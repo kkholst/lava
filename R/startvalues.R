@@ -1,0 +1,282 @@
+###{{{ starter.multigroup
+
+starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,silent=TRUE,...) {
+  ## Initial values:
+  W <- c() ## Weight-vector
+  s <- list()
+  for (i in 1:x$ngroup) {
+    mydata <- x$data[[i]][,manifest(x$lvm[[i]]),drop=FALSE]
+    W <- c(W, nrow(mydata))
+    if (nrow(mydata)<2) {
+      ii <- index(x$lvm[[i]])
+      nn <- ifelse(meanstructure, ii$npar+ii$npar.mean, ii$npar) 
+      s0 <- rep(1,nn)      
+    }
+    else {
+      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;
+      s0 <- starterfun(x$lvm[[i]], S=S, mu=mu,silent=TRUE)
+    }
+    s <- c(s, list(s0))
+  }
+  Wtotal <- sum(W); W <- W/Wtotal
+  
+  pg <- vector("list", x$npar); for (i in 1:length(pg)) pg[[i]] <- rep(0,x$ngroup)
+  meang <- vector("list", x$npar.mean); for (i in 1:length(meang)) meang[[i]] <- rep(0,x$ngroup)
+  
+  for (i in 1:x$ngroup) {
+    pp <- modelPar(x$lvm[[i]],s[[i]])
+    pos <- sapply(x$parlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
+    for (j in 1:length(pos))
+      pg[[ pos[j] ]][i] <-  pp$p[j]
+
+    pos <- sapply(x$meanlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
+    ptype <- sapply(x$meanlist[[i]], function(y) substr(y,1,1)=="m")
+    if (!(any(ptype)))
+      pos <- NULL
+    else
+      pos <- pos[ptype]
+    if (length(pos)>0)
+    for (j in 1:length(pos)) {
+      meang[[ pos[j] ]][i] <-  pp$meanpar[j]
+    }
+  }
+
+  ## Weighted average
+  wp <- unlist(lapply(pg, function(y) {
+    ppos <- !is.na(y)
+    myweight <- W[ppos]/sum(W[ppos])
+    sum(y[ppos]*myweight)
+  }))
+  wmean <- unlist(lapply(meang, function(y) {
+    ppos <- !is.na(y)
+    myweight <- W[ppos]/sum(W[ppos])
+    sum(y[ppos]*myweight)
+  }))
+  return(c(wmean,wp))
+}
+
+###}}}
+
+###{{{ startmean
+
+startmean <- function(x,p,mu) {
+  if (is.null(mu))
+    return(p)  
+  meanpar <- numeric(index(x)$npar.mean)  
+  mymeans <- vars(x)[index(x)$v1==1]
+  midx <- na.omit(match(names(mu),mymeans))
+  meanpar[midx] <- mu[midx]
+  AP <- matrices(x,p,meanpar)
+  nu <- numeric(length(vars(x)))
+  nu[vars(x)%in%manifest(x)] <- mu
+  meanstart <- ((diag(nrow(AP$A))-t(AP$A))%*%nu)[index(x)$v1==1]
+  names(meanstart) <- vars(x)[index(x)$v1==1]
+  return( c(meanstart, p) )
+}
+
+###}}}
+
+###{{{ startvalues3
+
+`startvalues3` <-
+function(x, S, debug=FALSE, tol=1e-6,...) {
+  S <- reorderdata.lvm(x,S)
+  if (nrow(S)!=length(manifest(x))) stop("Number of observed variables in data and models does not agree.")
+  J <- index(x)$J ## Manifest selection
+  P0 <- index(x)$P0 ## covariance 'adjacency'
+  A <- t(index(x)$M) ## Adjacency matrix
+  n <- nrow(S) ## Number of manifest variables
+  m <- nrow(A) ## Number of variables
+  A1 <- t(index(x)$M1) ## Adjacency matrix (without fixed parameters and duplicates)
+  A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
+  obs.idx <- as.vector(J%*%(1:m));  latent.idx <- setdiff(1:m, obs.idx)
+
+  exo.idx <- match(exogenous(x),vars(x))
+  exo.idxObs <- match(exogenous(x),manifest(x))
+  
+  AP0 <- moments(x, rep(0,index(x)$npar))
+  newP <- t(AP0$P)
+  newA <- t(AP0$A)
+  fixed <- t(x$fix)
+
+  for (i in latent.idx) {
+    fix.idx <- colnames(fixed)[which(!is.na(t(fixed[,i])))[1]]
+    lambda0 <- newA[fix.idx,i] 
+    rel.idx <- which(A0[,i]==1)
+    rel.all <- which(A[,i]==1)
+    rel.pos <-  colnames(A)[rel.all]
+    ## Estimation of lambda (latent -> endogenous)
+    for (j in rel.idx) {
+      lambda <- lambda0*S[fix.idx, j]/S[fix.idx,fix.idx]
+      newA[j,i] <- lambda
+    }
+    ## Estimation of  zeta^2 (variance of latent variable)
+    lambdas <- newA[rel.pos,i]
+
+    
+    ## Estimation of beta (covariate -> latent)
+    exo2latent <- which(A0[i,exo.idx]==1)
+    exo.pos <- colnames(S)[exo.idxObs[exo2latent]]
+    varX.eta <- S[exo.pos, exo.pos]
+    InvvarX.eta <- solve(varX.eta)
+
+    covXY <- S[exo.pos, rel.pos,drop=FALSE]
+    beta <- 0
+    for (j in 1:length(rel.pos))
+      beta <- beta + 1/lambdas[j]*InvvarX.eta %*% covXY[,j]
+    beta <- beta/length(rel.pos)
+
+    for (k in 1:length(exo.pos)) {
+      if (A0[i,exo.pos[k]]==1) {
+        newA[i,exo.pos[k]] <- beta[k]
+      }
+    }
+    
+    beta.eta <- matrix(newA[i,exo.pos], ncol=1)
+    
+    ## Estimation of  zeta^2 (variance of latent variable)
+    lambdas <- newA[rel.pos,i]
+
+    betavar <- matrix(beta.eta,nrow=1)%*%varX.eta%*%beta.eta
+
+
+    zetas <- c()
+    for (r1 in 1:(length(rel.pos)-1))
+      for (r2 in (r1+1):length(rel.pos)) {
+        zetas <- c(zetas, S[rel.pos[r1], rel.pos[r2]]/ (lambdas[r1]*lambdas[r2]) - betavar)
+      }
+    zeta <- mean(zetas)
+    
+    newP[i,i] <- zeta
+    for (j in rel.all) {
+      pos <- colnames(newA)[j]
+      vary <- S[pos,pos] - newA[pos,i]^2*(zeta+betavar)
+      newP[pos,pos] <- ifelse(vary<0.25,0.25,vary)
+    }
+    
+  }
+  Debug(list("start=",start), debug)
+  start <- pars(x, A=t(newA), P=newP)
+  return(start)
+}
+
+###}}} startvalues3
+
+###{{{ startvalues2
+
+`startvalues2` <-
+  function(x, S, mu=NULL, debug=FALSE, silent=FALSE,...) {
+    if (!silent) cat("Obtaining start values...\n")
+    S <- reorderdata.lvm(x,S)
+    ss <- startvalues(x,S)
+    Debug(list("ss=",ss),debug);
+    g <- measurement(x,silent=TRUE)
+    keep <- c()
+    if (length(g)>1) {
+      for (i in 1:length(g)) {
+        if (length(endogenous(g[[i]]))>2)
+          keep <- c(keep,i)      
+      }    
+      g <- g[keep]
+    }
+    if (length(g)<2)
+      return(startmean(x,ss,mu=mu))
+    ## if (!silent) cat("Fitting marginal measurement models...\n")
+    op <- options(warn=-1)
+    e <- lapply(g, function(y) estimate(y, data=list(S=S, n=1), control=list(meanstructure=FALSE, starterfun="startvalues", estimator="Simple", method="nlminb1"), optcontrol=list(), debug=FALSE, silent=TRUE))
+    for (l in e) {
+      ##    a <- coef(l$estimate)[,1]
+      a <- coef(l)
+      for (i in 1:length(a)) {
+        pos <- match(names(a)[i],names(ss))
+        if (!is.na(pos))
+          ss[pos] <- a[i]
+    } 
+    }
+    options(op)  
+    ##  names(ss) <- coef(x, silent=TRUE)
+    startmean(x,ss,mu=mu)
+  }
+
+###}}} startvalues2
+
+###{{{ startvalues
+
+`startvalues` <-
+function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
+  ## As proposed by McDonald & Hartmann, 1992. 
+  ## Implementation based on John Fox's
+  ## implementation in the 'sem' R-package
+  S <- reorderdata.lvm(x,S)
+  if (nrow(S)!=length(manifest(x))) stop("Number of observed variables in data and models does not agree.")
+  J <- index(x)$J ## Manifest selection
+  P0 <- index(x)$P0 ## covariance 'adjacency'
+  A <- t(index(x)$M) ## Adjacency matrix
+  n <- nrow(S) ## Number of manifest variables
+  m <- nrow(A) ## Number of variables
+  A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
+  obs.idx <- as.vector(J%*%(1:m));  latent.idx <- setdiff(1:m, obs.idx)
+  s <- sqrt(diag(S))
+  R <- cov2cor(S) ## S/outer(s,s)
+  C <- P0
+
+  Debug(list("obs.idx", obs.idx), debug)
+  C[obs.idx,obs.idx] <- R
+  ## Estimates of covariance between latent and manifest variables
+  Debug((C), debug)
+  for (i in latent.idx) {
+    inRelation <- A[obs.idx,i]==1
+    for (j in 1:length(obs.idx)) {
+      Debug((j), debug)
+      C[obs.idx[j],i] <- C[i,obs.idx[j]] <- if (any(inRelation)) {
+        numerator <- sum(R[j, which(inRelation)])
+        denominator <- sqrt(sum(R[which(inRelation), which(inRelation)]))
+        numerator/denominator ## as proposed by McDonald & Hartmann
+      } else {
+        runif(1, .3, .5) ## No arrows => small random covariance
+      }
+    }
+  }  
+  ## Estimates of covariance between latent variables
+  for (i in latent.idx) {
+    for (j in latent.idx) {
+      C[i,j] <- C[j,i] <-
+        if (i==j) {
+          1
+        } else {
+          inRelation.i <- A[obs.idx, i]==1
+          inRelation.j <- A[obs.idx, j]==1
+          if ((any(inRelation.i)) | (any(inRelation.j))) {
+            numerator <- sum(R[which(inRelation.i), which(inRelation.j)])
+            denominator <- sqrt( sum(R[which(inRelation.i), which(inRelation.i)])
+                                * sum(R[which(inRelation.j), which(inRelation.j)]))
+            numerator/(denominator+0.01) ## Avoid division by zero
+          } else {
+            runif(1, .3, .5)
+          }
+        }
+    }
+  }
+  if (debug) {
+    print("C="); print(C);
+  }  
+  Ahat <- matrix(0,m,m)
+  for (j in 1:m) { ## OLS-estimates
+    relation <- A[j,]==1
+    if (!any(relation)) next
+    Ahat[j, relation] <- solve(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j]
+  }
+  Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
+  Ahat[,obs.idx] <- Ahat[,obs.idx]/matrix(s, m, n, byrow=TRUE)
+  Chat <- C
+  Chat[obs.idx,] <- Chat[obs.idx,]*matrix(s,n,m)  ##
+  Chat[,obs.idx] <- Chat[,obs.idx]*matrix(s,m,n,byrow=TRUE)  ## 
+  Phat <- (diag(m)-Ahat)%*%Chat%*%t(diag(m)-Ahat)
+  diag(Phat) <- abs(diag(Phat))
+  Debug(list("start=",start), debug)
+  start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
+  names(start) <- coef(x, silent=TRUE, fixed=FALSE)
+  startmean(x,start,mu)
+}
+
+###}}} startvalues

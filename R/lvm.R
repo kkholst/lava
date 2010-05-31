@@ -1,0 +1,39 @@
+lvm <- function(var=NULL, silent=FALSE, ...) {
+ 
+  x <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
+  nodeDataDefaults(x, "fill") <- "white"
+  nodeDataDefaults(x, "shape") <- "rectangle"
+  nodeDataDefaults(x, "latent") <- FALSE
+  nodeDataDefaults(x, "randomslope") <- FALSE
+  nodeDataDefaults(x, "normal") <- TRUE
+  nodeDataDefaults(x, "survival") <- FALSE
+  nodeDataDefaults(x, "binary") <- FALSE
+  nodeDataDefaults(x, "categorical") <- FALSE
+  nodeDataDefaults(x, "distribution") <- NA
+  nodeDataDefaults(x, "label") <- expression(NA)
+  edgeDataDefaults(x, "lty") <- 1
+  edgeDataDefaults(x, "color") <- "black"
+  edgeDataDefaults(x, "est") <- 0
+  edgeDataDefaults(x, "arrowhead") <- "open"
+  edgeDataDefaults(x, "dir") <- "forward"
+  edgeDataDefaults(x, "cex") <- 1.5
+  edgeDataDefaults(x, "label") <- expression()
+
+  res <- list(graph=x, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
+  class(res) <- "lvm"
+
+  if (class(var)[1]=="formula") {
+    if (!is.null(getoutcome(var))) {
+      regression(res,...,silent=silent) <- var     
+    } else {
+      var <- all.vars(var)
+    }
+  }
+  if (is.character(var)) {
+    res <- addvar(res, var, silent=silent)  }
+  if (!is.null(var)) {
+    index(res) <- reindex(res,zeroones=TRUE) }
+ 
+  return(res)
+}
+

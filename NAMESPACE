@@ -1,0 +1,239 @@
+import(utils)
+import(stats)
+
+export(
+       lava,
+       lvm,
+       regression, "regression<-",
+       covariance, "covariance<-",
+       kill,"kill<-",
+       cancel,"cancel<-",
+       vars,latent,"latent<-",manifest,exogenous,"exogenous<-",endogenous,
+       "parameter<-",
+       randomslope,"randomslope<-",
+       covfix, "covfix<-",
+       regfix, "regfix<-",
+       intfix, "intfix<-",
+       intercept, "intercept<-",
+       parfix, "parfix<-",
+       bootstrap, 
+       constrain,"constrain<-",
+       constraints,
+       addvar,"addvar<-",
+
+       
+       Graph,"Graph<-",
+       Model,"Model<-",
+       children,parents,
+
+       survival,"survival<-",
+       functional,distribution,
+       "functional<-", "distribution<-",
+
+       Graph,"Graph<-",
+       Model,"Model<-",       
+
+       edgelabels,"edgelabels<-",
+       labels,"labels<-",
+       "nodecolor<-",
+
+       
+       estimate, startvalues, startvalues2, measurement,
+       estimate.MAR,
+       describecoef,baptize,
+       modelsearch,
+       gof,
+       compare,
+       multigroup,
+       score,
+       information,
+
+       parlabels,
+       pars,
+       moments,
+       ##       addattr,
+       path,
+       graph2lvm,
+       sim,
+       makemissing,
+       binomial.lvm, uniform.lvm, normal.lvm, poisson.lvm,
+       fixsome,
+       ##       variances, offdiags,
+       frobnorm,
+       variances,
+       offdiags,
+       reindex,
+       index,
+       "index<-",
+       getoutcome,
+
+       modelPar,
+       modelVar,
+
+       binary,
+       "binary<-"
+       )
+
+S3method(binary,lvm)
+S3method("binary<-",lvm)
+
+
+S3method(modelPar, lvm)
+S3method(modelPar, lvmfit)
+S3method(modelVar, lvm)
+S3method(modelVar, lvmfit)
+
+S3method(regression, lvm)
+S3method("regression<-", lvm)
+S3method(kill, lvm)
+S3method("kill<-", lvm)
+S3method(cancel, lvm)
+S3method("cancel<-", lvm)
+S3method(addvar, lvm)
+S3method("addvar<-", lvm)
+S3method(covariance, lvm)
+S3method("covfix<-", lvm)
+S3method("intfix<-", lvm)
+S3method("intfix", lvm)
+S3method("intercept<-", lvm)
+S3method("intercept", lvm)
+S3method("regfix<-", lvm)
+S3method("covfix", lvm)
+S3method("regfix", lvm)
+S3method("covariance<-", lvm)
+S3method(estimate, lvm)
+S3method(estimate, list)
+S3method(estimate, formula)
+S3method(estimate, lm)
+S3method(coef, lvm)
+S3method(print, lvm)
+S3method(print, fix)
+S3method(summary, lvm)
+S3method(subset, lvm)
+S3method(baptize, lvm)
+S3method(parents, lvm)
+S3method(children, lvm)
+
+
+S3method(summary, lvmfit)
+S3method(latent, lvm)
+S3method(latent, lvmfit)
+S3method("latent<-", lvm)
+S3method("survival", lvm)
+S3method("survival<-", lvm)
+S3method(vars, lvm)
+S3method(vars, lvmfit)
+S3method(addattr, lvm)
+S3method(addattr, graphNEL)
+S3method(manifest, lvm)
+S3method(manifest, lvmfit)
+S3method(exogenous, lvm)
+S3method(exogenous, list)
+S3method("exogenous<-", lvm)
+S3method(endogenous, lvm)
+S3method(exogenous, lvmfit)
+S3method(endogenous, lvmfit)
+S3method(finalize, lvm)
+S3method(plot, lvm)
+S3method(residuals, lvmfit)
+S3method(bootstrap,lvm)
+S3method("parfix<-", lvm)
+S3method(parfix, lvm)
+S3method("parameter<-",lvm)
+
+### lvmfit
+S3method(bootstrap,lvmfit)
+S3method(confint,lvmfit)
+         
+S3method(predict, lvm)
+S3method(predict, lvmfit)
+S3method(logLik, lvm)
+S3method(logLik, lvmfit)
+
+S3method(moments, lvm)
+S3method(moments, lvmfit)
+S3method(pars, default)
+S3method(pars, lvm)
+S3method(score, lvm)
+S3method(score, lvmfit)
+S3method(information, lvm)
+S3method(information, lvmfit)
+S3method(gof, lvmfit)
+S3method(print, gof.lvmfit)
+S3method(coef, lvmfit)
+S3method(coef, summary.lvmfit)
+S3method(print, lvmfit)
+S3method(plot, lvmfit)
+
+S3method(functional, lvm)
+S3method(distribution, lvm)
+S3method("functional<-", lvm)
+S3method("distribution<-", lvm)
+S3method(sim, lvm)
+S3method(sim, lvmfit)
+S3method(vars, graph)
+S3method("nodecolor<-",default)
+S3method("labels<-",default)
+S3method(labels,lvm)
+S3method(labels,lvmfit)
+S3method(edgelabels,lvm)
+S3method(edgelabels,lvmfit)
+S3method("edgelabels<-",lvm)
+S3method("edgelabels<-",graphNEL)
+S3method("edgelabels<-",lvmfit)
+S3method(path,lvm)
+S3method(path,lvmfit)
+S3method(path,graphNEL)
+S3method(effects,lvmfit)
+S3method(model.frame, lvmfit)
+S3method(Graph, lvm)
+S3method(Graph, lvmfit)
+S3method("Graph<-", lvm)
+S3method("Graph<-", lvmfit)
+S3method(Model, lvmfit)
+S3method("Model<-", lvmfit)
+S3method(index, lvmfit)
+S3method("index<-", lvmfit)
+S3method(index, lvm)
+S3method("index<-", lvm)
+S3method(compare, default)
+S3method(modelPar, lvm)
+S3method(formula, lvm)
+S3method(formula, lvmfit)
+S3method(print,summary.lvmfit)
+S3method(vcov, lvmfit)
+
+S3method(print,lvmfit.randomslope)
+
+### multigroup
+S3method(print, multigroup)
+S3method(summary, multigroup)
+S3method(plot, multigroup)
+S3method(estimate, multigroup)
+S3method(modelPar, multigroup)
+S3method(logLik, multigroup)
+S3method(Model, multigroup)
+S3method("Model<-", multigroup)
+S3method(score, multigroup)
+S3method(exogenous, multigroup)
+S3method(score, multigroup)
+
+### multigroupfit
+##S3method(gof, multigroupfit)
+S3method(pars, multigroupfit)
+S3method(modelPar, multigroupfit)
+S3method(coef, multigroupfit)
+S3method(print, multigroupfit)
+S3method(logLik, multigroupfit)
+S3method(Model, multigroupfit)
+S3method("Model<-", multigroupfit)
+S3method(summary, multigroupfit)
+S3method(vcov, multigroupfit)
+S3method(print,summary.multigroupfit)
+
+
+
+S3method(constrain,default)
+S3method("constrain<-",default)
+S3method("constrain<-",multigroupfit)
+

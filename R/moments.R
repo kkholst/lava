@@ -1,0 +1,57 @@
+`moments` <-
+  function(x,...) UseMethod("moments")
+
+moments.lvmfit <- function(x, p=pars(x),...) moments(Model(x),p=p,...)
+
+moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
+##  moments.lvm <- function(x, p, meanpar=NULL, conditional=FALSE, debug=FALSE,...) {
+### p: model-parameters as obtained from e.g. ´startvalues`
+###       i.e. vector of regression parameters and variance parameters
+### meanpar: mean-parameters (optional)
+
+  ii <- index(x)
+
+  pp <- modelPar(x,p)
+##  AP <- with(pp, matrices(x,p,meanpar=TRUE,...))
+  AP <- with(pp, matrices(x,p,meanpar=meanpar,data=data,...))
+  A <- AP$A; P <- AP$P; v <- AP$v; 
+  if (!is.null(v)) {
+    names(v) <- ii$vars
+  }
+  ##  rownames(P) <- colnames(P) <- ii$vars
+  npar <- ii$npar
+  npar.reg <- ii$npar.reg
+  
+  if (conditional) {
+    mynames <- endogenous(x)
+    J <- ii$Jy
+    px <- ii$px 
+    P <-  px %*% tcrossprod(P, px)      
+  } else {
+    mynames <- ii$vars
+    J <- ii$J ## Manifest variable selection matrix    
+  }
+
+  Im <- diag(nrow(A))  
+  if (ii$sparse) {
+    IAi <- with(AP, as(solve(ii$Im-t(A)),"sparseMatrix"))
+##    IAi <- as(solve(Diagonal(nrow(A))-t(A)),"sparseMatrix")
+    G <- as(J%*%IAi,"sparseMatrix")
+  } else {
+    IAi <- solve(Im-t(A))
+##    IAi <- solve(diag(nrow(A))-t(A))
+    G <- J%*%IAi
+  }
+
+  xi <- NULL
+  if (!is.null(v)) {
+    xi <- G%*%v ## Model-specific mean vector
+  }
+  ##  rownames(xi) <- J%*%mynames
+
+  Cfull <- as.matrix(IAi %*% tcrossprod(P,IAi))
+  C <- as.matrix(J %*% tcrossprod(Cfull,J))
+##  rownames(C) <- colnames(C) <- mynames
+  
+  return(list(Cfull=Cfull, C=C, v=v, xi=xi, A=A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx))
+}

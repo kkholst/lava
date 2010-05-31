@@ -1,0 +1,60 @@
+Isqrt <- function(X) { eX <- eigen(X); with(eX, vectors %*% diag(1/sqrt(values)) %*% t(vectors)) }
+
+residuals.lvmfit <- function(object,data=model.frame(object),p=pars(object),...) {
+  residuals(Model(object), data=data, p=p, ...)
+}
+
+residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=pars(object),...) {
+  Y <- setdiff(manifest(object), X <- exogenous(object))
+  Pr <- (predict(object,p=p,data=data))[,Y]
+  ##  y <- endogenous(object)[match(endogenous(object),manifest(object))]
+  r <- as.matrix(data[,Y]-(Pr))
+  res <- r
+  
+  if (std) {
+    S <- attributes(Pr)$cond.var;
+    if (length(Y)>1) {
+      res <- r%*%Isqrt(S)
+    } else res <- 1/sqrt(S[1,1])*r
+  }
+  res
+}
+
+gradpredict <- function(p,obj,data=model.frame(obj)) {
+##  res <- residuals.lvmfit(object=obj,data=data,std=FALSE,p=p)  
+  mom <- moments(Model(obj),p,conditional=TRUE)
+  D <- with(obj, deriv(model, meanpar=modelPar(model,p)$meanpar, mom=mom))
+
+  X <- with(obj, exogenous(model))
+  Y <- with(obj, setdiff(manifest(model), X))
+  X.idx <- with(obj, match(X,manifest(model)))
+  X.idx.all <- with(obj, match(X, vars(model)))
+
+  mu0 <- mom$v; mu0[X.idx.all] <- 0
+  xs <- data[,X,drop=FALSE]
+  mu.x <- apply(xs, 1, FUN=function(i) { res  <- rep(0,length(mu0)); res[X.idx.all] <- i; res })
+  ##xi.x <- (mu.0 + mu.x)
+  mu.0 <- rbind(rep(1,nrow(data))) %x% mu0
+  mu. <- mu.0 + mu.x
+  
+  K <- nrow(mom$J)
+  I <- diag(K)
+
+  ##dmu. <- cbind(rep(1,ncol(mu.))) %x% px%*%D$dvecv
+
+##  dIAi <- with(mom, (t(IAi) %x% IAi) %*% (D$dvecA))
+##  d1 <- (t(mu.) %x% Jy)%*%dIAi
+
+  d1 <- (t(mu.) %x% I)%*%D$dvecG
+  px <- index(obj)$px
+  G <- mom$G ## index(obj)$Jy %*% solve(diag(nrow(mom$A))-t(mom$A))
+  d2 <-  cbind(rep(1,ncol(mu.))) %x% (G%*% px%*% D$dvecv)
+  dvecmui = d1+d2
+  ## Reorganize vector
+  idx <- (0:(nrow(data)-1))*K+1
+  idx. <- c(); for (i in 1:K) idx. <- c(idx., idx+i-1)
+  dvecmui <- dvecmui[idx.,]
+  ## first n rows first coordinate of predicted values,
+  ## next n rows second coordinates and so forth
+  dvecmui
+}

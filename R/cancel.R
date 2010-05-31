@@ -1,0 +1,41 @@
+"cancel<-" <- function(x,...,value) UseMethod("cancel<-")
+
+"cancel<-.lvm" <- function(x, ..., value) {
+  cancel(x,value,...)
+}
+
+"cancel" <- function(x,value,...) UseMethod("cancel")
+cancel.lvm <- function(x,value,...) {
+  if (class(value)[1]=="formula") {
+      ##      yx <- all.vars(value)
+    lhs <- getoutcome(value)
+    if (is.null(lhs)) yy <- NULL else yy <- decomp.specials(lhs)
+    xf <- attributes(terms(value))$term.labels
+    if(identical(all.vars(value),xf))
+      return(cancel(x,xf))
+    res <- lapply(xf,decomp.specials)
+    xx <- unlist(lapply(res, function(z) z[1]))
+    for (i in yy) {
+      for (j in xx)
+        cancel(x) <- c(i,j)
+      }
+    index(x) <- reindex(x)
+  return(x)
+  }
+  
+  M <- as(Graph(x), Class="matrix")
+  for (v1 in value)
+    for (v2 in value)
+      if (v1!=v2)
+        {
+          if (all(c(v1,v2)%in%vars(x))) {
+          if (M[v1,v2]==1)
+            Graph(x) <- removeEdge(v1, v2, Graph(x))
+          x$par[v1,v2] <- x$fix[v1,v2] <-
+            x$covpar[v1,v2] <- x$covfix[v1,v2] <- NA
+          x$cov[v1,v2] <- 0
+        }
+        }
+  index(x) <- reindex(x)
+  return(x)
+}

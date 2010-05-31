@@ -1,0 +1,17 @@
+desc <- packageDescription("lava")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc[["Date"]])
+vers <- paste("R package version", desc[["Version"]])
+title <- paste(desc[["Package"]], ": ", desc[["Title"]], sep="")
+author <- desc[["Author"]]
+plist <- personList(as.person(author))
+textver <- paste(author, " (", year, "). ", title, ". ", vers, ".", sep="")
+
+citHeader("To cite 'lava' in publications use:")
+
+citEntry(entry="Manual",
+         title = title,
+         author = plist,
+         year = year,
+         note = vers,
+         
+         textVersion = textver)

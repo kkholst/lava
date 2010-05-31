@@ -1,0 +1,13 @@
+
+confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,...) {
+  if (!profile) {
+    return(confint.default(object,parm=parm,level=level,...))
+  }
+  res <- c()
+  for (i in parm) {
+    res <- rbind(res, profci.lvmfit(object,parm=i,level=level,profile=profile))
+  }  
+  rownames(res) <- names(coef(object))[parm]
+  colnames(res) <- paste((c(0,1) + c(1,-1)*(1-level)/2)*100,"%")
+  return(res) 
+}
