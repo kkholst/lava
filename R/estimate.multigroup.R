@@ -111,7 +111,6 @@
   ##parord <- modelPar(x,1:length(mystart),debug=debug)$p
   parord <- modelPar(x,1:with(x,npar+npar.mean),debug=debug)$p
   mymodel <- x
-  
 
   parkeep <- c()
   myclass <- c("multigroupfit","lvmfit")  
@@ -123,7 +122,7 @@
 ################################################################################
 
     if (Xfix) {
-      myclass <- c("randomslope",myclass)
+      myclass <- c("lvmfit.randomslope",myclass)
       for (k in 1:x$ngroup) {
         x1 <- x0 <- x$lvm[[k]]
         data0 <- x$data[[k]]

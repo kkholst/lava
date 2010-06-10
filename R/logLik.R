@@ -39,7 +39,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
       return(logLikFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
-    }
+    }    
     loglik <- sapply(1:nrow(data),myfun)
     if (!indiv) {
       loglik <- sum(loglik)
@@ -90,9 +90,6 @@ gaussian_logLik.lvm <- function(object,p,data,
     return(loglik)
   }
     
-##    loglik <- logLikFun(object,p,data,type=type,model=model,weight=NULL,indiv=FALSE,S=S,mu=mu,n=n,debug=FALSE,...)
-   
-##  meanstructure <- !is.null(modelPar(object,p)$meanpar)
   if (missing(n)) {
     n <- nrow(data)
   }
@@ -157,19 +154,12 @@ gaussian_logLik.lvm <- function(object,p,data,
       weight <- NULL
   }
 
-##  print("n=");print(n)
   if (n==1) {
     data <- rbind(data)
   }
   if (n<2 | indiv | !is.null(weight)) {
     res <- c()
     data <- data[,manifest(object),drop=FALSE]
-    ## if (!(is.matrix(data) | is.data.frame(data))) {
-    ##   ti <- cbind(as.numeric(data[myidx]))
-    ##   if (meanstructure)
-    ##     ti <- ti-xi
-    ##   loglik <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
-    ## } else {
     loglik <- 0; 
     for (i in 1:n) {
       ti <- cbind(as.numeric(data[i,myidx]))
@@ -181,17 +171,14 @@ gaussian_logLik.lvm <- function(object,p,data,
         val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%ti
       } else { 
         val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
-##        val <-  -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
       }
       if (indiv)
         res <- c(res,val)
       loglik <- loglik + val
     }
-    ##  }
     if (indiv)
       return(res)    
   } else {
-    ##    T <- (n-1)/n*S
     T <- S
     if (meanstructure) {
       W <- tcrossprod(mu-xi)
@@ -228,26 +215,27 @@ logLik.lvmfit <- function(object,
 
 logLik.lvm.missing <- function(object,
                           p=coef(object), ...) {
-  logLik(object$multigroup, p=p, ...)
+  logLik(object$estimate$model0, p=p, ...)
 }
 ###}}}
 
 ###{{{ logLik.multigroup
 
 logLik.multigroup <- function(object,p,data=object$data,type=c("cond","sim","exo","sat"),...) {
-
-  pp <- modelPar(object,p)$p
+  res <- procrandomslope(object)
+  pp <- with(res, modelPar(model,p)$p) 
+    
   if (type[1]=="sat") {
     n <- 0
     df <- 0
     loglik <- 0
     for (i in 1:object$ngroup) {
-        m <- Model(object)[[i]]
-        L <- logLik(m,p=pp[[i]],data=object$data[[i]],type="sat")
-        df <- df + attributes(L)$df
-        loglik <- loglik + L
-        n <- n + object$samplestat[[i]]$n
-      }
+      m <- Model(object)[[i]]
+      L <- logLik(m,p=pp[[i]],data=object$data[[i]],type="sat")
+      df <- df + attributes(L)$df
+      loglik <- loglik + L
+      n <- n + object$samplestat[[i]]$n
+    }
     attr(loglik, "nall") <- n
     attr(loglik, "nobs") <- n-df
     attr(loglik, "df") <- df
@@ -272,6 +260,6 @@ logLik.multigroup <- function(object,p,data=object$data,type=c("cond","sim","exo
 
 ###{{{ logLik.multigroupfit
 logLik.multigroupfit <- function(object,p=object$opt$est,...) {
-  logLik(Model(object),p=p,...)
+  logLik(object$model0,p=p,...)
 }
 ###}}} logLik.multigroup

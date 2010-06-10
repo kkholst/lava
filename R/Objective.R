@@ -51,22 +51,6 @@ gaussian2_method.lvm <- "NR"
 gaussian2_objective.lvm <- gaussian_objective.lvm
 gaussian2_gradient.lvm <- gaussian_gradient.lvm
 gaussian2_hessian.lvm <- function(p,model,n,data,...) {
-##   if (FALSE) {
-##   mp <- modelVar(x,p)       
-##   C <- mp$C
-##   iC <- Inverse(C)
-##   xi <- mp$xi
-##   D <- deriv(x, p=p, mom=mp,meanpar=TRUE,mu=NULL)
-##   score0 <- -1/2*as.vector(iC)%*%D$dS
-##   for (i in 1:nrow(data)) {
-##     z <- as.numeric(mydata[i,])
-##     u <- z-xi
-##     score <- rbind(score,
-##                    as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
-##                               1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS))
-##   } 
-##   S <- colSums(score)
-## }
   S <- -score(model,p=p,n=n,data=data,...)
   I <- t(S)%*%S
   attributes(I)$grad <- colSums(S)
@@ -78,7 +62,6 @@ gaussian3_gradient.lvm <- gaussian_gradient.lvm
 gaussian3_hessian.lvm <- function(p,model,n,data,...) {
   I <- information(x=model,p=p,n=n,...)
   S <- score(model,p=p,n=n,data=data)
-#  val <- score(model,p=p,n=n,data=data,...)
   J <- t(S)%*%S
   return(J%*%solve(I)%*%J)  
 }

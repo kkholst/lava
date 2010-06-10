@@ -2,7 +2,7 @@
 function(model,...) UseMethod("finalize")
 
 `finalize.lvm` <-
-function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10,...) {
+function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen","indianred1"), ...) {
   opt <- options(warn=-1)
   x <- model$graph
   
@@ -72,7 +72,6 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
       if (!is.null(cex))
         nodeRenderInfo(x)$cex <- cex
 
-    cols <- c("lightblue","orange","yellowgreen","indianred1")
     if (plain) {
       x <- addattr(x,attr="shape",var=vars(model),val="none")      
     } else {    

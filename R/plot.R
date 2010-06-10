@@ -1,7 +1,8 @@
 ###{{{ plot.lvm
 
 `plot.lvm` <-
-function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,attrs=list(graph=list(rankdir="BT")),...) {
+  function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
+         attrs=list(graph=graph),...) {
   if (all) {
     diag <- cor <- labels <- intercept <- addcolor <- TRUE
   }
@@ -41,12 +42,11 @@ function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=T
   function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,...) {
     if (!require("Rgraphviz")) stop("package Rgraphviz not available")
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
-
     g <- Graph(x)
     newgraph <- FALSE
     if (is.null(g)) {
       newgraph <- TRUE
-      Graph(x) <- finalize(Model(x), diag=TRUE, cor=TRUE, addcolor=TRUE)
+      Graph(x) <- finalize(Model(x), diag=TRUE, cor=TRUE, ...)
     }
     if(noplot) return(Graph(x))
 
@@ -54,17 +54,16 @@ function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=T
     if (newgraph) {
       if (missing(type))
         type <- "est"
-      x <- edgelabels(x, type=type)
+      x <- edgelabels(x, type=type, diag=diag, cor=cor, ...)
     } else {
       if (!missing(type)) {
-        x <- edgelabels(x, type=type)
+        x <- edgelabels(x, type=type, diag=diag, cor=cor, ...)
       }
     }
-    
-    g <- layoutGraph(Graph(x),...)
+    g <- Graph(x)
     var <- rownames(covariance(Model(x)))
-    if (!cor) {
-      delta <- 1
+     if (!cor) {
+       delta <- 1
       for (r in 1:(nrow(covariance(Model(x)))-delta) ) {
         for (s in (r+delta):ncol(covariance(Model(x))) ) {
           if (covariance(Model(x))[r,s]==1) {
@@ -79,11 +78,12 @@ function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=T
         if (isAdjacent(g,var[r],var[r]))
           g <- removeEdge(var[r],var[r],g)
       }
-    }              
-    renderGraph(g)
+    }    
+    m <- Model(x); Graph(m) <- g
+    g <- plot(m, diag=diag, cor=cor, ...)
     options(.savedOpt)
-    invisible(g)
-    }
+    invisible(g)    
+  }
 
 ###}}} plot.lvmfit
 

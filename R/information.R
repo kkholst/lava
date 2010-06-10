@@ -68,7 +68,6 @@ information.lvm <- function(x,p,n,type=c("E","obs","varS","robust","num"),data,w
   D <- deriv(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
   C <- mp$C
   iC <- Inverse(C,0,det=FALSE)
-  ##iC <- solve(C)
 
   if (is.null(weight)) {
     W <- diag(ncol(iC))
@@ -85,9 +84,7 @@ information.lvm <- function(x,p,n,type=c("E","obs","varS","robust","num"),data,w
     diag(iW) <- 1/diag(iW)
   }
       
-##  information_Sigma <-  n/2*t(D$dS)%*%((iW%*%iC)%x%(iC%*%W))%*%(D$dS)
   information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
-##  information_Sigma <-  n/2*t(D$dS)%*%(iC%x%iC)%*%(D$dS)
   if (is.null(pp$meanpar))
     return(information_Sigma)
 
@@ -95,14 +92,7 @@ information.lvm <- function(x,p,n,type=c("E","obs","varS","robust","num"),data,w
   
   idx <- with(index(x), (1:npar) + npar.mean)
   dxi <- D$dxi; ##dxi[,idx] <- 0
-##  information_mu <-  t(D$dxi) %*% iC %*% (D$dxi)
   information_mu <- n*t(D$dxi) %*% (iC%*%W) %*% (D$dxi)
-
-  ##  1/information_mu[1,1]
-##  print(information_mu)
-###   I <- information_mu[1:ii$npar.mean,1:ii$npar.mean]
-###   sqrt(diag(solve(I)))
-##  information_mu[idx,] <- information_mu[,idx] <- 0
 
   information <- information_Sigma + information_mu
   return(information)  

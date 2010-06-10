@@ -94,7 +94,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=TRUE,control=list(),silent=FALSE,weight,onlymodel=FALSE,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=TRUE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
@@ -124,12 +124,15 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
     cat("Calculating 1. and 2. moments of exogenous variables...\n")
     
     exo.idx <- c(which(manifest(x)%in%exogenous(x)))
-    xx <- covariance(subset(x,exogenous(x)),exogenous(x),exogenous(x))
+    xx <- subset(Model(x),exogenous(x))
+    exogenous(xx) <- NULL
+    covfix(xx, vars(xx)) <- NA
+    xx <- covariance(xx,exogenous(x),exogenous(x))
     datax <- data[,exogenous(x),drop=FALSE]
-    ##    print(datax)
     mu0 <- colMeans(datax,na.rm=TRUE)
     cov0 <- cov(datax,use="pairwise.complete.obs")*(nrow(datax)-1)/nrow(datax)
     cov0upper <- cov0[upper.tri(cov0,diag=TRUE)]
+    exogenous(xx) <- NULL
     coefpos <- matrices(xx,1:(K*(K-1)/2+K))$P
     ii <- coefpos[upper.tri(coefpos,diag=TRUE)]
     start <- c(mu0, cov0upper[order(ii)])
@@ -138,8 +141,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
     mu[exo.idx] <- mu0    
     ##    cat("\n")
   }
+  
   x0 <- x
-
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
   
   ##  print(covfix(x)$values)##[,exogenous(x),exogenous(x)])
@@ -198,7 +201,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
 ##   model <- fixsome(model, measurement.fix=fix, S=S, mu=mu, n=1)
   
   if (nrow(val$patterns)==1) {
-    res <- estimate(x,data=data,fix=fix,weight=weight,...)
+    res <- estimate(x,data=data,fix=fix,weight=weight,estimator=estimator,...)
     return(res)
   }
 
@@ -226,7 +229,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
 
-  e.mis <- estimate(mg0,debug=debug,control=control,silent=silent,weight=val$weights,...)
+  e.mis <- estimate(mg0,debug=debug,control=control,silent=silent,weight=val$weights,estimator=estimator,...)
 
   ##  return(e.mis)
 
@@ -268,12 +271,15 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
 ##                        cc=pattern.allcomp,
                         cc=mycc,
                         ncc=as.numeric(table(mis.type)[pattern.allcomp]),
-                        multigroup=e.mis$model, estimate=e.mis,
+                        multigroup=e.mis$model,
+                        model0=e.mis$model0$lvm,
+                        estimate=e.mis,
                         model=x,
                         model0=x0,
                         vcov=e.mis$vcov, opt=e.mis$opt,
                         control=control,
                         data=list(model.frame=data),
+                        estimator=estimator,
                         call=cl
                         ))
   class(res) <- c("lvm.missing","lvmfit") #,"lvmfit")
@@ -284,6 +290,3 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
 }
 
 ###}}} estimate.MAR.lvm
-
-
- 

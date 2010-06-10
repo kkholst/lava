@@ -75,6 +75,51 @@ substArg <- function(x,env,...) {
 
 ###}}}
 
+###{{{ procrandomslope
+
+procrandomslope <- function(object,data=object$data,...) {
+  Xfix <- FALSE
+  xfix <- myfix <- list()
+  xx <- object
+  for (i in 1:object$ngroup) {
+    x0 <- object$lvm[[i]]
+    data0 <- data[[i]]
+    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0))]
+    xfix <- c(xfix, list(xfix0))
+    if (length(xfix0)>0) { ## Yes, random slopes
+      Xfix<-TRUE
+    }
+    xx$lvm[[i]] <- x0    
+  }   
+  if (Xfix) {
+    for (k in 1:object$ngroup) {
+      x1 <- x0 <- object$lvm[[k]]
+      data0 <- data[[k]]        
+      nrow <- length(vars(x0))
+      xpos <- lapply(xfix[[k]],function(y) which(regfix(x0)$labels==y))
+      colpos <- lapply(xpos, function(y) ceiling(y/nrow))
+      rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
+      myfix0 <- list(var=xfix[[k]], col=colpos, row=rowpos)
+      myfix <- c(myfix, list(myfix0))        
+      for (i in 1:length(myfix0$var))
+        for (j in 1:length(myfix0$col[[i]])) 
+          regfix(x0,
+                 from=vars(x0)[myfix0$row[[i]][j]],to=vars(x0)[myfix0$col[[i]][j]]) <-
+                   colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
+      index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
+      object$lvm[[k]] <- x0
+      yvars <- endogenous(x0)
+      #parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE)%in%coef(x0,mean=TRUE)])
+    }
+#    parkeep <- sort(unique(parkeep))
+    object <- multigroup(object$lvm,data,fix=FALSE,exo.fix=FALSE)
+  }
+  return(list(model=object,fix=myfix))
+}
+
+
+###}}}
+
 ###{{{ fixsome function
 
 fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, debug=TRUE, na.method="complete.obs") {

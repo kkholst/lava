@@ -91,7 +91,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   A <- AP$A; P <- AP$P
   P[exogenous(object),exogenous(object)] <- NA
   
-  gr <- finalize(Model(object), diag=TRUE, cor=TRUE, addcolor=TRUE)
+  gr <- finalize(Model(object), ...)
   Anz <- A; Anz[Afix==0] <- NA
   gr <- edgelabels(gr, lab=Anz)
   Pnz <- P; Pnz[Model(object)$cov==0] <- NA
