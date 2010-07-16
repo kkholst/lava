@@ -46,6 +46,9 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
   eta.idx <- match(eta,allvars)
   obs.idx <- match(obs,allvars)
   exo.idx <- match(exo,allvars)
+  exo.obsidx <- match(exo,obs)
+  endo.obsidx <- match(endo,obs)
+
   fix.idx <- !is.na(x$fix) ## Index of fixed parameters
   covfix.idx <- !is.na(x$covfix) ## Index of fixed covariance parameters
 
@@ -140,6 +143,7 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
   res <- list(vars=allvars, manifest=obs, exogenous=exo, latent=eta,
               endo=endo,
               exo.idx=exo.idx, eta.idx=eta.idx,
+              exo.obsidx=exo.obsidx, endo.obsidx=endo.obsidx,
               obs.idx=obs.idx, 
               endo.idx=setdiff(obs.idx,exo.idx))
   

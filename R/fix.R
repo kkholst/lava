@@ -1,22 +1,51 @@
 ###{{{ print.fix
 
 print.fix <- function(x,exo=FALSE,...) {
-  idx <- 1:attributes(x)$nvar
-  if (!exo & attributes(x)$type!="reg") idx <- setdiff(idx,attributes(x)$exo.idx)
-  if (attributes(x)$type=="mean") {
-    for (i in idx) {
-        cat(names(x)[i],"\t")
-    }
-    cat("\n")
-    for (i in idx) {
-        cat(x[[i]],"\t")
-    }
-    cat("\n")
-  } else {
-    with(x, print(rel[idx,idx,drop=FALSE]))
-    with(x, printmany(labels[idx,idx,drop=FALSE], values[idx,idx,drop=FALSE], name1="labels=", name2="values="))
-  }
+  switch(attributes(x)$type,
+        reg = cat("Regression parameters:\n"),
+        cov = cat("Regression parameters:\n"),
+        mean = cat("Regression parameters:\n"))
+  M <- linconstrain(x,print=TRUE)
+  ## idx <- 1:attributes(x)$nvar
+  ## if (!exo & attributes(x)$type!="reg") idx <- setdiff(idx,attributes(x)$exo.idx)
+  ## if (attributes(x)$type=="mean") {
+  ##   for (i in idx) {
+  ##       cat(names(x)[i],"\t")
+  ##   }
+  ##   cat("\n")
+  ##   for (i in idx) {
+  ##       cat(x[[i]],"\t")
+  ##   }
+  ##   cat("\n")
+  ## } else {
+  ##   with(x, print(rel[idx,idx,drop=FALSE]))
+  ##   with(x, printmany(labels[idx,idx,drop=FALSE], values[idx,idx,drop=FALSE], name1="labels=", name2="values="))
+  ## }
   invisible(x)
+}
+
+
+linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {  
+  idx <- 1:attributes(x)$nvar
+  if (!exo & attributes(x)$type!="reg")
+    idx <- setdiff(idx,attributes(x)$exo.idx)
+  if (attributes(x)$type=="mean") {
+    M <- rbind(unlist(x[idx]))
+    rownames(M) <- ""
+    M[is.na(M)] <- "*"    
+  } else {  
+    M <- x$rel[idx,idx,drop=FALSE]
+    M[M==0] <- NA
+    M[M==1] <- "*"
+    M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
+    M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
+  }
+  if (print) {
+    M0 <- M
+    rownames(M0) <- paste(indent,rownames(M))
+    print(M0,quote=FALSE,na.print="",...)
+  }
+  invisible(M)
 }
 
 ###}}} print.fix

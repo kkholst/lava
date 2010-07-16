@@ -4,7 +4,7 @@
 constrain.default <- function(x,estimate=FALSE,...) {
   if (estimate) {
     return(constraints(x,...))
-  }    
+  }
   if (class(Model(x))[1]=="multigroup" ) {
     res <- list()
     for (m in Model(x)$lvm) {
@@ -12,7 +12,7 @@ constrain.default <- function(x,estimate=FALSE,...) {
         res <- c(res, constrain(m))
     }
     return(res)
-  }
+  }  
   return(Model(x)$constrain)
 }
 

@@ -73,9 +73,8 @@ gaussian_logLik.lvm <- function(object,p,data,
                           weight=NULL, indiv=FALSE, S, mu, n, debug=FALSE, meanstructure=TRUE,...) { 
   
    
-  exo.idx <- with(index(object), exo.idx)##match(exogenous(object),manifest(object))
-  endo.idx <- with(index(object), endo.idx)##match(endogenous(object),manifest(object))
-  
+  exo.idx <- with(index(object), exo.obsidx)##match(exogenous(object),manifest(object))
+  endo.idx <- with(index(object), endo.obsidx)##match(endogenous(object),manifest(object))
   if (type[1]=="exo") {
     if (length(exo.idx)==0 || is.na(exo.idx))
       return(0)
@@ -106,8 +105,8 @@ gaussian_logLik.lvm <- function(object,p,data,
     ##    Sigma <- (n-1)/n*S ## ML = 1/n * sum((xi-Ex)^2)
     Sigma <- S
     loglik <- -(n*k)/2*log(2*pi) -n/2*(log(det(Sigma)) + k) - L1
-    P <- length(endogenous(object))
-    k <- sum(exogenous(object)%in%index(object)$manifest)
+    P <- length(endo.idx)
+    k <- length(exo.idx)
     npar <- P*(1+(P-1)/2)
     if (meanstructure) npar <- npar+ (P*k + P)
     attr(loglik, "nall") <- n
@@ -158,10 +157,13 @@ gaussian_logLik.lvm <- function(object,p,data,
       weight <- NULL
   }
 
-  if (n==1) {
-    data <- rbind(data)
-  }
-  if (n<2 | indiv | !is.null(weight)) {    
+  
+  if (missing(n))
+    if (!missing(data)) n <- NROW(data)
+  if (!missing(n))
+  if (n<2 | indiv | !is.null(weight)) {
+    if (n==1)
+      data <- rbind(data) 
     res <- numeric(n)
     data <- data[,index(object)$manifest,drop=FALSE]   
     loglik <- 0; 
@@ -177,7 +179,7 @@ gaussian_logLik.lvm <- function(object,p,data,
         val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
       }
       if (indiv)
-        res[i,] <- val
+        res[i] <- val
       loglik <- loglik + val
     }
     if (indiv)
