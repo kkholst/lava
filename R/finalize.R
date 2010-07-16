@@ -6,15 +6,15 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
   opt <- options(warn=-1)
   x <- model$graph
   
-  var <- rownames(covariance(model))
+  var <- rownames(covariance(model)$rel)
   edges <- c()
   delta <- ifelse(diag,0,1)
   
   if (cor | diag) {
-    for (r in 1:(nrow(covariance(model))-delta) ) {
-      for (s in (r+delta):ncol(covariance(model)) ) {
+    for (r in 1:(nrow(covariance(model)$rel)-delta) ) {
+      for (s in (r+delta):ncol(covariance(model)$rel) ) {
         if (cor | r==s)
-          if (covariance(model)[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(model)))) {
+          if (covariance(model)$rel[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(model)))) {
             x <- addEdge(var[r],var[s], x)
             x <- addEdge(var[s],var[r], x)
             edges <- c(edges,
@@ -76,11 +76,13 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
       x <- addattr(x,attr="shape",var=vars(model),val="none")      
     } else {    
       if (addcolor) {
-        nodecolor(x, exogenous(model)) <- cols[1]
-        nodecolor(x, endogenous(model)) <- cols[2]
-        nodecolor(x, latent(model)) <- cols[3]
-        nodecolor(x, survival(model)) <- cols[4]
-        nodecolor(x, binary(model)) <- cols[4]
+        if (is.null(nodeRenderInfo(Graph(model))$fill)) notcolored <- vars(model)
+        else notcolored <- vars(model)[is.na(nodeRenderInfo(Graph(model))$fill)]
+        nodecolor(x, intersect(notcolored,exogenous(model))) <- cols[1]
+        nodecolor(x, intersect(notcolored,endogenous(model))) <- cols[2]
+        nodecolor(x, intersect(notcolored,latent(model))) <- cols[3]
+        nodecolor(x, intersect(notcolored,survival(model))) <- cols[4]
+        nodecolor(x, intersect(notcolored,binary(model))) <- cols[4]
       }
     }
     

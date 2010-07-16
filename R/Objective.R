@@ -32,12 +32,82 @@
 gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
   dots <- list(...); dots$weight <- NULL
   if (n>2) data <- NULL
-  val <- -score(x,p=p,S=S,mu=mu,n=n,data=data,reindex=FALSE,...)
+  val <- -gaussian_score.lvm(x,p=p,S=S,mu=mu,n=n,data=data,reindex=FALSE,...)
   if (!is.null(nrow(val))) {
     val <- colSums(val)
   }
   val
 }
+
+gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=FALSE,...) {
+  ## If not already done, calculate some relevant zero-one matrices and matrix derivatives
+
+  if (!is.null(data)) {  
+    if ((nrow(data)<2 | !is.null(weight))| indiv)
+    {
+      ##pp <- modelPar(x,p)    
+      mp <- modelVar(x,p,data=data[1,])
+      C <- mp$C
+      xi <- mp$xi
+      iC <- Inverse(C,0,det=FALSE)
+##      D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
+      D <- with(attributes(mp), deriv(x, meanpar=meanpar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
+      ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
+      Debug("after deriv.", debug)
+      myvars <- (index(x)$manifest)
+      if (NCOL(data)!=length(myvars)) {
+        data <- subset(data,select=myvars)
+      }
+
+      score <- matrix(ncol=length(p),nrow=NROW(data))
+      score0 <- -1/2*as.vector(iC)%*%D$dS
+      for (i in 1:NROW(data)) {
+        z <- as.numeric(data[i,])
+        u <- z-xi
+        if (!is.null(weight)) {
+          W <- diag(as.numeric(weight[i,]))
+          score[i,] <- 
+            as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
+                       -1/2*(as.vector((iC
+                                        - iC %*% tcrossprod(u)
+                                        %*% iC)%*%W)) %*% D$dS
+                       
+                       )
+        } else {
+          score[i,] <- 
+            as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
+                       1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS)
+        }
+      }; colnames(score) <- names(p)
+      return(score)
+    }
+  }
+  ### Here the emperical mean and variance of the population are sufficient statistics:
+  if (missing(S)) {
+    data0 <- na.omit(data[,manifest(x),drop=FALSE])
+    n <- NROW(data0)
+    S <- cov(data0)*(n-1)/n
+    mu <- colMeans(data0)
+  }
+  mp <- modelVar(x,p)  
+  C <- mp$C
+  xi <- mp$xi
+  iC <- Inverse(C,0,det=FALSE)
+  Debug("Sufficient stats.",debug)
+  if (!is.null(mu)) {
+    W <- tcrossprod(mu-xi)
+    T <- S+W
+  } else {
+    T <- S
+  }
+  D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean) ##, all=length(constrain(x))>0)
+  vec.iC <- as.vector(iC)  
+  Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
+  if (!is.null(mu)) # & mp$npar.mean>0)
+    Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
+  return(rbind(as.numeric(Grad)))
+}
+
 
 ###}}} gaussian
 

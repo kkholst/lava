@@ -80,15 +80,19 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data,...) {
       theta0[!is.na(val.idx)] <- theta
       return(myc(theta0))
     }
-    vals0 <- unlist(vals)[!is.na(val.idx)]
+    vals0 <- unlist(vals)[!is.na(val.idx)]    
 ##  vals0 <- unlist(vals)[na.omit(val.idx)]
-    if (!is.null(attributes(fval)$grad)) {
-      Gr <- cbind(attributes(fval)$grad(unlist(vals0)))
-    } else {
-      Gr <- cbind(as.numeric(jacobian(myc0, unlist(vals0))))
+    if (length(vals0)==0)
+      mycoef[2] <- NA
+    else {
+      if (!is.null(attributes(fval)$grad)) {
+        Gr <- cbind(attributes(fval)$grad(unlist(vals0)))
+      } else {
+        Gr <- cbind(as.numeric(jacobian(myc0, unlist(vals0))))
+      }
+      V <- vcov[val.idx0,val.idx0]
+      mycoef[2] <- (t(Gr)%*%V%*%Gr)^0.5
     }
-    V <- vcov[val.idx0,val.idx0]
-    mycoef[2] <- (t(Gr)%*%V%*%Gr)^0.5
     ## if (second) {
     ##   if (!is.null(attributes(fval)$hessian)) {
     ##     H <- attributes(fval)$hessian(unlist(vals))

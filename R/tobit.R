@@ -8,7 +8,7 @@ tobit_objective.lvm <- function(x,p,data,weight,indiv=FALSE,debug=FALSE,
   zz <- manifest(x)
   Debug("start",debug)
   d <- as.matrix(rbind(data)[,zz,drop=FALSE]);
-  colnames(d) <- zz
+  colnames(d) <- zz  
   Debug("dd",debug)
   yy <- endogenous(x)
   yy.w <- intersect(yy,colnames(weight))
@@ -20,11 +20,10 @@ tobit_objective.lvm <- function(x,p,data,weight,indiv=FALSE,debug=FALSE,
   patterns <- unique(Status,MARGIN=1)
   cens.type <- apply(Status,1,
                      function(x) which(apply(patterns,1,function(y) identical(x,y))))  
-  mp <- modelVar(x,p,data=d)
+  mp <- modelVar(x,p,data=as.data.frame(d))
   Sigma <- mp$C ## Model specific covariance matrix
   xi <- mp$xi ## Model specific mean-vector
   Debug("loop:",debug)
-
 ##  val <- 0
   val <- c()
   for (i in 1:nrow(patterns)) {
@@ -79,12 +78,14 @@ tobit_objective.lvm <- function(x,p,data,weight,indiv=FALSE,debug=FALSE,
 }
 
 
-
 tobit_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,
 ###                                algorithm=Miwa(),...) {
-                               algorithm=GenzBretz(abseps=1e-5),...) {
-  save.seed <- .Random.seed
-#  set.seed(1)
+                               algorithm=GenzBretz(abseps=1e-5),seed=NULL,...) {
+  if (!is.null(seed)) {
+    if (!exists(".Random.seed")) runif(1)
+    save.seed <- .Random.seed
+    set.seed(seed)
+  }
   require(mvtnorm)
   zz <- manifest(x)
   d <- as.matrix(data[,zz,drop=FALSE]); colnames(d) <- zz
@@ -102,6 +103,7 @@ tobit_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,
                      function(x) which(apply(patterns,1,function(y) identical(x,y))))  
   val <- 0
   score <- c()
+##  browser()
   for (i in 1:nrow(patterns)) {
     ## Usual marginal likelihood for status==1
     pat <- patterns[i,]
@@ -124,7 +126,8 @@ tobit_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,
 ##    dummy <- cens.score(x,p,data=y,cens.idx=cens.idx, cens.which.left=cens.which.left)
 ##    score <- rbind(score,dummy)    
   }
-#  set.seed(save.seed)
+  if (!is.null(seed))
+    set.seed(save.seed)
   if (indiv)
     return(-score)
   return(-colSums(score))
@@ -216,6 +219,7 @@ cens.score <- function(x,p,data,cens.idx,cens.which.left,...) {
 Dpmvnorm <- function(Y,S,mu=rep(0,NROW(S)),std=FALSE,seed=1,
 ###                     algorithm=Miwa(),...) {
                      algorithm=GenzBretz(abseps=1e-5),...) {
+  if (!exists(".Random.seed")) runif(1)
   save.seed <- .Random.seed
   require(mvtnorm)
   if (!std) {
@@ -282,6 +286,7 @@ Dpmvnorm <- function(Y,S,mu=rep(0,NROW(S)),std=FALSE,seed=1,
 Dthetapmvnorm <- function(yy,mu,S,dmu,dS,seed=1,
 ###                          algorithm=Miwa(),...) {
                           algorithm=GenzBretz(abseps=1e-5),...) {
+  if (!exists(".Random.seed")) runif(1)
   save.seed <- .Random.seed
   ##yy <- as.matrix(yy)
   ##  pp <- modelPar(x,p)
@@ -326,7 +331,8 @@ Dthetapmvnorm <- function(yy,mu,S,dmu,dS,seed=1,
 
 mom.cens <- function(x,p,cens.idx,data,deriv=TRUE,conditional=TRUE,right=TRUE,...) {
   obs.idx <- setdiff(1:NCOL(data),cens.idx)
-  M <- moments(x,p)
+#  browser()
+  M <- moments(x,p,data=as.data.frame(data))
   if (deriv)
     D <- deriv(x,p=p,mom=M,meanpar=TRUE) ##,mu=colMeans(data))
 

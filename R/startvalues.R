@@ -205,8 +205,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 `startvalues` <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992. 
-  ## Implementation based on John Fox's
-  ## implementation in the 'sem' R-package
+  ## Implementation based on John Fox's implementation in the 'sem' R-package
   S <- reorderdata.lvm(x,S)
   if (nrow(S)!=length(manifest(x))) stop("Number of observed variables in data and models does not agree.")
   J <- index(x)$J ## Manifest selection
@@ -217,7 +216,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
   obs.idx <- as.vector(J%*%(1:m));  latent.idx <- setdiff(1:m, obs.idx)
   s <- sqrt(diag(S))
-  R <- cov2cor(S) ## S/outer(s,s)
+  R <- (cov2cor(S)) ## S/outer(s,s)
   C <- P0
 
   Debug(list("obs.idx", obs.idx), debug)
@@ -261,9 +260,10 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
     print("C="); print(C);
   }  
   Ahat <- matrix(0,m,m)
+  C[is.nan(C)] <- 0
   for (j in 1:m) { ## OLS-estimates
     relation <- A[j,]==1
-    if (!any(relation)) next
+    if (!any(relation)) next    
     Ahat[j, relation] <- solve(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j]
   }
   Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
@@ -275,8 +275,11 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   diag(Phat) <- abs(diag(Phat))
   Debug(list("start=",start), debug)
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
-  names(start) <- coef(x, silent=TRUE, fixed=FALSE)
-  startmean(x,start,mu)
+  names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)  
+  res <- startmean(x,start,mu)
+  res[is.nan(res)] <- 1
+  res[is.na(res)] <- 1
+  res
 }
 
 ###}}} startvalues

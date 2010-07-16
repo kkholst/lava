@@ -1,3 +1,9 @@
+
+'%s%' <-
+function(st1,st2) {
+  paste(st1, st2, sep="")
+}
+
 ###{{{ parlabels
 
 parlabels <- function(x) {
@@ -117,7 +123,6 @@ procrandomslope <- function(object,data=object$data,...) {
   return(list(model=object,fix=myfix))
 }
 
-
 ###}}}
 
 ###{{{ fixsome function
@@ -174,10 +179,14 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     }
     exo <- exogenous(x);
     exo.idx <- match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
+    if (length(exo.idx)>0)
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
           i. <- exo_all.idx[i]; j. <- exo_all.idx[j]
-          x$covfix[i.,j.] <- x$covfix[j.,i.] <- S0[exo.idx[i],exo.idx[j]]
+          myval <- S0[exo.idx[i],exo.idx[j]];
+          if (i.==j. & myval==0) myval <- 1
+          else if (is.na(myval) || is.nan(myval)) myval <- 0
+          x$covfix[i.,j.] <- x$covfix[j.,i.] <- myval
         }
       x$mean[exo_all.idx] <- mu0[exo.idx]
   }
@@ -395,6 +404,7 @@ toformula <- function (y = ".", x = ".")
 ###}}} toformula
 
 ###{{{ getvars
+
 ## getvars <- function(x,env=parent.frame()) {
 ##   vars <- substitute(x,env=env)
 ## ##  vars <- eval(substitute(x),env=parent.frame())
@@ -403,6 +413,7 @@ toformula <- function (y = ".", x = ".")
 ##   }
 ##   return(as.character(vars))
 ## }
+
 ###}}} getvars
 
 ###{{{ frobnorm
@@ -454,6 +465,18 @@ getoutcome <- function(formula) {
 decomp.specials <- function(x,pattern="[()]") {
   st <- gsub(" ","",x)
   vars <- rev(unlist(strsplit(st,pattern)))[1]
+  unlist(strsplit(vars,","))
+}
+Decomp.specials <- function(x,pattern="[()]") {
+  st <- gsub(" ","",x)
+  st <- gsub("\n","",st)
+  mysplit <- rev(unlist(strsplit(st,pattern)))
+  type <- mysplit[2] 
+  vars <- mysplit[1]
+  res <- unlist(strsplit(vars,","))
+  if (type=="s" | type=="seq") {
+    return(paste(res[1],seq(as.numeric(res[2])),sep=""))
+  } 
   unlist(strsplit(vars,","))
 }
 
@@ -544,6 +567,11 @@ whichentry <- function(x) {
 ###}}} whichentry
 
 ###{{{ blockdiag
+`%+%` <-
+function(x,...) {
+  blockdiag(x,...)
+}
+
 blockdiag <- function(x,...,pad=0) {
   xx <- list(x,...)
   rows <- unlist(lapply(xx,nrow))

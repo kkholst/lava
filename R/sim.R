@@ -2,10 +2,32 @@ uniform.lvm <- function(n,mu,var,...) (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
 uniform1.lvm <- function(n,...) runif(n,0,1)
 binomial.lvm <- function(n,mu,...) rbinom(n,1,tigol(mu))
 logit.lvm <- binomial.lvm
-probit.lvm <- function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
-##probit.lvm <- function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
+##probit.lvm <- function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
+probit.lvm <- function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
 normal.lvm <- function(n,mu=0,var=1) rnorm(n,mu,sqrt(var))
 poisson.lvm <- function(n,mu,...) rpois(n,exp(mu))
+weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
+  require(survival)
+  lambda <- 1/scale
+  f <- function(n,mu,var,...) {
+    a0 <- function(t) lambda*scale*(lambda*t)^(scale-1)
+    A0 <- function(t) (lambda*t)^scale
+    A0i <- function(eta) eta^(1/scale)/lambda
+    U <- rexp(n, 1) #give everyone a random death time, on the CH scale
+    Z <- U*exp(-mu)
+    T <- A0i(Z)
+    if (breakties!=0)
+      T <- T+runif(n,0,breakties)
+    if (is.function(cens))
+      cens <- cens(n,...)
+    Delta <- (T<cens)
+    T[!Delta] <- cens[!Delta]
+    S <- Surv(T,Delta*1)
+    return(S)
+  }
+  return(f)
+}
+
 
 "sim" <- function(x,...) UseMethod("sim")
  
@@ -18,57 +40,36 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),normal=TRUE,cond=TRUE,
       distribution(m, pred) <- list(mydata[,pred])
     }
   }
-  sim(m,n=n,p=p,normal=normal,cond=cond)
+  sim(m,n=n,p=p,normal=normal,cond=cond,...)
 }
 
+
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
-  require("MASS")
-  if (length(constrain(x))>0) warning("Not using 'constrain' specifications in simulation'")
-  x$constrain <- NULL
-  
-  nn <- vars(x)
-  k <- length(nn)
+  require("mvtnorm")
+
+  nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
   xf <- intersect(unique(parlabels(x)),exogenous(x))
   xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
-    
-  if (!is.null(p)) {
-    if (length(p)!=(index(x)$npar+index(x)$npar.mean)) {
-      p0 <- p
-      p <- rep(1, index(x)$npar+index(x)$npar.mean)
-      p[1:index(x)$npar.mean] <- sigma
-      p[offdiags(x)] <- rho
-      idx1 <- match(names(p0),coef(x,mean=TRUE))
-      idx2 <- which(names(p0)%in%coef(x,mean=TRUE))
-      p[idx1] <- p0[idx2]
-    }
-    M <- modelVar(x,p)
-    A <- M$A; P <- M$P ##Sigma <- M$P
-    if (!is.null(M$v)) mu <- M$v
-  } else {
-    P <- index(x)$P
-    Pfree <- index(x)$P0
-    diag(P)[diag(Pfree)==1] <- sigma
-    diag(Pfree) <- 0
-    P[Pfree==1] <- rho    
-    A <- index(x)$M0
-    for (i in 1:k)
-      for (j in 1:k)
-        if (!is.na(x$fix[i,j])) A[i,j] <- x$fix[i,j]      
-    ## Sigma <- diag(k)*sigma
-    ## for (i in 1:k)
-    ##   for (j in i:k) {
-    ##     if (x$cov[i,j]==1 & i!=j)          
-    ##       Sigma[i,j] <- Sigma[j,i] <- rho
-    ##     if (!is.na(x$covfix[i,j]))
-    ##       Sigma[i,j] <- Sigma[j,i] <- x$covfix[i,j]
-    ##   }    
+  if (length(p)!=(index(x)$npar+index(x)$npar.mean)) {
+    p0 <- p
+    p <- rep(1, index(x)$npar+index(x)$npar.mean)
+    p[1:index(x)$npar.mean] <- 0
+    p[index(x)$npar.mean + variances(x)] <- sigma
+    p[index(x)$npar.mean + offdiags(x)] <- rho
+    idx1 <- match(names(p0),coef(x,mean=TRUE,fix=FALSE))
+    idx2 <- which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE))
+    p[idx1] <- p0[idx2]
   }
+  M <- modelVar(x,p,data=NULL)
+  A <- M$A; P <- M$P ##Sigma <- M$P
+  if (!is.null(M$v)) mu <- M$v
  
-  E <- mvrnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
-  
+  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
+     
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
+  res <- as.data.frame(res)
   X <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
   X.idx <- match(X,vars(x))
   if (!is.null(X) && length(X)>0)
@@ -88,44 +89,81 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   }
   simuled <- X
 
-  
   if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) ) ) { ## || all(is.na(distribution(x))) ) {
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
       pp <- predict(x, mypar, data.frame(res))
       Ey.x <- t(attributes(pp)$Ey.x)
       Vy.x <- attributes(pp)$cond.var
-      yy <- Ey.x + mvrnorm(n,mu=rep(0,ncol(Vy.x)),Sigma=Vy.x)
+      yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
       res <- cbind(yy, res[,X]); colnames(res) <- c(colnames(Vy.x),X)
       return(res)
     }
     ## Simulate from sim. distribution (Y,X) (mv-normal)
-    I <- diag(k)
+    I <- diag(length(nn))
     IAi <- solve(I-t(A))
-    dd <- mvrnorm(n,mu,P)
+    dd <- rmvnorm(n,mu,P)
     res <- dd%*%t(IAi)
     return(data.frame(res))       
   }
 
-  while (length(simuled)<length(vars(x))) {
-    leftovers <- setdiff(vars(x),simuled)
+  
+  
+  xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
+  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
+  if (!all(xconstrain %in% index(x)$exogenous)) stop("Non-linear constraint only allowed via covariates")
+  if (length(xconstrain>0))
+  for (i in which(xconstrain.idx)) {
+    ff <- constrain(x)[[i]]
+    myargs <- attributes(ff)$args
+    D <- matrix(0,n,length(myargs))
+    for (j in 1:ncol(D)) {
+      if (myargs[j]%in%xconstrain)
+        D[,j] <- res[,myargs[j]]
+      else
+        D[,j] <- M$parval[[myargs[j]]]
+    }
+    res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
+  }
+  xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
+  covparnames <- unique(as.vector(covariance(x)$labels))  
+  if (any(xconstrain.par%in%covparnames)) {
+    mu0 <- rep(0,ncol(P))
+    P0 <- P
+    E <- t(sapply(1:n,function(idx) {
+      for (i in intersect(xconstrain.par,covparnames)) {
+        P0[covariance(x)$labels==i] <- res[idx,i]
+      }
+      return(rmvnorm(1,mu0,P0))
+    }))
+  }
+
+
+    while (length(simuled)<length(nn)) {
+    leftovers <- setdiff(nn,simuled)
+    
     for (i in leftovers) {
       pos <- match(i,vars(x))
       relations <- colnames(A)[A[,pos]!=0]
       if (all(relations%in%simuled)) { ## Only depending on already simulated variables
         ##        mu.i <- 0
-        mu.i <- mu[pos]
+        if (x$mean[[pos]]%in%xconstrain.par) {
+          mu.i <- res[,x$mean[[pos]] ]
+        } else {
+          mu.i <- mu[pos]
+        }
         for (From in relations) {
           f <- functional(x,i,From)[[1]]
           if (!is.function(f))
             f <- function(x) x
           reglab <- regfix(x)$labels[From,pos]
-          if (reglab%in%xfix) {
+          if (reglab%in%c(xfix,xconstrain.par)) {
             mu.i <- mu.i + res[,reglab]*f(res[,From])
-          } else {
+          }
+          else {
             mu.i <- mu.i + A[From,pos]*f(res[,From])
           }
-        }          
+        }
         dist.i <- distribution(x,i)[[1]]
         if (!is.function(dist.i))
           res[,pos] <- mu.i + E[,pos]
@@ -137,6 +175,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
       }
     }
   }
+  res <- res[,nn,drop=FALSE]
   
   return(data.frame(res))
 }

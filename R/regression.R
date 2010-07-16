@@ -44,7 +44,7 @@
 `regression.lvm` <-
   function(object=lvm(),to,from,fn=NA,debug=FALSE,silent=FALSE,...) {
     if (missing(to)) {
-      return(index(object)$M)
+      return(regfix(object))
       ####...
     }        
     if (class(to)[1]=="formula") {

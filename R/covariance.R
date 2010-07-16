@@ -1,6 +1,7 @@
 "covariance<-" <- function(object,...,value) UseMethod("covariance<-")
 
 "covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, ..., value) {
+
   if (!is.null(var1)) {
     if (class(var1)[1]=="formula") {
       lhs <- getoutcome(var1)
@@ -10,15 +11,15 @@
         return(object)
       }
       else {
-        yy <- decomp.specials(lhs)
+        yy <- decomp.specials(var1)
         xx <- setdiff(all.vars(var1),yy)
-        covfix(object,var1=lhs,var2=xx,...) <- value
+        ##        xx <- var2
+        covfix(object,var1=yy,var2=xx,...) <- value
         object$parpos <- NULL
         return(object)
       } 
-    }
+    } 
   }
-  
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)
     if (is.null(lhs)) {
@@ -48,7 +49,7 @@
       object$parpos <- NULL
       return(object)
     }
-    
+
     xx <- unlist(lapply(res, function(z) z[1]))
     for (y in yy)
       for (i in 1:length(xx)) {
@@ -67,8 +68,13 @@
     ##       xx <- attributes(terms(value))$term.labels
     ##       yy <- setdiff(yx,xx)
     ##       return(regression(model,to=yy,from=xx,...))
-  } else 
-  covariance(object, value)
+  }
+  ##  if (is.null(var1)) {
+  else
+    covariance(object,value,...)
+##  } else  {
+##    covfix(object,var1,var2,...) <- value
+##  }
 }
 
 `covariance` <-
@@ -81,7 +87,7 @@ function(object,var=NULL,...) {
       covariance(object,...) <- var
       return(object)
     }
-    
+
     for (i in 1:length(var)) {
       c1 <- var[i]
       for (j in i:length(var)) {
@@ -105,6 +111,6 @@ function(object,var=NULL,...) {
   ##   return(object)
   ## }
   else
-    object$cov
+    return(covfix(object))
 }
 

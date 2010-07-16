@@ -1,17 +1,94 @@
 `score` <-
 function(x,...) UseMethod("score")
 
+###{{{ score.lvm
 
-###{{{ score.multigroupfit
+score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
+
+  
+  
+  cl <- match.call()
+  lname <- paste(model,"_score.lvm",sep="")
+  if (!exists(lname))
+    lname <- paste(model,"_gradient.lvm",sep="")
+
+  scoreFun <- get(lname)
+
+  if (missing(data) || is.null(data)) {
+    cl[[1]] <- scoreFun
+    score <- eval.parent(cl)
+    return(rbind(score))
+  }    
+  
+  if (is.null(index(x)$dA) | reindex)
+    x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
+  
+  xfix <- colnames(data)[(colnames(data)%in%parlabels(x))]
+  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
+  
+  Debug(xfix,debug)
+  if (missing(n)) {
+    n <- nrow(data)
+  }
+
+  if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
+    x0 <- x
+    if (length(xfix)>0) {
+      Debug("random slopes...",debug)
+      nrow <- length(vars(x))
+      xpos <- lapply(xfix,function(y) which(regfix(x)$labels==y))
+      colpos <- lapply(xpos, function(y) ceiling(y/nrow))
+      rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
+      myfix <- list(var=xfix, col=colpos, row=rowpos)
+      for (i in 1:length(myfix$var))
+                                        #      regfix(x0, from=vars(x0)[myfix$row[[i]][]],to=vars(x0)[myfix$col[[i]][j]]) <
+                                        #          (data[1,myfix$var[[i]]])
+        for (j in 1:length(myfix$col[[i]])) {
+          regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
+            data[1,myfix$var[[i]]]
+        }
+      index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)    
+    }
+    pp <- modelPar(x0,p)
+    p0 <- with(pp, c(meanpar,p))
+    k <- length(index(x0)$manifest)
+    
+    myfun <- function(ii) {
+      if (length(xfix)>0)
+        for (i in 1:length(myfix$var)) {
+          index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
+        }
+      return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
+    }
+    score <- t(sapply(1:nrow(data),myfun))
+    if (!indiv) {
+      score <- colSums(rbind(score))
+    }
+    return(score)
+  }
+
+  cl$constrain <- FALSE
+  cl[[1]] <- scoreFun
+  score <- eval.parent(cl)
+#  score <- eval(cl,parent.frame())
+  return(score)
+}
+
+
+###}}} score.lvm
+  
+###{{{ score.lvm.missing
+
 score.lvm.missing <- function(object,
                           p=coef(object), ...) {
   score(object$estimate$model0, p=p, ...)
 }
-###}}} score.multigroupfit
+
+###}}} score.lvm.missing
 
 ###{{{ score.multigroupfit
 
-score.multigroupfit <- function(x,p=object$opt$est,...) {
+score.multigroupfit <- function(x,p=x$opt$est,...) {
   score(x$model0,p=p,...)
 }
 
@@ -25,11 +102,11 @@ score.multigroup <- function(x,data=x$data,p,indiv=FALSE,...) {
   if (!indiv) {
     S <- 0
     for (i in 1:x$ngroup)
-      S <- S + colSums(score(x$lvm[[i]],p=pp[[i]],data=data[[i]]))    
+      S <- S + colSums(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],...))    
   } else {
     S <- list()
     for (i in 1:x$ngroup)
-      S <- c(S, list(score(x$lvm[[i]],p=pp[[i]],data=data[[i]])))
+      S <- c(S, list(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],...)))
   }
   return(S)  
 }
@@ -38,25 +115,25 @@ score.multigroup <- function(x,data=x$data,p,indiv=FALSE,...) {
 
 ###{{{ score.lvmfit
 
-score.lvmfit <- function(x, data=model.frame(x), p=pars(x), ...) {
-  score(x$model0,data=data,p=p,...)
+score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), ...) {
+  score(x$model0,data=data,p=p,model=model,weight=weight,...)
 }
 
 ###}}} score.lvmfit
 
-###{{{ score.lvm
+###{{{ score.orig
 
-score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE,...) {
+score2.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE,...) {
   ## If not already done, calculate some relevant zero-one matrices and matrix derivatives
   if (is.null(index(x)$dA) | reindex)
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
-  
+
   if (!is.null(data)) {
     xfix <- colnames(data)[(colnames(data)%in%parlabels(x))]
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
 
     
-    if ((missing(S) |  nrow(data)<2 | length(xfix)>0 | length(xconstrain)>0 | !is.null(weight)) & constrain) {
+    if ((nrow(data)<2 | length(xfix)>0 | length(xconstrain)>0 | !is.null(weight)) & constrain) {
       
       Debug("before deriv.", debug)
       Debug(xfix,debug)
@@ -109,24 +186,24 @@ score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reind
         data <- subset(data,select=myvars)
       }
 
-    score <- c()
+    score <- matrix(ncol=length(p),nrow=NROW(data))
     score0 <- -1/2*as.vector(iC)%*%D$dS
       for (i in 1:NROW(data)) {
         z <- as.numeric(data[i,])
         u <- z-xi
         if (!is.null(weight)) {
           W <- diag(as.numeric(weight[i,]))
-          score <- rbind(score,
-                         as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
-                                    -1/2*(as.vector((iC
-                                                     - iC %*% tcrossprod(u)
-                                                     %*% iC)%*%W)) %*% D$dS
-                                    
-                                    ))
+          score[i,] <- 
+            as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
+                       -1/2*(as.vector((iC
+                                        - iC %*% tcrossprod(u)
+                                        %*% iC)%*%W)) %*% D$dS
+                       
+                       )
         } else {
-          score <- rbind(score,
-                         as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
-                                    1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS))
+          score[i,] <- 
+            as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
+                       1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS)
         }
       }; colnames(score) <- names(p)
       return(score)
@@ -153,9 +230,4 @@ score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reind
   return(as.numeric(Grad))
 }
 
-gaussian.score <- function(data,mu,S,dS,dmu) {
-##  D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, mu=mu)  
-}
-
 ###}}} score.lvm
-

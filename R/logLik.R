@@ -9,7 +9,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   if (missing(n)) {
     n <- nrow(data)
   }
-
+  
   lname <- paste(model,"_logLik.lvm",sep="")
   logLikFun <- get(lname)
   if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
@@ -70,10 +70,11 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
-                          weight=NULL, indiv=FALSE, S, mu, n, debug=FALSE, meanstructure=TRUE,...) {
-
-  exo.idx <- match(exogenous(object),manifest(object))
-  endo.idx <- match(endogenous(object),manifest(object))
+                          weight=NULL, indiv=FALSE, S, mu, n, debug=FALSE, meanstructure=TRUE,...) { 
+  
+   
+  exo.idx <- with(index(object), exo.idx)##match(exogenous(object),manifest(object))
+  endo.idx <- with(index(object), endo.idx)##match(endogenous(object),manifest(object))
   
   if (type[1]=="exo") {
     if (length(exo.idx)==0 || is.na(exo.idx))
@@ -91,20 +92,22 @@ gaussian_logLik.lvm <- function(object,p,data,
   }
     
   if (missing(n)) {
-    n <- nrow(data)
+    if (is.vector(data)) n <- 1
+    else n <- nrow(data)
   }
-  if (missing(S)) {
-    d0 <- procdata.lvm(object,data=data)
-    S <- d0$S; mu <- d0$mu; n <- d0$n
-  }
-    k <- length(index(object)$manifest)    
+  k <- length(index(object)$manifest)
+  
   if (type[1]=="sat") {
+    if (missing(S)) {
+      d0 <- procdata.lvm(object,data=data)
+      S <- d0$S; mu <- d0$mu; n <- d0$n
+    }    
     L1 <- logLik(object,p,data,type="exo",meanstructure=meanstructure)
     ##    Sigma <- (n-1)/n*S ## ML = 1/n * sum((xi-Ex)^2)
     Sigma <- S
     loglik <- -(n*k)/2*log(2*pi) -n/2*(log(det(Sigma)) + k) - L1
     P <- length(endogenous(object))
-    k <- sum(exogenous(object)%in%manifest(object))
+    k <- sum(exogenous(object)%in%index(object)$manifest)
     npar <- P*(1+(P-1)/2)
     if (meanstructure) npar <- npar+ (P*k + P)
     attr(loglik, "nall") <- n
@@ -114,12 +117,10 @@ gaussian_logLik.lvm <- function(object,p,data,
     return(loglik)
   }
   myidx <- switch(type[1],
-                  sim =  1:nrow(S),
+                  sim =  1:length(index(object)$manifest),
                   cond = { endo.idx },
                   cond2 = { endo.idx },
                   exo =  { exo.idx } )
-  S <- S[myidx,myidx,drop=FALSE]
-  mu <- mu[myidx,drop=FALSE]  
   
   mom <- moments(object, p, conditional=(type[1]=="cond2"), data=data)  
   C <- mom$C
@@ -132,6 +133,8 @@ gaussian_logLik.lvm <- function(object,p,data,
   k <- nrow(C)
   iC <- Inverse(C,0,det=TRUE)
   detC <- attributes(iC)$det
+#  iC <- solve(C)
+#  detC <- 1
   
   ##  detC <- det(C)            
   ##  iC <- try(solve(C), silent=TRUE)
@@ -141,6 +144,7 @@ gaussian_logLik.lvm <- function(object,p,data,
   ##     else
   ##       return(-.Machine$double.xmax)
   ##   }
+
 
   if (!is.null(weight)) {
     weight <- cbind(weight)
@@ -157,9 +161,9 @@ gaussian_logLik.lvm <- function(object,p,data,
   if (n==1) {
     data <- rbind(data)
   }
-  if (n<2 | indiv | !is.null(weight)) {
-    res <- c()
-    data <- data[,manifest(object),drop=FALSE]
+  if (n<2 | indiv | !is.null(weight)) {    
+    res <- numeric(n)
+    data <- data[,index(object)$manifest,drop=FALSE]   
     loglik <- 0; 
     for (i in 1:n) {
       ti <- cbind(as.numeric(data[i,myidx]))
@@ -173,12 +177,19 @@ gaussian_logLik.lvm <- function(object,p,data,
         val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
       }
       if (indiv)
-        res <- c(res,val)
+        res[i,] <- val
       loglik <- loglik + val
     }
     if (indiv)
       return(res)    
   } else {
+
+    if (missing(S)) {
+      d0 <- procdata.lvm(object,data=data)
+      S <- d0$S; mu <- d0$mu; n <- d0$n
+    }
+    S <- S[myidx,myidx,drop=FALSE]
+    mu <- mu[myidx,drop=FALSE]  
     T <- S
     if (meanstructure) {
       W <- tcrossprod(mu-xi)

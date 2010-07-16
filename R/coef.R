@@ -1,7 +1,9 @@
 ###{{{ coef.lvm
 
 `coef.lvm` <-
-function(object, fixed=FALSE, mean=FALSE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, debug=FALSE,...) {
+function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, debug=FALSE,...) {
+ if (fix) ## 12/7-2010
+   object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
     rownames(coefs) <- c(coef(object,mean=TRUE)[c(1:index(object)$npar.mean)],paste("p",1:index(object)$npar,sep=""))
@@ -96,7 +98,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
         }
       }
       c1 <- coef(Model(object),mean=TRUE)
-      c1. <- coef(Model(object))      
+      c1. <- coef(Model(object),mean=FALSE)      
       ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
       ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
       myorder <- match(coefs,c1)

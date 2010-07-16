@@ -8,6 +8,7 @@ lvm <- function(var=NULL, silent=FALSE, ...) {
   nodeDataDefaults(x, "normal") <- TRUE
   nodeDataDefaults(x, "survival") <- FALSE
   nodeDataDefaults(x, "binary") <- FALSE
+  nodeDataDefaults(x, "parameter") <- FALSE
   nodeDataDefaults(x, "categorical") <- FALSE
   nodeDataDefaults(x, "distribution") <- NA
   nodeDataDefaults(x, "label") <- expression(NA)

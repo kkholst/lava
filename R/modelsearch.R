@@ -84,8 +84,8 @@ forwardsearch <- function(x,k=1) {
   restrictedcomb <- combn(1:nrow(restricted), k) # Combinations of k-additions to the model
 
   n <- nrow(model.frame(x))
-  S <- (n-1)/n*var(model.frame(x))
-  mu <- colMeans(model.frame(x))
+  S <- (n-1)/n*var(model.frame(x),na.rm=TRUE)
+  mu <- colMeans(model.frame(x),na.rm=TRUE)
 
   cat(ncol(restrictedcomb), "models:\n")
   count <- 0
@@ -136,15 +136,17 @@ forwardsearch <- function(x,k=1) {
         rmidx <- 1:length(pp$meanpar)
       } 
       ##      myidx <- (length(Sc2)-altmodel$index$npar+1):length(Sc2)
-      Sc2 <- Sc2 ##[-rmidx]
+##      Sc2 <- Sc2[-rmidx]
       ##          Sc <- colSums(score(altmodel,data=model.frame(x),p=c(pp$meanpar,p1)))
-      I <- information(altmodel,p1,n=x$data$n) ##[-rmidx,-rmidx]
+      I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
       iI <- try(solve(I), silent=TRUE)
+##      browser()
       Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
                    ## rbind(Sc)%*%iI%*%cbind(Sc)
-                   t(Sc2)%*%iI%*%(Sc2)
+                   (Sc2)%*%iI%*%t(Sc2)
                    )
       Tests <- c(Tests, Q)
+##      print(Q)
       Vars <- c(Vars, list(varlist))
     }
 

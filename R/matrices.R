@@ -76,11 +76,14 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
         idx.reg <- which(x$par==p)
         P[idx] <- A[idx.reg[1]]
       }
-  } ## duplicate parameters  
-  P <- symmetrize(P)
+  } ## duplicate parameters
+  P[upper.tri(P)] <- t(P)[upper.tri(P)]    
+##  P <- symmetrize(P)
   
   v <- NULL
-  if (!is.null(meanpar) | npar.mean==0) {
+  mparname.all <- NULL
+##  if (!(is.null(meanpar)) | npar.mean!=0) {
+  if (!is.null(meanpar) | npar.mean==0) { 
     named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
     v <- rep(0,length(x$mean))
@@ -107,13 +110,13 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
         idx.2 <- which(x$par==p)
         v[idx] <- A[idx.2[1]]        
       }
-    } ## duplicate parameters
+    } 
   }
 
-##  browser()
+  ##  browser()
   ## Constrained...
   constrain.idx <- NULL
-  if (length(ii$constrain.par)>0 && is.numeric(pars)) {
+  if (length(ii$constrain.par)>0 && is.numeric(c(pars,meanpar))) {
     constrain.idx <- list()
     for (p in constrain.par) {
       reg.tidx <- reg.idx <- cov.idx <- m.idx <- NULL    
@@ -143,7 +146,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     }
   }
 ##  browser()
-
   
   if (x$index$sparse & !is.character(class(pars)[1])) {
     A <- as(A,"sparseMatrix")

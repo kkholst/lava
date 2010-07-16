@@ -13,13 +13,13 @@ function(x, data,
          graph=FALSE,
          fix,
          debug=FALSE, silent=FALSE,
+         quick=FALSE,
          ...) { 
 
   if (length(exogenous(x)>0)) {
     catx <- categorical2dummy(x,data)
     x <- catx$x; data <- catx$data
-  }
-  
+  }  
   cl <- match.call()
 
   Method <-  paste(estimator, "_method", ".lvm", sep="")
@@ -107,7 +107,7 @@ function(x, data,
     return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=debug,silent=silent,estimator=estimator,weight=weight,...))
   }
   
-  if (index) {
+  if (!quick & index) {
     ## Proces data and setup some matrices
     x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
     if (!silent)
@@ -261,6 +261,7 @@ function(x, data,
         for (i in 1:length(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
+##        browser()
         res <- do.call(InformationFun, list(p=pp, obj=myObj, model=x0, data=data[ii,],
                                             n=1, weight=weight[ii,]))
         return(res)
@@ -337,11 +338,11 @@ For numerical approximation please install the library 'numDeriv'.")
 
     I0 <- myInfo(pp)
     attributes(I0)$grad <- NULL
-    ##    D <- attributes(I0)$grad
-    ##    if (is.null(D)) {
-    D <- myGrad(p0)
-  ##      attributes(I0)$grad <- D
-#    }
+    D <- attributes(I0)$grad
+    if (is.null(D)) {
+      D <- myGrad(p0)
+      attributes(I0)$grad <- D
+    }
     if (optim$constrain) {
       I0[constrained,-constrained] <- apply(I0[constrained,-constrained,drop=FALSE],2,function(x) x*pp[constrained]);
       I0[-constrained,constrained] <- t(I0[constrained,-constrained])
@@ -369,13 +370,14 @@ For numerical approximation please install the library 'numDeriv'.")
   } else {
     opt <- do.call(ObjectiveFun, list(x=x,data=data))
     opt$grad <- rep(0,length(opt$estimate))
-  }  
+  }
+  if (quick) return(opt$estimate)
   ## Calculate std.err:
   
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
-  
+
   mom <- modelVar(x, pp, debug)
   if (!silent) cat("Calculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
@@ -392,7 +394,7 @@ For numerical approximation please install the library 'numDeriv'.")
   }
   if (any(is.na(asVar))) {warning("Problems with assymptotic variance matrix. Possibly non-singular information matrix!")
                         }
-  Debug("did that", debug)
+  Debug("did that", debug) 
 
   ##
   SD <- sqrt(diag(asVar))

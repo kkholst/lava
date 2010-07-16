@@ -7,5 +7,9 @@
   latent(x) <- value
   covfix(x,value,NULL) <- 1
   intfix(x, value) <- value
+  nodeData(Graph(x), value, attr="parameter") <- TRUE
   return(x)
 }
+
+parameter <- function(x,...)
+  vars(x)[unlist(lapply(nodeData(Graph(x)), function(z) z$parameter))]

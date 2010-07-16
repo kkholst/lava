@@ -61,12 +61,12 @@
       }
     }
     g <- Graph(x)
-    var <- rownames(covariance(Model(x)))
+    var <- rownames(covariance(Model(x))$rel)
      if (!cor) {
        delta <- 1
-      for (r in 1:(nrow(covariance(Model(x)))-delta) ) {
-        for (s in (r+delta):ncol(covariance(Model(x))) ) {
-          if (covariance(Model(x))[r,s]==1) {
+      for (r in 1:(nrow(covariance(Model(x))$rel)-delta) ) {
+        for (s in (r+delta):ncol(covariance(Model(x))$rel) ) {
+          if (covariance(Model(x))$rel[r,s]==1) {
             g <- removeEdge(var[r],var[s], g)
             g <- removeEdge(var[s],var[r], g)
           }
@@ -74,7 +74,7 @@
       }
     }
     if (!diag) {
-      for (r in 1:(nrow(covariance(Model(x)))) ) {
+      for (r in 1:(nrow(covariance(Model(x))$rel)) ) {
         if (isAdjacent(g,var[r],var[r]))
           g <- removeEdge(var[r],var[r],g)
       }

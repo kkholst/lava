@@ -8,6 +8,10 @@ function(x,...) UseMethod("exogenous")
     exogenous(x,...) <- all.vars(value)
     return(x)
   }
+  not.in <- !(value%in%vars(x))
+  if (any(not.in)) {
+    addvar(x) <- value[not.in]
+  }
   x$exogenous <- value
   index(x) <- reindex(x)
   return(x)

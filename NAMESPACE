@@ -19,25 +19,18 @@ export(
        bootstrap, 
        constrain,"constrain<-",
        constraints,
-       addvar,"addvar<-",
-
-       
+       addvar,"addvar<-",       
        Graph,"Graph<-",
        Model,"Model<-",
        children,parents,
-
        survival,"survival<-",
        functional,distribution,
        "functional<-", "distribution<-",
-
        Graph,"Graph<-",
        Model,"Model<-",       
-
        edgelabels,"edgelabels<-",
        labels,"labels<-",
-       "nodecolor<-",
-
-       
+       "nodecolor<-",       
        estimate, startvalues, startvalues2, measurement,
        estimate.MAR,
        describecoef,baptize,
@@ -47,7 +40,6 @@ export(
        multigroup,
        score,
        information,
-
        parlabels,
        pars,
        moments,
@@ -56,7 +48,8 @@ export(
        graph2lvm,
        sim,
        makemissing,
-       binomial.lvm, uniform.lvm, normal.lvm, poisson.lvm,
+       logit.lvm, probit.lvm, binomial.lvm, uniform.lvm, normal.lvm, poisson.lvm,
+       weibull.lvm,
        fixsome,
        ##       variances, offdiags,
        frobnorm,
@@ -66,23 +59,20 @@ export(
        index,
        "index<-",
        getoutcome,
-
        modelPar,
        modelVar,
-
        binary,
-       "binary<-"
+       "binary<-",
+       '%s%'
        )
 
 S3method(binary,lvm)
 S3method("binary<-",lvm)
 
-
 S3method(modelPar, lvm)
 S3method(modelPar, lvmfit)
 S3method(modelVar, lvm)
 S3method(modelVar, lvmfit)
-
 S3method(regression, lvm)
 S3method("regression<-", lvm)
 S3method(kill, lvm)
@@ -107,14 +97,11 @@ S3method(estimate, formula)
 S3method(estimate, lm)
 S3method(coef, lvm)
 S3method(print, lvm)
-S3method(print, fix)
 S3method(summary, lvm)
 S3method(subset, lvm)
 S3method(baptize, lvm)
 S3method(parents, lvm)
 S3method(children, lvm)
-
-
 S3method(summary, lvmfit)
 S3method(latent, lvm)
 S3method(latent, lvmfit)
@@ -143,13 +130,11 @@ S3method("parameter<-",lvm)
 
 ### lvmfit
 S3method(bootstrap,lvmfit)
-S3method(confint,lvmfit)
-         
+S3method(confint,lvmfit)         
 S3method(predict, lvm)
 S3method(predict, lvmfit)
 S3method(logLik, lvm)
 S3method(logLik, lvmfit)
-
 S3method(moments, lvm)
 S3method(moments, lvmfit)
 S3method(pars, default)
@@ -159,7 +144,6 @@ S3method(score, lvmfit)
 S3method(information, lvm)
 S3method(information, lvmfit)
 S3method(gof, lvmfit)
-S3method(print, gof.lvmfit)
 S3method(coef, lvmfit)
 S3method(coef, summary.lvmfit)
 S3method(print, lvmfit)
@@ -202,7 +186,6 @@ S3method(formula, lvm)
 S3method(formula, lvmfit)
 S3method(print,summary.lvmfit)
 S3method(vcov, lvmfit)
-
 S3method(print,lvmfit.randomslope)
 
 ### multigroup
@@ -231,9 +214,11 @@ S3method(summary, multigroupfit)
 S3method(vcov, multigroupfit)
 S3method(print,summary.multigroupfit)
 
-
-
 S3method(constrain,default)
 S3method("constrain<-",default)
 S3method("constrain<-",multigroupfit)
-
+S3method(print,modelsearch)
+S3method(print,bootstrap.lvm)
+S3method(print, fix)
+S3method(print, gof.lvmfit)
+S3method(print, effects)

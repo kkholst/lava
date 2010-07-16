@@ -40,6 +40,7 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
   eta <- latent(x) ## Latent variables/Factors
   m <- length(eta)
   obs <- manifest(x)  ## Manifest/Observed variables
+  endo <- endogenous(x)
   exo <- exogenous(x)
   allvars <- vars(x)
   eta.idx <- match(eta,allvars)
@@ -136,7 +137,11 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
   ## Position of variables matrix (Apos),
   ## Position of covariance variables matrix (Ppos),
   ## Position/Indicator matrix of free regression parameters (M0)
-  res <- list(vars=allvars, manifest=obs, exogenous=exo, latent=eta)
+  res <- list(vars=allvars, manifest=obs, exogenous=exo, latent=eta,
+              endo=endo,
+              exo.idx=exo.idx, eta.idx=eta.idx,
+              obs.idx=obs.idx, 
+              endo.idx=setdiff(obs.idx,exo.idx))
   
   if (standard) {
     res <- c(res, list(M=M, A=A, P=P, P0=P0, P1=P1, M0=M0, M1=M1, v0=v0, v1=v1, npar=(npar.reg+npar.var), npar.reg=npar.reg, npar.mean=sum(v1), constrain.par=constrain.par))
@@ -151,10 +156,10 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
   if (zeroones) {
     if (sparse) {
       if (!require("Matrix")) stop("package Matrix not available")
-
-      Ik <- Diagonal(length(obs))
-      Im <- Diagonal(ncol(A))
-      Kkk <- commutation(length(obs),sparse=TRUE)
+      Ik <- Matrix:::Diagonal(length(obs))
+      Im <- Matrix:::Diagonal(ncol(A))
+      ##      Kkk <- commutation(length(obs),sparse=TRUE)
+      Kkk <- NULL
       J <- as(J, "sparseMatrix")
       Jy <- as(Jy, "sparseMatrix")
       px <- as(px, "sparseMatrix")
@@ -162,8 +167,9 @@ function(x, debug=FALSE,sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,me
     } else {
       Ik <- diag(length(obs))
       Im <- diag(ncol(A))
-      Kkk <- commutation(length(obs),sparse=FALSE)
+      ##      Kkk <- commutation(length(obs),sparse=FALSE)
     }
+    Kkk <- NULL
 
     
     res[c("Ik","Im","Kkk")] <- NULL

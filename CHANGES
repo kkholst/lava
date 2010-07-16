@@ -1,3 +1,8 @@
+Changes to Version 0.9-6 (16/07-2010)
+	- New simulation routine allowing non-linear constraints
+	- Various minor bug fixes
+	- Optimized code
+	
 Changes to Version 0.9-5 (29/04-2010)
 	- Documentation 
 	- Bug fix: Wrong log-Lik/score for models with all fixed intercepts

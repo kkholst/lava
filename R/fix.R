@@ -1,18 +1,20 @@
 ###{{{ print.fix
 
-print.fix <- function(x,...) {
+print.fix <- function(x,exo=FALSE,...) {
+  idx <- 1:attributes(x)$nvar
+  if (!exo & attributes(x)$type!="reg") idx <- setdiff(idx,attributes(x)$exo.idx)
   if (attributes(x)$type=="mean") {
-    for (i in 1:length(x)) {
-      cat(names(x)[i],"\t")
+    for (i in idx) {
+        cat(names(x)[i],"\t")
     }
     cat("\n")
-    for (i in 1:length(x)) {
-      cat(x[[i]],"\t")
+    for (i in idx) {
+        cat(x[[i]],"\t")
     }
     cat("\n")
   } else {
-    with(x, print(rel))
-    with(x, printmany(labels, values, name1="labels=", name2="values="))
+    with(x, print(rel[idx,idx,drop=FALSE]))
+    with(x, printmany(labels[idx,idx,drop=FALSE], values[idx,idx,drop=FALSE], name1="labels=", name2="values="))
   }
   invisible(x)
 }
@@ -26,6 +28,8 @@ print.fix <- function(x,...) {
 
 intercept.lvm <- intfix.lvm <- function(object,...) {
   res <- object$mean; attr(res,"type") <- "mean"
+  attr(res,"exo.idx") <- index(object)$exo.idx
+  attr(res,"nvar") <- length(res)  
   class(res) <- "fix"
   return(res)
 }
@@ -63,7 +67,9 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
 
 "covfix" <- function(object,...) UseMethod("covfix")
 covfix.lvm <- function(object,...) {
-  res <- list(rel=covariance(object), labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
+  res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
+  attr(res,"exo.idx") <- index(object)$exo.idx
+  attr(res,"nvar") <- NROW(res$rel)
   class(res) <- "fix"
   return(res)
 }
@@ -144,7 +150,9 @@ covfix.lvm <- function(object,...) {
 
 "regfix" <- function(object,...) UseMethod("regfix")
 regfix.lvm <- function(object,...) {
-  res <- list(rel=regression(object), labels=object$par, values=object$fix); attr(res,"type") <- "reg"
+  res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
+  attr(res,"exo.idx") <- index(object)$exo.idx
+  attr(res,"nvar") <- NROW(res$rel)
   class(res) <- "fix"
   return(res)
 }
@@ -152,7 +160,7 @@ regfix.lvm <- function(object,...) {
 "regfix<-.lvm" <- function(object, to, from, ..., value) {
   if (is.null(to)) stop("variable list needed")
   if (class(to)[1]=="formula") {
-    lhs <- getoutcome(to)
+    lhs <- decomp.specials(getoutcome(to))
     if (is.null(lhs)) {
       to <- all.vars(to)
       if (is.null(from)) stop("predictor list needed")
@@ -160,15 +168,15 @@ regfix.lvm <- function(object,...) {
         from <- all.vars(from)      
     } else {
       from <- all.vars(to)
-      to <- decomp.specials(lhs)      
+      to <- lhs ##decomp.specials(lhs)      
       ##      from <- all.vars(extractvar(to)$x
       from <- setdiff(from,to)
     }
   }
-
+  
   object <- addvar(object,c(to,from),...)
-  if (length(from)==length(to)) {
-    if (length(value)!=length(from)) stop("Wrong number of parameters")
+  if (length(from)==length(to) & length(from)==length(value)) {
+##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
       if (!isAdjacent(Graph(object), from[i], to[i])) {
         covfix(object,to[i],from[i]) <- NA## Remove any old correlation specification
@@ -208,9 +216,10 @@ regfix.lvm <- function(object,...) {
     value <- rep(value,K)  
   if (length(value)!=K) stop("Wrong number of parameters")
 
-  for (i in 1:length(from)) {
-    for (j in 1:length(to)) {
-      p <- (i-1)*length(to) + j
+  for (j in 1:length(to)) {
+    for (i in 1:length(from)) {
+      ##      p <- (i-1)*length(to) + j
+      p <- (j-1)*length(from) + i
       valp <- suppressWarnings(as.numeric(value[[p]]))
       if (is.na(value[[p]]) | value[[p]]=="NA")
         object$fix[from[i],to[j]] <- object$par[from[i],to[j]] <- NA
@@ -242,8 +251,10 @@ regfix.lvm <- function(object,...) {
 }
 
 "parfix" <- function(x,...) UseMethod("parfix")
-parfix.lvm <- function(x,idx,value,...) {
+parfix.lvm <- function(x,idx,value,fix=TRUE,...) {
   object <- Model(x)
+  if (fix)
+    object <- fixsome(object)
   if (length(idx)!=length(value))
     value <- rep(value,length.out=length(idx))
   I <- index(object)

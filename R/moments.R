@@ -23,7 +23,7 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   npar.reg <- ii$npar.reg
   
   if (conditional) {
-    mynames <- endogenous(x)
+    mynames <- index(x)$endo.idx
     J <- ii$Jy
     px <- ii$px 
     P <-  px %*% tcrossprod(P, px)      

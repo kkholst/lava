@@ -112,15 +112,35 @@ deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, seco
     nobs <- nrow(ii$J)
     ii$Ik <- diag(nobs)
     ii$Im <- diag(ncol(ii$A))
-    ii$Kkk <- commutation(nobs,sparse=FALSE)
+    ##    ii$Kkk <- commutation(nobs,sparse=FALSE)
   }
-  
-  dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
-  MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
-  G1 <- MM %*% (dG)
-  G2 <- with(mom, ii$Kkk%*%(G1))
-  G3 <- with(mom, (G%x%G)%*%(res$dP))
-  dS <- G1+G2+G3  
+
+  N <- NCOL(ii$A)
+  K <- nobs
+##  browser()
+  if (N>15) {
+    dG <- with(mom, matrix(0,prod(dim(G)),NCOL(res$dA)))
+    for (i in 1:NCOL(dG)) { ## vec(ABC) = (C'xA)*vec(B)
+      dG[,i] <- as.vector(with(mom, G%*%matrix(res$dA[,i],ncol=N)%*%IAi))
+    }
+    G1 <- G2 <- G3 <- matrix(0,K^2,NCOL(res$dA))
+    tGP <- with(mom, t(G%*%P))
+    for (i in 1:NCOL(G1)) {
+      G1[,i] <- as.vector(matrix(dG[,i],ncol=NCOL(mom$G))%*%tGP)
+      G3[,i] <- as.vector(with(mom, ((G)%*%matrix(res$dP[,i],ncol=NCOL(mom$P))%*%t(G))))
+    }
+    G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+    dS <- G1+G2+G3
+  } else {
+    dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
+    MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
+    G1<- MM %*% (dG)
+    ## Commutatation product K*X: 
+    ##  G2 <- with(mom, ii$Kkk%*%(G1))
+    G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+    G3 <- with(mom, (G%x%G)%*%(res$dP))
+    dS <- G1+G2+G3
+  }
   res <- c(res, list(dG=dG, dS=dS))
 
 ##    if (!is.null(meanpar)) {
@@ -139,6 +159,7 @@ deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, seco
     }
   
     if (second) {
+      cat("Bleeding edge...\n")
       k <- nrow(ii$A)
       K <- ii$Kkk ## commutation(k,k)
       I <- ii$Ik ## diag(k)
