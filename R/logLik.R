@@ -165,7 +165,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     if (n==1)
       data <- rbind(data) 
     res <- numeric(n)
-    data <- data[,index(object)$manifest,drop=FALSE]   
+    data <- data[,index(object)$manifest,drop=FALSE]
     loglik <- 0; 
     for (i in 1:n) {
       ti <- cbind(as.numeric(data[i,myidx]))
@@ -174,9 +174,9 @@ gaussian_logLik.lvm <- function(object,p,data,
       }
       if (!is.null(weight)) {
         W <- diag(weight[i,])
-        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%ti
+        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
       } else { 
-        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%ti
+        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)
       }
       if (indiv)
         res[i] <- val

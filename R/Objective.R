@@ -47,9 +47,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
     {
       ##pp <- modelPar(x,p)    
       mp <- modelVar(x,p,data=data[1,])
-      C <- mp$C
-      xi <- mp$xi
-      iC <- Inverse(C,0,det=FALSE)
+      iC <- Inverse(mp$C,0,det=FALSE)
 ##      D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       D <- with(attributes(mp), deriv(x, meanpar=meanpar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
@@ -58,23 +56,21 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       if (NCOL(data)!=length(myvars)) {
         data <- subset(data,select=myvars)
       }
-
       score <- matrix(ncol=length(p),nrow=NROW(data))
-      score0 <- -1/2*as.vector(iC)%*%D$dS
+      score0 <- -1/2*as.vector(iC)%*%D$dS      
       for (i in 1:NROW(data)) {
         z <- as.numeric(data[i,])
-        u <- z-xi
+        u <- z-mp$xi
         if (!is.null(weight)) {
           W <- diag(as.numeric(weight[i,]))
           score[i,] <- 
             as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                        -1/2*(as.vector((iC
                                         - iC %*% tcrossprod(u)
-                                        %*% iC)%*%W)) %*% D$dS
-                       
+                                        %*% iC)%*%W)) %*% D$dS                       
                        )
         } else {
-          score[i,] <- 
+          score[i,] <-
             as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
                        1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS)
         }
@@ -82,6 +78,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       return(score)
     }
   }
+  
   ### Here the emperical mean and variance of the population are sufficient statistics:
   if (missing(S)) {
     data0 <- na.omit(data[,manifest(x),drop=FALSE])

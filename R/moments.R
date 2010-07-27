@@ -14,38 +14,39 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   pp <- modelPar(x,p)
 ##  AP <- with(pp, matrices(x,p,meanpar=TRUE,...))
   AP <- with(pp, matrices(x,p,meanpar=meanpar,data=data,...))
-  A <- AP$A; P <- AP$P; v <- AP$v; 
-  if (!is.null(v)) {
-    names(v) <- ii$vars
+#  A <- AP$A; P <- AP$P; v <- AP$v;
+  P <- AP$P
+  if (!is.null(AP$v)) {
+    names(AP$v) <- ii$vars
   }
   ##  rownames(P) <- colnames(P) <- ii$vars
   npar <- ii$npar
   npar.reg <- ii$npar.reg
   
   if (conditional) {
-    mynames <- index(x)$endo.idx
+    ##    mynames <- index(x)$endo.idx
     J <- ii$Jy
     px <- ii$px 
-    P <-  px %*% tcrossprod(P, px)      
+    P <-  with(ii, px%*% tcrossprod(P, px))
   } else {
-    mynames <- ii$vars
+    ##    mynames <- ii$vars
     J <- ii$J ## Manifest variable selection matrix    
   }
 
-  Im <- diag(nrow(A))  
+  Im <- diag(nrow(AP$A))  
   if (ii$sparse) {
-    IAi <- with(AP, as(solve(ii$Im-t(A)),"sparseMatrix"))
+    IAi <- with(AP, as(solve(Im-t(A)),"sparseMatrix"))
 ##    IAi <- as(solve(Diagonal(nrow(A))-t(A)),"sparseMatrix")
     G <- as(J%*%IAi,"sparseMatrix")
   } else {
-    IAi <- solve(Im-t(A))
+    IAi <- solve(Im-t(AP$A))
 ##    IAi <- solve(diag(nrow(A))-t(A))
     G <- J%*%IAi
   }
 
   xi <- NULL
-  if (!is.null(v)) {
-    xi <- G%*%v ## Model-specific mean vector
+  if (!is.null(AP$v)) {
+    xi <- G%*%AP$v ## Model-specific mean vector
   }
   ##  rownames(xi) <- J%*%mynames
 
@@ -53,5 +54,5 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   C <- as.matrix(J %*% tcrossprod(Cfull,J))
 ##  rownames(C) <- colnames(C) <- mynames
   
-  return(list(Cfull=Cfull, C=C, v=v, xi=xi, A=A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx))
+  return(list(Cfull=Cfull, C=C, v=AP$v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx))
 }
