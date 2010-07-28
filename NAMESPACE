@@ -43,7 +43,6 @@ export(
        parlabels,
        pars,
        moments,
-       ##       addattr,
        path,
        graph2lvm,
        sim,
@@ -53,6 +52,13 @@ export(
        fixsome,
        ##       variances, offdiags,
        frobnorm,
+
+       addhook,
+       gethook,
+       deriv.lvm,
+       addattr,
+       
+       
        variances,
        offdiags,
        reindex,
@@ -61,13 +67,9 @@ export(
        getoutcome,
        modelPar,
        modelVar,
-       binary,
-       "binary<-",
        '%s%'
        )
 
-S3method(binary,lvm)
-S3method("binary<-",lvm)
 
 S3method(modelPar, lvm)
 S3method(modelPar, lvmfit)
@@ -222,3 +224,4 @@ S3method(print,bootstrap.lvm)
 S3method(print, fix)
 S3method(print, gof.lvmfit)
 S3method(print, effects)
+

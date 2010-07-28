@@ -2,7 +2,7 @@
 function(model,...) UseMethod("finalize")
 
 `finalize.lvm` <-
-function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen","indianred1"), ...) {
+function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), ...) {
   opt <- options(warn=-1)
   x <- model$graph
   
@@ -81,11 +81,20 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
         nodecolor(x, intersect(notcolored,exogenous(model))) <- cols[1]
         nodecolor(x, intersect(notcolored,endogenous(model))) <- cols[2]
         nodecolor(x, intersect(notcolored,latent(model))) <- cols[3]
-        nodecolor(x, intersect(notcolored,survival(model))) <- cols[4]
-        nodecolor(x, intersect(notcolored,binary(model))) <- cols[4]
+        ##        nodecolor(x, intersect(notcolored,survival(model))) <- cols[4]        
+        myhooks <- gethook("color.hooks")
+        count <- 3
+        for (f in myhooks) {
+          count <- count+1
+          res <- do.call(f, list(x=model,subset=notcolored))
+          if (length(cols)>=count) {
+            nodecolor(x,res$vars) <- cols[count]
+          } else {
+            nodecolor(x, res$vars) <- res$col
+          }
+        }       
       }
-    }
-    
+    }    
     
   }
   

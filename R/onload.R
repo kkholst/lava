@@ -1,4 +1,5 @@
-'.onLoad' <- function(lib, pkg="structural")
+
+'.onLoad' <- function(lib, pkg="lava")
   {
     desc <- packageDescription(pkg)
     cat("Loading '", desc$Package, "' package...\n", sep="")

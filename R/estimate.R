@@ -83,23 +83,15 @@ function(x, data,
   Debug(list("mu=",mu),debug)
   
 
-  
-  ## Binary outcomes -> censored regression
-  if (length(binary(x))>0 & estimator=="gaussian") {
-    if (is.null(weight)) {
-      W <- data[,binary(x),drop=FALSE]; W[W==0] <- -1; colnames(W) <- binary(x)
-      weight <- W
-    } else {
-      if (!all(binary(x)%in%colnames(data))) {
-        W <- data[,binary(x),drop=FALSE]; W[W==0] <- -1; colnames(W) <- binary(x)
-        weight[,binary(x)] <- W
-      }
-    }
-    for (b in binary(x)) {
-      data[!is.na(data[,b]),b] <- 0
-    }
-    ##    data[,binary(x)] <- 0
-    estimator <- "tobit"
+  ### Run hooks (additional lava plugins)
+  myhooks <- gethook()
+  for (f in myhooks) {
+    res <- do.call(f, list(x=x,data=data,weight=weight,estimator=estimator,optim=optim))
+    if (!is.null(res$x)) x <- res$x
+    if (!is.null(res$data)) data <- res$data
+    if (!is.null(res$weight)) weight <- res$weight
+    if (!is.null(res$optim)) optim <- res$optim
+    if (!is.null(res$estimator)) estimator <- res$estimator
   }
   
   ## Missing data

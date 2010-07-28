@@ -30,8 +30,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
 
 ##  print(control)
   if (trace>0)
-  cat("Iter= 0\n",
-      "\t theta=", paste(formatC(start), collapse=" "),"\n")
+  cat("Iter=0;\t\n",
+      "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
   
   
   oneiter <- function(p.orig) {
@@ -92,9 +92,9 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
       }
     }
     if (count2==trace) {
-      cat("control$gamma=", control$gamma, "\n")
-      cat("Iter=",count, "D=", paste(formatC(newpar$D), collapse=" "),"\n")
-      cat("\t theta=", paste(formatC(thetacur), collapse=" "),"\n")      
+##      cat("control$gamma=", control$gamma, "\n")
+      cat("Iter=",count, ";\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
+      cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
       count2 <- 0
     }
     if (sum(newpar$D^2)<control$S.tol) break;
