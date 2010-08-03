@@ -39,6 +39,7 @@
     optim[names(control)] <- control
   }
 
+
   Debug("Start values...",debug)
   if (!is.null(optim$start)) {
     mystart <- optim$start
@@ -79,6 +80,22 @@
   }
 
 
+### Run hooks (additional lava plugins)
+  myhooks <- gethook()
+  newweight <- list()
+  for (f in myhooks) {
+    for ( i in 1:x$ngroup) {
+      res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],estimator=estimator,optim=optim))
+      if (!is.null(res$x)) x$lvm[[i]] <- res$x
+      if (!is.null(res$data)) x$data[[i]] <- res$data
+      newweight <- c(newweight,list(res$weight))
+      if (!is.null(res$optim)) optim <- res$optim
+      if (!is.null(res$estimator)) estimator <- res$estimator
+    }
+    if (!is.null(newweight))
+      weight <- newweight
+  }
+  
   ## Check for random slopes
   Xfix <- FALSE
   Xconstrain <- FALSE
@@ -346,10 +363,12 @@
     }
     
   }
+
 ################################################################################
 #########################################2#######################################
 ################################################################################
-    
+
+##  browser()
   
   if (!silent) cat("Optimizing objective function...")
   if (debug) {
