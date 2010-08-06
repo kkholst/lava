@@ -131,11 +131,12 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
 
   var.missing <- c()
   if (!missing(data) | !missing(S)) {
+        
     if (!missing(data)) {
       dd <- procdata.lvm(x,data=data,na.method=na.method)
     } else {
       dd <- procdata.lvm(x, list(S=S,mu=mu,n=n))
-    }      
+    }
     S <- dd$S; mu <- dd$mu; n <- dd$n    
     var.missing <- setdiff(manifest(x),colnames(S))
   } else { S <- NULL; mu <- NULL }
@@ -284,6 +285,11 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       obs <- setdiff(intersect(vars(x), colnames(data)),latent(x))
       Debug(obs, debug)
       mydata <- subset(data, select=obs)
+      for (i in 1:ncol(mydata)) {
+        if (is.Surv(mydata[,i]))
+          mydata[,i] <- mydata[,i][,1]
+      }
+      
 ##      mydata <- data[,obs]
       if (any(is.na(mydata))) {
 ##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)

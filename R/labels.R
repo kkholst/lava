@@ -41,7 +41,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
 "edgelabels<-.lvmfit" <- function(object,to,from,est=TRUE,edges=NULL,cex=1,...,value) {
   if (is.null(edges))  {
     if (class(to)[1]=="formula") {
-      yy <- getoutcome(to)
+      yy <- decomp.specials(getoutcome(to))
       from <- setdiff(all.vars(to),yy)
       to <- yy     
     }
@@ -112,14 +112,16 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   edgelabels(object,lab=value,...)
 }
 
-`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, col="black", labcol="black",
+`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black",
+                                  expr=TRUE,
                                   debug=FALSE,...) {
   if (is.null(lab)) {
     return(edgeRenderInfo(object)$label)
   }
   if (class(to)[1]=="formula") {
-    yy <- getoutcome(to)
-    from <- setdiff(all.vars(to),yy)
+    yy <- decomp.specials(getoutcome(to))
+    from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
+    if (length(from)==0) from <- yy
     to <- yy     
   }
 
@@ -128,23 +130,64 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 
   if (is.null(edgeRenderInfo(object)$label))
     edgeRenderInfo(object)$label <- expression()
-  
+
+
   if (!is.null(lab)) {
-    if (!is.null(from) & !is.null(to)) {
+    if (!is.null(from) & !is.null(to)) {      
       estr <- paste("\"",from,"~",to,"\"", sep="")
       estr2 <- paste(from,"~",to, sep="")
+      if (length(lab)!=length(estr2)) lab <- rep(lab,length(estr2))
+      if (length(col)!=length(estr2)) col <- rep(col,length(estr2))
+      if (length(cex)!=length(estr2)) cex <- rep(cex,length(estr2))
+      if (length(lwd)!=length(estr2)) lwd <- rep(lwd,length(estr2))
+      if (length(lty)!=length(estr2)) lty <- rep(lty,length(estr2))
+      if (length(labcol)!=length(estr2)) labcol <- rep(labcol,length(estr2))  
+
+      curedges <- names(edgeRenderInfo(object)$label)
       Debug(estr,debug)
-      if (!is.null(lab))
-        edgeRenderInfo(object)$label[estr2] <- lab
-      if (!is.null(cex))
-        edgeRenderInfo(object)$cex[estr2] <- cex
-      if (!is.null(col))
-        edgeRenderInfo(object)$col[estr2] <- col
-      if (!is.null(lwd))
-        edgeRenderInfo(object)$lwd[estr2] <- lwd
-      if (!is.null(labcol))
-        edgeRenderInfo(object)$textCol[estr2] <- labcol
-      st <- eval(parse(text=paste("expression(",edgeRenderInfo(object)$label,")",sep="")))
+      
+      estr2.idx <- which(estr2%in%curedges)
+      newstr.idx <- setdiff(1:length(estr2),estr2.idx)
+      newstr <- estr2[newstr.idx]
+      estr2 <- estr2[estr2.idx]
+##      browser()
+      if (length(estr2)>0) {
+        if (!is.null(lab))
+          edgeRenderInfo(object)$label[estr2] <- lab[estr2.idx]
+        if (!is.null(cex))
+        edgeRenderInfo(object)$cex[estr2] <- cex[estr2.idx]
+        if (!is.null(col))
+          edgeRenderInfo(object)$col[estr2] <- col[estr2.idx]
+        if (!is.null(lwd))
+          edgeRenderInfo(object)$lwd[estr2] <- lwd[estr2.idx]
+        if (!is.null(lty))
+          edgeRenderInfo(object)$lty[estr2] <- lty[estr2.idx]
+        if (!is.null(labcol))
+          edgeRenderInfo(object)$textCol[estr2] <- labcol[estr2.idx]
+      }
+      if (length(newstr)>0) {        
+        
+        if (!is.null(lab))
+          edgeDataDefaults(object)$futureinfo$label[newstr] <-
+            lab[newstr.idx]
+        if (!is.null(cex))
+          edgeDataDefaults(object)$futureinfo$cex[newstr] <-
+            cex[newstr.idx]
+        if (!is.null(col))
+          edgeDataDefaults(object)$futureinfo$col[newstr] <-
+            col[newstr.idx]
+        if (!is.null(lwd))
+          edgeDataDefaults(object)$futureinfo$lwd[newstr] <-
+            lwd[newstr.idx]
+        if (!is.null(lty))
+          edgeDataDefaults(object)$futureinfo$lty[newstr] <-
+            lty[newstr.idx]
+        if (!is.null(labcol))        
+          edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
+            labcol[newstr.idx]
+##        browser()
+      }
+##      st <- eval(parse(text=paste("expression(",edgeRenderInfo(object)$label,")",sep="")))
    ##   edgeRenderInfo(object)$label <- st
 ##      edgeRenderInfo(object)$label <- as.expression(edgeRenderInfo(object)$label)
       return(object)
@@ -157,7 +200,10 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
           estr <- paste("\"",nodes[r],"~",nodes[s],"\"", sep="")
           estr2 <- paste(nodes[r],"~",nodes[s], sep="")          
           Debug(estr, debug)
-          st <- eval(parse(text=paste("expression(",lab[r,s],")",sep="")))
+          if (expr)
+            st <- eval(parse(text=paste("expression(",lab[r,s],")",sep="")))
+          else
+            st <- lab[r,s]
           edgeRenderInfo(object)$label[estr2] <- st
         }
       }

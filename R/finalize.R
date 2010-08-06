@@ -2,12 +2,18 @@
 function(model,...) UseMethod("finalize")
 
 `finalize.lvm` <-
-function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), ...) {
+function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, ...) {
   opt <- options(warn=-1)
-  x <- model$graph
+  x <- Graph(model)
+  
+   if (unexpr) {
+    mylab <- as.character(edgeRenderInfo(x)$label); names(mylab) <- names(edgeRenderInfo(x)$label)
+    x@renderInfo@edges$label <- as.list(mylab)
+  }
+
   
   var <- rownames(covariance(model)$rel)
-  edges <- c()
+  edges <- coredges <- c()
   delta <- ifelse(diag,0,1)
   
   if (cor | diag) {
@@ -17,13 +23,38 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
           if (covariance(model)$rel[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(model)))) {
             x <- addEdge(var[r],var[s], x)
             x <- addEdge(var[s],var[r], x)
+            newedges <- c(paste(var[r],"~",var[s], sep=""),
+                          paste(var[s],"~",var[r], sep=""))
             edges <- c(edges,
-                       paste(var[r],"~",var[s], sep=""),
-                       paste(var[s],"~",var[r], sep=""))
+                       newedges
+                       )
+            if (r!=s)
+            coredges <- c(coredges,newedges)
           }
       }
     }
   }
+  
+
+  
+  if (length(edgeDataDefaults(x)$futureinfo)>0) {
+    estr <- names(edgeDataDefaults(x)$futureinfo$label)
+    estr <- estr[length(estr)>0]    
+    revestr <- sapply(estr, function(y) paste(rev(unlist(strsplit(y,"~"))),collapse="~"))
+    revidx <- which(revestr%in%edgeNames(x))
+    count <- 0
+    for (i in estr) {      
+      count <- count+1
+      for (f in names(edgeDataDefaults(x)$futureinfo)) {
+  ##      edgeRenderInfo(x)[[f]][[i]] <- edgeDataDefaults(x)$futureinfo[[f]][[i]]
+        if (count%in%revidx)
+          x@renderInfo@edges[[f]][[revestr[count]]] <- edgeDataDefaults(x)$futureinfo[[f]][[i]]
+        else
+          x@renderInfo@edges[[f]][[i]] <- edgeDataDefaults(x)$futureinfo[[f]][[i]]          
+      }
+    }
+  }  
+
   if (intercept) {
   ##  mu <- intfix(model)
   ##  nNA <- sum(is.na(mu))
@@ -37,10 +68,8 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
 ##    }
 ##    x <- addattr(x,attr="shape",var=mu,val="none")      
   }
-
   
   recursive <- c()
-
   A <- index(model)$A
   if (index(model)$npar.reg>0)
   for (i in 1:(nrow(A)-1))
@@ -50,20 +79,33 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
                         paste(var[j],"~",var[i], sep=""))
  
   for (e in edgeNames(x)) {
-    dir <- "forward"; lty <- 1; arrowhead <- "none"
-    if (e %in% edges) {
-      dir <- "none"; lty <- 2; arrowhead <- "open"
-    }
+    dir <- "forward"; lty <- 1; arrowtail <- "none"
     if (e %in% recursive) {
-      dir <- "none"; lty <- 1; arrowhead <- "open"
-    }    
+      dir <- "none"; lty <- 1; arrowtail <- "open"
+    }
+    if (e %in% edges) {
+      dir <- "none"; lty <- 2; arrowtail <- "none"
+    }
+    if (e %in% coredges) {
+      dir <- "none"; lty <- 2; arrowtail <- "open"
+    }
+    arrowhead <- "open"
 ##    estr <- paste("\"",e,"\"",sep="")
     estr <- e
-    x <- addattr(x,"dir",var=estr,val=dir,fun="edgeRenderInfo")
+##    browser()
+    for (f in c("col","cex","textCol","lwd")) {
+      if (!(estr%in%names(edgeRenderInfo(x)[[f]]))
+          || is.na(edgeRenderInfo(x)[[f]][[estr]]))
+        x <- addattr(x,f,var=estr,
+                     val=edgeDataDefaults(x)[[f]],
+                     fun="edgeRenderInfo")      
+    }
+
+    x <- addattr(x,"lty",var=estr,val=lty,fun="edgeRenderInfo")
     x <- addattr(x,"direction",var=estr,val=dir,fun="edgeRenderInfo")
-    x <- addattr(x,"arrowhead",var=estr,val="open",fun="edgeRenderInfo")
-    x <- addattr(x,"arrowtail",var=estr,val=arrowhead,fun="edgeRenderInfo")
-    x <- addattr(x,attr="lty",var=estr,val=lty,fun="edgeRenderInfo")
+    x <- addattr(x,"dir",var=estr,val=dir,fun="edgeRenderInfo")
+    x <- addattr(x,"arrowhead",var=estr,val=arrowhead,fun="edgeRenderInfo")
+    x <- addattr(x,"arrowtail",var=estr,val=arrowtail,fun="edgeRenderInfo")
     x <- addattr(x,attr="fontsize",var=estr,val=fontsize1,fun="edgeRenderInfo")
     if (is.null(edgeRenderInfo(x)$label))
       edgeRenderInfo(x)$label <- expression()
@@ -94,7 +136,7 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
           }
         }       
       }
-    }    
+    }
     
   }
   

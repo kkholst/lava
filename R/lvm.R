@@ -12,13 +12,17 @@ lvm <- function(var=NULL, silent=FALSE, ...) {
   nodeDataDefaults(x, "categorical") <- FALSE
   nodeDataDefaults(x, "distribution") <- NA
   nodeDataDefaults(x, "label") <- expression(NA)
+
   edgeDataDefaults(x, "lty") <- 1
-  edgeDataDefaults(x, "color") <- "black"
+  edgeDataDefaults(x, "lwd") <- 1
+  edgeDataDefaults(x, "col") <- "black"
+  edgeDataDefaults(x, "textCol") <- "black"
   edgeDataDefaults(x, "est") <- 0
   edgeDataDefaults(x, "arrowhead") <- "open"
   edgeDataDefaults(x, "dir") <- "forward"
   edgeDataDefaults(x, "cex") <- 1.5
   edgeDataDefaults(x, "label") <- expression()
+  edgeDataDefaults(x, "futureinfo") <- list()
 
   res <- list(graph=x, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
   class(res) <- "lvm"

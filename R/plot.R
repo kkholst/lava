@@ -2,12 +2,14 @@
 
 `plot.lvm` <-
   function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
-         attrs=list(graph=graph),...) {
+         attrs=list(graph=graph),
+           unexpr=FALSE,
+           ...) {
   if (all) {
     diag <- cor <- labels <- intercept <- addcolor <- TRUE
   }
   if (!require("Rgraphviz")) stop("package Rgraphviz not available")
-  g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1)
+  g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr)
   if  (labels) {
     AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
     mylab <- AP$P; mylab[AP$A!="0"] <- AP$A[AP$A!="0"]
@@ -20,6 +22,9 @@
   if (debug) {
     plot(g)
   } else {
+
+
+    
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     g <- layoutGraph(g,attrs=attrs,...)
     renderGraph(g)
@@ -78,7 +83,7 @@
         if (isAdjacent(g,var[r],var[r]))
           g <- removeEdge(var[r],var[r],g)
       }
-    }    
+    } 
     m <- Model(x); Graph(m) <- g
     g <- plot(m, diag=diag, cor=cor, ...)
     options(.savedOpt)

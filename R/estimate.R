@@ -81,8 +81,8 @@ function(x, data,
   Debug(list("n=",n),debug)  
   Debug(list("S=",S),debug)
   Debug(list("mu=",mu),debug)
-  
 
+  
   ### Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
