@@ -35,6 +35,7 @@ export(
        estimate.MAR,
        describecoef,baptize,
        modelsearch,
+       equivalence,
        gof,
        compare,
        multigroup,

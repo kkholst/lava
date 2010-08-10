@@ -3,6 +3,8 @@ assign("estimate.hooks",c(),lava.env)
 lockBinding("estimate.hooks", lava.env)
 assign("color.hooks",c(),lava.env)
 lockBinding("color.hooks", lava.env)
+assign("sim.hooks",c(),lava.env)
+lockBinding("sim.hooks", lava.env)
 
 gethook <- function(hook="estimate.hooks",...) {
   get(hook,envir=lava.env)

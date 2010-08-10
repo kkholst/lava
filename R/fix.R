@@ -212,8 +212,9 @@ regfix.lvm <- function(object,...) {
         object <- regression(object, to=to, from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))
-      if (is.na(value[[i]]) | value[[i]]=="NA")
+      if (is.na(value[[i]]) | value[[i]]=="NA") {
         object$fix[from[i],to[i]] <- object$par[from[i],to[i]] <- NA
+      }
       else {
         if (is.numeric(value[[i]]) | !is.na(vali)) {
           object$fix[from[i],to[i]] <- vali

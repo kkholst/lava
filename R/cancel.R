@@ -36,6 +36,7 @@ cancel.lvm <- function(x,value,...) {
           x$cov[v1,v2] <- 0
         }
         }
+  x$parpos <- NULL
   index(x) <- reindex(x)
   return(x)
 }

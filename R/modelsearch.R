@@ -1,12 +1,83 @@
-modelsearch <- function(x,k=1,dir="forward") {
-  if (dir!="forward")
-    return(backwardsearch(x,k))
-  else
-    return(forwardsearch(x,k))
+
+equivalence <- function(x,rel,tol=ifelse(k==1,1e-1,0.5),k=1,...) {
+  if (class(rel)[1]=="formula") {
+    myvars <- all.vars(rel)
+  } else {    
+    myvars <- rel
+  }
+  if (length(myvars)!=2) stop("Two variables only")
+  x0 <- Model(x)
+  cancel(x0) <- rel  
+  e0 <- estimate(x0,data=model.frame(x),...)   
+  s <- modelsearch(e0,k=k)
+  relname <- c(paste(myvars,collapse="<->"),
+               paste(rev(myvars),collapse="<->"))
+  if (k==1) {
+    relidx <- na.omit(match(relname,s$res[,"Index"]))
+    T0 <- s$test[relidx,1]
+  } else {
+##    if (covariance(Model(x))$rel[myvars[1],myvars[2]]==0) {
+    
+    ## paridx <- which(names(coef(x))%in%relname)
+    ## if (length(paridx)==0) {
+    ##   paridx <- which(names(coef(x))%in%paste(myvars,collapse="<-"))
+    ## }    
+    p0 <- coef(x)
+##    p0[paridx] <- 0
+    p0[] <- 0
+    p0[match(names(coef(e0)),names(p0))] <- coef(e0)
+    S0 <- score(x,p=p0)[,,drop=TRUE]
+    I0 <- information(x,p=p0,data=NULL,n=nrow(model.frame(x)))   
+    T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0)    
+  }
+  T <- s$test[,1]
+  Equiv <- setdiff(which(abs(T-T0)<tol),relidx)
+  Improve <- which((T-T0)>tol)
+  eqvar <- ivar <- NULL
+  models <- list()
+  cat("  0)\t ",paste(myvars,collapse="<->"),"  (",formatC(T0),")\n",sep="")
+  cat("Empirical equivalent models:\n")
+  if (length(Equiv)==0)
+    cat("\t none\n")
+  else {
+    for (i in 1:length(Equiv)) {      
+      cat("  ",i,")\t ",  s$res[Equiv[i],"Index"],
+          "  (",s$res[Equiv[i],1],")",
+          "\n",sep="")
+##      xnew <- x0
+##      exo.idx <- which(s$var[[Equiv[i]]]%in%index(x0)$exogenous)
+##      if (length(exo.idx)>0) {
+##        
+##      } else {
+##
+##      }
+    }
+    eqvar <- s$var[Equiv]
+  }  
+  cat("Candidates for model improvement:\n")
+  if (length(Improve)==0)
+    cat("\t none\n")
+  else {
+    for (i in 1:length(Improve)) {
+      cat("  ",i,")\t ",  s$res[Improve[i],"Index"],
+          "  (",s$res[Improve[i],1],")",
+          "\n",sep="")
+    }
+    ivar <- s$var[Improve]
+  }  
+  res <- list(equiv=eqvar, improve=ivar, scoretest=s)
 }
 
 
-backwardsearch <- function(x,k=1) {
+modelsearch <- function(x,k=1,dir="forward",...) {
+  if (dir!="forward")
+    return(backwardsearch(x,k,...))
+  else
+    return(forwardsearch(x,k,...))
+}
+
+
+backwardsearch <- function(x,k=1,...) {
   if (class(x)!="lvmfit") stop("Expected an object of class 'lvmfit'.")
   p <- pars(x)
   cur <- Model(x)
@@ -28,7 +99,7 @@ backwardsearch <- function(x,k=1) {
       ii <- freecomb[,i]
       p0 <- p1; p0[ii] <- 0
       R <- diag(length(p0)); R <- matrix(R[ii,],nrow=length(ii))
-      I <- information(Model(x), p=p1, n=x$data$n)
+      I <- information(Model(x), p=p1, n=x$data$n, data=model.frame(x))
       if (!is.null(pp$meanpar)) {
         rmidx <- 1:length(pp$meanpar)
         I <- I[-rmidx,-rmidx]
@@ -55,7 +126,7 @@ backwardsearch <- function(x,k=1) {
   res
 }
 
-forwardsearch <- function(x,k=1) {
+forwardsearch <- function(x,k=1,silent=FALSE,...) {
   if (class(x)!="lvmfit") stop("Expected an object of class 'lvmfit'.")
   p <- coef(x)
   cur <- Model(x)
@@ -87,17 +158,20 @@ forwardsearch <- function(x,k=1) {
   S <- (n-1)/n*var(model.frame(x),na.rm=TRUE)
   mu <- colMeans(model.frame(x),na.rm=TRUE)
 
-  cat(ncol(restrictedcomb), "models:\n")
+  if (!silent)
+    cat("Calculating score test for",ncol(restrictedcomb), "models:\n")
   count <- 0
   for (i in 1:ncol(restrictedcomb))
     {
-      cat(".")
-      count <- count+1
-      if (count==20) {
-        cat("\n")
-        count <- 0
+      if (!silent) {
+        cat(".")
+        count <- count+1
+        if (count==20) {          
+          cat("\n")
+          count <- 0
+        }
       }
-
+    
       varlist <- c()
       altmodel <- cur ## HA: altmodel, H0: cur
       for (j in 1:k) {
@@ -140,7 +214,7 @@ forwardsearch <- function(x,k=1) {
       ##          Sc <- colSums(score(altmodel,data=model.frame(x),p=c(pp$meanpar,p1)))
       I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
       iI <- try(solve(I), silent=TRUE)
-##      browser()
+##      browser()      
       Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
                    ## rbind(Sc)%*%iI%*%cbind(Sc)
                    (Sc2)%*%iI%*%t(Sc2)
@@ -152,8 +226,9 @@ forwardsearch <- function(x,k=1) {
 
   Tests0 <- Tests
   Vars0 <- Vars
-  
-  cat("\n\n")
+
+  if (!silent)
+    cat("\n\n")
   ord <- order(Tests);
   Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
   Tests <- Tests[ord,,drop=FALSE]

@@ -10,9 +10,9 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
   require(survival)
   lambda <- 1/scale
   f <- function(n,mu,var,...) {
-    a0 <- function(t) lambda*scale*(lambda*t)^(scale-1)
-    A0 <- function(t) (lambda*t)^scale
-    A0i <- function(eta) eta^(1/scale)/lambda
+    a0 <- function(t) lambda*shape*(lambda*t)^(shape-1)
+    A0 <- function(t) (lambda*t)^shape
+    A0i <- function(eta) eta^(1/shape)/lambda
     U <- rexp(n, 1) #give everyone a random death time, on the CH scale
     Z <- U*exp(-mu)
     T <- A0i(Z)
@@ -176,6 +176,13 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     }
   }
   res <- res[,nn,drop=FALSE]
+
+  myhooks <- gethook("sim.hooks")
+  count <- 3
+  for (f in myhooks) {
+    count <- count+1
+    res2 <- do.call(f, list(x=x,data=res))
+  }         
   
   return(data.frame(res))
 }
