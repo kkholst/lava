@@ -1,5 +1,5 @@
 
-equivalence <- function(x,rel,tol=ifelse(k==1,1e-1,0.5),k=1,...) {
+equivalence <- function(x,rel,tol=1e-1,k=1,omitrel=TRUE,...) {
   if (class(rel)[1]=="formula") {
     myvars <- all.vars(rel)
   } else {    
@@ -12,6 +12,7 @@ equivalence <- function(x,rel,tol=ifelse(k==1,1e-1,0.5),k=1,...) {
   s <- modelsearch(e0,k=k)
   relname <- c(paste(myvars,collapse="<->"),
                paste(rev(myvars),collapse="<->"))
+  relidx <- NULL
   if (k==1) {
     relidx <- na.omit(match(relname,s$res[,"Index"]))
     T0 <- s$test[relidx,1]
@@ -33,41 +34,85 @@ equivalence <- function(x,rel,tol=ifelse(k==1,1e-1,0.5),k=1,...) {
   T <- s$test[,1]
   Equiv <- setdiff(which(abs(T-T0)<tol),relidx)
   Improve <- which((T-T0)>tol)
+  if (omitrel) { ## Don't save models including 'rel'
+    keep <- c()
+    if (length(Equiv)>0) {
+      for (i in 1:length(Equiv)) {
+        newvars <- s$var[[Equiv[i]]]
+        if (!any(apply(newvars,1,function(z) all(z%in%myvars)))) keep <- c(keep,Equiv[i])
+      }
+      Equiv <- keep
+    }
+    keep <- c()
+    if (length(Improve)>0) {
+      for (i in 1:length(Improve)) {
+        newvars <- s$var[[Improve[i]]]
+        if (!any(apply(newvars,1,function(z) all(z%in%myvars)))) keep <- c(keep,Improve[i])
+      }
+      Improve <- keep
+    }
+  }
   eqvar <- ivar <- NULL
   models <- list()
-  cat("  0)\t ",paste(myvars,collapse="<->"),"  (",formatC(T0),")\n",sep="")
-  cat("Empirical equivalent models:\n")
-  if (length(Equiv)==0)
-    cat("\t none\n")
-  else {
+  if (length(Equiv)>0){
     for (i in 1:length(Equiv)) {      
-      cat("  ",i,")\t ",  s$res[Equiv[i],"Index"],
-          "  (",s$res[Equiv[i],1],")",
-          "\n",sep="")
-##      xnew <- x0
-##      exo.idx <- which(s$var[[Equiv[i]]]%in%index(x0)$exogenous)
-##      if (length(exo.idx)>0) {
-##        
-##      } else {
-##
-##      }
+      xnew <- x0
+      newvars <- s$var[[Equiv[i]]]
+      for (j in 1:nrow(newvars)) {
+        exo.idx <- which(newvars[j,]%in%index(x0)$exogenous)
+        if (length(exo.idx)>0) {
+          xnew <- regression(xnew,from=newvars[j,exo.idx],to=newvars[j,setdiff(1:2,exo.idx)])
+        } else {
+          covariance(xnew) <- newvars
+        }
+      }
+      models <- c(models,list(xnew))
     }
     eqvar <- s$var[Equiv]
-  }  
-  cat("Candidates for model improvement:\n")
-  if (length(Improve)==0)
-    cat("\t none\n")
-  else {
-    for (i in 1:length(Improve)) {
-      cat("  ",i,")\t ",  s$res[Improve[i],"Index"],
-          "  (",s$res[Improve[i],1],")",
-          "\n",sep="")
+  }
+  if (length(Improve)>0)   {
+      for (i in 1:length(Improve)) {
+      xnew <- x0
+      newvars <- s$var[[Improve[i]]]
+      for (j in 1:nrow(newvars)) {
+        exo.idx <- which(newvars[j,]%in%index(x0)$exogenous)
+        if (length(exo.idx)>0) {
+          xnew <- regression(xnew,from=newvars[j,exo.idx],to=newvars[j,setdiff(1:2,exo.idx)])
+        } else {
+          covariance(xnew) <- newvars
+        }
+      }
+      models <- c(models,list(xnew))
     }
     ivar <- s$var[Improve]
   }  
-  res <- list(equiv=eqvar, improve=ivar, scoretest=s)
+  res <- list(equiv=eqvar, improve=ivar, scoretest=s, models=models, I=Improve, E=Equiv, T0=T0, vars=myvars)
+  class(res) <- "equivalence"
+  return(res)
 }
 
+print.equivalence <- function(x,...) {
+  cat("  0)\t ",paste(x$vars,collapse="<->"),"  (",formatC(x$T0),")\n",sep="")
+  cat("Empirical equivalent models:\n")
+  if (length(x$E)==0)
+    cat("\t none\n")
+  else
+    for (i in 1:length(x$E)) {        
+      cat("  ",i,")\t ",  x$scoretest$res[x$E[i],"Index"],
+          "  (",x$scoretest$res[x$E[i],1],")",
+          "\n",sep="")
+    }
+  cat("Candidates for model improvement:\n")
+  if (length(x$I)==0)
+    cat("\t none\n")
+  else
+  for (i in 1:length(x$I)) {
+      cat("  ",i,")\t ",  x$scoretest$res[x$I[i],"Index"],
+          "  (",x$scoretest$res[x$I[i],1],")",
+          "\n",sep="")
+  }
+  invisible(x)
+}
 
 modelsearch <- function(x,k=1,dir="forward",...) {
   if (dir!="forward")

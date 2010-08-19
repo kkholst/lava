@@ -3,8 +3,8 @@
 print.fix <- function(x,exo=FALSE,...) {
   switch(attributes(x)$type,
         reg = cat("Regression parameters:\n"),
-        cov = cat("Regression parameters:\n"),
-        mean = cat("Regression parameters:\n"))
+        cov = cat("Covariance parameters:\n"),
+        mean = cat("Intercept parameters:\n"))
   M <- linconstrain(x,print=TRUE)
   ## idx <- 1:attributes(x)$nvar
   ## if (!exo & attributes(x)$type!="reg") idx <- setdiff(idx,attributes(x)$exo.idx)

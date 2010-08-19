@@ -181,7 +181,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   count <- 3
   for (f in myhooks) {
     count <- count+1
-    res2 <- do.call(f, list(x=x,data=res))
+    res <- do.call(f, list(x=x,data=res))
   }         
   
   return(data.frame(res))

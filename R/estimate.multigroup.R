@@ -79,7 +79,6 @@
     weight <- NULL
   }
 
-
 ### Run hooks (additional lava plugins)
   myhooks <- gethook()
   newweight <- list()
@@ -368,10 +367,10 @@
 #########################################2#######################################
 ################################################################################
 
-##  browser()
-  
+
   if (!silent) cat("Optimizing objective function...")
   if (debug) {
+    browser()
     print(lower)
     print(optim$constrain)
     print(optim$method)
