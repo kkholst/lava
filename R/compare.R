@@ -25,7 +25,7 @@ compare.default <- function(object,...) {
   if (length(objects)<2) {
 
     L0 <- logLik(object)
-    L1 <- logLik(object, type="sat")
+    L1 <- satmodel(object,logLik=TRUE)
     df <- attributes(L1)$df-attributes(L0)$df; names(df) <- "df"
     ##    Q <- -2*(L0-L1);
     Q <- abs(2*(L0-L1));

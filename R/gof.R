@@ -1,3 +1,22 @@
+satmodel <- function(object,logLik=TRUE,...) {
+  if (object$estimator=="gaussian" & logLik)
+    return(logLik(object, type="sat"))
+  covar <- exogenous(object)
+  y <- endogenous(object)
+  m0 <- Model(object)
+  suppressWarnings(m0 <- regression(m0,y,covar))
+  if (length(latent(m0))>0)
+    kill(m0) <- latent(m0)
+  cancel(m0) <- y
+  suppressWarnings(covariance(m0) <- y)
+  cat("Calculating MLE of saturated model:\n")
+  missing <- "lvm.missing"%in%class(object)  
+  e0 <- estimate(m0,model.frame(object),weight=Weight(object),estimator=object$estimator,control=list(start=c(0,0,1,1,0),trace=1),silent=TRUE,missing=missing)
+  if (logLik)
+    return(logLik(e0))
+  return(e0)
+}
+
 `gof` <-
   function(object,...) UseMethod("gof")
 
@@ -17,7 +36,7 @@
 ## }
 
 
-gof.lvmfit <- function(object,...) {
+gof.lvmfit <- function(object,chisq=FALSE,...) {
   n <- object$data$n
   loglik <- logLik(object,...)
   
@@ -26,7 +45,7 @@ gof.lvmfit <- function(object,...) {
   myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
   myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
   
-  if (class(object)[1]=="lvmfit" & object$estimator=="gaussian")   
+  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq)   )
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
   else
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
@@ -43,13 +62,12 @@ print.gof.lvmfit <- function(x,...) {
        cat(" Log-Likelihood =", logLik, "\n",
            "BIC =", BIC, "\n",
            "AIC =", AIC, "\n"))
-  if (class(x$model)[1]=="lvmfit" & x$model$estimator=="gaussian")
+  if (!is.null(x$fit))
   with(x,
        cat(" log-Likelihood of model =", fit$estimate[1], "\n",
            "log-Likelihood of saturated model =", fit$estimate[2], "\n",
            "Chi-squared statistic: Q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
-
   invisible(x)
 }
