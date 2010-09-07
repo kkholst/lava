@@ -5,20 +5,27 @@
   if (!is.null(var1)) {
     if (class(var1)[1]=="formula") {
       lhs <- getoutcome(var1)
+      xf <- attributes(terms(var1))$term.labels
+      xx <- unlist(lapply(xf, function(x) x[1]))
       if (is.null(lhs)) {
         covfix(object,var1,var2,...) <- value
         object$parpos <- NULL
         return(object)
       }
       else {
-        yy <- decomp.specials(var1)
-        xx <- setdiff(all.vars(var1),yy)
+        yy <- decomp.specials(lhs)
+##        xx <- setdiff(all.vars(var1),yy)
         ##        xx <- var2
-        covfix(object,var1=yy,var2=xx,...) <- value
-        object$parpos <- NULL
-        return(object)
+##        covfix(object,var1=yy,var2=xx,...) <- value
+##        object$parpos <- NULL
+##        return(object)
       } 
-    } 
+    } else {
+      yy <- var1; xx <- var2
+    }
+    covfix(object,var1=yy,var2=xx,...) <- value
+    object$parpos <- NULL
+    return(object)
   }
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)

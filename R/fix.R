@@ -138,6 +138,7 @@ covfix.lvm <- function(object,...) {
     return(object)    
   }
 
+  browser()
   ##object$cov[var1,var2] <-  object$cov[var2,var1] <- 1  
   K <- length(var1)*length(var2)
   if (length(value)==1)

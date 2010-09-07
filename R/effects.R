@@ -7,9 +7,9 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   P <- path(object,to=to,from=from,...)
   from <- P$path[[1]][1]
   to <- tail(P$path[[1]],1)
-    
+
   cc <- coef(object,level=9) ## All parameters (fixed and variable)
-  cc0 <- coef(object,level=2) ## Estimated parameters
+  cc0 <- cbind(coef(object)) ## Estimated parameters
   i1 <- na.omit(match(rownames(cc),rownames(cc0)))
   idx.cc0 <-  which(rownames(cc)%in%rownames(cc0)); ## Position of estimated parameters among all parameters
   S <- matrix(0,nrow(cc),nrow(cc)); rownames(S) <- colnames(S) <- rownames(cc)
@@ -27,9 +27,9 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
     K <- length(idx.list[[i]])
     idx.list[[i]] <- idx.all[pos:(pos+K-1)]; pos <- pos+K
   }
-  totalef <- prodsumdelta(coefs.all, idx.list, S.all)
+  totalef <- prodsumdelta(coefs.all, idx.list, S.all,...)
   margef <- list(); for (i in 1:length(idx.list)) {
-    margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all)))
+    margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all,...)))
   }
   
   directidx <- which(lapply(P$path,length)==2)
@@ -98,9 +98,10 @@ prodsumdelta <- function(betas,prodidx,S,order=1) { ## Delta-method
     if (order>1) {
       H0 <- attributes(myterm)$hessian
       Sigma <- S[ii,ii]
-      ## print(Sigma)
-      ## print(H0)
-      ## print(Sigma%*%H0)
+       ## print(Sigma)
+       ## print(H0)
+       ## print(Sigma%*%H0)
+      print(sum(diag(Sigma%*%H0))/2)
       val <- val + (myterm + sum(diag(Sigma%*%H0))/2)
     } else {
       val <- val + myterm      

@@ -31,11 +31,11 @@ constrain.default <- function(x,estimate=FALSE,...) {
   }
   Model(x)$constrain[[par]] <- value
   attributes(Model(x)$constrain[[par]])$args <- args
-  index(x) <- reindex(x)
+  index(Model(x)) <- reindex(Model(x))
   return(x)    
 }
 
-constraints <- function(object,vcov=object$vcov,level=0.95,data,...) {
+constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(object),...) {
   if (!require("numDeriv")) stop("package Rgraphviz not available")
 ##  if (class(object)[1]=="lvm") {
 ##    return(constrain(object,estimate=FALSE))
@@ -71,7 +71,12 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data,...) {
     mycoef <- numeric(6)
     val.idx <- myidx[attributes(myc)$args]
     val.idx0 <- na.omit(val.idx)
-    M <- modelVar(Model(object),p=pars.default(object),data=data[1,])
+    mydata <- rbind(numeric(length(manifest(object))))
+    colnames(mydata) <- manifest(object)
+    data <- rbind(data)
+    iname <- intersect(colnames(mydata),colnames(data))
+    mydata[1,iname] <- unlist(data[1,iname])
+    M <- modelVar(Model(object),p=pars.default(object),data=as.data.frame(mydata))
     vals <- M$parval[attributes(myc)$args]
     fval <- mycoef[1] <- myc(unlist(vals))
     myc0 <- function(theta) {
