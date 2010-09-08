@@ -211,11 +211,8 @@ covfix.lvm <- function(object,...) {
   for (i in 1:length(var1)) {
     for (j in 1:length(var2)) {
       if (!pairwise | var1[i]!=var2[j]) {
-        cat(var1[i],";",var2[j],"\n")
+##        cat(var1[i],";",var2[j],"\n")
         p <- p+1
-##        print((i-1)*length(var2) + j)
-##        p <- (i-1)*length(var2) + j0
-##        print(p)
         valp <- suppressWarnings(as.numeric(value[[p]]))
         if (is.na(value[[p]]) | value[[p]]=="NA") {
           object$covfix[var1[i],var2[j]] <- object$covpar[var1[i],var2[j]] <- NA
