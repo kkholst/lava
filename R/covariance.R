@@ -19,7 +19,7 @@
 ##        covfix(object,var1=yy,var2=xx,...) <- value
 ##        object$parpos <- NULL
 ##        return(object)
-      } 
+      }
     } else {
       yy <- var1; xx <- var2
     }
@@ -88,22 +88,37 @@
 function(object,var=NULL,...) UseMethod("covariance")
 
 `covariance.lvm` <-
-function(object,var=NULL,...) {
+function(object,var=NULL,var2,...) {
   if (!is.null(var)) {
     if (class(var)[1]=="formula") {
       covariance(object,...) <- var
       return(object)
     }
 
-    for (i in 1:length(var)) {
-      c1 <- var[i]
-      for (j in i:length(var)) {
-        c2 <- var[j]
-        object <- addvar(object, c(c1,c2), silent=TRUE)
-##        cancel(object) <- c(c1,c2)
-        object$cov[c1,c2] <- object$cov[c2,c1] <- 1
-        object$parpos <- NULL
-        index(object) <- reindex(object)
+    if (!missing(var2)) {
+      for (i in 1:length(var)) {
+        c1 <- var[i]
+        for (j in 1:length(var2)) {
+          c2 <- var2[j]
+          object <- addvar(object, c(c1,c2), silent=TRUE)
+          ##        cancel(object) <- c(c1,c2)
+          object$cov[c1,c2] <- object$cov[c2,c1] <- 1
+          object$parpos <- NULL
+          index(object) <- reindex(object)
+        }
+      }
+    }
+    else {
+      for (i in 1:length(var)) {
+        c1 <- var[i]
+        for (j in i:length(var)) {
+          c2 <- var[j]
+          object <- addvar(object, c(c1,c2), silent=TRUE)
+          ##        cancel(object) <- c(c1,c2)
+          object$cov[c1,c2] <- object$cov[c2,c1] <- 1
+          object$parpos <- NULL
+          index(object) <- reindex(object)
+        }
       }
     }
     return(object)

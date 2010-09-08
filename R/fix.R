@@ -103,16 +103,51 @@ covfix.lvm <- function(object,...) {
   return(res)
 }
 "covfix<-" <- function(object,...,value) UseMethod("covfix<-")
-"covfix<-.lvm" <- function(object, var1, var2=var1, diag=(length(var1)==1),...,value) {
+"covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, ..., value) {
+                           ##diag=(length(var1)==1),...,value) {
 
   if (class(var1)[1]=="formula") {
     var1 <- all.vars(var1)
-  }    
+  }
   if (class(var2)[1]=="formula")
-    var2 <- all.vars(var2)  
+    var2 <- all.vars(var2)
   
   object <- addvar(object,c(var1,var2),...)
   
+  if (pairwise) {
+    p <- 0
+    K <- length(var1)*(length(var1)-1)/2
+    if (length(value)==1)
+      value <- rep(value,K)
+    if (length(value)!=K) stop("Wrong number of parameters")
+    for (i in 1:(length(var1)-1)) {
+      for (j in (i+1):length(var1)) {
+        p <- p+1
+        valp <- suppressWarnings(as.numeric(value[[p]]))
+        if (is.na(value[[p]]) | value[[p]]=="NA") {
+          object$covfix[var1[i],var1[j]] <- object$covpar[var1[i],var1[j]] <- NA
+          object$covfix[var1[j],var1[i]] <- object$covpar[var1[j],var1[i]] <- NA
+        }
+        else {
+          object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1  
+          ##        cancel(object) <- c(var1[i],var2[j]) ## Remove old associations
+          if (is.numeric(value[[p]]) | !is.na(valp)) {
+            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- valp
+            object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- NA
+          } else {
+            object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- value[[p]]
+            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- NA    
+          }
+        }
+      }
+    }
+    newindex <- reindex(object)
+    object$parpos <- NULL
+    index(object)[names(newindex)] <- newindex
+    return(object)
+  }
+   
+
   if (is.null(var2)) {
     if (length(value)==1)
       value <- rep(value,length(var1))
@@ -138,17 +173,49 @@ covfix.lvm <- function(object,...) {
     return(object)    
   }
 
-  browser()
+  if (length(var1)==length(var2) & length(var1)==length(value)) {
+    p <- 0
+    for (i in 1:length(var1)) {
+      p <- p+1
+      valp <- suppressWarnings(as.numeric(value[[p]]))
+      if (is.na(value[[p]]) | value[[p]]=="NA") {
+        object$covfix[var1[i],var2[i]] <- object$covpar[var1[i],var2[i]] <- NA
+        object$covfix[var2[i],var1[i]] <- object$covpar[var2[i],var1[i]] <- NA
+      }
+      else {
+        object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1  
+        ##        cancel(object) <- c(var1[i],var2[j]) ## Remove old associations
+        if (is.numeric(value[[p]]) | !is.na(valp)) {
+          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- valp
+          object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- NA
+        } else {
+          object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- value[[p]]
+          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- NA    
+        }
+      }      
+    }
+    newindex <- reindex(object)
+    object$parpos <- NULL
+    index(object)[names(newindex)] <- newindex
+    return(object)    
+  }
+
+  
   ##object$cov[var1,var2] <-  object$cov[var2,var1] <- 1  
   K <- length(var1)*length(var2)
   if (length(value)==1)
     value <- rep(value,K)
   if (length(value)!=K) stop("Wrong number of parameters")
-
+ 
+  p <- 0
   for (i in 1:length(var1)) {
     for (j in 1:length(var2)) {
-      if (diag | var1[i]!=var2[j]) {
-        p <- (i-1)*length(var2) + j
+      if (!pairwise | var1[i]!=var2[j]) {
+        cat(var1[i],";",var2[j],"\n")
+        p <- p+1
+##        print((i-1)*length(var2) + j)
+##        p <- (i-1)*length(var2) + j0
+##        print(p)
         valp <- suppressWarnings(as.numeric(value[[p]]))
         if (is.na(value[[p]]) | value[[p]]=="NA") {
           object$covfix[var1[i],var2[j]] <- object$covpar[var1[i],var2[j]] <- NA
