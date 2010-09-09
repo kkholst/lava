@@ -30,12 +30,12 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,...) {
     } else {      
       Sigma.phi.v1.v2 <- vcov(x)[coefpos,coefpos]
       nabla.f <- function(p) {
-        c(p[1]/sqrt(p[2]*p[3]), -f(p)/(2*p[2]), -f(p)/(2*p[3]))
+        c(1/sqrt(p[2]*p[3]), -f(p)/(2*p[2]), -f(p)/(2*p[3]))
       }
       rho.var <- t(nabla.f(phi.v1.v2))%*%Sigma.phi.v1.v2%*%nabla.f(phi.v1.v2)
       est <- c(rho, sqrt(rho.var),  rho + c(-1,1)*qnorm(1-level/2)*sqrt(rho.var))
     }
-      res <- rbind(res,est)
+    res <- rbind(res,est)
     rownames(res)[nrow(res)] <- paste(mynames[c(rowpos,colpos)],collapse="~")
   }
   colnames(res) <- c("Correlation","Std.Err","lowerCI","upperCI")

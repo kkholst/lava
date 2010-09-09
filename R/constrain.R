@@ -63,7 +63,8 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
   names(myidx) <- names(parpos$parval)    
   mynames <- c()
   N <- length(index(object)$constrain.par)
-  res <- matrix(nrow=N,ncol=6)
+##  res <- matrix(nrow=N,ncol=6)
+  res <- c()
   count <- 0
   for (pp in index(object)$constrain.par) {
     count <- count+1
@@ -111,8 +112,14 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
     mycoef[3] <- mycoef[1]/mycoef[2]
     mycoef[4] <- 2*(1-pnorm(abs(mycoef[3])))
     mycoef[5:6] <- mycoef[1] + c(1,-1)*qnorm((1-level)/2)*mycoef[2]
-    res[count,] <- mycoef
+##    res[count,] <- mycoef
+    res <- rbind(res,mycoef)
     mynames <- c(mynames,pp)
+    if (!is.null(attributes(fval)$inv)){
+      res2 <- attributes(fval)$inv(mycoef[c(1,5,6)])
+      res <- rbind(res, c(res2[1],NA,NA,NA,res2[2],res2[3]))
+      mynames <- c(mynames,paste("inv(",pp,")",sep=""))
+    }
   }
   rownames(res) <- mynames
   colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)", "2.5%", "97.5%")

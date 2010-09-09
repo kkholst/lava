@@ -53,12 +53,12 @@ export(
        fixsome,
        ##       variances, offdiags,
        frobnorm,
-
+       correlation,
        addhook,
        gethook,
        deriv.lvm,
        addattr,
-       
+       partialcor,
        
        variances,
        offdiags,
@@ -70,7 +70,6 @@ export(
        modelVar,
        '%s%'
        )
-
 
 S3method(modelPar, lvm)
 S3method(modelPar, lvmfit)
@@ -151,6 +150,8 @@ S3method(coef, lvmfit)
 S3method(coef, summary.lvmfit)
 S3method(print, lvmfit)
 S3method(plot, lvmfit)
+S3method(correlation, lvmfit)
+
 
 S3method(functional, lvm)
 S3method(distribution, lvm)
