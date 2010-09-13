@@ -43,5 +43,6 @@ function(x, var, debug=FALSE, silent=FALSE,...) {
       if (!silent)
         cat("\tAdded '", i, "' to model.\n", sep="")
     }
+##  index(m) <- reindex(m)
   return(x)
 }

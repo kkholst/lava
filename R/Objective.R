@@ -49,7 +49,8 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       mp <- modelVar(x,p,data=data[1,])
       iC <- Inverse(mp$C,0,det=FALSE)
 ##      D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
-      D <- with(attributes(mp), deriv(x, meanpar=meanpar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
+      MeanPar <- attributes(mp)$meanpar
+      D <- with(attributes(mp), deriv(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
       Debug("after deriv.", debug)
       myvars <- (index(x)$manifest)

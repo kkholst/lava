@@ -103,7 +103,7 @@ covfix.lvm <- function(object,...) {
   return(res)
 }
 "covfix<-" <- function(object,...,value) UseMethod("covfix<-")
-"covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, ..., value) {
+"covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
                            ##diag=(length(var1)==1),...,value) {
 
   if (class(var1)[1]=="formula") {
@@ -111,8 +111,14 @@ covfix.lvm <- function(object,...) {
   }
   if (class(var2)[1]=="formula")
     var2 <- all.vars(var2)
-  
+
   object <- addvar(object,c(var1,var2),...)
+
+  allvars <- c(var1,var2)
+  exoset <- setdiff(exogenous(object),allvars)
+  if (!exo & length(exoset)>0)
+##    exogenous(object,mom=TRUE) <- exoset
+    exogenous(object) <- exoset
   
   if (pairwise) {
     p <- 0
@@ -273,7 +279,7 @@ regfix.lvm <- function(object,...) {
 ##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
       if (!isAdjacent(Graph(object), from[i], to[i])) {
-        covfix(object,to[i],from[i]) <- NA## Remove any old correlation specification
+        covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
         object <- regression(object, to=to, from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))

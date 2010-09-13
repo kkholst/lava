@@ -1,5 +1,5 @@
 "correlation" <- function(x,...) UseMethod("correlation")
-correlation.lvmfit <- function(x,z=TRUE,level=0.05,...) {
+correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
   pp <- matrices(Model(x), 1:index(x)$npar+index(x)$npar.mean)$P
   pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
   if (length(pos)<1) return(NULL)
@@ -21,7 +21,7 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,...) {
     rho <- f(phi.v1.v2)    
     if (z) {
         zrho <- atanh(rho)
-        var.z <- 1/(nrow(model.frame(x))-3) ## n-k-3
+        var.z <- 1/(nrow(model.frame(x))-ifelse(adj,3,0)) ## n-k-3
         ci.z <- zrho + c(-1,1)*qnorm(1-level/2)*sqrt(var.z)
         ci.rho <- tanh(ci.z)
         z <- 1/sqrt(var.z)*zrho

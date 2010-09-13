@@ -25,7 +25,7 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,...) {
         count <- count+1
         st <- ifelse(missing(labels),paste("p",count,sep=""),labels[count])
 ##        st <- paste("p",count,sep="")
-        covfix(x,p0[2],p0[1]) <- st
+        covfix(x,p0[2],p0[1],exo=FALSE) <- st
       }
     } else { ## Mean parameter
       curfix <- MeanFix[[p0]]

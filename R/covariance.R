@@ -30,7 +30,7 @@
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)
     if (is.null(lhs)) {
-      return(covariance(object,all.vars(value)))
+      return(covariance(object,all.vars(value),...))
     }
     yy <- decomp.specials(lhs)
 
@@ -46,7 +46,7 @@
           {
           for (i in yy)
             for (j in res[[1]])
-              object <- covariance(object, c(i,j))
+              object <- covariance(object, c(i,j),...)
         } else {
           covfix(object,var1=yy,var2=NULL) <- res[[1]]
         }
@@ -65,7 +65,7 @@
         } else if ((i+1)%in%attr(tt,"specials")$f | (i+1)%in%attr(tt,"specials")$v) {
           covfix(object, var1=y, var2=NULL) <- res[[i]]
         } else {
-          object <- covariance(object,c(y,xx[i]))
+          object <- covariance(object,c(y,xx[i]),...)
         }
       }
 
@@ -88,12 +88,23 @@
 function(object,var=NULL,...) UseMethod("covariance")
 
 `covariance.lvm` <-
-function(object,var=NULL,var2,...) {
+function(object,var=NULL,var2,exo=FALSE,...) {
   if (!is.null(var)) {
     if (class(var)[1]=="formula") {
       covariance(object,...) <- var
       return(object)
     }
+    allvars <- var    
+    if (!missing(var2)) {
+      if (class(var2)[1]=="formula")
+        var2 <- all.vars(var2)
+      allvars <- c(allvars,var2)
+    }
+
+    exoset <- setdiff(exogenous(object),allvars)
+    if (!exo & length(exoset)>0)
+##      exogenous(object,mom=TRUE) <- exoset
+      exogenous(object) <- exoset
 
     if (!missing(var2)) {
       for (i in 1:length(var)) {

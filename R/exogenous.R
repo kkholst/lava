@@ -3,7 +3,9 @@ function(x,...) UseMethod("exogenous")
 
 "exogenous<-" <- function(x,...,value) UseMethod("exogenous<-")
 
-`exogenous<-.lvm` <- function(x,...,value) {
+`exogenous<-.lvm` <- function(x,silent=FALSE,
+                              ##mom=TRUE,
+                              ...,value) {
   if (class(value)[1]=="formula") {
     exogenous(x,...) <- all.vars(value)
     return(x)
@@ -12,7 +14,19 @@ function(x,...) UseMethod("exogenous")
   if (any(not.in)) {
     addvar(x) <- value[not.in]
   }
+  xorg <- exogenous(x)
   x$exogenous <- value
+  if (!is.null(value)) {
+    notexo.idx <- which(!(xorg%in%value))
+    if (length(notexo.idx)>0) { ##  & mom) {      
+      if (length(notexo.idx)>1) {
+        covariance(x,xorg[notexo.idx],pairwise=TRUE,exo=TRUE) <- NA
+      }
+      covariance(x,xorg[notexo.idx],vars(x),exo=TRUE) <- NA
+      intercept(x,xorg[notexo.idx]) <- NA
+    }
+  }
+##  x$exogenous <- value  
   index(x) <- reindex(x)
   return(x)
 }

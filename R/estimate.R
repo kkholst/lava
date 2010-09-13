@@ -348,7 +348,7 @@ For numerical approximation please install the library 'numDeriv'.")
   }   
   coefname <- coef(x,mean=optim$meanstructure);
 
-  if (!silent) cat("Optimizing objective function...\n")  
+  if (!silent) cat("Optimizing objective function...\n")
   ## Optimize with lower constraints on the variance-parameters
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
@@ -374,9 +374,12 @@ For numerical approximation please install the library 'numDeriv'.")
   if (!silent) cat("Calculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
-    asVar <- tryCatch(
-                      solve(myInfo(opt$estimate)),
-                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
+    asVar <- Inverse(myInfo(opt$estimate))
+    diag(asVar)[(diag(asVar)==0)] <- NA
+##    if ()
+##    asVar <- tryCatch(
+##                      solve(myInfo(opt$estimate)),
+##                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
 ###
   } else {
     asVar <- tryCatch(do.call(asVarFun,
@@ -453,7 +456,7 @@ estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,...) {
   ## }
   exogenous(model) <- setdiff(covars,pred.norm)
   if (unstruct) {    
-    model <- covariance(model,pred.norm)
+    model <- covariance(model,pred.norm,pairwise=TRUE)
   }
   estimate(model,mydata,silent=TRUE,...)
 }

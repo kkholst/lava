@@ -20,10 +20,35 @@ comparepair <- function(x1,x2) {
 `compare` <-
   function(object,...) UseMethod("compare")
 
-compare.default <- function(object,...) {
+compare.default <- function(object,...,par,contrast,null) {
+  if (!missing(par)) {
+    contrast <- rep(0,length(coef(object)))
+    contrast[parpos(Model(object),p=par)] <- 1
+    contrast <- diag(contrast)
+  }
+  if (!missing(contrast)) {
+    B <- contrast        
+    p <- coef(object)
+    if (ncol(B)<length(p)) {
+      B <- matrix(0,ncol=length(coef(object)))
+      B[parpos(Model(object),p=colnames(contrast))] <- 1      
+    }
+    if (missing(null)) null <- 0
+    Q <- t(B%*%p-null)%*%Inverse(B%*%vcov(object)%*%t(B))%*%(B%*%p-null)
+    df <- qr(B)$rank; names(df) <- "df"
+    attributes(Q) <- NULL; names(Q) <- "chisq";
+    pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
+    method = "Wald test";
+    ##    hypothesis <-
+    res <- list(##data.name=hypothesis,
+                statistic = Q, parameter = df,
+                p.value=pQ, method = method
+                )
+    class(res) <- "htest"
+    return(res)        
+  }
   objects <- list(object,...)
   if (length(objects)<2) {
-
     L0 <- logLik(object)
     L1 <- satmodel(object,logLik=TRUE)
     df <- attributes(L1)$df-attributes(L0)$df; names(df) <- "df"
@@ -40,8 +65,7 @@ compare.default <- function(object,...) {
     return(res)    
   }
   if (length(objects)==2)
-    return(comparepair(objects[[1]],objects[[2]]))
-  
+    return(comparepair(objects[[1]],objects[[2]]))  
   res <- list()
   for (i in 1:(length(objects)-1)) {
     res <- c(res, list(comparepair(objects[[i]],objects[[i+1]])))

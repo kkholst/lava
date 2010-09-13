@@ -131,16 +131,19 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
       if (p%in%parname.all) {
         reg.idx <- which(x$par==p)
         reg.tidx <- which(t(x$par==p))
-        A[reg.idx] <- myc(val)
+        if (!is.null(val))
+          A[reg.idx] <- myc(val)
       }
       if (p%in%covparname.all) {
         cov.idx <- which(x$covpar==p)
-        P[cov.idx] <- myc(val)        
+        if (!is.null(val))
+          P[cov.idx] <- myc(val)        
       }
-##      if (!is.null(meanpar))
+      ##      if (!is.null(meanpar))
         if (p%in%mparname.all) {
-          m.idx <- which(x$mean==p)        
-          v[m.idx] <- myc(val)        
+          m.idx <- which(x$mean==p)
+          if (!is.null(val))
+            v[m.idx] <- myc(val)        
         }
       constrain.idx[[p]] <- list(reg.idx=reg.idx,reg.tidx=reg.tidx,cov.idx=cov.idx,m.idx=m.idx)
     }

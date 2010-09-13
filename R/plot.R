@@ -4,10 +4,13 @@
   function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
+           parameters=TRUE,
            ...) {
   if (all) {
     diag <- cor <- labels <- intercept <- addcolor <- TRUE
   }
+  index(x) <- reindex(x)
+##  browser()
   if (!require("Rgraphviz")) stop("package Rgraphviz not available")
   g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr)
   if  (labels) {
@@ -22,12 +25,15 @@
   if (debug) {
     plot(g)
   } else {
-
-
     
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
-    g <- layoutGraph(g,attrs=attrs,...)
-    renderGraph(g)
+    dots <- list(...)
+    dots$attrs <- attrs
+    dots$x <- g
+    if (is.null(dots$layoutType) & all(index(m)$A==0))
+      dots$layoutType <- "circo"
+    g <- do.call("layoutGraph", dots)
+    res <- tryCatch(renderGraph(g),error=function(e) NULL)
     options(.savedOpt)
   }
   ## if (!is.null(legend)) {

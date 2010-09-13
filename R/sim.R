@@ -1,11 +1,41 @@
-uniform.lvm <- function(n,mu,var,...) (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
-uniform1.lvm <- function(n,...) runif(n,0,1)
-binomial.lvm <- function(n,mu,...) rbinom(n,1,tigol(mu))
-logit.lvm <- binomial.lvm
-##probit.lvm <- function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
-probit.lvm <- function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
-normal.lvm <- function(n,mu=0,var=1) rnorm(n,mu,sqrt(var))
-poisson.lvm <- function(n,mu,...) rpois(n,exp(mu))
+normal.lvm <- function(mean,sd,log=FALSE,...) {
+  rnormal <- if(log) rlnorm else rnorm
+  if (!missing(mean) & !missing(sd)) 
+    f <- function(n,...) rnormal(n,mean,sd)
+  else
+    f <- function(n,mu=0,var=1,...) rnormal(n,mu,sqrt(var))
+  return(f)
+}
+poisson.lvm <- function(lambda) {
+ if (!missing(lambda))
+    f <- function(n,...) rpois(n,lambda)
+ else
+   f <- function(n,mu,...) rpois(n,exp(mu))
+ return(f)
+}
+binomial.lvm <- function(link="logit",p) {
+  if (!missing(p))
+    f <- function(n,...) rbinom(n,1,p)
+  else {
+    f <- switch(link,
+                logit = 
+                function(n,mu,...) rbinom(n,1,tigol(mu)),
+                cloglog =
+                function(n,mu,...) rbinom(n,1,1-exp(-exp(1-mu))),
+                function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
+                ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
+                )
+  }
+  return(f)
+}
+uniform.lvm <- function(a,b) {
+  if (!missing(a) & !missing(b)) 
+    f <- function(n,...) runif(n,a,b)
+  else
+    f <- function(n,mu,var,...)
+      (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
+  return(f)
+}
 weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
   require(survival)
   lambda <- 1/scale
@@ -27,26 +57,28 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
   }
   return(f)
 }
+logit.lvm <- binomial.lvm("logit")
+probit.lvm <- binomial.lvm("probit")
 
 
 "sim" <- function(x,...) UseMethod("sim")
  
-sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),normal=TRUE,cond=TRUE,...) {
+sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
   m <- Model(x)
-  if (cond & (nrow(model.frame(x))==n)) {
+  if ((nrow(model.frame(x))==n) & xfix) {
     X <- exogenous(x)
     mydata <- model.frame(x)
     for (pred in X) {
       distribution(m, pred) <- list(mydata[,pred])
     }
   }
-  sim(m,n=n,p=p,normal=normal,cond=cond,...)
+  sim(m,n=n,p=p,...)
 }
 
 
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   require("mvtnorm")
-
+  index(x) <- reindex(x)
   nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
   xf <- intersect(unique(parlabels(x)),exogenous(x))
@@ -58,8 +90,14 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     p[index(x)$npar.mean + variances(x)] <- sigma
     p[index(x)$npar.mean + offdiags(x)] <- rho
     idx1 <- match(names(p0),coef(x,mean=TRUE,fix=FALSE))
+    idx11 <- match(names(p0),coef(x,mean=TRUE,fix=FALSE,labels=TRUE))
     idx2 <- which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE))
-    p[idx1] <- p0[idx2]
+    idx22 <- which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE,labels=TRUE))
+##    browser()
+    if (length(idx1)>0 && !is.na(idx1))      
+      p[idx1] <- p0[idx2]
+    if (length(idx11)>0 && !is.na(idx11))
+      p[idx11] <- p0[idx22]
   }
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P

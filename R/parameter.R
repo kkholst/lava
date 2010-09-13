@@ -4,7 +4,7 @@
     parameter(x,...) <- all.vars(value)
     return(x)
   }
-  latent(x) <- value
+  latent(x,silent=TRUE) <- value
   covfix(x,value,NULL) <- 1
   intfix(x, value) <- value
   nodeData(Graph(x), value, attr="parameter") <- TRUE

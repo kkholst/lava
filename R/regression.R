@@ -12,6 +12,7 @@
       yy <- decomp.specials(lhs)
       res <- lapply(xf,decomp.specials)
       xx <- unlist(lapply(res, function(x) x[1]))
+      object <- addvar(object,yy,...)
       for (y in yy)
         for (i in 1:length(res)) {
           if (length(res[[i]])>1)
@@ -59,14 +60,13 @@
     sx <- strsplit(xx,"$",fixed=TRUE)
     xs <- sapply(sx, FUN=function(i) i[1])    
     fix <- as.numeric(sapply(sx, FUN=function(i) i[2]))
-        
-    
+
+    object <- addvar(object, c(to,xs), debug=debug, silent=silent)    
     for (i in to)
       for (j in xs) {
 ##        object <- addvar(object, c(i,xs), debug=debug, silent=silent)
-        object <- addvar(object, c(i,j), debug=debug, silent=silent)
 ##        cancel(object) <- c(i,j)
-        covfix(object,i,j) <- "NA"
+        covfix(object,i,j,exo=TRUE) <- "NA"
 ##        Graph(object) <- addEdge(xs,i,Graph(object))
         Graph(object) <- addEdge(j,i,Graph(object))
         ##        functional(object,xs,i) <- fn

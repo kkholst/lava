@@ -1,3 +1,29 @@
+range.lvm <- function(a=0,b=1) {
+  if (b==Inf) {
+    f <- function(x) {
+      res <- a+exp(x)
+      attributes(res)$grad <- exp
+      res
+    }
+    return(f)
+  }
+  if (a==-Inf) {
+    f <- function(x) {
+      res <- -exp(x)+b
+      attributes(res)$grad <- function(x) -exp(x)
+      res
+    }
+    return(f)
+  }
+  f <- function(x) {
+    res <- (a+b*exp(x))/(1+exp(x))
+    attributes(res)$grad <- function(x) exp(x)*(b-a-a*b*exp(x))/(1+exp(x))^2
+    res
+  }
+  return(f)  
+}
+
+
 "constrain<-" <- function(x,...,value) UseMethod("constrain<-")
 "constrain" <- function(x,...) UseMethod("constrain")
 
@@ -28,6 +54,21 @@ constrain.default <- function(x,estimate=FALSE,...) {
     xf <- attributes(terms(par))$term.labels
     par <- lhs
     args <- xf
+  }
+  if (is.null(value) || suppressWarnings(is.na(value))) {
+    if (!is.null(par)) {
+      Model(x)$constrain[[par]] <- NULL
+    } else {
+      Model(x)$constrain[[args]] <- NULL
+    }
+    return(x)
+  }
+  for (i in args) {
+    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x))))) {
+      ##    if (!(i%in%c(parlabels(x))))
+      cat("\tAdding parameter '", i,"'\n",sep="")
+      parameter(x,silent=TRUE) <- i
+    }
   }
   Model(x)$constrain[[par]] <- value
   attributes(Model(x)$constrain[[par]])$args <- args

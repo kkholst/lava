@@ -1,7 +1,7 @@
 ###{{{ coef.lvm
 
 `coef.lvm` <-
-function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, debug=FALSE,...) {
+function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, labels=FALSE, debug=FALSE,...) {
  if (fix) ## 12/7-2010
    object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
@@ -32,7 +32,10 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
     for (j in 1:nrow(A)) {
       val <- A[j,i]
       if (val!="0") {
-        res <- c(res, paste(nn[i],symbol[1],nn[j],sep=""))
+        if (labels & !is.na(regfix(Model(object))$labels[j,i]))
+          res <- c(res, regfix(Model(object))$labels[j,i])
+        else
+          res <- c(res, paste(nn[i],symbol[1],nn[j],sep=""))
         counter <- counter+1
         resname <- c(resname, val)      
       }
@@ -44,7 +47,10 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
       val <- P[j,i]
       if (val!="0") {
         counter <- counter+1
-        res <- c(res, paste(nn[i],symbol[2],nn[j],sep=""))
+        if (labels & !is.na(covfix(Model(object))$labels[j,i]))
+          res <- c(res, covfix(Model(object))$labels[j,i])
+        else
+          res <- c(res, paste(nn[i],symbol[2],nn[j],sep=""))
         resname <- c(resname, val)
       }
     }
@@ -52,9 +58,30 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   names(res) <- resname
   resnum <- sapply(resname, function(s) as.numeric(substr(s,2,nchar(s))))
   res <- res[order(resnum)]
-  if (mean) {
-    res <- c(vars(object)[index(object)$v1==1], res)
-  }
+ if (mean) {
+   nmean <- sum(index(object)$v1==1)
+   if (nmean>0) {
+
+     if (!labels)
+       res <- c(vars(object)[index(object)$v1==1], res)
+     else {
+       mres <- c()
+       for (i in 1:length(index(object)$v1)) {
+       val <- index(object)$v1[i]
+       if (val==1) {
+         if (!is.na(intfix(Model(object))[[i]])) {
+           mres <- c(mres, intfix(Model(object))[[i]])
+         }
+         else
+           mres <- c(mres, vars(object)[i])
+       }
+     }
+       res <- c(mres,res)     
+     }
+     names(res)[1:nmean] <- paste("m",1:nmean,sep="")
+   }
+ }
+ 
   if (!silent) {
     cat(paste(res, collapse="\n")); cat("\n")
   }

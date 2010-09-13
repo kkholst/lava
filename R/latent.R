@@ -11,7 +11,7 @@
 function(x,...) UseMethod("latent")
 
 `latent.lvm` <-
-function(x,var,clear=FALSE,zero=TRUE,...) {
+function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
   if (missing(var)) {
     latentidx <- unlist(nodeData(Graph(x), attr="latent"))
     if (length(latentidx)>0)
@@ -27,7 +27,7 @@ function(x,var,clear=FALSE,zero=TRUE,...) {
     }
   } else {
     if (!all(var%in%vars(x))) {
-      addvar(x) <- setdiff(var,vars(x))
+      addvar(x,silent=silent) <- setdiff(var,vars(x))
     }    
     x <- addattr(x,attr="shape",var=var,val="ellipse")
     nodeData(Graph(x), var, attr="latent") <- TRUE
