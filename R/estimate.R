@@ -19,9 +19,9 @@ function(x, data,
   if (length(exogenous(x)>0)) {
     catx <- categorical2dummy(x,data)
     x <- catx$x; data <- catx$data
-  }  
+  }
+  
   cl <- match.call()
-
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method))
     Method <- "nlminb2"
@@ -80,9 +80,7 @@ function(x, data,
   S <- dd$S; mu <- dd$mu; n <- dd$n
   Debug(list("n=",n),debug)  
   Debug(list("S=",S),debug)
-  Debug(list("mu=",mu),debug)
-
-  
+  Debug(list("mu=",mu),debug)  
   ### Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
@@ -118,7 +116,6 @@ function(x, data,
   k <- length(manifest(x))
   ##  m <- length(latent(x))    
   Debug(list("S=",S),debug)
-  
 
   if (!optim$meanstructure) {
     mu <- NULL
@@ -147,8 +144,10 @@ function(x, data,
     optim$start <- start
   }
   ## Setup optimization constraints
-  lowmin <- -Inf 
-  lower <- rep(lowmin, length(optim$start)); lower[variances(x)+index(x)$npar.mean] <- optim$tol
+  lowmin <- -Inf
+  lower <- rep(lowmin,length(optim$start))
+  if (length(optim$constrain)==1 & optim$constrain)
+    lower[variances(x)+index(x)$npar.mean] <- optim$tol
   if (any(optim$constrain)) {
     if (length(optim$constrain)!=length(lower))
       constrained <- is.finite(lower)
@@ -160,8 +159,7 @@ function(x, data,
     CS[CS<0] <- 0.01
     optim$start[constrained] <- log(CS)
   }
-
-  ## NaN? 
+  ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
   Debug(list("lower=",lower),debug)
   
@@ -176,8 +174,8 @@ function(x, data,
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
   
-###### Random slopes?
-  if (length(xfix)>0 | length(xconstrain)>0) { ## Yes, random slopes
+###### Random slopes or non-linear constraints?
+  if (length(xfix)>0 | length(xconstrain)>0) { ## Yes
     x0 <- x
     
     if (length(xfix)>0) {
@@ -433,32 +431,33 @@ For numerical approximation please install the library 'numDeriv'.")
 
 ###{{{ estimate.formula
 
-estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,...) {
+estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,silent=TRUE,...) {
   cl <- match.call()
-  varnames <- all.vars(x)
-  mf <- model.frame(x,data)
-  mt <- attr(mf, "terms")
-  yvar <- names(mf)[1]
-  y <- data[,yvar]
-  opt <- options(na.action="na.pass")
-  mm <- model.matrix(x,data)
-  options(opt)
-  covars <- colnames(mm)
-  if (attr(terms(x),"intercept")==1)
-    covars <- covars[-1]
+  ## {  varnames <- all.vars(x)
+  ##    mf <- model.frame(x,data)
+  ##    mt <- attr(mf, "terms")
+  ##    yvar <- names(mf)[1]
+  ##    y <- data[,yvar]
+  ##    opt <- options(na.action="na.pass")
+  ##    mm <- model.matrix(x,data)
+  ##    options(opt)
+  ##    covars <- colnames(mm)
+  ##    if (attr(terms(x),"intercept")==1)
+  ##      covars <- covars[-1]
+  ##    model <- lvm()
+  ##    for (i in covars) {
+  ##      model <- regression(model, to=yvar, from=i,silent=TRUE)
+  ##    }     
+  ##    mydata <- as.data.frame(cbind(y,mm)); names(mydata)[1] <- yvar
+  ##  }
   model <- lvm()
-  for (i in covars) {
-    model <- regression(model, to=yvar, from=i,silent=TRUE)
-  }
-  mydata <- as.data.frame(cbind(y,mm)); names(mydata)[1] <- yvar
-  ## if (missing(pred.norm)) {
-  ##   pred.norm <- covars
-  ## }
-  exogenous(model) <- setdiff(covars,pred.norm)
-  if (unstruct) {    
-    model <- covariance(model,pred.norm,pairwise=TRUE)
-  }
-  estimate(model,mydata,silent=TRUE,...)
+  regression(model,silent=silent) <- x
+  ##  covars <- exogenous(model)
+  ##  exogenous(model) <- setdiff(covars,pred.norm)
+  ##  if (unstruct) {    
+  ##    model <- covariance(model,pred.norm,pairwise=TRUE)
+  ##  }
+  estimate(model,data,silent=silent,...)
 }
 
 ###}}} estimate.formula

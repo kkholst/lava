@@ -1,5 +1,4 @@
-
-equivalence <- function(x,rel,tol=1e-1,k=1,omitrel=TRUE,...) {
+equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
   if (class(rel)[1]=="formula") {
     myvars <- all.vars(rel)
   } else {    
@@ -8,7 +7,15 @@ equivalence <- function(x,rel,tol=1e-1,k=1,omitrel=TRUE,...) {
   if (length(myvars)!=2) stop("Two variables only")
   x0 <- Model(x)
   cancel(x0) <- rel  
-  e0 <- estimate(x0,data=model.frame(x),...)   
+  e0 <- estimate(x0,data=model.frame(x),weight=Weight(x),estimator=x$estimator,...)   
+  if (k!=1) {
+    p0 <- coef(x)
+    p0[] <- 0
+    p0[match(names(coef(e0)),names(p0))] <- coef(e0)
+    S0 <- score(x,p=p0)[,,drop=TRUE]; 
+    I0 <- information(x,p=p0)   
+    T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0); names(T0) <- "Q"
+  } 
   s <- modelsearch(e0,k=k)
   relname <- c(paste(myvars,collapse="<->"),
                paste(rev(myvars),collapse="<->"))
@@ -16,21 +23,21 @@ equivalence <- function(x,rel,tol=1e-1,k=1,omitrel=TRUE,...) {
   if (k==1) {
     relidx <- na.omit(match(relname,s$res[,"Index"]))
     T0 <- s$test[relidx,1]
-  } else {
-##    if (covariance(Model(x))$rel[myvars[1],myvars[2]]==0) {
-    
+  }
+##  else {
+##    if (covariance(Model(x))$rel[myvars[1],myvars[2]]==0) {    
     ## paridx <- which(names(coef(x))%in%relname)
     ## if (length(paridx)==0) {
     ##   paridx <- which(names(coef(x))%in%paste(myvars,collapse="<-"))
     ## }    
-    p0 <- coef(x)
+##    p0 <- coef(x)
 ##    p0[paridx] <- 0
-    p0[] <- 0
-    p0[match(names(coef(e0)),names(p0))] <- coef(e0)
-    S0 <- score(x,p=p0)[,,drop=TRUE]
-    I0 <- information(x,p=p0,data=NULL,n=nrow(model.frame(x)))   
-    T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0)    
-  }
+  ##   p0[] <- 0
+  ##   p0[match(names(coef(e0)),names(p0))] <- coef(e0)
+  ##   S0 <- score(x,p=p0)[,,drop=TRUE]
+  ##   I0 <- information(x,p=p0,data=NULL,n=nrow(model.frame(x)))   
+  ##   T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0)    
+  ## }
   T <- s$test[,1]
   Equiv <- setdiff(which(abs(T-T0)<tol),relidx)
   Improve <- which((T-T0)>tol)
@@ -215,13 +222,17 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
           cat("\n")
           count <- 0
         }
-      }
-    
+      }    
       varlist <- c()
       altmodel <- cur ## HA: altmodel, H0: cur
       for (j in 1:k) {
         myvar <- restricted[restrictedcomb[j,i],]
-        covariance(altmodel) <- V[myvar]
+        if (any(wx <- V[myvar]%in%X)) {
+          altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
+##          exogenous(altmodel,xfree=FALSE) <- setdiff(X,V[myvar])
+        } else {
+          covariance(altmodel) <- V[myvar]
+        }
         varlist <- rbind(varlist, V[myvar])
       }
       altmodel$parpos <- NULL
@@ -248,16 +259,16 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         if (!is.na(idx))
             p1[ic] <- pp$p[idx]
       }
-      Sc2 <- score(altmodel,p=p1,S=S,data=NULL,n=n)
-##      Sc2 <- -gaussian_gradient.lvm(altmodel,p1,S,mu=NULL,n)
+#      Sc2 <- score(altmodel,p=p1,S=S,data=NULL,n=n)
+      Sc2 <- score(altmodel,p=p1,data=model.frame(x),model=x$estimator,weight=Weight(x))
       rmidx <- NULL
       if (!is.null(pp$meanpar)) {
         rmidx <- 1:length(pp$meanpar)
       } 
       ##      myidx <- (length(Sc2)-altmodel$index$npar+1):length(Sc2)
 ##      Sc2 <- Sc2[-rmidx]
-      ##          Sc <- colSums(score(altmodel,data=model.frame(x),p=c(pp$meanpar,p1)))
-      I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
+##      I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
+      I <- information(altmodel,p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
       iI <- try(solve(I), silent=TRUE)
 ##      browser()      
       Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
@@ -273,7 +284,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
   Vars0 <- Vars
 
   if (!silent)
-    cat("\n\n")
+    cat("\n")
   ord <- order(Tests);
   Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
   Tests <- Tests[ord,,drop=FALSE]

@@ -30,7 +30,7 @@
     dots <- list(...)
     dots$attrs <- attrs
     dots$x <- g
-    if (is.null(dots$layoutType) & all(index(m)$A==0))
+    if (is.null(dots$layoutType) & all(index(x)$A==0))
       dots$layoutType <- "circo"
     g <- do.call("layoutGraph", dots)
     res <- tryCatch(renderGraph(g),error=function(e) NULL)

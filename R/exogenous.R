@@ -4,7 +4,7 @@ function(x,...) UseMethod("exogenous")
 "exogenous<-" <- function(x,...,value) UseMethod("exogenous<-")
 
 `exogenous<-.lvm` <- function(x,silent=FALSE,
-                              ##mom=TRUE,
+                              xfree=TRUE,
                               ...,value) {
   if (class(value)[1]=="formula") {
     exogenous(x,...) <- all.vars(value)
@@ -16,9 +16,9 @@ function(x,...) UseMethod("exogenous")
   }
   xorg <- exogenous(x)
   x$exogenous <- value
-  if (!is.null(value)) {
+  if (!is.null(value) & xfree) {
     notexo.idx <- which(!(xorg%in%value))
-    if (length(notexo.idx)>0) { ##  & mom) {      
+    if (length(notexo.idx)>0) { ##  & mom) {
       if (length(notexo.idx)>1) {
         covariance(x,xorg[notexo.idx],pairwise=TRUE,exo=TRUE) <- NA
       }

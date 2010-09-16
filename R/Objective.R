@@ -92,7 +92,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   xi <- mp$xi
   iC <- Inverse(C,0,det=FALSE)
   Debug("Sufficient stats.",debug)
-  if (!is.null(mu)) {
+  if (!is.null(mu) & !is.null(xi)) {
     W <- tcrossprod(mu-xi)
     T <- S+W
   } else {
@@ -101,7 +101,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean) ##, all=length(constrain(x))>0)
   vec.iC <- as.vector(iC)  
   Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
-  if (!is.null(mu)) # & mp$npar.mean>0)
+  if (!is.null(mu) & !is.null(xi)) # & mp$npar.mean>0)
     Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
   return(rbind(as.numeric(Grad)))
 }

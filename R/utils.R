@@ -251,9 +251,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   f <- as.formula(paste("~ 1+", paste(catX,collapse="+")))
   opt <- options(na.action="na.pass")
   M <- model.matrix(f,data)
-  if ((ncol(M)-1)==length(X)) {
-    return(list(x=x,data=data))
-  }
+  
   options(opt)
   Mnames <- colnames(M)
   Mpos <- attributes(M)$assign
@@ -288,6 +286,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       for (i in 1:ncol(mydata)) {
         if (is.Surv(mydata[,i]))
           mydata[,i] <- mydata[,i][,1]
+        if (is.character(mydata[,i]) | is.factor(mydata[,i]))
+          mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
       }
       
 ##      mydata <- data[,obs]

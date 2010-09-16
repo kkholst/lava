@@ -101,10 +101,12 @@ function(object,var=NULL,var2,exo=FALSE,...) {
       allvars <- c(allvars,var2)
     }
 
-    exoset <- setdiff(exogenous(object),allvars)
-    if (!exo & length(exoset)>0)
+    xorg <- exogenous(object)
+    exoset <- setdiff(xorg,allvars) 
+    if (!exo & length(exoset)<length(xorg)) {
 ##      exogenous(object,mom=TRUE) <- exoset
       exogenous(object) <- exoset
+    }
 
     if (!missing(var2)) {
       for (i in 1:length(var)) {

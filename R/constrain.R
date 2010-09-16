@@ -77,7 +77,6 @@ constrain.default <- function(x,estimate=FALSE,...) {
 }
 
 constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(object),...) {
-  if (!require("numDeriv")) stop("package Rgraphviz not available")
 ##  if (class(object)[1]=="lvm") {
 ##    return(constrain(object,estimate=FALSE))
 ##    }
@@ -104,6 +103,8 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
   names(myidx) <- names(parpos$parval)    
   mynames <- c()
   N <- length(index(object)$constrain.par)
+  if (N>0)
+    if (!require("numDeriv")) stop("package Rgraphviz not available")
 ##  res <- matrix(nrow=N,ncol=6)
   res <- c()
   count <- 0

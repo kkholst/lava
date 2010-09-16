@@ -102,7 +102,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     diag(iW) <- 1/diag(iW)
   }
 
-
   if (NCOL(D$dS)>30) {
     I <- matrix(0,NCOL(D$dS),NCOL(D$dS))
     for (i in 1:NCOL(D$dS)) {

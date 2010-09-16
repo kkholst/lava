@@ -115,10 +115,12 @@ covfix.lvm <- function(object,...) {
   object <- addvar(object,c(var1,var2),...)
 
   allvars <- c(var1,var2)
-  exoset <- setdiff(exogenous(object),allvars)
-  if (!exo & length(exoset)>0)
+  xorg <- exogenous(object)
+  exoset <- setdiff(xorg,allvars) 
+  if (!exo & length(exoset)<length(xorg)) {
 ##    exogenous(object,mom=TRUE) <- exoset
     exogenous(object) <- exoset
+  }
   
   if (pairwise) {
     p <- 0

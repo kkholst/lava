@@ -1,22 +1,3 @@
-parpos <- function(x,mean=TRUE,p,...) {
-  if (!missing(p)) {
-    if (!is.character(p)) p <- names(p)
-    idx1 <- match(p,coef(x,mean=mean,fix=FALSE))
-    idx11 <- match(p,coef(x,mean=mean,fix=FALSE,labels=TRUE))
-    res <- (union(idx1,idx11)); names(res) <- p
-    res <- idx1; res[!is.na(idx11)] <- idx11[!is.na(idx11)]
-    names(res) <- p
-    return(sort(res))
-  }
-  if (mean)
-    nn <- with(index(x),matrices(x,1:npar+npar.mean,meanpar=1:npar.mean)) ## Position of parameters
-  else nn <- with(index(x),matrices(x,1:npar,NULL))
-  nn$A[index(x)$M0!=1] <- 0
-  nn$P[index(x)$P0!=1] <- 0
-  nn$v[index(x)$v0!=1] <- 0
-  nn
-}
-
 updatelvm <- function(x,mean=TRUE,...) {
   index(x) <- reindex(x,mean=mean,...)
   x$parpos <- parpos(x,mean=mean,...)

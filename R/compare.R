@@ -20,18 +20,22 @@ comparepair <- function(x1,x2) {
 `compare` <-
   function(object,...) UseMethod("compare")
 
-compare.default <- function(object,...,par,contrast,null) {
+compare.default <- function(object,...,par,contrast,null,scoretest) {
   if (!missing(par)) {
     contrast <- rep(0,length(coef(object)))
     contrast[parpos(Model(object),p=par)] <- 1
     contrast <- diag(contrast)
   }
+  ### Wald test
   if (!missing(contrast)) {
-    B <- contrast        
+    B <- contrast    
     p <- coef(object)
+    if (is.vector(B)) { B <- rbind(B); colnames(B) <- names(contrast) }
     if (ncol(B)<length(p)) {
-      B <- matrix(0,ncol=length(coef(object)))
-      B[parpos(Model(object),p=colnames(contrast))] <- 1      
+      nn <- colnames(B)
+      B <- matrix(0,nrow=nrow(B),ncol=length(coef(object)))
+      myidx <- parpos(Model(object),p=nn)
+      B[,myidx] <- contrast[attributes(myidx)$ord]
     }
     if (missing(null)) null <- 0
     Q <- t(B%*%p-null)%*%Inverse(B%*%vcov(object)%*%t(B))%*%(B%*%p-null)
@@ -47,6 +51,39 @@ compare.default <- function(object,...,par,contrast,null) {
     class(res) <- "htest"
     return(res)        
   }
+
+  ### Score test
+  if (!missing(scoretest)) {
+    altmodel <- Model(object)
+    if (class(scoretest)[1]=="formula") scoretest <- list(scoretest)
+    for (i in scoretest) {
+      regression(altmodel) <- i
+    }
+    p0 <- numeric(length(coef(altmodel)))        
+    idx <-  match(coef(Model(object)),coef(altmodel))
+    p0[idx] <- coef(object)
+    Sc2 <- score(altmodel,p=p0,data=model.frame(object),weigth=Weight(altmodel),
+                 estimator=object$estimator,...)
+    I <- information(altmodel,p=p0,n=object$data$n,
+                     data=model.frame(object),weigth=Weight(object),
+                     estimator=object$estimator,...
+                     )
+    iI <- try(solve(I), silent=TRUE)
+    Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
+                 ## rbind(Sc)%*%iI%*%cbind(Sc)
+                 (Sc2)%*%iI%*%t(Sc2)
+                 )
+    attributes(Q) <- NULL; names(Q) <- "chisq"
+    df <- length(p0)-length(coef(object)); names(df) <- "df"
+    pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
+    res <- list(data.name=as.character(scoretest),
+                statistic = Q, parameter = df,
+                p.value=pQ, method = "Score test")
+    class(res) <- "htest"
+    return(res)    
+  }
+
+  ### Likelihood ratio test
   objects <- list(object,...)
   if (length(objects)<2) {
     L0 <- logLik(object)

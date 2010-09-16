@@ -39,15 +39,22 @@
     optim[names(control)] <- control
   }
 
-
+  
   Debug("Start values...",debug)
-  if (!is.null(optim$start)) {
+  if (!is.null(optim$start) & length(optim$start)==(M$npar+M$npar.mean)) {
     mystart <- optim$start
   } else {
     if (!silent) cat("Obtaining starting value...")
     mystart <- with(optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,silent=FALSE,fix=FALSE))
+    if (!is.null(optim$start)) {
+      pname <- names(optim$start)
+      ppos <- parpos.multigroup(x,p=pname,mean=TRUE)
+      if (any(!is.na(ppos)))
+        mystart[match(pname,ppos)] <- optim$start[na.omit(match(ppos,pname))]
+    }
     if (!silent) cat("\n")
   }
+  Debug(mystart,debug)
   Debug("Constraints...",debug)
   ## Setup optimization constraints
   lower <- rep(-Inf, x$npar);
@@ -64,8 +71,7 @@
     else
       constrained <- optim$constrain
     lower[] <- -Inf
-    optim$constrain <- TRUE
-    
+    optim$constrain <- TRUE    
     mystart[constrained] <- log(mystart[constrained])
   }
 
