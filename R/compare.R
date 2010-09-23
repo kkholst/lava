@@ -20,25 +20,29 @@ comparepair <- function(x1,x2) {
 `compare` <-
   function(object,...) UseMethod("compare")
 
-compare.default <- function(object,...,par,contrast,null,scoretest) {
+compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   if (!missing(par)) {
     contrast <- rep(0,length(coef(object)))
     contrast[parpos(Model(object),p=par)] <- 1
-    contrast <- diag(contrast)
+    contrast <- diag(contrast)[contrast!=0,]
   }
   ### Wald test
   if (!missing(contrast)) {
     B <- contrast    
     p <- coef(object)
     if (is.vector(B)) { B <- rbind(B); colnames(B) <- names(contrast) }
+    if (missing(Sigma)) {
+      Sigma <- vcov(object)
+    }
     if (ncol(B)<length(p)) {
       nn <- colnames(B)
-      B <- matrix(0,nrow=nrow(B),ncol=length(coef(object)))
       myidx <- parpos(Model(object),p=nn)
-      B[,myidx] <- contrast[attributes(myidx)$ord]
+      B0 <- matrix(0,nrow=nrow(B),ncol=length(coef(object)))
+      B0[,myidx] <- B[,attributes(myidx)$ord]
+      B <- B0
     }
     if (missing(null)) null <- 0
-    Q <- t(B%*%p-null)%*%Inverse(B%*%vcov(object)%*%t(B))%*%(B%*%p-null)
+    Q <- t(B%*%p-null)%*%Inverse(B%*%Sigma%*%t(B))%*%(B%*%p-null)
     df <- qr(B)$rank; names(df) <- "df"
     attributes(Q) <- NULL; names(Q) <- "chisq";
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
@@ -49,6 +53,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest) {
                 p.value=pQ, method = method
                 )
     class(res) <- "htest"
+    attributes(res)$B <- B
     return(res)        
   }
 

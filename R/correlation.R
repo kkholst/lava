@@ -18,14 +18,14 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
     f <- function(p) {
       p[1]/sqrt(p[2]*p[3])
     }
-    rho <- f(phi.v1.v2)    
+    rho <- f(phi.v1.v2)
     if (z) {
         zrho <- atanh(rho)
         var.z <- 1/(nrow(model.frame(x))-ifelse(adj,3,0)) ## n-k-3
         ci.z <- zrho + c(-1,1)*qnorm(1-level/2)*sqrt(var.z)
         ci.rho <- tanh(ci.z)
-        z <- 1/sqrt(var.z)*zrho
-        p.z <- 2*(pnorm(-abs(z))) # p-value using z-transform for H_0: rho=0.
+        zs <- 1/sqrt(var.z)*zrho
+        p.z <- 2*(pnorm(-abs(zs))) # p-value using z-transform for H_0: rho=0.
         est <- c(rho, NA, ci.rho[1], ci.rho[2])
     } else {      
       Sigma.phi.v1.v2 <- vcov(x)[coefpos,coefpos]

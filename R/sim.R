@@ -51,8 +51,12 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
     if (is.function(cens))
       cens <- cens(n,...)
     Delta <- (T<cens)
-    T[!Delta] <- cens[!Delta]
-    S <- Surv(T,Delta*1)
+    if (any(!Delta)) {
+      T[!Delta] <- cens[!Delta]
+      S <- Surv(T,Delta*1)      
+    }
+    else
+      S <- T
     return(S)
   }
   return(f)
@@ -83,16 +87,16 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
   xf <- intersect(unique(parlabels(x)),exogenous(x))
   xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
-  if (length(p)!=(index(x)$npar+index(x)$npar.mean)) {
+  if (length(p)!=(index(x)$npar+index(x)$npar.mean) | !is.null(names(p))) {
     p0 <- p
     p <- rep(1, index(x)$npar+index(x)$npar.mean)
     p[1:index(x)$npar.mean] <- 0
     p[index(x)$npar.mean + variances(x)] <- sigma
     p[index(x)$npar.mean + offdiags(x)] <- rho
-    idx1 <- match(names(p0),coef(x,mean=TRUE,fix=FALSE))
-    idx11 <- match(names(p0),coef(x,mean=TRUE,fix=FALSE,labels=TRUE))
-    idx2 <- which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE))
-    idx22 <- which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE,labels=TRUE))
+    idx1 <- na.omit(match(names(p0),coef(x,mean=TRUE,fix=FALSE)))
+    idx11 <- na.omit(match(names(p0),coef(x,mean=TRUE,fix=FALSE,labels=TRUE)))
+    idx2 <- na.omit(which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE)))
+    idx22 <- na.omit(which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE,labels=TRUE)))
 ##    browser()
     if (length(idx1)>0 && !is.na(idx1))      
       p[idx1] <- p0[idx2]

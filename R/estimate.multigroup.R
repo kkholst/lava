@@ -41,7 +41,7 @@
 
   
   Debug("Start values...",debug)
-  if (!is.null(optim$start) & length(optim$start)==(M$npar+M$npar.mean)) {
+  if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
     mystart <- optim$start
   } else {
     if (!silent) cat("Obtaining starting value...")
@@ -144,7 +144,7 @@
 ################################################################################
 
     if (Xfix) {
-      myclass <- c("lvmfit.randomslope",myclass)
+      myclass <- c(myclass,"lvmfit.randomslope")
       for (k in 1:x$ngroup) {
         x1 <- x0 <- x$lvm[[k]]
         data0 <- x$data[[k]]
@@ -410,7 +410,7 @@ For numerical approximation please install the library 'numDeriv'.")
   asVar <- tryCatch(solve(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
 
-  if (!silent) cat("\n")
+##  if (!silent) cat("\n")
 
     
   res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight)

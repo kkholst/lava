@@ -4,7 +4,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   nm <- length(models)
   if (nm!=length(datasets)) stop("Supply dataset for each model")
   if (nm<2) stop("Two or more groups neeeded")
-
+  mynames <- names(models)
+  
   ## Check for random slopes
   xfix <- list()
   for (i in 1:length(models)) {
@@ -69,7 +70,6 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     }
 
     models.orig <- models
-    
     val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,...)
     val$models.orig <- models.orig; val$missing <- TRUE
     return(val)
@@ -215,13 +215,12 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     mymean <- NULL
     mymeanpos <- NULL
     mymeanlist <- NULL
-  }
- 
+  }  
   ####
 
 ##  mymean <- paste("m",1:nfree.mean,sep=""); names(mymean) <- vars(models)[midx]
   
-  res <- list(npar=nfree, npar.mean=nfree.mean, ngroup=length(lvms),
+  res <- list(npar=nfree, npar.mean=nfree.mean, ngroup=length(lvms), names=mynames,
               lvm=lvms, data=datas, samplestat=samplestat,
               A=As, P=Ps,
               meanpar=names(mu),

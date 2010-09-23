@@ -94,7 +94,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=TRUE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=TRUE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
@@ -111,8 +111,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
 ##  }
   if (missing(fix))
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)  
-
-  cat("\n")
 
   S <- diag(length(manifest(x)));
   mu <- rep(0,nrow(S));  
@@ -232,7 +230,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   e.mis <- estimate(mg0,debug=debug,control=control,silent=silent,weight=val$weights,estimator=estimator,...)
 
   ##  return(e.mis)
-
+  
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]
   cc <- coef(e.mis,level=0)
   mynames <- c()
@@ -264,7 +262,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
       updatelvm(x,zeroones=TRUE,deriv=TRUE)
                 ##                reindex(x,zeroones=TRUE,deriv=TRUE)
   }
-  
+
   res <- with(val, list(coef=cc,
                         patterns=patterns, table=table(mis.type),
                         nmis=nmis,
@@ -284,7 +282,14 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
                         ))
   class(res) <- c("lvm.missing","lvmfit") #,"lvmfit")
   if ("lvmfit.randomslope"%in%class(e.mis))
-    class(res) <- c("lvmfit.randomslope",class(res))
+    class(res) <- c(class(res),"lvmfit.randomslope")
+  if (hessian) {
+    cat("Calculating asymptotic variance...\n")
+    res$vcov <- solve(information(res$estimate,type="hessian"))
+    cc[] <- coef(e.mis,level=0,vcov=res$vcov)
+    res$coef <- cc
+  }
+
   res <- edgelabels(res,type="est")
   return(res)
 }

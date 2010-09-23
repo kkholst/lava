@@ -8,11 +8,14 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
     
   cl <- match.call()
   lname <- paste(model,"_score.lvm",sep="")
-  if (!exists(lname))
+  if (!exists(lname)) {
     lname <- paste(model,"_gradient.lvm",sep="")
-
-  scoreFun <- get(lname)
-
+    mygrad <- get(lname)
+    scoreFun <- function(...) -mygrad(...)
+  } else {
+    scoreFun <- get(lname)
+  }
+  
   if (missing(data) || is.null(data)) {
     cl[[1]] <- scoreFun
     score <- eval.parent(cl)
@@ -88,7 +91,7 @@ score.lvm.missing <- function(object,
 ###{{{ score.multigroupfit
 
 score.multigroupfit <- function(x,p=x$opt$est,...) {
-  score(x$model0,p=p,...)
+  score(x$multigroup,p=p,...)
 }
 
 ###}}} score.multigroupfit
@@ -96,18 +99,18 @@ score.multigroupfit <- function(x,p=x$opt$est,...) {
 ###{{{ score.multigroup
 
 score.multigroup <- function(x,data=x$data,p,indiv=FALSE,...) {
-  res <- procrandomslope(x)
-  pp <- with(res, modelPar(model,p)$p)
-  if (!indiv) {
-    S <- 0
-    for (i in 1:x$ngroup)
-      S <- S + colSums(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],...))    
-  } else {
-    S <- list()
-    for (i in 1:x$ngroup)
-      S <- c(S, list(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],...)))
+  rm <- procrandomslope(x)
+  pp <- with(rm, modelPar(model,p)$p)
+  parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
+  S <- list()
+  for (i in 1:x$ngroup) {
+    S <- c(S, list(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],indiv=FALSE)))#,...)))    
   }
-  return(S)  
+  if (indiv) return(S)
+  res <- numeric(length(p))
+  for (i in 1:x$ngroup)
+    res[parord[[i]]] <- res[parord[[i]]]+S[[i]]
+  return(res)  
 }
 
 ###}}} score.multigroup

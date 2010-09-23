@@ -21,4 +21,3 @@ function(object,var,...,value) UseMethod("nodecolor<-")
   }
 
 
-

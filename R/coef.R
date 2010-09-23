@@ -7,8 +7,12 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
     rownames(coefs) <- c(coef(object,mean=TRUE)[c(1:index(object)$npar.mean)],paste("p",1:index(object)$npar,sep=""))
-    I <- information(object,p=p,data=data,type="E")
-    myvcov <- solve(I)
+    if (!is.null(data)) {
+      I <- information(object,p=p,data=data,type="E")
+      myvcov <- solve(I)
+    } else {
+      myvcov <- matrix(NA,length(p),length(p))
+    }
     object$vcov <- myvcov
     coefs[,2] <- sqrt(diag(myvcov))
     coefs[,3] <- coefs[,1]/coefs[,2]
@@ -94,7 +98,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
 
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," with "), data,
-         std=NULL, labels=TRUE, 
+         std=NULL, labels=TRUE, vcov, 
          debug=FALSE, type, reliability=FALSE, second=FALSE, ...) {
 
   ## object0 <- object
@@ -143,7 +147,6 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
     myorder <- 1:(npar+npar.mean)
     myorder.reg <- 1:npar
   }
-
   
   if (level<0) {
     res <- pars.default(object)
@@ -176,13 +179,18 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   A <- p$A
   P <- p$P
   ## coefs <- object$coef[myorder,]
-  mycoef <- object$coef 
-  if (!missing(type)) {
-    if (!missing(data))
-      I <- information(object,type=type,data=data)
-    I <- information(object,type=type)
-    myvcov <- solve(I)
-    mycoef[,2] <- sqrt(diag(myvcov))
+  mycoef <- object$coef
+  if (!missing(type) | !missing(vcov)) {
+    if (!missing(vcov)) {
+      mycoef[,2] <- sqrt(diag(vcov))
+    } else {
+      if (!missing(data)) 
+        I <- informaton(object,type=type,data=data)
+      else
+        I <- information(object,type=type)    
+      myvcov <- solve(I)
+      mycoef[,2] <- sqrt(diag(myvcov))
+    }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
     mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))
   }
@@ -346,7 +354,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   attributes(res)$from <- From
   attributes(res)$latent <- latent.var
   attributes(res)$nlincon <- nlincon.estimates.full
-  
+
   return(res)
 }
 
@@ -363,12 +371,15 @@ coef.multigroup <- function(object,...) {
 ###{{{ coef.multigroupfit
 
 coef.multigroupfit <-
-  function(object, level=1,
+  function(object, level=1,vcov,
            debug=FALSE,labels=FALSE,...) {
 
     if (level==0) {
       theta <- pars(object)
-      theta.sd <- sqrt(diag(object$vcov))
+      if (missing(vcov))
+        theta.sd <- sqrt(diag(object$vcov))
+      else
+        theta.sd <- sqrt(diag(vcov))
       res <- cbind(theta,theta.sd,(Z <- theta/theta.sd),2*(1-pnorm(abs(Z))))
       colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
       return(res)

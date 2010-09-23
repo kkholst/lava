@@ -56,6 +56,9 @@ print.multigroupfit <- function(x,...)  {
     counter <- counter+1
     cat(rep("-",50),"\n",sep="")
     cat("Group ", counter, sep="")
+    myname <- x$model$names[counter]
+    if (!is.null(myname) && !is.na(myname))
+      cat(": ",myname,sep="")
     cat(" (n=",nrow(Model(x)$data[[counter]]), ")\n", sep="")
     print(CC[[counter]],quote=FALSE,right=TRUE)
   }

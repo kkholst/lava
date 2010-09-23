@@ -385,7 +385,7 @@ For numerical approximation please install the library 'numDeriv'.")
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
     
   }
-  if (any(is.na(asVar))) {warning("Problems with assymptotic variance matrix. Possibly non-singular information matrix!")
+  if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
                         }
   Debug("did that", debug) 
 
