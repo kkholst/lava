@@ -242,7 +242,7 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
 
 categorical2dummy <- function(x,data,silent=TRUE,...) {
   x0 <- x
-  X <- exogenous(x)
+  X <- intersect(exogenous(x),colnames(data))
   catX <- c()  
   for (i in X) {
     if (!is.numeric(data[,i])) catX <- c(catX,i)
@@ -365,6 +365,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###}}}
 
 ###{{{ symmetrize
+
 `symmetrize` <-
 function(M, upper=TRUE) {
   if (length(M)==1) return(M)
@@ -384,6 +385,7 @@ function(M, upper=TRUE) {
     return(M)
   }
 }
+
 ###}}}
 
 ###{{{ toformula

@@ -490,7 +490,7 @@ CoefMat <- function(x,digits=5,scientific=0,level=9,...) {
   mycoef <- format(cc,digits=digits,scientific=scientific,...)
 ##  mycoef <- formatC(cc,digits=digits,scientific=scientific,...)
   mycoef[is.na(cc)] <- ""
-  mycoef[cc[,4]<1e-16,4] <- "  <2e-16"
+  mycoef[cc[,4]<1e-16,4] <- "  <1e-16"
   
 
   M <- ncol(cc)
@@ -517,13 +517,24 @@ CoefMat <- function(x,digits=5,scientific=0,level=9,...) {
       res <- rbind(res, c("Measurements:",rep("",M)))
       count <- 0
       Delta <- FALSE
-      for (i in latent.from) {
+      for (i in latent.var) {
         count <- count+1
-        newrow <- mycoef[i,]        
-        newname <- rownames(cc)[i]
-        if (count%in%first.entry) Delta <- !Delta
+        Delta <- !Delta
+        Myidx <- setdiff(which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var)),first.entry[count])
+        Myidx <- c(first.entry[count],Myidx)
         prefix <- ifelse(Delta,"  ","   ")
-        res <- rbind(res,c(paste(prefix,newname),newrow))
+        for (j in Myidx) {
+          newrow <- mycoef[j,]        
+          newname <- rownames(cc)[j]
+          res <- rbind(res,c(paste(prefix,newname),newrow))
+        }                
+##      for (i in latent.from) {      
+##        count <- count+1
+##        newrow <- mycoef[i,]        
+##        newname <- rownames(cc)[i]
+##        if (count%in%first.entry) Delta <- !Delta
+##        Prefix <- ifelse(Delta,"  ","   ")
+##        res <- rbind(res,c(paste(prefix,newname),newrow))
         ##    res <- rbind(res,c(newname,newrow))
       }      
     }    
