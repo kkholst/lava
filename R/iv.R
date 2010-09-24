@@ -26,7 +26,7 @@ CondVar <- function(S,idx) {
 }
 
 varest <- function(x,data) {
-  p <- IV(x,d)$estimate
+  p <- IV(x,data)$estimate
   idx <- match(names(p),coef(x,mean=TRUE))
   x0 <- parfix(Model(x),idx,p)
   index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)

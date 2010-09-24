@@ -1,27 +1,27 @@
 normal.lvm <- function(mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   if (!missing(mean) & !missing(sd)) 
-    f <- function(n,...) rnormal(n,mean,sd)
+    f <- function(n,mu,var,...) rnormal(n,mean,sd)
   else
-    f <- function(n,mu=0,var=1,...) rnormal(n,mu,sqrt(var))
+    f <- function(n,mu,var,...) rnormal(n,mu,sqrt(var))
   return(f)
 }
 poisson.lvm <- function(lambda) {
  if (!missing(lambda))
-    f <- function(n,...) rpois(n,lambda)
+    f <- function(n,mu,...) rpois(n,lambda)
  else
    f <- function(n,mu,...) rpois(n,exp(mu))
  return(f)
 }
 binomial.lvm <- function(link="logit",p) {
   if (!missing(p))
-    f <- function(n,...) rbinom(n,1,p)
+    f <- function(n,mu,var,...) rbinom(n,1,p)
   else {
     f <- switch(link,
                 logit = 
-                function(n,mu,...) rbinom(n,1,tigol(mu)),
+                function(n,mu,var,...) rbinom(n,1,tigol(mu)),
                 cloglog =
-                function(n,mu,...) rbinom(n,1,1-exp(-exp(1-mu))),
+                function(n,mu,var,...) rbinom(n,1,1-exp(-exp(1-mu))),
                 function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
                 ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
                 )
@@ -30,7 +30,7 @@ binomial.lvm <- function(link="logit",p) {
 }
 uniform.lvm <- function(a,b) {
   if (!missing(a) & !missing(b)) 
-    f <- function(n,...) runif(n,a,b)
+    f <- function(n,mu,var,...) runif(n,a,b)
   else
     f <- function(n,mu,var,...)
       (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))

@@ -173,7 +173,6 @@ weighted_gradient.lvm <-  function(x,p,data,
 
 weighted2_method.lvm <- "NR"
 `weighted2_hessian.lvm` <- function(p,model,n,opt,weight=NULL,data,...) {
-  require(numDeriv)
   myfun <- function(p0) weighted2_gradient.lvm(model,p=p0,n=n,data=data,weight=weight)
   jacobian(myfun,p)
 }

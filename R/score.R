@@ -81,9 +81,9 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   
 ###{{{ score.lvm.missing
 
-score.lvm.missing <- function(object,
-                          p=coef(object), ...) {
-  score(object$estimate$model0, p=p, ...)
+score.lvm.missing <- function(x,
+                          p=coef(x), ...) {
+  score(x$estimate$model0, p=p, ...)
 }
 
 ###}}} score.lvm.missing

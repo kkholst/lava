@@ -1,20 +1,20 @@
 
-deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
+deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
   ## if (!missing(mom)) {
   ##   if (mom$npar==length(attributes(mom)$pars))
   ##     meanpar <- NULL
   ## }
   if (missing(mom) & !missing(p)) {
-    mom <- modelVar(x,p)
+    mom <- modelVar(expr,p)
   }
   if (missing(mom) & !missing(p)) {
-    mom <- modelVar(x,p)
+    mom <- modelVar(expr,p)
     all <- TRUE
     if (mom$npar==length(p))
       meanpar <- NULL  
   }
 
-  ii <- index(x)
+  ii <- index(expr)
   npar.total <- npar <- ii$npar; npar.reg <- ii$npar.reg
   npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
   if (npar.mean>0) {
@@ -23,10 +23,10 @@ deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, seco
     meanpar <- NULL
   }
 
-  nn <- x$parpos
+  nn <- expr$parpos
   if (is.null(nn))  
     {
-      nn <- matrices(x,1:npar + npar.mean,meanpar);
+      nn <- matrices(expr,1:npar + npar.mean,meanpar);
       nn$A[ii$M0!=1] <- 0
       nn$P[ii$P0!=1] <- 0
       nn$v[ii$v0!=1] <- 0
@@ -67,11 +67,11 @@ deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, seco
     
     if (!is.null(meanpar) & npar.mean>0) {
       if (ii$sparse) {
-        dv <- Matrix(0, nrow=length(x$mean), ncol=npar.total)
+        dv <- Matrix(0, nrow=length(expr$mean), ncol=npar.total)
       } else {
-        dv <- matrix(0, nrow=length(x$mean), ncol=npar.total)
+        dv <- matrix(0, nrow=length(expr$mean), ncol=npar.total)
       }
-      dv[,mean.idx] <- sapply(1:npar.mean, function(i) izero(which(nn$v==i),length(x$mean)) ) 
+      dv[,mean.idx] <- sapply(1:npar.mean, function(i) izero(which(nn$v==i),length(expr$mean)) ) 
       res <- c(res, list(dv=dv))
     }
   } else {
@@ -80,10 +80,10 @@ deriv.lvm <- function(x, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, seco
   if (!all) return(res)
  
   ## Non-linear constraints:
-  if (!missing(p)  && length(index(x)$constrain.par)>0) {
+  if (!missing(p)  && length(index(expr)$constrain.par)>0) {
 ##    print("Constraints....")
-    for (pp in index(x)$constrain.par) {
-      myc <- constrain(x)[[pp]]
+    for (pp in index(expr)$constrain.par) {
+      myc <- constrain(expr)[[pp]]
       parval <- mom$parval
       vals <- parval[attributes(myc)$args]
       fval <- myc(unlist(vals))

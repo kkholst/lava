@@ -185,7 +185,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
       mycoef[,2] <- sqrt(diag(vcov))
     } else {
       if (!missing(data)) 
-        I <- informaton(object,type=type,data=data)
+        I <- information(object,type=type,data=data)
       else
         I <- information(object,type=type)    
       myvcov <- solve(I)
