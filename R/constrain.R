@@ -104,7 +104,7 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
   mynames <- c()
   N <- length(index(object)$constrain.par)
   if (N>0)
-    if (!require("numDeriv")) stop("package Rgraphviz not available")
+    ##    if (!require("numDeriv")) stop("package numDeriv not available")
 ##  res <- matrix(nrow=N,ncol=6)
   res <- c()
   count <- 0
