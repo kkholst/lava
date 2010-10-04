@@ -1,23 +1,27 @@
-satmodel <- function(object,logLik=TRUE,...) {
+satmodel <- function(object,logLik=TRUE,data=model.frame(object),
+                     control=list(start=coef(object),trace=1),
+                     weight=Weight(object),estimator=object$estimator,
+                     ...) {
   if (object$estimator=="gaussian" & logLik)
     return(logLik(object, type="sat"))
   covar <- exogenous(object)
   y <- endogenous(object)
   m0 <- Model(object)
-  suppressWarnings(m0 <- regression(m0,y,covar))
+  if (length(covar)>0)
+    suppressWarnings(m0 <- regression(m0,y,covar))
   if (length(latent(m0))>0)
     kill(m0) <- latent(m0)
   cancel(m0) <- y
-  ##  suppressWarnings(covariance(m0) <- y)  
-  if (length(y)>1) {
-    for (i in 1:(length(y)-1))
-      for (j in (i+1):length(y)) {
-        m0 <- regression(m0,y[i],y[j])
-      }
-  }
+  suppressWarnings(covariance(m0) <- y)
+  ## if (length(y)>1) {
+  ##   for (i in 1:(length(y)-1))
+  ##     for (j in (i+1):length(y)) {
+  ##       m0 <- regression(m0,y[i],y[j])
+  ##     }
+  ## }
   cat("Calculating MLE of saturated model:\n")
   missing <- "lvm.missing"%in%class(object)  
-  e0 <- estimate(m0,model.frame(object),weight=Weight(object),estimator=object$estimator,control=list(start=coef(object),trace=1),silent=TRUE,missing=missing)
+  e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,missing=missing,control=control,...)
   if (logLik)
     return(logLik(e0))
   return(e0)

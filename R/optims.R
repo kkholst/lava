@@ -97,7 +97,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
       cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
       count2 <- 0
     }
-    if (sum(newpar$D^2)<control$S.tol) break;
+    if (mean(newpar$D^2)<control$S.tol) break;
 ##    if (frobnorm(oldpar-thetacur)<control$abs.tol) break;
   }
   res <- list(par=thetacur, iterations=count, method="NR")
