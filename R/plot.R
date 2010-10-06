@@ -4,7 +4,7 @@
   function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
-           parameters=TRUE,
+           parameters=TRUE,addstyle=TRUE,
            ...) {
   if (all) {
     diag <- cor <- labels <- intercept <- addcolor <- TRUE
@@ -12,7 +12,7 @@
   index(x) <- reindex(x)
 ##  browser()
   if (!require("Rgraphviz")) stop("package Rgraphviz not available")
-  g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr)
+  g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   if  (labels) {
     AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
     mylab <- AP$P; mylab[AP$A!="0"] <- AP$A[AP$A!="0"]
@@ -20,8 +20,6 @@
     mylab[!is.na(x$covpar)] <- x$covpar[!is.na(x$covpar)]
     g <- edgelabels(g, lab=mylab)
   }
-  if (noplot)
-    return(g)
   if (debug) {
     plot(g)
   } else {
@@ -33,6 +31,8 @@
     if (is.null(dots$layoutType) & all(index(x)$A==0))
       dots$layoutType <- "circo"
     g <- do.call("layoutGraph", dots)
+    if (noplot)
+      return(g)    
     res <- tryCatch(renderGraph(g),error=function(e) NULL)
     options(.savedOpt)
   }

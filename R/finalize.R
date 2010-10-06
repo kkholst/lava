@@ -2,7 +2,7 @@
 function(model,...) UseMethod("finalize")
 
 `finalize.lvm` <-
-function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, ...) {
+function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
   opt <- options(warn=-1)
   x <- Graph(model)
   
@@ -77,7 +77,7 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
       if(A[i,j]==1 & A[j,i]==1) recursive <- c(recursive,
                         paste(var[i],"~",var[j], sep=""),
                         paste(var[j],"~",var[i], sep=""))
- 
+
   for (e in edgeNames(x)) {
     dir <- "forward"; lty <- 1; arrowtail <- "none"
     if (e %in% recursive) {
@@ -93,7 +93,7 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
 ##    estr <- paste("\"",e,"\"",sep="")
     estr <- e
 ##    browser()
-    for (f in c("col","cex","textCol","lwd")) {
+    for (f in c("col","cex","textCol","lwd","lty")) {
       if (!(estr%in%names(edgeRenderInfo(x)[[f]]))
           || is.na(edgeRenderInfo(x)[[f]][[estr]]))
         x <- addattr(x,f,var=estr,
@@ -101,12 +101,14 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
                      fun="edgeRenderInfo")      
     }
 
-    x <- addattr(x,"lty",var=estr,val=lty,fun="edgeRenderInfo")
-    x <- addattr(x,"direction",var=estr,val=dir,fun="edgeRenderInfo")
-    x <- addattr(x,"dir",var=estr,val=dir,fun="edgeRenderInfo")
-    x <- addattr(x,"arrowhead",var=estr,val=arrowhead,fun="edgeRenderInfo")
-    x <- addattr(x,"arrowtail",var=estr,val=arrowtail,fun="edgeRenderInfo")
-    x <- addattr(x,attr="fontsize",var=estr,val=fontsize1,fun="edgeRenderInfo")
+    if (addstyle) {
+      x <- addattr(x,"lty",var=estr,val=lty,fun="edgeRenderInfo")
+      x <- addattr(x,"direction",var=estr,val=dir,fun="edgeRenderInfo")
+      x <- addattr(x,"dir",var=estr,val=dir,fun="edgeRenderInfo")
+      x <- addattr(x,"arrowhead",var=estr,val=arrowhead,fun="edgeRenderInfo")
+      x <- addattr(x,"arrowtail",var=estr,val=arrowtail,fun="edgeRenderInfo")
+      x <- addattr(x,attr="fontsize",var=estr,val=fontsize1,fun="edgeRenderInfo")
+    }
     if (is.null(edgeRenderInfo(x)$label))
       edgeRenderInfo(x)$label <- expression()
 

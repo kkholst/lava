@@ -6,17 +6,23 @@ function(x,...) UseMethod("information")
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
                                     c("E","hessian","varS","outer","robust","num"),"outer"),
                             data,weight=NULL,model="gaussian",method="simple",
+                            inverse=FALSE, pinv=TRUE,
                             score=TRUE,...) {
   if (missing(n))
     n <- NROW(data)
   if (type[1]=="robust") {
     cl <- match.call()
-    cl$type <- "E"
-    I <- eval.parent(cl)
+    cl$inverse <- FALSE
     cl$type <- "outer"
     J <- eval.parent(cl)
+    if (inverse) cl$inverse <- TRUE
+    cl$type <- "E"
+    I <- eval.parent(cl)
 ##    I <- information(x,p,n,data=data,weight=weight,type="E")
 ##    J <- information(x,p,n,data=data,weight=weight,type="outer")
+    if (inverse) {
+      return(I%*%J%*%I)
+    }
     return(I%*%solve(J)%*%I)
   }
   if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
@@ -24,12 +30,27 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,indiv=FALSE,seed=1,n=n) ##...)
     ##    I <- -hessian(function(p0) logLik(x,p0,dd),p)
     I <- -jacobian(myf,p,method=method)
-    return((I+t(I))/2) # Symmetric result
+    res <- (I+t(I))/2 # Symmetric result
+    if (inverse) {
+      if (pinv)
+        iI <- Inverse(res)
+      else
+        iI <- solve(res)
+      return(iI)
+    }
+    return(res)
   }
   if (type[1]=="varS" | type[1]=="outer") {
     S <- score(x,p=p,data=na.omit(data),model=model,weight=weight,indiv=TRUE,...)
-##    print("...")
+    ##    print("...")
     res <- t(S)%*%S
+    if (inverse) {
+      if (pinv)
+        iI <- Inverse(res)
+      else
+        iI <- solve(res)
+      return(iI)
+    }
     attributes(res)$grad <- colSums(S)
     return(res)    
   }
@@ -71,6 +92,13 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       }
       L <- lapply(1:nrow(data),function(y) myfun(y))
       val <- apply(array(unlist(L),dim=c(length(p0),length(p0),nrow(data))),c(1,2),sum)
+      if (inverse) {
+        if (pinv)
+          iI <- Inverse(val)
+        else
+          iI <- solve(val)
+        return(iI)
+      }
       return(val)
     }    
   }
@@ -78,6 +106,13 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   if (!is.null(weight) && is.matrix(weight)) {
     L <- lapply(1:nrow(weight),function(y) information(x,p=p,n=1,type=type,weight=weight[y,]))
     val <- apply(array(unlist(L),dim=c(length(p),length(p),nrow(weight))),c(1,2),sum)
+    if (inverse) {
+      if (pinv)
+        iI <- Inverse(val)
+      else
+        iI <- solve(val)
+      return(iI)
+    }
     return(val)
   }
   
@@ -115,8 +150,16 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   } else {
     information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
   }
-  if (is.null(pp$meanpar))
+  if (is.null(pp$meanpar)) {
+    if (inverse) {
+      if (pinv)
+        iI <- Inverse(information_Sigma)
+      else
+        iI <- solve(information_Sigma)
+      return(iI)
+    }
     return(information_Sigma)
+  }
 
   f <- function(p0) modelVar(x,p0)$xi
   
@@ -132,7 +175,13 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   ##   if (!is.null(mu)) # & mp$npar.mean>0)
   ##     Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
   ## }
-
+  if (inverse) {
+    if (pinv)
+      iI <- Inverse(information)
+    else
+      iI <- solve(information)
+    return(iI)
+  }
   return(information)  
 }
 

@@ -6,8 +6,9 @@ variances <- function(x,mean=FALSE) {
   x$parpos <- parpos(Model(x),mean=TRUE) 
   res <- diag(x$parpos$P)[diag(index(x)$P0)==1]
   if (!mean) {
-    res - index(x)$npar.mean
+    return(res - index(x)$npar.mean)    
   }
+  return(res)
 }
 ## And the off-diagonal (covariance) parameters
 offdiags <- function(x,mean=FALSE) {

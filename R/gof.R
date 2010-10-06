@@ -1,8 +1,11 @@
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
-                     control=list(start=coef(object),trace=1),
+##                     control=list(start=coef(object),trace=1),
+                     control=list(trace=1),
                      weight=Weight(object),estimator=object$estimator,
+                     missing="lvm.missing"%in%class(object),
+                     regr=FALSE,
                      ...) {
-  if (object$estimator=="gaussian" & logLik)
+  if (object$estimator=="gaussian" & logLik & !missing)
     return(logLik(object, type="sat"))
   covar <- exogenous(object)
   y <- endogenous(object)
@@ -12,16 +15,24 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
   if (length(latent(m0))>0)
     kill(m0) <- latent(m0)
   cancel(m0) <- y
-  suppressWarnings(covariance(m0) <- y)
-  ## if (length(y)>1) {
-  ##   for (i in 1:(length(y)-1))
-  ##     for (j in (i+1):length(y)) {
-  ##       m0 <- regression(m0,y[i],y[j])
-  ##     }
-  ## }
+  if (!regr)
+    suppressWarnings(covariance(m0) <- y)
+  else {
+    if (length(y)>1) {
+      for (i in 1:(length(y)-1))
+       for (j in (i+1):length(y)) {
+         m0 <- regression(m0,y[i],y[j])
+       }
+    }
+    exogenous(m0) <- covar
+  }
+  if (is.null(control$start)) {
+    mystart <- rep(0,with(index(m0), npar.mean+npar))
+    mystart[variances(m0,mean=TRUE)] <- 1
+    control$start <- mystart
+  }  
   cat("Calculating MLE of saturated model:\n")
-  missing <- "lvm.missing"%in%class(object)  
-  e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,missing=missing,control=control,...)
+  e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
   if (logLik)
     return(logLik(e0))
   return(e0)

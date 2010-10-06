@@ -185,10 +185,9 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
       mycoef[,2] <- sqrt(diag(vcov))
     } else {
       if (!missing(data)) 
-        I <- information(object,type=type,data=data)
+        myvcov <- information(object,type=type,data=data,inverse=TRUE)
       else
-        I <- information(object,type=type)    
-      myvcov <- solve(I)
+        myvcov <- information(object,type=type,inverse=TRUE)    
       mycoef[,2] <- sqrt(diag(myvcov))
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
@@ -520,8 +519,10 @@ CoefMat <- function(x,digits=5,scientific=0,level=9,...) {
       for (i in latent.var) {
         count <- count+1
         Delta <- !Delta
-        Myidx <- setdiff(which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var)),first.entry[count])
-        Myidx <- c(first.entry[count],Myidx)
+##        Myidx <- setdiff(which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var)),first.entry[count])
+##        Myidx <- c(first.entry[count],Myidx)
+        Myidx <- which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var))
+
         prefix <- ifelse(Delta,"  ","   ")
         for (j in Myidx) {
           newrow <- mycoef[j,]        

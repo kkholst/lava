@@ -270,7 +270,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
                         cc=mycc,
                         ncc=as.numeric(table(mis.type)[pattern.allcomp]),
                         multigroup=e.mis$model,
-                        model0=e.mis$model0$lvm,
+##                        mg0=e.mis$model0$lvm,
                         estimate=e.mis,
                         model=x,
                         model0=x0,

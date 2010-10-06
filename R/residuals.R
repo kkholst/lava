@@ -29,7 +29,7 @@ gradpredict <- function(p,obj,data=model.frame(obj)) {
   Y <- with(obj, setdiff(manifest(model), X))
   X.idx <- with(obj, match(X,manifest(model)))
   X.idx.all <- with(obj, match(X, vars(model)))
-
+  
   mu0 <- mom$v; mu0[X.idx.all] <- 0
   xs <- data[,X,drop=FALSE]
   mu.x <- apply(xs, 1, FUN=function(i) { res  <- rep(0,length(mu0)); res[X.idx.all] <- i; res })
