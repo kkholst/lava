@@ -11,7 +11,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   for (i in 1:length(models)) {
     x0 <- models[[i]]
     data0 <- datasets[[i]]
-    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0))]
+    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
     xfix <- c(xfix, list(xfix0))
   }
   if (missing(fix)) {

@@ -6,10 +6,13 @@ function(st1,st2) {
 
 ###{{{ parlabels
 
-parlabels <- function(x) {
-  c(unlist(intfix(x)[unlist(lapply(intfix(x), function(y) !is.na(y) & !is.numeric(y)))]),
-    regfix(x)$labels[!is.na(regfix(x)$labels)],
-    covfix(x)$labels[!is.na(covfix(x)$labels)])
+parlabels <- function(x,exo=FALSE) {
+  res <- c(unlist(intfix(x)[unlist(lapply(intfix(x), function(y) !is.na(y) & !is.numeric(y)))]),
+           regfix(x)$labels[!is.na(regfix(x)$labels)],
+           covfix(x)$labels[!is.na(covfix(x)$labels)])
+  if (exo)
+    res <- intersect(res,exogenous(x))
+  return(res)
 }
 
 ###}}} parlabels
@@ -90,7 +93,7 @@ procrandomslope <- function(object,data=object$data,...) {
   for (i in 1:object$ngroup) {
     x0 <- object$lvm[[i]]
     data0 <- data[[i]]
-    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0))]
+    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
     xfix <- c(xfix, list(xfix0))
     if (length(xfix0)>0) { ## Yes, random slopes
       Xfix<-TRUE
@@ -273,7 +276,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###{{{ procdata.lvm
 
 `procdata.lvm` <-
-  function(x,data,debug=FALSE,categorical=FALSE,na.method="complete.obs") {    
+  function(x,data,debug=FALSE,categorical=FALSE,na.method=ifelse(any(is.na(data[,endogenous(x)])),"pairwise.complete.obs","complete.obs")) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
     }
@@ -291,10 +294,10 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       }
       
 ##      mydata <- data[,obs]
-      if (any(is.na(mydata))) {
+##      if (any(is.na(mydata))) {
 ##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)
-        mydata <- na.omit(mydata)
-      }
+##        mydata <- na.omit(mydata)
+##      }
       S <- NULL
       n <- nrow(mydata)
       if (n==1) {
@@ -303,7 +306,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       if (na.method=="pairwise.complete.obs") {
         mu <- colMeans(mydata,na.rm=TRUE)
         if (is.null(S))
-          S <- cov(na.omit(mydata),use=na.method)        
+          S <- cov(mydata,use=na.method)        
       }
       if (na.method=="complete.obs") {
         mu <- colMeans(na.omit(mydata))

@@ -94,17 +94,17 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=TRUE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
   Debug("estimate.MAR",debug)
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
-  if (length(redvar)>0)
+  if (length(redvar)>0 & !silent)
     warning(paste("Remove latent variable colnames from dataset",redvar)) 
 
   
-  xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x))],latent(x))
+  xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
 ##    names(data)[(names(data)%in%parlabels(x))]
 ##  if (length(xfix)>0) {
 ##    warning("Random slopes detected. Estimation with data MAR not supported.")   
@@ -119,7 +119,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   vnames <- manifest(x)
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
-    cat("Calculating 1. and 2. moments of exogenous variables...\n")
+    if (!silent)
+      cat("Calculating 1. and 2. moments of exogenous variables...\n")
     
     exo.idx <- c(which(manifest(x)%in%exogenous(x)))
     xx <- subset(Model(x),exogenous(x))
@@ -150,10 +151,12 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   ##    x <- fixsome(x, data=data0, S=S, mu=mu, measurement.fix=fix, exo.fix=TRUE, x0=TRUE)
   ##  }    
   ##fixsome(x,data=data0,measurement.fix=FALSE,exo.fix=TRUE)
-  
-  cat("Identifying missing patterns...")
+
+  if (!silent)
+    cat("Identifying missing patterns...")
   val <- missingModel(x,data,var=which,type=type,keep=xfix,weight=weight,...)
-  cat("\n")
+  if (!silent)
+    cat("\n")
 
 ##   res <- c()
   
@@ -197,27 +200,28 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
 ##   mu[exo.idx] <- colMeans(data[,exo,drop=FALSE])
 ##   names(mu) <- obs
 ##   model <- fixsome(model, measurement.fix=fix, S=S, mu=mu, n=1)
-  
   if (nrow(val$patterns)==1) {
-    res <- estimate(x,data=data,fix=fix,weight=weight,estimator=estimator,...)
+    res <- estimate(x,data=data,fix=fix,weight=weight,estimator=estimator,silent=silent,control=control,...)
     return(res)
   }
-
   if (startcc & is.null(control$start)) {
     if (!silent)
       cat("Obtaining starting value...")
     start0 <- rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
     mystart <- tryCatch(
-                        coef(estimate(x,data=na.omit(data),silent=TRUE)),
+                        coef(estimate(x,data=na.omit(data),silent=TRUE,
+                                     weight=weight,estimator=estimator,... 
+                                      )),
                         error=function(e) rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
                         )
     control$start <- mystart
-    cat("\n")
+    if (!silent)
+      cat("\n")
   }
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
   if (is.null(control$information))
-    control$information <- "E"
+    control$information <- "obs"
 
   ##  browser()
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
@@ -284,7 +288,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   if ("lvmfit.randomslope"%in%class(e.mis))
     class(res) <- c(class(res),"lvmfit.randomslope")
   if (hessian) {
-    cat("Calculating asymptotic variance...\n")
+    if (!silent)
+      cat("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
     cc[] <- coef(e.mis,level=0,vcov=res$vcov)
     res$coef <- cc

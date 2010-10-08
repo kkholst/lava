@@ -33,6 +33,7 @@ export(
        "nodecolor<-",       
        estimate, startvalues, startvalues2, measurement,
        estimate.MAR,
+       gaussian_logLik.lvm,
        describecoef,baptize,
        modelsearch,
        equivalence,

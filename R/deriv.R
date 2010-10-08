@@ -164,6 +164,7 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
       K <- ii$Kkk ## commutation(k,k)
       I <- ii$Ik ## diag(k)
       I2 <- diag(k*k)
+      ##      KI <- I[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
       d2S1 <-  t(
                 (I %x% K %x% I) %*% (
                                      ( I2 %x% as.vector(mom$G) )%*% dG +

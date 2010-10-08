@@ -132,8 +132,8 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
       c1. <- coef(Model(object),mean=FALSE)      
       ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
       ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
-      myorder <- match(coefs,c1)
-      myorder.reg <- na.omit(match(coefs,c1.))
+      myorder <- match(coefnames,c1)
+      myorder.reg <- na.omit(match(coefnames,c1.))
 ##      myorder <- match(c2,c1)
 ##      myorder.reg <- na.omit(match(c2,c1.))
       

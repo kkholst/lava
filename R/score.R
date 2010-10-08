@@ -25,7 +25,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   if (is.null(index(x)$dA) | reindex)
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
   
-  xfix <- colnames(data)[(colnames(data)%in%parlabels(x))]
+  xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
   
   Debug(xfix,debug)
@@ -76,41 +76,45 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   return(score)
 }
 
-
 ###}}} score.lvm
   
 ###{{{ score.lvm.missing
 
 score.lvm.missing <- function(x,
-                          p=coef(x), ...) {
-  score(x$estimate$model0, p=p, ...)
+                          p=coef(x), estimator=x$estimator,
+                              weight=Weight(x$estimate),
+                              ...) {
+  score(x$estimate$model0, p=p, model=estimator, weight=weight,...)
 }
 
 ###}}} score.lvm.missing
 
 ###{{{ score.multigroupfit
 
-score.multigroupfit <- function(x,p=x$opt$est,...) {
-  score(x$multigroup,p=p,...)
+score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estimator, ...) {
+  score(x$model0, p=p, weight=weight, model=estimator,...)
 }
 
 ###}}} score.multigroupfit
 
 ###{{{ score.multigroup
 
-score.multigroup <- function(x,data=x$data,p,indiv=FALSE,...) {
+score.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
   parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
   S <- list()
   for (i in 1:x$ngroup) {
-    S <- c(S, list(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],indiv=FALSE)))#,...)))    
+    S0 <- rbind(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],indiv=indiv,...))
+    S1 <- matrix(ncol=length(p),nrow=nrow(S0))
+    S1[,parord[[i]]] <- S0
+    S <- c(S, list(S1))
   }
   if (indiv) return(S)
-  res <- numeric(length(p))
+  res <- matrix(0,nrow=1,ncol=length(p))
   for (i in 1:x$ngroup)
-    res[parord[[i]]] <- res[parord[[i]]]+S[[i]]
-  return(res)  
+    res[,parord[[i]]] <- res[,parord[[i]]]  + S[[i]][,parord[[i]]]
+  return(as.vector(res))
 }
 
 ###}}} score.multigroup
@@ -131,7 +135,7 @@ score2.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, rein
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
 
   if (!is.null(data)) {
-    xfix <- colnames(data)[(colnames(data)%in%parlabels(x))]
+    xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
 
     

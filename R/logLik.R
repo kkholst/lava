@@ -2,7 +2,7 @@
 
 logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,...) {
   cl <- match.call()
-  xfix <- colnames(data)[(colnames(data)%in%parlabels(object))]
+  xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
   
   Debug(xfix,debug)
@@ -71,7 +71,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
                           weight=NULL, indiv=FALSE, S, mu, n, debug=FALSE, meanstructure=TRUE,...) { 
-  
    
   exo.idx <- with(index(object), exo.obsidx)##match(exogenous(object),manifest(object))
   endo.idx <- with(index(object), endo.obsidx)##match(endogenous(object),manifest(object))
@@ -227,14 +226,17 @@ logLik.lvmfit <- function(object,
 ###{{{ logLik.lvm.missing
 
 logLik.lvm.missing <- function(object,
-                          p=coef(object), ...) {
-  logLik(object$estimate$model0, p=p, ...)
+                               p=coef(object), model=object$estimator,
+                               weight=Weight(object$estimate),                
+                               ...) {
+  logLik(object$estimate$model0, p=p, model=model, weight=weight, ...)
 }
+
 ###}}}
 
 ###{{{ logLik.multigroup
 
-logLik.multigroup <- function(object,p,data=object$data,type=c("cond","sim","exo","sat"),...) {
+logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond","sim","exo","sat"),...) {
   res <- procrandomslope(object)
   pp <- with(res, modelPar(model,p)$p) 
     
@@ -255,11 +257,11 @@ logLik.multigroup <- function(object,p,data=object$data,type=c("cond","sim","exo
     class(loglik) <- "logLik"
     return(loglik)  
   }
-  
+
   n <- 0
   loglik <- 0; for (i in 1:object$ngroup) {
     n <- n + object$samplestat[[i]]$n
-    val <- logLik(object$lvm[[i]],pp[[i]],data[[i]],type=type,...)
+    val <- logLik(object$lvm[[i]],pp[[i]],data[[i]],weight=weight[[i]],type=type,...)
     loglik <- loglik + val
   }
   attr(loglik, "nall") <- n
@@ -272,7 +274,8 @@ logLik.multigroup <- function(object,p,data=object$data,type=c("cond","sim","exo
 ###}}} logLik.multigroup
 
 ###{{{ logLik.multigroupfit
-logLik.multigroupfit <- function(object,p=object$opt$est,...) {
-  logLik(object$model0,p=p,...)
+logLik.multigroupfit <- function(object,
+                                 p=pars(object), weight=Weight(object), model=object$estimator, ...) {
+  logLik(object$model0,p=p,weight=weight,model=model,...)
 }
 ###}}} logLik.multigroup

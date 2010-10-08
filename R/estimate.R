@@ -58,12 +58,11 @@ function(x, data,
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0)
-    warning(paste("Remove latent variable colnames from dataset",redvar))   
-  xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x))],latent(x))
+    warning(paste("Remove latent variable colnames from dataset",redvar))
+  xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
   if (missing(fix)) {
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)
   }
-
   Debug(list("start=",optim$start),debug)
   ## Weights...
   if (!missing(weight)) {
@@ -74,7 +73,6 @@ function(x, data,
   } else {
     weight <- NULL
   }
-
   Debug("procdata",debug)
   dd <- procdata.lvm(x,data=data,debug=debug)
   S <- dd$S; mu <- dd$mu; n <- dd$n
@@ -90,11 +88,6 @@ function(x, data,
     if (!is.null(res$weight)) weight <- res$weight
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
-  }
-  
-  ## Missing data
-  if (missing) {
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=debug,silent=silent,estimator=estimator,weight=weight,...))
   }
   
   if (!quick & index) {
@@ -116,7 +109,6 @@ function(x, data,
   k <- length(manifest(x))
   ##  m <- length(latent(x))    
   Debug(list("S=",S),debug)
-
   if (!optim$meanstructure) {
     mu <- NULL
   }  
@@ -128,7 +120,6 @@ function(x, data,
     paragree <- myparnames%in%names(optim$start)
     paragree.2 <- names(optim$start)%in%myparnames
   }
-  
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
 
@@ -143,6 +134,13 @@ function(x, data,
     }
     optim$start <- start
   }
+  
+  ## Missing data
+  if (missing) {
+    control$start <- optim$start
+    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=debug,silent=silent,estimator=estimator,weight=weight,...))
+  }
+  
   ## Setup optimization constraints
   lowmin <- -Inf
   lower <- rep(lowmin,length(optim$start))
@@ -162,6 +160,7 @@ function(x, data,
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
   Debug(list("lower=",lower),debug)
+
   
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   if (!exists(ObjectiveFun)) stop("Unknown estimator.")

@@ -4,19 +4,19 @@ function(x,...) UseMethod("information")
 ###{{{ information.lvm
 
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
-                                    c("E","hessian","varS","outer","robust","num"),"outer"),
+                                    c("E","hessian","varS","outer","sandwich","robust","num"),"outer"),
                             data,weight=NULL,model="gaussian",method="simple",
                             inverse=FALSE, pinv=TRUE,
                             score=TRUE,...) {
   if (missing(n))
     n <- NROW(data)
-  if (type[1]=="robust") {
+  if (type[1]%in%c("sandwich","robust")) {
     cl <- match.call()
     cl$inverse <- FALSE
     cl$type <- "outer"
     J <- eval.parent(cl)
     if (inverse) cl$inverse <- TRUE
-    cl$type <- "E"
+    cl$type <- ifelse(type[1]=="sandwich","E","hessian")
     I <- eval.parent(cl)
 ##    I <- information(x,p,n,data=data,weight=weight,type="E")
 ##    J <- information(x,p,n,data=data,weight=weight,type="outer")
@@ -57,7 +57,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 
 
   if (n>1) {
-    xfix <- colnames(data)[(colnames(data)%in%parlabels(x))]
+    xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
 
     if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
@@ -196,25 +196,29 @@ information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=
 ###}}} information.lvmfit
 
 
-information.lvm.missing <- function(x,...)
-  information(x$estimate,...)
-
-information.multigroupfit <- function(x,p=x$opt$est,...) {
-  information(x$model0,p=p,...)
+information.lvm.missing <- function(x,
+                                    p=coef(x), estimator=x$estimator,
+                                    weight=Weight(x$estimate),
+                                    ...) {
+  information(x$estimate$model0, p=p, model=estimator, weight=weight,...)
 }
 
-information.multigroup <- function(x,data=x$data,p,indiv=FALSE,...) {
+information.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estimator, ...) {
+  information(x$model0,p=p, weight=weight, model=estimator ,...)
+}
+
+information.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
   parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
   I <- matrix(0,nrow=length(p),ncol=length(p))
   if (!indiv) {
     for (i in 1:x$ngroup)
-      I[parord[[i]],parord[[i]]] <- I[parord[[i]],parord[[i]]] + information(x$lvm[[i]],p=pp[[i]],data=data[[i]],...)
+      I[parord[[i]],parord[[i]]] <- I[parord[[i]],parord[[i]]] + information(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],...)
   } else {
     I <- list()
     for (i in 1:x$ngroup)
-      I <- c(I, list(information(x$lvm[[i]],p=pp[[i]],data=data[[i]],...)))
+      I <- c(I, list(information(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],...)))
   }
   return(I)  
 }

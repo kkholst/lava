@@ -31,7 +31,8 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,...) {
       curfix <- MeanFix[[p0]]
       if (is.na(curfix) | overwrite) {
         count <- count+1
-        st <- ifelse(missing(labels),paste("m",count,sep=""),labels[count])
+        st <- ifelse(missing(labels),p0,labels[count]) 
+##        st <- ifelse(missing(labels),paste("m",count,sep=""),labels[count])
         intfix(x,p0) <- st        
       }
     }

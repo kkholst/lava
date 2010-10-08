@@ -100,8 +100,9 @@
     if (!is.null(newweight))
       weight <- newweight
   }
-  
+
   ## Check for random slopes
+  xXx <- exogenous(x)
   Xfix <- FALSE
   Xconstrain <- FALSE
   xfix <- list()
@@ -109,7 +110,7 @@
   for (i in 1:x$ngroup) {
     x0 <- x$lvm[[i]]
     data0 <- x$data[[i]]
-    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0))]
+    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
     xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
     xconstrain <- c(xconstrain,list(xconstrain0))
     xfix <- c(xfix, list(xfix0))
@@ -370,7 +371,7 @@
   }
 
 ################################################################################
-#########################################2#######################################
+################################################################################
 ################################################################################
 
 
@@ -448,7 +449,7 @@ function(x, data, silent=FALSE, fix, missing=FALSE,  ...) {
   xfix <- list()
   for (i in 1:length(x)) {
     data0 <- data[[i]]
-    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x[[i]]))]
+    xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x[[i]],exo=TRUE))]
     xfix <- c(xfix, list(xfix0))
     if (length(xfix0)>0) { ## Yes, random slopes
       Xfix<-TRUE
