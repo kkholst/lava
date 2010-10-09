@@ -276,11 +276,11 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###{{{ procdata.lvm
 
 `procdata.lvm` <-
-  function(x,data,debug=FALSE,categorical=FALSE,na.method=ifelse(any(is.na(data[,endogenous(x)])),"pairwise.complete.obs","complete.obs")) {
+  function(x,data,debug=FALSE,categorical=FALSE,na.method=ifelse(any(is.na(data[,manifest(x)])),"pairwise.complete.obs","complete.obs")) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
     }
-    if (is.data.frame(data) | is.matrix(data)) {
+     if (is.data.frame(data) | is.matrix(data)) {
       nn <- colnames(data)
       data <- as.data.frame(data); colnames(data) <- nn; rownames(data) <- NULL
       obs <- setdiff(intersect(vars(x), colnames(data)),latent(x))
@@ -305,8 +305,10 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       }
       if (na.method=="pairwise.complete.obs") {
         mu <- colMeans(mydata,na.rm=TRUE)
-        if (is.null(S))
-          S <- cov(mydata,use=na.method)        
+        if (is.null(S)) {
+          S <- cov(mydata,use=na.method)
+          S[is.na(S)] <- 1e-2
+        }
       }
       if (na.method=="complete.obs") {
         mu <- colMeans(na.omit(mydata))

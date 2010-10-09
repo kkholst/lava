@@ -83,8 +83,26 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
 score.lvm.missing <- function(x,
                           p=coef(x), estimator=x$estimator,
                               weight=Weight(x$estimate),
+                              indiv=FALSE,
+                              list=FALSE,
                               ...) {
-  score(x$estimate$model0, p=p, model=estimator, weight=weight,...)
+  S <- score(x$estimate$model0, p=p, model=estimator, weight=weight,
+               indiv=indiv,...)
+  if (indiv & !list) {
+    S0 <- matrix(ncol=length(p),nrow=length(x$order))
+    rownames(S0) <- 1:nrow(S0)
+    myorder <- x$orderlist
+    if (length(x$allmis)>0)
+      myorder[[x$allmis]] <- NULL
+    for (i in 1:length(S))
+      S0[myorder[[i]],] <- S[[i]]
+    if (length(x$allmis)>0) {
+      S0 <- S0[-x$orderlist[[x$allmis]],]
+    }
+    S0[is.na(S0)] <- 0
+    return(S0)
+  }
+  return(S)
 }
 
 ###}}} score.lvm.missing

@@ -118,7 +118,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     exo2latent <- which(A0[i,exo.idx]==1)
     exo.pos <- colnames(S)[exo.idxObs[exo2latent]]
     varX.eta <- S[exo.pos, exo.pos]
-    InvvarX.eta <- solve(varX.eta)
+    InvvarX.eta <- Inverse(varX.eta)
 
     covXY <- S[exo.pos, rel.pos,drop=FALSE]
     beta <- 0
@@ -264,7 +264,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   for (j in 1:m) { ## OLS-estimates
     relation <- A[j,]==1
     if (!any(relation)) next    
-    Ahat[j, relation] <- solve(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j]
+    Ahat[j, relation] <- Inverse(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j]
   }
   Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
   Ahat[,obs.idx] <- Ahat[,obs.idx]/matrix(s, m, n, byrow=TRUE)

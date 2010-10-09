@@ -28,7 +28,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   topendo <- endogenous(model,top=TRUE)
   exo <- exogenous(model) ##,index=FALSE)######
   exclude <- c()
-  
+
   for (i in setdiff(1:nrow(patterns),pattern.allmis)) {
     includemodel <- TRUE
     count <- count+1
@@ -119,9 +119,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   vnames <- manifest(x)
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
-    if (!silent)
-      cat("Calculating 1. and 2. moments of exogenous variables...\n")
-    
+    ##if (!silent)cat("Calculating 1. and 2. moments of exogenous variables...\n")    
     exo.idx <- c(which(manifest(x)%in%exogenous(x)))
     xx <- subset(Model(x),exogenous(x))
     exogenous(xx) <- NULL
@@ -139,8 +137,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
     S[exo.idx,exo.idx] <- cov0
     mu[exo.idx] <- mu0    
     ##    cat("\n")
-  }
-  
+  }  
   x0 <- x
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
   
@@ -267,9 +264,20 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
                 ##                reindex(x,zeroones=TRUE,deriv=TRUE)
   }
 
+  ord <- c()
+  ordlist <- list()
+  for (i in 1:nrow(val$patterns)) {
+    ordlist <- c(ordlist, list(which(val$mis.type==i)))
+    ord <- c(ord, ordlist[[i]])    
+  }
+
   res <- with(val, list(coef=cc,
                         patterns=patterns, table=table(mis.type),
+                        mis.type=mis.type,
+                        order=ord,
+                        orderlist=ordlist,
                         nmis=nmis,
+                        allmis=pattern.allmis,
 ##                        cc=pattern.allcomp,
                         cc=mycc,
                         ncc=as.numeric(table(mis.type)[pattern.allcomp]),

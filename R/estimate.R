@@ -101,7 +101,7 @@ function(x, data,
       x <- updatelvm(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,mean=TRUE,debug=debug)
     }
   }
-
+  
 ##  if (index(x)$npar.mean==0) optim$meanstructure <- FALSE       
   if (is.null(estimator) || estimator==FALSE) {
     return(x)
