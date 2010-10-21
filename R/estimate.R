@@ -9,10 +9,10 @@ function(x, data,
          control=list(),
          missing=FALSE,
          weight,
+         fix,
          index=TRUE,
          graph=FALSE,
-         fix,
-         debug=FALSE, silent=FALSE,
+         debug=FALSE, silent=lava.options()$silent,
          quick=FALSE,
          ...) { 
 
@@ -24,7 +24,7 @@ function(x, data,
   cl <- match.call()
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method))
-    Method <- "nlminb2"
+    Method <- "nlminb1"
   else
     Method <- get(Method)
   optim <- list(
@@ -49,6 +49,9 @@ function(x, data,
                 sparse=FALSE,
                 tol=1e-9)
 
+  defopt <- lava.options()[]
+  defopt <- defopt[intersect(names(defopt),names(optim))]
+  optim[names(defopt)] <- defopt
   if (length(control)>0) {
     optim[names(control)] <- control
   }
@@ -305,7 +308,7 @@ function(x, data,
       if (!require("numDeriv")) {        
         S <- naiveGrad(myObj, pp)
       } else {
-        S <- grad(myObj, pp, method="Richardson")
+        S <- grad(myObj, pp, method=lava.options()$Dmethod)
       }
       if (optim$constrain) {
         S[constrained] <- S[constrained]*pp[constrained]
@@ -423,6 +426,14 @@ For numerical approximation please install the library 'numDeriv'.")
   if(graph) {
     res <- edgelabels(res,type="est")
   }
+
+  myhooks <- gethook("post.hooks")
+  for (f in myhooks) {
+    res0 <- do.call(f,res)
+    if (!is.null(res0))
+      res <- res0
+  }
+  
   return(res)
 }
 

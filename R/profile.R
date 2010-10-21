@@ -17,7 +17,20 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
         index(mm)$P[fixed$P[i,1],fixed$P[i,2]] <-
           mm$covfix[fixed$P[i,1],fixed$P[i,2]] <- tau0
     }
-    ee <- estimate(mm,model.frame(fitted),fix=FALSE,silent=TRUE,index=FALSE,control=list(start=coef(fitted),method="NR",trace=0))
+    dots <- list(...)
+    dots$silent <- FALSE
+    if (!is.null(dots$control)) 
+      control <- dots$control
+    else
+      control <- list()
+    control$start <- coef(fitted)
+    dots$control <- control
+    dots$index <- FALSE
+    dots$fix <- FALSE
+    dots$silent <- TRUE
+    dots$data <- model.frame(fitted)
+    dots$x <- mm
+    ee <- do.call("estimate",dots)
     return(logLik(ee))
   }
   val <- sapply(tau,plogl)
@@ -35,5 +48,6 @@ profci.lvmfit <- function(x,parm,level=0.95,...) {
     tau.range[1] <- max(1e-6,tau.range[1])
   lower <- uniroot(pp,interval=c(tau.range[1],tau0))
   upper <- uniroot(pp,interval=c(tau0,tau.range[2]))
+  ##  res <- rbind(lower$root,upper$root); rownames(res) <- coef()
   return(c(lower$root,upper$root))
 }

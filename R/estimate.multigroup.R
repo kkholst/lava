@@ -3,7 +3,8 @@
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
                                   weight,
-                                  silent=FALSE,
+                                  silent=lava.options()$silent,
+                                  quick=FALSE,
                                   debug=FALSE,...) {
   cl <- match.call()
   Method <-  paste(estimator, "_method", ".lvm", sep="")
@@ -34,6 +35,9 @@
                 reindex=FALSE,
                 tol=1e-9)
 
+  defopt <- lava.options()[]
+  defopt <- defopt[intersect(names(defopt),names(optim))]
+  optim[names(defopt)] <- defopt
   
   if (length(control)>0) {
     optim[names(control)] <- control
@@ -377,7 +381,6 @@
 
   if (!silent) cat("Optimizing objective function...")
   if (debug) {
-    browser()
     print(lower)
     print(optim$constrain)
     print(optim$method)
@@ -390,7 +393,8 @@
   if (optim$constrain) {
     opt$estimate[constrained] <- exp(opt$estimate[constrained])
   }  
-
+  if (quick) return(list(opt=opt,vcov=NA))
+  
   if (is.null(myGrad)) {
     if (!require("numDeriv")) {
       opt$gradient <- naiveGrad(myObj, opt$estimate)
@@ -417,6 +421,13 @@ For numerical approximation please install the library 'numDeriv'.")
   res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight)
   class(res) <- myclass
 
+  myhooks <- gethook("post.hooks")
+  for (f in myhooks) {
+    res0 <- do.call(f,res)
+    if (!is.null(res0))
+      res <- res0
+  }
+
   return(res)
 }
 
@@ -425,7 +436,7 @@ For numerical approximation please install the library 'numDeriv'.")
 ###{{{ estimate.list
 
 `estimate.list` <-
-function(x, data, silent=FALSE, fix, missing=FALSE,  ...) {
+function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
   }  

@@ -2,7 +2,7 @@
 
 `coef.lvm` <-
 function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, labels=FALSE, debug=FALSE,...) {
- if (fix) ## 12/7-2010
+  if (fix) ## 12/7-2010
    object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p

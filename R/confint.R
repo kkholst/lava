@@ -3,6 +3,10 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
   if (!profile) {
     return(confint.default(object,parm=parm,level=level,...))
   }
+  if (is.character(parm)) {
+    parm <- parpos(Model(object),p=parm)
+    parm <- parm[attributes(parm)$ord]
+  } 
   res <- c()
   for (i in parm) {
     res <- rbind(res, profci.lvmfit(object,parm=i,level=level,profile=profile))

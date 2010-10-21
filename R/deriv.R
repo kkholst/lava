@@ -65,27 +65,44 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
     }    
     res <- list(dA=dA, dP=dP)
     
-    if (!is.null(meanpar) & npar.mean>0) {
+    {
       if (ii$sparse) {
         dv <- Matrix(0, nrow=length(expr$mean), ncol=npar.total)
       } else {
         dv <- matrix(0, nrow=length(expr$mean), ncol=npar.total)
       }
-      dv[,mean.idx] <- sapply(1:npar.mean, function(i) izero(which(nn$v==i),length(expr$mean)) ) 
+      if (!is.null(meanpar) & npar.mean>0)
+        dv[,mean.idx] <- sapply(1:npar.mean, function(i) izero(which(nn$v==i),length(expr$mean)) ) 
       res <- c(res, list(dv=dv))
     }
   } else {
     res <- with(ii, list(dA=dA, dP=dP, dv=dv))
   }
   if (!all) return(res)
- 
+
   ## Non-linear constraints:
+  cname <- constrainpar <- c()  
   if (!missing(p)  && length(index(expr)$constrain.par)>0) {
 ##    print("Constraints....")
     for (pp in index(expr)$constrain.par) {
       myc <- constrain(expr)[[pp]]
       parval <- mom$parval
-      vals <- parval[attributes(myc)$args]
+##      vals <- parval[attributes(myc)$args]
+      vals <- c(parval,constrainpar)[attributes(myc)$args]
+
+      ## browser()
+      ## while (!all(names(vals)%in%names(parval))) {
+      ##   myc0 <- myc
+      ##   vals0 <- vals
+      ##   for (p in names(vals0)) {
+      ##     if (p%in%names(constrainpar)) {
+      ##       vals[p] <- NULL
+      ##       pvals <- attributes(constrainpar[[p]])$vals
+      ##       vals[names(pvals)] <- pvals
+      ##     }
+      ##   }
+      ## }
+      
       fval <- myc(unlist(vals))
       if (!is.null(attributes(fval)$grad)) {
         Gr <- attributes(fval)$grad(unlist(vals))
@@ -94,6 +111,12 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
         Gr <- as.numeric(jacobian(myc, unlist(vals)))
       }
       mat.idx <- mom$constrain.idx[[pp]]
+      cname <- c(cname,pp)
+      attributes(fval)$grad <- Gr
+      attributes(fval)$vals <- vals
+      constrainpar <- c(constrainpar,list(fval)); names(constrainpar) <- cname
+      
+###      browser()
       for (jj in 1:length(vals)) {
         allpars <- c(nn$A[attributes(vals[[jj]])$reg.idx[1]],
                      nn$P[attributes(vals[[jj]])$cov.idx[1]],
@@ -107,7 +130,6 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
       }     
     }
   }
-
   if (is.null(ii$Kkk)) {
     nobs <- nrow(ii$J)
     ii$Ik <- diag(nobs)

@@ -3,6 +3,7 @@ import(stats)
 
 export(
        lava,
+       lava.options,
        lvm,
        regression, "regression<-",
        covariance, "covariance<-",
@@ -20,14 +21,13 @@ export(
        constrain,"constrain<-",
        constraints,
        addvar,"addvar<-",       
-       Graph,"Graph<-",
-       Model,"Model<-",
        children,parents,
        survival,"survival<-",
        functional,distribution,
        "functional<-", "distribution<-",
        Graph,"Graph<-",
-       Model,"Model<-",       
+       Model,"Model<-",
+       Weight,
        edgelabels,"edgelabels<-",
        labels,"labels<-",
        "nodecolor<-",       
@@ -54,7 +54,9 @@ export(
        fixsome,
        ##       variances, offdiags,
        frobnorm,
+       Inverse,
        correlation,
+       
        addhook,
        gethook,
        addattr,
@@ -185,6 +187,7 @@ S3method(Graph, lvm)
 S3method(Graph, lvmfit)
 S3method("Graph<-", lvm)
 S3method("Graph<-", lvmfit)
+S3method(Weight, default)
 S3method(Model, lvmfit)
 S3method("Model<-", lvmfit)
 S3method(index, lvmfit)

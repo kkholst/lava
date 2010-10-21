@@ -523,19 +523,19 @@ tigol <- function(z) 1/(1+exp(-z))
 
 ###{{{ Inverse/pseudo
 
-Inverse <- function(X,tol=0,det=TRUE) {
+Inverse <- function(X,tol=1e-9,det=TRUE) {
   n <- nrow(X)
   if (nrow(X)==1) {
     res <- 1/X
     if (det) attributes(res)$det <- X
     return(res)
-  } 
+  }
   svdX <- svd(X)
   id0 <- numeric(n)
   id0[svdX$d>tol] <- 1/svdX$d[svdX$d>tol]
   res <- with(svdX, v%*%diag(id0)%*%t(u))
   if (det)
-    attributes(res)$det <- prod(svdX$d)
+    attributes(res)$det <- prod(svdX$d[svdX$d>tol])
   return(res)
 }
 
@@ -612,12 +612,21 @@ CondMom <- function(mu,S,idx,X) {
   SXX <- S[idxX,idxX,drop=FALSE];
   SYY <- S[idxY,idxY,drop=FALSE]
   SYX <- S[idxY,idxX,drop=FALSE]
-  muY <- mu[idxY,drop=FALSE]
-  muX <- mu[idxX,drop=FALSE]
-  iSXX <- solve(SXX)  
-  Z <- apply(X,1,function(xx) xx-muX)
-  SZ <- t(SYX%*%iSXX%*%Z)
-  condmean <- matrix(apply(SZ,1,function(x) muY+x),ncol=ncol(SZ),nrow=nrow(SZ))
+  muY <- mu[,idxY,drop=FALSE]
+  muX <- mu[,idxX,drop=FALSE]
+  iSXX <- solve(SXX)
+  if (is.matrix(mu))
+    Z <- t(X-muX)
+  else
+    Z <- apply(X,1,function(xx) xx-muX)
+  SZ  <- t(SYX%*%iSXX%*%Z)
+  browser()
+##  condmean <- matrix(
+  if (is.matrix(mu))
+    condmean <- SZ+muY
+  else
+    condmean <- t(apply(SZ,1,function(x) muY+x))
+##  ,ncol=ncol(SZ),nrow=nrow(SZ))
   condvar <- SYY-SYX%*%iSXX%*%t(SYX)
   return(list(mean=condmean,var=condvar))
 }

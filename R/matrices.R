@@ -83,12 +83,15 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
   v <- NULL
   mparname.all <- NULL
 ##  if (!(is.null(meanpar)) | npar.mean!=0) {
-  if (!is.null(meanpar) | npar.mean==0) { 
+##  if (!is.null(meanpar) | npar.mean==0)
+    {    
     named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
     v <- rep(0,length(x$mean))
+##    browser()
     names(v) <- colnames(P)
-    v[index(x)$v1==1] <- meanpar
+    if (!is.null(meanpar) | npar.mean==0)    
+      v[index(x)$v1==1] <- meanpar
     if (any(fixed))
         v[fixed] <- unlist(x$mean[fixed])
     mparname.all <- unique(x$mean[named])
@@ -116,9 +119,12 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
   ##  browser()
   ## Constrained...
   constrain.idx <- NULL
-  if (length(ii$constrain.par)>0 && is.numeric(c(pars,meanpar))) {
+  cname <- constrainpar <- c()  
+  if (length(ii$constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
     constrain.idx <- list()
     for (p in constrain.par) {
+##      browser()
+      cname <- c(cname,p)
       reg.tidx <- reg.idx <- cov.idx <- m.idx <- NULL    
       myc <- constrain(x)[[p]]
       xargs <- manifest(x)[na.omit(match(attributes(myc)$args,manifest(x)))]
@@ -127,23 +133,26 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
           parval[[xargs]] <- (data)[xargs]
         } else parval[[xargs]] <- 0
       }
-      val <- unlist(parval[attributes(myc)$args])
+      val <- unlist(c(parval,constrainpar)[attributes(myc)$args])      
+      cpar <- myc(val); 
+      constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
+##      browser()
       if (p%in%parname.all) {
         reg.idx <- which(x$par==p)
         reg.tidx <- which(t(x$par==p))
         if (!is.null(val))
-          A[reg.idx] <- myc(val)
+          A[reg.idx] <- cpar##myc(val)
       }
       if (p%in%covparname.all) {
         cov.idx <- which(x$covpar==p)
         if (!is.null(val))
-          P[cov.idx] <- myc(val)        
+          P[cov.idx] <- cpar##myc(val)        
       }
       ##      if (!is.null(meanpar))
-        if (p%in%mparname.all) {
+      if (p%in%mparname.all) {
           m.idx <- which(x$mean==p)
           if (!is.null(val))
-            v[m.idx] <- myc(val)        
+            v[m.idx] <- cpar##myc(val)        
         }
       constrain.idx[[p]] <- list(reg.idx=reg.idx,reg.tidx=reg.tidx,cov.idx=cov.idx,m.idx=m.idx)
     }
@@ -155,7 +164,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     P <- as(P,"sparseMatrix")
     v <- as(v,"sparseMatrix")
   }
-  return(list(A=A, P=P, v=v, parval=parval, constrain.idx=constrain.idx))
+  return(list(A=A, P=P, v=v, parval=parval, constrain.idx=constrain.idx, constrainpar=constrainpar))
 }
 
 ###}}} matrices.lvm

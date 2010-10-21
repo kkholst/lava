@@ -129,7 +129,8 @@ gaussian_logLik.lvm <- function(object,p,data,
   }  
   Debug(list("C=",C),debug)
   k <- nrow(C)
-  iC <- Inverse(C,0,det=TRUE)
+
+  iC <- Inverse(C,det=TRUE)
   detC <- attributes(iC)$det
 #  iC <- solve(C)
 #  detC <- 1
@@ -150,12 +151,11 @@ gaussian_logLik.lvm <- function(object,p,data,
     if (ncol(weight)!=1 & ncol(weight)!=K) {
       w.temp <- weight
       weight <- matrix(1,nrow=nrow(weight),ncol=K)
-      weight[,endo.idx] <- weight      
+      weight[,endo.idx] <- w.temp
     }
     if (type=="exo")
       weight <- NULL
   }
-
   
   if (missing(n))
     if (!missing(data)) n <- NROW(data)
@@ -185,7 +185,7 @@ gaussian_logLik.lvm <- function(object,p,data,
       return(res)    
   } else {
 
-    if (missing(S)) {
+   if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
     }

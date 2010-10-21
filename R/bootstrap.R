@@ -1,45 +1,64 @@
 bootstrap <- function(x,...) UseMethod("bootstrap")
 
-bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),control=list(start=coef(x)),...) bootstrap.lvm(Model(x),R=R,data=data,control=control,...)
+bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
+                             control=list(start=coef(x)),
+                             estimator=x$estimator,weight=Weight(x),...)
+  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,...)
 
-bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,sd=FALSE,silent=TRUE,...) {
+bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,sd=FALSE,silent=FALSE,...) {
   
   coefs <- sds <- c()
   on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
-  for (i in 0:R) {
+  
+
+  bootfun <- function(i) {
     if (i==0) {
       d0 <- data
     } else {
       d0 <- data[sample(1:nrow(data),replace=TRUE),]
     }
-    e0 <- estimate(x,data=d0,control=control,silent=silent,index=FALSE,...)    
-    cat(".")
+    e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE
+                   )##,...)    
+    if (!silent) cat(".")
     if (!is.null(fun)) {
-      coefs <- rbind(coefs,fun(e0))
+      coefs <- fun(e0)
     } else {    
-      newcoef <- coef(e0)
+      coefs <- coef(e0)
       newsd <- c()
       if (sd) {
         newsd <- e0$coef[,2]
       }
       if (constraints & length(constrain(x))>0) {
         cc <- constraints(e0,...)
-        newcoef <- c(newcoef,cc[,1])
+        coefs <- c(coefs,cc[,1])
+        names(coefs)[seq(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
         if (sd) {
           newsd <- c(newsd,cc[,2])
         }
       }
-      coefs <- rbind(coefs,newcoef)
-      if (sd)
-        sds <- rbind(sds, newsd)
+      ##      coefs <- rbind(coefs,newcoef)
+      ##      if (sd)
+      ##        sds <- rbind(sds, newsd)
     }
-  }; cat("\n")
+    return(list(coefs=coefs,sds=newsd))
+  }; if (!silent) cat("\n")
+  
+##  system.time(
+              res <- foreach (i=0:R) %dopar% bootfun(i)
+  ##              )
+
+  coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
+  sds <- NULL
+  if (sd)
+    sds <- matrix(unlist(lapply(res, function(x) x$sds)),nrow=R+1,byrow=TRUE)
+
 
   if (!is.null(fun)) {
     rownames(coefs) <- c()
-    res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x)    
+    res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x) 
   } else {
-    if (constraints& length(constrain(x))>0) colnames(coefs)[-(1:length(coef(e0)))] <- rownames(cc)
+    if (constraints& length(constrain(x))>0) colnames(coefs)[-(1:length(coef(fitted)))] <- rownames(cc)
+    colnames(coefs) <- names(res[[1]]$coefs)
     rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
     res <- list(coef=coefs[-1,,drop=FALSE], sd=sds[-1,,drop=FALSE], coef0=coefs[1,], sd0=sds[1,], model=x)
   }

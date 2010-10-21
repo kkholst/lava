@@ -8,6 +8,6 @@ Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models
 Keywords: latent variable model, structural equation model, likelihood inference
 Depends: R (>= 2.5.0), stats, graphics, graph, mvtnorm, survival, numDeriv
-Suggests: Rgraphviz, Matrix, gof (>= 0.6)
+Suggests: Rgraphviz, Matrix, gof (>= 0.6), foreach
 License: GPL-3
 LazyLoad: yes

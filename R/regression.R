@@ -43,7 +43,7 @@
   function(object,to,from,...) UseMethod("regression")
 
 `regression.lvm` <-
-  function(object=lvm(),to,from,fn=NA,debug=FALSE,silent=FALSE,...) {
+  function(object=lvm(),to,from,fn=NA,debug=FALSE,silent=lava.options()$silent,...) {
     if (missing(to)) {
       return(regfix(object))
       ####...

@@ -1,7 +1,7 @@
 "covariance<-" <- function(object,...,value) UseMethod("covariance<-")
 
 "covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, ..., value) {
-
+  
   if (!is.null(var1)) {
     if (class(var1)[1]=="formula") {
       lhs <- getoutcome(var1)

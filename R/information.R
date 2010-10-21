@@ -5,7 +5,7 @@ function(x,...) UseMethod("information")
 
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
                                     c("E","hessian","varS","outer","sandwich","robust","num"),"outer"),
-                            data,weight=NULL,model="gaussian",method="simple",
+                            data,weight=NULL,model="gaussian",method=lava.options()$Dmethod,
                             inverse=FALSE, pinv=TRUE,
                             score=TRUE,...) {
   if (missing(n))
@@ -27,7 +27,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   }
   if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
     require("numDeriv")
-    myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,indiv=FALSE,seed=1,n=n) ##...)
+    myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,indiv=FALSE,n=n) ##...)
     ##    I <- -hessian(function(p0) logLik(x,p0,dd),p)
     I <- -jacobian(myf,p,method=method)
     res <- (I+t(I))/2 # Symmetric result

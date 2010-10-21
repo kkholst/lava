@@ -64,7 +64,8 @@ constrain.default <- function(x,estimate=FALSE,...) {
     return(x)
   }
   for (i in args) {
-    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x))))) {
+##    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x))))) {
+    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x)),names(constrain(x))))) {
       ##    if (!(i%in%c(parlabels(x))))
       cat("\tAdding parameter '", i,"'\n",sep="")
       parameter(x,silent=TRUE) <- i
@@ -120,7 +121,7 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
     iname <- intersect(colnames(mydata),colnames(data))
     mydata[1,iname] <- unlist(data[1,iname])
     M <- modelVar(Model(object),p=pars.default(object),data=as.data.frame(mydata))
-    vals <- M$parval[attributes(myc)$args]
+    vals <- with(M,c(parval,constrainpar))[attributes(myc)$args]
     fval <- mycoef[1] <- myc(unlist(vals))
     myc0 <- function(theta) {
       theta0 <- unlist(vals);

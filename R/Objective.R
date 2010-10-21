@@ -106,7 +106,6 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   return(rbind(as.numeric(Grad)))
 }
 
-
 ###}}} gaussian
 
 ###{{{ gaussian variants

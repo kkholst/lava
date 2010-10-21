@@ -43,7 +43,7 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
 ##    IAi <- solve(diag(nrow(A))-t(A))
     G <- J%*%IAi
   }
-
+  
   xi <- NULL
   if (!is.null(AP$v)) {
     xi <- G%*%AP$v ## Model-specific mean vector
@@ -54,5 +54,5 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   C <- as.matrix(J %*% tcrossprod(Cfull,J))
 ##  rownames(C) <- colnames(C) <- mynames
   
-  return(list(Cfull=Cfull, C=C, v=AP$v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx))
+  return(list(Cfull=Cfull, C=C, v=AP$v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx, constrainpar=AP$constrainpar))
 }
