@@ -1,5 +1,5 @@
 predict.lvmfit <- function(object,x,data=model.frame(object),p=pars(object),...) {
-  predict(Model(object),x,p=p,data=data,mu=object$mu,S=object$S,...)
+  predict(x$model0,x,p=p,data=data,mu=object$mu,S=object$S,...)
 }
 
 predict.lvm <- function(object,x,resid=FALSE,p,data,path=FALSE,...) {
@@ -7,7 +7,7 @@ predict.lvm <- function(object,x,resid=FALSE,p,data,path=FALSE,...) {
   if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
 
     
-  m <- moments(object,p)
+  m <- moments(object,p,data=data)
   if (path) {
     Y <- endogenous(object,top=TRUE)
     X <- setdiff(manifest(object),Y)
