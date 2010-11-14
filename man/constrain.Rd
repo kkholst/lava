@@ -1,20 +1,20 @@
-\name{constrain}
+'\name{constrain}
 \alias{constrain<-}
 \alias{constrain.default}
 \alias{constrain<-.multigroup}
 \alias{constrain<-.default}
 \alias{constraints}
 \alias{parameter<-}
-\title{ Add non-linear constraints to latent variable model}
+\title{ Add non-linear constraints to latent variable model }
 \description{
   Add non-linear parameter constraints as well as
   non-linear associations between covariates and latent or observed
   variables in the model (non-linear regression).
 }
 \usage{
-  \method{constrain}{default}(x,par,args,...) <- value
-  \method{constrain}{multigroup}(x,par,k=1,...) <- value
-  constraints(object,vcov=object$vcov,level=0.95,data,...)
+\method{constrain}{default}(x,par,args,...) <- value
+\method{constrain}{multigroup}(x,par,k=1,...) <- value
+constraints(object,vcov=object$vcov,level=0.95,data,...)
 }
 \arguments{  
   \item{x}{\code{lvm}-object}
@@ -26,12 +26,13 @@ new parameter (overruling the \code{args} argument).}
     in defining \code{par}}
   \item{k}{For multigroup models this argument specifies which group to
     add the constraint to}
-  \item{\dots}{}
   \item{value}{Real function taking args as a vector argument }
   \item{object}{\code{lvm}-object}
   \item{vcov}{Variance matrix of parameter estimates}
   \item{level}{Level of confidence limits}
-  \item{data}{Data-row from which possible non-linear constraints should be calculated}
+  \item{data}{Data-row from which possible non-linear constraints should
+    be calculated}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   A \code{lvm} object.
@@ -95,7 +96,6 @@ new parameter (overruling the \code{args} argument).}
   function of the log-likelihood. If the gradient attribute is omitted
   the chain rule will be applied on a numeric approximation of the
   gradient.
-  
 }
 \author{Klaus K. Holst}
 \seealso{
@@ -127,31 +127,27 @@ logLik(e1)
 ##############################
 
 ## Simulate data
-m0 <- lvm(c(y1,y2)~f(x,0)+f(eta,1))
-latent(m0) <- ~eta
-covariance(m0) <- c(y1,y2) ~ f(0.01)
-covariance(m0) <- c(eta) ~ f(0.01)
+m <- lvm(c(y1,y2)~f(x,0)+f(eta,1))
+latent(m) <- ~eta
+covariance(m) <- c(y1,y2) ~ f(v)
+intercept(m) <- c(y1,y2) ~ f(mu)
+covariance(m) <- c(eta) ~ f(zeta)
 set.seed(1)
-d <- sim(m0,100)[,manifest(m0)]
+d <- sim(m,100,p=c(v=0.01,zeta=0.01))[,manifest(m0)]
 d <- transform(d,
-               y1=y1+pnorm(2*x),
-               y2=y2+pnorm(2*x))
+               y1=y1+2*pnorm(2*x),
+               y2=y2+2*pnorm(2*x))
 
 ## Specify model and estimate parameters
-m <- m0
-parameter(m) <- ~ nu+alpha
-intercept(m) <- c(y1,y2) ~ f(mu)
-covariance(m) <- c(y1,y2) ~ f(v)
-covariance(m) <- eta ~ f(zeta)
-constrain(m, mu ~ x + alpha + nu) <- function(x) pnorm(x[1]*x[2])+x[3]
-e <- estimate(m,d,control=list(trace=1))
+constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[1]*x[2])+x[3]
+e <- estimate(m,d,control=list(trace=1,method="NR"))
 constraints(e,data=d)
 
 ## Plot model-fit
 \dontrun{
 plot(y1~x,d,pch=16); points(y2~x,d,pch=16,col="gray")
 x0 <- seq(-4,4,length.out=100)
-lines(x0,pnorm(coef(e)[2]*x0)+coef(e)[1])
+lines(x0,coef(e)["nu"] + coef(e)["gamma"]*pnorm(coef(e)["alpha"]*x0))
 }
 
 ##############################
@@ -173,9 +169,6 @@ summary(ee)
 m3 <- lvm(y ~ f(x,beta)+f(z,beta2))
 m4 <- lvm(y ~ f(x,beta2) + z)
 e2 <- estimate(list(m3,m4),list(d1,d2),control=list(method="NR"))
-
-
-
 }
 \keyword{models}
 \keyword{regression}

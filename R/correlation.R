@@ -14,7 +14,11 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
     rowpos <- (idx-1)%%n + 1
     colpos <- ceiling(idx/n)
     coefpos <- c(i,pp0[rbind(c(rowpos,rowpos),c(colpos,colpos))])
-    phi.v1.v2 <- coef(x)[coefpos]
+    pval <- pp[rbind(c(rowpos,rowpos),c(colpos,colpos))]
+    phi.v1.v2 <- numeric(3);    
+    newval <- coef(x)[coefpos]
+    phi.v1.v2[coefpos!=0] <- newval
+    phi.v1.v2[coefpos==0] <- pval[tail(coefpos==0,2)]
     f <- function(p) {
       p[1]/sqrt(p[2]*p[3])
     }
@@ -28,7 +32,8 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
         p.z <- 2*(pnorm(-abs(zs))) # p-value using z-transform for H_0: rho=0.
         est <- c(rho, NA, ci.rho[1], ci.rho[2])
     } else {      
-      Sigma.phi.v1.v2 <- vcov(x)[coefpos,coefpos]
+      Sigma.phi.v1.v2 <- matrix(0,3,3)
+      Sigma.phi.v1.v2[coefpos!=0,coefpos!=0] <- vcov(x)[coefpos,coefpos]      
       nabla.f <- function(p) {
         c(1/sqrt(p[2]*p[3]), -f(p)/(2*p[2]), -f(p)/(2*p[3]))
       }

@@ -1,6 +1,8 @@
 "children" <- function(object,...) UseMethod("children")
 "parents" <- function(object,...) UseMethod("parents")
 
+parents.lvmfit <- function(object,...) parents(Model(object),...)
+children.lvmfit <- function(object,...) children(Model(object),...)
 parents.lvm <- function(object,var,...) {
   A <- index(object)$A
   if (missing(var)) {

@@ -20,7 +20,7 @@
   \item{var1}{Vector of variables names
     between (or formula)}
   \item{var2}{Vector of variables names (or formula) defining pairwise covariance between \code{var1} and \code{var2})}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
   \item{value}{List of parameter values or (if \code{var1} is
     unspecified) a }
 }
@@ -29,10 +29,10 @@
   structure between residual terms of a latent variable model, using
   a formula syntax.
   
-  For instance, a multivariate model with two response variables,
-  \deqn{Y_1 = \mu_1 + \epsilon_1}{y1 = mu1 + epsilon1}
-  \deqn{Y_2 = \mu_2 + \epsilon_2}{y2 = mu2 + epsilon2}
-  \deqn{Y_3 = \mu_3 + \epsilon_3}{y3 = mu3 + epsilon3}
+  For instance, a multivariate model with three response variables,
+  \deqn{Y_1 = \mu_1 + \epsilon_1}%%{y[1] = \mu_1 + \epsilon_1}
+  \deqn{Y_2 = \mu_2 + \epsilon_2}%%{y[2] = \mu_2 + \epsilon_2}
+  \deqn{Y_3 = \mu_3 + \epsilon_3}%%{y[3] = \mu_3 + \epsilon_3}
   can be specified as
 
   \code{m <- lvm(~y1+y2+y3)}
@@ -62,6 +62,7 @@
   possibly second) argument is defined as well. E.g:
 
   \code{covariance(m,y1~y1+y2) <- list("a1","b1")}
+  
   \code{covariance(m,~y2+y3) <- list("a2",2)}
 
   Defines
@@ -70,15 +71,11 @@
   \deqn{var(\epsilon_3) = 2}
   \deqn{cov(\epsilon_1,\epsilon_2) = b1}  
   
-  The assigment function \code{covfix<-} can like \code{covariance<-} be
-  used to specify covariance constraints, but conveniently allows the
-  parameter values to be given as a list of values (numeric and
-  characters).
 
   Parameter constraints can be cleared by fixing the relevant parameters
   to \code{NA} (see also the \code{regression} method).
   
-  The function \code{covfix} (called without
+  The function \code{covariance} (called without
   additional arguments) can be used to inspect the covariance
   constraints of a \code{lvm}-object. 
   

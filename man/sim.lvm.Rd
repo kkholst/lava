@@ -12,6 +12,13 @@
 \alias{distribution<-}
 \alias{distribution.lvm}
 \alias{distribution<-.lvm}
+\alias{weibull.lvm}
+\alias{binomial.lvm}
+\alias{poisson.lvm}
+\alias{uniform.lvm}
+\alias{normal.lvm}
+\alias{probit.lvm}
+\alias{logit.lvm}
 
 \title{ Simulate model }
 \description{
@@ -31,7 +38,7 @@
   \item{cond}{  }
   \item{sigma}{ }
   \item{rho}{  }
-  \item{\dots}{  }
+  \item{\dots}{Additional arguments to be passed to the low level functions  }
 }
 \details{
   E.g. \eqn{ E(y|x) = 2*x^2 } could be specified as

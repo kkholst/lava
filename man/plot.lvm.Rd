@@ -6,8 +6,12 @@
   Plot the path diagram of a SEM
 }
 \usage{
-\method{plot}{lvm} (x, diag = FALSE, cor=TRUE, labels = FALSE,
-addcolor = TRUE, debug=FALSE, ...)
+\method{plot}{lvm}(x, all = FALSE, diag = FALSE, cor = TRUE, labels =
+                 FALSE, intercept = FALSE, addcolor = TRUE, plain =
+                 FALSE, cex, fontsize1 = 10, debug = FALSE, noplot =
+                 FALSE, graph = list(rankdir = "BT"), attrs =
+                 list(graph = graph), unexpr = FALSE, parameters =
+                 TRUE, addstyle = TRUE, ...)
 }
 \arguments{
   \item{x}{ Model object }
@@ -20,7 +24,7 @@ addcolor = TRUE, debug=FALSE, ...)
   \item{addcolor}{ Logical argument indiciating whether to add colors to
     plot (overrides \code{nodecolor} calls) }
   \item{debug}{ for debugging only }
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \author{ Klaus K. Holst }
 \examples{

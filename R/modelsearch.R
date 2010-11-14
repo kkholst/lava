@@ -236,40 +236,34 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         varlist <- rbind(varlist, V[myvar])
       }
       altmodel$parpos <- NULL
-      altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=FALSE)
-      ##          mu <- colMeans(model.frame(x))
-      ##      altmodel$parpos <- NULL
-      ##      index(altmodel)$dA <- NULL      
-      ##    index(altmodel) <- reindex(altmodel) ##,deriv=TRUE,zeroones=FALSE)
-##      index(altmodel)$Kkk <- index(x)$Kkk
-##      index(altmodel)$Ik <- index(x)$Ik
-##      index(altmodel)$Im <- index(x)$Im
-##      DD <- deriv(altmodel,p=p1)
-#      index(x)[names(DD)] <- DD
-      
-      cc <- coef(altmodel, mean=FALSE,silent=TRUE,symbol=c("->","<->"))
-      cc0 <- coef(cur, mean=FALSE,silent=TRUE,symbol=c("->","<->"))
+##      altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=FALSE)
+      altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=TRUE)
+      cc <- coef(altmodel, mean=TRUE,silent=TRUE,symbol=c("->","<->"))
+      cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=c("->","<->"))
       ##          pos <- match(paste(V[i], "<->", V[j], sep=""),cc)
       ##          if (is.na(pos)) ## Should not be necessary 
       ##            pos <- match(paste(V[i], "<->", V[j], sep=""),cc)
-      p1 <- numeric(length(pp$p)+k) ## New parameter basically p1 = (p0, 0)
+      ###      p1 <- numeric(length(pp$p)+k) ## New parameter basically p1 = (p0, 0)
+      p1 <- numeric(length(p)+k)
       ## Need to be sure we place 0 at the correct position
       for (ic in 1:length(cc)) {
         idx <- match(cc[ic],cc0)
         if (!is.na(idx))
-            p1[ic] <- pp$p[idx]
+##            p1[ic] <- pp$p[idx]
+          p1[ic] <- p[idx]
       }
 #      Sc2 <- score(altmodel,p=p1,S=S,data=NULL,n=n)
       Sc2 <- score(altmodel,p=p1,data=model.frame(x),model=x$estimator,weight=Weight(x))
-      rmidx <- NULL
-      if (!is.null(pp$meanpar)) {
-        rmidx <- 1:length(pp$meanpar)
-      } 
+##      browser()
+##      rmidx <- NULL
+##      if (!is.null(pp$meanpar)) {
+##        rmidx <- 1:length(pp$meanpar)
+##      } 
       ##      myidx <- (length(Sc2)-altmodel$index$npar+1):length(Sc2)
 ##      Sc2 <- Sc2[-rmidx]
 ##      I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
       I <- information(altmodel,p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
-      iI <- try(solve(I), silent=TRUE)
+      iI <- try(Inverse(I), silent=TRUE)
 ##      browser()      
       Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
                    ## rbind(Sc)%*%iI%*%cbind(Sc)

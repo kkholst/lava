@@ -18,7 +18,7 @@ Graph(x, ...) <- value
 \arguments{
   \item{x}{ Model object }
   \item{value}{ New \code{graphNEL} object }
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   Returns a graph object (\code{graphNEL})

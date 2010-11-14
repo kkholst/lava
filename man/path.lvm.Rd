@@ -35,7 +35,7 @@
     turned on/off.}
   \item{var}{Variable(s) of interest either given as a character vector or
     a formula}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   If \code{object} is of class \code{lvmfit} a list with the following

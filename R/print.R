@@ -9,7 +9,10 @@ function(x, ...) {
   cat("Npar=", index(x)$npar, "+", index(x)$npar.mean, "\n", sep="")
   cat("\n")
   ff <- formula(x,TRUE)
-  for (f in ff) print(as.character(f), quote=FALSE)
+  for (f in ff) {
+    oneline <- as.character(f); 
+    cat(as.character(oneline))
+  }
   invisible(x)
 }
 

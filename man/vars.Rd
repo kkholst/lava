@@ -34,7 +34,7 @@ endogenous(x,...)
 exogenous(x,...)
 manifest(x,...)
 latent(x,...)
-\method{exogenous}{lvm}(x,...) <- value
+\method{exogenous}{lvm}(x,silent = FALSE, xfree = TRUE,...) <- value
 \method{exogenous}{lvm}(x,latent=FALSE,index=TRUE,...)
 \method{latent}{lvm}(x,clear=FALSE,...) <- value
 }
@@ -45,8 +45,10 @@ latent(x,...)
   \item{index}{For internal use only}
   \item{clear}{Logical indicating whether to add or remove latent
     variable status}
+  \item{silent}{Suppress messages}
+  \item{xfree}{For internal use only}
   \item{value}{Formula or character vector of variable names.}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \details{
   \code{vars} returns all variables of the \code{lvm}-object including

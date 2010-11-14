@@ -28,11 +28,11 @@ function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
   } else {
     if (!all(var%in%vars(x))) {
       addvar(x,silent=silent) <- setdiff(var,vars(x))
-    }    
+    }
     x <- addattr(x,attr="shape",var=var,val="ellipse")
     nodeData(Graph(x), var, attr="latent") <- TRUE
     if (zero) {
-      intfix(x,var) <- 0
+      intercept(x,var) <- 0
     }
   }
   index(x) <- reindex(x)

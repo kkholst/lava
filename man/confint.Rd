@@ -14,7 +14,7 @@
   \item{level}{Confidence level}
   \item{profile}{Logical expression defining whether to calculate
     confidence limits via the profile log likelihood}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   A 2xp matrix with columns of lower and upper confidence limits

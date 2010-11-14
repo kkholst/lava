@@ -6,19 +6,13 @@
 \alias{summary.lvmfit}
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \description{
-  Estimate parameters. ML-based or user-defined estimator.
+  Estimate parameters. MLE, IV or user-defined estimator.
 }
 \usage{
-\method{estimate}{lvm}(x, data,
-         estimator="gaussian",
-         control=list(),
-         missing=FALSE,
-         weight,
-         index=TRUE,
-         graph=FALSE,
-         fix,
-         debug=FALSE, silent=FALSE,
-         ...) 
+\method{estimate}{lvm}(x, data, estimator = "gaussian", control = list(),
+                 missing = FALSE, weight, fix, index = TRUE, graph =
+                 FALSE, debug = FALSE, silent = lava.options()$silent,
+                 quick = FALSE, ...)
 }
 \arguments{
   \item{x}{ \code{lvm}-object }
@@ -38,9 +32,11 @@
     set to 0 and at least one regression parameter of each measurement
     model fixed to ensure identifiability.)}
   \item{debug}{ for debugging only }
+  \item{quick}{ If TRUE the parameter estimates are calculated but all
+    additional information such as standard errors are skipped }
   \item{silent}{ Logical argument indicating whether information should
     be printed during estimation }
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   A \code{lvmfit}-object.

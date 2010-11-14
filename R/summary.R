@@ -1,8 +1,12 @@
 ###{{{ summary.lvm
 
 `summary.lvm` <-
-function(object,...) {  
-  print(object,...)
+function(object,...) {
+  k <- length(vars(object))
+  cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
+  if (k==0)
+    return()
+  cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
   cat("\n")
   print(regression(object))
   print(covariance(object))
@@ -44,8 +48,11 @@ function(object,std="xy", level=9, labels=2, ...) {
 
 print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   l2D <- sum(x$object$opt$grad^2)
+  rnkV <- qr(vcov(x$object))$rank
   if (l2D>1e-2) warning("Possible problems with convergence!")
   cat("||score||^2=",l2D,"\n")
+  np <- nrow(vcov(x$object))
+  if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
   cat("Latent variables:", latent(x$object), "\n")
   cat("Number of rows in data=",x$n)
   if (x$nc!=x$n) {
@@ -65,7 +72,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   cat("Estimator:",x$object$estimator,"\n")
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(x$gof)) {
-    print(x$gof)
+    print(x$gof,optim=FALSE)
     cat(rep("-", 50), "\n", sep="");
   }
   invisible(x)

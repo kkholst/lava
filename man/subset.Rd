@@ -14,7 +14,7 @@ measurement(x,silent=TRUE,debug=FALSE)
   \item{vars}{Character vector or formula specifying variables to include in subset.}
   \item{silent}{Logical variable which indicates whether messages are turned on/off.}
   \item{debug}{For debugging only}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   A \code{lvm}-object.

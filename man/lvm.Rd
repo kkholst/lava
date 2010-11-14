@@ -18,7 +18,7 @@ lvm(var = NULL, silent=FALSE, ...)
   }
   \item{silent}{Logical variable which indicates whether messages are turned
   on/off.}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   Returns an object of class \code{lvm}.

@@ -8,11 +8,6 @@
 \alias{pars}
 \alias{pars.lvm}
 \alias{pars.lvmfit}
-\alias{binomial.lvm}
-\alias{poisson.lvm}
-\alias{uniform1.lvm}
-\alias{uniform.lvm}
-\alias{normal.lvm}
 \alias{procdata.lvm}
 \alias{fixsome}
 \alias{index}
@@ -24,6 +19,8 @@
 \alias{index}
 \alias{index.lvm}
 \alias{index.lvmfit}
+\alias{randomslope}
+\alias{randomslope<-}
 \alias{describecoef}
 \alias{lisrel}
 \alias{addattr}

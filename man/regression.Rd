@@ -15,11 +15,10 @@
   and define linear constraints between model equations.
 }
 \usage{
-\method{regression}{lvm}(object, to, from, fn=NA, debug=FALSE,
-silent=FALSE, ...)
+\method{regression}{lvm}function(object = lvm(), to, from, fn = NA,
+debug = FALSE, silent = lava.options()$silent, ...)
 \method{regression}{lvm}(object, to=NULL, ...) <- value
 \method{regfix}{lvm}(object, ...)
-	  
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -31,7 +30,7 @@ silent=FALSE, ...)
     \code{to=NULL} a \code{list} of parameter values.}
   \item{debug}{for debugging only.}
   \item{silent}{Logical variable which indicates whether messages are turned on/off.}
-  \item{\dots}{...}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \details{
 
@@ -41,7 +40,7 @@ silent=FALSE, ...)
 
   For instance, to add the following linear regression model, to the
   \code{lvm}-object, \code{m}:  
-  \deqn{ E(Y|X_1,X_2) = \beta_1 X_1 + \beta_2 X_2  }{ E(Y|X1,X2) = beta1*X1 + beta2*X2}
+  \deqn{ E(Y|X_1,X_2) = \beta_1 X_1 + \beta_2 X_2  }%%{ E(Y|X1,X2) = beta1*X1 + beta2*X2}
   We can write
 
   \code{regression(m) <- y ~ x1 + x2}
@@ -52,12 +51,13 @@ silent=FALSE, ...)
   \code{regression(m) <- c(y1,y2) ~ x1 + x2}
 
   defines
-  \deqn{ E(Y_i|X_1,X_2) = \beta_{1i} X_1 + \beta_{2i} X_2  }{ E(Yi|X1,X2) = beta[1i]*X1 + beta[2i]*X2}
+  \deqn{ E(Y_i|X_1,X_2) = \beta_{1i} X_1 + \beta_{2i} X_2  }%%{ E(Yi|X1,X2) = beta[1i]*X1 + beta[2i]*X2}
   
   
   The special function, \code{f}, can be used in the model specification
   to specify linear constraints. E.g. to fix
-  \eqn{\beta_1=\beta_2}{beta1=beta2}, we could write
+  \eqn{\beta_1=\beta_2}%%{beta1=beta2}
+  , we could write
 
   \code{regression(m) <- y ~ f(x1,beta) + f(x2,beta)}
 
@@ -72,10 +72,10 @@ silent=FALSE, ...)
 
   \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 
-  defines \eqn{E(y1|x1,x2) = a1 x1 + b1 x2}. The rhs argument can be a
+  defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs argument can be a
   mixture of character and numeric values (and NA's).  
   
-  The function \code{regfix} (called without
+  The function \code{regression} (called without
   additional arguments) can be used to inspect the linear
   constraints of a \code{lvm}-object.
    

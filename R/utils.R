@@ -1,8 +1,10 @@
+###{{{ %s% string concat operator
 
 '%s%' <-
 function(st1,st2) {
   paste(st1, st2, sep="")
 }
+###}}}
 
 ###{{{ parlabels
 
@@ -276,7 +278,9 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###{{{ procdata.lvm
 
 `procdata.lvm` <-
-  function(x,data,debug=FALSE,categorical=FALSE,na.method=ifelse(any(is.na(data[,manifest(x)])),"pairwise.complete.obs","complete.obs")) {
+  function(x,data,debug=FALSE,categorical=FALSE,
+           na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"pairwise.complete.obs","complete.obs")
+           ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
     }
@@ -287,7 +291,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       Debug(obs, debug)
       mydata <- subset(data, select=obs)
       for (i in 1:ncol(mydata)) {
-        if (is.Surv(mydata[,i]))
+        if (inherits(mydata[,i],"Surv"))
           mydata[,i] <- mydata[,i][,1]
         if (is.character(mydata[,i]) | is.factor(mydata[,i]))
           mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
@@ -332,6 +336,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###}}}    
 
 ###{{{ reorderdata.lvm
+
 `reorderdata.lvm` <-
   function(x, data) {
     if (is.vector(data)) {
@@ -344,6 +349,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       data[ii,ii,drop=FALSE]    
     }
   }
+
 ###}}}
 
 ###{{{ tr
@@ -394,6 +400,36 @@ function(M, upper=TRUE) {
 ###}}}
 
 ###{{{ toformula
+extractvar <- function(f) {
+    yy <- getoutcome(f)
+    xx <- attributes(terms(f))$term.labels
+    myvars <- all.vars(f)
+    return(list(y=yy,x=xx,all=myvars))
+}
+getoutcome <- function(formula) {
+  aa <- attributes(terms(formula))
+  if (aa$response==0)
+    return(NULL)
+  paste(deparse(formula[[2]]),collapse="")
+}
+decomp.specials <- function(x,pattern="[()]") {
+  st <- gsub(" ","",x)
+  vars <- rev(unlist(strsplit(st,pattern)))[1]
+  unlist(strsplit(vars,","))
+}
+Decomp.specials <- function(x,pattern="[()]") {
+  st <- gsub(" ","",x)
+  st <- gsub("\n","",st)
+  mysplit <- rev(unlist(strsplit(st,pattern)))
+  type <- mysplit[2] 
+  vars <- mysplit[1]
+  res <- unlist(strsplit(vars,","))
+  if (type=="s" | type=="seq") {
+    return(paste(res[1],seq(as.numeric(res[2])),sep=""))
+  } 
+  unlist(strsplit(vars,","))
+}
+
 toformula <- function (y = ".", x = ".") 
 {
     xst <- x[1]
@@ -462,64 +498,6 @@ printR <- function(x,eol="\n",...) {
 }
 
 ###}}}
-
-extractvar <- function(f) {
-    yy <- getoutcome(f)
-    xx <- attributes(terms(f))$term.labels
-    myvars <- all.vars(f)
-    return(list(y=yy,x=xx,all=myvars))
-}
-getoutcome <- function(formula) {
-  aa <- attributes(terms(formula))
-  if (aa$response==0)
-    return(NULL)
-  paste(deparse(formula[[2]]),collapse="")
-}
-decomp.specials <- function(x,pattern="[()]") {
-  st <- gsub(" ","",x)
-  vars <- rev(unlist(strsplit(st,pattern)))[1]
-  unlist(strsplit(vars,","))
-}
-Decomp.specials <- function(x,pattern="[()]") {
-  st <- gsub(" ","",x)
-  st <- gsub("\n","",st)
-  mysplit <- rev(unlist(strsplit(st,pattern)))
-  type <- mysplit[2] 
-  vars <- mysplit[1]
-  res <- unlist(strsplit(vars,","))
-  if (type=="s" | type=="seq") {
-    return(paste(res[1],seq(as.numeric(res[2])),sep=""))
-  } 
-  unlist(strsplit(vars,","))
-}
-
-as.numeric.list <- function(x,...) {
-  res <- list()
-  asnum <- as.numeric(x)
-  lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
-}
-
-edge2pair <- function(e) {
-  sapply(e,function(x) strsplit(x,"~"))
-}
-numberdup <- function(xx) { ## Convert to numbered list
-  dup.xx <- duplicated(xx)
-  dups <- xx[dup.xx]
-  xx.new <- numeric(length(xx))
-  count <- 0
-  for (i in 1:length(xx)) {
-    if (!dup.xx[i]) {
-      count <- count+1
-      xx.new[i] <- count
-    } else {
-      xx.new[i] <- xx.new[match(xx[i],xx)[1]]
-    }
-  }
-  return(xx.new)
-}
-
-logit <- function(p) log(p/(1-p))
-tigol <- function(z) 1/(1+exp(-z))
 
 ###{{{ Inverse/pseudo
 
@@ -620,7 +598,6 @@ CondMom <- function(mu,S,idx,X) {
   else
     Z <- apply(X,1,function(xx) xx-muX)
   SZ  <- t(SYX%*%iSXX%*%Z)
-  browser()
 ##  condmean <- matrix(
   if (is.matrix(mu))
     condmean <- SZ+muY
@@ -635,4 +612,33 @@ CondMom <- function(mu,S,idx,X) {
 
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean)
+
 }
+
+as.numeric.list <- function(x,...) {
+  res <- list()
+  asnum <- as.numeric(x)
+  lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
+}
+
+edge2pair <- function(e) {
+  sapply(e,function(x) strsplit(x,"~"))
+}
+numberdup <- function(xx) { ## Convert to numbered list
+  dup.xx <- duplicated(xx)
+  dups <- xx[dup.xx]
+  xx.new <- numeric(length(xx))
+  count <- 0
+  for (i in 1:length(xx)) {
+    if (!dup.xx[i]) {
+      count <- count+1
+      xx.new[i] <- count
+    } else {
+      xx.new[i] <- xx.new[match(xx[i],xx)[1]]
+    }
+  }
+  return(xx.new)
+}
+
+logit <- function(p) log(p/(1-p))
+tigol <- function(z) 1/(1+exp(-z))

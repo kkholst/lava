@@ -17,7 +17,7 @@ Model(x, ...) <- value
 \arguments{
   \item{x}{ Fitted model }
   \item{value}{ New model object (e.g. \code{lvm} or \code{multigroup})}
-  \item{\dots}{}
+  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   Returns a model object (e.g. \code{lvm} or \code{multigroup})

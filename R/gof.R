@@ -71,11 +71,15 @@ gof.lvmfit <- function(object,chisq=FALSE,...) {
   else
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
 
+  l2D <- sum(object$opt$grad^2)
+  rnkV <- qr(vcov(object))$rank
+  res <- c(res, L2score=l2D, rankV=rnkV, k=nrow(vcov(object)))
+
   class(res) <- "gof.lvmfit"
   return(res)       
 }
 
-print.gof.lvmfit <- function(x,...) {
+print.gof.lvmfit <- function(x,optim=TRUE,...) {
   if (!is.null(x$n))
     with(x,       
          cat("Number of observations =", n, "\n"))
@@ -90,5 +94,10 @@ print.gof.lvmfit <- function(x,...) {
            "Chi-squared statistic: Q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
+  if (optim) {
+    cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
+    cat("||score||^2 =",x$L2score,"\n")
+  }
+
   invisible(x)
 }

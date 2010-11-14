@@ -1,11 +1,10 @@
-predict.lvmfit <- function(object,x,data=model.frame(object),p=pars(object),...) {
-  predict(x$model0,x,p=p,data=data,mu=object$mu,S=object$S,...)
+predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) {
+  predict(Model(object),x,p=p,data=data,mu=object$mu,S=object$S,...)
 }
 
-predict.lvm <- function(object,x,resid=FALSE,p,data,path=FALSE,...) {
+predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
   ## data = data.frame of exogenous variables
   if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
-
     
   m <- moments(object,p,data=data)
   if (path) {
@@ -62,8 +61,8 @@ predict.lvm <- function(object,x,resid=FALSE,p,data,path=FALSE,...) {
   ## mu <- as.vector(m$IAi%*%m$v); names(mu) <- names(m$v)
   ##  S <- C.x
   ##  mu <- t(xi.x)
-
-  if (!missing(x)) {
+##  browser()
+  if (!is.null(x)) {
     if (class(x)[1]=="formula") 
       x <- all.vars(x)
     y <- setdiff(vars(object),c(x,exogenous(object)))
@@ -72,7 +71,7 @@ predict.lvm <- function(object,x,resid=FALSE,p,data,path=FALSE,...) {
       Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
       Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
       Vhat[,y] <- t(E.x)
-      return(t((IA%*%t(Vhat)-m$v)[y,]))
+      return(t((IA%*%t(Vhat)-m$v)))
     }
     res <- t(E.x); colnames(res) <- y
     return(res)
