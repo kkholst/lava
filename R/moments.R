@@ -1,3 +1,7 @@
+Moments <- function(x,p,data,conditional=TRUE,...) {
+  
+}
+
 `moments` <-
   function(x,...) UseMethod("moments")
 
@@ -22,17 +26,18 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   ##  rownames(P) <- colnames(P) <- ii$vars
   npar <- ii$npar
   npar.reg <- ii$npar.reg
-  
+
+  J <- ii$J
   if (conditional) {
     ##    mynames <- index(x)$endo.idx
     J <- ii$Jy
     px <- ii$px 
-    P <-  with(ii, px%*% tcrossprod(P, px))
+    P <-  px%*% tcrossprod(P, px)
   } else {
     ##    mynames <- ii$vars
-    J <- ii$J ## Manifest variable selection matrix    
+    ##    J <- ii$J ## Manifest variable selection matrix    
   }
-
+  
   Im <- diag(nrow(AP$A))  
   if (ii$sparse) {
     IAi <- with(AP, as(solve(Im-t(A)),"sparseMatrix"))

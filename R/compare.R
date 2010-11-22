@@ -1,4 +1,5 @@
 comparepair <- function(x1,x2) {
+
   ##if (class(x1)!="lvmfit" | class(x2)!="lvmfit") stop("'lvmfit' object expected.")
   l1 <- logLik(x1);  l2 <- logLik(x2)
   df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;

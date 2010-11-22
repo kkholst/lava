@@ -236,7 +236,7 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
 ###{{{ Debug
 
 `Debug` <-
-  function(msg, cond) {
+  function(msg, cond=lava.options()$debug) {
     if (cond)
       print(paste(msg, collapse=" "))
   }

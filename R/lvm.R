@@ -7,11 +7,15 @@ lvm <- function(var=NULL, silent=FALSE, ...) {
   nodeDataDefaults(x, "randomslope") <- FALSE
   nodeDataDefaults(x, "normal") <- TRUE
   nodeDataDefaults(x, "survival") <- FALSE
-  nodeDataDefaults(x, "binary") <- FALSE
   nodeDataDefaults(x, "parameter") <- FALSE
   nodeDataDefaults(x, "categorical") <- FALSE
   nodeDataDefaults(x, "distribution") <- NA
   nodeDataDefaults(x, "label") <- expression(NA)
+  myhooks <- gethook("init.hooks")
+  for (f in myhooks) {
+    x <- do.call(f, list(x=x))
+  }        
+
 
   edgeDataDefaults(x, "lty") <- 1
   edgeDataDefaults(x, "lwd") <- 1

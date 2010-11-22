@@ -1,4 +1,9 @@
 "parameter<-" <- function(x,...,value) UseMethod("parameter<-")
+
+"parameter<-.lvmfit" <- function(x,...,value) {
+  parameter(Model(x),...) <- value
+  return(x)
+}
 "parameter<-.lvm" <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     parameter(x,...) <- all.vars(value)

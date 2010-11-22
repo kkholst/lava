@@ -1,23 +1,3 @@
-lava.env <- environment()
-assign("estimate.hooks",c(),lava.env)
-lockBinding("estimate.hooks", lava.env)
-assign("color.hooks",c(),lava.env)
-lockBinding("color.hooks", lava.env)
-assign("sim.hooks",c(),lava.env)
-lockBinding("sim.hooks", lava.env)
-assign("post.hooks",c(),lava.env)
-lockBinding("post.hooks", lava.env)
-assign("options",
-       list(
-            trace=0,
-            iter.max=300,
-            constrain=FALSE,
-            silent=FALSE,
-            Dmethod="simple" ##Richardson"
-            ),
-       lava.env)
-lockBinding("post.hooks", lava.env)
-
 lava.options <- function(...) {
   dots <- list(...)
   curopt <- get("options",envir=lava.env)
@@ -35,6 +15,30 @@ gethook <- function(hook="estimate.hooks",...) {
 addhook <- function(x,hook="estimate.hooks",...) {
   ##  env <- as.environment("package:lava")
   unlockBinding(hook,lava.env)
-  assign(hook,c(gethook(hook),x), envir=lava.env)
+  assign(hook,unique(c(gethook(hook),x)), envir=lava.env)
   lockBinding(hook, lava.env)
 }
+
+lava.env <- environment()
+assign("init.hooks",c(),lava.env)
+lockBinding("init.hooks", lava.env)
+assign("estimate.hooks",c(),lava.env)
+lockBinding("estimate.hooks", lava.env)
+assign("color.hooks",c(),lava.env)
+lockBinding("color.hooks", lava.env)
+assign("sim.hooks",c(),lava.env)
+lockBinding("sim.hooks", lava.env)
+assign("post.hooks",c(),lava.env)
+lockBinding("post.hooks", lava.env)
+assign("options",
+       list(
+            trace=0,
+            iter.max=300,
+            constrain=FALSE,
+            silent=FALSE,
+            Dmethod="simple", ##Richardson"
+            parallel=TRUE,
+            debug=FALSE
+            ),
+       lava.env)
+

@@ -94,11 +94,11 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
-  Debug("estimate.MAR",debug)
+  Debug("estimate.MAR")
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0 & !silent)
     warning(paste("Remove latent variable colnames from dataset",redvar)) 
@@ -228,7 +228,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,debug=FALSE,type=2,start
   
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
 
-  e.mis <- estimate(mg0,debug=debug,control=control,silent=silent,weight=val$weights,estimator=estimator,...)
+  e.mis <- estimate(mg0,control=control,silent=silent,weight=val$weights,estimator=estimator,...)
 
   ##  return(e.mis)
   

@@ -19,9 +19,9 @@ constraints(object,vcov=object$vcov,level=0.95,data,...)
 \arguments{  
   \item{x}{\code{lvm}-object}
   \item{par}{Name of new parameter. Alternatively a
- formula with lhs specifying the new parameter and the
-rhs defining the names of the parameters or variable names defining the
-new parameter (overruling the \code{args} argument).}
+    formula with lhs specifying the new parameter and the
+    rhs defining the names of the parameters or variable names defining the
+    new parameter (overruling the \code{args} argument).}
   \item{args}{Vector of variables names or parameter names that are used
     in defining \code{par}}
   \item{k}{For multigroup models this argument specifies which group to

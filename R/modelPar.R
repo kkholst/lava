@@ -9,12 +9,12 @@ modelPar.lvmfit <- function(x, p=pars(x), ...) modelPar(Model(x),p=p,...)
 
 ###{{{ modelPar
 
-modelPar.lvm <- function(x,p, debug=FALSE, ...) {
+modelPar.lvm <- function(x,p, ...) {
   npar <- index(x)$npar
   npar.mean <- index(x)$npar.mean
-  Debug(list("npar=",npar),debug)
-  Debug(list("npar.mean=",npar.mean),debug)
-  Debug(list("p=",p),debug)
+  Debug(list("npar=",npar))
+  Debug(list("npar.mean=",npar.mean))
+  Debug(list("p=",p))
   if (length(p)!=npar & length(p)!=(npar+npar.mean)) stop("Wrong dimension of parameter vector!")  
   if (length(p)!=npar) { ## if meanstructure
       meanpar <- p[1:npar.mean]
@@ -35,7 +35,7 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 ###}}}
 
 ###{{{ modelPar.multigroup
-modelPar.multigroup <- function(x,p, debug=FALSE, ...) {
+modelPar.multigroup <- function(x,p, ...) {
   npar <- x$npar
   npar.mean <- x$npar.mean
   k <- x$ngroup

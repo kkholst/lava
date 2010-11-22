@@ -56,7 +56,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   cat("Latent variables:", latent(x$object), "\n")
   cat("Number of rows in data=",x$n)
   if (x$nc!=x$n) {
-    cat(" (complete cases=",x$nc,", ", x$ngroup, " groups)",sep="")    
+    cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")    
   }; cat("\n")
   cat(rep("-", 50), "\n", sep="");
   print(x$coefmat,quote=FALSE,right=TRUE)

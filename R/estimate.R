@@ -9,10 +9,11 @@ function(x, data,
          control=list(),
          missing=FALSE,
          weight,
+         cluster=NULL,
          fix,
          index=TRUE,
          graph=FALSE,
-         debug=FALSE, silent=lava.options()$silent,
+         silent=lava.options()$silent,
          quick=FALSE,
          ...) { 
 
@@ -30,7 +31,7 @@ function(x, data,
   optim <- list(
                 eval.max=300,
                 iter.max=500,
-                trace=ifelse(debug,3,0),
+                trace=ifelse(lava.options()$debug,3,0),
                 gamma=1,
                 gamma2=1,
                 ngamma=NULL,
@@ -66,7 +67,7 @@ function(x, data,
   if (missing(fix)) {
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)
   }
-  Debug(list("start=",optim$start),debug)
+  Debug(list("start=",optim$start))
   ## Weights...
   if (!missing(weight)) {
     if (is.character(weight)) {
@@ -76,13 +77,23 @@ function(x, data,
   } else {
     weight <- NULL
   }
-  Debug("procdata",debug)
-  dd <- procdata.lvm(x,data=data,debug=debug)
+  Debug("procdata")
+  dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
-  Debug(list("n=",n),debug)  
-  Debug(list("S=",S),debug)
-  Debug(list("mu=",mu),debug)  
-  ### Run hooks (additional lava plugins)
+  Debug(list("n=",n))  
+  Debug(list("S=",S))
+  Debug(list("mu=",mu))
+ 
+  if (fix) {
+    var.missing <- setdiff(vars(x),colnames(S))
+    if (length(var.missing)>0) {## Convert to latent:
+      new.lat <- setdiff(var.missing,latent(x))
+      if (length(new.lat)>0)
+        x <- latent(x, new.lat)
+    }
+  }
+
+  ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
     res <- do.call(f, list(x=x,data=data,weight=weight,estimator=estimator,optim=optim))
@@ -92,26 +103,26 @@ function(x, data,
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
-  
+
   if (!quick & index) {
     ## Proces data and setup some matrices
     x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
     if (!silent)
-    cat("Reindexing model...\n")
+      cat("Reindexing model...\n")
     if (length(xfix)>0) {
-      index(x) <- reindex(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,debug=debug)
+      index(x) <- reindex(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE)
     } else {
-      x <- updatelvm(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,mean=TRUE,debug=debug)
+      x <- updatelvm(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,mean=TRUE)
     }
   }
   
-##  if (index(x)$npar.mean==0) optim$meanstructure <- FALSE       
+  ## if (index(x)$npar.mean==0) optim$meanstructure <- FALSE       
   if (is.null(estimator) || estimator==FALSE) {
     return(x)
   }  
   k <- length(manifest(x))
   ##  m <- length(latent(x))    
-  Debug(list("S=",S),debug)
+  Debug(list("S=",S))
   if (!optim$meanstructure) {
     mu <- NULL
   }  
@@ -128,10 +139,10 @@ function(x, data,
 
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
-    Debug(list("starter=",optim$starterfun), debug)
-    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=debug,silent=silent)))
-    Debug(start, debug)  
-    Debug(list("start=",start),debug)
+    Debug(list("starter=",optim$starterfun))
+    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
+    Debug(start)  
+    Debug(list("start=",start))
     if (length(paragree.2)>0) {
       start[which(paragree)] <- optim$start[which(paragree.2)]
     }
@@ -141,7 +152,7 @@ function(x, data,
   ## Missing data
   if (missing) {
     control$start <- optim$start
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=debug,silent=silent,estimator=estimator,weight=weight,...))
+    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,...))
   }
   
   ## Setup optimization constraints
@@ -162,8 +173,7 @@ function(x, data,
   }
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
-  Debug(list("lower=",lower),debug)
-
+  Debug(list("lower=",lower))
   
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   if (!exists(ObjectiveFun)) stop("Unknown estimator.")
@@ -175,8 +185,8 @@ function(x, data,
 
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
-  
-###### Random slopes or non-linear constraints?
+
+  ## Random slopes or non-linear constraints?
   if (length(xfix)>0 | length(xconstrain)>0) { ## Yes
     x0 <- x
     
@@ -370,7 +380,7 @@ For numerical approximation please install the library 'numDeriv'.")
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
 
-  mom <- modelVar(x, pp, debug)
+  mom <- modelVar(x, pp)
   if (!silent) cat("Calculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
@@ -389,30 +399,12 @@ For numerical approximation please install the library 'numDeriv'.")
   }
   if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
                         }
-  Debug("did that", debug) 
+  Debug("did that") 
 
-  ##
-  SD <- sqrt(diag(asVar))
-  Z <- opt$estimate/SD
-  pval <- 2*(1-pnorm(abs(Z)))
-  coef <- cbind(opt$estimate, SD, Z, pval);
-  Debug(coef,debug)
-
-  nparall <- mom$npar + ifelse(optim$meanstructure, mom$npar.mean,0)
+  nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
-  mycoef[pp.idx,] <- coef
-  colnames(mycoef) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")    
-
-  mynames <- c()
-  if (optim$meanstructure) {
-    mynames <- vars(x)[index(x)$v1==1]
-  }
-  if (index(x)$npar>0) {
-    mynames <- c(mynames,paste("p",1:index(x)$npar,sep=""))
-  }
-  rownames(mycoef) <- mynames
-  Debug(list("COEF",coef),debug)
-   
+  mycoef[pp.idx,1] <- opt$estimate
+  
   ### OBS: v = t(A)%*%v + e
   res <- list(model=x, call=cl, coef=mycoef, vcov=asVar, mu=mu, S=S, ##A=A, P=P,
               model0=mymodel, ## Random slope hack
@@ -420,18 +412,21 @@ For numerical approximation please install the library 'numDeriv'.")
               data=list(model.frame=data, S=S, mu=mu, C=mom$C, v=mom$v, n=n,
                 m=length(latent(x)), k=k),
               weight=weight,
+              cluster=cluster,
+              pp.idx=pp.idx,
               graph=NULL, control=optim)
 
   class(res) <- myclass
-  if(graph) {
-    res <- edgelabels(res,type="est")
-  }
 
   myhooks <- gethook("post.hooks")
   for (f in myhooks) {
-    res0 <- do.call(f,res)
+    res0 <- do.call(f,list(x=res))
     if (!is.null(res0))
       res <- res0
+  }
+  
+  if(graph) {
+    res <- edgelabels(res,type="est")
   }
   
   return(res)

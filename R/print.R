@@ -11,7 +11,7 @@ function(x, ...) {
   ff <- formula(x,TRUE)
   for (f in ff) {
     oneline <- as.character(f); 
-    cat(as.character(oneline))
+    cat(as.character(oneline),"\n")
   }
   invisible(x)
 }

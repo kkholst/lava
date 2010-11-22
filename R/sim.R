@@ -1,3 +1,10 @@
+t.lvm <- function(df=1,mean,sd,...) {
+ if (!missing(lambda))
+    f <- function(n,mu,var,...) rt(n,lambda)
+ else
+   f <- function(n,mu,...) rpois(n,exp(mu))
+ return(f)
+}
 normal.lvm <- function(mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   if (!missing(mean) & !missing(sd)) 
@@ -130,7 +137,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     }
   }
   simuled <- X
-
+  
   if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) ) ) { ## || all(is.na(distribution(x))) ) {
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
@@ -146,85 +153,80 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     IAi <- solve(I-t(A))
     dd <- rmvnorm(n,mu,P)
     res <- dd%*%t(IAi)
-    return(data.frame(res))       
-  }
-
-  
-
+  } else {
   
   
-  xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
-  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
-  if (!all(xconstrain %in% index(x)$exogenous)) stop("Non-linear constraint only allowed via covariates")
-  if (length(xconstrain>0))
-  for (i in which(xconstrain.idx)) {
-    ff <- constrain(x)[[i]]
-    myargs <- attributes(ff)$args
-    D <- matrix(0,n,length(myargs))
-    for (j in 1:ncol(D)) {
-      if (myargs[j]%in%xconstrain)
-        D[,j] <- res[,myargs[j]]
-      else
-        D[,j] <- M$parval[[myargs[j]]]
-    }
-    res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
-  }
-  xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
-  covparnames <- unique(as.vector(covariance(x)$labels))  
-  if (any(xconstrain.par%in%covparnames)) {
-    mu0 <- rep(0,ncol(P))
-    P0 <- P
-    E <- t(sapply(1:n,function(idx) {
-      for (i in intersect(xconstrain.par,covparnames)) {
-        P0[covariance(x)$labels==i] <- res[idx,i]
+    xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
+    xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
+    if (!all(xconstrain %in% index(x)$exogenous)) stop("Non-linear constraint only allowed via covariates")
+    if (length(xconstrain>0))
+      for (i in which(xconstrain.idx)) {
+        ff <- constrain(x)[[i]]
+        myargs <- attributes(ff)$args
+        D <- matrix(0,n,length(myargs))
+        for (j in 1:ncol(D)) {
+          if (myargs[j]%in%xconstrain)
+            D[,j] <- res[,myargs[j]]
+          else
+            D[,j] <- M$parval[[myargs[j]]]
+        }
+        res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
       }
-      return(rmvnorm(1,mu0,P0))
-    }))
-  }
+    xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
+    covparnames <- unique(as.vector(covariance(x)$labels))  
+    if (any(xconstrain.par%in%covparnames)) {
+      mu0 <- rep(0,ncol(P))
+      P0 <- P
+      E <- t(sapply(1:n,function(idx) {
+        for (i in intersect(xconstrain.par,covparnames)) {
+          P0[covariance(x)$labels==i] <- res[idx,i]
+        }
+        return(rmvnorm(1,mu0,P0))
+      }))
+    }
 
 
     while (length(simuled)<length(nn)) {
-    leftovers <- setdiff(nn,simuled)
-    
-    for (i in leftovers) {
-      pos <- match(i,vars(x))
-      relations <- colnames(A)[A[,pos]!=0]
-      if (all(relations%in%simuled)) { ## Only depending on already simulated variables
-        ##        mu.i <- 0
-        if (x$mean[[pos]]%in%xconstrain.par) {
-          mu.i <- res[,x$mean[[pos]] ]
-        } else {
-          mu.i <- mu[pos]
-        }
-        for (From in relations) {
-          f <- functional(x,i,From)[[1]]
-          if (!is.function(f))
-            f <- function(x) x
-          reglab <- regfix(x)$labels[From,pos]
-          if (reglab%in%c(xfix,xconstrain.par)) {
-            mu.i <- mu.i + res[,reglab]*f(res[,From])
+      leftovers <- setdiff(nn,simuled)
+      
+      for (i in leftovers) {
+        pos <- match(i,vars(x))
+        relations <- colnames(A)[A[,pos]!=0]
+        if (all(relations%in%simuled)) { ## Only depending on already simulated variables
+          ##        mu.i <- 0
+          if (x$mean[[pos]]%in%xconstrain.par) {
+            mu.i <- res[,x$mean[[pos]] ]
+          } else {
+            mu.i <- mu[pos]
           }
+          for (From in relations) {
+            f <- functional(x,i,From)[[1]]
+            if (!is.function(f))
+              f <- function(x) x
+            reglab <- regfix(x)$labels[From,pos]
+            if (reglab%in%c(xfix,xconstrain.par)) {
+              mu.i <- mu.i + res[,reglab]*f(res[,From])
+            }
+            else {
+              mu.i <- mu.i + A[From,pos]*f(res[,From])
+            }
+          }
+          dist.i <- distribution(x,i)[[1]]
+          if (!is.function(dist.i))
+            res[,pos] <- mu.i + E[,pos]
+          ##          res[,pos] <- rnorm(n,mu.i,sd=Sigma[pos,pos]^0.5)
           else {
-            mu.i <- mu.i + A[From,pos]*f(res[,From])
+            res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
           }
+          simuled <- c(simuled,i)
         }
-        dist.i <- distribution(x,i)[[1]]
-        if (!is.function(dist.i))
-          res[,pos] <- mu.i + E[,pos]
-##          res[,pos] <- rnorm(n,mu.i,sd=Sigma[pos,pos]^0.5)
-        else {
-          res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
-        }
-        simuled <- c(simuled,i)
       }
     }
+    res <- res[,nn,drop=FALSE]
   }
-  res <- res[,nn,drop=FALSE]
-
+    
   myhooks <- gethook("sim.hooks")
-  count <- 3
   for (f in myhooks) {
-    count <- count+1
     res <- do.call(f, list(x=x,data=res))
   }         
   

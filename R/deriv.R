@@ -1,14 +1,14 @@
 
-deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
+deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
   ## if (!missing(mom)) {
   ##   if (mom$npar==length(attributes(mom)$pars))
   ##     meanpar <- NULL
   ## }
+##  if (missing(mom) & !missing(p)) {
+##    mom <- modelVar(expr,p)
+##  }
   if (missing(mom) & !missing(p)) {
-    mom <- modelVar(expr,p)
-  }
-  if (missing(mom) & !missing(p)) {
-    mom <- modelVar(expr,p)
+    mom <- modelVar(expr,p,conditional=conditional)
     all <- TRUE
     if (mom$npar==length(p))
       meanpar <- NULL  
@@ -131,7 +131,7 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
     }
   }
   if (is.null(ii$Kkk)) {
-    nobs <- nrow(ii$J)
+    nobs <- nrow(mom$J)
     ii$Ik <- diag(nobs)
     ii$Im <- diag(ncol(ii$A))
     ##    ii$Kkk <- commutation(nobs,sparse=FALSE)
@@ -156,6 +156,7 @@ deriv.lvm <- function(expr, p, mom, cond=FALSE, meanpar=TRUE, mu=NULL, S=NULL, s
   } else {
     dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
     MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
+##    browser()
     G1<- MM %*% (dG)
     ## Commutatation product K*X: 
     ##  G2 <- with(mom, ii$Kkk%*%(G1))

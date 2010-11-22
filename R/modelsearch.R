@@ -7,7 +7,8 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
   if (length(myvars)!=2) stop("Two variables only")
   x0 <- Model(x)
   cancel(x0) <- rel  
-  e0 <- estimate(x0,data=model.frame(x),weight=Weight(x),estimator=x$estimator,...)   
+  e0 <- estimate(x0,data=model.frame(x),weight=Weight(x),estimator=x$estimator,...)
+  browser()
   if (k!=1) {
     p0 <- coef(x)
     p0[] <- 0

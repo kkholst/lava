@@ -5,7 +5,7 @@
                                   weight,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
-                                  debug=FALSE,...) {
+                                  ...) {
   cl <- match.call()
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method))
@@ -15,7 +15,7 @@
   optim <- list(
                 eval.max=300,
                 iter.max=500,
-                trace=ifelse(debug,3,0),
+                trace=ifelse(lava.options()$debug,3,0),
                 gamma=1,
                 gamma2=1,
                 lambda=0.05,
@@ -44,7 +44,7 @@
   }
 
   
-  Debug("Start values...",debug)
+  Debug("Start values...")
   if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
     mystart <- optim$start
   } else {
@@ -58,8 +58,8 @@
     }
     if (!silent) cat("\n")
   }
-  Debug(mystart,debug)
-  Debug("Constraints...",debug)
+  Debug(mystart)
+  Debug("Constraints...")
   ## Setup optimization constraints
   lower <- rep(-Inf, x$npar);
   for (i in 1:x$ngroup) {
@@ -136,7 +136,7 @@
   
   
   ##parord <- modelPar(x,1:length(mystart),debug=debug)$p
-  parord <- modelPar(x,1:with(x,npar+npar.mean),debug=debug)$p
+  parord <- modelPar(x,1:with(x,npar+npar.mean))$p
   mymodel <- x
 
   parkeep <- c()
@@ -306,7 +306,7 @@
       if (optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
-      pp <- modelPar(x,theta, debug=debug)$p
+      pp <- modelPar(x,theta)$p
       res <- c()
       for (i in 1:x$ngroup) { 
         res <- c(res,
@@ -380,7 +380,7 @@
 
 
   if (!silent) cat("Optimizing objective function...")
-  if (debug) {
+  if (lava.options()$debug) {
     print(lower)
     print(optim$constrain)
     print(optim$method)
@@ -467,9 +467,9 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
     }
   }
   if (missing(fix)) {
-    fix <- ifelse(length(Xfix)>0,FALSE,TRUE)
+    fix <- ifelse(Xfix,FALSE,TRUE)
   }  
-
+  
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
   res <- estimate(mg,...)
     

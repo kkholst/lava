@@ -48,6 +48,8 @@ export(
        path,
        graph2lvm,
        sim,
+       heavytail,
+       "heavytail<-"
        makemissing,
        logit.lvm, probit.lvm, binomial.lvm, uniform.lvm, normal.lvm, poisson.lvm,
        weibull.lvm,
@@ -134,6 +136,8 @@ S3method(bootstrap,lvm)
 S3method("parfix<-", lvm)
 S3method(parfix, lvm)
 S3method("parameter<-",lvm)
+S3method("parameter<-",lvmfit)
+
 
 ### lvmfit
 S3method(bootstrap,lvmfit)
@@ -169,6 +173,8 @@ S3method(distribution, lvm)
 S3method("functional<-", lvm)
 S3method("distribution<-", lvm)
 S3method(sim, lvm)
+S3method(heavytail, lvm)
+S3method("heavytail<-", lvm)
 S3method(sim, lvmfit)
 S3method(vars, graph)
 S3method("nodecolor<-",default)
