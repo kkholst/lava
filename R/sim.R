@@ -1,9 +1,9 @@
-t.lvm <- function(df=1,mean,sd,...) {
- if (!missing(lambda))
-    f <- function(n,mu,var,...) rt(n,lambda)
- else
-   f <- function(n,mu,...) rpois(n,exp(mu))
- return(f)
+t.lvm <- function(df=2,mu,sigma,...) {
+  if (!missing(mu) & !missing(sigma)) 
+    f <- function(n,mu,var,...) mu+sigma*rt(n,df=df)
+  else
+    f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
+  return(f)
 }
 normal.lvm <- function(mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm

@@ -93,7 +93,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     }
     if (count2==trace) {
 ##      cat("control$gamma=", control$gamma, "\n")
-      cat("Iter=",count, ";\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
+      cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
       cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
       count2 <- 0
     }

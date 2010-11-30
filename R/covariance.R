@@ -105,6 +105,7 @@ function(object,var=NULL,var2,exo=FALSE,...) {
     exoset <- setdiff(xorg,allvars) 
     if (!exo & length(exoset)<length(xorg)) {
 ##      exogenous(object,mom=TRUE) <- exoset
+##      if (length(exoset)==0) exoset <- NA
       exogenous(object) <- exoset
     }
 

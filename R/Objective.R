@@ -1,5 +1,6 @@
 ###{{{ gaussian
 
+gaussian_method.lvm <- "nlminb2"
 `gaussian_objective.lvm` <-
   function(x,p,data,S,mu,n,...) {
     mp <- modelVar(x,p=p,data=data,...)
@@ -24,9 +25,9 @@
   }
 
 
-`gaussian_hessian.lvm` <- function(p,model,n,opt,mu,...) {
+`gaussian_hessian.lvm` <- function(x,p,n,mu,opt,...) {
   dots <- list(...); dots$weight <- NULL  
-  do.call("information", c(list(x=model,p=p,n=n),dots))
+  do.call("information", c(list(x=x,p=p,n=n),dots))
 }
 
 gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
@@ -111,24 +112,23 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
 ###{{{ gaussian variants
 
 ## Maximum Likelihood with numerical gradient + hessian
-
 gaussian0_objective.lvm <- gaussian_objective.lvm
-
+## BHHH 
 gaussian2_method.lvm <- "NR"
 gaussian2_objective.lvm <- gaussian_objective.lvm
 gaussian2_gradient.lvm <- gaussian_gradient.lvm
-gaussian2_hessian.lvm <- function(p,model,n,data,...) {
-  S <- -score(model,p=p,n=n,data=data,...)
+gaussian2_hessian.lvm <- function(x,p,n,data,...) {
+  S <- -score(x,p=p,n=n,data=data,...)
   I <- t(S)%*%S
   attributes(I)$grad <- colSums(S)
   return(I)  
 }
-
+## Sandwich
 gaussian3_objective.lvm <- gaussian_objective.lvm
 gaussian3_gradient.lvm <- gaussian_gradient.lvm
-gaussian3_hessian.lvm <- function(p,model,n,data,...) {
-  I <- information(x=model,p=p,n=n,...)
-  S <- score(model,p=p,n=n,data=data)
+gaussian3_hessian.lvm <- function(x,p,n,data,...) {
+  I <- information(x=x,p=p,n=n,...)
+  S <- score(x=x,p=p,n=n,data=data)
   J <- t(S)%*%S
   return(J%*%solve(I)%*%J)  
 }
@@ -145,13 +145,12 @@ gaussian4_variance.lvm <- function(x,p,data) {
 ###{{{ Weighted
 
 weighted_method.lvm <- "NR"
-`weighted_hessian.lvm` <- function(p,model,n,opt,weight=NULL,data,...) {
-  S <- score(model,p=p,n=n,data=data,weight=weight)
+`weighted_hessian.lvm` <- function(x,p,n,weight=NULL,data,opt,...) {
+  S <- score(x,p=p,n=n,data=data,weight=weight)
   I <- t(S)%*%S
   attributes(I)$grad <- -colSums(S)
   return(I)  
 }
-
 weighted_gradient.lvm <-  function(x,p,data,
                                    S,mu,n,weight=NULL,...) {
   val <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
@@ -160,7 +159,6 @@ weighted_gradient.lvm <-  function(x,p,data,
   }
   val
 }
-
 `weighted_objective.lvm` <- function(x,p,data,
                                    S,mu,n,weight=NULL,...) {
   S <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
@@ -171,51 +169,14 @@ weighted_gradient.lvm <-  function(x,p,data,
 
 
 weighted2_method.lvm <- "NR"
-`weighted2_hessian.lvm` <- function(p,model,n,opt,weight=NULL,data,...) {
-  myfun <- function(p0) weighted2_gradient.lvm(model,p=p0,n=n,data=data,weight=weight)
-  jacobian(myfun,p)
+`weighted2_hessian.lvm` <- function(x,p,n,weight=NULL,data,opt,...) {
+  myfun <- function(p0) weighted2_gradient.lvm(x,p=p0,n=n,data=data,weight=weight)
+  res <- jacobian(myfun,p)
 }
-
 weighted2_gradient.lvm <-  weighted_gradient.lvm
-
-
-`weighted2_objective.lvm` <- function(x,p,data,
-                                   S,mu,n,weight=NULL,...) {
-  S <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
-  S <- matrix(S,ncol=1)
-  res <- t(S)%*%S
-  return(res[1])
-}
+`weighted2_objective.lvm` <- NULL 
 
 ###}}} Weighted
 
-###{{{ IPW/MSM
 
-###}}}
-
-###{{{ Simple
-`Simple_hessian.lvm` <- function(p,...) {
-  matrix(NA, ncol=length(p), nrow=length(p))
-}
-Simple_gradient.lvm <- function(x,p,...) {
-  naiveGrad(function(pp) Simple_objective.lvm(x,pp,...), p)
-}
-`Simple_objective.lvm` <-
-  function(x, p=p, S=S, n=n, ...) {
-    m. <- moments(x,p)
-    C <- m.$C
-    A <- m.$A
-    P <- m.$P
-    J <- m.$J
-    IAi <- m.$IAi
-    npar.reg <- m.$npar.reg; npar <- m.$npar
-    G <- J%*%IAi
-    detC <- det(C)
-    iC <- try(solve(C), silent=TRUE)
-    if (detC<0 | inherits(iC, "try-error"))
-      return(.Machine$double.xmax)    
-    res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
-    res
-  }
-###}}} ObjectiveSimple
 

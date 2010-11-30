@@ -24,6 +24,7 @@ updatelvm <- function(x,mean=TRUE,...) {
 ###   npar.var  ## Number of covariance parameters
 `reindex` <-
 function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { ## Extract indices of parameters from model
+  x$parpos <- NULL
   M <- as(Graph(x), Class="matrix")
   Debug("M=")
 
@@ -31,7 +32,9 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   m <- length(eta)
   obs <- manifest(x)  ## Manifest/Observed variables
   endo <- endogenous(x)
-  exo <- exogenous(x)
+##  exo <- exogenous(x,index=FALSE)
+  exo <- exogenous(x) ##,index=FALSE)
+
   allvars <- vars(x)
   eta.idx <- match(eta,allvars)
   obs.idx <- match(obs,allvars)

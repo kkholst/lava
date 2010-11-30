@@ -1,4 +1,4 @@
-'\name{constrain}
+\name{constrain}
 \alias{constrain<-}
 \alias{constrain.default}
 \alias{constrain<-.multigroup}

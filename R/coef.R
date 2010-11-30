@@ -1,7 +1,7 @@
 ###{{{ coef.lvm
 
 `coef.lvm` <-
-function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, labels=FALSE, debug=FALSE,...) {
+function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, labels=FALSE, ...) {
   if (fix) ## 12/7-2010
    object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
@@ -99,7 +99,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," with "), data,
          std=NULL, labels=TRUE, vcov, 
-         debug=FALSE, type, reliability=FALSE, second=FALSE, ...) {
+         type, reliability=FALSE, second=FALSE, ...) {
 
   ## object0 <- object
   ## xfix <- colnames(model.frame(object))[(colnames(model.frame(object))%in%parlabels(Model(object)))]
@@ -174,7 +174,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   
   myparnames <- paste("p",1:npar,sep="")[myorder.reg]
   myparnames <- paste("p",1:npar,sep="")[order(myorder.reg)]
-  
+
   p <- matrices(Model(object), myparnames)
   A <- p$A
   P <- p$P
@@ -200,13 +200,13 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   free[index(object)$M1!=1] <- FALSE
   nlincon <- matrix(Model(object)$par%in%names(constrain(Model(object))),nrow(A))
   if (missing(data)) {
-    data <- matrix(0,ncol=length(manifest(object))); colnames(data) <- manifest(object)
+    data <- matrix(0,ncol=length(index(Model(object))$manifest)); colnames(data) <- index(Model(object))$manifest
   }
   nlincon.estimates.full<- constraints(object,second=second,data=data)  
   nlincon.estimates <- nlincon.estimates.full[,-(5:6),drop=FALSE]
   matched <- c()
   res <- c()
-  
+
   for (i in 1:ncol(A))
     for (j in 1:nrow(A)) {
       val <- A[j,i]
@@ -220,7 +220,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
             newrow <- matrix(c(coefs[matching,1],NA,NA,NA), nrow=1)
           }
         } else {
-          Debug(list("(i,j)", i, ",", j),debug)
+          Debug(list("(i,j)", i, ",", j))
           if (nlincon[j,i]) {
             newrow <- matrix(nlincon.estimates[Model(object)$par[j,i],],nrow=1)
           } else {
@@ -250,15 +250,15 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   free.var <- P!="0" 
   free.var[index(object)$P1!=1] <- FALSE
   nlincon.var <- matrix(Model(object)$covpar%in%names(constrain(Model(object))),nrow(P))  
-
+##  browser()
 
     if (level>0)   
       ## Variance estimates:
       for (i in 1:ncol(p$P))
         for (j in i:nrow(p$P)) {
           val <- p$P[j,i]
-          if (val!="0" & !any(vars(object)[c(i,j)]%in%exogenous(object)))
-            if (level>1 | !all(vars(object)[c(i,j)]%in%manifest(object)))
+          if (val!="0" & !any(vars(object)[c(i,j)]%in%index(Model(object))$exogenous))
+            if (level>1 | !all(vars(object)[c(i,j)]%in%index(Model(object))$manifest))
             {
             matching <- match(val,rownames(coefs))
             matched <- c(matched,matching)
@@ -272,7 +272,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
               if (i==j)
                 newrow[,4] <- NA
             } else {
-              Debug(list("(i,j)", i, ",", j),debug)
+              Debug(list("(i,j)", i, ",", j))
               if (nlincon.var[j,i]) {
                 newrow <- matrix(nlincon.estimates[Model(object)$covpar[j,i],],nrow=1)
               } else {
@@ -304,13 +304,13 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   ##  res <- res0
   ## Mean parameter:
   nlincon.mean <- lapply(Model(object)$mean, function(x) x%in%names(constrain(Model(object))) )
-
+  
   if (level>0 & npar.mean>0) {
     mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
     munames <- rownames(coefs)[1:index(object)$npar.mean]
     meanpar <- matrices(Model(object), myparnames, munames)$v
     for (i in 1:length(meanpar)) {
-      if (!vars(object)[i]%in%exogenous(object)) {
+      if (!index(Model(object))$vars[i]%in%index(Model(object))$exogenous) {
         val <- meanpar[i]
         matching <- match(val,rownames(coefs))
         if (!is.na(matching)) {
@@ -330,15 +330,15 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
         if (labels & !(is.na(intfix(Model(object))[[i]]) | is.numeric(intfix(Model(object))[[i]]))) {
           rownames(newrow) <- intfix(Model(object))[[i]]
           if (labels>1) {
-            rownames(newrow) <- paste(rownames(newrow),vars(Model(object))[i],sep=":")
+            rownames(newrow) <- paste(rownames(newrow),index(Model(object))$vars[i],sep=":")
           }          
         } else {       
-          rownames(newrow) <- vars(Model(object))[i]
+          rownames(newrow) <- index(Model(object))$vars[i]
         }        
         if ((index(object)$v1[i]==1) | level>2) {
           res <- rbind(res, newrow)
           Type <- c(Type,"intercept")
-          Var <- c(Var, vars(Model(object))[i])
+          Var <- c(Var, index(Model(object))$vars[i])
           From <- c(From, NA)
         }
       }
@@ -371,7 +371,7 @@ coef.multigroup <- function(object,...) {
 
 coef.multigroupfit <-
   function(object, level=1,vcov,
-           debug=FALSE,labels=FALSE,...) {
+           labels=FALSE,...) {
 
     if (level==0) {
       theta <- pars(object)

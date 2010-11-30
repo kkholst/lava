@@ -9,7 +9,7 @@ function(x, data,
          control=list(),
          missing=FALSE,
          weight,
-         cluster=NULL,
+         cluster,
          fix,
          index=TRUE,
          graph=FALSE,
@@ -23,11 +23,7 @@ function(x, data,
   }
   
   cl <- match.call()
-  Method <-  paste(estimator, "_method", ".lvm", sep="")
-  if (!exists(Method))
-    Method <- "nlminb1"
-  else
-    Method <- get(Method)
+  
   optim <- list(
                 eval.max=300,
                 iter.max=500,
@@ -43,7 +39,7 @@ function(x, data,
                 stabil=FALSE,
                 start=NULL,
                 constrain=FALSE,
-                method=Method,
+                method=NULL,
                 starterfun="startvalues",
                 information="E",
                 meanstructure=TRUE,
@@ -77,6 +73,15 @@ function(x, data,
   } else {
     weight <- NULL
   }
+  ## Correlated clusters...
+  if (!missing(cluster)) {
+    if (is.character(cluster)) {
+      cluster <- data[,cluster]
+    } 
+  } else {
+    cluster <- NULL
+  }
+
   Debug("procdata")
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
@@ -103,6 +108,13 @@ function(x, data,
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
+  Method <-  paste(estimator, "_method", ".lvm", sep="")
+  if (!exists(Method))
+    Method <- "nlminb1"
+  else
+    Method <- get(Method)
+  if (is.null(optim$method)) optim$method <- Method
+
 
   if (!quick & index) {
     ## Proces data and setup some matrices
@@ -152,7 +164,7 @@ function(x, data,
   ## Missing data
   if (missing) {
     control$start <- optim$start
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,...))
+    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,cluster=cluster,...))
   }
   
   ## Setup optimization constraints
@@ -264,7 +276,7 @@ function(x, data,
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
 ##        browser()
-        res <- do.call(InformationFun, list(p=pp, obj=myObj, model=x0, data=data[ii,],
+        res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
                                             n=1, weight=weight[ii,]))
         return(res)
       }      
@@ -300,7 +312,7 @@ function(x, data,
       return(S)
     }
     myInfo <- function(pp,...) {
-      I <- do.call(InformationFun, list(p=pp, obj=myObj, model=x, data=data,
+      I <- do.call(InformationFun, list(p=pp, obj=myObj, x=x, data=data,
                                         S=S, mu=mu, n=n,
                                         weight=weight, type=optim$information))
       if (is.null(mu) & index(x)$npar.mean>0) {
@@ -309,7 +321,7 @@ function(x, data,
       return(I)
     }
     
-  }
+  }  
   if (!exists(GradFun) & !is.null(optim$method)) {
     cat("Using numerical derivatives...\n")
     myGrad <- function(pp) {
@@ -358,6 +370,7 @@ For numerical approximation please install the library 'numDeriv'.")
   }   
   coefname <- coef(x,mean=optim$meanstructure);
 
+  ##  browser()
   if (!silent) cat("Optimizing objective function...\n")
   ## Optimize with lower constraints on the variance-parameters
   if (!is.null(optim$method)) {

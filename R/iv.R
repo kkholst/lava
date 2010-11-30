@@ -81,7 +81,7 @@ varest <- function(x,data) {
   
 
 ## Instrumental Variable Estimator / 2SLS
-IV <- function(m,data,debug=FALSE,...) {
+IV <- function(m,data,...) {
   if (length(constrain(m))>0) stop("Nonlinear constrains not supported!")
   if (class(m)=="lvmfit")
     m <- Model(m)
@@ -170,8 +170,7 @@ IV <- function(m,data,debug=FALSE,...) {
   for (v in vv) {
     pred <- which(A[v,]==1)
     if (sum(pred)>0) {
-      if (debug)
-        cat(vars(m)[v],"\n")  
+      Debug(vars(m)[v])
       pred.lat <- intersect(pred,lat.idx) # Any latent predictors?
       lpos <- match(v,lat.idx) 
       lppos <- match(pred.lat,lat.idx)
@@ -225,8 +224,9 @@ IV <- function(m,data,debug=FALSE,...) {
   theta <- list(); for (i in 1:length(Y.)) theta <- c(theta, list(ZhatLS[[i]]%*%Y.[[i]]))
   u <- c()
   for (i in 1:length(Y.))
-    u <- cbind(u, Y.[[i]]-Zhat[[i]]%*%theta[[i]])
-  covu <- cov(u)
+    u <- cbind(u, Y.[[i]]-Z.[[i]]%*%theta[[i]])
+  covu <- crossprod(u)/nrow(u)
+
   theta.npar <- unlist(lapply(theta,length))
   theta.ncum <- c(0,cumsum(theta.npar))
   vartheta <- matrix(0,ncol=sum(theta.npar),nrow=sum(theta.npar))
@@ -234,43 +234,55 @@ IV <- function(m,data,debug=FALSE,...) {
     for (j in i:length(theta)) {
       idx1 <- 1:theta.npar[i] + theta.ncum[i]
       idx2 <- 1:theta.npar[j] + theta.ncum[j]
-      uZZ <- covu[i,j]*ZhatLS[[i]]%*%t(ZhatLS[[j]])
+      uZZ <- covu[i,j]* (ZhatLS[[i]]%*%t(ZhatLS[[j]]))
       vartheta[idx1,idx2] <- uZZ      
       if (i!=j) {
         vartheta[idx2,idx1] <- t(uZZ)
       }      
     }
   }    
-  ##  Zall <- Z.[[1]]
-  ##  for (i in 2:length(Z.)) Zall <- adiag(Zall,Z.[[i]])
-  ##  Vall <- V.[[1]]
-  ##  for (i in 2:length(V.)) Vall <- adiag(Vall,V.[[i]])
-  ##  Yall <- c()
-  ##  for (i in 1:length(Y.)) Yall <- rbind(Yall,Y.[[i]])  
-  ##  Zhat <- Vall%*%solve(crossprod(Vall))%*%t(Vall)%*%Zall[,]
-  ##  ZhatLS <- solve(crossprod(Zhat))%*%t(Zhat)
-  ##  thetahat <- ZhatLS%*%Yall
+
+  ## Zall <- Z.[[1]]
+  ## for (i in 2:length(Z.)) Zall <- blockdiag(Zall,Z.[[i]])
+  ## Vall <- V.[[1]]
+  ## for (i in 2:length(V.)) Vall <- blockdiag(Vall,V.[[i]])
+  ## Yall <- c()
+  ## for (i in 1:length(Y.)) Yall <- rbind(Yall,Y.[[i]])  
+  ## Zhat <- Vall%*%solve(crossprod(Vall))%*%t(Vall)%*%Zall[,]
+  ## ZhatLS <- solve(crossprod(Zhat))%*%t(Zhat)
+  ## thetahat <- ZhatLS%*%Yall 
   ##  Yhat <- Zhat%*%thetahat
   ##  u <- Yall-Yhat
-  ##  u. <- matrix(u,ncol=9)
+  ## u. <- matrix(u,ncol=2)
   ##  sigmau <- cov(u.)
-  ord <- na.omit(match(coef(m,mean=TRUE),parname))
+
+  mname <- coefname[seq(index(m)$npar.mean)]
+  if (length(mname)>0) {
+    ## Rename parameters if original was parametrized with non-zero intercept of latent variable
+    idx <- which(index(m)$latent %in%mname)
+    if (length(idx)>0) {
+      parname[which(parname%in%eta.surrogate[idx])] <- (index(m)$latent)[idx]
+    }
+  }  
+##  ord <- na.omit(match(coef(m,mean=TRUE),parname))
   coef <- cbind(unlist(theta),diag(vartheta)^0.5); rownames(coef) <- parname; colnames(coef) <- c("Estimate","Std.Err")
-  coef <- coef[ord,]
-  
-  res <- list(estimate=coef[,1], vcov=vartheta[ord,ord])
+  ##  coef <- coef[ord,]
+  res <- list(estimate=coef[,1], vcov=vartheta)
   return(res)
 }
 
-IV2 <- function(m,data,debug=FALSE,...) {
+IV2 <- function(m,data,...) {
   m <- fixsome(m,data=data)
-  res <- IV(m,data,debug,...)
+  res <- IV(m,data,...)
   p <- res$estimate  
   idx <- match(names(p),coef(m,mean=TRUE))
   x0 <- parfix(m,idx,p)
   index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
   suppressWarnings(e0 <- estimate(x0,data,control=list(method="nlminb2"),silent=TRUE))
-  vcov <- blockdiag(res$vcov,e0$vcov)
+  p0 <- c(p[idx],coef(e0))
+##  browser()
+  V0 <- solve(information(m,data=data,p=p0))[-idx,-idx]
+  vcov <- blockdiag(res$vcov,V0)
   list(estimate=c(p,coef(e0)), vcov=vcov)
 }
 

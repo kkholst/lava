@@ -38,6 +38,7 @@ assign("options",
             silent=FALSE,
             Dmethod="simple", ##Richardson"
             parallel=TRUE,
+            param="relative",
             debug=FALSE
             ),
        lava.env)

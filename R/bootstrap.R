@@ -43,6 +43,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,
     return(list(coefs=coefs,sds=newsd))
   }; if (!silent) cat("\n")
 
+  i=0;
   if (require(foreach) & lava.options()$parallel) {
     res <- foreach (i=0:R) %dopar% bootfun(i)
   } else {

@@ -4,6 +4,7 @@
 function(st1,st2) {
   paste(st1, st2, sep="")
 }
+
 ###}}}
 
 ###{{{ parlabels
@@ -13,7 +14,7 @@ parlabels <- function(x,exo=FALSE) {
            regfix(x)$labels[!is.na(regfix(x)$labels)],
            covfix(x)$labels[!is.na(covfix(x)$labels)])
   if (exo)
-    res <- intersect(res,exogenous(x))
+    res <- intersect(res,index(Model(x))$exogenous)
   return(res)
 }
 
@@ -132,7 +133,7 @@ procrandomslope <- function(object,data=object$data,...) {
 
 ###{{{ fixsome function
 
-fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, debug=TRUE, na.method="complete.obs") {
+fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", ...) {
 
   var.missing <- c()
   if (!missing(data) | !missing(S)) {
@@ -143,10 +144,10 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
       dd <- procdata.lvm(x, list(S=S,mu=mu,n=n))
     }
     S <- dd$S; mu <- dd$mu; n <- dd$n    
-    var.missing <- setdiff(manifest(x),colnames(S))
+    var.missing <- setdiff(index(x)$manifest,colnames(S))
   } else { S <- NULL; mu <- NULL }
 
-  if (measurement.fix) {    
+  if (measurement.fix & lava.options()$param!="none") {    
     if (length(var.missing)>0) {## Convert to latent:
       new.lat <- setdiff(var.missing,latent(x))
       if (length(new.lat)>0)
@@ -157,34 +158,46 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     M <- as(Graph(x), Class="matrix")
     for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
       ys. <- names(which(M[e,ys]==1))
-      if (length(ys.)>0 & is.na(diag(covfix(x)$values)[e]) )
-        if (all(is.na(x$fix[e, ys.]==1))) {
-          if (debug)
-            cat("Fixing '", ys.[1], "' on '", e, "'.\n", sep="")
-          regfix(x,from=e,to=ys.[1]) <- 1
-##          x$fix[e,ys.[1]] <- 1
+      if (length(ys.)>0) {      
+        if (tolower(lava.options()$param)=="absolute") {
+          if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
+          if (is.na(x$covfix[e,e])) covariance(x,e) <- 1
+        } else {        
+          if (lava.options()$param=="hybrid") {
+            if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
+            if (all(is.na(x$fix[e, ys.]==1)) & is.na(diag(covfix(x)$values)[e])) 
+                regfix(x,from=e,to=ys.[1]) <- 1
+          } else { ## relative
+            if (all(is.na(x$fix[e, ys.]==1)) & is.na(diag(covfix(x)$values)[e])) 
+              regfix(x,from=e,to=ys.[1]) <- 1
+            if (is.na(intercept(x)[[ys.[1]]]) & is.na(intercept(x)[[e]]))
+              intercept(x,ys.[1]) <- 0
+          }
         }
+      }
     }
     
-    latintNA <- unlist(lapply(intfix(x)[latent(x)],is.na))
-    if (length(latintNA)>0) {
-      if (any(latintNA))
-      intfix(x, latent(x)[which(latintNA)]) <- 0 ## For identifiality we fix mean of latent variables to zero unless already fixed
-    }
+    ## latintNA <- unlist(lapply(intfix(x)[latent(x)],is.na))
+    ## if (length(latintNA)>0) {
+    ##   if (any(latintNA))
+    ##   intfix(x, latent(x)[which(latintNA)]) <- 0 ## For identifiality we fix mean of latent variables to zero unless already fixed
+    ## }
   }
 
   if (is.null(S)) x0 <- TRUE
   if (exo.fix) {
     if (x0) {
-      S0 <- diag(length(manifest(x)))
+      S0 <- diag(length(index(x)$manifest))
       mu0 <- rep(0,nrow(S0))      
     }
     else {
       S0 <- S
       mu0 <- mu
     }
-    exo <- exogenous(x);
-    exo.idx <- match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
+##    exo <- exogenous(x);
+    exo.idx <- index(x)$exo.obsidx;
+    ##exo.idx_match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
+    exo_all.idx <- index(x)$exo.idx
     if (length(exo.idx)>0)
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
@@ -247,7 +260,7 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
 
 categorical2dummy <- function(x,data,silent=TRUE,...) {
   x0 <- x
-  X <- intersect(exogenous(x),colnames(data))
+  X <- intersect(index(x)$exogenous,colnames(data))
   catX <- c()  
   for (i in X) {
     if (!is.numeric(data[,i])) catX <- c(catX,i)
@@ -278,8 +291,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###{{{ procdata.lvm
 
 `procdata.lvm` <-
-  function(x,data,debug=FALSE,categorical=FALSE,
-           na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"pairwise.complete.obs","complete.obs")
+  function(x,data,categorical=FALSE,
+           na.method=ifelse(any(is.na(data[,intersect(colnames(data),exogenous(x))])),"pairwise.complete.obs","complete.obs")
            ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
@@ -288,7 +301,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       nn <- colnames(data)
       data <- as.data.frame(data); colnames(data) <- nn; rownames(data) <- NULL
       obs <- setdiff(intersect(vars(x), colnames(data)),latent(x))
-      Debug(obs, debug)
+      Debug(obs)
       mydata <- subset(data, select=obs)
       for (i in 1:ncol(mydata)) {
         if (inherits(mydata[,i],"Surv"))
@@ -315,9 +328,11 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         }
       }
       if (na.method=="complete.obs") {
-        mu <- colMeans(na.omit(mydata))
+        mydata <- na.omit(mydata)
+        n <- nrow(mydata)
+        mu <- colMeans(mydata)
         if (is.null(S))
-          S <- (n-1)/n*cov(na.omit(mydata)) ## MLE variance matrix of observed variables
+          S <- (n-1)/n*cov(mydata) ## MLE variance matrix of observed variables
       }      
     }
     else
@@ -341,11 +356,11 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   function(x, data) {
     if (is.vector(data)) {
       nn <- names(data)
-      ii <- na.omit(match(manifest(x), nn))
+      ii <- na.omit(match(index(x)$manifest, nn))
       data[ii,drop=FALSE]
     } else {
       nn <- colnames(data)
-      ii <- na.omit(match(manifest(x), nn))
+      ii <- na.omit(match(index(x)$manifest, nn))
       data[ii,ii,drop=FALSE]    
     }
   }
@@ -533,6 +548,7 @@ naiveGrad <- function(f, x, h=1e-9) {
 ###}}}
 
 ###{{{ whichentry
+
 ## X k-dim. array of dimension (d1,d2,...,dk)
 ## Element x at entry (x1,...,xk).
 ## position (via which) := x1 + d1*(x2-1) + d1*d2*(x3-1) + ... + prod(d1,...,d[k-1])*(xk-1)
@@ -558,6 +574,7 @@ whichentry <- function(x) {
 ###}}} whichentry
 
 ###{{{ blockdiag
+
 `%+%` <-
 function(x,...) {
   blockdiag(x,...)

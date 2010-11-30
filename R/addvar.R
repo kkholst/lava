@@ -11,9 +11,9 @@ function(x,...,value) UseMethod("addvar<-")
 }
 
 `addvar.lvm` <-
-function(x, var, debug=FALSE, silent=FALSE,...) {
+function(x, var, silent=FALSE,...) {
   new <- setdiff(var,vars(x))
-  Debug(new, debug)
+  Debug(new)
   if (length(new)>0)
     for (i in new) {
       Graph(x) <- addNode(i, Graph(x))

@@ -27,7 +27,7 @@ function(x,...) UseMethod("exogenous")
     }
   }
 ##  x$exogenous <- value  
-  index(x) <- reindex(x)
+  index(x) <- reindex(x)  
   return(x)
 }
 
@@ -48,8 +48,10 @@ function(x,latent=FALSE,index=TRUE,...) {
   }
   if (is.null(x$exogenous)) return(x$exogenous)
   if (all(!is.na(x$exogenous)) & !latent) {
-    return(x$exogenous[x$exogenous%in%manifest(x)])
+    return(x$exogenous[x$exogenous%in%index(x)$manifest])
   }
+  if (!latent)
+    return(index(x)$exogenous)
   return(exogenous(x,latent=latent,index=FALSE,...))
 }
 

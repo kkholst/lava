@@ -116,9 +116,12 @@ covfix.lvm <- function(object,...) {
 
   allvars <- c(var1,var2)
   xorg <- exogenous(object)
-  exoset <- setdiff(xorg,allvars) 
+  exoset <- setdiff(xorg,allvars)
+  ##  browser()
+
   if (!exo & length(exoset)<length(xorg)) {
-##    exogenous(object,mom=TRUE) <- exoset
+    ##    exogenous(object,mom=TRUE) <- exoset
+    ##if (length(exoset)==0) exoset <- NA
     exogenous(object) <- exoset
   }
   
@@ -275,13 +278,19 @@ regfix.lvm <- function(object,...) {
       from <- setdiff(from,to)
     }
   }
-  
+
   object <- addvar(object,c(to,from),...)
+  newexo <- setdiff(from,c(to,index(object)$vars))
+  exo <- exogenous(object)
+  if (length(newexo)>0)
+    exo <- unique(c(exo,newexo))
+  exogenous(object) <- setdiff(exo,to)
+  
   if (length(from)==length(to) & length(from)==length(value)) {
 ##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
       if (!isAdjacent(Graph(object), from[i], to[i])) {
-        covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
+        ##covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
         object <- regression(object, to=to, from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))
@@ -304,7 +313,7 @@ regfix.lvm <- function(object,...) {
 #    index(object) <- reindex(object)
     return(object)
   }
-  
+
   for (i in from) {
     for (j in to) {
       if (!isAdjacent(Graph(object), i, j)) {
@@ -313,7 +322,8 @@ regfix.lvm <- function(object,...) {
       }
     }
   }
-  
+
+##  browser()
   K <- length(from)*length(to)
   if (length(value)==1)
     value <- rep(value,K)  
@@ -340,7 +350,7 @@ regfix.lvm <- function(object,...) {
   newindex <- reindex(object)
   object$parpos <- NULL
   index(object)[names(newindex)] <- newindex
-  #index(object) <- reindex(object)
+  index(object) <- reindex(object)
   return(object)
 }
 

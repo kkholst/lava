@@ -89,10 +89,13 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
   m <- nrow(A) ## Number of variables
   A1 <- t(index(x)$M1) ## Adjacency matrix (without fixed parameters and duplicates)
   A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
-  obs.idx <- as.vector(J%*%(1:m));  latent.idx <- setdiff(1:m, obs.idx)
 
-  exo.idx <- match(exogenous(x),vars(x))
-  exo.idxObs <- match(exogenous(x),manifest(x))
+  obs.idx <- index(x)$obs.idx; 
+  ##obs.idx <- as.vector(J%*%(1:m));
+  latent.idx <- setdiff(1:m, obs.idx)
+
+  exo.idx <- index(x)$exo.idx ## match(exogenous(x),vars(x))
+  exo.idxObs <- index(x)$exo.obsidx ##match(exogenous(x),manifest(x))
   
   AP0 <- moments(x, rep(0,index(x)$npar))
   newP <- t(AP0$P)
@@ -163,6 +166,32 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 ###}}} startvalues3
 
 ###{{{ startvalues2
+
+###{{{ ObjectiveSimple
+`Simple_hessian.lvm` <- function(p,...) {
+  matrix(NA, ncol=length(p), nrow=length(p))
+}
+Simple_gradient.lvm <- function(x,p,...) {
+  naiveGrad(function(pp) Simple_objective.lvm(x,pp,...), p)
+}
+`Simple_objective.lvm` <-
+  function(x, p=p, S=S, n=n, ...) {
+    m. <- moments(x,p)
+    C <- m.$C
+    A <- m.$A
+    P <- m.$P
+    J <- m.$J
+    IAi <- m.$IAi
+    npar.reg <- m.$npar.reg; npar <- m.$npar
+    G <- J%*%IAi
+    detC <- det(C)
+    iC <- try(solve(C), silent=TRUE)
+    if (detC<0 | inherits(iC, "try-error"))
+      return(.Machine$double.xmax)    
+    res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
+    res
+  }
+###}}} ObjectiveSimple
 
 `startvalues2` <-
   function(x, S, mu=NULL, debug=FALSE, silent=FALSE,...) {
@@ -272,7 +301,12 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   Chat[obs.idx,] <- Chat[obs.idx,]*matrix(s,n,m)  ##
   Chat[,obs.idx] <- Chat[,obs.idx]*matrix(s,m,n,byrow=TRUE)  ## 
   Phat <- (diag(m)-Ahat)%*%Chat%*%t(diag(m)-Ahat)
-  diag(Phat) <- abs(diag(Phat))
+  ##diag(Phat) <- abs(diag(Phat))
+  ## Guarantee PD-matrix:
+  eig <- eigen(Phat)
+  L <- eig$values; L[L<1e-3] <- 1e-3
+  Phat <- eig$vectors%*%diag(L)%*%t(eig$vectors)
+  
   Debug(list("start=",start), debug)
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
   names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)  

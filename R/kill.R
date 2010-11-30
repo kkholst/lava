@@ -23,6 +23,7 @@
   x$covfix <- x$covfix[keep,keep,drop=FALSE]
   x$cov <- x$cov[keep,keep,drop=FALSE]
   x$mean <- (x$mean)[-idx]
+  x$exogenous <- setdiff(exogenous(x),vv)
   index(x) <- reindex(x)
   return(x)
 }

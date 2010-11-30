@@ -3,6 +3,7 @@
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
                                   weight,
+                                  cluster=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
                                   ...) {
@@ -271,7 +272,7 @@
           }
           I <- I0
           J <- do.call(InformationFun,
-                       list(model=x0, p=pp[[k]],
+                       list(x=x0, p=pp[[k]],
                             data=mydata[[k]][ii,], n=1,
                             S=NULL,
                             weight=weight[[k]][ii,],
@@ -352,7 +353,7 @@
       I0 <- res <- matrix(0,length(theta),length(theta))
       for (i in 1:x$ngroup) {
         I <- I0;
-        I[ parord[[i]], parord[[i]] ] <- with(x$samplestat[[i]], do.call(InformationFun, list(p=pp[[i]], model=x$lvm[[i]], data=x$data[[i]],
+        I[ parord[[i]], parord[[i]] ] <- with(x$samplestat[[i]], do.call(InformationFun, list(p=pp[[i]], x=x$lvm[[i]], data=x$data[[i]],
                                                                                               S=S, mu=mu, n=n, weight=weight[[i]],
                                                                                               type=optim$information)))
         ##with(x$samplestat[[i]], information(x$lvm[[i]],p=pp[[i]],n=n))
@@ -418,12 +419,12 @@ For numerical approximation please install the library 'numDeriv'.")
 ##  if (!silent) cat("\n")
 
     
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight)
+  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, cluster=cluster)
   class(res) <- myclass
 
   myhooks <- gethook("post.hooks")
   for (f in myhooks) {
-    res0 <- do.call(f,res)
+    res0 <- do.call(f,list(x=res))
     if (!is.null(res0))
       res <- res0
   }
@@ -476,4 +477,4 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   return(res) 
 }
 
-###}}}
+###}}}z

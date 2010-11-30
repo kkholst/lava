@@ -103,7 +103,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     L1 <- logLik(object,p,data,type="exo",meanstructure=meanstructure)
     ##    Sigma <- (n-1)/n*S ## ML = 1/n * sum((xi-Ex)^2)
     Sigma <- S
-    loglik <- -(n*k)/2*log(2*pi) -n/2*(log(det(Sigma)) + k) - L1
+    loglik <- -(n*k)/2*log(2*base::pi) -n/2*(log(det(Sigma)) + k) - L1
     P <- length(endo.idx)
     k <- length(exo.idx)
     npar <- P*(1+(P-1)/2)
@@ -173,9 +173,9 @@ gaussian_logLik.lvm <- function(object,p,data,
       }
       if (!is.null(weight)) {
         W <- diag(weight[i,])
-        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
+        val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
       } else { 
-        val <- -k/2*log(2*pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)
+        val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)
       }
       if (indiv)
         res[i] <- val
@@ -196,7 +196,7 @@ gaussian_logLik.lvm <- function(object,p,data,
       W <- tcrossprod(mu-xi)
       T <- S+W
     }
-    loglik <- -(n*k)/2*log(2*pi) -n/2*(log(detC) + tr(T%*%iC))
+    loglik <- -(n*k)/2*log(2*base::pi) -n/2*(log(detC) + tr(T%*%iC))
   }
   return(loglik)
 }

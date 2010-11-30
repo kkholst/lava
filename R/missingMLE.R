@@ -1,10 +1,11 @@
 ###{{{ missingModel
 
-missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,...) {
+missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,cluster=NULL,...) {
   if (class(model)!="lvm") stop("Needs a lvm-object")
   if (type==3) {
     var <- manifest(model)
   }
+
   data0 <- subset(data, select=manifest(model))
   data.mis <- is.na(data0[,var,drop=FALSE])
   patterns <- unique(data.mis,MARGIN=1)
@@ -20,13 +21,13 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 ##    model <- fixsome(model, data=data0, measurement.fix=TRUE, exo.fix=FALSE)
 ##  }
   
-  models <- datasets <- weights <- c()
+  models <- datasets <- weights <- clusters <- c()
   mymodel <- baptize(model)
   pattern.compl <- 0
   count <- 0
   A <- index(model)$A
   topendo <- endogenous(model,top=TRUE)
-  exo <- exogenous(model) ##,index=FALSE)######
+  exo <- exogenous(model)
   exclude <- c()
 
   for (i in setdiff(1:nrow(patterns),pattern.allmis)) {
@@ -35,6 +36,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     mypattern <- patterns[i,]
     m0 <- mymodel;
     if (any(mypattern)) {
+      ##      browser()
       latent(m0,zero=FALSE) <- colnames(data.mis)[mypattern]
       if (type>1) {
         mytop <- intersect(topendo,colnames(data.mis)[mypattern])
@@ -59,14 +61,18 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
     w0.var <- intersect(manifest(m0),colnames(weight))
     w0 <- weight[mis.type==i,w0.var,drop=FALSE];
-    exogenous(m0) <- exogenous(model)
-    if (is.null(intersect(exogenous(m0),latent(m0)))) {
+    clust0 <- cluster[mis.type==i]
+    modelexo <- exogenous(model)
+    exogenous(m0) <- modelexo
+    ##    index(m0) <- reindex(m0,deriv=TRUE,zeroones=TRUE)
+    if (is.null(intersect(modelexo,latent(m0)))) {
       print("Missing exogenous variables... Going for complete-case analysis in these cases")
     } else {
       if( sum(unlist(index(m0)[c("npar","npar.mean")]))>0 ) {
         models <- c(models, list(m0))
         datasets <- c(datasets, list(d0))
         weights <- c(weights, list(w0))
+        clusters <- c(clusters, list(clust0))
       } else {
         exclude <- c(exclude,count)
       }
@@ -81,7 +87,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   pattern.allcomp<- which(apply(Patterns,1,function(x) all(!x))) ## Complete cases 
 
   res <- list(models=models, datasets=datasets,
-              weights=weights, 
+              weights=weights,
+              clusters=clusters,
               patterns=Patterns,
               pattern.compl=pattern.compl,
               pattern.allmis=pattern.allmis,
@@ -94,7 +101,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
@@ -102,7 +109,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0 & !silent)
     warning(paste("Remove latent variable colnames from dataset",redvar)) 
-
   
   xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
 ##    names(data)[(names(data)%in%parlabels(x))]
@@ -116,7 +122,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   mu <- rep(0,nrow(S));  
   ##  S <- mu <- NULL
   K <- length(exogenous(x))
-  vnames <- manifest(x)
+  vnames <- index(x)$manifest
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
     ##if (!silent)cat("Calculating 1. and 2. moments of exogenous variables...\n")    
@@ -151,7 +157,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   if (!silent)
     cat("Identifying missing patterns...")
-  val <- missingModel(x,data,var=which,type=type,keep=xfix,weight=weight,...)
+
+  val <- missingModel(x,data,var=which,type=type,keep=xfix,weight=weight,cluster=cluster,...)
   if (!silent)
     cat("\n")
 
@@ -206,8 +213,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
       cat("Obtaining starting value...")
     start0 <- rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
     mystart <- tryCatch(
-                        coef(estimate(x,data=na.omit(data),silent=TRUE,
-                                     weight=weight,estimator=estimator,... 
+                        (estimate(x,data=na.omit(data),silent=TRUE,
+                                     weight=weight,estimator=estimator,quick=TRUE,... 
                                       )),
                         error=function(e) rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
                         )
@@ -220,18 +227,14 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (is.null(control$information))
     control$information <- "obs"
 
-  ##  browser()
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
 
-  if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights))
+  if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,cluster=val$clusters))
 
   
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
-
-  e.mis <- estimate(mg0,control=control,silent=silent,weight=val$weights,estimator=estimator,...)
-
+  e.mis <- estimate(mg0,control=control,silent=silent,weight=val$weights,cluster=val$clusters,estimator=estimator,...)
   ##  return(e.mis)
-  
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]
   cc <- coef(e.mis,level=0)
   mynames <- c()
@@ -295,14 +298,14 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   class(res) <- c("lvm.missing","lvmfit") #,"lvmfit")
   if ("lvmfit.randomslope"%in%class(e.mis))
     class(res) <- c(class(res),"lvmfit.randomslope")
-  if (hessian) {
+  if (hessian & is.null(cluster)) {
     if (!silent)
       cat("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
     cc[] <- coef(e.mis,level=0,vcov=res$vcov)
     res$coef <- cc
   }
-
+  
   res <- edgelabels(res,type="est")
   return(res)
 }

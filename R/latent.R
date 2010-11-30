@@ -31,7 +31,7 @@ function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
     }
     x <- addattr(x,attr="shape",var=var,val="ellipse")
     nodeData(Graph(x), var, attr="latent") <- TRUE
-    if (zero) {
+    if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
       intercept(x,var) <- 0
     }
   }

@@ -47,7 +47,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     mean.idx <- 1:npar.mean
     npar.total <- npar+length(mean.idx)
   }
-  
+
   if (zeroones | is.null(ii$dA)) {
     dimA <- length(nn$A)
     if (ii$sparse) { ## Not used yet...

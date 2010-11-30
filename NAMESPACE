@@ -49,7 +49,7 @@ export(
        graph2lvm,
        sim,
        heavytail,
-       "heavytail<-"
+       "heavytail<-",
        makemissing,
        logit.lvm, probit.lvm, binomial.lvm, uniform.lvm, normal.lvm, poisson.lvm,
        weibull.lvm,

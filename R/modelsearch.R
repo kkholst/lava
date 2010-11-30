@@ -8,7 +8,6 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
   x0 <- Model(x)
   cancel(x0) <- rel  
   e0 <- estimate(x0,data=model.frame(x),weight=Weight(x),estimator=x$estimator,...)
-  browser()
   if (k!=1) {
     p0 <- coef(x)
     p0[] <- 0
@@ -122,11 +121,23 @@ print.equivalence <- function(x,...) {
   invisible(x)
 }
 
+holm <- function(p) {
+  k <- length(p)
+  w <- 1/k
+  ii <- order(p)
+  po <- p[ii]
+  qs <- min(1,po[1]/w)
+  for (i in 2:k) {
+      qs <- c(qs, min(1, max(qs[i-1],po[i]*(1-w*(i-1))/w)))
+    }
+  return(qs)
+}
+
 modelsearch <- function(x,k=1,dir="forward",...) {
   if (dir!="forward")
-    return(backwardsearch(x,k,...))
+    res <- backwardsearch(x,k,...)
   else
-    return(forwardsearch(x,k,...))
+    res <- forwardsearch(x,k,...)
 }
 
 
@@ -303,8 +314,13 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
 }
 
 
-print.modelsearch <- function(x,...) {
-  print(x$res, quote=FALSE, ...)
+print.modelsearch <- function(x,tail=nrow(x$res),adj="holm",...) {
+  N <- nrow(x$res)
+  if (adj=="holm") {
+    adjp <- rev(holm(as.numeric(x$test[,2])))
+    x$res <- cbind(x$res,'Adj.p-val'=formatC(adjp))
+  }
+  print(x$res[(N-tail+1):N,], quote=FALSE, ...)
   invisible(x)
 }
 

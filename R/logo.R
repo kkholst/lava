@@ -13,7 +13,7 @@ gfilter <- function(x,sigma=1) {
   x0 <- x*oscunits ## translate origo to center of image
   X <- fft(x0)  
   d <- gridfn(function(x,y) (x^2+y^2),height=height,width=width,center=TRUE)  
-  Gn <- exp(-2*(pi*sigma)^2*d) # frequency response
+  Gn <- exp(-2*(base::pi*sigma)^2*d) # frequency response
   H <- X*Gn
   res <- Re(fft(H,inverse=TRUE))/(width*height)*oscunits
   return(res)

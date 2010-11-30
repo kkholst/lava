@@ -15,11 +15,13 @@
       object <- addvar(object,yy,...)
       for (y in yy)
         for (i in 1:length(res)) {
-          if (length(res[[i]])>1)
+          if (length(res[[i]])>1) {
             regfix(object, to=y, from=res[[i]][1],...) <- res[[i]][2]
-          else
+          } else {
             object <- regression(object,to=y,from=res[[i]][1],...)
+          }
         }
+##      index(object) <- reindex(object)
       object$parpos <- NULL
       return(object)
 ##       yx <- all.vars(value)
@@ -43,43 +45,56 @@
   function(object,to,from,...) UseMethod("regression")
 
 `regression.lvm` <-
-  function(object=lvm(),to,from,fn=NA,debug=FALSE,silent=lava.options()$silent,...) {
+  function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
+##           newindex=TRUE,
+           ...) {
     if (missing(to)) {
       return(regfix(object))
       ####...
     }        
     if (class(to)[1]=="formula") {
-      regression(object,debug=debug,silent=silent,...) <- to
+      regression(object,silent=silent,...) <- to
 ##      functional(object,to) <- fn
       object$parpos <- NULL
       return(object)
     }
+##    browser()
+
     sx <- strsplit(from,"@")
     xx <- sapply(sx, FUN=function(i) i[1])
     ps <- sapply(sx, FUN=function(i) i[2])
     sx <- strsplit(xx,"$",fixed=TRUE)
     xs <- sapply(sx, FUN=function(i) i[1])    
     fix <- as.numeric(sapply(sx, FUN=function(i) i[2]))
-
-    object <- addvar(object, c(to,xs), debug=debug, silent=silent)    
+    allv <- index(object)$vars
+    
+    object <- addvar(object, c(to,xs), silent=silent)
     for (i in to)
       for (j in xs) {
-##        object <- addvar(object, c(i,xs), debug=debug, silent=silent)
-##        cancel(object) <- c(i,j)
-        covfix(object,i,j,exo=TRUE) <- "NA"
-##        Graph(object) <- addEdge(xs,i,Graph(object))
+        ##object <- addvar(object, c(i,xs), debug=debug, silent=silent)
+        ##cancel(object) <- c(i,j)
+        ##covfix(object,i,j,exo=TRUE) <- "NA"
+        ##        Graph(object) <- addEdge(xs,i,Graph(object))
         Graph(object) <- addEdge(j,i,Graph(object))
         ##        functional(object,xs,i) <- fn
         functional(object,j,i) <- fn
       }
-
-    if (debug) {
+    
+    newexo <- setdiff(xs,c(to,allv))
+    exo <- exogenous(object)
+    if (length(newexo)>0)
+      exo <- unique(c(exo,newexo))
+    exogenous(object) <- setdiff(exo,to)
+    
+    if (lava.options()$debug) {
 ##      Debug(list("x=",x, " y=",y, " est=",fixed),debug)
       print(object$fix)
     } 
     object$fix[xs,to] <- fix
     object$par[xs,to] <- ps
     object$parpos <- NULL
+    
+##    if (newindex)
     index(object) <- reindex(object)   
     return(object)
   }

@@ -25,12 +25,13 @@ function(object,...) {
 ###}}} summary.lvm
 
 ###{{{ summary.lvmfit
+
 `summary.lvmfit` <-
 function(object,std="xy", level=9, labels=2, ...) {
   cc <- CoefMat(object,labels=labels,std=std,level=level,...)
   mycoef <- coef(object,level=9)
   nlincon <- attributes(mycoef)$nlincon
-  nonexo <- setdiff(vars(object),exogenous(object))
+  nonexo <- setdiff(vars(object),index(Model(object))$exogenous)
   attributes(mycoef) <- attributes(mycoef)[1:2]
   if (class(object)[1]=="lvm.missing") {
     nn <- unlist(lapply(object$multigroup$data, nrow))

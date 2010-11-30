@@ -20,7 +20,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   
   models.orig <- NULL
 ######################
-### MLE with data MAR 
+### MLE with MAR mechanism
 ######################
   if (missing) {
 
