@@ -30,7 +30,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
 
 ##  print(control)
   if (trace>0)
-  cat("Iter=0;\t\n",
+  cat("\nIter=0;\t\n",
       "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
   
   
@@ -71,7 +71,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     ##    iI <- with(svdI,  (v)%*%diag(1/d)%*%t(u))
     ##    iI <- solve(I)
     ##    I <- I + 0.001*diag(nrow(I))
-    return(list(p=p.orig - control$gamma*iI%*%D,D=D))
+    return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
   } 
 
   
@@ -97,10 +97,10 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
       cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
       count2 <- 0
     }
-    if (mean(newpar$D^2)<control$S.tol) break;
+    if (mean(newpar$D^2)<control$tol) break;
 ##    if (frobnorm(oldpar-thetacur)<control$abs.tol) break;
   }
-  res <- list(par=thetacur, iterations=count, method="NR")
+  res <- list(par=thetacur, iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
   return(res)
 }
 

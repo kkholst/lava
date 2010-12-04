@@ -4,7 +4,6 @@ function(x,...) UseMethod("score")
 ###{{{ score.lvm
 
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
-
     
   cl <- match.call()
   lname <- paste(model,"_score.lvm",sep="")

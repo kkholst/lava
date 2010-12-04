@@ -9,6 +9,7 @@ function(x, data,
          control=list(),
          missing=FALSE,
          weight,
+         weight2,
          cluster,
          fix,
          index=TRUE,
@@ -73,6 +74,13 @@ function(x, data,
   } else {
     weight <- NULL
   }
+  if (!missing(weight2)) {
+    if (is.character(weight2)) {
+      weight2 <- data[,weight2]
+    }
+  } else {
+    weight2 <- NULL
+  }
   ## Correlated clusters...
   if (!missing(cluster)) {
     if (is.character(cluster)) {
@@ -101,10 +109,11 @@ function(x, data,
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
-    res <- do.call(f, list(x=x,data=data,weight=weight,estimator=estimator,optim=optim))
+    res <- do.call(f, list(x=x,data=data,weight=weight,weight2=weight2,estimator=estimator,optim=optim))
     if (!is.null(res$x)) x <- res$x
     if (!is.null(res$data)) data <- res$data
     if (!is.null(res$weight)) weight <- res$weight
+    if (!is.null(res$weight2)) weight2 <- res$weight2
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
@@ -164,7 +173,7 @@ function(x, data,
   ## Missing data
   if (missing) {
     control$start <- optim$start
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,cluster=cluster,...))
+    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
   
   ## Setup optimization constraints
@@ -240,7 +249,12 @@ function(x, data,
         for (i in 1:length(myfix$var)) {          
             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,]))
+        if (is.list(weight2)) {
+          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2[ii,]))
+        } else
+        {
+          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2))
+        }
         return(res)
       }           
       sum(sapply(1:nrow(data),myfun))
@@ -255,7 +269,12 @@ function(x, data,
         for (i in 1:length(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-        rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,]))
+        if (is.list(weight2)) {
+          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2))
+        } else
+        {
+          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2[ii,]))
+        }
 ##        browser()
 
         ##       rr <- score(x0,p=pp,data=data[ii,])
@@ -275,9 +294,13 @@ function(x, data,
         for (i in 1:length(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-##        browser()
-        res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
-                                            n=1, weight=weight[ii,]))
+        if (is.list(weight2)) {
+          res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
+                                              n=1, weight=weight[ii,], weight2=weight2))
+        } else {
+          res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
+                                              n=1, weight=weight[ii,], weight2=weight2[ii,]))
+        }
         return(res)
       }      
       L <- lapply(1:nrow(data),function(x) myfun(x))
@@ -297,12 +320,16 @@ function(x, data,
       if (optim$constrain) {
         pp[constrained] <- exp(pp[constrained])
       }
-      do.call(ObjectiveFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight))
+      do.call(ObjectiveFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
+                                 ,weight2=weight2
+                                 ))
     }
     myGrad <- function(pp) {
       if (optim$constrain)
         pp[constrained] <- exp(pp[constrained])
-      S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight))
+      S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
+                                 , weight2=weight2
+                                 ))
       if (optim$constrain) {
         S[constrained] <- S[constrained]*pp[constrained]
       }
@@ -314,7 +341,8 @@ function(x, data,
     myInfo <- function(pp,...) {
       I <- do.call(InformationFun, list(p=pp, obj=myObj, x=x, data=data,
                                         S=S, mu=mu, n=n,
-                                        weight=weight, type=optim$information))
+                                        weight=weight, weight2=weight2,
+                                        type=optim$information))
       if (is.null(mu) & index(x)$npar.mean>0) {
         return(I[-c(1:index(x)$npar.mean),-c(1:index(x)$npar.mean)])
       }
@@ -388,12 +416,12 @@ For numerical approximation please install the library 'numDeriv'.")
   }
   if (quick) return(opt$estimate)
   ## Calculate std.err:
-  
+
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
 
-  mom <- modelVar(x, pp)
+  mom <- modelVar(x, pp, data=data)
   if (!silent) cat("Calculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
@@ -424,13 +452,13 @@ For numerical approximation please install the library 'numDeriv'.")
               estimator=estimator, opt=opt,
               data=list(model.frame=data, S=S, mu=mu, C=mom$C, v=mom$v, n=n,
                 m=length(latent(x)), k=k),
-              weight=weight,
+              weight=weight, weight2=weight2,
               cluster=cluster,
               pp.idx=pp.idx,
               graph=NULL, control=optim)
 
   class(res) <- myclass
-
+  
   myhooks <- gethook("post.hooks")
   for (f in myhooks) {
     res0 <- do.call(f,list(x=res))

@@ -310,15 +310,16 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
   colnames(PM) <- c("Score: S", "P(S>s)", "Index"); rownames(PM) <- rep("",nrow(PM))
   res <- list(res=PM, test=Tests, var=Vars)
   class(res) <- "modelsearch"
-  res
+  return(res)
 }
 
 
-print.modelsearch <- function(x,tail=nrow(x$res),adj="holm",...) {
+print.modelsearch <- function(x,tail=nrow(x$res),adj=c("holm","BH"),...) {
   N <- nrow(x$res)
-  if (adj=="holm") {
-    adjp <- rev(holm(as.numeric(x$test[,2])))
-    x$res <- cbind(x$res,'Adj.p-val'=formatC(adjp))
+  if (!is.null(adj)) {
+    ##    adjp <- rev(holm(as.numeric(x$test[,2])))
+    adjp <- sapply(adj,function(i) p.adjust(x$test[,2],method=i))
+    x$res <- cbind(x$res,formatC(adjp))
   }
   print(x$res[(N-tail+1):N,], quote=FALSE, ...)
   invisible(x)

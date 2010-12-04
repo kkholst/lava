@@ -10,7 +10,8 @@ gaussian_method.lvm <- "nlminb2"
     detC <- attributes(iC)$det
     if (n<2) {
       z <- as.numeric(data-xi)
-      val <- log(detC) + (t(z)%*%iC%*%z)[1]
+      val <- log(detC) + tcrossprod(z,crossprod(z,iC))[1]
+        ##(t(z)%*%iC%*%z)[1]
       return(0.5*val)      
     }
     if (!is.null(mu)){

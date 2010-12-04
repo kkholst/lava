@@ -147,13 +147,15 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     var.missing <- setdiff(index(x)$manifest,colnames(S))
   } else { S <- NULL; mu <- NULL }
 
-  if (measurement.fix & lava.options()$param!="none") {    
+  if (measurement.fix & lava.options()$param!="none") {
     if (length(var.missing)>0) {## Convert to latent:
       new.lat <- setdiff(var.missing,latent(x))
       if (length(new.lat)>0)
       x <- latent(x, new.lat)
     }
     etas <- latent(x)
+##    etas <- index(x)$latent
+##    ys <- index(x)$endogenous
     ys <- endogenous(x)
     M <- as(Graph(x), Class="matrix")
     for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
@@ -170,7 +172,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
           } else { ## relative
             if (all(is.na(x$fix[e, ys.]==1)) & is.na(diag(covfix(x)$values)[e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
-            if (is.na(intercept(x)[[ys.[1]]]) & is.na(intercept(x)[[e]]))
+            if (!is.numeric(intercept(x)[[ys.[1]]]) & is.na(intercept(x)[[e]]))
               intercept(x,ys.[1]) <- 0
           }
         }
@@ -658,4 +660,5 @@ numberdup <- function(xx) { ## Convert to numbered list
 }
 
 logit <- function(p) log(p/(1-p))
+
 tigol <- function(z) 1/(1+exp(-z))

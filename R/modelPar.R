@@ -12,9 +12,6 @@ modelPar.lvmfit <- function(x, p=pars(x), ...) modelPar(Model(x),p=p,...)
 modelPar.lvm <- function(x,p, ...) {
   npar <- index(x)$npar
   npar.mean <- index(x)$npar.mean
-  Debug(list("npar=",npar))
-  Debug(list("npar.mean=",npar.mean))
-  Debug(list("p=",p))
   if (length(p)!=npar & length(p)!=(npar+npar.mean)) stop("Wrong dimension of parameter vector!")  
   if (length(p)!=npar) { ## if meanstructure
       meanpar <- p[1:npar.mean]

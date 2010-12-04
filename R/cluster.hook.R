@@ -1,6 +1,7 @@
 cluster.post.hook <- function(x,...) {
   if (class(x)[1]=="multigroupfit") {
     if (is.null(x$cluster)) return(NULL)
+    if (any(unlist(lapply(x$cluster,is.null)))) return(NULL)
     allclusters <- unlist(x$cluster)
     uclust <- unique(allclusters)
     K <- length(uclust)

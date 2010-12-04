@@ -28,11 +28,13 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   npar.reg <- ii$npar.reg
 
   J <- ii$J
+  Jidx <- ii$obs.idx
   if (conditional) {
     ##    mynames <- index(x)$endo.idx
     J <- ii$Jy
     px <- ii$px 
     P <-  px%*% tcrossprod(P, px)
+    Jidx <- ii$endo.idx
   } else {
     ##    mynames <- ii$vars
     ##    J <- ii$J ## Manifest variable selection matrix    
@@ -45,8 +47,8 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
     G <- as(J%*%IAi,"sparseMatrix")
   } else {
     IAi <- solve(Im-t(AP$A))
-##    IAi <- solve(diag(nrow(A))-t(A))
     G <- J%*%IAi
+    ##G <- IAi[Jidx,,drop=FALSE]
   }
   
   xi <- NULL
@@ -57,6 +59,7 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
 
   Cfull <- as.matrix(IAi %*% tcrossprod(P,IAi))
   C <- as.matrix(J %*% tcrossprod(Cfull,J))
+  ##  C <- Cfull[Jidx,Jidx,drop=FALSE]
 ##  rownames(C) <- colnames(C) <- mynames
   
   return(list(Cfull=Cfull, C=C, v=AP$v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx, constrainpar=AP$constrainpar))
