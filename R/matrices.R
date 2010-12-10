@@ -120,7 +120,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
   ## Constrained...
   constrain.idx <- NULL
   cname <- constrainpar <- c()  
-  if (length(ii$constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
+  if (length(constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
     constrain.idx <- list()
     for (p in constrain.par) {
 ##      browser()

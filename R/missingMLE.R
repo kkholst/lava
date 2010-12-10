@@ -110,7 +110,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
-estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,weight2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,weight2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
@@ -167,7 +167,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (!silent)
     cat("Identifying missing patterns...")
 
-  val <- missingModel(x,data,var=which,type=type,keep=xfix,weight=weight,weight2=weight2,cluster=cluster,...)
+  val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weight=weight,weight2=weight2,cluster=cluster,...)
   if (!silent)
     cat("\n")
 

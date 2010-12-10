@@ -163,16 +163,20 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
       if (length(ys.)>0) {      
         if (tolower(lava.options()$param)=="absolute") {
           if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
-          if (is.na(x$covfix[e,e])) covariance(x,e) <- 1
+          if (is.na(x$covfix[e,e]) & is.na(x$covpar[e,e])) covariance(x,e) <- 1
         } else {        
           if (lava.options()$param=="hybrid") {
             if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
-            if (all(is.na(x$fix[e, ys.]==1)) & is.na(diag(covfix(x)$values)[e])) 
-                regfix(x,from=e,to=ys.[1]) <- 1
-          } else { ## relative
-            if (all(is.na(x$fix[e, ys.]==1)) & is.na(diag(covfix(x)$values)[e])) 
+            if (all(is.na(x$fix[e, ys.]==1)) &
+                is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
-            if (!is.numeric(intercept(x)[[ys.[1]]]) & is.na(intercept(x)[[e]]))
+          } else { ## relative
+            browser()
+            if (all(is.na(x$fix[e, ys.]==1)) &
+                is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
+              regfix(x,from=e,to=ys.[1]) <- 1
+            if (!is.numeric(intercept(x)[[ys.[1]]]) &
+                !is.numeric(intercept(x)[[e]]))
               intercept(x,ys.[1]) <- 0
           }
         }

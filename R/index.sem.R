@@ -109,7 +109,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   ## Creating indicitor of free mean-parameters
   fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
   named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
-  mparname <- unique(x$mean[named])
+  mparname <- unlist(unique(x$mean[named]))
 ##  mparname.all <- unique(x$mean[named])
 ##  mparname <- setdiff(mparname.all,constrain.par)
   v0 <- rep(1,length(x$mean)) ## Vector of indicators of free mean-parameters
@@ -134,7 +134,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   ## Position of covariance variables matrix (Ppos),
   ## Position/Indicator matrix of free regression parameters (M0)
   res <- list(vars=allvars, manifest=obs, exogenous=exo, latent=eta,
-              endo=endo,
+              endogenous=endo,
               exo.idx=exo.idx, eta.idx=eta.idx,
               exo.obsidx=exo.obsidx, endo.obsidx=endo.obsidx,
               obs.idx=obs.idx, 
@@ -143,9 +143,69 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   if (standard) {
     res <- c(res, list(M=M, A=A, P=P, P0=P0, P1=P1, M0=M0, M1=M1, v0=v0, v1=v1, npar=(npar.reg+npar.var), npar.reg=npar.reg, npar.mean=sum(v1), constrain.par=constrain.par))
     npar.total <- res$npar+res$npar.mean
+    which.diag <- diag(P1==1)    
     ##  if (sparse)
     ##    res <- lapply(res, function(x) if(is.matrix(x)) as(x,"sparseMatrix") else x)
-    res <- c(res, list(J=J, Jy=Jy, px=px, sparse=sparse))
+    res <- c(res, list(parname.all=parname, parname=setdiff(parname,constrain.par),
+                       which.diag=which.diag,
+                       covparname.all=covparname,
+                       covparname=setdiff(covparname,constrain.par),
+                       meanfixed=fixed, meannamed=named,
+                       mparname.all=mparname,
+                       mparname=setdiff(mparname,constrain.par),
+                       J=J, Jy=Jy, px=px, sparse=sparse))
+
+    parname.all.reg.idx <- parname.all.reg.tidx <- 
+      parname.reg.tidx <- parname.reg.idx <- c()
+    for (p in res$parname.all) {
+      ipos <- which((x$par==p))
+      tipos <- which(t(x$par==p))
+      if (p%in%res$parname) {
+        parname.reg.idx <- c(parname.reg.idx, list(ipos))
+        parname.reg.tidx <- c(parname.reg.tidx, list(tipos))
+      }
+      parname.all.reg.idx <- c(parname.all.reg.idx, list(ipos))
+      parname.all.reg.tidx <- c(parname.all.reg.tidx, list(tipos))
+    };
+    if (length(parname.reg.idx)>0) {
+      names(parname.reg.idx) <- names(parname.reg.tidx) <- res$parname
+    }
+    if (length(parname.all.reg.idx)>0) {
+      names(parname.all.reg.idx) <- names(parname.all.reg.tidx) <- res$parname.all
+    }
+    covparname.all.idx <- covparname.idx <- c()
+    for (p in res$covparname.all) {
+      ipos <- which(x$covpar==p)
+      if (p%in%res$covparname)
+        covparname.idx <- c(covparname.idx, list(ipos))
+      covparname.all.idx <- c(covparname.all.idx, list(ipos))      
+    };
+    if (length(covparname.idx)>0)
+      names(covparname.idx) <- res$covparname
+    if (length(covparname.all.idx)>0)
+      names(covparname.all.idx) <- res$covparname.all
+    mparname.all.idx <- mparname.idx <- c()    
+    for (p in res$mparname.all) {
+      ipos <- which(x$mean==p)
+      if (p%in%mparname)
+        mparname.idx <- c(mparname.idx, list(ipos))
+      mparname.all.idx <- c(mparname.all.idx, list(ipos))
+    };
+    if (length(mparname.idx)>0)
+      names(mparname.idx) <- res$mparname
+    if (length(mparname.all.idx)>0)
+      names(mparname.all.idx) <- res$mparname.all
+
+    res <- c(res, list(mparname.idx=mparname.idx,
+                       covparname.idx=covparname.idx,
+                       parname.reg.idx=parname.reg.idx,
+                       parname.reg.tidx=parname.reg.tidx,
+                       mparname.all.idx=mparname.all.idx,
+                       covparname.all.idx=covparname.all.idx,
+                       parname.all.reg.idx=parname.all.reg.idx,
+                       parname.all.reg.tidx=parname.all.reg.tidx
+                       ))
+    
   } else {
     res <- index(x)
   }

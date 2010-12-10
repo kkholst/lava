@@ -60,7 +60,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         if (i>1) pos <- pos+mynpar[i-1]
         models[[i]] <- baptize(models[[i]],newpars[pos+1:mynpar[i]] ,overwrite=FALSE)        
         ##        warning("Missing data encountered")  
-        val <- missingModel(models[[i]],mydata,fix=FALSE)
+        val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep)
         datasets0 <- c(datasets0, val$datasets)
         models0 <- c(models0, val$models)            
       } else {

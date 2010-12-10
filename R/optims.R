@@ -21,6 +21,35 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 
 ###}}} nlminb
 
+###{{{ estfun
+
+estfun <- function(start,objective,gradient,hessian,...) {
+  myobj <- function(...) {
+    S <- gradient(...)
+    crossprod(S)[1]
+  }
+  if (!is.null(hessian)) {
+    mygrad <- function(x) {
+      H <- hessian(x)
+      S <- gradient(x)
+      2*S%*%H    
+    }
+  } else {
+    mygrad <- function(x) {
+      myfun <- function(z) gradient(z)
+      H <- jacobian(myfun,x,method=lava.options()$Dmethod)
+      S <- gradient(x)
+      2*S%*%H    
+    }
+  }
+  nlminb2(start,myobj,mygrad,hessian=NULL,...)
+}
+
+
+
+###}}} 
+
+
 ###{{{ Newton-Raphson/Scoring
 
 NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
@@ -35,7 +64,12 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
   
   
   oneiter <- function(p.orig) {
-    I <- hessian(p.orig)
+    ##  browser()
+    if (is.null(hessian)) {
+      I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
+    } else {
+      I <- hessian(p.orig)
+    }
     D <- attributes(I)$grad
     if (is.null(D)) {      
       D <- gradient(p.orig)
@@ -71,6 +105,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     ##    iI <- with(svdI,  (v)%*%diag(1/d)%*%t(u))
     ##    iI <- solve(I)
     ##    I <- I + 0.001*diag(nrow(I))
+    ##browser()
     return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
   } 
 
@@ -84,6 +119,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     count2 <- count2+1
     oldpar <- thetacur
     newpar <- oneiter(thetacur)
+    ##browser()
     thetacur <- newpar$p
     if (!is.null(control$ngamma)) {
       if (control$ngamma<=gammacount) {

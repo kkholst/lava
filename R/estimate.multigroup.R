@@ -8,14 +8,8 @@
                                   quick=FALSE,
                                   ...) {
   cl <- match.call()
-  Method <-  paste(estimator, "_method", ".lvm", sep="")
-  if (!exists(Method))
-    Method <- "nlminb1"
-  else
-    Method <- get(Method)
   optim <- list(
                 eval.max=300,
-
                 iter.max=500,
                 trace=ifelse(lava.options()$debug,3,0),
                 gamma=1,
@@ -28,7 +22,7 @@
                 stabil=FALSE,
                 start=NULL,
                 constrain=FALSE,
-                method=Method,
+                method=NULL,
                 starterfun=startvalues,
                 information="E",
                 meanstructure=TRUE,
@@ -44,8 +38,7 @@
   if (length(control)>0) {
     optim[names(control)] <- control
   }
-
-  
+   
   Debug("Start values...")
   if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
     mystart <- optim$start
@@ -83,18 +76,28 @@
 
   if (!missing(weight)) {
     if (is.character(weight)) {
+      stweight <- weight
       weight <- list()
-      for (i in 1:length(x$data)) 
-        weight <- c(weight, list(x$data[[i]][,weight]))
+      for (i in 1:length(x$data)) {
+        newweight <- as.matrix(x$data[[i]][,stweight])
+        colnames(newweight) <- index(x$lvm[[i]])$endogenous[seq_len(ncol(newweight))]
+        weight <- c(weight, list(newweight))
+      }
     }
   } else {
     weight <- NULL
   }
   if (!missing(weight2)) {
     if (is.character(weight2)) {
+      stweight2 <- weight2
       weight2 <- list()
-      for (i in 1:length(x$data)) 
-        weight2 <- c(weight2, list(x$data[[i]][,weight2]))
+      for (i in 1:length(x$data)) {
+        newweight <- as.matrix(x$data[[i]][,stweight2,drop=FALSE])
+        dropcol <- apply(newweight,2,function(x) any(is.na(x)))
+        newweight <- newweight[,!dropcol,drop=FALSE]
+        colnames(newweight) <- index(x$lvm[[i]])$endogenous[seq_len(ncol(newweight))]
+        weight2 <- c(weight2, list(newweight))
+      }
     }
   } else {
     weight2 <- NULL
@@ -104,6 +107,7 @@
   myhooks <- gethook()
   newweight <- list()
   newweight2 <- list()
+  newoptim <- newestimator <- NULL
   for (f in myhooks) {
     for ( i in 1:x$ngroup) {
       res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],weight2=weight2[[i]],estimator=estimator,optim=optim))
@@ -111,15 +115,25 @@
       if (!is.null(res$data)) x$data[[i]] <- res$data
       newweight <- c(newweight,list(res$weight))
       newweight2 <- c(newweight2,list(res$weight2))
-      if (!is.null(res$optim)) optim <- res$optim
-      if (!is.null(res$estimator)) estimator <- res$estimator
+      if (!is.null(res$optim)) newoptim <- res$optim
+      if (!is.null(res$estimator)) newestimator <- res$estimator
     }
-    if (!any(unlist(lapply(newweight,is.null))))
+    if (!is.null(newestimator)) estimator <- newestimator
+    if (!is.null(newoptim)) optim <- newoptim
+    if (!any(unlist(lapply(newweight,is.null)))) {
       weight <- newweight
-    if (!any(unlist(lapply(newweight2,is.null))))
-      weight2 <- newweight2    
+    } 
+    if (!any(unlist(lapply(newweight2,is.null)))) {
+      weight2 <- newweight2
+    }    
   }
-  
+  Method <-  paste(estimator, "_method", ".lvm", sep="")
+  if (!exists(Method))
+    Method <- "nlminb1"
+  else
+    Method <- get(Method)
+  if (is.null(optim$method)) optim$method <- Method
+
   ## Check for random slopes
   xXx <- exogenous(x)
   Xfix <- FALSE
@@ -409,13 +423,13 @@
 ################################################################################
 ################################################################################
 
-
   if (!silent) cat("Optimizing objective function...")
   if (lava.options()$debug) {
     print(lower)
     print(optim$constrain)
     print(optim$method)
   }
+
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
   if (!silent) cat("\n")
