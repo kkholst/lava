@@ -197,8 +197,9 @@ function(x, data,
   Debug(list("lower=",lower))
   
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
-  if (!exists(ObjectiveFun)) stop("Unknown estimator.")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
+
   InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
 
   mymodel <- x  
@@ -349,7 +350,8 @@ function(x, data,
       return(I)
     }
     
-  }  
+  }
+
   if (!exists(GradFun) & !is.null(optim$method)) {
     cat("Using numerical derivatives...\n")
     myGrad <- function(pp) {

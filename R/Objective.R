@@ -44,6 +44,7 @@ gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
 gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=FALSE,...) {
   ## If not already done, calculate some relevant zero-one matrices and matrix derivatives
 
+##browser()
   if (!is.null(data)) {  
     if ((nrow(data)<2 | !is.null(weight))| indiv)
     {
@@ -60,12 +61,18 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
         data <- subset(data,select=myvars)
       }
       score <- matrix(ncol=length(p),nrow=NROW(data))
-      score0 <- -1/2*as.vector(iC)%*%D$dS      
+      score0 <- -1/2*as.vector(iC)%*%D$dS
+      if (!is.null(weight)) {
+        W0 <- diag(length(myvars))
+        widx <- match(colnames(weight),myvars)
+      }
+      
       for (i in 1:NROW(data)) {
         z <- as.numeric(data[i,])
         u <- z-mp$xi
         if (!is.null(weight)) {
-          W <- diag(as.numeric(weight[i,]))
+          W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
+          ##W <-diag(length(myvars)); as.numeric(weight[i,]))
           score[i,] <- 
             as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                        -1/2*(as.vector((iC
@@ -145,28 +152,33 @@ gaussian4_variance.lvm <- function(x,p,data) {
 
 ###{{{ Weighted
 
-weighted_method.lvm <- "NR"
-`weighted_hessian.lvm` <- function(x,p,n,weight=NULL,data,opt,...) {
-  S <- score(x,p=p,n=n,data=data,weight=weight)
-  I <- t(S)%*%S
-  attributes(I)$grad <- -colSums(S)
-  return(I)  
+weighted_method.lvm <- "estfun"
+weighted_gradient.lvm <- function(...) {
+  val <- -gaussian_score.lvm(...)
+  colSums(val)  
 }
-weighted_gradient.lvm <-  function(x,p,data,
-                                   S,mu,n,weight=NULL,...) {
-  val <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
-  if (!is.null(nrow(val))) {
-    val <- colSums(val)
-  }
-  val
-}
-`weighted_objective.lvm` <- function(x,p,data,
-                                   S,mu,n,weight=NULL,...) {
-  S <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
-  S <- matrix(S,ncol=1)
-  res <- t(S)%*%S
-  return(res[1])
-}
+
+## `weighted_hessian.lvm` <- function(x,p,n,weight=NULL,data,opt,...) {
+##   S <- score(x,p=p,n=n,data=data,weight=weight)
+##   I <- t(S)%*%S
+##   attributes(I)$grad <- -colSums(S)
+##   return(I)  
+## }
+## weighted_gradient.lvm <-  function(x,p,data,
+##                                    S,mu,n,weight=NULL,...) {
+##   val <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
+##   if (!is.null(nrow(val))) {
+##     val <- colSums(val)
+##   }
+##   val
+## }
+## `weighted_objective.lvm` <- function(x,p,data,
+##                                    S,mu,n,weight=NULL,...) {
+##   S <- -score(x,p=p,S=S,mu=mu,n=n,data=data,weight=weight)
+##   S <- matrix(S,ncol=1)
+##   res <- t(S)%*%S
+##   return(res[1])
+## }
 
 
 weighted2_method.lvm <- "NR"

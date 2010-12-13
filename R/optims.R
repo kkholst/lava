@@ -2,6 +2,7 @@
 
 nlminb2 <- function(start,objective,gradient,hessian,...) {
   nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min")
+  cat("\n")
   dots <- list(...)
   control <- list(...)$control
   control <- control[names(control)%in%nlminbcontrols]

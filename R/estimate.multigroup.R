@@ -159,8 +159,9 @@
 
   ## Define objective function and first and second derivatives
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
-  if (!exists(ObjectiveFun)) stop("Unknown estimator.")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
+
   InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
   
   
@@ -171,7 +172,7 @@
   parkeep <- c()
   myclass <- c("multigroupfit","lvmfit")  
   myfix <- list()
-  
+
   if (Xfix | Xconstrain) { ## Model with random slopes:
 ################################################################################
 ################################################################################
@@ -415,14 +416,17 @@
       }
       attributes(res)$grad <- D
       return(res)
-    }
-    
+    }    
   }
-
+  
 ################################################################################
 ################################################################################
 ################################################################################
 
+  if (!exists(InformationFun)) myInformation <- NULL
+  else if (is.null(get(InformationFun))) myInformation <- NULL
+  if (is.null(get(GradFun))) myGrad <- NULL
+    
   if (!silent) cat("Optimizing objective function...")
   if (lava.options()$debug) {
     print(lower)
@@ -449,12 +453,15 @@
   } else {
     opt$gradient <- myGrad(opt$estimate)
   }
-   
-  if (!exists(InformationFun)) {
+
+  if (is.null(myInformation)) {
     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
 For numerical approximation please install the library 'numDeriv'.")
-    cat("Using a numerical approximation of hessian...\n");
-    myInformation <- function(theta) -hessian(myObj, theta, method="Richardson")
+    ##    cat("Using a numerical approximation of hessian...\n");
+    if (!is.null(myGrad))
+      myInformation <- function(theta) jacobian(myGrad, theta, method="Richardson")
+    else
+      myInformation <- function(theta) -hessian(myObj, theta, method="Richardson")
   }
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(solve(I),
