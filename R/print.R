@@ -65,6 +65,7 @@ print.multigroupfit <- function(x,...)  {
     cat(" (n=",nrow(Model(x)$data[[counter]]), ")\n", sep="")
     print(CC[[counter]],quote=FALSE,right=TRUE)
   }
+  cat("\n")
   invisible(x)
 }
 

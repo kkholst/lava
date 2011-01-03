@@ -36,12 +36,12 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   exo <- exogenous(x) ##,index=FALSE)
 
   allvars <- vars(x)
-  eta.idx <- match(eta,allvars)
-  obs.idx <- match(obs,allvars)
-  exo.idx <- match(exo,allvars)
-  exo.obsidx <- match(exo,obs)
-  endo.obsidx <- match(endo,obs)
-
+  eta.idx <- na.omit(match(eta,allvars))
+  obs.idx <- na.omit(match(obs,allvars))
+  exo.idx <- na.omit(match(exo,allvars))
+  exo.obsidx <- na.omit(match(exo,obs))
+  endo.obsidx <- na.omit(match(endo,obs))
+  
   fix.idx <- !is.na(x$fix) ## Index of fixed parameters
   covfix.idx <- !is.na(x$covfix) ## Index of fixed covariance parameters
 

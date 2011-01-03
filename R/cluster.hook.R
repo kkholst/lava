@@ -36,8 +36,8 @@ cluster.post.hook <- function(x,...) {
     for (i in uclust) {
       count <- count+1
       S0[count,] <- colSums(S[which(x$cluster==i),,drop=FALSE])
-    }
-    J <- crossprod(S0)
+    };
+    J <- count/(count-1)*crossprod(S0)
     asVar <- iI%*%J%*%iI
   } else {
     asVar <- x$vcov

@@ -1,14 +1,14 @@
 "kill<-" <- function(x, ..., value) UseMethod("kill<-")
 
 "kill<-.lvm" <- function(x, ..., value) {
-  if (class(value)[1]=="formula") {
-    return(kill(x,all.vars(value)))
-  }  
   kill(x,value)
 }
 
 "kill" <- function(x, value, ...) UseMethod("kill")
 "kill.lvm" <- function(x, value, ...) {
+  if (class(value)[1]=="formula") {
+    return(kill(x,all.vars(value),...))
+  }  
   idx <- which(vars(x)%in%value)
   if (length(idx)==0)
     return(x)

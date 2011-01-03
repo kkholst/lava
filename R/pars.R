@@ -1,11 +1,11 @@
 `pars` <-
   function(x,...) UseMethod("pars")
 
-pars.default <- function(x,...) x$coef[,1]
+pars.default <- function(x,...) x$opt$est##coef[,1]
 ###{{{ pars.multigroupfit
-pars.multigroupfit <- function(x,...) {
-  x$opt$est
-}
+##pars.multigroupfit <- function(x,...) {
+##  x$opt$est
+##}
 ###}}}
 
 ###{{{ pars.lvm

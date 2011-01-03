@@ -12,18 +12,13 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     n <- NROW(data)
   if (type[1]%in%c("sandwich","robust")) {
     cl <- match.call()
-    cl$inverse <- FALSE
+    cl$inverse <- !inverse
     cl$type <- "outer"
-    J <- eval.parent(cl)
-    if (inverse) cl$inverse <- TRUE
+    A <- eval.parent(cl)
+    cl$inverse <- !(cl$inverse)
     cl$type <- ifelse(type[1]=="sandwich","E","hessian")
-    I <- eval.parent(cl)
-##    I <- information(x,p,n,data=data,weight=weight,type="E")
-##    J <- information(x,p,n,data=data,weight=weight,type="outer")
-    if (inverse) {
-      return(I%*%J%*%I)
-    }
-    return(I%*%solve(J)%*%I)
+    B <- eval.parent(cl)
+    return(B%*%A%*%B)
   }
   if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
     require("numDeriv")

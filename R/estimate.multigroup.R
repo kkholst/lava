@@ -2,7 +2,8 @@
 
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
-                                  weight, weight2, 
+                                  weight, weightname,
+                                  weight2, 
                                   cluster=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
@@ -15,7 +16,7 @@
                 gamma=1,
                 gamma2=1,
                 lambda=0.05,
-                abs.tol=1e-20,
+                abs.tol=1e-9,
                 epsilon=1e-10,
                 delta=1e-10,
                 S.tol=1e-6,
@@ -88,7 +89,7 @@
     weight <- NULL
   }
   if (!missing(weight2)) {
-    if (is.character(weight2)) {
+    if (is.character(weight2)) {      
       stweight2 <- weight2
       weight2 <- list()
       for (i in 1:length(x$data)) {
@@ -459,9 +460,9 @@
 For numerical approximation please install the library 'numDeriv'.")
     ##    cat("Using a numerical approximation of hessian...\n");
     if (!is.null(myGrad))
-      myInformation <- function(theta) jacobian(myGrad, theta, method="Richardson")
+      myInformation <- function(theta) jacobian(myGrad, theta, method=lava.options()$Dmethod)
     else
-      myInformation <- function(theta) -hessian(myObj, theta, method="Richardson")
+      myInformation <- function(theta) -hessian(myObj, theta, method=lava.options()$Dmethod)
   }
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(solve(I),

@@ -4,14 +4,22 @@
   function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
-           parameters=TRUE,addstyle=TRUE,
+           parameters=TRUE,addstyle=TRUE,Rgraphviz=TRUE,
            ...) {
   if (all) {
     diag <- cor <- labels <- intercept <- addcolor <- TRUE
   }
   index(x) <- reindex(x)
 ##  browser()
-  if (!require("Rgraphviz")) stop("package Rgraphviz not available")
+  if (!require("Rgraphviz") | !Rgraphviz) {
+    if (!require("igraph"))
+      stop("package 'Rgraphviz' or 'igraph' not available")
+    g <- igraph.lvm(x,...)
+    if (noplot) return(g)
+    plot(g)
+    return(invisible(g))
+  } 
+   
   g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   if  (labels) {
     AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
@@ -45,7 +53,7 @@
   invisible(g)
 }
 
-###}}} plot.lvm
+###}}} plot.lvmz
 
 ###{{{ plot.lvmfit
 
@@ -109,3 +117,38 @@ plot.multigroupfit <- function(x,...) {
 }
 ###}}}
 
+###{{{ igraph.lvm
+
+igraph.lvm <- function(x,layout=layout.kamada.kawai,...) {
+  require("igraph")
+  oC <- covariance(x)$rel
+  for (i in 1:(nrow(oC)-1))
+    for (j in (i+1):nrow(oC)) {
+      if (oC[i,j]!=0) {
+        x <- regression(x,vars(x)[i],vars(x)[j])
+        x <- regression(x,vars(x)[j],vars(x)[i])
+      }
+    }  
+  g <- igraph.from.graphNEL(Graph(x))  
+  V(g)$color <- "lightblue"
+  V(g)$label <- vars(x)
+  for (i in match(latent(x),V(g)$name)) {
+    V(g)$shape[i] <- "circle"
+    V(g)$color[i] <- "green"
+  }
+  endo <- index(x)$endogenous
+  for (i in match(endo,V(g)$name)) {
+    V(g)$color[i] <- "orange"
+  }
+  E(g)$label <- as.list(rep("",length(E(g))))
+  oE <- edgelabels(x)
+  for (i in 1:length(E(g))) {
+    st <- as.character(oE[i])
+    if (length(st)>0)
+      E(g)$label[[i]] <- st
+  }
+  g$layout <- layout(g)
+  return(g)  
+}
+
+###}}} igraph.lvm

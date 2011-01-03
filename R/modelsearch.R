@@ -138,6 +138,7 @@ modelsearch <- function(x,k=1,dir="forward",...) {
     res <- backwardsearch(x,k,...)
   else
     res <- forwardsearch(x,k,...)
+  return(res)
 }
 
 

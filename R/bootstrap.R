@@ -23,7 +23,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,
     if (!is.null(fun)) {
       coefs <- fun(e0)
     } else {    
-      coefs <- coef(e0)
+      coefs <- coef(e0,symbol="<-")
       newsd <- c()
       if (sd) {
         newsd <- e0$coef[,2]
@@ -41,7 +41,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,
       ##        sds <- rbind(sds, newsd)
     }
     return(list(coefs=coefs,sds=newsd))
-  }; if (!silent) cat("\n")
+  }; 
 
   i=0;
   if (require(foreach) & lava.options()$parallel) {
@@ -49,6 +49,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,
   } else {
     res <- lapply(0:R,bootfun)
   }
+  if (!silent) cat("\n")
   
   coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
   sds <- NULL

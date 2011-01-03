@@ -169,7 +169,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 ##    if (!is.null(meanpar)) {
 ##  if (!is.null(mu)) {
   if (!is.null(mom$v)){
-      dxi <-
+      dxi <-        
         with(mom, (t(v)%x% ii$Ik)%*%dG)
       if (!is.null(res$dv))
         dxi <- dxi+ mom$G%*%res$dv

@@ -133,7 +133,7 @@ covariance(m) <- c(y1,y2) ~ f(v)
 intercept(m) <- c(y1,y2) ~ f(mu)
 covariance(m) <- c(eta) ~ f(zeta)
 set.seed(1)
-d <- sim(m,100,p=c(v=0.01,zeta=0.01))[,manifest(m0)]
+d <- sim(m,100,p=c(v=0.01,zeta=0.01))[,manifest(m)]
 d <- transform(d,
                y1=y1+2*pnorm(2*x),
                y2=y2+2*pnorm(2*x))

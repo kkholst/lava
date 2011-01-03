@@ -1,10 +1,10 @@
-###{{{ %s% string concat operator
+###{{{ %++% concat operator
 
-'%s%' <-
-function(st1,st2) {
-  paste(st1, st2, sep="")
-}
-
+`%+%` <- function(x,y) UseMethod("%+%",y)
+`%+%.lvm` <- function(x,y) merge(x,y)
+`%+%.matrix` <- function(x,y) blockdiag(x,y)
+`%+%.default` <- function(x,y) paste(x, y, sep="")
+ 
 ###}}}
 
 ###{{{ parlabels
@@ -135,6 +135,7 @@ procrandomslope <- function(object,data=object$data,...) {
 
 fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", ...) {
 
+  
   var.missing <- c()
   if (!missing(data) | !missing(S)) {
         
@@ -171,7 +172,6 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
           } else { ## relative
-            browser()
             if (all(is.na(x$fix[e, ys.]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
@@ -204,7 +204,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     exo.idx <- index(x)$exo.obsidx;
     ##exo.idx_match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
     exo_all.idx <- index(x)$exo.idx
-    if (length(exo.idx)>0)
+    if (length(exo.idx)>0) {
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
           i. <- exo_all.idx[i]; j. <- exo_all.idx[j]
@@ -214,9 +214,10 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
           x$covfix[i.,j.] <- x$covfix[j.,i.] <- myval
         }
       x$mean[exo_all.idx] <- mu0[exo.idx]
+    }
   }
   
-  index(x) <- reindex(x)
+  index(x) <- reindex(x)  
   return(x)
 }
 
@@ -580,11 +581,6 @@ whichentry <- function(x) {
 ###}}} whichentry
 
 ###{{{ blockdiag
-
-`%+%` <-
-function(x,...) {
-  blockdiag(x,...)
-}
 
 blockdiag <- function(x,...,pad=0) {
   xx <- list(x,...)

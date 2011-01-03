@@ -78,11 +78,29 @@ constrain.default <- function(x,estimate=FALSE,...) {
   return(x)    
 }
 
-constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(object),...) {
+constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0.95,
+                        p=pars.default(object),k,idx,...) {
 ##  if (class(object)[1]=="lvm") {
 ##    return(constrain(object,estimate=FALSE))
 ##    }
-  if (class(object)[1]=="multigroupfit") return(attributes(CoefMat.multigroupfit(object))$nlincon)   
+  if (class(object)[1]=="multigroupfit") {
+    if (!missing(k)) {
+      if (class(data)[1]=="list") data <- data[[k]]
+      parpos <- modelPar(object, seq_len(length(p)))$p[[k]]
+      if (nrow(data)>1 & !missing(idx)) {
+        res <- t(apply(data,1,function(x) constraints(Model(object)$lvm[[k]],data=x,p=p[parpos],vcov=vcov[parpos,parpos],level=level)[idx,]))
+        return(res)
+      }
+      return(constraints(Model(object)$lvm[[k]],data=data,p=p[parpos],vcov=vcov[parpos,parpos],level=level))
+    }
+    return(attributes(CoefMat.multigroupfit(object,data=data,vcov=vcov,...))$nlincon)
+  }
+
+  if (NROW(data)>1 & !missing(idx)) {
+    res <- t(apply(data,1,function(x) constraints(object,data=x,p=p,vcov=vcov,level=level)[idx,],...))
+    return(res)
+  }
+  
   if (length(index(object)$constrain.par)<1) return(NULL)
   parpos <- Model(object)$parpos
   if (is.null(parpos)) {
@@ -110,18 +128,18 @@ constraints <- function(object,vcov=object$vcov,level=0.95,data=model.frame(obje
 ##  res <- matrix(nrow=N,ncol=6)
   res <- c()
   count <- 0
+  mydata <- rbind(numeric(length(manifest(object))))
+  colnames(mydata) <- manifest(object)
+  data <- rbind(data)
+  iname <- intersect(colnames(mydata),colnames(data))
+  mydata[1,iname] <- unlist(data[1,iname])
   for (pp in index(object)$constrain.par) {
     count <- count+1
     myc <- constrain(Model(object))[[pp]]
     mycoef <- numeric(6)
     val.idx <- myidx[attributes(myc)$args]
     val.idx0 <- na.omit(val.idx)
-    mydata <- rbind(numeric(length(manifest(object))))
-    colnames(mydata) <- manifest(object)
-    data <- rbind(data)
-    iname <- intersect(colnames(mydata),colnames(data))
-    mydata[1,iname] <- unlist(data[1,iname])
-    M <- modelVar(Model(object),p=pars.default(object),data=as.data.frame(mydata))
+    M <- modelVar(Model(object),p=p,data=as.data.frame(mydata))
     vals <- with(M,c(parval,constrainpar))[attributes(myc)$args]
     fval <- mycoef[1] <- myc(unlist(vals))
     myc0 <- function(theta) {

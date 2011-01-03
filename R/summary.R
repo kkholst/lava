@@ -51,11 +51,11 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   l2D <- sum(x$object$opt$grad^2)
   rnkV <- qr(vcov(x$object))$rank
   if (l2D>1e-2) warning("Possible problems with convergence!")
-  cat("||score||^2=",l2D,"\n")
+  cat("||score||^2=",l2D,"\n",sep="")
   np <- nrow(vcov(x$object))
   if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
   cat("Latent variables:", latent(x$object), "\n")
-  cat("Number of rows in data=",x$n)
+  cat("Number of rows in data=",x$n,sep="")
   if (x$nc!=x$n) {
     cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")    
   }; cat("\n")

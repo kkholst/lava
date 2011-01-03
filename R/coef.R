@@ -1,25 +1,27 @@
 ###{{{ coef.lvm
 
 `coef.lvm` <-
-function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, level=9, labels=FALSE, ...) {
+function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
   if (fix) ## 12/7-2010
     object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
     rownames(coefs) <- c(coef(object,mean=TRUE)[c(1:index(object)$npar.mean)],paste("p",1:index(object)$npar,sep=""))
-    if (!is.null(data)) {
-      I <- information(object,p=p,data=data,type="E")
-      myvcov <- solve(I)
-    } else {
-      myvcov <- matrix(NA,length(p),length(p))
-    }
-    object$vcov <- myvcov
-    coefs[,2] <- sqrt(diag(myvcov))
+    if (missing(vcov)) {
+      if (!is.null(data)) {
+        I <- information(object,p=p,data=data,type="E")
+        myvcov <- solve(I)
+      } else {
+        myvcov <- matrix(NA,length(p),length(p))
+      } 
+      object$vcov <- myvcov
+    } else object$vcov <- vcov
+    coefs[,2] <- sqrt(diag(object$vcov))
     coefs[,3] <- coefs[,1]/coefs[,2]
     coefs[,4] <-  2*(1-pnorm(abs(coefs[,3])))    
     colnames(coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
     object$coefficients <- coefs;
-    return(coef.lvmfit(object,level=level,...))
+    return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
   }  
 
   AP <- matrices(object, paste("p",1:index(object)$npar, sep=""))
@@ -28,7 +30,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   P <- AP$P; P[index(object)$P1==0] <- "0"
   ##  P[lower.tri(P, diag=FALSE)] <- "0"
   nn <- vars(object)
-  
+
   counter <- 0
   res <- c()
   resname <- c()
@@ -51,10 +53,18 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
       val <- P[j,i]
       if (val!="0") {
         counter <- counter+1
+        if (length(symbol)<2) {
+          if (nn[i]!=nn[j]) {
+            ##            part2 <- paste("Cov(",nn[i],",",nn[j],")",sep="")
+            part2 <- paste(nn[i],nn[j],sep=",")
+          } else part2 <- nn[i]
+        } else {
+          part2 <- paste(nn[i],symbol[2],nn[j],sep="")
+        }
         if (labels & !is.na(covfix(Model(object))$labels[j,i]))
           res <- c(res, covfix(Model(object))$labels[j,i])
-        else
-          res <- c(res, paste(nn[i],symbol[2],nn[j],sep=""))
+        else 
+          res <- c(res, part2)
         resname <- c(resname, val)
       }
     }
@@ -97,8 +107,9 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
 ###{{{ coef.lvmfit
 
 `coef.lvmfit` <-
-function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," with "), data,
-         std=NULL, labels=TRUE, vcov, 
+function(object, level=ifelse(missing(type),-1,2),
+         symbol=c("<-","<->"),
+         data, std=NULL, labels=TRUE, vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
 
   ## object0 <- object
@@ -150,7 +161,7 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
   
   if (level<0) {
     res <- pars.default(object)
-    names(res) <- coef(Model(object), mean=meanstructure)[myorder]
+    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol)[myorder]
     return(res)
   }
   latent.var <- latent(object)
@@ -283,13 +294,22 @@ function(object, level=ifelse(missing(type),-1,2), symbol=c("<-","<->"," on "," 
             if (!missing(std)) {
               newrow <- cbind(newrow,Pstd[i,j])
             }
+            if (length(symbol)<2) {
+              if (nn[i]!=nn[j]) {
+##                part2 <- paste("Cov(",nn[i],",",nn[j],")",sep="")
+                part2 <- paste(nn[i],nn[j],sep=",")
+              } else part2 <- nn[i]
+              ##part2 <- paste("Var(",nn[i],")",sep="")
+            } else {
+              part2 <- paste(nn[i],symbol[2],nn[j],sep="")
+            }            
             if (labels & !is.na(covfix(Model(object))$labels[j,i])) {
               rownames(newrow) <- covfix(Model(object))$labels[j,i]
               if (labels>1) {
-                rownames(newrow) <- paste(rownames(newrow),paste(nn[i],symbol[2],nn[j],sep=""),sep=":")
+                rownames(newrow) <- paste(rownames(newrow),part2,sep=":")
               }
-            } else {       
-              rownames(newrow) <- paste(nn[i],symbol[2],nn[j],sep="")
+            } else {
+              rownames(newrow) <- part2
             }
             if ((free.var[j,i]) | level>2) {
               res <- rbind(res, newrow)
@@ -370,8 +390,8 @@ coef.multigroup <- function(object,...) {
 ###{{{ coef.multigroupfit
 
 coef.multigroupfit <-
-  function(object, level=1,vcov,
-           labels=FALSE,...) {
+  function(object, level=1,vcov, ext=FALSE,
+           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,...) {
 
     if (level==0) {
       theta <- pars(object)
@@ -406,8 +426,7 @@ coef.multigroupfit <-
 ##       res <- c(res, list(newcoef))
 ##     }    
 
-    
-    cc <- coef(object, level=0, ...)
+    cc <- coef(object, level=0, symbol=symbol, ...)
     model <- Model(object)
     parpos <- modelPar(model, 1:nrow(cc))$p
     npar.mean <- object$model$npar.mean
@@ -422,19 +441,54 @@ coef.multigroupfit <-
     }
 
     res <- list()
+    misrow <- list()
+    parpos2 <- list()
     for (i in 1:model$ngroup) {
-      newcoef <- cc[parpos[[i]],,drop=FALSE]
-  ##    rownames(newcoef) <- mynames[parpos[[i]]]      
-      rownames(newcoef) <- orignames <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE)
-##      attributes(newcoef)$pnames <- orignames
-##      attributes(newcoef)$names <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE)
-##      rownames(newcoef) <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE)
+      orignames <- coef(object$model0$lvm[[i]],mean=object$meanstructure, silent=TRUE, symbol=c("<-","<->"))
+      if (ext) {
+        newnames. <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE, labels=labels, symbol=symbol)
+        newnames <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE, labels=labels,symbol=c("<-","<->"))
+        newcoef <- matrix(NA,ncol=4,nrow=length(newnames))
+        rownames(newcoef) <- newnames.
+        idx <- match(orignames,newnames)
+        newcoef[idx,] <- cc[parpos[[i]],,drop=FALSE]
+        newparpos <- rep(NA,length(newnames))
+        newparpos[idx] <- parpos[[i]]
+        parpos2 <- c(parpos2, list(newparpos))
+        misrow <- c(misrow, list(setdiff(seq_len(length(newnames)),idx)))
+      } else {
+        newcoef <- cc[parpos[[i]],,drop=FALSE]
+        rownames(newcoef) <- orignames
+      }
+      colnames(newcoef) <- colnames(cc)
       ## Position of variance parameters:
       varpos <- variances(Model(model)[[i]],mean=FALSE)
       ## Number of parameters resp mean-parameters
       p <- nrow(newcoef); p0 <- length(coef(Model(model)[[i]], mean=FALSE, silent=TRUE))
       newcoef[(p-p0) + varpos,4] <- NA
       res <- c(res, list(newcoef))
+    }
+
+    if (ext) {
+      for (i in 1:model$ngroup) {
+        if (length(misrow[[i]])>0) {
+          nn <- rownames(res[[i]])[misrow[[i]]]
+          for (j in setdiff(1:model$ngroup,i)) {
+            nn2 <- rownames(res[[j]])
+            matching <- na.omit(match(nn,nn2))
+            matching <- setdiff(matching,misrow[[j]])
+            if (length(matching)>0) {
+              idxj <- match(nn2[matching],nn2)
+              idxi <- match(nn2[matching],rownames(res[[i]]))
+              res[[i]][nn2[matching],] <- res[[j]][nn2[matching],]
+              parpos2[[i]][idxi] <- parpos2[[j]][idxj]
+              nn <- setdiff(nn,nn2[matching])
+            }
+            if (length(nn)<1) break;
+          }
+        }
+      }
+      attributes(res)$parpos <- parpos2
     }
     return(res)
 }
@@ -443,9 +497,11 @@ coef.multigroupfit <-
 
 ###{{{ CoefMat
 
-CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,...) {
-  cc <- coef(x,level=level)
-  parpos <- modelPar(x, 1:length(pars(x)))$p
+CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,...) {
+  cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data)  
+  parpos <- attributes(cc)$parpos
+  ##cc <- coef(x,level=level)
+  ##parpos <- modelPar(x, 1:length(pars(x)))$p
   res <- c()
   nlincon.estimates <- c()
   nlincon.names <- c()
@@ -457,9 +513,10 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,...) {
     if (npar>0)
       rownames(mycoef)[(1:npar)+npar.mean] <- paste("p",1:npar,sep="")    
     m0$coefficients <- mycoef
+    m0$opt$estimate <- mycoef[,1]
     Vcov <- vcov(x)[parpos[[i]],parpos[[i]],drop=FALSE]; colnames(Vcov) <- rownames(Vcov) <- rownames(mycoef)
     m0$vcov <- Vcov
-    cc0 <- coef.lvmfit(m0,level=level,labels=labels)
+    cc0 <- coef.lvmfit(m0,level=level,labels=labels,symbol=symbol)
     res <- c(res, list(CoefMat(cc0)))
     newnlin <- attributes(cc0)$nlincon
     if (length(newnlin)>0)
@@ -480,10 +537,10 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,...) {
   return(res)
 }
 
-CoefMat <- function(x,digits=5,scientific=0,level=9,...) {
+CoefMat <- function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
   cc <- x
   if (!is.matrix(x)) {
-    cc <- coef(x,level=level,...)
+    cc <- coef(x,level=level,symbol=symbol,...)
   }
   res <- c()
   mycoef <- format(cc,digits=digits,scientific=scientific,...)

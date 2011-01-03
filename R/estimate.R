@@ -9,6 +9,7 @@ function(x, data,
          control=list(),
          missing=FALSE,
          weight,
+         weightname,
          weight2,
          cluster,
          fix,
@@ -33,7 +34,7 @@ function(x, data,
                 gamma2=1,
                 ngamma=NULL,
                 lambda=0.05,
-                abs.tol=1e-12,
+                abs.tol=1e-9,
                 epsilon=1e-10,
                 delta=1e-10,
                 S.tol=1e-5,
@@ -68,9 +69,17 @@ function(x, data,
   ## Weights...
   if (!missing(weight)) {
     if (is.character(weight)) {
-      weight <- data[,weight]
+      weight <- data[,weight,drop=FALSE]
+      if (!missing(weightname)) {
+        colnames(weight) <- weightname
+      } else {
+        yvar <- index(x)$endogenous
+        nw <- seq_len(min(length(yvar),ncol(weight)))
+        colnames(weight)[nw] <- yvar[nw]
+      }      
     }
     weight <- cbind(weight)
+    
   } else {
     weight <- NULL
   }
@@ -89,7 +98,8 @@ function(x, data,
   } else {
     cluster <- NULL
   }
-
+  
+  
   Debug("procdata")
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
@@ -97,7 +107,8 @@ function(x, data,
   Debug(list("S=",S))
   Debug(list("mu=",mu))
  
-  if (fix) {
+##  if (fix)
+  {
     var.missing <- setdiff(vars(x),colnames(S))
     if (length(var.missing)>0) {## Convert to latent:
       new.lat <- setdiff(var.missing,latent(x))
@@ -352,34 +363,33 @@ function(x, data,
     
   }
 
-  if (!exists(GradFun) & !is.null(optim$method)) {
-    cat("Using numerical derivatives...\n")
-    myGrad <- function(pp) {
-      if (optim$constrain)
-        pp[constrained] <- exp(pp[constrained])
-      if (!require("numDeriv")) {        
-        S <- naiveGrad(myObj, pp)
-      } else {
-        S <- grad(myObj, pp, method=lava.options()$Dmethod)
-      }
-      if (optim$constrain) {
-        S[constrained] <- S[constrained]*pp[constrained]
-      }
-      return(S)        
-    }
-  }  
-  if (!exists(InformationFun) & !is.null(optim$method)) {
-    if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
-For numerical approximation please install the library 'numDeriv'.")
-    cat("Using a numerical approximation of hessian...\n");
-    myInfo <- function(pp,...) hessian(myObj, opt$estimate, method="Richardson")
-  }
+  ## if (!exists(GradFun) & !is.null(optim$method)) {
+  ##   cat("Using numerical derivatives...\n")
+  ##   myGrad <- function(pp) {
+  ##     if (optim$constrain)
+  ##       pp[constrained] <- exp(pp[constrained])
+  ##     if (!require("numDeriv")) {        
+  ##       S <- naiveGrad(myObj, pp)
+  ##     } else {
+  ##       S <- grad(myObj, pp, method=lava.options()$Dmethod)
+  ##     }
+  ##     if (optim$constrain) {
+  ##       S[constrained] <- S[constrained]*pp[constrained]
+  ##     }
+  ##     return(S)        
+  ##   }
+  ##  }
+##   if (!exists(InformationFun) & !is.null(optim$method)) {
+##     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
+## For numerical approximation please install the library 'numDeriv'.")
+##     cat("Using a numerical approximation of hessian...\n");
+##     myInfo <- function(pp,...) hessian(myObj, opt$estimate, method="Richardson")
+##   }
   
   myHess <- function(pp) {
     p0 <- pp
     if (optim$constrain)
       pp[constrained] <- exp(pp[constrained])
-
     I0 <- myInfo(pp)
     attributes(I0)$grad <- NULL
     D <- attributes(I0)$grad
@@ -398,11 +408,17 @@ For numerical approximation please install the library 'numDeriv'.")
     }
     return(I0)
   }   
-  coefname <- coef(x,mean=optim$meanstructure);
+  
+  if (!exists(InformationFun)) myInfo <- myHess <- NULL
+  else if (is.null(get(InformationFun))) myInfo <- myHess <- NULL
+  if (is.null(get(GradFun))) myGrad <- NULL
 
+  coefname <- coef(x,mean=optim$meanstructure);
   ##  browser()
-  if (!silent) cat("Optimizing objective function...\n")
+  if (!silent) cat("Optimizing objective function...")
+  if (optim$trace>0 & !silent) cat("\n")
   ## Optimize with lower constraints on the variance-parameters
+
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -424,15 +440,26 @@ For numerical approximation please install the library 'numDeriv'.")
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
 
   mom <- modelVar(x, pp, data=data)
-  if (!silent) cat("Calculating asymptotic variance...\n")
+  if (!silent) cat("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
-    asVar <- Inverse(myInfo(opt$estimate))
+    if (is.null(myInfo)) {
+      if (!is.null(myGrad))
+        myInfo <- function(pp,...)
+          jacobian(myGrad,pp,method=lava.options()$Dmethod)
+      else
+        myInfo <- function(pp,...)
+          -hessian(myObj,pp,method=lava.options()$Dmethod)
+    }
+    I <- myInfo(opt$estimate)
+    asVar <- tryCatch(solve(I),
+                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
+    ##    asVar <- Inverse(myInfo(opt$estimate))
     diag(asVar)[(diag(asVar)==0)] <- NA
-##    if ()
-##    asVar <- tryCatch(
-##                      solve(myInfo(opt$estimate)),
-##                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
+    ##    if ()
+    ##    asVar <- tryCatch(
+    ##                      solve(myInfo(opt$estimate)),
+    ##                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
 ###
   } else {
     asVar <- tryCatch(do.call(asVarFun,

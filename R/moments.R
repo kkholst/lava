@@ -20,10 +20,12 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   AP <- with(pp, matrices(x,p,meanpar=meanpar,data=data,...))
 #  A <- AP$A; P <- AP$P; v <- AP$v;
   P <- AP$P
-  if (!is.null(AP$v)) {
-    names(AP$v) <- ii$vars
-  }
+  v <- AP$v
   ##  rownames(P) <- colnames(P) <- ii$vars
+  if (!is.null(v)) {
+    names(v) <- ii$vars
+  }
+
   npar <- ii$npar
   npar.reg <- ii$npar.reg
 
@@ -32,7 +34,10 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   if (conditional) {
     ##    mynames <- index(x)$endo.idx
     J <- ii$Jy
-    px <- ii$px 
+    px <- ii$px
+    exo <- exogenous(x)
+    if (!is.null(v))
+      v[exo] <- as.numeric(data[1,exo])
     P <-  px%*% tcrossprod(P, px)
     Jidx <- ii$endo.idx
   } else {
@@ -52,8 +57,8 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   }
   
   xi <- NULL
-  if (!is.null(AP$v)) {
-    xi <- G%*%AP$v ## Model-specific mean vector
+  if (!is.null(v)) {
+    xi <- G%*%v ## Model-specific mean vector
   }
   ##  rownames(xi) <- J%*%mynames
 
@@ -62,5 +67,5 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   ##  C <- Cfull[Jidx,Jidx,drop=FALSE]
 ##  rownames(C) <- colnames(C) <- mynames
   
-  return(list(Cfull=Cfull, C=C, v=AP$v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx, constrainpar=AP$constrainpar))
+  return(list(Cfull=Cfull, C=C, v=v, xi=xi, A=AP$A, P=P, IAi=IAi, J=J, G=G, npar=npar, npar.reg=npar.reg, npar.mean=ii$npar.mean, parval=AP$parval, constrain.idx=AP$constrain.idx, constrainpar=AP$constrainpar))
 }

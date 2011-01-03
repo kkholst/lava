@@ -2,11 +2,11 @@
 
 nlminb2 <- function(start,objective,gradient,hessian,...) {
   nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min")
-  cat("\n")
   dots <- list(...)
   control <- list(...)$control
   control <- control[names(control)%in%nlminbcontrols]
   dots$control <- control
+  if (length(dots$trace)>0 && dots$trace>0) cat("\n")
   mypar <- c(list(start=start,objective=objective,gradient=gradient,hessian=hessian),dots)
   mypar["debug"] <- NULL
   do.call("nlminb", mypar)
@@ -23,6 +23,46 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 ###}}} nlminb
 
 ###{{{ estfun
+
+
+### just for testing
+estfun0 <- function(start,objective,gradient,hessian,...) {
+
+  browser()
+  myobj <- function(...) {
+##    return(objective(...))
+##    return(objective(...))
+    S <- gradient(...)
+    return(crossprod(S)[1])
+  }
+  myobj <- objective
+  ##g <- function(...) numDeriv::grad(myobj,...)
+  g <- function(...) gradient(...)
+##  h <- function(...) numDeriv::hessian(myobj,...)
+  h <- function(...) numDeriv::jacobian(gradient,...)
+  ##nlminb(start,myobj,g,h,control=list(trace=1))
+  
+  theta <- start
+  print(theta)
+  count <- 0
+  for (i in 1:50) {
+    count <- count+1
+    I <- h(theta);
+    I1 <- solve(I)    
+    ##E <- eigen(I); L <- E$values;    
+    ##L[L<1e-2] <- 0; L[L>0] <- 1/L[L>0]    
+    ##I1 <- with(E, vectors%*%diag(L)%*%t(vectors))
+    S <- g(theta)
+    theta <- theta + (-0.5*I1%*%S)
+    print(S)
+    print(theta[,1])
+  }
+  
+  return(theta)
+    res <- list(par=theta[,1], iterations=count, method="estfun0", gradient=g(start))
+ 
+}
+
 
 estfun <- function(start,objective,gradient,hessian,...) {
   myobj <- function(...) {
@@ -63,10 +103,12 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
   cat("\nIter=0;\t\n",
       "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
   
-  
+
   oneiter <- function(p.orig) {
-    ##  browser()
     if (is.null(hessian)) {
+      cat(".")
+      ##      I <- numDeriv::jacobian(gradient,p.orig)      
+      ##      I <- numDeriv::jacobian(gradient,p.orig,method="simple")
       I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
     } else {
       I <- hessian(p.orig)
@@ -74,9 +116,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     D <- attributes(I)$grad
     if (is.null(D)) {      
       D <- gradient(p.orig)
-    } else {
     }
-
+    
     if (control$stabil) {
       if (control$lambda!=0) {
         if (control$lambda<0) {
@@ -137,7 +178,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     if (mean(newpar$D^2)<control$tol) break;
 ##    if (frobnorm(oldpar-thetacur)<control$abs.tol) break;
   }
-  res <- list(par=thetacur, iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
+  res <- list(par=as.vector(thetacur), iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
   return(res)
 }
 

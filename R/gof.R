@@ -38,6 +38,10 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
   return(e0)
 }
 
+condition <- function(A) {
+  suppressWarnings(with(eigen(A),tail(values,1)/head(values,1)))
+}
+
 `gof` <-
   function(object,...) UseMethod("gof")
 
@@ -73,8 +77,7 @@ gof.lvmfit <- function(object,chisq=FALSE,...) {
 
   l2D <- sum(object$opt$grad^2)
   rnkV <- qr(vcov(object))$rank
-  res <- c(res, L2score=l2D, rankV=rnkV, k=nrow(vcov(object)))
-
+  res <- c(res, L2score=l2D, rankV=rnkV, cond=condition(vcov(object)), k=nrow(vcov(object)))
   class(res) <- "gof.lvmfit"
   return(res)       
 }
@@ -96,6 +99,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
            ", P(Q>q) =", fit$p.value, "\n"))
   if (optim) {
     cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
+    cat("condition(Information) = ",x$cond,"\n",sep="")
     cat("||score||^2 =",x$L2score,"\n")
   }
 

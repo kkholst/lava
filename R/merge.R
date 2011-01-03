@@ -4,8 +4,10 @@ merge.lvm <- function(x,y,...) {
   m <- objects[[1]]
   for (i in 2:length(objects)) {
     m2 <- objects[[i]]
-    latent(m) <- latent(m2)
-    m$constrain <- c(m$constrain,m2$constrain)
+    if (length(latent(m2))>0)
+      latent(m) <- latent(m2)
+    if (length(m2$constrain)>0)
+      m$constrain <- c(m$constrain,m2$constrain)
     M <- (index(m2)$A)
     P <- (index(m2)$P)
     nn <- vars(m2)
@@ -29,8 +31,11 @@ merge.lvm <- function(x,y,...) {
         }
       }
     intercept(m,nn) <- intercept(m2)
+    m2x <- exogenous(m2)
+    if (length(m2x)>0)
+      exogenous(m) <- c(exogenous(m),m2x)
   }
-  ##  index(m) <- reindex(m)
+  index(m) <- reindex(m)
   return(m)
 }
   
