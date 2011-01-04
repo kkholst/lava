@@ -26,7 +26,7 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 
 
 ### just for testing
-estfun0 <- function(start,objective,gradient,hessian,...) {
+estfun2 <- function(start,objective,gradient,hessian,...) {
 
   browser()
   myobj <- function(...) {
@@ -74,7 +74,7 @@ estfun <- function(start,objective,gradient,hessian,...) {
       H <- hessian(x)
       S <- gradient(x)
       2*S%*%H    
-    }
+    }    
   } else {
     mygrad <- function(x) {
       myfun <- function(z) gradient(z)
@@ -82,6 +82,20 @@ estfun <- function(start,objective,gradient,hessian,...) {
       S <- gradient(x)
       2*S%*%H    
     }
+  }
+  nlminb2(start,myobj,mygrad,hessian=NULL,...)
+}
+
+estfun0 <- function(start,objective,gradient,hessian,...) {
+  myobj <- function(...) {
+    S <- gradient(...)
+    crossprod(S)[1]
+  }
+  mygrad <- function(x) {
+    myfun <- function(z) gradient(z)
+    H <- jacobian(myfun,x,method=lava.options()$Dmethod)
+    S <- gradient(x)
+    2*S%*%H    
   }
   nlminb2(start,myobj,mygrad,hessian=NULL,...)
 }
