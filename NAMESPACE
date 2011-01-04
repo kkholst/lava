@@ -267,5 +267,5 @@ S3method(print,equivalence)
 S3method(print,"bootstrap.lvm")
 S3method(print, fix)
 S3method(print, "gof.lvmfit")
-RS3method(print, effects)
+S3method(print, effects)
 
