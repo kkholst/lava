@@ -69,7 +69,8 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   Debug("npar done")
 
   P <- x$cov;
-  P0 <- P;  P0[covfix.idx] <- 0 ## Matrix of indicators of free covariance-parameters (removing fixed parameters)  
+  P0 <- P;  P0[covfix.idx] <- 0 ## Matrix of indicators of free covariance-parameters (removing fixed parameters)
+  P0[exo.idx,exo.idx] <- 0 ## 6/1-2011
   P1 <- P0 ## Matrix of indiciator of free _unique_ variance parameters (removing fixed _and_ duplicate parameters)
   covparname <- unique(x$covpar[!is.na(x$covpar)])
 ##  covparname.all <- unique(x$covpar[!is.na(x$covpar)])
@@ -83,10 +84,10 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   } 
   ##  P1[upper.tri(P1)] <- 0
   ##  P1 <- symmetrize(P1) ### OBS CHECK ME
-  
+
+  ##  P1. <- P1[-exo.idx,-exo.idx]
   npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
-  parnames <- paste("p", 1:(npar.reg+npar.var), sep="")
-  
+  parnames <- paste("p", 1:(npar.reg+npar.var), sep="")  
   Debug(npar.reg)
   
 ##  A <- M0;
@@ -113,6 +114,8 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 ##  mparname.all <- unique(x$mean[named])
 ##  mparname <- setdiff(mparname.all,constrain.par)
   v0 <- rep(1,length(x$mean)) ## Vector of indicators of free mean-parameters
+
+  v0[exo.idx] <- 0 ## 6/1-2011
   v0[fixed] <- 0; v1 <- v0
   for (p in mparname) {
     idx <- which(x$mean==p)
