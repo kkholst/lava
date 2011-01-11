@@ -4,7 +4,7 @@
 `%+%.lvm` <- function(x,y) merge(x,y)
 `%+%.matrix` <- function(x,y) blockdiag(x,y)
 `%+%.default` <- function(x,y) paste(x, y, sep="")
- 
+
 ###}}}
 
 ###{{{ parlabels
@@ -430,14 +430,19 @@ extractvar <- function(f) {
 }
 getoutcome <- function(formula) {
   aa <- attributes(terms(formula))
-  if (aa$response==0)
-    return(NULL)
-  paste(deparse(formula[[2]]),collapse="")
+  if (aa$response==0) {
+    res <- NULL
+  } else {
+    res <- paste(deparse(formula[[2]]),collapse="")
+  }
+  attributes(res)$x <- aa$term.labels
+  res  
 }
-decomp.specials <- function(x,pattern="[()]") {
+decomp.specials <- function(x,pattern="[()]",sep=",",...) {
   st <- gsub(" ","",x)
-  vars <- rev(unlist(strsplit(st,pattern)))[1]
-  unlist(strsplit(vars,","))
+  if (!is.null(pattern))
+    st <- rev(unlist(strsplit(st,pattern,...)))[1]
+  unlist(strsplit(st,sep,...))
 }
 Decomp.specials <- function(x,pattern="[()]") {
   st <- gsub(" ","",x)

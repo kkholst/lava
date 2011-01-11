@@ -262,36 +262,85 @@ regfix.lvm <- function(object,...) {
   return(res)
 }
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
-"regfix<-.lvm" <- function(object, to, from, ..., value) {
+"regfix<-.lvm" <- function(object, to, from, exo=TRUE,..., value) {
   if (is.null(to)) stop("variable list needed")
+  curvar <- index(object)$vars
   if (class(to)[1]=="formula") {
-    lhs <- decomp.specials(getoutcome(to))
-    if (is.null(lhs)) {
+    yx <- getoutcome(to)
+    lhs <- decomp.specials(yx)    
+    if (length(lhs)==0) {
       to <- all.vars(to)
       if (is.null(from)) stop("predictor list needed")
       if (class(from)[1]=="formula")
         from <- all.vars(from)      
     } else {
-      from <- all.vars(to)
-      to <- lhs ##decomp.specials(lhs)      
+      from <- attributes(yx)$x
+      to <- lhs
+      ##      from <- all.vars(ys)
+      ##      to <- lhs ##decomp.specials(lhs)      
       ##      from <- all.vars(extractvar(to)$x
-      from <- setdiff(from,to)
+      ##      from <- setdiff(all.vars(to),ys)
     }
+    
+    yyf <- lapply(to,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
+    ys <- unlist(lapply(yyf,function(y) y[1]))      
+    xxf <- lapply(from,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
+    xs <- unlist(lapply(xxf,function(y) y[1]))    
+
+    object <- addvar(object,c(ys,xs),...)
+
+    newexo <- notexo <- c()
+    for (i in 1:length(xs)) {        
+      xf <- unlist(strsplit(from[[i]],"[\\[.+?\\]]",perl=TRUE))
+      if (length(xf)>1) {
+        xpar <- decomp.specials(xf[2],NULL,":")
+        val <- ifelse(xpar[1]=="NA",NA,xpar[1])
+        valn <- suppressWarnings(as.numeric(val))
+        intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+        if (length(xpar)>1) {
+          val <- ifelse(xpar[2]=="NA",NA,xpar[2])
+          valn <- suppressWarnings(as.numeric(val))
+          covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+        }
+        notexo <- c(notexo,xs[i])
+      } else { newexo <- c(newexo,xs[i]) }
+    }
+    for (i in 1:length(ys)) {
+      yf <- unlist(strsplit(to[[i]],"[\\[.+?\\]]",perl=TRUE))
+      if (length(yf)>1) {
+        ypar <- decomp.specials(yf[2],NULL,":")
+        val <- ifelse(ypar[1]=="NA",NA,ypar[1])
+        valn <- suppressWarnings(as.numeric(val))
+        intercept(object,ys[i]) <- ifelse(is.na(valn),val,valn)
+        if (length(ypar)>1) {
+          val <- ifelse(ypar[2]=="NA",NA,ypar[2])
+          valn <- suppressWarnings(as.numeric(val))
+          covariance(object,ys[i]) <- ifelse(is.na(valn),val,valn)
+        }
+      }
+    }
+    to <- ys; from <- xs
+    object <- addvar(object,c(ys,xs),...)
+    notexo <- c(notexo,to)
+  } else {
+    object <- addvar(object,c(to,from),...)
+    newexo <- from
+    notexo <- to
   }
 
-  object <- addvar(object,c(to,from),...)
-  newexo <- setdiff(from,c(to,index(object)$vars))
-  exo <- exogenous(object)
-  if (length(newexo)>0)
-    exo <- unique(c(exo,newexo))
-  exogenous(object) <- setdiff(exo,to)
+  if (exo) {
+    oldexo <- exogenous(object)
+    newexo <- setdiff(newexo,c(notexo,curvar))
+    exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
+  }
+
   
   if (length(from)==length(to) & length(from)==length(value)) {
 ##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
       if (!isAdjacent(Graph(object), from[i], to[i])) {
         ##covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
-        object <- regression(object, to=to, from=from[i])
+        object <- regression(object, to=to[i], from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))
       if (is.na(value[[i]]) | value[[i]]=="NA") {

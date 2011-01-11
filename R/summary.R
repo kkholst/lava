@@ -41,6 +41,7 @@ function(object,std="xy", level=9, labels=2, ...) {
     res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=gof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo])
   } else {
     n <- nrow(model.frame(object))
+    if (is.null(n)) n <- model.frame(object)$n
     res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=gof(object), n=n, nc=n)##, varmat=modelVar(object)$P[nonexo,nonexo])
   }
   class(res) <- "summary.lvmfit"

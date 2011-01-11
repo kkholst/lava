@@ -25,7 +25,7 @@ function(x, data,
   }
   
   cl <- match.call()
-  
+
   optim <- list(
                 eval.max=300,
                 iter.max=500,
@@ -54,9 +54,7 @@ function(x, data,
   if (length(control)>0) {
     optim[names(control)] <- control
   }
-  ##  if (length(optcontrol)>0) {
-  ##    optim$control[names(optcontrol)] <- optcontrol
-  ##  }  
+    
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0)
@@ -106,8 +104,8 @@ function(x, data,
   Debug(list("n=",n))  
   Debug(list("S=",S))
   Debug(list("mu=",mu))
- 
-##  if (fix)
+
+  ##  if (fix)
   {
     var.missing <- setdiff(vars(x),colnames(S))
     if (length(var.missing)>0) {## Convert to latent:
@@ -135,7 +133,6 @@ function(x, data,
     Method <- get(Method)
   if (is.null(optim$method)) optim$method <- Method
 
-
   if (!quick & index) {
     ## Proces data and setup some matrices
     x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
@@ -148,12 +145,10 @@ function(x, data,
     }
   }
   
-  ## if (index(x)$npar.mean==0) optim$meanstructure <- FALSE       
   if (is.null(estimator) || estimator==FALSE) {
     return(x)
   }  
   k <- length(manifest(x))
-  ##  m <- length(latent(x))    
   Debug(list("S=",S))
   if (!optim$meanstructure) {
     mu <- NULL
@@ -265,7 +260,7 @@ function(x, data,
           res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2[ii,]))
         } else
         {
-          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2))
+          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
         }
         return(res)
       }           
@@ -287,9 +282,6 @@ function(x, data,
         {
           rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2[ii,]))
         }
-##        browser()
-
-        ##       rr <- score(x0,p=pp,data=data[ii,])
         return(rr)        
       }
       ss <- rowSums(rbind(sapply(1:nrow(data),myfun)))
@@ -454,13 +446,7 @@ function(x, data,
     I <- myInfo(opt$estimate)
     asVar <- tryCatch(solve(I),
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
-    ##    asVar <- Inverse(myInfo(opt$estimate))
     diag(asVar)[(diag(asVar)==0)] <- NA
-    ##    if ()
-    ##    asVar <- tryCatch(
-    ##                      solve(myInfo(opt$estimate)),
-    ##                      error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
-###
   } else {
     asVar <- tryCatch(do.call(asVarFun,
                               list(x=x,p=opt$estimate,data=data,opt=opt)),
@@ -525,8 +511,7 @@ estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,silent=TRUE,...
   ##    }     
   ##    mydata <- as.data.frame(cbind(y,mm)); names(mydata)[1] <- yvar
   ##  }
-  model <- lvm()
-  regression(model,silent=silent) <- x
+  model <- lvm(x,silent=silent)
   ##  covars <- exogenous(model)
   ##  exogenous(model) <- setdiff(covars,pred.norm)
   ##  if (unstruct) {    

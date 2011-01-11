@@ -1,12 +1,6 @@
 
 deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
-  ## if (!missing(mom)) {
-  ##   if (mom$npar==length(attributes(mom)$pars))
-  ##     meanpar <- NULL
-  ## }
-##  if (missing(mom) & !missing(p)) {
-##    mom <- modelVar(expr,p)
-##  }
+
   if (missing(mom) & !missing(p)) {
     mom <- modelVar(expr,p,conditional=conditional)
     all <- TRUE
@@ -182,7 +176,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     }
   
     if (second) {
-      cat("Bleeding edge...\n")
       k <- nrow(ii$A)
       K <- ii$Kkk ## commutation(k,k)
       I <- ii$Ik ## diag(k)

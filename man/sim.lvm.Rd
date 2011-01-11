@@ -12,6 +12,8 @@
 \alias{distribution<-}
 \alias{distribution.lvm}
 \alias{distribution<-.lvm}
+\alias{heavytail}
+\alias{heavytail<-}
 \alias{weibull.lvm}
 \alias{binomial.lvm}
 \alias{poisson.lvm}
@@ -35,9 +37,9 @@
   \item{normal}{ Logical indicating whether to simulate data from a
     multivariate normal distribution conditional on exogenous variables
     hence ignoring functional/distribution definition }
-  \item{cond}{  }
-  \item{sigma}{ }
-  \item{rho}{  }
+  \item{cond}{for internal use}
+  \item{sigma}{Default residual variance (1)}
+  \item{rho}{Default covariance parameter (0.5)}
   \item{\dots}{Additional arguments to be passed to the low level functions  }
 }
 \details{

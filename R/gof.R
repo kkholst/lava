@@ -105,3 +105,5 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
 
   invisible(x)
 }
+
+

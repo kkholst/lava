@@ -9,7 +9,7 @@ cancel.lvm <- function(x,value,...) {
   if (class(value)[1]=="formula") {
       ##      yx <- all.vars(value)
     lhs <- getoutcome(value)
-    if (is.null(lhs)) yy <- NULL else yy <- decomp.specials(lhs)
+    if (length(lhs)==0) yy <- NULL else yy <- decomp.specials(lhs)
     xf <- attributes(terms(value))$term.labels
     if(identical(all.vars(value),xf))
       return(cancel(x,xf))

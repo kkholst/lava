@@ -11,10 +11,10 @@
 }
 \details{
 \tabular{ll}{
-Package: \tab lvm\cr
+Package: \tab lava \cr
 Type: \tab Package\cr
-Version: \tab 0.9-5\cr
-Date: \tab 2009-05-17\cr
+Version: \tab 0.9-10 \cr
+Date: \tab 2011-01-10\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }

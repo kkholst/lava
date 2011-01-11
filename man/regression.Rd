@@ -15,8 +15,8 @@
   and define linear constraints between model equations.
 }
 \usage{
-\method{regression}{lvm}function(object = lvm(), to, from, fn = NA,
-debug = FALSE, silent = lava.options()$silent, ...)
+\method{regression}{lvm}(object = lvm(), to, from, fn = NA,
+silent = lava.options()$silent, ...)
 \method{regression}{lvm}(object, to=NULL, ...) <- value
 \method{regfix}{lvm}(object, ...)
 }
@@ -28,7 +28,6 @@ debug = FALSE, silent = lava.options()$silent, ...)
     (for simulation only).}
   \item{value}{A formula specifying the linear constraints or if
     \code{to=NULL} a \code{list} of parameter values.}
-  \item{debug}{for debugging only.}
   \item{silent}{Logical variable which indicates whether messages are turned on/off.}
   \item{\dots}{Additional arguments to be passed to the low level functions}
 }

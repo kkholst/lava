@@ -1,4 +1,5 @@
 \name{constrain}
+\alias{constrain}
 \alias{constrain<-}
 \alias{constrain.default}
 \alias{constrain<-.multigroup}
@@ -14,7 +15,9 @@
 \usage{
 \method{constrain}{default}(x,par,args,...) <- value
 \method{constrain}{multigroup}(x,par,k=1,...) <- value
-constraints(object,vcov=object$vcov,level=0.95,data,...)
+constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
+                        p=pars.default(object),k,idx,...)
+
 }
 \arguments{  
   \item{x}{\code{lvm}-object}
@@ -25,13 +28,15 @@ constraints(object,vcov=object$vcov,level=0.95,data,...)
   \item{args}{Vector of variables names or parameter names that are used
     in defining \code{par}}
   \item{k}{For multigroup models this argument specifies which group to
-    add the constraint to}
+    add/extract the constraint}
   \item{value}{Real function taking args as a vector argument }
   \item{object}{\code{lvm}-object}
-  \item{vcov}{Variance matrix of parameter estimates}
-  \item{level}{Level of confidence limits}
   \item{data}{Data-row from which possible non-linear constraints should
     be calculated}
+  \item{vcov}{Variance matrix of parameter estimates}
+  \item{level}{Level of confidence limits}
+  \item{p}{Parameter vector}
+  \item{idx}{Index indicating which constraints to extract}
   \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
@@ -144,7 +149,7 @@ e <- estimate(m,d,control=list(trace=1,method="NR"))
 constraints(e,data=d)
 
 ## Plot model-fit
-\dontrun{
+\donttest{
 plot(y1~x,d,pch=16); points(y2~x,d,pch=16,col="gray")
 x0 <- seq(-4,4,length.out=100)
 lines(x0,coef(e)["nu"] + coef(e)["gamma"]*pnorm(coef(e)["alpha"]*x0))

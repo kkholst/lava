@@ -10,8 +10,9 @@
 }
 \usage{
 \method{estimate}{lvm}(x, data, estimator = "gaussian", control = list(),
-                 missing = FALSE, weight, fix, index = TRUE, graph =
-                 FALSE, debug = FALSE, silent = lava.options()$silent,
+                 missing = FALSE, weight, weightname, weight2,
+                 cluster, fix, index = TRUE,
+                 graph=FALSE, silent = lava.options()$silent,
                  quick = FALSE, ...)
 }
 \arguments{
@@ -20,6 +21,12 @@
   \item{estimator}{ String defining the estimator (see details below) }
   \item{control}{ control/optimization parameters (see details below)}
   \item{weight}{ Optional weights to used by the chosen estimator. }
+  \item{weightname}{ Weight names (variable names of the model) in case
+    \code{weight} was given as a vector of column names of \code{data}}
+  \item{weight2}{ Optional second set of weights to used by the chosen estimator. }
+  \item{cluster}{ Vector (or name of column in \code{data}) that
+    identifies correlated groups of observations in the data leading to
+    variance estimates based on a sandwich estimator}
   \item{missing}{ Logical variable indiciating how to treat missing
     data. Setting to FALSE leads to complete case analysis. In the
     other case likelihood based inference is obtained by integrating out
@@ -31,7 +38,6 @@
     automatically should be imposed (e.g. intercepts of latent variables
     set to 0 and at least one regression parameter of each measurement
     model fixed to ensure identifiability.)}
-  \item{debug}{ for debugging only }
   \item{quick}{ If TRUE the parameter estimates are calculated but all
     additional information such as standard errors are skipped }
   \item{silent}{ Logical argument indicating whether information should
@@ -59,7 +65,7 @@ more of the following elements is expected:
   \item{starterfun:}{Starter-function with syntax
     \code{function(lvm, S, mu)}.  Three builtin functions are available:
     \code{startvalues}, \code{startvalues2},
-    \code{startvalues3}.}
+    \ code{startvalues3}.}
   \item{estimator:}{ String defining which estimator to use (Defaults to ``\code{gaussian}'')}
     \item{meanstructure}{Logical variable indicating whether to fit
     model with meanstructure.}
@@ -75,10 +81,8 @@ more of the following elements is expected:
 
 \seealso{ \code{\link{score}}, \code{\link{information}}, ... }
 \examples{
-m <- lvm()
-regression(m) <- y~v1+v2
-regression(m) <- c(v1,v2) ~ x
-\dontrun{
+m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
+\donttest{
 plot(m)
 }
 dd <- sim(m,10000) ## Simulate 10000 observations from model

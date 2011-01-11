@@ -304,7 +304,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ##diag(Phat) <- abs(diag(Phat))
   ## Guarantee PD-matrix:
   eig <- eigen(Phat)
-  L <- eig$values; L[L<1e-3] <- 1e-3
+  L <- abs(eig$values); L[L<1e-3] <- 1e-3
   Phat <- eig$vectors%*%diag(L)%*%t(eig$vectors)
   
   Debug(list("start=",start), debug)

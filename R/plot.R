@@ -1,14 +1,11 @@
 ###{{{ plot.lvm
 
 `plot.lvm` <-
-  function(x,all=FALSE,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,debug=FALSE,noplot=FALSE,graph=list(rankdir="BT"),
+  function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
-           parameters=TRUE,addstyle=TRUE,Rgraphviz=TRUE,
+           addstyle=TRUE,Rgraphviz=TRUE,
            ...) {
-  if (all) {
-    diag <- cor <- labels <- intercept <- addcolor <- TRUE
-  }
   index(x) <- reindex(x)
 ##  browser()
   if (!require("Rgraphviz") | !Rgraphviz) {
@@ -28,7 +25,7 @@
     mylab[!is.na(x$covpar)] <- x$covpar[!is.na(x$covpar)]
     g <- edgelabels(g, lab=mylab)
   }
-  if (debug) {
+  if (lava.options()$debug) {
     plot(g)
   } else {
     

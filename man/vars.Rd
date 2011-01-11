@@ -13,6 +13,7 @@
 \alias{manifest.lvmfit}
 \alias{manifest.multigroup}
 \alias{exogenous}
+\alias{exogenous<-}
 \alias{exogenous.lvm}
 \alias{exogenous<-.lvm}
 \alias{exogenous.lvmfit}

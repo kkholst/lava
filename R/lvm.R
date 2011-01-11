@@ -31,18 +31,25 @@ lvm <- function(var=NULL, silent=FALSE, ...) {
   res <- list(graph=x, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
   class(res) <- "lvm"
 
-  if (class(var)[1]=="formula") {
-    if (!is.null(getoutcome(var))) {
-      regression(res,...,silent=silent) <- var     
-    } else {
-      var <- all.vars(var)
+
+  myvar <- NULL
+  lvar <- var
+  if (!is.list(lvar)) lvar <- list(var)
+  for (myvar in lvar) {
+    if (class(myvar)[1]=="formula") {
+      if (length(getoutcome(myvar))>0) {
+        regression(res,...,silent=silent) <- myvar     
+      } else {
+        myvar <- all.vars(myvar)
+      }
     }
+    if (is.character(myvar)) {
+      res <- addvar(res, myvar, silent=silent)  }
   }
-  if (is.character(var)) {
-    res <- addvar(res, var, silent=silent)  }
-  if (!is.null(var)) {
+  if (!is.null(myvar)) {
     index(res) <- reindex(res,zeroones=TRUE) }
- 
+
+    
   return(res)
 }
 

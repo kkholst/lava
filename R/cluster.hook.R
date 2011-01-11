@@ -31,11 +31,14 @@ cluster.post.hook <- function(x,...) {
     S <- score(x,indiv=TRUE) #,...)
     I <- information(x,type="hessian") #,...)
     iI <- solve(I)
+
     S0 <- matrix(0,ncol=ncol(S),nrow=K)
     count <- 0
+    ##    J1 <- matrix(0,ncol=ncol(S),nrow=ncol(S))
     for (i in uclust) {
       count <- count+1
       S0[count,] <- colSums(S[which(x$cluster==i),,drop=FALSE])
+      ##      J1 <- J1+tcrossprod(S0[count,])
     };
     J <- count/(count-1)*crossprod(S0)
     asVar <- iI%*%J%*%iI

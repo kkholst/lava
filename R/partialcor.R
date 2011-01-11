@@ -1,5 +1,5 @@
 
-partialcor <- function(formula,data,level=0.05) {
+partialcor <- function(formula,data,level=0.95) {
   if (attributes(terms(formula))$response==0) {
     preds <- all.vars(formula)
     yy <- setdiff(names(data),preds)
@@ -21,7 +21,7 @@ partialcor <- function(formula,data,level=0.05) {
   rho <- cor(r)[1,2]
   zrho <- atanh(rho)
   var.z <- 1/(n-k-3)
-  ci.z <- zrho + c(-1,1)*qnorm(1-level/2)*sqrt(var.z)
+  ci.z <- zrho + c(-1,1)*qnorm(1-(1-level)/2)*sqrt(var.z)
   ci.rho <- tanh(ci.z)
   z <- 1/sqrt(var.z)*zrho
   p.z <- 2*(pnorm(-abs(z))) # p-value using z-transform for H_0: rho=0.

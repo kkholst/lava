@@ -114,7 +114,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 ##  mparname.all <- unique(x$mean[named])
 ##  mparname <- setdiff(mparname.all,constrain.par)
   v0 <- rep(1,length(x$mean)) ## Vector of indicators of free mean-parameters
-
+  
   v0[exo.idx] <- 0 ## 6/1-2011
   v0[fixed] <- 0; v1 <- v0
   for (p in mparname) {

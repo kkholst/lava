@@ -9,7 +9,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   if (missing(n)) {
     n <- nrow(data)
   }
-  
   lname <- paste(model,"_logLik.lvm",sep="")
   logLikFun <- get(lname)
   if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
@@ -119,7 +118,7 @@ gaussian_logLik.lvm <- function(object,p,data,
                   cond = { endo.idx },
                   cond2 = { endo.idx },
                   exo =  { exo.idx } )
-  
+
   mom <- moments(object, p, conditional=(type[1]=="cond2"), data=data)  
   C <- mom$C
   xi <- mom$xi
@@ -157,10 +156,11 @@ gaussian_logLik.lvm <- function(object,p,data,
       weight <- NULL
   }
   
+  notdatalist <- (is.null(data$S))
   if (missing(n))
     if (!missing(data)) n <- NROW(data)
   if (!missing(n))
-  if (n<2 | indiv | !is.null(weight)) {
+  if (notdatalist & (n<2 | indiv | !is.null(weight))) {
     if (n==1)
       data <- rbind(data) 
     res <- numeric(n)
@@ -184,7 +184,6 @@ gaussian_logLik.lvm <- function(object,p,data,
     if (indiv)
       return(res)    
   } else {
-
    if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
