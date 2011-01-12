@@ -8,7 +8,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   
   ## Check for random slopes
   xfix <- list()
-  for (i in 1:length(models)) {
+  for (i in 1:nm) {
     x0 <- models[[i]]
     data0 <- datasets[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
@@ -17,6 +17,15 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   if (missing(fix)) {
     fix <- !any(unlist(lapply(xfix, function(x) length(x)>0)))  
   }
+  for (i in 1:nm) {
+    x0 <- models[[i]]
+    data0 <- datasets[[i]]
+    if (length(exogenous(x0)>0)) {
+      catx <- categorical2dummy(x0,data0)
+      models[[i]] <- catx$x; datasets[[i]] <- catx$data
+    }
+  }
+
   
   models.orig <- NULL
 ######################

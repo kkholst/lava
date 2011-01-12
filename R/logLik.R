@@ -156,7 +156,7 @@ gaussian_logLik.lvm <- function(object,p,data,
       weight <- NULL
   }
   
-  notdatalist <- (is.null(data$S))
+  notdatalist <- (!is.list(data) | is.data.frame(data))
   if (missing(n))
     if (!missing(data)) n <- NROW(data)
   if (!missing(n))

@@ -303,6 +303,8 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   Phat <- (diag(m)-Ahat)%*%Chat%*%t(diag(m)-Ahat)
   ##diag(Phat) <- abs(diag(Phat))
   ## Guarantee PD-matrix:
+  Phat[is.nan(Phat)] <- 0
+  diag(Phat)[diag(Phat)==0] <- 1
   eig <- eigen(Phat)
   L <- abs(eig$values); L[L<1e-3] <- 1e-3
   Phat <- eig$vectors%*%diag(L)%*%t(eig$vectors)

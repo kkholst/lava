@@ -97,7 +97,6 @@ function(x, data,
     cluster <- NULL
   }
   
-  
   Debug("procdata")
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n

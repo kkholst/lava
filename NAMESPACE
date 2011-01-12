@@ -85,6 +85,7 @@ export(
        index,
        "index<-",
        getoutcome,
+       decomp.specials,
        modelPar,
        modelVar,
        CoefMat,

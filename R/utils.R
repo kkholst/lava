@@ -208,8 +208,11 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
           i. <- exo_all.idx[i]; j. <- exo_all.idx[j]
-          myval <- S0[exo.idx[i],exo.idx[j]];
-          if (i.==j. & myval==0) myval <- 1
+          myval <- S0[exo.idx[i],exo.idx[j]];          
+          if (i.==j. & myval==0) {
+            warning("Overparametrized model. Problem with '"%+%index(x)$vars[j.]%+%"'")
+            myval <- 1
+          }
           else if (is.na(myval) || is.nan(myval)) myval <- 0
           x$covfix[i.,j.] <- x$covfix[j.,i.] <- myval
         }
@@ -422,6 +425,7 @@ function(M, upper=TRUE) {
 ###}}}
 
 ###{{{ toformula
+
 extractvar <- function(f) {
     yy <- getoutcome(f)
     xx <- attributes(terms(f))$term.labels
@@ -477,6 +481,7 @@ toformula <- function (y = ".", x = ".")
     ff <- paste(yst, "~", xst)
     return(as.formula(ff))
 }
+
 ###}}} toformula
 
 ###{{{ getvars

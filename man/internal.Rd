@@ -41,6 +41,7 @@
 \alias{missingModel}
 \alias{frobnorm}
 \alias{getoutcome}
+\alias{decomp.specials}
 \alias{Inverse}
 \alias{gaussian_logLik.lvm}
 \alias{addhook}

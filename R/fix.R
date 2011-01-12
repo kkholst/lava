@@ -291,7 +291,7 @@ regfix.lvm <- function(object,...) {
 
     newexo <- notexo <- c()
     for (i in 1:length(xs)) {        
-      xf <- unlist(strsplit(from[[i]],"[\\[.+?\\]]",perl=TRUE))
+      xf <- unlist(strsplit(from[[i]],"[\\[\\]]",perl=TRUE))
       if (length(xf)>1) {
         xpar <- decomp.specials(xf[2],NULL,":")
         val <- ifelse(xpar[1]=="NA",NA,xpar[1])
@@ -306,7 +306,7 @@ regfix.lvm <- function(object,...) {
       } else { newexo <- c(newexo,xs[i]) }
     }
     for (i in 1:length(ys)) {
-      yf <- unlist(strsplit(to[[i]],"[\\[.+?\\]]",perl=TRUE))
+      yf <- unlist(strsplit(to[[i]],"[\\[\\]]",perl=TRUE))
       if (length(yf)>1) {
         ypar <- decomp.specials(yf[2],NULL,":")
         val <- ifelse(ypar[1]=="NA",NA,ypar[1])

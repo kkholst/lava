@@ -28,8 +28,9 @@
       xs <- unlist(lapply(xxf,function(x) x[1]))
       object <- addvar(object,xs,...)
 
+      
       for (i in 1:length(xs)) {        
-        xf <- unlist(strsplit(xx[[i]],"[\\[.+?\\]]",perl=TRUE))
+        xf <- unlist(strsplit(xx[[i]],"[\\[\\]]",perl=TRUE))
         if (length(xf)>1) {
           xpar <- decomp.specials(xf[2],NULL,":")
           val <- ifelse(xpar[1]=="NA",NA,xpar[1])
@@ -50,7 +51,7 @@
             
       for (i in 1:length(ys)) {
         y <- ys[i]
-        yf <- unlist(strsplit(yy[i],"[\\[.+?\\]]",perl=TRUE))
+        yf <- unlist(strsplit(yy[i],"[\\[\\]]",perl=TRUE))
         if (length(yf)>1) {
           ypar <- decomp.specials(yf[2],NULL,":")
           val <- ifelse(ypar[1]=="NA",NA,ypar[1])
