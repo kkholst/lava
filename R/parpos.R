@@ -1,5 +1,7 @@
 parpos <- function(x,mean=TRUE,p,...) {
   if (class(x)[1]%in%c("multigroup","multigroupfit")) {
+    if (class(x)[1]%in%"multigroupfit")
+      return(parpos.multigroup(Model(x),mean=mean,p=p,...))
     return(parpos.multigroup(x,mean=mean,p=p,...))
   }
   if (!missing(p)) {

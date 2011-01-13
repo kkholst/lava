@@ -15,3 +15,11 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
   colnames(res) <- paste((c(0,1) + c(1,-1)*(1-level)/2)*100,"%")
   return(res) 
 }
+
+
+confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,...) {
+  if (is.character(parm)) {
+    
+  }
+  
+}
