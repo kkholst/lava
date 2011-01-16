@@ -1,12 +1,12 @@
 
 confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,...) {
-  if (!profile) {
-    return(confint.default(object,parm=parm,level=level,...))
-  }
   if (is.character(parm)) {
     parm <- parpos(Model(object),p=parm)
     parm <- parm[attributes(parm)$ord]
   } 
+  if (!profile) {
+    return(confint.default(object,parm=parm,level=level,...))
+  }
   res <- c()
   for (i in parm) {
     res <- rbind(res, profci.lvmfit(object,parm=i,level=level,profile=profile))
@@ -18,8 +18,9 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
 
 
 confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,...) {
-  if (is.character(parm)) {
-    
-  }
-  
+  p <- 1-(1-level)/2
+  res <- cbind(pars(object),pars(object)) + qnorm(p)*cbind(-1,1)%x%diag(vcov(object))^0.5
+  colnames(res) <- paste(c(1-p,p)*100,"%",sep="")
+  rownames(res) <- parpos(object); rownames(res)[is.na(rownames(res))] <- ""
+  res[parm,,drop=FALSE]    
 }

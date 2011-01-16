@@ -104,7 +104,6 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
 
 ###}}} 
 
-
 ###{{{ Newton-Raphson/Scoring
 
 NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {

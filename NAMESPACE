@@ -162,7 +162,8 @@ S3method("parameter<-","lvmfit")
 
 ### lvmfit
 S3method(bootstrap,"lvmfit")
-S3method(confint,"lvmfit")         
+S3method(confint,"lvmfit")
+S3method(confint,"multigroupfit")    
 S3method(predict, "lvm")
 S3method(predict, "lvmfit")
 S3method(logLik, "lvm")
