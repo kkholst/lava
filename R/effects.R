@@ -62,7 +62,25 @@ print.effects <- function(x,...) {
   invisible(x) 
 }
   
-  
+coef.effects <- function(object,...) {  
+  totalef <- with(object$totalef, cbind(est,sd[1]))
+  directef <- with(object$directef, cbind(est,sd[1]))
+  rownames(totalef) <- "Total"
+  rownames(directef) <- "Direct"
+  nn <- indirectef <- c()
+  K <- seq_len(length(object$margef))
+  for (i in K) {
+    if (length(object$paths[[i]])>2) {        
+      nn <- c(nn,paste(rev(object$paths[[i]]),collapse="<-"))
+      indirectef <- rbind(indirectef, with(object$margef[[i]], c(est,sd)))
+      }
+  }; rownames(indirectef) <- nn  
+  mycoef <- rbind(totalef,directef,indirectef)
+  mycoef <- cbind(mycoef,mycoef[,1]/mycoef[,2])
+  mycoef <- cbind(mycoef,2*(1-pnorm(abs(mycoef[,3]))))
+  colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
+  mycoef
+}
   
 prodtrans <- function(betas) {
   k <- length(betas)

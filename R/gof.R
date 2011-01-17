@@ -94,7 +94,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
   with(x,
        cat(" log-Likelihood of model =", fit$estimate[1], "\n",
            "log-Likelihood of saturated model =", fit$estimate[2], "\n",
-           "Chi-squared statistic: Q =", fit$statistic, 
+           "Chi-squared statistic: q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
   if (optim) {
