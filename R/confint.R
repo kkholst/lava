@@ -17,10 +17,13 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
 }
 
 
-confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,...) {
+confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,
+                                  estimates=TRUE,...) {
   p <- 1-(1-level)/2
   res <- cbind(pars(object),pars(object)) + qnorm(p)*cbind(-1,1)%x%diag(vcov(object))^0.5
   colnames(res) <- paste(c(1-p,p)*100,"%",sep="")
   rownames(res) <- parpos(object); rownames(res)[is.na(rownames(res))] <- ""
-  res[parm,,drop=FALSE]    
+  if (estimates) res <- cbind(coef(object,level=0)[,c(1,2,4)],res)
+  res[parm,,drop=FALSE]
 }
+  

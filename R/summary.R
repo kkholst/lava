@@ -33,28 +33,34 @@ function(object,std="xy", level=9, labels=2, ...) {
   nlincon <- attributes(mycoef)$nlincon
   nonexo <- setdiff(vars(object),index(Model(object))$exogenous)
   attributes(mycoef) <- attributes(mycoef)[1:2]
+  mygof <- object$opt$summary.message
+  if (is.null(mygof)) {
+    mygof <- gof
+  }
   if (class(object)[1]=="lvm.missing") {
     nn <- unlist(lapply(object$multigroup$data, nrow))
     nc <- nn[object$cc]
     if (length(nc)==0) nc <- 0
     ngroup <- object$multigroup$ngroup
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=gof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo])
+    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo])
   } else {
     n <- nrow(model.frame(object))
     if (is.null(n)) n <- model.frame(object)$n
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=gof(object), n=n, nc=n)##, varmat=modelVar(object)$P[nonexo,nonexo])
+    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=n, nc=n)##, varmat=modelVar(object)$P[nonexo,nonexo])
   }
   class(res) <- "summary.lvmfit"
   res
 }
 
 print.summary.lvmfit <- function(x,varmat=TRUE,...) {
-  l2D <- sum(x$object$opt$grad^2)
-  rnkV <- qr(vcov(x$object))$rank
-  if (l2D>1e-2) warning("Possible problems with convergence!")
-  cat("||score||^2=",l2D,"\n",sep="")
-  np <- nrow(vcov(x$object))
-  if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
+  if (!is.null(x$control$method)) {
+    l2D <- sum(x$object$opt$grad^2)
+    rnkV <- qr(vcov(x$object))$rank
+    if (l2D>1e-2) warning("Possible problems with convergence!")    
+    cat("||score||^2=",l2D,"\n",sep="")
+    np <- nrow(vcov(x$object))
+    if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
+  }
   cat("Latent variables:", latent(x$object), "\n")
   cat("Number of rows in data=",x$n,sep="")
   if (x$nc!=x$n) {
@@ -74,7 +80,13 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   cat("Estimator:",x$object$estimator,"\n")
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(x$gof)) {
-    print(x$gof,optim=FALSE)
+    if (class(x$gof)[1]=="list") {
+      for (i in x$gof) {
+        print(i)
+      }
+    } else {
+      print(x$gof,optim=FALSE)
+    }
     cat(rep("-", 50), "\n", sep="");
   }
   invisible(x)

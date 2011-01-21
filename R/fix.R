@@ -413,7 +413,7 @@ regfix.lvm <- function(object,...) {
 }
 
 "parfix" <- function(x,...) UseMethod("parfix")
-parfix.lvm <- function(x,idx,value,fix=TRUE,...) {
+parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   object <- Model(x)
   if (fix)
     object <- fixsome(object)

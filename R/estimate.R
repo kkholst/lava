@@ -400,37 +400,41 @@ function(x, data,
     return(I0)
   }   
   
-  if (!exists(InformationFun)) myInfo <- myHess <- NULL
-  else if (is.null(get(InformationFun))) myInfo <- myHess <- NULL
-  if (is.null(get(GradFun))) myGrad <- NULL
+##  if (!exists(InformationFun)) myInfo <- myHess <- NULL
+##  if (is.null(get(InformationFun))) myInfo <- myHess <- NULL
+  if (is.null(tryCatch(get(InformationFun),error = function (x) NULL)))
+    myInfo <- myHess <- NULL
+  if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
+    myGrad <- NULL
 
   coefname <- coef(x,mean=optim$meanstructure);
   ##  browser()
   if (!silent) cat("Optimizing objective function...")
   if (optim$trace>0 & !silent) cat("\n")
   ## Optimize with lower constraints on the variance-parameters
-
+  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
-    opt$estimate <- opt$par
+    if (is.null(opt$estimate))
+      opt$estimate <- opt$par
     if (optim$constrain) {
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
     names(opt$estimate) <- coefname 
     opt$gradient <- as.vector(myGrad(opt$par))
   } else {
-    opt <- do.call(ObjectiveFun, list(x=x,data=data))
+    opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
     opt$grad <- rep(0,length(opt$estimate))
   }
   if (quick) return(opt$estimate)
   ## Calculate std.err:
-
+  
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
 
-  mom <- modelVar(x, pp, data=data)
+  mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
   if (!silent) cat("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
@@ -445,7 +449,7 @@ function(x, data,
     I <- myInfo(opt$estimate)
     asVar <- tryCatch(solve(I),
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
-    diag(asVar)[(diag(asVar)==0)] <- NA
+##    diag(asVar)[(diag(asVar)==0)] <- NA
   } else {
     asVar <- tryCatch(do.call(asVarFun,
                               list(x=x,p=opt$estimate,data=data,opt=opt)),
@@ -454,10 +458,13 @@ function(x, data,
   }
   if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
                         }
+  diag(asVar)[(diag(asVar)==0)] <- NA
+
   Debug("did that") 
 
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
+
   mycoef[pp.idx,1] <- opt$estimate
   
   ### OBS: v = t(A)%*%v + e

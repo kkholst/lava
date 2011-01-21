@@ -133,7 +133,7 @@ procrandomslope <- function(object,data=object$data,...) {
 
 ###{{{ fixsome function
 
-fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", ...) {
+fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
 
   
   var.missing <- c()
@@ -148,7 +148,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     var.missing <- setdiff(index(x)$manifest,colnames(S))
   } else { S <- NULL; mu <- NULL }
 
-  if (measurement.fix & lava.options()$param!="none") {
+  if (measurement.fix & param!="none") {
     if (length(var.missing)>0) {## Convert to latent:
       new.lat <- setdiff(var.missing,latent(x))
       if (length(new.lat)>0)
@@ -162,11 +162,11 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
       ys. <- names(which(M[e,ys]==1))
       if (length(ys.)>0) {      
-        if (tolower(lava.options()$param)=="absolute") {
+        if (tolower(param)=="absolute") {
           if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
           if (is.na(x$covfix[e,e]) & is.na(x$covpar[e,e])) covariance(x,e) <- 1
         } else {        
-          if (lava.options()$param=="hybrid") {
+          if (param=="hybrid") {
             if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
             if (all(is.na(x$fix[e, ys.]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 

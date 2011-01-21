@@ -2,20 +2,27 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 
 bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
                              control=list(start=coef(x)),
+                             p=coef(x), parametric=FALSE,
                              estimator=x$estimator,weight=Weight(x),...)
-  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,...)
+  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,p=p,...)
 
-bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),constraints=TRUE,sd=FALSE,silent=FALSE,...) {
+bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
+                          p, parametric=FALSE,
+                          constraints=TRUE,sd=FALSE,silent=FALSE,...) {
   
   coefs <- sds <- c()
   on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
   
-
+  pmis <- missing(p)
   bootfun <- function(i) {
     if (i==0) {
       d0 <- data
     } else {
-      d0 <- data[sample(1:nrow(data),replace=TRUE),]
+      if (!parametric | pmis) {
+        d0 <- data[sample(1:nrow(data),replace=TRUE),]
+      } else {
+        d0 <- sim(x,p=p,n=nrow(data))
+      }
     }
     e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE
                    )##,...)    
