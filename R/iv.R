@@ -302,7 +302,7 @@ IV <- function(m,data,R2thres=0,...) {
 }
 
 IV2 <- function(m,data,control=list(),...) {
-  ##  m <- fixsome(m,data=data,fix="")
+  ##  m <- fixsome(m,data=data,fix="relative")
   if (is.null(control$R2thres)) control$R2thres <- 0
   res <- IV(m,data,R2thres=control$R2thres)
   p <- res$estimate  

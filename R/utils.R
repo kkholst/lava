@@ -135,7 +135,11 @@ procrandomslope <- function(object,data=object$data,...) {
 
 fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
 
-  
+
+  if (is.character(measurement.fix)) {
+    param <- measurement.fix
+    measurement.fix <- TRUE
+  }
   var.missing <- c()
   if (!missing(data) | !missing(S)) {
         
@@ -175,8 +179,8 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
             if (all(is.na(x$fix[e, ys.]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
-            if (!is.numeric(intercept(x)[[ys.[1]]]) &
-                !is.numeric(intercept(x)[[e]]))
+            if (is.na(intercept(x)[[ys.[1]]]) &
+                is.na(intercept(x)[[e]]))
               intercept(x,ys.[1]) <- 0
           }
         }
