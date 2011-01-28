@@ -114,9 +114,10 @@ function(x, data,
     }
   }
 
+  
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
-  for (f in myhooks) {
+  for (f in myhooks) {    
     res <- do.call(f, list(x=x,data=data,weight=weight,weight2=weight2,estimator=estimator,optim=optim))
     if (!is.null(res$x)) x <- res$x
     if (!is.null(res$data)) data <- res$data
@@ -125,11 +126,13 @@ function(x, data,
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
+
   Method <-  paste(estimator, "_method", ".lvm", sep="")
-  if (!exists(Method))
+  if (!exists(Method)) {
     Method <- "nlminb1"
-  else
+  } else {
     Method <- get(Method)
+  }
   if (is.null(optim$method)) optim$method <- Method
 
   if (!quick & index) {

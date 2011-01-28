@@ -112,6 +112,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,weight2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
+
   ##  cl[1] <- call("missingModel")
   ##  val <- eval(cl)
   Debug("estimate.MAR")
@@ -152,7 +153,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     S[exo.idx,exo.idx] <- cov0
     mu[exo.idx] <- mu0    
     ##    cat("\n")
-  }  
+  }
+
   x0 <- x
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
   

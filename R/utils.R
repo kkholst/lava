@@ -163,6 +163,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
 ##    ys <- index(x)$endogenous
     ys <- endogenous(x)
     M <- as(Graph(x), Class="matrix")
+
     for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
       ys. <- names(which(M[e,ys]==1))
       if (length(ys.)>0) {      
@@ -208,6 +209,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     exo.idx <- index(x)$exo.obsidx;
     ##exo.idx_match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
     exo_all.idx <- index(x)$exo.idx
+
     if (length(exo.idx)>0) {
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
@@ -306,7 +308,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 `procdata.lvm` <-
   function(x,data,categorical=FALSE,
-           na.method=ifelse(any(is.na(data[,intersect(colnames(data),exogenous(x))])),"pairwise.complete.obs","complete.obs")
+##           na.method=ifelse(any(is.na(data[,intersect(colnames(data),exogenous(x))])),"pairwise.complete.obs","complete.obs")
+           na.method=c("pairwise.complete.obs")
            ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
