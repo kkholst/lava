@@ -67,7 +67,6 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
     }
     return(score)
   }
-
   cl$constrain <- FALSE
   cl[[1]] <- scoreFun
   score <- eval.parent(cl)

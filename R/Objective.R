@@ -42,7 +42,6 @@ gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
 }
 
 gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=FALSE,...) {
-  ## If not already done, calculate some relevant zero-one matrices and matrix derivatives
 
   if (!is.null(data)) {  
     if ((nrow(data)<2 | !is.null(weight))| indiv)
@@ -71,18 +70,12 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
         u <- z-mp$xi
         if (!is.null(weight)) {
           W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
-##          W[1,2] <- W[1,1]
-##          W[2,1] <- W[1,1]
-##          W[2,1] <- W[1,1]^0.5
-##          W[1,2] <- W[1,1]^0.5
-          ##W <-diag(length(myvars)); as.numeric(weight[i,]))
           score[i,] <- 
             as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                        -1/2*(as.vector((iC
                                         - iC %*% tcrossprod(u)
                                         %*% iC)%*%W)) %*% D$dS
                        )
-          
         } else {
           score[i,] <-
             as.numeric(score0 + crossprod(u,iC)%*%D$dxi +

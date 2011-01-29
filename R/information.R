@@ -1,6 +1,6 @@
 `information` <-
 function(x,...) UseMethod("information")
-
+ 
 ###{{{ information.lvm
 
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",

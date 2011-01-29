@@ -309,7 +309,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 `procdata.lvm` <-
   function(x,data,categorical=FALSE,
 ##           na.method=ifelse(any(is.na(data[,intersect(colnames(data),exogenous(x))])),"pairwise.complete.obs","complete.obs")
-           na.method=c("pairwise.complete.obs")
+           na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"pairwise.complete.obs","complete.obs")
+##           na.method=c("pairwise.complete.obs")
            ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
