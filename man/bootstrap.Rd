@@ -7,7 +7,7 @@
   Draws non-parametric bootstrap samples
 }
 \usage{
-\method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),p=coef(x),parametric=FALSE,constraints=TRUE,sd=FALSE,silent=FALSE,...)
+\method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),p,parametric=FALSE,constraints=TRUE,sd=FALSE,silent=FALSE,...)
 \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),control=list(start=coef(x)),p,parametric=FALSE,estimator=x$estimator,weight=Weight(x),...)
 }\arguments{
   \item{x}{\code{lvm}-object.}
