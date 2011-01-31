@@ -177,7 +177,7 @@ function(x, data,
     }
     optim$start <- start
   }
-  
+
   ## Missing data
   if (missing) {
     control$start <- optim$start
