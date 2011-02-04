@@ -34,11 +34,13 @@ assign("options",
        list(
             trace=0,
             iter.max=300,
+            eval.max=250,
             constrain=FALSE,
             silent=FALSE,
             Dmethod="simple", ##Richardson"
             parallel=TRUE,
             param="relative",
+            constrain=TRUE,
             debug=FALSE
             ),
        lava.env)

@@ -173,11 +173,13 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
         } else {        
           if (param=="hybrid") {
             if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
-            if (all(is.na(x$fix[e, ys.]==1)) &
+###            if (all(is.na(x$fix[e, ys.]==1)) &
+            if (all(is.na(x$fix[e, ]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
           } else { ## relative
-            if (all(is.na(x$fix[e, ys.]==1)) &
+###           if (all(is.na(x$fix[e, ys.]==1)) &
+            if (all(is.na(x$fix[e, ]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
             if (is.na(intercept(x)[[ys.[1]]]) &

@@ -10,8 +10,7 @@
                                   ...) {
   cl <- match.call()
   optim <- list(
-                eval.max=300,
-                iter.max=500,
+                iter.max=lava.options()$iter.max,
                 trace=ifelse(lava.options()$debug,3,0),
                 gamma=1,
                 gamma2=1,
@@ -22,7 +21,7 @@
                 S.tol=1e-6,
                 stabil=FALSE,
                 start=NULL,
-                constrain=FALSE,
+                constrain=lava.options()$constrain,
                 method=NULL,
                 starterfun=startvalues,
                 information="E",

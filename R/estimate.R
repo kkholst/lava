@@ -27,8 +27,7 @@ function(x, data,
   cl <- match.call()
 
   optim <- list(
-                eval.max=300,
-                iter.max=500,
+                iter.max=lava.options()$iter.max,
                 trace=ifelse(lava.options()$debug,3,0),
                 gamma=1,
                 gamma2=1,
@@ -40,7 +39,7 @@ function(x, data,
                 S.tol=1e-5,
                 stabil=FALSE,
                 start=NULL,
-                constrain=FALSE,
+                constrain=lava.options()$constrain,
                 method=NULL,
                 starterfun="startvalues",
                 information="E",
@@ -98,6 +97,9 @@ function(x, data,
   }
   
   Debug("procdata")
+  if (!missing & (is.matrix(data) | is.data.frame(data))) {    
+    data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix))])
+  }
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
   Debug(list("n=",n))  
@@ -183,6 +185,7 @@ function(x, data,
     control$start <- optim$start
     return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
+  
   
   ## Setup optimization constraints
   lowmin <- -Inf
