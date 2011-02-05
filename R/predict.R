@@ -2,7 +2,7 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
   predict(Model(object),x,p=p,data=data,mu=object$mu,S=object$S,...)
 }
 
-predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
+predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ## data = data.frame of exogenous variables
   if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
     
@@ -67,7 +67,7 @@ predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
       x <- all.vars(x)
     y <- setdiff(vars(object),c(x,exogenous(object)))
     E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,]
-    if (resid) {
+    if (residual) {
       Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
       Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
       Vhat[,y] <- t(E.x)
@@ -78,9 +78,6 @@ predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
 ##      return(t(Czeta.y[,x]%*%solve(Cy.x[x,x])%*%ry[x,]))
 ##    return(t(Eeta.x + C.x[eta.idx,x]%*%solve(Cy.x[x,x])%*%ry[x,]))
   }
-
-  
-
 
 
   if (length(eta.idx)>0) {
@@ -103,15 +100,22 @@ predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
     Vhat[,latent(object)] <- t(Eeta.y)
   ##dd[,exogenous(m1),drop=FALSE]
   I <- diag(nrow=nrow(A));
-  epsilonhat <- t( IA%*%t(Vhat) - m$v )
-
+  epsilonhat <- (t( IA%*%t(Vhat) - m$v ))[,c(endogenous(object),latent(object)),drop=FALSE]
+  if (residual) {
+    return(epsilonhat)
+  }
+  
   mydata <- matrix(0,ncol=ncol(A),nrow=nrow(data)); colnames(mydata) <- vars(object)
   mydata[,manifest(object)] <- as.matrix(data[,manifest(object)])
+  for (i in latent(object))
+    mydata[,i] <- m$v[i]
+  
   Yhat <- t(mydata%*%t(A)) + (m$v)
 ##  Yhat <- t((as.matrix(data[,manifest(object)]))%*%t(A)) + (m$v)
-  res <- t(Yhat)
-##  res <- Ey.x ## Conditional mean
+##  res <- t(Yhat)
+  res <- t(Ey.x) ## Conditional mean
   
+  attr(res, "cond.var") <- t(Yhat)
   attr(res, "cond.var") <- Cy.x
   attr(res, "blup") <- t(Eeta.y)
   attr(res, "var.blup") <- Ceta.y
@@ -119,5 +123,8 @@ predict.lvm <- function(object,x=NULL,resid=FALSE,p,data,path=FALSE,...) {
   attr(res, "eta.x") <- Eeta.x
   attr(res, "epsilon.y") <- epsilonhat
 ##  return(list(var.blup=Ceta.y, blup=t(Eeta.y), cond.var=Cy.x, cond.mean=t(Ey.x)))
-  return((res))
+  class(res) <- c("residual","matrix")
+  return(res)
 }
+
+print.residual <- function(x) x[,]
