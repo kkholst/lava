@@ -4,11 +4,11 @@
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
-           addstyle=TRUE,Rgraphviz=TRUE,
+           addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,
            ...) {
   index(x) <- reindex(x)
 ##  browser()
-  if (!require("Rgraphviz") | !Rgraphviz) {
+  if (!Rgraphviz || !require("Rgraphviz")) {
     if (!require("igraph"))
       stop("package 'Rgraphviz' or 'igraph' not available")
     g <- igraph.lvm(x,...)
@@ -56,7 +56,6 @@
 
 `plot.lvmfit` <-
   function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,...) {
-    if (!require("Rgraphviz")) stop("package Rgraphviz not available")
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     g <- Graph(x)
     newgraph <- FALSE
@@ -104,6 +103,7 @@
 ###}}} plot.lvmfit
 
 ###{{{ plot.multigroup
+
 plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
   k <- x$ngroup
   for (i in 1:k)
@@ -112,6 +112,7 @@ plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
 plot.multigroupfit <- function(x,...) {
   plot(Model(x),...)
 }
+
 ###}}}
 
 ###{{{ igraph.lvm

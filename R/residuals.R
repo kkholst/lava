@@ -8,7 +8,7 @@ residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=pars(objec
   Y <- setdiff(manifest(object), X <- exogenous(object))
   Pr <- (predict(object,p=p,data=data))[,Y]
   ##  y <- endogenous(object)[match(endogenous(object),manifest(object))]
-  r <- as.matrix(data[,Y]-(Pr))
+  r <- as.matrix(data[,Y,drop=FALSE]-(Pr))
   res <- r
   
   if (std) {

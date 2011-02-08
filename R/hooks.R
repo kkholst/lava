@@ -41,6 +41,7 @@ assign("options",
             parallel=TRUE,
             param="relative",
             constrain=TRUE,
+            Rgraphviz=TRUE,
             debug=FALSE
             ),
        lava.env)

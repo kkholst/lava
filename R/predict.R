@@ -123,8 +123,8 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   attr(res, "eta.x") <- Eeta.x
   attr(res, "epsilon.y") <- epsilonhat
 ##  return(list(var.blup=Ceta.y, blup=t(Eeta.y), cond.var=Cy.x, cond.mean=t(Ey.x)))
-  class(res) <- c("residual","matrix")
+  class(res) <- c("lvm.predict","matrix")
   return(res)
 }
 
-print.residual <- function(x) x[,]
+print.lvm.predict <- function(x,...) print(x[,])

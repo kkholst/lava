@@ -11,7 +11,7 @@
                  FALSE, cex, fontsize1 = 10, noplot =
                  FALSE, graph = list(rankdir = "BT"), attrs =
                  list(graph = graph), unexpr = FALSE,
-                 addstyle = TRUE, Rgraphviz = TRUE, ...)
+                 addstyle = TRUE, Rgraphviz=lava.options()$Rgraphviz, ...)
 }
 \arguments{
   \item{x}{ Model object }
