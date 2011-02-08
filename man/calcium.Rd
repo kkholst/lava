@@ -9,9 +9,9 @@
   month in 3 years.
 }
 \usage{calcium}
-\format{A data.frame containing 112 observations.}
-\source{book, p.xxx}
-\references{
-  ???
-}
+\format{A data.frame containing 560 (incomplete) observations. The
+  'person' column defines the individual girls of the study with
+  measurements at visiting times 'visit', and age in years 'age' at the time of
+  visit. The bone mineral density variable is 'bmd' (g/cm^2).}
+\source{Vonesh & Chinchilli (1997), Table 5.4.1 on page 228.}
 \keyword{datasets}
