@@ -29,6 +29,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     if (!silent) cat(".")
     if (!is.null(fun)) {
       coefs <- fun(e0)
+      newsd <- NULL
     } else {    
       coefs <- coef(e0,symbol="<-")
       newsd <- c()
