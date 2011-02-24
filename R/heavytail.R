@@ -44,8 +44,9 @@ heavytail.sim.hook <- function(x,data,...) {
   for (i in 1:length(couples)) {
     df <- hvar[[i]][1]
     Z <- rchisq(n,df=df)/df
-    for (v in names(h.type[[1]])) 
+    for (v in names(h.type[[i]])) {
       data[,v] <- data[,v]/sqrt(Z)
+    }
   }
   return(data)
 }
