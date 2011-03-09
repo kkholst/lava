@@ -16,7 +16,7 @@ function(x, var, silent=FALSE,...) {
   Debug(new)
   if (length(new)>0)
     for (i in new) {
-      Graph(x) <- addNode(i, Graph(x))
+      x$graph <- addNode(i, x$graph)
       x <- addattr(x,attr="shape",var=i,val="rectangle")
       N <- nrow(x$cov)
       if (is.null(N)) {

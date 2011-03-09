@@ -128,9 +128,11 @@
         ##cancel(object) <- c(i,j)
         ##covfix(object,i,j,exo=TRUE) <- "NA"
         ##        Graph(object) <- addEdge(xs,i,Graph(object))
-        Graph(object) <- addEdge(j,i,Graph(object))
+        object$graph <- addEdge(j,i,object$graph)
+        ##        Graph(object) <- addEdge(j,i,Graph(object))
         ##        functional(object,xs,i) <- fn
-        functional(object,j,i) <- fn
+        if (!is.na(fn))
+          functional(object,j,i) <- fn
       }
     
     newexo <- setdiff(xs,c(to,allv))

@@ -50,7 +50,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     return(res)    
   }
 
-
   if (n>1) {
     xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
@@ -110,6 +109,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     }
     return(val)
   }
+
   
   mp <- moments(x,p,data=data)
   pp <- modelPar(x,p)
@@ -118,7 +118,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   iC <- Inverse(C,0,det=FALSE)
 
   if (is.null(weight)) {
-    W <- diag(ncol(iC))
+    ##    W <- diag(ncol(iC))
   } else {
     if (length(weight)<ncol(iC)) {
       oldweight <- weight
@@ -132,18 +132,29 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     diag(iW) <- 1/diag(iW)
   }
 
-  if (NCOL(D$dS)>30) {
-    I <- matrix(0,NCOL(D$dS),NCOL(D$dS))
-    for (i in 1:NCOL(D$dS)) {
-      for (j in i:NCOL(D$dS)) {        
-        I[i,j] <- I[j,i] <- 
-          sum(diag(matrix(D$dS[,i],NCOL(iC))%*%iC%*%W%*%matrix(D$dS[,j],NCOL(iC))%*%iC))
-      }
-    }
-    information_Sigma <- n/2*I
+  ## if (NCOL(D$dS)>500) {
+  ##   I <- matrix(0,NCOL(D$dS),NCOL(D$dS))
+  ##   for (i in 1:NCOL(D$dS)) {
+  ##     for (j in i:NCOL(D$dS)) {
+  ##       if (is.null(weight)) {
+  ##         I[i,j] <- I[j,i] <- 
+  ##           sum(diag(matrix(D$dS[,i],NCOL(iC))%*%iC%*%matrix(D$dS[,j],NCOL(iC))%*%iC))        
+  ##       } else {
+  ##         I[i,j] <- I[j,i] <- 
+  ##           sum(diag(matrix(D$dS[,i],NCOL(iC))%*%iC%*%W%*%matrix(D$dS[,j],NCOL(iC))%*%iC))
+  ##       }
+  ##     }
+  ##   }
+  ##   information_Sigma <- n/2*I
       
-  } else {
-    information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
+  ## } else
+  
+  {
+    if (is.null(weight)) {
+      information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC))%*%(D$dS)
+    } else {
+      information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
+    }
   }
   if (is.null(pp$meanpar)) {
     if (inverse) {
@@ -160,7 +171,11 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   
   idx <- with(index(x), (1:npar) + npar.mean)
   dxi <- D$dxi; ##dxi[,idx] <- 0
-  information_mu <- n*t(D$dxi) %*% (iC%*%W) %*% (D$dxi)
+  if (is.null(weight)) {
+    information_mu <- n*t(D$dxi) %*% (iC) %*% (D$dxi)
+  } else {
+    information_mu <- n*t(D$dxi) %*% (iC%*%W) %*% (D$dxi)
+  }
   
   information <- information_Sigma + information_mu
   ##browser()
