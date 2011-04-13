@@ -2,7 +2,7 @@
 deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
 
   if (missing(mom) & !missing(p)) {
-    mom <- modelVar(expr,p,conditional=conditional)
+    mom <- modelVar(expr,p,conditional=conditional,...)
     all <- TRUE
     if (mom$npar==length(p))
       meanpar <- NULL  
@@ -20,7 +20,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   nn <- expr$parpos
   if (is.null(nn))  
     {
-      nn <- matrices(expr,1:npar + npar.mean,meanpar);
+      nn <- matrices.lvm(expr,1:npar + npar.mean,meanpar);
       nn$A[ii$M0!=1] <- 0
       nn$P[ii$P0!=1] <- 0
       nn$v[ii$v0!=1] <- 0

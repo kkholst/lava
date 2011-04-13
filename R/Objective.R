@@ -122,7 +122,7 @@ gaussian0_objective.lvm <- gaussian_objective.lvm
 gaussian1_objective.lvm <- gaussian_objective.lvm
 gaussian1_gradient.lvm <- function(...) gaussian_gradient.lvm(...)
 gaussian1_hessian.lvm <- function(x,p,...) {
-  browser()
+  ##  browser()
   myg2 <- function(p1) gaussian_gradient.lvm(x,p=p1,...)
   myg3 <- function(p1) numDeriv::jacobian(myg2,p1)
   ##-numDeriv::jacobian(myg,p)

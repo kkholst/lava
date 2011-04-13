@@ -119,7 +119,6 @@ plot.multigroupfit <- function(x,...) {
 
 igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
   require("igraph")
-  import(igraph)
   oC <- covariance(x)$rel
   for (i in 1:(nrow(oC)-1))
     for (j in (i+1):nrow(oC)) {

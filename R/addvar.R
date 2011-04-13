@@ -11,7 +11,7 @@ function(x,...,value) UseMethod("addvar<-")
 }
 
 `addvar.lvm` <-
-function(x, var, silent=FALSE,...) {
+function(x, var, silent=lava.options()$silent,...) {
   new <- setdiff(var,vars(x))
   Debug(new)
   if (length(new)>0)
