@@ -37,6 +37,7 @@ assign("options",
             eval.max=250,
             constrain=FALSE,
             silent=FALSE,
+            itol=1e-9,
             Dmethod="simple", ##Richardson"
             parallel=TRUE,
             param="relative",

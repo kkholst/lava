@@ -418,7 +418,7 @@ function(x, data,
   if (!silent) cat("Optimizing objective function...")
   if (optim$trace>0 & !silent) cat("\n")
   ## Optimize with lower constraints on the variance-parameters
-  
+
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -427,7 +427,8 @@ function(x, data,
     if (optim$constrain) {
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
-    names(opt$estimate) <- coefname 
+    names(opt$estimate) <- coefname
+    
     opt$gradient <- as.vector(myGrad(opt$par))
   } else {
     opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))

@@ -543,7 +543,7 @@ printR <- function(x,eol="\n",...) {
 
 ###{{{ Inverse/pseudo
 
-Inverse <- function(X,tol=1e-9,det=TRUE) {
+Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
   n <- nrow(X)
   if (nrow(X)==1) {
     res <- 1/X

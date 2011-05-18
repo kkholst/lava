@@ -110,12 +110,11 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     return(val)
   }
 
-  
   mp <- moments(x,p,data=data)
   pp <- modelPar(x,p)
   D <- deriv(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
   C <- mp$C
-  iC <- Inverse(C,0,det=FALSE)
+  iC <- Inverse(C,det=FALSE)
 
   if (is.null(weight)) {
     ##    W <- diag(ncol(iC))
