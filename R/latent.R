@@ -35,6 +35,13 @@ function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
       intercept(x,var) <- 0
     }
   }
+  
+  xorg <- exogenous(x)
+  exoset <- setdiff(xorg,var) 
+  if (length(exoset)<length(xorg)) {
+    exogenous(x) <- exoset
+  }  
+  
   index(x) <- reindex(x)
   return(x)
 }

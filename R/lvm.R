@@ -1,4 +1,4 @@
-lvm <- function(var=NULL, silent=FALSE, ...) {
+lvm <- function(var=NULL, silent=lava.options()$silent,...) {
  
   x <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
   nodeDataDefaults(x, "fill") <- "white"

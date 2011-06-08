@@ -4,7 +4,8 @@ model.frame.lvmfit <- function(formula, all=FALSE,...) {
   if (!is.data.frame(mydata) & !is.matrix(mydata))
     return(mydata)
   if (all) return(mydata)
-  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0,exo=TRUE))]
+##  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0,exo=TRUE))]
+  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0))]
   return( mydata[,c(manifest(formula),xfix)] )
 }
 
