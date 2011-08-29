@@ -427,7 +427,7 @@
   else if (is.null(get(InformationFun))) myInformation <- NULL
   if (is.null(get(GradFun))) myGrad <- NULL
     
-  if (!silent) cat("Optimizing objective function...")
+  if (!silent) cat("Optimizing objective function...\n")
   if (lava.options()$debug) {
     print(lower)
     print(optim$constrain)

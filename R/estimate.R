@@ -1,4 +1,3 @@
-`estimate` <-
 estimate <- function(x,...) UseMethod("estimate")
 
 ###{{{ estimate.lvm

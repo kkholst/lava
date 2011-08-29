@@ -31,7 +31,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
       coefs <- fun(e0)
       newsd <- NULL
     } else {    
-      coefs <- coef(e0,symbol="<-")
+      coefs <- coef(e0,symbol=c("<-","<->"))
       newsd <- c()
       if (sd) {
         newsd <- e0$coef[,2]
@@ -64,11 +64,10 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
   if (sd)
     sds <- matrix(unlist(lapply(res, function(x) x$sds)),nrow=R+1,byrow=TRUE)
 
-
   if (!is.null(fun)) {
     rownames(coefs) <- c()
     res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x) 
-  } else {
+  } else {    
     if (constraints& length(constrain(x))>0) colnames(coefs)[-(1:length(coef(fitted)))] <- names(res[[1]]$coefs)
     colnames(coefs) <- names(res[[1]]$coefs)
     rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
