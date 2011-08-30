@@ -1,7 +1,8 @@
 comparepair <- function(x1,x2) {
-
   ##if (class(x1)!="lvmfit" | class(x2)!="lvmfit") stop("'lvmfit' object expected.")
-  l1 <- logLik(x1);  l2 <- logLik(x2)
+  l1 <- do.call("logLik",list(x1),envir=parent.frame(2))
+  l2 <- do.call("logLik",list(x2),envir=parent.frame(2))
+  ##l1 <- logLik(x1);  l2 <- logLik(x2)
   df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;
   ##Q <- -2*ifelse(df1<df2, l1-l2, l2-l1); names(Q) <- "chisq"
   Q <- abs(2*(l1-l2))
