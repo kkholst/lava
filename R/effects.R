@@ -61,7 +61,8 @@ print.effects <- function(x,...) {
   cat("\n");
   invisible(x) 
 }
-  
+
+
 coef.effects <- function(object,...) {  
   totalef <- with(object$totalef, cbind(est,sd[1]))
   directef <- with(object$directef, cbind(est,sd[1]))
@@ -81,7 +82,17 @@ coef.effects <- function(object,...) {
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
   mycoef
 }
-  
+
+confint.effects <- function(object,level=0.95,...) {
+  mycoef <- coef(object)
+  p <- 1-(1-level)/2
+  res <- mycoef[,1] +  + qnorm(p)*cbind(-1,1)%x%mycoef[,2]
+  colnames(res) <- paste(c(1-p,p)*100,"%",sep="")
+  rownames(res) <- rownames(mycoef)
+  res  
+}
+
+
 prodtrans <- function(betas) {
   k <- length(betas)
   res <- prod(betas)

@@ -98,6 +98,7 @@ IV <- function(m,data,R2thres=0,...) {
   u.var <- index(m)$vars
   all.idx <- 1:length(u.var)
   lat.idx <- with(index(m), which(vars%in%latent))
+  if (lat.idx==0) stop("Estimator only defined for models with latent variable")
   y.var <- endogenous(m)
   y.idx <- which(index(m)$vars%in%y.var)
   x.idx <- which(vars(m)%in%exogenous(m))
