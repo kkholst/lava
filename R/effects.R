@@ -14,7 +14,7 @@ totaleffects.lvmfit <- function(object,to,...,level=0.95) {
     }
   }
   if (is.null(list(...)$from) & is.character(to)[1]) {
-    to <- sapply(paste(to,setdiff(vars(object),to),sep="~"),FUN=as.formula)    
+    to <- lapply(paste(to,setdiff(vars(object),to),sep="~"),FUN=as.formula)    
   }
   ef <- function(tt) {
     f <- effects(object,tt,...)

@@ -153,22 +153,25 @@ backwardeliminate <- function(x,
                               maxsteps=Inf,
                               information="E",
                               messages=TRUE,
+                              data,
                               ...) {
-  M <- Model(x)
-  D <- model.frame(x)
+
+  if (class(x)[1]=="lvm") { M <- x } else { M <- Model(x) }
+  if(missing(data)) data <- model.frame(x)
+
   if (intercepts) ii <- NULL
-  ff <- function(...) {
+  ff <- function() {
     ii <- grep("m",names(coef(M)))
-    vv <- variances(M,mean=TRUE)  
-    cc <- estimate(M,D,quick=TRUE,silent=silent,missing=missing,...)
-    I0 <- information(M,p=cc,data=D,type=information)[-c(ii,vv),-c(ii,vv)]
+    vv <- variances(M,mean=TRUE)
+    cc <- estimate(M,data,quick=TRUE,silent=silent,missing=missing,...)
+    I0 <- information(M,p=cc,data=data,type=information)[-c(ii,vv),-c(ii,vv)]
     cc0 <- cc[-c(ii,vv)]
     res <- (1-pnorm(abs(cc0/sqrt(diag(solve(I0))))))*2
     return(res)            
   }
   
   done <- FALSE; i <- 0;
-  while (!done & i<maxsteps) {
+  while (!done & i<maxsteps) {    
     p <- ff(); ordp <- order(p,decreasing=TRUE)
     curp <- p[ordp[1]]
     if (curp<pthres) break;
