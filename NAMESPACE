@@ -33,7 +33,8 @@ export(
        "nodecolor<-",       
        estimate, startvalues, startvalues2, measurement,
        estimate.MAR,
-
+       totaleffects,
+       
        ##       gaussian_method.lvm,
        gaussian_logLik.lvm,
 ##       gaussian_objective.lvm,
@@ -212,6 +213,8 @@ S3method(path,"lvm")
 S3method(path,"lvmfit")
 S3method(path,graphNEL)
 S3method(effects,"lvmfit")
+S3method(totaleffects,"lvmfit")
+
 S3method(model.frame, "lvmfit")
 S3method(Graph, "lvm")
 S3method(Graph, "lvmfit")

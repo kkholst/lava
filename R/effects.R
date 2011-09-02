@@ -1,4 +1,39 @@
 
+totaleffects <- function(object,...,value) UseMethod("totaleffects")
+
+totaleffects.lvmfit <- function(object,to,...,level=0.95) {
+  p <- (1-level)/2
+  q <- qnorm(p)
+  res <- c() 
+  if (class(to)[1]=="formula") {    
+    if (substr(deparse(to[3]),1,1)==".") {
+      trim <- function(x) sapply(x,function(z) gsub(" ","",z,fixed=TRUE))
+      to <- trim(strsplit(deparse(to),"~")[[1]][1])
+    } else {      
+      to <- list(to)
+    }
+  }
+  if (is.null(list(...)$from) & is.character(to)[1]) {
+    to <- sapply(paste(to,setdiff(vars(object),to),sep="~"),FUN=as.formula)    
+  }
+  ef <- function(tt) {
+    f <- effects(object,tt,...)
+    rbind(with(f$totalef,c(est,sd,est/sd,2*(1-pnorm(abs(est/sd))),est+q*sd,est-q*sd)))
+  }  
+  if (is.list(to)) {
+    for (tt in to) {
+      res <- rbind(res,ef(tt))
+    }
+  }
+  else
+    res <- ef(to)
+  colnames(res) <- c("Estimate","Std.Err","z value","Pr(>|z|)",
+                     paste(c(1-p,p)*100,"%",sep=""))
+  rownames(res) <- to
+  res
+}
+
+
 effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   if (missing(to)) {
     return(summary(object))

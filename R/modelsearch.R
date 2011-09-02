@@ -134,13 +134,50 @@ holm <- function(p) {
 }
 
 modelsearch <- function(x,k=1,dir="forward",...) {
-  if (dir!="forward")
-    res <- backwardsearch(x,k,...)
-  else
+  if (dir=="forward") {
     res <- forwardsearch(x,k,...)
+    return(res)
+  }
+  if (dir=="backstep") {
+    res <- backwardeliminate(x,...)
+    return(res)
+  }
+  res <- backwardsearch(x,k,...)
   return(res)
 }
 
+backwardeliminate <- function(x,
+                              keep=NULL,
+                              pthres=0.05,AIC=FALSE,silent=TRUE,
+                              missing=FALSE,intercepts=FALSE,
+                              maxsteps=Inf,
+                              information="E",
+                              messages=TRUE,
+                              ...) {
+  M <- Model(x)
+  D <- model.frame(x)
+  if (intercepts) ii <- NULL
+  ff <- function(...) {
+    ii <- grep("m",names(coef(M)))
+    vv <- variances(M,mean=TRUE)  
+    cc <- estimate(M,D,quick=TRUE,silent=silent,missing=missing,...)
+    I0 <- information(M,p=cc,data=D,type=information)[-c(ii,vv),-c(ii,vv)]
+    cc0 <- cc[-c(ii,vv)]
+    res <- (1-pnorm(abs(cc0/sqrt(diag(solve(I0))))))*2
+    return(res)            
+  }
+  
+  done <- FALSE; i <- 0;
+  while (!done & i<maxsteps) {
+    p <- ff(); ordp <- order(p,decreasing=TRUE)
+    curp <- p[ordp[1]]
+    if (curp<pthres) break;
+    var1 <- unlist(strsplit(names(curp),"<-"))
+    if (messages) message("Remove: ",names(curp))
+    cancel(M) <- var1
+  }
+  return(M)
+}
 
 backwardsearch <- function(x,k=1,...) {
   if (class(x)!="lvmfit") stop("Expected an object of class 'lvmfit'.")

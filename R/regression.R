@@ -5,6 +5,12 @@
     regfix(object, to=to, ...) <- value
     return(object)
   } else  {
+    if (is.list(value)) {
+      for (v in value)
+        regression(object,...) <- v       
+      return(object)
+    }
+    
     if (class(value)[1]=="formula") {
 
       curvar <- index(object)$var
@@ -111,6 +117,13 @@
       object$parpos <- NULL
       return(object)
     }
+    if (is.list(to)) {
+      for (t in to)
+        regression(object,silent=silent,...) <- t
+      object$parpos <- NULL
+      return(object)
+    }
+    
 ##    browser()
 
     sx <- strsplit(from,"@")

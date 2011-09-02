@@ -242,7 +242,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,weight2=val$weights2,cluster=val$clusters))
 
-  
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
   e.mis <- estimate(mg0,control=control,silent=silent,weight=val$weights,weight2=val$weights2,
                     cluster=val$clusters,estimator=estimator,...)
