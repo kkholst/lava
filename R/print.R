@@ -76,9 +76,9 @@ print.multigroup <- function(x,...) {
   cat("\n")
   cat("Number of groups:", x$ngroup, "\n")
   cat("Number of free parameters (not counting mean-parameters):", x$npar,"\n")  
-  cat("Parameter-vector:", unlist(x$parlist), "\n\n")
+##  cat("Parameter-vector:", unlist(x$parlist), "\n\n")
   cat("Number of free mean parameters:", length(grep("m",x$mean)),"\n")  
-  cat("Mean-vector:", x$mean, "\n\n")
+##  cat("Mean-vector:", x$mean, "\n\n")
   invisible(x)
 }
 ###}}} print.multigroup

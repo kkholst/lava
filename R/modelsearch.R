@@ -159,23 +159,40 @@ backwardeliminate <- function(x,
   if (class(x)[1]=="lvm") { M <- x } else { M <- Model(x) }
   if(missing(data)) data <- model.frame(x)
 
+  dots <- list(...)
+  if (is.null(dots$control$start)) {
+    p0 <- estimate(M,data,quick=TRUE,silent=silent,missing=FALSE,...)
+    dots$control <- c(dots$control, list(start=p0,information="E"))
+  }
+
   if (intercepts) ii <- NULL
   ff <- function() {
     ii <- grep("m",names(coef(M)))
     vv <- variances(M,mean=TRUE)
-    cc <- estimate(M,data,quick=TRUE,silent=silent,missing=missing,...)
-    I0 <- information(M,p=cc,data=data,type=information)[-c(ii,vv),-c(ii,vv)]
-    cc0 <- cc[-c(ii,vv)]
-    res <- (1-pnorm(abs(cc0/sqrt(diag(solve(I0))))))*2
+ ##   G <- estimate(M,data,quick=TRUE,silent=silent,missing=missing,onlymodel=TRUE)
+    args <- c(list(x=M,data=data,missing=missing,quick=TRUE,silent=silent),dots)
+    cc <- do.call("estimate",args)
+    if (is.numeric(cc)) {
+      I0 <- information(M,p=cc,data=data,type=information)[-c(ii,vv),-c(ii,vv)]
+      cc0 <- cc[-c(ii,vv)]
+      res <- (1-pnorm(abs(cc0/sqrt(diag(solve(I0))))))*2
+      attributes(res)$coef <- cc
+    } else {
+      coefs <- coef(cc)
+      res <- (1-pnorm(abs(coefs/sqrt(diag(vcov(cc))))))*2
+      res <- res[-c(ii,vv)]
+      attributes(res)$coef <- coefs
+    }
     return(res)            
   }
   
   done <- FALSE; i <- 0;
-  while (!done & i<maxsteps) {    
-    p <- ff(); ordp <- order(p,decreasing=TRUE)
+  while (!done & i<maxsteps) {
+    p <- ff(); ordp <- order(p,decreasing=TRUE)    
     curp <- p[ordp[1]]
     if (curp<pthres) break;
     var1 <- unlist(strsplit(names(curp),"<-"))
+    dots$control$start <- attributes(p)$coef[-ordp[1]]
     if (messages) message("Remove: ",names(curp))
     cancel(M) <- var1
   }
