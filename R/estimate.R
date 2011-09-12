@@ -52,7 +52,8 @@ function(x, data,
   if (length(control)>0) {
     optim[names(control)] <- control
   }
-    
+
+  if (!lava.options()$exogenous) exogenous(x) <- NULL
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0)

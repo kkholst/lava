@@ -9,6 +9,7 @@ lava.options <- function(...) {
   assign("options",curopt, envir=lava.env)  
   lockBinding("options", lava.env)  
 }
+
 gethook <- function(hook="estimate.hooks",...) {
   get(hook,envir=lava.env)
 }
@@ -42,6 +43,7 @@ assign("options",
             parallel=TRUE,
             param="relative",
             constrain=TRUE,
+            exogenous=TRUE,
             Rgraphviz=TRUE,
             debug=FALSE
             ),

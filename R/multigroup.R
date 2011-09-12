@@ -24,7 +24,9 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
       catx <- categorical2dummy(x0,data0)
       models[[i]] <- catx$x; datasets[[i]] <- catx$data
     }
+    if (!lava.options()$exogenous) exogenous(models[[i]]) <- NULL
   }
+
 
   
   models.orig <- NULL
