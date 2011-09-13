@@ -4,10 +4,12 @@ gaussian_method.lvm <- "nlminb2"
 `gaussian_objective.lvm` <-
   function(x,p,data,S,mu,n,...) {
     mp <- modelVar(x,p=p,data=data,...)
+
     C <- mp$C ## Model specific covariance matrix
     xi <- mp$xi ## Model specific mean-vector
     iC <- Inverse(C,tol=1e-7,det=TRUE)
     detC <- attributes(iC)$det
+   
     if (n<2) {
       z <- as.numeric(data-xi)
       val <- log(detC) + tcrossprod(z,crossprod(z,iC))[1]

@@ -307,7 +307,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   diag(Phat)[diag(Phat)==0] <- 1
   eig <- eigen(Phat)
   L <- abs(eig$values); L[L<1e-3] <- 1e-3
-  Phat <- eig$vectors%*%diag(L)%*%t(eig$vectors)
+  Phat <- eig$vectors%*%diag(L,ncol=ncol(eig$vectors))%*%t(eig$vectors)
   
   Debug(list("start=",start), debug)
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))

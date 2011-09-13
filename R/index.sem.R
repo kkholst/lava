@@ -96,13 +96,16 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 ##  P <- P0;
   P[covfix.idx] <- x$covfix[covfix.idx] ## ... with fixed parameters in plac
 
+  
   px <- Jy <- J <- I <- diag(length(vars(x)))
   if (m>0) {
     J[eta.idx,eta.idx] <- 0; J <- J[-eta.idx,,drop=FALSE]
   } ## Selection matrix (selecting observed variables)
   {
     ## Selection matrix (selection endogenous variables)
-    Jy[c(eta.idx,exo.idx),c(eta.idx,exo.idx)] <- 0; Jy <- Jy[-c(eta.idx,exo.idx),,drop=FALSE]
+    if (length(c(eta.idx,exo.idx))>0) {
+      Jy[c(eta.idx,exo.idx),c(eta.idx,exo.idx)] <- 0; Jy <- Jy[-c(eta.idx,exo.idx),,drop=FALSE]
+    }
     ## Cancelation matrix (cancels rows with exogenous variables)
     px[exo.idx,exo.idx] <- 0
   } 

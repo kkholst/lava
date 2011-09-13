@@ -37,11 +37,12 @@ lvm <- function(var=NULL, silent=lava.options()$silent,...) {
   if (!is.list(lvar)) lvar <- list(var)
   for (myvar in lvar) {
     if (class(myvar)[1]=="formula") {
-      if (length(getoutcome(myvar))>0) {
-        regression(res,...,silent=silent) <- myvar     
-      } else {
-        myvar <- all.vars(myvar)
-      }
+      ## if (length(getoutcome(myvar))>0) {
+      ##   regression(res,...,silent=silent) <- myvar     
+      ## } else {
+      ##   myvar <- all.vars(myvar)
+      ## }
+      regression(res,...,silent=silent) <- myvar
     }
     if (is.character(myvar)) {
       res <- addvar(res, myvar, silent=silent)  }

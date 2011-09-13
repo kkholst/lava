@@ -98,7 +98,7 @@ function(x, data,
   
   Debug("procdata")
   if (!missing & (is.matrix(data) | is.data.frame(data))) {    
-    data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix))])
+    data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix)),drop=FALSE])
   }
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
@@ -148,7 +148,7 @@ function(x, data,
       x <- updatelvm(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,mean=TRUE)
     }
   }
-  
+
   if (is.null(estimator) || estimator==FALSE) {
     return(x)
   }  
@@ -156,7 +156,7 @@ function(x, data,
   Debug(list("S=",S))
   if (!optim$meanstructure) {
     mu <- NULL
-  }  
+  }
   ## Get starting values
   myparnames <- coef(x,mean=TRUE)
   paragree <- FALSE
@@ -168,6 +168,7 @@ function(x, data,
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
 
+ 
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
     Debug(list("starter=",optim$starterfun))
@@ -179,6 +180,7 @@ function(x, data,
     }
     optim$start <- start
   }
+
 
   ## Missing data
   if (missing) {

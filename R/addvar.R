@@ -5,7 +5,9 @@ function(x,...,value) UseMethod("addvar<-")
 
 `addvar<-.lvm` <-function(x,...,value) {
   if (class(value)[1]=="formula") {
-    return(addvar(x,all.vars(value),...))
+    regression(x,...) <- value
+    return(x)
+##    return(addvar(x,all.vars(value),...))
   }
   addvar(x, var=value, ...)
 }

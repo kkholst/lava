@@ -14,26 +14,25 @@
     if (class(value)[1]=="formula") {
 
       curvar <- index(object)$var
-      
+
       ##      yx <- all.vars(value)
       lhs <- getoutcome(value)
       X <- attributes(terms(value))$term.labels
-      yy <- decomp.specials(lhs)
       res <- lapply(X,decomp.specials)
       xx <- unlist(lapply(res, function(x) x[1]))      
 
-      
-      yyf <- lapply(yy,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-      ys <- unlist(lapply(yyf,function(x) x[1]))      
-      object <- addvar(object,ys,...)
-
+      if (length(lhs)>0) {
+        yy <- decomp.specials(lhs)
+        yyf <- lapply(yy,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
+        ys <- unlist(lapply(yyf,function(x) x[1]))      
+        object <- addvar(object,ys,...)
+      }
       
       exo <- c()
       notexo <- c()
       xxf <- lapply(res,function(x) decomp.specials(x,NULL,"[",fixed=TRUE))
       xs <- unlist(lapply(xxf,function(x) x[1]))
       object <- addvar(object,xs,...)
-
       
       for (i in 1:length(xs)) {        
         xf <- unlist(strsplit(xx[[i]],"[\\[\\]]",perl=TRUE))
@@ -51,10 +50,17 @@
         } else { exo <- c(exo,xs[i]) }
       }
 
+      
+      if (length(lhs)==0) {
+        index(object) <- reindex(object)
+        return(object)
+      }
+      
       oldexo <- exogenous(object)
       newexo <- setdiff(exo,c(notexo,curvar,ys))
       exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
-            
+
+      
       for (i in 1:length(ys)) {
         y <- ys[i]
         yf <- unlist(strsplit(yy[i],"[\\[\\]]",perl=TRUE))
