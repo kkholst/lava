@@ -6,7 +6,7 @@ model.frame.lvmfit <- function(formula, all=FALSE,...) {
   if (all) return(mydata)
 ##  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0,exo=TRUE))]
   xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0))]
-  return( mydata[,c(manifest(formula),xfix)] )
+  return( mydata[,c(manifest(formula),xfix),drop=FALSE] )
 }
 
 model.frame.multigroupfit <- function(formula,...) {

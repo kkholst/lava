@@ -8,6 +8,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       meanpar <- NULL  
   }
 
+
   ii <- index(expr)
   npar.total <- npar <- ii$npar; npar.reg <- ii$npar.reg
   npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
@@ -16,7 +17,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   } else {
     meanpar <- NULL
   }
-
+  
   nn <- expr$parpos
   if (is.null(nn))  
     {
@@ -25,7 +26,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       nn$P[ii$P0!=1] <- 0
       nn$v[ii$v0!=1] <- 0
     }
-  
+ 
   if (npar.reg>0) {
     regr.idx <- 1:npar.reg + npar.mean
   } else {
@@ -52,7 +53,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     }
     if (npar.reg>0) {
       dA[,regr.idx] <- sapply(regr.idx, function(i) izero(which(t(nn$A)==i),nrow(dA)) )
-    }   
+    }
     par.var <- (npar.reg+1):npar
     if (npar>npar.reg) {
       dP[,var.idx] <- sapply(var.idx, function(i) izero(which(nn$P==i),nrow(dA)) )
@@ -71,7 +72,16 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     }
   } else {
     res <- with(ii, list(dA=dA, dP=dP, dv=dv))
+    for (pp in nn$parval) {
+      res$dP[attributes(pp)$cov.idx,pp] <- 1
+      res$dv[attributes(pp)$m.idx,pp] <- 1      
+    }
+    nn$parval
+##    if (length(parval))
   }
+
+##  browser()
+ 
   if (!all) return(res)
 
   ## Non-linear constraints:
@@ -110,7 +120,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       attributes(fval)$vals <- vals
       constrainpar <- c(constrainpar,list(fval)); names(constrainpar) <- cname
       
-###      browser()
       for (jj in 1:length(vals)) {
         allpars <- c(nn$A[attributes(vals[[jj]])$reg.idx[1]],
                      nn$P[attributes(vals[[jj]])$cov.idx[1]],

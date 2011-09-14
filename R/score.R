@@ -23,6 +23,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   
   if (is.null(index(x)$dA) | reindex)
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
+
   
   xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
@@ -201,6 +202,7 @@ score2.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, rein
 
       iC <- Inverse(C,0,det=FALSE)
       D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
+
       ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
       Debug("after deriv.", debug)
       myvars <- (index(x)$manifest)

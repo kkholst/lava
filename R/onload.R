@@ -1,7 +1,7 @@
 
 '.onLoad' <- function(lib, pkg="lava")
   {
-    addhook("heavytail.sim.hook","sim.hooks")
+    ##    addhook("heavytail.sim.hook","sim.hooks")
     addhook("heavytail.init.hook","init.hooks")
     addhook("cluster.post.hook","post.hooks")
 

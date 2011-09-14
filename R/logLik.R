@@ -4,7 +4,8 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   cl <- match.call()
   xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
-  
+
+
   Debug(xfix,debug)
   if (missing(n)) {
     n <- nrow(data)
@@ -37,7 +38,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
         for (i in 1:length(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(logLikFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
+      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
     }    
     loglik <- sapply(1:nrow(data),myfun)
     if (!indiv) {
@@ -50,6 +51,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     }
     return(loglik)
   }
+
   cl[[1]] <- logLikFun
   loglik <- eval.parent(cl)
 
@@ -93,11 +95,12 @@ gaussian_logLik.lvm <- function(object,p,data,
     else n <- nrow(data)
   }
   k <- length(index(object)$manifest)
-  
+
   if (type[1]=="sat") {
     if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
+      
     }    
     L1 <- logLik(object,p,data,type="exo",meanstructure=meanstructure)
     ##    Sigma <- (n-1)/n*S ## ML = 1/n * sum((xi-Ex)^2)

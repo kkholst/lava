@@ -113,9 +113,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
- 
-  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
-     
+  
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
   res <- as.data.frame(res)
@@ -151,7 +149,10 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     ## Simulate from sim. distribution (Y,X) (mv-normal)
     I <- diag(length(nn))
     IAi <- solve(I-t(A))
-    dd <- rmvnorm(n,mu,P)
+    E <- rmvnorm(n,sigma=P);   
+    colnames(E) <- vars(x)
+    dd <- mu + heavytail.sim.hook(x,E)
+##    dd <- mu + rmvnorm(n,mu,P)
     res <- dd%*%t(IAi)
   } else {
   
@@ -183,9 +184,12 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
         }
         return(rmvnorm(1,mu0,P0))
       }))
+    } else {
+      E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
     }
-
-
+    colnames(E) <- vars(x)
+    E <- heavytail.sim.hook(x,E)  
+    
     while (length(simuled)<length(nn)) {
       leftovers <- setdiff(nn,simuled)
       
@@ -212,8 +216,9 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
             }
           }
           dist.i <- distribution(x,i)[[1]]
-          if (!is.function(dist.i))
+          if (!is.function(dist.i)) {
             res[,pos] <- mu.i + E[,pos]
+          }
           ##          res[,pos] <- rnorm(n,mu.i,sd=Sigma[pos,pos]^0.5)
           else {
             res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
@@ -225,10 +230,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     res <- res[,nn,drop=FALSE]
   }
     
+
   myhooks <- gethook("sim.hooks")
   for (f in myhooks) {
     res <- do.call(f, list(x=x,data=res))
   }         
-  
+
   return(data.frame(res))
 }
