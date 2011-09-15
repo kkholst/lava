@@ -113,6 +113,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
+
+  E <- rmvnorm(n,sigma=P);   
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
@@ -149,7 +151,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     ## Simulate from sim. distribution (Y,X) (mv-normal)
     I <- diag(length(nn))
     IAi <- solve(I-t(A))
-    E <- rmvnorm(n,sigma=P);   
+##    E <- rmvnorm(n,sigma=P);   
     colnames(E) <- vars(x)
     dd <- mu + heavytail.sim.hook(x,E)
 ##    dd <- mu + rmvnorm(n,mu,P)
@@ -185,7 +187,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
         return(rmvnorm(1,mu0,P0))
       }))
     } else {
-      E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
+      ##      E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
     }
     colnames(E) <- vars(x)
     E <- heavytail.sim.hook(x,E)  

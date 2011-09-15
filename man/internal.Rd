@@ -60,7 +60,6 @@
 \alias{makemissing}
 \alias{merge}
 \alias{IV}
-\alias{lava.options}
 
 
 \title{For internal use}
