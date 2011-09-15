@@ -114,7 +114,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
 
-  E <- rmvnorm(n,sigma=P);   
+  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
