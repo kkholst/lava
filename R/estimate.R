@@ -474,6 +474,7 @@ function(x, data,
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
 
+  ##  browser()
   mycoef[pp.idx,1] <- opt$estimate
   
   ### OBS: v = t(A)%*%v + e

@@ -7,6 +7,7 @@
            addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,
            ...) {
   index(x) <- reindex(x)
+  if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
 ##  browser()
   if (!Rgraphviz || !require("Rgraphviz")) {
     if (!require("igraph"))

@@ -98,7 +98,7 @@ IV <- function(m,data,R2thres=0,...) {
   u.var <- index(m)$vars
   all.idx <- 1:length(u.var)
   lat.idx <- with(index(m), which(vars%in%latent))
-  if (lat.idx==0) stop("Estimator only defined for models with latent variable")
+  if (length(lat.idx)==0) stop("Estimator only defined for models with latent variable")
   y.var <- endogenous(m)
   y.idx <- which(index(m)$vars%in%y.var)
   x.idx <- which(vars(m)%in%exogenous(m))
@@ -291,7 +291,11 @@ IV <- function(m,data,R2thres=0,...) {
   ##     parname[which(parname%in%eta.surrogate[idx])] <- (index(m)$latent)[idx]
   ##   }
   ## }
+
+  ##browser()
+  ##suppressWarnings(
   parname[which(parname%in%eta.surrogate)] <- names(eta.surrogate)
+  ##)
   
   coef <- cbind(unlist(theta),diag(vartheta)^0.5); rownames(coef) <- parname; colnames(coef) <- c("Estimate","Std.Err")
   ##  coef <- coef[ord,]
@@ -306,6 +310,7 @@ IV2 <- function(m,data,control=list(),...) {
   ##  m <- fixsome(m,data=data,fix="relative")
   if (is.null(control$R2thres)) control$R2thres <- 0
   res <- IV(m,data,R2thres=control$R2thres)
+  browser()
   p <- res$estimate  
   idx <- match(names(p),coef(m,mean=TRUE))
   x0 <- parfix(m,idx,p)

@@ -146,7 +146,8 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
       theta0 <- unlist(vals);
 ##    theta0[val.idx0] <- theta[val.idx0];
       theta0[!is.na(val.idx)] <- theta
-      return(myc(theta0))
+      res <- myc(theta0)
+      return(res)
     }
     vals0 <- unlist(vals)[!is.na(val.idx)]    
 ##  vals0 <- unlist(vals)[na.omit(val.idx)]
