@@ -234,6 +234,9 @@ S3method(formula, "lvmfit")
 S3method(print,"summary.lvmfit")
 S3method(vcov, "lvmfit")
 S3method(print,lvmfit.randomslope)
+S3method("randomslope<-", "lvm")
+S3method(randomslope, "lvm")
+
 
 ### multigroup
 S3method(print, "multigroup")
