@@ -289,7 +289,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     ordlist <- c(ordlist, list(which(val$mis.type==i)))
     ord <- c(ord, ordlist[[i]])    
   }
-
+  
   res <- with(val, list(coef=cc,
                         patterns=patterns, table=table(mis.type),
                         mis.type=mis.type,

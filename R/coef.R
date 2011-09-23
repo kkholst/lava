@@ -138,7 +138,7 @@ function(object, level=ifelse(missing(type),-1,2),
             break;
           }
         }
-      }
+      }      
       c1 <- coef(Model(object),mean=TRUE)
       c1. <- coef(Model(object),mean=FALSE)      
       ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
@@ -158,6 +158,7 @@ function(object, level=ifelse(missing(type),-1,2),
     myorder <- 1:(npar+npar.mean)
     myorder.reg <- 1:npar
   }
+####  browser()
   
   if (level<0) {
     res <- pars.default(object)
