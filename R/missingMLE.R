@@ -219,6 +219,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 ##   mu[exo.idx] <- colMeans(data[,exo,drop=FALSE])
 ##   names(mu) <- obs
 ##   model <- fixsome(model, measurement.fix=fix, S=S, mu=mu, n=1)
+
   if (nrow(val$patterns)==1) {
     res <- estimate(x,data=data,fix=fix,weight=weight,weight2=weight2,estimator=estimator,silent=silent,control=control,...)
     return(res)
@@ -237,6 +238,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (!silent)
       cat("\n")
   }
+  names(control$start) <- NULL
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
   if (is.null(control$information))
@@ -252,6 +254,8 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                     cluster=val$clusters,estimator=estimator,...)
   ##  return(e.mis)
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]
+
+
   cc <- coef(e.mis,level=0)
   mynames <- c()
   if (e.mis$model$npar.mean>0)

@@ -155,14 +155,13 @@ function(object, level=ifelse(missing(type),-1,2),
       myorder.reg <- modelPar(object$multigroup,1:(npar))$p[[object$cc]]
     }
   } else {
-    myorder <- 1:(npar+npar.mean)
-    myorder.reg <- 1:npar
+    myorder <- seq_len(npar+npar.mean)
+    myorder.reg <- seq_len(npar)
   }
-####  browser()
   
   if (level<0) {
-    res <- pars.default(object)
-    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol)[myorder]
+    res <- (pars.default(object))[myorder]
+    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol) ##[myorder]
     return(res)
   }
   latent.var <- latent(object)
@@ -183,9 +182,10 @@ function(object, level=ifelse(missing(type),-1,2),
              )
     }
   }
+
   
   myparnames <- paste("p",1:npar,sep="")[myorder.reg]
-  myparnames <- paste("p",1:npar,sep="")[order(myorder.reg)]
+  ##myparnames <- paste("p",1:npar,sep="")[order(myorder.reg)]
 
   p <- matrices(Model(object), myparnames)
   A <- p$A
@@ -204,7 +204,7 @@ function(object, level=ifelse(missing(type),-1,2),
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
     mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))
-  }
+  }  
   coefs <- mycoef[order(myorder),,drop=FALSE]
   nn <- colnames(A)
   
@@ -328,7 +328,8 @@ function(object, level=ifelse(missing(type),-1,2),
   
   if (level>0 & npar.mean>0) {
     mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
-    munames <- rownames(coefs)[1:index(object)$npar.mean]
+##    munames <- rownames(coefs)[1:index(object)$npar.mean]
+    munames <- rownames(coefs)[order(myorder[seq_len(npar.mean)])]    
     meanpar <- matrices(Model(object), myparnames, munames)$v
     for (i in 1:length(meanpar)) {
       if (!index(Model(object))$vars[i]%in%index(Model(object))$exogenous) {
@@ -538,16 +539,26 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,.
   return(res)
 }
 
-CoefMat <- function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
+CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
+  function(x,
+           digits = max(3, getOption("digits") - 2),
+           level=9,
+           symbol="<-",...) {
+           
   cc <- x
   if (!is.matrix(x)) {
     cc <- coef(x,level=level,symbol=symbol,...)
   }
   res <- c()
-  mycoef <- format(cc,digits=digits,scientific=scientific,...)
-##  mycoef <- formatC(cc,digits=digits,scientific=scientific,...)
+  ##mycoef <- format(cc,digits=digits,scientific=scientific,...)
+  mycoef <- format(round(cc,max(1,digits)),digits=digits)
+  ##  mycoef[,4] <- format(round(cc[,4],max(1,digits+3)),digits=digits)
+  ##  mycoef[,4] <- formatC(round(cc[,4],max(1,digits+3)),digits=digits,format="g",
+  ##                        preserve.width="common",flag="")
+  mycoef[,4] <- formatC(cc[,4],digits=digits-1,format="g",
+                        preserve.width="common",flag="") 
   mycoef[is.na(cc)] <- ""
-  mycoef[cc[,4]<1e-16,4] <- "  <1e-16"
+  mycoef[cc[,4]<1e-12,4] <- "  <1e-12"
   
 
   M <- ncol(cc)

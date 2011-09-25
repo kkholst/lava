@@ -436,7 +436,7 @@
 
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
-  if (!silent) cat("\n")
+##  if (!silent) cat("\n")
 
   opt$estimate <- opt$par
   if (optim$constrain) {
@@ -453,7 +453,7 @@
   } else {
     opt$gradient <- myGrad(opt$estimate)
   }
-
+  
   if (is.null(myInformation)) {
     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
 For numerical approximation please install the library 'numDeriv'.")

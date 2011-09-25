@@ -50,7 +50,7 @@ modelPar.multigroup <- function(x,p, ...) {
   if (!is.null(meanpar)) {
     meanlist <- list(); for (i in 1:k) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
   }
-  browser()
+  ##browser()
   
   if (length(p.)>0)
   for (i in 1:length(p.)) {
