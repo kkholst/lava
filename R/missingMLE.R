@@ -241,16 +241,23 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   names(control$start) <- NULL
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
-  if (is.null(control$information))
-    control$information <- "obs"
+  ##  if (is.null(control$information))
+  ##    control$information <- "obs"
 
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
 
   
   if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,weight2=val$weights2,cluster=val$clusters))
 
+  browser()
+
+  if (all(unlist(lapply(val$weights,is.null)))) val$weights <- NULL
+  if (all(unlist(lapply(val$weights2,is.null)))) val$weights2 <- NULL
+  if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL
+  
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
-  e.mis <- estimate(mg0,control=control,silent=silent,weight=val$weights,weight2=val$weights2,
+  e.mis <- estimate(mg0,control=control,silent=silent,
+                    weight=val$weights,weight2=val$weights2,
                     cluster=val$clusters,estimator=estimator,...)
   ##  return(e.mis)
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]

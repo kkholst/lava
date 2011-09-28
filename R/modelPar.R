@@ -32,6 +32,7 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 ###}}}
 
 ###{{{ modelPar.multigroup
+
 modelPar.multigroup <- function(x,p, ...) {
   npar <- x$npar
   npar.mean <- x$npar.mean

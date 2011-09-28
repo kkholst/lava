@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Linear Latent Variable Models
-Version: 0.9-28
-Date: 2011-09-25
+Version: 0.9-29
+Date: 2011-09-28
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models

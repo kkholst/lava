@@ -13,8 +13,8 @@
 \tabular{ll}{
 Package: \tab lava \cr
 Type: \tab Package\cr
-Version: \tab 0.9-28 \cr
-Date: \tab 2011-09-25 \cr
+Version: \tab 0.9-29 \cr
+Date: \tab 2011-09-28 \cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
