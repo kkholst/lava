@@ -249,8 +249,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   
   if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,weight2=val$weights2,cluster=val$clusters))
 
-  browser()
-
   if (all(unlist(lapply(val$weights,is.null)))) val$weights <- NULL
   if (all(unlist(lapply(val$weights2,is.null)))) val$weights2 <- NULL
   if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL

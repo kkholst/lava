@@ -310,7 +310,6 @@ IV2 <- function(m,data,control=list(),...) {
   ##  m <- fixsome(m,data=data,fix="relative")
   if (is.null(control$R2thres)) control$R2thres <- 0
   res <- IV(m,data,R2thres=control$R2thres)
-  browser()
   p <- res$estimate  
   idx <- match(names(p),coef(m,mean=TRUE))
   x0 <- parfix(m,idx,p)
