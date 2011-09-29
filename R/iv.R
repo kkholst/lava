@@ -186,6 +186,7 @@ IV <- function(m,data,R2thres=0,...) {
       } else {
         v0 <- v
       }      
+
       ecor <- unique(c(v0,ecor))      
       XX <- vars(m)[A[v,]==1]
       intpred <- exogenous(m)
@@ -207,6 +208,7 @@ IV <- function(m,data,R2thres=0,...) {
           newf <- c(newf,f2)
         }
       }
+      
       intpred <- intersect(intpred,manifest(m))
       R2max <- apply(R2[XX,intpred,drop=FALSE],2,max)
       if (any(R2max<R2thres)) intpred <- intpred[R2max>=R2thres]
@@ -294,7 +296,7 @@ IV <- function(m,data,R2thres=0,...) {
 
   ##browser()
   ##suppressWarnings(
-  parname[which(parname%in%eta.surrogate)] <- names(eta.surrogate)
+  parname[which(parname%in%eta.surrogate)] <- names(eta.surrogate)[which(eta.surrogate%in%parname)]
   ##)
   
   coef <- cbind(unlist(theta),diag(vartheta)^0.5); rownames(coef) <- parname; colnames(coef) <- c("Estimate","Std.Err")
