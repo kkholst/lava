@@ -9,7 +9,7 @@
   index(x) <- reindex(x)
   if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
 ##  browser()
-  if (!Rgraphviz || !require("Rgraphviz")) {
+  if (!Rgraphviz || (!require("Rgraphviz"))) {
     if (!require("igraph"))
       stop("package 'Rgraphviz' or 'igraph' not available")
     g <- igraph.lvm(x,...)
