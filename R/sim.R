@@ -137,8 +137,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
     }
   }
   simuled <- X
-  
-  if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) ) ) { ## || all(is.na(distribution(x))) ) {
+
+  if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { ## || all(is.na(distribution(x))) ) {
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
       pp <- predict(x, mypar, data.frame(res))
@@ -161,6 +161,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   
     xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
+
     if (!all(xconstrain %in% index(x)$exogenous)) stop("Non-linear constraint only allowed via covariates")
     if (length(xconstrain>0))
       for (i in which(xconstrain.idx)) {

@@ -38,7 +38,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
   return(e0)
 }
 
-condition <- function(A) {
+condition <- function(A) {  
   suppressWarnings(with(eigen(A),tail(values,1)/head(values,1)))
 }
 
