@@ -78,7 +78,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
 }
 
 
-"print.bootstrap.lvm" <- function(x,idx,level=0.05,...) {
+"print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {
   cat("Non-parametric bootstrap statistics (R=",nrow(x$coef),"):\n\n",sep="")
   uplow <-(c(0,1) + c(1,-1)*(1-level)/2)
   nn <- paste(uplow*100,"%")
