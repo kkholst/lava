@@ -25,8 +25,10 @@ comparepair <- function(x1,x2) {
 compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   if (!missing(par)) {
     contrast <- rep(0,length(coef(object)))
-    contrast[parpos(Model(object),p=par)] <- 1
+    myidx <- parpos(Model(object),p=par)        
+    contrast[myidx] <- 1
     contrast <- diag(contrast)[contrast!=0,]
+    if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
   }
   ### Wald test
   if (!missing(contrast)) {
