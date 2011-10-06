@@ -139,7 +139,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
           sigma <- control$lambda
         }
         sigma <- min(sigma,10)
-        I <- I+sigma*diag(nrow(I))
+        I <- I+control$gamma2*sigma*diag(nrow(I))
       } else {
         sigma <- ((D)%*%t(D))
         ##        K <- max(diag(sigma))
