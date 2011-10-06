@@ -28,10 +28,11 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     dots$index <- FALSE
     dots$fix <- FALSE
     dots$silent <- TRUE
+    dots$quick <- TRUE
     dots$data <- model.frame(fitted)
     dots$x <- mm
     ee <- do.call("estimate",dots)
-    return(logLik(ee))
+    return(logLik(mm,p=ee,data=dots$data))
   }
   val <- sapply(tau,plogl)
   attributes(val) <- NULL

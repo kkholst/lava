@@ -78,11 +78,13 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
 }
 
 
-"print.bootstrap.lvm" <- function(x,idx,...) {
+"print.bootstrap.lvm" <- function(x,idx,level=0.05,...) {
   cat("Non-parametric bootstrap statistics (R=",nrow(x$coef),"):\n\n",sep="")
-  c1 <- t(apply(x$coef,2,function(x) c(mean(x), sd(x), quantile(x,c(0.025,0.975)))))
+  uplow <-(c(0,1) + c(1,-1)*(1-level)/2)
+  nn <- paste(uplow*100,"%")
+  c1 <- t(apply(x$coef,2,function(x) c(mean(x), sd(x), quantile(x,uplow))))
   c1 <- cbind(c1[,1],c1[,1]-x$coef0,c1[,-1,drop=FALSE])
-  colnames(c1) <- c("Estimate","Bias","Std.Err","2.5%","97.5%")
+  colnames(c1) <- c("Estimate","Bias","Std.Err",nn)
   if (missing(idx)) {
     print(c1)
   } else {

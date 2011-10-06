@@ -436,7 +436,9 @@ function(x, data,
     opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
     opt$grad <- rep(0,length(opt$estimate))
   }
-  if (quick) return(opt$estimate)
+  if (quick) {
+    return(opt$estimate)
+  }
   ## Calculate std.err:
   
   pp <- rep(NA,length(coefname)); names(pp) <- coefname

@@ -189,7 +189,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
         }
       }
     }
-    
+
     ## latintNA <- unlist(lapply(intfix(x)[latent(x)],is.na))
     ## if (length(latintNA)>0) {
     ##   if (any(latintNA))

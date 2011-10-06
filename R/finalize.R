@@ -39,7 +39,7 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
   
   if (length(edgeDataDefaults(x)$futureinfo)>0) {
     estr <- names(edgeDataDefaults(x)$futureinfo$label)
-    estr <- estr[length(estr)>0]    
+    estr <- estr[which(unlist(lapply(estr,nchar))>0)]
     revestr <- sapply(estr, function(y) paste(rev(unlist(strsplit(y,"~"))),collapse="~"))
     revidx <- which(revestr%in%edgeNames(x))
     count <- 0
