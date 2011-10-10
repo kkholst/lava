@@ -1,7 +1,7 @@
 Package: lava
 Type: Package
 Title: Linear Latent Variable Models
-Version: 0.9-34
+Version: 0.9-35
 Date: 2011-10-10
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
