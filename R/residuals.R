@@ -6,9 +6,10 @@ residuals.lvmfit <- function(object,data=model.frame(object),p=pars(object),...)
 
 residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=pars(object),...) {
   Y <- setdiff(manifest(object), X <- exogenous(object))
-  Pr <- (predict(object,p=p,data=data))[,Y]
+  Pr <- predict(object,p=p,data=data)
+  PrY <- Pr[,Y]
   ##  y <- endogenous(object)[match(endogenous(object),manifest(object))]
-  r <- as.matrix(data[,Y,drop=FALSE]-(Pr))
+  r <- as.matrix(data[,Y,drop=FALSE]-(PrY))
   res <- r
   
   if (std) {
@@ -17,6 +18,7 @@ residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=pars(objec
       res <- r%*%Isqrt(S)
     } else res <- 1/sqrt(S[1,1])*r
   }
+  colnames(res) <- colnames(r)
   res
 }
 
