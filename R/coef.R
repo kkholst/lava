@@ -121,13 +121,14 @@ function(object, level=ifelse(missing(type),-1,2),
   else meanstructure <- object$control$meanstructure
   npar <- index(object)$npar; npar.mean <- index(object)$npar.mean*meanstructure
 
-  if (class(object)[1]=="lvm.missing") {
+##   if (class(object)[1]%in%"lvm.missing") {
+  if ("lvm.missing"%in%class(object)) {
     ##npar <- object$estimate$model$npar; npar.mean <- object$estimate$model$npar.mean    ##    myorder <- modelPar(object$estimate$model,1:(npar+npar.mean))$p[[object$cc]]
     ##    myorder.reg <- modelPar(object$estimate$model,1:(npar))$p[[object$cc]]
     if (length(object$cc)==0) {## No complete cases
       coefs <- coef(object$estimate)
       p <- pars(object)
-      pn <- names(p)
+      pn <- seq(length(p))##names(p)
       pp <- modelPar(object$multigroup,pn)$p
       coefnames <- c()
       for (i in 1:length(pars(object))) {
@@ -154,7 +155,7 @@ function(object, level=ifelse(missing(type),-1,2),
       myorder <- modelPar(object$multigroup,1:(npar+npar.mean))$p[[object$cc]]
       myorder.reg <- modelPar(object$multigroup,1:(npar))$p[[object$cc]]
     }
-  } else {
+  } else {         
     myorder <- seq_len(npar+npar.mean)
     myorder.reg <- seq_len(npar)
   }
@@ -199,7 +200,7 @@ function(object, level=ifelse(missing(type),-1,2),
       if (!missing(data)) 
         myvcov <- information(object,type=type,data=data,inverse=TRUE)
       else
-        myvcov <- information(object,type=type,inverse=TRUE)
+        myvcov <- information(object,type=type,inverse=TRUE)    
       mycoef[,2] <- sqrt(diag(myvcov))
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
