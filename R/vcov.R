@@ -1,6 +1,10 @@
 vcov.lvmfit <- function(object,...) {
   res <- object$vcov
-  resnames <- coef(Model(object), mean=object$control$meanstructure)
+  if ("lvm.missing"%in%class(object)) {
+    resnames <- names(coef(object))
+  } else {
+    resnames <- coef(Model(object), mean=object$control$meanstructure)
+  }
   colnames(res) <- rownames(res) <- resnames
   return(res)
 }

@@ -126,12 +126,12 @@ function(object, level=ifelse(missing(type),-1,2),
     ##npar <- object$estimate$model$npar; npar.mean <- object$estimate$model$npar.mean    ##    myorder <- modelPar(object$estimate$model,1:(npar+npar.mean))$p[[object$cc]]
     ##    myorder.reg <- modelPar(object$estimate$model,1:(npar))$p[[object$cc]]
     if (length(object$cc)==0) {## No complete cases
-      coefs <- coef(object$estimate)
+        coefs <- coef(object$estimate)
       p <- pars(object)
       pn <- seq(length(p))##names(p)
       pp <- modelPar(object$multigroup,pn)$p
       coefnames <- c()
-      for (i in 1:length(pars(object))) {
+      for (i in 1:length(p)) {
         for (j in 1:length(pp)) {
           idx <- which(pn[i]==pp[[j]])
           if (length(idx)>0) {
@@ -144,8 +144,13 @@ function(object, level=ifelse(missing(type),-1,2),
       c1. <- coef(Model(object),mean=FALSE)      
       ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
       ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
-      myorder <- match(coefnames,c1)
-      myorder.reg <- na.omit(match(coefnames,c1.))
+      myorder <- match(c1,coefnames)
+      if (npar.mean>0) coefnames <- coefnames[-seq(npar.mean)]
+      myorder.reg <- na.omit(match(c1.,coefnames))
+
+##      myorder <- match(coefnames,c1)
+##      myorder.reg <- na.omit(match(coefnames,c1.))
+
 ##      myorder <- match(c2,c1)
 ##      myorder.reg <- na.omit(match(c2,c1.))
       
@@ -161,8 +166,10 @@ function(object, level=ifelse(missing(type),-1,2),
   }
   
   if (level<0) {
-    res <- (pars.default(object))[myorder]
-    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol) ##[myorder]
+    ##    res <- (pars.default(object))[myorder]
+    res <- (pars.default(object))
+    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol)[order(myorder)]
+##    res <- res[order(myorder)]
     return(res)
   }
   latent.var <- latent(object)
@@ -195,13 +202,13 @@ function(object, level=ifelse(missing(type),-1,2),
   mycoef <- object$coef
   if (!missing(type) | !missing(vcov)) {
     if (!missing(vcov)) {
-      mycoef[,2] <- sqrt(diag(vcov))
+      mycoef[,2] <- sqrt(diag(vcov))[myorder]
     } else {
       if (!missing(data)) 
         myvcov <- information(object,type=type,data=data,inverse=TRUE)
       else
         myvcov <- information(object,type=type,inverse=TRUE)    
-      mycoef[,2] <- sqrt(diag(myvcov))
+      mycoef[,2] <- sqrt(diag(myvcov))[myorder]
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
     mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))

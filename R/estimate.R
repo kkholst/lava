@@ -421,7 +421,8 @@ function(x, data,
   if (!silent) cat("Optimizing objective function...")
   if (optim$trace>0 & !silent) cat("\n")
   ## Optimize with lower constraints on the variance-parameters
-
+  if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
+  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
