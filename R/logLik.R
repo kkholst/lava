@@ -228,7 +228,7 @@ logLik.lvmfit <- function(object,
 ###{{{ logLik.lvm.missing
 
 logLik.lvm.missing <- function(object,
-                               p=coef(object), model=object$estimator,
+                               p=pars(object), model=object$estimator,
                                weight=Weight(object$estimate),                
                                ...) {
   logLik(object$estimate$model0, p=p, model=model, weight=weight, ...)

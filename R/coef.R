@@ -199,7 +199,7 @@ function(object, level=ifelse(missing(type),-1,2),
       if (!missing(data)) 
         myvcov <- information(object,type=type,data=data,inverse=TRUE)
       else
-        myvcov <- information(object,type=type,inverse=TRUE)    
+        myvcov <- information(object,type=type,inverse=TRUE)
       mycoef[,2] <- sqrt(diag(myvcov))
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
@@ -328,8 +328,8 @@ function(object, level=ifelse(missing(type),-1,2),
   
   if (level>0 & npar.mean>0) {
     mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
-##    munames <- rownames(coefs)[1:index(object)$npar.mean]
-    munames <- rownames(coefs)[order(myorder[seq_len(npar.mean)])]    
+    munames <- rownames(coefs)[1:index(object)$npar.mean]
+    ##    munames <- rownames(coefs)[order(myorder[seq_len(npar.mean)])]    
     meanpar <- matrices(Model(object), myparnames, munames)$v
     for (i in 1:length(meanpar)) {
       if (!index(Model(object))$vars[i]%in%index(Model(object))$exogenous) {

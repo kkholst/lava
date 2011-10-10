@@ -80,7 +80,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
 ###{{{ score.lvm.missing
 
 score.lvm.missing <- function(x,
-                          p=coef(x), estimator=x$estimator,
+                          p=pars(x), estimator=x$estimator,
                               weight=Weight(x$estimate),
                               indiv=FALSE,
                               list=FALSE,
