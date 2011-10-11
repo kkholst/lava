@@ -143,10 +143,12 @@ function(object, level=ifelse(missing(type),-1,2),
       c1 <- coef(Model(object),mean=TRUE)
       c1. <- coef(Model(object),mean=FALSE)      
       ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
-      ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
-      myorder <- match(c1,coefnames)
-      if (npar.mean>0) coefnames <- coefnames[-seq(npar.mean)]
-      myorder.reg <- na.omit(match(c1.,coefnames))
+        ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
+        myorder <- match(c1,coefnames)
+        myorderRev <- match(coefnames,c1)        
+
+        if (npar.mean>0) coefnames <- coefnames[-seq(npar.mean)]
+        myorder.reg <- na.omit(match(c1.,coefnames))
 
 ##      myorder <- match(coefnames,c1)
 ##      myorder.reg <- na.omit(match(coefnames,c1.))
@@ -212,8 +214,10 @@ function(object, level=ifelse(missing(type),-1,2),
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
     mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))
-  }  
-  coefs <- mycoef[order(myorder),,drop=FALSE]
+  }
+  
+##  coefs <- mycoef[order(myorder),,drop=FALSE]
+  coefs <- mycoef[myorder,,drop=FALSE]
   nn <- colnames(A)
   
   free <- A!="0" 
@@ -335,9 +339,10 @@ function(object, level=ifelse(missing(type),-1,2),
   nlincon.mean <- lapply(Model(object)$mean, function(x) x%in%names(constrain(Model(object))) )
   
   if (level>0 & npar.mean>0) {
-    mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
-    munames <- rownames(coefs)[1:index(object)$npar.mean]
-    ##    munames <- rownames(coefs)[order(myorder[seq_len(npar.mean)])]    
+    ##    mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
+    midx <- seq_len(npar.mean)
+    rownames(coefs)[midx] <- paste("m",myorder[midx],sep="")    
+    munames <- rownames(coefs)[seq_len(npar.mean)]
     meanpar <- matrices(Model(object), myparnames, munames)$v
     for (i in 1:length(meanpar)) {
       if (!index(Model(object))$vars[i]%in%index(Model(object))$exogenous) {
