@@ -49,9 +49,9 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
       ##        sds <- rbind(sds, newsd)
     }
     return(list(coefs=coefs,sds=newsd))
-  }; 
+  }
 
-  i=0;
+  i <- 0
   if (require(foreach) & lava.options()$parallel) {
     res <- foreach (i=0:R) %dopar% bootfun(i)
   } else {
