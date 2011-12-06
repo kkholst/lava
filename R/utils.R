@@ -357,6 +357,9 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
     }
     else
       if (is.list(data)) {
+        if ("cov"%in%names(data)) data$S <- data$cov
+        if ("var"%in%names(data)) data$S <- data$var
+        if ("mean"%in%names(data)) data$mu <- data$mean
         S <- reorderdata.lvm(x,data$S)
         mu <- reorderdata.lvm(x,data$mu)
         n <- data$n
@@ -603,6 +606,7 @@ whichentry <- function(x) {
 ###{{{ blockdiag
 
 blockdiag <- function(x,...,pad=0) {
+  if (is.list(x)) xx <- x  else xx <- list(x,...)
   xx <- list(x,...)
   rows <- unlist(lapply(xx,nrow))
   crows <- c(0,cumsum(rows))

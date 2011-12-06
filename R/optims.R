@@ -111,7 +111,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
   control <- dots$control
   trace <- control$trace
 
-##  print(control)
+  ## print(control)
   if (trace>0)
   cat("\nIter=0;\t\n",
       "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
@@ -130,7 +130,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     if (is.null(D)) {      
       D <- gradient(p.orig)
     }
-    
     if (control$stabil) {
       if (control$lambda!=0) {
         if (control$lambda<0) {
@@ -160,10 +159,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     ##    iI <- with(svdI,  (v)%*%diag(1/d)%*%t(u))
     ##    iI <- solve(I)
     ##    I <- I + 0.001*diag(nrow(I))
-    ##browser()
     return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
   } 
-
   
   count <- count2 <- 0  
   thetacur <- start
@@ -174,7 +171,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     count2 <- count2+1
     oldpar <- thetacur
     newpar <- oneiter(thetacur)
-    ##browser()
+    ## cat("........................\n")
+    ## browser()
     thetacur <- newpar$p
     if (!is.null(control$ngamma)) {
       if (control$ngamma<=gammacount) {

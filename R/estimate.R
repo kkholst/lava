@@ -98,6 +98,8 @@ function(x, data,
   }
   
   Debug("procdata")
+  ## xmis<- apply(testdata[,exogenous(m1)],1,function(x) any(is.na(x)))
+  ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
   if (!missing & (is.matrix(data) | is.data.frame(data))) {    
     data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix)),drop=FALSE])
   }
@@ -117,7 +119,6 @@ function(x, data,
     }
   }
 
-  
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {    
@@ -182,7 +183,6 @@ function(x, data,
     optim$start <- start
   }
 
-
   ## Missing data
   if (missing) {
     control$start <- optim$start
@@ -209,7 +209,7 @@ function(x, data,
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
   Debug(list("lower=",lower))
-  
+
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
   if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
