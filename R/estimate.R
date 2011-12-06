@@ -98,11 +98,15 @@ function(x, data,
   }
   
   Debug("procdata")
-  ## xmis<- apply(testdata[,exogenous(m1)],1,function(x) any(is.na(x)))
+  if (missing) { ## Remove rows with missing covariates
+    xmis <- apply(data[,exogenous(x)],1,function(x) any(is.na(x)))
+    data <- data[which(!xmis),]
+  }
   ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
   if (!missing & (is.matrix(data) | is.data.frame(data))) {    
     data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix)),drop=FALSE])
   }
+
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
   Debug(list("n=",n))  
