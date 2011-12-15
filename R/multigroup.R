@@ -100,7 +100,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     }
   }
     
-  ##
+  ##  
   exo <- exogenous(models)
   means <- lvms <- As <- Ps <- ps <- datas <- samplestat <- list()
   for (i in 1:nm) {

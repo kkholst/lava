@@ -13,7 +13,9 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
       s0 <- rep(1,nn)      
     }
     else {
-      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;
+      S <- x$samplestat[[i]]$S
+      mu <- if (meanstructure) x$samplestat[[i]]$mu else NULL;
+##      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;     
       s0 <- starterfun(x$lvm[[i]], S=S, mu=mu,silent=TRUE)
     }
     s <- c(s, list(s0))
@@ -247,7 +249,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   s <- sqrt(diag(S))
   R <- (cov2cor(S)) ## S/outer(s,s)
   C <- P0
-
+  
   Debug(list("obs.idx", obs.idx), debug)
   C[obs.idx,obs.idx] <- R
   ## Estimates of covariance between latent and manifest variables

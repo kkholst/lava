@@ -33,7 +33,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   ### Wald test
   if (!missing(contrast)) {
     B <- contrast    
-    p <- coef(object)
+    p <- pars(object)
     if (is.vector(B)) { B <- rbind(B); colnames(B) <- names(contrast) }
     if (missing(Sigma)) {
       Sigma <- vcov(object)
