@@ -6,6 +6,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
 
 
+  
   Debug(xfix,debug)
   if (missing(n)) {
     n <- nrow(data)
@@ -96,12 +97,14 @@ gaussian_logLik.lvm <- function(object,p,data,
   }
   k <- length(index(object)$manifest)
 
+
   if (type[1]=="sat") {
     if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
       
-    }    
+    }
+    if (missing(p)) p <- rep(1,length(coef(object)))
     L1 <- logLik(object,p,data,type="exo",meanstructure=meanstructure)
     ##    Sigma <- (n-1)/n*S ## ML = 1/n * sum((xi-Ex)^2)
     Sigma <- S
@@ -113,7 +116,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     attr(loglik, "nall") <- n
     attr(loglik, "nobs") <- n-npar
     attr(loglik, "df") <- npar    
-    class(loglik) <- "logLik"
+    class(loglik) <- "logLik"    
     return(loglik)
   }
   myidx <- switch(type[1],

@@ -5,8 +5,20 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
                      missing="lvm.missing"%in%class(object),
                      regr=FALSE,
                      ...) {
-  if (object$estimator=="gaussian" & logLik & !missing)
+  if (object$estimator=="gaussian" & logLik & !missing) {
+    if (class(object)[1]%in%c("multigroupfit","multigroup")) {
+
+      ll <- structure(0,nall=0,nobs=0,df=0,class="logLik")
+      for (i in seq_len(Model(object)$ngroup)) {
+        l0 <- logLik(Model(Model(object))[[i]],data=model.frame(ee)[[i]],type="sat")
+        ll <- ll+l0
+        for (atr in c("nall","nobs","df"))
+          attributes(ll)[[atr]] <- attributes(ll)[[atr]]+attributes(l0)[[atr]]
+      }
+      
+    } 
     return(logLik(object, type="sat"))
+  }
   covar <- exogenous(object)
   y <- endogenous(object)
   m0 <- Model(object)
