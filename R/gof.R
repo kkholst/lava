@@ -10,7 +10,8 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
 
       ll <- structure(0,nall=0,nobs=0,df=0,class="logLik")
       for (i in seq_len(Model(object)$ngroup)) {
-        l0 <- logLik(Model(Model(object))[[i]],data=model.frame(ee)[[i]],type="sat")
+        l0 <- logLik(Model(Model(object))[[i]],data=model.frame(object)[[i]],type="sat")
+
         ll <- ll+l0
         for (atr in c("nall","nobs","df"))
           attributes(ll)[[atr]] <- attributes(ll)[[atr]]+attributes(l0)[[atr]]
