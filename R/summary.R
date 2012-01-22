@@ -98,9 +98,14 @@ coef.summary.lvmfit <- function(object,...) object$coef
 
 ###{{{ summary.multigroupfit
 
-summary.multigroupfit <- function(object,...) {
-  cc <- CoefMat.multigroupfit(object,...) 
-  res <- list(coef=coef(object), object=object, coefmat=cc, gof=gof(object), object=object)
+summary.multigroupfit <- function(object,groups=NULL,...) {
+  if (is.null(groups)) {
+    if (object$model$missing) {
+      groups <- object$model$complete
+    }
+  }
+  cc <- CoefMat.multigroupfit(object,groups=groups,...) 
+  res <- list(coef=coef(object,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object)
   class(res) <- "summary.multigroupfit"
   res
 }
@@ -110,9 +115,9 @@ print.summary.multigroupfit <- function(x,...) {
   if (l2D>1e-2) warning("Possible problems with convergence!")
   cat("||score||^2=",l2D,"\n")
   cat("Latent variables:", latent(x$object), "\n")
-  print(x$object,...)
+  print(x$object,...)  
 ##  cat(rep("-", 50), "\n\n", sep="");
-  ##  print(x$coefmat,quote=FALSE,right=TRUE)
+  ##print(x$coefmat,quote=FALSE,right=TRUE)
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(attributes(x$coefmat)$nlincon)) {
     cat("Non-linear constraints:\n")

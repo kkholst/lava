@@ -433,7 +433,7 @@
     print(optim$constrain)
     print(optim$method)
   }
-
+  
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")

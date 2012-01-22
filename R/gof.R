@@ -89,8 +89,9 @@ gof.lvmfit <- function(object,chisq=FALSE,...) {
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
 
   l2D <- sum(object$opt$grad^2)
-  rnkV <- qr(vcov(object))$rank
-  res <- c(res, L2score=l2D, rankV=rnkV, cond=condition(vcov(object)), k=nrow(vcov(object)))
+  rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) NULL)
+  condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
+  res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
   class(res) <- "gof.lvmfit"
   return(res)       
 }

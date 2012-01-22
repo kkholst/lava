@@ -406,7 +406,7 @@ coef.multigroup <- function(object,...) {
 
 coef.multigroupfit <-
   function(object, level=1,vcov, ext=FALSE,
-           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,...) {
+           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,groups=NULL,...) {
 
     if (level==0) {
       theta <- pars(object)
@@ -458,7 +458,8 @@ coef.multigroupfit <-
     res <- list()
     misrow <- list()
     parpos2 <- list()
-    for (i in 1:model$ngroup) {
+    if (is.null(groups)) groups <- 1:model$ngroup
+    for (i in groups) {
       orignames <- coef(object$model0$lvm[[i]],mean=object$meanstructure, silent=TRUE, symbol=c("<-","<->"))
       if (ext) {
         newnames. <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE, labels=labels, symbol=symbol)
@@ -485,10 +486,12 @@ coef.multigroupfit <-
     }
 
     if (ext) {
-      for (i in 1:model$ngroup) {
+      for (i in seq(length(groups))) {
         if (length(misrow[[i]])>0) {
           nn <- rownames(res[[i]])[misrow[[i]]]
-          for (j in setdiff(1:model$ngroup,i)) {
+##          suppressMessages(browser())
+          ##          for (j in setdiff(1:model$ngroup,i)) {
+          for (j in setdiff(seq_len(length(groups)),i)) {
             nn2 <- rownames(res[[j]])
             matching <- na.omit(match(nn,nn2))
             matching <- setdiff(matching,misrow[[j]])
@@ -512,24 +515,27 @@ coef.multigroupfit <-
 
 ###{{{ CoefMat
 
-CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,...) {
-  cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data)  
+CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,groups=seq(Model(x)$ngroup),...) {
+  cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)  
   parpos <- attributes(cc)$parpos
+  ##  suppressMessages(browser())
   ##cc <- coef(x,level=level)
   ##parpos <- modelPar(x, 1:length(pars(x)))$p
   res <- c()
   nlincon.estimates <- c()
   nlincon.names <- c()
-  for (i in 1:Model(x)$ngroup) {
+  k <- 0
+  for (i in groups) {
+    k <- k+1
     m0 <- Model(Model(x))[[i]]
-    mycoef <- cc[[i]]
+    mycoef <- cc[[k]]
     npar <- index(m0)$npar
     npar.mean <- index(m0)$npar.mean
     if (npar>0)
       rownames(mycoef)[(1:npar)+npar.mean] <- paste("p",1:npar,sep="")    
     m0$coefficients <- mycoef
     m0$opt$estimate <- mycoef[,1]
-    Vcov <- vcov(x)[parpos[[i]],parpos[[i]],drop=FALSE]; colnames(Vcov) <- rownames(Vcov) <- rownames(mycoef)
+    Vcov <- vcov(x)[parpos[[k]],parpos[[k]],drop=FALSE]; colnames(Vcov) <- rownames(Vcov) <- rownames(mycoef)
     m0$vcov <- Vcov
     cc0 <- coef.lvmfit(m0,level=level,labels=labels,symbol=symbol)
     res <- c(res, list(CoefMat(cc0)))

@@ -36,6 +36,7 @@ function(x,level=2,labels=FALSE,...) {
 ###}}} print.lvmfit
 
 ###{{{ print.lvmfit.randomslope
+
 print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
   print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
   invisible(x)
@@ -45,10 +46,20 @@ print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
 
 ###{{{ print.multigroupfit
 
-print.multigroupfit <- function(x,...)  {
-  res <- coef(x)
+print.multigroupfit <- function(x,groups=NULL,...)  {
+  if (is.null(groups)) {
+    if (x$model$missing) {
+      groups <- x$model$complete
+      if (!is.null(e$model$mnames))
+        x$model$names <- x$model$mnames
+    } else {
+      groups <- seq_len(length(x$model))
+    }  
+  }
+  res <- coef(x,groups=groups,...)
   counter <- 0
   dots <- list(...)
+  dots$groups <- groups
   level <- if (is.null(dots$level)) {
     dots$level <- 2
 ##    dots$level <- ifelse("lvmfit.randomslope"%in%class(x),2,9)

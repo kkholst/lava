@@ -7,7 +7,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
   for (i in 1:x$ngroup) {
     mydata <- x$data[[i]][,manifest(x$lvm[[i]]),drop=FALSE]
     W <- c(W, nrow(mydata))
-    if (nrow(mydata)<2) {
+    if (nrow(mydata)<3) {
       ii <- index(x$lvm[[i]])
       nn <- ifelse(meanstructure, ii$npar+ii$npar.mean, ii$npar) 
       s0 <- rep(1,nn)      
@@ -15,11 +15,12 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
     else {
       S <- x$samplestat[[i]]$S
       mu <- if (meanstructure) x$samplestat[[i]]$mu else NULL;
-##      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;     
+      ##      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;
       s0 <- starterfun(x$lvm[[i]], S=S, mu=mu,silent=TRUE)
     }
     s <- c(s, list(s0))
   }
+
   Wtotal <- sum(W); W <- W/Wtotal
   
   pg <- vector("list", x$npar); for (i in 1:length(pg)) pg[[i]] <- rep(0,x$ngroup)
@@ -54,7 +55,9 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
     myweight <- W[ppos]/sum(W[ppos])
     sum(y[ppos]*myweight)
   }))
-  return(c(wmean,wp))
+  res <- c(wmean,wp)
+  res[!is.finite(res) | is.nan(res) | is.na(res) | is.complex(res)] <- .5
+  return(res)  
 }
 
 ###}}}
@@ -249,7 +252,6 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   s <- sqrt(diag(S))
   R <- (cov2cor(S)) ## S/outer(s,s)
   C <- P0
-  
   Debug(list("obs.idx", obs.idx), debug)
   C[obs.idx,obs.idx] <- R
   ## Estimates of covariance between latent and manifest variables
@@ -295,7 +297,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   for (j in 1:m) { ## OLS-estimates
     relation <- A[j,]==1
     if (!any(relation)) next    
-    Ahat[j, relation] <- Inverse(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j]
+    Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j], error=function(...) 0)
   }
   Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
   Ahat[,obs.idx] <- Ahat[,obs.idx]/matrix(s, m, n, byrow=TRUE)
@@ -315,8 +317,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
   names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)  
   res <- startmean(x,start,mu)
-  res[is.nan(res)] <- 1
-  res[is.na(res)] <- 1
+  res[!is.finite(res) | is.nan(res) | is.na(res)] <- 1
   res
 }
 

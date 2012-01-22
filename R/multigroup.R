@@ -27,7 +27,6 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     if (!lava.options()$exogenous) exogenous(models[[i]]) <- NULL
   }
 
-
   
   models.orig <- NULL
 ######################
@@ -41,7 +40,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     for (i in 1:nm) {
       ## Fix some parameters (predictors,latent variables,...)
       d0 <- datasets[[i]][1,,drop=FALSE]; d0[,] <- 1
-      models[[i]] <- fixsome(models[[i]], exo.fix=exo.fix, measurement.fix=fix, data=d0)
+      if (fix)
+        models[[i]] <- fixsome(models[[i]], exo.fix=exo.fix, measurement.fix=fix, data=d0)
       ## Find named/labelled parameters
       rpar <- unique(parlabels(models[[i]]))
       reservedpars <- c(reservedpars, rpar)
@@ -64,14 +64,19 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     pos <- 0
     models0 <- list()
     datasets0 <- list()
-    for (i in 1:nm) {
+    complidx <- c()
+    nmodels <- 0
+    for (i in seq_len(nm)) {
       myvars <- unlist(intersect(colnames(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep)))
       mydata <- datasets[[i]][,myvars]
       if (any(is.na(mydata))) {
         if (i>1) pos <- pos+mynpar[i-1]
         models[[i]] <- baptize(models[[i]],newpars[pos+1:mynpar[i]] ,overwrite=FALSE)        
-        ##        warning("Missing data encountered")  
+        ##        warning("Missing data encountered")        
         val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep)
+        ##        suppressMessages(browser())
+        nmodels <- c(nmodels,length(val$models))
+        complidx <- c(complidx,val$pattern.allcomp+nmodels[i]+1)
         datasets0 <- c(datasets0, val$datasets)
         models0 <- c(models0, val$models)            
       } else {
@@ -79,10 +84,12 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         models0 <- c(models0, list(models[[i]]))
       }
     }
-
+    
     models.orig <- models
-    val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,...)
+    suppressWarnings(val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,exo.fix=FALSE,...))
     val$models.orig <- models.orig; val$missing <- TRUE
+    val$complete <- complidx-1
+    val$mnames <- mynames
     return(val)
   }
 

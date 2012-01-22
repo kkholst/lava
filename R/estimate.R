@@ -99,7 +99,7 @@ function(x, data,
   
   Debug("procdata")
   if (missing) { ## Remove rows with missing covariates
-    xmis <- apply(data[,exogenous(x)],1,function(x) any(is.na(x)))
+    xmis <- apply(data[,exogenous(x),drop=FALSE],1,function(x) any(is.na(x)))    
     data <- data[which(!xmis),]
   }
   ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
