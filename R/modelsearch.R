@@ -148,8 +148,11 @@ modelsearch <- function(x,k=1,dir="forward",...) {
 
 backwardeliminate <- function(x,
                               keep=NULL,
-                              pthres=0.05,AIC=FALSE,silent=TRUE,
-                              missing=FALSE,intercepts=FALSE,
+                              pthres=0.05,
+                              AIC=FALSE,
+                              silent=TRUE,
+                              missing=FALSE,
+                              intercepts=FALSE,
                               maxsteps=Inf,
                               information="E",
                               messages=TRUE,
@@ -169,7 +172,7 @@ backwardeliminate <- function(x,
   ff <- function() {
     ii <- grep("m",names(coef(M)))
     vv <- variances(M,mean=TRUE)
- ##   G <- estimate(M,data,quick=TRUE,silent=silent,missing=missing,onlymodel=TRUE)
+    ##   G <- estimate(M,data,quick=TRUE,silent=silent,missing=missing,onlymodel=TRUE)
     args <- c(list(x=M,data=data,missing=missing,quick=TRUE,silent=silent),dots)
     cc <- do.call("estimate",args)
     if (is.numeric(cc)) {
@@ -188,12 +191,13 @@ backwardeliminate <- function(x,
   
   done <- FALSE; i <- 0;
   while (!done & i<maxsteps) {
-    p <- ff(); ordp <- order(p,decreasing=TRUE)    
+    p <- ff()
+    ordp <- order(p,decreasing=TRUE)    
     curp <- p[ordp[1]]
     if (curp<pthres) break;
     var1 <- unlist(strsplit(names(curp),"<-"))
     dots$control$start <- attributes(p)$coef[-ordp[1]]
-    if (messages) message("Remove: ",names(curp))
+    if (messages) message("Removed: ",names(curp)," p-value: ",round(curp,3))
     cancel(M) <- var1
   }
   return(M)
