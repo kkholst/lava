@@ -86,6 +86,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     }
     
     models.orig <- models
+    
     suppressWarnings(val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,exo.fix=FALSE,...))
     val$models.orig <- models.orig; val$missing <- TRUE
     val$complete <- complidx-1

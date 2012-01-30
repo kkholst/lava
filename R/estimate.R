@@ -426,6 +426,8 @@ function(x, data,
   if (optim$trace>0 & !silent) cat("\n")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
+
+  suppressMessages(browser())
   
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,

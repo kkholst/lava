@@ -433,6 +433,9 @@
     print(optim$constrain)
     print(optim$method)
   }
+
+  ##    suppressMessages(browser())
+
   
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))

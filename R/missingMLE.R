@@ -43,17 +43,19 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
         mytop <- intersect(topendo,colnames(data.mis)[mypattern])
         if (!is.null(mytop))
           kill(m0) <- mytop
-        for (xx in exo) {          
+###        for (xx in exo) {
+
+          ### Commented out, 30/1/2012 KKHO          
           ## If exogenous variable only have effect on missing variables,
           ##  then remove it from the model
-          if (all(c(rownames(A)[A[xx,]==1])%in%names(mypattern)[mypattern])) {
-            exoremove <- c(exoremove,xx)
-            kill(m0) <- xx
+###          if (all(c(rownames(A)[A[xx,]==1])%in%names(mypattern)[mypattern])) {
+###            exoremove <- c(exoremove,xx)
+###            kill(m0) <- xx
             ## and is missing,
 ##            if (all(c(xx,rownames(A)[A[xx,]==1])%in%names(mypattern)[mypattern])) {
 
-          }
-        }
+###         }
+###        }
       }
     ##      kill(m0) <- colnames(data.mis)[mypattern]
     } else
