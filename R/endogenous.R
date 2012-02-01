@@ -7,9 +7,10 @@ function(x,...) {
 }
 
 `endogenous.lvm` <-
-function(x,top=FALSE,...) {
+function(x,top=FALSE,latent=FALSE,...) {
+  observed <- manifest(x)
+  if (latent) observed <- vars(x)
   if (top) {
-    observed <- manifest(x)
     M <- as(Graph(x), Class="matrix")
     res <- c()
     for (i in observed)
@@ -17,7 +18,6 @@ function(x,top=FALSE,...) {
         res <- c(res, i)
     return(res)
   }
-  observed <- manifest(x)
   exo <- exogenous(x)
   return(setdiff(observed,exo))
 }

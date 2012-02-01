@@ -53,7 +53,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
       if (!is.null(e$model$mnames))
         x$model$names <- x$model$mnames
     } else {
-      groups <- seq_len(length(x$model))
+      groups <- seq_len(length(x$model$lvm))
     }  
   }
   res <- coef(x,groups=groups,...)
@@ -73,7 +73,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
     myname <- x$model$names[counter]
     if (!is.null(myname) && !is.na(myname))
       cat(": ",myname,sep="")
-    cat(" (n=",nrow(Model(x)$data[[counter]]), ")\n", sep="")
+    cat(" (n=",nrow(Model(x)$data[[groups[counter]]]), ")\n", sep="")
     print(CC[[counter]],quote=FALSE,right=TRUE)
   }
   cat("\n")
