@@ -16,7 +16,7 @@ function(x, ...) {
   invisible(x)
 }
 
-###}}} print.lvmz
+###}}} print.lvm
 
 ###{{{ print.lvmfit
 `print.lvmfit` <-
