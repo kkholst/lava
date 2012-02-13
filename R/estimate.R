@@ -517,7 +517,7 @@ function(x, data,
 
 ###{{{ estimate.formula
 
-estimate.formula <- function(x,pred.norm=c(),unstruct=FALSE,silent=TRUE,...) {
+estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,silent=TRUE,...) {
   cl <- match.call()
   ## {  varnames <- all.vars(x)
   ##    mf <- model.frame(x,data)

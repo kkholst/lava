@@ -7,18 +7,18 @@
   Function that constructs a new latent variable model object
 }
 \usage{
-lvm(var = NULL, silent=FALSE, ...)
+lvm(x = NULL, ..., silent=lava.options()$silent)
 }
 \arguments{
-  \item{var}{ Vector of variable names. Optional but gives control of
+  \item{x}{ Vector of variable names. Optional but gives control of
     the sequence of appearance of the variables. The argument can be
     given as a character vector or formula, e.g. \code{~y1+y2} is
     equivalent to \code{c("y1","y2")}. Alternatively the argument can be
     a formula specifying a linear model.
   }
+  \item{\dots}{Additional arguments to be passed to the low level functions}
   \item{silent}{Logical variable which indicates whether messages are turned
   on/off.}
-  \item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
   Returns an object of class \code{lvm}.
@@ -30,6 +30,7 @@ lvm(var = NULL, silent=FALSE, ...)
 m <- lvm() # Empty model
 m1 <- lvm(y~x) # Simple linear regression
 m2 <- lvm(~y1+y2) # Model with two independent variables (argument)
+m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 }
 \keyword{models}
 \keyword{regression}

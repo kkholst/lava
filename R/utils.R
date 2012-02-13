@@ -1,3 +1,17 @@
+###{{{ contrmat
+contrmat <- function(npar,ngroup,...) {
+ B <- matrix(0,ncol=npar*ngroup,nrow=npar*(ngroup-1))
+ pos <- 0
+ for (i in seq_len(npar)) {
+   for (j in seq_len(ngroup-1)) {
+     pos <- pos+1
+     B[pos,i] <- 1;  B[pos,j*npar+i] <- -1
+   }   
+ }
+ return(B)
+}
+###}}} contr
+
 ###{{{ %++% concat operator
 
 `%+%` <- function(x,y) UseMethod("%+%",y)

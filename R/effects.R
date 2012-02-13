@@ -118,7 +118,7 @@ coef.effects <- function(object,...) {
   mycoef
 }
 
-confint.effects <- function(object,level=0.95,...) {
+confint.effects <- function(object,parm,level=0.95,...) {
   mycoef <- coef(object)
   p <- 1-(1-level)/2
   res <- mycoef[,1] +  + qnorm(p)*cbind(-1,1)%x%mycoef[,2]

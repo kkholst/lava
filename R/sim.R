@@ -5,21 +5,32 @@ t.lvm <- function(df=2,mu,sigma,...) {
     f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
   return(f)
 }
+
 normal.lvm <- function(mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   if (!missing(mean) & !missing(sd)) 
     f <- function(n,mu,var,...) rnormal(n,mean,sd)
   else
-    f <- function(n,mu,var,...) rnormal(n,mu,sqrt(var))
+    f <- function(n,mu,var,...) {      
+      rnormal(n,mu,sqrt(var))
+    }
   return(f)
 }
-poisson.lvm <- function(lambda) {
+
+poisson.lvm <- function(lambda,link="log",...) {
+  fam <- poisson(link)
  if (!missing(lambda))
     f <- function(n,mu,...) rpois(n,lambda)
  else
-   f <- function(n,mu,...) rpois(n,exp(mu))
- return(f)
-}
+   f <- function(n,mu,...) {
+     if (missing(n)) {
+       return(fam)
+     }
+     rpois(n,fam$linkinv(mu))
+   }
+ return(f)  
+} 
+
 binomial.lvm <- function(link="logit",p) {
   if (!missing(p))
     f <- function(n,mu,var,...) rbinom(n,1,p)

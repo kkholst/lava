@@ -1,5 +1,6 @@
 \name{compare}
 \alias{compare}
+\alias{contrmat}
 \title{ Statistical tests }
 \description{
   Performs Likelihood-ratio, Wald or score tests.

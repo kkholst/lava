@@ -5,6 +5,7 @@
 \alias{path.graphNEL}
 \alias{effects}
 \alias{effects.lvmfit}
+\alias{totaleffects}
 \alias{parents}
 \alias{parents.lvm}
 \alias{children}

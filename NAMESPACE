@@ -34,7 +34,7 @@ export(
        estimate, startvalues, startvalues2, measurement,
        estimate.MAR,
        totaleffects,
-       
+       contrmat,       
        ##       gaussian_method.lvm,
        gaussian_logLik.lvm,
 ##       gaussian_objective.lvm,

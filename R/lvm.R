@@ -1,40 +1,41 @@
-lvm <- function(var=NULL, silent=lava.options()$silent,...) {
+lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
  
-  x <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
-  nodeDataDefaults(x, "fill") <- "white"
-  nodeDataDefaults(x, "shape") <- "rectangle"
-  nodeDataDefaults(x, "latent") <- FALSE
-  nodeDataDefaults(x, "randomslope") <- FALSE
-  nodeDataDefaults(x, "normal") <- TRUE
-  nodeDataDefaults(x, "survival") <- FALSE
-  nodeDataDefaults(x, "parameter") <- FALSE
-  nodeDataDefaults(x, "categorical") <- FALSE
-  nodeDataDefaults(x, "distribution") <- NA
-  nodeDataDefaults(x, "label") <- expression(NA)
+  m <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
+  nodeDataDefaults(m, "fill") <- "white"
+  nodeDataDefaults(m, "shape") <- "rectangle"
+  nodeDataDefaults(m, "latent") <- FALSE
+  nodeDataDefaults(m, "randomslope") <- FALSE
+  nodeDataDefaults(m, "normal") <- TRUE
+  nodeDataDefaults(m, "survival") <- FALSE
+  nodeDataDefaults(m, "parameter") <- FALSE
+  nodeDataDefaults(m, "categorical") <- FALSE
+  nodeDataDefaults(m, "distribution") <- NA
+  nodeDataDefaults(m, "label") <- expression(NA)
   myhooks <- gethook("init.hooks")
   for (f in myhooks) {
-    x <- do.call(f, list(x=x))
+    m <- do.call(f, list(x=m))
   }        
 
 
-  edgeDataDefaults(x, "lty") <- 1
-  edgeDataDefaults(x, "lwd") <- 1
-  edgeDataDefaults(x, "col") <- "black"
-  edgeDataDefaults(x, "textCol") <- "black"
-  edgeDataDefaults(x, "est") <- 0
-  edgeDataDefaults(x, "arrowhead") <- "open"
-  edgeDataDefaults(x, "dir") <- "forward"
-  edgeDataDefaults(x, "cex") <- 1.5
-  edgeDataDefaults(x, "label") <- expression()
-  edgeDataDefaults(x, "futureinfo") <- list()
+  edgeDataDefaults(m, "lty") <- 1
+  edgeDataDefaults(m, "lwd") <- 1
+  edgeDataDefaults(m, "col") <- "black"
+  edgeDataDefaults(m, "textCol") <- "black"
+  edgeDataDefaults(m, "est") <- 0
+  edgeDataDefaults(m, "arrowhead") <- "open"
+  edgeDataDefaults(m, "dir") <- "forward"
+  edgeDataDefaults(m, "cex") <- 1.5
+  edgeDataDefaults(m, "label") <- expression()
+  edgeDataDefaults(m, "futureinfo") <- list()
 
-  res <- list(graph=x, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
+  res <- list(graph=m, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
   class(res) <- "lvm"
 
 
   myvar <- NULL
-  lvar <- var
-  if (!is.list(lvar)) lvar <- list(var)
+  lvar <- x
+##  lvar <- list(x,...)
+  if (!is.list(lvar)) lvar <- list(x)
   for (myvar in lvar) {
     if (class(myvar)[1]=="formula") {
       ## if (length(getoutcome(myvar))>0) {

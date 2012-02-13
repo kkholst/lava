@@ -50,7 +50,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
   if (is.null(groups)) {
     if (x$model$missing) {
       groups <- x$model$complete
-      if (!is.null(e$model$mnames))
+      if (!is.null(x$model$mnames))
         x$model$names <- x$model$mnames
     } else {
       groups <- seq_len(length(x$model$lvm))
@@ -83,6 +83,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
 ###}}} print.multigroupfit
 
 ###{{{ print.multigroup
+
 print.multigroup <- function(x,...) {
   cat("\n")
   cat("Number of groups:", x$ngroup, "\n")
@@ -92,6 +93,7 @@ print.multigroup <- function(x,...) {
 ##  cat("Mean-vector:", x$mean, "\n\n")
   invisible(x)
 }
+
 ###}}} print.multigroup
 
 ###{{{ printmany
