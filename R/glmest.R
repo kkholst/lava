@@ -1,15 +1,17 @@
-glm.estimate.hook <- function(x,...) {
+glm.estimate.hook <- function(x,estimator,...) {
   yy <- c()
-  for (y in endogenous(x)) {
-    fam <- attributes(distribution(m)[[y]])$family
-    if (is.null(fam)) fam <- gaussian()
-    if (!(tolower(fam$family)%in%
-          c("gaussian","gamma","inverse.gaussian"))) {
-      yy <- c(yy,y)
+  if (estimator=="glm") {
+    for (y in endogenous(x)) {
+      fam <- attributes(distribution(m)[[y]])$family
+      if (is.null(fam)) fam <- gaussian()
+      if (!(tolower(fam$family)%in%
+            c("gaussian","gamma","inverse.gaussian"))) {
+        yy <- c(yy,y)
+      }
     }
+    if (length(yy)>0) covariance(x,yy) <- 1
   }
-  if (length(yy)>0) covariance(x,yy) <- 1
-  return(c(list(x=x,...))) 
+  return(c(list(x=x,estimator=estimator,...))) 
 }
 
 GLMest <- function(m,data,control=list(),...) {

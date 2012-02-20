@@ -115,8 +115,12 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
 }
 
 
-sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
+sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
+                    X,unlink=FALSE,...) {
   require("mvtnorm")
+  if (!missing(X)) {
+    n <- nrow(X)
+  }
   index(x) <- reindex(x)
   nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
@@ -147,25 +151,34 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
   res <- as.data.frame(res)
-  X <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
-  X.idx <- match(X,vars(x))
-  if (!is.null(X) && length(X)>0)
-  for (i in 1:length(X)) {
-    mu.x <- mu[X.idx[i]]
-    dist.x <- distribution(x,X[i])[[1]]
-    if (is.function(dist.x)) {
-      res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
-    } else {
-      if (is.null(dist.x) || is.na(dist.x)) {
-        ##        res[,X.idx[i]] <- rnorm(n,mu.x,sd=Sigma[X.idx[i],X.idx[i]]^0.5)
-        res[,X.idx[i]] <- mu.x+E[,X.idx[i]]
-      } else {
-        res[,X.idx[i]] <- dist.x ## Deterministic
+  
+  xx <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
+  X.idx <- match(xx,vars(x))  
+  if (missing(X)) {
+    if (!is.null(xx) && length(xx)>0)
+      for (i in 1:length(xx)) {
+        mu.x <- mu[X.idx[i]]
+        dist.x <- distribution(x,xx[i])[[1]]
+        if (is.function(dist.x)) {
+          res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
+        } else {
+          if (is.null(dist.x) || is.na(dist.x)) {
+            ##        res[,X.idx[i]] <- rnorm(n,mu.x,sd=Sigma[X.idx[i],X.idx[i]]^0.5)
+            res[,X.idx[i]] <- mu.x+E[,X.idx[i]]
+          } else {
+            res[,X.idx[i]] <- dist.x ## Deterministic
+          }
+        }
       }
-    }
+  } else {
+    res[,X.idx] <- X[,xx]
   }
-  simuled <- X
-
+  simuled <- xx
+  resunlink <- NULL
+  if (unlink) {
+    resunlink <- res
+  }
+  
   if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { ## || all(is.na(distribution(x))) ) {
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
@@ -173,7 +186,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
       Ey.x <- t(attributes(pp)$Ey.x)
       Vy.x <- attributes(pp)$cond.var
       yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
-      res <- cbind(yy, res[,X]); colnames(res) <- c(colnames(Vy.x),X)
+      res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)
       return(res)
     }
     ## Simulate from sim. distribution (Y,X) (mv-normal)
@@ -249,11 +262,15 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
           dist.i <- distribution(x,i)[[1]]
           if (!is.function(dist.i)) {
             res[,pos] <- mu.i + E[,pos]
+            if (unlink)
+              resunlink[,pos] <- res[,pos]
           }
           ##          res[,pos] <- rnorm(n,mu.i,sd=Sigma[pos,pos]^0.5)
           else {
             res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
-          }
+            if (unlink)
+              resunlink[,pos] <- mu.i
+          }          
           simuled <- c(simuled,i)
         }
       }
@@ -266,6 +283,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,...) {
   for (f in myhooks) {
     res <- do.call(f, list(x=x,data=res))
   }         
-
+  if (unlink) res <- resunlink
   return(data.frame(res))
 }

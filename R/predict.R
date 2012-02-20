@@ -1,11 +1,11 @@
-predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) {
-  predict(Model(object),x,p=p,data=data,mu=object$mu,S=object$S,...)
+predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) { 
+  predict(Model(object),x=x,p=p,data=data,mu=object$mu,S=object$S,...)
 }
 
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ## data = data.frame of exogenous variables
   if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
-    
+
   m <- moments(object,p,data=data)
   if (path) {
     Y <- endogenous(object,top=TRUE)
@@ -43,15 +43,10 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
     xi.x <- matrix(as.vector(m$IAi%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
     rownames(xi.x) <- names(mu.0)
   }
-  
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
- 
-
   Cy.epsilon <- P.x%*%t(m$IAi)
   Czeta.y <- Cy.epsilon[eta.idx,endogenous(object)]
-  ys <- data[,Y]
-  ry <- t(ys)-Ey.x
   ##  Eeta.x + t([,c(4,8)])[,endogenous(e)]%*%solve(Cy.x)%*%t(rr)
   
   ## m <- moments(object,p)
@@ -61,8 +56,12 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ## mu <- as.vector(m$IAi%*%m$v); names(mu) <- names(m$v)
   ##  S <- C.x
   ##  mu <- t(xi.x)
-##  browser()
+  browser()
+
+  
   if (!is.null(x)) {
+    ys <- data[,Y]
+    ry <- t(ys)-Ey.x
     if (class(x)[1]=="formula") 
       x <- all.vars(x)
     y <- setdiff(vars(object),c(x,exogenous(object)))
@@ -78,7 +77,6 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
 ##      return(t(Czeta.y[,x]%*%solve(Cy.x[x,x])%*%ry[x,]))
 ##    return(t(Eeta.x + C.x[eta.idx,x]%*%solve(Cy.x[x,x])%*%ry[x,]))
   }
-
 
   if (length(eta.idx)>0) {
     Ceta.x <- C.x[eta.idx,eta.idx]
