@@ -37,7 +37,7 @@ assign("options",
             iter.max=300,
             eval.max=250,
             constrain=FALSE,
-            silent=FALSE,
+            silent=TRUE,            
             itol=1e-9,
             Dmethod="simple", ##Richardson"
             parallel=TRUE,

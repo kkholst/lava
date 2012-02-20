@@ -3,22 +3,26 @@ t.lvm <- function(df=2,mu,sigma,...) {
     f <- function(n,mu,var,...) mu+sigma*rt(n,df=df)
   else
     f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
+  
   return(f)
 }
 
-normal.lvm <- function(mean,sd,log=FALSE,...) {
+normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
+  fam <- gaussian(eval(link))
   if (!missing(mean) & !missing(sd)) 
-    f <- function(n,mu,var,...) rnormal(n,mean,sd)
+    f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mean),sd)
   else
     f <- function(n,mu,var,...) {      
-      rnormal(n,mu,sqrt(var))
+      rnormal(n,fam$linkinv(mu),sqrt(var))
     }
-  return(f)
+  attr(f,"family") <- fam
+  return(f)  
 }
 
-poisson.lvm <- function(lambda,link="log",...) {
-  fam <- poisson(link)
+
+poisson.lvm <- function(link="log",lambda,...) {
+  fam <- poisson(eval(link))
  if (!missing(lambda))
     f <- function(n,mu,...) rpois(n,lambda)
  else
@@ -28,24 +32,37 @@ poisson.lvm <- function(lambda,link="log",...) {
      }
      rpois(n,fam$linkinv(mu))
    }
- return(f)  
+  attr(f,"family") <- fam
+  attr(f,"var") <- FALSE
+  return(f)  
 } 
 
 binomial.lvm <- function(link="logit",p) {
+  fam <- binomial(eval(link))
   if (!missing(p))
     f <- function(n,mu,var,...) rbinom(n,1,p)
   else {
-    f <- switch(link,
-                logit = 
-                function(n,mu,var,...) rbinom(n,1,tigol(mu)),
-                cloglog =
-                function(n,mu,var,...) rbinom(n,1,1-exp(-exp(1-mu))),
-                function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
-                ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
-                )
+    f <- function(n,mu,var,...) {
+      if (missing(n)) {
+        return(fam)
+      }
+      rbinom(n,1,fam$linkinv(mu))
+    }
+    ## f <- switch(link,
+    ##             logit = 
+    ##             function(n,mu,var,...) rbinom(n,1,tigol(mu)),
+    ##             cloglog =
+    ##             function(n,mu,var,...) rbinom(n,1,1-exp(-exp(1-mu))),
+    ##             function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
+    ##             ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
+    ##             )
+    
   }
+  attr(f,"family") <- fam
+  attr(f,"var") <- FALSE
   return(f)
 }
+
 uniform.lvm <- function(a,b) {
   if (!missing(a) & !missing(b)) 
     f <- function(n,mu,var,...) runif(n,a,b)
@@ -84,7 +101,7 @@ probit.lvm <- binomial.lvm("probit")
 
 
 "sim" <- function(x,...) UseMethod("sim")
- 
+
 sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
   m <- Model(x)
   if ((nrow(model.frame(x))==n) & xfix) {

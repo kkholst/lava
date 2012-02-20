@@ -474,6 +474,7 @@ function(x, data,
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
     
   }
+
   if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
                         }
   diag(asVar)[(diag(asVar)==0)] <- NA

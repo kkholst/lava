@@ -38,10 +38,16 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   if (missing(to)) {
     return(summary(object))
   }
-
   P <- path(object,to=to,from=from,...)
-  from <- P$path[[1]][1]
-  to <- tail(P$path[[1]],1)
+  if (is.null(P$path)) {
+    if (class(to)[1]=="formula") {
+      f <- extractvar(to)
+      to <- f$y; from <- f$x
+    }
+  } else {
+    from <- P$path[[1]][1]
+    to <- tail(P$path[[1]],1)
+  }
 
   cc <- coef(object,level=9) ## All parameters (fixed and variable)
   cc0 <- cbind(coef(object)) ## Estimated parameters
@@ -56,16 +62,25 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   
   idx.orig <- unique(unlist(P$idx))
   coefs.all <- cc[idx.orig]
+
   S.all <- S[idx.orig,idx.orig]
   idx.all <- numberdup(unlist(P$idx))
   pos <- 1; idx.list <- P$idx; for (i in 1:length(idx.list)) {
     K <- length(idx.list[[i]])
     idx.list[[i]] <- idx.all[pos:(pos+K-1)]; pos <- pos+K
   }
-  totalef <- prodsumdelta(coefs.all, idx.list, S.all,...)
-  margef <- list(); for (i in 1:length(idx.list)) {
-    margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all,...)))
+  margef <- list()
+  if (length(coefs.all)==1 && is.na(coefs.all)) {
+    totalef <- list(est=0,sd=0)
+    margef <- c(margef,list(est=0,sd=NA))
+  } else {
+    totalef <- prodsumdelta(coefs.all, idx.list, S.all,...)      
+    for (i in seq_len(length(idx.list))) {
+      margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all,...)))
+    }
+    paths <- list()
   }
+  
   
   directidx <- which(lapply(P$path,length)==2)
   if (length(directidx)==0)

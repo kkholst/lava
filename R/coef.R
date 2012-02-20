@@ -660,7 +660,9 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
   }
   if (Nvar>0) {
     var.idx <- which(attributes(cc)$type=="variance")
-    res <- rbind(res, c("Residual Variances:",rep("",M)))
+    vname <- "Residual Variances:"
+    if (!is.null(x$opt$dispname)) vname <- x$opt$dispname
+    res <- rbind(res, c(vname,rep("",M)))
     for (i in var.idx) {
       newrow <- mycoef[i,]
       newname <- rownames(cc)[i]
