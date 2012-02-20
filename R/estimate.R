@@ -134,7 +134,7 @@ function(x, data,
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
-
+ 
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method)) {
     Method <- "nlminb1"

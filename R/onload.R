@@ -1,6 +1,7 @@
 '.onAttach' <- function(lib, pkg="gof")
   {
     addhook("heavytail.init.hook","init.hooks")
+    addhook("glm.estimate.hook","estimate.hooks")
     addhook("cluster.post.hook","post.hooks")
     
     desc <- packageDescription(pkg)
