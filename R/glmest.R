@@ -2,7 +2,7 @@ glm.estimate.hook <- function(x,estimator,...) {
   yy <- c()
   if (estimator=="glm") {
     for (y in endogenous(x)) {
-      fam <- attributes(distribution(m)[[y]])$family
+      fam <- attributes(distribution(x)[[y]])$family
       if (is.null(fam)) fam <- gaussian()
       if (!(tolower(fam$family)%in%
             c("gaussian","gamma","inverse.gaussian"))) {
@@ -62,6 +62,7 @@ glm_method.lvm <- NULL
 glm_objective.lvm <- function(x,p,data,...) {
   GLMest(x,data,...)
 }
+glm_gradient.lvm <- NULL
 glm_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }

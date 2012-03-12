@@ -538,6 +538,7 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
     Vcov <- vcov(x)[parpos[[k]],parpos[[k]],drop=FALSE]; colnames(Vcov) <- rownames(Vcov) <- rownames(mycoef)
     m0$vcov <- Vcov
     cc0 <- coef.lvmfit(m0,level=level,labels=labels,symbol=symbol)
+    attributes(cc0)$dispname <- x$opt$dispname
     res <- c(res, list(CoefMat(cc0)))
     newnlin <- attributes(cc0)$nlincon
     if (length(newnlin)>0)
@@ -661,7 +662,9 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
   if (Nvar>0) {
     var.idx <- which(attributes(cc)$type=="variance")
     vname <- "Residual Variances:"
-    if (!is.null(x$opt$dispname)) vname <- x$opt$dispname
+    if (!is.list(x)) {
+      if (!is.null(attributes(x)$dispname)) vname <- attributes(x)$dispname
+    } else if (!is.null(x$opt$dispname)) vname <- x$opt$dispname
     res <- rbind(res, c(vname,rep("",M)))
     for (i in var.idx) {
       newrow <- mycoef[i,]
