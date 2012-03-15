@@ -56,12 +56,10 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ## mu <- as.vector(m$IAi%*%m$v); names(mu) <- names(m$v)
   ##  S <- C.x
   ##  mu <- t(xi.x)
-  browser()
 
-  
+  ys <- data[,Y]
+  ry <- t(ys)-Ey.x  
   if (!is.null(x)) {
-    ys <- data[,Y]
-    ry <- t(ys)-Ey.x
     if (class(x)[1]=="formula") 
       x <- all.vars(x)
     y <- setdiff(vars(object),c(x,exogenous(object)))
