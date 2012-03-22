@@ -127,13 +127,13 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
            "Chi-squared statistic: q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
-  if (!is.null(x$RMSEA)) {
-    rr <- formatC(x$RMSEA)
-    rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
-    cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
-  }
-
   if (optim) {
+    if (!is.null(x$RMSEA)) {
+      rr <- formatC(x$RMSEA)
+      rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
+      cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
+    }
+
     cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
     cat("condition(Information) = ",x$cond,"\n",sep="")
     cat("||score||^2 =",x$L2score,"\n")
