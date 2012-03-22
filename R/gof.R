@@ -90,10 +90,14 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     epsilon <- function(lambda) sapply(lambda,function(x) sqrt(max(0,x/(qdf*(n-1)))))
     opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
     alpha <- (1-level)/2
-    lo <- nlminb(q,function(x) opf(x,p=alpha))
-    hi <- nlminb(q,function(x) opf(x,p=1-alpha))
+    browser()
+    hi <- list(par=0)
+    RMSEA <- epsilon(q-qdf)
+    if (RMSEA>0)
+      hi <- nlminb(q,function(x) opf(x,p=1-alpha))
+    lo <- nlminb(RMSEA,function(x) opf(x,p=alpha))
     (ci <- c(epsilon(c(hi$par,lo$par))))
-    RMSEA <- c(RMSEA=epsilon(q-qdf),ci);
+    RMSEA <- c(RMSEA=RMSEA,ci);
     names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
     res <- c(res,list(RMSEA=RMSEA, level=level))
   } else {
