@@ -90,7 +90,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     epsilon <- function(lambda) sapply(lambda,function(x) sqrt(max(0,x/(qdf*(n-1)))))
     opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
     alpha <- (1-level)/2
-    hi <- list(par=-999)
+    hi <- list(min=0)
     RMSEA <- epsilon(q-qdf)
 
     if (RMSEA>0)
