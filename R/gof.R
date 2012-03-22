@@ -74,7 +74,7 @@ condition <- function(A) {
 ## }
 
 
-gof.lvmfit <- function(object,chisq=FALSE,...) {
+gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   n <- object$data$n
   loglik <- logLik(object,...)
   
@@ -83,10 +83,22 @@ gof.lvmfit <- function(object,chisq=FALSE,...) {
   myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
   myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
   
-  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq)   )
+  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq)   ) {
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
-  else
+    q <- res$fit$statistic
+    qdf <- res$fit$parameter
+    epsilon <- function(lambda) sapply(lambda,function(x) sqrt(max(0,x/(qdf*(n-1)))))
+    opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
+    alpha <- (1-level)/2
+    lo <- nlminb(q,function(x) opf(x,p=alpha))
+    hi <- nlminb(q,function(x) opf(x,p=1-alpha))
+    (ci <- c(epsilon(c(hi$par,lo$par))))
+    RMSEA <- c(RMSEA=epsilon(q-qdf),ci);
+    names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
+    res <- c(res,list(RMSEA=RMSEA, level=level))
+  } else {
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
+  }
 
   l2D <- sum(object$opt$grad^2)
   rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) NULL)
@@ -111,6 +123,12 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
            "Chi-squared statistic: q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
+  if (!is.null(x$RMSEA)) {
+    rr <- formatC(x$RMSEA)
+    rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
+    cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
+  }
+
   if (optim) {
     cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
     cat("condition(Information) = ",x$cond,"\n",sep="")

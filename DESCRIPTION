@@ -1,13 +1,13 @@
 Package: lava
 Type: Package
 Title: Linear Latent Variable Models
-Version: 0.9-45
-Date: 2012-02-20
+Version: 1.0
+Date: 2012-03-22
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models
 Keywords: latent variable model, structural equation model, likelihood inference
 Depends: R (>= 2.8.0), graph, mvtnorm, numDeriv
-Suggests: Rgraphviz, igraph, Matrix, gof (>= 0.7), foreach, survival
+Suggests: Rgraphviz, igraph, Matrix, gof (>= 0.8), foreach, survival
 License: GPL-3
 LazyLoad: yes
