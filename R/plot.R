@@ -17,7 +17,7 @@
     plot(g)
     return(invisible(g))
   } 
-   
+
   g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   if  (labels) {
     AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
@@ -29,11 +29,13 @@
   if (lava.options()$debug) {
     plot(g)
   } else {
-    
+
+##    graphRenderInfo(g)$recipEdges <- "distinct"
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     dots <- list(...)
     dots$attrs <- attrs
     dots$x <- g
+    dots$recipEdges <- "distinct"
     if (is.null(dots$layoutType) & all(index(x)$A==0))
       dots$layoutType <- "circo"
     g <- do.call("layoutGraph", dots)

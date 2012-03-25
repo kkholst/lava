@@ -1,6 +1,7 @@
 lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
  
   m <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
+  graphRenderInfo(m)$recipEdges <- "distinct"
   nodeDataDefaults(m, "fill") <- "white"
   nodeDataDefaults(m, "shape") <- "rectangle"
   nodeDataDefaults(m, "latent") <- FALSE

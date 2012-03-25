@@ -5,17 +5,14 @@ function(model,...) UseMethod("finalize")
 function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
   opt <- options(warn=-1)
   x <- Graph(model)
-  
+
    if (unexpr) {
     mylab <- as.character(edgeRenderInfo(x)$label); names(mylab) <- names(edgeRenderInfo(x)$label)
     x@renderInfo@edges$label <- as.list(mylab)
-  }
-
-  
+  } 
   var <- rownames(covariance(model)$rel)
-  edges <- coredges <- c()
-  delta <- ifelse(diag,0,1)
-  
+  varEdges <- corEdges <- c()
+  delta <- ifelse(diag,0,1)  
   if (cor | diag) {
     for (r in 1:(nrow(covariance(model)$rel)-delta) ) {
       for (s in (r+delta):ncol(covariance(model)$rel) ) {
@@ -25,11 +22,12 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
             x <- addEdge(var[s],var[r], x)
             newedges <- c(paste(var[r],"~",var[s], sep=""),
                           paste(var[s],"~",var[r], sep=""))
-            edges <- c(edges,
-                       newedges
-                       )
+            if (r==s)
+              varEdges <- c(varEdges,
+                            newedges
+                            )
             if (r!=s)
-            coredges <- c(coredges,newedges)
+            corEdges <- c(corEdges,newedges)
           }
       }
     }
@@ -54,7 +52,7 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
       }
     }
   }  
-
+  
   if (intercept) {
   ##  mu <- intfix(model)
   ##  nNA <- sum(is.na(mu))
@@ -68,31 +66,38 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
 ##    }
 ##    x <- addattr(x,attr="shape",var=mu,val="none")      
   }
-  
+
+  allEdges <- edgeNames(x)
+  regEdges <- c()
   recursive <- c()
   A <- index(model)$A
   if (index(model)$npar.reg>0)
   for (i in 1:(nrow(A)-1))
-    for (j in (i+1):(ncol(A)))
-      if(A[i,j]==1 & A[j,i]==1) recursive <- c(recursive,
-                        paste(var[i],"~",var[j], sep=""),
-                        paste(var[j],"~",var[i], sep=""))
+    for (j in (i+1):(ncol(A))) {
+##      if(A[i,j]==1 & A[j,i]==1) recursive <- c(recursive,
+##                        paste(var[i],"~",var[j], sep=""),
+##                        paste(var[j],"~",var[i], sep=""))
+      
+      if(A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
+      if(A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
+    }
+  allEdges <- unique(c(allEdges,regEdges))
+  corEdges <- setdiff(corEdges,regEdges)
 
-  for (e in edgeNames(x)) {
+  for (e in allEdges) {
     dir <- "forward"; lty <- 1; arrowtail <- "none"
     if (e %in% recursive) {
       dir <- "none"; lty <- 1; arrowtail <- "open"
     }
-    if (e %in% edges) {
+    if (e %in% varEdges) {
       dir <- "none"; lty <- 2; arrowtail <- "none"
     }
-    if (e %in% coredges) {
+    if (e %in% corEdges) {
       dir <- "none"; lty <- 2; arrowtail <- "open"
     }
     arrowhead <- "open"
 ##    estr <- paste("\"",e,"\"",sep="")
     estr <- e
-##    browser()
     for (f in c("col","cex","textCol","lwd","lty")) {
       if (!(estr%in%names(edgeRenderInfo(x)[[f]]))
           || is.na(edgeRenderInfo(x)[[f]][[estr]]))
