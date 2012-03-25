@@ -11,29 +11,6 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
     x@renderInfo@edges$label <- as.list(mylab)
   } 
   var <- rownames(covariance(model)$rel)
-  varEdges <- corEdges <- c()
-  delta <- ifelse(diag,0,1)  
-  if (cor | diag) {
-    for (r in 1:(nrow(covariance(model)$rel)-delta) ) {
-      for (s in (r+delta):ncol(covariance(model)$rel) ) {
-        if (cor | r==s)
-          if (covariance(model)$rel[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(model)))) {
-            x <- addEdge(var[r],var[s], x)
-            x <- addEdge(var[s],var[r], x)
-            newedges <- c(paste(var[r],"~",var[s], sep=""),
-                          paste(var[s],"~",var[r], sep=""))
-            if (r==s)
-              varEdges <- c(varEdges,
-                            newedges
-                            )
-            if (r!=s)
-            corEdges <- c(corEdges,newedges)
-          }
-      }
-    }
-  }
-  
-
   
   if (length(edgeDataDefaults(x)$futureinfo)>0) {
     estr <- names(edgeDataDefaults(x)$futureinfo$label)
@@ -81,7 +58,39 @@ function(model, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FAL
       if(A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
       if(A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
     }
-  allEdges <- unique(c(allEdges,regEdges))
+
+  varEdges <- corEdges <- c()
+  delta <- ifelse(diag,0,1)  
+  if (cor | diag) {
+    for (r in 1:(nrow(covariance(model)$rel)-delta) ) {
+      for (s in (r+delta):ncol(covariance(model)$rel) ) {
+        if (cor | r==s)
+          if (covariance(model)$rel[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(model)))) {
+            newedges <- c()
+            if (A[r,s]!=1) {
+              x <- addEdge(var[r],var[s], x)
+              newedges <- paste(var[r],"~",var[s], sep="")
+            } else {
+              if (A[s,r]!=1) {
+                x <- addEdge(var[s],var[r], x)
+                newedges <- c(newedges,paste(var[s],"~",var[r], sep=""))
+              }
+            }
+##            x <- addEdge(var[s],var[r], x)
+##            newedges <- c(paste(var[r],"~",var[s], sep=""),
+##                          paste(var[s],"~",var[r], sep=""))
+            if (r==s)
+              varEdges <- c(varEdges,
+                            newedges
+                            )
+            if (r!=s)
+            corEdges <- c(corEdges,newedges)
+          }
+      }
+    }
+  }
+
+  allEdges <- unique(c(regEdges,corEdges,varEdges))
   corEdges <- setdiff(corEdges,regEdges)
 
   for (e in allEdges) {
