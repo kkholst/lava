@@ -90,18 +90,18 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     epsilon <- function(lambda) sapply(lambda,function(x) sqrt(max(0,x/(qdf*(n-1)))))
     opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
     alpha <- (1-level)/2
-    hi <- list(min=0)
+    hi <- list(par=0)
     RMSEA <- epsilon(q-qdf)
-
+    start <- RMSEA
     if (RMSEA>0)
-      hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf))
-    ##optimize(function(x) opf(exp(x),p=1-alpha), interval=c(-9,log(RMSEA)))
-    start <- RMSEA+0.1
-    lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n))
-    ##optimize(function(x) opf(exp(x),p=alpha),interval=c(log(RMSEA+0.001),9))
-    ci <- c(epsilon(c(hi$min,lo$min)))    
+      hi <- nlminb(start,function(x) opf(x,p=1-alpha))
+    lo <- nlminb(start,function(x) opf(x,p=alpha))
+    ## hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf))
+    ## lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n))
+    ci <- c(epsilon(c(hi$par,lo$par)))    
     RMSEA <- c(RMSEA=RMSEA,ci);
     names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
+    
     res <- c(res,list(RMSEA=RMSEA, level=level))
   } else {
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
