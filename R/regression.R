@@ -6,19 +6,9 @@
     return(object)
   } else  {
     if (is.list(value)) {
-
       for (v in value) {
-        ## if (class(v)[1]=="formula") {
-        ##   vspec <- attributes(terms(f,specials="v"))
-        ##   browser()
-        ##   if (!is.null(vspec) && vspec==1) {
-        ##     covariance(object,...) <- v
-        ##   } else {     
-        ##     regression(object,...) <- v
-        ##   }
-        ## } else {       
-          regressionession(object,...) <- v        
-        }
+        regression(object,...) <- v        
+      }
       return(object)
     }
       
