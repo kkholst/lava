@@ -53,7 +53,7 @@ function(x, data,
   if (length(control)>0) {
     optim[names(control)] <- control
   }
-  
+
   if (!lava.options()$exogenous) exogenous(x) <- NULL
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
@@ -427,7 +427,6 @@ function(x, data,
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
 
-  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -484,7 +483,6 @@ function(x, data,
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
 
-  ##  browser()
   mycoef[pp.idx,1] <- opt$estimate
   
   ### OBS: v = t(A)%*%v + e

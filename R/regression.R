@@ -6,21 +6,39 @@
     return(object)
   } else  {
     if (is.list(value)) {
-      for (v in value)
-        regression(object,...) <- v       
+
+      for (v in value) {
+        ## if (class(v)[1]=="formula") {
+        ##   vspec <- attributes(terms(f,specials="v"))
+        ##   browser()
+        ##   if (!is.null(vspec) && vspec==1) {
+        ##     covariance(object,...) <- v
+        ##   } else {     
+        ##     regression(object,...) <- v
+        ##   }
+        ## } else {       
+          regressionession(object,...) <- v        
+        }
       return(object)
     }
+      
     
     if (class(value)[1]=="formula") {
 
-      curvar <- index(object)$var
-
-      ##      yx <- all.vars(value)
       lhs <- getoutcome(value)
+      vspec <- attributes(terms(value,specials="v"))$specials$v
+      if (!is.null(vspec) && vspec==1) {
+        v <- update(value,paste(decomp.specials(lhs),"~."))
+        covariance(object,...) <- v
+        return(object)
+      }        
+
+      curvar <- index(object)$var
+      ##      yx <- all.vars(value)
       X <- attributes(terms(value))$term.labels
       res <- lapply(X,decomp.specials)
       xx <- unlist(lapply(res, function(x) x[1]))      
-
+      
       if (length(lhs)>0) {
         yy <- decomp.specials(lhs)
         yyf <- lapply(yy,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))

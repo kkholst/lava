@@ -323,7 +323,7 @@ IV2 <- function(m,data,control=list(),...) {
     suppressWarnings(e0 <- estimate(x0,data,...,silent=TRUE,quick=TRUE))
     p0 <- c(p0,e0)
     V0 <- V0%+%matrix(0,ncol=length(e0),nrow=length(e0))
-  }
+  }  
   R2 <- noquote(formatC(cor(data[,manifest(m)])^2))
   colnames(R2) <- rownames(R2) <- manifest(m)
   l1 <- noquote(rbind(paste(latent(m),collapse=","),
