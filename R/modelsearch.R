@@ -133,6 +133,41 @@ holm <- function(p) {
   return(qs)
 }
 
+
+
+#' Model searching
+#' 
+#' Performs Wald or score tests and identifies candidates of equivalent models
+#' 
+#' 
+#' @aliases modelsearch equivalence
+#' @param x \code{lvmfit}-object
+#' @param k Number of parameters to test simultaneously. For \code{equivalence}
+#' the number of additional associations to be added instead of \code{rel}.
+#' @param dir Direction to do model search. "forward" := add
+#' associations/arrows to model/graph (score tests), "backward" := remove
+#' associations/arrows from model/graph (wald test)
+#' @param rel Formula or character-vector specifying two variables to omit from
+#' the model and subsequently search for possible equivalent models
+#' @param tol Define two models as empirical equivalent if the absolute
+#' difference in score test is less than \code{tol}
+#' @param omitrel if \code{k} greater than 1, this boolean defines wether to
+#' omit candidates containing \code{rel} from the output
+#' @param \dots Additional arguments to be passed to the low level functions
+#' @return Matrix of test-statistics and p-values
+#' @author Klaus K. Holst
+#' @seealso \code{\link{compare}},
+#' @keywords htest
+#' @examples
+#' 
+#' m <- lvm(); 
+#' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
+#' regression(m) <- eta ~ x
+#' m0 <- m; regression(m0) <- y2 ~ x
+#' dd <- sim(m0,100)[,manifest(m0)]
+#' e <- estimate(m,dd);
+#' modelsearch(e)
+#' 
 modelsearch <- function(x,k=1,dir="forward",...) {
   if (dir=="forward") {
     res <- forwardsearch(x,k,...)

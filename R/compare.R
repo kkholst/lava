@@ -19,6 +19,28 @@ comparepair <- function(x1,x2) {
 }
 
 
+
+
+##' Statistical tests
+##' 
+##' Performs Likelihood-ratio, Wald or score tests.
+##' 
+##' 
+##' @aliases compare contrmat
+##' @param object \code{lvmfit}-object
+##' @param \dots Additional arguments to low-level functions
+##' @return Matrix of test-statistics and p-values
+##' @author Klaus K. Holst
+##' @seealso \code{\link{modelsearch}}, \code{\link{equivalence}}
+##' @keywords htest
+##' @examples
+##' 
+##' m <- lvm(); 
+##' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
+##' regression(m) <- eta ~ x
+##'
+##' @export
+##' @method 
 `compare` <-
   function(object,...) UseMethod("compare")
 

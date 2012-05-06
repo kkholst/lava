@@ -1,4 +1,4 @@
-'.onAttach' <- function(lib, pkg="gof")
+'.onAttach' <- function(lib, pkg="lava")
   {
     addhook("heavytail.init.hook","init.hooks")
     addhook("glm.estimate.hook","estimate.hooks")

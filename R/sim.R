@@ -100,6 +100,33 @@ logit.lvm <- binomial.lvm("logit")
 probit.lvm <- binomial.lvm("probit")
 
 
+
+
+#' Simulate model
+#' 
+#' Simulate data from a general SEM model including non-linear effects and
+#' general link and distribution of variables.
+#' 
+#' E.g. \eqn{ E(y|x) = 2*x^2 } could be specified as
+#' 
+#' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
+#' 
+#' @aliases sim sim.lvmfit sim.lvm functional functional functional<-
+#' functional.lvm functional<-.lvm distribution distribution distribution<-
+#' distribution.lvm distribution<-.lvm heavytail heavytail<- weibull.lvm
+#' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm
+#' @param x Model object
+#' @param n Number of simulated values/individuals
+#' @param p Parameter value (optional)
+#' @param normal Logical indicating whether to simulate data from a
+#' multivariate normal distribution conditional on exogenous variables hence
+#' ignoring functional/distribution definition
+#' @param cond for internal use
+#' @param sigma Default residual variance (1)
+#' @param rho Default covariance parameter (0.5)
+#' @param \dots Additional arguments to be passed to the low level functions
+#' @author Klaus K. Holst
+#' @keywords models datagen regression
 "sim" <- function(x,...) UseMethod("sim")
 
 sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {

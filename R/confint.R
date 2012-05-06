@@ -1,4 +1,40 @@
-
+##' Calculate confidence limits for parameters
+##' 
+##' Calculate Wald og Likelihood based (profile likelihood) confidence intervals
+##' 
+##' Calculates either Wald confidence limits: \deqn{\hat{\theta} \pm
+##' z_{\alpha/2}*\hat\sigma_{\hat\theta}} or profile likelihood confidence
+##' limits, defined as the set of value \eqn{\tau}:
+##' \deqn{logLik(\hat\theta_{\tau},\tau)-logLik(\hat\theta)< q_{\alpha}/2}
+##' 
+##' where \eqn{q_{\alpha}} is the \eqn{\alpha} fractile of the \eqn{\chi^2_1}
+##' distribution, and \eqn{\hat\theta_{\tau}} are obtained by maximizing the
+##' log-likelihood with tau being fixed.
+##' 
+##' @param object \code{lvm}-object.
+##' @param parm Index of which parameters to calculate confidence limits for.
+##' @param level Confidence level
+##' @param profile Logical expression defining whether to calculate confidence
+##' limits via the profile log likelihood
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @return A 2xp matrix with columns of lower and upper confidence limits
+##' @author Klaus K. Holst
+##' @seealso \code{\link{bootstrap.lvm}}
+##' @keywords models regression
+##' @examples
+##' 
+##' m <- lvm(y~x)
+##' d <- sim(m,100)
+##' e <- estimate(y~x, d)
+##' confint(e,3,profile=TRUE)
+##' confint(e,3)
+##' \dontrun{
+##' B <- bootstrap(e,R=100)
+##' B
+##' }
+##'
+##' @aliases confint.multigroupfit
+##' @export
 confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,...) {
   if (is.character(parm)) {
     parm <- parpos(Model(object),p=parm)

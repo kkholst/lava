@@ -1,3 +1,25 @@
+##' Extract graph
+##' 
+##' Extract or replace graph object
+##' 
+##' 
+##' @aliases Graph Graph.lvmfit Graph.lvm Graph<- Graph<-.lvmfit Graph<-.lvm
+##' @usage
+##' Graph(x, ...)
+##' Graph(x, ...) <- value
+##' @param x Model object
+##' @param value New \code{graphNEL} object
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @return Returns a graph object (\code{graphNEL})
+##' @author Klaus K. Holst
+##' @seealso \code{\link{Model}}
+##' @keywords graphs models
+##' @examples
+##' 
+##' m <- lvm(y~x)
+##' Graph(m)
+##'
+##' @export
 `Graph` <-
 function(x,...) UseMethod("Graph")
 

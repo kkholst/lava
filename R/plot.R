@@ -1,5 +1,45 @@
 ###{{{ plot.lvm
 
+
+
+#' Plot path diagram
+#' 
+#' Plot the path diagram of a SEM
+#' 
+#' 
+#' @aliases plot.lvm plot.lvmfit
+#' @param x Model object
+#' @param diag Logical argument indicating whether to visualize variance
+#' parameters (i.e. diagonal of variance matrix)
+#' @param cor Logical argument indicating whether to visualize correlation
+#' parameters
+#' @param labels Logical argument indiciating whether to add labels to plot
+#' (Unnamed parameters will be labeled p1,p2,...)
+#' @param intercept Logical argument indiciating whether to add intercept
+#' labels (current version: not used))
+#' @param addcolor Logical argument indiciating whether to add colors to plot
+#' (overrides \code{nodecolor} calls)
+#' @param plain if TRUE strip plot of colors and boxes
+#' @param cex Fontsize of node labels
+#' @param fontsize1 Fontsize of edge labels
+#' @param noplot if TRUE then return \code{graphNEL} object only
+#' @param graph Graph attributes (Rgraphviz)
+#' @param attrs Attributes (Rgraphviz)
+#' @param unexpr if TRUE remove expressions from labels
+#' @param addstyle Logical argument indicating whether additional style should
+#' automatically be added to the plot (e.g. dashed lines to double-headed
+#' arrows)
+#' @param Rgraphviz if FALSE igraph is used for graphics
+#' @param \dots Additional arguments to be passed to the low level functions
+#' @author Klaus K. Holst
+#' @keywords hplot regression
+#' @examples
+#' 
+#' \dontrun{
+#' example(estimate)
+#' plot(e)
+#' }
+#' 
 `plot.lvm` <-
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
@@ -58,13 +98,13 @@
 ###{{{ plot.lvmfit
 
 `plot.lvmfit` <-
-  function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,...) {
+  function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,...) {
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     g <- Graph(x)
     newgraph <- FALSE
     if (is.null(g)) {
       newgraph <- TRUE
-      Graph(x) <- finalize(Model(x), diag=TRUE, cor=TRUE, ...)
+      Graph(x) <- finalize(Model(x), diag=TRUE, cor=TRUE, fontsize1=fontsize1, ...)
     }
     if(noplot) return(Graph(x))
 
@@ -72,10 +112,10 @@
     if (newgraph) {
       if (missing(type))
         type <- "est"
-      x <- edgelabels(x, type=type, diag=diag, cor=cor, ...)
+      x <- edgelabels(x, type=type, diag=diag, cor=cor, fontsize1=fontsize1, ...)
     } else {
       if (!missing(type)) {
-        x <- edgelabels(x, type=type, diag=diag, cor=cor, ...)
+        x <- edgelabels(x, type=type, diag=diag, cor=cor, fontsize1=fontsize1, ...)
       }
     }
     g <- Graph(x)
@@ -98,7 +138,7 @@
       }
     } 
     m <- Model(x); Graph(m) <- g
-    g <- plot(m, diag=diag, cor=cor, ...)
+    g <- plot(m, diag=diag, cor=cor, fontsize1=fontsize1, ...)
     options(.savedOpt)
     invisible(g)    
   }

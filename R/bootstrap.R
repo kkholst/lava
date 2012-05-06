@@ -1,3 +1,43 @@
+##' Calculate bootstrap estimates of a lvm
+##' 
+##' Draws non-parametric bootstrap samples
+##' 
+##' 
+##' @aliases bootstrap bootstrap.lvm bootstrap.lvmfit
+##' @param x \code{lvm}-object.
+##' @param R Number of bootstrap samples
+##' @param fun Optional function of the (bootstrapped) model-fit defining the
+##' statistic of interest
+##' @param data The data to resample from
+##' @param control Options to the optimization routine
+##' @param p Parameter vector of the null model for the parametric bootstrap
+##' @param parametric If TRUE a parametric bootstrap is calculated. If FALSE a
+##' non-parametric (row-sampling) bootstrap is computed.
+##' @param constraints Logical indicating whether non-linear parameter
+##' constraints should be included in the bootstrap procedure
+##' @param estimator String definining estimator, e.g. 'gaussian' (see
+##' \code{estimator})
+##' @param weight Optional weight matrix used by \code{estimator}
+##' @param sd Logical indicating whether standard error estimates should be
+##' included in the bootstrap procedure
+##' @param silent Suppress messages
+##' @param \dots Additional arguments, e.g. choice of estimator.
+##' @return A \code{bootstrap.lvm} object.
+##' @author Klaus K. Holst
+##' @seealso \code{\link{confint.lvmfit}}
+##' @keywords models regression
+##' @examples
+##' 
+##' m <- lvm(y~x)
+##' d <- sim(m,100)
+##' e <- estimate(y~x, d)
+##' \dontrun{
+##' B <- bootstrap(e,R=100)
+##' B
+##' }
+##'
+##' @export
+##' @method
 bootstrap <- function(x,...) UseMethod("bootstrap")
 
 bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),

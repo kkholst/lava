@@ -236,6 +236,24 @@ Simple_gradient.lvm <- function(x,p,...) {
 
 ###{{{ startvalues
 
+
+
+#' For internal use
+#' 
+#' for internal use
+#' 
+#' 
+#' @aliases startvalues startvalues2 startvalues3 starter.multigroup modelPar
+#' modelVar matrices pars pars.lvm pars.lvmfit procdata.lvm reorderdata
+#' graph2lvm igraph.lvm subgraph finalize index.lvm index.lvmfit index reindex
+#' index<- survival<- survival randomslope randomslope<- lisrel addattr
+#' variances offdiags describecoef parlabels stdcoef CoefMat deriv updatelvm
+#' checkmultigroup profile profci estimate.MAR missingModel frobnorm getoutcome
+#' decomp.specials Inverse gaussian_logLik.lvm addhook gethook correlation
+#' multigroup addvar Weight baptize fixsome parfix parfix<- %+% makemissing
+#' merge IV
+#' @author Klaus K. Holst
+#' @keywords utilities
 `startvalues` <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992. 

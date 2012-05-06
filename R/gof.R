@@ -55,6 +55,34 @@ condition <- function(A) {
   suppressWarnings(with(eigen(A),tail(values,1)/head(values,1)))
 }
 
+
+
+#' Extract model summaries and GOF statistics for model object
+#' 
+#' Calculates various GOF statistics for model object including global
+#' chi-squared test statistic and AIC. Extract model-specific mean and variance
+#' structure, residuals and various predicitions.
+#' 
+#' 
+#' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
+#' score score.lvmfit logLik.lvmfit
+#' @param object Model object
+#' @param x Model object
+#' @param p Parameter vector used to calculate statistics
+#' @param data Data.frame to use
+#' @param weight Optional weight matrix
+#' @param n Number of observations
+#' @param conditional If TRUE the conditional moments given the covariates are
+#' calculated. Otherwise the joint moments are calculated
+#' @param model String defining estimator, e.g. "gaussian" (see
+#' \code{estimate})
+#' @param debug Debugging only
+#' @param chisq Boolean indicating whether to calculate chi-squared
+#' goodness-of-fit (always TRUE for estimator='gaussian')
+#' @param \dots Additional arguments to be passed to the low level functions
+#' @return A \code{htest}-object.
+#' @author Klaus K. Holst
+#' @keywords methods models
 `gof` <-
   function(object,...) UseMethod("gof")
 

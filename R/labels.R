@@ -1,4 +1,41 @@
 ###{{{ labels
+
+
+#' Define labels of graph
+#' 
+#' Alters labels of nodes and edges in the graph of a latent variable model
+#' 
+#' 
+#' @aliases labels labels<- labels<-.default labels.lvm labels.lvmfit
+#' labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
+#' nodecolor<- nodecolor<-.default
+#' @param object \code{lvm}-object.
+#' @param value node label/edge label/color
+#' @param to Formula specifying outcomes and predictors defining relevant
+#' edges.
+#' @param \dots Additional arguments (\code{lwd}, \code{cex}, \code{col},
+#' \code{labcol}), \code{border}.
+#' @param var Formula or character vector specifying the nodes/variables to
+#' alter.
+#' @param border Colors of borders
+#' @param labcol Text label colors
+#' @param shape Shape of node
+#' @param lwd Line width of border
+#' @author Klaus K. Holst
+#' @keywords graphs aplot
+#' @examples
+#' 
+#' 
+#' m <- lvm(c(y,v)~x+z)
+#' regression(m) <- c(v,x)~z
+#' labels(m) <- c(y=expression(psi), z=expression(zeta))
+#' nodecolor(m,~y+z+x,border=c("white","white","black"), labcol="white", lwd=c(1,1,5)) <- c("orange","indianred","lightgreen")
+#' edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
+#' lwd=c(3,1)) <- expression(phi,rho)
+#' edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
+#' \donttest{plot(m)}
+#' 
+#' 
 `labels<-` <- function(object,...,value) UseMethod("labels<-")
 
 `labels<-.default` <- function(object,...,value) {

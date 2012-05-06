@@ -1,4 +1,96 @@
+#' Add regression association to latent variable model
+#' 
+#' Define regression association between variables in a \code{lvm}-object and
+#' define linear constraints between model equations.
+#' 
 
+#' 
+#' The \code{regression} function is used to specify linear associations
+#' between variables of a latent variable model, and offers formula syntax
+#' resembling the model specification of e.g. \code{lm}.
+#' 
+#' For instance, to add the following linear regression model, to the
+#' \code{lvm}-object, \code{m}: \deqn{ E(Y|X_1,X_2) = \beta_1 X_1 + \beta_2 X_2
+#' }%%{ E(Y|X1,X2) = beta1*X1 + beta2*X2} We can write
+#' 
+#' \code{regression(m) <- y ~ x1 + x2}
+#' 
+#' Multivariate models can be specified by successive calls with
+#' \code{regression}, but multivariate formulas are also supported, e.g.
+#' 
+#' \code{regression(m) <- c(y1,y2) ~ x1 + x2}
+#' 
+#' defines \deqn{ E(Y_i|X_1,X_2) = \beta_{1i} X_1 + \beta_{2i} X_2 }%%{
+#' E(Yi|X1,X2) = beta[1i]*X1 + beta[2i]*X2}
+#' 
+#' The special function, \code{f}, can be used in the model specification to
+#' specify linear constraints. E.g. to fix \eqn{\beta_1=\beta_2}%%{beta1=beta2}
+#' , we could write
+#' 
+#' \code{regression(m) <- y ~ f(x1,beta) + f(x2,beta)}
+#' 
+#' The second argument of \code{f} can also be a number (e.g. defining an
+#' offset) or be set to \code{NA} in order to clear any previously defined
+#' linear constraints.
+#' 
+#' All the parameter values of the linear constraints can be given as the right
+#' handside expression of the assigment function \code{regression<-} (or
+#' \code{regfix<-}) if the first (and possibly second) argument is defined as
+#' well. E.g:
+#' 
+#' \code{regression(m,y1~x1+x2) <- list("a1","b1")}
+#' 
+#' defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs argument can be a
+#' mixture of character and numeric values (and NA's).
+#' 
+#' The function \code{regression} (called without additional arguments) can be
+#' used to inspect the linear constraints of a \code{lvm}-object.
+#' 
+#' For backward compatibility the "\$"-symbol can be used to fix parameters at
+#' a given value. E.g. to add a linear relationship between \code{y} and
+#' \code{x} with slope 2 to the model \code{m}, we can write
+#' \code{regression(m,"y") <- "x$2"}.  Similarily we can use the "@"-symbol to
+#' name parameters. E.g. in a multiple regression we can force the parameters
+#' to be equal: \code{regression(m,"y") <- c("x1@b","x2@b")}.  Fixed parameters
+#' can be reset by fixing (with \$) them to \code{NA}.
+#' 
+#' @aliases regression regression<- regression<-.lvm regression.lvm regfix
+#' regfix regfix<- regfix.lvm regfix<-.lvm
+#' @param object \code{lvm}-object.
+#' @param to Character vector of outcome(s) or formula object.
+#' @param from Character vector of predictor(s).
+#' @param fn Real function defining the functional form of predictors (for
+#' simulation only).
+#' @param value A formula specifying the linear constraints or if
+#' \code{to=NULL} a \code{list} of parameter values.
+#' @param silent Logical variable which indicates whether messages are turned
+#' on/off.
+#' @param \dots Additional arguments to be passed to the low level functions
+#' @return A \code{lvm}-object
+#' @note Variables will be added to the model if not already present.
+#' @author Klaus K. Holst
+#' @seealso \code{\link{intercept<-}}, \code{\link{covariance<-}},
+#' \code{\link{constrain<-}}, \code{\link{parameter<-}},
+#' \code{\link{latent<-}}, \code{\link{cancel<-}}, \code{\link{kill<-}}
+#' @keywords models regression
+#' @examples
+#' 
+#' m <- lvm() ## Initialize empty lvm-object
+#' ### E(y1|z,v) = beta1*z + beta2*v
+#' regression(m) <- y1 ~ z + v 
+#' ### E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u
+#' regression(m) <- y2 ~ f(x,beta) + f(z,beta)  + f(v,2) + u
+#' ### Clear restriction on association between y and
+#' ### fix slope coefficient of u to beta
+#' regfix(m, y2 ~ v+u) <- list(NA,"beta")
+#' 
+#' regfix(m) ## Examine current linear parameter constraints
+#' 
+#' ## ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:
+#' m2 <- lvm(c(y1,y2) ~ x1+x2) 
+#' 
+#' 	  
+#' 
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 "regression<-.lvm" <- function(object, to=NULL, ..., value) {
   if (!is.null(to)) {    
