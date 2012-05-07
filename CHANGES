@@ -1,3 +1,8 @@
+Changes to Version 1.0-1 (07/05-2012)
+	- Fix in logLik (nobs)
+	- roxygen documentation
+	- 
+
 Changes to Version 0.9-10 (22/11-2010)
 	- heavytail function (simulate from mv t-distribution)
 	- cluster

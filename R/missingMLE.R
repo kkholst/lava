@@ -141,7 +141,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   vnames <- index(x)$manifest
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
-    ##if (!silent)cat("Calculating 1. and 2. moments of exogenous variables...\n")    
+    ##if (!silent) message("Calculating 1. and 2. moments of exogenous variables...\n")    
     exo.idx <- c(which(manifest(x)%in%exogenous(x)))
     xx <- subset(Model(x),exogenous(x))
     exogenous(xx) <- NULL
@@ -158,7 +158,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     ##    ex <- estimate(xx,datax,silent=TRUE)
     S[exo.idx,exo.idx] <- cov0
     mu[exo.idx] <- mu0    
-    ##    cat("\n")
+    ##    message("\n")
   }
 
   x0 <- x
@@ -173,11 +173,11 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   ##fixsome(x,data=data0,measurement.fix=FALSE,exo.fix=TRUE)
 
   if (!silent)
-    cat("Identifying missing patterns...")
+    message("Identifying missing patterns...")
 
   val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weight=weight,weight2=weight2,cluster=cluster,...)
   if (!silent)
-    cat("\n")
+    message("\n")
 
 ##   res <- c()
   
@@ -228,7 +228,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   }
   if (startcc & is.null(control$start)) {
     if (!silent)
-      cat("Obtaining starting value...")
+      message("Obtaining starting value...")
     start0 <- rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
     mystart <- tryCatch(
                         (estimate(x,data=na.omit(data),silent=TRUE,
@@ -238,7 +238,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                         )
     control$start <- mystart
     if (!silent)
-      cat("\n")
+      message("\n")
   }
   names(control$start) <- NULL
   if (is.null(control$meanstructure))
@@ -327,7 +327,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     class(res) <- c(class(res),"lvmfit.randomslope")
   if (hessian & is.null(cluster)) {
     if (!silent)
-      cat("Calculating asymptotic variance...\n")
+      message("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
     cc[] <- coef(e.mis,level=0,vcov=res$vcov)
     res$coef <- cc

@@ -468,7 +468,7 @@ For numerical approximation please install the library 'numDeriv'.")
       myInformation <- function(theta) -hessian(myObj, theta, method=lava.options()$Dmethod)
   }
   I <- myInformation(opt$estimate)
-  asVar <- tryCatch(solve(I),
+  asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
 
 ##  if (!silent) cat("\n")

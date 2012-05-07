@@ -19,6 +19,7 @@ function(x, ...) {
 ###}}} print.lvm
 
 ###{{{ print.lvmfit
+
 `print.lvmfit` <-
 function(x,level=2,labels=FALSE,...) {
 ##    print(signif(coef(x), digits=digits), print.gap=2, quote=FALSE, ...)
@@ -33,6 +34,7 @@ function(x,level=2,labels=FALSE,...) {
   invisible(x)
 ##  invisible(coefs)
 }
+
 ###}}} print.lvmfit
 
 ###{{{ print.lvmfit.randomslope
@@ -55,7 +57,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
     } else {
       groups <- seq_len(length(x$model$lvm))
     }  
-  }
+  }  
   res <- coef(x,groups=groups,...)
   counter <- 0
   dots <- list(...)
@@ -64,8 +66,10 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
     dots$level <- 2
 ##    dots$level <- ifelse("lvmfit.randomslope"%in%class(x),2,9)
   }
+  ##  suppressMessages(browser())
   myargs <- c(list(x=x), dots)
-  CC <- do.call("CoefMat.multigroupfit",myargs)
+  myargs$groups <- groups
+  CC <- do.call("CoefMat.multigroupfit",myargs)  
   for (cc in res) {
     counter <- counter+1
     cat(rep("-",50),"\n",sep="")

@@ -216,7 +216,7 @@ function(x, data,
     ## Proces data and setup some matrices
     x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
     if (!silent)
-      cat("Reindexing model...\n")
+      message("Reindexing model...\n")
     if (length(xfix)>0) {
       index(x) <- reindex(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE)
     } else {
@@ -437,7 +437,7 @@ function(x, data,
   }
 
   ## if (!exists(GradFun) & !is.null(optim$method)) {
-  ##   cat("Using numerical derivatives...\n")
+  ##   message("Using numerical derivatives...\n")
   ##   myGrad <- function(pp) {
   ##     if (optim$constrain)
   ##       pp[constrained] <- exp(pp[constrained])
@@ -455,7 +455,7 @@ function(x, data,
 ##   if (!exists(InformationFun) & !is.null(optim$method)) {
 ##     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
 ## For numerical approximation please install the library 'numDeriv'.")
-##     cat("Using a numerical approximation of hessian...\n");
+##     message("Using a numerical approximation of hessian...\n");
 ##     myInfo <- function(pp,...) hessian(myObj, opt$estimate, method="Richardson")
 ##   }
   
@@ -491,8 +491,8 @@ function(x, data,
 
   coefname <- coef(x,mean=optim$meanstructure);
   ##  browser()
-  if (!silent) cat("Optimizing objective function...")
-  if (optim$trace>0 & !silent) cat("\n")
+  if (!silent) message("Optimizing objective function...")
+  if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
 
@@ -521,7 +521,7 @@ function(x, data,
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
 
   mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
-  if (!silent) cat("\nCalculating asymptotic variance...\n")
+  if (!silent) message("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
   if (!exists(asVarFun)) {
     if (is.null(myInfo)) {

@@ -43,7 +43,7 @@ function(x, var, silent=lava.options()$silent,...) {
       myexpr <- paste("c(",i,"=expression(",i,"))", sep="\"")
       labels(x) <- (eval(parse(text=myexpr)))
       if (!silent)
-        cat("\tAdded '", i, "' to model.\n", sep="")
+        message("\tAdded '", i, "' to model.\n", sep="")
     }
 ##  index(m) <- reindex(m)
   return(x)

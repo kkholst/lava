@@ -46,7 +46,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       loglik <- sum(loglik)
       n <- nrow(data)
       attr(loglik, "nall") <- n
-      attr(loglik, "nobs") <- n-length(p0)
+      attr(loglik, "nobs") <- n
       attr(loglik, "df") <- length(p0)
       class(loglik) <- "logLik"      
     }
@@ -59,7 +59,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   if (is.null(attr(loglik,"nall")))
     attr(loglik, "nall") <- n
   if (is.null(attr(loglik,"nobs")))
-    attr(loglik, "nobs") <- n-length(p)
+    attr(loglik, "nobs") <- n##-length(p)
   if (is.null(attr(loglik,"df")))
     attr(loglik, "df") <- length(p)
   class(loglik) <- "logLik"
@@ -114,7 +114,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     npar <- P*(1+(P-1)/2)
     if (meanstructure) npar <- npar+ (P*k + P)
     attr(loglik, "nall") <- n
-    attr(loglik, "nobs") <- n-npar
+    attr(loglik, "nobs") <- n##-npar
     attr(loglik, "df") <- npar    
     class(loglik) <- "logLik"    
     return(loglik)
@@ -244,7 +244,7 @@ logLik.lvm.missing <- function(object,
 logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond","sim","exo","sat"),...) {
   res <- procrandomslope(object)
   pp <- with(res, modelPar(model,p)$p) 
-    
+
   if (type[1]=="sat") {
     n <- 0
     df <- 0
@@ -257,7 +257,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
       n <- n + object$samplestat[[i]]$n
     }
     attr(loglik, "nall") <- n
-    attr(loglik, "nobs") <- n-df
+    attr(loglik, "nobs") <- n##-df
     attr(loglik, "df") <- df
     class(loglik) <- "logLik"
     return(loglik)  
@@ -270,7 +270,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
     loglik <- loglik + val
   }
   attr(loglik, "nall") <- n
-  attr(loglik, "nobs") <- n-length(p)
+  attr(loglik, "nobs") <- n##-length(p)
   attr(loglik, "df") <- length(p)
   class(loglik) <- "logLik"
   return(loglik)  

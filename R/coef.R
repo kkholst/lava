@@ -406,7 +406,7 @@ coef.multigroup <- function(object,...) {
 
 coef.multigroupfit <-
   function(object, level=1,vcov, ext=FALSE,
-           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,groups=NULL,...) {
+           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,groups=NULL,...) {    
 
     if (level==0) {
       theta <- pars(object)
@@ -458,7 +458,8 @@ coef.multigroupfit <-
     res <- list()
     misrow <- list()
     parpos2 <- list()
-    if (is.null(groups)) groups <- 1:model$ngroup
+    if (is.null(groups)) groups <- seq(model$ngroup)
+    if (length(groups)==0) groups <- seq(model$ngroup)
     for (i in groups) {
       orignames <- coef(object$model0$lvm[[i]],mean=object$meanstructure, silent=TRUE, symbol=c("<-","<->"))
       if (ext) {
@@ -516,6 +517,8 @@ coef.multigroupfit <-
 ###{{{ CoefMat
 
 CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,groups=seq(Model(x)$ngroup),...) {
+##  browser()
+
   cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)  
   parpos <- attributes(cc)$parpos
   ##  suppressMessages(browser())
@@ -525,6 +528,7 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
   nlincon.estimates <- c()
   nlincon.names <- c()
   k <- 0
+
   for (i in groups) {
     k <- k+1
     m0 <- Model(Model(x))[[i]]
@@ -564,7 +568,7 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
            digits = max(3, getOption("digits") - 2),
            level=9,
            symbol="<-",...) {
-           
+      
   cc <- x
   if (!is.matrix(x)) {
     cc <- coef(x,level=level,symbol=symbol,...)
