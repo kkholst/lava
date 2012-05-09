@@ -1,0 +1,21 @@
+\name{Range.lvm}
+\alias{Range.lvm}
+\title{Define range constraints of parameters}
+\usage{
+  Range.lvm(a = 0, b = 1)
+}
+\arguments{
+  \item{a}{Lower bound}
+
+  \item{b}{Upper bound}
+}
+\value{
+  function
+}
+\description{
+  Define range constraints of parameters
+}
+\author{
+  Klaus K. Holst
+}
+

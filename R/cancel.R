@@ -1,10 +1,23 @@
+##' Generic cancel method
+##'
+##' @title Generic cancel method
+##' @param x Object
+##' @param ... Additioal arguments
+##' @author Klaus K. Holst
+##' @aliases cancel<-
+##' @export
+"cancel" <- function(x,...) UseMethod("cancel")
+
+##' @export
 "cancel<-" <- function(x,...,value) UseMethod("cancel<-")
 
+##' @S3method cancel<- lvm
 "cancel<-.lvm" <- function(x, ..., value) {
   cancel(x,value,...)
 }
 
-"cancel" <- function(x,value,...) UseMethod("cancel")
+
+##' @S3method cancel lvm
 cancel.lvm <- function(x,value,...) {
   if (class(value)[1]=="formula") {
       ##      yx <- all.vars(value)

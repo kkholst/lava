@@ -1,7 +1,10 @@
-
+##' @export
 "distribution<-" <- function(x,...,value) UseMethod("distribution<-")
+
+##' @export
 "distribution" <- function(x,...,value) UseMethod("distribution")
 
+##' @S3method distribution<- lvm
 "distribution<-.lvm" <- function(x,variable,...,value) {
   if (class(variable)[1]=="formula")
     variable <- all.vars(variable)
@@ -23,6 +26,8 @@
   return(x)
   
 }
+
+##' @S3method distribution lvm
 "distribution.lvm" <- function(x,var,...) {
   nodeRenderInfo(Graph(x))$distribution[var]
 }

@@ -81,6 +81,7 @@ varest <- function(x,data) {
   
 
 ## Instrumental Variable Estimator / 2SLS
+##' @export
 IV <- function(m,data,R2thres=0,...) {
   if (length(constrain(m))>0) stop("Nonlinear constrains not supported!")
   if (class(m)=="lvmfit")

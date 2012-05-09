@@ -1,9 +1,17 @@
-##' Calculate bootstrap estimates of a lvm
+##' Generic method for calculating bootstrap statistics
+##'
+##' @title Generic bootstrap method
+##' @param x Model object
+##' @param \dots Additional arguments
+##' @seealso \code{bootstrap.lvm} \code{bootstrap.lvmfit}
+##' @author Klaus K. Holst
+##' @export
+bootstrap <- function(x,...) UseMethod("bootstrap")
+
+##' Calculate bootstrap estimates of a lvm object
 ##' 
 ##' Draws non-parametric bootstrap samples
 ##' 
-##' 
-##' @aliases bootstrap bootstrap.lvm bootstrap.lvmfit
 ##' @param x \code{lvm}-object.
 ##' @param R Number of bootstrap samples
 ##' @param fun Optional function of the (bootstrapped) model-fit defining the
@@ -22,6 +30,18 @@
 ##' included in the bootstrap procedure
 ##' @param silent Suppress messages
 ##' @param \dots Additional arguments, e.g. choice of estimator.
+##' @aliases bootstrap.lvmfit
+##' @usage
+##' 
+##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
+##'                           p, parametric=FALSE,
+##'                           constraints=TRUE,sd=FALSE,silent=FALSE,...)
+##' 
+##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
+##'                              control=list(start=coef(x)),
+##'                              p=coef(x), parametric=FALSE,
+##'                              estimator=x$estimator,weight=Weight(x),...)
+##' 
 ##' @return A \code{bootstrap.lvm} object.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{confint.lvmfit}}
@@ -36,16 +56,7 @@
 ##' B
 ##' }
 ##'
-##' @export
-##' @method
-bootstrap <- function(x,...) UseMethod("bootstrap")
-
-bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
-                             control=list(start=coef(x)),
-                             p=coef(x), parametric=FALSE,
-                             estimator=x$estimator,weight=Weight(x),...)
-  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,p=p,...)
-
+##' @S3method bootstrap lvm
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE,
                           constraints=TRUE,sd=FALSE,silent=FALSE,...) {
@@ -117,7 +128,14 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
   return(res)
 }
 
+##' @S3method bootstrap lvmfit
+bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
+                             control=list(start=coef(x)),
+                             p=coef(x), parametric=FALSE,
+                             estimator=x$estimator,weight=Weight(x),...)
+  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,p=p,...)
 
+##' @S3method print bootstrap.lvm
 "print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {
   cat("Non-parametric bootstrap statistics (R=",nrow(x$coef),"):\n\n",sep="")
   uplow <-(c(0,1) + c(1,-1)*(1-level)/2)

@@ -1,7 +1,15 @@
+##' Generic method for labeling elements of an object
+##'
+##' @title Label elements of object
+##' @param x Object
+##' @param ... Additional arguments
+##' @author Klaus K. Holst
+##' @export
 `baptize` <- function(x,...) UseMethod("baptize")
 
 ###{{{ baptize.lvm
 
+##' @S3method baptize lvm
 baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
   p <- describecoef(x, mean=TRUE)  
   MeanFix <- intfix(x)

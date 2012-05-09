@@ -1,5 +1,6 @@
 ###{{{ estimate.multigroup
 
+##' @S3method estimate multigroup
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
                                   weight, weightname,
@@ -491,6 +492,7 @@ For numerical approximation please install the library 'numDeriv'.")
 
 ###{{{ estimate.list
 
+##' @S3method estimate list
 `estimate.list` <-
 function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (missing(data)) {
@@ -532,4 +534,4 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   return(res) 
 }
 
-###}}}z
+###}}}

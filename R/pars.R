@@ -1,6 +1,8 @@
+##' @export
 `pars` <-
   function(x,...) UseMethod("pars")
 
+##' @S3method pars default
 pars.default <- function(x,...) {
   if (!is.null(x$opt$est))
     return(x$opt$est)
@@ -8,6 +10,7 @@ pars.default <- function(x,...) {
     return(x$coef)
   return(coef(x))
 }
+
 ###{{{ pars.multigroupfit
 ##pars.multigroupfit <- function(x,...) {
 ##  x$opt$est
@@ -16,6 +19,7 @@ pars.default <- function(x,...) {
 
 ###{{{ pars.lvm
 
+##' @S3method pars lvm
 pars.lvm <- function(x, A, P, v,...) {
   parres <- A[index(x)$M1==1]
   diagcorfree <- diag(P)[diag(index(x)$P1)==1]

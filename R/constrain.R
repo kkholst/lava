@@ -1,4 +1,13 @@
-range.lvm <- function(a=0,b=1) {
+##' Define range constraints of parameters 
+##'
+##' @aliases Range.lvm
+##' @title Define range constraints of parameters
+##' @param a Lower bound
+##' @param b Upper bound
+##' @return function 
+##' @author Klaus K. Holst
+##' @export
+Range.lvm <- function(a=0,b=1) {
   if (b==Inf) {
     f <- function(x) {
       res <- a+exp(x)
@@ -23,9 +32,8 @@ range.lvm <- function(a=0,b=1) {
   return(f)  
 }
 
-
-
-
+##' Add non-linear constraints to latent variable model
+##'
 ##' Add non-linear constraints to latent variable model
 ##' 
 ##' Add non-linear parameter constraints as well as non-linear associations
@@ -88,32 +96,8 @@ range.lvm <- function(a=0,b=1) {
 ##' the corresponding score function of the log-likelihood. If the gradient
 ##' attribute is omitted the chain rule will be applied on a numeric
 ##' approximation of the gradient.
-##' 
 ##' @aliases constrain constrain<- constrain.default constrain<-.multigroup
 ##' constrain<-.default constraints parameter<-
-##' @usage
-##' \method{constrain}{default}(x,par,args,...) <- value
-## \method{constrain}{multigroup}(x,par,k=1,...) <- value
-## constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
-##                         p=pars.default(object),k,idx,...)
-##' @param x \code{lvm}-object
-##' @param par Name of new parameter. Alternatively a formula with lhs
-##' specifying the new parameter and the rhs defining the names of the
-##' parameters or variable names defining the new parameter (overruling the
-##' \code{args} argument).
-##' @param args Vector of variables names or parameter names that are used in
-##' defining \code{par}
-##' @param k For multigroup models this argument specifies which group to
-##' add/extract the constraint
-##' @param value Real function taking args as a vector argument
-##' @param object \code{lvm}-object
-##' @param data Data-row from which possible non-linear constraints should be
-##' calculated
-##' @param vcov Variance matrix of parameter estimates
-##' @param level Level of confidence limits
-##' @param p Parameter vector
-##' @param idx Index indicating which constraints to extract
-##' @param \dots Additional arguments to be passed to the low level functions
 ##' @return A \code{lvm} object.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{regression}}, \code{\link{intercept}},
@@ -156,7 +140,7 @@ range.lvm <- function(a=0,b=1) {
 ##'                y2=y2+2*pnorm(2*x))
 ##' 
 ##' ## Specify model and estimate parameters
-##' constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[1]*x[2])+x[3#]
+##' constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[1]*x[2])+x[3]
 ##' e <- estimate(m,d,control=list(trace=1,method="NR"))
 ##' constraints(e,data=d)
 ##' 
@@ -188,10 +172,38 @@ range.lvm <- function(a=0,b=1) {
 ##' e2 <- estimate(list(m3,m4),list(d1,d2),control=list(method="NR"))
 ##'
 ##' @export
-##' @method
+##' @usage
+##' 
+##' \method{constrain}{default}(x,par,args,...) <- value
+##' 
+##'  \method{constrain}{multigroup}(x,par,k=1,...) <- value
+##'
+##' constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
+##'                         p=pars.default(object),k,idx,...)
+##'
+##' @param x \code{lvm}-object
+##' @param par Name of new parameter. Alternatively a formula with lhs
+##' specifying the new parameter and the rhs defining the names of the
+##' parameters or variable names defining the new parameter (overruling the
+##' \code{args} argument).
+##' @param args Vector of variables names or parameter names that are used in
+##' defining \code{par}
+##' @param k For multigroup models this argument specifies which group to
+##' add/extract the constraint
+##' @param value Real function taking args as a vector argument
+##' @param object \code{lvm}-object
+##' @param data Data-row from which possible non-linear constraints should be
+##' calculated
+##' @param vcov Variance matrix of parameter estimates
+##' @param level Level of confidence limits
+##' @param p Parameter vector
+##' @param idx Index indicating which constraints to extract
+##' @param \dots Additional arguments to be passed to the low level functions
 "constrain<-" <- function(x,...,value) UseMethod("constrain<-")
+##' @export
 "constrain" <- function(x,...) UseMethod("constrain")
 
+##' @S3method constrain default
 constrain.default <- function(x,estimate=FALSE,...) {
   if (estimate) {
     return(constraints(x,...))
@@ -207,12 +219,14 @@ constrain.default <- function(x,estimate=FALSE,...) {
   return(Model(x)$constrain)
 }
 
+##' @S3method constrain<- multigroupfit
 "constrain<-.multigroupfit" <-
   "constrain<-.multigroup" <- function(x,par,k=1,...,value) {
     constrain(Model(x)$lvm[[k]],par=par,...) <- value
     return(x)
 }
 
+##' @S3method constrain<- default
 "constrain<-.default" <- function(x,par,args,...,value) {
   if (class(par)[1]=="formula") {
     lhs <- getoutcome(par)
@@ -243,6 +257,7 @@ constrain.default <- function(x,estimate=FALSE,...) {
   return(x)    
 }
 
+##' @export
 constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0.95,
                         p=pars.default(object),k,idx,...) {
 ##  if (class(object)[1]=="lvm") {

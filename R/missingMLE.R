@@ -116,6 +116,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
 ###{{{ estimate.MAR.lvm
 
+##' @export
 estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,weight2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
 

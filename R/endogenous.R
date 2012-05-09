@@ -1,11 +1,14 @@
+##' @export
 `endogenous` <-
 function(x,...) UseMethod("endogenous")
 
+##' @S3method endogenous lvmfit
 `endogenous.lvmfit` <-
 function(x,...) {
   endogenous(Model(x),...)
 }
 
+##' @S3method endogenous lvm
 `endogenous.lvm` <-
 function(x,top=FALSE,latent=FALSE,...) {
   observed <- manifest(x)
@@ -22,7 +25,7 @@ function(x,top=FALSE,latent=FALSE,...) {
   return(setdiff(observed,exo))
 }
 
-
+##' @S3method endogenous list
 endogenous.list <- function(x,...) {
   endolist <- c()
   for (i in 1:length(x)) {
@@ -35,6 +38,7 @@ endogenous.list <- function(x,...) {
 ##  return(exolist[!(exolist%in%endolist)])
 }
 
+##' @S3method endogenous multigroup
 `endogenous.multigroup` <-
 function(x,...) {
   endogenous(Model(x))

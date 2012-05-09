@@ -1,3 +1,4 @@
+##' @S3method merge lvm
 merge.lvm <- function(x,y,...) {  
   objects <- list(x,y,...)  
   if (length(objects)<2) return(x)

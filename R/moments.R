@@ -2,11 +2,14 @@ Moments <- function(x,p,data,conditional=TRUE,...) {
   
 }
 
+##' @export
 `moments` <-
   function(x,...) UseMethod("moments")
 
+##' @S3method moments lvmfit
 moments.lvmfit <- function(x, p=pars(x),...) moments(Model(x),p=p,...)
 
+##' @S3method moments lvm
 moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
 ##  moments.lvm <- function(x, p, meanpar=NULL, conditional=FALSE, debug=FALSE,...) {
 ### p: model-parameters as obtained from e.g. ´startvalues`

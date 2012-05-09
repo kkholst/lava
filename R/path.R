@@ -1,59 +1,61 @@
-#' Extract pathways in model graph
-#' 
-#' Extract all possible paths from one variable to another connected component
-#' in a latent variable model. In an estimated model the effect size is
-#' decomposed into direct, indirect and total effects including approximate
-#' standard errors.
-#' 
-#' 
-#' @aliases path path.lvm path.lvmfit path.graphNEL effects effects.lvmfit
-#' totaleffects parents parents.lvm children children.lvm
-#' @param object Model object (\code{lvm})
-#' @param to Outcome variable (string). Alternatively a formula specifying
-#' response and predictor in which case the argument \code{from} is ignored.
-#' @param from Response variable (string), not necessarily directly affected by
-#' \code{to}.
-#' @param silent Logical variable which indicates whether messages are turned
-#' on/off.
-#' @param var Variable(s) of interest either given as a character vector or a
-#' formula
-#' @param \dots Additional arguments to be passed to the low level functions
-#' @return If \code{object} is of class \code{lvmfit} a list with the following
-#' elements is returned \item{idx}{ A list where each element defines a
-#' possible pathway via a integer vector indicating the index of the visited
-#' nodes. } \item{V }{ A List of covariance matrices for each path. }
-#' \item{coef }{A list of parameters estimates for each path} \item{path }{A
-#' list where each element defines a possible pathway via a character vector
-#' naming the visited nodes in order.  } \item{edges }{Description of 'comp2'}
-#' 
-#' If \code{object} is of class \code{lvm} only the \code{path} element will be
-#' returned.
-#' 
-#' The \code{effects} method returns an object of class \code{effects}.
-#' @note For a \code{lvmfit}-object the parameters estimates and their
-#' corresponding covariance matrix are also returned.  The
-#' \code{effects}-function additionally calculates the total and indirect
-#' effects with approximate standard errors
-#' @author Klaus K. Holst
-#' @keywords methods models graphs
-#' @examples
-#' 
-#' m <- lvm(c(y1,y2,y3)~eta)
-#' regression(m) <- y2~x1
-#' latent(m) <- ~eta
-#' regression(m) <- eta~x1+x2
-#' d <- sim(m,500)
-#' e <- estimate(m,d)
-#' 
-#' path(Model(e),y2~x1)
-#' parents(Model(e), ~y2)
-#' children(Model(e), ~x2)
-#' children(Model(e), ~x2+eta)
-#' effects(e,y2~x1)
-#' 
-#' 
-#' 
-path <- function(object,to,from,...) UseMethod("path")
+##' Extract all possible paths from one variable to another connected component
+##' in a latent variable model. In an estimated model the effect size is
+##' decomposed into direct, indirect and total effects including approximate
+##' standard errors.
+##' 
+##' @title Extract pathways in model graph
+##' @export
+##' @aliases path effects path.lvm effects.lvmfit 
+##' totaleffects
+##' @seealso \code{children}, \code{parents}
+##' @return If \code{object} is of class \code{lvmfit} a list with the following
+##' elements is returned \item{idx}{ A list where each element defines a
+##' possible pathway via a integer vector indicating the index of the visited
+##' nodes. } \item{V }{ A List of covariance matrices for each path. }
+##' \item{coef }{A list of parameters estimates for each path} \item{path }{A
+##' list where each element defines a possible pathway via a character vector
+##' naming the visited nodes in order.  } \item{edges }{Description of 'comp2'}
+##' 
+##' If \code{object} is of class \code{lvm} only the \code{path} element will be
+##' returned.
+##' 
+##' The \code{effects} method returns an object of class \code{effects}.
+##' @note For a \code{lvmfit}-object the parameters estimates and their
+##' corresponding covariance matrix are also returned.  The
+##' \code{effects}-function additionally calculates the total and indirect
+##' effects with approximate standard errors
+##' @author Klaus K. Holst
+##' @keywords methods models graphs
+##' @examples
+##' 
+##' m <- lvm(c(y1,y2,y3)~eta)
+##' regression(m) <- y2~x1
+##' latent(m) <- ~eta
+##' regression(m) <- eta~x1+x2
+##' d <- sim(m,500)
+##' e <- estimate(m,d)
+##' 
+##' path(Model(e),y2~x1)
+##' parents(Model(e), ~y2)
+##' children(Model(e), ~x2)
+##' children(Model(e), ~x2+eta)
+##' effects(e,y2~x1)
+##'
+##' @usage
+##' \method{path}{lvm} (object, to = NULL, from, ...)
+##' \method{effects}{lvmfit} (object, to, from, silent=FALSE, ...)
+##' @param object Model object (\code{lvm})
+##' @param to Outcome variable (string). Alternatively a formula specifying
+##' response and predictor in which case the argument \code{from} is ignored.
+##' @param from Response variable (string), not necessarily directly affected by
+##' \code{to}.
+##' @param silent Logical variable which indicates whether messages are turned
+##' on/off.
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @export
+path <- function(object,...) UseMethod("path")
+
+##' @S3method path lvmfit
 path.lvmfit <- function(object,to=NULL,from,...) {
   mypath <- path(Model(object),to,from,...)
   cc <- coef(object,level=9) ## All parameters (fixed and variable)
@@ -99,7 +101,10 @@ path.lvmfit <- function(object,to=NULL,from,...) {
   return(res)
 }
 
+##' @S3method path lvm
 path.lvm <- function(object,to=NULL,from,...) path(Graph(object),to=to,from=from,...)
+
+##' @S3method path graphNEL
 path.graphNEL <- function(object,to,from,...) {
   if (class(to)[1]=="formula") {
     fvar <- extractvar(to)

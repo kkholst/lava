@@ -19,6 +19,7 @@ gfilter <- function(x,sigma=1) {
   return(res)
 }
 
+##' @export
 lava <- function(seed,w=128,h=w,bw=4,sigma=5000,bg=20000,numcol=128,col=grDevices::heat.colors(numcol),...) {
   if (!missing(seed))
     set.seed(seed)

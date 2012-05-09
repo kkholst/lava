@@ -1,23 +1,24 @@
-#' Calculate partial correlations
-#' 
-#' Calculate partial correlation coefficients and confidence limits via Fishers
-#' z-transform
-#' 
-#' 
-#' @param formula formula speciying the covariates and optionally the outcomes
-#' to calculate partial correlation for
-#' @param data data.frame
-#' @param level Level of confidence limits
-#' @return A coefficient matrix
-#' @author Klaus K. Holst
-#' @keywords models regression
-#' @examples
-#' 
-#' m <- lvm(c(y1,y2,y3)~x1+x2)
-#' covariance(m) <- c(y1,y2,y3)~y1+y2+y3
-#' d <- sim(m,500)
-#' partialcor(~x1+x2,d)
-#' 
+##' Calculate partial correlations
+##' 
+##' Calculate partial correlation coefficients and confidence limits via Fishers
+##' z-transform
+##' 
+##' 
+##' @param formula formula speciying the covariates and optionally the outcomes
+##' to calculate partial correlation for
+##' @param data data.frame
+##' @param level Level of confidence limits
+##' @return A coefficient matrix
+##' @author Klaus K. Holst
+##' @keywords models regression
+##' @examples
+##' 
+##' m <- lvm(c(y1,y2,y3)~x1+x2)
+##' covariance(m) <- c(y1,y2,y3)~y1+y2+y3
+##' d <- sim(m,500)
+##' partialcor(~x1+x2,d)
+##'
+##' @export
 partialcor <- function(formula,data,level=0.95) {
   if (attributes(terms(formula))$response==0) {
     preds <- all.vars(formula)

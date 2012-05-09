@@ -1,8 +1,11 @@
+##' @export
 `exogenous` <-
 function(x,...) UseMethod("exogenous")
 
+##' @export
 "exogenous<-" <- function(x,...,value) UseMethod("exogenous<-")
 
+##' @S3method exogenous<- lvm
 `exogenous<-.lvm` <- function(x,silent=FALSE,
                               xfree=TRUE,
                               ...,value) {
@@ -31,6 +34,7 @@ function(x,...) UseMethod("exogenous")
   return(x)
 }
 
+##' @S3method exogenous lvm
 `exogenous.lvm` <-
 function(x,latent=FALSE,index=TRUE,...) {
   if (!index) {
@@ -55,11 +59,13 @@ function(x,latent=FALSE,index=TRUE,...) {
   return(exogenous(x,latent=latent,index=FALSE,...))
 }
 
+##' @S3method exogenous lvmfit
 `exogenous.lvmfit` <-
 function(x,...) {
   exogenous(Model(x),...)
 }
 
+##' @S3method exogenous list
 exogenous.list <- function(x,...) {
   exolist <- c()
   endolist <- c()
@@ -72,6 +78,7 @@ exogenous.list <- function(x,...) {
   return(exolist[!(exolist%in%endolist)])
 }
 
+##' @S3method exogenous multigroup
 `exogenous.multigroup` <-
 function(x,...) {
   exogenous(Model(x))

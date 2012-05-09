@@ -1,5 +1,6 @@
 ###{{{ print.fix
 
+##' @S3method print fix
 print.fix <- function(x,exo=FALSE,...) {
   switch(attributes(x)$type,
         reg = cat("Regression parameters:\n"),
@@ -52,71 +53,77 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 
 ###{{{ intfix
 
+##' @export
 "intfix" <- function(object,...) UseMethod("intfix")
+##' @export
+"intfix<-" <- function(object,...,value) UseMethod("intfix<-")
 
-
-#' Fix mean parameters in 'lvm'-object
-#' 
-#' Define linear constraints on intercept parameters in a \code{lvm}-object.
-#' 
-
-#' 
-#' The \code{intercept} function is used to specify linear constraints on the
-#' intercept parameters of a latent variable model. As an example we look at
-#' the multivariate regression model
-#' 
-#' \deqn{ E(Y_1|X) = \alpha_1 + \beta_1 X} \deqn{ E(Y_2|X) = \alpha_2 + \beta_2
-#' X}
-#' 
-#' defined by the call
-#' 
-#' \code{m <- lvm(c(y1,y2) ~ x)}
-#' 
-#' To fix \eqn{\alpha_1=\alpha_2} we call
-#' 
-#' \code{intercept(m) <- c(y1,y2) ~ f(mu)}
-#' 
-#' Fixed parameters can be reset by fixing them to \code{NA}.  For instance to
-#' free the parameter restriction of \eqn{Y_1} and at the same time fixing
-#' \eqn{\alpha_2=2}, we call
-#' 
-#' \code{intercept(m, ~y1+y2) <- list(NA,2)}
-#' 
-#' Calling \code{intercept} with no additional arguments will return the
-#' current intercept restrictions of the \code{lvm}-object.
-#' 
-#' @aliases intercept intercept<- intercept.lvm intercept<-.lvm intfix intfix
-#' intfix<- intfix.lvm intfix<-.lvm
-#' @param object \code{lvm}-object
-#' @param vars character vector of variable names
-#' @param value Vector (or list) of parameter values or labels (numeric or
-#' character) or a formula defining the linear constraints (see also the
-#' \code{regression} or \code{covariance} methods).
-#' @param \dots ...
-#' @return
-#' 
-#' A \code{lvm}-object
-#' @note
-#' 
-#' Variables will be added to the model if not already present.
-#' @author Klaus K. Holst
-#' @seealso \code{\link{covariance<-}}, \code{\link{regression<-}},
-#' \code{\link{constrain<-}}, \code{\link{parameter<-}},
-#' \code{\link{latent<-}}, \code{\link{cancel<-}}, \code{\link{kill<-}}
-#' @keywords models regression
-#' @examples
-#' 
-#' 
-#' ## A multivariate model
-#' m <- lvm(c(y1,y2) ~ f(x1,beta)+x2)
-#' regression(m) <- y3 ~ f(x1,beta)
-#' intercept(m) <- y1 ~ f(mu)
-#' intercept(m, ~y2+y3) <- list(2,"mu")
-#' intercept(m) ## Examine intercepts of model (NA translates to free/unique parameter)
-#' 
-#' 
+##' Fix mean parameters in 'lvm'-object
+##' 
+##' Define linear constraints on intercept parameters in a \code{lvm}-object.
+##' 
+##' 
+##' The \code{intercept} function is used to specify linear constraints on the
+##' intercept parameters of a latent variable model. As an example we look at
+##' the multivariate regression model
+##' 
+##' \deqn{ E(Y_1|X) = \alpha_1 + \beta_1 X} \deqn{ E(Y_2|X) = \alpha_2 + \beta_2
+##' X}
+##' 
+##' defined by the call
+##' 
+##' \code{m <- lvm(c(y1,y2) ~ x)}
+##' 
+##' To fix \eqn{\alpha_1=\alpha_2} we call
+##' 
+##' \code{intercept(m) <- c(y1,y2) ~ f(mu)}
+##' 
+##' Fixed parameters can be reset by fixing them to \code{NA}.  For instance to
+##' free the parameter restriction of \eqn{Y_1} and at the same time fixing
+##' \eqn{\alpha_2=2}, we call
+##' 
+##' \code{intercept(m, ~y1+y2) <- list(NA,2)}
+##' 
+##' Calling \code{intercept} with no additional arguments will return the
+##' current intercept restrictions of the \code{lvm}-object.
+##' 
+##' @aliases intercept intercept<- intercept.lvm intercept<-.lvm intfix intfix
+##' intfix<- intfix.lvm intfix<-.lvm
+##' @param object \code{lvm}-object
+##' @param vars character vector of variable names
+##' @param value Vector (or list) of parameter values or labels (numeric or
+##' character) or a formula defining the linear constraints (see also the
+##' \code{regression} or \code{covariance} methods).
+##' @param \dots Additional arguments
+##' @usage
+##' \method{intercept}{lvm}(object, vars, ...) <- value
+##' @return
+##' 
+##' A \code{lvm}-object
+##' @note
+##' 
+##' Variables will be added to the model if not already present.
+##' @author Klaus K. Holst
+##' @seealso \code{\link{covariance<-}}, \code{\link{regression<-}},
+##' \code{\link{constrain<-}}, \code{\link{parameter<-}},
+##' \code{\link{latent<-}}, \code{\link{cancel<-}}, \code{\link{kill<-}}
+##' @keywords models regression
+##' @export
+##' @examples
+##' 
+##' 
+##' ## A multivariate model
+##' m <- lvm(c(y1,y2) ~ f(x1,beta)+x2)
+##' regression(m) <- y3 ~ f(x1,beta)
+##' intercept(m) <- y1 ~ f(mu)
+##' intercept(m, ~y2+y3) <- list(2,"mu")
+##' intercept(m) ## Examine intercepts of model (NA translates to free/unique paramete##r)
+##' 
+##' 
 "intercept" <- function(object,...) UseMethod("intercept")
 
+##' @S3method intercept lvm
+##' @S3method intfix lvm
 intercept.lvm <- intfix.lvm <- function(object,...) {
   res <- object$mean; attr(res,"type") <- "mean"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -124,7 +131,12 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
   class(res) <- "fix"
   return(res)
 }
-"intercept<-" <- "intfix<-" <- function(object,...,value) UseMethod("intfix<-")
+
+##' @export
+"intercept<-" <- function(object,...,value) UseMethod("intercept<-")
+
+##' @S3method intfix<- lvm
+##' @S3method intercept<- lvm
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)
@@ -156,7 +168,10 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
 
 ###{{{ covfix
 
+##' @export
 "covfix" <- function(object,...) UseMethod("covfix")
+
+##' @S3method covfix lvm
 covfix.lvm <- function(object,...) {
   res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -164,7 +179,12 @@ covfix.lvm <- function(object,...) {
   class(res) <- "fix"
   return(res)
 }
+
+
+##' @export
 "covfix<-" <- function(object,...,value) UseMethod("covfix<-")
+
+##' @S3method covfix<- lvm
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
                            ##diag=(length(var1)==1),...,value) {
 
@@ -315,7 +335,10 @@ covfix.lvm <- function(object,...) {
 
 ###{{{ regfix
 
+##' @export
 "regfix" <- function(object,...) UseMethod("regfix")
+
+##' @S3method regfix lvm
 regfix.lvm <- function(object,...) {
   res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -323,7 +346,11 @@ regfix.lvm <- function(object,...) {
   class(res) <- "fix"
   return(res)
 }
+
+##' @export
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
+
+##' @S3method regfix<- lvm
 "regfix<-.lvm" <- function(object, to, from, exo=TRUE,..., value) {
   if (is.null(to)) stop("variable list needed")
   curvar <- index(object)$vars
@@ -469,12 +496,18 @@ regfix.lvm <- function(object,...) {
 
 ###{{{ parfix
 
+##' @export
 "parfix<-" <- function(x,...,value) UseMethod("parfix<-")
+
+##' @S3method parfix<- lvm
 "parfix<-.lvm" <- function(x,idx,...,value) {
   parfix(x,idx,value,...)
 }
 
+##' @export
 "parfix" <- function(x,...) UseMethod("parfix")
+
+##' @S3method parfix lvm
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   object <- Model(x)
   if (fix)

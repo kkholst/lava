@@ -1,47 +1,54 @@
 ###{{{ labels
 
 
-#' Define labels of graph
-#' 
-#' Alters labels of nodes and edges in the graph of a latent variable model
-#' 
-#' 
-#' @aliases labels labels<- labels<-.default labels.lvm labels.lvmfit
-#' labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
-#' nodecolor<- nodecolor<-.default
-#' @param object \code{lvm}-object.
-#' @param value node label/edge label/color
-#' @param to Formula specifying outcomes and predictors defining relevant
-#' edges.
-#' @param \dots Additional arguments (\code{lwd}, \code{cex}, \code{col},
-#' \code{labcol}), \code{border}.
-#' @param var Formula or character vector specifying the nodes/variables to
-#' alter.
-#' @param border Colors of borders
-#' @param labcol Text label colors
-#' @param shape Shape of node
-#' @param lwd Line width of border
-#' @author Klaus K. Holst
-#' @keywords graphs aplot
-#' @examples
-#' 
-#' 
-#' m <- lvm(c(y,v)~x+z)
-#' regression(m) <- c(v,x)~z
-#' labels(m) <- c(y=expression(psi), z=expression(zeta))
-#' nodecolor(m,~y+z+x,border=c("white","white","black"), labcol="white", lwd=c(1,1,5)) <- c("orange","indianred","lightgreen")
-#' edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
-#' lwd=c(3,1)) <- expression(phi,rho)
-#' edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
-#' \donttest{plot(m)}
-#' 
-#' 
+##' Define labels of graph
+##' 
+##' Alters labels of nodes and edges in the graph of a latent variable model
+##' 
+##' 
+##' @aliases labels<- labels labels<-.default labels.lvm labels.lvmfit
+##' labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
+##' nodecolor<- nodecolor<-.default
+##' @author Klaus K. Holst
+##' @export
+##' @keywords graphs aplot
+##' @examples
+##' 
+##' 
+##' m <- lvm(c(y,v)~x+z)
+##' regression(m) <- c(v,x)~z
+##' labels(m) <- c(y=expression(psi), z=expression(zeta))
+##' nodecolor(m,~y+z+x,border=c("white","white","black"), labcol="white", lwd=c(1,1,5)) <- c("orange","indianred","lightgreen")
+##' edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
+##' lwd=c(3,1)) <- expression(phi,rho)
+##' edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
+##' \donttest{plot(m)}
+##' 
+##' @param object \code{lvm}-object.
+##' @param value node label/edge label/color
+##' @param to Formula specifying outcomes and predictors defining relevant
+##' edges.
+##' @param \dots Additional arguments (\code{lwd}, \code{cex}, \code{col},
+##' \code{labcol}), \code{border}.
+##' @param var Formula or character vector specifying the nodes/variables to
+##' alter.
+##' @param border Colors of borders
+##' @param labcol Text label colors
+##' @param shape Shape of node
+##' @param lwd Line width of border
+##' @usage
+##' \method{labels}{default}(object, ...) <- value
+##' \method{edgelabels}{lvm}(object, to, ...) <- value
+##' \method{nodecolor}{default}(object, var=vars(object),
+##' border, labcol, shape, lwd, ...) <- value
 `labels<-` <- function(object,...,value) UseMethod("labels<-")
 
+##' @S3method labels<- default
 `labels<-.default` <- function(object,...,value) {
   labels(object,value)
 }
 
+##' @S3method labels graphNEL
 labels.graphNEL <- function(object,lab=NULL,...) {
   if (is.null(lab))
     return(nodeRenderInfo(object)$label)  
@@ -50,6 +57,7 @@ labels.graphNEL <- function(object,lab=NULL,...) {
   return(object)
 }
 
+##' @S3method labels lvmfit
 labels.lvmfit <- function(object,lab=NULL,...) {
   if (is.null(lab))
     return(labels(Graph(object)))  
@@ -57,6 +65,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
   return(object)
 }
 
+##' @S3method labels lvm
 `labels.lvm` <- function(object,lab=NULL,...) {
   gr <- Graph(object)
   if (is.null(lab))
@@ -75,6 +84,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
 
 ###{{{ edgelabels
 
+##' @S3method edgelabels<- lvmfit
 "edgelabels<-.lvmfit" <- function(object,to,from,est=TRUE,edges=NULL,cex=1,...,value) {
   if (is.null(edges))  {
     if (class(to)[1]=="formula") {
@@ -102,6 +112,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
   return(object)
 }
 
+##' @S3method edgelabels lvmfit
 edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   if (!missing(value)) {
     edgelabels(object,...) <- value
@@ -137,18 +148,23 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   return(object)
 }
 
+##' @export
 `edgelabels` <- function(object, ...) UseMethod("edgelabels")
 
+##' @export
 `edgelabels<-` <- function(object,...,value) UseMethod("edgelabels<-")
 
+##' @S3method edgelabels<- lvm
 `edgelabels<-.lvm` <- function(object,to,...,value) {
   edgelabels(object,to=to, lab=value,...)
 }
 
+##' @S3method edgelabels<- graphNEL
 `edgelabels<-.graphNEL` <- function(object,...,value) {
   edgelabels(object,lab=value,...)
 }
 
+##' @S3method edgelabels graphNEL
 `edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black",
                                   expr=TRUE,
                                   debug=FALSE,...) {
@@ -249,6 +265,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   return(object)
 }
 
+##' @S3method edgelabels lvm
 `edgelabels.lvm` <-
 function(object,lab=NULL,...) {
   if (is.null(lab)) {

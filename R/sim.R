@@ -1,4 +1,5 @@
-t.lvm <- function(df=2,mu,sigma,...) {
+##' @export
+student.lvm <- function(df=2,mu,sigma,...) {
   if (!missing(mu) & !missing(sigma)) 
     f <- function(n,mu,var,...) mu+sigma*rt(n,df=df)
   else
@@ -7,6 +8,7 @@ t.lvm <- function(df=2,mu,sigma,...) {
   return(f)
 }
 
+##' @export
 normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   fam <- gaussian(eval(link))
@@ -20,7 +22,7 @@ normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   return(f)  
 }
 
-
+##' @export
 poisson.lvm <- function(link="log",lambda,...) {
   fam <- poisson(eval(link))
  if (!missing(lambda))
@@ -37,6 +39,7 @@ poisson.lvm <- function(link="log",lambda,...) {
   return(f)  
 } 
 
+##' @export
 binomial.lvm <- function(link="logit",p) {
   fam <- binomial(eval(link))
   if (!missing(p))
@@ -63,6 +66,7 @@ binomial.lvm <- function(link="logit",p) {
   return(f)
 }
 
+##' @export
 uniform.lvm <- function(a,b) {
   if (!missing(a) & !missing(b)) 
     f <- function(n,mu,var,...) runif(n,a,b)
@@ -71,6 +75,8 @@ uniform.lvm <- function(a,b) {
       (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
   return(f)
 }
+
+##' @export
 weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
   require(survival)
   lambda <- 1/scale
@@ -96,39 +102,50 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
   }
   return(f)
 }
+
+##' @export
 logit.lvm <- binomial.lvm("logit")
+
+##' @export
 probit.lvm <- binomial.lvm("probit")
 
 
 
 
-#' Simulate model
-#' 
-#' Simulate data from a general SEM model including non-linear effects and
-#' general link and distribution of variables.
-#' 
-#' E.g. \eqn{ E(y|x) = 2*x^2 } could be specified as
-#' 
-#' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
-#' 
-#' @aliases sim sim.lvmfit sim.lvm functional functional functional<-
-#' functional.lvm functional<-.lvm distribution distribution distribution<-
-#' distribution.lvm distribution<-.lvm heavytail heavytail<- weibull.lvm
-#' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm
-#' @param x Model object
-#' @param n Number of simulated values/individuals
-#' @param p Parameter value (optional)
-#' @param normal Logical indicating whether to simulate data from a
-#' multivariate normal distribution conditional on exogenous variables hence
-#' ignoring functional/distribution definition
-#' @param cond for internal use
-#' @param sigma Default residual variance (1)
-#' @param rho Default covariance parameter (0.5)
-#' @param \dots Additional arguments to be passed to the low level functions
-#' @author Klaus K. Holst
-#' @keywords models datagen regression
+##' Simulate model
+##' 
+##' Simulate data from a general SEM model including non-linear effects and
+##' general link and distribution of variables.
+##' 
+##' E.g. \eqn{ E(y|x) = 2*x^2 } could be specified as
+##' 
+##' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
+##' 
+##' @aliases sim sim.lvmfit sim.lvm functional functional<-
+##' functional.lvm functional<-.lvm distribution distribution distribution<-
+##' distribution.lvm distribution<-.lvm heavytail heavytail<- weibull.lvm
+##' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm student.lvm
+##' @usage
+##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
+##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
+##' @param x Model object
+##' @param n Number of simulated values/individuals
+##' @param p Parameter value (optional)
+##' @param normal Logical indicating whether to simulate data from a
+##' multivariate normal distribution conditional on exogenous variables hence
+##' ignoring functional/distribution definition
+##' @param cond for internal use
+##' @param sigma Default residual variance (1)
+##' @param rho Default covariance parameter (0.5)
+##' @param X Optional matrix of covariates
+##' @param unlink Return Inverse link transformed data
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @author Klaus K. Holst
+##' @keywords models datagen regression
+##' @export
 "sim" <- function(x,...) UseMethod("sim")
 
+##' @S3method sim lvmfit
 sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
   m <- Model(x)
   if ((nrow(model.frame(x))==n) & xfix) {
@@ -141,7 +158,7 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
   sim(m,n=n,p=p,...)
 }
 
-
+##' @S3method sim lvm
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     X,unlink=FALSE,...) {
   require("mvtnorm")

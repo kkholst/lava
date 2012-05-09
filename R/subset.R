@@ -1,24 +1,23 @@
-#' Extract subset of latent variable model
-#' 
-#' Extract measurement models or user-specified subset of model
-#' 
-#' 
-#' @aliases subset.lvm measurement
-#' @param x \code{lvm}-object.
-#' @param vars Character vector or formula specifying variables to include in
-#' subset.
-#' @param silent Logical variable which indicates whether messages are turned
-#' on/off.
-#' @param debug For debugging only
-#' @param \dots Additional arguments to be passed to the low level functions
-#' @return A \code{lvm}-object.
-#' @author Klaus K. Holst
-#' @keywords models regression
-#' @examples
-#' 
-#' m <- lvm(c(y1,y2)~x1+x2)
-#' subset(m,~y1+x1)
-#' 
+##' Extract subset of latent variable model
+##' 
+##' Extract measurement models or user-specified subset of model
+##' 
+##' 
+##' @aliases measurement
+##' @param x \code{lvm}-object.
+##' @param vars Character vector or formula specifying variables to include in
+##' subset.
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @return A \code{lvm}-object.
+##' @author Klaus K. Holst
+##' @keywords models regression
+##' @examples
+##' 
+##' m <- lvm(c(y1,y2)~x1+x2)
+##' subset(m,~y1+x1)
+##'
+##' @S3method subset lvm
+##' @method subset lvm
 subset.lvm <- function(x, vars, ...) {
   if (missing(vars))
     return(x)

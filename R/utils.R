@@ -1,4 +1,6 @@
 ###{{{ contrmat
+
+##' @export
 contrmat <- function(npar,ngroup,...) {
  B <- matrix(0,ncol=npar*ngroup,nrow=npar*(ngroup-1))
  pos <- 0
@@ -10,19 +12,28 @@ contrmat <- function(npar,ngroup,...) {
  }
  return(B)
 }
+
 ###}}} contr
 
 ###{{{ %++% concat operator
 
+##' @export
 `%+%` <- function(x,y) UseMethod("%+%",y)
+
+##' @S3method %+% lvm
 `%+%.lvm` <- function(x,y) merge(x,y)
+
+##' @S3method %+% matrix
 `%+%.matrix` <- function(x,y) blockdiag(x,y)
+
+##' @S3method %+% default
 `%+%.default` <- function(x,y) paste(x, y, sep="")
 
 ###}}}
 
 ###{{{ parlabels
 
+##' @export
 parlabels <- function(x,exo=FALSE) {
   res <- c(unlist(intfix(x)[unlist(lapply(intfix(x), function(y) !is.na(y) & !is.numeric(y)))]),
            regfix(x)$labels[!is.na(regfix(x)$labels)],
@@ -36,6 +47,7 @@ parlabels <- function(x,exo=FALSE) {
 
 ###{{{ describecoef
 
+##' @export
 describecoef <- function(x,par,from,to,mean=TRUE) {  
   p <- coef(x, mean=mean)  
   if (!missing(from)) {
@@ -147,6 +159,7 @@ procrandomslope <- function(object,data=object$data,...) {
 
 ###{{{ fixsome function
 
+##' @export
 fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
 
 
@@ -406,6 +419,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 ###{{{ tr
 
+##' @export
 ## Trace function. Returns the sum of the diagonal of symmetric matrix
 `tr` <-
   function(A) {
@@ -459,6 +473,8 @@ extractvar <- function(f) {
     myvars <- all.vars(f)
     return(list(y=yy,x=xx,all=myvars))
 }
+
+##' @export
 getoutcome <- function(formula) {
   aa <- attributes(terms(formula))
   if (aa$response==0) {
@@ -469,12 +485,15 @@ getoutcome <- function(formula) {
   attributes(res)$x <- aa$term.labels
   res  
 }
+
+##' @export
 decomp.specials <- function(x,pattern="[()]",sep=",",...) {
   st <- gsub(" ","",x)
   if (!is.null(pattern))
     st <- rev(unlist(strsplit(st,pattern,...)))[1]
   unlist(strsplit(st,sep,...))
 }
+
 Decomp.specials <- function(x,pattern="[()]") {
   st <- gsub(" ","",x)
   st <- gsub("\n","",st)
@@ -526,12 +545,16 @@ toformula <- function (y = ".", x = ".")
 
 ###{{{ frobnorm
 
+
 # Frobenius norm af matrice x. Hvis x er vektor er dette lig 2-normen
+##' @export
 frobnorm <- function(x) {
   frob2 <- tr(t(x)%*%x)
   return(sqrt(frob2))
 }
+##' @export
 mdist <- function(x,y) { frobnorm(x-y) }
+##' @export
 meq <- function(A,tol=1e-9) { frobnorm(A)<tol }
 
 ###}}} frobnorm
@@ -560,6 +583,7 @@ printR <- function(x,eol="\n",...) {
 
 ###{{{ Inverse/pseudo
 
+##' @export
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
   n <- nrow(X)
   if (nrow(X)==1) {
@@ -593,6 +617,7 @@ naiveGrad <- function(f, x, h=1e-9) {
 
 ###{{{ whichentry
 
+##' @export
 ## X k-dim. array of dimension (d1,d2,...,dk)
 ## Element x at entry (x1,...,xk).
 ## position (via which) := x1 + d1*(x2-1) + d1*d2*(x3-1) + ... + prod(d1,...,d[k-1])*(xk-1)

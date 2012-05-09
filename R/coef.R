@@ -1,5 +1,6 @@
 ###{{{ coef.lvm
 
+##' @S3method coef lvm
 `coef.lvm` <-
 function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
   if (fix) ## 12/7-2010
@@ -106,6 +107,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
 
 ###{{{ coef.lvmfit
 
+##' @S3method coef lvmfit
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2),
          symbol=c("<-","<->"),
@@ -396,6 +398,7 @@ function(object, level=ifelse(missing(type),-1,2),
 
 ###{{{ coef.multigroup
 
+##' @S3method coef multigroup
 coef.multigroup <- function(object,...) {
   return(object$parpos)
 }
@@ -404,6 +407,7 @@ coef.multigroup <- function(object,...) {
 
 ###{{{ coef.multigroupfit
 
+##' @S3method coef multigroupfit
 coef.multigroupfit <-
   function(object, level=1,vcov, ext=FALSE,
            labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,groups=NULL,...) {    
@@ -563,6 +567,8 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
   return(res)
 }
 
+
+##' @export
 CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
   function(x,
            digits = max(3, getOption("digits") - 2),

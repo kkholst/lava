@@ -1,9 +1,11 @@
 Isqrt <- function(X) { eX <- eigen(X); with(eX, vectors %*% diag(1/sqrt(values)) %*% t(vectors)) }
 
+##' @S3method residuals lvmfit
 residuals.lvmfit <- function(object,data=model.frame(object),p=pars(object),...) {
   residuals(Model(object), data=data, p=p, ...)
 }
 
+##' @S3method residuals lvm
 residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=pars(object),...) {
   Y <- setdiff(manifest(object), X <- exogenous(object))
   Pr <- predict(object,p=p,data=data)

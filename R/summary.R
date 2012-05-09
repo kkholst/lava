@@ -1,5 +1,6 @@
 ###{{{ summary.lvm
 
+##' @S3method summary lvm
 `summary.lvm` <-
 function(object,...) {
   k <- length(vars(object))
@@ -26,6 +27,7 @@ function(object,...) {
 
 ###{{{ summary.lvmfit
 
+##' @S3method summary lvmfit
 `summary.lvmfit` <-
 function(object,std="xy", level=9, labels=2, ...) {
   cc <- CoefMat(object,labels=labels,std=std,level=level,...)
@@ -52,6 +54,7 @@ function(object,std="xy", level=9, labels=2, ...) {
   res
 }
 
+##' @S3method print summary.lvmfit
 print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   if (!is.null(x$control$method)) {
     l2D <- sum(x$object$opt$grad^2)
@@ -92,12 +95,14 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   invisible(x)
 }
 
+##' @S3method coef summary.lvmfit
 coef.summary.lvmfit <- function(object,...) object$coef
 
 ###}}} summary.lvmfit
 
 ###{{{ summary.multigroupfit
 
+##' @S3method summary multigroupfit
 summary.multigroupfit <- function(object,groups=NULL,...) {
   if (is.null(groups)) {
     if (object$model$missing) {
@@ -110,6 +115,7 @@ summary.multigroupfit <- function(object,groups=NULL,...) {
   res
 }
 
+##' @S3method print summary.multigroupfit
 print.summary.multigroupfit <- function(x,...) {
   l2D <- sum(x$object$opt$grad^2)
   if (l2D>1e-2) warning("Possible problems with convergence!")
@@ -137,6 +143,7 @@ print.summary.multigroupfit <- function(x,...) {
 
 ###{{{ summary.multigroup
 
+##' @S3method summary multigroup
 summary.multigroup <- function(object,...) {
   for (m in object$lvm)
     print(m,...)

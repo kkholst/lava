@@ -1,7 +1,8 @@
-
+##' @export
 `nodecolor<-` <-
 function(object,var,...,value) UseMethod("nodecolor<-")
 
+##' @S3method nodecolor<- default
 `nodecolor<-.default` <-
   function(object, var=vars(object), border, labcol, shape, lwd, ..., value) {
     if (length(var)>0 & length(value)>0) {

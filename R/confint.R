@@ -1,5 +1,3 @@
-##' Calculate confidence limits for parameters
-##' 
 ##' Calculate Wald og Likelihood based (profile likelihood) confidence intervals
 ##' 
 ##' Calculates either Wald confidence limits: \deqn{\hat{\theta} \pm
@@ -10,7 +8,8 @@
 ##' where \eqn{q_{\alpha}} is the \eqn{\alpha} fractile of the \eqn{\chi^2_1}
 ##' distribution, and \eqn{\hat\theta_{\tau}} are obtained by maximizing the
 ##' log-likelihood with tau being fixed.
-##' 
+##'
+##' @title Calculate confidence limits for parameters
 ##' @param object \code{lvm}-object.
 ##' @param parm Index of which parameters to calculate confidence limits for.
 ##' @param level Confidence level
@@ -19,7 +18,7 @@
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @return A 2xp matrix with columns of lower and upper confidence limits
 ##' @author Klaus K. Holst
-##' @seealso \code{\link{bootstrap.lvm}}
+##' @seealso \code{\link{bootstrap}{lvm}}
 ##' @keywords models regression
 ##' @examples
 ##' 
@@ -34,7 +33,8 @@
 ##' }
 ##'
 ##' @aliases confint.multigroupfit
-##' @export
+##' @S3method confint lvmfit
+##' @method confint lvmfit
 confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,...) {
   if (is.character(parm)) {
     parm <- parpos(Model(object),p=parm)
@@ -53,6 +53,7 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
 }
 
 
+##' @S3method confint multigroupfit
 confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,
                                   estimates=TRUE,...) {
   p <- 1-(1-level)/2

@@ -1,7 +1,9 @@
+##' @S3method predict lvmfit
 predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) { 
   predict(Model(object),x=x,p=p,data=data,mu=object$mu,S=object$S,...)
 }
 
+##' @S3method predict lvm
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ## data = data.frame of exogenous variables
   if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
@@ -123,4 +125,5 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   return(res)
 }
 
+##' @S3method print lvm.predict
 print.lvm.predict <- function(x,...) print(x[,])

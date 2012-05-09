@@ -57,32 +57,54 @@ condition <- function(A) {
 
 
 
-#' Extract model summaries and GOF statistics for model object
-#' 
-#' Calculates various GOF statistics for model object including global
-#' chi-squared test statistic and AIC. Extract model-specific mean and variance
-#' structure, residuals and various predicitions.
-#' 
-#' 
-#' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
-#' score score.lvmfit logLik.lvmfit
-#' @param object Model object
-#' @param x Model object
-#' @param p Parameter vector used to calculate statistics
-#' @param data Data.frame to use
-#' @param weight Optional weight matrix
-#' @param n Number of observations
-#' @param conditional If TRUE the conditional moments given the covariates are
-#' calculated. Otherwise the joint moments are calculated
-#' @param model String defining estimator, e.g. "gaussian" (see
-#' \code{estimate})
-#' @param debug Debugging only
-#' @param chisq Boolean indicating whether to calculate chi-squared
-#' goodness-of-fit (always TRUE for estimator='gaussian')
-#' @param \dots Additional arguments to be passed to the low level functions
-#' @return A \code{htest}-object.
-#' @author Klaus K. Holst
-#' @keywords methods models
+##' Extract model summaries and GOF statistics for model object
+##' 
+##' Calculates various GOF statistics for model object including global
+##' chi-squared test statistic and AIC. Extract model-specific mean and variance
+##' structure, residuals and various predicitions.
+##' 
+##' 
+##' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
+##' score score.lvmfit logLik.lvmfit
+##' @param object Model object
+##' @param x Model object
+##' @param p Parameter vector used to calculate statistics
+##' @param data Data.frame to use
+##' @param weight Optional weight matrix
+##' @param n Number of observations
+##' @param conditional If TRUE the conditional moments given the covariates are
+##' calculated. Otherwise the joint moments are calculated
+##' @param model String defining estimator, e.g. "gaussian" (see
+##' \code{estimate})
+##' @param debug Debugging only
+##' @param chisq Boolean indicating whether to calculate chi-squared
+##' goodness-of-fit (always TRUE for estimator='gaussian')
+##' @param level Level of confidence limits for RMSEA
+##' @param \dots Additional arguments to be passed to the low level functions
+##' @usage
+##' 
+##' gof(object, ...)
+##'
+##' \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90, ...)
+##' 
+##' moments(x,...)
+##' 
+##' \method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...)
+##' 
+##' \method{logLik}{lvmfit}(object, p=coef(object),
+##'                       data=model.frame(object),
+##'                       model=object$estimator,
+##'                       weight=Weight(object),
+##'                           ...)
+##' 
+##' \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), ...)
+##' 
+##' \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),...)
+##' 
+##' @return A \code{htest}-object.
+##' @author Klaus K. Holst
+##' @keywords methods models
+##' @export
 `gof` <-
   function(object,...) UseMethod("gof")
 
@@ -101,7 +123,7 @@ condition <- function(A) {
 ##   return(res)    
 ## }
 
-
+##' @S3method gof lvmfit
 gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   n <- object$data$n
   loglik <- logLik(object,...)
@@ -143,6 +165,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   return(res)       
 }
 
+##' @S3method print gof.lvmfit
 print.gof.lvmfit <- function(x,optim=TRUE,...) {
   if (!is.null(x$n))
     with(x,       

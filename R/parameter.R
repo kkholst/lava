@@ -1,9 +1,13 @@
+##' @export
 "parameter<-" <- function(x,...,value) UseMethod("parameter<-")
 
+##' @S3method parameter<- lvmfit
 "parameter<-.lvmfit" <- function(x,...,value) {
   parameter(Model(x),...) <- value
   return(x)
 }
+
+##' @S3method parameter<- lvm
 "parameter<-.lvm" <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     parameter(x,...) <- all.vars(value)
@@ -16,5 +20,6 @@
   return(x)
 }
 
+##' @export
 parameter <- function(x,...)
   vars(x)[unlist(lapply(nodeData(Graph(x)), function(z) z$parameter))]

@@ -1,3 +1,4 @@
+##' @export
 `measurement` <-
 function(x, silent=TRUE, debug=FALSE) {
   M <- t(as(Graph(x), Class="matrix"))

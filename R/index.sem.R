@@ -1,16 +1,26 @@
+##' @export
 updatelvm <- function(x,mean=TRUE,...) {
   index(x) <- reindex(x,mean=mean,...)
   x$parpos <- parpos(x,mean=mean,...)
   return(x)
 }
 
+##' @export
 "index" <- function(x,...) UseMethod("index")
+
+##' @export
 "index<-" <- function(x,...,value) UseMethod("index<-")
 
+##' @S3method index lvm
 "index.lvm" <- function(x,...) { x$index }
+
+##' @S3method index lvmfit
 "index.lvmfit" <- function(x,...) { index(Model(x)) }
 
+##' @S3method index<- lvm
 "index<-.lvm" <- function(x,...,value)  { x$index <- value; return(x) }
+
+##' @S3method index<- lvmfit
 "index<-.lvmfit" <- function(x,...,value) { Model(x)$index <- value; return(x) }
 
 
@@ -22,6 +32,7 @@ updatelvm <- function(x,mean=TRUE,...) {
 ###   P0 ## Index of free variance parameters
 ###   P1 ## Index of free and _unique_ regression parameters
 ###   npar.var  ## Number of covariance parameters
+##' @export
 `reindex` <-
 function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { ## Extract indices of parameters from model
   x$parpos <- NULL

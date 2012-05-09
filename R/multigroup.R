@@ -1,5 +1,6 @@
 ###{{{ multigroup
 
+##' @export
 multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=FALSE, ...) {
   nm <- length(models)
   if (nm!=length(datasets)) stop("Supply dataset for each model")

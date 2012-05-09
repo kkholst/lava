@@ -1,5 +1,6 @@
 ### Return position of variance elements in the parameter vector (without mean parameters)
 ### Optimization constraints are needed on these parameters
+##' @export
 variances <- function(x,mean=FALSE) {
 ##  if (is.null(x$parpos))
 ##    x$parpos <- parpos(x)
@@ -11,6 +12,7 @@ variances <- function(x,mean=FALSE) {
   return(res)
 }
 ## And the off-diagonal (covariance) parameters
+##' @export
 offdiags <- function(x,mean=FALSE) {
   parpos <- parpos(x,mean=mean)
   pp <- parpos$P

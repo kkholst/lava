@@ -1,8 +1,10 @@
+##' @export
 `information` <-
 function(x,...) UseMethod("information")
  
 ###{{{ information.lvm
 
+##' @S3method information lvm
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
                                     c("E","hessian","varS","outer","sandwich","robust","num"),"outer"),
                             data,weight=NULL,model="gaussian",method=lava.options()$Dmethod,
@@ -198,6 +200,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 
 ###{{{ information.lvmfit
 
+##' @S3method information lvmfit
 information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),...) {
   information(x$model0,p=p,n=n,data=data,model=model,weight=weight,...)
 }
@@ -205,6 +208,7 @@ information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=
 ###}}} information.lvmfit
 
 
+##' @S3method information lvm.missing
 information.lvm.missing <- function(x,
                                     p=coef(x), estimator=x$estimator,
                                     weight=Weight(x$estimate),
@@ -212,10 +216,12 @@ information.lvm.missing <- function(x,
   information(x$estimate$model0, p=p, model=estimator, weight=weight,...)
 }
 
+##' @S3method information multigroupfit
 information.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estimator, ...) {
   information(x$model0,p=p, weight=weight, model=estimator ,...)
 }
 
+##' @S3method information multigroup
 information.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)

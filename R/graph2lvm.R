@@ -1,3 +1,4 @@
+##' @export
 `graph2lvm` <-
 function(g, debug=FALSE, silent=TRUE) {
   res <- lvm(nodes(g), debug=debug,silent=silent)

@@ -1,4 +1,4 @@
-
+##' @export
 makemissing <- function(data,p=0.2,cols=1:ncol(data),rowwise=FALSE,nafun=function(x) x) {
   p <- rep(p,length.out=length(cols))
   if (!rowwise)

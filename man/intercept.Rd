@@ -1,45 +1,43 @@
 \name{intercept}
 \alias{intercept}
-\alias{intercept<-}
 \alias{intercept.lvm}
+\alias{intercept<-}
 \alias{intercept<-.lvm}
 \alias{intfix}
-\alias{intfix}
-\alias{intfix<-}
 \alias{intfix.lvm}
+\alias{intfix<-}
 \alias{intfix<-.lvm}
-
-\title{ Fix mean parameters in 'lvm'-object }
-
-\description{
-  Define linear constraints on intercept parameters in a \code{lvm}-object.  
-}
-
+\title{Fix mean parameters in 'lvm'-object}
 \usage{
-
-\method{intercept}{lvm}(object, vars, ...) <- value
-
+  \method{intercept}{lvm}(object, vars, ...) <- value
 }
-
 \arguments{
-
   \item{object}{\code{lvm}-object}
+
   \item{vars}{character vector of variable names}
-  \item{value}{Vector (or list) of parameter values or labels (numeric
-  or character) or a formula defining the linear constraints (see also
-  the \code{regression} or \code{covariance} methods).}
-  \item{\dots}{...}
 
+  \item{value}{Vector (or list) of parameter values or
+  labels (numeric or character) or a formula defining the
+  linear constraints (see also the \code{regression} or
+  \code{covariance} methods).}
+
+  \item{\dots}{Additional arguments}
 }
-
+\value{
+  A \code{lvm}-object
+}
+\description{
+  Define linear constraints on intercept parameters in a
+  \code{lvm}-object.
+}
 \details{
+  The \code{intercept} function is used to specify linear
+  constraints on the intercept parameters of a latent
+  variable model. As an example we look at the multivariate
+  regression model
 
-  The \code{intercept} function is used to specify linear constraints
-  on the intercept parameters of a latent variable model. As an example
-  we look at the multivariate regression model
-
-  \deqn{ E(Y_1|X) = \alpha_1 + \beta_1 X}
-  \deqn{ E(Y_2|X) = \alpha_2 + \beta_2 X}
+  \deqn{ E(Y_1|X) = \alpha_1 + \beta_1 X} \deqn{ E(Y_2|X) =
+  \alpha_2 + \beta_2 X}
 
   defined by the call
 
@@ -49,49 +47,38 @@
 
   \code{intercept(m) <- c(y1,y2) ~ f(mu)}
 
-  Fixed parameters can be reset by fixing them to \code{NA}.  For
-  instance to free the parameter restriction of \eqn{Y_1} and at the
-  same time fixing \eqn{\alpha_2=2}, we call
+  Fixed parameters can be reset by fixing them to
+  \code{NA}.  For instance to free the parameter
+  restriction of \eqn{Y_1} and at the same time fixing
+  \eqn{\alpha_2=2}, we call
 
-  \code{intercept(m, ~y1+y2) <- list(NA,2)}  
+  \code{intercept(m, ~y1+y2) <- list(NA,2)}
 
-  Calling \code{intercept} with no additional arguments 
+  Calling \code{intercept} with no additional arguments
   will return the current intercept restrictions of the
   \code{lvm}-object.
-
 }
 \note{
-
-  Variables will be added to the model if not already present. 
-
-}
-\value{
-
-  A \code{lvm}-object
-
-}
-
-\author{Klaus K. Holst}
-
-\seealso{
-  \code{\link{covariance<-}},
-  \code{\link{regression<-}},
-  \code{\link{constrain<-}},
-  \code{\link{parameter<-}},
-  \code{\link{latent<-}},
-  \code{\link{cancel<-}},
-  \code{\link{kill<-}}  
+  Variables will be added to the model if not already
+  present.
 }
 \examples{
-
 ## A multivariate model
 m <- lvm(c(y1,y2) ~ f(x1,beta)+x2)
 regression(m) <- y3 ~ f(x1,beta)
 intercept(m) <- y1 ~ f(mu)
 intercept(m, ~y2+y3) <- list(2,"mu")
-intercept(m) ## Examine intercepts of model (NA translates to free/unique parameter)
-
+intercept(m) ## Examine intercepts of model (NA translates to free/unique paramete##r)
 }
-
+\author{
+  Klaus K. Holst
+}
+\seealso{
+  \code{\link{covariance<-}}, \code{\link{regression<-}},
+  \code{\link{constrain<-}}, \code{\link{parameter<-}},
+  \code{\link{latent<-}}, \code{\link{cancel<-}},
+  \code{\link{kill<-}}
+}
 \keyword{models}
 \keyword{regression}
+

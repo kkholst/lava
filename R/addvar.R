@@ -1,8 +1,18 @@
+##' Generic method for adding variables to model object
+##'
+##' @title Add variable to (model) object 
+##' @param x Model object
+##' @param ... Additional arguments
+##' @author Klaus K. Holst
+##' @aliases addvar<-
+##' @export
 `addvar` <-
 function(x,...) UseMethod("addvar")
+##' @export
 `addvar<-` <-
 function(x,...,value) UseMethod("addvar<-")
 
+##' @S3method addvar<- lvm
 `addvar<-.lvm` <-function(x,...,value) {
   if (class(value)[1]=="formula") {
     regression(x,...) <- value
@@ -12,6 +22,7 @@ function(x,...,value) UseMethod("addvar<-")
   addvar(x, var=value, ...)
 }
 
+##' @S3method addvar lvm
 `addvar.lvm` <-
 function(x, var, silent=lava.options()$silent,...) {
   new <- setdiff(var,vars(x))

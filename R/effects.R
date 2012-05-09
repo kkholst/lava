@@ -1,6 +1,8 @@
 
+##' @export
 totaleffects <- function(object,...,value) UseMethod("totaleffects")
 
+##' @S3method  totaleffects lvmfit
 totaleffects.lvmfit <- function(object,to,...,level=0.95) {
   p <- (1-level)/2
   q <- qnorm(p)
@@ -33,7 +35,7 @@ totaleffects.lvmfit <- function(object,to,...,level=0.95) {
   res
 }
 
-
+##' @S3method effects lvmfit
 effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   if (missing(to)) {
     return(summary(object))
@@ -93,6 +95,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   val
 }
 
+##' @S3method print effects
 print.effects <- function(x,...) {
   with(x, {
     cat("\nTotal effect of '", from, "' on '", to, "':\n", sep="")
@@ -112,7 +115,7 @@ print.effects <- function(x,...) {
   invisible(x) 
 }
 
-
+##' @S3method coef effects
 coef.effects <- function(object,...) {  
   totalef <- with(object$totalef, cbind(est,sd[1]))
   directef <- with(object$directef, cbind(est,sd[1]))
@@ -133,6 +136,7 @@ coef.effects <- function(object,...) {
   mycoef
 }
 
+##' @S3method confint effects
 confint.effects <- function(object,parm,level=0.95,...) {
   mycoef <- coef(object)
   p <- 1-(1-level)/2

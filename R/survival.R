@@ -1,10 +1,14 @@
+##' @export
 `survival` <- function(x,...) UseMethod("survival")
+##' @export
 "survival<-" <- function(x,...,value) UseMethod("survival<-")
 
+##' @S3method survival<- lvm
 "survival<-.lvm" <- function(x,...,value) {
   survival(x, value, ...)
 }
 
+##' @S3method survival lvm
 `survival.lvm` <-
 function(x,var=NULL, ...) {
   if (is.null(var)) {

@@ -1,4 +1,13 @@
+##' Generic correlation method
+##'
+##' @title Generic method for extracting correlation coefficients of model object
+##' @param x Object
+##' @param ... Additional arguments
+##' @author Klaus K. Holst
+##' @export
 "correlation" <- function(x,...) UseMethod("correlation")
+
+##' @S3method correlation lvmfit
 correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
   pp <- matrices(Model(x), 1:index(x)$npar+index(x)$npar.mean)$P
   pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]

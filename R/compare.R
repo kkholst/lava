@@ -1,32 +1,9 @@
-comparepair <- function(x1,x2) {
-  ##if (class(x1)!="lvmfit" | class(x2)!="lvmfit") stop("'lvmfit' object expected.")
-  l1 <- do.call("logLik",list(x1),envir=parent.frame(2))
-  l2 <- do.call("logLik",list(x2),envir=parent.frame(2))
-  ##l1 <- logLik(x1);  l2 <- logLik(x2)
-  df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;
-  ##Q <- -2*ifelse(df1<df2, l1-l2, l2-l1); names(Q) <- "chisq"
-  Q <- abs(2*(l1-l2))
-  names(Q) <- "chisq"
-  df <- abs(df1-df2); names(df) <- "df"
-  p <- 1-pchisq(Q,df=df)
-  values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
-
-  res <- list(statistic = Q, parameter = df,
-              p.value= p, method = "Likelihood ratio test",
-              estimate = values)
-  class(res) <- "htest"
-  return(res)
-}
-
-
-
-
-##' Statistical tests
+##' @title Statistical tests
 ##' 
-##' Performs Likelihood-ratio, Wald or score tests.
-##' 
-##' 
+##' Performs Likelihood-ratio, Wald andscore tests
+##'
 ##' @aliases compare contrmat
+##' @export
 ##' @param object \code{lvmfit}-object
 ##' @param \dots Additional arguments to low-level functions
 ##' @return Matrix of test-statistics and p-values
@@ -39,11 +16,9 @@ comparepair <- function(x1,x2) {
 ##' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
 ##' regression(m) <- eta ~ x
 ##'
-##' @export
-##' @method 
-`compare` <-
-  function(object,...) UseMethod("compare")
+compare <- function(object,...) UseMethod("compare")
 
+##' @S3method compare default
 compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   if (!missing(par)) {
     contrast <- rep(0,length(coef(object)))
@@ -140,3 +115,25 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   }
     return(res)
 }
+
+
+comparepair <- function(x1,x2) {
+  ##if (class(x1)!="lvmfit" | class(x2)!="lvmfit") stop("'lvmfit' object expected.")
+  l1 <- do.call("logLik",list(x1),envir=parent.frame(2))
+  l2 <- do.call("logLik",list(x2),envir=parent.frame(2))
+  ##l1 <- logLik(x1);  l2 <- logLik(x2)
+  df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;
+  ##Q <- -2*ifelse(df1<df2, l1-l2, l2-l1); names(Q) <- "chisq"
+  Q <- abs(2*(l1-l2))
+  names(Q) <- "chisq"
+  df <- abs(df1-df2); names(df) <- "df"
+  p <- 1-pchisq(Q,df=df)
+  values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
+
+  res <- list(statistic = Q, parameter = df,
+              p.value= p, method = "Likelihood ratio test",
+              estimate = values)
+  class(res) <- "htest"
+  return(res)
+}
+
