@@ -62,6 +62,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       if(A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
     }
 
+  
   varEdges <- corEdges <- c()
   delta <- ifelse(diag,0,1)  
   if (cor | diag) {

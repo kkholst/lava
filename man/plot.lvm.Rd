@@ -9,7 +9,7 @@
     graph = list(rankdir = "BT"),
     attrs = list(graph = graph), unexpr = FALSE,
     addstyle = TRUE, Rgraphviz = lava.options()$Rgraphviz,
-    ...)
+    init = TRUE, ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -51,6 +51,8 @@
   plot (e.g. dashed lines to double-headed arrows)}
 
   \item{Rgraphviz}{if FALSE igraph is used for graphics}
+
+  \item{init}{Reinitialize graph (for internal use)}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

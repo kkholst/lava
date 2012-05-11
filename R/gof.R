@@ -137,15 +137,17 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
     q <- res$fit$statistic
     qdf <- res$fit$parameter
-    epsilon <- function(lambda) sapply(lambda,function(x) sqrt(max(0,x/(qdf*(n-1)))))
+    epsilon <- function(lambda) sapply(lambda,function(x)
+                                       ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
+                                       ##sqrt(max(0,x/(qdf*(n-1)))))
     opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
     alpha <- (1-level)/2
     hi <- list(par=0)
     RMSEA <- epsilon(q-qdf)
     start <- RMSEA
     if (RMSEA>0)
-      hi <- nlminb(start,function(x) opf(x,p=1-alpha))
-    lo <- nlminb(start,function(x) opf(x,p=alpha))
+      hi <- tryCatch(nlminb(start,function(x) opf(x,p=1-alpha)),error=function(...) list(par=NA))
+    lo <- tryCatch(nlminb(start,function(x) opf(x,p=alpha)),error=function(...) list(par=NA))
     ## hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf))
     ## lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n))
     ci <- c(epsilon(c(hi$par,lo$par)))    

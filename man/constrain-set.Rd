@@ -151,9 +151,10 @@ logLik(e1)
 ## Simulate data
 m <- lvm(c(y1,y2)~f(x,0)+f(eta,1))
 latent(m) <- ~eta
-covariance(m) <- c(y1,y2) ~ f(v)
-intercept(m) <- c(y1,y2) ~ f(mu)
-covariance(m) <- c(eta) ~ f(zeta)
+covariance(m,~y1+y2) <- "v"
+intercept(m,~y1+y2) <- "mu"
+covariance(m,~eta) <- "zeta"
+intercept(m,~eta) <- 0
 set.seed(1)
 d <- sim(m,100,p=c(v=0.01,zeta=0.01))[,manifest(m)]
 d <- transform(d,
@@ -161,7 +162,7 @@ d <- transform(d,
                y2=y2+2*pnorm(2*x))
 
 ## Specify model and estimate parameters
-constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[1]*x[2])+x[3]
+constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[3]+x[1]*x[2])
 e <- estimate(m,d,control=list(trace=1,method="NR"))
 constraints(e,data=d)
 

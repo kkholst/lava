@@ -30,6 +30,7 @@
 ##' automatically be added to the plot (e.g. dashed lines to double-headed
 ##' arrows)
 ##' @param Rgraphviz if FALSE igraph is used for graphics
+##' @param init Reinitialize graph (for internal use)
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
@@ -46,11 +47,11 @@
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
            unexpr=FALSE,
-           addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,
+           addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
            ...) {
   index(x) <- reindex(x)
   if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
-##  browser()
+
   if (!Rgraphviz || (!require("Rgraphviz"))) {
     if (!require("igraph"))
       stop("package 'Rgraphviz' or 'igraph' not available")
@@ -59,8 +60,11 @@
     plot(g)
     return(invisible(g))
   } 
-
-  g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
+  if (init) {
+    g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
+  } else {
+    g <- Graph(x)
+  }
   if  (labels) {
     AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
     mylab <- AP$P; mylab[AP$A!="0"] <- AP$A[AP$A!="0"]
@@ -95,7 +99,7 @@
   invisible(g)
 }
 
-###}}} plot.lvmz
+###}}} plot.lvm
 
 ###{{{ plot.lvmfit
 
@@ -107,10 +111,11 @@
     newgraph <- FALSE
     if (is.null(g)) {
       newgraph <- TRUE
-      Graph(x) <- finalize(Model(x), diag=TRUE, cor=TRUE, fontsize1=fontsize1, ...)
+      Graph(x) <- finalize(Model(x), diag=TRUE, cor=FALSE, fontsize1=fontsize1, ...)
     }
     if(noplot) return(Graph(x))
-
+    ##  browser()
+    ##    newgraph <- FALSE
     ##cat("Setting up graph...\n")
     if (newgraph) {
       if (missing(type))
@@ -123,7 +128,7 @@
     }
     g <- Graph(x)
     var <- rownames(covariance(Model(x))$rel)
-     if (!cor) {
+    if (!cor) {
        delta <- 1
       for (r in 1:(nrow(covariance(Model(x))$rel)-delta) ) {
         for (s in (r+delta):ncol(covariance(Model(x))$rel) ) {
@@ -141,7 +146,7 @@
       }
     } 
     m <- Model(x); Graph(m) <- g
-    g <- plot(m, diag=diag, cor=cor, fontsize1=fontsize1, ...)
+    g <- plot(m, diag=diag, cor=cor, fontsize1=fontsize1, init=FALSE, ...)
     options(.savedOpt)
     invisible(g)    
   }
