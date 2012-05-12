@@ -10,7 +10,7 @@
 \title{Add covariance structure to Latent Variable Model}
 \usage{
   \method{covariance}{lvm}(object, var1=NULL, var2=NULL,
-    ...) <- value
+    constrain=FALSE, ...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object}
@@ -22,11 +22,14 @@
   defining pairwise covariance between \code{var1} and
   \code{var2})}
 
+  \item{constrain}{Define non-linear parameter constraints
+  to ensure positive definite structure}
+
   \item{\dots}{Additional arguments to be passed to the low
   level functions}
 
   \item{value}{List of parameter values or (if \code{var1}
-  is unspecified) a}
+  is unspecified)}
 }
 \value{
   A \code{lvm}-object

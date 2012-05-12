@@ -248,7 +248,8 @@ constrain.default <- function(x,estimate=FALSE,...) {
 #    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x)),names(constrain(x))))) {
     if (!(i%in%c(parlabels(Model(x)),index(Model(x))$exogenous,names(constrain(x))))) {
       ##    if (!(i%in%c(parlabels(x))))
-      message("\tAdding parameter '", i,"'\n",sep="")
+      if (!lava.options()$silent)
+        message("\tAdding parameter '", i,"'\n",sep="")
       parameter(x,silent=TRUE) <- i
     }
   }

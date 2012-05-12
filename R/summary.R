@@ -104,10 +104,14 @@ coef.summary.lvmfit <- function(object,...) object$coef
 
 ##' @S3method summary multigroupfit
 summary.multigroupfit <- function(object,groups=NULL,...) {
-  if (is.null(groups)) {
+  if (is.null(groups) | length(groups)==0) {
     if (object$model$missing) {
       groups <- object$model$complete
-    }
+      if (length(groups)==0)
+        groups <- seq_len(object$model0$ngroup)
+    } else {
+      groups <- seq_len(object$model$ngroup)
+    }    
   }
   cc <- CoefMat.multigroupfit(object,groups=groups,...) 
   res <- list(coef=coef(object,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object)

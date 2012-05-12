@@ -56,6 +56,8 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
   if (is.null(groups)) {
     if (x$model$missing) {
       groups <- x$model$complete
+      if (length(groups)==0)
+        groups <- seq_len(x$model0$ngroup)
       if (!is.null(x$model$mnames))
         x$model$names <- x$model$mnames
     } else {

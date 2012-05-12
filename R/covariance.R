@@ -67,10 +67,11 @@
 ##' @param var1 Vector of variables names between (or formula)
 ##' @param var2 Vector of variables names (or formula) defining pairwise
 ##' covariance between \code{var1} and \code{var2})
+##' @param constrain Define non-linear parameter constraints to ensure positive definite structure
 ##' @param \dots Additional arguments to be passed to the low level functions
-##' @param value List of parameter values or (if \code{var1} is unspecified) a
+##' @param value List of parameter values or (if \code{var1} is unspecified) 
 ##' @usage
-##' \method{covariance}{lvm}(object, var1=NULL, var2=NULL, ...) <- value
+##' \method{covariance}{lvm}(object, var1=NULL, var2=NULL, constrain=FALSE, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{regression<-}}, \code{\link{intercept<-}},
@@ -93,7 +94,7 @@
 "covariance<-" <- function(object,...,value) UseMethod("covariance<-")
 
 ##' @S3method covariance<- lvm
-"covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, ..., value) {
+"covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, constrain=FALSE, ..., value) {
 
   if (!is.null(var1)) {
     if (class(var1)[1]=="formula") {
@@ -123,7 +124,7 @@
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)
     if (length(lhs)==0) {
-      return(covariance(object,all.vars(value),...))
+      return(covariance(object,all.vars(value),constrain=constrain,...))
     }
     yy <- decomp.specials(lhs)
 
@@ -137,12 +138,12 @@
 ##          if(is.null(attr(tt,"specials")$v) | is.null(attr(tt,"specials")$f))
                     
           {
-          for (i in yy)
-            for (j in res[[1]])
-              object <- covariance(object, c(i,j),...)
-        } else {
-          covfix(object,var1=yy,var2=NULL) <- res[[1]]
-        }
+            for (i in yy)
+              for (j in res[[1]])
+                object <- covariance(object, c(i,j), constrain=constrain, ...)
+          } else {
+            covfix(object,var1=yy,var2=NULL) <- res[[1]]
+          }
       } else {
         covfix(object,var1=yy,var2=res[[1]][1]) <- res[[1]][2]
       }
@@ -179,10 +180,10 @@
 
 ##' @S3method covariance lvm
 `covariance.lvm` <-
-function(object,var=NULL,var2,exo=FALSE,...) {
+function(object,var=NULL,var2,exo=FALSE,constrain=FALSE,...) {
   if (!is.null(var)) {
     if (class(var)[1]=="formula") {
-      covariance(object,...) <- var
+      covariance(object,constrain=constrain,...) <- var
       return(object)
     }
     allvars <- var    
@@ -190,8 +191,13 @@ function(object,var=NULL,var2,exo=FALSE,...) {
       if (class(var2)[1]=="formula")
         var2 <- all.vars(var2)
       allvars <- c(allvars,var2)
+    }  
+    
+    if (constrain) {
+      if (length(var)!=2) stop("Constraints only implemented for pairs")
+      return(covarianceconst(object,var[1],var[2],...))
     }
-
+    
     xorg <- exogenous(object)
     exoset <- setdiff(xorg,allvars) 
     if (!exo & length(exoset)<length(xorg)) {
@@ -241,3 +247,38 @@ function(object,var=NULL,var2,exo=FALSE,...) {
     return(covfix(object))
 }
 
+covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,logv,...) {
+  if (class(var1)[1]=="formula") {
+    var1 <- getoutcome(var1)
+    var2 <- attributes(var1)$x
+  }
+  curpar <- parlabels(object)
+  v1name <- object$covpar[var1,var1]
+  v2name <- object$covpar[var2,var2]
+  logv1 <- logv2 <- NA
+  if (is.na(cname)) {
+    cname <- object$covpar[var1,var2]
+  }
+  nvarname <- c("rname","cname","v1name","v2name","logv1","logv2")[is.na(c(rname,cname,v1name,v2name,logv1,logv2))]
+  nprefix <- sapply(nvarname, function(x) substr(x,1,1))
+  if (!missing(logv)) nprefix[length(nprefix)-1:0] <- logv
+  ##browser()
+  for (i in seq_len(length(nvarname))) {    
+    count <- 0
+    repeat {
+      count <- count+1
+      curname <- paste(nprefix[i],count,sep="")
+      if (!(curname%in%curpar)) break;   
+    }
+    curpar <- c(curname,curpar)
+    assign(nvarname[i],curname)
+  }
+  covariance(object,c(var1,var2)) <- c(v1name,v2name)
+##  browser()
+  constrain(object,v1name,logv1) <- function(x) exp(x)
+  if (v1name!=v2name)
+  constrain(object,v2name,logv2) <- function(x) exp(x)
+  covariance(object,var1,var2) <- cname
+  constrain(object,cname,c(v1name,v2name,rname)) <- function(x) (prod(x[1:2]^0.5))*tanh(x[3])
+  return(structure(object,rname=rname,cname=cname))
+}
