@@ -163,9 +163,10 @@ NULL
 ##' modelPar modelVar matrices reorderdata graph2lvm igraph.lvm
 ##' subgraph finalize index.lvm index.lvmfit index reindex index<-
 ##' survival survival<- randomslope randomslope<- lisrel variances
-##' offdiags describecoef parlabels stdcoef CoefMat deriv updatelvm
-##' checkmultigroup profci estimate.MAR missingModel frobnorm
-##' getoutcome decomp.specials Inverse gaussian_logLik.lvm addhook
-##' gethook multigroup Weight fixsome parfix parfix<-
-##' %+% makemissing merge IV tr whichentry mdist meq parameter
+##' offdiags describecoef parlabels stdcoef CoefMat
+##' CoefMat.multigroupfit deriv updatelvm checkmultigroup profci
+##' estimate.MAR missingModel frobnorm getoutcome decomp.specials
+##' Inverse gaussian_logLik.lvm addhook gethook multigroup Weight
+##' fixsome parfix parfix<- %+% makemissing merge IV tr whichentry
+##' mdist meq parameter
 NULL

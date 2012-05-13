@@ -24,7 +24,6 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 
 ###{{{ estfun
 
-
 ### just for testing
 estfun2 <- function(start,objective,gradient,hessian,...) {
 
@@ -99,8 +98,6 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
   }
   nlminb2(start,myobj,mygrad,hessian=NULL,...)
 }
-
-
 
 ###}}} 
 

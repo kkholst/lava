@@ -247,22 +247,27 @@ function(object,var=NULL,var2,exo=FALSE,constrain=FALSE,...) {
     return(covfix(object))
 }
 
-covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,logv,...) {
+covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,vname=NA,v2name=vname,lname=NA,l2name=lname,...) {
   if (class(var1)[1]=="formula") {
     var1 <- getoutcome(var1)
     var2 <- attributes(var1)$x
   }
   curpar <- parlabels(object)
-  v1name <- object$covpar[var1,var1]
-  v2name <- object$covpar[var2,var2]
-  logv1 <- logv2 <- NA
   if (is.na(cname)) {
     cname <- object$covpar[var1,var2]
   }
-  nvarname <- c("rname","cname","v1name","v2name","logv1","logv2")[is.na(c(rname,cname,v1name,v2name,logv1,logv2))]
+
+  if (is.na(v2name)) {
+    v2name <- object$covpar[var2,var2]
+  }
+  if (is.na(vname)) {
+    vname <- object$covpar[var1,var1]
+  }
+ 
+  nvarname <- c("rname","cname","vname","v2name","lname","l2name")[is.na(c(rname,cname,vname,v2name,lname,l2name))]
+  
   nprefix <- sapply(nvarname, function(x) substr(x,1,1))
-  if (!missing(logv)) nprefix[length(nprefix)-1:0] <- logv
-  ##browser()
+  ##  if (!is.na(lname)) nprefix[length(nprefix)-1:0] <- lname
   for (i in seq_len(length(nvarname))) {    
     count <- 0
     repeat {
@@ -273,12 +278,15 @@ covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,logv,...) {
     curpar <- c(curname,curpar)
     assign(nvarname[i],curname)
   }
-  covariance(object,c(var1,var2)) <- c(v1name,v2name)
-##  browser()
-  constrain(object,v1name,logv1) <- function(x) exp(x)
-  if (v1name!=v2name)
-  constrain(object,v2name,logv2) <- function(x) exp(x)
+  covariance(object,c(var1,var2)) <- c(vname,v2name)
+  ff <- function(x) exp(x)
+  constrain(object,vname,lname) <- ff
+  if (vname!=v2name)
+    constrain(object,v2name,l2name) <- ff
   covariance(object,var1,var2) <- cname
-  constrain(object,cname,c(v1name,v2name,rname)) <- function(x) (prod(x[1:2]^0.5))*tanh(x[3])
+  cpar <- unique(c(vname,v2name,rname))
+  constrain(object,cname,cpar) <- function(x)
+    prod((x[seq(length(cpar)-1)]))^(1/(length(cpar)-1))*tanh(x[length(cpar)])
+  
   return(structure(object,rname=rname,cname=cname))
 }

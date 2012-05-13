@@ -58,7 +58,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
   }))
   res <- c(wmean,wp)
   res[!is.finite(res) | is.nan(res) | is.na(res) | is.complex(res)] <- .5
-  return(res)  
+  return(as.numeric(res))
 }
 
 ###}}}

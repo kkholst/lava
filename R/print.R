@@ -55,10 +55,20 @@ print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
 print.multigroupfit <- function(x,groups=NULL,...)  {
   if (is.null(groups)) {
     if (x$model$missing) {
-      groups <- x$model$complete
-      if (length(groups)==0)
-        groups <- seq_len(x$model0$ngroup)
-      if (!is.null(x$model$mnames))
+      modelclass <- attributes(x$model0)$modelclass
+      nmis <- attributes(x$model0)$nmis
+      orggroup <- unique(modelclass)
+      groupn <- unlist(lapply(orggroup,function(i) sum(modelclass==i)))
+      cumsumgroup <- cumsum(c(0,groupn))
+      groups <- unlist(lapply(orggroup,function(i)
+                              which.min(nmis[which(modelclass==i)])+cumsumgroup[i])) ##  groups with max. number of variables
+                       ##      suppressMessages(browser())
+                       ## if (length(groups)==0)
+                       ##   groupedDataps <- seq_len(x$model0$ngroup)      
+      for (i in seq_len(length(groups))) {
+        if (nmis[groups[i]]>0) warning("No complete cases in group ",i,". Showing results of group with max number of variables. All coefficients can be extracted with 'coef'. All missing pattern groups belonging to this sub-model can be extracted by calling: coef(..., groups=c(",paste(which(modelclass==i),collapse=","),"))")
+      }
+      if (!is.null(x$model$mnameses))
         x$model$names <- x$model$mnames
     } else {
       groups <- seq_len(length(x$model$lvm))

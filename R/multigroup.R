@@ -67,6 +67,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     datasets0 <- list()
     complidx <- c()
     nmodels <- 0
+    modelclass <- c()
+    nmis <- c()
     for (i in seq_len(nm)) {
       myvars <- unlist(intersect(colnames(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep)))
       mydata <- datasets[[i]][,myvars]
@@ -78,11 +80,18 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         ##        suppressMessages(browser())
         nmodels <- c(nmodels,length(val$models))
         complidx <- c(complidx,val$pattern.allcomp+nmodels[i]+1)
+        nmis0 <- rowSums(val$patterns);
+        allmis <- which(nmis0==ncol(val$patterns))
+        if (length(allmis)>0) nmis0 <- nmis0[-allmis]
+        nmis <- c(nmis,nmis0)
         datasets0 <- c(datasets0, val$datasets)
-        models0 <- c(models0, val$models)            
+        models0 <- c(models0, val$models)
+        modelclass <- c(modelclass,rep(i,length(val$models)))
       } else {
         datasets0 <- c(datasets0, list(mydata))
         models0 <- c(models0, list(models[[i]]))
+        modelclass <- c(modelclass,i)
+        nmis <- c(nmis,0)
       }
     }
     
@@ -92,6 +101,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     val$models.orig <- models.orig; val$missing <- TRUE
     val$complete <- complidx-1
     val$mnames <- mynames
+    attributes(val)$modelclass <- modelclass
+    attributes(val)$nmis <- nmis
     return(val)
   }
 

@@ -520,8 +520,8 @@ coef.multigroupfit <-
 
 ###{{{ CoefMat
 
+##' @export
 CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,groups=seq(Model(x)$ngroup),...) {
-##  browser()
 
   cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)  
   parpos <- attributes(cc)$parpos
@@ -531,9 +531,10 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
   res <- c()
   nlincon.estimates <- c()
   nlincon.names <- c()
-  k <- 0
-
+  count <- k <- 0
+  
   for (i in groups) {
+  ##  browser()
     k <- k+1
     m0 <- Model(Model(x))[[i]]
     mycoef <- cc[[k]]
@@ -550,14 +551,15 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
     res <- c(res, list(CoefMat(cc0)))
     newnlin <- attributes(cc0)$nlincon
     if (length(newnlin)>0)
-    if (i==1) {
+    if (count==0) {
+      count <- count+1
       nlincon.estimates <- newnlin
       nlincon.names <- rownames(newnlin)
     } else {
-      for (j in 1:NROW(newnlin)) {
+      for (j in seq_len(NROW(newnlin))) {
         if (!(rownames(newnlin)[j]%in%nlincon.names)) {
-          nlincon.estimates <- rbind(nlincon.estimates,newnlin[j,])
-          nlincon.names <- c(nlincon.names,rownames(newnlin))
+          nlincon.estimates <- rbind(nlincon.estimates,newnlin[j,,drop=FALSE])
+          nlincon.names <- c(nlincon.names,rownames(newnlin)[j])
         }
       }
     }
