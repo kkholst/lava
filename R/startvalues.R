@@ -23,7 +23,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
   }
 
   Wtotal <- sum(W); W <- W/Wtotal
-  
+
   pg <- vector("list", x$npar); for (i in 1:length(pg)) pg[[i]] <- rep(0,x$ngroup)
   meang <- vector("list", x$npar.mean); for (i in 1:length(meang)) meang[[i]] <- rep(0,x$ngroup)
   

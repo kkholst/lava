@@ -95,9 +95,6 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
           newsd <- c(newsd,cc[,2])
         }
       }
-      ##      coefs <- rbind(coefs,newcoef)
-      ##      if (sd)
-      ##        sds <- rbind(sds, newsd)
     }
     return(list(coefs=coefs,sds=newsd))
   }
