@@ -61,7 +61,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
 ##  if (object$control$meanstructure & npar.mean>0)
 ##    V <- V[-c(1:npar.mean),-c(1:npar.mean)]
   S[idx.cc0,idx.cc0] <- V[i1,i1] ## "Covariance matrix" of all parameters
-  
+
   idx.orig <- unique(unlist(P$idx))
   coefs.all <- cc[idx.orig]
 

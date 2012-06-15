@@ -100,7 +100,7 @@
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 
 ##' @S3method regression<- lvm
-"regression<-.lvm" <- function(object, to=NULL, ..., value) {
+"regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
   if (!is.null(to)) {    
     regfix(object, to=to, ...) <- value
     return(object)
@@ -163,11 +163,12 @@
         index(object) <- reindex(object)
         return(object)
       }
-      
-      oldexo <- exogenous(object)
-      newexo <- setdiff(exo,c(notexo,curvar,ys))
-      exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
 
+      if (lava.options()$exogenous) {
+        oldexo <- exogenous(object)
+        newexo <- setdiff(exo,c(notexo,curvar,ys))
+        exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
+      }
       
       for (i in 1:length(ys)) {
         y <- ys[i]
@@ -264,12 +265,14 @@
           functional(object,j,i) <- fn
       }
     
-    newexo <- setdiff(xs,c(to,allv))
-    exo <- exogenous(object)
-    if (length(newexo)>0)
-      exo <- unique(c(exo,newexo))
-    exogenous(object) <- setdiff(exo,to)
-    
+    if (lava.options()$exogenous) {
+      newexo <- setdiff(xs,c(to,allv))
+      exo <- exogenous(object)
+      if (length(newexo)>0)
+        exo <- unique(c(exo,newexo))
+      exogenous(object) <- setdiff(exo,to)
+    }
+      
     if (lava.options()$debug) {
 ##      Debug(list("x=",x, " y=",y, " est=",fixed),debug)
       print(object$fix)
