@@ -11,7 +11,7 @@
 \usage{
   \method{regression}{lvm}(object = lvm(), to, from, fn =
     NA, silent = lava.options()$silent, ...)
-    \method{regression}{lvm}(object, to=NULL, ...) <- value
+    \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -29,6 +29,8 @@
 
   \item{silent}{Logical variable which indicates whether
   messages are turned on/off.}
+
+  \item{quick}{Logical. If TRUE faster model specification but disables possibility of constraining parameters}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

@@ -39,7 +39,7 @@
   if (length(control)>0) {
     optim[names(control)] <- control
   }
-   
+
   Debug("Start values...")
   if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
     mystart <- optim$start
@@ -135,6 +135,7 @@
     Method <- get(Method)
   if (is.null(optim$method)) optim$method <- Method
 
+  
   ## Check for random slopes
   xXx <- exogenous(x)
   Xfix <- FALSE
@@ -434,10 +435,7 @@
     print(optim$constrain)
     print(optim$method)
   }
-
-  ##    suppressMessages(browser())
-
-
+  
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")
