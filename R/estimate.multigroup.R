@@ -110,23 +110,27 @@
   newweight2 <- list()
   newoptim <- newestimator <- NULL
   for (f in myhooks) {
+    print(f)
     for ( i in 1:x$ngroup) {
       res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],weight2=weight2[[i]],estimator=estimator,optim=optim))
+      print(res$weight)
       if (!is.null(res$x)) x$lvm[[i]] <- res$x
       if (!is.null(res$data)) x$data[[i]] <- res$data
-      newweight <- c(newweight,list(res$weight))
-      newweight2 <- c(newweight2,list(res$weight2))
+      if (!is.null(res$weight)) newweight <- c(newweight,list(res$weight))
+      if (!is.null(res$weight2)) newweight2 <- c(newweight2,list(res$weight2))
       if (!is.null(res$optim)) newoptim <- res$optim
       if (!is.null(res$estimator)) newestimator <- res$estimator
     }
     if (!is.null(newestimator)) estimator <- newestimator
     if (!is.null(newoptim)) optim <- newoptim
-    if (!any(unlist(lapply(newweight,is.null)))) {
-      weight <- newweight
-    } 
-    if (!any(unlist(lapply(newweight2,is.null)))) {
-      weight2 <- newweight2
-    }    
+    if (!is.null(res$weight))
+      if (!any(unlist(lapply(newweight,is.null)))) {
+        weight <- newweight
+      }
+    if (!is.null(res$weight2))
+      if (!any(unlist(lapply(newweight2,is.null)))) {
+        weight2 <- newweight2
+      }    
   }
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method))
@@ -435,7 +439,8 @@
     print(optim$constrain)
     print(optim$method)
   }
-  
+
+  ##  suppressMessages(browser())
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")
