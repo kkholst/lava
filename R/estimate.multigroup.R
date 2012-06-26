@@ -110,10 +110,8 @@
   newweight2 <- list()
   newoptim <- newestimator <- NULL
   for (f in myhooks) {
-    print(f)
     for ( i in 1:x$ngroup) {
       res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],weight2=weight2[[i]],estimator=estimator,optim=optim))
-      print(res$weight)
       if (!is.null(res$x)) x$lvm[[i]] <- res$x
       if (!is.null(res$data)) x$data[[i]] <- res$data
       if (!is.null(res$weight)) newweight <- c(newweight,list(res$weight))
