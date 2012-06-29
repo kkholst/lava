@@ -30,8 +30,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   exo <- exogenous(model)
   exclude <- c()
 
-  exoremove <- c()
   for (i in setdiff(1:nrow(patterns),pattern.allmis)) {
+    exoremove <- c()
     includemodel <- TRUE
     count <- count+1
     mypattern <- patterns[i,]
@@ -76,7 +76,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     clust0 <- cluster[mis.type==i]
     modelexo <- exogenous(model)
     exogenous(m0) <- setdiff(modelexo,exoremove)
-    
     ##    index(m0) <- reindex(m0,deriv=TRUE,zeroones=TRUE)
     if (is.null(intersect(modelexo,latent(m0)))) {
       print("Missing exogenous variables... Going for complete-case analysis in these cases")

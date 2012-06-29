@@ -497,7 +497,7 @@ coef.multigroupfit <-
 ##          suppressMessages(browser())
           ##          for (j in setdiff(1:model$ngroup,i)) {
           for (j in setdiff(seq_len(length(groups)),i)) {
-            nn2 <- rownames(res[[j]])
+ <- rownames(res[[j]])
             matching <- na.omit(match(nn,nn2))
             matching <- setdiff(matching,misrow[[j]])
             if (length(matching)>0) {
