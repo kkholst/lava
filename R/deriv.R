@@ -8,7 +8,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       meanpar <- NULL  
   }
 
-
   ii <- index(expr)
   npar.total <- npar <- ii$npar; npar.reg <- ii$npar.reg
   npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
@@ -92,7 +91,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       myc <- constrain(expr)[[pp]]
       parval <- mom$parval
 ##      vals <- parval[attributes(myc)$args]
-      vals <- c(parval,constrainpar)[attributes(myc)$args]
+      vals <- c(parval,constrainpar,mom$v)[attributes(myc)$args]
 
       ## browser()
       ## while (!all(names(vals)%in%names(parval))) {

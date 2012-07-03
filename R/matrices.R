@@ -142,7 +142,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     for (p in constrain.par) {
 ##      browser()
       cname <- c(cname,p)
-      reg.tidx <- reg.idx <- cov.idx <- m.idx <- NULL    
+      reg.tidx <- reg.idx <- cov.idx <- m.idx <- NULL
       myc <- constrain(x)[[p]]
       xargs <- manifest(x)[na.omit(match(attributes(myc)$args,manifest(x)))]
       if (length(xargs)>0) {
@@ -150,7 +150,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
           parval[[xargs]] <- (data)[xargs]
         } else parval[[xargs]] <- 0
       }
-      val <- unlist(c(parval,constrainpar)[attributes(myc)$args])      
+      val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])      
       cpar <- myc(val); 
       constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
 ##      browser()
