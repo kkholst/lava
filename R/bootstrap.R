@@ -106,7 +106,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     res <- lapply(0:R,bootfun)
   }
   if (!silent) cat("\n")
-  
+
   coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
   sds <- NULL
   if (sd)
@@ -116,7 +116,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     rownames(coefs) <- c()
     res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x) 
   } else {    
-    if (constraints& length(constrain(x))>0) colnames(coefs)[-(1:length(coef(fitted)))] <- names(res[[1]]$coefs)
+##    if (constraints & length(constrain(x))>0) colnames(coefs)[-seq_len(length(coef(fitted)x=))] <- names(res[[1]]$coefs)
     colnames(coefs) <- names(res[[1]]$coefs)
     rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
     res <- list(coef=coefs[-1,,drop=FALSE], sd=sds[-1,,drop=FALSE], coef0=coefs[1,], sd0=sds[1,], model=x)
