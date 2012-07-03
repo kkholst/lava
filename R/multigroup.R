@@ -76,7 +76,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         if (i>1) pos <- pos+mynpar[i-1]
         models[[i]] <- baptize(models[[i]],newpars[pos+1:mynpar[i]] ,overwrite=FALSE)        
         ##        warning("Missing data encountered")        
-        val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep)
+        val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep,...)
         ##        suppressMessages(browser())
         nmodels <- c(nmodels,length(val$models))
         complidx <- c(complidx,val$pattern.allcomp+nmodels[i]+1)

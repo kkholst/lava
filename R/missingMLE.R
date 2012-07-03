@@ -249,12 +249,10 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
   if (!is.null(names(control$start))) {
     ## Find position of parameters
-    parorder1 <- parpos(mg0)
+    parorder1 <- parpos(mg0,p=names(control$start))
     paridx <- match(parorder1,names(control$start))
-    newpos <- paridx[which(!is.na(paridx))]
-    control$start[which(!is.na(paridx))] <- control$start[newpos]
-##    paridx2 <- match(parorder2,names(control$start))   
-##    control$start[na.omit(paridx2)] <- control$start[which(!is.na(paridx2))]
+    newpos <- paridx[which(!is.na(paridx))]   
+    control$start[which(!is.na(paridx))] <- control$start[na.omit(paridx)]
   }
   
   
