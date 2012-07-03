@@ -70,8 +70,10 @@ parpos.multigroup <- function(x,mean=TRUE,p,...) {
     cur <- parpos(x$lvm[[i]],p=p)
     if (length(cur)>0) {
       p0[c(x$meanpos[[i]],x$parpos[[i]])[cur]] <- names(cur)
-      p <- p[-match(names(cur),p)]
-    }    
+      M <- na.omit(match(names(cur),p))
+      if (length(M)>0)
+        p <- p[-M]
+    }
     if (length(p)==0) break;
   }
   return(p0)    

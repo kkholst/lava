@@ -133,7 +133,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 ##  }
   if (missing(fix))
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)  
-
+  
   S <- diag(length(manifest(x)));
   mu <- rep(0,nrow(S));  
   ##  S <- mu <- NULL
@@ -240,21 +240,30 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (!silent)
       message("\n")
   }
-  names(control$start) <- NULL
+  ##  names(control$start) <- NULL
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
   ##  if (is.null(control$information))
   ##    control$information <- "obs"
-
+  
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
-
+  if (!is.null(names(control$start))) {
+    ## Find position of parameters
+    parorder1 <- parpos(mg0)
+    paridx <- match(parorder1,names(control$start))
+    newpos <- paridx[which(!is.na(paridx))]
+    control$start[which(!is.na(paridx))] <- control$start[newpos]
+##    paridx2 <- match(parorder2,names(control$start))   
+##    control$start[na.omit(paridx2)] <- control$start[which(!is.na(paridx2))]
+  }
+  
   
   if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,weight2=val$weights2,cluster=val$clusters))
 
   if (all(unlist(lapply(val$weights,is.null)))) val$weights <- NULL
   if (all(unlist(lapply(val$weights2,is.null)))) val$weights2 <- NULL
   if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL
-  
+
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
   e.mis <- estimate(mg0,control=control,silent=silent,
                     weight=val$weights,weight2=val$weights2,

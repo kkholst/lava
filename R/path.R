@@ -58,7 +58,7 @@ path <- function(object,...) UseMethod("path")
 ##' @S3method path lvmfit
 path.lvmfit <- function(object,to=NULL,from,...) {
   mypath <- path(Model(object),to,from,...)
-  cc <- coef(object,level=9) ## All parameters (fixed and variable)
+  cc <- coef(object,level=9,labels=FALSE) ## All parameters (fixed and variable)
 
   #cc0 <- coef(object,level=1) ## Estimated parameters
   cc0 <- coef(object,level=2) ## Estimated parameters

@@ -275,7 +275,7 @@ function(x, data,
     return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
   
-  
+
   ## Setup optimization constraints
   lowmin <- -Inf
   lower <- rep(lowmin,length(optim$start))
@@ -288,14 +288,16 @@ function(x, data,
       constrained <- optim$constrain
     lower[] <- -Inf
       optim$constrain <- TRUE
+    nn <- names(optim$start)
     CS <- optim$start[constrained]
     CS[CS<0] <- 0.01
     optim$start[constrained] <- log(CS)
+    names(optim$start) <- nn
   }
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
   Debug(list("lower=",lower))
-
+  
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
   if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")

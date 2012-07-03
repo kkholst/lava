@@ -50,8 +50,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
     from <- P$path[[1]][1]
     to <- tail(P$path[[1]],1)
   }
-
-  cc <- coef(object,level=9) ## All parameters (fixed and variable)
+  cc <- coef(object,level=9,labels=FALSE) ## All parameters (fixed and variable)
   cc0 <- cbind(coef(object)) ## Estimated parameters
   i1 <- na.omit(match(rownames(cc),rownames(cc0)))
   idx.cc0 <-  which(rownames(cc)%in%rownames(cc0)); ## Position of estimated parameters among all parameters
@@ -61,6 +60,18 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
 ##  if (object$control$meanstructure & npar.mean>0)
 ##    V <- V[-c(1:npar.mean),-c(1:npar.mean)]
   S[idx.cc0,idx.cc0] <- V[i1,i1] ## "Covariance matrix" of all parameters
+
+  cclab <- rownames(coef(object,level=9,labels=TRUE)) ## Identify equivalence constraints
+  cctab <- table(cclab)
+  equiv <- which(cctab>1)
+  if (length(equiv)>0) {
+    for (i in seq(length(equiv))) {
+      orgpos <- which(cclab==names(equiv))
+      pos <- orgpos[-1]
+      for (p in pos)
+        S[p,-orgpos[1]] <- S[-orgpos[1],p] <- S[orgpos[1],-p]
+    }
+  }  
 
   idx.orig <- unique(unlist(P$idx))
   coefs.all <- cc[idx.orig]
@@ -76,7 +87,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
     totalef <- list(est=0,sd=0)
     margef <- c(margef,list(est=0,sd=NA))
   } else {
-    totalef <- prodsumdelta(coefs.all, idx.list, S.all,...)      
+    totalef <- prodsumdelta(coefs.all, idx.list, S.all,...)
     for (i in seq_len(length(idx.list))) {
       margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all,...)))
     }
@@ -85,11 +96,18 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   
   
   directidx <- which(lapply(P$path,length)==2)
-  if (length(directidx)==0)
+  
+
+  inef.list <- idx.list
+  if (length(directidx)==0) {
     directef <- list(est=0, sd=NA)
-  else
+  } else {
+    inef.list <- inef.list[-directidx]
     directef <- margef[[directidx]]
-  val <- list(paths=P$path, totalef=totalef, directef=directef, margef=margef, from=from, to=to)
+  }
+  totalinef <- prodsumdelta(coefs.all, inef.list, S.all,...)
+  
+  val <- list(paths=P$path, totalef=totalef, directef=directef, totalinef=totalinef, margef=margef, from=from, to=to)
   class(val) <- "effects"
   ##    res <- c(res, list(val))
   val
@@ -102,7 +120,9 @@ print.effects <- function(x,...) {
     cat("\t\t", totalef$est, " (Approx. Std.Err = ", totalef$sd, ")\n", sep="")
     cat("Direct effect of '", from, "' on '", to, "':\n", sep="")
     cat("\t\t", directef$est, " (Approx. Std.Err = ", directef$sd, ")\n", sep="")
-  
+    cat("Total indirect effect of '", from, "' on '", to, "':\n", sep="")
+    cat("\t\t", totalinef$est, " (Approx. Std.Err = ", totalinef$sd, ")\n", sep="")
+    
     cat("Indirect effects:\n");
     for (i in 1:length(margef)) {
       if (length(paths[[i]])>2) {
@@ -119,8 +139,10 @@ print.effects <- function(x,...) {
 coef.effects <- function(object,...) {  
   totalef <- with(object$totalef, cbind(est,sd[1]))
   directef <- with(object$directef, cbind(est,sd[1]))
+  totindirectef <- with(object$totalinef, cbind(est,sd[1]))
   rownames(totalef) <- "Total"
   rownames(directef) <- "Direct"
+  rownames(totindirectef) <- "Indirect"
   nn <- indirectef <- c()
   K <- seq_len(length(object$margef))
   for (i in K) {
@@ -129,7 +151,7 @@ coef.effects <- function(object,...) {
       indirectef <- rbind(indirectef, with(object$margef[[i]], c(est,sd)))
       }
   }; rownames(indirectef) <- nn  
-  mycoef <- rbind(totalef,directef,indirectef)
+  mycoef <- rbind(totalef,directef,totindirectef,indirectef)
   mycoef <- cbind(mycoef,mycoef[,1]/mycoef[,2])
   mycoef <- cbind(mycoef,2*(1-pnorm(abs(mycoef[,3]))))
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
