@@ -133,14 +133,12 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     } 
   }
 
-  ##  browser()
   ## Constrained...
   constrain.idx <- NULL
   cname <- constrainpar <- c()  
   if (length(constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
     constrain.idx <- list()
     for (p in constrain.par) {
-##      browser()
       cname <- c(cname,p)
       reg.tidx <- reg.idx <- cov.idx <- m.idx <- NULL
       myc <- constrain(x)[[p]]

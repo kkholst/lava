@@ -165,6 +165,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (!missing(X)) {
     n <- nrow(X)
   }
+
   index(x) <- reindex(x)
   nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
@@ -180,7 +181,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     idx11 <- na.omit(match(names(p0),coef(x,mean=TRUE,fix=FALSE,labels=TRUE)))
     idx2 <- na.omit(which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE)))
     idx22 <- na.omit(which(names(p0)%in%coef(x,mean=TRUE,fix=FALSE,labels=TRUE)))
-##    browser()
     if (length(idx1)>0 && !is.na(idx1))      
       p[idx1] <- p0[idx2]
     if (length(idx11)>0 && !is.na(idx11))
@@ -195,7 +195,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
   res <- as.data.frame(res)
-  
+
   xx <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
   X.idx <- match(xx,vars(x))  
   if (missing(X)) {
@@ -247,7 +247,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
-    if (!all(xconstrain %in% index(x)$exogenous)) stop("Non-linear constraint only allowed via covariates")
+    if (!all(xconstrain %in% index(x)$exogenous)) warning("Non-linear constraint only allowed via covariates")
     if (length(xconstrain>0))
       for (i in which(xconstrain.idx)) {
         ff <- constrain(x)[[i]]
@@ -321,7 +321,14 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     }
     res <- res[,nn,drop=FALSE]
   }
-    
+
+  for (i in seq_len(length(x$constrainY))) {
+    cc <- x$constrainY[[i]]
+    args <- attributes(x$constrainY[[i]])$args
+    nam <- names(x$constrainY)[[i]]
+    newcol <- cbind(apply(res[,args,drop=FALSE],1,cc)); colnames(newcol) <- nam
+    res <- cbind(res,newcol)
+  }     
 
   myhooks <- gethook("sim.hooks")
   for (f in myhooks) {

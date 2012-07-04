@@ -246,16 +246,21 @@ constrain.default <- function(x,estimate=FALSE,...) {
   for (i in args) {
 ##    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x))))) {
 #    if (!(i%in%c(parlabels(Model(x)),exogenous(Model(x)),names(constrain(x))))) {
-    if (!(i%in%c(parlabels(Model(x)),index(Model(x))$exogenous,names(constrain(x))))) {
+    if (!(i%in%c(parlabels(Model(x)),vars(Model(x)),##index(Model(x))$exogenous,
+                 names(constrain(x))))) {
       ##    if (!(i%in%c(parlabels(x))))
       if (!lava.options()$silent)
         message("\tAdding parameter '", i,"'\n",sep="")
       parameter(x,silent=TRUE) <- i
     }
   }
-  Model(x)$constrain[[par]] <- value
-  attributes(Model(x)$constrain[[par]])$args <- args
-  index(Model(x)) <- reindex(Model(x))
+  if (i%in%endogenous(x)) {
+    Model(x)$constrainY[[par]] <- structure(value,args=args)    
+  } else { 
+    Model(x)$constrain[[par]] <- value
+    attributes(Model(x)$constrain[[par]])$args <- args
+    index(Model(x)) <- reindex(Model(x))
+  }
   return(x)    
 }
 

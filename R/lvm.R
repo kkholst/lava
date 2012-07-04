@@ -55,7 +55,7 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
   edgeDataDefaults(m, "label") <- expression()
   edgeDataDefaults(m, "futureinfo") <- list()
 
-  res <- list(graph=m, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list())
+  res <- list(graph=m, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list(), constrainY=list())
   class(res) <- "lvm"
 
 
