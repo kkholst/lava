@@ -44,11 +44,11 @@ function(object,std="xy", level=9, labels=2, ...) {
     nc <- nn[object$cc]
     if (length(nc)==0) nc <- 0
     ngroup <- object$multigroup$ngroup
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo])
+    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo], latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator)
   } else {
     n <- nrow(model.frame(object))
     if (is.null(n)) n <- model.frame(object)$n
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=n, nc=n)##, varmat=modelVar(object)$P[nonexo,nonexo])
+    res <- list(coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=n, nc=n, latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator)##, varmat=modelVar(object)$P[nonexo,nonexo])
   }
   class(res) <- "summary.lvmfit"
   res
@@ -57,14 +57,14 @@ function(object,std="xy", level=9, labels=2, ...) {
 ##' @S3method print summary.lvmfit
 print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   if (!is.null(x$control$method)) {
-    l2D <- sum(x$object$opt$grad^2)
-    rnkV <- qr(vcov(x$object))$rank
+    l2D <- sum(x$opt$grad^2)
+    rnkV <- qr(x$vcov)$rank
     if (l2D>1e-2) warning("Possible problems with convergence!")    
     cat("||score||^2=",l2D,"\n",sep="")
-    np <- nrow(vcov(x$object))
+    np <- nrow(x$vcov)
     if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
   }
-  cat("Latent variables:", latent(x$object), "\n")
+  cat("Latent variables:", x$latent, "\n")
   cat("Number of rows in data=",x$n,sep="")
   if (x$nc!=x$n) {
     cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")    
@@ -80,7 +80,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
     printCoefmat(x$nlincon,signif.stars=FALSE)
   }
   cat(rep("-", 50), "\n", sep="");
-  cat("Estimator:",x$object$estimator,"\n")
+  cat("Estimator:",x$estimator,"\n")
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(x$gof)) {
     if (class(x$gof)[1]=="list") {
@@ -114,17 +114,17 @@ summary.multigroupfit <- function(object,groups=NULL,...) {
     }    
   }
   cc <- CoefMat.multigroupfit(object,groups=groups,...) 
-  res <- list(coef=coef(object,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object)
+  res <- list(coef=coef(object,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
   class(res) <- "summary.multigroupfit"
   res
 }
 
 ##' @S3method print summary.multigroupfit
 print.summary.multigroupfit <- function(x,...) {
-  l2D <- sum(x$object$opt$grad^2)
+  l2D <- sum(x$opt$grad^2)
   if (l2D>1e-2) warning("Possible problems with convergence!")
   cat("||score||^2=",l2D,"\n")
-  cat("Latent variables:", latent(x$object), "\n")
+  cat("Latent variables:", x$latent, "\n")
   print(x$object,...)  
 ##  cat(rep("-", 50), "\n\n", sep="");
   ##print(x$coefmat,quote=FALSE,right=TRUE)
@@ -134,7 +134,7 @@ print.summary.multigroupfit <- function(x,...) {
     print(attributes(x$coefmat)$nlincon)
     cat(rep("-", 50), "\n", sep="");
   }
-  cat("Estimator:",x$object$estimator,"\n")  
+  cat("Estimator:",x$estimator,"\n")  
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(x$gof)) {
     print(x$gof)

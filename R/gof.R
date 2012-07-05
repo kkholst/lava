@@ -134,7 +134,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
   
   if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq)   ) {
-    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
+    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
     q <- res$fit$statistic
     qdf <- res$fit$parameter
     epsilon <- function(lambda) sapply(lambda,function(x)
@@ -156,7 +156,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     
     res <- c(res,list(RMSEA=RMSEA, level=level))
   } else {
-    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC, model=object)
+    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
   }
 
   l2D <- sum(object$opt$grad^2)
