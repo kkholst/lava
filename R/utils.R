@@ -323,9 +323,17 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   count <- 0
   for (i in catX) {
     count <- count+1
-    Y <- colnames(A)[A[i,]==1]
+    mnames <- Mnames[Mpos==count]
     kill(x0) <- i  
-    x0 <- regression(x0,to=Y,from=Mnames[Mpos==count],silent=silent)
+    Y <- colnames(A)[A[i,]==1]
+    if (length(mnames)==1) { 
+      fix <- as.list(F$labels[i,])
+      fixval <- F$values[i,]
+      fix[which(!is.na(fixval))] <- fixval[na.omit(fixval)]
+      regression(x0,to=Y,from=mnames,silent=silent) <- fix[Y]
+    } else {
+      x0 <- regression(x0,to=Y,from=mnames,silent=silent)
+    }
   }
   index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
   return(list(x=x0,data=cbind(data,M)))
