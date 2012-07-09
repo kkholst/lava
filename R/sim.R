@@ -91,13 +91,17 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
       T <- T+runif(n,0,breakties)
     if (is.function(cens))
       cens <- cens(n,...)
-    Delta <- (T<cens)
-    if (any(!Delta)) {
-      T[!Delta] <- cens[!Delta]
+    if (is.finite(cens[1])) {
+      Delta <- (T<cens)
+      if (any(!Delta)) {
+        T[!Delta] <- cens[!Delta]
       S <- Surv(T,Delta*1)      
-    }
-    else
+      } else {
+        S <- T
+      }
+    } else {
       S <- T
+    }
     return(S)
   }
   return(f)

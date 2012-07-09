@@ -17,13 +17,24 @@
 ##' @author Thomas A. Gerds
 ##' @keywords survival models regression
 ##' @examples
-##'
 ##' m <- lvm()
+##' distribution(m,~X2) <- binomial.lvm()
+##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
+##' regression(m) <- T2~f(X2,0.6)
+##' distribution(m,~T1+T2+C) <- weibull.lvm()
+##' system.time(d <- sim(m,1e5))
+##' m <- eventTime(m,otime~min(T1,T2,C=0))
+##' set.seed(1)
+##' d <- sim(m,10)
+##' 
+##' set.seed(1)
+##' m <- eventTime(m,cens.otime~min(T1,T2,C=0))
+##' sim(m,10)
 ##' @export
-##' @param object 
-##' @param formula 
-##' @param eventName 
-##' @param ... 
+##' @param object Model object
+##' @param formula Formula (see details)
+##' @param eventName Event names
+##' @param ... Additional arguments to lower levels functions
 eventTime <- function(object,formula,eventName,...){
   ff <- as.character(formula)
   timeName <- all.vars(update.formula(formula,"~1"))
@@ -61,7 +72,6 @@ eventTime <- function(object,formula,eventName,...){
 
 addhook("simulate.eventHistory","sim.hooks")
 
-##' @export
 simulate.eventHistory <- function(x,data,...){
   if (is.null(x$eventHistory)){
     return(data)
