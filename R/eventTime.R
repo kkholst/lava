@@ -19,8 +19,20 @@
 ##' @examples
 ##'
 ##' m <- lvm()
-##' regression(m) <- X1
-##' regression(m) <- X2
+##' regression(m) <- ~X1
+##' regression(m) <- ~X2
+##' distribution(m,~X2) <- binomial.lvm()
+##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
+##' regression(m) <- T2~f(X2,0.6)
+##' regression(m) <- ~C
+##' distribution(m,~T1) <- weibull.lvm()
+##' distribution(m,~T2) <- weibull.lvm()
+##' distribution(m,~C) <- weibull.lvm()
+##' m <- eventTime(m,otime~min(T1,T2))
+##' sim(m,10)
+##' m <- eventTime(m,cens.otime~min(T1,T2="E2",C=0))
+##' sim(m,10)
+##' 
 ##' @export
 ##' @param object 
 ##' @param formula 
@@ -35,11 +47,10 @@ eventTime <- function(object,formula,eventName,...){
   }else{
     rhs <- ff[[3]]
   }
-  rhs <- tolower(rhs)
+  ## rhs <- tolower(rhs)
   latentTimes <- strsplit(rhs,"[(,)]")[[1]]
   if (latentTimes[1]!="min")
     stop(paste("Formula ",formula," does not have the required form, e.g. ~min(T1=1,T2=2,C=0), see (examples in) help(eventTime)."))
-  browser()
   latentTimes <- latentTimes[-1]
   NT <- length(latentTimes)
   events <- vector(NT,mode="character")
@@ -47,7 +58,7 @@ eventTime <- function(object,formula,eventName,...){
     tmp <- strsplit(latentTimes[lt],"=")[[1]]
     stopifnot(length(tmp) %in% c(1,2))
     if (length(tmp)==1){
-      events[lt] <- paste("cause",lt,sep=".")
+      events[lt] <- as.character(lt)
       latentTimes[lt] <- tmp
     }
     else{
@@ -55,24 +66,40 @@ eventTime <- function(object,formula,eventName,...){
       latentTimes[lt] <- tmp[1]
     }
   }
-  m <- regression(m,paste("~",timeName))
-  m <- regression(m,paste("~",eventName))
-  distribution(m,paste("~",timeName)) <- time.lvm(times=latentTimes)
-  distribution(m,paste("~",timeName)) <- event.lvm(events=events,times=latentTimes)
+  m <- regression(m,formula(paste("~",timeName,sep="")))
+  if (missing(eventName)) eventName <- "Event"
+  eventTime <- list(names=c(timeName,eventName),latentTimes=gsub(" ","",latentTimes),events=gsub(" ","",events))
+  m$eventHistory <- c(m$eventHistory,list(eventTime))
   m
 }
 
+addhook("simulate.eventHistory","sim.hooks")
 
 ##' @export
-time.lvm <- function(times,...) {
-  f <- function(n,times,...) pmin(times)
-  return(f)
-}
-##' @export
-event.lvm <- function(events,times,...) {
-  f <- function(n,vars) {
-    e <- rep(events[1],n)
-    pmin(events,times)
+simulate.eventHistory <- function(x,data,...){
+  if (is.null(x$eventHistory)){
+    return(data)
   }
-  return(f)
+  else{
+    for (eh in x$eventHistory){
+      if (any((found <- match(eh$latentTimes,names(data),nomatch=0))==0)){
+        warning("Cannot find latent time variable: ",eh$latentTimes[found==0],".")
+      }
+      else{
+        for (v in 1:length(eh$latentTimes)){
+          if (v==1){ ## initialize with the first latent time and event
+            eh.time <- data[,eh$latentTimes[v]]
+            eh.event <- rep(eh$events[v],NROW(data))
+          } else{ ## now replace if next time is smaller
+            ## in case of tie keep the first event
+            eh.event[data[,eh$latentTimes[v]]<eh.time] <- eh$events[v]
+            eh.time <- pmin(eh.time,data[,eh$latentTimes[v]])
+          }
+        }
+      }
+      data[,eh$names[1]] <- eh.time
+      data[,eh$names[2]] <- eh.event
+    }
+    return(data)
+  }
 }
