@@ -58,19 +58,20 @@
 ##' @aliases regression regression<- regression<-.lvm regression.lvm regfix
 ##' regfix regfix<- regfix.lvm regfix<-.lvm
 ##' @param object \code{lvm}-object.
+##' @param value A formula specifying the linear constraints or if
+##' \code{to=NULL} a \code{list} of parameter values.
 ##' @param to Character vector of outcome(s) or formula object.
 ##' @param from Character vector of predictor(s).
 ##' @param fn Real function defining the functional form of predictors (for
 ##' simulation only).
-##' @param value A formula specifying the linear constraints or if
-##' \code{to=NULL} a \code{list} of parameter values.
 ##' @param silent Logical variable which indicates whether messages are turned
 ##' on/off.
+##' @param quick Faster implementation without parameter constraints
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
 ##' silent = lava.options()$silent, ...)
-##' \method{regression}{lvm}(object, to=NULL, ...) <- value
+##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.
 ##' @author Klaus K. Holst
@@ -141,8 +142,9 @@
       xxf <- lapply(res,function(x) decomp.specials(x,NULL,"[",fixed=TRUE))
       xs <- unlist(lapply(xxf,function(x) x[1]))
       object <- addvar(object,xs,...)
+
       
-      for (i in 1:length(xs)) {        
+      for (i in seq_len(length(xs))) {        
         xf <- unlist(strsplit(xx[[i]],"[\\[\\]]",perl=TRUE))
         if (length(xf)>1) {
           xpar <- decomp.specials(xf[2],NULL,":")
@@ -184,7 +186,7 @@
             covariance(object,y) <- ifelse(is.na(valn),val,valn)
           }
         }
-        for (j in 1:length(xs)) {        
+        for (j in seq_len(length(xs))) {        
           if (length(res[[j]])>1) {
             ##            regfix(object, to=y, from=res[[i]][1],...) <- res[[i]][2]
             regfix(object, to=y[1], from=xs[j],...) <- res[[j]][2]
@@ -241,7 +243,6 @@
       return(object)
     }
     
-##    browser()
 
     sx <- strsplit(from,"@")
     xx <- sapply(sx, FUN=function(i) i[1])

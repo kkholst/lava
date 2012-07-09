@@ -1,20 +1,24 @@
 \name{regression<-}
 \alias{regfix}
+\alias{regfix.lvm}
 \alias{regfix<-}
 \alias{regfix<-.lvm}
-\alias{regfix.lvm}
 \alias{regression}
+\alias{regression.lvm}
 \alias{regression<-}
 \alias{regression<-.lvm}
-\alias{regression.lvm}
 \title{Add regression association to latent variable model}
 \usage{
   \method{regression}{lvm}(object = lvm(), to, from, fn =
     NA, silent = lava.options()$silent, ...)
-    \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+    \method{regression}{lvm}(object, to=NULL, quick=FALSE,
+    ...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
+
+  \item{value}{A formula specifying the linear constraints
+  or if \code{to=NULL} a \code{list} of parameter values.}
 
   \item{to}{Character vector of outcome(s) or formula
   object.}
@@ -24,13 +28,11 @@
   \item{fn}{Real function defining the functional form of
   predictors (for simulation only).}
 
-  \item{value}{A formula specifying the linear constraints
-  or if \code{to=NULL} a \code{list} of parameter values.}
-
   \item{silent}{Logical variable which indicates whether
   messages are turned on/off.}
 
-  \item{quick}{Logical. If TRUE faster model specification but disables possibility of constraining parameters}
+  \item{quick}{Faster implementation without parameter
+  constraints}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

@@ -19,20 +19,6 @@
 ##' @examples
 ##'
 ##' m <- lvm()
-##' regression(m) <- ~X1
-##' regression(m) <- ~X2
-##' distribution(m,~X2) <- binomial.lvm()
-##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
-##' regression(m) <- T2~f(X2,0.6)
-##' regression(m) <- ~C
-##' distribution(m,~T1) <- weibull.lvm()
-##' distribution(m,~T2) <- weibull.lvm()
-##' distribution(m,~C) <- weibull.lvm()
-##' m <- eventTime(m,otime~min(T1,T2))
-##' sim(m,10)
-##' m <- eventTime(m,cens.otime~min(T1,T2="E2",C=0))
-##' sim(m,10)
-##' 
 ##' @export
 ##' @param object 
 ##' @param formula 

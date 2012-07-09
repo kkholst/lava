@@ -1,9 +1,12 @@
 \name{startvalues}
+\alias{CoefMat}
+\alias{CoefMat.multigroupfit}
+\alias{IV}
+\alias{Inverse}
+\alias{Weight}
 \alias{\%+\%}
 \alias{addhook}
 \alias{checkmultigroup}
-\alias{CoefMat}
-\alias{CoefMat.multigroupfit}
 \alias{decomp.specials}
 \alias{deriv}
 \alias{describecoef}
@@ -17,11 +20,9 @@
 \alias{graph2lvm}
 \alias{igraph.lvm}
 \alias{index}
-\alias{index<-}
 \alias{index.lvm}
 \alias{index.lvmfit}
-\alias{Inverse}
-\alias{IV}
+\alias{index<-}
 \alias{lisrel}
 \alias{makemissing}
 \alias{matrices}
@@ -57,7 +58,6 @@
 \alias{tr}
 \alias{updatelvm}
 \alias{variances}
-\alias{Weight}
 \alias{whichentry}
 \title{For internal use}
 \description{

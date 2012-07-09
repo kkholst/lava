@@ -7,8 +7,9 @@
 ##' @S3method distribution<- lvm
 "distribution<-.lvm" <- function(x,variable,...,value) {
   if (class(variable)[1]=="formula")
-    variable <- all.vars(variable)
+    variable <- all.vars(variable)  
   if (length(variable)==1) {
+    addvar(x) <- as.formula(paste("~",variable))
     var. <- paste("\"", variable, "\"", sep="")
     if (is.numeric(value)) value <- list(value)
     mytext <- paste("c(", paste(paste(var.,"=",expression(value),sep=""),collapse=","),")")

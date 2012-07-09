@@ -5,7 +5,8 @@
 \usage{
   \method{confint}{lvmfit} (object,
     parm = 1:length(coef(object)), level = 0.95,
-    profile = FALSE, ...)
+    profile = FALSE, curve = FALSE, n = 20,
+    interval = NULL, ...)
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -19,7 +20,18 @@
   calculate confidence limits via the profile log
   likelihood}
 
-  \item{\dots}{Additional arguments to be passed to the low
+  \item{curve}{if FALSE and profile is TRUE, confidence
+  limits are returned. Otherwise, the profile curve is
+  returned.}
+
+  \item{n}{Number of points to evaluate profile
+  log-likelihood in over the interval defined by
+  \code{interval}}
+
+  \item{interval}{Interval over which the profiling is
+  done}
+
+  \item{...}{Additional arguments to be passed to the low
   level functions}
 }
 \value{

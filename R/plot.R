@@ -55,9 +55,12 @@
   if (!Rgraphviz || (!require("Rgraphviz"))) {
     if (!require("igraph"))
       stop("package 'Rgraphviz' or 'igraph' not available")
-    g <- igraph.lvm(x,...)
+    L <- layout.sugiyama(g <- igraph.lvm(x,...))$layout
     if (noplot) return(g)
-    plot(g)
+    dots <- list(...)
+    if (is.null(dots$layout))
+      plot(g,layout=L,...)
+    else plot(g,...)
     return(invisible(g))
   } 
   if (init) {
