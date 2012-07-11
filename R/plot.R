@@ -1,7 +1,5 @@
 ###{{{ plot.lvm
 
-
-
 ##' Plot path diagram
 ##' 
 ##' Plot the path diagram of a SEM
@@ -52,7 +50,8 @@
   index(x) <- reindex(x)
   if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
 
-  if (!Rgraphviz || (!require("Rgraphviz"))) {
+  suppressWarnings(igraphit <- !Rgraphviz || !(require("graph")) || !(require("Rgraphviz")))
+  if (igraphit) {
     if (!require("igraph"))
       stop("package 'Rgraphviz' or 'igraph' not available")
     L <- layout.sugiyama(g <- igraph.lvm(x,...))$layout
@@ -184,10 +183,11 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
         x <- regression(x,vars(x)[i],vars(x)[j])
         x <- regression(x,vars(x)[j],vars(x)[i])
       }
-    }  
-  g <- igraph.from.graphNEL(Graph(x))  
+    }
+  g <- graph.adjacency(x$M,mode="directed")
   V(g)$color <- "lightblue"
   V(g)$label <- vars(x)
+  V(g)$shape <- "rectangle"
   for (i in match(latent(x),V(g)$name)) {
     V(g)$shape[i] <- "circle"
     V(g)$color[i] <- "green"

@@ -29,14 +29,14 @@ function(x, var, silent=lava.options()$silent,...) {
   Debug(new)
   if (length(new)>0)
     for (i in new) {
-      x$graph <- addNode(i, x$graph)
-      x <- addattr(x,attr="shape",var=i,val="rectangle")
       N <- nrow(x$cov)
       if (is.null(N)) {
         N <- 0
+        x$M <- matrix(0)
         x$cov <- matrix(1); x$covfix <- x$fix <- x$par <- x$covpar <- matrix(NA)
         x$mean <- list(NA)
       } else {
+        x$M <- rbind(cbind(x$M, rep(0,N)), rep(0,N+1)); ## Add regression labels
         x$par <- rbind(cbind(x$par, rep(NA,N)), rep(NA,N+1)); ## Add regression labels
         x$covpar <- rbind(cbind(x$covpar, rep(NA,N)), rep(NA,N+1)); ## Add covariance labels
         x$cov <- rbind(cbind(x$cov, rep(0,N)), rep(0,N+1)); ## Add covariance
@@ -45,7 +45,8 @@ function(x, var, silent=lava.options()$silent,...) {
         x$mean <- c(x$mean, NA)
       }
       x$cov[N+1,N+1] <- 1
-      names(x$mean)[N+1] <- 
+      names(x$mean)[N+1] <-
+        colnames(x$M)[N+1] <- rownames(x$M)[N+1] <-
         colnames(x$covfix)[N+1] <- rownames(x$covfix)[N+1] <-
           colnames(x$fix)[N+1] <- rownames(x$fix)[N+1] <-
             colnames(x$covpar)[N+1] <- rownames(x$covpar)[N+1] <-               

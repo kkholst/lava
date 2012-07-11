@@ -57,7 +57,7 @@ path <- function(object,...) UseMethod("path")
 
 ##' @S3method path lvmfit
 path.lvmfit <- function(object,to=NULL,from,...) {
-  mypath <- path(Model(object),to,from,...)
+  mypath <- pathM(Model(object)$M,to,from,...)
   cc <- coef(object,level=9,labels=FALSE) ## All parameters (fixed and variable)
 
   #cc0 <- coef(object,level=1) ## Estimated parameters
@@ -70,9 +70,7 @@ path.lvmfit <- function(object,to=NULL,from,...) {
 #  if (object$control$meanstructure & npar.mean>0)
 #    V <- V[-c(1:npar.mean),-c(1:npar.mean)]
   S[idx.cc0,idx.cc0] <- V[i1,i1]  ## "Covariance matrix" of all parameters
-  
-
-  
+ 
   idx <- list()
   coefs <- list()
   V <- list()
@@ -102,7 +100,7 @@ path.lvmfit <- function(object,to=NULL,from,...) {
 }
 
 ##' @S3method path lvm
-path.lvm <- function(object,to=NULL,from,...) path(Graph(object),to=to,from=from,...)
+path.lvm <- function(object,to=NULL,from,...) pathM(object$M,to=to,from=from,...)
 
 ##' @S3method path graphNEL
 path.graphNEL <- function(object,to,from,...) {
@@ -157,3 +155,60 @@ path.graphNEL <- function(object,to,from,...) {
   }
   return(res)
 }
+
+
+pathM <- function(M,to,from,...) {
+  nn <- colnames(M)
+  if (class(to)[1]=="formula") {
+    fvar <- extractvar(to)
+    if (length(fvar$x)==1 & length(fvar$y)==1)
+      return(pathM(M,to=fvar$y,from=fvar$x))
+    res <- list()
+    for (y in fvar$y) {
+      for (x in fvar$x) {
+        cat("x=",x, " y=",y, "\n")
+        res <- c(res, list(pathM(M,to=y,from=x)))
+      }
+    }
+    return(res)
+  }
+
+  ff <- function(g,from=1,to=NULL,res=list()) {    
+    i1 <- which(M[from,]==1)
+    for (i in i1) {
+      ##      e <- M[,i]; newto <- e[2];
+      if (is.null(to) || i==to) {
+        res <- c(res, list(c(from,i)))
+      }
+      newpath <- ff(g,from=i,to=to,list())
+      if (length(newpath)>0)
+      for (j in 1:length(newpath)) {
+        if (is.null(to) || (tail(newpath[[j]],1)==to))
+          res <- c(res, list(c(c(from,i),newpath[[j]][-1])))
+      }
+    }
+    return(res)
+  }
+  idxfrom <- ifelse(is.numeric(from),from,which(from==nn))
+  reachable <- acc(M,nn[idxfrom])
+
+  if (is.null(to)) {
+    idxto <- reachable
+  } else {
+    idxto <- ifelse(is.numeric(to),to,which(to==nn))
+  }
+
+  if (!(nn[idxto] %in% reachable))
+    return(NULL)
+  ##    stop("No directional relationship between variables")
+  
+  mypaths <- ff(M,idxfrom,idxto)
+  res <- list()
+  for (i in 1:length(mypaths)) {
+    res <- c(res, list(nn[mypaths[[i]]]))
+  }
+  return(res)
+}
+
+
+

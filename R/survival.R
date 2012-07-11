@@ -12,15 +12,14 @@
 `survival.lvm` <-
 function(x,var=NULL, ...) {
   if (is.null(var)) {
-    survidx <- unlist(nodeData(Graph(x), attr="survival"))
+    survidx <- unlist(x$attributes$survival)
     if (length(survidx)>0)
       return(names(survidx)[survidx])
     else
       NULL    
   }
-  x <- addattr(x,attr="shape",var=var,val="box")
-  nodeData(Graph(x), var, attr="survival") <- TRUE
-  nodeData(Graph(x), var, attr="normal") <- TRUE
+  x$attributes$survival[var] <- TRUE
+  x$attributes$normal[var] <- TRUE
   return(x)
 }
 

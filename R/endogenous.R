@@ -14,7 +14,7 @@ function(x,top=FALSE,latent=FALSE,...) {
   observed <- manifest(x)
   if (latent) observed <- vars(x)
   if (top) {
-    M <- as(Graph(x), Class="matrix")
+    M <- x$M
     res <- c()
     for (i in observed)
       if (!any(M[i,]==1))

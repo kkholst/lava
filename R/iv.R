@@ -52,7 +52,8 @@ varest <- function(x,data) {
   var.eta <- c()
   for (eta in latent(x)) {
     m.sub <- subset(Model(x),c(eta,indicators))
-    reachable <- acc(Graph(m.sub),eta)[[1]]    
+##    reachable <- acc(Graph(m.sub),eta)[[1]]
+    reachable <- acc(x$M,eta)
     ys <- intersect(names(reachable),y.indicators)
     ##    Seta <- CondVar(Omega[c(eta,ys),c(eta,ys)],1)
     lambdas <- c()

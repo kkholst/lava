@@ -36,7 +36,7 @@ updatelvm <- function(x,mean=TRUE,...) {
 `reindex` <-
 function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { ## Extract indices of parameters from model
   x$parpos <- NULL
-  M <- as(Graph(x), Class="matrix")
+  M <- x$M
   Debug("M=")
 
   eta <- latent(x) ## Latent variables/Factors

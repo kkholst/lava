@@ -1,7 +1,7 @@
 ##' @export
 `measurement` <-
 function(x, silent=TRUE, debug=FALSE) {
-  M <- t(as(Graph(x), Class="matrix"))
+  M <- x$M
   latent.idx <- match(latent(x),vars(x))
   obs.idx <- match(manifest(x),vars(x))
   if (length(latent.idx)==0)

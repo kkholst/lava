@@ -28,9 +28,7 @@
     return(x)
 
   edges <- paste(from,to,sep="~")
-  edges. <- paste("\"", edges, "\"", sep="")
-  mytext <- paste("c(", paste(paste(edges.,"=",expression(value),sep=""),collapse=","),")")
-  edgeRenderInfo(Graph(x))$"functional" <- eval(parse(text=mytext))
+  x$attributes$functional[[edges]] <- value
   return(x)
 }
 
@@ -40,9 +38,9 @@
 ##' @S3method functional lvm
 functional.lvm <- function(x,to,from,...) {
   if (missing(from))
-    return(edgeRenderInfo(Graph(x))$functional)
+    return(x$attributes$functional)
   
   edges <- paste(from,to,sep="~")
-  edgeRenderInfo(Graph(x))$functional[edges]
+  x$attributes$functional[edges]
 }
 

@@ -17,3 +17,4 @@ subgraph <- function(g,from,to,Tree=new("graphNEL",node=c(to,from),edgemode="dir
   }
   return(Tree)
 }
+

@@ -79,7 +79,7 @@ function(x,...) UseMethod("vars")
 ##' @S3method vars lvm
 `vars.lvm` <-
   function(x,...) {
-    nodes(Graph(x))
+    colnames(x$M)
   }
 
 ##' @S3method vars lvmfit

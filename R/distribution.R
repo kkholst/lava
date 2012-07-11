@@ -10,10 +10,8 @@
     variable <- all.vars(variable)  
   if (length(variable)==1) {
     addvar(x) <- as.formula(paste("~",variable))
-    var. <- paste("\"", variable, "\"", sep="")
     if (is.numeric(value)) value <- list(value)
-    mytext <- paste("c(", paste(paste(var.,"=",expression(value),sep=""),collapse=","),")")
-    nodeRenderInfo(Graph(x))$"distribution" <- eval(parse(text=mytext))
+    x$attributes$distribution[[variable]] <- value ##eval(parse(text=mytext))
     return(x)
   }    
   if ((length(value)!=length(variable) & length(value)!=1))
@@ -30,7 +28,7 @@
 
 ##' @S3method distribution lvm
 "distribution.lvm" <- function(x,var,...) {
-  nodeRenderInfo(Graph(x))$distribution[var]
+  x$attributes$distribution[var]
 }
 
 

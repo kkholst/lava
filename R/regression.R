@@ -172,7 +172,7 @@
         exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
       }
       
-      for (i in 1:length(ys)) {
+      for (i in seq_len(length(ys))) {
         y <- ys[i]
         yf <- unlist(strsplit(yy[i],"[\\[\\]]",perl=TRUE))
         if (length(yf)>1) {
@@ -204,7 +204,7 @@
 ##       xx <- attributes(terms(value))$term.labels
 ##       yy <- setdiff(yx,xx)
 ##       return(regression(object,to=yy,from=xx,...))
-    }
+         }
     if (!is.list(value) | length(value)>2) stop("Value should contain names of outcome (to) and predictors (from)")
     if (all(c("to","from")%in%names(value))) {
 
@@ -243,7 +243,6 @@
       return(object)
     }
     
-
     sx <- strsplit(from,"@")
     xx <- sapply(sx, FUN=function(i) i[1])
     ps <- sapply(sx, FUN=function(i) i[2])
@@ -253,13 +252,15 @@
     allv <- index(object)$vars
     
     object <- addvar(object, c(to,xs), silent=silent)
+    
     for (i in to)
       for (j in xs) {
         ##object <- addvar(object, c(i,xs), debug=debug, silent=silent)
         ##cancel(object) <- c(i,j)
         ##covfix(object,i,j,exo=TRUE) <- "NA"
         ##        Graph(object) <- addEdge(xs,i,Graph(object))
-        object$graph <- addEdge(j,i,object$graph)
+        ## object$graph <- addEdge(j,i,object$graph)
+        object$M[j,i] <- 1
         ##        Graph(object) <- addEdge(j,i,Graph(object))
         ##        functional(object,xs,i) <- fn
         if (!is.na(fn))

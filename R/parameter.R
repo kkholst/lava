@@ -16,10 +16,10 @@
   latent(x,silent=TRUE) <- value
   covfix(x,value,NULL) <- 1
   intfix(x, value) <- value
-  nodeData(Graph(x), value, attr="parameter") <- TRUE
+  x$attributes$parameter[value] <- TRUE
   return(x)
 }
 
 ##' @export
 parameter <- function(x,...)
-  vars(x)[unlist(lapply(nodeData(Graph(x)), function(z) z$parameter))]
+  names(unlist(x$attributes$parameter))

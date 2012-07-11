@@ -269,7 +269,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   ##  return(e.mis)
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]
 
-
   cc <- coef(e.mis,level=0)
   mynames <- c()
   if (e.mis$model$npar.mean>0)
@@ -340,7 +339,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     res$coef <- cc
   }
   
-  res <- edgelabels(res,type="est")
+  ##  res <- edgelabels(res,type="est")
   return(res)
 }
 

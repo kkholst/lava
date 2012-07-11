@@ -32,7 +32,7 @@ function(x,...) UseMethod("Graph")
 function(x,add=FALSE,...) {
   if ((is.null(x$graph) || length(x$graph)==0) & add) {
     m <- Model(x)
-    return(plot(x,noplot=TRUE))
+    return(plot(m,noplot=TRUE))
   }
   else return(x$graph)
 }

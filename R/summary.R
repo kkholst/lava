@@ -13,13 +13,7 @@ function(object,...) {
   print(covariance(object))
   print(intercept(object))
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
-  ## cat("\n")
-  ## A <- as(Graph(object), Class="matrix")
-  ## printmany(A, printmany(object$par, object$fix, name1="Labels:", name2="Fixed", print=FALSE),
-  ##           name1="Adjancency:")
-  ## cat("\n")
-  ## mu <- matrix(unlist(object$mean),nrow=1); rownames(mu) <- "Mean"; colnames(mu) <- vars(object)
-  ## print(mu, print.gap=2, quote=FALSE);
+
   cat("\n")
 }
 

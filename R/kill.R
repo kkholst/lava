@@ -43,9 +43,7 @@
     return(x)
   vv <- vars(x)[idx]
   keep <- setdiff(1:length(vars(x)),idx)
-  M <- as(Graph(x), Class="matrix")
-  for (v1 in vv)
-    Graph(x) <- removeNode(v1, Graph(x))
+  x$M <- x$M[keep,keep,drop=FALSE]
   x$par <- x$par[keep,keep,drop=FALSE]
   x$fix <- x$fix[keep,keep,drop=FALSE]
   x$covpar <- x$covpar[keep,keep,drop=FALSE]

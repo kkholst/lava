@@ -15,17 +15,17 @@ function(x,...) UseMethod("latent")
 
 ##' @S3method latent lvm
 `latent.lvm` <-
-function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
-  if (missing(var)) {
-    latentidx <- unlist(nodeData(Graph(x), attr="latent"))
+function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
+  if (missing(var)) {    
+    latentidx <- unlist(x$attributes$latent)
     if (length(latentidx)>0)
       return(names(latentidx)[latentidx])
     else
       return(NULL)
   }
   if (clear) {
-    x <- addattr(x,attr="shape",var=var,val="rectangle")
-    nodeData(Graph(x), var, attr="latent") <- FALSE
+    x$noderender$shape[var] <- "rectangle"
+    x$attributes$latent[var] <- FALSE
     if (zero) {
       intfix(x,var) <- NA
     }
@@ -33,8 +33,8 @@ function(x,var,clear=FALSE,zero=TRUE,silent=FALSE,...) {
     if (!all(var%in%vars(x))) {
       addvar(x,silent=silent) <- setdiff(var,vars(x))
     }
-    x <- addattr(x,attr="shape",var=var,val="ellipse")
-    nodeData(Graph(x), var, attr="latent") <- TRUE
+    x$noderender$shape[var] <- "ellipse"
+    x$attributes$latent[var] <- TRUE
     if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
       intercept(x,var) <- 0
     }

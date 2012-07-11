@@ -14,18 +14,18 @@ function(x,...) UseMethod("randomslope")
 `randomslope.lvm` <-
 function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,...) {
   if (missing(covar)) {
-    rsidx <- unlist(nodeData(Graph(x), attr="randomslope"))
+    rsidx <- unlist(x$attributes$randomslope)
     if (length(rsidx)>0)
       return(names(rsidx)[rsidx])
     else
-      NULL    
+      return(NULL)
   }
   if (class(covar)[1]=="formula") {
     covar <- all.vars(covar)
   }
   if (clear) {
     ##    x <- addattr(x,attr="shape",var=var,val="rectangle")
-    nodeData(Graph(x), covar, attr="randomslope") <- FALSE
+    x$attributes$randomslope[covar] <- FALSE
   } else {
     if (!is.null(random) & !is.null(response)) {
       if (class(random)[1]=="formula") {
@@ -66,7 +66,7 @@ function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,.
         }
       }
     } else {
-      nodeData(Graph(x), covar, attr="randomslope") <- TRUE
+      x$attributes$randomslope[covar] <- TRUE
     }
   }
   index(x) <- reindex(x)

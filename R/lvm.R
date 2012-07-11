@@ -25,39 +25,64 @@
 ##' m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 ##' 
 lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
- 
-  m <- new("graphNEL", edgemode="directed"); C <- par <- fix <- numeric(); mu <- list()
-  graphRenderInfo(m)$recipEdges <- "distinct"
-  nodeDataDefaults(m, "fill") <- "white"
-  nodeDataDefaults(m, "shape") <- "rectangle"
-  nodeDataDefaults(m, "latent") <- FALSE
-  nodeDataDefaults(m, "randomslope") <- FALSE
-  nodeDataDefaults(m, "normal") <- TRUE
-  nodeDataDefaults(m, "survival") <- FALSE
-  nodeDataDefaults(m, "parameter") <- FALSE
-  nodeDataDefaults(m, "categorical") <- FALSE
-  nodeDataDefaults(m, "distribution") <- NA
-  nodeDataDefaults(m, "label") <- expression(NA)
-  myhooks <- gethook("init.hooks")
-  for (f in myhooks) {
-    m <- do.call(f, list(x=m))
-  }        
 
+  M <- C <- par <- fix <- numeric(); mu <- list()
 
-  edgeDataDefaults(m, "lty") <- 1
-  edgeDataDefaults(m, "lwd") <- 1
-  edgeDataDefaults(m, "col") <- "black"
-  edgeDataDefaults(m, "textCol") <- "black"
-  edgeDataDefaults(m, "est") <- 0
-  edgeDataDefaults(m, "arrowhead") <- "open"
-  edgeDataDefaults(m, "dir") <- "forward"
-  edgeDataDefaults(m, "cex") <- 1.5
-  edgeDataDefaults(m, "label") <- expression()
-  edgeDataDefaults(m, "futureinfo") <- list()
+  
+  ##  m <- new("graphNEL", edgemode="directed");
+  noderender <- list(
+                  fill=c(),
+                  shape=c(),
+                  label=c()
+                  )
+  
+  edgerender <- list(lty=c(),
+                     lwd=c(),
+                     col=c(),
+                     textCol=c(),                  
+                     est=c(),
+                     arrowhead=c(),
+                     dir=c(),
+                     cex=c(),
+                     futureinfo=list())
+  graphrender <- list(recipEdges="distinct")
+  
+  graphdefault <- list(
+                    "fill"="white",
+                    "shape"="rectangle",
+                    "label"=expression(NA),
+                    "lty"=1,
+                    "lwd"=1,
+                    "col"="black",
+                    "textCol"="black",
+                    "est"=0,
+                    "arrowhead"="open",
+                    "dir"="forward",
+                    "cex"=1.5,
+                    "label"=expression(),
+                    "futureinfo"=c())
 
-  res <- list(graph=m, par=par, cov=C, covpar=C, fix=fix, covfix=fix, mean=mu, index=NULL, exogenous=NA, constrain=list(), constrainY=list())
+  modelattr <- list(latent=list(),
+                     randomslope=list(),
+                     survival=list(),
+                     parameter=list(),
+                     categorical=list(),
+                     distribution=list(),
+                     functional=list(),
+                     label=list())
+  
+  res <- list(M=M, par=par, cov=C, covpar=C, fix=fix, covfix=fix,
+              mean=mu, index=NULL, exogenous=NA,
+              constrain=list(), constrainY=list(),
+              attributes=modelattr, noderender=noderender,
+              edgerender=edgerender, graphrender=graphrender,
+              graphdef=graphdefault)  
   class(res) <- "lvm"
 
+  myhooks <- gethook("init.hooks")
+  for (f in myhooks) {
+    res <- do.call(f, list(x=res))
+  }        
 
   myvar <- NULL
   lvar <- x

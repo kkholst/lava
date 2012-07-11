@@ -15,27 +15,29 @@
 `heavytail.lvm` <-
 function(x,var=NULL,df=1,...) {
   if (is.null(var)) {
-    htidx <- unlist(nodeData(Graph(x), attr="heavytail"))
+    htidx <- x$attributes$heavytail
     if (length(htidx)>0 && any(htidx!=0)) {
       res <- htidx[htidx>0]
-      attributes(res)$couple <- unlist(nodeData(Graph(x), attr="heavytail.couple"))[htidx>0]
+      attributes(res)$couple <- unlist(x$attributes$heavytail.couple)[htidx>0]
       return(res)      
     }
     return(NULL)
   }
+  browser()
   couples <- attributes(heavytail(x))$couple
-  if (length(couples)==0) newval <- 1
-  else newval <- max(couples)+1
-  nodeData(Graph(x), var, attr="heavytail.couple") <- newval
-  nodeData(Graph(x), var, attr="heavytail") <- df
+  newval <- 1
+  if (length(couples)>0) newval <- max(couples)+1  
+  x$attributes$heavytail.couple[var] <- newval
+  x$attributes$heavytail[var] <- df
   return(x)
 }
 
-heavytail.init.hook <- function(x,...) {
-  nodeDataDefaults(x,"heavytail") <- 0
-  nodeDataDefaults(x,"heavytail.couple") <- 0
+heavytail.init.hook <- function(x,...) {  
+  x$attributes$heavytail <- list()
+  x$attributes$heavytail.couple <- list()
   return(x)
 }
+
 heavytail.sim.hook <- function(x,data,...) {
   n <- nrow(data)
   hvar <- heavytail(x)

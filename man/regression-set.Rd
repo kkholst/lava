@@ -1,12 +1,12 @@
 \name{regression<-}
 \alias{regfix}
-\alias{regfix.lvm}
 \alias{regfix<-}
 \alias{regfix<-.lvm}
+\alias{regfix.lvm}
 \alias{regression}
-\alias{regression.lvm}
 \alias{regression<-}
 \alias{regression<-.lvm}
+\alias{regression.lvm}
 \title{Add regression association to latent variable model}
 \usage{
   \method{regression}{lvm}(object = lvm(), to, from, fn =

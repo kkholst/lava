@@ -123,6 +123,9 @@ function(object, level=ifelse(missing(type),-1,2),
   else meanstructure <- object$control$meanstructure
   npar <- index(object)$npar; npar.mean <- index(object)$npar.mean*meanstructure
 
+  para <- parameter(Model(object))
+  para.idx <- which(vars(object)%in%para)
+  
 ##   if (class(object)[1]%in%"lvm.missing") {
   if ("lvm.missing"%in%class(object)) {
     ##npar <- object$estimate$model$npar; npar.mean <- object$estimate$model$npar.mean    ##    myorder <- modelPar(object$estimate$model,1:(npar+npar.mean))$p[[object$cc]]
@@ -180,8 +183,6 @@ function(object, level=ifelse(missing(type),-1,2),
   latent.idx <- which(vars(object)%in%latent.var)
   Type <- Var <- From <- VarType <- FromType <- c()
 
-  
-
   Astd <- Pstd <- vstd <- mytype <- NULL
   if (!is.null(std)) {
     stdCoef <- stdcoef(object)
@@ -221,7 +222,7 @@ function(object, level=ifelse(missing(type),-1,2),
 ##  coefs <- mycoef[order(myorder),,drop=FALSE]
   coefs <- mycoef[myorder,,drop=FALSE]
   nn <- colnames(A)
-  
+
   free <- A!="0" 
   free[index(object)$M1!=1] <- FALSE
   nlincon <- matrix(Model(object)$par%in%names(constrain(Model(object))),nrow(A))
@@ -281,8 +282,9 @@ function(object, level=ifelse(missing(type),-1,2),
     if (level>0)   
       ## Variance estimates:
       for (i in 1:ncol(p$P))
-        for (j in i:nrow(p$P)) {
+        for (j in i:nrow(p$P)) {          
           val <- p$P[j,i]
+          if (!(i%in%para.idx))
           if (val!="0" & !any(vars(object)[c(i,j)]%in%index(Model(object))$exogenous))
             if (level>1 | !all(vars(object)[c(i,j)]%in%index(Model(object))$manifest))
             {
@@ -374,7 +376,7 @@ function(object, level=ifelse(missing(type),-1,2),
         }        
         if ((index(object)$v1[i]==1) | level>2) {
           res <- rbind(res, newrow)
-          Type <- c(Type,"intercept")
+          Type <- c(Type,ifelse(!(i%in%para.idx),"intercept","parameter"))
           Var <- c(Var, index(Model(object))$vars[i])
           From <- c(From, NA)
         }
@@ -591,7 +593,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
                         preserve.width="common",flag="") 
   mycoef[is.na(cc)] <- ""
   mycoef[cc[,4]<1e-12,4] <- "  <1e-12"
-  
 
   M <- ncol(cc)
   N <- nrow(cc)
@@ -661,16 +662,27 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
       }
     }
   }
+
+  
   if (Nint>0) {
     int.idx <- which(attributes(cc)$type=="intercept")
     res <- rbind(res, c("Intercepts:",rep("",M)))
-    for (i in int.idx) {
+    for (i in int.idx) {      
       newrow <- mycoef[i,]
       newname <- rownames(cc)[i]
       res <- rbind(res,c(paste("  ",newname),newrow))
-      ##    res <- rbind(res,c(newname,newrow))
     }
+##    browser()
+    par.idx <- which(attributes(cc)$type=="parameter")
+    parres <- rbind(c("Additional Parameters:",rep("",M)))
+    for (i in par.idx) {
+      newrow <- mycoef[i,]
+      newname <- rownames(cc)[i]
+      parres <- rbind(parres,c(paste("  ",newname),newrow))
+    }
+    if (nrow(parres)>1) res <- rbind(res,parres)
   }
+  
   if (Nvar>0) {
     var.idx <- which(attributes(cc)$type=="variance")
     vname <- "Residual Variances:"

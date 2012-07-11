@@ -199,7 +199,6 @@ covfix.lvm <- function(object,...) {
   allvars <- c(var1,var2)
   xorg <- exogenous(object)
   exoset <- setdiff(xorg,allvars)
-  ##  browser()
 
   if (!exo & length(exoset)<length(xorg)) {
     ##    exogenous(object,mom=TRUE) <- exoset
@@ -423,11 +422,10 @@ regfix.lvm <- function(object,...) {
     exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
   }
 
-  
   if (length(from)==length(to) & length(from)==length(value)) {
 ##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
-      if (!isAdjacent(Graph(object), from[i], to[i])) {
+      if (object$M[from[i],to[i]]==0) { ## Not adjancent! ##!isAdjacent(Graph(object), from[i], to[i])) {
         ##covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
         object <- regression(object, to=to[i], from=from[i])
       }
@@ -454,7 +452,7 @@ regfix.lvm <- function(object,...) {
 
   for (i in from) {
     for (j in to) {
-      if (!isAdjacent(Graph(object), i, j)) {
+      if (object$M[i,j]==0) { ##!isAdjacent(Graph(object), i, j)) {
 ##        cancel(object) <- c(i,j) ## Remove old associations
         object <- regression(object,to=j,from=i)
       }

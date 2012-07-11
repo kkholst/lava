@@ -36,18 +36,16 @@ cancel.lvm <- function(x,value,...) {
   return(x)
   }
   
-  M <- as(Graph(x), Class="matrix")
   for (v1 in value)
     for (v2 in value)
       if (v1!=v2)
         {
           if (all(c(v1,v2)%in%vars(x))) {
-          if (M[v1,v2]==1)
-            Graph(x) <- removeEdge(v1, v2, Graph(x))
-          x$par[v1,v2] <- x$fix[v1,v2] <-
-            x$covpar[v1,v2] <- x$covfix[v1,v2] <- NA
-          x$cov[v1,v2] <- 0
-        }
+            x$M[v1,v2] <- 0
+            x$par[v1,v2] <- x$fix[v1,v2] <-
+              x$covpar[v1,v2] <- x$covfix[v1,v2] <- NA
+            x$cov[v1,v2] <- 0
+          }
         }
   x$parpos <- NULL
   index(x) <- reindex(x)

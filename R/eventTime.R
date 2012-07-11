@@ -22,13 +22,10 @@
 ##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
 ##' regression(m) <- T2~f(X2,0.6)
 ##' distribution(m,~T1+T2+C) <- weibull.lvm()
-##' system.time(d <- sim(m,1e5))
-##' m <- eventTime(m,otime~min(T1,T2,C=0))
-##' set.seed(1)
+##' m <- eventTime(m,otime~min(T1,T2))
 ##' d <- sim(m,10)
 ##' 
-##' set.seed(1)
-##' m <- eventTime(m,cens.otime~min(T1,T2,C=0))
+##' m <- eventTime(m,cens.otime~min(T1,T2=E2,C=0),"event")
 ##' sim(m,10)
 ##' @export
 ##' @param object Model object
@@ -36,6 +33,7 @@
 ##' @param eventName Event names
 ##' @param ... Additional arguments to lower levels functions
 eventTime <- function(object,formula,eventName,...){
+  if (missing(formula)) return(object$attributes$eventHistory)
   ff <- as.character(formula)
   timeName <- all.vars(update.formula(formula,"~1"))
   if (length(timeName)==0){
@@ -65,24 +63,32 @@ eventTime <- function(object,formula,eventName,...){
   }
   m <- regression(m,formula(paste("~",timeName,sep="")))
   if (missing(eventName)) eventName <- "Event"
-  eventTime <- list(names=c(timeName,eventName),latentTimes=gsub(" ","",latentTimes),events=gsub(" ","",events))
-  m$eventHistory <- c(m$eventHistory,list(eventTime))
-  m
+  eventTime <- list(names=c(timeName,eventName),
+                    latentTimes=gsub(" ","",latentTimes),
+                    events=gsub(" ","",events))
+  if (is.null(m$attributes$eventHistory)) {
+    m$attributes$eventHistory <- list(eventTime)
+    names(m$attributes$eventHistory) <- timeName
+  } else {
+    m$attributes$eventHistory[[timeName]] <- eventTime
+  }
+  return(m)
 }
 
 addhook("simulate.eventHistory","sim.hooks")
 
 simulate.eventHistory <- function(x,data,...){
-  if (is.null(x$eventHistory)){
+  if (is.null(eventTime(x))) {
     return(data)
   }
   else{
-    for (eh in x$eventHistory){
+    for (eh in eventTime(x)) {
       if (any((found <- match(eh$latentTimes,names(data),nomatch=0))==0)){
-        warning("Cannot find latent time variable: ",eh$latentTimes[found==0],".")
+        warning("Cannot find latent time variable: ",
+                eh$latentTimes[found==0],".")
       }
       else{
-        for (v in 1:length(eh$latentTimes)){
+        for (v in 1:length(eh$latentTimes)) {
           if (v==1){ ## initialize with the first latent time and event
             eh.time <- data[,eh$latentTimes[v]]
             eh.event <- rep(eh$events[v],NROW(data))

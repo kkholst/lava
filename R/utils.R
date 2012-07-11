@@ -189,7 +189,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
 ##    etas <- index(x)$latent
 ##    ys <- index(x)$endogenous
     ys <- endogenous(x)
-    M <- as(Graph(x), Class="matrix")
+    M <- x$M
 
     for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
       ys. <- names(which(M[e,ys]==1))
@@ -699,6 +699,23 @@ CondMom <- function(mu,S,idx,X) {
 }
 
 ###}}} CondMom
+
+###{{{ Depth-First/acc (accessible)
+
+DFS <- function(M,v,explored=c()) {
+  explored <- union(explored,v)
+  incident <- M[v,]
+  for (v1 in setdiff(which(incident==1),explored)) {
+    explored <- DFS(M,v1,explored)
+  }
+  return(explored)
+}
+acc <- function(M,v) {
+  if (is.character(v)) v <- which(colnames(M)==v)
+  colnames(M)[setdiff(DFS(M,v),v)]
+}
+
+###}}} Depth-First/acc (accessible)
 
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean)
