@@ -23,7 +23,6 @@ function(x,var=NULL,df=1,...) {
     }
     return(NULL)
   }
-  browser()
   couples <- attributes(heavytail(x))$couple
   newval <- 1
   if (length(couples)>0) newval <- max(couples)+1  
