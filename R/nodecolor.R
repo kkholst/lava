@@ -34,7 +34,6 @@ function(object,var,...,value) UseMethod("nodecolor<-")
         object <- addattr(object,attr="textCol",var=var,val=labcol)
       if (!missing(lwd))
         object <- addattr(object,attr="lwd",var=var,val=lwd)
-
     }
     return(object)
   }

@@ -8,10 +8,10 @@ textver <- paste(author, " (", year, "). ", title, ". ", vers, ".", sep="")
 
 citHeader("To cite 'lava' in publications use:")
 
-citEntry(entry="Manual",
-         title = title,
-         author = plist,
-         year = year,
-         note = vers,
-         
+citEntry(entry="Article",
+         title = "Linear Latent Variable Models: The lava-package",
+         author = "Klaus K. Holst and Esben Budtz-Joergensen",
+         year = 2012,
+ 	 journal = "Computational Statistics",
+	 note = "Accepted for publication",         
          textVersion = textver)
