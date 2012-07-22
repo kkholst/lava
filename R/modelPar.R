@@ -38,6 +38,8 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 
 ###{{{ modelPar.multigroup
 
+
+
 ##' @S3method modelPar multigroup
 modelPar.multigroup <- function(x,p, ...) {
   npar <- x$npar
@@ -52,12 +54,18 @@ modelPar.multigroup <- function(x,p, ...) {
       p. <- p
     }
 
+  Nmean <- unlist(lapply(x$meanposN,length))
+  Npar <- unlist(lapply(x$parposN,length))
+  pp <- lapply(x$parposN,function(x) p.[x])
+  mm <- lapply(x$meanposN,function(x) meanpar[x])
+  pm <- mm
+  for (i in seq(length(pm))) pm[[i]] <- c(pm[[i]],pp[[i]])
+  return(list(p=pm,par=pp,mean=mm))
 
   parlist <- list(); for (i in 1:k) parlist[[i]] <- numeric(length(x$parlist[[i]]))
   if (!is.null(meanpar)) {
     meanlist <- list(); for (i in 1:k) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
   }
-  ##browser()
   
   if (length(p.)>0)
   for (i in 1:length(p.)) {

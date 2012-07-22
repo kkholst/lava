@@ -5,7 +5,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
   ## Initial values:
   W <- c() ## Weight-vector
   s <- list()
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     mydata <- x$data[[i]][,manifest(x$lvm[[i]]),drop=FALSE]
     W <- c(W, nrow(mydata))
     if (nrow(mydata)<3) {
@@ -24,13 +24,13 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
 
   Wtotal <- sum(W); W <- W/Wtotal
 
-  pg <- vector("list", x$npar); for (i in 1:length(pg)) pg[[i]] <- rep(0,x$ngroup)
-  meang <- vector("list", x$npar.mean); for (i in 1:length(meang)) meang[[i]] <- rep(0,x$ngroup)
+  pg <- vector("list", x$npar); for (i in seq_len(length(pg))) pg[[i]] <- rep(0,x$ngroup)
+  meang <- vector("list", x$npar.mean); for (i in seq_len(length(meang))) meang[[i]] <- rep(0,x$ngroup)
   
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     pp <- modelPar(x$lvm[[i]],s[[i]])
     pos <- sapply(x$parlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
-    for (j in 1:length(pos))
+    for (j in seq_len(length(pos)))
       pg[[ pos[j] ]][i] <-  pp$p[j]
 
     pos <- sapply(x$meanlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
@@ -40,7 +40,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
     else
       pos <- pos[ptype]
     if (length(pos)>0)
-    for (j in 1:length(pos)) {
+    for (j in seq_len(length(pos))) {
       meang[[ pos[j] ]][i] <-  pp$meanpar[j]
     }
   }
@@ -99,7 +99,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
   obs.idx <- index(x)$obs.idx; 
   ##obs.idx <- as.vector(J%*%(1:m));
-  latent.idx <- setdiff(1:m, obs.idx)
+  latent.idx <- setdiff(seq_len(m), obs.idx)
 
   exo.idx <- index(x)$exo.idx ## match(exogenous(x),vars(x))
   exo.idxObs <- index(x)$exo.obsidx ##match(exogenous(x),manifest(x))
@@ -132,11 +132,11 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
     covXY <- S[exo.pos, rel.pos,drop=FALSE]
     beta <- 0
-    for (j in 1:length(rel.pos))
+    for (j in seq_len(length(rel.pos)))
       beta <- beta + 1/lambdas[j]*InvvarX.eta %*% covXY[,j]
     beta <- beta/length(rel.pos)
 
-    for (k in 1:length(exo.pos)) {
+    for (k in seq_len(length(exo.pos))) {
       if (A0[i,exo.pos[k]]==1) {
         newA[i,exo.pos[k]] <- beta[k]
       }
@@ -151,7 +151,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
 
     zetas <- c()
-    for (r1 in 1:(length(rel.pos)-1))
+    for (r1 in seq_len(length(rel.pos)-1))
       for (r2 in (r1+1):length(rel.pos)) {
         zetas <- c(zetas, S[rel.pos[r1], rel.pos[r2]]/ (lambdas[r1]*lambdas[r2]) - betavar)
       }
@@ -210,7 +210,7 @@ Simple_gradient.lvm <- function(x,p,...) {
     g <- measurement(x,silent=TRUE)
     keep <- c()
     if (length(g)>1) {
-      for (i in 1:length(g)) {
+      for (i in seq_len(length(g))) {
         if (length(endogenous(g[[i]]))>2)
           keep <- c(keep,i)      
       }    
@@ -224,7 +224,7 @@ Simple_gradient.lvm <- function(x,p,...) {
     for (l in e) {
       ##    a <- coef(l$estimate)[,1]
       a <- coef(l)
-      for (i in 1:length(a)) {
+      for (i in seq_len(length(a))) {
         pos <- match(names(a)[i],names(ss))
         if (!is.na(pos))
           ss[pos] <- a[i]
@@ -252,7 +252,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   n <- nrow(S) ## Number of manifest variables
   m <- nrow(A) ## Number of variables
   A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
-  obs.idx <- as.vector(J%*%(1:m));  latent.idx <- setdiff(1:m, obs.idx)
+  obs.idx <- as.vector(J%*%(seq_len(m)));  latent.idx <- setdiff(seq_len(m), obs.idx)
   s <- sqrt(diag(S))
   R <- (cov2cor(S)) ## S/outer(s,s)
   C <- P0
@@ -262,7 +262,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   Debug((C), debug)
   for (i in latent.idx) {
     inRelation <- A[obs.idx,i]==1
-    for (j in 1:length(obs.idx)) {
+    for (j in seq_len(length(obs.idx))) {
       Debug((j), debug)
       C[obs.idx[j],i] <- C[i,obs.idx[j]] <- if (any(inRelation)) {
         numerator <- sum(R[j, which(inRelation)])
@@ -298,7 +298,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   }  
   Ahat <- matrix(0,m,m)
   C[is.nan(C)] <- 0
-  for (j in 1:m) { ## OLS-estimates
+  for (j in seq_len(m)) { ## OLS-estimates
     relation <- A[j,]==1
     if (!any(relation)) next    
     Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j], error=function(...) 0)

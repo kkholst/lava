@@ -168,20 +168,23 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     pp0 <- lapply(ps, is.na)
     usedname <- cbind(parname, rep(NA,length(parname)))
     counter <- 1
-    pres <- pp0
+    pres <- pres0 <- pp0
     for (i in 1:length(pp0)) {
       if (length(pp0[[i]]>0))
       for (j in 1:length(pp0[[i]])) {
         pidx <- match(ps[[i]][j],parname)
         if (pp0[[i]][j]) {
           pres[[i]][j] <- paste("p",counter,sep="")
+          pres0[[i]][j] <- counter
           counter <- counter+1        
         } else if (!is.na(pidx)) {
           if (!is.na(usedname[pidx,2])) {
             pres[[i]][j] <- usedname[pidx,2]
+            pres0[[i]][j] <- as.numeric(substr(pres[[i]][j],2,nchar(pres[[i]][j])))
           } else {
             val <- paste("p",counter,sep="")
             pres[[i]][j] <- val
+            pres0[[i]][j] <- counter
             usedname[pidx,2] <- val
             counter <- counter+1
           }
@@ -191,9 +194,11 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
       }
     }
     mypar <- paste("p",1:nfree,sep="")
+    myparPos <- pres0
     myparpos <- pres
     myparlist <- lapply(pres, function(x) x[!is.na(x)])
   } else {
+    myparPos <- NULL
     mypar <- NULL
     myparpos <- NULL
     myparlist <- NULL
@@ -212,24 +217,28 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     mm0 <- lapply(means, is.na)
     usedname <- cbind(meanparname, rep(NA,length(meanparname)))
     counter <- 1
-    res <- mm0
+    res0 <- res <- mm0
     for (i in 1:length(mm0)) {
       if (length(mm0[[i]])>0)
       for (j in 1:length(mm0[[i]])) {
         midx <- match(means[[i]][j],meanparname)
         if (mm0[[i]][j]) {
           res[[i]][j] <- paste("m",counter,sep="")
+          res0[[i]][j] <- counter
           counter <- counter+1        
         } else if (!is.na(midx)) {
           pidx <- match(meanparname[midx],pp)
           if (!is.na(pidx)) {
             res[[i]][j] <- unlist(myparlist)[pidx]
+            res0[[i]][j] <- as.numeric(substr(res[[i]][j],2,nchar(res[[i]][j])))
           } else {
             if (!is.na(usedname[midx,2])) {
               res[[i]][j] <- usedname[midx,2]
+              res0[[i]][j] <- as.numeric(substr(res[[i]][j],2,nchar(res[[i]][j])))
             } else {
               val <- paste("m",counter,sep="")
               res[[i]][j] <- val
+              res0[[i]][j] <- counter
               usedname[midx,2] <- val
               counter <- counter+1
             }
@@ -239,10 +248,12 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         }
       }
     }
+    mymeanPos <- res0
     mymeanpos <- res
     mymeanlist <- lapply(res, function(x) x[!is.na(x)])
     mymean <- unique(unlist(mymeanlist))   ##paste("m",1:nfree.mean,sep="")    
   } else {
+    mymeanPos <- NULL
     mymean <- NULL
     mymeanpos <- NULL
     mymeanlist <- NULL
@@ -250,13 +261,15 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   ####
 
 ##  mymean <- paste("m",1:nfree.mean,sep=""); names(mymean) <- vars(models)[midx]
-  
+
   res <- list(npar=nfree, npar.mean=nfree.mean, ngroup=length(lvms), names=mynames,
               lvm=lvms, data=datas, samplestat=samplestat,
               A=As, P=Ps,
               meanpar=names(mu),
               par=mypar, parlist=myparlist,  parpos=myparpos,
               mean=mymean, meanlist=mymeanlist, meanpos=mymeanpos,
+              parposN=myparPos,
+              meanposN=mymeanPos,
               models.orig=models.orig, missing=missing
               )
   class(res) <- "multigroup"

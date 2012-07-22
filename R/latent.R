@@ -17,15 +17,15 @@ function(x,...) UseMethod("latent")
 `latent.lvm` <-
 function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
   if (missing(var)) {    
-    latentidx <- unlist(x$attributes$latent)
+    latentidx <- unlist(x$latent)
     if (length(latentidx)>0)
-      return(names(latentidx)[latentidx])
+       return(names(latentidx))
     else
       return(NULL)
   }
   if (clear) {
     x$noderender$shape[var] <- "rectangle"
-    x$attributes$latent[var] <- FALSE
+    x$latent[var] <- NULL
     if (zero) {
       intfix(x,var) <- NA
     }
@@ -34,17 +34,17 @@ function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
       addvar(x,silent=silent) <- setdiff(var,vars(x))
     }
     x$noderender$shape[var] <- "ellipse"
-    x$attributes$latent[var] <- TRUE
+    x$latent[var] <- TRUE
     if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
       intercept(x,var) <- 0
     }
   }
-  
+ 
   xorg <- exogenous(x)
   exoset <- setdiff(xorg,var) 
   if (length(exoset)<length(xorg)) {
     exogenous(x) <- exoset
-  }  
+  }
   
   index(x) <- reindex(x)
   return(x)

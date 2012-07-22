@@ -62,7 +62,7 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
                     "label"=expression(),
                     "futureinfo"=c())
 
-  modelattr <- list(latent=list(),
+  modelattr <- list(
                      randomslope=list(),
                      survival=list(),
                      parameter=list(),
@@ -71,7 +71,7 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
                      functional=list(),
                      label=list())
   
-  res <- list(M=M, par=par, cov=C, covpar=C, fix=fix, covfix=fix,
+  res <- list(M=M, par=par, cov=C, covpar=C, fix=fix, covfix=fix,latent=list(),
               mean=mu, index=NULL, exogenous=NA,
               constrain=list(), constrainY=list(),
               attributes=modelattr, noderender=noderender,

@@ -13,5 +13,5 @@ citEntry(entry="Article",
          author = "Klaus K. Holst and Esben Budtz-Joergensen",
          year = 2012,
  	 journal = "Computational Statistics",
-	 note = "Accepted for publication",         
+	 note = Accepted,         
          textVersion = textver)

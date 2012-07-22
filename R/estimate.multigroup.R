@@ -437,12 +437,11 @@
     print(optim$constrain)
     print(optim$method)
   }
-
   ##  suppressMessages(browser())
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")
-
+  
   opt$estimate <- opt$par
   if (optim$constrain) {
     opt$estimate[constrained] <- exp(opt$estimate[constrained])
