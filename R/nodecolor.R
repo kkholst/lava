@@ -9,7 +9,7 @@ function(object,var,...,value) UseMethod("nodecolor<-")
       if (class(var)[1]=="formula") var <- all.vars(var)
       object$noderender$fill[var] <- value
       if (!missing(border))
-        object$noderender$border[var] <- border
+        object$noderender$col[var] <- border
       if (!missing(shape))
         object$noderender$shape[var] <- shape
       if (!missing(labcol))
