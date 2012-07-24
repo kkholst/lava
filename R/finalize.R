@@ -30,7 +30,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     edgeRenderInfo(g)$label <- x$graphdef$label
     for (i in seq_len(length(x$edgerender))) {
       ee <- x$edgerender[[i]]
-      if (length(ee)>0) {
+      if (length(ee)>0 && names(x$edgerender)[i]!="futureinfo") {
         edgeRenderInfo(g)[names(x$edgerender)[i]][names(ee)] <- ee
       }
     }
