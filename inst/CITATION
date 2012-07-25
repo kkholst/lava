@@ -1,17 +1,24 @@
-desc <- packageDescription("lava")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc[["Date"]])
-vers <- paste("R package version", desc[["Version"]])
-title <- paste(desc[["Package"]], ": ", desc[["Title"]], sep="")
-author <- desc[["Author"]]
-plist <- personList(as.person(author))
-textver <- paste(author, " (", year, "). ", title, ". ", vers, ".", sep="")
+## desc <- packageDescription("lava")
+## year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc[["Date"]])
+## vers <- paste("R package version", desc[["Version"]])
+## title <- paste(desc[["Package"]], ": ", desc[["Title"]], sep="")
+## author <- desc[["Author"]]
+## plist <- personList(as.person(author))
+## textver <- paste(author, " (", year, "). ", title, ". ", vers, ".", sep="")
+
+author <- "Klaus K. Holst and Esben Budtz-Joergensen"
+year <- 2012
+journal <- "Computational Statistics"
+title <- "Linear Latent Variable Models: The lava-package"
+note <- "To appear"
+textver <- paste(author, " (", year, "). ", title, ". ", journal, ".", note, sep="")
 
 citHeader("To cite 'lava' in publications use:")
 
 citEntry(entry="Article",
-         title = "Linear Latent Variable Models: The lava-package",
-         author = "Klaus K. Holst and Esben Budtz-Joergensen",
-         year = 2012,
- 	 journal = "Computational Statistics",
-	 note = Accepted,         
+         title = title,
+         author = author,
+         year = year,
+ 	 journal = journal,
+	 note = note,
          textVersion = textver)
