@@ -53,7 +53,7 @@ NULL
 ##' Data
 ##'
 ##' Description
-##' @name gamborg
+##' @name bmidata 
 ##' @docType data
 ##' @format data.frame containing ...
 ##' @keywords datasets
