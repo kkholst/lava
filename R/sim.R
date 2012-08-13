@@ -128,7 +128,7 @@ probit.lvm <- binomial.lvm("probit")
 ##' @aliases sim sim.lvmfit sim.lvm functional functional<-
 ##' functional.lvm functional<-.lvm distribution distribution distribution<-
 ##' distribution.lvm distribution<-.lvm heavytail heavytail<- weibull.lvm
-##' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm student.lvm
+##' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm student.lvm coxGompertz.lvm coxWeibull.lvm coxExponential.lvm 
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)

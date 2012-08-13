@@ -145,15 +145,15 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
     hi <- list(par=0)
     RMSEA <- epsilon(q-qdf)
     start <- RMSEA
-    if (RMSEA>0)
-      hi <- tryCatch(nlminb(start,function(x) opf(x,p=1-alpha)),error=function(...) list(par=NA))
-    lo <- tryCatch(nlminb(start,function(x) opf(x,p=alpha)),error=function(...) list(par=NA))
-    ## hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf))
-    ## lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n))
+    if (RMSEA>0) {
+      hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum
+      hi <- tryCatch(nlminb(hi$par^0.5,function(x) opf(x^2,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
+    }
+    lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n)); lo$par <- lo$minimum
+    lo <- tryCatch(nlminb(lo$par^0.5,function(x) opf(x^2,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2
     ci <- c(epsilon(c(hi$par,lo$par)))    
     RMSEA <- c(RMSEA=RMSEA,ci);
     names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
-    
     res <- c(res,list(RMSEA=RMSEA, level=level))
   } else {
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
@@ -185,7 +185,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
            ", P(Q>q) =", fit$p.value, "\n"))
   if (optim) {
     if (!is.null(x$RMSEA)) {
-      rr <- formatC(x$RMSEA)
+      rr <- round(x$RMSEA*10000)/10000
       rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
       cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
     }
