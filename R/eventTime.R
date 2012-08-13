@@ -17,13 +17,17 @@
 ##' @author Thomas A. Gerds
 ##' @keywords survival models regression
 ##' @examples
+##'
 ##' m <- lvm()
 ##' distribution(m,~X2) <- binomial.lvm()
 ##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
 ##' regression(m) <- T2~f(X2,0.6)
-##' distribution(m,~T1+T2+C) <- weibull.lvm()
-##' m <- eventTime(m,otime~min(T1,T2))
-##' d <- sim(m,10)
+##' distribution(m,~T1) <- coxWeibull.lvm(scale=1/100)
+##' distribution(m,~T2) <- coxWeibull.lvm(scale=1/100)
+##' distribution(m,~C) <- coxWeibull.lvm(scale=1/100)
+##' m <- eventTime(m,time~min(T1=1,T2=2,C=0),"event")
+##' d <- sim(m,10000)
+##'
 ##' 
 ##' m <- eventTime(m,cens.otime~min(T1,T2=E2,C=0),"event")
 ##' sim(m,10)
@@ -103,5 +107,27 @@ simulate.eventHistory <- function(x,data,...){
       data[,eh$names[2]] <- eh.event
     }
     return(data)
+  }
+}
+
+
+
+##' @export
+coxWeibull.lvm <- function(shape=1,scale) {
+  f <- function(n,mu,var,...) {
+    (- (log(runif(n)) * (1 / scale) * exp(-mu)))^(1/shape)
+  }
+  return(f)
+}
+
+##' @export
+coxExponential.lvm <- function(scale){
+  coxWeibull.lvm(shape=1,scale)
+}
+
+##' @export
+coxGompertz.lvm <- function(shape=1,scale) {
+  f <- function(n,mu,var,...) {
+    (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
   }
 }
