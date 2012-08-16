@@ -4,13 +4,13 @@
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
-\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
+\alias{distribution.lvm}
 \alias{functional}
-\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
+\alias{functional.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
 \alias{logit.lvm}
