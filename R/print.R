@@ -3,16 +3,23 @@
 ##' @S3method print lvm
 `print.lvm` <-
 function(x, ...) {
-  k <- length(vars(x))
-  cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
-  if (k==0)
-    return()
-  cat("Npar=", index(x)$npar, "+", index(x)$npar.mean, "\n", sep="")
-  cat("\n")
-  ff <- formula(x,TRUE)
-  for (f in ff) {
-    oneline <- as.character(f); 
-    cat(as.character(oneline),"\n")
+  res <- NULL
+  myhooks <- gethook("print.hooks")
+  for (f in myhooks) {
+    res <- do.call(f, list(x=x,...))
+  }
+  if (is.null(res)) {
+    k <- length(vars(x))
+    cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
+    if (k==0)
+      return()
+    cat("Npar=", index(x)$npar, "+", index(x)$npar.mean, "\n", sep="")
+    cat("\n")
+    ff <- formula(x,TRUE)
+    for (f in ff) {
+      oneline <- as.character(f); 
+      cat(as.character(oneline),"\n")
+    }
   }
   invisible(x)
 }

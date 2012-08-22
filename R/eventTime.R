@@ -79,6 +79,39 @@ eventTime <- function(object,formula,eventName,...){
   return(m)
 }
 
+
+addhook("print.eventHistory","print.hooks")
+print.eventHistory <- function(x,...) { 
+  if (is.null(eh <- x$attributes$eventHistory)) return(NULL)
+  ehnames <- unlist(lapply(eh,function(x) x$names))
+  cat("Event History Model\n")
+  ff <- formula(x,TRUE)
+  R <- c()
+  for (f in ff) {
+    oneline <- as.character(f);
+    y <- gsub(" ","",strsplit(f,"~")[[1]][1])
+    if (!(y %in% ehnames)) {
+      col1 <- as.character(oneline)
+      D <- attributes(distribution(x)[[y]])$family
+      col2 <- "Normal"
+      if (!is.null(D$family)) col2 <- paste(D$family,sep="")
+      if (!is.null(D$link)) col2 <- paste(col2,"(",D$link,")",sep="")
+      if (!is.null(D$par)) col2 <- paste(col2,"(",paste(D$par,collapse=","),")",sep="")      
+      R <- rbind(R,c(col1,"  ",col2))
+    }
+  }
+  for (y in names(eh)) {
+    col1 <- paste(y, " = min(",paste(eh[[y]]$latentTimes,collapse=","),")",sep="")
+    eh[[y]]$names[2]
+    col2 <- paste(eh[[y]]$names[2], " := {",paste(eh[[y]]$events,collapse=","),"}",sep="")
+    R <- rbind(R,c(col1,"",col2))
+  }
+  rownames(R) <- rep("",nrow(R)); colnames(R) <- rep("",ncol(R))
+  print(R,quote=FALSE,...)
+  cat("\n")
+  TRUE
+}
+
 addhook("simulate.eventHistory","sim.hooks")
 
 simulate.eventHistory <- function(x,data,...){
@@ -117,6 +150,7 @@ coxWeibull.lvm <- function(shape=1,scale) {
   f <- function(n,mu,var,...) {
     (- (log(runif(n)) * (1 / scale) * exp(-mu)))^(1/shape)
   }
+  attr(f,"family") <- list(family="weibull",par=c(shape,scale))
   return(f)
 }
 
@@ -130,4 +164,9 @@ coxGompertz.lvm <- function(shape=1,scale) {
   f <- function(n,mu,var,...) {
     (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
   }
+  attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
+  return(f)
 }
+
+
+
