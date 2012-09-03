@@ -31,7 +31,7 @@ function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
     }
   } else {
     if (!all(var%in%vars(x))) {
-      addvar(x,silent=silent) <- setdiff(var,vars(x))
+      addvar(x,silent=silent,reindex=FALSE,) <- setdiff(var,vars(x))
     }
     x$noderender$shape[var] <- "ellipse"
     x$latent[var] <- TRUE

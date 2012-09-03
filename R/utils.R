@@ -495,10 +495,15 @@ getoutcome <- function(formula) {
 }
 
 ##' @export
-decomp.specials <- function(x,pattern="[()]",sep=",",...) {
+decomp.specials <- function(x,pattern="[()]",pattern2=NULL,sep=",",reverse=FALSE,...) {
   st <- gsub(" ","",x)
-  if (!is.null(pattern))
+  if (!is.null(pattern)) {
     st <- rev(unlist(strsplit(st,pattern,...)))[1]
+  }
+  if (!is.null(pattern2)) {
+    st <- (unlist(strsplit(st,pattern2,...)))
+    if (reverse) st <- rev(st)
+  }
   unlist(strsplit(st,sep,...))
 }
 

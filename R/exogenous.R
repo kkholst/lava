@@ -15,7 +15,7 @@ function(x,...) UseMethod("exogenous")
   }
   not.in <- !(value%in%vars(x))
   if (any(not.in)) {
-    addvar(x) <- value[not.in]
+    addvar(x,reindex=FALSE) <- value[not.in]
   }
   xorg <- exogenous(x)
   x$exogenous <- value

@@ -194,7 +194,7 @@ covfix.lvm <- function(object,...) {
   if (class(var2)[1]=="formula")
     var2 <- all.vars(var2)
 
-  object <- addvar(object,c(var1,var2),...)
+  object <- addvar(object,c(var1,var2),reindex=FALSE,...)
 
   allvars <- c(var1,var2)
   xorg <- exogenous(object)
@@ -375,7 +375,7 @@ regfix.lvm <- function(object,...) {
     xxf <- lapply(from,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
     xs <- unlist(lapply(xxf,function(y) y[1]))    
 
-    object <- addvar(object,c(ys,xs),...)
+    object <- addvar(object,c(ys,xs),reindex=FALSE,...)
 
     newexo <- notexo <- c()
     for (i in 1:length(xs)) {        
@@ -408,10 +408,10 @@ regfix.lvm <- function(object,...) {
       }
     }
     to <- ys; from <- xs
-    object <- addvar(object,c(ys,xs),...)
+    object <- addvar(object,c(ys,xs),reindex=FALSE,...)
     notexo <- c(notexo,to)
   } else {
-    object <- addvar(object,c(to,from),...)
+    object <- addvar(object,c(to,from),reindex=FALSE,...)
     newexo <- from
     notexo <- to
   }

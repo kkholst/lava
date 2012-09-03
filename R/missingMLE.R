@@ -30,7 +30,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   exo <- exogenous(model)
   exclude <- c()
 
-  for (i in setdiff(1:nrow(patterns),pattern.allmis)) {
+  for (i in setdiff(seq_len(nrow(patterns)),pattern.allmis)) {
     exoremove <- c()
     includemodel <- TRUE
     count <- count+1
@@ -77,9 +77,13 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     modelexo <- exogenous(model)
     exogenous(m0) <- setdiff(modelexo,exoremove)
     ##    index(m0) <- reindex(m0,deriv=TRUE,zeroones=TRUE)
-    if (is.null(intersect(modelexo,latent(m0)))) {
-      print("Missing exogenous variables... Going for complete-case analysis in these cases")
-    } else {
+    browser()
+    if (is.null(misx <- intersect(modelexo,latent(m0)))) {
+      message("Missing exogenous variables:", paste(misx,collapse=","),
+              "Going for complete-case analysis in these cases")      
+    }
+##    else
+    {
       if( sum(unlist(index(m0)[c("npar","npar.mean")]))>0 ) {
         models <- c(models, list(m0))
         datasets <- c(datasets, list(d0))

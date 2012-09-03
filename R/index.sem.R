@@ -98,7 +98,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 
   ##  P1. <- P1[-exo.idx,-exo.idx]
   npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
-  parnames <- paste("p", 1:(npar.reg+npar.var), sep="")  
+  parnames <- paste("p", seq_len(npar.reg+npar.var), sep="")  
   Debug(npar.reg)
   
 ##  A <- M0;

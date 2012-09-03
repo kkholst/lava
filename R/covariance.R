@@ -211,7 +211,7 @@ function(object,var=NULL,var2,exo=FALSE,constrain=FALSE,...) {
         c1 <- var[i]
         for (j in 1:length(var2)) {
           c2 <- var2[j]
-          object <- addvar(object, c(c1,c2), silent=TRUE)
+          object <- addvar(object, c(c1,c2), silent=TRUE, reindex=FALSE)
           ##        cancel(object) <- c(c1,c2)
           object$cov[c1,c2] <- object$cov[c2,c1] <- 1
           object$parpos <- NULL
@@ -224,7 +224,7 @@ function(object,var=NULL,var2,exo=FALSE,constrain=FALSE,...) {
         c1 <- var[i]
         for (j in i:length(var)) {
           c2 <- var[j]
-          object <- addvar(object, c(c1,c2), silent=TRUE)
+          object <- addvar(object, c(c1,c2), silent=TRUE, reindex=FALSE)
           ##        cancel(object) <- c(c1,c2)
           object$cov[c1,c2] <- object$cov[c2,c1] <- 1
           object$parpos <- NULL

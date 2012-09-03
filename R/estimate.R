@@ -85,7 +85,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' e
 ##'
 `estimate.lvm` <-
-function(x, data,
+function(x, data=parent.frame(),
          estimator="gaussian",
          control=list(),
          missing=FALSE,
@@ -136,6 +136,12 @@ function(x, data,
     optim[names(control)] <- control
   }
 
+  if (is.environment(data)) {
+    innames <- intersect(ls(envir=data),vars(x))
+    data <- as.data.frame(lapply(innames,function(x) get(x,envir=data)))
+    names(data) <- innames
+  }
+  
   if (!lava.options()$exogenous) exogenous(x) <- NULL
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
@@ -601,7 +607,7 @@ function(x, data,
 ###{{{ estimate.formula
 
 ##' @S3method estimate formula
-estimate.formula <- function(x,data,pred.norm=c(),unstruct=FALSE,silent=TRUE,...) {
+estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,...) {
   cl <- match.call()
   ## {  varnames <- all.vars(x)
   ##    mf <- model.frame(x,data)
