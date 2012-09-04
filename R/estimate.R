@@ -186,10 +186,11 @@ function(x, data=parent.frame(),
   }
   
   Debug("procdata")
-  if (missing) { ## Remove rows with missing covariates
-    xmis <- apply(data[,exogenous(x),drop=FALSE],1,function(x) any(is.na(x)))    
-    data <- data[which(!xmis),]
-  }
+  ## if (missing) { ## Remove rows with missing covariates
+  ##   xmis <- apply(data[,exogenous(x),drop=FALSE],1,function(x) any(is.na(x)))
+  ##   data <- data[which(!xmis),]
+  ## }
+  
   ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
   if (!missing & (is.matrix(data) | is.data.frame(data))) {    
     data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix)),drop=FALSE])
