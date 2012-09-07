@@ -21,6 +21,8 @@
 \alias{sim.lvm}
 \alias{sim.lvmfit}
 \alias{student.lvm}
+\alias{transform<-}
+\alias{transform<-.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
 \title{Simulate model}
