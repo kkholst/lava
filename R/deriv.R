@@ -79,57 +79,57 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 ##    if (length(parval))
   }
 
-##  browser()
- 
   if (!all) return(res)
 
   ## Non-linear constraints:
-  cname <- constrainpar <- c()  
+  cname <- constrainpar <- c()
   if (!missing(p)  && length(index(expr)$constrain.par)>0) {
 ##    print("Constraints....")
     for (pp in index(expr)$constrain.par) {
       myc <- constrain(expr)[[pp]]
-      parval <- mom$parval
-##      vals <- parval[attributes(myc)$args]
-      vals <- c(parval,constrainpar,mom$v)[attributes(myc)$args]
-
-      ## browser()
-      ## while (!all(names(vals)%in%names(parval))) {
-      ##   myc0 <- myc
-      ##   vals0 <- vals
-      ##   for (p in names(vals0)) {
-      ##     if (p%in%names(constrainpar)) {
-      ##       vals[p] <- NULL
-      ##       pvals <- attributes(constrainpar[[p]])$vals
-      ##       vals[names(pvals)] <- pvals
-      ##     }
-      ##   }
-      ## }
-      
-      fval <- myc(unlist(vals))
-      if (!is.null(attributes(fval)$grad)) {
-        Gr <- attributes(fval)$grad(unlist(vals))
-      } else {
-        if (!require("numDeriv")) stop("numDeriv or analytical derivatives needed!")
-        Gr <- as.numeric(jacobian(myc, unlist(vals)))
+      if (!is.null(myc)) {
+        parval <- mom$parval
+        ##      vals <- parval[attributes(myc)$args]
+        vals <- c(parval,constrainpar,mom$v)[attributes(myc)$args]
+        
+        ## browser()
+        ## while (!all(names(vals)%in%names(parval))) {
+        ##   myc0 <- myc
+        ##   vals0 <- vals
+        ##   for (p in names(vals0)) {
+        ##     if (p%in%names(constrainpar)) {
+        ##       vals[p] <- NULL
+        ##       pvals <- attributes(constrainpar[[p]])$vals
+        ##       vals[names(pvals)] <- pvals
+        ##     }
+        ##   }
+        ## }
+        
+        fval <- myc(unlist(vals))
+        if (!is.null(attributes(fval)$grad)) {
+          Gr <- attributes(fval)$grad(unlist(vals))
+        } else {
+          if (!require("numDeriv")) stop("numDeriv or analytical derivatives needed!")
+          Gr <- as.numeric(jacobian(myc, unlist(vals)))
       }
-      mat.idx <- mom$constrain.idx[[pp]]
-      cname <- c(cname,pp)
-      attributes(fval)$grad <- Gr
-      attributes(fval)$vals <- vals
-      constrainpar <- c(constrainpar,list(fval)); names(constrainpar) <- cname
-      
-      for (jj in 1:length(vals)) {
-        allpars <- c(nn$A[attributes(vals[[jj]])$reg.idx[1]],
-                     nn$P[attributes(vals[[jj]])$cov.idx[1]],
-                     nn$v[attributes(vals[[jj]])$m.idx[1]])
-        if (!is.null(mat.idx$cov.idx))
-          res$dP[mat.idx$cov.idx,allpars] <- Gr[jj]
-        if (!is.null(mat.idx$reg.idx))
-          res$dA[mat.idx$reg.tidx,allpars] <- Gr[jj]
-        if (!is.null(res$dv) & !is.null(mat.idx$m.idx))
-          res$dv[mat.idx$m.idx,allpars] <- Gr[jj]
-      }     
+        mat.idx <- mom$constrain.idx[[pp]]
+        cname <- c(cname,pp)
+        attributes(fval)$grad <- Gr
+        attributes(fval)$vals <- vals
+        constrainpar <- c(constrainpar,list(fval)); names(constrainpar) <- cname
+        
+        for (jj in 1:length(vals)) {
+          allpars <- c(nn$A[attributes(vals[[jj]])$reg.idx[1]],
+                       nn$P[attributes(vals[[jj]])$cov.idx[1]],
+                       nn$v[attributes(vals[[jj]])$m.idx[1]])
+          if (!is.null(mat.idx$cov.idx))
+            res$dP[mat.idx$cov.idx,allpars] <- Gr[jj]
+          if (!is.null(mat.idx$reg.idx))
+            res$dA[mat.idx$reg.tidx,allpars] <- Gr[jj]
+          if (!is.null(res$dv) & !is.null(mat.idx$m.idx))
+            res$dv[mat.idx$m.idx,allpars] <- Gr[jj]
+        }     
+      }
     }
   }
   if (is.null(ii$Kkk)) {
@@ -141,7 +141,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 
   N <- NCOL(ii$A)
   K <- nobs
-##  browser()
   if (N>15) {
     dG <- with(mom, matrix(0,prod(dim(G)),NCOL(res$dA)))
     for (i in 1:NCOL(dG)) { ## vec(ABC) = (C'xA)*vec(B)
@@ -158,7 +157,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   } else {
     dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
     MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
-##    browser()
     G1<- MM %*% (dG)
     ## Commutatation product K*X: 
     ##  G2 <- with(mom, ii$Kkk%*%(G1))

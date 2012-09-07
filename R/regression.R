@@ -136,33 +136,34 @@
       ##      X <- attributes(terms(value))$term.labels
       res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
       xx <- unlist(lapply(res, function(x) x[1]))      
-      
+
+      notexo <- c()
       if (length(lhs)>0) {
         yy <- decomp.specials(lhs)
         yyf <- lapply(yy,function(y) decomp.specials(y,NULL,pattern2="[",fixed=TRUE))
         ys <- unlist(lapply(yyf,function(x) x[1]))      
         object <- addvar(object,ys,reindex=FALSE,...)
+        notexo <- ys
       }
       
       exo <- c()
-      notexo <- c()
       xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="[",fixed=TRUE))
       xs <- unlist(lapply(xxf,function(x) x[1]))
-      object <- addvar(object,xs,reindex=FALSE,...)
-
+      object <- addvar(object,xs,reindex=FALSE ,...)
       
       for (i in seq_len(length(xs))) {        
         xf <- unlist(strsplit(xx[[i]],"[\\[\\]]",perl=TRUE))
         if (length(xf)>1) {
-          xpar <- decomp.specials(xf[2],NULL,":")
-          val <- ifelse(xpar[1]=="NA",NA,xpar[1])
-          valn <- suppressWarnings(as.numeric(val))
-          intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+          xpar <- strsplit(xf[2],":")[[1]]
           if (length(xpar)>1) {
             val <- ifelse(xpar[2]=="NA",NA,xpar[2])
             valn <- suppressWarnings(as.numeric(val))
             covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
           }
+          val <- ifelse(xpar[1]=="NA",NA,xpar[1])
+          valn <- suppressWarnings(as.numeric(val))
+          ##          browser()
+          intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
           notexo <- c(notexo,xs[i])
         } else { exo <- c(exo,xs[i]) }
       }
@@ -178,20 +179,20 @@
         newexo <- setdiff(exo,c(notexo,curvar,ys))
         exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
       }
-      
+
       for (i in seq_len(length(ys))) {
         y <- ys[i]
         yf <- unlist(strsplit(yy[i],"[\\[\\]]",perl=TRUE))
         if (length(yf)>1) {
-          ypar <- decomp.specials(yf[2],NULL,":")
-          val <- ifelse(ypar[1]=="NA",NA,ypar[1])
-          valn <- suppressWarnings(as.numeric(val))
-          intercept(object,y) <- ifelse(is.na(valn),val,valn)
+          ypar <- strsplit(yf[2],":")[[1]]
           if (length(ypar)>1) {
             val <- ifelse(ypar[2]=="NA",NA,ypar[2])
             valn <- suppressWarnings(as.numeric(val))
             covariance(object,y) <- ifelse(is.na(valn),val,valn)
           }
+          val <- ifelse(ypar[1]=="NA",NA,ypar[1])
+          valn <- suppressWarnings(as.numeric(val))
+          intercept(object,y) <- ifelse(is.na(valn),val,valn)
         }
         for (j in seq_len(length(xs))) {        
           if (length(res[[j]])>1) {

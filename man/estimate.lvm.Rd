@@ -4,9 +4,10 @@
 \alias{estimate.lvm}
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \usage{
-  \method{estimate}{lvm} (x, data, estimator = "gaussian",
-    control = list(), missing = FALSE, weight, weightname,
-    weight2, cluster, fix, index = TRUE, graph = FALSE,
+  \method{estimate}{lvm} (x, data = parent.frame(),
+    estimator = "gaussian", control = list(),
+    missing = FALSE, weight, weightname, weight2, cluster,
+    fix, index = TRUE, graph = FALSE,
     silent = lava.options()$silent, quick = FALSE, ...)
 }
 \arguments{

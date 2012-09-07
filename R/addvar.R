@@ -31,8 +31,9 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
   if (k>0) {
     if (lava.options()$sparse) {
       require(Matrix)
-      newM <- Matrix(0,k,k)
-      newcov <- Diagonal(k)
+      newNA <- newM <- Matrix(0,k,k)
+      newNAc <- newNA; diag(newNAc) <- NA
+      newcov <- Diagonal(k)      
     } else {
       newM <- matrix(0,k,k)
       newcov <- diag(k)
@@ -53,14 +54,19 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
       if (lava.options()$sparse) {
         x$M <- bdiag(x$M, newM) ## Add regression labels.R
         x$cov <- bdiag(x$cov, newcov) ## Add covariance
+        x$par <- bdiag(x$par, newNA) ## Add regression labels
+        x$covpar <- bdiag(x$covpar, newNA) ## Add covariance labels
+        x$fix <- bdiag(x$fix, newNA)
+        x$covfix <- bdiag(x$covfix,  newNA)
+
       } else {
         x$M <- blockdiag(x$M, newM, pad=0) ## Add regression labels
         x$cov <- blockdiag(x$cov, newcov, pad=0) ## Add covariance
+        x$par <- blockdiag(x$par, newNA, pad=NA) ## Add regression labels
+        x$covpar <- blockdiag(x$covpar, newNA, pad=NA) ## Add covariance labels
+        x$fix <- blockdiag(x$fix, newNA, pad=NA) ##
+        x$covfix <- blockdiag(x$covfix,  newNA, pad=NA) ##
       }
-      x$par <- blockdiag(x$par, newNA, pad=NA) ## Add regression labels
-      x$covpar <- blockdiag(x$covpar, newNA, pad=NA) ## Add covariance labels
-      x$fix <- blockdiag(x$fix, newNA, pad=NA) ##
-      x$covfix <- blockdiag(x$covfix,  newNA, pad=NA) ##
       x$mean <- c(x$mean, newmean)     
     }
     names(x$mean)[N+seq_len(k)] <-
@@ -89,6 +95,7 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
       else
         message("\tAdded ",paste(paste("'",new,"'",sep=""),collapse=",")," to model.\n", sep="")
     }
+    exogenous(x) <- c(new,exogenous(x))
   }
   if (reindex)
     index(x) <- reindex(x)

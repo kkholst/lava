@@ -178,7 +178,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     S <- dd$S; mu <- dd$mu; n <- dd$n    
     var.missing <- setdiff(index(x)$manifest,colnames(S))
   } else { S <- NULL; mu <- NULL }
-
+  
   if (measurement.fix & param!="none") {
     if (length(var.missing)>0) {## Convert to latent:
       new.lat <- setdiff(var.missing,latent(x))

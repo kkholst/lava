@@ -64,6 +64,7 @@ assign("options", list(
                     parallel=TRUE,
                     param="relative",
                     sparse=FALSE,
+                    test=TRUE,
                     constrain=TRUE,
                     exogenous=TRUE,
                     Rgraphviz=TRUE,

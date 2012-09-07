@@ -6,7 +6,7 @@
   \method{confint}{lvmfit} (object,
     parm = 1:length(coef(object)), level = 0.95,
     profile = FALSE, curve = FALSE, n = 20,
-    interval = NULL, ...)
+    interval = NULL, lower = TRUE, upper = TRUE, ...)
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -30,6 +30,12 @@
 
   \item{interval}{Interval over which the profiling is
   done}
+
+  \item{lower}{If FALSE the lower limit will not be
+  estimated (profile intervals only)}
+
+  \item{upper}{If FALSE the upper limit will not be
+  estimated (profile intervals only)}
 
   \item{...}{Additional arguments to be passed to the low
   level functions}

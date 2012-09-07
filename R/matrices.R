@@ -65,7 +65,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
       }
     }
 
-
   if (length(covparname)>0)
   for (p in covparname) {
     idx <- which(x$covpar==p)

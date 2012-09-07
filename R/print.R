@@ -31,8 +31,10 @@ function(x, ...) {
         R <- rbind(R,c(col1,"  ",col2))
       }
     }
-    rownames(R) <- rep("",nrow(R)); colnames(R) <- rep("",ncol(R))
-    print(R,quote=FALSE,...)
+    if (length(R)>0) {
+      rownames(R) <- rep("",nrow(R)); colnames(R) <- rep("",ncol(R))
+      print(R,quote=FALSE,...)
+    }
     cat("\n")
     cat("Number of free parameters: ", index(x)$npar, " (+", index(x)$npar.mean, " intercepts)\n", sep="")
 

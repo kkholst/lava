@@ -40,7 +40,7 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
   val
 }
 
-profci.lvmfit <- function(x,parm,level=0.95,interval=NULL,curve=FALSE,n=20,...) {
+profci.lvmfit <- function(x,parm,level=0.95,interval=NULL,curve=FALSE,n=20,lower=TRUE,upper=TRUE,...) {
   ll <- logLik(x)-qchisq(level,1)/2
   pp <- function(tau) (profile.lvmfit(x,parm,tau) - ll)
   tau0 <- coef(x)[parm]
@@ -55,8 +55,11 @@ profci.lvmfit <- function(x,parm,level=0.95,interval=NULL,curve=FALSE,n=20,...) 
     res <- cbind(par=xx,val=val)
     return(res)
   }
-  lower <- uniroot(pp,interval=c(interval[1],tau0))
-  upper <- uniroot(pp,interval=c(tau0,interval[2]))
+  low <- up <- NA
+  if (lower)
+    low <- uniroot(pp,interval=c(interval[1],tau0))$root
+  if (upper)
+    up <- uniroot(pp,interval=c(tau0,interval[2]))$root
   ##  res <- rbind(lower$root,upper$root); rownames(res) <- coef()
-  return(c(lower$root,upper$root))
+  return(c(low,up))
 }

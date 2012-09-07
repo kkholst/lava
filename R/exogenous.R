@@ -20,13 +20,13 @@ function(x,...) UseMethod("exogenous")
   xorg <- exogenous(x)
   x$exogenous <- value
   if (!is.null(value) & xfree) {
-    notexo.idx <- which(!(xorg%in%value))
+    notexo.idx <- xorg[which(!(xorg%in%value))]
     if (length(notexo.idx)>0) { ##  & mom) {
       if (length(notexo.idx)>1) {
-        covariance(x,xorg[notexo.idx],pairwise=TRUE,exo=TRUE) <- NA
+        covariance(x,notexo.idx,pairwise=TRUE,exo=TRUE) <- NA
       }
-      covariance(x,xorg[notexo.idx],vars(x),exo=TRUE) <- NA
-      intercept(x,xorg[notexo.idx]) <- NA
+      covariance(x,notexo.idx,vars(x),exo=TRUE) <- NA      
+      intercept(x,notexo.idx) <- x$mean[notexo.idx]
     }
   }
 ##  x$exogenous <- value  

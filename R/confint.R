@@ -20,6 +20,8 @@
 ##' @param n Number of points to evaluate profile log-likelihood in
 ##' over the interval defined by \code{interval}
 ##' @param interval Interval over which the profiling is done
+##' @param lower If FALSE the lower limit will not be estimated (profile intervals only)
+##' @param upper If FALSE the upper limit will not be estimated (profile intervals only)
 ##' @param ... Additional arguments to be passed to the low level functions
 ##' @return A 2xp matrix with columns of lower and upper confidence limits
 ##' @author Klaus K. Holst
@@ -40,7 +42,7 @@
 ##' @aliases confint.multigroupfit
 ##' @S3method confint lvmfit
 ##' @method confint lvmfit
-confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,curve=FALSE,n=20,interval=NULL,...) {
+confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,curve=FALSE,n=20,interval=NULL,lower=TRUE,upper=TRUE,...) {
   if (is.character(parm)) {
     parm <- parpos(Model(object),p=parm)
     parm <- parm[attributes(parm)$ord]
@@ -50,7 +52,7 @@ confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile
   }
   res <- c()
   for (i in parm) {
-    res <- rbind(res, profci.lvmfit(object,parm=i,level=level,profile=profile,n=n,curve=curve,interval=interval,...))
+    res <- rbind(res, profci.lvmfit(object,parm=i,level=level,profile=profile,n=n,curve=curve,interval=interval,lower=lower,upper=upper,...))
     if (curve) return(res)
   }  
   rownames(res) <- names(coef(object))[parm]

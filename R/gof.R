@@ -132,8 +132,10 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   nobs <- attributes(loglik)$nall*length(endogenous(object))
   myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
   myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
+
+  xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
   
-  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq)   ) {
+  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
     q <- res$fit$statistic
     qdf <- res$fit$parameter

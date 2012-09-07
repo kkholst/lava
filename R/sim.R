@@ -197,7 +197,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
-
+  
   E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
   
   ## Simulate exogenous variables (covariates)
@@ -205,7 +205,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   res <- as.data.frame(res)
 
   xx <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
-  X.idx <- match(xx,vars(x))  
+  X.idx <- match(xx,vars(x))
+  res[,X.idx] <- t(mu[X.idx]+t(E[,X.idx]))
   if (missing(X)) {
     if (!is.null(xx) && length(xx)>0)
       for (i in 1:length(xx)) {
@@ -216,7 +217,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         } else {
           if (is.null(dist.x) || is.na(dist.x)) {
             ##        res[,X.idx[i]] <- rnorm(n,mu.x,sd=Sigma[X.idx[i],X.idx[i]]^0.5)
-            res[,X.idx[i]] <- mu.x+E[,X.idx[i]]
+            ##            res[,X.idx[i]] <- mu.x+E[,X.idx[i]]
           } else {
             res[,X.idx[i]] <- dist.x ## Deterministic
           }

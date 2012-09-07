@@ -70,6 +70,7 @@
       constrained <- is.finite(lower)
     else
       constrained <- optim$constrain
+    constrained <- which(constrained)
     lower[] <- -Inf
     optim$constrain <- TRUE    
     mystart[constrained] <- log(mystart[constrained])

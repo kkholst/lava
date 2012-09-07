@@ -4,9 +4,18 @@
 logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,...) {
   cl <- match.call()
   xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
-  xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
 
-
+  constr <- lapply(constrain(object), function(z)(attributes(z)$args))
+  xconstrain <- intersect(unlist(constr), manifest(object))
+  xconstrainM <- TRUE
+  if (length(xconstrain)>0) {
+    constrainM <- names(constr)%in%unlist(object$mean)
+    for (i in seq_len(length(constr))) {    
+      if (!constrainM[i]) {
+        if (xconstrain%in%constr[[i]]) xconstrainM <- FALSE
+      }
+    }
+  }
   
   Debug(xfix,debug)
   if (missing(n)) {
@@ -14,7 +23,9 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   }
   lname <- paste(model,"_logLik.lvm",sep="")
   logLikFun <- get(lname)
-  if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
+  ##  browser()
+  if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ##### Random slopes!
+##  if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
     x0 <- object
     if (length(xfix)>0) {
       Debug("random slopes...",debug)
@@ -54,9 +65,55 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     return(loglik)
   }
 
-  cl[[1]] <- logLikFun
-  loglik <- eval.parent(cl)
 
+  
+  if (xconstrainM) {
+    xconstrain <- c()
+    for (i in seq_len(length(constrain(object)))) {
+      z <- constrain(object)[[i]]
+      xx <- intersect(attributes(z)$args,manifest(object))
+      if (length(xx)>0) {
+        warg <- setdiff(attributes(z)$args,xx)
+        wargidx <- which(attributes(z)$args%in%warg)
+        exoidx <- which(attributes(z)$args%in%xx)        
+        parname <- names(constrain(object))[i]
+        y <- names(which(unlist(lapply(intercept(object),function(x) x==parname))))
+        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+        names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
+        xconstrain <- c(xconstrain,list(el))
+      }
+    }  
+    if (length(xconstrain)>0) {
+      yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
+      iconstrain <- unlist(lapply(xconstrain,function(x) x$idx))
+      
+      offsets <- matrix(NA,nrow(data),length(yconstrain))
+      colnames(offsets) <- unlist(lapply(xconstrain,function(x) x$endo))    
+      M <- modelVar(object,p=p,data=data)
+      M$parval <- c(M$parval, object$mean[setdiff(unlist(lapply(object$mean,is.numeric)),xconstrain)])
+      for (i in seq_len(length(xconstrain))) {
+        pp <- unlist(M$parval[xconstrain[[i]]$warg]);
+        myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
+        mu <- with(xconstrain[[i]],
+                   apply(data[,exo,drop=FALSE],1,
+                         function(x) {
+                          func(unlist(c(pp,x))[myidx])
+                        }))
+        offsets[,xconstrain[[i]]$endo] <- mu
+      }
+      ##    data[,colnames(offsets)] <- data[,colnames(offsets)]-offsets
+      object$constrain[iconstrain] <- NULL
+      object$mean[yconstrain] <- 0      
+      loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,offset=offsets),list(...)))
+    } else {
+      cl[[1]] <- logLikFun
+      loglik <- eval.parent(cl)
+    }
+  } else {
+    cl[[1]] <- logLikFun          
+    loglik <- eval.parent(cl)
+  }
+    
   if (is.null(attr(loglik,"nall")))
     attr(loglik, "nall") <- n
   if (is.null(attr(loglik,"nobs")))
@@ -74,7 +131,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 ##' @export
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
-                          weight=NULL, indiv=FALSE, S, mu, n, debug=FALSE, meanstructure=TRUE,...) { 
+                          weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) { 
    
   exo.idx <- with(index(object), exo.obsidx)##match(exogenous(object),manifest(object))
   endo.idx <- with(index(object), endo.obsidx)##match(endogenous(object),manifest(object))
@@ -98,8 +155,11 @@ gaussian_logLik.lvm <- function(object,p,data,
     else n <- nrow(data)
   }
   k <- length(index(object)$manifest)
-
-
+  
+  if (!is.null(offset) && type[1]!="exo") {
+    data[,colnames(offset)] <- data[,colnames(offset)]-offset    
+  }
+ 
   if (type[1]=="sat") {
     if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
@@ -163,7 +223,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     if (type=="exo")
       weight <- NULL
   }
-  
+
   notdatalist <- (!is.list(data) | is.data.frame(data))
   if (missing(n))
     if (!missing(data)) n <- NROW(data)

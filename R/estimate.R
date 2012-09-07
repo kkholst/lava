@@ -211,7 +211,7 @@ function(x, data=parent.frame(),
         x <- latent(x, new.lat)
     }
   }
-
+ 
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {    
@@ -281,8 +281,27 @@ function(x, data=parent.frame(),
     control$start <- optim$start
     return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
-  
 
+  ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
+  constr <- lapply(constrain(x), function(z)(attributes(z)$args))
+  xconstrain <- intersect(unlist(constr), manifest(x))
+  xconstrainM <- TRUE
+  XconstrStdOpt <- TRUE
+  if (length(xconstrain)>0) {
+    constrainM <- names(constr)%in%unlist(x$mean)    
+    for (i in seq_len(length(constr))) {    
+      if (!constrainM[i]) {
+        if (xconstrain%in%constr[[i]]) xconstrainM <- FALSE
+      }
+    }  
+  ##  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
+    if ((is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian") ) {
+      XconstrStdOpt <- FALSE
+      optim$method <- "nlminb0"
+      if (is.null(control$constrain)) control$constrain <- TRUE
+    }
+  }
+  
   ## Setup optimization constraints
   lowmin <- -Inf
   lower <- rep(lowmin,length(optim$start))
@@ -295,6 +314,7 @@ function(x, data=parent.frame(),
       constrained <- optim$constrain
     lower[] <- -Inf
       optim$constrain <- TRUE
+    constrained <- which(constrained)
     nn <- names(optim$start)
     CS <- optim$start[constrained]
     CS[CS<0] <- 0.01
@@ -314,11 +334,8 @@ function(x, data=parent.frame(),
   mymodel <- x  
   myclass <- "lvmfit"
 
-  ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
-  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
-
-  ## Random slopes or non-linear constraints?
-  if (length(xfix)>0 | length(xconstrain)>0) { ## Yes
+  ## Random slopes?
+  if (length(xfix)>0 | (length(xconstrain)>0 & XconstrStdOpt | !lava.options()$test)) { ## Yes
     x0 <- x
     
     if (length(xfix)>0) {
@@ -423,19 +440,80 @@ function(x, data=parent.frame(),
 ##################################################
   } else { ## No, standard model
 
+    ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
+    ##  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
+
+    xconstrain <- c()
+    for (i in seq_len(length(constrain(x)))) {
+      z <- constrain(x)[[i]]
+      xx <- intersect(attributes(z)$args,manifest(x))
+      if (length(xx)>0) {
+        warg <- setdiff(attributes(z)$args,xx)
+        wargidx <- which(attributes(z)$args%in%warg)
+        exoidx <- which(attributes(z)$args%in%xx)
+        parname <- names(constrain(x))[i]
+        y <- names(which(unlist(lapply(intercept(x),function(x) x==parname))))
+        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+        names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
+        xconstrain <- c(xconstrain,list(el))
+      }
+    }
+    yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
+    iconstrain <- unlist(lapply(xconstrain,function(x) x$idx))
+    
+    MkOffset <- function(pp,grad=FALSE) {
+      if (length(xconstrain)>0) {
+        offsets <- matrix(NA,nrow(data),length(yconstrain))
+        colnames(offsets) <- yconstrain 
+        M <- modelVar(x,p=pp,data=data)
+        M$parval <- c(M$parval, x$mean[unlist(lapply(x$mean,is.numeric))])
+        for (i in seq_len(length(xconstrain))) {
+          pp <- unlist(M$parval[xconstrain[[i]]$warg]);
+          myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
+          mu <- with(xconstrain[[i]],
+                     apply(data[,exo,drop=FALSE],1,
+                           function(x) func(
+                                         unlist(c(pp,x))[myidx])))
+          offsets[,xconstrain[[i]]$endo] <- mu
+        }
+        return(offsets)
+      }
+      return(NULL)
+    }
+
     myObj <- function(pp) {
       if (optim$constrain) {
         pp[constrained] <- exp(pp[constrained])
       }
-      do.call(ObjectiveFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
-                                 ,weight2=weight2
-                                 ))
+      offset <- MkOffset(pp)      
+      mu0 <- mu; S0 <- S; x0 <- x
+      if (!is.null(offset)) {
+        x0$constrain[iconstrain] <- NULL        
+        data0 <- data[,manifest(x0)]
+        data0[,yconstrain] <- data0[,yconstrain]-offset
+        pd <- procdata.lvm(x0,data=data0)
+        S0 <- pd$S; mu0 <- pd$mu
+        x0$mean[yconstrain] <- 0
+      }
+      do.call(ObjectiveFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
+                                ,weight2=weight2, offset=offset
+                                ))
     }
+    
     myGrad <- function(pp) {
       if (optim$constrain)
         pp[constrained] <- exp(pp[constrained])
-      S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
-                                 , weight2=weight2
+      offset <- MkOffset(pp)
+      mu0 <- mu; S0 <- S; x0 <- x
+      if (!is.null(offset)) {
+        x0$constrain[iconstrain] <- NULL
+        data0 <- data[,manifest(x0)]
+        data0[,yconstrain] <- data0[,yconstrain]-offset       
+        pd <- procdata.lvm(x0,data=data0)
+        S0 <- pd$S; mu0 <- pd$mu
+      }
+      S <- do.call(GradFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
+                                 , weight2=weight2, offset=offset
                                  ))
       if (optim$constrain) {
         S[constrained] <- S[constrained]*pp[constrained]

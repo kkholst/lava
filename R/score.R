@@ -6,7 +6,7 @@ function(x,...) UseMethod("score")
 
 ##' @S3method score lvm
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
-    
+
   cl <- match.call()
   lname <- paste(model,"_score.lvm",sep="")
   if (!exists(lname)) {
@@ -25,11 +25,10 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   
   if (is.null(index(x)$dA) | reindex)
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
-
   
   xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
-  
+
   Debug(xfix,debug)
   if (missing(n)) {
     n <- nrow(data)

@@ -260,7 +260,9 @@ function(object, level=ifelse(missing(type),-1,2),
         if (labels & !is.na(regfix(Model(object))$labels[j,i])) {
           rownames(newrow) <- regfix(Model(object))$labels[j,i]
           if (labels>1) {
-            rownames(newrow) <- paste(rownames(newrow),paste(nn[i],symbol[1],nn[j],sep=""),sep=":")
+            newst <- paste(nn[i],symbol[1],nn[j],sep="")
+            if (rownames(newrow)!=newst)
+              rownames(newrow) <- paste(rownames(newrow),newst,sep=":")
           }
         } else {       
           rownames(newrow) <- paste(nn[i],symbol[1],nn[j],sep="")
@@ -323,7 +325,8 @@ function(object, level=ifelse(missing(type),-1,2),
             if (labels & !is.na(covfix(Model(object))$labels[j,i])) {
               rownames(newrow) <- covfix(Model(object))$labels[j,i]
               if (labels>1) {
-                rownames(newrow) <- paste(rownames(newrow),part2,sep=":")
+                if (rownames(newrow)!=part2)
+                  rownames(newrow) <- paste(rownames(newrow),part2,sep=":")
               }
             } else {
               rownames(newrow) <- part2
@@ -369,7 +372,8 @@ function(object, level=ifelse(missing(type),-1,2),
         if (labels & !(is.na(intfix(Model(object))[[i]]) | is.numeric(intfix(Model(object))[[i]]))) {
           rownames(newrow) <- intfix(Model(object))[[i]]
           if (labels>1) {
-            rownames(newrow) <- paste(rownames(newrow),index(Model(object))$vars[i],sep=":")
+            if (rownames(newrow)!=index(Model(object))$vars[i])
+              rownames(newrow) <- paste(rownames(newrow),index(Model(object))$vars[i],sep=":")
           }          
         } else {       
           rownames(newrow) <- index(Model(object))$vars[i]
