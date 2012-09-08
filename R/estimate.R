@@ -291,11 +291,14 @@ function(x, data=parent.frame(),
     constrainM <- names(constr)%in%unlist(x$mean)    
     for (i in seq_len(length(constr))) {    
       if (!constrainM[i]) {
-        if (xconstrain%in%constr[[i]]) xconstrainM <- FALSE
+        if (xconstrain%in%constr[[i]]) {
+          xconstrainM <- FALSE          
+          break;
+        }
       }
     }  
   ##  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
-    if ((is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian") ) {
+    if (xconstrainM & ( (is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian") ) ) {
       XconstrStdOpt <- FALSE
       optim$method <- "nlminb0"
       if (is.null(control$constrain)) control$constrain <- TRUE
@@ -441,8 +444,6 @@ function(x, data=parent.frame(),
   } else { ## No, standard model
 
     ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
-    ##  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
-
     xconstrain <- c()
     for (i in seq_len(length(constrain(x)))) {
       z <- constrain(x)[[i]]
@@ -460,13 +461,12 @@ function(x, data=parent.frame(),
     }
     yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
     iconstrain <- unlist(lapply(xconstrain,function(x) x$idx))
-    
+
     MkOffset <- function(pp,grad=FALSE) {
       if (length(xconstrain)>0) {
-        offsets <- matrix(NA,nrow(data),length(yconstrain))
-        colnames(offsets) <- yconstrain 
+        Mu <- matrix(0,nrow(data),length(vars(x))); colnames(Mu) <- vars(x)
         M <- modelVar(x,p=pp,data=data)
-        M$parval <- c(M$parval, x$mean[unlist(lapply(x$mean,is.numeric))])
+        M$parval <- c(M$parval,  x$mean[unlist(lapply(x$mean,is.numeric))])
         for (i in seq_len(length(xconstrain))) {
           pp <- unlist(M$parval[xconstrain[[i]]$warg]);
           myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
@@ -474,8 +474,9 @@ function(x, data=parent.frame(),
                      apply(data[,exo,drop=FALSE],1,
                            function(x) func(
                                          unlist(c(pp,x))[myidx])))
-          offsets[,xconstrain[[i]]$endo] <- mu
+          Mu[,xconstrain[[i]]$endo] <- mu
         }
+        offsets <- Mu%*%t(M$IAi)[,endogenous(x)]
         return(offsets)
       }
       return(NULL)
@@ -490,7 +491,8 @@ function(x, data=parent.frame(),
       if (!is.null(offset)) {
         x0$constrain[iconstrain] <- NULL        
         data0 <- data[,manifest(x0)]
-        data0[,yconstrain] <- data0[,yconstrain]-offset
+        ##        data0[,yconstrain] <- data0[,yconstrain]-offset
+        data0[,endogenous(x)] <- data0[,endogenous(x)]-offset        
         pd <- procdata.lvm(x0,data=data0)
         S0 <- pd$S; mu0 <- pd$mu
         x0$mean[yconstrain] <- 0
@@ -503,17 +505,18 @@ function(x, data=parent.frame(),
     myGrad <- function(pp) {
       if (optim$constrain)
         pp[constrained] <- exp(pp[constrained])
-      offset <- MkOffset(pp)
-      mu0 <- mu; S0 <- S; x0 <- x
-      if (!is.null(offset)) {
-        x0$constrain[iconstrain] <- NULL
-        data0 <- data[,manifest(x0)]
-        data0[,yconstrain] <- data0[,yconstrain]-offset       
-        pd <- procdata.lvm(x0,data=data0)
-        S0 <- pd$S; mu0 <- pd$mu
-      }
-      S <- do.call(GradFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
-                                 , weight2=weight2, offset=offset
+      ##  offset <- MkOffset(pp)
+      ##  mu0 <- mu; S0 <- S; x0 <- x
+      ## if (!is.null(offset)) {
+      ##   x0$constrain[iconstrain] <- NULL
+      ##   data0 <- data[,manifest(x0)]
+      ##   data0[,endogenous(x)] <- data0[,endogenous(x)]-offset
+      ##   pd <- procdata.lvm(x0,data=data0)
+      ##   S0 <- pd$S; mu0 <- pd$mu
+      ## }
+      ##      browser()
+      S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
+                                 , weight2=weight2##, offset=offset
                                  ))
       if (optim$constrain) {
         S[constrained] <- S[constrained]*pp[constrained]
@@ -582,15 +585,12 @@ function(x, data=parent.frame(),
     return(I0)
   }   
   
-##  if (!exists(InformationFun)) myInfo <- myHess <- NULL
-##  if (is.null(get(InformationFun))) myInfo <- myHess <- NULL
   if (is.null(tryCatch(get(InformationFun),error = function (x) NULL)))
     myInfo <- myHess <- NULL
   if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
     myGrad <- NULL
 
   coefname <- coef(x,mean=optim$meanstructure);
-  ##  browser()
   if (!silent) message("Optimizing objective function...")
   if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
@@ -605,8 +605,12 @@ function(x, data=parent.frame(),
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
     names(opt$estimate) <- coefname
-    
-    opt$gradient <- as.vector(myGrad(opt$par))
+
+    if (XconstrStdOpt)
+      opt$gradient <- as.vector(myGrad(opt$par))
+    else {
+      opt$gradient <- grad(myObj,opt$par)
+    }
   } else {
     opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
     opt$grad <- rep(0,length(opt$estimate))

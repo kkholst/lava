@@ -677,15 +677,15 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
       res <- rbind(res,c(paste("  ",newname),newrow))
     }
 ##    browser()
-    par.idx <- which(attributes(cc)$type=="parameter")
-    parres <- rbind(c("Additional Parameters:",rep("",M)))
-    for (i in par.idx) {
-      newrow <- mycoef[i,]
-      newname <- rownames(cc)[i]
-      parres <- rbind(parres,c(paste("  ",newname),newrow))
-    }
-    if (nrow(parres)>1) res <- rbind(res,parres)
   }
+  par.idx <- which(attributes(cc)$type=="parameter")
+  parres <- rbind(c("Additional Parameters:",rep("",M)))
+  for (i in par.idx) {
+    newrow <- mycoef[i,]
+    newname <- rownames(cc)[i]
+    parres <- rbind(parres,c(paste("  ",newname),newrow))
+  }
+  if (nrow(parres)>1) res <- rbind(res,parres)
   
   if (Nvar>0) {
     var.idx <- which(attributes(cc)$type=="variance")

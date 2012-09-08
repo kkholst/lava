@@ -134,36 +134,39 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
   myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
 
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
-  
-  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
-    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-    q <- res$fit$statistic
-    qdf <- res$fit$parameter
-    epsilon <- function(lambda) sapply(lambda,function(x)
-                                       ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
-                                       ##sqrt(max(0,x/(qdf*(n-1)))))
-    opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
-    alpha <- (1-level)/2
-    hi <- list(par=0)
-    RMSEA <- epsilon(q-qdf)
-    start <- RMSEA
-    if (RMSEA>0) {
-      hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum
-      hi <- tryCatch(nlminb(hi$par^0.5,function(x) opf(x^2,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
-    }
-    lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n)); lo$par <- lo$minimum
-    lo <- tryCatch(nlminb(lo$par^0.5,function(x) opf(x^2,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2
-    ci <- c(epsilon(c(hi$par,lo$par)))    
-    RMSEA <- c(RMSEA=RMSEA,ci);
-    names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
-    res <- c(res,list(RMSEA=RMSEA, level=level))
-  } else {
-    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-  }
 
   l2D <- sum(object$opt$grad^2)
   rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) NULL)
   condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
+
+  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
+    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
+    q <- res$fit$statistic
+    qdf <- res$fit$parameter
+    if (rnkV==ncol(vcov(object))) {
+      epsilon <- function(lambda) sapply(lambda,function(x)
+                                         ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
+      ##sqrt(max(0,x/(qdf*(n-1)))))
+      opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
+      alpha <- (1-level)/2
+      hi <- list(par=0)
+      RMSEA <- epsilon(q-qdf)
+      start <- RMSEA
+      if (RMSEA>0) {
+        hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum
+        hi <- tryCatch(nlminb(hi$par^0.5,function(x) opf(x^2,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
+      }
+      lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n)); lo$par <- lo$minimum
+      lo <- tryCatch(nlminb(lo$par^0.5,function(x) opf(x^2,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2
+      ci <- c(epsilon(c(hi$par,lo$par)))    
+      RMSEA <- c(RMSEA=RMSEA,ci);
+      names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
+      res <- c(res,list(RMSEA=RMSEA, level=level))
+    }
+  } else {
+    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
+  }
+
   res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
   class(res) <- "gof.lvmfit"
   return(res)       
@@ -185,13 +188,12 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
            "Chi-squared statistic: q =", fit$statistic, 
            ", df =", fit$parameter, 
            ", P(Q>q) =", fit$p.value, "\n"))
-  if (optim) {
-    if (!is.null(x$RMSEA)) {
-      rr <- round(x$RMSEA*10000)/10000
+  if (!is.null(x$RMSEA)) {
+    rr <- round(x$RMSEA*10000)/10000
       rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
-      cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
-    }
-
+    cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
+  }
+  if (optim) {
     cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
     cat("condition(Information) = ",x$cond,"\n",sep="")
     cat("||score||^2 =",x$L2score,"\n")

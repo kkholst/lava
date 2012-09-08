@@ -86,11 +86,10 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     if (length(xconstrain)>0) {
       yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
       iconstrain <- unlist(lapply(xconstrain,function(x) x$idx))
-      
-      offsets <- matrix(NA,nrow(data),length(yconstrain))
-      colnames(offsets) <- unlist(lapply(xconstrain,function(x) x$endo))    
+
+      Mu <- matrix(0,nrow(data),length(vars(object))); colnames(Mu) <- vars(object)
       M <- modelVar(object,p=p,data=data)
-      M$parval <- c(M$parval, object$mean[setdiff(unlist(lapply(object$mean,is.numeric)),xconstrain)])
+      M$parval <- c(M$parval,  object$mean[unlist(lapply(object$mean,is.numeric))])
       for (i in seq_len(length(xconstrain))) {
         pp <- unlist(M$parval[xconstrain[[i]]$warg]);
         myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
@@ -99,8 +98,10 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
                          function(x) {
                           func(unlist(c(pp,x))[myidx])
                         }))
-        offsets[,xconstrain[[i]]$endo] <- mu
+        Mu[,xconstrain[[i]]$endo] <- mu
+##        offsets[,xconstrain[[i]]$endo] <- mu
       }
+      offsets <- Mu%*%t(M$IAi)[,endogenous(object),drop=FALSE]
       ##    data[,colnames(offsets)] <- data[,colnames(offsets)]-offsets
       object$constrain[iconstrain] <- NULL
       object$mean[yconstrain] <- 0      

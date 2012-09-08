@@ -233,7 +233,7 @@ constrain.default <- function(x,estimate=FALSE,...) {
     lhs <- getoutcome(par)
     xf <- attributes(terms(par))$term.labels
     par <- lhs
-    if (par%in%endogenous(x)) {
+    if (par%in%vars(x)) {
       if (is.na(x$mean[[par]])) {
         intercept(x,par) <- par
       } else {
