@@ -32,6 +32,7 @@
                 reindex=FALSE,
                 tol=1e-9)
 
+  
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]
   optim[names(defopt)] <- defopt
@@ -141,24 +142,22 @@
   ## Check for random slopes
   xXx <- exogenous(x)
   Xfix <- FALSE
-  ##  Xconstrain <- FALSE
+  Xconstrain <- FALSE
   xfix <- list()
-  ##  xconstrain <- list
   for (i in 1:x$ngroup) {
     x0 <- x$lvm[[i]]
     data0 <- x$data[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
-    ##    xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
+    xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
     ##    xconstrain <- c(xconstrain,list(xconstrain0))
     xfix <- c(xfix, list(xfix0))
     if (length(xfix0)>0) { ## Yes, random slopes
       Xfix<-TRUE
     }
-    ## if (length(xconstrain0)>0)   Xconstrain <- TRUE
+    if (length(xconstrain0)>0) Xconstrain <- TRUE
   }
   
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
-
   constr <- c()
   XconstrStdOpt <- TRUE
   xconstrainM <- TRUE
@@ -203,7 +202,7 @@
   myclass <- c("multigroupfit","lvmfit")  
   myfix <- list()
 
-  if (Xfix |  (length(xconstrain)>0 & XconstrStdOpt | !lava.options()$test)) { ## Model with random slopes:
+  if (Xfix |  (Xconstrain & XconstrStdOpt | !lava.options()$test)) { ## Model with random slopes:
 ################################################################################
 ################################################################################
 ################################################################################
@@ -382,8 +381,8 @@
     iconstrain <- c()
     xconstrain <- c()
     for (j in seq_len(x$ngroup)) {
-      x0 <- x$lvm[[i]]
-      data0 <- x$data[[i]]
+      x0 <- x$lvm[[j]]
+      data0 <- x$data[[j]]
       xconstrain0 <- c()
       for (i in seq_len(length(constrain(x0)))) {
         z <- constrain(x0)[[i]]
