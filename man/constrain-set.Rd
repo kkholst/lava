@@ -1,8 +1,8 @@
 \name{constrain<-}
 \alias{constrain}
+\alias{constrain.default}
 \alias{constrain<-}
 \alias{constrain<-.default}
-\alias{constrain.default}
 \alias{constrain<-.multigroup}
 \alias{constraints}
 \alias{parameter<-}
@@ -163,7 +163,7 @@ d <- transform(d,
 
 ## Specify model and estimate parameters
 constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[3]+x[1]*x[2])
-e <- estimate(m,d,control=list(trace=1,method="NR"))
+e <- estimate(m,d,control=list(trace=1,constrain=TRUE))
 constraints(e,data=d)
 
 ## Plot model-fit
