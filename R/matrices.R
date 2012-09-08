@@ -26,7 +26,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
   parname <- setdiff(parname.all,constrain.par)
 
   if (npar.reg>0) {
-    A[which(M1==1)] <- pars[1:npar.reg]
+    A[which(M1==1)] <- pars[seq_len(npar.reg)]
     for (p in parname) {
       idx <- which((x$par==p))
       newval <- A[idx[1]]
@@ -47,7 +47,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     pars.var <- pars[-c(1:npar.reg)]
   }
   which.diag <- diag(P1==1)
-  diag(P)[which.diag] <- pars.var[1:sum(which.diag)]
+  diag(P)[which.diag] <- pars.var[seq_len(sum(which.diag))]
   covparname.all <- unique(x$covpar[!is.na(x$covpar)])
   covparname <- setdiff(covparname.all,constrain.par)
 
@@ -97,7 +97,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
     named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
     v <- rep(0,length(x$mean))
-    ##    browser()
     names(v) <- colnames(P)
     if (!is.null(meanpar) | npar.mean==0)    
       v[index(x)$v1==1] <- meanpar
@@ -144,13 +143,12 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
       xargs <- manifest(x)[na.omit(match(attributes(myc)$args,manifest(x)))]
       if (length(xargs)>0) {
         if (!is.null(data)) {
-          parval[[xargs]] <- (data)[xargs]
-        } else parval[[xargs]] <- 0
+          parval[xargs] <- (data)[xargs]
+        } else parval[xargs] <- 0
       }
       val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])      
       cpar <- myc(val); 
       constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
-##      browser()
       if (p%in%parname.all) {
         reg.idx <- which(x$par==p)
         reg.tidx <- which(t(x$par==p))
@@ -171,7 +169,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
       constrain.idx[[p]] <- list(reg.idx=reg.idx,reg.tidx=reg.tidx,cov.idx=cov.idx,m.idx=m.idx)
     }
   }
-##  browser()
   
   if (x$index$sparse & !is.character(class(pars)[1])) {
     A <- as(A,"sparseMatrix")
@@ -188,7 +185,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,data=NULL,...) {
 matrices.multigroup <- function(x, p) {
   pp <- modelPar(x,p)
   res <- list()
-  for (i in 1:x$ngroup)
+  for (i in seq_len(x$ngroup))
     res <- c(res, list(matrices(x$lvm[[i]],p=pp$par[[i]],meanpar=pp$mean[[i]])))
   return(res)
 }
