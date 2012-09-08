@@ -10,7 +10,7 @@ author <- "Klaus K. Holst and Esben Budtz-Joergensen"
 year <- 2012
 journal <- "Computational Statistics"
 title <- "Linear Latent Variable Models: The lava-package"
-note <- "To appear"
+note <- "http://dx.doi.org/10.1007/s00180-012-0344-y"
 textver <- paste(author, " (", year, "). ", title, ". ", journal, ".", note, sep="")
 
 citHeader("To cite 'lava' in publications use:")
