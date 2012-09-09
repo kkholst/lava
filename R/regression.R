@@ -33,6 +33,10 @@
 ##' The second argument of \code{f} can also be a number (e.g. defining an
 ##' offset) or be set to \code{NA} in order to clear any previously defined
 ##' linear constraints.
+##'
+##' Alternatively, a more straight forward notation can be used:
+##' 
+##' \code{regression(m) <- y ~ beta*x1 + beta*x2}
 ##' 
 ##' All the parameter values of the linear constraints can be given as the right
 ##' handside expression of the assigment function \code{regression<-} (or
@@ -113,9 +117,7 @@
       return(object)
     }
       
-    
     if (class(value)[1]=="formula") {
-
       yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
       ##lhs <- getoutcome(value)
       if (length(yx)==1) {        
@@ -125,12 +127,12 @@
       }
       X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
       
-      ## vspec <- attributes(terms(value,specials="v"))$specials$v
-      ## if (!is.null(vspec) && vspec==1) {
-      ##   v <- update(value,paste(decomp.specials(lhs),"~."))
-      ##   covariance(object,...) <- v
-      ##   return(object)
-      ## }        
+      vspec <- attributes(terms(value,specials="v"))$specials$v
+      if (!is.null(vspec) && vspec==1) {
+        v <- update(value,paste(decomp.specials(lhs),"~."))
+        covariance(object,...) <- v
+        return(object)
+      }        
 
       curvar <- index(object)$var
       ##      X <- attributes(terms(value))$term.labels
@@ -149,6 +151,12 @@
       exo <- c()
       xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="[",fixed=TRUE))
       xs <- unlist(lapply(xxf,function(x) x[1]))
+
+      ## Remove intercepts?
+      rmint <- na.omit(match("-1",xs))
+      if (length(rmint)>0) intercept(object,ys) <- 0
+      xs <- setdiff(xs,c("-1","1"))
+
       object <- addvar(object,xs,reindex=FALSE ,...)
       
       for (i in seq_len(length(xs))) {        
