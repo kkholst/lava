@@ -1,12 +1,12 @@
 \name{regression<-}
 \alias{regfix}
-\alias{regfix.lvm}
 \alias{regfix<-}
 \alias{regfix<-.lvm}
+\alias{regfix.lvm}
 \alias{regression}
-\alias{regression.lvm}
 \alias{regression<-}
 \alias{regression<-.lvm}
+\alias{regression.lvm}
 \title{Add regression association to latent variable model}
 \usage{
   \method{regression}{lvm}(object = lvm(), to, from, fn =
@@ -75,6 +75,11 @@
   The second argument of \code{f} can also be a number
   (e.g. defining an offset) or be set to \code{NA} in order
   to clear any previously defined linear constraints.
+
+  Alternatively, a more straight forward notation can be
+  used:
+
+  \code{regression(m) <- y ~ beta*x1 + beta*x2}
 
   All the parameter values of the linear constraints can be
   given as the right handside expression of the assigment

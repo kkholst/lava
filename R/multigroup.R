@@ -6,10 +6,10 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   if (nm!=length(datasets)) stop("Supply dataset for each model")
   if (nm<2) stop("Two or more groups neeeded")
   mynames <- names(models)
-  
+
   ## Check for random slopes
   xfix <- list()
-  for (i in 1:nm) {
+  for (i in seq_len(nm)) {
     x0 <- models[[i]]
     data0 <- datasets[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
@@ -18,7 +18,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   if (missing(fix)) {
     fix <- !any(unlist(lapply(xfix, function(x) length(x)>0)))  
   }
-  for (i in 1:nm) {
+
+  for (i in seq_len(nm)) {
     x0 <- models[[i]]
     data0 <- datasets[[i]]
     if (length(exogenous(x0)>0)) {
@@ -27,19 +28,19 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     }
     if (!lava.options()$exogenous) exogenous(models[[i]]) <- NULL
   }
-
   
   models.orig <- NULL
 ######################
 ### MLE with MAR mechanism
 ######################
   if (missing) {
-
+    
     parcount <- 0
     reservedpars <- c()
     mynpar <- c()
     for (i in 1:nm) {
       ## Fix some parameters (predictors,latent variables,...)
+        
       d0 <- datasets[[i]][1,,drop=FALSE]; d0[,] <- 1
       if (fix)
         models[[i]] <- fixsome(models[[i]], exo.fix=exo.fix, measurement.fix=fix, data=d0)
@@ -75,7 +76,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
       if (any(is.na(mydata))) {
         if (i>1) pos <- pos+mynpar[i-1]
         models[[i]] <- baptize(models[[i]],newpars[pos+1:mynpar[i]] ,overwrite=FALSE)        
-        ##        warning("Missing data encountered")        
+        ##        warning("Missing data encountered")
+
         val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep,...)
         ##        suppressMessages(browser())
         nmodels <- c(nmodels,length(val$models))
@@ -94,7 +96,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         nmis <- c(nmis,0)
       }
     }
-    
+
     models.orig <- models
     
     suppressWarnings(val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,exo.fix=TRUE,...))
@@ -110,7 +112,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 ######################
 ### Usual analysis:
 ######################
-  for (i in 1:nm) {
+  for (i in seq_len(nm)) {
     if (is.data.frame(datasets[[i]])) {
       myvars <- intersect(names(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep))
       if (any(is.na(datasets[[i]][,myvars]))) {
@@ -123,7 +125,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   ##  
   exo <- exogenous(models)
   means <- lvms <- As <- Ps <- ps <- datas <- samplestat <- list()
-  for (i in 1:nm) {
+  for (i in seq_len(nm)) {
 
     if (!is.null(exogenous(models[[i]]))) {
       if (any(is.na(exogenous(models[[i]])))) {
@@ -169,9 +171,9 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     usedname <- cbind(parname, rep(NA,length(parname)))
     counter <- 1
     pres <- pres0 <- pp0
-    for (i in 1:length(pp0)) {
+    for (i in seq_len(length(pp0))) {
       if (length(pp0[[i]]>0))
-      for (j in 1:length(pp0[[i]])) {
+      for (j in seq_len(length(pp0[[i]]))) {
         pidx <- match(ps[[i]][j],parname)
         if (pp0[[i]][j]) {
           pres[[i]][j] <- paste("p",counter,sep="")
@@ -193,7 +195,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         }
       }
     }
-    mypar <- paste("p",1:nfree,sep="")
+    mypar <- paste("p",seq_len(nfree),sep="")
     myparPos <- pres0
     myparpos <- pres
     myparlist <- lapply(pres, function(x) x[!is.na(x)])
@@ -218,9 +220,9 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     usedname <- cbind(meanparname, rep(NA,length(meanparname)))
     counter <- 1
     res0 <- res <- mm0
-    for (i in 1:length(mm0)) {
+    for (i in seq_len(length(mm0))) {
       if (length(mm0[[i]])>0)
-      for (j in 1:length(mm0[[i]])) {
+      for (j in seq_len(length(mm0[[i]]))) {
         midx <- match(means[[i]][j],meanparname)
         if (mm0[[i]][j]) {
           res[[i]][j] <- paste("m",counter,sep="")
@@ -281,7 +283,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 
 checkmultigroup <- function(x) {
     ## Check validity:
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     if (nrow(x$data[[i]])<2) {
       warning("With only one observation in the group, all parameters should be inherited from another a group!")
     }

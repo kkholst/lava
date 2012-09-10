@@ -6,10 +6,11 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     var <- manifest(model)
   }
 
-  data0 <- subset(data, select=manifest(model))
+##  data0 <- subset(data, select=manifest(model))
 ##  data.mis.all <- is.na(data0)
-##  data.mis <- data.mis.all[,var,drop=FALSE]
+##  data.mis <- data.mis.all[,var,drop=FALSE]  
   data.mis <- is.na(data[,var,drop=FALSE])
+  colnames(data.mis) <- var
   patterns <- unique(data.mis,MARGIN=1)
   
   mis.type <- apply(data.mis,1,
@@ -63,19 +64,20 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     } else
     pattern.compl <- count
 ##    d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
-    d0 <- data[mis.type==i,c(manifest(m0),keep),drop=FALSE];
+    d0 <- data[which(mis.type==i),c(manifest(m0),keep),drop=FALSE];
     w0.var <- intersect(manifest(m0),colnames(weight))
-    w0 <- weight[mis.type==i,w0.var,drop=FALSE];
+    w0 <- weight[which(mis.type==i),w0.var,drop=FALSE];
     if (!is.list(weight2)) {
       w02.var <- intersect(manifest(m0),colnames(weight2))
-      w02 <- weight2[mis.type==i,w02.var,drop=FALSE];
+      w02 <- weight2[which(mis.type==i),w02.var,drop=FALSE];
     } else {
       weights2 <- weight2
     }
 
-    clust0 <- cluster[mis.type==i]
+    clust0 <- cluster[which(mis.type==i)]
     ex0 <- exogenous(m0) <- setdiff(exo,exoremove)
     xmis <- which(apply(d0[,ex0,drop=FALSE],1,function(x) any(is.na(x))))
+
     if (length(xmis)>0) {
       misx <- ex0[apply(d0[xmis,ex0,drop=FALSE],2,function(x) any(is.na(x)))]
       warning("Missing exogenous variables: ", paste(misx,collapse=","),
@@ -84,7 +86,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
       w0 <- w0[-xmis,,drop=FALSE]      
       clust0 <- clust0[-xmis]
       w02 <- w02[-xmis,,drop=FALSE]
-    }  
+    }
     if (length(misx <- intersect(ex0,latent(m0)))>0) {
       warning("Missing exogenous variables:", paste(misx,collapse=","),
               "! Remove manually!.")          
@@ -116,8 +118,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     clusters[[rmset]] <- NULL
     patterns <- patterns[-rmset,,drop=FALSE]
   }
-  
-##  print(exclude)
+
+  ##  print(exclude)
   Patterns <- patterns
   if (length(exclude)>0)
     Patterns <- Patterns[-exclude,]

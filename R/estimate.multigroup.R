@@ -151,10 +151,8 @@
     xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
     ##    xconstrain <- c(xconstrain,list(xconstrain0))
     xfix <- c(xfix, list(xfix0))
-    if (length(xfix0)>0) { ## Yes, random slopes
-      Xfix<-TRUE
-    }
-    if (length(xconstrain0)>0) Xconstrain <- TRUE
+    if (length(xfix0)>0) Xfix<-TRUE ## Yes, random slopes      
+    if (length(xconstrain0)>0) Xconstrain <- TRUE ## Yes, nonlinear regression
   }
   
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -162,6 +160,7 @@
   XconstrStdOpt <- TRUE
   xconstrainM <- TRUE
   xconstrain <- c()
+  if (Xconstrain)
   for (i in 1:x$ngroup) {
     x0 <- x$lvm[[i]]
     data0 <- x$data[[i]]
