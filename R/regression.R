@@ -126,9 +126,10 @@
         lhs <- yx[1]; xidx <- 2
       }
       X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
-      
-      vspec <- attributes(terms(value,specials="v"))$specials$v
-      if (!is.null(vspec) && vspec==1) {
+
+      if (!is.null(lhs) && nchar(lhs[[1]])>2 && substr(lhs[[1]],1,2)=="v(") {
+      ## vspec <- attributes(terms(value,specials="v"))$specials$v
+      ## if (!is.null(vspec) && vspec==1) {
         v <- update(value,paste(decomp.specials(lhs),"~."))
         covariance(object,...) <- v
         return(object)

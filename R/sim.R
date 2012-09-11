@@ -2,16 +2,21 @@
 "transform<-" <- function(x,...,value) UseMethod("transform<-")
 
 ##' @S3method transform<- lvm
-"transform<-.lvm" <- function(x,formula,...,value) {
+"transform<-.lvm" <- function(x,formula,...,value) 
+  transform(x,formula,value,...)
+
+
+##' @S3method transform lvm
+"transform.lvm" <- function(x,formula,fun,...) {
   y <- getoutcome(formula)
   xx <- attributes(y)$x
   addvar(x) <- y
   intercept(x,y) <- 0; covariance(x,y) <- 0
   if (is.null(attributes(x)$transform))
     attributes(x)$transform <- list()
-  if (is.null(value)) attributes(x)$transform[y] <- NULL
+  if (is.null(fun)) attributes(x)$transform[y] <- NULL
   else
-    attributes(x)$transform[[y]] <- list(fun=value,x=xx)  
+    attributes(x)$transform[[y]] <- list(fun=fun,x=xx)  
   return(x)
 }
 
@@ -142,7 +147,7 @@ probit.lvm <- binomial.lvm("probit")
 ##' 
 ##' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
 ##' 
-##' @aliases sim sim.lvmfit sim.lvm transform<- transform<-.lvm
+##' @aliases sim sim.lvmfit sim.lvm transform<- transform<-.lvm transform.lvm
 ##' functional functional<-  functional.lvm functional<-.lvm
 ##' distribution distribution distribution<- distribution.lvm distribution<-.lvm
 ##' heavytail heavytail<- weibull.lvm
@@ -281,20 +286,21 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
     xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
-    if (!all(xconstrain %in% index(x)$exogenous)) warning("Non-linear constraint only allowed via covariates")
-    if (length(xconstrain>0))
-      for (i in which(xconstrain.idx)) {
-        ff <- constrain(x)[[i]]
-        myargs <- attributes(ff)$args
-        D <- matrix(0,n,length(myargs))
-        for (j in 1:ncol(D)) {
-          if (myargs[j]%in%xconstrain)
-            D[,j] <- res[,myargs[j]]
-          else
-            D[,j] <- M$parval[[myargs[j]]]
-        }
-        res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
-      }
+##    if (!all(xconstrain %in% index(x)$exogenous)) warning("Non-linear constraint only allowed via covariates")
+    ## if (length(xconstrain>0))
+    ##   for (i in which(xconstrain.idx)) {
+    ##     ff <- constrain(x)[[i]]
+    ##     myargs <- attributes(ff)$args
+    ##     D <- matrix(0,n,length(myargs))
+    ##     for (j in 1:ncol(D)) {
+    ##       if (myargs[j]%in%xconstrain)
+    ##         D[,j] <- res[,myargs[j]]
+    ##       else
+    ##         D[,j] <- M$parval[[myargs[j]]]
+    ##     }
+    ##     res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
+    ##   }
+    
     xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
     covparnames <- unique(as.vector(covariance(x)$labels))  
     if (any(xconstrain.par%in%covparnames)) {
@@ -312,6 +318,25 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     colnames(E) <- vars(x)
     E <- heavytail.sim.hook(x,E)  
 
+
+    ## Non-linear regression components 
+    xconstrain <- c()
+    for (i in seq_len(length(constrain(x)))) {
+      z <- constrain(x)[[i]]
+      xx <- intersect(attributes(z)$args,manifest(x))
+      if (length(xx)>0) {
+        warg <- setdiff(attributes(z)$args,xx)
+        wargidx <- which(attributes(z)$args%in%warg)
+        exoidx <- which(attributes(z)$args%in%xx)
+        parname <- names(constrain(x))[i]
+        y <- names(which(unlist(lapply(intercept(x),function(x) x==parname))))
+        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+        names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
+        xconstrain <- c(xconstrain,list(el))
+      }
+    }
+    yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
+   
     while (length(simuled)<length(nn)) {
       leftovers <- setdiff(nn,simuled)
       for (i in leftovers) {
@@ -319,15 +344,29 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
           simuled <- c(simuled,i)
         } else {
-          pos <- match(i,vars(x))
-          relations <- colnames(A)[A[,pos]!=0]
-          if (all(relations%in%simuled)) { ## Only depending on already simulated variables
+
+          ipos <- which(i%in%yconstrain)
+
+          if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
+            pos <- match(i,vars(x))
+            relations <- colnames(A)[A[,pos]!=0]
+            
+            if (all(relations%in%simuled)) { ## Only depending on already simulated variables
             ##        mu.i <- 0
             if (x$mean[[pos]]%in%xconstrain.par) {
               mu.i <- res[,x$mean[[pos]] ]
             } else {
               mu.i <- mu[pos]
             }
+            if (length(ipos)>0) {
+              pp <- unlist(M$parval[xconstrain[[ipos]]$warg])
+              myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
+              mu.i <- mu.i + with(xconstrain[[ipos]],
+                                  apply(res[,exo,drop=FALSE],1,
+                                        function(x) func(
+                                                      unlist(c(pp,x))[myidx])))
+            }
+            
             for (From in relations) {
               f <- functional(x,i,From)[[1]]
               if (!is.function(f))
@@ -353,20 +392,21 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 resunlink[,pos] <- mu.i
             }
             simuled <- c(simuled,i)
-          }          
+          }
+          }
         }
       }
     }
     res <- res[,nn,drop=FALSE]
   }
 
-  for (i in seq_len(length(x$constrainY))) {
-    cc <- x$constrainY[[i]]
-    args <- attributes(x$constrainY[[i]])$args
-    nam <- names(x$constrainY)[[i]]
-    newcol <- cbind(apply(res[,args,drop=FALSE],1,cc)); colnames(newcol) <- nam
-    res <- cbind(res,newcol)
-  }     
+  ## for (i in seq_len(length(x$constrainY))) {
+  ##   cc <- x$constrainY[[i]]
+  ##   args <- attributes(x$constrainY[[i]])$args
+  ##   nam <- names(x$constrainY)[[i]]
+  ##   newcol <- cbind(apply(res[,args,drop=FALSE],1,cc)); colnames(newcol) <- nam
+  ##   res <- cbind(res,newcol)
+  ## }     
 
   myhooks <- gethook("sim.hooks")
   for (f in myhooks) {
