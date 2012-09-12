@@ -41,6 +41,8 @@ cluster.post.hook <- function(x,...) {
       ##      J1 <- J1+tcrossprod(S0[count,])
     };
     J <- count/(count-1)*crossprod(S0)
+    col3 <- sqrt(-diag(iI)); ## Naive se
+    nn <- c("Estimate","Robust SE", "Naive SE", "P-value")
     asVar <- iI%*%J%*%iI
   } else {
     asVar <- x$vcov
@@ -49,14 +51,17 @@ cluster.post.hook <- function(x,...) {
   mycoef <- x$opt$estimate
   x$vcov <- asVar
   SD <- sqrt(diag(asVar))
-  nSD <- sqrt(-diag(iI))
   Z <- mycoef/SD
   pval <- 2*(1-pnorm(abs(Z)))
-  newcoef <- cbind(mycoef, SD, nSD, pval);
+  if (is.null(x$cluster)) {
+    col3 <- Z
+    nn <-  c("Estimate","Std. Error", "Z-value", "P-value")
+  } 
+  newcoef <- cbind(mycoef, SD, col3, pval);
   nparall <- index(x)$npar + ifelse(x$control$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
   mycoef[x$pp.idx,] <- newcoef
-  colnames(mycoef) <- c("Estimate","Robust SE", "Naive SE", "P-value")
+  colnames(mycoef) <- nn
   mynames <- c()
   if (x$control$meanstructure) {
     mynames <- vars(x)[index(x)$v1==1]
