@@ -30,7 +30,7 @@ cluster.post.hook <- function(x,...) {
     K <- length(uclust)
     S <- score(x,indiv=TRUE) #,...)
     I <- information(x,type="hessian") #,...)
-    iI <- solve(I)
+    iI <- Inverse(I)
 
     S0 <- matrix(0,ncol=ncol(S),nrow=K)
     count <- 0
@@ -45,16 +45,18 @@ cluster.post.hook <- function(x,...) {
   } else {
     asVar <- x$vcov
   }
+  diag(asVar)[diag(asVar)==0] <- NA
   mycoef <- x$opt$estimate
   x$vcov <- asVar
   SD <- sqrt(diag(asVar))
+  nSD <- sqrt(-diag(iI))
   Z <- mycoef/SD
   pval <- 2*(1-pnorm(abs(Z)))
-  newcoef <- cbind(mycoef, SD, Z, pval);
+  newcoef <- cbind(mycoef, SD, nSD, Z, pval);
   nparall <- index(x)$npar + ifelse(x$control$meanstructure, index(x)$npar.mean,0)
-  mycoef <- matrix(NA,nrow=nparall,ncol=4)
+  mycoef <- matrix(NA,nrow=nparall,ncol=5)
   mycoef[x$pp.idx,] <- newcoef
-  colnames(mycoef) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")    
+  colnames(mycoef) <- c("Estimate","Std. Error", "Naive SE", "Z value", "Pr(>|z|)")
   mynames <- c()
   if (x$control$meanstructure) {
     mynames <- vars(x)[index(x)$v1==1]

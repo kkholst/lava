@@ -159,7 +159,8 @@ NULL
 ##' @keywords utilities
 ##' @export
 ##' @aliases startvalues2 startvalues3 starter.multigroup modelPar
-##' modelVar matrices pars pars.lvm pars.lvmfit procdata.lvmfit
+##' modelVar matrices pars pars.lvm pars.lvmfit pars.glm score.glm
+##' procdata.lvmfit
 ##' modelPar modelVar matrices reorderdata graph2lvm igraph.lvm
 ##' subgraph finalize index.lvm index.lvmfit index reindex index<-
 ##' survival survival<- randomslope randomslope<- lisrel variances

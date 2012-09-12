@@ -37,7 +37,7 @@ GLMest <- function(m,data,control=list(),...) {
     colnames(V0) <- rownames(V0) <- names(p)
     if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
       p <- c(p,summary(g)$dispersion)
-      V1 <- matrix(0)
+      V1 <- matrix(0) ## Not estimated!
       colnames(V1) <- rownames(V1) <- names(p)[length(p)] <- paste(y,y,sep="<->")
       V0 <- V0%+%V1
     }
@@ -58,11 +58,129 @@ GLMest <- function(m,data,control=list(),...) {
     mymsg }, dispname="Dispersion:")
 }
 
+GLMscore <- function(x,p,data,indiv=FALSE,...) {
+  v <- vars(x)
+  yvar <- endogenous(x)  
+  S <- res <- c()
+  count <- 0
+  for (y in yvar) {
+    count <- count+1
+    xx <- parents(x,y)
+    fam <- attributes(distribution(x)[[y]])$family
+    if (is.null(fam)) fam <- gaussian()
+    g <- glm(toformula(y,xx),family=fam,data=data)
+    pdispersion <- NULL
+    if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+      pdispersion <- tail(p,1)
+      p0 <- p[-length(p)]
+    }
+    S0 <- rbind(score.glm(g,p=p0,indiv=indiv,...))
+    if (!is.null(pdispersion)) S0 <- cbind(S0,0)    
+    colnames(S0) <- names(p)
+    if (is.null(S)) {
+      S <- S0
+    } else {
+      S <- cbind(S,S0)
+    }    
+    res <- c(res, list(p));
+  }
+  coefs <- unlist(res)
+  idx <- na.omit(match(coef(x),names(coefs)))
+  S <- S[,idx,drop=FALSE]
+  if (!indiv) S <- as.vector(S)
+  ## coefs <- coefs[idx]
+  ## V <- V[idx,idx]
+  return(S)
+  
+}
+
+##' @S3method pars glm
+score.glm <- function(x,p=coef(x),indiv=FALSE,
+                      y,X,link,dispersion,offset=NULL,...) {
+  if (!missing(x)) {
+    link <- family(x)
+    a.phi <- 1
+    if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+      a.phi <- summary(x)$dispersion
+    }
+    response <- all.vars(formula(x))[1]
+    X <- model.matrix(x)
+    y <- model.frame(x)[,1]
+    n <- nrow(X)
+    offset <- x$offset
+  } else {
+    
+  }
+  g <- link$linkfun
+  ginv <- link$linkinv
+  dginv <- link$mu.eta ## D[linkinv]
+  ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
+  canonf <- do.call(link$family,list())           
+  caninvlink <- canonf$linkinv
+  canlink <- canonf$linkfun
+  Dcaninvlink <- canonf$mu.eta           
+  Dcanlink <- function(x) 1/Dcaninvlink(canlink(x))
+  ##gmu <- function(x) g(caninvlink(x))
+  ##invgmu <- function(z) canlink(ginv(z))
+  h <- function(z) Dcanlink(ginv(z))*dginv(z)                                
+  if(any(is.na(p))) stop("Over-parametrized model")
+  Xbeta <- X%*%p
+  if (!is.null(offset)) Xbeta <- Xbeta+offset
+  pi <- ginv(Xbeta)  
+  ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
+  ##return(res)
+  r <- y-pi
+  A <- as.vector(h(Xbeta)*r)/a.phi 
+  S <- apply(X,2,function(x) x*A)
+  if (!indiv) return(colSums(S))
+  return(S)
+}
+
+##' @S3method pars glm
+pars.glm <- function(x,...) {
+  if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+    res <- c(coef(x),summary(x)$dispersion)
+    names(res)[length(res)] <- "Dispersion"
+    return(res)
+  }
+  return(coef(x))
+}
+
+logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
+  f <- family(x)
+  ginv <- f$linkinv
+  X <- model.matrix(x)
+  n <- nrow(X)  
+  disp <- 1; p0 <- p
+  if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+    disp <- tail(p,1)
+    p0 <- p[-length(p)]
+  }
+  if(any(is.na(p))) stop("Over-parametrized model")
+  Xbeta <- X%*%p0
+  if (!is.null(x$offset)) Xbeta <- Xbeta+x$offset
+  y <- model.frame(x)[,1]
+  mu <- ginv(Xbeta)
+  w <- x$prior.weights
+  dev <-  f$dev.resids(y,mu,w)
+  if (indiv) {
+    
+  } 
+  loglik <- length(p)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
+  structure(loglik,nobs=n,df=length(p),class="logLik")
+}
+
+
+
 glm_method.lvm <- NULL
 glm_objective.lvm <- function(x,p,data,...) {
   GLMest(x,data,...)
 }
-glm_gradient.lvm <- NULL
+glm_gradient.lvm <- function(x,p,data,...) {
+  GLMscore(x,p,data,...)
+}
+
 glm_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }
+
