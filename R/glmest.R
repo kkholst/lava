@@ -70,6 +70,7 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
     if (is.null(fam)) fam <- gaussian()
     g <- glm(toformula(y,xx),family=fam,data=data)
     pdispersion <- NULL
+    p0 <- p
     if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
       pdispersion <- tail(p,1)
       p0 <- p[-length(p)]

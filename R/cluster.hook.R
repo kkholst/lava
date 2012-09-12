@@ -56,7 +56,7 @@ cluster.post.hook <- function(x,...) {
   nparall <- index(x)$npar + ifelse(x$control$meanstructure, index(x)$npar.mean,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=5)
   mycoef[x$pp.idx,] <- newcoef
-  colnames(mycoef) <- c("Estimate","Std. Error", "Naive SE", "Z value", "Pr(>|z|)")
+  colnames(mycoef) <- c("Estimate","SE", "Naive SE", "Z value", "Pr(>|z|)")
   mynames <- c()
   if (x$control$meanstructure) {
     mynames <- vars(x)[index(x)$v1==1]
