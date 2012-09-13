@@ -50,6 +50,12 @@
   index(x) <- reindex(x)
   if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
 
+  
+  myhooks <- gethook("plot.post.hooks")
+  for (f in myhooks) {
+    x <- do.call(f, list(x=x,...))
+  }
+  
   suppressWarnings(igraphit <- !Rgraphviz || !(require("graph")) || !(require("Rgraphviz")))
   if (igraphit) {
     if (!require("igraph"))
@@ -98,6 +104,12 @@
   ##          pt.cex=1.5, pch=15, lty=0, col=cols[1:4], cex=0.8)
   ##   par(op)
   ## }
+
+  myhooks <- gethook("plot.hooks")
+  for (f in myhooks) {
+    do.call(f, list(x=x,...))
+  }
+  
   invisible(g)
 }
 

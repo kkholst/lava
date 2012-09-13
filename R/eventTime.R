@@ -80,6 +80,24 @@ eventTime <- function(object,formula,eventName,...){
 }
 
 
+## addhook("color.eventHistory","color.hooks")
+## color.eventHistory <- function(x,subset=vars(x),...) {
+##   return(list(vars=intersect(subset,binary(x)),col="indianred1"))
+## }
+
+addhook("plothook.eventHistory","plot.post.hooks")
+plothook.eventHistory <- function(x,...) {
+  eh <- x$attributes$eventHistory
+  ehnames <- unlist(lapply(eh,function(x) x$names))
+  for (f in eh) {
+    x <- regression(x,to=f$names[1],from=f$latentTimes)
+    latent(x) <- f$latentTimes
+  }
+  browser()
+  return(x)
+}
+
+
 addhook("print.eventHistory","print.hooks")
 print.eventHistory <- function(x,...) { 
   if (is.null(eh <- x$attributes$eventHistory)) return(NULL)

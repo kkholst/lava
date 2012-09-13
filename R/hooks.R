@@ -53,6 +53,8 @@ assign("color.hooks",c(),envir=lava.env)
 assign("sim.hooks",c(),envir=lava.env)
 assign("post.hooks",c(),envir=lava.env)
 assign("print.hooks",c(),envir=lava.env)
+assign("plot.post.hooks",c(),envir=lava.env)
+assign("plot.hooks",c(),envir=lava.env)
 assign("options", list(
                     trace=0,
                     iter.max=300,

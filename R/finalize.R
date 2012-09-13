@@ -69,9 +69,11 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
 ##      if(A[i,j]==1 & A[j,i]==1) recursive <- c(recursive,
 ##                        paste(var[i],"~",var[j], sep=""),
 ##                        paste(var[j],"~",var[i], sep=""))
-      
-      if(A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
-      if(A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
+      if (A[j,i]==0 & x$M[j,i]!=0) {
+        g <- removeEdge(var[j],var[i],g)
+      }
+      if (A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
+      if (A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
     }
 
   
@@ -173,7 +175,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       else notcolored <- vars(x)[is.na(x$noderender$fill)]
       nodecolor(g, intersect(notcolored,exogenous(x))) <- cols[1]
       nodecolor(g, intersect(notcolored,endogenous(x))) <- cols[2]
-        nodecolor(g, intersect(notcolored,latent(x))) <- cols[3]
+      nodecolor(g, intersect(notcolored,latent(x))) <- cols[3]
       ##        nodecolor(x, intersect(notcolored,survival(x))) <- cols[4]        
       myhooks <- gethook("color.hooks")
       count <- 3
