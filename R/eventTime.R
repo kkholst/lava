@@ -93,7 +93,6 @@ plothook.eventHistory <- function(x,...) {
     x <- regression(x,to=f$names[1],from=f$latentTimes)
     latent(x) <- f$latentTimes
   }
-  browser()
   return(x)
 }
 
