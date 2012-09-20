@@ -65,19 +65,19 @@ eventTime <- function(object,formula,eventName,...){
       latentTimes[lt] <- tmp[1]
     }
   }
-  addvar(m) <- timeName
+  addvar(object) <- timeName
   ## m <- regression(m,formula(paste("~",timeName,sep="")))
   if (missing(eventName)) eventName <- "Event"
   eventTime <- list(names=c(timeName,eventName),
                     latentTimes=gsub(" ","",latentTimes),
                     events=gsub(" ","",events))
-  if (is.null(m$attributes$eventHistory)) {
-    m$attributes$eventHistory <- list(eventTime)
-    names(m$attributes$eventHistory) <- timeName
+  if (is.null(object$attributes$eventHistory)) {
+    object$attributes$eventHistory <- list(eventTime)
+    names(object$attributes$eventHistory) <- timeName
   } else {
-    m$attributes$eventHistory[[timeName]] <- eventTime
+    object$attributes$eventHistory[[timeName]] <- eventTime
   }
-  return(m)
+  return(object)
 }
 
 

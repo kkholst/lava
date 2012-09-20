@@ -341,7 +341,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       leftovers <- setdiff(nn,simuled)
       for (i in leftovers) {
         if (i%in%vartrans) {
-          res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
+          res[,i] <- with(attributes(x)$transform[[i]],apply(res[,i,drop=FALSE],1,fun))
           simuled <- c(simuled,i)
         } else {
 
