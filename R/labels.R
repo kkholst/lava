@@ -1,6 +1,5 @@
 ###{{{ labels
 
-
 ##' Define labels of graph
 ##' 
 ##' Alters labels of nodes and edges in the graph of a latent variable model

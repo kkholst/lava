@@ -7,8 +7,9 @@ function(x,...) UseMethod("finalize")
 function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
 
     g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
-
     nodeRenderInfo(g)$fill <- NA
+    nodeRenderInfo(g)$label <- NA
+    nodeRenderInfo(g)$label[vars(m)] <- vars(m)
     nodeRenderInfo(g)$shape <- x$graphdef$shape
     for (i in seq_len(length(x$noderender))) {
       nn <- unlist(x$noderender[[i]])
