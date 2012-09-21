@@ -9,7 +9,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
     nodeRenderInfo(g)$fill <- NA
     nodeRenderInfo(g)$label <- NA
-    nodeRenderInfo(g)$label[vars(m)] <- vars(m)
+    nodeRenderInfo(g)$label[vars(x)] <- vars(x)
     nodeRenderInfo(g)$shape <- x$graphdef$shape
     for (i in seq_len(length(x$noderender))) {
       nn <- unlist(x$noderender[[i]])
