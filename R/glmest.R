@@ -89,13 +89,12 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
   idx <- na.omit(match(coef(x),names(coefs)))
   S <- S[,idx,drop=FALSE]
   if (!indiv) S <- as.vector(S)
-  ## coefs <- coefs[idx]
-  ## V <- V[idx,idx]
   return(S)
   
 }
 
-##' @S3method pars glm
+
+##' @S3method score glm
 score.glm <- function(x,p=coef(x),indiv=FALSE,
                       y,X,link,dispersion,offset=NULL,...) {
   if (!missing(x)) {
@@ -171,6 +170,29 @@ logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
   structure(loglik,nobs=n,df=length(p),class="logLik")
 }
 
+hessian.glm <- function(x,p=coef(x),...) {  
+  jacobian(function(theta) score.glm(x,p=theta,...),p)
+}
+
+robustvar <- function(x,id=NULL,...) {
+  U <- score(x,indiv=TRUE)
+  II <- unique(id)
+  K <- length(II)
+  J <- 0
+  if (is.null(id)) {
+    J <- crossprod(U)
+  } else {
+    for (ii in II) {
+      J <- J+tcrossprod(colSums(U[which(id==ii),,drop=FALSE]))
+    }
+    J <- K/(K-1)*J
+  }
+  ##I <- -hessian(x)
+  ##iI <- solve(I)
+  iI <- vcov(x)
+  V <- iI%*%J%*%iI
+  return(V)  
+}
 
 
 glm_method.lvm <- NULL
@@ -178,7 +200,7 @@ glm_objective.lvm <- function(x,p,data,...) {
   GLMest(x,data,...)
 }
 glm_gradient.lvm <- function(x,p,data,...) {
-  GLMscore(x,p,data,...)
+  -GLMscore(x,p,data,...)
 }
 
 glm_variance.lvm <- function(x,p,data,opt,...) {

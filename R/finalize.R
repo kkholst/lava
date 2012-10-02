@@ -10,16 +10,30 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     nodeRenderInfo(g)$fill <- NA
     nodeRenderInfo(g)$label <- NA
     nodeRenderInfo(g)$label[vars(x)] <- vars(x)
+    
     nodeRenderInfo(g)$shape <- x$graphdef$shape
+    Lab <- NULL
     for (i in seq_len(length(x$noderender))) {
       nn <- unlist(x$noderender[[i]])
       if (length(nn)>0) {
-        nodeRenderInfo(g)[names(x$noderender)[i]][[1]][names(nn)] <- nn
+        R <- list(as.list(x$noderender[[i]])); names(R) <- names(x$noderender)[i]
+        if (names(x$noderender)[i]!="label")
+          nodeRenderInfo(g) <- R
+        else Lab <- R[[1]]
       }
     }
-    nodeRenderInfo(g)$label <- x$noderender$label
-    edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo
+    if (!is.null(Lab)) { ## Ugly hack to allow mathematical annotation
+      nn <- names(nodeRenderInfo(g)$label)
+      LL <- as.list(nodeRenderInfo(g)$label)
+      LL[names(Lab)] <- Lab
+      nodeRenderInfo(g) <- list(label=as.expression(LL))
+      names(nodeRenderInfo(g)$label) <- nn
+      ii <- which(names(nodeRenderInfo(g)$label)=="")
+      if (length(ii)>0)
+      nodeRenderInfo(g)$label <- nodeRenderInfo(g)$label[-ii]
+    }
     
+    edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo    
     edgeRenderInfo(g)$lty <- x$graphdef$lty
     edgeRenderInfo(g)$lwd <- x$graphdef$lty
     edgeRenderInfo(g)$col <- x$graphdef$col

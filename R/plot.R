@@ -83,7 +83,6 @@
   if (lava.options()$debug) {
     plot(g)
   } else {
-
 ##    graphRenderInfo(g)$recipEdges <- "distinct"
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     dots <- list(...)
@@ -92,6 +91,7 @@
     dots$recipEdges <- "distinct"
     if (is.null(dots$layoutType) & all(index(x)$A==0))
       dots$layoutType <- "circo"
+
     g <- do.call("layoutGraph", dots)
     if (noplot)
       return(g)    
@@ -104,6 +104,7 @@
   ##          pt.cex=1.5, pch=15, lty=0, col=cols[1:4], cex=0.8)
   ##   par(op)
   ## }
+
 
   myhooks <- gethook("plot.hooks")
   for (f in myhooks) {

@@ -41,7 +41,7 @@ cluster.post.hook <- function(x,...) {
       ##      J1 <- J1+tcrossprod(S0[count,])
     };
     J <- count/(count-1)*crossprod(S0)
-    col3 <- sqrt(-diag(iI)); ## Naive se
+    col3 <- sqrt(diag(iI)); ## Naive se
     nn <- c("Estimate","Robust SE", "Naive SE", "P-value")
     asVar <- iI%*%J%*%iI
   } else {

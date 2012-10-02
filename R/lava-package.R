@@ -160,14 +160,13 @@ NULL
 ##' @export
 ##' @aliases startvalues2 startvalues3 starter.multigroup modelPar
 ##' modelVar matrices pars pars.lvm pars.lvmfit pars.glm score.glm
-##' procdata.lvmfit
-##' modelPar modelVar matrices reorderdata graph2lvm igraph.lvm
-##' subgraph finalize index.lvm index.lvmfit index reindex index<-
-##' survival survival<- randomslope randomslope<- lisrel variances
-##' offdiags describecoef parlabels stdcoef CoefMat
+##' procdata.lvmfit modelPar modelVar matrices reorderdata graph2lvm
+##' igraph.lvm subgraph finalize index.lvm index.lvmfit index reindex
+##' index<- survival survival<- randomslope randomslope<- lisrel
+##' variances offdiags describecoef parlabels stdcoef CoefMat
 ##' CoefMat.multigroupfit deriv updatelvm checkmultigroup profci
 ##' estimate.MAR missingModel frobnorm getoutcome decomp.specials
-##' Inverse gaussian_logLik.lvm addhook gethook multigroup Weight
-##' fixsome parfix parfix<- %+% makemissing merge IV tr whichentry
-##' mdist meq parameter
+##' Specials Inverse gaussian_logLik.lvm addhook gethook multigroup
+##' Weight fixsome parfix parfix<- %+% makemissing merge IV tr
+##' whichentry mdist meq parameter
 NULL
