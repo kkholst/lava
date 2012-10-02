@@ -148,16 +148,17 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
                                          ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
       ##sqrt(max(0,x/(qdf*(n-1)))))
       opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
+      grd <- function(l,p=alpha) grad(function(x) opf(x,p),l)
       alpha <- (1-level)/2
       hi <- list(par=0)
       RMSEA <- epsilon(q-qdf)
       start <- RMSEA
       if (RMSEA>0) {
-        hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum        
-        hi <- tryCatch(nlminb(hi$par^0.5,function(x) opf(x^2,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
+        ## hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum        
+        hi <- tryCatch(nlminb(RMSEA^0.5,function(x) opf(x^2,p=1-alpha),
+                              gradient=function(x) 2*grd(x^2,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
       }
-      ##      lo <- optimize(function(x) opf(x,p=alpha),c(q-qdf,n)); lo$par <- lo$minimum
-      lo <- tryCatch(nlminb(RMSEA,function(x) opf(x^2,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2
+      lo <- tryCatch(nlminb(RMSEA^0.5,function(x) opf(x^2,p=alpha),gradient=function(x) 2*grd(x^2,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2     
       ci <- c(epsilon(c(hi$par,lo$par)))    
       RMSEA <- c(RMSEA=RMSEA,ci);
       names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
