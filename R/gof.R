@@ -147,22 +147,26 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
       epsilon <- function(lambda) sapply(lambda,function(x)
                                          ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
       ##sqrt(max(0,x/(qdf*(n-1)))))
-      opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
-      grd <- function(l,p=alpha) grad(function(x) opf(x^2,p),l)
+      ## opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
+      opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))
       alpha <- (1-level)/2
-      hi <- list(par=0)
       RMSEA <- epsilon(q-qdf)
-      start0 <- max(1e-5,q-qdf)
-      if (RMSEA>0) {
-        ## hi <- optimize(function(x) opf(x,p=1-alpha),c(0,q-qdf)); hi$par <- hi$minimum        
-        hi <- tryCatch(nlminb(start^0.5,function(x) opf(x^2,p=1-alpha),
-                              gradient=function(x) grd(x,p=1-alpha)),error=function(...) list(par=NA)); hi$par <- hi$par^2
+      B <- max(q-qdf,0)
+      lo <- hi <- list(root=0)
+      if (RMSEA>0 && opf(0,p=1-alpha)<0) {
+        hi <- uniroot(function(x) opf(x,p=1-alpha),c(0,B))
       }
-      lo <- tryCatch(nlminb(start0^0.5,function(x) opf(x^2,p=alpha),gradient=function(x) grd(x,p=alpha)),error=function(...) list(par=NA)); lo$par <- lo$par^2
-      ci <- c(epsilon(c(hi$par,lo$par)))    
+      if (opf(B,p=alpha)<0) {
+        lo <- uniroot(function(x) opf(x,p=alpha),c(B,n))
+      }
+      ## xx <- seq(B,10,length.out=500)
+      ## yy <- opf(xx,p=alpha)
+      ## plot(xx,yy,type="b")
+      ## abline(h=0)      
+      ci <- c(epsilon(c(hi$root,lo$root)))
       RMSEA <- c(RMSEA=RMSEA,ci);
       names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
-      res <- c(res,list(RMSEA=RMSEA, level=level))
+      res <- c(res,list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level))
     }
   } else {
     res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
