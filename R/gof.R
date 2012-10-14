@@ -80,12 +80,14 @@ condition <- function(A) {
 ##' @param chisq Boolean indicating whether to calculate chi-squared
 ##' goodness-of-fit (always TRUE for estimator='gaussian')
 ##' @param level Level of confidence limits for RMSEA
+##' @param rmsea.threshold Which probability to calculate, Pr(RMSEA<rmsea.treshold)
+##' @param all Calculate all (ad hoc) FIT indices: TLI, CFI, NFI, SRMR, ...
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' 
 ##' gof(object, ...)
 ##'
-##' \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90, ...)
+##' \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90, rmsea.threshold=0.05,all=FALSE,...)
 ##' 
 ##' moments(x,...)
 ##' 
@@ -105,8 +107,136 @@ condition <- function(A) {
 ##' @author Klaus K. Holst
 ##' @keywords methods models
 ##' @export
+##' @examples
+##' m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
+##' set.seed(1)
+##' dd <- sim(m,1000) 
+##' e <- estimate(m, dd)
+##' gof(e,all=TRUE,rmsea.threshold=0.05,level=0.9)
 `gof` <-
   function(object,...) UseMethod("gof")
+
+##' @S3method gof lvmfit
+gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FALSE,...) {
+  n <- object$data$n
+  loglik <- logLik(object,...)
+  
+  df <- attributes(loglik)$df
+  nobs <- attributes(loglik)$nall*length(endogenous(object))
+  myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
+  myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
+
+  xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
+
+  l2D <- sum(object$opt$grad^2)
+  rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) 0)
+  condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
+
+##  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
+  if ((object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
+
+    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
+    q <- res$fit$statistic
+    qdf <- res$fit$parameter
+    if (all) {     
+      m0 <- lvm(manifest(object)); exogenous(m0) <- NULL
+      e0 <- estimate(m0,model.frame(object))
+      g0 <- gof(e0)
+      logLikbaseline <- g0$logLik
+      qbaseline <- g0$fit$statistic
+      qdfbaseline <- g0$fit$parameter
+      CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
+      NFI <- (qbaseline-q)/qbaseline
+      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)
+      
+      S <- object$data$S
+      mu <- object$data$mu
+      C <- modelVar(object)$C
+      xi <- as.vector(modelVar(object)$xi)
+      if (is.null(S)) S <- cov(model.frame(object))
+      if (is.null(mu)) mu <- colMeans(model.frame(object))
+      L <- diag(S)^0.5
+      idx <- index(object)$endo.idx
+      R <- (diag(1/L))%*%(S-C)%*%(diag(1/L))
+      R2 <- (mu-xi)/L
+      SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
+      SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5      
+      res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR,"SRMR(endogenous)"=SRMR.endo))
+    }    
+    if (class(object)[1]=="lvmfit")
+    if (rnkV==ncol(vcov(object))) {
+
+      rmseafun <- function(...) {
+        epsilon <- function(lambda) sapply(lambda,function(x)
+                                           ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n))),0)) ## n-1,n vs. n-df
+        opf <- suppressWarnings(function(l,p) (p-pchisq(q,df=qdf,ncp=l)))
+        alpha <- (1-level)/2
+        RMSEA <- epsilon(q-qdf)
+        B <- max(q-qdf,0)
+        lo <- hi <- list(root=0)
+        if (RMSEA>0 && opf(0,p=1-alpha)<0) {
+          hi <- uniroot(function(x) opf(x,p=1-alpha),c(0,B))
+        }
+        if (opf(B,p=alpha)<0) {
+          lo <- uniroot(function(x) opf(x,p=alpha),c(B,n))
+        }
+        ci <- c(epsilon(c(hi$root,lo$root)))
+        RMSEA <- c(RMSEA=RMSEA,ci);
+        names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
+        pval <- 1-pchisq(q,qdf,(n*qdf*rmsea.threshold^2))
+        res <- list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level, rmsea.threshold=rmsea.threshold, pval.rmsea=pval)
+        return(res)
+      }
+      rmseaval <- tryCatch(rmseafun(),error=function(e) NULL)
+      res <- c(res,rmseaval)
+    }
+  } else {
+    res <- c(res,list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC))
+  }
+
+  res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
+  class(res) <- "gof.lvmfit"
+  return(res)       
+}
+
+##' @S3method print gof.lvmfit
+print.gof.lvmfit <- function(x,optim=TRUE,...) {
+  if (!is.null(x$n)) {
+    with(x,       
+         cat("\n Number of observations =", n, "\n"))
+  }
+  if (is.null(x$fit)) {
+    with(x,
+         cat(" Log-Likelihood =", logLik, "\n"))
+  }
+  with(x,  cat(" BIC =", BIC, "\n",
+               "AIC =", AIC, "\n"))
+  if (!is.null(x$fit))
+  with(x,
+       cat(" log-Likelihood of model =", fit$estimate[1], "\n\n",
+           "log-Likelihood of saturated model =", fit$estimate[2], "\n",
+           "Chi-squared statistic: q =", fit$statistic, 
+           ", df =", fit$parameter, 
+           "\n  P(Q>q) =", fit$p.value, "\n"))
+  if (!is.null(x$RMSEA)) {
+    rr <- round(x$RMSEA*10000)/10000
+      rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
+    cat("\n RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
+    cat("  Pr(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n\n",sep="")
+  }
+  for (i in c("TLI","CFI","NFI","SRMR","SRMR(endogenous)"))
+    if (!is.null(x[[i]])) cat("", i,"=",x[[i]],"\n")
+  
+  if (optim) {
+    cat("\nrank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
+    cat("condition(Information) = ",x$cond,"\n",sep="")
+    cat("||score||^2 =",x$L2score,"\n")
+  }
+
+  invisible(x)
+}
+
+
 
 ## gof.multigroupfit <- function(object,...) {
 ##   L0 <- logLik(object); df0 <- attributes(L0)$df
@@ -122,89 +252,3 @@ condition <- function(A) {
 ##   class(res) <- "htest"
 ##   return(res)    
 ## }
-
-##' @S3method gof lvmfit
-gof.lvmfit <- function(object,chisq=FALSE,level=0.90,...) {
-  n <- object$data$n
-  loglik <- logLik(object,...)
-  
-  df <- attributes(loglik)$df
-  nobs <- attributes(loglik)$nall*length(endogenous(object))
-  myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
-  myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
-
-  xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
-
-  l2D <- sum(object$opt$grad^2)
-  rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) NULL)
-  condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
-
-  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
-    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-    q <- res$fit$statistic
-    qdf <- res$fit$parameter
-    if (rnkV==ncol(vcov(object))) {
-      epsilon <- function(lambda) sapply(lambda,function(x)
-                                         ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n-1))),0))
-      ##sqrt(max(0,x/(qdf*(n-1)))))
-      ## opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))^2
-      opf <- function(l,p) (p-pchisq(q,df=qdf,ncp=l))
-      alpha <- (1-level)/2
-      RMSEA <- epsilon(q-qdf)
-      B <- max(q-qdf,0)
-      lo <- hi <- list(root=0)
-      if (RMSEA>0 && opf(0,p=1-alpha)<0) {
-        hi <- uniroot(function(x) opf(x,p=1-alpha),c(0,B))
-      }
-      if (opf(B,p=alpha)<0) {
-        lo <- uniroot(function(x) opf(x,p=alpha),c(B,n))
-      }
-      ## xx <- seq(B,10,length.out=500)
-      ## yy <- opf(xx,p=alpha)
-      ## plot(xx,yy,type="b")
-      ## abline(h=0)      
-      ci <- c(epsilon(c(hi$root,lo$root)))
-      RMSEA <- c(RMSEA=RMSEA,ci);
-      names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
-      res <- c(res,list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level))
-    }
-  } else {
-    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-  }
-
-  res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
-  class(res) <- "gof.lvmfit"
-  return(res)       
-}
-
-##' @S3method print gof.lvmfit
-print.gof.lvmfit <- function(x,optim=TRUE,...) {
-  if (!is.null(x$n))
-    with(x,       
-         cat("Number of observations =", n, "\n"))
-  with(x,
-       cat(" Log-Likelihood =", logLik, "\n",
-           "BIC =", BIC, "\n",
-           "AIC =", AIC, "\n"))
-  if (!is.null(x$fit))
-  with(x,
-       cat(" log-Likelihood of model =", fit$estimate[1], "\n",
-           "log-Likelihood of saturated model =", fit$estimate[2], "\n",
-           "Chi-squared statistic: q =", fit$statistic, 
-           ", df =", fit$parameter, 
-           ", P(Q>q) =", fit$p.value, "\n"))
-  if (!is.null(x$RMSEA)) {
-    rr <- round(x$RMSEA*10000)/10000
-      rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
-    cat(" RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
-  }
-  if (optim) {
-    cat("rank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
-    cat("condition(Information) = ",x$cond,"\n",sep="")
-    cat("||score||^2 =",x$L2score,"\n")
-  }
-
-  invisible(x)
-}
-
-

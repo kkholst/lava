@@ -228,7 +228,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
-  res <- as.data.frame(res)
+##  res <- as.data.frame(res)
 
   vartrans <- names(attributes(x)$transform)
   xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
@@ -408,10 +408,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   ##   res <- cbind(res,newcol)
   ## }     
 
+  res <- as.data.frame(res)
   myhooks <- gethook("sim.hooks")
   for (f in myhooks) {
     res <- do.call(f, list(x=x,data=res))
   }         
   if (unlink) res <- resunlink
-  return(data.frame(res))
+  return(as.data.frame(res))
 }

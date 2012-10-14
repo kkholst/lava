@@ -13,7 +13,7 @@
   gof(object, ...)
 
   \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90,
-    ...)
+    rmsea.threshold=0.05,all=FALSE,...)
 
   moments(x,...)
 
@@ -57,6 +57,12 @@
 
   \item{level}{Level of confidence limits for RMSEA}
 
+  \item{rmsea.threshold}{Which probability to calculate,
+  Pr(RMSEA<rmsea.treshold)}
+
+  \item{all}{Calculate all (ad hoc) FIT indices: TLI, CFI,
+  NFI, SRMR, ...}
+
   \item{\dots}{Additional arguments to be passed to the low
   level functions}
 }
@@ -68,6 +74,13 @@
   including global chi-squared test statistic and AIC.
   Extract model-specific mean and variance structure,
   residuals and various predicitions.
+}
+\examples{
+m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
+set.seed(1)
+dd <- sim(m,1000)
+e <- estimate(m, dd)
+gof(e,all=TRUE,rmsea.threshold=0.05,level=0.9)
 }
 \author{
   Klaus K. Holst
