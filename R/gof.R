@@ -119,6 +119,7 @@ condition <- function(A) {
 ##' @S3method gof lvmfit
 gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FALSE,...) {
   n <- object$data$n
+  if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
   loglik <- logLik(object,...)
   
   df <- attributes(loglik)$df
@@ -131,10 +132,10 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
   l2D <- sum(object$opt$grad^2)
   rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) 0)
   condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
+  
 
 ##  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
-  if ((object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
-
+  if (((object$estimator=="gaussian" & class(object)[1]!="lvm.missing") | chisq) & length(xconstrain)==0 ) {
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
     q <- res$fit$statistic
     qdf <- res$fit$parameter
@@ -163,7 +164,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5      
       res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR,"SRMR(endogenous)"=SRMR.endo))
     }    
-    if (class(object)[1]=="lvmfit")
+    ##    if (class(object)[1]=="lvmfit")
     if (rnkV==ncol(vcov(object))) {
 
       rmseafun <- function(...) {
@@ -191,7 +192,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       res <- c(res,rmseaval)
     }
   } else {
-    res <- c(res,list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC))
+    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
   }
 
   res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
