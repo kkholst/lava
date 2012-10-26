@@ -16,12 +16,13 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     for (i in seq_len(length(x$noderender))) {
       nn <- unlist(x$noderender[[i]])
       if (length(nn)>0) {
-        R <- list(as.list(x$noderender[[i]])); names(R) <- names(x$noderender)[i]
+        R <- list(as.list(x$noderender[[i]])); names(R) <- names(x$noderender)[i]        
         if (names(x$noderender)[i]!="label")
-          nodeRenderInfo(g) <- R
+          nodeRenderInfo(g) <- x$noderender[i]
         else Lab <- R[[1]]
       }
     }
+    
     if (!is.null(Lab)) { ## Ugly hack to allow mathematical annotation
       nn <- names(nodeRenderInfo(g)$label)
       LL <- as.list(nodeRenderInfo(g)$label)
@@ -32,7 +33,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       if (length(ii)>0)
       nodeRenderInfo(g)$label <- nodeRenderInfo(g)$label[-ii]
     }
-    
+   
     edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo    
     edgeRenderInfo(g)$lty <- x$graphdef$lty
     edgeRenderInfo(g)$lwd <- x$graphdef$lty
@@ -123,7 +124,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     }
   }
 
-    if (length(x$edgerender$futureinfo)>0) {
+  if (length(x$edgerender$futureinfo)>0) {
     estr <- names(x$edgerender$futureinfo$label)
     estr <- estr[which(unlist(lapply(estr,nchar))>0)]
     revestr <- sapply(estr, function(y) paste(rev(unlist(strsplit(y,"~"))),collapse="~"))
@@ -132,15 +133,14 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     for (i in estr) {      
       count <- count+1
       for (f in names(x$edgerender$futureinfo)) {
-  ##      edgeRenderInfo(g)[[f]][[i]] <- edgeDataDefaults(g)$futureinfo[[f]][[i]]
-        if (count%in%revidx)
+        if (count%in%revidx) {
           g@renderInfo@edges[[f]][[revestr[count]]] <- x$edgerender$futureinfo[[f]][[i]]
-        else
-          g@renderInfo@edges[[f]][[i]] <- x$edgerender$futureinfo[[f]][[i]]          
+        } else {
+          g@renderInfo@edges[[f]][[i]] <- x$edgerender$futureinfo[[f]][[i]]
+        }
       }
     }
-  }  
-
+  }
   allEdges <- unique(c(regEdges,corEdges,varEdges))
   corEdges <- setdiff(corEdges,regEdges)
 
@@ -181,9 +181,9 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       if (!is.null(cex))
         nodeRenderInfo(g)$cex <- cex
   }
-  
+
   if (plain) {
-    x <- addattr(x,attr="shape",var=vars(x),val="none")      
+    g <- addattr(g,attr="shape",var=vars(x),val="none")      
   } else {    
     if (addcolor) {
       if (is.null(x$noderender$fill)) notcolored <- vars(x)
@@ -205,7 +205,6 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       }       
     }
   }
-  
   options(opt)
   return(g)
 }

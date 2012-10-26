@@ -91,8 +91,13 @@
     dots$recipEdges <- "distinct"
     if (is.null(dots$layoutType) & all(index(x)$A==0))
       dots$layoutType <- "circo"
-
+    
     g <- do.call("layoutGraph", dots)
+    ## Temporary work around:
+    nodeRenderInfo(g)$fill <- nodeRenderInfo(dots$x)$fill
+    nodeRenderInfo(g)$col <- nodeRenderInfo(dots$x)$col
+    edgeRenderInfo(g)$col <- edgeRenderInfo(dots$x)$col
+    
     if (noplot)
       return(g)    
     res <- tryCatch(renderGraph(g),error=function(e) NULL)
@@ -133,9 +138,6 @@
       Graph(x) <- finalize(Model(x), diag=TRUE, cor=FALSE, fontsize1=fontsize1, ...)
     }
     if(noplot) return(Graph(x))
-    ##  browser()
-    ##    newgraph <- FALSE
-    ##cat("Setting up graph...\n")
     if (newgraph) {
       if (missing(type))
         type <- "est"
