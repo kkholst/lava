@@ -242,6 +242,10 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       for (i in 1:length(xx)) {
         mu.x <- mu[X.idx[i]]
         dist.x <- distribution(x,xx[i])[[1]]
+        if (is.list(dist.x)) {
+          dist.x <- dist.x[[1]]
+          if (length(dist.x)==1) dist.x <- rep(dist.x,n)
+        }
         if (is.function(dist.x)) {
           res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
         } else {
@@ -341,8 +345,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       leftovers <- setdiff(nn,simuled)
       for (i in leftovers) {
         if (i%in%vartrans) {
-          res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
-          simuled <- c(simuled,i)
+          xtrans <- attributes(x)$transform[[i]]$x
+          if (all(xtrans%in%simuled)) {
+            res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
+            simuled <- c(simuled,i)
+          }
         } else {
 
           ipos <- which(i%in%yconstrain)

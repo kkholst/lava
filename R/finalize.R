@@ -6,10 +6,10 @@ function(x,...) UseMethod("finalize")
 `finalize.lvm` <-
 function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
 
-    g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
-    nodeRenderInfo(g)$fill <- NA
-    nodeRenderInfo(g)$label <- NA
-    nodeRenderInfo(g)$label[vars(x)] <- vars(x)
+  g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
+  nodeRenderInfo(g)$fill <- NA
+  nodeRenderInfo(g)$label <- NA
+  nodeRenderInfo(g)$label[vars(x)] <- vars(x)
     
     nodeRenderInfo(g)$shape <- x$graphdef$shape
     Lab <- NULL

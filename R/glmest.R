@@ -27,6 +27,7 @@ GLMest <- function(m,data,control=list(),...) {
     fam <- attributes(distribution(m)[[y]])$family
     if (is.null(fam)) fam <- gaussian()
     mymsg <- c(mymsg, with(fam, paste(family,"(",link,")",sep="")))
+    if (length(xx)==0) xx <- 1
     g <- glm(toformula(y,xx),family=fam,data=data)
     p <- coef(g)
     V0 <- vcov(g)

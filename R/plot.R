@@ -122,6 +122,10 @@
 `plot.lvmfit` <-
   function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,...) {
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
+    if (!require("graph")) {
+      plot(Model(x),...)
+      return(invisible(x))
+    }
     g <- Graph(x)
     newgraph <- FALSE
     if (is.null(g)) {

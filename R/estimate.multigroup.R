@@ -112,7 +112,7 @@
   newweight2 <- list()
   newoptim <- newestimator <- NULL
   for (f in myhooks) {
-    for ( i in 1:x$ngroup) {
+    for ( i in seq_len(x$ngroup)) {
       res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],weight2=weight2[[i]],estimator=estimator,optim=optim))
       if (!is.null(res$x)) x$lvm[[i]] <- res$x
       if (!is.null(res$data)) x$data[[i]] <- res$data
@@ -192,7 +192,7 @@
 
   InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
   
-  
+  ##  suppressMessages(browser()) 
   ##parord <- modelPar(x,1:length(mystart),debug=debug)$p
   parord <- modelPar(x,1:with(x,npar+npar.mean))$p
   mymodel <- x
@@ -237,7 +237,8 @@
       lower <- lower[parkeep]
       x <- multigroup(x$lvm,x$data,fix=FALSE,exo.fix=FALSE) 
     }  
-    
+
+
     parord <- modelPar(x,1:length(mystart))$p    
     mydata <- list()
     for (i in 1:x$ngroup) {      
@@ -433,7 +434,7 @@
       }
       pp <- modelPar(x,theta)$p
       res <- c()
-      for (i in 1:x$ngroup) {
+      for (i in seq_len(x$ngroup)) {
         offset <- MkOffset(pp[[i]],x$lvm[[i]],x$data[[i]],xconstrain[[i]])
         x0 <- x$lvm[[i]]
         data0 <- x$data[[i]][,index(x$lvm[[i]])$manifest,drop=FALSE]
@@ -527,7 +528,6 @@
     print(optim$constrain)
     print(optim$method)
   }
-  ##  suppressMessages(browser())
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")
