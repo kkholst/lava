@@ -31,6 +31,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   if (!missing(contrast)) {
     B <- contrast    
     p <- pars(object)
+    pname <- names(p)
     if (is.vector(B)) { B <- rbind(B); colnames(B) <- names(contrast) }
     if (missing(Sigma)) {
       Sigma <- vcov(object)
@@ -42,13 +43,26 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
       B0[,myidx] <- B[,attributes(myidx)$ord]
       B <- B0
     }
-    if (missing(null)) null <- 0
-    Q <- t(B%*%p-null)%*%Inverse(B%*%Sigma%*%t(B))%*%(B%*%p-null)
+    if (missing(null)) null <- rep(0,nrow(B))
+    if (length(null)==1) null <- rep(null,nrow(B))
+    Bp <- B%*%p
+    Q <- t(Bp-null)%*%Inverse(B%*%Sigma%*%t(B))%*%(Bp-null)
     df <- qr(B)$rank; names(df) <- "df"
     attributes(Q) <- NULL; names(Q) <- "chisq";
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
-    method = "Wald test";
-    ##    hypothesis <-
+
+    method = "- Wald test -";    
+    if (!is.null(pname)) {
+      msg <- c()
+      for (i in seq_len(nrow(B))) {
+        Bidx <- which(B[i,]!=0)
+        Bval <- B[i,Bidx]; Bval[Bval==1] <- ""
+        msg <- c(msg,paste(paste(Bval,paste("[",pname[Bidx],"]",sep=""),collapse=" + ",sep="")," = ",null[i],sep=""))
+      }
+      method <- c(method,"","Null Hypothesis:",msg)
+    }
+    method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
+    
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,
                 p.value=pQ, method = method
