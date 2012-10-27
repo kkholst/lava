@@ -1,6 +1,6 @@
 ##' @title Statistical tests
 ##' 
-##' Performs Likelihood-ratio, Wald andscore tests
+##' Performs Likelihood-ratio, Wald and score tests
 ##'
 ##' @aliases compare contrmat
 ##' @export
@@ -11,11 +11,30 @@
 ##' @seealso \code{\link{modelsearch}}, \code{\link{equivalence}}
 ##' @keywords htest
 ##' @examples
-##' 
+##'
 ##' m <- lvm(); 
 ##' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
 ##' regression(m) <- eta ~ x
-##'
+##' m2 <- regression(m, c(y3,eta) ~ x)
+##' set.seed(1)
+##' d <- sim(m,1000)
+##' e <- estimate(m,d)
+##' e2 <- estimate(m2,d)
+##' 
+##' compare(e)
+##' 
+##' compare(e,e2) ## LRT, H0: y3<-x=0
+##' compare(e,scoretest=y3~x) ## Score-test, H0: y3<-x=0
+##' compare(e2,par=c("y3<-x")) ## Wald-test, H0: y3<-x=0
+##' 
+##' B <- diag(2); colnames(B) <- c("y2<-eta","y3<-eta")
+##' compare(e2,contrast=B,null=c(1,1))
+##' 
+##' B <- rep(0,length(coef(e2))); B[1:3] <- 1
+##' compare(e2,contrast=B)
+##' 
+##' compare(e,scoretest=list(y3~x,y2~x))
+##' 
 compare <- function(object,...) UseMethod("compare")
 
 ##' @S3method compare default
@@ -98,7 +117,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
     res <- list(data.name=as.character(scoretest),
                 statistic = Q, parameter = df,
-                p.value=pQ, method = "Score test")
+                p.value=pQ, method = "- Score test -")
     class(res) <- "htest"
     return(res)    
   }
@@ -116,7 +135,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
 
     values <- c(L0,L1); names(values) <- c("log likelihood (model)", "log likelihood (saturated model)")
     res <- list(statistic = Q, parameter = df,
-                p.value=pQ, method = "Likelihood ratio test",
+                p.value=pQ, method = "- Likelihood ratio test -",
                 estimate = values)
     class(res) <- "htest"
     return(res)    
@@ -145,7 +164,7 @@ comparepair <- function(x1,x2) {
   values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
 
   res <- list(statistic = Q, parameter = df,
-              p.value= p, method = "Likelihood ratio test",
+              p.value= p, method = "- Likelihood ratio test -",
               estimate = values)
   class(res) <- "htest"
   return(res)
