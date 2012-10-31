@@ -65,7 +65,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   cctab <- table(cclab)
   equiv <- which(cctab>1)
   for (i in seq_len(length(equiv))) {
-    orgpos <- which(cclab==names(equiv)[i])
+    orgpos <- which(cclab==(names(equiv)[i]))
     pos <- orgpos[-1]
     for (p in pos)
         S[p,-orgpos[1]] <- S[-orgpos[1],p] <- S[orgpos[1],-p]
