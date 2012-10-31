@@ -79,8 +79,8 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
         msg <- c(msg,paste(paste(Bval,paste("[",pname[Bidx],"]",sep=""),collapse=" + ",sep="")," = ",null[i],sep=""))
       }
       method <- c(method,"","Null Hypothesis:",msg)
+      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     }
-    method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,

@@ -64,15 +64,13 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   cclab <- rownames(coef(object,level=9,labels=TRUE)) ## Identify equivalence constraints
   cctab <- table(cclab)
   equiv <- which(cctab>1)
-  if (length(equiv)>0) {
-    for (i in seq(length(equiv))) {
-      orgpos <- which(cclab==names(equiv))
-      pos <- orgpos[-1]
-      for (p in pos)
+  for (i in seq_len(length(equiv))) {
+    orgpos <- which(cclab==names(equiv)[i])
+    pos <- orgpos[-1]
+    for (p in pos)
         S[p,-orgpos[1]] <- S[-orgpos[1],p] <- S[orgpos[1],-p]
-    }
-  }  
-
+  }
+  
   idx.orig <- unique(unlist(P$idx))
   coefs.all <- cc[idx.orig]
 

@@ -12,8 +12,10 @@ pars.default <- function(x,...) {
 }
 
 ###{{{ pars.multigroupfit
-##pars.multigroupfit <- function(x,...) {
-##  x$opt$est
+## pars.multigroupfit <- function(x,...) {
+##   res <- pars.default(x)
+##   lapply(ee$model$lvm,coef))
+##   coef()
 ##}
 ###}}}
 

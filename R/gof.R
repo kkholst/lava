@@ -223,7 +223,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
     rr <- round(x$RMSEA*10000)/10000
       rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
     cat("\n RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
-    cat("  Pr(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n\n",sep="")
+    cat("  P(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n\n",sep="")
   }
   for (i in c("TLI","CFI","NFI","SRMR","SRMR(endogenous)"))
     if (!is.null(x[[i]])) cat("", i,"=",x[[i]],"\n")
