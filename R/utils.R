@@ -209,7 +209,8 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
             if (all(is.na(x$fix[e, ]==1)) &
                 is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
               regfix(x,from=e,to=ys.[1]) <- 1
-            if (is.na(intercept(x)[[ys.[1]]]) &
+            if (!any(unlist(lapply(intercept(x)[ys],is.numeric))) &
+                ##is.na(intercept(x)[[ys.[1]]]) &
                 is.na(intercept(x)[[e]]))
               intercept(x,ys.[1]) <- 0
           }
