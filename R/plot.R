@@ -47,6 +47,7 @@
            unexpr=FALSE,
            addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
            ...) {
+  if (is.null(vars(x))) stop("Nothing to plot: model has no variables.")
   index(x) <- reindex(x)
   if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
 
