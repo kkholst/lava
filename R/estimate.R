@@ -716,6 +716,8 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
   mm <- model.matrix(x,data)
   options(opt)
   covars <- colnames(mm)
+  covars <- unlist(lapply(covars, function(x) gsub("[^a-zA-Z0-9._]","",x)))
+  colnames(mm) <- covars
   if (attr(terms(x),"intercept")==1)
     covars <- covars[-1]
   if (!is.null(cluster)) covars <- setdiff(covars,cluster)
