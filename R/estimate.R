@@ -152,6 +152,16 @@ function(x, data=parent.frame(),
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)
   }
   Debug(list("start=",optim$start))
+
+
+  if (!missing & (is.matrix(data) | is.data.frame(data))) {
+    includelist <- c(manifest(x),xfix)
+    if (!missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
+    if (!missing(weight2) && is.character(weight2)) includelist <- c(includelist,weight2)
+    if (!missing(cluster) && is.character(cluster)) includelist <- c(includelist,cluster)    
+    data <- na.omit(data[,intersect(colnames(data),includelist),drop=FALSE])
+  }
+  
   ## Weights...
   if (!missing(weight)) {
     if (is.character(weight)) {
@@ -192,9 +202,6 @@ function(x, data=parent.frame(),
   ## }
   
   ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
-  if (!missing & (is.matrix(data) | is.data.frame(data))) {    
-    data <- na.omit(data[,intersect(colnames(data),c(manifest(x),xfix)),drop=FALSE])
-  }
 
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
