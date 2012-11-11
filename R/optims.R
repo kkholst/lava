@@ -27,7 +27,6 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 ### just for testing
 estfun2 <- function(start,objective,gradient,hessian,...) {
 
-  browser()
   myobj <- function(...) {
 ##    return(objective(...))
 ##    return(objective(...))

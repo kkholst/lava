@@ -160,7 +160,6 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   };
 
 ######
-  browser()
   pp <- unlist(ps)
   parname <- unique(pp[!is.na(pp)])
   opt <- options(warn=-1); pidx <- is.na(as.numeric(parname)); options(opt)
