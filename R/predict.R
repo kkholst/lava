@@ -64,6 +64,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   if (!is.null(x)) {
     if (class(x)[1]=="formula") 
       x <- all.vars(x)
+    if (length(x)==0) return(t(xi.x))
     y <- setdiff(vars(object),c(x,exogenous(object)))
     E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,]
     if (residual) {
