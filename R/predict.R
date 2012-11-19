@@ -60,12 +60,24 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   ##  mu <- t(xi.x)
 
   ys <- data[,Y]
-  ry <- t(ys)-Ey.x  
+  ry <- t(ys)-Ey.x
+  y <- NULL
   if (!is.null(x)) {
-    if (class(x)[1]=="formula") 
-      x <- all.vars(x)
-    if (length(x)==0) return(t(xi.x))
-    y <- setdiff(vars(object),c(x,exogenous(object)))
+    if (class(x)[1]=="formula")  {
+      xy <- getoutcome(x)
+      if (length(xy)>0) {
+        y <- decomp.specials(xy)
+      }
+      x <- attributes(xy)$x
+    }
+    if (length(x)==0) {
+      if (!is.null(y))
+        xi.x <- xi.x[y,,drop=FALSE]
+      return(t(xi.x))
+    }
+    if (is.null(y))
+      y <- setdiff(vars(object),c(x,exogenous(object)))
+
     E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,]
     if (residual) {
       Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
