@@ -319,7 +319,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   
   Debug(list("start=",start), debug)
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
-  names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)  
+  names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)[seq_len(length(start))]
   res <- startmean(x,start,mu)
   res[!is.finite(res) | is.nan(res) | is.na(res)] <- 1
   res

@@ -4,14 +4,26 @@
 `summary.lvm` <-
 function(object,...) {
   k <- length(vars(object))
-  cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
+  ## cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
+  print(object)
   if (k==0)
     return()
-  cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
+##  cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
   cat("\n")
   print(regression(object))
   print(covariance(object))
   print(intercept(object))
+  if (length(object$exfix)>0) {
+    cat("\nAdditional parameters:\n")
+    val <- unlist(object$exfix)
+    val[is.na(val)] <- "*"
+    print(val,quote=FALSE)
+  }
+  if (length(constrain(object))>0) {
+    cat("Non-linear constraints:\n")
+    print(constrain(object),quote=FALSE)
+  }
+    
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
 
   cat("\n")

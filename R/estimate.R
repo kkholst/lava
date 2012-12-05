@@ -201,8 +201,6 @@ function(x, data=parent.frame(),
   ##   data <- data[which(!xmis),]
   ## }
   
-  ## e1<- estimate(m1,testdata[which(!xmis),-1],missing=TRUE)
-
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
   Debug(list("n=",n))  
@@ -218,10 +216,10 @@ function(x, data=parent.frame(),
         x <- latent(x, new.lat)
     }
   }
- 
+
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
-  for (f in myhooks) {    
+  for (f in myhooks) {
     res <- do.call(f, list(x=x,data=data,weight=weight,weight2=weight2,estimator=estimator,optim=optim))
     if (!is.null(res$x)) x <- res$x
     if (!is.null(res$data)) data <- res$data
@@ -230,7 +228,7 @@ function(x, data=parent.frame(),
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
- 
+
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method)) {
     Method <- "nlminb1"
@@ -269,7 +267,7 @@ function(x, data=parent.frame(),
   }
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
-
+  
  
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
@@ -282,7 +280,8 @@ function(x, data=parent.frame(),
     }
     optim$start <- start
   }
-
+  if (!is.null(x$expar)) optim$start <- c(optim$start,rep(0,index(x)$npar.ex))
+  
   ## Missing data
   if (missing) {
     control$start <- optim$start
@@ -334,7 +333,7 @@ function(x, data=parent.frame(),
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
   Debug(list("lower=",lower))
-  
+
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
   if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
@@ -505,10 +504,10 @@ function(x, data=parent.frame(),
         x0$mean[yconstrain] <- 0
       }
       do.call(ObjectiveFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
-                                ,weight2=weight2, offset=offset
-                                ))
+                                 ,weight2=weight2, offset=offset
+                                 ))
     }
-    
+
     myGrad <- function(pp) {
       if (optim$constrain)
         pp[constrained] <- exp(pp[constrained])
@@ -521,7 +520,6 @@ function(x, data=parent.frame(),
       ##   pd <- procdata.lvm(x0,data=data0)
       ##   S0 <- pd$S; mu0 <- pd$mu
       ## }
-      ##      browser()
       S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
                                  , weight2=weight2##, offset=offset
                                  ))
@@ -530,7 +528,9 @@ function(x, data=parent.frame(),
       }
       if (is.null(mu) & index(x)$npar.mean>0) {
         return(S[-c(1:index(x)$npar.mean)])
-      }      
+      }
+      if (length(S)<length(pp))  S <- c(S,rep(0,length(pp)-length(S)))
+
       return(S)
     }
     myInfo <- function(pp,...) {
@@ -591,18 +591,19 @@ function(x, data=parent.frame(),
     }
     return(I0)
   }   
-  
   if (is.null(tryCatch(get(InformationFun),error = function (x) NULL)))
     myInfo <- myHess <- NULL
   if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
     myGrad <- NULL
 
   coefname <- coef(x,mean=optim$meanstructure);
+  
   if (!silent) message("Optimizing objective function...")
   if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
 
+  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -613,7 +614,7 @@ function(x, data=parent.frame(),
     }
     names(opt$estimate) <- coefname
 
-    if (XconstrStdOpt)
+    if (XconstrStdOpt & !is.null(myGrad))
       opt$gradient <- as.vector(myGrad(opt$par))
     else {
       opt$gradient <- grad(myObj,opt$par)
@@ -641,7 +642,7 @@ function(x, data=parent.frame(),
           jacobian(myGrad,pp,method=lava.options()$Dmethod)
       else
         myInfo <- function(pp,...)
-          -hessian(myObj,pp,method=lava.options()$Dmethod)
+          hessian(myObj,pp)
     }
     I <- myInfo(opt$estimate)
     asVar <- tryCatch(solve(I),
@@ -660,16 +661,18 @@ function(x, data=parent.frame(),
 
   Debug("did that") 
 
-  nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean,0)
+  nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
 
   mycoef[pp.idx,1] <- opt$estimate
   
   ### OBS: v = t(A)%*%v + e
-  res <- list(model=x, call=cl, coef=mycoef, vcov=asVar, mu=mu, S=S, ##A=A, P=P,
+  res <- list(model=x, call=cl, coef=mycoef,
+              vcov=asVar, mu=mu, S=S, ##A=A, P=P,
               model0=mymodel, ## Random slope hack
-              estimator=estimator, opt=opt,
-              data=list(model.frame=data, S=S, mu=mu, C=mom$C, v=mom$v, n=n,
+              estimator=estimator, opt=opt,expar=x$expar,
+              data=list(model.frame=data, S=S, mu=mu,
+                C=mom$C, v=mom$v, n=n,                
                 m=length(latent(x)), k=k),
               weight=weight, weight2=weight2,
               cluster=cluster,

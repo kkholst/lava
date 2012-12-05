@@ -23,7 +23,8 @@ function(x, ...) {
       {
         col1 <- as.character(oneline)
         D <- attributes(distribution(x)[[y]])$family
-        col2 <- "Normal"
+        col2 <- x$attributes$type[y]
+        if (is.null(col2) || is.na(col2)) col2 <- "Normal"
         if (!is.null(D$family)) col2 <- paste(D$family,sep="")
         if (!is.null(D$link)) col2 <- paste(col2,"(",D$link,")",sep="")
         if (!is.null(D$par)) col2 <- paste(col2,"(",paste(D$par,collapse=","),")",sep="")
@@ -36,7 +37,7 @@ function(x, ...) {
       print(R,quote=FALSE,...)
     }
     cat("\n")
-    cat("Number of free parameters: ", index(x)$npar, " (+", index(x)$npar.mean, " intercepts)\n", sep="")
+    cat("Number of free parameters: ", with(index(x),npar+npar.mean+npar.ex),"\n", sep="")
 
 ##      oneline <- as.character(f); 
 ##      cat(as.character(oneline),"\n")
@@ -121,7 +122,8 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
     myname <- x$model$names[counter]
     if (!is.null(myname) && !is.na(myname))
       cat(": ",myname,sep="")
-    cat(" (n=",nrow(Model(x)$data[[groups[counter]]]), ")\n", sep="")
+    if (!x$model$missing) cat(" (n=",nrow(Model(x)$data[[groups[counter]]]), ")", sep="")
+    cat("\n")
     print(CC[[counter]],quote=FALSE,right=TRUE)
   }
   cat("\n")

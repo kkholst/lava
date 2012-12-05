@@ -202,7 +202,11 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 
 ##' @S3method information lvmfit
 information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),...) {
-  information(x$model0,p=p,n=n,data=data,model=model,weight=weight,...)
+  I <- information(x$model0,p=p,n=n,data=data,model=model,weight=weight,...)
+  if (ncol(I)<length(p)) {
+    I <- blockdiag(I,matrix(0,length(p)-ncol(I),length(p)-ncol(I)))
+  }
+  I
 }
 
 ###}}} information.lvmfit

@@ -149,7 +149,6 @@
     data0 <- x$data[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
     xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
-    ##    xconstrain <- c(xconstrain,list(xconstrain0))
     xfix <- c(xfix, list(xfix0))
     if (length(xfix0)>0) Xfix<-TRUE ## Yes, random slopes      
     if (length(xconstrain0)>0) Xconstrain <- TRUE ## Yes, nonlinear regression
@@ -192,8 +191,6 @@
 
   InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
   
-  ##  suppressMessages(browser()) 
-  ##parord <- modelPar(x,1:length(mystart),debug=debug)$p
   parord <- modelPar(x,1:with(x,npar+npar.mean))$p
   mymodel <- x
 
@@ -202,10 +199,8 @@
   myfix <- list()
 
   if (Xfix |  (Xconstrain & XconstrStdOpt | !lava.options()$test)) { ## Model with random slopes:
-################################################################################
-################################################################################
-################################################################################
-
+#############################################################
+    
     if (Xfix) {
       myclass <- c(myclass,"lvmfit.randomslope")
       for (k in 1:x$ngroup) {
@@ -251,7 +246,6 @@
       pp <- modelPar(x,theta)$p
       res <- 0
     for (k in 1:x$ngroup) {
-##      for (k in 5:5) {
         x0 <- x$lvm[[k]]
         data0 <- x$data[[k]]
         if (Xfix) {
@@ -358,7 +352,6 @@
             attributes(I)$grad <- D
           }
           I[ parord[[k]], parord[[k]] ] <- J
-##                                                   list(p=pp[[k]], model=x0, data=x$data[[k]], n=1, weight=weight[[k]][ii,]))
           return(I)
         }      
         L <- lapply(1:nrow(x$data[[k]]),function(x) myfun(x))
@@ -371,9 +364,7 @@
       return(res)   
     }
   } else { ## Model without random slopes:    
-################################################################################
-#########################################2#######################################
-################################################################################
+###########################################################
 
 
     ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -425,8 +416,7 @@
       return(NULL)
     }
 
-
-    
+   
     myObj <- function(theta) {     
       theta0 <- theta
       if (optim$constrain) {
@@ -487,7 +477,6 @@
       if (optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
-      ##      parord <- modelPar(x,1:length(theta),debug=debug)$p
       pp <- modelPar(x,theta)$p
       I0 <- res <- matrix(0,length(theta),length(theta))
       for (i in 1:x$ngroup) {
@@ -496,7 +485,6 @@
                                                                                               S=S, mu=mu, n=n, weight=weight[[i]],
                                                                                               weight2=weight2[[i]],
                                                                                               type=optim$information)))
-        ##with(x$samplestat[[i]], information(x$lvm[[i]],p=pp[[i]],n=n))
         res <- res + I
       }
       D <- myGrad(theta0)
@@ -514,10 +502,9 @@
     }    
   }
   
-################################################################################
-################################################################################
-################################################################################
+##############################################################
 
+  
   if (!exists(InformationFun)) myInformation <- NULL
   else if (is.null(get(InformationFun))) myInformation <- NULL
   if (is.null(get(GradFun))) myGrad <- NULL
@@ -554,11 +541,10 @@
   if (is.null(myInformation)) {
     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
 For numerical approximation please install the library 'numDeriv'.")
-    ##    cat("Using a numerical approximation of hessian...\n");
     if (!is.null(myGrad) & XconstrStdOpt)
       myInformation <- function(theta) jacobian(myGrad, theta, method=lava.options()$Dmethod)
     else {
-      myInformation <- function(theta) -hessian(myObj, theta)
+      myInformation <- function(theta) hessian(myObj, theta)
     }
   }
 }

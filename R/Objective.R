@@ -112,7 +112,9 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
   if (!is.null(mu) & !is.null(xi)) # & mp$npar.mean>0)
     Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
-  return(rbind(as.numeric(Grad)))
+  res <- as.numeric(Grad)
+  
+  return(rbind(res))
 }
 
 ###}}} gaussian
@@ -125,10 +127,8 @@ gaussian0_objective.lvm <- gaussian_objective.lvm
 gaussian1_objective.lvm <- gaussian_objective.lvm
 gaussian1_gradient.lvm <- function(...) gaussian_gradient.lvm(...)
 gaussian1_hessian.lvm <- function(x,p,...) {
-  ##  browser()
   myg2 <- function(p1) gaussian_gradient.lvm(x,p=p1,...)
   myg3 <- function(p1) numDeriv::jacobian(myg2,p1)
-  ##-numDeriv::jacobian(myg,p)
   myg <- function(p1) gaussian_objective.lvm(x,p=p1,...)
   numDeriv::hessian(myg,p)
 }
@@ -199,7 +199,6 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   }
   score0 <- -0.5*as.vector(iC)%*%D$dS
   Gdv <- mp$G%*%D$dv
-  ##  browser()
   for (i in 1:NROW(data)) {    
     W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
     dxi <-      
@@ -245,7 +244,6 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   for (i in 1:NROW(data)) {
     z <- as.matrix(data[i,myy])
     mp <- moments(x,p=p,conditional=TRUE,data=data[i,])
-    ##    browser()
     u <- as.numeric(z-mp$xi[,1])
     iC <- Inverse(mp$C,det=FALSE)
     D <- deriv(x, meanpar=pp$meanpar, 

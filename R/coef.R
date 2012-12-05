@@ -3,7 +3,7 @@
 ##' @S3method coef lvm
 `coef.lvm` <-
 function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
-  if (fix) ## 12/7-2010
+  if (fix)
     object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
@@ -29,7 +29,6 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   
   A <- AP$A; A[index(object)$M1==0] <- "0" ## Only free parameters
   P <- AP$P; P[index(object)$P1==0] <- "0"
-  ##  P[lower.tri(P, diag=FALSE)] <- "0"
   nn <- vars(object)
 
   counter <- 0
@@ -56,7 +55,6 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
         counter <- counter+1
         if (length(symbol)<2) {
           if (nn[i]!=nn[j]) {
-            ##            part2 <- paste("Cov(",nn[i],",",nn[j],")",sep="")
             part2 <- paste(nn[i],nn[j],sep=",")
           } else part2 <- nn[i]
         } else {
@@ -74,6 +72,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   resnum <- sapply(resname, function(s) as.numeric(substr(s,2,nchar(s))))
   res <- res[order(resnum)]
  if (mean) {
+   ## browser()
    nmean <- sum(index(object)$v1==1)
    if (nmean>0) {
 
@@ -96,6 +95,21 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
      names(res)[seq_len(nmean)] <- paste("m",seq_len(nmean),sep="")
    }
  }
+  if (!is.null(object$expar) && sum(index(object)$e1==1)>0) {
+    n2 <- names(object$expar)[index(object)$e1==1]
+    if (labels) {
+      count <- 0
+      for (i in seq_len(length(index(object)$e1))) {        
+        if (index(object)$e1[i]==1) {
+          val <- object$exfix[[i]]
+          count <- count+1
+          if(!is.na(val)) n2[count] <- val
+        }
+      }
+    } 
+    names(n2) <- paste("e",seq_len(length(n2)),sep="")
+    res <- c(res,n2)
+  }
  
   if (!silent) {
     cat(paste(res, collapse="\n")); cat("\n")
@@ -114,11 +128,6 @@ function(object, level=ifelse(missing(type),-1,2),
          data, std=NULL, labels=TRUE, vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
 
-  ## object0 <- object
-  ## xfix <- colnames(model.frame(object))[(colnames(model.frame(object))%in%parlabels(Model(object)))]
-  ## if (missing(fix)) {
-  ##   fix <- ifelse(length(xfix)>0,FALSE,TRUE)
-  ## }
   if (is.null(object$control$meanstructure)) meanstructure <- TRUE
   else meanstructure <- object$control$meanstructure
   npar <- index(object)$npar; npar.mean <- index(object)$npar.mean*meanstructure
@@ -126,14 +135,11 @@ function(object, level=ifelse(missing(type),-1,2),
   para <- parameter(Model(object))
   para.idx <- which(vars(object)%in%para)
   
-##   if (class(object)[1]%in%"lvm.missing") {
   if ("lvm.missing"%in%class(object)) {
-    ##npar <- object$estimate$model$npar; npar.mean <- object$estimate$model$npar.mean    ##    myorder <- modelPar(object$estimate$model,1:(npar+npar.mean))$p[[object$cc]]
-    ##    myorder.reg <- modelPar(object$estimate$model,1:(npar))$p[[object$cc]]
     if (length(object$cc)==0) {## No complete cases
         coefs <- coef(object$estimate)
       p <- pars(object)
-      pn <- seq(length(p))##names(p)
+      pn <- seq(length(p))
       pp <- modelPar(object$multigroup,pn)$p
       coefnames <- c()
       for (i in seq_len(length(p))) {
@@ -147,22 +153,12 @@ function(object, level=ifelse(missing(type),-1,2),
       }      
       c1 <- coef(Model(object),mean=TRUE)
       c1. <- coef(Model(object),mean=FALSE)      
-      ##      varpar1 <- which(sapply(c1,function(x) length(grep("<->",x)))==1)
-        ##      varpar2 <- which(sapply(coefnames,function(x) length(grep("<->",x)))==1)
         myorder <- match(c1,coefnames)
         myorderRev <- match(coefnames,c1)        
 
         if (npar.mean>0) coefnames <- coefnames[-seq(npar.mean)]
         myorder.reg <- na.omit(match(c1.,coefnames))
 
-##      myorder <- match(coefnames,c1)
-##      myorder.reg <- na.omit(match(coefnames,c1.))
-
-##      myorder <- match(c2,c1)
-##      myorder.reg <- na.omit(match(c2,c1.))
-      
-##      myorder <- match(c1,c2)
-##      myorder.reg <- match(c1.,c2)-(length(c1)-length(c1.))
     } else {
       myorder <- modelPar(object$multigroup,seq_len(npar+npar.mean))$p[[object$cc]]
       myorder.reg <- modelPar(object$multigroup,seq_len(npar))$p[[object$cc]]
@@ -171,12 +167,12 @@ function(object, level=ifelse(missing(type),-1,2),
     myorder <- seq_len(npar+npar.mean)
     myorder.reg <- seq_len(npar)
   }
+  myorder.extra <- seq_len(index(object)$npar.ex)+length(myorder)
+  myorder <- c(myorder,myorder.extra)
   
   if (level<0) {
-    ##    res <- (pars.default(object))[myorder]
     res <- (pars.default(object))
-    names(res) <- coef(Model(object), mean=meanstructure, symbol=symbol)[order(myorder)]
-##    res <- res[order(myorder)]
+    names(res)[seq_len(length(myorder))] <- coef(Model(object), mean=meanstructure, symbol=symbol)[order(myorder)]
     return(res)
   }
   latent.var <- latent(object)
@@ -198,12 +194,10 @@ function(object, level=ifelse(missing(type),-1,2),
 
   
   myparnames <- paste("p",seq_len(npar),sep="")[myorder.reg]
-  ##myparnames <- paste("p",1:npar,sep="")[order(myorder.reg)]
 
   p <- matrices(Model(object), myparnames)
   A <- p$A
   P <- p$P
-  ## coefs <- object$coef[myorder,]
   mycoef <- object$coef
   if (!missing(type) | !missing(vcov)) {
     if (!missing(vcov)) {
@@ -219,7 +213,6 @@ function(object, level=ifelse(missing(type),-1,2),
     mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))
   }
   
-##  coefs <- mycoef[order(myorder),,drop=FALSE]
   coefs <- mycoef[myorder,,drop=FALSE]
   nn <- colnames(A)
 
@@ -267,7 +260,6 @@ function(object, level=ifelse(missing(type),-1,2),
         } else {       
           rownames(newrow) <- paste(nn[i],symbol[1],nn[j],sep="")
         }
-##        if (is.na(Model(object)$fix[j,i]) | level>0) {
         if (free[j,i] | level>2) {
           res <- rbind(res, newrow)
           Type <- c(Type,"regression")
@@ -279,7 +271,6 @@ function(object, level=ifelse(missing(type),-1,2),
   free.var <- P!="0" 
   free.var[index(object)$P1!=1] <- FALSE
   nlincon.var <- matrix(Model(object)$covpar%in%names(constrain(Model(object))),nrow(P))  
-##  browser()
 
     if (level>0)   
       ## Variance estimates:
@@ -309,16 +300,13 @@ function(object, level=ifelse(missing(type),-1,2),
                 newrow <- matrix(c(Model(object)$covfix[j,i], NA, NA, NA), nrow=1)
               }
             }               
-###            if (is.na(Model(object)$covfix[j,i]) | level>0)
             if (!missing(std)) {
               newrow <- cbind(newrow,Pstd[i,j])
             }
             if (length(symbol)<2) {
               if (nn[i]!=nn[j]) {
-##                part2 <- paste("Cov(",nn[i],",",nn[j],")",sep="")
                 part2 <- paste(nn[i],nn[j],sep=",")
               } else part2 <- nn[i]
-              ##part2 <- paste("Var(",nn[i],")",sep="")
             } else {
               part2 <- paste(nn[i],symbol[2],nn[j],sep="")
             }            
@@ -341,12 +329,10 @@ function(object, level=ifelse(missing(type),-1,2),
         }
   res0 <- res
 
-  ##  res <- res0
   ## Mean parameter:
   nlincon.mean <- lapply(Model(object)$mean, function(x) x%in%names(constrain(Model(object))) )
   
   if (level>0 & npar.mean>0) {
-    ##    mu.estimated <- coefs[1:index(object)$npar.mean,,drop=FALSE] ##coefs[setdiff(1:nrow(coefs),matched),]
     midx <- seq_len(npar.mean)
     rownames(coefs)[midx] <- paste("m",myorder[midx],sep="")    
     munames <- rownames(coefs)[seq_len(npar.mean)]
@@ -387,7 +373,15 @@ function(object, level=ifelse(missing(type),-1,2),
       }
     }
   }
-
+  if (level>0 && length(myorder.extra>0)) {
+    cc <- coefs[myorder.extra,,drop=FALSE]
+    cc <- cbind(cc,rep(NA,ncol(res)-ncol(cc)))
+    res <- rbind(res,cc)
+    Type <- c(Type,rep("extra",length(myorder.extra)))
+    Var <- c(Var,rep(NA,length(myorder.extra)))
+    From <- c(From,rep(NA,length(myorder.extra)))
+  }
+    
   mycolnames <- colnames(coefs)
   if (!is.null(std)) mycolnames <- c(mycolnames, paste("std",std,sep="."))
   colnames(res) <- mycolnames
@@ -428,28 +422,6 @@ coef.multigroupfit <-
       colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
       return(res)
     }
-    
-##     cc <- coef(object, level=0)
-##     object0 <- object
-##     object0$model$lvm <- object$model$models.orig
-##     object0$model$ngroup <- length(object0$model$lvm)
-##     parpos <- modelPar(Model(object0), 1:nrow(cc))$p
-    
-##     cc <- coef(object0, level=0)
-
-##     model <- Model(object0)
-##     parpos <- modelPar(model, 1:nrow(cc))$p
-##     res <- list()
-##     for (i in 1:model$ngroup) {
-##       newcoef <- cc[parpos[[i]],,drop=FALSE]
-##       rownames(newcoef) <- coef(Model(model)[[i]], mean=object$meanstructure, silent=TRUE)
-##       ## Position of variance parameters:
-##       varpos <- variances(Model(model)[[i]])
-##       ## Number of parameters resp mean-parameters
-##       p <- nrow(newcoef); p0 <- length(coef(Model(model)[[i]], mean=FALSE, silent=TRUE))
-##       newcoef[(p-p0) + varpos,4] <- NA
-##       res <- c(res, list(newcoef))
-##     }    
 
     cc <- coef(object, level=0, symbol=symbol, ...)
     model <- Model(object)
@@ -501,7 +473,6 @@ coef.multigroupfit <-
         if (length(misrow[[i]])>0) {
           nn <- rownames(res[[i]])[misrow[[i]]]
 ##          suppressMessages(browser())
-          ##          for (j in setdiff(1:model$ngroup,i)) {
           for (j in setdiff(seq_len(length(groups)),i)) {
             nn2 <- rownames(res[[j]])
             matching <- na.omit(match(nn,nn2))
@@ -531,16 +502,12 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
 
   cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)  
   parpos <- attributes(cc)$parpos
-  ##  suppressMessages(browser())
-  ##cc <- coef(x,level=level)
-  ##parpos <- modelPar(x, 1:length(pars(x)))$p
   res <- c()
   nlincon.estimates <- c()
   nlincon.names <- c()
   count <- k <- 0
   
   for (i in groups) {
-  ##  browser()
     k <- k+1
     m0 <- Model(Model(x))[[i]]
     mycoef <- cc[[k]]
@@ -577,22 +544,17 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
 
 
 ##' @export
-CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
-  function(x,
-           digits = max(3, getOption("digits") - 2),
-           level=9,
-           symbol="<-",...) {
+CoefMat <- function(x,
+                    digits = max(3, getOption("digits") - 2),
+                    level=9,
+                    symbol="<-",...) {
       
   cc <- x
   if (!is.matrix(x)) {
     cc <- coef(x,level=level,symbol=symbol,...)
   }
   res <- c()
-  ##mycoef <- format(cc,digits=digits,scientific=scientific,...)
   mycoef <- format(round(cc,max(1,digits)),digits=digits)
-  ##  mycoef[,4] <- format(round(cc[,4],max(1,digits+3)),digits=digits)
-  ##  mycoef[,4] <- formatC(round(cc[,4],max(1,digits+3)),digits=digits,format="g",
-  ##                        preserve.width="common",flag="")
   mycoef[,4] <- formatC(cc[,4],digits=digits-1,format="g",
                         preserve.width="common",flag="") 
   mycoef[is.na(cc)] <- ""
@@ -603,6 +565,8 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
   Nreg <- sum(attributes(cc)$type=="regression")
   Nvar <- sum(attributes(cc)$type=="variance")
   Nint <- sum(attributes(cc)$type=="intercept")
+  Nextra <- sum(attributes(cc)$type=="extra")
+
   latent.var <- attributes(cc)$latent
   
   if (Nreg>0) {
@@ -625,8 +589,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
       for (i in latent.var) {
         count <- count+1
         Delta <- !Delta
-##        Myidx <- setdiff(which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var)),first.entry[count])
-##        Myidx <- c(first.entry[count],Myidx)
         Myidx <- which(attributes(cc)$from==i & attributes(cc)$type=="regression" & !(attributes(cc)$var%in%latent.var))
 
         prefix <- ifelse(Delta,"  ","   ")
@@ -635,14 +597,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
           newname <- rownames(cc)[j]
           res <- rbind(res,c(paste(prefix,newname),newrow))
         }                
-##      for (i in latent.from) {      
-##        count <- count+1
-##        newrow <- mycoef[i,]        
-##        newname <- rownames(cc)[i]
-##        if (count%in%first.entry) Delta <- !Delta
-##        Prefix <- ifelse(Delta,"  ","   ")
-##        res <- rbind(res,c(paste(prefix,newname),newrow))
-        ##    res <- rbind(res,c(newname,newrow))
       }      
     }    
     if ((Nreg-Nmeas)>0) {
@@ -662,7 +616,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
         if (count%in%first.entry) Delta <- !Delta
         prefix <- ifelse(Delta,"  ","   ")
         res <- rbind(res,c(paste(prefix,newname),newrow))
-        ##    res <- rbind(res,c(newname,newrow))
       }
     }
   }
@@ -676,7 +629,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
       newname <- rownames(cc)[i]
       res <- rbind(res,c(paste("  ",newname),newrow))
     }
-##    browser()
   }
   par.idx <- which(attributes(cc)$type=="parameter")
   parres <- rbind(c("Additional Parameters:",rep("",M)))
@@ -685,7 +637,15 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
     newname <- rownames(cc)[i]
     parres <- rbind(parres,c(paste("  ",newname),newrow))
   }
+  extra.idx <- which(attributes(cc)$type=="extra")
+  for (i in extra.idx) {
+    newrow <- mycoef[i,]
+    newname <- rownames(cc)[i]
+    parres <- rbind(parres,c(paste("  ",newname),newrow))
+  }
   if (nrow(parres)>1) res <- rbind(res,parres)
+
+
   
   if (Nvar>0) {
     var.idx <- which(attributes(cc)$type=="variance")
@@ -698,7 +658,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
       newrow <- mycoef[i,]
       newname <- rownames(cc)[i]
       res <- rbind(res,c(paste("  ",newname),newrow))
-      ##    res <- rbind(res,c(newname,newrow))
     }
   }
    res0 <- res[,-1]
@@ -711,7 +670,6 @@ CoefMat <- ##function(x,digits=5,scientific=0,level=9,symbol="<-",...) {
 ###{{{ standardized coefficients
 
 stdcoef <- function(x,p=coef(x),...) {
-  ##  M <- lisrel(Model(e),pars(e))
   M0 <- moments(Model(x),p)
   A <- t(M0$A)
   P <- M0$P
@@ -750,8 +708,9 @@ stdcoef <- function(x,p=coef(x),...) {
   else
     vstar <- NULL  
   pstd <- pars(Model(x),A=Astar,Pstar,v=vstar)
+  k <- length(p)-length(pstd)
   
-  res <- list(par=cbind(p,pstd,pstdXY),
+  res <- list(par=cbind(p,c(pstd,rep(NA,k)),c(pstdXY,rep(NA,k))),
               AstarXY=AstarXY, PstarXY=PstarXY, vstarXY=vstarXY,
               AstarY=AstarY, PstarY=PstarY, vstarY=vstarY,
               Astar=Astar, Pstar=Pstar, vstar=vstar)

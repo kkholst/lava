@@ -15,15 +15,25 @@ modelPar.lvmfit <- function(x, p=pars(x), ...) modelPar(Model(x),p=p,...)
 modelPar.lvm <- function(x,p, ...) {
   npar <- index(x)$npar
   npar.mean <- index(x)$npar.mean
-  if (length(p)!=npar & length(p)!=(npar+npar.mean)) stop("Wrong dimension of parameter vector!")  
+  if (length(p)!=npar & length(p)<(npar+npar.mean)) stop("Wrong dimension of parameter vector!")
+  p2 <- NULL
   if (length(p)!=npar) { ## if meanstructure
-      meanpar <- p[1:npar.mean]
-      p. <- p[-c(1:npar.mean)]
-    } else {
+    meanpar <- p[seq_len(npar.mean)]
+    p. <- p
+    if (length(meanpar)>0)
+      p. <- p[-seq_len(npar.mean)]
+    else
       meanpar <- NULL
-      p. <- p
-    }
-  return(list(p=p.,meanpar=meanpar))
+    p <- p.[seq_len(npar)]
+    if (length(npar)>0)
+      p2 <- p.[-seq_len(npar)]
+    else
+      p2 <- p.
+  } else {
+    meanpar <- NULL
+    p. <- p
+  }
+  return(list(p=p,meanpar=meanpar,p2=p2))
 }
 
 ###}}} modelpar.lvm
@@ -37,8 +47,6 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 ###}}}
 
 ###{{{ modelPar.multigroup
-
-
 
 ##' @S3method modelPar multigroup
 modelPar.multigroup <- function(x,p, ...) {

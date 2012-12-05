@@ -1,6 +1,7 @@
 glm.estimate.hook <- function(x,estimator,...) {
   yy <- c()
   if (estimator=="glm") {
+    browser()
     for (y in endogenous(x)) {
       fam <- attributes(distribution(x)[[y]])$family
       if (is.null(fam)) fam <- gaussian()

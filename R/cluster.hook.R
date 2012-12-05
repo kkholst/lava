@@ -59,6 +59,9 @@ cluster.post.hook <- function(x,...) {
   } 
   newcoef <- cbind(mycoef, SD, col3, pval);
   nparall <- index(x)$npar + ifelse(x$control$meanstructure, index(x)$npar.mean,0)
+  if (!is.null(x$expar)) {
+    nparall <- nparall+length(x$expar)
+  }
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
   mycoef[x$pp.idx,] <- newcoef
   colnames(mycoef) <- nn
@@ -69,6 +72,10 @@ cluster.post.hook <- function(x,...) {
   if (index(x)$npar>0) {
     mynames <- c(mynames,paste("p",1:index(x)$npar,sep=""))
   }
+  if (!is.null(x$expar)) {
+    mynames <- c(mynames,names(x$expar))
+  }
+
   rownames(mycoef) <- mynames
   x$coef <- mycoef  
   return(x)

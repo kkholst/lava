@@ -281,6 +281,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 
 ###}}}
 
+
+###{{{ checkmultigroup
 checkmultigroup <- function(x) {
     ## Check validity:
   for (i in seq_len(x$ngroup)) {
@@ -289,3 +291,4 @@ checkmultigroup <- function(x) {
     }
   }
 }
+###}}} checkmultigroup

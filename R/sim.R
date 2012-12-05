@@ -270,7 +270,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
       pp <- predict(x, mypar, data.frame(res))
-      Ey.x <- t(attributes(pp)$Ey.x)
       Vy.x <- attributes(pp)$cond.var
       yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
       res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)

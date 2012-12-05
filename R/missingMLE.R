@@ -252,6 +252,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     res <- estimate(x,data=data,fix=fix,weight=weight,weight2=weight2,estimator=estimator,silent=silent,control=control,...)
     return(res)
   }
+
   if (startcc & is.null(control$start)) {
     if (!silent)
       message("Obtaining starting value...")

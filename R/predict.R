@@ -1,14 +1,46 @@
 ##' @S3method predict lvmfit
 predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) { 
-  predict(Model(object),x=x,p=p,data=data,mu=object$mu,S=object$S,...)
+  predict(Model(object),x=x,p=p,data=data,...)
 }
 
 ##' @S3method predict lvm
-predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
+##' @aliases predict.lvmfit
+##' @param object Model object
+##' @param x optional list of (endogenous) variables to condition on
+##' @param residual If true the residuals are predicted
+##' @param p Parameter vector 
+##' @param data Data to use in prediction
+##' @param path Path prediction (...)
+##' @param quick If TRUE the conditional mean and variance given covariates are returned (and all other calculations skipped)
+##' @param ... Additional arguments to lower level function
+##' @examples
+##' m <- lvm()
+##' @export 
+predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.null(x)&!(residual|path),...) {
   ## data = data.frame of exogenous variables
-  if (!all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
 
+  if (!quick && !all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
   m <- moments(object,p,data=data)
+  if (quick) { ## Only conditional moments given covariates
+    ii <- index(object)
+    P.x <- m$P; P.x[ii$exo.idx, ii$exo.idx] <- 0
+    Cy.x <- (m$IAi%*% tcrossprod(P.x,m$IAi))[ii$endo.idx,ii$endo.idx,drop=FALSE]
+    ## Cy.x2 <- m$C[ii$endo.obsidx,ii$endo.obsidx]-m$C[ii$endo.obsidx,ii$exo.obsidx]%*%solve(m$C[ii$exo.obsidx,ii$exo.obsidx])%*%m$C[ii$exo.obsidx,ii$endo.obsidx]
+    X <- ii$exogenous
+    mu.0 <- m$v; mu.0[ii$exo.idx] <- 0
+    if (length(X)>0) {
+      mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
+      mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
+      xi.x <- (m$IAi[ii$endo.obsidx,]%*%(mu.0 + mu.x))
+    } else {
+      xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
+      rownames(xi.x) <- names(mu.0)
+    }
+    return(structure(t(xi.x),cond.var=Cy.x,
+                     p=m$p,
+                     e=m$e))
+  }
+  
   if (path) {
     Y <- endogenous(object,top=TRUE)
     X <- setdiff(manifest(object),Y)
@@ -19,9 +51,6 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
   X.idx <- match(X,manifest(object))
   eta.idx <- match(latent(object),vars(object))
   obs.idx <- match(manifest(object),vars(object))
-  ##  exo.idx <- match(exogenous(object),vars(object))
-  ##  muX <- mu[X.idx]
-  ##  varX <- S[X.idx, X.idx]
   X.idx.all <- match(X, vars(object))
   Y.idx.all <- match(Y, vars(object))
 
@@ -75,6 +104,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
         xi.x <- xi.x[y,,drop=FALSE]
       return(t(xi.x))
     }
+    x <- intersect(x,endogenous(object))
     if (is.null(y))
       y <- setdiff(vars(object),c(x,exogenous(object)))
 
@@ -126,13 +156,15 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,...) {
 ##  res <- t(Yhat)
   res <- t(Ey.x) ## Conditional mean
   
-  attr(res, "cond.var") <- t(Yhat)
+  ##  attr(res, "cond.var") <- t(Yhat)
   attr(res, "cond.var") <- Cy.x
   attr(res, "blup") <- t(Eeta.y)
   attr(res, "var.blup") <- Ceta.y
   attr(res, "Ey.x") <- Ey.x
   attr(res, "eta.x") <- Eeta.x
   attr(res, "epsilon.y") <- epsilonhat
+  attr(res, "p") <- m$p
+  attr(res, "e") <- m$e
 ##  return(list(var.blup=Ceta.y, blup=t(Eeta.y), cond.var=Cy.x, cond.mean=t(Ey.x)))
   class(res) <- c("lvm.predict","matrix")
   return(res)

@@ -1,7 +1,7 @@
 Package: lava
 Type: Package
 Title: Linear Latent Variable Models
-Version: 1.1-13
+Version: 1.1-14
 Date: 2012-11-12
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
@@ -18,7 +18,8 @@ Suggests:
     Matrix,
     gof (>= 0.8),
     foreach,
-    survival
+    survival,
+    testthat 
 License: GPL-3
 LazyLoad: yes
 Collate:

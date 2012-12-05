@@ -11,8 +11,11 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   lname <- paste(model,"_score.lvm",sep="")
   if (!exists(lname)) {
     lname <- paste(model,"_gradient.lvm",sep="")
-    mygrad <- get(lname)
+    mygrad <- get(lname)    
     scoreFun <- function(...) -mygrad(...)
+    if (is.null(mygrad)) {
+      stop("Missing gradient")
+    }      
   } else {
     scoreFun <- get(lname)
   }
@@ -55,7 +58,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
     pp <- modelPar(x0,p)
     p0 <- with(pp, c(meanpar,p))
     k <- length(index(x0)$manifest)
-    
+
     myfun <- function(ii) {
       if (length(xfix)>0)
         for (i in 1:length(myfix$var)) {
@@ -67,11 +70,15 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
     if (!indiv) {
       score <- colSums(rbind(score))
     }
+    if (length(score)<length(p))  score <- c(score,rep(0,length(p)-length(score)))
     return(score)
   }
   cl$constrain <- FALSE
   cl[[1]] <- scoreFun
   score <- eval.parent(cl)
+  if (is.null(dim(score))) score <- rbind(score)
+  if (NCOL(score)<length(p))  score <- cbind(rbind(score),rep(0,length(p)-NCOL(score)))
+
 #  score <- eval(cl,parent.frame())
   return(score)
 }
