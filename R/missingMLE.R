@@ -1,6 +1,6 @@
 ###{{{ missingModel
 
-missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,weight2=NULL,cluster=NULL,...) {
+missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,data2=NULL,cluster=NULL,...) {
   if (class(model)!="lvm") stop("Needs a lvm-object")
   if (type==3) {
     var <- manifest(model)
@@ -24,7 +24,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 ##    model <- fixsome(model, data=data0, measurement.fix=TRUE, exo.fix=FALSE)
 ##  }
 
-  models <- datasets <- weights <- weights2 <- clusters <- c()
+  models <- datasets <- weights <- data2 <- clusters <- c()
   mymodel <- baptize(model)
   pattern.compl <- 0
   count <- 0
@@ -67,11 +67,11 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     d0 <- data[which(mis.type==i),c(manifest(m0),keep),drop=FALSE];
     w0.var <- intersect(manifest(m0),colnames(weight))
     w0 <- weight[which(mis.type==i),w0.var,drop=FALSE];
-    if (!is.list(weight2)) {
-      w02.var <- intersect(manifest(m0),colnames(weight2))
-      w02 <- weight2[which(mis.type==i),w02.var,drop=FALSE];
+    if (!is.list(data2)) {
+      w02.var <- intersect(manifest(m0),colnames(data2))
+      w02 <- data2[which(mis.type==i),w02.var,drop=FALSE];
     } else {
-      weights2 <- weight2
+      data2 <- data2
     }
 
     clust0 <- cluster[which(mis.type==i)]
@@ -97,8 +97,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
         models <- c(models, list(m0))
         datasets <- c(datasets, list(d0))
         weights <- c(weights, list(w0))
-        if (!is.list(weight2))
-          weights2 <- c(weights2, list(w02))
+        if (!is.list(data2))
+          data2 <- c(data2, list(w02))
         clusters <- c(clusters, list(clust0))
       } else {
         exclude <- c(exclude,count)
@@ -114,7 +114,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     models[[rmset]] <- NULL
     datasets[[rmset]] <- NULL
     weights[[rmset]] <- NULL
-    weights2[[rmset]] <- NULL
+    data2[[rmset]] <- NULL
     clusters[[rmset]] <- NULL
     patterns <- patterns[-rmset,,drop=FALSE]
   }
@@ -127,7 +127,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
   res <- list(models=models, datasets=datasets,
               weights=weights,
-              weights2=weights2,
+              data2=data2,
               clusters=clusters,
               patterns=Patterns,
               pattern.compl=pattern.compl,
@@ -142,7 +142,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 ###{{{ estimate.MAR.lvm
 
 ##' @export
-estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,weight2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,data2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
 
   ##  cl[1] <- call("missingModel")
@@ -201,7 +201,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (!silent)
     message("Identifying missing patterns...")
 
-  val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weight=weight,weight2=weight2,cluster=cluster,...)
+  val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weight=weight,data2=data2,cluster=cluster,...)
   if (!silent)
     message("\n")
 
@@ -249,7 +249,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 ##   model <- fixsome(model, measurement.fix=fix, S=S, mu=mu, n=1)
 
   if (nrow(val$patterns)==1) {
-    res <- estimate(x,data=data,fix=fix,weight=weight,weight2=weight2,estimator=estimator,silent=silent,control=control,...)
+    res <- estimate(x,data=data,fix=fix,weight=weight,data2=data2,estimator=estimator,silent=silent,control=control,...)
     return(res)
   }
 
@@ -259,7 +259,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     start0 <- rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
     mystart <- tryCatch(
                         (estimate(x,data=na.omit(data),silent=TRUE,
-                                     weight=weight,weight2=weight2,estimator=estimator,quick=TRUE,... 
+                                     weight=weight,data2=data2,estimator=estimator,quick=TRUE,... 
                                       )),
                         error=function(e) rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
                         )
@@ -283,15 +283,15 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   }
   
   
-  if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,weight2=val$weights2,cluster=val$clusters))
+  if (onlymodel) return(list(mg=mg0,val=val,weight=val$weights,data2=val$data2,cluster=val$clusters))
 
   if (all(unlist(lapply(val$weights,is.null)))) val$weights <- NULL
-  if (all(unlist(lapply(val$weights2,is.null)))) val$weights2 <- NULL
+  if (all(unlist(lapply(val$data2,is.null)))) val$data2 <- NULL
   if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL
 
 ##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
   e.mis <- estimate(mg0,control=control,silent=silent,
-                    weight=val$weights,weight2=val$weights2,
+                    weight=val$weights,data2=val$data2,
                     cluster=val$clusters,estimator=estimator,...)
   ##  return(e.mis)
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]

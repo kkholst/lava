@@ -25,8 +25,7 @@ print.fix <- function(x,exo=FALSE,...) {
   invisible(x)
 }
 
-
-linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {  
+linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
   idx <- 1:attributes(x)$nvar
   if (!exo & attributes(x)$type!="reg")
     idx <- setdiff(idx,attributes(x)$exo.idx)
@@ -519,10 +518,10 @@ parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   vval <- V$v[v.fix]
   v.ord <- match(vval,idx)
   Pval <- V$P[V$P%in%idx]
-  P.fix <- whichentry(matrix(V$P%in%idx,nrow=nrow(V$P)))
+  P.fix <- which(matrix(V$P%in%idx,nrow=nrow(V$P)),arr.ind=TRUE)
   P.ord <- match(Pval,idx)
   Aval <- V$A[which(V$A%in%idx)]
-  A.fix <- whichentry(matrix(V$A%in%idx,nrow=nrow(V$A)))
+  A.fix <- which(matrix(V$A%in%idx,nrow=nrow(V$A)),arr.ind=TRUE)
   A.ord <- match(Aval,idx)
   count <- 0
   if (length(v.fix)) {

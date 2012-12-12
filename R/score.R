@@ -5,7 +5,7 @@ function(x,...) UseMethod("score")
 ###{{{ score.lvm
 
 ##' @S3method score lvm
-score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
+score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, data2=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
 
   cl <- match.call()
   lname <- paste(model,"_score.lvm",sep="")
@@ -64,7 +64,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
         for (i in 1:length(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
+      return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],data2=data2[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
     }
     score <- t(sapply(1:nrow(data),myfun))
     if (!indiv) {
@@ -150,8 +150,8 @@ score.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
 ###{{{ score.lvmfit
 
 ##' @S3method score lvmfit
-score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), ...) {
-  score(x$model0,data=data,p=p,model=model,weight=weight,...)
+score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), data2=x$data$data2, ...) {
+  score(x$model0,data=data,p=p,model=model,weight=weight,data2=data2,...)
 }
 
 ###}}} score.lvmfit

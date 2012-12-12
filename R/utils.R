@@ -17,7 +17,14 @@ contrmat <- function(npar,ngroup,...) {
 
 ###{{{ %++% concat operator
 
-##' @export
+##' Concatenation operator
+##'
+##' For matrices a block-diagonal matrix is created. For latent variable models ('lvm' objects) \code{merge.lvm} is called. For all other data types he operator is a wrapper of \code{paste}.
+##' @title Concatenation operator
+##' @param x First object
+##' @param y Second object
+##' @author Klaus K. Holst
+##' ##' @export
 `%+%` <- function(x,y) UseMethod("%+%",y)
 
 ##' @S3method %+% lvm
@@ -28,53 +35,6 @@ contrmat <- function(npar,ngroup,...) {
 
 ##' @S3method %+% default
 `%+%.default` <- function(x,y) paste(x, y, sep="")
-
-###}}}
-
-###{{{ parlabels
-
-##' @export
-parlabels <- function(x,exo=FALSE) {
-  res <- c(unlist(intfix(x)[unlist(lapply(intfix(x), function(y) !is.na(y) & !is.numeric(y)))]),
-           regfix(x)$labels[!is.na(regfix(x)$labels)],
-           covfix(x)$labels[!is.na(covfix(x)$labels)])
-  if (exo)
-    res <- intersect(res,index(Model(x))$exogenous)
-  return(res)
-}
-
-###}}} parlabels
-
-###{{{ describecoef
-
-##' @export
-describecoef <- function(x,par,from,to,mean=TRUE) {  
-  p <- coef(x, mean=mean)  
-  if (!missing(from)) {
-    st1 <- paste(to,"<-",from,sep="")
-    st2 <- paste(to,"<->",from,sep="")
-    st3 <- paste(from,"<->",to,sep="")
-    pos <- na.omit(match(unique(c(st1,st2,st3)),p))
-    attributes(pos) <- NULL
-    return(pos)
-  }
-  res <- strsplit(p,"<->")
-  var.idx <- which(unlist(lapply(res,length))>1) ## Variance parameters
-  rest.idx <- setdiff(1:length(p),var.idx)
-  res[rest.idx] <- strsplit(p[rest.idx],"<-")
-  mean.idx <- which(unlist(lapply(res,length))==1) ## Mean parameters
-  reg.idx <- setdiff(rest.idx,mean.idx)
-  names(res)[mean.idx] <- paste("m",1:length(mean.idx),sep="")
-  for (i in var.idx)
-    attr(res[[i]],"type") <- "cov"
-  for (i in mean.idx)
-    attr(res[[i]],"type") <- "mean"
-  for (i in reg.idx)
-    attr(res[[i]],"type") <- "reg"
-  if (missing(par))
-    return(res)
-  return(res[par])
-}
 
 ###}}}
 
@@ -153,111 +113,6 @@ procrandomslope <- function(object,data=object$data,...) {
     object <- multigroup(object$lvm,data,fix=FALSE,exo.fix=FALSE)
   }
   return(list(model=object,fix=myfix))
-}
-
-###}}}
-
-###{{{ fixsome function
-
-##' @export
-fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
-
-
-  if (is.character(measurement.fix)) {
-    param <- measurement.fix
-    measurement.fix <- TRUE
-  }
-  var.missing <- c()
-  if (!missing(data) | !missing(S)) {
-        
-    if (!missing(data)) {
-      dd <- procdata.lvm(x,data=data,na.method=na.method)
-    } else {
-      dd <- procdata.lvm(x, list(S=S,mu=mu,n=n))
-    }
-    S <- dd$S; mu <- dd$mu; n <- dd$n    
-    var.missing <- setdiff(index(x)$manifest,colnames(S))
-  } else { S <- NULL; mu <- NULL }
-  
-  if (measurement.fix & param!="none") {
-    if (length(var.missing)>0) {## Convert to latent:
-      new.lat <- setdiff(var.missing,latent(x))
-      if (length(new.lat)>0)
-      x <- latent(x, new.lat)
-    }
-    etas <- latent(x)
-##    etas <- index(x)$latent
-##    ys <- index(x)$endogenous
-    ys <- endogenous(x)
-    M <- x$M
-
-    for (e in etas) { ## Makes sure that at least one arrow from latent variable is fixed (identification)
-      ys. <- names(which(M[e,ys]==1))
-      if (length(ys.)>0) {      
-        if (tolower(param)=="absolute") {
-          if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
-          if (is.na(x$covfix[e,e]) & is.na(x$covpar[e,e])) covariance(x,e) <- 1
-        } else {        
-          if (param=="hybrid") {
-            if (is.na(intercept(x)[[e]])) intercept(x,e) <- 0
-###            if (all(is.na(x$fix[e, ys.]==1)) &
-            if (all(is.na(x$fix[e, ]==1)) &
-                is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
-              regfix(x,from=e,to=ys.[1]) <- 1
-          } else { ## relative
-###           if (all(is.na(x$fix[e, ys.]==1)) &
-            if (all(is.na(x$fix[e, ]==1)) &
-                is.na(x$covpar[e,e]) & is.na(x$covfix[e,e])) 
-              regfix(x,from=e,to=ys.[1]) <- 1
-            if (!any(unlist(lapply(intercept(x)[ys.],is.numeric))) &
-                ##is.na(intercept(x)[[ys.[1]]]) &
-                is.na(intercept(x)[[e]]))
-              intercept(x,ys.[1]) <- 0
-          }
-        }
-      }
-    }
-
-    ## latintNA <- unlist(lapply(intfix(x)[latent(x)],is.na))
-    ## if (length(latintNA)>0) {
-    ##   if (any(latintNA))
-    ##   intfix(x, latent(x)[which(latintNA)]) <- 0 ## For identifiality we fix mean of latent variables to zero unless already fixed
-    ## }
-  }
-
-  if (is.null(S)) x0 <- TRUE
-  if (exo.fix) {
-    if (x0) {
-      S0 <- diag(length(index(x)$manifest))
-      mu0 <- rep(0,nrow(S0))      
-    }
-    else {
-      S0 <- S
-      mu0 <- mu
-    }
-##    exo <- exogenous(x);
-    exo.idx <- index(x)$exo.obsidx;
-    ##exo.idx_match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
-    exo_all.idx <- index(x)$exo.idx
-
-    if (length(exo.idx)>0) {
-      for (i in 1:length(exo.idx))
-        for (j in 1:length(exo.idx)) {
-          i. <- exo_all.idx[i]; j. <- exo_all.idx[j]
-          myval <- S0[exo.idx[i],exo.idx[j]];          
-          if (i.==j. & myval==0) {
-            warning("Overparametrized model. Problem with '"%+%index(x)$vars[j.]%+%"'")
-            myval <- 1
-          }
-          else if (is.na(myval) || is.nan(myval)) myval <- 0
-          x$covfix[i.,j.] <- x$covfix[j.,i.] <- myval
-        }
-      x$mean[exo_all.idx] <- mu0[exo.idx]
-    }
-  }
-  
-  index(x) <- reindex(x)  
-  return(x)
 }
 
 ###}}}
@@ -589,6 +444,7 @@ meq <- function(A,tol=1e-9) { frobnorm(A)<tol }
 
 ###{{{ printR
 
+##' @export
 printR <- function(x,eol="\n",...) {
   if (is.vector(x)) {
     row <- paste("c(",paste(x,collapse=","),")",sep="")
@@ -650,28 +506,64 @@ naiveGrad <- function(f, x, h=1e-9) {
 ## Element x at entry (x1,...,xk).
 ## position (via which) := x1 + d1*(x2-1) + d1*d2*(x3-1) + ... + prod(d1,...,d[k-1])*(xk-1)
 whichentry <- function(x) {
-  idx <- which(x)
-  D <- dim(x)
-  if (length(D)<2)
-    return(idx)
-  K <- rev(cumprod(D))[-1]
-  t(sapply(idx,
-           function(ii) {
-             entry <- c()
-             pn <- ii
-             for (i in 1:(length(K))) {
-               xn <- floor((pn-1)/K[i])+1
-               pn <- pn-(xn-1)*K[i]
-               entry <- c(entry,xn)
-             }; entry <- rev(c(entry,pn))
-             return(entry)
-           }))
+  which(x,arr.ind=TRUE)
 }
+##   idx <- which(x)
+##   D <- dim(x)
+##   if (length(D)<2)
+##     return(idx)
+##   K <- rev(cumprod(D))[-1]
+##   t(sapply(idx,
+##            function(ii) {
+##              entry <- c()
+##              pn <- ii
+##              for (i in 1:(length(K))) {
+##                xn <- floor((pn-1)/K[i])+1
+##                pn <- pn-(xn-1)*K[i]
+##                entry <- c(entry,xn)
+##              }; entry <- rev(c(entry,pn))
+##              return(entry)
+##            }))
+## }
 
 ###}}} whichentry
 
+###{{{ revdiag
+##' @title Create/extract 'reverse'-diagonal matrix
+##' @aliases revdiag "revdiag<-"
+##' @param x vector
+##' @author Klaus K. Holst
+##' @export
+##' @aliases revdiag<-
+revdiag <- function(x) {
+    if (NCOL(x)==1) {
+      res <- matrix(0,length(x),length(x))
+      revdiag(res) <- x
+      return(res)
+    }
+    n <- ncol(x)
+    x[cbind(rev(seq(n)),seq(n))]
+  }
+
+"revdiag<-" <- function(x,value,...) {
+  n <- ncol(x)
+  x[cbind(rev(seq(n)),seq(n))] <- value
+  x
+}
+###}}} revdiag
+
 ###{{{ blockdiag
 
+##' @title Combine matrices to block diagonal structure
+##' @param x Matrix
+##' @param ... Additional matrices
+##' @param pad Value outside block-diagonal
+##' @author Klaus K. Holst
+##' @export
+##' @examples
+##' A <- diag(3)+1
+##' A%+%A
+##' blockdiag(A,A,A,pad=NA)
 blockdiag <- function(x,...,pad=0) {
   if (is.list(x)) xx <- x  else xx <- list(x,...)
   xx <- list(x,...)

@@ -14,10 +14,11 @@ function(object,...) {
   print(covariance(object))
   print(intercept(object))
   if (length(object$exfix)>0) {
-    cat("\nAdditional parameters:\n")
+    cat("Additional parameters:\n")    
     val <- unlist(object$exfix)
-    val[is.na(val)] <- "*"
-    print(val,quote=FALSE)
+    M <- rbind(val); colnames(M) <- names(val)
+    rownames(M) <- "   "
+    print(M,quote=FALSE)
   }
   if (length(constrain(object))>0) {
     cat("Non-linear constraints:\n")

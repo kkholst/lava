@@ -7,7 +7,10 @@ function(x,...) UseMethod("information")
 ##' @S3method information lvm
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
                                     c("E","hessian","varS","outer","sandwich","robust","num"),"outer"),
-                            data,weight=NULL,model="gaussian",method=lava.options()$Dmethod,
+                            data,weight=NULL,
+                            data2=NULL,
+                            model="gaussian",
+                            method=lava.options()$Dmethod,
                             inverse=FALSE, pinv=TRUE,
                             score=TRUE,...) {
   if (missing(n))
@@ -24,7 +27,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   }
   if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
     require("numDeriv")
-    myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,indiv=FALSE,n=n) ##...)
+    myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,data2=data2,indiv=FALSE,n=n) ##...)
     ##    I <- -hessian(function(p0) logLik(x,p0,dd),p)
     I <- -jacobian(myf,p,method=method)
     res <- (I+t(I))/2 # Symmetric result
@@ -38,7 +41,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     return(res)
   }
   if (type[1]=="varS" | type[1]=="outer") {
-    S <- score(x,p=p,data=na.omit(data),model=model,weight=weight,indiv=TRUE,...)
+    S <- score(x,p=p,data=na.omit(data),model=model,weight=weight,data2=data2,indiv=TRUE,...)
     ##    print("...")
     res <- t(S)%*%S
     if (inverse) {
@@ -201,8 +204,11 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 ###{{{ information.lvmfit
 
 ##' @S3method information lvmfit
-information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),...) {
-  I <- information(x$model0,p=p,n=n,data=data,model=model,weight=weight,...)
+information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),
+                               data2=x$data$data2,
+                               ...) {
+  I <- information(x$model0,p=p,n=n,data=data,model=model,
+                   weight=weight,data2=data2,...)
   if (ncol(I)<length(p)) {
     I <- blockdiag(I,matrix(0,length(p)-ncol(I),length(p)-ncol(I)))
   }
