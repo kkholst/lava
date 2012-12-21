@@ -19,7 +19,7 @@ Suggests:
     gof (>= 0.8),
     foreach,
     survival,
-    testthat 
+    testthat
 License: GPL-3
 LazyLoad: yes
 Collate:
@@ -110,3 +110,6 @@ Collate:
     'weight.R'
     'equivalence.R'
     'eventTime.R'
+    'describecoef.R'
+    'fixsome.R'
+    'parlabels.R'

@@ -1,5 +1,4 @@
 \name{startvalues}
-\alias{\%+\%}
 \alias{addhook}
 \alias{checkmultigroup}
 \alias{CoefMat}
@@ -17,9 +16,9 @@
 \alias{graph2lvm}
 \alias{igraph.lvm}
 \alias{index}
+\alias{index<-}
 \alias{index.lvm}
 \alias{index.lvmfit}
-\alias{index<-}
 \alias{Inverse}
 \alias{IV}
 \alias{lisrel}
@@ -41,6 +40,7 @@
 \alias{pars.glm}
 \alias{pars.lvm}
 \alias{pars.lvmfit}
+\alias{printR}
 \alias{procdata.lvmfit}
 \alias{profci}
 \alias{randomslope}
