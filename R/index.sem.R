@@ -178,6 +178,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
               endo.idx=setdiff(obs.idx,exo.idx))
   
   if (standard) {
+    ## npar.ex <- sum(e1); ##if(is.null(npar.ex)) npar.ex <- 0
     res <- c(res, list(M=M, A=A, P=P,
                        P0=P0, P1=P1,
                        M0=M0, M1=M1,

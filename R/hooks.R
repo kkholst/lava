@@ -57,6 +57,9 @@ assign("plot.post.hooks",c(),envir=lava.env)
 assign("plot.hooks",c(),envir=lava.env)
 assign("options", list(
                     trace=0,
+                    tol=1e-6,
+                    gamma=0.05,
+                    ngamma=2,
                     iter.max=300,
                     eval.max=250,
                     constrain=FALSE,

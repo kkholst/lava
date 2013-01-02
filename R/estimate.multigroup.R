@@ -11,26 +11,27 @@
                                   ...) {
   cl <- match.call()
   optim <- list(
-                iter.max=lava.options()$iter.max,
-                trace=ifelse(lava.options()$debug,3,0),
-                gamma=1,
-                gamma2=1,
-                lambda=0.05,
-                abs.tol=1e-9,
-                epsilon=1e-10,
-                delta=1e-10,
-                S.tol=1e-6,
-                stabil=FALSE,
-                start=NULL,
-                constrain=lava.options()$constrain,
-                method=NULL,
-                starterfun=startvalues,
-                information="E",
-                meanstructure=TRUE,
-                sparse=FALSE,
-                lbound=1e-9,
-                reindex=FALSE,
-                tol=1e-9)
+             iter.max=lava.options()$iter.max,
+             trace=ifelse(lava.options()$debug,3,0),
+             gamma=lava.options()$gamma,
+             ngamma=lava.options()$ngamma,
+             gamma2=1,
+             lambda=0.05,
+             abs.tol=1e-9,
+             epsilon=1e-10,
+             delta=1e-10,
+             S.tol=1e-6,
+             stabil=FALSE,
+             start=NULL,
+             constrain=lava.options()$constrain,
+             method=NULL,
+             starterfun=startvalues,
+             information="E",
+             meanstructure=TRUE,
+             sparse=FALSE,
+             lbound=1e-9,
+             reindex=FALSE,
+             tol=lava.options()$tol)
 
   
   defopt <- lava.options()[]

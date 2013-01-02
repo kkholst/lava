@@ -110,9 +110,9 @@ function(x, data=parent.frame(),
   optim <- list(
                 iter.max=lava.options()$iter.max,
                 trace=ifelse(lava.options()$debug,3,0),
-                gamma=1,
+                gamma=lava.options()$gamma,
                 gamma2=1,
-                ngamma=NULL,
+                ngamma=lava.options()$ngamma,             
                 lambda=0.05,
                 abs.tol=1e-9,
                 epsilon=1e-10,
@@ -127,7 +127,7 @@ function(x, data=parent.frame(),
                 information="E",
                 meanstructure=TRUE,
                 sparse=FALSE,
-                tol=1e-9)
+                tol=lava.options()$tol)
 
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]

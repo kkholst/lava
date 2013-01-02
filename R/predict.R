@@ -3,8 +3,9 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
   predict(Model(object),x=x,p=p,data=data,...)
 }
 
-##' @S3method predict lvm
-##' @aliases predict.lvmfit
+##' Prediction in structural equation models
+##'
+##' Prediction in structural equation models
 ##' @param object Model object
 ##' @param x optional list of (endogenous) variables to condition on
 ##' @param residual If true the residuals are predicted
@@ -15,6 +16,8 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
 ##' @param ... Additional arguments to lower level function
 ##' @examples
 ##' m <- lvm()
+##' @S3method predict lvm
+##' @aliases predict.lvmfit
 ##' @export 
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.null(x)&!(residual|path),...) {
   ## data = data.frame of exogenous variables
