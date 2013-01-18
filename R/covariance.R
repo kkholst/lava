@@ -290,3 +290,4 @@ covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,vname=NA,v2name=v
   
   return(structure(object,rname=rname,cname=cname))
 }
+

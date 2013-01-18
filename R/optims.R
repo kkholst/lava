@@ -170,7 +170,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     ## cat("........................\n")
     ## browser()
     thetacur <- newpar$p
-    if (!is.null(control$ngamma)) {
+    if (!is.null(control$ngamma) && control$ngamma>0) {
       if (control$ngamma<=gammacount) {
         control$gamma <- sqrt(control$gamma)
         gammacount <- 0

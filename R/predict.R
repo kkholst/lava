@@ -22,7 +22,7 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.null(x)&!(residual|path),...) {
   ## data = data.frame of exogenous variables
 
-  if (!quick && !all(exogenous(object)%in%colnames(data))) stop("dataframe should contain exogenous variables")
+  if (!quick && !all(exogenous(object)%in%colnames(data))) stop("data.frame should contain exogenous variables")
   m <- moments(object,p,data=data)
   if (quick) { ## Only conditional moments given covariates
     ii <- index(object)
@@ -44,19 +44,20 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
                      e=m$e))
   }
   
+  X <- exogenous(object)
+  Y <- setdiff(manifest(object), X)
   if (path) {
-    Y <- endogenous(object,top=TRUE)
-    X <- setdiff(manifest(object),Y)
-  } else {
-    X <- exogenous(object)
-    Y <- setdiff(manifest(object), X)
+    X <- colnames(data)
+    Y <- setdiff(Y,X)
+    ##  Y <- endogenous(object,top=TRUE)
+    ##  X <- setdiff(manifest(object),Y)
   }
   X.idx <- match(X,manifest(object))
   eta.idx <- match(latent(object),vars(object))
   obs.idx <- match(manifest(object),vars(object))
   X.idx.all <- match(X, vars(object))
   Y.idx.all <- match(Y, vars(object))
-
+  
   ## Calculation of conditional variance given X=x
   A <- t(m$A);
   P <- m$P
@@ -79,7 +80,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   }
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
-  Cy.epsilon <- P.x%*%t(m$IAi)
+  Cy.epsilon <- P.x%*%t(m$IAi) ## Covariance y,residual
   Czeta.y <- Cy.epsilon[eta.idx,endogenous(object)]
   ##  Eeta.x + t([,c(4,8)])[,endogenous(e)]%*%solve(Cy.x)%*%t(rr)
   
@@ -90,10 +91,11 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   ## mu <- as.vector(m$IAi%*%m$v); names(mu) <- names(m$v)
   ##  S <- C.x
   ##  mu <- t(xi.x)
+  if (path) return(t(xi.x))
 
-  ys <- data[,Y]
-  ry <- t(ys)-Ey.x
-  y <- NULL
+  y0 <- intersect(Y,colnames(data))
+  ys <- data[,y0,drop=FALSE]
+  ry <- t(ys)-Ey.x[y0,,drop=FALSE]  
   if (!is.null(x)) {
     if (class(x)[1]=="formula")  {
       xy <- getoutcome(x)
@@ -111,7 +113,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     if (is.null(y))
       y <- setdiff(vars(object),c(x,exogenous(object)))
 
-    E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,]
+    E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
     if (residual) {
       Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
       Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
@@ -124,6 +126,9 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
 ##    return(t(Eeta.x + C.x[eta.idx,x]%*%solve(Cy.x[x,x])%*%ry[x,]))
   }
 
+  ys <- data[,Y,drop=FALSE]
+  ry <- t(ys)-Ey.x  
+  
   if (length(eta.idx)>0) {
     Ceta.x <- C.x[eta.idx,eta.idx]
     Lambda <- matrix(A[Y.idx.all,eta.idx,drop=FALSE], ncol=length(eta.idx))
