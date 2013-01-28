@@ -1,3 +1,4 @@
+
 ##' Estimation and simulation of latent variable models
 ##' 
 ##' Framwork for estimating parameters and simulate data from Latent Variable

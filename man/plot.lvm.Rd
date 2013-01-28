@@ -9,7 +9,9 @@
     graph = list(rankdir = "BT"),
     attrs = list(graph = graph), unexpr = FALSE,
     addstyle = TRUE, Rgraphviz = lava.options()$Rgraphviz,
-    init = TRUE, ...)
+    init = TRUE,
+    layout = c("dot", "fdp", "circo", "twopi", "neato", "osage"),
+    ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -53,6 +55,11 @@
   \item{Rgraphviz}{if FALSE igraph is used for graphics}
 
   \item{init}{Reinitialize graph (for internal use)}
+
+  \item{layout}{Graph layout (see Rgraphviz or igraph
+  manual)}
+
+  \item{...}{}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

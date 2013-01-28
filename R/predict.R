@@ -36,22 +36,42 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
       mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
       xi.x <- (m$IAi[ii$endo.obsidx,]%*%(mu.0 + mu.x))
     } else {
-      xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
+       xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
       rownames(xi.x) <- names(mu.0)
     }
     return(structure(t(xi.x),cond.var=Cy.x,
                      p=m$p,
                      e=m$e))
   }
-  
+
+
   X <- exogenous(object)
   Y <- setdiff(manifest(object), X)
   if (path) {
-    X <- colnames(data)
+    X <- colnames(data)    
     Y <- setdiff(Y,X)
+    idx <- which(vars(object)%in%X)
+    if (length(Y)==0) stop("New data set should only contain exogenous variables and a true subset of the endogenous variables for 'path' prediction.")
+    A <- m$A
+    ## x <- colnames(newdata) ## Predictors
+    ## vv <- vars(object)
+    ## idx <- which(vv%in%x)
+    ## J <- diag(!izero(idx,nrow(A)))
+    A[,idx] <- 0 ## i.e., A <- A%*%J
+    IAi <- solve(diag(nrow=nrow(A))-t(A))
+    mu.0 <- m$v;
+    mu.0[X] <- 0
+    mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
+    mu.x[idx,] <- t(data[,vars(object)[idx],drop=FALSE])
+    pred <- t(IAi%*%(mu.0 + mu.x))
+    return(pred)
     ##  Y <- endogenous(object,top=TRUE)
     ##  X <- setdiff(manifest(object),Y)
   }
+
+  
+  IAi <- m$IAi
+  P <- m$P  
   X.idx <- match(X,manifest(object))
   eta.idx <- match(latent(object),vars(object))
   obs.idx <- match(manifest(object),vars(object))
@@ -59,28 +79,28 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   Y.idx.all <- match(Y, vars(object))
   
   ## Calculation of conditional variance given X=x
-  A <- t(m$A);
-  P <- m$P
   P.x <- m$P; P.x[X.idx.all, X.idx.all] <- 0
-  C.x <- (m$IAi%*% P.x %*%t(m$IAi))
+  C.x <- (IAi%*% P.x %*%t(IAi))
   Cy.x <- C.x[Y.idx.all,Y.idx.all,drop=FALSE]
   ##  px <- diag(nrow(A)); px[X.idx.all,X.idx.all] <- 0 ## Sets exogenous-entries to zero
   ##  print(sum(index(object)$px-px))
   ##  other.idx <- match(setdiff(vars(object),endogenous(object)),vars(object)) ##endogenous entries
   ## Calculation of conditional mean given X=x
-  G <- m$J%*%m$IAi
+  G <- m$J%*%IAi
   mu.0 <- m$v; mu.0[X.idx.all] <- 0
   if (length(X)>0) {
     xs <- data[,X,drop=FALSE]
     mu.x <- apply(xs, 1, FUN=function(i) {res <- rep(0,length(mu.0)); res[X.idx.all] <- i; res})
-    xi.x <- (m$IAi%*%(mu.0 + mu.x))
+    xi.x <- (IAi%*%(mu.0 + mu.x))
   } else {
-    xi.x <- matrix(as.vector(m$IAi%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
+    xi.x <- matrix(as.vector(IAi%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
     rownames(xi.x) <- names(mu.0)
   }
+  if (path) return(t(xi.x))
+
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
-  Cy.epsilon <- P.x%*%t(m$IAi) ## Covariance y,residual
+  Cy.epsilon <- P.x%*%t(IAi) ## Covariance y,residual
   Czeta.y <- Cy.epsilon[eta.idx,endogenous(object)]
   ##  Eeta.x + t([,c(4,8)])[,endogenous(e)]%*%solve(Cy.x)%*%t(rr)
   
@@ -91,7 +111,6 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   ## mu <- as.vector(m$IAi%*%m$v); names(mu) <- names(m$v)
   ##  S <- C.x
   ##  mu <- t(xi.x)
-  if (path) return(t(xi.x))
 
   y0 <- intersect(Y,colnames(data))
   ys <- data[,y0,drop=FALSE]

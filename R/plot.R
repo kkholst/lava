@@ -29,6 +29,8 @@
 ##' arrows)
 ##' @param Rgraphviz if FALSE igraph is used for graphics
 ##' @param init Reinitialize graph (for internal use)
+##' @param layout Graph layout (see Rgraphviz or igraph manual)
+##' @param ... 
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
@@ -46,6 +48,7 @@
          attrs=list(graph=graph),
            unexpr=FALSE,
            addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
+           layout=c("dot","fdp","circo","twopi","neato","osage"),
            ...) {
   if (is.null(vars(x))) stop("Nothing to plot: model has no variables.")
   index(x) <- reindex(x)
@@ -64,9 +67,9 @@
     L <- layout.sugiyama(g <- igraph.lvm(x,...))$layout
     if (noplot) return(g)
     dots <- list(...)
-    if (is.null(dots$layout))
+    if (is.character(layout))
       plot(g,layout=L,...)
-    else plot(g,...)
+    else plot(g,layout=layout,...)
     return(invisible(g))
   } 
   if (init) {
@@ -90,7 +93,8 @@
     dots$attrs <- attrs
     dots$x <- g
     dots$recipEdges <- "distinct"
-    if (is.null(dots$layoutType) & all(index(x)$A==0))
+    if (is.null(dots$layoutType)) dots$layoutType <- layout[1]
+    if (all(index(x)$A==0)) 
       dots$layoutType <- "circo"
     
     g <- do.call("layoutGraph", dots)

@@ -20,11 +20,12 @@ contrmat <- function(npar,ngroup,...) {
 ##' Concatenation operator
 ##'
 ##' For matrices a block-diagonal matrix is created. For latent variable models ('lvm' objects) \code{merge.lvm} is called. For all other data types he operator is a wrapper of \code{paste}.
+##' @name concatoperator
 ##' @title Concatenation operator
 ##' @param x First object
 ##' @param y Second object
 ##' @author Klaus K. Holst
-##' ##' @export
+##' @export
 `%+%` <- function(x,y) UseMethod("%+%",y)
 
 ##' @S3method %+% lvm
@@ -137,6 +138,7 @@ commutation <- function(m, n=m,sparse=FALSE) {
 }
 
 ###}}}
+
 
 ###{{{ izero
 
@@ -283,8 +285,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 ###{{{ tr
 
+##' Trace function. Returns the sum of the diagonal of symmetric matrix
 ##' @export
-## Trace function. Returns the sum of the diagonal of symmetric matrix
 `tr` <-
   function(A) {
     
@@ -428,7 +430,6 @@ toformula <- function (y = ".", x = ".")
 
 ###{{{ frobnorm
 
-
 # Frobenius norm af matrice x. Hvis x er vektor er dette lig 2-normen
 ##' @export
 frobnorm <- function(x) {
@@ -529,6 +530,7 @@ whichentry <- function(x) {
 ###}}} whichentry
 
 ###{{{ revdiag
+
 ##' @title Create/extract 'reverse'-diagonal matrix
 ##' @aliases revdiag "revdiag<-"
 ##' @param x vector
@@ -550,6 +552,7 @@ revdiag <- function(x) {
   x[cbind(rev(seq(n)),seq(n))] <- value
   x
 }
+
 ###}}} revdiag
 
 ###{{{ blockdiag

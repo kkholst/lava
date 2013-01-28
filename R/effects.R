@@ -92,10 +92,8 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
     paths <- list()
   }
   
-  
   directidx <- which(lapply(P$path,length)==2)
   
-
   inef.list <- idx.list
   if (length(directidx)==0) {
     directef <- list(est=0, sd=NA)
@@ -103,7 +101,11 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
     inef.list <- inef.list[-directidx]
     directef <- margef[[directidx]]
   }
-  totalinef <- prodsumdelta(coefs.all, inef.list, S.all,...)
+  if (length(inef.list)==0) {
+    totalinef <- list(est=0,sd=NA,grad=NA,hess=NA)
+  } else {
+    totalinef <- prodsumdelta(coefs.all, inef.list, S.all,...)
+  }
   
   val <- list(paths=P$path, totalef=totalef, directef=directef, totalinef=totalinef, margef=margef, from=from, to=to)
   class(val) <- "effects"
