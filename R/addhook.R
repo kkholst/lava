@@ -74,4 +74,3 @@ assign("options", list(
                     exogenous=TRUE,
                     Rgraphviz=TRUE,
                     debug=FALSE), envir=lava.env)
-       

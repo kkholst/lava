@@ -15,30 +15,6 @@ contrmat <- function(npar,ngroup,...) {
 
 ###}}} contr
 
-###{{{ %++% concat operator
-
-##' Concatenation operator
-##'
-##' For matrices a block-diagonal matrix is created. For latent variable models ('lvm' objects) \code{merge.lvm} is called. For all other data types he operator is a wrapper of \code{paste}.
-##' @name concatoperator
-##' @title Concatenation operator
-##' @param x First object
-##' @param y Second object
-##' @author Klaus K. Holst
-##' @export
-`%+%` <- function(x,y) UseMethod("%+%",y)
-
-##' @S3method %+% lvm
-`%+%.lvm` <- function(x,y) merge(x,y)
-
-##' @S3method %+% matrix
-`%+%.matrix` <- function(x,y) blockdiag(x,y)
-
-##' @S3method %+% default
-`%+%.default` <- function(x,y) paste(x, y, sep="")
-
-###}}}
-
 ###{{{ substArg
 
 substArg <- function(x,env,...) {
@@ -138,7 +114,6 @@ commutation <- function(m, n=m,sparse=FALSE) {
 }
 
 ###}}}
-
 
 ###{{{ izero
 
@@ -283,30 +258,6 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 ###}}}
 
-###{{{ tr
-
-##' Trace function. Returns the sum of the diagonal of symmetric matrix
-##' @export
-`tr` <-
-  function(A) {
-    
-    ##    if(!is.matrix(A) )
-    ##      stop("argument of 'tr' should be a matrix.")    
-##     n <- nrow(A)
-##         if (!n) 
-##       stop("0 x 0 matrix")
-##     if (n != ncol(A)) 
-##       stop("non-square matrix")
-##     if (any(!is.finite(A))) 
-##       stop("infinite or missing values")
-##     if (any(!is.numeric(A)))
-##       stop("numeric or complex values required")
-    
-    return(sum(diag(A)))
-  }
-
-###}}}
-
 ###{{{ symmetrize
 
 `symmetrize` <-
@@ -392,6 +343,23 @@ Decomp.specials <- function(x,pattern="[()]") {
   unlist(strsplit(vars,","))
 }
 
+##' Converts strings to formula
+##' 
+##' Converts a vector of predictors and a vector of responses (characters) i#nto
+##' a formula expression.
+##' 
+##' 
+##' @param predlist vector of predictors
+##' @param resplist vector of responses
+##' @return An object of class \code{formula}
+##' @author Klaus K. Holst
+##' @seealso \code{\link{as.formula}},
+##' @keywords models utilities
+##' @examples
+##' 
+##' toformula(c("age","gender"), "weight")
+##'
+##' @export
 toformula <- function (y = ".", x = ".") 
 {
     xst <- x[1]
@@ -430,10 +398,27 @@ toformula <- function (y = ".", x = ".")
 
 ###{{{ frobnorm
 
-# Frobenius norm af matrice x. Hvis x er vektor er dette lig 2-normen
+
+##' Returns the 2-norm/Frobenius norm
+##' 
+##' Returns the 2-norm of a vector (Frobenius norm of a matrix).
+##' 
+##' 
+##' @aliases frobnorm mdist meq
+##' @param x vector or matrix
+##' @param y vector or matrix of same dimensions as \code{x}
+##' @return A numeric (the distance/norm)
+##' @author Klaus K. Holst
+##' @keywords math utilities
 ##' @export
+##' @examples
+##' 
+##' mdist(1:5,2:6)
+##' meq(matrix(0,ncol=2,nrow=2))
+##' 
+ # #' @export
 frobnorm <- function(x) {
-  frob2 <- tr(t(x)%*%x)
+  tr(t(x)%*%x)^0.5
   return(sqrt(frob2))
 }
 ##' @export
@@ -632,6 +617,12 @@ acc <- function(M,v) {
 
 ###}}} Depth-First/acc (accessible)
 
+###{{{
+
+`tr` <- function(x) sum(diag(x))
+
+###}}}
+
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean)
 
@@ -664,4 +655,4 @@ numberdup <- function(xx) { ## Convert to numbered list
 
 logit <- function(p) log(p/(1-p))
 
-tigol <- function(z) 1/(1+exp(-z))
+expit <- tigol <- function(z) 1/(1+exp(-z))
