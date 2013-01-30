@@ -1,6 +1,6 @@
 \name{revdiag}
-\alias{"revdiag<-"}
 \alias{revdiag}
+\alias{"revdiag<-"}
 \alias{revdiag<-}
 \title{Create/extract 'reverse'-diagonal matrix}
 \usage{

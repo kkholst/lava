@@ -1,11 +1,27 @@
 \name{tr}
 \alias{tr}
-\title{Trace function. Returns the sum of the diagonal of symmetric matrix}
+\title{Trace operator}
 \usage{
   tr(A)
 }
-\description{
-  Trace function. Returns the sum of the diagonal of
-  symmetric matrix
+\arguments{
+  \item{A}{Square numeric matrix}
 }
+\value{
+  \code{numeric}
+}
+\description{
+  Calculates the trace of a square matrix.
+}
+\examples{
+tr(diag(1:5))
+}
+\author{
+  Klaus K. Holst
+}
+\seealso{
+  \code{\link{crossprod}}, \code{\link{tcrossprod}}
+}
+\keyword{algebra}
+\keyword{math}
 
