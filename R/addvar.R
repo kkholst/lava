@@ -2,7 +2,7 @@
 ##'
 ##' @title Add variable to (model) object 
 ##' @param x Model object
-##' @param ... Additional arguments
+##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
 ##' @aliases addvar<-
 ##' @export

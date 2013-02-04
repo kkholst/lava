@@ -70,6 +70,7 @@ condition <- function(A) {
 ##' @param x Model object
 ##' @param p Parameter vector used to calculate statistics
 ##' @param data Data.frame to use
+##' @param data2 Optional second data.frame (only for censored observations)
 ##' @param weight Optional weight matrix
 ##' @param n Number of observations
 ##' @param conditional If TRUE the conditional moments given the covariates are
@@ -97,11 +98,12 @@ condition <- function(A) {
 ##'                       data=model.frame(object),
 ##'                       model=object$estimator,
 ##'                       weight=Weight(object),
+##'                       data2=object$data$data2,
 ##'                           ...)
 ##' 
-##' \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), ...)
+##' \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), data2=x$data$data2, ...)
 ##' 
-##' \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),...)
+##' \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x), data2=x$data$data2, ...)
 ##' 
 ##' @return A \code{htest}-object.
 ##' @author Klaus K. Holst

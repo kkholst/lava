@@ -59,8 +59,6 @@
   \item{layout}{Graph layout (see Rgraphviz or igraph
   manual)}
 
-  \item{...}{}
-
   \item{\dots}{Additional arguments to be passed to the low
   level functions}
 }

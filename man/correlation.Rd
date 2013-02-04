@@ -7,7 +7,7 @@
 \arguments{
   \item{x}{Object}
 
-  \item{...}{Additional arguments}
+  \item{\dots}{Additional arguments}
 }
 \description{
   Generic correlation method

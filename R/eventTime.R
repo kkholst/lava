@@ -35,7 +35,7 @@
 ##' @param object Model object
 ##' @param formula Formula (see details)
 ##' @param eventName Event names
-##' @param ... Additional arguments to lower levels functions
+##' @param \dots Additional arguments to lower levels functions
 eventTime <- function(object,formula,eventName,...){
   if (missing(formula)) return(object$attributes$eventHistory)
   ff <- as.character(formula)

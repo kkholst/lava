@@ -2,7 +2,7 @@
 ##'
 ##' @title Label elements of object
 ##' @param x Object
-##' @param ... Additional arguments
+##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
 ##' @export
 `baptize` <- function(x,...) UseMethod("baptize")

@@ -30,7 +30,6 @@
 ##' @param Rgraphviz if FALSE igraph is used for graphics
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
-##' @param ... 
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression

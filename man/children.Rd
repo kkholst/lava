@@ -8,7 +8,7 @@
 \arguments{
   \item{object}{Object}
 
-  \item{...}{Additional arguments}
+  \item{\dots}{Additional arguments}
 }
 \description{
   Generic method for extracting children or parent elements

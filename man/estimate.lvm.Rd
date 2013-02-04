@@ -120,7 +120,7 @@ e
   Klaus K. Holst
 }
 \seealso{
-  \code{\link{score}}, \code{\link{information}}, ...
+  \code{score}, \code{information}, ...
 }
 \keyword{models}
 \keyword{regression}

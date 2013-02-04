@@ -10,7 +10,8 @@ Keywords: latent variable model, structural equation model, likelihood inference
 Depends:
     R (>= 2.14),
     mvtnorm,
-    numDeriv
+    numDeriv,
+    guts
 Suggests:
     graph,
     Rgraphviz,
@@ -84,7 +85,6 @@ Collate:
     'nodecolor.R'
     'Objective.R'
     'onload.R'
-    'operator.R'
     'optims.R'
     'parameter.R'
     'parlabels.R'
@@ -113,7 +113,4 @@ Collate:
     'weight.R'
     'addhook.R'
     'eventTime.R'
-    'nearest.R'
-    'orgify.R'
-    'printR.R'
     'utils.R'

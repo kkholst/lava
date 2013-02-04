@@ -3,9 +3,9 @@
 \alias{predict.lvmfit}
 \title{Prediction in structural equation models}
 \usage{
-  predict.lvm(object, x = NULL, residual = FALSE, p, data,
-    path = FALSE, quick = is.null(x) & !(residual | path),
-    ...)
+  \method{predict}{lvm} (object, x = NULL,
+    residual = FALSE, p, data, path = FALSE,
+    quick = is.null(x) & !(residual | path), ...)
 }
 \arguments{
   \item{object}{Model object}
@@ -19,13 +19,14 @@
 
   \item{data}{Data to use in prediction}
 
-  \item{path}{Path prediction (...)}
+  \item{path}{Path prediction}
 
   \item{quick}{If TRUE the conditional mean and variance
   given covariates are returned (and all other calculations
   skipped)}
 
-  \item{...}{Additional arguments to lower level function}
+  \item{\dots}{Additional arguments to lower level
+  function}
 }
 \description{
   Prediction in structural equation models

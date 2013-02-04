@@ -2,7 +2,7 @@
 ##'
 ##' @title Generic method for extracting correlation coefficients of model object
 ##' @param x Object
-##' @param ... Additional arguments
+##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
 ##' @export
 "correlation" <- function(x,...) UseMethod("correlation")

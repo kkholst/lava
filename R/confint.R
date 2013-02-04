@@ -22,7 +22,7 @@
 ##' @param interval Interval over which the profiling is done
 ##' @param lower If FALSE the lower limit will not be estimated (profile intervals only)
 ##' @param upper If FALSE the upper limit will not be estimated (profile intervals only)
-##' @param ... Additional arguments to be passed to the low level functions
+##' @param \dots Additional arguments to be passed to the low level functions
 ##' @return A 2xp matrix with columns of lower and upper confidence limits
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{bootstrap}{lvm}}

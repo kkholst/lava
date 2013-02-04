@@ -2,7 +2,7 @@
 ##'
 ##' @title Generic cancel method
 ##' @param x Object
-##' @param ... Additioal arguments
+##' @param \dots Additioal arguments
 ##' @author Klaus K. Holst
 ##' @aliases cancel<-
 ##' @export

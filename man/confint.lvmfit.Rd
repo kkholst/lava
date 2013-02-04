@@ -37,7 +37,7 @@
   \item{upper}{If FALSE the upper limit will not be
   estimated (profile intervals only)}
 
-  \item{...}{Additional arguments to be passed to the low
+  \item{\dots}{Additional arguments to be passed to the low
   level functions}
 }
 \value{

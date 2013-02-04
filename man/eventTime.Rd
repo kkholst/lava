@@ -11,7 +11,7 @@
 
   \item{eventName}{Event names}
 
-  \item{...}{Additional arguments to lower levels
+  \item{\dots}{Additional arguments to lower levels
   functions}
 }
 \description{

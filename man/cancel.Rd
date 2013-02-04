@@ -8,7 +8,7 @@
 \arguments{
   \item{x}{Object}
 
-  \item{...}{Additioal arguments}
+  \item{\dots}{Additioal arguments}
 }
 \description{
   Generic cancel method

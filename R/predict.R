@@ -11,12 +11,12 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
 ##' @param residual If true the residuals are predicted
 ##' @param p Parameter vector 
 ##' @param data Data to use in prediction
-##' @param path Path prediction (...)
+##' @param path Path prediction 
 ##' @param quick If TRUE the conditional mean and variance given covariates are returned (and all other calculations skipped)
-##' @param ... Additional arguments to lower level function
+##' @param \dots Additional arguments to lower level function
 ##' @examples
 ##' m <- lvm()
-##' @S3method predict lvm
+##' @method predict lvm
 ##' @aliases predict.lvmfit
 ##' @export 
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.null(x)&!(residual|path),...) {

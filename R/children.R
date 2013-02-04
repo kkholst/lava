@@ -4,7 +4,7 @@
 ##' @export
 ##' @aliases children parents
 ##' @param object Object
-##' @param ... Additional arguments
+##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
 "children" <- function(object,...) UseMethod("children")
 ##' @export

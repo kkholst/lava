@@ -8,7 +8,7 @@
 \arguments{
   \item{x}{Model object}
 
-  \item{...}{Additional arguments}
+  \item{\dots}{Additional arguments}
 }
 \description{
   Generic method for adding variables to model object

@@ -70,7 +70,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
-##' @seealso \code{\link{score}}, \code{\link{information}}, ...
+##' @seealso \code{score}, \code{information}, ...
 ##' @keywords models regression
 ##' @S3method estimate lvm
 ##' @method estimate lvm

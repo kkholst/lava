@@ -1,9 +1,3 @@
-##' Generic method for adding attributes to object or components of a class
-##'
-##' @title Add attribute to class
-##' @param x Object 
-##' @param ... Additional arguments
-##' @author Klaus K. Holst
 ##' @export
 `addattr` <-
 function(x,...) UseMethod("addattr")
