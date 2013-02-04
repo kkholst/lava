@@ -92,28 +92,7 @@ procrandomslope <- function(object,data=object$data,...) {
   return(list(model=object,fix=myfix))
 }
 
-###}}}
-
-###{{{ commutation
-
-### Finds the unique commutation matrix:
-### K%*%as.vector(A) = as.vector(t(A))
-commutation <- function(m, n=m,sparse=FALSE) { 
-  H <- function(i,j) { ## mxn-matrix with 1 at (i,j)
-    Hij <- matrix(0, nrow=m, ncol=n)
-    Hij[i,j] <- 1
-    Hij
-  }
-  K <- matrix(0,m*n,m*n)  
-  for (i in 1:m)
-    for (j in 1:n)
-      K <- K + H(i,j)%x%t(H(i,j))
-  if (sparse)
-    return(as(K, "sparseMatrix"))
-  K  
-}
-
-###}}}
+###}}} procrandomslope
 
 ###{{{ izero
 
@@ -282,7 +261,122 @@ function(M, upper=TRUE) {
 
 ###}}}
 
-###{{{ toformula
+###{{{ Inverse/pseudo
+
+##' @export
+Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
+  n <- nrow(X)
+  if (nrow(X)==1) {
+    res <- 1/X
+    if (det) attributes(res)$det <- X
+    return(res)
+  }
+  svdX <- svd(X)
+  id0 <- numeric(n)
+  id0[svdX$d>tol] <- 1/svdX$d[svdX$d>tol]
+  res <- with(svdX, v%*%diag(id0)%*%t(u))
+  if (det)
+    attributes(res)$det <- prod(svdX$d[svdX$d>tol])
+  return(res)
+}
+
+###}}}
+
+###{{{ naiveGrad
+
+naiveGrad <- function(f, x, h=1e-9) {
+  nabla <- numeric(length(x))
+  for (i in 1:length(x)) {
+    xh <- x; xh[i] <- x[i]+h
+    nabla[i] <- (f(xh)-f(x))/h
+  }
+  return(nabla)
+}
+
+###}}}
+
+###{{{ CondMom
+
+# conditional on Compl(idx)
+CondMom <- function(mu,S,idx,X) {
+  idxY <- idx
+  
+  idxX <- setdiff(1:ncol(S),idxY)
+  SXX <- S[idxX,idxX,drop=FALSE];
+  SYY <- S[idxY,idxY,drop=FALSE]
+  SYX <- S[idxY,idxX,drop=FALSE]
+  muY <- mu[,idxY,drop=FALSE]
+  muX <- mu[,idxX,drop=FALSE]
+  iSXX <- solve(SXX)
+  if (is.matrix(mu))
+    Z <- t(X-muX)
+  else
+    Z <- apply(X,1,function(xx) xx-muX)
+  SZ  <- t(SYX%*%iSXX%*%Z)
+##  condmean <- matrix(
+  if (is.matrix(mu))
+    condmean <- SZ+muY
+  else
+    condmean <- t(apply(SZ,1,function(x) muY+x))
+##  ,ncol=ncol(SZ),nrow=nrow(SZ))
+  condvar <- SYY-SYX%*%iSXX%*%t(SYX)
+  return(list(mean=condmean,var=condvar))
+}
+
+###}}} CondMom
+
+###{{{ Depth-First/acc (accessible)
+
+DFS <- function(M,v,explored=c()) {
+  explored <- union(explored,v)
+  incident <- M[v,]
+  for (v1 in setdiff(which(incident==1),explored)) {
+    explored <- DFS(M,v1,explored)
+  }
+  return(explored)
+}
+acc <- function(M,v) {
+  if (is.character(v)) v <- which(colnames(M)==v)
+  colnames(M)[setdiff(DFS(M,v),v)]
+}
+
+###}}} Depth-First/acc (accessible)
+
+`tr` <- function(x) sum(diag(x))
+
+npar.lvm <- function(x) {
+  return(index(x)$npar+ index(x)$npar.mean)
+
+}
+
+as.numeric.list <- function(x,...) {
+  res <- list()
+  asnum <- as.numeric(x)
+  lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
+}
+
+edge2pair <- function(e) {
+  sapply(e,function(x) strsplit(x,"~"))
+}
+numberdup <- function(xx) { ## Convert to numbered list
+  dup.xx <- duplicated(xx)
+  dups <- xx[dup.xx]
+  xx.new <- numeric(length(xx))
+  count <- 0
+  for (i in 1:length(xx)) {
+    if (!dup.xx[i]) {
+      count <- count+1
+      xx.new[i] <- count
+    } else {
+      xx.new[i] <- xx.new[match(xx[i],xx)[1]]
+    }
+  }
+  return(xx.new)
+}
+
+logit <- function(p) log(p/(1-p))
+expit <- tigol <- function(z) 1/(1+exp(-z))
+
 
 extractvar <- function(f) {
     yy <- getoutcome(f)
@@ -342,317 +436,3 @@ Decomp.specials <- function(x,pattern="[()]") {
   } 
   unlist(strsplit(vars,","))
 }
-
-##' Converts strings to formula
-##' 
-##' Converts a vector of predictors and a vector of responses (characters) i#nto
-##' a formula expression.
-##' 
-##' 
-##' @param predlist vector of predictors
-##' @param resplist vector of responses
-##' @return An object of class \code{formula}
-##' @author Klaus K. Holst
-##' @seealso \code{\link{as.formula}},
-##' @keywords models utilities
-##' @examples
-##' 
-##' toformula(c("age","gender"), "weight")
-##'
-##' @export
-toformula <- function (y = ".", x = ".") 
-{
-    xst <- x[1]
-    xn <- length(x)
-    if (xn > 1) 
-        for (i in 2:length(x)) {
-            xst <- paste(xst, "+", x[i])
-        }
-    yst <- y[1]
-    yn <- length(y)
-    if (yn > 1) {
-        yst <- paste("c(", yst, sep = "")
-        for (i in 2:length(y)) {
-            yst <- paste(yst, ", ", y[i], sep = "")
-        }
-        yst <- paste(yst, ")", sep = "")
-    }
-    ff <- paste(yst, "~", xst)
-    return(as.formula(ff))
-}
-
-###}}} toformula
-
-###{{{ getvars
-
-## getvars <- function(x,env=parent.frame()) {
-##   vars <- substitute(x,env=env)
-## ##  vars <- eval(substitute(x),env=parent.frame())
-##   if (class(vars)[1]=="formula") {
-##     vars <- all.vars(vars)
-##   }
-##   return(as.character(vars))
-## }
-
-###}}} getvars
-
-###{{{ frobnorm
-
-
-##' Returns the 2-norm/Frobenius norm
-##' 
-##' Returns the 2-norm of a vector (Frobenius norm of a matrix).
-##' 
-##' 
-##' @aliases frobnorm mdist meq
-##' @param x vector or matrix
-##' @param y vector or matrix of same dimensions as \code{x}
-##' @return A numeric (the distance/norm)
-##' @author Klaus K. Holst
-##' @keywords math utilities
-##' @export
-##' @examples
-##' 
-##' mdist(1:5,2:6)
-##' meq(matrix(0,ncol=2,nrow=2))
-##' 
- # #' @export
-frobnorm <- function(x) {
-  tr(t(x)%*%x)^0.5
-  return(sqrt(frob2))
-}
-##' @export
-mdist <- function(x,y) { frobnorm(x-y) }
-##' @export
-meq <- function(A,tol=1e-9) { frobnorm(A)<tol }
-
-###}}} frobnorm
-
-###{{{ printR
-
-##' @export
-printR <- function(x,eol="\n",...) {
-  if (is.vector(x)) {
-    row <- paste("c(",paste(x,collapse=","),")",sep="")
-    cat(row,eol,sep="")
-  }
-  if (is.matrix(x)) {
-    row <- "rbind("
-    cat(row,eol)
-    for (i in 1:nrow(x)) {
-      printR(x[i,],"")
-      cat(ifelse (i<nrow(x),",",""),eol,sep="")      
-    }
-    row <- ")"
-    cat(row,eol)
-  }
-  invisible(x)
-}
-
-###}}}
-
-###{{{ Inverse/pseudo
-
-##' @export
-Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
-  n <- nrow(X)
-  if (nrow(X)==1) {
-    res <- 1/X
-    if (det) attributes(res)$det <- X
-    return(res)
-  }
-  svdX <- svd(X)
-  id0 <- numeric(n)
-  id0[svdX$d>tol] <- 1/svdX$d[svdX$d>tol]
-  res <- with(svdX, v%*%diag(id0)%*%t(u))
-  if (det)
-    attributes(res)$det <- prod(svdX$d[svdX$d>tol])
-  return(res)
-}
-
-###}}}
-
-###{{{ naiveGrad
-
-naiveGrad <- function(f, x, h=1e-9) {
-  nabla <- numeric(length(x))
-  for (i in 1:length(x)) {
-    xh <- x; xh[i] <- x[i]+h
-    nabla[i] <- (f(xh)-f(x))/h
-  }
-  return(nabla)
-}
-
-###}}}
-
-###{{{ whichentry
-
-##' @export
-## X k-dim. array of dimension (d1,d2,...,dk)
-## Element x at entry (x1,...,xk).
-## position (via which) := x1 + d1*(x2-1) + d1*d2*(x3-1) + ... + prod(d1,...,d[k-1])*(xk-1)
-whichentry <- function(x) {
-  which(x,arr.ind=TRUE)
-}
-##   idx <- which(x)
-##   D <- dim(x)
-##   if (length(D)<2)
-##     return(idx)
-##   K <- rev(cumprod(D))[-1]
-##   t(sapply(idx,
-##            function(ii) {
-##              entry <- c()
-##              pn <- ii
-##              for (i in 1:(length(K))) {
-##                xn <- floor((pn-1)/K[i])+1
-##                pn <- pn-(xn-1)*K[i]
-##                entry <- c(entry,xn)
-##              }; entry <- rev(c(entry,pn))
-##              return(entry)
-##            }))
-## }
-
-###}}} whichentry
-
-###{{{ revdiag
-
-##' @title Create/extract 'reverse'-diagonal matrix
-##' @aliases revdiag "revdiag<-"
-##' @param x vector
-##' @author Klaus K. Holst
-##' @export
-##' @aliases revdiag<-
-revdiag <- function(x) {
-    if (NCOL(x)==1) {
-      res <- matrix(0,length(x),length(x))
-      revdiag(res) <- x
-      return(res)
-    }
-    n <- ncol(x)
-    x[cbind(rev(seq(n)),seq(n))]
-  }
-
-"revdiag<-" <- function(x,value,...) {
-  n <- ncol(x)
-  x[cbind(rev(seq(n)),seq(n))] <- value
-  x
-}
-
-###}}} revdiag
-
-###{{{ blockdiag
-
-##' @title Combine matrices to block diagonal structure
-##' @param x Matrix
-##' @param ... Additional matrices
-##' @param pad Value outside block-diagonal
-##' @author Klaus K. Holst
-##' @export
-##' @examples
-##' A <- diag(3)+1
-##' A%+%A
-##' blockdiag(A,A,A,pad=NA)
-blockdiag <- function(x,...,pad=0) {
-  if (is.list(x)) xx <- x  else xx <- list(x,...)
-  xx <- list(x,...)
-  rows <- unlist(lapply(xx,nrow))
-  crows <- c(0,cumsum(rows))
-  cols <- unlist(lapply(xx,ncol))
-  ccols <- c(0,cumsum(cols))
-  res <- matrix(pad,nrow=sum(rows),ncol=sum(cols))
-  for (i in 1:length(xx)) {
-    idx1 <- 1:rows[i]+crows[i]; idx2 <- 1:cols[i]+ccols[i]
-    res[idx1,idx2] <- xx[[i]]
-  }
-  colnames(res) <- unlist(lapply(xx,colnames)); rownames(res) <- unlist(lapply(xx,rownames))
-  return(res)
-}
-
-###}}} blockdiag
-
-###{{{ CondMom
-
-# conditional on Compl(idx)
-CondMom <- function(mu,S,idx,X) {
-  idxY <- idx
-  
-  idxX <- setdiff(1:ncol(S),idxY)
-  SXX <- S[idxX,idxX,drop=FALSE];
-  SYY <- S[idxY,idxY,drop=FALSE]
-  SYX <- S[idxY,idxX,drop=FALSE]
-  muY <- mu[,idxY,drop=FALSE]
-  muX <- mu[,idxX,drop=FALSE]
-  iSXX <- solve(SXX)
-  if (is.matrix(mu))
-    Z <- t(X-muX)
-  else
-    Z <- apply(X,1,function(xx) xx-muX)
-  SZ  <- t(SYX%*%iSXX%*%Z)
-##  condmean <- matrix(
-  if (is.matrix(mu))
-    condmean <- SZ+muY
-  else
-    condmean <- t(apply(SZ,1,function(x) muY+x))
-##  ,ncol=ncol(SZ),nrow=nrow(SZ))
-  condvar <- SYY-SYX%*%iSXX%*%t(SYX)
-  return(list(mean=condmean,var=condvar))
-}
-
-###}}} CondMom
-
-###{{{ Depth-First/acc (accessible)
-
-DFS <- function(M,v,explored=c()) {
-  explored <- union(explored,v)
-  incident <- M[v,]
-  for (v1 in setdiff(which(incident==1),explored)) {
-    explored <- DFS(M,v1,explored)
-  }
-  return(explored)
-}
-acc <- function(M,v) {
-  if (is.character(v)) v <- which(colnames(M)==v)
-  colnames(M)[setdiff(DFS(M,v),v)]
-}
-
-###}}} Depth-First/acc (accessible)
-
-###{{{
-
-`tr` <- function(x) sum(diag(x))
-
-###}}}
-
-npar.lvm <- function(x) {
-  return(index(x)$npar+ index(x)$npar.mean)
-
-}
-
-as.numeric.list <- function(x,...) {
-  res <- list()
-  asnum <- as.numeric(x)
-  lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
-}
-
-edge2pair <- function(e) {
-  sapply(e,function(x) strsplit(x,"~"))
-}
-numberdup <- function(xx) { ## Convert to numbered list
-  dup.xx <- duplicated(xx)
-  dups <- xx[dup.xx]
-  xx.new <- numeric(length(xx))
-  count <- 0
-  for (i in 1:length(xx)) {
-    if (!dup.xx[i]) {
-      count <- count+1
-      xx.new[i] <- count
-    } else {
-      xx.new[i] <- xx.new[match(xx[i],xx)[1]]
-    }
-  }
-  return(xx.new)
-}
-
-logit <- function(p) log(p/(1-p))
-
-expit <- tigol <- function(z) 1/(1+exp(-z))

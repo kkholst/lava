@@ -41,3 +41,7 @@ merge.lvm <- function(x,y,...) {
 }
   
 
+##' @S3method %+% lvm
+`%+%.lvm` <- function(x,y) merge(x,y)
+
+

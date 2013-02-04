@@ -5,7 +5,7 @@
 ##' Models.
 ##' 
 ##' @name lava-package
-##' @import utils stats
+##' @import utils stats guts
 ##' @aliases lava-package lava
 ##' @docType package
 ##' @author Klaus K. Holst Maintainer: <k.k.holst@@biostat.ku.dk>
