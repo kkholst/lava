@@ -1,6 +1,8 @@
 \name{kill}
 \alias{kill}
 \alias{kill<-}
+\alias{rmvar}
+\alias{rmvar<-}
 \title{Remove variables from (model) object.}
 \usage{
   kill(x, ...) <- value
@@ -9,10 +11,10 @@
   \item{x}{Model object}
 
   \item{value}{Vector of variables or formula specifying
-  which nodes to remove/add (or associations between
-  nodes).}
+  which nodes to remove}
 
-  \item{\dots}{..}
+  \item{\dots}{additional arguments to lower level
+  functions}
 }
 \description{
   Generic method for removing elements of object
@@ -25,7 +27,7 @@ regression(m) <- c(y1,y2) ~ x
 ### Cancel the covariance between the residuals of y1 and y2
 cancel(m) <- y1~y2
 ### Remove y2 from the model
-kill(m) <- ~y2
+rmvar(m) <- ~y2
 }
 \author{
   Klaus K. Holst

@@ -1,11 +1,11 @@
 ##' Generic method for removing elements of object
 ##'
 ##' @title Remove variables from (model) object. 
-##' @aliases kill kill<-
+##' @aliases kill kill<- rmvar rmvar<-
 ##' @param x Model object
 ##' @param value Vector of variables or formula specifying which nodes to
-##' remove/add (or associations between nodes).
-##' @param \dots ..
+##' remove
+##' @param \dots additional arguments to lower level functions
 ##' @usage
 ##' kill(x, ...) <- value
 ##' @seealso \code{cancel}
@@ -21,17 +21,26 @@
 ##' ### Cancel the covariance between the residuals of y1 and y2
 ##' cancel(m) <- y1~y2
 ##' ### Remove y2 from the model 
-##' kill(m) <- ~y2
+##' rmvar(m) <- ~y2
 ##'
 "kill" <- function(x, ...) UseMethod("kill")
 
 ##' @export
+"rmvar" <- function(x, ...) UseMethod("rmvar")
+
+##' @export
 "kill<-" <- function(x, ..., value) UseMethod("kill<-")
+##' @export
+"rmvar<-" <- function(x, ..., value) UseMethod("rmvar<-")
+
 
 ##' @S3method kill<- lvm
 "kill<-.lvm" <- function(x, ..., value) {
   kill(x,value)
 }
+
+##' @S3method rmvar<- lvm
+"rmvar<-.lvm" <- get("kill<-.lvm")
 
 ##' @S3method kill lvm
 "kill.lvm" <- function(x, value, ...) {
@@ -55,3 +64,6 @@
   index(x) <- reindex(x)
   return(x)
 }
+
+##' @S3method rmvar<- lvm
+"rmvar.lvm" <- get("kill.lvm")

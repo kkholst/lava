@@ -4,7 +4,7 @@
 ##' @param x Model object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
-##' @aliases addvar<-
+##' @aliases addvar<- 
 ##' @export
 `addvar` <-
 function(x,...) UseMethod("addvar")
@@ -12,8 +12,9 @@ function(x,...) UseMethod("addvar")
 `addvar<-` <-
 function(x,...,value) UseMethod("addvar<-")
 
+
 ##' @S3method addvar<- lvm
-`addvar<-.lvm` <-function(x,...,value) {
+`addvar<-.lvm` <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     regression(x,...) <- value
     return(x)
@@ -101,3 +102,4 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
     index(x) <- reindex(x)
   return(x)
 }
+

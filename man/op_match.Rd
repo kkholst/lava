@@ -1,0 +1,29 @@
+\name{\%nin\%}
+\alias{\%nin\%}
+\title{Matching operator (x not in y) oposed to the \code{\%in\%}-operator (x in y)}
+\usage{
+  x \%nin\% y
+}
+\arguments{
+  \item{x}{vector}
+
+  \item{y}{vector of same type as \code{x}}
+}
+\value{
+  A logical vector.
+}
+\description{
+  Matching operator
+}
+\examples{
+1:10 \%nin\% c(1,5,10)
+}
+\author{
+  Klaus K. Holst
+}
+\seealso{
+  \code{\link{match}}
+}
+\keyword{misc}
+\keyword{utilities}
+

@@ -10,13 +10,15 @@ Keywords: latent variable model, structural equation model, likelihood inference
 Depends:
     R (>= 2.14),
     mvtnorm,
-    numDeriv,
-    guts
+    numDeriv
 Suggests:
     graph,
     Rgraphviz,
     igraph (>= 0.6),
     Matrix,
+    lme4,
+    geepack,
+    ascii,
     gof (>= 0.8),
     foreach,
     survival,
@@ -114,3 +116,14 @@ Collate:
     'addhook.R'
     'eventTime.R'
     'utils.R'
+    'zblockdiag.R'
+    'zCol.R'
+    'zcommutation.R'
+    'zconfband.R'
+    'zId.R'
+    'zplotConf.R'
+    'zrevdiag.R'
+    'ztr.R'
+    'zoperators.R'
+    'zmypal.R'
+    'ztoformula.R'
