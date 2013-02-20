@@ -205,7 +205,7 @@ Range.lvm <- function(a=0,b=1) {
 "constrain" <- function(x,...) UseMethod("constrain")
 
 ##' @S3method constrain default
-constrain.default <- function(x,fun, idx, level=0.95, estimate=FALSE, ...) {
+constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...) {
   if (estimate) {
     return(constraints(x,...))
   }
@@ -221,8 +221,13 @@ constrain.default <- function(x,fun, idx, level=0.95, estimate=FALSE, ...) {
     return(Model(x)$constrain)
   }
   require(numDeriv)
-  b <- pars(x)
-  S <- vcov(x)
+  if (is.numeric(x)) {
+     b <- x
+   } else {
+     b <- pars(x)
+   }
+  if (missing(vcov))
+    vcov <- vcov(x)
   if (!missing(idx)) {
     b <- b[idx]; S <- S[idx,idx,drop=FALSE]
   }
