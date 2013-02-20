@@ -26,6 +26,10 @@
 ##' @export
 `Model` <- function(x,...) UseMethod("Model")
 
+
+##' @S3method Model default
+`Model.default` <- function(x,...) x
+
 ##' @S3method Model lvm
 `Model.lvm` <- function(x,...) x
 

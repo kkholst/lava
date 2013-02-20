@@ -114,7 +114,8 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
 
   y0 <- intersect(Y,colnames(data))
   ys <- data[,y0,drop=FALSE]
-  ry <- t(ys)-Ey.x[y0,,drop=FALSE]  
+  ry <- t(ys)-Ey.x[y0,,drop=FALSE]
+  y <- NULL
   if (!is.null(x)) {
     if (class(x)[1]=="formula")  {
       xy <- getoutcome(x)

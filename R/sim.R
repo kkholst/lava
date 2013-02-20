@@ -228,7 +228,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
-##  res <- as.data.frame(res)
 
   vartrans <- names(attributes(x)$transform)
   xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
@@ -322,7 +321,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     E <- heavytail.sim.hook(x,E)  
 
 
-    ## Non-linear regression components 
+    ## Non-linear regression components
     xconstrain <- c()
     for (i in seq_len(length(constrain(x)))) {
       z <- constrain(x)[[i]]
@@ -339,14 +338,26 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       }
     }
     yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
-   
+
+    res <- data.frame(res)
+
+    leftovers <- c()
     while (length(simuled)<length(nn)) {
+      leftoversPrev <- leftovers
       leftovers <- setdiff(nn,simuled)
+
+      if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)")
       for (i in leftovers) {
         if (i%in%vartrans) {
           xtrans <- attributes(x)$transform[[i]]$x
           if (all(xtrans%in%simuled)) {
-            res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
+
+            yy <- with(attributes(x)$transform[[i]],fun(res[,x]))
+            if (length(yy) != nrow(res)) { ## apply row-wise
+              res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x],1,fun))
+            } else {
+              res[,i] <- yy
+            }
             simuled <- c(simuled,i)
           }
         } else {
@@ -406,6 +417,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     res <- res[,nn,drop=FALSE]
   }
 
+  
   ## for (i in seq_len(length(x$constrainY))) {
   ##   cc <- x$constrainY[[i]]
   ##   args <- attributes(x$constrainY[[i]])$args

@@ -1,7 +1,6 @@
 glm.estimate.hook <- function(x,estimator,...) {
   yy <- c()
   if (estimator=="glm") {
-    browser()
     for (y in endogenous(x)) {
       fam <- attributes(distribution(x)[[y]])$family
       if (is.null(fam)) fam <- gaussian()
@@ -125,7 +124,7 @@ score.glm <- function(x,p=coef(x),indiv=FALSE,
   ##gmu <- function(x) g(caninvlink(x))
   ##invgmu <- function(z) canlink(ginv(z))
   h <- function(z) Dcanlink(ginv(z))*dginv(z)                                
-  if(any(is.na(p))) stop("Over-parametrized model")
+  if(any(is.na(p))) stop("Over-parameterized model")
   Xbeta <- X%*%p
   if (!is.null(offset)) Xbeta <- Xbeta+offset
   pi <- ginv(Xbeta)  
@@ -176,6 +175,9 @@ hessian.glm <- function(x,p=coef(x),...) {
   jacobian(function(theta) score.glm(x,p=theta,...),p)
 }
 
+##' @S3method information glm
+information.glm <- function(x,...) hessian.glm(x,...)
+
 robustvar <- function(x,id=NULL,...) {
   U <- score(x,indiv=TRUE)
   II <- unique(id)
@@ -189,8 +191,6 @@ robustvar <- function(x,id=NULL,...) {
     }
     J <- K/(K-1)*J
   }
-  ##I <- -hessian(x)
-  ##iI <- solve(I)
   iI <- vcov(x)
   V <- iI%*%J%*%iI
   return(V)  

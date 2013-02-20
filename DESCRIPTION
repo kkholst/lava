@@ -18,7 +18,6 @@ Suggests:
     Matrix,
     lme4,
     geepack,
-    ascii,
     gof (>= 0.8),
     foreach,
     survival,
@@ -127,3 +126,5 @@ Collate:
     'zoperators.R'
     'zmypal.R'
     'ztoformula.R'
+    'zdevcoords.R'
+    'curereg.R'

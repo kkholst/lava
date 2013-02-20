@@ -177,11 +177,11 @@ Range.lvm <- function(a=0,b=1) {
 ##' 
 ##' \method{constrain}{default}(x,par,args,...) <- value
 ##' 
-##'  \method{constrain}{multigroup}(x,par,k=1,...) <- value
+##' \method{constrain}{multigroup}(x,par,k=1,...) <- value
 ##'
 ##' constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
 ##'                         p=pars.default(object),k,idx,...)
-##'
+##' 
 ##' @param x \code{lvm}-object
 ##' @param par Name of new parameter. Alternatively a formula with lhs
 ##' specifying the new parameter and the rhs defining the names of the
@@ -205,19 +205,35 @@ Range.lvm <- function(a=0,b=1) {
 "constrain" <- function(x,...) UseMethod("constrain")
 
 ##' @S3method constrain default
-constrain.default <- function(x,estimate=FALSE,...) {
+constrain.default <- function(x,fun, idx, level=0.95, estimate=FALSE, ...) {
   if (estimate) {
     return(constraints(x,...))
   }
-  if (class(Model(x))[1]=="multigroup" ) {
-    res <- list()
-    for (m in Model(x)$lvm) {
-      if (length(constrain(m))>0)
-        res <- c(res, constrain(m))
-    }
-    return(res)
-  }  
-  return(Model(x)$constrain)
+  if (missing(fun)) {
+    if (class(Model(x))[1]=="multigroup" ) {
+      res <- list()
+      for (m in Model(x)$lvm) {
+        if (length(constrain(m))>0)
+          res <- c(res, constrain(m))
+      }
+      return(res)
+    }  
+    return(Model(x)$constrain)
+  }
+  require(numDeriv)
+  b <- pars(x)
+  S <- vcov(x)
+  if (!missing(idx)) {
+    b <- b[idx]; S <- S[idx,idx,drop=FALSE]
+  }
+  fb <- fun(b)
+  pl <- 1-(1-level)/2
+  D <- rbind(grad(fun,b))
+  se <- (D%*%S%*%t(D))^0.5
+  res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*se)
+  pstr <- paste(format(c(round(1000-1000*pl),round(pl*1000))/10),"%",sep="")
+  names(res) <- c("Estimate","Std.Err",pstr)
+  res
 }
 
 ##' @S3method constrain<- multigroupfit

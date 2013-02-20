@@ -5,7 +5,9 @@
     addhook("cluster.post.hook","post.hooks")
     
     desc <- packageDescription(pkg)
-    packageStartupMessage("\nLoading '", desc$Package, "' package...\n",
-                          "Version    : ", desc$Version, "\n",
-                          "Overview: help(package=", desc$Package, ")\n");
+    ## packageStartupMessage("Loading '", desc$Package, "' package...\n",
+    ##                       "\tVersion: ", desc$Version, "\n",
+    ##                       "\tOverview: help(package=", desc$Package, ")");
+    packageStartupMessage("Loading '", desc$Package, "' version ",desc$Version,".");
+    
   }
