@@ -226,8 +226,11 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
    } else {
      b <- pars(x)
    }
-  if (missing(vcov))
-    vcov <- vcov(x)
+  if (missing(vcov)) {
+    S <- stats::vcov(x)
+  } else {
+    S <- vcov
+  }
   if (!missing(idx)) {
     b <- b[idx]; S <- S[idx,idx,drop=FALSE]
   }
