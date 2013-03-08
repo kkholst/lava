@@ -96,22 +96,32 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 
 
 ##' @S3method score glm
-score.glm <- function(x,p=coef(x),indiv=FALSE,
+score.glm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,link,dispersion,offset=NULL,...) {
-  if (!missing(x)) {
+
+
+  response <- all.vars(formula(x))[1]
+  if (inherits(x,"glm")) {
     link <- family(x)
     a.phi <- 1
     if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
       a.phi <- summary(x)$dispersion
     }
-    response <- all.vars(formula(x))[1]
-    X <- model.matrix(x)
-    y <- model.frame(x)[,1]
-    n <- nrow(X)
+    if (missing(data)) {
+      X <- model.matrix(x)
+      y <- model.frame(x)[,1]      
+    } else {
+      X <- model.matrix(formula(x),data=data)
+      y <- model.frame(formula(x),data=data)[,1]
+    }    
     offset <- x$offset
   } else {
-    
+    if (missing(link)) stop("Family needed")
+    if (missing(data)) stop("data needed")
+    X <- model.matrix(formula(x),data=data)
+    y <- model.frame(formula(x),data=data)[,1]
   }
+  n <- nrow(X)  
   g <- link$linkfun
   ginv <- link$linkinv
   dginv <- link$mu.eta ## D[linkinv]

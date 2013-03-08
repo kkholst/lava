@@ -7,16 +7,15 @@
 \alias{covfix.lvm}
 \alias{covfix<-}
 \alias{covfix<-.lvm}
-\title{Add covariance structure to Latent Variable Model}
+\title{##' Add covariance structure to Latent Variable Model}
 \usage{
   \method{covariance}{lvm}(object, var1=NULL, var2=NULL,
-    constrain=FALSE, ...) <- value
+    constrain=FALSE, pairwise=FALSE,...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object}
 
-  \item{var1}{Vector of variables names between (or
-  formula)}
+  \item{var1}{Vector of variables names (or formula)}
 
   \item{var2}{Vector of variables names (or formula)
   defining pairwise covariance between \code{var1} and
@@ -24,6 +23,10 @@
 
   \item{constrain}{Define non-linear parameter constraints
   to ensure positive definite structure}
+
+  \item{pairwise}{If TRUE and \code{var2} is omitted then
+  pairwise correlation is added between all variables in
+  \code{var1}}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

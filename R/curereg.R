@@ -1,15 +1,19 @@
-##' Dose response calculation
+##' Dose response calculation for binomial regression models
 ##'
-##' @title Dose response...
-##' @param model 
-##' @param intercept 
-##' @param slope 
-##' @param prob 
-##' @param x 
-##' @param level 
-##' @param ci.level 
-##' @param EB 
+##' @title Dose response calculation for binomial regression models
+##' @param model Model object
+##' @param intercept Index of intercept parameters
+##' @param slope Index of intercept parameters
+##' @param prob Index of mixture parameters (only relevant for
+##' \code{curereg} models)
+##' @param x Optional weights
+##' length(x)=length(intercept)+length(slope)+length(prob)
+##' @param level Probability at which level to calculate dose
+##' @param ci.level Level of confidence limits
+##' @param EB Optional ratio of treatment effect and adverse effects
+##' used to find optimal dose (regret-function argument)
 ##' @author Klaus K. Holst
+##' @export
 PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
                EB=NULL) { 
   if (length(intercept)<length(coef(model))) {
@@ -34,19 +38,19 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
   }
   if (is.null(prob)) B.prob <- NULL
   B <- rbind(B.intercept,B.slope,B.prob)
-  S <- B%*%vcov(x)%*%t(B)
-  b <- as.vector(B%*%coef(x))
+  S <- B%*%vcov(model)%*%t(B)
+  b <- as.vector(B%*%coef(model))
 
   f <- function(b) {
     mylevel <- level
     if (!is.null(EB)) {      
       if (is.null(prob)) stop("Index of mixture-probability parameters needed")
-      pi0 <- family(x)$linkinv(b[3])
+      pi0 <- family(model)$linkinv(b[3])
       mylevel <- 1-(1-pi0)/pi0*(EB)/(1-EB)
     }
-    return(structure((family(x)$linkfun(mylevel)-b[1])/b[2],level=mylevel))
-  }  
-##  xx <- (family(x)$linkfun(level)-b[1])/b[2]
+    return(structure((family(model)$linkfun(mylevel)-b[1])/b[2],level=mylevel))
+  }
+
   xx <- f(b)
   Dxx <- -1/b[2]*rbind(1,xx)
   if (!is.null(EB))
@@ -65,14 +69,15 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
 ##' 
 ##' @title Regression model for binomial data with unkown group of immortals
 ##' @param formula Formula specifying 
-##' @param cureformula 
-##' @param data 
-##' @param fam 
-##' @param offset 
-##' @param start 
-##' @param var 
-##' @param ... 
+##' @param cureformula Formula for model of disease prevalence
+##' @param data data frame
+##' @param fam Distribution family (see the help page \code{family})
+##' @param offset Optional offset
+##' @param start Optional starting values
+##' @param var Type of variance (robust, expected, hessian, outer)
+##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
+##' @export
 curereg <- function(formula,cureformula=~1,data,fam=binomial(),offset=NULL,start,var="robust",...) {
   md <- model.frame(formula,data)
   y <- md[,1]
@@ -151,6 +156,8 @@ summary.curereg <- function(object,level=0.95,...) {
   pval <- 2*(1-pnorm(abs(cc[,1]/cc[,2])))
   cc <- cbind(cc[,1],cc[,1]-qnorm(1-alpha/2)*cc[,2],cc[,1]+qnorm(1-alpha/2)*cc[,2],pval)
   colnames(cc) <- c("Estimate",alpha.str,"P-value")
+
+  
   return(structure(list(coef=cc),class="summary.curereg"))
 }
 

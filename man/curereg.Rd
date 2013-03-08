@@ -9,19 +9,22 @@
 \arguments{
   \item{formula}{Formula specifying}
 
-  \item{cureformula}{}
+  \item{cureformula}{Formula for model of disease
+  prevalence}
 
-  \item{data}{}
+  \item{data}{data frame}
 
-  \item{fam}{}
+  \item{fam}{Distribution family (see the help page
+  \code{family})}
 
-  \item{offset}{}
+  \item{offset}{Optional offset}
 
-  \item{start}{}
+  \item{start}{Optional starting values}
 
-  \item{var}{}
+  \item{var}{Type of variance (robust, expected, hessian,
+  outer)}
 
-  \item{...}{}
+  \item{...}{Additional arguments to lower level functions}
 }
 \description{
   Regression model for binomial data with unkown group of

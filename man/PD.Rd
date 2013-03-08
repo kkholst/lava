@@ -1,29 +1,34 @@
 \name{PD}
 \alias{PD}
-\title{Dose response...}
+\title{Dose response calculation for binomial regression models}
 \usage{
   PD(model, intercept = 1, slope = 2, prob = NULL, x,
     level = 0.5, ci.level = 0.95, EB = NULL)
 }
 \arguments{
-  \item{model}{}
+  \item{model}{Model object}
 
-  \item{intercept}{}
+  \item{intercept}{Index of intercept parameters}
 
-  \item{slope}{}
+  \item{slope}{Index of intercept parameters}
 
-  \item{prob}{}
+  \item{prob}{Index of mixture parameters (only relevant
+  for \code{curereg} models)}
 
-  \item{x}{}
+  \item{x}{Optional weights
+  length(x)=length(intercept)+length(slope)+length(prob)}
 
-  \item{level}{}
+  \item{level}{Probability at which level to calculate
+  dose}
 
-  \item{ci.level}{}
+  \item{ci.level}{Level of confidence limits}
 
-  \item{EB}{}
+  \item{EB}{Optional ratio of treatment effect and adverse
+  effects used to find optimal dose (regret-function
+  argument)}
 }
 \description{
-  Dose response calculation
+  Dose response calculation for binomial regression models
 }
 \author{
   Klaus K. Holst

@@ -75,8 +75,13 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
                      partse=FALSE,
                      labels,
                      ...) {
-  
-  intercept <- coef(model)["(Intercept)"]
+
+
+  if ("mer"%in%class(model)) {
+    intercept <- lme4::fixef(model)["(Intercept)"]
+  } else {
+    intercept <- coef(model)["(Intercept)"]
+  }
   if (is.na(intercept) & !is.null(var2)) {
     model <- update(model,.~.+1)
     warning("Refitted model with an intercept term")
@@ -106,10 +111,14 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
   if (missing(labels)) labels <- thelevels
   
   k <- ifelse(is.null(var2),1,length(thelevels))
-  curpal <- palette()
+  ##  curpal <- palette()
   if (is.null(col)) { ## assign colors
-    col <- seq(k)
-    mypal()
+    ##    col <- seq(k)
+    mycol <- c("black","darkblue","darkred","goldenrod","mediumpurple",
+             "seagreen","aquamarine3","violetred1","salmon1",
+               "lightgoldenrod1","darkorange2","firebrick1","violetred1", "gold")
+    col <- mycol
+    ##    palette(mycol)
   }
   
   if (missing(xlim)) {
@@ -121,7 +130,6 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
   dots$xlim <- xlim
   x <- seq(xlim[1], xlim[2], length.out=npoints)  
   xx <- c()
- 
 
   newdata <- data.frame(id=1:npoints)
   partdata <- curdata[,-1,drop=FALSE]
@@ -162,7 +170,7 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
   newdata[,response] <- 0
   Y <- model.frame(model)[,1]
   if(class(Y)=="Surv") Y <- Y[,1] 
-  
+
   if (!any(c("lm","glm","survreg")%in%class(model)[1])) {
     names(newdata)[1] <- response
     if ("mer"%in%class(model)) {
@@ -346,6 +354,6 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
       legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white",cex=cex)
   }
 
-  palette(curpal)  
+  ##  palette(curpal)  
   invisible(list(x=xx, y=pr, predict=ci.all))
 }
