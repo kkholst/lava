@@ -71,14 +71,14 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
 ##' @param formula Formula specifying 
 ##' @param cureformula Formula for model of disease prevalence
 ##' @param data data frame
-##' @param fam Distribution family (see the help page \code{family})
+##' @param family Distribution family (see the help page \code{family})
 ##' @param offset Optional offset
 ##' @param start Optional starting values
 ##' @param var Type of variance (robust, expected, hessian, outer)
 ##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
-curereg <- function(formula,cureformula=~1,data,fam=binomial(),offset=NULL,start,var="robust",...) {
+curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,start,var="robust",...) {
   md <- model.frame(formula,data)
   y <- md[,1]
   X <- model.matrix(formula,data)
@@ -88,7 +88,7 @@ curereg <- function(formula,cureformula=~1,data,fam=binomial(),offset=NULL,start
   op <- nlminb(start,function(x)
                -curereg_logL(x[beta.idx],x[gamma.idx],y,X,Z),
                grad=function(x)
-               -curereg_score(x[beta.idx],x[gamma.idx],y,X,Z))
+               -curereg_score(x[beta.idx],x[gamma.idx],y,X,Z),...)
   beta <- op$par[beta.idx]; gamma <- op$par[gamma.idx]
   cc <- c(beta,gamma)
   names(cc) <- c(colnames(X),paste("pr:",colnames(Z),sep=""))
@@ -96,7 +96,7 @@ curereg <- function(formula,cureformula=~1,data,fam=binomial(),offset=NULL,start
   V <- lava:::Inverse(I); colnames(V) <- rownames(V) <- names(cc)
   res <- list(coef=cc,opt=op,beta=beta,gamma=gamma,
               beta.idx=beta.idx,gamma.idx=gamma.idx,
-              I=I,formula=formula,cureformula=cureformula, y=y, X=X, Z=Z, offset=offset, fam=fam, vcov=V, model.frame=md)
+              I=I,formula=formula,cureformula=cureformula, y=y, X=X, Z=Z, offset=offset, vcov=V, model.frame=md,family=family)
   class(res) <- "curereg"
   res$fitted.values <- predict(res)
   return(res)
@@ -107,7 +107,7 @@ vcov.curereg <- function(object,...) object$vcov
 ##' @S3method coef curereg
 coef.curereg <- function(object,...) object$coef
 ##' @S3method family curereg
-family.curereg <- function(object,...) object$fam
+family.curereg <- function(object,...) object$family
 ##' @S3method predict curereg
 predict.curereg <- function(object,beta=object$beta,gamma=object$gamma,newdata,link=TRUE,subdist=FALSE,...) {
   newf <- as.formula(paste("~",as.character(object$formula)[3]))
@@ -121,9 +121,9 @@ predict.curereg <- function(object,beta=object$beta,gamma=object$gamma,newdata,l
     gamma <- beta[object$gamma.idx]
     beta <- beta[object$beta.idx]
   }    
-  g <- object$fam$linkfun
-  ginv <- object$fam$linkinv
-  dginv <- object$fam$mu.eta ## D[linkinv]  
+  g <- object$family$linkfun
+  ginv <- object$family$linkinv
+  dginv <- object$family$mu.eta ## D[linkinv]  
   Xbeta <- as.vector(X%*%beta)
   Zgamma <- as.vector(Z%*%gamma)
   Pred <- ginv(Xbeta)
@@ -149,26 +149,50 @@ residuals.curereg <- function(object,newdata,...) {
 }
 
 ##' @S3method summary curereg
-summary.curereg <- function(object,level=0.95,...) {
+summary.curereg <- function(object,level=0.95,pr.contrast,...) {
   alpha <- 1-level
   alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
   cc <- cbind(coef(object),diag(vcov(object))^0.5)
   pval <- 2*(1-pnorm(abs(cc[,1]/cc[,2])))
-  cc <- cbind(cc[,1],cc[,1]-qnorm(1-alpha/2)*cc[,2],cc[,1]+qnorm(1-alpha/2)*cc[,2],pval)
+  qq <- qnorm(1-alpha/2)
+  cc <- cbind(cc[,1],cc[,1]-qq*cc[,2],cc[,1]+qq*cc[,2],pval)  
   colnames(cc) <- c("Estimate",alpha.str,"P-value")
-
-  
-  return(structure(list(coef=cc),class="summary.curereg"))
+  pr.names <- unlist(lapply(rownames(cc)[object$gamma.idx],
+                            function(x) substr(x,4,nchar(x))))
+  if (missing(pr.contrast)) {
+    withIntercept <- pr.names[1]=="(Intercept)"
+    pr.contrast <- diag(length(object$gamma.idx))
+    if (withIntercept) pr.contrast[,1] <- 1
+  }
+  pr.cc <- cbind(pr.contrast%*%cc[object$gamma.idx,1],
+                 diag((pr.contrast)%*%vcov(object)[object$gamma.idx,object$gamma.idx]%*%t(pr.contrast))^0.5)
+  pr.cc <- object$family$linkinv(cbind(pr.cc[,1],pr.cc[,1]-qq*pr.cc[,2],pr.cc[,1]+qq*pr.cc[,2]))
+  colnames(pr.cc) <- colnames(cc)[1:3]
+  ## B <- cbind(0,cbind(0,pr.contrast))
+  ## print(compare(object,contrast=B))  
+  pr.rnames <- c()
+  for (i in seq_len(nrow(pr.contrast))) {
+    Bidx <- which(pr.contrast[i,]!=0)
+    Bval <- pr.contrast[i,Bidx]; Bval[Bval==1] <- ""
+    pr.rnames <- c(pr.rnames,
+                   paste(paste(Bval,paste("{",pr.names[Bidx],"}",sep=""),collapse=" + ",sep=""),sep=""))
+  }
+  rownames(pr.cc) <- pr.rnames
+    
+  return(structure(list(coef=cc, pr.cc=pr.cc),class="summary.curereg"))
 }
+
 
 ##' @S3method print summary.curereg
 print.summary.curereg <- function(x,...) {
-  printCoefmat(x$coef,...)
+  print(x$coef,...)
+  cat("\nPrevalence probabilities:\n")
+  print(x$pr.cc,...)
 }
 
 ##' @S3method print curereg
 print.curereg <- function(x,...) {
- print(summary(x,...))
+  print(summary(x,...))
 }
 
 ##' @S3method logLik curereg
@@ -177,14 +201,14 @@ logLik.curereg <- function(object,beta=object$beta,gamma=object$gamma,data,offse
     y <- model.frame(object$formula,data)[,1]
     X <- model.matrix(object$formula,data)
     Z <- model.matrix(object$cureformula,data)
-    return(curereg_logL(beta,gamma,y,X,Z,offset,object$fam,indiv=indiv,...))
+    return(curereg_logL(beta,gamma,y,X,Z,offset,object$family,indiv=indiv,...))
   }    
-  curereg_logL(beta,gamma,object$y,object$X,object$Z,offset,object$fam,indiv=indiv,...)
+  curereg_logL(beta,gamma,object$y,object$X,object$Z,offset,object$family,indiv=indiv,...)
 }
-curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,fam=binomial(),indiv=FALSE,...) {
-  g <- fam$linkfun
-  ginv <- fam$linkinv
-  dginv <- fam$mu.eta ## D[linkinv]
+curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FALSE,...) {
+  g <- family$linkfun
+  ginv <- family$linkinv
+  dginv <- family$mu.eta ## D[linkinv]
   n <- nrow(X)  
   Xbeta <- as.vector(X%*%beta)
   Zgamma <- as.vector(Z%*%gamma)
@@ -203,18 +227,18 @@ score.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,indiv
     y <- model.frame(object$formula,data)[,1]
     X <- model.matrix(object$formula,data)
     Z <- model.matrix(object$cureformula,data)
-    s <- curereg_score(beta,gamma,y,X,Z,offset,x$fam,indiv=indiv,...)
+    s <- curereg_score(beta,gamma,y,X,Z,offset,x$family,indiv=indiv,...)
   } else {    
-    s <- curereg_score(beta,gamma,x$y,x$X,x$Z,offset,x$fam,indiv=indiv,...)
+    s <- curereg_score(beta,gamma,x$y,x$X,x$Z,offset,x$family,indiv=indiv,...)
   }
   if (indiv) colnames(s) <- names(x$coef) else names(s) <- names(x$coef)
   return(s)
 }
 
-curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,fam=binomial(),indiv=FALSE,...) {
-  g <- fam$linkfun
-  ginv <- fam$linkinv
-  dginv <- fam$mu.eta ## D[linkinv]
+curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FALSE,...) {
+  g <- family$linkfun
+  ginv <- family$linkinv
+  dginv <- family$mu.eta ## D[linkinv]
   n <- nrow(X)  
   Xbeta <- as.vector(X%*%beta)
   Zgamma <- as.vector(Z%*%gamma)
@@ -237,27 +261,27 @@ information.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset
     y <- model.frame(object$formula,data)[,1]
     X <- model.matrix(object$formula,data)
     Z <- model.matrix(object$cureformula,data)
-    I <- curereg_information(beta,gamma,y,X,Z,offset,x$fam,type=type,...)
+    I <- curereg_information(beta,gamma,y,X,Z,offset,x$family,type=type,...)
   } else {
-    I <- curereg_information(beta,gamma,x$y,x$X,x$Z,offset,x$fam,type=type,...)
+    I <- curereg_information(beta,gamma,x$y,x$X,x$Z,offset,x$family,type=type,...)
   }
   colnames(I) <- rownames(I) <- names(x$coef)
   return(I)
 }
 
-curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,fam=binomial(),type=c("outer","obs","robust"),...) {
+curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),type=c("outer","obs","robust"),...) {
   if (tolower(type[1])%in%c("obs")) {
     beta.idx <- seq(ncol(X)); gamma.idx <- seq(ncol(Z))+ncol(X)
     I <- -jacobian(function(x)
-                   curereg_score(x[beta.idx],x[gamma.idx],y,X,Z,offset,fam,...),c(beta,gamma))
+                   curereg_score(x[beta.idx],x[gamma.idx],y,X,Z,offset,family,...),c(beta,gamma))
     return(I)
   }
   if (tolower(type[1])%in%c("robust","sandwich")) {
-    I <- curereg_information(beta,gamma,y,X,Z,offset,fam,type="obs")
-    J <- curereg_information(beta,gamma,y,X,Z,offset,fam,type="outer")
-    return(J%*%solve(I)%*%J)
+    I <- curereg_information(beta,gamma,y,X,Z,offset,family,type="obs")
+    J <- curereg_information(beta,gamma,y,X,Z,offset,family,type="outer")
+    return(J%*%lava:::Inverse(I)%*%J)
   }
-  S <- curereg_score(beta,gamma,y,X,Z,offset,fam,indiv=TRUE,...)
+  S <- curereg_score(beta,gamma,y,X,Z,offset,family,indiv=TRUE,...)
   crossprod(S)
 }
 

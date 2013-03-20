@@ -53,7 +53,7 @@ eventTime <- function(object,formula,eventName,...){
   latentTimes <- latentTimes[-1]
   NT <- length(latentTimes)
   events <- vector(NT,mode="character")
-  for (lt in 1:NT){
+  for (lt in seq_len(NT)){
     tmp <- strsplit(latentTimes[lt],"=")[[1]]
     stopifnot(length(tmp) %in% c(1,2))
     if (length(tmp)==1){
@@ -65,12 +65,21 @@ eventTime <- function(object,formula,eventName,...){
       latentTimes[lt] <- tmp[1]
     }
   }
+  events <- gsub(" ","",events)
+  suppressWarnings(eventnum <- as.numeric(events)) 
+  if (all(!is.na(eventnum))) {
+    events <- eventnum
+  } else {
+    events <- gsub("\"","",events)
+  }
+
   addvar(object) <- timeName
   ## m <- regression(m,formula(paste("~",timeName,sep="")))
   if (missing(eventName)) eventName <- "Event"
   eventTime <- list(names=c(timeName,eventName),
                     latentTimes=gsub(" ","",latentTimes),
-                    events=gsub(" ","",events))
+                    events=events
+                    )
   if (is.null(object$attributes$eventHistory)) {
     object$attributes$eventHistory <- list(eventTime)
     names(object$attributes$eventHistory) <- timeName

@@ -125,6 +125,12 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
   ### Likelihood ratio test
   objects <- list(object,...)
   if (length(objects)<2) {
+    if (!("lvmfit"%in%class(object))) {
+      cc <- rbind(logLik(object),AIC(object))
+      rownames(cc) <- c("logLik","AIC")
+      colnames(cc) <-  ""
+      return(cc)
+    }
     L0 <- logLik(object)
     L1 <- satmodel(object,logLik=TRUE)
     df <- attributes(L1)$df-attributes(L0)$df; names(df) <- "df"
