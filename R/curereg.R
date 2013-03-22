@@ -65,6 +65,39 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
   structure(res,b=b)
 }
 
+
+TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=1,slope=2,alpha=0.95,...) {
+  g <- function(p=coef(object)) {
+    pp <- predict(object,link=FALSE,p=p,newdata=data)
+    X <- attributes(pp)$grad$beta
+    Z <- attributes(pp)$grad$gamma
+    db1 <- db2 <- matrix(0,nrow(X),ncol(X))
+    db1[,intercept] <- X[,intercept]
+    db2[,slope[1]] <- 1; db2[,slope[-1]] <- X[,slope[-1]]
+    b1 <- as.vector(db1%*%p[object$beta.idx])
+    b2 <- as.vector(db2%*%p[object$beta.idx])
+    ginv <-  object$family$linkinv
+    dginv <- object$family$mu.eta ## D[linkinv]
+    g <- object$family$linkfun
+    dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
+    pi0 <- ginv(pp[,2])
+    A2 <- dginv(pp[,2])
+    dpi0 <- rbind(apply(Z,2,function(z) A2*z))
+    h <- function(pi0) (alpha+pi0-1)/(alpha*pi0)
+    dh <- function(pi0) (1-alpha)/(alpha*pi0^2)
+    lev <- h(pi0)    
+    eta <- g(lev)
+    detad2 <- rbind(apply(dpi0,2,function(z) dg(lev)*dh(pi0)*z))
+    val <- (eta-b1)/b2
+    dvald1 <- -(db1+db2*val)/b2
+    return(structure(val,grad=cbind(dvald1,detad2/b2),varnames="theta"))
+  }
+  return(g())
+  ##  structure(g(coef(object)),grad=grad(g,coef(object)))
+}
+
+
+
 ##' Regression model for binomial data with unkown group of immortals
 ##' 
 ##' @title Regression model for binomial data with unkown group of immortals
@@ -79,7 +112,7 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
 ##' @author Klaus K. Holst
 ##' @export
 curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,start,var="robust",...) {
-  md <- model.frame(formula,data)
+  md <- cbind(model.frame(formula,data),model.frame(cureformula,data))
   y <- md[,1]
   X <- model.matrix(formula,data)
   Z <- model.matrix(cureformula,data)
@@ -109,7 +142,8 @@ coef.curereg <- function(object,...) object$coef
 ##' @S3method family curereg
 family.curereg <- function(object,...) object$family
 ##' @S3method predict curereg
-predict.curereg <- function(object,beta=object$beta,gamma=object$gamma,newdata,link=TRUE,subdist=FALSE,...) {
+
+predict.curereg <- function(object,p=coef(object),gamma,newdata,link=TRUE,subdist=FALSE,...) {
   newf <- as.formula(paste("~",as.character(object$formula)[3]))
   if (missing(newdata)) {
     X <- object$X; Z <- object$Z
@@ -117,24 +151,35 @@ predict.curereg <- function(object,beta=object$beta,gamma=object$gamma,newdata,l
     X <- model.matrix(newf,newdata)
     Z <- model.matrix(object$cureformula,newdata)
   }
-  if (length(beta)==length(object$beta)+length(object$gamma)) {
-    gamma <- beta[object$gamma.idx]
-    beta <- beta[object$beta.idx]
+  if (length(p)==length(object$beta)+length(object$gamma)) {
+    gamma <- p[object$gamma.idx]
+    p <- p[object$beta.idx]
   }    
   g <- object$family$linkfun
   ginv <- object$family$linkinv
   dginv <- object$family$mu.eta ## D[linkinv]  
-  Xbeta <- as.vector(X%*%beta)
+  Xbeta <- as.vector(X%*%p)
   Zgamma <- as.vector(Z%*%gamma)
+  if (!link) {
+    res <- cbind(beta=Xbeta,gamma=Zgamma)
+    return(structure(res,grad=list(beta=X,gamma=Z)))
+  }
   Pred <- ginv(Xbeta)
-  if (subdist) return(Pred)
   p0 <- ginv(Zgamma)
+  A1 <- dginv(Xbeta)
+  A2 <- dginv(Zgamma)
+  if (subdist) {
+    dgamma <- apply(Z,2,function(z) A2*z)
+    dbeta <- apply(X,2,function(x) A1*x)  
+    res <- cbind(subdist=Pred,pr=p0)
+    return(structure(res,grad=list(subdist=dbeta,pr=dgamma)))
+  }  
   Pred <- p0*Pred
-  A1 <- p0*dginv(Xbeta)
-  A2 <- ginv(Xbeta)*dginv(Zgamma)  
+  A1 <- p0*A1
+  A2 <- Pred*dginv(Zgamma)
   dgamma <- apply(Z,2,function(z) A2*z)
   dbeta <- apply(X,2,function(x) A1*x)  
-  attributes(Pred)$grad <- cbind(dbeta,dgamma)
+  attributes(Pred)$grad <- cbind(dbeta,p0*dgamma)
   return(Pred)  
 }
 
@@ -270,7 +315,7 @@ information.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset
 }
 
 curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),type=c("outer","obs","robust"),...) {
-  if (tolower(type[1])%in%c("obs")) {
+  if (tolower(type[1])%in%c("obs","hessian")) {
     beta.idx <- seq(ncol(X)); gamma.idx <- seq(ncol(Z))+ncol(X)
     I <- -jacobian(function(x)
                    curereg_score(x[beta.idx],x[gamma.idx],y,X,Z,offset,family,...),c(beta,gamma))

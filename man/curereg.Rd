@@ -3,8 +3,8 @@
 \title{Regression model for binomial data with unkown group of immortals}
 \usage{
   curereg(formula, cureformula = ~1, data,
-    fam = binomial(), offset = NULL, start, var = "robust",
-    ...)
+    family = binomial(), offset = NULL, start,
+    var = "robust", ...)
 }
 \arguments{
   \item{formula}{Formula specifying}
@@ -14,7 +14,7 @@
 
   \item{data}{data frame}
 
-  \item{fam}{Distribution family (see the help page
+  \item{family}{Distribution family (see the help page
   \code{family})}
 
   \item{offset}{Optional offset}

@@ -128,3 +128,4 @@ Collate:
     'ztoformula.R'
     'zdevcoords.R'
     'curereg.R'
+    'estimate.default.R'
