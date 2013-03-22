@@ -735,12 +735,3 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
 
 ###}}} estimate.formula
 
-###{{{ estimate.lm
-
-##' @S3method estimate lm
-estimate.lm <- function(x,data=model.frame(x),...) {
-  estimate(formula(x),data,...)
-}
-
-###}}} estimate.lm
-
