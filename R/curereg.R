@@ -67,7 +67,6 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
 
 
 TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=1,slope=2,alpha=0.95,...) {
-  g <- function(p=coef(object)) {
     pp <- predict(object,link=FALSE,p=p,newdata=data)
     X <- attributes(pp)$grad$beta
     Z <- attributes(pp)$grad$gamma
@@ -91,8 +90,6 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
     val <- (eta-b1)/b2
     dvald1 <- -(db1+db2*val)/b2
     return(structure(val,grad=cbind(dvald1,detad2/b2),varnames="theta"))
-  }
-  return(g())
   ##  structure(g(coef(object)),grad=grad(g,coef(object)))
 }
 

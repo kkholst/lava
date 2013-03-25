@@ -193,11 +193,18 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (!missing(X)) {
     n <- nrow(X)
   }
+  xx <- exogenous(x)
+  if (!is.null(p)) {
+    i1 <- na.omit(c(match(names(p),xx),
+                    match(names(p),paste(xx,"<->",xx,sep=""))))
+    if (length(i1)>0) covariance(x) <- xx[i1]
+  }
   index(x) <- reindex(x)
   nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
-  xf <- intersect(unique(parlabels(x)),exogenous(x))
+  xf <- intersect(unique(parlabels(x)),xx)
   xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
+
 
   if (length(p)!=(index(x)$npar+index(x)$npar.mean) | !is.null(names(p))) {
     nullp <- is.null(p)
@@ -223,7 +230,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
-    
+  
   E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
   
   ## Simulate exogenous variables (covariates)

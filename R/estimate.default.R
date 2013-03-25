@@ -121,9 +121,9 @@ estimate.default <- function(x,fun,data=model.frame(x),id1,id2,vcov=TRUE,level=0
       }
       if (iid) return(list(iid1,iid2))
       pp <- as.vector(colMeans(cbind(val)))
-      iid1 <- t(rbind(apply(cbind(val),1,function(x)-pp)))
+      iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))
       if (N!=n) {
-        if (missing(id)) {          
+        if (missing(id2)) {          
           message("Assuming independence between model iid decomposition and new data frame")
           V <- crossprod(iid1/n) + crossprod(iid2/n)
         } else {
@@ -155,6 +155,11 @@ estimate.default <- function(x,fun,data=model.frame(x),id1,id2,vcov=TRUE,level=0
   }
   return(res)  
 }
+
+estimate.glm <- function(x,...) {
+  estimate.default(x,...)
+}
+
 
 ##' @S3method print estimate
 print.estimate <- function(x,...) {
