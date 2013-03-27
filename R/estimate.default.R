@@ -130,7 +130,7 @@ estimate.default <- function(x,fun,data=model.frame(x),id1,id2,vcov=TRUE,level=0
           iid1[id1,,drop=FALSE]+iid2[id2,,drop=FALSE]
         }
       } else {
-        ##if (!missing(id))
+        ##if (!missing(id1))
         V <- crossprod((iid1+iid2)/n)
       }
     }
