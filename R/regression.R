@@ -119,7 +119,6 @@
       
     if (class(value)[1]=="formula") {
       yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
-      ##lhs <- getoutcome(value)
       if (length(yx)==1) {        
         lhs <- NULL; xidx <- 1
       } else {
@@ -128,15 +127,12 @@
       X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
 
       if (!is.null(lhs) && nchar(lhs[[1]])>2 && substr(lhs[[1]],1,2)=="v(") {
-      ## vspec <- attributes(terms(value,specials="v"))$specials$v
-      ## if (!is.null(vspec) && vspec==1) {
         v <- update(value,paste(decomp.specials(lhs),"~."))
         covariance(object,...) <- v
         return(object)
       }        
 
       curvar <- index(object)$var
-      ##      X <- attributes(terms(value))$term.labels
       res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
       xx <- unlist(lapply(res, function(x) x[1]))      
 
@@ -171,7 +167,6 @@
           }
           val <- ifelse(xpar[1]=="NA",NA,xpar[1])
           valn <- suppressWarnings(as.numeric(val))
-          ##          browser()
           intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
           notexo <- c(notexo,xs[i])
         } else { exo <- c(exo,xs[i]) }
@@ -205,22 +200,15 @@
         }
         for (j in seq_len(length(xs))) {        
           if (length(res[[j]])>1) {
-            ##            regfix(object, to=y, from=res[[i]][1],...) <- res[[i]][2]
             regfix(object, to=y[1], from=xs[j],...) <- res[[j]][2]
           } else {
-            ##            object <- regression(object,to=y,from=res[[i]][1],...)
             object <- regression(object,to=y[1],from=xs[j],...)
           }
         }
       }
       
-##      index(object) <- reindex(object)
       object$parpos <- NULL
       return(object)
-##       yx <- all.vars(value)
-##       xx <- attributes(terms(value))$term.labels
-##       yy <- setdiff(yx,xx)
-##       return(regression(object,to=yy,from=xx,...))
          }
     if (!is.list(value) | length(value)>2) stop("Value should contain names of outcome (to) and predictors (from)")
     if (all(c("to","from")%in%names(value))) {
@@ -229,7 +217,6 @@
     } else {
       yval <- value[[1]]; xval <- value[[2]]
     }
-##    print(xval); print(yval)
     regression(object, to=yval, from=xval,...)
   }
 }
@@ -241,15 +228,12 @@
 ##' @S3method regression lvm
 `regression.lvm` <-
   function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
-##           newindex=TRUE,
            ...) {
     if (missing(to)) {
       return(regfix(object))
-      ####...
     }        
     if (class(to)[1]=="formula") {
       regression(object,silent=silent,...) <- to
-##      functional(object,to) <- fn
       object$parpos <- NULL
       return(object)
     }
@@ -272,14 +256,7 @@
     
     for (i in to)
       for (j in xs) {
-        ##object <- addvar(object, c(i,xs), debug=debug, silent=silent)
-        ##cancel(object) <- c(i,j)
-        ##covfix(object,i,j,exo=TRUE) <- "NA"
-        ##        Graph(object) <- addEdge(xs,i,Graph(object))
-        ## object$graph <- addEdge(j,i,object$graph)
         object$M[j,i] <- 1
-        ##        Graph(object) <- addEdge(j,i,Graph(object))
-        ##        functional(object,xs,i) <- fn
         if (!is.na(fn))
           functional(object,j,i) <- fn
       }
@@ -293,14 +270,12 @@
     }
       
     if (lava.options()$debug) {
-##      Debug(list("x=",x, " y=",y, " est=",fixed),debug)
       print(object$fix)
     } 
     object$fix[xs,to] <- fix
     object$par[xs,to] <- ps
     object$parpos <- NULL
     
-##    if (newindex)
     index(object) <- reindex(object)   
     return(object)
   }

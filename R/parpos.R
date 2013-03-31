@@ -33,7 +33,10 @@ parpos.multigroup <- function(x,p,mean=TRUE,...) {
     }
     if (length(p)==0) break;
   }
-  return(p0)    
+  p1 <- which(!is.na(match(x$name,p)))
+  p0[p1] <- x$name[p1]
+  return(structure(which(!is.na(p0)),name=p0))
+##  return(p0)    
 }
 
 ##' @S3method parpos multigroupfit

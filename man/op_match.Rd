@@ -1,8 +1,8 @@
-\name{\%nin\%}
-\alias{\%nin\%}
+\name{\%ni\%}
+\alias{\%ni\%}
 \title{Matching operator (x not in y) oposed to the \code{\%in\%}-operator (x in y)}
 \usage{
-  x \%nin\% y
+  x \%ni\% y
 }
 \arguments{
   \item{x}{vector}
@@ -16,7 +16,7 @@
   Matching operator
 }
 \examples{
-1:10 \%nin\% c(1,5,10)
+1:10 \%ni\% c(1,5,10)
 }
 \author{
   Klaus K. Holst

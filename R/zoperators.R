@@ -29,8 +29,8 @@ notin <- Negate(get("%in%"))
 ##' 
 ##' Matching operator
 ##' @rdname op_match
-##' @aliases %nin%
-##' @usage x \%nin\% y
+##' @aliases %ni%
+##' @usage x \%ni\% y
 ##' @param x vector
 ##' @param y vector of same type as \code{x}
 ##' @return A logical vector.
@@ -39,10 +39,10 @@ notin <- Negate(get("%in%"))
 ##' @keywords utilities misc
 ##' @examples
 ##' 
-##' 1:10 %nin% c(1,5,10)
+##' 1:10 %ni% c(1,5,10)
 ##'
 ##' @export
-"%nin%" <- function(x,y) notin(x,y)
+"%ni%" <- function(x,y) notin(x,y)
 
 ## function(x,y) {
 ##   is.na(match(x,y))

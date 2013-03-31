@@ -258,8 +258,6 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
 }
 weighted2_hessian.lvm <- NULL
 
-
-
 ###}}} Weighted
 
 

@@ -8,7 +8,8 @@
     estimator = "gaussian", control = list(),
     missing = FALSE, weight, weightname, data2, cluster,
     fix, index = TRUE, graph = FALSE,
-    silent = lava.options()$silent, quick = FALSE, ...)
+    silent = lava.options()$silent, quick = FALSE, param,
+    ...)
 }
 \arguments{
   \item{x}{\code{lvm}-object}
@@ -59,6 +60,9 @@
 
   \item{silent}{Logical argument indicating whether
   information should be printed during estimation}
+
+  \item{param}{set parametrization (see
+  \code{help(lava.options)})}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}
@@ -115,6 +119,24 @@ plot(m)
 dd <- sim(m,10000) ## Simulate 10000 observations from model
 e <- estimate(m, dd) ## Estimate parameters
 e
+
+## Multiple group analysis
+m <- lvm()
+regression(m) <- c(y1,y2,y3)~u
+regression(m) <- u~x
+d1 <- sim(m,100,p=c("u<->u"=1,"u<-x"=1))
+d2 <- sim(m,100,p=c("u<->u"=2,"u<-x"=-1))
+
+mm <- baptize(m)
+regression(mm,u~x) <- NA
+covariance(mm,~u) <- NA
+intercept(mm,~u) <- NA
+ee <- estimate(list(mm,mm),list(d1,d2))
+
+## Missing data
+d0 <- makemissing(d1,cols=1:2)
+e0 <- estimate(m,d0,missing=TRUE)
+e0
 }
 \author{
   Klaus K. Holst

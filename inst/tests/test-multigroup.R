@@ -5,9 +5,9 @@ test_that("Multiple group I", {
   set.seed(1)
   d <- sim(m,100)
   ## Just a stratified analysis
-  e <- estimate(list("Group 1"=m,"Group 2"=m),list(d,d))
-  expect_equivalent(coef(e)[[1]][1:2,1],coef(lm(y~x,d)))
-  expect_equivalent(coef(e)[[2]][1:2,1],coef(lm(y~x,d)))
+  e <- estimate(list("Group A"=m,"Group B"=m),list(d,d))
+  expect_equivalent(coef(e)[c(1,3)],coef(lm(y~x,d)))
+  expect_equivalent(coef(e)[c(2,5)],coef(lm(y~x,d)))
 })
 
 test_that("Multiple group II", {
@@ -16,8 +16,8 @@ test_that("Multiple group II", {
   d <- sim(m,100)
   ## Just a standard linear regression (single group)
   e <- estimate(list(m,m),list(d,d))
-  expect_identical(coef(e)[[1]],coef(e)[[2]])
-  expect_equivalent(coef(e)[[1]][1:2,1],coef(lm(y~x,cbind(d,d)))) 
+  expect_identical(coef(e,level=2)[[1]],coef(e,level=2)[[2]])
+  expect_equivalent(coef(e,level=2)[[1]][1:2,1],coef(lm(y~x,cbind(d,d)))) 
 })
 
 

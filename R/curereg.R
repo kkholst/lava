@@ -15,23 +15,33 @@
 ##' @author Klaus K. Holst
 ##' @export
 PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
-               EB=NULL) { 
+               EB=NULL) {
+  N <- length(intercept)+length(slope)+length(prob)
   if (length(intercept)<length(coef(model))) {
-    B.intercept <- rep(0,length(coef(model)));    
-    B.intercept[intercept] <- 1
+    B.intercept <- rep(0,length(coef(model)));
+    if (!missing(x)) {
+      if (length(x)!=N) stop("x should be of same length as the total length of 'intercept','slope','prob'")
+      B.intercept[intercept] <- x[seq_len(length(intercept))]
+    } else B.intercept[intercept] <- 1    
   } else {
     B.intercept <- intercept
   }
   if (length(slope)<length(coef(model))) {
-    B.slope <- rep(0,length(coef(model)));    
-    B.slope[slope] <- 1
+    B.slope <- rep(0,length(coef(model)));
+    if (!missing(x)) 
+      B.slope[slope] <- x[length(intercept)+seq_len(length(slope))]
+    else
+      B.slope[slope] <- 1
   } else {
     B.slope <- slope
   }  
   if (!is.null(prob)) {
     if (length(prob)<length(coef(model))) {
-      B.prob <- rep(0,length(coef(model)));    
-      B.prob[prob] <- 1
+      B.prob <- rep(0,length(coef(model)));
+      if (!missing(x)) 
+        B.prob[prob] <- x[length(intercept)+length(slope)+seq_len(length(prob))]
+      else
+        B.prob[prob] <- 1
     } else {
       B.prob <- prob
     }
@@ -67,7 +77,6 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
 
 
 TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=1,slope=2,alpha=0.95,...) {
-  g <- function(p=coef(object)) {
     pp <- predict(object,link=FALSE,p=p,newdata=data)
     X <- attributes(pp)$grad$beta
     Z <- attributes(pp)$grad$gamma
@@ -91,8 +100,6 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
     val <- (eta-b1)/b2
     dvald1 <- -(db1+db2*val)/b2
     return(structure(val,grad=cbind(dvald1,detad2/b2),varnames="theta"))
-  }
-  return(g())
   ##  structure(g(coef(object)),grad=grad(g,coef(object)))
 }
 
@@ -111,7 +118,48 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
 ##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
-curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,start,var="robust",...) {
+##' @examples
+##' 
+##' ## Simulation
+##' n <- 2e3
+##' x <- runif(n,0,20)
+##' age <- runif(n,10,30)
+##' z0 <- rnorm(n,mean=-1+0.05*age)
+##' z <- cut(z0,breaks=c(-Inf,-1,0,1,Inf))
+##' p0 <- lava:::expit(model.matrix(~z+age) %*% c(-.4, -.4, 0.2, 2, -0.05))
+##' y <- (runif(n)<lava:::tigol(-1+0.25*x-0*age))*1
+##' u <- runif(n)<p0
+##' y[u==0] <- 0
+##' d <- data.frame(y=y,x=x,u=u*1,z=z,age=age)
+##' head(d)
+##' 
+##' ## Estimation
+##' e0 <- curereg(y~x*z,~1+z+age,data=d)
+##' e <- curereg(y~x,~1+z+age,data=d)
+##' compare(e,e0)
+##' e
+##' PD(e0,intercept=c(1,3),slope=c(2,6))
+##' 
+##' B <- rbind(c(1,0,0,0,20),
+##'            c(1,1,0,0,20),
+##'            c(1,0,1,0,20),
+##'            c(1,0,0,1,20))
+##' prev <- summary(e,pr.contrast=B)$prevalence
+##' 
+##' x <- seq(0,100,length.out=100)
+##' newdata <- expand.grid(x=x,age=20,z=levels(d$z))
+##' fit <- predict(e,newdata=newdata)
+##' plot(0,0,type="n",xlim=c(0,101),ylim=c(0,1),xlab="x",ylab="Probability(Event)")
+##' count <- 0
+##' for (i in levels(newdata$z)) {
+##'   count <- count+1
+##'   lines(x,fit[which(newdata$z==i)],col="darkblue",lty=count)
+##' }
+##' abline(h=prev[3:4,1],lty=3:4,col="gray")
+##' abline(h=prev[3:4,2],lty=3:4,col="lightgray")
+##' abline(h=prev[3:4,3],lty=3:4,col="lightgray")
+##' legend("topleft",levels(d$z),col="darkblue",lty=seq_len(length(levels(d$z))))
+curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,start,var="hessian",...) {
   md <- cbind(model.frame(formula,data),model.frame(cureformula,data))
   y <- md[,1]
   X <- model.matrix(formula,data)
@@ -120,7 +168,7 @@ curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,st
   if (missing(start)) start <- rep(0,ncol(X)+ncol(Z))
   op <- nlminb(start,function(x)
                -curereg_logL(x[beta.idx],x[gamma.idx],y,X,Z),
-               grad=function(x)
+               gradient=function(x)
                -curereg_score(x[beta.idx],x[gamma.idx],y,X,Z),...)
   beta <- op$par[beta.idx]; gamma <- op$par[gamma.idx]
   cc <- c(beta,gamma)
@@ -224,7 +272,7 @@ summary.curereg <- function(object,level=0.95,pr.contrast,...) {
   }
   rownames(pr.cc) <- pr.rnames
     
-  return(structure(list(coef=cc, pr.cc=pr.cc),class="summary.curereg"))
+  return(structure(list(coef=cc, prevalence=pr.cc),class="summary.curereg"))
 }
 
 
@@ -232,7 +280,7 @@ summary.curereg <- function(object,level=0.95,pr.contrast,...) {
 print.summary.curereg <- function(x,...) {
   print(x$coef,...)
   cat("\nPrevalence probabilities:\n")
-  print(x$pr.cc,...)
+  print(x$prevalence,...)
 }
 
 ##' @S3method print curereg
@@ -269,9 +317,9 @@ curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FA
 ##' @S3method score curereg
 score.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,indiv=FALSE,...) {
   if (!missing(data)) {
-    y <- model.frame(object$formula,data)[,1]
-    X <- model.matrix(object$formula,data)
-    Z <- model.matrix(object$cureformula,data)
+    y <- model.frame(x$formula,data)[,1]
+    X <- model.matrix(x$formula,data)
+    Z <- model.matrix(x$cureformula,data)
     s <- curereg_score(beta,gamma,y,X,Z,offset,x$family,indiv=indiv,...)
   } else {    
     s <- curereg_score(beta,gamma,x$y,x$X,x$Z,offset,x$family,indiv=indiv,...)
@@ -303,9 +351,9 @@ curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=F
 ##' @S3method information curereg
 information.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,type=c("robust","outer","obs"),...) {
   if (!missing(data)) {
-    y <- model.frame(object$formula,data)[,1]
-    X <- model.matrix(object$formula,data)
-    Z <- model.matrix(object$cureformula,data)
+    y <- model.frame(x$formula,data)[,1]
+    X <- model.matrix(x$formula,data)
+    Z <- model.matrix(x$cureformula,data)
     I <- curereg_information(beta,gamma,y,X,Z,offset,x$family,type=type,...)
   } else {
     I <- curereg_information(beta,gamma,x$y,x$X,x$Z,offset,x$family,type=type,...)

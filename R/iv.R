@@ -36,11 +36,6 @@ varest <- function(x,data) {
   A[A!=0] <- 1
   k <- nrow(A)
   I <- diag(k)
-  ##  P <- index(x)$P
-  ##  P[P!=0] <- 1
-  ##  IAi <- solve(I-A)
-  ##  Omega <- IAi%*%P%*%t(IAi)
-
   Ap <- modelVar(x)$A ## Estimated parameter matrix
   
   indicators <- setdiff(vars(x)[rowSums(A)==1],exogenous(x))
@@ -48,14 +43,11 @@ varest <- function(x,data) {
   y.indicators <- responses[rowSums(A[responses,])==1]
   Sigma <- var(data[,manifest(x)])
 
-  ##  m.sub <- subset(m,c(indicators,latent(x)))
   var.eta <- c()
   for (eta in latent(x)) {
     m.sub <- subset(Model(x),c(eta,indicators))
-##    reachable <- acc(Graph(m.sub),eta)[[1]]
     reachable <- acc(x$M,eta)
     ys <- intersect(names(reachable),y.indicators)
-    ##    Seta <- CondVar(Omega[c(eta,ys),c(eta,ys)],1)
     lambdas <- c()
     for (y in ys) {
       pp <- path(Model(x), from=eta, to=y)
@@ -69,7 +61,6 @@ varest <- function(x,data) {
       lambdas <- c(lambdas,lambda1)
     }
     val <- outer(1/lambdas,1/lambdas)*Sigma[ys,ys]
-##    [Seta==0]
     var.eta <- c(var.eta, mean(val[upper.tri(val)]))
   }
 
@@ -132,7 +123,6 @@ IV <- function(m,data,R2thres=0,...) {
   if (any(unlist(lapply(y.scale, function(x) length(x)))<1)) stop("At least one scale-measurement pr. latent variable")
 
   vv <- setdiff(1:k,c(unlist(y.scale),x.idx))
-##  vv <- setdiff(seq_len(nrow(A)),c(unlist(y.scale),x.idx))
 
   Ecor <- list()
   eta.surrogate <- c()    
@@ -210,7 +200,7 @@ IV <- function(m,data,R2thres=0,...) {
           newf <- c(newf,f2)
         }
       }
-      
+
       intpred <- intersect(intpred,manifest(m))
       R2max <- apply(R2[XX,intpred,drop=FALSE],2,max)
       if (any(R2max<R2thres)) intpred <- intpred[R2max>=R2thres]
@@ -227,8 +217,6 @@ IV <- function(m,data,R2thres=0,...) {
       Y. <- c(Y.,list(Y))
       XX <- vars(m)[A[v,]==1 & Afix[v,]!=1]
       parname <- c(parname, c(vars(m)[v0],paste(vars(m)[v],XX,sep="<-")))     
-##      if (length(free)>0)
-##        A0[v,XX[free]] <- coef(l)[-1][free]      
     } else {
       if (vars(m)[v]%in%latent(m)) {
         lpos <- match(v,lat.idx)
@@ -237,7 +225,6 @@ IV <- function(m,data,R2thres=0,...) {
         Y. <- c(Y.,list(Y))
         V. <- c(V.,list(cbind(rep(1,nrow(Y)))))
         Z. <- c(Z.,list(cbind(rep(1,nrow(Y)))))
-##        parname <- c(parname, vars(m)[v0])
         parname <- c(parname, names(eta.surrogate)[lpos])
        }
     }
@@ -246,9 +233,9 @@ IV <- function(m,data,R2thres=0,...) {
   LS <- function(X) {
     with(svd(X), v%*%diag(1/d,nrow=length(d))%*%t(u))
   }
-  projection <- function(X) X%*%LS(X)    
-  P <- lapply(V.,projection)
-  Zhat <- list(); for (i in 1:length(Z.)) Zhat <- c(Zhat, list(P[[i]]%*%Z.[[i]]))
+  projection <- function(X) X%*%LS(X)
+  P0 <- lapply(V.,LS)
+  Zhat <- list(); for (i in 1:length(Z.)) Zhat <- c(Zhat, list(V.[[i]]%*%(P0[[i]]%*%Z.[[i]])))
   ZhatLS <- lapply(Zhat,LS)
   theta <- list(); for (i in 1:length(Y.)) theta <- c(theta, list(ZhatLS[[i]]%*%Y.[[i]]))
   u <- c()
@@ -272,38 +259,9 @@ IV <- function(m,data,R2thres=0,...) {
   }    
 
   
-  ## Zall <- Z.[[1]]
-  ## for (i in 2:length(Z.)) Zall <- blockdiag(Zall,Z.[[i]])
-  ## Vall <- V.[[1]]
-  ## for (i in 2:length(V.)) Vall <- blockdiag(Vall,V.[[i]])
-  ## Yall <- c()
-  ## for (i in 1:length(Y.)) Yall <- rbind(Yall,Y.[[i]])  
-  ## Zhat <- Vall%*%solve(crossprod(Vall))%*%t(Vall)%*%Zall[,]
-  ## ZhatLS <- solve(crossprod(Zhat))%*%t(Zhat)
-  ## thetahat <- ZhatLS%*%Yall 
-  ##  Yhat <- Zhat%*%thetahat
-  ##  u <- Yall-Yhat
-  ## u. <- matrix(u,ncol=2)
-  ##  sigmau <- cov(u.)
-
-  ## mname <- coefname[seq(index(m)$npar.mean)]
-  ## if (length(mname)>0) {
-  ##   ## Rename parameters if original was parametrized with non-zero intercept of latent variable
-  ##   browser()
-  ##   idx <- which(index(m)$latent %in%mname)
-  ##   if (length(idx)>0) {
-  ##     parname[which(parname%in%eta.surrogate[idx])] <- (index(m)$latent)[idx]
-  ##   }
-  ## }
-
-  ##browser()
-  ##suppressWarnings(
   parname[which(parname%in%eta.surrogate)] <- names(eta.surrogate)[which(eta.surrogate%in%parname)]
-  ##)
   
   coef <- cbind(unlist(theta),diag(vartheta)^0.5); rownames(coef) <- parname; colnames(coef) <- c("Estimate","Std.Err")
-  ##  coef <- coef[ord,]
-  ##  ord <- na.omit(match(coef(m,mean=TRUE),parname))
   res <- list(estimate=coef[,1], vcov=vartheta)
   attributes(res)$surrogates <- eta.surrogate
   attributes(res)$instruments <- instruments  
@@ -311,7 +269,6 @@ IV <- function(m,data,R2thres=0,...) {
 }
 
 IV2 <- function(m,data,control=list(),...) {
-  ##  m <- fixsome(m,data=data,fix="relative")
   if (is.null(control$R2thres)) control$R2thres <- 0
   res <- IV(m,data,R2thres=control$R2thres)
   p <- res$estimate  

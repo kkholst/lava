@@ -47,8 +47,6 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix <- list(var=xfix, col=colpos, row=rowpos)
       for (i in 1:length(myfix$var))
-                                        #      regfix(x0, from=vars(x0)[myfix$row[[i]][]],to=vars(x0)[myfix$col[[i]][j]]) <
-                                        #          (data[1,myfix$var[[i]]])
         for (j in 1:length(myfix$col[[i]])) {
           regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
             data[1,myfix$var[[i]]]
@@ -185,7 +183,6 @@ score2.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, rein
             for (j in 1:length(myfix$col[[i]])) 
               regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
                 data[1,myfix$var[[i]]]
-          ##rep(data[1,myfix$var[[i]]],length(myfix$row[[i]]))
           index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
           yvars <- endogenous(x0)
         }
@@ -215,7 +212,6 @@ score2.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, rein
       iC <- Inverse(C,0,det=FALSE)
       D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
 
-      ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
       Debug("after deriv.", debug)
       myvars <- (index(x)$manifest)
       if (NCOL(data)!=length(myvars)) {

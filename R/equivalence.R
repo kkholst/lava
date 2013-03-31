@@ -17,6 +17,7 @@
 ##' @seealso \code{\link{compare}}, \code{\link{modelsearch}}
 ##' @export
 equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
+  if (missing(rel)) stop("Specify association 'rel' (formula or character vector)")
   if (class(rel)[1]=="formula") {
     myvars <- all.vars(rel)
   } else {    

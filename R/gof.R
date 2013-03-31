@@ -134,7 +134,6 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
   l2D <- sum(object$opt$grad^2)
   rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) 0)
   condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
-  
 
 ##  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
   if (((object$estimator=="gaussian" & class(object)[1]!="lvm.missing") | chisq) & length(xconstrain)==0 ) {

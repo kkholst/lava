@@ -196,7 +196,6 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       newstr.idx <- setdiff(1:length(estr2),estr2.idx)
       newstr <- estr2[newstr.idx]
       estr2 <- estr2[estr2.idx]
-##      browser()
       if (length(estr2)>0) {
         if (!is.null(lab))
           edgeRenderInfo(object)$label[estr2] <- lab[estr2.idx]
@@ -231,11 +230,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(labcol))        
           edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
             labcol[newstr.idx]
-##        browser()
       }
-##      st <- eval(parse(text=paste("expression(",edgeRenderInfo(object)$label,")",sep="")))
-   ##   edgeRenderInfo(object)$label <- st
-##      edgeRenderInfo(object)$label <- as.expression(edgeRenderInfo(object)$label)
       return(object)
     } 
 
@@ -299,7 +294,6 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       newstr.idx <- setdiff(1:length(estr2),estr2.idx)
       newstr <- estr2[newstr.idx]
       estr2 <- estr2[estr2.idx]
-##      browser()
       if (length(estr2)>0) {
         if (!is.null(lab))
           object$edgerenderlabel[estr2] <- lab[estr2.idx]
@@ -334,11 +328,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(labcol))        
           object$edgerender$futureinfo$textCol[newstr] <-
             labcol[newstr.idx]
-##        browser()
       }
-##      st <- eval(parse(text=paste("expression(",edgeRenderInfo(object)$label,")",sep="")))
-   ##   edgeRenderInfo(object)$label <- st
-##      edgeRenderInfo(object)$label <- as.expression(edgeRenderInfo(object)$label)
       return(object)
     } 
 

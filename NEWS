@@ -1,0 +1,13 @@
+* Version 1.2.0 <2013-03-28 Thu>
+  - New method 'iid' for extracting i.i.d. decomposition (influence
+    functions) from model objects (e.g. glm, lvm, ...)
+  - Method 'estimate' can now be used on model objects to transform
+    parameters (Delta method) or conduct Wald tests. Average effects,
+    i.e. averaging functionals over the empirical distribution is also
+    possible including calculation of standard errors.
+  - 'curereg' function for estimating mixtures of binary data.
+  - Instrumental Variable (IV) estimator (two-stage
+    least-squares) optimized.
+  - New distributions: Gamma.lvm, coxWeibull.lvm, coxExponential.lvm,
+    coxGompertz.lvm. New method 'eventTime' (for simulation of
+    competing risks data)

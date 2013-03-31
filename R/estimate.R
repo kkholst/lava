@@ -67,6 +67,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' additional information such as standard errors are skipped
 ##' @param silent Logical argument indicating whether information should be
 ##' printed during estimation
+##' @param param set parametrization (see \code{help(lava.options)})
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
@@ -83,51 +84,72 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' dd <- sim(m,10000) ## Simulate 10000 observations from model
 ##' e <- estimate(m, dd) ## Estimate parameters
 ##' e
-##'
+##' 
+##' ## Multiple group analysis
+##' m <- lvm()
+##' regression(m) <- c(y1,y2,y3)~u
+##' regression(m) <- u~x
+##' d1 <- sim(m,100,p=c("u<->u"=1,"u<-x"=1))
+##' d2 <- sim(m,100,p=c("u<->u"=2,"u<-x"=-1))
+##' 
+##' mm <- baptize(m)
+##' regression(mm,u~x) <- NA
+##' covariance(mm,~u) <- NA
+##' intercept(mm,~u) <- NA
+##' ee <- estimate(list(mm,mm),list(d1,d2))
+##' 
+##' ## Missing data
+##' d0 <- makemissing(d1,cols=1:2)
+##' e0 <- estimate(m,d0,missing=TRUE)
+##' e0
 `estimate.lvm` <-
-function(x, data=parent.frame(),
-         estimator="gaussian",
-         control=list(),
-         missing=FALSE,
-         weight,
-         weightname,
-         data2,
-         cluster,
-         fix,
-         index=TRUE,
-         graph=FALSE,
-         silent=lava.options()$silent,
-         quick=FALSE,
-         ...) { 
-
+  function(x, data=parent.frame(),
+           estimator="gaussian",
+           control=list(),
+           missing=FALSE,
+           weight, weightname,
+           data2,
+           cluster,
+           fix,
+           index=TRUE,
+           graph=FALSE,
+           silent=lava.options()$silent,
+           quick=FALSE,
+           param,
+           ...) { 
+  
   if (length(exogenous(x)>0)) {
     catx <- categorical2dummy(x,data)
     x <- catx$x; data <- catx$data
-  }
-  
+  }  
   cl <- match.call()
+  if (!missing(param)) {
+    oldparam <- lava.options()$param
+    lava.options(param=param)
+    on.exit(lava.options(param=oldparam))
+  }
 
   optim <- list(
-                iter.max=lava.options()$iter.max,
-                trace=ifelse(lava.options()$debug,3,0),
-                gamma=lava.options()$gamma,
-                gamma2=1,
-                ngamma=lava.options()$ngamma,             
-                lambda=0.05,
-                abs.tol=1e-9,
-                epsilon=1e-10,
-                delta=1e-10,
-                rel.tol=1e-10,
-                S.tol=1e-5,
-                stabil=FALSE,
-                start=NULL,
-                constrain=lava.options()$constrain,
-                method=NULL,
-                starterfun="startvalues",
-                information="E",
-                meanstructure=TRUE,
-                sparse=FALSE,
-                tol=lava.options()$tol)
+    iter.max=lava.options()$iter.max,
+    trace=ifelse(lava.options()$debug,3,0),
+    gamma=lava.options()$gamma,
+    gamma2=1,
+    ngamma=lava.options()$ngamma,             
+    lambda=0.05,
+    abs.tol=1e-9,
+    epsilon=1e-10,
+    delta=1e-10,
+    rel.tol=1e-10,
+    S.tol=1e-5,
+    stabil=FALSE,
+    start=NULL,
+    constrain=lava.options()$constrain,
+    method=NULL,
+    starterfun="startvalues",
+    information="E", 
+    meanstructure=TRUE,
+    sparse=FALSE,
+    tol=lava.options()$tol)
 
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]
@@ -196,10 +218,6 @@ function(x, data=parent.frame(),
   }
   
   Debug("procdata")
-  ## if (missing) { ## Remove rows with missing covariates
-  ##   xmis <- apply(data[,exogenous(x),drop=FALSE],1,function(x) any(is.na(x)))
-  ##   data <- data[which(!xmis),]
-  ## }
   
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
@@ -229,6 +247,21 @@ function(x, data=parent.frame(),
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
 
+  checkestimator <- function(x,...) {
+    ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")
+    exists(ffname[1])||exists(ffname[2])
+  }
+  if (!checkestimator(estimator)) { ## Try down/up-case version
+    estimator <- tolower(estimator)
+    if (!checkestimator(estimator)) {
+      estimator <- toupper(estimator)
+    }
+  }
+  ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
+  GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  if (!exists(ObjectiveFun) & !exists(GradFun))
+    stop("Unknown estimator.") 
+  
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method)) {
     Method <- "nlminb1"
@@ -303,7 +336,6 @@ function(x, data=parent.frame(),
         }
       }
     }  
-  ##  xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
     if (xconstrainM & ( (is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian") ) ) {
       XconstrStdOpt <- FALSE
       optim$method <- "nlminb0"
@@ -365,7 +397,7 @@ function(x, data=parent.frame(),
       yvars <- endogenous(x0)
       
       ## Alter start-values/constraints:
-      new.par.idx <- coef(mymodel,mean=TRUE)%in%coef(x0,mean=TRUE)
+      new.par.idx <- coef(mymodel,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE)
       if (length(optim$start)>sum(new.par.idx))
         optim$start <- optim$start[new.par.idx]
       lower <- lower[new.par.idx]
@@ -497,7 +529,6 @@ function(x, data=parent.frame(),
       if (!is.null(offset)) {
         x0$constrain[iconstrain] <- NULL        
         data0 <- data[,manifest(x0)]
-        ##        data0[,yconstrain] <- data0[,yconstrain]-offset
         data0[,endogenous(x)] <- data0[,endogenous(x)]-offset        
         pd <- procdata.lvm(x0,data=data0)
         S0 <- pd$S; mu0 <- pd$mu
@@ -545,29 +576,6 @@ function(x, data=parent.frame(),
     }
     
   }
-
-  ## if (!exists(GradFun) & !is.null(optim$method)) {
-  ##   message("Using numerical derivatives...\n")
-  ##   myGrad <- function(pp) {
-  ##     if (optim$constrain)
-  ##       pp[constrained] <- exp(pp[constrained])
-  ##     if (!require("numDeriv")) {        
-  ##       S <- naiveGrad(myObj, pp)
-  ##     } else {
-  ##       S <- grad(myObj, pp, method=lava.options()$Dmethod)
-  ##     }
-  ##     if (optim$constrain) {
-  ##       S[constrained] <- S[constrained]*pp[constrained]
-  ##     }
-  ##     return(S)        
-  ##   }
-  ##  }
-##   if (!exists(InformationFun) & !is.null(optim$method)) {
-##     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
-## For numerical approximation please install the library 'numDeriv'.")
-##     message("Using a numerical approximation of hessian...\n");
-##     myInfo <- function(pp,...) hessian(myObj, opt$estimate, method="Richardson")
-##   }
   
   myHess <- function(pp) {
     p0 <- pp
@@ -596,7 +604,7 @@ function(x, data=parent.frame(),
   if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
     myGrad <- NULL
 
-  coefname <- coef(x,mean=optim$meanstructure);
+  coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
   
   if (!silent) message("Optimizing objective function...")
   if (optim$trace>0 & !silent) message("\n")
@@ -612,7 +620,7 @@ function(x, data=parent.frame(),
     if (optim$constrain) {
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
-    names(opt$estimate) <- coefname
+  ##  names(opt$estimate) <- coefname
 
     if (XconstrStdOpt & !is.null(myGrad))
       opt$gradient <- as.vector(myGrad(opt$par))
@@ -647,7 +655,6 @@ function(x, data=parent.frame(),
     I <- myInfo(opt$estimate)
     asVar <- tryCatch(solve(I),
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
-##    diag(asVar)[(diag(asVar)==0)] <- NA
   } else {
     asVar <- tryCatch(do.call(asVarFun,
                               list(x=x,p=opt$estimate,data=data,opt=opt)),
@@ -663,8 +670,7 @@ function(x, data=parent.frame(),
 
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
-
-  mycoef[pp.idx,1] <- opt$estimate
+  mycoef[pp.idx,1] <- opt$estimate ## Will be finished during post.hooks
   
   ### OBS: v = t(A)%*%v + e
   res <- list(model=x, call=cl, coef=mycoef,

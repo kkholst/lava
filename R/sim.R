@@ -1,142 +1,3 @@
-##' @export
-"transform<-" <- function(x,...,value) UseMethod("transform<-")
-
-##' @S3method transform<- lvm
-"transform<-.lvm" <- function(x,formula,...,value) 
-  transform(x,formula,value,...)
-
-
-##' @S3method transform lvm
-"transform.lvm" <- function(`_data`,formula,fun,...) {
-  y <- getoutcome(formula)
-  xx <- attributes(y)$x
-  addvar(`_data`) <- y
-  intercept(`_data`,y) <- 0; covariance(`_data`,y) <- 0
-  if (is.null(attributes(`_data`)$transform))
-    attributes(`_data`)$transform <- list()
-  if (is.null(fun)) attributes(`_data`)$transform[y] <- NULL
-  else
-    attributes(`_data`)$transform[[y]] <- list(fun=fun,x=xx)  
-  return(`_data`)
-}
-
-##' @export
-student.lvm <- function(df=2,mu,sigma,...) {
-  if (!missing(mu) & !missing(sigma)) 
-    f <- function(n,mu,var,...) mu+sigma*rt(n,df=df)
-  else
-    f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
-  
-  return(f)
-}
-
-##' @export
-normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
-  rnormal <- if(log) rlnorm else rnorm
-  fam <- gaussian(eval(link))
-  if (!missing(mean) & !missing(sd)) 
-    f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mean),sd)
-  else
-    f <- function(n,mu,var,...) {      
-      rnormal(n,fam$linkinv(mu),sqrt(var))
-    }
-  attr(f,"family") <- fam
-  return(f)  
-}
-
-##' @export
-poisson.lvm <- function(link="log",lambda,...) {
-  fam <- poisson(eval(link))
- if (!missing(lambda))
-    f <- function(n,mu,...) rpois(n,lambda)
- else
-   f <- function(n,mu,...) {
-     if (missing(n)) {
-       return(fam)
-     }
-     rpois(n,fam$linkinv(mu))
-   }
-  attr(f,"family") <- fam
-  attr(f,"var") <- FALSE
-  return(f)  
-} 
-
-##' @export
-binomial.lvm <- function(link="logit",p) {
-  fam <- binomial(eval(link))
-  if (!missing(p))
-    f <- function(n,mu,var,...) rbinom(n,1,p)
-  else {
-    f <- function(n,mu,var,...) {
-      if (missing(n)) {
-        return(fam)
-      }
-      rbinom(n,1,fam$linkinv(mu))
-    }
-    ## f <- switch(link,
-    ##             logit = 
-    ##             function(n,mu,var,...) rbinom(n,1,tigol(mu)),
-    ##             cloglog =
-    ##             function(n,mu,var,...) rbinom(n,1,1-exp(-exp(1-mu))),
-    ##             function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
-    ##             ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
-    ##             )
-    
-  }
-  attr(f,"family") <- fam
-  attr(f,"var") <- FALSE
-  return(f)
-}
-
-##' @export
-uniform.lvm <- function(a,b) {
-  if (!missing(a) & !missing(b)) 
-    f <- function(n,mu,var,...) runif(n,a,b)
-  else
-    f <- function(n,mu,var,...)
-      (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
-  return(f)
-}
-
-##' @export
-weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
-  require(survival)
-  lambda <- 1/scale
-  f <- function(n,mu,var,...) {
-    a0 <- function(t) lambda*shape*(lambda*t)^(shape-1)
-    A0 <- function(t) (lambda*t)^shape
-    A0i <- function(eta) eta^(1/shape)/lambda
-    U <- rexp(n, 1) #give everyone a random death time, on the CH scale
-    Z <- U*exp(-mu)
-    T <- A0i(Z)
-    if (breakties!=0)
-      T <- T+runif(n,0,breakties)
-    if (is.function(cens))
-      cens <- cens(n,...)
-    if (is.finite(cens[1])) {
-      Delta <- (T<cens)
-      if (any(!Delta)) {
-        T[!Delta] <- cens[!Delta]
-      S <- Surv(T,Delta*1)      
-      } else {
-        S <- T
-      }
-    } else {
-      S <- T
-    }
-    return(S)
-  }
-  return(f)
-}
-
-##' @export
-logit.lvm <- binomial.lvm("logit")
-
-##' @export
-probit.lvm <- binomial.lvm("probit")
-
-
-
 
 ##' Simulate model
 ##' 
@@ -147,12 +8,25 @@ probit.lvm <- binomial.lvm("probit")
 ##' 
 ##' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
 ##' 
-##' @aliases sim sim.lvmfit sim.lvm transform<- transform<-.lvm transform.lvm
+##' @aliases sim sim.lvmfit sim.lvm
+##' simulate.lvmfit simulate.lvm
+##' transform<- transform<-.lvm transform.lvm
 ##' functional functional<-  functional.lvm functional<-.lvm
 ##' distribution distribution distribution<- distribution.lvm distribution<-.lvm
-##' heavytail heavytail<- weibull.lvm
-##' binomial.lvm poisson.lvm uniform.lvm normal.lvm probit.lvm logit.lvm
-##' student.lvm coxGompertz.lvm coxWeibull.lvm coxExponential.lvm 
+##' heavytail heavytail<-
+##' weibull.lvm
+##' binomial.lvm
+##' poisson.lvm
+##' uniform.lvm
+##' normal.lvm
+##' gaussian.lvm
+##' probit.lvm
+##' logit.lvm
+##' student.lvm
+##' coxGompertz.lvm
+##' coxWeibull.lvm
+##' coxExponential.lvm
+##' Gamma.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
@@ -171,6 +45,37 @@ probit.lvm <- binomial.lvm("probit")
 ##' @author Klaus K. Holst
 ##' @keywords models datagen regression
 ##' @export
+##' @examples
+##' 
+##' m <- lvm(y~x+z)
+##' regression(m) <- x~z
+##' distribution(m,~y+z) <- binomial.lvm("logit")
+##' d <- sim(m,1e3)
+##' head(d)
+##' 
+##' e <- estimate(m,d,estimator="glm")
+##' e
+##' sim(e,n=5)
+##' 
+##' distribution(m,~y) <- poisson.lvm()
+##' d <- sim(m,1e4,p=c(y=-1,"y<-x"=2,z=1))
+##' head(d)
+##' estimate(m,d,estimator="glm")
+##' mean(d$z); lava:::expit(1)
+##' 
+##' summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
+##' 
+##' 
+##' m <- lvm(y~x)
+##' distribution(m,~y+x) <- list(Gamma.lvm(shape=2),binomial.lvm())
+##' intercept(m,~y) <- 0.5
+##' d <- sim(m,1e4)
+##' summary(g <- glm(y~x,family=Gamma(),data=d))
+##' \dontrun{MASS::gamma.shape(g)}
+##' 
+##' args(lava::Gamma.lvm)
+##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
+##' sim(m,10,p=c(y=0.5))[,"y"]
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @S3method sim lvmfit
@@ -189,15 +94,21 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
 ##' @S3method sim lvm
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     X,unlink=FALSE,...) {
-  require("mvtnorm")
   if (!missing(X)) {
     n <- nrow(X)
+  }
+  xx <- exogenous(x)
+  if (!is.null(p)) {
+    i1 <- na.omit(c(match(names(p),xx),
+                    match(names(p),paste(xx,"<->",xx,sep=""))))
+    if (length(i1)>0) covariance(x) <- xx[i1]
   }
   index(x) <- reindex(x)
   nn <- setdiff(vars(x),parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
-  xf <- intersect(unique(parlabels(x)),exogenous(x))
+  xf <- intersect(unique(parlabels(x)),xx)
   xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
+
 
   if (length(p)!=(index(x)$npar+index(x)$npar.mean) | !is.null(names(p))) {
     nullp <- is.null(p)
@@ -223,15 +134,15 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   M <- modelVar(x,p,data=NULL)
   A <- M$A; P <- M$P ##Sigma <- M$P
   if (!is.null(M$v)) mu <- M$v
-    
-  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
+  
+##  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
+  E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%chol(P)
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
 
   vartrans <- names(attributes(x)$transform)
   xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
-  ##  xx <- unique(c(exogenous(x, latent=TRUE, index=FALSE),xfix))
   xx <- setdiff(xx,vartrans)
   
   X.idx <- match(xx,vars(x))
@@ -249,8 +160,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
         } else {
           if (is.null(dist.x) || is.na(dist.x)) {
-            ##        res[,X.idx[i]] <- rnorm(n,mu.x,sd=Sigma[X.idx[i],X.idx[i]]^0.5)
-            ##            res[,X.idx[i]] <- mu.x+E[,X.idx[i]]
           } else {
             res[,X.idx[i]] <- dist.x ## Deterministic
           }
@@ -265,22 +174,21 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     resunlink <- res
   }
   
-  if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { ## || all(is.na(distribution(x))) ) {
+  if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { 
     if(cond) { ## Simulate from conditional distribution of Y given X
       mypar <- pars(x,A,P,mu)
       Ey.x <- predict(x, mypar, data.frame(res))
       Vy.x <- attributes(Ey.x)$cond.var
-      yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
+##      yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
+      yy <- Ey.x + matrix(n*ncol(Vy.x),ncol=ncol(Vy.x))%*%chol(Vy.x)
       res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)
       return(res)
     }
     ## Simulate from sim. distribution (Y,X) (mv-normal)
     I <- diag(length(nn))
     IAi <- solve(I-t(A))
-##    E <- rmvnorm(n,sigma=P);   
     colnames(E) <- vars(x)
     dd <- t(apply(heavytail.sim.hook(x,E),1,function(x) x+mu))
-##    dd <- mu + rmvnorm(n,mu,P)
     res <- dd%*%t(IAi)
   } else {
 
@@ -312,10 +220,10 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         for (i in intersect(xconstrain.par,covparnames)) {
           P0[covariance(x)$labels==i] <- res[idx,i]
         }
-        return(rmvnorm(1,mu0,P0))
+##        return(rmvnorm(1,mu0,P0))
+        return(mu0+rbind(rnorm(ncol(P0)))%*%chol(P0))
       }))
     } else {
-      ##      E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
     }
     colnames(E) <- vars(x)
     E <- heavytail.sim.hook(x,E)  
@@ -369,7 +277,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             relations <- colnames(A)[A[,pos]!=0]
             
             if (all(relations%in%simuled)) { ## Only depending on already simulated variables
-            ##        mu.i <- 0
             if (x$mean[[pos]]%in%xconstrain.par) {
               mu.i <- res[,x$mean[[pos]] ]
             } else {
@@ -402,7 +309,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
               if (unlink)
                 resunlink[,pos] <- res[,pos]
             }
-            ##          res[,pos] <- rnorm(n,mu.i,sd=Sigma[pos,pos]^0.5)
             else {
               res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
               if (unlink)
@@ -434,3 +340,36 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (unlink) res <- resunlink
   return(as.data.frame(res))
 }
+
+
+
+##' @S3method simulate lvm
+simulate.lvm <- function(object,nsim,seed=NULL,...) {
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
+    runif(1)
+  if (is.null(seed)) 
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+  else {
+    R.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(seed)
+    RNGstate <- structure(seed, kind = as.list(RNGkind()))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+  }
+  sim(object,nsim,...)
+}
+
+##' @S3method simulate lvmfit
+simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
+    runif(1)
+  if (is.null(seed)) 
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+  else {
+    R.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(seed)
+    RNGstate <- structure(seed, kind = as.list(RNGkind()))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+  }
+  sim(object,nsim,...)
+}
+

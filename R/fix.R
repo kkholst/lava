@@ -7,26 +7,11 @@ print.fix <- function(x,exo=FALSE,...) {
         cov = cat("Covariance parameters:\n"),
         mean = cat("Intercept parameters:\n"))
   M <- linconstrain(x,print=TRUE)
-  ## idx <- 1:attributes(x)$nvar
-  ## if (!exo & attributes(x)$type!="reg") idx <- setdiff(idx,attributes(x)$exo.idx)
-  ## if (attributes(x)$type=="mean") {
-  ##   for (i in idx) {
-  ##       cat(names(x)[i],"\t")
-  ##   }
-  ##   cat("\n")
-  ##   for (i in idx) {
-  ##       cat(x[[i]],"\t")
-  ##   }
-  ##   cat("\n")
-  ## } else {
-  ##   with(x, print(rel[idx,idx,drop=FALSE]))
-  ##   with(x, printmany(labels[idx,idx,drop=FALSE], values[idx,idx,drop=FALSE], name1="labels=", name2="values="))
-  ## }
   invisible(x)
 }
 
 linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
-  idx <- 1:attributes(x)$nvar
+  idx <- seq_len(attributes(x)$nvar)
   if (!exo & attributes(x)$type!="reg")
     idx <- setdiff(idx,attributes(x)$exo.idx)
   if (attributes(x)$type=="mean") {
@@ -42,7 +27,8 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
   }
   if (print) {
     M0 <- M
-    rownames(M0) <- paste(indent,rownames(M))
+    if (NROW(M)>0)
+      rownames(M0) <- paste(indent,rownames(M))
     print(M0,quote=FALSE,na.print="",...)
   }
   invisible(M)
@@ -185,23 +171,19 @@ covfix.lvm <- function(object,...) {
 
 ##' @S3method covfix<- lvm
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
-                           ##diag=(length(var1)==1),...,value) {
 
   if (class(var1)[1]=="formula") {
     var1 <- all.vars(var1)
   }
   if (class(var2)[1]=="formula")
     var2 <- all.vars(var2)
-
   object <- addvar(object,c(var1,var2),reindex=FALSE,...)
-
+  
   allvars <- c(var1,var2)
   xorg <- exogenous(object)
   exoset <- setdiff(xorg,allvars)
 
   if (!exo & length(exoset)<length(xorg)) {
-    ##    exogenous(object,mom=TRUE) <- exoset
-    ##if (length(exoset)==0) exoset <- NA
     exogenous(object) <- exoset
   }
   
@@ -221,7 +203,6 @@ covfix.lvm <- function(object,...) {
         }
         else {
           object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1  
-          ##        cancel(object) <- c(var1[i],var2[j]) ## Remove old associations
           if (is.numeric(value[[p]]) | !is.na(valp)) {
             object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- valp
             object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- NA
@@ -275,7 +256,6 @@ covfix.lvm <- function(object,...) {
       }
       else {
         object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1  
-        ##        cancel(object) <- c(var1[i],var2[j]) ## Remove old associations
         if (is.numeric(value[[p]]) | !is.na(valp)) {
           object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- valp
           object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- NA
@@ -292,7 +272,6 @@ covfix.lvm <- function(object,...) {
   }
 
   
-  ##object$cov[var1,var2] <-  object$cov[var2,var1] <- 1  
   K <- length(var1)*length(var2)
   if (length(value)==1)
     value <- rep(value,K)
@@ -302,7 +281,6 @@ covfix.lvm <- function(object,...) {
   for (i in 1:length(var1)) {
     for (j in 1:length(var2)) {
       if (!pairwise | var1[i]!=var2[j]) {
-##        cat(var1[i],";",var2[j],"\n")
         p <- p+1
         valp <- suppressWarnings(as.numeric(value[[p]]))
         if (is.na(value[[p]]) | value[[p]]=="NA") {
@@ -311,7 +289,6 @@ covfix.lvm <- function(object,...) {
         }
         else {
           object$cov[var1[i],var2[j]] <-  object$cov[var2[j],var1[i]] <- 1  
-          ##        cancel(object) <- c(var1[i],var2[j]) ## Remove old associations
           if (is.numeric(value[[p]]) | !is.na(valp)) {
             object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- valp
             object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- NA
@@ -363,10 +340,6 @@ regfix.lvm <- function(object,...) {
     } else {
       from <- attributes(yx)$x
       to <- lhs
-      ##      from <- all.vars(ys)
-      ##      to <- lhs ##decomp.specials(lhs)      
-      ##      from <- all.vars(extractvar(to)$x
-      ##      from <- setdiff(all.vars(to),ys)
     }
     
     yyf <- lapply(to,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
@@ -422,10 +395,8 @@ regfix.lvm <- function(object,...) {
   }
 
   if (length(from)==length(to) & length(from)==length(value)) {
-##    if (length(value)!=length(from)) stop("Wrong number of parameters")
     for (i in 1:length(from)) {
       if (object$M[from[i],to[i]]==0) { ## Not adjancent! ##!isAdjacent(Graph(object), from[i], to[i])) {
-        ##covfix(object,to[i],from[i],exo=TRUE) <- NA## Remove any old correlation specification
         object <- regression(object, to=to[i], from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))
@@ -445,20 +416,17 @@ regfix.lvm <- function(object,...) {
     newindex <- reindex(object)
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
-#    index(object) <- reindex(object)
     return(object)
   }
 
   for (i in from) {
     for (j in to) {
       if (object$M[i,j]==0) { ##!isAdjacent(Graph(object), i, j)) {
-##        cancel(object) <- c(i,j) ## Remove old associations
         object <- regression(object,to=j,from=i)
       }
     }
   }
 
-##  browser()
   K <- length(from)*length(to)
   if (length(value)==1)
     value <- rep(value,K)  
@@ -466,7 +434,6 @@ regfix.lvm <- function(object,...) {
 
   for (j in 1:length(to)) {
     for (i in 1:length(from)) {
-      ##      p <- (i-1)*length(to) + j
       p <- (j-1)*length(from) + i
       valp <- suppressWarnings(as.numeric(value[[p]]))
       if (is.na(value[[p]]) | value[[p]]=="NA")

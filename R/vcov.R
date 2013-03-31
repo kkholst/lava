@@ -4,7 +4,7 @@ vcov.lvmfit <- function(object,...) {
   if ("lvm.missing"%in%class(object)) {
     resnames <- names(coef(object))
   } else {
-    resnames <- coef(Model(object), mean=object$control$meanstructure)
+    resnames <- coef(Model(object),fix=FALSE, mean=object$control$meanstructure)
   }
   colnames(res) <- rownames(res) <- resnames
   return(res)
@@ -12,6 +12,8 @@ vcov.lvmfit <- function(object,...) {
 
 ##' @S3method vcov multigroupfit
 vcov.multigroupfit <- function(object,...) {
-  return(object$vcov)
+  res <- object$vcov
+  colnames(res) <- rownames(res) <- object$model$name
+  return(res)
 }
 

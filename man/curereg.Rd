@@ -4,7 +4,7 @@
 \usage{
   curereg(formula, cureformula = ~1, data,
     family = binomial(), offset = NULL, start,
-    var = "robust", ...)
+    var = "hessian", ...)
 }
 \arguments{
   \item{formula}{Formula specifying}
@@ -29,6 +29,47 @@
 \description{
   Regression model for binomial data with unkown group of
   immortals
+}
+\examples{
+## Simulation
+n <- 2e3
+x <- runif(n,0,20)
+age <- runif(n,10,30)
+z0 <- rnorm(n,mean=-1+0.05*age)
+z <- cut(z0,breaks=c(-Inf,-1,0,1,Inf))
+p0 <- lava:::expit(model.matrix(~z+age) \%*\% c(-.4, -.4, 0.2, 2, -0.05))
+y <- (runif(n)<lava:::tigol(-1+0.25*x-0*age))*1
+u <- runif(n)<p0
+y[u==0] <- 0
+d <- data.frame(y=y,x=x,u=u*1,z=z,age=age)
+head(d)
+
+## Estimation
+e0 <- curereg(y~x*z,~1+z+age,data=d)
+e <- curereg(y~x,~1+z+age,data=d)
+compare(e,e0)
+e
+PD(e0,intercept=c(1,3),slope=c(2,6))
+
+B <- rbind(c(1,0,0,0,20),
+           c(1,1,0,0,20),
+           c(1,0,1,0,20),
+           c(1,0,0,1,20))
+prev <- summary(e,pr.contrast=B)$prevalence
+
+x <- seq(0,100,length.out=100)
+newdata <- expand.grid(x=x,age=20,z=levels(d$z))
+fit <- predict(e,newdata=newdata)
+plot(0,0,type="n",xlim=c(0,101),ylim=c(0,1),xlab="x",ylab="Probability(Event)")
+count <- 0
+for (i in levels(newdata$z)) {
+  count <- count+1
+  lines(x,fit[which(newdata$z==i)],col="darkblue",lty=count)
+}
+abline(h=prev[3:4,1],lty=3:4,col="gray")
+abline(h=prev[3:4,2],lty=3:4,col="lightgray")
+abline(h=prev[3:4,3],lty=3:4,col="lightgray")
+legend("topleft",levels(d$z),col="darkblue",lty=seq_len(length(levels(d$z))))
 }
 \author{
   Klaus K. Holst

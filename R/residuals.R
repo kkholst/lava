@@ -44,11 +44,6 @@ gradpredict <- function(p,obj,data=model.frame(obj)) {
   K <- nrow(mom$J)
   I <- diag(K)
 
-  ##dmu. <- cbind(rep(1,ncol(mu.))) %x% px%*%D$dvecv
-
-##  dIAi <- with(mom, (t(IAi) %x% IAi) %*% (D$dvecA))
-##  d1 <- (t(mu.) %x% Jy)%*%dIAi
-
   d1 <- (t(mu.) %x% I)%*%D$dvecG
   px <- index(obj)$px
   G <- mom$G ## index(obj)$Jy %*% solve(diag(nrow(mom$A))-t(mom$A))

@@ -276,7 +276,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
   if (!is.null(names(control$start))) {
     ## Find position of parameters
-    parorder1 <- parpos(mg0,p=names(control$start))
+    parorder1 <- attributes(parpos(mg0,p=names(control$start)))$name
     paridx <- match(parorder1,names(control$start))
     newpos <- paridx[which(!is.na(paridx))]   
     control$start[which(!is.na(paridx))] <- control$start[na.omit(paridx)]
@@ -296,10 +296,9 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   ##  return(e.mis)
   ##cc <- coef(e.mis,level=1)[[pattern.compl]]
 
-  cc <- coef(e.mis,level=0)
+  cc <- coef(e.mis,level=1)
   mynames <- c()
   if (e.mis$model$npar.mean>0)
-  ##   mynames <- c(mynames,coef(x,mean=TRUE)[1:e.mis$model$npar.mean])
     mynames <- c(mynames,paste("m",1:e.mis$model$npar.mean,sep=""))
    if (e.mis$model$npar>0)
      mynames <- c(mynames,paste("p",1:e.mis$model$npar,sep=""))
@@ -362,7 +361,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (!silent)
       message("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
-    cc[] <- coef(e.mis,level=0,vcov=res$vcov)
+    cc[] <- coef(e.mis,level=1,vcov=res$vcov)
     res$coef <- cc
   }
   

@@ -38,7 +38,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     parcount <- 0
     reservedpars <- c()
     mynpar <- c()
-    for (i in 1:nm) {
+    for (i in seq_len(nm)) {
       ## Fix some parameters (predictors,latent variables,...)
         
       d0 <- datasets[[i]][1,,drop=FALSE]; d0[,] <- 1
@@ -76,10 +76,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
       if (any(is.na(mydata))) {
         if (i>1) pos <- pos+mynpar[i-1]
         models[[i]] <- baptize(models[[i]],newpars[pos+1:mynpar[i]] ,overwrite=FALSE)        
-        ##        warning("Missing data encountered")
-
         val <- missingModel(models[[i]],mydata,fix=FALSE,keep=keep,...)
-        ##        suppressMessages(browser())
         nmodels <- c(nmodels,length(val$models))
         complidx <- c(complidx,val$pattern.allcomp+nmodels[i]+1)
         nmis0 <- rowSums(val$patterns);
@@ -122,7 +119,6 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     }
   }
     
-  ##  
   exo <- exogenous(models)
   means <- lvms <- As <- Ps <- ps <- datas <- samplestat <- list()
   for (i in seq_len(nm)) {
@@ -132,13 +128,9 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         exogenous(models[[i]]) <- exo
       }
     }
-    ##    if (!is.null(exogenous(models[[i]])) || is.na(exogenous(models[[i]])))
-    ##exogenous(models[[i]]) <- exo
     
-    ##    mydata <- datasets[[i]][,manifest(models[[i]]),drop=FALSE]
     mydata <- datasets[[i]]
     mymodel <- fixsome(models[[i]], data=mydata, measurement.fix=fix, exo.fix=exo.fix)
-    ##index(mymodel) <- reindex(mymodel,zeroones=TRUE,deriv=TRUE)
     mymodel <- updatelvm(mymodel,zeroones=TRUE,deriv=TRUE)
     
     P <- index(mymodel)$P1; P[P==0] <- NA
@@ -253,21 +245,38 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     mymeanPos <- res0
     mymeanpos <- res
     mymeanlist <- lapply(res, function(x) x[!is.na(x)])
-    mymean <- unique(unlist(mymeanlist))   ##paste("m",1:nfree.mean,sep="")    
+    mymean <- unique(unlist(mymeanlist))  
   } else {
     mymeanPos <- NULL
     mymean <- NULL
     mymeanpos <- NULL
     mymeanlist <- NULL
   }  
-  ####
 
-##  mymean <- paste("m",1:nfree.mean,sep=""); names(mymean) <- vars(models)[midx]
-
+  N <- nfree+nfree.mean
+  m0 <- p0 <- c() 
+  coefs <- coefsm <- mm0 <- mm <- pp0 <- pp <- c()
+  for (i in seq_len(length(myparPos))) {
+    pi <- myparPos[[i]]+nfree.mean
+    p1 <- setdiff(pi,p0)
+    p0 <- c(p0,p1)
+    pp0 <- c(pp0,list(match(p1,pi)+nfree.mean))
+    mi <- mymeanPos[[i]]    
+    m1 <- setdiff(mi,m0)    
+    m0 <- c(m0,m1)
+    mm0 <- c(mm0,list(match(m1,mi)))
+    pp <- c(pp,list(c(m1,p1)))
+    if (length(p1)>0)
+      coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]-nfree.mean],sep="@"))
+    if (length(m1)>0)
+      coefsm <- c(coefsm,paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@"))
+  }
+  coefs <- c(coefsm,coefs)
+  
   res <- list(npar=nfree, npar.mean=nfree.mean, ngroup=length(lvms), names=mynames,
               lvm=lvms, data=datas, samplestat=samplestat,
               A=As, P=Ps,
-              meanpar=names(mu),
+              meanpar=names(mu), name=coefs, coef=pp, coef.idx=pp0,
               par=mypar, parlist=myparlist,  parpos=myparpos,
               mean=mymean, meanlist=mymeanlist, meanpos=mymeanpos,
               parposN=myparPos,
@@ -280,7 +289,6 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 }
 
 ###}}}
-
 
 ###{{{ checkmultigroup
 checkmultigroup <- function(x) {

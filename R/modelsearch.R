@@ -198,46 +198,29 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
           altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
 ##          exogenous(altmodel,xfree=FALSE) <- setdiff(X,V[myvar])
         } else {
-          covariance(altmodel) <- V[myvar]
+          covariance(altmodel,pairwise=TRUE) <- V[myvar]
         }
         varlist <- rbind(varlist, V[myvar])
       }
       altmodel$parpos <- NULL
-##      altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=FALSE)
       altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=TRUE)
       cc <- coef(altmodel, mean=TRUE,silent=TRUE,symbol=c("->","<->"))
       cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=c("->","<->"))
-      ##          pos <- match(paste(V[i], "<->", V[j], sep=""),cc)
-      ##          if (is.na(pos)) ## Should not be necessary 
-      ##            pos <- match(paste(V[i], "<->", V[j], sep=""),cc)
-      ###      p1 <- numeric(length(pp$p)+k) ## New parameter basically p1 = (p0, 0)
       p1 <- numeric(length(p)+k)
       ## Need to be sure we place 0 at the correct position
       for (ic in 1:length(cc)) {
         idx <- match(cc[ic],cc0)
         if (!is.na(idx))
-##            p1[ic] <- pp$p[idx]
           p1[ic] <- p[idx]
       }
-#      Sc2 <- score(altmodel,p=p1,S=S,data=NULL,n=n)
       Sc2 <- score(altmodel,p=p1,data=model.frame(x),model=x$estimator,weight=Weight(x))
-##      browser()
-##      rmidx <- NULL
-##      if (!is.null(pp$meanpar)) {
-##        rmidx <- 1:length(pp$meanpar)
-##      } 
-      ##      myidx <- (length(Sc2)-altmodel$index$npar+1):length(Sc2)
-##      Sc2 <- Sc2[-rmidx]
-##      I <- information(altmodel,p1,n=x$data$n,data=NULL) ##[-rmidx,-rmidx]
-      I <- information(altmodel,p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
+      I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
       iI <- try(Inverse(I), silent=TRUE)
-##      browser()      
       Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
                    ## rbind(Sc)%*%iI%*%cbind(Sc)
                    (Sc2)%*%iI%*%t(Sc2)
                    )
       Tests <- c(Tests, Q)
-##      print(Q)
       Vars <- c(Vars, list(varlist))
     }
 

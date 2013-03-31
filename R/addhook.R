@@ -1,4 +1,5 @@
-##' Set global options for \code{lava}
+
+##' ##' Set global options for \code{lava}
 ##' 
 ##' Extract and set global parameters of \code{lava}. In particular optimization
 ##' parameters for the \code{estimate} function.

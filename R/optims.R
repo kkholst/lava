@@ -10,7 +10,6 @@ nlminb2 <- function(start,objective,gradient,hessian,...) {
   mypar <- c(list(start=start,objective=objective,gradient=gradient,hessian=hessian),dots)
   mypar["debug"] <- NULL
   do.call("nlminb", mypar)
-##  nlminb(start,objective,gradient=NULL,hessian=NULL,control=control,...)
 }
 
 nlminb1 <- function(start,objective,gradient,hessian,...) {
@@ -28,17 +27,12 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 estfun2 <- function(start,objective,gradient,hessian,...) {
 
   myobj <- function(...) {
-##    return(objective(...))
-##    return(objective(...))
     S <- gradient(...)
     return(crossprod(S)[1])
   }
   myobj <- objective
-  ##g <- function(...) numDeriv::grad(myobj,...)
   g <- function(...) gradient(...)
-##  h <- function(...) numDeriv::hessian(myobj,...)
   h <- function(...) numDeriv::jacobian(gradient,...)
-  ##nlminb(start,myobj,g,h,control=list(trace=1))
   
   theta <- start
   print(theta)
@@ -47,9 +41,6 @@ estfun2 <- function(start,objective,gradient,hessian,...) {
     count <- count+1
     I <- h(theta);
     I1 <- solve(I)    
-    ##E <- eigen(I); L <- E$values;    
-    ##L[L<1e-2] <- 0; L[L>0] <- 1/L[L>0]    
-    ##I1 <- with(E, vectors%*%diag(L)%*%t(vectors))
     S <- g(theta)
     theta <- theta + (-0.5*I1%*%S)
     print(S)
@@ -107,7 +98,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
   control <- dots$control
   trace <- control$trace
 
-  ## print(control)
   if (trace>0)
   cat("\nIter=0;\t\n",
       "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
@@ -116,8 +106,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
   oneiter <- function(p.orig) {
     if (is.null(hessian)) {
       cat(".")
-      ##      I <- numDeriv::jacobian(gradient,p.orig)      
-      ##      I <- numDeriv::jacobian(gradient,p.orig,method="simple")
       I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
     } else {
       I <- hessian(p.orig)
@@ -137,24 +125,13 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
         I <- I+control$gamma2*sigma*diag(nrow(I))
       } else {
         sigma <- ((D)%*%t(D))
-        ##        K <- max(diag(sigma))
         I <- I+control$gamma2*(sigma)
       }
     }
     svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
-    ##  delta <- 0
-    ##svdI$d0 <- 1/(abs(svdI$d)+delta)
     svdI$d0[abs(svdI$d)>control$epsilon] <-
       1/svdI$d[abs(svdI$d)>control$epsilon]
-    ##    svdI$d0 <- 1/svdI$d0
-    ##+control$delta)
-    ##    Debug(list("d0",svdI$d0), debug)    
-    ##    Debug(list("v",svdI$v), debug)    
-    ##    save(svdI, file="I.rda")
     iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
-    ##    iI <- with(svdI,  (v)%*%diag(1/d)%*%t(u))
-    ##    iI <- solve(I)
-    ##    I <- I + 0.001*diag(nrow(I))
     return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
   } 
   
@@ -167,8 +144,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
     count2 <- count2+1
     oldpar <- thetacur
     newpar <- oneiter(thetacur)
-    ## cat("........................\n")
-    ## browser()
     thetacur <- newpar$p
     if (!is.null(control$ngamma) && control$ngamma>0) {
       if (control$ngamma<=gammacount) {
@@ -177,13 +152,11 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
       }
     }
     if (count2==trace) {
-##      cat("control$gamma=", control$gamma, "\n")
       cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
       cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
       count2 <- 0
     }
     if (mean(newpar$D^2)<control$tol) break;
-##    if (frobnorm(oldpar-thetacur)<control$abs.tol) break;
   }
   res <- list(par=as.vector(thetacur), iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
   return(res)

@@ -91,9 +91,6 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
       cumsumgroup <- cumsum(c(0,groupn))
       groups <- unlist(lapply(orggroup,function(i)
                               which.min(nmis[which(modelclass==i)])+cumsumgroup[i])) ##  groups with max. number of variables
-                       ##      suppressMessages(browser())
-                       ## if (length(groups)==0)
-                       ##   groupedDataps <- seq_len(x$model0$ngroup)      
       for (i in seq_len(length(groups))) {
         if (nmis[groups[i]]>0) warning("No complete cases in group ",i,". Showing results of group with max number of variables. All coefficients can be extracted with 'coef'. All missing pattern groups belonging to this sub-model can be extracted by calling: coef(..., groups=c(",paste(which(modelclass==i),collapse=","),"))")
       }
@@ -103,7 +100,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
       groups <- seq_len(length(x$model$lvm))
     }  
   }  
-  res <- coef(x,groups=groups,...)
+  res <- coef(x,level=2,groups=groups,...)
   counter <- 0
   dots <- list(...)
   dots$groups <- groups
@@ -111,7 +108,6 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
     dots$level <- 2
 ##    dots$level <- ifelse("lvmfit.randomslope"%in%class(x),2,9)
   }
-  ##  suppressMessages(browser())
   myargs <- c(list(x=x), dots)
   myargs$groups <- groups
   CC <- do.call("CoefMat.multigroupfit",myargs)  

@@ -94,6 +94,22 @@ procrandomslope <- function(object,data=object$data,...) {
 
 ###}}} procrandomslope
 
+###{{{ kronprod
+
+## ' Calculate matrix product with kronecker product 
+## '
+## ' \deqn{(A\crossprod B) Y}
+## ' @title Calculate matrix product with kronecker product 
+## ' @param A 
+## ' @param B 
+## ' @param Y 
+## ' @author Klaus K. Holst
+kronprod <- function(A,B,Y) {
+  apply(cbind(Y),2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A))
+}
+
+###}}} kronprod
+
 ###{{{ izero
 
 izero <- function(i,n) { ## n-1 zeros and 1 at ith entry

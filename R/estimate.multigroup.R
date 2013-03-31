@@ -8,6 +8,7 @@
                                   cluster=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
+                                  param,
                                   ...) {
   cl <- match.call()
   optim <- list(
@@ -33,7 +34,14 @@
              reindex=FALSE,
              tol=lava.options()$tol)
 
-  
+
+
+  if (!missing(param)) {
+    oldparam <- lava.options()$param
+    lava.options(param=param)
+    on.exit(lava.options(param=oldparam))
+  }
+
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]
   optim[names(defopt)] <- defopt
@@ -52,7 +60,7 @@
       pname <- names(optim$start)
       ppos <- parpos.multigroup(x,p=pname,mean=TRUE)
       if (any(!is.na(ppos)))
-        mystart[match(pname,ppos)] <- optim$start[na.omit(match(ppos,pname))]
+        mystart[ppos] <- optim$start[na.omit(match(attributes(ppos)$name,pname))]
     }
     if (!silent) cat("\n")
   }
@@ -133,6 +141,19 @@
         data2 <- newdata2
       }    
   }
+
+
+  checkestimator <- function(x,...) {
+    ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")
+    exists(ffname[1])||exists(ffname[2])
+  }
+  if (!checkestimator(estimator)) { ## Try down/up-case version
+    estimator <- tolower(estimator)
+    if (!checkestimator(estimator)) {
+      estimator <- toupper(estimator)
+    }
+  }
+  
   Method <-  paste(estimator, "_method", ".lvm", sep="")
   if (!exists(Method))
     Method <- "nlminb1"
@@ -223,7 +244,7 @@
         index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
         x$lvm[[k]] <- x0
         yvars <- endogenous(x0)
-        parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE)%in%coef(x0,mean=TRUE)])
+        parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE)])
       }
       parkeep <- sort(unique(parkeep))
       ## Alter start-values:
@@ -233,7 +254,6 @@
       lower <- lower[parkeep]
       x <- multigroup(x$lvm,x$data,fix=FALSE,exo.fix=FALSE) 
     }  
-
 
     parord <- modelPar(x,1:length(mystart))$p    
     mydata <- list()
@@ -552,9 +572,6 @@ For numerical approximation please install the library 'numDeriv'.")
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
-
-##  if (!silent) cat("\n")
-
     
   res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, data2=data2, cluster=cluster)
   class(res) <- myclass

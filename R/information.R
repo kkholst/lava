@@ -71,7 +71,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
           for (j in 1:length(myfix$col[[i]])) 
             regfix(x0, from=vars(x0)[myfix$row[[i]]][j],to=vars(x0)[myfix$col[[i]]][j]) <-
               data[1,myfix$var[[i]]]
-        ##rep(data[1,myfix$var[[i]]],length(myfix$row[[i]]))
         index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
       }
       pp <- modelPar(x0,p)
@@ -103,7 +102,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   }
 
   if (!is.null(weight) && is.matrix(weight)) {
-    L <- lapply(1:nrow(weight),function(y) information(x,p=p,n=1,type=type,weight=weight[y,]))
+    L <- lapply(seq_len(nrow(weight)),function(y) information(x,p=p,n=1,type=type,weight=weight[y,]))
     val <- apply(array(unlist(L),dim=c(length(p),length(p),nrow(weight))),c(1,2),sum)
     if (inverse) {
       if (pinv)
@@ -136,22 +135,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     diag(iW) <- 1/diag(iW)
   }
 
-  ## if (NCOL(D$dS)>500) {
-  ##   I <- matrix(0,NCOL(D$dS),NCOL(D$dS))
-  ##   for (i in 1:NCOL(D$dS)) {
-  ##     for (j in i:NCOL(D$dS)) {
-  ##       if (is.null(weight)) {
-  ##         I[i,j] <- I[j,i] <- 
-  ##           sum(diag(matrix(D$dS[,i],NCOL(iC))%*%iC%*%matrix(D$dS[,j],NCOL(iC))%*%iC))        
-  ##       } else {
-  ##         I[i,j] <- I[j,i] <- 
-  ##           sum(diag(matrix(D$dS[,i],NCOL(iC))%*%iC%*%W%*%matrix(D$dS[,j],NCOL(iC))%*%iC))
-  ##       }
-  ##     }
-  ##   }
-  ##   information_Sigma <- n/2*I
-      
-  ## } else
   
   {
     if (is.null(weight)) {
@@ -182,13 +165,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   }
   
   information <- information_Sigma + information_mu
-  ##browser()
-  ## if (score) {
-  ##   vec.iC <- as.vector(iC)  
-  ##   Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
-  ##   if (!is.null(mu)) # & mp$npar.mean>0)
-  ##     Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
-  ## }
   if (inverse) {
     if (pinv)
       iI <- Inverse(information)
@@ -238,11 +214,11 @@ information.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) 
   parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
   I <- matrix(0,nrow=length(p),ncol=length(p))
   if (!indiv) {
-    for (i in 1:x$ngroup)
+    for (i in seq_len(x$ngroup))
       I[parord[[i]],parord[[i]]] <- I[parord[[i]],parord[[i]]] + information(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],...)
   } else {
     I <- list()
-    for (i in 1:x$ngroup)
+    for (i in seq_len(x$ngroup))
       I <- c(I, list(information(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],...)))
   }
   return(I)  

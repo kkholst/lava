@@ -23,9 +23,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   }
   lname <- paste(model,"_logLik.lvm",sep="")
   logLikFun <- get(lname)
-  ##  browser()
   if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ##### Random slopes!
-##  if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
     x0 <- object
     if (length(xfix)>0) {
       Debug("random slopes...",debug)
@@ -35,8 +33,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix <- list(var=xfix, col=colpos, row=rowpos)
       for (i in 1:length(myfix$var))
-        ##      regfix(x0, from=vars(x0)[myfix$row[[i]][]],to=vars(x0)[myfix$col[[i]][j]]) <
-        ##          (data[1,myfix$var[[i]]])
         for (j in 1:length(myfix$col[[i]])) {
           regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
             data[1,myfix$var[[i]]]
@@ -100,10 +96,8 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
                           func(unlist(c(pp,x))[myidx])
                         }))
         Mu[,xconstrain[[i]]$endo] <- mu
-##        offsets[,xconstrain[[i]]$endo] <- mu
       }
       offsets <- Mu%*%t(M$IAi)[,endogenous(object),drop=FALSE]
-      ##    data[,colnames(offsets)] <- data[,colnames(offsets)]-offsets
       object$constrain[iconstrain] <- NULL
       object$mean[yconstrain] <- 0      
       loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,data2=data2,offset=offsets),list(...)))

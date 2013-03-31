@@ -2,7 +2,13 @@
 ##' @export
 fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
 
-
+  if (is.null(param)) {
+    param <- "none"
+  } else {
+    paramval <- c("hybrid","relative","none","absolute")
+    param <- agrep(param,paramval,max.distance=0,value=TRUE)
+  }
+  
   if (is.character(measurement.fix)) {
     param <- measurement.fix
     measurement.fix <- TRUE

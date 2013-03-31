@@ -120,8 +120,8 @@ summary.multigroupfit <- function(object,groups=NULL,...) {
       groups <- seq_len(object$model$ngroup)
     }    
   }
-  cc <- CoefMat.multigroupfit(object,groups=groups,...) 
-  res <- list(coef=coef(object,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
+  cc <- CoefMat.multigroupfit(object,groups=groups,...)
+  res <- list(coef=coef(object,level=2,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
   class(res) <- "summary.multigroupfit"
   res
 }
