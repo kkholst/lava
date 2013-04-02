@@ -28,7 +28,7 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object)
 ##' ##  Conditional mean  gives covariates and y1
 ##' r <- predict(e,~y1+y2)
 ##' ##  Predicted residuals (conditional on all observed variables)
-##' r <- predict(e,residual=TRUE)
+##' r <- predict(e,vars(e),residual=TRUE)
 ##' 
 ##' @method predict lvm
 ##' @aliases predict.lvmfit
@@ -65,7 +65,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     Y <- setdiff(Y,X)
     idx <- which(vars(object)%in%X)
     if (length(Y)==0) stop("New data set should only contain exogenous variables and a true subset of the endogenous variables for 'path' prediction.")
-    A <- m$A
+    A <- t(m$A)
     A[,idx] <- 0 ## i.e., A <- A%*%J
     IAi <- solve(diag(nrow=nrow(A))-t(A))
     mu.0 <- m$v;
@@ -108,7 +108,8 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
   Cy.epsilon <- P.x%*%t(IAi) ## Covariance y,residual
   Czeta.y <- Cy.epsilon[eta.idx,endogenous(object)]
-  IA <- diag(nrow=nrow(m$A))-t(m$A)
+  A <- m$A
+  IA <- diag(nrow=nrow(A))-t(A)
 
   y0 <- intersect(Y,colnames(data))
   ys <- data[,y0,drop=FALSE]
@@ -147,7 +148,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   
   if (length(eta.idx)>0) {
     Ceta.x <- C.x[eta.idx,eta.idx]
-    Lambda <- matrix(A[Y.idx.all,eta.idx,drop=FALSE], ncol=length(eta.idx))
+    Lambda <- A[Y.idx.all,eta.idx,drop=FALSE] ##, ncol=length(eta.idx))
     Cetay.x <- Ceta.x%*%t(Lambda)
     KK <- Cetay.x %*% solve(Cy.x)
     Eeta.y <- Eeta.x + KK %*% ry 

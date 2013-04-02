@@ -45,6 +45,6 @@ r <- predict(e,y3~y1+y2)
 ##  Conditional mean  gives covariates and y1
 r <- predict(e,~y1+y2)
 ##  Predicted residuals (conditional on all observed variables)
-r <- predict(e,residual=TRUE)
+r <- predict(e,vars(e),residual=TRUE)
 }
 

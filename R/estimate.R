@@ -458,7 +458,7 @@ estimate <- function(x,...) UseMethod("estimate")
     }
 
     
-    myInfo <- function(pp,...) {
+    myInfo <- function(pp) {
       myfun <- function(ii) {
         if (length(xfix)>0)
         for (i in 1:length(myfix$var)) {
@@ -654,10 +654,10 @@ estimate <- function(x,...) UseMethod("estimate")
   if (!exists(asVarFun)) {
     if (is.null(myInfo)) {
       if (!is.null(myGrad))
-        myInfo <- function(pp,...)
+        myInfo <- function(pp)
           jacobian(myGrad,pp,method=lava.options()$Dmethod)
       else
-        myInfo <- function(pp,...)
+        myInfo <- function(pp)
           hessian(myObj,pp)
     }
     I <- myInfo(opt$estimate)
