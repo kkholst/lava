@@ -223,9 +223,9 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         if ("cov"%in%names(data)) data$S <- data$cov
         if ("var"%in%names(data)) data$S <- data$var
         if ("mean"%in%names(data)) data$mu <- data$mean
-        S <- reorderdata.lvm(x,data$S)
-        mu <- reorderdata.lvm(x,data$mu)
         n <- data$n
+        S <- reorderdata.lvm(x,data$S)*(n-1)/n
+        mu <- reorderdata.lvm(x,data$mu)
         ##      if (is.null(n)) stop("n was not specified");
       }
       else
@@ -452,4 +452,5 @@ Decomp.specials <- function(x,pattern="[()]") {
     return(paste(res[1],seq(as.numeric(res[2])),sep=""))
   } 
   unlist(strsplit(vars,","))
+
 }

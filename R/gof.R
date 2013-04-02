@@ -1,3 +1,5 @@
+rsq <- function(x) 1-coef(x,9,std="yx")[paste(manifest(x),"<->",manifest(x),sep=""),5] 
+
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
 ##                     control=list(start=coef(object),trace=1),
                      control=list(trace=1),
@@ -162,8 +164,11 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       R <- (diag(1/L))%*%(S-C)%*%(diag(1/L))
       R2 <- (mu-xi)/L
       SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
-      SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5      
-      res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR,"SRMR(endogenous)"=SRMR.endo))
+      res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR))
+      ## if (length(latent(object))>0) {
+      ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5      
+      ##   res <- c(res,list("SRMR(endogenous)"=SRMR.endo))
+      ## }
     }    
     ##    if (class(object)[1]=="lvmfit")
     if (rnkV==ncol(vcov(object))) {

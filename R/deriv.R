@@ -26,7 +26,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   var.idx <- seq_len(npar-npar.reg) + (npar.mean + npar.reg)   
   mean.idx <- seq_len(npar.mean)
   npar.total <- npar+length(mean.idx)
-  
+
   if (zeroones | is.null(ii$dA)) {
     dimA <- length(nn$A)
     if (ii$sparse) { ## Not used yet...
@@ -38,7 +38,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     if (npar.reg>0) {
       dA[,regr.idx] <- sapply(regr.idx, function(i) izero(which(t(nn$A)==i),nrow(dA)) )
     }
-    par.var <- (npar.reg+1):npar
+    par.var <- seq(npar.reg+1,npar)
     if (npar>npar.reg) {
       dP[,var.idx] <- sapply(var.idx, function(i) izero(which(nn$P==i),nrow(dA)) )
     }    
@@ -64,7 +64,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   }
 
   if (!all) return(res)
-
   ## Non-linear constraints:
   cname <- constrainpar <- c()
   if (!missing(p)  && length(index(expr)$constrain.par)>0) {
@@ -110,38 +109,23 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 
   N <- NCOL(ii$A)
   K <- nobs
-  ## if (N>1e5) {
-  ##   dG <- with(mom, matrix(0,prod(dim(G)),NCOL(res$dA)))
-  ##   for (i in 1:NCOL(dG)) { ## vec(ABC) = (C'xA)*vec(B)
-  ##     dG[,i] <- as.vector(with(mom, G%*%matrix(res$dA[,i],ncol=N)%*%IAi))
-  ##   }
-  ##   G1 <- G2 <- G3 <- matrix(0,K^2,NCOL(res$dA))
-  ##   tGP <- with(mom, t(G%*%P))
-  ##   for (i in 1:NCOL(G1)) {
-  ##     G1[,i] <- as.vector(matrix(dG[,i],ncol=NCOL(mom$G))%*%tGP)
-  ##     G3[,i] <- as.vector(with(mom, ((G)%*%matrix(res$dP[,i],ncol=NCOL(mom$P))%*%t(G))))
-  ##   }
-  ##   G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
-  ##   dS <- G1+G2+G3
+  ## if (N>10) {
+  dG <- with(mom, kronprod(t(IAi),G,res$dA))
+  GP <- with(mom,G%*%P)
+  G1 <- with(mom, kronprod(GP,ii$Ik,dG))
+  G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+  G3 <- with(mom, kronprod(G,G,res$dP))
+  dS <- G1+G2+G3
   ## } else {
-
-    ## if (DEBUG) {
-      dG <- with(mom, kronprod(t(IAi),G,res$dA))
-      GP <- with(mom,G%*%P)
-      G1 <- with(mom, kronprod(GP,ii$Ik,dG))
-      G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
-      G3 <- with(mom, kronprod(G,G,res$dP))
-      dS <- G1+G2+G3
-    ## } else {
-    ##   dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
-    ##   MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
-    ##   G1<- MM %*% (dG)
-    ##   ## Commutatation product K*X: 
-    ##   ##  G2 <- with(mom, ii$Kkk%*%(G1))
-    ##   G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
-    ##   G3 <- with(mom, (G%x%G)%*%(res$dP))
-    ##   dS <- G1+G2+G3
-    ## }
+  ##   dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
+  ##   MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
+  ##   G1<- MM %*% (dG)
+  ##   ## Commutatation product K*X: 
+  ##   ##  G2 <- with(mom, ii$Kkk%*%(G1))
+  ##   G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+  ##   G3 <- with(mom, (G%x%G)%*%(res$dP))
+  ##   dS <- G1+G2+G3
+  ## }
   ## }
   res <- c(res, list(dG=dG, dS=dS))
   

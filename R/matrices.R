@@ -14,14 +14,9 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
   P1 <- ii$P1 ## Index of free and _unique_ regression parameters
 
   P1.lower <- P1[lower.tri(P1)]
-  ## npar.reg <- sum(M1)
-  ## npar.var <- sum(diag(P1)) + sum(P1.lower) ## Number of covariance par
-  ##  npar.var <- ii$npar.var
   constrain.par <- names(constrain(x))
   parval <- list()
     
-####  parname.all <- unique(x$par[!is.na(x$par)])
-####  parname <- setdiff(parname.all,constrain.par)
 
   if (ii$npar.reg>0) {
     A[which(M1==1)] <- pars[seq_len(ii$npar.reg)]
@@ -44,8 +39,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
   }
   which.diag <- diag(P1==1)
   diag(P)[which.diag] <- pars.var[seq_len(sum(which.diag))]
-#### covparname.all <- unique(x$covpar[!is.na(x$covpar)])
-#### covparname <- setdiff(covparname.all,constrain.par)
 
   pars.off.diag <- pars.var
   if (sum(which.diag)>0) {
@@ -81,11 +74,9 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
       }
   } ## duplicate parameters
-  P[upper.tri(P)] <- t(P)[upper.tri(P)]    
-  ##P <- symmetrize(P)
+  P[upper.tri(P)] <- t(P)[upper.tri(P)]  ## Symmetrize...
   
   v <- NULL
-####mparname.all <- NULL
   {    
     named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
@@ -95,8 +86,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
       v[ii$v1==1] <- meanpar
     if (any(fixed))
         v[fixed] <- unlist(x$mean[fixed])
-#### mparname.all <- unique(x$mean[named])
-#### mparname <- setdiff(mparname.all,constrain.par)
 
     for (p in ii$mparname) {
       idx <- which(x$mean==p)
@@ -131,8 +120,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
       e[ii$e1==1] <- epars
     if (any(fixed))
         e[fixed] <- unlist(x$exfix[fixed])
-#### eparname.all <- unique(x$exfix[named])
-#### eparname <- setdiff(eparname.all,constrain.par)
     for (p in ii$eparname) {
       idx <- which(x$exfix==p)
       if (!(p%in%c(ii$parname,ii$covparname,ii$mparname))) {

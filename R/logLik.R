@@ -61,8 +61,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     }
     return(loglik)
   }
-
-
   
   if (xconstrainM) {
     xconstrain <- c()
@@ -99,7 +97,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       }
       offsets <- Mu%*%t(M$IAi)[,endogenous(object),drop=FALSE]
       object$constrain[iconstrain] <- NULL
-      object$mean[yconstrain] <- 0      
+      object$mean[yconstrain] <- 0
       loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,data2=data2,offset=offsets),list(...)))
     } else {
       cl[[1]] <- logLikFun
@@ -128,7 +126,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
                           weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) { 
-   
+  
   exo.idx <- with(index(object), exo.obsidx)##match(exogenous(object),manifest(object))
   endo.idx <- with(index(object), endo.obsidx)##match(endogenous(object),manifest(object))
   if (type[1]=="exo") {
@@ -276,6 +274,7 @@ logLik.lvmfit <- function(object,
                           weight=Weight(object),
                           data2=object$data$data2,
                           ...) {
+      
   logLikFun <- paste(model,"_logLik.lvm",sep="")
   if (!exists(logLikFun)) {
     model <- "gaussian"

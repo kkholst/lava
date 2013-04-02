@@ -42,7 +42,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   m <- length(eta)
   obs <- manifest(x)  ## Manifest/Observed variables
   endo <- endogenous(x)
-##  exo <- exogenous(x,index=FALSE)
   exo <- exogenous(x) ##,index=FALSE)
 
   allvars <- vars(x)
@@ -71,10 +70,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (p %in% constrain.par)
       M0[ii] <- M1[ii] <- 0
   }
-  ## if (length(constrain(x))>0) {
-  ##   jj <- which(x$par%in%constrain.par)
-  ##   M1[jj] <- 0
-  ## }  
   npar.reg <- sum(M1) ## Number of free regression parameters
   Debug("npar done")
 
@@ -83,8 +78,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   P0[exo.idx,exo.idx] <- 0 ## 6/1-2011
   P1 <- P0 ## Matrix of indiciator of free _unique_ variance parameters (removing fixed _and_ duplicate parameters)
   covparname <- unique(x$covpar[!is.na(x$covpar)])
-##  covparname.all <- unique(x$covpar[!is.na(x$covpar)])
-##  covparname <- setdiff(covparname.all,constrain.par)
   for (p in covparname) {
     ii <- which(x$covpar==p)
     if (length(ii)>1)
@@ -92,18 +85,14 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (p%in%c(parname,constrain.par))
       P0[ii] <- P1[ii] <- 0    
   } 
-  ##  P1[upper.tri(P1)] <- 0
-  ##  P1 <- symmetrize(P1) ### OBS CHECK ME
 
   ##  P1. <- P1[-exo.idx,-exo.idx]
   npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
   parnames <- paste("p", seq_len(npar.reg+npar.var), sep="")  
   Debug(npar.reg)
   
-##  A <- M0;
   A <- M
   A[fix.idx] <- x$fix[fix.idx] ## ... with fixed parameters in plac
-##  P <- P0;
   P[covfix.idx] <- x$covfix[covfix.idx] ## ... with fixed parameters in plac
 
   
@@ -124,8 +113,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
   named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
   mparname <- unlist(unique(x$mean[named]))
-##  mparname.all <- unique(x$mean[named])
-##  mparname <- setdiff(mparname.all,constrain.par)
   v0 <- rep(1,length(x$mean)) ## Vector of indicators of free mean-parameters
   
   v0[exo.idx] <- 0
@@ -177,7 +164,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
               endo.idx=setdiff(obs.idx,exo.idx))
   
   if (standard) {
-    ## npar.ex <- sum(e1); ##if(is.null(npar.ex)) npar.ex <- 0
     res <- c(res, list(M=M, A=A, P=P,
                        P0=P0, P1=P1,
                        M0=M0, M1=M1,
@@ -191,8 +177,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
                        constrain.par=constrain.par))
     npar.total <- res$npar+res$npar.mean+res$npar.ex
     which.diag <- diag(P1==1)    
-    ##  if (sparse)
-    ##    res <- lapply(res, function(x) if(is.matrix(x)) as(x,"sparseMatrix") else x)
+
     res <- c(res, list(parname.all=parname, parname=setdiff(parname,constrain.par),
                        which.diag=which.diag,
                        covparname.all=covparname,
@@ -279,7 +264,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
       if (!require("Matrix")) stop("package Matrix not available")
       Ik <- Matrix:::Diagonal(length(obs))
       Im <- Matrix:::Diagonal(ncol(A))
-      ##      Kkk <- commutation(length(obs),sparse=TRUE)
       Kkk <- NULL
       J <- as(J, "sparseMatrix")
       Jy <- as(Jy, "sparseMatrix")
@@ -288,7 +272,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     } else {
       Ik <- diag(length(obs))
       Im <- diag(ncol(A))
-      ##      Kkk <- commutation(length(obs),sparse=FALSE)
     }
     Kkk <- NULL
 
@@ -297,7 +280,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     res <- c(res, list(Ik=Ik, Im=Im, Kkk=Kkk))
   }
   if (deriv) {
-##    print("DERIV")
     if (res$npar.mean>0 & mean)
       D <- deriv(x,meanpar=rep(1,res$npar.mean),zeroones=TRUE)
     else

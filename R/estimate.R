@@ -78,12 +78,16 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' @examples
 ##' 
 ##' m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
+##' covariance(m) <- v1~v2+v3+v4
 ##' \donttest{
 ##' plot(m)
 ##' }
 ##' dd <- sim(m,10000) ## Simulate 10000 observations from model
 ##' e <- estimate(m, dd) ## Estimate parameters
 ##' e
+##' 
+##' e <- estimate(m,data=list(S=cov(dd),mu=colMeans(dd),n=nrow(dd)))
+##' 
 ##' 
 ##' ## Multiple group analysis
 ##' m <- lvm()
@@ -246,6 +250,7 @@ estimate <- function(x,...) UseMethod("estimate")
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
   }
+  rm(res)
 
   checkestimator <- function(x,...) {
     ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")
@@ -564,13 +569,17 @@ estimate <- function(x,...) UseMethod("estimate")
 
       return(S)
     }
-    myInfo <- function(pp,...) {
-      I <- do.call(InformationFun, list(p=pp, obj=myObj, x=x, data=data,
-                                        S=S, mu=mu, n=n,
+    myInfo <- function(pp) {
+      I <- do.call(InformationFun, list(p=pp,
+                                        obj=myObj,
+                                        x=x, data=data,
+                                        S=S, mu=mu,
+                                        n=n,
                                         weight=weight, data2=data2,
-                                        type=optim$information))
-      if (is.null(mu) & index(x)$npar.mean>0) {
-        return(I[-c(1:index(x)$npar.mean),-c(1:index(x)$npar.mean)])
+                                        type=optim$information
+                                        ))
+      if (is.null(mu) && index(x)$npar.mean>0) {
+        return(I[-seq_len(index(x)$npar.mean),-seq_len(index(x)$npar.mean)])
       }
       return(I)
     }
@@ -611,7 +620,6 @@ estimate <- function(x,...) UseMethod("estimate")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
 
-  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))

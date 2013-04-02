@@ -28,7 +28,7 @@ gaussian_method.lvm <- "nlminb2"
   }
 
 
-`gaussian_hessian.lvm` <- function(x,p,n,mu,opt,...) {
+`gaussian_hessian.lvm` <- function(x,p,n,...) {
   dots <- list(...); dots$weight <- NULL  
   do.call("information", c(list(x=x,p=p,n=n),dots))
 }

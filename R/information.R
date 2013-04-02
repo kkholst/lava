@@ -135,12 +135,14 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     diag(iW) <- 1/diag(iW)
   }
 
-  
+
   {
     if (is.null(weight)) {
-      information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC))%*%(D$dS)
+      ## information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC))%*%(D$dS)
+      information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC,D$dS)
     } else {
-      information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
+      ## information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
+      information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC%*%W,D$dS)
     }
   }
   if (is.null(pp$meanpar)) {
