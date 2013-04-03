@@ -85,14 +85,13 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     exo.idx <- index(x)$exo.obsidx;
     ##exo.idx_match(exo,manifest(x)); exo_all.idx <- match(exo, vars(x))
     exo_all.idx <- index(x)$exo.idx
-
     if (length(exo.idx)>0) {
       for (i in 1:length(exo.idx))
         for (j in 1:length(exo.idx)) {
           i. <- exo_all.idx[i]; j. <- exo_all.idx[j]
           myval <- S0[exo.idx[i],exo.idx[j]];          
           if (i.==j. & myval==0) {
-            warning("Overparametrized model. Problem with '"%+%index(x)$vars[j.]%+%"'")
+            ##            warning("Overparametrized model. Problem with '"%+%index(x)$vars[j.]%+%"'")
             myval <- 1
           }
           else if (is.na(myval) || is.nan(myval)) myval <- 0

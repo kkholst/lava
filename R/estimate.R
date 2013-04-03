@@ -249,8 +249,8 @@ estimate <- function(x,...) UseMethod("estimate")
     if (!is.null(res$data2)) data2 <- res$data2
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
+    rm(res)
   }
-  rm(res)
 
   checkestimator <- function(x,...) {
     ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")

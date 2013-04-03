@@ -34,7 +34,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 ### MLE with MAR mechanism
 ######################
   if (missing) {
-    
+
     parcount <- 0
     reservedpars <- c()
     mynpar <- c()
@@ -128,7 +128,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         exogenous(models[[i]]) <- exo
       }
     }
-    
+
     mydata <- datasets[[i]]
     mymodel <- fixsome(models[[i]], data=mydata, measurement.fix=fix, exo.fix=exo.fix)
     mymodel <- updatelvm(mymodel,zeroones=TRUE,deriv=TRUE)

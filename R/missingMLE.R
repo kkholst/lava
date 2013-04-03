@@ -6,9 +6,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     var <- manifest(model)
   }
 
-##  data0 <- subset(data, select=manifest(model))
-##  data.mis.all <- is.na(data0)
-##  data.mis <- data.mis.all[,var,drop=FALSE]  
   data.mis <- is.na(data[,var,drop=FALSE])
   colnames(data.mis) <- var
   patterns <- unique(data.mis,MARGIN=1)
@@ -16,13 +13,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   mis.type <- apply(data.mis,1,
                   function(x) which(apply(patterns,1,function(y) identical(x,y))))
   pattern.allmis <- which(apply(patterns,1,all)) ## Remove entry with all missing
-##  if (!is.null(pattern.allmis))
-##    patterns <- patterns[-pattern.allmis,]
- 
-##  if (fix) {
-##    data0 <- data[1,,drop=FALSE]; data0[,] <- 1
-##    model <- fixsome(model, data=data0, measurement.fix=TRUE, exo.fix=FALSE)
-##  }
 
   models <- datasets <- weights <- data2 <- clusters <- c()
   mymodel <- baptize(model)
@@ -53,14 +43,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
               kill(m0) <- xx
             }
           }
-            ## and is missing,
-##            if (all(c(xx,rownames(A)[A[xx,]==1])%in%names(mypattern)[mypattern])) {
-
-###         }
-###        }
         }
       }
-    ##      kill(m0) <- colnames(data.mis)[mypattern]
     } else
     pattern.compl <- count
 ##    d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
@@ -119,7 +103,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     patterns <- patterns[-rmset,,drop=FALSE]
   }
 
-  ##  print(exclude)
   Patterns <- patterns
   if (length(exclude)>0)
     Patterns <- Patterns[-exclude,]
@@ -145,29 +128,21 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weight,data2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
 
-  ##  cl[1] <- call("missingModel")
-  ##  val <- eval(cl)
   Debug("estimate.MAR")
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0 & !silent)
     warning(paste("Remove latent variable colnames from dataset",redvar)) 
   
   xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
-##    names(data)[(names(data)%in%parlabels(x))]
-##  if (length(xfix)>0) {
-##    warning("Random slopes detected. Estimation with data MAR not supported.")   
-##  }
   if (missing(fix))
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)  
   
   S <- diag(length(manifest(x)));
   mu <- rep(0,nrow(S));  
-  ##  S <- mu <- NULL
   K <- length(exogenous(x))
   vnames <- index(x)$manifest
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
-    ##if (!silent) message("Calculating 1. and 2. moments of exogenous variables...\n")    
     exo.idx <- c(which(manifest(x)%in%exogenous(x)))
     xx <- subset(Model(x),exogenous(x))
     exogenous(xx) <- NULL
@@ -181,7 +156,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     coefpos <- matrices(xx,1:(K*(K-1)/2+K))$P
     ii <- coefpos[upper.tri(coefpos,diag=TRUE)]
     start <- c(mu0, cov0upper[order(ii)])
-    ##    ex <- estimate(xx,datax,silent=TRUE)
     S[exo.idx,exo.idx] <- cov0
     mu[exo.idx] <- mu0    
     ##    message("\n")
@@ -189,14 +163,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   x0 <- x
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
-  
-  ##  print(covfix(x)$values)##[,exogenous(x),exogenous(x)])
-  ##  data0 <- data[1,,drop=FALSE]; data0[,] <- 1
-  ##  if (fix) {
-  ##    x <- fixsome(x, data=data0, measurement.fix=fix, exo.fix=FALSE)
-  ##    x <- fixsome(x, data=data0, S=S, mu=mu, measurement.fix=fix, exo.fix=TRUE, x0=TRUE)
-  ##  }    
-  ##fixsome(x,data=data0,measurement.fix=FALSE,exo.fix=TRUE)
 
   if (!silent)
     message("Identifying missing patterns...")
@@ -204,49 +170,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weight=weight,data2=data2,cluster=cluster,...)
   if (!silent)
     message("\n")
-
-##   res <- c()
-  
-##   x0 <- val$models[[5]]
-##   data0 <- val$data[[5]]
-
-##   x1 <- val$models[[5]]
-##   data1 <- val$data[[5]]
-##   f1 <- function(p) -logLik(x1,data1,p=p)
-##   g1 <- function(p) colSums(-score(x1,data1,p))
-
-
-##   f <- function(p) -logLik(x0,data0,p=p)
-##   g <- function(p) colSums(-score(x0,data0,p))
-##   res <- rbind(res,g(p))
-  
-##   ff <- function(p) f(p)+f1(p)
-##   gg <- function(p) g(p)+g1(p)
-
-  
-##   lower <- c(-Inf,-Inf,-Inf,-Inf,rep(1e-9,4))
-##   nlminb(p,ff,gg,lower=lower,control=list(trace=1))
-
-##   optim(p,f,g,control=list(trace=1))
-        
-  
-##   e0 <- estimate(x0,data0,control=list(trace=1,method="nlminb1"))    
-
-    
-  ##S <- cov(data,use="pairwise.complete.obs")
-  ##mu <- colMeans(data,na.rm=TRUE) 
-
-  
-##   exo <- exogenous(model);
-##   obs <- manifest(model)  
-##   S <- diag(length(obs))
-##   mu <- rep(0,nrow(S))
-##   exo.idx <- match(exo,obs);
-##   S[exo.idx,exo.idx] <- var(data[,exo,drop=FALSE])
-##   colnames(S) <- rownames(S) <- obs
-##   mu[exo.idx] <- colMeans(data[,exo,drop=FALSE])
-##   names(mu) <- obs
-##   model <- fixsome(model, measurement.fix=fix, S=S, mu=mu, n=1)
 
   if (nrow(val$patterns)==1) {
     res <- estimate(x,data=data,fix=fix,weight=weight,data2=data2,estimator=estimator,silent=silent,control=control,...)
@@ -267,15 +190,11 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (!silent)
       message("\n")
   }
-  ##  names(control$start) <- NULL
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
-  ##  if (is.null(control$information))
-  ##    control$information <- "obs"
-  
+
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
   if (!is.null(names(control$start))) {
-    ## Find position of parameters
     parorder1 <- attributes(parpos(mg0,p=names(control$start)))$name
     paridx <- match(parorder1,names(control$start))
     newpos <- paridx[which(!is.na(paridx))]   
@@ -289,12 +208,9 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (all(unlist(lapply(val$data2,is.null)))) val$data2 <- NULL
   if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL
 
-##  e.mis <- estimate(mg0,control=list(start=p,trace=1,method="nlminb1"))
   e.mis <- estimate(mg0,control=control,silent=silent,
                     weight=val$weights,data2=val$data2,
                     cluster=val$clusters,estimator=estimator,...)
-  ##  return(e.mis)
-  ##cc <- coef(e.mis,level=1)[[pattern.compl]]
 
   cc <- coef(e.mis,level=1)
   mynames <- c()
@@ -318,12 +234,10 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
     myfix <- list(var=xfix, col=colpos, row=rowpos)
     for (i in 1:length(xfix)) 
-      ##      for (j in 1:length(myfix$col[[i]])) 
       regfix(x, from=vars(x)[rowpos[[i]]],to=vars(x)[colpos[[i]]]) <-
         rep(colMeans(data[,xfix[i],drop=FALSE],na.rm=TRUE),length(rowpos[[i]]))
     x <-
       updatelvm(x,zeroones=TRUE,deriv=TRUE)
-                ##                reindex(x,zeroones=TRUE,deriv=TRUE)
   }
 
   ord <- c()
@@ -340,11 +254,9 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                         orderlist=ordlist,
                         nmis=nmis,
                         allmis=pattern.allmis,
-##                        cc=pattern.allcomp,
                         cc=mycc,
                         ncc=as.numeric(table(mis.type)[pattern.allcomp]),
                         multigroup=e.mis$model,
-##                        mg0=e.mis$model0$lvm,
                         estimate=e.mis,
                         model=x,
                         model0=x0,
@@ -354,7 +266,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                         estimator=estimator,
                         call=cl
                         ))
-  class(res) <- c("lvm.missing","lvmfit") #,"lvmfit")
+  class(res) <- c("lvm.missing","lvmfit")
   if ("lvmfit.randomslope"%in%class(e.mis))
     class(res) <- c(class(res),"lvmfit.randomslope")
   if (hessian & is.null(cluster)) {
@@ -365,7 +277,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     res$coef <- cc
   }
   
-  ##  res <- edgelabels(res,type="est")
   return(res)
 }
 

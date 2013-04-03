@@ -184,9 +184,8 @@ estimate.default <- function(x,fun,data=model.frame(x),id1,id2,score.deriv,level
   return(res)  
 }
 
-estimate.glm <- function(x,var,...) {
-  print("....")
-  estimate.default(x,...)
+estimate.glm <- function(x,...) {  
+  estimate.default(x,...,var)
 }
 
 
