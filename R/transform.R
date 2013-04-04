@@ -6,11 +6,10 @@
   transform(x,formula,value,...)
 
 
-##' @S3method transform lvm
 "transform.lvm" <- function(`_data`,formula,fun,...) {
   y <- getoutcome(formula)
   xx <- attributes(y)$x
-  addvar(`_data`) <- y
+  addvar(`_data`) <- c(y,xx)
   intercept(`_data`,y) <- 0; covariance(`_data`,y) <- 0
   if (is.null(attributes(`_data`)$transform))
     attributes(`_data`)$transform <- list()

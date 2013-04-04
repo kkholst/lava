@@ -47,6 +47,9 @@
 ##' @export
 ##' @examples
 ##' 
+##' ##################################################
+##' ## Logistic regression
+##' ##################################################
 ##' m <- lvm(y~x+z)
 ##' regression(m) <- x~z
 ##' distribution(m,~y+z) <- binomial.lvm("logit")
@@ -55,8 +58,12 @@
 ##' 
 ##' e <- estimate(m,d,estimator="glm")
 ##' e
+##' ## Simulate a few observation from estimated model
 ##' sim(e,n=5)
 ##' 
+##' ##################################################
+##' ## Poisson
+##' ##################################################
 ##' distribution(m,~y) <- poisson.lvm()
 ##' d <- sim(m,1e4,p=c(y=-1,"y<-x"=2,z=1))
 ##' head(d)
@@ -65,7 +72,9 @@
 ##' 
 ##' summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
 ##' 
-##' 
+##' ##################################################
+##' ### Gamma distribution
+##' ##################################################
 ##' m <- lvm(y~x)
 ##' distribution(m,~y+x) <- list(Gamma.lvm(shape=2),binomial.lvm())
 ##' intercept(m,~y) <- 0.5
@@ -76,6 +85,18 @@
 ##' args(lava::Gamma.lvm)
 ##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
+##' 
+##' ##################################################
+##' ### Transform
+##' ##################################################
+##' 
+##' m <- lvm()
+##' transform(m,xz~x+z) <- function(x) x[1]*(x[2]>0)
+##' regression(m) <- y~x+z+xz
+##' d <- sim(m,1e3)
+##' summary(lm(y~x+z + x*I(z>0),d))
+##' 
+##' 
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @S3method sim lvmfit
@@ -136,11 +157,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (!is.null(M$v)) mu <- M$v
   
 ##  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
-  E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%chol(P)
+  PP <- with(svd(P), v%*%diag(sqrt(d))%*%t(u))
+  E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
-
   vartrans <- names(attributes(x)$transform)
   xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
   xx <- setdiff(xx,vartrans)
@@ -180,7 +201,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       Ey.x <- predict(x, mypar, data.frame(res))
       Vy.x <- attributes(Ey.x)$cond.var
 ##      yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
-      yy <- Ey.x + matrix(n*ncol(Vy.x),ncol=ncol(Vy.x))%*%chol(Vy.x)
+      PP <- with(svd(Vy.x), v%*%diag(sqrt(d))%*%t(u))
+      yy <- Ey.x + matrix(n*ncol(Vy.x),ncol=ncol(Vy.x))%*%PP
       res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)
       return(res)
     }
@@ -221,7 +243,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           P0[covariance(x)$labels==i] <- res[idx,i]
         }
 ##        return(rmvnorm(1,mu0,P0))
-        return(mu0+rbind(rnorm(ncol(P0)))%*%chol(P0))
+        PP <- with(svd(P0), v%*%diag(sqrt(d))%*%t(u))
+        return(mu0+rbind(rnorm(ncol(P0)))%*%PP)
       }))
     } else {
     }
