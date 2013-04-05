@@ -283,9 +283,9 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           xtrans <- attributes(x)$transform[[i]]$x
           if (all(xtrans%in%simuled)) {
 
-            yy <- with(attributes(x)$transform[[i]],fun(res[,x]))
-            if (length(yy) != nrow(res)) { ## apply row-wise
-              res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x],1,fun))
+            suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,x])))
+            if (length(yy) != NROW(res)) { ## apply row-wise
+              res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
             } else {
               res[,i] <- yy
             }
@@ -346,7 +346,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     res <- res[,nn,drop=FALSE]
   }
 
-  
   ## for (i in seq_len(length(x$constrainY))) {
   ##   cc <- x$constrainY[[i]]
   ##   args <- attributes(x$constrainY[[i]])$args

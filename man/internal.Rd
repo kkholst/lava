@@ -1,9 +1,13 @@
 \name{startvalues}
+\alias{CoefMat}
+\alias{CoefMat.multigroupfit}
+\alias{IV}
+\alias{Inverse}
+\alias{Specials}
+\alias{Weight}
 \alias{addattr}
 \alias{addhook}
 \alias{checkmultigroup}
-\alias{CoefMat}
-\alias{CoefMat.multigroupfit}
 \alias{decomp.specials}
 \alias{deriv}
 \alias{describecoef}
@@ -19,8 +23,6 @@
 \alias{index.lvm}
 \alias{index.lvmfit}
 \alias{index<-}
-\alias{Inverse}
-\alias{IV}
 \alias{lisrel}
 \alias{matrices}
 \alias{merge}
@@ -44,7 +46,6 @@
 \alias{reindex}
 \alias{reorderdata}
 \alias{score.glm}
-\alias{Specials}
 \alias{starter.multigroup}
 \alias{startvalues}
 \alias{startvalues2}
@@ -55,7 +56,6 @@
 \alias{survival<-}
 \alias{updatelvm}
 \alias{variances}
-\alias{Weight}
 \title{For internal use}
 \description{
   For internal use
