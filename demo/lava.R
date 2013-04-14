@@ -1,10 +1,27 @@
 ###
-### All lava-demos:
+### lava examples:
 ###
 
-m <- lvm(y~x)
-d <- sim(m,100)
+## Model specificiation
+example(lvm)
+example(regression)
+example(covariance)
+example(intercept)
 
-e <- estimate(y~x,d)
-e
+## Simulation
+example(sim)
+example(eventTime)
+
+## Estimation
+example(estimate)
+example(constrain)
+example(curereg)
+
+## Inference
+example(gof)
+example(effects)
+example(estimate.default)
+example(modelsearch)
+example(predict.lvm)
+
 

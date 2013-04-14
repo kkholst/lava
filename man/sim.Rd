@@ -1,17 +1,17 @@
 \name{sim}
-\alias{Gamma.lvm}
 \alias{binomial.lvm}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
-\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
+\alias{distribution.lvm}
 \alias{functional}
-\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
+\alias{functional.lvm}
+\alias{Gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -25,9 +25,9 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
-\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
+\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
 \title{Simulate model}
