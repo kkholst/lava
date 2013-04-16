@@ -1,0 +1,6 @@
+example(lvm)
+example(regression)
+example(covariance)
+example(intercept)
+
+
