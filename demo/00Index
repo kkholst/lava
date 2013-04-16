@@ -1,4 +1,5 @@
-model		Model specification
-simulation	Simulation
-estimation	Estimation
-inference	Inference
+lava             All demos
+lava.model       Model specfication
+lava.simulation  Simulation
+lava.estimation  Estimation
+lava.inference   Inference
