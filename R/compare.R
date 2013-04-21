@@ -75,8 +75,9 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
       msg <- c()
       for (i in seq_len(nrow(B))) {
         Bidx <- which(B[i,]!=0)
-        Bval <- B[i,Bidx]; Bval[Bval==1] <- ""
-        msg <- c(msg,paste(paste(Bval,paste("[",pname[Bidx],"]",sep=""),collapse=" + ",sep="")," = ",null[i],sep=""))
+        Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
+        sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - "; if (sgn[1]==" + ") sgn[1] <- ""
+        msg <- c(msg,paste(paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep="")," = ",null[i],sep=""))
       }
       method <- c(method,"","Null Hypothesis:",msg)
       method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
