@@ -77,11 +77,22 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
                      ...) {
 
 
+  if (inherits(model,"formula")) model <- lm(model,data=data,...)
   if ("mer"%in%class(model)) {
     intercept <- lme4::fixef(model)["(Intercept)"]
   } else {
     intercept <- coef(model)["(Intercept)"]
   }
+  if (is.null(data)) {
+    curdata <- model.frame(model)
+  } else {
+    curdata <- get_all_vars(formula(model), data)
+  }
+  responseorig <- colnames(curdata)[1]
+  if (inherits(data[,var1],c("character","factor"))) {
+    var2 <- var1; var1 <- NULL
+  }
+
   if (is.na(intercept) & !is.null(var2)) {
     model <- update(model,.~.+1)
     warning("Refitted model with an intercept term")
@@ -91,13 +102,7 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
   dots <- list(...)
   
 
-  if (is.null(data)) {
-    curdata <- model.frame(model)
-  } else {
-    curdata <- get_all_vars(formula(model), data)
-  }
-  responseorig <- colnames(curdata)[1]
-
+  
   response <- all.vars(formula(model))[1]
   cname <- colnames(curdata)[-1]
   if (!is.factor(curdata[,var2]) & !is.null(var2)) {

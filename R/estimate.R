@@ -238,7 +238,7 @@ estimate <- function(x,...) UseMethod("estimate")
         x <- latent(x, new.lat)
     }
   }
-
+    
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
@@ -286,11 +286,11 @@ estimate <- function(x,...) UseMethod("estimate")
       x <- updatelvm(x,sparse=optim$sparse,zeroones=TRUE,deriv=TRUE,mean=TRUE)
     }
   }
-
   if (is.null(estimator) || estimator==FALSE) {
     return(x)
-  }  
-  k <- length(manifest(x))
+  }
+
+  if (length(index(x)$endogenous)==0) stop("No observed outcome variables. Check variable names in model and data.")
   Debug(list("S=",S))
   if (!optim$meanstructure) {
     mu <- NULL
@@ -687,7 +687,7 @@ estimate <- function(x,...) UseMethod("estimate")
               estimator=estimator, opt=opt,expar=x$expar,
               data=list(model.frame=data, S=S, mu=mu,
                 C=mom$C, v=mom$v, n=n,                
-                m=length(latent(x)), k=k, data2=data2),
+                m=length(latent(x)), k=length(index(x)$manifest), data2=data2),
               weight=weight, data2=data2,
               cluster=cluster,
               pp.idx=pp.idx,
