@@ -1,17 +1,25 @@
 ###{{{ contrmat
 
 ##' @export
-contrmat <- function(npar,ngroup,...) {
- B <- matrix(0,ncol=npar*ngroup,nrow=npar*(ngroup-1))
- pos <- 0
- for (i in seq_len(npar)) {
-   for (j in seq_len(ngroup-1)) {
-     pos <- pos+1
-     B[pos,i] <- 1;  B[pos,j*npar+i] <- -1
-   }   
- }
- return(B)
+contr <- function(p,n,...) {
+  if (length(p)==1) {
+    B <- matrix(0,ncol=p*n,nrow=p*(n-1))
+    pos <- 0
+    for (i in seq_len(p)) {
+      for (j in seq_len(n-1)) {
+        pos <- pos+1
+        B[pos,i] <- 1;  B[pos,j*p+i] <- -1
+      }   
+    }
+    return(B)
+  }  
+  if (missing(n)) n <- max(p)
+  B <- matrix(0,ncol=n,nrow=length(p)-1)
+  B[,p[1]] <- 1
+  B[cbind(seq(nrow(B)),p[-1])] <- -1
+  B
 }
+
 
 ###}}} contr
 

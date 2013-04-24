@@ -192,6 +192,6 @@ NULL
 ##' stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse
 ##' gaussian_logLik.lvm addhook gethook multigroup Weight fixsome
-##' parfix parfix<- merge IV parameter
+##' parfix parfix<- merge IV parameter contr
 ##' Specials decomp.specials getoutcome
 NULL

@@ -4,6 +4,7 @@
 \alias{checkmultigroup}
 \alias{CoefMat}
 \alias{CoefMat.multigroupfit}
+\alias{contr}
 \alias{decomp.specials}
 \alias{deriv}
 \alias{describecoef}

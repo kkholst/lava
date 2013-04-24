@@ -121,7 +121,7 @@ estimate <- function(x,...) UseMethod("estimate")
            quick=FALSE,
            param,
            ...) { 
-  
+    
   if (length(exogenous(x)>0)) {
     catx <- categorical2dummy(x,data)
     x <- catx$x; data <- catx$data
