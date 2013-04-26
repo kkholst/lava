@@ -189,7 +189,7 @@ function(object,var1=NULL,var2,exo=FALSE,pairwise=FALSE,constrain=FALSE,...) {
       allvars <- c(allvars,var2)
     }  
     if (constrain) {
-      if (length(var)!=2) stop("Constraints only implemented for pairs")
+      if (length(allvars)!=2) stop("Constraints only implemented for pairs")
       return(covarianceconst(object,var1[1],var1[2],...))
     }
 

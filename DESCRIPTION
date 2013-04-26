@@ -16,7 +16,7 @@ Suggests:
     Matrix,
     lme4,
     geepack,
-    gof (>= 0.8),
+    gof (>= 0.9),
     foreach,
     survival,
     testthat

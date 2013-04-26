@@ -714,7 +714,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ###{{{ estimate.formula
 
 ##' @S3method estimate formula
-estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,cluster=NULL,...) {
+estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,cluster=NULL,distribution=NULL,estimator="gaussian",...) {
   cl <- match.call()
   formulaId <- Specials(x,"cluster")
   formulaSt <- paste("~.-cluster(",formulaId,")",sep="")
@@ -728,23 +728,32 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
   mf <- model.frame(x,data)
   mt <- attr(mf, "terms")
   yvar <- names(mf)[1]
-  y <- data[,yvar]
+  y <- mf[,yvar]
   opt <- options(na.action="na.pass")
   mm <- model.matrix(x,data)
   options(opt)
   covars <- colnames(mm)
   covars <- unlist(lapply(covars, function(x) gsub("[^a-zA-Z0-9._]","",x)))
   colnames(mm) <- covars
-  if (attr(terms(x),"intercept")==1)
+  
+  if (attr(terms(x),"intercept")==1) {
     covars <- covars[-1]
+    int <- 1
+  } else {
+    int <- -1
+  }    
   if (!is.null(cluster)) covars <- setdiff(covars,cluster)
-  model <- lvm(toformula(yvar,covars),silent=TRUE)
+  model <- lvm(toformula(yvar,c(int,covars)),silent=TRUE)
+  if (!is.null(distribution)) {
+    lava::distribution(model,yvar) <- distribution
+    estimator <- "glm"
+  }  
   mydata <- na.omit(as.data.frame(cbind(y,mm))); names(mydata)[1] <- yvar
    exogenous(model) <- setdiff(covars,pred.norm)
    if (unstruct) {    
      model <- covariance(model,pred.norm,pairwise=TRUE)
    }
-  estimate(model,mydata,silent=silent,cluster=cluster,...)
+  estimate(model,mydata,silent=silent,cluster=cluster,estimator=estimator,...)
 }
 
 ###}}} estimate.formula
