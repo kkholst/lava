@@ -20,7 +20,6 @@ contr <- function(p,n,...) {
   B
 }
 
-
 ###}}} contr
 
 ###{{{ substArg
@@ -113,7 +112,7 @@ procrandomslope <- function(object,data=object$data,...) {
 ## ' @param Y 
 ## ' @author Klaus K. Holst
 kronprod <- function(A,B,Y) {
-  apply(cbind(Y),2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A))
+  rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
 }
 
 ###}}} kronprod
