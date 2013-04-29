@@ -190,7 +190,7 @@ function(object,var1=NULL,var2,exo=FALSE,pairwise=FALSE,constrain=FALSE,...) {
     }  
     if (constrain) {
       if (length(allvars)!=2) stop("Constraints only implemented for pairs")
-      return(covarianceconst(object,var1[1],var1[2],...))
+      return(covarianceconst(object,allvars[1],allvars[2],...))
     }
 
     object <- addvar(object, allvars, silent=TRUE, reindex=FALSE)
