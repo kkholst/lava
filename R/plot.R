@@ -49,10 +49,15 @@
            addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
            layout=c("dot","fdp","circo","twopi","neato","osage"),
            ...) {
-  if (is.null(vars(x))) stop("Nothing to plot: model has no variables.")
+    if (is.null(vars(x))) {
+      message("Nothing to plot: model has no variables.")
+      return(NULL)
+    }
   index(x) <- reindex(x)
-  if (length(index(x)$vars)<2) stop("Not available for models with fewer than two variables")
-
+  if (length(index(x)$vars)<2) {
+    message("Not available for models with fewer than two variables")
+    return(NULL)
+  }
   
   myhooks <- gethook("plot.post.hooks")
   for (f in myhooks) {
@@ -61,8 +66,10 @@
   
   suppressWarnings(igraphit <- !Rgraphviz || !(require("graph")) || !(require("Rgraphviz")))
   if (igraphit) {
-    if (!require("igraph"))
-      stop("package 'Rgraphviz' or 'igraph' not available")
+    if (!require("igraph")) {
+      message("package 'Rgraphviz' or 'igraph' not available")
+      return(NULL)
+    }
     L <- layout.sugiyama(g <- igraph.lvm(x,...))$layout
     if (noplot) return(g)
     dots <- list(...)
