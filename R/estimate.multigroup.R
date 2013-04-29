@@ -525,7 +525,7 @@
   
 ##############################################################
 
-  
+
   if (!exists(InformationFun)) myInformation <- NULL
   else if (is.null(get(InformationFun))) myInformation <- NULL
   if (is.null(get(GradFun))) myGrad <- NULL

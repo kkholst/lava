@@ -48,8 +48,36 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 
 ###{{{ modelPar.multigroup
 
-##' @S3method modelPar multigroup
+# ##' @S3method modelPar multigroup
 modelPar.multigroup <- function(x,p, ...) {
+  if (length(p)==x$npar) {
+    pp <- lapply(x$parposN,function(z) p[z])
+    res <- list(p=pp, par=pp, mean=NULL)
+    return(res)
+  }
+  
+  Nmean <- unlist(lapply(x$meanposN,length))
+  Npar <- unlist(lapply(x$parposN,length))
+
+  ppos <- mapply("+",x$parposN,as.list(Nmean),SIMPLIFY=FALSE)
+  ppos <- x$parposN
+  pp <- lapply(ppos,function(z) p[z+x$npar.mean])
+
+  if (length(pp)==0) pp <- lapply(seq_len(x$ngroup),function(x) logical())
+  mm <- lapply(x$meanposN,function(x) p[x])
+  if (is.null(mm)) mm <- lapply(seq_len(x$ngroup),logical())
+  pm <- mm
+  for (i in seq_len(length(pm))) pm[[i]] <- c(pm[[i]],pp[[i]])
+  res <- list(p=pm,par=pp,mean=mm)
+  return(res)
+}
+
+###}}}
+
+##' @S3method modelPar multigroup
+modelPar.multigroup <-
+##ppp <- 
+  function(x,p, ...) {
   npar <- x$npar
   npar.mean <- x$npar.mean
   k <- x$ngroup
@@ -62,50 +90,39 @@ modelPar.multigroup <- function(x,p, ...) {
       p. <- p
     }
 
-  Nmean <- unlist(lapply(x$meanposN,length))
-  Npar <- unlist(lapply(x$parposN,length))
-  pp <- lapply(x$parposN,function(x) p.[x])
-  if (length(pp)==0) pp <- lapply(seq_len(x$ngroup),function(x) logical())
-  mm <- lapply(x$meanposN,function(x) meanpar[x])
-  if (is.null(mm)) mm <- lapply(seq_len(x$ngroup),logical())
-  pm <- mm
-  for (i in seq_len(length(pm))) pm[[i]] <- c(pm[[i]],pp[[i]])
-  return(list(p=pm,par=pp,mean=mm))
 
-  ## parlist <- list(); for (i in 1:k) parlist[[i]] <- numeric(length(x$parlist[[i]]))
-  ## if (!is.null(meanpar)) {
-  ##   meanlist <- list(); for (i in 1:k) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
-  ## }
+  parlist <- list(); for (i in 1:k) parlist[[i]] <- numeric(length(x$parlist[[i]]))
+  if (!is.null(meanpar)) {
+    meanlist <- list(); for (i in 1:k) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
+  }
   
-  ## if (length(p.)>0)
-  ## for (i in 1:length(p.)) {
-  ##   for (j in 1:k) {
-  ##     idx <- match(paste("p",i,sep=""), x$parlist[[j]])
-  ##     if (!is.na(idx))
-  ##       parlist[[j]][idx] <- p.[i]
-  ##     if (!is.null(meanpar)) {
-  ##       midx <- match(paste("p",i,sep=""), x$meanlist[[j]])
-  ##       if (!is.na(midx))
-  ##         meanlist[[j]][midx] <- p.[i]
-  ##     }
-  ##   }
-  ## }
+  if (length(p.)>0)
+  for (i in 1:length(p.)) {
+    for (j in 1:k) {
+      idx <- match(paste("p",i,sep=""), x$parlist[[j]])
+      if (!is.na(idx))
+        parlist[[j]][idx] <- p.[i]
+      if (!is.null(meanpar)) {
+        midx <- match(paste("p",i,sep=""), x$meanlist[[j]])
+        if (!is.na(midx))
+          meanlist[[j]][midx] <- p.[i]
+      }
+    }
+  }
   
-  ## if (!is.null(meanpar)) {
-  ##   for (i in 1:length(meanpar)) {
-  ##     for (j in 1:k) {
-  ##       idx <- match(paste("m",i,sep=""), x$meanlist[[j]])
-  ##       if (!is.na(idx))
-  ##         meanlist[[j]][idx] <- meanpar[i]
-  ##     }
-  ##   }
-  ## } else {
-  ##   meanlist <- NULL
-  ## }
-  ## p0 <- parlist
-  ## for (i in 1:length(p0))
-  ##   p0[[i]] <- c(meanlist[[i]],parlist[[i]])  
-  ## return(list(p=p0, par=parlist, mean=meanlist))
+  if (!is.null(meanpar)) {
+    for (i in 1:length(meanpar)) {
+      for (j in 1:k) {
+        idx <- match(paste("m",i,sep=""), x$meanlist[[j]])
+        if (!is.na(idx))
+          meanlist[[j]][idx] <- meanpar[i]
+      }
+    }
+  } else {
+    meanlist <- NULL
+  }
+  p0 <- parlist
+  for (i in 1:length(p0))
+    p0[[i]] <- c(meanlist[[i]],parlist[[i]])  
+  return(list(p=p0, par=parlist, mean=meanlist))
 }
-
-###}}}

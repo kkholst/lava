@@ -742,7 +742,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
   } else {
     int <- -1
   }
-  browser()
+
   if (!is.null(cluster)) covars <- setdiff(covars,cluster)
   model <- lvm(toformula(yvar,c(int,covars)),silent=TRUE)
   if (!is.null(distribution)) {

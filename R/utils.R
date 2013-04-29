@@ -193,6 +193,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       obs <- setdiff(intersect(vars(x), colnames(data)),latent(x))
       Debug(obs)
       mydata <- subset(data, select=obs)
+      if (NROW(mydata)==0) stop("No observations")
       for (i in 1:ncol(mydata)) {
         if (inherits(mydata[,i],"Surv"))
           mydata[,i] <- mydata[,i][,1]
