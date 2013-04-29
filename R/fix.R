@@ -123,6 +123,7 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
 ##' @S3method intfix<- lvm
 ##' @S3method intercept<- lvm
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
+  if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
   if (class(value)[1]=="formula") {
     lhs <- getoutcome(value)
     yy <- decomp.specials(lhs)
@@ -186,7 +187,8 @@ covfix.lvm <- function(object,...) {
   if (!exo & length(exoset)<length(xorg)) {
     exogenous(object) <- exoset
   }
-  
+
+  if (inherits(value,"formula")) value <- all.vars(value)
   if (pairwise) {
     p <- 0
     K <- length(var1)*(length(var1)-1)/2
@@ -394,6 +396,8 @@ regfix.lvm <- function(object,...) {
     exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
   }
 
+  if (inherits(value,"formula")) value <- all.vars(value)
+  
   if (length(from)==length(to) & length(from)==length(value)) {
     for (i in 1:length(from)) {
       if (object$M[from[i],to[i]]==0) { ## Not adjancent! ##!isAdjacent(Graph(object), from[i], to[i])) {

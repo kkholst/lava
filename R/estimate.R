@@ -723,7 +723,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
     x <- update(x,as.formula(formulaSt))  
   }
   if (!is.null(cluster))
-    x <- update(x,as.formula(paste(".~.+",cluster)))
+    x <- update(x,as.formula(paste(".~.+",cluster)))  
   varnames <- all.vars(x)
   mf <- model.frame(x,data)
   mt <- attr(mf, "terms")
@@ -741,7 +741,8 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
     int <- 1
   } else {
     int <- -1
-  }    
+  }
+  browser()
   if (!is.null(cluster)) covars <- setdiff(covars,cluster)
   model <- lvm(toformula(yvar,c(int,covars)),silent=TRUE)
   if (!is.null(distribution)) {
