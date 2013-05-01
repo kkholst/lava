@@ -114,7 +114,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     if (is.data.frame(datasets[[i]])) {
       myvars <- intersect(names(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep))
       if (any(is.na(datasets[[i]][,myvars]))) {
-        if (warned) warning(paste("Missing data encountered. Going for complete-case analysis", sep=""))
+        if (!warned) warning(paste("Missing data encountered. Going for complete-case analysis", sep=""))
         warned  <- TRUE
         datasets[[i]] <- na.omit(datasets[[i]][,myvars,drop=FALSE])
       }
@@ -266,18 +266,18 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   for (i in seq_len(length(myparPos))) {
     mi <- mymeanPos[[i]]
     nmi <- length(mi)
-    pi <- myparPos[[i]]+length(mi)
+    pi <- myparPos[[i]]
     p1 <- setdiff(pi,p0)
     p0 <- c(p0,p1)
     ##    pp0 <- c(pp0,list(match(p1,pi)+nfree.mean))
-    pp0 <- c(pp0,list(match(p1,pi)+length(mi)))
+    pp0 <- c(pp0,list(match(p1,pi)))
     if (length(mean.omit[[i]])>0) mi <- mi[-mean.omit[[i]]]
     m1 <- setdiff(mi,m0)
     m0 <- c(m0,m1)    
     mm0 <- c(mm0,list(match(m1,mi)))
-    pp <- c(pp,list(c(m1,p1)))
+    pp <- c(pp,list(c(m1,p1+nfree.mean)))
     if (length(p1)>0)
-      coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]-nmi],sep="@"))
+      coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],sep="@"))
     if (length(m1)>0) {
       coefsm0 <- paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@")
       coefsm <- c(coefsm,coefsm0)

@@ -251,7 +251,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     return(x)
 }
 
-##' @S3method constrain<- default
+##' @S3method constrain<- default>
 "constrain<-.default" <- function(x,par,args,...,value) {
   if (class(par)[1]=="formula") {
     lhs <- getoutcome(par)
@@ -286,9 +286,10 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     }
   }
   if (i%in%endogenous(x)) {
-    Model(x)$constrainY[[par]] <- structure(value,args=args)    
-  } else { 
+    Model(x)$constrainY[[par]] <- list(fun=value,args=args)
+  } else {
     Model(x)$constrain[[par]] <- value
+    ## Model(x)$constrainArgs[[par]] <- args
     attributes(Model(x)$constrain[[par]])$args <- args
     index(Model(x)) <- reindex(Model(x))
   }
