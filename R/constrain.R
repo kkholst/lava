@@ -285,8 +285,11 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
   if (i%in%endogenous(x)) {
     Model(x)$constrainY[[par]] <- list(fun=value,args=args)
   } else {
-    Model(x)$constrain[[par]] <- value
-    ## Model(x)$constrainArgs[[par]] <- args
+    ## Wrap around do.call, since functions are not really
+    ## parsed as call-by-value in R, and hence setting
+    ## attributes to e.g. value=cos, will be overwritten
+    ## if value=cos is used again later with new args.
+    Model(x)$constrain[[par]] <- function(x) do.call(value,list(x))
     attributes(Model(x)$constrain[[par]])$args <- args
     index(Model(x)) <- reindex(Model(x))
   }
