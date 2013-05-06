@@ -1,5 +1,5 @@
 ##' @S3method predict lvmfit
-predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=pars(object),...) { 
+predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object),...) { 
   predict(Model(object),x=x,p=p,data=data,...)
 }
 
