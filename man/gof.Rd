@@ -22,14 +22,15 @@
 
   \method{logLik}{lvmfit}(object, p=coef(object),
     data=model.frame(object), model=object$estimator,
-    weight=Weight(object), data2=object$data$data2, ...)
+    weight=Weight(object), weight2=object$data$weight2,
+    ...)
 
   \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x),
     model=x$estimator, weight=Weight(x),
-    data2=x$data$data2, ...)
+    weight2=x$data$weight2, ...)
 
   \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x),
-    data2=x$data$data2, ...)
+    weight2=x$data$weight2, ...)
 }
 \arguments{
   \item{object}{Model object}
@@ -40,7 +41,7 @@
 
   \item{data}{Data.frame to use}
 
-  \item{data2}{Optional second data.frame (only for
+  \item{weight2}{Optional second data.frame (only for
   censored observations)}
 
   \item{weight}{Optional weight matrix}

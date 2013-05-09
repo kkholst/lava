@@ -6,7 +6,7 @@
 \usage{
   \method{estimate}{lvm} (x, data = parent.frame(),
     estimator = "gaussian", control = list(),
-    missing = FALSE, weight, weightname, data2, cluster,
+    missing = FALSE, weight, weightname, weight2, cluster,
     fix, index = TRUE, graph = FALSE,
     silent = lava.options()$silent, quick = FALSE, param,
     ...)
@@ -29,7 +29,7 @@
   model) in case \code{weight} was given as a vector of
   column names of \code{data}}
 
-  \item{data2}{Optional additional dataset used by the
+  \item{weight2}{Optional additional dataset used by the
   chosen estimator.}
 
   \item{cluster}{Vector (or name of column in \code{data})
