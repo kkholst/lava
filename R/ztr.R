@@ -24,8 +24,6 @@ function(A) {
     stop("non-square matrix")
   if (any(!is.finite(A))) 
     stop("infinite or missing values")
-  if (any(!is.numeric(A)))
-    stop("numeric or complex values required")    
   return(sum(diag(A)))
 }
 
