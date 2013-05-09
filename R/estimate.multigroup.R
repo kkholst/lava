@@ -4,7 +4,7 @@
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
                                   weight, weightname,
-                                  data2, 
+                                  weight2, 
                                   cluster=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
@@ -99,34 +99,34 @@
   } else {
     weight <- NULL
   }
-  if (!missing(data2)) {
-    if (is.character(data2)) {      
-      stdata2 <- data2
-      data2 <- list()
+  if (!missing(weight2)) {
+    if (is.character(weight2)) {      
+      stweight2 <- weight2
+      weight2 <- list()
       for (i in 1:length(x$data)) {
-        newweight <- as.matrix(x$data[[i]][,stdata2,drop=FALSE])
+        newweight <- as.matrix(x$data[[i]][,stweight2,drop=FALSE])
         dropcol <- apply(newweight,2,function(x) any(is.na(x)))
         newweight <- newweight[,!dropcol,drop=FALSE]
         colnames(newweight) <- index(x$lvm[[i]])$endogenous[seq_len(ncol(newweight))]
-        data2 <- c(data2, list(newweight))
+        weight2 <- c(weight2, list(newweight))
       }
     }
   } else {
-    data2 <- NULL
+    weight2 <- NULL
   }
 
 ### Run hooks (additional lava plugins)
   myhooks <- gethook()
   newweight <- list()
-  newdata2 <- list()
+  newweight2 <- list()
   newoptim <- newestimator <- NULL
   for (f in myhooks) {
     for ( i in seq_len(x$ngroup)) {
-      res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],data2=data2[[i]],estimator=estimator,optim=optim))
+      res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weight=weight[[i]],weight2=weight2[[i]],estimator=estimator,optim=optim))
       if (!is.null(res$x)) x$lvm[[i]] <- res$x
       if (!is.null(res$data)) x$data[[i]] <- res$data
       if (!is.null(res$weight)) newweight <- c(newweight,list(res$weight))
-      if (!is.null(res$data2)) newdata2 <- c(newdata2,list(res$data2))
+      if (!is.null(res$weight2)) newweight2 <- c(newweight2,list(res$weight2))
       if (!is.null(res$optim)) newoptim <- res$optim
       if (!is.null(res$estimator)) newestimator <- res$estimator
     }
@@ -136,9 +136,9 @@
       if (!any(unlist(lapply(newweight,is.null)))) {
         weight <- newweight
       }
-    if (!is.null(res$data2))
-      if (!any(unlist(lapply(newdata2,is.null)))) {
-        data2 <- newdata2
+    if (!is.null(res$weight2))
+      if (!any(unlist(lapply(newweight2,is.null)))) {
+        weight2 <- newweight2
       }    
   }
 
@@ -281,17 +281,17 @@
               index(x0)$A[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
                 data0[ii,xfix0[i]]
           }
-          if (is.list(data2[[k]][ii,])) {
+          if (is.list(weight2[[k]][ii,])) {
             res <- do.call(ObjectiveFun, list(x=x0, p=p0,
                                               data=data0[ii,manifest(x0),drop=FALSE],
                                               n=1, S=NULL, weight=weight[[k]][ii,],
-                                              data2=data2[[k]]))
+                                              weight2=weight2[[k]]))
             
           } else {
             res <- do.call(ObjectiveFun, list(x=x0, p=p0,
                                               data=data0[ii,manifest(x0),drop=FALSE],
                                               n=1, S=NULL, weight=weight[[k]][ii,],
-                                              data2=data2[[k]][ii,]))
+                                              weight2=weight2[[k]][ii,]))
           }
           return(res)
         }
@@ -318,14 +318,14 @@
               index(x0)$A[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
                 x$data[[k]][ii,xfix[[k]][i]]
           }
-          if (is.list(data2[[k]][ii,])) {
+          if (is.list(weight2[[k]][ii,])) {
             
           } else {
             val <- do.call(GradFun, list(x=x0, p=pp[[k]],
                                          data=mydata[[k]][ii,,drop=FALSE], n=1,
                                          S=NULL,
                                          weight=weight[[k]][ii,],
-                                         data2=data2[[k]][ii,]))
+                                         weight2=weight2[[k]][ii,]))
           }
           return(val)
         }
@@ -363,7 +363,7 @@
                             data=mydata[[k]][ii,], n=1,
                             S=NULL,
                             weight=weight[[k]][ii,],
-                            data2=data2[[k]][ii,],
+                            weight2=weight2[[k]][ii,],
                             type=optim$information
                             )
                        )
@@ -461,7 +461,7 @@
           x0$mean[yconstrain[[i]]] <- 0 
         }
         res <- c(res,
-                 do.call(ObjectiveFun, list(x=x0, p=pp[[i]], data=data0, S=S, mu=mu, n=n, weight=weight[[i]], data2=data2[[i]], offset=offset)))
+                 do.call(ObjectiveFun, list(x=x0, p=pp[[i]], data=data0, S=S, mu=mu, n=n, weight=weight[[i]], weight2=weight2[[i]], offset=offset)))
                  
       }
         sum(res)
@@ -482,7 +482,7 @@
                          do.call(GradFun, list(x=x$lvm[[i]],p=pp[[i]],
                                                data=x$data[[i]][,index(x$lvm[[i]])$manifest,drop=FALSE],
                                                S=S,mu=mu,n=n,
-                                               weight=weight[[i]], data2=data2[[i]])))
+                                               weight=weight[[i]], weight2=weight2[[i]])))
           D <- D0; D[ parord[[i]] ] <- repval
         res <- res + D
         }
@@ -504,7 +504,7 @@
         I <- I0;
         I[ parord[[i]], parord[[i]] ] <- with(x$samplestat[[i]], do.call(InformationFun, list(p=pp[[i]], x=x$lvm[[i]], data=x$data[[i]],
                                                                                               S=S, mu=mu, n=n, weight=weight[[i]],
-                                                                                              data2=data2[[i]],
+                                                                                              weight2=weight2[[i]],
                                                                                               type=optim$information)))
         res <- res + I
       }
@@ -573,7 +573,7 @@ For numerical approximation please install the library 'numDeriv'.")
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
     
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, data2=data2, cluster=cluster)
+  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, weight2=weight2, cluster=cluster)
   class(res) <- myclass
 
   myhooks <- gethook("post.hooks")

@@ -251,7 +251,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     return(x)
 }
 
-##' @S3method constrain<- default>
+##' @S3method constrain<- default
 "constrain<-.default" <- function(x,par,args,...,value) {
   if (class(par)[1]=="formula") {
     lhs <- getoutcome(par)

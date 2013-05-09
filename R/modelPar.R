@@ -48,7 +48,7 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 
 ###{{{ modelPar.multigroup
 
-# ##' @S3method modelPar multigroup
+##' @S3method modelPar multigroup
 modelPar.multigroup <- function(x,p, ...) {
   if (length(p)==x$npar) {
     pp <- lapply(x$parposN,function(z) p[z])
@@ -74,9 +74,7 @@ modelPar.multigroup <- function(x,p, ...) {
 
 ###}}}
 
-##' @S3method modelPar multigroup
-modelPar.multigroup <-
-##ppp <- 
+modelPar2.multigroup <-
   function(x,p, ...) {
   npar <- x$npar
   npar.mean <- x$npar.mean

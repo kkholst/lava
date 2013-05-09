@@ -1,7 +1,7 @@
 ###{{{ logLik.lvm
 
 ##' @S3method logLik lvm
-logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,data2=NULL,...) {
+logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,weight2=NULL,...) {
   cl <- match.call()
   xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
 
@@ -47,7 +47,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
         for (i in 1:length(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],data2=data2[ii,,drop=FALSE],
+      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],
                        model=model,debug=debug,indiv=indiv,...))
     }    
     loglik <- sapply(1:nrow(data),myfun)
@@ -98,7 +98,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       offsets <- Mu%*%t(M$IAi)[,endogenous(object),drop=FALSE]
       object$constrain[iconstrain] <- NULL
       object$mean[yconstrain] <- 0
-      loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,data2=data2,offset=offsets),list(...)))
+      loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,weight2=weight2,offset=offsets),list(...)))
     } else {
       cl[[1]] <- logLikFun
       loglik <- eval.parent(cl)
@@ -272,7 +272,7 @@ logLik.lvmfit <- function(object,
                           data=model.frame(object),
                           model=object$estimator,
                           weight=Weight(object),
-                          data2=object$data$data2,
+                          weight2=object$data$weight2,
                           ...) {
       
   logLikFun <- paste(model,"_logLik.lvm",sep="")
@@ -280,7 +280,7 @@ logLik.lvmfit <- function(object,
     model <- "gaussian"
   }
   l <- logLik.lvm(object$model0,p,data,model=model,weight=weight,
-                  data2=data2,
+                  weight2=weight2,
                   ...)
   return(l)
 }

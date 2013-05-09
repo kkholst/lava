@@ -48,7 +48,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' @param weight Optional weights to used by the chosen estimator.
 ##' @param weightname Weight names (variable names of the model) in case
 ##' \code{weight} was given as a vector of column names of \code{data}
-##' @param data2 Optional additional dataset used by the chosen
+##' @param weight2 Optional additional dataset used by the chosen
 ##' estimator.
 ##' @param cluster Vector (or name of column in \code{data}) that identifies
 ##' correlated groups of observations in the data leading to variance estimates
@@ -112,7 +112,7 @@ estimate <- function(x,...) UseMethod("estimate")
            control=list(),
            missing=FALSE,
            weight, weightname,
-           data2,
+           weight2,
            cluster,
            fix,
            index=TRUE,
@@ -183,7 +183,7 @@ estimate <- function(x,...) UseMethod("estimate")
   if (!missing & (is.matrix(data) | is.data.frame(data))) {
     includelist <- c(manifest(x),xfix)
     if (!missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
-    if (!missing(data2) && is.character(data2)) includelist <- c(includelist,data2)
+    if (!missing(weight2) && is.character(weight2)) includelist <- c(includelist,weight2)
     if (!missing(cluster) && is.character(cluster)) includelist <- c(includelist,cluster)    
     data <- na.omit(data[,intersect(colnames(data),includelist),drop=FALSE])
   }
@@ -205,12 +205,12 @@ estimate <- function(x,...) UseMethod("estimate")
   } else {
     weight <- NULL
   }
-  if (!missing(data2)) {
-    if (is.character(data2)) {
-      data2 <- data[,data2]
+  if (!missing(weight2)) {
+    if (is.character(weight2)) {
+      weight2 <- data[,weight2]
     }
   } else {
-    data2 <- NULL
+    weight2 <- NULL
   }
   ## Correlated clusters...
   if (!missing(cluster)) {
@@ -242,11 +242,11 @@ estimate <- function(x,...) UseMethod("estimate")
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
-    res <- do.call(f, list(x=x,data=data,weight=weight,data2=data2,estimator=estimator,optim=optim))
+    res <- do.call(f, list(x=x,data=data,weight=weight,weight2=weight2,estimator=estimator,optim=optim))
     if (!is.null(res$x)) x <- res$x
     if (!is.null(res$data)) data <- res$data
     if (!is.null(res$weight)) weight <- res$weight
-    if (!is.null(res$data2)) data2 <- res$data2
+    if (!is.null(res$weight2)) weight2 <- res$weight2
     if (!is.null(res$optim)) optim <- res$optim
     if (!is.null(res$estimator)) estimator <- res$estimator
     rm(res)
@@ -323,7 +323,7 @@ estimate <- function(x,...) UseMethod("estimate")
   ## Missing data
   if (missing) {
     control$start <- optim$start
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,data2=data2,cluster=cluster,...))
+    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
 
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -422,11 +422,11 @@ estimate <- function(x,...) UseMethod("estimate")
         for (i in 1:length(myfix$var)) {          
             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-        if (is.list(data2)) {
-          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], data2=data2[ii,]))
+        if (is.list(weight2)) {
+          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2[ii,]))
         } else
         {
-          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], data2=data2))
+          res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
         }
         return(res)
       }           
@@ -442,11 +442,11 @@ estimate <- function(x,...) UseMethod("estimate")
         for (i in 1:length(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-        if (is.list(data2)) {
-          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], data2=data2))
+        if (is.list(weight2)) {
+          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2))
         } else
         {
-          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], data2=data2[ii,]))
+          rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2[ii,]))
         }
         return(rr)        
       }
@@ -464,12 +464,12 @@ estimate <- function(x,...) UseMethod("estimate")
         for (i in 1:length(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
-        if (is.list(data2)) {
+        if (is.list(weight2)) {
           res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
-                                              n=1, weight=weight[ii,], data2=data2))
+                                              n=1, weight=weight[ii,], weight2=weight2))
         } else {
           res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
-                                              n=1, weight=weight[ii,], data2=data2[ii,]))
+                                              n=1, weight=weight[ii,], weight2=weight2[ii,]))
         }
         return(res)
       }      
@@ -540,7 +540,7 @@ estimate <- function(x,...) UseMethod("estimate")
         x0$mean[yconstrain] <- 0
       }
       do.call(ObjectiveFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
-                                 ,data2=data2, offset=offset
+                                 ,weight2=weight2, offset=offset
                                  ))
     }
 
@@ -557,7 +557,7 @@ estimate <- function(x,...) UseMethod("estimate")
       ##   S0 <- pd$S; mu0 <- pd$mu
       ## }
       S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
-                                 , data2=data2##, offset=offset
+                                 , weight2=weight2##, offset=offset
                                  ))
       if (optim$constrain) {
         S[constrained] <- S[constrained]*pp[constrained]
@@ -575,7 +575,7 @@ estimate <- function(x,...) UseMethod("estimate")
                                         x=x, data=data,
                                         S=S, mu=mu,
                                         n=n,
-                                        weight=weight, data2=data2,
+                                        weight=weight, weight2=weight2,
                                         type=optim$information
                                         ))
       if (is.null(mu) && index(x)$npar.mean>0) {
@@ -687,8 +687,8 @@ estimate <- function(x,...) UseMethod("estimate")
               estimator=estimator, opt=opt,expar=x$expar,
               data=list(model.frame=data, S=S, mu=mu,
                 C=mom$C, v=mom$v, n=n,                
-                m=length(latent(x)), k=length(index(x)$manifest), data2=data2),
-              weight=weight, data2=data2,
+                m=length(latent(x)), k=length(index(x)$manifest), weight2=weight2),
+              weight=weight, weight2=weight2,
               cluster=cluster,
               pp.idx=pp.idx,
               graph=NULL, control=optim)
