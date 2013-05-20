@@ -28,7 +28,6 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   J <- ii$J
   Jidx <- ii$obs.idx
   if (conditional) {
-    ##    mynames <- index(x)$endo.idx
     J <- ii$Jy
     px <- ii$px
     exo <- exogenous(x)

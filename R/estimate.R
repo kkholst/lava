@@ -225,9 +225,9 @@ estimate <- function(x,...) UseMethod("estimate")
   
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
-  Debug(list("n=",n))  
-  Debug(list("S=",S))
-  Debug(list("mu=",mu))
+  ## Debug(list("n=",n))  
+  ## Debug(list("S=",S))
+  ## Debug(list("mu=",mu))
 
   ##  if (fix)
   {
@@ -291,7 +291,6 @@ estimate <- function(x,...) UseMethod("estimate")
   }
 
   if (length(index(x)$endogenous)==0) stop("No observed outcome variables. Check variable names in model and data.")
-  Debug(list("S=",S))
   if (!optim$meanstructure) {
     mu <- NULL
   }
@@ -309,10 +308,9 @@ estimate <- function(x,...) UseMethod("estimate")
  
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
-    Debug(list("starter=",optim$starterfun))
     start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
-    Debug(start)  
-    Debug(list("start=",start))
+    ## Debug(start)  
+    ## Debug(list("start=",start))
     if (length(paragree.2)>0) {
       start[which(paragree)] <- optim$start[which(paragree.2)]
     }
@@ -369,7 +367,7 @@ estimate <- function(x,...) UseMethod("estimate")
   }
   ## Fix problems with starting values? 
   optim$start[is.nan(optim$start)] <- 0  
-  Debug(list("lower=",lower))
+  ## Debug(list("lower=",lower))
 
   ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
   GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
@@ -647,7 +645,7 @@ estimate <- function(x,...) UseMethod("estimate")
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
-
+  
   mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
   if (!silent) message("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
@@ -667,14 +665,11 @@ estimate <- function(x,...) UseMethod("estimate")
     asVar <- tryCatch(do.call(asVarFun,
                               list(x=x,p=opt$estimate,data=data,opt=opt)),
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
-    
   }
 
   if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
                         }
   diag(asVar)[(diag(asVar)==0)] <- NA
-
-  Debug("did that") 
 
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)

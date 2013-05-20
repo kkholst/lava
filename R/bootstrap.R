@@ -21,6 +21,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param p Parameter vector of the null model for the parametric bootstrap
 ##' @param parametric If TRUE a parametric bootstrap is calculated. If FALSE a
 ##' non-parametric (row-sampling) bootstrap is computed.
+##' @param bollenstine Bollen-Stine transformation (non-parametric bootstrap) for bootstrap hypothesis testing.
 ##' @param constraints Logical indicating whether non-linear parameter
 ##' constraints should be included in the bootstrap procedure
 ##' @param estimator String definining estimator, e.g. 'gaussian' (see
@@ -34,12 +35,12 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @usage
 ##' 
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
-##'                           p, parametric=FALSE,
+##'                           p, parametric=FALSE, bollenstine=FALSE,
 ##'                           constraints=TRUE,sd=FALSE,silent=FALSE,...)
 ##' 
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
 ##'                              control=list(start=coef(x)),
-##'                              p=coef(x), parametric=FALSE,
+##'                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
 ##'                              estimator=x$estimator,weight=Weight(x),...)
 ##' 
 ##' @return A \code{bootstrap.lvm} object.
@@ -58,12 +59,13 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##'
 ##' @S3method bootstrap lvm
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
-                          p, parametric=FALSE,
+                          p, parametric=FALSE, bollenstine=FALSE,
                           constraints=TRUE,sd=FALSE,silent=FALSE,...) {
   
   coefs <- sds <- c()
   on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
-  
+
+ 
   pmis <- missing(p)
   bootfun <- function(i) {
     if (i==0) {
@@ -99,6 +101,19 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     return(list(coefs=coefs,sds=newsd))
   }
 
+  if (bollenstine) {
+      e0 <- estimate(x,data=data,control=control,silent=TRUE,index=FALSE)
+      mm <- modelVar(e0)
+      mu <- mm$xi
+      Y <- t(t(data[,manifest(e0)])-as.vector(mu))
+      Sigma <- mm$C      
+      S <- (ncol(Y)-1)/ncol(Y)*var(Y)
+      sSigma <- with(eigen(Sigma),vectors%*%diag(sqrt(values),ncol=ncol(vectors))%*%t(vectors))
+      isS <- with(eigen(S),vectors%*%diag(1/sqrt(values),ncol=ncol(vectors))%*%t(vectors))
+      data <- as.matrix(Y)%*%(isS%*%sSigma)
+      colnames(data) <- manifest(e0)
+  }
+  
   i <- 0
   if (require(foreach) & lava.options()$parallel) {
     res <- foreach (i=0:R) %dopar% bootfun(i)
@@ -116,7 +131,6 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     rownames(coefs) <- c()
     res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x) 
   } else {    
-##    if (constraints & length(constrain(x))>0) colnames(coefs)[-seq_len(length(coef(fitted)x=))] <- names(res[[1]]$coefs)
     colnames(coefs) <- names(res[[1]]$coefs)
     rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
     res <- list(coef=coefs[-1,,drop=FALSE], sd=sds[-1,,drop=FALSE], coef0=coefs[1,], sd0=sds[1,], model=x)
@@ -128,9 +142,9 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
 ##' @S3method bootstrap lvmfit
 bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
                              control=list(start=coef(x)),
-                             p=coef(x), parametric=FALSE,
+                             p=coef(x), parametric=FALSE, bollenstine=FALSE,
                              estimator=x$estimator,weight=Weight(x),...)
-  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,p=p,...)
+  bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,bollenstine=bollenstine,p=p,...)
 
 ##' @S3method print bootstrap.lvm
 "print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {

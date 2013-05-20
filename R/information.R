@@ -139,7 +139,13 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   {
     if (is.null(weight)) {
       ## information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC))%*%(D$dS)
-      information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC,D$dS)
+        if (lava.options()$devel) {
+            information_Sigma <- matrix(0,length(p),length(p))
+            imean <- with(index(x)$parBelongsTo,mean)
+            information_Sigma[-imean,-imean] <- n/2*t(D$dS[,-imean])%*%kronprod(iC,iC,D$dS[,-imean])
+        } else {       
+            information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC,D$dS)
+        }
     } else {
       ## information_Sigma <-  n/2*t(D$dS)%*%((iC)%x%(iC%*%W))%*%(D$dS)
       information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC%*%W,D$dS)
@@ -157,16 +163,23 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   }
 
   f <- function(p0) modelVar(x,p0)$xi
-  
-  idx <- with(index(x), (1:npar) + npar.mean)
-  dxi <- D$dxi; ##dxi[,idx] <- 0
+
+  ii <- index(x)
+  dxi <- D$dxi; 
   if (is.null(weight)) {
     information_mu <- n*t(D$dxi) %*% (iC) %*% (D$dxi)
   } else {
     information_mu <- n*t(D$dxi) %*% (iC%*%W) %*% (D$dxi)
   }
+
+  if (!(lava.options()$devel)) {
+      information <- information_Sigma+information_mu
+  } else {
+      mparidx <- with(ii$parBelongsTo,c(mean,reg))
+      information <- information_Sigma
+      information[mparidx,mparidx] <- information[mparidx,mparidx] + information_mu
+  }
   
-  information <- information_Sigma + information_mu
   if (inverse) {
     if (pinv)
       iI <- Inverse(information)

@@ -36,7 +36,6 @@ updatelvm <- function(x,mean=TRUE,...) {
 function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { ## Extract indices of parameters from model
   x$parpos <- NULL
   M <- x$M
-  Debug("M=")
 
   eta <- latent(x) ## Latent variables/Factors
   m <- length(eta)
@@ -57,7 +56,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   constrain.par <- NULL
   if (length(constrain(x))>0) constrain.par <- names(constrain(x))
 
-  Debug("M0")
   M0 <- M;  M0[fix.idx] <- 0 ## Matrix of indicators of free regression-parameters (removing fixed parameters)
   M1 <- M0; ## Matrix of indiciator of free _unique_ regression parameters (removing fixed _and_ duplicate parameters)
   parname <- unique(x$par[!is.na(x$par)])
@@ -71,7 +69,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
       M0[ii] <- M1[ii] <- 0
   }
   npar.reg <- sum(M1) ## Number of free regression parameters
-  Debug("npar done")
 
   P <- x$cov;
   P0 <- P;  P0[covfix.idx] <- 0 ## Matrix of indicators of free covariance-parameters (removing fixed parameters)
@@ -89,7 +86,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   ##  P1. <- P1[-exo.idx,-exo.idx]
   npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
   parnames <- paste("p", seq_len(npar.reg+npar.var), sep="")  
-  Debug(npar.reg)
   
   A <- M
   A[fix.idx] <- x$fix[fix.idx] ## ... with fixed parameters in plac
@@ -287,7 +283,8 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     res[c("dA","dP","dv")] <- NULL
     res <- c(res, list(dA=D$dA, dP=D$dP, dv=D$dv))
   }
-  Debug("index done")
+
+  res <- c(res,mat.lvm(x,res))
   
   return(res)
 }

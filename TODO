@@ -1,0 +1,31 @@
+NR backtracking or modify to ensure PSD
+
+- weight & cluster arguments to multigroup function (in case of missing data)
+
+- merge model function
+
+- Simulation with fixed predictors (cond=TRUE) does not work 
+  with functional/distribution...
+
+- estimate.multigroup (estimate.lvm) check constraints (default NO?)
+
+- cleanup: estimate.R deriv.R information.R startvalues.R predict.R residuals.R Objective.R
+
+- nested.R
+
+- objective-function - data input.
+
+- auto argument to modelsearch function?
+
+- simulation with fixed predictors
+
+- inklusion af 0-1 variable (Muthen?)
+
+- missing
+
+- check derivatives
+
+- check information
+
+- cumres analytical derivatives
+

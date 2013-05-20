@@ -13,11 +13,9 @@ gaussian_method.lvm <- "nlminb2"
     if (n<2) {
       z <- as.numeric(data-xi)
       val <- log(detC) + tcrossprod(z,crossprod(z,iC))[1]
-        ##(t(z)%*%iC%*%z)[1]
       return(0.5*val)      
     }
     if (!is.null(mu)){
-      ##      if (is.null(mu)) mu <- xi
       W <- suppressMessages(tcrossprod(mu-xi))
       T <- S+W
     } else {
@@ -48,15 +46,10 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   if (!is.null(data)) {  
     if ((nrow(data)<2 | !is.null(weight))| indiv)
     {
-      ##pp <- modelPar(x,p)    
       mp <- modelVar(x,p,data=data[1,])
       iC <- Inverse(mp$C,det=FALSE)
-##      D <- with(pp, deriv(x, meanpar=meanpar, p=p, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       MeanPar <- attributes(mp)$meanpar
-      D <- with(attributes(mp), deriv(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
-      
-      ##      D <- with(pp, deriv(x, meanpar=meanpar, mom=mp, mu=NULL))
-      Debug("after deriv.", debug)
+      D <- with(attributes(mp), deriv(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))      
       myvars <- (index(x)$manifest)
       if (NCOL(data)!=length(myvars)) {
         data <- subset(data,select=myvars)
@@ -67,7 +60,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
         W0 <- diag(length(myvars))        
         widx <- match(colnames(weight),myvars)
       }
-      
+
       for (i in 1:NROW(data)) {
         z <- as.numeric(data[i,])
         u <- z-mp$xi
@@ -107,13 +100,23 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   } else {
     T <- S
   }
-  D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean) ##, all=length(constrain(x))>0)
-  vec.iC <- as.vector(iC)  
-  Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
-  if (!is.null(mu) & !is.null(xi)) # & mp$npar.mean>0)
-    Grad <- Grad - n/2*crossprod(D$dT,vec.iC)
+  D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean)
+  vec.iC <- as.vector(iC)
+  if (lava.options()$devel) {
+      Grad <- numeric(length(p))
+      imean <- with(index(x)$parBelongsTo,mean)
+      Grad[-imean] <- n/2*crossprod(D$dS[,-imean], as.vector(iC%*%T%*%iC)-vec.iC)
+  } else { 
+      Grad <- n/2*crossprod(D$dS, as.vector(iC%*%T%*%iC)-vec.iC)
+  }
+  if (!is.null(mu) & !is.null(xi)) {
+      if (!(lava.options()$devel)) {
+          Grad <- Grad - (n/2*crossprod(D$dT,vec.iC))
+      } else {
+          Grad[with(index(x)$parBelongsTo,c(mean,reg))] <- Grad[with(index(x)$parBelongsTo,c(mean,reg))] - (n/2*crossprod(D$dT,vec.iC))
+      }
+  }
   res <- as.numeric(Grad)
-  
   return(rbind(res))
 }
 

@@ -104,7 +104,6 @@ Range.lvm <- function(a=0,b=1) {
 ##' \code{\link{covariance}}
 ##' @keywords models regression
 ##' @examples
-##' 
 ##' ##############################
 ##' ### Non-linear parameter constraints 1
 ##' ##############################
@@ -115,7 +114,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' ## Define slope of x2 to be the square of the residual variance of y
 ##' ## Estimate both restricted and unrestricted model
 ##' e <- estimate(m,d,control=list(method="NR"))
-##' e1 <- estimate(m1,d,control=list(method="NR"))
+##' e1 <- estimate(m1,d)
 ##' p1 <- coef(e1)
 ##' p1 <- c(p1[1:2],p1[3]^2,p1[3])
 ##' ## Likelihood of unrestricted model evaluated in MLE of restricted model

@@ -4,12 +4,12 @@
 \title{Calculate bootstrap estimates of a lvm object}
 \usage{
   \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
-    p, parametric=FALSE,
+    p, parametric=FALSE, bollenstine=FALSE,
     constraints=TRUE,sd=FALSE,silent=FALSE,...)
 
   \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
     control=list(start=coef(x)), p=coef(x),
-    parametric=FALSE,
+    parametric=FALSE, bollenstine=FALSE,
     estimator=x$estimator,weight=Weight(x),...)
 }
 \arguments{
@@ -30,6 +30,10 @@
   \item{parametric}{If TRUE a parametric bootstrap is
   calculated. If FALSE a non-parametric (row-sampling)
   bootstrap is computed.}
+
+  \item{bollenstine}{Bollen-Stine transformation
+  (non-parametric bootstrap) for bootstrap hypothesis
+  testing.}
 
   \item{constraints}{Logical indicating whether non-linear
   parameter constraints should be included in the bootstrap

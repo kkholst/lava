@@ -7,7 +7,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     if (mom$npar==length(p))
       meanpar <- NULL  
   }
-
+  
   ii <- index(expr)
   npar.total <- npar <- ii$npar; npar.reg <- ii$npar.reg
   npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
@@ -28,7 +28,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   npar.total <- npar+length(mean.idx)
 
   if (zeroones | is.null(ii$dA)) {
-    dimA <- length(nn$A)
+    dimA <- length(ii$A)
     if (ii$sparse) { ## Not used yet...
       if (!require("Matrix")) stop("package Matrix not available")
       dP <- dA <- Matrix(0, nrow=dimA, ncol=npar.total)
@@ -36,11 +36,13 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       dP <- dA <- matrix(0, nrow=dimA, ncol=npar.total)
     }
     if (npar.reg>0) {
+##      dA[,regr.idx] <- sapply(regr.idx, function(i) izero(ii$reg[ii$reg[,2]==i,1],nrow(dA)))
       dA[,regr.idx] <- sapply(regr.idx, function(i) izero(which(t(nn$A)==i),nrow(dA)) )
     }
-    par.var <- seq(npar.reg+1,npar)
     if (npar>npar.reg) {
+        ##      dP[,var.idx] <- sapply(var.idx, function(i) izero(ii$cov[ii$cov[,2]==i,1],nrow(dA)) )
       dP[,var.idx] <- sapply(var.idx, function(i) izero(which(nn$P==i),nrow(dA)) )
+
     }    
     res <- list(dA=dA, dP=dP)
     
@@ -51,7 +53,8 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         dv <- matrix(0, nrow=length(expr$mean), ncol=npar.total)
       }
       if (!is.null(meanpar) & npar.mean>0)
-        dv[,mean.idx] <- sapply(1:npar.mean, function(i) izero(which(nn$v==i),length(expr$mean)) ) 
+          ##        dv[,mean.idx] <- sapply(mean.idx, function(i) izero(ii$mean[ii$mean[,2]==i,1],length(expr$mean)) )
+          dv[,mean.idx] <- sapply(mean.idx, function(i) izero(which(nn$v==i),length(expr$mean)) )          
       res <- c(res, list(dv=dv))
     }
   } else {
@@ -60,7 +63,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       res$dP[attributes(pp)$cov.idx,pp] <- 1
       res$dv[attributes(pp)$m.idx,pp] <- 1      
     }
-    nn$parval
   }
 
   if (!all) return(res)
@@ -110,12 +112,23 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   N <- NCOL(ii$A)
   K <- nobs
   ## if (N>10) {
-  dG <- with(mom, kronprod(t(IAi),G,res$dA))
-  GP <- with(mom,G%*%P)
-  G1 <- with(mom, kronprod(GP,ii$Ik,dG))
-  G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
-  G3 <- with(mom, kronprod(G,G,res$dP))
-  dS <- G1+G2+G3
+  if (!lava.options()$devel) {
+      dG <- with(mom, kronprod(t(IAi),G,res$dA))
+      G3 <- with(mom, kronprod(G,G,res$dP))
+      GP <- with(mom,G%*%P)
+      G1 <- with(mom, kronprod(GP,ii$Ik,dG))
+      G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+      dS <- G1+G2+G3
+  } else {
+      dG <- with(mom, kronprod(t(IAi),G,res$dA[,ii$parBelongsTo$reg,drop=FALSE]))
+      G3 <- with(mom, kronprod(G,G,res$dP[,ii$parBelongsTo$cov,drop=FALSE]))
+      GP <- with(mom,G%*%P)
+      G1 <- with(mom, kronprod(GP,ii$Ik,dG))
+      G2 <- G1[as.vector(matrix(1:(K^2),K,byrow=TRUE)),]
+      dS <- matrix(0,nrow=nrow(G1),ncol=ncol(res$dA))  
+      dS[,ii$parBelongsTo$reg] <- G1+G2;  dS[,ii$parBelongsTo$cov] <- G3
+  }
+    
   ## } else {
   ##   dG <- suppressMessages(with(mom, (t(IAi) %x% G) %*% (res$dA)))  
   ##   MM <- suppressMessages(with(mom, (G%*%P %x% ii$Ik)))
@@ -130,12 +143,19 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   res <- c(res, list(dG=dG, dS=dS))
   
   if (!is.null(mom$v)) {
-      ## dxi <-        
-      ##   with(mom, (t(v)%x% ii$Ik)%*%dG)
+      if (lava.options()$devel) {
+          dG <- with(mom, kronprod(t(IAi),G,res$dA[,with(ii$parBelongsTo,c(mean,reg)),drop=FALSE]))
+      } 
+      ##dG <- with(mom, kronprod(t(IAi),G,res$dA))      
       dxi <-        
         with(mom, kronprod(t(v),ii$Ik,dG))
-      if (!is.null(res$dv))
-        dxi <- dxi+ mom$G%*%res$dv
+      if (!is.null(res$dv)) {
+          if (!(lava.options()$devel)) {
+              dxi <- dxi+ mom$G%*%res$dv
+          } else {
+              dxi <- dxi+ mom$G%*%res$dv[,with(ii$parBelongsTo,c(mean,reg))]
+          }          
+      }
       res <- c(res, list(dxi=dxi))
       if (!is.null(mu)) {
         muv <- mu-mom$xi
@@ -143,7 +163,10 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         res <- c(res, list(dT=dT))
       }      
     }
-  
+
+
+
+      
     if (second) {
       k <- nrow(ii$A)
       K <- ii$Kkk ## commutation(k,k)

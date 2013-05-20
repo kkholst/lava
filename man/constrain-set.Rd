@@ -136,7 +136,7 @@ m1 <- m; constrain(m1,beta ~ v) <- function(x) x^2
 ## Define slope of x2 to be the square of the residual variance of y
 ## Estimate both restricted and unrestricted model
 e <- estimate(m,d,control=list(method="NR"))
-e1 <- estimate(m1,d,control=list(method="NR"))
+e1 <- estimate(m1,d)
 p1 <- coef(e1)
 p1 <- c(p1[1:2],p1[3]^2,p1[3])
 ## Likelihood of unrestricted model evaluated in MLE of restricted model

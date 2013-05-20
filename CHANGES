@@ -1,0 +1,86 @@
+Changes to Version 1.0-1 (07/05-2012)
+	- Fix in logLik (nobs)
+	- roxygen documentation
+	- 
+
+Changes to Version 0.9-10 (22/11-2010)
+	- heavytail function (simulate from mv t-distribution)
+	- cluster
+
+...
+
+Changes to Version 0.9-6 (16/07-2010)
+	- New simulation routine allowing non-linear constraints
+	- Various minor bug fixes
+	- Optimized code
+	
+Changes to Version 0.9-5 (29/04-2010)
+	- Documentation 
+	- Bug fix: Wrong log-Lik/score for models with all fixed intercepts
+
+Changes to Version 0.9-4 (29/04-2010)
+	- minor bug fixes
+
+Changes to Version 0.9-3 (29/04-2010)
+	- Non-linear regression via 'constrain'
+
+Changes to Version 0.9-3 (21/04-2010)
+	- Left & Right censoring
+	- Multivariate Probit regression
+
+Changes to Version 0.9-2 (1/04-2010)
+	- Non-linear parameter cconstraints
+
+Changes to Version 0.9-1 (24/03-2010)
+	- Censored (Tobit) regression
+	- minor bug fixes
+
+Changes to Version 0.9-0 (23/02-2010)
+	- Instrumental Variable/2SLS estimator
+	- profile likelihood confidence limits
+	- Robust standard errors
+	- bootstrap procedure
+	- ... minor bugs removed
+
+Changes to Version 0.8-4 (18/11-2009)
+	- Nicer output (CoefMat)
+	- Multigroup fixes
+	- Code optimization
+
+Changes to Version 0.8-3 (09/11-2009)
+	- Modular optimizer
+	- Scoring algorithm/Newton Raphson for use with Estimating Equations
+	- Inverse Probability of Censoring Weights (IPCW)
+
+Changes to Version 0.8-2 (15/9-2009)
+	- Mixture models
+
+Changes to Version 0.8-1 (5/9-2009)
+	- Random slopes
+	- Documentation
+	- Minor bugs (en masse) fixed
+
+Changes to Version ...-0.8-0 (5/9-2009)
+	- New package name: lvm (Latent Variable Models)
+	- Major fixes in multigroup
+	- Design changes wrt. multigroup 
+	(lists of models are now used instead of multigroup objects)
+	- Bugfix in twinlm (introduced by changes in multigroup)
+	- Multigroup model estimation with data MAR
+	- FIML with missing covariates (normal dist.)
+
+Changes to Version 0.7-4 (xx/7-2009)
+        - Fixed a bug in modelsearch (introduced 0.7-3)
+
+Changes to Version 0.7-3 (30/6-2009)
+        - Major improvements in computation efficiency
+
+Changes to Version 0.7-2 (22/6-2009)
+	- Standardized coefficients implemented
+
+Changes to Version 0.7-1 (19/6-2009)
+	- Bug fix in twin-models (twinlm)
+
+Changes to Version 0.7-0 (18/6-2009)
+	- Classic twin-models (twinlm)
+

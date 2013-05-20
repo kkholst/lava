@@ -1,5 +1,5 @@
 * Version 1.2.1 <2013-05-10 Fri>
-  - Minor bug fixes
+  - Optimization + minor bug fixes
 
 * Version 1.2.0 <2013-03-28 Thu>
   - New method 'iid' for extracting i.i.d. decomposition (influence
