@@ -13,11 +13,11 @@
 ##' @keywords graphs aplot
 ##' @examples
 ##' 
-##' 
 ##' m <- lvm(c(y,v)~x+z)
 ##' regression(m) <- c(v,x)~z
 ##' labels(m) <- c(y=expression(psi), z=expression(zeta))
-##' nodecolor(m,~y+z+x,border=c("white","white","black"), labcol="white", lwd=c(1,1,5)) <- c("orange","indianred","lightgreen")
+##' nodecolor(m,~y+z+x,border=c("white","white","black"),
+##' labcol="white", lwd=c(1,1,5)) <-  c("orange","indianred","lightgreen")
 ##' edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
 ##' lwd=c(3,1)) <- expression(phi,rho)
 ##' edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
