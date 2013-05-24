@@ -93,73 +93,84 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
 
 ###{{{ Newton-Raphson/Scoring
 
-NR <- function(start,objective,gradient,hessian,debug=FALSE,...) {
-  dots <- list(...)
-  control <- dots$control
-  trace <- control$trace
-
-  if (trace>0)
-  cat("\nIter=0;\t\n",
-      "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
-  
-
-  oneiter <- function(p.orig) {
-    if (is.null(hessian)) {
-      cat(".")
-      I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
-    } else {
-      I <- hessian(p.orig)
+NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
+    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,
+                     iter.max=200,tol=1e-15,stabil=FALSE,epsilon=1e-15)
+    if (!missing(control)) {
+        control0[names(control)] <- control
     }
-    D <- attributes(I)$grad
-    if (is.null(D)) {      
-      D <- gradient(p.orig)
-    }
-    if (control$stabil) {
-      if (control$lambda!=0) {
-        if (control$lambda<0) {
-          sigma <- (t(D)%*%(D))[1]          
-        } else {
-          sigma <- control$lambda
+    control <- control0
+    trace <- control$trace
+
+    if (trace>0)
+        cat("\nIter=0;\t\n",
+            "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
+
+    if (missing(gradient) & missing(hessian)) {
+        hessian <- function(p) {
+            ff <- objective(p)
+            res <- attributes(ff)$hessian
+            attributes(res)$grad <- as.vector(attributes(ff)$grad)
+            return(res)
         }
-        sigma <- min(sigma,10)
-        I <- I+control$gamma2*sigma*diag(nrow(I))
-      } else {
-        sigma <- ((D)%*%t(D))
-        I <- I+control$gamma2*(sigma)
-      }
     }
-    svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
-    svdI$d0[abs(svdI$d)>control$epsilon] <-
-      1/svdI$d[abs(svdI$d)>control$epsilon]
-    iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
-    return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
-  } 
-  
-  count <- count2 <- 0  
-  thetacur <- start
-  gammacount <- 0
-  for (jj in 1:control$iter.max) {
-    gammacount <- gammacount+1
-    count <-  count+1
-    count2 <- count2+1
-    oldpar <- thetacur
-    newpar <- oneiter(thetacur)
-    thetacur <- newpar$p
-    if (!is.null(control$ngamma) && control$ngamma>0) {
-      if (control$ngamma<=gammacount) {
-        control$gamma <- sqrt(control$gamma)
-        gammacount <- 0
-      }
+    oneiter <- function(p.orig) {
+        if (is.null(hessian)) {
+            cat(".")
+            I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
+        } else {
+            I <- hessian(p.orig)
+        }
+        D <- attributes(I)$grad
+        if (is.null(D)) {      
+            D <- gradient(p.orig)
+        }
+        if (control$stabil) {
+            if (control$lambda!=0) {
+                if (control$lambda<0) {
+                    sigma <- (t(D)%*%(D))[1]          
+                } else {
+                    sigma <- control$lambda
+                }
+                sigma <- min(sigma,10)
+                I <- I+control$gamma2*sigma*diag(nrow(I))
+            } else {
+                sigma <- ((D)%*%t(D))
+                I <- I+control$gamma2*(sigma)
+            }
+        }
+        svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
+        svdI$d0[abs(svdI$d)>control$epsilon] <-
+            1/svdI$d[abs(svdI$d)>control$epsilon]
+        iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))   
+        return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
+    } 
+    
+    count <- count2 <- 0  
+    thetacur <- start
+    gammacount <- 0
+    for (jj in seq_len(control$iter.max)) {
+        gammacount <- gammacount+1
+        count <-  count+1
+        count2 <- count2+1
+        oldpar <- thetacur
+        newpar <- oneiter(thetacur)
+        thetacur <- newpar$p
+        if (!is.null(control$ngamma) && control$ngamma>0) {
+            if (control$ngamma<=gammacount) {
+                control$gamma <- sqrt(control$gamma)
+                gammacount <- 0
+            }
+        }
+        if (count2==trace) {
+            cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
+            cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
+            count2 <- 0
+        }
+        if (mean(newpar$D^2)<control$tol) break;
     }
-    if (count2==trace) {
-      cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
-      cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
-      count2 <- 0
-    }
-    if (mean(newpar$D^2)<control$tol) break;
-  }
-  res <- list(par=as.vector(thetacur), iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
-  return(res)
+    res <- list(par=as.vector(thetacur), iterations=count, method="NR", gradient=newpar$D, iH=newpar$iI)
+    return(res)
 }
 
 ###}}} Newton Raphson/Scoring
