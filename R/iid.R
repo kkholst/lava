@@ -16,7 +16,7 @@
 ##' m <- lvm(y~x+z)
 ##' distribution(m, ~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
-##' g <- glm(y~x+z,data=d)
+##' g <- glm(y~x+z,data=d,family=binomial)
 ##' crossprod(iid(g)/nrow(d))
 ##' 
 iid <- function(x,...) UseMethod("iid")
