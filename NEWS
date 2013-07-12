@@ -1,7 +1,16 @@
-* Version 1.2.2 <2013-05-27 Mon>
+* Version 1.2.2 <2013-07-10 Wed>
+  - Regression parameters are now by default referenced using '~',
+    e.g. "y~x" instead of "y<-x". Applies to setting starting values
+    in 'estimate', parameters in 'sim','compare','estimate',....
+    To use the old syntax set 'lava.options(symbol=c("<-","<->"))'
   - Newton-Raphson/scoring procedure updated
   - Search-interval for profile likelihood CI improved (for variance
     parameters)
+  - 'estimate.default' updated (LRT)
+  - 'iid' updated (variance now obtained as tensor product of the result)
+  - progress bar for 'bootstrap' and 'modelsearch'
+  - various minor bug fixes
+  - new functions: Expand (expand.grid wrapper), By (by wrapper)
   
 * Version 1.2.1 <2013-05-10 Fri>
   - Optimization + minor bug fixes

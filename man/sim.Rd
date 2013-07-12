@@ -90,7 +90,7 @@ sim(e,n=5)
 ## Poisson
 ##################################################
 distribution(m,~y) <- poisson.lvm()
-d <- sim(m,1e4,p=c(y=-1,"y<-x"=2,z=1))
+d <- sim(m,1e4,p=c(y=-1,"y~x"=2,z=1))
 head(d)
 estimate(m,d,estimator="glm")
 mean(d$z); lava:::expit(1)

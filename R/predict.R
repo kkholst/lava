@@ -175,7 +175,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     mydata[,i] <- m$v[i]
   
   Yhat <- t(mydata%*%t(A)) + (m$v)
-  res <- t(Ey.x) ## Conditional mean
+  res <- cbind(t(Ey.x)) ## Conditional mean
   
   attr(res, "cond.var") <- Cy.x
   attr(res, "blup") <- t(Eeta.y)

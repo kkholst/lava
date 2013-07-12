@@ -7,7 +7,7 @@ gaussian_method.lvm <- "nlminb2"
 
     C <- mp$C ## Model specific covariance matrix
     xi <- mp$xi ## Model specific mean-vector
-    iC <- Inverse(C,tol=1e-7,det=TRUE)
+    iC <- Inverse(C,det=TRUE)
     detC <- attributes(iC)$det
    
     if (n<2) {

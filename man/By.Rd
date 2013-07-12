@@ -1,0 +1,34 @@
+\name{By}
+\alias{By}
+\title{Apply a Function to a Data Frame Split by Factors}
+\usage{
+  By(x, INDICES, FUN, COLUMNS, ...)
+}
+\arguments{
+  \item{x}{Data frame}
+
+  \item{INDICES}{Indices (vector or list of indices, vector
+  of column names, or formula of column names)}
+
+  \item{FUN}{A function to be applied to data frame subsets
+  of 'data'.}
+
+  \item{COLUMNS}{(Optional) subset of columns of x to work
+  on}
+
+  \item{...}{Additional arguments to lower-level functions}
+}
+\description{
+  Apply a Function to a Data Frame Split by Factors
+}
+\details{
+  Simple wrapper of the 'by' function
+}
+\examples{
+By(datasets::CO2,~Treatment+Type,colMeans,~conc)
+By(datasets::CO2,~Treatment+Type,colMeans,~conc+uptake)
+}
+\author{
+  Klaus K. Holst
+}
+

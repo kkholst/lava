@@ -147,7 +147,7 @@ coef.effects <- function(object,...) {
   K <- seq_len(length(object$margef))
   for (i in K) {
     if (length(object$paths[[i]])>2) {        
-      nn <- c(nn,paste(rev(object$paths[[i]]),collapse="<-"))
+      nn <- c(nn,paste(rev(object$paths[[i]]),collapse=lava.options()$symbol[1]))
       indirectef <- rbind(indirectef, with(object$margef[[i]], c(est,sd)))
       }
   }; rownames(indirectef) <- nn  

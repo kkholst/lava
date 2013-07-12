@@ -2,7 +2,7 @@
 
 ##' @S3method coef lvm
 `coef.lvm` <-
-function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
+function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
   if (fix)
     object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
@@ -59,9 +59,9 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
   ##   }
 
  ## if (DEBUG) {  
-  ii <- which(P!="0",arr.ind=TRUE)
+  ii <- which(P!="0",arr.ind=TRUE) 
   if (length(symbol)<2) 
-    rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=",")
+    rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=lava.options()$symbol[2])
   else
     rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=symbol[2])
   if (labels) {
@@ -147,7 +147,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=c("<-","<->"," on "," with "), sile
 ##' @S3method coef lvmfit
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2),
-         symbol=c("<-","<->"),
+         symbol=lava.options()$symbol,
          data, std=NULL, labels=TRUE, vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
 
@@ -328,7 +328,7 @@ function(object, level=ifelse(missing(type),-1,2),
             }
             if (length(symbol)<2) {
               if (nn[i]!=nn[j]) {
-                part2 <- paste(nn[i],nn[j],sep=",")
+                part2 <- paste(nn[i],nn[j],sep=lava.options()$symbol[2])
               } else part2 <- nn[i]
             } else {
               part2 <- paste(nn[i],symbol[2],nn[j],sep="")
@@ -433,7 +433,7 @@ coef.multigroup <- function(object,...) {
 ##' @S3method coef multigroupfit
 coef.multigroupfit <-
   function(object, level=0,vcov, ext=FALSE,
-           labels=FALSE,symbol=c("<-","<->"),covsymb=NULL,groups=NULL,...) {    
+           labels=FALSE,symbol=lava.options()$symbol,covsymb=NULL,groups=NULL,...) {    
 
     if (level==0) {
       res <- pars(object);
@@ -473,10 +473,10 @@ coef.multigroupfit <-
     if (is.null(groups)) groups <- seq(model$ngroup)
     if (length(groups)==0) groups <- seq(model$ngroup)
     for (i in groups) {
-      orignames <- coef(object$model0$lvm[[i]],fix=FALSE,mean=object$meanstructure, silent=TRUE, symbol=c("<-","<->"))
+      orignames <- coef(object$model0$lvm[[i]],fix=FALSE,mean=object$meanstructure, silent=TRUE, symbol=lava.options()$symbol)
       if (ext) {
         newnames. <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, silent=TRUE, labels=labels, symbol=symbol)
-        newnames <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, silent=TRUE, labels=labels,symbol=c("<-","<->"))
+        newnames <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, silent=TRUE, labels=labels,symbol=lava.options()$symbol)
         newcoef <- matrix(NA,ncol=4,nrow=length(newnames))
         rownames(newcoef) <- newnames.
         idx <- match(orignames,newnames)
@@ -527,7 +527,7 @@ coef.multigroupfit <-
 ###{{{ CoefMat
 
 ##' @export
-CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,groups=seq(Model(x)$ngroup),...) {
+CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol=lava.options()$symbol[1],data=NULL,groups=seq(Model(x)$ngroup),...) {
 
   cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)  
   parpos <- attributes(cc)$parpos
@@ -576,7 +576,7 @@ CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol="<-",data=NULL,g
 CoefMat <- function(x,
                     digits = max(3, getOption("digits") - 2),
                     level=9,
-                    symbol="<-",...) {
+                    symbol=lava.options()$symbol[1],...) {
       
   cc <- x
   if (!is.matrix(x)) {

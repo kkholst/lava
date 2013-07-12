@@ -11,8 +11,7 @@
 ##' @seealso \code{\link{modelsearch}}, \code{\link{equivalence}}
 ##' @keywords htest
 ##' @examples
-##'
-##' m <- lvm(); 
+##' m <- lvm();
 ##' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
 ##' regression(m) <- eta ~ x
 ##' m2 <- regression(m, c(y3,eta) ~ x)
@@ -24,34 +23,35 @@
 ##' compare(e)
 ##' 
 ##' compare(e,e2) ## LRT, H0: y3<-x=0
-##' compare(e,scoretest=y3~x) ## Score-test, H0: y3<-x=0
-##' compare(e2,par=c("y3<-x")) ## Wald-test, H0: y3<-x=0
+##' compare(e,scoretest=y3~x) ## Score-test, H0: y3~x=0
+##' compare(e2,par=c("y3~x")) ## Wald-test, H0: y3~x=0
 ##' 
-##' B <- diag(2); colnames(B) <- c("y2<-eta","y3<-eta")
+##' B <- diag(2); colnames(B) <- c("y2~eta","y3~eta")
 ##' compare(e2,contrast=B,null=c(1,1))
 ##' 
 ##' B <- rep(0,length(coef(e2))); B[1:3] <- 1
 ##' compare(e2,contrast=B)
 ##' 
 ##' compare(e,scoretest=list(y3~x,y2~x))
-##' 
 compare <- function(object,...) UseMethod("compare")
 
 ##' @S3method compare default
 compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
-  if (!missing(par)) {
-    contrast <- rep(0,length(coef(object)))
-    myidx <- parpos(Model(object),p=par)        
-    contrast[myidx] <- 1
-    contrast <- diag(contrast)[contrast!=0,]
-    if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
+  if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
+      if (!missing(contrast) && is.character(contrast)) par <- contrast
+      contrast <- rep(0,length(coef(object)))
+      myidx <- parpos(Model(object),p=par)        
+      contrast[myidx] <- 1
+      contrast <- diag(contrast)[contrast!=0,]
+      if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
   }
   ### Wald test
   if (!missing(contrast)) {
     B <- contrast    
     p <- coef(object)
     pname <- names(p)
-    if (is.vector(B)) { B <- rbind(B); colnames(B) <- names(contrast) }
+    B <- rbind(B);
+    colnames(B) <- if (is.vector(contrast)) names(contrast) else colnames(contrast)
     if (missing(Sigma)) {
       Sigma <- vcov(object)
     }

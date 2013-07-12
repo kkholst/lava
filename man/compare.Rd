@@ -33,10 +33,10 @@ e2 <- estimate(m2,d)
 compare(e)
 
 compare(e,e2) ## LRT, H0: y3<-x=0
-compare(e,scoretest=y3~x) ## Score-test, H0: y3<-x=0
-compare(e2,par=c("y3<-x")) ## Wald-test, H0: y3<-x=0
+compare(e,scoretest=y3~x) ## Score-test, H0: y3~x=0
+compare(e2,par=c("y3~x")) ## Wald-test, H0: y3~x=0
 
-B <- diag(2); colnames(B) <- c("y2<-eta","y3<-eta")
+B <- diag(2); colnames(B) <- c("y2~eta","y3~eta")
 compare(e2,contrast=B,null=c(1,1))
 
 B <- rep(0,length(coef(e2))); B[1:3] <- 1

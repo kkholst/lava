@@ -93,8 +93,8 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' m <- lvm()
 ##' regression(m) <- c(y1,y2,y3)~u
 ##' regression(m) <- u~x
-##' d1 <- sim(m,100,p=c("u<->u"=1,"u<-x"=1))
-##' d2 <- sim(m,100,p=c("u<->u"=2,"u<-x"=-1))
+##' d1 <- sim(m,100,p=c("u,u"=1,"u~x"=1))
+##' d2 <- sim(m,100,p=c("u,u"=2,"u~x"=-1))
 ##' 
 ##' mm <- baptize(m)
 ##' regression(mm,u~x) <- NA
@@ -601,7 +601,7 @@ estimate <- function(x,...) UseMethod("estimate")
       if (sum(constrained)==1) {
         I0[constrained,constrained] <- I0[constrained,constrained]*outer(pp[constrained],pp[constrained]) - D[constrained]
       } else {
-        I0[constrained,constrained] <- I0[constrained,constrained]*outer(pp[constrained],pp[constrained]) - diag(D[constrained])
+        I0[constrained,constrained] <- I0[constrained,constrained]*outer(pp[constrained],pp[constrained]) - diag(D[constrained],ncol=length(constrained))
       }
     }
     return(I0)
@@ -659,7 +659,7 @@ estimate <- function(x,...) UseMethod("estimate")
           hessian(myObj,pp)
     }
     I <- myInfo(opt$estimate)
-    asVar <- tryCatch(solve(I),
+    asVar <- tryCatch(Inverse(I),
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
   } else {
     asVar <- tryCatch(do.call(asVarFun,
@@ -667,8 +667,7 @@ estimate <- function(x,...) UseMethod("estimate")
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
   }
 
-  if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
-                        }
+  if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")                        }
   diag(asVar)[(diag(asVar)==0)] <- NA
 
   nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)

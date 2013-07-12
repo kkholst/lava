@@ -18,7 +18,7 @@ cluster.post.hook <- function(x,...) {
     }
     J <- crossprod(S)
     I <- information(x,type="hessian",...)
-    iI <- solve(I)
+    iI <- Inverse(I)
     asVar <- iI%*%J%*%iI
     x$vcov <- asVar
     return(x)

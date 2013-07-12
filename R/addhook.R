@@ -73,6 +73,8 @@ assign("options", list(
     test=TRUE,
     constrain=TRUE,
     exogenous=TRUE,
-    Rgraphviz=TRUE,    
+    Rgraphviz=TRUE,
+    ## symbols=c("<-","<->"),
+    symbols=c("~",","),
     devel=FALSE,
     debug=FALSE), envir=lava.env)

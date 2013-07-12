@@ -65,7 +65,7 @@
 ##' ## Poisson
 ##' ##################################################
 ##' distribution(m,~y) <- poisson.lvm()
-##' d <- sim(m,1e4,p=c(y=-1,"y<-x"=2,z=1))
+##' d <- sim(m,1e4,p=c(y=-1,"y~x"=2,z=1))
 ##' head(d)
 ##' estimate(m,d,estimator="glm")
 ##' mean(d$z); lava:::expit(1)
@@ -121,11 +121,12 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   xx <- exogenous(x)
   if (!is.null(p)) {
     i1 <- na.omit(c(match(names(p),xx),
-                    match(names(p),paste(xx,"<->",xx,sep=""))))
+                    match(names(p),paste(xx,lava.options()$symbol[2],xx,sep=""))))
     if (length(i1)>0) covariance(x) <- xx[i1]
   }
   index(x) <- reindex(x)
-  nn <- setdiff(vars(x),parameter(x))
+  vv <- vars(x)
+  nn <- setdiff(vv,parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
   xf <- intersect(unique(parlabels(x)),xx)
   xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
@@ -166,7 +167,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
   xx <- setdiff(xx,vartrans)
   
-  X.idx <- match(xx,vars(x))
+  X.idx <- match(xx,vv)
   res[,X.idx] <- t(mu[X.idx]+t(E[,X.idx]))
   if (missing(X)) {
     if (!is.null(xx) && length(xx)>0)
@@ -182,7 +183,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         } else {
           if (is.null(dist.x) || is.na(dist.x)) {
           } else {
-            res[,X.idx[i]] <- dist.x ## Deterministic
+              if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n)
+              res[,X.idx[i]] <- dist.x ## Deterministic
           }
         }
       }
@@ -209,7 +211,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     ## Simulate from sim. distribution (Y,X) (mv-normal)
     I <- diag(length(nn))
     IAi <- solve(I-t(A))
-    colnames(E) <- vars(x)
+    colnames(E) <- vv
     dd <- t(apply(heavytail.sim.hook(x,E),1,function(x) x+mu))
     res <- dd%*%t(IAi)
   } else {
@@ -248,7 +250,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       }))
     } else {
     }
-    colnames(E) <- vars(x)
+    colnames(E) <- vv
     E <- heavytail.sim.hook(x,E)  
 
 
@@ -271,7 +273,17 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
 
     res <- data.frame(res)
-
+    if (length(vartrans)>0) {
+        parvals <- parpos(x)$parval
+        if (length(parvals)>0) {
+            Parvals <- p[unlist(parvals)];
+            res <- cbind(res,
+                         cbind(rep(1,nrow(res)))%x%rbind(Parvals))
+            colnames(res)[seq(length(Parvals))+ncol(res)-length(Parvals)] <-
+                names(parvals)
+        }
+    }
+    
     leftovers <- c()
     while (length(simuled)<length(nn)) {
       leftoversPrev <- leftovers
@@ -281,11 +293,10 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       for (i in leftovers) {
         if (i%in%vartrans) {
           xtrans <- attributes(x)$transform[[i]]$x
-          if (all(xtrans%in%simuled)) {
-
-            suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,x])))
+          if (all(xtrans%in%c(simuled,names(parvals))))  {
+            suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,xtrans])))
             if (length(yy) != NROW(res)) { ## apply row-wise
-              res[,i] <- with(attributes(x)$transform[[i]],apply(res[,x,drop=FALSE],1,fun))
+              res[,i] <- with(attributes(x)$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
             } else {
               res[,i] <- yy
             }
@@ -296,7 +307,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           ipos <- which(i%in%yconstrain)
 
           if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
-            pos <- match(i,vars(x))
+            pos <- match(i,vv)
             relations <- colnames(A)[A[,pos]!=0]
             
             if (all(relations%in%simuled)) { ## Only depending on already simulated variables

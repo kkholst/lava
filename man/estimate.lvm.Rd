@@ -128,8 +128,8 @@ e <- estimate(m,data=list(S=cov(dd),mu=colMeans(dd),n=nrow(dd)))
 m <- lvm()
 regression(m) <- c(y1,y2,y3)~u
 regression(m) <- u~x
-d1 <- sim(m,100,p=c("u<->u"=1,"u<-x"=1))
-d2 <- sim(m,100,p=c("u<->u"=2,"u<-x"=-1))
+d1 <- sim(m,100,p=c("u,u"=1,"u~x"=1))
+d2 <- sim(m,100,p=c("u,u"=2,"u~x"=-1))
 
 mm <- baptize(m)
 regression(mm,u~x) <- NA

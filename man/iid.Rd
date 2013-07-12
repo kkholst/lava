@@ -5,10 +5,12 @@
 \usage{
   iid(x,...)
 
-  \method{iid}{default}(x,score.deriv,...)
+  \method{iid}{default}(x,score.deriv,id,...)
 }
 \arguments{
   \item{x}{model object}
+
+  \item{id}{id/cluster variable (optional)}
 
   \item{score.deriv}{(optional) derivative of mean score
   function}
@@ -23,7 +25,7 @@
 m <- lvm(y~x+z)
 distribution(m, ~y+z) <- binomial.lvm("logit")
 d <- sim(m,1e3)
-g <- glm(y~x+z,data=d)
-crossprod(iid(g)/nrow(d))
+g <- glm(y~x+z,data=d,family=binomial)
+crossprod(iid(g))
 }
 

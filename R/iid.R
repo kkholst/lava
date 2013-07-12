@@ -6,10 +6,11 @@
 ##' 
 ##' iid(x,...)
 ##' 
-##' \method{iid}{default}(x,score.deriv,...)
+##' \method{iid}{default}(x,score.deriv,id,...)
 ##' 
 ##' @aliases iid.default
 ##' @param x model object
+##' @param id id/cluster variable (optional)
 ##' @param score.deriv (optional) derivative of mean score function 
 ##' @param ... additional arguments
 ##' @examples
@@ -17,12 +18,12 @@
 ##' distribution(m, ~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
-##' crossprod(iid(g)/nrow(d))
+##' crossprod(iid(g))
 ##' 
 iid <- function(x,...) UseMethod("iid")
 
 ##' @S3method iid default
-iid.default <- function(x,score.deriv,...) {
+iid.default <- function(x,score.deriv,id,...) {
   if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
     warning("Not available for this class")
     return(NULL)
@@ -31,7 +32,7 @@ iid.default <- function(x,score.deriv,...) {
   n <- NROW(U)
   pp <- pars(x)   
   if (missing(score.deriv)) {
-    iI <- vcov(x)
+    iI <- vcov(x) 
   } else {
     if (is.null(score.deriv)) {
       score.deriv <- -jacobian(function(p) score(x,p=p,...),pp)
@@ -41,7 +42,11 @@ iid.default <- function(x,score.deriv,...) {
     }
     if (is.matrix(score.deriv)) {
       iI <- Inverse(score.deriv)
-    }    
+    }
   }
-  return(structure(n*U%*%iI,iI=iI))
+  iid0 <- U%*%iI
+  if (!missing(id)) {
+      iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iI))
+  }
+  return(structure(iid0,iI=iI))
 }

@@ -1,10 +1,12 @@
 ##' Estimation of functional of parameters 
 ##'
-##' Estimation of functional of parameters 
+##' Estimation of functional of parameters.
+##' Wald tests, robust standard errors, cluster robust standard errors,
+##' LRT (when \code{f} is not a function)...
 ##' @param x model object (\code{glm}, \code{lvmfit}, ...)
-##' @param fun transformation of model parameters and optionally data.
+##' @param f transformation of model parameters and (optionally) data
 ##' @param data \code{data.frame}
-##' @param id1 (optional) id-variable corresponding to iid decomposition of model parameters
+##' @param id (optional) id-variable corresponding to iid decomposition of model parameters
 ##' @param id2 (optional) id-variable of data.frame
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level Level of confidence limits
@@ -21,6 +23,10 @@
 ##' distribution(m,y~x) <- binomial.lvm("logit")
 ##' d <- sim(m,1000)
 ##' g <- glm(y~z+x,data=d,family=binomial())
+##' g0 <- glm(y~1,data=d,family=binomial())
+##' 
+##' ## LRT
+##' estimate(g,g0)
 ##' 
 ##' ## Plain estimates (robust standard errors)
 ##' estimate(g)
@@ -29,6 +35,7 @@
 ##' estimate(g,null=0)
 ##' estimate(g,contrast=rbind(c(1,1,0),c(1,0,2)))
 ##' estimate(g,contrast=rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
+##' estimate(g,contrast=2:3) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' 
 ##' ## Transformations
 ##' estimate(g,function(p) p[1]+p[2])
@@ -51,159 +58,167 @@
 ##' estimate(e,contrast=cbind(1,1))
 ##' @method estimate default
 ##' @S3method estimate default
-estimate.default <- function(x,fun,data=model.frame(x),id1,id2,score.deriv,level=0.95,iid=FALSE,contrast,null,vcov,coef,...) {
-  alpha <- 1-level
-  alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
-  nn <- NULL
-  if (missing(score.deriv)) {
-    suppressWarnings(iid0 <- iid(x))
-  } else {
-    suppressWarnings(iid0 <- iid(x,score.deriv=score.deriv))
-  }
-
-  if (!is.null(iid0)) {
-    n <- NROW(iid0)
-    if (missing(fun)) {
-      if (iid) return(iid0)
-      V <- crossprod(iid0/n)
-    }
-  } else {
-    if (!missing(vcov)) {
-      V <- vcov
+estimate.default <- function(x,f,data=model.frame(x),id,id2,
+                             score.deriv,level=0.95,iid=FALSE,
+                             contrast,null,vcov,coef,...) {
+    if (!missing(f) && !is.function(f)) return(compare(x,f,...))
+    alpha <- 1-level
+    alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
+    nn <- NULL
+    if (missing(score.deriv)) {
+        suppressWarnings(iid0 <- iid(x))
     } else {
-      V <- stats::vcov(x)
+        suppressWarnings(iid0 <- iid(x,score.deriv=score.deriv))
     }
-  }
-  if (!missing(coef)) {
-    pp <- coef
-  } else {
-    pp <- stats::coef(x)
-  }
-
-  if (!missing(fun)) {
-    form <- names(formals(fun))
-    dots <- ("..."%in%names(form))
-    form0 <- setdiff(form,"...")
-    parname <- "p"
-    if (length(form0)==1 && !(form0%in%c("object","data"))) {
-      ##names(formals(fun))[1] <- "p"
-      parname <- form0
-    }
-    if (!is.null(iid0)) {
-      arglist <- c(list(object=x,data=data,p=pp),list(...))
-      names(arglist)[3] <- parname      
-    } else {
-      arglist <- c(list(object=x,p=pp),list(...))
-      names(arglist)[2] <- parname
-    }
-    if (!dots) {
-      arglist <- arglist[form0]
-    }
-    val <- do.call("fun",arglist)
-    newfun <- NULL
-    if (is.list(val)) {
-      nn <- names(val)
-      val <- do.call("cbind",val)
-      newfun <- function(...) do.call("cbind",fun(...))
-    }
-    k <- NCOL(val)
-    N <- NROW(val)
-    D <- attributes(val)$grad
-    if (is.null(D)) {
-      D <- jacobian(function(p,...) {
-        arglist[[parname]] <- p
-          if (is.null(newfun))
-            return(do.call("fun",arglist))
-        return(do.call("newfun",arglist)) }, pp)      
+    if (!missing(id)) {
+        if (is.null(iid0)) stop("'iid' method needed")
+        if (is.character(id) && length(id)==1) id <- data[,id,drop=TRUE]
+        nprev <- nrow(iid0)
+        iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iid0))
     }
 
-    if (is.null(iid0)) {
-      pp <- as.vector(val)
-      V <- D%*%V%*%t(D)
-    } else {
-      if (NROW(val)<NROW(data)) { ## Apparently transformation not depending on data
-        pp <- as.vector(val)
-        iid2 <- iid0%*%t(D)
-        V <- crossprod(iid2/n)
-      } else {      
-        if (k>1) { ## More than one parameter (and depends on data)
-          D0 <- matrix(nrow=k,ncol=length(pp))
-          for (i in seq_len(k)) {
-            D0[i,] <- colMeans(D[seq(N)+(i-1)*N,,drop=FALSE])
-          }
-          D <- D0
-          iid2 <- iid0%*%t(D)        
-        } else {
-          D <- colMeans(rbind(D))
-          iid2 <- iid0%*%D
+    if (!is.null(iid0) && missing(vcov)) {
+        n <- NROW(iid0)
+        if (missing(f)) {
+            if (iid) return(iid0)
+            V <- crossprod(iid0)
         }
-        if (iid) return(list(iid1,iid2))
-        pp <- as.vector(colMeans(cbind(val)))
-        iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))
-        if (N!=n) {
-          if (missing(id2)) {          
-            message("Assuming independence between model iid decomposition and new data frame")
-            V <- crossprod(iid1/n) + crossprod(iid2/n)
-          } else {
-            iid1[id1,,drop=FALSE]+iid2[id2,,drop=FALSE]
-          }
+    } else {
+        if (!missing(vcov)) {
+            V <- vcov
         } else {
-          ##if (!missing(id1))
-          V <- crossprod((iid1+iid2)/n)
+            V <- stats::vcov(x)
         }
-      }
     }
-  }
-      
-  res <- cbind(pp,diag(V)^0.5)
-  if (missing(fun) || missing(null))
-    res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(1-pnorm(abs(res[,1])/res[,2]))*2)
-  else 
-    res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(1-pnorm(abs(res[,1]-null)/res[,2]))*2)  
-  colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
-  if (!is.null(nn)) {
-    rownames(res) <- nn
-  } else {
-   nn <- attributes(res)$varnames
-   if (!is.null(nn)) rownames(res) <- nn
-   if (is.null(rownames(res))) rownames(res) <- paste("p",seq(nrow(res)),sep="")
-  }
-  res <- structure(list(coef=res[,1],coefmat=res,vcov=V),class="estimate")
-  if (missing(fun) && (!missing(contrast) | !missing(null))) {
-    p <- length(res$coef)
-    if (missing(contrast)) contrast <- diag(p)
-    if (missing(null)) null <- 0
-    if (is.vector(contrast)) {
-      cont <- contrast
-      contrast <- diag(length(pp))
-      diag(contrast)[cont] <- 1
+    if (!missing(coef)) {
+        pp <- coef
+    } else {
+        pp <- stats::coef(x)
     }
-    cc <- compare(res,contrast=contrast,null=null,vcov=V)
-    res <- structure(c(res, list(compare=cc)),class="estimate")
-  }
-  return(res)  
+
+    if (!missing(f)) {
+        form <- names(formals(f))
+        dots <- ("..."%in%names(form))
+        form0 <- setdiff(form,"...")
+        parname <- "p"
+        if (length(form0)==1 && !(form0%in%c("object","data"))) {
+            ##names(formals(f))[1] <- "p"
+            parname <- form0
+        }
+        if (!is.null(iid0)) {
+            arglist <- c(list(object=x,data=data,p=pp),list(...))
+            names(arglist)[3] <- parname      
+        } else {
+            arglist <- c(list(object=x,p=pp),list(...))
+            names(arglist)[2] <- parname
+        }
+        if (!dots) {
+            arglist <- arglist[form0]
+        }
+        val <- do.call("f",arglist)
+        newf <- NULL
+        if (is.list(val)) {
+            nn <- names(val)
+            val <- do.call("cbind",val)
+            newf <- function(...) do.call("cbind",f(...))
+        }
+        k <- NCOL(val)
+        N <- NROW(val)
+        D <- attributes(val)$grad
+        if (is.null(D)) {
+            D <- jacobian(function(p,...) {
+                arglist[[parname]] <- p
+                if (is.null(newf))
+                    return(do.call("f",arglist))
+                return(do.call("newf",arglist)) }, pp)      
+        }
+
+        if (is.null(iid0)) {
+            pp <- as.vector(val)
+            V <- D%*%V%*%t(D)
+        } else {
+            if (NROW(val)<NROW(data)) { ## Apparently transformation not depending on data
+                pp <- as.vector(val)
+                iid2 <- iid0%*%t(D)
+                V <- crossprod(iid2)
+            } else {      
+                if (k>1) { ## More than one parameter (and depends on data)
+                    D0 <- matrix(nrow=k,ncol=length(pp))
+                    for (i in seq_len(k)) {
+                        D0[i,] <- colMeans(D[seq(N)+(i-1)*N,,drop=FALSE])
+                    }
+                    D <- D0
+                    iid2 <- iid0%*%t(D)        
+                } else {
+                    D <- colMeans(rbind(D))
+                    iid2 <- iid0%*%D
+                }
+                if (iid) return(list(iid1,iid2))
+                pp <- as.vector(colMeans(cbind(val)))
+                iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))
+                if (N!=n) {
+                    ## TODO....
+                    if (missing(id2)) {          
+                        message("Assuming independence between model iid decomposition and new data frame")
+                        V <- crossprod(iid1) + crossprod(iid2)
+                    } else {
+                        iid1[id,,drop=FALSE]+iid2[id2,,drop=FALSE]
+                    }
+                } else {
+                    V <- crossprod((iid1/n+iid2))
+                }
+            }
+        }
+    }
+    
+    res <- cbind(pp,diag(V)^0.5)
+    if (missing(f) || missing(null))
+        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(1-pnorm(abs(res[,1])/res[,2]))*2)
+    else 
+        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(1-pnorm(abs(res[,1]-null)/res[,2]))*2)  
+    colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
+    if (!is.null(nn)) {
+        rownames(res) <- nn
+    } else {
+        nn <- attributes(res)$varnames
+        if (!is.null(nn)) rownames(res) <- nn
+        if (is.null(rownames(res))) rownames(res) <- paste("p",seq(nrow(res)),sep="")
+    }
+    res <- structure(list(coef=res[,1],coefmat=res,vcov=V),class="estimate")
+    if (missing(f) && (!missing(contrast) | !missing(null))) {
+        p <- length(res$coef)    
+        if (missing(contrast)) contrast <- diag(p)
+        if (missing(null)) null <- 0
+        if (is.vector(contrast)) {
+            cont <- contrast
+            contrast <- diag(nrow=p)[cont,,drop=FALSE]
+        }
+        cc <- compare(res,contrast=contrast,null=null,vcov=V)
+        res <- structure(c(res, list(compare=cc)),class="estimate")
+    }
+    return(res)  
 }
 
 estimate.glm <- function(x,...) {  
-  estimate.default(x,...,var)
+    estimate.default(x,...,var)
 }
 
 
 ##' @S3method print estimate
-print.estimate <- function(x,...) {
-##  cat("\n")
-  print(x$coefmat,...)
-  if (!is.null(x$compare)) print(x$compare)    
+print.estimate <- function(x,digits=3,...) {
+    ##  cat("\n")
+    print(x$coefmat,digits=digits,...)
+    if (!is.null(x$compare)) print(x$compare)    
 }
 
 ##' @S3method vcov estimate
 vcov.estimate <- function(object,...) {
-  object$vcov
+    object$vcov
 }
 
 ##' @S3method coef estimate
 coef.estimate <- function(object,...) {
-  object$coef
+    object$coef
 }
 
 

@@ -216,7 +216,7 @@ IV <- function(m,data,R2thres=0,...) {
       Z. <- c(Z.,list(Z))
       Y. <- c(Y.,list(Y))
       XX <- vars(m)[A[v,]==1 & Afix[v,]!=1]
-      parname <- c(parname, c(vars(m)[v0],paste(vars(m)[v],XX,sep="<-")))     
+      parname <- c(parname, c(vars(m)[v0],paste(vars(m)[v],XX,sep=lava.options()$symbol[1])))     
     } else {
       if (vars(m)[v]%in%latent(m)) {
         lpos <- match(v,lat.idx)

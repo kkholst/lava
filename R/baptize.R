@@ -11,7 +11,8 @@
 
 ##' @S3method baptize lvm
 baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
-  p <- describecoef(x, mean=TRUE)  
+  p <- describecoef(x, mean=TRUE)
+  sym <- lava.options()$sym
   MeanFix <- intfix(x)
   RegFix <- regfix(x)
   CovFix <- covfix(x)
@@ -26,7 +27,7 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       if (all(is.na(c(curfix,curlab))) | overwrite) {
         count <- count+1
 ##        st <- ifelse(missing(labels),paste("p",count,sep=""),labels[count])
-        st <- ifelse(missing(labels),paste(p0[1],p0[2],sep="<-"),labels[count])
+        st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[1]),labels[count])
         regfix(x,from=p0[2],to=p0[1]) <- st
       }
     } else if (attributes(p0)$type=="cov") {
@@ -36,7 +37,7 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
         count <- count+1
 ##        st <- ifelse(missing(labels),paste("p",count,sep=""),labels[count])
 ##        st <- paste("p",count,sep="")
-        st <- ifelse(missing(labels),paste(p0[1],p0[2],sep="<->"),labels[count])
+        st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[2]),labels[count])
         covfix(x,p0[2],p0[1],exo=FALSE) <- st
       }
     } else { ## Mean parameter

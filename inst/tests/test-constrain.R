@@ -32,10 +32,10 @@ test_that("Multiple group constraints", {
   l <- lvm(~bw.1+bw.2)
   covariance(l) <- bw.1 ~ bw.2
   e <- estimate(l,subset(twinwide,zyg.1=="MZ"))
-  B <- cbind(1,-1); colnames(B) <- c("bw.1<->bw.1","bw.2<->bw.2")
+  B <- cbind(1,-1); colnames(B) <- c("bw.1,bw.1","bw.2,bw.2")
   lava::compare(e,contrast=B)
   B2 <- rbind(c(1,-1,0,0),c(0,0,1,-1))
-  colnames(B2) <- c("bw.1","bw.2","bw.1<->bw.1","bw.2<->bw.2")
+  colnames(B2) <- c("bw.1","bw.2","bw.1,bw.1","bw.2,bw.2")
   lava::compare(e,contrast=B2)
 
   l <- lvm(~bw.1+bw.2)

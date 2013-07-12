@@ -78,7 +78,7 @@ path.lvmfit <- function(object,to=NULL,from,...) {
     xx <- mypath[[i]]
     ii <- c()
     for (j in 1:(length(xx)-1)) {
-      st <- paste(xx[j+1], "<-", xx[j],sep="")
+      st <- paste(xx[j+1], lava.options()$symbol[1], xx[j],sep="")
       ii <- c(ii, match(st,rownames(cc)))
     }
     idx <- c(idx, list(ii)) 

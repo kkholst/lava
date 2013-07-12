@@ -36,8 +36,8 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
     T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0); names(T0) <- "Q"
   } 
   s <- modelsearch(e0,k=k)
-  relname <- c(paste(myvars,collapse="<->"),
-               paste(rev(myvars),collapse="<->"))
+  relname <- c(paste(myvars,collapse=lava.options()$symbol[2]),
+               paste(rev(myvars),collapse=lava.options()$symbol[2]))
   relidx <- NULL
   if (k==1) {
     relidx <- na.omit(match(relname,s$res[,"Index"]))
@@ -47,7 +47,7 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
 ##    if (covariance(Model(x))$rel[myvars[1],myvars[2]]==0) {    
     ## paridx <- which(names(coef(x))%in%relname)
     ## if (length(paridx)==0) {
-    ##   paridx <- which(names(coef(x))%in%paste(myvars,collapse="<-"))
+    ##   paridx <- which(names(coef(x))%in%paste(myvars,collapse=lava.options()$symbol[1]))
     ## }    
 ##    p0 <- coef(x)
 ##    p0[paridx] <- 0
@@ -119,7 +119,7 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
 
 ##' @S3method print equivalence
 print.equivalence <- function(x,...) {
-  cat("  0)\t ",paste(x$vars,collapse="<->"),"  (",formatC(x$T0),")\n",sep="")
+  cat("  0)\t ",paste(x$vars,collapse=lava.options()$symbol[2]),"  (",formatC(x$T0),")\n",sep="")
   cat("Empirical equivalent models:\n")
   if (length(x$E)==0)
     cat("\t none\n")

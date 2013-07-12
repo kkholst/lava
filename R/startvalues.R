@@ -192,7 +192,7 @@ Simple_gradient.lvm <- function(x,p,...) {
     npar.reg <- m.$npar.reg; npar <- m.$npar
     G <- J%*%IAi
     detC <- det(C)
-    iC <- try(solve(C), silent=TRUE)
+    iC <- Inverse(C,tol=1e-9)
     if (detC<0 | inherits(iC, "try-error"))
       return(.Machine$double.xmax)    
     res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
@@ -254,7 +254,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
   obs.idx <- as.vector(J%*%(seq_len(m)));  latent.idx <- setdiff(seq_len(m), obs.idx)
   s <- sqrt(diag(S))
-  R <- (cov2cor(S)) ## S/outer(s,s)
+  suppressWarnings(R <- (cov2cor(S))) ## S/outer(s,s)
   C <- P0
   Debug(list("obs.idx", obs.idx), debug)
   C[obs.idx,obs.idx] <- R

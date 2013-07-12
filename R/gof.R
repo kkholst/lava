@@ -1,4 +1,4 @@
-rsq <- function(x) 1-coef(x,9,std="yx")[paste(manifest(x),"<->",manifest(x),sep=""),5] 
+rsq <- function(x) 1-coef(x,9,std="yx")[paste(manifest(x),lava.options()$symbol[2],manifest(x),sep=""),5] 
 
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
 ##                     control=list(start=coef(object),trace=1),

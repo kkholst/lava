@@ -78,8 +78,12 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
       mu0 <- rep(0,nrow(S0))      
     }
     else {
-      S0 <- S
-      mu0 <- mu
+        S0 <- S
+        mu0 <- mu
+        e0 <- eigen(S0)
+        if (any(e0$values<(lava.options()$itol)^0.5))
+            S0 <- diag(diag(S),ncol=ncol(S))
+
     }
 ##    exo <- exogenous(x);
     exo.idx <- index(x)$exo.obsidx;

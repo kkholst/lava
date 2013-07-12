@@ -33,13 +33,13 @@ GLMest <- function(m,data,control=list(),...) {
     V0 <- vcov(g)
     names(p)[1] <- y
     if (length(p)>1) {
-      names(p)[-1] <- paste(y,xx,sep="<-")
+      names(p)[-1] <- paste(y,xx,sep=lava.options()$symbol[1])
     }
     colnames(V0) <- rownames(V0) <- names(p)
     if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
       p <- c(p,summary(g)$dispersion)
       V1 <- matrix(0) ## Not estimated!
-      colnames(V1) <- rownames(V1) <- names(p)[length(p)] <- paste(y,y,sep="<->")
+      colnames(V1) <- rownames(V1) <- names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
       V0 <- V0%+%V1
     }
     if (is.null(V)) {
@@ -95,10 +95,35 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 }
 
 
+
+
+##' @S3method score lm
+score.lm <- function(x,p=coef(x),data,indiv=FALSE,
+                      y,X,offset=NULL,...) {
+  response <- all.vars(formula(x))[1]
+  sigma2 <- summary(x)$sigma^2
+  if (missing(data)) {
+      X <- model.matrix(x)
+      y <- model.frame(x)[,1]      
+  } else {
+      X <- model.matrix(formula(x),data=data)
+      y <- model.frame(formula(x),data=data)[,1]
+  }    
+  offset <- x$offset
+  n <- nrow(X)  
+  if(any(is.na(p))) stop("Over-parameterized model")
+  Xbeta <- X%*%p
+  if (!is.null(offset)) Xbeta <- Xbeta+offset
+  r <- y-Xbeta
+  A <- as.vector(r)/sigma2 
+  S <- apply(X,2,function(x) x*A)
+  if (!indiv) return(colSums(S))
+  return(S)
+}
+
 ##' @S3method score glm
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,link,dispersion,offset=NULL,...) {
-
 
   response <- all.vars(formula(x))[1]
   if (inherits(x,"glm")) {
