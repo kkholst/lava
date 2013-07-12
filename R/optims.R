@@ -67,7 +67,7 @@ estfun <- function(start,objective,gradient,hessian,...) {
   } else {
     mygrad <- function(x) {
       myfun <- function(z) gradient(z)
-      H <- jacobian(myfun,x,method=lava.options()$Dmethod)
+      H <- numDeriv::jacobian(myfun,x,method=lava.options()$Dmethod)
       S <- gradient(x)
       2*S%*%H    
     }
@@ -82,7 +82,7 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
   }
   mygrad <- function(x) {
     myfun <- function(z) gradient(z)
-    H <- jacobian(myfun,x,method=lava.options()$Dmethod)
+    H <- numDeriv::jacobian(myfun,x,method=lava.options()$Dmethod)
     S <- gradient(x)
     2*S%*%H    
   }

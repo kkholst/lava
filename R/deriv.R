@@ -79,8 +79,8 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         if (!is.null(attributes(fval)$grad)) {
           Gr <- attributes(fval)$grad(unlist(vals))
         } else {
-          if (!require("numDeriv")) stop("numDeriv or analytical derivatives needed!")
-          Gr <- as.numeric(jacobian(myc, unlist(vals)))
+            ## if (!require("numDeriv")) stop("numDeriv or analytical derivatives needed!")
+          Gr <- as.numeric(numDeriv::jacobian(myc, unlist(vals)))
       }
         mat.idx <- mom$constrain.idx[[pp]]
         cname <- c(cname,pp)

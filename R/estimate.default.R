@@ -126,7 +126,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
         N <- NROW(val)
         D <- attributes(val)$grad
         if (is.null(D)) {
-            D <- jacobian(function(p,...) {
+            D <- numDeriv::jacobian(function(p,...) {
                 arglist[[parname]] <- p
                 if (is.null(newf))
                     return(do.call("f",arglist))

@@ -207,7 +207,7 @@ logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
 }
 
 hessian.glm <- function(x,p=coef(x),...) {  
-  jacobian(function(theta) score.glm(x,p=theta,...),p)
+  numDeriv::jacobian(function(theta) score.glm(x,p=theta,...),p)
 }
 
 ##' @S3method information glm

@@ -64,7 +64,7 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
   xx <- f(b)
   Dxx <- -1/b[2]*rbind(1,xx)
   if (!is.null(EB))
-    Dxx <- grad(f,b)
+    Dxx <- numDeriv::grad(f,b)
   se <- diag(t(Dxx)%*%S%*%Dxx)^0.5
   res <- cbind(Estimate=xx,"Std.Err"=se)
   alpha <- 1-ci.level
@@ -365,7 +365,7 @@ information.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset
 curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),type=c("outer","obs","robust"),...) {
   if (tolower(type[1])%in%c("obs","hessian")) {
     beta.idx <- seq(ncol(X)); gamma.idx <- seq(ncol(Z))+ncol(X)
-    I <- -jacobian(function(x)
+    I <- -numDeriv::jacobian(function(x)
                    curereg_score(x[beta.idx],x[gamma.idx],y,X,Z,offset,family,...),c(beta,gamma))
     return(I)
   }

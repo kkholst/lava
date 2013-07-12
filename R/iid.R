@@ -35,7 +35,7 @@ iid.default <- function(x,score.deriv,id,...) {
     iI <- vcov(x) 
   } else {
     if (is.null(score.deriv)) {
-      score.deriv <- -jacobian(function(p) score(x,p=p,...),pp)
+      score.deriv <- -numDeriv::jacobian(function(p) score(x,p=p,...),pp)
     }
     if (is.function(score.deriv)) {
       score.deriv <- score.deriv(x,p=pp,...)

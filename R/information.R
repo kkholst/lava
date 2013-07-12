@@ -26,10 +26,10 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     return(B%*%A%*%B)
   }
   if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
-    require("numDeriv")
+      ##    require("numDeriv")
     myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,weight2=weight2,indiv=FALSE,n=n) ##...)
     ##    I <- -hessian(function(p0) logLik(x,p0,dd),p)
-    I <- -jacobian(myf,p,method=method)
+    I <- -numDeriv::jacobian(myf,p,method=method)
     res <- (I+t(I))/2 # Symmetric result
     if (inverse) {
       if (pinv)

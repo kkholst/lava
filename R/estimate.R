@@ -631,7 +631,7 @@ estimate <- function(x,...) UseMethod("estimate")
     if (XconstrStdOpt & !is.null(myGrad))
       opt$gradient <- as.vector(myGrad(opt$par))
     else {
-      opt$gradient <- grad(myObj,opt$par)
+      opt$gradient <- numDeriv::grad(myObj,opt$par)
     }
   } else {
     opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
@@ -653,10 +653,10 @@ estimate <- function(x,...) UseMethod("estimate")
     if (is.null(myInfo)) {
       if (!is.null(myGrad))
         myInfo <- function(pp)
-          jacobian(myGrad,pp,method=lava.options()$Dmethod)
+          numDeriv::jacobian(myGrad,pp,method=lava.options()$Dmethod)
       else
         myInfo <- function(pp)
-          hessian(myObj,pp)
+          numDeriv::hessian(myObj,pp)
     }
     I <- myInfo(opt$estimate)
     asVar <- tryCatch(Inverse(I),

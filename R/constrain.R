@@ -219,7 +219,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     }  
     return(Model(x)$constrain)
   }
-  require(numDeriv)
+  ##  require(numDeriv)
   if (is.numeric(x)) {
      b <- x
    } else {
@@ -235,7 +235,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
   }
   fb <- fun(b)
   pl <- 1-(1-level)/2
-  D <- rbind(grad(fun,b))
+  D <- rbind(numDeriv::grad(fun,b))
   se <- (D%*%S%*%t(D))^0.5
   res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*se)
   pstr <- paste(format(c(round(1000-1000*pl),round(pl*1000))/10),"%",sep="")
@@ -369,7 +369,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
       if (!is.null(attributes(fval)$grad)) {
         Gr <- cbind(attributes(fval)$grad(unlist(vals0)))
       } else {
-        Gr <- cbind(as.numeric(jacobian(myc0, unlist(vals0))))
+        Gr <- cbind(as.numeric(numDeriv::jacobian(myc0, unlist(vals0))))
       }
       V <- vcov[val.idx0,val.idx0]
       mycoef[2] <- (t(Gr)%*%V%*%Gr)^0.5
