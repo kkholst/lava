@@ -2,7 +2,7 @@
 \alias{By}
 \title{Apply a Function to a Data Frame Split by Factors}
 \usage{
-  By(x, INDICES, FUN, COLUMNS, ...)
+  By(x, INDICES, FUN, COLUMNS, array = FALSE, ...)
 }
 \arguments{
   \item{x}{Data frame}
@@ -15,6 +15,8 @@
 
   \item{COLUMNS}{(Optional) subset of columns of x to work
   on}
+
+  \item{array}{if TRUE an array/matrix is always returned}
 
   \item{...}{Additional arguments to lower-level functions}
 }

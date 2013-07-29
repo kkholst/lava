@@ -1,7 +1,7 @@
 ##' Dose response calculation for binomial regression models
 ##'
 ##' @title Dose response calculation for binomial regression models
-##' @param model Model object
+##' @param model Model object or vector of parameter estimates
 ##' @param intercept Index of intercept parameters
 ##' @param slope Index of intercept parameters
 ##' @param prob Index of mixture parameters (only relevant for
@@ -10,15 +10,25 @@
 ##' length(x)=length(intercept)+length(slope)+length(prob)
 ##' @param level Probability at which level to calculate dose
 ##' @param ci.level Level of confidence limits
+##' @param vcov Optional estimate of variance matrix of parameter
+##' estimates
+##' @param family Optional distributional family argument
 ##' @param EB Optional ratio of treatment effect and adverse effects
 ##' used to find optimal dose (regret-function argument)
 ##' @author Klaus K. Holst
 ##' @export
-PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
-               EB=NULL) {
+PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,
+               ci.level=0.95,vcov,family, EB=NULL) {
+    if (is.vector(model)) {
+        beta <- model
+        if (missing(vcov)) stop("vcov argument needed")
+        if (missing(family)) stop("family argument needed")
+    } else beta <- coef(model)
+    if (missing(vcov)) vcov <- stats::vcov(model)
+    if (missing(family)) family <- stats::family(model)
   N <- length(intercept)+length(slope)+length(prob)
-  if (length(intercept)<length(coef(model))) {
-    B.intercept <- rep(0,length(coef(model)));
+  if (length(intercept)<length(beta)) {
+    B.intercept <- rep(0,length(beta));
     if (!missing(x)) {
       if (length(x)!=N) stop("x should be of same length as the total length of 'intercept','slope','prob'")
       B.intercept[intercept] <- x[seq_len(length(intercept))]
@@ -26,8 +36,8 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
   } else {
     B.intercept <- intercept
   }
-  if (length(slope)<length(coef(model))) {
-    B.slope <- rep(0,length(coef(model)));
+  if (length(slope)<length(beta)) {
+    B.slope <- rep(0,length(beta));
     if (!missing(x)) 
       B.slope[slope] <- x[length(intercept)+seq_len(length(slope))]
     else
@@ -36,8 +46,8 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
     B.slope <- slope
   }  
   if (!is.null(prob)) {
-    if (length(prob)<length(coef(model))) {
-      B.prob <- rep(0,length(coef(model)));
+    if (length(prob)<length(beta)) {
+      B.prob <- rep(0,length(beta));
       if (!missing(x)) 
         B.prob[prob] <- x[length(intercept)+length(slope)+seq_len(length(prob))]
       else
@@ -48,17 +58,17 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,ci.level=0.95,
   }
   if (is.null(prob)) B.prob <- NULL
   B <- rbind(B.intercept,B.slope,B.prob)
-  S <- B%*%vcov(model)%*%t(B)
-  b <- as.vector(B%*%coef(model))
+  S <- B%*%vcov%*%t(B)
+  b <- as.vector(B%*%beta)
 
   f <- function(b) {
     mylevel <- level
     if (!is.null(EB)) {      
       if (is.null(prob)) stop("Index of mixture-probability parameters needed")
-      pi0 <- family(model)$linkinv(b[3])
+      pi0 <- family$linkinv(b[3])
       mylevel <- 1-(1-pi0)/pi0*(EB)/(1-EB)
     }
-    return(structure((family(model)$linkfun(mylevel)-b[1])/b[2],level=mylevel))
+    return(structure((family$linkfun(mylevel)-b[1])/b[2],level=mylevel))
   }
 
   xx <- f(b)
@@ -311,7 +321,7 @@ curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FA
   loglik <- y*log(Pr)+(1-y)*log(1-Pr)
   if (indiv) return(loglik)
   loglik <- sum(loglik)
-  structure(loglik,nobs=n,df=length(beta)+1,class="logLik")
+  structure(loglik,nobs=n,df=length(beta)+length(gamma),class="logLik")
 }
 
 ##' @S3method score curereg

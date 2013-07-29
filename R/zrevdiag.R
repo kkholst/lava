@@ -19,6 +19,7 @@ revdiag <- function(x,...) {
     x[cbind(rev(seq(n)),seq(n))]
   }
 
+##' @export
 "revdiag<-" <- function(x,...,value) {
   n <- ncol(x)
   x[cbind(rev(seq(n)),seq(n))] <- value
