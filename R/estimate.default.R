@@ -109,25 +109,33 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
             arglist <- c(list(object=x,data=data,p=pp),list(...))
             names(arglist)[3] <- parname      
         } else {
-            arglist <- c(list(object=x,p=pp),list(...))
+            arglist <- c(list(object=x,p=pp),list(...))            
             names(arglist)[2] <- parname
         }
         if (!dots) {
             arglist <- arglist[form0]
         }
-        val <- do.call("f",arglist)
+
         newf <- NULL
-        if (is.list(val)) {
-            nn <- names(val)
-            val <- do.call("cbind",val)
-            newf <- function(...) do.call("cbind",f(...))
+        if (length(form)==0) {
+            arglist <- list(pp)
+            newf <- function(p) do.call("f",list(p))
+            val <- do.call("f",arglist)
+        } else {
+            val <- do.call("f",arglist)
+            if (is.list(val)) {
+                nn <- names(val)
+                val <- do.call("cbind",val)
+                newf <- function(...) do.call("cbind",f(...))
+            }
         }
         k <- NCOL(val)
         N <- NROW(val)
         D <- attributes(val)$grad
         if (is.null(D)) {
             D <- numDeriv::jacobian(function(p,...) {
-                arglist[[parname]] <- p
+                if (length(form)==0) arglist[[1]] <- p
+                else arglist[[parname]] <- p
                 if (is.null(newf))
                     return(do.call("f",arglist))
                 return(do.call("newf",arglist)) }, pp)      
