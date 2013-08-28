@@ -210,10 +210,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     }
     ## Simulate from sim. distribution (Y,X) (mv-normal)
     I <- diag(length(nn))
-    IAi <- solve(I-t(A))
+    IAi <- Inverse(I-t(A))
     colnames(E) <- vv
     dd <- t(apply(heavytail.sim.hook(x,E),1,function(x) x+mu))
     res <- dd%*%t(IAi)
+    colnames(res) <- vv
   } else {
 
     

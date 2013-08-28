@@ -6,6 +6,9 @@ Date: 2013-08-01
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models
+URL: http://lava.r-forge.r-project.org/
+License: GPL-3
+LazyLoad: yes
 Depends:
     R (>= 2.15)
 Imports:
@@ -21,8 +24,6 @@ Suggests:
     foreach,
     survival,
     testthat
-License: GPL-3
-LazyLoad: yes
 Collate:
     'addattr.R'
     'addvar.R'

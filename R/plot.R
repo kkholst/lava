@@ -94,11 +94,12 @@
     plot(g)
   } else {
 ##    graphRenderInfo(g)$recipEdges <- "distinct"
-    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
+    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"    
     dots <- list(...)
     dots$attrs <- attrs
     dots$x <- g
     dots$recipEdges <- "distinct"
+    if (attributes(g)$feedback) dots$recipEdges <- c("combine") 
     if (is.null(dots$layoutType)) dots$layoutType <- layout[1]
     if (all(index(x)$A==0)) 
       dots$layoutType <- "circo"

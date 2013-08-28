@@ -1,4 +1,4 @@
-##' Estimation of functional of parameters 
+0##' Estimation of functional of parameters 
 ##'
 ##' Estimation of functional of parameters.
 ##' Wald tests, robust standard errors, cluster robust standard errors,
@@ -153,19 +153,26 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
                     D <- colMeans(rbind(D))
                     iid2 <- iid0%*%D
                 }
-                if (iid) return(list(iid1,iid2))
                 pp <- as.vector(colMeans(cbind(val)))
-                iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))
+                iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))/length(val)
+                if (iid) return(list(iid1,iid2))
                 if (N!=n) {
                     ## TODO....
-                    if (missing(id2)) {          
+                    ##                    browser()
+                    if (missing(id2)) {                        
                         message("Assuming independence between model iid decomposition and new data frame")
                         V <- crossprod(iid1) + crossprod(iid2)
                     } else {
-                        iid1[id,,drop=FALSE]+iid2[id2,,drop=FALSE]
+                        if (missing(id)) {
+                            ii <- iid2
+                            ii[id2,] <- ii[id2,] + iid1
+                            V <- crossprod(ii)
+                        }
+                        else stop("No implementation of id,id2 combination...")
+
                     }
                 } else {
-                    V <- crossprod((iid1/n+iid2))
+                    V <- crossprod((iid1+iid2))
                 }
             }
         }

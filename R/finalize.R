@@ -77,16 +77,16 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
 
   allEdges <- edgeNames(g)
   regEdges <- c()
-  recursive <- c()
+  feedback <- c()
   A <- index(x)$A
   if (index(x)$npar.reg>0)
   for (i in 1:(nrow(A)-1))
-    for (j in (i+1):(ncol(A))) {
-##      if(A[i,j]==1 & A[j,i]==1) recursive <- c(recursive,
-##                        paste(var[i],"~",var[j], sep=""),
-##                        paste(var[j],"~",var[i], sep=""))
+      for (j in (i+1):(ncol(A))) {
+      if(A[i,j]==1 & A[j,i]==1) feedback <- c(feedback,
+                          paste(var[i],"~",var[j], sep=""),
+                          paste(var[j],"~",var[i], sep=""))
       if (A[j,i]==0 & x$M[j,i]!=0) {
-        g <- removeEdge(var[j],var[i],g)
+          g <- removeEdge(var[j],var[i],g)
       }
       if (A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
       if (A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
@@ -146,7 +146,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
 
   for (e in allEdges) {
     dir <- "forward"; lty <- 1; arrowtail <- "none"
-    if (e %in% recursive) {
+    if (e %in% feedback) {
       dir <- "none"; lty <- 1; arrowtail <- "open"
     }
     if (e %in% varEdges) {
@@ -166,6 +166,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
                      fun="edgeRenderInfo")      
     }
 
+
     if (addstyle) {
       g <- addattr(g,"lty",var=estr,val=lty,fun="edgeRenderInfo")
       g <- addattr(g,"direction",var=estr,val=dir,fun="edgeRenderInfo")
@@ -181,7 +182,6 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       if (!is.null(cex))
         nodeRenderInfo(g)$cex <- cex
   }
-
   if (plain) {
     g <- addattr(g,attr="shape",var=vars(x),val="none")      
   } else {    
@@ -206,6 +206,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     }
   }
   options(opt)
+  attributes(g)$feedback <- (length(feedback)>0)
   return(g)
 }
 
