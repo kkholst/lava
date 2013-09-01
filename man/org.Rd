@@ -5,7 +5,7 @@
   org(x, ..., ncol, include.rownames = TRUE,
     include.colnames = TRUE, header = TRUE,
     frame = "topbot", rownames, type = "org", tab = FALSE,
-    print = TRUE, html, latex)
+    margins = TRUE, print = TRUE, html, latex)
 }
 \arguments{
   \item{x}{R object}
@@ -32,6 +32,8 @@
   \item{type}{Type argument (see \code{ascii})}
 
   \item{tab}{Tabulate?}
+
+  \item{margins}{Add margins to table?}
 
   \item{print}{print or return result}
 

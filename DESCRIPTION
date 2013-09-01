@@ -14,6 +14,7 @@ Depends:
 Imports:
     numDeriv
 Suggests:
+    mets,
     graph,
     Rgraphviz,
     igraph (>= 0.6),
@@ -23,7 +24,8 @@ Suggests:
     gof (>= 0.9),
     foreach,
     survival,
-    testthat
+    testthat,
+    ascii
 Collate:
     'addattr.R'
     'addvar.R'
@@ -133,3 +135,4 @@ Collate:
     'transform.R'
     'By.R'
     'Expand.R'
+    'zorg.R'

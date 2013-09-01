@@ -3,7 +3,7 @@
 \title{Estimation of functional of parameters}
 \usage{
   \method{estimate}{default} (x, f, data = model.frame(x),
-    id, id2, score.deriv, level = 0.95, iid = FALSE,
+    id, subset, score.deriv, level = 0.95, iid = FALSE,
     contrast, null, vcov, coef, ...)
 }
 \arguments{
@@ -17,7 +17,8 @@
   \item{id}{(optional) id-variable corresponding to iid
   decomposition of model parameters}
 
-  \item{id2}{(optional) id-variable of data.frame}
+  \item{subset}{(optional) subset of data.frame on which to
+  condition (logical expression or variable name)}
 
   \item{score.deriv}{(optional) derivative of mean score
   function}

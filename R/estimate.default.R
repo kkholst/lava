@@ -1,4 +1,4 @@
-0##' Estimation of functional of parameters 
+##' Estimation of functional of parameters 
 ##'
 ##' Estimation of functional of parameters.
 ##' Wald tests, robust standard errors, cluster robust standard errors,
@@ -7,7 +7,7 @@
 ##' @param f transformation of model parameters and (optionally) data
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to iid decomposition of model parameters
-##' @param id2 (optional) id-variable of data.frame
+##' @param subset (optional) subset of data.frame on which to condition (logical expression or variable name)
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level Level of confidence limits
 ##' @param iid If TRUE the iid decompositions are returned instead of variance estimates
@@ -58,7 +58,7 @@
 ##' estimate(e,contrast=cbind(1,1))
 ##' @method estimate default
 ##' @S3method estimate default
-estimate.default <- function(x,f,data=model.frame(x),id,id2,
+estimate.default <- function(x,f,data=model.frame(x),id,subset,
                              score.deriv,level=0.95,iid=FALSE,
                              contrast,null,vcov,coef,...) {
     if (!missing(f) && !is.function(f)) return(compare(x,f,...))
@@ -70,13 +70,25 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
     } else {
         suppressWarnings(iid0 <- iid(x,score.deriv=score.deriv))
     }
+    if (!missing(subset)) {
+        e <- substitute(subset)
+        subset <- eval(e, data, parent.frame())
+        if (is.character(subset)) subset <- x[,subset]
+        if (is.numeric(subset)) subset <- subset==1
+    }
     if (!missing(id)) {
         if (is.null(iid0)) stop("'iid' method needed")
         if (is.character(id) && length(id)==1) id <- data[,id,drop=TRUE]
         nprev <- nrow(iid0)
-        iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iid0))
+        clidx <- NULL
+        ##if ("mets"%in%.packages(all.available=TRUE))
+        if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
+            iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iid0))
+        } else {
+            clidx <- mets::cluster.index(id)
+            iid0 <- t(apply(clidx$idclustmat+1,1,function(x) colSums(iid0[x,,drop=FALSE])))
+        }        
     }
-
     if (!is.null(iid0) && missing(vcov)) {
         n <- NROW(iid0)
         if (missing(f)) {
@@ -119,14 +131,14 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
         newf <- NULL
         if (length(form)==0) {
             arglist <- list(pp)
-            newf <- function(p) do.call("f",list(p))
+            newf <- function(p,...) do.call("f",list(p,...))
             val <- do.call("f",arglist)
         } else {
             val <- do.call("f",arglist)
             if (is.list(val)) {
                 nn <- names(val)
                 val <- do.call("cbind",val)
-                newf <- function(...) do.call("cbind",f(...))
+                newf <- function(p,...) do.call("cbind",f(p,...))
             }
         }
         k <- NCOL(val)
@@ -140,51 +152,69 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
                     return(do.call("f",arglist))
                 return(do.call("newf",arglist)) }, pp)      
         }
-
         if (is.null(iid0)) {
             pp <- as.vector(val)
             V <- D%*%V%*%t(D)
         } else {
-            if (NROW(val)<NROW(data)) { ## Apparently transformation not depending on data
+            if (N<NROW(data)) { ## transformation not depending on data
                 pp <- as.vector(val)
                 iid2 <- iid0%*%t(D)
                 V <- crossprod(iid2)
-            } else {      
+            } else {                
                 if (k>1) { ## More than one parameter (and depends on data)
+                    if (!missing(subset)) { ## Conditional estimate
+                        val <- apply(val,2,function(x) x*subset)
+                    }
                     D0 <- matrix(nrow=k,ncol=length(pp))
                     for (i in seq_len(k)) {
-                        D0[i,] <- colMeans(D[seq(N)+(i-1)*N,,drop=FALSE])
+                        D1 <- D[seq(N)+(i-1)*N,,drop=FALSE]
+                        if (!missing(subset)) ## Conditional estimate
+                            D1 <- apply(D1,2,function(x) x*subset)
+                        D0[i,] <- colMeans(D1)
                     }
                     D <- D0
                     iid2 <- iid0%*%t(D)        
-                } else {
+                } else { ## Single parameter
+                    if (!missing(subset)) { ## Conditional estimate
+                        val <- val*subset
+                        D <- apply(rbind(D),2,function(x) x*subset)
+                    }
                     D <- colMeans(rbind(D))
                     iid2 <- iid0%*%D
                 }
                 pp <- as.vector(colMeans(cbind(val)))
-                iid1 <- t(rbind(apply(cbind(val),1,function(x) x-pp)))/length(val)
-                if (iid) return(list(iid1,iid2))
-                if (N!=n) {
-                    ## TODO....
-                    ##                    browser()
-                    if (missing(id2)) {                        
+                iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N
+                if (!missing(id)) {
+                    if (is.null(clidx)) 
+                        iid1 <- matrix(unlist(by(iid1,id,colSums)),byrow=TRUE,ncol=ncol(iid1))
+                    else
+                        iid1 <- t(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[x,,drop=FALSE])))               
+                }
+                if (!missing(subset)) { ## Conditional estimate
+                    phat <- mean(subset)
+                    iid3 <- cbind(-1/phat^2 * (subset-phat)/n)
+                    if (!missing(id)) {
+                        if (is.null(clidx))
+                            iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
+                        else
+                            iid3 <- cbind(apply(clidx$idclustmat+1,1,function(x) sum(iid3[x])))
+         
+                    }
+                    iidtheta <- (iid1+iid2)/phat + rbind(pp)%x%iid3
+                    pp <- pp/phat
+                    V <- crossprod(iidtheta)
+                } else { 
+                    if (nrow(iid1)!=nrow(iid2)) {
                         message("Assuming independence between model iid decomposition and new data frame")
                         V <- crossprod(iid1) + crossprod(iid2)
-                    } else {
-                        if (missing(id)) {
-                            ii <- iid2
-                            ii[id2,] <- ii[id2,] + iid1
-                            V <- crossprod(ii)
-                        }
-                        else stop("No implementation of id,id2 combination...")
-
+                    } else {      
+                        V <- crossprod((iid1+iid2))
                     }
-                } else {
-                    V <- crossprod((iid1+iid2))
                 }
-            }
+            }            
         }
     }
+
     
     res <- cbind(pp,diag(V)^0.5)
     if (missing(f) || missing(null))
@@ -217,7 +247,6 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
 estimate.glm <- function(x,...) {  
     estimate.default(x,...)
 }
-
 
 ##' @S3method print estimate
 print.estimate <- function(x,digits=3,...) {

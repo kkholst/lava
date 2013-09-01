@@ -288,7 +288,7 @@ function(M, upper=TRUE) {
 ###{{{ Inverse/pseudo
 
 ##' @export
-Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
+Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=TRUE) {
   n <- nrow(X)
   if (nrow(X)==1) {
     res <- 1/X
@@ -299,8 +299,10 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE) {
   id0 <- numeric(n)
   id0[svdX$d>tol] <- 1/svdX$d[svdX$d>tol]
   res <- with(svdX, v%*%diag(id0)%*%t(u))
+  if (names && !is.null(colnames(X)))
+      dimnames(res) <- list(colnames(X),colnames(X))
   if (det)
-    attributes(res)$det <- prod(svdX$d[svdX$d>tol])
+    attributes(res)$det <- prod(svdX$d[svdX$d>tol])  
   return(res)
 }
 

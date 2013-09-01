@@ -103,17 +103,17 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     rownames(xi.x) <- names(mu.0)
   }
   if (path) return(t(xi.x))
-
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
   Cy.epsilon <- P.x%*%t(IAi) ## Covariance y,residual
-  Czeta.y <- Cy.epsilon[eta.idx,endogenous(object)]
+  Czeta.y <- Cy.epsilon[eta.idx,index(object)$endo.idx]
   A <- m$A
   IA <- diag(nrow=nrow(A))-t(A)
 
   y0 <- intersect(Y,colnames(data))
   ys <- data[,y0,drop=FALSE]
-  ry <- t(ys)-Ey.x[y0,,drop=FALSE]
+  y0.idx <- match(y0,Y)
+  ry <- t(ys)-Ey.x[y0.idx,,drop=FALSE]
   y <- NULL
   if (!is.null(x)) {
     if (class(x)[1]=="formula")  {
