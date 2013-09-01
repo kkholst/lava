@@ -56,6 +56,11 @@
 ##' e
 ##' estimate(e,diff)
 ##' estimate(e,contrast=cbind(1,1))
+##'
+##' ## Clusters and subset (conditional marginal effects)
+##' d$id <- rep(seq(nrow(d)/4),each=4)
+##' estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id)
+##' 
 ##' @method estimate default
 ##' @S3method estimate default
 estimate.default <- function(x,f,data=model.frame(x),id,subset,
@@ -81,12 +86,14 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
         if (is.character(id) && length(id)==1) id <- data[,id,drop=TRUE]
         nprev <- nrow(iid0)
         clidx <- NULL
+        ## if (!inherits(try(find.package("mets"),silent=TRUE),"try-error"))
+        ##     
         ##if ("mets"%in%.packages(all.available=TRUE))
         if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
             iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iid0))
         } else {
             clidx <- mets::cluster.index(id)
-            iid0 <- t(apply(clidx$idclustmat+1,1,function(x) colSums(iid0[x,,drop=FALSE])))
+            iid0 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid0[x,,drop=FALSE]))))
         }        
     }
     if (!is.null(iid0) && missing(vcov)) {
@@ -187,8 +194,9 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
                 if (!missing(id)) {
                     if (is.null(clidx)) 
                         iid1 <- matrix(unlist(by(iid1,id,colSums)),byrow=TRUE,ncol=ncol(iid1))
-                    else
-                        iid1 <- t(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[x,,drop=FALSE])))               
+                    else {
+                        iid1 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[x,,drop=FALSE]))))
+                    }
                 }
                 if (!missing(subset)) { ## Conditional estimate
                     phat <- mean(subset)

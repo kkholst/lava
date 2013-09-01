@@ -36,7 +36,7 @@
 compare <- function(object,...) UseMethod("compare")
 
 ##' @S3method compare default
-compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
+compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.95) {
   if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
       if (!missing(contrast) && is.character(contrast)) par <- contrast
       contrast <- rep(0,length(coef(object)))
@@ -65,7 +65,13 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
     if (missing(null)) null <- rep(0,nrow(B))
     if (length(null)==1) null <- rep(null,nrow(B))
     Bp <- B%*%p
-    Q <- t(Bp-null)%*%Inverse(B%*%Sigma%*%t(B))%*%(Bp-null)
+    V <- B%*%Sigma%*%t(B)
+    ct <- cbind(Bp,diag(V)^.5)
+    p <- 1-(1-level)/2
+    ct <- cbind(ct,ct[,1] + qnorm(p)*cbind(-1,1)%x%ct[,2])
+    colnames(ct) <- c("Estimate","Std.Err",paste(c(1-p,p)*100,"%",sep=""))
+    rownames(ct) <- rep("",nrow(ct))
+    Q <- t(Bp-null)%*%Inverse(V)%*%(Bp-null)
     df <- qr(B)$rank; names(df) <- "df"
     attributes(Q) <- NULL; names(Q) <- "chisq";
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
@@ -77,15 +83,15 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma) {
         Bidx <- which(B[i,]!=0)
         Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
         sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - "; if (sgn[1]==" + ") sgn[1] <- ""
-        msg <- c(msg,paste(paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep="")," = ",null[i],sep=""))
+        msg <- c(msg,paste(paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep="")," = ",null[i],sep=""))        
       }
       method <- c(method,"","Null Hypothesis:",msg)
-      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
+##      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     }
     
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,
-                p.value=pQ, method = method
+                p.value=pQ, method = method, estimate=ct
                 )
     class(res) <- "htest"
     attributes(res)$B <- B
