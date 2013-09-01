@@ -215,7 +215,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,id2,
 }
 
 estimate.glm <- function(x,...) {  
-    estimate.default(x,...,var)
+    estimate.default(x,...)
 }
 
 
