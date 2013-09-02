@@ -1,3 +1,9 @@
+* Version 1.2.3 <2013-09-02 Mon>
+  - 'subset' argument added to estimate.default. Calculates empirical
+    averages conditional on subsets of data
+  - Improved output from compare/estimate functions
+  - Minor bug fixes (plot, predict)
+
 * Version 1.2.2 <2013-07-10 Wed>
   - Regression parameters are now by default referenced using '~',
     e.g. "y~x" instead of "y<-x". Applies to setting starting values

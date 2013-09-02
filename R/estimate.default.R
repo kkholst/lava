@@ -86,16 +86,15 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
         e <- substitute(id)
         id <- eval(e, data, parent.frame())
         if (is.character(id) && length(id)==1) id <- data[,id,drop=TRUE]
-        if (length(id)==1 && id) id <- rownames(data)
         if (length(id)!=nrow(data)) stop("Dimensions of 'data' and 'id' does not agree")
         nprev <- nrow(iidtheta)
         clidx <- NULL
         if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
             iidtheta <- matrix(unlist(by(iidtheta,id,colSums)),byrow=TRUE,ncol=ncol(iidtheta))
         } else {
-                clidx <- mets::cluster.index(id)
-                iidtheta <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iidtheta[x,,drop=FALSE]))))
-            }
+            clidx <- mets::cluster.index(id)
+            iidtheta <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iidtheta[na.omit(x),,drop=FALSE]))))            
+        }
     }
     if (!is.null(iidtheta) && missing(vcov)) {
         n <- NROW(iidtheta)
@@ -195,7 +194,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
                     if (is.null(clidx)) 
                         iid1 <- matrix(unlist(by(iid1,id,colSums)),byrow=TRUE,ncol=ncol(iid1))
                     else {
-                        iid1 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[x,,drop=FALSE]))))
+                        iid1 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[na.omit(x),,drop=FALSE]))))
                     }
                 }
                 if (!missing(subset)) { ## Conditional estimate
@@ -205,7 +204,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
                         if (is.null(clidx))
                             iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
                         else
-                            iid3 <- cbind(apply(clidx$idclustmat+1,1,function(x) sum(iid3[x])))
+                            iid3 <- cbind(apply(clidx$idclustmat+1,1,function(x) sum(iid3[na.omit(x)])))
          
                     }
                     iidtheta <- (iid1+iid2)/phat + rbind(pp)%x%iid3
