@@ -76,14 +76,17 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     attributes(Q) <- NULL; names(Q) <- "chisq";
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
 
-    method = "- Wald test -";    
+    method = "- Wald test -";
+    cnames <- c()
     if (!is.null(pname)) {
       msg <- c()
       for (i in seq_len(nrow(B))) {
         Bidx <- which(B[i,]!=0)
         Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
-        sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - "; if (sgn[1]==" + ") sgn[1] <- ""
-        msg <- c(msg,paste(paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep="")," = ",null[i],sep=""))        
+        sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - ";
+        if (sgn[1]==" + ") sgn[1] <- "" else sgn[1] <- "-"
+        cnames <- c(cnames,paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep=""))
+        msg <- c(msg,paste(cnames[i]," = ",null[i],sep=""))
       }
       method <- c(method,"","Null Hypothesis:",msg)
 ##      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
@@ -91,7 +94,8 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,
-                p.value=pQ, method = method, estimate=ct
+                p.value=pQ, method = method, estimate=ct, vcov=V, coef=ct[,1],
+                null=null, cnames=cnames
                 )
     class(res) <- "htest"
     attributes(res)$B <- B
