@@ -15,7 +15,7 @@
   \item{data}{\code{data.frame}}
 
   \item{id}{(optional) id-variable corresponding to iid
-  decomposition of model parameters}
+  decomposition of model parameters.}
 
   \item{subset}{(optional) subset of data.frame on which to
   condition (logical expression or variable name)}
@@ -25,8 +25,8 @@
 
   \item{level}{Level of confidence limits}
 
-  \item{iid}{If TRUE the iid decompositions are returned
-  instead of variance estimates}
+  \item{iid}{If TRUE the iid decompositions are also
+  returned (extract with \code{iid} method)}
 
   \item{contrast}{(optional) Contrast matrix for final Wald
   test}

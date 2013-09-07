@@ -13,11 +13,16 @@
   Create a Data Frame from All Combinations of Factors
 }
 \details{
-  Simple wrapper of the 'expand.grid' function
+  Simple wrapper of the 'expand.grid' function.  If x is a
+  table then a data frame is returned with one row pr
+  individual observation.
 }
 \examples{
 dd <- Expand(iris, Sepal.Length=2:8, Species="virginica")
 str(dd)
+
+T <- with(warpbreaks, table(wool, tension))
+Expand(T)
 }
 \author{
   Klaus K. Holst
