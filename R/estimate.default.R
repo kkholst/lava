@@ -250,9 +250,9 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
         cc <- compare(res,contrast=contrast,null=null,vcov=V,level=level)
         res <- structure(c(res, list(compare=cc)),class="estimate")
         res$coefmat <- with(cc, cbind(estimate,
-                                      (1-pnorm(abs(estimate[,1]-null)/estimate[,2]))*2)); colnames(res$coefmat)[5] <- "P-value"
-        rownames(res$coefmat) <- make.unique(unlist(lapply(cc$cnames,
-                                               function(x) toString(x,width=15))))
+                                      (1-pnorm(abs(estimate[,1]-null)/estimate[,2]))*2));
+        colnames(res$coefmat)[5] <- "P-value"
+        rownames(res$coefmat) <- cc$cnames
         res$compare$estimate <- NULL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
@@ -265,9 +265,12 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @S3method print estimate
-print.estimate <- function(x,digits=3,...) {
+print.estimate <- function(x,digits=3,width=25,...) {
     ##  cat("\n")
-    print(x$coefmat,digits=digits,...)
+    cc <- x$coefmat
+    rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
+                                               function(x) toString(x,width=width))))
+    print(cc,digits=digits,...)
     if (!is.null(x$compare)) print(x$compare)    
 }
 
