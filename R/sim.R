@@ -407,3 +407,8 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
   sim(object,nsim,...)
 }
 
+rmvn <- function(n,mu=rep(0,ncol(Sigma)),Sigma=diag(2)+1,...) {
+    PP <- with(svd(Sigma), v%*%diag(sqrt(d))%*%t(u))
+    res <- matrix(rnorm(ncol(Sigma)*n),ncol=ncol(Sigma))%*%PP
+    return(res+cbind(rep(1,n))%*%mu)
+}
