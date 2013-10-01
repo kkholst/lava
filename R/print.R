@@ -22,6 +22,7 @@ function(x, ...) {
 ##      if (!(y %in% endogenous(m)))
       {
         col1 <- as.character(oneline)
+        
         D <- attributes(distribution(x)[[y]])$family
         col2 <- x$attributes$type[y]
         if (is.null(col2) || is.na(col2)) col2 <- ""
