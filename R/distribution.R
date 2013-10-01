@@ -54,6 +54,10 @@ normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
 ##' @export
 gaussian.lvm <- normal.lvm
 
+##' @export
+lognormal.lvm <- function(...) normal.lvm(...,log=TRUE)
+
+
 ###}}} normal/gaussian
 
 ###{{{ poisson
@@ -115,6 +119,7 @@ probit.lvm <- binomial.lvm("probit")
 
 ###{{{ Gamma
 
+
 ##' @export
 Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
   fam <- Gamma(link); fam$link <- link
@@ -147,6 +152,13 @@ Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,.
   attr(f,"var") <- FALSE
   return(f)  
 } 
+
+##' @export
+gamma.lvm <- Gamma.lvm
+
+##' @export
+loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
+
 
 ###}}} Gamma
 

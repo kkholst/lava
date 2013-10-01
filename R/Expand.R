@@ -9,16 +9,22 @@
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' dd <- Expand(iris, Sepal.Length=2:8, Species="virginica")
-##' str(dd)
+##' dd <- Expand(iris, Sepal.Length=2:8, Species=c("virginica","setosa"))
+##' summary(dd)
 ##'
 ##' T <- with(warpbreaks, table(wool, tension))
 ##' Expand(T)
 Expand <- function(x,...) {
+    if (missing(x)) {
+        return(expand.grid(...))
+    }
     if (inherits(x,"table")) {
         M <- as.data.frame(x)
         idx <- rep(seq(nrow(M)),M[,ncol(M)])
         return(M[idx,-ncol(M),drop=FALSE])                
+    }
+    if (!inherits(x,"data.frame")) {
+        return(expand.grid(x,...))
     }
     dots <- list(...)
     nn <- names(dots)

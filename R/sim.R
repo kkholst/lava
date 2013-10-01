@@ -4,10 +4,6 @@
 ##' Simulate data from a general SEM model including non-linear effects and
 ##' general link and distribution of variables.
 ##' 
-##' E.g. \eqn{ E(y|x) = 2*x^2 } could be specified as
-##' 
-##' \code{regression(m, "y3", fn=function(x) x^2) <- "x$2"}
-##' 
 ##' @aliases sim sim.lvmfit sim.lvm
 ##' simulate.lvmfit simulate.lvm
 ##' transform<- transform<-.lvm transform.lvm
@@ -19,6 +15,7 @@
 ##' poisson.lvm
 ##' uniform.lvm
 ##' normal.lvm
+##' lognormal.lvm
 ##' gaussian.lvm
 ##' probit.lvm
 ##' logit.lvm
@@ -26,7 +23,9 @@
 ##' coxGompertz.lvm
 ##' coxWeibull.lvm
 ##' coxExponential.lvm
-##' Gamma.lvm
+##' aalenExponential.lvm
+##' Gamma.lvm gamma.lvm
+##' loggamma.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
@@ -95,6 +94,33 @@
 ##' regression(m) <- y~x+z+xz
 ##' d <- sim(m,1e3)
 ##' summary(lm(y~x+z + x*I(z>0),d))
+##' 
+##' 
+##' ##################################################
+##' ### Cox model
+##' ### piecewise constant hazard, gamma frailty
+##' ##################################################
+##' 
+##' m <- lvm(y~x+z)
+##' rates <- c(1,0.5); cuts <- c(0,5)
+##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts)
+##'                              loggamma.lvm(rate=1,shape=1))
+##' \dontrun{
+##'     d <- sim(m,2e4,p=c("y~x"=0.1)); d$status <- TRUE
+##'     plot(timereg::aalen(Surv(y,status)~x,data=d,resample.iid=0,robust=0),spec=1)
+##'     L <- approxfun(c(cuts,max(d$y)),f=1,cumsum(c(0,rates*diff(c(cuts,max(d$y))))),method="linear")
+##'     curve(L,0,100,add=TRUE,col="blue")
+##' }
+##' 
+##' ## Equivalent via transform (here with Aalens additive hazard model)
+##' m <- lvm(y~x)
+##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
+##' distribution(m,~z) <- gamma.lvm(rate=1,shape=1)
+##' transform(m,t~y+z) <- prod
+##' sim(m,10)
+##' 
+##' 
+##' 
 ##' 
 ##' 
 "sim" <- function(x,...) UseMethod("sim")

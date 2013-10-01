@@ -182,9 +182,59 @@ coxWeibull.lvm <- function(shape=1,scale) {
 }
 
 ##' @export
-coxExponential.lvm <- function(scale){
-  coxWeibull.lvm(shape=1,scale)
+coxExponential.lvm <- function(scale,rate,timecut=0){
+    if (missing(rate)) rate=1/scale
+    if (missing(scale)) scale=1/rate
+    if (length(rate)==1) {
+        return(coxWeibull.lvm(shape=1,scale))
+    }
+    if (length(rate)>length(timecut))
+        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
+    timecut <- c(timecut,Inf)
+    f <- function(n,mu,...) {
+        Ai <- function() {
+            vals <- matrix(0,ncol=length(rate),nrow=n)
+            ival <- numeric(n)
+            for (i in seq(length(rate))) {
+                u <- -log(runif(n)) ##rexp(n,1)
+                vals[,i] <-  timecut[i] + u*exp(-mu)/(rate[i])
+                idx <- which(vals[,i]<=timecut[i+1] & ival==0)
+                ival[idx] <- vals[idx,i]
+            }
+            ival
+        }
+        Ai()
+    }
+    return(f)
 }
+
+##' @export
+aalenExponential.lvm <- function(scale,rate,timecut=0){
+    if (missing(rate)) rate=1/scale
+    if (missing(scale)) scale=1/rate
+    if (length(rate)==1) {
+        return(coxWeibull.lvm(shape=1,scale))
+    }
+    if (length(rate)>length(timecut))
+        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
+    timecut <- c(timecut,Inf)
+    f <- function(n,mu,...) {
+        Ai <- function() {
+            vals <- matrix(0,ncol=length(rate),nrow=n)
+            ival <- numeric(n)
+            for (i in seq(length(rate))) {
+                u <- -log(runif(n)) ##rexp(n,1)
+                vals[,i] <-  timecut[i] + u/(rate[i]+mu)
+                idx <- which(vals[,i]<=timecut[i+1] & ival==0)
+                ival[idx] <- vals[idx,i]
+            }
+            ival
+        }
+        Ai()
+    }
+    return(f)
+}
+
 
 ##' @export
 coxGompertz.lvm <- function(shape=1,scale) {
