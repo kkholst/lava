@@ -18,8 +18,8 @@
   individual observation.
 }
 \examples{
-dd <- Expand(iris, Sepal.Length=2:8, Species="virginica")
-str(dd)
+dd <- Expand(iris, Sepal.Length=2:8, Species=c("virginica","setosa"))
+summary(dd)
 
 T <- with(warpbreaks, table(wool, tension))
 Expand(T)

@@ -119,8 +119,14 @@
 ##' transform(m,t~y+z) <- prod
 ##' sim(m,10)
 ##' 
-##' 
-##' 
+##' ## Shared frailty
+##' m <- lvm(c(t1,t2)~x+z)
+##' rates <- c(1,0.5); cuts <- c(0,5)
+##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
+##' distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
+##' \dontrun{
+##'     mets::fast.reshape(sim(m,100),varying=t)
+##' }
 ##' 
 ##' 
 "sim" <- function(x,...) UseMethod("sim")
