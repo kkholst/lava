@@ -227,9 +227,9 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
     
     res <- cbind(pp,diag(V)^0.5)
     if (missing(f) || missing(null))
-        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1])/res[,2]),lower.tail=FALSE)*2)
+        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)*2))
     else 
-        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]-null)/res[,2]),lower.tail=FALSE)*2)  
+        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]-null)/res[,2],lower.tail=FALSE))*2)
     colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
     if (!is.null(nn)) {
         rownames(res) <- nn
@@ -251,7 +251,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
         cc <- compare(res,contrast=contrast,null=null,vcov=V,level=level)
         res <- structure(c(res, list(compare=cc)),class="estimate")
         res$coefmat <- with(cc, cbind(estimate,
-                                      (pnorm(abs(estimate[,1]-null)/estimate[,2]),lower.tail=FALSE)*2));
+                                      (pnorm(abs(estimate[,1]-null)/estimate[,2],lower.tail=FALSE)*2)));
         colnames(res$coefmat)[5] <- "P-value"
         rownames(res$coefmat) <- cc$cnames
         res$compare$estimate <- NULL
