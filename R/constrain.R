@@ -385,7 +385,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
     ##   mycoef[2] <- mycoef[2] + 0.5*sum(diag(HV%*%HV))
     ## }
     mycoef[3] <- mycoef[1]/mycoef[2]
-    mycoef[4] <- 2*(1-pnorm(abs(mycoef[3])))
+    mycoef[4] <- 2*(pnorm(abs(mycoef[3]),lower.tail=FALSE))
     mycoef[5:6] <- mycoef[1] + c(1,-1)*qnorm((1-level)/2)*mycoef[2]
     res <- rbind(res,mycoef)
     mynames <- c(mynames,pp)

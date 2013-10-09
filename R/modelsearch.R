@@ -70,11 +70,11 @@ backwardeliminate <- function(x,
         if (is.numeric(cc)) {
             I0 <- information(M,p=cc,data=data,type=information)[-c(ii,vv),-c(ii,vv)]
             cc0 <- cc[-c(ii,vv)]
-            res <- (1-pnorm(abs(cc0/sqrt(diag(solve(I0))))))*2
+            res <- (pnorm(abs(cc0/sqrt(diag(solve(I0)))),lower.tail=FALSE))*2
             attributes(res)$coef <- cc
         } else {
             coefs <- coef(cc)
-            res <- (1-pnorm(abs(coefs/sqrt(diag(vcov(cc))))))*2
+            res <- (pnorm(abs(coefs/sqrt(diag(vcov(cc)))),lower.tail=FALSE))*2
             res <- res[-c(ii,vv)]
             attributes(res)$coef <- coefs
         }

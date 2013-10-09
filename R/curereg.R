@@ -256,7 +256,7 @@ summary.curereg <- function(object,level=0.95,pr.contrast,...) {
   alpha <- 1-level
   alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
   cc <- cbind(coef(object),diag(vcov(object))^0.5)
-  pval <- 2*(1-pnorm(abs(cc[,1]/cc[,2])))
+  pval <- 2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE))
   qq <- qnorm(1-alpha/2)
   cc <- cbind(cc[,1],cc[,1]-qq*cc[,2],cc[,1]+qq*cc[,2],pval)  
   colnames(cc) <- c("Estimate",alpha.str,"P-value")

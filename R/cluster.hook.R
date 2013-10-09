@@ -52,7 +52,7 @@ cluster.post.hook <- function(x,...) {
   x$vcov <- asVar
   SD <- sqrt(diag(asVar))
   Z <- mycoef/SD
-  pval <- 2*(1-pnorm(abs(Z)))
+  pval <- 2*(pnorm(abs(Z),lower.tail=FALSE))
   if (is.null(x$cluster)) {
     col3 <- Z
     nn <-  c("Estimate","Std. Error", "Z-value", "P-value")

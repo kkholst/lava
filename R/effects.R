@@ -20,7 +20,7 @@ totaleffects.lvmfit <- function(object,to,...,level=0.95) {
   }
   ef <- function(tt) {
     f <- effects(object,tt,...)
-    rbind(with(f$totalef,c(est,sd,est/sd,2*(1-pnorm(abs(est/sd))),est+q*sd,est-q*sd)))
+    rbind(with(f$totalef,c(est,sd,est/sd,2*(pnorm(abs(est/sd),lower.tail=FALSE)),est+q*sd,est-q*sd)))
   }  
   if (is.list(to)) {
     for (tt in to) {
@@ -153,7 +153,7 @@ coef.effects <- function(object,...) {
   }; rownames(indirectef) <- nn  
   mycoef <- rbind(totalef,directef,totindirectef,indirectef)
   mycoef <- cbind(mycoef,mycoef[,1]/mycoef[,2])
-  mycoef <- cbind(mycoef,2*(1-pnorm(abs(mycoef[,3]))))
+  mycoef <- cbind(mycoef,2*(pnorm(abs(mycoef[,3]),lower.tail=FALSE)))
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
   mycoef
 }

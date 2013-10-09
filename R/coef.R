@@ -19,7 +19,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE,
     } else object$vcov <- vcov
     coefs[,2] <- sqrt(diag(object$vcov))
     coefs[,3] <- coefs[,1]/coefs[,2]
-    coefs[,4] <-  2*(1-pnorm(abs(coefs[,3])))    
+    coefs[,4] <-  2*(pnorm(abs(coefs[,3]),lower.tail=FALSE))    
     colnames(coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
     object$coefficients <- coefs;
     return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
@@ -233,7 +233,7 @@ function(object, level=ifelse(missing(type),-1,2),
       mycoef[,2] <- sqrt(diag(myvcov))[myorder]
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
-    mycoef[,4] <-  2*(1-pnorm(abs(mycoef[,3])))
+    mycoef[,4] <-  2*(pnorm(abs(mycoef[,3]),lower.tail=FALSE))
   }
   
   coefs <- mycoef[myorder,,drop=FALSE]
@@ -446,7 +446,7 @@ coef.multigroupfit <-
         theta.sd <- sqrt(diag(object$vcov))
       else
         theta.sd <- sqrt(diag(vcov))
-      res <- cbind(theta,theta.sd,(Z <- theta/theta.sd),2*(1-pnorm(abs(Z))))
+      res <- cbind(theta,theta.sd,(Z <- theta/theta.sd),2*(pnorm(abs(Z),lower.tail=FALSE)))
       if (is.null(rownames(res)))
         rownames(res) <- object$model$name
       colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
