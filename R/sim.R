@@ -1,4 +1,5 @@
 
+
 ##' Simulate model
 ##' 
 ##' Simulate data from a general SEM model including non-linear effects and
@@ -103,7 +104,7 @@
 ##' 
 ##' m <- lvm(y~x+z)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
-##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts)
+##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
 ##'                              loggamma.lvm(rate=1,shape=1))
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("y~x"=0.1)); d$status <- TRUE
@@ -115,7 +116,7 @@
 ##' ## Equivalent via transform (here with Aalens additive hazard model)
 ##' m <- lvm(y~x)
 ##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-##' distribution(m,~z) <- gamma.lvm(rate=1,shape=1)
+##' distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
 ##' transform(m,t~y+z) <- prod
 ##' sim(m,10)
 ##' 
@@ -327,10 +328,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         if (i%in%vartrans) {
           xtrans <- attributes(x)$transform[[i]]$x
           if (all(xtrans%in%c(simuled,names(parvals))))  {
-            suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,xtrans])))
+              suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,xtrans])))
             if (length(yy) != NROW(res)) { ## apply row-wise
               res[,i] <- with(attributes(x)$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
             } else {
+                colnames(yy) <- NULL
               res[,i] <- yy
             }
             simuled <- c(simuled,i)
@@ -439,8 +441,8 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
   sim(object,nsim,...)
 }
 
-rmvn <- function(n,mu=rep(0,ncol(Sigma)),Sigma=diag(2)+1,...) {
-    PP <- with(svd(Sigma), v%*%diag(sqrt(d))%*%t(u))
-    res <- matrix(rnorm(ncol(Sigma)*n),ncol=ncol(Sigma))%*%PP
-    return(res+cbind(rep(1,n))%*%mu)
+rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(2)+1,...) {
+    PP <- with(svd(sigma), v%*%diag(sqrt(d))%*%t(u))
+    res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
+    return(res+cbind(rep(1,n))%*%mean)
 }

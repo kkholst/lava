@@ -154,9 +154,6 @@ Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,.
 } 
 
 ##' @export
-gamma.lvm <- Gamma.lvm
-
-##' @export
 loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
 
