@@ -4,7 +4,7 @@
 ##' Wald tests, robust standard errors, cluster robust standard errors,
 ##' LRT (when \code{f} is not a function)...
 ##' @param x model object (\code{glm}, \code{lvmfit}, ...)
-##' @param f transformation of model parameters and (optionally) data
+##' @param f transformation of model parameters and (optionally) data, or contrast matrix (or vector)
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to iid decomposition of model parameters. 
 ##' @param subset (optional) subset of data.frame on which to condition (logical expression or variable name)
@@ -33,9 +33,9 @@
 ##' 
 ##' ## Testing contrasts
 ##' estimate(g,null=0)
-##' estimate(g,contrast=rbind(c(1,1,0),c(1,0,2)))
-##' estimate(g,contrast=rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
-##' estimate(g,contrast=2:3) ## same as rbind(c(0,1,0),c(0,0,1))
+##' estimate(g,rbind(c(1,1,0),c(1,0,2)))
+##' estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
+##' estimate(g,2:3) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' 
 ##' ## Transformations
 ##' estimate(g,function(p) p[1]+p[2])
@@ -55,7 +55,7 @@
 ##' e <- estimate(g, f)
 ##' e
 ##' estimate(e,diff)
-##' estimate(e,contrast=cbind(1,1))
+##' estimate(e,cbind(1,1))
 ##'
 ##' ## Clusters and subset (conditional marginal effects)
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
@@ -63,10 +63,13 @@
 ##' 
 ##' @method estimate default
 ##' @S3method estimate default
-estimate.default <- function(x,f,data=model.frame(x),id,subset,
+estimate.default <- function(x,f=NULL,data=model.frame(x),id,subset,
                              score.deriv,level=0.95,iid=FALSE,
                              contrast,null,vcov,coef,...) {
-    if (!missing(f) && !is.function(f)) return(compare(x,f,...))
+    if (!is.null(f) && !is.function(f)) {
+        if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
+        contrast <- f; f <- NULL
+    }
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
@@ -99,7 +102,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
 
     if (!is.null(iidtheta) && missing(vcov)) {
         n <- NROW(iidtheta)
-        if (missing(f)) {
+        if (is.null(f)) {
             V <- crossprod(iidtheta)
         }
     } else {
@@ -115,7 +118,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
         pp <- stats::coef(x)
     }
 
-    if (!missing(f)) {
+    if (!is.null(f)) {
         form <- names(formals(f))
         dots <- ("..."%in%names(form))
         form0 <- setdiff(form,"...")
@@ -226,7 +229,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
 
     
     res <- cbind(pp,diag(V)^0.5)
-    if (missing(f) || missing(null))
+    if (is.null(f) || missing(null))
         res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)*2))
     else 
         res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]-null)/res[,2],lower.tail=FALSE))*2)
@@ -240,7 +243,7 @@ estimate.default <- function(x,f,data=model.frame(x),id,subset,
     }
     res <- structure(list(coef=res[,1],coefmat=res,vcov=V, iid=NULL),class="estimate")
     if (iid) res$iid <- iidtheta
-    if (missing(f) && (!missing(contrast) | !missing(null))) {
+    if (is.null(f) && (!missing(contrast) | !missing(null))) {
         p <- length(res$coef)    
         if (missing(contrast)) contrast <- diag(p)
         if (missing(null)) null <- 0
