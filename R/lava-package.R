@@ -33,21 +33,26 @@ NULL
 ##' @keywords datasets
 NULL
 
-##' Data
-##'
-##' Description
+##' Longitudinal Bone Mineral Density Data (Wide format)
+##' 
+##' Bone Mineral Density Data consisting of 112 girls randomized to receive
+##' calcium og placebo. Longitudinal measurements of bone mineral density
+##' (g/cm^2) measured approximately every 6th month in 3 years.
 ##' @name bmd
 ##' @docType data
-##' @format data.frame containing ...
+##' @source Vonesh & Chinchilli (1997), Table 5.4.1 on page 228.
+##' @format data.frame
 ##' @keywords datasets
+##' @seealso calcium
 NULL
 
-##' Data
+##' Simulated data 
 ##'
-##' Description
+##' Simulated data
 ##' @name brisa
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
@@ -56,34 +61,27 @@ NULL
 ##' Description
 ##' @name bmidata 
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Hubble data
 ##'
-##' Description
+##' Velocity (v) and distance (D) measures of 36 Type Ia super-novae from the Hubble
+##' Space Telescope
 ##' @name hubble
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Freedman, W. L., et al. 2001, AstroPhysicalJournal, 553, 47.
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Hubble data
 ##'
-##' Description
 ##' @name hubble2
+##' @seealso hubble
 ##' @docType data
-##' @format data.frame containing ...
-##' @keywords datasets
-NULL
-
-##' Data
-##'
-##' Description
-##' @name hubble2
-##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
 ##' @keywords datasets
 NULL
 
@@ -92,7 +90,8 @@ NULL
 ##' Description
 ##' @name indoorenv
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
@@ -101,39 +100,49 @@ NULL
 ##' Description
 ##' @name missingdata
 ##' @docType data
-##' @format data.frame containing ...
+##' @format list of data.frames
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Example data (nonlinear model)
 ##'
-##' Description
 ##' @name nldata
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Example SEM data (nonlinear)
 ##'
-##' Description
+##' Simulated data
 ##' @name nsem
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Example SEM data 
 ##'
-##' Description
+##' Simulated data
 ##' @name semdata
 ##' @docType data
-##' @format data.frame containing ...
+##' @source Simulated
+##' @format data.frame 
 ##' @keywords datasets
 NULL
 
-##' Serotonin data
+##' Serotonin data 
 ##'
+##' This simulated data mimics a PET imaging study where the 5-HT2A
+##' receptor and serotonin transporter (SERT) binding potential has
+##' been quantified into 8 different regions. The 5-HT2A
+##' cortical regions are considered high-binding regions
+## 'which are a priori known to yield quite similar and highly correlated
+##' measurements.  These measurements can be regarded as proxy measures of
+##' the extra-cellular levels of serotonin in the brain 
 ##' \tabular{rll}{
 ##'         day    \tab numeric \tab Scan day of the year \cr
 ##'         age    \tab numeric \tab Age at baseline scan \cr
@@ -152,26 +161,39 @@ NULL
 ##' }
 ##' @name serotonin
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
 ##' Data
 ##'
 ##' Description
+##' @seealso serotonin
 ##' @name serotonin2
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
+##' @source Simulated
 ##' @keywords datasets
 NULL
 
-##' Data
+##' Twin menarche data
 ##'
-##' Description
+##' Simulated data
+##' \tabular{rll}{
+##'         id    \tab numeric \tab Twin-pair id \cr
+##'         zyg    \tab character \tab Zygosity (MZ or DZ) \cr
+##'         twinnum    \tab numeric \tab Twin number (1 or 2) \cr
+##'         agemena    \tab numeric \tab Age at menarche (or censoring) \cr
+##'         status    \tab logical \tab Censoring status (observed:=T,censored:=F) \cr
+##'         bw    \tab numeric  \tab Birth weight \cr
+##'         msmoke    \tab numeric \tab Did mother smoke? (yes:=1,no:=0) \cr
+##' }
 ##' @name twindata
 ##' @docType data
-##' @format data.frame containing ...
+##' @format data.frame
 ##' @keywords datasets
+##' @source Simulated
 NULL
 
 

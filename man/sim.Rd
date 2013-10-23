@@ -1,19 +1,18 @@
 \name{sim}
-\alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
+\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
-\alias{distribution.lvm}
 \alias{functional}
+\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
-\alias{functional.lvm}
-\alias{gamma.lvm}
 \alias{Gamma.lvm}
+\alias{gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -29,11 +28,12 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
+\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
-\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
+\alias{aalenExponential.lvm}
 \title{Simulate model}
 \usage{
   \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
@@ -128,7 +128,7 @@ summary(lm(y~x+z + x*I(z>0),d))
 
 m <- lvm(y~x+z)
 rates <- c(1,0.5); cuts <- c(0,5)
-distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts)
+distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
                              loggamma.lvm(rate=1,shape=1))
 \dontrun{
     d <- sim(m,2e4,p=c("y~x"=0.1)); d$status <- TRUE
@@ -140,9 +140,18 @@ distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts)
 ## Equivalent via transform (here with Aalens additive hazard model)
 m <- lvm(y~x)
 distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-distribution(m,~z) <- gamma.lvm(rate=1,shape=1)
+distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
 transform(m,t~y+z) <- prod
 sim(m,10)
+
+## Shared frailty
+m <- lvm(c(t1,t2)~x+z)
+rates <- c(1,0.5); cuts <- c(0,5)
+distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
+distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
+\dontrun{
+    mets::fast.reshape(sim(m,100),varying=t)
+}
 }
 \author{
   Klaus K. Holst

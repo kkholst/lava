@@ -2,7 +2,10 @@
 \name{indoorenv}
 \alias{indoorenv}
 \title{Data}
-\format{data.frame containing ...}
+\format{data.frame}
+\source{
+  Simulated
+}
 \description{
   Description
 }

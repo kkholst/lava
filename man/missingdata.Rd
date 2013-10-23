@@ -2,7 +2,10 @@
 \name{missingdata}
 \alias{missingdata}
 \title{Data}
-\format{data.frame containing ...}
+\format{list of data.frames}
+\source{
+  Simulated
+}
 \description{
   Description
 }

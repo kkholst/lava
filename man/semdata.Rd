@@ -1,10 +1,13 @@
 \docType{data}
 \name{semdata}
 \alias{semdata}
-\title{Data}
-\format{data.frame containing ...}
+\title{Example SEM data}
+\format{data.frame}
+\source{
+  Simulated
+}
 \description{
-  Description
+  Simulated data
 }
 \keyword{datasets}
 

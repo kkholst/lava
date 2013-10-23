@@ -1,12 +1,13 @@
 \docType{data}
 \name{hubble2}
 \alias{hubble2}
-\title{Data}
-\format{data.frame containing ...}
+\title{Hubble data}
+\format{data.frame}
 \description{
-  Description
-
-  Description
+  Hubble data
+}
+\seealso{
+  hubble
 }
 \keyword{datasets}
 

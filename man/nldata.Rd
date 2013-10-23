@@ -1,10 +1,13 @@
 \docType{data}
 \name{nldata}
 \alias{nldata}
-\title{Data}
-\format{data.frame containing ...}
+\title{Example data (nonlinear model)}
+\format{data.frame}
+\source{
+  Simulated
+}
 \description{
-  Description
+  Example data (nonlinear model)
 }
 \keyword{datasets}
 

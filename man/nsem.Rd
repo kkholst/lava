@@ -1,10 +1,13 @@
 \docType{data}
 \name{nsem}
 \alias{nsem}
-\title{Data}
-\format{data.frame containing ...}
+\title{Example SEM data (nonlinear)}
+\format{data.frame}
+\source{
+  Simulated
+}
 \description{
-  Description
+  Simulated data
 }
 \keyword{datasets}
 

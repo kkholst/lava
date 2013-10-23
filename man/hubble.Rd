@@ -1,10 +1,15 @@
 \docType{data}
 \name{hubble}
 \alias{hubble}
-\title{Data}
-\format{data.frame containing ...}
+\title{Hubble data}
+\format{data.frame}
+\source{
+  Freedman, W. L., et al. 2001, AstroPhysicalJournal, 553,
+  47.
+}
 \description{
-  Description
+  Velocity (v) and distance (D) measures of 36 Type Ia
+  super-novae from the Hubble Space Telescope
 }
 \keyword{datasets}
 
