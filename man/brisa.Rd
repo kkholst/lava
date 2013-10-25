@@ -2,7 +2,7 @@
 \name{brisa}
 \alias{brisa}
 \title{Simulated data}
-\format{data.frame containing ...}
+\format{data.frame}
 \source{
   Simulated
 }

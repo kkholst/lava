@@ -1,18 +1,19 @@
 \name{sim}
+\alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
-\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
+\alias{distribution.lvm}
 \alias{functional}
-\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
-\alias{Gamma.lvm}
+\alias{functional.lvm}
 \alias{gamma.lvm}
+\alias{Gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -28,12 +29,11 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
-\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
+\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
-\alias{aalenExponential.lvm}
 \title{Simulate model}
 \usage{
   \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
@@ -122,6 +122,38 @@ summary(lm(y~x+z + x*I(z>0),d))
 
 
 ##################################################
+### Non-random variables
+##################################################
+m <- lvm()
+distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
+                               ones.lvm(),       ## Vector of ones
+                               ones.lvm(0.2))     ##  0.8n 0, 0.2n 1
+sim(m,10)
+
+
+##################################################
+### Cox model
+### piecewise constant hazard
+################################################
+
+m <- lvm(t~x)
+rates <- c(1,0.5); cuts <- c(0,5)
+## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
+distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
+
+
+\dontrun{
+    d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
+    plot(timereg::aalen(survival::Surv(t,status)~x,data=d,
+                        resample.iid=0,robust=0),spec=1)
+    L <- approxfun(c(cuts,max(d$t)),f=1,
+                   cumsum(c(0,rates*diff(c(cuts,max(d$t))))),
+                   method="linear")
+    curve(L,0,100,add=TRUE,col="blue")
+}
+
+
+##################################################
 ### Cox model
 ### piecewise constant hazard, gamma frailty
 ##################################################
@@ -131,9 +163,12 @@ rates <- c(1,0.5); cuts <- c(0,5)
 distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
                              loggamma.lvm(rate=1,shape=1))
 \dontrun{
-    d <- sim(m,2e4,p=c("y~x"=0.1)); d$status <- TRUE
-    plot(timereg::aalen(Surv(y,status)~x,data=d,resample.iid=0,robust=0),spec=1)
-    L <- approxfun(c(cuts,max(d$y)),f=1,cumsum(c(0,rates*diff(c(cuts,max(d$y))))),method="linear")
+    d <- sim(m,2e4,p=c("y~x"=0)); d$status <- TRUE
+    plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
+                        resample.iid=0,robust=0),spec=1)
+    L <- approxfun(c(cuts,max(d$y)),f=1,
+                   cumsum(c(0,rates*diff(c(cuts,max(d$y))))),
+                   method="linear")
     curve(L,0,100,add=TRUE,col="blue")
 }
 

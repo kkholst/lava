@@ -2,7 +2,7 @@
 \name{bmidata}
 \alias{bmidata}
 \title{Data}
-\format{data.frame containing ...}
+\format{data.frame}
 \description{
   Description
 }
