@@ -3,6 +3,8 @@
     averages conditional on subsets of data
   - Improved output from compare/estimate functions
   - Minor bug fixes (plot, predict)
+  - Piecewise constant rates with coxEponential.lvm. New
+    aalenExponential.lvm function for additive models
 
 * Version 1.2.2 <2013-07-10 Wed>
   - Regression parameters are now by default referenced using '~',
