@@ -99,6 +99,28 @@
 ##' 
 ##' ##################################################
 ##' ### Cox model
+##' ### piecewise constant hazard
+##' ################################################
+##' 
+##' m <- lvm(t~x)
+##' rates <- c(1,0.5); cuts <- c(0,5)
+##' ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
+##' distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
+##' 
+##' 
+##' \dontrun{
+##'     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
+##'     plot(timereg::aalen(survival::Surv(t,status)~x,data=d,
+##'                         resample.iid=0,robust=0),spec=1)
+##'     L <- approxfun(c(cuts,max(d$t)),f=1,
+##'                    cumsum(c(0,rates*diff(c(cuts,max(d$t))))),
+##'                    method="linear")
+##'     curve(L,0,100,add=TRUE,col="blue")
+##' }
+##' 
+##' 
+##' ##################################################
+##' ### Cox model
 ##' ### piecewise constant hazard, gamma frailty
 ##' ##################################################
 ##' 
@@ -107,9 +129,12 @@
 ##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
 ##'                              loggamma.lvm(rate=1,shape=1))
 ##' \dontrun{
-##'     d <- sim(m,2e4,p=c("y~x"=0.1)); d$status <- TRUE
-##'     plot(timereg::aalen(Surv(y,status)~x,data=d,resample.iid=0,robust=0),spec=1)
-##'     L <- approxfun(c(cuts,max(d$y)),f=1,cumsum(c(0,rates*diff(c(cuts,max(d$y))))),method="linear")
+##'     d <- sim(m,2e4,p=c("y~x"=0)); d$status <- TRUE
+##'     plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
+##'                         resample.iid=0,robust=0),spec=1)
+##'     L <- approxfun(c(cuts,max(d$y)),f=1,
+##'                    cumsum(c(0,rates*diff(c(cuts,max(d$y))))),
+##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
 ##' 
@@ -128,7 +153,6 @@
 ##' \dontrun{
 ##'     mets::fast.reshape(sim(m,100),varying=t)
 ##' }
-##' 
 ##' 
 "sim" <- function(x,...) UseMethod("sim")
 
