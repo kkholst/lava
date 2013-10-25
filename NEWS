@@ -1,10 +1,11 @@
-* Version 1.2.3 <2013-09-02 Mon>
+* Version 1.2.3 <2013-11-02 Sat>
   - 'subset' argument added to estimate.default. Calculates empirical
     averages conditional on subsets of data
   - Improved output from compare/estimate functions
   - Minor bug fixes (plot, predict)
-  - Piecewise constant rates with coxEponential.lvm. New
-    aalenExponential.lvm function for additive models
+  - sim: Piecewise constant rates with coxEponential.lvm. New
+    aalenExponential.lvm function for additive models. Functions
+    ones.lvm and sequence.lvm for deterministic variables.
 
 * Version 1.2.2 <2013-07-10 Wed>
   - Regression parameters are now by default referenced using '~',

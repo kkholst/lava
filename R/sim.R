@@ -98,6 +98,16 @@
 ##' 
 ##' 
 ##' ##################################################
+##' ### Non-random variables
+##' ##################################################
+##' m <- lvm()
+##' distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
+##'                                ones.lvm(),       ## Vector of ones
+##'                                ones.lvm(0.2))     ##  0.8n 0, 0.2n 1
+##' sim(m,10)
+##' 
+##' 
+##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard
 ##' ################################################
@@ -153,7 +163,6 @@
 ##' \dontrun{
 ##'     mets::fast.reshape(sim(m,100),varying=t)
 ##' }
-##' 
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @S3method sim lvmfit

@@ -220,3 +220,24 @@ weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
 }
 
 ###}}} weibull
+
+###{{{ sequence
+##' @export
+sequence.lvm <- function(a=0,b=1) {
+    f <- function(n,...)
+      seq(a,b,length.out=n)
+  return(f)
+}
+###}}} sequence
+
+###{{{ ones
+##' @export
+ones.lvm <- function(fraction=0) {
+    f <- function(n,...) {
+        val <- rep(1,n)
+        if (fraction>0 && fraction<1) val[seq(n*(1-fraction))] <- 0
+        val
+        }
+  return(f)
+}
+###}}} ones
