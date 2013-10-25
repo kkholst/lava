@@ -173,9 +173,9 @@ simulate.eventHistory <- function(x,data,...){
 
 
 ##' @export
-coxWeibull.lvm <- function(shape=1,scale) {
+coxWeibull.lvm <- function(shape=1,scale,rate=1/scale) {
   f <- function(n,mu,var,...) {
-    (- (log(runif(n)) * (1 / scale) * exp(-mu)))^(1/shape)
+    (- (log(runif(n)) * rate * exp(-mu)))^(1/shape)
   }
   attr(f,"family") <- list(family="weibull",par=c(shape,scale))
   return(f)
