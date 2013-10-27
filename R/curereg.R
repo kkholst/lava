@@ -184,7 +184,7 @@ curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,st
   cc <- c(beta,gamma)
   names(cc) <- c(colnames(X),paste("pr:",colnames(Z),sep=""))
   I <- curereg_information(beta,gamma,y,X,Z,offset,type=var,...)
-  V <- lava:::Inverse(I); colnames(V) <- rownames(V) <- names(cc)
+  V <- lava::Inverse(I); colnames(V) <- rownames(V) <- names(cc)
   res <- list(coef=cc,opt=op,beta=beta,gamma=gamma,
               beta.idx=beta.idx,gamma.idx=gamma.idx,
               I=I,formula=formula,cureformula=cureformula, y=y, X=X, Z=Z, offset=offset, vcov=V, model.frame=md,family=family)
@@ -382,7 +382,7 @@ curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),t
   if (tolower(type[1])%in%c("robust","sandwich")) {
     I <- curereg_information(beta,gamma,y,X,Z,offset,family,type="obs")
     J <- curereg_information(beta,gamma,y,X,Z,offset,family,type="outer")
-    return(J%*%lava:::Inverse(I)%*%J)
+    return(J%*%lava::Inverse(I)%*%J)
   }
   S <- curereg_score(beta,gamma,y,X,Z,offset,family,indiv=TRUE,...)
   crossprod(S)
