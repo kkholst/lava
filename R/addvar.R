@@ -32,9 +32,9 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
   if (k>0) {
     if (lava.options()$sparse) {
       require(Matrix)
-      newNA <- newM <- Matrix(0,k,k)
+      newNA <- newM <- Matrix::Matrix(0,k,k)
       newNAc <- newNA; diag(newNAc) <- NA
-      newcov <- Diagonal(k)      
+      newcov <- Matrix::Diagonal(k)      
     } else {
       newM <- matrix(0,k,k)
       newcov <- diag(k)

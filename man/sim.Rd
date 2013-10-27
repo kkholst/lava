@@ -1,19 +1,18 @@
 \name{sim}
-\alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
+\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
-\alias{distribution.lvm}
 \alias{functional}
+\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
-\alias{functional.lvm}
-\alias{gamma.lvm}
 \alias{Gamma.lvm}
+\alias{gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -21,19 +20,22 @@
 \alias{logit.lvm}
 \alias{lognormal.lvm}
 \alias{normal.lvm}
+\alias{ones.lvm}
 \alias{poisson.lvm}
 \alias{probit.lvm}
+\alias{sequence.lvm}
 \alias{sim}
 \alias{sim.lvm}
 \alias{sim.lvmfit}
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
+\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
-\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
+\alias{aalenExponential.lvm}
 \title{Simulate model}
 \usage{
   \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
@@ -127,7 +129,7 @@ summary(lm(y~x+z + x*I(z>0),d))
 m <- lvm()
 distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
                                ones.lvm(),       ## Vector of ones
-                               ones.lvm(0.2))     ##  0.8n 0, 0.2n 1
+                               ones.lvm(0.5))    ##  0.8n 0, 0.2n 1
 sim(m,10)
 
 

@@ -27,6 +27,8 @@
 ##' aalenExponential.lvm
 ##' Gamma.lvm gamma.lvm
 ##' loggamma.lvm
+##' ones.lvm
+##' sequence.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
@@ -103,7 +105,7 @@
 ##' m <- lvm()
 ##' distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
 ##'                                ones.lvm(),       ## Vector of ones
-##'                                ones.lvm(0.2))     ##  0.8n 0, 0.2n 1
+##'                                ones.lvm(0.5))    ##  0.8n 0, 0.2n 1
 ##' sim(m,10)
 ##' 
 ##' 

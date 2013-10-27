@@ -211,7 +211,7 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
     R <- as.vector(Y-Yhat)
 
     if ("mer"%in%class(model)) {
-      uz <- as.matrix(unlist(lme4:::ranef(model))%*%model@Zt)[1,]
+      uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
       R <- R-uz
     }
   } else {

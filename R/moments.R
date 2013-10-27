@@ -40,7 +40,7 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   Im <- diag(nrow(AP$A))  
   if (ii$sparse) {
     IAi <- with(AP, as(Inverse(Im-t(A)),"sparseMatrix"))
-    ##IAi <- as(solve(Diagonal(nrow(A))-t(A)),"sparseMatrix")
+    ##IAi <- as(solve(Matrix::Diagonal(nrow(A))-t(A)),"sparseMatrix")
     G <- as(J%*%IAi,"sparseMatrix")
   } else {
     IAi <- Inverse(Im-t(AP$A))
