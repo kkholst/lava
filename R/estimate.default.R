@@ -73,11 +73,13 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,subset,
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
-    if (missing(score.deriv)) {
-        suppressWarnings(iidtheta <- iid(x))
-    } else {
-        suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv))
-    }
+    if (missing(vcov)) { ## If user supplied vcov, then don't estimate IC
+        if (missing(score.deriv)) {
+            suppressWarnings(iidtheta <- iid(x))
+        } else {
+            suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv))
+        }
+    }  else { iidtheta <- NULL }
     if (!missing(subset)) {
         e <- substitute(subset)
         subset <- eval(e, data, parent.frame())
