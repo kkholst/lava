@@ -1,5 +1,5 @@
 
-* Version 1.2.4 <2013-10-31 Thu>
+* Version 1.2.4 <2013-11-01 Fri>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
 
