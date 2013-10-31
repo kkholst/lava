@@ -1,4 +1,5 @@
 \name{sim}
+\alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
@@ -11,8 +12,8 @@
 \alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
-\alias{Gamma.lvm}
 \alias{gamma.lvm}
+\alias{Gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -35,7 +36,6 @@
 \alias{transform<-.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
-\alias{aalenExponential.lvm}
 \title{Simulate model}
 \usage{
   \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
