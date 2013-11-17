@@ -27,13 +27,16 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       nn <- names(nodeRenderInfo(g)$label)
       LL <- as.list(nodeRenderInfo(g)$label)
       LL[names(Lab)] <- Lab
-      nodeRenderInfo(g) <- list(label=as.expression(LL))
+      if (any(unlist(lapply(LL,function(x) is.expression(x) || is.name(x)))))
+          nodeRenderInfo(g) <- list(label=as.expression(LL))
+      else
+          nodeRenderInfo(g) <- list(label=LL)
       names(nodeRenderInfo(g)$label) <- nn
       ii <- which(names(nodeRenderInfo(g)$label)=="")
       if (length(ii)>0)
       nodeRenderInfo(g)$label <- nodeRenderInfo(g)$label[-ii]
     }
-   
+  
     edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo    
     edgeRenderInfo(g)$lty <- x$graphdef$lty
     edgeRenderInfo(g)$lwd <- x$graphdef$lty
@@ -147,15 +150,15 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
   for (e in allEdges) {
     dir <- "forward"; lty <- 1; arrowtail <- "none"
     if (e %in% feedback) {
-      dir <- "none"; lty <- 1; arrowtail <- "open"
+      dir <- "none"; lty <- 1; arrowtail <- "closed"
     }
     if (e %in% varEdges) {
       dir <- "none"; lty <- 2; arrowtail <- "none"
     }
     if (e %in% corEdges) {
-      dir <- "none"; lty <- 2; arrowtail <- "open"
+      dir <- "none"; lty <- 2; arrowtail <- "closed"
     }
-    arrowhead <- "open"
+    arrowhead <- "closed"
 ##    estr <- paste("\"",e,"\"",sep="")
     estr <- e
     for (f in c("col","cex","textCol","lwd","lty")) {

@@ -16,11 +16,21 @@
 ##' regression(m) <- c(v,x)~z
 ##' labels(m) <- c(y=expression(psi), z=expression(zeta))
 ##' nodecolor(m,~y+z+x,border=c("white","white","black"),
-##'           labcol="white", lwd=c(1,1,5)) <-  c("orange","indianred","lightgreen")
-##' edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
+##'           labcol="white", lwd=c(1,1,5),
+##'           lty=c(1,2)) <-  c("orange","indianred","lightgreen")
+##' edgelabels(m,y~z+x, cex=c(2,1.5), col=c("orange","black"),labcol="darkblue",
+##'            arrowhead=c("tee","dot"),
 ##'            lwd=c(3,1)) <- expression(phi,rho)
-##' edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
-##' \donttest{plot(m)}
+##' edgelabels(m,c(v,x)~z, labcol="red", cex=0.8,arrowhead="none") <- 2
+##' \donttest{plot(m,addstyle=FALSE)}
+##' 
+##' m <- lvm(y~x)
+##' labels(m) <- list(x="multiple\nlines")
+##' \donttest{
+##' par(mfrow=c(1,2))
+##' plot(m,plain=TRUE)
+##' plot(m)
+##' }
 ##' @param object \code{lvm}-object.
 ##' @param value node label/edge label/color
 ##' @param to Formula specifying outcomes and predictors defining relevant
@@ -156,7 +166,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 }
 
 ##' @S3method edgelabels graphNEL
-`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black",
+`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black", arrowhead="closed", 
                                   expr=TRUE,
                                   debug=FALSE,...) {
   if (is.null(lab)) {
@@ -185,7 +195,10 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       if (length(cex)!=length(estr2)) cex <- rep(cex,length(estr2))
       if (length(lwd)!=length(estr2)) lwd <- rep(lwd,length(estr2))
       if (length(lty)!=length(estr2)) lty <- rep(lty,length(estr2))
-      if (length(labcol)!=length(estr2)) labcol <- rep(labcol,length(estr2))  
+      if (length(arrowhead)!=length(estr2))
+          arrowhead <- rep(arrowhead,length(estr2))
+      if (length(labcol)!=length(estr2))
+          labcol <- rep(labcol,length(estr2))  
 
       curedges <- names(edgeRenderInfo(object)$label)
        Debug(estr,debug)
@@ -207,6 +220,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
           edgeRenderInfo(object)$lty[estr2] <- lty[estr2.idx]
         if (!is.null(labcol))
           edgeRenderInfo(object)$textCol[estr2] <- labcol[estr2.idx]
+        if (!is.null(arrowhead))
+          edgeRenderInfo(object)$arrowhead[estr2] <- arrowhead[estr2.idx]
       }
       if (length(newstr)>0) {        
         
@@ -228,6 +243,9 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(labcol))        
           edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
             labcol[newstr.idx]
+        if (!is.null(arrowhead))        
+          edgeDataDefaults(object)$futureinfo$arrowhead[newstr] <-
+            arrowhead[newstr.idx]
       }
       return(object)
     } 
@@ -255,7 +273,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 
 ##' @S3method edgelabels lvm
 `edgelabels.lvm` <- function(object, lab=NULL, to=NULL, from=NULL,
-                             cex=1.5, lwd=1, lty=1, col="black", labcol="black",
+                             cex=1.5, lwd=1, lty=1, col="black",
+                             labcol="black", arrowhead="closed",
                              expr=TRUE, debug=FALSE,...) {
   if (is.null(lab)) {
     return(object$edgerender$label)
@@ -284,6 +303,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       if (length(lwd)!=length(estr2)) lwd <- rep(lwd,length(estr2))
       if (length(lty)!=length(estr2)) lty <- rep(lty,length(estr2))
       if (length(labcol)!=length(estr2)) labcol <- rep(labcol,length(estr2))  
+      if (length(arrowhead)!=length(estr2)) arrowhead <- rep(arrowhead,length(estr2))  
 
       curedges <- names(object$edgerender$label)
        Debug(estr,debug)
@@ -305,6 +325,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
           object$edgerender$lty[estr2] <- lty[estr2.idx]
         if (!is.null(labcol))
           object$edgerender$textCol[estr2] <- labcol[estr2.idx]
+        if (!is.null(arrowhead))
+          object$edgerender$arrowhead[estr2] <- arrowhead[estr2.idx]
       }
       if (length(newstr)>0) {        
         
@@ -326,6 +348,9 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(labcol))        
           object$edgerender$futureinfo$textCol[newstr] <-
             labcol[newstr.idx]
+        if (!is.null(arrowhead))        
+          object$edgerender$futureinfo$arrowhead[newstr] <-
+            arrowhead[newstr.idx]
       }
       return(object)
     } 

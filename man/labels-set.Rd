@@ -49,11 +49,21 @@ m <- lvm(c(y,v)~x+z)
 regression(m) <- c(v,x)~z
 labels(m) <- c(y=expression(psi), z=expression(zeta))
 nodecolor(m,~y+z+x,border=c("white","white","black"),
-          labcol="white", lwd=c(1,1,5)) <-  c("orange","indianred","lightgreen")
-edgelabels(m,y~z+x, cex=c(2,3), col=c("orange","black"),labcol="darkblue",
+          labcol="white", lwd=c(1,1,5),
+          lty=c(1,2)) <-  c("orange","indianred","lightgreen")
+edgelabels(m,y~z+x, cex=c(2,1.5), col=c("orange","black"),labcol="darkblue",
+           arrowhead=c("tee","dot"),
            lwd=c(3,1)) <- expression(phi,rho)
-edgelabels(m,c(v,x)~z, labcol="red", cex=2) <- 2
-\donttest{plot(m)}
+edgelabels(m,c(v,x)~z, labcol="red", cex=0.8,arrowhead="none") <- 2
+\donttest{plot(m,addstyle=FALSE)}
+
+m <- lvm(y~x)
+labels(m) <- list(x="multiple\\nlines")
+\donttest{
+par(mfrow=c(1,2))
+plot(m,plain=TRUE)
+plot(m)
+}
 }
 \author{
   Klaus K. Holst
