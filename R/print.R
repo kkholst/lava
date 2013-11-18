@@ -16,10 +16,13 @@ function(x, ...) {
       return()
     ff <- formula(x,TRUE)
     R <- c()
+    trim <- function (x) gsub("^\\s+|\\s+$", "", x)
     for (f in ff) {
       oneline <- as.character(f);
-      y <- gsub(" ","",strsplit(f,"~")[[1]][1])
-##      if (!(y %in% endogenous(m)))
+      y <- strsplit(f,"~")[[1]][1]
+      ##      y <- gsub("^ .", "", y) # remove leading white space
+      ##      y <- gsub(". $", "", y) # remove trailing white space
+      y <- trim(y)
       {
         col1 <- as.character(oneline)
         
@@ -29,6 +32,7 @@ function(x, ...) {
         if (!is.null(D$family)) col2 <- paste(D$family,sep="")
         if (!is.null(D$link)) col2 <- paste(col2,"(",D$link,")",sep="")
         if (!is.null(D$par)) col2 <- paste(col2,"(",paste(D$par,collapse=","),")",sep="")
+        
         if (L[y]) col2 <- paste(col2,", Latent",sep="")  
         R <- rbind(R,c(col1,"  ",col2))
       }
