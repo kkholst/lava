@@ -70,6 +70,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,subset,
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
         contrast <- f; f <- NULL
     }
+    if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
@@ -250,8 +251,11 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,subset,
         if (missing(contrast)) contrast <- diag(p)
         if (missing(null)) null <- 0
         if (is.vector(contrast)) {
-            cont <- contrast
-            contrast <- diag(nrow=p)[cont,,drop=FALSE]
+            if (length(contrast)==p) contrast <- rbind(contrast)
+            else {
+                cont <- contrast
+                contrast <- diag(nrow=p)[cont,,drop=FALSE]
+            }
         }
         cc <- compare(res,contrast=contrast,null=null,vcov=V,level=level)
         res <- structure(c(res, list(compare=cc)),class="estimate")
