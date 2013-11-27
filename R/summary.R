@@ -51,7 +51,7 @@ function(object,std="xy", level=9, labels=2, ...) {
     nc <- nn[object$cc]
     if (length(nc)==0) nc <- 0
     ngroup <- object$multigroup$ngroup
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo], latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator)
+    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo], latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator, rsq=rsq(object))
   } else {
     n <- nrow(model.frame(object))
     if (is.null(n)) n <- model.frame(object)$n
@@ -98,6 +98,10 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
       print(x$gof,optim=FALSE)
     }
     cat(rep("-", 50), "\n", sep="");
+  }
+  if (!is.null(x$rsq)) {
+      cat("R-square\n")
+      print(round(x$rsq,3),quote=FALSE)
   }
   invisible(x)
 }
