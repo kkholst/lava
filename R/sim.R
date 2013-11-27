@@ -439,9 +439,15 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   myhooks <- gethook("sim.hooks")
   for (f in myhooks) {
     res <- do.call(f, list(x=x,data=res))
-  }         
+  }
   if (unlink) res <- resunlink
-  return(as.data.frame(res))
+
+  res <- as.data.frame(res)
+  self <- attributes(x)$selftransform
+  for (v in names(self)) {
+      res[,v] <- self[[v]](res[,v])
+  }  
+  return(res)
 }
 
 
