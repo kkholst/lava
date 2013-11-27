@@ -1,4 +1,10 @@
-rsq <- function(x) 1-coef(x,9,std="yx")[paste(manifest(x),lava.options()$symbol[2],manifest(x),sep=""),5] 
+##' @export
+rsq <- function(x) {
+    v <- c(endogenous(x),latent(x))
+    res <- 1-coef(x,9,std="yx")[paste(v,lava.options()$symbol[2],v,sep=""),5]
+    names(res) <- v
+    res
+}
 
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
 ##                     control=list(start=coef(object),trace=1),
@@ -46,7 +52,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
     mystart[variances(m0,mean=TRUE)] <- 1
     control$start <- mystart
   }  
-  cat("Calculating MLE of saturated model:\n")
+  message("Calculating MLE of saturated model:\n")
   e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
   if (logLik)
     return(logLik(e0))
@@ -133,7 +139,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
 
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
 
-  l2D <- sum(object$opt$grad^2)
+  l2D <- mean(object$opt$grad^2)
   rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) 0)
   condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
 
@@ -237,7 +243,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
   if (optim) {
     cat("\nrank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
     cat("condition(Information) = ",x$cond,"\n",sep="")
-    cat("||score||^2 =",x$L2score,"\n")
+    cat("mean(score^2) =",x$L2score,"\n")
   }
 
   invisible(x)

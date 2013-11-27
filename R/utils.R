@@ -214,8 +214,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       if (na.method=="pairwise.complete.obs") {
         mu <- colMeans(mydata,na.rm=TRUE)
         if (is.null(S)) {
-          S <- cov(mydata,use=na.method)
-          S[is.na(S)] <- 1e-2
+          S <- (n-1)/n*cov(mydata,use=na.method)
+          S[is.na(S)] <- 1e-3
         }
       }
       if (na.method=="complete.obs") {
@@ -232,7 +232,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         if ("var"%in%names(data)) data$S <- data$var
         if ("mean"%in%names(data)) data$mu <- data$mean
         n <- data$n
-        S <- reorderdata.lvm(x,data$S)*(n-1)/n
+        S <- reorderdata.lvm(x,data$S)
         mu <- reorderdata.lvm(x,data$mu)
         ##      if (is.null(n)) stop("n was not specified");
       }

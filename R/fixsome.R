@@ -21,7 +21,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     } else {
       dd <- procdata.lvm(x, list(S=S,mu=mu,n=n))
     }
-    S <- dd$S; mu <- dd$mu; n <- dd$n    
+    S <- dd$S; mu <- dd$mu; n <- dd$n
     var.missing <- setdiff(index(x)$manifest,colnames(S))
   } else { S <- NULL; mu <- NULL }
   
