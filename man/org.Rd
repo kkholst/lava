@@ -4,14 +4,14 @@
 \usage{
   org(x, ..., ncol, include.rownames = TRUE,
     include.colnames = TRUE, header = TRUE,
-    frame = "topbot", rownames, type = "org", tab = FALSE,
-    margins = TRUE, print = TRUE, html, latex)
+    frame = "topbot", rownames = NULL, colnames = NULL,
+    type = "org", tab = FALSE, margins = TRUE,
+    print = TRUE, html, latex)
 }
 \arguments{
   \item{x}{R object}
 
-  \item{\dots}{additional arguments to lower level
-  functions}
+  \item{...}{}
 
   \item{ncol}{If \code{x} is a vector and \code{ncol} is
   given as argument, the resulting output will be a
@@ -29,6 +29,8 @@
 
   \item{rownames}{Optional vector of row names}
 
+  \item{colnames}{Optional vector of column names}
+
   \item{type}{Type argument (see \code{ascii})}
 
   \item{tab}{Tabulate?}
@@ -40,6 +42,9 @@
   \item{html}{HTML prefix (added to ATTR_HTML)}
 
   \item{latex}{LaTeX prefix (added to ATTR_LaTeX)}
+
+  \item{\dots}{additional arguments to lower level
+  functions}
 }
 \description{
   Convert object to ascii suitable for org-mode
