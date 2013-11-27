@@ -237,10 +237,44 @@ Simple_gradient.lvm <- function(x,p,...) {
 
 ###}}} startvalues2
 
+
 ###{{{ startvalues
 
 ##' @export
-`startvalues` <-
+startvalues <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
+    p0 <- startvalues0(x,S,mu,...)
+    A <- t(index(x)$M) ## Adjacency matrix    
+    P0 <- A0 <- matrix(0,nrow(A),ncol(A))
+    A0[,index(x)$eta.idx] <- A[,index(x)$eta.idx]
+    diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.idx]/2
+    diag(P0)[index(x)$eta.idx] <- 0.05##mean(diag(S)[index(x)$endo.idx])/2
+    pp <- pars(x,A=t(A0),P=P0,v=rep(0,index(x)$npar.mean))
+    nu <- numeric(length(vars(x)))
+    pp[pp=1] <- p0[pp=1]
+    if (!is.null(mu)) {
+        nu[vars(x)%in%manifest(x)] <- mu
+        (diag(nrow(A0))-t(A0))%*%nu
+        meanstart <- solve(diag(nrow(A0))+t(A0))%*%nu
+        meanstart <- meanstart[which(is.na(x$mean))]
+        if (length(meanstart)>0)
+            pp[seq(length(meanstart))] <- meanstart
+    }    
+    names(pp) <- coef(x, silent=TRUE, fixed=FALSE, mean=TRUE)[seq_len(length(pp))]
+    ## pp[1:5] <- mu[c(2:5,1)]
+    ## pp0 <- pp
+    ## pp[pp==1] <- c(0.453084, 0.887495, 0.598851,  1.23732)[c(1,4,2,3)]
+    ## pp[1:5] <- c(1.085, -0.630, -0.186,  1.113, -0.062)
+    ##    suppressMessages(browser())
+    pp[!is.finite(pp) | is.nan(pp) | is.na(pp)] <- 0.1
+    return(pp)    
+}
+
+###}}} startvalues
+
+###{{{ startvalues0
+
+##' @export
+`startvalues0` <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992. 
   ## Implementation based on John Fox's implementation in the 'sem' R-package
