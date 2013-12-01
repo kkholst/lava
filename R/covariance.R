@@ -63,7 +63,9 @@
 ##' 
 #
 ##' 
-##' @aliases covariance covariance<- covariance.lvm covariance<-.lvm covfix<- covfix covfix<-.lvm covfix.lvm
+##' @aliases covariance covariance<- covariance.lvm covariance<-.lvm
+##' covfix<- covfix covfix<-.lvm covfix.lvm
+##' variance variance<- variance.lvm variance<-.lvm
 ##' @param object \code{lvm}-object
 ##' @param var1 Vector of variables names (or formula)
 ##' @param var2 Vector of variables names (or formula) defining pairwise
@@ -91,6 +93,21 @@
 ##'
 ##' 
 `covariance` <- function(object,...) UseMethod("covariance")
+
+##' @export
+"variance<-" <- function(object,...,value) UseMethod("covariance<-")
+
+##' @export
+`variance` <- function(object,...) UseMethod("variance")
+
+##' @S3method variance<- lvm
+"variance.lvm" <- function(object,...) covariance(object,...)
+
+##' @S3method variance<- lvm
+"variance<-.lvm" <- function(object,...,value) {
+    covariance(object,...) <- value
+    return(object)
+}
 
 ##' @export
 "covariance<-" <- function(object,...,value) UseMethod("covariance<-")
