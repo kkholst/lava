@@ -20,6 +20,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   Debug(xfix,debug)
   if (missing(n)) {
     n <- nrow(data)
+    if (is.null(n)) n <- data$n
   }
   lname <- paste(model,"_logLik.lvm",sep="")
   logLikFun <- get(lname)
@@ -107,7 +108,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     cl[[1]] <- logLikFun          
     loglik <- eval.parent(cl)
   }
-    
+
   if (is.null(attr(loglik,"nall")))
     attr(loglik, "nall") <- n
   if (is.null(attr(loglik,"nobs")))
