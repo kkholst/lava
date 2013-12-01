@@ -51,11 +51,13 @@ function(object,std="xy", level=9, labels=2, ...) {
     nc <- nn[object$cc]
     if (length(nc)==0) nc <- 0
     ngroup <- object$multigroup$ngroup
-    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup, varmat=modelVar(object)$P[nonexo,nonexo], latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator, rsq=rsq(object))
+    res <- list(object=object, coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=sum(nn), nc=nc, ngroup=ngroup,
+                varmat=modelVar(object)$P[nonexo,nonexo], latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator, rsq=rsq(object))
   } else {
     n <- nrow(model.frame(object))
     if (is.null(n)) n <- model.frame(object)$n
-    res <- list(coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=n, nc=n, latent=latent(object), opt=object$opt, vcov=vcov(object), estimator=object$estimator)##, varmat=modelVar(object)$P[nonexo,nonexo])
+    res <- list(coef=mycoef, coefmat=cc, nlincon=nlincon, gof=mygof(object), n=n, nc=n, latent=latent(object),
+                opt=object$opt, vcov=vcov(object), estimator=object$estimator, rsq=rsq(object))##, varmat=modelVar(object)$P[nonexo,nonexo])
   }
   class(res) <- "summary.lvmfit"
   res
