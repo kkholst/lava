@@ -79,15 +79,13 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' 
 ##' m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
 ##' covariance(m) <- v1~v2+v3+v4
-##' \donttest{
-##' plot(m)
-##' }
 ##' dd <- sim(m,10000) ## Simulate 10000 observations from model
 ##' e <- estimate(m, dd) ## Estimate parameters
 ##' e
 ##' 
-##' e <- estimate(m,data=list(S=cov(dd),mu=colMeans(dd),n=nrow(dd)))
-##' 
+##' ## Using just sufficient statistics
+##' n <- nrow(dd)
+##' e0 <- estimate(m,data=list(S=cov(dd)*(n-1)/n,mu=colMeans(dd),n=n))
 ##' 
 ##' ## Multiple group analysis
 ##' m <- lvm()

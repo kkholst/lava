@@ -66,8 +66,9 @@
   Plot the path diagram of a SEM
 }
 \examples{
-\dontrun{
+\donttest{
 example(estimate)
+plot(m)
 plot(e)
 }
 }

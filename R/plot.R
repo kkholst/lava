@@ -35,8 +35,9 @@
 ##' @keywords hplot regression
 ##' @examples
 ##' 
-##' \dontrun{
+##' \donttest{
 ##' example(estimate)
+##' plot(m)
 ##' plot(e)
 ##' }
 ##'
