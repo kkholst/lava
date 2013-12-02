@@ -48,8 +48,8 @@
 \alias{score.glm}
 \alias{Specials}
 \alias{starter.multigroup}
-\alias{startvalue0}
 \alias{startvalues}
+\alias{startvalues0}
 \alias{startvalues2}
 \alias{startvalues3}
 \alias{stdcoef}

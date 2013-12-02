@@ -205,7 +205,7 @@ NULL
 ##' @author Klaus K. Holst
 ##' @keywords utilities
 ##' @export
-##' @aliases addattr startvalue0 startvalues2 startvalues3
+##' @aliases addattr startvalues0 startvalues2 startvalues3
 ##' starter.multigroup modelPar modelVar matrices pars pars.lvm
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
 ##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
