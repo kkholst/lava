@@ -17,9 +17,9 @@
 \alias{graph2lvm}
 \alias{igraph.lvm}
 \alias{index}
+\alias{index<-}
 \alias{index.lvm}
 \alias{index.lvmfit}
-\alias{index<-}
 \alias{Inverse}
 \alias{IV}
 \alias{lisrel}
@@ -44,6 +44,7 @@
 \alias{randomslope<-}
 \alias{reindex}
 \alias{reorderdata}
+\alias{rsq}
 \alias{score.glm}
 \alias{Specials}
 \alias{starter.multigroup}

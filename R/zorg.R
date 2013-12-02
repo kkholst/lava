@@ -2,7 +2,7 @@
 ##' 
 ##' @title Convert object to ascii suitable for org-mode
 ##' @param x R object
-##' @param ... 
+##' @param ... additional arguments to lower level functions
 ##' @param ncol If \code{x} is a vector and \code{ncol} is given as argument, the resulting output will be a \code{matrix} with \code{ncol} columns
 ##' @param include.rownames If \code{FALSE} row names are removed
 ##' @param include.colnames If \code{FALSE} column names are removed
@@ -16,7 +16,6 @@
 ##' @param print print or return result 
 ##' @param html HTML prefix (added to ATTR_HTML)
 ##' @param latex LaTeX prefix (added to ATTR_LaTeX)
-##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {  
     if (!suppressPackageStartupMessages(require(ascii))) stop("ascii package required")

@@ -119,7 +119,8 @@ e <- estimate(m, dd) ## Estimate parameters
 e
 
 ## Using just sufficient statistics
-e <- estimate(m,data=list(S=cov(dd),mu=colMeans(dd),n=nrow(dd)))
+n <- nrow(dd)
+e0 <- estimate(m,data=list(S=cov(dd)*(n-1)/n,mu=colMeans(dd),n=n))
 
 ## Multiple group analysis
 m <- lvm()

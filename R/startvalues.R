@@ -274,7 +274,7 @@ startvalues <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
 ###{{{ startvalues0
 
 ##' @export
-`startvalues0` <-
+startvalues0 <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992. 
   ## Implementation based on John Fox's implementation in the 'sem' R-package

@@ -11,7 +11,7 @@
 \arguments{
   \item{x}{R object}
 
-  \item{...}{}
+  \item{...}{additional arguments to lower level functions}
 
   \item{ncol}{If \code{x} is a vector and \code{ncol} is
   given as argument, the resulting output will be a
@@ -42,9 +42,6 @@
   \item{html}{HTML prefix (added to ATTR_HTML)}
 
   \item{latex}{LaTeX prefix (added to ATTR_LaTeX)}
-
-  \item{\dots}{additional arguments to lower level
-  functions}
 }
 \description{
   Convert object to ascii suitable for org-mode

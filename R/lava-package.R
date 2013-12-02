@@ -211,7 +211,7 @@ NULL
 ##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##' index.lvm index.lvmfit index reindex index<- survival survival<-
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
-##' parlabels stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
+##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse
 ##' gaussian_logLik.lvm addhook gethook multigroup Weight fixsome
 ##' parfix parfix<- merge IV parameter contr Specials decomp.specials
