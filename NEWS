@@ -2,6 +2,7 @@
 * Version 1.2.4 <2013-11-01 Fri>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
+  - New default starting values
 
 * Version 1.2.3 <2013-10-27 Sun>
   - 'subset' argument added to estimate.default. Calculates empirical
