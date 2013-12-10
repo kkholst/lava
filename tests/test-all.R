@@ -1,5 +1,5 @@
 if (require(testthat)) {
   library(lava)
-  test_package("lava")
+  test_check("lava")
 }
 

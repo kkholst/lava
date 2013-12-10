@@ -1,0 +1,26 @@
+\name{Combine}
+\alias{Combine}
+\title{Report estimates across different models}
+\usage{
+  Combine(x, ...)
+}
+\arguments{
+  \item{x}{list of model objects}
+
+  \item{...}{additional arguments to lower level functions}
+}
+\description{
+  Report estimates across different models
+}
+\examples{
+data(serotonin)
+m1 <- lm(cau ~ age*gene1 + age*gene2,data=serotonin)
+m2 <- lm(cau ~ age + gene1,data=serotonin)
+m3 <- lm(cau ~ age*gene2,data=serotonin)
+
+Combine(list(A=m1,B=m2,C=m3),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
+}
+\author{
+  Klaus Kähler Holst
+}
+

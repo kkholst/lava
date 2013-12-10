@@ -19,10 +19,12 @@
 ##' @author Klaus K. Holst
 org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {  
     if (!suppressPackageStartupMessages(require(ascii))) stop("ascii package required")
+    dots <- list(...)
     if (tab) {
         if (!inherits(x,"table")) {
             x <- table(x)
         }
+        if (is.null(dots$digits)) dots$digits <- 0
         if (margins) x <- addmargins(x)
     }
     if (!missing(ncol)) {
@@ -44,14 +46,15 @@ org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TR
             include.rownames <- FALSE
         }      
     }
-    x <- ascii(x,include.rownames=include.rownames,include.colnames=include.colnames,header=header,frame=frame,type=type,rownames=rownames,colnames=colnames,...)
+    args <- c(list(x=x,include.rownames=include.rownames,include.colnames=include.colnames,header=header,frame=frame,type=type,rownames=rownames,colnames=colnames),dots)
+    x <- do.call("ascii",args)
     if (print) {
         op <- options(asciiType=type)
         if (!missing(html)) 
             cat("#+ATTR_HTML: ",html,"\n",sep="")            
         if (!missing(latex)) 
-            cat("#+ATTR_LaTeX: ",latex,"\n",sep="")            
-        suppressWarnings(ascii::print(x,...))
+            cat("#+ATTR_LaTeX: ",latex,"\n",sep="")
+        suppressWarnings(do.call(getFromNamespace("print", "ascii"),c(x=x,dots)))
         options(op)
     }
     invisible(x)

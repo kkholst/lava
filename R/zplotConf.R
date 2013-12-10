@@ -76,7 +76,7 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
                      labels,
                      ...) {
 
-
+    
   if (inherits(model,"formula")) model <- lm(model,data=data,...)
   if ("mer"%in%class(model)) {
     intercept <- lme4::fixef(model)["(Intercept)"]
@@ -163,13 +163,18 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
         ##   newdata <- cbind(newdata, rep(thelevels, each=npoints))
         ##   partdata[,nn] <- rep(ref,nrow(partdata))
         ## } else {
-          newdata <- cbind(newdata, rep(0,k*npoints))         
+          if (is.logical(v))
+              newdata <- cbind(newdata,FALSE)
+          else
+              newdata <- cbind(newdata,0)
+          ##          newdata <- cbind(newdata, rep(0,k*npoints))         
 ##        }
         ##        partdata[,nn] <- 0
       }
     }
   };
   colnames(newdata) <- c("_id", cname)
+  ##  browser()
   ##deparse(formula(model)[[2]])
 
   newdata[,response] <- 0
@@ -194,10 +199,11 @@ plotConf <- function(model, ##var1=attributes(terms(model), "terms.label")[2],
     }
     bidx <- which(names(bb)%in%coefnames)
     notbidx <- setdiff(seq(length(bb)),bidx)
-    if (class(model)[1]=="geeglm")
-      SS <- (summary(model)$cov.unscaled)[bidx,bidx,drop=FALSE]
-    else
-      SS <- vcov(model)[bidx,bidx,drop=FALSE]
+    if (class(model)[1]=="geeglm") {
+        SS <- (summary(model)$cov.unscaled)[bidx,bidx,drop=FALSE]
+    } else {
+        SS <- vcov(model)[bidx,bidx,drop=FALSE]
+    }
     bb0 <- bb; bb0[notbidx] <- 0
 
     sqrtSS <- with(eigen(SS),vectors%*%diag(sqrt(values))%*%t(vectors))
