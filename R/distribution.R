@@ -81,19 +81,26 @@ poisson.lvm <- function(link="log",lambda,...) {
 
 ###}}} poisson
 
+###{{{ threshold
+threshold.lvm <- function(p,...) {
+    if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
+    function(n,...) cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))
+}
+###}}}
+
 ###{{{ binomial
 
 ##' @export
-binomial.lvm <- function(link="logit",p) {
+binomial.lvm <- function(link="logit",p,size=1) {
   fam <- binomial(link); fam$link <- link
   if (!missing(p))
-    f <- function(n,mu,var,...) rbinom(n,1,p)
+    f <- function(n,mu,var,...) rbinom(n,size,p)
   else {
     f <- function(n,mu,var,...) {
       if (missing(n)) {
         return(fam)
       }
-      rbinom(n,1,fam$linkinv(mu))
+      rbinom(n,size,fam$linkinv(mu))
     }
     ## f <- switch(link,
     ##             logit = 
