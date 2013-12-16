@@ -7,7 +7,7 @@
         constrain(x,formula,...) <- value
         return(x)
     } 
-    transform(x,formula,...) <- fun
+    transform(x,formula,value,...)
 }
 
 
