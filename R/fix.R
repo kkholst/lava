@@ -328,7 +328,7 @@ regfix.lvm <- function(object,...) {
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
 ##' @S3method regfix<- lvm
-"regfix<-.lvm" <- function(object, to, from, exo=TRUE,..., value) {
+"regfix<-.lvm" <- function(object, to, from, exo=TRUE, variance, ..., value) {
   if (is.null(to)) stop("variable list needed")
   curvar <- index(object)$vars
   if (class(to)[1]=="formula") {
@@ -347,9 +347,12 @@ regfix.lvm <- function(object,...) {
     yyf <- lapply(to,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
     ys <- unlist(lapply(yyf,function(y) y[1]))      
     xxf <- lapply(from,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-    xs <- unlist(lapply(xxf,function(y) y[1]))    
-
+    xs <- unlist(lapply(xxf,function(y) y[1]))       
+    
     object <- addvar(object,c(ys,xs),reindex=FALSE,...)
+
+    if (!missing(variance))
+        covariance(object,ys) <- variance
 
     newexo <- notexo <- c()
     for (i in 1:length(xs)) {        
