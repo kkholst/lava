@@ -27,7 +27,7 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
 ##' @title Report estimates across different models
 ##' @param x list of model objects
 ##' @param ... additional arguments to lower level functions
-##' @author Klaus Kähler Holst
+##' @author Klaus K. Holst
 ##' @examples
 ##' data(serotonin)
 ##' m1 <- lm(cau ~ age*gene1 + age*gene2,data=serotonin)
