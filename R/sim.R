@@ -29,7 +29,6 @@
 ##' loggamma.lvm
 ##' ones.lvm
 ##' sequence.lvm
-##' timedep
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
