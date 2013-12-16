@@ -29,6 +29,7 @@
 ##' loggamma.lvm
 ##' ones.lvm
 ##' sequence.lvm
+##' timedep
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
@@ -358,7 +359,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
       leftoversPrev <- leftovers
       leftovers <- setdiff(nn,simuled)
 
-      if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)")
+      if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)") 
       for (i in leftovers) {
         if (i%in%vartrans) {
           xtrans <- attributes(x)$transform[[i]]$x
@@ -379,8 +380,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
           if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
             pos <- match(i,vv)
             relations <- colnames(A)[A[,pos]!=0]
-            
-            if (all(relations%in%simuled)) { ## Only depending on already simulated variables
+            simvars <- x$attributes$simvar[[i]]            
+            if (all(c(relations,simvars)%in%simuled)) { ## Only depending on already simulated variables
             if (x$mean[[pos]]%in%xconstrain.par) {
               mu.i <- res[,x$mean[[pos]] ]
             } else {
@@ -414,9 +415,13 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 resunlink[,pos] <- res[,pos]
             }
             else {
-              res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
-              if (unlink)
-                resunlink[,pos] <- mu.i
+                if (length(simvars)>0) { ## Depends on mu and also on other variables (e.g. time-depending effect)
+                    if (length(mu.i)==1) mu.i <- rep(mu.i,n)
+                    mu.i <- cbind("m0"=mu.i,res[,simvars,drop=FALSE])
+                }
+                res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
+                if (unlink)
+                    resunlink[,pos] <- mu.i
             }
             simuled <- c(simuled,i)
           }
