@@ -3,11 +3,11 @@
 \alias{edgelabels<-}
 \alias{edgelabels<-.lvm}
 \alias{labels}
-\alias{labels<-}
-\alias{labels<-.default}
 \alias{labels.graphNEL}
 \alias{labels.lvm}
 \alias{labels.lvmfit}
+\alias{labels<-}
+\alias{labels<-.default}
 \alias{nodecolor}
 \alias{nodecolor<-}
 \alias{nodecolor<-.default}
