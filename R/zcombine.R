@@ -1,5 +1,5 @@
 
-excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,...) {
+excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalue=TRUE,...) {
     cc <- coef(summary(x))
     res <- round(cbind(cc[,1:3,drop=FALSE],confint(x)),max(1,digits))
     pvalround <- round(cc[,4], max(1, p.digits))
@@ -14,7 +14,7 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,...) {
     pval[which(pvalround<10^(-p.digits))] <- paste("p<0.",paste(rep("0",p.digits-1),collapse=""),"1",sep="")
     res <- cbind(res,pval)
     res2 <- apply(res,1,function(x)
-                  paste(x[1]," [", x[4], ";",x[5],"], ",x[6],sep=""))
+                  paste(x[1], if (se) paste(" (", x[2], ")",sep=""), if (ci) paste(" [", x[4], ";",x[5],"]",sep=""), if (pvalue) paste(", ", x[6],sep=""),sep=""))
     names(res2) <- names(coef(x))
     if (!missing(fun)) {
         res2 <- c(res2,fun(x))
