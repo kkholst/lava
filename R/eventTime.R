@@ -191,7 +191,7 @@ coxWeibull.lvm <- function(shape=1,scale,rate=1/scale) {
 ##' @param timecut Time intervals
 ##' @param type Type of model (default piecewise constant intensity)
 ##' @param ... Additional arguments to lower level functions
-##' @author Klaus Kähler Holst
+##' @author Klaus K. Holst
 ##' @export
 ##' @examples
 ##' 

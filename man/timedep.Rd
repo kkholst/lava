@@ -68,6 +68,6 @@ exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, fam
 }
 }
 \author{
-  Klaus Kähler Holst
+  Klaus K. Holst
 }
 

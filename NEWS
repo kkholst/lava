@@ -1,8 +1,12 @@
 
-* Version 1.2.4 <2013-11-01 Fri>
+* Version 1.2.4 <2013-12-01 Sun>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
   - New default starting values
+  - Time-varying effects via 'timedep'
+  - R-squared added to summary
+  - alias: covariance->variance
+  - added size argument to binomial.lvm; 
 
 * Version 1.2.3 <2013-10-27 Sun>
   - 'subset' argument added to estimate.default. Calculates empirical
