@@ -18,7 +18,7 @@
 ##' @keywords survival models regression
 ##' @examples
 ##'
-##' m <- lvm()
+##' m <- lvm() 
 ##' distribution(m,~X2) <- binomial.lvm()
 ##' regression(m) <- T1~f(X1,-.5)+f(X2,0.3)
 ##' regression(m) <- T2~f(X2,0.6)
@@ -36,7 +36,7 @@
 ##' @param formula Formula (see details)
 ##' @param eventName Event names
 ##' @param \dots Additional arguments to lower levels functions
-eventTime <- function(object,formula,eventName,...){
+eventTime <- function(object,formula,eventName,...) {
   if (missing(formula)) return(object$attributes$eventHistory)
   ff <- as.character(formula)
   timeName <- all.vars(update.formula(formula,"~1"))
@@ -181,23 +181,54 @@ coxWeibull.lvm <- function(shape=1,scale,rate=1/scale) {
   return(f)
 }
 
+
 ##' @export
-coxExponential.lvm <- function(scale,rate,timecut=0){
+timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
+    if (missing(timecut)) stop("'timecut' needed")
+    ##if (inherits(formula,"formula"))
+    ff <- getoutcome(formula)
+    simvars <- attributes(ff)$x
+    if (is.null(object$attributes$simvar)) {
+        object$attributes$simvar <- list(simvars)
+        names(object$attributes$simvar) <- ff
+    } else {
+        object$attributes$simvar[[ff]] <- simvars
+    }
+    if (missing(rate)) rate <- rep(1,length(timecut))
+    args <- list(timecut=timecut,rate=rate,...)
+    distribution(object,ff) <- do.call(type,args)
+    return(object)
+}
+
+
+##' @export
+coxExponential.lvm <- function(scale=1,rate,timecut){
     if (missing(rate)) rate=1/scale
     if (missing(scale)) scale=1/rate
-    if (length(rate)==1) {
+    if (missing(timecut)) {
         return(coxWeibull.lvm(shape=1,scale))
     }
-    if (length(rate)>length(timecut))
-        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
+
+    if (NROW(rate)>length(timecut))
+        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")    
+    par <- paste(timecut,rate,sep=":")
+    if (is.matrix(rate)) par <- "..."
     timecut <- c(timecut,Inf)
     f <- function(n,mu,...) {
         Ai <- function() {
-            vals <- matrix(0,ncol=length(rate),nrow=n)
+            vals <- matrix(0,ncol=length(timecut)-1,nrow=n)
             ival <- numeric(n)
-            for (i in seq(length(rate))) {
+            if (is.matrix(rate)) {
+                mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
+                rate <- rep(1,length(timecut)-1)                
+            }   
+            for (i in seq(length(timecut)-1)) {
                 u <- -log(runif(n)) ##rexp(n,1)
-                vals[,i] <-  timecut[i] + u*exp(-mu)/(rate[i])
+                if (NCOL(mu)>1) {
+                    vals[,i] <-  timecut[i] + u*exp(-mu[,1]-mu[,i+1])/(rate[i])
+                } else {
+                    vals[,i] <-  timecut[i] + u*exp(-mu)/(rate[i])
+                }
                 idx <- which(vals[,i]<=timecut[i+1] & ival==0)
                 ival[idx] <- vals[idx,i]
             }
@@ -205,26 +236,38 @@ coxExponential.lvm <- function(scale,rate,timecut=0){
         }
         Ai()
     }
+    attributes(f)$family <- list(family="CoxExponential",par=par)
     return(f)
 }
 
 ##' @export
-aalenExponential.lvm <- function(scale,rate,timecut=0){
+aalenExponential.lvm <- function(scale=1,rate,timecut=0){
     if (missing(rate)) rate=1/scale
     if (missing(scale)) scale=1/rate
-    if (length(rate)==1) {
+    if (missing(timecut)==1) {
         return(coxWeibull.lvm(shape=1,scale))
     }
+    
     if (length(rate)>length(timecut))
         stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
+    par <- paste(timecut,rate,sep=":")
+    if (is.matrix(rate)) par <- "..."
     timecut <- c(timecut,Inf)
     f <- function(n,mu,...) {
         Ai <- function() {
-            vals <- matrix(0,ncol=length(rate),nrow=n)
+            vals <- matrix(0,ncol=length(timecut)-1,nrow=n)
             ival <- numeric(n)
-            for (i in seq(length(rate))) {
+            if (is.matrix(rate)) {
+                mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
+                rate <- rep(1,length(timecut)-1)                
+            }
+            for (i in seq(length(timecut)-1)) {
                 u <- -log(runif(n)) ##rexp(n,1)
-                vals[,i] <-  timecut[i] + u/(rate[i]+mu)
+                if (NCOL(mu)>1) {
+                    vals[,i] <-  timecut[i] + u/(rate[i]+mu[,1]+mu[,i+1])
+                } else {
+                    vals[,i] <-  timecut[i] + u/(rate[i]+mu)
+                }
                 idx <- which(vals[,i]<=timecut[i+1] & ival==0)
                 ival[idx] <- vals[idx,i]
             }
@@ -232,6 +275,7 @@ aalenExponential.lvm <- function(scale,rate,timecut=0){
         }
         Ai()
     }
+    attributes(f)$family <- list(family="aalenExponential",par=par)
     return(f)
 }
 
