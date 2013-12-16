@@ -21,6 +21,6 @@ m3 <- lm(cau ~ age*gene2,data=serotonin)
 Combine(list(A=m1,B=m2,C=m3),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
 }
 \author{
-  Klaus Kähler Holst
+  Klaus K. Holst
 }
 

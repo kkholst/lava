@@ -31,6 +31,7 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
+\alias{timedep}
 \alias{transform<-}
 \alias{transform<-.lvm}
 \alias{transform.lvm}
