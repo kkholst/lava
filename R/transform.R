@@ -2,8 +2,13 @@
 "transform<-" <- function(x,...,value) UseMethod("transform<-")
 
 ##' @S3method transform<- lvm
-"transform<-.lvm" <- function(x,formula,...,value) 
-    transform(x,formula,value,...)
+"transform<-.lvm" <- function(x,formula,add=FALSE,...,value) {
+    if (add) {
+        constrain(x,formula,...) <- value
+        return(x)
+    } 
+    transform(x,formula,...) <- fun
+}
 
 
 "transform.lvm" <- function(`_data`,formula,fun,...) {
