@@ -27,9 +27,16 @@
 ##' m <- lvm(y~x)
 ##' labels(m) <- list(x="multiple\nlines")
 ##' \donttest{
-##' par(mfrow=c(1,2))
+##' op <- par(mfrow=c(1,2))
 ##' plot(m,plain=TRUE)
 ##' plot(m)
+##' par(op)
+##' }
+##'
+##' \donttest{
+##' d <- sim(m,100)
+##' e <- estimate(m,d)
+##' plot(e,type="sd")
 ##' }
 ##' @param object \code{lvm}-object.
 ##' @param value node label/edge label/color
