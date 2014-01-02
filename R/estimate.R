@@ -306,7 +306,9 @@ estimate <- function(x,...) UseMethod("estimate")
  
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
-    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
+      if (is.null(control$starterfun) && lava.options()$param!="relative")
+          optim$starterfun <- startvalues0
+      start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
     ## Debug(list("start=",start))
     if (length(paragree.2)>0) {
       start[which(paragree)] <- optim$start[which(paragree.2)]

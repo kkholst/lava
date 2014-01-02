@@ -238,11 +238,11 @@ Simple_gradient.lvm <- function(x,p,...) {
 ###}}} startvalues2
 
 
-###{{{ startvalues
+###{{{ startvalues0
 
 ##' @export
-startvalues <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
-    p0 <- startvalues0(x,S,mu,...)
+startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
+    p0 <- startvalues(x,S,mu,...)
     A <- t(index(x)$M) ## Adjacency matrix    
     P0 <- A0 <- matrix(0,nrow(A),ncol(A))
     A0[,index(x)$eta.idx] <- A[,index(x)$eta.idx]
@@ -264,12 +264,12 @@ startvalues <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     return(pp)    
 }
 
-###}}} startvalues
+###}}} startvalues0
 
-###{{{ startvalues0
+###{{{ startvalues
 
 ##' @export
-startvalues0 <-
+startvalues <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992. 
   ## Implementation based on John Fox's implementation in the 'sem' R-package

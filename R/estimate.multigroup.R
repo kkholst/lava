@@ -55,6 +55,8 @@
     mystart <- optim$start
   } else {
     if (!silent) cat("Obtaining starting value...")
+    if (is.null(control$starterfun) && lava.options()$param!="relative")
+        optim$starterfun <- startvalues0
     mystart <- with(optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,silent=FALSE,fix=FALSE))
     if (!is.null(optim$start)) {
       pname <- names(optim$start)
