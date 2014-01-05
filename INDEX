@@ -1,0 +1,86 @@
+* Estimation and simulation of latent variable models
+
+** Model building 
+
+Range.lvm               Define range constraints of parameters
+addvar                  Add variable to (model) object
+baptize                 Label elements of object
+cancel                  Generic cancel method
+children                Extract children or parent elements of object
+constrain<-             Add non-linear constraints to latent variable model
+covariance              Add covariance structure to Latent Variable Model
+eventTime               Add an observed event time outcome to a latent variable model.
+intercept               Fix mean parameters in 'lvm'-object
+kill                    Remove variables from (model) object.
+labels<-                Define labels of graph
+lvm                     Initialize new latent variable model
+makemissing             Create random missing data
+parpos                  Generic method for finding indeces of model parameters
+path                    Extract pathways in model graph
+plot.lvm                Plot path diagram
+regression<-            Add regression association to latent variable model
+subset.lvm              Extract subset of latent variable model
+timedep                 Time-dependent parameters
+vars                    Extract variable names from latent variable model
+
+** Model inference
+
+Graph                   Extract graph
+Model                   Extract model
+bootstrap               Generic bootstrap method
+bootstrap.lvm           Calculate bootstrap estimates of a lvm object
+confint.lvmfit          Calculate confidence limits for parameters
+compare                 Statistical tests Performs Likelihood-ratio, Wald and score tests
+correlation             Generic method for extracting correlation coefficients of model object
+curereg                 Regression model for binomial data with unkown group of immortals
+equivalence             Identify candidates of equivalent models
+estimate.default        Estimation of functional of parameters
+estimate.lvm            Estimation of parameters in a Latent Variable Model (lvm)
+gof                     Extract model summaries and GOF statistics for model object
+iid                     Extract i.i.d. decomposition (influence function) from model object
+lava.options            Set global options for 'lava'
+modelsearch             Model searching
+partialcor              Calculate partial correlations
+sim                     Simulate model
+predict.lvm             Prediction in structural equation models
+startvalues             For internal use
+
+** Utilities
+
+%+%                     Concatenation operator
+%ni%                    Matching operator (x not in y) oposed to the '%in%'-operator (x in y)
+By                      Apply a Function to a Data Frame Split by Factors
+Col                     Generate a transparent RGB color
+Combine                 Report estimates across different models
+Expand                  Create a Data Frame from All Combinations of Factors
+Id                      Identify points on plot
+PD                      Dose response calculation for binomial regression models
+blockdiag               Combine matrices to block diagonal structure
+confband                Add Confidence limits bar to plot
+devcoords               Returns device-coordinates and plot-region
+org                     Convert object to ascii suitable for org-mode
+plotConf                Plot regression lines
+revdiag                 Create/extract 'reverse'-diagonal matrix
+toformula               Converts strings to formula
+tr                      Trace operator
+trim                    Trim tring of (leading/trailing/all) white spaces
+
+** Datasets
+
+bmd                     Longitudinal Bone Mineral Density Data (Wide format)
+bmidata                 Data
+brisa                   Simulated data
+calcium                 Longitudinal Bone Mineral Density Data
+hubble                  Hubble data
+hubble2                 Hubble data
+indoorenv               Data
+nldata                  Example data (nonlinear model)
+missingdata             Data
+nsem                    Example SEM data (nonlinear)
+semdata                 Example SEM data
+serotonin               Serotonin data
+serotonin2              Data
+twindata                Twin menarche data
+
+
+
