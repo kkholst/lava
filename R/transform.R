@@ -18,6 +18,7 @@
         y <- getoutcome(formula)
         xx <- attributes(y)$x
     }
+    if (length(xx)==0) { xx <- y; y <- NULL }
     if (length(y)==0) {
         if (is.null(attributes(`_data`)$selftransform))
             attributes(`_data`)$selftransform <- list()
