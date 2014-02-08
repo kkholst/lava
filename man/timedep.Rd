@@ -11,7 +11,12 @@
   \item{formula}{Formula with rhs specifying time-varying
   covariates}
 
-  \item{rate}{Optional (log)-rate(ratio) parameters}
+  \item{rate}{Optional rate parameters. If given as a
+  vector this parameter is interpreted as the raw
+  (baseline-)rates within each time interval defined by
+  \code{timecut}.  If given as a matrix the parameters are
+  interpreted as log-rates (and log-rate-ratios for the
+  time-varying covariates defined in the formula).}
 
   \item{timecut}{Time intervals}
 
@@ -43,7 +48,7 @@ m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
 
 \dontrun{
 d <- sim(m,1e4); d$status <- TRUE
-dd <- lifetable(Surv(y,status)~z1,data=d,breaks=c(3,5));
+dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(3,5));
 exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
 }
 
@@ -63,7 +68,7 @@ m <- timedep(m,y~m1+m2,timecut=c(0,5))
 
 \dontrun{
 d <- sim(m,1e5); d$status <- TRUE
-dd <- lifetable(Surv(y,status)~z1,data=d,breaks=c(5))
+dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(5))
 exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, family=poisson)))
 }
 }
