@@ -5,12 +5,13 @@
   plotConf(model, var1 = all.vars(formula(model))[2],
     var2 = NULL, data = NULL, ci.lty = 0, ci = TRUE,
     level = 0.95, pch = 16, lty = 1, lwd = 2,
-    npoints = 100, xlim, col = NULL, colpt, alpha = 0.2,
+    npoints = 100, xlim, col = NULL, colpt, alpha = 0.5,
     cex = 1, delta = 0.07, centermark = 0.03, jitter = 0.2,
     cidiff = FALSE, mean = TRUE,
     legend = ifelse(is.null(var1), FALSE, "topright"),
-    trans = function(x) {     x }, partres = TRUE,
-    partse = FALSE, labels, ...)
+    trans = function(x) {     x },
+    partres = inherits(model, "lm"), partse = FALSE,
+    labels, vcov, predictfun, ...)
 }
 \arguments{
   \item{model}{Model object (e.g. \code{lm})}
@@ -67,6 +68,11 @@
   \item{partse}{.}
 
   \item{labels}{Optional labels of \code{var2}}
+
+  \item{vcov}{Optional variance estimates}
+
+  \item{predictfun}{Optional predict-function used to
+  calculate confidence limits and predictions}
 
   \item{\dots}{additional arguments to lower level
   functions}
