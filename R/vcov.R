@@ -2,7 +2,7 @@
 vcov.lvmfit <- function(object,...) {
   res <- object$vcov
   if ("lvm.missing"%in%class(object)) {
-    resnames <- names(coef(object))
+    resnames <- names(pars(object))
   } else {
     resnames <- coef(Model(object),fix=FALSE, mean=object$control$meanstructure)
   }

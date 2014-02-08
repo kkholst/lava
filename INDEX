@@ -40,6 +40,7 @@ gof                     Extract model summaries and GOF statistics for model obj
 iid                     Extract i.i.d. decomposition (influence function) from model object
 lava.options            Set global options for 'lava'
 modelsearch             Model searching
+multinomial		Estimate probabilities in contingency table
 partialcor              Calculate partial correlations
 sim                     Simulate model
 predict.lvm             Prediction in structural equation models

@@ -138,3 +138,6 @@ Collate:
     'zorg.R'
     'ztrim.R'
     'zcombine.R'
+    'multinomial.R'
+    'ordreg.R'
+    'pcor.R'

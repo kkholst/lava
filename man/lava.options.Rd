@@ -1,6 +1,6 @@
 \name{lava.options}
 \alias{lava.options}
-\title{##' Set global options for \code{lava}}
+\title{Set global options for \code{lava}}
 \usage{
   lava.options(...)
 }

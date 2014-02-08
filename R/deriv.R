@@ -11,22 +11,27 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   ii <- index(expr)
   npar.total <- npar <- ii$npar; npar.reg <- ii$npar.reg
   npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
+  npar.ex <- ii$npar.ex
   meanpar <- seq_len(npar.mean)
-  
+  epar <- seq_len(npar.ex)  
   nn <- expr$parpos
+  
   if (is.null(nn))  
     {
-      nn <- matrices.lvm(expr,1:npar + npar.mean,meanpar);
+      nn <- matrices.lvm(expr,1:npar + npar.mean,meanpar,epar+npar.mean+npar);
       nn$A[ii$M0!=1] <- 0
       nn$P[ii$P0!=1] <- 0
       nn$v[ii$v0!=1] <- 0
+      nn$e[ii$e0!=1] <- 0
     }
  
   regr.idx <- seq_len(npar.reg) + npar.mean
   var.idx <- seq_len(npar-npar.reg) + (npar.mean + npar.reg)   
   mean.idx <- seq_len(npar.mean)
   npar.total <- npar+length(mean.idx)
-
+  epar.idx <- seq_len(npar.ex)+npar.total
+  npar.total <- npar.total+length(epar.idx)
+  
   if (zeroones | is.null(ii$dA)) {
     dimA <- length(ii$A)
     if (ii$sparse) { ## Not used yet...
@@ -67,14 +72,13 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 
   if (!all) return(res)
   ## Non-linear constraints:
-  cname <- constrainpar <- c()
-  if (!missing(p)  && length(index(expr)$constrain.par)>0) {
+  cname <- constrainpar <- c()  
+    if (!missing(p) && length(index(expr)$constrain.par)>0) {
     for (pp in index(expr)$constrain.par) {
       myc <- constrain(expr)[[pp]]
       if (!is.null(myc)) {
         parval <- mom$parval
-        vals <- c(parval,constrainpar,mom$v)[attributes(myc)$args]
-           
+        vals <- c(parval,constrainpar,mom$v,mom$e)[attributes(myc)$args]        
         fval <- myc(unlist(vals))
         if (!is.null(attributes(fval)$grad)) {
           Gr <- attributes(fval)$grad(unlist(vals))
@@ -88,10 +92,12 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         attributes(fval)$vals <- vals
         constrainpar <- c(constrainpar,list(fval)); names(constrainpar) <- cname
         
-        for (jj in 1:length(vals)) {
+        for (jj in seq_len(length(vals))) {
           allpars <- c(nn$A[attributes(vals[[jj]])$reg.idx[1]],
                        nn$P[attributes(vals[[jj]])$cov.idx[1]],
-                       nn$v[attributes(vals[[jj]])$m.idx[1]])
+                       nn$v[attributes(vals[[jj]])$m.idx[1]],
+                       nn$e[attributes(vals[[jj]])$e.idx[1]]
+                       )
           if (!is.null(mat.idx$cov.idx))
             res$dP[mat.idx$cov.idx,allpars] <- Gr[jj]
           if (!is.null(mat.idx$reg.idx))
@@ -102,6 +108,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       }
     }
   }
+  
   if (is.null(ii$Kkk)) {
     nobs <- nrow(mom$J)
     ii$Ik <- diag(nobs)

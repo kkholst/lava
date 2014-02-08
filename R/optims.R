@@ -93,7 +93,7 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
 
 ###{{{ Newton-Raphson/Scoring
 
-NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
+NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,
                      iter.max=200,tol=1e-15,stabil=FALSE,epsilon=1e-15)
     if (!missing(control)) {
@@ -105,7 +105,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     if (trace>0)
         cat("\nIter=0;\t\n",
             "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
-
+ 
     if (missing(gradient) & missing(hessian)) {
         hessian <- function(p) {
             ff <- objective(p)
@@ -224,6 +224,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                 I <- I+control0$gamma2*(sigma)
             }
         }
+
         svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
         svdI$d0[abs(svdI$d)>control0$epsilon] <-
             1/svdI$d[abs(svdI$d)>control0$epsilon]
@@ -231,6 +232,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         Delta = control0$gamma*iI%*%D
         mD = mD0 = mean(D^2)
         Lambda <- 1
+        if (2>3)
         while (mD>=mD0) {
             p <- p.orig + Lambda*Delta
             if (gradFun) {
@@ -243,7 +245,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             if (is.nan(mD)) mD=mD0
             Lambda <- Lambda/2
             if (Lambda<1e-12) break;
-        }        
+        }
+        p <- p.orig + Lambda*Delta
         return(list(p=p,D=D,iI=iI))
     } 
     

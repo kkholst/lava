@@ -35,7 +35,6 @@
              tol=lava.options()$tol)
 
 
-
   if (!missing(param)) {
     oldparam <- lava.options()$param
     lava.options(param=param)
@@ -49,6 +48,7 @@
   if (length(control)>0) {
     optim[names(control)] <- control
   }
+
 
   Debug("Start values...")
   if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
@@ -88,6 +88,7 @@
     mystart[constrained] <- log(mystart[constrained])
   }
 
+  browser()
   if (!missing(weight)) {
     if (is.character(weight)) {
       stweight <- weight
@@ -161,7 +162,9 @@
     Method <- "nlminb1"
   else
     Method <- get(Method)
-  if (is.null(optim$method)) optim$method <- Method
+  if (is.null(optim$method)) {      
+      optim$method <- Method
+  }
   
   ## Check for random slopes
   xXx <- exogenous(x)
@@ -541,7 +544,7 @@
   opt <- do.call(optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
 ##  if (!silent) cat("\n")
-  
+
   opt$estimate <- opt$par
   if (optim$constrain) {
     opt$estimate[constrained] <- exp(opt$estimate[constrained])
@@ -626,7 +629,8 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (missing(fix)) {
     fix <- ifelse(Xfix,FALSE,TRUE)
   }  
-  
+
+
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
   res <- estimate(mg,...)
     

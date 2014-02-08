@@ -74,8 +74,8 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
         index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
       }
       pp <- modelPar(x0,p)
-      p0 <- with(pp, c(meanpar,p))
-      k <- length(index(x)$manifest)      
+      p0 <- with(pp, c(meanpar,p,p2))
+      k <- length(index(x)$manifest)     
       myfun <- function(ii) {
         if (length(xfix)>0)
           for (i in 1:length(myfix$var)) {
@@ -151,7 +151,8 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC%*%W,D$dS)
     }
   }
-  if (is.null(pp$meanpar)) {
+
+  if (is.null(pp$meanpar) && is.null(pp$p2)) {
     if (inverse) {
       if (pinv)
         iI <- Inverse(information_Sigma)
@@ -226,7 +227,7 @@ information.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x
 information.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
-  parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
+  parord <- modelPar(rm$model,seq_len(with(rm$model,npar+npar.mean)))$p
   I <- matrix(0,nrow=length(p),ncol=length(p))
   if (!indiv) {
     for (i in seq_len(x$ngroup))

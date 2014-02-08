@@ -271,7 +271,8 @@ estimate <- function(x,...) UseMethod("estimate")
   } else {
     Method <- get(Method)
   }
-  if (is.null(optim$method)) optim$method <- Method
+  if (is.null(optim$method))       
+      optim$method <- ifelse(missing,"nlminb1",Method)
 
   if (!quick & index) {
     ## Proces data and setup some matrices
@@ -306,7 +307,7 @@ estimate <- function(x,...) UseMethod("estimate")
  
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
-      if (is.null(control$starterfun) && lava.options()$param!="relative")
+      if (is.null(optim$starterfun) && lava.options()$param!="relative")
           optim$starterfun <- startvalues0
       start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
     ## Debug(list("start=",start))
@@ -315,12 +316,14 @@ estimate <- function(x,...) UseMethod("estimate")
     }
     optim$start <- start
   }
-  if (!is.null(x$expar)) optim$start <- c(optim$start,rep(0,index(x)$npar.ex))
+  if (!is.null(x$expar)) 
+      optim$start <- c(optim$start, structure(rep(0,index(x)$npar.ex),names=names(x$expar)))
   
   ## Missing data
   if (missing) {
-    control$start <- optim$start
-    return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
+      ##$start <- optim$start    
+      ##return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
+      return(estimate.MAR(x=x,data=data,fix=fix,control=optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
 
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -616,7 +619,7 @@ estimate <- function(x,...) UseMethod("estimate")
   if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
-
+  
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -640,7 +643,7 @@ estimate <- function(x,...) UseMethod("estimate")
     return(opt$estimate)
   }
   ## Calculate std.err:
-  
+
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
   pp[names(opt$estimate)] <- opt$estimate
   pp.idx <- na.omit(match(coefname,names(opt$estimate)))
@@ -687,7 +690,7 @@ estimate <- function(x,...) UseMethod("estimate")
               graph=NULL, control=optim)
 
   class(res) <- myclass
-  
+
   myhooks <- gethook("post.hooks")
   for (f in myhooks) {
     res0 <- do.call(f,list(x=res))

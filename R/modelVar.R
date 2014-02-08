@@ -5,7 +5,6 @@
 `modelVar` <-
   function(x,p,...) UseMethod("modelVar")
 
-
 ##' @S3method modelVar lvmfit
 modelVar.lvmfit <- function(x, p=pars(x), ...) modelVar(Model(x),p=p,...)
 
@@ -15,6 +14,7 @@ modelVar.lvm <- function(x,p,data,...) {
   res <- moments(x, p=p, data=data,...)
   attr(res, "pars") <- pp$p
   attr(res, "meanpar") <- pp$meanpar
+  attr(res, "epar") <- pp$epar
   res
 }
 ###}}} modelVar

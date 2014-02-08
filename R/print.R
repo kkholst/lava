@@ -39,13 +39,12 @@ function(x, ...) {
         rownames(R) <- paste(" ",R[,1]," "); colnames(R) <- rep("",ncol(R))
         print(R[,2,drop=FALSE],quote=FALSE,...)
     }
-    cat("\n")
-    cat("Number of free parameters: ", with(index(x),npar+npar.mean+npar.ex),"\n", sep="")
 
 ##      oneline <- as.character(f); 
 ##      cat(as.character(oneline),"\n")
 
   }
+  cat("\n")
   invisible(x)
 }
 

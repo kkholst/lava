@@ -22,7 +22,7 @@ pars.default <- function(x,...) {
 ###{{{ pars.lvm
 
 ##' @S3method pars lvm
-pars.lvm <- function(x, A, P, v,...) {
+pars.lvm <- function(x, A, P, v, e, ...) {
   parres <- A[index(x)$M1==1]
   diagcorfree <- diag(P)[diag(index(x)$P1)==1]
   parres <- c(parres, diagcorfree)
@@ -35,9 +35,12 @@ pars.lvm <- function(x, A, P, v,...) {
       }
     }
   if (length(parres)>0)
-  names(parres) <- paste("p",1:length(parres),sep="")
+  names(parres) <- paste("p",seq_len(length(parres)),sep="")
   if (!missing(v)) {
     parres <- c( v[which(index(x)$v1==1)], parres)
+  }
+  if (!missing(e)) {
+    parres <- c( parres, e[which(index(x)$e1==1)] )
   }
   return(parres)        
 }

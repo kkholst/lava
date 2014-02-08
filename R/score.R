@@ -6,7 +6,7 @@ function(x,...) UseMethod("score")
 
 ##' @S3method score lvm
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, weight2=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
-
+    
   cl <- match.call()
   lname <- paste(model,"_score.lvm",sep="")
   if (!exists(lname)) {
@@ -54,7 +54,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
       index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)    
     }
     pp <- modelPar(x0,p)
-    p0 <- with(pp, c(meanpar,p))
+    ##p0 <- with(pp, c(meanpar,p,p2))
     k <- length(index(x0)$manifest)
 
     myfun <- function(ii) {
@@ -62,7 +62,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
         for (i in 1:length(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
+      return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p,p2)),weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
     }
     score <- t(sapply(1:nrow(data),myfun))
     if (!indiv) {
@@ -128,7 +128,7 @@ score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estim
 score.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
-  parord <- modelPar(rm$model,1:with(rm$model,npar+npar.mean))$p
+  parord <- modelPar(rm$model,seq_len(with(rm$model,npar+npar.mean+npar.ex)))$p
   S <- list()
   for (i in 1:x$ngroup) {
     S0 <- rbind(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],indiv=indiv,...))

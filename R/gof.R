@@ -1,8 +1,11 @@
 ##' @export
 rsq <- function(x) {
-    v <- c(endogenous(x),latent(x))
-    res <- 1-coef(x,9,std="yx")[paste(v,lava.options()$symbol[2],v,sep=""),5]
-    names(res) <- v
+    v <- c(endogenous(x),setdiff(latent(x),parameter(Model(x))))
+    res <- coef(x,9,std="yx")
+    idx <- with(attributes(res),which(var==from & var==v))
+    nam <- attributes(res)$var[idx]
+    res <- res[idx,5]
+    names(res) <- nam
     res
 }
 

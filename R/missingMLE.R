@@ -23,6 +23,7 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   exo <- exogenous(model)
   exclude <- c()
 
+  warned <- FALSE
   for (i in setdiff(seq_len(nrow(patterns)),pattern.allmis)) {
     exoremove <- c()
     includemodel <- TRUE
@@ -64,8 +65,10 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 
     if (length(xmis)>0) {
       misx <- ex0[apply(d0[xmis,ex0,drop=FALSE],2,function(x) any(is.na(x)))]
-      warning("Missing exogenous variables: ", paste(misx,collapse=","),
-              ". Removing rows...")
+      if (!warned)
+          warning("Missing exogenous variables: ", paste(misx,collapse=","),
+                  ". Removing rows...")
+      warned <- TRUE
       d0 <- d0[-xmis,,drop=FALSE]
       w0 <- w0[-xmis,,drop=FALSE]      
       clust0 <- clust0[-xmis]
@@ -197,8 +200,11 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (!is.null(names(control$start))) {
     parorder1 <- attributes(parpos(mg0,p=names(control$start)))$name
     paridx <- match(parorder1,names(control$start))
-    newpos <- paridx[which(!is.na(paridx))]   
-    control$start[which(!is.na(paridx))] <- control$start[na.omit(paridx)]
+    newpos <- paridx[which(!is.na(paridx))]
+    start0 <- control$start
+    start0[which(!is.na(paridx))] <- control$start[na.omit(paridx)]
+    names(start0)[which(!is.na(paridx))] <- names(control$start[na.omit(paridx)])
+    control$start <- start0
   }
   
   
@@ -269,6 +275,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   class(res) <- c("lvm.missing","lvmfit")
   if ("lvmfit.randomslope"%in%class(e.mis))
     class(res) <- c(class(res),"lvmfit.randomslope")
+  
   if (hessian & is.null(cluster)) {
     if (!silent)
       message("Calculating asymptotic variance...\n")

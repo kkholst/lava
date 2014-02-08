@@ -13,13 +13,18 @@
     parameter(x,...) <- all.vars(value)
     return(x)
   }
-  latent(x,silent=TRUE) <- value
-  covfix(x,value,NULL) <- 1
-  intfix(x, value) <- value
+  ## latent(x,silent=TRUE) <- value
+  ## covfix(x,value,NULL) <- 1
+  ## intfix(x, value) <- value
+  newpar <- rep(0,length(value)); names(newpar) <- value
+  newfix <- as.list(value); names(newfix) <- value
+  x$expar <- c(x$expar,newpar)
+  x$exfix <- c(x$exfix,newfix)
+  index(x) <- reindex(x)
   x$attributes$parameter[value] <- TRUE
   return(x)
 }
 
 ##' @export
 parameter <- function(x,...)
-  names(unlist(x$attributes$parameter))
+    names(unlist(x$attributes$parameter))

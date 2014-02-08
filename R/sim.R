@@ -192,7 +192,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     match(names(p),paste(xx,lava.options()$symbol[2],xx,sep=""))))
     if (length(i1)>0) covariance(x) <- xx[i1]
   }
-  index(x) <- reindex(x)
+  ##  index(x) <- reindex(x)
   vv <- vars(x)
   nn <- setdiff(vv,parameter(x))
   mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
@@ -203,7 +203,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (length(p)!=(index(x)$npar+index(x)$npar.mean) | !is.null(names(p))) {
     nullp <- is.null(p)
     p0 <- p
-    p <- rep(1, index(x)$npar+index(x)$npar.mean)
+    p <- c(rep(1, index(x)$npar+index(x)$npar.mean),x$expar)
     p[seq_len(index(x)$npar.mean)] <- 0
     p[index(x)$npar.mean + variances(x)] <- sigma
     p[index(x)$npar.mean + offdiags(x)] <- rho
@@ -220,14 +220,13 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         p[idx11] <- p0[idx22]
       }
   }
-
   M <- modelVar(x,p,data=NULL)
-  A <- M$A; P <- M$P ##Sigma <- M$P
+  A <- M$A; P <- M$P 
   if (!is.null(M$v)) mu <- M$v
   
-##  E <- rmvnorm(n,rep(0,ncol(P)),P) ## Error term for conditional normal distributed variables
+##  E <- rmvnorm(n,rep(0,ncol(P)),P)
   PP <- with(svd(P), v%*%diag(sqrt(d))%*%t(u))
-  E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP
+  E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
   
   ## Simulate exogenous variables (covariates)
   res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn

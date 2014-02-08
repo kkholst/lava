@@ -17,7 +17,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     parBelongsTo <- list(mean=seq_len(ii$npar.mean),
                          reg=seq_len(ii$npar.reg)+ii$npar.mean,
                          cov=seq_len(ii$npar.var)+ii$npar.mean+ii$npar.reg,
-                         epar=seq_len(length(x$exfix))+with(ii,npar.reg+npar.var+npar.mean),
+                         epar=seq_len(ii$npar.ex)+with(ii,npar.reg+npar.var+npar.mean),
                          cpar=numeric())
     
     idxA <- which(M1==1)
@@ -130,17 +130,15 @@ mat.lvm <- function(x,ii=index(x),...) {
         }
     } 
       
-
     ## Ex-parameters
     idxE <- NULL
     pidxE <- parBelongsTo$epar
     named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))    
     fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
-    
     epar <- rep(0,length(x$exfix))
     names(epar) <- names(x$expar)
     if (!(ii$npar.ex==0)) {
-        idxE <- ii$e1==1
+        idxE <- which(ii$e1==1)
         epar[idxE] <- pidxE
     }
     if (any(fixed))
@@ -149,8 +147,8 @@ mat.lvm <- function(x,ii=index(x),...) {
         idx <- which(x$exfix==p)
         if (!(p%in%c(ii$parname,ii$covparname,ii$mparname))) {
             if (length(idx)>1) {
-                idxE <- c(idxE,idx)
-                pidxE <- c(pidxE,epar[idx[1]])
+                idxE <- c(idxE,idx[-1])
+                pidxE <- c(pidxE,rep(epar[idx[1]],length(idx)-1))
             }
             parval[[p]] <- epar[idx[1]]        
         }
@@ -180,7 +178,7 @@ mat.lvm <- function(x,ii=index(x),...) {
             idxE <- c(idxE,idx)
         }
     }
-
+    ee <- cbind(idxE,pidxE); rownames(ee) <- names(x$expar)[ee[,1]]
 
     ## Constrained...
     constrain.par <- names(constrain(x))
@@ -212,11 +210,12 @@ mat.lvm <- function(x,ii=index(x),...) {
     }
 
     parBelongsTo <- lapply(parBelongsTo,function(x) sort(unique(x)))
+
     
     return(list(mean=cbind(idxM,pidxM),
                 reg=cbind(idxA,pidxA),
                 cov=cbind(idxP,pidxP),
-                epar=cbind(idxE,pidxE),                
+                epar=ee,                
                 parval=parval,
                 constrain.idx=constrain.idx,
                 parBelongsTo=parBelongsTo))
@@ -416,6 +415,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
         fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
         
         e <- rep(0,length(x$exfix))
+
         names(e) <- names(x$expar)
         if (!(is.null(epars) | ii$npar.ex==0))
             e[ii$e1==1] <- epars
@@ -444,11 +444,11 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
             }
         } 
     }
-
+    
     ## Constrained...
     constrain.idx <- NULL
     cname <- constrainpar <- c()  
-    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
+    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar,e))) {   
         constrain.idx <- list()
         for (p in constrain.par) {
             cname <- c(cname,p)
@@ -460,7 +460,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                     parval[xargs] <- (data)[xargs]
                 } else parval[xargs] <- 0
             }
-            val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])      
+            val <- unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args])      
             cpar <- myc(val); 
             constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
             if (p%in%ii$parname.all) {

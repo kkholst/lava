@@ -6,6 +6,9 @@ function(object,...) {
   k <- length(vars(object))
   ## cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
   print(object)
+  cat("\n")
+  cat("Number of free parameters: ", with(index(object),npar+npar.mean+npar.ex),"\n", sep="")
+
   if (k==0)
     return()
 ##  cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")

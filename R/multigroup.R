@@ -47,7 +47,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
       ## Find named/labelled parameters
       rpar <- unique(parlabels(models[[i]]))
       reservedpars <- c(reservedpars, rpar)
-      mynpar <- c(mynpar, with(index(models[[1]]), npar+npar.mean))      
+      mynpar <- c(mynpar, with(index(models[[1]]), npar+npar.mean+npar.ex))
     }; reservedpars <- unique(reservedpars)
     nonamepar <- sum(mynpar)
     ## Find unique parameter-names for all parameters
@@ -122,7 +122,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   }
     
   exo <- exogenous(models)
-  means <- lvms <- As <- Ps <- ps <- datas <- samplestat <- list()
+  means <- lvms <- As <- Ps <- ps <- exs <- datas <- samplestat <- list()
   for (i in seq_len(nm)) {
 
     if (!is.null(exogenous(models[[i]]))) {
@@ -140,10 +140,13 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 
     A <- index(mymodel)$M1; A[A==0] <- NA
     A[!is.na(A) & !is.na(mymodel$par)] <- mymodel$par[!is.na(A) & !is.na(mymodel$par)]
-    p <- pars(mymodel, A, P)
-    p[p=="1"] <- NA
     
     mu <- unlist(mymodel$mean)[which(index(mymodel)$v1==1)]
+    ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
+
+    p <- pars(mymodel, A, P, e=ex)
+    p[p=="1"] <- NA
+    
     means <- c(means, list(mu))
     lvms <- c(lvms, list(mymodel))
     datas <- c(datas, list(mydata))
@@ -151,6 +154,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     As <- c(As, list(A))
     Ps <- c(Ps, list(P))
     ps <- c(ps, list(p))
+    exs <- c(exs, list(ex))
   };
 
 ######
@@ -260,6 +264,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     mymeanlist <- NULL
   }  
 
+### Extra parameters 
+  
   N <- nfree+nfree.mean
   m0 <- p0 <- c() 
   coefs <- coefsm <- mm0 <- mm <- pp0 <- pp <- c()
@@ -285,7 +291,8 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   }
   coefs <- c(coefsm,coefs)
   
-  res <- list(npar=nfree, npar.mean=nfree.mean, ngroup=length(lvms), names=mynames,
+  res <- list(npar=nfree, npar.mean=nfree.mean,
+              ngroup=length(lvms), names=mynames,
               lvm=lvms, data=datas, samplestat=samplestat,
               A=As, P=Ps,
               meanpar=names(mu), name=coefs, coef=pp, coef.idx=pp0,

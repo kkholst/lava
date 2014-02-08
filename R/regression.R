@@ -116,7 +116,7 @@
       }
       return(object)
     }
-      
+
     if (class(value)[1]=="formula") {
       yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
       if (length(yx)==1) {        

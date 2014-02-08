@@ -56,7 +56,7 @@ cluster.post.hook <- function(x,...) {
   if (is.null(x$cluster)) {
     col3 <- Z
     nn <-  c("Estimate","Std. Error", "Z-value", "P-value")
-  } 
+  }
   newcoef <- cbind(mycoef, SD, col3, pval);
   nparall <- index(x)$npar + ifelse(x$control$meanstructure, index(x)$npar.mean,0)
   if (!is.null(x$expar)) {
