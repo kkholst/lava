@@ -68,7 +68,7 @@ To cite that =lava= package please use the following reference
 
 #+RESULTS[<2013-04-30 23:38:24> 7568e0bf059c90570390f8966101e0187c02d181]:
 :RESULTS:
-[[file:lava1.png]]
+[[file:examples/lava1.png]]
 :END:
 
 #+BEGIN_SRC R :exports both :wrap example
@@ -119,7 +119,7 @@ Residual Variances:
 
 #+RESULTS[<2013-04-30 23:38:26> c7f8f4a89418d60417bd44cfdf351e0d8cf25e30]:
 :RESULTS:
-[[file:gof1.png]]
+[[file:examples/gof1.png]]
 :END:
 
 
