@@ -1,0 +1,145 @@
+* Latent Variable Models (=lava=)
+  Estimation and simulation of latent variable models
+  
+** Installation
+#+BEGIN_SRC R :exports both :eval never
+install.packages("lava",dependencies=TRUE)
+library("lava")
+demo("lava")
+#+END_SRC
+
+For graphical capabilities the =Rgraphviz= package is needed
+#+BEGIN_SRC R :exports both :eval never
+source("http://bioconductor.org/biocLite.R");
+biocLite("BiocUpgrade") ## Upgrade previous bioconductor installation
+biocLite("Rgraphviz")
+#+END_SRC
+or the =igraph= package
+#+BEGIN_SRC R :exports both :eval never
+install.packages("igraph",dependencies=TRUE)
+#+END_SRC
+
+The development version may be installed directly from [[https://r-forge.r-project.org/projects/lava/][R-forge]]:
+#+BEGIN_SRC R :exports both :eval never
+install.packages("lava", repos="http://R-Forge.R-project.org")
+#+END_SRC
+or github 
+#+BEGIN_EXAMPLE
+git@github.com:kkholst/lava.git
+#+END_EXAMPLE
+
+** Citation
+
+To cite that =lava= package please use the following reference
+
+#+BEGIN_EXAMPLE
+  Klaus K. Holst and Esben Budtz-Joergensen (2013). 
+  Linear Latent Variable Models: The lava-package. 
+  Computational Statistics 28 (4), pp 1385-1453. 
+  http://dx.doi.org/10.1007/s00180-012-0344-y
+
+  BibTeX:
+  @Article{lava,
+    title = {Linear Latent Variable Models: The lava-package},
+    author = {Klaus K. Holst and Esben Budtz-Joergensen},
+    year = {2013},
+    volume = {28},
+    number = {4},
+    pages = {1385-1452},
+    journal = {Computational Statistics},
+    note = {http://dx.doi.org/10.1007/s00180-012-0344-y},
+  }
+#+END_EXAMPLE
+
+** Examples
+
+#+BEGIN_SRC R :exports both :file lava1.png
+  ## Specify structurual equation models with two factors
+  m <- lvm()
+  regression(m) <- c(y1,y2,y3) ~ eta1
+  regression(m) <- c(z1,z2,z3) ~ eta2
+  latent(m) <- ~eta1+eta2
+  regression(m) <- eta2~eta1+x
+  regression(m) <- eta1~x
+  
+  labels(m) <- c(eta1=expression(eta[1]),eta2=expression(eta[2]))
+  plot(m)
+#+END_SRC
+
+#+RESULTS[<2013-04-30 23:38:24> 7568e0bf059c90570390f8966101e0187c02d181]:
+:RESULTS:
+[[file:lava1.png]]
+:END:
+
+#+BEGIN_SRC R :exports both :wrap example
+  ## Simulation
+  set.seed(1)
+  d <- sim(m,100)
+  ## Estimation
+  e <- estimate(m,d)
+  e
+#+END_SRC
+
+#+RESULTS[<2013-04-30 23:38:25> 4249dc09faa9ddbf1bbc2b5d193087497f5b33c6]:
+#+BEGIN_example
+                    Estimate Std. Error  Z-value   P-value
+Measurements:                                             
+   y2<-eta1          0.95462    0.08115 11.76402    <1e-12
+   y3<-eta1          0.98476    0.08956 10.99505    <1e-12
+    z2<-eta2         0.97038    0.05390 18.00340    <1e-12
+    z3<-eta2         0.95608    0.05666 16.87367    <1e-12
+Regressions:                                              
+   eta1<-x           1.24587    0.11541 10.79492    <1e-12
+    eta2<-eta1       0.95607    0.18015  5.30712 1.114e-07
+    eta2<-x          1.11495    0.25263  4.41333 1.018e-05
+Intercepts:                                               
+   y2               -0.13896    0.12459 -1.11532    0.2647
+   y3               -0.07661    0.13870 -0.55239    0.5807
+   eta1              0.15801    0.12780  1.23644    0.2163
+   z2               -0.00441    0.14858 -0.02969    0.9763
+   z3               -0.15900    0.15731 -1.01076    0.3121
+   eta2             -0.14143    0.18380 -0.76948    0.4416
+Residual Variances:                                       
+   y1                0.69684    0.14862  4.68885          
+   y2                0.89804    0.16632  5.39933          
+   y3                1.22456    0.21185  5.78037          
+   eta1              0.93620    0.19636  4.76773          
+   z1                1.41423    0.26262  5.38514          
+   z2                0.87568    0.19466  4.49852          
+   z3                1.18155    0.22643  5.21822          
+   eta2              1.24430    0.29003  4.29032
+#+END_example
+
+#+BEGIN_SRC R :exports both :file gof1.png
+  ## Assessing goodness-of-fit (linearity between eta2 and eta1)
+  library(gof)
+  g <- cumres(e,eta2~eta1)
+  plot(g)
+#+END_SRC
+
+#+RESULTS[<2013-04-30 23:38:26> c7f8f4a89418d60417bd44cfdf351e0d8cf25e30]:
+:RESULTS:
+[[file:gof1.png]]
+:END:
+
+
+
+
+* COMMENT Setup
+
+#+TITLE: The lava and mets packages
+#+AUTHOR: Klaus K. Holst
+#+PROPERTY: session *R*
+#+PROPERTY: cache yes
+#+PROPERTY: results output graphics wrap 
+#+PROPERTY: exports results 
+#+PROPERTY: tangle yes 
+#+OPTIONS: timestamp:t author:nil creator:nil
+#+OPTIONS: d:t
+#+PROPERTY: comments yes 
+#+STARTUP: hideall 
+#+OPTIONS: toc:t h:4 num:nil tags:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.biostat.ku.dk/~kkho/styles/orgmode2.css"/>
+#+HTML_HEAD: <link rel="icon" type="image/x-icon" href="http://www.biostat.ku.dk/~kkho/styles/logo.ico"/>
+#+HTML_HEAD: <style type="text/css">body { background-image: url(http://www.biostat.ku.dk/~kkho/styles/logo.png); }</style>
+
