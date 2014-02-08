@@ -1,0 +1,30 @@
+\name{ordreg}
+\alias{ordreg}
+\title{Univariate cumulative link regression models}
+\usage{
+  ordreg(formula, data = parent.frame(), offset,
+    family = binomial("logit"), start, fast = FALSE, ...)
+}
+\arguments{
+  \item{formula}{formula}
+
+  \item{data}{data.frame}
+
+  \item{offset}{offset}
+
+  \item{family}{family (default proportional odds)}
+
+  \item{start}{optional starting values}
+
+  \item{fast}{If TRUE standard errors etc. will not be
+  calculated}
+
+  \item{...}{Additional arguments to lower level functions}
+}
+\description{
+  Ordinal regression models
+}
+\author{
+  Klaus Kähler Holst
+}
+

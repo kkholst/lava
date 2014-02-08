@@ -1,5 +1,17 @@
-ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),start,...) {
-    y <- ordered(data[,lava:::getoutcome(formula)])
+##' Ordinal regression models
+##'
+##' @title Univariate cumulative link regression models
+##' @param formula formula
+##' @param data data.frame
+##' @param offset offset
+##' @param family family (default proportional odds)
+##' @param start optional starting values
+##' @param fast If TRUE standard errors etc. will not be calculated
+##' @param ... Additional arguments to lower level functions
+##' @export
+##' @author Klaus Kähler Holst
+ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),start,fast=FALSE,...) {
+    y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
     X <- model.matrix(update(formula,.~.+1),data=data)[,-1,drop=FALSE]
     up <- new.env()
@@ -28,6 +40,7 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),s
     if (missing(start)) start <- with(up,c(rep(-1,K-1),rep(0,p)))
     op <- nlminb(start,ff,gg)
     cc <- op$par;
+    if (fast) return(structure(cc,threshold=up$threshold(cc,up$K)))
     nn <- c(paste(lev[-length(lev)], lev[-1L], sep = "|"),
                    colnames(X))
     I <- ordreg_hessian(cc,up)
@@ -37,30 +50,42 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),s
     structure(res,class="ordreg")
 }
 
+##' @S3method print ordreg
 print.ordreg <- function(x,...) {
     cat("Call:\n"); print(x$call)
     cat("\nParameter Estimates:\n")
     print(x$coef)
 }
 
+##' @S3method score ordreg
 score.ordreg <- function(x,p=coef(x),indiv=FALSE,...) {
     ordreg_score(coef(x),x$up)
     if (!indiv) return(colSums(x$up$score))
     x$up$score
 }
 
+##' @S3method coef ordreg
+logLik.ordreg <- function(object,p=coef(object),indiv=FALSE,...) {
+    ordreg_logL(p,object$up)
+    res <- log(object$up$pr)    
+    if (!indiv) res <- sum(res)
+    structure(res,nall=length(object$up$pr),nobs=object$up$pr,df=length(p),class="logLik")
+}
+
+##' @S3method coef ordreg
 coef.ordreg <- function(object,...) object$coef
 
+##' @S3method vcov ordreg
 vcov.ordreg <- function(object,...) object$vcov
 
-ordreg_logL <- function(theta,env,...) {
+ordreg_logL <- function(theta,env,indiv=...) {
     if (length(theta)!=with(env,p+K-1)) stop("Wrong dimension")
     env$theta <- theta
     if (env$p>0) beta <- with(env,theta[seq(p)+K-1])
     alpha <- with(env, threshold(theta,K))
     env$alpha <- alpha
     env$beta <- beta
-    eta <- env$X%*%beta
+    if (env$p>0) eta <- env$X%*%beta else eta <- cbind(rep(0,env$n))
     env$lp <- kronecker(-eta,rbind(alpha),"+")
     F <- with(env,h(lp))
     Pr <- cbind(F,1)-cbind(0,F)
