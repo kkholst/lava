@@ -7,11 +7,14 @@
 ## textver <- paste(author, " (", year, "). ", title, ". ", vers, ".", sep="")
 
 author <- "Klaus K. Holst and Esben Budtz-Joergensen"
-year <- 2012
+year <- 2013
 journal <- "Computational Statistics"
 title <- "Linear Latent Variable Models: The lava-package"
 note <- "http://dx.doi.org/10.1007/s00180-012-0344-y"
-textver <- paste(author, " (", year, "). ", title, ". ", journal, ".", note, sep="")
+volume <- 28
+number <- 4
+pages <- "1385-1452"
+textver <- paste(author, " (", year, "). ", title, ". ", journal, " ", volume, " (", number ,"), pp. ", pages, ". ", note, sep="")
 
 citHeader("To cite 'lava' in publications use:")
 
@@ -19,6 +22,9 @@ citEntry(entry="Article",
          title = title,
          author = author,
          year = year,
+         volume=volume,
+         number=number,
+         pages=pages,
  	 journal = journal,
 	 note = note,
          textVersion = textver)
