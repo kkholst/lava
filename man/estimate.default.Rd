@@ -93,5 +93,33 @@ estimate(e,cbind(1,1))
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
 estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id)
+
+## More examples with clusters:
+m <- lvm(c(y1,y2,y3)~u+x)
+d <- sim(m,10)
+l1 <- glm(y1~x,data=d)
+l2 <- glm(y2~x,data=d)
+l3 <- glm(y3~x,data=d)
+
+## Some random id-numbers
+id1 <- c(1,1,4,1,3,1,2,3,4,5)
+id2 <- c(1,2,3,4,5,6,7,8,1,1)
+id3 <- seq(10)
+
+## Un-stacked and stacked i.i.d. decomposition
+iid(estimate(l1,id=id1,stack=FALSE))
+iid(estimate(l1,id=id1))
+
+## Combined i.i.d. decomposition
+e1 <- estimate(l1,id=id1)
+e2 <- estimate(l2,id=id2)
+e3 <- estimate(l3,id=id3)
+(a2 <- merge(e1,e2,e3))
+
+## Same:
+iid(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+
+iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
+iid(merge(l1,l2,l3,id=FALSE)) # independence
 }
 

@@ -59,11 +59,38 @@
 ##' e
 ##' estimate(e,diff)
 ##' estimate(e,cbind(1,1))
-##'
+##' 
 ##' ## Clusters and subset (conditional marginal effects)
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
 ##' estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id)
 ##' 
+##' ## More examples with clusters:
+##' m <- lvm(c(y1,y2,y3)~u+x)
+##' d <- sim(m,10)
+##' l1 <- glm(y1~x,data=d)
+##' l2 <- glm(y2~x,data=d)
+##' l3 <- glm(y3~x,data=d)
+##' 
+##' ## Some random id-numbers
+##' id1 <- c(1,1,4,1,3,1,2,3,4,5)
+##' id2 <- c(1,2,3,4,5,6,7,8,1,1)
+##' id3 <- seq(10)
+##' 
+##' ## Un-stacked and stacked i.i.d. decomposition
+##' iid(estimate(l1,id=id1,stack=FALSE))
+##' iid(estimate(l1,id=id1))
+##' 
+##' ## Combined i.i.d. decomposition
+##' e1 <- estimate(l1,id=id1)
+##' e2 <- estimate(l2,id=id2)
+##' e3 <- estimate(l3,id=id3)
+##' (a2 <- merge(e1,e2,e3))
+##' 
+##' ## Same:
+##' iid(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+##' 
+##' iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
+##' iid(merge(l1,l2,l3,id=FALSE)) # independence
 ##' @method estimate default
 ##' @S3method estimate default
 estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
@@ -95,6 +122,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
         if (is.character(subset)) subset <- data[,subset]
         if (is.numeric(subset)) subset <- subset==1
     }
+    idstack <- NULL
     if (!missing(id)) {
         if (is.null(iidtheta)) stop("'iid' method needed")
         nprev <- nrow(iidtheta)
@@ -114,14 +142,15 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
             clidx <- NULL
             if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
                 iidtheta <- matrix(unlist(by(iidtheta,id,colSums)),byrow=TRUE,ncol=ncol(iidtheta))
+                idstack <- sort(unique(id))
             } else {
-                clidx <- mets::cluster.index(id)
-                iidtheta <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iidtheta[na.omit(x),,drop=FALSE]))))
-            }            
-            id <- id[as.vector(clidx$firstclustid)+1]
-        }
-    } else id <- NULL
-    if (!is.null(iidtheta)) rownames(iidtheta) <- id
+                clidx <- mets::cluster.index(id,mat=iidtheta,return.all=TRUE)
+                iidtheta <- clidx$X
+                idstack <- id[as.vector(clidx$firstclustid)+1]
+            } 
+        } else idstack <- id
+    }
+    if (!is.null(iidtheta)) rownames(iidtheta) <- idstack
 
     if (!is.null(iidtheta) && missing(vcov)) {
         n <- NROW(iidtheta)
@@ -219,12 +248,12 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
                     iid2 <- iidtheta%*%D
                 }
                 pp <- as.vector(colMeans(cbind(val)))
-                iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N
+                iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N 
                 if (!missing(id)) {
                     if (is.null(clidx)) 
                         iid1 <- matrix(unlist(by(iid1,id,colSums)),byrow=TRUE,ncol=ncol(iid1))
                     else {
-                        iid1 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid1[na.omit(x),,drop=FALSE]))))
+                        iid1 <- mets::cluster.index(id,mat=iid2,return.all=FALSE)
                     }
                 }
                 if (!missing(subset)) { ## Conditional estimate
@@ -234,8 +263,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
                         if (is.null(clidx))
                             iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
                         else
-                            iid3 <- cbind(apply(clidx$idclustmat+1,1,function(x) sum(iid3[na.omit(x)])))
-         
+                            iid3 <- mets::cluster.index(id,mat=iid3,return.all=FALSE)         
                     }
                     iidtheta <- (iid1+iid2)/phat + rbind(pp)%x%iid3
                     pp <- pp/phat
@@ -267,7 +295,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,stack=TRUE,subset,
         if (is.null(rownames(res))) rownames(res) <- paste("p",seq(nrow(res)),sep="")
     }
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
-    res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=id),class="estimate")
+    res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
     if (iid) res$iid <- iidtheta
     if (is.null(f) && (!missing(contrast) | !missing(null))) {
         p <- length(res$coef)    
@@ -332,47 +360,3 @@ iid.estimate <- function(x,...) {
 model.frame.estimate <- function(formula,...) {
     NULL
 }
-
-##' @S3method merge estimate
-merge.estimate <- function(x,y,...,id,indep=FALSE) {
-    objects <- list(x,y, ...)
-    coefs <- unlist(lapply(objects,coef))
-    names(coefs) <- make.unique(names(coefs))   
-    if (missing(id)) {
-        id <- lapply(objects,function(x) x$id)
-    } else {
-        if (length(id)!=length(objects)) stop("Same number of id-elements as model objects expected")
-    }
-    if (any(unlist(lapply(id,is.null)))) stop("Id needed for each model object")
-    ##iid <- Reduce("cbind",lapply(objects,iid))    
-    ids <- iidall <- c(); count <- 0
-    for (z in objects) {
-        count <- count+1
-        clidx <- NULL
-        id0 <- id[[count]]
-        if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
-            iid0 <- matrix(unlist(by(iid(z),id0,colSums)),byrow=TRUE,ncol=length(coef(z)))
-        } else {
-            clidx <- mets::cluster.index(id0)
-            iid0 <- t(rbind(apply(clidx$idclustmat+1,1,function(x) colSums(iid(z)[na.omit(x),,drop=FALSE]))))
-        }
-        ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
-        iidall <- c(iidall, list(iid0))
-    }
-    id <- unique(unlist(ids))
-    iid0 <- matrix(0,nrow=length(id),ncol=length(coefs))
-    colpos <- 0
-    for (i in seq(length(objects))) {
-        relpos <- seq(length(coef(objects[[i]])))
-        iid0[match(ids[[i]],id),relpos+colpos] <- iidall[[i]]
-        colpos <- colpos+tail(relpos,1)
-    }
-    rownames(iid0) <- id##
-    estimate.default(NULL,coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id)
-}
-
-##' @S3method %+% estimate
-`%+%.estimate` <- function(x,y) merge(x,y)
-
-
-
