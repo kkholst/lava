@@ -317,7 +317,7 @@ estimate <- function(x,...) UseMethod("estimate")
     optim$start <- start
   }
   if (!is.null(x$expar)) 
-      optim$start <- c(optim$start, structure(rep(0,index(x)$npar.ex),names=names(x$expar)))
+      optim$start <- c(optim$start, structure(unlist(x$expar),names=names(x$expar)))
   
   ## Missing data
   if (missing) {
