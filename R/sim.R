@@ -203,7 +203,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
   if (length(p)!=(index(x)$npar+index(x)$npar.mean) | !is.null(names(p))) {
     nullp <- is.null(p)
     p0 <- p
-    p <- c(rep(1, index(x)$npar+index(x)$npar.mean),x$expar)
+    p <- c(rep(1, index(x)$npar+index(x)$npar.mean),unlist(x$expar))
     p[seq_len(index(x)$npar.mean)] <- 0
     p[index(x)$npar.mean + variances(x)] <- sigma
     p[index(x)$npar.mean + offdiags(x)] <- rho
