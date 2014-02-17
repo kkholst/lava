@@ -292,15 +292,22 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
 ###{{{ matrices.multigroup
 
-matrices.multigroup <- function(x, p) {
+matrices.multigroup <- function(x, p, ...) {
   pp <- modelPar(x,p)
   res <- list()
   for (i in seq_len(x$ngroup))
-    res <- c(res, list(matrices(x$lvm[[i]],p=pp$par[[i]],meanpar=pp$mean[[i]])))
+    res <- c(res, list(matrices2(x$lvm[[i]],pp$p[[i]])))
   return(res)
 }
 
 ###}}}
+
+matrices2 <- function(x,p,...) {
+    m0 <- p[seq_len(index(x)$npar.mean)]
+    p0 <- p[with(index(x),seq_len(npar)+npar.mean)]
+    e0 <- p[with(index(x),seq_len(npar.ex)+npar.mean+npar)]
+    matrices(x,p0,m0,e0,...)
+}
 
 ###{{{ matrices Obsolete
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {

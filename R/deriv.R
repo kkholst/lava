@@ -18,7 +18,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   
   if (is.null(nn))  
     {
-      nn <- matrices.lvm(expr,1:npar + npar.mean,meanpar,epar+npar.mean+npar);
+      nn <- matrices2(expr, seq_len(npar+npar.mean+npar.ex));
       nn$A[ii$M0!=1] <- 0
       nn$P[ii$P0!=1] <- 0
       nn$v[ii$v0!=1] <- 0

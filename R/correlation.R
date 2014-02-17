@@ -9,7 +9,7 @@
 
 ##' @S3method correlation lvmfit
 correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
-  pp <- matrices(Model(x), 1:index(x)$npar+index(x)$npar.mean)$P
+  pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
   pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
   if (length(pos)<1) return(NULL)
   pp0 <- pp

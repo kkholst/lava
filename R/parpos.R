@@ -64,10 +64,8 @@ parpos.lvm <- function(x,p,mean=TRUE,...) {
     return(res)
   }
   if (mean)
-    nn <- with(index(x),matrices(x,seq_len(npar)+npar.mean,meanpar=seq_len(npar.mean),
-                                 seq_len(npar.ex)+npar.mean+npar)
-                                 ) ## Position of parameters
-  else nn <- with(index(x),matrices(x,1:npar,NULL))
+    nn <- with(index(x),matrices2(x,seq_len(npar+npar.mean+npar.ex))) ## Position of parameters
+  else nn <- with(index(x),matrices(x,seq_len(npar),NULL,seq_len(npar.ex)+npar))
   nn$A[index(x)$M0!=1] <- 0
   nn$P[index(x)$P0!=1] <- 0
   nn$v[index(x)$v0!=1] <- 0

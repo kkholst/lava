@@ -5,9 +5,10 @@ updatelvm <- function(x,mean=TRUE,...) {
   return(x)
 }
 
-
+##' @export
 "index" <- function(x,...) UseMethod("index")
 
+##' @export
 "index<-" <- function(x,...,value) UseMethod("index<-")
 
 ##' @S3method index lvm

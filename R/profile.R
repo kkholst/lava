@@ -7,16 +7,16 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     for (i in fixed$v) {
       mm$mean[[i]] <- tau0
     }
-    if (length(fixed$A)>0) {
-      for (i in 1:nrow(fixed$A)) {
+    for (i in seq_len(nrow(fixed$A))) {
         index(mm)$A[fixed$A[i,1],fixed$A[i,2]] <-
-          mm$fix[fixed$A[i,1],fixed$A[i,2]] <- tau0
-      }
+            mm$fix[fixed$A[i,1],fixed$A[i,2]] <- tau0
     }
-    if (length(fixed$P)>0) {
-      for (i in 1:nrow(fixed$P))
+    for (i in seq_len(nrow(fixed$P))) {
         index(mm)$P[fixed$P[i,1],fixed$P[i,2]] <-
-          mm$covfix[fixed$P[i,1],fixed$P[i,2]] <- tau0
+            mm$covfix[fixed$P[i,1],fixed$P[i,2]] <- tau0
+    }
+    for (i in length(fixed$e)) {
+        index(mm)$exfix[i] <- tau0
     }
     dots <- list(...)
     dots$silent <- FALSE

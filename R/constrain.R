@@ -219,7 +219,6 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     }  
     return(Model(x)$constrain)
   }
-  ##  require(numDeriv)
   if (is.numeric(x)) {
      b <- x
    } else {
@@ -319,20 +318,22 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
   if (length(index(object)$constrain.par)<1) return(NULL)
   parpos <- Model(object)$parpos
   if (is.null(parpos)) {
-    parpos <- with(index(object),matrices(Model(object),1:npar+npar.mean,meanpar=1:npar.mean))
-    parpos$A[index(object)$M0==0] <- 0
-    parpos$P[index(object)$P0==0] <- 0
-    parpos$v[index(object)$v1==0] <- 0
+      parpos <- with(index(object),matrices2(Model(object),seq_len(npar+npar.mean+npar.ex)))
+      parpos$A[index(object)$M0==0] <- 0
+      parpos$P[index(object)$P0==0] <- 0
+      parpos$v[index(object)$v1==0] <- 0
+      parpos$e[index(object)$e1==0] <- 0
   }
   myidx <- unlist(lapply(parpos$parval, function(x) {
     if (!is.null(attributes(x)$reg.idx)) {
       return(parpos$A[attributes(x)$reg.idx[1]])
     } else if (!is.null(attributes(x)$cov.idx)) {
       return(parpos$P[attributes(x)$cov.idx[1]])
-    }
-    else if (!is.null(attributes(x)$m.idx)) {
+    } else if (!is.null(attributes(x)$m.idx)) {
       return(parpos$v[attributes(x)$m.idx[1]])
-    } else NA
+    } else if (!is.null(attributes(x)$e.idx))
+        return(parpos$e[attributes(x)$e.idx[1]])
+    else NA
   }))
   names(myidx) <- names(parpos$parval)    
   mynames <- c()

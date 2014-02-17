@@ -478,6 +478,10 @@ regfix.lvm <- function(object,...) {
 ##' @export
 "parfix" <- function(x,...) UseMethod("parfix")
 
+
+## m <- lvm(c(y[m:v]~b*x))
+## constrain(m,b~a) <- base::identity
+
 ##' @S3method parfix lvm
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   object <- Model(x)
@@ -485,55 +489,50 @@ parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
     object <- fixsome(object)
   if (length(idx)!=length(value))
     value <- rep(value,length.out=length(idx))
+  value <- as.list(value)
   I <- index(object)
-  V <- with(I, matrices(Model(object),npar.mean+1:npar,1:npar.mean))
+  V <- with(I, matrices2(Model(object), seq_len(npar.mean+npar+npar.ex)))
   V$A[I$M0!=1] <- 0; V$P[I$P0!=1] <- 0
-  v.fix <- which(V$v%in%idx)
+  v.fix <- which(V$v%in%idx) ## Intercepts
   vval <- V$v[v.fix]
   v.ord <- match(vval,idx)
-  Pval <- V$P[V$P%in%idx]
+  Pval <- V$P[V$P%in%idx] ## Variance/covariance
   P.fix <- which(matrix(V$P%in%idx,nrow=nrow(V$P)),arr.ind=TRUE)
   P.ord <- match(Pval,idx)
-  Aval <- V$A[which(V$A%in%idx)]
+  Aval <- V$A[which(V$A%in%idx)] ## Regression parameters
   A.fix <- which(matrix(V$A%in%idx,nrow=nrow(V$A)),arr.ind=TRUE)
   A.ord <- match(Aval,idx)
-  count <- 0
-  if (length(v.fix)) {
-    for (i in 1:length(v.fix)) {
-      count <- count+1
+  e.fix <- which(V$e%in%idx)
+  eval <- V$e[e.fix]
+  e.ord <- match(eval,idx)
+  for (i in seq_len(length(e.fix))) {
+      object$exfix[[e.fix[i]]] <- value[[e.ord[i]]]
+  }      
+  for (i in seq_len(length(v.fix))) {
       object$mean[[v.fix[i]]] <- value[[v.ord[i]]]
-    }
   }
-  if (length(A.fix)>0) {
-    for (i in 1:nrow(A.fix)) {
-      count <- count+1
-##      if (is.numeric(value[[count]])) {
+  for (i in seq_len(nrow(A.fix))) {
       if (is.numeric(value[[ A.ord[i] ]])){
-        object$fix[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
-        object$par[A.fix[i,1],A.fix[i,2]] <- NA
+          object$fix[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
+          object$par[A.fix[i,1],A.fix[i,2]] <- NA
       } else {
-        object$par[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
-        object$fix[A.fix[i,1],A.fix[i,2]] <- NA
+          object$par[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
+          object$fix[A.fix[i,1],A.fix[i,2]] <- NA
       }
-    }
   }
-  if (length(P.fix)>0) {
-    for (i in 1:nrow(P.fix)) {
-      count <- count+1
-      ##      if (is.numeric(value[[count]])) {
+  for (i in seq_len(nrow(P.fix))) {
       if (is.numeric(value[[ P.ord[i] ]])) {
-        object$covfix[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
-        object$covpar[P.fix[i,1],P.fix[i,2]] <- NA
+          object$covfix[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
+          object$covpar[P.fix[i,1],P.fix[i,2]] <- NA
       } else {
-        object$covpar[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
-        object$covfix[P.fix[i,1],P.fix[i,2]] <- NA
+          object$covpar[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
+          object$covfix[P.fix[i,1],P.fix[i,2]] <- NA
       }
-    }
   }
   newindex <- reindex(object)
   object$parpos <- NULL
   index(object)[names(newindex)] <- newindex
-  attributes(object)$fixed <- list(v=v.fix,A=A.fix,P=P.fix)
+  attributes(object)$fixed <- list(v=v.fix,A=A.fix,P=P.fix,e=e.fix)
   return(object)
 }
 

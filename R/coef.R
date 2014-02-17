@@ -215,8 +215,6 @@ function(object, level=ifelse(missing(type),-1,2),
              )
     }
   }
-
-
   myparnames <- paste("p",seq_len(npar+npar.ex),sep="")[myorder.reg]
 
   p <- matrices(Model(object), myparnames)
@@ -401,7 +399,7 @@ function(object, level=ifelse(missing(type),-1,2),
   
   if (level>0 && length(myorder.extra>0)) {
       cc <- coefs[myorder.extra,,drop=FALSE]
-      rownames(cc) <- rownames(index(object)$epar)
+      rownames(cc) <- rownames(index(object)$epar)[which(index(object)$e1==1)]
       cc <- cbind(cc,rep(NA,ncol(res)-ncol(cc)))
       res <- rbind(res,cc)
       Type <- c(Type,rep("extra",length(myorder.extra)))
