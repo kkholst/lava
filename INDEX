@@ -34,7 +34,7 @@ compare                 Statistical tests Performs Likelihood-ratio, Wald and sc
 correlation             Generic method for extracting correlation coefficients of model object
 curereg                 Regression model for binomial data with unkown group of immortals
 equivalence             Identify candidates of equivalent models
-estimate.default        Estimation of functional of parameters
+estimate.default        Aggregation of parameters and data
 estimate.lvm            Estimation of parameters in a Latent Variable Model (lvm)
 gof                     Extract model summaries and GOF statistics for model object
 iid                     Extract i.i.d. decomposition (influence function) from model object
@@ -44,7 +44,8 @@ multinomial		Estimate probabilities in contingency table
 partialcor              Calculate partial correlations
 sim                     Simulate model
 predict.lvm             Prediction in structural equation models
-startvalues             For internal use
+startvalues             Starting values
+contr			Create contrast matrices
 
 ** Utilities
 
