@@ -25,6 +25,6 @@
   Ordinal regression models
 }
 \author{
-  Klaus Kähler Holst
+  Klaus K. Holst
 }
 

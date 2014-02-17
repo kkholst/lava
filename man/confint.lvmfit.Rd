@@ -4,7 +4,7 @@
 \title{Calculate confidence limits for parameters}
 \usage{
   \method{confint}{lvmfit} (object,
-    parm = 1:length(coef(object)), level = 0.95,
+    parm = seq_len(length(coef(object))), level = 0.95,
     profile = FALSE, curve = FALSE, n = 20,
     interval = NULL, lower = TRUE, upper = TRUE, ...)
 }

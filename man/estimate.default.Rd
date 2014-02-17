@@ -3,9 +3,9 @@
 \title{Estimation of functional of parameters}
 \usage{
   \method{estimate}{default} (x, f = NULL,
-    data = model.frame(x), id, stack = TRUE, subset,
-    score.deriv, level = 0.95, iid = TRUE, contrast, null,
-    vcov, coef, print = NULL, ...)
+    data = model.frame(x), id, iddata, stack = TRUE,
+    subset, score.deriv, level = 0.95, iid = TRUE,
+    contrast, null, vcov, coef, print = NULL, ...)
 }
 \arguments{
   \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -18,7 +18,10 @@
   \item{id}{(optional) id-variable corresponding to iid
   decomposition of model parameters.}
 
-  \item{stack}{}
+  \item{iddata}{(optional) id-variable for 'data'}
+
+  \item{stack}{If TRUE (default) the i.i.d. decomposition
+  is automatically stacked according to 'id'}
 
   \item{subset}{(optional) subset of data.frame on which to
   condition (logical expression or variable name)}
@@ -28,8 +31,8 @@
 
   \item{level}{Level of confidence limits}
 
-  \item{iid}{If TRUE the iid decompositions are also
-  returned (extract with \code{iid} method)}
+  \item{iid}{If TRUE (default) the iid decompositions are
+  also returned (extract with \code{iid} method)}
 
   \item{contrast}{(optional) Contrast matrix for final Wald
   test}

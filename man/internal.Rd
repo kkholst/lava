@@ -17,9 +17,9 @@
 \alias{graph2lvm}
 \alias{igraph.lvm}
 \alias{index}
+\alias{index<-}
 \alias{index.lvm}
 \alias{index.lvmfit}
-\alias{index<-}
 \alias{Inverse}
 \alias{IV}
 \alias{lisrel}
@@ -30,6 +30,8 @@
 \alias{modelVar}
 \alias{multigroup}
 \alias{offdiags}
+\alias{ordinal}
+\alias{ordinal<-}
 \alias{parameter}
 \alias{parfix}
 \alias{parfix<-}
