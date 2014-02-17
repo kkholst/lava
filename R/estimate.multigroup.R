@@ -88,7 +88,6 @@
     mystart[constrained] <- log(mystart[constrained])
   }
 
-  browser()
   if (!missing(weight)) {
     if (is.character(weight)) {
       stweight <- weight
@@ -560,6 +559,10 @@
       opt$gradient <- myGrad(opt$estimate)
   }
 
+  if (!is.null(opt$convergence)) {
+      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.") 
+  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.") 
+  
   if (!XconstrStdOpt) {
     myInformation <- function(theta) information(x,p=theta)
   } else {
