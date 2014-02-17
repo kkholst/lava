@@ -372,7 +372,7 @@ acc <- function(M,v) {
 tr <- function(x) sum(diag(x))
 
 npar.lvm <- function(x) {
-  return(index(x)$npar+ index(x)$npar.mean)
+  return(index(x)$npar+ index(x)$npar.mean+index(x)$npar.ex)
 
 }
 
@@ -400,6 +400,7 @@ numberdup <- function(xx) { ## Convert to numbered list
   }
   return(xx.new)
 }
+
 
 logit <- function(p) log(p/(1-p))
 expit <- tigol <- function(z) 1/(1+exp(-z))
