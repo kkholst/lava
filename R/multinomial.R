@@ -15,16 +15,20 @@
 ##'               z3=cut(y3,breaks=breaks),
 ##'               z4=cut(y4,breaks=breaks))
 ##' 
-##' 
 ##' multinomial(d[,5])
 ##' (a1 <- multinomial(d[,5:6]))
 ##' (K1 <- kappa(a1)) ## Cohen's kappa
 ##' 
 ##' K2 <- kappa(d[,7:8])
 ##' ## Testing difference K1-K2:
-##' estimate(merge(K1,K2),diff)
+##' estimate(merge(K1,K2,id=TRUE),diff)
 ##' 
-##' sqrt(vcov(K1)+vcov(K2)) ## Wrong std.err ignoring dependence
+##' estimate(merge(K1,K2,id=FALSE),diff) ## Wrong std.err ignoring dependence
+##' sqrt(vcov(K1)+vcov(K2))
+##'
+##' ## Average of the two kappas:
+##' estimate(merge(K1,K2,id=TRUE),function(x) mean(x))
+##' estimate(merge(K1,K2,id=FALSE),function(x) mean(x)) ## Independence
 ##' 
 ##' ## Goodman-Kruskal's gamma
 ##' m2 <- lvm(); covariance(m2) <- y1~y2
@@ -39,7 +43,8 @@
 ##' \dontrun{
 ##' gkgamma(table(d2[,3:4]))
 ##' gkgamma(multinomial(d2[,3:4]))
-##' }
+
+##' ##' }
 ##' @author Klaus Kähler Holst
 multinomial <- function(x,...) {
     if (is.table(x)) x <- lava::Expand(x)
