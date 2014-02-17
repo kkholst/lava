@@ -55,13 +55,3 @@ iid.default <- function(x,score.deriv,id,...) {
   return(structure(iid0,iI=iI))
 }
 
-##' @S3method iid cox.aalen
-iid.cox.aalen <- function(x,time.idx,...) {
-    if (missing(time.idx)) return(x$gamma.iid)
-    if (!all(time.idx)%in%seq(NCOL(x$cum)-1)) stop("Wrong index")
-    if (time.idx==0) return(x$B.iid)
-    res <- lapply(time.idx, 
-                  function(i) Reduce("rbind",lapply(x$B.iid,function(x) x[,i])))
-    if (length(idx)==1) return(res[[1]])
-    return(res)
-}
