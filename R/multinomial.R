@@ -43,9 +43,8 @@
 ##' \dontrun{
 ##' gkgamma(table(d2[,3:4]))
 ##' gkgamma(multinomial(d2[,3:4]))
-
-##' ##' }
-##' @author Klaus Kähler Holst
+##' }
+##' @author Klaus K. Holst
 multinomial <- function(x,...) {
     if (is.table(x)) x <- lava::Expand(x)
     if (NCOL(x)==1) {
@@ -238,14 +237,14 @@ independence <- function(x,...) {
         print(estimate(x))
     })
     return(list(p.value=e$coefmat[5]))
-    Q <- sum((a$coefmat[1,1]/a$coefmat[1,2]))
-    df <- nrow(a$coefmat)
-    res <- list(##data.name=hypothesis,
-                statistic = Q, parameter = df,
-                p.value=1-pchisq(Q,df=1),
-                method = "Test for independence")
-    class(res) <- "htest"
-    res
+    ## Q <- sum((a$coefmat[1,1]/a$coefmat[1,2]))
+    ## df <- nrow(a$coefmat)
+    ## res <- list(##data.name=hypothesis,
+    ##             statistic = Q, parameter = df,
+    ##             p.value=1-pchisq(Q,df=1),
+    ##             method = "Test for independence")
+    ## class(res) <- "htest"
+    ## res
 }
 
 ## independence(x)
