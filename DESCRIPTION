@@ -141,3 +141,4 @@ Collate:
     'multinomial.R'
     'ordreg.R'
     'pcor.R'
+    'ordinal.R'
