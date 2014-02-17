@@ -112,7 +112,7 @@ plothook.eventHistory <- function(x,...) {
 
 addhook("colorhook.eventHistory","color.hooks")
 colorhook.eventHistory <- function(x,subset=vars(x),...) {
-  return(list(vars=intersect(subset,unlist(m$attributes$timedep)),col="lightblue4"))
+  return(list(vars=intersect(subset,unlist(x$attributes$timedep)),col="lightblue4"))
 }
 
 addhook("print.eventHistory","print.hooks")
