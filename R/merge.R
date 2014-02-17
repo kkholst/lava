@@ -48,7 +48,7 @@ merge.lm <- function(x,...) {
     lava:::merge.estimate(x,...)
 }
 
-##' ##' @S3method merge glm
+##' @S3method merge glm
 merge.glm <- function(x,...) {
     lava:::merge.estimate(x,...)
 }
