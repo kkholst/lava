@@ -8,7 +8,7 @@
 }
 
 ##' @S3method parameter<- lvm
-"parameter<-.lvm" <- function(x,...,value) {
+"parameter<-.lvm" <- function(x,start,...,value) {
   if (class(value)[1]=="formula") {
     parameter(x,...) <- all.vars(value)
     return(x)
@@ -16,10 +16,18 @@
   ## latent(x,silent=TRUE) <- value
   ## covfix(x,value,NULL) <- 1
   ## intfix(x, value) <- value
-  newpar <- rep(0,length(value)); names(newpar) <- value
+  if (!missing(start)) {
+      if (length(start) != length(value)) stop("'start' and 'value' should be of the same lengths")
+      start <- as.list(start)
+      names(start) <- value
+  } else {
+      start <- as.list(rep(0,length(value))); names(start) <- value
+  }
   newfix <- as.list(value); names(newfix) <- value
-  x$expar <- c(x$expar,newpar)
-  x$exfix <- c(x$exfix,newfix)
+  x$expar[value] <- start
+  x$exfix[value] <- newfix
+  ##x$expar <- c(x$expar,start)
+  ##x$exfix <- c(x$exfix,newfix)
   index(x) <- reindex(x)
   x$attributes$parameter[value] <- TRUE
   return(x)
