@@ -271,8 +271,8 @@ estimate <- function(x,...) UseMethod("estimate")
   } else {
     Method <- get(Method)
   }
-  if (is.null(optim$method))       
-      optim$method <- ifelse(missing,"nlminb1",Method)
+  if (is.null(optim$method)) 
+      optim$method <- if (missing) "nlminb1" else Method
 
   if (!quick & index) {
     ## Proces data and setup some matrices
@@ -293,6 +293,8 @@ estimate <- function(x,...) UseMethod("estimate")
   if (!optim$meanstructure) {
     mu <- NULL
   }
+
+  nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
   ## Get starting values
   myparnames <- coef(x,mean=TRUE)
   paragree <- FALSE
@@ -304,20 +306,25 @@ estimate <- function(x,...) UseMethod("estimate")
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
   
- 
+  ## suppressMessages(browser())
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
       if (is.null(optim$starterfun) && lava.options()$param!="relative")
           optim$starterfun <- startvalues0
       start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
+      if (!is.null(x$expar) && length(start)<nparall) {
+          ii <- which(index(x)$e1==1)
+          start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
+          
+      }
     ## Debug(list("start=",start))
     if (length(paragree.2)>0) {
       start[which(paragree)] <- optim$start[which(paragree.2)]
     }
     optim$start <- start
   }
-  if (!is.null(x$expar)) 
-      optim$start <- c(optim$start, structure(unlist(x$expar),names=names(x$expar)))
+  coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
+  names(optim$start) <- coefname
   
   ## Missing data
   if (missing) {
@@ -612,14 +619,12 @@ estimate <- function(x,...) UseMethod("estimate")
     myInfo <- myHess <- NULL
   if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
     myGrad <- NULL
-
-  coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
   
   if (!silent) message("Optimizing objective function...")
   if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
   if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
-  
+
   if (!is.null(optim$method)) {
     opt <- do.call(optim$method,
                    list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
@@ -628,8 +633,7 @@ estimate <- function(x,...) UseMethod("estimate")
     if (optim$constrain) {
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
-  ##  names(opt$estimate) <- coefname
-
+  
     if (XconstrStdOpt & !is.null(myGrad))
       opt$gradient <- as.vector(myGrad(opt$par))
     else {
@@ -637,8 +641,11 @@ estimate <- function(x,...) UseMethod("estimate")
     }
   } else {
     opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
-    opt$grad <- rep(0,length(opt$estimate))
+    opt$gradient <- rep(0,length(opt$estimate))
   }
+  if (!is.null(opt$convergence)) {
+      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.") 
+  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.") 
   if (quick) {
     return(opt$estimate)
   }
@@ -651,6 +658,7 @@ estimate <- function(x,...) UseMethod("estimate")
   mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
   if (!silent) message("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
+
   if (!exists(asVarFun)) {
     if (is.null(myInfo)) {
       if (!is.null(myGrad))
@@ -672,7 +680,6 @@ estimate <- function(x,...) UseMethod("estimate")
   if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")                        }
   diag(asVar)[(diag(asVar)==0)] <- NA
 
-  nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
   mycoef[pp.idx,1] <- opt$estimate ## Will be finished during post.hooks
   
