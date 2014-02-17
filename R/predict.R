@@ -39,22 +39,24 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   if (!quick && !all(exogenous(object)%in%colnames(data))) stop("data.frame should contain exogenous variables")
   m <- moments(object,p,data=data)
   if (quick) { ## Only conditional moments given covariates
-    ii <- index(object)
-    P.x <- m$P; P.x[ii$exo.idx, ii$exo.idx] <- 0
-    Cy.x <- (m$IAi%*% tcrossprod(P.x,m$IAi))[ii$endo.idx,ii$endo.idx,drop=FALSE]
-    X <- ii$exogenous
-    mu.0 <- m$v; mu.0[ii$exo.idx] <- 0
-    if (length(X)>0) {
-      mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
-      mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
-      xi.x <- (m$IAi[ii$endo.obsidx,]%*%(mu.0 + mu.x))
-    } else {
-       xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
-      rownames(xi.x) <- names(mu.0)
-    }
-    return(structure(t(xi.x),cond.var=Cy.x,
-                     p=m$p,
-                     e=m$e))
+      ii <- index(object)
+      P.x <- m$P; P.x[ii$exo.idx, ii$exo.idx] <- 0
+      Cy.x <- (m$IAi%*% tcrossprod(P.x,m$IAi))[ii$endo.idx,ii$endo.idx,drop=FALSE]
+      X <- ii$exogenous
+      mu.0 <- m$v; mu.0[ii$exo.idx] <- 0
+      if (length(X)>0) {
+          mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
+          mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
+          xi.x <- (m$IAi[ii$endo.obsidx,]%*%(mu.0 + mu.x))
+      } else {
+          xi.x <- m$xi%*%rep(1,nrow(data))
+          rownames(xi.x) <- ii$endogenous
+          ##xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
+          ##rownames(xi.x) <- names(mu.0)
+      }
+      return(structure(t(xi.x),cond.var=Cy.x,
+                       p=m$p,
+                       e=m$e))
   }
 
 
