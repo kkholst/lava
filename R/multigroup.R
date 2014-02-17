@@ -294,7 +294,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
   res <- list(npar=nfree, npar.mean=nfree.mean,
               ngroup=length(lvms), names=mynames,
               lvm=lvms, data=datas, samplestat=samplestat,
-              A=As, P=Ps,
+              A=As, P=Ps, expar=exs,
               meanpar=names(mu), name=coefs, coef=pp, coef.idx=pp0,
               par=mypar, parlist=myparlist,  parpos=myparpos,
               mean=mymean, meanlist=mymeanlist, meanpos=mymeanpos,
