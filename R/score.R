@@ -128,7 +128,7 @@ score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estim
 score.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
-  parord <- modelPar(rm$model,seq_len(with(rm$model,npar+npar.mean+npar.ex)))$p
+  parord <- modelPar(rm$model,seq_len(with(rm$model,npar+npar.mean)))$p
   S <- list()
   for (i in 1:x$ngroup) {
     S0 <- rbind(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],indiv=indiv,...))
