@@ -44,9 +44,15 @@
 
 ##' @S3method kill lvm
 "kill.lvm" <- function(x, value, ...) {
-  if (class(value)[1]=="formula") {
-    return(kill(x,all.vars(value),...))
-  }  
+  if (class(value)[1]=="formula") value <- all.vars(value)
+  idx <- which(names(x$exfix)%in%value)
+  if (length(idx)>0) {
+      x$attributes$parameter[idx] <- x$expar[idx] <- x$exfix[idx] <- NULL
+      if (length(x$exfix)==0) {
+          x$exfix <- x$expar <- x$attributes$parameter <- NULL    
+      }
+      index(x) <- reindex(x)
+  }
   idx <- which(vars(x)%in%value)
   if (length(idx)==0)
     return(x)
