@@ -110,7 +110,7 @@ backwardsearch <- function(x,k=1,...) {
     parnotvar<- setdiff(1:length(p1), variances(Model(x))) ## We don't want to perform tests on the boundary of the parameter space
     freecomb <- combn(parnotvar, k)
     
-    for (i in 1:ncol(freecomb))
+    for (i in seq_len(ncol(freecomb)))
         {
             cc0 <- coef(cur, mean=FALSE,silent=TRUE,symbol=lava.options()$symbol)
             ii <- freecomb[,i]
@@ -129,8 +129,8 @@ backwardsearch <- function(x,k=1,...) {
     ord <- order(Tests, decreasing=TRUE); 
     Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
     res <- list(test=Tests[ord,], var=Vars[ord])
-    PM <- c()
-    for (i in 1:nrow(Tests)) {
+    PM <- matrix(ncol=3,nrow=0)
+    for (i in seq_len(nrow(Tests))) {
         if (!is.na(res$test[i,1])) {
             newrow <- c(formatC(res$test[i,1]), formatC(res$test[i,2]), paste(res$var[[i]],collapse=", "))
             PM <- rbind(PM, newrow)
@@ -169,8 +169,9 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             if ( AP[j,i]==0 ) {
                 restricted <- rbind(restricted,  c(i,j))
             }  
-    
-    restrictedcomb <- combn(1:nrow(restricted), k) # Combinations of k-additions to the model
+
+    if (is.null(restricted)) return(NULL)
+    restrictedcomb <- combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
 
     if (class(model.frame(x))%ni%c("data.frame","matrix")) {
         n <- model.frame(x)$n
@@ -186,7 +187,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         count <- 0
         pb <- txtProgressBar(style=3,width=40)        
     }
-    for (i in 1:ncol(restrictedcomb))
+    for (i in seq_len(ncol(restrictedcomb)))
         {
             count <- count+1
             if (!silent) {
@@ -241,7 +242,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     Tests <- Tests[ord,,drop=FALSE]
     Vars <- Vars[ord]
     PM <- c()
-    for (i in 1:nrow(Tests)) {
+    for (i in seq_len(nrow(Tests))) {
         if (!is.na(Tests[i,1])) {
             vv <- apply(Vars[[i]],1,function(x) paste(x,collapse=lava.options()$symbol[2]))
             newrow <- c(formatC(Tests[i,1]), formatC(Tests[i,2]), paste(vv,collapse=", "))
