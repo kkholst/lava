@@ -7,9 +7,11 @@ function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE,
     object <- fixsome(object,measurement.fix=FALSE)
   if (!missing(p)) {
     coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
-    rownames(coefs) <- c(coef(object,mean=TRUE,fix=FALSE)[c(seq_len(index(object)$npar.mean))],paste("p",seq_len(index(object)$npar),sep=""))
+    rownames(coefs) <- c(coef(object,mean=TRUE,fix=FALSE)[c(seq_len(index(object)$npar.mean))],
+                         paste("p",seq_len(index(object)$npar),sep=""),
+                               paste("e",seq_len(index(object)$npar.ex),sep=""))
     if (missing(vcov)) {
-      if (!is.null(data)) {
+      if (!missing(data) && !is.null(data)) {
         I <- information(object,p=p,data=data,type="E")
         myvcov <- solve(I)
       } else {
@@ -25,8 +27,9 @@ function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE,
     return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
   }  
 
+
+  ## Free regression/covariance parameters
   AP <- matrices(object, paste("p",seq_len(index(object)$npar), sep=""))
-  
   A <- AP$A; A[index(object)$M1==0] <- "0" ## Only free parameters
   P <- AP$P; P[index(object)$P1==0] <- "0"; P[upper.tri(P)] <- "0"
   nn <- vars(object)
