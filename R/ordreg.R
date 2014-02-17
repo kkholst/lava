@@ -9,7 +9,7 @@
 ##' @param fast If TRUE standard errors etc. will not be calculated
 ##' @param ... Additional arguments to lower level functions
 ##' @export
-##' @author Klaus Kähler Holst
+##' @author Klaus K. Holst
 ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),start,fast=FALSE,...) {
     y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
@@ -43,7 +43,7 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),s
     if (fast) return(structure(cc,threshold=up$threshold(cc,up$K)))
     nn <- c(paste(lev[-length(lev)], lev[-1L], sep = "|"),
                    colnames(X))
-    I <- ordreg_hessian(cc,up)
+    I <- -ordreg_hessian(cc,up)
     names(cc) <- nn
     dimnames(I) <- list(nn,nn)
     res <- list(vcov=solve(I),coef=cc,call=match.call(),up=up)
@@ -55,6 +55,25 @@ print.ordreg <- function(x,...) {
     cat("Call:\n"); print(x$call)
     cat("\nParameter Estimates:\n")
     print(x$coef)
+}
+
+##' @S3method summary ordreg
+summary.ordreg <- function(object,alpha=0.95,...) {
+    res <- cbind(coef(object),diag(vcov(object))^.5)
+    pp <- 1-(1-alpha)/2
+    qq <- qnorm(pp)
+    res <- cbind(res,res[,1]-res[,2]*qq,res[,1]+res[,2]*qq,2*(1-pnorm(abs(res[,1])/res[,2])))
+    colnames(res) <- c("Estimate","Std.Err",paste(round(c(1-pp,pp)*1000)/10,"%",sep=""),"P-value")
+    res <- list(coef=res,logLik=logLik(object),AIC=AIC(object))
+    class(res) <- "summary.ordreg"
+    return(res)
+}
+
+##' @S3method print summary.ordreg
+print.summary.ordreg <- function(x,alpha=0.95,...) {
+    cat("AIC: ", x$AIC, "\n\n")
+    print(x$coef)
+    cat("\n")
 }
 
 ##' @S3method score ordreg
@@ -78,7 +97,7 @@ coef.ordreg <- function(object,...) object$coef
 ##' @S3method vcov ordreg
 vcov.ordreg <- function(object,...) object$vcov
 
-ordreg_logL <- function(theta,env,indiv=...) {
+ordreg_logL <- function(theta,env,indiv=FALSE,...) {
     if (length(theta)!=with(env,p+K-1)) stop("Wrong dimension")
     env$theta <- theta
     if (env$p>0) beta <- with(env,theta[seq(p)+K-1])
