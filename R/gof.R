@@ -10,7 +10,6 @@ rsq <- function(x) {
 }
 
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
-##                     control=list(start=coef(object),trace=1),
                      control=list(trace=1),
                      weight=Weight(object),estimator=object$estimator,
                      missing="lvm.missing"%in%class(object),

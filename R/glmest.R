@@ -95,8 +95,6 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 }
 
 
-
-
 ##' @S3method score lm
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,offset=NULL,...) {

@@ -42,7 +42,7 @@
 ##' @aliases confint.multigroupfit
 ##' @S3method confint lvmfit
 ##' @method confint lvmfit
-confint.lvmfit <- function(object,parm=1:length(coef(object)),level=0.95,profile=FALSE,curve=FALSE,n=20,interval=NULL,lower=TRUE,upper=TRUE,...) {
+confint.lvmfit <- function(object,parm=seq_len(length(coef(object))),level=0.95,profile=FALSE,curve=FALSE,n=20,interval=NULL,lower=TRUE,upper=TRUE,...) {
   if (is.character(parm)) {
     parm <- parpos(Model(object),p=parm)
     parm <- parm[attributes(parm)$ord]

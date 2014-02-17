@@ -134,7 +134,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   npar.mean <- index(object)$npar.mean
   Par <- object$coef
   if (npar.mean>0)
-    Par <- Par[-(1:npar.mean),,drop=FALSE]
+    Par <- Par[-seq_len(npar.mean),,drop=FALSE]
   Par <-
     switch(type,
            sd = paste(formatC(Par[,1,drop=FALSE]), " (", formatC(Par[,2,drop=FALSE]), ")", sep=""),
@@ -143,7 +143,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
            name = rownames(Par),
            none = ""
            )
-  AP <- matrices(Model(object), Par)
+  AP <- matrices(Model(object), Par) ## Ignore expar
   A <- AP$A; P <- AP$P
   P[exogenous(object),exogenous(object)] <- NA
   
