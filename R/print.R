@@ -115,7 +115,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
   CC <- do.call("CoefMat.multigroupfit",myargs)  
   for (cc in res) {
     counter <- counter+1
-    cat(rep("-",50),"\n",sep="")
+    cat(rep("_",52),"\n",sep="")
     cat("Group ", counter, sep="")
     myname <- x$model$names[counter]
     if (!is.null(myname) && !is.na(myname))
