@@ -7,11 +7,12 @@
 ##' @param f transformation of model parameters and (optionally) data, or contrast matrix (or vector)
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to iid decomposition of model parameters. 
-##' @param stack 
+##' @param iddata (optional) id-variable for 'data'
+##' @param stack If TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'
 ##' @param subset (optional) subset of data.frame on which to condition (logical expression or variable name)
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level Level of confidence limits
-##' @param iid If TRUE the iid decompositions are also returned (extract with \code{iid} method)
+##' @param iid If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) Null hypothesis to test 
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -194,7 +195,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
         newf <- NULL
         if (length(form)==0) {
             arglist <- list(pp)
-            newf <- function(p,...) do.call("f",list(p,...))
+            ##newf <- function(p,...) do.call("f",list(p,...))
             newf <- function(...) do.call("f",list(...))
             val <- do.call("f",arglist)
         } else {
@@ -202,7 +203,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
             if (is.list(val)) {
                 nn <- names(val)
                 val <- do.call("cbind",val)
-                newf <- function(p,...) do.call("cbind",f(p,...))
+                ##newf <- function(p,...) do.call("cbind",f(p,...))
                 newf <- function(...) do.call("cbind",f(...))
             }
         }
