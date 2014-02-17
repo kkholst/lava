@@ -140,7 +140,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
         }
         if (stack) {
             clidx <- NULL
-            if (lava.options()$cluster.index) {
+            if (!lava.options()$cluster.index) {
                 iidtheta <- matrix(unlist(by(iidtheta,id,colSums)),byrow=TRUE,ncol=ncol(iidtheta))
                 idstack <- sort(unique(id))
             } else { 
@@ -251,7 +251,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
                 pp <- as.vector(colMeans(cbind(val)))
                 iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N 
                 if (!missing(id)) {
-                    if (lava.options()$cluster.index) 
+                    if (!lava.options()$cluster.index) 
                         iid1 <- matrix(unlist(by(iid1,id,colSums)),byrow=TRUE,ncol=ncol(iid1))
                     else {
                         iid1 <- mets::cluster.index(id,mat=iid1,return.all=FALSE)
@@ -261,7 +261,7 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
                     phat <- mean(subset)
                     iid3 <- cbind(-1/phat^2 * (subset-phat)/n)
                     if (!missing(id)) {
-                        if (lava.options()$cluster.index)
+                        if (!lava.options()$cluster.index)
                             iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
                         else
                             iid3 <- mets::cluster.index(id,mat=iid3,return.all=FALSE)         

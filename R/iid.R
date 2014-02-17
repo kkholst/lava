@@ -46,7 +46,7 @@ iid.default <- function(x,score.deriv,id,...) {
   }
   iid0 <- U%*%iI
   if (!missing(id)) {
-      if (lava.options()cluster.index) {
+      if (!lava.options()$cluster.index) {
           iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iI))
       } else {
           iid0 <- mets::cluster.index(id,mat=iid0,return.all=FALSE)
