@@ -247,7 +247,6 @@ estimate.default <- function(x,f=NULL,data=model.frame(x),id,iddata,stack=TRUE,s
                     D <- colMeans(rbind(D))
                     iid2 <- iidtheta%*%D
                 }
-                browser()
                 pp <- as.vector(colMeans(cbind(val)))
                 iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N 
                 if (!missing(id)) {
