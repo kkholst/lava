@@ -85,7 +85,7 @@ merge.estimate <- function(x,y,...,id) {
         count <- count+1
         clidx <- NULL
         id0 <- id[[count]]
-        if (inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
+        if (lava.options()cluster.index) {
             iid0 <- matrix(unlist(by(iid(z),id0,colSums)),byrow=TRUE,ncol=length(coef(z)))
             ids <- c(ids, list(sort(unique(id0))))
 
