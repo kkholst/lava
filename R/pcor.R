@@ -10,10 +10,10 @@ pcor <- function(x,y,X,Z,start,...) {
     if (missing(start)) {
         f <- as.formula(ifelse(missing(X),"~1","~X"))
         start <- c(0.5,
-                   attr(lava:::ordreg(update(f,x~.),fast=TRUE,family=binomial("probit")),"threshold"),
-                   attr(lava:::ordreg(update(f,y~.),fast=TRUE,family=binomial("probit")),"threshold"))
+                   attr(lava::ordreg(update(f,x~.),fast=TRUE,family=binomial("probit")),"threshold"),
+                   attr(lava::ordreg(update(f,y~.),fast=TRUE,family=binomial("probit")),"threshold"))
     } 
-    browser()
+
     nn <- table(x,y)
     ff <- function(theta) {
         -sum(as.vector(nn)*log(polycor0(theta[1],theta[n1],theta[n2])))
@@ -46,7 +46,7 @@ vcov.pcor <- function(object,...) object$vcov
 logLik.pcor <- function(object,p=coef(object),...) {
     u <- polycor0(p[1],p[object$n1],p[object$n2],onlyP=TRUE)
     np <- sum(as.vector(object$tab)*log(as.vector(u)))
-    nobs <- sum(ps$tab)/2
+    nobs <- sum(u$tab)/2
     structure(np,nall=nobs,nobs=nobs,df=length(p),class="logLik")
 }
 
