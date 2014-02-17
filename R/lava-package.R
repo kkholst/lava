@@ -209,11 +209,12 @@ NULL
 ##' starter.multigroup modelPar modelVar matrices pars pars.lvm
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
 ##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
-##' index.lvm index.lvmfit index reindex index<- survival survival<-
+##' index.lvm index.lvmfit index reindex index<-
+##' survival survival<- ordinal ordinal<-
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse
 ##' gaussian_logLik.lvm addhook gethook multigroup Weight fixsome
 ##' parfix parfix<- merge IV parameter contr Specials decomp.specials
-##' getoutcome
+##' getoutcome index index<-
 NULL
