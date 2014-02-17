@@ -66,6 +66,7 @@ assign("options", list(
     constrain=FALSE,
     silent=TRUE,            
     itol=1e-9,
+    cluster.index=inherits(try(find.package("mets"),silent=TRUE),"try-error"),
     Dmethod="simple", ##Richardson"
     parallel=TRUE,
     param="relative",
