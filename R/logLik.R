@@ -40,15 +40,13 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
         }
       index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
     }
-    pp <- modelPar(x0,p)
-    p0 <- with(pp, c(meanpar,p))
     k <- length(index(x0)$manifest)
     myfun <- function(ii) {
       if (length(xfix)>0)
         for (i in 1:length(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=with(pp,c(meanpar,p)),weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],
+      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=p,weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],
                        model=model,debug=debug,indiv=indiv,...))
     }    
     loglik <- sapply(1:nrow(data),myfun)
@@ -57,7 +55,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       n <- nrow(data)
       attr(loglik, "nall") <- n
       attr(loglik, "nobs") <- n
-      attr(loglik, "df") <- length(p0)
+      attr(loglik, "df") <- length(p)
       class(loglik) <- "logLik"      
     }
     return(loglik)
@@ -127,8 +125,8 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
                           weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) { 
-  exo.idx <- with(index(object), exo.obsidx)##match(exogenous(object),manifest(object))
-  endo.idx <- with(index(object), endo.obsidx)##match(endogenous(object),manifest(object))
+  exo.idx <- with(index(object), exo.obsidx)
+  endo.idx <- with(index(object), endo.obsidx)
   if (type[1]=="exo") {
     if (length(exo.idx)==0 || is.na(exo.idx))
       return(0)
@@ -170,7 +168,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     npar <- P*(1+(P-1)/2)
     if (meanstructure) npar <- npar+ (P*k + P)
     attr(loglik, "nall") <- n
-    attr(loglik, "nobs") <- n##-npar
+    attr(loglik, "nobs") <- n
     attr(loglik, "df") <- npar    
     class(loglik) <- "logLik"    
     return(loglik)
@@ -193,18 +191,6 @@ gaussian_logLik.lvm <- function(object,p,data,
 
   iC <- Inverse(C,det=TRUE)
   detC <- attributes(iC)$det
-#  iC <- solve(C)
-#  detC <- 1
-  
-  ##  detC <- det(C)            
-  ##  iC <- try(solve(C), silent=TRUE)
-  ##   if (detC<0 | inherits(iC, "try-error")) {
-  ##     if (indiv)
-  ##       return(rep(-.Machine$double.xmax,nrow(data)))
-  ##     else
-  ##       return(-.Machine$double.xmax)
-  ##   }
-
 
   if (!is.null(weight)) {
     weight <- cbind(weight)
