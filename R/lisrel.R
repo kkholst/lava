@@ -24,9 +24,9 @@ lisrel <- function(model,p,X=NULL,muX=NULL,varX=NULL,...) {
   Gamma <- A[eta.idx,exo.idx,drop=FALSE]
   V <- mom$P
   Psi <- V[eta.idx,eta.idx] ## Residual variance
-  Theta <- V[y.idx,y.idx] ## -
 
-  IBi <- solve(I-B)
+  Theta <- V[y.idx,y.idx] ## -  
+  IBi <- if (ncol(I)>0) solve(I-B) else I
   LIBi <- Lambda%*%IBi
   Phi <- LIBi%*%Gamma + K
 
