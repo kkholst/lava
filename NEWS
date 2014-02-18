@@ -1,7 +1,29 @@
 * Version 1.2.5 <2014-02-01 Wed>
+  - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
-  - 'merge' method added for combining 'estimate' objects 
-  - Cleaned up code
+  - R-squared values (+ approximate standard
+    errors/i.i.d. decomposition) via 'rsq(model,TRUE)'
+  - Added 'dataid' argument to estimate.default allowing different id
+    fo 'data' and i.i.d. decomposition of model-parameters. 
+    With the argument 'stack=FALSE' influence functions within
+    clusters will not be stacked together.
+  - New infrastructure for adding additional parameters to models (no
+    user-visible changes).
+  - multinomial function for calculating influence curves for
+    multinomial probabilities. 'gammagk','kappa' methods for
+    calculating Goodman-Kruskals gamma and Cohens kappa coefficients.
+  - ordreg function for univariate ordinal regression models
+  - iid methods for data.frames/matrices (empirical mean and variance)
+  - Support for using 'mets::cluster.index' in GEE-type models (much
+    faster).
+  - plotConf updated (vcov argument added and more graphical arguments
+    parsed to plotting functions)
+  - Additional unit-tests implemented
+  - New 'forrestplot' and 'Combine' functions
+  - Covariance structure may now be specified using '~~', e.g.
+    'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
+    (y,z),(y,u),(v,z),(v,u).
+
 
 * Version 1.2.4 <2013-12-01 Sun>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
@@ -11,7 +33,7 @@
   - R-squared added to summary
   - alias: covariance->variance
   - added size argument to binomial.lvm; 
-
+    
 * Version 1.2.3 <2013-10-27 Sun>
   - 'subset' argument added to estimate.default. Calculates empirical
     averages conditional on subsets of data
