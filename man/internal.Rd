@@ -8,6 +8,7 @@
 \alias{decomp.specials}
 \alias{deriv}
 \alias{describecoef}
+\alias{dmvn}
 \alias{estimate.MAR}
 \alias{finalize}
 \alias{fixsome}
@@ -17,9 +18,9 @@
 \alias{graph2lvm}
 \alias{igraph.lvm}
 \alias{index}
-\alias{index<-}
 \alias{index.lvm}
 \alias{index.lvmfit}
+\alias{index<-}
 \alias{Inverse}
 \alias{IV}
 \alias{lisrel}
@@ -46,6 +47,7 @@
 \alias{randomslope<-}
 \alias{reindex}
 \alias{reorderdata}
+\alias{rmvn}
 \alias{rsq}
 \alias{score.glm}
 \alias{Specials}

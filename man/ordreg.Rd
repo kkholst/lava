@@ -3,7 +3,7 @@
 \title{Univariate cumulative link regression models}
 \usage{
   ordreg(formula, data = parent.frame(), offset,
-    family = binomial("logit"), start, fast = FALSE, ...)
+    family = binomial("probit"), start, fast = FALSE, ...)
 }
 \arguments{
   \item{formula}{formula}
