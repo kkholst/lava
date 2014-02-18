@@ -85,17 +85,18 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
   }        
 
   myvar <- NULL
-  lvar <- x
-##  lvar <- list(x,...)
+  ## lvar <- x
+  lvar <- list(x,...)
   if (!is.list(lvar)) lvar <- list(x)
   for (myvar in lvar) {
     if (class(myvar)[1]=="formula") {
-      ## if (length(getoutcome(myvar))>0) {
-      ##   regression(res,...,silent=silent) <- myvar     
-      ## } else {
-      ##   myvar <- all.vars(myvar)
-      ## }
-      regression(res,...,silent=silent) <- myvar
+        ## if (length(getoutcome(myvar))>0) {
+        ##   regression(res,...,silent=silent) <- myvar     
+        ## } else {
+        ##   myvar <- all.vars(myvar)
+        ## }
+        ## regression(res,...,silent=silent) <- myvar
+      regression(res,silent=silent) <- myvar
     }
     if (is.character(myvar)) {
       res <- addvar(res, myvar, silent=silent)  }
