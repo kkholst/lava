@@ -55,3 +55,46 @@ iid.default <- function(x,score.deriv,id,...) {
   return(structure(iid0,iI=iI))
 }
 
+
+##' @S3method iid matrix
+iid.matrix <- function(x,...) {
+    p <- ncol(x); n <- nrow(x)
+    mu <- colMeans(x); S <- var(x)*(n-1)/n
+    iid1 <- t(t(x)-mu)
+    iid2 <- matrix(ncol=(p+1)*p/2,nrow=n)
+    pos <- 0
+    nn <- c()
+    cc <- mu
+    for (i in seq(p))
+        for (j in seq(i,p)) {
+            pos <- pos+1
+            cc <- c(cc,S[i,j])
+            iid2[,pos] <- (iid1[,i]*iid1[,j])-cc[length(cc)]
+            nn <- c(nn,paste(colnames(x)[c(i,j)],collapse=lava.options()$symbols[2]))
+        }
+    colnames(iid1) <- colnames(x); colnames(iid2) <- nn
+    names(cc) <- c(colnames(iid1),colnames(iid2))
+    structure(cbind(iid1/n,iid2/n),
+              coef=cc,
+              mean=mu, var=S)
+}
+
+##' @S3method iid numeric
+iid.numeric <- function(x,...) {
+    n <- length(x)
+    mu <- mean(x); S <- var(x)*(n-1)/n
+    iid1 <- t(t(x)-mu)
+    structure(cbind(mean=iid1/n,var=(iid1^2-S)/n),coef=c(mean=mu,var=S),mean=mu,var=S)
+}
+
+
+##' @S3method iid data.frame
+iid.data.frame <- function(x,...) {
+    if (!all(apply(x[1,,drop=FALSE],2,function(x) inherits(x,c("numeric","integer")))))
+        stop("Don't know how to handle data.frames of this type")
+    iid(as.matrix(x))
+}
+
+
+
+

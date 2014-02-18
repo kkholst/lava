@@ -485,8 +485,19 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
   sim(object,nsim,...)
 }
 
+##' @export
 rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(2)+1,...) {
     PP <- with(svd(sigma), v%*%diag(sqrt(d))%*%t(u))
     res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
     return(res+cbind(rep(1,n))%*%mean)
 }
+
+##' @export
+dmvn <- function(x,mean=rep(0,ncol(sigma)),sigma,log=FALSE,...) {
+    k <- ncol(sigma)
+    isigma <- Inverse(sigma)
+    logval <- -0.5*(base::log(2*base::pi)*k+base::log(attributes(isigma)$det)+rowSums((x%*%isigma)*x))
+    if (log) return(logval)
+    return(exp(logval))
+}
+
