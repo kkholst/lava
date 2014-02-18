@@ -59,7 +59,7 @@ print.ordinal.lvm <- function(x,...) {
             ## }
             x$attributes$ordinalparname[var[i]] <- list(names(newfix))
         }
-        x$attributes$type[var[i]] <- ifelse(K[i]>2,"Ordinal","Binary")
+        x$attributes$type[var[i]] <- ifelse(K[i]>2,"ordinal","binary")
         if (K[i]>2) intfix(x,var[i],NULL) <- 0
     }
     x$attributes$ordinal[var] <- TRUE
