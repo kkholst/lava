@@ -82,10 +82,10 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
     P1 <- pnorm(a0,sd=1)
     P2 <- pnorm(b0,sd=1)
     for (i in seq(k1))
-        for (j in seq(k2)) P[i,j] <- pmvnorm(lower=c(-Inf,-Inf),upper=c(a0[i],b0[j]),sigma=S)
+        for (j in seq(k2)) P[i,j] <- mets::pbvn(lower=c(-Inf,-Inf),upper=c(a0[i],b0[j]),sigma=S)
 
     PP <- Drho <- matrix(0,nrow=k1+1,ncol=k2+1)
-    pmvn <- function(i,j,sigma=S) {
+    pmvn0 <- function(i,j,sigma=S) {
         if (i==0 | j==0) return(0)
         if (i==(k1+1) & j==(k2+1)) return(1)
         if (i==(k1+1)) return(P2[j])
@@ -93,7 +93,7 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
         P[i,j]
     }
 
-    dpmvn <- function(i,j,type=1,k) {
+    dpmvn0 <- function(i,j,type=1,k) {
         if (i==0 | j==0) return(0)
         if (i==(k1+1) & j==(k2+1)) return(0)
         if (i==(k1+1)) {
@@ -105,7 +105,7 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
             return(0)
         }
         if (type==1) ## rho
-            return(dmvnorm(c(a0[i],b0[j]),sigma=S))
+            return(dmvn(c(a0[i],b0[j]),sigma=S))
         if (type==2) { ## threshold a
             if (k!=i) return(0)
             return(dnorm(a0[i])*pnorm((b0[j]-rho*a0[i])/sqrt(1-rho^2)))
@@ -116,10 +116,10 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
     
     for (i in seq(k1+1))
         for (j in seq(k2+1)) {
-            PP[i,j] <- pmvn(i,j) + pmvn(i-1,j-1) -
-                pmvn(i-1,j) - pmvn(i,j-1)
-            Drho[i,j] <- dpmvn(i,j) + dpmvn(i-1,j-1) -
-                dpmvn(i-1,j) - dpmvn(i,j-1)
+            PP[i,j] <- pmvn0(i,j) + pmvn0(i-1,j-1) -
+                pmvn0(i-1,j) - pmvn0(i,j-1)
+            Drho[i,j] <- dpmvn0(i,j) + dpmvn0(i-1,j-1) -
+                dpmvn0(i-1,j) - dpmvn0(i,j-1)
         }
     if (onlyP) return(PP)
     
@@ -128,8 +128,8 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
         for (i in seq(k1+1))
             for (j in seq(k2+1)) {
                 pos <- i + (k1+1)*(j-1)
-                Da[pos,k] <- dpmvn(i,j,type=2,k=k) + dpmvn(i-1,j-1,type=2,k=k) -
-                    dpmvn(i-1,j,type=2,k=k) - dpmvn(i,j-1,type=2,k=k)
+                Da[pos,k] <- dpmvn0(i,j,type=2,k=k) + dpmvn0(i-1,j-1,type=2,k=k) -
+                    dpmvn0(i-1,j,type=2,k=k) - dpmvn0(i,j-1,type=2,k=k)
             }
     
     Db <- matrix(0,length(PP),k2)
@@ -137,8 +137,8 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
         for (i in seq(k1+1))
             for (j in seq(k2+1)) {
                 pos <- i + (k1+1)*(j-1)
-                Db[pos,k] <- dpmvn(i,j,type=3,k=k) + dpmvn(i-1,j-1,type=3,k=k) -
-                    dpmvn(i-1,j,type=3,k=k) - dpmvn(i,j-1,type=3,k=k)
+                Db[pos,k] <- dpmvn0(i,j,type=3,k=k) + dpmvn0(i-1,j-1,type=3,k=k) -
+                    dpmvn0(i-1,j,type=3,k=k) - dpmvn0(i,j-1,type=3,k=k)
             }
     
     list(p=PP,dp=cbind(as.vector(Drho),Da,Db))
