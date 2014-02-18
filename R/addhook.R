@@ -47,6 +47,14 @@ addhook <- function(x,hook="estimate.hooks",...) {
   invisible(newhooks)
 }
 
+versioncheck <- function(pkg,geq,sep=".",...) {
+    xyz <- tryCatch(
+        as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
+        error=function(x) NULL)
+    if (is.null(xyz)) return(FALSE)
+    all(xyz[seq(length(geq))]>=geq)
+}
+
 lava.env <- new.env()
 assign("init.hooks",c(),envir=lava.env)
 assign("estimate.hooks",c(),envir=lava.env)
@@ -66,7 +74,7 @@ assign("options", list(
     constrain=FALSE,
     silent=TRUE,            
     itol=1e-9,
-    cluster.index=!inherits(try(find.package("mets"),silent=TRUE),"try-error"),
+    cluster.index=versioncheck("metsa",c(0,2,7)),
     Dmethod="simple", ##Richardson"
     parallel=TRUE,
     param="relative",
