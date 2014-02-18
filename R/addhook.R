@@ -74,7 +74,7 @@ assign("options", list(
     constrain=FALSE,
     silent=TRUE,            
     itol=1e-9,
-    cluster.index=versioncheck("metsa",c(0,2,7)),
+    cluster.index=versioncheck("mets",c(0,2,7)),
     Dmethod="simple", ##Richardson"
     parallel=TRUE,
     param="relative",
