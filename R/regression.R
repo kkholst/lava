@@ -118,19 +118,27 @@
     }
 
     if (class(value)[1]=="formula") {
-      yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
-      if (length(yx)==1) {        
-        lhs <- NULL; xidx <- 1
-      } else {
-        lhs <- yx[1]; xidx <- 2
-      }
-      X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
-
-      if (!is.null(lhs) && nchar(lhs[[1]])>2 && substr(lhs[[1]],1,2)=="v(") {
-        v <- update(value,paste(decomp.specials(lhs),"~."))
-        covariance(object,...) <- v
-        return(object)
-      }        
+        yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
+        iscovar <- FALSE
+        if (length(yx)==1) {        
+            lhs <- NULL; xidx <- 1
+        } else {
+            lhs <- yx[1]; xidx <- 2
+            if (yx[[xidx]][1]=="") {
+                yx[[xidx]] <- yx[[xidx]][-1]
+                iscovar <- TRUE
+            }            
+        }
+        X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
+        
+        if (iscovar) {
+            return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
+        }
+        if (!is.null(lhs) && nchar(lhs[[1]])>2 && substr(lhs[[1]],1,2)=="v(") {
+            v <- update(value,paste(decomp.specials(lhs),"~."))
+            covariance(object,...) <- v
+            return(object)
+        }        
 
       curvar <- index(object)$var
       res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
