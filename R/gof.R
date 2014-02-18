@@ -1,11 +1,59 @@
 ##' @export
-rsq <- function(x) {
+rsq <- function(x,model=TRUE) {
+
+    if (!model) {
+        v <- endogenous(x)
+        vpar <- paste(v,v,sep=lava.options()$symbol[2])
+        iid.v <- iid(model.frame(x)[,v])    
+        iid.mod <- iid(x)
+        coef0 <- c(attributes(iid.v)$coef[vpar],
+                   coef(x)[vpar])
+        iid0 <- cbind(iid.v[,vpar],iid.mod[,vpar])
+        p <- length(v)
+        idx <- seq_len(p);         
+        ee <- estimate(NULL,data=NULL,
+                       function(x) {
+                           res <- (x[idx]-x[idx+p])/x[idx]
+                           names(res) <- v
+                           as.list(res)
+                       },
+                       print=function(x,...) {
+                           cat("\nR-squared:\n\n")
+                           print(x$coefmat)
+                           cat("\n")
+                       },
+                       coef=coef0, iid=iid0)
+
+        ## lat <- latent(x)
+        ## v <- intersect(children(x,lat),endogenous(x))
+        ## vpar <- paste(v,v,sep=lava.options()$symbol[2])
+        ## lpar <- paste(lat,lat,sep=lava.options()$symbol[2])
+        ## rpar <- paste(v,lat,sep=lava.options()$symbol[1])
+        ## fix <- x$model$fix[lat,v]
+        ## par <- x$model$par[lat,v]
+
+        ## ee <- estimate(NULL,data=NULL,
+        ##                function(x) {
+        ##                    res <- (x[idx]-x[idx+p])/x[idx]
+        ##                    names(res) <- v
+        ##                    as.list(res)
+        ##                },
+        ##                print=function(x,...) {
+        ##                    cat("\nR-squared:\n\n")
+        ##                    print(x$coefmat)
+        ##                    cat("\n")
+        ##                },    
+
+        return(list(ee))
+    }
+
+    browser()
     v <- c(endogenous(x),setdiff(latent(x),parameter(Model(x))))
     res <- coef(x,9,std="yx")
-    idx <- with(attributes(res),which(var==from & var==v))
+    idx <- with(attributes(res),which(var==from && var==v))
     nam <- attributes(res)$var[idx]
-    res <- res[idx,5]
-    names(res) <- nam
+    res <- 1-res[idx,5]   
+    names(res) <- nam    
     res
 }
 
