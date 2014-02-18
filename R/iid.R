@@ -28,7 +28,7 @@ iid.default <- function(x,score.deriv,id,...) {
     warning("Not available for this class")
     return(NULL)
   }
-  U <- score(x,indiv=TRUE,...)
+  U <- score(x,indiv=TRUE,combine=TRUE,...)
   n <- NROW(U)
   pp <- pars(x)   
   if (missing(score.deriv)) {
