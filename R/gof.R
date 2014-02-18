@@ -1,7 +1,7 @@
 ##' @export
-rsq <- function(x,model=TRUE) {
+rsq <- function(x,stderr=FALSE) {
 
-    if (!model) {
+    if (stderr) {
         v <- endogenous(x)
         vpar <- paste(v,v,sep=lava.options()$symbol[2])
         iid.v <- iid(model.frame(x)[,v])    
@@ -20,37 +20,50 @@ rsq <- function(x,model=TRUE) {
                        print=function(x,...) {
                            cat("\nR-squared:\n\n")
                            print(x$coefmat)
-                           cat("\n")
                        },
                        coef=coef0, iid=iid0)
 
-        ## lat <- latent(x)
-        ## v <- intersect(children(x,lat),endogenous(x))
-        ## vpar <- paste(v,v,sep=lava.options()$symbol[2])
-        ## lpar <- paste(lat,lat,sep=lava.options()$symbol[2])
-        ## rpar <- paste(v,lat,sep=lava.options()$symbol[1])
-        ## fix <- x$model$fix[lat,v]
-        ## par <- x$model$par[lat,v]
+        res <- list(ee)
+        for (lat in latent(x)) {
 
-        ## ee <- estimate(NULL,data=NULL,
-        ##                function(x) {
-        ##                    res <- (x[idx]-x[idx+p])/x[idx]
-        ##                    names(res) <- v
-        ##                    as.list(res)
-        ##                },
-        ##                print=function(x,...) {
-        ##                    cat("\nR-squared:\n\n")
-        ##                    print(x$coefmat)
-        ##                    cat("\n")
-        ##                },    
+            v <- intersect(children(x,lat),endogenous(x))
+            vpar <- paste(v,v,sep=lava.options()$symbol[2])
+            lpar <- paste(lat,lat,sep=lava.options()$symbol[2])
+            rpar <- paste(v,lat,sep=lava.options()$symbol[1])
+            fix <- c(x$model$fix[lat,v,drop=TRUE],x$model$covfix[lat,lat])
+            pp <- coef(x)
+            idx <- x$model$parpos$A[lat,v]
+            idx2 <- x$model$parpos$P[lat,lat]
+            p0 <- c(idx,idx2)
+            p1 <- setdiff(unique(p0),0)
+            p2 <- match(p0,p1)
+            
+            k <- length(v)
+            coef0 <- c(pp[p1],attributes(iid.v)$coef[vpar])
+            iid0 <- cbind(iid.mod[,p1],iid.v[,vpar])            
 
-        return(list(ee))
+            ee <- estimate(NULL,data=NULL,
+                           function(p) {
+                               p. <- p[p2]
+                               p.[is.na(p.)] <- fix[is.na(p.)]
+                               res <- p.[seq_len(k)]^2*p.[k+1]/tail(p,3)
+                               names(res) <- v
+                               as.list(res)
+                           },
+                           print=function(x,...) {
+                               cat("\nVariance explained by '", lat,"':\n\n",sep="")
+                               print(x$coefmat)
+                           },coef=coef0,iid=iid0)
+            res <- c(res,list(ee))
+        }
+        
+        return(res)
     }
 
-    browser()
     v <- c(endogenous(x),setdiff(latent(x),parameter(Model(x))))
     res <- coef(x,9,std="yx")
-    idx <- with(attributes(res),which(var==from && var==v))
+    idx <- with(attributes(res),
+                which(type=="variance" & (var==from)))
     nam <- attributes(res)$var[idx]
     res <- 1-res[idx,5]   
     names(res) <- nam    
@@ -170,9 +183,21 @@ condition <- function(A) {
 ##' @examples
 ##' m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
 ##' set.seed(1)
-##' dd <- sim(m,1000) 
+##' dd <- sim(m,1000)
 ##' e <- estimate(m, dd)
 ##' gof(e,all=TRUE,rmsea.threshold=0.05,level=0.9)
+##' 
+##' 
+##' set.seed(1)
+##' m <- lvm(list(c(y1,y2,y3)~u,y1~x)); latent(m) <- ~u
+##' regression(m,c(y2,y3)~u) <- "b"
+##' d <- sim(m,1000)
+##' e <- estimate(m,d)
+##' ##'
+##' rr <- rsq(e,TRUE)
+##' rr
+##' estimate(rr[[2]],contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
+##' 
 `gof` <-
   function(object,...) UseMethod("gof")
 
