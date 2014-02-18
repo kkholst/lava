@@ -3,7 +3,7 @@ context("Constraints")
 test_that("Simple linear constraint",{
     m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))
     constrain(m1,beta2~psi) <- function(x) 2*x
-    matrices(m1,1:2,0,3)
+    lava:::matrices.lvm(m1,1:2,0,3)
     d1 <- sim(m1,100)
     e1 <- estimate(m1,d1)
     expect_equivalent(constraints(e1)[1],coef(lm(y~x+z,d1))["z"])
@@ -60,7 +60,6 @@ test_that("Probit constraints", {
         ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1
         ordinal(m,K=3,constrain=list("t1","t2")) <- ~X2
         ##        e <- estimate(m,x)
-        e <- estimate(m,x,estimator="normal",control=list(trace=1))
         e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
         estimate(e)
     }   
@@ -68,7 +67,7 @@ test_that("Probit constraints", {
 
 
 test_that("Multiple group constraints II", {
-  data(lava:::twindata)
+  data(twindata)
   twinwide <- reshape(twindata,direction="wide",
                       idvar="id",timevar="twinnum")
   l <- lvm(~bw.1+bw.2)

@@ -28,7 +28,7 @@ test_that("Profile confidence limits", {
     ci0 <- confint(e,3)
     ci <- confint(e,3,profile=TRUE)
     expect_true(mean((ci0-ci)^2)<0.1)
-}
+})
 
 test_that("IV-estimator", {
     m <- lvm(c(y1,y2,y3)~u); latent(m) <- ~u    
