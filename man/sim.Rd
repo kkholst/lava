@@ -5,13 +5,13 @@
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
-\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
+\alias{distribution.lvm}
 \alias{functional}
-\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
+\alias{functional.lvm}
 \alias{gamma.lvm}
 \alias{Gamma.lvm}
 \alias{gaussian.lvm}
@@ -31,9 +31,9 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
-\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
+\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
 \title{Simulate model}
