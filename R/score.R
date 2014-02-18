@@ -125,16 +125,20 @@ score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estim
 ###{{{ score.multigroup
 
 ##' @S3method score multigroup
-score.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) {
+score.multigroup <- function(x,data=x$data,weight=NULL,weight2=NULL,p,indiv=combine,combine=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
   parord <- modelPar(rm$model,seq_len(with(rm$model,npar+npar.mean)))$p
   S <- list()
-  for (i in 1:x$ngroup) {
-    S0 <- rbind(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],indiv=indiv,...))
+  for (i in seq_len(x$ngroup)) {
+    S0 <- rbind(score(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],weight2=weight2[[i]],indiv=indiv,...))
     S1 <- matrix(ncol=length(p),nrow=nrow(S0))
     S1[,parord[[i]]] <- S0
     S <- c(S, list(S1))
+  }
+  if (combine) {
+      S <- Reduce("rbind",S); S[is.na(S)] <- 0
+      return(S)
   }
   if (indiv) return(S)
   res <- matrix(0,nrow=1,ncol=length(p))
