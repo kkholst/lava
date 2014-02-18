@@ -24,7 +24,6 @@
     'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
     (y,z),(y,u),(v,z),(v,u).
 
-
 * Version 1.2.4 <2013-12-01 Sun>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
