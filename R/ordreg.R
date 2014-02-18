@@ -10,7 +10,7 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @export
 ##' @author Klaus K. Holst
-ordreg <- function(formula,data=parent.frame(),offset,family=binomial("logit"),start,fast=FALSE,...) {
+ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),start,fast=FALSE,...) {
     y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
     X <- model.matrix(update(formula,.~.+1),data=data)[,-1,drop=FALSE]
