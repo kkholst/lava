@@ -92,23 +92,25 @@ score.lvm.missing <- function(x,
                               indiv=FALSE,
                               list=FALSE,
                               ...) {
-  S <- score(x$estimate$model0, p=p, model=estimator, weight=weight,
-               indiv=indiv,...)
-  if (indiv & !list) {
-    S0 <- matrix(ncol=length(p),nrow=length(x$order))
-    rownames(S0) <- 1:nrow(S0)
-    myorder <- x$orderlist
-    if (length(x$allmis)>0)
-      myorder[[x$allmis]] <- NULL
-    for (i in 1:length(S))
-      S0[myorder[[i]],] <- S[[i]]
-    if (length(x$allmis)>0) {
-      S0 <- S0[-x$orderlist[[x$allmis]],]
+    dots <- list(...)
+    dots$combine <- FALSE
+    S <- do.call("score",c(list(x=x$estimate$model0,p=p, model=estimator, weight=weight, indiv=indiv),dots))
+    if (indiv & !list) {
+        S0 <- matrix(ncol=length(p),nrow=length(x$order))
+        rownames(S0) <- 1:nrow(S0)
+        myorder <- x$orderlist
+        if (length(x$allmis)>0)
+            myorder[[x$allmis]] <- NULL
+        for (i in 1:length(S))
+            S0[myorder[[i]],] <- S[[i]]
+        if (length(x$allmis)>0) {
+            S0 <- S0[-x$orderlist[[x$allmis]],]
+        }
+        S0[is.na(S0)] <- 0
+        colnames(S0) <- names(coef(x))
+        return(S0)
     }
-    S0[is.na(S0)] <- 0
-    return(S0)
-  }
-  return(S)
+    return(S)
 }
 
 ###}}} score.lvm.missing
