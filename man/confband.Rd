@@ -46,8 +46,10 @@ est <- rnorm(K); est[c(3:4,10:12)] <- NA
 se <- runif(K,0.2,0.4)
 x <- cbind(est,est-2*se,est+2*se,runif(K,0.5,2))
 rownames(x) <- unlist(lapply(letters[seq(K)],function(x) paste(rep(x,4),collapse="")))
+rownames(x)[which(is.na(est))] <- ""
 signif <- sign(x[,2])==sign(x[,3])
-forrestplot(x,sep=c(2,15),col=signif+1)
+forrestplot(x,text.right=FALSE)
+forrestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
 }
 \author{
   Klaus K. Holst

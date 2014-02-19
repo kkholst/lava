@@ -28,6 +28,7 @@ iid.default <- function(x,score.deriv,id,...) {
     warning("Not available for this class")
     return(NULL)
   }
+  browser()
   U <- score(x,indiv=TRUE,combine=TRUE,...)
   n <- NROW(U)
   pp <- pars(x)   
@@ -59,7 +60,7 @@ iid.default <- function(x,score.deriv,id,...) {
 ##' @S3method iid matrix
 iid.matrix <- function(x,...) {
     p <- ncol(x); n <- nrow(x)
-    mu <- colMeans(x); S <- var(x)*(n-1)/n
+    mu <- colMeans(x,na.rm=TRUE); S <- var(x,use="pairwise.complete.obs")*(n-1)/n
     iid1 <- t(t(x)-mu)
     iid2 <- matrix(ncol=(p+1)*p/2,nrow=n)
     pos <- 0
@@ -74,6 +75,8 @@ iid.matrix <- function(x,...) {
         }
     colnames(iid1) <- colnames(x); colnames(iid2) <- nn
     names(cc) <- c(colnames(iid1),colnames(iid2))
+    iid1[is.na(iid1)] <- 0
+    iid2[is.na(iid2)] <- 0    
     structure(cbind(iid1/n,iid2/n),
               coef=cc,
               mean=mu, var=S)

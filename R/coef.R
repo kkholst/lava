@@ -153,6 +153,9 @@ function(object, level=ifelse(missing(type),-1,2),
          symbol=lava.options()$symbol,
          data, std=NULL, labels=TRUE, vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
+    
+    res <- (pars.default(object))
+    if (level<0 && !is.null(names(res))) return(res)
 
   if (is.null(object$control$meanstructure)) meanstructure <- TRUE
   else meanstructure <- object$control$meanstructure
@@ -169,7 +172,7 @@ function(object, level=ifelse(missing(type),-1,2),
           c1. <- coef(Model(object),mean=FALSE,fix=FALSE)
           myorder <- match(c1,names(coefs))
           myorder.reg <- order(na.omit(match(names(coefs),c1.)))          
-          myorder.extra <- c(6)
+          myorder.extra <- c()
           ##mp <- modelPar(object,seq_len(npar+npar.mean+npar.ex))
           ## mp <- modelPar(object,seq_len(npar+npar.mean+npar.ex))
           ## myorder <- c(mp$meanpar,mp$p)
@@ -193,12 +196,13 @@ function(object, level=ifelse(missing(type),-1,2),
   ## myorder.extra <- seq_len(index(object)$npar.ex)+length(myorder)
   ## myorder <- c(myorder,myorder.extra)
 
+
+    if (level<0) {
+        names(res)[seq_len(length(myorder))] <- coef(Model(object),fix=FALSE, mean=meanstructure, symbol=symbol)[order(myorder)]
+        return(res)
+    }
+
   
- if (level<0) {
-    res <- (pars.default(object))
-    ##names(res)[seq_len(length(myorder))] <- coef(Model(object),fix=FALSE, mean=meanstructure, symbol=symbol)[order(myorder)]
-    return(res)
-  }
   latent.var <- latent(object)
   latent.idx <- which(vars(object)%in%latent.var)
   Type <- Var <- From <- VarType <- FromType <- c()

@@ -5,7 +5,7 @@ rsq <- function(x,stderr=FALSE) {
         v <- endogenous(x)
         vpar <- paste(v,v,sep=lava.options()$symbol[2])
         iid.v <- iid(model.frame(x)[,v])    
-        iid.mod <- iid(x)
+        iid.mod <- iid(x)        
         coef0 <- c(attributes(iid.v)$coef[vpar],
                    coef(x)[vpar])
         iid0 <- cbind(iid.v[,vpar],iid.mod[,vpar])

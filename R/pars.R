@@ -4,8 +4,8 @@
 
 ##' @S3method pars default
 pars.default <- function(x,...) {
-  if (!is.null(x$opt$est))
-    return(x$opt$est)
+  if (!is.null(x$opt$estimate))
+    return(x$opt$estimate)
   if (!is.null(x$coef))
     return(x$coef)
   return(coef(x))

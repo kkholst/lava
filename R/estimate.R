@@ -652,9 +652,14 @@ estimate <- function(x,...) UseMethod("estimate")
   ## Calculate std.err:
 
   pp <- rep(NA,length(coefname)); names(pp) <- coefname
-  pp[names(opt$estimate)] <- opt$estimate
-  pp.idx <- na.omit(match(coefname,names(opt$estimate)))
-  
+  if (!is.null(names(opt$estimate))) {
+      pp[names(opt$estimate)] <- opt$estimate
+      pp.idx <- na.omit(match(coefname,names(opt$estimate)))
+  } else {
+      pp[] <- opt$estimate
+      pp.idx <- seq(length(pp))
+  }
+
   mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
   if (!silent) message("\nCalculating asymptotic variance...\n")
   asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")

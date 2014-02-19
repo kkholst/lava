@@ -1,8 +1,8 @@
 \name{constrain<-}
 \alias{constrain}
+\alias{constrain.default}
 \alias{constrain<-}
 \alias{constrain<-.default}
-\alias{constrain.default}
 \alias{constrain<-.multigroup}
 \alias{constraints}
 \alias{parameter<-}
