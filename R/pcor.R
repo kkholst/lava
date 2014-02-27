@@ -32,7 +32,7 @@ pcor <- function(x,y,X,Z,start,...) {
     names(cc) <- c("rho",paste(rownames(nn),"x",sep=".")[-1], paste(colnames(nn),"y",sep=".")[-1])
     V <- solve(numDeriv::jacobian(function(p) gg(p), op$par))
     
-    res <- list(coef=cc, vcov=V, tab=nn, logLik0=logL0, logLik=-ff(op$par), n1=n1, n2=n2)
+    res <- list(coef=cc, vcov=V, tab=nn, logLik0=logL0, logLik=-ff(op$par), n1=n1, n2=n2, opt=op)
     structure(res,class="pcor")
 }
 
@@ -44,9 +44,9 @@ vcov.pcor <- function(object,...) object$vcov
 
 ##' @S3method logLik pcor
 logLik.pcor <- function(object,p=coef(object),...) {
-    u <- polycor0(p[1],p[object$n1],p[object$n2],onlyP=TRUE)
+    u <- polycor0(p[1],p[object$n1],p[object$n2],onlyP=TRUE)    
     np <- sum(as.vector(object$tab)*log(as.vector(u)))
-    nobs <- sum(u$tab)/2
+    nobs <- sum(object$tab)/2
     structure(np,nall=nobs,nobs=nobs,df=length(p),class="logLik")
 }
 
@@ -81,8 +81,9 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
     P <- matrix(0,nrow=k1,ncol=k2)
     P1 <- pnorm(a0,sd=1)
     P2 <- pnorm(b0,sd=1)
-    for (i in seq(k1))
-        for (j in seq(k2)) P[i,j] <- mets::pbvn(lower=c(-Inf,-Inf),upper=c(a0[i],b0[j]),sigma=S)
+    set.seed(1)
+    for (i in seq(k1)) 
+        for (j in seq(k2)) P[i,j] <- mets::pmvn(lower=c(-Inf,-Inf),upper=c(a0[i],b0[j]),sigma=S)
 
     PP <- Drho <- matrix(0,nrow=k1+1,ncol=k2+1)
     pmvn0 <- function(i,j,sigma=S) {
