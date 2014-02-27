@@ -82,10 +82,17 @@ poisson.lvm <- function(link="log",lambda,...) {
 ###}}} poisson
 
 ###{{{ threshold
-threshold.lvm <- function(p,...) {
+
+threshold.lvm <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
-    function(n,...) cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))
+    if (!missing(labels))
+    return(function(n,...) {
+        return(cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf),labels=labels))
+    })
+    function(n,...)
+        cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))    
 }
+
 ###}}}
 
 ###{{{ binomial
