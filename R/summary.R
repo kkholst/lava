@@ -105,8 +105,15 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
     cat(rep("-", 50), "\n", sep="");
   }
   if (!is.null(x$rsq)) {
-      cat("R-square\n")
-      print(round(x$rsq,3),quote=FALSE)
+      if (!is.list(x$rsq)) {
+          cat("R-square\n")
+          print(round(x$rsq,3),quote=FALSE)
+      } else {
+          for (i in seq_len(length(x$rsq))) {
+              cat(names(x$rsq)[i],"\n")
+              print(round(x$rsq[[i]],3),quote=FALSE)
+          }          
+      }
   }
   invisible(x)
 }
