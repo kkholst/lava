@@ -24,35 +24,32 @@ iid <- function(x,...) UseMethod("iid")
 
 ##' @S3method iid default
 iid.default <- function(x,score.deriv,id,...) {
-  if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
-    warning("Not available for this class")
-    return(NULL)
-  }
-  browser()
-  U <- score(x,indiv=TRUE,combine=TRUE,...)
-  n <- NROW(U)
-  pp <- pars(x)   
-  if (missing(score.deriv)) {
-    iI <- vcov(x) 
-  } else {
-    if (is.null(score.deriv)) {
-      score.deriv <- -numDeriv::jacobian(function(p) score(x,p=p,...),pp)
+    if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
+        warning("Not available for this class")
+        return(NULL)
+    }    
+    U <- score(x,indiv=TRUE,...)
+    n <- NROW(U)
+    pp <- pars(x)
+    if (missing(score.deriv)) {
+        iI <- vcov(x) 
+    } else {
+        if (!is.null(score.deriv) && is.function(score.deriv)) {
+            score.deriv <- score.deriv(x,p=pp,...)
+        } else if (!is.null(score.deriv) && is.matrix(score.deriv)) {
+            iI <- Inverse(score.deriv)
+        } else {
+            score.deriv <- -numDeriv::jacobian(function(p) score(x,p=p,...),pp,method=lava.options()$Dmethod)    
+        }
     }
-    if (is.function(score.deriv)) {
-      score.deriv <- score.deriv(x,p=pp,...)
+    iid0 <- U%*%iI
+    if (!missing(id)) {
+        if (!lava.options()$cluster.index) {
+            iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iI))
+        } else {
+            iid0 <- mets::cluster.index(id,mat=iid0,return.all=FALSE)
+        }
     }
-    if (is.matrix(score.deriv)) {
-      iI <- Inverse(score.deriv)
-    }
-  }
-  iid0 <- U%*%iI
-  if (!missing(id)) {
-      if (!lava.options()$cluster.index) {
-          iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(iI))
-      } else {
-          iid0 <- mets::cluster.index(id,mat=iid0,return.all=FALSE)
-      }
-  }
   return(structure(iid0,iI=iI))
 }
 
