@@ -1,4 +1,4 @@
-* Version 1.2.5 <2014-02-01 Wed>
+* Version 1.2.5 <2014-02-28 Fri>
   - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
   - R-squared values (+ approximate standard
@@ -19,7 +19,7 @@
   - plotConf updated (vcov argument added and more graphical arguments
     parsed to plotting functions)
   - Additional unit-tests implemented
-  - New 'forrestplot' and 'Combine' functions
+  - New 'forestplot' and 'Combine' functions
   - Covariance structure may now be specified using '~~', e.g.
     'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
     (y,z),(y,u),(v,z),(v,u).
