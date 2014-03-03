@@ -47,7 +47,7 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
     G <- J%*%IAi
     ##G <- IAi[Jidx,,drop=FALSE]
   }
-  
+
   xi <- NULL
   if (!is.null(v)) {
     xi <- G%*%v ## Model-specific mean vector

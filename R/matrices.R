@@ -425,7 +425,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
         names(e) <- names(x$expar)
         if (!(is.null(epars) | ii$npar.ex==0))
-            e[ii$e1==1] <- epars
+            e[which(ii$e1==1)] <- epars
         if (any(fixed))
             e[fixed] <- unlist(x$exfix[fixed])
         for (p in ii$eparname) {
