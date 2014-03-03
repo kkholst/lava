@@ -1,3 +1,21 @@
+color.ordinal <- function(x,subset=vars(x),...) {
+    return(list(vars=intersect(subset,ordinal(x)),col="indianred1"))
+}
+
+ordinal.sim.hook <- function(x,data,p,...) {
+    ovar <- ordinal(x)    
+    for (i in seq_len(length(ovar))) {
+        if (attributes(ovar)$liability[i]) {
+            idx <- attributes(ovar)$idx[[ovar[i]]]
+            breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
+            z <- cut(data[,ovar[i]],breaks=breaks)
+            data[,ovar[i]] <- as.numeric(z)-1
+        }
+    }
+    return(data)
+}
+##addhook("ordinal.sim.hook","sim.hooks")
+
 ##' @export
 "ordinal<-" <- function(x,...,value) UseMethod("ordinal<-")
 
@@ -25,26 +43,33 @@ print.ordinal.lvm <- function(x,...) {
 }
 
 ##' @S3method ordinal lvm
-`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, start, ...) {
+`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, ...) {
     if (is.null(var)) {
         ordidx <- unlist(x$attributes$ordinal)
         KK <- unlist(x$attributes$nordinal)
         idx <- x$attributes$ordinalparname
         fix <- lapply(idx,function(z) x$exfix[z])
+        liability <- x$attributes$liability
         if (length(ordidx)>0) {
             val <- names(ordidx)
-            return(structure(val,K=KK,idx=idx,fix=fix,class="ordinal.lvm"))
+            return(structure(val,K=KK,idx=idx,fix=fix,liability=liability,class="ordinal.lvm"))
         }
         else
             return(NULL)
     }
+    
+    if (!missing(p)) breaks <- qnorm(p)
+    if (!is.null(breaks)) breaks <- ordreg_threshold(breaks)
     if (length(var)>length(K)) K <- rep(K[1],length(var))
     if (length(var)==1 && !missing(constrain)) constrain <- list(constrain)
+
+    addvar(x) <- var
     for (i in seq_len(length(var))) {
         if (K[i]>2) {
             parname <- paste(var[i],":",paste(seq(K[i]-1)-1,seq(K[i]-1),sep="|"),sep="")
-            newpar <- if (missing(start))
-                rep(-1,K[i]-1) else start[[i]]
+            newpar <- if (is.null(breaks)) {
+                rep(-1,K[i]-1)
+            } else if (length(breaks)==1) breaks else breaks[[i]]
             if (length(newpar)<K[i]-1) stop("Wrong number of starting values")
             newfix <- if (missing(constrain))
                 rep(list(NA),length(newpar)) else constrain[[i]]
@@ -61,10 +86,22 @@ print.ordinal.lvm <- function(x,...) {
         }
         x$attributes$type[var[i]] <- ifelse(K[i]>2,"ordinal","binary")
         if (K[i]>2) intfix(x,var[i],NULL) <- 0
+        if (!liability) {
+            mytr <- function(y,p,idx,...) {
+                breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
+                as.numeric(cut(y,breaks=breaks))-1
+            }
+            myalist <- substitute(alist(y=,p=,idx=pp),
+                                  list(pp=x$attributes$ordinalparname[[var[i]]]))
+            formals(mytr) <- eval(myalist)
+            transform(x,var[i],post=FALSE) <- mytr
+            
+        }
     }
+    x$attributes$liability[var] <- liability
     x$attributes$ordinal[var] <- TRUE
     x$attributes$nordinal[var] <- K
     x$attributes$normal[var] <- FALSE
     covfix(x,var,NULL) <- 1
-  return(x)
+    return(x)
 }
