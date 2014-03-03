@@ -83,6 +83,7 @@ poisson.lvm <- function(link="log",lambda,...) {
 
 ###{{{ threshold
 
+##' @export
 threshold.lvm <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
     if (!missing(labels))
@@ -129,7 +130,7 @@ logit.lvm <- binomial.lvm("logit")
 ##' @export
 probit.lvm <- binomial.lvm("probit")
 
-###}}} poisson
+###}}} binomial
 
 ###{{{ Gamma
 
