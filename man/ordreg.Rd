@@ -24,6 +24,12 @@
 \description{
   Ordinal regression models
 }
+\examples{
+m <- lvm(y~x)
+ordinal(m,K=3) <- ~y
+d <- sim(m,100)
+e <- ordreg(y~x,d)
+}
 \author{
   Klaus K. Holst
 }
