@@ -251,46 +251,50 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
 
 ##' @S3method constrain<- default
 "constrain<-.default" <- function(x,par,args,...,value) {
-  if (class(par)[1]=="formula") {
-    lhs <- getoutcome(par)
-    xf <- attributes(terms(par))$term.labels
-    par <- lhs
+    if (class(par)[1]=="formula") {
+        lhs <- getoutcome(par)
+        xf <- attributes(terms(par))$term.labels
+        par <- lhs
+        if (par%in%vars(x)) {
+            if (is.na(x$mean[[par]])) {
+                intercept(x,par) <- par
+            } else {
+                par <- x$mean[[par]]
+            }
+        }
+        args <- xf
+    }
+    if (is.null(value) || suppressWarnings(is.na(value))) {
+        if (!is.null(par)) {
+            Model(x)$constrain[[par]] <- NULL
+        } else {
+            Model(x)$constrain[[args]] <- NULL
+        }
+        return(x)
+    }
+    for (i in args) {
+        if (!(i%in%c(parlabels(Model(x)),vars(Model(x)),
+                     names(constrain(x))))) {
+            if (!lava.options()$silent)
+                message("\tAdding parameter '", i,"'\n",sep="")
+            parameter(x,silent=TRUE) <- i
+        }
+    }
+
     if (par%in%vars(x)) {
-      if (is.na(x$mean[[par]])) {
-        intercept(x,par) <- par
-      } else {
-        par <- x$mean[[par]]
-      }
-    }
-    args <- xf
-  }
-  if (is.null(value) || suppressWarnings(is.na(value))) {
-    if (!is.null(par)) {
-      Model(x)$constrain[[par]] <- NULL
+        if (!"..."%in%names(formals(value))) {
+            formals(value) <- c(formals(value),alist(...=))
+        }
+        Model(x)$constrainY[[par]] <- list(fun=value,args=args)
     } else {
-      Model(x)$constrain[[args]] <- NULL
+        ## Wrap around do.call, since functions are not really
+        ## parsed as call-by-value in R, and hence setting
+        ## attributes to e.g. value=cos, will be overwritten
+        ## if value=cos is used again later with new args.
+        Model(x)$constrain[[par]] <- function(x) do.call(value,list(x))
+        attributes(Model(x)$constrain[[par]])$args <- args
+        index(Model(x)) <- reindex(Model(x))
     }
-    return(x)
-  }
-  for (i in args) {
-    if (!(i%in%c(parlabels(Model(x)),vars(Model(x)),
-                 names(constrain(x))))) {
-      if (!lava.options()$silent)
-        message("\tAdding parameter '", i,"'\n",sep="")
-      parameter(x,silent=TRUE) <- i
-    }
-  }
-  if (i%in%endogenous(x)) {
-    Model(x)$constrainY[[par]] <- list(fun=value,args=args)
-  } else {
-    ## Wrap around do.call, since functions are not really
-    ## parsed as call-by-value in R, and hence setting
-    ## attributes to e.g. value=cos, will be overwritten
-    ## if value=cos is used again later with new args.
-    Model(x)$constrain[[par]] <- function(x) do.call(value,list(x))
-    attributes(Model(x)$constrain[[par]])$args <- args
-    index(Model(x)) <- reindex(Model(x))
-  }
   return(x)    
 }
 
