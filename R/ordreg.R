@@ -1,3 +1,23 @@
+ordreg_threshold <- function(theta) {
+    v <- theta[1]
+    if (length(theta)>1) v <- cumsum(c(v,exp(theta[seq(length(theta)-1)+1L])))
+    return(v)
+}
+
+ordreg_ithreshold <- function(v) {
+    theta <- v[1]
+    if (length(v)>1) theta <- c(theta,log(-rev(diff(rev(v)))))        
+    return(theta)
+}
+
+ordreg_dthreshold <- function(theta) {
+    K <- length(theta)+1
+    Da <- matrix(0,K,K-1)
+    Da[seq(K-1),1L] <- 1L
+    for (i in seq_len(K-2)+1) Da[seq(i,K-1),i] <- exp(theta[i])
+    Da
+}
+
 ##' Ordinal regression models
 ##'
 ##' @title Univariate cumulative link regression models
@@ -10,6 +30,11 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @export
 ##' @author Klaus K. Holst
+##' @examples
+##' m <- lvm(y~x)
+##' ordinal(m,K=3) <- ~y
+##' d <- sim(m,100)
+##' e <- ordreg(y~x,d)
 ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),start,fast=FALSE,...) {
     y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
@@ -22,25 +47,14 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),
     assign("K",nlevels(y),envir=up)
     assign("n",length(y),envir=up)
     assign("p",NCOL(X),envir=up)    
-    assign("threshold",
-           function(theta,K) {
-               a <- theta[1]
-               if (K>2) a <- cumsum(c(a,exp(theta[seq(K-2)+1L])))
-               return(a)
-           }, envir=up)
-    assign("dthreshold",
-           function(theta,K) {
-               Da <- matrix(0,K,K-1)
-               Da[seq(K-1),1L] <- 1L
-               for (i in seq_len(K-2)+1) Da[seq(i,K-1),i] <- exp(theta[i])
-               Da
-           },envir=up)
+    assign("threshold", function(theta,K) ordreg_threshold(theta[seq(K-1)]), envir=up)
+    assign("dthreshold",function(theta,K) ordreg_dthreshold(theta[seq(K-1)]), envir=up)
     ff <- function(theta) -ordreg_logL(theta,up)
     gg <- function(theta) -ordreg_score(theta,up)
-    if (missing(start)) start <- with(up,c(rep(-1,K-1),rep(0,p)))
+    if (missing(start)) start <- with(up,c(rep(-1,up$K-1),rep(0,p)))
     op <- nlminb(start,ff,gg)
     cc <- op$par;
-    if (fast) return(structure(cc,threshold=up$threshold(cc,up$K)))
+    if (fast) return(structure(cc,threshold=up$threshold(cc))) ##,up$K)))
     nn <- c(paste(lev[-length(lev)], lev[-1L], sep = "|"),
                    colnames(X))
     I <- -ordreg_hessian(cc,up)
