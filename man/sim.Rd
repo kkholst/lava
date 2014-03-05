@@ -1,6 +1,7 @@
 \name{sim}
 \alias{aalenExponential.lvm}
 \alias{binomial.lvm}
+\alias{categorical}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
@@ -31,6 +32,7 @@
 \alias{simulate.lvm}
 \alias{simulate.lvmfit}
 \alias{student.lvm}
+\alias{threshold.lvm}
 \alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}

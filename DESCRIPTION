@@ -142,3 +142,4 @@ Collate:
     'ordreg.R'
     'pcor.R'
     'ordinal.R'
+    'normal.R'
