@@ -66,10 +66,11 @@ print.ordinal.lvm <- function(x,...) {
     addvar(x) <- var
     for (i in seq_len(length(var))) {
         if (K[i]>2) {
+            ##suppressMessages(browser())
             parname <- paste(var[i],":",paste(seq(K[i]-1)-1,seq(K[i]-1),sep="|"),sep="")
             newpar <- if (is.null(breaks)) {
                 rep(-1,K[i]-1)
-            } else if (length(breaks)==1) breaks else breaks[[i]]
+            } else if (is.list(breaks)) breaks[[i]] else breaks
             if (length(newpar)<K[i]-1) stop("Wrong number of starting values")
             newfix <- if (missing(constrain))
                 rep(list(NA),length(newpar)) else constrain[[i]]

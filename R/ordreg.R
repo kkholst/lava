@@ -97,7 +97,7 @@ score.ordreg <- function(x,p=coef(x),indiv=FALSE,...) {
     x$up$score
 }
 
-##' @S3method coef ordreg
+##' @S3method logLik ordreg
 logLik.ordreg <- function(object,p=coef(object),indiv=FALSE,...) {
     ordreg_logL(p,object$up)
     res <- log(object$up$pr)    
