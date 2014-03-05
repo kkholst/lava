@@ -81,6 +81,29 @@ poisson.lvm <- function(link="log",lambda,...) {
 
 ###}}} poisson
 
+
+##' @export
+categorical <- function(x,formula,K,beta,p,...) {
+    fname <- NULL
+    if (!missing(beta)) {
+        K <- length(beta)
+        fname <- names(beta)
+    }
+    if (is.null(fname))
+        fname <- paste(gsub(" ","",deparse(formula)),seq(K)-1,sep=":")
+    y <- getoutcome(formula)
+    if (missing(p)) p <- rep(1/K,K-1)
+    ordinal(x,K=K,liability=FALSE,p=p) <- attr(y,"x")
+    parameter(x) <- fname
+    val <- paste("function(x,p,...) p[\"",fname[1],"\"]*(x==0)",sep="")
+    for (i in seq(K-1)) {        
+        val <- paste(val,"+p[\"",fname[i+1],"\"]*(x==",i,")",sep="")
+    }    
+    functional(x,formula) <- eval(parse(text=val))
+    return(x)
+}
+
+
 ###{{{ threshold
 
 ##' @export

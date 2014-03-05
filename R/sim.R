@@ -27,6 +27,8 @@
 ##' aalenExponential.lvm
 ##' Gamma.lvm gamma.lvm
 ##' loggamma.lvm
+##' categorical
+##' threshold.lvm
 ##' ones.lvm
 ##' sequence.lvm
 ##' @usage
