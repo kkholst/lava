@@ -187,12 +187,16 @@ simulate.eventHistory <- function(x,data,...){
 
 
 ##' @export
-coxWeibull.lvm <- function(shape=1,scale,rate=1/scale) {
-  f <- function(n,mu,var,...) {
-    (- (log(runif(n)) * rate * exp(-mu)))^(1/shape)
-  }
-  attr(f,"family") <- list(family="weibull",par=c(shape,scale))
-  return(f)
+coxWeibull.lvm <- function(nu=1,lambda,shape=nu,scale,rate) {
+    ## nu, lambda parameter according to Bender et al 2005, Stat.Med.
+    ## Note different compared to usual shape,scale parametrization
+    if (!missing(rate)) lambda <- rate^(shape)
+    if (!missing(scale)) lambda <- (1/scale)^(shape)
+    f <- function(n,mu,var,...) {
+        (- (log(runif(n)) / lambda * exp(-mu)))^(1/shape)
+    }
+    attr(f,"family") <- list(family="weibull",par=c(shape,scale))
+    return(f)
 }
 
 
