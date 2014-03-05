@@ -3,33 +3,33 @@
 
 ##' @S3method functional<- lvm
 "functional<-.lvm" <- function(x,to,from,...,value) {
-  if (class(to)[1]=="formula") {
-    yy <- decomp.specials(getoutcome(to))
-    ##xx <- attributes(terms(to))$term.labels
-    myvars <- all.vars(to)
-    xx <- setdiff(myvars,yy)
-    if (length(yy)*length(xx)>length(value) & length(value)!=1) stop("Wrong number of values")
-    count <- 0
-    for (y in yy) {
-      count <- count+1
-      for (i in 1:length(xx)) {
-        suppressWarnings(x <- regression(x, to=y,from=xx[i],silent=TRUE))
-        count <- count+1
-          if (length(value)==1) {
-            functional(x, to=y, from=xx[i],...) <- value
-          } else
-          functional(x, to=y, from=xx[i],...) <- value[[count]]        
+    if (class(to)[1]=="formula") {
+        yy <- decomp.specials(getoutcome(to))
+        ##xx <- attributes(terms(to))$term.labels
+        myvars <- all.vars(to)
+        xx <- setdiff(myvars,yy)
+        if (length(yy)*length(xx)>length(value) & length(value)!=1) stop("Wrong number of values")
+        count <- 0
+        for (y in yy) {
+            count <- count+1
+            for (i in 1:length(xx)) {
+                suppressWarnings(x <- regression(x,to=y,from=xx[i],silent=TRUE))
+                count <- count+1
+                if (length(value)==1) {                    
+                    functional(x, to=y, from=xx[i],...) <- value
+                } else
+                    functional(x, to=y, from=xx[i],...) <- value[[count]]        
+            }
         }
+        return(x)
     }
+    
+    if (missing(from) | missing(to))
+        return(x)
+    
+    edges <- paste(from,to,sep="~")
+    x$attributes$functional[[edges]] <- value
     return(x)
-  }
-  
-  if (missing(from) | missing(to))
-    return(x)
-
-  edges <- paste(from,to,sep="~")
-  x$attributes$functional[[edges]] <- value
-  return(x)
 }
 
 ##' @export
@@ -37,10 +37,10 @@
 
 ##' @S3method functional lvm
 functional.lvm <- function(x,to,from,...) {
-  if (missing(from))
-    return(x$attributes$functional)
-  
-  edges <- paste(from,to,sep="~")
-  x$attributes$functional[edges]
+    if (missing(from))
+        return(x$attributes$functional)
+    
+    edges <- paste(from,to,sep="~")
+    x$attributes$functional[edges]
 }
 
