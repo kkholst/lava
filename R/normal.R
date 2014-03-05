@@ -12,7 +12,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     y <- lava::endogenous(x)
     ord <- lava::ordinal(x)
     status <- rep(0,length(y))
-    if (exists("binary.lvm")) status[match(binary(x),y)] <- 2
+    if (exists("binary.lvm")) status[match(do.call("binary",x),y)] <- 2
     status[match(ord,y)] <- 2
     thres <- matrix(0,nrow=length(y),max(1,attributes(ord)$K-1)); rownames(thres) <- y
 ##    browser()
