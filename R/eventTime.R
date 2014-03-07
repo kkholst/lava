@@ -32,6 +32,7 @@
 ##' m <- eventTime(m,cens.otime~min(T1,T2=E2,C=0),"event")
 ##' sim(m,10)
 ##' @export
+##' @aliases eventTime<-
 ##' @param object Model object
 ##' @param formula Formula (see details)
 ##' @param eventName Event names
@@ -74,6 +75,7 @@ eventTime <- function(object,formula,eventName,...) {
   }
 
   addvar(object) <- timeName
+  #distribution(object,timeName) <- NA
   ## m <- regression(m,formula(paste("~",timeName,sep="")))
   if (missing(eventName)) eventName <- "Event"
   eventTime <- list(names=c(timeName,eventName),
@@ -89,6 +91,10 @@ eventTime <- function(object,formula,eventName,...) {
   return(object)
 }
 
+##' @export
+"eventTime<-" <- function(object,...,value) {
+    eventTime(object,value,...)
+}
 
 ## addhook("color.eventHistory","color.hooks")
 ## color.eventHistory <- function(x,subset=vars(x),...) {
@@ -195,7 +201,7 @@ coxWeibull.lvm <- function(nu=1,lambda,shape=nu,scale,rate) {
     f <- function(n,mu,var,...) {
         (- (log(runif(n)) / lambda * exp(-mu)))^(1/shape)
     }
-    attr(f,"family") <- list(family="weibull",par=c(shape,scale))
+    attr(f,"family") <- list(family="weibull",par=c(shape=shape,scale=lambda^(-1/shape)))
     return(f)
 }
 

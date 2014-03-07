@@ -81,28 +81,33 @@ poisson.lvm <- function(link="log",lambda,...) {
 
 ###}}} poisson
 
+###{{{ categorical
 
 ##' @export
 categorical <- function(x,formula,K,beta,p,...) {
-    fname <- NULL
     if (!missing(beta)) {
         K <- length(beta)
-        fname <- names(beta)
-    }
-    if (is.null(fname))
+        fpar <- names(beta)
         fname <- paste(gsub(" ","",deparse(formula)),seq(K)-1,sep=":")
+    } else {
+        beta <- rep(0,K)
+        fname <- paste(gsub(" ","",deparse(formula)),seq(K)-1,sep=":")
+    }    
     y <- getoutcome(formula)
     if (missing(p)) p <- rep(1/K,K-1)
-    ordinal(x,K=K,liability=FALSE,p=p) <- attr(y,"x")
-    parameter(x) <- fname
-    val <- paste("function(x,p,...) p[\"",fname[1],"\"]*(x==0)",sep="")
+    pname <- names(p)
+    if (is.null(pname)) pname <- rep(NA,K-1)
+    ordinal(x,K=K,liability=FALSE,p=p,constrain=pname) <- attr(y,"x")
+    parameter(x,fpar,start=beta) <- fname
+    val <- paste("function(x,p,...) p[\"",fpar[1],"\"]*(x==0)",sep="")
     for (i in seq(K-1)) {        
-        val <- paste(val,"+p[\"",fname[i+1],"\"]*(x==",i,")",sep="")
+        val <- paste(val,"+p[\"",fpar[i+1],"\"]*(x==",i,")",sep="")
     }    
     functional(x,formula) <- eval(parse(text=val))
     return(x)
 }
 
+###}}} categorical
 
 ###{{{ threshold
 

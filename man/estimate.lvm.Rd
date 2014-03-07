@@ -93,8 +93,8 @@
 
   \item{starterfun:}{Starter-function with syntax
   \code{function(lvm, S, mu)}.  Three builtin functions are
-  available: \code{startvalues}, \code{startvalues2}, \
-  codestartvalues3.}
+  available: \code{startvalues}, \code{startvalues0},
+  \code{startvalues1}, ...}
 
   \item{estimator:}{ String defining which estimator to use
   (Defaults to ``\code{gaussian}'')}

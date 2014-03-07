@@ -225,9 +225,18 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     A <- M$A; P <- M$P 
     if (!is.null(M$v)) mu <- M$v
     
+
+    ## dontsim <- names(distribution(x))[unlist(lapply(distribution(x),function(x) identical(x,NA)))]
     ##  E <- rmvnorm(n,rep(0,ncol(P)),P)
     PP <- with(svd(P), v%*%diag(sqrt(d))%*%t(u))
-    E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
+    if (length(distribution(x))>0) {
+        ii <- match(names(distribution(x)),vars(x))
+        jj <- setdiff(seq(ncol(P)),ii)
+        E <- matrix(0,ncol=ncol(P),nrow=n)
+        system.time(E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE])
+    } else {
+        E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
+    }
     
     ## Simulate exogenous variables (covariates)
     res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
@@ -259,12 +268,12 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     } else {
         res[,X.idx] <- X[,xx]
     }
-    simuled <- xx
+    simuled <- c(xx)
     resunlink <- NULL
     if (unlink) {
         resunlink <- res
     }
-    
+
     if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { 
         if(cond) { ## Simulate from conditional distribution of Y given X
             mypar <- pars(x,A,P,mu)
@@ -357,7 +366,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     names(parvals)
             }
         }
-        
+
         leftovers <- c()
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
@@ -379,7 +388,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 } else {
 
                     ipos <- which(i%in%yconstrain)
-
                     if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
                         pos <- match(i,vv)
                         relations <- colnames(A)[A[,pos]!=0]

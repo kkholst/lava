@@ -26,7 +26,7 @@
              start=NULL,
              constrain=lava.options()$constrain,
              method=NULL,
-             starterfun=startvalues,
+             starterfun=startvalues0,
              information="E",
              meanstructure=TRUE,
              sparse=FALSE,

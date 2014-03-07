@@ -1,5 +1,6 @@
 \name{eventTime}
 \alias{eventTime}
+\alias{eventTime<-}
 \title{Add an observed event time outcome to a latent variable model.}
 \usage{
   eventTime(object, formula, eventName, ...)

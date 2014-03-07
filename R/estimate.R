@@ -23,7 +23,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##'
 ##' \item{starterfun:}{Starter-function with syntax
 ##' \code{function(lvm, S, mu)}.  Three builtin functions are available:
-##' \code{startvalues}, \code{startvalues2}, \ codestartvalues3.}
+##' \code{startvalues}, \code{startvalues0}, \code{startvalues1}, ...}
 ##'
 ##' \item{estimator:}{ String defining which estimator to use (Defaults to
 ##' ``\code{gaussian}'')}
@@ -147,7 +147,7 @@ estimate <- function(x,...) UseMethod("estimate")
     start=NULL,
     constrain=lava.options()$constrain,
     method=NULL,
-    starterfun="startvalues",
+    starterfun="startvalues0",
     information="E", 
     meanstructure=TRUE,
     sparse=FALSE,
@@ -305,8 +305,7 @@ estimate <- function(x,...) UseMethod("estimate")
   }
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
-  
-  ## suppressMessages(browser())
+
   if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
       if (is.null(optim$starterfun) && lava.options()$param!="relative")

@@ -178,8 +178,8 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
 ###{{{ NR 2
 
 NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
-    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,
-                     iter.max=200,tol=1e-15,stabil=FALSE,epsilon=1e-15)
+    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,backtrace=FALSE,
+                     iter.max=200,tol=1e-9,stabil=FALSE,epsilon=1e-9)
     if (!missing(control)) {
         control0[names(control)] <- control
     }
@@ -198,7 +198,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             return(res)
         }
     }
-    oneiter <- function(p.orig,return.mat=FALSE) {
+    oneiter <- function(p.orig,Dprev,return.mat=FALSE) {
         if (is.null(hessian)) {
             cat(".")
             I <- -numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
@@ -230,25 +230,28 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             1/svdI$d[abs(svdI$d)>control0$epsilon]
         iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
         Delta = control0$gamma*iI%*%D
-        mD = mD0 = mean(D^2)
+
         Lambda <- 1
-        if (2>3)
-        while (mD>=mD0) {
-            p <- p.orig + Lambda*Delta
-            if (gradFun) {
-                D = gradient(p)                
-            } else {
-                DI <- oneiter(p,return.mat=TRUE)
-                D = DI$D
-            }
-            mD = mean(D^2)
-            if (is.nan(mD)) mD=mD0
-            Lambda <- Lambda/2
+        if (control0$backtrace) {
+            mD0 <- mean(Dprev^2)
+            mD <- mean(D^2)
+            while (mD>=mD0) {
+                p <- p.orig + Lambda*Delta
+                if (gradFun) {
+                    D = gradient(p)                
+                } else {
+                    DI <- oneiter(p,return.mat=TRUE)
+                    D = DI$D
+                }
+                mD = mean(D^2)
+                if (is.nan(mD)) mD=mD0
+                Lambda <- Lambda/2
             if (Lambda<1e-12) break;
+            }
         }
         p <- p.orig + Lambda*Delta
         return(list(p=p,D=D,iI=iI))
-    } 
+    }
     
     count <- count2 <- 0  
     thetacur <- start
