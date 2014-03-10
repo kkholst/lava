@@ -1,4 +1,3 @@
-
 ##' Simulate model
 ##' 
 ##' Simulate data from a general SEM model including non-linear effects and
