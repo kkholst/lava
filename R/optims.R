@@ -183,9 +183,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     if (!missing(control)) {
         control0[names(control)] <- control
     }
-    trace <- control0$trace
 
-    if (trace>0)
+    if (control0$trace>0)
         cat("\nIter=0;\t\n",
             "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
 
@@ -256,12 +255,14 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     count <- count2 <- 0  
     thetacur <- start
     gammacount <- 0
+    Dprev <- rep(Inf,length(start))
     for (jj in seq_len(control0$iter.max)) {
         gammacount <- gammacount+1
         count <-  count+1
         count2 <- count2+1
         oldpar <- thetacur
-        newpar <- oneiter(thetacur)
+        newpar <- oneiter(thetacur,Dprev)
+        Dprev <- newpar$D       
         thetacur <- newpar$p
         if (!is.null(control0$ngamma) && control0$ngamma>0) {
             if (control0$ngamma<=gammacount) {
@@ -269,7 +270,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                 gammacount <- 0
             }
         }
-        if (count2==trace) {
+        if (count2==control0$trace) {
             cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
             cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
             count2 <- 0

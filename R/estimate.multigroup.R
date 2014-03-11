@@ -16,6 +16,7 @@
              trace=ifelse(lava.options()$debug,3,0),
              gamma=lava.options()$gamma,
              ngamma=lava.options()$ngamma,
+	     backtrace=TRUE,
              gamma2=1,
              lambda=0.05,
              abs.tol=1e-9,

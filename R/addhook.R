@@ -67,7 +67,8 @@ assign("plot.hooks",c(),envir=lava.env)
 assign("options", list(
     trace=0,
     tol=1e-6,
-    gamma=0.05,
+    gamma=1,
+    backtrace=TRUE,
     ngamma=0,
     iter.max=300,
     eval.max=250,

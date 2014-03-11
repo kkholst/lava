@@ -174,31 +174,6 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
 ###{{{ startvalues2
 
-###{{{ ObjectiveSimple
-`Simple_hessian.lvm` <- function(p,...) {
-  matrix(NA, ncol=length(p), nrow=length(p))
-}
-Simple_gradient.lvm <- function(x,p,...) {
-  naiveGrad(function(pp) Simple_objective.lvm(x,pp,...), p)
-}
-`Simple_objective.lvm` <-
-  function(x, p=p, S=S, n=n, ...) {
-    m. <- moments(x,p)
-    C <- m.$C
-    A <- m.$A
-    P <- m.$P
-    J <- m.$J
-    IAi <- m.$IAi
-    npar.reg <- m.$npar.reg; npar <- m.$npar
-    G <- J%*%IAi
-    detC <- det(C)
-    iC <- Inverse(C,tol=1e-9)
-    if (detC<0 | inherits(iC, "try-error"))
-      return(.Machine$double.xmax)    
-    res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
-    res
-  }
-###}}} ObjectiveSimple
 
 ##' @export
 `startvalues2` <-
@@ -242,57 +217,60 @@ Simple_gradient.lvm <- function(x,p,...) {
 
 startvalues1 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     p0 <- startvalues(x,S,mu,...)
-    p0[index(x)$npar.mean+variances(x)] <- 1
-    p0[index(x)$npar.mean+offdiags(x)] <- 1
+    p0[index(x)$npar.mean+variances(x)] <- 0.1
+    p0[index(x)$npar.mean+offdiags(x)] <- 0
     p0
 }
+
+startvalues00 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
+    p0 <- startvalues(x,S,mu,...)
+    p0 <- numeric(length(p0))
+    P0 <- x$cov*1
+    ##P0[!is.na(x$covfix)] <- 
+    ##P0 <- x$covfix; P0[is.na(P0)] <- 0
+    ##diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.obsidx]/2
+    lu <- min(diag(P0)[index(x)$endo.idx])/2
+    ##  suppressMessages(browser())
+    ##    diag(P0)[] <- 0.1
+    ## diag(P0)[index(x)$endo.idx] <- 1    
+    diag(P0)[index(x)$eta.idx] <- 0.1 ##mean(diag(S)[index(x)$endo.idx])/2
+    ee <- eigen(P0)
+    tol <- 1e-6
+    ii <- ee$values
+    ii[ee$values<tol] <- tol
+    P0 <- ee$vectors%*%diag(ii)%*%t(ee$vectors)    
+    A0 <- P0        
+    pp <- pars(x,A=t(A0),P=P0,v=rep(0,index(x)$npar.mean))
+    idx <- index(x)$npar.mean + c(offdiags(x),variances(x))
+    p0[idx] <- pp[idx]    
+    return(p0)
+}
+
 
 ##' @export
 startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     p0 <- startvalues(x,S,mu,...)
-    A <- t(index(x)$M) ## Adjacency matrix    
+    A <- t(index(x)$M) ## Adjacency matrix
     P0 <- A0 <- matrix(0,nrow(A),ncol(A))
     A0[,index(x)$eta.idx] <- A[,index(x)$eta.idx]
-    diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.idx]/2
-    diag(P0)[index(x)$eta.idx] <- 0.05##mean(diag(S)[index(x)$endo.idx])/2
-    pp <- pars(x,A=t(A0),P=P0,v=rep(0,index(x)$npar.mean))
+    diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.obsidx]/3
+    ##lu <- min(diag(P0)[index(x)$endo.idx])
+    lu <- 0.9
+    diag(P0)[index(x)$eta.idx] <- lu##mean(diag(S)[index(x)$endo.idx])/2
+    pp <- pars(x,A=t(A0),P=P0,v=rep(1,length(index(x)$vars)))
+    ##suppressMessages(browser())
     nu <- numeric(length(vars(x)))
-    pp[pp=1] <- p0[pp=1]
-    if (!is.null(mu)) {
-        nu[vars(x)%in%manifest(x)] <- mu
-        (diag(nrow(A0))-t(A0))%*%nu
-        meanstart <- solve(diag(nrow(A0))+t(A0))%*%nu
-        meanstart <- meanstart[which(is.na(x$mean))]
-        if (length(meanstart)>0)
-            pp[seq(length(meanstart))] <- meanstart
-    }    
+    pp[pp==1] <- p0[pp==1]
+    ## if (!is.null(mu)) {
+    ##     nu[vars(x)%in%manifest(x)] <- mu
+    ##     (diag(nrow(A0))-t(A0))%*%nu
+    ##     meanstart <- solve(diag(nrow(A0))+t(A0))%*%nu
+    ##     meanstart <- meanstart[which(is.na(x$mean))]
+    ##     if (length(meanstart)>0)
+    ##         pp[seq(length(meanstart))] <- meanstart
+    ## }    
     names(pp) <- coef(x, silent=TRUE, fixed=FALSE, mean=TRUE)[seq_len(length(pp))]
-    pp[!is.finite(pp) | is.nan(pp) | is.na(pp)] <- 0.1
-    return(pp)    
-}
-
-
-##' @export
-startvalues1 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
-    p0 <- startvalues(x,S,mu,...)
-    A <- t(index(x)$M) ## Adjacency matrix    
-    P0 <- A0 <- matrix(0,nrow(A),ncol(A))
-    A0[,index(x)$eta.idx] <- A[,index(x)$eta.idx]
-    diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.idx]/2
-    diag(P0)[index(x)$eta.idx] <- 0.05##mean(diag(S)[index(x)$endo.idx])/2
-    pp <- pars(x,A=t(A0),P=P0,v=rep(0,index(x)$npar.mean))
-    nu <- numeric(length(vars(x)))
-    pp[pp=1] <- p0[pp=1]
-    if (!is.null(mu)) {
-        nu[vars(x)%in%manifest(x)] <- mu
-        (diag(nrow(A0))-t(A0))%*%nu
-        meanstart <- solve(diag(nrow(A0))+t(A0))%*%nu
-        meanstart <- meanstart[which(is.na(x$mean))]
-        if (length(meanstart)>0)
-            pp[seq(length(meanstart))] <- meanstart
-    }    
-    names(pp) <- coef(x, silent=TRUE, fixed=FALSE, mean=TRUE)[seq_len(length(pp))]
-    pp[!is.finite(pp) | is.nan(pp) | is.na(pp)] <- 0.1
+    pp[!is.finite(pp) | is.nan(pp) | is.na(pp)] <- 0.01
     return(pp)    
 }
 
