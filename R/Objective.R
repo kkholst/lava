@@ -282,7 +282,7 @@ Simple_gradient.lvm <- function(x,p,...) {
     npar.reg <- m.$npar.reg; npar <- m.$npar
     G <- J%*%IAi
     detC <- det(C)
-    iC <- Inverse(C,tol=1e-9)
+    iC <- Inverse(C)
     if (detC<0 | inherits(iC, "try-error"))
       return(.Machine$double.xmax)    
     res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
