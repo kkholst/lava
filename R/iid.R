@@ -19,7 +19,7 @@
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
 ##' crossprod(iid(g))
-##' 
+##'
 iid <- function(x,...) UseMethod("iid")
 
 ##' @S3method iid default
@@ -53,6 +53,9 @@ iid.default <- function(x,score.deriv,id,...) {
   return(structure(iid0,iI=iI))
 }
 
+
+##' @S3method iid multigroupfit
+iid.multigroupfit <- function(x,...) iid.default(x,combine=TRUE,...)
 
 ##' @S3method iid matrix
 iid.matrix <- function(x,...) {
