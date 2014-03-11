@@ -137,11 +137,11 @@
 ##' ##################################################
 ##' 
 ##' m <- lvm(y~x+z)
-##' rates <- c(1,0.5); cuts <- c(0,5)
+##' rates <- c(0.3,0.5); cuts <- c(0,5)
 ##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
 ##'                              loggamma.lvm(rate=1,shape=1))
 ##' \dontrun{
-##'     d <- sim(m,2e4,p=c("y~x"=0)); d$status <- TRUE
+##'     d <- sim(m,2e4,p=c("y~x"=0,"y~z"=0)); d$status <- TRUE
 ##'     plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
 ##'                         resample.iid=0,robust=0),spec=1)
 ##'     L <- approxfun(c(cuts,max(d$y)),f=1,
@@ -163,7 +163,7 @@
 ##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 ##' distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 ##' \dontrun{
-##'     mets::fast.reshape(sim(m,100),varying=t)
+##'     mets::fast.reshape(sim(m,100),varying="t")
 ##' }
 "sim" <- function(x,...) UseMethod("sim")
 
@@ -231,7 +231,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         ii <- match(names(distribution(x)),vars(x))
         jj <- setdiff(seq(ncol(P)),ii)
         E <- matrix(0,ncol=ncol(P),nrow=n)
-        system.time(E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE])
+        if (length(jj)>0)
+            system.time(E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE])
     } else {
         E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
     }
@@ -406,15 +407,27 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                             }
                             
                             for (From in relations) {
-                                f <- functional(x,i,From)[[1]]
+                                f <- functional(x,i,From)[[1]] 
                                 if (!is.function(f))
-                                    f <- function(x,...) x
+                                    f <- function(x,...) x                                
                                 reglab <- regfix(x)$labels[From,pos]
                                 if (reglab%in%c(xfix,xconstrain.par)) {
-                                    mu.i <- mu.i + res[,reglab]*f(res[,From],p)
+                                    if (is.function(f)) {
+                                        if (length(formals(f))>1) {
+                                            mu.i <- mu.i + res[,reglab]*f(res[,From],p)
+                                        } else {
+                                            mu.i <- mu.i + res[,reglab]*f(res[,From])
+                                        }
+                                    } else  mu.i <- mu.i + res[,reglab]*res[,From]
                                 }
                                 else {
-                                    mu.i <- mu.i + A[From,pos]*f(res[,From],p)
+                                    if (is.function(f)) {
+                                        if (length(formals(f))>1) {
+                                            mu.i <- mu.i + A[From,pos]*f(res[,From],p)
+                                        } else {
+                                            mu.i <- mu.i + A[From,pos]*f(res[,From])
+                                        }
+                                    } else  mu.i <- mu.i + A[From,pos]*res[,From]
                                 }
                             }
                             dist.i <- distribution(x,i)[[1]]

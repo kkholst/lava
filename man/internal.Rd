@@ -54,6 +54,7 @@
 \alias{starter.multigroup}
 \alias{startvalues}
 \alias{startvalues0}
+\alias{startvalues1}
 \alias{startvalues2}
 \alias{startvalues3}
 \alias{stdcoef}

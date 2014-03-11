@@ -22,6 +22,7 @@ gaussian_method.lvm <- "nlminb2"
       T <- S
     }
     res <- n/2*log(detC) + n/2*tr(T%*%iC) ## Objective function (Full Information ML)
+    ## if (any(attr(iC,"lambda")<1e-16)) res <- res-1e2    
     return(res)
   }
 
@@ -263,5 +264,28 @@ weighted2_hessian.lvm <- NULL
 
 ###}}} Weighted
 
-
-
+###{{{ Simple
+`Simple_hessian.lvm` <- function(p,...) {
+  matrix(NA, ncol=length(p), nrow=length(p))
+}
+Simple_gradient.lvm <- function(x,p,...) {
+  naiveGrad(function(pp) Simple_objective.lvm(x,pp,...), p)
+}
+`Simple_objective.lvm` <-
+  function(x, p=p, S=S, n=n, ...) {
+    m. <- moments(x,p)
+    C <- m.$C
+    A <- m.$A
+    P <- m.$P
+    J <- m.$J
+    IAi <- m.$IAi
+    npar.reg <- m.$npar.reg; npar <- m.$npar
+    G <- J%*%IAi
+    detC <- det(C)
+    iC <- Inverse(C,tol=1e-9)
+    if (detC<0 | inherits(iC, "try-error"))
+      return(.Machine$double.xmax)    
+    res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
+    res
+  }
+###}}} ObjectiveSimple

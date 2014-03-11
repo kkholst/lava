@@ -163,11 +163,11 @@ distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
 ##################################################
 
 m <- lvm(y~x+z)
-rates <- c(1,0.5); cuts <- c(0,5)
+rates <- c(0.3,0.5); cuts <- c(0,5)
 distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
                              loggamma.lvm(rate=1,shape=1))
 \dontrun{
-    d <- sim(m,2e4,p=c("y~x"=0)); d$status <- TRUE
+    d <- sim(m,2e4,p=c("y~x"=0,"y~z"=0)); d$status <- TRUE
     plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
                         resample.iid=0,robust=0),spec=1)
     L <- approxfun(c(cuts,max(d$y)),f=1,
@@ -189,7 +189,7 @@ rates <- c(1,0.5); cuts <- c(0,5)
 distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 \dontrun{
-    mets::fast.reshape(sim(m,100),varying=t)
+    mets::fast.reshape(sim(m,100),varying="t")
 }
 }
 \author{

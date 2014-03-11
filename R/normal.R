@@ -1,7 +1,5 @@
-##' @export
 normal_method.lvm <- "nlminb0"
 
-##' @export
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     save.seed <- .Random.seed; set.seed(1)
     on.exit(set.seed(save.seed))
@@ -46,13 +44,11 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     return(-sum(l))  
 }
 
-##' @export
 normal_logLik.lvm <- function(object,p,data,weight2,...) {
     res <- -normal_objective.lvm(x=object,p=p,data=data,weight2=weight2,...)
     return(res)
 }
 
-##' @export
 normal_gradient.lvm <- function(x,p,data,weight2,indiv=FALSE,...) {
     if (indiv) {
         return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,indiv=TRUE,...),p,method=lava.options()$Dmethod))

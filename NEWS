@@ -1,8 +1,8 @@
 * Version 1.2.5 <2014-02-28 Fri>
-  - Function 'categorical'....
   - Improved flexibility in simulations with 'transform','constrain' (ex: categorical predictors)
   - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
+  - Function 'categorical' for adding categorical predictors to simulation model
   - R-squared values (+ approximate standard
     errors/i.i.d. decomposition) via 'rsq(model,TRUE)'
   - Added 'dataid' argument to estimate.default allowing different id

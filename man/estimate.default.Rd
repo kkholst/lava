@@ -84,6 +84,15 @@ vcov(e)
 ## Label new parameters
 estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
 
+## Multiple group
+m <- lvm(y~x)
+m <- baptize(m)
+d2 <- d1 <- sim(m,50)
+e <- estimate(list(m,m),list(d1,d2))
+estimate(e) ## Wrong
+estimate(e,id=rep(seq(nrow(d1)),2))
+estimate(lm(y~x,d1))
+
 ## Marginalize
 f <- function(p,data)
   list(p0=lava:::expit(p[1] + p[3]*data[,"z"]),
