@@ -6,7 +6,6 @@ pcor <- function(x,y,X,Z,start,...) {
     
     n1 <- 1+seq(nlevels(x)-1)
     n2 <- n1[length(n1)]+seq(nlevels(y)-1)
-    browser()
     if (missing(start)) {
         f <- as.formula(ifelse(missing(X),"~1","~X"))
         start <- c(0.5,
@@ -27,7 +26,7 @@ pcor <- function(x,y,X,Z,start,...) {
     nn0 <- nn; nn[nn==0] <- .5
     p0 <- as.vector(nn)/sum(nn)
     logL0 <- sum(as.vector(nn)*log(p0))
-    t0 <- system.time(op <- nlminb(start,ff,gg))
+    suppressWarnings(t0 <- system.time(op <- nlminb(start,ff,gg)))
     cc <- op$par
     names(cc) <- c("rho",paste(rownames(nn),"x",sep=".")[-1], paste(colnames(nn),"y",sep=".")[-1])
     V <- solve(numDeriv::jacobian(function(p) gg(p), op$par))

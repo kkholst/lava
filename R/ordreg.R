@@ -54,7 +54,7 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),
     if (missing(start)) start <- with(up,c(rep(-1,up$K-1),rep(0,p)))
     op <- nlminb(start,ff,gg)
     cc <- op$par;
-    if (fast) return(structure(cc,threshold=up$threshold(cc))) ##,up$K)))
+    if (fast) return(structure(cc,threshold=up$threshold(cc,up$K))) ##,up$K)))
     nn <- c(paste(lev[-length(lev)], lev[-1L], sep = "|"),
                    colnames(X))
     I <- -ordreg_hessian(cc,up)
