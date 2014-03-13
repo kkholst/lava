@@ -1,18 +1,20 @@
-* Version 1.2.5 <2014-02-28 Fri>
-  - Improved flexibility in simulations with 'transform','constrain' (ex: categorical predictors)
+* Version 1.2.5 <2014-03-13 Thu>
   - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
-  - Function 'categorical' for adding categorical predictors to simulation model
-  - R-squared values (+ approximate standard
-    errors/i.i.d. decomposition) via 'rsq(model,TRUE)'
+  - Function 'categorical' for adding categorical predictors to
+    simulation model
+  - Improved flexibility in simulations with 'transform','constrain'
+    (ex: categorical predictors)
   - Added 'dataid' argument to estimate.default allowing different id
-    fo 'data' and i.i.d. decomposition of model-parameters. 
+    for 'data' and i.i.d. decomposition of model parameter estimates. 
     With the argument 'stack=FALSE' influence functions within
     clusters will not be stacked together.
+  - R-squared values (+ approximate standard
+    errors/i.i.d. decomposition) via 'rsq(model,TRUE)'
   - New infrastructure for adding additional parameters to models (no
     user-visible changes).
   - multinomial function for calculating influence curves for
-    multinomial probabilities. 'gammagk','kappa' methods for
+    multinomial probabilities. 'gammagk' and 'kappa' methods for
     calculating Goodman-Kruskals gamma and Cohens kappa coefficients.
   - ordreg function for univariate ordinal regression models
   - iid methods for data.frames/matrices (empirical mean and variance)
@@ -25,7 +27,7 @@
   - Covariance structure may now be specified using '~~', e.g.
     'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
     (y,z),(y,u),(v,z),(v,u).
-
+    
 * Version 1.2.4 <2013-12-01 Sun>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
