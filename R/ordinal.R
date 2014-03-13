@@ -8,8 +8,6 @@ ordinal.sim.hook <- function(x,data,p,...) {
         if (attributes(ovar)$liability[i]) {
             idx <- attributes(ovar)$idx[[ovar[i]]]
             breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
-            ##breaks <- c(-Inf,p[idx],Inf)
-            browser()
             z <- cut(data[,ovar[i]],breaks=breaks)
             data[,ovar[i]] <- as.numeric(z)-1
         }
@@ -60,8 +58,8 @@ print.ordinal.lvm <- function(x,...) {
             return(NULL)
     }
     
-    if (!missing(p)) breaks <- qnorm(p)
-    if (!is.null(breaks)) breaks <- ordreg_threshold(breaks)
+    if (!missing(p)) breaks <- qnorm(cumsum(p))
+    if (!is.null(breaks)) breaks <- ordreg_ithreshold(breaks)
     if (length(var)>length(K)) K <- rep(K[1],length(var))
     if (length(var)==1 && !missing(constrain)) constrain <- list(constrain)
 
