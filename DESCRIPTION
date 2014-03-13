@@ -143,3 +143,4 @@ Collate:
     'pcor.R'
     'ordinal.R'
     'normal.R'
+    'categorical.R'

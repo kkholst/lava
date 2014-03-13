@@ -1,3 +1,20 @@
+##' @export
+rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(2)+1,...) {
+    PP <- with(svd(sigma), v%*%diag(sqrt(d))%*%t(u))
+    res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
+    return(res+cbind(rep(1,n))%*%mean)
+}
+
+##' @export
+dmvn <- function(x,mean=rep(0,ncol(sigma)),sigma,log=FALSE,...) {
+    k <- ncol(sigma)
+    isigma <- Inverse(sigma)
+    logval <- -0.5*(base::log(2*base::pi)*k+base::log(attributes(isigma)$det)+rowSums((x%*%isigma)*x))
+    if (log) return(logval)
+    return(exp(logval))
+}
+
+
 normal_method.lvm <- "nlminb0"
 
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
@@ -13,7 +30,6 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     if (exists("binary.lvm")) status[match(do.call("binary",x),y)] <- 2
     status[match(ord,y)] <- 2
     thres <- matrix(0,nrow=length(y),max(1,attributes(ord)$K-1)); rownames(thres) <- y
-##    browser()
     for (i in seq_len(length(attributes(ord)$fix))) {
         nn <- names(attributes(ord)$idx)[i]
         ii <- attributes(ord)$idx[[nn]]
@@ -29,17 +45,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         yu[,colnames(weight2)] <- weight2
         status[match(colnames(weight2),y)] <- 1
     }
-
-    l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
-    ## l <- .Call("loglikMVN",
-    ##            yl=as.matrix(yl),
-    ##            yu=as.matrix(yu),
-    ##            status=as.integer(status),
-    ##            mu=as.matrix(mu),dmu=NULL,s=as.matrix(S),ds=NULL,
-    ##            z=NULL,su=NULL,dsu=NULL,
-    ##            threshold=as.matrix(thres),
-    ##            dthreshold=NULL, package="mets")
-  
+    l <- mets::loglikMVN(yl,yu,status,mu,S,thres)  
     if (indiv) return(-l)
     return(-sum(l))  
 }

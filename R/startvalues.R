@@ -215,6 +215,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
 ###{{{ startvalues0
 
+##' @export
 startvalues1 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     p0 <- startvalues(x,S,mu,...)
     p0[index(x)$npar.mean+variances(x)] <- 0.1
@@ -230,7 +231,6 @@ startvalues00 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     ##P0 <- x$covfix; P0[is.na(P0)] <- 0
     ##diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.obsidx]/2
     lu <- min(diag(P0)[index(x)$endo.idx])/2
-    ##  suppressMessages(browser())
     ##    diag(P0)[] <- 0.1
     ## diag(P0)[index(x)$endo.idx] <- 1    
     diag(P0)[index(x)$eta.idx] <- 0.1 ##mean(diag(S)[index(x)$endo.idx])/2
@@ -258,7 +258,6 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     lu <- 0.9
     diag(P0)[index(x)$eta.idx] <- lu##mean(diag(S)[index(x)$endo.idx])/2
     pp <- pars(x,A=t(A0),P=P0,v=rep(1,length(index(x)$vars)))
-    ##suppressMessages(browser())
     nu <- numeric(length(vars(x)))
     pp[pp==1] <- p0[pp==1]
     ## if (!is.null(mu)) {

@@ -192,6 +192,27 @@ distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 \dontrun{
     mets::fast.reshape(sim(m,100),varying="t")
 }
+
+##################################################
+### Categorical predictor
+##################################################
+
+##library(mets)
+m <- lvm()
+m <- categorical(m,y~x,K=4)
+d <- sim(m,1000,p=c('y~x:2'=4))
+lm(y~-1+factor(x),data=d)
+
+
+m <- lvm()
+regression(m) <- z~x
+m <- categorical(m,y~x,K=4,p=c(0.1,0.2,0.3))
+with(sim(m,1e4),table(x))/1e4
+
+m <- categorical(m,y~z,K=3)
+d <- sim(m,1e4,p=c('y~z:0'=3,'y~x:2'=4))
+lm(y~factor(z)+factor(x),data=d)
+with(d,table(x))/nrow(d)
 }
 \author{
   Klaus K. Holst
