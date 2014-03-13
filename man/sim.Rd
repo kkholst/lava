@@ -2,6 +2,7 @@
 \alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{categorical}
+\alias{categorical<-}
 \alias{coxExponential.lvm}
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
