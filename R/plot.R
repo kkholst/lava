@@ -51,7 +51,8 @@
 ##' x1=expression(x[scriptscriptstyle(1)]),
 ##' x2=expression(x[scriptscriptstyle(2)]),
 ##' eta=expression(eta))
-##' edgelabels(m, eta ~ z+x1+x2, cex=2, lwd=3, col=c("orange","lightblue","lightblue")) <- expression(rho,phi,psi)
+##' edgelabels(m, eta ~ z+x1+x2, cex=2, lwd=3,
+##'            col=c("orange","lightblue","lightblue")) <- expression(rho,phi,psi)
 ##' nodecolor(m, vars(m), border="white", labcol="darkblue") <- NA
 ##' nodecolor(m, ~y1+y2+z, labcol=c("white","white","black")) <- NA
 ##' plot(m,cex=1.5)
