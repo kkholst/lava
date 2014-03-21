@@ -67,12 +67,6 @@
 }
 \examples{
 \donttest{
-example(estimate)
-plot(m)
-plot(e)
-}
-
-\donttest{
 m <- lvm(c(y1,y2) ~ eta)
 regression(m) <- eta ~ z+x2
 regression(m) <- c(eta,z) ~ x1
@@ -87,6 +81,18 @@ edgelabels(m, eta ~ z+x1+x2, cex=2, lwd=3,
 nodecolor(m, vars(m), border="white", labcol="darkblue") <- NA
 nodecolor(m, ~y1+y2+z, labcol=c("white","white","black")) <- NA
 plot(m,cex=1.5)
+
+d <- sim(m,100)
+e <- estimate(m,d)
+plot(e)
+}
+
+\donttest{
+m <- lvm(c(y1,y2) ~ eta)
+regression(m) <- eta ~ z+x2
+regression(m) <- c(eta,z) ~ x1
+latent(m) <- ~eta
+plot(lava:::beautify(m,edgecol=F))
 }
 }
 \author{

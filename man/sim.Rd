@@ -1,5 +1,4 @@
 \name{sim}
-\alias{Gamma.lvm}
 \alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{categorical}
@@ -16,6 +15,7 @@
 \alias{functional<-}
 \alias{functional<-.lvm}
 \alias{gamma.lvm}
+\alias{Gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
