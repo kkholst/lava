@@ -10,8 +10,8 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
   nodeRenderInfo(g)$fill <- NA
   nodeRenderInfo(g)$label <- NA
   nodeRenderInfo(g)$label[vars(x)] <- vars(x)
-    
-    nodeRenderInfo(g)$shape <- x$graphdef$shape
+  nodeRenderInfo(g)$shape <- x$graphdef$shape
+  
     Lab <- NULL
     for (i in seq_len(length(x$noderender))) {
       nn <- unlist(x$noderender[[i]])
@@ -26,11 +26,10 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     if (!is.null(Lab)) { ## Ugly hack to allow mathematical annotation
       nn <- names(nodeRenderInfo(g)$label)
       LL <- as.list(nodeRenderInfo(g)$label)
-      LL[names(Lab)] <- Lab
-      if (any(unlist(lapply(LL,function(x) is.expression(x) || is.name(x)))))
+      LL[names(Lab)] <- Lab      
+      if (any(unlist(lapply(LL,function(x) is.expression(x) || is.name(x) || is.call(x))))) {
           nodeRenderInfo(g) <- list(label=as.expression(LL))
-      else
-          nodeRenderInfo(g) <- list(label=LL)
+      } else nodeRenderInfo(g) <- list(label=LL)      
       names(nodeRenderInfo(g)$label) <- nn
       ii <- which(names(nodeRenderInfo(g)$label)=="")
       if (length(ii)>0)
@@ -113,9 +112,6 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
                 newedges <- c(newedges,paste(var[s],"~",var[r], sep=""))
               }
             }
-##            g <- addEdge(var[s],var[r], g)
-##            newedges <- c(paste(var[r],"~",var[s], sep=""),
-##                          paste(var[s],"~",var[r], sep=""))
             if (r==s)
               varEdges <- c(varEdges,
                             newedges
@@ -159,7 +155,6 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       dir <- "none"; lty <- 2; arrowtail <- "closed"
     }
     arrowhead <- "closed"
-##    estr <- paste("\"",e,"\"",sep="")
     estr <- e
     for (f in c("col","cex","textCol","lwd","lty")) {
       if (!(estr%in%names(edgeRenderInfo(g)[[f]]))

@@ -36,12 +36,6 @@
 ##' @examples
 ##' 
 ##' \donttest{
-##' example(estimate)
-##' plot(m)
-##' plot(e)
-##' }
-##'
-##' \donttest{
 ##' m <- lvm(c(y1,y2) ~ eta)
 ##' regression(m) <- eta ~ z+x2
 ##' regression(m) <- c(eta,z) ~ x1
@@ -56,8 +50,21 @@
 ##' nodecolor(m, vars(m), border="white", labcol="darkblue") <- NA
 ##' nodecolor(m, ~y1+y2+z, labcol=c("white","white","black")) <- NA
 ##' plot(m,cex=1.5)
+##'
+##' d <- sim(m,100)
+##' e <- estimate(m,d)
+##' plot(e)
 ##' }
 ##'
+##' \donttest{
+##' m <- lvm(c(y1,y2) ~ eta)
+##' regression(m) <- eta ~ z+x2
+##' regression(m) <- c(eta,z) ~ x1
+##' latent(m) <- ~eta
+##' plot(lava:::beautify(m,edgecol=F))
+##' }
+##'
+##' 
 ##' @S3method plot lvm
 ##' @method plot lvm
 `plot.lvm` <-
@@ -238,8 +245,8 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
   V(g)$label <- vars(x)
   V(g)$shape <- "rectangle"
   for (i in match(latent(x),V(g)$name)) {
-    V(g)$shape[i] <- "circle"
-    V(g)$color[i] <- "green"
+      V(g)$shape[i] <- "circle"
+      V(g)$color[i] <- "green"
   }
   endo <- index(x)$endogenous
   for (i in match(endo,V(g)$name)) {
@@ -257,3 +264,35 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
 }
 
 ###}}} igraph.lvm
+
+beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("white",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
+    nodecolor(x, exogenous(x), border=border[1], labcol=labcol[1]) <- NA
+    nodecolor(x, endogenous(x), border=border[1], labcol=labcol[1]) <- NA
+    nodecolor(x, latent(x), border=border[1], labcol=labcol[1]) <- NA
+    trimmed <- gsub("[[:digit:]]*$","",vars(x))
+    num <- c()
+    for (i in seq_len(length(vars(x)))) {
+        num <- c(num,gsub(trimmed[i],"",vars(x)[i]))
+    }
+    lab <- paste(vars(x),"=",paste("expression(",trimmed,"[scriptscriptstyle(",num,")])",sep=""),sep="",collapse=",")
+    labels(x) <- eval(parse(text=paste("c(",lab,")")))
+    if (!edgecol) return(x)
+    iex <- index(x)$exo.idx
+    ien <- index(x)$endo.idx
+    ila <- index(x)$eta.idx
+    for (i in iex) {
+        for (j in which(x$M[i,]==1))
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[1]) <- NA
+    }
+    for (i in ien) {
+        for (j in which(x$M[i,]==1))
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[2]) <- NA
+    }
+    for (i in ila) {
+        for (j in which(x$M[i,]==1))
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[3]) <- NA
+    }
+    x
+}
+    
+
