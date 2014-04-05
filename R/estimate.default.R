@@ -335,6 +335,21 @@ estimate.glm <- function(x,...) {
     estimate.default(x,...)
 }
 
+
+
+estimate.lmerMod <- function(x,...) {
+    cc <- cbind(fixef(x),diag(vcov(x))^.5)
+    cc <- cbind(cc,cc[,1]-qnorm(0.975)*cc[,2],cc[,1]+qnorm(0.975)*cc[,2],
+                2*(1-pnorm(abs(cc[,1])/cc[,2])))
+    colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
+    res <- structure(list(coef=fixef(x), vcov=vcov(x),
+                          coefmat=cc,
+                          varcomp=as.numeric(VarCorr(x)),residual=attributes(VarCorr(x))$sc^2
+                          ),
+                     class="estimate")
+    res
+}
+
 ##' @S3method print estimate
 print.estimate <- function(x,digits=3,width=25,...) {
     if (!is.null(x$print)) {
