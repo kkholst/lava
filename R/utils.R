@@ -332,9 +332,12 @@ CondMom <- function(mu,S,idx,X) {
   SXX <- S[idxX,idxX,drop=FALSE];
   SYY <- S[idxY,idxY,drop=FALSE]
   SYX <- S[idxY,idxX,drop=FALSE]
+  iSXX <- solve(SXX)
+  condvar <- SYY-SYX%*%iSXX%*%t(SYX)
+  if (missing(mu)) return(condvar)
+  
   muY <- mu[,idxY,drop=FALSE]
   muX <- mu[,idxX,drop=FALSE]
-  iSXX <- solve(SXX)
   if (is.matrix(mu))
     Z <- t(X-muX)
   else
@@ -346,7 +349,6 @@ CondMom <- function(mu,S,idx,X) {
   else
     condmean <- t(apply(SZ,1,function(x) muY+x))
 ##  ,ncol=ncol(SZ),nrow=nrow(SZ))
-  condvar <- SYY-SYX%*%iSXX%*%t(SYX)
   return(list(mean=condmean,var=condvar))
 }
 

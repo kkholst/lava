@@ -104,6 +104,8 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     xi.x <- matrix(as.vector(IAi%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
     rownames(xi.x) <- names(mu.0)
   }
+
+  attr(xi.x,"cond.var") <- Cy.x
   if (path) return(t(xi.x))
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
@@ -118,33 +120,37 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   ry <- t(ys)-Ey.x[y0.idx,,drop=FALSE]
   y <- NULL
   if (!is.null(x)) {
-    if (class(x)[1]=="formula")  {
-      xy <- getoutcome(x)
-      if (length(xy)>0) {
-        y <- decomp.specials(xy)
+      if (class(x)[1]=="formula")  {
+          xy <- getoutcome(x)
+          if (length(xy)>0) {
+              y <- decomp.specials(xy)
+          }
+          x <- attributes(xy)$x
       }
-      x <- attributes(xy)$x
-    }
-    if (length(x)==0) {
-      if (!is.null(y))
-        xi.x <- xi.x[y,,drop=FALSE]
-      return(t(xi.x))
-    }
-    x <- intersect(x,endogenous(object))
-    if (is.null(y))
-      y <- setdiff(vars(object),c(x,exogenous(object)))
-
-    E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
-    if (residual) {
-      Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
-      Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
-      Vhat[,y] <- t(E.x)
-      return(t((IA%*%t(Vhat)-m$v)))
-    }
-    res <- t(E.x); colnames(res) <- y
-    return(res)
+      if (length(x)==0) {
+          if (!is.null(y)) {
+              xi.x <- xi.x[y,,drop=FALSE]
+              attr(xi.x,"cond.var") <- Cy.x[y,y,drop=FALSE]
+          }
+          return(t(xi.x))
+      }
+      x <- intersect(x,endogenous(object))
+      if (is.null(y))
+          y <- setdiff(vars(object),c(x,exogenous(object)))
+      
+      E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
+      if (residual) {
+          Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
+          Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
+          Vhat[,y] <- t(E.x)
+          return(t((IA%*%t(Vhat)-m$v)))
+      }
+      res <- t(E.x); colnames(res) <- y
+      attr(res,"cond.var") <-
+          C.x[y,y,drop=FALSE]-C.x[y,x,drop=FALSE]%*%solve(C.x[x,x,drop=FALSE])%*%C.x[x,y,drop=FALSE]
+      return(res)
   }
-
+  
   ys <- data[,Y,drop=FALSE]
   ry <- t(ys)-Ey.x  
   
