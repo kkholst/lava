@@ -111,14 +111,14 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 ######################
   warned <- FALSE
   for (i in seq_len(nm)) {
-    if (is.data.frame(datasets[[i]])) {
-      myvars <- intersect(names(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep))
+    if (inherits(datasets[[i]],c("data.frame","matrix"))) {
+      myvars <- intersect(colnames(datasets[[i]]),c(vars(models[[i]]),xfix[[i]],keep))
       if (any(is.na(datasets[[i]][,myvars]))) {
         if (!warned) warning(paste("Missing data encountered. Going for complete-case analysis", sep=""))
         warned  <- TRUE
         datasets[[i]] <- na.omit(datasets[[i]][,myvars,drop=FALSE])
       }
-    }
+##    }
   }
     
   exo <- exogenous(models)
