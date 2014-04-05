@@ -130,9 +130,10 @@
             }            
         }
         X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
-        
         if (iscovar) {
-            return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
+            ## return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
+            covariance(object) <- toformula(decomp.specials(lhs[[1]]),X)
+            return(object)
         }
         if (!is.null(lhs) && nchar(lhs[[1]])>2 && substr(lhs[[1]],1,2)=="v(") {
             v <- update(value,paste(decomp.specials(lhs),"~."))
