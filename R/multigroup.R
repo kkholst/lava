@@ -118,7 +118,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         warned  <- TRUE
         datasets[[i]] <- na.omit(datasets[[i]][,myvars,drop=FALSE])
       }
-##    }
+    }
   }
     
   exo <- exogenous(models)
