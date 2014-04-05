@@ -3,9 +3,8 @@
 \alias{predict.lvmfit}
 \title{Prediction in structural equation models}
 \usage{
-  \method{predict}{lvm} (object, x = NULL,
-    residual = FALSE, p, data, path = FALSE,
-    quick = is.null(x) & !(residual | path), ...)
+\method{predict}{lvm}(object, x = NULL, residual = FALSE, p, data,
+  path = FALSE, quick = is.null(x) & !(residual | path), ...)
 }
 \arguments{
   \item{object}{Model object}
@@ -29,7 +28,7 @@
   function}
 }
 \description{
-  Prediction in structural equation models
+Prediction in structural equation models
 }
 \examples{
 m <- lvm(list(c(y1,y2,y3)~u,u~x)); latent(m) <- ~u

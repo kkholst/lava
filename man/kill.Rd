@@ -5,7 +5,7 @@
 \alias{rmvar<-}
 \title{Remove variables from (model) object.}
 \usage{
-  kill(x, ...) <- value
+kill(x, ...) <- value
 }
 \arguments{
   \item{x}{Model object}
@@ -17,7 +17,7 @@
   functions}
 }
 \description{
-  Generic method for removing elements of object
+Generic method for removing elements of object
 }
 \examples{
 m <- lvm()
@@ -30,10 +30,10 @@ cancel(m) <- y1~y2
 rmvar(m) <- ~y2
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{cancel}
+\code{cancel}
 }
 \keyword{models}
 \keyword{regression}

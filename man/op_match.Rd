@@ -2,7 +2,7 @@
 \alias{\%ni\%}
 \title{Matching operator (x not in y) oposed to the \code{\%in\%}-operator (x in y)}
 \usage{
-  x \%ni\% y
+x \%ni\% y
 }
 \arguments{
   \item{x}{vector}
@@ -10,19 +10,19 @@
   \item{y}{vector of same type as \code{x}}
 }
 \value{
-  A logical vector.
+A logical vector.
 }
 \description{
-  Matching operator
+Matching operator
 }
 \examples{
 1:10 \%ni\% c(1,5,10)
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{match}}
+\code{\link{match}}
 }
 \keyword{misc}
 \keyword{utilities}

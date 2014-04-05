@@ -4,7 +4,7 @@
 \alias{summary.lvm}
 \title{Initialize new latent variable model}
 \usage{
-  lvm(x = NULL, ..., silent = lava.options()$silent)
+lvm(x = NULL, ..., silent = lava.options()$silent)
 }
 \arguments{
   \item{x}{Vector of variable names. Optional but gives
@@ -21,11 +21,10 @@
   messages are turned on/off.}
 }
 \value{
-  Returns an object of class \code{lvm}.
+Returns an object of class \code{lvm}.
 }
 \description{
-  Function that constructs a new latent variable model
-  object
+Function that constructs a new latent variable model object
 }
 \examples{
 m <- lvm() # Empty model
@@ -34,11 +33,11 @@ m2 <- lvm(~y1+y2) # Model with two independent variables (argument)
 m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{regression}}, \code{\link{covariance}},
-  \code{\link{intercept}}, ...
+\code{\link{regression}}, \code{\link{covariance}},
+\code{\link{intercept}}, ...
 }
 \keyword{models}
 \keyword{regression}

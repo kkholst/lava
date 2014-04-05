@@ -4,12 +4,10 @@
 \alias{estimate.lvm}
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \usage{
-  \method{estimate}{lvm} (x, data = parent.frame(),
-    estimator = "gaussian", control = list(),
-    missing = FALSE, weight, weightname, weight2, cluster,
-    fix, index = TRUE, graph = FALSE,
-    silent = lava.options()$silent, quick = FALSE, param,
-    ...)
+\method{estimate}{lvm}(x, data = parent.frame(), estimator = "gaussian",
+  control = list(), missing = FALSE, weight, weightname, weight2, cluster,
+  fix, index = TRUE, graph = FALSE, silent = lava.options()$silent,
+  quick = FALSE, param, ...)
 }
 \arguments{
   \item{x}{\code{lvm}-object}
@@ -68,48 +66,47 @@
   level functions}
 }
 \value{
-  A \code{lvmfit}-object.
+A \code{lvmfit}-object.
 }
 \description{
-  Estimate parameters. MLE, IV or user-defined estimator.
+Estimate parameters. MLE, IV or user-defined estimator.
 }
 \details{
-  A list of parameters controlling the estimation and
-  optimization procedures is parsed via the \code{control}
-  argument. By default Maximum Likelihood is used assuming
-  multivariate normal distributed measurement errors. A
-  list with one or more of the following elements is
-  expected:
+A list of parameters controlling the estimation and
+optimization procedures is parsed via the \code{control}
+argument. By default Maximum Likelihood is used assuming
+multivariate normal distributed measurement errors. A list
+with one or more of the following elements is expected:
 
-  \describe{ \item{start:}{Starting value. The order of the
-  parameters can be shown by calling \code{coef} (with
-  \code{mean=TRUE}) on the \code{lvm}-object or with
-  \code{plot(..., labels=TRUE)}. Note that this requires a
-  check that it is actual the model being estimated, as
-  \code{estimate} might add additional restriction to the
-  model, e.g. through the \code{fix} and \code{exo.fix}
-  arguments. The \code{lvm}-object of a fitted model can be
-  extracted with the \code{Model}-function.}
+\describe{ \item{start:}{Starting value. The order of the
+parameters can be shown by calling \code{coef} (with
+\code{mean=TRUE}) on the \code{lvm}-object or with
+\code{plot(..., labels=TRUE)}. Note that this requires a
+check that it is actual the model being estimated, as
+\code{estimate} might add additional restriction to the
+model, e.g. through the \code{fix} and \code{exo.fix}
+arguments. The \code{lvm}-object of a fitted model can be
+extracted with the \code{Model}-function.}
 
-  \item{starterfun:}{Starter-function with syntax
-  \code{function(lvm, S, mu)}.  Three builtin functions are
-  available: \code{startvalues}, \code{startvalues0},
-  \code{startvalues1}, ...}
+\item{starterfun:}{Starter-function with syntax
+\code{function(lvm, S, mu)}.  Three builtin functions are
+available: \code{startvalues}, \code{startvalues0},
+\code{startvalues1}, ...}
 
-  \item{estimator:}{ String defining which estimator to use
-  (Defaults to ``\code{gaussian}'')}
+\item{estimator:}{ String defining which estimator to use
+(Defaults to ``\code{gaussian}'')}
 
-  \item{meanstructure}{Logical variable indicating whether
-  to fit model with meanstructure.}
+\item{meanstructure}{Logical variable indicating whether to
+fit model with meanstructure.}
 
-  \item{method:}{ String pointing to alternative optimizer
-  (e.g. \code{optim} to use simulated annealing).}
+\item{method:}{ String pointing to alternative optimizer
+(e.g. \code{optim} to use simulated annealing).}
 
-  \item{control:}{ Parameters passed to the optimizer
-  (default \code{stats::nlminb}).}
+\item{control:}{ Parameters passed to the optimizer
+(default \code{stats::nlminb}).}
 
-  \item{tol:}{ Tolerance of optimization constraints on
-  lower limit of variance parameters.  } }
+\item{tol:}{ Tolerance of optimization constraints on lower
+limit of variance parameters.  } }
 }
 \examples{
 m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
@@ -141,10 +138,10 @@ e0 <- estimate(m,d0,missing=TRUE)
 e0
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{score}, \code{information}, ...
+\code{score}, \code{information}, ...
 }
 \keyword{models}
 \keyword{regression}

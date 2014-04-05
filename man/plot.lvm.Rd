@@ -3,15 +3,12 @@
 \alias{plot.lvmfit}
 \title{Plot path diagram}
 \usage{
-  \method{plot}{lvm} (x, diag = FALSE, cor = TRUE,
-    labels = FALSE, intercept = FALSE, addcolor = TRUE,
-    plain = FALSE, cex, fontsize1 = 10, noplot = FALSE,
-    graph = list(rankdir = "BT"),
-    attrs = list(graph = graph), unexpr = FALSE,
-    addstyle = TRUE, Rgraphviz = lava.options()$Rgraphviz,
-    init = TRUE,
-    layout = c("dot", "fdp", "circo", "twopi", "neato", "osage"),
-    ...)
+\method{plot}{lvm}(x, diag = FALSE, cor = TRUE, labels = FALSE,
+  intercept = FALSE, addcolor = TRUE, plain = FALSE, cex,
+  fontsize1 = 10, noplot = FALSE, graph = list(rankdir = "BT"),
+  attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
+  Rgraphviz = lava.options()$Rgraphviz, init = TRUE, layout = c("dot",
+  "fdp", "circo", "twopi", "neato", "osage"), ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -63,7 +60,7 @@
   level functions}
 }
 \description{
-  Plot the path diagram of a SEM
+Plot the path diagram of a SEM
 }
 \examples{
 \donttest{
@@ -96,7 +93,7 @@ plot(lava:::beautify(m,edgecol=F))
 }
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \keyword{hplot}
 \keyword{regression}
