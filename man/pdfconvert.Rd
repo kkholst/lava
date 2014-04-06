@@ -1,0 +1,34 @@
+\name{pdfconvert}
+\alias{pdfconvert}
+\title{Convert pdf to raster format}
+\usage{
+pdfconvert(files, dpi = 300, resolution = 1024, gsopt, format = "png",
+  ...)
+}
+\arguments{
+  \item{files}{Vector of (pdf-)filenames to process}
+
+  \item{dpi}{DPI}
+
+  \item{resolution}{Resolution of raster image file}
+
+  \item{gsopt}{Optional ghostscript arguments}
+
+  \item{format}{Raster format (e.g. png, jpg, tif, ...)}
+
+  \item{\dots}{Additional arguments}
+}
+\description{
+Convert PDF file to print quality png (default 300 dpi)
+}
+\details{
+Access to ghostscript program 'gs' is needed
+}
+\author{
+Klaus K. Holst
+}
+\seealso{
+\code{dev.copy2pdf}, \code{printdev}
+}
+\keyword{iplot}
+
