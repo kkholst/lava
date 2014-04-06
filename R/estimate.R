@@ -170,7 +170,7 @@ estimate <- function(x,...) UseMethod("estimate")
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
   if (length(redvar)>0)
-    warning(paste("Remove latent variable colnames from dataset",redvar))
+    warning(paste("Latent variable exists in dataset",redvar))
   xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
   if (missing(fix)) {
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)
