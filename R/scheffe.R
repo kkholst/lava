@@ -3,7 +3,7 @@
 ##'
 ##' @title Calculate simultaneous confidence limits by Scheffe's method
 ##' @param model Linear model
-##' @param new new data frame
+##' @param newdata new data frame
 ##' @param conf.level confidence level (0.95)
 ##' @export
 ##' @examples

@@ -42,8 +42,9 @@ lava.options            Set global options for 'lava'
 modelsearch             Model searching
 multinomial		Estimate probabilities in contingency table
 partialcor              Calculate partial correlations
-sim                     Simulate model
 predict.lvm             Prediction in structural equation models
+scheffe			Simulatenous confidence bands (lm)
+sim                     Simulate model
 startvalues             Starting values
 contr			Create contrast matrices
 
@@ -58,6 +59,7 @@ Expand                  Create a Data Frame from All Combinations of Factors
 Id                      Identify points on plot
 PD                      Dose response calculation for binomial regression models
 blockdiag               Combine matrices to block diagonal structure
+colorbar		Add colorbar to plot
 confband                Add Confidence limits bar to plot
 devcoords               Returns device-coordinates and plot-region
 org                     Convert object to ascii suitable for org-mode

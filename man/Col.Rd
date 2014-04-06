@@ -2,12 +2,14 @@
 \alias{Col}
 \title{Generate a transparent RGB color}
 \usage{
-Col(col, alpha = 0.2)
+Col(col, alpha = 0.2, locate = 0)
 }
 \arguments{
   \item{col}{Color (numeric or character)}
 
   \item{alpha}{Degree of transparency (0,1)}
+
+  \item{locate}{Choose colour (with mouse)}
 }
 \value{
 A character vector with elements of 7 or 9 characters,

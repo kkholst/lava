@@ -93,9 +93,6 @@ function(infile, startstring, endstring) {
 
 `mplus` <-
 function(file="template.mplus",wait=TRUE,intern=TRUE,...) {
-  if (is.null(file)) { 
-    Mplus()
-  } else {
     if (!file.exists(file)) file <- paste(file,".mplus",sep="")
     if (!file.exists(file)) stop("File does not exist")
     if (!exists("winecmd")) winecmd <- "wine"
@@ -104,7 +101,6 @@ function(file="template.mplus",wait=TRUE,intern=TRUE,...) {
     system(mycmd, wait=wait, intern=TRUE)
     prefix <- strsplit(file, ".", fixed=TRUE)[[1]][1]
     return(getMplus(paste(prefix,".out",sep=""),coef=TRUE))
-  }
 }
 
 `toMplus.data.frame` <-
@@ -207,13 +203,13 @@ function(x, datafile="data.tab",
   if (run & exists("mplus")) {
     res <- mplus(mplusfile)
     outfile <- paste(strsplit(mplusfile,".",fixed=TRUE)[[1]][1],".out",sep="")
-    mplus2R(outfile)
+    getMplus(outfile)
     return(res)
   }
 }
 
 `toMplus.lvmfit` <-
-function(x, model=NULL, data=model.frame(x), run=TRUE, categorical=binary(Model(x)),
+function(x, model=NULL, data=model.frame(x), run=TRUE, categorical=NULL,##binary(Model(x)),
          mplusfile="template.mplus", ...) {
   mymodel <- ""
   M <- index(x)$M
