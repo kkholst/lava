@@ -8,20 +8,17 @@
 ##' @title Identify points on plot
 ##' @usage 
 ##' \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
-##' 
 ##' idplot(x,y,...,id=list())
-##' @aliases idplot
-#' @param object
-#' @param ...
-#' @param #x X coordinates
-#' @param #y Y coordinates
-#' @param #label Should labels be added?
-#' @param #n Max number of inputs to expect
-#' @param #pch Symbol
-#' @param #col Color
-#' @param #cex Size
-#' @param #id List of arguments parsed to \code{Id} function
-#' @param #\dots Additional arguments parsed to \code{plot} function
+##' @aliases idplot click.default
+##' @param x X coordinates
+##' @param y Y coordinates
+##' @param label Should labels be added?
+##' @param n Max number of inputs to expect
+##' @param pch Symbol
+##' @param col Color
+##' @param cex Size
+##' @param id List of arguments parsed to \code{Id} function
+##' @param \dots Additional arguments parsed to \code{plot} function
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{idplot}}, \code{identify}
 ##' @examples
@@ -37,10 +34,11 @@
 ##' with(iris, idplot(Sepal.Length,Petal.Length))
 ##' }
 ##' @keywords iplot
-#' @export
+##' @export
 click <- function(x,...){
     UseMethod("click")
 }
+
 ##' @S3method click default
 click.default <-
 function(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)

@@ -2,7 +2,6 @@
 ##'
 ##' @title Add color-bar to plot
 ##' @param clut Color look-up table
-##' @param 0.5) 
 ##' @param x.range x range
 ##' @param y.range y range
 ##' @param values label values
@@ -13,7 +12,6 @@
 ##' @param border border of color bar rectangles
 ##' @param position Label position left/bottom (1) or top/right (2) or no text (0)
 ##' @param direction horizontal or vertical color bars
-##' @param ... 
 ##' @param \dots additional low level arguments (i.e. parsed to \code{text})
 ##' @export
 ##' @examples

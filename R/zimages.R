@@ -30,7 +30,6 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 ##       mar=list(c(0,0,0,0),c(0,0,0,0)),yaxs="i",xaxs="i")
 
 
-
 images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label.offset=0.02,
                  order=TRUE,colorbar.border=0,main,
                    axis1,axis2,mar,
@@ -74,7 +73,7 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
         par(mar=c(0,0,0,2))
         plot.new(); plot.window(xlim=c(0,1),ylim=c(0,1))
         for (i in seq(G)) {
-            guts::colorbar(col[[i]],values=seq(M)-1,direction="horizontal",
+            lava::colorbar(col[[i]],values=seq(M)-1,direction="horizontal",
                            y.range=c(1-i/(G+1),1-i/(G+1)+label.offset),
                            border=colorbar.border,x.range=c(0,1),srt=0,cex=0.6)
             text(0.5,1-i/(G+1)-label.offset, levels(group)[i])
@@ -85,7 +84,7 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
         plot.new(); plot.window(xlim=c(0,1),ylim=c(0,1))
         for (i in seq(G)) {
             xr <- c(1-i/(G+1),1-i/(G+1)+.1)-.1/2
-            guts::colorbar(col[[i]],values=seq(M)-1,direction="horizontal",
+            lava::colorbar(col[[i]],values=seq(M)-1,direction="horizontal",
                            x.range=xr,
                            border=colorbar.border,y.range=c(0.3,0.5),srt=0,cex=0.6)
             text(mean(xr),.1, levels(group)[i])

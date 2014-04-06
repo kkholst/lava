@@ -10,8 +10,6 @@ colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
 \arguments{
   \item{clut}{Color look-up table}
 
-  \item{0.5)}{}
-
   \item{x.range}{x range}
 
   \item{y.range}{y range}
@@ -32,8 +30,6 @@ colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
   top/right (2) or no text (0)}
 
   \item{direction}{horizontal or vertical color bars}
-
-  \item{...}{}
 
   \item{\dots}{additional low level arguments (i.e. parsed
   to \code{text})}

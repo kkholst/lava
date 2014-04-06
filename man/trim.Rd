@@ -7,7 +7,7 @@ trim(x, all = FALSE, ...)
 \arguments{
   \item{x}{String}
 
-  \item{all}{Trim all whitespaces?##'}
+  \item{all}{Trim all whitespaces?}
 
   \item{\dots}{additional arguments to lower level
   functions}
