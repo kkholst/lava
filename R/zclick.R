@@ -15,7 +15,7 @@
 ##' @param label Should labels be added?
 ##' @param n Max number of inputs to expect
 ##' @param pch Symbol
-##' @param col Color
+##' @param col Colour
 ##' @param cex Size
 ##' @param id List of arguments parsed to \code{Id} function
 ##' @param \dots Additional arguments parsed to \code{plot} function
