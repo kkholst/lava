@@ -202,36 +202,37 @@ uniform.lvm <- function(a,b) {
 ###}}} uniform
 
 ###{{{ weibull
+## see also eventTime.R for coxWeibull
 
 ##' @export
-weibull.lvm <- function(scale=1.25,shape=2,cens=Inf,breakties=0) {
-  require(survival)
-  lambda <- 1/scale
-  f <- function(n,mu,var,...) {
-    a0 <- function(t) lambda*shape*(lambda*t)^(shape-1)
-    A0 <- function(t) (lambda*t)^shape
-    A0i <- function(eta) eta^(1/shape)/lambda
-    U <- rexp(n, 1) #give everyone a random death time, on the CH scale
-    Z <- U*exp(-mu)
-    T <- A0i(Z)
-    if (breakties!=0)
-      T <- T+runif(n,0,breakties)
-    if (is.function(cens))
-      cens <- cens(n,...)
-    if (is.finite(cens[1])) {
-      Delta <- (T<cens)
-      if (any(!Delta)) {
-        T[!Delta] <- cens[!Delta]
-      S <- Surv(T,Delta*1)      
-      } else {
-        S <- T
-      }
-    } else {
-      S <- T
+weibull.lvm <- function(scale=100,shape=2) {
+    ## accelerated failure time (AFT) regression
+    ## parametrization.
+    ## 
+    ## We parametrize the Weibull distribution (without covariates) as follows:
+    ## hazard(t) = 1/shape * exp(-scale/shape) * t^(1/shape-1)
+    ## The hazard is:
+    ## - rising if shape > 1
+    ## - declining if shape <1
+    ## - constant if shape=1
+    ## 
+    ## AFT regression
+    ## hazard(t|Z) = 1/shape * exp(-scale/shape) * t^(1/shape-1) exp(-beta/shape*Z)
+    ## scale^(-1/shape) = exp(a0+a1*X)
+    ## PH regression
+    ## scale = exp(b0+ b1*X)
+    f <- function(n,mu,var,...) {
+        print(paste("weibull.scale=",scale))
+        print(paste("weibull.shape=",shape))
+        print(paste("coxWeibull.scale=",exp(scale/shape)))
+        (- log(runif(n)) * exp(scale/shape) * exp(mu/shape))^{shape}
+        ## scale * (-log(1-runif(n)))^{1/shape}
+        ## (- (log(runif(n)) / (1/scale)^(shape) * exp(-mu)))^(1/shape)
     }
-    return(S)
-  }
-  return(f)
+    attr(f,"family") <- list(family="weibull",
+                             regression="AFT",
+                             par=c(shape=shape,scale=scale))
+    return(f)
 }
 
 ###}}} weibull
