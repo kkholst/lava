@@ -1,16 +1,16 @@
 \name{covariance}
 \alias{covariance}
-\alias{covariance.lvm}
 \alias{covariance<-}
 \alias{covariance<-.lvm}
+\alias{covariance.lvm}
 \alias{covfix}
-\alias{covfix.lvm}
 \alias{covfix<-}
 \alias{covfix<-.lvm}
+\alias{covfix.lvm}
 \alias{variance}
-\alias{variance.lvm}
 \alias{variance<-}
 \alias{variance<-.lvm}
+\alias{variance.lvm}
 \title{Add covariance structure to Latent Variable Model}
 \usage{
 \method{covariance}{lvm}(object, var1=NULL, var2=NULL, constrain=FALSE, pairwise=FALSE,...) <- value
