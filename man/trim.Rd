@@ -2,7 +2,7 @@
 \alias{trim}
 \title{Trim tring of (leading/trailing/all) white spaces}
 \usage{
-trim(x, all = FALSE, ...)
+  trim(x, all = FALSE, ...)
 }
 \arguments{
   \item{x}{String}
@@ -13,9 +13,9 @@ trim(x, all = FALSE, ...)
   functions}
 }
 \description{
-Trim tring of (leading/trailing/all) white spaces
+  Trim tring of (leading/trailing/all) white spaces
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

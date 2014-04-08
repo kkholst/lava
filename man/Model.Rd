@@ -3,9 +3,9 @@
 \alias{Model<-}
 \title{Extract model}
 \usage{
-Model(x, ...)
+  Model(x, ...)
 
-Model(x, ...) <- value
+  Model(x, ...) <- value
 }
 \arguments{
   \item{x}{Fitted model}
@@ -17,11 +17,11 @@ Model(x, ...) <- value
   level functions}
 }
 \value{
-Returns a model object (e.g. \code{lvm} or
-\code{multigroup})
+  Returns a model object (e.g. \code{lvm} or
+  \code{multigroup})
 }
 \description{
-Extract or replace model object
+  Extract or replace model object
 }
 \examples{
 m <- lvm(y~x)
@@ -29,10 +29,10 @@ e <- estimate(m, sim(m,100))
 Model(e)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{Graph}}
+  \code{\link{Graph}}
 }
 \keyword{models}
 

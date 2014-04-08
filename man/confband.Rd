@@ -3,8 +3,8 @@
 \alias{forestplot}
 \title{Add Confidence limits bar to plot}
 \usage{
-confband(x, lower, upper, center = NULL, delta = 0.07, centermark = 0.03,
-  pch, blank = TRUE, vert = TRUE, ...)
+  confband(x, lower, upper, center = NULL, delta = 0.07,
+    centermark = 0.03, pch, blank = TRUE, vert = TRUE, ...)
 }
 \arguments{
   \item{x}{Position (x-coordinate if vert=TRUE,
@@ -33,7 +33,7 @@ confband(x, lower, upper, center = NULL, delta = 0.07, centermark = 0.03,
   lwd, lty,...)}
 }
 \description{
-Add Confidence limits bar to plot
+  Add Confidence limits bar to plot
 }
 \examples{
 plot(0,0,type="n",xlab="",ylab="")
@@ -52,10 +52,10 @@ forestplot(x,text.right=FALSE)
 forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{confband}
+  \code{confband}
 }
 \keyword{iplot}
 

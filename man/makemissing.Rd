@@ -2,8 +2,8 @@
 \alias{makemissing}
 \title{Create random missing data}
 \usage{
-makemissing(data, p = 0.2, cols = 1:ncol(data), rowwise = FALSE,
-  nafun = function(x) x)
+  makemissing(data, p = 0.2, cols = 1:ncol(data),
+    rowwise = FALSE, nafun = function(x) x)
 }
 \arguments{
   \item{data}{data.frame}
@@ -20,13 +20,13 @@ makemissing(data, p = 0.2, cols = 1:ncol(data), rowwise = FALSE,
   complete-cases only)}
 }
 \value{
-data.frame
+  data.frame
 }
 \description{
-Generates missing entries in data.frame/matrix
+  Generates missing entries in data.frame/matrix
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \keyword{utilities}
 

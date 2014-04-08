@@ -3,7 +3,7 @@
 \alias{subset.lvm}
 \title{Extract subset of latent variable model}
 \usage{
-\method{subset}{lvm}(x, vars, ...)
+  \method{subset}{lvm} (x, vars, ...)
 }
 \arguments{
   \item{x}{\code{lvm}-object.}
@@ -15,18 +15,18 @@
   level functions}
 }
 \value{
-A \code{lvm}-object.
+  A \code{lvm}-object.
 }
 \description{
-Extract measurement models or user-specified subset of
-model
+  Extract measurement models or user-specified subset of
+  model
 }
 \examples{
 m <- lvm(c(y1,y2)~x1+x2)
 subset(m,~y1+x1)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \keyword{models}
 \keyword{regression}

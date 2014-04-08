@@ -5,7 +5,7 @@
 \alias{multinomial}
 \title{Estimate probabilities in contingency table}
 \usage{
-multinomial(x, ...)
+  multinomial(x, ...)
 }
 \arguments{
   \item{x}{Matrix or data.frame with observations (1 or 2
@@ -14,7 +14,7 @@ multinomial(x, ...)
   \item{...}{Additional arguments to lower-level functions}
 }
 \description{
-Estimate probabilities in contingency table
+  Estimate probabilities in contingency table
 }
 \examples{
 set.seed(1)
@@ -57,6 +57,6 @@ gkgamma(multinomial(d2[,3:4]))
 }
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

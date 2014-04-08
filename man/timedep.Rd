@@ -2,7 +2,8 @@
 \alias{timedep}
 \title{Time-dependent parameters}
 \usage{
-timedep(object, formula, rate, timecut, type = "coxExponential.lvm", ...)
+  timedep(object, formula, rate, timecut,
+    type = "coxExponential.lvm", ...)
 }
 \arguments{
   \item{object}{Model}
@@ -25,7 +26,7 @@ timedep(object, formula, rate, timecut, type = "coxExponential.lvm", ...)
   \item{...}{Additional arguments to lower level functions}
 }
 \description{
-Add time-varying covariate effects to model
+  Add time-varying covariate effects to model
 }
 \examples{
 ## Piecewise constant hazard
@@ -72,6 +73,6 @@ exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, fam
 }
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

@@ -3,9 +3,9 @@
 \alias{Graph<-}
 \title{Extract graph}
 \usage{
-Graph(x, ...)
+  Graph(x, ...)
 
-Graph(x, ...) <- value
+  Graph(x, ...) <- value
 }
 \arguments{
   \item{x}{Model object}
@@ -16,17 +16,17 @@ Graph(x, ...) <- value
   level functions}
 }
 \description{
-Extract or replace graph object
+  Extract or replace graph object
 }
 \examples{
 m <- lvm(y~x)
 Graph(m)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{Model}}
+  \code{\link{Model}}
 }
 \keyword{graphs}
 \keyword{models}

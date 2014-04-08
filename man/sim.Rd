@@ -41,8 +41,9 @@
 \alias{weibull.lvm}
 \title{Simulate model}
 \usage{
-\method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
-sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
+  \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
+    cond = FALSE, sigma = 1, rho = 0.5, X, unlink=FALSE,
+    ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -70,8 +71,9 @@ sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
   level functions}
 }
 \description{
-Simulate data from a general SEM model including non-linear
-effects and general link and distribution of variables.
+  Simulate data from a general SEM model including
+  non-linear effects and general link and distribution of
+  variables.
 }
 \examples{
 ##################################################
@@ -213,7 +215,7 @@ lm(y~factor(z)+factor(x),data=d)
 with(d,table(x))/nrow(d)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \keyword{datagen}
 \keyword{models}

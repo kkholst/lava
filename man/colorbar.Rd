@@ -2,10 +2,11 @@
 \alias{colorbar}
 \title{Add color-bar to plot}
 \usage{
-colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
-  x.range = c(-0.5, 0.5), y.range = c(-0.1, 0.1), values = seq(clut),
-  digits = 2, label.offset, srt = 45, cex = 0.5, border = NA,
-  position = 1, direction = c("horizontal", "vertical"), ...)
+  colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
+    x.range = c(-0.5, 0.5), y.range = c(-0.1, 0.1),
+    values = seq(clut), digits = 2, label.offset, srt = 45,
+    cex = 0.5, border = NA, position = 1,
+    direction = c("horizontal", "vertical"), ...)
 }
 \arguments{
   \item{clut}{Color look-up table}
@@ -35,7 +36,7 @@ colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
   to \code{text})}
 }
 \description{
-Add color-bar to plot
+  Add color-bar to plot
 }
 \examples{
 \dontrun{

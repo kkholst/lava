@@ -9,9 +9,10 @@
 \alias{regression.lvm}
 \title{Add regression association to latent variable model}
 \usage{
-\method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-silent = lava.options()$silent, ...)
-\method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+  \method{regression}{lvm}(object = lvm(), to, from, fn =
+    NA, silent = lava.options()$silent, ...)
+    \method{regression}{lvm}(object, to=NULL, quick=FALSE,
+    ...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -37,78 +38,79 @@ silent = lava.options()$silent, ...)
   level functions}
 }
 \value{
-A \code{lvm}-object
+  A \code{lvm}-object
 }
 \description{
-Define regression association between variables in a
-\code{lvm}-object and define linear constraints between
-model equations.
+  Define regression association between variables in a
+  \code{lvm}-object and define linear constraints between
+  model equations.
 }
 \details{
-The \code{regression} function is used to specify linear
-associations between variables of a latent variable model,
-and offers formula syntax resembling the model
-specification of e.g. \code{lm}.
+  The \code{regression} function is used to specify linear
+  associations between variables of a latent variable
+  model, and offers formula syntax resembling the model
+  specification of e.g. \code{lm}.
 
-For instance, to add the following linear regression model,
-to the \code{lvm}-object, \code{m}: \deqn{ E(Y|X_1,X_2) =
-\beta_1 X_1 + \beta_2 X_2} We can write
+  For instance, to add the following linear regression
+  model, to the \code{lvm}-object, \code{m}: \deqn{
+  E(Y|X_1,X_2) = \beta_1 X_1 + \beta_2 X_2} We can write
 
-\code{regression(m) <- y ~ x1 + x2}
+  \code{regression(m) <- y ~ x1 + x2}
 
-Multivariate models can be specified by successive calls
-with \code{regression}, but multivariate formulas are also
-supported, e.g.
+  Multivariate models can be specified by successive calls
+  with \code{regression}, but multivariate formulas are
+  also supported, e.g.
 
-\code{regression(m) <- c(y1,y2) ~ x1 + x2}
+  \code{regression(m) <- c(y1,y2) ~ x1 + x2}
 
-defines \deqn{ E(Y_i|X_1,X_2) = \beta_{1i} X_1 + \beta_{2i}
-X_2 }
+  defines \deqn{ E(Y_i|X_1,X_2) = \beta_{1i} X_1 +
+  \beta_{2i} X_2 }
 
-The special function, \code{f}, can be used in the model
-specification to specify linear constraints. E.g. to fix
-\eqn{\beta_1=\beta_2} , we could write
+  The special function, \code{f}, can be used in the model
+  specification to specify linear constraints. E.g. to fix
+  \eqn{\beta_1=\beta_2} , we could write
 
-\code{regression(m) <- y ~ f(x1,beta) + f(x2,beta)}
+  \code{regression(m) <- y ~ f(x1,beta) + f(x2,beta)}
 
-The second argument of \code{f} can also be a number (e.g.
-defining an offset) or be set to \code{NA} in order to
-clear any previously defined linear constraints.
+  The second argument of \code{f} can also be a number
+  (e.g. defining an offset) or be set to \code{NA} in order
+  to clear any previously defined linear constraints.
 
-Alternatively, a more straight forward notation can be
-used:
+  Alternatively, a more straight forward notation can be
+  used:
 
-\code{regression(m) <- y ~ beta*x1 + beta*x2}
+  \code{regression(m) <- y ~ beta*x1 + beta*x2}
 
-All the parameter values of the linear constraints can be
-given as the right handside expression of the assigment
-function \code{regression<-} (or \code{regfix<-}) if the
-first (and possibly second) argument is defined as well.
-E.g:
+  All the parameter values of the linear constraints can be
+  given as the right handside expression of the assigment
+  function \code{regression<-} (or \code{regfix<-}) if the
+  first (and possibly second) argument is defined as well.
+  E.g:
 
-\code{regression(m,y1~x1+x2) <- list("a1","b1")}
+  \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 
-defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs
-argument can be a mixture of character and numeric values
-(and NA's).
+  defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs
+  argument can be a mixture of character and numeric values
+  (and NA's).
 
-The function \code{regression} (called without additional
-arguments) can be used to inspect the linear constraints of
-a \code{lvm}-object.
+  The function \code{regression} (called without additional
+  arguments) can be used to inspect the linear constraints
+  of a \code{lvm}-object.
 
-For backward compatibility the "$"-symbol can be used to
-fix parameters at a given value. E.g. to add a linear
-relationship between \code{y} and \code{x} with slope 2 to
-the model \code{m}, we can write \code{regression(m,"y") <-
-"x$2"}.  Similarily we can use the "@"-symbol to name
-parameters. E.g. in a multiple regression we can force the
-parameters to be equal: \code{regression(m,"y") <-
-c("x1@b","x2@b")}.  Fixed parameters can be reset by fixing
-(with \$) them to \code{NA}.
+  For backward compatibility the "$"-symbol can be used to
+  fix parameters at a given value. E.g. to add a linear
+  relationship between \code{y} and \code{x} with slope 2
+  to the model \code{m}, we can write
+  \code{regression(m,"y") <- "x$2"}.  Similarily we can use
+  the "@"-symbol to name parameters. E.g. in a multiple
+  regression we can force the parameters to be equal:
+  \code{regression(m,"y") <- c("x1@b","x2@b")}.  Fixed
+  parameters can be reset by fixing (with \$) them to
+  \code{NA}.
 }
 \note{
-Variables will be added to the model if not already
-present.
+  Variables will be added to the model if not already
+  present.
 }
 \examples{
 m <- lvm() ## Initialize empty lvm-object
@@ -126,13 +128,13 @@ regression(m) ## Examine current linear parameter constraints
 m2 <- lvm(c(y1,y2) ~ x1+x2)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{intercept<-}}, \code{\link{covariance<-}},
-\code{\link{constrain<-}}, \code{\link{parameter<-}},
-\code{\link{latent<-}}, \code{\link{cancel<-}},
-\code{\link{kill<-}}
+  \code{\link{intercept<-}}, \code{\link{covariance<-}},
+  \code{\link{constrain<-}}, \code{\link{parameter<-}},
+  \code{\link{latent<-}}, \code{\link{cancel<-}},
+  \code{\link{kill<-}}
 }
 \keyword{models}
 \keyword{regression}

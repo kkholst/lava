@@ -2,7 +2,7 @@
 \alias{getMplus}
 \title{Read Mplus output}
 \usage{
-getMplus(infile = "template.out", coef = TRUE, ...)
+  getMplus(infile = "template.out", coef = TRUE, ...)
 }
 \arguments{
   \item{infile}{Mplus output file}
@@ -13,12 +13,12 @@ getMplus(infile = "template.out", coef = TRUE, ...)
   functions}
 }
 \description{
-Read Mplus output files
+  Read Mplus output files
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-getSAS
+  getSAS
 }
 

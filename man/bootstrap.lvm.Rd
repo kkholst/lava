@@ -3,14 +3,14 @@
 \alias{bootstrap.lvmfit}
 \title{Calculate bootstrap estimates of a lvm object}
 \usage{
-\method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
-                          p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,silent=FALSE,...)
+  \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
+    p, parametric=FALSE, bollenstine=FALSE,
+    constraints=TRUE,sd=FALSE,silent=FALSE,...)
 
-\method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
-                             control=list(start=coef(x)),
-                             p=coef(x), parametric=FALSE, bollenstine=FALSE,
-                             estimator=x$estimator,weight=Weight(x),...)
+  \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
+    control=list(start=coef(x)), p=coef(x),
+    parametric=FALSE, bollenstine=FALSE,
+    estimator=x$estimator,weight=Weight(x),...)
 }
 \arguments{
   \item{x}{\code{lvm}-object.}
@@ -54,10 +54,10 @@
   estimator.}
 }
 \value{
-A \code{bootstrap.lvm} object.
+  A \code{bootstrap.lvm} object.
 }
 \description{
-Draws non-parametric bootstrap samples
+  Draws non-parametric bootstrap samples
 }
 \examples{
 m <- lvm(y~x)
@@ -69,10 +69,10 @@ B
 }
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{confint.lvmfit}}
+  \code{\link{confint.lvmfit}}
 }
 \keyword{models}
 \keyword{regression}
