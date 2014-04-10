@@ -4,17 +4,17 @@
 \title{Twin menarche data}
 \format{data.frame}
 \source{
-  Simulated
+Simulated
 }
 \description{
-  Simulated data \tabular{rll}{ id \tab numeric \tab
-  Twin-pair id \cr zyg \tab character \tab Zygosity (MZ or
-  DZ) \cr twinnum \tab numeric \tab Twin number (1 or 2)
-  \cr agemena \tab numeric \tab Age at menarche (or
-  censoring) \cr status \tab logical \tab Censoring status
-  (observed:=T,censored:=F) \cr bw \tab numeric \tab Birth
-  weight \cr msmoke \tab numeric \tab Did mother smoke?
-  (yes:=1,no:=0) \cr }
+Simulated data \tabular{rll}{ id \tab numeric \tab
+Twin-pair id \cr zyg \tab character \tab Zygosity (MZ or
+DZ) \cr twinnum \tab numeric \tab Twin number (1 or 2) \cr
+agemena \tab numeric \tab Age at menarche (or censoring)
+\cr status \tab logical \tab Censoring status
+(observed:=T,censored:=F) \cr bw \tab numeric \tab Birth
+weight \cr msmoke \tab numeric \tab Did mother smoke?
+(yes:=1,no:=0) \cr }
 }
 \keyword{datasets}
 

@@ -2,8 +2,7 @@
 \alias{scheffe}
 \title{Calculate simultaneous confidence limits by Scheffe's method}
 \usage{
-  scheffe(model, newdata = model.frame(model),
-    conf.level = 0.95)
+scheffe(model, newdata = model.frame(model), conf.level = 0.95)
 }
 \arguments{
   \item{model}{Linear model}
@@ -13,8 +12,8 @@
   \item{conf.level}{confidence level (0.95)}
 }
 \description{
-  Function to compute the Scheffe corrected confidence
-  interval for the regression line
+Function to compute the Scheffe corrected confidence
+interval for the regression line
 }
 \examples{
 x <- rnorm(100)

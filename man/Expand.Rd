@@ -2,7 +2,7 @@
 \alias{Expand}
 \title{Create a Data Frame from All Combinations of Factors}
 \usage{
-  Expand(x, ...)
+Expand(x, ...)
 }
 \arguments{
   \item{x}{Data.frame}
@@ -10,12 +10,12 @@
   \item{...}{vectors, factors or a list containing these}
 }
 \description{
-  Create a Data Frame from All Combinations of Factors
+Create a Data Frame from All Combinations of Factors
 }
 \details{
-  Simple wrapper of the 'expand.grid' function.  If x is a
-  table then a data frame is returned with one row pr
-  individual observation.
+Simple wrapper of the 'expand.grid' function.  If x is a
+table then a data frame is returned with one row pr
+individual observation.
 }
 \examples{
 dd <- Expand(iris, Sepal.Length=2:8, Species=c("virginica","setosa"))
@@ -25,6 +25,6 @@ T <- with(warpbreaks, table(wool, tension))
 Expand(T)
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 

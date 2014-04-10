@@ -4,10 +4,10 @@
 \title{Simulated data}
 \format{data.frame}
 \source{
-  Simulated
+Simulated
 }
 \description{
-  Simulated data
+Simulated data
 }
 \keyword{datasets}
 

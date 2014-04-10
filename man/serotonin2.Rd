@@ -4,13 +4,13 @@
 \title{Data}
 \format{data.frame}
 \source{
-  Simulated
+Simulated
 }
 \description{
-  Description
+Description
 }
 \seealso{
-  serotonin
+serotonin
 }
 \keyword{datasets}
 

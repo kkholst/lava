@@ -1,19 +1,19 @@
 \name{constrain<-}
 \alias{constrain}
+\alias{constrain.default}
 \alias{constrain<-}
 \alias{constrain<-.default}
-\alias{constrain.default}
 \alias{constrain<-.multigroup}
 \alias{constraints}
 \alias{parameter<-}
 \title{Add non-linear constraints to latent variable model}
 \usage{
-  \method{constrain}{default}(x,par,args,...) <- value
+\method{constrain}{default}(x,par,args,...) <- value
 
-  \method{constrain}{multigroup}(x,par,k=1,...) <- value
+\method{constrain}{multigroup}(x,par,k=1,...) <- value
 
-  constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
-    p=pars.default(object),k,idx,...)
+constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
+                        p=pars.default(object),k,idx,...)
 }
 \arguments{
   \item{x}{\code{lvm}-object}
@@ -50,80 +50,78 @@
   level functions}
 }
 \value{
-  A \code{lvm} object.
+A \code{lvm} object.
 }
 \description{
-  Add non-linear constraints to latent variable model
+Add non-linear constraints to latent variable model
 }
 \details{
-  Add non-linear parameter constraints as well as
-  non-linear associations between covariates and latent or
-  observed variables in the model (non-linear regression).
+Add non-linear parameter constraints as well as non-linear
+associations between covariates and latent or observed
+variables in the model (non-linear regression).
 
-  As an example we will specify the follow multiple
-  regression model:
+As an example we will specify the follow multiple
+regression model:
 
-  \deqn{E(Y|X_1,X_2) = \alpha + \beta_1 X_1 + \beta_2 X_2}
-  \deqn{V(Y|X_1,X_2) = v}
+\deqn{E(Y|X_1,X_2) = \alpha + \beta_1 X_1 + \beta_2 X_2}
+\deqn{V(Y|X_1,X_2) = v}
 
-  which is defined (with the appropiate parameter labels)
-  as
+which is defined (with the appropiate parameter labels) as
 
-  \code{m <- lvm(y ~ f(x,beta1) + f(x,beta2))}
+\code{m <- lvm(y ~ f(x,beta1) + f(x,beta2))}
 
-  \code{intercept(m) <- y ~ f(alpha)}
+\code{intercept(m) <- y ~ f(alpha)}
 
-  \code{covariance(m) <- y ~ f(v)}
+\code{covariance(m) <- y ~ f(v)}
 
-  The somewhat strained parameter constraint \deqn{ v =
-  \frac{(beta1-beta2)^2}{alpha}}
+The somewhat strained parameter constraint \deqn{ v =
+\frac{(beta1-beta2)^2}{alpha}}
 
-  can then specified as
+can then specified as
 
-  \code{constrain(m,v ~ beta1 + beta2 + alpha) <-
-  function(x) (x[1]-x[2])^2/x[3] }
+\code{constrain(m,v ~ beta1 + beta2 + alpha) <- function(x)
+(x[1]-x[2])^2/x[3] }
 
-  A subset of the arguments \code{args} can be covariates
-  in the model, allowing the specification of non-linear
-  regression models.  As an example the non-linear
-  regression model \deqn{ E(Y\mid X) = \nu + \Phi(\alpha +
-  \beta X)} where \eqn{\Phi} denotes the standard normal
-  cumulative distribution function, can be defined as
+A subset of the arguments \code{args} can be covariates in
+the model, allowing the specification of non-linear
+regression models.  As an example the non-linear regression
+model \deqn{ E(Y\mid X) = \nu + \Phi(\alpha + \beta X)}
+where \eqn{\Phi} denotes the standard normal cumulative
+distribution function, can be defined as
 
-  \code{m <- lvm(y ~ f(x,0)) # No linear effect of x}
+\code{m <- lvm(y ~ f(x,0)) # No linear effect of x}
 
-  Next we add three new parameters using the
-  \code{parameter} assigment function:
+Next we add three new parameters using the \code{parameter}
+assigment function:
 
-  \code{parameter(m) <- ~nu+alpha+beta}
+\code{parameter(m) <- ~nu+alpha+beta}
 
-  The intercept of \eqn{Y} is defined as \code{mu}
+The intercept of \eqn{Y} is defined as \code{mu}
 
-  \code{intercept(m) <- y ~ f(mu)}
+\code{intercept(m) <- y ~ f(mu)}
 
-  And finally the newly added intercept parameter \code{mu}
-  is defined as the appropiate non-linear function of
-  \eqn{\alpha}, \eqn{\nu} and \eqn{\beta}:
+And finally the newly added intercept parameter \code{mu}
+is defined as the appropiate non-linear function of
+\eqn{\alpha}, \eqn{\nu} and \eqn{\beta}:
 
-  \code{constrain(m, mu ~ x + alpha + nu) <- function(x)
-  pnorm(x[1]*x[2])+x[3]}
+\code{constrain(m, mu ~ x + alpha + nu) <- function(x)
+pnorm(x[1]*x[2])+x[3]}
 
-  The \code{constraints} function can be used to show the
-  estimated non-linear parameter constraints of an
-  estimated model object (\code{lvmfit} or
-  \code{multigroupfit}). Calling \code{constrain} with no
-  additional arguments beyound \code{x} will return a list
-  of the functions and parameter names defining the
-  non-linear restrictions.
+The \code{constraints} function can be used to show the
+estimated non-linear parameter constraints of an estimated
+model object (\code{lvmfit} or \code{multigroupfit}).
+Calling \code{constrain} with no additional arguments
+beyound \code{x} will return a list of the functions and
+parameter names defining the non-linear restrictions.
 
-  The gradient function can optionally be added as an
-  attribute \code{grad} to the return value of the function
-  defined by \code{value}. In this case the analytical
-  derivatives will be calculated via the chain rule when
-  evaluating the corresponding score function of the
-  log-likelihood. If the gradient attribute is omitted the
-  chain rule will be applied on a numeric approximation of
-  the gradient.
+The gradient function can optionally be added as an
+attribute \code{grad} to the return value of the function
+defined by \code{value}. In this case the analytical
+derivatives will be calculated via the chain rule when
+evaluating the corresponding score function of the
+log-likelihood. If the gradient attribute is omitted the
+chain rule will be applied on a numeric approximation of
+the gradient.
 }
 \examples{
 ##############################
@@ -195,11 +193,11 @@ e2 <- estimate(list(m3,m4),list(d1,d2),control=list(method="NR"))
 }
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{regression}}, \code{\link{intercept}},
-  \code{\link{covariance}}
+\code{\link{regression}}, \code{\link{intercept}},
+\code{\link{covariance}}
 }
 \keyword{models}
 \keyword{regression}

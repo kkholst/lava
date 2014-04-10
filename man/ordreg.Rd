@@ -2,8 +2,8 @@
 \alias{ordreg}
 \title{Univariate cumulative link regression models}
 \usage{
-  ordreg(formula, data = parent.frame(), offset,
-    family = binomial("probit"), start, fast = FALSE, ...)
+ordreg(formula, data = parent.frame(), offset, family = binomial("probit"),
+  start, fast = FALSE, ...)
 }
 \arguments{
   \item{formula}{formula}
@@ -22,7 +22,7 @@
   \item{...}{Additional arguments to lower level functions}
 }
 \description{
-  Ordinal regression models
+Ordinal regression models
 }
 \examples{
 m <- lvm(y~x)
@@ -31,6 +31,6 @@ d <- sim(m,100)
 e <- ordreg(y~x,d)
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 

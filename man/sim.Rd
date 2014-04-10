@@ -1,4 +1,5 @@
 \name{sim}
+\alias{Gamma.lvm}
 \alias{aalenExponential.lvm}
 \alias{binomial.lvm}
 \alias{categorical}
@@ -7,15 +8,14 @@
 \alias{coxGompertz.lvm}
 \alias{coxWeibull.lvm}
 \alias{distribution}
+\alias{distribution.lvm}
 \alias{distribution<-}
 \alias{distribution<-.lvm}
-\alias{distribution.lvm}
 \alias{functional}
+\alias{functional.lvm}
 \alias{functional<-}
 \alias{functional<-.lvm}
-\alias{functional.lvm}
 \alias{gamma.lvm}
-\alias{Gamma.lvm}
 \alias{gaussian.lvm}
 \alias{heavytail}
 \alias{heavytail<-}
@@ -34,16 +34,15 @@
 \alias{simulate.lvmfit}
 \alias{student.lvm}
 \alias{threshold.lvm}
+\alias{transform.lvm}
 \alias{transform<-}
 \alias{transform<-.lvm}
-\alias{transform.lvm}
 \alias{uniform.lvm}
 \alias{weibull.lvm}
 \title{Simulate model}
 \usage{
-  \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE,
-    cond = FALSE, sigma = 1, rho = 0.5, X, unlink=FALSE,
-    ...)
+\method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
+sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -71,9 +70,8 @@
   level functions}
 }
 \description{
-  Simulate data from a general SEM model including
-  non-linear effects and general link and distribution of
-  variables.
+Simulate data from a general SEM model including non-linear
+effects and general link and distribution of variables.
 }
 \examples{
 ##################################################
@@ -215,7 +213,7 @@ lm(y~factor(z)+factor(x),data=d)
 with(d,table(x))/nrow(d)
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \keyword{datagen}
 \keyword{models}

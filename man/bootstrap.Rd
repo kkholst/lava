@@ -2,7 +2,7 @@
 \alias{bootstrap}
 \title{Generic bootstrap method}
 \usage{
-  bootstrap(x, ...)
+bootstrap(x, ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -10,12 +10,12 @@
   \item{\dots}{Additional arguments}
 }
 \description{
-  Generic method for calculating bootstrap statistics
+Generic method for calculating bootstrap statistics
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{bootstrap.lvm} \code{bootstrap.lvmfit}
+\code{bootstrap.lvm} \code{bootstrap.lvmfit}
 }
 
