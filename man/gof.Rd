@@ -25,9 +25,11 @@ moments(x,...)
                       weight2=object$data$weight2,
                           ...)
 
-\method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), weight2=x$data$weight2, ...)
+\method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator,
+                   weight=Weight(x), weight2=x$data$weight2, ...)
 
-\method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
+\method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
+                   model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
 }
 \arguments{
   \item{object}{Model object}

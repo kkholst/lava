@@ -17,9 +17,12 @@
 ##' @examples
 ##' \dontrun{
 ##' plotNeuro(x,roi=R,mm=-18,range=5)
-##' colorbar(clut <- Col(rev(rainbow(11,start=0,end=0.69)),0.5),x=c(-40,40),y.range=c(84,90),values=c(-5:5))
+##' colorbar(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
+##'          x=c(-40,40),y.range=c(84,90),values=c(-5:5))
 ##' 
-##' colorbar(clut <- Col(rev(rainbow(11,start=0,end=0.69)),0.5),x=c(-10,10),y.range=c(-100,50),values=c(-5:5),direction="vertical",border=1)
+##' colorbar(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
+##'          x=c(-10,10),y.range=c(-100,50),values=c(-5:5),
+##'          direction="vertical",border=1)
 ##' }
 colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
                      x.range=c(-.5,.5),y.range=c(-.1,.1),
