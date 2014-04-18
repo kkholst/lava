@@ -17,7 +17,7 @@
 ##' @param pch Symbol
 ##' @param col Colour
 ##' @param cex Size
-##' @param id List of arguments parsed to \code{Id} function
+##' @param id List of arguments parsed to \code{click} function
 ##' @param \dots Additional arguments parsed to \code{plot} function
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{idplot}}, \code{identify}

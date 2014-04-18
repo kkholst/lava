@@ -22,7 +22,8 @@ idplot(x,y,...,id=list())
 
   \item{cex}{Size}
 
-  \item{id}{List of arguments parsed to \code{Id} function}
+  \item{id}{List of arguments parsed to \code{click}
+  function}
 
   \item{\dots}{Additional arguments parsed to \code{plot}
   function}

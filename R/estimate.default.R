@@ -378,7 +378,13 @@ coef.estimate <- function(object,...) {
 
 ##' @S3method iid estimate
 iid.estimate <- function(x,...) {
-    x$iid
+    dimn <- dimnames(x$iid)
+    if (!is.null(dimn)) {
+        dimn[[2]] <- names(coef(x))
+    } else {
+        dimn <- list(NULL,names(coef(x)))
+    }
+    structure(x$iid,dimnames=dimn)
 }
 
 ##' @S3method model.frame estimate
