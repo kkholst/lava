@@ -4,7 +4,8 @@
 \title{Add Confidence limits bar to plot}
 \usage{
   confband(x, lower, upper, center = NULL, delta = 0.07,
-    centermark = 0.03, pch, blank = TRUE, vert = TRUE, ...)
+    centermark = 0.03, pch, blank = TRUE, vert = TRUE,
+    polygon = FALSE, step = FALSE, ...)
 }
 \arguments{
   \item{x}{Position (x-coordinate if vert=TRUE,
@@ -50,6 +51,16 @@ rownames(x)[which(is.na(est))] <- ""
 signif <- sign(x[,2])==sign(x[,3])
 forestplot(x,text.right=FALSE)
 forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
+
+z <- seq(10)
+zu <- c(z[-1],10)
+plot(z,type="n")
+confband(z,zu,rep(0,length(z)),col=Col("darkblue"),polygon=TRUE,step=TRUE)
+confband(z,zu,zu-2,col=Col("darkred"),polygon=TRUE,step=TRUE)
+
+z <- seq(0,1,length.out=100)
+plot(z,z,type="n")
+confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
 }
 \author{
   Klaus K. Holst
