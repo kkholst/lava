@@ -116,6 +116,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
   A <- as.vector(r)/sigma2 
   S <- apply(X,2,function(x) x*A)
   if (!indiv) return(colSums(S))
+  attributes(S)$bread <- vcov(x)
   return(S)
 }
 
@@ -174,6 +175,9 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
       S <- apply(S,2,function(x) x*weight)
   }
   if (!indiv) return(colSums(S))
+  attributes(S)$bread <- vcov(x)
+  if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
+      attributes(S)$bread <- Inverse(information.glm(x))
   return(S)
 }
 
@@ -213,15 +217,15 @@ logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
 
 ##' @S3method iid glm
 iid.glm <- function(x,...) {
-    if (x$family$family=="quasi" && x$family$link=="identity" && g$family$varfun=="constant") {
-        return(iid.default(x,information,...))
+    if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
+        return(iid.default(x,information.glm,...))
     }
     iid.default(x,...)
 }
 
 
 hessian.glm <- function(x,p=coef(x),...) {  
-  numDeriv::jacobian(function(theta) score.glm(x,p=theta,...),p)
+  numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
 }
 
 ##' @S3method information glm

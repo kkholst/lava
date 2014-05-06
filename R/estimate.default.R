@@ -404,7 +404,7 @@ stack.estimate <- function(x,y,Ix,iIy,weight,dweight,...) {
     iid1 <- iid(x)
     iid2 <- iid(y)
     if (missing(iIy)) {
-        iIy <- attributes(iid2)$iI
+        iIy <- attributes(iid2)$bread
     }
     if (!missing(dweight)) {
         u2 <- apply(solve(iIy)%*%t(iid2),1,function(x) x/weight)

@@ -5,15 +5,15 @@
 \usage{
   iid(x,...)
 
-  \method{iid}{default}(x,score.deriv,id,...)
+  \method{iid}{default}(x,bread,id,...)
 }
 \arguments{
   \item{x}{model object}
 
   \item{id}{id/cluster variable (optional)}
 
-  \item{score.deriv}{(optional) derivative of mean score
-  function}
+  \item{bread}{(optional) Inverse of derivative of mean
+  score function}
 
   \item{...}{additional arguments}
 }

@@ -138,8 +138,9 @@ score.multigroup <- function(x,data=x$data,weight=NULL,weight2=NULL,p,indiv=comb
     S1[,parord[[i]]] <- S0
     S <- c(S, list(S1))
   }
-  if (combine) {
+  if (combine) {      
       S <- Reduce("rbind",S); S[is.na(S)] <- 0
+      if (!indiv) S <- colSums(S)
       return(S)
   }
   if (indiv) return(S)
