@@ -173,7 +173,7 @@ eventTime <- function(object,formula,eventName,...) {
   if (is.null(object$attributes$eventHistory)) {
     object$attributes$eventHistory <- list(eventTime)
     names(object$attributes$eventHistory) <- timeName
-  } else {
+ } else {
     object$attributes$eventHistory[[timeName]] <- eventTime
   }
   return(object)

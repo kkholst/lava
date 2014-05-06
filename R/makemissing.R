@@ -20,3 +20,4 @@ makemissing <- function(data,p=0.2,cols=1:ncol(data),rowwise=FALSE,nafun=functio
     data[which(rbinom(nrow(data),1,p)==1),cols] <- NA
   return(nafun(data))
 }
+
