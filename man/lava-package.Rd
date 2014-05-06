@@ -4,14 +4,14 @@
 \alias{lava-package}
 \title{Estimation and simulation of latent variable models}
 \description{
-Framwork for estimating parameters and simulate data from
-Latent Variable Models.
+  Framwork for estimating parameters and simulate data from
+  Latent Variable Models.
 }
 \examples{
 lava()
 }
 \author{
-Klaus K. Holst Maintainer: <k.k.holst@biostat.ku.dk>
+  Klaus K. Holst Maintainer: <k.k.holst@biostat.ku.dk>
 }
 \keyword{package}
 

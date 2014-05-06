@@ -2,8 +2,9 @@
 \alias{curereg}
 \title{Regression model for binomial data with unkown group of immortals}
 \usage{
-curereg(formula, cureformula = ~1, data, family = binomial(),
-  offset = NULL, start, var = "hessian", ...)
+  curereg(formula, cureformula = ~1, data,
+    family = binomial(), offset = NULL, start,
+    var = "hessian", ...)
 }
 \arguments{
   \item{formula}{Formula specifying}
@@ -26,8 +27,8 @@ curereg(formula, cureformula = ~1, data, family = binomial(),
   \item{...}{Additional arguments to lower level functions}
 }
 \description{
-Regression model for binomial data with unkown group of
-immortals
+  Regression model for binomial data with unkown group of
+  immortals
 }
 \examples{
 ## Simulation
@@ -71,6 +72,6 @@ abline(h=prev[3:4,3],lty=3:4,col="lightgray")
 legend("topleft",levels(d$z),col="darkblue",lty=seq_len(length(levels(d$z))))
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

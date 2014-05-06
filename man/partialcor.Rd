@@ -2,7 +2,7 @@
 \alias{partialcor}
 \title{Calculate partial correlations}
 \usage{
-partialcor(formula, data, level = 0.95)
+  partialcor(formula, data, level = 0.95)
 }
 \arguments{
   \item{formula}{formula speciying the covariates and
@@ -14,11 +14,11 @@ partialcor(formula, data, level = 0.95)
   \item{level}{Level of confidence limits}
 }
 \value{
-A coefficient matrix
+  A coefficient matrix
 }
 \description{
-Calculate partial correlation coefficients and confidence
-limits via Fishers z-transform
+  Calculate partial correlation coefficients and confidence
+  limits via Fishers z-transform
 }
 \examples{
 m <- lvm(c(y1,y2,y3)~x1+x2)
@@ -27,7 +27,7 @@ d <- sim(m,500)
 partialcor(~x1+x2,d)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \keyword{models}
 \keyword{regression}

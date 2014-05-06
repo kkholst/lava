@@ -2,7 +2,7 @@
 \alias{By}
 \title{Apply a Function to a Data Frame Split by Factors}
 \usage{
-By(x, INDICES, FUN, COLUMNS, array = FALSE, ...)
+  By(x, INDICES, FUN, COLUMNS, array = FALSE, ...)
 }
 \arguments{
   \item{x}{Data frame}
@@ -21,16 +21,16 @@ By(x, INDICES, FUN, COLUMNS, array = FALSE, ...)
   \item{...}{Additional arguments to lower-level functions}
 }
 \description{
-Apply a Function to a Data Frame Split by Factors
+  Apply a Function to a Data Frame Split by Factors
 }
 \details{
-Simple wrapper of the 'by' function
+  Simple wrapper of the 'by' function
 }
 \examples{
 By(datasets::CO2,~Treatment+Type,colMeans,~conc)
 By(datasets::CO2,~Treatment+Type,colMeans,~conc+uptake)
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

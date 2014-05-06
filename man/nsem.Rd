@@ -4,10 +4,10 @@
 \title{Example SEM data (nonlinear)}
 \format{data.frame}
 \source{
-Simulated
+  Simulated
 }
 \description{
-Simulated data
+  Simulated data
 }
 \keyword{datasets}
 

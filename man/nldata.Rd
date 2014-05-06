@@ -4,10 +4,10 @@
 \title{Example data (nonlinear model)}
 \format{data.frame}
 \source{
-Simulated
+  Simulated
 }
 \description{
-Example data (nonlinear model)
+  Example data (nonlinear model)
 }
 \keyword{datasets}
 

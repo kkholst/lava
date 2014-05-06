@@ -2,7 +2,7 @@
 \alias{correlation}
 \title{Generic method for extracting correlation coefficients of model object}
 \usage{
-correlation(x, ...)
+  correlation(x, ...)
 }
 \arguments{
   \item{x}{Object}
@@ -10,9 +10,9 @@ correlation(x, ...)
   \item{\dots}{Additional arguments}
 }
 \description{
-Generic correlation method
+  Generic correlation method
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

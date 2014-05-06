@@ -3,7 +3,7 @@
 \alias{addvar<-}
 \title{Add variable to (model) object}
 \usage{
-addvar(x, ...)
+  addvar(x, ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -11,9 +11,9 @@ addvar(x, ...)
   \item{\dots}{Additional arguments}
 }
 \description{
-Generic method for adding variables to model object
+  Generic method for adding variables to model object
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

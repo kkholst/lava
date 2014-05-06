@@ -2,7 +2,8 @@
 \alias{equivalence}
 \title{Identify candidates of equivalent models}
 \usage{
-equivalence(x, rel, tol = 0.001, k = 1, omitrel = TRUE, ...)
+  equivalence(x, rel, tol = 0.001, k = 1, omitrel = TRUE,
+    ...)
 }
 \arguments{
   \item{x}{\code{lvmfit}-object}
@@ -27,12 +28,12 @@ equivalence(x, rel, tol = 0.001, k = 1, omitrel = TRUE, ...)
   level functions}
 }
 \description{
-Identifies candidates of equivalent models
+  Identifies candidates of equivalent models
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{compare}}, \code{\link{modelsearch}}
+  \code{\link{compare}}, \code{\link{modelsearch}}
 }
 

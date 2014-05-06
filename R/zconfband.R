@@ -33,9 +33,34 @@
 ##' signif <- sign(x[,2])==sign(x[,3])
 ##' forestplot(x,text.right=FALSE)
 ##' forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
+##'
+##' z <- seq(10)
+##' zu <- c(z[-1],10)
+##' plot(z,type="n")
+##' confband(z,zu,rep(0,length(z)),col=Col("darkblue"),polygon=TRUE,step=TRUE)
+##' confband(z,zu,zu-2,col=Col("darkred"),polygon=TRUE,step=TRUE)
+##'
+##' z <- seq(0,1,length.out=100)
+##' plot(z,z,type="n")
+##' confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
 ##' @author Klaus K. Holst
 confband <- function(x,lower,upper,center=NULL,delta=0.07,centermark=0.03,
-                     pch,blank=TRUE,vert=TRUE,...) {
+                     pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
+    if (polygon) {
+        if (step) {
+            x1 <- rep(x,each=2)[-1]
+            y1 <- rep(lower, each=2);  y1 <- y1[-length(y1)]
+            x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]  
+            y2 <- rep(rev(upper),each=2)[-1]
+            xx <- c(x1,x2)
+            yy <- c(y1,y2)
+        } else {
+            xx <- c(x,rev(x))
+            yy <- c(lower,rev(upper))
+        }
+        polygon(xx,yy,...)
+        return(invisible(NULL))
+    }
     if (vert) {
         if (!is.null(lower)) {
             segments(x,lower,x,upper,...)

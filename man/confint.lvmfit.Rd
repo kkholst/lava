@@ -3,9 +3,10 @@
 \alias{confint.multigroupfit}
 \title{Calculate confidence limits for parameters}
 \usage{
-\method{confint}{lvmfit}(object, parm = seq_len(length(coef(object))),
-  level = 0.95, profile = FALSE, curve = FALSE, n = 20,
-  interval = NULL, lower = TRUE, upper = TRUE, ...)
+  \method{confint}{lvmfit} (object,
+    parm = seq_len(length(coef(object))), level = 0.95,
+    profile = FALSE, curve = FALSE, n = 20,
+    interval = NULL, lower = TRUE, upper = TRUE, ...)
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -40,25 +41,26 @@
   level functions}
 }
 \value{
-A 2xp matrix with columns of lower and upper confidence
-limits
+  A 2xp matrix with columns of lower and upper confidence
+  limits
 }
 \description{
-Calculate Wald og Likelihood based (profile likelihood)
-confidence intervals
+  Calculate Wald og Likelihood based (profile likelihood)
+  confidence intervals
 }
 \details{
-Calculates either Wald confidence limits:
-\deqn{\hat{\theta} \pm
-z_{\alpha/2}*\hat\sigma_{\hat\theta}} or profile likelihood
-confidence limits, defined as the set of value \eqn{\tau}:
-\deqn{logLik(\hat\theta_{\tau},\tau)-logLik(\hat\theta)<
-q_{\alpha}/2}
+  Calculates either Wald confidence limits:
+  \deqn{\hat{\theta} \pm
+  z_{\alpha/2}*\hat\sigma_{\hat\theta}} or profile
+  likelihood confidence limits, defined as the set of value
+  \eqn{\tau}:
+  \deqn{logLik(\hat\theta_{\tau},\tau)-logLik(\hat\theta)<
+  q_{\alpha}/2}
 
-where \eqn{q_{\alpha}} is the \eqn{\alpha} fractile of the
-\eqn{\chi^2_1} distribution, and \eqn{\hat\theta_{\tau}}
-are obtained by maximizing the log-likelihood with tau
-being fixed.
+  where \eqn{q_{\alpha}} is the \eqn{\alpha} fractile of
+  the \eqn{\chi^2_1} distribution, and
+  \eqn{\hat\theta_{\tau}} are obtained by maximizing the
+  log-likelihood with tau being fixed.
 }
 \examples{
 m <- lvm(y~x)
@@ -72,10 +74,10 @@ B
 }
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \seealso{
-\code{\link{bootstrap}{lvm}}
+  \code{\link{bootstrap}{lvm}}
 }
 \keyword{models}
 \keyword{regression}

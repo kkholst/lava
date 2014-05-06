@@ -4,10 +4,10 @@
 \title{Hubble data}
 \format{data.frame}
 \description{
-Hubble data
+  Hubble data
 }
 \seealso{
-hubble
+  hubble
 }
 \keyword{datasets}
 

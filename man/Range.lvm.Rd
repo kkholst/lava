@@ -2,7 +2,7 @@
 \alias{Range.lvm}
 \title{Define range constraints of parameters}
 \usage{
-Range.lvm(a = 0, b = 1)
+  Range.lvm(a = 0, b = 1)
 }
 \arguments{
   \item{a}{Lower bound}
@@ -10,12 +10,12 @@ Range.lvm(a = 0, b = 1)
   \item{b}{Upper bound}
 }
 \value{
-function
+  function
 }
 \description{
-Define range constraints of parameters
+  Define range constraints of parameters
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 

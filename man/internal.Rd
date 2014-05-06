@@ -1,13 +1,9 @@
 \name{startvalues}
-\alias{CoefMat}
-\alias{CoefMat.multigroupfit}
-\alias{IV}
-\alias{Inverse}
-\alias{Specials}
-\alias{Weight}
 \alias{addattr}
 \alias{addhook}
 \alias{checkmultigroup}
+\alias{CoefMat}
+\alias{CoefMat.multigroupfit}
 \alias{contr}
 \alias{decomp.specials}
 \alias{deriv}
@@ -25,6 +21,8 @@
 \alias{index.lvm}
 \alias{index.lvmfit}
 \alias{index<-}
+\alias{Inverse}
+\alias{IV}
 \alias{lisrel}
 \alias{matrices}
 \alias{merge}
@@ -52,6 +50,7 @@
 \alias{rmvn}
 \alias{rsq}
 \alias{score.glm}
+\alias{Specials}
 \alias{starter.multigroup}
 \alias{startvalues}
 \alias{startvalues0}
@@ -64,12 +63,13 @@
 \alias{survival<-}
 \alias{updatelvm}
 \alias{variances}
+\alias{Weight}
 \title{For internal use}
 \description{
-For internal use
+  For internal use
 }
 \author{
-Klaus K. Holst
+  Klaus K. Holst
 }
 \keyword{utilities}
 
