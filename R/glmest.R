@@ -121,7 +121,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
 
 ##' @S3method score glm
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,link,dispersion,offset=NULL,...) {
+                      y,X,link,dispersion,offset=NULL,weight,...) {
 
   response <- all.vars(formula(x))[1]
   if (inherits(x,"glm")) {
@@ -169,6 +169,10 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   r <- y-pi
   A <- as.vector(h(Xbeta)*r)/a.phi 
   S <- apply(X,2,function(x) x*A)
+  if (!is.null(x$weight) || !missing(weight)) {
+      if (missing(weight)) weight <- x$weight
+      S <- apply(S,2,function(x) x*weight)
+  }
   if (!indiv) return(colSums(S))
   return(S)
 }
@@ -206,6 +210,15 @@ logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
   loglik <- length(p)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
   structure(loglik,nobs=n,df=length(p),class="logLik")
 }
+
+##' @S3method iid glm
+iid.glm <- function(x,...) {
+    if (x$family$family=="quasi" && x$family$link=="identity" && g$family$varfun=="constant") {
+        return(iid.default(x,information,...))
+    }
+    iid.default(x,...)
+}
+
 
 hessian.glm <- function(x,p=coef(x),...) {  
   numDeriv::jacobian(function(theta) score.glm(x,p=theta,...),p)
