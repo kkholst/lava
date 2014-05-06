@@ -31,17 +31,27 @@ iid.default <- function(x,score.deriv,id,...) {
     U <- score(x,indiv=TRUE,...)
     n <- NROW(U)
     pp <- pars(x)
+    iI <- NULL
+    if (!missing(score.deriv) && is.null(score.deriv)) {
+        iI <- vcov(x)
+    }    
     if (missing(score.deriv)) {
-        iI <- vcov(x) 
-    } else {
-        if (!is.null(score.deriv) && is.function(score.deriv)) {
-            score.deriv <- score.deriv(x,p=pp,...)
-        } else if (!is.null(score.deriv) && is.matrix(score.deriv)) {
-            ##iI <- Inverse(score.deriv)
-        } else {
-            score.deriv <- numDeriv::jacobian(function(p) score(x,p=p,...),pp,method=lava.options()$Dmethod)    
+        if (!is.null(attributes(x)$iI)) {
+            iI <- attributes(x)$iI
+        } else if (!is.null(attributes(x)$I)) {
+            iI <- Inverse(attributes(x)$I)
         }
-        iI <- -Inverse(score.deriv)
+        if (is.null(iI)) {
+            if (!is.null(x$iI)) {
+                iI <- x$iI
+            } else if (!is.null(x$I)) {
+                iI <- Inverse(x$I)
+            }
+        }        
+        if (is.null(iI)) {
+            I <- -numDeriv::jacobian(function(p) score(x,p=p,...),pp,method=lava.options()$Dmethod)
+            iI <- Inverse(I)
+        }
     }
     iid0 <- U%*%iI
     if (!missing(id)) {

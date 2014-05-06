@@ -101,6 +101,7 @@
 ##' 
 ##' iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 ##' iid(merge(l1,l2,l3,id=FALSE)) # independence
+##' @aliases estimate.default estimate.estimate merge.estimate stack.estimate
 ##' @method estimate default
 ##' @S3method estimate default
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
@@ -414,8 +415,8 @@ stack.estimate <- function(x,y,Ix,iIy,weight,dweight,...) {
         Ix <- matrix(Ix,byrow=TRUE,ncol=ncol(iid1))
     }
     ii <- iid(merge(x,y))
-    iid1. <- ii[,seq(length(coef(x))),drop=FALSE]
-    iid2. <- ii[,length(coef(x))+seq(length(coef(y))),drop=FALSE] 
+    iid1. <- ii[,seq_along(coef(x)),drop=FALSE]
+    iid2. <- ii[,length(coef(x))+seq_along(coef(y)),drop=FALSE] 
     iid3 <- t(iIy%*%(Ix%*%t(iid1.)))
     estimate(coef=c(coef(x),coef(y)),iid=cbind(iid1.,iid2.-iid3))
 }
