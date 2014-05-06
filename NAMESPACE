@@ -423,6 +423,7 @@ S3method(vcov,multinomial)
 S3method(vcov,ordreg)
 S3method(vcov,pcor)
 <<<<<<< HEAD
+<<<<<<< HEAD
 export("%+%")
 export("%ni%")
 export("Graph<-")
