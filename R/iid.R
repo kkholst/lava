@@ -37,10 +37,11 @@ iid.default <- function(x,score.deriv,id,...) {
         if (!is.null(score.deriv) && is.function(score.deriv)) {
             score.deriv <- score.deriv(x,p=pp,...)
         } else if (!is.null(score.deriv) && is.matrix(score.deriv)) {
-            iI <- Inverse(score.deriv)
+            ##iI <- Inverse(score.deriv)
         } else {
-            score.deriv <- -numDeriv::jacobian(function(p) score(x,p=p,...),pp,method=lava.options()$Dmethod)    
+            score.deriv <- numDeriv::jacobian(function(p) score(x,p=p,...),pp,method=lava.options()$Dmethod)    
         }
+        iI <- -Inverse(score.deriv)
     }
     iid0 <- U%*%iI
     if (!missing(id)) {
