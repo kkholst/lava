@@ -4,9 +4,8 @@
 \alias{idplot}
 \title{Identify points on plot}
 \usage{
-  \method{click}{default}(x, y=NULL, label=TRUE,
-    n=length(x), pch=19, col="orange", cex=3, ...)
-    idplot(x,y,...,id=list())
+\method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
+idplot(x,y,...,id=list())
 }
 \arguments{
   \item{x}{X coordinates}
@@ -30,14 +29,14 @@
   function}
 }
 \description{
-  Extension of the \code{identify} function
+Extension of the \code{identify} function
 }
 \details{
-  For the usual 'X11' device the identification process is
-  terminated by pressing any mouse button other than the
-  first. For the 'quartz' device the process is terminated
-  by pressing either the pop-up menu equivalent (usually
-  second mouse button or 'Ctrl'-click) or the 'ESC' key.
+For the usual 'X11' device the identification process is
+terminated by pressing any mouse button other than the
+first. For the 'quartz' device the process is terminated by
+pressing either the pop-up menu equivalent (usually second
+mouse button or 'Ctrl'-click) or the 'ESC' key.
 }
 \examples{
 \donttest{
@@ -53,10 +52,10 @@ with(iris, idplot(Sepal.Length,Petal.Length))
 }
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{idplot}}, \code{identify}
+\code{\link{idplot}}, \code{identify}
 }
 \keyword{iplot}
 

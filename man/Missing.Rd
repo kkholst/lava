@@ -2,7 +2,7 @@
 \alias{Missing}
 \title{Missing value generator}
 \usage{
-  Missing(object, formula, Rformula, ...)
+Missing(object, formula, Rformula, ...)
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -18,15 +18,15 @@
   \item{...}{Passed to binomial.lvm.}
 }
 \value{
-  lvm object
+lvm object
 }
 \description{
-  Missing value generator
+Missing value generator
 }
 \details{
-  This function adds a binary variable to a given
-  \code{lvm} model and also a variable which is equal to
-  the original variable where the binary variable is
+This function adds a binary variable to a given \code{lvm}
+model and also a variable which is equal to the original
+variable where the binary variable is
 }
 \examples{
 library(lava)
@@ -36,6 +36,6 @@ m <- Missing(m,formula=x1~x01,Rformula=R1~0.3*x02+-0.7*x01,p=0.4)
 sim(m,10)
 }
 \author{
-  Thomas A. Gerds <tag@biostat.ku.dk>
+Thomas A. Gerds <tag@biostat.ku.dk>
 }
 

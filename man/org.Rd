@@ -2,11 +2,9 @@
 \alias{org}
 \title{Convert object to ascii suitable for org-mode}
 \usage{
-  org(x, ..., ncol, include.rownames = TRUE,
-    include.colnames = TRUE, header = TRUE,
-    frame = "topbot", rownames = NULL, colnames = NULL,
-    type = "org", tab = FALSE, margins = TRUE,
-    print = TRUE, html, latex)
+org(x, ..., ncol, include.rownames = TRUE, include.colnames = TRUE,
+  header = TRUE, frame = "topbot", rownames = NULL, colnames = NULL,
+  type = "org", tab = FALSE, margins = TRUE, print = TRUE, html, latex)
 }
 \arguments{
   \item{x}{R object}
@@ -44,9 +42,9 @@
   \item{latex}{LaTeX prefix (added to ATTR_LaTeX)}
 }
 \description{
-  Convert object to ascii suitable for org-mode
+Convert object to ascii suitable for org-mode
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 

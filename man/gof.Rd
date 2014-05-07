@@ -10,28 +10,26 @@
 \alias{score.lvmfit}
 \title{Extract model summaries and GOF statistics for model object}
 \usage{
-  gof(object, ...)
+gof(object, ...)
 
-  \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90,
-    rmsea.threshold=0.05,all=FALSE,...)
+\method{gof}{lvmfit}(object, chisq=FALSE, level=0.90, rmsea.threshold=0.05,all=FALSE,...)
 
-  moments(x,...)
+moments(x,...)
 
-  \method{moments}{lvm}(x, p, debug=FALSE,
-    conditional=FALSE, data=NULL, ...)
+\method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...)
 
-  \method{logLik}{lvmfit}(object, p=coef(object),
-    data=model.frame(object), model=object$estimator,
-    weight=Weight(object), weight2=object$data$weight2,
-    ...)
+\method{logLik}{lvmfit}(object, p=coef(object),
+                      data=model.frame(object),
+                      model=object$estimator,
+                      weight=Weight(object),
+                      weight2=object$data$weight2,
+                          ...)
 
-  \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x),
-    model=x$estimator, weight=Weight(x),
-    weight2=x$data$weight2, ...)
+\method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator,
+                   weight=Weight(x), weight2=x$data$weight2, ...)
 
-  \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
-    model=x$estimator,weight=Weight(x),
-    weight2=x$data$weight2, ...)
+\method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
+                   model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
 }
 \arguments{
   \item{object}{Model object}
@@ -74,13 +72,13 @@
   level functions}
 }
 \value{
-  A \code{htest}-object.
+A \code{htest}-object.
 }
 \description{
-  Calculates various GOF statistics for model object
-  including global chi-squared test statistic and AIC.
-  Extract model-specific mean and variance structure,
-  residuals and various predicitions.
+Calculates various GOF statistics for model object
+including global chi-squared test statistic and AIC.
+Extract model-specific mean and variance structure,
+residuals and various predicitions.
 }
 \examples{
 m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
@@ -102,7 +100,7 @@ rr
 estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \keyword{methods}
 \keyword{models}

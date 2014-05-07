@@ -3,9 +3,9 @@
 \alias{revdiag<-}
 \title{Create/extract 'reverse'-diagonal matrix}
 \usage{
-  revdiag(x,...)
+revdiag(x,...)
 
-  revdiag(x,...) <- value
+revdiag(x,...) <- value
 }
 \arguments{
   \item{x}{vector}
@@ -17,9 +17,9 @@
   functions}
 }
 \description{
-  Create/extract 'reverse'-diagonal matrix
+Create/extract 'reverse'-diagonal matrix
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 

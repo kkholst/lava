@@ -5,10 +5,9 @@
 \alias{stack.estimate}
 \title{Estimation of functional of parameters}
 \usage{
-  \method{estimate}{default} (x = NULL, f = NULL, data, id,
-    iddata, stack = TRUE, subset, score.deriv,
-    level = 0.95, iid = TRUE, contrast, null, vcov, coef,
-    print = NULL, ...)
+\method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,
+  stack = TRUE, subset, score.deriv, level = 0.95, iid = TRUE, contrast,
+  null, vcov, coef, print = NULL, ...)
 }
 \arguments{
   \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -52,9 +51,9 @@
   \item{...}{additional arguments to lower level functions}
 }
 \description{
-  Estimation of functional of parameters. Wald tests,
-  robust standard errors, cluster robust standard errors,
-  LRT (when \code{f} is not a function)...
+Estimation of functional of parameters. Wald tests, robust
+standard errors, cluster robust standard errors, LRT (when
+\code{f} is not a function)...
 }
 \examples{
 ## Simulation from logistic regression model

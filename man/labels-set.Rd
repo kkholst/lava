@@ -13,10 +13,10 @@
 \alias{nodecolor<-.default}
 \title{Define labels of graph}
 \usage{
-  \method{labels}{default}(object, ...) <- value
-    \method{edgelabels}{lvm}(object, to, ...) <- value
-    \method{nodecolor}{default}(object, var=vars(object),
-    border, labcol, shape, lwd, ...) <- value
+\method{labels}{default}(object, ...) <- value
+\method{edgelabels}{lvm}(object, to, ...) <- value
+\method{nodecolor}{default}(object, var=vars(object),
+border, labcol, shape, lwd, ...) <- value
 }
 \arguments{
   \item{object}{\code{lvm}-object.}
@@ -41,8 +41,8 @@
   \item{lwd}{Line width of border}
 }
 \description{
-  Alters labels of nodes and edges in the graph of a latent
-  variable model
+Alters labels of nodes and edges in the graph of a latent
+variable model
 }
 \examples{
 m <- lvm(c(y,v)~x+z)
@@ -73,7 +73,7 @@ plot(e,type="sd")
 }
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \keyword{aplot}
 \keyword{graphs}

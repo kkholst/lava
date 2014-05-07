@@ -2,7 +2,7 @@
 \alias{modelsearch}
 \title{Model searching}
 \usage{
-  modelsearch(x, k = 1, dir = "forward", ...)
+modelsearch(x, k = 1, dir = "forward", ...)
 }
 \arguments{
   \item{x}{\code{lvmfit}-object}
@@ -20,10 +20,10 @@
   level functions}
 }
 \value{
-  Matrix of test-statistics and p-values
+Matrix of test-statistics and p-values
 }
 \description{
-  Performs Wald or score tests
+Performs Wald or score tests
 }
 \examples{
 m <- lvm();
@@ -35,10 +35,10 @@ e <- estimate(m,dd);
 modelsearch(e)
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{compare}}, \code{\link{equivalence}}
+\code{\link{compare}}, \code{\link{equivalence}}
 }
 \keyword{htest}
 

@@ -5,7 +5,7 @@
 
 Performs Likelihood-ratio, Wald and score tests}
 \usage{
-  compare(object, ...)
+compare(object, ...)
 }
 \arguments{
   \item{object}{\code{lvmfit}-object}
@@ -13,12 +13,12 @@ Performs Likelihood-ratio, Wald and score tests}
   \item{\dots}{Additional arguments to low-level functions}
 }
 \value{
-  Matrix of test-statistics and p-values
+Matrix of test-statistics and p-values
 }
 \description{
-  Statistical tests
+Statistical tests
 
-  Performs Likelihood-ratio, Wald and score tests
+Performs Likelihood-ratio, Wald and score tests
 }
 \examples{
 m <- lvm();
@@ -45,10 +45,10 @@ compare(e2,contrast=B)
 compare(e,scoretest=list(y3~x,y2~x))
 }
 \author{
-  Klaus K. Holst
+Klaus K. Holst
 }
 \seealso{
-  \code{\link{modelsearch}}, \code{\link{equivalence}}
+\code{\link{modelsearch}}, \code{\link{equivalence}}
 }
 \keyword{htest}
 
