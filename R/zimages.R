@@ -29,7 +29,6 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 ## images(list(X,X),group,axis2=c(FALSE,FALSE),axis1=c(FALSE,FALSE),
 ##       mar=list(c(0,0,0,0),c(0,0,0,0)),yaxs="i",xaxs="i")
 
-##' @export
 images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label.offset=0.02,
                  order=TRUE,colorbar.border=0,main,
                    axis1,axis2,mar,
