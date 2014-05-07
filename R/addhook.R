@@ -84,6 +84,7 @@ assign("options", list(
     constrain=TRUE,
     exogenous=TRUE,
     Rgraphviz=TRUE,
+    edgecolor=FALSE,
     ## symbols=c("<-","<->"),
     symbols=c("~",","),
     devel=FALSE,

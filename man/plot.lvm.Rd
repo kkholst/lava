@@ -8,7 +8,8 @@
   fontsize1 = 10, noplot = FALSE, graph = list(rankdir = "BT"),
   attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
   Rgraphviz = lava.options()$Rgraphviz, init = TRUE, layout = c("dot",
-  "fdp", "circo", "twopi", "neato", "osage"), ...)
+  "fdp", "circo", "twopi", "neato", "osage"),
+  edgecolor = lava.options()$edgecolor, ...)
 }
 \arguments{
   \item{x}{Model object}
@@ -55,6 +56,8 @@
 
   \item{layout}{Graph layout (see Rgraphviz or igraph
   manual)}
+
+  \item{edgecolor}{if TRUE plot style with colored edges}
 
   \item{\dots}{Additional arguments to be passed to the low
   level functions}

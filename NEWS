@@ -1,4 +1,23 @@
-* Version 1.2.5 <2014-03-13 Thu>
+* Version 1.2.6 <2014-05-07 Wed>
+  - New 'stack' function for two-stage estimation (via 'estimate' objects)
+  - New 'blocksample' function for resampling clustered data.
+  - New function 'Missing' to generate complex missing data patterns
+  - Weibull parametrization of 'coxWeibull.lvm' rolled back
+    (ver. 1.2.4). The function 'weibull.lvm' now leads to Accelerated
+    Failure Time model (see examples of 'eventTime')
+  - iid function cleanup (new 'bread' attribute).
+    iid.glm now gives correct estimated influence functions for
+    'quasi' link (constant variance)
+  - Parameter constraints on (co)variance parameters now possible with
+    the syntax lvm(...,y~~a*x) (corresponding to
+    covariance(...,y~x)<-"a")
+  - Some additional utilities: pdfconvert, scheffe, images, click. confband
+    updated with 'polygon' argument.
+  - New function getMplus: Import results from Mplus
+  - New function getSAS: Import SAS ODS
+  - New 'edgecolor' argument of plot-function
+
+* TODO Version 1.2.5 <2014-03-13 Thu>
   - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
   - Function 'categorical' for adding categorical predictors to

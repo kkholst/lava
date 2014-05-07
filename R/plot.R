@@ -30,6 +30,7 @@
 ##' @param Rgraphviz if FALSE igraph is used for graphics
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
+##' @param edgecolor if TRUE plot style with colored edges
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
@@ -73,6 +74,7 @@
            unexpr=FALSE,
            addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
            layout=c("dot","fdp","circo","twopi","neato","osage"),
+           edgecolor=lava.options()$edgecolor,
            ...) {
     if (is.null(vars(x))) {
       message("Nothing to plot: model has no variables.")
@@ -83,7 +85,7 @@
     message("Not available for models with fewer than two variables")
     return(NULL)
   }
-  
+  if (edgecolor) x <- beautify(x)
   myhooks <- gethook("plot.post.hooks")
   for (f in myhooks) {
     x <- do.call(f, list(x=x,...))
@@ -264,6 +266,7 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
 }
 
 ###}}} igraph.lvm
+
 
 beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("white",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
     nodecolor(x, exogenous(x), border=border[1], labcol=labcol[1]) <- NA
