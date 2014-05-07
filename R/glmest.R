@@ -217,9 +217,9 @@ logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
 
 ##' @S3method iid glm
 iid.glm <- function(x,...) {
-    if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
-        return(iid.default(x,information.glm,...))
-    }
+    ## if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
+    ##     return(iid.default(x,information.glm,...))
+    ## }
     iid.default(x,...)
 }
 
