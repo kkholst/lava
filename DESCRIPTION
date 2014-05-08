@@ -26,3 +26,4 @@ Suggests:
     survival,
     testthat,
     ascii
+Roxygen: list(wrap = FALSE)
