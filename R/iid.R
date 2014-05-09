@@ -37,6 +37,7 @@ iid.default <- function(x,bread,id,...) {
     if (missing(bread)) bread <- attributes(U)$bread
     if (is.null(bread)) {
         bread <- attributes(x)$bread
+        if (is.null(bread)) bread <- x$bread
         if (is.null(bread)) {
             I <- -numDeriv::jacobian(function(p) score(x,p=p,indiv=FALSE,...),pp,method=lava.options()$Dmethod)
             bread <- Inverse(I)

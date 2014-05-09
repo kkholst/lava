@@ -113,11 +113,11 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
     }
     if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
     
-    if (is.matrix(x) || is.vector(x)) contrast <- x
+    ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
-    if (missing(vcov)) { ## If user supplied vcov, then don't estimate IC
+    if (missing(vcov) || (is.logical(vcov) && vcov[1]==FALSE)) { ## If user supplied vcov, then don't estimate IC
         if (missing(score.deriv)) {
             if (!is.logical(iid)) {
                 iidtheta <- iid
@@ -128,7 +128,10 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
         } else {
             suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv))
         }
-    }  else { iidtheta <- NULL }
+    } else {
+        if (is.logical(vcov)) vcov <- vcov(x)
+        iidtheta <- NULL
+    }
     if (!missing(subset)) {
         e <- substitute(subset)
         subset <- eval(e, data, parent.frame())
@@ -379,8 +382,14 @@ vcov.estimate <- function(object,...) {
 }
 
 ##' @S3method coef estimate
-coef.estimate <- function(object,...) {
+coef.estimate <- function(object,mat=FALSE,...) {
+    if (mat) return(object$coefmat)
     object$coef
+}
+
+##' @S3method summary estimate
+summary.estimate <- function(object,...) {
+    object$coefmat
 }
 
 ##' @S3method iid estimate
