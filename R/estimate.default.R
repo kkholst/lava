@@ -106,6 +106,7 @@
 ##' @S3method estimate default
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
                              score.deriv,level=0.95,iid=TRUE,
+                             type=c("robust","df","mbn"),
                              contrast,null,vcov,coef,print=NULL,...) {
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
@@ -134,16 +135,18 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
     }
     if (!missing(subset)) {
         e <- substitute(subset)
-        subset <- eval(e, data, parent.frame())
+        if (inherits(try(id,silent=TRUE),"try-error")) subset <- eval(e,data)
+        ##subset <- eval(e, data, parent.frame())
         if (is.character(subset)) subset <- data[,subset]
         if (is.numeric(subset)) subset <- subset==1
-    }
+    }    
     idstack <- NULL
     if (!missing(id)) {
         if (is.null(iidtheta)) stop("'iid' method needed")
         nprev <- nrow(iidtheta)
         e <- substitute(id)
-        if (!is.null(data)) id <- eval(e, data, parent.frame())
+        if (inherits(try(id),"try-error")) id <- eval(e,data)
+            ##if (!is.null(data)) id <- eval(e, data)
         if (is.logical(id) && length(id)==1) {
             id <- if(is.null(iidtheta)) seq(nrow(data)) else seq(nprev)
             stack <- FALSE
@@ -155,6 +158,7 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
             if (length(id)!=nrow(data)) stop("Dimensions of 'data' and 'id' does not agree")
         }
         if (stack) {
+            N <- nrow(iidtheta)
             clidx <- NULL
             if (!lava.options()$cluster.index) {
                 iidtheta <- matrix(unlist(by(iidtheta,id,colSums)),byrow=TRUE,ncol=ncol(iidtheta))
@@ -167,15 +171,39 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
                 iidtheta <- clidx$X
                 attributes(iidtheta)[names(atr)] <- atr
                 idstack <- id[as.vector(clidx$firstclustid)+1]
-            } 
-        } else idstack <- id
+            }
+            if (is.null(attributes(iidtheta)$N)) {
+                attributes(iidtheta)$N <- N
+            }
+        } else idstack <- id        
     }
     if (!is.null(iidtheta)) rownames(iidtheta) <- idstack
 
     if (!is.null(iidtheta) && missing(vcov)) {
-        n <- NROW(iidtheta)
-        if (is.null(f)) {
-            V <- crossprod(iidtheta)
+        ## if (is.null(f))
+        V <- crossprod(iidtheta)
+        ### Small-sample corrections for clustered data
+        K <- NROW(iidtheta)
+        N <- attributes(iidtheta)$N
+        if (is.null(N)) N <- K                    
+        p <- NCOL(iidtheta)
+        adj1 <- K/(K-p) ## Mancl & DeRouen, 2001
+        adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
+        if (tolower(type[1])=="mbn" && !is.null(attributes(iidtheta)$bread)) {
+            V0 <- V
+            iI0 <- attributes(iidtheta)$bread
+            I0 <- Inverse(iI0)
+            I1 <- crossprod(iidtheta%*%I0)
+            delta <- min(0.5,p/(K-p))
+            phi <- max(1,tr(I0%*%V0)*adj2/p)
+            V <- adj2*V0 + delta*phi*iI0
+            ## suppressMessages(browser())
+        }
+        if (tolower(type[1])=="df") {
+            V <- adj1*V
+        }
+        if (tolower(type[1])=="df2") {
+            V <- adj2*V
         }
     } else {
         if (!missing(vcov)) {
@@ -244,7 +272,8 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
             if (N<NROW(data) || NROW(data)==0) { ## transformation not depending on data
                 pp <- as.vector(val)
                 iidtheta <- iidtheta%*%t(D)
-                V <- crossprod(iidtheta)
+                ##V <- crossprod(iidtheta)
+                V <- D%*%V%*%t(D)
             } else {
                 if (k>1) { ## More than one parameter (and depends on data)
                     if (!missing(subset)) { ## Conditional estimate
@@ -278,7 +307,7 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
                 }
                 if (!missing(subset)) { ## Conditional estimate
                     phat <- mean(subset)
-                    iid3 <- cbind(-1/phat^2 * (subset-phat)/n)
+                    iid3 <- cbind(-1/phat^2 * (subset-phat)/N) ## check
                     if (!missing(id)) {
                         if (!lava.options()$cluster.index)
                             iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
@@ -297,7 +326,7 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
                         V <- crossprod(iidtheta)
                     }
                 }
-            }            
+            }
         }
     }
 
@@ -345,20 +374,6 @@ estimate.glm <- function(x,...) {
     estimate.default(x,...)
 }
 
-
-
-estimate.lmerMod <- function(x,...) {
-    cc <- cbind(fixef(x),diag(vcov(x))^.5)
-    cc <- cbind(cc,cc[,1]-qnorm(0.975)*cc[,2],cc[,1]+qnorm(0.975)*cc[,2],
-                2*(1-pnorm(abs(cc[,1])/cc[,2])))
-    colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
-    res <- structure(list(coef=fixef(x), vcov=vcov(x),
-                          coefmat=cc,
-                          varcomp=as.numeric(VarCorr(x)),residual=attributes(VarCorr(x))$sc^2
-                          ),
-                     class="estimate")
-    res
-}
 
 ##' @S3method print estimate
 print.estimate <- function(x,digits=3,width=25,...) {
