@@ -170,8 +170,8 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   r <- y-pi
   A <- as.vector(h(Xbeta)*r)/a.phi 
   S <- apply(X,2,function(x) x*A)
-  if (!is.null(x$weight) || !missing(weight)) {
-      if (missing(weight)) weight <- x$weight
+  if (!is.null(x$prior.weights) || !missing(weight)) {
+      if (missing(weight)) weight <- x$prior.weights
       S <- apply(S,2,function(x) x*weight)
   }
   if (!indiv) return(colSums(S))
@@ -191,28 +191,35 @@ pars.glm <- function(x,...) {
   return(coef(x))
 }
 
-logL.glm <- function(x,p=pars.glm(x),indiv=FALSE,...) {
-  f <- family(x)
-  ginv <- f$linkinv
-  X <- model.matrix(x)
-  n <- nrow(X)  
-  disp <- 1; p0 <- p
-  if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-    disp <- tail(p,1)
-    p0 <- p[-length(p)]
-  }
-  if(any(is.na(p))) stop("Over-parametrized model")
-  Xbeta <- X%*%p0
-  if (!is.null(x$offset)) Xbeta <- Xbeta+x$offset
-  y <- model.frame(x)[,1]
-  mu <- ginv(Xbeta)
-  w <- x$prior.weights
-  dev <-  f$dev.resids(y,mu,w)
-  if (indiv) {
-    
-  } 
-  loglik <- length(p)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
-  structure(loglik,nobs=n,df=length(p),class="logLik")
+logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
+    if (!missing(data)) {
+        x <- update(x,data=data,...)
+    }
+    f <- family(x)
+    ginv <- f$linkinv
+    X <- model.matrix(x)
+    n <- nrow(X)  
+    disp <- 1; p0 <- p
+    if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+        if (length(p)==ncol(X)) {
+            disp <- suppressWarnings((summary(x)$dispersion))
+        } else {
+            disp <- tail(p,1)
+            p0 <- p[-length(p)]
+        }
+    }
+    if(any(is.na(p))) stop("Over-parametrized model")
+    Xbeta <- X%*%p0
+    if (!is.null(x$offset)) Xbeta <- Xbeta+x$offset
+    y <- model.frame(x)[,1]
+    mu <- ginv(Xbeta)
+    w <- x$prior.weights
+    dev <-  f$dev.resids(y,mu,w)
+    if (indiv) {
+        
+    } 
+    loglik <- length(p)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
+    structure(loglik,nobs=n,df=length(p),class="logLik")
 }
 
 ##' @S3method iid glm
