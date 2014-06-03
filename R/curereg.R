@@ -183,11 +183,17 @@ curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,st
   beta <- op$par[beta.idx]; gamma <- op$par[gamma.idx]
   cc <- c(beta,gamma)
   names(cc) <- c(colnames(X),paste("pr:",colnames(Z),sep=""))
-  I <- curereg_information(beta,gamma,y,X,Z,offset,type=var,...)
-  V <- Inverse(I); colnames(V) <- rownames(V) <- names(cc)
+  bread <- Inverse(curereg_information(beta,gamma,y,X,Z,offset,type="hessian",...))
+  if (tolower(var[1])%in%c("robust","sandwich")) {
+      meat <- curereg_information(beta,gamma,y,X,Z,offset,family,type="outer",...)
+      V <- bread%*%meat%*%bread
+  } else {
+      V <- bread
+  }
+  colnames(V) <- rownames(V) <- names(cc)
   res <- list(coef=cc,opt=op,beta=beta,gamma=gamma,
-              beta.idx=beta.idx,gamma.idx=gamma.idx,
-              I=I,formula=formula,cureformula=cureformula, y=y, X=X, Z=Z, offset=offset, vcov=V, model.frame=md,family=family)
+              beta.idx=beta.idx,gamma.idx=gamma.idx,bread=bread,
+              formula=formula,cureformula=cureformula, y=y, X=X, Z=Z, offset=offset, vcov=V, model.frame=md,family=family)
   class(res) <- "curereg"
   res$fitted.values <- predict(res)
   return(res)

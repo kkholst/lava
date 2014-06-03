@@ -38,21 +38,29 @@ colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
   delta <- ifelse(X,x.range[1],y.range[1])
   if (!is.null(values)) dM <- diff(range(values))/(nlut-1)
   for (i in seq_len(nlut+1)-1) {
-    pos <- delta + (i-1)*scale
-    if (X) {
-      x1 <- pos; x2 <- pos+scale; y1 <- y.range[1]; y2 <- y.range[2]
-    } else {
-      y1 <- pos; y2 <- pos+scale; x1 <- x.range[1]; x2 <- x.range[2]
-    }
-    if (i>0)
-      rect(x1,y1,x2,y2, col=clut[i], border=border, xpd=TRUE)
-    if (!is.null(values)) {
-      rund <- format(round(min(values)+dM*i,max(1,digits)),digits=digits)
-##      rund <- round((min(values)+dM*i)*10^digits)/(10^digits)
-      x0 <- pos+(1+0.5)*scale; y0 <- y.range[2]+label.offset
-      if (!X) { y0 <- x0; x0 <- x.range[1]-label.offset }
-      if (i<nlut)
-        text(x0,y0,rund,cex=cex,srt=srt,xpd=TRUE,...)
-    }
+      pos <- delta + (i-1)*scale
+      if (X) {
+          x1 <- pos; x2 <- pos+scale; y1 <- y.range[1]; y2 <- y.range[2]
+      } else {
+          y1 <- pos; y2 <- pos+scale; x1 <- x.range[1]; x2 <- x.range[2]
+      }
+      if (i>0)
+          rect(x1,y1,x2,y2, col=clut[i], border=border, xpd=TRUE)
+  }  
+  if (!is.null(values)) {      
+      for (i in seq_len(nlut+1)-1) {
+          pos <- delta + (i-1)*scale
+          rund <- format(round(min(values)+dM*i,max(1,digits)),digits=digits)
+          ##      rund <- round((min(values)+dM*i)*10^digits)/(10^digits)
+          x0 <- pos+(1+0.5)*scale; y0 <- y.range[2]+label.offset                
+          if (!X) {
+              y0 <- x0;
+              if (position==1) x0 <- x.range[1]-label.offset
+              if (position==2) x0 <- x.range[1]+label.offset*5
+              if (position==3) x0 <- x.range[1]+label.offset*1
+          }
+          if (i<nlut)
+              text(x0,y0,rund,cex=cex,srt=srt,xpd=TRUE,...)
+      }
   }
 }

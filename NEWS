@@ -1,3 +1,8 @@
+* Version 1.2.7 <2014-05-07 Wed>
+  - Fixed a bug in score.glm introduced in version 1.2.6
+  - small-sample corrections in 'estimate'
+  
+
 * Version 1.2.6 <2014-05-07 Wed>
   - New 'stack' function for two-stage estimation (via 'estimate' objects)
   - New 'blocksample' function for resampling clustered data.
