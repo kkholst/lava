@@ -45,11 +45,13 @@ iid.default <- function(x,bread,id,...) {
     }
     iid0 <- U%*%bread
     if (!missing(id)) {
+        N <- nrow(iid0)
         if (!lava.options()$cluster.index) {
             iid0 <- matrix(unlist(by(iid0,id,colSums)),byrow=TRUE,ncol=ncol(bread))
         } else {
             iid0 <- mets::cluster.index(id,mat=iid0,return.all=FALSE)
         }
+        attributes(iid0)$N <- N
     }
     colnames(iid0) <- colnames(U)
   return(structure(iid0,bread=bread))
