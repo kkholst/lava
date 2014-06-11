@@ -172,7 +172,9 @@
 ##' 
 ##' ##library(mets)
 ##' m <- lvm()
-##' categorical(m,K=3,labels=c("A","B","C")) <- "v"
+##' ## categorical(m,K=3) <- "v"
+##' categorical(m,labels=c("A","B","C")) <- "v"
+##' 
 ##' regression(m,additive=FALSE) <- y~v
 ##' \dontrun{
 ##'   plot(y~v,sim(m,1000,p=c("y~v:2"=3)))

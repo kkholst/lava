@@ -1,6 +1,6 @@
 ##' @export
 categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) {
-
+    
     if (is.character(formula)) {
         regr <- FALSE
         X <- formula
@@ -12,6 +12,15 @@ categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) 
         if (length(attributes(y)$x)==0) {
             X <- y; regr <- FALSE        
         }
+    }
+    if (!missing(p)) {
+        if (!missing(K) && K!=length(p)+1) stop("Wrong dimension of 'p'")
+        if (is.numeric(p) && sum(p)>=1) warning("'p' sums >= 1")
+    }
+    if (missing(K)) {
+        if (!is.null(list(...)$labels)) K <- length(list(...)$labels)
+        if (!missing(beta)) K <- length(beta)
+        if (!missing(p)) K <- length(p)-1
     }
     if (!regr.only) {
         if (missing(p)) p <- rep(1/K,K-1)
