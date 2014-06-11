@@ -13,29 +13,29 @@
     } else {
         y <- getoutcome(formula)
         xx <- attributes(y)$x
-    }    
+    }
     if (length(xx)==0) { xx <- y; y <- NULL }
     if (length(y)==0) {
         if (post) {
             `_data`$constrainY[xx] <- NULL
             `_data`$constrain[xx] <- NULL
-            if (is.null(attributes(`_data`)$selftransform))
-                attributes(`_data`)$selftransform <- list()
-            attributes(`_data`)$selftransform[[xx]] <- fun
+            if (is.null(`_data`$attributes$selftransform))
+                `_data`$attributes$selftransform <- list()
+            `_data`$attributes$selftransform[[xx]] <- fun
             return(`_data`)
         }
-        attributes(`_data`)$selftransform[xx] <- NULL
+        `_data`$attributes$selftransform[xx] <- NULL
         constrain(`_data`,xx,y,...) <- fun
         return(`_data`)
     }
 
-    attributes(`_data`)$selftransform[y] <- NULL
+    `_data`$attributes$selftransform[y] <- NULL
     addvar(`_data`) <- c(y)
     intercept(`_data`,y) <- 0; covariance(`_data`,y) <- 0
-    if (is.null(attributes(`_data`)$transform))
-        attributes(`_data`)$transform <- list()
-    if (is.null(fun)) attributes(`_data`)$transform[y] <- NULL
+    if (is.null(`_data`$attributes$transform))
+        `_data`$attributes$transform <- list()
+    if (is.null(fun)) `_data`$attributes$transform[y] <- NULL
     else
-        attributes(`_data`)$transform[[y]] <- list(fun=fun,x=xx)  
+        `_data`$attributes$transform[[y]] <- list(fun=fun,x=xx)  
     return(`_data`)
 }

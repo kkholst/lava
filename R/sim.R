@@ -172,20 +172,13 @@
 ##' 
 ##' ##library(mets)
 ##' m <- lvm()
-##' m <- categorical(m,y~x,K=4)
-##' d <- sim(m,1000,p=c('y~x:2'=4))
-##' lm(y~-1+factor(x),data=d)
+##' categorical(m,K=3,labels=c("A","B","C")) <- "v"
+##' regression(m,additive=FALSE) <- y~v
+##' \dontrun{
+##'   plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
+##' }
 ##' 
-##' 
-##' m <- lvm()
-##' regression(m) <- z~x
-##' m <- categorical(m,y~x,K=4,p=c(0.1,0.2,0.3))
-##' with(sim(m,1e4),table(x))/1e4
-##' 
-##' m <- categorical(m,y~z,K=3)
-##' d <- sim(m,1e4,p=c('y~z:0'=3,'y~x:2'=4))
-##' lm(y~factor(z)+factor(x),data=d)
-##' with(d,table(x))/nrow(d)
+
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @S3method sim lvmfit
@@ -260,7 +253,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     
     ## Simulate exogenous variables (covariates)
     res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
-    vartrans <- names(attributes(x)$transform)
+    vartrans <- names(x$attributes$transform)
     xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
     xx <- setdiff(xx,vartrans)
     
@@ -394,11 +387,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)") 
             for (i in leftovers) {
                 if (i%in%vartrans) {
-                    xtrans <- attributes(x)$transform[[i]]$x
+                    xtrans <- x$attributes$transform[[i]]$x
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
-                        suppressWarnings(yy <- with(attributes(x)$transform[[i]],fun(res[,xtrans])))
+                        suppressWarnings(yy <- with(x$attributes$transform[[i]],fun(res[,xtrans])))
                         if (length(yy) != NROW(res)) { ## apply row-wise
-                            res[,i] <- with(attributes(x)$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
+                            res[,i] <- with(x$attributes$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
                         } else {
                             colnames(yy) <- NULL
                             res[,i] <- yy
@@ -489,7 +482,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     if (unlink) res <- resunlink
 
     res <- as.data.frame(res)
-    self <- attributes(x)$selftransform
+    self <- x$attributes$selftransform
     for (v in names(self)) {
         res[,v] <- self[[v]](res[,v])
     }  

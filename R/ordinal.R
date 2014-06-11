@@ -3,7 +3,7 @@ color.ordinal <- function(x,subset=vars(x),...) {
 }
 
 ordinal.sim.hook <- function(x,data,p,...) {
-    ovar <- ordinal(x)    
+    ovar <- ordinal(x)
     for (i in seq_len(length(ovar))) {
         if (attributes(ovar)$liability[i]) {
             idx <- attributes(ovar)$idx[[ovar[i]]]
@@ -11,6 +11,13 @@ ordinal.sim.hook <- function(x,data,p,...) {
             z <- cut(data[,ovar[i]],breaks=breaks)
             data[,ovar[i]] <- as.numeric(z)-1
         }
+        K <- attributes(ovar)$K[i]
+        lab <- attributes(ovar)$labels[ovar[i]][[1]]
+        if (!is.null(lab))
+            data[,ovar[i]] <- factor(data[,ovar[i]],
+                                     levels=seq(K)-1,
+                                     labels=lab)
+        
     }
     return(data)
 }
@@ -43,16 +50,17 @@ print.ordinal.lvm <- function(x,...) {
 }
 
 ##' @S3method ordinal lvm
-`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, ...) {
+`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, labels, ...) {
     if (is.null(var)) {
         ordidx <- unlist(x$attributes$ordinal)
         KK <- unlist(x$attributes$nordinal)
         idx <- x$attributes$ordinalparname
         fix <- lapply(idx,function(z) x$exfix[z])
         liability <- x$attributes$liability
+        labels <- x$attributes$labels
         if (length(ordidx)>0) {
             val <- names(ordidx)
-            return(structure(val,K=KK,idx=idx,fix=fix,liability=liability,class="ordinal.lvm"))
+            return(structure(val,K=KK,idx=idx,fix=fix,liability=liability,labels=labels,class="ordinal.lvm"))
         }
         else
             return(NULL)
@@ -101,8 +109,10 @@ print.ordinal.lvm <- function(x,...) {
     }
     x$attributes$liability[var] <- liability
     x$attributes$ordinal[var] <- TRUE
+    if (!missing(labels)) x$attributes$labels[var] <- list(labels)
     x$attributes$nordinal[var] <- K
     x$attributes$normal[var] <- FALSE
     covfix(x,var,NULL) <- 1
+    if (is.null(index(x))) index(x) <- reindex(x)
     return(x)
 }
