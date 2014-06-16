@@ -203,7 +203,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' @export
 "constrain" <- function(x,...) UseMethod("constrain")
 
-##' @S3method constrain default
+##' @export
 constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...) {
   if (estimate) {
     return(constraints(x,...))
@@ -242,14 +242,14 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
   res
 }
 
-##' @S3method constrain<- multigroupfit
+##' @export
 "constrain<-.multigroupfit" <-
   "constrain<-.multigroup" <- function(x,par,k=1,...,value) {
     constrain(Model(x)$lvm[[k]],par=par,...) <- value
     return(x)
 }
 
-##' @S3method constrain<- default
+##' @export
 "constrain<-.default" <- function(x,par,args,...,value) {
     if (class(par)[1]=="formula") {
         lhs <- getoutcome(par)

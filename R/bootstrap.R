@@ -57,7 +57,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' B
 ##' }
 ##'
-##' @S3method bootstrap lvm
+##' @export
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
                           constraints=TRUE,sd=FALSE,silent=FALSE,...) {
@@ -144,14 +144,14 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     return(res)
 }
 
-##' @S3method bootstrap lvmfit
+##' @export
 bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
                              control=list(start=coef(x)),
                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
                              estimator=x$estimator,weight=Weight(x),...)
     bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,bollenstine=bollenstine,p=p,...)
 
-##' @S3method print bootstrap.lvm
+##' @export
 "print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {
     cat("Non-parametric bootstrap statistics (R=",nrow(x$coef),"):\n\n",sep="")
     uplow <-(c(0,1) + c(1,-1)*(1-level)/2)

@@ -57,12 +57,12 @@
 ##' border, labcol, shape, lwd, ...) <- value
 `labels<-` <- function(object,...,value) UseMethod("labels<-")
 
-##' @S3method labels<- default
+##' @export
 `labels<-.default` <- function(object,...,value) {
   labels(object,value)
 }
 
-##' @S3method labels graphNEL
+##' @export
 labels.graphNEL <- function(object,lab=NULL,...) {
   if (is.null(lab))    
     return(nodeRenderInfo(object)$label)  
@@ -71,14 +71,14 @@ labels.graphNEL <- function(object,lab=NULL,...) {
   return(object)
 }
 
-##' @S3method labels lvmfit
+##' @export
 labels.lvmfit <- function(object,lab=NULL,...) {
   if (is.null(lab)) return(object$noderender$label)
   object$noderender$label <- lab
   return(object)
 }
 
-##' @S3method labels lvm
+##' @export
 `labels.lvm` <- function(object,lab=NULL,...) {
   if (is.null(lab))
     return(object$noderender$label)
@@ -92,7 +92,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
 
 ###{{{ edgelabels
 
-##' @S3method edgelabels<- lvmfit
+##' @export
 "edgelabels<-.lvmfit" <- function(object,to,from,est=TRUE,edges=NULL,cex=1,...,value) {
   if (is.null(edges))  {
     if (class(to)[1]=="formula") {
@@ -120,7 +120,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
   return(object)
 }
 
-##' @S3method edgelabels lvmfit
+##' @export
 edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   if (!missing(value)) {
     edgelabels(object,...) <- value
@@ -162,17 +162,17 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 ##' @export
 `edgelabels<-` <- function(object,...,value) UseMethod("edgelabels<-")
 
-##' @S3method edgelabels<- lvm
+##' @export
 `edgelabels<-.lvm` <- function(object,to,...,value) {
   edgelabels(object,to=to, lab=value,...)
 }
 
-##' @S3method edgelabels<- graphNEL
+##' @export
 `edgelabels<-.graphNEL` <- function(object,...,value) {
   edgelabels(object,lab=value,...)
 }
 
-##' @S3method edgelabels graphNEL
+##' @export
 `edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black", arrowhead="closed", 
                                   expr=TRUE,
                                   debug=FALSE,...) {
@@ -278,7 +278,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 
 
 
-##' @S3method edgelabels lvm
+##' @export
 `edgelabels.lvm` <- function(object, lab=NULL, to=NULL, from=NULL,
                              cex=1.5, lwd=1, lty=1, col="black",
                              labcol="black", arrowhead="closed",

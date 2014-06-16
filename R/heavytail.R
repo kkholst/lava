@@ -3,7 +3,7 @@
 ##' @export
 "heavytail<-" <- function(x,...,value) UseMethod("heavytail<-")
 
-##' @S3method heavytail<- lvm
+##' @export
 "heavytail<-.lvm" <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     return(heavytail(x,all.vars(value),...))
@@ -11,7 +11,7 @@
   heavytail(x, value, ...)
 }
 
-##' @S3method heavytail lvm
+##' @export
 `heavytail.lvm` <-
 function(x,var=NULL,df=1,...) {
   if (is.null(var)) {

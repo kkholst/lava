@@ -9,7 +9,7 @@
 
 ###{{{ baptize.lvm
 
-##' @S3method baptize lvm
+##' @export
 baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
   p <- describecoef(x, mean=TRUE)
   sym <- lava.options()$sym

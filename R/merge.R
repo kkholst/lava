@@ -1,7 +1,7 @@
-##' @S3method %+% lvm
+##' @export
 `%+%.lvm` <- function(x,y) merge(x,y)
 
-##' @S3method merge lvm
+##' @export
 merge.lvm <- function(x,y,...) {  
   objects <- list(x,y,...)  
   if (length(objects)<2) return(x)
@@ -44,7 +44,7 @@ merge.lvm <- function(x,y,...) {
 }
   
 
-##' @S3method merge estimate
+##' @export
 merge.estimate <- function(x,y,...,id) {
     objects <- list(x,y, ...)
     coefs <- unlist(lapply(objects,coef))
@@ -100,12 +100,12 @@ merge.estimate <- function(x,y,...,id) {
 }
 
 
-##' @S3method merge lm
+##' @export
 merge.lm <- function(x,...) {
     merge.estimate(x,...)
 }
 
-##' @S3method merge glm
+##' @export
 merge.glm <- function(x,...) {
     merge.estimate(x,...)
 }

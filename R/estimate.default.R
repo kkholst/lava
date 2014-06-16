@@ -13,6 +13,7 @@
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level Level of confidence limits
 ##' @param iid If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
+##' @param type Type of small-sample correction 
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) Null hypothesis to test 
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -103,7 +104,7 @@
 ##' iid(merge(l1,l2,l3,id=FALSE)) # independence
 ##' @aliases estimate.default estimate.estimate merge.estimate stack.estimate
 ##' @method estimate default
-##' @S3method estimate default
+##' @export
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
                              score.deriv,level=0.95,iid=TRUE,
                              type=c("robust","df","mbn"),
@@ -135,17 +136,19 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,subset,
     }
     if (!missing(subset)) {
         e <- substitute(subset)
-        if (inherits(try(id,silent=TRUE),"try-error")) subset <- eval(e,data)
+        expr <- suppressWarnings(inherits(try(subset,silent=TRUE),"try-error"))
+        if (expr) subset <- eval(e,envir=data)
         ##subset <- eval(e, data, parent.frame())
         if (is.character(subset)) subset <- data[,subset]
-        if (is.numeric(subset)) subset <- subset==1
+        if (is.numeric(subset)) subset <- subset>0
     }    
     idstack <- NULL
     if (!missing(id)) {
         if (is.null(iidtheta)) stop("'iid' method needed")
         nprev <- nrow(iidtheta)
         e <- substitute(id)
-        if (inherits(try(id),"try-error")) id <- eval(e,data)
+        expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
+        if (expr) id <- eval(e,envir=data)
             ##if (!is.null(data)) id <- eval(e, data)
         if (is.logical(id) && length(id)==1) {
             id <- if(is.null(iidtheta)) seq(nrow(data)) else seq(nprev)
@@ -375,7 +378,7 @@ estimate.glm <- function(x,...) {
 }
 
 
-##' @S3method print estimate
+##' @export
 print.estimate <- function(x,digits=3,width=25,...) {
     if (!is.null(x$print)) {
         x$print(x,...)
@@ -388,7 +391,7 @@ print.estimate <- function(x,digits=3,width=25,...) {
     if (!is.null(x$compare)) print(x$compare)    
 }
 
-##' @S3method vcov estimate
+##' @export
 vcov.estimate <- function(object,...) {    
     res <- object$vcov
     nn <- names(coef(object))
@@ -396,18 +399,18 @@ vcov.estimate <- function(object,...) {
     res
 }
 
-##' @S3method coef estimate
+##' @export
 coef.estimate <- function(object,mat=FALSE,...) {
     if (mat) return(object$coefmat)
     object$coef
 }
 
-##' @S3method summary estimate
+##' @export
 summary.estimate <- function(object,...) {
     object$coefmat
 }
 
-##' @S3method iid estimate
+##' @export
 iid.estimate <- function(x,...) {
     dimn <- dimnames(x$iid)
     if (!is.null(dimn)) {
@@ -418,12 +421,12 @@ iid.estimate <- function(x,...) {
     structure(x$iid,dimnames=dimn)
 }
 
-##' @S3method model.frame estimate
+##' @export
 model.frame.estimate <- function(formula,...) {
     NULL
 }
 
-##' @S3method stack estimate
+##' @export
 stack.estimate <- function(x,y,Ix,iIy,weight,dweight,...) {    
     iid1 <- iid(x)
     iid2 <- iid(y)

@@ -1,5 +1,5 @@
-##' @S3method formula lvm
-##' @S3method formula lvmfit
+##' @export
+##' @export
 formula.lvmfit <- formula.lvm <- function(x,char=FALSE,...) {
   A <- index(x)$A
   res <- c()

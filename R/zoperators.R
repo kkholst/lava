@@ -17,10 +17,10 @@
 ##' @export
 `%+%` <- function(x,y) UseMethod("%+%",y)
 
-##' @S3method %+% default
+##' @export
 `%+%.default` <- function(x,y) paste(x,y,sep="")
 
-##' @S3method %+% matrix
+##' @export
 `%+%.matrix` <- function(x,y) blockdiag(x,y)
 
 

@@ -8,12 +8,13 @@
 ##' @export
 `addvar` <-
 function(x,...) UseMethod("addvar")
+
 ##' @export
 `addvar<-` <-
 function(x,...,value) UseMethod("addvar<-")
 
 
-##' @S3method addvar<- lvm
+##' @export
 `addvar<-.lvm` <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     regression(x,...) <- value
@@ -23,7 +24,7 @@ function(x,...,value) UseMethod("addvar<-")
   addvar(x, var=value, ...)
 }
 
-##' @S3method addvar lvm
+##' @export
 `addvar.lvm` <-
 function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
   new <- setdiff(var,vars(x))

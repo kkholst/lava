@@ -1,7 +1,7 @@
 ##' @export
 "functional<-" <- function(x,...,value) UseMethod("functional<-")
 
-##' @S3method functional<- lvm
+##' @export
 "functional<-.lvm" <- function(x,to,from,...,value) {
     if (class(to)[1]=="formula") {
         yy <- decomp.specials(getoutcome(to))
@@ -35,7 +35,7 @@
 ##' @export
 "functional" <- function(x,...) UseMethod("functional")
 
-##' @S3method functional lvm
+##' @export
 functional.lvm <- function(x,to,from,...) {
     if (missing(from))
         return(x$attributes$functional)

@@ -39,7 +39,7 @@ click <- function(x,...){
     UseMethod("click")
 }
 
-##' @S3method click default
+##' @export
 click.default <-
 function(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
   {

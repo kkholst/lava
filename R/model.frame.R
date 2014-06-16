@@ -1,4 +1,4 @@
-##' @S3method model.frame lvmfit
+##' @export
 model.frame.lvmfit <- function(formula, all=FALSE,...) {
   dots <- list(...)
   mydata <- formula$data$model.frame
@@ -10,7 +10,7 @@ model.frame.lvmfit <- function(formula, all=FALSE,...) {
   return( mydata[,c(manifest(formula),xfix),drop=FALSE] )
 }
 
-##' @S3method model.frame multigroupfit
+##' @export
 model.frame.multigroupfit <- function(formula,...) {
   dots <- list(...)
   mydata <- formula$model$data

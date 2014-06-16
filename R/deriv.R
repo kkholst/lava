@@ -1,4 +1,4 @@
-##' @S3method deriv lvm
+##' @export
 deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
 
   if (missing(mom) & !missing(p)) {

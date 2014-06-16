@@ -2,7 +2,7 @@
 `finalize` <-
 function(x,...) UseMethod("finalize")
 
-##' @S3method finalize lvm
+##' @export
 `finalize.lvm` <-
 function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
 

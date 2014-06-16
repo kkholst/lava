@@ -1,6 +1,6 @@
 ###{{{ coef.lvm
 
-##' @S3method coef lvm
+##' @export
 `coef.lvm` <-
 function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
   if (fix)
@@ -147,7 +147,7 @@ function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE,
 
 ###{{{ coef.lvmfit
 
-##' @S3method coef lvmfit
+##' @export
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2),
          symbol=lava.options()$symbol,
@@ -427,7 +427,7 @@ function(object, level=ifelse(missing(type),-1,2),
 
 ###{{{ coef.multigroup
 
-##' @S3method coef multigroup
+##' @export
 coef.multigroup <- function(object,...) {
   return(object$parpos)
 }
@@ -436,7 +436,7 @@ coef.multigroup <- function(object,...) {
 
 ###{{{ coef.multigroupfit
 
-##' @S3method coef multigroupfit
+##' @export
 coef.multigroupfit <-
   function(object, level=0,vcov, ext=FALSE,
            labels=FALSE,symbol=lava.options()$symbol,covsymb=NULL,groups=NULL,...) {    

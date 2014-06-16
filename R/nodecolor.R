@@ -2,7 +2,7 @@
 `nodecolor<-` <-
 function(object,var,...,value) UseMethod("nodecolor<-")
 
-##' @S3method nodecolor<- lvm
+##' @export
 `nodecolor<-.lvm` <-
   function(object, var=vars(object), border, labcol, shape, lwd, ..., value) {
     if (length(var)>0 & length(value)>0) {
@@ -20,7 +20,7 @@ function(object,var,...,value) UseMethod("nodecolor<-")
     return(object)
   }
 
-##' @S3method nodecolor<- default
+##' @export
 `nodecolor<-.default` <-
   function(object, var=vars(object), border, labcol, shape, lwd, ..., value) {
     if (length(var)>0 & length(value)>0) {

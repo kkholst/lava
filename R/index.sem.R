@@ -11,16 +11,16 @@ updatelvm <- function(x,mean=TRUE,...) {
 ##' @export
 "index<-" <- function(x,...,value) UseMethod("index<-")
 
-##' @S3method index lvm
+##' @export
 "index.lvm" <- function(x,...) { x$index }
 
-##' @S3method index lvmfit
+##' @export
 "index.lvmfit" <- function(x,...) { index(Model(x)) }
 
-##' @S3method index<- lvm
+##' @export
 "index<-.lvm" <- function(x,...,value)  { x$index <- value; return(x) }
 
-##' @S3method index<- lvmfit
+##' @export
 "index<-.lvmfit" <- function(x,...,value) { Model(x)$index <- value; return(x) }
 
 

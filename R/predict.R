@@ -1,4 +1,4 @@
-##' @S3method predict lvmfit
+##' @export
 predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object),...) { 
   predict(Model(object),x=x,p=p,data=data,...)
 }
@@ -197,5 +197,5 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   return(res)
 }
 
-##' @S3method print lvm.predict
+##' @export
 print.lvm.predict <- function(x,...) print(x[,])

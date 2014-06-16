@@ -70,11 +70,12 @@
 ##' simulation only).
 ##' @param silent Logical variable which indicates whether messages are turned
 ##' on/off.
+##' @param additive If FALSE and predictor is categorical a non-additive effect is assumed
 ##' @param quick Faster implementation without parameter constraints
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-##' silent = lava.options()$silent, ...)
+##' silent = lava.options()$silent, additive=TRUE, ...)
 ##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.
@@ -104,7 +105,7 @@
 ##' @export
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 
-##' @S3method regression<- lvm
+##' @export
 "regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
   if (!is.null(to)) {    
     regfix(object, to=to, ...) <- value
@@ -233,7 +234,7 @@
 `regression` <-
   function(object,to,from,...) UseMethod("regression")
 
-##' @S3method regression lvm
+##' @export
 `regression.lvm` <-
     function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
              additive=TRUE, ...) {

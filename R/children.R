@@ -10,13 +10,13 @@
 ##' @export
 "parents" <- function(object,...) UseMethod("parents")
 
-##' @S3method parents lvmfit
+##' @export
 parents.lvmfit <- function(object,...) parents(Model(object),...)
 
-##' @S3method children lvmfit
+##' @export
 children.lvmfit <- function(object,...) children(Model(object),...)
 
-##' @S3method parents lvm
+##' @export
 parents.lvm <- function(object,var,...) {
   A <- index(object)$A
   if (missing(var)) {
@@ -28,7 +28,7 @@ parents.lvm <- function(object,var,...) {
   unique(unlist(res))
 }
 
-##' @S3method children lvm
+##' @export
 children.lvm <- function(object,var,...) {
   A <- index(object)$A
   if (missing(var)) {

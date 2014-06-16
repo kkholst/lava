@@ -4,7 +4,7 @@ function(x,...) UseMethod("score")
 
 ###{{{ score.lvm
 
-##' @S3method score lvm
+##' @export
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, weight2=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
     
   cl <- match.call()
@@ -85,7 +85,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
   
 ###{{{ score.lvm.missing
 
-##' @S3method score lvm.missing
+##' @export
 score.lvm.missing <- function(x,
                           p=pars(x), estimator=x$estimator,
                               weight=Weight(x$estimate),
@@ -117,7 +117,7 @@ score.lvm.missing <- function(x,
 
 ###{{{ score.multigroupfit
 
-##' @S3method score multigroupfit
+##' @export
 score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estimator, ...) {
   score(x$model0, p=p, weight=weight, model=estimator,...)
 }
@@ -126,7 +126,7 @@ score.multigroupfit <- function(x,p=pars(x), weight=Weight(x), estimator=x$estim
 
 ###{{{ score.multigroup
 
-##' @S3method score multigroup
+##' @export
 score.multigroup <- function(x,data=x$data,weight=NULL,weight2=NULL,p,indiv=combine,combine=FALSE,...) {
   rm <- procrandomslope(x)
   pp <- with(rm, modelPar(model,p)$p)
@@ -154,7 +154,7 @@ score.multigroup <- function(x,data=x$data,weight=NULL,weight2=NULL,p,indiv=comb
 
 ###{{{ score.lvmfit
 
-##' @S3method score lvmfit
+##' @export
 score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weight=Weight(x), weight2=x$data$weight2, ...) {
   score(x$model0,data=data,p=p,model=model,weight=weight,weight2=weight2,...)
 }

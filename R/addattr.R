@@ -2,7 +2,7 @@
 `addattr` <-
 function(x,...) UseMethod("addattr")
 
-##' @S3method addattr lvm
+##' @export
 `addattr.lvm` <-
 function(x, attr, var=NULL, val=TRUE, fun="nodeRenderInfo",debug=FALSE,...) {
   if (!is.null(var)) {
@@ -13,7 +13,7 @@ function(x, attr, var=NULL, val=TRUE, fun="nodeRenderInfo",debug=FALSE,...) {
   }
 }
 
-##' @S3method addattr graphNEL
+##' @export
 `addattr.graphNEL` <-
 function(x, attr, var=NULL, val=TRUE,fun="nodeRenderInfo",debug=FALSE,...) {
   if (is.null(var)) {

@@ -1,14 +1,14 @@
 ##' @export
 "parameter<-" <- function(x,...,value) UseMethod("parameter<-")
 
-##' @S3method parameter<- lvmfit
+##' @export
 "parameter<-.lvmfit" <- function(x,...,value) {
   parameter(Model(x),...) <- value
   return(x)
 }
 
 
-##' @S3method parameter<- lvm
+##' @export
 "parameter<-.lvm" <- function(x,constrain,start,...,value) {
   if (class(value)[1]=="formula") value <- all.vars(value)
   if (!missing(start)) {

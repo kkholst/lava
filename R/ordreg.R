@@ -64,14 +64,14 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),
     structure(res,class="ordreg")
 }
 
-##' @S3method print ordreg
+##' @export
 print.ordreg <- function(x,...) {
     cat("Call:\n"); print(x$call)
     cat("\nParameter Estimates:\n")
     print(x$coef)
 }
 
-##' @S3method summary ordreg
+##' @export
 summary.ordreg <- function(object,alpha=0.95,...) {
     res <- cbind(coef(object),diag(vcov(object))^.5)
     pp <- 1-(1-alpha)/2
@@ -83,21 +83,21 @@ summary.ordreg <- function(object,alpha=0.95,...) {
     return(res)
 }
 
-##' @S3method print summary.ordreg
+##' @export
 print.summary.ordreg <- function(x,alpha=0.95,...) {
     cat("AIC: ", x$AIC, "\n\n")
     print(x$coef)
     cat("\n")
 }
 
-##' @S3method score ordreg
+##' @export
 score.ordreg <- function(x,p=coef(x),indiv=FALSE,...) {
     ordreg_score(coef(x),x$up)
     if (!indiv) return(colSums(x$up$score))
     x$up$score
 }
 
-##' @S3method logLik ordreg
+##' @export
 logLik.ordreg <- function(object,p=coef(object),indiv=FALSE,...) {
     ordreg_logL(p,object$up)
     res <- log(object$up$pr)    
@@ -105,10 +105,10 @@ logLik.ordreg <- function(object,p=coef(object),indiv=FALSE,...) {
     structure(res,nall=length(object$up$pr),nobs=object$up$pr,df=length(p),class="logLik")
 }
 
-##' @S3method coef ordreg
+##' @export
 coef.ordreg <- function(object,...) object$coef
 
-##' @S3method vcov ordreg
+##' @export
 vcov.ordreg <- function(object,...) object$vcov
 
 ordreg_logL <- function(theta,env,indiv=FALSE,...) {

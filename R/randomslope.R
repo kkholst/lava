@@ -1,7 +1,7 @@
 ##' @export
 "randomslope<-" <- function(x,...,value) UseMethod("randomslope<-")
 
-##' @S3method randomslope<- lvm
+##' @export
 "randomslope<-.lvm" <- function(x, ..., value) {
   randomslope(x, covar=value, ...)
 }
@@ -10,7 +10,7 @@
 `randomslope` <-
 function(x,...) UseMethod("randomslope")
 
-##' @S3method randomslope lvm
+##' @export
 `randomslope.lvm` <-
 function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,...) {
   if (missing(covar)) {
@@ -73,7 +73,7 @@ function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,.
   return(x)
 }
 
-##' @S3method randomslope lvmfit
+##' @export
 `randomslope.lvmfit` <-
   function(x,...) {
     randomslope(Model(x),...)

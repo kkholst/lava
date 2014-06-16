@@ -183,7 +183,7 @@
 
 "sim" <- function(x,...) UseMethod("sim")
 
-##' @S3method sim lvmfit
+##' @export
 sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
     m <- Model(x)
     if ((nrow(model.frame(x))==n) & xfix) {
@@ -196,7 +196,7 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
     sim(m,n=n,p=p,...)
 }
 
-##' @S3method sim lvm
+##' @export
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     X,unlink=FALSE,...) {
     if (!missing(X)) {
@@ -493,7 +493,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
 
 
-##' @S3method simulate lvm
+##' @export
 simulate.lvm <- function(object,nsim,seed=NULL,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
         runif(1)
@@ -508,7 +508,7 @@ simulate.lvm <- function(object,nsim,seed=NULL,...) {
     sim(object,nsim,...)
 }
 
-##' @S3method simulate lvmfit
+##' @export
 simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
         runif(1)

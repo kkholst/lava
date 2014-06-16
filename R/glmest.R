@@ -95,7 +95,7 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 }
 
 
-##' @S3method score lm
+##' @export
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,offset=NULL,...) {
   response <- all.vars(formula(x))[1]
@@ -120,7 +120,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
   return(S)
 }
 
-##' @S3method score glm
+##' @export
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,link,dispersion,offset=NULL,weight,...) {
 
@@ -181,7 +181,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   return(S)
 }
 
-##' @S3method pars glm
+##' @export
 pars.glm <- function(x,...) {
   if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
     res <- c(coef(x),summary(x)$dispersion)
@@ -222,7 +222,7 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
     structure(loglik,nobs=n,df=length(p),class="logLik")
 }
 
-##' @S3method iid glm
+##' @export
 iid.glm <- function(x,...) {
     ## if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
     ##     return(iid.default(x,information.glm,...))
@@ -235,7 +235,7 @@ hessian.glm <- function(x,p=coef(x),...) {
   numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
 }
 
-##' @S3method information glm
+##' @export
 information.glm <- function(x,...) hessian.glm(x,...)
 
 robustvar <- function(x,id=NULL,...) {

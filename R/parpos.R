@@ -9,13 +9,13 @@
 `parpos` <-
   function(x,...) UseMethod("parpos")
 
-##' @S3method parpos default
+##' @export
 parpos.default <- function(x,p,...) {
   if (is.numeric(p)) return(p)
   na.omit(match(coef(x),p))
 }
 
-##' @S3method parpos multigroup
+##' @export
 parpos.multigroup <- function(x,p,mean=TRUE,...) {
   if (missing(p)) {
     p <- unique(unlist(lapply(x$lvm, function(z) setdiff(parlabels(z),names(constrain(z))) )))
@@ -39,10 +39,10 @@ parpos.multigroup <- function(x,p,mean=TRUE,...) {
 ##  return(p0)    
 }
 
-##' @S3method parpos multigroupfit
+##' @export
 parpos.multigroupfit <- function(x,...) parpos.multigroup(x$model0,...)
 
-##' @S3method parpos lvm
+##' @export
 parpos.lvm <- function(x,p,mean=TRUE,...) {
   if (!missing(p)) {    
     if (!is.character(p)) p <- names(p)
@@ -73,7 +73,7 @@ parpos.lvm <- function(x,p,mean=TRUE,...) {
   nn
 }
 
-##' @S3method parpos lvmfit
+##' @export
 parpos.lvmfit <- parpos.lvm
 
 

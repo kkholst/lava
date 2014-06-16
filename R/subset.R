@@ -16,7 +16,7 @@
 ##' m <- lvm(c(y1,y2)~x1+x2)
 ##' subset(m,~y1+x1)
 ##'
-##' @S3method subset lvm
+##' @export
 ##' @method subset lvm
 subset.lvm <- function(x, vars, ...) {
   if (missing(vars))

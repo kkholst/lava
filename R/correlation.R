@@ -7,7 +7,7 @@
 ##' @export
 "correlation" <- function(x,...) UseMethod("correlation")
 
-##' @S3method correlation lvmfit
+##' @export
 correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
   pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
   pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]

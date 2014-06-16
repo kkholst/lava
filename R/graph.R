@@ -26,9 +26,8 @@
 `Graph` <-
 function(x,...) UseMethod("Graph")
 
-##' @S3method Graph lvmfit
-##' @S3method Graph lvm
-`Graph.lvmfit` <- `Graph.lvm` <-
+##' @export
+`Graph.lvm` <-
 function(x,add=FALSE,...) {
   if ((is.null(x$graph) || length(x$graph)==0) & add) {
     m <- Model(x)
@@ -38,10 +37,14 @@ function(x,add=FALSE,...) {
 }
 
 ##' @export
+`Graph.lvmfit` <- function(x,...) Graph.lvm(x,...)
+
+##' @export
 "Graph<-" <- function(x,...,value) UseMethod("Graph<-")
 
-##' @S3method Graph<- lvmfit
+##' @export
 "Graph<-.lvmfit" <- function(x,...,value) { x$graph <- value; return(x) }
-##' @S3method Graph<- lvm
+
+##' @export
 "Graph<-.lvm" <- function(x,...,value) { x$graph <- value; return(x) }
 

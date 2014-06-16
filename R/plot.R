@@ -66,7 +66,7 @@
 ##' }
 ##'
 ##' 
-##' @S3method plot lvm
+##' @export
 ##' @method plot lvm
 `plot.lvm` <-
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
@@ -162,7 +162,7 @@
 
 ###{{{ plot.lvmfit
 
-##' @S3method plot lvmfit
+##' @export
 `plot.lvmfit` <-
   function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,...) {
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
@@ -215,14 +215,14 @@
 
 ###{{{ plot.multigroup
 
-##' @S3method plot multigroup
+##' @export
 plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
   k <- x$ngroup
   for (i in 1:k)
     plot(x$lvm[[i]],diag=diag,labels=labels, ...)
 }
 
-##' @S3method plot multigroupfit
+##' @export
 plot.multigroupfit <- function(x,...) {
   plot(Model(x),...)
 }

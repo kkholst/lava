@@ -35,7 +35,7 @@
 ##' compare(e,scoretest=list(y3~x,y2~x))
 compare <- function(object,...) UseMethod("compare")
 
-##' @S3method compare default
+##' @export
 compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.95) {
   if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
       if (!missing(contrast) && is.character(contrast)) par <- contrast

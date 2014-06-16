@@ -34,15 +34,15 @@
 "rmvar<-" <- function(x, ..., value) UseMethod("rmvar<-")
 
 
-##' @S3method kill<- lvm
+##' @export
 "kill<-.lvm" <- function(x, ..., value) {
   kill(x,value)
 }
 
-##' @S3method rmvar<- lvm
+##' @export
 "rmvar<-.lvm" <- get("kill<-.lvm")
 
-##' @S3method kill lvm
+##' @export
 "kill.lvm" <- function(x, value, ...) {
   if (class(value)[1]=="formula") value <- all.vars(value)
   idx <- which(names(x$exfix)%in%value)
@@ -71,5 +71,5 @@
   return(x)
 }
 
-##' @S3method rmvar<- lvm
+##' @export
 "rmvar.lvm" <- get("kill.lvm")

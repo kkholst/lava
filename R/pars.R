@@ -2,7 +2,7 @@
 `pars` <-
   function(x,...) UseMethod("pars")
 
-##' @S3method pars default
+##' @export
 pars.default <- function(x,...) {
   if (!is.null(x$opt$estimate))
     return(x$opt$estimate)
@@ -21,7 +21,7 @@ pars.default <- function(x,...) {
 
 ###{{{ pars.lvm
 
-##' @S3method pars lvm
+##' @export
 pars.lvm <- function(x, A, P, v, e, ...) {
   parres <- A[index(x)$M1==1]
   diagcorfree <- diag(P)[diag(index(x)$P1)==1]

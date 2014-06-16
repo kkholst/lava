@@ -259,7 +259,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     return(res)
 }
 
-##' @S3method print modelsearch
+##' @export
 print.modelsearch <- function(x,tail=nrow(x$res),adj=c("holm","BH"),...) {
     N <- nrow(x$res)
     if (!is.null(adj)) {

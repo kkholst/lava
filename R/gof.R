@@ -238,7 +238,7 @@ condition <- function(A) {
 `gof` <-
   function(object,...) UseMethod("gof")
 
-##' @S3method gof lvmfit
+##' @export
 gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FALSE,...) {
   n <- object$data$n
   if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
@@ -324,7 +324,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
   return(res)       
 }
 
-##' @S3method print gof.lvmfit
+##' @export
 print.gof.lvmfit <- function(x,optim=TRUE,...) {
   if (!is.null(x$n)) {
     with(x,       

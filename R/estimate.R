@@ -73,7 +73,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' @author Klaus K. Holst
 ##' @seealso \code{score}, \code{information}, ...
 ##' @keywords models regression
-##' @S3method estimate lvm
+##' @export
 ##' @method estimate lvm
 ##' @examples
 ##' 
@@ -720,7 +720,7 @@ estimate <- function(x,...) UseMethod("estimate")
 
 ###{{{ estimate.formula
 
-##' @S3method estimate formula
+##' @export
 estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,cluster=NULL,distribution=NULL,estimator="gaussian",...) {
   cl <- match.call()
   formulaId <- Specials(x,"cluster")

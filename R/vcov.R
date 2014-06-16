@@ -1,4 +1,4 @@
-##' @S3method vcov lvmfit
+##' @export
 vcov.lvmfit <- function(object,...) {
   res <- object$vcov
   if ("lvm.missing"%in%class(object)) {
@@ -10,7 +10,7 @@ vcov.lvmfit <- function(object,...) {
   return(res)
 }
 
-##' @S3method vcov multigroupfit
+##' @export
 vcov.multigroupfit <- function(object,...) {
   res <- object$vcov
   colnames(res) <- rownames(res) <- object$model$name

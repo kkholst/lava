@@ -6,7 +6,7 @@
 ##' @export
 "distribution" <- function(x,...,value) UseMethod("distribution")
 
-##' @S3method distribution<- lvm
+##' @export
 "distribution<-.lvm" <- function(x,variable,...,value) {
   if (class(variable)[1]=="formula")
     variable <- all.vars(variable)  
@@ -28,7 +28,7 @@
   
 }
 
-##' @S3method distribution lvm
+##' @export
 "distribution.lvm" <- function(x,var,...) {
   x$attributes$distribution[var]
 }

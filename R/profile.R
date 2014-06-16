@@ -1,4 +1,4 @@
-##' @S3method profile lvmfit
+##' @export
 profile.lvmfit <- function(fitted,idx,tau,...) {
   mm <- parfix(Model(fitted),idx,tau)
   index(mm) <- reindex(mm,zeroones=TRUE,deriv=TRUE)

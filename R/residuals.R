@@ -1,7 +1,7 @@
 Isqrt <- function(X) { eX <- eigen(X); with(eX, vectors %*% diag(1/sqrt(values)) %*% t(vectors)) }
 
 
-##' @S3method residuals lvmfit
+##' @export
 residuals.multigroupfit <- function(object,data=model.frame(object),p=coef(object), k, ...) {
   pp <- modelPar(object,p,...)
   if (!missing(k)) return(residuals(object$model$lvm[[k]],data=data[[k]],p=pp$p[[k]],...))
@@ -13,12 +13,12 @@ residuals.multigroupfit <- function(object,data=model.frame(object),p=coef(objec
 }
 
 
-##' @S3method residuals lvmfit
+##' @export
 residuals.lvmfit <- function(object,data=model.frame(object),p=coef(object),...) {
   residuals(Model(object), data=data, p=p, ...)
 }
 
-##' @S3method residuals lvm
+##' @export
 residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=coef(object),...) {
   Y <- setdiff(manifest(object), X <- exogenous(object))
   Pr <- predict(object,p=p,data=data)

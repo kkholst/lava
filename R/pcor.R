@@ -35,13 +35,13 @@ pcor <- function(x,y,X,Z,start,...) {
     structure(res,class="pcor")
 }
 
-##' @S3method coef pcor
+##' @export
 coef.pcor <- function(object,...) object$coef
 
-##' @S3method vcov pcor
+##' @export
 vcov.pcor <- function(object,...) object$vcov
 
-##' @S3method logLik pcor
+##' @export
 logLik.pcor <- function(object,p=coef(object),...) {
     u <- polycor0(p[1],p[object$n1],p[object$n2],onlyP=TRUE)    
     np <- sum(as.vector(object$tab)*log(as.vector(u)))
@@ -49,7 +49,7 @@ logLik.pcor <- function(object,p=coef(object),...) {
     structure(np,nall=nobs,nobs=nobs,df=length(p),class="logLik")
 }
 
-##' @S3method print pcor
+##' @export
 print.pcor <- function(x,...) {
     res <- cbind(coef(x),diag(vcov(x))^0.5)
     colnames(res) <- c("Estimate","Std.Err")
@@ -59,7 +59,7 @@ print.pcor <- function(x,...) {
     cat("\nDeviance = ", q, ", df = ",df,"\n")
 }
 
-##' @S3method score pcor
+##' @export
 score.pcor <- function(x,p=coef(x),indiv=FALSE,...) {
     u <- polycor0(p[1],p[x$n1],p[x$n2],onlyP=FALSE)
     if (!indiv) {

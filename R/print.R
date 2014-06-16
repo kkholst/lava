@@ -1,6 +1,6 @@
 ###{{{ print.lvm
 
-##' @S3method print lvm
+##' @export
 `print.lvm` <-
 function(x, ...) {
   res <- NULL
@@ -52,7 +52,7 @@ function(x, ...) {
 
 ###{{{ print.lvmfit
 
-##' @S3method print lvmfit
+##' @export
 `print.lvmfit` <-
 function(x,level=2,labels=FALSE,...) {
 ##    print(signif(coef(x), digits=digits), print.gap=2, quote=FALSE, ...)
@@ -72,7 +72,7 @@ function(x,level=2,labels=FALSE,...) {
 
 ###{{{ print.lvmfit.randomslope
 
-##' @S3method print lvmfit.randomslope
+##' @export
 print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
   print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
   invisible(x)
@@ -82,7 +82,7 @@ print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
 
 ###{{{ print.multigroupfit
 
-##' @S3method print multigroupfit
+##' @export
 print.multigroupfit <- function(x,groups=NULL,...)  {
   if (is.null(groups)) {
     if (x$model$missing) {
@@ -132,7 +132,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
 
 ###{{{ print.multigroup
 
-##' @S3method print multigroup
+##' @export
 print.multigroup <- function(x,...) {
   cat("\n")
   cat("Number of groups:", x$ngroup, "\n")

@@ -27,29 +27,29 @@
 `Model` <- function(x,...) UseMethod("Model")
 
 
-##' @S3method Model default
+##' @export
 `Model.default` <- function(x,...) x
 
-##' @S3method Model lvm
+##' @export
 `Model.lvm` <- function(x,...) x
 
-##' @S3method Model lvmfit
+##' @export
 `Model.lvmfit` <- function(x,...) x$model
 
-##' @S3method Model multigroup
+##' @export
 `Model.multigroup` <- function(x,...) x$lvm
 
-##' @S3method Model multigroupfit
+##' @export
 `Model.multigroupfit` <- function(x,...) x$model
 
 ##' @export
 "Model<-" <- function(x,...,value) UseMethod("Model<-")
 
-##' @S3method Model<- lvm
+##' @export
 "Model<-.lvm" <- function(x,...,value) { x <- value; return(x) }
-##' @S3method Model<- lvmfit
+##' @export
 "Model<-.lvmfit" <- function(x,...,value) { x$model <- value; return(x) }
-##' @S3method Model<- multigroup
+##' @export
 "Model<-.multigroup" <- function(x,...,value) { x$lvm <- value; return(x) }
-##' @S3method Model<- multigroupfit
+##' @export
 "Model<-.multigroupfit" <- function(x,...,value) { x$model <- value; return(x) }

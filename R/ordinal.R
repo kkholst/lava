@@ -26,7 +26,7 @@ ordinal.sim.hook <- function(x,data,p,...) {
 ##' @export
 "ordinal<-" <- function(x,...,value) UseMethod("ordinal<-")
 
-##' @S3method ordinal<- lvm
+##' @export
 "ordinal<-.lvm" <- function(x,...,value) {
   if (class(value)[1]=="formula") {
     return(ordinal(x,all.vars(value),...))
@@ -37,7 +37,7 @@ ordinal.sim.hook <- function(x,data,p,...) {
 ##' @export
 "ordinal" <- function(x,...) UseMethod("ordinal")
 
-##' @S3method print ordinal.lvm
+##' @export
 print.ordinal.lvm <- function(x,...) {
   cat(rep("_",28),"\n",sep="")
   for (i in x) {
@@ -49,7 +49,7 @@ print.ordinal.lvm <- function(x,...) {
   }
 }
 
-##' @S3method ordinal lvm
+##' @export
 `ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, labels, ...) {
     if (is.null(var)) {
         ordidx <- unlist(x$attributes$ordinal)

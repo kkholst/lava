@@ -100,10 +100,10 @@
 ##' @export
 `variance` <- function(object,...) UseMethod("variance")
 
-##' @S3method variance<- lvm
+##' @export
 "variance.lvm" <- function(object,...) covariance(object,...)
 
-##' @S3method variance<- lvm
+##' @export
 "variance<-.lvm" <- function(object,...,value) {
     covariance(object,...) <- value
     return(object)
@@ -112,7 +112,7 @@
 ##' @export
 "covariance<-" <- function(object,...,value) UseMethod("covariance<-")
 
-##' @S3method covariance<- lvm
+##' @export
 "covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, constrain=FALSE, pairwise=FALSE, ..., value) {
 
   if (!is.null(var1)) {
@@ -190,7 +190,7 @@
   else covariance(object,value,pairwise=pairwise,...)
 }
 
-##' @S3method covariance lvm
+##' @export
 `covariance.lvm` <-
 function(object,var1=NULL,var2,exo=FALSE,pairwise=FALSE,constrain=FALSE,...) {
   if (!is.null(var1)) {

@@ -70,25 +70,25 @@
 `vars` <-
 function(x,...) UseMethod("vars")
 
-##' @S3method vars graph
+##' @export
 `vars.graph` <-
   function(x,...) {
     nodes(x)
   }
 
-##' @S3method vars lvm
+##' @export
 `vars.lvm` <-
   function(x,...) {
     colnames(x$M)
   }
 
-##' @S3method vars lvmfit
+##' @export
 `vars.lvmfit` <-
   function(x,...) {
     vars(Model(x),...)
   }
 
-##' @S3method vars list
+##' @export
 vars.list <- function(x,...) {
   varlist <- c()
   for (i in 1:length(x)) {

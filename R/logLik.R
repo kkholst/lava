@@ -1,6 +1,6 @@
 ###{{{ logLik.lvm
 
-##' @S3method logLik lvm
+##' @export
 logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,weight2=NULL,...) {
   cl <- match.call()
   xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
@@ -252,7 +252,7 @@ gaussian_logLik.lvm <- function(object,p,data,
 
 ###{{{ logLik.lvmfit
 
-##' @S3method logLik lvmfit
+##' @export
 logLik.lvmfit <- function(object,
                           p=coef(object),
                           data=model.frame(object),
@@ -275,7 +275,7 @@ logLik.lvmfit <- function(object,
 
 ###{{{ logLik.lvm.missing
 
-##' @S3method logLik lvm.missing
+##' @export
 logLik.lvm.missing <- function(object,
                                p=pars(object), model=object$estimator,
                                weight=Weight(object$estimate),
@@ -287,7 +287,7 @@ logLik.lvm.missing <- function(object,
 
 ###{{{ logLik.multigroup
 
-##' @S3method logLik multigroup
+##' @export
 logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond","sim","exo","sat"),...) {
   res <- procrandomslope(object)
   pp <- with(res, modelPar(model,p)$p) 
@@ -327,7 +327,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
 
 ###{{{ logLik.multigroupfit
 
-##' @S3method logLik multigroupfit
+##' @export
 logLik.multigroupfit <- function(object,
                                  p=pars(object), weight=Weight(object), model=object$estimator, ...) {
   logLik(object$model0,p=p,weight=weight,model=model,...)

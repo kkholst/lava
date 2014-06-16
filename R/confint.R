@@ -40,7 +40,7 @@
 ##' }
 ##'
 ##' @aliases confint.multigroupfit
-##' @S3method confint lvmfit
+##' @export
 ##' @method confint lvmfit
 confint.lvmfit <- function(object,parm=seq_len(length(coef(object))),level=0.95,profile=FALSE,curve=FALSE,n=20,interval=NULL,lower=TRUE,upper=TRUE,...) {
   if (is.character(parm)) {
@@ -61,7 +61,7 @@ confint.lvmfit <- function(object,parm=seq_len(length(coef(object))),level=0.95,
 }
 
 
-##' @S3method confint multigroupfit
+##' @export
 confint.multigroupfit <- function(object,parm=1:length(pars(object)),level=0.95,
                                   estimates=TRUE,...) {
   p <- 1-(1-level)/2

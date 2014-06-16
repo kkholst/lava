@@ -1,7 +1,7 @@
 ##' @export
 "transform<-" <- function(x,...,value) UseMethod("transform<-")
 
-##' @S3method transform<- lvm
+##' @export
 "transform<-.lvm" <- function(x,formula,...,value) {
     transform(x,formula,value,...)
 }

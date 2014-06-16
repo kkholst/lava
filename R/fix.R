@@ -1,6 +1,6 @@
 ###{{{ print.fix
 
-##' @S3method print fix
+##' @export
 print.fix <- function(x,exo=FALSE,...) {
   switch(attributes(x)$type,
         reg = cat("Regression parameters:\n"),
@@ -107,8 +107,8 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 ##' 
 "intercept" <- function(object,...) UseMethod("intercept")
 
-##' @S3method intercept lvm
-##' @S3method intfix lvm
+##' @export
+##' @export
 intercept.lvm <- intfix.lvm <- function(object,...) {
   res <- object$mean; attr(res,"type") <- "mean"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -120,8 +120,8 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
 ##' @export
 "intercept<-" <- function(object,...,value) UseMethod("intercept<-")
 
-##' @S3method intfix<- lvm
-##' @S3method intercept<- lvm
+##' @export
+##' @export
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
   if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
   if (class(value)[1]=="formula") {
@@ -157,7 +157,7 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
 ##' @export
 "covfix" <- function(object,...) UseMethod("covfix")
 
-##' @S3method covfix lvm
+##' @export
 covfix.lvm <- function(object,...) {
   res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -170,7 +170,7 @@ covfix.lvm <- function(object,...) {
 ##' @export
 "covfix<-" <- function(object,...,value) UseMethod("covfix<-")
 
-##' @S3method covfix<- lvm
+##' @export
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
 
   if (class(var1)[1]=="formula") {
@@ -315,7 +315,7 @@ covfix.lvm <- function(object,...) {
 ##' @export
 "regfix" <- function(object,...) UseMethod("regfix")
 
-##' @S3method regfix lvm
+##' @export
 regfix.lvm <- function(object,...) {
   res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
   attr(res,"exo.idx") <- index(object)$exo.idx
@@ -327,7 +327,7 @@ regfix.lvm <- function(object,...) {
 ##' @export
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
-##' @S3method regfix<- lvm
+##' @export
 "regfix<-.lvm" <- function(object, to, from, exo=TRUE, variance, ..., value) {
   if (is.null(to)) stop("variable list needed")
   curvar <- index(object)$vars
@@ -470,7 +470,7 @@ regfix.lvm <- function(object,...) {
 ##' @export
 "parfix<-" <- function(x,...,value) UseMethod("parfix<-")
 
-##' @S3method parfix<- lvm
+##' @export
 "parfix<-.lvm" <- function(x,idx,...,value) {
   parfix(x,idx,value,...)
 }
@@ -482,7 +482,7 @@ regfix.lvm <- function(object,...) {
 ## m <- lvm(c(y[m:v]~b*x))
 ## constrain(m,b~a) <- base::identity
 
-##' @S3method parfix lvm
+##' @export
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   object <- Model(x)
   if (fix)

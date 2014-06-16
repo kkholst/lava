@@ -11,13 +11,13 @@
 ##' @export
 "cancel<-" <- function(x,...,value) UseMethod("cancel<-")
 
-##' @S3method cancel<- lvm
+##' @export
 "cancel<-.lvm" <- function(x, ..., value) {
   cancel(x,value,...)
 }
 
 
-##' @S3method cancel lvm
+##' @export
 cancel.lvm <- function(x,value,...) {
   if (class(value)[1]=="formula") {
       ##      yx <- all.vars(value)

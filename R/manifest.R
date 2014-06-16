@@ -2,7 +2,7 @@
 `manifest` <-
 function(x,...) UseMethod("manifest")
 
-##' @S3method manifest lvm
+##' @export
 `manifest.lvm` <-
 function(x,...) {
   if (length(vars(x))>0) 
@@ -11,13 +11,13 @@ function(x,...) {
     NULL
 }
 
-##' @S3method manifest lvmfit
+##' @export
 `manifest.lvmfit` <-
 function(x,...) {
   manifest(Model(x))
 }
 
-##' @S3method manifest list
+##' @export
 manifest.list <- function(x,...) {
   manifestlist <- c()
   for (i in 1:length(x)) {
@@ -27,7 +27,7 @@ manifest.list <- function(x,...) {
   return(manifestlist)
 }
 
-##' @S3method manifest multigroup
+##' @export
 `manifest.multigroup` <-
 function(x,...) {
   manifest(Model(x))

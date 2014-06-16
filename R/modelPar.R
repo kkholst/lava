@@ -4,14 +4,14 @@
   function(x,p,...) UseMethod("modelPar")
 
 ###{{{ modelPar.lvmfit
-##' @S3method modelPar lvmfit
+##' @export
 modelPar.lvmfit <- function(x, p=pars(x), ...) modelPar(Model(x),p=p,...)
 
 ###}}} modelPar.lvmfit
 
 ###{{{ modelPar
 
-##' @S3method modelPar lvm
+##' @export
 modelPar.lvm <- function(x,p, ...) {
   npar <- index(x)$npar
   npar.mean <- index(x)$npar.mean
@@ -38,7 +38,7 @@ modelPar.lvm <- function(x,p, ...) {
 
 ###{{{ modelPar.multigroupfit
 
-##' @S3method modelPar multigroupfit
+##' @export
 modelPar.multigroupfit <- function(x,p=pars(x),...) {
   modelPar(Model(x),p,...)
 }
@@ -46,7 +46,7 @@ modelPar.multigroupfit <- function(x,p=pars(x),...) {
 
 ###{{{ modelPar.multigroup
 
-##' @S3method modelPar multigroup
+##' @export
 modelPar.multigroup <- function(x,p, ...) {
   if (length(p)==x$npar) {
     pp <- lapply(x$parposN,function(z) p[z])

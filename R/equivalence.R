@@ -117,7 +117,7 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
   return(res)
 }
 
-##' @S3method print equivalence
+##' @export
 print.equivalence <- function(x,...) {
   cat("  0)\t ",paste(x$vars,collapse=lava.options()$symbol[2]),"  (",formatC(x$T0),")\n",sep="")
   cat("Empirical equivalent models:\n")

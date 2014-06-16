@@ -88,27 +88,27 @@ multinomial <- function(x,...) {
     res
 }
 
-##' @S3method model.frame multinomial
+##' @export
 model.frame.multinomial <- function(formula,...) {
     formula$data
 }
 
-##' @S3method iid multinomial
+##' @export
 iid.multinomial <- function(x,...) {
     x$iid
 }
 
-##' @S3method coef multinomial
+##' @export
 coef.multinomial <- function(object,...) {
     object$coef
 }
 
-##' @S3method vcov multinomial
+##' @export
 vcov.multinomial <- function(object,...) {
     object$vcov
 }
 
-##' @S3method print multinomial
+##' @export
 print.multinomial <- function(x,...) {
     cat("Call: "); print(x$call)
     cat("\nEstimates:\n")
@@ -124,7 +124,7 @@ print.multinomial <- function(x,...) {
     ## print(x$position,quote=FALSE)
 }
 
-##' @S3method kappa multinomial
+##' @export
 kappa.multinomial <- function(z,...) {    
     pp <- length(coef(z))
     if ((length(z$levels)!=2) || !(identical(z$levels[[1]],z$levels[[2]])))
@@ -140,12 +140,12 @@ kappa.multinomial <- function(z,...) {
     estimate(b2,function(p) list(kappa=(p[1]-p[2])/(1-p[2])),iid=TRUE)
 }
 
-##' @S3method kappa table
+##' @export
 kappa.table <- function(z,...) {
     kappa(multinomial(Expand(z)),...)
 }
 
-##' @S3method kappa data.frame
+##' @export
 kappa.data.frame <- function(z,...) {
     kappa(multinomial(z),...)
 }
