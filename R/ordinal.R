@@ -7,7 +7,11 @@ ordinal.sim.hook <- function(x,data,p,...) {
     for (i in seq_len(length(ovar))) {
         if (attributes(ovar)$liability[i]) {
             idx <- attributes(ovar)$idx[[ovar[i]]]
-            breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
+            if (length(idx)==0) {
+                breaks <- c(-Inf,0,Inf)
+            } else {
+                breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
+            }
             z <- cut(data[,ovar[i]],breaks=breaks)
             data[,ovar[i]] <- as.numeric(z)-1
         }
