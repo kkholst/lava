@@ -7,9 +7,9 @@
 \title{Estimation of functional of parameters}
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,
-  stack = TRUE, subset, score.deriv, level = 0.95, iid = TRUE,
-  type = c("robust", "df", "mbn"), contrast, null, vcov, coef, print = NULL,
-  ...)
+  stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
+  iid = TRUE, type = c("robust", "df", "mbn"), contrast, null, vcov, coef,
+  print = NULL, ...)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -23,6 +23,8 @@
 \item{iddata}{(optional) id-variable for 'data'}
 
 \item{stack}{If TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'}
+
+\item{average}{If TRUE averages are calculated}
 
 \item{subset}{(optional) subset of data.frame on which to condition (logical expression or variable name)}
 
@@ -95,14 +97,14 @@ estimate(lm(y~x,d1))
 f <- function(p,data)
   list(p0=lava:::expit(p[1] + p[3]*data[,"z"]),
        p1=lava:::expit(p[1] + p[2] + p[3]*data[,"z"]))
-e <- estimate(g, f)
+e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))
 
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
-estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id)
+estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)

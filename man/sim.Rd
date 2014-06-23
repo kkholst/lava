@@ -127,9 +127,10 @@ summary(lm(y~x+z + x*I(z>0),d))
 ### Non-random variables
 ##################################################
 m <- lvm()
-distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
+distribution(m,~x+z+v+w) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
                                ones.lvm(),       ## Vector of ones
-                               ones.lvm(0.5))    ##  0.8n 0, 0.2n 1
+                               ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
+                               ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 sim(m,10)
 
 
