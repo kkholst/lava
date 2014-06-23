@@ -248,10 +248,21 @@ sequence.lvm <- function(a=0,b=1) {
 
 ###{{{ ones
 ##' @export
-ones.lvm <- function(fraction=0) {
+ones.lvm <- function(p=0,interval=NULL) {
     f <- function(n,...) {
+        if (!is.null(interval)) {
+            val <- rep(0,n)
+            if (!is.list(interval)) interval <- list(interval)
+            for (i in seq_along(interval)) {
+                ii <- interval[[i]]
+                lo <- round(ii[1]*n)
+                hi <- round(ii[2]*n)
+                val[seq(lo,hi)] <- 1
+            }
+            return(val)
+        }
         val <- rep(1,n)
-        if (fraction>0 && fraction<1) val[seq(n*(1-fraction))] <- 0
+        if (p>0 && p<1) val[seq(n*(1-p))] <- 0
         val
         }
   return(f)
