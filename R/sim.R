@@ -103,9 +103,10 @@
 ##' ### Non-random variables
 ##' ##################################################
 ##' m <- lvm()
-##' distribution(m,~x+z+v) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
+##' distribution(m,~x+z+v+w) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
 ##'                                ones.lvm(),       ## Vector of ones
-##'                                ones.lvm(0.5))    ##  0.8n 0, 0.2n 1
+##'                                ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
+##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))    
 ##' sim(m,10)
 ##' 
 ##' 
@@ -241,7 +242,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     
 
     ## dontsim <- names(distribution(x))[unlist(lapply(distribution(x),function(x) identical(x,NA)))]
-    ##  E <- rmvnorm(n,rep(0,ncol(P)),P)
     PP <- with(svd(P), v%*%diag(sqrt(d))%*%t(u))
     if (length(distribution(x))>0) {
         ii <- match(names(distribution(x)),vars(x))
@@ -294,7 +294,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             mypar <- pars(x,A,P,mu)
             Ey.x <- predict(x, mypar, data.frame(res))
             Vy.x <- attributes(Ey.x)$cond.var
-            ##      yy <- Ey.x + rmvnorm(n,mean=rep(0,ncol(Vy.x)),sigma=Vy.x)
             PP <- with(svd(Vy.x), v%*%diag(sqrt(d))%*%t(u))
             yy <- Ey.x + matrix(n*ncol(Vy.x),ncol=ncol(Vy.x))%*%PP
             res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)
@@ -314,22 +313,24 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
         ##    if (!all(xconstrain %in% index(x)$exogenous)) warning("Non-linear constraint only allowed via covariates")
-        ## if (length(xconstrain>0))
-        ##   for (i in which(xconstrain.idx)) {
-        ##     ff <- constrain(x)[[i]]
-        ##     myargs <- attributes(ff)$args
-        ##     D <- matrix(0,n,length(myargs))
-        ##     for (j in 1:ncol(D)) {
-        ##       if (myargs[j]%in%xconstrain)
-        ##         D[,j] <- res[,myargs[j]]
-        ##       else
-        ##         D[,j] <- M$parval[[myargs[j]]]
-        ##     }
-        ##     res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
-        ##   }
+        if (length(xconstrain)>0)
+          for (i in which(xconstrain.idx)) {
+            ff <- constrain(x)[[i]]
+            myargs <- attributes(ff)$args
+            D <- matrix(0,n,length(myargs))
+            for (j in 1:ncol(D)) {
+              if (myargs[j]%in%xconstrain)
+                D[,j] <- res[,myargs[j]]
+              else
+                D[,j] <- M$parval[[myargs[j]]]
+            }
+            ##res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
+            res <- cbind(res, apply(D,1,ff)); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
+          }
         
         xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
-        covparnames <- unique(as.vector(covariance(x)$labels))  
+        covparnames <- unique(as.vector(covariance(x)$labels))
+
         if (any(xconstrain.par%in%covparnames)) {
             mu0 <- rep(0,ncol(P))
             P0 <- P
@@ -362,6 +363,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 xconstrain <- c(xconstrain,list(el))
             }            
         }
+
+        
         for (i in intersect(exogenous(x),names(x$constrainY))) {
             cc <- x$constrainY[[i]]
             args <- cc$args
@@ -373,15 +376,16 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         res <- data.frame(res)
         if (length(vartrans)>0) {
             parvals <- parpos(x)$parval
-            if (length(parvals)>0) {
+            parvalsnam <- setdiff(names(parvals),xx)
+            if (length(parvalsnam)>0) {
                 Parvals <- p[unlist(parvals)];
                 res <- cbind(res,
                              cbind(rep(1,nrow(res)))%x%rbind(Parvals))
                 colnames(res)[seq(length(Parvals))+ncol(res)-length(Parvals)] <-
-                    names(parvals)
+                    names(Parvals)
             }
         }
-
+        
         leftovers <- c()
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
