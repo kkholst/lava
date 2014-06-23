@@ -1,6 +1,6 @@
 ordreg_threshold <- function(theta) {
     v <- theta[1]
-    if (length(theta)>1) v <- cumsum(c(v,exp(theta[seq(length(theta)-1)+1L])))
+    if (length(theta)>1) v <- cumsum(c(v,exp(theta[seq(length(theta)-1L)+1L])))
     return(v)
 }
 

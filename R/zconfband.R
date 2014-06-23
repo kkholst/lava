@@ -100,7 +100,7 @@ confband <- function(x,lower,upper,center=NULL,delta=0.07,centermark=0.03,
 
 
 ##' @export
-forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=TRUE,delta=0,axes=TRUE,cex=1,pch=15,xlab="",ylab="",sep,air,xlim,ylim,mar=c(4,8,1,1),box1=FALSE,box2=FALSE,...) {
+forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=text,delta=0,axes=TRUE,cex=1,pch=15,xlab="",ylab="",sep,air,xlim,ylim,mar=c(4,8,1,1),box1=FALSE,box2=FALSE,...) {
     if (is.matrix(x)) {
         lower <- x[,2]; upper <- x[,3]
         if (ncol(x)>3) cex <- x[,4]
@@ -128,7 +128,7 @@ forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=TRUE,de
     if (!missing(sep)) abline(h=sep+.5,col="gray")
     confband(seq(K),lower,upper,x,pch=pch,cex=cex,vert=FALSE,blank=FALSE,...)
     mtext(labels,2,at=seq(K),las=2,line=1)
-    if (text)
+    if (text) {
         xpos <- upper
         if (text.right) {
             par(mar=c(mar[1],0,mar[3],0))
@@ -140,6 +140,7 @@ forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=TRUE,de
             st <- paste(formatC(x[i])," (",formatC(lower[i]),";",formatC(upper[i]),")",sep="")
             if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=0.6)
         }
+    }
 }
 
 
