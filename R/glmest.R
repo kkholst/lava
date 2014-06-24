@@ -164,6 +164,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   if(any(is.na(p))) stop("Over-parameterized model")
   Xbeta <- X%*%p
   if (!is.null(offset)) Xbeta <- Xbeta+offset
+  if (missing(data) && !is.null(x$offset) && is.null(offset) ) Xbeta <- Xbeta+x$offset
   pi <- ginv(Xbeta)  
   ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
   ##return(res)
