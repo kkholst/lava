@@ -201,7 +201,6 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
             delta <- min(0.5,p/(K-p))
             phi <- max(1,tr(I0%*%V0)*adj2/p)
             V <- adj2*V0 + delta*phi*iI0
-            ## suppressMessages(browser())
         }
         if (tolower(type[1])=="df") {
             V <- adj1*V
