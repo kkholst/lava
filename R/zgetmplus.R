@@ -60,7 +60,7 @@ function(infile="template.out",coef=TRUE,...) {
 
 
 `findfileseg` <-
-function(infile, startstring, endstring) {
+function(infile, startstring, endstring,nlines) {
   con <- file(infile, blocking = FALSE)
   inp <- readLines(con)
   close(con)
@@ -71,8 +71,10 @@ function(infile, startstring, endstring) {
   if (length(a1)>0)
     linestart <- as.numeric(strsplit(a1,":")[[1]][1])
 
+  nn <- length(inp)
+  if (!missing(nlines)) nn <- linestart+nlines
   if (missing(endstring)) {
-    for (i in linestart:length(inp)) {
+    for (i in seq(linestart,nn)) {
       lineend <- i-1
       if (inp[i]==inp[i-1]) break;
     }
