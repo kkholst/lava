@@ -42,11 +42,13 @@ normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   fam <- gaussian(link); fam$link <- link
   if (!missing(mean) & !missing(sd)) 
-    f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mean),sd)
-  else
-    f <- function(n,mu,var,...) {      
-      rnormal(n,fam$linkinv(mu),sqrt(var))
-    }
+      f <- function(n,mu,var,...) mu+rnormal(n,fam$linkinv(mean),sd)
+  if (!missing(mean) & missing(sd)) 
+      f <- function(n,mu,var,...) mu+rnormal(n,fam$linkinv(mean),sqrt(var))
+  if (missing(mean) & !missing(sd)) 
+      f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sd)
+  if (missing(mean) & missing(sd))
+      f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))     
   attr(f,"family") <- fam
   return(f)  
 }
@@ -174,7 +176,13 @@ loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
 ###}}} Gamma
 
+##' @export
+chisq.lvm <- function(df=1,...) {
+    function(n,mu,var,...) mu + rchisq(n,df=df)
+}
+
 ###{{{ student (t-distribution)
+
 
 ##' @export
 student.lvm <- function(df=2,mu,sigma,...) {
@@ -185,6 +193,10 @@ student.lvm <- function(df=2,mu,sigma,...) {
   return(f)
 }
 
+##' @export
+t.lvm <- student.lvm
+
+
 ###}}} student (t-distribution)
 
 ###{{{ uniform
@@ -192,7 +204,7 @@ student.lvm <- function(df=2,mu,sigma,...) {
 ##' @export
 uniform.lvm <- function(a,b) {
   if (!missing(a) & !missing(b)) 
-    f <- function(n,mu,var,...) runif(n,a,b)
+    f <- function(n,mu,var,...) mu+runif(n,a,b)
   else
     f <- function(n,mu,var,...)
       (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))

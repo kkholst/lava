@@ -282,5 +282,4 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     return(res)
 }
 
-
 ###}}} Newton Raphson/Scoring

@@ -242,7 +242,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     
 
     ## dontsim <- names(distribution(x))[unlist(lapply(distribution(x),function(x) identical(x,NA)))]
-    PP <- with(svd(P), v%*%diag(sqrt(d))%*%t(u))
+    PP <- with(svd(P), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
     if (length(distribution(x))>0) {
         ii <- match(names(distribution(x)),vars(x))
         jj <- setdiff(seq(ncol(P)),ii)
@@ -294,7 +294,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             mypar <- pars(x,A,P,mu)
             Ey.x <- predict(x, mypar, data.frame(res))
             Vy.x <- attributes(Ey.x)$cond.var
-            PP <- with(svd(Vy.x), v%*%diag(sqrt(d))%*%t(u))
+            PP <- with(svd(Vy.x), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
             yy <- Ey.x + matrix(n*ncol(Vy.x),ncol=ncol(Vy.x))%*%PP
             res <- cbind(yy, res[,xx]); colnames(res) <- c(colnames(Vy.x),xx)
             return(res)
@@ -339,7 +339,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     P0[covariance(x)$labels==i] <- res[idx,i]
                 }
                 ##        return(rmvnorm(1,mu0,P0))
-                PP <- with(svd(P0), v%*%diag(sqrt(d))%*%t(u))
+                PP <- with(svd(P0), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
                 return(mu0+rbind(rnorm(ncol(P0)))%*%PP)
             }))
         } else {

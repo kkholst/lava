@@ -298,7 +298,7 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=TRUE) {
   svdX <- svd(X)
   id0 <- numeric(n)
   id0[svdX$d>tol] <- 1/svdX$d[svdX$d>tol]
-  res <- with(svdX, v%*%diag(id0)%*%t(u))
+  res <- with(svdX, v%*%diag(id0,nrow=length(id0))%*%t(u))
   if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
   if (det)
     attributes(res)$det <- prod(svdX$d[svdX$d>tol])
