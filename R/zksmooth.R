@@ -1,7 +1,7 @@
 ##' Plot/estimate surface 
 ##'
 ##' @export
-##' @aliases ksmooth2d surface
+##' @aliases ksmooth2 surface
 ##' @param x formula or data
 ##' @param data data.frame
 ##' @param h bandwidth
@@ -13,12 +13,12 @@
 ##' @examples
 ##'
 ##' \donttest{
-##' ksmooth2d(rmvn(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1)
-##' ksmooth2d(rmvn(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1,
+##' ksmooth2(rmvn(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1)
+##' ksmooth2(rmvn(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1,
 ##'         rgl=FALSE,theta=30)
 ##'
-##' ksmooth2d(function(x,y) x^2+y^2, c(-20,20))
-##' ksmooth2d(function(x,y) x^2+y^2, xlim=c(-5,5), ylim=c(0,10))
+##' ksmooth2(function(x,y) x^2+y^2, c(-20,20))
+##' ksmooth2(function(x,y) x^2+y^2, xlim=c(-5,5), ylim=c(0,10))
 ##' 
 ##' f <- function(x,y) 1-sqrt(x^2+y^2)
 ##' surface(f,xlim=c(-1,1),alpha=0.9,aspect=c(1,1,0.75))
@@ -27,7 +27,7 @@
 ##' 
 ##' surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
 ##' }
-ksmooth2d <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,2),...) {
+ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,2),...) {
     if (is.function(x)) {
         args <- c(list(f=x,h=h,xlab=xlab,ylab=ylab,zlab=zlab,gridsize=gridsize),list(...))
         if (is.null(args$xlim) && !missing(data)) {

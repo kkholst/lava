@@ -201,7 +201,7 @@ distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 
 m <- lvm()
 distribution(m,~y1+y2,oratio=4) <- VGAM::rplack
-ksmooth(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
+ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
 
 m <- lvm()
 distribution(m,~z1+z2,"or1") <- VGAM::rplack
