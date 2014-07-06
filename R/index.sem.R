@@ -72,8 +72,10 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   npar.reg <- sum(M1) ## Number of free regression parameters
 
   P <- x$cov;
+
   P0 <- P;  P0[covfix.idx] <- 0 ## Matrix of indicators of free covariance-parameters (removing fixed parameters)
-  P0[exo.idx,exo.idx] <- 0 ## 6/1-2011
+  if (length(exo.idx)>0)
+      P0[exo.idx,exo.idx] <- 0 ## 6/1-2011
   P1 <- P0 ## Matrix of indiciator of free _unique_ variance parameters (removing fixed _and_ duplicate parameters)
   covparname <- unique(x$covpar[!is.na(x$covpar)])
   for (p in covparname) {
@@ -109,11 +111,14 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   ## Creating indicitor of free mean-parameters
   fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
   named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
-  mparname <- unlist(unique(x$mean[named]))
+  mparname <- NULL
+  if (length(named)>0)
+      mparname <- unlist(unique(x$mean[named]))
   v0 <- rep(1,length(x$mean)) ## Vector of indicators of free mean-parameters
-  
+
   v0[exo.idx] <- 0
-  v0[fixed] <- 0; v1 <- v0
+  if (length(fixed)>0) v0[fixed] <- 0;
+  v1 <- v0
   for (p in mparname) {
     idx <- which(x$mean==p)
     if (length(idx)>1) {
@@ -276,7 +281,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     res[c("Ik","Im","Kkk")] <- NULL
     res <- c(res, list(Ik=Ik, Im=Im, Kkk=Kkk))
   }
-  if (deriv) {
+  if (deriv && length(P)>0) {
     if (res$npar.mean>0 & mean)
       D <- deriv(x,meanpar=rep(1,res$npar.mean),zeroones=TRUE)
     else
@@ -285,6 +290,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     res <- c(res, list(dA=D$dA, dP=D$dP, dv=D$dv))
   }
 
+  if (length(P)>0)
   res <- c(res,mat.lvm(x,res))
   
   return(res)

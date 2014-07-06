@@ -19,6 +19,7 @@
 ##' probit.lvm
 ##' logit.lvm
 ##' student.lvm
+##' chisq.lvm
 ##' coxGompertz.lvm
 ##' coxWeibull.lvm
 ##' coxExponential.lvm
@@ -48,7 +49,6 @@
 ##' @keywords models datagen regression
 ##' @export
 ##' @examples
-##' 
 ##' ##################################################
 ##' ## Logistic regression
 ##' ##################################################
@@ -106,7 +106,7 @@
 ##' distribution(m,~x+z+v+w) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
 ##'                                ones.lvm(),       ## Vector of ones
 ##'                                ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
-##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))    
+##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 ##' sim(m,10)
 ##' 
 ##' 
@@ -166,6 +166,28 @@
 ##' \dontrun{
 ##'     mets::fast.reshape(sim(m,100),varying="t")
 ##' }
+##' ##'
+##' 
+##' ##################################################
+##' ### General multivariate distributions
+##' ##################################################
+##' 
+##' \dontrun{
+##' 
+##' m <- lvm()
+##' distribution(m,~y1+y2,oratio=4) <- VGAM::rplack
+##' ksmooth(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
+##' 
+##' m <- lvm()
+##' distribution(m,~z1+z2,"or1") <- VGAM::rplack
+##' distribution(m,~y1+y2,"or2") <- VGAM::rplack
+##' sim(m,10,p=c(or1=0.1,or2=4))
+##' 
+##' m <- lvm()
+##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
+##' var(sim(m,100))
+##' 
+##' }
 ##' 
 ##' ##################################################
 ##' ### Categorical predictor
@@ -180,7 +202,6 @@
 ##' \dontrun{
 ##'   plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 ##' }
-##' 
 
 "sim" <- function(x,...) UseMethod("sim")
 
@@ -243,14 +264,26 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
     ## dontsim <- names(distribution(x))[unlist(lapply(distribution(x),function(x) identical(x,NA)))]
     PP <- with(svd(P), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
-    if (length(distribution(x))>0) {
+    mdist <- distribution(x,multivariate=TRUE)$var
+    mdistnam <- names(mdist)
+    mii <- match(mdistnam,vars(x))
+    if (length(distribution(x))>0 ) {
         ii <- match(names(distribution(x)),vars(x))
-        jj <- setdiff(seq(ncol(P)),ii)
+        jj <- setdiff(seq(ncol(P)),c(ii,mii))
         E <- matrix(0,ncol=ncol(P),nrow=n)
         if (length(jj)>0)
             system.time(E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE])
     } else {
         E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
+    }
+
+    if (length(mdistnam)>0) {
+        fun <- distribution(x,multivariate=TRUE)$fun
+        for (i in seq_along(fun)) {
+            mv <- names(which(unlist(mdist)==i))
+            ii <- match(mv,vars(x))
+            E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x,...)
+        }
     }
     
     ## Simulate exogenous variables (covariates)

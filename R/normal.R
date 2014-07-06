@@ -1,5 +1,5 @@
 ##' @export
-rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(2)+1,...) {
+rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(length(mean))*.5+.5,...) {
     PP <- with(svd(sigma), v%*%diag(sqrt(d),ncol=length(d))%*%t(u))
     res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
     if (NROW(mean)==nrow(res) && NCOL(mean)==ncol(res)) return(res+mean)

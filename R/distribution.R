@@ -7,18 +7,83 @@
 "distribution" <- function(x,...,value) UseMethod("distribution")
 
 ##' @export
-"distribution<-.lvm" <- function(x,variable,...,value) {
-  if (class(variable)[1]=="formula")
-    variable <- all.vars(variable)  
+"distribution<-.lvm" <- function(x,variable,parname=NULL,init.par,...,value) {
+  if (inherits(variable,"formula")) variable <- all.vars(variable)
+  dots <- list(...)
+  
+  if (!is.null(parname) || length(dots)>0) {
+      if (length(parname)>1 || (is.character(parname))) {
+          if (missing(init.par)) {
+              parameter(x,start=rep(1,length(parname))) <- parname
+          } else {
+              parameter(x,start=init.par) <- parname
+          }
+          gen <- function(n,p,...) {
+              args <- c(n,as.list(p[parname]),dots)
+              names(args) <- names(formals(value))[seq(length(parname)+1)]
+              do.call(value,args)
+          }
+      } else {
+          gen <- function(n,p,...) {
+              args <- c(n=n,dots)
+              names(args)[1] <- names(formals(value))[1]
+              do.call(value,args)
+          }
+      }
+      distribution(x,variable) <- list(gen)
+      return(x)
+  }
+  
   if (length(variable)==1) {
-    addvar(x) <- as.formula(paste("~",variable))
-    if (is.numeric(value)) value <- list(value)
-    x$attributes$distribution[[variable]] <- value ##eval(parse(text=mytext))
-    return(x)
-  }    
+      addvar(x) <- as.formula(paste("~",variable))
+      if (is.numeric(value)) value <- list(value)
+      x$attributes$distribution[[variable]] <- value
+      ## Remove from 'mdistribution'     
+      vars <- which(names(x$attributes$mdistribution$var)%in%variable)
+      for (i in vars) {
+          pos <- x$attributes$mdistribution$var[[i]]
+          x$attributes$mdistribution$fun[pos] <- NULL
+          x$attributes$mdistribution$var[which(x$attributes$mdistribution$var==pos)] <- NULL
+          above <- which(x$attributes$mdistribution$var>pos)
+          if (length(above)>0)
+              x$attributes$mdistribution$var[above] <- lapply(x$attributes$mdistribution$var[above],function(x) x-1)
+      }
+      return(x)    
+  }
+
+  if (is.list(value) && length(value)==1 && (is.function(value[[1]]) || is.null(value[[1]]))) {
+      addvar(x) <- variable
+      ## Multivariate distribution
+      if (is.null(x$attributes$mdistribution)) x$attributes$mdistribution <- list(var=list(), fun=list())
+      vars <- x$attributes$mdistribution$var
+
+      if (any(ii <- which(names(vars)%in%variable))) {
+          num <- unique(unlist(vars[ii]))
+          vars[which(unlist(vars)%in%num)] <- NULL
+          newfunlist <- list()
+          numleft <- unique(unlist(vars))
+          for (i in seq_along(numleft)) {
+              newfunlist <- c(newfunlist, x$attributes$mdistribution$fun[[numleft[i]]])
+              ii <- which(unlist(vars)==numleft[i])
+              vars[ii] <- i
+          }
+          K <- length(numleft)
+          x$attributes$mdistribution$var <- vars
+          x$attributes$mdistribution$fun <- newfunlist
+      } else {          
+          K <- length(x$attributes$mdistribution$fun)
+      }
+      if (length(distribution(x))>0)
+          distribution(x,variable) <- rep(list(NULL),length(variable))
+
+      x$attributes$mdistribution$var[variable] <- K+1
+      x$attributes$mdistribution$fun <- c(x$attributes$mdistribution$fun,value)
+      return(x)
+  }
+  
   if ((length(value)!=length(variable) & length(value)!=1))
     stop("Wrong number of values")
-  for (i in 1:length(variable))
+  for (i in seq_along(variable))
     if (length(value)==1) {
       distribution(x,variable[i],...) <- value
     } else {
@@ -29,7 +94,8 @@
 }
 
 ##' @export
-"distribution.lvm" <- function(x,var,...) {
+"distribution.lvm" <- function(x,var,multivariate=FALSE,...) {
+    if (multivariate) return(x$attributes$mdistribution)
   x$attributes$distribution[var]
 }
 
@@ -134,6 +200,7 @@ probit.lvm <- binomial.lvm("probit")
 
 ###}}} binomial
 
+
 ###{{{ Gamma
 
 
@@ -183,7 +250,6 @@ chisq.lvm <- function(df=1,...) {
 
 ###{{{ student (t-distribution)
 
-
 ##' @export
 student.lvm <- function(df=2,mu,sigma,...) {
   if (!missing(mu) & !missing(sigma)) 
@@ -192,10 +258,6 @@ student.lvm <- function(df=2,mu,sigma,...) {
     f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)  
   return(f)
 }
-
-##' @export
-t.lvm <- student.lvm
-
 
 ###}}} student (t-distribution)
 

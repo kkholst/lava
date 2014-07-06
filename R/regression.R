@@ -176,8 +176,10 @@
           }
           val <- ifelse(xpar[1]=="NA",NA,xpar[1])
           valn <- suppressWarnings(as.numeric(val))
-          intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
-          notexo <- c(notexo,xs[i])
+          if (val!=".") {
+              intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+              notexo <- c(notexo,xs[i])
+          }
         } else { exo <- c(exo,xs[i]) }
       }
 
@@ -205,7 +207,8 @@
           }
           val <- ifelse(ypar[1]=="NA",NA,ypar[1])
           valn <- suppressWarnings(as.numeric(val))
-          intercept(object,y) <- ifelse(is.na(valn),val,valn)
+          if (val!=".")
+              intercept(object,y) <- ifelse(is.na(valn),val,valn)
         }
         for (j in seq_len(length(xs))) {        
           if (length(res[[j]])>1) {
