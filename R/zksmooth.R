@@ -24,12 +24,14 @@
 ##' surface(f,xlim=c(-1,1),alpha=0.9,aspect=c(1,1,0.75))
 ##' surface(f,xlim=c(-1,1),clut=heat.colors(128))
 ##' ##play3d(spin3d(axis=c(0,0,1), rpm=8), duration=5)
+##'
+##' ksmooth2(f,c(-1,1),rgl=FALSE,image=fields::image.plot)
 ##' 
 ##' surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
 ##' }
 ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,2),...) {
     if (is.function(x)) {
-        args <- c(list(f=x,h=h,xlab=xlab,ylab=ylab,zlab=zlab,gridsize=gridsize),list(...))
+        args <- c(list(f=x,h=h,xlab=xlab,ylab=ylab,zlab=zlab),list(...))
         if (is.null(args$xlim) && !missing(data)) {
             if (is.list(data)) {
                 args$xlim <- data[[1]]
@@ -53,7 +55,7 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
 
 
 ##' @export
-surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl=TRUE,expand=0.5,nlevels=10,col.contour="black",contour=TRUE,persp=TRUE,image=TRUE,...) {
+surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl=TRUE,expand=0.5,nlevels=10,col.contour="black",contour=TRUE,persp=TRUE,image="image",...) {
     if (missing(x)) {
         if (length(n)==1) n <- rep(n,2)
         x <- seq(xlim[1],xlim[2],length.out=n[1])    
@@ -61,9 +63,8 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
     }
     if (is.function(f)) {
         xy <- as.matrix(expand.grid(x,y))
-        
         if (inherits(try(f(c(x[1],y[1])),silent=TRUE),"try-error"))
-            f <- f(xy[,1],xy[,2])
+            f <- matrix(f(xy[,1],xy[,2]),nrow=length(x),ncol=length(y))
         else
             f <- f(xy)
     }
@@ -92,18 +93,20 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
         parargs <- list()
         if (persp) {
             parargs$mar <- c(0.2,0,0,0)
-            if (contour) parargs$mfrow=c(2,1)
+            if (contour || !is.null(image)) parargs$mfrow=c(2,1)
         }
         op <- do.call(par,parargs)
         if (persp) graphics::persp(f, col=col, expand=expand, ...)
-        if (contour) {
+        if (contour | !is.null(image)) {
             par(mar=c(3,3,0.5,3)) ##c(bottom, left, top, right)
-            if (image) {
-                graphics::image(f,x=x,y=y,col=clut)
+            if (!is.null(image)) {
+                do.call(image,list(x=x,y=y,z=f,col=clut,xlim=range(x),ylim=range(y),xlab="",ylab=""))
             }
-            args <- c(list(x=x,y=y,z=f,nlevels=nlevels,col=col.contour,add=image),dots)
-            args <- args[names(formals(contour.default))]
-            do.call("contour",args) ##nlevels=20
+            if (contour) {
+                args <- c(list(x=x,y=y,z=f,nlevels=nlevels,col=col.contour,add=!is.null(image)),dots)
+                args <- args[names(formals(contour.default))]
+                do.call("contour",args) ##nlevels=20
+            }
         }
         suppressWarnings(par(op))
     } else {
