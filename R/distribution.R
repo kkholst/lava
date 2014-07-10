@@ -296,9 +296,9 @@ weibull.lvm <- function(scale=100,shape=2) {
     ## PH regression
     ## scale = exp(b0+ b1*X)
     f <- function(n,mu,var,...) {
-        message("weibull.scale=",scale)
-        message("weibull.shape=",shape)
-        message("coxWeibull.scale=",exp(scale/shape))
+        ## message("weibull.scale=",scale)
+        ## message("weibull.shape=",shape)
+        ## message("coxWeibull.scale=",exp(scale/shape))
         (- log(runif(n)) * exp(scale/shape) * exp(mu/shape))^{shape}
         ## scale * (-log(1-runif(n)))^{1/shape}
         ## (- (log(runif(n)) / (1/scale)^(shape) * exp(-mu)))^(1/shape)
