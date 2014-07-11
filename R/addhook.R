@@ -82,6 +82,7 @@ assign("options", list(
     sparse=FALSE,
     test=TRUE,
     constrain=TRUE,
+    min.weight=1e-3,
     exogenous=TRUE,
     Rgraphviz=TRUE,
     edgecolor=FALSE,

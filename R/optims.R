@@ -116,7 +116,6 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     }
     oneiter <- function(p.orig) {
         if (is.null(hessian)) {
-            cat(".")
             I <- numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
         } else {
             I <- hessian(p.orig)
