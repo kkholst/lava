@@ -69,12 +69,15 @@ print.ordinal.lvm <- function(x,...) {
         else
             return(NULL)
     }
-    
     if (!missing(p)) breaks <- qnorm(cumsum(p))
-    if (!is.null(breaks)) breaks <- ordreg_ithreshold(breaks)
+    if (!is.null(breaks)) {
+        breaks <- ordreg_ithreshold(breaks)
+        K <- length(breaks)+1
+    }
     if (length(var)>length(K)) K <- rep(K[1],length(var))
     if (length(var)==1 && !missing(constrain)) constrain <- list(constrain)
 
+    
     addvar(x) <- var
     for (i in seq_len(length(var))) {
         if (K[i]>2) {
