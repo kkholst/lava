@@ -104,7 +104,9 @@ estimate(e,cbind(1,1))
 
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
-estimate(g,function(p,data) list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])), subset=z>0, id=d$id, average=TRUE)
+estimate(g,function(p,data)
+         list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+         subset=z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)
