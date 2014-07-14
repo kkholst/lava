@@ -41,6 +41,8 @@ surface(f,xlim=c(-1,1),alpha=0.9,aspect=c(1,1,0.75))
 surface(f,xlim=c(-1,1),clut=heat.colors(128))
 ##play3d(spin3d(axis=c(0,0,1), rpm=8), duration=5)
 
+ksmooth2(f,c(-1,1),rgl=FALSE,image=fields::image.plot)
+
 surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
 }
 }

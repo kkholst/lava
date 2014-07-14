@@ -202,7 +202,13 @@
 ##' \dontrun{
 ##'   plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 ##' }
-
+##' 
+##' m <- lvm()
+##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
+##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
+##' table(sim(m,1e4)$v)
+##' glm(y~v, data=sim(m,1e4))
+##' glm(y~v, data=sim(m,1e4,p=c("y~v:1"=3)))
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @export
