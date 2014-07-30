@@ -206,6 +206,7 @@
 ##' m <- lvm()
 ##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 ##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
+##' regression(m,additive=FALSE,beta=c(0,4,-1)) <- z~v
 ##' table(sim(m,1e4)$v)
 ##' glm(y~v, data=sim(m,1e4))
 ##' glm(y~v, data=sim(m,1e4,p=c("y~v:1"=3)))
