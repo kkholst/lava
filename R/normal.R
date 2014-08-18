@@ -19,17 +19,30 @@ dmvn <- function(x,mean=rep(0,ncol(sigma)),sigma,log=FALSE,...) {
 normal_method.lvm <- "nlminb0"
 
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
-    save.seed <- .Random.seed; set.seed(1)
-    on.exit(set.seed(save.seed))
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
+    save.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(1)
+    on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     y.idx <- lava::index(x)$endo.idx
-    mu <- predict(x,data=data,p=p)
-    S <- attributes(mu)$cond.var
-    class(mu) <- "matrix"
     y <- lava::endogenous(x)
     ord <- lava::ordinal(x)
     status <- rep(0,length(y))
-    if (exists("binary.lvm")) status[match(do.call("binary",x),y)] <- 2
+    if (exists("binary.lvm")) {
+        bin <- match(do.call("binary.lvm",list(x=x)),y)
+        if (length(bin)>0) status[bin] <- 2
+    }
     status[match(ord,y)] <- 2
+
+    Table <- length(y)==length(ord)    
+    if (Table) {
+        pat <- mets::fast.pattern(data,categories=max(data)+1)
+        data <- pat$pattern
+        colnames(data) <- y
+    }    
+    
+    mu <- predict(x,data=data,p=p)
+    S <- attributes(mu)$cond.var
+    class(mu) <- "matrix"        
     thres <- matrix(0,nrow=length(y),max(1,attributes(ord)$K-1)); rownames(thres) <- y
     for (i in seq_len(length(attributes(ord)$fix))) {
         nn <- names(attributes(ord)$idx)[i]
@@ -38,6 +51,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         thres[nn,seq_len(length(val))] <-
             cumsum(c(val[1],exp(val[-1])))
     }
+
     yl <- yu <- as.matrix(data[,y,drop=FALSE])
     if (!inherits(yl[1,1],c("numeric","integer","logical")) ||
         !inherits(yu[1,1],c("numeric","integer","logical")))
@@ -46,7 +60,14 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         yu[,colnames(weight2)] <- weight2
         status[match(colnames(weight2),y)] <- 1
     }
-    l <- mets::loglikMVN(yl,yu,status,mu,S,thres)  
+    l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
+    
+    if (Table) {
+        l <- l[pat$group+1]
+        ##data <- data[pat$group+1,]
+        ##l <- l+runif(length(l),0,0.001)
+    }
+ 
     if (indiv) return(-l)
     return(-sum(l))  
 }
