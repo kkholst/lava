@@ -13,6 +13,9 @@ pcor <- function(x,y,X,Z,start,...) {
                    attr(lava::ordreg(update(f,y~.),fast=TRUE,family=binomial("probit")),"threshold"))
     } 
 
+
+    ii <- mets::fast.pattern(cbind(as.numeric(x),as.numeric(y)),categories=max(length(unique(x)),length(unique(y))))
+        
     nn <- table(x,y)
     ff <- function(theta) {
         -sum(as.vector(nn)*log(polycor0(theta[1],theta[n1],theta[n2])))
@@ -22,16 +25,15 @@ pcor <- function(x,y,X,Z,start,...) {
         np <- as.vector(nn)/as.vector(pp$p)
         -colSums(apply(pp$dp,2,function(x) np*x))
     }
-
     nn0 <- nn; nn[nn==0] <- .5
     p0 <- as.vector(nn)/sum(nn)
     logL0 <- sum(as.vector(nn)*log(p0))
     suppressWarnings(t0 <- system.time(op <- nlminb(start,ff,gg)))
     cc <- op$par
     names(cc) <- c("rho",paste(rownames(nn),"x",sep=".")[-1], paste(colnames(nn),"y",sep=".")[-1])
-    V <- solve(numDeriv::jacobian(function(p) gg(p), op$par))
+    V <- solve(numDeriv::jacobian(function(p) gg(p), cc))
     
-    res <- list(coef=cc, vcov=V, tab=nn, logLik0=logL0, logLik=-ff(op$par), n1=n1, n2=n2, opt=op)
+    res <- list(coef=cc, vcov=V, tab=nn, logLik0=logL0, logLik=-ff(cc), n1=n1, n2=n2, opt=op, idx=ii)
     structure(res,class="pcor")
 }
 
@@ -68,8 +70,20 @@ score.pcor <- function(x,p=coef(x),indiv=FALSE,...) {
     }
     U <- u$dp;
     U <- apply(u$dp,2,function(x) x/as.vector(u$p))
-    ii <- unlist(apply(cbind(seq(length(x$tab)),as.vector(x$tab)),1,function(x) rep(x[1],x[2])))    
-    return(U[ii,])
+    ##ii <- unlist(apply(cbind(seq(length(x$tab)),as.vector(x$tab)),1,function(x) rep(x[1],x[2])))
+    Pos <- matrix(0,nrow=prod(dim(x$tab)),ncol=2)
+    count <- 0
+    for (j in seq(ncol(x$tab))) 
+        for (i in seq(nrow(x$tab))) {
+            count <- count+1
+            Pos[count,] <- c(i,j)
+        }
+    pos <- match(data.frame(t(x$idx$pattern)),data.frame(t(Pos)))
+    ## pos <- c()
+    ## for (i in seq(nrow(x$idx$pattern))) {
+    ##     pos <- c(pos,which(apply(Pos,1,function(y) identical(y,x$idx$pattern[i,]))))
+    ## }
+    return(U[pos[x$idx$group+1],])
 }
     
 
