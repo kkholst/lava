@@ -45,13 +45,26 @@ merge.lvm <- function(x,y,...) {
   
 
 ##' @export
-merge.estimate <- function(x,y,...,id) {
+merge.estimate <- function(x,y,...,id,paired=FALSE,labels) {
     objects <- list(x,y, ...)
     coefs <- unlist(lapply(objects,coef))
-    names(coefs) <- make.unique(names(coefs))
-
-    if (missing(id)) {
-        id <- lapply(objects,function(x) x$id)
+    if (!missing(labels)) {
+        names(coefs) <- labels
+    } else {
+        names(coefs) <- make.unique(names(coefs))
+    }
+    if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
+        nn <- unlist(lapply(objects,function(x) nrow(x$iid)))
+        cnn <- c(0,cumsum(nn))
+        id <- list()
+        for (i in seq_along(nn)) id <- c(id,list(seq(nn[i])+cnn[i]))
+    }
+    if (missing(id)) {        
+        if (paired) { ## One-to-one dependence between observations in x,y,...
+            id <- rep(list(seq(nrow(x$iid))),length(objects))            
+        } else {
+            id <- lapply(objects,function(x) x$id)
+        }
     } else {
         nn <- unlist(lapply(objects,function(x) NROW(iid(x))))
         if (length(id)==1 && is.logical(id)) {            
@@ -107,5 +120,10 @@ merge.lm <- function(x,...) {
 
 ##' @export
 merge.glm <- function(x,...) {
+    merge.estimate(x,...)
+}
+
+##' @export
+merge.multinomial <- function(x,...) {
     merge.estimate(x,...)
 }
