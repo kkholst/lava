@@ -9,7 +9,7 @@
 \method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
   iid = TRUE, type = c("robust", "df", "mbn"), contrast, null, vcov, coef,
-  print = NULL, ...)
+  print = NULL, labels, ...)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -45,6 +45,8 @@
 \item{coef}{(optional) parameter coefficient}
 
 \item{print}{(optional) print function}
+
+\item{labels}{(optional) names of coefficients}
 
 \item{...}{additional arguments to lower level functions}
 }
