@@ -1,8 +1,11 @@
+
 ##' Estimate probabilities in contingency table
 ##'
 ##' @title Estimate probabilities in contingency table
-##' @aliases multinomial kappa.multinomial kappa.table gkgamma
+##' @aliases multinomial kappa.multinomial kappa.table gkgamma OR
 ##' @param x Matrix or data.frame with observations (1 or 2 columns)
+##' @param marginal If TRUE the marginals are estimated
+##' @param transform Optional transformation of parameters (e.g., logit)
 ##' @param ... Additional arguments to lower-level functions
 ##' @export
 ##' @examples
@@ -25,7 +28,7 @@
 ##' 
 ##' estimate(merge(K1,K2,id=FALSE),diff) ## Wrong std.err ignoring dependence
 ##' sqrt(vcov(K1)+vcov(K2))
-##'
+##' ##'
 ##' ## Average of the two kappas:
 ##' estimate(merge(K1,K2,id=TRUE),function(x) mean(x))
 ##' estimate(merge(K1,K2,id=FALSE),function(x) mean(x)) ## Independence
@@ -45,7 +48,7 @@
 ##' gkgamma(multinomial(d2[,3:4]))
 ##' }
 ##' @author Klaus K. Holst
-multinomial <- function(x,...) {
+multinomial <- function(x,marginal=FALSE,transform,...) {
     if (is.table(x)) x <- lava::Expand(x)
     if (NCOL(x)==1) {
         x <- as.factor(x)
@@ -57,7 +60,7 @@ multinomial <- function(x,...) {
         for (i in seq(k)) {
             iid[,i] <- (1*(x==lev[i])-P[i])/n
         };
-        coefs <- as.vector(P); names(coefs) <- paste("p",seq(k))
+        coefs <- as.vector(P); names(coefs) <- paste("p",seq(k),sep="")
         res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid,position=seq(k),levels=list(lev),data=x)
         class(res) <- "multinomial"
         return(res)
@@ -83,7 +86,29 @@ multinomial <- function(x,...) {
     }; iid <- iid/n
     coefs <- as.vector(P);
     names(coefs) <-  as.vector(outer(seq(k1),seq(k2),function(...) paste("p",...,sep="")))
-    res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid, position=Pos, call=match.call(), levels=list(lev1,lev2), data=x)
+    position1 <- position2 <- NULL
+    if (marginal) {        
+        p1 <- rowSums(P)
+        p2 <- colSums(P)
+        iid1 <- apply(Pos,1,function(x) rowSums(iid[,x]))
+        iid2 <- apply(Pos,2,function(x) rowSums(iid[,x]))
+        iid <- cbind(iid,iid1,iid2)
+        names(p1) <- paste("p",seq(k1),".",sep="")
+        names(p2) <- paste("p",".",seq(k2),sep="")
+        coefs <- c(coefs,p1,p2)
+        colnames(iid) <- names(coefs)
+        position1 <- length(P)+seq(k1)
+        position2 <- length(P)+k1+seq(k2)
+    }
+    if (!missing(transform)) {
+        f <- function(p) do.call(transform,list(p))
+        D <- diag(numDeriv::grad(f,coefs),ncol=length(coefs))
+        coefs <- f(coefs)
+        iid <- iid%*%t(D)
+    }   
+    res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid, position=Pos, call=match.call(), levels=list(lev1,lev2), data=x,
+                position1=position1,position2=position2 ## Position of marginals)
+                )
     class(res) <- "multinomial"
     res
 }
@@ -124,8 +149,12 @@ print.multinomial <- function(x,...) {
     ## print(x$position,quote=FALSE)
 }
 
+##################################################
+## Cohen's kappa
+##################################################
+
 ##' @export
-kappa.multinomial <- function(z,...) {    
+kappa.multinomial <- function(z,all=FALSE,...) {    
     pp <- length(coef(z))
     if ((length(z$levels)!=2) || !(identical(z$levels[[1]],z$levels[[2]])))
         stop("Expected square table and same factor levels in rows and columns")
@@ -137,7 +166,10 @@ kappa.multinomial <- function(z,...) {
     for (i in seq(k)) A[i+k,z$position[,i]] <- 1    
     b <- estimate(z,function(p) as.vector(rbind(A0,A)%*%p),iid=TRUE)    
     b2 <- estimate(b,function(p) c(p[1],sum(p[seq(k)+1]*p[seq(k)+k+1])),iid=TRUE)
-    estimate(b2,function(p) list(kappa=(p[1]-p[2])/(1-p[2])),iid=TRUE)
+    if (!all) {
+        return(estimate(b2,function(p) list(kappa=(p[1]-p[2])/(1-p[2])),iid=TRUE,...))
+    }
+    estimate(b2,function(p) list(kappa=(p[1]-p[2])/(1-p[2]),agree=p[1], independence=p[2]),iid=TRUE,...)
 }
 
 ##' @export
@@ -149,6 +181,51 @@ kappa.table <- function(z,...) {
 kappa.data.frame <- function(z,...) {
     kappa(multinomial(z),...)
 }
+
+##################################################
+## Information theoretical measures
+##################################################
+
+
+information_assoc <- function(P,base=exp(1),...) {
+    P.row <- rowSums(P)
+    P.col <- colSums(P)
+    H.row <- H.col <- H <- 0
+    for (j in seq_along(P.col))
+        if (P.col[j]>0) H.col <- H.col - P.col[j]*log(P.col[j]+(P.col[j]==0),base=base)
+    for (i in seq_along(P.row)) {
+        if (P.row[i]>0) H.row <- H.row - P.row[i]*log(P.row[i]+(P.row[i]==0),base=base)
+        for (j in seq_along(P.col)) {
+            if (P[i,j]>0) H <- H - P[i,j]*log(P[i,j],base=base)
+        }
+    }
+    I <- H.row+H.col-H
+    return(list(MI=I,H=H,H.row=H.row,H.col=H.col,
+                U.row=I/H.row,U.col=I/H.col,U.sym=2*I/(H.row+H.col)))
+}
+    
+
+##' @export
+information.data.frame <- function(x,...) {
+    information(multinomial(x,marginal=TRUE),...)
+}
+
+##' @export
+information.table <- function(x,...) {
+    information(multinomial(x,marginal=TRUE),...)
+}
+
+##' @export
+information.multinomial <- function(x,...) {
+    estimate(x,function(p,object,...) {
+        P <- object$position; P[] <- p[object$position]
+        information_assoc(P)},...)
+}
+
+
+##################################################
+## Goodman-Kruskal gamma
+##################################################
 
 goodmankruskal_gamma <- function(P,...) {
     nr <- nrow(P); nc <- ncol(P)
@@ -180,10 +257,26 @@ gkgamma <- function(x,...) {
 
     P <- x$position
     estimate(x,function(p) { P[] <- p[P]
-                             list(gamma=goodmankruskal_gamma(P)) },iid=TRUE)    
+                             list(gamma=goodmankruskal_gamma(P)) },iid=TRUE,...)    
 }
 
+##################################################
+## Independence tests
+##################################################
 
+##' @export
+OR <- function(x,...) {
+    M <- multinomial(x)
+    pos <- M$position
+    if (ncol(pos)!=2 & ncol(pos)!=2) stop("Only for 2x2 tables")
+    orfun <- function(p,...) {
+        list(logOR=sum(log(p[diag(pos)]))-sum(log(p[revdiag(pos)])))
+    }
+    estimate(M,orfun)
+}
+logor <- function(x) {
+    c(log(prod(diag(x))/prod(revdiag(x))),sum(1/x)^.5)
+}
 
 
 independence <- function(x,...) {
@@ -227,7 +320,7 @@ independence <- function(x,...) {
     ## M <- P
     ## chisq.test(M,correct=FALSE)
 
-    return(estimate(x,function(p) list(cramersV=f(p)),iid=TRUE))
+    return(estimate(x,function(p) list(cramersV=f(p)),iid=TRUE,...))
     
     
     e <- estimate(x,f,iid=TRUE,print=function(x,...) {
@@ -235,7 +328,7 @@ independence <- function(x,...) {
         cat("Test statistc:\t ", formatC(x$coefmat[1]/x$coefmat[2]),
             "\nP-value:\t ", x$coefmat[5],"\n\n")
         print(estimate(x))
-    })
+    },...)
     return(list(p.value=e$coefmat[5]))
     ## Q <- sum((a$coefmat[1,1]/a$coefmat[1,2]))
     ## df <- nrow(a$coefmat)
