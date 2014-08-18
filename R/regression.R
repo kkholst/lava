@@ -107,16 +107,23 @@
 
 ##' @export
 "regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
-  if (!is.null(to)) {    
-    regfix(object, to=to, ...) <- value
-    return(object)
-  } else  {
-    if (is.list(value)) {
-      for (v in value) {
-        regression(object,...) <- v        
-      }
-      return(object)
+    dots <- list(...)
+    if (length(dots$additive)>0 && !dots$additive && !inherits(value,"formula")) {
+        regression(object,beta=value,...) <- to
+        return(object)
     }
+    
+    if (!is.null(to)) {    
+        regfix(object, to=to, ...) <- value
+        return(object)
+    } else  {
+        if (is.list(value)) {
+            for (v in value) {
+                regression(object,...) <- v        
+            }
+            return(object)
+        }
+    
     if (class(value)[1]=="formula") {
         yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
         iscovar <- FALSE
