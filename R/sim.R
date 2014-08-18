@@ -206,6 +206,8 @@
 ##' m <- lvm()
 ##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 ##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
+##' ## ## equivalent to:
+##' ## regression(m,y~v,additive=FALSE) <- c(0,2,-1)
 ##' regression(m,additive=FALSE,beta=c(0,4,-1)) <- z~v
 ##' table(sim(m,1e4)$v)
 ##' glm(y~v, data=sim(m,1e4))
@@ -244,10 +246,14 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     xf <- intersect(unique(parlabels(x)),xx)
     xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
 
-    if (length(p)!=(index(x)$npar+index(x)$npar.mean) | is.null(names(p))) {
+    if (length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
         nullp <- is.null(p)
         p0 <- p
-        p <- c(rep(1, index(x)$npar+index(x)$npar.mean),unlist(x$expar))
+        ep <- NULL
+        ei <- which(index(x)$e1==1)
+        if (length(ei)>0)
+            ep <- unlist(x$expar)[ei]        
+        p <- c(rep(1, index(x)$npar+index(x)$npar.mean),ep)
         p[seq_len(index(x)$npar.mean)] <- 0
         p[index(x)$npar.mean + variances(x)] <- sigma
         p[index(x)$npar.mean + offdiags(x)] <- rho
@@ -283,7 +289,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     } else {
         E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
     }
-
+    
     if (length(mdistnam)>0) {
         fun <- distribution(x,multivariate=TRUE)$fun
         for (i in seq_along(fun)) {
@@ -348,7 +354,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         colnames(res) <- vv
     } else {
 
-        
+
         xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
         xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
@@ -519,11 +525,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         }
         res <- res[,nn,drop=FALSE]
     }
-    
+
     res <- as.data.frame(res)
     myhooks <- gethook("sim.hooks")
     for (f in myhooks) {
-        res <- do.call(f, list(x=x,data=res,p=p))
+        res <- do.call(f, list(x=x,data=res,p=p,modelpar=M))
     }
     if (unlink) res <- resunlink
 
