@@ -1,3 +1,4 @@
+
 ##' Estimation of functional of parameters 
 ##'
 ##' Estimation of functional of parameters.
@@ -20,6 +21,7 @@
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
 ##' @param coef (optional) parameter coefficient
 ##' @param print (optional) print function
+##' @param labels (optional) names of coefficients
 ##' @param ... additional arguments to lower level functions
 ##' @export
 ##' @examples
@@ -111,7 +113,7 @@
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FALSE,subset,
                              score.deriv,level=0.95,iid=TRUE,
                              type=c("robust","df","mbn"),
-                             contrast,null,vcov,coef,print=NULL,...) {
+                             contrast,null,vcov,coef,print=NULL,labels,...) {
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
         contrast <- f; f <- NULL
@@ -228,7 +230,7 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         dots <- ("..."%in%names(form))
         form0 <- setdiff(form,"...")
         parname <- "p"
-        parname <- form[1]
+        if (!is.null(form)) parname <- form[1] # unless .Primitive
         if (length(form0)==1 && !(form0%in%c("object","data"))) {
             ##names(formals(f))[1] <- "p"
             parname <- form0
@@ -371,6 +373,12 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         res$compare$estimate <- NULL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
+    }
+    if (!missing(labels)) {
+        names(res$coef) <- labels
+        colnames(res$iid) <- labels
+        colnames(res$vcov) <- rownames(res$vcov) <- labels
+        rownames(res$coefmat) <- labels
     }
     return(res)  
 }
