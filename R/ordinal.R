@@ -2,7 +2,7 @@ color.ordinal <- function(x,subset=vars(x),...) {
     return(list(vars=intersect(subset,ordinal(x)),col="indianred1"))
 }
 
-ordinal.sim.hook <- function(x,data,p,...) {
+ordinal.sim.hook <- function(x,data,p,modelpar,...) {
     ovar <- ordinal(x)
     for (i in seq_len(length(ovar))) {
         if (attributes(ovar)$liability[i]) {
@@ -10,7 +10,7 @@ ordinal.sim.hook <- function(x,data,p,...) {
             if (length(idx)==0) {
                 breaks <- c(-Inf,0,Inf)
             } else {
-                breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
+                breaks <- c(-Inf,ordreg_threshold(modelpar$e[idx]),Inf)
             }
             z <- cut(data[,ovar[i]],breaks=breaks)
             data[,ovar[i]] <- as.numeric(z)-1
@@ -74,9 +74,14 @@ print.ordinal.lvm <- function(x,...) {
         breaks <- ordreg_ithreshold(breaks)
         K <- length(breaks)+1
     }
+    if (!missing(labels)) K <- length(labels)
     if (length(var)>length(K)) K <- rep(K[1],length(var))
     if (length(var)==1 && !missing(constrain)) constrain <- list(constrain)
-
+    if (length(var)>1) {
+        if (!missing(labels) && !is.list(labels)) labels <- rep(list(labels),length(var))
+        if (!missing(breaks) && !is.list(breaks)) breaks <- rep(list(breaks),length(var))
+        if (!missing(constrain) && !is.list(constrain)) constrain <- rep(list(constrain),length(var))
+    }
     
     addvar(x) <- var
     for (i in seq_len(length(var))) {
@@ -115,7 +120,10 @@ print.ordinal.lvm <- function(x,...) {
     }
     x$attributes$liability[var] <- liability
     x$attributes$ordinal[var] <- TRUE
-    if (!missing(labels)) x$attributes$labels[var] <- list(labels)
+    if (!missing(labels)) {
+        if (length(var)==1) labels <- list(labels)
+        x$attributes$labels[var] <- labels
+    }
     x$attributes$nordinal[var] <- K
     x$attributes$normal[var] <- FALSE
     covfix(x,var,NULL) <- 1
