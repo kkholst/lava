@@ -1,4 +1,7 @@
 
+##' @export
+estimate <- function(x,...) UseMethod("estimate")
+
 ##' Estimation of functional of parameters 
 ##'
 ##' Estimation of functional of parameters.

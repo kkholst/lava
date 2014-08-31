@@ -243,7 +243,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
   n <- object$data$n
   if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
   loglik <- logLik(object,...)
-  
+
   df <- attributes(loglik)$df
   nobs <- attributes(loglik)$nall*length(endogenous(object))
   myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
@@ -252,7 +252,9 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
   xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
 
   l2D <- mean(object$opt$grad^2)
-  rnkV <- tryCatch(qr(vcov(object))$rank,error=function(...) 0)
+  S <- vcov(object)
+  rnkV <- tryCatch(qr(S)$rank,error=function(...) 0)
+  minSV <- attr(S,"minSV")
   condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
 
 ##  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
@@ -269,8 +271,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       qdfbaseline <- g0$fit$parameter
       CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
       NFI <- (qbaseline-q)/qbaseline
-      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)
-      
+      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)      
       S <- object$data$S
       mu <- object$data$mu
       C <- modelVar(object)$C
@@ -289,7 +290,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       ## }
     }    
     ##    if (class(object)[1]=="lvmfit")
-    if (rnkV==ncol(vcov(object))) {
+    if (rnkV==ncol(vcov(object)) && minSV>1e-12) {
 
       rmseafun <- function(...) {
         epsilon <- function(lambda) sapply(lambda,function(x)

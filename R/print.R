@@ -55,17 +55,14 @@ function(x, ...) {
 ##' @export
 `print.lvmfit` <-
 function(x,level=2,labels=FALSE,...) {
-##    print(signif(coef(x), digits=digits), print.gap=2, quote=FALSE, ...)
-##  if (index(x)$npar.reg==0 & level==0) level <- 1
-##  coefs <- coef(x, level=level, ...);
-##  coefs[coefs[,4]==0,4] <- 1e-16
-##  printCoefmat(coefs, na.print="NA", signif.stars=signif.stars,...)
-##  cat("---\n")
-#  cat("\n", rep("-", 50), "\n\n", sep="");
-  print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
-#  cat("\n", rep("-", 50), "\n\n", sep="");
-  invisible(x)
-##  invisible(coefs)
+    print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
+    minSV <- attr(vcov(x),"minSV")
+    if (!is.null(minSV) && minSV<1e-12) {
+        warning("Small singular value: ", format(minSV))
+    }
+    if (attr(vcov(x),"pseudo")) warning("Singular covariance matrix. Pseudo-inverse used.")
+    ##  cat("\n", rep("-", 50), "\n\n", sep="");
+    invisible(x)
 }
 
 ###}}} print.lvmfit
