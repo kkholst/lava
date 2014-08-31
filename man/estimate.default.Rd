@@ -8,8 +8,8 @@
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
-  iid = TRUE, type = c("robust", "df", "mbn"), contrast, null, vcov, coef,
-  print = NULL, labels, ...)
+  iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
+  coef, print = NULL, labels, ...)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -35,6 +35,8 @@
 \item{iid}{If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)}
 
 \item{type}{Type of small-sample correction}
+
+\item{keep}{(optional) Index of parameters to keep}
 
 \item{contrast}{(optional) Contrast matrix for final Wald test}
 
@@ -108,7 +110,7 @@ estimate(e,cbind(1,1))
 d$id <- rep(seq(nrow(d)/4),each=4)
 estimate(g,function(p,data)
          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
-         subset=z>0, id=d$id, average=TRUE)
+         subset=d$z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)

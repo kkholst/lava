@@ -18,7 +18,8 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level Level of confidence limits
 ##' @param iid If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
-##' @param type Type of small-sample correction 
+##' @param type Type of small-sample correction
+##' @param keep (optional) Index of parameters to keep
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) Null hypothesis to test 
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -81,7 +82,7 @@ estimate <- function(x,...) UseMethod("estimate")
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
 ##' estimate(g,function(p,data)
 ##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
-##'          subset=z>0, id=d$id, average=TRUE)
+##'          subset=d$z>0, id=d$id, average=TRUE)
 ##' 
 ##' ## More examples with clusters:
 ##' m <- lvm(c(y1,y2,y3)~u+x)
@@ -116,6 +117,7 @@ estimate <- function(x,...) UseMethod("estimate")
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FALSE,subset,
                              score.deriv,level=0.95,iid=TRUE,
                              type=c("robust","df","mbn"),
+                             keep,
                              contrast,null,vcov,coef,print=NULL,labels,...) {
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
@@ -377,6 +379,12 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
     }
+    if (!missing(keep) && !is.null(keep)) {
+        res$coef <- res$coef[keep]
+        res$coefmat <- res$coefmat[keep,,drop=FALSE]
+        res$iid <- res$iid[,keep,drop=FALSE]
+        res$vcov <- res$vcov[keep,keep,drop=FALSE]
+    }
     if (!missing(labels)) {
         names(res$coef) <- labels
         colnames(res$iid) <- labels
@@ -386,10 +394,15 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
     return(res)  
 }
 
+##' @export
+estimate.list <- function(x,...) {
+    if (inherits(x[[1]],"lvm")) return(estimate.lvmlist(x,...))
+    lapply(x,function(x) estimate(x,...))
+}
+
 estimate.glm <- function(x,...) {  
     estimate.default(x,...)
 }
-
 
 ##' @export
 print.estimate <- function(x,digits=3,width=25,...) {

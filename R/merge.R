@@ -45,10 +45,10 @@ merge.lvm <- function(x,y,...) {
   
 
 ##' @export
-merge.estimate <- function(x,y,...,id,paired=FALSE,labels) {
+merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL) {
     objects <- list(x,y, ...)
     coefs <- unlist(lapply(objects,coef))
-    if (!missing(labels)) {
+    if (!is.null(labels)) {
         names(coefs) <- labels
     } else {
         names(coefs) <- make.unique(names(coefs))
@@ -109,19 +109,22 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels) {
         colpos <- colpos+tail(relpos,1)
     }
     rownames(iid0) <- id
-    estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id)
+    estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id, keep=keep)
 }
 
 
 ##' @export
-merge.lm <- function(x,...) {
-    merge.estimate(x,...)
+merge.lm <- function(x,y,...) {
+    args <- c(list(x,y),list(...))
+    nn <- names(formals(merge.estimate)[-seq(3)])
+    idx <- na.omit(match(nn,names(args)))
+    models <- args; models[idx] <- NULL
+    mm <- lapply(models,estimate); names(mm)[1:2] <- c("x","y")
+    do.call("merge.estimate",c(mm,args[idx]))
 }
 
 ##' @export
-merge.glm <- function(x,...) {
-    merge.estimate(x,...)
-}
+merge.glm <- merge.lm
 
 ##' @export
 merge.multinomial <- function(x,...) {

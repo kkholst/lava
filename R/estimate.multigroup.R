@@ -598,8 +598,7 @@
 
 ###{{{ estimate.list
 
-##' @export
-`estimate.list` <-
+estimate.lvmlist <-
 function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))

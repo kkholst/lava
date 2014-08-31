@@ -38,7 +38,7 @@
 ##' \item{tol:}{ Tolerance of optimization constraints on lower limit of
 ##' variance parameters.  } }
 ##'
-##' @aliases estimate.list estimate
+##' @aliases estimate
 ##' @param x \code{lvm}-object
 ##' @param data \code{data.frame}
 ##' @param estimator String defining the estimator (see details below)
