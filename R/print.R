@@ -60,8 +60,8 @@ function(x,level=2,labels=FALSE,...) {
     if (!is.null(minSV) && minSV<1e-12) {
         warning("Small singular value: ", format(minSV))
     }
-    if (attr(vcov(x),"pseudo")) warning("Singular covariance matrix. Pseudo-inverse used.")
-    ##  cat("\n", rep("-", 50), "\n\n", sep="");
+    pseudo <- attr(vcov(x),"pseudo")
+    if (!is.null(pseudo) && pseudo) warning("Singular covariance matrix. Pseudo-inverse used.")
     invisible(x)
 }
 

@@ -290,7 +290,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       ## }
     }    
     ##    if (class(object)[1]=="lvmfit")
-    if (rnkV==ncol(vcov(object)) && minSV>1e-12) {
+    if (rnkV==ncol(vcov(object)) && (!is.null(minSV) && minSV>1e-12)) {
 
       rmseafun <- function(...) {
         epsilon <- function(lambda) sapply(lambda,function(x)
