@@ -1,6 +1,12 @@
-
 ##' @export
 estimate <- function(x,...) UseMethod("estimate")
+
+##' @export
+estimate.list <- function(x,...) {
+    if (inherits(x[[1]],"lvm")) return(estimate.lvmlist(x,...))
+    lapply(x,function(x) estimate(x,...))
+}
+
 
 ##' Estimation of functional of parameters 
 ##'
@@ -189,6 +195,8 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
                 attributes(iidtheta)$N <- N
             }
         } else idstack <- id        
+    } else {
+        if (!is.null(data)) idstack <- rownames(data)
     }
     if (!is.null(iidtheta)) rownames(iidtheta) <- idstack
 
@@ -394,11 +402,6 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
     return(res)  
 }
 
-##' @export
-estimate.list <- function(x,...) {
-    if (inherits(x[[1]],"lvm")) return(estimate.lvmlist(x,...))
-    lapply(x,function(x) estimate(x,...))
-}
 
 estimate.glm <- function(x,...) {  
     estimate.default(x,...)
