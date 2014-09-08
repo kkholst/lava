@@ -13,7 +13,7 @@ p.correct <- function(object,idx,alpha=0.05) {
 }
 
 ##' @export
-closed.testing <- function(object,idx=seq_along(coef(object)),...) {    
+closed.testing <- function(object,idx=seq_along(coef(object)),null=rep(0,length(idx)),...) {    
     B <- diag(nrow=length(idx))
     e <- estimate(object,keep=idx)
     combs <- pvals <- c()
@@ -21,7 +21,7 @@ closed.testing <- function(object,idx=seq_along(coef(object)),...) {
         co <- combn(length(idx),i)
         pp <- numeric(ncol(co))
         for (j in seq_along(pp)) {
-            pp[j] <- compare(e,contrast=B[co[,j],,drop=FALSE],...)$p.value
+            pp[j] <- compare(e,contrast=B[co[,j],,drop=FALSE],null=null[co[,j]],...)$p.value
         }
         combs <- c(combs,list(co))
         pvals <- c(pvals,list(pp))
@@ -35,5 +35,5 @@ closed.testing <- function(object,idx=seq_along(coef(object)),...) {
         }
         pmax <- c(pmax,max(pk))
     }
-    return(pmax)
+    return(structure(pmax,comb=combs,pval=pvals))
 }
