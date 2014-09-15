@@ -301,6 +301,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     
     ## Simulate exogenous variables (covariates)
     res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
+
     vartrans <- names(x$attributes$transform)
     xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
     xx <- setdiff(xx,vartrans)
@@ -409,7 +410,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 xconstrain <- c(xconstrain,list(el))
             }            
         }
-
         
         for (i in intersect(exogenous(x),names(x$constrainY))) {
             cc <- x$constrainY[[i]]
@@ -431,17 +431,19 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     names(Parvals)
             }
         }
-        
+
         leftovers <- c()
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
-            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)") 
+            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)")
+
             for (i in leftovers) {
                 if (i%in%vartrans) {
-                    xtrans <- x$attributes$transform[[i]]$x
+                    xtrans <- x$attributes$transform[[i]]$x                    
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
                         suppressWarnings(yy <- with(x$attributes$transform[[i]],fun(res[,xtrans])))
+                        
                         if (length(yy) != NROW(res)) { ## apply row-wise
                             res[,i] <- with(x$attributes$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
                         } else {
@@ -456,7 +458,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
                         pos <- match(i,vv)
                         relations <- colnames(A)[A[,pos]!=0]
-                        simvars <- x$attributes$simvar[[i]]            
+                        simvars <- x$attributes$simvar[[i]]
+
                         if (all(c(relations,simvars)%in%simuled)) { ## Only depending on already simulated variables
                             if (x$mean[[pos]]%in%xconstrain.par) {
                                 mu.i <- res[,x$mean[[pos]] ]
@@ -496,6 +499,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                     } else  mu.i <- mu.i + A[From,pos]*res[,From]
                                 }
                             }
+
                             dist.i <- distribution(x,i)[[1]]
                             if (!is.function(dist.i)) {
                                 res[,pos] <- mu.i + E[,pos]

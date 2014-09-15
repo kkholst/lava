@@ -4,6 +4,7 @@ color.ordinal <- function(x,subset=vars(x),...) {
 
 ordinal.sim.hook <- function(x,data,p,modelpar,...) {
     ovar <- ordinal(x)
+
     for (i in seq_len(length(ovar))) {
         if (attributes(ovar)$liability[i]) {
             idx <- attributes(ovar)$idx[[ovar[i]]]
@@ -85,7 +86,7 @@ print.ordinal.lvm <- function(x,...) {
     
     addvar(x) <- var
     for (i in seq_len(length(var))) {
-        if (K[i]>2) {
+        if (K[i]>2 || (K[i]==2 && !liability)) {
             parname <- paste(var[i],":",paste(seq(K[i]-1)-1,seq(K[i]-1),sep="|"),sep="")
             newpar <- if (is.null(breaks)) {
                 rep(-1,K[i]-1)
@@ -110,7 +111,7 @@ print.ordinal.lvm <- function(x,...) {
             mytr <- function(y,p,idx,...) {
                 breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
                 as.numeric(cut(y,breaks=breaks))-1
-            }
+            }                
             myalist <- substitute(alist(y=,p=,idx=pp),
                                   list(pp=x$attributes$ordinalparname[[var[i]]]))
             formals(mytr) <- eval(myalist)
