@@ -37,6 +37,8 @@
   if (length(variable)==1) {
       addvar(x) <- as.formula(paste("~",variable))
       if (is.numeric(value)) value <- list(value)
+      if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
+      if (!is.null(attributes(value)$variance)) variance(x,variable) <- attributes(value)$variance
       x$attributes$distribution[[variable]] <- value
       ## Remove from 'mdistribution'     
       vars <- which(names(x$attributes$mdistribution$var)%in%variable)
@@ -78,6 +80,7 @@
 
       x$attributes$mdistribution$var[variable] <- K+1
       x$attributes$mdistribution$fun <- c(x$attributes$mdistribution$fun,value)
+
       return(x)
   }
   
@@ -107,14 +110,9 @@
 normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
   fam <- gaussian(link); fam$link <- link
-  if (!missing(mean) & !missing(sd)) 
-      f <- function(n,mu,var,...) mu+rnormal(n,fam$linkinv(mean),sd)
-  if (!missing(mean) & missing(sd)) 
-      f <- function(n,mu,var,...) mu+rnormal(n,fam$linkinv(mean),sqrt(var))
-  if (missing(mean) & !missing(sd)) 
-      f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sd)
-  if (missing(mean) & missing(sd))
-      f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))     
+  f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))
+  if (!missing(mean)) attr(f,"mean") <- mean
+  if (!missing(sd)) attr(f,"variance") <- sd^2
   attr(f,"family") <- fam
   return(f)  
 }
@@ -132,19 +130,17 @@ lognormal.lvm <- function(...) normal.lvm(...,log=TRUE)
 
 ##' @export
 poisson.lvm <- function(link="log",lambda,...) {  
-  fam <- poisson(link); fam$link <- link
- if (!missing(lambda))
-    f <- function(n,mu,...) rpois(n,lambda)
- else
-   f <- function(n,mu,...) {
-     if (missing(n)) {
-       return(fam)
-     }
-     rpois(n,fam$linkinv(mu))
-   }
-  attr(f,"family") <- fam
-  attr(f,"var") <- FALSE
-  return(f)  
+    fam <- poisson(link); fam$link <- link
+    f <- function(n,mu,...) {
+        if (missing(n)) {
+            return(fam)
+        }
+        rpois(n,fam$linkinv(mu))
+    }
+    if (!missing(lambda)) attr(f,"mean") <- fam$linkfun(lambda)
+    attr(f,"family") <- fam
+    attr(f,"var") <- FALSE  
+    return(f)  
 } 
 
 ###}}} poisson
@@ -168,16 +164,16 @@ threshold.lvm <- function(p,labels=NULL,...) {
 
 ##' @export
 binomial.lvm <- function(link="logit",p,size=1) {
-  fam <- binomial(link); fam$link <- link
-  if (!missing(p))
-    f <- function(n,mu,var,...) rbinom(n,size,p)
-  else {
+    fam <- binomial(link); fam$link <- link
     f <- function(n,mu,var,...) {
       if (missing(n)) {
         return(fam)
       }
       rbinom(n,size,fam$linkinv(mu))
-    }
+  }
+    attr(f,"family") <- fam
+    attr(f,"var") <- FALSE
+    if (!missing(p)) attr(f,"mean") <- fam$linkfun(p)
     ## f <- switch(link,
     ##             logit = 
     ##             function(n,mu,var,...) rbinom(n,1,tigol(mu)),
@@ -186,9 +182,7 @@ binomial.lvm <- function(link="logit",p,size=1) {
     ##             function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
     ##             ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
     ##             )    
-  }
-  attr(f,"family") <- fam
-  attr(f,"var") <- FALSE
+    ##}
   return(f)
 }
 
@@ -199,7 +193,6 @@ logit.lvm <- binomial.lvm("logit")
 probit.lvm <- binomial.lvm("probit")
 
 ###}}} binomial
-
 
 ###{{{ Gamma
 
@@ -243,20 +236,21 @@ loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
 ###}}} Gamma
 
+###{{{ chisq
 ##' @export
 chisq.lvm <- function(df=1,...) {
     function(n,mu,var,...) mu + rchisq(n,df=df)
 }
+###}}} chisq
 
 ###{{{ student (t-distribution)
 
 ##' @export
 student.lvm <- function(df=2,mu,sigma,...) {
-  if (!missing(mu) & !missing(sigma)) 
-    f <- function(n,mu,var,...) mu+sigma*rt(n,df=df)
-  else
-    f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)  
-  return(f)
+    f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
+    if (!missing(mu)) attr(f,"mean") <- mu
+    if (!missing(sigma)) attr(f,"variace") <- sigma^2
+    return(f)
 }
 
 ###}}} student (t-distribution)

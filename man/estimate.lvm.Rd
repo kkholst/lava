@@ -95,6 +95,17 @@ alternative optimizer (e.g. \code{optim} to use simulated annealing).}
 variance parameters.  } }
 }
 \examples{
+dd <- read.table(header=TRUE,
+text="x1 x2 x3
+1.0 2.0 1.4
+2.1 4.1 4.0
+3.1 3.4 7.0
+4.2 6.1 3.5
+5.3 5.2 2.3
+1.1 1.6 2.9")
+e <- estimate(lvm(c(x1,x2,x3)~u),dd)
+
+## Simulation example
 m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
 covariance(m) <- v1~v2+v3+v4
 dd <- sim(m,10000) ## Simulate 10000 observations from model
