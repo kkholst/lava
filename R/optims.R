@@ -177,7 +177,7 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
 ###{{{ NR 2
 
 NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
-    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,backtrace=FALSE,
+    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,backtrace=TRUE,
                      iter.max=200,tol=1e-9,stabil=FALSE,epsilon=1e-9)
     if (!missing(control)) {
         control0[names(control)] <- control
@@ -248,6 +248,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             }
         }
         p <- p.orig + Lambda*Delta
+        Lambda <- Lambda^.5
         return(list(p=p,D=D,iI=iI))
     }
     
