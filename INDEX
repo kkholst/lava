@@ -62,6 +62,7 @@ blockdiag               Combine matrices to block diagonal structure
 colorbar		Add colorbar to plot
 confband                Add Confidence limits bar to plot
 devcoords               Returns device-coordinates and plot-region
+dsort			Sort data frame
 org                     Convert object to ascii suitable for org-mode
 plotConf                Plot regression lines
 revdiag                 Create/extract 'reverse'-diagonal matrix
