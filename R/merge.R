@@ -45,9 +45,15 @@ merge.lvm <- function(x,y,...) {
   
 
 ##' @export
-merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL) {
+merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=NULL) {
     objects <- list(x,y, ...)
-    coefs <- unlist(lapply(objects,coef))
+    if (length(nai <- names(objects)=="NA")>0)
+    names(objects)[which(nai)] <- ""
+    if (!missing(subset)) {
+        coefs <- unlist(lapply(objects, function(x) coef(x)[subset]))
+    } else {
+        coefs <- unlist(lapply(objects,coef))
+    }
     if (!is.null(labels)) {
         names(coefs) <- labels
     } else {
@@ -89,12 +95,14 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL) {
         count <- count+1
         clidx <- NULL
         id0 <- id[[count]]
-        if (!lava.options()$cluster.index) {
-            iid0 <- matrix(unlist(by(iid(z),id0,colSums)),byrow=TRUE,ncol=length(coef(z)))
+        iidz <- iid(z)
+        if (!missing(subset)) iidz <- iidz[,subset,drop=FALSE]
+        if (!lava.options()$cluster.index) {        
+            iid0 <- matrix(unlist(by(iidz,id0,colSums)),byrow=TRUE,ncol=ncol(iidz))
             ids <- c(ids, list(sort(unique(id0))))
 
         } else {
-            clidx <- mets::cluster.index(id0,mat=iid(z),return.all=TRUE)
+            clidx <- mets::cluster.index(id0,mat=iidz,return.all=TRUE)
             iid0 <- clidx$X
             ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
         }
@@ -104,7 +112,8 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL) {
     iid0 <- matrix(0,nrow=length(id),ncol=length(coefs))
     colpos <- 0
     for (i in seq(length(objects))) {
-        relpos <- seq(length(coef(objects[[i]])))
+        relpos <- seq_along(coef(objects[[i]]))
+        if (!missing(subset)) relpos <- seq_along(subset)
         iid0[match(ids[[i]],id),relpos+colpos] <- iidall[[i]]
         colpos <- colpos+tail(relpos,1)
     }
