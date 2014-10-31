@@ -383,6 +383,8 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
                                       (pnorm(abs(estimate[,1]-null)/estimate[,2],lower.tail=FALSE)*2)));
         colnames(res$coefmat)[5] <- "P-value"
         rownames(res$coefmat) <- cc$cnames
+        res$iid <- res$iid%*%t(contrast)
+        colnames(res$iid) <- cc$cnames
         res$compare$estimate <- NULL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov

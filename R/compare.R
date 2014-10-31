@@ -145,7 +145,6 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     L0 <- logLik(object)
     L1 <- satmodel(object,logLik=TRUE)
     df <- attributes(L1)$df-attributes(L0)$df; names(df) <- "df"
-    ##    Q <- -2*(L0-L1);
     Q <- abs(2*(L0-L1));
     attributes(Q) <- NULL; names(Q) <- "chisq";
     pQ <- ifelse(df==0,NA,1-pchisq(Q,df))
@@ -168,22 +167,23 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
 
 
 comparepair <- function(x1,x2) {
-  ##if (class(x1)!="lvmfit" | class(x2)!="lvmfit") stop("'lvmfit' object expected.")
-  l1 <- do.call("logLik",list(x1),envir=parent.frame(2))
-  l2 <- do.call("logLik",list(x2),envir=parent.frame(2))
-  ##l1 <- logLik(x1);  l2 <- logLik(x2)
-  df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;
-  ##Q <- -2*ifelse(df1<df2, l1-l2, l2-l1); names(Q) <- "chisq"
-  Q <- abs(2*(l1-l2))
-  names(Q) <- "chisq"
-  df <- abs(df1-df2); names(df) <- "df"
-  p <- 1-pchisq(Q,df=df)
-  values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
-
-  res <- list(statistic = Q, parameter = df,
-              p.value= p, method = "- Likelihood ratio test -",
-              estimate = values)
-  class(res) <- "htest"
-  return(res)
+    l1 <- do.call("logLik",list(x1),envir=parent.frame(2))
+    l2 <- do.call("logLik",list(x2),envir=parent.frame(2))
+    df1 <- attributes(l1)$df;  df2 <- attributes(l2)$df;
+    if (is.null(df1)) {
+        df1 <- length(do.call("coef",list(x1),envir=parent.frame(2)))
+        df2 <- length(do.call("coef",list(x2),envir=parent.frame(2)))
+    }  
+    Q <- abs(2*(l1-l2))
+    names(Q) <- "chisq"
+    df <- abs(df1-df2); names(df) <- "df"
+    p <- 1-pchisq(Q,df=df)
+    values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
+    
+    res <- list(statistic = Q, parameter = df,
+                p.value= p, method = "- Likelihood ratio test -",
+                estimate = values)
+    class(res) <- "htest"
+    return(res)
 }
 
