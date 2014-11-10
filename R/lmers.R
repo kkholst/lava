@@ -1,9 +1,9 @@
 ##v <- lmerplot(l1,varcomp=TRUE,colorkey=TRUE,lwd=0,col=rainbow(20))
 lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=TRUE,mar=c(4,4,4,6),col,...) {
     if (varcomp) {
-        Z <- getME(model,"Z")
-        nn <- unlist(lapply(getME(model,"Ztlist"),nrow))
-        ve <- getME(model,"sigma")^2
+        Z <- lme4::getME(model,"Z")
+        nn <- unlist(lapply(lme4::getME(model,"Ztlist"),nrow))
+        ve <- lme4::getME(model,"sigma")^2
         vu <- varcomp(model,profile=FALSE)$varcomp
         L <- Matrix::Diagonal(sum(nn),rep(vu,nn))
         V <- Z%*%L%*%(Matrix::t(Z))
@@ -40,16 +40,16 @@ lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=
 }
 
 varcomp <- function(x,profile=TRUE,...) {
-    cc <- cbind(fixef(x),diag(as.matrix(vcov(x)))^.5)
+    cc <- cbind(lme4::fixef(x),diag(as.matrix(vcov(x)))^.5)
     cc <- cbind(cc,cc[,1]-qnorm(0.975)*cc[,2],cc[,1]+qnorm(0.975)*cc[,2],
                 2*(1-pnorm(abs(cc[,1])/cc[,2])))
     pr <- NULL
     if (profile) pr <- confint(x)
     colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
-    res <- structure(list(coef=fixef(x), vcov=as.matrix(vcov(x)),
+    res <- structure(list(coef=lme4::fixef(x), vcov=as.matrix(vcov(x)),
                           coefmat=cc,
                           confint=pr,
-                          varcomp=as.numeric(VarCorr(x)),residual=attributes(VarCorr(x))$sc^2
+                          varcomp=as.numeric(lme4::VarCorr(x)),residual=attributes(lme4::VarCorr(x))$sc^2
                           ),
                      class="estimate.lmer")
     res

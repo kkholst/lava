@@ -73,7 +73,7 @@ function(x,...) UseMethod("vars")
 ##' @export
 `vars.graph` <-
   function(x,...) {
-    nodes(x)
+    graph::nodes(x)
   }
 
 ##' @export

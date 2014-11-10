@@ -36,7 +36,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     dimA <- length(ii$A)
     if (ii$sparse) { ## Not used yet...
       if (!require("Matrix")) stop("package Matrix not available")
-      dP <- dA <- Matrix(0, nrow=dimA, ncol=npar.total)
+      dP <- dA <- Matrix::Matrix(0, nrow=dimA, ncol=npar.total)
     } else {
       dP <- dA <- matrix(0, nrow=dimA, ncol=npar.total)
     }
@@ -53,7 +53,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     
     {
       if (ii$sparse) {
-        dv <- Matrix(0, nrow=length(expr$mean), ncol=npar.total)
+        dv <- Matrix::Matrix(0, nrow=length(expr$mean), ncol=npar.total)
       } else {
         dv <- matrix(0, nrow=length(expr$mean), ncol=npar.total)
       }

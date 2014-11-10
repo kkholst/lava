@@ -65,9 +65,9 @@
 ##' @export
 labels.graphNEL <- function(object,lab=NULL,...) {
   if (is.null(lab))    
-    return(nodeRenderInfo(object)$label)  
-  nodeRenderInfo(object) <- list(label=lab)
-  names(nodeRenderInfo(object)$label) <- nodes(object);
+    return(graph::nodeRenderInfo(object)$label)  
+  graph::nodeRenderInfo(object) <- list(label=lab)
+  names(graph::nodeRenderInfo(object)$label) <- graph::nodes(object);
   return(object)
 }
 
@@ -115,8 +115,8 @@ labels.lvmfit <- function(object,lab=NULL,...) {
     mytext <- paste("c(", paste(paste(edges.,"=expression(",as.character(value),"==\"",val,"\")",sep=""),collapse=","),")")
   else
     mytext <- paste("c(", paste(paste(edges.,"=expression(",as.character(value),")",sep=""),collapse=","),")")
-  edgeRenderInfo(Graph(object))$label <- eval(parse(text=mytext))
-  edgeRenderInfo(Graph(object))$cex[edges] <- cex  
+  graph::edgeRenderInfo(Graph(object))$label <- eval(parse(text=mytext))
+  graph::edgeRenderInfo(Graph(object))$cex[edges] <- cex  
   return(object)
 }
 
@@ -127,7 +127,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
     return(object)
   }
   if (missing(type))
-    return(edgeRenderInfo(Graph(object))$label)
+    return(graph::edgeRenderInfo(Graph(object))$label)
   
   Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
   Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
@@ -177,7 +177,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
                                   expr=TRUE,
                                   debug=FALSE,...) {
   if (is.null(lab)) {
-    return(edgeRenderInfo(object)$label)
+    return(graph::edgeRenderInfo(object)$label)
   }
   if (class(to)[1]=="formula") {
     yy <- decomp.specials(getoutcome(to))
@@ -187,10 +187,10 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   }
 
   M <- as(object, Class="matrix")
-  nodes <- nodes(object)
+  nodes <- graph::nodes(object)
 
-  if (is.null(edgeRenderInfo(object)$label))
-    edgeRenderInfo(object)$label <- expression()
+  if (is.null(graph::edgeRenderInfo(object)$label))
+      graph::edgeRenderInfo(object)$label <- expression()
 
 
   if (!is.null(lab)) {
@@ -207,7 +207,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       if (length(labcol)!=length(estr2))
           labcol <- rep(labcol,length(estr2))  
 
-      curedges <- names(edgeRenderInfo(object)$label)
+      curedges <- names(graph::edgeRenderInfo(object)$label)
        Debug(estr,debug)
       
       estr2.idx <- which(estr2%in%curedges)
@@ -216,43 +216,43 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       estr2 <- estr2[estr2.idx]
       if (length(estr2)>0) {
         if (!is.null(lab))
-          edgeRenderInfo(object)$label[estr2] <- lab[estr2.idx]
+          graph::edgeRenderInfo(object)$label[estr2] <- lab[estr2.idx]
         if (!is.null(cex))
-        edgeRenderInfo(object)$cex[estr2] <- cex[estr2.idx]
+            graph::edgeRenderInfo(object)$cex[estr2] <- cex[estr2.idx]
         if (!is.null(col))
-          edgeRenderInfo(object)$col[estr2] <- col[estr2.idx]
+            graph::edgeRenderInfo(object)$col[estr2] <- col[estr2.idx]
         if (!is.null(lwd))
-          edgeRenderInfo(object)$lwd[estr2] <- lwd[estr2.idx]
+            graph::edgeRenderInfo(object)$lwd[estr2] <- lwd[estr2.idx]
         if (!is.null(lty))
-          edgeRenderInfo(object)$lty[estr2] <- lty[estr2.idx]
+            graph::edgeRenderInfo(object)$lty[estr2] <- lty[estr2.idx]
         if (!is.null(labcol))
-          edgeRenderInfo(object)$textCol[estr2] <- labcol[estr2.idx]
+            graph::edgeRenderInfo(object)$textCol[estr2] <- labcol[estr2.idx]
         if (!is.null(arrowhead))
-          edgeRenderInfo(object)$arrowhead[estr2] <- arrowhead[estr2.idx]
+            graph::edgeRenderInfo(object)$arrowhead[estr2] <- arrowhead[estr2.idx]
       }
       if (length(newstr)>0) {        
         
-        if (!is.null(lab))
-          edgeDataDefaults(object)$futureinfo$label[newstr] <-
-            lab[newstr.idx]
+          if (!is.null(lab))
+              graph::edgeDataDefaults(object)$futureinfo$label[newstr] <-
+                  lab[newstr.idx]
         if (!is.null(cex))
-          edgeDataDefaults(object)$futureinfo$cex[newstr] <-
-            cex[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$cex[newstr] <-
+                cex[newstr.idx]
         if (!is.null(col))
-          edgeDataDefaults(object)$futureinfo$col[newstr] <-
-            col[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$col[newstr] <-
+                col[newstr.idx]
         if (!is.null(lwd))
-          edgeDataDefaults(object)$futureinfo$lwd[newstr] <-
-            lwd[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$lwd[newstr] <-
+                lwd[newstr.idx]
         if (!is.null(lty))
-          edgeDataDefaults(object)$futureinfo$lty[newstr] <-
-            lty[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$lty[newstr] <-
+                lty[newstr.idx]
         if (!is.null(labcol))        
-          edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
-            labcol[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
+                labcol[newstr.idx]
         if (!is.null(arrowhead))        
-          edgeDataDefaults(object)$futureinfo$arrowhead[newstr] <-
-            arrowhead[newstr.idx]
+            graph::edgeDataDefaults(object)$futureinfo$arrowhead[newstr] <-
+                arrowhead[newstr.idx]
       }
       return(object)
     } 
@@ -268,7 +268,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
             st <- eval(parse(text=paste("expression(",lab[r,s],")",sep="")))
           else
             st <- lab[r,s]
-          edgeRenderInfo(object)$label[estr2] <- st
+          graph::edgeRenderInfo(object)$label[estr2] <- st
         }
       }
   }

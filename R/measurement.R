@@ -14,7 +14,7 @@ function(x, silent=TRUE, debug=FALSE) {
     relation <- M[obs.idx,ii]==1
     byNodes <- names(relation)[relation]
     newnodes <- c(latent(x)[i],byNodes)
-    g0 <- subGraph(newnodes, Graph(x))
+    g0 <- graph::subGraph(newnodes, Graph(x))
     lvm1 <- latent(graph2lvm(g0, debug=TRUE), latent(x)[i])
     g0fix<- x$fix[newnodes, newnodes]; lvm1$fix <- g0fix
     index(lvm1) <- reindex(lvm1)

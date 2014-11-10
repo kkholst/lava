@@ -1,7 +1,7 @@
 ##' @export
 `graph2lvm` <-
 function(g, debug=FALSE, silent=TRUE) {
-  res <- lvm(nodes(g), debug=debug,silent=silent)
+  res <- lvm(graph::nodes(g), debug=debug,silent=silent)
   M <- t(as(g, Class="matrix"))
   for (i in 1:nrow(M)) {
     if (any(M[,i]==1)) {      

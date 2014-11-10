@@ -54,12 +54,12 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
       x$mean <- newmean
     } else {
       if (lava.options()$sparse) {
-        x$M <- bdiag(x$M, newM) ## Add regression labels.R
-        x$cov <- bdiag(x$cov, newcov) ## Add covariance
-        x$par <- bdiag(x$par, newNA) ## Add regression labels
-        x$covpar <- bdiag(x$covpar, newNA) ## Add covariance labels
-        x$fix <- bdiag(x$fix, newNA)
-        x$covfix <- bdiag(x$covfix,  newNA)
+        x$M <- Matrix::bdiag(x$M, newM) ## Add regression labels.R
+        x$cov <- Matrix::bdiag(x$cov, newcov) ## Add covariance
+        x$par <- Matrix::bdiag(x$par, newNA) ## Add regression labels
+        x$covpar <- Matrix::bdiag(x$covpar, newNA) ## Add covariance labels
+        x$fix <- Matrix::bdiag(x$fix, newNA)
+        x$covfix <- Matrix::bdiag(x$covfix,  newNA)
 
       } else {
         x$M <- blockdiag(x$M, newM, pad=0) ## Add regression labels

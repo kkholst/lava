@@ -7,10 +7,10 @@ function(x,...) UseMethod("finalize")
 function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
 
   g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
-  nodeRenderInfo(g)$fill <- NA
-  nodeRenderInfo(g)$label <- NA
-  nodeRenderInfo(g)$label[vars(x)] <- vars(x)
-  nodeRenderInfo(g)$shape <- x$graphdef$shape
+  graph::nodeRenderInfo(g)$fill <- NA
+  graph::nodeRenderInfo(g)$label <- NA
+  graph::nodeRenderInfo(g)$label[vars(x)] <- vars(x)
+  graph::nodeRenderInfo(g)$shape <- x$graphdef$shape
   
     Lab <- NULL
     for (i in seq_len(length(x$noderender))) {
@@ -18,38 +18,38 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       if (length(nn)>0) {
         R <- list(as.list(x$noderender[[i]])); names(R) <- names(x$noderender)[i]        
         if (names(x$noderender)[i]!="label")
-          nodeRenderInfo(g) <- x$noderender[i]
+          graph::nodeRenderInfo(g) <- x$noderender[i]
         else Lab <- R[[1]]
       }
     }
     
     if (!is.null(Lab)) { ## Ugly hack to allow mathematical annotation
-      nn <- names(nodeRenderInfo(g)$label)
-      LL <- as.list(nodeRenderInfo(g)$label)
+      nn <- names(graph::nodeRenderInfo(g)$label)
+      LL <- as.list(graph::nodeRenderInfo(g)$label)
       LL[names(Lab)] <- Lab      
       if (any(unlist(lapply(LL,function(x) is.expression(x) || is.name(x) || is.call(x))))) {
-          nodeRenderInfo(g) <- list(label=as.expression(LL))
-      } else nodeRenderInfo(g) <- list(label=LL)      
-      names(nodeRenderInfo(g)$label) <- nn
-      ii <- which(names(nodeRenderInfo(g)$label)=="")
+          graph::nodeRenderInfo(g) <- list(label=as.expression(LL))
+      } else graph::nodeRenderInfo(g) <- list(label=LL)      
+      names(graph::nodeRenderInfo(g)$label) <- nn
+      ii <- which(names(graph::nodeRenderInfo(g)$label)=="")
       if (length(ii)>0)
-      nodeRenderInfo(g)$label <- nodeRenderInfo(g)$label[-ii]
+          graph::nodeRenderInfo(g)$label <- graph::nodeRenderInfo(g)$label[-ii]
     }
   
-    edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo    
-    edgeRenderInfo(g)$lty <- x$graphdef$lty
-    edgeRenderInfo(g)$lwd <- x$graphdef$lty
-    edgeRenderInfo(g)$col <- x$graphdef$col
-    edgeRenderInfo(g)$textCol <- x$graphdef$textCol
-    edgeRenderInfo(g)$arrowhead <- x$graphdef$arrowhead
-    edgeRenderInfo(g)$dir <- x$graphdef$dir
-    edgeRenderInfo(g)$arrowtail <- "none"
-    edgeRenderInfo(g)$cex <- x$graphdef$cex
-    edgeRenderInfo(g)$label <- x$graphdef$label
+  graph::edgeDataDefaults(g)$futureinfo <- x$edgerender$futureinfo    
+  graph::edgeRenderInfo(g)$lty <- x$graphdef$lty
+  graph::edgeRenderInfo(g)$lwd <- x$graphdef$lty
+  graph::edgeRenderInfo(g)$col <- x$graphdef$col
+  graph::edgeRenderInfo(g)$textCol <- x$graphdef$textCol
+  graph::edgeRenderInfo(g)$arrowhead <- x$graphdef$arrowhead
+  graph::edgeRenderInfo(g)$dir <- x$graphdef$dir
+  graph::edgeRenderInfo(g)$arrowtail <- "none"
+  graph::edgeRenderInfo(g)$cex <- x$graphdef$cex
+  graph::edgeRenderInfo(g)$label <- x$graphdef$label
     for (i in seq_len(length(x$edgerender))) {
       ee <- x$edgerender[[i]]
       if (length(ee)>0 && names(x$edgerender)[i]!="futureinfo") {
-        edgeRenderInfo(g)[names(x$edgerender)[i]][names(ee)] <- ee
+        graph::edgeRenderInfo(g)[names(x$edgerender)[i]][names(ee)] <- ee
       }
     }
   
@@ -58,7 +58,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
 
 
    if (unexpr) {
-    mylab <- as.character(edgeRenderInfo(g)$label); names(mylab) <- names(edgeRenderInfo(g)$label)
+    mylab <- as.character(graph::edgeRenderInfo(g)$label); names(mylab) <- names(graph::edgeRenderInfo(g)$label)
     g@renderInfo@edges$label <- as.list(mylab)
   } 
  
@@ -77,7 +77,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
 ##    x <- addattr(x,attr="shape",var=mu,val="none")      
   }
 
-  allEdges <- edgeNames(g)
+  allEdges <- graph::edgeNames(g)
   regEdges <- c()
   feedback <- c()
   A <- index(x)$A
@@ -88,7 +88,7 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
                           paste(var[i],"~",var[j], sep=""),
                           paste(var[j],"~",var[i], sep=""))
       if (A[j,i]==0 & x$M[j,i]!=0) {
-          g <- removeEdge(var[j],var[i],g)
+          g <- graph::removeEdge(var[j],var[i],g)
       }
       if (A[i,j]==1) regEdges <- c(regEdges,paste(var[i],"~",var[j], sep=""))
       if (A[j,i]==1) regEdges <- c(regEdges,paste(var[j],"~",var[i], sep=""))
@@ -104,11 +104,11 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
           if (covariance(x)$rel[r,s]==1 & (!any(c(var[r],var[s])%in%exogenous(x)))) {
             newedges <- c()
             if (A[r,s]!=1) {
-              g <- addEdge(var[r],var[s], g)
+              g <- graph::addEdge(var[r],var[s], g)
               newedges <- paste(var[r],"~",var[s], sep="")
             } else {
               if (A[s,r]!=1) {
-                g <- addEdge(var[s],var[r], g)
+                g <- graph::addEdge(var[s],var[r], g)
                 newedges <- c(newedges,paste(var[s],"~",var[r], sep=""))
               }
             }
@@ -127,15 +127,15 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     estr <- names(x$edgerender$futureinfo$label)
     estr <- estr[which(unlist(lapply(estr,nchar))>0)]
     revestr <- sapply(estr, function(y) paste(rev(unlist(strsplit(y,"~"))),collapse="~"))
-    revidx <- which(revestr%in%edgeNames(g))
+    revidx <- which(revestr%in%graph::edgeNames(g))
     count <- 0
     for (i in estr) {      
       count <- count+1
       for (f in names(x$edgerender$futureinfo)) {
-        if (count%in%revidx) {
-          g@renderInfo@edges[[f]][[revestr[count]]] <- x$edgerender$futureinfo[[f]][[i]]
+          if (count%in%revidx) {
+              g@renderInfo@edges[[f]][[revestr[count]]] <- x$edgerender$futureinfo[[f]][[i]]
         } else {
-          g@renderInfo@edges[[f]][[i]] <- x$edgerender$futureinfo[[f]][[i]]
+            g@renderInfo@edges[[f]][[i]] <- x$edgerender$futureinfo[[f]][[i]]
         }
       }
     }
@@ -157,13 +157,12 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
     arrowhead <- "closed"
     estr <- e
     for (f in c("col","cex","textCol","lwd","lty")) {
-      if (!(estr%in%names(edgeRenderInfo(g)[[f]]))
-          || is.na(edgeRenderInfo(g)[[f]][[estr]]))
+      if (!(estr%in%names(graph::edgeRenderInfo(g)[[f]]))
+          || is.na(graph::edgeRenderInfo(g)[[f]][[estr]]))
         g <- addattr(g,f,var=estr,
                      val=x$graphdef[[f]],
                      fun="edgeRenderInfo")      
     }
-
 
     if (addstyle) {
       g <- addattr(g,"lty",var=estr,val=lty,fun="edgeRenderInfo")
@@ -173,15 +172,15 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       g <- addattr(g,"arrowtail",var=estr,val=arrowtail,fun="edgeRenderInfo")
       g <- addattr(g,attr="fontsize",var=estr,val=fontsize1,fun="edgeRenderInfo")
     }
-    if (is.null(edgeRenderInfo(g)$label))
-      edgeRenderInfo(g)$label <- expression()
+    if (is.null(graph::edgeRenderInfo(g)$label))
+        graph::edgeRenderInfo(g)$label <- expression()
 
     if (!missing(cex))
       if (!is.null(cex))
-        nodeRenderInfo(g)$cex <- cex
+          graph::nodeRenderInfo(g)$cex <- cex
   }
   if (plain) {
-    g <- addattr(g,attr="shape",var=vars(x),val="none")      
+      g <- addattr(g,attr="shape",var=vars(x),val="none")      
   } else {    
     if (addcolor) {
       if (is.null(x$noderender$fill)) notcolored <- vars(x)
