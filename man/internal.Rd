@@ -4,6 +4,7 @@
 \alias{CoefMat.multigroupfit}
 \alias{IV}
 \alias{Inverse}
+\alias{NR}
 \alias{Specials}
 \alias{Weight}
 \alias{addattr}
@@ -15,6 +16,7 @@
 \alias{describecoef}
 \alias{dmvn}
 \alias{estimate.MAR}
+\alias{expit}
 \alias{finalize}
 \alias{fixsome}
 \alias{gaussian_logLik.lvm}
@@ -27,6 +29,7 @@
 \alias{index.lvmfit}
 \alias{index<-}
 \alias{lisrel}
+\alias{logit}
 \alias{matrices}
 \alias{merge}
 \alias{missingModel}
@@ -63,6 +66,7 @@
 \alias{subgraph}
 \alias{survival}
 \alias{survival<-}
+\alias{tigol}
 \alias{updatelvm}
 \alias{variances}
 \title{For internal use}

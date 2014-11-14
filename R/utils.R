@@ -408,9 +408,14 @@ numberdup <- function(xx) { ## Convert to numbered list
 }
 
 
+##' @export
 logit <- function(p) log(p/(1-p))
-expit <- tigol <- function(z) 1/(1+exp(-z))
 
+##' @export
+expit <- function(z) 1/(1+exp(-z))
+
+##' @export
+tigol <- expit
 
 extractvar <- function(f) {
     yy <- getoutcome(f)

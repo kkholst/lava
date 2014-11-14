@@ -28,20 +28,43 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 
 
 
-
-## X <- matrix(rbinom(400,3,0.5),20)
-## group <- rep(1:4,each=5)
-## images(X,colorbar=0,zlim=c(0,3))
-## images(X,group=group,zlim=c(0,3))
-## images(X,group=group,col=list(brewer.pal(4,"Purples"),
-##                                brewer.pal(4,"Greys"),
-##                                brewer.pal(4,"YlGn"),
-##                                brewer.pal(4,"PuBuGn")),colorbar=2,zlim=c(0,3))
-## images(list(X,X,X,X),group=group,zlim=c(0,3))
-## images(list(X,X,X,X),ncol=1,group=group,zlim=c(0,3))
-## images(list(X,X),group,axis2=c(FALSE,FALSE),axis1=c(FALSE,FALSE),
-##       mar=list(c(0,0,0,0),c(0,0,0,0)),yaxs="i",xaxs="i",zlim=c(0,3))
-
+##' Visualize categorical by group variable
+##' 
+##' @title Organize several image calls (for visualizing categorical data) 
+##' @param x data.frame or matrix
+##' @param group group variable
+##' @param ncol number of columns in layout
+##' @param byrow organize by row if TRUE
+##' @param colorbar Add color bar
+##' @param colorbar.space Space around color bar
+##' @param label.offset label offset
+##' @param order order
+##' @param colorbar.border Add border around color bar
+##' @param main Main title
+##' @param rowcol switch rows and columns
+##' @param plotfun Alternative plot function (instead of 'image') 
+##' @param axis1 Axis 1
+##' @param axis2 Axis 2
+##' @param mar Margins
+##' @param col Colours
+##' @param ... Additional arguments to lower level graphics functions
+##' @author Klaus Holst
+##' @examples
+##' X <- matrix(rbinom(400,3,0.5),20)
+##' group <- rep(1:4,each=5)
+##' images(X,colorbar=0,zlim=c(0,3))
+##' images(X,group=group,zlim=c(0,3))
+##' \dontrun{
+##' images(X,group=group,col=list(RColorBrewer::brewer.pal(4,"Purples"),
+##'                                RColorBrewer::brewer.pal(4,"Greys"),
+##'                                RColorBrewer::brewer.pal(4,"YlGn"),
+##'                                RColorBrewer::brewer.pal(4,"PuBuGn")),colorbar=2,zlim=c(0,3))
+##' }
+##' images(list(X,X,X,X),group=group,zlim=c(0,3))
+##' images(list(X,X,X,X),ncol=1,group=group,zlim=c(0,3))
+##' images(list(X,X),group,axis2=c(FALSE,FALSE),axis1=c(FALSE,FALSE),
+##'       mar=list(c(0,0,0,0),c(0,0,0,0)),yaxs="i",xaxs="i",zlim=c(0,3))
+##' @export
 images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label.offset=0.02,
                  order=TRUE,colorbar.border=0,main,rowcol=FALSE,plotfun=NULL,
                    axis1,axis2,mar,

@@ -15,6 +15,7 @@ kill                    Remove variables from (model) object.
 labels<-                Define labels of graph
 lvm                     Initialize new latent variable model
 makemissing             Create random missing data
+Missing			Add missing mechanism to model
 parpos                  Generic method for finding indeces of model parameters
 path                    Extract pathways in model graph
 plot.lvm                Plot path diagram
@@ -30,6 +31,7 @@ Model                   Extract model
 bootstrap               Generic bootstrap method
 bootstrap.lvm           Calculate bootstrap estimates of a lvm object
 confint.lvmfit          Calculate confidence limits for parameters
+contr			Create contrast matrices
 compare                 Statistical tests Performs Likelihood-ratio, Wald and score tests
 correlation             Generic method for extracting correlation coefficients of model object
 curereg                 Regression model for binomial data with unkown group of immortals
@@ -41,21 +43,26 @@ iid                     Extract i.i.d. decomposition (influence function) from m
 lava.options            Set global options for 'lava'
 modelsearch             Model searching
 multinomial		Estimate probabilities in contingency table
+or2prob			Convert OR (and marginal) to joint probabilities
 partialcor              Calculate partial correlations
 predict.lvm             Prediction in structural equation models
 scheffe			Simulatenous confidence bands (lm)
 sim                     Simulate model
 startvalues             Starting values
-contr			Create contrast matrices
+tetrachoric		Calculate tetrachoric correlations for joint probabilities
+
 
 ** Utilities
 
-%+%                     Concatenation operator
+%++%                    Concatenation operator
 %ni%                    Matching operator (x not in y) oposed to the '%in%'-operator (x in y)
 By                      Apply a Function to a Data Frame Split by Factors
 Col                     Generate a transparent RGB color
 Combine                 Report estimates across different models
+dsort			Sort data.frame according to variable(s)
 Expand                  Create a Data Frame from All Combinations of Factors
+getSAS			Read SAS output (ODS)
+getMplus		Read Mplus output
 Id                      Identify points on plot
 PD                      Dose response calculation for binomial regression models
 blockdiag               Combine matrices to block diagonal structure
@@ -66,6 +73,8 @@ dsort			Sort data frame
 org                     Convert object to ascii suitable for org-mode
 plotConf                Plot regression lines
 revdiag                 Create/extract 'reverse'-diagonal matrix
+surface			Visualize function surface
+ksmooth2		Estimate and visualize bivariate density 
 toformula               Converts strings to formula
 tr                      Trace operator
 trim                    Trim tring of (leading/trailing/all) white spaces

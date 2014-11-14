@@ -176,6 +176,7 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
 
 ###{{{ NR 2
 
+##' @export
 NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,backtrace=TRUE,
                      iter.max=200,tol=1e-9,stabil=FALSE,epsilon=1e-9)
