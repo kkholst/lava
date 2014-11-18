@@ -54,17 +54,18 @@ test_that("Multiple group constraints I", {
 test_that("Probit constraints", {
     if (!inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
         require("mets")
-        x <- transform(data.frame(lava:::rmvn(1000,sigma=0.5*diag(2)+0.5)),
-                       X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
-        m <- covariance(lvm(),X1~X2)
-        ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1
-        ordinal(m,K=3,constrain=list("t1","t2")) <- ~X2
-        ##        e <- estimate(m,x)
-        e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
-        estimate(e)
+        if (as.numeric(strsplit(b$Version,".",fixed=TRUE)[[1]][1])>0) { ## At least major version 1
+            x <- transform(data.frame(lava:::rmvn(1000,sigma=0.5*diag(2)+0.5)),
+                           X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
+            m <- covariance(lvm(),X1~X2)
+            ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1
+            ordinal(m,K=3,constrain=list("t1","t2")) <- ~X2
+            ##        e <- estimate(m,x)
+            e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
+            estimate(e)
+        }
     }   
 })
-
 
 test_that("Multiple group constraints II", {
   data(twindata)
