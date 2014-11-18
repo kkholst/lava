@@ -1,18 +1,19 @@
-* Version 1.3 <2014-11-10 Mon>
+* Version 1.3 <2014-11-18 Tue>
   - New syntax for categorical predictors (method 'categorical' and
     argument 'additive=FALSE' with 'regression method)
-  - Argument 'intervals' added to 'ones.lvm' for piece-wise effects
+  - Argument 'intervals' added to 'ones.lvm' for piece-wise constant effects
   - Argument 'average=TRUE' now needed for empirical averages in estimate.default
   - Fixed a bug in score.glm (with weights and offset) introduced in version 1.2.6
   - estimate.default:
     - small-sample corrections
-    - Default id from row names in estimate.default (used with merge)
-    - iid decompostion also returned for hypothesis contrast 
+    - Default id from row names in estimate.default (used with merge method)
+    - iid decompostion also returned for hypothesis contrasts 
     - keep argument added to estimate.default and merge
+    - labels argument added to estimate.default
   - 'images' function for visualization of tabular data added to namespace
-  - 'ksmooth' and 'surface' for surface estimation and visualization
+  - 'ksmooth' and 'surface' for surface estimation and visualization of bivariate data and functions
+  - 'dsort': Sort data.frames
   - general multivariate distributions in simulations. see example in 'sim'
-  - labels argument added to estimate.default
   - 'or2prob', 'tetrachoric' for conversion from OR to probabilities
     (and tetrachoric correlations).
     'prob.normal': calculates probabilities from threshold model given thresholds and variance
@@ -22,7 +23,6 @@
   - Multiple testing routines: closed.testing, p.correct, ...
   - 'Missing' method updated with a simple 'suffix' argument
   - Back-tracing updated in Newton-Raphson routine
-  - 'dsort': Sort data.frames
 
 * Version 1.2.6 <2014-05-07 Wed>
   - New 'stack' function for two-stage estimation (via 'estimate' objects)
