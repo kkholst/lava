@@ -54,7 +54,7 @@ test_that("Multiple group constraints I", {
 test_that("Probit constraints", {
     if (!inherits(try(find.package("mets"),silent=TRUE),"try-error")) {
         require("mets")
-        if (as.numeric(strsplit(b$Version,".",fixed=TRUE)[[1]][1])>0) { ## At least major version 1
+        if (as.numeric(strsplit(sessionInfo()$otherPkgs$mets$Version,".",fixed=TRUE)[[1]][1])>0) { ## At least major version 1
             x <- transform(data.frame(lava:::rmvn(1000,sigma=0.5*diag(2)+0.5)),
                            X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
             m <- covariance(lvm(),X1~X2)
