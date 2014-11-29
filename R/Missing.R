@@ -13,7 +13,7 @@
 ##' is used as the name of the latent (full-data) name, and the
 ##' observed data name is 'missing.data'
 ##' @param Rformula Missing data mechanism with left hand side
-##' specifying the name of the missing value indicator (may also just
+##' specifying the name of the observed data indicator (may also just
 ##' be given as a character instead of a formula)
 ##' @param missing.name Name of observed data variable (only used if
 ##' 'formula' was given as a character specifying the name of the
@@ -74,6 +74,7 @@ Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
         out
     }
     regression(object) <- Rformula
+    transform(object,indicatorname) <- function(x) 1-x
     object
 }
 
