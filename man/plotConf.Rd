@@ -88,6 +88,8 @@ y <- 5 + 2*x0 + 0.5*x1 + -1*(x2=="B")*x1 + 0.5*(x2=="B") + rnorm(n, sd=0.25)
 dd <- data.frame(y=y, x1=x1, x2=x2)
 lm0 <- lm(y ~ x0 + x1*x2, dd)
 plotConf(lm0, var1="x1", var2="x2")
+abline(a=5,b=0.5,col="red")
+abline(a=5.5,b=-0.5,col="red")
 ### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)
 
 data(iris)

@@ -47,6 +47,8 @@
 ##' dd <- data.frame(y=y, x1=x1, x2=x2)
 ##' lm0 <- lm(y ~ x0 + x1*x2, dd)
 ##' plotConf(lm0, var1="x1", var2="x2")
+##' abline(a=5,b=0.5,col="red")
+##' abline(a=5.5,b=-0.5,col="red")
 ##' ### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)
 ##' 
 ##' data(iris)
@@ -87,13 +89,15 @@ plotConf <- function(model,
     } else {
         intercept <- coef(model)["(Intercept)"]
     }
-    if (is.na(intercept) & !is.null(var2)) {
-        model <- update(model,.~.+1)
-        warning("Refitted model with an intercept term")
-        intercept <- coef(model)["(Intercept)"]  
-    }
+    if (is.na(intercept))
+        intercept <- 0
+    ##& !is.null(var2)) {
+    ## model <- update(model,.~.+1)
+    ## warning("Refitted model with an intercept term")
+    ## intercept <- coef(model)["(Intercept)"]
+    ##}
     if (is.null(data)) {
-        curdata <- model.frame(model)
+        curdata <- get_all_vars(model,data=model.frame(model))
     } else {
         curdata <- get_all_vars(formula(model), data)
     }
@@ -132,7 +136,7 @@ plotConf <- function(model,
     xx <- c()
 
     newdata <- data.frame(id=seq(npoints))
-    partdata <- curdata[,-1,drop=FALSE]
+    partdata <- curdata
     for (nn in cname) {
         v <- curdata[,nn]
         if (!is.null(var1) && nn==var1) {
@@ -157,13 +161,11 @@ plotConf <- function(model,
     };
     colnames(newdata) <- c("_id", cname)
     partdata[,response] <- newdata[,response] <- 0
-
     newdata <- model.frame(model,data=newdata)
     partdata <- model.frame(model,data=partdata)
     
     Y <- model.frame(model)[,1]
     if(class(Y)=="Surv") Y <- Y[,1] 
-
     XX <- model.matrix(formula(terms(model)),data=newdata)
     XX0 <- model.matrix(formula(terms(model)),data=partdata)
     if ("mer"%in%class(model)) {
@@ -204,12 +206,13 @@ plotConf <- function(model,
         R <- R-uz
     }
     
-    intercept <- bb["(Intercept)"]
+    ##intercept <- 0 ##bb["(Intercept)"]
     pr <- trans(intercept + R)
     
     intercept0 <- 0
     if (is.na(intercept)) {
         intercept <- 0
+
         if (!is.null(var2)) {
             intercept <- coef(model)[paste(var2,thelevels,sep="")][as.numeric(curdata[,var2])]
             intercept0 <- coef(model)[paste(var2,thelevels[1],sep="")]
