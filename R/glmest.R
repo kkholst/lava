@@ -97,7 +97,7 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 
 ##' @export
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,offset=NULL,...) {
+                      y,X,offset=NULL,weight=NULL,...) {
   response <- all.vars(formula(x))[1]
   sigma2 <- summary(x)$sigma^2
   if (missing(data)) {
@@ -107,12 +107,14 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
       X <- model.matrix(formula(x),data=data)
       y <- model.frame(formula(x),data=data)[,1]
   }    
-  offset <- x$offset
   n <- nrow(X)  
   if(any(is.na(p))) stop("Over-parameterized model")
   Xbeta <- X%*%p
+  if (is.null(offset)) offset <- x$offset
   if (!is.null(offset)) Xbeta <- Xbeta+offset
   r <- y-Xbeta
+  if (is.null(weight)) weight <- x$weight
+  if (!is.null(weight)) r <- r*weight
   A <- as.vector(r)/sigma2 
   S <- apply(X,2,function(x) x*A)
   if (!indiv) return(colSums(S))
@@ -178,7 +180,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   if (!indiv) return(colSums(S))
   attributes(S)$bread <- vcov(x)
   if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
-      attributes(S)$bread <- Inverse(information.glm(x))
+      attributes(S)$bread <- -Inverse(information.glm(x))
   return(S)
 }
 
