@@ -52,7 +52,11 @@ versioncheck <- function(pkg,geq,sep=".",...) {
         as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
         error=function(x) NULL)
     if (is.null(xyz)) return(FALSE)
-    all(xyz[seq(length(geq))]>=geq)
+    for (i in seq_along(xyz)) {
+        if (xyz[i]>geq[i]) return(TRUE)
+        if (xyz[i]<geq[i]) return(FALSE)
+    }
+    return(TRUE)
 }
 
 lava.env <- new.env()
