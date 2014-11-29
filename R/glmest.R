@@ -97,7 +97,7 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
 
 ##' @export
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,offset=NULL,weight=NULL,...) {
+                      y,X,offset=NULL,weights=NULL,...) {
   response <- all.vars(formula(x))[1]
   sigma2 <- summary(x)$sigma^2
   if (missing(data)) {
@@ -113,8 +113,8 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
   if (is.null(offset)) offset <- x$offset
   if (!is.null(offset)) Xbeta <- Xbeta+offset
   r <- y-Xbeta
-  if (is.null(weight)) weight <- x$weight
-  if (!is.null(weight)) r <- r*weight
+  if (is.null(weights)) weights <- x$weights
+  if (!is.null(weights)) r <- r*weights
   A <- as.vector(r)/sigma2 
   S <- apply(X,2,function(x) x*A)
   if (!indiv) return(colSums(S))
@@ -124,7 +124,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
 
 ##' @export
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,link,dispersion,offset=NULL,weight,...) {
+                      y,X,link,dispersion,offset=NULL,weights,...) {
 
   response <- all.vars(formula(x))[1]
   if (inherits(x,"glm")) {
@@ -173,9 +173,9 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,
   r <- y-pi
   A <- as.vector(h(Xbeta)*r)/a.phi 
   S <- apply(X,2,function(x) x*A)
-  if (!is.null(x$prior.weights) || !missing(weight)) {
-      if (missing(weight)) weight <- x$prior.weights
-      S <- apply(S,2,function(x) x*weight)
+  if (!is.null(x$prior.weights) || !missing(weights)) {
+      if (missing(weights)) weights <- x$prior.weights
+      S <- apply(S,2,function(x) x*weights)
   }
   if (!indiv) return(colSums(S))
   attributes(S)$bread <- vcov(x)
