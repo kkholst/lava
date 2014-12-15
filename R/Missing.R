@@ -70,11 +70,10 @@ Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
         distribution(object,indicatorname) <- binomial.lvm(...)
     transform(object,newf) <- function(u){
         out <- u[,1]
-        out[u[,2]==1] <- NA
+        out[u[,2]==0] <- NA
         out
     }
     regression(object) <- Rformula
-    transform(object,indicatorname) <- function(x) 1-x
     object
 }
 
