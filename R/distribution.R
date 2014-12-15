@@ -138,8 +138,43 @@ poisson.lvm <- function(link="log",lambda,...) {
         rpois(n,fam$linkinv(mu))
     }
     if (!missing(lambda)) attr(f,"mean") <- fam$linkfun(lambda)
+          if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
+      if (!is.null(attributes(value)$variance)) variance(x,variable) <- attributes(value)$variance
+
     attr(f,"family") <- fam
     attr(f,"var") <- FALSE  
+    return(f)  
+} 
+
+###}}} poisson
+
+###{{{ pareto
+
+## @examples
+## m <- lvm()
+## categorical(m,K=3) <- ~x
+## distribution(m,~y) <- pareto.lvm(lambda=1)
+## regression(m,additive=FALSE) <- y~x
+## regression(m) <- y~z
+## d <- sim(m,1e4,p=c("y~x:0"=1,"y~x:1"=1,"y~x:2"=exp(1)))
+## 
+## X <- model.matrix(y~-1+factor(x)+z,data=d)
+## mlogL <- function(theta) {
+##     lambda <- exp(theta[1])
+##     mu <- exp(X%*%theta[-1])
+##     -sum(log(lambda*mu*(1+mu*d$y)^{-lambda-1}))
+## }
+## nlminb(rep(0,ncol(X)+1),mlogL)
+##' @export
+pareto.lvm <- function(lambda=1,...) {   ## shape: lambda, scale: mu
+    ## Density f(y): lambda*mu*(1+mu*y)^{-lambda-1}
+    ## Survival S(y): (1+mu*y)^{-lambda}
+    ## Inverse CDF: u -> ((1-u)^{-1/lambda}-1)/mu
+    f <- function(n,mu,var,...) {        
+        ((1-runif(n))^(-1/lambda)-1)/exp(mu)
+    }
+    attr(f,"family") <- list(family="pareto",
+                             par=c(lambda=lambda))
     return(f)  
 } 
 
@@ -336,3 +371,5 @@ ones.lvm <- function(p=0,interval=NULL) {
   return(f)
 }
 ###}}} ones
+
+###}}}

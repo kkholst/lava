@@ -26,6 +26,7 @@
 \alias{lognormal.lvm}
 \alias{normal.lvm}
 \alias{ones.lvm}
+\alias{pareto.lvm}
 \alias{poisson.lvm}
 \alias{probit.lvm}
 \alias{sequence.lvm}
