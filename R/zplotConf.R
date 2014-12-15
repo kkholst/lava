@@ -89,8 +89,7 @@ plotConf <- function(model,
     } else {
         intercept <- coef(model)["(Intercept)"]
     }
-    if (is.na(intercept))
-        intercept <- 0
+    if (is.na(intercept)) intercept <- 0
     ##& !is.null(var2)) {
     ## model <- update(model,.~.+1)
     ## warning("Refitted model with an intercept term")
@@ -196,23 +195,24 @@ plotConf <- function(model,
     z <- qnorm(1-(1-level)/2)
     ci.all$fit <- cbind(ci.all$fit,ci.all$fit-z*ci.all$se.fit,ci.all$fit+z*ci.all$se.fit)
 
+    ##residuals(model,type="response") ##
     R <- Y-XX0%*%bb
+    ## zero <- bb; zero[-1] <- 0
+    ## intercept <- (model.matrix(model,curdata[1,,])%*%zero)[1]
+   
     if (!missing(predictfun)) {        
         R <- Y-predict(model, newdata=partdata)
-        ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
+        ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)        
     }
     if ("mer"%in%class(model)) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
         R <- R-uz
     }
     
-    ##intercept <- 0 ##bb["(Intercept)"]
-    pr <- trans(intercept + R)
-    
+    pr <- trans(intercept + R)    
     intercept0 <- 0
     if (is.na(intercept)) {
         intercept <- 0
-
         if (!is.null(var2)) {
             intercept <- coef(model)[paste(var2,thelevels,sep="")][as.numeric(curdata[,var2])]
             intercept0 <- coef(model)[paste(var2,thelevels[1],sep="")]
