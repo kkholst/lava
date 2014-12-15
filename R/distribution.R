@@ -138,11 +138,9 @@ poisson.lvm <- function(link="log",lambda,...) {
         rpois(n,fam$linkinv(mu))
     }
     if (!missing(lambda)) attr(f,"mean") <- fam$linkfun(lambda)
-          if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
-      if (!is.null(attributes(value)$variance)) variance(x,variable) <- attributes(value)$variance
-
     attr(f,"family") <- fam
-    attr(f,"var") <- FALSE  
+    attr(f,"var") <- FALSE
+    browser()
     return(f)  
 } 
 
