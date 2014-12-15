@@ -3,7 +3,9 @@
   - plotConf updated with support for special function terms in the
     model (I, poly, ns, ...). Old version is available (not in
     namespace) as lava:::plotConf0.
-  - 
+  - pareto distribution
+  - stack updated ...
+  - measurement.error
 
 * Version 1.3.0 <2014-11-18 Tue>
   - New syntax for categorical predictors (method 'categorical' and

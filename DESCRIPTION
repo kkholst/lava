@@ -6,7 +6,7 @@ Date: 2014-12-01
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Estimation and simulation of latent variable models
-URL: http://lava.r-forge.r-project.org/
+URL: https://github.com/kkholst/lava
 License: GPL-3
 LazyLoad: yes
 Depends:

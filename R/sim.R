@@ -18,6 +18,7 @@
 ##' gaussian.lvm
 ##' probit.lvm
 ##' logit.lvm
+##' pareto.lvm
 ##' student.lvm
 ##' chisq.lvm
 ##' coxGompertz.lvm
