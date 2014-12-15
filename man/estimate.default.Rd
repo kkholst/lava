@@ -3,7 +3,6 @@
 \alias{estimate.default}
 \alias{estimate.estimate}
 \alias{merge.estimate}
-\alias{stack.estimate}
 \title{Estimation of functional of parameters}
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,

@@ -117,7 +117,7 @@ estimate.list <- function(x,...) {
 ##' 
 ##' iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 ##' iid(merge(l1,l2,l3,id=FALSE)) # independence
-##' @aliases estimate.default estimate.estimate merge.estimate stack.estimate
+##' @aliases estimate.default estimate.estimate merge.estimate
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FALSE,subset,
