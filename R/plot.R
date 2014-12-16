@@ -62,7 +62,7 @@
 ##' regression(m) <- eta ~ z+x2
 ##' regression(m) <- c(eta,z) ~ x1
 ##' latent(m) <- ~eta
-##' plot(lava:::beautify(m,edgecol=F))
+##' plot(lava:::beautify(m,edgecol=FALSE))
 ##' }
 ##'
 ##' 

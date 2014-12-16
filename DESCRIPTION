@@ -25,6 +25,7 @@ Suggests:
     gof (>= 0.9),
     foreach,
     rgl,
+    fields,
     survival,
     testthat,
     ascii
