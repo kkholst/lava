@@ -16,13 +16,13 @@ dmvn <- function(x,mean=rep(0,ncol(sigma)),sigma,log=FALSE,...) {
 }
 
 
-normal_method.lvm <- "nlminb0"
+normal_method.lvm <- "nlminb2"
 
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
-    set.seed(1)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
+    set.seed(1)
     y.idx <- lava::index(x)$endo.idx
     y <- lava::endogenous(x)
     ord <- lava::ordinal(x)
@@ -78,9 +78,27 @@ normal_logLik.lvm <- function(object,p,data,weight2,...) {
 }
 
 normal_gradient.lvm <- function(x,p,data,weight2,indiv=FALSE,...) {
+    if  (is.null(ordinal(x))) {
+        D <- deriv.lvm(x,p=p)
+        M <- moments(x,p)
+        Y <- as.matrix(data[,manifest(x)])
+        mu <- t(M$xi)%x%rep(1,nrow(d))
+        ss <- -mets::scoreMVN(Y,mu,M$C,D$dxi,D$dS)
+        if (!indiv) return(colSums(ss))
+        return(ss)
+    }
     if (indiv) {
         return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,indiv=TRUE,...),p,method=lava.options()$Dmethod))
     }
     numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,...),p,method=lava.options()$Dmethod)
 }
 
+normal_hessian.lvm <- function(x,p,n,...) {
+    ##return(numDeriv::jacobian(function(p0) normal_gradient.lvm(x,p=p0,data=data,indiv=FALSE,...),p,method=lava.options()$Dmethod))
+    dots <- list(...); dots$weight <- NULL  
+    do.call("information", c(list(x=x,p=p,n=n),dots))
+    ## S <- normal_gradient.lvm(x,p=p,data=data,indiv=TRUE,...)
+    ## J <- t(S)%*%S
+    ## attributes(J)$grad <- colSums(S)
+    ## return(J)  
+}
