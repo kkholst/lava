@@ -19,11 +19,12 @@ or the =igraph= package
 install.packages("igraph",dependencies=TRUE)
 #+END_SRC
 
-The development version may be installed directly from [[https://r-forge.r-project.org/projects/lava/][R-forge]]:
+The development version may be installed directly from =github=:
 #+BEGIN_SRC R :exports both :eval never
-install.packages("lava", repos="http://R-Forge.R-project.org")
+devtools::install_github("kkholst/lava")
 #+END_SRC
-or github 
+
+or download the source code from
 #+BEGIN_EXAMPLE
 git@github.com:kkholst/lava.git
 #+END_EXAMPLE
@@ -66,7 +67,6 @@ To cite that =lava= package please use the following reference
   plot(m)
 #+END_SRC
 
-#+RESULTS[<2013-04-30 23:38:24> 7568e0bf059c90570390f8966101e0187c02d181]:
 :RESULTS:
 [[file:examples/lava1.png]]
 :END:
@@ -117,7 +117,6 @@ Residual Variances:
   plot(g)
 #+END_SRC
 
-#+RESULTS[<2013-04-30 23:38:26> c7f8f4a89418d60417bd44cfdf351e0d8cf25e30]:
 :RESULTS:
 [[file:examples/gof1.png]]
 :END:
@@ -130,7 +129,7 @@ Residual Variances:
 #+TITLE: The lava and mets packages
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
-#+PROPERTY: cache yes
+#+PROPERTY: cache no
 #+PROPERTY: results output graphics wrap 
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
