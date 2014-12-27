@@ -1,5 +1,4 @@
-* Latent Variable Models (=lava=)
-  Estimation and simulation of latent variable models
+Estimation and simulation of latent variable models
   
 ** Installation
 #+BEGIN_SRC R :exports both :eval never
@@ -33,13 +32,14 @@ git@github.com:kkholst/lava.git
 
 To cite that =lava= package please use the following reference
 
-#+BEGIN_EXAMPLE
+#+BEGIN_QUOTE
   Klaus K. Holst and Esben Budtz-Joergensen (2013). 
   Linear Latent Variable Models: The lava-package. 
   Computational Statistics 28 (4), pp 1385-1453. 
   http://dx.doi.org/10.1007/s00180-012-0344-y
+#+END_QUOTE
 
-  BibTeX:
+#+BEGIN_BIBTEX
   @Article{lava,
     title = {Linear Latent Variable Models: The lava-package},
     author = {Klaus K. Holst and Esben Budtz-Joergensen},
@@ -50,7 +50,7 @@ To cite that =lava= package please use the following reference
     journal = {Computational Statistics},
     note = {http://dx.doi.org/10.1007/s00180-012-0344-y},
   }
-#+END_EXAMPLE
+#+END_BIBTEX
 
 ** Examples
 
@@ -126,7 +126,7 @@ Residual Variances:
 
 * COMMENT Setup
 
-#+TITLE: The lava and mets packages
+#+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
 #+PROPERTY: cache no
