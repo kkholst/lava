@@ -8,8 +8,8 @@ parsedesign <- function(coef,x,...) {
     expr <- suppressWarnings(inherits(try(x,silent=TRUE),"try-error"))
     if (expr) {
         ee <- c(deparse(substitute(x)), sapply(dots, deparse))
-    } else {
-        ee <- c(deparse(x), sapply(dots, deparse))
+    } else {        
+        ee <- c(deparse(x), sapply(dots, function(x) deparse(as.character(x))))
     }
     res <- c()
     for (e in ee) {
@@ -22,7 +22,9 @@ parsedesign <- function(coef,x,...) {
             if (is.na(val)) {
                 val <- switch(val0,"-"=-1,1)
             }
-            Val[match(ff[2*i],coef)] <- val
+            par0 <- ff[2*i]
+            par0int <- suppressWarnings(as.integer(par0))
+            if (!is.na(par0int)) Val[par0int] <- val else Val[match(par0,coef)] <- val
         }
         res <- rbind(res,Val)
     }
