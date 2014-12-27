@@ -15,6 +15,7 @@ estimate.list <- function(x,...) {
 ##' LRT (when \code{f} is not a function)...
 ##' @param x model object (\code{glm}, \code{lvmfit}, ...)
 ##' @param f transformation of model parameters and (optionally) data, or contrast matrix (or vector)
+##' @param ... additional arguments to lower level functions
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to iid decomposition of model parameters. 
 ##' @param iddata (optional) id-variable for 'data'
@@ -30,9 +31,11 @@ estimate.list <- function(x,...) {
 ##' @param null (optional) Null hypothesis to test 
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
 ##' @param coef (optional) parameter coefficient
+##' @param robust If TRUE robust standard errors are calculated. If
+##' FALSE p-values for linear models are calculated from t-distribution
+##' @param df Degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function
 ##' @param labels (optional) names of coefficients
-##' @param ... additional arguments to lower level functions
 ##' @export
 ##' @examples
 ##' 
@@ -54,6 +57,10 @@ estimate.list <- function(x,...) {
 ##' estimate(g,rbind(c(1,1,0),c(1,0,2)))
 ##' estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
 ##' estimate(g,2:3) ## same as rbind(c(0,1,0),c(0,0,1))
+##' ## Alternative syntax
+##' estimate(g,"z","z"-"x",2*"z"-3*"x")
+##' ## Usual (non-robust) confidence intervals
+##' estimate(g,robust=FALSE)
 ##' 
 ##' ## Transformations
 ##' estimate(g,function(p) p[1]+p[2])
@@ -65,7 +72,7 @@ estimate.list <- function(x,...) {
 ##' 
 ##' ## Label new parameters
 ##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
-##'
+##' ##'
 ##' ## Multiple group
 ##' m <- lvm(y~x)
 ##' m <- baptize(m)
@@ -120,11 +127,22 @@ estimate.list <- function(x,...) {
 ##' @aliases estimate.default estimate.estimate merge.estimate
 ##' @method estimate default
 ##' @export
-estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FALSE,subset,
+estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average=FALSE,subset,
                              score.deriv,level=0.95,iid=TRUE,
                              type=c("robust","df","mbn"),
                              keep,
-                             contrast,null,vcov,coef,print=NULL,labels,...) {
+                             contrast,null,vcov,coef,
+                             robust=TRUE,df=NULL,
+                             print=NULL,labels) {
+    expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
+    if (!missing(coef)) {
+        pp <- coef
+    } else {
+        pp <- suppressWarnings(try(stats::coef(x),"try-error"))
+    }
+    if (expr || is.character(f)) {        
+        f <- parsedesign(names(pp),substitute(f),...)
+    }
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
         contrast <- f; f <- NULL
@@ -199,7 +217,10 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         if (!is.null(data)) idstack <- rownames(data)
     }
     if (!is.null(iidtheta)) rownames(iidtheta) <- idstack
-
+    if (!robust) {
+        if (inherits(x,"lm") && family(x)$family=="gaussian" && is.null(df)) df <- x$df.residual
+        if (missing(vcov)) vcov <- stats::vcov(x)
+    }    
     if (!is.null(iidtheta) && missing(vcov)) {
         ## if (is.null(f))
         V <- crossprod(iidtheta)
@@ -231,11 +252,6 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         } else {
             V <- stats::vcov(x)
         }
-    }
-    if (!missing(coef)) {
-        pp <- coef
-    } else {
-        pp <- stats::coef(x)
     }
 
     if (!is.null(f)) {
@@ -351,10 +367,16 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
     }
 
     if (length(pp)==1) res <- rbind(c(pp,diag(V)^0.5)) else res <- cbind(pp,diag(V)^0.5)
-    if (is.null(f) || missing(null))
-        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)*2))
-    else 
-        res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2],(pnorm(abs(res[,1]-null)/res[,2],lower.tail=FALSE))*2)
+    beta0 <- res[,1]
+    if (!is.null(f) && !missing(null)) beta0 <- beta0-null
+    if (!is.null(df)) {
+        za <- qt(1-alpha/2,df=df)
+        pval <- 2*pt(abs(res[,1]/res[,2]),df=df,lower.tail=FALSE)
+    } else {
+        za <- qnorm(1-alpha/2)
+        pval <- 2*pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)
+    }
+    res <- cbind(res,res[,1]-za*res[,2],res[,1]+za*res[,2],pval)
     colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
     if (!is.null(nn)) {
         rownames(res) <- nn
@@ -362,7 +384,7 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
         nn <- attributes(res)$varnames
         if (!is.null(nn)) rownames(res) <- nn
         if (is.null(rownames(res))) rownames(res) <- paste("p",seq(nrow(res)),sep="")
-    }
+    }    
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
     if (iid) res$iid <- iidtheta
@@ -377,14 +399,20 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
                 contrast <- diag(nrow=p)[cont,,drop=FALSE]
             }
         }
-        cc <- compare(res,contrast=contrast,null=null,vcov=V,level=level)
+        cc <- compare(res,contrast=contrast,null=null,vcov=V,level=level,df=df)
         res <- structure(c(res, list(compare=cc)),class="estimate")
-        res$coefmat <- with(cc, cbind(estimate,
-                                      (pnorm(abs(estimate[,1]-null)/estimate[,2],lower.tail=FALSE)*2)));
+        if (!is.null(df)) {
+            pval <- with(cc,pt(abs(estimate[,1]-null)/estimate[,2],df=df,lower.tail=FALSE)*2)
+        } else {
+            pval <- with(cc,pnorm(abs(estimate[,1]-null)/estimate[,2],lower.tail=FALSE)*2)
+        }
+        res$coefmat <- with(cc, cbind(estimate,pval))
         colnames(res$coefmat)[5] <- "P-value"
         rownames(res$coefmat) <- cc$cnames
-        res$iid <- res$iid%*%t(contrast)
-        colnames(res$iid) <- cc$cnames
+        if (!is.null(res$iid)) {            
+            res$iid <- res$iid%*%t(contrast)
+            colnames(res$iid) <- cc$cnames
+        }
         res$compare$estimate <- NULL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
@@ -392,12 +420,12 @@ estimate.default <- function(x=NULL,f=NULL,data,id,iddata,stack=TRUE,average=FAL
     if (!missing(keep) && !is.null(keep)) {
         res$coef <- res$coef[keep]
         res$coefmat <- res$coefmat[keep,,drop=FALSE]
-        res$iid <- res$iid[,keep,drop=FALSE]
+        if (!is.null(res$iid)) res$iid <- res$iid[,keep,drop=FALSE]
         res$vcov <- res$vcov[keep,keep,drop=FALSE]
     }
     if (!missing(labels)) {
         names(res$coef) <- labels
-        colnames(res$iid) <- labels
+        if (!is.null(res$iid)) colnames(res$iid) <- labels
         colnames(res$vcov) <- rownames(res$vcov) <- labels
         rownames(res$coefmat) <- labels
     }
@@ -456,4 +484,6 @@ iid.estimate <- function(x,...) {
 model.frame.estimate <- function(formula,...) {
     NULL
 }
+
+
 

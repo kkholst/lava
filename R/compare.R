@@ -2,7 +2,7 @@
 ##' 
 ##' Performs Likelihood-ratio, Wald and score tests
 ##'
-##' @aliases compare contrmat
+##' @aliases compare
 ##' @export
 ##' @param object \code{lvmfit}-object
 ##' @param \dots Additional arguments to low-level functions
@@ -36,7 +36,7 @@
 compare <- function(object,...) UseMethod("compare")
 
 ##' @export
-compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.95) {
+compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.95,df=NULL) {
   if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
       if (!missing(contrast) && is.character(contrast)) par <- contrast
       contrast <- rep(0,length(coef(object)))
@@ -68,7 +68,8 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     V <- B%*%Sigma%*%t(B)
     ct <- cbind(Bp,diag(V)^.5)
     p <- 1-(1-level)/2
-    ct <- cbind(ct,ct[,1] + qnorm(p)*cbind(-1,1)%x%ct[,2])
+    qp <- if(!is.null(df)) qt(p,df=df) else qnorm(p)
+    ct <- cbind(ct,ct[,1] + qp*cbind(-1,1)%x%ct[,2])
     colnames(ct) <- c("Estimate","Std.Err",paste(c(1-p,p)*100,"%",sep=""))
     rownames(ct) <- rep("",nrow(ct))
     Q <- t(Bp-null)%*%Inverse(V)%*%(Bp-null)
