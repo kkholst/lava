@@ -369,7 +369,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
 
     if (length(pp)==1) res <- rbind(c(pp,diag(V)^0.5)) else res <- cbind(pp,diag(V)^0.5)
     beta0 <- res[,1]
-    if (!is.null(f) && !missing(null)) beta0 <- beta0-null
+    if (!missing(null)) beta0 <- beta0-null
     if (!is.null(df)) {
         za <- qt(1-alpha/2,df=df)
         pval <- 2*pt(abs(res[,1]/res[,2]),df=df,lower.tail=FALSE)
@@ -389,7 +389,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
     if (iid) res$iid <- iidtheta
-    if (is.null(f) && (!missing(contrast) | !missing(null))) {
+    if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)    
         if (missing(contrast)) contrast <- diag(p)
         if (missing(null)) null <- 0
@@ -447,8 +447,19 @@ print.estimate <- function(x,digits=3,width=25,...) {
     cc <- x$coefmat
     rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
                                                function(x) toString(x,width=width))))
-    print(cc,digits=digits,...)
-    if (!is.null(x$compare)) print(x$compare)    
+    print(cc,digits=digits,...)    
+    if (!is.null(x$compare)) {        
+        cat("\n",x$compare$method[3],"\n")
+        cat(paste(" ",x$compare$method[-(1:3)],collapse="\n"),"\n")
+        if (length(x$compare$method)>4) {
+            out <- character()
+            out <- with(x$compare, c(out, paste(names(statistic), "=", format(round(statistic, 4)))))
+            out <- with(x$compare, c(out, paste(names(parameter), "=", format(round(parameter,3)))))
+            fp  <- with(x$compare, format.pval(p.value, digits = digits))
+            out <- c(out, paste("p-value", if (substr(fp, 1L, 1L) == "<") fp else paste("=", fp)))
+            cat(" ",strwrap(paste(out, collapse = ", ")), sep = "\n")
+        }
+    }
 }
 
 ##' @export
