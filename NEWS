@@ -6,6 +6,11 @@
   - pareto distribution
   - stack updated ...
   - measurement.error
+  - pratio flyttet over fra errvar?
+  - andre ting fra guts?
+  - estimate.default new syntax for contrast
+  - parsedesign
+  - normal gradient
 
 * Version 1.3.0 <2014-11-18 Tue>
   - New syntax for categorical predictors (method 'categorical' and

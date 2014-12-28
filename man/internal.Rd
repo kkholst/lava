@@ -47,6 +47,7 @@
 \alias{pars.glm}
 \alias{pars.lvm}
 \alias{pars.lvmfit}
+\alias{parsedesign}
 \alias{procdata.lvmfit}
 \alias{profci}
 \alias{randomslope}

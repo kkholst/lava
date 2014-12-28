@@ -5,15 +5,17 @@
 \alias{merge.estimate}
 \title{Estimation of functional of parameters}
 \usage{
-\method{estimate}{default}(x = NULL, f = NULL, data, id, iddata,
+\method{estimate}{default}(x = NULL, f = NULL, ..., data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
   iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
-  coef, print = NULL, labels, ...)
+  coef, robust = TRUE, df = NULL, print = NULL, labels)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
 
 \item{f}{transformation of model parameters and (optionally) data, or contrast matrix (or vector)}
+
+\item{...}{additional arguments to lower level functions}
 
 \item{data}{\code{data.frame}}
 
@@ -45,11 +47,14 @@
 
 \item{coef}{(optional) parameter coefficient}
 
+\item{robust}{If TRUE robust standard errors are calculated. If
+FALSE p-values for linear models are calculated from t-distribution}
+
+\item{df}{Degrees of freedom (default obtained from 'df.residual')}
+
 \item{print}{(optional) print function}
 
 \item{labels}{(optional) names of coefficients}
-
-\item{...}{additional arguments to lower level functions}
 }
 \description{
 Estimation of functional of parameters.
@@ -75,6 +80,10 @@ estimate(g,null=0)
 estimate(g,rbind(c(1,1,0),c(1,0,2)))
 estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
 estimate(g,2:3) ## same as rbind(c(0,1,0),c(0,0,1))
+## Alternative syntax
+estimate(g,"z","z"-"x",2*"z"-3*"x")
+## Usual (non-robust) confidence intervals
+estimate(g,robust=FALSE)
 
 ## Transformations
 estimate(g,function(p) p[1]+p[2])
@@ -86,7 +95,7 @@ vcov(e)
 
 ## Label new parameters
 estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
-
+##'
 ## Multiple group
 m <- lvm(y~x)
 m <- baptize(m)

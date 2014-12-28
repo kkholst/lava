@@ -41,12 +41,14 @@ estimate.lvm            Estimation of parameters in a Latent Variable Model (lvm
 gof                     Extract model summaries and GOF statistics for model object
 iid                     Extract i.i.d. decomposition (influence function) from model object
 lava.options            Set global options for 'lava'
+measurement.error	Two-stage estimator for (non-linear) measurement error models
 modelsearch             Model searching
 multinomial		Estimate probabilities in contingency table
 or2prob			Convert OR (and marginal) to joint probabilities
 partialcor              Calculate partial correlations
 predict.lvm             Prediction in structural equation models
 scheffe			Simulatenous confidence bands (lm)
+stack.estimate		Stack estimating equations
 sim                     Simulate model
 startvalues             Starting values
 tetrachoric		Calculate tetrachoric correlations for joint probabilities
@@ -71,6 +73,7 @@ confband                Add Confidence limits bar to plot
 devcoords               Returns device-coordinates and plot-region
 dsort			Sort data frame
 org                     Convert object to ascii suitable for org-mode
+parsedesign		Create contrast matrix from expression
 plotConf                Plot regression lines
 revdiag                 Create/extract 'reverse'-diagonal matrix
 surface			Visualize function surface
