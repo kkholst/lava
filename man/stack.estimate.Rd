@@ -3,11 +3,11 @@
 \alias{stack.estimate}
 \title{Stack estimating equations}
 \usage{
-\method{stack}{estimate}(model1, model2, D1u, inv.D2u, weight, dweight, U,
-  k = 1, keep1 = FALSE, ...)
+\method{stack}{estimate}(x, model2, D1u, inv.D2u, weight, dweight, U, k = 1,
+  keep1 = FALSE, ...)
 }
 \arguments{
-\item{model1}{Model 1}
+\item{x}{Model 1}
 
 \item{model2}{Model 2}
 
@@ -23,7 +23,7 @@
 
 \item{k}{Debug argument}
 
-\item{keep.x}{If TRUE only parameters of model 2 i s returned}
+\item{keep1}{If TRUE only parameters of model 2 i s returned}
 
 \item{...}{Additional arguments to lower level functions}
 }
