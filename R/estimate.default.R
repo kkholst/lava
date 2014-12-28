@@ -140,7 +140,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     } else {
         pp <- suppressWarnings(try(stats::coef(x),"try-error"))
     }
-    if (expr || is.character(f)) {        
+    if (expr || is.character(f)) { ## || is.call(f)) {
+        ## if (is.call(f)) f <- parsedesign(seq(length(pp)),f,...)
         f <- parsedesign(names(pp),substitute(f),...)
     }
     if (!is.null(f) && !is.function(f)) {
