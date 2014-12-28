@@ -140,7 +140,6 @@ poisson.lvm <- function(link="log",lambda,...) {
     if (!missing(lambda)) attr(f,"mean") <- fam$linkfun(lambda)
     attr(f,"family") <- fam
     attr(f,"var") <- FALSE
-    browser()
     return(f)  
 } 
 
