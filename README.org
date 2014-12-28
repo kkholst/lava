@@ -39,7 +39,7 @@ To cite that =lava= package please use the following reference
   http://dx.doi.org/10.1007/s00180-012-0344-y
 #+END_QUOTE
 
-#+BEGIN_SRC LaTeX
+#+BEGIN_SRC bibtex
   @Article{lava,
     title = {Linear Latent Variable Models: The lava-package},
     author = {Klaus K. Holst and Esben Budtz-Joergensen},
@@ -50,7 +50,7 @@ To cite that =lava= package please use the following reference
     journal = {Computational Statistics},
     note = {http://dx.doi.org/10.1007/s00180-012-0344-y},
   }
-#+END_SRC LaTeX
+#+END_SRC bibtex
 
 ** Examples
 
@@ -80,7 +80,6 @@ To cite that =lava= package please use the following reference
   e
 #+END_SRC
 
-#+RESULTS[<2013-04-30 23:38:25> 4249dc09faa9ddbf1bbc2b5d193087497f5b33c6]:
 #+BEGIN_example
                     Estimate Std. Error  Z-value   P-value
 Measurements:                                             
@@ -120,9 +119,6 @@ Residual Variances:
 :RESULTS:
 [[file:examples/gof1.png]]
 :END:
-
-
-
 
 * COMMENT Setup
 
