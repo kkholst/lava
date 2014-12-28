@@ -39,7 +39,7 @@ To cite that =lava= package please use the following reference
   http://dx.doi.org/10.1007/s00180-012-0344-y
 #+END_QUOTE
 
-#+BEGIN_SRC BIBTEX
+#+BEGIN_SRC LaTeX
   @Article{lava,
     title = {Linear Latent Variable Models: The lava-package},
     author = {Klaus K. Holst and Esben Budtz-Joergensen},
@@ -50,7 +50,7 @@ To cite that =lava= package please use the following reference
     journal = {Computational Statistics},
     note = {http://dx.doi.org/10.1007/s00180-012-0344-y},
   }
-#+END_SRC BIBTEX
+#+END_SRC LaTeX
 
 ** Examples
 
