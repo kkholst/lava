@@ -9,7 +9,7 @@ parsedesign <- function(coef,x,...) {
     if (expr) {
         ee <- c(deparse(substitute(x)), sapply(dots, deparse))
     } else {        
-        ee <- c(deparse(x), sapply(dots, function(x) deparse(as.character(x))))
+        ee <- c(deparse(x), sapply(dots, function(x) deparse(x)))
     }
     res <- c()
     for (e in ee) {
@@ -24,9 +24,10 @@ parsedesign <- function(coef,x,...) {
             }
             par0 <- ff[2*i]
             par0int <- suppressWarnings(as.integer(par0))
-            if (!is.na(par0int)) Val[par0int] <- val else Val[match(par0,coef)] <- val
+            if (is.na(par0int)) par0int <- match(par0,coef)
+            if (par0int<=length(Val)) Val[par0int] <- val
         }
-        res <- rbind(res,Val)
+        if (any(Val!=0)) res <- rbind(res,Val)
     }
     res
 }

@@ -59,6 +59,7 @@ estimate.list <- function(x,...) {
 ##' estimate(g,2:3) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' ## Alternative syntax
 ##' estimate(g,"z","z"-"x",2*"z"-3*"x")
+##' estimate(g,"1","2"-"3",null=c(0,1))
 ##' ## Usual (non-robust) confidence intervals
 ##' estimate(g,robust=FALSE)
 ##' 
@@ -369,7 +370,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
 
     if (length(pp)==1) res <- rbind(c(pp,diag(V)^0.5)) else res <- cbind(pp,diag(V)^0.5)
     beta0 <- res[,1]
-    if (!missing(null)) beta0 <- beta0-null
+
+    if (!missing(null) && missing(contrast)) beta0 <- beta0-null
     if (!is.null(df)) {
         za <- qt(1-alpha/2,df=df)
         pval <- 2*pt(abs(res[,1]/res[,2]),df=df,lower.tail=FALSE)
