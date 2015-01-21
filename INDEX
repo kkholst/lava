@@ -44,15 +44,12 @@ lava.options            Set global options for 'lava'
 measurement.error	Two-stage estimator for (non-linear) measurement error models
 modelsearch             Model searching
 multinomial		Estimate probabilities in contingency table
-or2prob			Convert OR (and marginal) to joint probabilities
 partialcor              Calculate partial correlations
 predict.lvm             Prediction in structural equation models
 scheffe			Simulatenous confidence bands (lm)
 stack.estimate		Stack estimating equations
 sim                     Simulate model
 startvalues             Starting values
-tetrachoric		Calculate tetrachoric correlations for joint probabilities
-
 
 ** Utilities
 

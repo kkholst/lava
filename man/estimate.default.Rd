@@ -82,6 +82,7 @@ estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
 estimate(g,2:3) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g,"z","z"-"x",2*"z"-3*"x")
+estimate(g,"1","2"-"3",null=c(0,1))
 ## Usual (non-robust) confidence intervals
 estimate(g,robust=FALSE)
 

@@ -170,6 +170,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (is.logical(vcov)) vcov <- vcov(x)
         iidtheta <- NULL
     }
+    
     if (!missing(subset)) {
         e <- substitute(subset)
         expr <- suppressWarnings(inherits(try(subset,silent=TRUE),"try-error"))
@@ -485,6 +486,7 @@ summary.estimate <- function(object,...) {
 
 ##' @export
 iid.estimate <- function(x,...) {
+    if (is.null(x$iid)) return(NULL)
     dimn <- dimnames(x$iid)
     if (!is.null(dimn)) {
         dimn[[2]] <- names(coef(x))
