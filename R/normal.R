@@ -72,17 +72,17 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     return(-sum(l))  
 }
 
-normal_logLik.lvm <- function(object,p,data,weight2,...) {
+normal_logLik.lvm <- function(object,p,data,weight2=NULL,...) {
     res <- -normal_objective.lvm(x=object,p=p,data=data,weight2=weight2,...)
     return(res)
 }
 
-normal_gradient.lvm <- function(x,p,data,weight2,indiv=FALSE,...) {
+normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     if  (is.null(ordinal(x))) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
         Y <- as.matrix(data[,manifest(x)])
-        mu <- t(M$xi)%x%rep(1,nrow(d))
+        mu <- t(M$xi)%x%rep(1,nrow(Y))
         ss <- -mets::scoreMVN(Y,mu,M$C,D$dxi,D$dS)
         if (!indiv) return(colSums(ss))
         return(ss)
