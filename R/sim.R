@@ -176,12 +176,12 @@
 ##' \dontrun{
 ##' 
 ##' m <- lvm()
-##' distribution(m,~y1+y2,oratio=4) <- VGAM::rplack
+##' distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
 ##' ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
 ##' 
 ##' m <- lvm()
-##' distribution(m,~z1+z2,"or1") <- VGAM::rplack
-##' distribution(m,~y1+y2,"or2") <- VGAM::rplack
+##' distribution(m,~z1+z2,"or1") <- VGAM::rbiplackcop
+##' distribution(m,~y1+y2,"or2") <- VGAM::rbiplackcop
 ##' sim(m,10,p=c(or1=0.1,or2=4))
 ##' 
 ##' m <- lvm()
@@ -314,6 +314,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             for (i in 1:length(xx)) {
                 mu.x <- mu[X.idx[i]]
                 dist.x <- distribution(x,xx[i])[[1]]
+                if (is.list(dist.x) && is.function(dist.x[[1]])) dist.x <- dist.x[[1]]
                 if (is.list(dist.x)) {
                     dist.x <- dist.x[[1]]
                     if (length(dist.x)==1) dist.x <- rep(dist.x,n)
@@ -500,7 +501,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                     } else  mu.i <- mu.i + A[From,pos]*res[,From]
                                 }
                             }
-
                             dist.i <- distribution(x,i)[[1]]
                             if (!is.function(dist.i)) {
                                 res[,pos] <- mu.i + E[,pos]

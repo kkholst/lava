@@ -10,35 +10,43 @@
 "distribution<-.lvm" <- function(x,variable,parname=NULL,init.par,...,value) {
   if (inherits(variable,"formula")) variable <- all.vars(variable)
   dots <- list(...)
-  
-  if (!is.null(parname) || length(dots)>0) {
+  Generator <- (is.function(value) && inherits(try(do.call(value,list()),silent=TRUE),"try-error"))
+  if (Generator && length(variable)==1) value <- list(value)
+  if (!is.null(parname) || length(dots)>0) { ## || Generator) {
       if (length(parname)>1 || (is.character(parname))) {
           if (missing(init.par)) {
               parameter(x,start=rep(1,length(parname))) <- parname
           } else {
               parameter(x,start=init.par) <- parname
           }
+          ## if ("..."%ni%names(formals(value))) formals(value) <- c(formals(value),alist(...=))
+          ## formals(value) <- modifyList(formals(value),dots)
           gen <- function(n,p,...) {
               args <- c(n,as.list(p[parname]),dots)
               names(args) <- names(formals(value))[seq(length(parname)+1)]
               do.call(value,args)
           }
       } else {
-          gen <- function(n,p,...) {
-              args <- c(n=n,dots)
-              names(args)[1] <- names(formals(value))[1]
-              do.call(value,args)
-          }
+          gen <- value
+          if ("..."%ni%names(formals(gen))) formals(gen) <- c(formals(gen),alist(...=))
+          formals(gen) <- modifyList(formals(gen),dots)
+          ## gen <- function(n,p,...) {
+          ##     args <- c(n=n,dots)
+          ##     names(args)[1] <- names(formals(value))[1]
+          ##     do.call(value,args)
+          ## }
       }
-      distribution(x,variable) <- list(gen)
+      if (length(variable)>1) gen <- list(gen)
+      distribution(x,variable) <- gen
       return(x)
   }
-  
+
   if (length(variable)==1) {
       addvar(x) <- as.formula(paste("~",variable))
       if (is.numeric(value)) value <- list(value)
       if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
       if (!is.null(attributes(value)$variance)) variance(x,variable) <- attributes(value)$variance
+##      if (is.function(value) && "..."%ni%names(formals(value))) formals(value) <- c(formals(value),alist(...=))
       x$attributes$distribution[[variable]] <- value
       ## Remove from 'mdistribution'     
       vars <- which(names(x$attributes$mdistribution$var)%in%variable)
@@ -83,15 +91,17 @@
 
       return(x)
   }
-  
+
   if ((length(value)!=length(variable) & length(value)!=1))
-    stop("Wrong number of values")
+      stop("Wrong number of values")
+##  if (length(value)==1 && "..."%ni%names(formals(value))) formals(value) <- c(formals(value),alist(...=))  
   for (i in seq_along(variable))
-    if (length(value)==1) {
+      if (length(value)==1) {          
       distribution(x,variable[i],...) <- value
-    } else {
+  } else {
+##      if ("..."%ni%names(formals(value[[i]]))) formals(value[[i]]) <- c(formals(value[[i]]),alist(...=))  
       distribution(x,variable[i],...) <- value[[i]]
-    }
+  }
   return(x)
   
 }
