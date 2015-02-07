@@ -96,7 +96,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
             if (constraints & length(constrain(x))>0) {
                 cc <- constraints(e0,...)
                 coefs <- c(coefs,cc[,1])
-                names(coefs)[seq_len(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
+                names(coefs)[seq(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
                 if (sd) {
                     newsd <- c(newsd,cc[,2])
                 }

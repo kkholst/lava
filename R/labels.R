@@ -370,7 +370,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
           estr2 <- paste0(nodes[r],"~",nodes[s])
           Debug(estr, debug)
           if (expr)
-            st <- eval(parse0(text=paste("expression(",lab[r,s],")")))
+            st <- eval(parse(text=paste0("expression(",lab[r,s],")")))
           else
             st <- lab[r,s]
           object$edgerender$label[estr2] <- st
