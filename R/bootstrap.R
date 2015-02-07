@@ -9,9 +9,9 @@
 bootstrap <- function(x,...) UseMethod("bootstrap")
 
 ##' Calculate bootstrap estimates of a lvm object
-##' 
+##'
 ##' Draws non-parametric bootstrap samples
-##' 
+##'
 ##' @param x \code{lvm}-object.
 ##' @param R Number of bootstrap samples
 ##' @param fun Optional function of the (bootstrapped) model-fit defining the
@@ -33,22 +33,22 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param \dots Additional arguments, e.g. choice of estimator.
 ##' @aliases bootstrap.lvmfit
 ##' @usage
-##' 
+##'
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
 ##'                           constraints=TRUE,sd=FALSE,silent=FALSE,...)
-##' 
+##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
 ##'                              control=list(start=coef(x)),
 ##'                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
 ##'                              estimator=x$estimator,weight=Weight(x),...)
-##' 
+##'
 ##' @return A \code{bootstrap.lvm} object.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{confint.lvmfit}}
 ##' @keywords models regression
 ##' @examples
-##' 
+##'
 ##' m <- lvm(y~x)
 ##' d <- sim(m,100)
 ##' e <- estimate(y~x, d)
@@ -61,7 +61,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
                           constraints=TRUE,sd=FALSE,silent=FALSE,...) {
-    
+
     coefs <- sds <- c()
     on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
     pb <- txtProgressBar(style=3,width=40)
@@ -73,7 +73,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
             d0 <- data
         } else {
             if (!parametric | pmis) {
-                d0 <- data[sample(1:nrow(data),replace=TRUE),]
+                d0 <- data[sample(seq_len(nrow(data)),replace=TRUE),]
             } else {
                 d0 <- sim(x,p=p,n=nrow(data))
             }
@@ -87,7 +87,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
         if (!is.null(fun)) {
             coefs <- fun(e0)
             newsd <- NULL
-        } else {    
+        } else {
             coefs <- coef(e0)
             newsd <- c()
             if (sd) {
@@ -96,7 +96,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
             if (constraints & length(constrain(x))>0) {
                 cc <- constraints(e0,...)
                 coefs <- c(coefs,cc[,1])
-                names(coefs)[seq(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
+                names(coefs)[seq_len(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
                 if (sd) {
                     newsd <- c(newsd,cc[,2])
                 }
@@ -109,7 +109,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
         mm <- modelVar(e0)
         mu <- mm$xi
         Y <- t(t(data[,manifest(e0)])-as.vector(mu))
-        Sigma <- mm$C      
+        Sigma <- mm$C
         S <- (ncol(Y)-1)/ncol(Y)*var(Y)
         sSigma <- with(eigen(Sigma),vectors%*%diag(sqrt(values),ncol=ncol(vectors))%*%t(vectors))
         isS <- with(eigen(S),vectors%*%diag(1/sqrt(values),ncol=ncol(vectors))%*%t(vectors))
@@ -124,7 +124,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     } else {
         res <- lapply(0:R,bootfun)
     }
-    if (!silent) setTxtProgressBar(pb, 1)  
+    if (!silent) setTxtProgressBar(pb, 1)
     close(pb)
     ##  if (!silent) message("")
     coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
@@ -134,8 +134,8 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
 
     if (!is.null(fun)) {
         rownames(coefs) <- c()
-        res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x) 
-    } else {    
+        res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x)
+    } else {
         colnames(coefs) <- names(res[[1]]$coefs)
         rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
         res <- list(coef=coefs[-1,,drop=FALSE], sd=sds[-1,,drop=FALSE], coef0=coefs[1,], sd0=sds[1,], model=x)

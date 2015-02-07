@@ -1,10 +1,10 @@
 ###{{{ labels
 
 ##' Define labels of graph
-##' 
+##'
 ##' Alters labels of nodes and edges in the graph of a latent variable model
-##' 
-##' 
+##'
+##'
 ##' @aliases labels<- labels labels<-.default labels.lvm labels.lvmfit
 ##' labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
 ##' nodecolor<- nodecolor<-.default
@@ -23,7 +23,7 @@
 ##'            lwd=c(3,1)) <- expression(phi,rho)
 ##' edgelabels(m,c(v,x)~z, labcol="red", cex=0.8,arrowhead="none") <- 2
 ##' \donttest{plot(m,addstyle=FALSE)}
-##' 
+##'
 ##' m <- lvm(y~x)
 ##' labels(m) <- list(x="multiple\nlines")
 ##' \donttest{
@@ -64,8 +64,8 @@
 
 ##' @export
 labels.graphNEL <- function(object,lab=NULL,...) {
-  if (is.null(lab))    
-    return(graph::nodeRenderInfo(object)$label)  
+  if (is.null(lab))
+    return(graph::nodeRenderInfo(object)$label)
   graph::nodeRenderInfo(object) <- list(label=lab)
   names(graph::nodeRenderInfo(object)$label) <- graph::nodes(object);
   return(object)
@@ -98,25 +98,25 @@ labels.lvmfit <- function(object,lab=NULL,...) {
     if (class(to)[1]=="formula") {
       yy <- decomp.specials(getoutcome(to))
       from <- setdiff(all.vars(to),yy)
-      to <- yy     
+      to <- yy
     }
     edges <- paste(from,to,sep="~")
   }
-    
-  edges. <- paste("\"", edges, "\"", sep="")
+
+  edges. <- paste0("\"", edges, "\"")
   fromto <- edge2pair(edges)
   val <- c()
-  for (i in 1:length(edges)) {
+  for (i in seq_along(edges)) {
     val <- c(val,
              formatC(effects(object,from=fromto[[i]][1],to=fromto[[i]][2],silent=TRUE)$directef[[1]])
              )
   }
   if (est)
-    mytext <- paste("c(", paste(paste(edges.,"=expression(",as.character(value),"==\"",val,"\")",sep=""),collapse=","),")")
+    mytext <- paste("c(", paste(paste0(edges.,"=expression(",as.character(value),"==\"",val,"\")"),collapse=","),")")
   else
-    mytext <- paste("c(", paste(paste(edges.,"=expression(",as.character(value),")",sep=""),collapse=","),")")
+    mytext <- paste("c(", paste(paste0(edges.,"=expression(",as.character(value),")"),collapse=","),")")
   graph::edgeRenderInfo(Graph(object))$label <- eval(parse(text=mytext))
-  graph::edgeRenderInfo(Graph(object))$cex[edges] <- cex  
+  graph::edgeRenderInfo(Graph(object))$cex[edges] <- cex
   return(object)
 }
 
@@ -128,7 +128,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   }
   if (missing(type))
     return(graph::edgeRenderInfo(Graph(object))$label)
-  
+
   Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
   Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
   npar.mean <- index(object)$npar.mean
@@ -137,7 +137,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
     Par <- Par[-seq_len(npar.mean),,drop=FALSE]
   Par <-
     switch(type,
-           sd = paste(formatC(Par[,1,drop=FALSE]), " (", formatC(Par[,2,drop=FALSE]), ")", sep=""),
+           sd = paste0(formatC(Par[,1,drop=FALSE]), " (", formatC(Par[,2,drop=FALSE]), ")"),
            est = formatC(Par[,1,drop=FALSE]),
            pval = formatC(Par[,4,drop=FALSE]),
            name = rownames(Par),
@@ -146,7 +146,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   AP <- matrices(Model(object), Par) ## Ignore expar
   A <- AP$A; P <- AP$P
   P[exogenous(object),exogenous(object)] <- NA
-  
+
   gr <- finalize(Model(object), ...)
   Anz <- A; Anz[Afix==0] <- NA
   gr <- edgelabels(gr, lab=Anz)
@@ -173,7 +173,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 }
 
 ##' @export
-`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black", arrowhead="closed", 
+`edgelabels.graphNEL` <- function(object, lab=NULL, to=NULL, from=NULL, cex=1.5, lwd=1, lty=1, col="black", labcol="black", arrowhead="closed",
                                   expr=TRUE,
                                   debug=FALSE,...) {
   if (is.null(lab)) {
@@ -183,7 +183,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
     yy <- decomp.specials(getoutcome(to))
     from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
     if (length(from)==0) from <- yy
-    to <- yy     
+    to <- yy
   }
 
   M <- as(object, Class="matrix")
@@ -194,9 +194,9 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
 
 
   if (!is.null(lab)) {
-    if (!is.null(from) & !is.null(to)) {      
-      estr <- paste("\"",from,"~",to,"\"", sep="")
-      estr2 <- paste(from,"~",to, sep="")
+    if (!is.null(from) & !is.null(to)) {
+      estr <- paste0("\"",from,"~",to,"\"")
+      estr2 <- paste0(from,"~",to)
       if (length(lab)!=length(estr2)) lab <- rep(lab,length(estr2))
       if (length(col)!=length(estr2)) col <- rep(col,length(estr2))
       if (length(cex)!=length(estr2)) cex <- rep(cex,length(estr2))
@@ -205,13 +205,13 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
       if (length(arrowhead)!=length(estr2))
           arrowhead <- rep(arrowhead,length(estr2))
       if (length(labcol)!=length(estr2))
-          labcol <- rep(labcol,length(estr2))  
+          labcol <- rep(labcol,length(estr2))
 
       curedges <- names(graph::edgeRenderInfo(object)$label)
        Debug(estr,debug)
-      
+
       estr2.idx <- which(estr2%in%curedges)
-      newstr.idx <- setdiff(1:length(estr2),estr2.idx)
+      newstr.idx <- setdiff(seq_along(estr2),estr2.idx)
       newstr <- estr2[newstr.idx]
       estr2 <- estr2[estr2.idx]
       if (length(estr2)>0) {
@@ -230,8 +230,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(arrowhead))
             graph::edgeRenderInfo(object)$arrowhead[estr2] <- arrowhead[estr2.idx]
       }
-      if (length(newstr)>0) {        
-        
+      if (length(newstr)>0) {
+
           if (!is.null(lab))
               graph::edgeDataDefaults(object)$futureinfo$label[newstr] <-
                   lab[newstr.idx]
@@ -247,32 +247,32 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(lty))
             graph::edgeDataDefaults(object)$futureinfo$lty[newstr] <-
                 lty[newstr.idx]
-        if (!is.null(labcol))        
+        if (!is.null(labcol))
             graph::edgeDataDefaults(object)$futureinfo$textCol[newstr] <-
                 labcol[newstr.idx]
-        if (!is.null(arrowhead))        
+        if (!is.null(arrowhead))
             graph::edgeDataDefaults(object)$futureinfo$arrowhead[newstr] <-
                 arrowhead[newstr.idx]
       }
       return(object)
-    } 
+    }
 
     ## Used by "edgelabels.lvmfit"
-    for (r in 1:nrow(M))
-      for (s in 1:ncol(M)) {
+    for (r in seq_len(nrow(M)))
+      for (s in seq_len(ncol(M))) {
         if (M[r,s]!=0 & !is.na(lab[r,s])) {
-          estr <- paste("\"",nodes[r],"~",nodes[s],"\"", sep="")
-          estr2 <- paste(nodes[r],"~",nodes[s], sep="")          
+          estr <- paste0("\"",nodes[r],"~",nodes[s],"\"")
+          estr2 <- paste0(nodes[r],"~",nodes[s])
           Debug(estr, debug)
           if (expr)
-            st <- eval(parse(text=paste("expression(",lab[r,s],")",sep="")))
+            st <- eval(parse(text=paste0("expression(",lab[r,s],")")))
           else
             st <- lab[r,s]
           graph::edgeRenderInfo(object)$label[estr2] <- st
         }
       }
   }
-  
+
   return(object)
 }
 
@@ -290,7 +290,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
     yy <- decomp.specials(getoutcome(to))
     from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
     if (length(from)==0) from <- yy
-    to <- yy     
+    to <- yy
   }
 
   M <- object$M
@@ -299,24 +299,24 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
   if (is.null(object$edgerender$label))
     object$edgerender$label <- expression()
 
-  
+
   if (!is.null(lab)) {
-    if (!is.null(from) & !is.null(to)) {      
-      estr <- paste("\"",from,"~",to,"\"", sep="")
-      estr2 <- paste(from,"~",to, sep="")
+    if (!is.null(from) & !is.null(to)) {
+      estr <- paste0("\"",from,"~",to,"\"")
+      estr2 <- paste0(from,"~",to)
       if (length(lab)!=length(estr2)) lab <- rep(lab,length(estr2))
       if (length(col)!=length(estr2)) col <- rep(col,length(estr2))
       if (length(cex)!=length(estr2)) cex <- rep(cex,length(estr2))
       if (length(lwd)!=length(estr2)) lwd <- rep(lwd,length(estr2))
       if (length(lty)!=length(estr2)) lty <- rep(lty,length(estr2))
-      if (length(labcol)!=length(estr2)) labcol <- rep(labcol,length(estr2))  
-      if (length(arrowhead)!=length(estr2)) arrowhead <- rep(arrowhead,length(estr2))  
+      if (length(labcol)!=length(estr2)) labcol <- rep(labcol,length(estr2))
+      if (length(arrowhead)!=length(estr2)) arrowhead <- rep(arrowhead,length(estr2))
 
       curedges <- names(object$edgerender$label)
        Debug(estr,debug)
-      
+
       estr2.idx <- which(estr2%in%curedges)
-      newstr.idx <- setdiff(1:length(estr2),estr2.idx)
+      newstr.idx <- setdiff(seq_along(estr2),estr2.idx)
       newstr <- estr2[newstr.idx]
       estr2 <- estr2[estr2.idx]
       if (length(estr2)>0) {
@@ -335,8 +335,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(arrowhead))
           object$edgerender$arrowhead[estr2] <- arrowhead[estr2.idx]
       }
-      if (length(newstr)>0) {        
-        
+      if (length(newstr)>0) {
+
         if (!is.null(lab))
           object$edgerender$futureinfo$label[newstr] <-
             lab[newstr.idx]
@@ -352,33 +352,32 @@ edgelabels.lvmfit <- function(object,value,type,pthres,...) {
         if (!is.null(lty))
           object$edgerender$futureinfo$lty[newstr] <-
             lty[newstr.idx]
-        if (!is.null(labcol))        
+        if (!is.null(labcol))
           object$edgerender$futureinfo$textCol[newstr] <-
             labcol[newstr.idx]
-        if (!is.null(arrowhead))        
+        if (!is.null(arrowhead))
           object$edgerender$futureinfo$arrowhead[newstr] <-
             arrowhead[newstr.idx]
       }
       return(object)
-    } 
+    }
 
     ## Used by "edgelabels.lvmfit"
-    for (r in 1:nrow(M))
-      for (s in 1:ncol(M)) {
+    for (r in seq_len(nrow(M)))
+      for (s in seq_len(ncol(M))) {
         if (M[r,s]!=0 & !is.na(lab[r,s])) {
-          estr <- paste("\"",nodes[r],"~",nodes[s],"\"", sep="")
-          estr2 <- paste(nodes[r],"~",nodes[s], sep="")          
+          estr <- paste0("\"",nodes[r],"~",nodes[s],"\"")
+          estr2 <- paste0(nodes[r],"~",nodes[s])
           Debug(estr, debug)
           if (expr)
-            st <- eval(parse(text=paste("expression(",lab[r,s],")",sep="")))
+            st <- eval(parse0(text=paste("expression(",lab[r,s],")")))
           else
             st <- lab[r,s]
           object$edgerender$label[estr2] <- st
         }
       }
-  }  
+  }
   return(object)
 }
 
 ###}}} edgelabels
-

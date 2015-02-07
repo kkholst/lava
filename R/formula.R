@@ -3,7 +3,7 @@
 formula.lvmfit <- formula.lvm <- function(x,char=FALSE,...) {
   A <- index(x)$A
   res <- c()
-  for (i in 1:ncol(A)) {
+  for (i in seq_len(ncol(A))) {
     if (!(colnames(A)[i]%in%c(index(x)$exogenous,parameter(x)) )) {
       f <- paste(colnames(A)[i],"~ 1")
       if (any(A[,i]!=0)) {
@@ -16,4 +16,3 @@ formula.lvmfit <- formula.lvm <- function(x,char=FALSE,...) {
   }
   return(res)
 }
-  

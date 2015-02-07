@@ -2,10 +2,10 @@
 ##' in a latent variable model. In an estimated model the effect size is
 ##' decomposed into direct, indirect and total effects including approximate
 ##' standard errors.
-##' 
+##'
 ##' @title Extract pathways in model graph
 ##' @export
-##' @aliases path effects path.lvm effects.lvmfit 
+##' @aliases path effects path.lvm effects.lvmfit
 ##' totaleffects
 ##' @seealso \code{children}, \code{parents}
 ##' @return If \code{object} is of class \code{lvmfit} a list with the following
@@ -15,10 +15,10 @@
 ##' \item{coef }{A list of parameters estimates for each path} \item{path }{A
 ##' list where each element defines a possible pathway via a character vector
 ##' naming the visited nodes in order.  } \item{edges }{Description of 'comp2'}
-##' 
+##'
 ##' If \code{object} is of class \code{lvm} only the \code{path} element will be
 ##' returned.
-##' 
+##'
 ##' The \code{effects} method returns an object of class \code{effects}.
 ##' @note For a \code{lvmfit}-object the parameters estimates and their
 ##' corresponding covariance matrix are also returned.  The
@@ -27,14 +27,14 @@
 ##' @author Klaus K. Holst
 ##' @keywords methods models graphs
 ##' @examples
-##' 
+##'
 ##' m <- lvm(c(y1,y2,y3)~eta)
 ##' regression(m) <- y2~x1
 ##' latent(m) <- ~eta
 ##' regression(m) <- eta~x1+x2
 ##' d <- sim(m,500)
 ##' e <- estimate(m,d)
-##' 
+##'
 ##' path(Model(e),y2~x1)
 ##' parents(Model(e), ~y2)
 ##' children(Model(e), ~x2)
@@ -68,29 +68,29 @@ path.lvmfit <- function(object,to=NULL,from,...) {
   V <- object$vcov
   npar.mean <- index(object)$npar.mean
 #  if (object$control$meanstructure & npar.mean>0)
-#    V <- V[-c(1:npar.mean),-c(1:npar.mean)]
+#    V <- V[-c(seq_len(npar.mean)),-c(seq_len(npar.mean))]
   S[idx.cc0,idx.cc0] <- V[i1,i1]  ## "Covariance matrix" of all parameters
- 
+
   idx <- list()
   coefs <- list()
   V <- list()
-  for (i in 1:length(mypath)) {
+  for (i in seq_along(mypath)) {
     xx <- mypath[[i]]
     ii <- c()
-    for (j in 1:(length(xx)-1)) {
-      st <- paste(xx[j+1], lava.options()$symbol[1], xx[j],sep="")
+    for (j in seq_len(length(xx)-1)) {
+      st <- paste0(xx[j+1], lava.options()$symbol[1], xx[j])
       ii <- c(ii, match(st,rownames(cc)))
     }
-    idx <- c(idx, list(ii)) 
+    idx <- c(idx, list(ii))
     V <- c(V, list(S[ii,ii]))
     coefs <- c(coefs, list(cc[ii]))
   }
 
   edges <- list()
-  for (i in 1:length(mypath)) {
+  for (i in seq_along(mypath)) {
     p0 <- mypath[[i]]
     ee <- c()
-    for (i in 1:(length(p0)-1)) {
+    for (i in seq_len(length(p0)-1)) {
       ee <- c(ee, paste(p0[i],p0[i+1],sep="~"))
     }
     edges <- c(edges, list(ee))
@@ -117,7 +117,7 @@ path.graphNEL <- function(object,to,from,...) {
     }
     return(res)
   }
-  ff <- function(g,from=1,to=NULL,res=list()) {    
+  ff <- function(g,from=1,to=NULL,res=list()) {
     M <- graph::edgeMatrix(g)
     i1 <- which(M[1,]==from)
     for (i in i1) {
@@ -127,7 +127,7 @@ path.graphNEL <- function(object,to,from,...) {
       }
       newpath <- ff(g,from=newto,to=to,list())
       if (length(newpath)>0)
-      for (j in 1:length(newpath)) {
+      for (j in seq_along(newpath)) {
         if (is.null(to) || (tail(newpath[[j]],1)==to))
           res <- c(res, list(c(M[,i],newpath[[j]][-1])))
       }
@@ -147,10 +147,10 @@ path.graphNEL <- function(object,to,from,...) {
 ##    return(structure(NULL,to=to[1],from=from[1]))
     return(NULL)
   ##    stop("No directional relationship between variables")
-  
+
   mypaths <- ff(object,idxfrom,idxto)
   res <- list()
-  for (i in 1:length(mypaths)) {
+  for (i in seq_along(mypaths)) {
     res <- c(res, list(graph::nodes(object)[mypaths[[i]]]))
   }
   return(res)
@@ -173,7 +173,7 @@ pathM <- function(M,to,from,...) {
     return(res)
   }
 
-  ff <- function(g,from=1,to=NULL,res=list()) {    
+  ff <- function(g,from=1,to=NULL,res=list()) {
     i1 <- which(M[from,]==1)
     for (i in i1) {
       ##      e <- M[,i]; newto <- e[2];
@@ -182,7 +182,7 @@ pathM <- function(M,to,from,...) {
       }
       newpath <- ff(g,from=i,to=to,list())
       if (length(newpath)>0)
-      for (j in 1:length(newpath)) {
+      for (j in seq_along(newpath)) {
         if (is.null(to) || (tail(newpath[[j]],1)==to))
           res <- c(res, list(c(c(from,i),newpath[[j]][-1])))
       }
@@ -201,14 +201,11 @@ pathM <- function(M,to,from,...) {
   if (!(nn[idxto] %in% reachable))
     return(NULL)
   ##    stop("No directional relationship between variables")
-  
+
   mypaths <- ff(M,idxfrom,idxto)
   res <- list()
-  for (i in 1:length(mypaths)) {
+  for (i in seq_along(mypaths)) {
     res <- c(res, list(nn[mypaths[[i]]]))
   }
   return(res)
 }
-
-
-

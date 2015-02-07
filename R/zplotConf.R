@@ -16,19 +16,20 @@
 ##' @param col Color (for each level in \code{var2})
 ##' @param colpt Color of partial residual points
 ##' @param alpha Alpha level
-##' @param cex Point size 
+##' @param cex Point size
 ##' @param delta For categorical \code{var1}
 ##' @param centermark For categorical \code{var1}
 ##' @param jitter For categorical \code{var1}
 ##' @param cidiff For categorical \code{var1}
 ##' @param mean For categorical \code{var1}
-##' @param legend Boolean (add legend) 
+##' @param legend Boolean (add legend)
 ##' @param trans Transform estimates (e.g. exponential)
 ##' @param partres Boolean indicating whether to plot partial residuals
 ##' @param partse .
 ##' @param labels Optional labels of \code{var2}
 ##' @param vcov Optional variance estimates
 ##' @param predictfun Optional predict-function used to calculate confidence limits and predictions
+##' @param plot If FALSE return only predictions and confidence bands
 ##' @param \dots additional arguments to lower level functions
 ##' @return list with following members:
 ##' \item{x}{Variable on the x-axis (\code{var1})}
@@ -50,39 +51,40 @@
 ##' abline(a=5,b=0.5,col="red")
 ##' abline(a=5.5,b=-0.5,col="red")
 ##' ### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)
-##' 
+##'
 ##' data(iris)
 ##' l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
 ##' plotConf(l,var2="Species")
 ##' @keywords hplot, regression
 plotConf <- function(model,
-                      var1=all.vars(formula(model))[2],
-                      var2=NULL,
-                      data=NULL,
-                      ci.lty=0,
-                      ci=TRUE, level=0.95,
-                      pch=16, lty=1, lwd=2,
-                      npoints=100,
-                      xlim,
-                      col=NULL,
-                      colpt,
-                      alpha=0.5,
-                      cex=1,
-                      delta=0.07,
-                      centermark=0.03,
-                      jitter=0.2,
-                      cidiff=FALSE,
-                      mean=TRUE,
-                      legend=ifelse(is.null(var1),FALSE,"topright"),
-                      trans=function(x) {x},
-                      partres=inherits(model,"lm"),
-                      partse=FALSE,
-                      labels,
-                      vcov,
-                      predictfun,
-                      ...) {
+                     var1=all.vars(formula(model))[2],
+                     var2=NULL,
+                     data=NULL,
+                     ci.lty=0,
+                     ci=TRUE, level=0.95,
+                     pch=16, lty=1, lwd=2,
+                     npoints=100,
+                     xlim,
+                     col=NULL,
+                     colpt,
+                     alpha=0.5,
+                     cex=1,
+                     delta=0.07,
+                     centermark=0.03,
+                     jitter=0.2,
+                     cidiff=FALSE,
+                     mean=TRUE,
+                     legend=ifelse(is.null(var1),FALSE,"topright"),
+                     trans=function(x) {x},
+                     partres=inherits(model,"lm"),
+                     partse=FALSE,
+                     labels,
+                     vcov,
+                     predictfun,
+                     plot=TRUE,
+                     ...) {
 
-    
+
     if (inherits(model,"formula")) model <- lm(model,data=data,...)
     if ("mer"%in%class(model)) {
         intercept <- lme4::fixef(model)["(Intercept)"]
@@ -105,8 +107,8 @@ plotConf <- function(model,
         var2 <- var1; var1 <- NULL
     }
     dots <- list(...)
-    
-    
+
+
     response <- all.vars(formula(model))[1]
     cname <- colnames(curdata)[-1]
     if (!is.factor(curdata[,var2]) & !is.null(var2)) {
@@ -116,14 +118,14 @@ plotConf <- function(model,
     }
     thelevels <- levels(curdata[,var2])
     if (missing(labels)) labels <- thelevels
-    
+
     k <- ifelse(is.null(var2),1,length(thelevels))
-    if (is.null(col)) { 
+    if (is.null(col)) {
         col <- c("black","darkblue","darkred","goldenrod","mediumpurple",
                  "seagreen","aquamarine3","violetred1","salmon1",
                  "lightgoldenrod1","darkorange2","firebrick1","violetred1", "gold")
     }
-    
+
     if (missing(xlim)) {
         if (!is.null(var1))
             xlim <- range(curdata[,var1])
@@ -131,7 +133,7 @@ plotConf <- function(model,
             xlim <- c(0,length(thelevels))+0.5
     }
     dots$xlim <- xlim
-    x <- seq(xlim[1], xlim[2], length.out=npoints)  
+    x <- seq(xlim[1], xlim[2], length.out=npoints)
     xx <- c()
 
     newdata <- data.frame(id=seq(npoints))
@@ -148,7 +150,7 @@ plotConf <- function(model,
                     partdata[,nn] <- factor(rep(levels(v)[1], nrow(partdata)),levels=levels(v))
                 } else {
                     newdata <- cbind(newdata, factor(rep(levels(v)[1], k*npoints),
-                                                     levels=levels(v)))         
+                                                     levels=levels(v)))
                 }
             } else {
                 if (is.logical(v))
@@ -162,16 +164,16 @@ plotConf <- function(model,
     partdata[,response] <- newdata[,response] <- 0
     newdata <- model.frame(model,data=newdata)
     partdata <- model.frame(model,data=partdata)
-    
+
     Y <- model.frame(model)[,1]
-    if(class(Y)=="Surv") Y <- Y[,1] 
+    if(class(Y)=="Surv") Y <- Y[,1]
     XX <- model.matrix(formula(terms(model)),data=newdata)
     XX0 <- model.matrix(formula(terms(model)),data=partdata)
     if ("mer"%in%class(model)) {
         bb <- lme4::fixef(model)
     } else {
         bb <- coef(model)
-    } 
+    }
     if (!missing(vcov)) SS <- vcov else {
         if (class(model)[1]=="geeglm") {
             SS <- (summary(model)$cov.unscaled)
@@ -181,7 +183,7 @@ plotConf <- function(model,
     }
     ## coefnames <- c("(Intercept)",var1)
     ## if (!is.null(var2)) {
-    ##     var2n <- paste(var2,thelevels[-1],sep="")
+    ##     var2n <- paste0(var2,thelevels[-1])
     ##     coefnames <- c(coefnames,var2n,paste(var1,var2n,sep=":"),
     ##                    paste(var2n,var1,sep=":"))
     ## }
@@ -199,23 +201,23 @@ plotConf <- function(model,
     R <- Y-XX0%*%bb
     ## zero <- bb; zero[-1] <- 0
     ## intercept <- (model.matrix(model,curdata[1,,])%*%zero)[1]
-   
-    if (!missing(predictfun)) {        
+
+    if (!missing(predictfun)) {
         R <- Y-predict(model, newdata=partdata)
-        ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)        
+        ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
     }
     if ("mer"%in%class(model)) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
         R <- R-uz
     }
-    
-    pr <- trans(intercept + R)    
+
+    pr <- trans(intercept + R)
     intercept0 <- 0
     if (is.na(intercept)) {
         intercept <- 0
         if (!is.null(var2)) {
-            intercept <- coef(model)[paste(var2,thelevels,sep="")][as.numeric(curdata[,var2])]
-            intercept0 <- coef(model)[paste(var2,thelevels[1],sep="")]
+            intercept <- coef(model)[paste0(var2,thelevels)][as.numeric(curdata[,var2])]
+            intercept0 <- coef(model)[paste0(var2,thelevels[1])]
         }
     }
 
@@ -235,32 +237,35 @@ plotConf <- function(model,
     if (is.null(var1)) {
         dots$axes=FALSE
         if (is.null(dots$xlab))
-            dots$xlab <- ""    
+            dots$xlab <- ""
     } else  {
         if (is.null(dots$xlab))
-            dots$xlab <- var1    
+            dots$xlab <- var1
     }
+
+    if (!plot) return(list(x=x, y=pr, predict=ci.all, predict.newdata=newdata))
+
     plot.list <- c(x=0,y=0,type="n",dots)
-    do.call(plot, plot.list)
+    do.call(graphics::plot, plot.list)
     if (is.null(var1)) {
         box()
         axis(2)
         axis(1,at=seq(length(thelevels)),labels)
     }
-    
+
     col.trans <- Col(col,alpha)
 
-    Wrap <- function(k,n) { (1:k-1)%%n +1 }
-    col.i <- Wrap(k,length(col));  col.k <- col[col.i]; 
+    Wrap <- function(k,n) { (seq_len(k)-1)%%n +1 }
+    col.i <- Wrap(k,length(col));  col.k <- col[col.i];
     lty.k <- lty[Wrap(k,length(lty))]
     pch.k <- pch[Wrap(k,length(pch))]
 
-    if (!is.null(var1)) {        
-        for (i in 1:k) {
+    if (!is.null(var1)) {
+        for (i in seq_len(k)) {
             ci0 <- trans(ci.all$fit[(npoints*(i-1)+1):(i*npoints),])
             y <- ci0[,1]; yu <- ci0[,3]; yl <- ci0[,2]
             lines(y ~ x, col=col.k[i], lwd=lwd, lty=lty.k[i])
-            
+
             if (ci) {
                 lines(yl ~ x, lwd=1, col=col.k[i], lty=ci.lty)
                 lines(yu ~ x, lwd=1, col=col.k[i], lty=ci.lty)
@@ -268,7 +273,7 @@ plotConf <- function(model,
                 yy <- c(yl, rev(yu))
                 polygon(xx,yy, col=col.trans[col.i[i]], lty=0)
             }
-            
+
         }
     }
     ii <- as.numeric(curdata[,var2])
@@ -280,9 +285,9 @@ plotConf <- function(model,
         if (partres>0)
             points(pr ~ x,pch=pch[1], col=colpt[1], cex=cex, ...)
         positions <- seq(k)
-        mycoef <- bb[paste(var2,thelevels,sep="")][-1]
+        mycoef <- bb[paste0(var2,thelevels)][-1]
         if (class(model)[1]%in%c("lm","glm"))
-            myconf <- confint(model)[paste(var2,thelevels,sep="")[-1],,drop=FALSE]    
+            myconf <- confint(model)[paste0(var2,thelevels)[-1],,drop=FALSE]
         else {
             myconf <- matrix(mycoef,ncol=2,nrow=length(mycoef))
             myconf <- myconf + qnorm(0.975)*cbind((diag(as.matrix(SS))[-1])^0.5)%x%cbind(-1,1)
@@ -304,9 +309,9 @@ plotConf <- function(model,
                 y <- ci0[,1]; yu <- ci0[,3]; yl <- ci0[,2]
             }
             if (!mean) y <- NULL
-            confband(pos,yl,yu,delta=delta,center=y,centermark=centermark,col=col[1],lwd=lwd[1],lty=lty[1],cex=cex)  
+            confband(pos,yl,yu,delta=delta,center=y,centermark=centermark,col=col[1],lwd=lwd[1],lty=lty[1],cex=cex)
         }
-    } else {    
+    } else {
         if (partres) {
             xx <- curdata[,var1]
             if (!missing(colpt)) {
@@ -319,7 +324,7 @@ plotConf <- function(model,
             }
         }
     }
-    
+
     if (k>1 && legend!=FALSE) {
         if (length(lty)>1)
             legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white", lty=lty.k,cex=cex)
@@ -327,8 +332,8 @@ plotConf <- function(model,
             legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white",cex=cex)
     }
 
-    ##  palette(curpal)  
-    invisible(list(x=xx, y=pr, predict=ci.all))
+    ##  palette(curpal)
+    invisible(list(x=xx, y=pr, predict=ci.all, predict.newdata=newdata))
 }
 
 
@@ -361,7 +366,7 @@ plotConf0 <- function(model,
                       predictfun,
                       ...) {
 
-    
+
     if (inherits(model,"formula")) model <- lm(model,data=data,...)
     if ("mer"%in%class(model)) {
         intercept <- lme4::fixef(model)["(Intercept)"]
@@ -371,7 +376,7 @@ plotConf0 <- function(model,
     if (is.na(intercept) & !is.null(var2)) {
         model <- update(model,.~.+1)
         warning("Refitted model with an intercept term")
-        intercept <- coef(model)["(Intercept)"]  
+        intercept <- coef(model)["(Intercept)"]
     }
     if (is.null(data)) {
         curdata <- model.frame(model)
@@ -383,8 +388,8 @@ plotConf0 <- function(model,
         var2 <- var1; var1 <- NULL
     }
     dots <- list(...)
-    
-    
+
+
     response <- all.vars(formula(model))[1]
     cname <- colnames(curdata)[-1]
     if (!is.factor(curdata[,var2]) & !is.null(var2)) {
@@ -394,14 +399,14 @@ plotConf0 <- function(model,
     }
     thelevels <- levels(curdata[,var2])
     if (missing(labels)) labels <- thelevels
-    
+
     k <- ifelse(is.null(var2),1,length(thelevels))
-    if (is.null(col)) { 
+    if (is.null(col)) {
         col <- c("black","darkblue","darkred","goldenrod","mediumpurple",
                  "seagreen","aquamarine3","violetred1","salmon1",
                  "lightgoldenrod1","darkorange2","firebrick1","violetred1", "gold")
     }
-    
+
     if (missing(xlim)) {
         if (!is.null(var1))
             xlim <- range(curdata[,var1])
@@ -409,7 +414,7 @@ plotConf0 <- function(model,
             xlim <- c(0,length(thelevels))+0.5
     }
     dots$xlim <- xlim
-    x <- seq(xlim[1], xlim[2], length.out=npoints)  
+    x <- seq(xlim[1], xlim[2], length.out=npoints)
     xx <- c()
 
     newdata <- data.frame(id=seq(npoints))
@@ -426,7 +431,7 @@ plotConf0 <- function(model,
                     partdata[,nn] <- factor(rep(levels(v)[1], nrow(partdata)),levels=levels(v))
                 } else {
                     newdata <- cbind(newdata, factor(rep(levels(v)[1], k*npoints),
-                                                     levels=levels(v)))         
+                                                     levels=levels(v)))
                 }
             } else {
                 if (is.logical(v))
@@ -440,7 +445,7 @@ plotConf0 <- function(model,
     partdata[,response] <- newdata[,response] <- 0
 
     Y <- model.frame(model)[,1]
-    if(class(Y)=="Surv") Y <- Y[,1] 
+    if(class(Y)=="Surv") Y <- Y[,1]
 
     XX <- model.matrix(formula(terms(model)),data=newdata)
     XX0 <- model.matrix(formula(terms(model)),data=partdata)
@@ -448,7 +453,7 @@ plotConf0 <- function(model,
         bb <- lme4::fixef(model)
     } else {
         bb <- coef(model)
-    } 
+    }
     if (!missing(vcov)) SS <- vcov else {
         if (class(model)[1]=="geeglm") {
             SS <- (summary(model)$cov.unscaled)
@@ -458,13 +463,13 @@ plotConf0 <- function(model,
     }
     coefnames <- c("(Intercept)",var1)
     if (!is.null(var2)) {
-        var2n <- paste(var2,thelevels[-1],sep="")
+        var2n <- paste0(var2,thelevels[-1])
         coefnames <- c(coefnames,var2n,paste(var1,var2n,sep=":"),
                        paste(var2n,var1,sep=":"))
     }
     bidx <- which(names(bb)%in%coefnames)
     notbidx <- setdiff(seq(length(bb)),bidx)
-    bb0 <- bb; bb0[notbidx] <- 0 
+    bb0 <- bb; bb0[notbidx] <- 0
 
     myse <- apply(XX[,bidx,drop=FALSE],1,function(x) rbind(x)%*%SS[bidx,bidx,drop=FALSE]%*%cbind(x))^.5
     ci.all <- list(fit=XX%*%bb0,se.fit=myse)
@@ -472,23 +477,23 @@ plotConf0 <- function(model,
     ci.all$fit <- cbind(ci.all$fit,ci.all$fit-z*ci.all$se.fit,ci.all$fit+z*ci.all$se.fit)
 
     R <- Y-XX0%*%bb
-    if (!missing(predictfun)) {        
+    if (!missing(predictfun)) {
         R <- Y-predict(model, newdata=partdata)
         ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
     }
     if ("mer"%in%class(model)) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
         R <- R-uz
-    } 
+    }
     intercept <- bb["(Intercept)"]
     pr <- trans(intercept + R)
-    
+
     intercept0 <- 0
     if (is.na(intercept)) {
         intercept <- 0
         if (!is.null(var2)) {
-            intercept <- coef(model)[paste(var2,thelevels,sep="")][as.numeric(curdata[,var2])]
-            intercept0 <- coef(model)[paste(var2,thelevels[1],sep="")]
+            intercept <- coef(model)[paste0(var2,thelevels)][as.numeric(curdata[,var2])]
+            intercept0 <- coef(model)[paste0(var2,thelevels[1])]
         }
     }
 
@@ -508,10 +513,10 @@ plotConf0 <- function(model,
     if (is.null(var1)) {
         dots$axes=FALSE
         if (is.null(dots$xlab))
-            dots$xlab <- ""    
+            dots$xlab <- ""
     } else  {
         if (is.null(dots$xlab))
-            dots$xlab <- var1    
+            dots$xlab <- var1
     }
     plot.list <- c(x=0,y=0,type="n",dots)
     do.call(plot, plot.list)
@@ -520,20 +525,20 @@ plotConf0 <- function(model,
         axis(2)
         axis(1,at=seq(length(thelevels)),labels)
     }
-    
+
     col.trans <- Col(col,alpha)
 
-    Wrap <- function(k,n) { (1:k-1)%%n +1 }
-    col.i <- Wrap(k,length(col));  col.k <- col[col.i]; 
+    Wrap <- function(k,n) { (seq_len(k)-1)%%n +1 }
+    col.i <- Wrap(k,length(col));  col.k <- col[col.i];
     lty.k <- lty[Wrap(k,length(lty))]
     pch.k <- pch[Wrap(k,length(pch))]
 
-    if (!is.null(var1)) {        
-        for (i in 1:k) {
+    if (!is.null(var1)) {
+        for (i in seq_len(k)) {
             ci0 <- trans(ci.all$fit[(npoints*(i-1)+1):(i*npoints),])
             y <- ci0[,1]; yu <- ci0[,3]; yl <- ci0[,2]
             lines(y ~ x, col=col.k[i], lwd=lwd, lty=lty.k[i])
-            
+
             if (ci) {
                 lines(yl ~ x, lwd=1, col=col.k[i], lty=ci.lty)
                 lines(yu ~ x, lwd=1, col=col.k[i], lty=ci.lty)
@@ -541,7 +546,7 @@ plotConf0 <- function(model,
                 yy <- c(yl, rev(yu))
                 polygon(xx,yy, col=col.trans[col.i[i]], lty=0)
             }
-            
+
         }
     }
     ii <- as.numeric(curdata[,var2])
@@ -553,9 +558,9 @@ plotConf0 <- function(model,
         if (partres>0)
             points(pr ~ x,pch=pch[1], col=colpt[1], cex=cex, ...)
         positions <- seq(k)
-        mycoef <- bb[paste(var2,thelevels,sep="")][-1]
+        mycoef <- bb[paste0(var2,thelevels)][-1]
         if (class(model)[1]%in%c("lm","glm"))
-            myconf <- confint(model)[paste(var2,thelevels,sep="")[-1],,drop=FALSE]    
+            myconf <- confint(model)[paste0(var2,thelevels)[-1],,drop=FALSE]
         else {
             myconf <- matrix(mycoef,ncol=2,nrow=length(mycoef))
             myconf <- myconf + qnorm(0.975)*cbind((diag(as.matrix(SS))[-1])^0.5)%x%cbind(-1,1)
@@ -577,9 +582,9 @@ plotConf0 <- function(model,
                 y <- ci0[,1]; yu <- ci0[,3]; yl <- ci0[,2]
             }
             if (!mean) y <- NULL
-            confband(pos,yl,yu,delta=delta,center=y,centermark=centermark,col=col[1],lwd=lwd[1],lty=lty[1],cex=cex)  
+            confband(pos,yl,yu,delta=delta,center=y,centermark=centermark,col=col[1],lwd=lwd[1],lty=lty[1],cex=cex)
         }
-    } else {    
+    } else {
         if (partres) {
             xx <- curdata[,var1]
             if (!missing(colpt)) {
@@ -592,7 +597,7 @@ plotConf0 <- function(model,
             }
         }
     }
-    
+
     if (k>1 && legend!=FALSE) {
         if (length(lty)>1)
             legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white", lty=lty.k,cex=cex)
@@ -600,7 +605,6 @@ plotConf0 <- function(model,
             legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white",cex=cex)
     }
 
-    ##  palette(curpal)  
+    ##  palette(curpal)
     invisible(list(x=xx, y=pr, predict=ci.all))
 }
-

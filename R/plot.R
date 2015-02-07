@@ -1,10 +1,10 @@
 ###{{{ plot.lvm
 
 ##' Plot path diagram
-##' 
+##'
 ##' Plot the path diagram of a SEM
-##' 
-##' 
+##'
+##'
 ##' @aliases plot.lvmfit
 ##' @param x Model object
 ##' @param diag Logical argument indicating whether to visualize variance
@@ -35,7 +35,7 @@
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
 ##' @examples
-##' 
+##'
 ##' \donttest{
 ##' m <- lvm(c(y1,y2) ~ eta)
 ##' regression(m) <- eta ~ z+x2
@@ -65,7 +65,7 @@
 ##' plot(lava:::beautify(m,edgecol=FALSE))
 ##' }
 ##'
-##' 
+##'
 ##' @export
 ##' @method plot lvm
 `plot.lvm` <-
@@ -90,7 +90,7 @@
   for (f in myhooks) {
     x <- do.call(f, list(x=x,...))
   }
-  
+
   suppressWarnings(igraphit <- !Rgraphviz || !(require("graph")) || !(require("Rgraphviz")))
   if (igraphit) {
     if (!require("igraph")) {
@@ -104,14 +104,14 @@
       plot(g,layout=L,...)
     else plot(g,layout=layout,...)
     return(invisible(g))
-  } 
+  }
   if (init) {
     g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   } else {
     g <- Graph(x)
   }
   if  (labels) {
-    AP <- matrices(x,paste("p",seq_len(index(x)$npar),sep=""))
+    AP <- matrices(x,paste0("p",seq_len(index(x)$npar)))
     mylab <- AP$P; mylab[AP$A!="0"] <- AP$A[AP$A!="0"]
     mylab[!is.na(x$par)] <- x$par[!is.na(x$par)]
     mylab[!is.na(x$covpar)] <- x$covpar[!is.na(x$covpar)]
@@ -121,23 +121,23 @@
     plot(g)
   } else {
 ##    graphRenderInfo(g)$recipEdges <- "distinct"
-    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"    
+    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     dots <- list(...)
     dots$attrs <- attrs
     dots$x <- g
     dots$recipEdges <- "distinct"
-    if (attributes(g)$feedback) dots$recipEdges <- c("combine") 
+    if (attributes(g)$feedback) dots$recipEdges <- c("combine")
     if (is.null(dots$layoutType)) dots$layoutType <- layout[1]
-    if (all(index(x)$A==0)) 
+    if (all(index(x)$A==0))
       dots$layoutType <- "circo"
-    
+
     g <- do.call("layoutGraph", dots)
     ## Temporary work around:
     graph::nodeRenderInfo(g)$fill <- graph::nodeRenderInfo(dots$x)$fill
     graph::nodeRenderInfo(g)$col <- graph::nodeRenderInfo(dots$x)$col
-    graph::edgeRenderInfo(g)$col <- graph::edgeRenderInfo(dots$x)$col    
+    graph::edgeRenderInfo(g)$col <- graph::edgeRenderInfo(dots$x)$col
     if (noplot)
-      return(g)    
+      return(g)
     res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
     options(.savedOpt)
   }
@@ -153,7 +153,7 @@
   for (f in myhooks) {
     do.call(f, list(x=x,...))
   }
-  
+
   invisible(g)
 }
 
@@ -189,8 +189,8 @@
     var <- rownames(covariance(Model(x))$rel)
     if (!cor) {
        delta <- 1
-      for (r in 1:(nrow(covariance(Model(x))$rel)-delta) ) {
-        for (s in (r+delta):ncol(covariance(Model(x))$rel) ) {
+      for (r in seq_len(nrow(covariance(Model(x))$rel)-delta) ) {
+        for (s in seq(r+delta,ncol(covariance(Model(x))$rel)) ) {
           if (covariance(Model(x))$rel[r,s]==1) {
             g <- graph::removeEdge(var[r],var[s], g)
             g <- graph::removeEdge(var[s],var[r], g)
@@ -199,15 +199,15 @@
       }
     }
     if (!diag) {
-      for (r in 1:(nrow(covariance(Model(x))$rel)) ) {
+      for (r in seq_len(nrow(covariance(Model(x))$rel)) ) {
         if (graph::isAdjacent(g,var[r],var[r]))
           g <- graph::removeEdge(var[r],var[r],g)
       }
-    } 
+    }
     m <- Model(x); Graph(m) <- g
     g <- plot(m, diag=diag, cor=cor, fontsize1=fontsize1, init=FALSE, ...)
     options(.savedOpt)
-    invisible(g)    
+    invisible(g)
   }
 
 ###}}} plot.lvmfit
@@ -217,7 +217,7 @@
 ##' @export
 plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
   k <- x$ngroup
-  for (i in 1:k)
+  for (i in seq_len(k))
     plot(x$lvm[[i]],diag=diag,labels=labels, ...)
 }
 
@@ -234,8 +234,8 @@ plot.multigroupfit <- function(x,...) {
 igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
   require("igraph")
   oC <- covariance(x)$rel
-  for (i in 1:(nrow(oC)-1))
-    for (j in (i+1):nrow(oC)) {
+  for (i in seq_len(nrow(oC)-1))
+    for (j in seq(i+1,nrow(oC))) {
       if (oC[i,j]!=0) {
         x <- regression(x,vars(x)[i],vars(x)[j])
         x <- regression(x,vars(x)[j],vars(x)[i])
@@ -255,13 +255,13 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
   }
   igraph::E(g)$label <- as.list(rep("",length(igraph::E(g))))
   oE <- edgelabels(x)
-  for (i in 1:length(igraph::E(g))) {
+  for (i in seq_along(igraph::E(g))) {
     st <- as.character(oE[i])
     if (length(st)>0)
       igraph::E(g)$label[[i]] <- st
   }
   g$layout <- layout(g)
-  return(g)  
+  return(g)
 }
 
 ###}}} igraph.lvm
@@ -276,7 +276,7 @@ beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("whi
     for (i in seq_len(length(vars(x)))) {
         num <- c(num,gsub(trimmed[i],"",vars(x)[i]))
     }
-    lab <- paste(vars(x),"=",paste("expression(",trimmed,"[scriptscriptstyle(",num,")])",sep=""),sep="",collapse=",")
+    lab <- paste0(vars(x),"=",paste0("expression(",trimmed,"[scriptscriptstyle(",num,")])"),collapse=",")
     labels(x) <- eval(parse(text=paste("c(",lab,")")))
     if (!edgecol) return(x)
     iex <- index(x)$exo.idx
@@ -296,5 +296,3 @@ beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("whi
     }
     x
 }
-    
-

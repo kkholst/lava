@@ -2,7 +2,7 @@
 ##'
 ##' Stack estimating equations
 ##' @param x Model 1
-##' @param model2 Model 2 
+##' @param model2 Model 2
 ##' @param D1u Derivative of score of model 2 w.r.t. parameter vector of model 1
 ##' @param inv.D2u Inverse of deri
 ##' @param weight weight (vector or function)
@@ -51,7 +51,7 @@ stack.glm <- function(x,model2,...) {
 
 ##' Two-stage (non-linear) measurement error
 ##'
-##' Two-stage measurement error 
+##' Two-stage measurement error
 ##' @param model1 Stage 1 model
 ##' @param formula Formula specifying observed covariates in stage 2 model
 ##' @param data data.frame
@@ -68,12 +68,12 @@ stack.glm <- function(x,model2,...) {
 ##' regression(m) <- z~u2+u+v+uv+x
 ##' set.seed(1)
 ##' d <- sim(m,1000,p=c("u,u"=1))
-##' 
+##'
 ##' ## Stage 1
 ##' m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,c(y3[0:s],y4[0:s],y5[0:s])~1*v,u~b*x,u~~v)
 ##' latent(m1) <- ~u+v
 ##' e1 <- estimate(m1,d)
-##' 
+##'
 ##' pp <- function(mu,var,data,...) {
 ##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 ##' }
@@ -98,7 +98,7 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
     names(stage.two$coefficients) <- colnames(X)
     if (!inherits(stage.two,"estimate"))
         e2 <- estimate(stage.two, id=id2)
-    U <- function(alpha=p1,beta=coef(stage.two)) {        
+    U <- function(alpha=p1,beta=coef(stage.two)) {
         X <- cbind(X0,uhat(alpha))
         r <- (Y-X%*%beta)/summary(stage.two)$sigma^2
         apply(X,2,function(x) sum(x*r))

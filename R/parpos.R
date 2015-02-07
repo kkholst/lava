@@ -23,7 +23,7 @@ parpos.multigroup <- function(x,p,mean=TRUE,...) {
   if (!is.character(p)) p <- names(p)
   p0 <- rep(NA,with(x,npar+npar.mean));
   names(p0) <- c(x$mean,x$par)
-  for (i in 1:length(x$lvm)) {
+  for (i in seq_along(x$lvm)) {
     cur <- parpos(x$lvm[[i]],p=p)
     if (length(cur)>0) {
       p0[c(x$meanpos[[i]],x$parpos[[i]])[cur]] <- names(cur)
@@ -36,7 +36,7 @@ parpos.multigroup <- function(x,p,mean=TRUE,...) {
   p1 <- which(!is.na(match(x$name,p)))
   p0[p1] <- x$name[p1]
   return(structure(which(!is.na(p0)),name=p0))
-##  return(p0)    
+##  return(p0)
 }
 
 ##' @export
@@ -44,7 +44,7 @@ parpos.multigroupfit <- function(x,...) parpos.multigroup(x$model0,...)
 
 ##' @export
 parpos.lvm <- function(x,p,mean=TRUE,...) {
-  if (!missing(p)) {    
+  if (!missing(p)) {
     if (!is.character(p)) p <- names(p)
     cc1 <- coef(Model(x),mean=mean,fix=FALSE)
     cc2 <- coef(Model(x),mean=mean,fix=FALSE,labels=TRUE)
@@ -53,14 +53,14 @@ parpos.lvm <- function(x,p,mean=TRUE,...) {
     res <- (union(idx1,idx11));
     if (length(res)!=length(p)) {
       names(res) <- cc1[res]
-    } else {      
+    } else {
       names(res) <- p
     }
     ##    res <- idx1; res[!is.na(idx11)] <- idx11[!is.na(idx11)]
     ##    names(res) <- p
     ord <- order(res)
     res <- sort(res)
-    attributes(res)$ord <- ord    
+    attributes(res)$ord <- ord
     return(res)
   }
   if (mean)
@@ -75,5 +75,3 @@ parpos.lvm <- function(x,p,mean=TRUE,...) {
 
 ##' @export
 parpos.lvmfit <- parpos.lvm
-
-

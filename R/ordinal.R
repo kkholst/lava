@@ -22,7 +22,7 @@ ordinal.sim.hook <- function(x,data,p,modelpar,...) {
             data[,ovar[i]] <- factor(data[,ovar[i]],
                                      levels=seq(K)-1,
                                      labels=lab)
-        
+
     }
     return(data)
 }
@@ -83,11 +83,11 @@ print.ordinal.lvm <- function(x,...) {
         if (!missing(breaks) && !is.list(breaks)) breaks <- rep(list(breaks),length(var))
         if (!missing(constrain) && !is.list(constrain)) constrain <- rep(list(constrain),length(var))
     }
-    
+
     addvar(x) <- var
     for (i in seq_len(length(var))) {
         if (K[i]>2 || (K[i]==2 && !liability)) {
-            parname <- paste(var[i],":",paste(seq(K[i]-1)-1,seq(K[i]-1),sep="|"),sep="")
+            parname <- paste0(var[i],":",paste(seq(K[i]-1)-1,seq(K[i]-1),sep="|"))
             newpar <- if (is.null(breaks)) {
                 rep(-1,K[i]-1)
             } else if (is.list(breaks)) breaks[[i]] else breaks
@@ -96,12 +96,12 @@ print.ordinal.lvm <- function(x,...) {
                 rep(list(NA),length(newpar)) else constrain[[i]]
             if (length(newfix)<K[i]-1) stop("Wrong number of constraints")
             names(newpar) <- names(newfix) <- parname
-            
+
             parameter(x,newfix,start=newpar) <- names(newfix)
             ## pex <- parname%in%names(x$expar)
             ## if (any(pex <- parname%in%names(x$expar))) {
             ##     if (!all(pex)) stop("Cannot change number of categories! Re-specify model.")
-            ##     x$attributes$iordinal[var] <- list(idx)       
+            ##     x$attributes$iordinal[var] <- list(idx)
             ## }
             x$attributes$ordinalparname[var[i]] <- list(names(newfix))
         }
@@ -111,12 +111,12 @@ print.ordinal.lvm <- function(x,...) {
             mytr <- function(y,p,idx,...) {
                 breaks <- c(-Inf,ordreg_threshold(p[idx]),Inf)
                 as.numeric(cut(y,breaks=breaks))-1
-            }                
+            }
             myalist <- substitute(alist(y=,p=,idx=pp),
                                   list(pp=x$attributes$ordinalparname[[var[i]]]))
             formals(mytr) <- eval(myalist)
             transform(x,var[i],post=FALSE) <- mytr
-            
+
         }
     }
     x$attributes$liability[var] <- liability

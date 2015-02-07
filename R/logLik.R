@@ -10,19 +10,19 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   xconstrainM <- TRUE
   if (length(xconstrain)>0) {
     constrainM <- names(constr)%in%unlist(object$mean)
-    for (i in seq_len(length(constr))) {    
+    for (i in seq_len(length(constr))) {
       if (!constrainM[i]) {
         if (xconstrain%in%constr[[i]]) xconstrainM <- FALSE
       }
     }
   }
-  
+
   Debug(xfix,debug)
   if (missing(n)) {
     n <- nrow(data)
     if (is.null(n)) n <- data$n
   }
-  lname <- paste(model,"_logLik.lvm",sep="")
+  lname <- paste0(model,"_logLik.lvm")
   logLikFun <- get(lname)
   if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ##### Random slopes!
     x0 <- object
@@ -33,8 +33,8 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       colpos <- lapply(xpos, function(y) ceiling(y/nrow))
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix <- list(var=xfix, col=colpos, row=rowpos)
-      for (i in 1:length(myfix$var))
-        for (j in 1:length(myfix$col[[i]])) {
+      for (i in seq_along(myfix$var))
+        for (j in seq_along(myfix$col[[i]])) {
           regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
             data[1,myfix$var[[i]]]
         }
@@ -43,24 +43,24 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     k <- length(index(x0)$manifest)
     myfun <- function(ii) {
       if (length(xfix)>0)
-        for (i in 1:length(myfix$var)) {
+        for (i in seq_along(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
       return(logLikFun(x0,data=data[ii,,drop=FALSE], p=p,weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],
                        model=model,debug=debug,indiv=indiv,...))
-    }    
-    loglik <- sapply(1:nrow(data),myfun)
+    }
+    loglik <- sapply(seq_len(nrow(data)),myfun)
     if (!indiv) {
       loglik <- sum(loglik)
       n <- nrow(data)
       attr(loglik, "nall") <- n
       attr(loglik, "nobs") <- n
       attr(loglik, "df") <- length(p)
-      class(loglik) <- "logLik"      
+      class(loglik) <- "logLik"
     }
     return(loglik)
   }
-  
+
   if (xconstrainM) {
     xconstrain <- c()
     for (i in seq_len(length(constrain(object)))) {
@@ -69,14 +69,14 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       if (length(xx)>0) {
         warg <- setdiff(attributes(z)$args,xx)
         wargidx <- which(attributes(z)$args%in%warg)
-        exoidx <- which(attributes(z)$args%in%xx)        
+        exoidx <- which(attributes(z)$args%in%xx)
         parname <- names(constrain(object))[i]
         y <- names(which(unlist(lapply(intercept(object),function(x) x==parname))))
-        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)
         names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
         xconstrain <- c(xconstrain,list(el))
       }
-    }  
+    }
     if (length(xconstrain)>0) {
       yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
       iconstrain <- unlist(lapply(xconstrain,function(x) x$idx))
@@ -103,7 +103,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       loglik <- eval.parent(cl)
     }
   } else {
-    cl[[1]] <- logLikFun          
+    cl[[1]] <- logLikFun
     loglik <- eval.parent(cl)
   }
 
@@ -124,15 +124,15 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 ##' @export
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
-                          weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) { 
+                          weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) {
   exo.idx <- with(index(object), exo.obsidx)
   endo.idx <- with(index(object), endo.obsidx)
   if (type[1]=="exo") {
     if (length(exo.idx)==0 || is.na(exo.idx))
       return(0)
   }
-  
-  cl <- match.call()  
+
+  cl <- match.call()
   if (type[1]=="cond") {
     cl$type <- "sim"
     L0 <- eval.parent(cl)
@@ -141,22 +141,22 @@ gaussian_logLik.lvm <- function(object,p,data,
     loglik <- L0-L1
     return(loglik)
   }
-    
+
   if (missing(n)) {
     if (is.vector(data)) n <- 1
     else n <- nrow(data)
   }
   k <- length(index(object)$manifest)
-  
+
   if (!is.null(offset) && type[1]!="exo") {
-    data[,colnames(offset)] <- data[,colnames(offset)]-offset    
+    data[,colnames(offset)] <- data[,colnames(offset)]-offset
   }
- 
+
   if (type[1]=="sat") {
     if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
-          
+
     }
     if (missing(p)) p <- rep(1,length(coef(object)))
     L1 <- logLik(object,p,data,type="exo",meanstructure=meanstructure)
@@ -169,23 +169,23 @@ gaussian_logLik.lvm <- function(object,p,data,
     if (meanstructure) npar <- npar+ (P*k + P)
     attr(loglik, "nall") <- n
     attr(loglik, "nobs") <- n
-    attr(loglik, "df") <- npar    
-    class(loglik) <- "logLik"    
+    attr(loglik, "df") <- npar
+    class(loglik) <- "logLik"
     return(loglik)
   }
   myidx <- switch(type[1],
-                  sim =  1:length(index(object)$manifest),
+                  sim =  seq_along(index(object)$manifest),
                   cond = { endo.idx },
                   cond2 = { endo.idx },
                   exo =  { exo.idx } )
 
-  mom <- moments(object, p, conditional=(type[1]=="cond2"), data=data)  
+  mom <- moments(object, p, conditional=(type[1]=="cond2"), data=data)
   C <- mom$C
   xi <- mom$xi
   if (type[1]=="exo") {
     C <- C[exo.idx,exo.idx,drop=FALSE]
     xi <- xi[exo.idx,drop=FALSE]
-  }  
+  }
   Debug(list("C=",C),debug)
   k <- nrow(C)
 
@@ -210,11 +210,11 @@ gaussian_logLik.lvm <- function(object,p,data,
   if (!missing(n))
   if (notdatalist & (n<2 | indiv | !is.null(weight))) {
     if (n==1)
-      data <- rbind(data) 
+      data <- rbind(data)
     res <- numeric(n)
     data <- data[,index(object)$manifest,drop=FALSE]
-    loglik <- 0; 
-    for (i in 1:n) {
+    loglik <- 0;
+    for (i in seq_len(n)) {
       ti <- cbind(as.numeric(data[i,myidx]))
       if (meanstructure) {
         ti <- ti-xi
@@ -222,7 +222,7 @@ gaussian_logLik.lvm <- function(object,p,data,
       if (!is.null(weight)) {
         W <- diag(weight[i,])
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
-      } else { 
+      } else {
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)
       }
       if (indiv)
@@ -230,14 +230,14 @@ gaussian_logLik.lvm <- function(object,p,data,
       loglik <- loglik + val
     }
     if (indiv)
-      return(res)    
+      return(res)
   } else {
    if (missing(S)) {
       d0 <- procdata.lvm(object,data=data)
       S <- d0$S; mu <- d0$mu; n <- d0$n
     }
     S <- S[myidx,myidx,drop=FALSE]
-    mu <- mu[myidx,drop=FALSE]  
+    mu <- mu[myidx,drop=FALSE]
     T <- S
     if (meanstructure) {
       W <- tcrossprod(mu-xi)
@@ -248,7 +248,7 @@ gaussian_logLik.lvm <- function(object,p,data,
   return(loglik)
 }
 
-###}}}  
+###}}}
 
 ###{{{ logLik.lvmfit
 
@@ -260,8 +260,8 @@ logLik.lvmfit <- function(object,
                           weight=Weight(object),
                           weight2=object$data$weight2,
                           ...) {
-      
-  logLikFun <- paste(model,"_logLik.lvm",sep="")
+
+  logLikFun <- paste0(model,"_logLik.lvm")
   if (!exists(logLikFun)) {
     model <- "gaussian"
   }
@@ -290,13 +290,13 @@ logLik.lvm.missing <- function(object,
 ##' @export
 logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond","sim","exo","sat"),...) {
   res <- procrandomslope(object)
-  pp <- with(res, modelPar(model,p)$p) 
+  pp <- with(res, modelPar(model,p)$p)
 
   if (type[1]=="sat") {
     n <- 0
     df <- 0
     loglik <- 0
-    for (i in 1:object$ngroup) {
+    for (i in seq_len(object$ngroup)) {
       m <- Model(object)[[i]]
       L <- logLik(m,p=pp[[i]],data=object$data[[i]],type="sat")
       df <- df + attributes(L)$df
@@ -307,11 +307,11 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
     attr(loglik, "nobs") <- n##-df
     attr(loglik, "df") <- df
     class(loglik) <- "logLik"
-    return(loglik)  
+    return(loglik)
   }
 
   n <- 0
-  loglik <- 0; for (i in 1:object$ngroup) {
+  loglik <- 0; for (i in seq_len(object$ngroup)) {
     n <- n + object$samplestat[[i]]$n
     val <- logLik(object$lvm[[i]],pp[[i]],data[[i]],weight=weight[[i]],type=type,...)
     loglik <- loglik + val
@@ -320,7 +320,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
   attr(loglik, "nobs") <- n##-length(p)
   attr(loglik, "df") <- length(p)
   class(loglik) <- "logLik"
-  return(loglik)  
+  return(loglik)
 }
 
 ###}}} logLik.multigroup

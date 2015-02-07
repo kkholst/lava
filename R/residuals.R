@@ -9,7 +9,7 @@ residuals.multigroupfit <- function(object,data=model.frame(object),p=coef(objec
   for (i in seq(length(pp$p))) {
     res <- c(res, list(residuals(object$model$lvm[[i]],data=data[[i]],p=pp$p[[i]],...)))
   }
-  return(res)  
+  return(res)
 }
 
 
@@ -26,7 +26,7 @@ residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=coef(objec
   ##  y <- endogenous(object)[match(endogenous(object),manifest(object))]
   r <- as.matrix(data[,Y,drop=FALSE]-(PrY))
   res <- r
-  
+
   if (std) {
     S <- attributes(Pr)$cond.var;
     if (length(Y)>1) {
@@ -38,7 +38,7 @@ residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=coef(objec
 }
 
 gradpredict <- function(p,obj,data=model.frame(obj)) {
-##  res <- residuals.lvmfit(object=obj,data=data,std=FALSE,p=p)  
+##  res <- residuals.lvmfit(object=obj,data=data,std=FALSE,p=p)
   mom <- moments(Model(obj),p,conditional=TRUE)
   D <- with(obj, deriv(model, meanpar=modelPar(model,p)$meanpar, mom=mom))
 
@@ -46,14 +46,14 @@ gradpredict <- function(p,obj,data=model.frame(obj)) {
   Y <- with(obj, setdiff(manifest(model), X))
   X.idx <- with(obj, match(X,manifest(model)))
   X.idx.all <- with(obj, match(X, vars(model)))
-  
+
   mu0 <- mom$v; mu0[X.idx.all] <- 0
   xs <- data[,X,drop=FALSE]
   mu.x <- apply(xs, 1, FUN=function(i) { res  <- rep(0,length(mu0)); res[X.idx.all] <- i; res })
   ##xi.x <- (mu.0 + mu.x)
   mu.0 <- rbind(rep(1,nrow(data))) %x% mu0
   mu. <- mu.0 + mu.x
-  
+
   K <- nrow(mom$J)
   I <- diag(K)
 
@@ -64,7 +64,7 @@ gradpredict <- function(p,obj,data=model.frame(obj)) {
   dvecmui = d1+d2
   ## Reorganize vector
   idx <- (0:(nrow(data)-1))*K+1
-  idx. <- c(); for (i in 1:K) idx. <- c(idx., idx+i-1)
+  idx. <- c(); for (i in seq_len(K)) idx. <- c(idx., idx+i-1)
   dvecmui <- dvecmui[idx.,]
   ## first n rows first coordinate of predicted values,
   ## next n rows second coordinates and so forth

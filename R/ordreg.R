@@ -6,7 +6,7 @@ ordreg_threshold <- function(theta) {
 
 ordreg_ithreshold <- function(v) {
     theta <- v[1]
-    if (length(v)>1) theta <- c(theta,log(-rev(diff(rev(v)))))        
+    if (length(v)>1) theta <- c(theta,log(-rev(diff(rev(v)))))
     return(theta)
 }
 
@@ -43,10 +43,10 @@ ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),
     assign("h",family$linkinv,envir=up)
     assign("dh",family$mu.eta,envir=up)
     assign("y",as.numeric(y),envir=up)
-    assign("X",X,envir=up)    
+    assign("X",X,envir=up)
     assign("K",nlevels(y),envir=up)
     assign("n",length(y),envir=up)
-    assign("p",NCOL(X),envir=up)    
+    assign("p",NCOL(X),envir=up)
     assign("threshold", function(theta,K) ordreg_threshold(theta[seq(K-1)]), envir=up)
     assign("dthreshold",function(theta,K) ordreg_dthreshold(theta[seq(K-1)]), envir=up)
     ff <- function(theta) -ordreg_logL(theta,up)
@@ -77,7 +77,7 @@ summary.ordreg <- function(object,alpha=0.95,...) {
     pp <- 1-(1-alpha)/2
     qq <- qnorm(pp)
     res <- cbind(res,res[,1]-res[,2]*qq,res[,1]+res[,2]*qq,2*(1-pnorm(abs(res[,1])/res[,2])))
-    colnames(res) <- c("Estimate","Std.Err",paste(round(c(1-pp,pp)*1000)/10,"%",sep=""),"P-value")
+    colnames(res) <- c("Estimate","Std.Err",paste0(round(c(1-pp,pp)*1000)/10,"%"),"P-value")
     res <- list(coef=res,logLik=logLik(object),AIC=AIC(object))
     class(res) <- "summary.ordreg"
     return(res)
@@ -100,7 +100,7 @@ score.ordreg <- function(x,p=coef(x),indiv=FALSE,...) {
 ##' @export
 logLik.ordreg <- function(object,p=coef(object),indiv=FALSE,...) {
     ordreg_logL(p,object$up)
-    res <- log(object$up$pr)    
+    res <- log(object$up$pr)
     if (!indiv) res <- sum(res)
     structure(res,nall=length(object$up$pr),nobs=object$up$pr,df=length(p),class="logLik")
 }
@@ -143,6 +143,3 @@ ordreg_score <- function(theta,env,...) {
 ordreg_hessian <- function(theta,env,...) {
     numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta)
 }
-
-
-

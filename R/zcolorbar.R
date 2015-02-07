@@ -19,7 +19,7 @@
 ##' plotNeuro(x,roi=R,mm=-18,range=5)
 ##' colorbar(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
 ##'          x=c(-40,40),y.range=c(84,90),values=c(-5:5))
-##' 
+##'
 ##' colorbar(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
 ##'          x=c(-10,10),y.range=c(-100,50),values=c(-5:5),
 ##'          direction="vertical",border=1)
@@ -33,7 +33,7 @@ colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
   nlut <- length(clut)
   X <- length(agrep(tolower(direction[1]),"horizontal"))>0
   scale <- ifelse(X,diff(x.range),diff(y.range))/nlut
-  barsize <- ifelse(X,diff(y.range),diff(x.range))  
+  barsize <- ifelse(X,diff(y.range),diff(x.range))
   if (missing(label.offset)) label.offset <- barsize/3
   delta <- ifelse(X,x.range[1],y.range[1])
   if (!is.null(values)) dM <- diff(range(values))/(nlut-1)
@@ -46,13 +46,13 @@ colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
       }
       if (i>0)
           rect(x1,y1,x2,y2, col=clut[i], border=border, xpd=TRUE)
-  }  
-  if (!is.null(values)) {      
+  }
+  if (!is.null(values)) {
       for (i in seq_len(nlut+1)-1) {
           pos <- delta + (i-1)*scale
           rund <- format(round(min(values)+dM*i,max(1,digits)),digits=digits)
           ##      rund <- round((min(values)+dM*i)*10^digits)/(10^digits)
-          x0 <- pos+(1+0.5)*scale; y0 <- y.range[2]+label.offset                
+          x0 <- pos+(1+0.5)*scale; y0 <- y.range[2]+label.offset
           if (!X) {
               y0 <- x0;
               if (position==1) x0 <- x.range[1]-label.offset

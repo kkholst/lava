@@ -4,13 +4,13 @@ rsq <- function(x,stderr=FALSE) {
     if (stderr) {
         v <- endogenous(x)
         vpar <- paste(v,v,sep=lava.options()$symbol[2])
-        iid.v <- iid(model.frame(x)[,v])    
-        iid.mod <- iid(x)        
+        iid.v <- iid(model.frame(x)[,v])
+        iid.mod <- iid(x)
         coef0 <- c(attributes(iid.v)$coef[vpar],
                    coef(x)[vpar])
         iid0 <- cbind(iid.v[,vpar],iid.mod[,vpar])
         p <- length(v)
-        idx <- seq_len(p);         
+        idx <- seq_len(p);
         ee <- estimate(NULL,data=NULL,
                        function(x) {
                            res <- (x[idx]-x[idx+p])/x[idx]
@@ -38,7 +38,7 @@ rsq <- function(x,stderr=FALSE) {
         ##     p0 <- c(idx,idx2)
         ##     p1 <- setdiff(unique(p0),0)
         ##     p2 <- match(p0,p1)
-            
+
         ##     k <- length(v)
         ##     coef0 <- c(pp[p1],attributes(iid.v)$coef[vpar])
         ##     iid0 <- cbind(iid.mod[,p1],iid.v[,vpar])
@@ -56,12 +56,12 @@ rsq <- function(x,stderr=FALSE) {
         ##                    },coef=coef0,iid=iid0)
         ##     res <- c(res,list(ee))
         ## }
-        
+
         return(res)
     }
-        
 
-    
+
+
     v <- c(endogenous(x),setdiff(latent(x),parameter(Model(x))))
     res <- coef(x,9,std="yx")
     idx <- with(attributes(res),
@@ -74,7 +74,7 @@ rsq <- function(x,stderr=FALSE) {
     ## v <- setdiff(vars(x),exogenous(x))
     ## vvar <- M$Cfull[cbind(v,v)]
     ## rsq <- (vvar-M$P[cbind(v,v)])/vvar
-    
+
     if (length(latent(x))>0) {
         M <- moments(x,coef(x))
         nn <- names(res)
@@ -97,10 +97,10 @@ rsq <- function(x,stderr=FALSE) {
             k <- length(v)
             val <- (p.^2*varl)/varv; names(val) <- v
             res <- c(res,list(val))
-            nn <- c(nn,paste("Variance explained by '",lat,"'",sep=""))
+            nn <- c(nn,paste0("Variance explained by '",lat,"'"))
         }
         names(res) <- nn
-    }   
+    }
     res
 }
 
@@ -121,8 +121,8 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
         for (atr in c("nall","nobs","df"))
           attributes(ll)[[atr]] <- attributes(ll)[[atr]]+attributes(l0)[[atr]]
       }
-      
-    } 
+
+    }
     return(logLik(object, type="sat"))
   }
   covar <- exogenous(object)
@@ -137,8 +137,8 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
     suppressWarnings(covariance(m0) <- y)
   else {
     if (length(y)>1) {
-      for (i in 1:(length(y)-1))
-       for (j in (i+1):length(y)) {
+      for (i in seq_len(length(y)-1))
+       for (j in seq(i+1,length(y))) {
          m0 <- regression(m0,y[i],y[j])
        }
     }
@@ -148,7 +148,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
     mystart <- rep(0,with(index(m0), npar.mean+npar))
     mystart[variances(m0,mean=TRUE)] <- 1
     control$start <- mystart
-  }  
+  }
   message("Calculating MLE of saturated model:\n")
   e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
   if (logLik)
@@ -156,19 +156,19 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
   return(e0)
 }
 
-condition <- function(A) {  
+condition <- function(A) {
   suppressWarnings(with(eigen(A),tail(values,1)/head(values,1)))
 }
 
 
 
 ##' Extract model summaries and GOF statistics for model object
-##' 
+##'
 ##' Calculates various GOF statistics for model object including global
 ##' chi-squared test statistic and AIC. Extract model-specific mean and variance
 ##' structure, residuals and various predicitions.
-##' 
-##' 
+##'
+##'
 ##' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
 ##' score score.lvmfit logLik.lvmfit
 ##' @param object Model object
@@ -190,28 +190,28 @@ condition <- function(A) {
 ##' @param all Calculate all (ad hoc) FIT indices: TLI, CFI, NFI, SRMR, ...
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
-##' 
+##'
 ##' gof(object, ...)
 ##'
 ##' \method{gof}{lvmfit}(object, chisq=FALSE, level=0.90, rmsea.threshold=0.05,all=FALSE,...)
-##' 
+##'
 ##' moments(x,...)
-##' 
+##'
 ##' \method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...)
-##' 
+##'
 ##' \method{logLik}{lvmfit}(object, p=coef(object),
 ##'                       data=model.frame(object),
 ##'                       model=object$estimator,
 ##'                       weight=Weight(object),
 ##'                       weight2=object$data$weight2,
 ##'                           ...)
-##' 
+##'
 ##' \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator,
 ##'                    weight=Weight(x), weight2=x$data$weight2, ...)
-##' 
+##'
 ##' \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
 ##'                    model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
-##' 
+##'
 ##' @return A \code{htest}-object.
 ##' @author Klaus K. Holst
 ##' @keywords methods models
@@ -222,8 +222,8 @@ condition <- function(A) {
 ##' dd <- sim(m,1000)
 ##' e <- estimate(m, dd)
 ##' gof(e,all=TRUE,rmsea.threshold=0.05,level=0.9)
-##' 
-##' 
+##'
+##'
 ##' set.seed(1)
 ##' m <- lvm(list(c(y1,y2,y3)~u,y1~x)); latent(m) <- ~u
 ##' regression(m,c(y2,y3)~u) <- "b"
@@ -234,7 +234,7 @@ condition <- function(A) {
 ##' rr <- rsq(e,TRUE)
 ##' rr
 ##' estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
-##' 
+##'
 `gof` <-
   function(object,...) UseMethod("gof")
 
@@ -262,7 +262,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
     res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
     q <- res$fit$statistic
     qdf <- res$fit$parameter
-    if (all) {     
+    if (all) {
       m0 <- lvm(manifest(object)); exogenous(m0) <- NULL
       e0 <- estimate(m0,model.frame(object))
       g0 <- gof(e0)
@@ -271,7 +271,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       qdfbaseline <- g0$fit$parameter
       CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
       NFI <- (qbaseline-q)/qbaseline
-      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)      
+      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)
       S <- object$data$S
       mu <- object$data$mu
       C <- modelVar(object)$C
@@ -285,10 +285,10 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
       res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR))
       ## if (length(latent(object))>0) {
-      ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5      
+      ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5
       ##   res <- c(res,list("SRMR(endogenous)"=SRMR.endo))
       ## }
-    }    
+    }
     ##    if (class(object)[1]=="lvmfit")
     if (rnkV==ncol(vcov(object)) && (!is.null(minSV) && minSV>1e-12)) {
 
@@ -308,7 +308,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
         }
         ci <- c(epsilon(c(hi$root,lo$root)))
         RMSEA <- c(RMSEA=RMSEA,ci);
-        names(RMSEA) <- c("RMSEA",paste(100*c(alpha,(1-alpha)),"%",sep=""))
+        names(RMSEA) <- c("RMSEA",paste0(100*c(alpha,(1-alpha)),"%"))
         pval <- 1-pchisq(q,qdf,(n*qdf*rmsea.threshold^2))
         res <- list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level, rmsea.threshold=rmsea.threshold, pval.rmsea=pval)
         return(res)
@@ -322,13 +322,13 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
 
   res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
   class(res) <- "gof.lvmfit"
-  return(res)       
+  return(res)
 }
 
 ##' @export
 print.gof.lvmfit <- function(x,optim=TRUE,...) {
   if (!is.null(x$n)) {
-    with(x,       
+    with(x,
          cat("\n Number of observations =", n, "\n"))
   }
   if (is.null(x$fit)) {
@@ -341,18 +341,18 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
   with(x,
        cat(" log-Likelihood of model =", fit$estimate[1], "\n\n",
            "log-Likelihood of saturated model =", fit$estimate[2], "\n",
-           "Chi-squared statistic: q =", fit$statistic, 
-           ", df =", fit$parameter, 
+           "Chi-squared statistic: q =", fit$statistic,
+           ", df =", fit$parameter,
            "\n  P(Q>q) =", fit$p.value, "\n"))
   if (!is.null(x$RMSEA)) {
     rr <- round(x$RMSEA*10000)/10000
-      rmsea <- paste(rr[1]," (",rr[2],";",rr[3],")",sep="")
+      rmsea <- paste0(rr[1]," (",rr[2],";",rr[3],")")
     cat("\n RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
     cat("  P(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n",sep="")
-  }  
+  }
   for (i in c("TLI","CFI","NFI","SRMR","SRMR(endogenous)"))
     if (!is.null(x[[i]])) cat("", i,"=",x[[i]],"\n")
-  
+
   if (optim) {
     cat("\nrank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
     cat("condition(Information) = ",x$cond,"\n",sep="")
@@ -376,5 +376,5 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
 ##               p.value=pQ, method = "Likelihood ratio test",
 ##               estimate = values)
 ##   class(res) <- "htest"
-##   return(res)    
+##   return(res)
 ## }

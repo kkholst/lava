@@ -1,8 +1,8 @@
 ##' Model searching
-##' 
+##'
 ##' Performs Wald or score tests
-##' 
-##' 
+##'
+##'
 ##' @aliases modelsearch
 ##' @param x \code{lvmfit}-object
 ##' @param k Number of parameters to test simultaneously. For \code{equivalence}
@@ -16,8 +16,8 @@
 ##' @seealso \code{\link{compare}}, \code{\link{equivalence}}
 ##' @keywords htest
 ##' @examples
-##' 
-##' m <- lvm(); 
+##'
+##' m <- lvm();
 ##' regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
 ##' regression(m) <- eta ~ x
 ##' m0 <- m; regression(m0) <- y2 ~ x
@@ -78,13 +78,13 @@ backwardeliminate <- function(x,
             res <- res[-c(ii,vv)]
             attributes(res)$coef <- coefs
         }
-        return(res)            
+        return(res)
     }
-    
+
     done <- FALSE; i <- 0;
     while (!done & i<maxsteps) {
         p <- ff()
-        ordp <- order(p,decreasing=TRUE)    
+        ordp <- order(p,decreasing=TRUE)
         curp <- p[ordp[1]]
         if (curp<pthres) break;
         var1 <- unlist(strsplit(names(curp),lava.options()$symbol[1]))
@@ -107,9 +107,9 @@ backwardsearch <- function(x,k=1,...) {
     p1 <- pp$p
     Tests <- c(); Vars <- list()
 
-    parnotvar<- setdiff(1:length(p1), variances(Model(x))) ## We don't want to perform tests on the boundary of the parameter space
+    parnotvar<- setdiff(seq_along(p1), variances(Model(x))) ## We don't want to perform tests on the boundary of the parameter space
     freecomb <- combn(parnotvar, k)
-    
+
     for (i in seq_len(ncol(freecomb)))
         {
             cc0 <- coef(cur, mean=FALSE,silent=TRUE,symbol=lava.options()$symbol)
@@ -118,7 +118,7 @@ backwardsearch <- function(x,k=1,...) {
             R <- diag(length(p0)); R <- matrix(R[ii,],nrow=length(ii))
             I <- information(Model(x), p=p1, n=x$data$n, data=model.frame(x))
             if (!is.null(pp$meanpar)) {
-                rmidx <- 1:length(pp$meanpar)
+                rmidx <- seq_along(pp$meanpar)
                 I <- I[-rmidx,-rmidx]
             }
             iI <- solve(I)
@@ -126,7 +126,7 @@ backwardsearch <- function(x,k=1,...) {
             Tests <- c(Tests, W)
             Vars <- c(Vars, list(cc0[ii]))
         }
-    ord <- order(Tests, decreasing=TRUE); 
+    ord <- order(Tests, decreasing=TRUE);
     Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
     res <- list(test=Tests[ord,], var=Vars[ord])
     PM <- matrix(ncol=3,nrow=0)
@@ -159,16 +159,16 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (nfree<k) {
         message("Cannot free",k,"variables from model.\n");
         return()
-    }  
-    
+    }
+
     Tests <- c(); Vars <- list()
     AP <- with(index(cur),A+t(A)+P)
     restricted <- c()
-    for (i in 1:(ncol(AP)-1))
-        for (j in (i+1):nrow(AP))
+    for (i in seq_len(ncol(AP)-1))
+        for (j in seq(i+1,nrow(AP)))
             if ( AP[j,i]==0 ) {
                 restricted <- rbind(restricted,  c(i,j))
-            }  
+            }
 
     if (is.null(restricted)) return(NULL)
     restrictedcomb <- combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
@@ -185,14 +185,14 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (!silent) {
         message("Calculating score test for ",ncol(restrictedcomb), " models:")
         count <- 0
-        pb <- txtProgressBar(style=3,width=40)        
+        pb <- txtProgressBar(style=3,width=40)
     }
     for (i in seq_len(ncol(restrictedcomb)))
         {
             count <- count+1
             if (!silent) {
                 setTxtProgressBar(pb, count/ncol(restrictedcomb))
-            }    
+            }
             varlist <- c()
             altmodel <- cur ## HA: altmodel, H0: cur
             for (j in seq_len(k)) {
@@ -210,7 +210,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
             p1 <- numeric(length(p)+k)
             ## Need to be sure we place 0 at the correct position
-            for (ic in 1:length(cc)) {
+            for (ic in seq_along(cc)) {
                 idx <- match(cc[ic],cc0)
                 if (!is.na(idx))
                     p1[ic] <- p[idx]
@@ -222,8 +222,8 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
                 Sc2 <- score(altmodel,p=p1,data=model.frame(x),
                              model=x$estimator,weight=Weight(x))
             }
-            I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]    
-            
+            I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
+
             iI <- try(Inverse(I), silent=TRUE)
             Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
                          (Sc2)%*%iI%*%t(Sc2)
@@ -267,9 +267,6 @@ print.modelsearch <- function(x,tail=nrow(x$res),adj=c("holm","BH"),...) {
         adjp <- sapply(adj,function(i) p.adjust(x$test[,2],method=i))
         x$res <- cbind(x$res,formatC(adjp))
     }
-    print(x$res[(N-tail+1):N,], quote=FALSE, ...)
+    print(x$res[seq(N-tail+1,N),], quote=FALSE, ...)
     invisible(x)
 }
-
-
-

@@ -4,7 +4,7 @@
 \alias{makemissing}
 \title{Create random missing data}
 \usage{
-makemissing(data, p = 0.2, cols = 1:ncol(data), rowwise = FALSE,
+makemissing(data, p = 0.2, cols = seq_len(ncol(data)), rowwise = FALSE,
   nafun = function(x) x)
 }
 \arguments{

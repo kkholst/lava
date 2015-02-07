@@ -37,5 +37,3 @@ function(object,var,...,value) UseMethod("nodecolor<-")
     }
     return(object)
   }
-
-

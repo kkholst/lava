@@ -1,4 +1,4 @@
-##' Plot/estimate surface 
+##' Plot/estimate surface
 ##'
 ##' @export
 ##' @aliases ksmooth2 surface
@@ -18,15 +18,15 @@
 ##'
 ##' ksmooth2(function(x,y) x^2+y^2, c(-20,20))
 ##' ksmooth2(function(x,y) x^2+y^2, xlim=c(-5,5), ylim=c(0,10))
-##' 
+##'
 ##' f <- function(x,y) 1-sqrt(x^2+y^2)
 ##' surface(f,xlim=c(-1,1),alpha=0.9,aspect=c(1,1,0.75))
 ##' surface(f,xlim=c(-1,1),clut=heat.colors(128))
 ##' ##play3d(spin3d(axis=c(0,0,1), rpm=8), duration=5)
-##' 
+##'
 ##' if (!inherits(try(find.package("fields"),silent=TRUE),"try-error"))
 ##'     ksmooth2(f,c(-1,1),rgl=FALSE,image=fields::image.plot)
-##' 
+##'
 ##' surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
 ##' }
 ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,2),...) {
@@ -48,7 +48,7 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
     est <- KernSmooth::bkde2D(x, bandwidth=h, gridsize=gridsize)
     if (is.null(xlab)) xlab <- names(x)[1]
     if (is.null(ylab)) ylab <- names(x)[2]
-    surface(est$fhat, x=est$x1, y=est$x2, est$fhat, 
+    surface(est$fhat, x=est$x1, y=est$x2, est$fhat,
             xlab=xlab, ylab=ylab, zlab=zlab, ...)
     return(invisible(est))
 }
@@ -58,8 +58,8 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
 surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl=TRUE,expand=0.5,nlevels=10,col.contour="black",contour=TRUE,persp=TRUE,image="image",...) {
     if (missing(x)) {
         if (length(n)==1) n <- rep(n,2)
-        x <- seq(xlim[1],xlim[2],length.out=n[1])    
-        y <- seq(ylim[1],ylim[2],length.out=n[2])        
+        x <- seq(xlim[1],xlim[2],length.out=n[1])
+        y <- seq(ylim[1],ylim[2],length.out=n[2])
     }
     if (is.function(f)) {
         xy <- as.matrix(expand.grid(x,y))
@@ -68,7 +68,7 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
         else
             f <- f(xy)
     }
-    zrg <- range(f) 
+    zrg <- range(f)
     zlen <- diff(zrg)
     if (length(clut)==1) {
         ncolour <- 128
@@ -85,7 +85,7 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
     if (!rgl) {
         if (missing(col)) {
             nc <- ncol(f); nr <- nrow(f)
-            facet <- f[-1,-1]+f[-1,-nc]+f[-nr,-1]+f[-nr,-nc]                                        
+            facet <- f[-1,-1]+f[-1,-nc]+f[-nr,-1]+f[-nr,-nc]
             facetcol <- cut(facet, ncolour)
             col <- clut[facetcol]
         }

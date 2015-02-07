@@ -1,18 +1,22 @@
 ##' @export
-"transform<-" <- function(x,...,value) UseMethod("transform<-")
+"transform<-" <- function(`_data`,...,value) UseMethod("transform<-")
 
 ##' @export
-"transform<-.lvm" <- function(x,formula,...,value) {
-    transform(x,formula,value,...)
+"transform<-.lvm" <- function(`_data`,formula=NULL,...,value) {
+    transform(`_data`,formula,value,...)
 }
 
 
-"transform.lvm" <- function(`_data`,formula,fun,post=TRUE,...) {
-    if (is.character(formula)) {
-        y <- NULL; xx <- formula
+"transform.lvm" <- function(`_data`,formula,fun,post=TRUE,y,x,...) {
+    if (!missing(y) && !missing(x)) {
+        xx <- x
     } else {
-        y <- getoutcome(formula)
-        xx <- attributes(y)$x
+        if (is.character(formula)) {
+            y <- NULL; xx <- formula
+        } else {
+            y <- getoutcome(formula)
+            xx <- attributes(y)$x
+        }
     }
     if (length(xx)==0) { xx <- y; y <- NULL }
     if (length(y)==0) {
@@ -36,6 +40,6 @@
         `_data`$attributes$transform <- list()
     if (is.null(fun)) `_data`$attributes$transform[y] <- NULL
     else
-        `_data`$attributes$transform[[y]] <- list(fun=fun,x=xx)  
+        `_data`$attributes$transform[[y]] <- list(fun=fun,x=xx)
     return(`_data`)
 }

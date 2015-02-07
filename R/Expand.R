@@ -2,7 +2,7 @@
 ##'
 ##' Simple wrapper of the 'expand.grid' function.  If x is a table
 ##' then a data frame is returned with one row pr individual
-##' observation. 
+##' observation.
 ##' @title Create a Data Frame from All Combinations of Factors
 ##' @param x Data.frame
 ##' @param ... vectors, factors or a list containing these
@@ -21,7 +21,7 @@ Expand <- function(x,...) {
     if (inherits(x,"table")) {
         M <- as.data.frame(x)
         idx <- rep(seq(nrow(M)),M[,ncol(M)])
-        return(M[idx,-ncol(M),drop=FALSE])                
+        return(M[idx,-ncol(M),drop=FALSE])
     }
     if (!inherits(x,"data.frame")) {
         return(expand.grid(x,...))

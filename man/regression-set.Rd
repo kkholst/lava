@@ -12,7 +12,7 @@
 \title{Add regression association to latent variable model}
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-silent = lava.options()$silent, additive=TRUE, ...)
+silent = lava.options()$silent, additive=TRUE, y, x, ...)
 \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 }
 \arguments{
@@ -32,6 +32,10 @@ simulation only).}
 on/off.}
 
 \item{additive}{If FALSE and predictor is categorical a non-additive effect is assumed}
+
+\item{y}{Alias for 'to'}
+
+\item{x}{Alias for 'from'}
 
 \item{quick}{Faster implementation without parameter constraints}
 

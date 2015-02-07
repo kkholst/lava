@@ -20,7 +20,7 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
         if (rowcol) {
             for (i in seq_len(length(idx)))
                 image(x=x0,y=idx[[i]],as.matrix(x[,idx[[i]]]),col=col[[i]],add=TRUE,xaxs=xaxs,yaxs=yaxs,...)
-        } else 
+        } else
             for (i in seq_len(length(idx)))
                 image(x=idx[[i]],y=y0,as.matrix(x[idx[[i]],]),col=col[[i]],add=TRUE,xaxs=xaxs,yaxs=yaxs,...)
     }
@@ -29,8 +29,8 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 
 
 ##' Visualize categorical by group variable
-##' 
-##' @title Organize several image calls (for visualizing categorical data) 
+##'
+##' @title Organize several image calls (for visualizing categorical data)
 ##' @param x data.frame or matrix
 ##' @param group group variable
 ##' @param ncol number of columns in layout
@@ -42,7 +42,7 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 ##' @param colorbar.border Add border around color bar
 ##' @param main Main title
 ##' @param rowcol switch rows and columns
-##' @param plotfun Alternative plot function (instead of 'image') 
+##' @param plotfun Alternative plot function (instead of 'image')
 ##' @param axis1 Axis 1
 ##' @param axis2 Axis 2
 ##' @param mar Margins
@@ -77,7 +77,7 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
     K <- length(x)
     lout <- matrix(seq(K),ncol=ncol,byrow=byrow)
     hei <- rep(1,nrow(lout))/nrow(lout)
-    wid <- rep(1,ncol)/ncol    
+    wid <- rep(1,ncol)/ncol
     if (colorbar==1) {
         wid <- c(rep(1,ncol)/ncol*(1-colorbar.space),colorbar.space)
         lout <- cbind(lout,K+1)
@@ -87,7 +87,7 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
         lout <- rbind(lout,K+1)
     }
     if (missing(group)) {
-        group <- rep(1,nrow(x[[1]]))        
+        group <- rep(1,nrow(x[[1]]))
     }
     if (missing(main)) main <- rep("",K)
     if (!is.list(col)) col <- list(col)
@@ -123,6 +123,6 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
                            x.range=xr,
                            border=colorbar.border,y.range=c(0.3,0.5),srt=0,cex=0.6)
             text(mean(xr),.1, levels(group)[i])
-        }        
+        }
     }
 }

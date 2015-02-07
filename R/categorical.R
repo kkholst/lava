@@ -1,6 +1,6 @@
 ##' @export
 categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) {
-    
+
     if (is.character(formula)) {
         regr <- FALSE
         X <- formula
@@ -10,7 +10,7 @@ categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) 
         regr <- TRUE
         if (length(y)==0) regr <- FALSE
         if (length(attributes(y)$x)==0) {
-            X <- y; regr <- FALSE        
+            X <- y; regr <- FALSE
         }
     }
     if (!missing(p)) {
@@ -35,11 +35,11 @@ categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) 
     fname <- paste(gsub(" ","",deparse(formula)),seq(K)-1,sep=":")
     fpar <- names(beta)
     if (is.null(fpar)) fpar <- fname
-    
+
     parameter(x,fpar,start=beta) <- fname
-    val <- paste("function(x,p,...) p[\"",fpar[1],"\"]*(x==0)",sep="")
-    for (i in seq(K-1)) {        
-        val <- paste(val,"+p[\"",fpar[i+1],"\"]*(x==",i,")",sep="")
+    val <- paste0("function(x,p,...) p[\"",fpar[1],"\"]*(x==0)")
+    for (i in seq(K-1)) {
+        val <- paste0(val,"+p[\"",fpar[i+1],"\"]*(x==",i,")")
     }
     functional(x,formula) <- eval(parse(text=val))
     return(x)

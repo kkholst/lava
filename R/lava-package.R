@@ -1,9 +1,9 @@
 
 ##' Estimation and simulation of latent variable models
-##' 
+##'
 ##' Framwork for estimating parameters and simulate data from Latent Variable
 ##' Models.
-##' 
+##'
 ##' @name lava-package
 ##' @import utils stats
 ##' @aliases lava-package lava
@@ -11,18 +11,18 @@
 ##' @author Klaus K. Holst Maintainer: <k.k.holst@@biostat.ku.dk>
 ##' @keywords package
 ##' @examples
-##' 
+##'
 ##' lava()
-##' 
+##'
 NULL
 
 ##' Longitudinal Bone Mineral Density Data
-##' 
+##'
 ##' Bone Mineral Density Data consisting of 112 girls randomized to receive
 ##' calcium og placebo. Longitudinal measurements of bone mineral density
 ##' (g/cm^2) measured approximately every 6th month in 3 years.
-##' 
-##' 
+##'
+##'
 ##' @name calcium
 ##' @docType data
 ##' @format A data.frame containing 560 (incomplete) observations. The 'person'
@@ -34,7 +34,7 @@ NULL
 NULL
 
 ##' Longitudinal Bone Mineral Density Data (Wide format)
-##' 
+##'
 ##' Bone Mineral Density Data consisting of 112 girls randomized to receive
 ##' calcium og placebo. Longitudinal measurements of bone mineral density
 ##' (g/cm^2) measured approximately every 6th month in 3 years.
@@ -46,7 +46,7 @@ NULL
 ##' @seealso calcium
 NULL
 
-##' Simulated data 
+##' Simulated data
 ##'
 ##' Simulated data
 ##' @name brisa
@@ -59,7 +59,7 @@ NULL
 ##' Data
 ##'
 ##' Description
-##' @name bmidata 
+##' @name bmidata
 ##' @docType data
 ##' @format data.frame
 ##' @keywords datasets
@@ -138,17 +138,17 @@ NULL
 ##' @keywords datasets
 NULL
 
-##' Example SEM data 
+##' Example SEM data
 ##'
 ##' Simulated data
 ##' @name semdata
 ##' @docType data
 ##' @source Simulated
-##' @format data.frame 
+##' @format data.frame
 ##' @keywords datasets
 NULL
 
-##' Serotonin data 
+##' Serotonin data
 ##'
 ##' This simulated data mimics a PET imaging study where the 5-HT2A
 ##' receptor and serotonin transporter (SERT) binding potential has
@@ -156,7 +156,7 @@ NULL
 ##' cortical regions are considered high-binding regions
 ## 'which are a priori known to yield quite similar and highly correlated
 ##' measurements.  These measurements can be regarded as proxy measures of
-##' the extra-cellular levels of serotonin in the brain 
+##' the extra-cellular levels of serotonin in the brain
 ##' \tabular{rll}{
 ##'         day    \tab numeric \tab Scan day of the year \cr
 ##'         age    \tab numeric \tab Age at baseline scan \cr
@@ -212,7 +212,7 @@ NULL
 
 
 ##' For internal use
-##' 
+##'
 ##' @title For internal use
 ##' @name startvalues
 ##' @rdname internal

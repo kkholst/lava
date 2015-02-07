@@ -16,10 +16,9 @@ function(x,var=NULL, ...) {
     if (length(survidx)>0)
       return(names(survidx)[survidx])
     else
-      NULL    
+      NULL
   }
   x$attributes$survival[var] <- TRUE
   x$attributes$normal[var] <- TRUE
   return(x)
 }
-

@@ -1,11 +1,11 @@
 ##' This function transforms a standard color (e.g. "red") into an
-##' transparent RGB-color (i.e. alpha-blend<1). 
+##' transparent RGB-color (i.e. alpha-blend<1).
 ##'
 ##' This only works for certain graphics devices (Cairo-X11 (x11 as of R>=2.7), quartz, pdf, ...).
 ##' @title Generate a transparent RGB color
 ##' @param col Color (numeric or character)
 ##' @param alpha Degree of transparency (0,1)
-##' @param locate Choose colour (with mouse) 
+##' @param locate Choose colour (with mouse)
 ##' @return   A character vector with elements of 7 or 9 characters, '"\#"'
 ##'  followed by the red, blue, green and optionally alpha values in
 ##' hexadecimal (after rescaling to '0 ... 255').
@@ -24,9 +24,9 @@ Col <- function(col,alpha=0.2,locate=0) {
         pall    <- colSums(pall) ; pall2 <- character(0)
         pall2[pall>0]   <- "black"
         pall2[pall==0]  <- "white"
-        
+
         par(mar=c(0,0,1,0))
-        
+
         plot.new()
         title(main="Palette of colors()")
         rect(xleft,ybottom,xright,ytop,col=colors())
@@ -35,8 +35,8 @@ Col <- function(col,alpha=0.2,locate=0) {
              ,labels = 1:657
              ,cex=0.55
              ,col=pall2)
-        
-        
+
+
         colmat    <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
         cols        <- NA
         i        <- NA
@@ -46,13 +46,13 @@ Col <- function(col,alpha=0.2,locate=0) {
                 if(any(h$x<0,h$y<0,h$x>1,h$y>1)) stop("locator out of bounds!")
                 else {
                     cc        <- floor(h$x/(1/26))+1
-                    rr        <- floor(h$y/(1/26))+1            
+                    rr        <- floor(h$y/(1/26))+1
                     cols[i]    <- colors()[colmat[rr,cc]]
-                } 
-            } 
+                }
+            }
         return(cols)
-    } 
-    
+    }
+
     sapply(col, function(x)
            do.call(rgb,as.list(c(col2rgb(x)/255,alpha)))
            )

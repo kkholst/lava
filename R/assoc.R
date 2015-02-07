@@ -10,7 +10,7 @@ normal.threshold <- function(object,p=coef(object),...) {
     breaks <- lapply(breaks.orig, ordreg_threshold)
     names(breaks) <- names(K)
     ii <- match(names(K),vars(object))
-    sigma <- M$Cfull[ii,ii]    
+    sigma <- M$Cfull[ii,ii]
     list(breaks=breaks,sigma=sigma,mean=M$v[ii],K=K)
 }
 
@@ -18,7 +18,7 @@ prob.normal <- function(sigma,breaks,breaks2=breaks) {
     if (ncol(sigma)!=2 || missing(breaks)) stop("Wrong input")
     P <- matrix(ncol=length(breaks2)-1, nrow=length(breaks)-1)
     for (i in seq(length(breaks)-1))
-        for (j in seq(length(breaks2)-1)) 
+        for (j in seq(length(breaks2)-1))
             P[i,j] <- mets::pmvn(lower=c(breaks[i],breaks2[j]),upper=c(breaks[i+1],breaks2[j+1]),sigma=sigma)
     return(P)
 }

@@ -28,7 +28,7 @@ function(x,top=FALSE,latent=FALSE,...) {
 ##' @export
 endogenous.list <- function(x,...) {
   endolist <- c()
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     ##    exolist <- c(exolist, exogenous(x[[i]]))
     endolist <- c(endolist, endogenous(x[[i]]))
   }

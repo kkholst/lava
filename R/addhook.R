@@ -1,9 +1,9 @@
 
 ##' Set global options for \code{lava}
-##' 
+##'
 ##' Extract and set global parameters of \code{lava}. In particular optimization
 ##' parameters for the \code{estimate} function.
-##' 
+##'
 ##' \itemize{ \item \code{param}: 'relative' (factor loading and variance of one
 ##' endogenous variables in each measurement model are fixed to one), 'absolute'
 ##' (mean and variance of latent variables are set to 0 and 1, respectively),
@@ -12,13 +12,13 @@
 ##' 'none' (no constraints are added) \item \code{silent}: Set to \code{FALSE}
 ##' to disable various output messages \item ...  } see \code{control} parameter
 ##' of the \code{estimate} function.
-##' 
+##'
 ##' @param \dots Arguments
 ##' @return \code{list} of parameters
 ##' @author Klaus K. Holst
 ##' @keywords models
 ##' @examples
-##' 
+##'
 ##' \dontrun{
 ##' lava.options(iter.max=100,silent=TRUE)
 ##' }
@@ -26,8 +26,8 @@
 ##' @export
 lava.options <- function(...) {
   dots <- list(...)
-  curopt <- get("options",envir=lava.env) 
-  if (length(dots)==0) 
+  curopt <- get("options",envir=lava.env)
+  if (length(dots)==0)
     return(curopt)
   idx <- which(names(dots)!="")
   curopt[names(dots)[idx]] <- dots[idx]
@@ -77,7 +77,7 @@ assign("options", list(
     iter.max=300,
     eval.max=250,
     constrain=FALSE,
-    silent=TRUE,            
+    silent=TRUE,
     itol=0,##1e-9,
     cluster.index=versioncheck("mets",c(0,2,7)),
     Dmethod="simple", ##Richardson"

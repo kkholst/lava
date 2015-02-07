@@ -32,23 +32,23 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,
     if (!missing(x)) {
       if (length(x)!=N) stop("x should be of same length as the total length of 'intercept','slope','prob'")
       B.intercept[intercept] <- x[seq_len(length(intercept))]
-    } else B.intercept[intercept] <- 1    
+    } else B.intercept[intercept] <- 1
   } else {
     B.intercept <- intercept
   }
   if (length(slope)<length(beta)) {
     B.slope <- rep(0,length(beta));
-    if (!missing(x)) 
+    if (!missing(x))
       B.slope[slope] <- x[length(intercept)+seq_len(length(slope))]
     else
       B.slope[slope] <- 1
   } else {
     B.slope <- slope
-  }  
+  }
   if (!is.null(prob)) {
     if (length(prob)<length(beta)) {
       B.prob <- rep(0,length(beta));
-      if (!missing(x)) 
+      if (!missing(x))
         B.prob[prob] <- x[length(intercept)+length(slope)+seq_len(length(prob))]
       else
         B.prob[prob] <- 1
@@ -63,7 +63,7 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,
 
   f <- function(b) {
     mylevel <- level
-    if (!is.null(EB)) {      
+    if (!is.null(EB)) {
       if (is.null(prob)) stop("Index of mixture-probability parameters needed")
       pi0 <- family$linkinv(b[3])
       mylevel <- 1-(1-pi0)/pi0*(EB)/(1-EB)
@@ -80,8 +80,8 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,
   alpha <- 1-ci.level
   alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
   res <- cbind(res,res[,1]-qnorm(1-alpha/2)*res[,2],res[,1]+qnorm(1-alpha/2)*res[,2])
-  colnames(res)[3:4] <- alpha.str  
-  rownames(res) <- paste(round(1000*attributes(xx)$level)/10,"%",sep="")
+  colnames(res)[3:4] <- alpha.str
+  rownames(res) <- paste0(round(1000*attributes(xx)$level)/10,"%")
   structure(res,b=b)
 }
 
@@ -104,7 +104,7 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
     dpi0 <- rbind(apply(Z,2,function(z) A2*z))
     h <- function(pi0) (alpha+pi0-1)/(alpha*pi0)
     dh <- function(pi0) (1-alpha)/(alpha*pi0^2)
-    lev <- h(pi0)    
+    lev <- h(pi0)
     eta <- g(lev)
     detad2 <- rbind(apply(dpi0,2,function(z) dg(lev)*dh(pi0)*z))
     val <- (eta-b1)/b2
@@ -116,9 +116,9 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
 
 
 ##' Regression model for binomial data with unkown group of immortals
-##' 
+##'
 ##' @title Regression model for binomial data with unkown group of immortals
-##' @param formula Formula specifying 
+##' @param formula Formula specifying
 ##' @param cureformula Formula for model of disease prevalence
 ##' @param data data frame
 ##' @param family Distribution family (see the help page \code{family})
@@ -129,7 +129,7 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' 
+##'
 ##' ## Simulation
 ##' n <- 2e3
 ##' x <- runif(n,0,20)
@@ -142,20 +142,20 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
 ##' y[u==0] <- 0
 ##' d <- data.frame(y=y,x=x,u=u*1,z=z,age=age)
 ##' head(d)
-##' 
+##'
 ##' ## Estimation
 ##' e0 <- curereg(y~x*z,~1+z+age,data=d)
 ##' e <- curereg(y~x,~1+z+age,data=d)
 ##' compare(e,e0)
 ##' e
 ##' PD(e0,intercept=c(1,3),slope=c(2,6))
-##' 
+##'
 ##' B <- rbind(c(1,0,0,0,20),
 ##'            c(1,1,0,0,20),
 ##'            c(1,0,1,0,20),
 ##'            c(1,0,0,1,20))
 ##' prev <- summary(e,pr.contrast=B)$prevalence
-##' 
+##'
 ##' x <- seq(0,100,length.out=100)
 ##' newdata <- expand.grid(x=x,age=20,z=levels(d$z))
 ##' fit <- predict(e,newdata=newdata)
@@ -182,7 +182,7 @@ curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,st
                -curereg_score(x[beta.idx],x[gamma.idx],y,X,Z),...)
   beta <- op$par[beta.idx]; gamma <- op$par[gamma.idx]
   cc <- c(beta,gamma)
-  names(cc) <- c(colnames(X),paste("pr:",colnames(Z),sep=""))
+  names(cc) <- c(colnames(X),paste0("pr:",colnames(Z)))
   bread <- Inverse(curereg_information(beta,gamma,y,X,Z,offset,type="hessian",...))
   if (tolower(var[1])%in%c("robust","sandwich")) {
       meat <- curereg_information(beta,gamma,y,X,Z,offset,family,type="outer",...)
@@ -220,10 +220,10 @@ predict.curereg <- function(object,p=coef(object),gamma,newdata,link=TRUE,subdis
   if (length(p)==length(object$beta)+length(object$gamma)) {
     gamma <- p[object$gamma.idx]
     p <- p[object$beta.idx]
-  }    
+  }
   g <- object$family$linkfun
   ginv <- object$family$linkinv
-  dginv <- object$family$mu.eta ## D[linkinv]  
+  dginv <- object$family$mu.eta ## D[linkinv]
   Xbeta <- as.vector(X%*%p)
   Zgamma <- as.vector(Z%*%gamma)
   if (!link) {
@@ -236,17 +236,17 @@ predict.curereg <- function(object,p=coef(object),gamma,newdata,link=TRUE,subdis
   A2 <- dginv(Zgamma)
   if (subdist) {
     dgamma <- apply(Z,2,function(z) A2*z)
-    dbeta <- apply(X,2,function(x) A1*x)  
+    dbeta <- apply(X,2,function(x) A1*x)
     res <- cbind(subdist=Pred,pr=p0)
     return(structure(res,grad=list(subdist=dbeta,pr=dgamma)))
-  }  
+  }
   Pred <- p0*Pred
   A1 <- p0*A1
   A2 <- Pred*dginv(Zgamma)
   dgamma <- apply(Z,2,function(z) A2*z)
-  dbeta <- apply(X,2,function(x) A1*x)  
+  dbeta <- apply(X,2,function(x) A1*x)
   attributes(Pred)$grad <- cbind(dbeta,p0*dgamma)
-  return(Pred)  
+  return(Pred)
 }
 
 ##' @export
@@ -266,7 +266,7 @@ summary.curereg <- function(object,level=0.95,pr.contrast,...) {
   cc <- cbind(coef(object),diag(vcov(object))^0.5)
   pval <- 2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE))
   qq <- qnorm(1-alpha/2)
-  cc <- cbind(cc[,1],cc[,1]-qq*cc[,2],cc[,1]+qq*cc[,2],pval)  
+  cc <- cbind(cc[,1],cc[,1]-qq*cc[,2],cc[,1]+qq*cc[,2],pval)
   colnames(cc) <- c("Estimate",alpha.str,"P-value")
   pr.names <- unlist(lapply(rownames(cc)[object$gamma.idx],
                             function(x) substr(x,4,nchar(x))))
@@ -280,16 +280,16 @@ summary.curereg <- function(object,level=0.95,pr.contrast,...) {
   pr.cc <- object$family$linkinv(cbind(pr.cc[,1],pr.cc[,1]-qq*pr.cc[,2],pr.cc[,1]+qq*pr.cc[,2]))
   colnames(pr.cc) <- colnames(cc)[1:3]
   ## B <- cbind(0,cbind(0,pr.contrast))
-  ## print(compare(object,contrast=B))  
+  ## print(compare(object,contrast=B))
   pr.rnames <- c()
   for (i in seq_len(nrow(pr.contrast))) {
     Bidx <- which(pr.contrast[i,]!=0)
     Bval <- pr.contrast[i,Bidx]; Bval[Bval==1] <- ""
     pr.rnames <- c(pr.rnames,
-                   paste(paste(Bval,paste("{",pr.names[Bidx],"}",sep=""),collapse=" + ",sep=""),sep=""))
+                   paste0(paste0(Bval,paste0("{",pr.names[Bidx],"}"),collapse=" + ")))
   }
   rownames(pr.cc) <- pr.rnames
-    
+
   return(structure(list(coef=cc, prevalence=pr.cc),class="summary.curereg"))
 }
 
@@ -313,14 +313,14 @@ logLik.curereg <- function(object,beta=object$beta,gamma=object$gamma,data,offse
     X <- model.matrix(object$formula,data)
     Z <- model.matrix(object$cureformula,data)
     return(curereg_logL(beta,gamma,y,X,Z,offset,object$family,indiv=indiv,...))
-  }    
+  }
   curereg_logL(beta,gamma,object$y,object$X,object$Z,offset,object$family,indiv=indiv,...)
 }
 curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FALSE,...) {
   g <- family$linkfun
   ginv <- family$linkinv
   dginv <- family$mu.eta ## D[linkinv]
-  n <- nrow(X)  
+  n <- nrow(X)
   Xbeta <- as.vector(X%*%beta)
   Zgamma <- as.vector(Z%*%gamma)
   p0 <- ginv(Zgamma)
@@ -339,7 +339,7 @@ score.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,indiv
     X <- model.matrix(x$formula,data)
     Z <- model.matrix(x$cureformula,data)
     s <- curereg_score(beta,gamma,y,X,Z,offset,x$family,indiv=indiv,...)
-  } else {    
+  } else {
     s <- curereg_score(beta,gamma,x$y,x$X,x$Z,offset,x$family,indiv=indiv,...)
   }
   if (indiv) colnames(s) <- names(x$coef) else names(s) <- names(x$coef)
@@ -350,7 +350,7 @@ curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=F
   g <- family$linkfun
   ginv <- family$linkinv
   dginv <- family$mu.eta ## D[linkinv]
-  n <- nrow(X)  
+  n <- nrow(X)
   Xbeta <- as.vector(X%*%beta)
   Zgamma <- as.vector(Z%*%gamma)
   p0 <- ginv(Zgamma)
@@ -358,7 +358,7 @@ curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=F
   Pr <- p0*ginv(Xbeta)
   A0 <- (y/Pr  - (1-y)/(1-Pr))
   A1 <- A0*p0*dginv(Xbeta)
-  A2 <- A0*ginv(Xbeta)*dginv(Zgamma)  
+  A2 <- A0*ginv(Xbeta)*dginv(Zgamma)
   dbeta <- apply(X,2,function(x) A1*x)
   dgamma <- apply(Z,2,function(z) A2*z)
   ss <- cbind(dbeta,dgamma)
@@ -395,4 +395,3 @@ curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),t
   S <- curereg_score(beta,gamma,y,X,Z,offset,family,indiv=TRUE,...)
   crossprod(S)
 }
-

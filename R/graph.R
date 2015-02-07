@@ -1,15 +1,15 @@
 ##' Extract graph
-##' 
+##'
 ##' Extract or replace graph object
-##' 
-##' 
+##'
+##'
 ##' @aliases Graph Graph<-
 ##' @usage
-##' 
+##'
 ##' Graph(x, ...)
-##' 
+##'
 ##' Graph(x, ...) <- value
-##' 
+##'
 ##' @param x Model object
 ##' @param value New \code{graphNEL} object
 ##' @param \dots Additional arguments to be passed to the low level functions
@@ -18,7 +18,7 @@
 ##' @keywords graphs models
 ##' @export
 ##' @examples
-##' 
+##'
 ##' m <- lvm(y~x)
 ##' Graph(m)
 ##'
@@ -47,4 +47,3 @@ function(x,add=FALSE,...) {
 
 ##' @export
 "Graph<-.lvm" <- function(x,...,value) { x$graph <- value; return(x) }
-

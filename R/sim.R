@@ -1,8 +1,8 @@
 ##' Simulate model
-##' 
+##'
 ##' Simulate data from a general SEM model including non-linear effects and
 ##' general link and distribution of variables.
-##' 
+##'
 ##' @aliases sim sim.lvmfit sim.lvm
 ##' simulate.lvmfit simulate.lvm
 ##' transform<- transform<-.lvm transform.lvm
@@ -58,12 +58,12 @@
 ##' distribution(m,~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' head(d)
-##' 
+##'
 ##' e <- estimate(m,d,estimator="glm")
 ##' e
 ##' ## Simulate a few observation from estimated model
 ##' sim(e,n=5)
-##' 
+##'
 ##' ##################################################
 ##' ## Poisson
 ##' ##################################################
@@ -72,9 +72,9 @@
 ##' head(d)
 ##' estimate(m,d,estimator="glm")
 ##' mean(d$z); lava:::expit(1)
-##' 
+##'
 ##' summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
-##' 
+##'
 ##' ##################################################
 ##' ### Gamma distribution
 ##' ##################################################
@@ -84,22 +84,22 @@
 ##' d <- sim(m,1e4)
 ##' summary(g <- glm(y~x,family=Gamma(),data=d))
 ##' \dontrun{MASS::gamma.shape(g)}
-##' 
+##'
 ##' args(lava::Gamma.lvm)
 ##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
-##' 
+##'
 ##' ##################################################
 ##' ### Transform
 ##' ##################################################
-##' 
+##'
 ##' m <- lvm()
 ##' transform(m,xz~x+z) <- function(x) x[1]*(x[2]>0)
 ##' regression(m) <- y~x+z+xz
 ##' d <- sim(m,1e3)
 ##' summary(lm(y~x+z + x*I(z>0),d))
-##' 
-##' 
+##'
+##'
 ##' ##################################################
 ##' ### Non-random variables
 ##' ##################################################
@@ -109,19 +109,19 @@
 ##'                                ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
 ##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 ##' sim(m,10)
-##' 
-##' 
+##'
+##'
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard
 ##' ################################################
-##' 
+##'
 ##' m <- lvm(t~x)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
 ##' ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
 ##' distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
-##' 
-##' 
+##'
+##'
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
 ##'     plot(timereg::aalen(survival::Surv(t,status)~x,data=d,
@@ -131,13 +131,13 @@
 ##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
-##' 
-##' 
+##'
+##'
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard, gamma frailty
 ##' ##################################################
-##' 
+##'
 ##' m <- lvm(y~x+z)
 ##' rates <- c(0.3,0.5); cuts <- c(0,5)
 ##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
@@ -151,63 +151,68 @@
 ##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
-##' 
+##'
 ##' ## Equivalent via transform (here with Aalens additive hazard model)
 ##' m <- lvm(y~x)
 ##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 ##' distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
 ##' transform(m,t~y+z) <- prod
 ##' sim(m,10)
-##' 
+##'
 ##' ## Shared frailty
 ##' m <- lvm(c(t1,t2)~x+z)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
 ##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 ##' distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 ##' \dontrun{
-##'     mets::fast.reshape(sim(m,100),varying="t")
+##' mets::fast.reshape(sim(m,100),varying="t")
 ##' }
-##' ##'
-##' 
+##'
 ##' ##################################################
 ##' ### General multivariate distributions
 ##' ##################################################
-##' 
+##'
 ##' \dontrun{
-##' 
 ##' m <- lvm()
 ##' distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
 ##' ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
-##' 
+##'
 ##' m <- lvm()
 ##' distribution(m,~z1+z2,"or1") <- VGAM::rbiplackcop
 ##' distribution(m,~y1+y2,"or2") <- VGAM::rbiplackcop
 ##' sim(m,10,p=c(or1=0.1,or2=4))
-##' 
+##' }
+##'
 ##' m <- lvm()
 ##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
 ##' var(sim(m,100))
-##' 
-##' }
-##' 
+##'
+##' ## Syntax also useful for univariate generators, e.g.
+##' m <- lvm(y~x+z)
+##' distribution(m,~y,TRUE) <- function(n) rnorm(n,mean=1000)
+##' sim(m,5)
+##' distribution(m,~y,"m1",0) <- rnorm
+##' sim(m,5)
+##' sim(m,5,p=c(m1=100))
+##'
 ##' ##################################################
 ##' ### Categorical predictor
 ##' ##################################################
-##' 
+##'
 ##' ##library(mets)
 ##' m <- lvm()
 ##' ## categorical(m,K=3) <- "v"
 ##' categorical(m,labels=c("A","B","C")) <- "v"
-##' 
+##'
 ##' regression(m,additive=FALSE) <- y~v
 ##' \dontrun{
-##'   plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
+##' plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 ##' }
-##' 
+##'
 ##' m <- lvm()
 ##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 ##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
-##' ## ## equivalent to:
+##' ## equivalent to:
 ##' ## regression(m,y~v,additive=FALSE) <- c(0,2,-1)
 ##' regression(m,additive=FALSE,beta=c(0,4,-1)) <- z~v
 ##' table(sim(m,1e4)$v)
@@ -237,7 +242,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     xx <- exogenous(x)
     if (!is.null(p)) {
         i1 <- na.omit(c(match(names(p),xx),
-                        match(names(p),paste(xx,lava.options()$symbol[2],xx,sep=""))))
+                        match(names(p),paste0(xx,lava.options()$symbol[2],xx))))
         if (length(i1)>0) covariance(x) <- xx[i1]
     }
     ##  index(x) <- reindex(x)
@@ -253,7 +258,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         ep <- NULL
         ei <- which(index(x)$e1==1)
         if (length(ei)>0)
-            ep <- unlist(x$expar)[ei]        
+            ep <- unlist(x$expar)[ei]
         p <- c(rep(1, index(x)$npar+index(x)$npar.mean),ep)
         p[seq_len(index(x)$npar.mean)] <- 0
         p[index(x)$npar.mean + variances(x)] <- sigma
@@ -265,32 +270,32 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             idx11 <- na.omit(match(names(p0),c2))
             idx2 <- na.omit(which(names(p0)%in%c1))
             idx22 <- na.omit(which(names(p0)%in%c2))
-            if (length(idx1)>0 && !is.na(idx1))      
+            if (length(idx1)>0 && !is.na(idx1))
                 p[idx1] <- p0[idx2]
             if (length(idx11)>0 && !is.na(idx11))
                 p[idx11] <- p0[idx22]
         }
     }
     M <- modelVar(x,p,data=NULL)
-    A <- M$A; P <- M$P 
+    A <- M$A; P <- M$P
     if (!is.null(M$v)) mu <- M$v
-    
 
     ## dontsim <- names(distribution(x))[unlist(lapply(distribution(x),function(x) identical(x,NA)))]
     PP <- with(svd(P), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
     mdist <- distribution(x,multivariate=TRUE)$var
     mdistnam <- names(mdist)
     mii <- match(mdistnam,vars(x))
+
     if (length(distribution(x))>0 ) {
         ii <- match(names(distribution(x)),vars(x))
         jj <- setdiff(seq(ncol(P)),c(ii,mii))
         E <- matrix(0,ncol=ncol(P),nrow=n)
         if (length(jj)>0)
-            system.time(E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE])
+            E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE]
     } else {
         E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
     }
-    
+
     if (length(mdistnam)>0) {
         fun <- distribution(x,multivariate=TRUE)$fun
         for (i in seq_along(fun)) {
@@ -299,19 +304,19 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x,...)
         }
     }
-    
+
     ## Simulate exogenous variables (covariates)
     res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
 
     vartrans <- names(x$attributes$transform)
     xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
     xx <- setdiff(xx,vartrans)
-    
+
     X.idx <- match(xx,vv)
     res[,X.idx] <- t(mu[X.idx]+t(E[,X.idx]))
     if (missing(X)) {
         if (!is.null(xx) && length(xx)>0)
-            for (i in 1:length(xx)) {
+            for (i in seq_along(xx)) {
                 mu.x <- mu[X.idx[i]]
                 dist.x <- distribution(x,xx[i])[[1]]
                 if (is.list(dist.x) && is.function(dist.x[[1]])) dist.x <- dist.x[[1]]
@@ -338,7 +343,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         resunlink <- res
     }
 
-    if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) { 
+    if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) {
         if(cond) { ## Simulate from conditional distribution of Y given X
             mypar <- pars(x,A,P,mu)
             Ey.x <- predict(x, mypar, data.frame(res))
@@ -358,7 +363,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     } else {
 
 
-        xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))  
+        xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,index(x)$manifest))>0))
         xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
         ##    if (!all(xconstrain %in% index(x)$exogenous)) warning("Non-linear constraint only allowed via covariates")
@@ -367,7 +372,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             ff <- constrain(x)[[i]]
             myargs <- attributes(ff)$args
             D <- matrix(0,n,length(myargs))
-            for (j in 1:ncol(D)) {
+            for (j in seq_len(ncol(D))) {
               if (myargs[j]%in%xconstrain)
                 D[,j] <- res[,myargs[j]]
               else
@@ -376,14 +381,14 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             ##res[,names(xconstrain.idx)[i]] <- apply(D,1,ff)
             res <- cbind(res, apply(D,1,ff)); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
           }
-        
-        xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]  
+
+        xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]
         covparnames <- unique(as.vector(covariance(x)$labels))
 
         if (any(xconstrain.par%in%covparnames)) {
             mu0 <- rep(0,ncol(P))
             P0 <- P
-            E <- t(sapply(1:n,function(idx) {
+            E <- t(sapply(seq_len(n),function(idx) {
                 for (i in intersect(xconstrain.par,covparnames)) {
                     P0[covariance(x)$labels==i] <- res[idx,i]
                 }
@@ -394,7 +399,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         } else {
         }
         colnames(E) <- vv
-        E <- heavytail.sim.hook(x,E)  
+        E <- heavytail.sim.hook(x,E)
 
         ## Non-linear regression components
         xconstrain <- c()
@@ -407,17 +412,17 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 exoidx <- which(attributes(z)$args%in%xx)
                 parname <- names(constrain(x))[i]
                 y <- names(which(unlist(lapply(intercept(x),function(x) x==parname))))
-                el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+                el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)
                 names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
                 xconstrain <- c(xconstrain,list(el))
-            }            
+            }
         }
-        
+
         for (i in intersect(exogenous(x),names(x$constrainY))) {
             cc <- x$constrainY[[i]]
             args <- cc$args
             args <- if (is.null(args) || length(args)==0) res[,i] else res[,args]
-            res[,i] <- cc$fun(args,p,...)                
+            res[,i] <- cc$fun(args,p,...)
         }
         yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
 
@@ -430,7 +435,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 res <- cbind(res,
                              cbind(rep(1,nrow(res)))%x%rbind(Parvals))
                 colnames(res)[seq(length(Parvals))+ncol(res)-length(Parvals)] <-
-                    names(Parvals)
+                    names(parvals)
             }
         }
 
@@ -442,10 +447,9 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
             for (i in leftovers) {
                 if (i%in%vartrans) {
-                    xtrans <- x$attributes$transform[[i]]$x                    
+                    xtrans <- x$attributes$transform[[i]]$x
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
                         suppressWarnings(yy <- with(x$attributes$transform[[i]],fun(res[,xtrans])))
-                        
                         if (length(yy) != NROW(res)) { ## apply row-wise
                             res[,i] <- with(x$attributes$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
                         } else {
@@ -476,11 +480,11 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                                           function(x) func(
                                                               unlist(c(pp,x))[myidx])))
                             }
-                            
+
                             for (From in relations) {
-                                f <- functional(x,i,From)[[1]] 
+                                f <- functional(x,i,From)[[1]]
                                 if (!is.function(f))
-                                    f <- function(x,...) x                                
+                                    f <- function(x,...) x
                                 reglab <- regfix(x)$labels[From,pos]
                                 if (reglab%in%c(xfix,xconstrain.par)) {
                                     if (is.function(f)) {
@@ -515,13 +519,13 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                 res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
                                 if (unlink)
                                     resunlink[,pos] <- mu.i
-                            }                            
+                            }
                             if (i%in%names(x$constrainY)) {
                                 cc <- x$constrainY[[i]]
                                 args <- cc$args
                                 args <- if (is.null(args) || length(args)==0) res[,pos] else res[,args]
-                                res[,pos] <- cc$fun(args,p,...)                            
-                            }                            
+                                res[,pos] <- cc$fun(args,p,...)
+                            }
                             simuled <- c(simuled,i)
                         }
                     }
@@ -542,7 +546,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     self <- x$attributes$selftransform
     for (v in names(self)) {
         res[,v] <- self[[v]](res[,v])
-    }  
+    }
     return(res)
 }
 
@@ -550,9 +554,9 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
 ##' @export
 simulate.lvm <- function(object,nsim,seed=NULL,...) {
-    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         runif(1)
-    if (is.null(seed)) 
+    if (is.null(seed))
         RNGstate <- get(".Random.seed", envir = .GlobalEnv)
     else {
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
@@ -565,9 +569,9 @@ simulate.lvm <- function(object,nsim,seed=NULL,...) {
 
 ##' @export
 simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
-    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         runif(1)
-    if (is.null(seed)) 
+    if (is.null(seed))
         RNGstate <- get(".Random.seed", envir = .GlobalEnv)
     else {
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
@@ -577,5 +581,3 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
     }
     sim(object,nsim,...)
 }
-
-

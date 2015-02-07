@@ -4,7 +4,7 @@
 `estimate.multigroup` <- function(x, control=list(),
                                   estimator="gaussian",
                                   weight, weightname,
-                                  weight2, 
+                                  weight2,
                                   cluster=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
@@ -45,7 +45,7 @@
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]
   optim[names(defopt)] <- defopt
-  
+
   if (length(control)>0) {
     optim[names(control)] <- control
   }
@@ -71,10 +71,10 @@
   Debug("Constraints...")
   ## Setup optimization constraints
   lower <- rep(-Inf, x$npar);
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     vpos <- sapply(x$parlist[[i]][variances(x$lvm[[i]],mean=FALSE)], function(y) as.numeric(substr(y,2,nchar(y))))
     if (length(vpos)>0)
-    lower[vpos] <- optim$lbound  
+    lower[vpos] <- optim$lbound
   }
   if (optim$meanstructure)
     lower <- c(rep(-Inf,x$npar.mean), lower)
@@ -85,7 +85,7 @@
       constrained <- optim$constrain
     constrained <- which(constrained)
     lower[] <- -Inf
-    optim$constrain <- TRUE    
+    optim$constrain <- TRUE
     mystart[constrained] <- log(mystart[constrained])
   }
 
@@ -93,7 +93,7 @@
     if (is.character(weight)) {
       stweight <- weight
       weight <- list()
-      for (i in 1:length(x$data)) {
+      for (i in seq_along(x$data)) {
         newweight <- as.matrix(x$data[[i]][,stweight])
         colnames(newweight) <- index(x$lvm[[i]])$endogenous[seq_len(ncol(newweight))]
         weight <- c(weight, list(newweight))
@@ -103,10 +103,10 @@
     weight <- NULL
   }
   if (!missing(weight2)) {
-    if (is.character(weight2)) {      
+    if (is.character(weight2)) {
       stweight2 <- weight2
       weight2 <- list()
-      for (i in 1:length(x$data)) {
+      for (i in seq_along(x$data)) {
         newweight <- as.matrix(x$data[[i]][,stweight2,drop=FALSE])
         dropcol <- apply(newweight,2,function(x) any(is.na(x)))
         newweight <- newweight[,!dropcol,drop=FALSE]
@@ -142,12 +142,12 @@
     if (!is.null(res$weight2))
       if (!any(unlist(lapply(newweight2,is.null)))) {
         weight2 <- newweight2
-      }    
+      }
   }
 
 
   checkestimator <- function(x,...) {
-    ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")
+    ffname <- paste0(x,c("_objective","_gradient"),".lvm")
     exists(ffname[1])||exists(ffname[2])
   }
   if (!checkestimator(estimator)) { ## Try down/up-case version
@@ -156,46 +156,46 @@
       estimator <- toupper(estimator)
     }
   }
-  
-  Method <-  paste(estimator, "_method", ".lvm", sep="")
+
+  Method <-  paste0(estimator, "_method", ".lvm")
   if (!exists(Method))
     Method <- "nlminb1"
   else
     Method <- get(Method)
-  if (is.null(optim$method)) {      
+  if (is.null(optim$method)) {
       optim$method <- Method
   }
-  
+
   ## Check for random slopes
   xXx <- exogenous(x)
   Xfix <- FALSE
   Xconstrain <- FALSE
   xfix <- list()
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     x0 <- x$lvm[[i]]
     data0 <- x$data[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
     xconstrain0 <- intersect(unlist(lapply(constrain(x0),function(z) attributes(z)$args)),manifest(x0))
     xfix <- c(xfix, list(xfix0))
-    if (length(xfix0)>0) Xfix<-TRUE ## Yes, random slopes      
+    if (length(xfix0)>0) Xfix<-TRUE ## Yes, random slopes
     if (length(xconstrain0)>0) Xconstrain <- TRUE ## Yes, nonlinear regression
   }
-  
+
   ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
   constr <- c()
   XconstrStdOpt <- TRUE
   xconstrainM <- TRUE
   xconstrain <- c()
   if (Xconstrain)
-  for (i in 1:x$ngroup) {
+  for (i in seq_len(x$ngroup)) {
     x0 <- x$lvm[[i]]
     data0 <- x$data[[i]]
     constr0 <- lapply(constrain(x0), function(z)(attributes(z)$args))
     xconstrain0 <- intersect(unlist(constr0), manifest(x0))
     xconstrain <- c(xconstrain, list(xconstrain0))
     if (length(xconstrain0)>0) {
-      constrainM0 <- names(constr0)%in%unlist(x0$mean)    
-      for (i in seq_len(length(constr0))) {    
+      constrainM0 <- names(constr0)%in%unlist(x0$mean)
+      for (i in seq_len(length(constr0))) {
         if (!constrainM0[i]) {
           if (xconstrain0%in%constr0[[i]]) {
             xconstrainM <- FALSE
@@ -210,39 +210,39 @@
     }
   }
 
-     
+
   ## Define objective function and first and second derivatives
-  ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
-  GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  ObjectiveFun  <- paste0(estimator, "_objective", ".lvm")
+  GradFun  <- paste0(estimator, "_gradient", ".lvm")
   if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
 
-  InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
-  
-  parord <- modelPar(x,1:with(x,npar+npar.mean))$p
+  InformationFun <- paste0(estimator, "_hessian", ".lvm")
+
+  parord <- modelPar(x,seq_len(with(x,npar+npar.mean)))$p
   mymodel <- x
 
   parkeep <- c()
-  myclass <- c("multigroupfit","lvmfit")  
+  myclass <- c("multigroupfit","lvmfit")
   myfix <- list()
 
   if (Xfix |  (Xconstrain & XconstrStdOpt | !lava.options()$test)) { ## Model with random slopes:
 #############################################################
-    
+
     if (Xfix) {
       myclass <- c(myclass,"lvmfit.randomslope")
-      for (k in 1:x$ngroup) {
+      for (k in seq_len(x$ngroup)) {
         x1 <- x0 <- x$lvm[[k]]
         data0 <- x$data[[k]]
-        
+
         nrow <- length(vars(x0))
         xpos <- lapply(xfix[[k]],function(y) which(regfix(x0)$labels==y))
         colpos <- lapply(xpos, function(y) ceiling(y/nrow))
         rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
         myfix0 <- list(var=xfix[[k]], col=colpos, row=rowpos)
         myfix <- c(myfix, list(myfix0))
-      
-        for (i in 1:length(myfix0$var))
-          for (j in 1:length(myfix0$col[[i]])) 
+
+        for (i in seq_along(myfix0$var))
+          for (j in seq_along(myfix0$col[[i]]))
             regfix(x0,
                    from=vars(x0)[myfix0$row[[i]][j]],to=vars(x0)[myfix0$col[[i]][j]]) <-
                      colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
@@ -257,21 +257,21 @@
       if (length(mystart)!=length(parkeep))
         mystart <- mystart[parkeep]
       lower <- lower[parkeep]
-      x <- multigroup(x$lvm,x$data,fix=FALSE,exo.fix=FALSE) 
-    }  
+      x <- multigroup(x$lvm,x$data,fix=FALSE,exo.fix=FALSE)
+    }
 
-    parord <- modelPar(x,1:length(mystart))$p    
+    parord <- modelPar(x,seq_along(mystart))$p
     mydata <- list()
-    for (i in 1:x$ngroup) {      
+    for (i in seq_len(x$ngroup)) {
       mydata <- c(mydata, list(as.matrix(x$data[[i]][,manifest(x$lvm[[i]])])))
     }
-    
+
     myObj <- function(theta) {
       if (optim$constrain)
         theta[constrained] <- exp(theta[constrained])
       pp <- modelPar(x,theta)$p
       res <- 0
-    for (k in 1:x$ngroup) {
+    for (k in seq_len(x$ngroup)) {
         x0 <- x$lvm[[k]]
         data0 <- x$data[[k]]
         if (Xfix) {
@@ -280,8 +280,8 @@
         }
         p0 <- pp[[k]]
         myfun <- function(ii) {
-          if (Xfix) 
-          for (i in 1:length(myfix0$var)) {
+          if (Xfix)
+          for (i in seq_along(myfix0$var)) {
             x0$fix[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
               index(x0)$A[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
                 data0[ii,xfix0[i]]
@@ -291,7 +291,7 @@
                                               data=data0[ii,manifest(x0),drop=FALSE],
                                               n=1, S=NULL, weight=weight[[k]][ii,],
                                               weight2=weight2[[k]]))
-            
+
           } else {
             res <- do.call(ObjectiveFun, list(x=x0, p=p0,
                                               data=data0[ii,manifest(x0),drop=FALSE],
@@ -300,7 +300,7 @@
           }
           return(res)
         }
-        res <- res + sum(sapply(1:nrow(mydata[[k]]),myfun))
+        res <- res + sum(sapply(seq_len(nrow(mydata[[k]])),myfun))
       }
       res
     }
@@ -311,20 +311,20 @@
       }
       pp <- modelPar(x,theta)$p
       D0 <- res <- rbind(numeric(length(mystart)))
-      for (k in 1:x$ngroup) {
+      for (k in seq_len(x$ngroup)) {
         if (Xfix) {
           myfix0 <- myfix[[k]]
         }
         x0 <- x$lvm[[k]]
         myfun <- function(ii) {
           if (Xfix)
-          for (i in 1:length(myfix0$var)) {
+          for (i in seq_along(myfix0$var)) {
             x0$fix[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
               index(x0)$A[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
                 x$data[[k]][ii,xfix[[k]][i]]
           }
           if (is.list(weight2[[k]][ii,])) {
-            
+
           } else {
             val <- do.call(GradFun, list(x=x0, p=pp[[k]],
                                          data=mydata[[k]][ii,,drop=FALSE], n=1,
@@ -334,7 +334,7 @@
           }
           return(val)
         }
-        D <- D0; D[parord[[k]]] <- rowSums(sapply(1:nrow(mydata[[k]]),myfun))
+        D <- D0; D[parord[[k]]] <- rowSums(sapply(seq_len(nrow(mydata[[k]])),myfun))
         res <- res+D
       }
       if (optim$constrain) {
@@ -351,14 +351,14 @@
       pp <- modelPar(x,theta)$p
       I0 <- res <- matrix(0,length(theta),length(theta))
       grad <- grad0 <- numeric(length(theta))
-      for (k in 1:x$ngroup) {
+      for (k in seq_len(x$ngroup)) {
         x0 <- x$lvm[[k]]
         if (Xfix) {
           myfix0 <- myfix[[k]]
         }
         myfun <- function(ii) {
           if (Xfix)
-          for (i in 1:length(myfix0$var)) {
+          for (i in seq_along(myfix0$var)) {
             x0$fix[cbind(myfix0$row[[i]],myfix0$col[[i]])] <- index(x0)$A[cbind(myfix0$row[[i]],myfix0$col[[i]])] <-
               x$data[[k]][ii,xfix[[k]][i]]
           }
@@ -379,17 +379,17 @@
           }
           I[ parord[[k]], parord[[k]] ] <- J
           return(I)
-        }      
-        L <- lapply(1:nrow(x$data[[k]]),function(x) myfun(x))
+        }
+        L <- lapply(seq_len(nrow(x$data[[k]])),function(x) myfun(x))
         if (!is.null(attributes(L[[1]])$grad))
-          grad <- grad + rowSums(matrix((unlist(lapply(L,function(x) attributes(x)$grad))),ncol=length(L)))        
+          grad <- grad + rowSums(matrix((unlist(lapply(L,function(x) attributes(x)$grad))),ncol=length(L)))
         res <- res + apply(array(unlist(L),dim=c(length(theta),length(theta),nrow(x$data[[k]]))),c(1,2),sum)
       }
       if (!is.null(attributes(L[[1]])$grad))
         attributes(res)$grad <- grad
-      return(res)   
+      return(res)
     }
-  } else { ## Model without random slopes:    
+  } else { ## Model without random slopes:
 ###########################################################
 
 
@@ -410,7 +410,7 @@
           exoidx <- which(attributes(z)$args%in%xx)
           parname <- names(constrain(x0))[i]
           y <- names(which(unlist(lapply(intercept(x0),function(x) x==parname))))
-          el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+          el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)
           names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
           xconstrain0 <- c(xconstrain0,list(el))
         }
@@ -442,8 +442,8 @@
       return(NULL)
     }
 
-   
-    myObj <- function(theta) {     
+
+    myObj <- function(theta) {
       theta0 <- theta
       if (optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
@@ -463,15 +463,15 @@
           S[endogenous(x0),endogenous(x0)] <- pd$S
           mu[endogenous(x0)] <- pd$mu
           n <- pd$n
-          x0$mean[yconstrain[[i]]] <- 0 
+          x0$mean[yconstrain[[i]]] <- 0
         }
         res <- c(res,
                  do.call(ObjectiveFun, list(x=x0, p=pp[[i]], data=data0, S=S, mu=mu, n=n, weight=weight[[i]], weight2=weight2[[i]], offset=offset)))
-                 
+
       }
         sum(res)
     }
-    
+
     if (!exists(GradFun)) {
       myGrad <- NULL
     } else  {
@@ -482,7 +482,7 @@
         }
         pp <- modelPar(x,theta)$p
         D0 <- res <- rbind(numeric(length(theta)))
-        for (i in 1:x$ngroup) {
+        for (i in seq_len(x$ngroup)) {
           repval <- with(x$samplestat[[i]],
                          do.call(GradFun, list(x=x$lvm[[i]],p=pp[[i]],
                                                data=x$data[[i]][,index(x$lvm[[i]])$manifest,drop=FALSE],
@@ -497,7 +497,7 @@
         return(as.vector(res))
       }
     }
-    
+
     myInformation <- function(theta) {
       theta0 <- theta
       if (optim$constrain) {
@@ -505,7 +505,7 @@
       }
       pp <- modelPar(x,theta)$p
       I0 <- res <- matrix(0,length(theta),length(theta))
-      for (i in 1:x$ngroup) {
+      for (i in seq_len(x$ngroup)) {
         I <- I0;
         I[ parord[[i]], parord[[i]] ] <- with(x$samplestat[[i]], do.call(InformationFun, list(p=pp[[i]], x=x$lvm[[i]], data=x$data[[i]],
                                                                                               S=S, mu=mu, n=n, weight=weight[[i]],
@@ -525,16 +525,16 @@
       }
       attributes(res)$grad <- D
       return(res)
-    }    
+    }
   }
-  
+
 ##############################################################
 
 
   if (!exists(InformationFun)) myInformation <- NULL
   else if (is.null(get(InformationFun))) myInformation <- NULL
   if (is.null(get(GradFun))) myGrad <- NULL
-    
+
   if (!silent) cat("Optimizing objective function...\n")
   if (lava.options()$debug) {
     print(lower)
@@ -548,7 +548,7 @@
   opt$estimate <- opt$par
   if (optim$constrain) {
     opt$estimate[constrained] <- exp(opt$estimate[constrained])
-  }  
+  }
   if (quick) return(list(opt=opt,vcov=NA))
 
   if (is.null(myGrad) | !XconstrStdOpt ) {
@@ -561,9 +561,9 @@
   }
 
   if (!is.null(opt$convergence)) {
-      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.") 
-  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.") 
-  
+      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.")
+  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.")
+
   if (!XconstrStdOpt) {
     myInformation <- function(theta) information(x,p=theta)
   } else {
@@ -580,7 +580,7 @@
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
-    
+
   res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, weight2=weight2, cluster=cluster)
   class(res) <- myclass
 
@@ -602,7 +602,7 @@ estimate.lvmlist <-
 function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
-  }  
+  }
   nm <- length(x)
   if (nm==1) {
     return(estimate(x[[1]],data,missing=missing,...))
@@ -611,7 +611,7 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (is.data.frame(data)) {
     warning("Only one dataset - going for standard analysis on each submodel.")
     res <- c()
-    for (i in 1:nm) {
+    for (i in seq_len(nm)) {
       res <- c(res, list(estimate(x[[i]],data=data,silent=TRUE,missing=missing, ...)))
     }
     return(res)
@@ -621,7 +621,7 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
 
   Xfix <- FALSE
   xfix <- list()
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     data0 <- data[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x[[i]],exo=TRUE))]
     xfix <- c(xfix, list(xfix0))
@@ -631,13 +631,13 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   }
   if (missing(fix)) {
     fix <- ifelse(Xfix,FALSE,TRUE)
-  }  
+  }
 
 
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
   res <- estimate(mg,...)
-    
-  return(res) 
+
+  return(res)
 }
 
 ###}}}

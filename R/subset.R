@@ -1,8 +1,8 @@
 ##' Extract subset of latent variable model
-##' 
+##'
 ##' Extract measurement models or user-specified subset of model
-##' 
-##' 
+##'
+##'
 ##' @aliases measurement
 ##' @param x \code{lvm}-object.
 ##' @param vars Character vector or formula specifying variables to include in
@@ -12,7 +12,7 @@
 ##' @author Klaus K. Holst
 ##' @keywords models regression
 ##' @examples
-##' 
+##'
 ##' m <- lvm(c(y1,y2)~x1+x2)
 ##' subset(m,~y1+x1)
 ##'
@@ -22,14 +22,14 @@ subset.lvm <- function(x, vars, ...) {
   if (missing(vars))
     return(x)
   if (class(vars)[1]=="formula") vars <- all.vars(vars)
-  if (!all(vars%in%vars(x))) stop("Not a subset of model")  
+  if (!all(vars%in%vars(x))) stop("Not a subset of model")
   latentvars <- intersect(vars,latent(x))
   ##  g0 <- subGraph(vars, Graph(x))
   ##  res <- graph2lvm(g0)
   res <- lvm(vars)
   M <- x$M[vars,vars,drop=FALSE]
-  for (i in 1:nrow(M)) {
-    if (any(M[,i]==1)) {      
+  for (i in seq_len(nrow(M))) {
+    if (any(M[,i]==1)) {
       res <- regression(res, rownames(M)[M[,i]==1], rownames(M)[i], ...)
     }
   }

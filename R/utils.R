@@ -8,7 +8,7 @@ parsedesign <- function(coef,x,...) {
     expr <- suppressWarnings(inherits(try(x,silent=TRUE),"try-error"))
     if (expr) {
         ee <- c(deparse(substitute(x)), sapply(dots, deparse))
-    } else {        
+    } else {
         ee <- c(deparse(x), sapply(dots, function(x) deparse(x)))
     }
     res <- c()
@@ -33,7 +33,7 @@ parsedesign <- function(coef,x,...) {
 }
 
 
-###}}} 
+###}}}
 
 ###{{{ contr
 
@@ -46,10 +46,10 @@ contr <- function(p,n,...) {
       for (j in seq_len(n-1)) {
         pos <- pos+1
         B[pos,i] <- 1;  B[pos,j*p+i] <- -1
-      }   
+      }
     }
     return(B)
-  }  
+  }
   if (missing(n)) n <- max(p)
   B <- matrix(0,ncol=n,nrow=length(p)-1)
   B[,p[1]] <- 1
@@ -88,7 +88,7 @@ substArg <- function(x,env,...) {
 ##   substArg(zz,env=env)
 ## }
 ## h <- function(x,...) {
-##   env=new.env(); assign("x",substitute(x),env)  
+##   env=new.env(); assign("x",substitute(x),env)
 ##   substArg(x,env=TRUE)
 ## }
 
@@ -100,7 +100,7 @@ procrandomslope <- function(object,data=object$data,...) {
   Xfix <- FALSE
   xfix <- myfix <- list()
   xx <- object
-  for (i in 1:object$ngroup) {
+  for (i in seq_len(object$ngroup)) {
     x0 <- object$lvm[[i]]
     data0 <- data[[i]]
     xfix0 <- colnames(data0)[(colnames(data0)%in%parlabels(x0,exo=TRUE))]
@@ -108,20 +108,20 @@ procrandomslope <- function(object,data=object$data,...) {
     if (length(xfix0)>0) { ## Yes, random slopes
       Xfix<-TRUE
     }
-    xx$lvm[[i]] <- x0    
-  }   
+    xx$lvm[[i]] <- x0
+  }
   if (Xfix) {
-    for (k in 1:object$ngroup) {
+    for (k in seq_len(object$ngroup)) {
       x1 <- x0 <- object$lvm[[k]]
-      data0 <- data[[k]]        
+      data0 <- data[[k]]
       nrow <- length(vars(x0))
       xpos <- lapply(xfix[[k]],function(y) which(regfix(x0)$labels==y))
       colpos <- lapply(xpos, function(y) ceiling(y/nrow))
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix0 <- list(var=xfix[[k]], col=colpos, row=rowpos)
-      myfix <- c(myfix, list(myfix0))        
-      for (i in 1:length(myfix0$var))
-        for (j in 1:length(myfix0$col[[i]])) 
+      myfix <- c(myfix, list(myfix0))
+      for (i in seq_along(myfix0$var))
+        for (j in seq_along(myfix0$col[[i]]))
           regfix(x0,
                  from=vars(x0)[myfix0$row[[i]][j]],to=vars(x0)[myfix0$col[[i]][j]]) <-
                    colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
@@ -140,13 +140,13 @@ procrandomslope <- function(object,data=object$data,...) {
 
 ###{{{ kronprod
 
-## ' Calculate matrix product with kronecker product 
+## ' Calculate matrix product with kronecker product
 ## '
 ## ' \deqn{(A\crossprod B) Y}
-## ' @title Calculate matrix product with kronecker product 
-## ' @param A 
-## ' @param B 
-## ' @param Y 
+## ' @title Calculate matrix product with kronecker product
+## ' @param A
+## ' @param B
+## ' @param Y
 ## ' @author Klaus K. Holst
 kronprod <- function(A,B,Y) {
   rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
@@ -178,7 +178,7 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
 categorical2dummy <- function(x,data,silent=TRUE,...) {
   x0 <- x
   X <- intersect(index(x)$exogenous,colnames(data))
-  catX <- c()  
+  catX <- c()
   for (i in X) {
     if (!is.numeric(data[,i])) catX <- c(catX,i)
   }
@@ -186,7 +186,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   f <- as.formula(paste("~ 1+", paste(catX,collapse="+")))
   opt <- options(na.action="na.pass")
   M <- model.matrix(f,data)
-  
+
   options(opt)
   Mnames <- colnames(M)
   Mpos <- attributes(M)$assign
@@ -196,9 +196,9 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   for (i in catX) {
     count <- count+1
     mnames <- Mnames[Mpos==count]
-    kill(x0) <- i  
+    kill(x0) <- i
     Y <- colnames(A)[A[i,]==1]
-    if (length(mnames)==1) { 
+    if (length(mnames)==1) {
       fix <- as.list(F$labels[i,])
       fixval <- F$values[i,]
       fix[which(!is.na(fixval))] <- fixval[na.omit(fixval)]
@@ -231,13 +231,13 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       Debug(obs)
       mydata <- subset(data, select=obs)
       if (NROW(mydata)==0) stop("No observations")
-      for (i in 1:ncol(mydata)) {
+      for (i in seq_len(ncol(mydata))) {
         if (inherits(mydata[,i],"Surv"))
           mydata[,i] <- mydata[,i][,1]
         if (is.character(mydata[,i]) | is.factor(mydata[,i]))
           mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
       }
-      
+
 ##      mydata <- data[,obs]
 ##      if (any(is.na(mydata))) {
 ##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)
@@ -261,7 +261,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         mu <- colMeans(mydata)
         if (is.null(S))
           S <- (n-1)/n*cov(mydata) ## MLE variance matrix of observed variables
-      }      
+      }
     }
     else
       if (is.list(data)) {
@@ -279,7 +279,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
     return(list(S=S,mu=mu,n=n))
   }
 
-###}}}    
+###}}}
 
 ###{{{ reorderdata.lvm
 
@@ -292,7 +292,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
     } else {
       nn <- colnames(data)
       ii <- na.omit(match(index(x)$manifest, nn))
-      data[ii,ii,drop=FALSE]    
+      data[ii,ii,drop=FALSE]
     }
   }
 
@@ -305,14 +305,14 @@ function(M, upper=TRUE) {
   if (length(M)==1) return(M)
   if (!is.matrix(M) | ncol(M)!=nrow(M)) stop("Only implemented for square matrices.")
   if (upper) {
-    for (i in 1:(ncol(M)-1))
-      for (j in (i+1):nrow(M))
+    for (i in seq_len(ncol(M)-1))
+      for (j in seq(i+1,nrow(M)))
         M[i,j] <- M[j,i]
     return(M)
   } else {
-    for (i in 1:ncol(M))
-      for (j in 1:nrow(M))
-        if (M[i,j]==0)          
+    for (i in seq_len(ncol(M)))
+      for (j in seq_len(nrow(M)))
+        if (M[i,j]==0)
           M[i,j] <- M[j,i]
         else
           M[j,i] <- M[i,j]
@@ -334,7 +334,7 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=TRUE) {
   }
   svdX <- svd(X)
   id0 <- numeric(n)
-  idx <- which(svdX$d>tol)  
+  idx <- which(svdX$d>tol)
   id0[idx] <- 1/svdX$d[idx]
   res <- with(svdX, v%*%diag(id0,nrow=length(id0))%*%t(u))
   if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
@@ -353,7 +353,7 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=TRUE) {
 
 naiveGrad <- function(f, x, h=1e-9) {
   nabla <- numeric(length(x))
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     xh <- x; xh[i] <- x[i]+h
     nabla[i] <- (f(xh)-f(x))/h
   }
@@ -367,15 +367,15 @@ naiveGrad <- function(f, x, h=1e-9) {
 # conditional on Compl(idx)
 CondMom <- function(mu,S,idx,X) {
   idxY <- idx
-  
-  idxX <- setdiff(1:ncol(S),idxY)
+
+  idxX <- setdiff(seq_len(ncol(S)),idxY)
   SXX <- S[idxX,idxX,drop=FALSE];
   SYY <- S[idxY,idxY,drop=FALSE]
   SYX <- S[idxY,idxX,drop=FALSE]
   iSXX <- solve(SXX)
   condvar <- SYY-SYX%*%iSXX%*%t(SYX)
   if (missing(mu)) return(condvar)
-  
+
   muY <- mu[,idxY,drop=FALSE]
   muX <- mu[,idxX,drop=FALSE]
   if (is.matrix(mu))
@@ -433,7 +433,7 @@ numberdup <- function(xx) { ## Convert to numbered list
   dups <- xx[dup.xx]
   xx.new <- numeric(length(xx))
   count <- 0
-  for (i in 1:length(xx)) {
+  for (i in seq_along(xx)) {
     if (!dup.xx[i]) {
       count <- count+1
       xx.new[i] <- count
@@ -470,7 +470,7 @@ getoutcome <- function(formula) {
     res <- paste(deparse(formula[[2]]),collapse="")
   }
   attributes(res)$x <- aa$term.labels
-  res  
+  res
 }
 
 
@@ -504,12 +504,12 @@ Decomp.specials <- function(x,pattern="[()]") {
   st <- gsub(" ","",x)
   st <- gsub("\n","",st)
   mysplit <- rev(unlist(strsplit(st,pattern)))
-  type <- mysplit[2] 
+  type <- mysplit[2]
   vars <- mysplit[1]
   res <- unlist(strsplit(vars,","))
   if (type=="s" | type=="seq") {
-    return(paste(res[1],seq(as.numeric(res[2])),sep=""))
-  } 
+    return(paste0(res[1],seq(as.numeric(res[2]))))
+  }
   unlist(strsplit(vars,","))
 
 }

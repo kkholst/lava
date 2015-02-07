@@ -18,7 +18,7 @@
   } else {
       start <- as.list(rep(0,length(value))); names(start) <- value
   }
-  if (!missing(constrain)) {      
+  if (!missing(constrain)) {
       newfix <- constrain
       if (!is.list(newfix)) newfix <- as.list(newfix)
   } else {

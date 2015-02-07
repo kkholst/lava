@@ -50,7 +50,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   exo.idx <- na.omit(match(exo,allvars))
   exo.obsidx <- na.omit(match(exo,obs))
   endo.obsidx <- na.omit(match(endo,obs))
-  
+
   fix.idx <- !is.na(x$fix) ## Index of fixed parameters
   covfix.idx <- !is.na(x$covfix) ## Index of fixed covariance parameters
 
@@ -83,18 +83,18 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (length(ii)>1)
       P1[ii[-1]] <- 0
     if (p%in%c(parname,constrain.par))
-      P0[ii] <- P1[ii] <- 0    
-  } 
+      P0[ii] <- P1[ii] <- 0
+  }
 
   ##  P1. <- P1[-exo.idx,-exo.idx]
   npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
-  parnames <- paste("p", seq_len(npar.reg+npar.var), sep="")  
-  
+  parnames <- paste0("p", seq_len(npar.reg+npar.var))
+
   A <- M
   A[fix.idx] <- x$fix[fix.idx] ## ... with fixed parameters in plac
   P[covfix.idx] <- x$covfix[covfix.idx] ## ... with fixed parameters in plac
 
-  
+
   px <- Jy <- J <- I <- diag(length(vars(x)))
   if (m>0) {
     J[eta.idx,eta.idx] <- 0; J <- J[-eta.idx,,drop=FALSE]
@@ -106,7 +106,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     }
     ## Cancelation matrix (cancels rows with exogenous variables)
     px[exo.idx,exo.idx] <- 0
-  } 
+  }
 
   ## Creating indicitor of free mean-parameters
   fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
@@ -129,7 +129,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
       v0[idx] <- v1[idx] <- 0
   } ## duplicate parameters
 
-  ### 
+  ###
   ### Extra parameters
   ###
   efixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
@@ -148,8 +148,8 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (p%in%c(parname,covparname,constrain.par,mparname))
       e0[idx] <- e1[idx] <- 0
   } ## duplicate parameters
- 
-    
+
+
   ## Return:
   ## Adjacency-matrix (M)
   ## Matrix of regression-parameters (0,1) _with_ fixed parameters (A)
@@ -162,9 +162,9 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
               endogenous=endo,
               exo.idx=exo.idx, eta.idx=eta.idx,
               exo.obsidx=exo.obsidx, endo.obsidx=endo.obsidx,
-              obs.idx=obs.idx, 
+              obs.idx=obs.idx,
               endo.idx=setdiff(obs.idx,exo.idx))
-  
+
   if (standard) {
     res <- c(res, list(M=M, A=A, P=P,
                        P0=P0, P1=P1,
@@ -178,7 +178,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
                        npar.ex=sum(e1),
                        constrain.par=constrain.par))
     npar.total <- res$npar+res$npar.mean+res$npar.ex
-    which.diag <- diag(P1==1)    
+    which.diag <- diag(P1==1)
 
     res <- c(res, list(parname.all=parname, parname=setdiff(parname,constrain.par),
                        which.diag=which.diag,
@@ -191,7 +191,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
                        eparname=setdiff(eparname,constrain.par),
                        J=J, Jy=Jy, px=px, sparse=sparse))
 
-    parname.all.reg.idx <- parname.all.reg.tidx <- 
+    parname.all.reg.idx <- parname.all.reg.tidx <-
       parname.reg.tidx <- parname.reg.idx <- c()
     for (p in res$parname.all) {
       ipos <- which((x$par==p))
@@ -214,14 +214,14 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
       ipos <- which(x$covpar==p)
       if (p%in%res$covparname)
         covparname.idx <- c(covparname.idx, list(ipos))
-      covparname.all.idx <- c(covparname.all.idx, list(ipos))      
+      covparname.all.idx <- c(covparname.all.idx, list(ipos))
     };
     if (length(covparname.idx)>0)
       names(covparname.idx) <- res$covparname
     if (length(covparname.all.idx)>0)
       names(covparname.all.idx) <- res$covparname.all
 
-    mparname.all.idx <- mparname.idx <- c()    
+    mparname.all.idx <- mparname.idx <- c()
     for (p in res$mparname.all) {
       ipos <- which(x$mean==p)
       if (p%in%mparname)
@@ -233,7 +233,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (length(mparname.all.idx)>0)
       names(mparname.all.idx) <- res$mparname.all
 
-    eparname.all.idx <- eparname.idx <- c()    
+    eparname.all.idx <- eparname.idx <- c()
     for (p in res$eparname.all) {
       ipos <- which(x$exfix==p)
       if (p%in%eparname)
@@ -245,7 +245,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
     if (length(eparname.all.idx)>0)
       names(eparname.all.idx) <- res$eparname.all
 
-    
+
     res <- c(res, list(mparname.idx=mparname.idx,
                        covparname.idx=covparname.idx,
                        parname.reg.idx=parname.reg.idx,
@@ -256,11 +256,11 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
                        parname.all.reg.idx=parname.all.reg.idx,
                        parname.all.reg.tidx=parname.all.reg.tidx
                        ))
-    
+
   } else {
     res <- index(x)
   }
-  
+
   if (zeroones) {
     if (sparse) {
       if (!require("Matrix")) stop("package Matrix not available")
@@ -270,14 +270,14 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
       J <- as(J, "sparseMatrix")
       Jy <- as(Jy, "sparseMatrix")
       px <- as(px, "sparseMatrix")
-      
+
     } else {
       Ik <- diag(length(obs))
       Im <- diag(ncol(A))
     }
     Kkk <- NULL
 
-    
+
     res[c("Ik","Im","Kkk")] <- NULL
     res <- c(res, list(Ik=Ik, Im=Im, Kkk=Kkk))
   }
@@ -292,7 +292,6 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 
   if (length(P)>0)
   res <- c(res,mat.lvm(x,res))
-  
+
   return(res)
 }
-

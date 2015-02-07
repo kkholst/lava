@@ -1,15 +1,15 @@
 ##' Extract model
-##' 
+##'
 ##' Extract or replace model object
-##' 
-##' 
+##'
+##'
 ##' @aliases Model Model<-
 ##' @usage
-##' 
+##'
 ##' Model(x, ...)
-##' 
+##'
 ##' Model(x, ...) <- value
-##' 
+##'
 ##' @param x Fitted model
 ##' @param value New model object (e.g. \code{lvm} or \code{multigroup})
 ##' @param \dots Additional arguments to be passed to the low level functions
@@ -18,7 +18,7 @@
 ##' @seealso \code{\link{Graph}}
 ##' @keywords models
 ##' @examples
-##' 
+##'
 ##' m <- lvm(y~x)
 ##' e <- estimate(m, sim(m,100))
 ##' Model(e)

@@ -19,7 +19,7 @@ mat.lvm <- function(x,ii=index(x),...) {
                          cov=seq_len(ii$npar.var)+ii$npar.mean+ii$npar.reg,
                          epar=seq_len(ii$npar.ex)+with(ii,npar.reg+npar.var+npar.mean),
                          cpar=numeric())
-    
+
     idxA <- which(M1==1)
     pidxA <- parBelongsTo$reg
     if (ii$npar.reg>0) {
@@ -30,7 +30,7 @@ mat.lvm <- function(x,ii=index(x),...) {
             attributes(newval)$reg.idx <- idx
             attributes(newval)$reg.tidx <- which(t(x$par==p))
             parval[[p]] <- newval
-            if (length(idx)>1) {                
+            if (length(idx)>1) {
                 idxA <- c(idxA,idx[-1])
                 pidxA <- c(pidxA,rep(A[idx[1]],length(idx)-1))
                 A[idx] <- A[idx[1]]
@@ -41,18 +41,18 @@ mat.lvm <- function(x,ii=index(x),...) {
     pars.var <- parBelongsTo$cov
     idxdiag <- (seq(ncol(P1))-1)*ncol(P1) + seq(ncol(P1))
     idxP <- idxdiag[which(P1[idxdiag]==1)]
-    pidxP <- pars.var[seq_len(length(idxP))]    
+    pidxP <- pars.var[seq_len(length(idxP))]
     P[idxP] <- pidxP
 
     pars.off.diag <- pars.var
     if (length(pidxP)>0) {
         pars.off.diag <- pars.off.diag[-seq_len(length(pidxP))]
     }
-    
+
     counter <- 0
     if (length(pars.off.diag)>0 & ncol(P)>1)
-        for (i in 1:(ncol(P1)-1))
-            for (j in (i+1):nrow(P1)) {
+        for (i in seq_len(ncol(P1)-1))
+            for (j in seq(i+1,nrow(P1))) {
                 if (ii$P1[j,i]!=0) {
                     counter <- counter+1
                     pos <- c(j+(i-1)*ncol(P1),
@@ -61,7 +61,7 @@ mat.lvm <- function(x,ii=index(x),...) {
                     idxP <- c(idxP,pos); pidxP <- c(pidxP,P[j,i],P[i,j])
                 }
             }
-    
+
     if (length(ii$covparname)>0)
         for (p in ii$covparname) {
             idx <- which(x$covpar==p)
@@ -69,7 +69,7 @@ mat.lvm <- function(x,ii=index(x),...) {
             if (!(p%in%ii$parname)) {
                 parval[[p]] <- P[idx[1]]
             }
-            attributes(parval[[p]])$cov.idx <- idx            
+            attributes(parval[[p]])$cov.idx <- idx
             if (length(idx)>1+isOffDiag) {
                 P[idx[-seq(1+isOffDiag)]] <- parval[[p]]
             }
@@ -92,7 +92,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     pidxM <- seq_len(ii$npar.mean)
     v <- NULL
 
-    named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
+    named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
     v <- rep(0,length(x$mean))
     names(v) <- colnames(P)
@@ -104,7 +104,7 @@ mat.lvm <- function(x,ii=index(x),...) {
         v[fixed] <- unlist(x$mean[fixed])
 
     for (p in ii$mparname) {
-        idx <- which(x$mean==p)            
+        idx <- which(x$mean==p)
         if (!(p%in%c(ii$parname,ii$covparname))) {
             if (length(idx)>1) {
                 pidxM <- c(pidxM,rep(v[idx[1]],length(idx)-1))
@@ -113,7 +113,7 @@ mat.lvm <- function(x,ii=index(x),...) {
             parval[[p]] <- v[idx[1]]
             v[idx] <- parval[[p]]
         }
-        attributes(parval[[p]])$m.idx <- idx            
+        attributes(parval[[p]])$m.idx <- idx
         if (p %in% ii$covparname & !(p %in% ii$parname)) {
             parBelongsTo$cov <- c(parBelongsTo$cov,p)
             idx.2 <- which(x$covpar==p)
@@ -128,12 +128,12 @@ mat.lvm <- function(x,ii=index(x),...) {
             pidxM <- c(pidxM,rep(A[idx.2[1]],length(idx)))
             idxM <- c(idxM,idx)
         }
-    } 
-      
+    }
+
     ## Ex-parameters
     idxE <- NULL
     pidxE <- parBelongsTo$epar
-    named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))    
+    named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
     fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
     epar <- rep(0,length(x$exfix))
     names(epar) <- names(x$expar)
@@ -150,10 +150,10 @@ mat.lvm <- function(x,ii=index(x),...) {
                 idxE <- c(idxE,idx[-1])
                 pidxE <- c(pidxE,rep(epar[idx[1]],length(idx)-1))
             }
-            parval[[p]] <- epar[idx[1]]        
+            parval[[p]] <- epar[idx[1]]
         }
         attributes(parval[[p]])$e.idx <- idx
-        
+
         if (length(idx)>1)
             epar[idx[-1]] <- parval[[p]]
         if (p %in% setdiff(ii$covparname,c(ii$parname,ii$mparname))) {
@@ -183,7 +183,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     ## Constrained...
     constrain.par <- names(constrain(x))
     constrain.idx <- NULL
-    if (length(constrain.par)>0) {   
+    if (length(constrain.par)>0) {
         constrain.idx <- list()
         for (p in constrain.par) {
             reg.tidx <- reg.idx <- cov.idx <- m.idx <- e.idx <- NULL
@@ -211,15 +211,15 @@ mat.lvm <- function(x,ii=index(x),...) {
 
     parBelongsTo <- lapply(parBelongsTo,function(x) sort(unique(x)))
 
-    
+
     return(list(mean=cbind(idxM,pidxM),
                 reg=cbind(idxA,pidxA),
                 cov=cbind(idxP,pidxP),
-                epar=ee,                
+                epar=ee,
                 parval=parval,
                 constrain.idx=constrain.idx,
                 parBelongsTo=parBelongsTo))
-    
+
 }
 
 
@@ -227,9 +227,9 @@ mat.lvm <- function(x,ii=index(x),...) {
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
     pp <- c(rep(NA,ii$npar.mean),pars)
-    v <- NULL    
+    v <- NULL
     if (!is.null(meanpar) && length(meanpar)>0) {
-        pp[seq(ii$npar.mean)] <- meanpar        
+        pp[seq(ii$npar.mean)] <- meanpar
         v <- ii$v0; v[v==0] <- 0 ##unlist(x$mean[which(v==0)])
         v[ii$mean[,1]] <- meanpar[ii$mean[,2]]
     }
@@ -246,12 +246,12 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
         res <- pp[x];
         attributes(res) <- attributes(x);
         res })
-    
+
     ## Constrained...
     constrain.par <- names(constrain(x))
     constrain.idx <- NULL
-    cname <- constrainpar <- c()  
-    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar))) {   
+    cname <- constrainpar <- c()
+    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar))) {
         constrain.idx <- list()
         for (p in constrain.par) {
             cname <- c(cname,p)
@@ -262,8 +262,8 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                     parval[xargs] <- (data)[xargs]
                 } else parval[xargs] <- 0
             }
-            val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])      
-            cpar <- myc(val); 
+            val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])
+            cpar <- myc(val);
             constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
             if (p%in%ii$parname.all) {
                 if (!is.null(val))
@@ -349,12 +349,12 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
     pars.off.diag <- pars.var
     if (sum(which.diag)>0) {
-        pars.off.diag <- pars.off.diag[-c(1:sum(which.diag))]
+        pars.off.diag <- pars.off.diag[-seq_len(sum(which.diag))]
     }
     counter <- 0
     if (length(pars.off.diag)>0 & ncol(P)>1)
-        for (i in 1:(ncol(P1)-1))
-            for (j in (i+1):nrow(P1)) {
+        for (i in seq_len(ncol(P1)-1))
+            for (j in seq(i+1,nrow(P1))) {
                 if (ii$P1[j,i]!=0) {
                     counter <- counter+1
                     P[j,i] <- pars.off.diag[counter]
@@ -365,7 +365,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
         for (p in ii$covparname) {
             idx <- which(x$covpar==p)
             if (!(p%in%ii$parname)) {
-                parval[[p]] <- P[idx[1]]      
+                parval[[p]] <- P[idx[1]]
             }
             attributes(parval[[p]])$cov.idx <- idx
             if (length(idx)>1) {
@@ -373,18 +373,18 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
             }
             if (ii$npar.reg>0 && p%in%ii$parname) {
                 idx.reg <- which(x$par==p)
-                P[idx] <- A[idx.reg[1]]                
+                P[idx] <- A[idx.reg[1]]
                 atr <- attributes(parval[[p]])
                 parval[[p]] <- A[idx.reg[1]] ###?????
-                attributes(parval[[p]]) <- atr                
-            }            
+                attributes(parval[[p]]) <- atr
+            }
         } ## duplicate parameters
     P[upper.tri(P)] <- t(P)[upper.tri(P)]  ## Symmetrize...
 
 
     v <- NULL
-    {    
-        named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))    
+    {
+        named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
         fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
         v <- rep(0,length(x$mean))
         names(v) <- colnames(P)
@@ -397,10 +397,10 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
             idx <- which(x$mean==p)
 
             if (!(p%in%c(ii$parname,ii$covparname))) {
-                parval[[p]] <- v[idx[1]]        
+                parval[[p]] <- v[idx[1]]
             }
             attributes(parval[[p]])$m.idx <- idx
-            
+
             if (length(idx)>1)
                 v[idx[-1]] <- parval[[p]]
             if (p %in% ii$covparname & !(p %in% ii$parname)) {
@@ -411,16 +411,16 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                 idx.2 <- which(x$par==p)
                 v[idx] <- A[idx.2[1]]
             }
-        } 
+        }
     }
 
-    
+
     ## Ex-parameters
     e <- NULL
-    {    
-        named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))    
+    {
+        named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
         fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
-        
+
         e <- rep(0,length(x$exfix))
 
         names(e) <- names(x$expar)
@@ -431,10 +431,10 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
         for (p in ii$eparname) {
             idx <- which(x$exfix==p)
             if (!(p%in%c(ii$parname,ii$covparname,ii$mparname))) {
-                parval[[p]] <- e[idx[1]]        
+                parval[[p]] <- e[idx[1]]
             }
             attributes(parval[[p]])$e.idx <- idx
-            
+
             if (length(idx)>1)
                 e[idx[-1]] <- parval[[p]]
             if (p %in% setdiff(ii$covparname,c(ii$parname,ii$mparname))) {
@@ -449,13 +449,13 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                 idx.2 <- which(x$mean==p)
                 e[idx] <- v[idx.2[1]]
             }
-        } 
+        }
     }
-    
+
     ## Constrained...
     constrain.idx <- NULL
-    cname <- constrainpar <- c()  
-    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar,e))) {   
+    cname <- constrainpar <- c()
+    if (length(constrain.par)>0 && is.numeric(c(pars,meanpar,e))) {
         constrain.idx <- list()
         for (p in constrain.par) {
             cname <- c(cname,p)
@@ -467,8 +467,8 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                     parval[xargs] <- (data)[xargs]
                 } else parval[xargs] <- 0
             }
-            val <- unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args])      
-            cpar <- myc(val); 
+            val <- unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args])
+            cpar <- myc(val);
             constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
             if (p%in%ii$parname.all) {
                 reg.idx <- which(x$par==p)
@@ -479,22 +479,22 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
             if (p%in%ii$covparname.all) {
                 cov.idx <- which(x$covpar==p)
                 if (!is.null(val))
-                    P[cov.idx] <- cpar##myc(val)        
+                    P[cov.idx] <- cpar##myc(val)
             }
             if (p%in%ii$mparname.all) {
                 m.idx <- which(x$mean==p)
                 if (!is.null(val))
-                    v[m.idx] <- cpar##myc(val)        
+                    v[m.idx] <- cpar##myc(val)
             }
             if (p%in%ii$eparname.all) {
                 e.idx <- which(x$exfix==p)
                 if (!is.null(val))
-                    e[e.idx] <- cpar##myc(val)        
+                    e[e.idx] <- cpar##myc(val)
             }
             constrain.idx[[p]] <- list(reg.idx=reg.idx,reg.tidx=reg.tidx,cov.idx=cov.idx,m.idx=m.idx,e.idx=e.idx)
         }
     }
-    
+
     if (x$index$sparse & !is.character(class(pars)[1])) {
         A <- as(A,"sparseMatrix")
         P <- as(P,"sparseMatrix")

@@ -1,6 +1,6 @@
 ##' @title Trim tring of (leading/trailing/all) white spaces
 ##' @param x String
-##' @param all Trim all whitespaces? 
+##' @param all Trim all whitespaces?
 ##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export

@@ -4,10 +4,10 @@
 variances <- function(x,mean=FALSE) {
 ##  if (is.null(x$parpos))
 ##    x$parpos <- parpos(x)
-  x$parpos <- parpos(Model(x),mean=TRUE) 
+  x$parpos <- parpos(Model(x),mean=TRUE)
   res <- diag(x$parpos$P)[diag(index(x)$P0)==1]
   if (!mean) {
-    return(res - index(x)$npar.mean)    
+    return(res - index(x)$npar.mean)
   }
   return(res)
 }
@@ -18,4 +18,3 @@ offdiags <- function(x,mean=FALSE) {
   pp <- parpos$P
   pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
 }
-

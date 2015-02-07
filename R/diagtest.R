@@ -17,6 +17,6 @@ diagtest <- function(table,positive=1,...) {
              Specificity=p[4]/(1-p[1]-p[2]), # Prob test - | given no disease (True negative rate)
              PositivePredictiveValue=p[1]/(p[1]+p[3]), # Prob disease | test +
              NegativePredictiveValue=p[4]/(1-p[1]-p[3]) # Prob disease free | test .
-             )}    
+             )}
     list(table=table,multinomial=M,estimate=estimate(M,diag))
 }

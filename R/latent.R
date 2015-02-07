@@ -16,7 +16,7 @@ function(x,...) UseMethod("latent")
 ##' @export
 `latent.lvm` <-
 function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
-  if (missing(var)) {    
+  if (missing(var)) {
     latentidx <- unlist(x$latent)
     if (length(latentidx)>0)
        return(names(latentidx))
@@ -39,13 +39,13 @@ function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
       intercept(x,var) <- 0
     }
   }
- 
+
   xorg <- exogenous(x)
-  exoset <- setdiff(xorg,var) 
+  exoset <- setdiff(xorg,var)
   if (length(exoset)<length(xorg)) {
     exogenous(x) <- exoset
   }
-  
+
   index(x) <- reindex(x)
   return(x)
 }
@@ -59,7 +59,7 @@ function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
 ##' @export
 latent.list <- function(x,...) {
   latlist <- c()
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     latlist <- c(latlist, latent(x[[i]]))
   }
   latlist <- unique(latlist)
@@ -71,4 +71,3 @@ latent.list <- function(x,...) {
 function(x,...) {
   latent(Model(x))
 }
-

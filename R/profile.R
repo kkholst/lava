@@ -20,7 +20,7 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     }
     dots <- list(...)
     dots$silent <- FALSE
-    if (!is.null(dots$control)) 
+    if (!is.null(dots$control))
       control <- dots$control
     else
       control <- list()
@@ -51,7 +51,7 @@ profci.lvmfit <- function(x,parm,level=0.95,interval=NULL,curve=FALSE,n=20,lower
           interval[1] <- max(1e-5,interval[1])
   }
   if (curve) {
-    xx <- seq(interval[1],interval[2],length.out=n) 
+    xx <- seq(interval[1],interval[2],length.out=n)
     val <- sapply(xx,pp)
     res <- cbind(par=xx,val=val)
     return(res)

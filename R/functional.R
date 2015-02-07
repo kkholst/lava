@@ -12,21 +12,21 @@
         count <- 0
         for (y in yy) {
             count <- count+1
-            for (i in 1:length(xx)) {
+            for (i in seq_along(xx)) {
                 suppressWarnings(x <- regression(x,to=y,from=xx[i],silent=TRUE))
                 count <- count+1
-                if (length(value)==1) {                    
+                if (length(value)==1) {
                     functional(x, to=y, from=xx[i],...) <- value
                 } else
-                    functional(x, to=y, from=xx[i],...) <- value[[count]]        
+                    functional(x, to=y, from=xx[i],...) <- value[[count]]
             }
         }
         return(x)
     }
-    
+
     if (missing(from) | missing(to))
         return(x)
-    
+
     edges <- paste(from,to,sep="~")
     x$attributes$functional[[edges]] <- value
     return(x)
@@ -39,8 +39,7 @@
 functional.lvm <- function(x,to,from,...) {
     if (missing(from))
         return(x$attributes$functional)
-    
+
     edges <- paste(from,to,sep="~")
     x$attributes$functional[edges]
 }
-

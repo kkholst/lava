@@ -2,9 +2,9 @@
 ###{{{ estimate.lvm
 
 ##' Estimation of parameters in a Latent Variable Model (lvm)
-##' 
+##'
 ##' Estimate parameters. MLE, IV or user-defined estimator.
-##' 
+##'
 ##' A list of parameters controlling the estimation and optimization procedures
 ##' is parsed via the \code{control} argument. By default Maximum Likelihood is
 ##' used assuming multivariate normal distributed measurement errors. A list
@@ -34,7 +34,7 @@
 ##'
 ##' \item{control:}{ Parameters passed to the optimizer (default
 ##' \code{stats::nlminb}).}
-##' 
+##'
 ##' \item{tol:}{ Tolerance of optimization constraints on lower limit of
 ##' variance parameters.  } }
 ##'
@@ -83,31 +83,31 @@
 ##' 5.3 5.2 2.3
 ##' 1.1 1.6 2.9")
 ##' e <- estimate(lvm(c(x1,x2,x3)~u),dd)
-##' 
+##'
 ##' ## Simulation example
 ##' m <- lvm(list(y~v1+v2+v3+v4,c(v1,v2,v3,v4)~x))
 ##' covariance(m) <- v1~v2+v3+v4
 ##' dd <- sim(m,10000) ## Simulate 10000 observations from model
 ##' e <- estimate(m, dd) ## Estimate parameters
 ##' e
-##' 
+##'
 ##' ## Using just sufficient statistics
 ##' n <- nrow(dd)
 ##' e0 <- estimate(m,data=list(S=cov(dd)*(n-1)/n,mu=colMeans(dd),n=n))
-##' 
+##'
 ##' ## Multiple group analysis
 ##' m <- lvm()
 ##' regression(m) <- c(y1,y2,y3)~u
 ##' regression(m) <- u~x
 ##' d1 <- sim(m,100,p=c("u,u"=1,"u~x"=1))
 ##' d2 <- sim(m,100,p=c("u,u"=2,"u~x"=-1))
-##' 
+##'
 ##' mm <- baptize(m)
 ##' regression(mm,u~x) <- NA
 ##' covariance(mm,~u) <- NA
 ##' intercept(mm,~u) <- NA
 ##' ee <- estimate(list(mm,mm),list(d1,d2))
-##' 
+##'
 ##' ## Missing data
 ##' d0 <- makemissing(d1,cols=1:2)
 ##' e0 <- estimate(m,d0,missing=TRUE)
@@ -126,12 +126,12 @@
            silent=lava.options()$silent,
            quick=FALSE,
            param,
-           ...) { 
-    
+           ...) {
+
   if (length(exogenous(x)>0)) {
     catx <- categorical2dummy(x,data)
     x <- catx$x; data <- catx$data
-  }  
+  }
   cl <- match.call()
   if (!missing(param)) {
     oldparam <- lava.options()$param
@@ -144,7 +144,7 @@
     trace=ifelse(lava.options()$debug,3,0),
     gamma=lava.options()$gamma,
     gamma2=1,
-    ngamma=lava.options()$ngamma,             
+    ngamma=lava.options()$ngamma,
     lambda=0.05,
     abs.tol=1e-9,
     epsilon=1e-10,
@@ -156,7 +156,7 @@
     constrain=lava.options()$constrain,
     method=NULL,
     starterfun="startvalues0",
-    information="E", 
+    information="E",
     meanstructure=TRUE,
     sparse=FALSE,
     tol=lava.options()$tol)
@@ -173,7 +173,7 @@
     data <- as.data.frame(lapply(innames,function(x) get(x,envir=data)))
     names(data) <- innames
   }
-  
+
   if (!lava.options()$exogenous) exogenous(x) <- NULL
   ## Random-slopes:
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
@@ -190,10 +190,10 @@
     includelist <- c(manifest(x),xfix)
     if (!missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
     if (!missing(weight2) && is.character(weight2)) includelist <- c(includelist,weight2)
-    if (!missing(cluster) && is.character(cluster)) includelist <- c(includelist,cluster)    
+    if (!missing(cluster) && is.character(cluster)) includelist <- c(includelist,cluster)
     data <- na.omit(data[,intersect(colnames(data),includelist),drop=FALSE])
   }
-  
+
   ## Weights...
   if (!missing(weight)) {
     if (is.character(weight)) {
@@ -204,10 +204,10 @@
         yvar <- index(x)$endogenous
         nw <- seq_len(min(length(yvar),ncol(weight)))
         colnames(weight)[nw] <- yvar[nw]
-      }      
+      }
     }
     weight <- cbind(weight)
-    
+
   } else {
     weight <- NULL
   }
@@ -222,16 +222,16 @@
   if (!missing(cluster)) {
     if (is.character(cluster)) {
       cluster <- data[,cluster]
-    } 
+    }
   } else {
     cluster <- NULL
   }
-  
+
   Debug("procdata")
-  
+
   dd <- procdata.lvm(x,data=data)
   S <- dd$S; mu <- dd$mu; n <- dd$n
-  ## Debug(list("n=",n))  
+  ## Debug(list("n=",n))
   ## Debug(list("S=",S))
   ## Debug(list("mu=",mu))
 
@@ -244,7 +244,7 @@
         x <- latent(x, new.lat)
     }
   }
-    
+
   ## Run hooks (additional lava plugins)
   myhooks <- gethook()
   for (f in myhooks) {
@@ -259,7 +259,7 @@
   }
 
   checkestimator <- function(x,...) {
-    ffname <- paste(x,c("_objective","_gradient"),".lvm",sep="")
+    ffname <- paste0(x,c("_objective","_gradient"),".lvm")
     exists(ffname[1])||exists(ffname[2])
   }
   if (!checkestimator(estimator)) { ## Try down/up-case version
@@ -268,18 +268,18 @@
       estimator <- toupper(estimator)
     }
   }
-  ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
-  GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  ObjectiveFun  <- paste0(estimator, "_objective", ".lvm")
+  GradFun  <- paste0(estimator, "_gradient", ".lvm")
   if (!exists(ObjectiveFun) & !exists(GradFun))
-    stop("Unknown estimator.") 
-  
-  Method <-  paste(estimator, "_method", ".lvm", sep="")
+    stop("Unknown estimator.")
+
+  Method <-  paste0(estimator, "_method", ".lvm")
   if (!exists(Method)) {
     Method <- "nlminb1"
   } else {
     Method <- get(Method)
   }
-  if (is.null(optim$method)) 
+  if (is.null(optim$method))
       optim$method <- if (missing) "nlminb1" else Method
 
   if (!quick & index) {
@@ -314,7 +314,7 @@
   if (sum(paragree)>=length(myparnames))
     optim$start <- optim$start[which(paragree.2)]
 
-  if (! (length(optim$start)==length(myparnames) & sum(paragree)==0)) 
+  if (! (length(optim$start)==length(myparnames) & sum(paragree)==0))
   if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
       if (is.null(optim$starterfun) && lava.options()$param!="relative")
           optim$starterfun <- startvalues0
@@ -322,7 +322,7 @@
       if (!is.null(x$expar) && length(start)<nparall) {
           ii <- which(index(x)$e1==1)
           start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
-          
+
       }
     ## Debug(list("start=",start))
     if (length(paragree.2)>0) {
@@ -332,10 +332,10 @@
   }
   coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
   names(optim$start) <- coefname
-  
+
   ## Missing data
   if (missing) {
-      ##$start <- optim$start    
+      ##$start <- optim$start
       ##return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
       return(estimate.MAR(x=x,data=data,fix=fix,control=optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
   }
@@ -346,22 +346,22 @@
   xconstrainM <- TRUE
   XconstrStdOpt <- TRUE
   if (length(xconstrain)>0) {
-    constrainM <- names(constr)%in%unlist(x$mean)    
-    for (i in seq_len(length(constr))) {    
+    constrainM <- names(constr)%in%unlist(x$mean)
+    for (i in seq_len(length(constr))) {
       if (!constrainM[i]) {
         if (xconstrain%in%constr[[i]]) {
-          xconstrainM <- FALSE          
+          xconstrainM <- FALSE
           break;
         }
       }
-    }  
+    }
     if (xconstrainM & ( (is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian") ) ) {
       XconstrStdOpt <- FALSE
       optim$method <- "nlminb0"
       if (is.null(control$constrain)) control$constrain <- TRUE
     }
   }
-  
+
   ## Setup optimization constraints
   lowmin <- -Inf
   lower <- rep(lowmin,length(optim$start))
@@ -381,23 +381,23 @@
     optim$start[constrained] <- log(CS)
     names(optim$start) <- nn
   }
-  ## Fix problems with starting values? 
-  optim$start[is.nan(optim$start)] <- 0  
+  ## Fix problems with starting values?
+  optim$start[is.nan(optim$start)] <- 0
   ## Debug(list("lower=",lower))
 
-  ObjectiveFun  <- paste(estimator, "_objective", ".lvm", sep="")
-  GradFun  <- paste(estimator, "_gradient", ".lvm", sep="")
+  ObjectiveFun  <- paste0(estimator, "_objective", ".lvm")
+  GradFun  <- paste0(estimator, "_gradient", ".lvm")
   if (!exists(ObjectiveFun) & !exists(GradFun)) stop("Unknown estimator.")
 
-  InformationFun <- paste(estimator, "_hessian", ".lvm", sep="")
+  InformationFun <- paste0(estimator, "_hessian", ".lvm")
 
-  mymodel <- x  
+  mymodel <- x
   myclass <- "lvmfit"
 
   ## Random slopes?
   if (length(xfix)>0 | (length(xconstrain)>0 & XconstrStdOpt | !lava.options()$test)) { ## Yes
     x0 <- x
-    
+
     if (length(xfix)>0) {
       myclass <- c("lvmfit.randomslope",myclass)
       nrow <- length(vars(x))
@@ -406,15 +406,15 @@
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix <- list(var=xfix, col=colpos, row=rowpos)
       x0 <- x
-      for (i in 1:length(myfix$var)) 
-        for (j in 1:length(myfix$col[[i]])) 
+      for (i in seq_along(myfix$var))
+        for (j in seq_len(length(myfix$col[[i]])))
           regfix(x0, from=vars(x0)[myfix$row[[i]][j]],
                  to=vars(x0)[myfix$col[[i]][j]]) <-
                    colMeans(data[,myfix$var[[i]],drop=FALSE])
       x0 <- updatelvm(x0,zeroones=TRUE,deriv=TRUE)
       x <- x0
       yvars <- endogenous(x0)
-      
+
       ## Alter start-values/constraints:
       new.par.idx <- coef(mymodel,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE)
       if (length(optim$start)>sum(new.par.idx))
@@ -424,7 +424,7 @@
         constrained <- constrained[new.par.idx]
       }
     }
-    
+
     mydata <- as.matrix(data[,manifest(x0)])
 
     myObj <- function(pp) {
@@ -433,7 +433,7 @@
       }
       myfun <- function(ii) {
         if (length(xfix)>0)
-        for (i in 1:length(myfix$var)) {          
+        for (i in seq_along(myfix$var)) {
             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
         if (is.list(weight2)) {
@@ -443,8 +443,8 @@
           res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
         }
         return(res)
-      }           
-      sum(sapply(1:nrow(data),myfun))
+      }
+      sum(sapply(seq_len(nrow(data)),myfun))
     }
 
     myGrad <- function(pp) {
@@ -453,7 +453,7 @@
       }
       myfun <- function(ii) {
         if (length(xfix)>0)
-        for (i in 1:length(myfix$var)) {
+        for (i in seq_along(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
         if (is.list(weight2)) {
@@ -462,20 +462,20 @@
         {
           rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2[ii,]))
         }
-        return(rr)        
+        return(rr)
       }
-      ss <- rowSums(rbind(sapply(1:nrow(data),myfun)))
+      ss <- rowSums(rbind(sapply(seq_len(nrow(data)),myfun)))
       if (optim$constrain) {
         ss[constrained] <- ss[constrained]*pp[constrained]
       }
       return(ss)
     }
 
-    
+
     myInfo <- function(pp) {
       myfun <- function(ii) {
         if (length(xfix)>0)
-        for (i in 1:length(myfix$var)) {
+        for (i in seq_along(myfix$var)) {
           x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
         }
         if (is.list(weight2)) {
@@ -486,17 +486,17 @@
                                               n=1, weight=weight[ii,], weight2=weight2[ii,]))
         }
         return(res)
-      }      
-      L <- lapply(1:nrow(data),function(x) myfun(x))
+      }
+      L <- lapply(seq_len(nrow(data)),function(x) myfun(x))
       val <- apply(array(unlist(L),dim=c(length(pp),length(pp),nrow(data))),c(1,2),sum)
       if (!is.null(attributes(L[[1]])$grad)) {
         attributes(val)$grad <- colSums (
                                           matrix( unlist(lapply(L,function(i) attributes(i)$grad)) , ncol=length(pp), byrow=TRUE)
-                                          )        
-      }     
+                                          )
+      }
       return(val)
     }
-    
+
 ##################################################
   } else { ## No, standard model
 
@@ -511,7 +511,7 @@
         exoidx <- which(attributes(z)$args%in%xx)
         parname <- names(constrain(x))[i]
         y <- names(which(unlist(lapply(intercept(x),function(x) x==parname))))
-        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)      
+        el <- list(i,y,parname,xx,exoidx,warg,wargidx,z)
         names(el) <- c("idx","endo","parname","exo","exoidx","warg","wargidx","func")
         xconstrain <- c(xconstrain,list(el))
       }
@@ -543,12 +543,12 @@
       if (optim$constrain) {
         pp[constrained] <- exp(pp[constrained])
       }
-      offset <- MkOffset(pp)      
+      offset <- MkOffset(pp)
       mu0 <- mu; S0 <- S; x0 <- x
       if (!is.null(offset)) {
-        x0$constrain[iconstrain] <- NULL        
+        x0$constrain[iconstrain] <- NULL
         data0 <- data[,manifest(x0)]
-        data0[,endogenous(x)] <- data0[,endogenous(x)]-offset        
+        data0[,endogenous(x)] <- data0[,endogenous(x)]-offset
         pd <- procdata.lvm(x0,data=data0)
         S0 <- pd$S; mu0 <- pd$mu
         x0$mean[yconstrain] <- 0
@@ -577,7 +577,7 @@
         S[constrained] <- S[constrained]*pp[constrained]
       }
       if (is.null(mu) & index(x)$npar.mean>0) {
-        return(S[-c(1:index(x)$npar.mean)])
+        return(S[-c(seq_len(index(x)$npar.mean))])
       }
       if (length(S)<length(pp))  S <- c(S,rep(0,length(pp)-length(S)))
 
@@ -597,9 +597,9 @@
       }
       return(I)
     }
-    
+
   }
-  
+
   myHess <- function(pp) {
     p0 <- pp
     if (optim$constrain)
@@ -621,12 +621,12 @@
       }
     }
     return(I0)
-  }   
+  }
   if (is.null(tryCatch(get(InformationFun),error = function (x) NULL)))
     myInfo <- myHess <- NULL
   if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
     myGrad <- NULL
-  
+
   if (!silent) message("Optimizing objective function...")
   if (optim$trace>0 & !silent) message("\n")
   ## Optimize with lower constraints on the variance-parameters
@@ -640,7 +640,7 @@
     if (optim$constrain) {
       opt$estimate[constrained] <- exp(opt$estimate[constrained])
     }
-  
+
     if (XconstrStdOpt & !is.null(myGrad))
       opt$gradient <- as.vector(myGrad(opt$par))
     else {
@@ -651,8 +651,8 @@
     opt$gradient <- rep(0,length(opt$estimate))
   }
   if (!is.null(opt$convergence)) {
-      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.") 
-  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.") 
+      if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.")
+  } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.")
   if (quick) {
     return(opt$estimate)
   }
@@ -669,7 +669,7 @@
 
   mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
   if (!silent) message("\nCalculating asymptotic variance...\n")
-  asVarFun  <- paste(estimator, "_variance", ".lvm", sep="")
+  asVarFun  <- paste0(estimator, "_variance", ".lvm")
 
   if (!exists(asVarFun)) {
     if (is.null(myInfo)) {
@@ -694,14 +694,14 @@
 
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
   mycoef[pp.idx,1] <- opt$estimate ## Will be finished during post.hooks
-  
+
   ### OBS: v = t(A)%*%v + e
   res <- list(model=x, call=cl, coef=mycoef,
               vcov=asVar, mu=mu, S=S, ##A=A, P=P,
               model0=mymodel, ## Random slope hack
               estimator=estimator, opt=opt,expar=x$expar,
               data=list(model.frame=data, S=S, mu=mu,
-                C=mom$C, v=mom$v, n=n,                
+                C=mom$C, v=mom$v, n=n,
                 m=length(latent(x)), k=length(index(x)$manifest), weight2=weight2),
               weight=weight, weight2=weight2,
               cluster=cluster,
@@ -716,11 +716,11 @@
     if (!is.null(res0))
       res <- res0
   }
-  
+
   if(graph) {
     res <- edgelabels(res,type="est")
   }
-  
+
   return(res)
 }
 
@@ -732,13 +732,13 @@
 estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,cluster=NULL,distribution=NULL,estimator="gaussian",...) {
   cl <- match.call()
   formulaId <- Specials(x,"cluster")
-  formulaSt <- paste("~.-cluster(",formulaId,")",sep="")
+  formulaSt <- paste0("~.-cluster(",formulaId,")")
   if (!is.null(formulaId)) {
     cluster <- formulaId
-    x <- update(x,as.formula(formulaSt))  
+    x <- update(x,as.formula(formulaSt))
   }
   if (!is.null(cluster))
-    x <- update(x,as.formula(paste(".~.+",cluster)))  
+    x <- update(x,as.formula(paste(".~.+",cluster)))
   varnames <- all.vars(x)
   mf <- model.frame(x,data)
   mt <- attr(mf, "terms")
@@ -750,7 +750,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
   covars <- colnames(mm)
   covars <- unlist(lapply(covars, function(x) gsub("[^a-zA-Z0-9._]","",x)))
   colnames(mm) <- covars
-  
+
   if (attr(terms(x),"intercept")==1) {
     covars <- covars[-1]
     int <- 1
@@ -763,14 +763,13 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
   if (!is.null(distribution)) {
     lava::distribution(model,yvar) <- distribution
     estimator <- "glm"
-  }  
+  }
   mydata <- na.omit(as.data.frame(cbind(y,mm))); names(mydata)[1] <- yvar
    exogenous(model) <- setdiff(covars,pred.norm)
-   if (unstruct) {    
+   if (unstruct) {
      model <- covariance(model,pred.norm,pairwise=TRUE)
    }
   estimate(model,mydata,silent=silent,cluster=cluster,estimator=estimator,...)
 }
 
 ###}}} estimate.formula
-

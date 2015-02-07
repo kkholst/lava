@@ -6,6 +6,7 @@
 ##' center is drawn (if not NULL))
 ##' @param upper Upper limit
 ##' @param center Center point
+##' @param line If FALSE do not add line between upper and lower bound
 ##' @param delta Length of limit bars
 ##' @param centermark Length of center bar
 ##' @param pch Center symbol (if missing a line is drawn)
@@ -24,7 +25,7 @@
 ##' plot(0,0,type="n",xlab="",ylab="")
 ##' confband(0.5,-0.5,0.5,0,col="darkblue")
 ##' confband(0.8,-0.5,0.5,0,col="darkred",vert=FALSE,pch=1,cex=1.5)
-##' 
+##'
 ##' set.seed(1)
 ##' K <- 20
 ##' est <- rnorm(K); est[c(3:4,10:12)] <- NA
@@ -46,13 +47,13 @@
 ##' plot(z,z,type="n")
 ##' confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
 ##' @author Klaus K. Holst
-confband <- function(x,lower,upper,center=NULL,delta=0.07,centermark=0.03,
+confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0.03,
                      pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
     if (polygon) {
         if (step) {
             x1 <- rep(x,each=2)[-1]
             y1 <- rep(lower, each=2);  y1 <- y1[-length(y1)]
-            x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]  
+            x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]
             y2 <- rep(rev(upper),each=2)[-1]
             xx <- c(x1,x2)
             yy <- c(y1,y2)
@@ -64,11 +65,12 @@ confband <- function(x,lower,upper,center=NULL,delta=0.07,centermark=0.03,
         return(invisible(NULL))
     }
     if (vert) {
-        if (!is.null(lower)) {
+        if (line && !missing(lower) && !missing(upper))
             segments(x,lower,x,upper,...)
+        if (!missing(lower))
             segments(x-delta,lower,x+delta,lower,...)
+        if (!missing(upper))
             segments(x-delta,upper,x+delta,upper,...)
-        }
         if (!is.null(center)) {
             if (!missing(pch)) {
                 if (blank)
@@ -79,22 +81,24 @@ confband <- function(x,lower,upper,center=NULL,delta=0.07,centermark=0.03,
             }
         }
     } else {
-        
-        if (!is.null(lower)) {
+        if (line && !missing(lower) && !missing(upper))
             segments(lower,x,upper,x,...)
+        if (!missing(lower))
             segments(lower,x-delta,lower,x+delta,...)
+        if (!missing(upper))
             segments(upper,x-delta,upper,x+delta,...)
-        }
-        if (!is.null(center)) {
-            if (!missing(pch)) {
-                if (blank)
-                    points(center,x,pch=16,col="white")
-                points(center,x,pch=pch,...)
-            } else {
-                segments(center,x-centermark,center,x+centermark,...)
-            }
+    }
+    if (!is.null(center)) {
+        if (!missing(pch)) {
+            if (blank)
+                points(center,x,pch=16,col="white")
+            points(center,x,pch=pch,...)
+        } else {
+            segments(center,x-centermark,center,x+centermark,...)
         }
     }
+    if (missing(lower)) lower <- NULL
+    if (missing(upper)) upper <- NULL
     invisible(c(x,lower,upper,center))
 }
 
@@ -106,7 +110,7 @@ forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=text,de
         if (ncol(x)>3) cex <- x[,4]
         x <- x[,1]
     }
-    if (missing(labels)) labels <- names(x)    
+    if (missing(labels)) labels <- names(x)
     K <- length(x)
     def.par <- par(no.readonly=TRUE)
     on.exit(par(def.par))
@@ -119,7 +123,7 @@ forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=text,de
     if (missing(xlim)) {
         if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
         xlim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
-    }    
+    }
     par(mar=mar) ## bottom,left,top,right
     plot(0,type="n",axes=FALSE,xlab=xlab,ylab=ylab,xlim=xlim,ylim=ylim,...)
     if (box1) box()
@@ -137,11 +141,8 @@ forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=text,de
             xpos[] <- 0
         }
         for (i in seq_len(K)) {
-            st <- paste(formatC(x[i])," (",formatC(lower[i]),";",formatC(upper[i]),")",sep="")
+            st <- paste0(formatC(x[i])," (",formatC(lower[i]),";",formatC(upper[i]),")")
             if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=0.6)
         }
     }
 }
-
-
-

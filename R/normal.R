@@ -33,16 +33,16 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     }
     status[match(ord,y)] <- 2
 
-    Table <- length(y)==length(ord)    
+    Table <- length(y)==length(ord)
     if (Table) {
         pat <- mets::fast.pattern(data,categories=max(data)+1)
         data <- pat$pattern
         colnames(data) <- y
-    }    
-    
+    }
+
     mu <- predict(x,data=data,p=p)
     S <- attributes(mu)$cond.var
-    class(mu) <- "matrix"        
+    class(mu) <- "matrix"
     thres <- matrix(0,nrow=length(y),max(1,attributes(ord)$K-1)); rownames(thres) <- y
     for (i in seq_len(length(attributes(ord)$fix))) {
         nn <- names(attributes(ord)$idx)[i]
@@ -61,15 +61,15 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         status[match(colnames(weight2),y)] <- 1
     }
     l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
-    
+
     if (Table) {
         l <- l[pat$group+1]
         ##data <- data[pat$group+1,]
         ##l <- l+runif(length(l),0,0.001)
     }
- 
+
     if (indiv) return(-l)
-    return(-sum(l))  
+    return(-sum(l))
 }
 
 normal_logLik.lvm <- function(object,p,data,weight2=NULL,...) {
@@ -95,10 +95,10 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
 
 normal_hessian.lvm <- function(x,p,n,...) {
     ##return(numDeriv::jacobian(function(p0) normal_gradient.lvm(x,p=p0,data=data,indiv=FALSE,...),p,method=lava.options()$Dmethod))
-    dots <- list(...); dots$weight <- NULL  
+    dots <- list(...); dots$weight <- NULL
     do.call("information", c(list(x=x,p=p,n=n),dots))
     ## S <- normal_gradient.lvm(x,p=p,data=data,indiv=TRUE,...)
     ## J <- t(S)%*%S
     ## attributes(J)$grad <- colSums(S)
-    ## return(J)  
+    ## return(J)
 }

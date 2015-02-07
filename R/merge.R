@@ -1,12 +1,12 @@
 ##' @export
-`%+%.lvm` <- function(x,y) merge(x,y)
+`%++%.lvm` <- function(x,y) merge(x,y)
 
 ##' @export
-merge.lvm <- function(x,y,...) {  
-  objects <- list(x,y,...)  
+merge.lvm <- function(x,y,...) {
+  objects <- list(x,y,...)
   if (length(objects)<2) return(x)
   m <- objects[[1]]
-  for (i in 2:length(objects)) {
+  for (i in seq(2,length(objects))) {
     m2 <- objects[[i]]
     if (length(latent(m2))>0)
       latent(m) <- latent(m2)
@@ -15,7 +15,7 @@ merge.lvm <- function(x,y,...) {
     M <- (index(m2)$A)
     P <- (index(m2)$P)
     nn <- vars(m2)
-    for (j in 1:nrow(M)) {
+    for (j in seq_len(nrow(M))) {
       if (any(idx <- M[j,]!=0)) {
         val <- as.list(rep(NA,sum(idx==TRUE)))
         if (any(idx. <- !is.na(m2$par[j,idx])))
@@ -42,7 +42,7 @@ merge.lvm <- function(x,y,...) {
   index(m) <- reindex(m)
   return(m)
 }
-  
+
 
 ##' @export
 merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=NULL) {
@@ -65,15 +65,15 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         id <- list()
         for (i in seq_along(nn)) id <- c(id,list(seq(nn[i])+cnn[i]))
     }
-    if (missing(id)) {        
+    if (missing(id)) {
         if (paired) { ## One-to-one dependence between observations in x,y,...
-            id <- rep(list(seq(nrow(x$iid))),length(objects))            
+            id <- rep(list(seq(nrow(x$iid))),length(objects))
         } else {
             id <- lapply(objects,function(x) x$id)
         }
     } else {
         nn <- unlist(lapply(objects,function(x) NROW(iid(x))))
-        if (length(id)==1 && is.logical(id)) {            
+        if (length(id)==1 && is.logical(id)) {
             if (id) {
                 if (any(nn[1]!=nn)) stop("Expected objects of the same size: ", paste(nn,collapse=","))
                 id0 <- seq(nn[1]); id <- c()
@@ -89,7 +89,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         if (!identical(idlen,nn)) stop("Wrong lengths of 'id': ", paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
     }
     if (any(unlist(lapply(id,is.null)))) stop("Id needed for each model object")
-    ##iid <- Reduce("cbind",lapply(objects,iid))    
+    ##iid <- Reduce("cbind",lapply(objects,iid))
     ids <- iidall <- c(); count <- 0
     for (z in objects) {
         count <- count+1
@@ -97,7 +97,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         id0 <- id[[count]]
         iidz <- iid(z)
         if (!missing(subset)) iidz <- iidz[,subset,drop=FALSE]
-        if (!lava.options()$cluster.index) {        
+        if (!lava.options()$cluster.index) {
             iid0 <- matrix(unlist(by(iidz,id0,colSums)),byrow=TRUE,ncol=ncol(iidz))
             ids <- c(ids, list(sort(unique(id0))))
 

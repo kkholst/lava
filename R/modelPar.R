@@ -26,7 +26,7 @@ modelPar.lvm <- function(x,p, ...) {
     p <- p.[seq_len(npar)]
     if (npar>0) {
         p2 <- p.[-seq_len(npar)]
-    } else p2 <- p.    
+    } else p2 <- p.
   } else {
     meanpar <- NULL
     p2 <- NULL
@@ -75,7 +75,7 @@ modelPar2.multigroup <-
   npar <- x$npar
   npar.mean <- x$npar.mean
   k <- x$ngroup
-  if (length(p)!=npar & length(p)!=(npar+npar.mean)) stop("Wrong dimension of parameter vector!")  
+  if (length(p)!=npar & length(p)!=(npar+npar.mean)) stop("Wrong dimension of parameter vector!")
   if (length(p)!=npar) { ## if meanstructure
       meanpar <- p[seq_len(npar.mean)]
       p. <- p[-seq_len(npar.mean)]
@@ -85,29 +85,29 @@ modelPar2.multigroup <-
     }
 
 
-  parlist <- list(); for (i in 1:k) parlist[[i]] <- numeric(length(x$parlist[[i]]))
+  parlist <- list(); for (i in seq_len(k)) parlist[[i]] <- numeric(length(x$parlist[[i]]))
   if (!is.null(meanpar)) {
-    meanlist <- list(); for (i in 1:k) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
+    meanlist <- list(); for (i in seq_len(k)) meanlist[[i]] <- numeric(length(x$meanlist[[i]]))
   }
-  
+
   if (length(p.)>0)
-  for (i in 1:length(p.)) {
-    for (j in 1:k) {
-      idx <- match(paste("p",i,sep=""), x$parlist[[j]])
+  for (i in seq_along(p.)) {
+    for (j in seq_len(k)) {
+      idx <- match(paste0("p",i), x$parlist[[j]])
       if (!is.na(idx))
         parlist[[j]][idx] <- p.[i]
       if (!is.null(meanpar)) {
-        midx <- match(paste("p",i,sep=""), x$meanlist[[j]])
+        midx <- match(paste0("p",i), x$meanlist[[j]])
         if (!is.na(midx))
           meanlist[[j]][midx] <- p.[i]
       }
     }
   }
-  
+
   if (!is.null(meanpar)) {
-    for (i in 1:length(meanpar)) {
-      for (j in 1:k) {
-        idx <- match(paste("m",i,sep=""), x$meanlist[[j]])
+    for (i in seq_along(meanpar)) {
+      for (j in seq_len(k)) {
+        idx <- match(paste0("m",i), x$meanlist[[j]])
         if (!is.na(idx))
           meanlist[[j]][idx] <- meanpar[i]
       }
@@ -116,7 +116,7 @@ modelPar2.multigroup <-
     meanlist <- NULL
   }
   p0 <- parlist
-  for (i in 1:length(p0))
-    p0[[i]] <- c(meanlist[[i]],parlist[[i]])  
+  for (i in seq_along(p0))
+    p0[[i]] <- c(meanlist[[i]],parlist[[i]])
   return(list(p=p0, par=parlist, mean=meanlist))
 }

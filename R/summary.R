@@ -17,7 +17,7 @@ function(object,...) {
   print(covariance(object))
   print(intercept(object))
   if (length(object$exfix)>0) {
-    cat("Additional parameters:\n")    
+    cat("Additional parameters:\n")
     val <- unlist(object$exfix)
     M <- rbind(val); colnames(M) <- names(val)
     rownames(M) <- "   "
@@ -27,7 +27,7 @@ function(object,...) {
     cat("Non-linear constraints:\n")
     print(constrain(object),quote=FALSE)
   }
-    
+
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
 
   cat("\n")
@@ -71,7 +71,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   if (!is.null(x$control$method)) {
     l2D <- sum(x$opt$grad^2)
     rnkV <- qr(x$vcov)$rank
-    if (l2D>1e-2) warning("Possible problems with convergence!")    
+    if (l2D>1e-2) warning("Possible problems with convergence!")
     cat("||score||^2=",l2D,"\n",sep="")
     np <- nrow(x$vcov)
     if (rnkV<np) warning("Possible problems with identification (rank(informaion)=",rnkV,"<",np,"!")
@@ -79,7 +79,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   cat("Latent variables:", x$latent, "\n")
   cat("Number of rows in data=",x$n,sep="")
   if (x$nc!=x$n) {
-    cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")    
+    cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")
   }; cat("\n")
   cat(rep("-", 50), "\n", sep="");
   print(x$coefmat,quote=FALSE,right=TRUE)
@@ -112,7 +112,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
           for (i in seq_len(length(x$rsq))) {
               cat(names(x$rsq)[i],"\n")
               print(round(x$rsq[[i]],3),quote=FALSE)
-          }          
+          }
       }
   }
   invisible(x)
@@ -134,7 +134,7 @@ summary.multigroupfit <- function(object,groups=NULL,...) {
         groups <- seq_len(object$model0$ngroup)
     } else {
       groups <- seq_len(object$model$ngroup)
-    }    
+    }
   }
   cc <- CoefMat.multigroupfit(object,groups=groups,...)
   res <- list(coef=coef(object,level=2,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
@@ -148,7 +148,7 @@ print.summary.multigroupfit <- function(x,...) {
   if (l2D>1e-2) warning("Possible problems with convergence!")
   cat("||score||^2=",l2D,"\n")
   cat("Latent variables:", x$latent, "\n")
-  print(x$object,...)  
+  print(x$object,...)
 ##  cat(rep("-", 50), "\n\n", sep="");
   ##print(x$coefmat,quote=FALSE,right=TRUE)
   cat(rep("-", 50), "\n", sep="");
@@ -157,13 +157,13 @@ print.summary.multigroupfit <- function(x,...) {
     print(attributes(x$coefmat)$nlincon)
     cat(rep("-", 50), "\n", sep="");
   }
-  cat("Estimator:",x$estimator,"\n")  
+  cat("Estimator:",x$estimator,"\n")
   cat(rep("-", 50), "\n", sep="");
   if (!is.null(x$gof)) {
     print(x$gof)
     cat(rep("-", 50), "\n", sep="");
   }
-  invisible(x)  
+  invisible(x)
 }
 
 ###}}} summary.multigroupfit

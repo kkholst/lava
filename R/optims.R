@@ -33,23 +33,23 @@ estfun2 <- function(start,objective,gradient,hessian,...) {
   myobj <- objective
   g <- function(...) gradient(...)
   h <- function(...) numDeriv::jacobian(gradient,...)
-  
+
   theta <- start
   print(theta)
   count <- 0
-  for (i in 1:50) {
+  for (i in seq_len(50)) {
     count <- count+1
     I <- h(theta);
-    I1 <- solve(I)    
+    I1 <- solve(I)
     S <- g(theta)
     theta <- theta + (-0.5*I1%*%S)
     print(S)
     print(theta[,1])
   }
-  
+
   return(theta)
     res <- list(par=theta[,1], iterations=count, method="estfun0", gradient=g(start))
- 
+
 }
 
 
@@ -62,14 +62,14 @@ estfun <- function(start,objective,gradient,hessian,...) {
     mygrad <- function(x) {
       H <- hessian(x)
       S <- gradient(x)
-      2*S%*%H    
-    }    
+      2*S%*%H
+    }
   } else {
     mygrad <- function(x) {
       myfun <- function(z) gradient(z)
       H <- numDeriv::jacobian(myfun,x,method=lava.options()$Dmethod)
       S <- gradient(x)
-      2*S%*%H    
+      2*S%*%H
     }
   }
   nlminb2(start,myobj,mygrad,hessian=NULL,...)
@@ -84,12 +84,12 @@ estfun0 <- function(start,objective,gradient,hessian,...) {
     myfun <- function(z) gradient(z)
     H <- numDeriv::jacobian(myfun,x,method=lava.options()$Dmethod)
     S <- gradient(x)
-    2*S%*%H    
+    2*S%*%H
   }
   nlminb2(start,myobj,mygrad,hessian=NULL,...)
 }
 
-###}}} 
+###}}}
 
 ###{{{ Newton-Raphson/Scoring
 
@@ -104,8 +104,8 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
 
     if (trace>0)
         cat("\nIter=0;\t\n",
-            "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
- 
+            "\tp=", paste0(formatC(start), collapse=" "),"\n")
+
     if (missing(gradient) & missing(hessian)) {
         hessian <- function(p) {
             ff <- objective(p)
@@ -121,13 +121,13 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             I <- hessian(p.orig)
         }
         D <- attributes(I)$grad
-        if (is.null(D)) {      
+        if (is.null(D)) {
             D <- gradient(p.orig)
         }
         if (control$stabil) {
             if (control$lambda!=0) {
                 if (control$lambda<0) {
-                    sigma <- (t(D)%*%(D))[1]          
+                    sigma <- (t(D)%*%(D))[1]
                 } else {
                     sigma <- control$lambda
                 }
@@ -141,11 +141,11 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
         svdI$d0[abs(svdI$d)>control$epsilon] <-
             1/svdI$d[abs(svdI$d)>control$epsilon]
-        iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))   
+        iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
         return(list(p=p.orig - control$gamma*iI%*%D,D=D,iI=iI))
-    } 
-    
-    count <- count2 <- 0  
+    }
+
+    count <- count2 <- 0
     thetacur <- start
     gammacount <- 0
     for (jj in seq_len(control$iter.max)) {
@@ -162,8 +162,8 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             }
         }
         if (count2==trace) {
-            cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
-            cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
+            cat("Iter=",count, ";\n\tD=", paste0(formatC(newpar$D), collapse=" "),"\n")
+            cat("\tp=", paste0(formatC(thetacur), collapse=" "),"\n")
             count2 <- 0
         }
         if (mean(newpar$D^2)<control$tol) break;
@@ -186,9 +186,9 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
 
     if (control0$trace>0)
         cat("\nIter=0;\t\n",
-            "\tp=", paste(formatC(start), collapse=" "),"\n",sep="")
+            "\tp=", paste0(formatC(start), collapse=" "),"\n")
 
-    gradFun = !missing(gradient)    
+    gradFun = !missing(gradient)
     if (!gradFun & missing(hessian)) {
         hessian <- function(p) {
             ff <- objective(p)
@@ -205,14 +205,14 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             I <- -hessian(p.orig)
         }
         D <- attributes(I)$grad
-        if (is.null(D)) {      
+        if (is.null(D)) {
             D <- gradient(p.orig)
         }
         if (return.mat) return(list(D=D,I=I))
         if (control0$stabil) {
             if (control0$lambda!=0) {
                 if (control0$lambda<0) {
-                    sigma <- (t(D)%*%(D))[1]          
+                    sigma <- (t(D)%*%(D))[1]
                 } else {
                     sigma <- control0$lambda
                 }
@@ -237,7 +237,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             while (mD>=mD0) {
                 p <- p.orig + Lambda*Delta
                 if (gradFun) {
-                    D = gradient(p)                
+                    D = gradient(p)
                 } else {
                     DI <- oneiter(p,return.mat=TRUE)
                     D = DI$D
@@ -252,8 +252,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         Lambda <- Lambda^.5
         return(list(p=p,D=D,iI=iI))
     }
-    
-    count <- count2 <- 0  
+
+    count <- count2 <- 0
     thetacur <- start
     gammacount <- 0
     Dprev <- rep(Inf,length(start))
@@ -263,7 +263,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         count2 <- count2+1
         oldpar <- thetacur
         newpar <- oneiter(thetacur,Dprev)
-        Dprev <- newpar$D       
+        Dprev <- newpar$D
         thetacur <- newpar$p
         if (!is.null(control0$ngamma) && control0$ngamma>0) {
             if (control0$ngamma<=gammacount) {
@@ -272,8 +272,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             }
         }
         if (count2==control0$trace) {
-            cat("Iter=",count, ";\n\tD=", paste(formatC(newpar$D), collapse=" "),"\n",sep="")
-            cat("\tp=", paste(formatC(thetacur), collapse=" "),"\n",sep="")      
+            cat("Iter=",count, ";\n\tD=", paste0(formatC(newpar$D), collapse=" "),"\n")
+            cat("\tp=", paste0(formatC(thetacur), collapse=" "),"\n")
             count2 <- 0
         }
         if (mean(newpar$D^2)<control0$tol) break;

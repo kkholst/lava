@@ -35,7 +35,7 @@ cancel.lvm <- function(x,value,...) {
     index(x) <- reindex(x)
   return(x)
   }
-  
+
   for (v1 in value)
     for (v2 in value)
       if (v1!=v2)

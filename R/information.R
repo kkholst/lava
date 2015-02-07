@@ -1,7 +1,7 @@
 ##' @export
 `information` <-
 function(x,...) UseMethod("information")
- 
+
 ###{{{ information.lvm
 
 ##' @export
@@ -52,7 +52,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       return(iI)
     }
     attributes(res)$grad <- colSums(S)
-    return(res)    
+    return(res)
   }
 
   if (n>1) {
@@ -67,19 +67,19 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
         colpos <- lapply(xpos, function(y) ceiling(y/nrow))
         rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
         myfix <- list(var=xfix, col=colpos, row=rowpos)
-        for (i in 1:length(myfix$var)) 
-          for (j in 1:length(myfix$col[[i]])) 
+        for (i in seq_along(myfix$var))
+          for (j in seq_along(myfix$col[[i]]))
             regfix(x0, from=vars(x0)[myfix$row[[i]]][j],to=vars(x0)[myfix$col[[i]]][j]) <-
               data[1,myfix$var[[i]]]
         index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
       }
       pp <- modelPar(x0,p)
       p0 <- with(pp, c(meanpar,p,p2))
-      k <- length(index(x)$manifest)     
+      k <- length(index(x)$manifest)
       myfun <- function(ii) {
         if (length(xfix)>0)
-          for (i in 1:length(myfix$var)) {
-            for (j in 1:length(myfix$col[[i]])) {
+          for (i in seq_along(myfix$var)) {
+            for (j in seq_along(myfix$col[[i]])) {
               index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
             }
           }
@@ -88,7 +88,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
           ww <- weight[ii,]
         return(information(x0,p=p,n=1,type=type,weight=ww,data=data[ii,]))
       }
-      L <- lapply(1:nrow(data),function(y) myfun(y))
+      L <- lapply(seq_len(nrow(data)),function(y) myfun(y))
       val <- apply(array(unlist(L),dim=c(length(p0),length(p0),nrow(data))),c(1,2),sum)
       if (inverse) {
         if (pinv)
@@ -98,7 +98,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
         return(iI)
       }
       return(val)
-    }    
+    }
   }
 
   if (!is.null(weight) && is.matrix(weight)) {
@@ -143,7 +143,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
             information_Sigma <- matrix(0,length(p),length(p))
             imean <- with(index(x)$parBelongsTo,mean)
             information_Sigma[-imean,-imean] <- n/2*t(D$dS[,-imean])%*%kronprod(iC,iC,D$dS[,-imean])
-        } else {       
+        } else {
             information_Sigma <- n/2*t(D$dS)%*%kronprod(iC,iC,D$dS)
         }
     } else {
@@ -166,7 +166,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   f <- function(p0) modelVar(x,p0)$xi
 
   ii <- index(x)
-  dxi <- D$dxi; 
+  dxi <- D$dxi;
   if (is.null(weight)) {
     information_mu <- n*t(D$dxi) %*% (iC) %*% (D$dxi)
   } else {
@@ -180,7 +180,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       information <- information_Sigma
       information[mparidx,mparidx] <- information[mparidx,mparidx] + information_mu
   }
-  
+
   if (inverse) {
     if (pinv)
       iI <- Inverse(information)
@@ -188,7 +188,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       iI <- solve(information)
     return(iI)
   }
-  return(information)  
+  return(information)
 }
 
 ###}}} information.lvm
@@ -237,5 +237,5 @@ information.multigroup <- function(x,data=x$data,weight=NULL,p,indiv=FALSE,...) 
     for (i in seq_len(x$ngroup))
       I <- c(I, list(information(x$lvm[[i]],p=pp[[i]],data=data[[i]],weight=weight[[i]],...)))
   }
-  return(I)  
+  return(I)
 }

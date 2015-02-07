@@ -1,7 +1,7 @@
 pzmax <- function(alpha,S) {
     ##P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
     k <- nrow(S)
-    z <- qnorm(1-alpha/2)    
+    z <- qnorm(1-alpha/2)
     1-mets::pmvn(lower=rep(-z,k),upper=rep(z,k),sigma=cov2cor(S))
 }
 
@@ -17,7 +17,7 @@ p.correct <- function(object,idx,alpha=0.05) {
 ##'
 ##' Closed testing procedure
 ##' @aliases closed.testing p.correct
-##' @param object estimate object 
+##' @param object estimate object
 ##' @param idx Index of parameters to adjust for multiple testing
 ##' @param null Null hypothesis value
 ##' @param ... Additional arguments
@@ -36,16 +36,16 @@ p.correct <- function(object,idx,alpha=0.05) {
 ##' l5 <- lm(y5~x,d)
 ##' l6 <- lm(y6~x,d)
 ##' l7 <- lm(y7~x,d)
-##' 
+##'
 ##' (a <- merge(l1,l2,l3,l4,l5,l6,l7,subset=2))
 ##' p.correct(a)
 ##' as.vector(closed.testing(a))
-##' 
-closed.testing <- function(object,idx=seq_along(coef(object)),null=rep(0,length(idx)),...) {    
+##'
+closed.testing <- function(object,idx=seq_along(coef(object)),null=rep(0,length(idx)),...) {
     B <- diag(nrow=length(idx))
     e <- estimate(object,keep=idx)
     combs <- pvals <- c()
-    for (i in seq_along(idx)) {        
+    for (i in seq_along(idx)) {
         co <- combn(length(idx),i)
         pp <- numeric(ncol(co))
         for (j in seq_along(pp)) {

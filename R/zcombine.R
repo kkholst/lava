@@ -10,16 +10,16 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
         ## res <- format(res)
         pval <- format(pvalround)
     }
-    pval <- paste("p=",pvalround,sep="")
-    pval[which(pvalround<10^(-p.digits))] <- paste("p<0.",paste(rep("0",p.digits-1),collapse=""),"1",sep="")
+    pval <- paste0("p=",pvalround)
+    pval[which(pvalround<10^(-p.digits))] <- paste0("p<0.",paste(rep("0",p.digits-1),collapse=""),"1")
     res <- cbind(res,pval)
     res2 <- apply(res,1,function(x)
-                  paste(x[1], if (se) paste(" (", x[2], ")",sep=""), if (ci) paste(" [", x[4], ";",x[5],"]",sep=""), if (pvalue) paste(", ", x[6],sep=""),sep=""))
+                  paste0(x[1], if (se) paste0(" (", x[2], ")"), if (ci) paste0(" [", x[4], ";",x[5],"]"), if (pvalue) paste0(", ", x[6])))
     names(res2) <- names(coef(x))
     if (!missing(fun)) {
         res2 <- c(res2,fun(x))
-    }         
-    res2    
+    }
+    res2
 }
 
 ##' Report estimates across different models
@@ -33,7 +33,7 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
 ##' m1 <- lm(cau ~ age*gene1 + age*gene2,data=serotonin)
 ##' m2 <- lm(cau ~ age + gene1,data=serotonin)
 ##' m3 <- lm(cau ~ age*gene2,data=serotonin)
-##' 
+##'
 ##' Combine(list(A=m1,B=m2,C=m3),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
 ##' @export
 Combine <- function(x,...) {
@@ -49,4 +49,3 @@ Combine <- function(x,...) {
     colnames(res) <- names(ll)
     return(res)
 }
-

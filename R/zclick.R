@@ -6,7 +6,7 @@
 ##' the pop-up menu equivalent (usually second mouse button or
 ##' 'Ctrl'-click) or the 'ESC' key.
 ##' @title Identify points on plot
-##' @usage 
+##' @usage
 ##' \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
 ##' idplot(x,y,...,id=list())
 ##' @aliases idplot click.default
@@ -23,14 +23,14 @@
 ##' @seealso \code{\link{idplot}}, \code{identify}
 ##' @examples
 ##' \donttest{
-##' n <- 10; x <- seq(1:n); y <- runif(n)
+##' n <- 10; x <- seq(n); y <- runif(n)
 ##' plot(y ~ x); click(x,y)
-##' 
+##'
 ##' data(iris)
 ##' l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
 ##' res <- plotConf(l,var2="Species")## ylim=c(6,8), xlim=c(2.5,3.3))
 ##' with(res, click(x,y))
-##' 
+##'
 ##' with(iris, idplot(Sepal.Length,Petal.Length))
 ##' }
 ##' @keywords iplot

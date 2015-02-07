@@ -10,7 +10,7 @@ plotConf(model, var1 = all.vars(formula(model))[2], var2 = NULL,
   alpha = 0.5, cex = 1, delta = 0.07, centermark = 0.03, jitter = 0.2,
   cidiff = FALSE, mean = TRUE, legend = ifelse(is.null(var1), FALSE,
   "topright"), trans = function(x) {     x }, partres = inherits(model,
-  "lm"), partse = FALSE, labels, vcov, predictfun, ...)
+  "lm"), partse = FALSE, labels, vcov, predictfun, plot = TRUE, ...)
 }
 \arguments{
 \item{model}{Model object (e.g. \code{lm})}
@@ -68,6 +68,8 @@ plotConf(model, var1 = all.vars(formula(model))[2], var2 = NULL,
 \item{vcov}{Optional variance estimates}
 
 \item{predictfun}{Optional predict-function used to calculate confidence limits and predictions}
+
+\item{plot}{If FALSE return only predictions and confidence bands}
 
 \item{\dots}{additional arguments to lower level functions}
 }

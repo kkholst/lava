@@ -21,4 +21,3 @@ blockdiag <- function(x,...,pad=0) {
   colnames(res) <- unlist(lapply(xx,colnames)); rownames(res) <- unlist(lapply(xx,rownames))
   return(res)
 }
-

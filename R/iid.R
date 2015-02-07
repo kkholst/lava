@@ -1,17 +1,17 @@
 ##' Extract i.i.d. decomposition (influence function) from model object
 ##'
-##' Extract i.i.d. decomposition (influence function) from model object 
+##' Extract i.i.d. decomposition (influence function) from model object
 ##' @export
 ##' @usage
-##' 
+##'
 ##' iid(x,...)
-##' 
+##'
 ##' \method{iid}{default}(x,bread,id,...)
-##' 
+##'
 ##' @aliases iid.default
 ##' @param x model object
 ##' @param id id/cluster variable (optional)
-##' @param bread (optional) Inverse of derivative of mean score function 
+##' @param bread (optional) Inverse of derivative of mean score function
 ##' @param ... additional arguments
 ##' @examples
 ##' m <- lvm(y~x+z)
@@ -80,7 +80,7 @@ iid.matrix <- function(x,...) {
     colnames(iid1) <- colnames(x); colnames(iid2) <- nn
     names(cc) <- c(colnames(iid1),colnames(iid2))
     iid1[is.na(iid1)] <- 0
-    iid2[is.na(iid2)] <- 0    
+    iid2[is.na(iid2)] <- 0
     structure(cbind(iid1/n,iid2/n),
               coef=cc,
               mean=mu, var=S)
@@ -101,7 +101,3 @@ iid.data.frame <- function(x,...) {
         stop("Don't know how to handle data.frames of this type")
     iid(as.matrix(x))
 }
-
-
-
-

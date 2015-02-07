@@ -5,8 +5,9 @@
 \alias{forestplot}
 \title{Add Confidence limits bar to plot}
 \usage{
-confband(x, lower, upper, center = NULL, delta = 0.07, centermark = 0.03,
-  pch, blank = TRUE, vert = TRUE, polygon = FALSE, step = FALSE, ...)
+confband(x, lower, upper, center = NULL, line = TRUE, delta = 0.07,
+  centermark = 0.03, pch, blank = TRUE, vert = TRUE, polygon = FALSE,
+  step = FALSE, ...)
 }
 \arguments{
 \item{x}{Position (x-coordinate if vert=TRUE, y-coordinate otherwise)}
@@ -17,6 +18,8 @@ center is drawn (if not NULL))}
 \item{upper}{Upper limit}
 
 \item{center}{Center point}
+
+\item{line}{If FALSE do not add line between upper and lower bound}
 
 \item{delta}{Length of limit bars}
 

@@ -2,7 +2,7 @@
 ##' @aliases revdiag revdiag<-
 ##' @usage
 ##' revdiag(x,...)
-##' 
+##'
 ##' revdiag(x,...) <- value
 ##' @param x vector
 ##' @param value For the assignment function the values to put in the diagonal

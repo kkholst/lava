@@ -17,7 +17,7 @@ lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=
             uu <- devcoords()
             xrange <- c(uu$fig.x2,uu$dev.x2)
             xrange <- diff(xrange)/3*c(1,-1)+xrange
-            yrange <- c(uu$fig.y1,uu$fig.y2)        
+            yrange <- c(uu$fig.y1,uu$fig.y2)
             colorbar(direction="vertical",x.range=xrange,y.range=yrange,clut=col,values=seq(0,1,length.out=length(col)),srt=0,position=2)
             par(opt)
         }

@@ -1,5 +1,5 @@
 ##' @title Statistical tests
-##' 
+##'
 ##' Performs Likelihood-ratio, Wald and score tests
 ##'
 ##' @aliases compare
@@ -19,19 +19,19 @@
 ##' d <- sim(m,1000)
 ##' e <- estimate(m,d)
 ##' e2 <- estimate(m2,d)
-##' 
+##'
 ##' compare(e)
-##' 
+##'
 ##' compare(e,e2) ## LRT, H0: y3<-x=0
 ##' compare(e,scoretest=y3~x) ## Score-test, H0: y3~x=0
 ##' compare(e2,par=c("y3~x")) ## Wald-test, H0: y3~x=0
-##' 
+##'
 ##' B <- diag(2); colnames(B) <- c("y2~eta","y3~eta")
 ##' compare(e2,contrast=B,null=c(1,1))
-##' 
+##'
 ##' B <- rep(0,length(coef(e2))); B[1:3] <- 1
 ##' compare(e2,contrast=B)
-##' 
+##'
 ##' compare(e,scoretest=list(y3~x,y2~x))
 compare <- function(object,...) UseMethod("compare")
 
@@ -40,14 +40,14 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
   if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
       if (!missing(contrast) && is.character(contrast)) par <- contrast
       contrast <- rep(0,length(coef(object)))
-      myidx <- parpos(Model(object),p=par)        
+      myidx <- parpos(Model(object),p=par)
       contrast[myidx] <- 1
       contrast <- diag(contrast)[contrast!=0,]
       if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
   }
   ### Wald test
   if (!missing(contrast)) {
-    B <- contrast    
+    B <- contrast
     p <- coef(object)
     pname <- names(p)
     B <- rbind(B);
@@ -70,7 +70,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     p <- 1-(1-level)/2
     qp <- if(!is.null(df)) qt(p,df=df) else qnorm(p)
     ct <- cbind(ct,ct[,1] + qp*cbind(-1,1)%x%ct[,2])
-    colnames(ct) <- c("Estimate","Std.Err",paste(c(1-p,p)*100,"%",sep=""))
+    colnames(ct) <- c("Estimate","Std.Err",paste0(c(1-p,p)*100,"%"))
     rownames(ct) <- rep("",nrow(ct))
     Q <- t(Bp-null)%*%Inverse(V)%*%(Bp-null)
     df <- qr(B)$rank; names(df) <- "df"
@@ -86,13 +86,13 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
         Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
         sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - ";
         if (sgn[1]==" + ") sgn[1] <- "" else sgn[1] <- "-"
-        cnames <- c(cnames,paste(sgn,Bval,paste("[",pname[Bidx],"]",sep=""),collapse="",sep=""))
-        msg <- c(msg,paste(cnames[i]," = ",null[i],sep=""))
+        cnames <- c(cnames,paste0(sgn,Bval,paste0("[",pname[Bidx],"]"),collapse=""))
+        msg <- c(msg,paste0(cnames[i]," = ",null[i]))
       }
       method <- c(method,"","Null Hypothesis:",msg)
 ##      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     }
-    
+
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,
                 p.value=pQ, method = method, estimate=ct, vcov=V, coef=ct[,1],
@@ -100,7 +100,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
                 )
     class(res) <- "htest"
     attributes(res)$B <- B
-    return(res)        
+    return(res)
   }
 
   ### Score test
@@ -110,7 +110,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     for (i in scoretest) {
       regression(altmodel) <- i
     }
-    p0 <- numeric(length(coef(altmodel)))        
+    p0 <- numeric(length(coef(altmodel)))
     idx <-  match(coef(Model(object)),coef(altmodel))
     p0[idx] <- coef(object)
     Sc2 <- score(altmodel,p=p0,data=model.frame(object),weigth=Weight(altmodel),
@@ -131,7 +131,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
                 statistic = Q, parameter = df,
                 p.value=pQ, method = "- Score test -")
     class(res) <- "htest"
-    return(res)    
+    return(res)
   }
 
   ### Likelihood ratio test
@@ -155,12 +155,12 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
                 p.value=pQ, method = "- Likelihood ratio test -",
                 estimate = values)
     class(res) <- "htest"
-    return(res)    
+    return(res)
   }
   if (length(objects)==2)
-    return(comparepair(objects[[1]],objects[[2]]))  
+    return(comparepair(objects[[1]],objects[[2]]))
   res <- list()
-  for (i in 1:(length(objects)-1)) {
+  for (i in seq_len(length(objects)-1)) {
     res <- c(res, list(comparepair(objects[[i]],objects[[i+1]])))
   }
     return(res)
@@ -174,17 +174,16 @@ comparepair <- function(x1,x2) {
     if (is.null(df1)) {
         df1 <- length(do.call("coef",list(x1),envir=parent.frame(2)))
         df2 <- length(do.call("coef",list(x2),envir=parent.frame(2)))
-    }  
+    }
     Q <- abs(2*(l1-l2))
     names(Q) <- "chisq"
     df <- abs(df1-df2); names(df) <- "df"
     p <- 1-pchisq(Q,df=df)
     values <- c(l1,l2); names(values) <- c("log likelihood (model 1)", "log likelihood (model 2)")
-    
+
     res <- list(statistic = Q, parameter = df,
                 p.value= p, method = "- Likelihood ratio test -",
                 estimate = values)
     class(res) <- "htest"
     return(res)
 }
-

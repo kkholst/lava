@@ -1,5 +1,5 @@
 Moments <- function(x,p,data,conditional=TRUE,...) {
-  
+
 }
 
 ##' @export
@@ -36,8 +36,8 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
     P <-  px%*% tcrossprod(P, px)
     Jidx <- ii$endo.idx
   }
-  
-  Im <- diag(nrow(AP$A))  
+
+  Im <- diag(nrow(AP$A))
   if (ii$sparse) {
     IAi <- with(AP, as(Inverse(Im-t(A)),"sparseMatrix"))
     ##IAi <- as(solve(Matrix::Diagonal(nrow(A))-t(A)),"sparseMatrix")

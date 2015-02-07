@@ -14,16 +14,16 @@ function(infile="template.out",coef=TRUE,...) {
   if (coef) {
     start <- "MODEL RESULTS"
     end1 <- "R-SQUARE"
-    res0 <- findfileseg(infile,start)[-c(1:5)]
+    res0 <- findfileseg(infile,start)[-c(seq(5))]
     res <- sapply(res0,function(x) { val <- strsplit(x," ")[[1]]; val[val!=""] })
     res <- res[unlist(lapply(res, length))!=0]
-    
+
     coef.idx <- unlist(lapply(res, length))>3
     lab.idx <- which(!coef.idx)
     count <- 0
     mycoef <- c()
     myrownames <- c()
-    for (i in 1:length(res)) {
+    for (i in seq_along(res)) {
       if (i %in% lab.idx) {
         count <- count+1
       } else {
@@ -34,13 +34,13 @@ function(infile="template.out",coef=TRUE,...) {
                         paste(paste(res[[lab.idx[count]]],collapse=" "),res[[i]][1])
                         )
 
-      }      
+      }
     }
     rownames(mycoef) <- myrownames
     colnames(mycoef) <- c("Estimate","Std.Err","Z-value","Std","StdYX")
     return(mycoef)
   }
-  
+
   start <- "Estimate       S.E.  Est./S.E."
   end1 <- "MODEL RESULTS"
   end2 <- "QUALITY OF NUMERICAL RESULTS"
@@ -66,8 +66,8 @@ function(infile, startstring, endstring,nlines) {
   close(con)
   nullstring <- 0
   linestart <- 1; lineend <- length(inp)
-  
-  mycmd1 <- paste("grep -n \"",startstring,"\" ", infile, sep="");  a1 <- system(mycmd1,intern=TRUE);
+
+  mycmd1 <- paste0("grep -n \"",startstring,"\" ", infile);  a1 <- system(mycmd1,intern=TRUE);
   if (length(a1)>0)
     linestart <- as.numeric(strsplit(a1,":")[[1]][1])
 
@@ -79,11 +79,11 @@ function(infile, startstring, endstring,nlines) {
       if (inp[i]==inp[i-1]) break;
     }
   } else {
-    mycmd2 <- paste("grep -n \"",endstring,"\" ", infile, sep="");  a2 <- system(mycmd2,intern=TRUE);
+    mycmd2 <- paste0("grep -n \"",endstring,"\" ", infile);  a2 <- system(mycmd2,intern=TRUE);
     if (length(a2)>0)
       lineend <- as.numeric(strsplit(a2,":")[[1]][1])
   }
-  
+
   res <- inp[linestart:lineend-1]
   return(res)
 }
@@ -95,14 +95,14 @@ function(infile, startstring, endstring,nlines) {
 
 `mplus` <-
 function(file="template.mplus",wait=TRUE,intern=TRUE,...) {
-    if (!file.exists(file)) file <- paste(file,".mplus",sep="")
+    if (!file.exists(file)) file <- paste0(file,".mplus")
     if (!file.exists(file)) stop("File does not exist")
     if (!exists("winecmd")) winecmd <- "wine"
     if (!exists("mplus.directory")) mplus.directory <- ""
-    mycmd <- paste(winecmd, " \"", mplus.directory, "mplus.exe\" ", file, sep="")
+    mycmd <- paste0(winecmd, " \"", mplus.directory, "mplus.exe\" ", file)
     system(mycmd, wait=wait, intern=TRUE)
     prefix <- strsplit(file, ".", fixed=TRUE)[[1]][1]
-    return(getMplus(paste(prefix,".out",sep=""),coef=TRUE))
+    return(getMplus(paste0(prefix,".out"),coef=TRUE))
 }
 
 `toMplus.data.frame` <-
@@ -114,23 +114,23 @@ function(x, datafile="data.tab",
          group,
          run=FALSE, techout=FALSE,missing=TRUE,...) {
   write.table(x, file=datafile, sep="\t",
-              quote=FALSE, row.names=FALSE, col.names=FALSE, na=na.string)  
+              quote=FALSE, row.names=FALSE, col.names=FALSE, na=na.string)
   varnames <- c()
   ngroups <- ceiling(ncol(x)/4)
-  
-  for (i in 1:ngroups) {
+
+  for (i in seq_len(ngroups)) {
     newline <- c("\t",colnames(x)[((i-1)*4+1):min(ncol(x), (i*4))],"\n")
     varnames <- c(varnames, newline)
   }
 
-###   mplusfilesummary <- paste("summary",mplusfile,sep="")
-###   zz <- file(mplusfilesummary, "w")  # open an output file connection  
+###   mplusfilesummary <- paste0("summary",mplusfile)
+###   zz <- file(mplusfilesummary, "w")  # open an output file connection
 ###   cat(file=zz, "TITLE:  Summary-statistics\n")
 ###   cat(file=zz, "!-----------------------------------------------------\n")
 ###   cat(file=zz,"DATA:\n\tFILE=\"", datafile, "\";\n")
 ###   cat(file=zz,"VARIABLE:\n\tNAMES ARE\n")
 ###   cat(file=zz, varnames, ";\n\n")
-  
+
 ###   cat(file=zz, "!-----------------------------------------------------\n")
 ###   cat(file=zz, "USEVARIABLES=\n!?;\n")
 ###   cat(file=zz, "!CATEGORICAL=?;\n")
@@ -141,7 +141,7 @@ function(x, datafile="data.tab",
 ###   cat(file=zz, "!-----------------------------------------------------\n")
 ###   cat(file=zz, "OUTPUT:\t\tstandardized sampstat;")
 ###   close(zz)
-  
+
   zz <- file(mplusfile, "w")  # open an output file connection
   cat(file=zz, "TITLE: ...\n")
   cat(file=zz, "!-----------------------------------------------------\n")
@@ -167,13 +167,13 @@ function(x, datafile="data.tab",
     if (missing) cat(file=zz, " MISSING;\n")
     else cat(file=zz,";\n")
     cat(file=zz, "ESTIMATOR=ML;\n")
-    cat(file=zz, "INFORMATION=EXPECTED;\n")  
+    cat(file=zz, "INFORMATION=EXPECTED;\n")
     cat(file=zz, "ITERATIONS=5000;\n")
     cat(file=zz, "CONVERGENCE=0.00005;\n\n")
   } else {
     cat(file=zz,"ANALYSIS:\n")
     cat(file=zz, analysis,"\n")
-  }    
+  }
   cat(file=zz, "!-----------------------------------------------------\n")
   cat(file=zz, "MODEL:\n")
   cat(file=zz, model,"\n")
@@ -204,7 +204,7 @@ function(x, datafile="data.tab",
 
   if (run & exists("mplus")) {
     res <- mplus(mplusfile)
-    outfile <- paste(strsplit(mplusfile,".",fixed=TRUE)[[1]][1],".out",sep="")
+    outfile <- paste0(strsplit(mplusfile,".",fixed=TRUE)[[1]][1],".out")
     getMplus(outfile)
     return(res)
   }
@@ -220,15 +220,15 @@ function(x, model=NULL, data=model.frame(x), run=TRUE, categorical=NULL,##binary
   p <- length(nn)
   lat.var <- latent(x)
   lat.idx <- match(lat.var, vars(x))
-  for (i in 1:p) {
-    for (j in 1:p) {
-      if (M[i,j]!=0) {        
+  for (i in seq_len(p)) {
+    for (j in seq_len(p)) {
+      if (M[i,j]!=0) {
         var1 <- nn[i]; var2 <- nn[j];
         if (i %in% lat.idx & !(j %in% lat.idx)) {## & !(j %in% lat.idx)) {
           key <- " on "
-          mymodel <- paste(mymodel, "\n", var1, " by ", var2, ";", sep="")
+          mymodel <- paste0(mymodel, "\n", var1, " by ", var2, ";")
         } else {
-          mymodel <- paste(mymodel, "\n", var2, " on ", var1, ";", sep="")
+          mymodel <- paste0(mymodel, "\n", var2, " on ", var1, ";")
         }
       }
     }
@@ -237,7 +237,7 @@ function(x, model=NULL, data=model.frame(x), run=TRUE, categorical=NULL,##binary
     for (j in ((i+1):p)) {
       if (P[i,j]!=0) {
         var1 <- nn[i]; var2 <- nn[j];
-        mymodel <- paste(mymodel, "\n", var1, " with ", var2, ";", sep="")
+        mymodel <- paste0(mymodel, "\n", var1, " with ", var2, ";")
       }
     }
   }

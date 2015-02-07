@@ -1,5 +1,5 @@
 ##' Convert object to ascii suitable for org-mode
-##' 
+##'
 ##' @title Convert object to ascii suitable for org-mode
 ##' @param x R object
 ##' @param ... additional arguments to lower level functions
@@ -13,11 +13,11 @@
 ##' @param type Type argument (see \code{ascii})
 ##' @param tab Tabulate?
 ##' @param margins Add margins to table?
-##' @param print print or return result 
+##' @param print print or return result
 ##' @param html HTML prefix (added to ATTR_HTML)
 ##' @param latex LaTeX prefix (added to ATTR_LaTeX)
 ##' @author Klaus K. Holst
-org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {  
+org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {
     if (!suppressPackageStartupMessages(require(ascii))) stop("ascii package required")
     dots <- list(...)
     if (tab) {
@@ -28,9 +28,9 @@ org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TR
         if (margins) x <- addmargins(x)
     }
     if (!missing(ncol)) {
-        y <- formatC(as.vector(x))  
+        y <- formatC(as.vector(x))
         n0 <- length(y)%%ncol
-        if (n0 > 0) 
+        if (n0 > 0)
             y <- c(y, rep("", ncol - n0))
         x <- matrix(y, ncol = ncol, byrow = TRUE)
     }
@@ -44,19 +44,18 @@ org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TR
             rownames(x) <- rownames[1]
         } else {
             include.rownames <- FALSE
-        }      
+        }
     }
     args <- c(list(x=x,include.rownames=include.rownames,include.colnames=include.colnames,header=header,frame=frame,type=type,rownames=rownames,colnames=colnames),dots)
     x <- do.call("ascii",args)
     if (print) {
         op <- options(asciiType=type)
-        if (!missing(html)) 
-            cat("#+ATTR_HTML: ",html,"\n",sep="")            
-        if (!missing(latex)) 
+        if (!missing(html))
+            cat("#+ATTR_HTML: ",html,"\n",sep="")
+        if (!missing(latex))
             cat("#+ATTR_LaTeX: ",latex,"\n",sep="")
         suppressWarnings(do.call(getFromNamespace("print", "ascii"),c(x=x,dots)))
         options(op)
     }
     invisible(x)
 }
-

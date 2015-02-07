@@ -28,22 +28,21 @@ pars.lvm <- function(x, A, P, v, e, ...) {
   parres <- c(parres, diagcorfree)
 
   if (ncol(A)>1)
-  for (i in 1:(ncol(index(x)$P1)-1))
-    for (j in (i+1):nrow(index(x)$P1)) {
+  for (i in seq_len(ncol(index(x)$P1)-1))
+    for (j in seq(i+1,nrow(index(x)$P1))) {
       if (index(x)$P1[j,i]!=0) {
         parres <- c(parres, P[j,i])
       }
     }
   if (length(parres)>0)
-  names(parres) <- paste("p",seq_len(length(parres)),sep="")
+  names(parres) <- paste0("p",seq_len(length(parres)))
   if (!missing(v)) {
     parres <- c( v[which(index(x)$v1==1)], parres)
   }
   if (!missing(e)) {
     parres <- c( parres, e[which(index(x)$e1==1)] )
   }
-  return(parres)        
+  return(parres)
 }
 
 ###}}} pars.lvm
-

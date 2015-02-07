@@ -191,16 +191,14 @@ rates <- c(1,0.5); cuts <- c(0,5)
 distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
 \dontrun{
-    mets::fast.reshape(sim(m,100),varying="t")
+mets::fast.reshape(sim(m,100),varying="t")
 }
-##'
 
 ##################################################
 ### General multivariate distributions
 ##################################################
 
 \dontrun{
-
 m <- lvm()
 distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
 ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
@@ -209,12 +207,19 @@ m <- lvm()
 distribution(m,~z1+z2,"or1") <- VGAM::rbiplackcop
 distribution(m,~y1+y2,"or2") <- VGAM::rbiplackcop
 sim(m,10,p=c(or1=0.1,or2=4))
+}
 
 m <- lvm()
 distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
 var(sim(m,100))
 
-}
+## Syntax also useful for univariate generators, e.g.
+m <- lvm(y~x+z)
+distribution(m,~y,TRUE) <- function(n) rnorm(n,mean=1000)
+sim(m,5)
+distribution(m,~y,"m1",0) <- rnorm
+sim(m,5)
+sim(m,5,p=c(m1=100))
 
 ##################################################
 ### Categorical predictor
@@ -227,13 +232,13 @@ categorical(m,labels=c("A","B","C")) <- "v"
 
 regression(m,additive=FALSE) <- y~v
 \dontrun{
-  plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
+plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 }
 
 m <- lvm()
 categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
-## ## equivalent to:
+## equivalent to:
 ## regression(m,y~v,additive=FALSE) <- c(0,2,-1)
 regression(m,additive=FALSE,beta=c(0,4,-1)) <- z~v
 table(sim(m,1e4)$v)

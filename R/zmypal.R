@@ -7,4 +7,3 @@ mypal <- function(set=TRUE,...) {
     palette(col)
     invisible(oldpal)
 }
-                         

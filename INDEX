@@ -58,23 +58,23 @@ startvalues             Starting values
 By                      Apply a Function to a Data Frame Split by Factors
 Col                     Generate a transparent RGB color
 Combine                 Report estimates across different models
-dsort			Sort data.frame according to variable(s)
+dsort			Sort data.frame
 Expand                  Create a Data Frame from All Combinations of Factors
 getSAS			Read SAS output (ODS)
 getMplus		Read Mplus output
 Id                      Identify points on plot
+ksmooth2		Estimate and visualize bivariate density 
 PD                      Dose response calculation for binomial regression models
 blockdiag               Combine matrices to block diagonal structure
 colorbar		Add colorbar to plot
 confband                Add Confidence limits bar to plot
 devcoords               Returns device-coordinates and plot-region
-dsort			Sort data frame
 org                     Convert object to ascii suitable for org-mode
 parsedesign		Create contrast matrix from expression
 plotConf                Plot regression lines
 revdiag                 Create/extract 'reverse'-diagonal matrix
 surface			Visualize function surface
-ksmooth2		Estimate and visualize bivariate density 
+spaghetti		Plot longitudinal data
 toformula               Converts strings to formula
 tr                      Trace operator
 trim                    Trim tring of (leading/trailing/all) white spaces

@@ -1,5 +1,5 @@
 ##' Trace operator
-##' 
+##'
 ##' Calculates the trace of a square matrix.
 ##' @param A Square numeric matrix
 ##' @return \code{numeric}
@@ -7,7 +7,7 @@
 ##' @seealso \code{\link{crossprod}}, \code{\link{tcrossprod}}
 ##' @keywords math algebra
 ##' @examples
-##' 
+##'
 ##' tr(diag(1:5))
 ##'
 ##' @export
@@ -17,13 +17,12 @@ function(A) {
     return(A)
   if(!is.matrix(A))
     stop("argument of 'tr' should be a matrix.")
-  n <- nrow(A)            
-  if (!n) 
+  n <- nrow(A)
+  if (!n)
     stop("0 x 0 matrix")
-  if (n != ncol(A)) 
+  if (n != ncol(A))
     stop("non-square matrix")
-  if (any(!is.finite(A))) 
+  if (any(!is.finite(A)))
     stop("infinite or missing values")
   return(sum(diag(A)))
 }
-

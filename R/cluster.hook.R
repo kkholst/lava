@@ -6,11 +6,11 @@ cluster.post.hook <- function(x,...) {
     uclust <- unique(allclusters)
     K <- length(uclust)
     G <- x$model$ngroup
-    S0 <- lapply(score(x,indiv=TRUE), function(x) { x[which(is.na(x))] <- 0; x })    
+    S0 <- lapply(score(x,indiv=TRUE), function(x) { x[which(is.na(x))] <- 0; x })
     S <- matrix(0,length(pars(x)),nrow=K)
     aS <- c() ##matrix(0,S[[1]]
     for (i in uclust) {
-      for (j in 1:G) {
+      for (j in seq_len(G)) {
         idx <- which(x$cluster[[j]]==i)
         if (length(idx)>0)
           S[i,] <- S[i,] + colSums(S0[[j]][idx,,drop=FALSE])
@@ -22,8 +22,8 @@ cluster.post.hook <- function(x,...) {
     asVar <- iI%*%J%*%iI
     x$vcov <- asVar
     return(x)
-  } 
-  
+  }
+
   ## lvmfit:
   if (!is.null(x$cluster)) {
     uclust <- unique(x$cluster)
@@ -70,13 +70,13 @@ cluster.post.hook <- function(x,...) {
     mynames <- vars(x)[index(x)$v1==1]
   }
   if (index(x)$npar>0) {
-    mynames <- c(mynames,paste("p",1:index(x)$npar,sep=""))
+    mynames <- c(mynames,paste0("p",seq_len(index(x)$npar)))
   }
   if (!is.null(x$expar)) {
     mynames <- c(mynames,names(x$expar))
   }
 
   rownames(mycoef) <- mynames
-  x$coef <- mycoef  
+  x$coef <- mycoef
   return(x)
 }

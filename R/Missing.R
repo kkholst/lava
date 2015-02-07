@@ -3,7 +3,7 @@
 ##' This function adds a binary variable to a given \code{lvm} model
 ##' and also a variable which is equal to the original variable where
 ##' the binary variable is equal to zero
-##' 
+##'
 ##' @title Missing value generator
 ##' @param object  \code{lvm}-object.
 ##' @param formula The right hand side specifies the name of a latent
@@ -30,8 +30,8 @@
 ##' m <- lvm(y0~x01+x02+x03)
 ##' m <- Missing(m,formula=x1~x01,Rformula=R1~0.3*x02+-0.7*x01,p=0.4)
 ##' sim(m,10)
-##' 
-##' 
+##'
+##'
 ##' m <- lvm(y~1)
 ##' m <- Missing(m,"y","r")
 ##' ## same as
@@ -42,7 +42,7 @@
 ##' m <- lvm(y~1)
 ##' Missing(m,"y") <- r~x
 ##' sim(m,10)
-##' 
+##'
 ##' m <- lvm(y~1)
 ##' m <- Missing(m,"y","r",suffix=".")
 ##' ## same as
@@ -50,11 +50,11 @@
 ##' ## same as
 ##' ## m <- Missing(m,y.~y,"r")
 ##' sim(m,10)
-##' 
-##' @export 
+##'
+##' @export
 ##' @author Thomas A. Gerds <tag@@biostat.ku.dk>
 Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
-    if (is.character(Rformula)) { 
+    if (is.character(Rformula)) {
         indicatorname <- Rformula
         Rformula <- toformula(Rformula,1)
     } else {
@@ -62,9 +62,9 @@ Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
     }
     if (length(all.vars(formula))==1) formula <- all.vars(formula)
     if (is.character(formula)) {
-        if (missing(missing.name)) missing.name <- paste(formula,suffix,sep="")
+        if (missing(missing.name)) missing.name <- paste0(formula,suffix)
         formula <- toformula(missing.name,formula)
-    } 
+    }
     newf <- update(formula,paste(".~.+",indicatorname))
     if (is.null(distribution(object,indicatorname)[[1]]) || length(list(...))>0)
         distribution(object,indicatorname) <- binomial.lvm(...)

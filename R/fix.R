@@ -17,8 +17,8 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
   if (attributes(x)$type=="mean") {
     M <- rbind(unlist(x[idx]))
     rownames(M) <- ""
-    M[is.na(M)] <- "*"    
-  } else {  
+    M[is.na(M)] <- "*"
+  } else {
     M <- x$rel[idx,idx,drop=FALSE]
     M[M==0] <- NA
     M[M==1] <- "*"
@@ -44,34 +44,34 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 "intfix<-" <- function(object,...,value) UseMethod("intfix<-")
 
 ##' Fix mean parameters in 'lvm'-object
-##' 
+##'
 ##' Define linear constraints on intercept parameters in a \code{lvm}-object.
-##' 
-##' 
+##'
+##'
 ##' The \code{intercept} function is used to specify linear constraints on the
 ##' intercept parameters of a latent variable model. As an example we look at
 ##' the multivariate regression model
-##' 
+##'
 ##' \deqn{ E(Y_1|X) = \alpha_1 + \beta_1 X} \deqn{ E(Y_2|X) = \alpha_2 + \beta_2
 ##' X}
-##' 
+##'
 ##' defined by the call
-##' 
+##'
 ##' \code{m <- lvm(c(y1,y2) ~ x)}
-##' 
+##'
 ##' To fix \eqn{\alpha_1=\alpha_2} we call
-##' 
+##'
 ##' \code{intercept(m) <- c(y1,y2) ~ f(mu)}
-##' 
+##'
 ##' Fixed parameters can be reset by fixing them to \code{NA}.  For instance to
 ##' free the parameter restriction of \eqn{Y_1} and at the same time fixing
 ##' \eqn{\alpha_2=2}, we call
-##' 
+##'
 ##' \code{intercept(m, ~y1+y2) <- list(NA,2)}
-##' 
+##'
 ##' Calling \code{intercept} with no additional arguments will return the
 ##' current intercept restrictions of the \code{lvm}-object.
-##' 
+##'
 ##' @aliases intercept intercept<- intercept.lvm intercept<-.lvm intfix intfix
 ##' intfix<- intfix.lvm intfix<-.lvm
 ##' @param object \code{lvm}-object
@@ -83,10 +83,10 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 ##' @usage
 ##' \method{intercept}{lvm}(object, vars, ...) <- value
 ##' @return
-##' 
+##'
 ##' A \code{lvm}-object
 ##' @note
-##' 
+##'
 ##' Variables will be added to the model if not already present.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{covariance<-}}, \code{\link{regression<-}},
@@ -95,16 +95,16 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 ##' @keywords models regression
 ##' @export
 ##' @examples
-##' 
-##' 
+##'
+##'
 ##' ## A multivariate model
 ##' m <- lvm(c(y1,y2) ~ f(x1,beta)+x2)
 ##' regression(m) <- y3 ~ f(x1,beta)
 ##' intercept(m) <- y1 ~ f(mu)
 ##' intercept(m, ~y2+y3) <- list(2,"mu")
 ##' intercept(m) ## Examine intercepts of model (NA translates to free/unique paramete##r)
-##' 
-##' 
+##'
+##'
 "intercept" <- function(object,...) UseMethod("intercept")
 
 ##' @export
@@ -112,7 +112,7 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 intercept.lvm <- intfix.lvm <- function(object,...) {
   res <- object$mean; attr(res,"type") <- "mean"
   attr(res,"exo.idx") <- index(object)$exo.idx
-  attr(res,"nvar") <- length(res)  
+  attr(res,"nvar") <- length(res)
   class(res) <- "fix"
   return(res)
 }
@@ -130,7 +130,7 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
     if ((class(value[[3]])=="logical" && is.na(value[[3]]))) {
       intfix(object,yy) <- NA
       return(object)
-    }        
+    }
     tt <- terms(value)
     xf <- attributes(terms(tt))$term.labels
     res <- lapply(xf,decomp.specials)[[1]]
@@ -142,7 +142,7 @@ intercept.lvm <- intfix.lvm <- function(object,...) {
   }
   if (class(vars)[1]=="formula") {
     vars <- all.vars(vars)
-  }    
+  }
   object$mean[vars] <- value
   newindex <- reindex(object)
   object$parpos <- NULL
@@ -179,7 +179,7 @@ covfix.lvm <- function(object,...) {
   if (class(var2)[1]=="formula")
     var2 <- all.vars(var2)
   object <- addvar(object,c(var1,var2),reindex=FALSE,...)
-  
+
   allvars <- c(var1,var2)
   xorg <- exogenous(object)
   exoset <- setdiff(xorg,allvars)
@@ -195,8 +195,8 @@ covfix.lvm <- function(object,...) {
     if (length(value)==1)
       value <- rep(value,K)
     if (length(value)!=K) stop("Wrong number of parameters")
-    for (i in 1:(length(var1)-1)) {
-      for (j in (i+1):length(var1)) {
+    for (i in seq_len(length(var1)-1)) {
+      for (j in seq(i+1,length(var1))) {
         p <- p+1
         valp <- suppressWarnings(as.numeric(value[[p]]))
         if (is.na(value[[p]]) | value[[p]]=="NA") {
@@ -204,13 +204,13 @@ covfix.lvm <- function(object,...) {
           object$covfix[var1[j],var1[i]] <- object$covpar[var1[j],var1[i]] <- NA
         }
         else {
-          object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1  
+          object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1
           if (is.numeric(value[[p]]) | !is.na(valp)) {
             object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- valp
             object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- NA
           } else {
             object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- value[[p]]
-            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- NA    
+            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- NA
           }
         }
       }
@@ -220,13 +220,13 @@ covfix.lvm <- function(object,...) {
     index(object)[names(newindex)] <- newindex
     return(object)
   }
-   
+
 
   if (is.null(var2)) {
     if (length(value)==1)
       value <- rep(value,length(var1))
     if (length(value)!=length(var1)) stop("Wrong number of parameters")
-    for (i in 1:length(var1)) {
+    for (i in seq_along(var1)) {
       vali <- suppressWarnings(as.numeric(value[[i]]))
       if (is.na(value[[i]]) | value[[i]]=="NA") {
         object$covfix[var1[i],var1[i]] <- object$covpar[var1[i],var1[i]] <- NA
@@ -243,13 +243,13 @@ covfix.lvm <- function(object,...) {
     }
     newindex <- reindex(object)
     object$parpos <- NULL
-    index(object)[names(newindex)] <- newindex    
-    return(object)    
+    index(object)[names(newindex)] <- newindex
+    return(object)
   }
 
   if (length(var1)==length(var2) & length(var1)==length(value)) {
     p <- 0
-    for (i in 1:length(var1)) {
+    for (i in seq_along(var1)) {
       p <- p+1
       valp <- suppressWarnings(as.numeric(value[[p]]))
       if (is.na(value[[p]]) | value[[p]]=="NA") {
@@ -257,31 +257,31 @@ covfix.lvm <- function(object,...) {
         object$covfix[var2[i],var1[i]] <- object$covpar[var2[i],var1[i]] <- NA
       }
       else {
-        object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1  
+        object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1
         if (is.numeric(value[[p]]) | !is.na(valp)) {
           object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- valp
           object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- NA
         } else {
           object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- value[[p]]
-          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- NA    
+          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- NA
         }
-      }      
+      }
     }
     newindex <- reindex(object)
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
-    return(object)    
+    return(object)
   }
 
-  
+
   K <- length(var1)*length(var2)
   if (length(value)==1)
     value <- rep(value,K)
   if (length(value)!=K) stop("Wrong number of parameters")
- 
+
   p <- 0
-  for (i in 1:length(var1)) {
-    for (j in 1:length(var2)) {
+  for (i in seq_along(var1)) {
+    for (j in seq_along(var2)) {
       if (!pairwise | var1[i]!=var2[j]) {
         p <- p+1
         valp <- suppressWarnings(as.numeric(value[[p]]))
@@ -290,13 +290,13 @@ covfix.lvm <- function(object,...) {
           object$covfix[var2[j],var1[i]] <- object$covpar[var2[j],var1[i]] <- NA
         }
         else {
-          object$cov[var1[i],var2[j]] <-  object$cov[var2[j],var1[i]] <- 1  
+          object$cov[var1[i],var2[j]] <-  object$cov[var2[j],var1[i]] <- 1
           if (is.numeric(value[[p]]) | !is.na(valp)) {
             object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- valp
             object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- NA
           } else {
             object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- value[[p]]
-            object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- NA    
+            object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- NA
           }
         }
       }
@@ -328,34 +328,42 @@ regfix.lvm <- function(object,...) {
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
 ##' @export
-"regfix<-.lvm" <- function(object, to, from, exo=TRUE, variance, ..., value) {
-  if (is.null(to)) stop("variable list needed")
+"regfix<-.lvm" <- function(object, to, from, exo=TRUE, variance, y,x, ..., value) {
+    if (!missing(y)) {
+        if (inherits(y,"formula")) y <- all.vars(y)
+        to <- y
+    }
+    if (!missing(x)) {
+        if (inherits(x,"formula")) x <- all.vars(x)
+        from <- x
+    }
+    if (is.null(to)) stop("variable list needed")
   curvar <- index(object)$vars
   if (class(to)[1]=="formula") {
     yx <- getoutcome(to)
-    lhs <- decomp.specials(yx)    
+    lhs <- decomp.specials(yx)
     if (length(lhs)==0) {
       to <- all.vars(to)
       if (is.null(from)) stop("predictor list needed")
       if (class(from)[1]=="formula")
-        from <- all.vars(from)      
+        from <- all.vars(from)
     } else {
       from <- attributes(yx)$x
       to <- lhs
     }
-    
+
     yyf <- lapply(to,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-    ys <- unlist(lapply(yyf,function(y) y[1]))      
+    ys <- unlist(lapply(yyf,function(y) y[1]))
     xxf <- lapply(from,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-    xs <- unlist(lapply(xxf,function(y) y[1]))       
-    
+    xs <- unlist(lapply(xxf,function(y) y[1]))
+
     object <- addvar(object,c(ys,xs),reindex=FALSE,...)
 
     if (!missing(variance))
         covariance(object,ys) <- variance
 
     newexo <- notexo <- c()
-    for (i in 1:length(xs)) {        
+    for (i in seq_along(xs)) {
       xf <- unlist(strsplit(from[[i]],"[\\[\\]]",perl=TRUE))
       if (length(xf)>1) {
         xpar <- decomp.specials(xf[2],NULL,":")
@@ -370,7 +378,7 @@ regfix.lvm <- function(object,...) {
         notexo <- c(notexo,xs[i])
       } else { newexo <- c(newexo,xs[i]) }
     }
-    for (i in 1:length(ys)) {
+    for (i in seq_along(ys)) {
       yf <- unlist(strsplit(to[[i]],"[\\[\\]]",perl=TRUE))
       if (length(yf)>1) {
         ypar <- decomp.specials(yf[2],NULL,":")
@@ -400,9 +408,9 @@ regfix.lvm <- function(object,...) {
   }
 
   if (inherits(value,"formula")) value <- all.vars(value)
-  
+
   if (length(from)==length(to) & length(from)==length(value)) {
-    for (i in 1:length(from)) {
+    for (i in seq_along(from)) {
       if (object$M[from[i],to[i]]==0) { ## Not adjancent! ##!isAdjacent(Graph(object), from[i], to[i])) {
         object <- regression(object, to=to[i], from=from[i])
       }
@@ -417,7 +425,7 @@ regfix.lvm <- function(object,...) {
         } else {
           object$par[from[i],to[i]] <- value[[i]]
           object$fix[from[i],to[i]] <- NA
-        }      
+        }
       }
     }
     newindex <- reindex(object)
@@ -436,11 +444,11 @@ regfix.lvm <- function(object,...) {
 
   K <- length(from)*length(to)
   if (length(value)==1)
-    value <- rep(value,K)  
+    value <- rep(value,K)
   if (length(value)!=K) stop("Wrong number of parameters")
 
-  for (j in 1:length(to)) {
-    for (i in 1:length(from)) {
+  for (j in seq_along(to)) {
+    for (i in seq_along(from)) {
       p <- (j-1)*length(from) + i
       valp <- suppressWarnings(as.numeric(value[[p]]))
       if (is.na(value[[p]]) | value[[p]]=="NA")
@@ -507,7 +515,7 @@ parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
   e.ord <- match(eval,idx)
   for (i in seq_len(length(e.fix))) {
       object$exfix[[e.fix[i]]] <- value[[e.ord[i]]]
-  }      
+  }
   for (i in seq_len(length(v.fix))) {
       object$mean[[v.fix[i]]] <- value[[v.ord[i]]]
   }

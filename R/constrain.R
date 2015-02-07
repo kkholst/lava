@@ -1,10 +1,10 @@
-##' Define range constraints of parameters 
+##' Define range constraints of parameters
 ##'
 ##' @aliases Range.lvm
 ##' @title Define range constraints of parameters
 ##' @param a Lower bound
 ##' @param b Upper bound
-##' @return function 
+##' @return function
 ##' @author Klaus K. Holst
 ##' @export
 Range.lvm <- function(a=0,b=1) {
@@ -29,67 +29,67 @@ Range.lvm <- function(a=0,b=1) {
     attributes(res)$grad <- function(x) exp(x)*(b-a-a*b*exp(x))/(1+exp(x))^2
     res
   }
-  return(f)  
+  return(f)
 }
 
 ##' Add non-linear constraints to latent variable model
 ##'
 ##' Add non-linear constraints to latent variable model
-##' 
+##'
 ##' Add non-linear parameter constraints as well as non-linear associations
 ##' between covariates and latent or observed variables in the model (non-linear
 ##' regression).
-##' 
+##'
 ##' As an example we will specify the follow multiple regression model:
-##' 
+##'
 ##' \deqn{E(Y|X_1,X_2) = \alpha + \beta_1 X_1 + \beta_2 X_2} \deqn{V(Y|X_1,X_2)
 ##' = v}
-##' 
+##'
 ##' which is defined (with the appropiate parameter labels) as
-##' 
+##'
 ##' \code{m <- lvm(y ~ f(x,beta1) + f(x,beta2))}
-##' 
+##'
 ##' \code{intercept(m) <- y ~ f(alpha)}
-##' 
+##'
 ##' \code{covariance(m) <- y ~ f(v)}
-##' 
+##'
 ##' The somewhat strained parameter constraint \deqn{ v =
 ##' \frac{(beta1-beta2)^2}{alpha}}
-##' 
+##'
 ##' can then specified as
-##' 
+##'
 ##' \code{constrain(m,v ~ beta1 + beta2 + alpha) <- function(x)
 ##' (x[1]-x[2])^2/x[3] }
-##' 
+##'
 ##' A subset of the arguments \code{args} can be covariates in the model,
 ##' allowing the specification of non-linear regression models.  As an example
 ##' the non-linear regression model \deqn{ E(Y\mid X) = \nu + \Phi(\alpha +
 ##' \beta X)} where \eqn{\Phi} denotes the standard normal cumulative
 ##' distribution function, can be defined as
-##' 
+##'
 ##' \code{m <- lvm(y ~ f(x,0)) # No linear effect of x}
-##' 
+##'
 ##' Next we add three new parameters using the \code{parameter} assigment
 ##' function:
-##' 
+##'
 ##' \code{parameter(m) <- ~nu+alpha+beta}
-##' 
+##'
 ##' The intercept of \eqn{Y} is defined as \code{mu}
-##' 
+##'
 ##' \code{intercept(m) <- y ~ f(mu)}
-##' 
+##'
 ##' And finally the newly added intercept parameter \code{mu} is defined as the
 ##' appropiate non-linear function of \eqn{\alpha}, \eqn{\nu} and \eqn{\beta}:
-##' 
+##'
 ##' \code{constrain(m, mu ~ x + alpha + nu) <- function(x)
 ##' pnorm(x[1]*x[2])+x[3]}
-##' 
+##'
 ##' The \code{constraints} function can be used to show the estimated non-linear
 ##' parameter constraints of an estimated model object (\code{lvmfit} or
 ##' \code{multigroupfit}). Calling \code{constrain} with no additional arguments
 ##' beyound \code{x} will return a list of the functions and parameter names
 ##' defining the non-linear restrictions.
-##' 
+##'
 ##' The gradient function can optionally be added as an attribute \code{grad} to
 ##' the return value of the function defined by \code{value}. In this case the
 ##' analytical derivatives will be calculated via the chain rule when evaluating
@@ -121,11 +121,11 @@ Range.lvm <- function(a=0,b=1) {
 ##' logLik(e,p1)
 ##' ## Likelihood of restricted model (MLE)
 ##' logLik(e1)
-##' 
+##'
 ##' ##############################
 ##' ### Non-linear regression
 ##' ##############################
-##' 
+##'
 ##' ## Simulate data
 ##' m <- lvm(c(y1,y2)~f(x,0)+f(eta,1))
 ##' latent(m) <- ~eta
@@ -138,7 +138,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' d <- transform(d,
 ##'                y1=y1+2*pnorm(2*x),
 ##'                y2=y2+2*pnorm(2*x))
-##' 
+##'
 ##' ## Specify model and estimate parameters
 ##' constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[3]+x[1]*x[2])
 ##' \donttest{
@@ -149,7 +149,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' x0 <- seq(-4,4,length.out=100)
 ##' lines(x0,coef(e)["nu"] + coef(e)["gamma"]*pnorm(coef(e)["alpha"]*x0))
 ##' }
-##' 
+##'
 ##' ##############################
 ##' ### Multigroup model
 ##' ##############################
@@ -166,21 +166,21 @@ Range.lvm <- function(a=0,b=1) {
 ##' \donttest{
 ##' ee <- estimate(list(m1,m2),list(d1,d2),control=list(method="NR"))
 ##' summary(ee)
-##' 
+##'
 ##' m3 <- lvm(y ~ f(x,beta)+f(z,beta2))
 ##' m4 <- lvm(y ~ f(x,beta2) + z)
 ##' e2 <- estimate(list(m3,m4),list(d1,d2),control=list(method="NR"))
 ##' }
 ##' @export
 ##' @usage
-##' 
+##'
 ##' \method{constrain}{default}(x,par,args,...) <- value
-##' 
+##'
 ##' \method{constrain}{multigroup}(x,par,k=1,...) <- value
 ##'
 ##' constraints(object,data=model.frame(object),vcov=object$vcov,level=0.95,
 ##'                         p=pars.default(object),k,idx,...)
-##' 
+##'
 ##' @param x \code{lvm}-object
 ##' @param par Name of new parameter. Alternatively a formula with lhs
 ##' specifying the new parameter and the rhs defining the names of the
@@ -216,7 +216,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
           res <- c(res, constrain(m))
       }
       return(res)
-    }  
+    }
     return(Model(x)$constrain)
   }
   if (is.numeric(x)) {
@@ -237,7 +237,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
   D <- rbind(numDeriv::grad(fun,b))
   se <- (D%*%S%*%t(D))^0.5
   res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*se)
-  pstr <- paste(format(c(round(1000-1000*pl),round(pl*1000))/10),"%",sep="")
+  pstr <- paste0(format(c(round(1000-1000*pl),round(pl*1000))/10),"%")
   names(res) <- c("Estimate","Std.Err",pstr)
   res
 }
@@ -295,7 +295,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
         attributes(Model(x)$constrain[[par]])$args <- args
         index(Model(x)) <- reindex(Model(x))
     }
-  return(x)    
+  return(x)
 }
 
 ##' @export
@@ -318,7 +318,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
     res <- t(apply(data,1,function(x) constraints(object,data=x,p=p,vcov=vcov,level=level)[idx,],...))
     return(res)
   }
-  
+
   if (length(index(object)$constrain.par)<1) return(NULL)
   parpos <- Model(object)$parpos
   if (is.null(parpos)) {
@@ -339,7 +339,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
         return(parpos$e[attributes(x)$e.idx[1]])
     else NA
   }))
-  names(myidx) <- names(parpos$parval)    
+  names(myidx) <- names(parpos$parval)
   mynames <- c()
   N <- length(index(object)$constrain.par)
   if (N>0)
@@ -366,7 +366,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
       res <- myc(theta0)
       return(res)
     }
-    vals0 <- unlist(vals)[!is.na(val.idx)]    
+    vals0 <- unlist(vals)[!is.na(val.idx)]
 ##  vals0 <- unlist(vals)[na.omit(val.idx)]
     if (length(vals0)==0)
       mycoef[2] <- NA
@@ -397,7 +397,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
     if (!is.null(attributes(fval)$inv)){
       res2 <- attributes(fval)$inv(mycoef[c(1,5,6)])
       res <- rbind(res, c(res2[1],NA,NA,NA,res2[2],res2[3]))
-      mynames <- c(mynames,paste("inv(",pp,")",sep=""))
+      mynames <- c(mynames,paste0("inv(",pp,")"))
     }
   }
   rownames(res) <- mynames

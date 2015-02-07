@@ -1,10 +1,10 @@
 ##' Generic method for adding variables to model object
 ##'
-##' @title Add variable to (model) object 
+##' @title Add variable to (model) object
 ##' @param x Model object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
-##' @aliases addvar<- 
+##' @aliases addvar<-
 ##' @export
 `addvar` <-
 function(x,...) UseMethod("addvar")
@@ -35,14 +35,14 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
       require(Matrix)
       newNA <- newM <- Matrix::Matrix(0,k,k)
       newNAc <- newNA; diag(newNAc) <- NA
-      newcov <- Matrix::Diagonal(k)      
+      newcov <- Matrix::Diagonal(k)
     } else {
       newM <- matrix(0,k,k)
       newcov <- diag(k)
     }
     newNA <- matrix(NA,k,k)
-    colnames(newM) <- rownames(newM) <- 
-      colnames(newcov) <- rownames(newcov) <- 
+    colnames(newM) <- rownames(newM) <-
+      colnames(newcov) <- rownames(newcov) <-
         colnames(newNA) <- rownames(newNA) <- new
     newmean <- as.list(rep(NA,k))
     ##  for (i in new) {
@@ -69,7 +69,7 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
         x$fix <- blockdiag(x$fix, newNA, pad=NA) ##
         x$covfix <- blockdiag(x$covfix,  newNA, pad=NA) ##
       }
-      x$mean <- c(x$mean, newmean)     
+      x$mean <- c(x$mean, newmean)
     }
     names(x$mean)[N+seq_len(k)] <-
       colnames(x$M)[N+seq_len(k)] <- rownames(x$M)[N+seq_len(k)] <-
@@ -84,8 +84,8 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
     ##   colnames(x$M)[N+1] <- rownames(x$M)[N+1] <-
     ##     colnames(x$covfix)[N+1] <- rownames(x$covfix)[N+1] <-
     ##       colnames(x$fix)[N+1] <- rownames(x$fix)[N+1] <-
-    ##         colnames(x$covpar)[N+1] <- rownames(x$covpar)[N+1] <-               
-    ##           colnames(x$par)[N+1] <- rownames(x$par)[N+1] <- 
+    ##         colnames(x$covpar)[N+1] <- rownames(x$covpar)[N+1] <-
+    ##           colnames(x$par)[N+1] <- rownames(x$par)[N+1] <-
     ##             colnames(x$cov)[N+1] <- rownames(x$cov)[N+1] <- i
     ## myexpr <- paste("c(",i,"=expression(",i,"))", sep="\"")
     ## labels(x) <- (eval(parse(text=myexpr)))
@@ -103,4 +103,3 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
     index(x) <- reindex(x)
   return(x)
 }
-

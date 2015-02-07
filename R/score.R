@@ -6,29 +6,29 @@ function(x,...) UseMethod("score")
 
 ##' @export
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, weight2=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
-    
+
   cl <- match.call()
-  lname <- paste(model,"_score.lvm",sep="")
+  lname <- paste0(model,"_score.lvm")
   if (!exists(lname)) {
-    lname <- paste(model,"_gradient.lvm",sep="")
-    mygrad <- get(lname)    
+    lname <- paste0(model,"_gradient.lvm")
+    mygrad <- get(lname)
     scoreFun <- function(...) -mygrad(...)
     if (is.null(mygrad)) {
       stop("Missing gradient")
-    }      
+    }
   } else {
     scoreFun <- get(lname)
   }
-  
+
   if (missing(data) || is.null(data)) {
     cl[[1]] <- scoreFun
     score <- eval.parent(cl)
     return(rbind(score))
-  }    
-  
+  }
+
   if (is.null(index(x)$dA) | reindex)
     x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
-  
+
   xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
   xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),index(x)$manifest)
 
@@ -46,12 +46,12 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
       colpos <- lapply(xpos, function(y) ceiling(y/nrow))
       rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
       myfix <- list(var=xfix, col=colpos, row=rowpos)
-      for (i in 1:length(myfix$var))
-        for (j in 1:length(myfix$col[[i]])) {
+      for (i in seq_along(myfix$var))
+        for (j in seq_along(myfix$col[[i]])) {
           regfix(x0, from=vars(x0)[myfix$row[[i]][j]],to=vars(x0)[myfix$col[[i]][j]]) <-
             data[1,myfix$var[[i]]]
         }
-      index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)    
+      index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
     }
     pp <- modelPar(x0,p)
     ##p0 <- with(pp, c(meanpar,p,p2))
@@ -59,12 +59,12 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
 
     myfun <- function(ii) {
       if (length(xfix)>0)
-        for (i in 1:length(myfix$var)) {
+        for (i in seq_along(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
       return(scoreFun(x0,data=data[ii,], p=with(pp,c(meanpar,p,p2)),weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],model=model,debug=debug,indiv=indiv,...))
     }
-    score <- t(sapply(1:nrow(data),myfun))
+    score <- t(sapply(seq_len(nrow(data)),myfun))
     if (!indiv) {
       score <- colSums(rbind(score))
     }
@@ -82,7 +82,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weight=NULL, 
 }
 
 ###}}} score.lvm
-  
+
 ###{{{ score.lvm.missing
 
 ##' @export
@@ -97,11 +97,11 @@ score.lvm.missing <- function(x,
     S <- do.call("score",c(list(x=x$estimate$model0,p=p, model=estimator, weight=weight, indiv=indiv),dots))
     if (indiv & !list) {
         S0 <- matrix(ncol=length(p),nrow=length(x$order))
-        rownames(S0) <- 1:nrow(S0)
+        rownames(S0) <- seq_len(nrow(S0))
         myorder <- x$orderlist
         if (length(x$allmis)>0)
             myorder[[x$allmis]] <- NULL
-        for (i in 1:length(S))
+        for (i in seq_along(S))
             S0[myorder[[i]],] <- S[[i]]
         if (length(x$allmis)>0) {
             S0 <- S0[-x$orderlist[[x$allmis]],]
@@ -138,14 +138,14 @@ score.multigroup <- function(x,data=x$data,weight=NULL,weight2=NULL,p,indiv=comb
     S1[,parord[[i]]] <- S0
     S <- c(S, list(S1))
   }
-  if (combine) {      
+  if (combine) {
       S <- Reduce("rbind",S); S[is.na(S)] <- 0
       if (!indiv) S <- colSums(S)
       return(S)
   }
   if (indiv) return(S)
   res <- matrix(0,nrow=1,ncol=length(p))
-  for (i in 1:x$ngroup)
+  for (i in seq_len(x$ngroup))
     res[,parord[[i]]] <- res[,parord[[i]]]  + S[[i]][,parord[[i]]]
   return(as.vector(res))
 }

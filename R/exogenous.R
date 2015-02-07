@@ -25,12 +25,12 @@ function(x,...) UseMethod("exogenous")
       if (length(notexo.idx)>1) {
         covariance(x,notexo.idx,pairwise=TRUE,exo=TRUE) <- NA
       }
-      covariance(x,notexo.idx,vars(x),exo=TRUE) <- NA      
+      covariance(x,notexo.idx,vars(x),exo=TRUE) <- NA
       intercept(x,notexo.idx) <- x$mean[notexo.idx]
     }
   }
-##  x$exogenous <- value  
-  index(x) <- reindex(x)  
+##  x$exogenous <- value
+  index(x) <- reindex(x)
   return(x)
 }
 
@@ -46,7 +46,7 @@ function(x,latent=FALSE,index=TRUE,...) {
     M <- x$M
     res <- c()
     for (i in allvars)
-      if (!any(M[,i]==1) & any(M[i,]==1)) 
+      if (!any(M[,i]==1) & any(M[i,]==1))
         res <- c(res, i)
     return(res)
   }
@@ -69,7 +69,7 @@ function(x,...) {
 exogenous.list <- function(x,...) {
   exolist <- c()
   endolist <- c()
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     exolist <- c(exolist, exogenous(x[[i]]))
     endolist <- c(endolist, endogenous(x[[i]]))
   }
@@ -83,5 +83,3 @@ exogenous.list <- function(x,...) {
 function(x,...) {
   exogenous(Model(x))
 }
-
-

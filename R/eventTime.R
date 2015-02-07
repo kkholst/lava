@@ -1,33 +1,33 @@
 ##' Add an observed event time outcome to a latent variable model.
 ##'
 ##' For example, if the model 'm' includes latent event time variables
-##' are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored), 
-##' then one can specify 
+##' are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored),
+##' then one can specify
 ##'
 ##' \code{eventTime(object=m,formula=ObsTime~min(T1=a,T2=b,C=0,"ObsEvent"))}
 ##'
 ##' when data are simulated from the model
-##' one gets 2 new columns: 
+##' one gets 2 new columns:
 ##'
 ##' - "ObsTime": the smallest of T1, T2 and C
 ##' - "ObsEvent": 'a' if T1 is smallest, 'b' if T2 is smallest and '0' if C is smallest
 ##'
 ##' Note that "ObsEvent" and "ObsTime" are names specified by the user.
-##' 
+##'
 ##' @author Thomas A. Gerds
 ##' @keywords survival models regression
 ##' @examples
-##' 
+##'
 ##' # Right censored survival data without covariates
 ##' m0 <- lvm()
 ##' distribution(m0,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
 ##' distribution(m0,"censtime") <- coxExponential.lvm(rate=10)
 ##' m0 <- eventTime(m0,time~min(eventtime=1,censtime=0),"status")
 ##' sim(m0,10)
-##' 
+##'
 ##' # Alternative specification of the right censored survival outcome
 ##' ## eventTime(m,"Status") <- ~min(eventtime=1,censtime=0)
-##' 
+##'
 ##' # Cox regression:
 ##' # lava implements two different parametrizations of the same
 ##' # Weibull regression model. The first specifies
@@ -49,18 +49,18 @@
 ##'     d <- sim(m,1000)
 ##'     library(survival)
 ##'     coxph(Surv(time,status)~sex+sbp,data=d)
-##'     
+##'
 ##'     sr <- survreg(Surv(time,status)~sex+sbp,data=d)
 ##'     library(SurvRegCensCov)
 ##'     ConvertWeibull(sr)
 ##'
 ##' }
-##' 
+##'
 ##' # The second parametrization is an accelerated failure time
 ##' # regression model and uses the function weibull.lvm instead
-##' # of coxWeibull.lvm to specify the event time distributions. 
+##' # of coxWeibull.lvm to specify the event time distributions.
 ##' # Here is an example:
-##' 
+##'
 ##' ma <- lvm()
 ##' distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=0.7)
 ##' distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=0.7)
@@ -72,7 +72,7 @@
 ##' set.seed(17)
 ##' sim(ma,6)
 ##' # The regression coefficients of the AFT model
-##' # can be tranformed into log(hazard ratios): 
+##' # can be tranformed into log(hazard ratios):
 ##' #  coef.coxWeibull = - coef.weibull / shape.weibull
 ##' \dontrun{
 ##'     set.seed(17)
@@ -82,32 +82,32 @@
 ##'     coef(fa)
 ##'     c(0.7,-0.008)/0.7
 ##' }
-##' 
-##' 
-##' # The Weibull parameters are related as follows: 
+##'
+##'
+##' # The Weibull parameters are related as follows:
 ##' # shape.coxWeibull = 1/shape.weibull
 ##' # scale.coxWeibull = exp(-scale.weibull/shape.weibull)
 ##' # scale.AFT = log(scale.coxWeibull) / shape.coxWeibull
 ##' # Thus, the following are equivalent parametrizations
 ##' # which produce exactly the same random numbers:
-##' 
+##'
 ##' model.aft <- lvm()
 ##' distribution(model.aft,"eventtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
 ##' distribution(model.aft,"censtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
 ##' set.seed(17)
 ##' sim(model.aft,6)
-##' 
+##'
 ##' model.cox <- lvm()
 ##' distribution(model.cox,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
 ##' distribution(model.cox,"censtime") <- coxWeibull.lvm(scale=1/100,shape=2)
 ##' set.seed(17)
 ##' sim(model.cox,6)
-##' 
+##'
 ##' # The minimum of multiple latent times one of them still
 ##' # being a censoring time, yield
 ##' # right censored competing risks data
-##' 
-##' mc <- lvm() 
+##'
+##' mc <- lvm()
 ##' distribution(mc,~X2) <- binomial.lvm()
 ##' regression(mc) <- T1~f(X1,-.5)+f(X2,0.3)
 ##' regression(mc) <- T2~f(X2,0.6)
@@ -116,8 +116,8 @@
 ##' distribution(mc,~C) <- coxWeibull.lvm(scale=1/100)
 ##' mc <- eventTime(mc,time~min(T1=1,T2=2,C=0),"event")
 ##' sim(mc,6)
-##' 
-##' 
+##'
+##'
 ##' @export
 ##' @aliases eventTime<-
 ##' @param object Model object
@@ -155,7 +155,7 @@ eventTime <- function(object,formula,eventName,...) {
         }
     }
     events <- gsub(" ","",events)
-    suppressWarnings(eventnum <- as.numeric(events)) 
+    suppressWarnings(eventnum <- as.numeric(events))
     if (all(!is.na(eventnum))) {
         events <- eventnum
     } else {
@@ -164,7 +164,7 @@ eventTime <- function(object,formula,eventName,...) {
 
   addvar(object) <- timeName
   #distribution(object,timeName) <- NA
-  ## m <- regression(m,formula(paste("~",timeName,sep="")))
+  ## m <- regression(m,formula(paste0("~",timeName)))
   if (missing(eventName)) eventName <- "Event"
   eventTime <- list(names=c(timeName,eventName),
                     latentTimes=gsub(" ","",latentTimes),
@@ -197,7 +197,7 @@ plothook.eventHistory <- function(x,...) {
     x <- regression(x,to=f$names[1],from=f$latentTimes)
     latent(x) <- f$latentTimes
   }
-  timedep <- x$attributes$timedep  
+  timedep <- x$attributes$timedep
   for (i in seq_len(length(timedep))) {
       x <- regression(x,to=names(timedep)[i],from=timedep[[i]])
   }
@@ -225,16 +225,16 @@ print.eventHistory <- function(x,...) {
             col1 <- as.character(oneline)
             D <- attributes(distribution(x)[[y]])$family
             col2 <- "Normal"
-            if (!is.null(D$family)) col2 <- paste(D$family,sep="")
-            if (!is.null(D$link)) col2 <- paste(col2,"(",D$link,")",sep="")
-            if (!is.null(D$par)) col2 <- paste(col2,"(",paste(D$par,collapse=","),")",sep="")      
+            if (!is.null(D$family)) col2 <- paste0(D$family)
+            if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
+            if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
             R <- rbind(R,c(col1,"  ",col2))
         }
     }
     for (y in names(eh)) {
-        col1 <- paste(y, " = min(",paste(eh[[y]]$latentTimes,collapse=","),")",sep="")
+        col1 <- paste0(y, " = min(",paste(eh[[y]]$latentTimes,collapse=","),")")
         eh[[y]]$names[2]
-        col2 <- paste(eh[[y]]$names[2], " := {",paste(eh[[y]]$events,collapse=","),"}",sep="")
+        col2 <- paste0(eh[[y]]$names[2], " := {",paste(eh[[y]]$events,collapse=","),"}")
         R <- rbind(R,c(col1,"",col2))
     }
     rownames(R) <- rep("",nrow(R)); colnames(R) <- rep("",ncol(R))
@@ -260,7 +260,7 @@ simulate.eventHistory <- function(x,data,...){
                 eh$latentTimes[found==0],".")
       }
       else{
-        for (v in 1:length(eh$latentTimes)) {
+        for (v in seq_along(eh$latentTimes)) {
           if (v==1){ ## initialize with the first latent time and event
             eh.time <- data[,eh$latentTimes[v]]
             eh.event <- rep(eh$events[v],NROW(data))
@@ -283,25 +283,25 @@ simulate.eventHistory <- function(x,data,...){
 ##' @export
 coxWeibull.lvm <- function(scale=1/100,shape=2) {
     ## proportional hazard (Cox) parametrization.
-    ## 
+    ##
     ## Here we parametrize the Weibull distribution
-    ## (without covariates) as 
+    ## (without covariates) as
     ##
     ## hazard(t) = scale * shape * t^(shape-1)
     ##
     ## The linear predictor (LP) enters like this
-    ## 
+    ##
     ## hazard(t) = = scale * exp(LP) * shape * t^(shape-1)
     ##
-    ## Thus, we simulate 
+    ## Thus, we simulate
     ##
     ## T = (scale^{-1} * exp(-LP) * -log(U))^{shape-1})
-    ## 
+    ##
     ## The hazard is:
     ## - rising if shape > 1
     ## - declining if shape <1
     ## - constant if shape=1
-    ## 
+    ##
     ## scale = exp(b0+ b1*X)
     f <- function(n,mu,var,...) {
         (- log(runif(n)) / (scale * exp(mu)))^{1/shape}
@@ -314,7 +314,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 
 
 ##' Add time-varying covariate effects to model
-##' 
+##'
 ##' @title Time-dependent parameters
 ##' @param object Model
 ##' @param formula Formula with rhs specifying time-varying covariates
@@ -329,32 +329,32 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' 
+##'
 ##' ## Piecewise constant hazard
 ##' m <- lvm(y~1)
 ##' m <- timedep(m,y~1,timecut=c(0,5),rate=c(0.5,0.3))
-##' 
+##'
 ##' \dontrun{
 ##' d <- sim(m,1e4); d$status <- TRUE
 ##' dd <- mets::lifetable(Surv(y,status)~1,data=d,breaks=c(5));
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval, dd, family=poisson)))
 ##' }
-##' 
-##' 
+##'
+##'
 ##' ## Piecewise constant hazard and time-varying effect of z1
 ##' m <- lvm(y~1)
 ##' distribution(m,~z1) <- ones.lvm(0.5)
 ##' R <- log(cbind(c(0.2,0.7,0.9),c(0.5,0.3,0.3)))
 ##' m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
-##' 
+##'
 ##' \dontrun{
 ##' d <- sim(m,1e4); d$status <- TRUE
 ##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(3,5));
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
 ##' }
-##' 
-##' 
-##' 
+##'
+##'
+##'
 ##' ## Explicit simulation of time-varying effects
 ##' m <- lvm(y~1)
 ##' distribution(m,~z1) <- ones.lvm(0.5)
@@ -366,7 +366,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##' regression(m,m2 ~ z1,variance=0) <- log(0.3)
 ##' intercept(m,~m1+m2) <- c(-0.5,0)
 ##' m <- timedep(m,y~m1+m2,timecut=c(0,5))
-##' 
+##'
 ##' \dontrun{
 ##' d <- sim(m,1e5); d$status <- TRUE
 ##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(5))
@@ -400,7 +400,7 @@ coxExponential.lvm <- function(scale=1,rate,timecut){
         return(coxWeibull.lvm(shape=1,scale))
     }
     if (NROW(rate)>length(timecut))
-        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")    
+        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
     par <- paste(timecut,rate,sep=":")
     if (is.matrix(rate)) par <- "..."
     timecut <- c(timecut,Inf)
@@ -410,8 +410,8 @@ coxExponential.lvm <- function(scale=1,rate,timecut){
             ival <- numeric(n)
             if (is.matrix(rate)) {
                 mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
-                rate <- rep(1,length(timecut)-1)                
-            }   
+                rate <- rep(1,length(timecut)-1)
+            }
             for (i in seq(length(timecut)-1)) {
                 u <- -log(runif(n)) ##rexp(n,1)
                 if (NCOL(mu)>1) {
@@ -437,7 +437,7 @@ aalenExponential.lvm <- function(scale=1,rate,timecut=0){
     if (missing(timecut)==1) {
         return(coxWeibull.lvm(shape=1,scale))
     }
-    
+
     if (length(rate)>length(timecut))
         stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
     par <- paste(timecut,rate,sep=":")
@@ -449,7 +449,7 @@ aalenExponential.lvm <- function(scale=1,rate,timecut=0){
             ival <- numeric(n)
             if (is.matrix(rate)) {
                 mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
-                rate <- rep(1,length(timecut)-1)                
+                rate <- rep(1,length(timecut)-1)
             }
             for (i in seq(length(timecut)-1)) {
                 u <- -log(runif(n)) ##rexp(n,1)
@@ -478,6 +478,3 @@ coxGompertz.lvm <- function(shape=1,scale) {
   attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
   return(f)
 }
-
-
-

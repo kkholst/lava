@@ -1,7 +1,7 @@
 gfilter <- function(x,sigma=1) {
   gridfn <- function(fn,width,height,center=TRUE) {
-    jx <- (1:height)
-    jy <- (1:width)
+    jx <- seq_len(height)
+    jy <- seq_len(width)
     if (center) {
       jx <- jx/height-0.5
       jy <- jy/width-0.5
@@ -9,10 +9,10 @@ gfilter <- function(x,sigma=1) {
     outer(jx, jy, FUN=fn)
   }
   width <- ncol(x); height <- nrow(x)
-  oscunits <- gridfn(function(x,y) ((-1)^(x+y)),height=height,width=width,center=FALSE)  
+  oscunits <- gridfn(function(x,y) ((-1)^(x+y)),height=height,width=width,center=FALSE)
   x0 <- x*oscunits ## translate origo to center of image
-  X <- fft(x0)  
-  d <- gridfn(function(x,y) (x^2+y^2),height=height,width=width,center=TRUE)  
+  X <- fft(x0)
+  d <- gridfn(function(x,y) (x^2+y^2),height=height,width=width,center=TRUE)
   Gn <- exp(-2*(base::pi*sigma)^2*d) # frequency response
   H <- X*Gn
   res <- Re(fft(H,inverse=TRUE))/(width*height)*oscunits

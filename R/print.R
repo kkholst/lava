@@ -26,21 +26,21 @@ function(x, ...) {
         col2 <- x$attributes$type[y]
         if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
         if (!is.null(D$family)) {
-            col2 <- paste(D$family,sep="")            
-        }        
-        if (!is.null(D$link)) col2 <- paste(col2,"(",D$link,")",sep="")
-        if (!is.null(D$par)) col2 <- paste(col2,"(",paste(D$par,collapse=","),")",sep="")
-        
-        if (L[y]) col2 <- paste(col2,", latent",sep="")  
+            col2 <- paste0(D$family)
+        }
+        if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
+        if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
+
+        if (L[y]) col2 <- paste0(col2,", latent")
         R <- rbind(R,c(col1,col2))
       }
     }
-    if (length(R)>0) {        
+    if (length(R)>0) {
         rownames(R) <- paste(" ",R[,1]," "); colnames(R) <- rep("",ncol(R))
         print(R[,2,drop=FALSE],quote=FALSE,...)
     }
 
-##      oneline <- as.character(f); 
+##      oneline <- as.character(f);
 ##      cat(as.character(oneline),"\n")
 
   }
@@ -97,8 +97,8 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
         x$model$names <- x$model$mnames
     } else {
       groups <- seq_len(length(x$model$lvm))
-    }  
-  }  
+    }
+  }
   res <- coef(x,level=2,groups=groups,...)
   counter <- 0
   dots <- list(...)
@@ -109,7 +109,7 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
   }
   myargs <- c(list(x=x), dots)
   myargs$groups <- groups
-  CC <- do.call("CoefMat.multigroupfit",myargs)  
+  CC <- do.call("CoefMat.multigroupfit",myargs)
   for (cc in res) {
     counter <- counter+1
     cat(rep("_",52),"\n",sep="")
@@ -133,9 +133,9 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
 print.multigroup <- function(x,...) {
   cat("\n")
   cat("Number of groups:", x$ngroup, "\n")
-  cat("Number of free parameters (not counting mean-parameters):", x$npar,"\n")  
+  cat("Number of free parameters (not counting mean-parameters):", x$npar,"\n")
 ##  cat("Parameter-vector:", unlist(x$parlist), "\n\n")
-  cat("Number of free mean parameters:", length(grep("m",x$mean)),"\n")  
+  cat("Number of free mean parameters:", length(grep("m",x$mean)),"\n")
 ##  cat("Mean-vector:", x$mean, "\n\n")
   invisible(x)
 }

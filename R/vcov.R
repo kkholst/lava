@@ -16,4 +16,3 @@ vcov.multigroupfit <- function(object,...) {
   colnames(res) <- rownames(res) <- object$model$name
   return(res)
 }
-

@@ -1,5 +1,5 @@
 ##' @export
-predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object),...) { 
+predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object),...) {
   predict(Model(object),x=x,p=p,data=data,...)
 }
 
@@ -9,16 +9,16 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object)
 ##' @param object Model object
 ##' @param x optional list of (endogenous) variables to condition on
 ##' @param residual If true the residuals are predicted
-##' @param p Parameter vector 
+##' @param p Parameter vector
 ##' @param data Data to use in prediction
-##' @param path Path prediction 
+##' @param path Path prediction
 ##' @param quick If TRUE the conditional mean and variance given covariates are returned (and all other calculations skipped)
 ##' @param \dots Additional arguments to lower level function
 ##' @examples
 ##' m <- lvm(list(c(y1,y2,y3)~u,u~x)); latent(m) <- ~u
 ##' d <- sim(m,100)
 ##' e <- estimate(m,d)
-##' 
+##'
 ##' ## Conditional mean (and variance as attribute) given covariates
 ##' r <- predict(e)
 ##' ## Best linear unbiased predictor (BLUP)
@@ -29,10 +29,10 @@ predict.lvmfit <- function(object,x=NULL,data=model.frame(object),p=coef(object)
 ##' r <- predict(e,~y1+y2)
 ##' ##  Predicted residuals (conditional on all observed variables)
 ##' r <- predict(e,vars(e),residual=TRUE)
-##' 
+##'
 ##' @method predict lvm
 ##' @aliases predict.lvmfit
-##' @export 
+##' @export
 predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.null(x)&!(residual|path),...) {
   ## data = data.frame of exogenous variables
 
@@ -63,7 +63,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   X <- exogenous(object)
   Y <- setdiff(manifest(object), X)
   if (path) {
-    X <- colnames(data)    
+    X <- colnames(data)
     Y <- setdiff(Y,X)
     idx <- which(vars(object)%in%X)
     if (length(Y)==0) stop("New data set should only contain exogenous variables and a true subset of the endogenous variables for 'path' prediction.")
@@ -80,15 +80,15 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
     ##  X <- setdiff(manifest(object),Y)
   }
 
-  
+
   IAi <- m$IAi
-  P <- m$P  
+  P <- m$P
   X.idx <- match(X,manifest(object))
   eta.idx <- match(latent(object),vars(object))
   obs.idx <- match(manifest(object),vars(object))
   X.idx.all <- match(X, vars(object))
   Y.idx.all <- match(Y, vars(object))
-  
+
   ## Calculation of conditional variance given X=x
   P.x <- m$P; P.x[X.idx.all, X.idx.all] <- 0
   C.x <- (IAi%*% P.x %*%t(IAi))
@@ -137,7 +137,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
       x <- intersect(x,endogenous(object))
       if (is.null(y))
           y <- setdiff(vars(object),c(x,exogenous(object)))
-      
+
       E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
       if (residual) {
           Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
@@ -150,23 +150,23 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
           C.x[y,y,drop=FALSE]-C.x[y,x,drop=FALSE]%*%solve(C.x[x,x,drop=FALSE])%*%C.x[x,y,drop=FALSE]
       return(res)
   }
-  
+
   ys <- data[,Y,drop=FALSE]
-  ry <- t(ys)-Ey.x  
-  
+  ry <- t(ys)-Ey.x
+
   if (length(eta.idx)>0) {
     Ceta.x <- C.x[eta.idx,eta.idx]
     Lambda <- A[Y.idx.all,eta.idx,drop=FALSE] ##, ncol=length(eta.idx))
     Cetay.x <- Ceta.x%*%t(Lambda)
     KK <- Cetay.x %*% solve(Cy.x)
-    Eeta.y <- Eeta.x + KK %*% ry 
-    
+    Eeta.y <- Eeta.x + KK %*% ry
+
     Ceta.y <- Ceta.x - KK%*% t(Cetay.x)
   } else {
     Eeta.y <- NA
     Ceta.y <- NA
   }
-  
+
   Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
   Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
   if (length(eta.idx)>0)
@@ -176,15 +176,15 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   if (residual) {
     return(epsilonhat)
   }
-  
+
   mydata <- matrix(0,ncol=ncol(A),nrow=nrow(data)); colnames(mydata) <- vars(object)
   mydata[,manifest(object)] <- as.matrix(data[,manifest(object)])
   for (i in latent(object))
     mydata[,i] <- m$v[i]
-  
+
   Yhat <- t(mydata%*%t(A)) + (m$v)
   res <- cbind(t(Ey.x)) ## Conditional mean
-  
+
   attr(res, "cond.var") <- Cy.x
   attr(res, "blup") <- t(Eeta.y)
   attr(res, "var.blup") <- Ceta.y

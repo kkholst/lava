@@ -19,14 +19,14 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
   count <- 0
   curlab <- parlabels(x)
   coef(x)
-  for (i in 1:length(p)) {
+  for (i in seq_along(p)) {
     p0 <- p[[i]]
     if (attributes(p0)$type=="reg") {
       curfix <- RegFix$values[p0[2],p0[1]]
       curlab <- RegFix$labels[p0[2],p0[1]]
       if (all(is.na(c(curfix,curlab))) | overwrite) {
         count <- count+1
-##        st <- ifelse(missing(labels),paste("p",count,sep=""),labels[count])
+##        st <- ifelse(missing(labels),paste0("p",count),labels[count])
         st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[1]),labels[count])
         regfix(x,from=p0[2],to=p0[1]) <- st
       }
@@ -35,8 +35,8 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       curlab <- CovFix$labels[p0[2],p0[1]]
       if (all(is.na(c(curfix,curlab))) | overwrite) {
         count <- count+1
-##        st <- ifelse(missing(labels),paste("p",count,sep=""),labels[count])
-##        st <- paste("p",count,sep="")
+##        st <- ifelse(missing(labels),paste0("p",count),labels[count])
+##        st <- paste0("p",count)
         st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[2]),labels[count])
         covfix(x,p0[2],p0[1],exo=FALSE) <- st
       }
@@ -45,16 +45,16 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       if (length(curfix)>0)
       if (is.na(curfix) | overwrite) {
         count <- count+1
-        st <- ifelse(missing(labels),p0,labels[count]) 
-##        st <- ifelse(missing(labels),paste("m",count,sep=""),labels[count])
-        intfix(x,p0) <- st        
+        st <- ifelse(missing(labels),p0,labels[count])
+##        st <- ifelse(missing(labels),paste0("m",count),labels[count])
+        intfix(x,p0) <- st
       }
     }
   }
   if (index(x)$npar.ex>0) {
     x$exfix[is.na(x$exfix)] <- names(x$exfix)[is.na(x$exfix)]
     index(x) <- reindex(x)
-  } 
+  }
   return(x)
 }
 

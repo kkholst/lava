@@ -5,7 +5,7 @@ function(x,...) UseMethod("manifest")
 ##' @export
 `manifest.lvm` <-
 function(x,...) {
-  if (length(vars(x))>0) 
+  if (length(vars(x))>0)
     setdiff(vars(x),latent(x))
   else
     NULL
@@ -20,7 +20,7 @@ function(x,...) {
 ##' @export
 manifest.list <- function(x,...) {
   manifestlist <- c()
-  for (i in 1:length(x)) {
+  for (i in seq_along(x)) {
     manifestlist <- c(manifestlist, manifest(x[[i]]))
   }
   endolist <- unique(manifestlist)
@@ -32,4 +32,3 @@ manifest.list <- function(x,...) {
 function(x,...) {
   manifest(Model(x))
 }
-

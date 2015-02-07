@@ -3,7 +3,7 @@ subgraph <- function(g,from,to,Tree=new("graphNEL",node=c(to,from),edgemode="dir
     newnodes <- !(adjnodes %in% graph::nodes(Tree))
     if (length(adjnodes)==0)
         return(Tree)
-    for (v in adjnodes) {  
+    for (v in adjnodes) {
         if (v==to) {
             Tree <- graph::addEdge(from, v, Tree)
         }
@@ -17,4 +17,3 @@ subgraph <- function(g,from,to,Tree=new("graphNEL",node=c(to,from),edgemode="dir
     }
     return(Tree)
 }
-

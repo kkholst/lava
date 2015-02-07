@@ -40,7 +40,7 @@ the pop-up menu equivalent (usually second mouse button or
 }
 \examples{
 \donttest{
-n <- 10; x <- seq(1:n); y <- runif(n)
+n <- 10; x <- seq(n); y <- runif(n)
 plot(y ~ x); click(x,y)
 
 data(iris)

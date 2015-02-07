@@ -24,11 +24,11 @@ function(x, attr, var=NULL, val=TRUE,fun="nodeRenderInfo",debug=FALSE,...) {
       attrvar <- names(f[[attr]])[which(val==f[[attr]])]
     return(attrvar)
   }
-  if (is.character(val)) 
-    myexpr <- paste("list(",attr,"=c(", paste("\"",var,"\"=\"",val,"\"" , sep="", collapse=", "), "))", sep="")
+  if (is.character(val))
+    myexpr <- paste0("list(",attr,"=c(", paste0("\"",var,"\"=\"",val,"\"" , collapse=", "), "))")
   else
-    myexpr <- paste("list(",attr,"=c(", paste("\"",var,"\"=",val, sep="", collapse=", "), "))", sep="")
+    myexpr <- paste0("list(",attr,"=c(", paste0("\"",var,"\"=",val, collapse=", "), "))")
   Debug(list("str=",myexpr),debug)
-  eval(parse(text=paste(fun,"(x) <- ",myexpr,sep="")))
+  eval(parse(text=paste0(fun,"(x) <- ",myexpr)))
   return(x)
 }

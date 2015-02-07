@@ -6,11 +6,11 @@ function(x, silent=TRUE, debug=FALSE) {
   obs.idx <- match(manifest(x),vars(x))
   if (length(latent.idx)==0)
     return(NULL)
-  
+
   measurementmodels <- c()
-  for (i in 1:length(latent.idx)) {
+  for (i in seq_along(latent.idx)) {
     ii <- latent.idx[i]
-    
+
     relation <- M[obs.idx,ii]==1
     byNodes <- names(relation)[relation]
     newnodes <- c(latent(x)[i],byNodes)
@@ -21,6 +21,5 @@ function(x, silent=TRUE, debug=FALSE) {
     measurementmodels <- c(measurementmodels, list(lvm1))
   }
 
-  measurementmodels    
+  measurementmodels
 }
-

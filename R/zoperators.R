@@ -4,7 +4,7 @@
 ##' Concatenation operator
 ##' @aliases %+% %++%
 ##' @rdname op_concat
-##' @usage x \%+\% y
+##' @usage x \%++\% y
 ##' @title Concatenation operator
 ##' @param x First object
 ##' @param y Second object of same class
@@ -12,30 +12,30 @@
 ##' @keywords utilities misc
 ##' @seealso \code{blockdiag}, \code{\link{paste}}, \code{\link{cat}},
 ##' @examples
-##' matrix(rnorm(25),5)%+%matrix(rnorm(25),5)
-##' "Hello "%+%" World"
+##' matrix(rnorm(25),5)%++%matrix(rnorm(25),5)
+##' "Hello "%++%" World"
+##' @export
+`%++%` <- function(x,y) UseMethod("%++%",y)
+
 ##' @export
 `%+%` <- function(x,y) UseMethod("%+%",y)
 
 ##' @export
-`%++%` <- function(x,y) UseMethod("%+%",y)
+`%++%.default` <- function(x,y) x%++%y
 
 ##' @export
-`%++%.default` <- function(x,y) x%+%y
+`%++%.default` <- function(x,y) paste0(x,y)
 
 ##' @export
-`%+%.default` <- function(x,y) paste(x,y,sep="")
+`%++%.character` <- function(x,y) paste0(x,y)
 
 ##' @export
-`%+%.character` <- function(x,y) paste(x,y,sep="")
-
-##' @export
-`%+%.matrix` <- function(x,y) blockdiag(x,y)
+`%++%.matrix` <- function(x,y) blockdiag(x,y)
 
 
 notin <- Negate(get("%in%"))
 ##' Matching operator (x not in y) oposed to the \code{\%in\%}-operator (x in y)
-##' 
+##'
 ##' Matching operator
 ##' @rdname op_match
 ##' @aliases %ni%
@@ -47,7 +47,7 @@ notin <- Negate(get("%in%"))
 ##' @seealso \code{\link{match}}
 ##' @keywords utilities misc
 ##' @examples
-##' 
+##'
 ##' 1:10 %ni% c(1,5,10)
 ##'
 ##' @export
@@ -56,4 +56,3 @@ notin <- Negate(get("%in%"))
 ## function(x,y) {
 ##   is.na(match(x,y))
 ## }
-

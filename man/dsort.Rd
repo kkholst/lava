@@ -4,12 +4,14 @@
 \alias{dsort}
 \title{Sort data frame}
 \usage{
-dsort(data, ...)
+dsort(data, x, ...)
 }
 \arguments{
 \item{data}{Data frame}
 
-\item{...}{Arguments to order}
+\item{x}{variable to order by}
+
+\item{...}{additional variables to order by}
 }
 \value{
 data.frame

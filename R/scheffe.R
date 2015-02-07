@@ -24,11 +24,10 @@ scheffe <- function(model,newdata=model.frame(model),conf.level=0.95) {
     p <- model$rank
     alpha <- 1-conf.level
     ## Scheffe value uses 1-tailed F critical value
-    scheffe.crit <- sqrt(p*qf(1-alpha,p,df)) 
+    scheffe.crit <- sqrt(p*qf(1-alpha,p,df))
     ci <- predict(model,newdata,interval="confidence",level=conf.level)
     delta <- scheffe.crit/qt(1-alpha/2,df)
     ci[,2] <- ci[,1] -(ci[,1]-ci[,2])*delta
     ci[,3] <- ci[,1] +(ci[,3]-ci[,1])*delta
     return(ci)
 }
-
