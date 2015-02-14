@@ -4,7 +4,7 @@
 ##' then a data frame is returned with one row pr individual
 ##' observation.
 ##' @title Create a Data Frame from All Combinations of Factors
-##' @param x Data.frame
+##' @param `_data` Data.frame
 ##' @param ... vectors, factors or a list containing these
 ##' @author Klaus K. Holst
 ##' @export
@@ -14,24 +14,24 @@
 ##'
 ##' T <- with(warpbreaks, table(wool, tension))
 ##' Expand(T)
-Expand <- function(x,...) {
-    if (missing(x)) {
+Expand <- function(`_data`,...) {
+    if (missing(`_data`)) {
         return(expand.grid(...))
     }
-    if (inherits(x,"table")) {
-        M <- as.data.frame(x)
+    if (inherits(`_data`,"table")) {
+        M <- as.data.frame(`_data`)
         idx <- rep(seq(nrow(M)),M[,ncol(M)])
         return(M[idx,-ncol(M),drop=FALSE])
     }
-    if (!inherits(x,"data.frame")) {
-        return(expand.grid(x,...))
+    if (!inherits(`_data`,"data.frame")) {
+        return(expand.grid(`_data`,...))
     }
     dots <- list(...)
     nn <- names(dots)
     for (n in nn) {
         y <- dots[[n]]
-        if (is.factor(x[1,n])) {
-            dots[[n]] <- factor(y,levels=levels(x[1,n]))
+        if (is.factor(`_data`[1,n])) {
+            dots[[n]] <- factor(y,levels=levels(`_data`[1,n]))
         }
     }
     do.call("expand.grid",dots)

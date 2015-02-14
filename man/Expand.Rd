@@ -4,12 +4,12 @@
 \alias{Expand}
 \title{Create a Data Frame from All Combinations of Factors}
 \usage{
-Expand(x, ...)
+Expand(`_data`, ...)
 }
 \arguments{
-\item{x}{Data.frame}
-
 \item{...}{vectors, factors or a list containing these}
+
+\item{`_data`}{Data.frame}
 }
 \description{
 Create a Data Frame from All Combinations of Factors
