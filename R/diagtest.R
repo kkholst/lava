@@ -1,4 +1,11 @@
-##' @export
+##' Calculate prevalence, sensitivity, specificity, and positive and
+##' negative predictive values
+##' 
+##' @title Calculate diagnostic tests for 2x2 table
+##' @param table Table or (matrix/data.frame with two columns)
+##' @param positive Switch reference
+##' @param ... Additional arguments to lower level functions
+##' @author Klaus Holst
 diagtest <- function(table,positive=1,...) {
     if (!is.table(table) && (is.matrix(table) || is.data.frame(table))) {
         table <- base::table(table[,1],table[,2])

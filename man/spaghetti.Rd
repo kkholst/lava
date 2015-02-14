@@ -9,31 +9,31 @@ spaghetti(formula, data, id, type = "l", lty = 1, col = Col(1),
   trend.lwd = 3, xlab = "Time", ylab = "", ...)
 }
 \arguments{
-\item{formula}{}
+\item{formula}{Formula (response ~ time)}
 
-\item{data}{}
+\item{data}{data.frame}
 
-\item{id}{}
+\item{id}{Id variable}
 
-\item{type}{}
+\item{type}{Type (line 'l', stair 's', ...)}
 
-\item{lty}{}
+\item{lty}{Line type}
 
-\item{col}{}
+\item{col}{Colour}
 
-\item{trend}{}
+\item{trend}{Add trend line}
 
-\item{trend.col}{}
+\item{trend.col}{Colour of trend line}
 
-\item{trend.alpha}{}
+\item{trend.alpha}{Transparency}
 
-\item{trend.lwd}{}
+\item{trend.lwd}{Trend line width}
 
-\item{xlab}{}
+\item{xlab}{Label of X-axis}
 
-\item{ylab}{}
+\item{ylab}{Label of Y-axis}
 
-\item{...}{}
+\item{...}{Additional arguments to lower level arguments}
 }
 \description{
 Spaghetti plot for longitudinal data

@@ -1,19 +1,19 @@
 ##' Spaghetti plot for longitudinal data
 ##'
 ##' @title Spaghetti plot
-##' @param formula
-##' @param data
-##' @param id
-##' @param type
-##' @param lty
-##' @param col
-##' @param trend
-##' @param trend.col
-##' @param trend.alpha
-##' @param trend.lwd
-##' @param xlab
-##' @param ylab
-##' @param ...
+##' @param formula Formula (response ~ time) 
+##' @param data data.frame
+##' @param id Id variable 
+##' @param type Type (line 'l', stair 's', ...)
+##' @param lty Line type
+##' @param col Colour
+##' @param trend Add trend line
+##' @param trend.col Colour of trend line
+##' @param trend.alpha Transparency
+##' @param trend.lwd Trend line width
+##' @param xlab Label of X-axis
+##' @param ylab Label of Y-axis
+##' @param ... Additional arguments to lower level arguments
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples

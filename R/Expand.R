@@ -4,7 +4,7 @@
 ##' then a data frame is returned with one row pr individual
 ##' observation.
 ##' @title Create a Data Frame from All Combinations of Factors
-##' @param `_data` Data.frame
+##' @param _data Data.frame
 ##' @param ... vectors, factors or a list containing these
 ##' @author Klaus K. Holst
 ##' @export

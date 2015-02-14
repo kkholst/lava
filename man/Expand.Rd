@@ -7,9 +7,9 @@
 Expand(`_data`, ...)
 }
 \arguments{
-\item{...}{vectors, factors or a list containing these}
+\item{_data}{Data.frame}
 
-\item{`_data`}{Data.frame}
+\item{...}{vectors, factors or a list containing these}
 }
 \description{
 Create a Data Frame from All Combinations of Factors
