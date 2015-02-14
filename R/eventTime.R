@@ -126,6 +126,7 @@
 ##' @param \dots Additional arguments to lower levels functions
 eventTime <- function(object,formula,eventName,...) {
     if (missing(formula)) return(object$attributes$eventHistory)
+    if (inherits(eventName,"formula")) eventName <- all.vars(eventName)
     ff <- as.character(formula)
     timeName <- all.vars(update.formula(formula,"~1"))
     if (length(timeName)==0){
