@@ -14,7 +14,7 @@ Depends:
 Imports:
     numDeriv
 Suggests:
-    mets (>= 0.2.7),
+    mets (>= 1.0),
     graph,
     Rgraphviz,
     igraph (>= 0.6),
