@@ -200,14 +200,15 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (stack) {
             N <- nrow(iidtheta)
             clidx <- NULL
+            atr <- attributes(iidtheta)
+            atr$dimnames <- NULL
+            atr$dim <- NULL
             if (!lava.options()$cluster.index) {
                 iidtheta <- matrix(unlist(by(iidtheta,id,colSums)),byrow=TRUE,ncol=ncol(iidtheta))
+                attributes(iidtheta)[names(atr)] <- atr
                 idstack <- sort(unique(id))
             } else {
                 clidx <- mets::cluster.index(id,mat=iidtheta,return.all=TRUE)
-                atr <- attributes(iidtheta)
-                atr$dimnames <- NULL
-                atr$dim <- NULL
                 iidtheta <- clidx$X
                 attributes(iidtheta)[names(atr)] <- atr
                 idstack <- id[as.vector(clidx$firstclustid)+1]
