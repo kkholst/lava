@@ -131,7 +131,7 @@
     if (all(index(x)$A==0))
       dots$layoutType <- "circo"
 
-    g <- do.call("layoutGraph", dots)
+    g <- do.call(getFromNamespace("layoutGraph","Rgraphviz"), dots)
     ## Temporary work around:
     graph::nodeRenderInfo(g)$fill <- graph::nodeRenderInfo(dots$x)$fill
     graph::nodeRenderInfo(g)$col <- graph::nodeRenderInfo(dots$x)$col

@@ -161,16 +161,16 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
           || is.na(graph::edgeRenderInfo(g)[[f]][[estr]]))
         g <- addattr(g,f,var=estr,
                      val=x$graphdef[[f]],
-                     fun="edgeRenderInfo")
+                     fun="graph::edgeRenderInfo")
     }
 
     if (addstyle) {
-      g <- addattr(g,"lty",var=estr,val=lty,fun="edgeRenderInfo")
-      g <- addattr(g,"direction",var=estr,val=dir,fun="edgeRenderInfo")
-      g <- addattr(g,"dir",var=estr,val=dir,fun="edgeRenderInfo")
-      g <- addattr(g,"arrowhead",var=estr,val=arrowhead,fun="edgeRenderInfo")
-      g <- addattr(g,"arrowtail",var=estr,val=arrowtail,fun="edgeRenderInfo")
-      g <- addattr(g,attr="fontsize",var=estr,val=fontsize1,fun="edgeRenderInfo")
+      g <- addattr(g,"lty",var=estr,val=lty,fun="graph::edgeRenderInfo")
+      g <- addattr(g,"direction",var=estr,val=dir,fun="graph::edgeRenderInfo")
+      g <- addattr(g,"dir",var=estr,val=dir,fun="graph::edgeRenderInfo")
+      g <- addattr(g,"arrowhead",var=estr,val=arrowhead,fun="graph::edgeRenderInfo")
+      g <- addattr(g,"arrowtail",var=estr,val=arrowtail,fun="graph::edgeRenderInfo")
+      g <- addattr(g,attr="fontsize",var=estr,val=fontsize1,fun="graph::edgeRenderInfo")
     }
     if (is.null(graph::edgeRenderInfo(g)$label))
         graph::edgeRenderInfo(g)$label <- expression()
