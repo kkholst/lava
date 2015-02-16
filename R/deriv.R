@@ -35,7 +35,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
   if (zeroones | is.null(ii$dA)) {
     dimA <- length(ii$A)
     if (ii$sparse) { ## Not used yet...
-      if (!require("Matrix")) stop("package Matrix not available")
+      if (!requireNamespace("Matrix",quietly=TRUE)) stop("package Matrix not available")
       dP <- dA <- Matrix::Matrix(0, nrow=dimA, ncol=npar.total)
     } else {
       dP <- dA <- matrix(0, nrow=dimA, ncol=npar.total)
@@ -83,7 +83,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         if (!is.null(attributes(fval)$grad)) {
           Gr <- attributes(fval)$grad(unlist(vals))
         } else {
-            ## if (!require("numDeriv")) stop("numDeriv or analytical derivatives needed!")
+            ## if (!requireNamespace("numDeriv")) stop("numDeriv or analytical derivatives needed!")
           Gr <- as.numeric(numDeriv::jacobian(myc, unlist(vals)))
       }
         mat.idx <- mom$constrain.idx[[pp]]

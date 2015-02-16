@@ -18,7 +18,7 @@
 ##' @param latex LaTeX prefix (added to ATTR_LaTeX)
 ##' @author Klaus K. Holst
 org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {
-    if (!suppressPackageStartupMessages(require(ascii))) stop("ascii package required")
+    if (!requireNamespace("ascii",quietly=TRUE)) stop("ascii package required")
     dots <- list(...)
     if (tab) {
         if (!inherits(x,"table")) {
@@ -47,7 +47,7 @@ org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TR
         }
     }
     args <- c(list(x=x,include.rownames=include.rownames,include.colnames=include.colnames,header=header,frame=frame,type=type,rownames=rownames,colnames=colnames),dots)
-    x <- do.call("ascii",args)
+    x <- do.call(getFromNamespace("ascii","ascii"),args)
     if (print) {
         op <- options(asciiType=type)
         if (!missing(html))

@@ -552,7 +552,7 @@
   if (quick) return(list(opt=opt,vcov=NA))
 
   if (is.null(myGrad) | !XconstrStdOpt ) {
-    ## if (!require("numDeriv")) {
+    ## if (!requireNamespace("numDeriv")) {
     ##   opt$gradient <- naiveGrad(myObj, opt$estimate)
     ## } else {
       opt$gradient <- numDeriv::grad(myObj, opt$par, method=lava.options()$Dmethod)
@@ -568,7 +568,7 @@
     myInformation <- function(theta) information(x,p=theta)
   } else {
   if (is.null(myInformation)) {
-##     if (!require("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
+##     if (!requireNamespace("numDeriv")) stop("I do not know how to calculate the asymptotic variance of this estimator.
 ## For numerical approximation please install the library 'numDeriv'.")
     if (!is.null(myGrad) & XconstrStdOpt)
       myInformation <- function(theta) numDeriv::jacobian(myGrad, theta, method=lava.options()$Dmethod)

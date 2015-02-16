@@ -32,7 +32,7 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
   Debug(new)
   if (k>0) {
     if (lava.options()$sparse) {
-      require(Matrix)
+      requireNamespace("Matrix",quietly=TRUE)
       newNA <- newM <- Matrix::Matrix(0,k,k)
       newNAc <- newNA; diag(newNAc) <- NA
       newcov <- Matrix::Diagonal(k)

@@ -118,7 +118,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     }
 
     i <- 0
-    if (suppressPackageStartupMessages(require(foreach)) & lava.options()$parallel) {
+    if (requireNamespace("foreach",quietly=TRUE) & lava.options()$parallel) {
         res <- foreach::"%dopar%"(foreach::foreach (i=0:R),bootfun(i))
         ##      res <- mclapply(0:R,bootfun,mc.cores=)
     } else {

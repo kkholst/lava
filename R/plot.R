@@ -91,9 +91,9 @@
     x <- do.call(f, list(x=x,...))
   }
 
-  suppressWarnings(igraphit <- !Rgraphviz || !(require("graph")) || !(require("Rgraphviz")))
+  suppressWarnings(igraphit <- !Rgraphviz || !(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE)))
   if (igraphit) {
-    if (!require("igraph")) {
+    if (!requireNamespace("igraph",quietly=TRUE)) {
       message("package 'Rgraphviz' or 'igraph' not available")
       return(NULL)
     }
@@ -165,7 +165,7 @@
 `plot.lvmfit` <-
   function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,...) {
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
-    if (!require("graph")) {
+    if (!requireNamespace("graph",quietly=TRUE)) {
       plot(Model(x),...)
       return(invisible(x))
     }
@@ -232,7 +232,7 @@ plot.multigroupfit <- function(x,...) {
 
 ##' @export
 igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
-  require("igraph")
+  requireNamespace("igraph",quietly=TRUE)
   oC <- covariance(x)$rel
   for (i in seq_len(nrow(oC)-1))
     for (j in seq(i+1,nrow(oC))) {

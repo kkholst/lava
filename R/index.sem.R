@@ -263,7 +263,7 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
 
   if (zeroones) {
     if (sparse) {
-      if (!require("Matrix")) stop("package Matrix not available")
+      if (!requireNamespace("Matrix",quietly=TRUE)) stop("package Matrix not available")
       Ik <- Matrix::Diagonal(length(obs))
       Im <- Matrix::Diagonal(ncol(A))
       Kkk <- NULL
