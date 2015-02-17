@@ -39,8 +39,7 @@ spaghetti(formula, data, id, type = "l", lty = 1, col = Col(1),
 Spaghetti plot for longitudinal data
 }
 \examples{
-\dontrun{
-library(mets)
+if (interactive() & require(mets)) {
 K <- 5
 y <- "y"\%++\%seq(K)
 m <- lvm()

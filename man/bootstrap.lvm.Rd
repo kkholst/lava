@@ -58,9 +58,9 @@ Draws non-parametric bootstrap samples
 m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(y~x, d)
-\dontrun{
-B <- bootstrap(e,R=100)
-B
+\donttest{ ## Reduce Ex.Timings
+   B <- bootstrap(e,R=100)
+   B
 }
 }
 \author{

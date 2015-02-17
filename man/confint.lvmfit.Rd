@@ -55,7 +55,7 @@ d <- sim(m,100)
 e <- estimate(y~x, d)
 confint(e,3,profile=TRUE)
 confint(e,3)
-\dontrun{
+\donttest{ ## Reduce Ex.timings
 B <- bootstrap(e,R=100)
 B
 }

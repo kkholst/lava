@@ -36,7 +36,7 @@
 ##' @keywords hplot regression
 ##' @examples
 ##'
-##' \donttest{
+##' if (interactive()) {
 ##' m <- lvm(c(y1,y2) ~ eta)
 ##' regression(m) <- eta ~ z+x2
 ##' regression(m) <- c(eta,z) ~ x1
@@ -55,17 +55,13 @@
 ##' d <- sim(m,100)
 ##' e <- estimate(m,d)
 ##' plot(e)
-##' }
 ##'
-##' \donttest{
 ##' m <- lvm(c(y1,y2) ~ eta)
 ##' regression(m) <- eta ~ z+x2
 ##' regression(m) <- c(eta,z) ~ x1
 ##' latent(m) <- ~eta
 ##' plot(lava:::beautify(m,edgecol=FALSE))
 ##' }
-##'
-##'
 ##' @export
 ##' @method plot lvm
 `plot.lvm` <-

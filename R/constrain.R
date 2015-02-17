@@ -141,7 +141,7 @@ Range.lvm <- function(a=0,b=1) {
 ##'
 ##' ## Specify model and estimate parameters
 ##' constrain(m, mu ~ x + alpha + nu + gamma) <- function(x) x[4]*pnorm(x[3]+x[1]*x[2])
-##' \donttest{
+##' \donttest{ ## Reduce Ex.Timings
 ##' e <- estimate(m,d,control=list(trace=1,constrain=TRUE))
 ##' constraints(e,data=d)
 ##' ## Plot model-fit
@@ -163,14 +163,13 @@ Range.lvm <- function(a=0,b=1) {
 ##' constrain(m2,psi ~ beta2) <- function(x) x
 ##' ## Add parameter beta2 to model 2, now beta2 exists in both models
 ##' parameter(m2) <- ~ beta2
-##' \donttest{
 ##' ee <- estimate(list(m1,m2),list(d1,d2),control=list(method="NR"))
 ##' summary(ee)
 ##'
 ##' m3 <- lvm(y ~ f(x,beta)+f(z,beta2))
 ##' m4 <- lvm(y ~ f(x,beta2) + z)
 ##' e2 <- estimate(list(m3,m4),list(d1,d2),control=list(method="NR"))
-##' }
+##' e2
 ##' @export
 ##' @usage
 ##'

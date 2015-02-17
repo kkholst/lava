@@ -63,7 +63,7 @@ arrows)}
 Plot the path diagram of a SEM
 }
 \examples{
-\donttest{
+if (interactive()) {
 m <- lvm(c(y1,y2) ~ eta)
 regression(m) <- eta ~ z+x2
 regression(m) <- c(eta,z) ~ x1
@@ -82,9 +82,7 @@ plot(m,cex=1.5)
 d <- sim(m,100)
 e <- estimate(m,d)
 plot(e)
-}
 
-\donttest{
 m <- lvm(c(y1,y2) ~ eta)
 regression(m) <- eta ~ z+x2
 regression(m) <- c(eta,z) ~ x1

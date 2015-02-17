@@ -39,16 +39,16 @@ the pop-up menu equivalent (usually second mouse button or
 'Ctrl'-click) or the 'ESC' key.
 }
 \examples{
-\donttest{
-n <- 10; x <- seq(n); y <- runif(n)
-plot(y ~ x); click(x,y)
+if (interactive()) {
+    n <- 10; x <- seq(n); y <- runif(n)
+    plot(y ~ x); click(x,y)
 
-data(iris)
-l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
-res <- plotConf(l,var2="Species")## ylim=c(6,8), xlim=c(2.5,3.3))
-with(res, click(x,y))
+    data(iris)
+    l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
+    res <- plotConf(l,var2="Species")## ylim=c(6,8), xlim=c(2.5,3.3))
+    with(res, click(x,y))
 
-with(iris, idplot(Sepal.Length,Petal.Length))
+    with(iris, idplot(Sepal.Length,Petal.Length))
 }
 }
 \author{

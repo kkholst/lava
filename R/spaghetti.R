@@ -17,8 +17,7 @@
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' \dontrun{
-##' library(mets)
+##' if (interactive() & require(mets)) {
 ##' K <- 5
 ##' y <- "y"%++%seq(K)
 ##' m <- lvm()

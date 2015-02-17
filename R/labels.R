@@ -22,18 +22,18 @@
 ##'            arrowhead=c("tee","dot"),
 ##'            lwd=c(3,1)) <- expression(phi,rho)
 ##' edgelabels(m,c(v,x)~z, labcol="red", cex=0.8,arrowhead="none") <- 2
-##' \donttest{plot(m,addstyle=FALSE)}
-##'
+##' if (interactive()) {
+##'     plot(m,addstyle=FALSE)
+##' }
+##' 
 ##' m <- lvm(y~x)
 ##' labels(m) <- list(x="multiple\nlines")
-##' \donttest{
+##' if (interactive()) {
 ##' op <- par(mfrow=c(1,2))
 ##' plot(m,plain=TRUE)
 ##' plot(m)
 ##' par(op)
-##' }
-##'
-##' \donttest{
+##' 
 ##' d <- sim(m,100)
 ##' e <- estimate(m,d)
 ##' plot(e,type="sd")
