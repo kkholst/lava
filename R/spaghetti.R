@@ -39,6 +39,9 @@ spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,tren
         ord <- order(as.numeric(unlist(lapply(nn,function(x) gsub(vname,"",x)))))
         idx[ord]
     }
+    if (length(col)==nrow(data)) {
+        col <- with(data, fast.reshape(col,id=id))[,1]
+    }
     if (length(x)==0) {
         wide <- mets::fast.reshape(data,id=id,varying=y,...)
         yidx <- Idx(y,names(wide))

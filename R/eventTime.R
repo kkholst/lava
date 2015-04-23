@@ -337,7 +337,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##'
 ##' \dontrun{
 ##' d <- sim(m,1e4); d$status <- TRUE
-##' dd <- mets::lifetable(Surv(y,status)~1,data=d,breaks=c(5));
+##' dd <- mets::lifetable(Surv(y,status)~1,data=d,breaks=c(0,5,10));
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval, dd, family=poisson)))
 ##' }
 ##'
@@ -350,7 +350,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##'
 ##' \dontrun{
 ##' d <- sim(m,1e4); d$status <- TRUE
-##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(3,5));
+##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,3,5,Inf));
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
 ##' }
 ##'
@@ -370,7 +370,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##'
 ##' \dontrun{
 ##' d <- sim(m,1e5); d$status <- TRUE
-##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(5))
+##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,5,Inf))
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, family=poisson)))
 ##' }
 timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
@@ -387,7 +387,9 @@ timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
         object$attributes$timedep[[ff]] <- simvars
     }
     if (missing(rate)) rate <- rep(1,length(timecut))
+    
     args <- list(timecut=timecut,rate=rate,...)
+    covariance(object,ff) <- 1
     distribution(object,ff) <- do.call(type,args)
     return(object)
 }

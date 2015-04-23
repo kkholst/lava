@@ -33,7 +33,7 @@ m <- timedep(m,y~1,timecut=c(0,5),rate=c(0.5,0.3))
 
 \dontrun{
 d <- sim(m,1e4); d$status <- TRUE
-dd <- mets::lifetable(Surv(y,status)~1,data=d,breaks=c(5));
+dd <- mets::lifetable(Surv(y,status)~1,data=d,breaks=c(0,5,10));
 exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval, dd, family=poisson)))
 }
 
@@ -46,7 +46,7 @@ m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
 
 \dontrun{
 d <- sim(m,1e4); d$status <- TRUE
-dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(3,5));
+dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,3,5,Inf));
 exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
 }
 
@@ -66,7 +66,7 @@ m <- timedep(m,y~m1+m2,timecut=c(0,5))
 
 \dontrun{
 d <- sim(m,1e5); d$status <- TRUE
-dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(5))
+dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,5,Inf))
 exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, family=poisson)))
 }
 }

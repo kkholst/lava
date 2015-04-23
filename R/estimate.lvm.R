@@ -689,7 +689,13 @@
                       error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
   }
 
-  if (any(is.na(asVar))) {warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")                        }
+  if (any(is.na(asVar))) {
+      warning("Problems with asymptotic variance matrix. Possibly non-singular information matrix!")
+  }
+  if (!is.null(attributes(asVar)$pseudo) && attributes(asVar)$pseudo) {
+      warning("Near-singular covariance matrix, using pseudo-inverse!")
+  }
+  
   diag(asVar)[(diag(asVar)==0)] <- NA
 
   mycoef <- matrix(NA,nrow=nparall,ncol=4)
