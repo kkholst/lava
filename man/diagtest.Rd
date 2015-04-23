@@ -4,7 +4,7 @@
 \alias{diagtest}
 \title{Calculate diagnostic tests for 2x2 table}
 \usage{
-diagtest(table, positive = 1, ...)
+diagtest(table, positive = 2, ...)
 }
 \arguments{
 \item{table}{Table or (matrix/data.frame with two columns)}
