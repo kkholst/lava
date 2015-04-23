@@ -78,7 +78,7 @@ assign("options", list(
     eval.max=250,
     constrain=FALSE,
     silent=TRUE,
-    itol=0,##1e-9,
+    itol=1e-12,
     cluster.index=versioncheck("mets",c(0,2,7)),
     Dmethod="simple", ##Richardson"
     parallel=TRUE,
