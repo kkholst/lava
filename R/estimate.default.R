@@ -36,6 +36,8 @@ estimate.list <- function(x,...) {
 ##' @param df Degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function
 ##' @param labels (optional) names of coefficients
+##' @param label.width (optional) max width of labels
+##' @param only.coef if TRUE only the coefficient matrix is return
 ##' @export
 ##' @examples
 ##'
@@ -134,7 +136,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              keep,
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
-                             print=NULL,labels) {
+                             print=NULL,labels,label.width,
+                             only.coef=FALSE
+                             ) {
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
         pp <- coef
@@ -434,6 +438,11 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         colnames(res$vcov) <- rownames(res$vcov) <- labels
         rownames(res$coefmat) <- labels
     }
+    if (!missing(label.width)) {
+        rownames(res$coefmat) <- make.unique(unlist(lapply(rownames(res$coefmat),
+                                                           function(x) toString(x,width=label.width))))
+    }
+    if (only.coef) return(res$coefmat)
     return(res)
 }
 
