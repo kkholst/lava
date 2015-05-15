@@ -9,7 +9,8 @@
 \method{estimate}{default}(x = NULL, f = NULL, ..., data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
   iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
-  coef, robust = TRUE, df = NULL, print = NULL, labels)
+  coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
+  only.coef = FALSE)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -56,6 +57,10 @@ FALSE p-values for linear models are calculated from t-distribution}
 \item{print}{(optional) print function}
 
 \item{labels}{(optional) names of coefficients}
+
+\item{label.width}{(optional) max width of labels}
+
+\item{only.coef}{if TRUE only the coefficient matrix is return}
 }
 \description{
 Estimation of functional of parameters.

@@ -8,7 +8,7 @@
 \method{estimate}{lvm}(x, data = parent.frame(), estimator = "gaussian",
   control = list(), missing = FALSE, weight, weightname, weight2, cluster,
   fix, index = TRUE, graph = FALSE, silent = lava.options()$silent,
-  quick = FALSE, param, ...)
+  quick = FALSE, method, param, ...)
 }
 \arguments{
 \item{x}{\code{lvm}-object}
@@ -51,7 +51,11 @@ printed during estimation}
 \item{quick}{If TRUE the parameter estimates are calculated but all
 additional information such as standard errors are skipped}
 
+\item{method}{Optimization method}
+
 \item{param}{set parametrization (see \code{help(lava.options)})}
+
+\item{...}{}
 
 \item{\dots}{Additional arguments to be passed to the low level functions}
 }

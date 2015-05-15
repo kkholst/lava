@@ -2,9 +2,19 @@
 % Please edit documentation in R/fplot.R
 \name{fplot}
 \alias{fplot}
+\title{fplot
+Fast plotting via RGL
+
+Fast plotting via RGL}
 \usage{
-fplot(x, y, z = NULL, ..., z.col = topo.colors(64), data = parent.frame(),
-  add = FALSE)
+fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
+  data = parent.frame(), add = FALSE)
+}
+\description{
+fplot
+Fast plotting via RGL
+
+Fast plotting via RGL
 }
 \examples{
 if (interactive()) {

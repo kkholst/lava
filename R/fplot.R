@@ -1,3 +1,7 @@
+##' @title fplot
+##' Fast plotting via RGL
+##'
+##' Fast plotting via RGL
 ##' @export
 ##' @examples
 ##' if (interactive()) {

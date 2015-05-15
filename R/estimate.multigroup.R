@@ -600,7 +600,7 @@
 
 estimate.lvmlist <-
 function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
-  if (missing(data)) {
+  if (base::missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
   }
   nm <- length(x)
@@ -629,7 +629,7 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
       Xfix<-TRUE
     }
   }
-  if (missing(fix)) {
+  if (base::missing(fix)) {
     fix <- ifelse(Xfix,FALSE,TRUE)
   }
 
