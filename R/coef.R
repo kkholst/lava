@@ -2,146 +2,146 @@
 
 ##' @export
 `coef.lvm` <-
-function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
-  if (fix)
-    object <- fixsome(object,measurement.fix=FALSE)
-  if (!missing(p)) {
-    coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
-    rownames(coefs) <- c(coef(object,mean=TRUE,fix=FALSE)[c(seq_len(index(object)$npar.mean))],
-                         paste0("p",seq_len(index(object)$npar)),
-                               paste0("e",seq_len(index(object)$npar.ex)))
-    if (missing(vcov)) {
-      if (!missing(data) && !is.null(data)) {
-        I <- information(object,p=p,data=data,type="E")
-        myvcov <- solve(I)
-      } else {
-        myvcov <- matrix(NA,length(p),length(p))
-      }
-      object$vcov <- myvcov
-    } else object$vcov <- vcov
-    coefs[,2] <- sqrt(diag(object$vcov))
-    coefs[,3] <- coefs[,1]/coefs[,2]
-    coefs[,4] <-  2*(pnorm(abs(coefs[,3]),lower.tail=FALSE))
-    colnames(coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
-    object$coefficients <- coefs;
-    return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
-  }
-
-
-  ## Free regression/covariance parameters
-  AP <- matrices(object, paste0("p",seq_len(index(object)$npar)))
-  A <- AP$A; A[index(object)$M1==0] <- "0" ## Only free parameters
-  P <- AP$P; P[index(object)$P1==0] <- "0"; P[upper.tri(P)] <- "0"
-  nn <- vars(object)
-
-  counter <- 0
-  res <- c()
-  resname <- c()
-
-  ## if (DEBUG) {
-  ii <- which(t(A)!="0",arr.ind=TRUE)
-  rname <- paste(nn[ii[,1]],nn[ii[,2]],sep=symbol[1])
-  if (labels) {
-    rname2 <- t(regfix(Model(object))$labels)[ii]
-    rname[which(!is.na(rname2))] <- rname2[which(!is.na(rname2))]
-  }
-  res <- rname
-  resname <- c(resname,t(A)[ii])
-  ## } else
-  ## for (i in seq_len(ncol(A)))
-  ##   for (j in seq_len(nrow(A))) {
-  ##     val <- A[j,i]
-  ##     if (val!="0") {
-  ##       if (labels & !is.na(regfix(Model(object))$labels[j,i]))
-  ##         res <- c(res, regfix(Model(object))$labels[j,i])
-  ##       else
-  ##         res <- c(res, paste0(nn[i],symbol[1],nn[j]))
-  ##       counter <- counter+1
-  ##       resname <- c(resname, val)
-  ##     }
-  ##   }
-
- ## if (DEBUG) {
-  ii <- which(P!="0",arr.ind=TRUE)
-  if (length(symbol)<2)
-    rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=lava.options()$symbol[2])
-  else
-    rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=symbol[2])
-  if (labels) {
-    rname2 <- (covfix(Model(object))$labels)[ii]
-    rname[which(!is.na(rname2))] <- rname2[which(!is.na(rname2))]
-  }
-  res <- c(res,rname)
-  resname <- c(resname,P[ii])
-## } else
-##   for (i in seq_len(ncol(P)))
-##     for (j in seq(i,nrow(P)))
-##     {
-##       val <- P[j,i]
-##       if (val!="0") {
-##         counter <- counter+1
-##         if (length(symbol)<2) {
-##           if (nn[i]!=nn[j]) {
-##             part2 <- paste(nn[i],nn[j],sep=",")
-##           } else part2 <- nn[i]
-##         } else {
-##           part2 <- paste0(nn[i],symbol[2],nn[j])
-##         }
-##         if (labels & !is.na(covfix(Model(object))$labels[j,i]))
-##           res <- c(res, covfix(Model(object))$labels[j,i])
-##         else
-##           res <- c(res, part2)
-##         resname <- c(resname, val)
-##       }
-##     }
-
-  names(res) <- resname
-  resnum <- sapply(resname, function(s) as.numeric(substr(s,2,nchar(s))))
-  res <- res[order(resnum)]
-  if (mean) {
-   nmean <- sum(index(object)$v1==1)
-   if (nmean>0) {
-
-     if (!labels)
-       res <- c(vars(object)[index(object)$v1==1], res)
-     else {
-       mres <- c()
-       for (i in seq_len(length(index(object)$v1))) {
-       val <- index(object)$v1[i]
-       if (val==1) {
-         if (!is.na(intfix(Model(object))[[i]])) {
-           mres <- c(mres, intfix(Model(object))[[i]])
-         }
-         else
-           mres <- c(mres, vars(object)[i])
-       }
-     }
-       res <- c(mres,res)
-     }
-     names(res)[seq_len(nmean)] <- paste0("m",seq_len(nmean))
-   }
- }
-  if (!is.null(object$expar) && sum(index(object)$e1==1)>0) {
-    n2 <- names(object$expar)[index(object)$e1==1]
-    if (labels) {
-      count <- 0
-      for (i in seq_len(length(index(object)$e1))) {
-        if (index(object)$e1[i]==1) {
-          val <- object$exfix[[i]]
-          count <- count+1
-          if(!is.na(val)) n2[count] <- val
+    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
+        if (fix)
+            object <- fixsome(object,measurement.fix=FALSE)
+        if (!missing(p)) {
+            coefs <- matrix(NA,nrow=length(p),ncol=4); coefs[,1] <- p
+            rownames(coefs) <- c(coef(object,mean=TRUE,fix=FALSE)[c(seq_len(index(object)$npar.mean))],
+                                 {if (index(object)$npar>0) paste0("p",seq_len(index(object)$npar)) },
+                                 {if (index(object)$npar.ex>0) paste0("e",seq_len(index(object)$npar.ex))} )
+            if (missing(vcov)) {
+                if (!missing(data) && !is.null(data)) {
+                    I <- information(object,p=p,data=data,type="E")
+                    myvcov <- solve(I)
+                } else {
+                    myvcov <- matrix(NA,length(p),length(p))
+                }
+                object$vcov <- myvcov
+            } else object$vcov <- vcov
+            coefs[,2] <- sqrt(diag(object$vcov))
+            coefs[,3] <- coefs[,1]/coefs[,2]
+            coefs[,4] <-  2*(pnorm(abs(coefs[,3]),lower.tail=FALSE))
+            colnames(coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
+            object$coefficients <- coefs;
+            return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
         }
-      }
-    }
-    names(n2) <- paste0("e",seq_len(length(n2)))
-    res <- c(res,n2)
-  }
 
-  if (!silent) {
-    cat(paste(res, collapse="\n")); cat("\n")
-  }
-  res
-}
+
+        ## Free regression/covariance parameters
+        AP <- matrices(object, paste0("p",seq_len(index(object)$npar)))
+        A <- AP$A; A[index(object)$M1==0] <- "0" ## Only free parameters
+        P <- AP$P; P[index(object)$P1==0] <- "0"; P[upper.tri(P)] <- "0"
+        nn <- vars(object)
+
+        counter <- 0
+        res <- c()
+        resname <- c()
+
+        ## if (DEBUG) {
+        ii <- which(t(A)!="0",arr.ind=TRUE)
+        rname <- paste(nn[ii[,1]],nn[ii[,2]],sep=symbol[1])
+        if (labels) {
+            rname2 <- t(regfix(Model(object))$labels)[ii]
+            rname[which(!is.na(rname2))] <- rname2[which(!is.na(rname2))]
+        }
+        res <- rname
+        resname <- c(resname,t(A)[ii])
+        ## } else
+        ## for (i in seq_len(ncol(A)))
+        ##   for (j in seq_len(nrow(A))) {
+        ##     val <- A[j,i]
+        ##     if (val!="0") {
+        ##       if (labels & !is.na(regfix(Model(object))$labels[j,i]))
+        ##         res <- c(res, regfix(Model(object))$labels[j,i])
+        ##       else
+        ##         res <- c(res, paste0(nn[i],symbol[1],nn[j]))
+        ##       counter <- counter+1
+        ##       resname <- c(resname, val)
+        ##     }
+        ##   }
+
+        ## if (DEBUG) {
+        ii <- which(P!="0",arr.ind=TRUE)
+        if (length(symbol)<2)
+            rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=lava.options()$symbol[2])
+        else
+            rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=symbol[2])
+        if (labels) {
+            rname2 <- (covfix(Model(object))$labels)[ii]
+            rname[which(!is.na(rname2))] <- rname2[which(!is.na(rname2))]
+        }
+        res <- c(res,rname)
+        resname <- c(resname,P[ii])
+        ## } else
+        ##   for (i in seq_len(ncol(P)))
+        ##     for (j in seq(i,nrow(P)))
+        ##     {
+        ##       val <- P[j,i]
+        ##       if (val!="0") {
+        ##         counter <- counter+1
+        ##         if (length(symbol)<2) {
+        ##           if (nn[i]!=nn[j]) {
+        ##             part2 <- paste(nn[i],nn[j],sep=",")
+        ##           } else part2 <- nn[i]
+        ##         } else {
+        ##           part2 <- paste0(nn[i],symbol[2],nn[j])
+        ##         }
+        ##         if (labels & !is.na(covfix(Model(object))$labels[j,i]))
+        ##           res <- c(res, covfix(Model(object))$labels[j,i])
+        ##         else
+        ##           res <- c(res, part2)
+        ##         resname <- c(resname, val)
+        ##       }
+        ##     }
+
+        names(res) <- resname
+        resnum <- sapply(resname, function(s) as.numeric(substr(s,2,nchar(s))))
+        res <- res[order(resnum)]
+        if (mean) {
+            nmean <- sum(index(object)$v1==1)
+            if (nmean>0) {
+
+                if (!labels)
+                    res <- c(vars(object)[index(object)$v1==1], res)
+                else {
+                    mres <- c()
+                    for (i in seq_len(length(index(object)$v1))) {
+                        val <- index(object)$v1[i]
+                        if (val==1) {
+                            if (!is.na(intfix(Model(object))[[i]])) {
+                                mres <- c(mres, intfix(Model(object))[[i]])
+                            }
+                            else
+                                mres <- c(mres, vars(object)[i])
+                        }
+                    }
+                    res <- c(mres,res)
+                }
+                names(res)[seq_len(nmean)] <- paste0("m",seq_len(nmean))
+            }
+        }
+        if (!is.null(object$expar) && sum(index(object)$e1==1)>0) {
+            n2 <- names(object$expar)[index(object)$e1==1]
+            if (labels) {
+                count <- 0
+                for (i in seq_len(length(index(object)$e1))) {
+                    if (index(object)$e1[i]==1) {
+                        val <- object$exfix[[i]]
+                        count <- count+1
+                        if(!is.na(val)) n2[count] <- val
+                    }
+                }
+            }
+            names(n2) <- paste0("e",seq_len(length(n2)))
+            res <- c(res,n2)
+        }
+
+        if (!silent) {
+            cat(paste(res, collapse="\n")); cat("\n")
+        }
+        res
+    }
 
 ###}}}
 
@@ -220,7 +220,7 @@ function(object, level=ifelse(missing(type),-1,2),
     }
   }
   myparnames <- paste0("p",seq_len(npar+npar.ex))[myorder.reg]
-
+    
   p <- matrices(Model(object), myparnames)
   A <- p$A
   P <- p$P
@@ -694,8 +694,8 @@ CoefMat <- function(x,
       newname <- rownames(cc)[i]
       res <- rbind(res,c(paste("  ",newname),newrow))
     }
-  }
-   res0 <- res[,-1]
+}
+  res0 <- res[,-1]
   rownames(res0) <- format(res[,1],justify="left")
   res0
 }
