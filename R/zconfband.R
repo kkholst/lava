@@ -65,10 +65,13 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
         return(invisible(NULL))
     }
     if (vert) {
+        lower <- lower[length(x)]
+        upper <- upper[length(x)]
+        center <- center[length(x)]
         if (line && !missing(lower) && !missing(upper))
-            segments(x,lower,x,upper,...)
+            segments(x,lower[length(x)],x,upper[length(upper)],...)
         if (!missing(lower))
-            segments(x-delta,lower,x+delta,lower,...)
+            segments(x-delta,lower[length(upper)],x+delta,lower,...)
         if (!missing(upper))
             segments(x-delta,upper,x+delta,upper,...)
         if (!is.null(center)) {
@@ -94,7 +97,7 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
                 points(center,x,pch=16,col="white")
             points(center,x,pch=pch,...)
         } else {
-            segments(center,x-centermark,center,x+centermark,...)
+            ##segments(center,x-centermark,center,x+centermark,...)
         }
     }
     if (missing(lower)) lower <- NULL

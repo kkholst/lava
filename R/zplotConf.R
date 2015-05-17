@@ -82,6 +82,7 @@ plotConf <- function(model,
                      vcov,
                      predictfun,
                      plot=TRUE,
+                     new=TRUE,
                      ...) {
 
 
@@ -246,11 +247,13 @@ plotConf <- function(model,
     if (!plot) return(list(x=x, y=pr, predict=ci.all, predict.newdata=newdata))
 
     plot.list <- c(x=0,y=0,type="n",dots)
-    do.call(graphics::plot, plot.list)
-    if (is.null(var1)) {
-        box()
-        axis(2)
-        axis(1,at=seq(length(thelevels)),labels)
+    if (new) {
+        do.call(graphics::plot, plot.list)
+        if (is.null(var1)) {
+            box()
+            axis(2)
+            axis(1,at=seq(length(thelevels)),labels)
+        }
     }
 
     col.trans <- Col(col,alpha)
