@@ -55,9 +55,7 @@ additional information such as standard errors are skipped}
 
 \item{param}{set parametrization (see \code{help(lava.options)})}
 
-\item{...}{}
-
-\item{\dots}{Additional arguments to be passed to the low level functions}
+\item{...}{Additional arguments to be passed to the low level functions}
 }
 \value{
 A \code{lvmfit}-object.

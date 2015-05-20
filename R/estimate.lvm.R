@@ -67,8 +67,7 @@
 ##' additional information such as standard errors are skipped
 ##' @param method Optimization method
 ##' @param param set parametrization (see \code{help(lava.options)})
-##' @param ... 
-##' @param \dots Additional arguments to be passed to the low level functions
+##' @param ... Additional arguments to be passed to the low level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
 ##' @seealso \code{score}, \code{information}, ...

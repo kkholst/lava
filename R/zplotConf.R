@@ -30,6 +30,7 @@
 ##' @param vcov Optional variance estimates
 ##' @param predictfun Optional predict-function used to calculate confidence limits and predictions
 ##' @param plot If FALSE return only predictions and confidence bands
+##' @param new If FALSE add to current plot
 ##' @param \dots additional arguments to lower level functions
 ##' @return list with following members:
 ##' \item{x}{Variable on the x-axis (\code{var1})}
