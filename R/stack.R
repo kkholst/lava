@@ -68,16 +68,26 @@ stack.glm <- function(x,model2,...) {
 ##' regression(m) <- z~u2+u+v+uv+x
 ##' set.seed(1)
 ##' d <- sim(m,1000,p=c("u,u"=1))
-##'
+##' 
 ##' ## Stage 1
 ##' m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,c(y3[0:s],y4[0:s],y5[0:s])~1*v,u~b*x,u~~v)
 ##' latent(m1) <- ~u+v
 ##' e1 <- estimate(m1,d)
-##'
+##' 
 ##' pp <- function(mu,var,data,...) {
 ##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 ##' }
-##' (e <- measurement.error(e1, z~1+x, data=d,predictfun=pp)[[1]])
+##' (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+##' 
+##' ## uu <- seq(-1,1,length.out=100)
+##' ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
+##' if (interactive()) {
+##'     plot(e,intercept=TRUE,vline=0)
+##' 
+##'     f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
+##'     u <- seq(-1,1,length.out=100)
+##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
+##' }
 measurement.error <- function(model1, formula, data=parent.frame(), predictfun=function(mu,var,data,...) mu[,1]^2+var[1], id1, id2, ...) {
     if (!inherits(model1,c("lvmfit","lvm.mixture"))) stop("Expected lava object ('lvmfit','lvm.mixture',...)")
     if (missing(formula)) stop("formula needed for stage two (right-hand side additional covariates)")
@@ -105,5 +115,34 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
     }
     Ia <- -numDeriv::jacobian(function(p) U(p),p1)
     stacked <- stack(e1,e2,Ia)
-    list(estimate=stacked, naive=e2, lm=coef(summary(stage.two)))
+    res <- c(stacked,list(naive=e2,lm=coef(summary(stage.two)),fun=predictfun))
+    ## res <- list(estimate=stacked, naive=e2, lm=coef(summary(stage.two)),
+    ##             fun=predictfun)
+    structure(res,class=c("measurement.error","estimate"))
 }
+
+
+##' @export
+plot.estimate <- function(x,f,idx,intercept=FALSE,data,type="l",xlab="x",ylab="f(x)",col=1,...) {
+    if (!missing(f)) {
+        data <- as.list(data)
+        env <- new.env()
+        for (y in names(data)) {
+            assign(y,data[[y]],env)
+        }
+        environment(f) <- env
+        pp <- estimate(e,f)$coefmat
+        plot(data[[1]],pp[,1],xlab=xlab,ylab=ylab,type=type,...)
+        confband(data[[1]],pp[,3],pp[,4],polygon=TRUE,col=Col(col),lty=0)
+        return(invisible(pp))
+    }
+    pp <- x$coefmat[,c(1,3,4),drop=FALSE]    
+    if (!missing(idx)) pp <- pp[idx,,drop=FALSE]
+    if (!intercept) {
+        idx <- match("(Intercept)",rownames(pp))
+        if (length(idx)>0) pp <- pp[-idx,,drop=FALSE]
+    }    
+    forestplot(pp[rev(seq(nrow(pp))),,drop=FALSE],...)
+}
+
+
