@@ -31,7 +31,4 @@
 \description{
 Stack estimating equations
 }
-\examples{
-2+2
-}
 

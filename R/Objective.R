@@ -179,7 +179,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   myy <- index(x)$endogenous
   myx <- index(x)$exogenous
   mynx <- setdiff(myvars,myx)
-  W0 <- diag(length(myy))
+  W0 <- diag(nrow=length(myy))
   widx <- match(colnames(weight),myy)
   pp <- modelPar(x,p)
   mp <- moments(x,p=p,conditional=TRUE,data=data[1,])
@@ -200,7 +200,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
                                   - iC %*% tcrossprod(u)
                                   %*% iC)%*%W)) %*% D$dS)
     return(-score)
-  }
+}
   score0 <- -0.5*as.vector(iC)%*%D$dS
   Gdv <- mp$G%*%D$dv
   for (i in seq_len(NROW(data))) {

@@ -190,7 +190,6 @@
         }
         Debug(list("start=",optim$start))
 
-
         if (!missing & (is.matrix(data) | is.data.frame(data))) {
             includelist <- c(manifest(x),xfix)
             if (!base::missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
@@ -212,7 +211,6 @@
                 }
             }
             weight <- cbind(weight)
-
         } else {
             weight <- NULL
         }
@@ -445,10 +443,9 @@
                         }
                     if (is.list(weight2)) {
                         res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2[ii,]))
-                    } else
-                        {
-                            res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
-                        }
+                    } else {
+                        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
+                    }
                     return(res)
                 }
                 sum(sapply(seq_len(nrow(data)),myfun))
