@@ -6,7 +6,7 @@
     transform(`_data`,formula,value,...)
 }
 
-
+##' @export
 "transform.lvm" <- function(`_data`,formula,fun,post=TRUE,y,x,...) {
     if (!missing(y) && !missing(x)) {
         xx <- x

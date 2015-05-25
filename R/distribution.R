@@ -36,7 +36,7 @@
           ##     do.call(value,args)
           ## }
       }
-##      if (length(variable)>1)
+      ##      if (length(variable)>1)
           {
           gen <- list(gen)
       }
@@ -110,7 +110,11 @@
 }
 
 ##' @export
-"distribution.lvm" <- function(x,var,multivariate=FALSE,...) {
+"distribution.lvm" <- function(x,var,value,multivariate=FALSE,...) {
+    if (!missing(value)) {
+        distribution(x,var,...) <- value
+        return(x)
+    }
     if (multivariate) return(x$attributes$mdistribution)
   x$attributes$distribution[var]
 }
