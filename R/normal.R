@@ -7,9 +7,16 @@ rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(length(mean))*.5+.5,...) {
 }
 
 ##' @export
-dmvn <- function(x,mean=rep(0,ncol(sigma)),sigma,log=FALSE,...) {
+dmvn <- function(x,mean,sigma,log=FALSE,...) {
     k <- ncol(sigma)
     isigma <- Inverse(sigma)
+    if (!missing(mean)) {
+        if (NROW(mean)==nrow(x) && NCOL(mean)==ncol(x)) {
+            x <- x-mean
+        } else {
+            x <- t(t(x)-mean)
+        }
+    }    
     logval <- -0.5*(base::log(2*base::pi)*k+base::log(attributes(isigma)$det)+rowSums((x%*%isigma)*x))
     if (log) return(logval)
     return(exp(logval))

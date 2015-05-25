@@ -32,7 +32,6 @@ parsedesign <- function(coef,x,...) {
     res
 }
 
-
 ###}}}
 
 ###{{{ contr
