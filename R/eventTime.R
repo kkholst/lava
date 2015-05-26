@@ -394,6 +394,10 @@ timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
     return(object)
 }
 
+##' @export
+"timedep<-" <- function(object,...,value) {
+    timedep(object,value,...)
+}
 
 ##' @export
 coxExponential.lvm <- function(scale=1,rate,timecut){
