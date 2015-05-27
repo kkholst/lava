@@ -328,6 +328,7 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 ##' @param type Type of model (default piecewise constant intensity)
 ##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
+##' @aliases timedep timedep<-
 ##' @export
 ##' @examples
 ##'

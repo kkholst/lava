@@ -77,7 +77,7 @@
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-##' silent = lava.options()$silent, additive=TRUE, y, x, ...)
+##' silent = lava.options()$silent, additive=TRUE, y, x, value, ...)
 ##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.

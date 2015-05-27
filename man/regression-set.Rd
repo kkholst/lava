@@ -12,7 +12,7 @@
 \title{Add regression association to latent variable model}
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-silent = lava.options()$silent, additive=TRUE, y, x, ...)
+silent = lava.options()$silent, additive=TRUE, y, x, value, ...)
 \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 }
 \arguments{

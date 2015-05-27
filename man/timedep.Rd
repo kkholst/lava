@@ -2,6 +2,7 @@
 % Please edit documentation in R/eventTime.R
 \name{timedep}
 \alias{timedep}
+\alias{timedep<-}
 \title{Time-dependent parameters}
 \usage{
 timedep(object, formula, rate, timecut, type = "coxExponential.lvm", ...)

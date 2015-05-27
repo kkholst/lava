@@ -3,18 +3,37 @@
 \name{fplot}
 \alias{fplot}
 \title{fplot
-Fast plotting via RGL
+Faster plot via RGL
 
-Fast plotting via RGL}
+Faster plot via RGL}
 \usage{
 fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
   data = parent.frame(), add = FALSE)
 }
+\arguments{
+\item{x}{X variable}
+
+\item{y}{Y variable}
+
+\item{z}{Z variable (optional)}
+
+\item{xlab}{x-axis label}
+
+\item{ylab}{y-axis label}
+
+\item{...}{additional arggument to lower level plot functions}
+
+\item{z.col}{Color}
+
+\item{data}{data.frame}
+
+\item{add}{If TRUE use current active device}
+}
 \description{
 fplot
-Fast plotting via RGL
+Faster plot via RGL
 
-Fast plotting via RGL
+Faster plot via RGL
 }
 \examples{
 if (interactive()) {
