@@ -1,5 +1,5 @@
 Estimation and simulation of latent variable models
-  
+
 ** Installation
 #+BEGIN_SRC R :exports both :eval never
 install.packages("lava",dependencies=TRUE)
@@ -54,71 +54,114 @@ To cite that =lava= package please use the following reference
 
 ** Examples
 
-#+BEGIN_SRC R :exports both :file lava1.png
-  ## Specify structurual equation models with two factors
+Specify structurual equation models with two factors
+#+BEGIN_SRC R :exports both :results output graphics :file inst/lava1.png  
   m <- lvm()
   regression(m) <- c(y1,y2,y3) ~ eta1
   regression(m) <- c(z1,z2,z3) ~ eta2
   latent(m) <- ~eta1+eta2
   regression(m) <- eta2~eta1+x
   regression(m) <- eta1~x
-  
+
   labels(m) <- c(eta1=expression(eta[1]),eta2=expression(eta[2]))
   plot(m)
 #+END_SRC
 
+#+RESULTS:
 :RESULTS:
-[[file:examples/lava1.png]]
+[[file:inst/lava1.png]]
 :END:
 
+Simulation
 #+BEGIN_SRC R :exports both :wrap example
-  ## Simulation
   set.seed(1)
   d <- sim(m,100)
-  ## Estimation
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_example
+#+END_example
+
+Estimation
+#+BEGIN_SRC R :exports both :wrap example
   e <- estimate(m,d)
   e
 #+END_SRC
 
+#+RESULTS:
 #+BEGIN_example
                     Estimate Std. Error  Z-value   P-value
 Measurements:                                             
-   y2<-eta1          0.95462    0.08115 11.76402    <1e-12
-   y3<-eta1          0.98476    0.08956 10.99505    <1e-12
-    z2<-eta2         0.97038    0.05390 18.00340    <1e-12
-    z3<-eta2         0.95608    0.05666 16.87367    <1e-12
+   y2~eta1           0.95462    0.08083 11.80993    <1e-12
+   y3~eta1           0.98476    0.08922 11.03722    <1e-12
+    z2~eta2          0.97038    0.05368 18.07714    <1e-12
+    z3~eta2          0.95608    0.05643 16.94182    <1e-12
 Regressions:                                              
-   eta1<-x           1.24587    0.11541 10.79492    <1e-12
-    eta2<-eta1       0.95607    0.18015  5.30712 1.114e-07
-    eta2<-x          1.11495    0.25263  4.41333 1.018e-05
+   eta1~x            1.24587    0.11486 10.84694    <1e-12
+    eta2~eta1        0.95608    0.18008  5.30910 1.102e-07
+    eta2~x           1.11495    0.25228  4.41951 9.893e-06
 Intercepts:                                               
-   y2               -0.13896    0.12459 -1.11532    0.2647
-   y3               -0.07661    0.13870 -0.55239    0.5807
+   y2               -0.13896    0.12458 -1.11537    0.2647
+   y3               -0.07661    0.13869 -0.55241    0.5807
    eta1              0.15801    0.12780  1.23644    0.2163
    z2               -0.00441    0.14858 -0.02969    0.9763
    z3               -0.15900    0.15731 -1.01076    0.3121
-   eta2             -0.14143    0.18380 -0.76948    0.4416
+   eta2             -0.14143    0.18380 -0.76949    0.4416
 Residual Variances:                                       
-   y1                0.69684    0.14862  4.68885          
-   y2                0.89804    0.16632  5.39933          
-   y3                1.22456    0.21185  5.78037          
-   eta1              0.93620    0.19636  4.76773          
-   z1                1.41423    0.26262  5.38514          
-   z2                0.87568    0.19466  4.49852          
-   z3                1.18155    0.22643  5.21822          
-   eta2              1.24430    0.29003  4.29032
+   y1                0.69684    0.14858  4.69004          
+   y2                0.89804    0.16630  5.40026          
+   y3                1.22456    0.21182  5.78109          
+   eta1              0.93620    0.19623  4.77084          
+   z1                1.41422    0.26259  5.38570          
+   z2                0.87569    0.19463  4.49934          
+   z3                1.18155    0.22640  5.21883          
+   eta2              1.24430    0.28992  4.29195
 #+END_example
 
-#+BEGIN_SRC R :exports both :file gof1.png
-  ## Assessing goodness-of-fit (linearity between eta2 and eta1)
+Assessing goodness-of-fit (linearity between eta2 and eta1)
+#+BEGIN_SRC R :exports both :results output graphics :file inst/gof1.png  
   library(gof)
   g <- cumres(e,eta2~eta1)
   plot(g)
 #+END_SRC
 
+#+RESULTS:
 :RESULTS:
-[[file:examples/gof1.png]]
+[[file:inst/gof1.png]]
 :END:
+
+Non-linear measurement error model 
+#+BEGIN_SRC R :exports both :wrap example
+
+  m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*eta, eta~x) 
+  e1 <- estimate(m1,d)
+
+  pp <- function(mu,var,data,...) cbind(eta=mu[,"eta"],eta2=mu[,"eta"]^2+var["eta","eta"])
+  ee <- measurement.error(e1, z1~1+x, data=d, predictfun=pp)
+  ee
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_example
+             Estimate Std.Err   2.5% 97.5%  P-value
+(Intercept)  0.000138  0.2212 -0.433 0.434 1.00e+00
+x            0.854841  0.3348  0.199 1.511 1.07e-02
+eta          1.148610  0.2221  0.713 1.584 2.31e-07
+eta2        -0.032049  0.0485 -0.127 0.063 5.09e-01
+#+END_example
+
+#+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png  
+  f <- function(p) p[1]+p["eta"]*eta+p["eta2"]*eta^2
+  eta <- seq(-1,1,length.out=100)
+  plot(ee, f, data=data.frame(eta))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+[[file:inst/me1.png]]
+:END:
+
+
 
 * COMMENT Setup
 
@@ -126,7 +169,7 @@ Residual Variances:
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
 #+PROPERTY: cache no
-#+PROPERTY: results output graphics wrap 
+#+PROPERTY: results output wrap 
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
 #+OPTIONS: timestamp:t author:nil creator:nil
