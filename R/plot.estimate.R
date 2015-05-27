@@ -8,7 +8,7 @@ plot.estimate <- function(x,f,idx,intercept=FALSE,data,type="l",xlab="x",ylab="f
             assign(y,data[[y]],env)
         }
         environment(f) <- env
-        pp <- estimate(e,f,...)$coefmat
+        pp <- estimate(x,f,...)$coefmat
         if (!add) suppressWarnings(plot(data[[1]],pp[,1],xlab=xlab,ylab=ylab,type=type,...))
         else lines(data[[1]],pp[,1],xlab=xlab,ylab=ylab,type=type,...)
         confband(data[[1]],pp[,3],pp[,4],polygon=TRUE,col=Col(col),lty=0)

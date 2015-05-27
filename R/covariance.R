@@ -192,13 +192,18 @@
 
 ##' @export
 `covariance.lvm` <-
-function(object,var1=NULL,var2,exo=FALSE,pairwise=FALSE,constrain=FALSE,...) {
-  if (!is.null(var1)) {
-    if (class(var1)[1]=="formula") {
-      covariance(object,constrain=constrain,
+    function(object,var1=NULL,var2=NULL,exo=FALSE,pairwise=FALSE,constrain=FALSE,value,...) {
+
+        if (!missing(value)) {
+            covariance(object,var1=var1,var2,exo=exo,pariwise=pairwise,constrain=constrain,...) <- value
+            return(object)
+        }
+        if (!is.null(var1)) {
+            if (class(var1)[1]=="formula") {
+                covariance(object,constrain=constrain,
                  pairwise=pairwise,exo=exo,...) <- var1
-      return(object)
-    }
+                return(object)
+            }
     allvars <- var1
     if (!missing(var2)) {
       if (class(var2)[1]=="formula")

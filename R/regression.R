@@ -248,7 +248,7 @@
 ##' @export
 `regression.lvm` <-
     function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
-             additive=TRUE, y,x,...) {
+             additive=TRUE, y,x,value,...) {
         if (!missing(y)) {
             if (inherits(y,"formula")) y <- all.vars(y)
             to <- y
@@ -279,7 +279,11 @@
             return(regfix(object))
         }
         if (class(to)[1]=="formula") {
-            regression(object,silent=silent,...) <- to
+            if (!missing(value)) {
+                regression(object,to,silent=silent,...) <- value
+            } else {
+                regression(object,silent=silent,...) <- to
+            }
             object$parpos <- NULL
             return(object)
         }

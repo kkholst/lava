@@ -109,12 +109,16 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 
 ##' @export
 ##' @export
-intercept.lvm <- intfix.lvm <- function(object,...) {
-  res <- object$mean; attr(res,"type") <- "mean"
-  attr(res,"exo.idx") <- index(object)$exo.idx
-  attr(res,"nvar") <- length(res)
-  class(res) <- "fix"
-  return(res)
+intercept.lvm <- intfix.lvm <- function(object,value,...) {
+    if (!missing(value)) {
+        intercept(object,...) <- value
+        return(object)
+    }
+    res <- object$mean; attr(res,"type") <- "mean"
+    attr(res,"exo.idx") <- index(object)$exo.idx
+    attr(res,"nvar") <- length(res)
+    class(res) <- "fix"
+    return(res)
 }
 
 ##' @export
