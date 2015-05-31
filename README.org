@@ -69,9 +69,7 @@ Specify structurual equation models with two factors
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
 [[file:inst/lava1.png]]
-#+END_example
 
 Simulation
 #+BEGIN_SRC R :exports code
@@ -80,11 +78,9 @@ Simulation
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
-#+END_example
 
 Estimation
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :wrap example
   e <- estimate(m,d)
   e
 #+END_SRC
@@ -130,9 +126,7 @@ Assessing goodness-of-fit (linearity between eta2 and eta1)
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
 [[file:inst/gof1.png]]
-#+END_example
 
 ***  Non-linear measurement error model
 
@@ -148,11 +142,9 @@ d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.5))
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
-#+END_example
 
 Stage 1:
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :wrap example
   m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,u~x)
   latent(m1) <- ~u
   (e1 <- estimate(m1,d))
@@ -172,7 +164,7 @@ Residual Variances:
 
  
 Stage 2
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :wrap example
   pp <- function(mu,var,data,...) cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"])
   (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 #+END_SRC
@@ -187,16 +179,14 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+END_example
 
 
-#+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png  
+#+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png
   f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
   u <- seq(-1,1,length.out=100)
   plot(e, f, data=data.frame(u))
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
 [[file:inst/me1.png]]
-#+END_example
 
 
 
@@ -206,7 +196,6 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
 #+PROPERTY: cache no
-#+PROPERTY: wrap example
 #+PROPERTY: results output
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
