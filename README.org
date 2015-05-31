@@ -54,6 +54,7 @@ To cite that =lava= package please use the following reference
 
 ** Examples
 
+*** Structural Equation Model
 Specify structurual equation models with two factors
 #+BEGIN_SRC R :exports both :results output graphics :file inst/lava1.png  
   m <- lvm()
@@ -73,23 +74,23 @@ Specify structurual equation models with two factors
 :END:
 
 Simulation
-#+BEGIN_SRC R :exports both :wrap example
+#+BEGIN_SRC R :exports code
   set.seed(1)
   d <- sim(m,100)
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
-#+END_example
+:RESULTS:
+:END:
 
 Estimation
-#+BEGIN_SRC R :exports both :wrap example
+#+BEGIN_SRC R :exports both
   e <- estimate(m,d)
   e
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
+:RESULTS:
                     Estimate Std. Error  Z-value   P-value
 Measurements:                                             
    y2~eta1           0.95462    0.08083 11.80993    <1e-12
@@ -116,7 +117,10 @@ Residual Variances:
    z2                0.87569    0.19463  4.49934          
    z3                1.18155    0.22640  5.21883          
    eta2              1.24430    0.28992  4.29195
-#+END_example
+:END:
+
+
+*** Model assessment
 
 Assessing goodness-of-fit (linearity between eta2 and eta1)
 #+BEGIN_SRC R :exports both :results output graphics :file inst/gof1.png  
@@ -130,30 +134,63 @@ Assessing goodness-of-fit (linearity between eta2 and eta1)
 [[file:inst/gof1.png]]
 :END:
 
-Non-linear measurement error model 
-#+BEGIN_SRC R :exports both :wrap example
+***  Non-linear measurement error model
 
-  m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*eta, eta~x) 
-  e1 <- estimate(m1,d)
+Simulate non-linear model 
 
-  pp <- function(mu,var,data,...) cbind(eta=mu[,"eta"],eta2=mu[,"eta"]^2+var["eta","eta"])
-  ee <- measurement.error(e1, z1~1+x, data=d, predictfun=pp)
-  ee
+#+BEGIN_SRC R :exports code
+m <- lvm(c(y1,y2,y3)~u,u~x)
+transform(m,u2~u) <- function(x) x^2
+regression(m) <- z~u2+u
+
+set.seed(1)
+d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.2))
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
-             Estimate Std.Err   2.5% 97.5%  P-value
-(Intercept)  0.000138  0.2212 -0.433 0.434 1.00e+00
-x            0.854841  0.3348  0.199 1.511 1.07e-02
-eta          1.148610  0.2221  0.713 1.584 2.31e-07
-eta2        -0.032049  0.0485 -0.127 0.063 5.09e-01
-#+END_example
+:RESULTS:
+:END:
+
+Stage 1:
+#+BEGIN_SRC R :exports both
+  m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,u~x)
+  latent(m1) <- ~u
+  (e1 <- estimate(m1,d))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+                    Estimate Std. Error  Z-value  P-value
+Regressions:                                             
+   u~x               1.06998    0.08208 13.03542   <1e-12
+Intercepts:                                              
+   u                -0.08871    0.08753 -1.01344   0.3108
+Residual Variances:                                      
+   y1                1.00054    0.07075 14.14214         
+   u                 1.19873    0.15503  7.73233
+:END:
+
+ 
+Stage 2
+#+BEGIN_SRC R :exports both
+  pp <- function(mu,var,data,...) cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"])
+  (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+            Estimate Std.Err   2.5%   97.5%  P-value
+(Intercept)  -1.0086  0.1100 -1.224 -0.7930 4.72e-20
+x            -0.0972  0.1248 -0.342  0.1475 4.36e-01
+u             1.0652  0.0922  0.884  1.2459 7.20e-31
+u2           -0.0814  0.0315 -0.143 -0.0197 9.67e-03
+:END:
+
 
 #+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png  
-  f <- function(p) p[1]+p["eta"]*eta+p["eta2"]*eta^2
-  eta <- seq(-1,1,length.out=100)
-  plot(ee, f, data=data.frame(eta))
+  f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
+  u <- seq(-1,1,length.out=100)
+  plot(e, f, data=data.frame(u))
 #+END_SRC
 
 #+RESULTS:
@@ -169,7 +206,7 @@ eta2        -0.032049  0.0485 -0.127 0.063 5.09e-01
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
 #+PROPERTY: cache no
-#+PROPERTY: results output wrap 
+#+PROPERTY: results output
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
 #+OPTIONS: timestamp:t author:nil creator:nil
