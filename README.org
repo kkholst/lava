@@ -69,9 +69,9 @@ Specify structurual equation models with two factors
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
 [[file:inst/lava1.png]]
-:END:
+#+END_example
 
 Simulation
 #+BEGIN_SRC R :exports code
@@ -80,8 +80,8 @@ Simulation
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
-:END:
+#+BEGIN_example
+#+END_example
 
 Estimation
 #+BEGIN_SRC R :exports both
@@ -90,7 +90,7 @@ Estimation
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
                     Estimate Std. Error  Z-value   P-value
 Measurements:                                             
    y2~eta1           0.95462    0.08083 11.80993    <1e-12
@@ -117,7 +117,7 @@ Residual Variances:
    z2                0.87569    0.19463  4.49934          
    z3                1.18155    0.22640  5.21883          
    eta2              1.24430    0.28992  4.29195
-:END:
+#+END_example
 
 
 *** Model assessment
@@ -130,9 +130,9 @@ Assessing goodness-of-fit (linearity between eta2 and eta1)
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
 [[file:inst/gof1.png]]
-:END:
+#+END_example
 
 ***  Non-linear measurement error model
 
@@ -148,8 +148,8 @@ d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.5))
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
-:END:
+#+BEGIN_example
+#+END_example
 
 Stage 1:
 #+BEGIN_SRC R :exports both
@@ -159,7 +159,7 @@ Stage 1:
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
                     Estimate Std. Error  Z-value  P-value
 Regressions:                                             
    u~x               1.06998    0.08208 13.03542   <1e-12
@@ -168,7 +168,7 @@ Intercepts:
 Residual Variances:                                      
    y1                1.00054    0.07075 14.14214         
    u                 1.19873    0.15503  7.73233
-:END:
+#+END_example
 
  
 Stage 2
@@ -178,13 +178,13 @@ Stage 2
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
             Estimate Std.Err   2.5%  97.5%  P-value
 (Intercept)  -1.1068  0.1380 -1.377 -0.836 1.04e-15
 x            -0.0899  0.1496 -0.383  0.203 5.48e-01
 u             1.1108  0.1350  0.846  1.375 1.89e-16
 u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
-:END:
+#+END_example
 
 
 #+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png  
@@ -194,9 +194,9 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
+#+BEGIN_example
 [[file:inst/me1.png]]
-:END:
+#+END_example
 
 
 
