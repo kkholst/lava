@@ -206,6 +206,7 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: session *R*
 #+PROPERTY: cache no
+#+PROPERTY: wrap example
 #+PROPERTY: results output
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
