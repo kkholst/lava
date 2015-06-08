@@ -197,9 +197,19 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
         if (is.character(id) && length(id)==1) id <- data[,id,drop=TRUE]
         if (!is.null(iidtheta)) {
-            if (length(id)!=nprev) stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+            if (length(id)!=nprev) {
+                if (!is.null(x$na.action) && (length(id)==length(x$na.action)+nprev)) {
+                    warning("Applying na.action")
+                    id <- id[-x$na.action]
+                } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+            }
         } else {
-            if (length(id)!=nrow(data)) stop("Dimensions of 'data' and 'id' does not agree")
+            if (length(id)!=nrow(data)) {
+                if (!is.null(x$na.action) && (length(id)==length(x$na.action)+nrow(data))) {
+                    warning("Applying na.action")
+                    id <- id[-x$na.action]
+                } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+            }
         }
         if (stack) {
             N <- nrow(iidtheta)
