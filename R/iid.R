@@ -10,8 +10,10 @@
 ##'
 ##' @aliases iid.default
 ##' @param x model object
-##' @param id id/cluster variable (optional)
+##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
+##' @param folds (optional) Calculate aggregated iid decomposition 
+##' @param maxsize (optional) Data is split in groups of size up to 'maxsize'
 ##' @param ... additional arguments
 ##' @examples
 ##' m <- lvm(y~x+z)
@@ -23,12 +25,19 @@
 iid <- function(x,...) UseMethod("iid")
 
 ##' @export
-iid.default <- function(x,bread,id,...) {
+iid.default <- function(x,bread,id=NULL,folds=0,maxsize=5e5,...) {
     if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
         warning("Not available for this class")
         return(NULL)
     }
-    U <- score(x,indiv=TRUE,...)
+    if (folds>0) {
+        if (!requireNamespace("mets",quietly=TRUE)) stop("Requires 'mets'")
+        U <- Reduce("rbind",mets::divide.conquer(function(data) score(x,data=data,...),
+                                                 id=id,
+                                                 data=data,size=round(nrow(data)/folds)))
+    } else {
+        U <- score(x,indiv=TRUE,...)
+    }
     n <- NROW(U)
     pp <- pars(x)
     if (!missing(bread) && is.null(bread)) {
@@ -39,7 +48,13 @@ iid.default <- function(x,bread,id,...) {
         bread <- attributes(x)$bread
         if (is.null(bread)) bread <- x$bread
         if (is.null(bread)) {
-            I <- -numDeriv::jacobian(function(p) score(x,p=p,indiv=FALSE,...),pp,method=lava.options()$Dmethod)
+            if (!is.null(maxsize)) {
+                ff <- function(p) colSums(Reduce("rbind",mets::divide.conquer(function(data) score(x,data=data,p=p,...),
+                                                                              data=data,size=maxsize)))
+                I <- -numDeriv::jacobian(ff,pp,method=lava.options()$Dmethod)
+            } else {
+                I <- -numDeriv::jacobian(function(p) score(x,p=p,indiv=FALSE,...),pp,method=lava.options()$Dmethod)
+            }
             bread <- Inverse(I)
         }
     }

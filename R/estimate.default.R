@@ -165,10 +165,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                 iidtheta <- iid
                 iid <- TRUE
             } else {
-                suppressWarnings(iidtheta <- iid(x))
+                suppressWarnings(iidtheta <- iid(x,...))
             }
         } else {
-            suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv))
+            suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv,...))
         }
     } else {
         if (is.logical(vcov)) vcov <- vcov(x)
@@ -224,7 +224,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     } else {
         if (!is.null(data)) idstack <- rownames(data)
     }
-    if (!is.null(iidtheta)) rownames(iidtheta) <- idstack
+
+    if (!is.null(iidtheta) && (length(idstack)==nrow(iidtheta))) rownames(iidtheta) <- idstack
     if (!robust) {
         if (inherits(x,"lm") && family(x)$family=="gaussian" && is.null(df)) df <- x$df.residual
         if (missing(vcov)) vcov <- stats::vcov(x)
