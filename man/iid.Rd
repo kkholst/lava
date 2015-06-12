@@ -14,9 +14,13 @@ iid(x,...)
 
 \item{...}{additional arguments}
 
-\item{id}{id/cluster variable (optional)}
+\item{id}{(optional) id/cluster variable}
 
 \item{bread}{(optional) Inverse of derivative of mean score function}
+
+\item{folds}{(optional) Calculate aggregated iid decomposition}
+
+\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize'}
 }
 \description{
 Extract i.i.d. decomposition (influence function) from model object

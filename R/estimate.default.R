@@ -38,6 +38,7 @@ estimate.list <- function(x,...) {
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
+##' @param transform (optional) transform of parameters and confidence intervals
 ##' @export
 ##' @examples
 ##'
@@ -137,7 +138,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
                              print=NULL,labels,label.width,
-                             only.coef=FALSE
+                             only.coef=FALSE,transform
                              ) {
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
@@ -405,9 +406,14 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (!is.null(nn)) rownames(res) <- nn
         if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
     }
+    if (!missing(transform)) {
+        res[,c(1,3,4)] <- transform(res[,c(1,3,4)])
+        res[,2] <- NA
+    }
+    
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
-    if (iid) res$iid <- iidtheta
+    if (iid && missing(transform)) res$iid <- iidtheta
     if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)
         if (missing(contrast)) contrast <- diag(p)

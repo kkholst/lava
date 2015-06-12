@@ -108,7 +108,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
       y <- model.frame(formula(x),data=data)[,1]
   }
   n <- nrow(X)
-  if(any(is.na(p))) stop("Over-parameterized model")
+  if(any(is.na(p))) warning("Over-parameterized model")
   Xbeta <- X%*%p
   if (is.null(offset)) offset <- x$offset
   if (!is.null(offset)) Xbeta <- Xbeta+offset

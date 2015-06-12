@@ -105,6 +105,7 @@ iid.matrix <- function(x,...) {
 iid.numeric <- function(x,...) {
     n <- length(x)
     mu <- mean(x); S <- var(x)*(n-1)/n
+    browser()
     iid1 <- t(t(x)-mu)
     structure(cbind(mean=iid1/n,var=(iid1^2-S)/n),coef=c(mean=mu,var=S),mean=mu,var=S)
 }
