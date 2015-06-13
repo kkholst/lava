@@ -22,7 +22,7 @@ Sort data according to columns in data frame
 \examples{
 data(hubble)
 dsort(hubble, "sigma")
-dsort(hubble, hubble$sigma)
-dsort(hubble,sigma,v)
+dsort(hubble, hubble$sigma,"v")
+dsort(hubble,~sigma+v)
 }
 

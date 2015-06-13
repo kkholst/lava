@@ -10,20 +10,17 @@
 ##' @examples
 ##' data(hubble)
 ##' dsort(hubble, "sigma")
-##' dsort(hubble, hubble$sigma)
-##' dsort(hubble,sigma,v)
+##' dsort(hubble, hubble$sigma,"v")
+##' dsort(hubble,~sigma+v)
 dsort <- function(data,x,...) {
-    e <- substitute(x)
-    expr <- suppressWarnings(inherits(try(x,silent=TRUE),"try-error"))
-    x1 <- if (expr) eval(e,envir=data) else {
-        if (is.character(x) && length(x)<nrow(data)) lapply(x,function(z) data[,z]) else x
-    }
-    dots <- as.list(substitute(list(...))[-1])
+    if (missing(x)) return(data)
+    if (inherits(x,"formula")) x <- all.vars(x)
+    if (is.character(x) && length(x)<nrow(data)) x <- lapply(x,function(z) data[,z])
+    dots <- list(...)
     args <- lapply(dots, function(x) {
-        e <- eval(x,envir=data)
-        if (length(e)==1 && is.character(e)) e <- data[,e]
-        e
+        if (length(x)==1 && is.character(x)) x <- data[,x]
+        x
     })
-    if (!is.list(x1)) x1 <- list(x1)
-    data[do.call("order",c(x1,args)),]
+    if (!is.list(x)) x <- list(x)
+    data[do.call("order",c(x,args)),]
 }

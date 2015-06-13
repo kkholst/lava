@@ -7,7 +7,7 @@
 \usage{
 iid(x,...)
 
-\method{iid}{default}(x,bread,id,...)
+\method{iid}{default}(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...)
 }
 \arguments{
 \item{x}{model object}
@@ -18,9 +18,9 @@ iid(x,...)
 
 \item{bread}{(optional) Inverse of derivative of mean score function}
 
-\item{folds}{(optional) Calculate aggregated iid decomposition}
+\item{folds}{(optional) Calculate aggregated iid decomposition (0:=disabled)}
 
-\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize'}
+\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize' (0:=disabled)}
 }
 \description{
 Extract i.i.d. decomposition (influence function) from model object
