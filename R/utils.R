@@ -17,7 +17,7 @@ parsedesign <- function(coef,x,...) {
         ff <- strsplit(e0,'\"')[[1]]
         Val <- rbind(rep(0,length(coef)))
         for (i in seq(length(ff)/2)) {
-            val0 <- gsub("*","",ff[2*(i-1)+1],fixed=TRUE)
+            val0 <- gsub("[*()]","",ff[2*(i-1)+1])            
             suppressWarnings(val <- as.numeric(val0))
             if (is.na(val)) {
                 val <- switch(val0,"-"=-1,1)
