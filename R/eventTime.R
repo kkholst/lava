@@ -124,7 +124,7 @@
 ##' @param formula Formula (see details)
 ##' @param eventName Event names
 ##' @param \dots Additional arguments to lower levels functions
-eventTime <- function(object,formula,eventName,...) {
+eventTime <- function(object,formula,eventName="status",...) {
     if (missing(formula)) return(object$attributes$eventHistory)
     if (inherits(eventName,"formula")) eventName <- all.vars(eventName)
     ff <- as.character(formula)
@@ -166,7 +166,7 @@ eventTime <- function(object,formula,eventName,...) {
   addvar(object) <- timeName
   #distribution(object,timeName) <- NA
   ## m <- regression(m,formula(paste0("~",timeName)))
-  if (missing(eventName)) eventName <- "Event"
+    ##if (missing(eventName)) eventName <- "Event"
   eventTime <- list(names=c(timeName,eventName),
                     latentTimes=gsub(" ","",latentTimes),
                     events=events
