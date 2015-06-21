@@ -159,7 +159,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         contrast <- f; f <- NULL
     }
     if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
-
+    
     ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
@@ -332,7 +332,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
             pp <- as.vector(val)
             V <- D%*%V%*%t(D)
         } else {
-            if (!average || N<NROW(data) || NROW(data)==0) { ## transformation not depending on data
+            if (!average || (N<NROW(data))) { ## || NROW(data)==0)) { ## transformation not depending on data
                 pp <- as.vector(val)
                 iidtheta <- iidtheta%*%t(D)
                 ##V <- crossprod(iidtheta)

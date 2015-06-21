@@ -28,8 +28,8 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,weight,dweight,U,k=1,keep1=FALSE
         weight <- weight(coef(x))
     }
     if (!missing(dweight)) {
-        D2u <- Inverse(inv.D2u)
-        u2 <- -iid2%*%D2u ## Score of stage two equation derived from estimated influence function
+        D2u <- Inverse(inv.D2u)        
+        u2 <- iid2%*%D2u ## Score of stage two equation derived from estimated influence function
         ## Derivative of score wrt first set of parameters (weight-parameters)
         D1u <- crossprod(apply(u2,2,function(x) -x/weight),dweight)
     }

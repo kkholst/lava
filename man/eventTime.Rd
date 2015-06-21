@@ -5,7 +5,7 @@
 \alias{eventTime<-}
 \title{Add an observed event time outcome to a latent variable model.}
 \usage{
-eventTime(object, formula, eventName, ...)
+eventTime(object, formula, eventName = "status", ...)
 }
 \arguments{
 \item{object}{Model object}
