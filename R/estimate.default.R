@@ -38,6 +38,8 @@ estimate.list <- function(x,...) {
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
+##' @param transform (optional) transform of parameters and confidence intervals
+##' @param folds (optional) Aggregate influence functions (divide and conquer)
 ##' @export
 ##' @examples
 ##'
@@ -137,7 +139,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
                              print=NULL,labels,label.width,
-                             only.coef=FALSE
+                             only.coef=FALSE,transform,folds=0
                              ) {
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
@@ -145,9 +147,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     } else {
         pp <- suppressWarnings(try(stats::coef(x),"try-error"))
     }
+
     if (expr || is.character(f)) { ## || is.call(f)) {
         ## if (is.call(f)) f <- parsedesign(seq(length(pp)),f,...)
-        f <- parsedesign(names(pp),substitute(f),...)
+        dots <- substitute(list(...))[-1]
+        args <- c(list(coef=names(pp),x=substitute(f)),dots)
+        f <- do.call(parsedesign,args)
     }
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
@@ -165,10 +170,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                 iidtheta <- iid
                 iid <- TRUE
             } else {
-                suppressWarnings(iidtheta <- iid(x,...))
+                suppressWarnings(iidtheta <- iid(x,folds=folds))
             }
         } else {
-            suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv,...))
+            suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv,folds=folds))
         }
     } else {
         if (is.logical(vcov)) vcov <- vcov(x)
@@ -187,10 +192,13 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     if (!missing(id)) {
         if (is.null(iidtheta)) stop("'iid' method needed")
         nprev <- nrow(iidtheta)
-        e <- substitute(id)
-        expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
-        if (expr) id <- eval(e,envir=data)
-            ##if (!is.null(data)) id <- eval(e, data)
+        if (inherits(id,"formula")) {
+            id <- interaction(get_all_vars(id,data))
+        }
+        ## e <- substitute(id)
+        ## expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
+        ## if (expr) id <- eval(e,envir=data)
+        ##if (!is.null(data)) id <- eval(e, data)
         if (is.logical(id) && length(id)==1) {
             id <- if(is.null(iidtheta)) seq(nrow(data)) else seq(nprev)
             stack <- FALSE
@@ -405,9 +413,14 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (!is.null(nn)) rownames(res) <- nn
         if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
     }
+    if (!missing(transform)) {
+        res[,c(1,3,4)] <- transform(res[,c(1,3,4)])
+        res[,2] <- NA
+    }
+    
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
-    if (iid) res$iid <- iidtheta
+    if (iid && missing(transform)) res$iid <- iidtheta
     if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)
         if (missing(contrast)) contrast <- diag(p)

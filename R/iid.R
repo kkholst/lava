@@ -6,14 +6,14 @@
 ##'
 ##' iid(x,...)
 ##'
-##' \method{iid}{default}(x,bread,id,...)
+##' \method{iid}{default}(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...)
 ##'
 ##' @aliases iid.default
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
-##' @param folds (optional) Calculate aggregated iid decomposition 
-##' @param maxsize (optional) Data is split in groups of size up to 'maxsize'
+##' @param folds (optional) Calculate aggregated iid decomposition (0:=disabled)
+##' @param maxsize (optional) Data is split in groups of size up to 'maxsize' (0:=disabled)
 ##' @param ... additional arguments
 ##' @examples
 ##' m <- lvm(y~x+z)
@@ -25,7 +25,7 @@
 iid <- function(x,...) UseMethod("iid")
 
 ##' @export
-iid.default <- function(x,bread,id=NULL,folds=0,maxsize=5e5,...) {
+iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
     if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
         warning("Not available for this class")
         return(NULL)
@@ -48,7 +48,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=5e5,...) {
         bread <- attributes(x)$bread
         if (is.null(bread)) bread <- x$bread
         if (is.null(bread)) {
-            if (!is.null(maxsize)) {
+            if (maxsize>0) {
                 ff <- function(p) colSums(Reduce("rbind",mets::divide.conquer(function(data) score(x,data=data,p=p,...),
                                                                               data=data,size=maxsize)))
                 I <- -numDeriv::jacobian(ff,pp,method=lava.options()$Dmethod)

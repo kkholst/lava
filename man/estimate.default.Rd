@@ -10,7 +10,7 @@
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
   iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
   coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
-  only.coef = FALSE)
+  only.coef = FALSE, transform, folds = 0)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -61,6 +61,10 @@ FALSE p-values for linear models are calculated from t-distribution}
 \item{label.width}{(optional) max width of labels}
 
 \item{only.coef}{if TRUE only the coefficient matrix is return}
+
+\item{transform}{(optional) transform of parameters and confidence intervals}
+
+\item{folds}{(optional) Aggregate influence functions (divide and conquer)}
 }
 \description{
 Estimation of functional of parameters.
