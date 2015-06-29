@@ -27,10 +27,10 @@ subset.lvm <- function(x, vars, ...) {
   ##  g0 <- subGraph(vars, Graph(x))
   ##  res <- graph2lvm(g0)
   res <- lvm(vars)
-  M <- x$M[vars,vars,drop=FALSE]
+  M <- t(x$M[vars,vars,drop=FALSE])
   for (i in seq_len(nrow(M))) {
     if (any(M[,i]==1)) {
-      res <- regression(res, rownames(M)[M[,i]==1], rownames(M)[i], ...)
+      res <- regression(res, y=rownames(M)[M[,i]==1], x=rownames(M)[i], ...)
     }
   }
   if (length(latentvars)>0)
