@@ -9,8 +9,8 @@ pcor <- function(x,y,X,Z,start,...) {
     if (missing(start)) {
         f <- as.formula(ifelse(missing(X),"~1","~X"))
         start <- c(0.5,
-                   attr(lava::ordreg(update(f,x~.),fast=TRUE,family=binomial("probit")),"threshold"),
-                   attr(lava::ordreg(update(f,y~.),fast=TRUE,family=binomial("probit")),"threshold"))
+                   attr(lava::ordreg(update(f,x~.),fast=TRUE,family=stats::binomial("probit")),"threshold"),
+                   attr(lava::ordreg(update(f,y~.),fast=TRUE,family=stats::binomial("probit")),"threshold"))
     }
 
 

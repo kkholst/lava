@@ -35,7 +35,7 @@ ordreg_dthreshold <- function(theta) {
 ##' ordinal(m,K=3) <- ~y
 ##' d <- sim(m,100)
 ##' e <- ordreg(y~x,d)
-ordreg <- function(formula,data=parent.frame(),offset,family=binomial("probit"),start,fast=FALSE,...) {
+ordreg <- function(formula,data=parent.frame(),offset,family=stats::binomial("probit"),start,fast=FALSE,...) {
     y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
     X <- model.matrix(update(formula,.~.+1),data=data)[,-1,drop=FALSE]

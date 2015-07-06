@@ -169,7 +169,7 @@ TN.curereg <- function(object,data=model.frame(object),p=coef(object),intercept=
 ##' abline(h=prev[3:4,2],lty=3:4,col="lightgray")
 ##' abline(h=prev[3:4,3],lty=3:4,col="lightgray")
 ##' legend("topleft",levels(d$z),col="darkblue",lty=seq_len(length(levels(d$z))))
-curereg <- function(formula,cureformula=~1,data,family=binomial(),offset=NULL,start,var="hessian",...) {
+curereg <- function(formula,cureformula=~1,data,family=stats::binomial(),offset=NULL,start,var="hessian",...) {
   md <- cbind(model.frame(formula,data),model.frame(cureformula,data))
   y <- md[,1]
   X <- model.matrix(formula,data)
@@ -316,7 +316,7 @@ logLik.curereg <- function(object,beta=object$beta,gamma=object$gamma,data,offse
   }
   curereg_logL(beta,gamma,object$y,object$X,object$Z,offset,object$family,indiv=indiv,...)
 }
-curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FALSE,...) {
+curereg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=stats::binomial(),indiv=FALSE,...) {
   g <- family$linkfun
   ginv <- family$linkinv
   dginv <- family$mu.eta ## D[linkinv]
@@ -346,7 +346,7 @@ score.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,indiv
   return(s)
 }
 
-curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),indiv=FALSE,...) {
+curereg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=stats::binomial(),indiv=FALSE,...) {
   g <- family$linkfun
   ginv <- family$linkinv
   dginv <- family$mu.eta ## D[linkinv]
@@ -380,7 +380,7 @@ information.curereg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset
   return(I)
 }
 
-curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=binomial(),type=c("outer","obs","robust"),...) {
+curereg_information <- function(beta,gamma,y,X,Z,offset=NULL,family=stats::binomial(),type=c("outer","obs","robust"),...) {
   if (tolower(type[1])%in%c("obs","hessian")) {
     beta.idx <- seq(ncol(X)); gamma.idx <- seq(ncol(Z))+ncol(X)
     I <- -numDeriv::jacobian(function(x)

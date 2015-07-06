@@ -3,7 +3,7 @@ glm.estimate.hook <- function(x,estimator,...) {
   if (estimator=="glm") {
     for (y in endogenous(x)) {
       fam <- attributes(distribution(x)[[y]])$family
-      if (is.null(fam)) fam <- gaussian()
+      if (is.null(fam)) fam <- stats::gaussian()
       if (!(tolower(fam$family)%in%
             c("gaussian","gamma","inverse.gaussian"))) {
         yy <- c(yy,y)
@@ -25,7 +25,7 @@ GLMest <- function(m,data,control=list(),...) {
     count <- count+1
     xx <- parents(m,y)
     fam <- attributes(distribution(m)[[y]])$family
-    if (is.null(fam)) fam <- gaussian()
+    if (is.null(fam)) fam <- stats::gaussian()
     mymsg <- c(mymsg, with(fam, paste0(family,"(",link,")")))
     if (length(xx)==0) xx <- 1
     g <- glm(toformula(y,xx),family=fam,data=data)
@@ -68,7 +68,7 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
     count <- count+1
     xx <- parents(x,y)
     fam <- attributes(distribution(x)[[y]])$family
-    if (is.null(fam)) fam <- gaussian()
+    if (is.null(fam)) fam <- stats::gaussian()
     g <- glm(toformula(y,xx),family=fam,data=data)
     pdispersion <- NULL
     p0 <- p

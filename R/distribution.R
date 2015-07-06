@@ -126,7 +126,7 @@
 ##' @export
 normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
   rnormal <- if(log) rlnorm else rnorm
-  fam <- gaussian(link); fam$link <- link
+  fam <- stats::gaussian(link); fam$link <- link
   f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))
   if (!missing(mean)) attr(f,"mean") <- mean
   if (!missing(sd)) attr(f,"variance") <- sd^2
@@ -147,7 +147,7 @@ lognormal.lvm <- function(...) normal.lvm(...,log=TRUE)
 
 ##' @export
 poisson.lvm <- function(link="log",lambda,...) {
-    fam <- poisson(link); fam$link <- link
+    fam <- stats::poisson(link); fam$link <- link
     f <- function(n,mu,...) {
         if (missing(n)) {
             return(fam)
@@ -213,13 +213,13 @@ threshold.lvm <- function(p,labels=NULL,...) {
 
 ##' @export
 binomial.lvm <- function(link="logit",p,size=1) {
-    fam <- binomial(link); fam$link <- link
+    fam <- stats::binomial(link); fam$link <- link
     f <- function(n,mu,var,...) {
-      if (missing(n)) {
-        return(fam)
-      }
-      rbinom(n,size,fam$linkinv(mu))
-  }
+        if (missing(n)) {
+            return(fam)
+        }
+        rbinom(n,size,fam$linkinv(mu))
+    }
     attr(f,"family") <- fam
     attr(f,"var") <- FALSE
     if (!missing(p)) attr(f,"mean") <- fam$linkfun(p)
@@ -232,7 +232,7 @@ binomial.lvm <- function(link="logit",p,size=1) {
     ##             ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
     ##             )
     ##}
-  return(f)
+    return(f)
 }
 
 ##' @export
@@ -248,7 +248,7 @@ probit.lvm <- binomial.lvm("probit")
 
 ##' @export
 Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
-  fam <- Gamma(link); fam$link <- link
+  fam <- stats::Gamma(link); fam$link <- link
   rgam <- if (!log) rgamma else function(...) log(rgamma(...))
   if (!missing(shape) & !missing(rate))
     f <- function(n,mu,var,...) rgam(n,shape=shape,rate=rate)

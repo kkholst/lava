@@ -108,7 +108,7 @@ backwardsearch <- function(x,k=1,...) {
     Tests <- c(); Vars <- list()
 
     parnotvar<- setdiff(seq_along(p1), variances(Model(x))) ## We don't want to perform tests on the boundary of the parameter space
-    freecomb <- combn(parnotvar, k)
+    freecomb <- utils::combn(parnotvar, k)
 
     for (i in seq_len(ncol(freecomb)))
         {
@@ -171,7 +171,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             }
 
     if (is.null(restricted)) return(NULL)
-    restrictedcomb <- combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
+    restrictedcomb <- utils::combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
 
     if (class(model.frame(x))%ni%c("data.frame","matrix")) {
         n <- model.frame(x)$n

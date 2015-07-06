@@ -4,7 +4,7 @@
 \alias{curereg}
 \title{Regression model for binomial data with unkown group of immortals}
 \usage{
-curereg(formula, cureformula = ~1, data, family = binomial(),
+curereg(formula, cureformula = ~1, data, family = stats::binomial(),
   offset = NULL, start, var = "hessian", ...)
 }
 \arguments{
