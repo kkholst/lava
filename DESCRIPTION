@@ -1,7 +1,7 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.4.1
+Version: 1.4.1.1
 Date: 2015-06-13
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <klaus@holst.it>
@@ -12,7 +12,7 @@ LazyLoad: yes
 Depends:
     R (>= 2.15)
 Imports:
-    numDeriv
+    numDeriv, methods, graphics, grDevices, utils, stats
 Suggests:
     mets (>= 1.1),
     graph,

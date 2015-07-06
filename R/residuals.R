@@ -40,7 +40,7 @@ residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=coef(objec
 gradpredict <- function(p,obj,data=model.frame(obj)) {
 ##  res <- residuals.lvmfit(object=obj,data=data,std=FALSE,p=p)
   mom <- moments(Model(obj),p,conditional=TRUE)
-  D <- with(obj, deriv(model, meanpar=modelPar(model,p)$meanpar, mom=mom))
+  D <- with(obj, deriv.lvm(model, meanpar=modelPar(model,p)$meanpar, mom=mom))
 
   X <- with(obj, exogenous(model))
   Y <- with(obj, setdiff(manifest(model), X))

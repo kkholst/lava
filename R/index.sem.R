@@ -283,9 +283,9 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   }
   if (deriv && length(P)>0) {
     if (res$npar.mean>0 & mean)
-      D <- deriv(x,meanpar=rep(1,res$npar.mean),zeroones=TRUE)
+      D <- deriv.lvm(x,meanpar=rep(1,res$npar.mean),zeroones=TRUE)
     else
-      D <- deriv(x,meanpar=NULL,zeroones=TRUE)
+      D <- deriv.lvm(x,meanpar=NULL,zeroones=TRUE)
     res[c("dA","dP","dv")] <- NULL
     res <- c(res, list(dA=D$dA, dP=D$dP, dv=D$dv))
   }

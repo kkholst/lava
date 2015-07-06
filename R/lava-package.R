@@ -5,7 +5,14 @@
 ##' Models.
 ##'
 ##' @name lava-package
-##' @import utils stats
+##' @importFrom graphics plot lines points abline points text layout
+##'     par plot.new plot.window title rect locator segments image
+##'     mtext box axis polygon matplot contour contour.default
+##' @importFrom grDevices xy.coords col2rgb colors rainbow topo.colors
+##'     gray.colors palette colorRampPalette heat.colors
+##' @importFrom utils stack
+##' @importFrom stats deriv effects lm family simulate
+##' @importFrom methods new as
 ##' @aliases lava-package lava
 ##' @docType package
 ##' @author Klaus K. Holst Maintainer: <k.k.holst@@biostat.ku.dk>

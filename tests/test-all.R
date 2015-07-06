@@ -1,6 +1,4 @@
-if (require(testthat)) {
-  library(lava)
-  if (exists("test_check"))
-      test_check("lava")
-}
+library("lava")
+suppressPackageStartupMessages(library("testthat"))
+test_check("lava")
 

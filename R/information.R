@@ -116,7 +116,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 
   mp <- moments(x,p,data=data)
   pp <- modelPar(x,p)
-  D <- deriv(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
+  D <- deriv.lvm(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
   C <- mp$C
   iC <- Inverse(C,det=FALSE)
 

@@ -50,7 +50,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       mp <- modelVar(x,p,data=data[1,])
       iC <- Inverse(mp$C,det=FALSE)
       MeanPar <- attributes(mp)$meanpar
-      D <- with(attributes(mp), deriv(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
+      D <- with(attributes(mp), deriv.lvm(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       myvars <- (index(x)$manifest)
       if (NCOL(data)!=length(myvars)) {
         data <- subset(data,select=myvars)
@@ -101,7 +101,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   } else {
     T <- S
   }
-  D <- deriv(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean)
+  D <- deriv.lvm(x, meanpar=attributes(mp)$meanpar, mom=mp, p=p, mu=mu, mean=mean)
   vec.iC <- as.vector(iC)
   if (lava.options()$devel) {
       Grad <- numeric(length(p))
@@ -190,7 +190,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   for (i in myx) v[,i] <- data[,i]
   xi <- t(mp$G%*%t(v))
   u <- as.matrix(data)[,myy]-xi
-  D <- deriv(x, meanpar=pp$meanpar,
+  D <- deriv.lvm(x, meanpar=pp$meanpar,
              p=pp$p, mom=mp, mu=NULL)
   if (NROW(data)==1) {
     W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
@@ -250,7 +250,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
     mp <- moments(x,p=p,conditional=TRUE,data=data[i,])
     u <- as.numeric(z-mp$xi[,1])
     iC <- Inverse(mp$C,det=FALSE)
-    D <- deriv(x, meanpar=pp$meanpar,
+    D <- deriv.lvm(x, meanpar=pp$meanpar,
                p=pp$p, mom=mp, mu=NULL)
     W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
     score[i,] <- -0.5*as.vector(iC%*%W)%*%D$dS +
