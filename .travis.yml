@@ -4,8 +4,9 @@ r_check_args: --as-cran
 r_binary_packages:
  - numDeriv
  - mets
+ - igraph
 
-bioc_packages:
+ bioc_packages:
  - graph
  - Rgraphviz
 

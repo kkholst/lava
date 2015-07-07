@@ -1,7 +1,8 @@
 [[https://travis-ci.org/kkholst/lava][https://travis-ci.org/kkholst/lava.svg?branch=master]]
-[[http://cran.rstudio.com/web/packages/lava/index.html][http://www.r-pkg.org/badges/version/lava]]
 [[https://codecov.io/github/kkholst/lava?branch=master][https://codecov.io/github/kkholst/lava/coverage.svg?branch=master]]
- 
+[[http://cran.rstudio.com/web/packages/lava/index.html][http://www.r-pkg.org/badges/version/lava]]
+[[http://cran.rstudio.com/web/packages/lava/index.html][http://cranlogs.r-pkg.org/badges/lava]] 
+
 Estimation and simulation of latent variable models
 
 ** Installation
