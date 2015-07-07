@@ -1,4 +1,4 @@
-#+BEeGIN_HTML
+#+BEGIN_HTML
 <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
 <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
 <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="http://www.r-pkg.org/badges/version/lava"></a>
