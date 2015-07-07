@@ -1,0 +1,9 @@
+language: r
+sudo: required
+r_check_args: --as-cran
+r_binary_packages:
+ - numDeriv
+ - mets
+
+r_github_packages:
+ - hadley/testthat
