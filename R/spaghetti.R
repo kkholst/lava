@@ -17,7 +17,7 @@
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' if (interactive() & require(mets)) {
+##' if (interactive() & requireNamespace(mets)) {
 ##' K <- 5
 ##' y <- "y"%++%seq(K)
 ##' m <- lvm()
@@ -25,7 +25,7 @@
 ##' regression(m,y=y,x=~s) <- seq(K)-1
 ##' regression(m,y=y,x=~x) <- "b"
 ##' d <- sim(m,500)
-##' dd <- fast.reshape(d);
+##' dd <- mets::fast.reshape(d);
 ##' dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
 ##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
 ##' }
