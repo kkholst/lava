@@ -1,6 +1,8 @@
+[[https://travis-ci.org/kkholst/lava][https://travis-ci.org/kkholst/lava.svg?branch=master]]
+[[http://cran.rstudio.com/web/packages/lava/index.html][http://www.r-pkg.org/badges/version/lava]]
+[[https://codecov.io/github/kkholst/lava?branch=master][https://codecov.io/github/kkholst/lava/coverage.svg?branch=master]]
+ 
 Estimation and simulation of latent variable models
-
-[[Travis-CI Build Status][https://travis-ci.org/kkholst/lava.svg?branch=master]]
 
 ** Installation
 #+BEGIN_SRC R :exports both :eval never
@@ -201,6 +203,7 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+PROPERTY: results output
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
+#+PROPERTY: eval no
 #+OPTIONS: timestamp:t author:nil creator:nil
 #+OPTIONS: d:t
 #+PROPERTY: comments yes 
