@@ -1,5 +1,7 @@
 Estimation and simulation of latent variable models
 
+[[Travis-CI Build Status][https://travis-ci.org/hadley/bigvis.svg?branch=master]]
+
 ** Installation
 #+BEGIN_SRC R :exports both :eval never
 install.packages("lava",dependencies=TRUE)

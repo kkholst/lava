@@ -5,5 +5,9 @@ r_binary_packages:
  - numDeriv
  - mets
 
+bioc_packages:
+ - graph
+ - Rgraphviz
+
 r_github_packages:
  - hadley/testthat

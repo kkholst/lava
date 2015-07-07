@@ -2,7 +2,7 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.4.1.1
-Date: 2015-06-13
+Date: 2015-07-07
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Estimation and simulation of latent variable models.
