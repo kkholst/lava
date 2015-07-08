@@ -1,14 +1,23 @@
 language: r
 sudo: required
-r_check_args: --as-cran
+r_check_args: --as-cran --run-donttest
 r_binary_packages:
  - numDeriv
  - mets
  - igraph
-
- bioc_packages:
- - graph
+ - lme4
+ - fields
+ - foreach
+ - rgl
+ - plyr
+ - nloptr
+ - minqa
+ - maps
+ - geepack
  - Rgraphviz
 
-r_github_packages:
+bioc_packages:
+ - graph
+
+github_packages:
  - hadley/testthat
