@@ -2,7 +2,7 @@
 <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
 <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
 <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="http://www.r-pkg.org/badges/version/lava"></a>
-<a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
+<a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
 #+END_HTML
 
 Estimation and simulation of latent variable models
