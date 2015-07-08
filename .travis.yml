@@ -16,12 +16,14 @@ r_binary_packages:
  - geepack
  - Rgraphviz
 
-bioc_packages:
- - graph
-
 github_packages:
  - hadley/testthat
  - jimhester/covr
 
 after_success:
   - Rscript -e 'library(covr);coveralls()'
+
+before_install:
+  - sudo apt-get install -y r-bioc-rgraphviz r-bioc-graph
+#bioc_packages:
+# - graph
