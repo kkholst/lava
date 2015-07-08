@@ -14,7 +14,6 @@ r_binary_packages:
  - minqa
  - maps
  - geepack
- - Rgraphviz
 
 github_packages:
  - hadley/testthat
