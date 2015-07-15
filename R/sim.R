@@ -597,7 +597,7 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##' distribution(m,~y) <- 0
 ##' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
 ##' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
-##'
+##' 
 ##' onerun <- function(iter=NULL,...,b0=1,idx=2) {
 ##'     d <- sim(m,2e3,p=c("y~x"=b0))
 ##'     l <- lm(y~x,d)
@@ -608,13 +608,14 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
 ##' }
-##'
+##' 
 ##' val <- sim(onerun,R=10,b0=1,messages=0)
 ##' val
 ##' val <- sim(val,R=100,b0=1) ## append results
+##' 
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-##' summary(val,estimate=c(1,1),se=c(2,5))
-##'
+##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
+##' 
 ##' if (interactive()) {
 ##'     plot(val,1,1)
 ##' }
@@ -671,14 +672,17 @@ sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::det
 print.sim <- function(x,...) print(x[,],...)
 
 ##' @export
-plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,...) {
+plot.sim <- function(x,idx=seq(ncol(x)),lty=1,col=1:10,true=NULL,legend=TRUE,...) {
     val <- apply(x[,idx,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
-    matplot(val,type="l",...)
+    matplot(val,type="l",col=col,lty=lty,...)
     if (!is.null(true)) abline(h=true,lty=2,...)
+    if (legend) {
+        graphics::legend("bottom",colnames(x)[idx],bg="white",col=col,lty=lty,...)
+    }
 }
 
 ##' @export
-summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,...) {
+summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,...) {
     if (missing(fun)) fun <- function(x) {
         pp <- c(.025,.5,.975)
         res <- c(mean(x,na.rm=TRUE),sd(x,na.rm=TRUE),quantile(x,c(0,pp,1),na.rm=TRUE),
@@ -712,5 +716,6 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
         }
         est <- rbind(est,Coverage=Coverage)
     }
+    if (!is.null(names)) colnames(est) <- names
     return(est)
 }

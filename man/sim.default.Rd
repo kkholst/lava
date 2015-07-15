@@ -45,8 +45,9 @@ onerun <- function(iter=NULL,...,b0=1,idx=2) {
 val <- sim(onerun,R=10,b0=1,messages=0)
 val
 val <- sim(val,R=100,b0=1) ## append results
+
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-summary(val,estimate=c(1,1),se=c(2,5))
+summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
     plot(val,1,1)
