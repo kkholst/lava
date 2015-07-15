@@ -691,12 +691,12 @@ print.sim <- function(x,...) {
 }
 
 ##' @export
-plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,lty=1,col=1:10,legend=TRUE,...) {
+plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,lty=1,col=1:10,legend=colnames(x)[idx],...) {
     val <- apply(x[,idx,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
     matplot(val,type="l",col=col,lty=lty,...)
     if (!is.null(true)) abline(h=true,lty=2,...)
-    if (legend) {
-        graphics::legend("bottom",colnames(x)[idx],bg="white",col=col,lty=lty,...)
+    if (!is.null(legend)) {
+        graphics::legend("bottom",legend,bg="white",col=col,lty=lty)
     }
 }
 
