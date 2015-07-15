@@ -42,9 +42,9 @@ onerun <- function(iter=NULL,...,b0=1,idx=2) {
     res
 }
 
-val <- sim(onerun,R=10,b0=1,messages=0)
+val <- sim(onerun,R=10,b0=1,messages=0,mc.cores=1)
 val
-val <- sim(val,R=100,b0=1) ## append results
+val <- sim(val,R=40,b0=1,mc.cores=1) ## append results
 
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))

@@ -609,9 +609,9 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##'     res
 ##' }
 ##' 
-##' val <- sim(onerun,R=10,b0=1,messages=0)
+##' val <- sim(onerun,R=10,b0=1,messages=0,mc.cores=1)
 ##' val
-##' val <- sim(val,R=100,b0=1) ## append results
+##' val <- sim(val,R=40,b0=1,mc.cores=1) ## append results
 ##' 
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
@@ -620,7 +620,7 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##'     plot(val,1,1)
 ##' }
 sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
-    requireNamespace("parallel")
+    requireNamespace("parallel",quietly=TRUE)
     if (messages>0) pb <- txtProgressBar(style=3,width=40)
     olddata <- NULL
     if (inherits(x,"sim")) {
