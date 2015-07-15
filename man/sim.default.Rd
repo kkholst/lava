@@ -34,17 +34,22 @@ transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
 onerun <- function(iter=NULL,...,b0=1,idx=2) {
     d <- sim(m,2e3,p=c("y~x"=b0))
     l <- lm(y~x,d)
-    res <- c(coef(l)[idx],estimate(l,only.coef=TRUE)[idx,3:4],confint(l)[idx,])
-    names(res) <- c("Estimate","Sandwich.lo","Sandwich.hi","Model.lo","Model.hi")
+    res <- c(coef(summary(l))[idx,1:2],
+             confint(l)[idx,],
+             estimate(l,only.coef=TRUE)[idx,2:3:4])
+    names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
+                    "Sandwich.se","Sandwich.lo","Sandwich.hi")
     res
 }
 
-b0 <- 1
-val <- sim(onerun,R=20,b0=b0,messages=0)
+val <- sim(onerun,R=10,b0=1,messages=0)
 val
-val <- sim(val,R=100,b0=b0) ## append results
+val <- sim(val,R=100,b0=1) ## append results
+summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
+summary(val,estimate=c(1,1),se=c(2,5))
 
-M <- t(apply(val,1,function(x) c(x[1],x[2]<b0 & x[3]>b0, x[4]<b0 & x[5]>b0)))
-colMeans(M)
+if (interactive()) {
+    plot(val,1,1)
+}
 }
 

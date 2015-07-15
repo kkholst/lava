@@ -225,7 +225,6 @@ sim(m,5,p=c(m1=100))
 ### Categorical predictor
 ##################################################
 
-##library(mets)
 m <- lvm()
 ## categorical(m,K=3) <- "v"
 categorical(m,labels=c("A","B","C")) <- "v"
