@@ -672,7 +672,7 @@ sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::det
 print.sim <- function(x,...) print(x[,],...)
 
 ##' @export
-plot.sim <- function(x,idx=seq(ncol(x)),lty=1,col=1:10,true=NULL,legend=TRUE,...) {
+plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,lty=1,col=1:10,legend=TRUE,...) {
     val <- apply(x[,idx,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
     matplot(val,type="l",col=col,lty=lty,...)
     if (!is.null(true)) abline(h=true,lty=2,...)
