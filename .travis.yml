@@ -1,6 +1,10 @@
 language: r
 sudo: required
+
 r_check_args: --as-cran --run-donttest
+
+warnings_are_errors: true
+
 r_binary_packages:
  - numDeriv
  - mets
@@ -20,7 +24,7 @@ github_packages:
  - jimhester/covr
 
 after_success:
-  - Rscript -e 'library(covr);coveralls()'
+  - Rscript -e 'library(covr);codecov()'
 
 before_install:
   - sudo apt-get install -y r-bioc-rgraphviz r-bioc-graph

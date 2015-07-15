@@ -1,6 +1,7 @@
 * Version 1.4.1.1 <2015-07-09 Thu>
   - Namespace update
   - Travis, unit-tests
+  - sim.default
   
 * Version 1.4.1 <2015-06-13 Sat>
   - New plot.estimate method
