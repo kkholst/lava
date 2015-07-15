@@ -443,6 +443,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
+
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)")
 
             for (i in leftovers) {
@@ -581,3 +582,86 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
     }
     sim(object,nsim,...)
 }
+
+##' Wrapper function for mclapply 
+##'
+##' @export
+##' @param x function or 'sim' object
+##' @param R Number of replications
+##' @param colnames Optional column names
+##' @param messages Messages
+##' @param mc.cores Number of cores to use
+##' @param blocksize Split computations in blocks
+##' @param ... Additional arguments to mclapply
+##' @examples
+##' m <- lvm(y~x+e)
+##' distribution(m,~y) <- 0
+##' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
+##' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
+##' 
+##' onerun <- function(iter=NULL,...,b0=1,idx=2) {
+##'     d <- sim(m,2e3,p=c("y~x"=b0))
+##'     l <- lm(y~x,d)
+##'     res <- c(coef(l)[idx],estimate(l,only.coef=TRUE)[idx,3:4],confint(l)[idx,])
+##'     names(res) <- c("Estimate","Sandwich.lo","Sandwich.hi","Model.lo","Model.hi")
+##'     res
+##' }
+##' 
+##' b0 <- 1
+##' val <- sim(onerun,R=20,b0=b0,messages=0)
+##' val
+##' val <- sim(val,R=100,b0=b0) ## append results
+##' 
+##' M <- t(apply(val,1,function(x) c(x[1],x[2]<b0 & x[3]>b0, x[4]<b0 & x[5]>b0)))
+##' colMeans(M)
+sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
+    requireNamespace("parallel")
+    if (messages>0) pb <- txtProgressBar(style=3,width=40)    
+    olddata <- NULL
+    if (inherits(x,"sim")) {
+        olddata <- x
+        x <- attr(x,"f")
+    } else {
+        if (!is.function(x)) stop("Expected a function or 'sim' object")
+    }
+    res <- val <- NULL
+    mycall <- match.call()
+    on.exit({
+        if (messages>0) close(pb)
+        if (is.null(colnames) && !is.null(val)) {
+            if (is.matrix(val[[1]])) {
+                colnames <- base::colnames(val[[1]])
+            } else {
+                colnames <- names(val[[1]])
+            }
+        }
+        base::colnames(res) <- colnames
+        if (!is.null(olddata)) res <- rbind(olddata,res)
+        attr(res,"call") <- mycall
+        attr(res,"f") <- x
+        class(res) <- c("sim","matrix")
+        if (idx.done<R) {
+            res <- res[seq(idx.done),,drop=FALSE]
+        }
+        return(res)
+    })
+    nfolds <- round(R/blocksize)
+    idx <- split(1:R,sort((1:R)%%nfolds))
+    idx.done <- 0
+    count <- 0    
+    for (ii in idx) {
+        count <- count+1
+        val <- parallel::mclapply(ii,x,mc.cores=mc.cores,...)
+        if (messages>0) ##getTxtProgressBar(pb)<(i/R)) {
+            setTxtProgressBar(pb, count/length(idx))       
+        
+        if (is.null(res)) {
+            res <- matrix(NA,ncol=length(val[[1]]),nrow=R)
+        }
+        res[ii,] <- Reduce(rbind,val)
+        idx.done <- max(ii)
+    }
+}
+
+##' @export
+print.sim <- function(x,...) print(x[,],...)
