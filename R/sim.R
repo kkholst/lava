@@ -617,7 +617,7 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 ##' 
 ##' if (interactive()) {
-##'     plot(val[1:20,],1,1,ylim=c(0.8,1.2))
+##'     plot(val[1:20,c(1:4)],vline=c(1,NA,NA,NA),yax.flip=TRUE,start=5)
 ##' }
 sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
     requireNamespace("parallel",quietly=TRUE)
@@ -691,13 +691,25 @@ print.sim <- function(x,...) {
 }
 
 ##' @export
-plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,lty=1,col=1:10,legend=colnames(x)[idx],...) {
-    val <- apply(x[,idx,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
-    matplot(val,type="l",col=col,lty=lty,...)
-    if (!is.null(true)) abline(h=true,lty=2,...)
-    if (!is.null(legend)) {
-        graphics::legend("bottom",legend,bg="white",col=col,lty=lty)
+plot.sim <- function(x,vline=NULL,lty.vline=2,
+                     start=1,end=nrow(x),
+                     idx=seq(ncol(x)),
+                     main="Running Average",
+                     plot.type=c("multiple","single"),xlab="",...) {
+    if (!requireNamespace("zoo",quietly=TRUE)) stop("zoo package required")
+    my.panel <- function(x, ..., pf = parent.frame()) {
+        lines(x, ...)
+        args <- list(...)
+        args$type <- NULL
+        args$lty <- lty.vline
+        args[1] <- NULL
+        args$h <- vline[with(pf,panel.number)]
+        if (!is.null(vline)) do.call(abline,args)
     }
+    if (!is.null(vline) && length(idx)>vline) vline <- rep(vline,ceiling(length(idx)/length(vline)))
+    val <- apply(x[,idx,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
+    val <- stats::window(zoo::zoo(val),start=start,end=end)
+    plot(val,xlab=xlab,plot.type=plot.type,panel=my.panel,main=main,...)
 }
 
 ##' @export

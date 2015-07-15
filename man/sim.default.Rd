@@ -51,7 +51,8 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
-    plot(val[1:20,],1,1,ylim=c(0.8,1.2))
+    plot(val[1:20,c(1:4)],vline=c(1,NA,NA,NA),yax.flip=TRUE,start=5)
+    ##plot(val[1:20,c(1:4)],plot.type="single",col=1:4)
 }
 }
 

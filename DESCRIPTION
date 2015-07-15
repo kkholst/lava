@@ -28,5 +28,6 @@ Suggests:
     fields,
     survival,
     testthat,
-    ascii
+    ascii,
+    zoo
 Roxygen: list(wrap = FALSE)
