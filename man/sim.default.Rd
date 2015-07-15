@@ -4,8 +4,9 @@
 \alias{sim.default}
 \title{Wrapper function for mclapply}
 \usage{
-\method{sim}{default}(x, R = 100, colnames = NULL, messages = 1L,
-  mc.cores = parallel::detectCores(), blocksize = 2L * mc.cores, ...)
+\method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
+  messages = 1L, mc.cores = parallel::detectCores(), blocksize = 2L *
+  mc.cores, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
@@ -31,12 +32,12 @@ distribution(m,~y) <- 0
 distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
 transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
 
-onerun <- function(iter=NULL,...,b0=1,idx=2) {
-    d <- sim(m,2e3,p=c("y~x"=b0))
+onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
+    d <- sim(m,n,p=c("y~x"=b0))
     l <- lm(y~x,d)
     res <- c(coef(summary(l))[idx,1:2],
              confint(l)[idx,],
-             estimate(l,only.coef=TRUE)[idx,2:3:4])
+             estimate(l,only.coef=TRUE)[idx,2:4])
     names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
     res
@@ -50,7 +51,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
-    plot(val,1,1)
+    plot(val[1:20,],1,1,ylim=c(0.8,1.2))
 }
 }
 

@@ -328,7 +328,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 } else {
                     if (is.null(dist.x) || is.na(dist.x)) {
                     } else {
-                        if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n)
+                        if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n,".")
                         res[,X.idx[i]] <- dist.x ## Deterministic
                     }
                 }
@@ -443,7 +443,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
 
-            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model)")
+            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
 
             for (i in leftovers) {
                 if (i%in%vartrans) {
@@ -598,12 +598,12 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
 ##' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
 ##' 
-##' onerun <- function(iter=NULL,...,b0=1,idx=2) {
-##'     d <- sim(m,2e3,p=c("y~x"=b0))
+##' onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
+##'     d <- sim(m,n,p=c("y~x"=b0))
 ##'     l <- lm(y~x,d)
 ##'     res <- c(coef(summary(l))[idx,1:2],
 ##'              confint(l)[idx,],
-##'              estimate(l,only.coef=TRUE)[idx,2:3:4])
+##'              estimate(l,only.coef=TRUE)[idx,2:4])
 ##'     names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
@@ -617,18 +617,20 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 ##' 
 ##' if (interactive()) {
-##'     plot(val,1,1)
+##'     plot(val[1:20,],1,1,ylim=c(0.8,1.2))
 ##' }
-sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
     requireNamespace("parallel",quietly=TRUE)
-    if (messages>0) pb <- txtProgressBar(style=3,width=40)
     olddata <- NULL
+    if (inherits(x,c("data.frame","matrix"))) olddata <- x
     if (inherits(x,"sim")) {
-        olddata <- x
         x <- attr(x,"f")
+        if (!is.null(f)) x <- f
     } else {
-        if (!is.function(x)) stop("Expected a function or 'sim' object")
+        if (!is.null(f)) x <- f
+        if (!is.function(x)) stop("Expected a function or 'sim' object.")
     }
+    if (is.null(x)) stop("Must give new function argument 'f'.")
     res <- val <- NULL
     mycall <- match.call()
     on.exit({
@@ -650,10 +652,11 @@ sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::det
         }
         return(res)
     })
-    nfolds <- round(R/blocksize)
+    nfolds <- max(1,round(R/blocksize))
     idx <- split(1:R,sort((1:R)%%nfolds))
     idx.done <- 0
     count <- 0
+    if (messages>0) pb <- txtProgressBar(style=3,width=40)
     for (ii in idx) {
         count <- count+1
         val <- parallel::mclapply(ii,x,mc.cores=mc.cores,...)
@@ -669,7 +672,23 @@ sim.default <- function(x,R=100,colnames=NULL,messages=1L,mc.cores=parallel::det
 }
 
 ##' @export
-print.sim <- function(x,...) print(x[,],...)
+"[.sim" <- function (x, i, j, drop = FALSE) {
+    atr <- attributes(x)
+    class(x) <- "matrix"
+    x <- NextMethod("[",drop=FALSE)
+    atr.keep <- "call"
+    if (missing(j)) atr.keep <- c(atr.keep,"f")
+    attributes(x)[atr.keep] <- atr[atr.keep]
+    class(x) <- c("sim","matrix")
+    x
+}
+
+##' @export
+print.sim <- function(x,...) {
+    attr(x,"f") <- attr(x,"call") <- NULL
+    class(x) <- "matrix"
+    print(x,...)
+}
 
 ##' @export
 plot.sim <- function(x,idx=seq(ncol(x)),true=NULL,lty=1,col=1:10,legend=TRUE,...) {
@@ -695,20 +714,20 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
     est <- apply(object[,estimate,drop=FALSE],2,
                  function(x) c(Mean=mean(x,na.rm=TRUE),Missing=mean(is.na(x)),SD=sd(x,na.rm=TRUE)))
     if (!is.null(true)) {
-        if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'")
+        if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
         est <- rbind(rbind(True=true),rbind(Bias=true-est["Mean",]),
                      rbind(RMSE=((true-est["Mean",])^2+(est["SD",])^2)^.5),
                      est)
     }
     if (!is.null(se)) {
-        if (length(se)!=length(estimate)) stop("'se' should be of same length as 'estimate'")
+        if (length(se)!=length(estimate)) stop("'se' should be of same length as 'estimate'.")
         est <- rbind(est, SE=apply(object[,se,drop=FALSE],2,
                                   function(x) c(mean(x,na.rm=TRUE))))
         est <- rbind(est,"SE/SD"=est["SE",]/est["SD",])
 
     }
     if (!is.null(confint)) {
-        if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate)")
+        if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate).")
         Coverage <- c()
         for (i in seq_along(estimate)) {
             Coverage <- c(Coverage,
