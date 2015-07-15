@@ -59,7 +59,7 @@ m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(y~x, d)
 \donttest{ ## Reduce Ex.Timings
-B <- bootstrap(e,R=100)
+B <- bootstrap(e,R=50)
 B
 }
 }

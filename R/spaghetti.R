@@ -17,7 +17,7 @@
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples
-##' if (interactive() & requireNamespace(mets)) {
+##' if (interactive() & requireNamespace("mets")) {
 ##' K <- 5
 ##' y <- "y"%++%seq(K)
 ##' m <- lvm()
