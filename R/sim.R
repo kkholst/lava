@@ -587,6 +587,7 @@ simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
 ##' @export
 ##' @param x function or 'sim' object
 ##' @param R Number of replications
+##' @param f Optional function (i.e., if x is a matrix)
 ##' @param colnames Optional column names
 ##' @param messages Messages
 ##' @param mc.cores Number of cores to use

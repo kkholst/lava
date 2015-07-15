@@ -13,6 +13,8 @@
 
 \item{R}{Number of replications}
 
+\item{f}{Optional function (i.e., if x is a matrix)}
+
 \item{colnames}{Optional column names}
 
 \item{messages}{Messages}
@@ -52,7 +54,6 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
     plot(val[1:20,c(1:4)],vline=c(1,NA,NA,NA),yax.flip=TRUE,start=5)
-    ##plot(val[1:20,c(1:4)],plot.type="single",col=1:4)
 }
 }
 
