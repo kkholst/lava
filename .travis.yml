@@ -10,7 +10,11 @@ r_binary_packages:
  - mets
  - igraph
  - lme4
+ - maps
+ - xtable
+ - ascii
  - fields
+ - RcppEigen
  - foreach
  - rgl
  - plyr
