@@ -54,7 +54,12 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"))
-    plot(val,estimate=c(1,1),c(2,5),true=c(1,1),names=c("Model","Sandwich"))
+    plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
+         names=c("Model","Sandwich"))
+    plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
+         true=c(1,1),names=c("Model","Sandwich"),
+         polygon=TRUE,line.lwd=1.5,density.col=c("gray20","gray60"),
+         rug=TRUE)
 }
 }
 
