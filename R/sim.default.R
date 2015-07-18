@@ -178,7 +178,7 @@ plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
                      border=density.col,
                      density.lty,
                      density.col=col,
-                     density.lwd=0.2,
+                     density.lwd=0.4,
                      xlab="",...) {
 
     if (is.null(estimate)) {
