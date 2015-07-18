@@ -9,7 +9,7 @@
 ##' @param mc.cores Number of cores to use
 ##' @param blocksize Split computations in blocks
 ##' @param ... Additional arguments to mclapply
-##' @aliases sim.default summary.default
+##' @aliases sim.default summary.sim
 ##' @examples
 ##' m <- lvm(y~x+e)
 ##' distribution(m,~y) <- 0
@@ -183,8 +183,8 @@ plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
 
     if (is.null(estimate)) {
         av <- apply(x[,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
-        matplot(x,type="p",pch=pch, cex=cex, col=col,...)
-        matlines(av,type="l",col=col,lty=lty,...)
+        graphics::matplot(x,type="p",pch=pch, cex=cex, col=col,...)
+        graphics::matlines(av,type="l",col=col,lty=lty,...)
         if (!is.null(true)) abline(h=true,lty=true.lty,...)
         if (missing(legend)) legend <- colnames(x)
         if (!is.null(legend))
