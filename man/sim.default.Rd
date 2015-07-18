@@ -2,6 +2,7 @@
 % Please edit documentation in R/sim.default.R
 \name{sim.default}
 \alias{sim.default}
+\alias{summary.default}
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
@@ -53,13 +54,13 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 
 if (interactive()) {
-    plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"))
-    plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
-         names=c("Model","Sandwich"))
+    plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
          true=c(1,1),names=c("Model","Sandwich"),
-         polygon=TRUE,line.lwd=1.5,density.col=c("gray20","gray60"),
-         rug=TRUE)
+         line.lwd=1,density.col=c("gray20","gray60"),
+         rug=FALSE)
+    plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
+         names=c("Model","Sandwich"))
 }
 }
 
