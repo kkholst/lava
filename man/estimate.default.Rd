@@ -10,7 +10,7 @@
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
   iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
   coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
-  only.coef = FALSE, transform, folds = 0)
+  only.coef = FALSE, transform, folds = 0, cluster)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -25,34 +25,34 @@
 
 \item{iddata}{(optional) id-variable for 'data'}
 
-\item{stack}{If TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'}
+\item{stack}{if TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'}
 
-\item{average}{If TRUE averages are calculated}
+\item{average}{if TRUE averages are calculated}
 
 \item{subset}{(optional) subset of data.frame on which to condition (logical expression or variable name)}
 
 \item{score.deriv}{(optional) derivative of mean score function}
 
-\item{level}{Level of confidence limits}
+\item{level}{level of confidence limits}
 
-\item{iid}{If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)}
+\item{iid}{if TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)}
 
-\item{type}{Type of small-sample correction}
+\item{type}{type of small-sample correction}
 
-\item{keep}{(optional) Index of parameters to keep}
+\item{keep}{(optional) index of parameters to keep}
 
 \item{contrast}{(optional) Contrast matrix for final Wald test}
 
-\item{null}{(optional) Null hypothesis to test}
+\item{null}{(optional) null hypothesis to test}
 
 \item{vcov}{(optional) covariance matrix of parameter estimates (e.g. Wald-test)}
 
 \item{coef}{(optional) parameter coefficient}
 
-\item{robust}{If TRUE robust standard errors are calculated. If
+\item{robust}{if TRUE robust standard errors are calculated. If
 FALSE p-values for linear models are calculated from t-distribution}
 
-\item{df}{Degrees of freedom (default obtained from 'df.residual')}
+\item{df}{degrees of freedom (default obtained from 'df.residual')}
 
 \item{print}{(optional) print function}
 
@@ -64,7 +64,9 @@ FALSE p-values for linear models are calculated from t-distribution}
 
 \item{transform}{(optional) transform of parameters and confidence intervals}
 
-\item{folds}{(optional) Aggregate influence functions (divide and conquer)}
+\item{folds}{(optional) aggregate influence functions (divide and conquer)}
+
+\item{cluster}{(obsolete) alias for 'id'.}
 }
 \description{
 Estimation of functional of parameters.

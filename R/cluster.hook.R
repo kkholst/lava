@@ -40,7 +40,12 @@ cluster.post.hook <- function(x,...) {
       S0[count,] <- colSums(S[which(x$cluster==i),,drop=FALSE])
       ##      J1 <- J1+tcrossprod(S0[count,])
     };
-    J <- count/(count-1)*crossprod(S0)
+    p <- ncol(S)
+    ## adj1 <- 1
+    adj1 <- K/(K-1) 
+    ## adj1 <- K/(K-p) ## Mancl & DeRouen, 2001
+      
+    J <- adj1*crossprod(S0)
     col3 <- sqrt(diag(iI)); ## Naive se
     nn <- c("Estimate","Robust SE", "Naive SE", "P-value")
     asVar <- iI%*%J%*%iI

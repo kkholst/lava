@@ -5,10 +5,11 @@
                                   estimator="gaussian",
                                   weight, weightname,
                                   weight2,
-                                  cluster=NULL,
+                                  id=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
                                   param,
+                                  cluster,
                                   ...) {
   cl <- match.call()
   optim <- list(
@@ -41,6 +42,7 @@
     lava.options(param=param)
     on.exit(lava.options(param=oldparam))
   }
+  if (!missing(cluster)) id <- cluster
 
   defopt <- lava.options()[]
   defopt <- defopt[intersect(names(defopt),names(optim))]
@@ -580,8 +582,8 @@
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
-
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, weight2=weight2, cluster=cluster)
+    
+  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure, vcov=asVar, estimator=estimator, weight=weight, weight2=weight2, cluster=id)
   class(res) <- myclass
 
   myhooks <- gethook("post.hooks")

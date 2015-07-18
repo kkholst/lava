@@ -6,9 +6,9 @@
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \usage{
 \method{estimate}{lvm}(x, data = parent.frame(), estimator = "gaussian",
-  control = list(), missing = FALSE, weight, weightname, weight2, cluster,
-  fix, index = TRUE, graph = FALSE, silent = lava.options()$silent,
-  quick = FALSE, method, param, ...)
+  control = list(), missing = FALSE, weight, weightname, weight2, id, fix,
+  index = TRUE, graph = FALSE, silent = lava.options()$silent,
+  quick = FALSE, method, param, cluster, ...)
 }
 \arguments{
 \item{x}{\code{lvm}-object}
@@ -32,7 +32,7 @@ under assumption the assumption that data is missing at random (MAR).}
 \item{weight2}{Optional additional dataset used by the chosen
 estimator.}
 
-\item{cluster}{Vector (or name of column in \code{data}) that identifies
+\item{id}{Vector (or name of column in \code{data}) that identifies
 correlated groups of observations in the data leading to variance estimates
 based on a sandwich estimator}
 
@@ -54,6 +54,8 @@ additional information such as standard errors are skipped}
 \item{method}{Optimization method}
 
 \item{param}{set parametrization (see \code{help(lava.options)})}
+
+\item{cluster}{Obsolete. Alias for 'id'.}
 
 \item{...}{Additional arguments to be passed to the low level functions}
 }

@@ -19,27 +19,28 @@ estimate.list <- function(x,...) {
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to iid decomposition of model parameters.
 ##' @param iddata (optional) id-variable for 'data'
-##' @param stack If TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'
-##' @param average If TRUE averages are calculated
+##' @param stack if TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'
+##' @param average if TRUE averages are calculated
 ##' @param subset (optional) subset of data.frame on which to condition (logical expression or variable name)
 ##' @param score.deriv (optional) derivative of mean score function
-##' @param level Level of confidence limits
-##' @param iid If TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
-##' @param type Type of small-sample correction
-##' @param keep (optional) Index of parameters to keep
+##' @param level level of confidence limits
+##' @param iid if TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
+##' @param type type of small-sample correction
+##' @param keep (optional) index of parameters to keep
 ##' @param contrast (optional) Contrast matrix for final Wald test
-##' @param null (optional) Null hypothesis to test
+##' @param null (optional) null hypothesis to test
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
 ##' @param coef (optional) parameter coefficient
-##' @param robust If TRUE robust standard errors are calculated. If
+##' @param robust if TRUE robust standard errors are calculated. If
 ##' FALSE p-values for linear models are calculated from t-distribution
-##' @param df Degrees of freedom (default obtained from 'df.residual')
+##' @param df degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
 ##' @param transform (optional) transform of parameters and confidence intervals
-##' @param folds (optional) Aggregate influence functions (divide and conquer)
+##' @param folds (optional) aggregate influence functions (divide and conquer)
+##' @param cluster (obsolete) alias for 'id'.
 ##' @export
 ##' @examples
 ##'
@@ -139,7 +140,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
                              print=NULL,labels,label.width,
-                             only.coef=FALSE,transform,folds=0
+                             only.coef=FALSE,transform,
+                             folds=0,
+                             cluster
                              ) {
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
@@ -147,7 +150,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     } else {
         pp <- suppressWarnings(try(stats::coef(x),"try-error"))
     }
-
+    if (!missing(cluster)) id <- cluster
+    
     if (expr || is.character(f)) { ## || is.call(f)) {
         ## if (is.call(f)) f <- parsedesign(seq(length(pp)),f,...)
         dots <- substitute(list(...))[-1]
@@ -256,7 +260,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         N <- attributes(iidtheta)$N
         if (is.null(N)) N <- K
         p <- NCOL(iidtheta)
-        adj1 <- K/(K-p) ## Mancl & DeRouen, 2001
+        adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
+        adj1 <- K/(K-1) ## Mancl & DeRouen, 2001        
         adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
         if (tolower(type[1])=="mbn" && !is.null(attributes(iidtheta)$bread)) {
             V0 <- V
@@ -268,6 +273,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
             V <- adj2*V0 + delta*phi*iI0
         }
         if (tolower(type[1])=="df") {
+            V <- adj0*V
+        }
+        if (tolower(type[1])=="df1") {
             V <- adj1*V
         }
         if (tolower(type[1])=="df2") {

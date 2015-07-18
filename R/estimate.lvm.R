@@ -52,7 +52,7 @@
 ##' \code{weight} was given as a vector of column names of \code{data}
 ##' @param weight2 Optional additional dataset used by the chosen
 ##' estimator.
-##' @param cluster Vector (or name of column in \code{data}) that identifies
+##' @param id Vector (or name of column in \code{data}) that identifies
 ##' correlated groups of observations in the data leading to variance estimates
 ##' based on a sandwich estimator
 ##' @param fix Logical variable indicating whether parameter restriction
@@ -67,6 +67,7 @@
 ##' additional information such as standard errors are skipped
 ##' @param method Optimization method
 ##' @param param set parametrization (see \code{help(lava.options)})
+##' @param cluster Obsolete. Alias for 'id'.
 ##' @param ... Additional arguments to be passed to the low level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
@@ -120,7 +121,7 @@
              missing=FALSE,
              weight, weightname,
              weight2,
-             cluster,
+             id,
              fix,
              index=TRUE,
              graph=FALSE,
@@ -128,6 +129,7 @@
              quick=FALSE,
              method,
              param,
+             cluster,
              ...) {
 
         if (length(exogenous(x)>0)) {
@@ -143,7 +145,7 @@
         if (!base::missing(method)) {
             control["method"] <- list(method)
         }
-
+        
         optim <- list(
             iter.max=lava.options()$iter.max,
             trace=ifelse(lava.options()$debug,3,0),
@@ -190,11 +192,12 @@
         }
         Debug(list("start=",optim$start))
 
+        if (!missing(cluster)) id <- cluster
         if (!missing & (is.matrix(data) | is.data.frame(data))) {
             includelist <- c(manifest(x),xfix)
             if (!base::missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
             if (!base::missing(weight2) && is.character(weight2)) includelist <- c(includelist,weight2)
-            if (!base::missing(cluster) && is.character(cluster)) includelist <- c(includelist,cluster)
+            if (!base::missing(id) && is.character(id)) includelist <- c(includelist,id)
             data <- na.omit(data[,intersect(colnames(data),includelist),drop=FALSE])
         }
 
@@ -222,12 +225,12 @@
             weight2 <- NULL
         }
         ## Correlated clusters...
-        if (!base::missing(cluster)) {
-            if (is.character(cluster)) {
-                cluster <- data[,cluster]
+        if (!base::missing(id)) {
+            if (is.character(id)) {
+                id <- data[,id]
             }
         } else {
-            cluster <- NULL
+            id <- NULL
         }
 
         Debug("procdata")
@@ -340,9 +343,7 @@
 
         ## Missing data
         if (missing) {
-            ##$start <- optim$start
-            ##return(estimate.MAR(x=x,data=data,fix=fix,control=control,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
-            return(estimate.MAR(x=x,data=data,fix=fix,control=optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=cluster,...))
+            return(estimate.MAR(x=x,data=data,fix=fix,control=optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=id,...))
         }
 
         ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -723,7 +724,7 @@
                         C=mom$C, v=mom$v, n=n,
                         m=length(latent(x)), k=length(index(x)$manifest), weight2=weight2),
                     weight=weight, weight2=weight2,
-                    cluster=cluster,
+                    cluster=id,
                     pp.idx=pp.idx,
                     graph=NULL, control=optim)
 
@@ -748,16 +749,16 @@
 ###{{{ estimate.formula
 
 ##' @export
-estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,cluster=NULL,distribution=NULL,estimator="gaussian",...) {
+estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
-    formulaId <- Specials(x,"cluster")
-    formulaSt <- paste0("~.-cluster(",formulaId,")")
+    formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))    
+    formulaSt <- paste0("~.-cluster(",formulaId,")-id(",formulaId,")")
     if (!is.null(formulaId)) {
-        cluster <- formulaId
+        id <- formulaId
         x <- update(x,as.formula(formulaSt))
     }
-    if (!is.null(cluster))
-        x <- update(x,as.formula(paste(".~.+",cluster)))
+    if (!is.null(id))
+        x <- update(x,as.formula(paste(".~.+",id)))
     varnames <- all.vars(x)
     mf <- model.frame(x,data)
     mt <- attr(mf, "terms")
@@ -777,7 +778,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
         int <- -1
     }
 
-    if (!is.null(cluster)) covars <- setdiff(covars,cluster)
+    if (!is.null(id)) covars <- setdiff(covars,id)
     model <- lvm(toformula(yvar,c(int,covars)),silent=TRUE)
     if (!is.null(distribution)) {
         lava::distribution(model,yvar) <- distribution
@@ -788,7 +789,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
     if (unstruct) {
         model <- covariance(model,pred.norm,pairwise=TRUE)
     }
-    estimate(model,mydata,silent=silent,cluster=cluster,estimator=estimator,...)
+    estimate(model,mydata,silent=silent,id=id,estimator=estimator,...)
 }
 
 ###}}} estimate.formula
