@@ -53,7 +53,8 @@ Col <- function(col,alpha=0.2,locate=0) {
         return(cols)
     }
 
-    sapply(col, function(x)
-           do.call(rgb,as.list(c(col2rgb(x)/255,alpha)))
-           )
+    mapply(function(x,alpha)
+        do.call(rgb,as.list(c(col2rgb(x)/255,alpha))),
+        col,alpha)
 }
+
