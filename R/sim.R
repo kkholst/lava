@@ -450,7 +450,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     xtrans <- x$attributes$transform[[i]]$x
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
                         suppressWarnings(yy <- with(x$attributes$transform[[i]],fun(res[,xtrans])))
-                        if (length(yy) != NROW(res)) { ## apply row-wise
+                        if (NROW(yy) != NROW(res)) { ## apply row-wise
                             res[,i] <- with(x$attributes$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
                         } else {
                             colnames(yy) <- NULL
@@ -459,7 +459,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                         simuled <- c(simuled,i)
                     }
                 } else {
-
+                    
                     ipos <- which(i%in%yconstrain)
                     if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
                         pos <- match(i,vv)
