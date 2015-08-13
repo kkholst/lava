@@ -15,48 +15,61 @@ glm.estimate.hook <- function(x,estimator,...) {
 }
 
 GLMest <- function(m,data,control=list(),...) {
-  v <- vars(m)
-  yvar <- endogenous(m)
-  res <- c()
-  count <- 0
-  V <- NULL
-  mymsg <- c()
-  for (y in yvar) {
-    count <- count+1
-    xx <- parents(m,y)
-    fam <- attributes(distribution(m)[[y]])$family
-    if (is.null(fam)) fam <- stats::gaussian()
-    mymsg <- c(mymsg, with(fam, paste0(family,"(",link,")")))
-    if (length(xx)==0) xx <- 1
-    g <- glm(toformula(y,xx),family=fam,data=data)
-    p <- coef(g)
-    V0 <- vcov(g)
-    names(p)[1] <- y
-    if (length(p)>1) {
-      names(p)[-1] <- paste(y,xx,sep=lava.options()$symbol[1])
+    v <- vars(m)
+    yvar <- endogenous(m)
+    res <- c()
+    count <- 0
+    V <- NULL
+    mymsg <- c()
+    iids <- c()
+
+    for (y in yvar) {
+        count <- count+1
+        xx <- parents(m,y)
+        fam <- attributes(distribution(m)[[y]])$family
+        if (is.null(fam)) fam <- stats::gaussian()
+        mymsg <- c(mymsg, with(fam, paste0(family,"(",link,")")))
+        if (length(xx)==0) xx <- 1
+        f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
+        ##environment(f) <- parent.frame()
+        isSurv <- inherits(data[1,y],"Surv")
+        if (isSurv) {            
+            g <- survival::survreg(f,data=data,dist=fam$family)            
+        } else {
+            g <- glm(f,family=fam,data=data)
+        }
+        p <- pars(g)
+        iids <- cbind(iids,iid(g))
+        names(p)[1] <- y
+        if (length(p)>1) {
+            nn <- paste(y,xx,sep=lava.options()$symbol[1])
+            names(p)[seq_along(nn)+1] <- nn
+            if (length(p)>length(nn)+1) names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
+        }
+
+        ## colnames(V0) <- rownames(V0) <- names(p)
+        if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
+            iids <- cbind(iids,0)
+        ##     p <- c(p,summary(g)$dispersion)
+        ##     ## V1 <- matrix(0) ## Not estimated!
+        ##     ## colnames(V1) <- rownames(V1) <- names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
+        ##     ## V0 <- V0%++%V1
+        }
+        ## if (is.null(V)) {
+        ##     V <- V0
+        ## } else {
+        ##     V <- V%++%V0
+        ## }
+        res <- c(res, list(p));
     }
-    colnames(V0) <- rownames(V0) <- names(p)
-    if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-      p <- c(p,summary(g)$dispersion)
-      V1 <- matrix(0) ## Not estimated!
-      colnames(V1) <- rownames(V1) <- names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
-      V0 <- V0%++%V1
-    }
-    if (is.null(V)) {
-      V <- V0
-    } else {
-      V <- V%++%V0
-    }
-  res <- c(res, list(p));
-  }
-  coefs <- unlist(res)
-  idx <- match(coef(m),names(coefs))
-  coefs <- coefs[idx]
-  V <- V[idx,idx]
-  mymsg <- noquote(cbind(mymsg))
-  colnames(mymsg) <- "Family(Link)"; rownames(mymsg) <- paste(yvar,":")
-  list(estimate=coefs,vcov=V,summary.message=function(...)  {
-    mymsg }, dispname="Dispersion:")
+    coefs <- unlist(res)
+    idx <- match(coef(m),names(coefs))
+    coefs <- coefs[idx]
+    V <- crossprod(iids)    
+    mymsg <- noquote(cbind(mymsg))
+    colnames(mymsg) <- "Family(Link)"; rownames(mymsg) <- paste(yvar,":")
+    list(estimate=coefs,vcov=V,iid=iids,summary.message=function(...)  {
+        mymsg }, dispname="Dispersion:")
 }
 
 GLMscore <- function(x,p,data,indiv=FALSE,...) {
@@ -65,33 +78,38 @@ GLMscore <- function(x,p,data,indiv=FALSE,...) {
   S <- res <- c()
   count <- 0
   for (y in yvar) {
-    count <- count+1
-    xx <- parents(x,y)
-    fam <- attributes(distribution(x)[[y]])$family
-    if (is.null(fam)) fam <- stats::gaussian()
-    g <- glm(toformula(y,xx),family=fam,data=data)
-    pdispersion <- NULL
-    p0 <- p
-    if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+      count <- count+1
+      xx <- parents(x,y)
+      fam <- attributes(distribution(x)[[y]])$family
+      if (is.null(fam)) fam <- stats::gaussian()
+      if (length(xx)==0) xx <- 1
+      f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
+      if (inherits(data[,y],"Surv")) {            
+          g <- survival::survreg(f,data=data,dist=fam$family)            
+      } else {
+          g <- glm(f,family=fam,data=data)
+      }
+      pdispersion <- NULL
+      p0 <- p
+      if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian")) {
       pdispersion <- tail(p,1)
-      p0 <- p[-length(p)]
-    }
-    S0 <- rbind(score.glm(g,p=p0,indiv=indiv,...))
-    if (!is.null(pdispersion)) S0 <- cbind(S0,0)
-    colnames(S0) <- names(p)
-    if (is.null(S)) {
-      S <- S0
-    } else {
-      S <- cbind(S,S0)
-    }
-    res <- c(res, list(p));
+          p0 <- p[-length(p)]
+      }
+      S0 <- rbind(score.glm(g,p=p0,indiv=indiv,...))
+      if (!is.null(pdispersion)) S0 <- cbind(S0,0)
+      colnames(S0) <- names(p)
+      if (is.null(S)) {
+          S <- S0
+      } else {
+          S <- cbind(S,S0)
+      }
+      res <- c(res, list(p));
   }
-  coefs <- unlist(res)
-  idx <- na.omit(match(coef(x),names(coefs)))
-  S <- S[,idx,drop=FALSE]
-  if (!indiv) S <- as.vector(S)
-  return(S)
-
+    coefs <- unlist(res)
+    idx <- na.omit(match(coef(x),names(coefs)))
+    S <- S[,idx,drop=FALSE]
+    if (!indiv) S <- as.vector(S)
+    return(S)    
 }
 
 
@@ -228,7 +246,7 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
 ##' @export
 iid.glm <- function(x,...) {
     ## if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
-    ##     return(iid.default(x,information.glm,...))
+8    ##     return(iid.default(x,information.glm,...))
     ## }
     iid.default(x,...)
 }
