@@ -356,21 +356,10 @@ weibull.lvm <- function(scale=100,shape=2) {
 
 ###{{{ sequence
 ##' @export
-sequence.lvm <- function(a=0,b=1,integer=FALSE) {
-    if (integer) {
-        f <- function(n,...) seq(n)
-        return(f)
-    }
-    if (is.null(a) || is.null(b)) {
-        if (!is.null(a)) {
-            f <- function(n,...) seq(a,length.out=n)
-        } else {
-            f <- function(n,...) seq(n)-(n-b)
-        }
-    } else {
-        f <- function(n,...) seq(a,b,length.out=n)
-    }
-    return(f)
+sequence.lvm <- function(a=0,b=1) {
+    f <- function(n,...)
+      seq(a,b,length.out=n)
+  return(f)
 }
 ###}}} sequence
 
@@ -379,18 +368,18 @@ sequence.lvm <- function(a=0,b=1,integer=FALSE) {
 ones.lvm <- function(p=0,interval=NULL) {
     f <- function(n,...) {
         if (!is.null(interval)) {
-            val <- rep(0L,n)
+            val <- rep(0,n)
             if (!is.list(interval)) interval <- list(interval)
             for (i in seq_along(interval)) {
                 ii <- interval[[i]]
                 lo <- round(ii[1]*n)
                 hi <- round(ii[2]*n)
-                val[seq(lo,hi)] <- 1L
+                val[seq(lo,hi)] <- 1
             }
             return(val)
         }
-        val <- rep(1L,n)
-        if (p>0 && p<1) val[seq(n*(1-p))] <- 0L
+        val <- rep(1,n)
+        if (p>0 && p<1) val[seq(n*(1-p))] <- 0
         val
         }
   return(f)
