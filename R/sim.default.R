@@ -145,7 +145,7 @@ density.sim <- function(x,plot.type="single",...) {
 
 ##' @export
 ##' @export plot.sim
-plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
+plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      names=NULL,
                      auto.layout=TRUE,
                      byrow=FALSE,
@@ -181,6 +181,9 @@ plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
                      density.lwd=0.4,
                      xlab="",...) {
 
+    if (missing(estimate)) {
+        estimate <- seq(ncol(x))
+    }
     if (is.null(estimate)) {
         av <- apply(x[,drop=FALSE],2,function(z) cumsum(z)/seq(length(z)))
         graphics::matplot(x,type="p",pch=pch, cex=cex, col=col,...)
@@ -191,6 +194,9 @@ plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
             graphics::legend(legendpos,legend=legend,bg="white",col=col,lty=lty,pch=pch,...)
         return(invisible(NULL))
     }
+    if (is.character(estimate)) {
+        estimate <- match(estimate,colnames(x))
+    }    
 
     K <- length(estimate)
     est <- tru <- c()
@@ -205,6 +211,13 @@ plot.sim <- function(x,estimate=NULL,se=NULL,true=NULL,
         est <- c(est,list(rep(estimate[i],length(se[[i]]))))
         if (!is.null(true)) tru <- c(tru,list(rep(true[i],length(se[[i]]))))
     }
+    
+    if (length(se)>0) {
+        for (i in seq_along(se)) {
+            if (is.character(se[[i]])) se[[i]] <- match(se[[i]],colnames(x))
+        }
+    }
+    
     ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
     oldpar <- NULL
     on.exit({
@@ -421,6 +434,10 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
     }
     if (is.null(estimate) && is.null(confint)) return(apply(object,2,fun))
 
+    if (is.character(estimate)) {
+        estimate <- match(estimate,colnames(object))
+    }
+    
     est <- apply(object[,estimate,drop=FALSE],2,
                  function(x) c(Mean=mean(x,na.rm=TRUE),Missing=mean(is.na(x)),SD=sd(x,na.rm=TRUE)))
     if (!is.null(true)) {
@@ -430,6 +447,9 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
                      est)
     }
     if (!is.null(se)) {
+        if (is.character(se)) {
+            se <- match(se,colnames(object))
+        }
         if (length(se)!=length(estimate)) stop("'se' should be of same length as 'estimate'.")
         est <- rbind(est, SE=apply(object[,se,drop=FALSE],2,
                                   function(x) c(mean(x,na.rm=TRUE))))
@@ -437,6 +457,9 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
 
     }
     if (!is.null(confint)) {
+        if (is.character(confint)) {
+            confint <- match(confint,colnames(object))
+        }
         if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate).")
         Coverage <- c()
         for (i in seq_along(estimate)) {
