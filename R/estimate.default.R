@@ -149,6 +149,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         pp <- coef
     } else {
         pp <- suppressWarnings(try(stats::coef(x),"try-error"))
+        if (inherits(x,"survreg") && length(pp)<NROW(x$var)) {
+            pp <- c(pp,scale=x$scale)
+        }
     }
     if (!missing(cluster)) id <- cluster
     
