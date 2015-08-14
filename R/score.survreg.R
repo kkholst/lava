@@ -5,7 +5,7 @@ pars.survreg <- function(x,...) {
 
 
 ##' @export
-score.survreg <- function(x,p,scale=TRUE,logscale=FALSE,...) {    
+score.survreg <- function(x,p,scale=TRUE,logscale=FALSE,indiv.logLik=FALSE,...) {    
     npar <- NROW(x$var)
     m <- model.frame(x)
     X <- model.matrix(terms(x), m)
@@ -38,6 +38,9 @@ score.survreg <- function(x,p,scale=TRUE,logscale=FALSE,...) {
     if (hasscale && !scale) {
         V <- V[-npar,-npar,drop=FALSE]
     }
+    attributes(S)$logLik <- 
+                    if (indiv.logLik) derivatives[,"g"]
+                    else sum(derivatives[,"g"])    
     attributes(S)$bread <- V
     return(S)
 }
