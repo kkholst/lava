@@ -67,13 +67,14 @@ GLMest <- function(m,data,control=list(),...) {
         mymsg }, dispname="Dispersion:")
 }
 
-GLMscore <- function(x,p,data,indiv=TRUE,...) {
+GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
     v <- vars(x)
     yvar <- endogenous(x)
     S <- pnames <- c()
     count <- 0
     pos <- 0
     breads <- c()
+    L <- 0
     for (y in yvar) {
         count <- count+1
         xx <- parents(x,y)
@@ -92,6 +93,7 @@ GLMscore <- function(x,p,data,indiv=TRUE,...) {
         pdispersion <- NULL
         npar <- length(xx)+2
         p0 <- p[pidx]
+        if (!isSurv) L0 <- logL.glm(g,p=p0,indiv=TRUE,...)
         if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
             p0 <- p0[-length(p0)]
             S0 <- score(g,p=p0,indiv=TRUE,...)
@@ -101,8 +103,10 @@ GLMscore <- function(x,p,data,indiv=TRUE,...) {
             V0 <- blockdiag(V0,null,pad=0)
         } else {
             S0 <- score(g,p=p0,indiv=TRUE,...)
+            if (isSurv) L0 <- attr(S0,"logLik")
             V0 <- attr(S0,"bread")
         }
+        L <- L+sum(L0)
         breads <- c(breads,list(V0))
         S <- c(S,list(S0))
         pnames <- c(pnames, list(pname));
@@ -113,6 +117,7 @@ GLMscore <- function(x,p,data,indiv=TRUE,...) {
     S <- Reduce(cbind,S)[,idx,drop=FALSE]
     colnames(S) <- coef(x)
     attributes(S)$bread <- V
+    attributes(S)$logLik <- structure(L,nobs=nrow(data),nall=nrow(data),df=length(p),class="logLik")
     if (!indiv) S <- colSums(S)
     return(S)    
 }
@@ -256,7 +261,6 @@ iid.glm <- function(x,...) {
     iid.default(x,...)
 }
 
-
 hessian.glm <- function(x,p=coef(x),...) {
   numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
 }
@@ -282,6 +286,9 @@ robustvar <- function(x,id=NULL,...) {
   return(V)
 }
 
+glm_logLik.lvm <- function(object,...) {
+    attr(GLMscore(object,...),"logLik")
+}
 
 glm_method.lvm <- NULL
 glm_objective.lvm <- function(x,p,data,...) {
