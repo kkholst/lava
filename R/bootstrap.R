@@ -76,8 +76,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                 d0 <- sim(x,p=p,n=nrow(data))
             }
         }
-        e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE
-                       )##,...)
+        e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE,...)
         if (!silent && getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, i/R)
         }
@@ -103,7 +102,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
         return(list(coefs=coefs,sds=newsd))
     }
     if (bollenstine) {
-        e0 <- estimate(x,data=data,control=control,silent=TRUE,index=FALSE)
+        e0 <- estimate(x,data=data,control=control,silent=TRUE,index=FALSE,...)
         mm <- modelVar(e0)
         mu <- mm$xi
         Y <- t(t(data[,manifest(e0)])-as.vector(mu))
