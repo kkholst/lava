@@ -122,7 +122,6 @@ Residual Variances:
    eta2              1.24430    0.28992  4.29195
 #+END_example
 
-
 *** Model assessment
 
 Assessing goodness-of-fit (linearity between eta2 and eta1)
@@ -135,7 +134,7 @@ Assessing goodness-of-fit (linearity between eta2 and eta1)
 #+RESULTS:
 [[file:inst/gof1.png]]
 
-***  Non-linear measurement error model
+*** Non-linear measurement error model
 
 Simulate non-linear model 
 
@@ -195,9 +194,77 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+RESULTS:
 [[file:inst/me1.png]]
 
+*** Simulation
+
+Studying the small-sample properties of mediation 
+#+BEGIN_SRC R :exports both
+m <- lvm(y~x,c~1)
+regression(m) <- c(y,x)~z
+distribution(m,~x) <- binomial.lvm()
+eventTime(m) <- t~min(y=1,c=0)
+transform(m,S~t+status) <- function(x) Surv(x[,1],x[,2])
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output graphics :file inst/mediation1.png
+  plot(m)
+#+END_SRC
+
+#+RESULTS:
+[[file:inst/mediation1.png]]
 
 
-* COMMENT Setup
+Simulate from model and estimate indirect effects
+
+#+BEGIN_SRC R :exports both :wrap example
+onerun <- function(...) {
+    d <- sim(m,100)
+    m0 <- lvm(S~x+z,x~z)
+    e <- estimate(m0,d,estimator="glm")
+    vec(coef(effects(e,S~z))[,1:2])
+}
+val <- sim(onerun,100)
+summary(val)
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_example
+        Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
+Mean         1.1874645       0.9678090        0.21965543     0.21965543
+SD           0.1652632       0.1600043        0.08485274     0.08485274
+Min          0.8562344       0.6439444        0.06339969     0.06339969
+2.5%         0.8913389       0.6994522        0.07885221     0.07885221
+50%          1.1655916       0.9540034        0.21608931     0.21608931
+97.5%        1.5095060       1.3069191        0.42095111     0.42095111
+Max          1.5947086       1.4073973        0.46398074     0.46398074
+Missing      0.0000000       0.0000000        0.00000000     0.00000000
+        Total.Std.Err Direct.Std.Err Indirect.Std.Err S~x~z.Std.Err
+Mean        0.1620513     0.15718758       0.07846717    0.07846717
+SD          0.0218284     0.02076922       0.01717629    0.01717629
+Min         0.1258935     0.11389975       0.04626549    0.04626549
+2.5%        0.1267663     0.12310592       0.05087125    0.05087125
+50%         0.1603664     0.15657741       0.07792703    0.07792703
+97.5%       0.2061210     0.19864763       0.11344883    0.11344883
+Max         0.2330385     0.21233302       0.14476788    0.14476788
+Missing     0.0000000     0.00000000       0.00000000    0.00000000
+#+END_example
+
+
+Add additional simulations and visualize results 
+
+#+BEGIN_SRC R :exports both :results output graphics :file inst/mediation2.png
+  val <- sim(val,500) ## Add 500 simulations
+  plot(val,estimate=c("Total.Estimate","Indirect.Estimate"),
+       true=c(2,1),se=c("Total.Std.Err","Indirect.Std.Err"))
+#+END_SRC
+
+#+RESULTS:
+[[file:inst/mediation2.png]]
+
+
+
+* -- COMMENT Setup
 
 #+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
@@ -206,7 +273,7 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 #+PROPERTY: results output
 #+PROPERTY: exports results 
 #+PROPERTY: tangle yes 
-#+PROPERTY: eval no
+#+PROPERTY: eval yes
 #+OPTIONS: timestamp:t author:nil creator:nil
 #+OPTIONS: d:t
 #+PROPERTY: comments yes 

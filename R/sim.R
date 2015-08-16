@@ -451,7 +451,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             leftovers <- setdiff(nn,simuled)
 
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
-            message(leftovers)
             for (i in leftovers) {
                 if (i%in%vartrans) {
                     xtrans <- x$attributes$transform[[i]]$x
