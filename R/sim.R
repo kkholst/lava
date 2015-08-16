@@ -466,7 +466,8 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                         simuled <- c(simuled,i)
                     }
                 } else if (i%in%multitrans) {
-                    idx <- match(i,multitrans)
+                    idx0 <- match(i,multitrans)
+                    idx <- multitrans.idx[idx0]
                     mtval <- x$attributes$multitransform[[idx]]
                     if (all(mtval$x%in%simuled)) {
                         res[,mtval$y] <- mtval$fun(res[,mtval$x])
