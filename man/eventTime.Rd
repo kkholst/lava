@@ -133,7 +133,7 @@ mc <- eventTime(mc,time~min(T1=1,T2=2,C=0),"event")
 sim(mc,6)
 }
 \author{
-Thomas A. Gerds
+Thomas A. Gerds, Klaus K. Holst
 }
 \keyword{models}
 \keyword{regression}

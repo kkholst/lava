@@ -14,7 +14,7 @@
 ##'
 ##' Note that "ObsEvent" and "ObsTime" are names specified by the user.
 ##'
-##' @author Thomas A. Gerds
+##' @author Thomas A. Gerds, Klaus K. Holst
 ##' @keywords survival models regression
 ##' @examples
 ##'
@@ -163,21 +163,31 @@ eventTime <- function(object,formula,eventName="status",...) {
         events <- gsub("\"","",events)
     }
 
-  addvar(object) <- timeName
-  #distribution(object,timeName) <- NA
-  ## m <- regression(m,formula(paste0("~",timeName)))
+    addvar(object) <- timeName
+    ##distribution(object,timeName) <- NA
+    ##m <- regression(m,formula(paste0("~",timeName)))
     ##if (missing(eventName)) eventName <- "Event"
-  eventTime <- list(names=c(timeName,eventName),
-                    latentTimes=gsub(" ","",latentTimes),
-                    events=events
-                    )
-  if (is.null(object$attributes$eventHistory)) {
-    object$attributes$eventHistory <- list(eventTime)
-    names(object$attributes$eventHistory) <- timeName
- } else {
-    object$attributes$eventHistory[[timeName]] <- eventTime
-  }
-  return(object)
+    eventTime <- list(names=c(timeName,eventName),
+                      latentTimes=gsub(" ","",latentTimes),
+                      events=events
+                      )
+
+    transform(object,
+              y=eventTime$names,
+              x=eventTime$latentTimes) <-
+                                         function(z) {
+                                             idx <- apply(z,1,which.min)
+                                             cbind(z[cbind(seq(NROW(z)),idx)],
+                                                   eventTime$events[idx])
+                                         }
+    
+    if (is.null(object$attributes$eventHistory)) {
+        object$attributes$eventHistory <- list(eventTime)
+        names(object$attributes$eventHistory) <- timeName
+    } else {
+        object$attributes$eventHistory[[timeName]] <- eventTime
+    }
+    return(object)
 }
 
 ##' @export
@@ -195,8 +205,9 @@ plothook.eventHistory <- function(x,...) {
   eh <- x$attributes$eventHistory
   ehnames <- unlist(lapply(eh,function(x) x$names))
   for (f in eh) {
-    x <- regression(x,to=f$names[1],from=f$latentTimes)
-    latent(x) <- f$latentTimes
+      x <- regression(x,to=f$names[1],from=f$latentTimes)
+      latent(x) <- f$latentTimes
+      kill(x) <- f$names[2]
   }
   timedep <- x$attributes$timedep
   for (i in seq_len(length(timedep))) {
@@ -248,36 +259,36 @@ print.eventHistory <- function(x,...) {
     TRUE
 }
 
-addhook("simulate.eventHistory","sim.hooks")
+## addhook("simulate.eventHistory","sim.hooks")
 
-simulate.eventHistory <- function(x,data,...){
-  if (is.null(eventTime(x))) {
-    return(data)
-  }
-  else{
-    for (eh in eventTime(x)) {
-      if (any((found <- match(eh$latentTimes,names(data),nomatch=0))==0)){
-        warning("Cannot find latent time variable: ",
-                eh$latentTimes[found==0],".")
-      }
-      else{
-        for (v in seq_along(eh$latentTimes)) {
-          if (v==1){ ## initialize with the first latent time and event
-            eh.time <- data[,eh$latentTimes[v]]
-            eh.event <- rep(eh$events[v],NROW(data))
-          } else{ ## now replace if next time is smaller
-            ## in case of tie keep the first event
-            eh.event[data[,eh$latentTimes[v]]<eh.time] <- eh$events[v]
-            eh.time <- pmin(eh.time,data[,eh$latentTimes[v]])
-          }
-        }
-      }
-      data[,eh$names[1]] <- eh.time
-      data[,eh$names[2]] <- eh.event
-    }
-    return(data)
-  }
-}
+## simulate.eventHistory <- function(x,data,...){
+##   if (is.null(eventTime(x))) {
+##     return(data)
+##   }
+##   else{
+##     for (eh in eventTime(x)) {
+##       if (any((found <- match(eh$latentTimes,names(data),nomatch=0))==0)){
+##         warning("Cannot find latent time variable: ",
+##                 eh$latentTimes[found==0],".")
+##       }
+##       else{
+##         for (v in seq_along(eh$latentTimes)) {
+##           if (v==1){ ## initialize with the first latent time and event
+##             eh.time <- data[,eh$latentTimes[v]]
+##             eh.event <- rep(eh$events[v],NROW(data))
+##           } else{ ## now replace if next time is smaller
+##             ## in case of tie keep the first event
+##             eh.event[data[,eh$latentTimes[v]]<eh.time] <- eh$events[v]
+##             eh.time <- pmin(eh.time,data[,eh$latentTimes[v]])
+##           }
+##         }
+##       }
+##       data[,eh$names[1]] <- eh.time
+##       data[,eh$names[2]] <- eh.event
+##     }
+##     return(data)
+##   }
+## }
 
 
 
