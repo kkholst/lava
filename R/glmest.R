@@ -96,8 +96,11 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
         if (!isSurv) L0 <- logL.glm(g,p=p0,indiv=TRUE,...)
         if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
             p0 <- p0[-length(p0)]
-            S0 <- score(g,p=p0,indiv=TRUE,...)
-            V0 <- attr(S0,"bread")            
+            S0 <- score(g,p=p0,indiv=TRUE,pearson=TRUE,...)
+            V0 <- attr(S0,"bread")
+            r <- attr(S0,"pearson")
+            dispersion <- mean(r^2)
+            ##browser()
             S0 <- cbind(S0,scale=0)
             null <- matrix(0); dimnames(null) <- list("scale","scale")
             V0 <- blockdiag(V0,null,pad=0)
@@ -151,65 +154,72 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
 }
 
 ##' @export
-score.glm <- function(x,p=coef(x),data,indiv=FALSE,
+score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
                       y,X,link,dispersion,offset=NULL,weights=NULL,...) {
 
-  response <- all.vars(formula(x))[1]
-  if (inherits(x,"glm")) {
-    link <- family(x)
-    a.phi <- 1
-    if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-      a.phi <- summary(x)$dispersion
-    }
-    if (missing(data)) {
-      X <- model.matrix(x)
-      y <- model.frame(x)[,1]
+    response <- all.vars(formula(x))[1]
+    if (inherits(x,"glm")) {
+        link <- family(x)
+        if (missing(data)) {
+            X <- model.matrix(x)
+            y <- model.frame(x)[,1]
+        } else {
+            X <- model.matrix(formula(x),data=data)
+            y <- model.frame(formula(x),data=data)[,1]
+        }
+        offset <- x$offset
     } else {
-      X <- model.matrix(formula(x),data=data)
-      y <- model.frame(formula(x),data=data)[,1]
+        if (missing(link)) stop("Family needed")
+        if (missing(data)) stop("data needed")
+        X <- model.matrix(formula(x),data=data)
+        y <- model.frame(formula(x),data=data)[,1]
     }
-    offset <- x$offset
-  } else {
-    if (missing(link)) stop("Family needed")
-    if (missing(data)) stop("data needed")
-    X <- model.matrix(formula(x),data=data)
-    y <- model.frame(formula(x),data=data)[,1]
-  }
-  if (is.character(y) || is.factor(y)) {
-      y <- as.numeric(as.factor(y))-1
-  }
-  n <- nrow(X)
-  g <- link$linkfun
-  ginv <- link$linkinv
-  dginv <- link$mu.eta ## D[linkinv]
-  ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
-  canonf <- do.call(link$family,list())
-  caninvlink <- canonf$linkinv
-  canlink <- canonf$linkfun
-  Dcaninvlink <- canonf$mu.eta
-  Dcanlink <- function(x) 1/Dcaninvlink(canlink(x))
-  ##gmu <- function(x) g(caninvlink(x))
-  ##invgmu <- function(z) canlink(ginv(z))
-  h <- function(z) Dcanlink(ginv(z))*dginv(z)
-  if(any(is.na(p))) stop("Over-parameterized model")
-  Xbeta <- X%*%p
-  if (!is.null(offset)) Xbeta <- Xbeta+offset
-  if (missing(data) && !is.null(x$offset) && is.null(offset) ) Xbeta <- Xbeta+x$offset
-  pi <- ginv(Xbeta)
-  ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
-  ##return(res)
-  r <- y-pi
-  A <- as.vector(h(Xbeta)*r)/a.phi
-  S <- apply(X,2,function(x) x*A)
-  if (!is.null(x$prior.weights) || !is.null(weights)) {
-      if (is.null(weights)) weights <- x$prior.weights
-      S <- apply(S,2,function(x) x*weights)
-  }
-  if (!indiv) return(colSums(S))
-  attributes(S)$bread <- vcov(x)
-  if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
-      attributes(S)$bread <- -Inverse(information.glm(x))
-  return(S)
+    if (is.character(y) || is.factor(y)) {
+        y <- as.numeric(as.factor(y))-1
+    }
+    n <- nrow(X)
+    g <- link$linkfun
+    ginv <- link$linkinv
+    dginv <- link$mu.eta ## D[linkinv]
+    ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
+    canonf <- do.call(link$family,list())
+    caninvlink <- canonf$linkinv
+    canlink <- canonf$linkfun
+    Dcaninvlink <- canonf$mu.eta
+    Dcanlink <- function(x) 1/Dcaninvlink(canlink(x))
+    ##gmu <- function(x) g(caninvlink(x))
+    ##invgmu <- function(z) canlink(ginv(z))
+    h <- function(z) Dcanlink(ginv(z))*dginv(z)
+    if(any(is.na(p))) stop("Over-parameterized model")
+    Xbeta <- X%*%p
+    if (!is.null(offset)) Xbeta <- Xbeta+offset
+    if (missing(data) && !is.null(x$offset) && is.null(offset) ) Xbeta <- Xbeta+x$offset
+    pi <- ginv(Xbeta)
+    ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
+    ##return(res)
+    r <- y-pi
+    if (!is.null(x$prior.weights) || !is.null(weights)) {
+        if (is.null(weights)) weights <- x$prior.weights
+    } else {
+        weights <- !is.na(r)
+    }
+    r <- r*weights
+    a.phi <- 1
+    rpearson <- as.vector(r)/link$variance(pi)^.5
+    if (length(p)>length(coef(x))) {
+        a.phi <- p[length(coef(x))+1]
+    } else if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+        ##a.phi <- summary(x)$dispersion*g0$df.residual/sum(weights)
+        a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
+    }
+    A <- as.vector(h(Xbeta)*r)/a.phi
+    S <- apply(X,2,function(x) x*A)
+    if (!indiv) return(colSums(S))
+    if (pearson) attr(S,"pearson") <- rpearson
+    attributes(S)$bread <- vcov(x)
+    if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
+        attributes(S)$bread <- -Inverse(information.glm(x))
+    return(S)
 }
 
 ##' @export
