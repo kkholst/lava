@@ -20,8 +20,8 @@ score.survreg <- function(x,p,scale=TRUE,logscale=FALSE,indiv.logLik=FALSE,...) 
     derivatives <- residuals(x, type = "matrix")
     w <- model.weights(m)
     if (is.null(w)) w <- 1
-    dLdLP <- derivatives[,"dg"] ## Derivative wrt linear-predictor p=Xbeta
-    S <- apply(X,2,function(x) w*x*dLdLP)
+    dldLP <- w*derivatives[,"dg"] ## Derivative wrt linear-predictor p=Xbeta
+    S <- apply(X,2,function(x) x*dldLP)
     if (!is.null(x$naive.var)) {
         V <- x$naive.var
     } else {
