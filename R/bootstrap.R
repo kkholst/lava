@@ -125,6 +125,8 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     close(pb)
     ##  if (!silent) message("")
     coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
+    nn <- names(res[[1]]$coefs)
+    if (!is.null(nn)) colnames(coefs) <- nn
     sds <- NULL
     if (sd)
         sds <- matrix(unlist(lapply(res, function(x) x$sds)),nrow=R+1,byrow=TRUE)
