@@ -308,6 +308,13 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
 
     vartrans <- names(x$attributes$transform)
+    multitrans <- multitrans.idx <- NULL
+    if (length(x$attributes$multitransform)>0) {        
+        multitrans <- unlist(lapply(x$attributes$multitransform,function(z) z$y))
+        for (i in (seq_along(x$attributes$multitransform))) {
+            multitrans.idx <- c(multitrans.idx,rep(i,length(x$attributes$multitransform[[i]]$y)))
+        }
+    }
     xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
     xx <- setdiff(xx,vartrans)
 
@@ -444,7 +451,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             leftovers <- setdiff(nn,simuled)
 
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
-
+            message(leftovers)
             for (i in leftovers) {
                 if (i%in%vartrans) {
                     xtrans <- x$attributes$transform[[i]]$x
@@ -458,8 +465,15 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                         }
                         simuled <- c(simuled,i)
                     }
-                } else {
-                    
+                } else if (i%in%multitrans) {
+                    idx <- match(i,multitrans)
+                    mtval <- x$attributes$multitransform[[idx]]
+                    if (all(mtval$x%in%simuled)) {
+                        res[,mtval$y] <- mtval$fun(res[,mtval$x])
+                        simuled <- c(simuled,mtval$y)
+                        break;
+                    }
+                } else {                    
                     ipos <- which(i%in%yconstrain)
                     if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
                         pos <- match(i,vv)
