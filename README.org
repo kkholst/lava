@@ -196,7 +196,7 @@ u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
 
 *** Simulation
 
-Studying the small-sample properties of mediation 
+Studying the small-sample properties of mediation analysis 
 #+BEGIN_SRC R :exports both
 m <- lvm(y~x,c~1)
 regression(m) <- c(y,x)~z
@@ -264,7 +264,7 @@ Add additional simulations and visualize results
 
 
 
-* -- COMMENT Setup
+* COMMENT Setup
 
 #+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
