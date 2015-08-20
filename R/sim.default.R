@@ -46,17 +46,26 @@
 sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
     requireNamespace("parallel",quietly=TRUE)
     olddata <- NULL
+    dots <- list(...)
+    mycall <- match.call(expand.dots=FALSE)
     if (inherits(x,c("data.frame","matrix"))) olddata <- x
-    if (inherits(x,"sim")) {
+    if (inherits(x,"sim")) {        
+        oldcall <- attr(x,"call")
         x <- attr(x,"f")
         if (!is.null(f)) x <- f
+        ex <- oldcall[["..."]]
+        for (nn in setdiff(names(ex),names(dots))) {
+            dots[[nn]] <- ex[[nn]]
+            val <- list(ex[[nn]]); names(val) <- nn
+            mycall[["..."]] <- c(mycall[["..."]],list(val))
+        }
+        
     } else {
         if (!is.null(f)) x <- f
         if (!is.function(x)) stop("Expected a function or 'sim' object.")
     }
     if (is.null(x)) stop("Must give new function argument 'f'.")
     res <- val <- NULL
-    mycall <- match.call()
     on.exit({
         if (messages>0) close(pb)
         if (is.null(colnames) && !is.null(val)) {
@@ -83,7 +92,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=p
     if (messages>0) pb <- txtProgressBar(style=3,width=40)
     for (ii in idx) {
         count <- count+1
-        val <- parallel::mclapply(ii,x,mc.cores=mc.cores,...)
+        val <- do.call(parallel::mclapply,c(list(X=ii,FUN=x,mc.cores=mc.cores),dots))
         if (messages>0) ##getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, count/length(idx))
 
