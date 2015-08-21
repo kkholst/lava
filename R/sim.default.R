@@ -85,6 +85,15 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=p
         }
         return(res)
     })
+    if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
+        parval <- as.data.frame(R)
+        if (is.vector(R)) names(parval) <- NULL
+        else if (inherits(R,c("matrix","data.frame"))) names(parval) <- colnames(R)
+        R <- NROW(parval)        
+    } else {
+        parval <- as.data.frame(1:R)
+        names(parval) <- NULL
+    }
     nfolds <- max(1,round(R/blocksize))
     idx <- split(1:R,sort((1:R)%%nfolds))
     idx.done <- 0
@@ -92,10 +101,11 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=p
     if (messages>0) pb <- txtProgressBar(style=3,width=40)
     for (ii in idx) {
         count <- count+1
-        val <- do.call(parallel::mclapply,c(list(X=ii,FUN=x,mc.cores=mc.cores),dots))
+        ##val <- do.call(parallel::mclapply,c(list(X=ii,FUN=x,mc.cores=mc.cores),dots))
+        pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
+        val <- do.call(parallel::mcmapply,pp)        
         if (messages>0) ##getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, count/length(idx))
-
         if (is.null(res)) {
             res <- matrix(NA,ncol=length(val[[1]]),nrow=R)
         }
