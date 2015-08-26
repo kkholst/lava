@@ -8,7 +8,8 @@
 ##' @param messages Messages
 ##' @param mc.cores Number of cores to use
 ##' @param blocksize Split computations in blocks
-##' @param ... Additional arguments to mclapply
+##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
+##' @param ... Additional arguments to (mc)mapply
 ##' @aliases sim.default summary.sim
 ##' @examples
 ##' m <- lvm(y~x+e)
@@ -43,8 +44,13 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,...) {
-    requireNamespace("parallel",quietly=TRUE)
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,type=1,...) {
+    if (type==0) {
+        mc.cores <- 1
+        block.size <- R
+        messages <- 0
+    }
+    if (mc.cores>1) requireNamespace("parallel",quietly=TRUE)
     olddata <- NULL
     dots <- list(...)
     mycall <- match.call(expand.dots=FALSE)
@@ -103,7 +109,11 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=p
         count <- count+1
         ##val <- do.call(parallel::mclapply,c(list(X=ii,FUN=x,mc.cores=mc.cores),dots))
         pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
-        val <- do.call(parallel::mcmapply,pp)        
+        if (mc.cores>1) {
+            val <- do.call(parallel::mcmapply,pp)
+        } else {
+            val <- do.call(mapply,pp)
+        }
         if (messages>0) ##getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, count/length(idx))
         if (is.null(res)) {
@@ -176,6 +186,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      true.lty=2,true.col="gray70",true.lwd=1.2,
                      legend,
                      legendpos="topleft",
+                     legend.cex=0.6,
                      plot.type=c("multiple","single"),
                      polygon=TRUE,
                      cex.axis=0.5,
@@ -389,12 +400,12 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                     if (polygon) {
                         dcol <- c(density.col[1],se.col)
                         graphics::legend(legendpos,legend,
-                                         fill=Col(dcol,density.alpha),border=dcol,cex=0.6)
+                                         fill=Col(dcol,density.alpha),border=dcol,cex=legend.cex)
                     } else {
                         graphics::legend(legendpos,legend,
                                          col=c(density.col[1],se.col),
                                          lty=c(density.lty[1],se.lty),
-                                         lwd=c(density.lwd[1],se.lwd),cex=0.6)
+                                         lwd=c(density.lwd[1],se.lwd),cex=legend.cex)
                     }
                 }
             }
@@ -425,7 +436,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         if (!is.null(legendold)) {
             legend <- rep(legendold,length.out=K)
             graphics::legend(legendpos,legend,
-                             fill=Col(col,density.alpha),border=col,cex=0.6)
+                             fill=Col(col,density.alpha),border=col,cex=legend.cex)
         }
 
     } else {

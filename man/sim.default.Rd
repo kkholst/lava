@@ -7,7 +7,7 @@
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
   messages = 1L, mc.cores = parallel::detectCores(), blocksize = 2L *
-  mc.cores, ...)
+  mc.cores, type = 1, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
@@ -24,7 +24,9 @@
 
 \item{blocksize}{Split computations in blocks}
 
-\item{...}{Additional arguments to mclapply}
+\item{type}{type=0 is an alias for messages=1,mc.cores=1,blocksize=R}
+
+\item{...}{Additional arguments to (mc)mapply}
 }
 \description{
 Wrapper function for mclapply
