@@ -10,6 +10,7 @@
 ##' @param srt rotation of labels
 ##' @param cex text size
 ##' @param border border of color bar rectangles
+##' @param alpha Alpha (transparency) level 0-1
 ##' @param position Label position left/bottom (1) or top/right (2) or no text (0)
 ##' @param direction horizontal or vertical color bars
 ##' @param \dots additional low level arguments (i.e. parsed to \code{text})
@@ -24,10 +25,11 @@
 ##'          x=c(-10,10),y.range=c(-100,50),values=c(-5:5),
 ##'          direction="vertical",border=1)
 ##' }
-colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),0.5),
+colorbar <- function(clut=Col(rev(rainbow(11,start=0,end=0.69)),alpha),
                      x.range=c(-.5,.5),y.range=c(-.1,.1),
                      values=seq(clut),digits=2,label.offset,srt=45,
                      cex=0.5,border=NA,
+                     alpha=0.5,
                      position=1,
                      direction=c("horizontal","vertical"),...) {
   nlut <- length(clut)

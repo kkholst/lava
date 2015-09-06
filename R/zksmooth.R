@@ -27,6 +27,7 @@
 ##' 
 ##' if (interactive()) {
 ##'     surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
+##'     surface(function(x) dmvn(x,sigma=diag(2)),c(-3,3),box=FALSE,specular="black")##' 
 ##' }
 ##' 
 ##' if (!inherits(try(find.package("fields"),silent=TRUE),"try-error")) {
@@ -59,7 +60,7 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
 
 
 ##' @export
-surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl=TRUE,expand=0.5,nlevels=10,col.contour="black",contour=TRUE,persp=TRUE,image="image",...) {
+surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",clut.center,x,y,rgl=TRUE,expand=0.5,nlevels=10,col.contour="black",contour=TRUE,persp=TRUE,image="image",...) {
     if (missing(x)) {
         if (length(n)==1) n <- rep(n,2)
         x <- seq(xlim[1],xlim[2],length.out=n[1])
@@ -67,10 +68,16 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
     }
     if (is.function(f)) {
         xy <- as.matrix(expand.grid(x,y))
-        if (inherits(try(f(c(x[1],y[1])),silent=TRUE),"try-error"))
+        if (inherits(try(f(c(x[1],y[1])),silent=TRUE),"try-error")) {            
             f <- matrix(f(xy[,1],xy[,2]),nrow=length(x),ncol=length(y))
-        else
-            f <- f(xy)
+        } else {
+            val <- f(xy)
+            if (length(val)<NROW(xy)) {
+                f <- matrix(apply(xy,1,f),nrow=length(x),ncol=length(y))
+            } else {            
+                f <- matrix(val,nrow=length(x),ncol=length(y))
+            }
+        }
     }
     zrg <- range(f)
     zlen <- diff(zrg)
@@ -78,10 +85,13 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
         ncolour <- 128
         clut <- switch(clut,
                        topo=topo.colors(ncolour),
+                       red=colorRampPalette(c("yellow","red"),bias=1)(ncolour),
                        blue=colorRampPalette(c("white","blue"),bias=1)(ncolour),
                        gold=colorRampPalette(c("white","goldenrod1"),bias=1)(ncolour),
+                       france=colorRampPalette(c("blue","white","red"))(ncolour),
+                       rainbow=rainbow(n=128,start=0,end=1),
                        heat=heat.colors(ncolour),
-                       heatrev=rev(heat.colors(ncolour)),
+                       heatrev=rev(heat.colors(ncolour)),                       
                        colorRampPalette(c("white","goldenrod1"),bias=1)(ncolour)
                        )
     }
@@ -100,7 +110,7 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
             if (contour || !is.null(image)) parargs$mfrow=c(2,1)
         }
         op <- do.call(par,parargs)
-        if (persp) graphics::persp(f, col=col, expand=expand, ...)
+        if (persp) graphics::persp(x=x,y=x,z=f, col=col, expand=expand, ...)
         if (contour | !is.null(image)) {
             par(mar=c(3,3,0.5,3)) ##c(bottom, left, top, right)
             if (!is.null(image)) {
@@ -114,8 +124,14 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",x,y,rgl
         }
         suppressWarnings(par(op))
     } else {
-        if (missing(col))
+        if (missing(col)) {
+            if (!missing(clut.center)) {
+                zmax <- max(abs(zrg))
+                zrg <- c(-zmax,zmax)
+                zlen <- 2*zmax
+            }
             col <- clut[round((length(clut)-1)*(f-zrg[1])/zlen)+1]
+        }
         rgl::persp3d(x, y, f, col=col,...)
     }
 }

@@ -4,10 +4,10 @@
 \alias{colorbar}
 \title{Add color-bar to plot}
 \usage{
-colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
+colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), alpha),
   x.range = c(-0.5, 0.5), y.range = c(-0.1, 0.1), values = seq(clut),
   digits = 2, label.offset, srt = 45, cex = 0.5, border = NA,
-  position = 1, direction = c("horizontal", "vertical"), ...)
+  alpha = 0.5, position = 1, direction = c("horizontal", "vertical"), ...)
 }
 \arguments{
 \item{clut}{Color look-up table}
@@ -27,6 +27,8 @@ colorbar(clut = Col(rev(rainbow(11, start = 0, end = 0.69)), 0.5),
 \item{cex}{text size}
 
 \item{border}{border of color bar rectangles}
+
+\item{alpha}{Alpha (transparency) level 0-1}
 
 \item{position}{Label position left/bottom (1) or top/right (2) or no text (0)}
 
