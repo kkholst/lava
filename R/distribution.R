@@ -1,3 +1,4 @@
+
 ###{{{ distribution
 
 ##' @export
@@ -376,7 +377,7 @@ sequence.lvm <- function(a=0,b=1,integer=FALSE) {
 
 ###{{{ ones
 ##' @export
-ones.lvm <- function(p=0,interval=NULL) {
+ones.lvm <- function(p=1,interval=NULL) {
     f <- function(n,...) {
         if (!is.null(interval)) {
             val <- rep(0L,n)
@@ -389,6 +390,7 @@ ones.lvm <- function(p=0,interval=NULL) {
             }
             return(val)
         }
+        if (p==0) return(rep(0L,n))
         val <- rep(1L,n)
         if (p>0 && p<1) val[seq(n*(1-p))] <- 0L
         val
