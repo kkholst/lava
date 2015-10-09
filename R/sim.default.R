@@ -44,7 +44,14 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores=parallel::detectCores(),blocksize=2L*mc.cores,type=1,...) {
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,type=1,...) {
+    if (missing(mc.cores)) {
+        if (.Platform$OS.type=="windows") {
+            mc.cores <- 1
+        } else {
+            mc.cores <- getOption("mc.cores",parallel::detectCores())
+        }
+    }
     if (type==0) {
         mc.cores <- 1
         block.size <- R

@@ -6,8 +6,7 @@
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
-  messages = 1L, mc.cores = parallel::detectCores(), blocksize = 2L *
-  mc.cores, type = 1, ...)
+  messages = 1L, mc.cores, blocksize = 2L * mc.cores, type = 1, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
