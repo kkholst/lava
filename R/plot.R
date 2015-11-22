@@ -14,7 +14,7 @@
 ##' @param labels Logical argument indiciating whether to add labels to plot
 ##' (Unnamed parameters will be labeled p1,p2,...)
 ##' @param intercept Logical argument indiciating whether to add intercept
-##' labels (current version: not used))
+##' labels
 ##' @param addcolor Logical argument indiciating whether to add colors to plot
 ##' (overrides \code{nodecolor} calls)
 ##' @param plain if TRUE strip plot of colors and boxes

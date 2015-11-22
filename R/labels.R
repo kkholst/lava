@@ -121,39 +121,49 @@ labels.lvmfit <- function(object,lab=NULL,...) {
 }
 
 ##' @export
-edgelabels.lvmfit <- function(object,value,type,pthres,...) {
-  if (!missing(value)) {
-    edgelabels(object,...) <- value
+edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fun=formatC,...) {
+    if (!missing(value)) {
+        edgelabels(object,...) <- value
+        return(object)
+    }
+    if (missing(type))
+        return(graph::edgeRenderInfo(Graph(object))$label)
+    
+
+    Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
+    Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
+    mfix <- index(object)$v0
+    
+    npar.mean <- index(object)$npar.mean
+    Par <- object$coef
+    mpar <- c()
+    if (npar.mean>0) {
+        mpar <- do.call(format.fun,list(Par[seq_len(npar.mean)]))
+        Par <- Par[-seq_len(npar.mean),,drop=FALSE]
+    }
+    Par <-
+        switch(type,
+               sd = paste0(do.call(format.fun,list(Par[,1,drop=FALSE])), " (", do.call(format.fun,list(Par[,2,drop=FALSE])), ")"),
+               est = do.call(format.fun,list(Par[,1,drop=FALSE])),
+               pval = do.call(format.fun,list(Par[,4,drop=FALSE])),
+               name = rownames(Par),
+               none = ""
+               )
+    AP <- matrices(Model(object), Par,mpar) ## Ignore expar
+    A <- AP$A; P <- AP$P
+    P[exogenous(object),exogenous(object)] <- NA
+    
+    gr <- finalize(Model(object), ...)
+    Anz <- A; Anz[Afix==0] <- NA    
+    gr <- edgelabels(gr, lab=Anz)
+    Pnz <- P; Pnz[Model(object)$cov==0] <- NA
+    if (intercept) {
+        idx <- which(!is.na(diag(Pnz)))
+        diag(Pnz)[idx] <- paste(paste0("[",AP$v[idx],"]"),diag(Pnz)[idx],sep="\n")
+    }
+    gr <- edgelabels(gr, lab=Pnz, expr=!intercept)
+    Graph(object) <- gr
     return(object)
-  }
-  if (missing(type))
-    return(graph::edgeRenderInfo(Graph(object))$label)
-
-  Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
-  Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
-  npar.mean <- index(object)$npar.mean
-  Par <- object$coef
-  if (npar.mean>0)
-    Par <- Par[-seq_len(npar.mean),,drop=FALSE]
-  Par <-
-    switch(type,
-           sd = paste0(formatC(Par[,1,drop=FALSE]), " (", formatC(Par[,2,drop=FALSE]), ")"),
-           est = formatC(Par[,1,drop=FALSE]),
-           pval = formatC(Par[,4,drop=FALSE]),
-           name = rownames(Par),
-           none = ""
-           )
-  AP <- matrices(Model(object), Par) ## Ignore expar
-  A <- AP$A; P <- AP$P
-  P[exogenous(object),exogenous(object)] <- NA
-
-  gr <- finalize(Model(object), ...)
-  Anz <- A; Anz[Afix==0] <- NA
-  gr <- edgelabels(gr, lab=Anz)
-  Pnz <- P; Pnz[Model(object)$cov==0] <- NA
-  gr <- edgelabels(gr, lab=Pnz)
-  Graph(object) <- gr
-  return(object)
 }
 
 ##' @export

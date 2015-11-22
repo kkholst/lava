@@ -26,7 +26,7 @@ parameters}
 (Unnamed parameters will be labeled p1,p2,...)}
 
 \item{intercept}{Logical argument indiciating whether to add intercept
-labels (current version: not used))}
+labels}
 
 \item{addcolor}{Logical argument indiciating whether to add colors to plot
 (overrides \code{nodecolor} calls)}
