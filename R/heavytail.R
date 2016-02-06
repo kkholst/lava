@@ -5,7 +5,7 @@
 
 ##' @export
 "heavytail<-.lvm" <- function(x,...,value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     return(heavytail(x,all.vars(value),...))
   }
   heavytail(x, value, ...)

@@ -193,7 +193,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      true.lty=2,true.col="gray70",true.lwd=1.2,
                      legend,
                      legendpos="topleft",
-                     legend.cex=0.6,
+                     cex.legend=0.6,
                      plot.type=c("multiple","single"),
                      polygon=TRUE,
                      cex.axis=0.5,
@@ -201,6 +201,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      rug=TRUE,
                      rug.alpha=0.5,                     
                      main,
+                     cex.main=1,
                      equal=FALSE,
                      delta=1.15,
                      ylim=NULL,
@@ -378,7 +379,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             }
             if (rug) graphics::rug(y,col=Col(col[1],rug.alpha[1]))
             if (!is.null(main) && !(running.mean || scatter.plot)) {
-                title(main[i])
+                title(main[i],cex.main=cex.main)
             }
             if (!is.null(true)) {
                 abline(v=true[i],lty=true.lty,col=true.col,lwd=true.lwd)
@@ -407,12 +408,12 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                     if (polygon) {
                         dcol <- c(density.col[1],se.col)
                         graphics::legend(legendpos,legend,
-                                         fill=Col(dcol,density.alpha),border=dcol,cex=legend.cex)
+                                         fill=Col(dcol,density.alpha),border=dcol,cex=cex.legend)
                     } else {
                         graphics::legend(legendpos,legend,
                                          col=c(density.col[1],se.col),
                                          lty=c(density.lty[1],se.lty),
-                                         lwd=c(density.lwd[1],se.lwd),cex=legend.cex)
+                                         lwd=c(density.lwd[1],se.lwd),cex=cex.legend)
                     }
                 }
             }
@@ -429,7 +430,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             my.scatter.sim(i,add=(i>1),colors=col[i])
         }
         if (!is.null(main) && !byrow) {
-            title(main[1])
+            title(main[1],cex.main=cex.main)
         }
         if (missing(legend)) legend <- colnames(x)[estimate]
         legendold <- legend
@@ -443,14 +444,14 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         if (!is.null(legendold)) {
             legend <- rep(legendold,length.out=K)
             graphics::legend(legendpos,legend,
-                             fill=Col(col,density.alpha),border=col,cex=legend.cex)
+                             fill=Col(col,density.alpha),border=col,cex=cex.legend)
         }
 
     } else {
         for (i in seq(K)) {
             my.scatter.sim(i)
-            if (!is.null(main) && !byrow) {
-                title(main[i])
+            if (!is.null(main) && !byrow && scatter.plot) {
+                title(main[i],cex.main=cex.main)
             }
             my.density.sim(i,auto.legend=missing(legend))
             if (i==1 && ask) par(ask=ask)

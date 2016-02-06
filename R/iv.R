@@ -76,8 +76,9 @@ varest <- function(x,data) {
 ##' @export
 IV <- function(m,data,R2thres=0,...) {
   if (length(constrain(m))>0) stop("Nonlinear constrains not supported!")
-  if (class(m)=="lvmfit")
-    m <- Model(m)
+  if (inherits(m,"lvmfit")) {
+      m <- Model(m)
+  }
   R2 <- cor(data[,manifest(m)])^2
 
   A <- t(index(m)$A)

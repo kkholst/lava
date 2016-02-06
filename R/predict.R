@@ -59,7 +59,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
                        e=m$e))
   }
 
-
+    
   X <- exogenous(object)
   Y <- setdiff(manifest(object), X)
   if (path) {
@@ -120,7 +120,7 @@ predict.lvm <- function(object,x=NULL,residual=FALSE,p,data,path=FALSE,quick=is.
   ry <- t(ys)-Ey.x[y0.idx,,drop=FALSE]
   y <- NULL
   if (!is.null(x)) {
-      if (class(x)[1]=="formula")  {
+      if (inherits(x,"formula")) {
           xy <- getoutcome(x)
           if (length(xy)>0) {
               y <- decomp.specials(xy)

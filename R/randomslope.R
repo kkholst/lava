@@ -20,7 +20,7 @@ function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,.
     else
       return(NULL)
   }
-  if (class(covar)[1]=="formula") {
+  if (inherits(covar,"formula")) {
     covar <- all.vars(covar)
   }
   if (clear) {
@@ -28,10 +28,10 @@ function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,.
     x$attributes$randomslope[covar] <- FALSE
   } else {
     if (!is.null(random) & !is.null(response)) {
-      if (class(random)[1]=="formula") {
+      if (inherits(random,"formula")) {
         random <- all.vars(random)
       }
-      if (class(response)[1]=="formula") {
+      if (inherits(response,"formula")) {
         response <- all.vars(response)
       }
       if (length(covar)!=length(response)) stop("Vectors should be of the same length!")
@@ -49,7 +49,7 @@ function(x,covar,random=NULL,response=NULL,param,postfix,clear=FALSE,zero=TRUE,.
           if (missing(param)) {
             x <- regression(x,to=newlatent[i],from=random)
           } else {
-            if (class(param)[1]=="formula") {
+            if (inherits(param,"formula")) {
               param <- all.vars(param)
             }
             if (length(param)!=length(newlatent))

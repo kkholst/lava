@@ -128,10 +128,10 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
 ##' @export
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
   if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     lhs <- getoutcome(value)
     yy <- decomp.specials(lhs)
-    if ((class(value[[3]])=="logical" && is.na(value[[3]]))) {
+    if ((inherits(value[[3]],"logical") && is.na(value[[3]]))) {
       intfix(object,yy) <- NA
       return(object)
     }
@@ -144,7 +144,7 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
     object$parpos <- NULL
     return(object)
   }
-  if (class(vars)[1]=="formula") {
+  if (inherits(vars,"formula")) {
     vars <- all.vars(vars)
   }
   object$mean[vars] <- value
@@ -177,11 +177,12 @@ covfix.lvm <- function(object,...) {
 ##' @export
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
 
-  if (class(var1)[1]=="formula") {
-    var1 <- all.vars(var1)
+  if (inherits(var1,"formula")) {
+      var1 <- all.vars(var1)
   }
-  if (class(var2)[1]=="formula")
-    var2 <- all.vars(var2)
+  if (inherits(var2,"formula")) {
+      var2 <- all.vars(var2)
+  }
   object <- addvar(object,c(var1,var2),reindex=FALSE,...)
 
   allvars <- c(var1,var2)
@@ -343,13 +344,13 @@ regfix.lvm <- function(object,...) {
     }
     if (is.null(to)) stop("variable list needed")
   curvar <- index(object)$vars
-  if (class(to)[1]=="formula") {
+  if (inherits(to,"formula")) {
     yx <- getoutcome(to)
     lhs <- decomp.specials(yx)
     if (length(lhs)==0) {
       to <- all.vars(to)
       if (is.null(from)) stop("predictor list needed")
-      if (class(from)[1]=="formula")
+      if (inherits(from,"formula"))
         from <- all.vars(from)
     } else {
       from <- attributes(yx)$x

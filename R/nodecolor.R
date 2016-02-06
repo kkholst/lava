@@ -6,7 +6,7 @@ function(object,var,...,value) UseMethod("nodecolor<-")
 `nodecolor<-.lvm` <-
   function(object, var=vars(object), border, labcol, shape, lwd, ..., value) {
     if (length(var)>0 & length(value)>0) {
-      if (class(var)[1]=="formula") var <- all.vars(var)
+      if (inherits(var,"formula")) var <- all.vars(var)
       object$noderender$fill[var] <- value
       if (!missing(border))
         object$noderender$col[var] <- border
@@ -24,7 +24,7 @@ function(object,var,...,value) UseMethod("nodecolor<-")
 `nodecolor<-.default` <-
   function(object, var=vars(object), border, labcol, shape, lwd, ..., value) {
     if (length(var)>0 & length(value)>0) {
-      if (class(var)[1]=="formula") var <- all.vars(var)
+      if (inherits(var,"formula")) var <- all.vars(var)
       object <- addattr(object,attr="fill",var=var,val=value)
       if (!missing(border))
         object <- addattr(object,attr="col",var=var,val=border)

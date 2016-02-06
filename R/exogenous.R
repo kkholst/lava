@@ -9,7 +9,7 @@ function(x,...) UseMethod("exogenous")
 `exogenous<-.lvm` <- function(x,silent=FALSE,
                               xfree=TRUE,
                               ...,value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     exogenous(x,...) <- all.vars(value)
     return(x)
   }

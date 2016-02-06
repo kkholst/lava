@@ -10,7 +10,7 @@
 
 ##' @export
 "parameter<-.lvm" <- function(x,constrain,start,...,value) {
-  if (class(value)[1]=="formula") value <- all.vars(value)
+  if (inherits(value,"formula")) value <- all.vars(value)
   if (!missing(start)) {
       if (length(start) != length(value)) stop("'start' and 'value' should be of the same lengths")
       start <- as.list(start)

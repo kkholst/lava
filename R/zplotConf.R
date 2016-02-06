@@ -88,7 +88,7 @@ plotConf <- function(model,
 
 
     if (inherits(model,"formula")) model <- lm(model,data=data,...)
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         intercept <- lme4::fixef(model)["(Intercept)"]
     } else {
         intercept <- coef(model)["(Intercept)"]
@@ -168,16 +168,16 @@ plotConf <- function(model,
     partdata <- model.frame(model,data=partdata)
 
     Y <- model.frame(model)[,1]
-    if(class(Y)=="Surv") Y <- Y[,1]
+    if(inherits(Y,"Surv")) Y <- Y[,1]
     XX <- model.matrix(formula(terms(model)),data=newdata)
     XX0 <- model.matrix(formula(terms(model)),data=partdata)
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         bb <- lme4::fixef(model)
     } else {
         bb <- coef(model)
     }
     if (!missing(vcov)) SS <- vcov else {
-        if (class(model)[1]=="geeglm") {
+        if (inherits(model,"geeglm")) {
             SS <- (summary(model)$cov.unscaled)
         } else {
             SS <- stats::vcov(model)
@@ -208,7 +208,7 @@ plotConf <- function(model,
         R <- Y-predict(model, newdata=partdata)
         ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
     }
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
         R <- R-uz
     }
@@ -290,7 +290,7 @@ plotConf <- function(model,
             points(pr ~ x,pch=pch[1], col=colpt[1], cex=cex, ...)
         positions <- seq(k)
         mycoef <- bb[paste0(var2,thelevels)][-1]
-        if (class(model)[1]%in%c("lm","glm"))
+        if (inherits(model,c("lm","glm")))
             myconf <- confint(model)[paste0(var2,thelevels)[-1],,drop=FALSE]
         else {
             myconf <- matrix(mycoef,ncol=2,nrow=length(mycoef))
@@ -372,7 +372,7 @@ plotConf0 <- function(model,
 
 
     if (inherits(model,"formula")) model <- lm(model,data=data,...)
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         intercept <- lme4::fixef(model)["(Intercept)"]
     } else {
         intercept <- coef(model)["(Intercept)"]
@@ -449,17 +449,17 @@ plotConf0 <- function(model,
     partdata[,response] <- newdata[,response] <- 0
 
     Y <- model.frame(model)[,1]
-    if(class(Y)=="Surv") Y <- Y[,1]
+    if(inherits(Y,"Surv")) Y <- Y[,1]
 
     XX <- model.matrix(formula(terms(model)),data=newdata)
     XX0 <- model.matrix(formula(terms(model)),data=partdata)
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         bb <- lme4::fixef(model)
     } else {
         bb <- coef(model)
     }
     if (!missing(vcov)) SS <- vcov else {
-        if (class(model)[1]=="geeglm") {
+        if (inherits(model,"geeglm")) {
             SS <- (summary(model)$cov.unscaled)
         } else {
             SS <- stats::vcov(model)
@@ -485,7 +485,7 @@ plotConf0 <- function(model,
         R <- Y-predict(model, newdata=partdata)
         ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
     }
-    if ("mer"%in%class(model)) {
+    if (inherits(model,"lmerMod")) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
         R <- R-uz
     }
@@ -563,7 +563,7 @@ plotConf0 <- function(model,
             points(pr ~ x,pch=pch[1], col=colpt[1], cex=cex, ...)
         positions <- seq(k)
         mycoef <- bb[paste0(var2,thelevels)][-1]
-        if (class(model)[1]%in%c("lm","glm"))
+        if (inherits(model,c("lm","glm")))
             myconf <- confint(model)[paste0(var2,thelevels)[-1],,drop=FALSE]
         else {
             myconf <- matrix(mycoef,ncol=2,nrow=length(mycoef))

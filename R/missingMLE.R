@@ -1,7 +1,7 @@
 ###{{{ missingModel
 
 missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,weight2=NULL,cluster=NULL,...) {
-  if (class(model)!="lvm") stop("Needs a lvm-object")
+  if (inherits(model,"lvm")) stop("Needs a lvm-object")
   if (type==3) {
     var <- manifest(model)
   }
@@ -273,7 +273,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                         call=cl
                         ))
   class(res) <- c("lvm.missing","lvmfit")
-  if ("lvmfit.randomslope"%in%class(e.mis))
+  if (inherits(e.mis,"lvmfit.randomslope"))
     class(res) <- c(class(res),"lvmfit.randomslope")
 
   if (hessian & is.null(cluster)) {

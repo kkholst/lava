@@ -12,7 +12,12 @@ LazyLoad: yes
 Depends:
     R (>= 2.15)
 Imports:
-    numDeriv, methods, graphics, grDevices, utils, stats
+    numDeriv,
+    methods,
+    graphics,
+    grDevices,
+    utils,
+    stats
 Suggests:
     mets (>= 1.1),
     graph,
@@ -31,3 +36,4 @@ Suggests:
     ascii,
     zoo
 Roxygen: list(wrap = FALSE)
+RoxygenNote: 5.0.1

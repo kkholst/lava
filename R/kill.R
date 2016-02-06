@@ -44,7 +44,7 @@
 
 ##' @export
 "kill.lvm" <- function(x, value, ...) {
-  if (class(value)[1]=="formula") value <- all.vars(value)
+  if (inherits(value,"formula")) value <- all.vars(value)
   idx <- which(names(x$exfix)%in%value)
   if (length(idx)>0) {
       x$attributes$parameter[idx] <- x$expar[idx] <- x$exfix[idx] <- NULL

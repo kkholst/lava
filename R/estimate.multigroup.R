@@ -609,7 +609,7 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
   if (nm==1) {
     return(estimate(x[[1]],data,missing=missing,...))
   }
-  if (!all(unlist(lapply(x, function(y) class(y)[1]=="lvm")))) stop ("Expected a list of 'lvm' objects.")
+  if (!all(unlist(lapply(x, function(y) inherits(y,"lvm"))))) stop ("Expected a list of 'lvm' objects.")
   if (is.data.frame(data)) {
     warning("Only one dataset - going for standard analysis on each submodel.")
     res <- c()

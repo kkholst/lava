@@ -124,7 +124,7 @@
             return(object)
         }
 
-    if (class(value)[1]=="formula") {
+    if (inherits(value,"formula")) {
         yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
         iscovar <- FALSE
         if (length(yx)==1) {
@@ -278,7 +278,7 @@
         if (missing(to)) {
             return(regfix(object))
         }
-        if (class(to)[1]=="formula") {
+        if (inherits(to,"formula")) {
             if (!missing(value)) {
                 regression(object,to,silent=silent,...) <- value
             } else {

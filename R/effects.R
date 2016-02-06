@@ -7,7 +7,7 @@ totaleffects.lvmfit <- function(object,to,...,level=0.95) {
   p <- (1-level)/2
   q <- qnorm(p)
   res <- c()
-  if (class(to)[1]=="formula") {
+  if (inherits(to,"formula")) {
     if (substr(deparse(to[3]),1,1)==".") {
       trim <- function(x) sapply(x,function(z) gsub(" ","",z,fixed=TRUE))
       to <- trim(strsplit(deparse(to),"~")[[1]][1])
@@ -42,7 +42,7 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   }
   P <- path(object,to=to,from=from,...)
   if (is.null(P$path)) {
-    if (class(to)[1]=="formula") {
+    if (inherits(to,"formula")) {
       f <- extractvar(to)
       to <- f$y; from <- f$x
     }

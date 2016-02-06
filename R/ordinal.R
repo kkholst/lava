@@ -33,7 +33,7 @@ ordinal.sim.hook <- function(x,data,p,modelpar,...) {
 
 ##' @export
 "ordinal<-.lvm" <- function(x,...,value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     return(ordinal(x,all.vars(value),...))
   }
   ordinal(x, value, ...)

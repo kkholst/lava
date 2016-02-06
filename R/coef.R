@@ -165,7 +165,7 @@ function(object, level=ifelse(missing(type),-1,2),
   para <- parameter(Model(object))
   para.idx <- which(vars(object)%in%para)
 
-  if ("lvm.missing"%in%class(object)) {
+  if (inherits(object,"lvm.missing")) {
       if (length(object$cc)==0) {## No complete cases
           coefs <- coef(object$estimate)
           c1 <- coef(Model(object),mean=TRUE,fix=FALSE)

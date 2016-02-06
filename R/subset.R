@@ -19,9 +19,8 @@
 ##' @export
 ##' @method subset lvm
 subset.lvm <- function(x, vars, ...) {
-    if (missing(vars))
-        return(x)
-    if (class(vars)[1]=="formula") vars <- all.vars(vars)
+    if (missing(vars)) return(x)
+    if (inherits(vars,"formula")) vars <- all.vars(vars)
     if (!all(vars%in%vars(x))) stop("Not a subset of model")
     latentvars <- intersect(vars,latent(x))
     ##  g0 <- subGraph(vars, Graph(x))

@@ -95,7 +95,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
 ##' @export
 "edgelabels<-.lvmfit" <- function(object,to,from,est=TRUE,edges=NULL,cex=1,...,value) {
   if (is.null(edges))  {
-    if (class(to)[1]=="formula") {
+    if (inherits(to,"formula")) {
       yy <- decomp.specials(getoutcome(to))
       from <- setdiff(all.vars(to),yy)
       to <- yy
@@ -189,7 +189,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
   if (is.null(lab)) {
     return(graph::edgeRenderInfo(object)$label)
   }
-  if (class(to)[1]=="formula") {
+  if (inherits(to,"formula")) {
     yy <- decomp.specials(getoutcome(to))
     from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
     if (length(from)==0) from <- yy
@@ -296,7 +296,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
   if (is.null(lab)) {
     return(object$edgerender$label)
   }
-  if (class(to)[1]=="formula") {
+  if (inherits(to,"formula")) {
     yy <- decomp.specials(getoutcome(to))
     from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
     if (length(from)==0) from <- yy

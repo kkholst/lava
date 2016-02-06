@@ -44,6 +44,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                      trend.lty=1,trend.join=TRUE,trend.delta=0.2,
                      trend=!is.null(tau),trend.col=col,
                      trend.alpha=0.2,trend.lwd=3,
+                     legend=NULL,
                      xlab="Time",ylab="",add=FALSE,...) {
                          ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
         if (!lava.options()$cluster.index) stop("mets not available? Check 'lava.options()cluster.index'.")    
@@ -61,7 +62,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         if (length(type)<K)        type <- rep(type,K)
         if (length(col)<K)         col <- rep(col,K)
         if (length(lty)<K)         lty <- rep(lty,K)
-        if (length(lwd)<K)         lty <- rep(lwd,K)
+        if (length(lwd)<K)         lwd <- rep(lwd,K)
         if (length(alpha)<K)       alpha <- rep(alpha,K)
         if (length(trend)<K)       trend <- rep(trend,K)
         if (length(trend.col)<K)   trend.col <- rep(trend.col,K)
@@ -81,6 +82,9 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                      trend.delta=trend.delta,
                      trend.formula=trend.formula,
                      add=TRUE,...)
+        }
+        if (!is.null(legend)) {
+            graphics::legend(legend,names(dd),lwd=lwd,col=col,lty=lty)
         }
         return(invisible(NULL))
     }
@@ -103,14 +107,14 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         yidx <- Idx(y,names(wide))
         Y <- wide[,yidx,drop=FALSE]
         X <- NULL
-        matplot(t(Y),type=type,lty=lty,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
+        matplot(t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
     } else {
         wide <- mets::fast.reshape(dsort(data,c(id,x)),id=id,varying=c(y,x),...)
         yidx <- Idx(y,names(wide))
         xidx <- Idx(x,names(wide))
         Y <- wide[,yidx,drop=FALSE]
         X <- wide[,xidx,drop=FALSE]
-        matplot(t(X),t(Y),type=type,lty=lty,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,add=add,...)
+        matplot(t(X),t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,add=add,...)
         if (trend) {
             if (is.numeric(trend.formula)) {
                 trend.formula <- sort(trend.formula)

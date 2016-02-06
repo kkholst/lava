@@ -16,7 +16,7 @@ function(x,...,value) UseMethod("addvar<-")
 
 ##' @export
 `addvar<-.lvm` <- function(x,...,value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     regression(x,...) <- value
     return(x)
 ##    return(addvar(x,all.vars(value),...))

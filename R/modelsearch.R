@@ -52,7 +52,7 @@ backwardeliminate <- function(x,
                               data,
                               ...) {
 
-    if (class(x)[1]=="lvm") { M <- x } else { M <- Model(x) }
+    if (inherits(x,"lvm")) { M <- x } else { M <- Model(x) }
     if(missing(data)) data <- model.frame(x)
 
     dots <- list(...)
@@ -96,7 +96,7 @@ backwardeliminate <- function(x,
 }
 
 backwardsearch <- function(x,k=1,...) {
-    if (class(x)!="lvmfit") stop("Expected an object of class 'lvmfit'.")
+    if (inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     p <- pars(x)
     cur <- Model(x)
     pp <- modelPar(cur,p)
@@ -173,7 +173,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (is.null(restricted)) return(NULL)
     restrictedcomb <- utils::combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
 
-    if (class(model.frame(x))%ni%c("data.frame","matrix")) {
+    if (!inherits(model.frame(x),c("data.frame","matrix"))) {
         n <- model.frame(x)$n
         S <- model.frame(x)$S
         mu <- model.frame(x)$mu

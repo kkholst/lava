@@ -3,7 +3,7 @@
 
 ##' @export
 "latent<-.lvm" <- function(x, clear=FALSE,..., value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     return(latent(x,all.vars(value),clear=clear,...))
   }
   latent(x, var=value, clear=clear,...)

@@ -19,7 +19,7 @@
 
 ##' @export
 cancel.lvm <- function(x,value,...) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
       ##      yx <- all.vars(value)
     lhs <- getoutcome(value)
     if (length(lhs)==0) yy <- NULL else yy <- decomp.specials(lhs)

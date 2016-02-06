@@ -116,7 +116,7 @@
 "covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, constrain=FALSE, pairwise=FALSE, ..., value) {
 
   if (!is.null(var1)) {
-    if (class(var1)[1]=="formula") {
+    if (inherits(var1,"formula")) {
       lhs <- getoutcome(var1)
       xf <- attributes(terms(var1))$term.labels
       xx <- unlist(lapply(xf, function(x) x[1]))
@@ -143,7 +143,7 @@
       return(object)
   }
 
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     lhs <- getoutcome(value)
     if (length(lhs)==0) {
       return(covariance(object,all.vars(value),constrain=constrain,pairwise=pairwise,...))
@@ -199,14 +199,14 @@
             return(object)
         }
         if (!is.null(var1)) {
-            if (class(var1)[1]=="formula") {
+            if (inherits(var1,"formula")) {
                 covariance(object,constrain=constrain,
                  pairwise=pairwise,exo=exo,...) <- var1
                 return(object)
             }
     allvars <- var1
     if (!missing(var2)) {
-      if (class(var2)[1]=="formula")
+      if (inherits(var2,"formula"))
         var2 <- all.vars(var2)
       allvars <- c(allvars,var2)
     }
@@ -254,7 +254,7 @@
 }
 
 covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,vname=NA,v2name=vname,lname=NA,l2name=lname,...) {
-  if (class(var1)[1]=="formula") {
+  if (inherits(var1,"formula")) {
     var1 <- getoutcome(var1)
     var2 <- attributes(var1)$x
   }

@@ -3,7 +3,7 @@
 
 ##' @export
 "functional<-.lvm" <- function(x,to,from,...,value) {
-    if (class(to)[1]=="formula") {
+    if (inherits(to,"formula")) {
         yy <- decomp.specials(getoutcome(to))
         ##xx <- attributes(terms(to))$term.labels
         myvars <- all.vars(to)

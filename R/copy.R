@@ -1,6 +1,6 @@
 "copy<-" <- function(object,...,value) UseMethod("copy<-")
 "copy<-.lvm" <- function(object,...,value) {
-  if (class(value)[1]=="formula") {
+  if (inherits(value,"formula")) {
     value <- all.vars(value)
   }
   if (length(value)<2) stop("Provide name of new variable")

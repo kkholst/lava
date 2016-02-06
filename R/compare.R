@@ -106,7 +106,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
   ### Score test
   if (!missing(scoretest)) {
     altmodel <- Model(object)
-    if (class(scoretest)[1]=="formula") scoretest <- list(scoretest)
+    if (inherits(scoretest,"formula")) scoretest <- list(scoretest)
     for (i in scoretest) {
       regression(altmodel) <- i
     }
@@ -137,7 +137,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
   ### Likelihood ratio test
   objects <- list(object,...)
   if (length(objects)<2) {
-    if (!("lvmfit"%in%class(object))) {
+    if (!(inherits(object,"lvmfit"))) {
       cc <- rbind(logLik(object),AIC(object))
       rownames(cc) <- c("logLik","AIC")
       colnames(cc) <-  ""
