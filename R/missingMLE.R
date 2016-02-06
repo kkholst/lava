@@ -1,7 +1,7 @@
 ###{{{ missingModel
 
 missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weight=NULL,weight2=NULL,cluster=NULL,...) {
-  if (inherits(model,"lvm")) stop("Needs a lvm-object")
+  if (!inherits(model,"lvm")) stop("Needs a lvm-object")
   if (type==3) {
     var <- manifest(model)
   }
