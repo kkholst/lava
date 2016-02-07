@@ -118,13 +118,11 @@ sim(m,10,p=c(y=0.5))[,"y"]
 ##################################################
 ### Transform
 ##################################################
-
 m <- lvm()
 transform(m,xz~x+z) <- function(x) x[1]*(x[2]>0)
 regression(m) <- y~x+z+xz
 d <- sim(m,1e3)
 summary(lm(y~x+z + x*I(z>0),d))
-
 
 ##################################################
 ### Non-random variables
@@ -136,17 +134,14 @@ distribution(m,~x+z+v+w) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 sim(m,10)
 
-
 ##################################################
 ### Cox model
 ### piecewise constant hazard
 ################################################
-
 m <- lvm(t~x)
 rates <- c(1,0.5); cuts <- c(0,5)
 ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
 distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
-
 
 \dontrun{
     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
@@ -158,12 +153,10 @@ distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
     curve(L,0,100,add=TRUE,col="blue")
 }
 
-
 ##################################################
 ### Cox model
 ### piecewise constant hazard, gamma frailty
 ##################################################
-
 m <- lvm(y~x+z)
 rates <- c(0.3,0.5); cuts <- c(0,5)
 distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
@@ -177,14 +170,12 @@ distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
                    method="linear")
     curve(L,0,100,add=TRUE,col="blue")
 }
-
 ## Equivalent via transform (here with Aalens additive hazard model)
 m <- lvm(y~x)
 distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
 transform(m,t~y+z) <- prod
 sim(m,10)
-
 ## Shared frailty
 m <- lvm(c(t1,t2)~x+z)
 rates <- c(1,0.5); cuts <- c(0,5)
@@ -197,7 +188,6 @@ mets::fast.reshape(sim(m,100),varying="t")
 ##################################################
 ### General multivariate distributions
 ##################################################
-
 \dontrun{
 m <- lvm()
 distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
@@ -222,9 +212,48 @@ sim(m,5)
 sim(m,5,p=c(m1=100))
 
 ##################################################
+### Regression design in other parameters
+##################################################
+## Variance heterogeneity
+m <- lvm(y~x)
+distribution(m,~y) <- function(n,mean,x) rnorm(n,mean,exp(x)^.5)
+if (interactive()) plot(y~x,sim(m,1e3))
+## Alternaively, calculate the standard error directly
+addvar(m) <- ~sd ## If 'sd' should be part of the resulting data.frame
+constrain(m,sd~x) <- function(x) exp(x)^.5
+distribution(m,~y) <- function(n,mean,sd) rnorm(n,mean,sd)
+if (interactive()) plot(y~x,sim(m,1e3))
+
+## Regression on variance parameter
+m <- lvm()
+regression(m) <- y~x
+regression(m) <- v~x
+##distribution(m,~v) <- 0 # No stochastic term
+## Alternative:
+## regression(m) <- v[NA:0]~x
+distribution(m,~y) <- function(n,mean,v) rnorm(n,mean,exp(v)^.5)
+if (interactive()) plot(y~x,sim(m,1e3))
+
+## Regression on shape parameter in Weibull model
+m <- lvm()
+regression(m) <- y ~ z+v
+regression(m) <- s ~ exp(0.6*x-0.5*z)
+distribution(m,~x+z) <- binomial.lvm()
+distribution(m,~cens) <- coxWeibull.lvm(scale=1)
+distribution(m,~y) <- coxWeibull.lvm(scale=0.1,shape=~s)
+eventTime(m) <- time ~ min(y=1,cens=0)
+
+if (interactive()) {
+    d <- sim(m,1e3)
+    require(survival)
+    (cc <- coxph(Surv(time,status)~v+strata(x,z),data=d))
+    plot(survfit(cc) ,col=1:4,mark.time=FALSE)
+}
+
+
+##################################################
 ### Categorical predictor
 ##################################################
-
 m <- lvm()
 ## categorical(m,K=3) <- "v"
 categorical(m,labels=c("A","B","C")) <- "v"

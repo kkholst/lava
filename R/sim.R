@@ -58,12 +58,12 @@
 ##' distribution(m,~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' head(d)
-##'
+##' 
 ##' e <- estimate(m,d,estimator="glm")
 ##' e
 ##' ## Simulate a few observation from estimated model
 ##' sim(e,n=5)
-##'
+##' 
 ##' ##################################################
 ##' ## Poisson
 ##' ##################################################
@@ -72,9 +72,9 @@
 ##' head(d)
 ##' estimate(m,d,estimator="glm")
 ##' mean(d$z); lava:::expit(1)
-##'
+##' 
 ##' summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
-##'
+##' 
 ##' ##################################################
 ##' ### Gamma distribution
 ##' ##################################################
@@ -84,22 +84,20 @@
 ##' d <- sim(m,1e4)
 ##' summary(g <- glm(y~x,family=Gamma(),data=d))
 ##' \dontrun{MASS::gamma.shape(g)}
-##'
+##' 
 ##' args(lava::Gamma.lvm)
 ##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
-##'
+##' 
 ##' ##################################################
 ##' ### Transform
 ##' ##################################################
-##'
 ##' m <- lvm()
 ##' transform(m,xz~x+z) <- function(x) x[1]*(x[2]>0)
 ##' regression(m) <- y~x+z+xz
 ##' d <- sim(m,1e3)
 ##' summary(lm(y~x+z + x*I(z>0),d))
-##'
-##'
+##' 
 ##' ##################################################
 ##' ### Non-random variables
 ##' ##################################################
@@ -109,19 +107,16 @@
 ##'                                ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
 ##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 ##' sim(m,10)
-##'
-##'
+##' 
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard
 ##' ################################################
-##'
 ##' m <- lvm(t~x)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
 ##' ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
 ##' distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
-##'
-##'
+##' 
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
 ##'     plot(timereg::aalen(survival::Surv(t,status)~x,data=d,
@@ -131,13 +126,11 @@
 ##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
-##'
-##'
+##' 
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard, gamma frailty
 ##' ##################################################
-##'
 ##' m <- lvm(y~x+z)
 ##' rates <- c(0.3,0.5); cuts <- c(0,5)
 ##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
@@ -151,14 +144,12 @@
 ##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
-##'
 ##' ## Equivalent via transform (here with Aalens additive hazard model)
 ##' m <- lvm(y~x)
 ##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
 ##' distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
 ##' transform(m,t~y+z) <- prod
 ##' sim(m,10)
-##'
 ##' ## Shared frailty
 ##' m <- lvm(c(t1,t2)~x+z)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
@@ -167,26 +158,25 @@
 ##' \dontrun{
 ##' mets::fast.reshape(sim(m,100),varying="t")
 ##' }
-##'
+##' 
 ##' ##################################################
 ##' ### General multivariate distributions
 ##' ##################################################
-##'
 ##' \dontrun{
 ##' m <- lvm()
 ##' distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
 ##' ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
-##'
+##' 
 ##' m <- lvm()
 ##' distribution(m,~z1+z2,"or1") <- VGAM::rbiplackcop
 ##' distribution(m,~y1+y2,"or2") <- VGAM::rbiplackcop
 ##' sim(m,10,p=c(or1=0.1,or2=4))
 ##' }
-##'
+##' 
 ##' m <- lvm()
 ##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
 ##' var(sim(m,100))
-##'
+##' 
 ##' ## Syntax also useful for univariate generators, e.g.
 ##' m <- lvm(y~x+z)
 ##' distribution(m,~y,TRUE) <- function(n) rnorm(n,mean=1000)
@@ -194,20 +184,59 @@
 ##' distribution(m,~y,"m1",0) <- rnorm
 ##' sim(m,5)
 ##' sim(m,5,p=c(m1=100))
-##'
+##' 
+##' ##################################################
+##' ### Regression design in other parameters
+##' ##################################################
+##' ## Variance heterogeneity
+##' m <- lvm(y~x)
+##' distribution(m,~y) <- function(n,mean,x) rnorm(n,mean,exp(x)^.5)
+##' if (interactive()) plot(y~x,sim(m,1e3))
+##' ## Alternaively, calculate the standard error directly
+##' addvar(m) <- ~sd ## If 'sd' should be part of the resulting data.frame
+##' constrain(m,sd~x) <- function(x) exp(x)^.5
+##' distribution(m,~y) <- function(n,mean,sd) rnorm(n,mean,sd)
+##' if (interactive()) plot(y~x,sim(m,1e3))
+##' 
+##' ## Regression on variance parameter
+##' m <- lvm()
+##' regression(m) <- y~x
+##' regression(m) <- v~x
+##' ##distribution(m,~v) <- 0 # No stochastic term
+##' ## Alternative:
+##' ## regression(m) <- v[NA:0]~x
+##' distribution(m,~y) <- function(n,mean,v) rnorm(n,mean,exp(v)^.5)
+##' if (interactive()) plot(y~x,sim(m,1e3))
+##' 
+##' ## Regression on shape parameter in Weibull model
+##' m <- lvm()
+##' regression(m) <- y ~ z+v
+##' regression(m) <- s ~ exp(0.6*x-0.5*z)
+##' distribution(m,~x+z) <- binomial.lvm()
+##' distribution(m,~cens) <- coxWeibull.lvm(scale=1)
+##' distribution(m,~y) <- coxWeibull.lvm(scale=0.1,shape=~s)
+##' eventTime(m) <- time ~ min(y=1,cens=0)
+##' 
+##' if (interactive()) {
+##'     d <- sim(m,1e3)
+##'     require(survival)
+##'     (cc <- coxph(Surv(time,status)~v+strata(x,z),data=d))
+##'     plot(survfit(cc) ,col=1:4,mark.time=FALSE)
+##' }
+##' 
+##' 
 ##' ##################################################
 ##' ### Categorical predictor
 ##' ##################################################
-##'
 ##' m <- lvm()
 ##' ## categorical(m,K=3) <- "v"
 ##' categorical(m,labels=c("A","B","C")) <- "v"
-##'
+##' 
 ##' regression(m,additive=FALSE) <- y~v
 ##' \dontrun{
 ##' plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 ##' }
-##'
+##' 
 ##' m <- lvm()
 ##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 ##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
@@ -449,7 +478,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
-
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
             for (i in leftovers) {
                 if (i%in%vartrans) {
@@ -479,8 +507,15 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                         pos <- match(i,vv)
                         relations <- colnames(A)[A[,pos]!=0]
                         simvars <- x$attributes$simvar[[i]]
+                        dist.i <- distribution(x,i)[[1]] ## User-specified distribution function
+                        dist.xx <- NULL
+                        if (is.function(dist.i)) {
+                            dist.args0 <- names(formals(dist.i))
+                            dist.args <- setdiff(dist.args0,c("n","mean","mu","var","..."))
+                            dist.xx <- intersect(names(res),dist.args) ## Variables influencing distribution
+                        }
 
-                        if (all(c(relations,simvars)%in%simuled)) { ## Only depending on already simulated variables
+                        if (all(c(relations,simvars,dist.xx)%in%simuled)) { ## Only depending on already simulated variables
                             if (x$mean[[pos]]%in%xconstrain.par) {
                                 mu.i <- res[,x$mean[[pos]] ]
                             } else {
@@ -519,7 +554,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                     } else  mu.i <- mu.i + A[From,pos]*res[,From]
                                 }
                             }
-                            dist.i <- distribution(x,i)[[1]]
                             if (!is.function(dist.i)) {
                                 res[,pos] <- mu.i + E[,pos]
                                 if (unlink)
@@ -530,11 +564,27 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                     if (length(mu.i)==1) mu.i <- rep(mu.i,n)
                                     mu.i <- cbind("m0"=mu.i,res[,simvars,drop=FALSE])
                                 }
-                                res[,pos] <- dist.i(n=n,mu=mu.i,var=P[pos,pos])
+                                new.args <- list(n=n)
+                                mu.arg <- intersect(c("mean","mu"),dist.args0)
+                                if (length(mu.arg)>0) {
+                                    new.args <- c(new.args,list(mu.i))
+                                    names(new.args)[length(new.args)] <- mu.arg[1]
+                                }
+                                var.arg <- intersect(c("var"),dist.args0)
+                                if (length(var.arg)>0) {
+                                    new.args <- c(new.args,list(P[pos,pos]))
+                                    names(new.args)[length(new.args)] <- var.arg[1]
+                                }
+                                for (jj in dist.xx) {
+                                    new.args <- c(new.args,list(res[,jj,drop=TRUE]))
+                                    names(new.args)[length(new.args)] <- jj
+                                }
+                                res[,pos] <- do.call(dist.i,new.args)
                                 if (unlink)
                                     resunlink[,pos] <- mu.i
                             }
-                            if (i%in%names(x$constrainY)) {
+
+                            if (length(x$constrainY)>0 && i%in%names(x$constrainY)) {
                                 cc <- x$constrainY[[i]]
                                 args <- cc$args
                                 args <- if (is.null(args) || length(args)==0) res[,pos] else res[,args]
