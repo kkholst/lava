@@ -1,3 +1,4 @@
+##' Combine matrices to block diagonal structure
 ##' @title Combine matrices to block diagonal structure
 ##' @param x Matrix
 ##' @param \dots Additional matrices

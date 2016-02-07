@@ -19,6 +19,7 @@
 ##' @param trend.col Colour of trend line
 ##' @param trend.alpha Transparency
 ##' @param trend.lwd Trend line width
+##' @param legend Legend
 ##' @param xlab Label of X-axis
 ##' @param ylab Label of Y-axis
 ##' @param add Add to existing device
@@ -130,7 +131,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     data0 <- data[data[,x]==i,,drop=FALSE]
                     newdata <- data.frame(i); names(newdata) <- x                    
                     if (!is.null(tau)) {
-                        if (!require(quantreg)) stop("Install 'quantreg'")
+                        ##if (!require(quantreg)) stop("Install 'quantreg'")
                         suppressWarnings(r1 <- quantreg::rq(tf,data=data0,tau=tau))
                         pr <- predict(r1,newdata=newdata)##,interval="confidence")
                         res <- rbind(res,pr)
@@ -154,7 +155,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     trend.formula <- update(trend.formula,toformula(y,"."))
                 }
                 if (!is.null(tau)) {
-                    if (!require(quantreg)) stop("Install 'quantreg'")
+                    ##if (!require(quantreg)) stop("Install 'quantreg'")
                     suppressWarnings(r1 <- quantreg::rq(trend.formula,data=data,tau=tau))
                     newdata <- data.frame(seq(min(X,na.rm=TRUE),max(X,na.rm=TRUE),length.out=100))
                     names(newdata) <- x

@@ -48,6 +48,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 
 \item{trend.lwd}{Trend line width}
 
+\item{legend}{Legend}
+
 \item{xlab}{Label of X-axis}
 
 \item{ylab}{Label of Y-axis}

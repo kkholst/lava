@@ -209,7 +209,7 @@ plotConf <- function(model,
         ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
     }
     if (inherits(model,"lmerMod")) {
-        uz <- as.matrix(unlist(lme4::ranef(model))%*%model@Zt)[1,]
+        uz <- as.matrix(unlist(lme4::ranef(model))%*%do.call(Matrix::rBind,lme4::getME(model,"Ztlist")))[1,]
         R <- R-uz
     }
 

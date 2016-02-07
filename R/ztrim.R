@@ -1,3 +1,4 @@
+##' Trim tring of (leading/trailing/all) white spaces
 ##' @title Trim tring of (leading/trailing/all) white spaces
 ##' @param x String
 ##' @param all Trim all whitespaces?

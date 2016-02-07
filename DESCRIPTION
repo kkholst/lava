@@ -29,6 +29,7 @@ Suggests:
     geepack,
     gof (>= 0.9),
     foreach,
+    quantreg,
     rgl,
     fields,
     survival,

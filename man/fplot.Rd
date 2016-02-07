@@ -2,10 +2,7 @@
 % Please edit documentation in R/fplot.R
 \name{fplot}
 \alias{fplot}
-\title{fplot
-Faster plot via RGL
-
-Faster plot via RGL}
+\title{fplot}
 \usage{
 fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
   data = parent.frame(), add = FALSE)
@@ -28,6 +25,9 @@ fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
 \item{data}{data.frame}
 
 \item{add}{If TRUE use current active device}
+}
+\description{
+Faster plot via RGL
 }
 \examples{
 if (interactive()) {

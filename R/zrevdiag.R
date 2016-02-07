@@ -1,3 +1,4 @@
+##' Create/extract 'reverse'-diagonal matrix
 ##' @title Create/extract 'reverse'-diagonal matrix
 ##' @aliases revdiag revdiag<-
 ##' @usage

@@ -16,6 +16,9 @@ revdiag(x,...) <- value
 
 \item{\dots}{additional arguments to lower level functions}
 }
+\description{
+Create/extract 'reverse'-diagonal matrix
+}
 \author{
 Klaus K. Holst
 }

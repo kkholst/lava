@@ -13,6 +13,9 @@ trim(x, all = FALSE, ...)
 
 \item{\dots}{additional arguments to lower level functions}
 }
+\description{
+Trim tring of (leading/trailing/all) white spaces
+}
 \author{
 Klaus K. Holst
 }

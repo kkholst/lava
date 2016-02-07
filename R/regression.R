@@ -141,13 +141,18 @@
         if (xidx==2) {
             if (length(grep("[a-zA-Z]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
                 invlink <- strsplit(yx[[xidx]],"\\(")[[1]][1]
-                yx[[xidx]] <- gsub("[a-zA-Z]*\\(|\\)$","",yx[[xidx]])
+                if (invlink%in%c("f","v")) { ## Reserved for setting linear constraints
+                    invlink <- NULL
+                } else {
+                    yx[[xidx]] <- gsub("[a-zA-Z]*\\(|\\)$","",yx[[xidx]])
+                }
             }
         }
 
         ## Handling constraints with negative coefficients
+        ## while not tampering with formulas like y~f(x,-2)
         st <- yx[[xidx]]
-        yx[[xidx]] <- gsub("^\\+","",gsub("\\-","\\+\\-",gsub("\\+\\-","\\-",st)))        
+        yx[[xidx]] <- gsub("^\\+","",gsub("[^,]\\-","\\+\\-",gsub("\\+\\-","\\-",st)))        
         X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
         if (iscovar) {
             ## return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))

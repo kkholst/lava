@@ -1,7 +1,5 @@
+##' Faster plot via RGL
 ##' @title fplot
-##' Faster plot via RGL
-##'
-##' Faster plot via RGL
 ##' @export
 ##' @examples
 ##' if (interactive()) {

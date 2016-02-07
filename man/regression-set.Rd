@@ -90,7 +90,7 @@ well. E.g:
 \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 
 defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs argument can be a
-mixture of character and numeric values (and NA's).
+mixture of character and numeric values (and NA's to remove constraints).
 
 The function \code{regression} (called without additional arguments) can be
 used to inspect the linear constraints of a \code{lvm}-object.

@@ -13,6 +13,9 @@ blockdiag(x, ..., pad = 0)
 
 \item{\dots}{Additional matrices}
 }
+\description{
+Combine matrices to block diagonal structure
+}
 \examples{
 A <- diag(3)+1
 blockdiag(A,A,A,pad=NA)

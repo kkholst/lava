@@ -1,7 +1,5 @@
-##' @title Statistical tests
-##'
 ##' Performs Likelihood-ratio, Wald and score tests
-##'
+##' @title Statistical tests
 ##' @aliases compare
 ##' @export
 ##' @param object \code{lvmfit}-object

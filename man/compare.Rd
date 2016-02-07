@@ -2,9 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{compare}
 \alias{compare}
-\title{Statistical tests
-
-Performs Likelihood-ratio, Wald and score tests}
+\title{Statistical tests}
 \usage{
 compare(object, ...)
 }
@@ -15,6 +13,9 @@ compare(object, ...)
 }
 \value{
 Matrix of test-statistics and p-values
+}
+\description{
+Performs Likelihood-ratio, Wald and score tests
 }
 \examples{
 m <- lvm();
