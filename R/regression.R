@@ -46,7 +46,7 @@
 ##' \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 ##'
 ##' defines \eqn{E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2}. The rhs argument can be a
-##' mixture of character and numeric values (and NA's).
+##' mixture of character and numeric values (and NA's to remove constraints).
 ##'
 ##' The function \code{regression} (called without additional arguments) can be
 ##' used to inspect the linear constraints of a \code{lvm}-object.
@@ -136,6 +136,18 @@
                 iscovar <- TRUE
             }
         }
+        ##Check for link function
+        invlink <- NULL
+        if (xidx==2) {
+            if (length(grep("[a-zA-Z]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
+                invlink <- strsplit(yx[[xidx]],"\\(")[[1]][1]
+                yx[[xidx]] <- gsub("[a-zA-Z]*\\(|\\)$","",yx[[xidx]])
+            }
+        }
+
+        ## Handling constraints with negative coefficients
+        st <- yx[[xidx]]
+        yx[[xidx]] <- gsub("^\\+","",gsub("\\-","\\+\\-",gsub("\\+\\-","\\-",st)))        
         X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
         if (iscovar) {
             ## return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
@@ -159,6 +171,17 @@
         ys <- unlist(lapply(yyf,function(x) x[1]))
         object <- addvar(object,ys,reindex=FALSE,...)
         notexo <- ys
+        ## Add link-transformation
+        if (!is.null(invlink)) {
+            if (invlink=="") {
+                object <- transform(object,ys,NULL,post=FALSE)
+                covariance(object,ys) <- NA
+            } else {
+                ff <- function(x) {};  body(ff) <- parse(text=paste0(invlink,"(x)"))
+                object <- transform(object,ys,ff,post=FALSE)
+                covariance(object,ys) <- 0
+            }
+        }
       }
 
       exo <- c()
@@ -166,9 +189,9 @@
       xs <- unlist(lapply(xxf,function(x) x[1]))
 
       ## Remove intercepts?
-      rmint <- na.omit(match("-1",xs))
+      rmint <- na.omit(match(c("0","-1"),xs))
       if (length(rmint)>0) intercept(object,ys) <- 0
-      xs <- setdiff(xs,c("-1","1"))
+      xs <- setdiff(xs,c("-1","1","0"))
 
       object <- addvar(object,xs,reindex=FALSE ,...)
 
