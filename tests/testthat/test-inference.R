@@ -48,7 +48,7 @@ test_that("glm-estimator", {
     head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
-    c2 <- coef(summary(glm(y~x+z,d,family=binomial)))[,1:2]  
+    c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]  
     expect_equivalent(c1,c2)
 })
 
