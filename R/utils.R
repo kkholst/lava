@@ -512,3 +512,7 @@ Decomp.specials <- function(x,pattern="[()]") {
   unlist(strsplit(vars,","))
 
 }
+
+printline <- function(n=70) {
+    cat(rep("_", n), "\n", sep="");
+}
