@@ -314,10 +314,26 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
     ## - declining if shape <1
     ## - constant if shape=1
     ##
-    ## scale = exp(b0+ b1*X)
-    f <- function(n,mu,var,...) {
-        (- log(runif(n)) / (scale * exp(mu)))^{1/shape}
+    ## scale = exp(b0 + b1*X)
+    f <- function(n,mu,Scale=scale,Shape=shape,...) {
+        (- log(runif(n)) / (Scale * exp(mu)))^(1/Shape)
     }
+    ff <- formals(f)
+    expr <- "(- log(runif(n)) / (Scale * exp(mu)))^{1/Shape}"
+    if (inherits(scale,"formula")) scale <- all.vars(scale)[1]
+    if (is.character(scale)) {
+        names(ff)[3] <- scale
+        expr <- gsub("Scale",scale,expr)
+    }
+    if (inherits(shape,"formula")) shape <- all.vars(shape)[1]
+    if (is.character(shape)) {
+        names(ff)[4] <- shape
+        expr <- gsub("Shape",shape,expr)
+    }
+    formals(f) <- ff
+    ##e <- c(expression(suppressMessages(browser())), parse(text=expr))
+    e <- parse(text=expr)
+    body(f) <- as.call(c(as.name("{"), e))
     attr(f,"family") <- list(family="weibull",
                              regression="PH",
                              par=c(shape=shape,scale=scale))
