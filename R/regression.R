@@ -152,7 +152,11 @@
         ## Handling constraints with negative coefficients
         ## while not tampering with formulas like y~f(x,-2)
         st <- yx[[xidx]]
-        yx[[xidx]] <- gsub("^\\+","",gsub("[^,]\\-","\\+\\-",gsub("\\+\\-","\\-",st)))        
+        st <- gsub("\\-","\\+\\-",gsub("\\+\\-","\\-",st)) ## Convert - to +- (to allow for splitting on '+')
+        ##gsub("[^,]\\-","\\+\\-",st) ## Convert back any - not starting with ','
+        st <- gsub(",\\+",",",st) ## Remove + inside 'f' and 'v' constraints
+        st <- gsub("^\\+","",st) ## Remove leading plus        
+        yx[[xidx]] <- st
         X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
         if (iscovar) {
             ## return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
