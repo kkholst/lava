@@ -266,6 +266,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     if (is.null(value) || suppressWarnings(is.na(value))) {
         if (!is.null(par)) {
             Model(x)$constrain[[par]] <- NULL
+            Model(x)$constrainY[[par]] <- NULL
         } else {
             Model(x)$constrain[[args]] <- NULL
         }
