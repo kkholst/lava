@@ -59,7 +59,8 @@ GLMest <- function(m,data,control=list(),...) {
     coefs <- unlist(res)
     idx <- match(coef(m),names(coefs))
     coefs <- coefs[idx]
-    V <- Reduce(blockdiag,breads)[idx,idx]
+    ##V <- Reduce(blockdiag,breads)[idx,idx]
+    V <- crossprod(iids[,idx])
     ##V <- crossprod(iids[,idx])    
     mymsg <- noquote(cbind(mymsg))
     colnames(mymsg) <- "Family(Link)"; rownames(mymsg) <- paste(yvar,":")
