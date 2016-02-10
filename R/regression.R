@@ -155,7 +155,7 @@
         st <- gsub("\\-","\\+\\-",gsub("\\+\\-","\\-",st)) ## Convert - to +- (to allow for splitting on '+')
         ##gsub("[^,]\\-","\\+\\-",st) ## Convert back any - not starting with ','
         st <- gsub(",\\+",",",st) ## Remove + inside 'f' and 'v' constraints
-        st <- gsub("^\\+","",st) ## Remove leading plus        
+        st <- gsub("^\\+","",st) ## Remove leading plus
         yx[[xidx]] <- st
         X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
         if (iscovar) {
@@ -197,10 +197,12 @@
       xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="[",fixed=TRUE))
       xs <- unlist(lapply(xxf,function(x) x[1]))
 
-      ## Remove intercepts?
-      rmint <- na.omit(match(c("0","-1"),xs))
-      if (length(rmint)>0) intercept(object,ys) <- 0
-      xs <- setdiff(xs,c("-1","1","0"))
+        ## Alter intercepts?
+        intpos <- vapply(xs,function(x) grepl("[\\-]*[\\.|0-9]+$",x), 0)
+        if (any(intpos>0)) {
+            intercept(object,ys) <- as.numeric(xs[intpos[1]])
+            xs <- xs[-intpos]
+        }
 
       object <- addvar(object,xs,reindex=FALSE ,...)
 
