@@ -198,7 +198,7 @@
       xs <- unlist(lapply(xxf,function(x) x[1]))
 
         ## Alter intercepts?
-        intpos <- vapply(xs,function(x) grepl("[\\-]*[\\.|0-9]+$",x), 0)
+        intpos <- vapply(xs,function(x) grepl("^[\\-]*[\\.|0-9]+$",x), 0)
         if (any(intpos>0)) {
             intercept(object,ys) <- as.numeric(xs[intpos[1]])
             xs <- xs[-intpos]

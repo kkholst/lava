@@ -773,13 +773,13 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
 
     if (attr(terms(x),"intercept")==1) {
         covars <- covars[-1]
-        int <- 1
+        it <- c()
     } else {
-        int <- -1
+        it <- "0"
     }
-
+    
     if (!is.null(id)) covars <- setdiff(covars,id)
-    model <- lvm(toformula(yvar,c(int,covars)),silent=TRUE)
+    model <- lvm(toformula(yvar,c(it,covars)),silent=TRUE)
     if (!is.null(distribution)) {
         lava::distribution(model,yvar) <- distribution
         estimator <- "glm"
