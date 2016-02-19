@@ -4,3 +4,5 @@
 \.gitignore$
 README.org
 ^examples$
+^.*\.Rproj$
+^\.Rproj\.user$
