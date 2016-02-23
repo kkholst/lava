@@ -6,7 +6,7 @@ function(x, ...) {
   res <- NULL
   myhooks <- gethook("print.hooks")
   for (f in myhooks) {
-    res <- do.call(f, list(x=x,...))
+      res <- do.call(f, list(x=x,...))
   }
   if (is.null(res)) {
     k <- length(vars(x))
@@ -17,7 +17,6 @@ function(x, ...) {
     ff <- formula(x,char=TRUE,all=TRUE)
     R <- c()
     for (f in ff) {
-       as. 
       oneline <- as.character(f);
       y <- strsplit(f,"~")[[1]][1]
       y <- trim(y)
