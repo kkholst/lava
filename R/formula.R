@@ -1,10 +1,9 @@
 ##' @export
-##' @export
-formula.lvmfit <- formula.lvm <- function(x,char=FALSE,...) {
+formula.lvm <- function(x,char=FALSE,all=FALSE,...) {
   A <- index(x)$A
   res <- c()
   for (i in seq_len(ncol(A))) {
-    if (!(colnames(A)[i]%in%c(index(x)$exogenous,parameter(x)) )) {
+    if (all || !(colnames(A)[i]%in%c(index(x)$exogenous,parameter(x)) )) {
       f <- paste(colnames(A)[i],"~ 1")
       if (any(A[,i]!=0)) {
         f <- (paste(colnames(A)[i],"~",paste(colnames(A)[A[,i]!=0],collapse="+")))
@@ -16,3 +15,7 @@ formula.lvmfit <- formula.lvm <- function(x,char=FALSE,...) {
   }
   return(res)
 }
+
+
+##' @export
+formula.lvmfit <- formula.lvm

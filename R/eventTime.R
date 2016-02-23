@@ -228,7 +228,7 @@ print.eventHistory <- function(x,...) {
     if (is.null(eh) & is.null(timedep)) return(NULL)
     ehnames <- unlist(lapply(eh,function(x) x$names))
     cat("Event History Model\n")
-    ff <- formula(x,TRUE)
+    ff <- formula(x,char=TRUE,all=TRUE)
     R <- c()
     for (f in ff) {
         oneline <- as.character(f);
