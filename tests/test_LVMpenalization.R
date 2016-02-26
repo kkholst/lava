@@ -94,18 +94,18 @@ for(iter_grid in 1:n.grid){
   dt.results[iter_grid, c("n.obs","n.param","lambda","rep") := .(n,p,grid[iter_grid,"lambda"],grid[iter_grid,"rep"])]
   dt.results[iter_grid, c("time.lvm","time.lvmL1","time.lvmL2") := .(tps1[3],tps2[3],tps3[3])]
   
-  param_penalized1 <- c(penalized1.fit@unpenalized, penalized1.fit@penalized,  penalized1.fit@nuisance$sigma2)
+  param_penalized1 <- c(penalized1.fit@unpenalized, penalized1.fit@penalized)#,  penalized1.fit@nuisance$sigma2)
   dt.results[iter_grid, L1.zeroBeta := sum( abs(penalized1.fit@penalized) < 1e-10)]
   dt.results[iter_grid, L1.cv := if("iterations" %in% names(elvm1.fit)){elvm1.fit$opt$convergence}else{NA} ]
   dt.results[iter_grid, L1.iteration := if("iterations" %in% names(elvm1.fit)){elvm1.fit$opt$iterations}else{NA} ]
-  dt.results[iter_grid, L1.maxDiff := max(abs(param_penalized1-coef(elvm1.fit)))]
-  dt.results[iter_grid, L1.minDiff := min(abs(param_penalized1-coef(elvm1.fit)))]
+  dt.results[iter_grid, L1.maxDiff := max(abs(param_penalized1-coef(elvm1.fit)[1:(p+1)]))]
+  dt.results[iter_grid, L1.minDiff := min(abs(param_penalized1-coef(elvm1.fit)[1:(p+1)]))]
   
-  param_penalized2 <- c(penalized2.fit@unpenalized, penalized2.fit@penalized,  penalized2.fit@nuisance$sigma2)
+  param_penalized2 <- c(penalized2.fit@unpenalized, penalized2.fit@penalized)#,  penalized2.fit@nuisance$sigma2)
   dt.results[iter_grid, L2.cv := if("iterations" %in% names(elvm2.fit)){elvm2.fit$opt$convergence}else{NA} ]
   dt.results[iter_grid, L2.iteration := if("iterations" %in% names(elvm2.fit)){elvm2.fit$opt$iterations}else{NA} ]
-  dt.results[iter_grid, L2.maxDiff := max(abs(param_penalized2-coef(elvm2.fit)))]
-  dt.results[iter_grid, L2.minDiff := min(abs(param_penalized2-coef(elvm2.fit)))]
+  dt.results[iter_grid, L2.maxDiff := max(abs(param_penalized2-coef(elvm2.fit)[1:(p+1)]))]
+  dt.results[iter_grid, L2.minDiff := min(abs(param_penalized2-coef(elvm2.fit)[1:(p+1)]))]
   
   
 }
