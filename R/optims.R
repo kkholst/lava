@@ -12,135 +12,6 @@ nlminb2 <- function(start,objective,gradient,hessian,...) {
   do.call("nlminb", mypar)
 }
 
-optimx1 <- function(start,objective,gradient,hessian,...) {
-  require(optimx)
-  
-  nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min","optim.method","optimx.method")
-  dots <- list(...)
-  control <- list(...)$control
-  control <- control[names(control)%in%nlminbcontrols]
-  dots$control <- control
-  if (length(dots$trace)>0 && dots$trace>0) cat("\n")
-  mypar <- c(list(start=start,objective=objective,gradient=gradient,hessian=hessian),dots)
-  mypar["debug"] <- NULL
-  
-  if(!is.null(mypar$control$optimx.method)){
-    optimx.method <- mypar$control$optimx.method
-    mypar$control$optimx.method <- NULL
-    
-    optimx.res <- optimx(par = mypar$start, 
-                         fn = mypar$objective, 
-                         gr = mypar$gradient,
-                         method = optimx.method,
-                         control = mypar$control)
-    
-  }else{
-    mypar$control$all.methods <- TRUE
-    
-    optimx.res <- optimx(par = mypar$start, 
-                         fn = mypar$objective, 
-                         gr = mypar$gradient,
-                         control = mypar$control)  
-  }
-  
-  
-  index.cv <- which(optimx.res$convcode == 0)
-  if(length(index.cv) == 0){
-    res <- list(par = rep(NA, length(mypar$start)),
-                objective = NA,
-                convergence = 1,
-                evaluations = c("function" = NA, "gradient" = NA),
-                message = "optimx has not converged \n"
-    )
-  }else if(length(index.cv) == 1){
-    
-    par_tempo <- unlist(lapply(1:length(mypar$start), function(x){optimx.res[[x]][index.cv]})) 
-    names(par_tempo) <- names(mypar$start)
-    
-    res <- list(par = par_tempo,
-                objective = optimx.res$value[index.cv],
-                convergence = optimx.res$convcode[index.cv],
-                evaluations = c("function" = optimx.res$fevals[index.cv], "gradient" = optimx.res$gevals[index.cv]),
-                message = paste0("One algorithm has converged: ",attributes(optimx.res)$row.names[index.cv], " (value = ",optimx.res$value[index.cv],")\n")
-    )
-  }else{
-    index.cvBest <- index.cv[which.max(optimx.res$value[index.cv])]
-    par_tempo <- unlist(lapply(1:length(mypar$start), function(x){optimx.res[[x]][index.cvBest]})) 
-    names(par_tempo) <- names(mypar$start)
-    
-    res <- list(par = par_tempo,
-                objective = optimx.res$value[index.cvBest],
-                convergence = optimx.res$convcode[index.cvBest],
-                evaluations = c("function" = optimx.res$fevals[index.cvBest], "gradient" = optimx.res$gevals[index.cvBest]),
-                message = paste0("Several algorithms have converged but only the best convergence point is retained \n",
-                                 "method: ",paste(attributes(optimx.res)$row.names[index.cv], collapse = " | "), "\n",
-                                 "value : ",paste(optimx.res$value[index.cv], collapse = " | "), "\n")
-                
-    )
-  }
-  
-  return(res)
-  
-}
-
-# optimx0 <- function(start,objective,gradient,hessian,...) {
-#   nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min","optim.method","optimx.method")
-#   dots <- list(...)
-#   control <- list(...)$control
-#   control <- control[names(control)%in%nlminbcontrols]
-#   dots$control <- control
-#   if (length(dots$trace)>0 && dots$trace>0) cat("\n")
-#   mypar <- c(list(start=start,objective=objective,gradient=gradient,hessian=hessian),dots)
-#   mypar["debug"] <- NULL
-#   
-#   ### modifs
-#   if(!is.null(mypar$control$optim.method)){
-#     
-#     res <- optim(par = mypar$start, 
-#                  fn = mypar$objective, 
-#                  gr = mypar$gradient,
-#                  method = mypar$control$optim.method,
-#                  lower = c(rep(-Inf,length(mypar$start)-1),  0.0000001)
-#     )
-#     
-#     res <- list(par = res$par,
-#                 objective = res$value,
-#                 convergence = res$convergence,
-#                 evaluations = res$counts,
-#                 message = res$message
-#                 )
-#     
-#   }else if(!is.null(mypar$control$optimx.method)){
-# 
-# #     cat("**** NOTE: My hessian - numDeriv::hessian ****\n")
-# #     print(mypar$hessian(mypar$start) - numDeriv:::hessian(mypar$objective, mypar$start))
-#     
-#     res <- optimx(par = mypar$start, 
-#                  fn = mypar$objective, 
-#                  gr = mypar$gradient,
-#                  #hess = mypar$hessian,
-#                  method = mypar$control$optimx.method,
-#                  lower = c(rep(-Inf,length(mypar$start)-1),  0.0000001)
-#     )
-# #     cat("optimizer: ",attributes(res)$row.names,"\n")
-#     
-#     Vcoef <- as.numeric(coef(res))
-#     names(Vcoef) <- names(mypar$start)
-#     res <- list(par = Vcoef,
-#                 objective = res$value,
-#                 convergence = res$convcode,
-#                 evaluations = c("function" = res$fevals, "gradient" = res$gevals),
-#                 message = res$message
-#     )
-#     
-#   }else{
-#     res <- do.call("nlminb", mypar)  
-#   }
-#   
-#   return(res)
-# }
-
-
 nlminb1 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=gradient,hessian=NULL,...)
 }
@@ -331,7 +202,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             cat(".")
             I <- -numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
         } else {
-            I <- -hessian(p.orig)
+            I <- -hessian(p.orig, ...)
         }
         D <- attributes(I)$grad
         if (is.null(D)) {
@@ -366,7 +237,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
             while (mD>=mD0) {
                 p <- p.orig + Lambda*Delta
                 if (gradFun) {
-                    D = gradient(p)
+                    D = gradient(p, ...)
                 } else {
                     DI <- oneiter(p,return.mat=TRUE)
                     D = DI$D

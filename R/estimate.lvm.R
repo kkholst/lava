@@ -675,7 +675,7 @@
       if (XconstrStdOpt & !is.null(myGrad))
         opt$gradient <- as.vector(myGrad(opt$par, ...))
       else {
-        opt$gradient <- numDeriv::grad(myObj,opt$par)
+        opt$gradient <- numDeriv::grad(myObj,opt$par, ...)
       }
     } else {
       if (!NoOptim) {
@@ -714,13 +714,13 @@
       if (!exists(asVarFun)) {
         if (is.null(myInfo)) {
           if (!is.null(myGrad))
-            myInfo <- function(pp)
-              numDeriv::jacobian(myGrad,pp,method=lava.options()$Dmethod)
+            myInfo <- function(pp, ...)
+              numDeriv::jacobian(myGrad,pp,method=lava.options()$Dmethod, ...)
           else
-            myInfo <- function(pp)
-              numDeriv::hessian(myObj,pp)
+            myInfo <- function(pp, ...)
+              numDeriv::hessian(myObj,pp, ...)
         }
-        I <- myInfo(opt$estimate)
+        I <- myInfo(opt$estimate, ...)
         asVar <- tryCatch(Inverse(I),
                           error=function(e) matrix(NA, length(opt$estimate), length(opt$estimate)))
       } else {

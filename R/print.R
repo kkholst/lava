@@ -6,7 +6,7 @@ function(x, ...) {
   res <- NULL
   myhooks <- gethook("print.hooks")
   for (f in myhooks) {
-    res <- do.call(f, list(x=x,...))
+      res <- do.call(f, list(x=x,...))
   }
   if (is.null(res)) {
     k <- length(vars(x))
@@ -14,7 +14,7 @@ function(x, ...) {
     cat("Latent Variable Model\n") ##;" \n\twith: ", k, " variables.\n", sep="");
     if (k==0)
       return()
-    ff <- formula(x,TRUE)
+    ff <- formula(x,char=TRUE,all=TRUE)
     R <- c()
     for (f in ff) {
       oneline <- as.character(f);
