@@ -45,7 +45,6 @@ ISTA <- function(start, objective, gradient, hessian,...){
     ## ISTA
   
     while(test.cv == FALSE && iter <= control$iter.max){
-      
       x_km1 <- x_k
       x_k <- proxOperator(x = x_km1 - t_k * gradient(x_km1, penalty = penalty), 
                           lambda1 = lambda1)

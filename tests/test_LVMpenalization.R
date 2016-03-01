@@ -148,8 +148,8 @@ for(iter_grid in 1:n.grid){
 #   dt.results[iter_grid, L2FISTA.minDiff := min(abs(param_penalized2-coef(elvm2FISTA.fit)), na.rm = TRUE)]
   
 }
-dt.results
-dt.results
+print(dt.results)
+
 # save(dt.results, file = paste0("C:/Users/hpl802/Documents/Projects/LVM/CV-test/dt_results.RData"))
 
 
