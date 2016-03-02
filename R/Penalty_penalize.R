@@ -52,7 +52,8 @@
   return(x)
 }
 
-`penalize<-.plvm` <- function(x, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
+`penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE,
+                              lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
   
   ## coefficients
   if(!is.null(value)){
@@ -66,7 +67,19 @@
     x$penalty$names.coef <- value
     x$penalty$index.coef <- which(coef(x) %in% names.coef)
   } else if(is.null(x$penalty$names.coef)){
-    x$penalty$names.coef <- paste(x$index$endogenous ,x$exogenous , sep = "~")
+    
+    ls.names <- list()
+    if(pen.intercept){
+    ls.names$intercept <- x$index$endogenous
+    }
+    if(pen.exogenous){
+      ls.names$exogenous <- as.vector(sapply(x$index$endogenous, function(nameY){paste(nameY ,x$exogenous , sep = "~")}))
+    }
+    if(pen.variance){
+      ls.names$variance <- paste(x$index$endogenous ,x$index$endogenous , sep = "~")
+    }
+    
+    x$penalty$names.coef <- as.vector(unlist(ls.names))
     x$penalty$index.coef <- which(coef(x) %in% x$penalty$names.coef)
   } 
   
@@ -102,8 +115,12 @@
     
   } else if(is.null(x$penalty$gn_penalty)){
     
-    x$penalty$gn_penalty <- function(coef, lambda2){
-      return( lambda2 * abs(coef) )
+    x$penalty$gn_penalty <- function(coef, lambda1, lambda2){
+      
+      gn1 <- lambda1 * sign(coef)
+      gn2 <- lambda2 * abs(coef)
+      
+      return( gn1 + gn2 )
     }
     
   }
@@ -115,8 +132,12 @@
     
   } else if(is.null(x$penalty$hn_penalty)){
     
-    x$penalty$hn_penalty <- hn_penalty <- function(coef, lambda2){
-      return( lambda2 * sign(coef) )
+    x$penalty$hn_penalty <- hn_penalty <- function(coef, lambda1, lambda2){
+      
+      hn1 <- 0
+      hn2 <- lambda2 * sign(coef)
+      
+      return( hn1 + hn2 )
     }
     
   }
@@ -147,7 +168,7 @@
 
 #### 3- optim functions #### 
 
-penalized_method.lvm <- "nlminb2"#lava:::gaussian_method.lvm
+penalized_method.lvm <- "FISTA"#lava:::gaussian_method.lvm # nlminb2
 
 penalized_objective.lvm <- function(x, ...){  # proportional to the log likelihood
   
@@ -156,7 +177,7 @@ penalized_objective.lvm <- function(x, ...){  # proportional to the log likeliho
   dots <- list(...)
   penalty <- dots$penalty
   
-  if(penalty$lambda1>0 || penalty$lambda2>0){ # L1 or L2 penalty
+  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
     
     obj.P <- penalty$fn(coef = dots$p[penalty$index.coef],
                         lambda1 = penalty$lambda1,
@@ -176,9 +197,10 @@ penalized_gradient.lvm <- function(x, ...){
   dots <- list(...)
   penalty <- dots$penalty
   
-  if(penalty$lambda2>0){ # only L2 penalty
+  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
     res_tempo <- penalty$gn(coef = dots$p[penalty$index.coef],
-                                 lambda2 = penalty$lambda2)
+                            lambda1 = penalty$lambda1, 
+                            lambda2 = penalty$lambda2)
     
     grad.P <- rep(0, length(dots$p))
     grad.P[penalty$index.coef] <- res_tempo
@@ -198,10 +220,12 @@ penalized_hessian.lvm <- function(x, ...){ # second order partial derivative
   dots <- list(...)
   penalty <- dots$penalty
   
-  if(penalty$lambda2>0){ # only L2 penalty
+  
+  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
     
     res_tempo <- penalty$hn(coef = dots$p[penalty$index.coef],
-                                 lambda2 = penalty$lambda2)
+                            lambda1 = penalty$lambda1, 
+                            lambda2 = penalty$lambda2)
     
     hess.P <- rep(0, length(dots$p))
     hess.P[penalty$index.coef] <- res_tempo
@@ -222,10 +246,10 @@ penalized_logLik.lvm <- function(object, ...){ # log likelihood
   dots <- list(...)
   penalty <- dots$penalty
   
-  if(!is.null(penalty)){
+  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
     logLik.P <- penalty$fn(coef = dots$p[penalty$names.coef],
-                                lambda = penalty$lambda, 
-                                power = penalty$power)
+                           lambda1 = penalty$lambda1, 
+                           lambda2 = penalty$lambda2)
     
   }else{
     logLik.P <- 0
