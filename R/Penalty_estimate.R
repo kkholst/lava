@@ -58,7 +58,8 @@
 #' lapply(ls.p12lvm,coef)
 #' 
 #' 
-`estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, method = penalized_method.lvm, ...) {
+`estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
+                            method = penalized_method.lvm, regularizationPath = FALSE, ...) {
   
   ## generic penalty
   penalty  <- x$penalty
@@ -82,36 +83,47 @@
   
   ## dots 
   dots <- list(...)
+  
+  # optimizer
+  if(method == "proxGrad"){
+    if("control" %in% names(dots) == FALSE){
+      dots$control <- list()
+    }
+    if("control" %in% names(dots$control) == FALSE){
+      dots$control$proxGrad.method <- "FISTA"
+    }else{
+      if(dots$control$proxGrad.method %in% c("ISTA","FISTA") == FALSE){
+        stop("estimate.plvm: wrong specification of control$proxGrad.method \n",
+             "only  \"ISTA\" and \"FISTA\" mehtods are available \n",
+             "control$proxGrad.method: ",dots$control$proxGrad.method,"\n")
+      }  
+    }
+  }
+  
+  # cleaning [not completely checked - may be issues here]
   names.dots <- names(dots)
   if(any(names.dots %in% names(penalty))){
     fixedArgs <- setdiff(names(formals("estimate.plvm")),c("..."))
     dotsArgs <- setdiff(names.dots[names.dots %in% names(penalty)], fixedArgs)
     
-    penalty[dotsArgs] <- dots[dotsArgs]
-    dots[dotsArgs] <- NULL
-  }
- 
-  ## optimizer
-  if(method == "FISTA"){
-    method <- "ISTA"
-    if("control" %in% names(dots) == FALSE){
-      dots$control <- list()
+    if(length(dotsArgs)>0){
+      penalty[dotsArgs] <- dots[dotsArgs]
+      dots[dotsArgs] <- NULL
     }
-    dots$control$FAST <- TRUE
   }
 
-#   if(penalty$lambda1>0 && method %in% c("ISTA","FISTA") == FALSE){
-#     stop("estimate.plvm: Can only perform Lasso regression if method=\"ISTA\" or \"FISTA\" \n")
-#   }
-
+  if(regularizationPath){
+    dots$control$test.path <- TRUE
+  }
+  
   ## penalty time n
   penalty$lambda1 <- penalty$lambda1 * nrow(data)
   penalty$lambda2 <- penalty$lambda2 * nrow(data)
-
+  
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", penalty = penalty, method = method), 
                                           dots)
-                 )
+  )
   
   #### export
   return(res)

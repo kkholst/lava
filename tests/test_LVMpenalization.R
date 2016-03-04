@@ -42,7 +42,7 @@ names.results <- c("n.obs","n.param","lambda","rep",
                    paste("L2",export.fit, sep = "."),
                    paste("L2ISTA",export.fit, sep = "."),
                    paste("L2FISTA",export.fit, sep = "."),
-                   paste("L12",export.fit, sep = ".")
+                   paste("L12FISTA",export.fit, sep = ".")
 )
 dt.results <- data.table(matrix(as.numeric(NA), nrow = n.grid, ncol = length(names.results)))
 names(dt.results) <- names.results
@@ -51,7 +51,7 @@ names(dt.results) <- names.results
 
 
 for(iter_grid in 1:n.grid){
-
+  
   setTxtProgressBar(.pb, iter_grid)
   
   n <- grid[iter_grid,"n"]
@@ -74,39 +74,39 @@ for(iter_grid in 1:n.grid){
   
   ## lava
   tps1 <- system.time(
-  elvm.fit <- estimate(lvm.model, df.data, 
-                       control = list(constrain = TRUE))
+    elvm.fit <- estimate(lvm.model, df.data, 
+                         control = list(constrain = TRUE))
   )
-
+  
   tps2 <- system.time(
-  elvm1.fit <- estimate(plvm.model, data = df.data, lambda1 = lambda1, method = "nlminb2", 
-                        control = list(constrain = TRUE, iter.max = iter.max))
+    elvm1.fit <- estimate(plvm.model, data = df.data, lambda1 = lambda1, method = "nlminb2", 
+                          control = list(constrain = TRUE, iter.max = iter.max))
   )
   tps2bis <- system.time(
-    elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1, method = "ISTA",
-                              control = list(constrain = TRUE, iter.max = iter.max))
+    elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1,
+                              control = list(constrain = TRUE, iter.max = iter.max, proxGrad.method = "ISTA"))
   )
   tps2ter <- system.time(
-    elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1,  method = "FISTA",
-                               control = list(constrain = TRUE, iter.max = iter.max))
+    elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = 50/n,
+                               control = list(constrain = TRUE, iter.max = iter.max, proxGrad.method = "FISTA"))
   )
   tps3 <- system.time(
     elvm2.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2, method = "nlminb2",
                           control = list(constrain = TRUE, iter.max = iter.max))
   )
   tps3bis <- system.time(
-    elvm2ISTA.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2, method = "ISTA",
-                              control = list(constrain = TRUE, iter.max = iter.max))
+    elvm2ISTA.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2,
+                              control = list(constrain = TRUE, iter.max = iter.max, proxGrad.method = "ISTA"))
   )
   tps3ter <- system.time(
-    elvm2FISTA.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2,  method = "FISTA",
-                               control = list(constrain = TRUE, iter.max = iter.max))
+    elvm2FISTA.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2,
+                               control = list(constrain = TRUE, iter.max = iter.max, proxGrad.method = "FISTA"))
   )
   tps4 <- system.time(
-  elvm12.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1, lambda2 = lambda2,  method = "FISTA",
-                             control = list(constrain = TRUE, iter.max = iter.max))
+    elvm12FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1, lambda2 = lambda2,
+                                control = list(constrain = TRUE, iter.max = iter.max, proxGrad.method = "FISTA"))
   )
-    
+  
   ## penalized
   penalized1.fit <- penalized:::penalized(response = df.data$Y, penalized = df.data[,all.vars(formula_tempo)[-1]], 
                                           lambda1 = n * lambda1 * coef(elvm1FISTA.fit)["Y,Y"], 
@@ -119,15 +119,15 @@ for(iter_grid in 1:n.grid){
                                           trace = FALSE )
   
   penalized12.fit <- penalized:::penalized(response = df.data$Y, penalized = df.data[,all.vars(formula_tempo)[-1]], 
-                                           lambda1 = n * lambda1 * coef(elvm12.fit)["Y,Y"], 
-                                           lambda2 = n * lambda2 * coef(elvm12.fit)["Y,Y"], 
+                                           lambda1 = n * lambda1 * coef(elvm12FISTA.fit)["Y,Y"], 
+                                           lambda2 = n * lambda2 * coef(elvm12FISTA.fit)["Y,Y"], 
                                            trace = FALSE )
   
   
   dt.results[iter_grid, c("n.obs","n.param","lambda","rep") := .(n,p,grid[iter_grid,"lambda"],grid[iter_grid,"rep"])]
-  dt.results[iter_grid, c("lvm.time","L1.time","L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time","L12.time") := .(tps1[3],tps2[3],tps2bis[3],tps2ter[3],tps3[3],tps3bis[3],tps3ter[3],tps4[3])]
+  dt.results[iter_grid, c("lvm.time","L1.time","L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time","L12FISTA.time") := .(tps1[3],tps2[3],tps2bis[3],tps2ter[3],tps3[3],tps3bis[3],tps3ter[3],tps4[3])]
   
-  param_penalized1 <- c(penalized1.fit@unpenalized, penalized1.fit@penalized,NA) #) penalized1.fit@nuisance$sigma2
+  param_penalized1 <- c(penalized1.fit@unpenalized, penalized1.fit@penalized, penalized1.fit@nuisance$sigma2) #) 
   dt.results[iter_grid, L1.zeroBeta := sum( abs(penalized1.fit@penalized) < 1e-10)]
   dt.results[iter_grid, L1.cv := if("convergence" %in% names(elvm1.fit$opt)){elvm1.fit$opt$convergence}else{NA} ]
   dt.results[iter_grid, L1.iteration := if("iterations" %in% names(elvm1.fit$opt)){elvm1.fit$opt$iterations}else{NA} ]
@@ -160,16 +160,16 @@ for(iter_grid in 1:n.grid){
   dt.results[iter_grid, L2FISTA.maxDiff := max(abs(param_penalized2-coef(elvm2FISTA.fit)), na.rm = TRUE)]
   dt.results[iter_grid, L2FISTA.minDiff := min(abs(param_penalized2-coef(elvm2FISTA.fit)), na.rm = TRUE)]
   
-  param_penalized12 <- c(penalized12.fit@unpenalized, penalized12.fit@penalized, NA) #penalized12.fit@nuisance$sigma2
-  dt.results[iter_grid, L12.cv := if("convergence" %in% names(elvm12.fit$opt)){elvm12.fit$opt$convergence}else{NA} ]
-  dt.results[iter_grid, L12.iteration := if("iterations" %in% names(elvm12.fit$opt)){elvm12.fit$opt$iterations}else{NA} ]
-  dt.results[iter_grid, L12.maxDiff := max(abs(param_penalized12-coef(elvm12.fit)), na.rm = TRUE)]
-  dt.results[iter_grid, L12.minDiff := min(abs(param_penalized12-coef(elvm12.fit)), na.rm = TRUE)]
+  param_penalized12 <- c(penalized12.fit@unpenalized, penalized12.fit@penalized, penalized12.fit@nuisance$sigma2) #
+  dt.results[iter_grid, L12FISTA.cv := if("convergence" %in% names(elvm12FISTA.fit$opt)){elvm12FISTA.fit$opt$convergence}else{NA} ]
+  dt.results[iter_grid, L12FISTA.iteration := if("iterations" %in% names(elvm12FISTA.fit$opt)){elvm12FISTA.fit$opt$iterations}else{NA} ]
+  dt.results[iter_grid, L12FISTA.maxDiff := max(abs(param_penalized12-coef(elvm12FISTA.fit)), na.rm = TRUE)]
+  dt.results[iter_grid, L12FISTA.minDiff := min(abs(param_penalized12-coef(elvm12FISTA.fit)), na.rm = TRUE)]
   
 }
-print(dt.results[,c("n.obs","n.param","lambda","rep","L1.zeroBeta","L1.cv","L1ISTA.cv","L1FISTA.cv","L2.cv","L2ISTA.cv","L2FISTA.cv","L12.cv"), with = FALSE])
-print(dt.results[,c("n.obs","n.param","lambda","rep","L1.zeroBeta","L1.maxDiff","L1ISTA.maxDiff","L1FISTA.maxDiff","L2.maxDiff","L2ISTA.maxDiff","L2FISTA.maxDiff","L12.maxDiff"), with = FALSE])
-print(dt.results[,c("n.obs","n.param","lambda","rep","lvm.time","L1.time","L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time","L12.time"), with = FALSE])
+print(dt.results[,c("n.obs","n.param","lambda","rep","L1.zeroBeta","L1.cv","L1ISTA.cv","L1FISTA.cv","L2.cv","L2ISTA.cv","L2FISTA.cv","L12FISTA.cv"), with = FALSE])
+print(dt.results[,c("n.obs","n.param","lambda","rep","L1.zeroBeta","L1.maxDiff","L1ISTA.maxDiff","L1FISTA.maxDiff","L2.maxDiff","L2ISTA.maxDiff","L2FISTA.maxDiff","L12FISTA.maxDiff"), with = FALSE])
+print(dt.results[,c("n.obs","n.param","lambda","rep","lvm.time","L1.time","L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time","L12FISTA.time"), with = FALSE])
 
 # save(dt.results, file = paste0("C:/Users/hpl802/Documents/Projects/LVM/CV-test/dt_results.RData"))
 
@@ -179,14 +179,7 @@ print(dt.results[,c("n.obs","n.param","lambda","rep","lvm.time","L1.time","L1IST
 # dt.results[, lapply(.SD,quantile), .SDcols = c("L1ISTA.iteration","L1FISTA.iteration","L2.iteration","L2ISTA.iteration","L2FISTA.iteration")]
 # dt.results[, lapply(.SD,quantile, na.rm = TRUE), .SDcols = c("L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time")]
 
-# dt.results[ lambda == 1, lapply(.SD,quantile), .SDcols = c("L1ISTA.maxDiff","L1FISTA.maxDiff","L2.maxDiff","L2ISTA.maxDiff","L2FISTA.maxDiff")]
-
-#### display
-# dt.results[, .(L2.cv = 100 * mean(L2.cv==0)), by =c("n.obs","n.param","lambda")]
-# 
-# dt.results[, .(L2.cv = 100 * mean(L2.cv==0)), by =c("n.obs","n.param")]
-# 
-# dt.results[, .(L2.cv = 100 * mean(L2.cv==0)), by =c("n.param")]
+# dt.results
 # 
 # dt.results[, .(Mismatch = 100 * mean(L2.maxDiff>1e-3)), by =c("n.obs","n.param","lambda")]
 # 

@@ -168,7 +168,7 @@
 
 #### 3- optim functions #### 
 
-penalized_method.lvm <- "FISTA"#lava:::gaussian_method.lvm # nlminb2
+penalized_method.lvm <- "proxGrad"#lava:::gaussian_method.lvm # nlminb2
 
 penalized_objective.lvm <- function(x, ...){  # proportional to the log likelihood
   
