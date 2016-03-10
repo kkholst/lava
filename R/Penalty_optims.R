@@ -1,6 +1,6 @@
 proxGrad <- function(start, objective, gradient, hessian,...){
   
-  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol","proxGrad.method","test.path")
+  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol","proxGrad.method","fix.sigma","test.path")
   dots <- list(...)
   control <- dots$control
   control <- control[names(control) %in% PGcontrols]
@@ -43,9 +43,17 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   lambda2[penalty$index.coef] <- penalty$lambda2 
    
   #### main
+  if(control$fix.sigma){
+    names.constrain <- names(start)[grep(pattern = ",", names(start), fixed = TRUE)]
+    constrain <- rep(1-dots$control$constrain, length(names.constrain))
+    names(constrain) <- names.constrain
+  }else{
+    constrain <- NULL
+  }
+ 
   res <- do.call(control$proxGrad.method,
                  list(start = start, step = step, proxOperator = proxOperator, gradient = gradient, 
-                      lambda1 = lambda1, lambda2 = lambda2,
+                      lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
                       iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol))
   res$objective <- objective(res$par, penalty = penalty)
  
@@ -57,30 +65,34 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     pathRegularization(Y = as.matrix(df.data[,1,drop = FALSE]), 
                        X = cbind(1,as.matrix(df.data[,-1])),
                        start = start, objective = objective, gradient = gradient, hessian = hessian,
-                       index.penalized = penalty$index.coef,
+                       index.penalized = penalty$index.coef, constrain = constrain,
                        step = step, proxOperator = proxOperator, control = control, lambda2 = lambda2)
    
   }
-    ### export
+   ### export
+
   return(res)
 }
 
 
 
-ISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
+ISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2, constrain,
                  iter.max, abs.tol, rel.tol){
+  
   
   ## initialisation
   test.cv <- FALSE
   iter <- 1
   x_k <- start 
-
+  if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+  
   ## loop
   while(test.cv == FALSE && iter <= iter.max){
     x_km1 <- x_k
     
     x_k <- proxOperator(x = x_km1 - step * gradient(x_km1, penalty = NULL), 
                         step = step, lambda1 = lambda1, lambda2 = lambda2)
+    if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
     
     iter <- iter + 1
     absDiff <-  (abs(x_k-x_km1) < abs.tol)
@@ -102,7 +114,7 @@ ISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
   ))
 }
 
-FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
+FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2, constrain,
                   iter.max, abs.tol, rel.tol){
   
   ## initialisation
@@ -111,6 +123,7 @@ FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
   x_k <- start 
   y_k <- start  
   t_k <- 1
+  if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
   
   ## loop
   while(test.cv == FALSE && iter <= iter.max){
@@ -119,6 +132,7 @@ FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
    
     x_k <- proxOperator(x = y_k - step * gradient(y_k, penalty = NULL), 
                         step = step, lambda1 = lambda1, lambda2 = lambda2)
+    if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
     
     t_k <- (1 + sqrt(1 + 4 * t_k^2)) / 2
     y_k <- x_k + (t_km1-1)/t_k * (x_k - x_km1)
@@ -132,7 +146,7 @@ FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2,
   ## export
   message <- if(test.cv){"Sucessful convergence \n"
   }else{
-    paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
+    paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff, na.rm = TRUE)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
   }
   return(list(par = x_k,
               convergence = as.numeric(test.cv==FALSE),

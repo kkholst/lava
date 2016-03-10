@@ -38,7 +38,6 @@ pathRegularization <- function(X, Y, start, objective, gradient, hessian, index.
     
     iter <- iter + 1
   # }
-  seq_lambda[1] <- seq_lambda[1] - (iter-1) * 0.999
   
   mu <- X %*% knot1[1:n.coefmean]
   XY <- t(X) %*% (Y - mu)

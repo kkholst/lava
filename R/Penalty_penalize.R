@@ -36,10 +36,7 @@
                       names.coef = NULL,
                       index.coef = NULL,
                       lambda1 = 0, 
-                      lambda2 = 0,
-                      trace.objective = FALSE, 
-                      trace.gradient = FALSE, 
-                      trace.hessian = FALSE)
+                      lambda2 = 0)
     class(x) <- append("plvm", class(x))
   }
   

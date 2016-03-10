@@ -89,7 +89,7 @@
     if("control" %in% names(dots) == FALSE){
       dots$control <- list()
     }
-    if("control" %in% names(dots$control) == FALSE){
+    if("proxGrad.method" %in% names(dots$control) == FALSE){
       dots$control$proxGrad.method <- "FISTA"
     }else{
       if(dots$control$proxGrad.method %in% c("ISTA","FISTA") == FALSE){
@@ -98,7 +98,11 @@
              "control$proxGrad.method: ",dots$control$proxGrad.method,"\n")
       }  
     }
+    if("fix.sigma" %in% names(dots$control) == FALSE){ #[DEBUG!!]
+      dots$control$fix.sigma <- FALSE
+    }
   }
+  
   
   # cleaning [not completely checked - may be issues here]
   names.dots <- names(dots)
