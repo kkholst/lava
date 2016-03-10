@@ -19,7 +19,7 @@ penalized.fit <- penalized(df.data$y,df.data[,c("X1", "X2", "X3", "X4")],
 coef(p1lvm.fit) - c(penalized.fit@unpenalized, penalized.fit@penalized,penalized.fit@nuisance$sigma2)
 lambda.lvm-lambda.penalized/(n*penalized.fit@nuisance$sigma2)
 
-
+require('penalized')
 #### check the whole path
 path.fit <- penalized(df.data$y, df.data[,c("X1", "X2", "X3", "X4")], 
                       steps = "Park" )
