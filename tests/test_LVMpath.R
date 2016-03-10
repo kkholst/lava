@@ -20,6 +20,32 @@ lvm.fit <- estimate(lvm.model,  data = df.data,
                       control = list(constrain = TRUE))
 
 #### look at sigma
+lambda.lvm <- 0.5
+p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda.lvm,
+                      control = list(constrain = TRUE, iter.max = 1000))
+p1lvm.fit
+coef(p1lvm.fit)
+lambda.penalized <- lambda.lvm*n*coef(p1lvm.fit)["y,y"]
+penalized.fit <- penalized(df.data$y,df.data[,c("X1", "X2", "X3", "X4")], 
+                 lambda1 = lambda.penalized)
+coef(p1lvm.fit) - c(penalized.fit@unpenalized, penalized.fit@penalized,penalized.fit@nuisance$sigma2)
+lambda.lvm-lambda.penalized/(n*penalized.fit@nuisance$sigma2)
+
+require('penalized')
+#### check the whole path
+path.fit <- penalized(df.data$y, df.data[,c("X1", "X2", "X3", "X4")], 
+                      steps = "Park" )
+seq_lambda.penalized <- unlist(lapply(path.fit, function(x){x@lambda1}))
+seq_sigma.penalized <- unlist(lapply(path.fit, function(x){x@nuisance$sigma2}))
+seq_lambda.lvm <- seq_lambda.penalized / (n * seq_sigma.penalized)
+
+iter_path <- 5
+p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = seq_lambda.lvm[iter_path], regularizationPath = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000))
+coef(p1lvm.fit)
+c(path.fit[[iter_path]]@unpenalized, path.fit[[iter_path]]@penalized, path.fit[[iter_path]]@nuisance$sigma2)
+
+#### compare penalized with lava when fixing sigma
 penalized.fit <- penalized(df.data$y,df.data[,c("X1", "X2", "X3", "X4")], 
                            steps = "Park")
 seq_lambda <- unlist(lapply(penalized.fit,function(x){x@lambda1}))

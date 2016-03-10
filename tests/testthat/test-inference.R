@@ -52,3 +52,15 @@ test_that("glm-estimator", {
     expect_equivalent(c1,c2)
 })
 
+
+test_that("gaussian", {
+    m <- lvm(y~x)
+    d <- simulate(m,100,seed=1)
+    S <- cov(d[,vars(m),drop=FALSE])
+    mu <- colMeans(d[,vars(m),drop=FALSE])
+    f <- function(p) lava:::gaussian_objective.lvm(p,x=m,S=S,mu=mu,n=nrow(d))
+    g <- function(p) lava:::gaussian_score.lvm(p,x=m,n=nrow(d),data=d,indiv=TRUE)
+    s1 <- numDeriv::grad(f,c(0,1,1))
+    s2 <- g(c(0,1,1))
+    expect_equal(s1,-colSums(s2),tolerance=0.1)
+})
