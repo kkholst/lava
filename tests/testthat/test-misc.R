@@ -48,8 +48,6 @@ test_that("All the rest:", {
 
     op <- lava.options(debug=TRUE)
     expect_true(lava.options()$debug,TRUE)
-    lava.options(op)
-
-    
+    lava.options(op)    
 })
 
