@@ -12,9 +12,13 @@
 }
 
 ##' @export
-`addattr.graphNEL` <- function(x, attr, var=NULL, val=TRUE,fun=graph::nodeRenderInfo,debug=FALSE,...) {
+`addattr.graphNEL` <- function(x, attr, var=NULL, val=TRUE,fun="graph::nodeRenderInfo",debug=FALSE,...) {
     if (is.null(var)) {
-        f <- do.call(fun,list(x))
+        ff <- strsplit(fun,"::")[[1]]
+        if (length(ff)>1) {
+            ff <- getFromNamespace(ff[2],ff[1])
+        }
+        f <- do.call(ff,list(x))
         if (is.null(val) || !is.logical(f[[attr]]))
             attrvar <- f[[attr]]
         else

@@ -116,7 +116,7 @@
   if (lava.options()$debug) {
     plot(g)
   } else {
-##    graphRenderInfo(g)$recipEdges <- "distinct"
+    ## graphRenderInfo(g)$recipEdges <- "distinct"
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     dots <- list(...)
     dots$attrs <- attrs

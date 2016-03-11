@@ -30,13 +30,18 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
 ##' @param silent Suppress messages
+##' @param parallel If TRUE parallel backend will be used
+##' @param mc.cores Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)
 ##' @param \dots Additional arguments, e.g. choice of estimator.
 ##' @aliases bootstrap.lvmfit
 ##' @usage
 ##'
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
-##'                           constraints=TRUE,sd=FALSE,silent=FALSE,...)
+##'                           constraints=TRUE,sd=FALSE,silent=FALSE,
+##'                           parallel=lava.options()$parallel,
+##'                           mc.cores=NULL,
+##'                           ...)
 ##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
 ##'                              control=list(start=coef(x)),

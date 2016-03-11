@@ -6,6 +6,20 @@ test_that("Linear constraints", {
 }) 
 
 
+test_that("Graph attributes", {
+    require("graph")
+    m <- lvm(y~x)
+    g1 <- graph::updateGraph(plot(m,noplot=TRUE))
+    col <- "blue"; v <- "y"
+    g1 <- lava::addattr(g1,"fill",v,col)
+    expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
+    nodecolor(m,v) <- "blue"
+    g2 <- plot(m,noplot=TRUE)
+    expect_match(col,graph::nodeRenderInfo(g2)$fill[v])
+    expect_match(addattr(g2,"fill")["y"],"blue")
+})
+
+
 test_that("Basic model building blocks", {
     m <- lvm(y[m]~x)
     covariance(m) <- y~z
@@ -32,6 +46,6 @@ test_that("Basic model building blocks", {
     d <- sim(m,50)
     e <- estimate(m,d)
     ## Equivalence
-    equivalence(e,silent=TRUE)
+    ##equivalence(e,silent=TRUE)
     
 }) 

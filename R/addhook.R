@@ -26,12 +26,12 @@
 ##' @export
 lava.options <- function(...) {
   dots <- list(...)
-  curopt <- get("options",envir=lava.env)
+  newopt <- curopt <- get("options",envir=lava.env)
   if (length(dots)==0)
     return(curopt)
   idx <- which(names(dots)!="")
-  curopt[names(dots)[idx]] <- dots[idx]
-  assign("options",curopt,envir=lava.env)
+  newopt[names(dots)[idx]] <- dots[idx]
+  assign("options",newopt,envir=lava.env)
   invisible(curopt)
 }
 
