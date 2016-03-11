@@ -58,11 +58,15 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @export
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,silent=FALSE,...) {
+                          constraints=TRUE,sd=FALSE,silent=FALSE,
+                          parallel=lava.options()$parallel,
+                          mc.cores=NULL,
+                          ...) {
 
     coefs <- sds <- c()
     on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
-    pb <- txtProgressBar(style=3,width=40)
+    pb <- NULL
+    if (!silent) pb <- txtProgressBar(style=3,width=40)
     pmis <- missing(p)
     ##maxcount <- 0
     bootfun <- function(i) {
@@ -115,14 +119,20 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     }
 
     i <- 0
-    if (requireNamespace("foreach",quietly=TRUE) & lava.options()$parallel) {
-        res <- foreach::"%dopar%"(foreach::foreach (i=0:R),bootfun(i))
-        ##      res <- mclapply(0:R,bootfun,mc.cores=)
+    if (parallel) {
+        if (is.null(mc.cores) && requireNamespace("foreach",quietly=TRUE)) {
+            res <- foreach::"%dopar%"(foreach::foreach (i=0:R),bootfun(i))
+        } else {
+            if (is.null(mc.cores)) mc.cores <- 1
+            res <- parallel::mclapply(0:R,bootfun,mc.cores=mc.cores)
+        }
     } else {
         res <- lapply(0:R,bootfun)
     }
-    if (!silent) setTxtProgressBar(pb, 1)
-    close(pb)
+    if (!silent) {
+        setTxtProgressBar(pb, 1)
+        close(pb)
+    }
     ##  if (!silent) message("")
     coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
     nn <- names(res[[1]]$coefs)

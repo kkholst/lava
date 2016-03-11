@@ -35,7 +35,7 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
     I0 <- information(x,p=p0)
     T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0); names(T0) <- "Q"
   }
-  s <- modelsearch(e0,k=k)
+  s <- modelsearch(e0,k=k,...)
   relname <- c(paste(myvars,collapse=lava.options()$symbol[2]),
                paste(rev(myvars),collapse=lava.options()$symbol[2]))
   relidx <- NULL
@@ -43,20 +43,6 @@ equivalence <- function(x,rel,tol=1e-3,k=1,omitrel=TRUE,...) {
     relidx <- na.omit(match(relname,s$res[,"Index"]))
     T0 <- s$test[relidx,1]
   }
-##  else {
-##    if (covariance(Model(x))$rel[myvars[1],myvars[2]]==0) {
-    ## paridx <- which(names(coef(x))%in%relname)
-    ## if (length(paridx)==0) {
-    ##   paridx <- which(names(coef(x))%in%paste(myvars,collapse=lava.options()$symbol[1]))
-    ## }
-##    p0 <- coef(x)
-##    p0[paridx] <- 0
-  ##   p0[] <- 0
-  ##   p0[match(names(coef(e0)),names(p0))] <- coef(e0)
-  ##   S0 <- score(x,p=p0)[,,drop=TRUE]
-  ##   I0 <- information(x,p=p0,data=NULL,n=nrow(model.frame(x)))
-  ##   T0 <- rbind(S0)%*%solve(I0)%*%cbind(S0)
-  ## }
   T <- s$test[,1]
   Equiv <- setdiff(which(abs(T-T0)<tol),relidx)
   Improve <- which((T-T0)>tol)

@@ -1,10 +1,12 @@
-##' Create/extract 'reverse'-diagonal matrix
-##' @title Create/extract 'reverse'-diagonal matrix
-##' @aliases revdiag revdiag<-
+##' Create/extract 'reverse'-diagonal matrix or off-diagonal elements
+##' @title Create/extract 'reverse'-diagonal matrix or off-diagonal elements
+##' @aliases revdiag revdiag<- offdiag offdiag<-
 ##' @usage
 ##' revdiag(x,...)
+##' offdiag(x,...)
 ##'
 ##' revdiag(x,...) <- value
+##' offdiag(x,...) <- value
 ##' @param x vector
 ##' @param value For the assignment function the values to put in the diagonal
 ##' @param \dots additional arguments to lower level functions
@@ -16,16 +18,17 @@ revdiag <- function(x,...) {
       revdiag(res) <- x
       return(res)
     }
-    n <- ncol(x)
+    n <- max(ncol(x),nrow(x))
     x[cbind(rev(seq(n)),seq(n))]
   }
 
 ##' @export
 "revdiag<-" <- function(x,...,value) {
-  n <- ncol(x)
+  n <- max(ncol(x),nrow(x))
   x[cbind(rev(seq(n)),seq(n))] <- value
   x
 }
+
 
 ##' @export
 offdiag <- function(x,...) {

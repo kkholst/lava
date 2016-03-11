@@ -64,3 +64,30 @@ test_that("gaussian", {
     s2 <- g(c(0,1,1))
     expect_equal(s1,-colSums(s2),tolerance=0.1)
 })
+
+
+test_that("Association measures", {
+    P <- matrix(c(0.25,0.25,0.25,0.25),2)
+    a1 <- lava:::assoc(P)
+    expect_equivalent(-log(0.25),a1$H)
+    expect_true(with(a1, all(c(kappa,gamma,MI,U.sym)==0)))
+    
+    p <- lava:::prob.normal(sigma=diag(nrow=2),breaks=c(-Inf,0),breaks2=c(-Inf,0))[1]
+    expect_equal(p[1],0.25)
+
+    ## q <- qnorm(0.75)
+    ## m <- ordinal(lvm(y~x),~y, K=3)#, breaks=c(-q,q))
+    ## normal.threshold(m,p=c(0,1,2))
+})
+
+
+test_that("Bootstrap", {
+    y <- rep(c(0,1),each=5)
+    x <- 1:10
+    e <- estimate(y~x)
+    B1 <- bootstrap(e,R=2,silent=TRUE)
+    B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE)
+    expect_false(B1$bollenstine)
+    expect_true(B2$bollenstine)
+    expect_true(nrow(B1$coef)==2)
+})

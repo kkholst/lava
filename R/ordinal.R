@@ -33,9 +33,6 @@ ordinal.sim.hook <- function(x,data,p,modelpar,...) {
 
 ##' @export
 "ordinal<-.lvm" <- function(x,...,value) {
-  if (inherits(value,"formula")) {
-    return(ordinal(x,all.vars(value),...))
-  }
   ordinal(x, value, ...)
 }
 
@@ -56,6 +53,9 @@ print.ordinal.lvm <- function(x,...) {
 
 ##' @export
 `ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, labels, ...) {
+    if (inherits(var,"formula")) {
+        var <- all.vars(var)
+    }
     if (is.null(var)) {
         ordidx <- unlist(x$attributes$ordinal)
         KK <- unlist(x$attributes$nordinal)

@@ -11,5 +11,5 @@ test_that("Missing", {
     expect_equal(sum(d$r),sum(!is.na(d$y0)))
 
     g <- glm(r~x,data=d,family=binomial)
-    expect_equal(object=coef(g),expected=c(0,1),tolerance=0.3,scale=1)    
+    expect_true(all.equal(coef(g),c(0,1),tolerance=0.2,check.attributes=FALSE))
 })

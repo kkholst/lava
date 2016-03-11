@@ -34,5 +34,5 @@ assoc <- function(P,sigma,breaks,...) {
     inf <- information_assoc(P)
     res <- c(list(kappa=kap,gamma=gam),inf)
     if (!missing(sigma)) res <- c(res,rho=sigma[1,2])
-    return(res)
+    return(res)    
 }
