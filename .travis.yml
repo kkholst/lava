@@ -10,6 +10,7 @@ r_binary_packages:
  - mets
  - igraph
  - lme4
+ - gof
  - maps
  - data.table
  - xtable
@@ -29,7 +30,7 @@ r_github_packages:
  - jimhester/covr
 
 after_success:
-  - Rscript -e 'library(covr);codecov()'
+  - Rscript -e 'library("covr");codecov(type="all")'
 
 before_install:
   - sudo apt-get install -y r-bioc-rgraphviz r-bioc-graph
