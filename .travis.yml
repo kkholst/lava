@@ -11,6 +11,7 @@ r_binary_packages:
  - igraph
  - lme4
  - maps
+ - data.table
  - xtable
  - ascii
  - fields

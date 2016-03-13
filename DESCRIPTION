@@ -21,6 +21,7 @@ Imports:
 Suggests:
     mets (>= 1.1),
     graph,
+    data.table,
     Rgraphviz,
     igraph (>= 0.6),
     Matrix,
