@@ -220,7 +220,7 @@ gaussian_logLik.lvm <- function(object,p,data,
         ti <- ti-xi
       }
       if (!is.null(weight)) {
-        W <- diag(weight[i,])
+        W <- diag(weight[i,],nrow=length(weight[i,]))
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
       } else {
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)

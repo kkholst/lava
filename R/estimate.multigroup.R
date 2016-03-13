@@ -522,7 +522,7 @@
         if (sum(constrained)==1) {
           res[constrained,constrained] <- res[constrained,constrained]*outer(theta[constrained],theta[constrained]) - (D[constrained])
         } else {
-          res[constrained,constrained] <- res[constrained,constrained]*outer(theta[constrained],theta[constrained]) - diag(D[constrained])
+          res[constrained,constrained] <- res[constrained,constrained]*outer(theta[constrained],theta[constrained]) - diag(D[constrained],nrow=length(constrained))
         }
       }
       attributes(res)$grad <- D

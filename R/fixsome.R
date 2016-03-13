@@ -63,7 +63,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
     if (is.null(S)) x0 <- TRUE
     if (exo.fix) {
         if (x0) {
-            S0 <- diag(length(index(x)$manifest))
+            S0 <- diag(nrow=length(index(x)$manifest))
             mu0 <- rep(0,nrow(S0))
         }
         else {

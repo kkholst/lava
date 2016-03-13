@@ -40,7 +40,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
       contrast <- rep(0,length(coef(object)))
       myidx <- parpos(Model(object),p=par)
       contrast[myidx] <- 1
-      contrast <- diag(contrast)[contrast!=0,]
+      contrast <- diag(contrast,nrow=length(contrast))[which(contrast!=0),,drop=FALSE]
       if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
   }
   ### Wald test

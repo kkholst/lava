@@ -20,7 +20,6 @@ test_that("Multiple group II", {
   expect_equivalent(coef(e,level=2)[[1]][1:2,1],coef(lm(y~x,cbind(d,d)))) 
 })
 
-
 context("Missing data")
 
 test_that("Missing data analysis", {

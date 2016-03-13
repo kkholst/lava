@@ -25,14 +25,17 @@
 ##'
 ##' @export
 lava.options <- function(...) {
-  dots <- list(...)
-  newopt <- curopt <- get("options",envir=lava.env)
-  if (length(dots)==0)
-    return(curopt)
-  idx <- which(names(dots)!="")
-  newopt[names(dots)[idx]] <- dots[idx]
-  assign("options",newopt,envir=lava.env)
-  invisible(curopt)
+    dots <- list(...)
+    newopt <- curopt <- get("options",envir=lava.env)
+    if (length(dots)==0)
+        return(curopt)
+    if (length(dots)==1 && is.list(dots[[1]]) && is.null(names(dots))) {
+        dots <- dots[[1]]
+    }
+    idx <- which(names(dots)!="")
+    newopt[names(dots)[idx]] <- dots[idx]
+    assign("options",newopt,envir=lava.env)
+    invisible(curopt)
 }
 
 ##' @export

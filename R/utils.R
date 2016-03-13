@@ -245,7 +245,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       S <- NULL
       n <- nrow(mydata)
       if (n==1) {
-        S <- diag(ncol(mydata)); colnames(S) <- rownames(S) <- obs
+        S <- diag(nrow=ncol(mydata)); colnames(S) <- rownames(S) <- obs
       }
       if (na.method=="pairwise.complete.obs") {
         mu <- colMeans(mydata,na.rm=TRUE)

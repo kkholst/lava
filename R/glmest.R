@@ -101,7 +101,6 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
             V0 <- attr(S0,"bread")
             r <- attr(S0,"pearson")
             dispersion <- mean(r^2)
-            ##browser()
             S0 <- cbind(S0,scale=0)
             null <- matrix(0); dimnames(null) <- list("scale","scale")
             V0 <- blockdiag(V0,null,pad=0)

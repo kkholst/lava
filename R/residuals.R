@@ -1,4 +1,7 @@
-Isqrt <- function(X) { eX <- eigen(X); with(eX, vectors %*% diag(1/sqrt(values)) %*% t(vectors)) }
+Isqrt <- function(X) {
+    eX <- eigen(X);
+    with(eX, vectors %*% diag(1/sqrt(values),nrow=length(values)) %*% t(vectors))
+}
 
 
 ##' @export
@@ -55,7 +58,7 @@ gradpredict <- function(p,obj,data=model.frame(obj)) {
   mu. <- mu.0 + mu.x
 
   K <- nrow(mom$J)
-  I <- diag(K)
+  I <- diag(nrow=K)
 
   d1 <- (t(mu.) %x% I)%*%D$dvecG
   px <- index(obj)$px

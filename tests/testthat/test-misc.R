@@ -12,14 +12,15 @@ test_that("By", {
 
 
 test_that("Expand", {
-          dd <- Expand(iris, Sepal.Length=2:8, Species=c("virginica","setosa"))
-          ##' summary(dd)
-          ##'
-          d0 <- datasets::warpbreaks[,c("wool","tension")]
-          T <- table(d0)
-          d1 <- Expand(T)
-          expect_identical(dim(d0),dim(d1))
-          expect_identical(table(d1),T)
+    dd <- Expand(iris, Sepal.Length=2:8, Species=c("virginica","setosa"))
+    expect_identical(levels(iris$Species),levels(dd$Species))
+    expect_true(nrow(dd)==14)
+    
+    d0 <- datasets::warpbreaks[,c("wool","tension")]
+    T <- table(d0)
+    d1 <- Expand(T)
+    expect_identical(dim(d0),dim(d1))
+    expect_identical(table(d1),T)
 })
 
 
@@ -35,7 +36,7 @@ test_that("All the rest:", {
     expect_true(lava:::versioncheck("lava",c(1,4,1)))
 
     op <- lava.options(debug=TRUE)
-    expect_true(lava.options()$debug,TRUE)
+    expect_true(lava.options()$debug)
     lava.options(op)    
 })
 

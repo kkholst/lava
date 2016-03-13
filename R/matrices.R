@@ -343,14 +343,11 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     } else {
         pars.var <- pars[-seq_len(ii$npar.reg)]
     }
-    which.diag <- diag(P1==1)
-    diag(P)[which.diag] <- pars.var[seq_len(sum(which.diag))]
-
+    
+    diag(P)[ii$which.diag] <- pars.var[seq_along(ii$which.diag)]
 
     pars.off.diag <- pars.var
-    if (sum(which.diag)>0) {
-        pars.off.diag <- pars.off.diag[-seq_len(sum(which.diag))]
-    }
+    pars.off.diag <- pars.off.diag[-seq_along(ii$which.diag)]
     counter <- 0
     if (length(pars.off.diag)>0 & ncol(P)>1)
         for (i in seq_len(ncol(P1)-1))

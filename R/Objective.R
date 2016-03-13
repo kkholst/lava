@@ -58,7 +58,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       score <- matrix(ncol=length(p),nrow=NROW(data))
       score0 <- -1/2*as.vector(iC)%*%D$dS
       if (!is.null(weight)) {
-        W0 <- diag(length(myvars))
+        W0 <- diag(nrow=length(myvars))
         widx <- match(colnames(weight),myvars)
       }
 
@@ -242,7 +242,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   myy <- index(x)$endogenous
   myx <- index(x)$exogenous
   mynx <- setdiff(myvars,myx)
-  W0 <- diag(length(myy))
+  W0 <- diag(nrow=length(myy))
   widx <- match(colnames(weight),myy)
   pp <- modelPar(x,p)
   for (i in seq_len(NROW(data))) {

@@ -434,7 +434,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     if (iid && missing(transform)) res$iid <- iidtheta
     if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)
-        if (missing(contrast)) contrast <- diag(p)
+        if (missing(contrast)) contrast <- diag(nrow=p)
         if (missing(null)) null <- 0
         if (is.vector(contrast)) {
             if (length(contrast)==p) contrast <- rbind(contrast)

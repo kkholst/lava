@@ -75,7 +75,7 @@ startmean <- function(x,p,mu) {
   AP <- matrices(x,p,meanpar)
   nu <- numeric(length(vars(x)))
   nu[vars(x)%in%manifest(x)] <- mu
-  meanstart <- ((diag(nrow(AP$A))-t(AP$A))%*%nu)[index(x)$v1==1]
+  meanstart <- ((diag(nrow=nrow(AP$A))-t(AP$A))%*%nu)[index(x)$v1==1]
   names(meanstart) <- vars(x)[index(x)$v1==1]
   return( c(meanstart, p) )
 }
@@ -212,7 +212,6 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 
 ###}}} startvalues2
 
-
 ###{{{ startvalues0
 
 ##' @export
@@ -238,7 +237,7 @@ startvalues00 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     tol <- 1e-6
     ii <- ee$values
     ii[ee$values<tol] <- tol
-    P0 <- ee$vectors%*%diag(ii)%*%t(ee$vectors)
+    P0 <- ee$vectors%*%diag(ii,nrow=length(ii))%*%t(ee$vectors)
     A0 <- P0
     pp <- pars(x,A=t(A0),P=P0,v=rep(0,index(x)$npar.mean))
     idx <- index(x)$npar.mean + c(offdiags(x),variances(x))
@@ -339,7 +338,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   for (j in seq_len(m)) { ## OLS-estimates
     relation <- A[j,]==1
     if (!any(relation)) next
-    Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(sum(relation))*delta) %*% C[relation,j], error=function(...) 0)
+    Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(nrow=sum(relation))*delta) %*% C[relation,j], error=function(...) 0)
   }
   Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
   Ahat[,obs.idx] <- Ahat[,obs.idx]/matrix(s, m, n, byrow=TRUE)

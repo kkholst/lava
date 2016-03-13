@@ -111,8 +111,8 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
 
   if (is.null(ii$Kkk)) {
     nobs <- nrow(mom$J)
-    ii$Ik <- diag(nobs)
-    ii$Im <- diag(ncol(ii$A))
+    ii$Ik <- diag(nrow=nobs)
+    ii$Im <- diag(nrow=ncol(ii$A))
     ##    ii$Kkk <- commutation(nobs,sparse=FALSE)
   }
 
@@ -178,7 +178,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       k <- nrow(ii$A)
       K <- ii$Kkk ## commutation(k,k)
       I <- ii$Ik ## diag(k)
-      I2 <- diag(k*k)
+      I2 <- diag(nrow=k*k)
       ##      KI <- I[as.vector(matrix(seq_len(K^2),K,byrow=TRUE)),]
       d2S1 <-  t(
                 (I %x% K %x% I) %*% (

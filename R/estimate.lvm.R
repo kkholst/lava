@@ -709,7 +709,7 @@
             if (!is.null(attributes(asVar)$pseudo) && attributes(asVar)$pseudo) {
                 warning("Near-singular covariance matrix, using pseudo-inverse!")
             }
-            diag(asVar)[(diag(asVar)==0)] <- NA
+            diag(asVar)[diag(asVar)==0] <- NA
         }
 
         mycoef <- matrix(NA,nrow=nparall,ncol=4)

@@ -132,7 +132,7 @@ NR0 <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                     sigma <- control$lambda
                 }
                 sigma <- min(sigma,10)
-                I <- I+control$gamma2*sigma*diag(nrow(I))
+                I <- I+control$gamma2*sigma*diag(nrow=nrow(I))
             } else {
                 sigma <- ((D)%*%t(D))
                 I <- I+control$gamma2*(sigma)
@@ -217,7 +217,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                     sigma <- control0$lambda
                 }
                 sigma <- min(sigma,10)
-                I <- I+control0$gamma2*sigma*diag(nrow(I))
+                I <- I+control0$gamma2*sigma*diag(nrow=nrow(I))
             } else {
                 sigma <- ((D)%*%t(D))
                 I <- I+control0$gamma2*(sigma)

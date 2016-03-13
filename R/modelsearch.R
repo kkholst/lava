@@ -115,7 +115,7 @@ backwardsearch <- function(x,k=1,...) {
             cc0 <- coef(cur, mean=FALSE,silent=TRUE,symbol=lava.options()$symbol)
             ii <- freecomb[,i]
             p0 <- p1; p0[ii] <- 0
-            R <- diag(length(p0)); R <- matrix(R[ii,],nrow=length(ii))
+            R <- diag(nrow=length(p0)); R <- matrix(R[ii,],nrow=length(ii))
             I <- information(Model(x), p=p1, n=x$data$n, data=model.frame(x))
             if (!is.null(pp$meanpar)) {
                 rmidx <- seq_along(pp$meanpar)

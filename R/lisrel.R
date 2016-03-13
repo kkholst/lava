@@ -20,7 +20,7 @@ lisrel <- function(model,p,X=NULL,muX=NULL,varX=NULL,...) {
   Lambda <- A[y.idx,eta.idx,drop=FALSE]
   K <- A[y.idx,exo.idx,drop=FALSE]
   B <- A[eta.idx,eta.idx,drop=FALSE]
-  I <- diag(nrow(B))
+  I <- diag(nrow=nrow(B))
   Gamma <- A[eta.idx,exo.idx,drop=FALSE]
   V <- mom$P
   Psi <- V[eta.idx,eta.idx] ## Residual variance

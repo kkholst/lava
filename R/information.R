@@ -130,7 +130,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
       print(idx); print(oldweight)
       weight[,idx] <- oldweight
     }
-    W <- diag(as.numeric(weight))
+    W <- diag(nrow=as.numeric(weight))
     iW <- W
     diag(iW) <- 1/diag(iW)
   }
@@ -204,7 +204,7 @@ information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=
   if (ncol(I)<length(p)) {
     I <- blockdiag(I,matrix(0,length(p)-ncol(I),length(p)-ncol(I)))
   }
-  I
+  return(I)
 }
 
 ###}}} information.lvmfit

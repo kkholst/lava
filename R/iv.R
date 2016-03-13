@@ -35,7 +35,7 @@ varest <- function(x,data) {
   Afix <- A; Afix[t(index(x)$M0)==1] <- 0
   A[A!=0] <- 1
   k <- nrow(A)
-  I <- diag(k)
+  I <- diag(nrow=k)
   Ap <- modelVar(x)$A ## Estimated parameter matrix
 
   indicators <- setdiff(vars(x)[rowSums(A)==1],exogenous(x))
@@ -65,7 +65,7 @@ varest <- function(x,data) {
   }
 
   S <- rep(0,k); S[match(manifest(x),vars(x))] <- diag(Sigma); S[match(latent(x),vars(x))] <- var.eta; names(S) <- vars(x)
-  I <- diag(k)
+  I <- diag(nrow=k)
   IA <- (I-t(Ap))
   IA%*%cbind(S)%*%t(IA)
 
@@ -86,7 +86,7 @@ IV <- function(m,data,R2thres=0,...) {
   A[A!=0] <- 1
   P <- index(m)$P
   k <- nrow(A)
-  I <- diag(k)
+  I <- diag(nrow=k)
   B <- rbind(I,solve(I-A))
   VV <- B%*%P%*%t(B)
   u.var <- index(m)$vars

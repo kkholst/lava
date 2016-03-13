@@ -140,7 +140,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (missing(fix))
     fix <- ifelse(length(xfix)>0,FALSE,TRUE)
 
-  S <- diag(length(manifest(x)));
+  S <- diag(nrow=length(manifest(x)));
   mu <- rep(0,nrow(S));
   K <- length(exogenous(x))
   vnames <- index(x)$manifest

@@ -389,7 +389,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             return(res)
         }
         ## Simulate from sim. distribution (Y,X) (mv-normal)
-        I <- diag(length(nn))
+        I <- diag(nrow=length(nn))
         IAi <- Inverse(I-t(A))
         colnames(E) <- vv
         dd <- t(apply(heavytail.sim.hook(x,E),1,function(x) x+mu))
