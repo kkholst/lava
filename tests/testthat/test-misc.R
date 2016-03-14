@@ -23,11 +23,51 @@ test_that("Expand", {
     expect_identical(table(d1),T)
 })
 
+test_that("dsort", {
+    data(hubble)
+    expect_equivalent(order(dsort(hubble, ~sigma)$sigma),
+                      seq_len(nrow(hubble)))
+})
+
+test_that("formulas", {
+    f <- toformula(c('y1','y2'),'x'%++%1:5)
+    ff <- getoutcome(f)
+    expect_equivalent(trim(ff,all=TRUE),"c(y1,y2)")
+    expect_true(length(attr(ff,'x'))==5)
+})
 
 test_that("trim", {
     expect_true(length(grep(" ",trim(" test ")))==0)    
     expect_true(length(gregexpr(" ",trim(" t e s t "))[[1]])==3)
     expect_true(length(grep(" ",trim(" t e s t ",all=TRUE)))==0)
+})
+
+
+test_that("Matrix operations:", {
+    ## vec operator
+    expect_equivalent(vec(diag(3)),c(1,0,0,0,1,0,0,0,1))
+    expect_true(nrow(vec(diag(3),matrix=TRUE))==9)
+
+    ## commutaion matrix
+    A <- matrix(1:16 ,ncol=4)
+    K <- commutation(A)
+    expect_equivalent(K%*%as.vector(A),vec(t(A),matrix=TRUE))
+
+    ## Block diagonal
+    A <- diag(3)+1
+    B <- blockdiag(A,A,A,pad=NA)
+    expect_equivalent(dim(B),c(9,9))
+    expect_true(sum(is.na(B))==81-27)
+})
+
+
+test_that("plotConf", {
+    m <- lvm(y~x+g)
+    distribution(m,~g) <- binomial.lvm()
+    d <- sim(m,50)
+    l <- lm(y~x+g,d)
+    g1 <- plotConf(l,var2="g",plot=FALSE)
+    g2 <- plotConf(l,var1=NULL,var2="g",plot=FALSE)
 })
 
 
@@ -39,4 +79,5 @@ test_that("All the rest:", {
     expect_true(lava.options()$debug)
     lava.options(op)    
 })
+
 

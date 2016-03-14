@@ -1,25 +1,5 @@
 context("Model specification")
 
-test_that("Linear constraints", {
-    m <- lvm(c(y[m:v]~b*x))
-    constrain(m,b~a) <- base::identity
-}) 
-
-
-test_that("Graph attributes", {
-    require("graph")
-    m <- lvm(y~x)
-    g1 <- graph::updateGraph(plot(m,noplot=TRUE))
-    col <- "blue"; v <- "y"
-    g1 <- lava::addattr(g1,"fill",v,col)
-    expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
-    nodecolor(m,v) <- "blue"
-    g2 <- plot(m,noplot=TRUE)
-    expect_match(col,graph::nodeRenderInfo(g2)$fill[v])
-    expect_match(addattr(g2,"fill")["y"],"blue")
-})
-
-
 test_that("Basic model building blocks", {
     m <- lvm(y[m]~x)
     covariance(m) <- y~z
@@ -47,8 +27,64 @@ test_that("Basic model building blocks", {
     e <- estimate(m,d)
     ## Equivalence
     ##equivalence(e,silent=TRUE)
+
+
+    ## formula
+    f <- formula(m,all=TRUE)
+    expect_true(length(f)==length(vars(m)))
+    expect_true(all(lapply(f,function(x) inherits(x,"formula"))))
+
+    ## Parametrization
+    m <- lvm(c(y1,y2,y3)~u)
+    latent(m) <- ~u
+    m2 <- fixsome(m,param=NULL)
+    expect_true(all(is.na(regression(m2)$values)))
+    m2 <- fixsome(m,param="relative")
+    expect_true(regression(m2)$values["u","y1"]==1)
+    expect_true(intercept(m2)[["y1"]]==0)
+    m2 <- fixsome(m,param="hybrid")
+    expect_true(regression(m2)$values["u","y1"]==1)
+    expect_true(intercept(m2)[["u"]]==0)
+    m2 <- fixsome(m,param="absolute")
+    expect_true(all(is.na(regression(m2)$values)))
+    expect_true(intercept(m2)[["u"]]==0)
+    expect_true(covariance(m2)$values["u","u"]==1)
     
 }) 
+
+
+test_that("Linear constraints", {
+    m <- lvm(c(y[m:v]~b*x))
+    constrain(m,b~a) <- base::identity
+})
+
+
+test_that("Graph attributes", {
+    require("graph")
+    m <- lvm(y~x)
+    g1 <- graph::updateGraph(plot(m,noplot=TRUE))
+    col <- "blue"; v <- "y"
+    g1 <- lava::addattr(g1,"fill",v,col)
+    expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
+    nodecolor(m,v) <- "blue"
+    g2 <- Graph(m,add=TRUE)
+    expect_true(inherits(g2,"graph"))
+    expect_match(col,graph::nodeRenderInfo(g2)$fill[v])
+    expect_match(addattr(g2,"fill")["y"],"blue")
+    graph::graphRenderInfo(g2)$rankdir <- "LR"
+    Graph(m) <- g2
+    expect_true(graph::graphRenderInfo(Graph(m))$rankdir=="LR")
+
+    ## Labels
+    labels(m) <- c(y="Y")
+    addattr(Graph(m,add=TRUE),"label")
+    expect_true(addattr(finalize(m),"label")["y"]=="Y")
+    labels(g2) <- c(y="Y")
+    expect_true(graph::nodeRenderInfo(g2)$label["y"]=="Y")
+
+    edgelabels(m,y~x) <- "a"
+    expect_true(!is.null(edgelabels(finalize(m))))
+})
 
 
 

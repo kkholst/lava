@@ -74,12 +74,32 @@ test_that("Association measures", {
     
     p <- lava:::prob.normal(sigma=diag(nrow=2),breaks=c(-Inf,0),breaks2=c(-Inf,0))[1]
     expect_equal(p[1],0.25)
-
     ## q <- qnorm(0.75)
     ## m <- ordinal(lvm(y~x),~y, K=3)#, breaks=c(-q,q))
     ## normal.threshold(m,p=c(0,1,2))
 })
 
+
+test_that("modelsearch", {
+    m <- lvm(c(y1,y2)~x)
+    d <- sim(m,100)
+    e <- estimate(lvm(c(y1,y2)~1,y1~x),d)
+    e0 <- estimate(lvm(c(y1,y2)~x,y1~~y2),d)
+
+    s1 <- modelsearch(e,silent=TRUE)
+    expect_true(nrow(s1$res)==2)
+    s2 <- modelsearch(e0,silent=TRUE,dir="backward")
+    expect_true(nrow(s2$res)==3)
+    e00 <- estimate(e0,vcov=vcov(e0))$coefmat
+    ii <- match(s2$res[,"Index"],rownames(e00))
+    expect_equivalent(e00[ii,5],s2$test[,2])
+
+    s3 <- modelsearch(e0,dir="backward",k=3)
+    expect_true(nrow(s3$res)==1)
+    
+    ee <- modelsearch(e0,dir="backstep",messages=FALSE)
+    expect_true(inherits(ee,"lvm"))
+})
 
 test_that("Bootstrap", {
     y <- rep(c(0,1),each=5)
@@ -105,4 +125,73 @@ test_that("Survreg", {
     expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
     expect_true(mean(colSums(s)^2)<1e-6)
     expect_equivalent(vcov(m),attr(s,'bread'))
+})
+
+
+
+test_that("Combine", { ## Combine model output
+    data(serotonin)
+    m1 <- lm(cau ~ age*gene1 + age*gene2,data=serotonin)
+    m2 <- lm(cau ~ age + gene1,data=serotonin)
+
+    cc <- Combine(list('model A'=m1,'model B'=m2),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
+    expect_true(nrow(cc)==length(coef(m1))+1)
+    expect_equivalent(colnames(cc),c('model A','model B'))
+    expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
+})
+
+
+test_that("estimate.default", {
+    
+})
+
+
+test_that("zero-inflated binomial regression (zib)", {
+    set.seed(1)
+    n <- 1e3
+    x <- runif(n,0,20)
+    age <- runif(n,10,30)
+    z0 <- rnorm(n,mean=-1+0.05*age)
+    z <- cut(z0,breaks=c(-Inf,-1,0,1,Inf))
+    p0 <- lava::expit(model.matrix(~z+age) %*% c(-.4, -.4, 0.2, 2, -0.05))
+    y <- (runif(n)<lava:::tigol(-1+0.25*x-0*age))*1
+    u <- runif(n)<p0
+    y[u==0] <- 0
+    d <- data.frame(y=y,x=x,u=u*1,z=z,age=age)
+
+    ## Estimation
+    e0 <- zibreg(y~x*z,~1+z+age,data=d)    
+    e <- zibreg(y~x,~1+z+age,data=d)
+    compare(e,e0)
+
+    e
+    PD(e0,intercept=c(1,3),slope=c(2,6))
+
+    B <- rbind(c(1,0,0,0,20),
+               c(1,1,0,0,20),
+               c(1,0,1,0,20),
+               c(1,0,0,1,20))
+    prev <- summary(e,pr.contrast=B)$prevalence
+
+    x <- seq(0,100,length.out=100)
+    newdata <- expand.grid(x=x,age=20,z=levels(d$z))
+    fit <- predict(e,newdata=newdata)
+})
+
+test_that("Optimization", {
+    m <- lvm(y~x+z)
+    d <- simulate(m,10,seed=1)
+    e1 <- estimate(m,d,control=list(method="nlminb0"))
+    e2 <- estimate(m,d,control=list(method="NR"))
+    expect_equivalent(round(coef(e1),3),round(coef(e2),3))
+
+    f <- function(x) x^2*log(x) # x>0
+    df <- function(x) 2*x*log(x) + x
+    df2 <- function(x) 2*log(x) + 3
+    op <- NR(5,f,df,df2,control=list(tol=1e-40)) ## Find root
+    expect_equivalent(round(op$par,digits=7),.6065307)
+    op2 <- estfun0(5,gradient=df)
+    op3 <- estfun(5,gradient=df,hessian=df2,control=list(tol=1e-40))
+    expect_equivalent(op$par,op2$par)
+    expect_equivalent(op$par,op3$par)
 })
