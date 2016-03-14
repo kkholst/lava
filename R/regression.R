@@ -105,6 +105,8 @@
 ##' @export
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 
+
+
 ##' @export
 "regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
     dots <- list(...)
@@ -124,8 +126,11 @@
             return(object)
         }
 
-    if (inherits(value,"formula")) {
-        yx <- lapply(strsplit(as.character(value),"~"),function(x) gsub(" ","",x))[-1]
+      if (inherits(value,"formula")) {
+        ## Split into reponse and covariates by ~ disregarding expressions in parantheses
+        ##'(?!...)' Negative lookahead assertion
+        regex <- "~(?![^\\(]*\\))"
+        yx <- lapply(strsplit(as.character(value),regex,perl=TRUE),function(x) gsub(" ","",x))[-1]
         iscovar <- FALSE
         if (length(yx)==1) {
             lhs <- NULL; xidx <- 1
@@ -139,16 +144,17 @@
         ##Check for link function
         invlink <- NULL
         if (xidx==2) {
-            invlink <- strsplit(yx[[xidx]],"\\(.*\\)")[[1]][1]            
             if (length(grep("[a-zA-Z0-9_]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
-                if (invlink%in%c("f","v","I")) { ## Reserved for setting linear constraints
+                invlink <- strsplit(yx[[xidx]],"\\(.*\\)")[[1]][1]
+                if (invlink%in%c("f","v","I","") ||
+                          grepl("+",invlink))
+                { ## Reserved for setting linear constraints
                     invlink <- NULL
                 } else {
                     yx[[xidx]] <- gsub(paste0(invlink,"\\(|\\)$"),"",yx[[xidx]])
                 }
             }
         }
-        
 
         ## Handling constraints with negative coefficients
         ## while not tampering with formulas like y~f(x,-2)
@@ -158,7 +164,9 @@
         st <- gsub(",\\+",",",st) ## Remove + inside 'f' and 'v' constraints
         st <- gsub("^\\+","",st) ## Remove leading plus
         yx[[xidx]] <- st
-        X <- strsplit(yx[[xidx]],"+",fixed=TRUE)[[1]]
+
+        ## Match '+' but not when preceeded by ( ... )
+        X <- strsplit(yx[[xidx]],"\\+(?![^\\(]*\\))", perl=TRUE)[[1]]
         if (iscovar) {
             ## return(covariance(object,var1=decomp.specials(lhs[[1]]),var2=X))
             covariance(object) <- toformula(decomp.specials(lhs[[1]]),X)
@@ -171,7 +179,16 @@
         }
 
       curvar <- index(object)$var
-      res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
+      ##regex <- "(?!(\\(*))[\\(\\)]"
+      regex <- "[\\(\\)]"
+      ## Keep squares brackets and |(...) statements
+      ## Extract variables from expressions like
+      ## f(x,b) -> x,b  and  2*x -> 2,cx
+      ## but avoid to tamper with transformation expressions:
+      ## a~(x*b)
+      res <- lapply(X,decomp.specials,regex,pattern2="\\*",pattern.ignore="~",reverse=TRUE,perl=TRUE)
+      ##OLD:
+      ##res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
       xx <- unlist(lapply(res, function(x) x[1]))
 
       notexo <- c()
@@ -194,9 +211,9 @@
         }
       }
 
-      exo <- c()
-      xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="[",fixed=TRUE))
-      xs <- unlist(lapply(xxf,function(x) x[1]))
+        exo <- c()
+        xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="\\[|~",perl=TRUE))
+        xs <- unlist(lapply(xxf,function(x) x[1]))
 
         ## Alter intercepts?
         intpos <- vapply(xs,function(x) grepl("^[\\-]*[\\.|0-9]+$",x), 0)
@@ -205,26 +222,38 @@
             xs <- xs[-intpos]
         }
 
-      object <- addvar(object,xs,reindex=FALSE ,...)
+        object <- addvar(object,xs,reindex=FALSE ,...)
 
-      for (i in seq_len(length(xs))) {
-          xf <- unlist(strsplit(xx[[i]],"[\\[\\]]",perl=TRUE))
-          if (length(xf)>1) {
-              xpar <- strsplit(xf[2],":")[[1]]
-              if (length(xpar)>1) {
-                  val <- ifelse(xpar[2]=="NA",NA,xpar[2])
-                  valn <- suppressWarnings(as.numeric(val))
-                  covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
-              }          
-              val <- ifelse(xpar[1]=="NA",NA,xpar[1])
-              valn <- suppressWarnings(as.numeric(val))
-              if (is.na(val) || val!=".") {
-                  intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
-              notexo <- c(notexo,xs[i])
-              }
-          } else { exo <- c(exo,xs[i]) }
-      }
+        for (i in seq_len(length(xs))) {
 
+            ## Extract transformation statements: var~(expr)
+            xf0 <- strsplit(xx[[i]],"~")[[1]]
+            if (length(xf0)>1) {
+                myexpr <- xf0[2]
+                ftr <- toformula(y="",x=paste0("-1+I(",myexpr,")"))
+                xtr <- all.vars(ftr)
+                xf0 <- xf0[1]
+                transform(object, y=xf0, x=xtr) <- function(x) {
+                    structure(model.matrix(ftr,as.data.frame(x)),dimnames=list(NULL,xf0))
+                }
+            }
+
+            xf <- unlist(strsplit(xf0,"[\\[\\]]",perl=TRUE))
+            if (length(xf)>1) {
+                xpar <- strsplit(xf[2],":")[[1]]
+                if (length(xpar)>1) {
+                    val <- ifelse(xpar[2]=="NA",NA,xpar[2])
+                    valn <- suppressWarnings(as.numeric(val))
+                    covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+                }
+                val <- ifelse(xpar[1]=="NA",NA,xpar[1])
+                valn <- suppressWarnings(as.numeric(val))
+                if (is.na(val) || val!=".") {
+                    intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
+                    notexo <- c(notexo,xs[i])
+                }
+            } else { exo <- c(exo,xs[i]) }
+        }
 
       if (length(lhs)==0) {
         index(object) <- reindex(object)
@@ -364,3 +393,4 @@
         index(object) <- reindex(object)
         return(object)
     }
+
