@@ -30,7 +30,7 @@ r_github_packages:
  - jimhester/covr
 
 after_success:
-  - Rscript -e 'library("covr");codecov(type="all")'
+  - Rscript -e 'library("covr");codecov(type="test")'
 
 before_install:
   - sudo apt-get install -y r-bioc-rgraphviz r-bioc-graph
