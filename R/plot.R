@@ -94,7 +94,7 @@
       return(NULL)
     }
     L <- igraph::layout.sugiyama(g <- igraph.lvm(x,...))$layout
-    if (noplot) return(g)
+    if (noplot) return(graph::updateGraph(g))
     dots <- list(...)
     if (is.character(layout))
       plot(g,layout=L,...)

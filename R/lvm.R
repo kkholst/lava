@@ -29,7 +29,6 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
   M <- C <- par <- fix <- numeric(); mu <- list()
 
 
-  ##  m <- new("graphNEL", edgemode="directed");
   noderender <- list(
                   fill=c(),
                   shape=c(),

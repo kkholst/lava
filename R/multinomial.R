@@ -334,7 +334,7 @@ independence <- function(x,...) {
     ## df <- nrow(a$coefmat)
     ## res <- list(##data.name=hypothesis,
     ##             statistic = Q, parameter = df,
-    ##             p.value=1-pchisq(Q,df=1),
+    ##             p.value=pchisq(Q,df=1,lower.tail=FALSE),
     ##             method = "Test for independence")
     ## class(res) <- "htest"
     ## res
