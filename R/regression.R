@@ -2,7 +2,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Split into reponse and covariates by ~ disregarding expressions in parantheses
     ## '(?!...)' Negative lookahead assertion
-    regex <- "~(?![^\\(]*\\))"
+    regex <- "~(?![^\\(].*\\))"
     yx <- lapply(strsplit(as.character(value),regex,perl=TRUE),function(x) gsub(" ","",x))[-1]
     iscovar <- FALSE
     if (length(yx)==1) {
@@ -40,7 +40,6 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Match '+' but not when preceeded by ( ... )
     X <- strsplit(yx[[xidx]],"\\+(?![^\\(]*\\))", perl=TRUE)[[1]]
-
     ##regex <- "(?!(\\(*))[\\(\\)]"
     regex <- "[\\(\\)]"
     ## Keep squares brackets and |(...) statements
