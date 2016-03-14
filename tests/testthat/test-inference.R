@@ -91,3 +91,18 @@ test_that("Bootstrap", {
     expect_true(B2$bollenstine)
     expect_true(nrow(B1$coef)==2)
 })
+
+
+test_that("Survreg", {
+    m <- lvm(y0~x)   
+    transform(m,y~y0) <- function(x) pmin(x,2)
+    transform(m,status~y0) <- function(x) x<2
+    d <- simulate(m,100,seed=1)
+    require('survival')
+    m <- survreg(Surv(y,status)~x,data=d,dist='gaussian')
+    s <- score(m)
+    expect_true(length(pars(m))==length(coef(m))+1)
+    expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
+    expect_true(mean(colSums(s)^2)<1e-6)
+    expect_equivalent(vcov(m),attr(s,'bread'))
+})

@@ -49,3 +49,20 @@ test_that("Basic model building blocks", {
     ##equivalence(e,silent=TRUE)
     
 }) 
+
+
+
+test_that("Categorical variables", {
+    m <- lvm()
+    categorical(m,K=3,p=c(0.1,0.5)) <- ~x
+    d1 <- simulate(m,10,seed=1)
+    categorical(m,K=3) <- ~x
+    d2 <- simulate(m,10,seed=1)
+    expect_false(identical(d1,d2))
+    
+    regression(m,additive=FALSE,y~x) <- c(0,-5,5)
+    d <- simulate(m,100,seed=1)
+    l <- lm(y~factor(x),d)
+    expect_true(sign(coef(l))[2]==-sign(coef(l))[3])
+     
+})

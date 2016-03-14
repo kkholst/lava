@@ -295,7 +295,8 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
       rmseafun <- function(...) {
         epsilon <- function(lambda) sapply(lambda,function(x)
                                            ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n))),0)) ## n-1,n vs. n-df
-        opf <- suppressWarnings(function(l,p) (p-pchisq(q,df=qdf,ncp=l)))
+        opf <- function(l,p) suppressWarnings(p-pchisq(q,df=qdf,ncp=l))
+        ## pchisq(... lower.tail=FALSE)-1
         alpha <- (1-level)/2
         RMSEA <- epsilon(q-qdf)
         B <- max(q-qdf,0)
@@ -309,7 +310,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
         ci <- c(epsilon(c(hi$root,lo$root)))
         RMSEA <- c(RMSEA=RMSEA,ci);
         names(RMSEA) <- c("RMSEA",paste0(100*c(alpha,(1-alpha)),"%"))
-        pval <- 1-pchisq(q,qdf,(n*qdf*rmsea.threshold^2))
+        pval <- pchisq(q,qdf,(n*qdf*rmsea.threshold^2),lower.tail=FALSE)
         res <- list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level, rmsea.threshold=rmsea.threshold, pval.rmsea=pval)
         return(res)
       }
@@ -370,7 +371,7 @@ print.gof.lvmfit <- function(x,optim=TRUE,...) {
 
 ##   df <- df1-df0; names(df) <- "df"
 ##   Q <- -2*(L0-L1); attributes(Q) <- NULL; names(Q) <- "chisq";
-##   pQ <- 1-pchisq(Q,df)
+##   pQ <- pchisq(Q,df,lower.tail=FALSE)
 ##   values <- c(L0,L1); names(values) <- c("log likelihood (model)", "log likelihood (saturated model)")
 ##   res <- list(statistic = Q, parameter = df,
 ##               p.value=pQ, method = "Likelihood ratio test",

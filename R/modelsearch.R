@@ -23,7 +23,7 @@
 ##' m0 <- m; regression(m0) <- y2 ~ x
 ##' dd <- sim(m0,100)[,manifest(m0)]
 ##' e <- estimate(m,dd);
-##' modelsearch(e)
+##' modelsearch(e,silent=TRUE)
 ##'
 ##' @export
 modelsearch <- function(x,k=1,dir="forward",...) {
@@ -90,13 +90,16 @@ backwardeliminate <- function(x,
         var1 <- unlist(strsplit(names(curp),lava.options()$symbol[1]))
         dots$control$start <- attributes(p)$coef[-ordp[1]]
         if (messages) message("Removed: ",names(curp)," p-value: ",round(curp,3))
-        cancel(M) <- var1
+        nn <- strsplit(var1,"~|,")[[1]]
+        cancel(M) <- nn
     }
+
+    if (messages) message("")
     return(M)
 }
 
 backwardsearch <- function(x,k=1,...) {
-    if (inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
+    if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     p <- pars(x)
     cur <- Model(x)
     pp <- modelPar(cur,p)
@@ -127,8 +130,8 @@ backwardsearch <- function(x,k=1,...) {
             Vars <- c(Vars, list(cc0[ii]))
         }
     ord <- order(Tests, decreasing=TRUE);
-    Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
-    res <- list(test=Tests[ord,], var=Vars[ord])
+    Tests <- cbind(Tests, pchisq(Tests,k,lower.tail=FALSE)); colnames(Tests) <- c("Test Statistic", "P-value")
+    res <- list(test=Tests[ord,,drop=FALSE], var=Vars[ord])
     PM <- matrix(ncol=3,nrow=0)
     for (i in seq_len(nrow(Tests))) {
         if (!is.na(res$test[i,1])) {
@@ -138,7 +141,7 @@ backwardsearch <- function(x,k=1,...) {
     }
     colnames(PM) <- c("Wald: W", "P(W>w)", "Index"); rownames(PM) <- rep("",nrow(PM))
 
-    res <- list(res=PM)
+    res <- list(res=PM,test=res$test)
     class(res) <- "modelsearch"
     res
 }
@@ -157,7 +160,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     npar.mean <- index(cur)$npar.mean
     nfree <- npar.sat-npar.cur
     if (nfree<k) {
-        message("Cannot free",k,"variables from model.\n");
+        message("Cannot free ",k," variables from model.\n");
         return()
     }
 
@@ -187,58 +190,56 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         count <- 0
         pb <- txtProgressBar(style=3,width=40)
     }
-    for (i in seq_len(ncol(restrictedcomb)))
-        {
+    for (i in seq_len(ncol(restrictedcomb))) {
+        if (!silent) {                        
             count <- count+1
-            if (!silent) {
-                setTxtProgressBar(pb, count/ncol(restrictedcomb))
-            }
-            varlist <- c()
-            altmodel <- cur ## HA: altmodel, H0: cur
-            for (j in seq_len(k)) {
-                myvar <- restricted[restrictedcomb[j,i],]
-                if (any(wx <- V[myvar]%in%X)) {
-                    altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
-                } else {
-                    covariance(altmodel,pairwise=TRUE) <- V[myvar]
-                }
-                varlist <- rbind(varlist, V[myvar])
-            }
-            altmodel$parpos <- NULL
-            altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=TRUE)
-            cc <- coef(altmodel, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
-            cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
-            p1 <- numeric(length(p)+k)
-            ## Need to be sure we place 0 at the correct position
-            for (ic in seq_along(cc)) {
-                idx <- match(cc[ic],cc0)
-                if (!is.na(idx))
-                    p1[ic] <- p[idx]
-            }
-            if (x$estimator=="gaussian") {
-                Sc2 <- score(altmodel,p=p1,data=NULL,
-                             model=x$estimator,weight=Weight(x),S=S,mu=mu,n=n)
-            } else {
-                Sc2 <- score(altmodel,p=p1,data=model.frame(x),
-                             model=x$estimator,weight=Weight(x))
-            }
-            I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
-
-            iI <- try(Inverse(I), silent=TRUE)
-            Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
-                         (Sc2)%*%iI%*%t(Sc2)
-                         )
-            Tests <- c(Tests, Q)
-            Vars <- c(Vars, list(varlist))
+            setTxtProgressBar(pb, count/ncol(restrictedcomb))
         }
-
+        varlist <- c()
+        altmodel <- cur ## HA: altmodel, H0: cur
+        for (j in seq_len(k)) {
+            myvar <- restricted[restrictedcomb[j,i],]
+            if (any(wx <- V[myvar]%in%X)) {
+                altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
+            } else {
+                covariance(altmodel,pairwise=TRUE) <- V[myvar]
+            }
+            varlist <- rbind(varlist, V[myvar])
+        }
+        altmodel$parpos <- NULL
+        altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=TRUE)
+        cc <- coef(altmodel, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
+        cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
+        p1 <- numeric(length(p)+k)
+        ## Need to be sure we place 0 at the correct position
+        for (ic in seq_along(cc)) {
+            idx <- match(cc[ic],cc0)
+            if (!is.na(idx))
+                p1[ic] <- p[idx]
+        }
+        if (x$estimator=="gaussian") {
+            Sc2 <- score(altmodel,p=p1,data=NULL,
+                         model=x$estimator,weight=Weight(x),S=S,mu=mu,n=n)
+        } else {
+            Sc2 <- score(altmodel,p=p1,data=model.frame(x),
+                         model=x$estimator,weight=Weight(x))
+        }
+        I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
+        
+        iI <- try(Inverse(I), silent=TRUE)
+            Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
+            (Sc2)%*%iI%*%t(Sc2)
+                         )
+        Tests <- c(Tests, Q)
+        Vars <- c(Vars, list(varlist))
+    }
+    
     Tests0 <- Tests
     Vars0 <- Vars
 
-    if (!silent)
-        close(pb)
+    if (!silent) close(pb)
     ord <- order(Tests);
-    Tests <- cbind(Tests, 1-pchisq(Tests,k)); colnames(Tests) <- c("Test Statistic", "P-value")
+    Tests <- cbind(Tests, pchisq(Tests,k,lower.tail=FALSE)); colnames(Tests) <- c("Test Statistic", "P-value")
     Tests <- Tests[ord,,drop=FALSE]
     Vars <- Vars[ord]
     PM <- c()
@@ -264,8 +265,9 @@ print.modelsearch <- function(x,tail=nrow(x$res),adj=c("holm","BH"),...) {
     N <- nrow(x$res)
     if (!is.null(adj)) {
         ##    adjp <- rev(holm(as.numeric(x$test[,2])))
-        adjp <- sapply(adj,function(i) p.adjust(x$test[,2],method=i))
-        x$res <- cbind(x$res,formatC(adjp))
+        adjp <- rbind(sapply(adj,function(i) p.adjust(x$test[,2],method=i)))
+        colnames(adjp) <- adj
+        x$res <- cbind(x$res,rbind(formatC(adjp)))
     }
     print(x$res[seq(N-tail+1,N),], quote=FALSE, ...)
     invisible(x)
