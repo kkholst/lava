@@ -139,15 +139,16 @@
         ##Check for link function
         invlink <- NULL
         if (xidx==2) {
-            if (length(grep("[a-zA-Z]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
-                invlink <- strsplit(yx[[xidx]],"\\(")[[1]][1]
-                if (invlink%in%c("f","v")) { ## Reserved for setting linear constraints
+            invlink <- strsplit(yx[[xidx]],"\\(.*\\)")[[1]][1]            
+            if (length(grep("[a-zA-Z0-9_]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
+                if (invlink%in%c("f","v","I")) { ## Reserved for setting linear constraints
                     invlink <- NULL
                 } else {
-                    yx[[xidx]] <- gsub("[a-zA-Z]*\\(|\\)$","",yx[[xidx]])
+                    yx[[xidx]] <- gsub(paste0(invlink,"\\(|\\)$"),"",yx[[xidx]])
                 }
             }
         }
+        
 
         ## Handling constraints with negative coefficients
         ## while not tampering with formulas like y~f(x,-2)
