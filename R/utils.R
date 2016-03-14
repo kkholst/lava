@@ -487,9 +487,9 @@ Specials <- function(f,spec,split2="+",...) {
 
 
 ##' @export
-decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore, sep=",",reverse=FALSE,...) {
+decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep=",",reverse=FALSE,...) {
   st <- gsub(" |^\\(|)$","",x) # Remove white space and leading/trailing parantheses
-  if (!missing(pattern.ignore)) {
+  if (!is.null(pattern.ignore)) {
       if (grepl(pattern.ignore,st,...)) return(st)
   }
   if (!is.null(pattern)) {

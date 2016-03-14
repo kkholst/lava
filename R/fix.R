@@ -333,7 +333,7 @@ regfix.lvm <- function(object,...) {
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
 ##' @export
-"regfix<-.lvm" <- function(object, to, from, exo=TRUE, variance, y,x, ..., value) {
+"regfix<-.lvm" <- function(object, to, from, exo=lava.options()$exogenous, variance, y,x, ..., value) {
     if (!missing(y)) {
         if (inherits(y,"formula")) y <- all.vars(y)
         to <- y
@@ -343,80 +343,32 @@ regfix.lvm <- function(object,...) {
         from <- x
     }
     if (is.null(to)) stop("variable list needed")
-  curvar <- index(object)$vars
+    
   if (inherits(to,"formula")) {
-    yx <- getoutcome(to)
-    lhs <- decomp.specials(yx)
-    if (length(lhs)==0) {
-      to <- all.vars(to)
-      if (is.null(from)) stop("predictor list needed")
-      if (inherits(from,"formula"))
-        from <- all.vars(from)
-    } else {
-      from <- attributes(yx)$x
-      to <- lhs
-    }
-
-    yyf <- lapply(to,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-    ys <- unlist(lapply(yyf,function(y) y[1]))
-    xxf <- lapply(from,function(y) decomp.specials(y,NULL,"[",fixed=TRUE))
-    xs <- unlist(lapply(xxf,function(y) y[1]))
-
-    object <- addvar(object,c(ys,xs),reindex=FALSE,...)
-
-    if (!missing(variance))
-        covariance(object,ys) <- variance
-
-    newexo <- notexo <- c()
-    for (i in seq_along(xs)) {
-      xf <- unlist(strsplit(from[[i]],"[\\[\\]]",perl=TRUE))
-      if (length(xf)>1) {
-        xpar <- decomp.specials(xf[2],NULL,":")
-        val <- ifelse(xpar[1]=="NA",NA,xpar[1])
-        valn <- suppressWarnings(as.numeric(val))
-        intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
-        if (length(xpar)>1) {
-          val <- ifelse(xpar[2]=="NA",NA,xpar[2])
-          valn <- suppressWarnings(as.numeric(val))
-          covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
-        }
-        notexo <- c(notexo,xs[i])
-      } else { newexo <- c(newexo,xs[i]) }
-    }
-    for (i in seq_along(ys)) {
-      yf <- unlist(strsplit(to[[i]],"[\\[\\]]",perl=TRUE))
-      if (length(yf)>1) {
-        ypar <- decomp.specials(yf[2],NULL,":")
-        val <- ifelse(ypar[1]=="NA",NA,ypar[1])
-        valn <- suppressWarnings(as.numeric(val))
-        intercept(object,ys[i]) <- ifelse(is.na(valn),val,valn)
-        if (length(ypar)>1) {
-          val <- ifelse(ypar[2]=="NA",NA,ypar[2])
-          valn <- suppressWarnings(as.numeric(val))
-          covariance(object,ys[i]) <- ifelse(is.na(valn),val,valn)
-        }
-      }
-    }
-    to <- ys; from <- xs
-    object <- addvar(object,c(ys,xs),reindex=FALSE,...)
-    notexo <- c(notexo,to)
+      val <- procformula(object,to,exo=exo)
+      object <- val$object
+      ys <- val$ys
+      xs <- val$xs      
+      if (!missing(variance))
+          covariance(object,ys) <- variance      
+      to <- ys; from <- xs 
   } else {
-    object <- addvar(object,c(to,from),reindex=FALSE,...)
-    newexo <- from
-    notexo <- to
+      object <- addvar(object,c(to,from),reindex=FALSE,...)
+      newexo <- from
+      notexo <- to
+      curvar <- index(object)$var  
+      if (exo) {
+          oldexo <- exogenous(object)
+          newexo <- setdiff(newexo,c(notexo,curvar))
+          exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
+      }
   }
-
-  if (exo) {
-    oldexo <- exogenous(object)
-    newexo <- setdiff(newexo,c(notexo,curvar))
-    exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
-  }
-
+    
   if (inherits(value,"formula")) value <- all.vars(value)
 
   if (length(from)==length(to) & length(from)==length(value)) {
     for (i in seq_along(from)) {
-      if (object$M[from[i],to[i]]==0) { ## Not adjancent! ##!isAdjacent(Graph(object), from[i], to[i])) {
+      if (object$M[from[i],to[i]]==0) { ## Not adjacent! ##!isAdjacent(Graph(object), from[i], to[i])) {
         object <- regression(object, to=to[i], from=from[i])
       }
       vali <- suppressWarnings(as.numeric(value[[i]]))

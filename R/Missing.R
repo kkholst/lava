@@ -66,8 +66,9 @@ Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
         formula <- toformula(missing.name,formula)
     }
     newf <- update(formula,paste(".~.+",indicatorname))
-    if (is.null(distribution(object,indicatorname)[[1]]) || length(list(...))>0)
+    if (is.null(distribution(object,indicatorname)[[1]]) || length(list(...))>0) {
         distribution(object,indicatorname) <- binomial.lvm(...)
+    }
     transform(object,newf) <- function(u){
         out <- u[,1]
         out[u[,2]==0] <- NA
