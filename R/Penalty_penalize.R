@@ -33,8 +33,11 @@
     x$penalty <- list(fn_penalty = NULL,
                       gn_penalty = NULL,
                       hn_penalty = NULL,
-                      names.coef = NULL,
-                      index.coef = NULL,
+                      index.meanCoef = NULL,
+                      index.varCoef = NULL,
+                      index.interceptCoef = NULL,
+                      names.penaltyCoef = NULL,
+                      index.penaltyCoef = NULL,
                       lambda1 = 0, 
                       lambda2 = 0)
     class(x) <- append("plvm", class(x))
@@ -52,6 +55,10 @@
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE,
                               lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
   
+  x$penalty$index.varCoef <- grep(",", coef(x))
+  x$penalty$index.meanCoef <- setdiff(1:length(coef(x)), x$penalty$index.varCoef)
+  x$penalty$index.interceptCoef <- setdiff(x$penalty$index.meanCoef, grep("~", coef(x)))
+  
   ## coefficients
   if(!is.null(value)){
     
@@ -61,23 +68,23 @@
            "available coefficients: ",paste(coef(x)[coef(x) %in% value == FALSE], collapse = " "),"\n")
     }
     
-    x$penalty$names.coef <- value
-    x$penalty$index.coef <- which(coef(x) %in% names.coef)
+    x$penalty$index.penaltyCoef <- which(coef(x) %in% value)
+    x$penalty$names.penaltyCoef <- coef(x)[x$penalty$index.penaltyCoef]
+    
   } else if(is.null(x$penalty$names.coef)){
+  
+    x$penalty$index.penaltyCoef <- NULL
+    if(pen.intercept == TRUE){
+      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, x$penalty$index.interceptCoef)
+    }
+    if(pen.exogenous == TRUE){
+      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, setdiff(x$penalty$index.meanCoef,x$penalty$index.interceptCoef))
+    }
+    if(pen.variance == TRUE){
+      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, x$penalty$index.varCoef)
+    }
     
-    ls.names <- list()
-    if(pen.intercept){
-    ls.names$intercept <- x$index$endogenous
-    }
-    if(pen.exogenous){
-      ls.names$exogenous <- as.vector(sapply(x$index$endogenous, function(nameY){paste(nameY ,x$exogenous , sep = "~")}))
-    }
-    if(pen.variance){
-      ls.names$variance <- paste(x$index$endogenous ,x$index$endogenous , sep = "~")
-    }
-    
-    x$penalty$names.coef <- as.vector(unlist(ls.names))
-    x$penalty$index.coef <- which(coef(x) %in% x$penalty$names.coef)
+    x$penalty$names.penaltyCoef <- coef(x)[x$penalty$index.penaltyCoef]
   } 
   
   ## penalization parameters

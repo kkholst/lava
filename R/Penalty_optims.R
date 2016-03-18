@@ -12,20 +12,20 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   if(penalty$lambda1 == 0 && penalty$lambda2 == 0){
     proxOperator <- function(x, step, lambda1, lambda2){x}
   }else if(penalty$lambda2 == 0){
-    test.penalty <- 1:n.coef %in% penalty$index.coef
+    test.penalty <- 1:n.coef %in% penalty$index.penaltyCoef
     
     proxOperator <- function(x, step, lambda1, lambda2){
       mapply(proxL1, x = x, step = step, lambda = lambda1, test.penalty = test.penalty)
     }
   }else if(penalty$lambda1 == 0){
-    test.penalty <- 1:n.coef %in% penalty$index.coef
+    test.penalty <- 1:n.coef %in% penalty$index.penaltyCoef
    
      proxOperator <- function(x, step, lambda1, lambda2){
       mapply(proxL2, x = x, step = step, lambda = lambda2, test.penalty = test.penalty)
     }
   }else{
-    test.penalty1 <- 1:n.coef %in% penalty$index.coef
-    test.penalty2 <- 1:n.coef %in% penalty$index.coef
+    test.penalty1 <- 1:n.coef %in% penalty$index.penaltyCoef
+    test.penalty2 <- 1:n.coef %in% penalty$index.penaltyCoef
     
     proxOperator <- function(x, step, lambda1, lambda2){
       mapply(proxL2, 
@@ -34,14 +34,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     }
   }
   
-  #### initialisation
-  step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value)) # may be computationnaly expensive 
-  
-  lambda1 <- rep(0, n.coef)
-  lambda1[penalty$index.coef] <- penalty$lambda1 
-  lambda2 <- rep(0, n.coef)
-  lambda2[penalty$index.coef] <- penalty$lambda2 
-   
+     
   #### main
   if(control$fix.sigma){
     names.constrain <- names(start)[grep(pattern = ",", names(start), fixed = TRUE)]
@@ -50,25 +43,37 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   }else{
     constrain <- NULL
   }
- 
-  res <- do.call(control$proxGrad.method,
-                 list(start = start, step = step, proxOperator = proxOperator, gradient = gradient, 
-                      lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
-                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol))
-  res$objective <- objective(res$par, penalty = penalty)
- 
-   #### path regularization
-  if("test.path" %in% names(dots$control) && dots$control$test.path == TRUE){
+  
+  if( identical(penalty$lambda1, "Park") ){
     
-    cat("current regularization: ",penalty$lambda1 ,"\n")
+    ## path regularization
+    resLassoPath <- LassoPath_lvm(beta0 = start, hessianLv = hessian, gradientLv = gradient,
+                                  indexPenalty = penalty$index.penaltyCoef, indexNuisance = penalty$index.varCoef)
     
-    pathRegularization(Y = as.matrix(df.data[,1,drop = FALSE]), 
-                       X = cbind(1,as.matrix(df.data[,-1])),
-                       start = start, objective = objective, gradient = gradient, hessian = hessian,
-                       index.penalized = penalty$index.coef, constrain = constrain,
-                       step = step, proxOperator = proxOperator, control = control, lambda2 = lambda2)
-   
+    
+  }else if(is.numeric(penalty$lambda1)){
+  
+    ## one step lasso
+    step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value)) # may be computationnaly expensive 
+    
+    lambda1 <- rep(0, n.coef)
+    lambda1[penalty$index.penaltyCoef] <- penalty$lambda1 
+    lambda2 <- rep(0, n.coef)
+    lambda2[penalty$index.penaltyCoef] <- penalty$lambda2 
+    
+    res <- do.call(control$proxGrad.method,
+                   list(start = start, step = step, proxOperator = proxOperator, gradient = gradient, 
+                        lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
+                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol))
+    res$objective <- objective(res$par, penalty = penalty)
+  
+    
+  }else{
+    stop("proxGrad: wrong specification of argument \'lambda1\' \n",
+         "must be numeric or \"Park\" \n",
+         "proposed lambda1: ",lambda1,"\n")
   }
+  
    ### export
 
   return(res)
@@ -129,7 +134,7 @@ FISTA <- function(start, step = NULL, proxOperator, gradient, lambda1, lambda2, 
   while(test.cv == FALSE && iter <= iter.max){
     x_km1 <- x_k
     t_km1 <- t_k
-   
+    
     x_k <- proxOperator(x = y_k - step * gradient(y_k, penalty = NULL), 
                         step = step, lambda1 = lambda1, lambda2 = lambda2)
     if(!is.null(constrain)){x_k[names(constrain)] <- constrain}

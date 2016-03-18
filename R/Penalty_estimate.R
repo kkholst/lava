@@ -59,7 +59,7 @@
 #' 
 #' 
 `estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
-                            method = penalized_method.lvm, regularizationPath = FALSE, ...) {
+                            method = penalized_method.lvm, ...) {
   
   ## generic penalty
   penalty  <- x$penalty
@@ -116,14 +116,6 @@
     }
   }
 
-  if(regularizationPath){
-    dots$control$test.path <- TRUE
-  }
-  
-  ## penalty time n
-  penalty$lambda1 <- penalty$lambda1 * nrow(data)
-  penalty$lambda2 <- penalty$lambda2 * nrow(data)
-  
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", penalty = penalty, method = method), 
                                           dots)

@@ -20,10 +20,10 @@ sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 #### Over the grid ####
 
 ## parametrisation
-seq_n <- 300#c(25,50,100,200,300,500)
+seq_n <- c(50,300)
 seq_p <- c(5,10,15,20)
-seq_lambda <- seq(0,0.5, length.out = 5)#c(1,5,10,15)#
-seq_rep <- 1#:5
+seq_lambda <- c(0,exp(seq(-3, 2, length.out = 15)))#c(1,5,10,15)#
+seq_rep <- 10
 Allbeta <- beta <- c(1:5,rep(0, max(seq_p) - 5))# rbinom(p, size = 1, prob = 1/seq(1,p/2, by = 0.5))
 iter.max <- 5000
 
@@ -173,10 +173,10 @@ print(dt.results[,c("n.obs","n.param","lambda","rep","lvm.time","L1.time","L1IST
 save(dt.results, file = paste0("C:/Users/hpl802/Documents/Projects/LVM/CV-test/dt_results.RData"))
 
 
-# dt.results[, lapply(.SD,mean), .SDcols = c("L1ISTA.cv","L1FISTA.cv","L2.cv","L2ISTA.cv","L2FISTA.cv")]
-# dt.results[, lapply(.SD,quantile, na.rm = TRUE), .SDcols = c("L1ISTA.maxDiff","L1FISTA.maxDiff","L2.maxDiff","L2ISTA.maxDiff","L2FISTA.maxDiff")]
-# dt.results[, lapply(.SD,quantile), .SDcols = c("L1ISTA.iteration","L1FISTA.iteration","L2.iteration","L2ISTA.iteration","L2FISTA.iteration")]
-# dt.results[, lapply(.SD,quantile, na.rm = TRUE), .SDcols = c("L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time")]
+# dt.results[, lapply(.SD,mean), .SDcols = c("L1.cv","L1ISTA.cv","L1FISTA.cv","L2.cv","L2ISTA.cv","L2FISTA.cv","L12FISTA.cv")]
+# dt.results[, lapply(.SD,quantile, na.rm = TRUE), .SDcols = c("L1.maxDiff","L1ISTA.maxDiff","L1FISTA.maxDiff","L2.maxDiff","L2ISTA.maxDiff","L2FISTA.maxDiff","L12FISTA.maxDiff")]
+# dt.results[, lapply(.SD,quantile), .SDcols = c("L1.iteration","L1ISTA.iteration","L1FISTA.iteration","L2.iteration","L2ISTA.iteration","L2FISTA.iteration","L12FISTA.iteration")]
+# dt.results[, lapply(.SD,quantile, na.rm = TRUE), .SDcols = c("L1.time","L1ISTA.time","L1FISTA.time","L2.time","L2ISTA.time","L2FISTA.time","L12FISTA.time")]
 
 # dt.results
 # 
