@@ -148,7 +148,8 @@ backwardsearch <- function(x,k=1,...) {
 
 forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
-    p <- coef(x)
+    
+    p <- pars(x,reorder=TRUE)
     cur <- Model(x)
     pp <- modelPar(cur,p)
     Y <- endogenous(x)
@@ -217,14 +218,14 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             if (!is.na(idx))
                 p1[ic] <- p[idx]
         }
-        if (x$estimator=="gaussian") {
+        if (x$estimator=="gaussian" && !inherits(x,"lvm.missing")) {
             Sc2 <- score(altmodel,p=p1,data=NULL,
                          model=x$estimator,weight=Weight(x),S=S,mu=mu,n=n)
         } else {
             Sc2 <- score(altmodel,p=p1,data=model.frame(x),
                          model=x$estimator,weight=Weight(x))
         }
-        I <- information(altmodel,p=p1,n=x$data$n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
+        I <- information(altmodel,p=p1,n=n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
         
         iI <- try(Inverse(I), silent=TRUE)
             Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test

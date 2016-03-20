@@ -70,8 +70,13 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
             S0 <- S
             mu0 <- mu
             e0 <- eigen(S0)
-            if (any(e0$values<(lava.options()$itol)^0.5))
-                S0 <- diag(diag(S),ncol=ncol(S))
+            if (any(e0$values<(lava.options()$itol)^0.5)) {
+                ## Projection to nearest positive definite matrix
+                ii <- e0$values
+                ii[ii<lava.options()$itol] <- lava.options()$itol^.5
+                S0 <- e0$vectors%*%diag(ii,nrow=length(ii))%*%t(e0$vectors)
+                ##S0 <- diag(diag(S),ncol=ncol(S))
+            }
 
         }
         exo.idx <- index(x)$exo.obsidx;

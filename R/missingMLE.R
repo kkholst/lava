@@ -146,12 +146,13 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   vnames <- index(x)$manifest
   names(mu) <- rownames(S) <- colnames(S) <- vnames
   if (K>0) {
-    exo.idx <- c(which(manifest(x)%in%exogenous(x)))
     xx <- subset(Model(x),exogenous(x))
     exogenous(xx) <- NULL
     covfix(xx, vars(xx)) <- NA
     xx <- covariance(xx,exogenous(x),exogenous(x))
     datax <- data[,exogenous(x),drop=FALSE]
+    exo.idx <- match(exogenous(x),manifest(x))
+
     mu0 <- colMeans(datax,na.rm=TRUE)
     cov0 <- cov(datax,use="pairwise.complete.obs")*(nrow(datax)-1)/nrow(datax)
     cov0upper <- cov0[upper.tri(cov0,diag=TRUE)]
