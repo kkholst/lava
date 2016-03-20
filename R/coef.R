@@ -151,19 +151,20 @@
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2),
          symbol=lava.options()$symbol,
-         data, std=NULL, labels=TRUE, vcov,
+         data, std=NULL, labels=TRUE, vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
 
-    res <- (pars.default(object))
+    res <- (pars.default(object,...))
     if (level<0 && !is.null(names(res))) return(res)
 
-  if (is.null(object$control$meanstructure)) meanstructure <- TRUE
+    if (is.null(object$control$meanstructure)) meanstructure <- TRUE
   else meanstructure <- object$control$meanstructure
   npar <- index(object)$npar; npar.mean <- index(object)$npar.mean*meanstructure
   npar.ex <- index(object)$npar.ex
 
   para <- parameter(Model(object))
   para.idx <- which(vars(object)%in%para)
+
 
   if (inherits(object,"lvm.missing")) {
       if (length(object$cc)==0) {## No complete cases

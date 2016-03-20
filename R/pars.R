@@ -11,6 +11,18 @@ pars.default <- function(x,...) {
   return(coef(x))
 }
 
+##' @export
+pars.lvm.missing <- function(x,reorder=FALSE,...) {
+    res <- pars.default(x)
+    if (reorder) {
+        idx <- match(coef(Model(x)),names(coef(x)))
+        return(res[idx])
+    }
+    return(res)
+}
+
+
+
 ###{{{ pars.multigroupfit
 ## pars.multigroupfit <- function(x,...) {
 ##   res <- pars.default(x)
