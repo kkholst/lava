@@ -584,7 +584,6 @@ CoefMat <- function(x,
                     digits = max(3, getOption("digits") - 2),
                     level=9,
                     symbol=lava.options()$symbol[1],...) {
-
   cc <- x
   if (!is.matrix(x)) {
     cc <- coef(x,level=level,symbol=symbol,...)
@@ -604,6 +603,7 @@ CoefMat <- function(x,
   Nextra <- sum(attributes(cc)$type=="extra")
 
   latent.var <- attributes(cc)$latent
+
 
   if (Nreg>0) {
     reg.idx <- which(attributes(cc)$type=="regression")
@@ -706,7 +706,7 @@ CoefMat <- function(x,
 ###{{{ standardized coefficients
 
 stdcoef <- function(x,p=coef(x),...) {
-  M0 <- moments(Model(x),p)
+  M0 <- moments(x,p=p,...)
   A <- t(M0$A)
   P <- M0$P
   v <- M0$v

@@ -147,9 +147,13 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              ) {
     cl <- match.call(expand.dots=TRUE)
     if (!missing(use)) {
-        cl[c("use","f","contrast","only.coef","subset","average")] <- NULL
-        cl$keep <- use
-        x <- eval(cl)        
+        p0 <- c("f","contrast","only.coef","subset","average","keep","labels")
+        cl0 <- cl
+        cl0[c("use",p0)] <- NULL
+        cl0$keep <- use
+        cl$x <- eval(cl0)
+        cl[c("vcov","use")] <- NULL
+        return(eval(cl))
     }
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
@@ -311,10 +315,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
             parname <- form0
         }
         if (!is.null(iidtheta)) {
-            arglist <- c(list(object=x,data=data,p=pp),list(...))
+            arglist <- c(list(object=x,data=data,p=as.vector(pp)),list(...))
             names(arglist)[3] <- parname
         } else {
-            arglist <- c(list(object=x,p=pp),list(...))
+            arglist <- c(list(object=x,p=as.vector(pp)),list(...))
             names(arglist)[2] <- parname
         }
         if (!dots) {
@@ -322,7 +326,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
         newf <- NULL
         if (length(form)==0) {
-            arglist <- list(pp)
+            arglist <- list(as.vector(pp))
             ##newf <- function(p,...) do.call("f",list(p,...))
             newf <- function(...) do.call("f",list(...))
             val <- do.call("f",arglist)
@@ -347,11 +351,11 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                 return(do.call("newf",arglist)) }, pp)
         }        
         if (is.null(iidtheta)) {
-            pp <- as.vector(val)
+            pp <- structure(as.vector(val),names=names(val))
             V <- D%*%V%*%t(D)
         } else {
             if (!average || (N<NROW(data))) { ## || NROW(data)==0)) { ## transformation not depending on data
-                pp <- as.vector(val)
+                pp <- structure(as.vector(val),names=names(val))
                 iidtheta <- iidtheta%*%t(D)
                 ##V <- crossprod(iidtheta)
                 V <- D%*%V%*%t(D)
@@ -469,6 +473,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         res$vcov <- res$compare$vcov
     }
     if (!missing(keep) && !is.null(keep)) {
+        if (is.character(keep)) {
+            keep <- match(keep,rownames(res$coefmat))
+        }
         res$coef <- res$coef[keep]
         res$coefmat <- res$coefmat[keep,,drop=FALSE]
         if (!is.null(res$iid)) res$iid <- res$iid[,keep,drop=FALSE]
