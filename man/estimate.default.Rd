@@ -8,8 +8,8 @@
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, ..., data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
-  iid = TRUE, type = c("robust", "df", "mbn"), keep, contrast, null, vcov,
-  coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
+  iid = TRUE, type = c("robust", "df", "mbn"), keep, use, contrast, null,
+  vcov, coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
   only.coef = FALSE, transform, folds = 0, cluster)
 }
 \arguments{
@@ -39,7 +39,9 @@
 
 \item{type}{type of small-sample correction}
 
-\item{keep}{(optional) index of parameters to keep}
+\item{keep}{(optional) index of parameters to keep from final result}
+
+\item{use}{(optional) index of parameters to use in calculations}
 
 \item{contrast}{(optional) Contrast matrix for final Wald test}
 

@@ -5,13 +5,15 @@
 \alias{predict.lvmfit}
 \title{Prediction in structural equation models}
 \usage{
-\method{predict}{lvm}(object, x = NULL, residual = FALSE, p, data,
-  path = FALSE, quick = is.null(x) & !(residual | path), ...)
+\method{predict}{lvm}(object, x = NULL, y = NULL, residual = FALSE, p,
+  data, path = FALSE, quick = is.null(x) & !(residual | path), ...)
 }
 \arguments{
 \item{object}{Model object}
 
 \item{x}{optional list of (endogenous) variables to condition on}
+
+\item{y}{optional subset of variables to predict}
 
 \item{residual}{If true the residuals are predicted}
 
