@@ -198,7 +198,7 @@ test_that("Optimization", {
 
 
 test_that("Prediction, random intercept", {
-
+    require(lme4)
     ## Random intercept model
     m <- lvm(c(y1,y2,y3)~u[0])
     latent(m) <- ~u
