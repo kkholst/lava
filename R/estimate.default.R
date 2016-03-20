@@ -26,7 +26,8 @@ estimate.list <- function(x,...) {
 ##' @param level level of confidence limits
 ##' @param iid if TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)
 ##' @param type type of small-sample correction
-##' @param keep (optional) index of parameters to keep
+##' @param keep (optional) index of parameters to keep from final result
+##' @param use (optional) index of parameters to use in calculations
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -136,7 +137,7 @@ estimate.list <- function(x,...) {
 estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average=FALSE,subset,
                              score.deriv,level=0.95,iid=TRUE,
                              type=c("robust","df","mbn"),
-                             keep,
+                             keep,use,
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
                              print=NULL,labels,label.width,
@@ -144,6 +145,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              folds=0,
                              cluster
                              ) {
+    cl <- match.call(expand.dots=TRUE)
+    if (!missing(use)) {
+        cl[c("use","f","contrast","only.coef","subset","average")] <- NULL
+        cl$keep <- use
+        x <- eval(cl)        
+    }
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
         pp <- coef
@@ -297,6 +304,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         dots <- ("..."%in%names(form))
         form0 <- setdiff(form,"...")
         parname <- "p"
+
         if (!is.null(form)) parname <- form[1] # unless .Primitive
         if (length(form0)==1 && !(form0%in%c("object","data"))) {
             ##names(formals(f))[1] <- "p"
@@ -310,9 +318,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
             names(arglist)[2] <- parname
         }
         if (!dots) {
-            arglist <- arglist[form0]
+            arglist <- arglist[intersect(form0,names(arglist))]
         }
-
         newf <- NULL
         if (length(form)==0) {
             arglist <- list(pp)
@@ -338,7 +345,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                 if (is.null(newf))
                     return(do.call("f",arglist))
                 return(do.call("newf",arglist)) }, pp)
-        }
+        }        
         if (is.null(iidtheta)) {
             pp <- as.vector(val)
             V <- D%*%V%*%t(D)
