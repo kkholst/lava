@@ -195,3 +195,46 @@ test_that("Optimization", {
     expect_equivalent(op$par,op2$par)
     expect_equivalent(op$par,op3$par)
 })
+
+
+test_that("Prediction, random intercept", {
+
+    ## Random intercept model
+    m <- lvm(c(y1,y2,y3)~u[0])
+    latent(m) <- ~u
+    regression(m) <- y1~x1
+    regression(m) <- y2~x2
+    regression(m) <- y3~x3
+
+    d <- simulate(m,1e3,seed=1)
+    dd <- reshape(d,varying=list(c('y1','y2','y3'),c('x1','x2','x3')),direction='long',v.names=c('y','x'))
+    
+    system.time(l <- lme4::lmer(y~x+(1|id), data=dd, REML=FALSE))
+    m0 <- lvm(c(y1[m:v],y2[m:v],y3[m:v])~1*u[0])
+    latent(m0) <- ~u
+    regression(m0,y=c('y1','y2','y3'),x=c('x1','x2','x3')) <- rep('b',3)
+    system.time(e <- estimate(m0,d))
+
+    mytol <- 1e-6
+    mse <- function(x,y=0) mean(na.omit(x-y)^2)
+    expect_true(mse(logLik(e),logLik(l))<mytol)
+    expect_true(mse(lme4::fixef(l),coef(e)[1:2])<mytol)
+    u1 <- lme4::ranef(l)[[1]][,1]
+    u2 <- predict(e,endogenous(e))
+    expect_true(mse(u1,u2)<1e-9)
+
+    ## Missing data
+
+    idx <- sample(seq(nrow(dd)),nrow(dd)*0.5)
+    dd0 <- dd[idx,,drop=FALSE]
+    d0 <- mets::fast.reshape(subset(dd0,select=-u),id='id',num='time')
+    
+    system.time(e0 <- estimate(m0,d0,missing=TRUE))
+    system.time(l0 <- lme4::lmer(y~x+(1|id), data=dd0, REML=FALSE))
+    expect_true(mse(logLik(e0),logLik(l0))<mytol)
+    expect_true(mse(lme4::fixef(l0),coef(e0)[1:2])<mytol)
+    u01 <- lme4::ranef(l0)[[1]][,1]
+    u02 <- predict(e0,endogenous(e0))
+    expect_true(mse(u01,u02)<1e-9)    
+})
+

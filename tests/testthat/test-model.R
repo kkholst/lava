@@ -32,7 +32,7 @@ test_that("Basic model building blocks", {
     ## formula
     f <- formula(m,all=TRUE)
     expect_true(length(f)==length(vars(m)))
-    expect_true(all(lapply(f,function(x) inherits(x,"formula"))))
+    expect_true(all(unlist(lapply(f,function(x) inherits(x,"formula")))))
 
     ## Parametrization
     m <- lvm(c(y1,y2,y3)~u)

@@ -71,7 +71,12 @@ test_that("plotConf", {
 })
 
 
-test_that("All the rest:", {
+test_that("wrapvev", {
+    expect_equivalent(wrapvec(5,2),c(3,4,5,1,2))
+    expect_equivalent(wrapvec(seq(1:5),-1),c(5,1,2,3,4))
+})
+
+test_that("All the rest", {
     expect_false(lava:::versioncheck(NULL))
     expect_true(lava:::versioncheck("lava",c(1,4,1)))
 
