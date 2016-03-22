@@ -1,23 +1,31 @@
 ##' @export
-rmvn <- function(n,mean=rep(0,ncol(sigma)),sigma=diag(nrow=length(mean))*.5+.5,...) {
+rmvn <- function(n,mu=rep(0,ncol(sigma)),sigma=diag(nrow=length(mu))*.5+.5,...) {
     PP <- with(svd(sigma), v%*%diag(sqrt(d),ncol=length(d))%*%t(u))
     res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
-    if (NROW(mean)==nrow(res) && NCOL(mean)==ncol(res)) return(res+mean)
-    return(res+cbind(rep(1,n))%*%mean)
+    if (NROW(mu)==nrow(res) && NCOL(mu)==ncol(res)) return(res+mu)
+    return(res+cbind(rep(1,n))%*%mu)
 }
 
 ##' @export
-dmvn <- function(x,mean,sigma,log=FALSE,...) {
-    k <- ncol(sigma)
-    isigma <- Inverse(sigma)
-    if (!missing(mean)) {
-        if (NROW(mean)==nrow(x) && NCOL(mean)==ncol(x)) {
-            x <- x-mean
+dmvn <- function(x,mu,sigma,log=FALSE,...) {
+    if (length(sigma)==1) {
+        k <- 1
+        isigma <- structure(cbind(1/sigma),det=as.vector(sigma))
+        
+    } else {
+        k <- ncol(sigma)
+        isigma <- Inverse(sigma)
+    }
+    if (!missing(mu)) {
+        if (NROW(mu)==NROW(x) && NCOL(mu)==NCOL(x)) {
+            x <- x-mu
         } else {
-            x <- t(t(x)-mean)
-        }
-    }    
-    logval <- -0.5*(base::log(2*base::pi)*k+base::log(attributes(isigma)$det)+rowSums((x%*%isigma)*x))
+            x <- t(t(x)-mu)
+        }        
+    }
+    logval <- -0.5*(base::log(2*base::pi)*k+
+                    base::log(attributes(isigma)$det)+
+                    rowSums((x%*%isigma)*x))
     if (log) return(logval)
     return(exp(logval))
 }
