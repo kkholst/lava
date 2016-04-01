@@ -55,12 +55,19 @@ proxGrad <- function(start, objective, gradient, hessian,...){
    if( dots$regularizationPath ){
     
     ## path regularization
-    resLassoPath <- LassoPath_lvm(beta0 = start, hessianLv = hessian, gradientLv = gradient, objectiveLv = objective,
-                                  indexPenalty = index.penaltyCoef, 
-                                  indexNuisance = which(names(start) %in% penalty$names.varCoef),
-                                  dataY = as.matrix(dots$control$data[,1,drop = FALSE]), dataX = as.matrix(dots$control$data[,-1,drop = FALSE]))
-    
-    # print(resLassoPath)
+     if(dots$use.lavaDeriv){
+       resLassoPath <- LassoPath_lvm(beta0 = start, hessianLv = hessian, gradientLv = gradient,
+                                     indexPenalty = index.penaltyCoef, 
+                                     indexNuisance = which(names(start) %in% penalty$names.varCoef), 
+                                     fix.nuisance = dots$fix.sigma)
+       
+     }else{
+       resLassoPath <- LassoPath_lvm(beta0 = start,
+                                     indexPenalty = index.penaltyCoef, 
+                                     indexNuisance = which(names(start) %in% penalty$names.varCoef), 
+                                     fix.nuisance = dots$fix.sigma,
+                                     dataY = as.matrix(dots$control$data[,1,drop = FALSE]), dataX = as.matrix(dots$control$data[,-1,drop = FALSE]))
+     }
     
     res <- list(par = start,
                 convergence = 0,

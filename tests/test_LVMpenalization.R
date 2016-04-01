@@ -20,9 +20,9 @@ sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 #### Over the grid ####
 
 ## parametrisation
-seq_n <- 300 # c(25,50,300)
+seq_n <- c(25,50,300)
 seq_p <- c(5,10,20,30)
-seq_lambda <- c(0,exp(seq(-3, 2, length.out = 15)))#c(1,5,10,15)#
+seq_lambda <- c(0,exp(seq(-3, 3, length.out = 15)))#c(1,5,10,15)#
 seq_rep <- 1 # 10
 Allbeta <- beta <- c(1:5,rep(0, max(seq_p) - 5))# rbinom(p, size = 1, prob = 1/seq(1,p/2, by = 0.5))
 iter.max <- 5000
@@ -58,6 +58,8 @@ for(iter_grid in 1:n.grid){
   lambda1 <- grid[iter_grid,"lambda"]
   lambda2 <- grid[iter_grid,"lambda"] 
   beta <- Allbeta[1:p] 
+  
+  if(n<p){next}
   
   ## simulation
   X <- matrix(rnorm(n*p),n,p)

@@ -59,7 +59,8 @@
 #' 
 #' 
 `estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
-                            regularizationPath = FALSE, fix.sigma = FALSE,
+                            regularizationPath = FALSE, 
+                            fix.sigma = FALSE, use.lavaDeriv = FALSE,
                             method = penalized_method.lvm, proxGrad.method = "ISTA", ...) {
   
   ## generic penalty
@@ -106,7 +107,8 @@
   
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
-                                               penalty = penalty, regularizationPath = regularizationPath, fix.sigma = fix.sigma,
+                                               penalty = penalty, regularizationPath = regularizationPath, 
+                                               fix.sigma = fix.sigma, use.lavaDeriv = use.lavaDeriv,
                                                method = method, proxGrad.method = proxGrad.method), 
                                           dots)
   )

@@ -580,6 +580,7 @@
         ##   pd <- procdata.lvm(x0,data=data0)
         ##   S0 <- pd$S; mu0 <- pd$mu
         ## }
+        
         S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
                                    , weight2=weight2, ... 
                                    ##, offset=offset

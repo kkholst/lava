@@ -1,4 +1,8 @@
 rm(list = ls())
+### issue with data normalisation
+### issue with gradiant from lava
+### issue with FISTA
+### no need to fix sigma with a TRUE LVM model
 
 library(penalized)
 library(optimx)
@@ -15,15 +19,11 @@ n <- 500
 formula.lvm <- Y~X1+X2+X3+X4
 lvm.model <- lvm(list(formula.lvm))
 df.data <- sim(lvm.model,n)
-df.data <- orthoData(df.data, formula = formula.lvm)$data
-# orthoData(df.data, formula = formula.lvm)[,-1] - orthoData(dataX = as.matrix(df.data[, -1]))
 plvm.model <- penalize(lvm.model)
 
 
 lvm.fit <- estimate(lvm.model,  data = df.data,
                       control = list(constrain = TRUE))
-# apply(dataX_orth,2, sd)
-# cor(dataX_orth)
 
 #### check fix lambda ####
 penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
@@ -43,48 +43,33 @@ coef(elvm1FISTA.fit)
 elvm1FISTA.fit$opt$iterations
 
 #### check regularization path ####
-# resLassoPath <- LassoPath(dataX = dataX_orth, 
+# resLassoPath <- LassoPath(dataX = dataX_norm, 
 #                           dataY = df.data[,all.vars(formula.lvm)[1]], 
 #                           iter_max = 100)
 
-set.seed(10)
-n <- 500
-formula.lvm <- as.formula(paste0("y~",paste(paste0("X",1:5), collapse = "+")))
-lvm.model <- lvm(formula.lvm)
-df.dataO <- sim(lvm.model,n)
-plvm.model <- penalize(lvm.model)
-df.data <- df.dataO
-df.data <- orthoData(df.dataO, formula = formula.lvm)$data
+df.data_norm <- normData(df.data, formula = formula.lvm)$data
 
-p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE,
-                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+p1lvm.fit <- estimate(plvm.model,  data = df.data_norm, regularizationPath = TRUE, fix.sigma = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data_norm))
 p1lvm.fit$opt$message
 
-res <- orthoData(dataX = as.matrix(df.dataO[,-1]))
+penalized.fit <- penalized(response = df.data_norm[,all.vars(formula.lvm)[1]], 
+                           penalized = df.data_norm[,all.vars(formula.lvm)[-1]], 
+                           steps = "Park")
+unlist(lapply(penalized.fit, function(x){x@lambda1}))
+
+#### incorrect when data are not normogonalized
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, fix.sigma = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+p1lvm.fit$opt$message
 
 penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
                            penalized = df.data[,all.vars(formula.lvm)[-1]], 
                            steps = "Park")
 unlist(lapply(penalized.fit, function(x){x@lambda1}))
 
-coef(estimate(plvm.model,  data = df.data, lambda1 = 569.4650, fix.sigma = TRUE,
-              control = list(constrain = TRUE, iter.max = 1000)))
 
-p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 433.9035, fix.sigma = TRUE,
-                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
-coef(p1lvm.fit)
-
-#### incorrect when data are not orthogonalized
-
-source("C:/Users/hpl802/Documents/Projects/LVM/Code/TryNRlasso/FCT_RegularizationPath.R")
-resLassoPath <- LassoPath(dataX = df.data[,all.vars(formula.lvm)[-1]], 
-                          dataY = df.data[,all.vars(formula.lvm)[1]], 
-                          iter_max = 100)
-resLassoPath <- LassoPath(dataX = df.dataO[,all.vars(formula.lvm)[-1]], 
-                          dataY = df.dataO[,all.vars(formula.lvm)[1]], 
-                          iter_max = 100)
-
-Xpen - df.data[,all.vars(formula.lvm)[-1]]
 #### 2- LVM ####
 
 set.seed(10)
@@ -96,7 +81,6 @@ regression(lvm.model2, Y3 ~ eta + X3 + X4 + X5) <- c(1,rep(0.5,3))
 regression(lvm.model2, eta ~ X6 + X7 + X8 + X9 + X10) <- rep(1,5)
 df.data2 <- sim(lvm.model2, 1e3)
 df.data2 <- df.data2[, names(df.data2) != "eta"]
-
 
 ### correct specification
 lvm.model2bis <- lvm()
@@ -116,6 +100,10 @@ elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 0,
                           control = list(constrain = TRUE, iter.max = 5000, proxGrad.method = "ISTA", fix.sigma = FALSE))
 range(coef(lvm.fit2) - coef(elvm2ISTA.fit))
 
+elvm2FISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 0,
+                          control = list(constrain = TRUE, iter.max = 5000, proxGrad.method = "FISTA", fix.sigma = FALSE))
+range(coef(lvm.fit2) - coef(elvm2FISTA.fit))
+
 ### incorrect specification
 lvm.model2bis <- lvm()
 regression(lvm.model2bis) <- Y1 ~ eta
@@ -132,6 +120,8 @@ plvm.model2bis <- penalize(lvm.model2bis)
 
 elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "ISTA", fix.sigma = FALSE,
                           control = list(constrain = TRUE, iter.max = 5000))
+# elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "ISTA", fix.sigma = TRUE,
+#                           control = list(constrain = TRUE, iter.max = 5000))
 
 coef(elvm2ISTA.fit)
 range(coef(lvm.fit2) - coef(elvm2ISTA.fit))
@@ -144,16 +134,14 @@ ggbase <- ggplot(  melt(dt.ggplot, id.vars = "coef", variable.name = "model"), a
 ggbase + geom_point()
 
 
-elvm2FISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "FISTA", fix.sigma = FALSE,
-                          control = list(constrain = TRUE, iter.max = 1000))
+# elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "FISTA", fix.sigma = FALSE,
+#                           control = list(constrain = TRUE, iter.max = 5000))
+# 
+# coef(elvm2FISTA.fit)
 
-RPlvm.fit <- estimate(plvm.model2bis,  data = df.data2,  regularizationPath = TRUE, proxGrad.method = "ISTA", fix.sigma = FALSE,
-                           control = list(constrain = TRUE, iter.max = 1000, data = df.data2))
-
-
-p2lvm.fit <- estimate(plvm.model2bis,  data = df.data, regularizationPath = TRUE,
-                      control = list(constrain = TRUE, iter.max = 5000, data = df.data2))
-p1lvm.fit$opt$message
+#### regularization path
+elvm2ISTA.RP <- estimate(plvm.model2bis,  data = df.data2, regularizationPath = TRUE, proxGrad.method = "ISTA", fix.sigma = FALSE,
+                         control = list(constrain = TRUE, iter.max = 1000))
 
 
 # #### check objective
