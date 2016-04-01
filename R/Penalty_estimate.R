@@ -59,7 +59,8 @@
 #' 
 #' 
 `estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
-                            method = penalized_method.lvm, ...) {
+                            regularizationPath = FALSE, fix.sigma = FALSE,
+                            method = penalized_method.lvm, proxGrad.method = "ISTA", ...) {
   
   ## generic penalty
   penalty  <- x$penalty
@@ -81,30 +82,17 @@
     penalty$hn_penalty <- hn_penalty
   }
   
-  ## dots 
-  dots <- list(...)
   
   # optimizer
-  if(method == "proxGrad"){
-    if("control" %in% names(dots) == FALSE){
-      dots$control <- list()
-    }
-    if("proxGrad.method" %in% names(dots$control) == FALSE){
-      dots$control$proxGrad.method <- "FISTA"
-    }else{
-      if(dots$control$proxGrad.method %in% c("ISTA","FISTA") == FALSE){
-        stop("estimate.plvm: wrong specification of control$proxGrad.method \n",
-             "only  \"ISTA\" and \"FISTA\" mehtods are available \n",
-             "control$proxGrad.method: ",dots$control$proxGrad.method,"\n")
-      }  
-    }
-    if("fix.sigma" %in% names(dots$control) == FALSE){ #[DEBUG!!]
-      dots$control$fix.sigma <- FALSE
-    }
-  }
+  if(proxGrad.method %in% c("ISTA","FISTA") == FALSE){
+    stop("estimate.plvm: wrong specification of control$proxGrad.method \n",
+         "only  \"ISTA\" and \"FISTA\" mehtods are available \n",
+         "control$proxGrad.method: ",proxGrad.method,"\n")
+  }  
   
+  ## dots  :  cleaning [not completely checked - may be issues here]
+  dots <- list(...)
   
-  # cleaning [not completely checked - may be issues here]
   names.dots <- names(dots)
   if(any(names.dots %in% names(penalty))){
     fixedArgs <- setdiff(names(formals("estimate.plvm")),c("..."))
@@ -115,9 +103,11 @@
       dots[dotsArgs] <- NULL
     }
   }
-
+  
   #### main
-  res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", penalty = penalty, method = method), 
+  res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
+                                               penalty = penalty, regularizationPath = regularizationPath, fix.sigma = fix.sigma,
+                                               method = method, proxGrad.method = proxGrad.method), 
                                           dots)
   )
   

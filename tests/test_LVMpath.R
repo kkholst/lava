@@ -9,97 +9,190 @@ path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
-
+#### 1- regression ####
 set.seed(10)
 n <- 500
 formula.lvm <- Y~X1+X2+X3+X4
 lvm.model <- lvm(list(formula.lvm))
 df.data <- sim(lvm.model,n)
+df.data <- orthoData(df.data, formula = formula.lvm)$data
+# orthoData(df.data, formula = formula.lvm)[,-1] - orthoData(dataX = as.matrix(df.data[, -1]))
 plvm.model <- penalize(lvm.model)
+
 
 lvm.fit <- estimate(lvm.model,  data = df.data,
                       control = list(constrain = TRUE))
+# apply(dataX_orth,2, sd)
+# cor(dataX_orth)
 
+#### check fix lambda ####
+penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
+                           penalized = df.data[,all.vars(formula.lvm)[-1]], 
+                           steps = "Park")
 
-dataX_orth <- as.matrix(df.data[,all.vars(formula.lvm)[-1]])
-ones <- rep(1,nrow(dataX_orth))
-dataX_orth <- dataX_orth - cbind(ones) %*% solve(crossprod(ones), crossprod(ones, dataX_orth))
-dataX_orth <- sweep(dataX_orth, MARGIN = 2, FUN = "/", 
-                    STATS = sqrt(apply(dataX_orth, 2, var)*(nrow(dataX_orth)-1)/nrow(dataX_orth))
-)
+coef(penalized.fit[[4]])
+
+elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, fix.sigma = TRUE,
+                           control = list(constrain = TRUE, iter.max = 5000))
+coef(elvm1ISTA.fit)
+elvm1ISTA.fit$opt$iterations
+
+elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, proxGrad.method = "FISTA", fix.sigma = TRUE,
+                           control = list(constrain = TRUE, iter.max = 5000))
+coef(elvm1FISTA.fit)
+elvm1FISTA.fit$opt$iterations
 
 #### check regularization path ####
-penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
-                           penalized = dataX_orth, 
-                           steps = "Park")
+# resLassoPath <- LassoPath(dataX = dataX_orth, 
+#                           dataY = df.data[,all.vars(formula.lvm)[1]], 
+#                           iter_max = 100)
 
-resLassoPath <- LassoPath(dataX = dataX_orth, 
+set.seed(10)
+n <- 500
+formula.lvm <- as.formula(paste0("y~",paste(paste0("X",1:5), collapse = "+")))
+lvm.model <- lvm(formula.lvm)
+df.dataO <- sim(lvm.model,n)
+plvm.model <- penalize(lvm.model)
+df.data <- df.dataO
+df.data <- orthoData(df.dataO, formula = formula.lvm)$data
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+p1lvm.fit$opt$message
+
+res <- orthoData(dataX = as.matrix(df.dataO[,-1]))
+
+penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
+                           penalized = df.data[,all.vars(formula.lvm)[-1]], 
+                           steps = "Park")
+unlist(lapply(penalized.fit, function(x){x@lambda1}))
+
+coef(estimate(plvm.model,  data = df.data, lambda1 = 569.4650, fix.sigma = TRUE,
+              control = list(constrain = TRUE, iter.max = 1000)))
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 433.9035, fix.sigma = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+coef(p1lvm.fit)
+
+#### incorrect when data are not orthogonalized
+
+source("C:/Users/hpl802/Documents/Projects/LVM/Code/TryNRlasso/FCT_RegularizationPath.R")
+resLassoPath <- LassoPath(dataX = df.data[,all.vars(formula.lvm)[-1]], 
                           dataY = df.data[,all.vars(formula.lvm)[1]], 
                           iter_max = 100)
+resLassoPath <- LassoPath(dataX = df.dataO[,all.vars(formula.lvm)[-1]], 
+                          dataY = df.dataO[,all.vars(formula.lvm)[1]], 
+                          iter_max = 100)
 
-# n.knot <- nrow(resLassoPath)
-# diffBeta <- unlist(lapply(penalized.fit[1:n.knot],function(x){x@lambda1})) - resLassoPath$lambda
-# diffLambda <- t(data.frame(lapply(penalized.fit[1:n.knot],function(x){c(x@unpenalized, x@penalized)}))) - resLassoPath[,-1]
+Xpen - df.data[,all.vars(formula.lvm)[-1]]
+#### 2- LVM ####
 
-df.data_orth <- data.frame(Y = df.data[,all.vars(formula.lvm)[1]],
-                           dataX_orth)
-p1lvm.fit <- estimate(plvm.model,  data = df.data_orth, lambda1 = "Park",
-                      control = list(constrain = TRUE, iter.max = 1000))
-
-
-coef(penalized.fit[[1]])
-penalized.fit[[3]]@lambda1
-penalized.fit[[3]]@nuisance$sigma2
-
-p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 =  572.5238,
-                      control = list(constrain = TRUE, iter.max = 1000, fix.sigma = TRUE))
-coef(p1lvm.fit)
+set.seed(10)
+n <- 500
+lvm.model2 <- lvm()
+regression(lvm.model2, Y1 ~ eta) <- 1
+regression(lvm.model2, Y2 ~ eta + X1 + X2) <- c(1,rep(0.3,2))
+regression(lvm.model2, Y3 ~ eta + X3 + X4 + X5) <- c(1,rep(0.5,3))
+regression(lvm.model2, eta ~ X6 + X7 + X8 + X9 + X10) <- rep(1,5)
+df.data2 <- sim(lvm.model2, 1e3)
+df.data2 <- df.data2[, names(df.data2) != "eta"]
 
 
+### correct specification
+lvm.model2bis <- lvm()
+regression(lvm.model2bis) <- Y1 ~ eta
+regression(lvm.model2bis) <- Y2 ~ eta + X1 + X2
+regression(lvm.model2bis) <- Y3 ~ eta + X3 + X4 + X5
+regression(lvm.model2bis) <- eta ~ X6 + X7 + X8 + X9 + X10
+latent(lvm.model2bis) <- ~eta
+
+lvm.fit2 <- estimate(lvm.model2bis,  data = df.data2,
+                     control = list(constrain = TRUE))
+coef(lvm.fit2)
+
+plvm.model2bis <- penalize(lvm.model2bis)
+
+elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 0,
+                          control = list(constrain = TRUE, iter.max = 5000, proxGrad.method = "ISTA", fix.sigma = FALSE))
+range(coef(lvm.fit2) - coef(elvm2ISTA.fit))
+
+### incorrect specification
+lvm.model2bis <- lvm()
+regression(lvm.model2bis) <- Y1 ~ eta
+regression(lvm.model2bis) <- Y2 ~ eta + X1 + X2 + X3 + X4 + X5
+regression(lvm.model2bis) <- Y3 ~ eta + X1 + X2 + X3 + X4 + X5
+regression(lvm.model2bis) <- eta ~ + X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9 + X10
+latent(lvm.model2bis) <- ~eta
+
+lvm.fit2 <- estimate(lvm.model2bis,  data = df.data2,
+                     control = list(constrain = TRUE))
+coef(lvm.fit2)
+
+plvm.model2bis <- penalize(lvm.model2bis)
+
+elvm2ISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "ISTA", fix.sigma = FALSE,
+                          control = list(constrain = TRUE, iter.max = 5000))
+
+coef(elvm2ISTA.fit)
+range(coef(lvm.fit2) - coef(elvm2ISTA.fit))
+
+dt.ggplot <- data.table(coef = names(coef(lvm.fit2)), 
+                        lvm = coef(lvm.fit2), plvm = coef(elvm2ISTA.fit))
+
+require(ggplot2)
+ggbase <- ggplot(  melt(dt.ggplot, id.vars = "coef", variable.name = "model"), aes(x = coef, y = value, group = model, col = model))
+ggbase + geom_point()
 
 
-#### look at sigma
-lambda.lvm <- 0.5
-p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda.lvm,
-                      control = list(constrain = TRUE, iter.max = 1000))
-p1lvm.fit
-coef(p1lvm.fit)
-lambda.penalized <- lambda.lvm*n*coef(p1lvm.fit)["y,y"]
-penalized.fit <- penalized(df.data$y,df.data[,c("X1", "X2", "X3", "X4")], 
-                 lambda1 = lambda.penalized)
-coef(p1lvm.fit) - c(penalized.fit@unpenalized, penalized.fit@penalized,penalized.fit@nuisance$sigma2)
-lambda.lvm-lambda.penalized/(n*penalized.fit@nuisance$sigma2)
+elvm2FISTA.fit <- estimate(plvm.model2bis,  data = df.data2, lambda1 = 40, proxGrad.method = "FISTA", fix.sigma = FALSE,
+                          control = list(constrain = TRUE, iter.max = 1000))
 
-#### check the whole path
-path.fit <- penalized(df.data$y, df.data[,c("X1", "X2", "X3", "X4")], 
-                      steps = "Park" )
-seq_lambda.penalized <- unlist(lapply(path.fit, function(x){x@lambda1}))
-seq_sigma.penalized <- unlist(lapply(path.fit, function(x){x@nuisance$sigma2}))
-seq_lambda.lvm <- seq_lambda.penalized / (n * seq_sigma.penalized)
+RPlvm.fit <- estimate(plvm.model2bis,  data = df.data2,  regularizationPath = TRUE, proxGrad.method = "ISTA", fix.sigma = FALSE,
+                           control = list(constrain = TRUE, iter.max = 1000, data = df.data2))
 
-iter_path <- 5
-p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = seq_lambda.lvm[iter_path], regularizationPath = TRUE,
-                      control = list(constrain = TRUE, iter.max = 1000))
-coef(p1lvm.fit)
-c(path.fit[[iter_path]]@unpenalized, path.fit[[iter_path]]@penalized, path.fit[[iter_path]]@nuisance$sigma2)
 
-#### compare penalized with lava when fixing sigma
-penalized.fit <- penalized(df.data$Y,df.data[,c("X1", "X2", "X3", "X4")], 
-                           steps = "Park")
-seq_lambda <- unlist(lapply(penalized.fit,function(x){x@lambda1}))
+p2lvm.fit <- estimate(plvm.model2bis,  data = df.data, regularizationPath = TRUE,
+                      control = list(constrain = TRUE, iter.max = 5000, data = df.data2))
+p1lvm.fit$opt$message
 
-for(iter_lambda in 1:length(seq_lambda)){
 
-  lambda.lvm <- seq_lambda[iter_lambda]/n
-  p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda.lvm, 
-                        control = list(constrain = TRUE, iter.max = 1000, fix.sigma = TRUE))
-  
-  cat("lambda = ",lambda.lvm,"\n")
-  coefPenalized <- c(penalized.fit[[iter_lambda]]@unpenalized,penalized.fit[[iter_lambda]]@penalized)[c("(Intercept)","X1","X2","X3","X4")]
-  print(cbind(coefLVM = coef(p1lvm.fit)[1:5],
-              coefP = coefPenalized,
-              diff = coef(p1lvm.fit)[1:5] - coefPenalized)
-  )
-  
-}
-
+# #### check objective
+# lvm.test <- lvm(Y ~ 1)
+# df.test <- sim(lvm.test, 1e3)
+# 
+# calcObj <- function(Y){
+#   meanY <- mean(Y)
+#   sdY <- sd(Y)
+#   n <- length(Y)
+#   
+#   ## theorical
+#   Omega <- diag(sdY^2, 1, 1)
+#   xi <- mean(Y)
+#   
+#   ## empirical
+#   Sigma <- diag(sdY^2, 1, 1)
+#   mu <- mean(Y)
+#   
+#   TT <- Sigma + tcrossprod(mu-xi)
+#   
+#   sum(dnorm(Y, mean = meanY, sd =sdY, log = TRUE))
+#   
+#   -n/2*log(2*pi) - n/2 * log(det(Omega)) - n/2 * tr(TT %*% solve(Omega))
+#   
+# }
+# calcObj(df.test$Y)
+# 
+# logLik(lm(Y ~ 1, data = df.test))
+# 
+# lvm.fitTest <- estimate(lvm.test,  data = df.test,
+#                         control = list(constrain = TRUE))
+# 
+# lvm.fitTest$opt$objective
+# 
+# 
+# lvm.simple <- lvm(Y1 ~ eta, Y2 ~ eta, Y3 ~ eta)
+# latent(lvm.simple) <- ~ eta
+# df.simple <- sim(lvm.simple,1e3)
+# 
+# fit.simple <- estimate(lvm.simple, df.simple[names(df.simple) != "eta"])
+# coef(fit.simple)

@@ -13,7 +13,8 @@
   }else{
     penaltyType <- "none"
   }
-  cat("Penalty on: ",paste(x$penalty$names.coef, collapse = " "),"\n",
+  
+  cat("Penalty on: ",paste(x$penalty$names.penaltyCoef, collapse = " "),"\n",
       "Type     : ", penaltyType, "\n")
   cat("\n")
   

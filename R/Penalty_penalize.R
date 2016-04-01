@@ -1,6 +1,6 @@
 #### 1- S3 Methods ####
 
-# ##' @export
+##' @export
 `penalize` <-
   function(x,...) UseMethod("penalize")
 
@@ -33,11 +33,10 @@
     x$penalty <- list(fn_penalty = NULL,
                       gn_penalty = NULL,
                       hn_penalty = NULL,
-                      index.meanCoef = NULL,
-                      index.varCoef = NULL,
-                      index.interceptCoef = NULL,
+                      names.meanCoef = NULL,
+                      names.varCoef = NULL,
+                      names.interceptCoef = NULL,
                       names.penaltyCoef = NULL,
-                      index.penaltyCoef = NULL,
                       lambda1 = 0, 
                       lambda2 = 0)
     class(x) <- append("plvm", class(x))
@@ -55,9 +54,13 @@
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE,
                               lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
   
-  x$penalty$index.varCoef <- grep(",", coef(x))
-  x$penalty$index.meanCoef <- setdiff(1:length(coef(x)), x$penalty$index.varCoef)
-  x$penalty$index.interceptCoef <- setdiff(x$penalty$index.meanCoef, grep("~", coef(x)))
+  index.varCoef <- grep(",", coef(x))
+  index.meanCoef <- setdiff(1:length(coef(x)), index.varCoef)
+  index.interceptCoef <- setdiff(index.meanCoef, grep("~", coef(x)))
+  
+  x$penalty$names.varCoef <- coef(x)[index.varCoef]
+  x$penalty$names.meanCoef <- coef(x)[index.meanCoef]
+  x$penalty$names.interceptCoef <- coef(x)[index.interceptCoef]
   
   ## coefficients
   if(!is.null(value)){
@@ -68,23 +71,23 @@
            "available coefficients: ",paste(coef(x)[coef(x) %in% value == FALSE], collapse = " "),"\n")
     }
     
-    x$penalty$index.penaltyCoef <- which(coef(x) %in% value)
-    x$penalty$names.penaltyCoef <- coef(x)[x$penalty$index.penaltyCoef]
+    index.penaltyCoef <- which(coef(x) %in% value)
+    x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
     
-  } else if(is.null(x$penalty$names.coef)){
+  } else if(is.null(x$penalty$names.penaltyCoef)){
   
-    x$penalty$index.penaltyCoef <- NULL
+    index.penaltyCoef <- NULL
     if(pen.intercept == TRUE){
-      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, x$penalty$index.interceptCoef)
+      index.penaltyCoef <- c(index.penaltyCoef, index.interceptCoef)
     }
     if(pen.exogenous == TRUE){
-      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, setdiff(x$penalty$index.meanCoef,x$penalty$index.interceptCoef))
+      index.penaltyCoef <- c(index.penaltyCoef, setdiff(index.meanCoef,index.interceptCoef))
     }
     if(pen.variance == TRUE){
-      x$penalty$index.penaltyCoef <- c(x$penalty$index.penaltyCoef, x$penalty$index.varCoef)
+      index.penaltyCoef <- c(index.penaltyCoef, index.varCoef)
     }
     
-    x$penalty$names.penaltyCoef <- coef(x)[x$penalty$index.penaltyCoef]
+    x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
   } 
   
   ## penalization parameters
@@ -196,7 +199,7 @@ penalized_objective.lvm <- function(x, ...){  # proportional to the log likeliho
 
 penalized_gradient.lvm <- function(x, ...){
   
-  grad.UP <- lava:::gaussian_gradient.lvm(x,...)
+  grad.UP <- gaussian_gradient.lvm(x,...)#lava:::gaussian_gradient.lvm(x,...)
   
   dots <- list(...)
   penalty <- dots$penalty
