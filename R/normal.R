@@ -7,11 +7,11 @@ rmvn <- function(n,mu=rep(0,ncol(sigma)),sigma=diag(nrow=length(mu))*.5+.5,...) 
 }
 
 ##' @export
-dmvn <- function(x,mu,sigma,log=FALSE,...) {
+dmvn <- function(x,mu,sigma,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
     if (length(sigma)==1) {
         k <- 1
         isigma <- structure(cbind(1/sigma),det=as.vector(sigma))
-        
+
     } else {
         k <- ncol(sigma)
         isigma <- Inverse(sigma)
@@ -21,11 +21,12 @@ dmvn <- function(x,mu,sigma,log=FALSE,...) {
             x <- x-mu
         } else {
             x <- t(t(x)-mu)
-        }        
+        }
     }
     logval <- -0.5*(base::log(2*base::pi)*k+
                     base::log(attributes(isigma)$det)+
                     rowSums((x%*%isigma)*x))
+    if (nan.zero) logval[is.nan(logval)] <- -Inf
     if (log) return(logval)
     return(exp(logval))
 }
