@@ -1,3 +1,42 @@
+colsel <- function(locate,...) {
+    ytop    <- rep(seq(1/26,1,by=1/26),each=26)[1:657]
+    ybottom <- rep(seq(0,1-1/26,by=1/26),each=26)[1:657]
+    xleft   <- rep(seq(0,1-1/26,by=1/26),times=26)[1:657]
+    xright  <- rep(seq(1/26,1,by=1/26),times=26)[1:657]
+    pall    <- round(col2rgb(colors())/256)
+    pall    <- colSums(pall) ; pall2 <- character(0)
+    pall2[pall>0]   <- "black"
+    pall2[pall==0]  <- "white"
+    
+    par(mar=c(0,0,1,0))
+    
+    plot.new()
+    title(main="Palette of colors()")
+    rect(xleft,ybottom,xright,ytop,col=colors())
+    text(x=xleft+((1/26)/2)
+        ,y=ytop-((1/26)/2)
+        ,labels = 1:657
+             ,cex=0.55
+        ,col=pall2)
+    
+    
+    colmat    <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
+    cols        <- NA
+    i        <- NA
+    for(i in seq_len(locate))
+    {
+        h    <- locator(1)
+        if(any(h$x<0,h$y<0,h$x>1,h$y>1)) stop("locator out of bounds!")
+        else {
+            cc        <- floor(h$x/(1/26))+1
+            rr        <- floor(h$y/(1/26))+1
+            cols[i]    <- colors()[colmat[rr,cc]]
+        }
+    }
+    return(cols)
+}
+
+
 ##' Extension of the \code{identify} function
 ##'
 ##' For the usual 'X11' device the identification process is
