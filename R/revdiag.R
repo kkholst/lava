@@ -3,12 +3,13 @@
 ##' @aliases revdiag revdiag<- offdiag offdiag<-
 ##' @usage
 ##' revdiag(x,...)
-##' offdiag(x,...)
+##' offdiag(x,type=0,...)
 ##'
 ##' revdiag(x,...) <- value
-##' offdiag(x,...) <- value
+##' offdiag(x,type=0,...) <- value
 ##' @param x vector
 ##' @param value For the assignment function the values to put in the diagonal
+##' @param type 0: upper and lower triangular, 1: upper triangular, 2: lower triangular, 3: upper triangular + diagonal, 4: lower triangular + diagonal
 ##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
@@ -31,26 +32,40 @@ revdiag <- function(x,...) {
 
 
 ##' @export
-offdiag <- function(x,...) {
-    if (NCOL(x)==1) return(NULL)
-    ii <- c(which(lower.tri(x,diag=FALSE)),which(upper.tri(x,diag=FALSE)))
+offdiag <- function(x,type=0,...) {
+    ##if (NCOL(x)==1) return(NULL)
+    if (type%in%c(1,3)) {
+        ii <- which(upper.tri(x,diag=(type==3)))
+    } else if (type%in%c(2,4)) {
+        ii <- which(lower.tri(x,diag=(type==4)))
+    } else {
+        ii <- c(which(lower.tri(x,diag=FALSE)),which(upper.tri(x,diag=FALSE)))
+    }
     res <- x[ii]
     class(res) <- c("offdiag",class(res))
-    res
+    attributes(res) <-
+        c(attributes(res),list(type=type,dimension=dim(x),index=ii))
+    return(res)
   }
 
 ##' @export
-"offdiag<-" <- function(x,...,value) {
-    ii <- c(which(lower.tri(x,diag=FALSE)),which(upper.tri(x,diag=FALSE)))   
+"offdiag<-" <- function(x,type=0,...,value) {
+    if (type%in%c(1,3)) {
+        ii <- which(upper.tri(x,diag=(type==3)))
+    } else if (type%in%c(2,4)) {
+        ii <- which(lower.tri(x,diag=(type==4)))
+    } else {
+        ii <- c(which(lower.tri(x,diag=FALSE)),which(upper.tri(x,diag=FALSE)))
+    }
     x[ii] <- value
     return(x)
 }
 
 ##' @export
 print.offdiag <- function(x,...) {
-    n <- (1+sqrt(1+4*length(x)))/2
-    M <- matrix(NA,n,n)
-    M[lower.tri(M)] <- x[seq(length(x)/2)]
-    M[upper.tri(M)] <- x[seq(length(x)/2)+length(x)/2]
+    type <- attr(x,"type")
+    nn <- attr(x,"dimension")
+    M <- matrix(NA,nn[1],nn[2])
+    M[attr(x,"index")] <- x
     print(M,na.print="")
 }
