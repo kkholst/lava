@@ -12,8 +12,9 @@ print.fix <- function(x,exo=FALSE,...) {
 
 linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
   idx <- seq_len(attributes(x)$nvar)
+  idx0 <- setdiff(idx,attributes(x)$exo.idx)
   if (!exo & attributes(x)$type!="reg")
-    idx <- setdiff(idx,attributes(x)$exo.idx)
+    idx <- idx0
   if (attributes(x)$type=="mean") {
     M <- rbind(unlist(x[idx]))
     rownames(M) <- ""
@@ -24,6 +25,8 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
     M[M==1] <- "*"
     M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
     M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
+    if (attributes(x)$type=="reg")
+        M <- t(M[,idx0,drop=FALSE])
   }
   if (print) {
     M0 <- M

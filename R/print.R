@@ -15,13 +15,14 @@ function(x, ...) {
     if (k==0)
       return()
     ff <- formula(x,char=TRUE,all=TRUE)
-    R <- c()
+    R <- Rx <- c()
+    exo <- exogenous(x)
     for (f in ff) {
       oneline <- as.character(f);
       y <- strsplit(f,"~")[[1]][1]
       y <- trim(y)
       {
-        col1 <- as.character(oneline)
+        col1 <- as.character(oneline)          
         D <- attributes(distribution(x)[[y]])$family
         col2 <- x$attributes$type[y]
         if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
@@ -30,15 +31,25 @@ function(x, ...) {
         }
         if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
         if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
-
+        if (is.vector(distribution(x)[[y]][[1]])) col2 <- "fixed"
         if (L[y]) col2 <- paste0(col2,", latent")
-        R <- rbind(R,c(col1,col2))
+        if (y%in%exo) {
+            Rx <- rbind(Rx,c(col1,col2))
+        } else {
+            R <- rbind(R,c(col1,col2))
+        }
       }
     }
     if (length(R)>0) {
         rownames(R) <- paste(" ",R[,1]," "); colnames(R) <- rep("",ncol(R))
         print(R[,2,drop=FALSE],quote=FALSE,...)
     }
+    if (length(Rx)>0) {
+        cat("\nExogenous variables:")
+        rownames(Rx) <- paste(" ",Rx[,1]," "); colnames(Rx) <- rep("",ncol(Rx))
+        print(Rx[,2,drop=FALSE],quote=FALSE,...)
+    }
+    
 
 ##      oneline <- as.character(f);
 ##      cat(as.character(oneline),"\n")
