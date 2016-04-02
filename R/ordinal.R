@@ -70,6 +70,27 @@ print.ordinal.lvm <- function(x,...) {
         else
             return(NULL)
     }
+    if (K[1]==0L || is.null(K[1]) || (is.logical(K) & !K[1])) {
+        x$attributes$type[var] <- setdiff(x$attributes$type,var)
+        pp <- unlist(x$attributes$ordinalparname[var])
+        parameter(x,remove=TRUE) <- pp
+        x$attributes$ordinalparname[var] <- NULL        
+        x$attributes$ordinal[var] <- NULL
+        ##x$attributes$labels[var] <- NULL
+        x$attributes$type <- x$attributes$type[setdiff(names(x$attributes$type),var)]
+        x$attributes$liability <- x$attributes$liability[setdiff(names(x$attributes$liability),var)]
+        x$attributes$nordinal <- x$attributes$nordinal[setdiff(names(x$attributes$nordinal),var)]
+        x$attributes$normal <- x$attributes$normal[setdiff(names(x$attributes$normal),var)]
+        x$constrainY[var] <- NULL
+        exo <- intersect(var,exogenous(x,TRUE))
+        if (length(exo)>0) {
+            intercept(x,var) <- NA
+            covariance(x,var) <- NA
+            exogenous(x) <- union(exogenous(x),exo)
+        }
+        return(x)
+    }
+    
     if (!missing(p)) breaks <- qnorm(cumsum(p))
     if (!is.null(breaks)) {
         breaks <- ordreg_ithreshold(breaks)

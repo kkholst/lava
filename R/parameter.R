@@ -9,8 +9,16 @@
 
 
 ##' @export
-"parameter<-.lvm" <- function(x,constrain,start,...,value) {
+"parameter<-.lvm" <- function(x,constrain,start,remove=FALSE,...,value) {
   if (inherits(value,"formula")) value <- all.vars(value)
+  if (remove) {
+      x$expar[value] <- NULL
+      x$exfix[value] <- NULL
+      x$attributes$parameter[value] <- NULL
+      index(x) <- reindex(x)
+      return(x)
+      
+  }
   if (!missing(start)) {
       if (length(start) != length(value)) stop("'start' and 'value' should be of the same lengths")
       start <- as.list(start)
