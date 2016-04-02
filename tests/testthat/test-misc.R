@@ -76,6 +76,27 @@ test_that("wrapvev", {
     expect_equivalent(wrapvec(seq(1:5),-1),c(5,1,2,3,4))
 })
 
+
+test_that("matrix functions", {
+    A <- revdiag(1:3)
+    expect_equivalent(A,matrix(c(0,0,1,0,2,0,3,0,0),3))
+    expect_equivalent(1:3,revdiag(A))
+    revdiag(A) <- 4
+    expect_equivalent(rep(4,3),revdiag(A))
+    diag(A) <- 0
+    offdiag(A) <- 5
+    expect_true(sum(offdiag(A))==6*5)
+
+    
+    A <- matrix(0,3,3)
+    offdiag(A,type=3) <- 1:6
+    B <- crossprod(A)
+    
+    expect_equivalent(solve(A),Inverse(A))
+    expect_equivalent(det(B),attr(Inverse(B,chol=TRUE),"det"))
+})
+
+
 test_that("All the rest", {
     expect_false(lava:::versioncheck(NULL))
     expect_true(lava:::versioncheck("lava",c(1,4,1)))

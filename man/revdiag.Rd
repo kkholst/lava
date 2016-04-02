@@ -8,15 +8,17 @@
 \title{Create/extract 'reverse'-diagonal matrix or off-diagonal elements}
 \usage{
 revdiag(x,...)
-offdiag(x,...)
+offdiag(x,type=0,...)
 
 revdiag(x,...) <- value
-offdiag(x,...) <- value
+offdiag(x,type=0,...) <- value
 }
 \arguments{
 \item{x}{vector}
 
 \item{value}{For the assignment function the values to put in the diagonal}
+
+\item{type}{0: upper and lower triangular, 1: upper triangular, 2: lower triangular, 3: upper triangular + diagonal, 4: lower triangular + diagonal}
 
 \item{\dots}{additional arguments to lower level functions}
 }

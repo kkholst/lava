@@ -6,7 +6,7 @@
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
-  messages = 1L, mc.cores, blocksize = 2L * mc.cores, type = 1, ...)
+  messages = 1L, mc.cores, blocksize = 2L * mc.cores, cl, type = 1L, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
@@ -22,6 +22,8 @@
 \item{mc.cores}{Number of cores to use}
 
 \item{blocksize}{Split computations in blocks}
+
+\item{cl}{(optional) cluster to use for parallelization}
 
 \item{type}{type=0 is an alias for messages=1,mc.cores=1,blocksize=R}
 

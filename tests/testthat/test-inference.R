@@ -80,6 +80,32 @@ test_that("Association measures", {
 })
 
 
+test_that("equivalence", {
+    m <- lvm(c(y1,y2,y3)~u,u~x,y1~x)
+    latent(m) <- ~u
+    d <- sim(m,100)
+    cancel(m) <- y1~x
+    regression(m) <- y2~x
+    e <- estimate(m,d)
+    ##eq <- equivalence(e,y1~x,k=1)
+    eq <- equivalence(e,y2~x,k=1)
+    print(eq)
+    expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))
+})
+
+test_that("multiple testing", {
+    expect_equivalent(lava:::holm(c(0.05/3,0.025,0.05)),rep(0.05,3))
+    
+    ci1 <- scheffe(l <- lm(1:5~c(0.5,0.7,1,1.3,1.5)))
+    ci2 <- predict(l,interval="confidence")
+    expect_equivalent(ci1[,1],ci2[,1])
+    expect_true(all(ci1[,2]<ci2[,2]))
+    expect_true(all(ci1[,3]>ci2[,3]))
+
+    
+})
+
+
 test_that("modelsearch", {
     m <- lvm(c(y1,y2)~x)
     d <- sim(m,100)
@@ -140,10 +166,6 @@ test_that("Combine", { ## Combine model output
     expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
 })
 
-
-test_that("estimate.default", {
-    
-})
 
 
 test_that("zero-inflated binomial regression (zib)", {

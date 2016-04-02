@@ -4,8 +4,8 @@
 \alias{pdfconvert}
 \title{Convert pdf to raster format}
 \usage{
-pdfconvert(files, dpi = 300, resolution = 1024, gsopt, format = "png",
-  ...)
+pdfconvert(files, dpi = 300, resolution = 1024, gs, gsopt, resize,
+  format = "png", ...)
 }
 \arguments{
 \item{files}{Vector of (pdf-)filenames to process}
@@ -14,7 +14,11 @@ pdfconvert(files, dpi = 300, resolution = 1024, gsopt, format = "png",
 
 \item{resolution}{Resolution of raster image file}
 
-\item{gsopt}{Optional ghostscript arguments}
+\item{gs}{Optional ghostscript command}
+
+\item{gsopt}{Optional ghostscript options}
+
+\item{resize}{Optional resize command}
 
 \item{format}{Raster format (e.g. png, jpg, tif, ...)}
 
