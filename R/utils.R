@@ -324,26 +324,32 @@ function(M, upper=TRUE) {
 ###{{{ Inverse/pseudo
 
 ##' @export
-Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=TRUE) {
-  n <- nrow(X)
-  if (nrow(X)==1) {
-    res <- 1/X
-    if (det) attributes(res)$det <- X
+Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE) {
+    n <- nrow(X)
+    if (n==1L) {
+        res <- 1/X
+        if (det) attributes(res)$det <- X
+        if (chol) attributes(res)$chol <- X
+        return(res)
+    }
+    if (chol) {
+        L <- chol(X)
+        res <- chol2inv(L)
+        if (det) attributes(res)$det <- prod(diag(L)^2)
+        if (chol) attributes(res)$chol <- X        
+    } else {
+        svdX <- svd(X)
+        id0 <- numeric(n)
+        idx <- which(svdX$d>tol)
+        id0[idx] <- 1/svdX$d[idx]
+        res <- with(svdX, v%*%diag(id0,nrow=length(id0))%*%t(u))
+        if (det)
+            attributes(res)$det <- prod(svdX$d[svdX$d>tol])
+        attributes(res)$pseudo <- (length(idx)<n)
+        attributes(res)$minSV <- min(svdX$d)
+    }
+    if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
     return(res)
-  }
-  svdX <- svd(X)
-  id0 <- numeric(n)
-  idx <- which(svdX$d>tol)
-  id0[idx] <- 1/svdX$d[idx]
-  res <- with(svdX, v%*%diag(id0,nrow=length(id0))%*%t(u))
-  if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
-  if (det)
-      attributes(res)$det <- prod(svdX$d[svdX$d>tol])
-  attributes(res)$pseudo <- (length(idx)<n)
-  attributes(res)$minSV <- min(svdX$d)
-  ##ee <- eigen(X)
-  ##attributes(res)$lambda <- ee$values
-  return(res)
 }
 
 ###}}}
