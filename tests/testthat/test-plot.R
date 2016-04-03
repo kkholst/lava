@@ -37,21 +37,6 @@ if (requireNamespace("visualTest") && requireNamespace("png")) {
     }
 
     
-    d1 <- gropen()    
-    plot(1,xlim=c(-2,2),ylim=c(-2,2))
-    points(0.5,0.5)
-    points(1,1)
-    dev.off()
-
-    d2 <- gropen()
-    plot(1,xlim=c(-2,2),ylim=c(-2,2))
-    points(1,1)
-    points(0.5,0.5)
-    dev.off()
-
-    grcompare(d1,d2)
-
-    
     test_that("plotConf", {
         set.seed(1)
         x <- rnorm(50)
@@ -99,11 +84,34 @@ if (requireNamespace("visualTest") && requireNamespace("png")) {
         dev.off()
 
         expect_true(grcompare(d1,d2,threshold=10))
-        
-        ##forestplot(coef(l0),confint(l0)[,1],confint(l0)[,2],axes=FALSE)
-        
+                
   })
 
+
+    test_that("forestplot", {
+        set.seed(1)
+        K <- 20
+        est <- rnorm(K); est[c(3:4,10:12)] <- NA        
+        se <- runif(K,0.2,0.4)        
+        x <- cbind(est,est-2*se,est+2*se,runif(K,0.5,2))        
+        rownames(x) <- unlist(lapply(letters[seq(K)],function(x) paste(rep(x,4),collapse="")))
+        rownames(x)[which(is.na(est))] <- ""
+        signif <- sign(x[,2])==sign(x[,3])        
+        forestplot(x)
+        ## TODO
+    })
+
+    test_that("plot.sim", {
+        onerun2 <- function(a,b,...) {
+            return(cbind(a=a,b=b,c=a-1,d=a+1))
+        }
+        R <- data.frame(a=1:2,b=3:4)
+        val2 <- sim(onerun2,R=R,type=0)
+        plot(val2)
+        plot(val2,plot.type="single")
+        density(val2)
+        ## TODO
+    })
 
     
 }

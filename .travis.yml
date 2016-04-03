@@ -27,6 +27,11 @@ r_binary_packages:
  - geepack
  - testthat
  - png
+ - MatrixModels
+ - SparseM
+ - lazyeval
+ - quantreg
+ - zoo
 
 r_github_packages:
  - jimhester/covr

@@ -34,3 +34,4 @@ test
 *.dvi
 _region*
 symbols.rds
+Rplots.pdf

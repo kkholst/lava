@@ -88,8 +88,8 @@ test_that("equivalence", {
     regression(m) <- y2~x
     e <- estimate(m,d)
     ##eq <- equivalence(e,y1~x,k=1)
-    eq <- equivalence(e,y2~x,k=1)
-    print(eq)
+    suppressMessages(eq <- equivalence(e,y2~x,k=1))
+    expect_output(print(eq),"y1,y2")
     expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))
 })
 
@@ -101,8 +101,6 @@ test_that("multiple testing", {
     expect_equivalent(ci1[,1],ci2[,1])
     expect_true(all(ci1[,2]<ci2[,2]))
     expect_true(all(ci1[,3]>ci2[,3]))
-
-    
 })
 
 
@@ -131,8 +129,8 @@ test_that("Bootstrap", {
     y <- rep(c(0,1),each=5)
     x <- 1:10
     e <- estimate(y~x)
-    B1 <- bootstrap(e,R=2,silent=TRUE)
-    B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE)
+    B1 <- bootstrap(e,R=2,silent=TRUE,mc.cores=1)
+    B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE,mc.cores=1)
     expect_false(B1$bollenstine)
     expect_true(B2$bollenstine)
     expect_true(nrow(B1$coef)==2)
@@ -202,7 +200,7 @@ test_that("zero-inflated binomial regression (zib)", {
 
 test_that("Optimization", {
     m <- lvm(y~x+z)
-    d <- simulate(m,10,seed=1)
+    d <- simulate(m,20,seed=1)
     e1 <- estimate(m,d,control=list(method="nlminb0"))
     e2 <- estimate(m,d,control=list(method="NR"))
     expect_equivalent(round(coef(e1),3),round(coef(e2),3))
@@ -260,3 +258,49 @@ test_that("Prediction, random intercept", {
     expect_true(mse(u01,u02)<1e-9)    
 })
 
+
+
+test_that("Random slope model", {
+
+    set.seed(1)
+    m <- lvm()
+    regression(m) <- y1 ~ 1*u+1*s
+    regression(m) <- y2 ~ 1*u+2*s
+    regression(m) <- y3 ~ 1*u+3*s
+    latent(m) <- ~u+s
+    d <- sim(m,20)
+
+    dd <- mets::fast.reshape(d)
+    library(lme4)
+    l <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
+    sl <- lava:::varcomp(l,profile=FALSE)
+
+    d0 <- mets::fast.reshape(dd,id="id")
+    m0 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
+    addvar(m0) <- ~num1+num2+num3
+    covariance(m0) <- u~s
+    latent(m0) <- ~s+u
+    regression(m0) <- y1 ~ num1*s
+    regression(m0) <- y2 ~ num2*s
+    regression(m0) <- y3 ~ num3*s
+    system.time(e0 <- estimate(m0,d0,param="none",control=list(trace=0)))
+    system.time(e1 <- estimate(m1,d0,param="none"))
+    
+    expect_true(mean(sl$coef-coef(e0)[c("u","s")])^2<1e-5)
+    expect_true((logLik(l)-logLik(e0))^2<1e-5)    
+    expect_true(mean(diag(sl$varcomp)-coef(e0)[c("u,u","s,s")])^2<1e-5)
+
+    m1 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
+    addvar(m1) <- ~num1+num2+num3
+    covariance(m1) <- u~s
+    latent(m1) <- ~s+u
+    regression(m1) <- y1 ~ b1*s
+    regression(m1) <- y2 ~ b2*s
+    regression(m1) <- y3 ~ b3*s
+    constrain(m1,b1~num1) <- function(x) x
+    constrain(m1,b2~num2) <- function(x) x
+    constrain(m1,b3~num3) <- function(x) x
+    system.time(e1 <- estimate(m1,d0,param="none",p=coef(e0)))
+    expect_true((logLik(e1)-logLik(e0))^2<1e-5)    
+    
+})
