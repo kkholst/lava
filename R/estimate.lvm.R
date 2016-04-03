@@ -1,4 +1,3 @@
-
 ###{{{ estimate.lvm
 
 ##' Estimation of parameters in a Latent Variable Model (lvm)
@@ -130,6 +129,7 @@
              method,
              param,
              cluster,
+             p,
              ...) {
 
         if (length(exogenous(x)>0)) {
@@ -182,10 +182,11 @@
         }
 
         if (!lava.options()$exogenous) exogenous(x) <- NULL
-        ## Random-slopes:
+        
         redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
         if (length(redvar)>0)
             warning(paste("Latent variable exists in dataset",redvar))
+        ## Random-slopes:
         xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
         if (base::missing(fix)) {
             fix <- ifelse(length(xfix)>0,FALSE,TRUE)
@@ -312,32 +313,37 @@
 
         nparall <- index(x)$npar + ifelse(optim$meanstructure, index(x)$npar.mean+index(x)$npar.ex,0)
         ## Get starting values
-        myparnames <- coef(x,mean=TRUE)
-        paragree <- FALSE
-        paragree.2 <- c()
-        if (!is.null(optim$start)) {
-            paragree <- myparnames%in%names(optim$start)
-            paragree.2 <- names(optim$start)%in%myparnames
-        }
-        if (sum(paragree)>=length(myparnames))
-            optim$start <- optim$start[which(paragree.2)]
-
-        if (! (length(optim$start)==length(myparnames) & sum(paragree)==0))
-            if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
-                if (is.null(optim$starterfun) && lava.options()$param!="relative")
-                    optim$starterfun <- startvalues0
-                start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
-                if (!is.null(x$expar) && length(start)<nparall) {
-                    ii <- which(index(x)$e1==1)
-                    start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
-
-                }
-                ## Debug(list("start=",start))
-                if (length(paragree.2)>0) {
-                    start[which(paragree)] <- optim$start[which(paragree.2)]
-                }
-                optim$start <- start
+        if (!missing(p)) {
+            start <- p
+            optim$start <- p
+        } else {
+            myparnames <- coef(x,mean=TRUE)
+            paragree <- FALSE
+            paragree.2 <- c()
+            if (!is.null(optim$start)) {
+                paragree <- myparnames%in%names(optim$start)
+                paragree.2 <- names(optim$start)%in%myparnames
             }
+            if (sum(paragree)>=length(myparnames))
+                optim$start <- optim$start[which(paragree.2)]
+            
+            if (! (length(optim$start)==length(myparnames) & sum(paragree)==0))
+                if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
+                    if (is.null(optim$starterfun) && lava.options()$param!="relative")
+                        optim$starterfun <- startvalues0
+                    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
+                    if (!is.null(x$expar) && length(start)<nparall) {
+                        ii <- which(index(x)$e1==1)
+                        start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))                        
+                    }
+                    ## Debug(list("start=",start))
+                    if (length(paragree.2)>0) {
+                        start[which(paragree)] <- optim$start[which(paragree.2)]
+                    }
+                    optim$start <- start
+                }
+        }
+       
         coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
         names(optim$start) <- coefname
 
@@ -355,7 +361,7 @@
             constrainM <- names(constr)%in%unlist(x$mean)
             for (i in seq_len(length(constr))) {
                 if (!constrainM[i]) {
-                    if (xconstrain%in%constr[[i]]) {
+                    if (constr[[i]]%in%xconstrain) {
                         xconstrainM <- FALSE
                         break;
                     }
@@ -420,17 +426,15 @@
                 x0 <- updatelvm(x0,zeroones=TRUE,deriv=TRUE)
                 x <- x0
                 yvars <- endogenous(x0)
-
                 ## Alter start-values/constraints:
-                new.par.idx <- coef(mymodel,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE)
-                if (length(optim$start)>sum(new.par.idx))
+                new.par.idx <- which(coef(mymodel,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE))
+                if (length(optim$start)>length(new.par.idx))
                     optim$start <- optim$start[new.par.idx]
                 lower <- lower[new.par.idx]
                 if (optim$constrain) {
-                    constrained <- constrained[new.par.idx]
+                    constrained <- match(constrained,new.par.idx)
                 }
             }
-
             mydata <- as.matrix(data[,manifest(x0)])
 
             myObj <- function(pp) {
@@ -637,27 +641,36 @@
         ## Optimize with lower constraints on the variance-parameters
         if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
 
-        if (!is.null(optim$method)) {
-            opt <- do.call(optim$method,
-                           list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
-            if (is.null(opt$estimate))
-                opt$estimate <- opt$par
-            if (optim$constrain) {
-                opt$estimate[constrained] <- exp(opt$estimate[constrained])
-            }
-            
-            if (XconstrStdOpt & !is.null(myGrad))
-                opt$gradient <- as.vector(myGrad(opt$par))
-            else {
-                opt$gradient <- numDeriv::grad(myObj,opt$par)
-            }
+        if (!missing(p)) {
+            opt <- list(estimate=p)
+            ## if (!is.null(myGrad))
+            ##     opt <- c(opt,list(gradient=myGrad(p)))
+            ## if (!is.null(myObj))
+            ##     opt <- c(opt,list(objective=myObj(p)))
+
         } else {
-            if (!NoOptim) {
-                opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
-                opt$gradient <- rep(0,length(opt$estimate))
+            if (!is.null(optim$method)) {
+                opt <- do.call(optim$method,
+                               list(start=optim$start, objective=myObj, gradient=myGrad, hessian=myHess, lower=lower, control=optim, debug=debug))
+                if (is.null(opt$estimate))
+                    opt$estimate <- opt$par
+                if (optim$constrain) {
+                opt$estimate[constrained] <- exp(opt$estimate[constrained])
+                }
+            
+                if (XconstrStdOpt & !is.null(myGrad))
+                    opt$gradient <- as.vector(myGrad(opt$par))
+                else {
+                    opt$gradient <- numDeriv::grad(myObj,opt$par)
+                }
             } else {
-                opt <- list(estimate=optim$start,
-                            gradient=rep(0,length(optim$start)))                
+                if (!NoOptim) {
+                    opt <- do.call(ObjectiveFun, list(x=x,data=data,control=control,...))
+                    opt$gradient <- rep(0,length(opt$estimate))
+                } else {
+                    opt <- list(estimate=optim$start,
+                                gradient=rep(0,length(optim$start)))                
+                }
             }
         }
         if (!is.null(opt$convergence)) {
@@ -667,7 +680,6 @@
             return(opt$estimate)
         }
         ## Calculate std.err:
-
         pp <- rep(NA,length(coefname)); names(pp) <- coefname
         if (!is.null(names(opt$estimate))) {
             pp[names(opt$estimate)] <- opt$estimate
@@ -677,7 +689,7 @@
             pp.idx <- seq(length(pp))
         }
 
-        mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL)
+        suppressWarnings(mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL))
         if (NoOptim) {
             asVar <- matrix(NA,ncol=length(pp),nrow=length(pp))
         } else {        
