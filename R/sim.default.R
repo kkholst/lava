@@ -7,6 +7,7 @@
 ##' @param colnames Optional column names
 ##' @param messages Messages
 ##' @param mc.cores Number of cores to use
+##' @param cl (optional) cluster to use for parallelization
 ##' @param blocksize Split computations in blocks
 ##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
 ##' @param ... Additional arguments to (mc)mapply
@@ -44,20 +45,32 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,type=1,...) {
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
     if (missing(mc.cores)) {
         if (.Platform$OS.type=="windows") {
-            mc.cores <- 1
+            mc.cores <- 1L
         } else {
             mc.cores <- getOption("mc.cores",parallel::detectCores())
         }
     }
-    if (type==0) {
-        mc.cores <- 1
-        block.size <- R
+    if (type==0L) {
+        mc.cores <- 1L
+        if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
+            blocksize <- NROW(R)
+        } else {
+            blocksize <- R
+        }
         messages <- 0
     }
-    if (mc.cores>1) requireNamespace("parallel",quietly=TRUE)
+    if (is.null(seed))
+        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+    if (mc.cores>1 || !missing(cl)) requireNamespace("parallel",quietly=TRUE)
+    newcl <- FALSE
+    if (!missing(cl) && is.logical(cl) && cl) {
+        cl <- parallel::makeForkCluster(mc.cores)
+        if (!is.null(seed)) clusterSetRNGStream(cl,seed)
+        newcl <- TRUE
+    }
     olddata <- NULL
     dots <- list(...)
     mycall <- match.call(expand.dots=FALSE)
@@ -81,6 +94,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     res <- val <- NULL
     on.exit({
         if (messages>0) close(pb)
+        if (newcl) parallel::stopCluster(cl)
         if (is.null(colnames) && !is.null(val)) {
             if (is.matrix(val[[1]])) {
                 colnames <- base::colnames(val[[1]])
@@ -114,19 +128,29 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     if (messages>0) pb <- txtProgressBar(style=3,width=40)
     for (ii in idx) {
         count <- count+1
-        ##val <- do.call(parallel::mclapply,c(list(X=ii,FUN=x,mc.cores=mc.cores),dots))
-        pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
+        if (!missing(cl)) {
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=x,SIMPLIFY=FALSE))
+        } else {
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
+        }
         if (mc.cores>1) {
-            val <- do.call(parallel::mcmapply,pp)
+            if (!missing(cl)) {
+                val <- do.call(parallel::clusterMap,pp)
+            } else {
+                val <- do.call(parallel::mcmapply,pp)
+            }
         } else {
             val <- do.call(mapply,pp)
         }
-        if (messages>0) ##getTxtProgressBar(pb)<(i/R)) {
+        if (messages>0) 
             setTxtProgressBar(pb, count/length(idx))
         if (is.null(res)) {
+            ##res <- array(NA,dim=c(R,dim(val[[1]])),dimnames=c(list(NULL),dimnames(val[[1]]),NULL))
             res <- matrix(NA,ncol=length(val[[1]]),nrow=R)
         }
         res[ii,] <- Reduce(rbind,val)
+        ##rr <- abind::abind(val,along=length(dim(res)))
+        ##res[ii,] <- abind(val,along=length(dim(res)))
         idx.done <- max(ii)
     }
 }
