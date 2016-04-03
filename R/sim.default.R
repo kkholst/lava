@@ -63,8 +63,16 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         }
         messages <- 0
     }
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        runif(1)
     if (is.null(seed))
         RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+    else {
+        R.seed <- get(".Random.seed", envir = .GlobalEnv)
+        set.seed(seed)
+        RNGstate <- structure(seed, kind = as.list(RNGkind()))
+        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+    }
     if (mc.cores>1 || !missing(cl)) requireNamespace("parallel",quietly=TRUE)
     newcl <- FALSE
     if (!missing(cl) && is.logical(cl) && cl) {
