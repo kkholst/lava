@@ -46,10 +46,12 @@ varcomp <- function(x,profile=TRUE,...) {
     pr <- NULL
     if (profile) pr <- confint(x)
     colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
+    vc <- VarCorr(x)
     res <- structure(list(coef=lme4::fixef(x), vcov=as.matrix(vcov(x)),
                           coefmat=cc,
                           confint=pr,
-                          varcomp=as.numeric(lme4::VarCorr(x)),residual=attributes(lme4::VarCorr(x))$sc^2
+                          varcomp=vc[[1]][,],
+                          residual=attributes(vc)$sc^2
                           ),
                      class="estimate.lmer")
     res

@@ -12,7 +12,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     constrainM <- names(constr)%in%unlist(object$mean)
     for (i in seq_len(length(constr))) {
       if (!constrainM[i]) {
-        if (xconstrain%in%constr[[i]]) xconstrainM <- FALSE
+        if (constr[[i]]%in%xconstrain) xconstrainM <- FALSE
       }
     }
   }
@@ -24,6 +24,8 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
   }
   lname <- paste0(model,"_logLik.lvm")
   logLikFun <- get(lname)
+
+
   if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ##### Random slopes!
     x0 <- object
     if (length(xfix)>0) {
