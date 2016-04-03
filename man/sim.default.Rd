@@ -28,6 +28,8 @@
 
 \item{type}{type=0 is an alias for messages=1,mc.cores=1,blocksize=R}
 
+\item{seed}{(optional) Seed (needed with cl=TRUE)}
+
 \item{...}{Additional arguments to (mc)mapply}
 }
 \description{

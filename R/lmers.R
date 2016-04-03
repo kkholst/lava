@@ -46,7 +46,7 @@ varcomp <- function(x,profile=TRUE,...) {
     pr <- NULL
     if (profile) pr <- confint(x)
     colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
-    vc <- VarCorr(x)
+    vc <- lme4::VarCorr(x)
     res <- structure(list(coef=lme4::fixef(x), vcov=as.matrix(vcov(x)),
                           coefmat=cc,
                           confint=pr,

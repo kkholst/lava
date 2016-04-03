@@ -57,6 +57,8 @@ additional information such as standard errors are skipped}
 
 \item{cluster}{Obsolete. Alias for 'id'.}
 
+\item{p}{Evaluate model in parameter 'p' (no optimization)}
+
 \item{...}{Additional arguments to be passed to the low level functions}
 }
 \value{

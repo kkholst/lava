@@ -67,6 +67,7 @@
 ##' @param method Optimization method
 ##' @param param set parametrization (see \code{help(lava.options)})
 ##' @param cluster Obsolete. Alias for 'id'.
+##' @param p Evaluate model in parameter 'p' (no optimization)
 ##' @param ... Additional arguments to be passed to the low level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
@@ -145,7 +146,7 @@
         if (!base::missing(method)) {
             control["method"] <- list(method)
         }
-        
+
         optim <- list(
             iter.max=lava.options()$iter.max,
             trace=ifelse(lava.options()$debug,3,0),
@@ -182,7 +183,7 @@
         }
 
         if (!lava.options()$exogenous) exogenous(x) <- NULL
-        
+
         redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
         if (length(redvar)>0)
             warning(paste("Latent variable exists in dataset",redvar))
@@ -326,7 +327,7 @@
             }
             if (sum(paragree)>=length(myparnames))
                 optim$start <- optim$start[which(paragree.2)]
-            
+
             if (! (length(optim$start)==length(myparnames) & sum(paragree)==0))
                 if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
                     if (is.null(optim$starterfun) && lava.options()$param!="relative")
@@ -334,7 +335,7 @@
                     start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
                     if (!is.null(x$expar) && length(start)<nparall) {
                         ii <- which(index(x)$e1==1)
-                        start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))                        
+                        start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
                     }
                     ## Debug(list("start=",start))
                     if (length(paragree.2)>0) {
@@ -343,7 +344,7 @@
                     optim$start <- start
                 }
         }
-       
+
         coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
         names(optim$start) <- coefname
 
@@ -657,7 +658,7 @@
                 if (optim$constrain) {
                 opt$estimate[constrained] <- exp(opt$estimate[constrained])
                 }
-            
+
                 if (XconstrStdOpt & !is.null(myGrad))
                     opt$gradient <- as.vector(myGrad(opt$par))
                 else {
@@ -669,7 +670,7 @@
                     opt$gradient <- rep(0,length(opt$estimate))
                 } else {
                     opt <- list(estimate=optim$start,
-                                gradient=rep(0,length(optim$start)))                
+                                gradient=rep(0,length(optim$start)))
                 }
             }
         }
@@ -692,11 +693,11 @@
         suppressWarnings(mom <- tryCatch(modelVar(x, pp, data=data),error=function(x)NULL))
         if (NoOptim) {
             asVar <- matrix(NA,ncol=length(pp),nrow=length(pp))
-        } else {        
+        } else {
 
             if (!silent) message("\nCalculating asymptotic variance...\n")
             asVarFun  <- paste0(estimator, "_variance", ".lvm")
-            
+
             if (!exists(asVarFun)) {
                 if (is.null(myInfo)) {
                 if (!is.null(myGrad))

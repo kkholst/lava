@@ -284,7 +284,6 @@ test_that("Random slope model", {
     regression(m0) <- y2 ~ num2*s
     regression(m0) <- y3 ~ num3*s
     system.time(e0 <- estimate(m0,d0,param="none",control=list(trace=0)))
-    system.time(e1 <- estimate(m1,d0,param="none"))
     
     expect_true(mean(sl$coef-coef(e0)[c("u","s")])^2<1e-5)
     expect_true((logLik(l)-logLik(e0))^2<1e-5)    

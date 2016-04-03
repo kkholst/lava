@@ -10,6 +10,7 @@
 ##' @param cl (optional) cluster to use for parallelization
 ##' @param blocksize Split computations in blocks
 ##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
+##' @param seed (optional) Seed (needed with cl=TRUE)
 ##' @param ... Additional arguments to (mc)mapply
 ##' @aliases sim.default summary.sim
 ##' @examples
@@ -68,7 +69,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     newcl <- FALSE
     if (!missing(cl) && is.logical(cl) && cl) {
         cl <- parallel::makeForkCluster(mc.cores)
-        if (!is.null(seed)) clusterSetRNGStream(cl,seed)
+        if (!is.null(seed)) parallel::clusterSetRNGStream(cl,seed)
         newcl <- TRUE
     }
     olddata <- NULL
