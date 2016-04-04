@@ -1,8 +1,14 @@
-rm(list = ls())
+#### note
+# talk with klauss about gradient / hessian : hessian(beta, type = "expectation") vs hessian(beta, type = "hessian")
+#
+
+
 ### issue with data normalisation
-### issue with gradiant from lava
+### issue with gradient from lava
 ### issue with FISTA
-### no need to fix sigma with a TRUE LVM model
+
+
+rm(list = ls())
 
 library(penalized)
 library(optimx)
@@ -37,7 +43,7 @@ elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[
 coef(elvm1ISTA.fit)
 elvm1ISTA.fit$opt$iterations
 
-elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, proxGrad.method = "FISTA", fix.sigma = TRUE,
+elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, proxGrad.method = "FISTA", fix.sigma = FALSE,
                            control = list(constrain = TRUE, iter.max = 5000))
 coef(elvm1FISTA.fit)
 elvm1FISTA.fit$opt$iterations
@@ -142,6 +148,25 @@ ggbase + geom_point()
 #### regularization path
 elvm2ISTA.RP <- estimate(plvm.model2bis,  data = df.data2, regularizationPath = TRUE, proxGrad.method = "ISTA", fix.sigma = FALSE,
                          control = list(constrain = TRUE, iter.max = 1000))
+
+
+
+##
+penalized.fit <- penalized(response = df.data2[,"Y1"], 
+                           penalized = df.data2[,c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10")], 
+                           steps = "Park")
+unlist(lapply(penalized.fit, function(x){x@lambda1}))
+
+penalized.fit <- penalized(response = df.data2[,"Y1"], 
+                           penalized = df.data2[,c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10")], 
+                           lambda1 =  27.77252)
+
+
+lvm.simple <- lvm(Y1 ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9 + X10)
+plvm.simple <- penalize(lvm.simple)
+
+simple.fit <- estimate(plvm.simple,  data = df.data2, lambda1 = 27.77252)
+coef(simple.fit)
 
 
 # #### check objective

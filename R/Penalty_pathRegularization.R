@@ -130,7 +130,6 @@ LassoPath_lvm <- function(beta0, hessianLv, gradientLv,
   iter <- 1
   
   while(iter < iter_max && cv == FALSE){
-    # browser()
     lambda_tempo <- V.lambda[iter]*1/scalePen
     lambda_tempo[-indexPenalty] <- 0
     
@@ -140,12 +139,12 @@ LassoPath_lvm <- function(beta0, hessianLv, gradientLv,
     
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
     
-    V.lambda <- c(V.lambda, newLambda)
-    M.beta <- rbind(M.beta, resNode$beta)
-    
-    iter <- iter + 1
     if(newLambda < 0 || is.infinite(newLambda)){
       cv <- TRUE
+    }else{
+    V.lambda <- c(V.lambda, newLambda)
+    M.beta <- rbind(M.beta, resNode$beta)
+    iter <- iter + 1
     }
   }
   

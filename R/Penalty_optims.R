@@ -1,9 +1,12 @@
 proxGrad <- function(start, objective, gradient, hessian,...){
    
-  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol","proxGrad.method","fix.sigma","test.path")
+  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol","proxGrad.method","fix.sigma", "cooling","test.path")
   dots <- list(...)
   control <- dots$control
   control <- control[names(control) %in% PGcontrols]
+  
+  if("cooling" %in% names(control) == FALSE){control$cooling <- 0.999}
+  
   penalty <- dots$penalty
   if (length(dots$trace)>0 && dots$trace>0) cat("\n")
   n.coef <- length(start)
@@ -86,17 +89,17 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     lambda2[index.penaltyCoef] <- penalty$lambda2 
    
     res <- do.call(dots$proxGrad.method,
-                   list(start = start, step = step, proxOperator = proxOperator, gradient = gradient, 
+                   list(start = start, step = step, proxOperator = proxOperator, gradient = gradient,
                         lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
-                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol))
+                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, cooling = control$cooling))
       
     res$objective <- objective(res$par, penalty = penalty)
   
     if(!is.null(constrain)){
     res2 <- do.call(dots$proxGrad.method,
-                   list(start = res$par, step = step, proxOperator = proxOperator, gradient = gradient, 
+                   list(start = res$par, step = step, proxOperator = proxOperator, gradient = gradient,
                         lambda1 = lambda1, lambda2 = lambda2, constrain = res$par[names(res$par) %in% names(constrain) == FALSE],
-                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol))
+                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, cooling = control$cooling))
     res$par <- res2$par
     }
   }
@@ -107,10 +110,10 @@ proxGrad <- function(start, objective, gradient, hessian,...){
 
 
 
-ISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradient, lambda1, lambda2, constrain,
-                 iter.max, abs.tol, rel.tol){
-  
-  
+ISTA <- function(start, step, proxOperator, gradient, 
+                 lambda1, lambda2, constrain,
+                 iter.max, abs.tol, rel.tol, cooling){
+
   ## initialisation
   test.cv <- FALSE
   iter <- 1
@@ -120,16 +123,18 @@ ISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradient
   ## loop
   while(test.cv == FALSE && iter <= iter.max){
     x_km1 <- x_k
-    step <- step * decreaseStep
-    
+
     x_k <- proxOperator(x = x_km1 - step * gradient(x_km1, penalty = NULL), 
                         step = step, lambda1 = lambda1, lambda2 = lambda2)
     if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+    # if(x_k["Y,Y"]>var(df.data$Y)){cat(x_k["Y,Y"], " ", var(df.data$Y), "\n")}
     
     iter <- iter + 1
+    step <- step * cooling
     absDiff <-  (abs(x_k-x_km1) < abs.tol)
     relDiff <- (abs(x_k-x_km1)/abs(x_k) < rel.tol)
     test.cv <- all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
+   
     
   }
   
@@ -148,8 +153,9 @@ ISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradient
   ))
 }
 
-FISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradient, lambda1, lambda2, constrain,
-                  iter.max, abs.tol, rel.tol){
+FISTA <- function(start, step, proxOperator, gradient, 
+                  lambda1, lambda2, constrain,
+                  iter.max, abs.tol, rel.tol, cooling){
   
   ## initialisation
   test.cv <- FALSE
@@ -157,16 +163,13 @@ FISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradien
   x_k <- start 
   t_k <- 1
   if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-  
   y_k <- x_k
   
   ## loop
   while(test.cv == FALSE && iter <= iter.max){
     x_km1 <- x_k
     t_km1 <- t_k
-    step <- step * decreaseStep
-  # cat(iter," ")
-
+  
     x_k <- proxOperator(x = y_k - step * gradient(y_k, penalty = NULL), 
                         step = step, lambda1 = lambda1, lambda2 = lambda2)
     if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
@@ -175,6 +178,7 @@ FISTA <- function(start, step = NULL, decreaseStep = 0.99, proxOperator, gradien
     y_k <- x_k + (t_km1-1)/t_k * (x_k - x_km1)
     
     iter <- iter + 1
+    step <- step * cooling
     absDiff <-  abs(x_k-x_km1)
     relDiff <- abs(x_k-x_km1)/abs(x_k)
     test.cv <- all( ( absDiff<abs.tol) + ifelse(is.na(relDiff),0, relDiff < rel.tol) > 0 )

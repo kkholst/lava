@@ -20,7 +20,7 @@ sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 #### Over the grid ####
 
 ## parametrisation
-seq_n <- c(25,50,300)
+seq_n <- c(50,300)
 seq_p <- c(5,10,20,30)
 seq_lambda <- c(0,exp(seq(-3, 3, length.out = 15)))#c(1,5,10,15)#
 seq_rep <- 1 # 10
@@ -58,8 +58,6 @@ for(iter_grid in 1:n.grid){
   lambda1 <- grid[iter_grid,"lambda"]
   lambda2 <- grid[iter_grid,"lambda"] 
   beta <- Allbeta[1:p] 
-  
-  if(n<p){next}
   
   ## simulation
   X <- matrix(rnorm(n*p),n,p)
