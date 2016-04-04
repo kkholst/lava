@@ -350,13 +350,14 @@ test_that("multinomial", {
     ## TODO
     lava:::independence(d[,5:6])
     information(d[,5:6])
-
     ## pcor
-    (rho <- pcor(d[,5],d[,6]))
-    score(rho)
-
     
-    
+    system.time(rho <- pcor(d[,5],d[,6]))
+    rho2 <- polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
+    expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
+    expect_true(abs(rho$vcov[1]-rho2$var[1])^2<1e-5)
+    expect_true(mean(score(rho))^2<1e-5)
+       
 })
 
 

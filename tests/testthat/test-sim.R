@@ -84,8 +84,7 @@ test_that("eventTime", {
     ## d <- sim(m,1e4); d$status <- TRUE
     ## dd <- mets::lifetable(survival::Surv(y,status)~z1,data=d,breaks=c(0,3,5,Inf));
     ## exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
-
-    
+   
 
 })
 
