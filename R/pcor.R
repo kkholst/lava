@@ -1,4 +1,13 @@
-pcor <- function(x,y,X,Z,start,...) {
+##' Polychoric correlation
+##'
+##' Maximum likelhood estimates of polychoric correlations
+##' @param x Variable 1
+##' @param y Variable 2
+##' @param X Optional covariates
+##' @param start Optional starting values 
+##' @param ... Additional arguments to lower level functions
+##' @export
+pcor <- function(x,y,X,start,...) {
     if (is.numeric(x) && is.numeric(y)) {
         e <- estimate(covariance(lvm(),x~y))
         return(estimate(e,function(p) list(rho=p[5]/(p[3]*p[4])^.5),iid=TRUE))
