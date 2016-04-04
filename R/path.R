@@ -135,7 +135,7 @@ path.graphNEL <- function(object,to,from,...) {
     return(res)
   }
   idxfrom <- ifelse(is.numeric(from),from,which(from==graph::nodes(object)))
-  M <- as(g,"matrix")
+  ##M <- as(object,"matrix")
   ##reachable <- acc(M,graph::nodes(object)[idxfrom])
   reachable <- graph::acc(object,graph::nodes(object)[idxfrom])[[1]]
   

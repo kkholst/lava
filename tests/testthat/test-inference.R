@@ -375,7 +375,7 @@ test_that("multinomial", {
     ## pcor
 
     if (requireNamespace("polycor")) {
-        require('polycor')
+        require('mvtnorm')
         system.time(rho <- pcor(d[,5],d[,6]))
         rho2 <- polycor::polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
         expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
