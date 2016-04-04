@@ -113,5 +113,32 @@ if (requireNamespace("visualTest") && requireNamespace("png")) {
         ## TODO
     })
 
+    test_that("spaghetti", {
+        K <- 5
+        y <- "y"%++%seq(K)
+        m <- lvm()
+        regression(m,y=y,x=~u) <- 1
+        regression(m,y=y,x=~s) <- seq(K)-1
+        regression(m,y=y,x=~x) <- "b"
+        d <- sim(m,5)
+        dd <- mets::fast.reshape(d);
+        dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
+        spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
+        ## TODO
+    })
+    
+    test_that("ksmooth", {
+        ## TODO
+    })
+
+    test_that("plot.lvm", {
+        ## TODO
+    })
+    
+    test_that("images", {
+        ## TODO
+    })
+
+    
     
 }

@@ -104,7 +104,7 @@ test_that("multiple testing", {
 })
 
 
-test_that("modelsearch", {
+test_that("modelsearch and GoF", {
     m <- lvm(c(y1,y2)~x)
     d <- sim(m,100)
     e <- estimate(lvm(c(y1,y2)~1,y1~x),d)
@@ -123,6 +123,12 @@ test_that("modelsearch", {
     
     ee <- modelsearch(e0,dir="backstep",messages=FALSE)
     expect_true(inherits(ee,"lvm"))
+
+    ## TODO
+    gof(e,all=TRUE)    
+    r <- rsq(e)[[1]]
+    expect_true(abs(summary(lm(y1~x,d))$r.square-r["y1"])<1e-5)
+    
 })
 
 test_that("Bootstrap", {
@@ -303,3 +309,55 @@ test_that("Random slope model", {
     expect_true((logLik(e1)-logLik(e0))^2<1e-5)    
     
 })
+
+
+test_that("multinomial", {
+    set.seed(1)
+    breaks <- c(-Inf,-1,0,Inf)
+    m <- lvm(); covariance(m,pairwise=TRUE) <- ~y1+y2+y3+y4
+    d <- transform(sim(m,5e2),
+                   z1=cut(y1,breaks=breaks),
+                   z2=cut(y2,breaks=breaks),
+                   z3=cut(y3,breaks=breaks),
+                   z4=cut(y4,breaks=breaks))
+
+    m <- multinomial(d[,5])
+    lev <- levels(d[,5])    
+    e <- estimate(l <- lm(d[,5]==lev[1]~1))
+    expect_true(abs(vcov(e)[1]-vcov(m)[1])<1e-9)
+        
+    (a1 <- multinomial(d[,5:6],marginal=TRUE))
+    K1 <- kappa(a1) ## Cohen's kappa
+    P <- a1$P
+    marg1 <- rowSums(P)
+    marg2 <- colSums(P)
+    expect_equivalent(K1$coef,sum(diag(P)-marg1*marg2)/(1-sum(marg1*marg2)))
+    
+    K2 <- kappa(d[,7:8])
+    ## Testing difference K1-K2:
+    e1 <- estimate(merge(K1,K2,id=TRUE),diff)
+    e2 <- estimate(merge(K1,K2,id=NULL),diff)
+    expect_true(vcov(e1)!=vcov(e2))
+    expect_equivalent(vcov(e2),(vcov(K1)+vcov(K2)))
+
+    g1 <- gkgamma(d[,5:6])
+    g2 <- gkgamma(table(d[,5:6]))
+    g3 <- gkgamma(multinomial(d[,5:6]))
+    expect_equivalent(g1$coefmat,g2$coefmat)
+    expect_equivalent(g3$coefmat,g2$coefmat)
+
+    
+    ## TODO
+    lava:::independence(d[,5:6])
+    information(d[,5:6])
+
+    ## pcor
+    (rho <- pcor(d[,5],d[,6]))
+    score(rho)
+
+    
+    
+})
+
+
+

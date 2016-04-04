@@ -60,4 +60,32 @@ test_that("sim.default I", {
 })
 
 
+test_that("eventTime", {
+    m <- lvm(eventtime~x)
+    distribution(m,~eventtime) <- coxExponential.lvm(1/100)
+    distribution(m,~censtime) <- coxWeibull.lvm(1/500)
+    eventTime(m) <- time~min(eventtime=1,censtime=0)
+
+    set.seed(1)
+    d <- sim(m,100)
+    expect_equivalent((d$time<d$cens)*1L,d$status)
+
+    ## TODO
+    plot(m)
+    print(m)
+
+    ## Time varying effect
+    m <- lvm(y~1)
+    distribution(m,~z1) <- ones.lvm(0.5)
+    R <- log(cbind(c(0.2,0.7,0.9),c(0.5,0.3,0.3)))
+    m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
+   
+    ## sim(m,100)
+    ## d <- sim(m,1e4); d$status <- TRUE
+    ## dd <- mets::lifetable(survival::Surv(y,status)~z1,data=d,breaks=c(0,3,5,Inf));
+    ## exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
+
+    
+
+})
 
