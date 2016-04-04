@@ -83,10 +83,11 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
         }
       }
 
-        if (any(intpos>0)) {
-            intercept(object,ys) <- as.numeric(xs[intpos[1]])
-            xs <- xs[-intpos]
-        }
+      if (any(intpos>0)) {
+          if (xs[intpos[1]]=="1") xs[intpos[1]] <- NA
+              intercept(object,ys) <- as.numeric(xs[intpos[1]])
+          xs <- xs[-intpos]          
+      }
 
         object <- addvar(object,xs,reindex=FALSE ,...)
         exolist <- c()
