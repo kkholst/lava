@@ -22,7 +22,7 @@ merge.lvm <- function(x,y,...) {
           val[idx.] <- m2$par[j,idx][idx.]
         if (any(idx. <- !is.na(m2$fix[j,idx])))
           val[idx.] <- m2$fix[j,idx][idx.]
-        regression(m,nn[idx],nn[j],silent=TRUE) <- val
+        regression(m,to=nn[idx],from=nn[j],silent=TRUE) <- val
       }
       P0 <- P[j,]; P0[seq_len(j-1)] <- 0
         if (any(idx <- P[j,]!=0)) {

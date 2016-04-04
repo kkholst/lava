@@ -49,6 +49,16 @@ test_that("Basic model building blocks", {
     expect_true(all(is.na(regression(m2)$values)))
     expect_true(intercept(m2)[["u"]]==0)
     expect_true(covariance(m2)$values["u","u"]==1)
+
+    ## Merge
+    m1 <- lvm(c(y1,y2,y3)~1*u1[m1:v1])
+    latent(m1) <- ~u1
+    m2 <- lvm(c(y1,y2,y3)~2*u2[m2:v2])
+    latent(m2) <- ~u2
+    mm <- m1%++%m2
+
+    expect_true(covariance(mm)$labels["u1","u1"]=="v1")
+    expect_true(intercept(mm)[["u2"]]=="m2")
     
 }) 
 

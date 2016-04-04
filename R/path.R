@@ -135,8 +135,10 @@ path.graphNEL <- function(object,to,from,...) {
     return(res)
   }
   idxfrom <- ifelse(is.numeric(from),from,which(from==graph::nodes(object)))
-  reachable <- acc(object,graph::nodes(object)[idxfrom])[[1]]
-
+  M <- as(g,"matrix")
+  ##reachable <- acc(M,graph::nodes(object)[idxfrom])
+  reachable <- graph::acc(object,graph::nodes(object)[idxfrom])[[1]]
+  
   if (is.null(to)) {
     idxto <- reachable
   } else {
@@ -191,7 +193,7 @@ pathM <- function(M,to,from,...) {
   }
   idxfrom <- ifelse(is.numeric(from),from,which(from==nn))
   reachable <- acc(M,nn[idxfrom])
-
+  
   if (is.null(to)) {
     idxto <- reachable
   } else {

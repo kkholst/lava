@@ -9,7 +9,7 @@ test_that("Effects",{
     d <- sim(m,100)
     start <- c(rep(0,6),rep(1,17))
     suppressWarnings(e <- estimate(m,d,control=list(iter.max=0,start=start)))
-    f <- coef(effects(e,y1~x))
+    f <- coef(ef <- effects(e,y1~x))
     expect_true(all(f[,2]>0)) ## Std.err
     expect_equal(f["Total",1],3) 
     expect_equal(f["Direct",1],1)
@@ -17,6 +17,15 @@ test_that("Effects",{
     expect_equal(f2["Total",1],1)
     expect_equal(f2["Direct",1],1)
     expect_equal(f2["Indirect",1],0)
+
+    expect_output(ef,"Indirect effects")
+    expect_equivalent(confint(ef)["Direct",],
+                      confint(e)["y1~x",])
+
+    expect_equivalent(totaleffects(e,y1~x)[,1:4],f["Total",])
+    
+    g <- graph::updateGraph(plot(m,noplot=TRUE))
+    expect_equivalent(path(g,y1~x),path(m,y1~x))    
 })
 
 test_that("Profile confidence limits", {

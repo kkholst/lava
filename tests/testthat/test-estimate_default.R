@@ -8,6 +8,8 @@ test_that("estimate.default", {
 
     l1 <- lm(y1~x+z,d)
     l2 <- lm(y2~x+z,d)
+    ll <- merge(l1,l2)
+    expect_equivalent(ll$coefmat[,1],c(coef(l1),coef(l2)))
 
     e1 <- estimate(l1)
     f1 <- estimate(l1,function(x) x^2, use=2)

@@ -409,6 +409,7 @@ DFS <- function(M,v,explored=c()) {
   }
   return(explored)
 }
+
 acc <- function(M,v) {
   if (is.character(v)) v <- which(colnames(M)==v)
   colnames(M)[setdiff(DFS(M,v),v)]
