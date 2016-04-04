@@ -178,7 +178,9 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
                        npar.ex=sum(e1),
                        constrain.par=constrain.par))
     npar.total <- res$npar+res$npar.mean+res$npar.ex
-    which.diag <- which(diag(P1==1))
+    which.diag <- NULL
+    if (length(P1)>0)
+        which.diag <- which(diag(P1==1))
 
     res <- c(res, list(parname.all=parname, parname=setdiff(parname,constrain.par),
                        which.diag=which.diag,

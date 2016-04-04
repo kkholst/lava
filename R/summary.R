@@ -29,7 +29,6 @@ function(object,...) {
   }
 
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
-
   cat("\n")
 }
 

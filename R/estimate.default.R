@@ -151,9 +151,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         cl0 <- cl
         cl0[c("use",p0)] <- NULL
         cl0$keep <- use
-        cl$x <- eval(cl0)
+        cl$x <- eval(cl0,parent.frame())
         cl[c("vcov","use")] <- NULL
-        return(eval(cl))
+        return(eval(cl,parent.frame()))
     }
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {

@@ -1,7 +1,8 @@
-("Inference")
+context("Inference")
 
 test_that("estimate.default", {
     m <- lvm(c(y1,y2)~x+z,y1~~y2)
+##    set.seed(1)
     d <- sim(m,20)    
     dd <- mets::fast.reshape(d)
 
@@ -9,8 +10,9 @@ test_that("estimate.default", {
     l2 <- lm(y2~x+z,d)
 
     e1 <- estimate(l1)
-    f1 <- estimate(l1,function(x) x^2, use="x")
-    expect_true(coef(l1)["x"]^2==f1$coefmat[1])    
+    f1 <- estimate(l1,function(x) x^2, use=2)
+    expect_true(coef(l1)["x"]^2==f1$coefmat[1])
+    
     e1b <- estimate(NULL,coef=coef(l1),vcov=vcov(estimate(l1)))
     e1c <- estimate(NULL,coef=coef(l1),iid=iid(l1))
     expect_equivalent(vcov(e1b),vcov(e1c))    
@@ -44,7 +46,6 @@ test_that("estimate.default", {
     a <- merge(a0,a1,labels=c("a0","a1"))
     estimate(a,diff)
     expect_equivalent(estimate(a,diff)$coefmat,e1$coefmat[3,,drop=FALSE])
-    
     
     
 })

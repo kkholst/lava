@@ -31,7 +31,7 @@ function(x, ...) {
         }
         if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
         if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
-        if (is.vector(distribution(x)[[y]][[1]])) col2 <- "fixed"
+        if (is.list(distribution(x)[[y]]) && is.vector(distribution(x)[[y]][[1]])) col2 <- "fixed"
         if (L[y]) col2 <- paste0(col2,", latent")
         if (y%in%exo) {
             Rx <- rbind(Rx,c(col1,col2))

@@ -60,6 +60,83 @@ test_that("sim.default I", {
 })
 
 
+test_that("distributions", {
+    m <- lvm(y1~x)
+    distribution(m,~y1) <- binomial.lvm("probit")
+    distribution(m,~y2) <- poisson.lvm()
+    distribution(m,~y3) <- normal.lvm(mean=1,sd=2)
+    distribution(m,~y3) <- lognormal.lvm()
+    distribution(m,~y3) <- pareto.lvm()
+    distribution(m,~y3) <- loggamma.lvm()
+    distribution(m,~y3) <- weibull.lvm()
+    distribution(m,~y3) <- chisq.lvm()
+    distribution(m,~y3) <- student.lvm(mu=1,sigma=1)    
+
+    expect_output(distribution(m)$y2,"Family: poisson")
+    expect_output(distribution(m)$y1,"Family: binomial")
+    latent(m) <- ~u    
+    expect_output(m,"binomial\\(probit\\)")
+    expect_output(m,"poisson\\(log\\)")
+
+    ## Generator:
+    m <- lvm()
+    distribution(m,~y,TRUE) <- function(n,...) {
+        res <- exp(rnorm(n)); res[seq(min(n,5))] <- 0
+        return(res)
+    }
+    d <- sim(m,10)
+    expect_true(all(d[1:5,1]==0))
+    expect_true(all(d[6:10,1]!=0))
+
+    m <- lvm()
+    distribution(m,~y,"a",init.par=2) <- function(n,a,...) {
+        rep(1,n)*a
+    }
+    expect_true(all(sim(m,2)==2))
+    expect_true(all(sim(m,2,p=c(a=10))==10))
+    expect_equivalent(sim(m,2,p=c(a=10)),sim(m,2,a=10))
+
+    ## Multivariate distribution
+    if (requireNamespace("VGAM")) {
+        m <- lvm()
+        distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
+        expect_equivalent(c("y1","y2"),colnames(sim(m,5)))
+        
+    }
+
+    ## Special 'distributions'
+    m <- lvm()
+    distribution(m,~x1) <- sequence.lvm(int=TRUE)
+    distribution(m,~x2) <- sequence.lvm(a=1,b=2)
+    distribution(m,~x3) <- sequence.lvm(a=NULL,b=2)
+    distribution(m,~x4) <- sequence.lvm(a=2,b=NULL)
+    ex <- sim(m,5)
+    expect_equivalent(ex$x1,1:5)
+    expect_equivalent(ex$x2,seq(1,2,length.out=5))
+    expect_equivalent(ex$x3,seq(-2,2))
+    expect_equivalent(ex$x4,seq(2,6))
+
+    m <- lvm()
+    distribution(m,~x1) <- ones.lvm()
+    distribution(m,~x2) <- ones.lvm(p=0.5)
+    distribution(m,~x3) <- ones.lvm(interval=c(0.4,0.6))
+    ex <- sim(m,10)
+    expect_equivalent(ex$x1,rep(1,10))
+    expect_equivalent(ex$x2,c(rep(0,5),rep(1,5)))
+    expect_equivalent(ex$x3,c(0,0,0,1,1,1,0,0,0,0))
+
+    m <- lvm()
+    expect_error(distribution(m,~y) <- threshold.lvm(p=c(0.5,.75)))
+    distribution(m,~y) <- threshold.lvm(p=c(0.25,.25))
+    set.seed(1)
+    expect_equivalent(1:3,sort(unique(sim(m,200))[,1]))
+
+    ## distribution(m,~y) <- threshold.lvm(p=c(0.25,.25),labels=letters[1:3])
+    ## expect_equivalent(c("a","b","c"),sort(unique(sim(m,200))[,1]))
+        
+})
+
+
 test_that("eventTime", {
     m <- lvm(eventtime~x)
     distribution(m,~eventtime) <- coxExponential.lvm(1/100)
@@ -72,7 +149,7 @@ test_that("eventTime", {
 
     ## TODO
     plot(m)
-    print(m)
+    expect_output(print(m),"Event History Model")
 
     ## Time varying effect
     m <- lvm(y~1)
@@ -84,7 +161,7 @@ test_that("eventTime", {
     ## d <- sim(m,1e4); d$status <- TRUE
     ## dd <- mets::lifetable(survival::Surv(y,status)~z1,data=d,breaks=c(0,3,5,Inf));
     ## exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval+z1:interval, dd, family=poisson)))
-   
 
 })
+
 

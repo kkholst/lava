@@ -200,7 +200,7 @@ pareto.lvm <- function(lambda=1,...) {   ## shape: lambda, scale: mu
 ##' @export
 threshold.lvm <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
-    if (!missing(labels))
+    if (!is.null(labels))
     return(function(n,...) {
         return(cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf),labels=labels))
     })

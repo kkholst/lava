@@ -133,12 +133,26 @@ if (requireNamespace("visualTest") && requireNamespace("png")) {
 
     test_that("plot.lvm", {
         ## TODO
+        m <- lvm(y~u,u~x)
+        latent(m) <- ~u
+        plot(m)
+        d <- sim(m,10)
+        e <- estimate(m,d)
+        plot(e)
+        plot(lava:::beautify(m))
+        g <- igraph.lvm(m)
+        expect_true(inherits(g,"igraph"))
     })
     
     test_that("images", {
         ## TODO
     })
 
+    test_that("labels,edgelabels", {
+        ## TODO
+    })
+
+    
     
     
 }

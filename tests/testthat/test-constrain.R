@@ -1,12 +1,22 @@
 context("Constraints")
 
 test_that("Simple linear constraint",{
-    m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))
+    m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))    
     constrain(m1,beta2~psi) <- function(x) 2*x
+    expect_output(summary(m1),"Non-linear constraints:")
+   
     lava:::matrices.lvm(m1,1:2,0,3)
     d1 <- sim(m1,100)
     e1 <- estimate(m1,d1)
+    expect_output(e1,"y~x")
+    expect_warning(e1,NA)
+        
     expect_equivalent(constraints(e1)[1],coef(lm(y~x+z,d1))["z"])
+    s <- summary(e1)
+    expect_output(s,"Non-linear constraints:")
+
+    expect_equivalent(dim(coef(s)), c(length(coef(e1))+1,4))
+    expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))    
 })
 
 
@@ -43,7 +53,7 @@ test_that("Non-linear in exogenous variables", {
     parameter(m) <- ~a+b
     constrain(m,m~a+b+x) <- function(z) z[1]+z[2]*z[3]
     e <- estimate(m,d,control=list(method="NR"))
-    expect_true(mean(coef(lm(y~x,d))-coef(e)[c("a","b")])^2<1e-4)
+    expect_true(mean(coef(lm(y~x,d))-coef(e)[c("a","b")])^2<1e-3)
 })
 
 
@@ -111,7 +121,7 @@ test_that("Multiple group constraints II", {
   expect_true(length(coef(ee))==4)
   expect_true(nrow(ce)==1)
   expect_true(all(!is.na(ce)))
-  expect_true(mean(score(ee)^2)<1e-4)
+  expect_true(mean(score(ee)^2)<1e-3)
 })
 
 

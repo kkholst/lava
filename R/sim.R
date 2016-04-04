@@ -267,6 +267,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     if (!missing(X)) {
         n <- nrow(X)
     }
+    p <- c(p,unlist(list(...)))
     xx <- exogenous(x)
     if (!is.null(p)) {
         i1 <- na.omit(c(match(names(p),xx),
@@ -329,7 +330,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         for (i in seq_along(fun)) {
             mv <- names(which(unlist(mdist)==i))
             ii <- match(mv,vars(x))
-            E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x,...)
+            E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x) # ,...)
         }
     }
 
@@ -457,7 +458,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             cc <- x$constrainY[[i]]
             args <- cc$args
             args <- if (is.null(args) || length(args)==0) res[,i] else res[,args]
-            res[,i] <- cc$fun(args,p,...)
+            res[,i] <- cc$fun(args,p) # ,...)
         }
         yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
 
@@ -588,7 +589,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                 cc <- x$constrainY[[i]]
                                 args <- cc$args
                                 args <- if (is.null(args) || length(args)==0) res[,pos] else res[,args]
-                                res[,pos] <- cc$fun(args,p,...)
+                                res[,pos] <- cc$fun(args,p) # ,...)
                             }
                             simuled <- c(simuled,i)
                         }

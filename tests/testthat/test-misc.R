@@ -103,7 +103,14 @@ test_that("All the rest", {
 
     op <- lava.options(debug=TRUE)
     expect_true(lava.options()$debug)
-    lava.options(op)    
+    lava.options(op)
+
+    A <- diag(2); colnames(A) <- c("a","b")    
+    expect_output(printmany(A,A,2,rownames=c("A","B"),bothrows=FALSE),NA)
+    expect_output(printmany(A,A[1,,drop=FALSE],2,rownames=c("A","B"),bothrows=FALSE),NA)
+    expect_output(printmany(A,A,2,rownames=c("A","B"),name1="no.1",name2="no.2",
+                            bothrows=TRUE),NA)
+    
 })
 
 

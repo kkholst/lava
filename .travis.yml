@@ -33,6 +33,7 @@ r_binary_packages:
  - lazyeval
  - quantreg
  - zoo
+ - VGAM
 
 r_github_packages:
  - jimhester/covr

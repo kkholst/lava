@@ -90,7 +90,7 @@ test_that("equivalence", {
     ##eq <- equivalence(e,y1~x,k=1)
     suppressMessages(eq <- equivalence(e,y2~x,k=1))
     expect_output(print(eq),"y1,y2")
-    expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))
+    expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))    
 })
 
 test_that("multiple testing", {
@@ -189,8 +189,14 @@ test_that("zero-inflated binomial regression (zib)", {
     e0 <- zibreg(y~x*z,~1+z+age,data=d)    
     e <- zibreg(y~x,~1+z+age,data=d)
     compare(e,e0)
+    expect_equivalent(score(e,data=d),
+                      colSums(score(e,indiv=TRUE)))
+    expect_equivalent(logLik(e,data=d),
+                      logLik(e)) 
+    expect_equivalent(vcov(e), Inverse(information(e,type="obs",data=d)))
 
-    e
+    expect_output(e, "Prevalence probabilities:")
+    
     PD(e0,intercept=c(1,3),slope=c(2,6))
 
     B <- rbind(c(1,0,0,0,20),
@@ -223,7 +229,7 @@ test_that("Optimization", {
 })
 
 
-test_that("Prediction, random intercept", {
+test_that("Prediction with missing data, random intercept", {
     ## Random intercept model
     m <- lvm(c(y1,y2,y3)~u[0])
     latent(m) <- ~u
@@ -261,7 +267,14 @@ test_that("Prediction, random intercept", {
     expect_true(mse(nlme::fixef(l0),coef(e0)[1:2])<mytol)
     u01 <- nlme::ranef(l0)##[[1]][,1]
     u02 <- predict(e0,endogenous(e0))
-    expect_true(mse(u01,u02)<1e-9)    
+    expect_true(mse(u01,u02)<1e-9)
+
+    s <- summary(e0)
+    expect_output(s,paste0("data=",nrow(d0)))
+    expect_true(inherits(e0$estimate,"multigroupfit"))
+    expect_output(e0$estimate,"Group 1")
+    expect_output(summary(e0$estimate),paste0("observations = ",nrow(d0)))
+
 })
 
 
@@ -351,13 +364,15 @@ test_that("multinomial", {
     lava:::independence(d[,5:6])
     information(d[,5:6])
     ## pcor
-    
-    system.time(rho <- pcor(d[,5],d[,6]))
-    rho2 <- polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
-    expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
-    expect_true(abs(rho$vcov[1]-rho2$var[1])^2<1e-5)
-    expect_true(mean(score(rho))^2<1e-5)
-       
+
+    if (requireNamespace("polycor")) {
+        require('polycor')
+        system.time(rho <- pcor(d[,5],d[,6]))
+        rho2 <- polycor::polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
+        expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
+        expect_true(abs(rho$vcov[1]-rho2$var[1])^2<1e-5)
+        expect_true(mean(score(rho))^2<1e-5)
+    }
 })
 
 
