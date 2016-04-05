@@ -25,7 +25,8 @@ residuals.lvmfit <- function(object,data=model.frame(object),p=coef(object),...)
 residuals.lvm <- function(object,data=model.frame(object),std=FALSE,p=coef(object),...) {
   Y <- setdiff(manifest(object), X <- exogenous(object))
   Pr <- predict(object,p=p,data=data)
-  PrY <- Pr[,Y]
+  
+  PrY <- Pr[,Y,drop=FALSE]
   ##  y <- endogenous(object)[match(endogenous(object),manifest(object))]
   r <- as.matrix(data[,Y,drop=FALSE]-(PrY))
   res <- r

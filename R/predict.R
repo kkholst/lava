@@ -84,7 +84,7 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
       if (length(X)>0) {
           mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
           mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
-          xi.x <- (m$IAi[ii$endo.obsidx,]%*%(mu.0 + mu.x))
+          xi.x <- (m$IAi[ii$endo.obsidx,,drop=FALSE]%*%(mu.0 + mu.x))
       } else {
           xi.x <- m$xi%*%rep(1,nrow(data))
           rownames(xi.x) <- ii$endogenous
@@ -175,10 +175,10 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
       if (is.null(y))
           y <- setdiff(vars(object),c(x,exogenous(object)))
 
-      E.x <- xi.x[y,] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
+      E.x <- xi.x[y,,drop=FALSE] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
       if (residual) {
           Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
-          Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
+          Vhat[,obs.idx] <- as.matrix(data[,manifest(object),drop=FALSE])
           Vhat[,y] <- t(E.x)
           return(t((IA%*%t(Vhat)-m$v)))
       }
