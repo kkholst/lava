@@ -102,6 +102,13 @@ test_that("matrix functions", {
 })
 
 
+test_that("getmplus", {
+})
+test_that("getsas", {
+})
+
+
+
 test_that("All the rest", {
     expect_false(lava:::versioncheck(NULL))
     expect_true(lava:::versioncheck("lava",c(1,4,1)))

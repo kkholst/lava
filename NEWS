@@ -1,9 +1,14 @@
   
-* Version 1.4.1.2 <2015-08-15 Sat>
-  - Namespace update
-  - Travis, unit-tests
-  - sim.default
-  - glm estimator update (censored)
+
+* Version 1.4.2 <2016-04-05 Tue>
+  - Code optimization and minor bug fixes
+  - Travis-CI, unit-tests
+  - glm estimator update (censored regression)
+  - polychoric correlations (function pcor)
+  - New utility functions: wrapvec, offdiag
+  - simulation: regression design on parameters (see weibull +
+    variance hetereogeneity example in help('sim'))
+    
 * Version 1.4.1 <2015-06-13 Sat>
   - New plot.estimate method
   - Documentation and examples updated
