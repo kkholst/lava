@@ -48,6 +48,8 @@ test_that("estimate.default", {
     a <- merge(a0,a1,labels=c("a0","a1"))
     estimate(a,diff)
     expect_equivalent(estimate(a,diff)$coefmat,e1$coefmat[3,,drop=FALSE])
-    
+
+
+    stack
     
 })

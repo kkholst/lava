@@ -97,7 +97,7 @@ test_that("equivalence", {
     regression(m) <- y2~x
     e <- estimate(m,d)
     ##eq <- equivalence(e,y1~x,k=1)
-    suppressMessages(eq <- equivalence(e,y2~x,k=1))
+    dm <- capture.output(eq <- equivalence(e,y2~x,k=1))
     expect_output(print(eq),"y1,y2")
     expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))    
 })
@@ -144,11 +144,21 @@ test_that("Bootstrap", {
     y <- rep(c(0,1),each=5)
     x <- 1:10
     e <- estimate(y~x)
-    B1 <- bootstrap(e,R=2,silent=TRUE,mc.cores=1)
+    B1 <- bootstrap(e,R=2,silent=TRUE,mc.cores=1,sd=TRUE)    
     B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE,mc.cores=1)
     expect_false(B1$bollenstine)
     expect_true(B2$bollenstine)
     expect_true(nrow(B1$coef)==2)
+    expect_output(B1,"Standard errors:")
+    dm <- capture.output(B3 <- bootstrap(e,R=2,fun=function(x) coef(x)[2]^2+10))
+    expect_true(all(mean(B3$coef)>10))
+
+    y <- rep(c(0,1),each=5)
+    x <- 1:10
+    m <- lvm(y~b*x)
+    constrain(m,alpha~b) <- function(x) x^2
+    e <- estimate(m,data.frame(y=y,x=x))
+    expect_output(bootstrap(e,R=1,silent=TRUE),"alpha")
 })
 
 
@@ -296,14 +306,18 @@ test_that("Random slope model", {
     regression(m) <- y2 ~ 1*u+2*s
     regression(m) <- y3 ~ 1*u+3*s
     latent(m) <- ~u+s
-    d <- sim(m,20)
+    dw <- sim(m,20)
 
-    dd <- mets::fast.reshape(d)
+    dd <- mets::fast.reshape(dw)
+    dd0 <- dd[-c(1:2*3),]
     library(lme4)
     l <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
     sl <- lava:::varcomp(l,profile=FALSE)
 
-    d0 <- mets::fast.reshape(dd,id="id")
+    d <- mets::fast.reshape(dd,id="id")
+    d0 <- mets::fast.reshape(dd0,id="id")
+    
+    
     m0 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
     addvar(m0) <- ~num1+num2+num3
     covariance(m0) <- u~s
@@ -311,12 +325,17 @@ test_that("Random slope model", {
     regression(m0) <- y1 ~ num1*s
     regression(m0) <- y2 ~ num2*s
     regression(m0) <- y3 ~ num3*s
-    system.time(e0 <- estimate(m0,d0,param="none",control=list(trace=0)))
+    system.time(e <- estimate(m0,d,param="none",control=list(trace=0)))
     
-    expect_true(mean(sl$coef-coef(e0)[c("u","s")])^2<1e-5)
-    expect_true((logLik(l)-logLik(e0))^2<1e-5)    
-    expect_true(mean(diag(sl$varcomp)-coef(e0)[c("u,u","s,s")])^2<1e-5)
+    expect_true(mean(sl$coef-coef(e)[c("u","s")])^2<1e-5)
+    expect_true((logLik(l)-logLik(e))^2<1e-5)    
+    expect_true(mean(diag(sl$varcomp)-coef(e)[c("u,u","s,s")])^2<1e-5)
 
+    ## missing
+    expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",start=coef(e),trace=1)),"Iter=")
+    l0 <- lmer(y~ 1+num +(1+num|id),dd0,REML=FALSE)    
+    expect_true((logLik(l0)-logLik(e0))^2<1e-5)    
+    
     m1 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
     addvar(m1) <- ~num1+num2+num3
     covariance(m1) <- u~s
@@ -327,8 +346,13 @@ test_that("Random slope model", {
     constrain(m1,b1~num1) <- function(x) x
     constrain(m1,b2~num2) <- function(x) x
     constrain(m1,b3~num3) <- function(x) x
-    system.time(e1 <- estimate(m1,d0,param="none",p=coef(e0)))
-    expect_true((logLik(e1)-logLik(e0))^2<1e-5)    
+    system.time(e1 <- estimate(m1,d,param="none",p=coef(e)))
+    expect_true((logLik(e1)-logLik(e))^2<1e-5)
+
+    ## TODO    
+    ## missing    
+    ## system.time(e10 <- estimate(m1,d0,missing=TRUE,param="none",
+    ##                             control=list(trace=coef(e0))))
     
 })
 
@@ -385,4 +409,41 @@ test_that("multinomial", {
 })
 
 
+test_that("predict,residuals", {
 
+    m <- lvm(c(y1,y2,y3)~u,u~x)
+    latent(m) <- ~u
+    d <- sim(m,100,'y1~u'=1,'y3~u'=3)
+    e <- estimate(m,d)
+    
+    l <- lm(y3~x,data=d)
+    e3 <- estimate(y3~x,d)
+    expect_true(mean((residuals(l)-residuals(e3))^2)<1e-12)
+    expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-12)
+   
+    r <- residuals(e)
+    expect_true(ncol(r)==3)
+     
+    
+    
+})
+
+
+test_that("partialcor", {
+    m <- lvm(c(y1,y2,y3)~x1+x2)
+    covariance(m) <- c(y1,y2,y3)~y1+y2+y3
+    set.seed(1)
+    d <- sim(m,500)
+    c1 <- partialcor(~x1+x2,d)
+    e <- estimate(m,d)
+    c2 <- correlation(e)    
+    expect_true(mean(c1[,1]-c2[,1])^2<1e-9)
+    ## CI, note difference var(z)=1/(n-k-3) vs var(z)=1/(n-3)
+    expect_true(mean(c1[,4]-c2[,3])^2<1e-3)
+    expect_true(mean(c1[,5]-c2[,4])^2<1e-3)
+
+})
+
+test_that("multipletesting", {
+    
+})

@@ -59,6 +59,13 @@ test_that("Basic model building blocks", {
 
     expect_true(covariance(mm)$labels["u1","u1"]=="v1")
     expect_true(intercept(mm)[["u2"]]=="m2")
+
+    ## LISREL
+    mm <- fixsome(mm)
+    L <- lisrel(mm,rep(1,length(coef(mm))))
+    expect_equivalent(L$B,matrix(0,2,2))
+    expect_equivalent(L$Theta,diag(3))
+    expect_equivalent(L$Psi,diag(2))
     
 }) 
 
@@ -73,6 +80,9 @@ test_that("Graph attributes", {
     require("graph")
     m <- lvm(y~x)
     g1 <- graph::updateGraph(plot(m,noplot=TRUE))
+    m1 <- graph2lvm(g1)
+    expect_equivalent(m1$M,m$M)
+    
     col <- "blue"; v <- "y"
     g1 <- lava::addattr(g1,"fill",v,col)
     expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
@@ -96,8 +106,7 @@ test_that("Graph attributes", {
     expect_true(!is.null(edgelabels(finalize(m))))
 })
 
-
-
+ 
 test_that("Categorical variables", {
     m <- lvm()
     categorical(m,K=3,p=c(0.1,0.5)) <- ~x

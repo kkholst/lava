@@ -152,6 +152,30 @@ if (requireNamespace("visualTest") && requireNamespace("png")) {
         ## TODO
     })
 
+    test_that("colorbar", {
+        ## TODO
+    })
+
+    test_that("fplot", {
+        ## TODO
+    })
+
+    test_that("interactive", {
+        ## TODO
+    })
+
+    test_that("pdfconvert", {
+        ## TODO
+    })
+
+    test_that("plot.estimate", {
+        ## TODO
+    })
+
+    test_that("logo", {
+        lava(seed=1)
+    })
+
     
     
     

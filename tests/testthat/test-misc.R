@@ -2,7 +2,9 @@ context("Utility functions")
 
 test_that("By", {
     require('data.table')
-    By(datasets::CO2,~Treatment+Type,colMeans,~conc)
+    b1 <- By(datasets::CO2,~Treatment+Type,colMeans,~conc)
+    b2 <- By(datasets::CO2,c('Treatment','Type'),colMeans,'conc')
+    expect_equivalent(b1,b2)
     t1 <- as.data.frame(data.table(datasets::CO2)[,mean(uptake),by=.(Treatment,Type,conc>500)])
     t2 <- By(datasets::CO2,~Treatment+Type+I(conc>500),colMeans,~uptake)
     expect_true(inherits(t2,"array"))
@@ -21,6 +23,9 @@ test_that("Expand", {
     d1 <- Expand(T)
     expect_identical(dim(d0),dim(d1))
     expect_identical(table(d1),T)
+
+    expect_identical(expand.grid(1:2,1:2),Expand(1:2,1:2))
+    expect_identical(expand.grid(a=1:2,b=1:2),Expand(a=1:2,b=1:2))
 })
 
 test_that("dsort", {
