@@ -27,7 +27,7 @@ test_that("estimate.default", {
     expect_true(h1$coefmat[,5]==e1$coefmat["x",5])
 
     ## GEE
-    if (requireNamespace("geepack")) {
+    if (requireNamespace("geepack",quietly=TRUE)) {
         l <- lm(y~x+z,dd)
         g1 <- estimate(l,id=dd$id)
         g2 <- geepack::geeglm(y~x+z,id=dd$id,data=dd)

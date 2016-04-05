@@ -398,7 +398,7 @@ test_that("multinomial", {
     information(d[,5:6])
     ## pcor
 
-    if (requireNamespace("polycor")) {
+    if (requireNamespace("polycor",quietly=TRUE)) {
         require('mvtnorm')
         system.time(rho <- pcor(d[,5],d[,6]))
         rho2 <- polycor::polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)

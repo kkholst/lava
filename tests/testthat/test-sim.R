@@ -37,15 +37,15 @@ test_that("sim.default I", {
     s1 <- summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1),names=c("Model","Sandwich"))
     expect_true(length(grep("Coverage",rownames(s1)))>0)
     expect_equivalent(colnames(s1),c("Model","Sandwich"))
-
-    val <- sim(onerun,R=2,cl=TRUE,seed=1,messages=0)
+    
+    val <- sim(onerun,R=2,cl=TRUE,seed=1,messages=0,mc.cores=2)
     expect_true(val[1,1]!=val[1,2])
         
     onerun2 <- function(a,b,...) {
         return(cbind(a=a,b=b,c=a-1,d=a+1))
     }
     R <- data.frame(a=1:2,b=3:4)
-    val2 <- sim(onerun2,R=R,messages=1,mc.cores=2)
+    dm <- capture.output(val2 <- sim(onerun2,R=R,messages=1,mc.cores=2))
     expect_true(all(R-val2[,1:2]==0))
     res <- summary(val2)
     expect_equivalent(res["Mean",],c(1.5,3.5,0.5,2.5))
@@ -97,12 +97,10 @@ test_that("distributions", {
     expect_equivalent(sim(m,2,p=c(a=10)),sim(m,2,a=10))
 
     ## Multivariate distribution
-    if (requireNamespace("VGAM")) {
-        m <- lvm()
-        distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
-        expect_equivalent(c("y1","y2"),colnames(sim(m,5)))
-        
-    }
+    m <- lvm()
+    rmr <- function(n,rho,...) rmvn(n,sigma=diag(2)*(1-rho)+rho)
+    distribution(m,~y1+y2,rho=0.9) <- rmr
+    expect_equivalent(c("y1","y2"),colnames(d <- sim(m,5)))
 
     ## Special 'distributions'
     m <- lvm()
