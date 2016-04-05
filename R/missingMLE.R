@@ -35,14 +35,17 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
       if (type>1) {
         mytop <- intersect(topendo,colnames(data.mis)[mypattern])
         if (!is.null(mytop)) {
-          kill(m0) <- mytop
+          kill(m0) <- mytop     
           for (xx in exo) {
           ## If exogenous variable only have effect on missing variables,
           ##  then remove it from the model
-            if (all(c(rownames(A)[A[xx,]==1])%in%mytop)) {
-              exoremove <- c(exoremove,xx)
-              kill(m0) <- xx
-            }
+              if (all(c(rownames(A)[A[xx,]==1])%in%mytop) &&
+                  !(xx%in%m0$par)
+                  ##&& !(xx%in%names(index(m0))$parval)
+                  ) {
+                  exoremove <- c(exoremove,xx)
+                  kill(m0) <- xx
+              }
           }
         }
       }
@@ -167,7 +170,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   x0 <- x
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
-
   if (!silent)
     message("Identifying missing patterns...")
 

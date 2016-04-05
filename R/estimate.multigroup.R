@@ -212,7 +212,6 @@
     }
   }
 
-
   ## Define objective function and first and second derivatives
   ObjectiveFun  <- paste0(estimator, "_objective", ".lvm")
   GradFun  <- paste0(estimator, "_gradient", ".lvm")
