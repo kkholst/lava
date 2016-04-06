@@ -189,7 +189,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (!silent) {
         message("Calculating score test for ",ncol(restrictedcomb), " models:")
         count <- 0
-        pb <- txtProgressBar(style=3,width=40)
+        pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     }
     for (i in seq_len(ncol(restrictedcomb))) {
         if (!silent) {                        

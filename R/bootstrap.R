@@ -71,7 +71,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     coefs <- sds <- c()
     on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
     pb <- NULL
-    if (!silent) pb <- txtProgressBar(style=3,width=40)
+    if (!silent) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     pmis <- missing(p)
     ##maxcount <- 0
     bootfun <- function(i) {

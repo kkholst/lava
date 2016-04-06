@@ -46,9 +46,9 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
-    if (missing(mc.cores)) {
-        if (.Platform$OS.type=="windows") {
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {    
+    if (missing(mc.cores) || .Platform$OS.type=="windows") {
+        if (.Platform$OS.type=="windows") { ## Disable parallel processing on windows
             mc.cores <- 1L
         } else {
             mc.cores <- getOption("mc.cores",parallel::detectCores())
@@ -73,12 +73,19 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         RNGstate <- structure(seed, kind = as.list(RNGkind()))
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
-    if (mc.cores>1 || !missing(cl)) requireNamespace("parallel",quietly=TRUE)
+    if (mc.cores>1L || !missing(cl)) requireNamespace("parallel",quietly=TRUE)
     newcl <- FALSE
-    if (!missing(cl) && is.logical(cl) && cl) {
-        cl <- parallel::makeForkCluster(mc.cores)
-        if (!is.null(seed)) parallel::clusterSetRNGStream(cl,seed)
-        newcl <- TRUE
+    if (!missing(cl) && is.logical(cl)) {
+        if (.Platform$OS.type=="windows" || TRUE) { ## Don't fork processes on windows
+            cl <- NULL
+            mc.cores <- 1
+        } else {
+            if (cl) {
+                cl <- parallel::makeForkCluster(mc.cores)
+                if (!is.null(seed)) parallel::clusterSetRNGStream(cl,seed)
+                newcl <- TRUE
+            }
+        }
     }
     olddata <- NULL
     dots <- list(...)
@@ -134,16 +141,16 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     idx <- split(1:R,sort((1:R)%%nfolds))
     idx.done <- 0
     count <- 0
-    if (messages>0) pb <- txtProgressBar(style=3,width=40)
+    if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     for (ii in idx) {
         count <- count+1
-        if (!missing(cl)) {
+        if (!missing(cl) && !is.null(cl)) {
             pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=x,SIMPLIFY=FALSE))
         } else {
             pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
         }
         if (mc.cores>1) {
-            if (!missing(cl)) {
+            if (!missing(cl) && !is.null(cl)) {
                 val <- do.call(parallel::clusterMap,pp)
             } else {
                 val <- do.call(parallel::mcmapply,pp)
