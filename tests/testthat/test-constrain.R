@@ -8,12 +8,12 @@ test_that("Simple linear constraint",{
     lava:::matrices.lvm(m1,1:2,0,3)
     d1 <- sim(m1,100)
     e1 <- estimate(m1,d1)
-    expect_output(e1,"y~x")
+    expect_output(print(e1),"y~x")
     expect_warning(e1,NA)
         
     expect_equivalent(constraints(e1)[1],coef(lm(y~x+z,d1))["z"])
     s <- summary(e1)
-    expect_output(s,"Non-linear constraints:")
+    expect_output(print(s),"Non-linear constraints:")
 
     expect_equivalent(dim(coef(s)), c(length(coef(e1))+1,4))
     expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))    
@@ -115,13 +115,15 @@ test_that("Multiple group constraints II", {
 
   parameter(l) <- ~r2
   parameter(l2) <- ~r1
-  ee <- estimate(list(MZ=l,DZ=l2),list(MZ,DZ),control=list(method="NR"))
+  ee <- estimate(list(MZ=l,DZ=l2),list(MZ,DZ),control=list(method="NR",tol=1e-9,constrain=FALSE))
+  expect_true(mean(score(ee)^2)<1e-9)
+  
   constrain(ee,h~r2+r1) <- function(x) 2*(x[1]-x[2])
   ce <- constraints(ee)
+  expect_equivalent(constraints(ee)[1],2*diff(coef(ee)[3:4]))
   expect_true(length(coef(ee))==4)
   expect_true(nrow(ce)==1)
   expect_true(all(!is.na(ce)))
-  expect_true(mean(score(ee)^2)<1e-3)
 })
 
 

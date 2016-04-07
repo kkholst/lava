@@ -72,11 +72,11 @@ test_that("distributions", {
     distribution(m,~y3) <- chisq.lvm()
     distribution(m,~y3) <- student.lvm(mu=1,sigma=1)    
 
-    expect_output(distribution(m)$y2,"Family: poisson")
-    expect_output(distribution(m)$y1,"Family: binomial")
+    expect_output(print(distribution(m)$y2),"Family: poisson")
+    expect_output(print(distribution(m)$y1),"Family: binomial")
     latent(m) <- ~u    
-    expect_output(m,"binomial\\(probit\\)")
-    expect_output(m,"poisson\\(log\\)")
+    expect_output(print(m),"binomial\\(probit\\)")
+    expect_output(print(m),"poisson\\(log\\)")
 
     ## Generator:
     m <- lvm()

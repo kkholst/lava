@@ -18,7 +18,7 @@ test_that("Effects",{
     expect_equal(f2["Direct",1],1)
     expect_equal(f2["Indirect",1],0)
 
-    expect_output(ef,"Indirect effects")
+    expect_output(print(ef),"Indirect effects")
     expect_equivalent(confint(ef)["Direct",],
                       confint(e)["y1~x",])
 
@@ -149,7 +149,7 @@ test_that("Bootstrap", {
     expect_false(B1$bollenstine)
     expect_true(B2$bollenstine)
     expect_true(nrow(B1$coef)==2)
-    expect_output(B1,"Standard errors:")
+    expect_output(print(B1),"Standard errors:")
     dm <- capture.output(B3 <- bootstrap(e,R=2,fun=function(x) coef(x)[2]^2+10))
     expect_true(all(mean(B3$coef)>10))
 
@@ -158,7 +158,8 @@ test_that("Bootstrap", {
     m <- lvm(y~b*x)
     constrain(m,alpha~b) <- function(x) x^2
     e <- estimate(m,data.frame(y=y,x=x))
-    expect_output(bootstrap(e,R=1,silent=TRUE),"alpha")
+    b <- bootstrap(e,R=1,silent=TRUE)
+    expect_output(print(b),"alpha")
 })
 
 
@@ -214,7 +215,7 @@ test_that("zero-inflated binomial regression (zib)", {
                       logLik(e)) 
     expect_equivalent(vcov(e), Inverse(information(e,type="obs",data=d)))
 
-    expect_output(e, "Prevalence probabilities:")
+    expect_output(print(e), "Prevalence probabilities:")
     
     PD(e0,intercept=c(1,3),slope=c(2,6))
 
@@ -289,10 +290,10 @@ test_that("Prediction with missing data, random intercept", {
     expect_true(mse(u01,u02)<1e-9)
 
     s <- summary(e0)
-    expect_output(s,paste0("data=",nrow(d0)))
+    expect_output(print(s),paste0("data=",nrow(d0)))
     expect_true(inherits(e0$estimate,"multigroupfit"))
-    expect_output(e0$estimate,"Group 1")
-    expect_output(summary(e0$estimate),paste0("observations = ",nrow(d0)))
+    expect_output(print(e0$estimate),"Group 1")
+    expect_output(print(summary(e0$estimate)),paste0("observations = ",nrow(d0)))
 
 })
 
@@ -316,8 +317,7 @@ test_that("Random slope model", {
 
     d <- mets::fast.reshape(dd,id="id")
     d0 <- mets::fast.reshape(dd0,id="id")
-    
-    
+  
     m0 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
     addvar(m0) <- ~num1+num2+num3
     covariance(m0) <- u~s
@@ -325,14 +325,15 @@ test_that("Random slope model", {
     regression(m0) <- y1 ~ num1*s
     regression(m0) <- y2 ~ num2*s
     regression(m0) <- y3 ~ num3*s
-    system.time(e <- estimate(m0,d,param="none",control=list(trace=0)))
+    system.time(e <- estimate(m0,d,param="none",control=list(trace=0,constrain=FALSE)))
     
     expect_true(mean(sl$coef-coef(e)[c("u","s")])^2<1e-5)
     expect_true((logLik(l)-logLik(e))^2<1e-5)    
     expect_true(mean(diag(sl$varcomp)-coef(e)[c("u,u","s,s")])^2<1e-5)
 
     ## missing
-    expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",start=coef(e),trace=1)),"Iter=")
+    expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
+                  "Iter=")
     l0 <- lmer(y~ 1+num +(1+num|id),dd0,REML=FALSE)    
     expect_true((logLik(l0)-logLik(e0))^2<1e-5)    
     
@@ -410,22 +411,19 @@ test_that("multinomial", {
 
 
 test_that("predict,residuals", {
-
     m <- lvm(c(y1,y2,y3)~u,u~x)
     latent(m) <- ~u
+    set.seed(1)
     d <- sim(m,100,'y1~u'=1,'y3~u'=3)
     e <- estimate(m,d)
     
     l <- lm(y3~x,data=d)
     e3 <- estimate(y3~x,d)
     expect_true(mean((residuals(l)-residuals(e3))^2)<1e-12)
-    expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-12)
+    expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-3)
    
     r <- residuals(e)
-    expect_true(ncol(r)==3)
-     
-    
-    
+    expect_true(ncol(r)==3)         
 })
 
 

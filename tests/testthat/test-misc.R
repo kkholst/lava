@@ -1,15 +1,16 @@
 context("Utility functions")
 
 test_that("By", {
-    require('data.table')
     b1 <- By(datasets::CO2,~Treatment+Type,colMeans,~conc)
     b2 <- By(datasets::CO2,c('Treatment','Type'),colMeans,'conc')
     expect_equivalent(b1,b2)
-    t1 <- as.data.frame(data.table(datasets::CO2)[,mean(uptake),by=.(Treatment,Type,conc>500)])
+    ## require('data.table')
+    ## t1 <- as.data.frame(data.table(datasets::CO2)[,mean(uptake),by=.(Treatment,Type,conc>500)])
+    d0 <- transform(datasets::CO2,conc500=conc>500)
+    t1 <- by(d0[,"uptake"],d0[,c("Treatment","Type","conc500")],mean)
     t2 <- By(datasets::CO2,~Treatment+Type+I(conc>500),colMeans,~uptake)
     expect_true(inherits(t2,"array"))
-    expect_equivalent(sort(t2),sort(t1$V1))    
-    
+    expect_equivalent(sort(t2),sort(t1))
 })
 
 
@@ -118,10 +119,10 @@ test_that("All the rest", {
     lava.options(op)
 
     A <- diag(2); colnames(A) <- c("a","b")    
-    expect_output(printmany(A,A,2,rownames=c("A","B"),bothrows=FALSE),NA)
-    expect_output(printmany(A,A[1,,drop=FALSE],2,rownames=c("A","B"),bothrows=FALSE),NA)
+    expect_output(lava:::printmany(A,A,2,rownames=c("A","B"),bothrows=FALSE),"a b")
+    expect_output(lava:::printmany(A,A[1,,drop=FALSE],2,rownames=c("A","B"),bothrows=FALSE),"a b")
     expect_output(printmany(A,A,2,rownames=c("A","B"),name1="no.1",name2="no.2",
-                            bothrows=TRUE),NA)
+                            bothrows=TRUE),"no.1")
     
 })
 
