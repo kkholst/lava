@@ -105,6 +105,16 @@
     }
   }
   
+  if("control" %in% names.dots == FALSE){
+    dots <- list(control = list())
+  }
+  if("fast" %in% names(dots$control) == FALSE){
+    dots$control$fast <- FALSE
+  }
+  if("iter.max" %in% names(dots$control) == FALSE){
+    dots$control$iter.max <- 5000
+  }
+  
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
                                                penalty = penalty, regularizationPath = regularizationPath, 

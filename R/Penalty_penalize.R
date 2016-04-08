@@ -1,5 +1,46 @@
 #### 1- S3 Methods ####
-
+##' @aliases penalize penalize<- penalize.lvm penalize.plvm
+##' @param x
+##' @param pen.intercept should the intercept be penalized
+##' @param pen.exogenous should the mean parameters be penalized
+##' @param pen.variance should the variance parameters be penalized (not possible now)
+##' @param lambda1 the lasso penalty
+##' @param lambda2 the ridge penalty
+##' @param fn_penalty user defined penalty function. Arguments coef, lambda1, lambda2.
+##' @param gn_penalty first derivative of the user defined penalty function. Arguments coef, lambda1, lambda2.
+##' @param hn_penalty, second derivative of the user defined penalty user defined penalty function. Arguments coef, lambda1, lambda2.
+##' @param value
+##' @return none
+##' @export
+##' @examples
+##' set.seed(10)
+##' n <- 500
+##' formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
+##' lvm.modelSim <- lvm()
+##' regression(lvm.modelSim, formula.lvm) <- as.list( c(rep(0,2),1:3) )
+##' distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
+##' df.data <- sim(lvm.modelSim,n)
+##' 
+##' lvm.model <- lvm(formula.lvm)
+##' plvm.model <- penalize(lvm.model)
+##' 
+##' #### regularization
+##' elvm.L2 <- estimate(plvm.model,  data = df.data, lambda2 = 50)
+##' elvm.L1 <- estimate(plvm.model,  data = df.data, lambda1 = 65)
+##' elvm.L12 <- estimate(plvm.model,  data = df.data, lambda1 = 50, lambda2 = 50)
+##' 
+##' #### path regularization
+##' elvm.FixedPath <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, fix.sigma = TRUE,
+##'                            control = list(data = df.data))
+##'                            
+##' elvm.L1Fixedpath <- estimate(plvm.model,  data = df.data, lambda1 = elvm.FixedPath$opt$message[3,"lambda"],
+##'                         fix.sigma = TRUE)                           
+##' coef(L1Fixedpath) - elvm.FixedPath$opt$message[3,-1]
+##'
+##' elvm.FreePath <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, control = list(data = df.data))                                                        
+##' elvm.L1FreePath <- estimate(plvm.model,  data = df.data, lambda1 = elvm.FreePath$opt$message[3,"lambda"])                           
+##' coef(elvm.L1FreePath) - elvm.FreePath$opt$message[3,-1]
+##' 
 ##' @export
 `penalize` <-
   function(x,...) UseMethod("penalize")

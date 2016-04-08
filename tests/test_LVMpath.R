@@ -22,11 +22,14 @@ sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 #### 1- regression ####
 set.seed(10)
 n <- 500
-formula.lvm <- Y~X1+X2+X3+X4
-lvm.model <- lvm(list(formula.lvm))
-df.data <- sim(lvm.model,n)
-plvm.model <- penalize(lvm.model)
+formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
+lvm.modelSim <- lvm()
+regression(lvm.modelSim, formula.lvm) <- as.list( c(rep(0,2),1:3) )
+distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
+df.data <- sim(lvm.modelSim,n)
 
+lvm.model <- lvm(formula.lvm)
+plvm.model <- penalize(lvm.model)
 
 lvm.fit <- estimate(lvm.model,  data = df.data,
                       control = list(constrain = TRUE))
@@ -34,19 +37,49 @@ lvm.fit <- estimate(lvm.model,  data = df.data,
 #### check fix lambda ####
 penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
                            penalized = df.data[,all.vars(formula.lvm)[-1]], 
-                           steps = "Park")
+                           lambda1 = 500)
 
-coef(penalized.fit[[4]])
+elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, 
+                          lambda1 = penalized.fit@lambda1/penalized.fit@nuisance$sigma2,
+                          control = list(constrain = TRUE, iter.max = 5000))
 
-elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, fix.sigma = TRUE,
-                           control = list(constrain = TRUE, iter.max = 5000))
-coef(elvm1ISTA.fit)
+coef(elvm1ISTA.fit) - c(penalized.fit@unpenalized,penalized.fit@penalized,penalized.fit@nuisance$sigma2)
+
+penalized.fit1000 <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
+                           penalized = df.data[,all.vars(formula.lvm)[-1]], 
+                           lambda1 = 1000)
+
+elvm1.FIXED <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit1000@lambda1,
+                        fix.sigma = TRUE, 
+                        control = list(constrain = TRUE, iter.max = 5000))
+coef(elvm1.FIXED) - c(penalized.fit1000@unpenalized, penalized.fit1000@penalized, penalized.fit1000@nuisance$sigma2)
+
+elvm1.FREE <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit1000@lambda1/penalized.fit1000@nuisance$sigma2,
+                       fix.sigma = FALSE,
+                       control = list(constrain = TRUE, iter.max = 5000))
+coef(elvm1.FREE) - c(penalized.fit1000@unpenalized, penalized.fit1000@penalized, penalized.fit1000@nuisance$sigma2)
+
+####
+
+penalizedPath.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
+                               penalized = df.data[,all.vars(formula.lvm)[-1]], 
+                               steps = "Park")
+iter_path <- 2
+
+elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, fix.sigma = FALSE,
+                          lambda1 = penalizedPath.fit[[iter_path]]@lambda1,#/penalizedPath.fit[[iter_path]]@nuisance$sigma2,
+                          control = list(constrain = TRUE, iter.max = 5000, cooling = NA))
+elvm1ISTA.fit2 <- estimate(plvm.model,  data = df.data, fix.sigma = FALSE,
+                          lambda1 = penalizedPath.fit[[iter_path]]@lambda1,#/penalizedPath.fit[[iter_path]]@nuisance$sigma2,
+                          control = list(constrain = TRUE, iter.max = 5000, cooling = 0.999))
 elvm1ISTA.fit$opt$iterations
+elvm1ISTA.fit2$opt$iterations
 
-elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = penalized.fit[[4]]@lambda1, proxGrad.method = "FISTA", fix.sigma = FALSE,
-                           control = list(constrain = TRUE, iter.max = 5000))
-coef(elvm1FISTA.fit)
-elvm1FISTA.fit$opt$iterations
+coef(elvm1ISTA.fit) - c(penalizedPath.fit[[iter_path]]@unpenalized,
+                        penalizedPath.fit[[iter_path]]@penalized,
+                        penalizedPath.fit[[iter_path]]@nuisance$sigma2)
+
+
 
 #### check regularization path ####
 # resLassoPath <- LassoPath(dataX = dataX_norm, 
@@ -64,17 +97,39 @@ penalized.fit <- penalized(response = df.data_norm[,all.vars(formula.lvm)[1]],
                            steps = "Park")
 unlist(lapply(penalized.fit, function(x){x@lambda1}))
 
-#### incorrect when data are not normogonalized
-
-p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, fix.sigma = TRUE,
-                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
-p1lvm.fit$opt$message
-
+#### data are not normogonalized
 penalized.fit <- penalized(response = df.data[,all.vars(formula.lvm)[1]], 
                            penalized = df.data[,all.vars(formula.lvm)[-1]], 
                            steps = "Park")
 unlist(lapply(penalized.fit, function(x){x@lambda1}))
 
+##
+p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, fix.sigma = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+p1lvm.fit$opt$message
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 621.94685, fix.sigma = TRUE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+coef(p1lvm.fit)
+
+##
+p1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = TRUE, fix.sigma = FALSE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+p1lvm.fit$opt$message
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 10, fix.sigma = FALSE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data))
+coef(p1lvm.fit)
+
+#### check regularization path - fix.sigma ####
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data_norm, regularizationPath = TRUE, fix.sigma = FALSE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data_norm))
+p1lvm.fit$opt$message
+
+p1lvm.fit <- estimate(plvm.model,  data = df.data_norm, lambda1 = p1lvm.fit$opt$message$lambda[11], fix.sigma = FALSE,
+                      control = list(constrain = TRUE, iter.max = 1000, data = df.data_norm))
+coef(p1lvm.fit)
 
 #### 2- LVM ####
 
