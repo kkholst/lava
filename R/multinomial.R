@@ -17,22 +17,22 @@
 ##'               z2=cut(y2,breaks=breaks),
 ##'               z3=cut(y3,breaks=breaks),
 ##'               z4=cut(y4,breaks=breaks))
-##'
+##' 
 ##' multinomial(d[,5])
 ##' (a1 <- multinomial(d[,5:6]))
 ##' (K1 <- kappa(a1)) ## Cohen's kappa
-##'
+##' 
 ##' K2 <- kappa(d[,7:8])
 ##' ## Testing difference K1-K2:
 ##' estimate(merge(K1,K2,id=TRUE),diff)
-##'
+##' 
 ##' estimate(merge(K1,K2,id=FALSE),diff) ## Wrong std.err ignoring dependence
 ##' sqrt(vcov(K1)+vcov(K2))
-##' ##'
+##' 
 ##' ## Average of the two kappas:
 ##' estimate(merge(K1,K2,id=TRUE),function(x) mean(x))
 ##' estimate(merge(K1,K2,id=FALSE),function(x) mean(x)) ## Independence
-##'
+##' ##'
 ##' ## Goodman-Kruskal's gamma
 ##' m2 <- lvm(); covariance(m2) <- y1~y2
 ##' breaks1 <- c(-Inf,-1,0,Inf)
@@ -40,13 +40,17 @@
 ##' d2 <- transform(sim(m2,5e2),
 ##'               z1=cut(y1,breaks=breaks1),
 ##'               z2=cut(y2,breaks=breaks2))
-##'
+##' 
 ##' (g1 <- gkgamma(d2[,3:4]))
 ##' ## same as
 ##' \dontrun{
 ##' gkgamma(table(d2[,3:4]))
 ##' gkgamma(multinomial(d2[,3:4]))
 ##' }
+##' 
+##' ##partial gamma
+##' d2$x <- rbinom(nrow(d2),2,0.5)
+##' gkgamma(z1~z2|x,data=d2)
 ##' @author Klaus K. Holst
 multinomial <- function(x,marginal=FALSE,transform,...) {
     if (is.table(x)) x <- lava::Expand(x)
@@ -248,17 +252,6 @@ goodmankruskal_gamma <- function(P,...) {
     (Pconc-Pdisc)/(Pconc+Pdisc)
 }
 
-##' @export
-gkgamma <- function(x,...) {
-    if (is.table(x) || is.data.frame(x) || is.matrix(x)) {
-        x <- multinomial(x)
-    }
-    if (!inherits(x,"multinomial")) stop("Expected table, data.frame or multinomial object")
-
-    P <- x$position
-    estimate(x,function(p) { P[] <- p[P]
-                             list(gamma=goodmankruskal_gamma(P)) },iid=TRUE,...)
-}
 
 ##################################################
 ## Independence tests

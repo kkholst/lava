@@ -42,11 +42,11 @@ estimate(merge(K1,K2,id=TRUE),diff)
 
 estimate(merge(K1,K2,id=FALSE),diff) ## Wrong std.err ignoring dependence
 sqrt(vcov(K1)+vcov(K2))
-##'
+
 ## Average of the two kappas:
 estimate(merge(K1,K2,id=TRUE),function(x) mean(x))
 estimate(merge(K1,K2,id=FALSE),function(x) mean(x)) ## Independence
-
+##'
 ## Goodman-Kruskal's gamma
 m2 <- lvm(); covariance(m2) <- y1~y2
 breaks1 <- c(-Inf,-1,0,Inf)
@@ -61,6 +61,10 @@ d2 <- transform(sim(m2,5e2),
 gkgamma(table(d2[,3:4]))
 gkgamma(multinomial(d2[,3:4]))
 }
+
+##partial gamma
+d2$x <- rbinom(nrow(d2),2,0.5)
+gkgamma(z1~z2|x,data=d2)
 }
 \author{
 Klaus K. Holst
