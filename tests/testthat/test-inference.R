@@ -442,6 +442,11 @@ test_that("partialcor", {
 
 })
 
-test_that("multipletesting", {
-    
+test_that("partialgamma", {
+      
 })
+
+test_that("multipletesting", {
+    ## TODO
+})
+

@@ -36,6 +36,7 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
     }
     if (!is.null(strata)) {
         dd <- split(data,strata)
+        browser()
         gam <- lapply(dd,function(d,...) gkgamma(x,data=d,...),
                       ...,
                       iid=TRUE,
@@ -50,7 +51,7 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
             ##w <- tot/sum(tot)
             ##pgam <- sum(w*gam)            
             c(gam,pgamma=sum(dif)/sum(tot))
-        },labels=c(paste0("γ:",names(dd)),"pgamma"),
+        },labels=c(paste0("\u03b3:",names(dd)),"pgamma"),
         iid=iid)
         k <- length(dd)
         if (!iid) {

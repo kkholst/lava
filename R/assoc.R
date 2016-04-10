@@ -30,7 +30,7 @@ assoc <- function(P,sigma,breaks,...) {
     marg.col <- colSums(P)
     Chance <- sum(marg.row*marg.col)
     kap <- (Agree-Chance)/(1-Chance)
-    gam <- goodmankruskal_gamma(P)
+    gam <- goodmankruskal_gamma(P)$gamma
     inf <- information_assoc(P)
     res <- c(list(kappa=kap,gamma=gam),inf)
     if (!missing(sigma)) res <- c(res,rho=sigma[1,2])

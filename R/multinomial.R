@@ -228,32 +228,6 @@ information.multinomial <- function(x,...) {
 
 
 ##################################################
-## Goodman-Kruskal gamma
-##################################################
-
-goodmankruskal_gamma <- function(P,...) {
-    nr <- nrow(P); nc <- ncol(P)
-    Pconc <- 0
-    for (i in seq_len(nr-1)) {
-        h <- seq(i+1,nr)
-        for (j in seq_len(nc-1)) {
-                k <- seq(j+1,nc)
-                Pconc <- Pconc+2*P[i,j]*sum(P[h,k])
-            }
-    }
-    Pdisc <- 0
-    for (i in seq_len(nr-1)) {
-        h <- seq(i+1,nr)
-        for (j in (seq_len(nc-1)+1)) {
-            k <- seq(1,j-1)
-            Pdisc <- Pdisc+2*P[i,j]*sum(P[h,k])
-        }
-    }
-    (Pconc-Pdisc)/(Pconc+Pdisc)
-}
-
-
-##################################################
 ## Independence tests
 ##################################################
 

@@ -1,8 +1,13 @@
-* Version 1.4.3 <2016-04-06 Wed>
+* Version 1.4.3 <2016-04-11 Mon>
+  - partial gamma coefficients (gkgamma)
+  - Unit tests works with new testthat version
+  - Avoid trying to fork new processes on windows (bootstrap,sim.default)
+
+* Version 1.4.2 <2016-04-05 Wed>
   - Code optimization and minor bug fixes
   - Travis-CI, unit-tests
   - glm estimator update (censored regression)
-  - polychoric correlations (function pcor)
+  - polychoric correlations (pcor)
   - New utility functions: wrapvec, offdiag
   - simulation: regression design on parameters (see weibull +
     variance hetereogeneity example in help('sim'))

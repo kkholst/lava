@@ -476,7 +476,6 @@ getoutcome <- function(formula,sep) {
     res <- paste(deparse(formula[[2]]),collapse="")
   }
   if (!missing(sep)) {
-      yx <- getoutcome(f)
       attributes(res)$x <- lapply(strsplit(aa$term.labels,"\\|")[[1]],
                                   function(x) as.formula(paste0("~",x)))
   } else {
