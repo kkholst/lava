@@ -332,7 +332,7 @@
                 if (is.null(optim$start) || sum(paragree)<length(myparnames)) {
                     if (is.null(optim$starterfun) && lava.options()$param!="relative")
                         optim$starterfun <- startvalues0
-                    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent)))
+                    start <- suppressWarnings(do.call(optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent,data=data,...)))
                     if (!is.null(x$expar) && length(start)<nparall) {
                         ii <- which(index(x)$e1==1)
                         start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
