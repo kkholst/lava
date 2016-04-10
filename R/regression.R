@@ -40,6 +40,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Match '+' but not when preceeded by ( ... )
     X <- strsplit(yx[[xidx]],"\\+(?![^\\(]*\\))", perl=TRUE)[[1]]
+    
     ##regex <- "(?!(\\(*))[\\(\\)]"
     regex <- "[\\(\\)]"
     ## Keep squares brackets and |(...) statements
@@ -55,8 +56,10 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
     xxf <- lapply(as.list(xx),function(x) decomp.specials(x,NULL,pattern2="\\[|~",perl=TRUE))
     xs <- unlist(lapply(xxf,function(x) x[1]))
 
-    ## Alter intercepts?
-    intpos <- vapply(xs,function(x) grepl("^[\\-]*[\\.|0-9]+$",x), 0)
+    ## Alter intercepts?    
+    intpos <- which(vapply(xs,function(x) grepl("^[\\-]*[\\.|0-9]+$",x), 0)==1)
+    ## Match '(int)'
+    intpos0 <- which(vapply(X,function(x) grepl("^\\([\\-]*[\\.|0-9]+\\)$",x),0)==1)
 
     yy <- ys <- NULL
     if (length(lhs)>0) {
@@ -83,10 +86,13 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
         }
       }
 
-      if (any(intpos>0)) {
-          if (xs[intpos[1]]=="1") xs[intpos[1]] <- NA
-              intercept(object,ys) <- as.numeric(xs[intpos[1]])
-          xs <- xs[-intpos]          
+      if (length(intpos>0)) {
+          if (xs[intpos[1]]==1 && (!length(intpos0)>0) ) {
+              xs[intpos[1]] <- NA
+          }
+          intercept(object,ys) <- as.numeric(xs[intpos[1]])
+          xs <- xs[-intpos]
+          res[intpos] <- NULL
       }
 
         object <- addvar(object,xs,reindex=FALSE ,...)
