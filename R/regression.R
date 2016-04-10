@@ -57,10 +57,10 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
     xs <- unlist(lapply(xxf,function(x) x[1]))
 
     ## Alter intercepts?    
-    intpos <- which(vapply(xs,function(x) grepl("^[\\-]*[\\.|0-9]+$",x), 0)==1)
+    intpos <- which(vapply(xs,function(x) grepl("^[\\+\\-]*[\\.|0-9]+$",x), 0)==1)
     ## Match '(int)'
-    intpos0 <- which(vapply(X,function(x) grepl("^\\([\\-]*[\\.|0-9]+\\)$",x),0)==1)
-
+    intpos0 <- which(vapply(X,function(x) grepl("^\\([\\+\\-]*[\\.|0-9]+\\)$",x),0)==1)
+    
     yy <- ys <- NULL
     if (length(lhs)>0) {
         yy <- decomp.specials(lhs)
@@ -87,6 +87,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
       }
 
       if (length(intpos>0)) {
+          xs[intpos[1]] <- gsub("\\+","",xs[intpos[1]])
           if (xs[intpos[1]]==1 && (!length(intpos0)>0) ) {
               xs[intpos[1]] <- NA
           }
