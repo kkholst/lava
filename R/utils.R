@@ -325,7 +325,7 @@ function(M, upper=TRUE) {
 
 ##' @export
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE) {
-    n <- nrow(X)
+    n <- NROW(X)
     if (n==1L) {
         res <- 1/X
         if (det) attributes(res)$det <- X
@@ -468,15 +468,21 @@ extractvar <- function(f) {
 }
 
 ##' @export
-getoutcome <- function(formula) {
+getoutcome <- function(formula,sep) {
   aa <- attributes(terms(formula))
   if (aa$response==0) {
     res <- NULL
   } else {
     res <- paste(deparse(formula[[2]]),collapse="")
   }
-  attributes(res)$x <- aa$term.labels
-  res
+  if (!missing(sep)) {
+      yx <- getoutcome(f)
+      attributes(res)$x <- lapply(strsplit(aa$term.labels,"\\|")[[1]],
+                                  function(x) as.formula(paste0("~",x)))
+  } else {
+      attributes(res)$x <- aa$term.labels
+  }
+  return(res)
 }
 
 
