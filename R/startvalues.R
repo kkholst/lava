@@ -84,7 +84,6 @@ startmean <- function(x,p,mu) {
 
 ###{{{ startvalues3
 
-##' @export
 `startvalues3` <-
 function(x, S, debug=FALSE, tol=1e-6,...) {
   S <- reorderdata.lvm(x,S)
@@ -100,6 +99,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
   obs.idx <- index(x)$obs.idx;
   ##obs.idx <- as.vector(J%*%(seq_len(m)));
   latent.idx <- setdiff(seq_len(m), obs.idx)
+  lat <- colnames(A)[latent.idx]
 
   exo.idx <- index(x)$exo.idx ## match(exogenous(x),vars(x))
   exo.idxObs <- index(x)$exo.obsidx ##match(exogenous(x),manifest(x))
@@ -120,7 +120,6 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
       lambda <- lambda0*S[fix.idx, j]/S[fix.idx,fix.idx]
       newA[j,i] <- lambda
     }
-    ## Estimation of  zeta^2 (variance of latent variable)
     lambdas <- newA[rel.pos,i]
 
 
@@ -128,8 +127,9 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     exo2latent <- which(A0[i,exo.idx]==1)
     exo.pos <- colnames(S)[exo.idxObs[exo2latent]]
     varX.eta <- S[exo.pos, exo.pos]
-    InvvarX.eta <- Inverse(varX.eta)
-
+    InvvarX.eta <- Inverse(varX.eta,tol=1e-3)
+    browser()
+    rel.pos <- setdiff(rel.pos,lat)
     covXY <- S[exo.pos, rel.pos,drop=FALSE]
     beta <- 0
     for (j in seq_len(length(rel.pos)))
@@ -145,10 +145,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     beta.eta <- matrix(newA[i,exo.pos], ncol=1)
 
     ## Estimation of  zeta^2 (variance of latent variable)
-    lambdas <- newA[rel.pos,i]
-
     betavar <- matrix(beta.eta,nrow=1)%*%varX.eta%*%beta.eta
-
 
     zetas <- c()
     for (r1 in seq_len(length(rel.pos)-1))
@@ -175,6 +172,7 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 ###{{{ startvalues2
 
 
+## Estimate sub-models (measurement models)
 ##' @export
 `startvalues2` <-
   function(x, S, mu=NULL, debug=FALSE, silent=FALSE,...) {
@@ -195,7 +193,9 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
       return(startmean(x,ss,mu=mu))
     ## if (!silent) cat("Fitting marginal measurement models...\n")
     op <- options(warn=-1)
-    e <- lapply(g, function(y) estimate(y, data=list(S=S, n=1), control=list(meanstructure=FALSE, starterfun="startvalues", estimator="Simple", method="nlminb1"), optcontrol=list(), debug=FALSE, silent=TRUE))
+    e <- lapply(g, function(y) {
+        estimate(y, data=list(S=S[manifest(y),manifest(y),drop=FALSE], mu=mu[manifest(y)], n=100), control=list(meanstructure=FALSE, starterfun="startvalues", estimator="Simple", method="nlminb1"), optcontrol=list(), debug=FALSE, silent=TRUE)
+    })
     for (l in e) {
       ##    a <- coef(l$estimate)[,1]
       a <- coef(l)
@@ -206,7 +206,6 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     }
     }
     options(op)
-    ##  names(ss) <- coef(x, silent=TRUE)
     startmean(x,ss,mu=mu)
   }
 
@@ -276,6 +275,7 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
 
 ###{{{ startvalues
 
+## McDonald & Hartmann, 1992
 ##' @export
 startvalues <-
 function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
@@ -338,7 +338,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
   for (j in seq_len(m)) { ## OLS-estimates
     relation <- A[j,]==1
     if (!any(relation)) next
-    Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(nrow=sum(relation))*delta) %*% C[relation,j], error=function(...) 0)
+    Ahat[j, relation] <- tryCatch(Inverse(C[relation,relation] + diag(nrow=sum(relation))*delta,tol=1e-3) %*% C[relation,j], error=function(...) 0)
   }
   Ahat[obs.idx,] <- Ahat[obs.idx,]*matrix(s, n, m)
   Ahat[,obs.idx] <- Ahat[,obs.idx]/matrix(s, m, n, byrow=TRUE)
