@@ -128,7 +128,6 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     exo.pos <- colnames(S)[exo.idxObs[exo2latent]]
     varX.eta <- S[exo.pos, exo.pos]
     InvvarX.eta <- Inverse(varX.eta,tol=1e-3)
-    browser()
     rel.pos <- setdiff(rel.pos,lat)
     covXY <- S[exo.pos, rel.pos,drop=FALSE]
     beta <- 0

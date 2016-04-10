@@ -36,7 +36,6 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
     }
     if (!is.null(strata)) {
         dd <- split(data,strata)
-        browser()
         gam <- lapply(dd,function(d,...) gkgamma(x,data=d,...),
                       ...,
                       iid=TRUE,
