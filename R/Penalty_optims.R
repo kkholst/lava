@@ -1,17 +1,20 @@
 proxGrad <- function(start, objective, gradient, hessian,...){
-   
-  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol","proxGrad.method","fix.sigma", "cooling","test.path")
+  
+  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain",
+                  "proxGrad.method", "fast", "browser")
   dots <- list(...)
   control <- dots$control
   control <- control[names(control) %in% PGcontrols]
-  
-  if("cooling" %in% names(control) == FALSE){control$cooling <- 0.999}
   
   penalty <- dots$penalty
   if (length(dots$trace)>0 && dots$trace>0) cat("\n")
   n.coef <- length(start)
   
   index.penaltyCoef <- which(names(start) %in% penalty$names.penaltyCoef)
+  
+  if("browser" %in% names(control) && control$browser == TRUE){
+    browser()
+  }
   
   #### definition of the operator
   if(penalty$lambda1 == 0 && penalty$lambda2 == 0){
@@ -54,23 +57,42 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   }else{
     constrain <- NULL
   }
- 
-   if( dots$regularizationPath ){
-    
-    ## path regularization
-     if(dots$use.lavaDeriv){
-       resLassoPath <- LassoPath_lvm(beta0 = start, hessianLv = hessian, gradientLv = gradient,
-                                     indexPenalty = index.penaltyCoef, 
-                                     indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                                     fix.nuisance = dots$fix.sigma)
+  
+  
+  if( dots$regularizationPath ){
+
+     ## path regularization
+       objectiveLava <- function(pp){-objective(pp)}
+       gradientLava <- function(pp){-gradient(pp)}
+       hessianLava <- function(pp){-hessian(pp)}
+      
+       resLassoPath <- LassoPath_lvm(beta0 = start, objectiveLv = objectiveLava, gradientLv = gradientLava, hessianLv = hessianLava,
+                                     indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
+                                     sd.X = penalty$sd.X, base.lambda = penalty$lambda1, 
+                                     fix.nuisance = dots$fix.sigma, exp.nuisance = control$constrain)
        
-     }else{
-       resLassoPath <- LassoPath_lvm(beta0 = start,
-                                     indexPenalty = index.penaltyCoef, 
-                                     indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                                     fix.nuisance = dots$fix.sigma,
-                                     dataY = as.matrix(dots$control$data[,1,drop = FALSE]), dataX = as.matrix(dots$control$data[,-1,drop = FALSE]))
-     }
+      names(resLassoPath) <- c("lambda", names(start))
+
+    if(!is.null(constrain)){
+      lambda2 <- rep(0, n.coef)
+      lambda1 <- rep(0, n.coef)
+      
+      for(iter_lambda in 1:nrow(resLassoPath)){
+        iter_start  <- unlist(resLassoPath[iter_lambda,-1])
+        lambda1[index.penaltyCoef] <- resLassoPath[iter_lambda,1]
+
+        resTempo <- do.call(dots$proxGrad.method,
+                            list(start = iter_start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                                 lambda1 = lambda1, lambda2 = lambda2, constrain = iter_start[names(iter_start) %in% names(constrain) == FALSE],
+                                 iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
+        
+        resLassoPath[iter_lambda,names(constrain)] <- resTempo$par[names(constrain)]
+      }
+    }
+    
+    if(control$constrain == TRUE){
+      resLassoPath[,names(constrain)] <- exp(resLassoPath[,names(constrain)])
+    }
     
     res <- list(par = start,
                 convergence = 0,
@@ -81,64 +103,86 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   }else{
     
     ## one step lasso
-    step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value)) # may be computationnaly expensive 
-    
     lambda1 <- rep(0, n.coef)
     lambda1[index.penaltyCoef] <- penalty$lambda1 
     lambda2 <- rep(0, n.coef)
     lambda2[index.penaltyCoef] <- penalty$lambda2 
    
     res <- do.call(dots$proxGrad.method,
-                   list(start = start, step = step, proxOperator = proxOperator, gradient = gradient,
+                   list(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                         lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
-                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, cooling = control$cooling))
+                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
       
     res$objective <- objective(res$par, penalty = penalty)
-  
+     
     if(!is.null(constrain)){
-    res2 <- do.call(dots$proxGrad.method,
-                   list(start = res$par, step = step, proxOperator = proxOperator, gradient = gradient,
-                        lambda1 = lambda1, lambda2 = lambda2, constrain = res$par[names(res$par) %in% names(constrain) == FALSE],
-                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, cooling = control$cooling))
-    res$par <- res2$par
+      res2 <- do.call(dots$proxGrad.method,
+                      list(start = res$par, step = res$step, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                           lambda1 = lambda1, lambda2 = lambda2, constrain = res$par[names(res$par) %in% names(constrain) == FALSE],
+                           iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
+      res$par <- res2$par
     }
   }
-
+  
   ### export
   return(res)
 }
 
 
-
-ISTA <- function(start, step, proxOperator, gradient, 
-                 lambda1, lambda2, constrain,
-                 iter.max, abs.tol, rel.tol, cooling){
+ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
+                 lambda1, lambda2, constrain, n.backtracking = 1, eta.backtracking = 0.5,
+                 iter.max, abs.tol, rel.tol, fast){
 
   ## initialisation
   test.cv <- FALSE
   iter <- 1
   x_k <- start 
   if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-  
-  ## loop
-  while(test.cv == FALSE && iter <= iter.max){
-    x_km1 <- x_k
-
-    x_k <- proxOperator(x = x_km1 - step * gradient(x_km1, penalty = NULL), 
-                        step = step, lambda1 = lambda1, lambda2 = lambda2)
-    if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-    # if(x_k["Y,Y"]>var(df.data$Y)){cat(x_k["Y,Y"], " ", var(df.data$Y), "\n")}
-    
-    iter <- iter + 1
-    step <- step * cooling
-    absDiff <-  (abs(x_k-x_km1) < abs.tol)
-    relDiff <- (abs(x_k-x_km1)/abs(x_k) < rel.tol)
-    test.cv <- all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
-   
-    
+  if(fast == TRUE){
+    t_k <- 1
+    y_k <- x_k
+  }
+  if(is.null(step)){
+    step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value))
   }
   
-  # print(x_k - x_km1)
+   ## loop
+  while(test.cv == FALSE && iter <= iter.max){
+    x_km1 <- x_k
+    iter_back <- 0
+    diff_back <- 1
+    
+    while( (iter_back < n.backtracking) && (diff_back > 0) ){
+      
+      stepTest <- step*eta.backtracking^iter_back
+      
+      if(fast == TRUE){
+        t_km1 <- t_k
+        x_k <- proxOperator(x = y_k - stepTest * gradient(y_k, penalty = NULL), 
+                            step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
+        t_k <- (1 + sqrt(1 + 4 * t_km1^2)) / 2
+        y_k <- x_k + (t_km1-1)/t_k * (x_k - x_km1)
+      }else{
+        x_k <- proxOperator(x = x_km1 - stepTest * gradient(x_km1, penalty = NULL), 
+                            step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
+      }
+      if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+      
+      diff_x <- x_k - x_km1
+      current_obj <- objective(x_k)
+      diff_obj <- current_obj - objective(x_km1)
+      diff_back <- diff_obj - (crossprod(diff_x, gradient(x_km1)) + 1/(2*stepTest) * crossprod(diff_x))
+      iter_back <- iter_back + 1
+    }
+    step <- 1/max(abs(eigen(hessian(x_k, penalty = NULL))$value))#stepTest
+    
+    iter <- iter + 1
+    absDiff <- abs(diff_obj) < abs.tol  #(abs(diff_x) < abs.tol)
+    relDiff <- abs(diff_obj)/abs(current_obj) < rel.tol #(abs(diff_x)/abs(x_k) < rel.tol)
+    test.cv <- absDiff + relDiff > 0  #all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
+    
+    # cat(iter,": ",stepTest," ",diff_back,"\n")
+  }
   
   ## export
   message <- if(test.cv){"Sucessful convergence \n"
@@ -146,50 +190,7 @@ ISTA <- function(start, step, proxOperator, gradient,
     paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
   }
   return(list(par = x_k,
-              convergence = as.numeric(test.cv==FALSE),
-              iterations = iter,
-              evaluations = c("function" = 0, "gradient" = iter),
-              message = message
-  ))
-}
-
-FISTA <- function(start, step, proxOperator, gradient, 
-                  lambda1, lambda2, constrain,
-                  iter.max, abs.tol, rel.tol, cooling){
-  
-  ## initialisation
-  test.cv <- FALSE
-  iter <- 1
-  x_k <- start 
-  t_k <- 1
-  if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-  y_k <- x_k
-  
-  ## loop
-  while(test.cv == FALSE && iter <= iter.max){
-    x_km1 <- x_k
-    t_km1 <- t_k
-  
-    x_k <- proxOperator(x = y_k - step * gradient(y_k, penalty = NULL), 
-                        step = step, lambda1 = lambda1, lambda2 = lambda2)
-    if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-  
-    t_k <- (1 + sqrt(1 + 4 * t_k^2)) / 2
-    y_k <- x_k + (t_km1-1)/t_k * (x_k - x_km1)
-    
-    iter <- iter + 1
-    step <- step * cooling
-    absDiff <-  abs(x_k-x_km1)
-    relDiff <- abs(x_k-x_km1)/abs(x_k)
-    test.cv <- all( ( absDiff<abs.tol) + ifelse(is.na(relDiff),0, relDiff < rel.tol) > 0 )
-  }
-  
-  ## export
-  message <- if(test.cv){"Sucessful convergence \n"
-  }else{
-    paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff, na.rm = TRUE)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
-  }
-  return(list(par = x_k,
+              step = step,
               convergence = as.numeric(test.cv==FALSE),
               iterations = iter,
               evaluations = c("function" = 0, "gradient" = iter),

@@ -98,6 +98,7 @@
   index.varCoef <- grep(",", coef(x))
   index.meanCoef <- setdiff(1:length(coef(x)), index.varCoef)
   index.interceptCoef <- setdiff(index.meanCoef, grep("~", coef(x)))
+  index.latentCoef <- intersect(grep(names(x$latent), coef(x)), index.meanCoef)
   
   x$penalty$names.varCoef <- coef(x)[index.varCoef]
   x$penalty$names.meanCoef <- coef(x)[index.meanCoef]
@@ -122,7 +123,7 @@
       index.penaltyCoef <- c(index.penaltyCoef, index.interceptCoef)
     }
     if(pen.exogenous == TRUE){
-      index.penaltyCoef <- c(index.penaltyCoef, setdiff(index.meanCoef,index.interceptCoef))
+      index.penaltyCoef <- c(index.penaltyCoef, setdiff(index.meanCoef,c(index.interceptCoef,index.latentCoef)))
     }
     if(pen.variance == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, index.varCoef)

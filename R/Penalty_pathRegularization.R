@@ -1,134 +1,8 @@
 LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv, 
-                          indexPenalty, indexNuisance, fix.nuisance,
-                          gradientPen = NULL, iter_max = length(beta0)*10,
-                          dataY, dataX){
-  
-   #### orthogonalize data
-  if(missing(objectiveLv) || missing(hessianLv) || missing(gradientLv) ){
-  res <- normData(dataX = dataX)
-  dataX <- res$data
-  Xcenter <- res$Xcenter
-  
-  scalePen <- rep(1, length(beta0))
-  names(scalePen) <- names(beta0)
-  Xcenter_param <- rep(NA, length(beta0))
-  names(Xcenter_param) <- names(beta0)
-  
-  for(iter_x in 1:length(res$sd.X)){
-    index <- grep(pattern = names(res$sd.X)[iter_x], names(scalePen))  
-    if(length(index)>0){
-      scalePen[index] <- res$sd.X[iter_x]
-      Xcenter_param[index] <- Xcenter[iter_x]
-    }
-  }
-  scalePen[indexNuisance] <- 0
-  Xcenter_param[indexNuisance] <- 0
-  }else{
-    scalePen <- rep(1,length(beta0))
-    Xcenter_param <- rep(0,length(beta0))
-  }
-  
-  #### derivative of the likelihood
-  
-  #   n.data <- NROW(dataX)
-  #   S <- cov(cbind(dataY,dataX))*(n.data-1)/n.data
-  #   mu <- apply(cbind(dataY,dataX),2,mean)
-  
-  # gradientLv_save <- gradientLv
-  
-  if(missing(hessianLv)){
-    hessianLv <- function(coef, ...){
-      
-      XX <- cbind(1,dataX)
-      YY <- dataY
-      
-      sigma2 <- coef[length(coef)]
-      beta <- coef[-length(coef)]
-      residuals <- YY-XX %*% cbind(beta)
-      
-      hess_sigma2 <- + n/(2*sigma2^2) - 1/(sigma2^3) * crossprod(residuals, residuals)
-      hess_sigma2FDbeta <- - 1/(sigma2^2) * crossprod(XX, residuals)
-      hess_beta <- - 1/(sigma2) * crossprod(XX, XX)
-      
-      return(cbind( rbind(hess_beta,t(hess_sigma2FDbeta)),
-                    rbind(hess_sigma2FDbeta,hess_sigma2)
-      ))
-    }
-  }
-  
-  if(missing(gradientLv)){
-    gradientLv <- function(coef, ...){
-      
-      XX <- cbind(1,dataX)
-      YY <- dataY
-      
-      beta <- coef[-length(coef)]
-      residuals <- YY-XX %*% cbind(beta)
-      sigma2 <- coef[length(coef)]
-      
-      grad_sigma2 <- - n/(2*sigma2) + 1/(2*sigma2^2) * crossprod(residuals, residuals)
-      grad_beta <- + 1/(sigma2) * crossprod(XX, residuals)
-      
-      return(drop(c(grad_beta, grad_sigma2)))
-    }
-  }
-  
-  if(missing(objectiveLv)){
-    objectiveLv <- function(coef, ...){
-      
-      XX <- cbind(1,dataX)
-      YY <- dataY
-      
-      beta <- coef[-length(coef)]
-      residuals <- YY-XX %*% cbind(beta)
-      sigma2 <- coef[length(coef)]
-      
-      lv <- - n/2 * log(2*pi*sigma2) - 1/(2*sigma2) * t(residuals) %*% residuals
-     # pen <-  - lambda1 * sum( abs(beta) ) - lambda2 / 2 * sum( beta^2 )
-      
-      return(drop(lv))
-    }
-  }
-  #   objectiveLv2 <- function(coef, ...){
-  #     
-  #     XX <- cbind(1,dataX)
-  #     YY <- dataY
-  #     
-  #     beta <- coef[-length(coef)]
-  #     residuals <- YY-XX %*% cbind(beta)
-  #     sigma2 <- coef[length(coef)]
-  #     
-  #     sum(dnorm(residuals, mean = 0, sd = sqrt(sigma2), log = TRUE))
-  #     
-  #     grad_sigma2 <- - n/(2*sigma2) + 1/(2*sigma2^2) * crossprod(residuals, residuals)
-  #     grad_beta <- + 1/(sigma2) * crossprod(XX, residuals)
-  #     
-  #     return(drop(c(grad_beta, grad_sigma2)))
-  #   }
-  
-  # coef <- M.beta[1,]
-  # gradientLv2 <- function(coef, ...){
-  
-  #### See Klaus thesis formula 21 page 30 
-  #     XX <- cbind(1,dataX)
-  #     YY <- dataY
-  #     S_XY <- cov(cbind(XX, YY))
-  #     mu_XY <- apply(cbind(YY, XX), 2, mean)
-  
-  #     beta <- coef[-length(coef)]
-  #     residuals <- mu_XY[1]- mu_XY[-1] %*% cbind(beta)
-  #     sigma2 <- coef[length(coef)]
-  #     
-  #     grad_sigma2 <- - n/(2*sigma2) + 1/(2*sigma2^2) * crossprod(residuals, residuals)
-  #     grad_beta <- + 1/(sigma2) * crossprod(XX, residuals)
-  
-  #     return(drop(c(grad_beta, grad_sigma2)))
-  #   }
-  
-  #   gradientLv_save(beta0)
-  #   gradientLv(beta0)
-  
-  
+                          indexPenalty, indexNuisance,
+                          sd.X, base.lambda, fix.nuisance, exp.nuisance,
+                          gradientPen = NULL, iter_max = length(beta0)*10){
+
   p <- length(beta0)
   
   if(is.null(gradientPen)){
@@ -142,24 +16,22 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
   M.gradB <- matrix(0, nrow = 1, ncol = p)
   M.beta[1,] <- beta0
   if(fix.nuisance == TRUE){
-    M.beta[1,indexNuisance] <- 1  
+    if(exp.nuisance){
+      M.beta[1,indexNuisance] <- 0
+    }else{
+      M.beta[1,indexNuisance] <- 1  
+    }
   }
-
-  if(!missing(dataY) ){
-    M.beta[1,1] <- mean(dataY)
-  }
-  
-  V.lambda <- max( abs( gradientLv(M.beta[1,]))[indexPenalty]  * scalePen[indexPenalty] )
-  
+    
+  V.lambda <- max( abs( gradientLv(M.beta[1,]) * sd.X)[indexPenalty] )
   cv <- FALSE
   iter <- 1
   
   while(iter < iter_max && cv == FALSE){
-    
-    lambda_tempo <- V.lambda[iter]*1/scalePen
+    lambda_tempo <- V.lambda[iter]*base.lambda
     lambda_tempo[-indexPenalty] <- 0
     
-     resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
+    resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = lambda_tempo, 
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
     
@@ -171,10 +43,11 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     V.lambda <- c(V.lambda, newLambda)
     
     if(fix.nuisance == FALSE){
-    resNode$beta[indexNuisance] <- nextNuisance_lvm(resNode = resNode, 
-                                                    index = indexNuisance, 
-                                                    objective = objectiveLv, 
-                                                    gradient = gradientLv)
+     
+#     resNode$beta[indexNuisance] <- nextNuisance_lvm(resNode = resNode, 
+#                                                     index = indexNuisance, 
+#                                                     objective = objectiveLv, 
+#                                                     gradient = gradientLv)
     }
     
     M.beta <- rbind(M.beta, resNode$beta)
@@ -182,17 +55,8 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     }
   }
   
-  #### restore the original scale 
-  M.beta[,-indexNuisance] <- sweep(M.beta[,-indexNuisance], MARGIN = 2, FUN = "/", STATS = scalePen[-indexNuisance])
-  index.col <- which(!is.na(Xcenter_param))
-  if(ncol(M.beta)!= length(index.col)){
-  M.beta[,-index.col] <- M.beta[,-index.col] - Xcenter_param[setdiff(index.col, indexNuisance)] %*% t(M.beta[,setdiff(index.col, indexNuisance)])
-  }
-  
-  #### export
-  return(data.frame(lambda = V.lambda, 
-                    setNames(as.data.frame(M.beta), names(beta0) ))
-  )
+   #### export
+  return(data.frame(lambda = V.lambda, M.beta))
 }
 
 #' @title  Find the next value of the regularization parameter
@@ -200,7 +64,6 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
 nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
                          beta, lambda1, indexPenalty, indexNuisance){
   
- 
   ##
   grad_Lv <- gradientLv(beta)
   hess_Lv <- hessianLv(beta)
@@ -210,8 +73,8 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
                  setdiff(which(abs(grad_Lv)/lambda1 > 1-1e-04),indexNuisance)
   )
   
-  grad_B.A <- solve(hess_Lv[set_A,set_A], grad_Pen[set_A] * lambda1[set_A])
-  grad_Rho <- hess_Lv[,set_A] %*% grad_B.A / lambda1 
+  grad_B.A <- solve(hess_Lv[set_A,set_A, drop = FALSE], grad_Pen[set_A, drop = FALSE] * lambda1[set_A, drop = FALSE])
+  grad_Rho <- hess_Lv[,set_A, drop = FALSE] %*% grad_B.A / lambda1 
   
   ## find next knot
   gamma1 <- -beta[set_A]/(grad_B.A*lambda1[set_A]) 
@@ -235,47 +98,21 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
   return(list(gamma = gamma, beta = beta))
 }
 
-
-normData <- function(data, formula, dataX = NULL){
-  
-  if(!missing(data) && !missing(formula)){
-    dataX <- as.matrix(data[,all.vars(formula.lvm)[-1]])  
-  }
-  
-  ones <- rep(1,nrow(dataX))
-  Xcenter <- solve(crossprod(ones), crossprod(ones, dataX))
-  dataX <- dataX - cbind(ones) %*% Xcenter
-  sd.X <- sqrt(apply(dataX, 2, var)*(nrow(dataX)-1)/nrow(dataX))
-  dataX <- sweep(dataX, MARGIN = 2, FUN = "/", 
-                 STATS = sd.X)
-  
-  
-  if(!missing(data) && !missing(formula)){
-    dataX <- data.frame(data[,all.vars(formula.lvm)[1], drop = FALSE],dataX)
-  }
-  
-  return(list(data = dataX,
-              sd.X = sd.X,
-              Xcenter = Xcenter))
-}
-
-nextNuisance_lvm <- function(resNode, index, objective, gradient){
+nextNuisance_lvm <- function(beta, index, objective, gradient){
  
    fn_warper <- function(x){
-  
-    start <- resNode$beta
+    start <- beta
     start[index] <- x
     objective(start)
   }
   gn_warper <- function(x){
-    
-    start <- resNode$beta
-    start[indexNuisance] <- x
+    start <- beta
+    start[index] <- x
     return(gradient(start)[index])
   }
   
   suppressWarnings(
-  resOptim <- optim(par = resNode$beta[index],
+  resOptim <- optim(par = beta[index],
                     fn = fn_warper, gr = gn_warper, control = list(fnscale = -1))
   )
   
