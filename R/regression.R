@@ -20,7 +20,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
         if (length(grep("[a-zA-Z0-9_]*\\(.*\\)$",yx[[xidx]]))>0) { ## rhs of the form F(x+y)
             invlink <- strsplit(yx[[xidx]],"\\(.*\\)")[[1]][1]
                 if (invlink%in%c("f","v","I","") ||
-                    grepl("+",invlink))
+                    grepl("\\+",invlink))
                 { ## Reserved for setting linear constraints
                     invlink <- NULL
                 } else {
@@ -37,7 +37,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
     st <- gsub(",\\+",",",st) ## Remove + inside 'f' and 'v' constraints
     st <- gsub("^\\+","",st) ## Remove leading plus
     yx[[xidx]] <- st
-
+    
     ## Match '+' but not when preceeded by ( ... )
     X <- strsplit(yx[[xidx]],"\\+(?![^\\(]*\\))", perl=TRUE)[[1]]
     

@@ -214,6 +214,9 @@ threshold.lvm <- function(p,labels=NULL,...) {
 
 ##' @export
 binomial.lvm <- function(link="logit",p,size=1) {
+    if (substitute(link)==quote(identity)) {
+        link <- "identity"
+    }
     fam <- stats::binomial(link); fam$link <- link
     f <- function(n,mu,var,...) {
         if (missing(n)) {
