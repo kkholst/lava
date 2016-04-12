@@ -52,44 +52,57 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
             c(gam,pgamma=sum(dif)/sum(tot))
         },labels=c(paste0("\u03b3:",names(dd)),"pgamma"),
         iid=iid)
-        k <- length(dd)
+        k <- unlist(lapply(gam,function(x) nrow(x$iid)))
         if (!iid) {
             for (i in seq_along(gam))
                 gam[[i]][c("iid","id")] <- NULL
         }
-        homtest <- estimate(res,lava::contr(seq(k),k+1),iid=FALSE)
-        return(structure(list(cl=match.call(),k=k,n=unlist(lapply(dd,nrow)),
-                              strata=gam,gamma=res,homtest=homtest),
-                         class="gkgamma"))
+        homtest <- estimate(res,lava::contr(seq_along(gam),length(gam)+1),iid=FALSE)
+        class(res) <- c("gkgamma","estimate")
+        attributes(res) <- c(attributes(res),
+                             list(class="gkgamma",
+                                  cl=match.call(),
+                                  k=k,
+                                  n=unlist(lapply(dd,nrow)),
+                                  strata=gam,
+                                  homtest=homtest))
+        return(res)
     }
     if (is.table(x) || is.data.frame(x) || is.matrix(x)) {
-        x <- multinomial(x)
+        x <- multinomial(x,data=data,...)
     }
     if (!inherits(x,"multinomial")) stop("Expected table, data.frame or multinomial object")    
     estimate(x,function(p) {
         P <- x$position; P[] <- p[x$position]
         goodmankruskal_gamma(P)
-    },iid=iid,...)
+    },iid=iid,data=data,...)
 }
 
 ##' @export
 print.gkgamma <- function(x,...) {
-    for (i in seq_along(x$strata)) {
-        cat(names(x$strata)[i]," (n=",x$n[i],"):\n",sep="")
-        e <- x$strata[[i]]
+    cat("Call: ")
+    print(attr(x,"cl"))
+    printline(50)
+    cat("Strata:\n\n")    
+    for (i in seq_along(attr(x,"strata"))) {
+        with(attributes(x), cat(paste0(names(strata)[i]," (n=",n[i],
+                                       if (k[i]<n[i]) paste0(",clusters=",k[i]),
+                                       "):\n",sep="")))
+        e <- attr(x,"strata")[[i]]
         print(e)
     }
     printline(50)
-    cat("\nGamma coefficient:\n\n")
-    print(x$gamma)
+    cat("Gamma coefficient:\n\n")
+    class(x) <- "estimate"
+    print(x)
     printline(50)
-    cat("\nHomogeneity test:\n")
-    with(x$homtest$compare,
-         cat("chisq = ",statistic,
+    cat("Homogeneity test:\n\n")
+    with(attr(x,"homtest")$compare,
+         cat("\u03c7\u00b2 = ",statistic,
              ", df = ",parameter,
-             ", p-value = ",p.value,"\n"))
+             ", p-value = ",p.value,"\n",sep=""))
+    invisible(x)
 }
-
 
 
 
