@@ -492,6 +492,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                                                            function(x) toString(x,width=label.width))))
     }
     if (only.coef) return(res$coefmat)
+    res$call <- cl
+    if (!is.null(data)) attr(res,"n") <- nrow(data)
+    if (!is.null(res$iid)) attr(res,"k") <- nrow(res$iid)
     return(res)
 }
 
@@ -540,7 +543,28 @@ coef.estimate <- function(object,mat=FALSE,...) {
 
 ##' @export
 summary.estimate <- function(object,...) {
-    object$coefmat
+    object <- c(object,list(n=attr(object,"n",exact=TRUE),k=attr(object,"k",exact=TRUE)))
+    object[c("iid","id","print")] <- NULL
+    class(object) <- "summary.estimate"
+    object
+}
+
+##' @export
+print.summary.estimate <- function(object,...) {
+    cat("Call: "); print(object$call)
+    printline(50)
+    if (!is.null(object[["n"]]) && !is.null(object[["k"]])) {
+        cat("n = ",object$n," clusters = ",object$k,"\n\n",sep="")
+    } else {
+        if (!is.null(object[["n"]])) {
+            cat("n = ",object$n,"\n\n",sep="")
+        }
+        if (!is.null(object[["k"]])) {
+            cat("n = ",object$k,"\n\n",sep="")
+        }
+    }
+    
+    print.estimate(object)
 }
 
 ##' @export
