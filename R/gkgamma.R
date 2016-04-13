@@ -52,7 +52,6 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
             c(gam,pgamma=sum(dif)/sum(tot))
         },labels=c(paste0("\u03b3:",names(dd)),"pgamma"),
         iid=iid)
-        k <- unlist(lapply(gam,function(x) nrow(x$iid)))
         if (!iid) {
             for (i in seq_along(gam))
                 gam[[i]][c("iid","id")] <- NULL
@@ -61,8 +60,6 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
         attributes(res) <- c(attributes(res),
                              list(class=c("gkgamma","estimate"),
                                   cl=match.call(),
-                                  k=k,
-                                  n=unlist(lapply(dd,nrow)),
                                   strata=gam,
                                   homtest=homtest))
         return(res)
@@ -80,35 +77,41 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
 }
 
 ##' @export
-print.gkgamma <- function(x,...) {
-    cat("Call: ")
-    print(attr(x,"cl"))
-    printline(50)
+print.gkgamma <- function(x,call=TRUE,...) {
+    if (call) {
+        cat("Call: ")
+        print(attr(x,"cl"))
+        printline(50)
+    }
+    n <- x$n
+
     if (!is.null(attr(x,"strata"))) {
         cat("Strata:\n\n")
         for (i in seq_along(attr(x,"strata"))) {
-            with(attributes(x), cat(paste0(names(strata)[i]," (n=",n[i],
-                                           if (k[i]<n[i]) paste0(",clusters=",k[i]),
+            with(attributes(x), cat(paste0(names(strata)[i],
+                                           " (n=",strata[[i]]$n,
+                                           if (strata[[i]]$ncluster<strata[[i]]$n) paste0(",clusters=",strata[[i]]$ncluster),
                                            "):\n",sep="")))
             e <- attr(x,"strata")[[i]]
-            print(e)
+            print.estimate(e,level=0)
         }
         printline(50)
+        cat("\n")
+        n <- sum(unlist(lapply(attr(x,"strata"),"[[","n")))
     }
-    n <- attr(x,"n",exact=TRUE)
-    k <- attr(x,"k",exact=TRUE)
-    if (!is.null(n) && !is.null(k)) {
-        cat("n = ",n," clusters = ",k,"\n\n",sep="")
+    k <- x$ncluster
+    if (!is.null(n) && !is.null(k) && k<n) {
+        cat("n = ",n,", clusters = ",k,"\n\n",sep="")
     } else {
         if (!is.null(n)) {
             cat("n = ",n,"\n\n",sep="")
-        }
-        if (!is.null(k)) {
+        } else if (!is.null(k)) {
             cat("n = ",k,"\n\n",sep="")
         }
     }
-    printline(50)
-    cat("Gamma coefficient:\n\n")
+    if (!is.null(attr(x,"strata"))) {
+        cat("Gamma coefficient:\n\n")
+    }
     class(x) <- "estimate"
     print(x)
     if (!is.null(attr(x,"homtest"))) {

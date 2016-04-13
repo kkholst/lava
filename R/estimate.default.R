@@ -1,4 +1,3 @@
-##' @export
 estimate <- function(x,...) UseMethod("estimate")
 
 ##' @export
@@ -165,7 +164,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
     }
     if (!missing(cluster)) id <- cluster
-    
+
     if (expr || is.character(f)) { ## || is.call(f)) {
         ## if (is.call(f)) f <- parsedesign(seq(length(pp)),f,...)
         dots <- substitute(list(...))[-1]
@@ -177,7 +176,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         contrast <- f; f <- NULL
     }
     if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
-    
+
     ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
@@ -275,7 +274,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (is.null(N)) N <- K
         p <- NCOL(iidtheta)
         adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
-        adj1 <- K/(K-1) ## Mancl & DeRouen, 2001        
+        adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
         adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
         if (tolower(type[1])=="mbn" && !is.null(attributes(iidtheta)$bread)) {
             V0 <- V
@@ -349,7 +348,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                 if (is.null(newf))
                     return(do.call("f",arglist))
                 return(do.call("newf",arglist)) }, pp)
-        }        
+        }
         if (is.null(iidtheta)) {
             pp <- structure(as.vector(val),names=names(val))
             V <- D%*%V%*%t(D)
@@ -439,7 +438,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         res[,c(1,3,4)] <- transform(res[,c(1,3,4)])
         res[,2] <- NA
     }
-    
+
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
     if (iid && missing(transform)) res$iid <- iidtheta
@@ -493,8 +492,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     }
     if (only.coef) return(res$coefmat)
     res$call <- cl
-    if (!is.null(data)) attr(res,"n") <- nrow(data)
-    if (!is.null(res$iid)) attr(res,"k") <- nrow(res$iid)
+    res$n <- nrow(data)
+    res$ncluster <- nrow(res$iid)
     return(res)
 }
 
@@ -504,11 +503,28 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @export
-print.estimate <- function(x,digits=3,width=25,...) {
+print.estimate <- function(x,level=0,digits=3,width=25,...) {
     if (!is.null(x$print)) {
         x$print(x,...)
         return(invisible(x))
     }
+    if (level>0 && !is.null(x$call)) {
+        cat("Call: "); print(x$call)
+        printline(50)
+    }
+    if (level>0) {
+        if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
+            cat("n = ",x[["n"]],", clusters = ",x[["k"]],"\n\n",sep="")
+        } else {
+            if (!is.null(x[["n"]])) {
+                cat("n = ",x[["n"]],"\n\n",sep="")
+            }
+            if (!is.null(x[["k"]])) {
+                cat("n = ",x[["k"]],"\n\n",sep="")
+            }
+        }
+    }
+
     cc <- x$coefmat
     rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
                                                function(x) toString(x,width=width))))
@@ -543,28 +559,14 @@ coef.estimate <- function(object,mat=FALSE,...) {
 
 ##' @export
 summary.estimate <- function(object,...) {
-    object <- c(object,list(n=attr(object,"n",exact=TRUE),k=attr(object,"k",exact=TRUE)))
     object[c("iid","id","print")] <- NULL
     class(object) <- "summary.estimate"
     object
 }
 
 ##' @export
-print.summary.estimate <- function(object,...) {
-    cat("Call: "); print(object$call)
-    printline(50)
-    if (!is.null(object[["n"]]) && !is.null(object[["k"]])) {
-        cat("n = ",object$n," clusters = ",object$k,"\n\n",sep="")
-    } else {
-        if (!is.null(object[["n"]])) {
-            cat("n = ",object$n,"\n\n",sep="")
-        }
-        if (!is.null(object[["k"]])) {
-            cat("n = ",object$k,"\n\n",sep="")
-        }
-    }
-    
-    print.estimate(object)
+print.summary.estimate <- function(x,...) {
+    print.estimate(x,level=2,...)
 }
 
 ##' @export
