@@ -52,17 +52,10 @@
 
 
 #### 2- Penalty functions ####
-`penalize.lvm` <- function(x, ...){
+`penalize.lvm` <- function(x, value = NULL, ...){
   
-  dots <- list(...)
-  if("value" %in% names(dots)){
-    value <- dots$value
-    dots$value <- NULL
-    penalize(x, dots) <- dots$value
-  }else{
-    penalize(x, ...) <- NULL
-  }
-  
+  penalize(x, ...) <- value
+
   return(x)
 }
 `penalize.plvm` <- `penalize.lvm`
@@ -74,9 +67,6 @@
     x$penalty <- list(fn_penalty = NULL,
                       gn_penalty = NULL,
                       hn_penalty = NULL,
-                      names.meanCoef = NULL,
-                      names.varCoef = NULL,
-                      names.interceptCoef = NULL,
                       names.penaltyCoef = NULL,
                       lambda1 = 0, 
                       lambda2 = 0)
@@ -94,16 +84,7 @@
 
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE,
                               lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
-  
-  index.varCoef <- grep(",", coef(x))
-  index.meanCoef <- setdiff(1:length(coef(x)), index.varCoef)
-  index.interceptCoef <- setdiff(index.meanCoef, grep("~", coef(x)))
-  index.latentCoef <- intersect(grep(names(x$latent), coef(x)), index.meanCoef)
-  
-  x$penalty$names.varCoef <- coef(x)[index.varCoef]
-  x$penalty$names.meanCoef <- coef(x)[index.meanCoef]
-  x$penalty$names.interceptCoef <- coef(x)[index.interceptCoef]
-  
+
   ## coefficients
   if(!is.null(value)){
     
@@ -113,22 +94,27 @@
            "available coefficients: ",paste(coef(x)[coef(x) %in% value == FALSE], collapse = " "),"\n")
     }
     
-    index.penaltyCoef <- which(coef(x) %in% value)
-    x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
+    x$penalty$names.penaltyCoef <- value
     
   } else if(is.null(x$penalty$names.penaltyCoef)){
   
     index.penaltyCoef <- NULL
     if(pen.intercept == TRUE){
-      index.penaltyCoef <- c(index.penaltyCoef, index.interceptCoef)
+      index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$mean)  #setdiff(index.meanCoef, grep("~", coef(x)))
     }
     if(pen.exogenous == TRUE){
-      index.penaltyCoef <- c(index.penaltyCoef, setdiff(index.meanCoef,c(index.interceptCoef,index.latentCoef)))
+      index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$reg) # setdiff(1:length(coef(x)), index.varCoef)
     }
     if(pen.variance == TRUE){
-      index.penaltyCoef <- c(index.penaltyCoef, index.varCoef)
+      index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$cov) #grep(",", coef(x))
     }
     
+    ## no penalization on parameters related to the latent variables
+    if(length(x$latent)>0){
+      index.penaltyCoef <- setdiff(index.penaltyCoef, grep(names(x$latent), coef(x))) 
+    }
+    
+      
     x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
   } 
   
@@ -167,7 +153,7 @@
     x$penalty$gn_penalty <- function(coef, lambda1, lambda2){
       
       gn1 <- lambda1 * sign(coef)
-      gn2 <- lambda2 * abs(coef)
+      gn2 <- lambda2 * coef # why * abs(coef) ???
       
       return( gn1 + gn2 )
     }
@@ -184,7 +170,7 @@
     x$penalty$hn_penalty <- hn_penalty <- function(coef, lambda1, lambda2){
       
       hn1 <- 0
-      hn2 <- lambda2 * sign(coef)
+      hn2 <- lambda2 #* sign(coef)
       
       return( hn1 + hn2 )
     }

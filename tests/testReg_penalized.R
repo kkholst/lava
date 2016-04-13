@@ -27,6 +27,9 @@ seq_rep <- 1 # 10
 Allbeta <- beta <- c(1:5,rep(0, max(seq_p) - 5))# rbinom(p, size = 1, prob = 1/seq(1,p/2, by = 0.5))
 iter.max <- 5000
 
+lvm_constrain <- TRUE
+lvm_fix.sigma <- FALSE
+
 grid <- expand.grid(n =  seq_n,
                     p =  seq_p,
                     lambda =  seq_lambda,
@@ -55,7 +58,9 @@ for(iter_grid in 1:n.grid){
   
   n <- grid[iter_grid,"n"]
   p <- grid[iter_grid,"p"]
-  lambda1 <- grid[iter_grid,"lambda"]
+  lambda1 <- penalized:::penalized(response = df.data$Y, penalized = df.data[,all.vars(formula_tempo)[-1]], 
+                        step = "Park", trace = FALSE )[[sample.int(p, size = 1)]]@lambda1
+  #lambda1 <- grid[iter_grid,"lambda"]
   lambda2 <- grid[iter_grid,"lambda"] 
   beta <- Allbeta[1:p] 
   
@@ -87,48 +92,59 @@ for(iter_grid in 1:n.grid){
                                            lambda2 = lambda2, 
                                            trace = FALSE )
   ## lava
+  if(lvm_fix.sigma == FALSE){
+    lambda1_lvm <- lambda1/penalized1.fit@nuisance$sigma2
+    lambda2_lvm <- lambda2/penalized2.fit@nuisance$sigma2
+    
+    lambda1net_lvm <- lambda1/penalized12.fit@nuisance$sigma2
+    lambda2net_lvm <- lambda2/penalized12.fit@nuisance$sigma2
+  }else{
+    lambda1_lvm <- lambda1
+    lambda2_lvm <- lambda2
+    
+    lambda1net_lvm <- lambda1
+    lambda2net_lvm <- lambda2
+  }
+  
   tps1 <- system.time(
     elvm.fit <- estimate(lvm.model, df.data, 
-                         control = list(constrain = TRUE))
+                         control = list(constrain = lvm_constrain))
   )
   
   tps2 <- system.time(
-    elvm1.fit <- estimate(plvm.model, data = df.data, lambda1 = lambda1/penalized1.fit@nuisance$sigma2, 
+    elvm1.fit <- estimate(plvm.model, data = df.data, lambda1 = lambda1, 
                           method = "nlminb2", 
-                          control = list(constrain = TRUE, iter.max = iter.max))
+                          control = list(constrain = lvm_constrain, iter.max = iter.max))
   )
   tps2bis <- system.time(
-    elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1/penalized1.fit@nuisance$sigma2, 
-                              proxGrad.method = "ISTA",
-                              control = list(constrain = TRUE, iter.max = iter.max))
+    elvm1ISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1_lvm, 
+                              fix.sigma = lvm_fix.sigma,
+                              control = list(constrain = lvm_constrain, iter.max = iter.max))
   )
   tps2ter <- system.time(
-    elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1/penalized1.fit@nuisance$sigma2,
-                               proxGrad.method = "FISTA",
-                               control = list(constrain = TRUE, iter.max = iter.max))
+    elvm1FISTA.fit <- estimate(plvm.model,  data = df.data, lambda1 = lambda1_lvm,
+                               fix.sigma = lvm_fix.sigma,
+                               control = list(constrain = lvm_constrain, iter.max = iter.max, fast = TRUE))
   )
   tps3 <- system.time(
     elvm2.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2, method = "nlminb2",
-                          control = list(constrain = TRUE, iter.max = iter.max))
+                          control = list(constrain = lvm_constrain, iter.max = iter.max))
   )
   tps3bis <- system.time(
-    elvm2ISTA.fit <- estimate(plvm.model,  data = df.data, 
-                              lambda2 = lambda2/penalized2.fit@nuisance$sigma2, 
-                              proxGrad.method = "ISTA", 
-                              control = list(constrain = TRUE, iter.max = iter.max))
+    elvm2ISTA.fit <- estimate(plvm.model,  data = df.data,lambda2 = lambda2_lvm,
+                              fix.sigma = lvm_fix.sigma,
+                              control = list(constrain = lvm_constrain, iter.max = iter.max))
   )
   tps3ter <- system.time(
-    elvm2FISTA.fit <- estimate(plvm.model,  data = df.data, 
-                               lambda2 = lambda2/penalized2.fit@nuisance$sigma2, 
-                               proxGrad.method = "FISTA",
-                               control = list(constrain = TRUE, iter.max = iter.max))
+    elvm2FISTA.fit <- estimate(plvm.model,  data = df.data, lambda2 = lambda2_lvm, 
+                               fix.sigma = lvm_fix.sigma,
+                               control = list(constrain = lvm_constrain, iter.max = iter.max, fast = TRUE))
   )
   tps4 <- system.time(
     elvm12FISTA.fit <- estimate(plvm.model,  data = df.data, 
-                                lambda1 = lambda1/penalized12.fit@nuisance$sigma2, 
-                                lambda2 = lambda2/penalized12.fit@nuisance$sigma2,
-                                proxGrad.method = "FISTA",
-                                control = list(constrain = TRUE, iter.max = iter.max))
+                                lambda1 = lambda1net_lvm, 
+                                lambda2 = lambda2net_lvm,
+                                control = list(constrain = lvm_constrain, iter.max = iter.max, fast = TRUE))
   )
   
   dt.results[iter_grid, c("n.obs","n.param","lambda","rep") := .(n,p,grid[iter_grid,"lambda"],grid[iter_grid,"rep"])]

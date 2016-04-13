@@ -1,62 +1,104 @@
 LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv, 
                           indexPenalty, indexNuisance,
-                          sd.X, base.lambda, fix.nuisance, exp.nuisance,
-                          gradientPen = NULL, iter_max = length(beta0)*10){
+                          sd.X, base.lambda1, lambda2, fix.nuisance, proxOperator, control,
+                          gradientPen = NULL, iter_max = length(beta0)*2){
 
   p <- length(beta0)
   
   if(is.null(gradientPen)){
     gradientPen <- function(beta, grad_Lv, ...){
-      ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  
+      ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  # because grad_Lv in lava is -grad(Lv)
     }
   }
   
   #### initialisation
   M.beta <- matrix(0, nrow = 1, ncol = p)
-  M.gradB <- matrix(0, nrow = 1, ncol = p)
+  colnames(M.beta) <- names(beta0)
   M.beta[1,] <- beta0
   if(fix.nuisance == TRUE){
-    if(exp.nuisance){
+    if(control$constrain){
       M.beta[1,indexNuisance] <- 0
     }else{
       M.beta[1,indexNuisance] <- 1  
     }
   }
-    
-  V.lambda <- max( abs( gradientLv(M.beta[1,]) * sd.X)[indexPenalty] )
+  
+  V.lambda <- max( abs(-gradientLv(M.beta[1,]) * sd.X)[indexPenalty] )
+
   cv <- FALSE
   iter <- 1
   
+  #### main loop
   while(iter < iter_max && cv == FALSE){
-    lambda_tempo <- V.lambda[iter]*base.lambda
-    lambda_tempo[-indexPenalty] <- 0
+    cat("*")
     
+    ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
-                            beta = M.beta[iter,], lambda1 = lambda_tempo, 
+                            beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1,
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
-    
+
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
    
     if(newLambda < 0 || is.infinite(newLambda)){
       cv <- TRUE
     }else{
-    V.lambda <- c(V.lambda, newLambda)
-    
-    if(fix.nuisance == FALSE){
-     
-#     resNode$beta[indexNuisance] <- nextNuisance_lvm(resNode = resNode, 
-#                                                     index = indexNuisance, 
-#                                                     objective = objectiveLv, 
-#                                                     gradient = gradientLv)
+    # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
+      
+    if(any(lambda2>0)){ ## correction of the beta due to the L2 correction
+      resNode$beta <- do.call("ISTA",
+                              list(start = resNode$beta, proxOperator = proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
+                                   lambda1 = newLambda*base.lambda1, lambda2 = lambda2, constrain = resNode$beta[indexNuisance],
+                                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
+    }
+      
+    if(fix.nuisance == FALSE){ ## estimation of sigma
+      warperObj <- function(sigma2){
+        pp <- resNode$beta
+        pp[indexNuisance] <- sigma2
+        return(objectiveLv(pp))
+      }
+      
+      warperGrad <- function(sigma2){
+        pp <- resNode$beta
+        pp[indexNuisance] <- sigma2
+        return(sum(abs(gradientLv(pp)[indexNuisance])))
+      }
+      
+#       test1 <- optim(par = resNode$beta[indexNuisance], 
+#                      fn = warperObj,
+#                      gr = warperGrad,
+#                      method = "Brent", lower = 0, upper = M.beta[1,indexNuisance])$par
+#       
+#       warperObj(test1)
+#       warperObj(7.826057 )
+      
+      resNode$beta[indexNuisance] <- optim(par = resNode$beta[indexNuisance], 
+                                           fn = warperGrad, 
+                                           lower = rep(0,length(indexNuisance)), upper = M.beta[1, indexNuisance])$par
+      # cat(test1, " ", resNode$beta[indexNuisance], "\n")
+   
+      ## update lambda given that the product lambda*sigma must be a constant
+      newLambda <- median(newLambda * M.beta[iter,names(resNode$beta[indexNuisance])] / resNode$beta[indexNuisance])
     }
     
-    M.beta <- rbind(M.beta, resNode$beta)
+    cat("\n")
+    ## correction step
+    resNode$beta <- do.call("ISTA",
+                            list(start = resNode$beta, proxOperator = proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
+                                 lambda1 = newLambda*base.lambda1, lambda2 = lambda2, constrain = if(fix.nuisance){resNode$beta[indexNuisance]}else{NULL},
+                                 iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
+    print(resNode$beta)
+    
+     V.lambda <- c(V.lambda, newLambda)
+     M.beta <- rbind(M.beta, resNode$beta)
+    } 
+    
     iter <- iter + 1
-    }
   }
-  
+  cat("\n")
+
    #### export
-  return(data.frame(lambda = V.lambda, M.beta))
+  return(data.frame(lambda1 = V.lambda, lambda2 = NA, M.beta))
 }
 
 #' @title  Find the next value of the regularization parameter
@@ -65,8 +107,8 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
                          beta, lambda1, indexPenalty, indexNuisance){
   
   ##
-  grad_Lv <- gradientLv(beta)
-  hess_Lv <- hessianLv(beta)
+  grad_Lv <- -gradientLv(beta)  # because grad_Lv in lava is -grad(Lv)
+  hess_Lv <- -hessianLv(beta)  # because hess_Lv in lava is -hess(Lv)
   grad_Pen <- gradientPen(beta, grad_Lv = grad_Lv)
   
   set_A <- union(setdiff(which(beta!=0),indexNuisance),
@@ -98,23 +140,3 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
   return(list(gamma = gamma, beta = beta))
 }
 
-nextNuisance_lvm <- function(beta, index, objective, gradient){
- 
-   fn_warper <- function(x){
-    start <- beta
-    start[index] <- x
-    objective(start)
-  }
-  gn_warper <- function(x){
-    start <- beta
-    start[index] <- x
-    return(gradient(start)[index])
-  }
-  
-  suppressWarnings(
-  resOptim <- optim(par = beta[index],
-                    fn = fn_warper, gr = gn_warper, control = list(fnscale = -1))
-  )
-  
-  return(resOptim$par)
-}

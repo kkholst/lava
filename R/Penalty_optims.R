@@ -12,20 +12,16 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   
   index.penaltyCoef <- which(names(start) %in% penalty$names.penaltyCoef)
   
-  if("browser" %in% names(control) && control$browser == TRUE){
-    browser()
-  }
-  
   #### definition of the operator
-  if(penalty$lambda1 == 0 && penalty$lambda2 == 0){
+  if(all(penalty$lambda1 == 0) && all(penalty$lambda2 == 0)){
     proxOperator <- function(x, step, lambda1, lambda2){x}
-  }else if(penalty$lambda2 == 0){
+  }else if(all(penalty$lambda2 == 0)){
     test.penalty <- 1:n.coef %in% index.penaltyCoef
     
     proxOperator <- function(x, step, lambda1, lambda2){
       mapply(proxL1, x = x, step = step, lambda = lambda1, test.penalty = test.penalty)
     }
-  }else if(penalty$lambda1 == 0){
+  }else if(all(penalty$lambda1 == 0)){
     test.penalty <- 1:n.coef %in% index.penaltyCoef
    
      proxOperator <- function(x, step, lambda1, lambda2){
@@ -58,40 +54,35 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     constrain <- NULL
   }
   
-  
   if( dots$regularizationPath ){
-
+  
      ## path regularization
-       objectiveLava <- function(pp){-objective(pp)}
-       gradientLava <- function(pp){-gradient(pp)}
-       hessianLava <- function(pp){-hessian(pp)}
-      
-       resLassoPath <- LassoPath_lvm(beta0 = start, objectiveLv = objectiveLava, gradientLv = gradientLava, hessianLv = hessianLava,
+       resLassoPath <- LassoPath_lvm(beta0 = start, objectiveLv = objective, gradientLv = gradient, hessianLv = hessian,
                                      indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                                     sd.X = penalty$sd.X, base.lambda = penalty$lambda1, 
-                                     fix.nuisance = dots$fix.sigma, exp.nuisance = control$constrain)
+                                     sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, 
+                                     fix.nuisance = dots$fix.sigma, proxOperator = proxOperator, control = control)
        
-      names(resLassoPath) <- c("lambda", names(start))
-
-    if(!is.null(constrain)){
-      lambda2 <- rep(0, n.coef)
-      lambda1 <- rep(0, n.coef)
+      names(resLassoPath) <- c("lambda1", "lambda2", names(start))
       
-      for(iter_lambda in 1:nrow(resLassoPath)){
-        iter_start  <- unlist(resLassoPath[iter_lambda,-1])
-        lambda1[index.penaltyCoef] <- resLassoPath[iter_lambda,1]
-
-        resTempo <- do.call(dots$proxGrad.method,
-                            list(start = iter_start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                 lambda1 = lambda1, lambda2 = lambda2, constrain = iter_start[names(iter_start) %in% names(constrain) == FALSE],
-                                 iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
-        
-        resLassoPath[iter_lambda,names(constrain)] <- resTempo$par[names(constrain)]
-      }
-    }
-    
+#     if(length(constrain)>0){
+#       lambda2 <- rep(0, n.coef)
+#       lambda1 <- rep(0, n.coef)
+#       
+#       for(iter_lambda in 1:nrow(resLassoPath)){
+#         
+#         iter_start  <- unlist(resLassoPath[iter_lambda,names(start)])
+#         lambda1[index.penaltyCoef] <- resLassoPath[iter_lambda,"lambda1"]
+#        
+#         resTempo <- do.call(dots$proxGrad.method,
+#                             list(start = iter_start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+#                                  lambda1 = lambda1, lambda2 = penalty$lambda2, constrain = iter_start[names(iter_start) %in% names(constrain) == FALSE],
+#                                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
+#         
+#         resLassoPath[iter_lambda,names(constrain)] <- resTempo$par[names(constrain)]
+#       }
+#     }
     if(control$constrain == TRUE){
-      resLassoPath[,names(constrain)] <- exp(resLassoPath[,names(constrain)])
+      resLassoPath[,penalty$names.varCoef] <- exp(resLassoPath[,penalty$names.varCoef])
     }
     
     res <- list(par = start,
@@ -107,7 +98,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     lambda1[index.penaltyCoef] <- penalty$lambda1 
     lambda2 <- rep(0, n.coef)
     lambda2[index.penaltyCoef] <- penalty$lambda2 
-   
+ 
     res <- do.call(dots$proxGrad.method,
                    list(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                         lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
@@ -130,8 +121,8 @@ proxGrad <- function(start, objective, gradient, hessian,...){
 
 
 ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
-                 lambda1, lambda2, constrain, n.backtracking = 1, eta.backtracking = 0.5,
-                 iter.max, abs.tol, rel.tol, fast){
+                 lambda1, lambda2, constrain, n.backtracking = 10, eta.backtracking = 0.5,
+                 iter.max, abs.tol, rel.tol, fast, trace = FALSE){
 
   ## initialisation
   test.cv <- FALSE
@@ -142,20 +133,27 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
     t_k <- 1
     y_k <- x_k
   }
+  
   if(is.null(step)){
     step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value))
   }
   
-   ## loop
+  if(trace){
+    .pb <- txtProgressBar(min = 0, max = iter.max, style = 3)
+  }
+  
+  ## loop
   while(test.cv == FALSE && iter <= iter.max){
+  
+    if(trace){setTxtProgressBar(.pb, iter)}
+    
     x_km1 <- x_k
     iter_back <- 0
     diff_back <- 1
     
     while( (iter_back < n.backtracking) && (diff_back > 0) ){
-      
       stepTest <- step*eta.backtracking^iter_back
-      
+     
       if(fast == TRUE){
         t_km1 <- t_k
         x_k <- proxOperator(x = y_k - stepTest * gradient(y_k, penalty = NULL), 
@@ -166,7 +164,9 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
         x_k <- proxOperator(x = x_km1 - stepTest * gradient(x_km1, penalty = NULL), 
                             step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
       }
-      if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+      if(!is.null(constrain)){
+        x_k[names(constrain)] <- constrain
+      }
       
       diff_x <- x_k - x_km1
       current_obj <- objective(x_k)
@@ -181,14 +181,16 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
     relDiff <- abs(diff_obj)/abs(current_obj) < rel.tol #(abs(diff_x)/abs(x_k) < rel.tol)
     test.cv <- absDiff + relDiff > 0  #all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
     
-    # cat(iter,": ",stepTest," ",diff_back,"\n")
   }
+  
+  if(trace){cat("\n")}
   
   ## export
   message <- if(test.cv){"Sucessful convergence \n"
   }else{
     paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
   }
+  
   return(list(par = x_k,
               step = step,
               convergence = as.numeric(test.cv==FALSE),
