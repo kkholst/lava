@@ -102,8 +102,8 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     res <- do.call(dots$proxGrad.method,
                    list(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                         lambda1 = lambda1, lambda2 = lambda2, constrain = constrain,
-                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast))
-      
+                        iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))
+
     res$objective <- objective(res$par, penalty = penalty)
      
     if(!is.null(constrain)){
@@ -146,14 +146,13 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
   while(test.cv == FALSE && iter <= iter.max){
   
     if(trace){setTxtProgressBar(.pb, iter)}
-    
     x_km1 <- x_k
     iter_back <- 0
     diff_back <- 1
     
     while( (iter_back < n.backtracking) && (diff_back > 0) ){
       stepTest <- step*eta.backtracking^iter_back
-     
+    
       if(fast == TRUE){
         t_km1 <- t_k
         x_k <- proxOperator(x = y_k - stepTest * gradient(y_k, penalty = NULL), 
@@ -174,12 +173,14 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
       diff_back <- diff_obj - (crossprod(diff_x, gradient(x_km1)) + 1/(2*stepTest) * crossprod(diff_x))
       iter_back <- iter_back + 1
     }
+     
     step <- 1/max(abs(eigen(hessian(x_k, penalty = NULL))$value))#stepTest
-    
     iter <- iter + 1
     absDiff <- abs(diff_obj) < abs.tol  #(abs(diff_x) < abs.tol)
     relDiff <- abs(diff_obj)/abs(current_obj) < rel.tol #(abs(diff_x)/abs(x_k) < rel.tol)
     test.cv <- absDiff + relDiff > 0  #all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
+    
+    # cat(step," ",iter_back, " ", max(abs(diff_x))," ",diff_obj,"\n")
     
   }
   

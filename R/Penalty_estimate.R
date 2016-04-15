@@ -117,6 +117,10 @@
     dots$control$iter.max <- 5000
   }
   
+  if("constrain" %in% names(dots$control) == FALSE){
+    dots$control$constrain <- TRUE
+  }
+  
   #### orthogonalization
   if(regularizationPath){
     save_lambda2 <- penalty$lambda2
@@ -145,16 +149,13 @@
   
   
   #### main
-#   regularizationPath <- FALSE
-#   penalty$lambda1 <- 100
-#   penalty$lambda2 <- 0
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
                                                penalty = penalty, regularizationPath = regularizationPath, 
                                                fix.sigma = fix.sigma, 
                                                method = method, proxGrad.method = proxGrad.method), 
                                           dots)
   )
-
+  
   #### restore the original scale 
   if(regularizationPath){
     res$opt$message$lambda2 <- save_lambda2
@@ -169,7 +170,6 @@
     
     names(res$opt$message) <- c("lambda1","lambda2",save_names.coef)
   }
-  
   
   
   #### export
@@ -191,7 +191,6 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     
     index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
     if( length(index_coef)>0 ){
-      
       ls.tempo <- lapply(exogeneous, grep, penalty$names.penaltyCoef[index_coef], fixed = TRUE) # which exogeneous varaible is related to outcome Y_tempo
       names.varData <- exogeneous[unlist(lapply(ls.tempo, function(t){length(t)>0}))] 
       
@@ -212,8 +211,8 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
       # update penalty
       penalty$names.penaltyCoef[index_coef][unlist(ls.tempo)] <- paste0(penalty$names.penaltyCoef[index_coef][unlist(ls.tempo)], label, Y_tempo)
     }
+    
   }
-  
 
   #### remove useless variables
   varCoef <- unlist(strsplit(coef(model), split = "~", fixed = TRUE))
@@ -238,12 +237,13 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     
     index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
     if( length(index_coef)>0 ){
+
        # orthogonalize data relative to non penalize coefficients
       resOrtho <- orthoData.lvm(model, name.Y = Y_tempo,
                                 allCoef = names.coef[grep(Y_tempo, names.coef, fixed = TRUE)], 
                                 penaltyCoef = penalty$names.penaltyCoef[index_coef], 
                                 data = data)
-      
+   
       # update results
       data[, colnames(resOrtho$orthogonalizer)] <- resOrtho$data[, colnames(resOrtho$orthogonalizer),drop = FALSE]
       lambda1[names(resOrtho$lambda1)] <- resOrtho$lambda1
@@ -294,8 +294,9 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   }
   
   var.penalized <-  extractVar(penaltyCoef)
-  var.unpenalized <- setdiff(extractVar(allCoef), c(var.penalized,names.covCoef,names.latentCoef))
-  
+  var.unpenalized <- setdiff(extractVar(setdiff(allCoef,c(names.covCoef,names.latentCoef))), 
+                             c(var.penalized))
+
   ## rebuild data
   X_tempo <- data[,setdiff(c(var.penalized,var.unpenalized),names.interceptCoef), drop = FALSE]
   
@@ -320,21 +321,24 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   
   ## scale
   sd.X <- setNames(rep(1,n.coef), allCoef)
-  index.penalized <- setdiff(var.penalized, names.interceptCoef)
-  index.penalized2 <- setdiff(which(names(mu.X) %in% penaltyCoef),
-                              names.interceptCoef)
+ 
+  varNI.penalized <- setdiff(var.penalized, names.interceptCoef)
+  index.penalized <- setdiff(which(names(mu.X) %in% penaltyCoef),
+                             which(names(mu.X) %in% names.interceptCoef) )
     
-  if(length(index.penalized)>0){
-  sd.X[index.penalized2] <- sqrt(apply(penalized[,index.penalized, drop = FALSE], 2, var)*(n-1)/n)
-  penalized <- sweep(penalized[,index.penalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.penalized2])
+  if(length(varNI.penalized)>0){
+  sd.X[index.penalized] <- sqrt(apply(penalized[,varNI.penalized, drop = FALSE], 2, var)*(n-1)/n)
+  penalized <- sweep(penalized[,varNI.penalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.penalized])
   }
-  
-  index.unpenalized <- setdiff(var.unpenalized, names.interceptCoef)
-  index.unpenalized2 <- setdiff(which(names(mu.X) %in% penaltyCoef == FALSE), 
-                                c(names.interceptCoef, model$index$parBelongsTo$cov))
-  if(length(index.unpenalized)>0){
-  sd.X[index.unpenalized2] <- sqrt(apply(unpenalized[,index.unpenalized, drop = FALSE], 2, var)*(n-1)/n)
-  unpenalized <- sweep(unpenalized[,index.unpenalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.unpenalized2])
+ 
+   varNI.unpenalized <- setdiff(var.unpenalized, names.interceptCoef)
+  index.unpenalized <- setdiff(which(names(mu.X) %in% penaltyCoef == FALSE), 
+                               which(names(mu.X) %in% c(names.interceptCoef, names.covCoef))
+                               )
+          
+  if(length(varNI.unpenalized)>0){
+  sd.X[index.unpenalized] <- sqrt(apply(unpenalized[,varNI.unpenalized, drop = FALSE], 2, var)*(n-1)/n)
+  unpenalized <- sweep(unpenalized[,varNI.unpenalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.unpenalized])
   }
   mu.X <- mu.X * sd.X
   
@@ -369,7 +373,6 @@ rescaleRes <- function(Mres, penalty, orthogonalizer){
   name.Y <- names(orthogonalizer)
   covCoef <- penalty$names.varCoef
   n.Y <- length(name.Y)
-  index.penalized <- penalty$names.penaltyCoef
   
   for(iter_Y in 1:n.Y){
     Y_tempo <- name.Y[iter_Y]

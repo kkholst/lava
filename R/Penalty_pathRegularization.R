@@ -36,7 +36,7 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1,
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
-
+  
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
    
     if(newLambda < 0 || is.infinite(newLambda)){
@@ -68,26 +68,22 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
 #                      fn = warperObj,
 #                      gr = warperGrad,
 #                      method = "Brent", lower = 0, upper = M.beta[1,indexNuisance])$par
-#       
-#       warperObj(test1)
-#       warperObj(7.826057 )
       
+      suppressWarnings(
       resNode$beta[indexNuisance] <- optim(par = resNode$beta[indexNuisance], 
                                            fn = warperGrad, 
-                                           lower = rep(0,length(indexNuisance)), upper = M.beta[1, indexNuisance])$par
-      # cat(test1, " ", resNode$beta[indexNuisance], "\n")
-   
+                                           lower = rep(1e-12,length(indexNuisance)), upper = M.beta[1, indexNuisance])$par
+      )
+    
       ## update lambda given that the product lambda*sigma must be a constant
       newLambda <- median(newLambda * M.beta[iter,names(resNode$beta[indexNuisance])] / resNode$beta[indexNuisance])
     }
     
-    cat("\n")
     ## correction step
     resNode$beta <- do.call("ISTA",
                             list(start = resNode$beta, proxOperator = proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
                                  lambda1 = newLambda*base.lambda1, lambda2 = lambda2, constrain = if(fix.nuisance){resNode$beta[indexNuisance]}else{NULL},
                                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
-    print(resNode$beta)
     
      V.lambda <- c(V.lambda, newLambda)
      M.beta <- rbind(M.beta, resNode$beta)
@@ -96,7 +92,7 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     iter <- iter + 1
   }
   cat("\n")
-
+  
    #### export
   return(data.frame(lambda1 = V.lambda, lambda2 = NA, M.beta))
 }
