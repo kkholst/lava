@@ -60,7 +60,7 @@ ordreg <- function(formula,data=parent.frame(),offset,family=stats::binomial("pr
     I <- -ordreg_hessian(cc,up)
     names(cc) <- nn
     dimnames(I) <- list(nn,nn)
-    res <- list(vcov=solve(I),coef=cc,call=match.call(),up=up)
+    res <- list(vcov=solve(I),coef=cc,call=match.call(),up=up,opt=op)
     structure(res,class="ordreg")
 }
 
@@ -92,7 +92,7 @@ print.summary.ordreg <- function(x,alpha=0.95,...) {
 
 ##' @export
 score.ordreg <- function(x,p=coef(x),indiv=FALSE,...) {
-    ordreg_score(coef(x),x$up)
+    ordreg_score(p,x$up)
     if (!indiv) return(colSums(x$up$score))
     x$up$score
 }
@@ -141,5 +141,5 @@ ordreg_score <- function(theta,env,...) {
     colSums(env$score)
 }
 ordreg_hessian <- function(theta,env,...) {
-    numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta)
+    numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta,...)
 }
