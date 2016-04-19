@@ -67,6 +67,11 @@ multinomial <- function(x,marginal=FALSE,transform,...) {
         coefs <- as.vector(P); names(coefs) <- paste0("p",seq(k))
         res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid,position=seq(k),levels=list(lev),data=x)
         class(res) <- "multinomial"
+        if (length(list(...))>0) {
+            agr <- estimate(res,...)
+            res$vcov <- vcov(agr)
+            res$iid <- iid(agr)
+        }        
         return(res)
     }
     if (NCOL(x)!=2L) stop("Matrix or data.frame with one or two columns expected")
@@ -114,6 +119,11 @@ multinomial <- function(x,marginal=FALSE,transform,...) {
                 position1=position1,position2=position2 ## Position of marginals)
                 )
     class(res) <- "multinomial"
+    if (length(list(...))>0) {
+        agr <- estimate(res,...)
+        res$vcov <- vcov(agr)
+        res$iid <- iid(agr)
+    }
     res
 }
 
@@ -239,7 +249,7 @@ OR <- function(x,...) {
     orfun <- function(p,...) {
         list(logOR=sum(log(p[diag(pos)]))-sum(log(p[revdiag(pos)])))
     }
-    estimate(M,orfun)
+    estimate(M,orfun,...)
 }
 logor <- function(x) {
     c(log(prod(diag(x))/prod(revdiag(x))),sum(1/x)^.5)
