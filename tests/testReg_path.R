@@ -116,6 +116,61 @@ test <- estimate(plvm.model,  data = df.data,
 rbind(coef(test),
       elvm.PathL12_free$opt$message[iter_path,-(1:2)])
 
+#### 3- Slow convergence ####
+
+set.seed(10)
+n <- 500
+formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
+lvm.modelSim <- lvm()
+regression(lvm.modelSim, formula.lvm) <- as.list( c(rep(0,2),1:3) )
+distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
+df.data <- sim(lvm.modelSim,n)
+
+lvm.model <- lvm(formula.lvm)
+plvm.model <- penalize(lvm.model)
+
+system.time(
+lvm.test0 <- estimate(plvm.model,  data = df.data)
+)
+
+system.time(
+  lvm.testPath <- estimate(plvm.model,  data = df.data, 
+                           regularizationPath =  TRUE,
+                           control = list(constrain = TRUE, iter.max = 5000))
+)
+# bruger   system forløbet 
+# 18.16     0.01    18.22
+lvm.testPath$opt$message
+
+system.time(
+  lvm.test1 <- estimate(plvm.model,  data = df.data, 
+                        lambda1 =  lvm.testPath$opt$message[2,"lambda1"],
+                        control = list(constrain = TRUE, iter.max = 5000))
+)
+lvm.test1$opt$iterations
+
+system.time(
+  lvm.test1_fast <- estimate(plvm.model,  data = df.data, 
+                        lambda1 =  lvm.testPath$opt$message[2,"lambda1"],
+                        control = list(constrain = TRUE, iter.max = 5000, fast = 2))
+)
+lvm.test1_fast$opt$iterations
+coef(lvm.test1)-coef(lvm.test1_fast)
+
+system.time(
+  lvm.test2 <- estimate(plvm.model,  data = df.data, 
+                        lambda1 =  lvm.testPath$opt$message[3,"lambda1"],
+                        control = list(constrain = TRUE, iter.max = 5000))
+)
+
+system.time(
+  lvm.test3 <- estimate(plvm.model,  data = df.data, 
+                        lambda1 =  lvm.testPath$opt$message[4,"lambda1"],
+                        control = list(constrain = TRUE, iter.max = 5000))
+)
+
+
+
 #### 3- Several regressions #####
 set.seed(10)
 n <- 500

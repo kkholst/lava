@@ -121,7 +121,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
 
 
 ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
-                 lambda1, lambda2, constrain, n.backtracking = 10, eta.backtracking = 0.5,
+                 lambda1, lambda2, constrain, n.backtracking = 1, eta.backtracking = 0.5,
                  iter.max, abs.tol, rel.tol, fast, trace = FALSE){
 
   ## initialisation
@@ -129,7 +129,7 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
   iter <- 1
   x_k <- start 
   if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-  if(fast == TRUE){
+  if(fast > 0){
     t_k <- 1
     y_k <- x_k
   }
@@ -153,12 +153,27 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
     while( (iter_back < n.backtracking) && (diff_back > 0) ){
       stepTest <- step*eta.backtracking^iter_back
     
-      if(fast == TRUE){
-        t_km1 <- t_k
+      if(fast == 1){ # Bech and Teboulle (2009 A Fast Iterative Shrinkage-Thresholding Algorithm)
         x_k <- proxOperator(x = y_k - stepTest * gradient(y_k, penalty = NULL), 
                             step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
+        
+        t_km1 <- t_k
         t_k <- (1 + sqrt(1 + 4 * t_km1^2)) / 2
         y_k <- x_k + (t_km1-1)/t_k * (x_k - x_km1)
+        
+      }else if(fast == 2){ # Li Accelerated Proximal Gradient Methods
+         
+        z_k <- proxOperator(x = y_k - stepTest * gradient(y_k, penalty = NULL), 
+                            step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
+        
+        v_k <- proxOperator(x = x_km1 - stepTest * gradient(x_km1, penalty = NULL), 
+                            step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
+        
+        t_km1 <- t_k
+        t_k <- (1 + sqrt(1 + 4 * t_km1^2)) / 2
+        x_k <- if(objective(z_k)<=objective(v_k)){z_k}else{fast <- FALSE ; v_k} # fast <- FALSE is not in the original method
+        y_k <- x_k + t_km1/t_k * (z_k - x_k) + (t_km1-1)/t_k * (x_k - x_km1)
+        
       }else{
         x_k <- proxOperator(x = x_km1 - stepTest * gradient(x_km1, penalty = NULL), 
                             step = stepTest, lambda1 = lambda1, lambda2 = lambda2)
@@ -174,13 +189,16 @@ ISTA <- function(start, step = NULL, proxOperator, hessian, gradient, objective,
       iter_back <- iter_back + 1
     }
      
-    step <- 1/max(abs(eigen(hessian(x_k, penalty = NULL))$value))#stepTest
+    step <- 1/max(abs(eigen(hessian(x_k, penalty = NULL))$value)) 
+    # could also be computed using the Barzilai-Borwein Method     
+    # step = crossprod(diff_x) / crossprod(diff_x, gradient(x_km1) - gradient(x_k)) 
+    
     iter <- iter + 1
     absDiff <- abs(diff_obj) < abs.tol  #(abs(diff_x) < abs.tol)
     relDiff <- abs(diff_obj)/abs(current_obj) < rel.tol #(abs(diff_x)/abs(x_k) < rel.tol)
     test.cv <- absDiff + relDiff > 0  #all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
     
-    # cat(step," ",iter_back, " ", max(abs(diff_x))," ",diff_obj,"\n")
+     # cat(step," ",iter_back, " ", max(abs(diff_x))," ",diff_obj,"\n")
     
   }
   

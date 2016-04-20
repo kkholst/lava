@@ -31,8 +31,8 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
   #### main loop
   while(iter < iter_max && cv == FALSE){
     cat("*")
-    
-    ## prediction step: next breakpoint assuming linear path and constant sigma
+   
+     ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1,
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
@@ -136,3 +136,71 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
   return(list(gamma = gamma, beta = beta))
 }
 
+EPSODE <- function(gradient, hessian, beta, V, lambda,
+                   indexPenalty){
+  
+  n.beta <- length(beta)
+  setNE <- intersect(which(V %*% beta < 0),  indexPenalty)
+  setZE <- intersect(which(V %*% beta == 0), indexPenalty)
+  setPE <- intersect(which(V %*% beta > 0), indexPenalty)
+  
+  ODEpath <- function(t, y, ls.args){
+    H <- ls.args$hessian(y)
+    H_m1 <- solve(H)
+    Uz <- ls.args$V[ls.args$setZE,]
+    UzHm1Uz_m1 <- solve(Uz %*% H_m1 %*% t(Uz))
+    uz <- - colSums(ls.args$V[ls.args$setNE,]) +  colSums(ls.args$V[ls.args$setPE,])
+    
+    P <- H_m1 - H_m1 %*% t(Uz) %*% UzHm1Uz_m1 %*% Uz %*% H_m1 
+    return(list(- P %*% uz))
+  }
+  
+  iter <- 1
+  seq_lambda <- lambda
+  M.beta <- rbind(beta)
+  
+  #### iterations
+  # while(iter < 1000 && (length(setNE) > 0 || length(setPE) )){}
+  iterLambda_m1 <- 0
+  iterLambda <- seq_lambda[iter,]
+  iterBeta <- M.beta[iter,-1]
+  
+  ## Solve ODE
+  res.ode <- ode(y = iterBeta, times = c(iterLambda_m1,iterLambda), func = ODEpath,  # hmax
+                 list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE)
+  )
+  
+  iterBeta <- res.ode[1,-1]
+  
+  M.beta <- rbind(M.beta,
+                  iterBeta)
+                  
+  ## find next node
+  H <- hessian(iterBeta)
+  H_m1 <- solve(H)
+  G <- gradient(iterBeta)
+  Uz <- V[setZE,]
+  uz <- - colSums(V[setNE,]) +  colSums(V[setPE,])
+  Q <- H_m1 %*% t(Uz) %*% solve(Uz %*% H_m1 %*% t(Uz))
+  
+  lambda_tempo1 <- ( - Q[indexPenalty,] %*% G[indexPenalty] ) / (1 + Q[indexPenalty,] %*% uz[indexPenalty] )
+  lambda_tempo1 <- lambda_tempo1[lambda_tempo1>=0]
+  lambda_tempo2 <- ( - Q[indexPenalty,] %*% G[indexPenalty] ) / (- 1 + Q[indexPenalty,] %*% uz[indexPenalty] )
+  lambda_tempo2 <- lambda_tempo2[lambda_tempo2>=0]
+  
+  iterLambda <- min(lambda_tempo1,lambda_tempo2)
+  
+  if(iterLambda < 0 || is.infinite(iterLambda)){
+    cv <- TRUE
+  }else{
+    seq_lambda <- c(seq_lambda, iterLambda)
+  }
+  
+  ## udpate sets
+  setNE <- intersect(which(V %*% beta < 0),  indexPenalty)
+  setZE <- intersect(which(V %*% beta == 0), indexPenalty)
+  setPE <- intersect(which(V %*% beta > 0), indexPenalty)
+  
+  ####
+  iter <- iter + 1
+}
