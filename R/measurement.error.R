@@ -46,7 +46,7 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
         cbind(predictfun(P,attributes(P)$cond.var,data))
     }
     if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
-    if (missing(id2)) id2 <- seq(nrow(model.frame(model1)))
+    if (missing(id2)) id2 <- seq(nrow(model.frame(model2)))
     if (!inherits(model1,"estimate"))
         e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(model1))
     u <- uhat()
@@ -69,3 +69,81 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
     ##             fun=predictfun)
     structure(res,class=c("measurement.error","estimate"))
 }
+
+##' Two-stage estimator (non-linear SEM)
+##'
+##' Two-stage estimator for non-linear structural equation models
+##' @export
+##' @param model1 Stage 1 measurement model
+##' @param model2 Stage 2 SEM
+##' @param data data.frame
+##' @param predictfun Prediction of latent variable
+##' @param id1 Optional id-variable (stage 1 model) 
+##' @param id2 Optional id-variable (stage 2 model)
+##' @param ... Additional arguments to lower level functions
+##' @examples
+##' m <- lvm(c(x1,x2,x3)~f1,f1~z,
+##'          c(y1,y2,y3)~f2,f2~f1+z)
+##' latent(m) <- ~f1+f2
+##' d <- sim(m,200,p=c("f2,f2"=2,"f1,f1"=0.5))
+##' 
+##' ## Full MLE
+##' ee <- estimate(m,d)
+##' 
+##' ## Manual two-stage
+##' \dontrun{
+##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
+##' e1 <- estimate(m1,d)
+##' pp1 <- predict(e1,f1~x1+x2+x3)
+##' 
+##' d$u1 <- pp1[,]
+##' d$u2 <- pp1[,]^2+attr(pp1,"cond.var")
+##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
+##' e2 <- estimate(m2,d)
+##' }
+##' 
+##' ## Two-stage
+##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
+##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
+##' pred <- function(mu,var,data,...)
+##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
+##' mm <- twostage(m1,m2,data=d,predictfun=pred)
+
+twostage <- function(model1, model2, data=parent.frame(),
+                         predictfun=function(mu,var,data,...)
+                             cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
+                     id1,id2, ...) {
+    if (inherits(model1,"lvm")) {
+        model1 <- estimate(model1,data=data,...)
+    }    
+    if (!inherits(model1,c("estimate","lvmfit","lvm.mixture"))) stop("Expected lava object ('estimate','lvmfit','lvm.mixture',...)")
+    if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
+    p1 <- coef(model1)
+    fixsome(model2)
+    uhat <- function(p=p1) {
+        P <- predictlvm(model1,p=p,data=model.frame(model1))
+        cbind(predictfun(P$mean,P$var,model.frame(model1)))
+    }
+    pp <- uhat()
+    newd <- data
+    newd[,colnames(pp)] <- pp
+    model2 <- estimate(model2,data=newd,...)
+    p2 <- coef(model2)    
+    if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
+    if (missing(id2)) id2 <- seq(nrow(model.frame(model2)))
+    if (!inherits(model1,"estimate")) {
+        e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(model1))
+    }
+    e2 <- estimate(model2, id=id2)
+    U <- function(alpha=p1,beta=p2) {
+        pp <- uhat(alpha)
+        newd <- model.frame(model2)
+        newd[,colnames(pp)] <- pp
+        score(model2,p=beta,data=newd)
+    }
+    Ia <- -numDeriv::jacobian(function(p) U(p),p1)
+    stacked <- stack(e1,e2,Ia)
+    res <- c(stacked,list(naive=e2,fun=predictfun))
+    structure(res,class=c("measurement.error","estimate"))
+}
+
