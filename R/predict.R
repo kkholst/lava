@@ -272,7 +272,8 @@ predictlvm <- function(object,formula,p=coef(object),data=model.frame(object),..
     if (!missing(formula)) {
         yx <- getoutcome(formula)
         y <- decomp.specials(yx)
-        x <- attr(yx,"x")        
+        x <- attr(yx,"x")
+        x <- setdiff(x,index(model)$exogenous)
     } else {
         y <- index(model)$latent
         x <- index(model)$endogenous
