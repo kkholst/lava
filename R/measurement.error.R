@@ -46,7 +46,7 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
         cbind(predictfun(P,attributes(P)$cond.var,data))
     }
     if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
-    if (missing(id2)) id2 <- seq(nrow(model.frame(model2)))
+    if (missing(id2)) id2 <- seq(nrow(model.frame(model1)))
     if (!inherits(model1,"estimate"))
         e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(model1))
     u <- uhat()
@@ -107,8 +107,8 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' pred <- function(mu,var,data,...)
 ##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
-##' mm <- twostage(m1,m2,data=d,predictfun=pred)
-
+##' (mm <- twostage(m1,m2,data=d,predictfun=pred))
+##' 
 twostage <- function(model1, model2, data=parent.frame(),
                          predictfun=function(mu,var,data,...)
                              cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
@@ -119,7 +119,6 @@ twostage <- function(model1, model2, data=parent.frame(),
     if (!inherits(model1,c("estimate","lvmfit","lvm.mixture"))) stop("Expected lava object ('estimate','lvmfit','lvm.mixture',...)")
     if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
     p1 <- coef(model1)
-    fixsome(model2)
     uhat <- function(p=p1) {
         P <- predictlvm(model1,p=p,data=model.frame(model1))
         cbind(predictfun(P$mean,P$var,model.frame(model1)))
