@@ -159,7 +159,10 @@
 
 ##' @export
 `plot.lvmfit` <-
-  function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,...) {
+    function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,f,...) {
+        if (!missing(f)) {
+            return(plot.estimate(x,f=f,...))
+        }
     .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
     if (!requireNamespace("graph",quietly=TRUE)) {
       plot(Model(x),...)

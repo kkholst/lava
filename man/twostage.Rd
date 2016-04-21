@@ -29,7 +29,7 @@ Two-stage estimator for non-linear structural equation models
 m <- lvm(c(x1,x2,x3)~f1,f1~z,
          c(y1,y2,y3)~f2,f2~f1+z)
 latent(m) <- ~f1+f2
-d <- sim(m,200,p=c("f2,f2"=2,"f1,f1"=0.5))
+d <- simulate(m,100,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
 
 ## Full MLE
 ee <- estimate(m,d)
@@ -53,5 +53,9 @@ pred <- function(mu,var,data,...)
     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
 (mm <- twostage(m1,m2,data=d,predictfun=pred))
 
+if (interactive()) {
+    pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
+    plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
+}
 }
 

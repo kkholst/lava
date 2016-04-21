@@ -560,7 +560,8 @@ coef.estimate <- function(object,mat=FALSE,...) {
 
 ##' @export
 summary.estimate <- function(object,...) {
-    object[c("iid","id","print")] <- NULL
+    ##object[c("iid","id","print")] <- NULL
+    object <- object[c("coef","coefmat","vcov","call","ncluster")]
     class(object) <- "summary.estimate"
     object
 }
