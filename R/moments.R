@@ -17,8 +17,7 @@ moments.lvm.missing <- function(x, p=pars(x), ...) {
 
 
 ##' @export
-moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
-##  moments.lvm <- function(x, p, meanpar=NULL, conditional=FALSE, debug=FALSE,...) {
+moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, latent=FALSE, ...) {
 ### p: model-parameters as obtained from e.g. 'startvalues'.
 ###       (vector of regression parameters and variance parameters)
 ### meanpar: mean-parameters (optional)
@@ -33,15 +32,23 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   }
 
   J <- ii$J
-  Jidx <- ii$obs.idx
   if (conditional) {
     J <- ii$Jy
+    if (latent) {
+       J <- diag(nrow=length(ii$vars))[sort(c(ii$endo.idx,ii$eta.idx)),,drop=FALSE]
+    }
     px <- ii$px
     exo <- exogenous(x)
-    if (!is.null(v))
-      v[exo] <- as.numeric(data[1,exo])
+    ## if (missing(row)) { 
+    v <- rbind(v) %x% cbind(rep(1,nrow(data)))
+    if (length(ii$exo.idx)>0) {
+        v[,ii$exo.idx] <- as.matrix(data[,exo])
+    }
+    ## } else {
+    ##     if (!is.null(v)) 
+    ##         v[exo] <- as.numeric(data[row,exo])
+    ## }
     P <-  px%*% tcrossprod(P, px)
-    Jidx <- ii$endo.idx
   }
 
   Im <- diag(nrow=nrow(AP$A))
@@ -52,12 +59,11 @@ moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...) {
   } else {
     IAi <- Inverse(Im-t(AP$A))
     G <- J%*%IAi
-    ##G <- IAi[Jidx,,drop=FALSE]
   }
 
   xi <- NULL
   if (!is.null(v)) {
-    xi <- G%*%v ## Model-specific mean vector
+      xi <- v%*%t(G) ## Model-specific mean vector
   }
   Cfull <- as.matrix(IAi %*% tcrossprod(P,IAi))
   C <- as.matrix(J %*% tcrossprod(Cfull,J))

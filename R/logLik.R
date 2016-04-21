@@ -217,9 +217,9 @@ gaussian_logLik.lvm <- function(object,p,data,
     data <- data[,index(object)$manifest,drop=FALSE]
     loglik <- 0;
     for (i in seq_len(n)) {
-      ti <- cbind(as.numeric(data[i,myidx]))
+      ti <- as.numeric(data[i,myidx])
       if (meanstructure) {
-        ti <- ti-xi
+        ti <- cbind(ti-as.numeric(xi))
       }
       if (!is.null(weight)) {
         W <- diag(weight[i,],nrow=length(weight[i,]))
@@ -242,7 +242,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     mu <- mu[myidx,drop=FALSE]
     T <- S
     if (meanstructure) {
-      W <- tcrossprod(mu-xi)
+      W <- crossprod(rbind(mu-xi))
       T <- S+W
     }
     loglik <- -(n*k)/2*log(2*base::pi) -n/2*(log(detC) + tr(T%*%iC))

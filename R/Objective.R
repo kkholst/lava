@@ -4,7 +4,6 @@ gaussian_method.lvm <- "nlminb2"
 `gaussian_objective.lvm` <-
   function(x,p,data,S,mu,n,...) {
     mp <- modelVar(x,p=p,data=data,...)
-
     C <- mp$C ## Model specific covariance matrix
     xi <- mp$xi ## Model specific mean-vector
     iC <- Inverse(C,det=TRUE)
@@ -16,7 +15,7 @@ gaussian_method.lvm <- "nlminb2"
       return(0.5*val)
     }
     if (!is.null(mu)){
-      W <- suppressMessages(tcrossprod(mu-xi))
+      W <- suppressMessages(crossprod(rbind(mu-xi)))
       T <- S+W
     } else {
       T <- S
@@ -64,19 +63,19 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
 
       for (i in seq_len(NROW(data))) {
         z <- as.numeric(data[i,])
-        u <- z-mp$xi
+        u <- z-as.numeric(mp$xi)
         if (!is.null(weight)) {
           W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
           score[i,] <-
             as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                        -1/2*(as.vector((iC
-                                        - iC %*% tcrossprod(u)
+                                        - iC %*% crossprod(rbind(u))
                                         %*% iC)%*%W)) %*% D$dS
                        )
         } else {
-          score[i,] <-
-            as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
-                       1/2*as.vector(iC%*%tcrossprod(u)%*%iC)%*%D$dS)
+            score[i,] <-
+                as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
+                       1/2*as.vector(iC%*%crossprod(rbind(u))%*%iC)%*%D$dS)
         }
       }; colnames(score) <- names(p)
       return(score)
@@ -96,7 +95,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   iC <- Inverse(C,det=FALSE)
   Debug("Sufficient stats.",debug)
   if (!is.null(mu) & !is.null(xi)) {
-    W <- tcrossprod(mu-xi)
+    W <- crossprod(rbind(mu-xi))
     T <- S+W
   } else {
     T <- S
@@ -197,7 +196,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
     score[i,] <-
       as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                  -1/2*(as.vector((iC
-                                  - iC %*% tcrossprod(u)
+                                  - iC %*% crossprod(rbind(u))
                                   %*% iC)%*%W)) %*% D$dS)
     return(-score)
 }
@@ -209,7 +208,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
       (t(as.numeric(v[i,]))%x%diag(nrow=length(myy)))%*%D$dG + Gdv
     score[i,] <- -0.5*as.vector(iC%*%W)%*%D$dS +
       as.numeric(crossprod(u[i,],iC%*%W)%*%dxi +
-                 1/2*as.vector(iC%*%tcrossprod(u[i,])%*%iC%*%W)%*%D$dS)
+                 1/2*as.vector(iC%*%crossprod(rbind(u[i,]))%*%iC%*%W)%*%D$dS)
     ## score[i,] <- -0.5*as.vector(iC)%*%D$dS +
     ##   as.numeric(crossprod(u[i,],iC)%*%dxi +
     ##              1/2*as.vector(iC%*%tcrossprod(u[i,])%*%iC)%*%D$dS)
@@ -255,7 +254,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
     W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
     score[i,] <- -0.5*as.vector(iC%*%W)%*%D$dS +
       as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
-                 1/2*as.vector(iC%*%tcrossprod(u)%*%iC%*%W)%*%D$dS)
+                 1/2*as.vector(iC%*%crossprod(rbind(u))%*%iC%*%W)%*%D$dS)
   }
   if (indiv) return(-score)
   colSums(-score)
@@ -265,6 +264,7 @@ weighted2_hessian.lvm <- NULL
 ###}}} Weighted
 
 ###{{{ Simple
+
 `Simple_hessian.lvm` <- function(p,...) {
   matrix(NA, ncol=length(p), nrow=length(p))
 }
@@ -288,4 +288,5 @@ Simple_gradient.lvm <- function(x,p,...) {
     res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)
     res
   }
+
 ###}}} ObjectiveSimple

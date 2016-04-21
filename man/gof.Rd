@@ -18,7 +18,7 @@ gof(object, ...)
 
 moments(x,...)
 
-\method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...)
+\method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, latent=FALSE, ...)
 
 \method{logLik}{lvmfit}(object, p=coef(object),
                       data=model.frame(object),
@@ -41,6 +41,8 @@ moments(x,...)
 \item{p}{Parameter vector used to calculate statistics}
 
 \item{data}{Data.frame to use}
+
+\item{latent}{If TRUE predictions of latent variables are included in output}
 
 \item{weight2}{Optional second data.frame (only for censored observations)}
 

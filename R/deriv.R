@@ -155,23 +155,34 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       }
       ##dG <- with(mom, kronprod(t(IAi),G,res$dA))
       dxi <-
-        with(mom, kronprod(t(v),ii$Ik,dG))
+          with(mom, kronprod(rbind(v),ii$Ik,dG))
+      if (is.matrix(mom$v) && nrow(mom$v)>1) {
+          ## reorder
+          k <- nrow(dxi)/nrow(mom$v)
+          idx0 <- seq(nrow(mom$v))*k-k+1
+          idx <- unlist(lapply(1:k,function(x) idx0+x-1))
+          dxi <- dxi[idx,,drop=FALSE]
+      }
+
       if (!is.null(res$dv)) {
           if (!(lava.options()$devel)) {
-              dxi <- dxi+ mom$G%*%res$dv
+              if (is.matrix(mom$v) && nrow(mom$v)>1) {
+                  ##dxi <- dxi + cbind(rep(1,nrow(mom$v)))%x%(mom$G%*%res$dv)
+                  dxi <- dxi + (mom$G%*%res$dv)%x%cbind(rep(1,nrow(mom$v)))
+              } else {
+                  dxi <- dxi+ mom$G%*%res$dv
+              }
           } else {
               dxi <- dxi+ mom$G%*%res$dv[,with(ii$parBelongsTo,c(mean,reg))]
           }
       }
       res <- c(res, list(dxi=dxi))
       if (!is.null(mu)) {
-        muv <- mu-mom$xi
-        dT <- suppressMessages(-(ii$Ik%x%muv + muv%x%ii$Ik) %*% dxi)
-        res <- c(res, list(dT=dT))
+          muv <- rbind(mu-mom$xi)
+          dT <- suppressMessages(-t(ii$Ik%x%muv + muv%x%ii$Ik) %*% dxi)
+          res <- c(res, list(dT=dT))
       }
     }
-
-
 
 
     if (second) {

@@ -175,6 +175,7 @@ condition <- function(A) {
 ##' @param x Model object
 ##' @param p Parameter vector used to calculate statistics
 ##' @param data Data.frame to use
+##' @param latent If TRUE predictions of latent variables are included in output
 ##' @param weight2 Optional second data.frame (only for censored observations)
 ##' @param weight Optional weight matrix
 ##' @param n Number of observations
@@ -197,7 +198,7 @@ condition <- function(A) {
 ##'
 ##' moments(x,...)
 ##'
-##' \method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, ...)
+##' \method{moments}{lvm}(x, p, debug=FALSE, conditional=FALSE, data=NULL, latent=FALSE, ...)
 ##'
 ##' \method{logLik}{lvmfit}(object, p=coef(object),
 ##'                       data=model.frame(object),
