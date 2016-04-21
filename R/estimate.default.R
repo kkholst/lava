@@ -315,10 +315,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
             parname <- form0
         }
         if (!is.null(iidtheta)) {
-            arglist <- c(list(object=x,data=data,p=as.vector(pp)),list(...))
+            arglist <- c(list(object=x,data=data,p=vec(pp)),list(...))
             names(arglist)[3] <- parname
         } else {
-            arglist <- c(list(object=x,p=as.vector(pp)),list(...))
+            arglist <- c(list(object=x,p=vec(pp)),list(...))
             names(arglist)[2] <- parname
         }
         if (!dots) {
@@ -326,7 +326,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
         newf <- NULL
         if (length(form)==0) {
-            arglist <- list(as.vector(pp))
+            arglist <- list(vec(pp))
             ##newf <- function(p,...) do.call("f",list(p,...))
             newf <- function(...) do.call("f",list(...))
             val <- do.call("f",arglist)
@@ -381,7 +381,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                     D <- colMeans(rbind(D))
                     iid2 <- iidtheta%*%D
                 }
-                pp <- as.vector(colMeans(cbind(val)))
+                pp <- vec(colMeans(cbind(val)))
                 iid1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N
                 if (!missing(id)) {
                     if (!lava.options()$cluster.index)
