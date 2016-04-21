@@ -148,7 +148,13 @@ procrandomslope <- function(object,data=object$data,...) {
 ## ' @param Y
 ## ' @author Klaus K. Holst
 kronprod <- function(A,B,Y) {
-  rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
+    if (missing(Y)) {
+        ## Assume 'B'=Identity, (A otimes B)Y
+        k <- nrow(B)/ncol(A)
+        res <- rbind(apply(B,2,function(x) matrix(x,nrow=k)%*%t(A)))
+        return(res)
+    }
+    rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
 }
 
 ###}}} kronprod
