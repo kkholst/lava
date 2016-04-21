@@ -51,6 +51,7 @@ predict.lvm.missing <- function(object,x=NULL,y=NULL,data=model.frame(object),p=
 ##' @param path Path prediction
 ##' @param quick If TRUE the conditional mean and variance given covariates are returned (and all other calculations skipped)
 ##' @param \dots Additional arguments to lower level function
+##' @seealso predictlvm
 ##' @examples
 ##' m <- lvm(list(c(y1,y2,y3)~u,u~x)); latent(m) <- ~u
 ##' d <- sim(m,100)
@@ -84,7 +85,7 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
       if (length(X)>0) {
           mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
           mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
-          xi.x <- (m$IAi[ii$endo.obsidx,,drop=FALSE]%*%(mu.0 + mu.x))
+          xi.x <- (m$IAi[ii$endo.idx,,drop=FALSE]%*%(mu.0 + mu.x))
       } else {
           xi.x <- m$xi%*%rep(1,nrow(data))
           rownames(xi.x) <- ii$endogenous
@@ -174,8 +175,11 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
       x <- intersect(x,endogenous(object))
       if (is.null(y))
           y <- setdiff(vars(object),c(x,exogenous(object)))
-
-      E.x <- xi.x[y,,drop=FALSE] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
+      if (length(x)>0) {
+          E.x <- xi.x[y,,drop=FALSE] + C.x[y,x]%*%solve(C.x[x,x])%*%ry[x,,drop=FALSE]
+      } else {
+          E.x <- xi.x[y,,drop=FALSE]
+      }
       if (residual) {
           Vhat <- matrix(0, nrow(data), length(vars(object))); colnames(Vhat) <- vars(object)
           Vhat[,obs.idx] <- as.matrix(data[,manifest(object),drop=FALSE])
@@ -183,8 +187,12 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
           return(t((IA%*%t(Vhat)-m$v)))
       }
       res <- t(E.x); colnames(res) <- y
-      attr(res,"cond.var") <-
-          C.x[y,y,drop=FALSE]-C.x[y,x,drop=FALSE]%*%solve(C.x[x,x,drop=FALSE])%*%C.x[x,y,drop=FALSE]
+      if (length(x)>0) {
+          attr(res,"cond.var") <-
+              C.x[y,y,drop=FALSE]-C.x[y,x,drop=FALSE]%*%solve(C.x[x,x,drop=FALSE])%*%C.x[x,y,drop=FALSE]
+      } else {
+          attr(res,"cond.var") <- C.x[y,y,drop=FALSE]
+      }
       return(res)
   }
 
@@ -236,3 +244,82 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
 
 ##' @export
 print.lvm.predict <- function(x,...) print(x[,])
+
+##' Predict function for latent variable models
+##'
+##' Predictions of conditinoal mean and variance and calculation of
+##' jacobian with respect to parameter vector.
+##' @export
+##' @param object Model object
+##' @param formula Formula specifying which variables to predict and which to condition on
+##' @param p Parameter vector
+##' @param data Data.frame
+##' @param ... Additional arguments to lower level functions
+##' @seealso predict.lvm
+##' @examples
+##' m <- lvm(c(x1,x2,x3)~u1,u1~z,
+##'          c(y1,y2,y3)~u2,u2~u1+z)
+##' latent(m) <- ~u1+u2
+##' d <- simulate(m,10,"u2,u2"=2,"u1,u1"=0.5,seed=123)
+##' e <- estimate(m,d)
+##' 
+##' ## Conditional mean given covariates
+##' predictlvm(e,c(x1,x2)~1)$mean
+##' ## Conditional variance of u1,y1 given x1,x2
+##' predictlvm(e,c(u1,y1)~x1+x2)$var
+predictlvm <- function(object,formula,p=coef(object),data=model.frame(object),...) {
+    model <- Model(object)
+    if (!missing(formula)) {
+        yx <- getoutcome(formula)
+        y <- decomp.specials(yx)
+        x <- attr(yx,"x")        
+    } else {
+        y <- index(model)$latent
+        x <- index(model)$endogenous
+    }    
+    endo <- with(index(model),setdiff(vars,exogenous))
+    idxY <- match(y,endo)
+    idxX <- match(x,endo)
+    ny <- length(y)
+    if (ny==0) return(NULL)
+    m <- modelVar(model,p,conditional=TRUE,data=data,latent=TRUE)
+    D <- deriv.lvm(model,p,conditional=TRUE,data=data,latent=TRUE)
+    N <- nrow(data)
+    ii0 <- seq(N)
+    iiY <- sort(unlist(lapply(idxY,function(x) ii0+N*(x-1))))
+    k <- ncol(m$xi)
+    J <- matrix(seq(k^2),k)
+    if (length(idxX)==0) { ## Return conditional mean and variance given covariates
+        M <- m$xi[,idxY,drop=FALSE]
+        dM <- D$dxi[iiY,,drop=FALSE]
+        V <- m$C[idxY,idxY,drop=FALSE]
+        dV <- D$dS[as.vector(J[idxY,idxY]),,drop=FALSE]
+        return(list(mean=M,mean.jacobian=dM,var=V,var.jacobian=dV))
+    }
+    iiX <- sort(unlist(lapply(idxX,function(x) ii0+N*(x-1))))
+    X <- as.matrix(data[,x,drop=FALSE])
+    rX <- X-m$xi[,idxX,drop=FALSE]
+    dX <- D$dxi[iiX,,drop=FALSE]
+    ic <- solve(m$C[idxX,idxX,drop=FALSE])
+    c2 <- m$C[idxY,idxX,drop=FALSE]
+    B <- c2%*%ic
+    ## Conditional variance
+    V <- m$C[idxY,idxY,drop=FALSE]-B%*%t(c2)
+    dV <- D$dS[as.vector(J[idxY,idxY]),,drop=FALSE] -
+        (
+            (B%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE] +
+            -(B%x%B)%*%D$dS[as.vector(J[idxX,idxX]),,drop=FALSE] +
+            (diag(nrow=ny)%x%B)%*%D$dS[as.vector(J[idxX,idxY]),,drop=FALSE]
+        )
+    ## Conditional mean
+    M <- m$xi[,idxY,drop=FALSE]+rX%*%t(B)
+    dB <- (ic%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE]+
+        -(ic%x%B)%*%D$dS[as.vector(J[idxX,idxX]),,drop=FALSE]
+    ## Find derivative of transposed matrix
+    n0 <- as.vector(matrix(seq(prod(dim(B))),ncol=nrow(B),byrow=TRUE))
+    dB. <- dB[n0,,drop=FALSE]
+    dM <- D$dxi[iiY,,drop=FALSE] +
+        ((diag(nrow=ny)%x%rX)%*%dB.) - kronprod(B,dX)
+    list(mean=M,mean.jacobian=dM,var=V,var.jacobian=dV)
+}
+

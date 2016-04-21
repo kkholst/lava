@@ -358,6 +358,30 @@ test_that("Random slope model", {
 })
 
 
+test_that("Predictions, jacobians", {
+    m <- lvm(c(x1,x2,x3)~u1,u1~z,
+             c(y1,y2,y3)~u2,u2~u1+z)
+    latent(m) <- ~u1+u2
+    d <- simulate(m,10,"u2,u2"=2,"u1,u1"=0.5,seed=123)
+    e <- estimate(m,d)
+
+    object <- e
+    f <- function(p,x=vars(object)) predict(object,x,p=p)
+    expect_true(sum(abs(numDeriv::jacobian(f,coef(object))-predictlvm(object)$mean.jacobian))
+                <1e-6)
+    expect_true(sum(abs(numDeriv::jacobian(function(p) predictlvm(object,p=p)$var,coef(object))-predictlvm(object)$var.jacobian))
+                <1e-6)
+
+    expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,x1~1),coef(object))-
+                        predictlvm(object,x1~1)$mean.jacobian))
+                <1e-6)
+    
+    expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,u1~x1+x2+x3),coef(object))-
+                        predictlvm(object,u1~x1+x2+x3)$mean.jacobian))
+                <1e-6)
+})
+
+
 test_that("multinomial", {
     set.seed(1)
     breaks <- c(-Inf,-1,0,Inf)
@@ -449,4 +473,6 @@ test_that("partialgamma", {
 test_that("multipletesting", {
     ## TODO
 })
+
+
 

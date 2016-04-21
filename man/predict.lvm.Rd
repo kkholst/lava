@@ -47,4 +47,7 @@ r <- predict(e,~y1+y2)
 r <- predict(e,vars(e),residual=TRUE)
 
 }
+\seealso{
+predictlvm
+}
 
