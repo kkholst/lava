@@ -294,32 +294,34 @@ predictlvm <- function(object,formula,p=coef(object),data=model.frame(object),..
         dM <- D$dxi[iiY,,drop=FALSE]
         V <- m$C[idxY,idxY,drop=FALSE]
         dV <- D$dS[as.vector(J[idxY,idxY]),,drop=FALSE]
-        return(list(mean=M,mean.jacobian=dM,var=V,var.jacobian=dV))
-    }
-    iiX <- sort(unlist(lapply(idxX,function(x) ii0+N*(x-1))))
-    X <- as.matrix(data[,x,drop=FALSE])
-    rX <- X-m$xi[,idxX,drop=FALSE]
-    dX <- D$dxi[iiX,,drop=FALSE]
-    ic <- solve(m$C[idxX,idxX,drop=FALSE])
-    c2 <- m$C[idxY,idxX,drop=FALSE]
-    B <- c2%*%ic
-    ## Conditional variance
-    V <- m$C[idxY,idxY,drop=FALSE]-B%*%t(c2)
-    dV <- D$dS[as.vector(J[idxY,idxY]),,drop=FALSE] -
-        (
-            (B%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE] +
+    } else {
+        iiX <- sort(unlist(lapply(idxX,function(x) ii0+N*(x-1))))
+        X <- as.matrix(data[,x,drop=FALSE])
+        rX <- X-m$xi[,idxX,drop=FALSE]
+        dX <- D$dxi[iiX,,drop=FALSE]
+        ic <- solve(m$C[idxX,idxX,drop=FALSE])
+        c2 <- m$C[idxY,idxX,drop=FALSE]
+        B <- c2%*%ic
+        ## Conditional variance
+        V <- m$C[idxY,idxY,drop=FALSE]-B%*%t(c2)
+        dV <- D$dS[as.vector(J[idxY,idxY]),,drop=FALSE] -
+            (
+                (B%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE] +
             -(B%x%B)%*%D$dS[as.vector(J[idxX,idxX]),,drop=FALSE] +
             (diag(nrow=ny)%x%B)%*%D$dS[as.vector(J[idxX,idxY]),,drop=FALSE]
-        )
-    ## Conditional mean
-    M <- m$xi[,idxY,drop=FALSE]+rX%*%t(B)
-    dB <- (ic%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE]+
-        -(ic%x%B)%*%D$dS[as.vector(J[idxX,idxX]),,drop=FALSE]
-    ## Find derivative of transposed matrix
-    n0 <- as.vector(matrix(seq(prod(dim(B))),ncol=nrow(B),byrow=TRUE))
-    dB. <- dB[n0,,drop=FALSE]
-    dM <- D$dxi[iiY,,drop=FALSE] +
+            )
+        ## Conditional mean
+        M <- m$xi[,idxY,drop=FALSE]+rX%*%t(B)
+        dB <- (ic%x%diag(nrow=ny))%*%D$dS[as.vector(J[idxY,idxX]),,drop=FALSE]+
+            -(ic%x%B)%*%D$dS[as.vector(J[idxX,idxX]),,drop=FALSE]
+        ## Find derivative of transposed matrix
+        n0 <- as.vector(matrix(seq(prod(dim(B))),ncol=nrow(B),byrow=TRUE))
+        dB. <- dB[n0,,drop=FALSE]
+        dM <- D$dxi[iiY,,drop=FALSE] +
         ((diag(nrow=ny)%x%rX)%*%dB.) - kronprod(B,dX)
-    list(mean=M,mean.jacobian=dM,var=V,var.jacobian=dV)
+    }
+    colnames(M) <- y
+    dimnames(V) <- list(y,y)
+    return(list(mean=M,mean.jacobian=dM,var=V,var.jacobian=dV))
 }
 
