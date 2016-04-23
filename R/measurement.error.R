@@ -17,27 +17,29 @@
 ##' regression(m) <- z~u2+u+v+uv+x
 ##' set.seed(1)
 ##' d <- sim(m,1000,p=c("u,u"=1))
-##' 
+##'
 ##' ## Stage 1
 ##' m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,c(y3[0:s],y4[0:s],y5[0:s])~1*v,u~b*x,u~~v)
 ##' latent(m1) <- ~u+v
 ##' e1 <- estimate(m1,d)
-##' 
+##'
 ##' pp <- function(mu,var,data,...) {
 ##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 ##' }
 ##' (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
-##' 
+##'
 ##' ## uu <- seq(-1,1,length.out=100)
 ##' ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
 ##' if (interactive()) {
 ##'     plot(e,intercept=TRUE,vline=0)
-##' 
+##'
 ##'     f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
 ##'     u <- seq(-1,1,length.out=100)
 ##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
 ##' }
-measurement.error <- function(model1, formula, data=parent.frame(), predictfun=function(mu,var,data,...) mu[,1]^2+var[1], id1, id2, ...) {
+measurement.error <- function(model1, formula, data=parent.frame(),
+                              predictfun=function(mu,var,data,...) mu[,1]^2+var[1],
+                              id1, id2, ...) {
     if (!inherits(model1,c("lvmfit","lvm.mixture"))) stop("Expected lava object ('lvmfit','lvm.mixture',...)")
     if (missing(formula)) stop("formula needed for stage two (right-hand side additional covariates)")
     p1 <- coef(model1,full=TRUE)
@@ -80,7 +82,7 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
 ##' @param model2 Stage 2 SEM
 ##' @param data data.frame
 ##' @param predictfun Prediction of latent variable
-##' @param id1 Optional id-variable (stage 1 model) 
+##' @param id1 Optional id-variable (stage 1 model)
 ##' @param id2 Optional id-variable (stage 2 model)
 ##' @param ... Additional arguments to lower level functions
 ##' @examples
@@ -88,40 +90,40 @@ measurement.error <- function(model1, formula, data=parent.frame(), predictfun=f
 ##'          c(y1,y2,y3)~f2,f2~f1+z)
 ##' latent(m) <- ~f1+f2
 ##' d <- simulate(m,100,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
-##' 
+##'
 ##' ## Full MLE
 ##' ee <- estimate(m,d)
-##' 
+##'
 ##' ## Manual two-stage
 ##' \dontrun{
 ##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 ##' e1 <- estimate(m1,d)
 ##' pp1 <- predict(e1,f1~x1+x2+x3)
-##' 
+##'
 ##' d$u1 <- pp1[,]
 ##' d$u2 <- pp1[,]^2+attr(pp1,"cond.var")
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' e2 <- estimate(m2,d)
 ##' }
-##' 
+##'
 ##' ## Two-stage
 ##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' pred <- function(mu,var,data,...)
 ##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
 ##' (mm <- twostage(m1,m2,data=d,predictfun=pred))
-##' 
+##'
 ##' if (interactive()) {
 ##'     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
 ##'     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
 ##' }
 twostage <- function(model1, model2, data=parent.frame(),
-                         predictfun=function(mu,var,data,...)
-                             cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
-                     id1,id2, ...) {
+                     predictfun=function(mu,var,data,...)
+                         cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
+                     id1,id2, all=FALSE, ...) {
     if (inherits(model1,"lvm")) {
         model1 <- estimate(model1,data=data,...)
-    }    
+    }
     if (!inherits(model1,c("estimate","lvmfit","lvm.mixture"))) stop("Expected lava object ('estimate','lvmfit','lvm.mixture',...)")
     if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
     p1 <- coef(model1)
@@ -133,7 +135,7 @@ twostage <- function(model1, model2, data=parent.frame(),
     newd <- data
     newd[,colnames(pp)] <- pp
     model2 <- estimate(model2,data=newd,...)
-    p2 <- coef(model2)    
+    p2 <- coef(model2)
     if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
     if (missing(id2)) id2 <- seq(nrow(model.frame(model2)))
     if (!inherits(model1,"estimate")) {
@@ -149,7 +151,7 @@ twostage <- function(model1, model2, data=parent.frame(),
     Ia <- -numDeriv::jacobian(function(p) U(p),p1)
     stacked <- stack(e1,e2,Ia)
 
-    coef <- model2$coef    
+    coef <- model2$coef
     res <- model2
     res[names(stacked)] <- stacked
     res$estimator <- "generic"
@@ -158,7 +160,9 @@ twostage <- function(model1, model2, data=parent.frame(),
     coef[,] <- cc
     res$coef <- coef
     res$fun <- predictfun
-        
+    if (all) {
+        res$naive <- model2
+        res$naive.robust <- e2
+    }
     structure(res,class=c("measurement.error","lvmfit","estimate"))
 }
-

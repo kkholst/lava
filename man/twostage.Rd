@@ -5,7 +5,8 @@
 \title{Two-stage estimator (non-linear SEM)}
 \usage{
 twostage(model1, model2, data = parent.frame(), predictfun = function(mu,
-  var, data, ...) cbind(u1 = mu[, 1], u2 = mu[, 1]^2 + var[1]), id1, id2, ...)
+  var, data, ...) cbind(u1 = mu[, 1], u2 = mu[, 1]^2 + var[1]), id1, id2,
+  all = FALSE, ...)
 }
 \arguments{
 \item{model1}{Stage 1 measurement model}
