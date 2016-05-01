@@ -46,7 +46,7 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {    
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
     if (missing(mc.cores) || .Platform$OS.type=="windows") {
         if (.Platform$OS.type=="windows") { ## Disable parallel processing on windows
             mc.cores <- 1L
@@ -91,7 +91,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     dots <- list(...)
     mycall <- match.call(expand.dots=FALSE)
     if (inherits(x,c("data.frame","matrix"))) olddata <- x
-    if (inherits(x,"sim")) {        
+    if (inherits(x,"sim")) {
         oldcall <- attr(x,"call")
         x <- attr(x,"f")
         if (!is.null(f)) x <- f
@@ -101,7 +101,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
             val <- list(ex[[nn]]); names(val) <- nn
             mycall[["..."]] <- c(mycall[["..."]],list(val))
         }
-        
+
     } else {
         if (!is.null(f)) x <- f
         if (!is.function(x)) stop("Expected a function or 'sim' object.")
@@ -132,7 +132,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         parval <- as.data.frame(R)
         if (is.vector(R)) names(parval) <- NULL
         else if (inherits(R,c("matrix","data.frame"))) names(parval) <- colnames(R)
-        R <- NROW(parval)        
+        R <- NROW(parval)
     } else {
         parval <- as.data.frame(1:R)
         names(parval) <- NULL
@@ -158,7 +158,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         } else {
             val <- do.call(mapply,pp)
         }
-        if (messages>0) 
+        if (messages>0)
             setTxtProgressBar(pb, count/length(idx))
         if (is.null(res)) {
             ##res <- array(NA,dim=c(R,dim(val[[1]])),dimnames=c(list(NULL),dimnames(val[[1]]),NULL))
@@ -239,7 +239,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      cex.axis=0.5,
                      alpha=0.5,
                      rug=TRUE,
-                     rug.alpha=0.5,                     
+                     rug.alpha=0.5,
                      main,
                      cex.main=1,
                      equal=FALSE,
@@ -274,7 +274,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
     if (is.character(estimate)) {
         estimate <- match(estimate,colnames(x))
-    }    
+    }
 
     K <- length(estimate)
     est <- tru <- c()
@@ -289,14 +289,15 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         est <- c(est,list(rep(estimate[i],length(se[[i]]))))
         if (!is.null(true)) tru <- c(tru,list(rep(true[i],length(se[[i]]))))
     }
-    
+
     if (length(se)>0) {
         for (i in seq_along(se)) {
             if (is.character(se[[i]])) se[[i]] <- match(se[[i]],colnames(x))
         }
     }
-    
+
     ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
+
     oldpar <- NULL
     on.exit({
         par(oldpar)
@@ -339,8 +340,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             ylim <-  rep(list(rg),K)
         }
         if (density.plot) {
-            if (is.null(density.xlim)) density.xlim <- ylim
             if (is.null(density.ylim)) density.ylim <- rep(list(c(0,maxdy*delta)),K)
+            if (is.null(density.xlim)) density.xlim <- ylim
         }
     }
 
@@ -359,7 +360,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
     if (missing(main)) {
         main <- NULL
-        if (K>1 && !single) main <- colnames(ss)
+        if (!missing(names)) main <- names
+        else if (K>1 && !single) main <- colnames(ss)
     }
     if (!is.null(main)) main <- rep(main,length.out=K)
     if (missing(density.lty)) {
@@ -424,7 +426,6 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             if (!is.null(true)) {
                 abline(v=true[i],lty=true.lty,col=true.col,lwd=true.lwd)
             }
-
             if (!is.null(se)) {
                 se.pos <- match(se[[i]],unlist(se))
                 ns <- length(se.pos)+1
@@ -434,13 +435,13 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 se.lty <- rep(density.lty,length.out=ns)[-1]
                 se.lwd <- rep(density.lwd,length.out=ns)[-1]
                 xx <- dy$x
-                 for (j in seq_along(se.pos)) {
+                for (j in seq_along(se.pos)) {
                     if (polygon) {
-                        yy <- dnorm(xx,mean=ss["Mean",i],sd=ss["SE",se.pos[j]])
+                        yy <- dnorm(xx,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]])
                         if (se.alpha[j]>0) graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA)
                         if (!is.null(border)) lines(xx,yy,col=se.border[j],lty=se.lty[j],lwd=se.lwd[j])
                     } else {
-                        graphics::curve(dnorm(x,mean=ss["Mean",i],sd=ss["SE",se.pos[j]]),lwd=se.lwd[j],lty=se.lty[j],col=se.col[j],add=TRUE)
+                        graphics::curve(dnorm(x,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]]),lwd=se.lwd[j],lty=se.lty[j],col=se.col[j],add=TRUE)
                     }
                  }
                 if (auto.legend) legend <- c("Kernel",colnames(ss)[se.pos])
@@ -502,7 +503,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
 ##' @export
 ##' @export summary.sim
-summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,...) {
+summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,unique.names=TRUE,...) {
     if (missing(fun)) fun <- function(x) {
         pp <- c(.025,.5,.975)
         res <- c(mean(x,na.rm=TRUE),sd(x,na.rm=TRUE),quantile(x,c(0,pp,1),na.rm=TRUE),
@@ -515,7 +516,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
     if (is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
-    
+
     est <- apply(object[,estimate,drop=FALSE],2,
                  function(x) c(Mean=mean(x,na.rm=TRUE),Missing=mean(is.na(x)),SD=sd(x,na.rm=TRUE)))
     if (!is.null(true)) {
@@ -546,7 +547,16 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
         }
         est <- rbind(est,Coverage=Coverage)
     }
-    if (!is.null(names)) colnames(est) <- names
-    colnames(est) <- make.unique(colnames(est))
+    if (!is.null(names)) {
+         if (length(names)<ncol(est)) {
+            uest <- unique(estimate)
+            names <- names[match(estimate,uest)]
+        }
+        colnames(est) <- names
+
+    }
+    if (unique.names) {
+        colnames(est) <- make.unique(colnames(est))
+    }
     return(est)
 }
