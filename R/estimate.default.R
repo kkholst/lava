@@ -39,7 +39,7 @@ estimate.list <- function(x,...) {
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
-##' @param transform (optional) transform of parameters and confidence intervals
+##' @param transform.ci (optional) transform of parameters and confidence intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
 ##' @param cluster (obsolete) alias for 'id'.
 ##' @export
@@ -141,7 +141,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                              contrast,null,vcov,coef,
                              robust=TRUE,df=NULL,
                              print=NULL,labels,label.width,
-                             only.coef=FALSE,transform,
+                             only.coef=FALSE,transform.ci=NULL,
                              folds=0,
                              cluster
                              ) {
@@ -435,14 +435,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (!is.null(nn)) rownames(res) <- nn
         if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
     }
-    if (!missing(transform)) {
-        res[,c(1,3,4)] <- transform(res[,c(1,3,4)])
-        res[,2] <- NA
-    }
 
     coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
-    if (iid && missing(transform)) res$iid <- iidtheta
+    if (iid) ## && is.null(transform.ci))
+        res$iid <- iidtheta
+
     if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)
         if (missing(contrast)) contrast <- diag(nrow=p)
@@ -472,6 +470,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
     }
+
+    if (!is.null(transform.ci)) {
+        res$coefmat[,c(1,3,4)] <- do.call(transform.ci,list(res$coefmat[,c(1,3,4)]))
+        res$coefmat[,2] <- NA
+    }
+
     if (!missing(keep) && !is.null(keep)) {
         if (is.character(keep)) {
             keep <- match(keep,rownames(res$coefmat))
@@ -504,7 +508,7 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @export
-print.estimate <- function(x,level=0,digits=3,width=25,...) {
+print.estimate <- function(x,level=0,digits=3,width=25,std.error=TRUE,p.value=TRUE,...) {
     if (!is.null(x$print)) {
         x$print(x,...)
         return(invisible(x))
@@ -528,7 +532,10 @@ print.estimate <- function(x,level=0,digits=3,width=25,...) {
 
     cc <- x$coefmat
     rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
-                                               function(x) toString(x,width=width))))
+                                              function(x) toString(x,width=width))))
+    if (!std.error) cc <- cc[,-2,drop=FALSE]
+    if (!p.value) cc[,-ncol(cc),drop=FALSE]
+
     print(cc,digits=digits,...)
     if (!is.null(x$compare)) {
         cat("\n",x$compare$method[3],"\n")
