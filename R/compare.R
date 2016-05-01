@@ -90,7 +90,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
       method <- c(method,"","Null Hypothesis:",msg)
 ##      method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     }
-
+    rownames(ct) <- cnames
     res <- list(##data.name=hypothesis,
                 statistic = Q, parameter = df,
                 p.value=pQ, method = method, estimate=ct, vcov=V, coef=ct[,1],
