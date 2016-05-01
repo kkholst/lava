@@ -155,10 +155,10 @@ print.multigroup <- function(x,...) {
 
 ###{{{ printmany
 
-printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,emptystr=" ",bothrows=TRUE,print=TRUE,...) {
+printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,emptystr=" ",bothrows=!is.table(A),right=TRUE,print=TRUE,...) {
   cA <- colnames(A); cB <- colnames(B)
-  A <- format(A, digits=digits)
-  B <- format(B, digits=digits)
+  A <- format(A, digits=digits, right=right, ...)
+  B <- format(B, digits=digits, right=right, ...)
   nA <- nrow(A); nB <- nrow(B)
   if (nrow(A)<nrow(B)) {
     rA <- rownames(A)
@@ -170,20 +170,31 @@ printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,
   }
   if (!is.null(rownames) & length(rownames)==nrow(A))
     rownames(A) <- rownames(B) <- rownames
-  res <- cbind(A, matrix("", nrow=nrow(A), ncol=nspace)); colnames(res) <- c(colnames(A), rep(emptystr,nspace))
+  res <- cbind(A, matrix("", nrow=nrow(A), ncol=nspace));
+  dnn <- dimnames(A)
+  dnn[[2]] <- c(dnn[[2]],rep(emptystr,nspace))
+  dimnames(res) <- dnn
+  ##dimnames(res)[[2]] <- c(dimnames(res)[[2]],rep(emptystr,nspace))
   if (!is.null(name1)) {
-    oldname <- colnames(res)
-    res <- cbind(rep("",nrow(res)), rownames(res), res); colnames(res) <- c(name1,"",oldname)
-    rownames(res) <- rep("",nrow(res))
+      oldname <- colnames(res)
+      res <- cbind(rep("",nrow(res)), rownames(res), res);
+      cres <- name1
+      if (!is.null(rownames(res))) cres <- c(cres,"")
+      colnames(res) <- c(cres,oldname)
+      rownames(res) <- rep("",nrow(res))
   }
   if (!is.null(name2)) {
     oldname <- colnames(res)
     res <- cbind(res,rep("",nrow(res))); colnames(res) <- c(oldname,name2)
   }
-  if (!identical(rownames(A),rownames(B)) | bothrows)
-    res <- cbind(res, rownames(B))
+  if (!identical(rownames(A),rownames(B)) & bothrows)
+      res <- cbind(res, rownames(B))
   res <- cbind(res, B)
-  if (print) print(res, quote=FALSE,...)
+  if (is.null(name2)) {
+      dnn[[2]] <- c(dnn[[2]],dimnames(B)[[2]])
+      dimnames(res) <- dnn
+  }
+  if (print) print(res, quote=FALSE, right=right, ...)
   invisible(res)
 }
 
