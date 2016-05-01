@@ -31,7 +31,8 @@
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
 ##' @param edgecolor if TRUE plot style with colored edges
-##' @param \dots Additional arguments to be passed to the low level functions
+##' @param graph.proc If TRUE subscripts are automatically added to labels
+##' @param ... Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
 ##' @examples
@@ -67,11 +68,13 @@
 `plot.lvm` <-
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
-           unexpr=FALSE,
-           addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
-           layout=c("dot","fdp","circo","twopi","neato","osage"),
-           edgecolor=lava.options()$edgecolor,
-           ...) {
+         unexpr=FALSE,
+         addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
+         layout=c("dot","fdp","circo","twopi","neato","osage"),
+         edgecolor=lava.options()$edgecolor,
+         graph.proc=lava.options()$graph.proc,         
+         
+         ...) {
     if (is.null(vars(x))) {
       message("Nothing to plot: model has no variables.")
       return(NULL)
@@ -81,7 +84,6 @@
     message("Not available for models with fewer than two variables")
     return(NULL)
   }
-  if (edgecolor) x <- beautify(x)
   myhooks <- gethook("plot.post.hooks")
   for (f in myhooks) {
     x <- do.call(f, list(x=x,...))
@@ -101,7 +103,10 @@
     else plot(g,layout=layout,...)
     return(invisible(g))
   }
-  if (init) {
+    if (init) {
+        if (graph.proc || edgecolor) {
+            x <- beautify(x,edgecol=edgecolor,...)
+        }
     g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   } else {
     g <- Graph(x)
@@ -134,7 +139,11 @@
     graph::edgeRenderInfo(g)$col <- graph::edgeRenderInfo(dots$x)$col
     if (noplot)
       return(g)
-    res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
+      res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
+    { # Redo nodes to avoid edges overlapping node borders
+      par(new=TRUE)
+      res <- tryCatch(Rgraphviz::renderGraph(g,drawEdges=NULL,new=FALSE),error=function(e) NULL)
+    }
     options(.savedOpt)
   }
   ## if (!is.null(legend)) {
@@ -159,7 +168,7 @@
 
 ##' @export
 `plot.lvmfit` <-
-    function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,f,...) {
+    function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,f,graph.proc=lava.options()$graph.proc,...) {
         if (!missing(f)) {
             return(plot.estimate(x,f=f,...))
         }
@@ -171,8 +180,11 @@
     g <- Graph(x)
     newgraph <- FALSE
     if (is.null(g)) {
-      newgraph <- TRUE
-      Graph(x) <- finalize(Model(x), diag=TRUE, cor=FALSE, fontsize1=fontsize1, ...)
+        newgraph <- TRUE
+        if (graph.proc) {
+            Model(x) <- beautify(Model(x),edgecol=FALSE,...)
+        }
+        Graph(x) <- finalize(Model(x), diag=TRUE, cor=FALSE, fontsize1=fontsize1, ...)
     }
     if(noplot) return(Graph(x))
     if (newgraph) {
@@ -266,32 +278,61 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
 ###}}} igraph.lvm
 
 
-beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("white",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
-    nodecolor(x, exogenous(x), border=border[1], labcol=labcol[1]) <- NA
-    nodecolor(x, endogenous(x), border=border[1], labcol=labcol[1]) <- NA
-    nodecolor(x, latent(x), border=border[1], labcol=labcol[1]) <- NA
+beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
+    if (is.null(x$noderender$fill)) notcolored <- vars(x)
+    else notcolored <- vars(x)[is.na(x$noderender$fill)]
+    x0 <- intersect(notcolored,exogenous(x))
+    if (length(x0)>0)
+        nodecolor(x, x0, border=border[1], labcol=labcol[1]) <- col[1]
+    x0 <- intersect(notcolored,endogenous(x))
+    if (length(x0)>0)
+        nodecolor(x, x0, border=border[1], labcol=labcol[1]) <- col[2]
+    x0 <- intersect(notcolored,latent(x))
+    if (length(x0)>0)
+        nodecolor(x, x0, border=border[1], labcol=labcol[1]) <- col[3]
+
     trimmed <- gsub("[[:digit:]]*$","",vars(x))
-    num <- c()
+    keep <- num <- c()
     for (i in seq_len(length(vars(x)))) {
-        num <- c(num,gsub(trimmed[i],"",vars(x)[i]))
+        lb <- labels(x)[vars(x)[i]]
+        if (is.null(try(eval(lb),silent=TRUE))) {
+            keep <- c(keep,i)
+            num <- c(num,gsub(trimmed[i],"",vars(x)[i]))
+        }
     }
-    lab <- paste0(vars(x),"=",paste0("expression(",trimmed,"[scriptscriptstyle(",num,")])"),collapse=",")
-    labels(x) <- eval(parse(text=paste("c(",lab,")")))
+    if (length(keep)>0) {
+        trimmed <- trimmed[keep]
+        lab <- paste0(vars(x)[keep],"=",paste0("expression(",trimmed,"[scriptscriptstyle(",num,")])"),collapse=",")
+        labels(x) <- eval(parse(text=paste("c(",lab,")")))
+    }
     if (!edgecol) return(x)
     iex <- index(x)$exo.idx
     ien <- index(x)$endo.idx
     ila <- index(x)$eta.idx
     for (i in iex) {
-        for (j in which(x$M[i,]==1))
-            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[1]) <- NA
+        for (j in which(x$M[i,]==1)) {
+            elab <- edgelabels(x,to=vars(x)[j],from=rev(vars(x)[i]))
+            elab2 <- try(eval(elab),silent=TRUE)
+            if (is.null(elab2)) elab2 <- ""
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[1]) <- elab2
+        }
     }
     for (i in ien) {
-        for (j in which(x$M[i,]==1))
-            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[2]) <- NA
+        for (j in which(x$M[i,]==1)) {
+            elab <- edgelabels(x,to=vars(x)[j],from=rev(vars(x)[i]))
+            elab2 <- try(eval(elab),silent=TRUE)
+            if (is.null(elab2)) elab2 <- ""
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[2]) <- elab2
+        }
     }
     for (i in ila) {
-        for (j in which(x$M[i,]==1))
-            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[3]) <- NA
+        for (j in which(x$M[i,]==1)) {
+            elab <- edgelabels(x,to=vars(x)[j],from=rev(vars(x)[i]))
+            elab2 <- try(eval(elab),silent=TRUE)
+            if (is.null(elab2)) elab2 <- ""
+            if (is.null(try(eval(elab),silent=TRUE))) elab <- ""
+            edgelabels(x, to=vars(x)[j], from=rev(vars(x)[i]), cex=2, lwd=3,col=col[3]) <- elab2
+        }
     }
     x
 }

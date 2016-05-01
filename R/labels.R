@@ -293,15 +293,20 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
                              cex=1.5, lwd=1, lty=1, col="black",
                              labcol="black", arrowhead="closed",
                              expr=TRUE, debug=FALSE,...) {
-  if (is.null(lab)) {
-    return(object$edgerender$label)
-  }
-  if (inherits(to,"formula")) {
-    yy <- decomp.specials(getoutcome(to))
-    from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
-    if (length(from)==0) from <- yy
-    to <- yy
-  }
+    if (inherits(to,"formula")) {
+        yy <- decomp.specials(getoutcome(to))
+        from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
+        if (length(from)==0) from <- yy
+        to <- yy
+    }
+    if (is.null(lab)) {
+        res <- c(object$edgerender$label,object$edgerender$futureinfo$label)
+        if (!is.null(to) && !is.null(from)) {
+            estr <- apply(Expand(from,to),1,function(x) paste0(x,collapse="~"))
+            res <- res[estr]
+        }
+        return(res)
+    }
 
   M <- object$M
   nodes <- colnames(M)

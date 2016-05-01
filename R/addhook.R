@@ -91,6 +91,7 @@ assign("options", list(
     sparse=FALSE,
     test=TRUE,
     constrain=TRUE,
+    graph.proc=TRUE,
     min.weight=1e-3,
     exogenous=TRUE,
     Rgraphviz=TRUE,
