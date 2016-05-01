@@ -65,9 +65,9 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
         return(res)
     }
     if (is.table(x) || is.data.frame(x) || is.matrix(x)) {
-        x <- multinomial(x,data=data,...)
+        x <- multinomial(x)
     }
-    if (!inherits(x,"multinomial")) stop("Expected table, data.frame or multinomial object")    
+    if (!inherits(x,"multinomial")) stop("Expected table, data.frame or multinomial object")
     structure(estimate(x,function(p) {
         P <- x$position; P[] <- p[x$position]
         goodmankruskal_gamma(P)

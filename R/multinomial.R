@@ -114,6 +114,9 @@ multinomial <- function(x,marginal=FALSE,transform,...) {
                 position1=position1,position2=position2 ## Position of marginals)
                 )
     class(res) <- "multinomial"
+    if (length(list(...))>0) {
+        res <- structure(estimate(res,...),class=c("multinomial","estimate"))
+    }
     res
 }
 
