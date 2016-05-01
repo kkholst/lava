@@ -1,5 +1,23 @@
 context("Simulation")
 
+test_that("Constrain, transform I", {
+    m <- lvm(,~y+x)
+    distribution(m,~x) <- sequence.lvm()
+    transform(m,y~x) <- function(x) x
+    with(sim(m,10),expect_equivalent(y,x))
+
+    m <- lvm(y~1,~x)
+    distribution(m,~x) <- sequence.lvm()
+    intercept(m,~y) <- "ym"
+    covariance(m,~y) <- 0.001
+    constrain(m,ym~x) <- function(x) x
+    d <- simulate(m,200)
+    expect_true(mean((d$y-d$x)^2)<0.1)
+
+
+})
+
+
 test_that("Missing", {
     m <- lvm(y~1)
     m <- Missing(m,y~1,r~x)

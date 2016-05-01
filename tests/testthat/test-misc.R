@@ -119,11 +119,12 @@ test_that("All the rest", {
     lava.options(op)
 
     A <- diag(2); colnames(A) <- c("a","b")    
-    expect_output(lava:::printmany(A,A,2,rownames=c("A","B"),bothrows=FALSE),"a b")
-    expect_output(lava:::printmany(A,A[1,,drop=FALSE],2,rownames=c("A","B"),bothrows=FALSE),"a b")
+    expect_output(printmany(A,A,2,rownames=c("A","B"),bothrows=FALSE),"a b")
+    expect_output(printmany(A,A[1,,drop=FALSE],2,rownames=c("A","B"),bothrows=FALSE),"a b")
     expect_output(printmany(A,A,2,rownames=c("A","B"),name1="no.1",name2="no.2",
                             bothrows=TRUE),"no.1")
-    
+
+    ##printmany(A,A,2,name1="no.1",name2="no.2",bothrows=T)    
 })
 
 

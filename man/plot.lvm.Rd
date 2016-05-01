@@ -11,7 +11,8 @@
   attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
   Rgraphviz = lava.options()$Rgraphviz, init = TRUE, layout = c("dot",
   "fdp", "circo", "twopi", "neato", "osage"),
-  edgecolor = lava.options()$edgecolor, ...)
+  edgecolor = lava.options()$edgecolor,
+  graph.proc = lava.options()$graph.proc, ...)
 }
 \arguments{
 \item{x}{Model object}
@@ -57,7 +58,9 @@ arrows)}
 
 \item{edgecolor}{if TRUE plot style with colored edges}
 
-\item{\dots}{Additional arguments to be passed to the low level functions}
+\item{graph.proc}{If TRUE subscripts are automatically added to labels}
+
+\item{...}{Additional arguments to be passed to the low level functions}
 }
 \description{
 Plot the path diagram of a SEM

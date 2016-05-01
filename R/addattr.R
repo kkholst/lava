@@ -2,6 +2,9 @@
 `addattr` <- function(x,...) UseMethod("addattr")
 
 ##' @export
+`addattr.lvmfit` <- function(x,...) addattr(Model(x),...)
+
+##' @export
 `addattr.lvm` <- function(x, attr, var=NULL, val=TRUE, fun=graph::nodeRenderInfo,debug=FALSE,...) {
     if (!is.null(var)) {
         Graph(x) <- addattr(Graph(x), attr=attr, var=var, val=val, fun=fun, debug=debug)

@@ -4,18 +4,36 @@
 \alias{diagtest}
 \title{Calculate diagnostic tests for 2x2 table}
 \usage{
-diagtest(table, positive = 2, ...)
+diagtest(table, positive = 2, exact = FALSE, p0 = NA,
+  confint = c("logit", "arcsin", "pseudoscore", "exact"), ...)
 }
 \arguments{
 \item{table}{Table or (matrix/data.frame with two columns)}
 
 \item{positive}{Switch reference}
 
+\item{exact}{If TRUE exact binomial proportions CI/test will be used}
+
+\item{p0}{Optional null hypothesis (test prevalenc, sensitivity, ...)}
+
+\item{confint}{Type of confidence limits}
+
 \item{...}{Additional arguments to lower level functions}
 }
 \description{
 Calculate prevalence, sensitivity, specificity, and positive and
 negative predictive values
+}
+\details{
+Table should be in the format with outcome in columns and
+    test in rows.  Data.frame should be with test in the first
+    column and outcome in the second column.
+}
+\examples{
+M <- as.table(matrix(c(42,12,
+                       35,28),ncol=2,byrow=TRUE,
+                     dimnames=list(rater=c("no","yes"),gold=c("no","yes"))))
+diagtest(M,exact=TRUE)
 }
 \author{
 Klaus Holst

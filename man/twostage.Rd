@@ -21,6 +21,8 @@ twostage(model1, model2, data = parent.frame(), predictfun = function(mu,
 
 \item{id2}{Optional id-variable (stage 2 model)}
 
+\item{all}{If TRUE return additional output (naive estimates)}
+
 \item{...}{Additional arguments to lower level functions}
 }
 \description{
