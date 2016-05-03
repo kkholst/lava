@@ -1,6 +1,7 @@
 LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv, 
                           indexPenalty, indexNuisance,
-                          sd.X, base.lambda1, lambda2, fix.nuisance, proxOperator, control,
+                          sd.X, base.lambda1, lambda2, group.lambda1, 
+                          step, n.BT, eta.BT, fix.nuisance, proxOperator, control,
                           gradientPen = NULL, iter_max = length(beta0)*2){
 
   p <- length(beta0)
@@ -47,7 +48,8 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     if(any(lambda2>0)){ ## correction of the beta due to the L2 correction
       resNode$beta <- do.call("ISTA",
                               list(start = resNode$beta, proxOperator = proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
-                                   lambda1 = newLambda*base.lambda1, lambda2 = lambda2, constrain = resNode$beta[indexNuisance],
+                                   lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, 
+                                   step = step, n.BT = n.BT, eta.BT = eta.BT, constrain = resNode$beta[indexNuisance],
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
     }
       
@@ -82,7 +84,8 @@ LassoPath_lvm <- function(beta0, objectiveLv, hessianLv, gradientLv,
     ## correction step
     resNode$beta <- do.call("ISTA",
                             list(start = resNode$beta, proxOperator = proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
-                                 lambda1 = newLambda*base.lambda1, lambda2 = lambda2, constrain = if(fix.nuisance){resNode$beta[indexNuisance]}else{NULL},
+                                 lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, 
+                                 step = step, n.BT = n.BT, eta.BT = eta.BT, constrain = if(fix.nuisance){resNode$beta[indexNuisance]}else{NULL},
                                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
     
      V.lambda <- c(V.lambda, newLambda)
@@ -138,37 +141,44 @@ nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
 
 EPSODE <- function(gradient, hessian, beta, V, lambda,
                    indexPenalty){
-  
+ 
   n.beta <- length(beta)
   setNE <- intersect(which(V %*% beta < 0),  indexPenalty)
   setZE <- intersect(which(V %*% beta == 0), indexPenalty)
   setPE <- intersect(which(V %*% beta > 0), indexPenalty)
   
   ODEpath <- function(t, y, ls.args){
-    H <- ls.args$hessian(y)
-    H_m1 <- solve(H)
-    Uz <- ls.args$V[ls.args$setZE,]
-    UzHm1Uz_m1 <- solve(Uz %*% H_m1 %*% t(Uz))
+   
     uz <- - colSums(ls.args$V[ls.args$setNE,]) +  colSums(ls.args$V[ls.args$setPE,])
     
-    P <- H_m1 - H_m1 %*% t(Uz) %*% UzHm1Uz_m1 %*% Uz %*% H_m1 
+    H <- ls.args$hessian(y)
+    H_m1 <- solve(H)
+    if(length(ls.args$setZE) == 0){
+      P <- H_m1
+    }else{
+      Uz <- ls.args$V[ls.args$setZE,]
+      UzHm1Uz_m1 <- solve(Uz %*% H_m1 %*% t(Uz))
+      P <- H_m1 - H_m1 %*% t(Uz) %*% UzHm1Uz_m1 %*% Uz %*% H_m1 
+    }
+    
     return(list(- P %*% uz))
   }
   
   iter <- 1
-  seq_lambda <- lambda
+  seq_lambda <- 10#lambda
   M.beta <- rbind(beta)
   
   #### iterations
   # while(iter < 1000 && (length(setNE) > 0 || length(setPE) )){}
   iterLambda_m1 <- 0
-  iterLambda <- seq_lambda[iter,]
-  iterBeta <- M.beta[iter,-1]
+  iterLambda <- seq_lambda[iter]
+  iterBeta <- M.beta[iter,]
   
-  ## Solve ODE
-  res.ode <- ode(y = iterBeta, times = c(iterLambda_m1,iterLambda), func = ODEpath,  # hmax
+  ## Solve ODE # library(deSolve)
+  res.ode <- ode(y = iterBeta, times = seq(iterLambda_m1,25,0.01), func = ODEpath,  # hmax
                  list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE)
   )
+  any(res.ode[,-1] == 0)
   
   iterBeta <- res.ode[1,-1]
   
@@ -203,4 +213,8 @@ EPSODE <- function(gradient, hessian, beta, V, lambda,
   
   ####
   iter <- iter + 1
+}
+
+EPSODE_sweep <- function(){
+  
 }

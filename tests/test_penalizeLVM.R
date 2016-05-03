@@ -12,9 +12,10 @@ path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
+n <- 500
+
 #### 1- Simulations ####
 set.seed(10)
-n <- 500
 formula.lvm1 <- as.formula( paste0("Y1~eta+", paste0("X",1, collapse = "+") ) )
 formula.lvm2 <- as.formula( paste0("Y2~eta+", paste0("X",2, collapse = "+") ) )
 formula.lvm3 <- as.formula( paste0("Y3~eta+", paste0("X",3, collapse = "+") ) )
@@ -32,27 +33,80 @@ df.data <- df.data[,names(df.data) != "eta"]
 
 formula.All_lvm <- sapply(paste0("Y",1:5,"~eta+", paste0("X",1:5, collapse = "+") ), as.formula)
 
-lvm.modelSim <- lvm(formula.All_lvm)
-latent(lvm.modelSim) <- "eta"
-plvm.modelSim <- penalize(lvm.modelSim)
+lvm.model <- lvm(formula.All_lvm)
+latent(lvm.model) <- "eta"
+plvm.model <- penalize(lvm.model)
 
 
 #### 2- Estimations ####
-res <- estimate(plvm.modelSim,  data = df.data,
+system.time(
+res <- estimate(plvm.model,  data = df.data,
                 lambda1 = 100,
                 control = list(constrain = TRUE, iter.max = 5000))
+)
 coef(res)
 
+system.time(
+  res <- estimate(plvm.model,  data = df.data,
+                  lambda1 = 100,
+                  control = list(constrain = TRUE, iter.max = 5000, fast = 2))
+)
 
-plvm.modelSim2 <- penalize(lvm.modelSim, 
-                          c(paste0("Y",5,"~eta"), plvm.modelSim$penalty$names.penaltyCoef)
+plvm.model2 <- penalize(lvm.model, 
+                          c(paste0("Y",4:5,"~eta"), plvm.modelSim$penalty$names.penaltyCoef)
                           )
-plvm.modelSim2
-res2 <- estimate(plvm.modelSim2,  data = df.data,
+plvm.model2
+res2 <- estimate(plvm.model2,  data = df.data,
                  lambda1 = 100,
-                 control = list(constrain = TRUE, iter.max = 5000))
+                 control = list(constrain = TRUE, iter.max = 5000, fast = 2))
 coef(res2)
 
+#### 3- More complex LVM
+lvm.modelSim2 <- lvm(list(Y1 ~ eta1,
+                         Y2 ~ eta1,
+                         Y3 ~ eta1,
+                         Y4 ~ eta1,
+                         Y5 ~ eta2,
+                         Y6 ~ eta2,
+                         Y7 ~ eta2,
+                         X1 ~ eta3,
+                         X2 ~ eta3,
+                         X3 ~ eta3,
+                         eta3 ~ eta1 + eta2))
+latent(lvm.modelSim2) <- ~ eta3 + eta2 + eta1
+
+df.data <- sim(lvm.modelSim2,n)
+df.data <- df.data[,names(df.data) %in% paste0("eta",1:3) == FALSE]
+
+lvm.model2 <- lvm(list(Y1 ~ eta1 + eta4,
+                       Y2 ~ eta1 + eta4,
+                       Y3 ~ eta1 + eta4,
+                       Y4 ~ eta1,
+                       Y5 ~ eta2,
+                       Y6 ~ eta2,
+                       Y7 ~ eta2,
+                       X1 ~ eta3,
+                       X2 ~ eta3,
+                       X3 ~ eta3,
+                       eta3 ~ eta1 + eta2 + eta4))
+latent(lvm.model2) <- ~ eta3 + eta2 + eta1 + eta4
+
+res3 <- estimate(lvm.model2,  data = df.data)
+coef(res3)
+
+plvm.model2 <- penalize(lvm.model2, value = c(paste0("Y",1:3,"~eta4"),"eta4,eta4","Y5~eta2","Y6~eta2"))
+
+res3 <- estimate(plvm.model2,  data = df.data,
+                 lambda1 = 3,
+                 control = list(constrain = FALSE, iter.max = 1000, trace = TRUE, step = NULL))
+coef(res3)
+
+res3 <- estimate(plvm.model2,  data = df.data,
+                 lambda1 = 2,
+                 control = list(constrain = FALSE, iter.max = 1000, trace = TRUE))
+coef(res3)
+
+##
 
 
 #### LAVA vs REGSEM ####

@@ -61,14 +61,14 @@
 `estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
                             regularizationPath = FALSE, 
                             fix.sigma = FALSE, 
-                            method = penalized_method.lvm, proxGrad.method = "ISTA", ...) {
+                            method = penalized_method.lvm, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)
   
   ## generic penalty
   penalty  <- x$penalty
-  
+
   ## specific values
   if(!missing(lambda1)){
     penalty$lambda1 <- lambda1
@@ -86,27 +86,11 @@
     penalty$hn_penalty <- hn_penalty
   }
   penalty$names.varCoef <- names.coef[x$index$parBelongsTo$cov]
-  
-  # optimizer
-  if(proxGrad.method %in% c("ISTA","FISTA") == FALSE){
-    stop("estimate.plvm: wrong specification of control$proxGrad.method \n",
-         "only  \"ISTA\" and \"FISTA\" mehtods are available \n",
-         "control$proxGrad.method: ",proxGrad.method,"\n")
-  }  
-  
+
   ## dots
   dots <- list(...)
   names.dots <- names(dots)
-#   if(any(names.dots %in% names(penalty))){
-#     fixedArgs <- setdiff(names(formals("estimate.plvm")),c("..."))
-#     dotsArgs <- setdiff(names.dots[names.dots %in% names(penalty)], fixedArgs)
-#     
-#     if(length(dotsArgs)>0){
-#       penalty[dotsArgs] <- dots[dotsArgs]
-#       dots[dotsArgs] <- NULL
-#     }
-#   }
-  
+
   if("control" %in% names.dots == FALSE){
     dots <- list(control = list())
   }
@@ -116,9 +100,13 @@
   if("iter.max" %in% names(dots$control) == FALSE){
     dots$control$iter.max <- 5000
   }
-  
   if("constrain" %in% names(dots$control) == FALSE){
-    dots$control$constrain <- TRUE
+    dots$control$constrain <- FALSE
+  }
+  if(all( c("step", "n.BT", "eta.BT") %in% names(dots$control) == FALSE ) ){
+    dots$control$step <- 1
+    dots$control$n.BT <- 10
+    dots$control$eta.BT <- 0.5
   }
   
   #### orthogonalization
@@ -139,23 +127,35 @@
   #### initialization
   if(is.null(dots$control$start)){
     x0 <- x
-    for(iter_link in penalty$names.penaltyCoef){
-      cancel(x0) <- as.formula(iter_link)
-    }
-    x0.fit <- do.call(`estimate.lvm`, args = c(list(x = x0, data = data)))
     dots$control$start <- setNames(rep(0,n.coef),names.coef)
+    
+    for(iter_link in penalty$names.penaltyCoef){
+     
+      if(iter_link %in% coef(x)[x$index$parBelongsTo$cov] ){
+        kill(x0) <- strsplit(iter_link, split = ",", fixed = TRUE)[[1]][1]
+        dots$control$start[iter_link] <- 1
+      }else if(iter_link %in% coef(x)[x$index$parBelongsTo$mean]){
+        cancel(x0) <- as.formula(paste0(iter_link,"~1"))
+      }else {
+        cancel(x0) <- as.formula(iter_link)
+      }
+    }
+  
+    suppressWarnings(
+      x0.fit <- do.call(`estimate.lvm`, args = c(list(x = x0, data = data)))
+    )
     dots$control$start[names(coef(x0.fit))] <- coef(x0.fit)
   }
-  
   
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
                                                penalty = penalty, regularizationPath = regularizationPath, 
                                                fix.sigma = fix.sigma, 
-                                               method = method, proxGrad.method = proxGrad.method), 
+                                               method = method), 
                                           dots)
   )
-  
+   res$penalty <-  penalty
+    
   #### restore the original scale 
   if(regularizationPath){
     res$opt$message$lambda2 <- save_lambda2

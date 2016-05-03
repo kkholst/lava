@@ -37,6 +37,16 @@ coef2.penalized <- function(x, iter_lambda){
   return(coef)
 }
 
+validLVM <- function(x){
+  library(penalized)
+  
+  name.outcome <- strsplit(x$penalty$names.varCoef, split = ",", fixed = TRUE)[[1]][1]
+  resPenalized <- penalized(as.formula(paste0(name.outcome,"~.")), lambda1 = x$penalty$lambda1*coef(x)[x$penalty$names.varCoef], data = x$data$model.frame)
+  diffCoef <- coef(x) - coef2.penalized(resPenalized)
+  
+  return(diffCoef)
+}
+
 #### 1- only L1 ####
 set.seed(10)
 n <- 500
@@ -59,15 +69,22 @@ seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 for(iter_l in 1:length(seq_lambda)){
   cat(iter_l, " : ",penalized.PathL1[[iter_l]]@lambda1,"\n")
   
-  elvm.fit_tempo <- estimate(plvm.model,  data = df.data, 
-                             fix.sigma = TRUE, lambda1 = penalized.PathL1[[iter_l]]@lambda1,
-                             control = list(constrain = TRUE, iter.max = 5000))
-  print( range(coef(elvm.fit_tempo) - coef2.penalized(penalized.PathL1, iter_lambda = iter_l)) )
+#   elvm.fit_tempo <- estimate(plvm.model,  data = df.data, 
+#                              fix.sigma = TRUE, lambda1 = penalized.PathL1[[iter_l]]@lambda1,
+#                              control = list(constrain = TRUE, iter.max = 1000, fast = 0, trace = TRUE))
+#   print( range(coef(elvm.fit_tempo) - coef2.penalized(penalized.PathL1, iter_lambda = iter_l)) )
+#   print( elvm.fit_tempo$opt$iterations )
+#   elvm.fit_tempo <- estimate(plvm.model,  data = df.data, 
+#                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
+#                              control = list(constrain = TRUE, iter.max = 1000, fast = 0, trace = FALSE))
+#   print( range(coef(elvm.fit_tempo) - coef2.penalized(penalized.PathL1, iter_lambda = iter_l)) )
+#   print( elvm.fit_tempo$opt$iterations )
   
   elvm.fit_tempo <- estimate(plvm.model,  data = df.data, 
                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                             control = list(constrain = TRUE, iter.max = 5000))
+                             control = list(constrain = TRUE, iter.max = 1000, fast = 3, trace = FALSE))
   print( range(coef(elvm.fit_tempo) - coef2.penalized(penalized.PathL1, iter_lambda = iter_l)) )
+  print( elvm.fit_tempo$opt$iterations )
 }
 
 #### check path ####
@@ -78,14 +95,15 @@ elvm.PathL1_fixed <- estimate(plvm.model,  data = df.data,
 elvm.PathL1_fixed$opt$message
 coef2.penalized(penalized.PathL1)
 
-
+beta <- coef(estimate(lvm.model, df.data))
 elvm.PathL1_free <- estimate(plvm.model,  data =  df.data, 
-                              fix.sigma = FALSE, regularizationPath = TRUE, lambda2 = 0,
-                              control = list(constrain = FALSE, iter.max = 5000))
+                              regularizationPath = TRUE, lambda2 = 0,
+                              control = list(constrain = FALSE, iter.max = 5000, start = coef(estimate(lvm.model, df.data))))
 elvm.PathL1_free$opt$message
 
 # list(elvm.PathL1_fixed$opt$message$lambda1,
 #      elvm.PathL1_free$opt$message$lambda1 * elvm.PathL1_free$opt$message[,"Y,Y"])
+# [1] 1617.81111 1617.64933 1002.92748  606.39734  606.33670   29.44781   29.44487   24.99796    0.00000
 
 iter_path <- 5
 test <- estimate(plvm.model,  data = df.data, 
@@ -116,62 +134,57 @@ test <- estimate(plvm.model,  data = df.data,
 rbind(coef(test),
       elvm.PathL12_free$opt$message[iter_path,-(1:2)])
 
-#### 3- Slow convergence ####
+#### 3- Group Lasso ####
+# gglasso
+# grplasso
+# grpreg
 
-set.seed(10)
-n <- 500
-formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
-lvm.modelSim <- lvm()
-regression(lvm.modelSim, formula.lvm) <- as.list( c(rep(0,2),1:3) )
-distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
-df.data <- sim(lvm.modelSim,n)
+####
+library(gglasso)
+data(bardet)
+group1 <- rep(1:4,each=1)
 
-lvm.model <- lvm(formula.lvm)
-plvm.model <- penalize(lvm.model)
+bardet$x <- bardet$x[,1:5]
 
-system.time(
-lvm.test0 <- estimate(plvm.model,  data = df.data)
-)
+# fit group lasso penalized least squares
+m1 <- gglasso(x=bardet$x,y=bardet$y,group=group1,loss="ls")
+m1$b0
+m1$beta
+m1$npasses
 
-system.time(
-  lvm.testPath <- estimate(plvm.model,  data = df.data, 
-                           regularizationPath =  TRUE,
-                           control = list(constrain = TRUE, iter.max = 5000))
-)
-# bruger   system forløbet 
-# 18.16     0.01    18.22
-lvm.testPath$opt$message
+df.bardet <- data.frame(bardet)
+names(df.bardet) <- gsub(".","",names(df.bardet), fixed = TRUE)
+lvm.model2 <- lvm(as.formula(paste0("y ~ ", paste(names(df.bardet)[1:ncol(df.bardet)], collapse = "+"))))
+          
+plvm.model2 <- penalize(lvm.model2) 
+plvm.model2$penalty$group.penaltyCoef <- group1
 
-system.time(
-  lvm.test1 <- estimate(plvm.model,  data = df.data, 
-                        lambda1 =  lvm.testPath$opt$message[2,"lambda1"],
-                        control = list(constrain = TRUE, iter.max = 5000))
-)
-lvm.test1$opt$iterations
+eplvm.model2 <- estimate(plvm.model2,  data = df.bardet,
+                         lambda1 = 75,
+                         control = list(constrain = FALSE, iter.max = 1000, step = NULL, trace = TRUE))
+coef(eplvm.model2)
+####
+library(grplasso)
+data(splice)
 
-system.time(
-  lvm.test1_fast <- estimate(plvm.model,  data = df.data, 
-                        lambda1 =  lvm.testPath$opt$message[2,"lambda1"],
-                        control = list(constrain = TRUE, iter.max = 5000, fast = 2))
-)
-lvm.test1_fast$opt$iterations
-coef(lvm.test1)-coef(lvm.test1_fast)
+## Define a list with the contrasts of the factors
+contr <- rep(list("contr.sum"), ncol(splice) - 1)
+names(contr) <- names(splice)[-1]
 
-system.time(
-  lvm.test2 <- estimate(plvm.model,  data = df.data, 
-                        lambda1 =  lvm.testPath$opt$message[3,"lambda1"],
-                        control = list(constrain = TRUE, iter.max = 5000))
-)
+## Fit a logistic model 
+fit.splice <- grplasso(y ~ ., data = splice, model = LogReg(), lambda = 20,
+                       contrasts = contr, center = TRUE, standardize = TRUE)
 
-system.time(
-  lvm.test3 <- estimate(plvm.model,  data = df.data, 
-                        lambda1 =  lvm.testPath$opt$message[4,"lambda1"],
-                        control = list(constrain = TRUE, iter.max = 5000))
-)
+####
+library(grpreg)
+data(birthwt.grpreg)
+X <- as.matrix(birthwt.grpreg[,-1:-2])
+y <- birthwt.grpreg$bwt
+group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+fit <- grpreg(X,y,group,penalty="grLasso")
+plot(fit)
 
-
-
-#### 3- Several regressions #####
+#### 4- Several regressions #####
 set.seed(10)
 n <- 500
 formula.lvm1 <- as.formula(paste0("Y1~",paste(paste0("X",1:5), collapse = "+")))
