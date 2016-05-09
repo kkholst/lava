@@ -32,7 +32,7 @@ dmvn <- function(x,mu,sigma,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
 }
 
 
-normal_method.lvm <- "nlminb2"
+normal_method.lvm <- "nlminb0"
 
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
@@ -55,7 +55,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         data <- pat$pattern
         colnames(data) <- y
     }
-
+    
     mu <- predict(x,data=data,p=p)
     S <- attributes(mu)$cond.var
     class(mu) <- "matrix"
@@ -72,6 +72,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     if (!inherits(yl[1,1],c("numeric","integer","logical")) ||
         !inherits(yu[1,1],c("numeric","integer","logical")))
         stop("Unexpected data (normal_objective)")
+
     if (!is.null(weight2)) {
         yu[,colnames(weight2)] <- weight2
         status[match(colnames(weight2),y)] <- 1
@@ -83,7 +84,6 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         ##data <- data[pat$group+1,]
         ##l <- l+runif(length(l),0,0.001)
     }
-
     if (indiv) return(-l)
     return(-sum(l))
 }
@@ -118,3 +118,5 @@ normal_hessian.lvm <- function(x,p,n,...) {
     ## attributes(J)$grad <- colSums(S)
     ## return(J)
 }
+
+normal_gradient.lvm <- normal_hessian.lvm <- NULL

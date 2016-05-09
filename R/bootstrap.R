@@ -85,7 +85,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                 d0 <- sim(x,p=p,n=nrow(data))
             }
         }
-        e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE,...)
+        suppressWarnings(e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE,...))
         if (!silent && getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, i/R)
         }
