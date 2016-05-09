@@ -69,9 +69,12 @@
   ## generic penalty
   penalty  <- x$penalty
 
-  ## specific values
+    ## specific values
   if(!missing(lambda1)){
     penalty$lambda1 <- lambda1
+  }
+  if(regularizationPath > 0){
+    penalty$lambda1 <- 1
   }
   if(!missing(lambda2)){
     penalty$lambda2 <- lambda2
@@ -110,7 +113,7 @@
   }
   
   #### orthogonalization
-  if(regularizationPath){
+  if(regularizationPath == 1){
     save_lambda2 <- penalty$lambda2
     save_names.coef <- names.coef
     
@@ -123,30 +126,18 @@
     penalty$lambda2 <- penalty$lambda2 * save_lambda2
     names.coef <- coef(x)
   }
+
+  if(regularizationPath == 2){
+    if("step_lambda1" %in% names(dots$control) == FALSE){
+      dots$control$step_lambda1 <- 10
+    }
+  }
   
   #### initialization
   if(is.null(dots$control$start)){
-    x0 <- x
-    dots$control$start <- setNames(rep(0,n.coef),names.coef)
-    
-    for(iter_link in penalty$names.penaltyCoef){
-     
-      if(iter_link %in% coef(x)[x$index$parBelongsTo$cov] ){
-        kill(x0) <- strsplit(iter_link, split = ",", fixed = TRUE)[[1]][1]
-        dots$control$start[iter_link] <- 1
-      }else if(iter_link %in% coef(x)[x$index$parBelongsTo$mean]){
-        cancel(x0) <- as.formula(paste0(iter_link,"~1"))
-      }else {
-        cancel(x0) <- as.formula(iter_link)
-      }
-    }
-  
-    suppressWarnings(
-      x0.fit <- do.call(`estimate.lvm`, args = c(list(x = x0, data = data)))
-    )
-    dots$control$start[names(coef(x0.fit))] <- coef(x0.fit)
+    dots$control$start <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef, penalty = penalty)
   }
-  
+    
   #### main
   res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
                                                penalty = penalty, regularizationPath = regularizationPath, 
@@ -157,7 +148,7 @@
    res$penalty <-  penalty
     
   #### restore the original scale 
-  if(regularizationPath){
+  if(regularizationPath == 1){
     res$opt$message$lambda2 <- save_lambda2
     
     res$opt$message <- rbind(res$opt$message,
@@ -177,6 +168,41 @@
 }
 
 
+initializer.lvm <- function(x, data, names.coef, n.coef, penalty){
+  
+#   initLVM <- try(do.call(`estimate.lvm`, args = c(list(x = x, data = data, ...))))
+  
+#   if("try-error" %in% class(initLVM) == FALSE){ ## normal model
+#     
+#     start <- coef(initLVM)
+#     
+#   }else{ ## hight dimensional model
+    
+    x0 <- x
+    start <- setNames(rep(0,n.coef),names.coef)
+    
+    for(iter_link in penalty$names.penaltyCoef){
+      
+      if(iter_link %in% coef(x)[x$index$parBelongsTo$cov] ){
+        kill(x0) <- strsplit(iter_link, split = ",", fixed = TRUE)[[1]][1]
+        start[iter_link] <- 1
+      }else if(iter_link %in% coef(x)[x$index$parBelongsTo$mean]){
+        cancel(x0) <- as.formula(paste0(iter_link,"~1"))
+      }else {
+        cancel(x0) <- as.formula(iter_link)
+      }
+    }
+    
+    suppressWarnings(
+      x0.fit <- do.call(`estimate.lvm`, args = c(list(x = x0, data = data)))
+    )
+    start[names(coef(x0.fit))] <- coef(x0.fit)
+    
+#   }
+  
+  return(start)
+}
+  
 prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
 
   outcomes <- model$index$endogenous

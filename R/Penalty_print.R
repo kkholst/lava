@@ -18,6 +18,7 @@
   cat("Penalty on: ",paste(x$penalty$names.penaltyCoef, collapse = " "),"\n",
       "Type      : ", penaltyType, "\n")
   }else{
+    
     test.lasso <- (x$penalty$group.penaltyCoef<1)*(x$penalty$group.penaltyCoef>0)
     if(any(test.lasso==1)){
     x$penalty$group.penaltyCoef[test.lasso==1] <- 0.5

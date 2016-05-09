@@ -118,7 +118,7 @@
       
     x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
   } 
-  
+ 
   #### group penalty if the latent variable is penalized
    names.varLatent <- paste(names(x$latent),names(x$latent),sep = ",")
   if(any(x$penalty$names.penaltyCoef %in% names.varLatent)){

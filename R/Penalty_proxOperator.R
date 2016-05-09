@@ -15,7 +15,7 @@ proxL2 <- function(x, step, lambda, test.penalty){
 }
 
 proxE2 <- function(x, step, lambda){
-  max(0, 1-lambda * step/norm(x, type = "2"))*x
+  max(0, 1- sqrt(length(x)) * lambda * step/norm(x, type = "2"))*x
 }
 
 
