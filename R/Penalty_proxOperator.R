@@ -14,15 +14,7 @@ proxL2 <- function(x, step, lambda, test.penalty){
   }
 }
 
-proxE2 <- function(x, step, lambda){
+proxE2 <- function(x, step, lambda){ # adapted from Simon 2013
   max(0, 1- sqrt(length(x)) * lambda * step/norm(x, type = "2"))*x
 }
-
-
-#### need to adapt test.penalty
-# x <- 1:10
-# step <- 0.05
-# lambda <- 10
-# test.penalty <- abs(round(rnorm(10, sd = 2)))
-# proxE2(x, step, lambda, test.penalty)
 

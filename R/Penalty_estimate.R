@@ -66,10 +66,10 @@
   names.coef <- coef(x)
   n.coef <- length(names.coef)
   
-  ## generic penalty
+  #### penalty
   penalty  <- x$penalty
 
-    ## specific values
+  ## specific values
   if(!missing(lambda1)){
     penalty$lambda1 <- lambda1
   }
@@ -112,58 +112,65 @@
     dots$control$eta.BT <- 0.5
   }
   
-  #### orthogonalization
-  if(regularizationPath == 1){
-    save_lambda2 <- penalty$lambda2
-    save_names.coef <- names.coef
-    
-    resOrtho <- prepareDataPath.lvm(model = x, data = data, penalty = penalty)
-
-    data <- resOrtho$data
-    dots$control$start <- resOrtho$mu.X
-    x <- resOrtho$model
-    penalty <- resOrtho$penalty
-    penalty$lambda2 <- penalty$lambda2 * save_lambda2
-    names.coef <- coef(x)
-  }
-
+  dots$control$penalty <- penalty
+  
+  dots$control$regularizationPath <- regularizationPath
   if(regularizationPath == 2){
     if("step_lambda1" %in% names(dots$control) == FALSE){
       dots$control$step_lambda1 <- 10
     }
   }
   
+  dots$control$fix.sigma <- fix.sigma
+  
+  #### orthogonalization
+  if(regularizationPath > 0){
+    save_lambda2 <- dots$control$penalty$lambda2
+    save_names.coef <- names.coef
+  }
+  if(regularizationPath == 1){
+    resOrtho <- prepareDataPath.lvm(model = x, data = data, penalty = penalty)
+ 
+    data <- resOrtho$data
+    dots$control$start <- resOrtho$mu.X
+    x <- resOrtho$model
+    dots$control$penalty <- resOrtho$penalty
+    dots$control$penalty$lambda2 <- dots$control$penalty$lambda2 * save_lambda2
+    names.coef <- coef(x)
+  }
+
   #### initialization
   if(is.null(dots$control$start)){
     dots$control$start <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef, penalty = penalty)
   }
     
   #### main
-  res <- do.call(`estimate.lvm`, args = c(list(x = x, data = data, estimator = "penalized", 
-                                               penalty = penalty, regularizationPath = regularizationPath, 
-                                               fix.sigma = fix.sigma, 
-                                               method = method), 
-                                          dots)
+  res <- do.call(lava:::estimate.lvm, args = c(list(x = x, data = data, estimator = "penalized", 
+                                                    method = method), dots)
   )
-   res$penalty <-  penalty
-    
+  res$penalty <-  dots$control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
+  res$penalty$regularizationPath <- regularizationPath
+  
   #### restore the original scale 
   if(regularizationPath == 1){
-    res$opt$message$lambda2 <- save_lambda2
-    
     res$opt$message <- rbind(res$opt$message,
-                             c(0,0,coef(do.call(`estimate.lvm`, args = c(list(x = x, data = data)))))
+                             c(0,0,coef(do.call(lava:::estimate.lvm, args = c(list(x = x, data = data)))))
     )
-    
+  
     res$opt$message <- rescaleRes(Mres = as.matrix(res$opt$message), 
-                                  penalty = penalty, 
+                                  penalty = dots$control$penalty, 
                                   orthogonalizer = resOrtho$orthogonalizer)
     
+   
+  }
+  if(regularizationPath > 0){
+    res$opt$message$lambda2 <- save_lambda2
     names(res$opt$message) <- c("lambda1","lambda2",save_names.coef)
   }
   
   
   #### export
+  class(res) <- append("plvmfit", class(res))
   return(res)
 }
 
@@ -194,7 +201,7 @@ initializer.lvm <- function(x, data, names.coef, n.coef, penalty){
     }
     
     suppressWarnings(
-      x0.fit <- do.call(`estimate.lvm`, args = c(list(x = x0, data = data)))
+      x0.fit <- do.call(lava:::estimate.lvm, args = c(list(x = x0, data = data)))
     )
     start[names(coef(x0.fit))] <- coef(x0.fit)
     

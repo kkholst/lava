@@ -64,10 +64,7 @@
   
   ## add slot to object
   if("plvm" %in% class(x) == FALSE){
-    x$penalty <- list(fn_penalty = NULL,
-                      gn_penalty = NULL,
-                      hn_penalty = NULL,
-                      names.penaltyCoef = NULL,
+    x$penalty <- list(names.penaltyCoef = NULL,
                       group.penaltyCoef = NULL,
                       lambda1 = 0, 
                       lambda2 = 0)
@@ -84,7 +81,7 @@
 }
 
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE, pen.latent = FALSE,
-                              lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, ..., value){
+                              lambda1, lambda2, ..., value){
 
   ## coefficients
   if(!is.null(value)){
@@ -153,57 +150,6 @@
     x$penalty$lambda2 <- lambda2
   }
   
-  ## objective function
-  if(!missing(fn_penalty)){
-    
-    x$penalty$fn_penalty <- fn_penalty
-    
-  } else if(is.null(x$penalty$fn_penalty)){
-    
-    x$penalty$fn_penalty <-  fn_penalty <- function(coef, lambda1, lambda2){
-      fn1 <- lambda1 * sum( abs(coef) )
-      fn2 <- lambda2/2 * sum( coef^2 )
-      
-      return( fn1 + fn2 )
-    }
-    
-  }
-  
-  ## gradient function
-  if(!missing(gn_penalty)){
-    
-    x$penalty$gn_penalty <- gn_penalty
-    
-  } else if(is.null(x$penalty$gn_penalty)){
-    
-    x$penalty$gn_penalty <- function(coef, lambda1, lambda2){
-      
-      gn1 <- lambda1 * sign(coef)
-      gn2 <- lambda2 * coef 
-      
-      return( gn1 + gn2 )
-    }
-    
-  }
-  
-  ## hessian function
-  if(!missing(hn_penalty)){
-    
-    x$penalty$hn_penalty <- hn_penalty
-    
-  } else if(is.null(x$penalty$hn_penalty)){
-    
-    x$penalty$hn_penalty <- hn_penalty <- function(coef, lambda1, lambda2){
-      
-      hn1 <- 0
-      hn2 <- lambda2
-      
-      return( hn1 + hn2 )
-    }
-    
-  }
- 
-  
   ## dots
   dots <- list(...)
   names.dots <- names(dots)
@@ -232,92 +178,18 @@
 
 penalized_method.lvm <- "proxGrad"#lava:::gaussian_method.lvm # nlminb2
 
-penalized_objective.lvm <- function(x, ...){  # proportional to the log likelihood
+penalized_objective.lvm <- lava:::gaussian_objective.lvm
+
+penalized_objectivePen.lvm <- function(x, lambda1, lambda2){
+
+  obj.P <- lambda1 * sum( abs(x) ) + lambda2/2 * sum( x^2 )
   
-  obj.UP <- lava:::gaussian_objective.lvm(x,...) # log likelihood
-  
-  dots <- list(...)
-  penalty <- dots$penalty
-  
-  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
-    
-    obj.P <- penalty$fn(coef = dots$p[penalty$index.coef],
-                        lambda1 = penalty$lambda1,
-                        lambda2 = penalty$lambda2)
-    
-  }else{
-    obj.P <- 0
-  }
-  
-  return( obj.UP + obj.P )
+  return( obj.P )
 }
 
-penalized_gradient.lvm <- function(x, ...){
-  
-  grad.UP <- gaussian_gradient.lvm(x,...)#lava:::gaussian_gradient.lvm(x,...)
-  
-  dots <- list(...)
-  penalty <- dots$penalty
-  
-  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
-    res_tempo <- penalty$gn(coef = dots$p[penalty$index.coef],
-                            lambda1 = penalty$lambda1, 
-                            lambda2 = penalty$lambda2)
-    
-    grad.P <- rep(0, length(dots$p))
-    grad.P[penalty$index.coef] <- res_tempo
-    
-  }else{
-    grad.P <- rep(0, length(grad.UP))
-  }
 
-  return( grad.UP + grad.P )
-  
-}
+penalized_gradient.lvm <- lava:::gaussian_gradient.lvm
 
-penalized_hessian.lvm <- function(x, ...){ # second order partial derivative
+penalized_hessian.lvm <- lava:::gaussian_hessian.lvm
   
-  hess.UP <- lava:::gaussian_hessian.lvm(x, ...)
-  
-  dots <- list(...)
-  penalty <- dots$penalty
-  
-  
-  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
-    
-    res_tempo <- penalty$hn(coef = dots$p[penalty$index.coef],
-                            lambda1 = penalty$lambda1, 
-                            lambda2 = penalty$lambda2)
-    
-    hess.P <- rep(0, length(dots$p))
-    hess.P[penalty$index.coef] <- res_tempo
-    hess.P <- diag(hess.P)
-    
-  }else{
-    hess.P <- 0
-  }
-  
-  return( hess.UP + hess.P )
-  
-}
-
-penalized_logLik.lvm <- function(object, ...){ # log likelihood
-  
-  logLik.UP <- lava:::gaussian_logLik.lvm(object,...)
-  
-  dots <- list(...)
-  penalty <- dots$penalty
-  
-  if(!is.null(penalty) && (penalty$lambda1>0 || penalty$lambda2>0) ){ # L1 or L2 penalty
-    logLik.P <- penalty$fn(coef = dots$p[penalty$names.coef],
-                           lambda1 = penalty$lambda1, 
-                           lambda2 = penalty$lambda2)
-    
-  }else{
-    logLik.P <- 0
-  }
-  
-  # browser()
-  return( logLik.UP + logLik.P )
-}
-
+penalized_logLik.lvm <- lava:::gaussian_logLik.lvm

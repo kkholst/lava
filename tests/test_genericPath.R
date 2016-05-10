@@ -5,6 +5,7 @@ library(optimx)
 library(numDeriv)
 library(data.table)
 library(deSolve)
+library(lava)
 
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
@@ -65,18 +66,21 @@ hessianO <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data)
   return(H)
 }
 
-####
+# #### Orthogonalize data
+# df.dataH <- df.data # df.data <- df.dataH
+# resOrtho <- prepareDataPath.lvm(model = lvm.model, data = df.data, penalty = plvm.model$penalty)
+# df.data[] <- resOrtho$data[]
+
+#### normal regularization path
 penalized.PathL1 <- penalized(Y ~  ., data = df.data, steps = "Park", trace = TRUE)
 seqPark_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 seqParkNorm_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1/x@nuisance$sigma2}))
 
 plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = TRUE)
-plvm.RP$opt$message
+plvm.RP
 
 
 ### check Q condition
-
-
 plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = 1,
                     control = list(start = coef(estimate(lvm.model, data = df.data))))
 # plvm.RP$opt$message
@@ -96,14 +100,16 @@ plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = 2,
 # 7  6.286164       0  0.053473845 -1.692839e-08 -1.026122e-02 9.127400e-01 1.870240e+00 2.9317331449  3.976663
 # 8  0.000000       0  0.056772636 -5.865776e-02 -7.109498e-02 9.577815e-01 1.921950e+00 2.9777820863  3.963549
 ###PB!!!!!!!!!!!!!!
-plvm.punctual1 <- estimate(plvm.model, data = df.data, lambda1 = 78.974093)
+lambda_tempo <- seqParkNorm_lambda[9]
+
+plvm.punctual1 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo)
 coef(plvm.punctual1)
 
-plvm.punctual2 <- estimate(plvm.model, data = df.data, lambda1 = 78.974093,
+plvm.punctual2 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo,
                           control = list(start = coef(estimate(lvm.model, data = df.data))))
 coef(plvm.punctual2)
 
-plvm.punctual3 <- estimate(plvm.model, data = df.data, lambda1 = 78.974093,
+plvm.punctual3 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo,
                            control = list(start = newBeta, step = NULL))
 coef(plvm.punctual3)
 

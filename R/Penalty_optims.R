@@ -4,12 +4,17 @@ proxGrad <- function(start, objective, gradient, hessian,...){
                   "group.penaltyCoef",
                   "step_lambda1",
                   "fast", "step", "n.BT", "eta.BT", "trace")
+
   dots <- list(...)
   control <- dots$control
   control <- control[names(control) %in% PGcontrols]
   
-  penalty <- dots$penalty
-  if (length(dots$trace)>0 && dots$trace>0) cat("\n")
+  penalty <- dots$control$penalty
+  dots$control$penalty <- NULL
+  regularizationPath <- dots$control$regularizationPath
+  dots$control$regularizationPath <- NULL
+  fix.sigma <- dots$control$fix.sigma # to be removed
+  dots$control$fix.sigma <- NULL # to be removed
   n.coef <- length(start)
   
   #### definition of the operator
@@ -59,46 +64,47 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   penalty$group.penaltyCoef[penalty$names.penaltyCoef ] <- tempo
   
   #### main
-  if( dots$regularizationPath > 0 ){
+  if( regularizationPath > 0 ){
          
      ## path regularization
-    if( dots$regularizationPath == 1){
+    if( regularizationPath == 1){
       
       resLassoPath <- LassoPath_lvm(beta0 = start, objectiveLv = objective, gradientLv = gradient, hessianLv = hessian,
                                     indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
                                     sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                                     step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, 
-                                    fix.nuisance = dots$fix.sigma, proxOperator = proxOperator, control = control)
+                                    fix.nuisance = fix.sigma, proxOperator = proxOperator, control = control)
       
-      names(resLassoPath) <- c("lambda1", "lambda2", names(start))
-      
-      if(control$constrain == TRUE){
-        resLassoPath[,penalty$names.varCoef] <- exp(resLassoPath[,penalty$names.varCoef])
-      }
-      
-      res <- list(par = start,
-                  convergence = 0,
-                  iterations = 0,
-                  evaluations = c("function" = 0, "gradient" = 0),
-                  message = resLassoPath,
-                  objective = NA)
     }else{
       
       V <- matrix(0, nrow = length(start), ncol = length(start))
       diag(V)[index.penaltyCoef] <- 1
       
-      EPSODE(beta = start, objective = objective, gradient = gradient, hessian = hessian, V = V, indexPenalty = index.penaltyCoef, 
-             step_lambda1 = control$step_lambda1,
-             lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
-             step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, proxOperator = proxOperator, 
-             control = control)
+      resLassoPath <- EPSODE(beta = start, objective = objective, gradient = gradient, hessian = hessian, V = V, indexPenalty = index.penaltyCoef, 
+                             step_lambda1 = control$step_lambda1,
+                             lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
+                             step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, proxOperator = proxOperator, 
+                             control = control)
       
     }
+    
+    names(resLassoPath) <- c("lambda1", "lambda2", names(start))
+    
+    if(control$constrain == TRUE){
+      resLassoPath[,penalty$names.varCoef] <- exp(resLassoPath[,penalty$names.varCoef])
+    }
+    
+    res <- list(par = start,
+                convergence = 0,
+                iterations = 0,
+                evaluations = c("function" = 0, "gradient" = 0),
+                message = resLassoPath,
+                objective = NA)
     
   }else{
     
     ## TO BE REMOVED
-    if(dots$fix.sigma){
+    if(fix.sigma){
       constrain <- rep(1-dots$control$constrain, length(penalty$names.varCoef))
       names(constrain) <- penalty$names.varCoef
       
@@ -122,8 +128,9 @@ proxGrad <- function(start, objective, gradient, hessian,...){
                 lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = constrain,
                 step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, trace = if(!is.null(control$trace)){control$trace}else{FALSE},
                 iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast)
-
-    res$objective <- objective(res$par, penalty = penalty)
+    
+    res$objective <- objective(res$par) + penalized_objectivePen.lvm(res$par, 
+                                                                     lambda1 = lambda1, lambda2 = lambda2)
      
     if(!is.null(constrain)){
       res2 <- ISTA(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
@@ -159,7 +166,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
    
     stepMax <- step 
   if(is.null(step)){
-    step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value))
+    step <- 1/max(abs(eigen(hessian(start))$value))
     n.BT <- 1
     eta.BT <- 1
   }else{
@@ -167,7 +174,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
       stop("ISTA: if argument \'step\' is not null then argments \'n.BT\' and \'eta.BT\' must be specified \n")
     }
      stepMin <- step*eta.BT^n.BT
-    # step <- 1/max(abs(eigen(hessian(start, penalty = NULL))$value))
+    # step <- 1/max(abs(eigen(hessian(start))$value))
   }
   
   obj_k <- try(objective(x_k))
@@ -194,7 +201,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
       stepBT <- step*eta.BT^iter_back
       
       if(fast == 1){ # Bech and Teboulle (2009 A Fast Iterative Shrinkage-Thresholding Algorithm)
-        grad_tempo <- gradient(y_k, penalty = NULL)
+        grad_tempo <- gradient(y_k)
         
         x_k <- proxOperator(x = y_k - stepBT * grad_tempo, 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
@@ -203,12 +210,12 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         obj_tempo <- objective(y_k)
         
       }else if(fast == 2){ # Li Accelerated Proximal Gradient Methods
-        grad_tempo <- gradient(y_k, penalty = NULL)
+        grad_tempo <- gradient(y_k)
         
         z_k <- proxOperator(x = y_k - stepBT * grad_tempo, 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
         
-        v_k <- proxOperator(x = x_km1 - stepBT * gradient(x_km1, penalty = NULL), 
+        v_k <- proxOperator(x = x_km1 - stepBT * gradient(x_km1), 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
         
         x_k <- if(objective(z_k)<=objective(v_k)){z_k}else{v_k} # fast <- FALSE is not in the original method
@@ -219,7 +226,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         
       }else if(fast == 3){ # Nesterov step A SPARSE-GROUP LASSO
         z_km1 <- z_k
-        z_k <- proxOperator(x = x_km1 - stepBT * gradient(x_km1, penalty = NULL), 
+        z_k <- proxOperator(x = x_km1 - stepBT * gradient(x_km1), 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
         x_k <- z_km1 + (z_k - z_km1) * iter / (iter + 3)
         diff_tempo <- x_k - z_k#x_km1
@@ -227,7 +234,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         obj_tempo <- try(objective(z_k))#obj_km1#
         
       }else{ # normal step
-        grad_tempo <- gradient(x_km1, penalty = NULL)
+        grad_tempo <- gradient(x_km1)
         
         x_k <- proxOperator(x = x_km1 - stepBT * grad_tempo, 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
@@ -264,7 +271,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
     }
     
     if(is.null(stepMax)){
-      step <- 1/max(abs(eigen(hessian(x_k, penalty = NULL))$value)) 
+      step <- 1/max(abs(eigen(hessian(x_k))$value)) 
     }else{
       
       step <- max(stepMin,min(stepMax, stepBT/sqrt(eta.BT)))
@@ -295,78 +302,4 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
               evaluations = c("function" = 0, "gradient" = iter),
               message = message
   ))
-}
-
-optimx1 <- function(start, objective, gradient, hessian,...) {
-  require(optimx)
-  
-  optimxcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min","optimx.method")
-  dots <- list(...)
-  control <- dots$control
-  control <- control[names(control)%in%optimxcontrols]
-  dots$control <- NULL
-  dots$tol.grad_pen <- NULL
-  dots$debug <- NULL
-  dots$lower <- NULL
-  if (length(dots$trace)>0 && dots$trace>0) cat("\n")
-
-  if(!is.null(control$optimx.method)){
-    optimx.method <- control$optimx.method
-    control$optimx.method <- NULL
-   
-    optimx.res <- do.call(optimx,
-                          c(list(par = start, fn = objective, gr = gradient, method = optimx.method, control = control),
-                            dots)
-    )
-    
-  }else{
-    control$all.methods <- TRUE
-    
-    optimx.res <- do.call(optimx,
-                          c(list(par = start, fn = objective, gr = gradient, control = control),
-                            dots)
-    )
-  }
-  
-  
-  index.cv <- which(optimx.res$convcode == 0)
-  if(length(index.cv) == 0){
-    res <- list(par = rep(NA, length(start)),
-                objective = NA,
-                convergence = 1,
-                iterations = NA,
-                evaluations = c("function" = NA, "gradient" = NA),
-                message = "optimx has not converged \n"
-    )
-  }else if(length(index.cv) == 1){
-    
-    par_tempo <- unlist(lapply(1:length(start), function(x){optimx.res[[x]][index.cv]})) 
-    names(par_tempo) <- names(start)
-    
-    res <- list(par = par_tempo,
-                objective = optimx.res$value[index.cv],
-                convergence = optimx.res$convcode[index.cv],
-                iterations = optimx.res$niter[index.cv],
-                evaluations = c("function" = optimx.res$fevals[index.cv], "gradient" = optimx.res$gevals[index.cv]),
-                message = paste0("One algorithm has converged: ",attributes(optimx.res)$row.names[index.cv], " (value = ",optimx.res$value[index.cv],")\n")
-    )
-  }else{
-    index.cvBest <- index.cv[which.max(optimx.res$value[index.cv])]
-    par_tempo <- unlist(lapply(1:length(start), function(x){optimx.res[[x]][index.cvBest]})) 
-    names(par_tempo) <- names(start)
-    
-    res <- list(par = par_tempo,
-                objective = optimx.res$value[index.cvBest],
-                convergence = optimx.res$convcode[index.cvBest],
-                iterations = optimx.res$niter[index.cvBest],
-                evaluations = c("function" = optimx.res$fevals[index.cvBest], "gradient" = optimx.res$gevals[index.cvBest]),
-                message = paste0("Several algorithms have converged but only the best convergence point is retained \n",
-                                 "method: ",paste(attributes(optimx.res)$row.names[index.cv], collapse = " | "), "\n",
-                                 "value : ",paste(optimx.res$value[index.cv], collapse = " | "), "\n")
-                
-    )
-  }
-  
-  return(res)
-  
 }

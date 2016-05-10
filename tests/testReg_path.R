@@ -4,6 +4,7 @@ library(penalized)
 library(optimx)
 library(numDeriv)
 library(data.table)
+library(lava)
 
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
@@ -142,7 +143,7 @@ rbind(coef(test),
 ####
 library(gglasso)
 data(bardet)
-group1 <- rep(1:4,each=1)
+group1 <- rep(1:5,each=1)
 
 bardet$x <- bardet$x[,1:5]
 
@@ -152,17 +153,85 @@ m1$b0
 m1$beta
 m1$npasses
 
-df.bardet <- data.frame(bardet)
+df.bardet <- data.frame(bardet$x, bardet$y)
 names(df.bardet) <- gsub(".","",names(df.bardet), fixed = TRUE)
-lvm.model2 <- lvm(as.formula(paste0("y ~ ", paste(names(df.bardet)[1:ncol(df.bardet)], collapse = "+"))))
-          
-plvm.model2 <- penalize(lvm.model2) 
-plvm.model2$penalty$group.penaltyCoef <- group1
+lvm.model_bardety <- lvm(as.formula(paste0("bardety ~ ", paste(names(df.bardet)[1:ncol(bardet$x)], collapse = "+"))))
+elvm.model_bardety <- estimate(lvm.model_bardety,  data = df.bardet)
 
-eplvm.model2 <- estimate(plvm.model2,  data = df.bardet,
-                         lambda1 = 75,
-                         control = list(constrain = FALSE, iter.max = 1000, step = NULL, trace = TRUE))
-coef(eplvm.model2)
+plvm.model_G1 <- penalize(lvm.model_bardety) 
+
+eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
+                           lambda1 = 0,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+coef(eplvm.model_G1) - coef(elvm.model_bardety) ### not really converged
+
+eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
+                           lambda1 = 100,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = FALSE))
+coef(eplvm.model_G1)
+
+
+plvm.model_GL <- penalize(lvm.model_bardety) 
+plvm.model_GL$penalty$group.penaltyCoef[] <- 1
+
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
+                          lambda1 = 0,
+                          control = list(constrain = TRUE, iter.max = 1000, start = coef(elvm.model_bardety), trace = TRUE))
+coef(eplvm.model_GL) - coef(elvm.model_bardety) 
+
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
+                           lambda1 = 0,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+coef(eplvm.model_GL)### not really converged
+
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
+                           lambda1 = 30,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+coef(eplvm.model_GL)
+
+#### agreement between lasso and grouped lasso when dealing with one parameter
+plvm.model <- penalize(lvm.model_bardety, value = "bardety~X1")
+
+eplvm.model <- estimate(plvm.model,  data = df.bardet,
+                           lambda1 = 5,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+plvm.model
+
+plvm.model_GL <- plvm.model
+plvm.model_GL$penalty$group.penaltyCoef[] <- 1
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
+                           lambda1 = 5,
+                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+coef(eplvm.model) - coef(eplvm.model_GL)
+
+m1 <- gglasso(x=bardet$x,y=bardet$y,group=group1,loss="ls")
+
+m1$lambda * length(bardet$y) 
+
+m1$b0
+
+m1$beta
+m1$npasses
+
+set.seed(10)
+n <- 500
+formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
+lvm.modelSim <- lvm()
+regression(lvm.modelSim, formula.lvm) <- as.list( c(rep(0,2),1:3) )
+distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
+df.data <- sim(lvm.modelSim,n)
+
+lvm.model <- lvm(formula.lvm)
+plvm.model <- penalize(lvm.model)
+lvm.test0 <- estimate(lvm.model,  data = df.data)
+plvm.test0 <- estimate(plvm.model,  data = df.data)
+coef(lvm.test0)
+
+lvm.test1 <- estimate(lvm.model2,  data = df.bardet)
+plvm.test1 <- estimate(penalize(lvm.model2),  data = df.bardet)
+coef(lvm.test1)
+names(df.bardet)
+
 ####
 library(grplasso)
 data(splice)
@@ -172,7 +241,7 @@ contr <- rep(list("contr.sum"), ncol(splice) - 1)
 names(contr) <- names(splice)[-1]
 
 ## Fit a logistic model 
-fit.splice <- grplasso(y ~ ., data = splice, model = LogReg(), lambda = 20,
+fit.splice <- grplasso(y ~ ., data = splice, model = LogReg(),
                        contrasts = contr, center = TRUE, standardize = TRUE)
 
 ####
@@ -220,3 +289,4 @@ lvm.test <- estimate(plvm.model,  data = df.data,
                      fix.sigma = FALSE, lambda1 = Mres$lambda1[10],
                      control = list(constrain = FALSE, iter.max = 5000))
 coef(lvm.test)
+
