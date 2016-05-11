@@ -82,7 +82,7 @@ plvm.RP
 
 ### using sign condition
 plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2,
-                    control = list(constrain = TRUE, step_lambda1 = 10, 
+                    control = list(constrain = FALSE, step_lambda1 = 10, 
                                    start = coef(estimate(lvm.model, data = df.data))))
 
 plvm.EPSODE2 <- estimate(plvm.model, data = df.data, regularizationPath = 2,
