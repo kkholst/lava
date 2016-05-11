@@ -58,7 +58,7 @@ hessianO <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data)
   hessian_sigma2 <- + n/(2*sigma2^2) - 2/(2*sigma2^3) * t(epsilon) %*% epsilon
   hessian_sigma2FDbeta <- - 1/(sigma2^2) * t(Xint) %*% epsilon
   hessian_beta <- - 1/(sigma2) * t(Xint) %*% Xint
-  
+
   H <- cbind( rbind(hessian_beta,t(hessian_sigma2FDbeta)),
               rbind(hessian_sigma2FDbeta,hessian_sigma2)
   )
@@ -80,15 +80,21 @@ plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = TRUE)
 plvm.RP
 
 
-### check Q condition
-plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = 1,
-                    control = list(start = coef(estimate(lvm.model, data = df.data))))
-# plvm.RP$opt$message
-plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = 2,
-                    control = list(constrain = FALSE, step_lambda1 = 10, start = coef(estimate(lvm.model, data = df.data))))
+### using sign condition
+plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2,
+                    control = list(constrain = TRUE, step_lambda1 = 10, 
+                                   start = coef(estimate(lvm.model, data = df.data))))
 
-plvm.RP <- estimate(plvm.model, data = df.data, regularizationPath = 2,
-                    control = list(constrain = FALSE, step_lambda1 = -10, iter.max = 1000))
+plvm.EPSODE2 <- estimate(plvm.model, data = df.data, regularizationPath = 2,
+                         control = list(constrain = FALSE, step_lambda1 = 10, correction.step = FALSE,
+                                        start = coef(estimate(lvm.model, data = df.data))))
+
+### using constrain condition
+plvm.EPSODE.inv <- estimate(plvm.model, data = df.data, regularizationPath = 2,
+                            control = list(constrain = FALSE, step_lambda1 = -10, iter.max = 1000))
+
+# plvm.EPSODE.inv2 <- estimate(plvm.model, data = df.data, regularizationPath = 2,
+#                              control = list(constrain = FALSE, step_lambda1 = -10, correction.step = FALSE, iter.max = 1000))
 
 
 # 1 86.153347       0 -0.121409118  0.000000e+00  0.000000e+00 0.000000e+00 0.000000e+00 0.0000000000 18.778273

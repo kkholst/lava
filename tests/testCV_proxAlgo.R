@@ -71,7 +71,7 @@ seqPark_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 seqParkNorm_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1/x@nuisance$sigma2}))
 
 #### specific knot
-lambda_tempo <- seqParkNorm_lambda[6]
+lambda_tempo <- seqParkNorm_lambda[2]
 
 start1 <- coef(estimate(lvm.model, data = df.data))
 start2 <- coef(estimate(plvm.model, lambda1 = 1e5, data = df.data))

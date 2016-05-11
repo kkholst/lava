@@ -46,6 +46,12 @@ res <- estimate(plvm.model,  data = df.data,
 )
 coef(res)
 
+
+res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2,
+                       control = list(constrain = FALSE, step_lambda1 = 10, 
+                                      start = coef(estimate(lvm.model, data = df.data))))
+# rowSums(res.EPSODE$opt$message[,-(1:2)]==0)
+
 system.time(
   res <- estimate(plvm.model,  data = df.data,
                   lambda1 = 100,

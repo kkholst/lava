@@ -59,8 +59,7 @@
 #' 
 #' 
 `estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
-                            regularizationPath = FALSE, 
-                            fix.sigma = FALSE, 
+                            regularizationPath = FALSE, fix.sigma = FALSE, 
                             method = penalized_method.lvm, ...) {
   
   names.coef <- coef(x)
@@ -113,11 +112,13 @@
   }
   
   dots$control$penalty <- penalty
-  
   dots$control$regularizationPath <- regularizationPath
   if(regularizationPath == 2){
     if("step_lambda1" %in% names(dots$control) == FALSE){
       dots$control$step_lambda1 <- 10
+    }
+    if("correction.step" %in% names(dots$control) == FALSE){
+      dots$control$correction.step <- TRUE
     }
   }
   
@@ -148,6 +149,7 @@
   res <- do.call(lava:::estimate.lvm, args = c(list(x = x, data = data, estimator = "penalized", 
                                                     method = method), dots)
   )
+  
   res$penalty <-  dots$control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
   res$penalty$regularizationPath <- regularizationPath
   
@@ -165,7 +167,6 @@
   }
   if(regularizationPath > 0){
     res$opt$message$lambda2 <- save_lambda2
-    names(res$opt$message) <- c("lambda1","lambda2",save_names.coef)
   }
   
   

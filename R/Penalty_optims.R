@@ -1,14 +1,12 @@
 proxGrad <- function(start, objective, gradient, hessian,...){
   
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain",
-                  "group.penaltyCoef",
-                  "step_lambda1",
+                  "step_lambda1", "correction.step",
                   "fast", "step", "n.BT", "eta.BT", "trace")
 
   dots <- list(...)
   control <- dots$control
   control <- control[names(control) %in% PGcontrols]
-  
   penalty <- dots$control$penalty
   dots$control$penalty <- NULL
   regularizationPath <- dots$control$regularizationPath
@@ -16,7 +14,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
   fix.sigma <- dots$control$fix.sigma # to be removed
   dots$control$fix.sigma <- NULL # to be removed
   n.coef <- length(start)
-  
+
   #### definition of the operator
   if(any(penalty$group.penaltyCoef>=1)){ # grouped lasso
     proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){
@@ -81,13 +79,12 @@ proxGrad <- function(start, objective, gradient, hessian,...){
       diag(V)[index.penaltyCoef] <- 1
       
       resLassoPath <- EPSODE(beta = start, objective = objective, gradient = gradient, hessian = hessian, V = V, indexPenalty = index.penaltyCoef, 
-                             step_lambda1 = control$step_lambda1,
+                             step_lambda1 = control$step_lambda1, correction.step = control$correction.step,
                              lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                              step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, proxOperator = proxOperator, 
                              control = control)
       
     }
-    
     names(resLassoPath) <- c("lambda1", "lambda2", names(start))
     
     if(control$constrain == TRUE){
@@ -117,7 +114,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     }else{
       constrain <- NULL
     }
-    
+
     ## one step lasso
     lambda1 <- rep(0, n.coef)
     lambda1[index.penaltyCoef] <- penalty$lambda1 
@@ -135,7 +132,7 @@ proxGrad <- function(start, objective, gradient, hessian,...){
     if(!is.null(constrain)){
       res2 <- ISTA(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                    lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = res$par[names(res$par) %in% names(constrain) == FALSE],
-                   step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT,
+                   step = control$step, n.BT = control$n.BT, eta.BT = control$eta.BT, trace = if(!is.null(control$trace)){control$trace}else{FALSE},
                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast)
       res$par <- res2$par
     }
@@ -150,7 +147,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
                  lambda1, lambda2, group.lambda1,
                  step, n.BT, eta.BT,  constrain, 
                  iter.max, abs.tol, rel.tol, fast, trace = FALSE){
-
+  
    ## initialisation
   test.penalty1 <- group.lambda1
   test.penalty2 <- (lambda2>0)
@@ -235,7 +232,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         
       }else{ # normal step
         grad_tempo <- gradient(x_km1)
-        
+      
         x_k <- proxOperator(x = x_km1 - stepBT * grad_tempo, 
                             step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
         diff_tempo <- x_k - x_km1
@@ -250,12 +247,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
       if(any("try-error" %in% c(class(obj_k), class(obj_tempo), class(grad_tempo)))){
         diff_back <- Inf
       }else{
-        #  (x_k - x_km1) + stepBT * grad_tempo is 0
-        #  crossprod((x_k - x_km1) + stepBT * grad_tempo, (x_k - x_km1)) is 0
-        #  crossprod(x_k - x_km1) + crossprod(stepBT * grad_tempo, (x_k - x_km1)) is 0
-        #  crossprod(x_k - x_km1) + stepBT * crossprod(grad_tempo, (x_k - x_km1)) is 0
-        #  so crossprod(grad_tempo, (x_k - x_km1)) = crossprod(x_k - x_km1) / stepBT if no operator and is thus negative
-        diff_back <- obj_k - (obj_tempo + crossprod(diff_tempo, grad_tempo) + 1/(2*stepBT) * crossprod(diff_tempo) ) 
+         diff_back <- obj_k - (obj_tempo + crossprod(diff_tempo, grad_tempo) + 1/(2*stepBT) * crossprod(diff_tempo) ) 
       }
       iter_back <- iter_back + 1
     }
@@ -283,7 +275,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
     absDiff <- abs(obj_k - obj_km1) < abs.tol  #(abs(diff_x) < abs.tol)
     relDiff <- abs(obj_k - obj_km1)/abs(obj_k) < rel.tol #(abs(diff_x)/abs(x_k) < rel.tol)
     test.cv <- absDiff + relDiff > 0  #all(  absDiff + ifelse(is.na(relDiff),0,relDiff) > 0 )
-     
+  
     if(trace){cat(stepBT," ",iter_back, " ", max(abs(x_k - x_km1))," ",obj_k - obj_km1,"\n")}
   }
   
