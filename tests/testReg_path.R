@@ -108,7 +108,7 @@ for(iter_l in 1:length(seq_lambda)){
 #### check path ####
 elvm.PathL1_fixed <- estimate(plvm.model,  data = df.data, 
                               regularizationPath = 1,
-                              control = list(constrain = TRUE, iter.max = 5000))
+                              control = list(constrain = FALSE, iter.max = 5000))
 elvm.PathL1_fixed$opt$message
 
 # lambda1.abs   lambda1 lambda2          Y    Y~X1_penY    Y~X2_penY    Y~X3_penY    Y~X4_penY    Y~X5_penY      Y,Y
@@ -128,7 +128,7 @@ elvm.PathL1_fixed$opt$message
 # elvm.PathL1_fixed$opt$message
 
 elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
-                              regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 20, correctionStep = FALSE,
+                              regularizationPath = 2, fixSigma = TRUE,correctionStep = FALSE,
                               control = list(constrain = FALSE, iter.max = 5000))
 
 elvm.EPSODE1_free <- estimate(plvm.model,  data = df.data, 
@@ -136,9 +136,12 @@ elvm.EPSODE1_free <- estimate(plvm.model,  data = df.data,
                              control = list(constrain = FALSE, iter.max = 5000))
 
 elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
-                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -20, correctionStep = FALSE,
+                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, correctionStep = FALSE,
                                control = list(constrain = FALSE, iter.max = 5000))
 
+
+# Y       Y~X1       Y~X2       Y~X3       Y~X4       Y~X5        Y,Y 
+# -0.2452852  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  6.0736380 
 #### 2- L1 and L2 ####
 penalized.PathL12 <- penalized(Y ~  ., data = df.data, steps = "Park", lambda2 = 100, trace = FALSE)
 seq_lambda <- unlist(lapply(penalized.PathL12, function(x){x@lambda1}))
@@ -180,10 +183,13 @@ elvm.PathL12_fixed <- estimate(plvm.model,  data = df.data,
 elvm.PathL12_fixed$opt$message
 
 #### TO CHECK
-# elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data, 
-#                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 5.5, lambda2 = 100, 
-#                               control = list(constrain = FALSE, iter.max = 5000))
+elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data, correctionStep = TRUE,
+                              regularizationPath = 2, fixSigma = TRUE, lambda2 = 100, 
+                              control = list(constrain = FALSE, iter.max = 5000))
 
+elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data,  lambda2 = 100,
+                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, correctionStep = FALSE, trace = TRUE,
+                               control = list(constrain = FALSE, iter.max = 5000))
 
 #### 3- Group Lasso ####
 # gglasso
@@ -194,7 +200,7 @@ elvm.PathL12_fixed$opt$message
 library(gglasso)
 data(bardet)
 group1 <- rep(1, times = 5)#rep(1:5,each=1)
-bardet$x <- bardet$x[,1:3]
+bardet$x <- bardet$x[,1:5]
 
 # fit group lasso penalized least squares
 m1 <- gglasso(x=bardet$x,y=bardet$y,group=group1,loss="ls")

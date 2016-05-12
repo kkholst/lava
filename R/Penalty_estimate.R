@@ -17,7 +17,6 @@
 #' If regularizationPath>0, the argument lambda1 is ignored but not lambda2
 #' @param stepLambda1 argument for the EPSODE function (see Penalty_EPSODE.R)
 #' @param correctionStep argument for the EPSODE function (see Penalty_EPSODE.R)   [temporary]
-#' @param lavaDerivatives argument for the EPSODE function (see Penalty_EPSODE.R)  [temporary]
 #' @param fast argument for the ISTA function (see Penalty_optims.R) 
 #' @param step argument for the ISTA function (see Penalty_optims.R)
 #' @param BT.n argument for the ISTA function (see Penalty_optims.R)
@@ -66,7 +65,7 @@
 #' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1)
 #' p12lvm.fit
 estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
-                          regularizationPath = FALSE, stepLambda1 = 50, correctionStep = TRUE, lavaDerivatives = TRUE,
+                          regularizationPath = FALSE, stepLambda1 = 50, correctionStep = FALSE,
                           fast = FALSE, step = 1, BT.n = 20, BT.eta = 0.5, trace = FALSE,
                           fixSigma = FALSE, ...) {
   
@@ -124,7 +123,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
                            step = step,
                            BT.n = BT.n,
                            BT.eta = BT.eta,
-                           trace = trace,
+                           trace = if(regularizationPath == 0){trace}else{FALSE},
                            fixSigma = constrain.sigma,
                            sigmaMax = constrain.sigma_max
   )
@@ -132,7 +131,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   control$regPath <- list(type = regularizationPath,
                           stepLambda1 = stepLambda1,
                           correctionStep = correctionStep,
-                          lavaDerivatives = lavaDerivatives)
+                          trace = if(regularizationPath > 0){trace}else{FALSE})
   
   ## proximal operator 
   if(any(penalty$group.penaltyCoef>=1)){ # grouped lasso

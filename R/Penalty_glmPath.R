@@ -34,7 +34,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
   
   #### main loop
   while(iter < iter.max && cv == FALSE){
-    cat("*")
+    if(control$regPath$trace){cat("*")}
 
      ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
@@ -49,13 +49,13 @@ glmPath <- function(beta0, objective, hessian, gradient,
       # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
       
       ## correction step or update beta value with L2 penalization
-       if(control$regPath$correctionStep || any(lambda2>0)){
+       if(any(lambda2>0)){
         resNode$beta <- do.call("ISTA",
                                 list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                      lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
                                      step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
-      }
+       }
       
       ## update
       V.lambda <- c(V.lambda, newLambda)
@@ -64,23 +64,16 @@ glmPath <- function(beta0, objective, hessian, gradient,
     
     iter <- iter + 1
   }
-  cat("\n")
-  
-  #### update sigma value
-  M.beta[,names(control$proxGrad$fixSigma)] <- apply(M.beta, 1, optim.nuisance, 
-                                                     index.sigma2 = indexNuisance,
-                                                     sigma_max = if(control$constrain){NULL}else{control$proxGrad$sigmaMax},
-                                                     gradient = gradient,
-                                                     objective = objective)
-  
-  if(control$constrain){
-    M.beta[,names(control$proxGrad$fixSigma)] <- exp(M.beta[,names(control$proxGrad$fixSigma)])
-  }
+  if(control$regPath$trace){cat("\n ")}
 
   #### export
-  return(data.frame(lambda1.abs = V.lambda, 
-                    lambda1 = V.lambda/M.beta[,names(control$proxGrad$fixSigma)], 
-                    lambda2 = NA, M.beta))
+  V.lambda <- unname(V.lambda)
+  rownames(M.beta) <- NULL
+  
+  return(as.data.frame(cbind(lambda1.abs = V.lambda, 
+                             lambda1 = NA, 
+                             lambda2 = NA, 
+                             M.beta)))
 }
 
 #' @title  Find the next value of the regularization parameter

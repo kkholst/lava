@@ -39,33 +39,20 @@ plvm.model <- penalize(lvm.model)
 
 
 #### 2- Estimations ####
+res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 20, trace = TRUE,
+                       control = list(constrain = FALSE, iter.max = 5000))
+
+
 system.time(
-res <- estimate(plvm.model,  data = df.data,
-                lambda1 = 100,
+res_free <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
+                lambda1 = res.EPSODE$opt$message[10,"lambda1.abs"],
                 control = list(constrain = TRUE, iter.max = 5000))
 )
-coef(res)
+coef(res_free) - res.EPSODE$opt$message[10,names(coef(res_free))]
+which(coef(res_free) == 0)
+which( res.EPSODE$opt$message[10,names(coef(res_free))] == 0)
 
-
-res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2,
-                       control = list(constrain = FALSE, step_lambda1 = 10, 
-                                      start = coef(estimate(lvm.model, data = df.data))))
-# rowSums(res.EPSODE$opt$message[,-(1:2)]==0)
-
-system.time(
-  res <- estimate(plvm.model,  data = df.data,
-                  lambda1 = 100,
-                  control = list(constrain = TRUE, iter.max = 5000, fast = 2))
-)
-
-plvm.model2 <- penalize(lvm.model, 
-                          c(paste0("Y",4:5,"~eta"), plvm.modelSim$penalty$names.penaltyCoef)
-                          )
-plvm.model2
-res2 <- estimate(plvm.model2,  data = df.data,
-                 lambda1 = 100,
-                 control = list(constrain = TRUE, iter.max = 5000, fast = 2))
-coef(res2)
+rbind(coef(res_free), res.EPSODE$opt$message[10,names(coef(res_free))])
 
 #### 3- More complex LVM
 lvm.modelSim2 <- lvm(list(Y1 ~ eta1,

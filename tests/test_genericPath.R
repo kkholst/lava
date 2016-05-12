@@ -103,7 +103,7 @@ plvm.glmPath <- estimate(plvm.model, data = df.data, lambda1 = 6.286164, trace =
 #### EPSODE regularization path 
 
 ### from no penalization
-plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, lavaDerivatives = FALSE,
+plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, lavaDerivatives = TRUE,
                     control = list(constrain = FALSE, step_lambda1 = 10, 
                                    start = coef(estimate(lvm.model, data = df.data))))
 

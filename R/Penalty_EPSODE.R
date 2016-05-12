@@ -9,7 +9,6 @@
 #' @param hessian second derivative of the likelihood given by lava. Only used to estimate the step parameter of the algorithm when step = NULL
 #' @param V matrix that left multiply beta to define the penalization (identity corresponds to a standard lasso penalty)
 #' @param indexPenalty position of the penalised coefficients in beta
-#' @param lavaDerivatives should the derivative of the likelihood computed by lava be used
 #' @param stepLambda1 the range of lambda values investigated at each step
 #' @param resolution_lambda1 the number of lambda values that form the grid with range stepLambda1
 #' @param nstep_max the maximum number of iterations
@@ -23,12 +22,11 @@
 #' Zhou 2014 - A generic Path Algorithm for Regularized Statistical Estimation
 
 
-EPSODE <- function(beta, objective, gradient, hessian, V, 
+EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1, 
                    indexPenalty, indexNuisance, 
-                   lavaDerivatives, stepLambda1, resolution_lambda1 = 1000, nstep_max = length(beta)*5,#, 
-                   correctionStep, ode.method = "euler",
-                   lambda2, group.lambda1, control){
-  
+                   stepLambda1, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,15),#, 
+                   correctionStep, ode.method = "euler", control){
+
   #### preparation
   n.coef <- length(beta)
   lambda2_save <- lambda2
@@ -36,12 +34,20 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
   lambda2[indexPenalty] <- lambda2_save 
   envir <- environment()
   
+  #### constrain 
+  if(!is.null(control$proxGrad$fixSigma)){
+    indexAllCoef <- setdiff(1:n.coef, which(names(beta) == names(control$proxGrad$fixSigma)) )
+    beta[names(control$proxGrad$fixSigma)] <- control$proxGrad$fixSigma
+  }else {
+    indexAllCoef <- 1:n.coef
+  }
+  
   #### initialization
   iter <- 1
   if(stepLambda1 > 0){
     seq_lambda1 <- 0  
   }else{
-    seq_lambda1 <-  100#max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
+    seq_lambda1 <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
     beta <- do.call("ISTA",
                     list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
@@ -49,13 +55,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
                          iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
   }
   
-  ##
-  if(!is.null(control$proxGrad$fixSigma)){
-    indexAllCoef <- setdiff(1:n.coef, which(names(beta) == names(control$proxGrad$fixSigma)) )
-    beta[names(control$proxGrad$fixSigma)] <- control$proxGrad$fixSigma
-  }else {
-    indexAllCoef <- 1:n.coef
-  }
+  
 #   if(!is.null(control$proxGrad$fixSigma)){
 #     control$proxGrad$fixSigma <- beta[-indexAllCoef]
 #   }else{
@@ -71,6 +71,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
  
   #### main loop
   while(iter < nstep_max && test.ncv){
+    if(control$regPath$trace){cat("*")}
     
     ## current parameters
     iterLambda1 <- seq_lambda1[iter]
@@ -78,7 +79,9 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
       iterLambda1 <- iterLambda1 + stepLambda1/resolution_lambda1
     }
     iterBeta <- M.beta[iter,]
-    cat(iter," ",iterLambda1," ", paste(iterBeta, collapse = " "),"\n")  
+
+    
+    #cat(iter," ",iterLambda1," ", paste(iterBeta, collapse = " "),"\n")  
     if(length(setZE)>0){
       iterBeta[setZE] <- 0
     }
@@ -88,11 +91,11 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
     cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
    
     res.ode <- ode(y = iterBeta, 
-                   times = unique(round(lambda.ode, digit = 6)), 
+                   times = lambda.ode, 
                    func = EPSODE_odeBeta, method = ode.method,
                    parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
-                               indexPenalty = indexPenalty, indexAllCoef = indexAllCoef, 
-                               lavaDerivatives = lavaDerivatives, stepLambda1 = stepLambda1, envir = envir)
+                               lambda2 = lambda2, indexPenalty = indexPenalty, indexAllCoef = indexAllCoef, 
+                               envir = envir)
     )
     index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
     indexM.breakpoint <- max(1, index.breakpoint - 1)
@@ -104,11 +107,11 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
       cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
       
       res.ode <- ode(y = res.ode[indexM.breakpoint,-1], 
-                     times = unique(round(lambda.ode, digit = 6)), 
+                     times = lambda.ode, 
                      func = EPSODE_odeBeta, method = ode.method,
                      parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
-                                 indexPenalty = indexPenalty, indexAllCoef = indexAllCoef, 
-                                 lavaDerivatives = lavaDerivatives, stepLambda1 = stepLambda1, envir = envir)
+                                 lambda2 = lambda2, indexPenalty = indexPenalty, indexAllCoef = indexAllCoef, 
+                                 envir = envir)
       )
       index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
       
@@ -153,7 +156,6 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
     setPE <- intersect(which(V %*% newBeta > 0), indexPenalty)
     setZE <- setdiff(indexPenalty, c(setNE,setPE))
     }
-    cat("\n ")
     
     ## updates
     M.beta <- rbind(M.beta, newBeta)
@@ -166,34 +168,17 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
     }
     
   }
-
-  #### update sigma value
-  if(!is.null(control$proxGrad$fixSigma)){
-    M.beta[,names(control$proxGrad$fixSigma)] <- apply(M.beta, 1, optim.nuisance, 
-                                                       index.sigma2 = indexNuisance,
-                                                       sigma_max = if(control$constrain){NULL}else{control$proxGrad$sigmaMax},
-                                                       gradient = gradient,
-                                                       objective = objective)
-    
-    if(control$constrain){
-      M.beta[,names(control$proxGrad$fixSigma)] <- exp(M.beta[,names(control$proxGrad$fixSigma)])
-    }
-    
-    lambda1.abs <- unname(seq_lambda1)
-    lambda1 <- unname(seq_lambda1) / M.beta[,names(control$proxGrad$fixSigma)]
-  }else{
-    lambda1.abs <- NA
-    lambda1 <- unname(seq_lambda1)
-  }
   
-  
-  
+  if(control$regPath$trace){cat("\n ")}
   
   #### export
-  return(data.frame(lambda1.abs = lambda1.abs, 
-                    lambda1 = lambda1, 
-                    lambda2 = NA,
-                    unname(M.beta)))
+  seq_lambda1 <- unname(seq_lambda1)
+  rownames(M.beta) <- NULL
+
+  return(as.data.frame(cbind(lambda1.abs = if(!is.null(control$proxGrad$fixSigma)){seq_lambda1}else{NA}, 
+                             lambda1 = if(!is.null(control$proxGrad$fixSigma)){NA}else{seq_lambda1}, 
+                             lambda2 = NA,
+                             M.beta)))
 }
 
 EPSODE_odeBeta <- function(t, y, ls.args){
@@ -228,16 +213,16 @@ EPSODE_odeBeta <- function(t, y, ls.args){
     uz <- uz  + colSums(ls.args$V[ls.args$setPE,,drop = FALSE])
   }
   
-  #### estimate Q and P
-  if(ls.args$lavaDerivatives){ #### LAVA derivative
-    Hfull <- ls.args$hessian(y)
-    H <- Hfull[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]
-    attr(H, "grad")  <- attr(Hfull, "grad")[ls.args$indexAllCoef, drop = FALSE]
-  }else{
-    H <- -hessianO(y)[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]#
-    attr(H, "grad") <- -gradientO(y)[ls.args$indexAllCoef, drop = FALSE]# # 
+  #### Hessian and gradient
+  Hfull <- ls.args$hessian(y)
+  H <- Hfull[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]
+  attr(H, "grad")  <- attr(Hfull, "grad")[ls.args$indexAllCoef, drop = FALSE]
+  if(any(ls.args$lambda2>0)){
+    attr(H, "grad") <- attr(H, "grad") + ls.args$lambda2[ls.args$indexAllCoef, drop = FALSE] * y[ls.args$indexAllCoef, drop = FALSE]
+    H[] <- H[] + diag(ls.args$lambda2[ls.args$indexAllCoef, drop = FALSE])
   }
   
+  #### estimate Q and P
   H_m1 <- solve(H)
   
   if(length(ls.args$setZE) == 0){
@@ -278,7 +263,7 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   Puz[ls.args$setZE] <- 0
   #Puz <- P %*% uz
   
-  return(list(-Puz * sign(ls.args$stepLambda1)))
+  return(list(-Puz))
 }
 
 # EPSODE_odeP <- function(t, y, ls.args){

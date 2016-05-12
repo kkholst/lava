@@ -63,17 +63,19 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
   control <- dots$control[names(dots$control) %in% PGcontrols]
   
   n.coef <- length(start)
-  
+
   #### update the penalty according to start 
   # (some coefficient have been removed as they are chosen as a reference)
   res <- initPenalty(start = start, penalty = penalty)
   penalty$group.penaltyCoef <- res$group.penaltyCoef
+  
   index.penaltyCoef <- res$index.penaltyCoef
+  indexNuisance <- which(names(start) == names(control$proxGrad$fixSigma))
   
   #### main
   if( regPath$type == 1){
     resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
-                            indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
+                            indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                             sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                             control = control)
     
@@ -83,13 +85,28 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
     diag(V)[index.penaltyCoef] <- 1
     
     resLassoPath <- EPSODE(beta = start, objective = objective, gradient = gradient, hessian = hessian, V = V, 
-                           indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                           stepLambda1 = regPath$stepLambda1, correctionStep = regPath$correctionStep, lavaDerivatives = regPath$lavaDerivatives,
+                           indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
+                           stepLambda1 = regPath$stepLambda1, correctionStep = regPath$correctionStep,
                            lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                            control = control)
     
   }
-  names(resLassoPath) <- c("lambda1.abs", "lambda1", "lambda2", names(start))
+  
+  #### update sigma value
+  if(!is.null(control$proxGrad$fixSigma)){
+  resLassoPath[,names(control$proxGrad$fixSigma)] <- apply(resLassoPath[,names(start), drop = FALSE], 1, optim.nuisance, 
+                                                           index.sigma2 = indexNuisance,
+                                                           sigma_max = if(control$constrain){NULL}else{control$proxGrad$sigmaMax},
+                                                           gradient = gradient,
+                                                           objective = objective)
+  
+  if(control$constrain){
+    resLassoPath[,names(control$proxGrad$fixSigma)] <- exp(resLassoPath[,names(control$proxGrad$fixSigma)])
+  }
+  
+  resLassoPath$lambda1 <- resLassoPath$lambda1.abs / resLassoPath[,names(control$proxGrad$fixSigma)]
+  }
+  
  
   res <- list(par = start,
               convergence = 0,
