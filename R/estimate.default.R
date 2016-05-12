@@ -91,8 +91,8 @@ estimate.list <- function(x,...) {
 ##'
 ##' ## Marginalize
 ##' f <- function(p,data)
-##'   list(p0=lava:::expit(p[1] + p[3]*data[,"z"]),
-##'        p1=lava:::expit(p[1] + p[2] + p[3]*data[,"z"]))
+##'   list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+##'        p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 ##' e <- estimate(g, f, average=TRUE)
 ##' e
 ##' estimate(e,diff)

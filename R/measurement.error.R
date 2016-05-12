@@ -84,6 +84,7 @@ measurement.error <- function(model1, formula, data=parent.frame(),
 ##' @param predictfun Prediction of latent variable
 ##' @param id1 Optional id-variable (stage 1 model)
 ##' @param id2 Optional id-variable (stage 2 model)
+##' @param all If TRUE return additional output (naive estimates)
 ##' @param ... Additional arguments to lower level functions
 ##' @examples
 ##' m <- lvm(c(x1,x2,x3)~f1,f1~z,

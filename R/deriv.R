@@ -153,9 +153,9 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       if (lava.options()$devel) {
           dG <- with(mom, kronprod(t(IAi),G,res$dA[,with(ii$parBelongsTo,c(mean,reg)),drop=FALSE]))
       }
-      ##dG <- with(mom, kronprod(t(IAi),G,res$dA))
       dxi <-
-          with(mom, kronprod(rbind(v),ii$Ik,dG))
+          with(mom, kronprod(rbind(v),dG))
+      ##  with(mom, kronprod(rbind(v),ii$Ik,dG))
       if (is.matrix(mom$v) && nrow(mom$v)>1) {
           ## reorder
           k <- nrow(dxi)/nrow(mom$v)

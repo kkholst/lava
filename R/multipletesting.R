@@ -1,5 +1,6 @@
 pzmax <- function(alpha,S) {
     ##P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     k <- nrow(S)
     z <- qnorm(1-alpha/2)
     1-mets::pmvn(lower=rep(-z,k),upper=rep(z,k),sigma=cov2cor(S))
