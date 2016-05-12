@@ -25,14 +25,18 @@ predict.lvm.missing <- function(object,x=NULL,y=NULL,data=model.frame(object),p=
     data[,xx][which(is.na(data[,xx]),arr.ind=TRUE)] <- 0
     pp <- predict.lvmfit(object,x=x,y=y,data=data,p=p,...)
     if (all(obs0)) return(pp)
-    
+
     if (!requireNamespace("mets",quietly=TRUE)) stop("Requires 'mets'")
     obs <- mets::fast.pattern(obs0)
     res <- matrix(nrow=nrow(data),ncol=NCOL(pp))
     for (i in seq(nrow(obs$pattern))) {
         jj <- which(obs$pattern[i,]==1)
         ii <- which(obs$group==i-1)
-        res[ii,] <- predict.lvmfit(object,...,p=p,x=x[jj],y=y,data=data[ii,,drop=FALSE])[,colnames(pp),drop=FALSE]
+        if (length(jj)==0) {
+            res[ii,] <- NA
+        } else {
+            res[ii,] <- predict.lvmfit(object,...,p=p,x=x[jj],y=y,data=data[ii,,drop=FALSE])[,colnames(pp),drop=FALSE]
+        }
     }
     attributes(res) <- attributes(pp)
     return(res)
@@ -85,14 +89,14 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
       if (length(X)>0) {
           mu.x <- matrix(0,ncol=nrow(data),nrow=length(mu.0))
           mu.x[ii$exo.idx,] <- t(data[,X,drop=FALSE])
-          xi.x <- (m$IAi[ii$endo.idx,,drop=FALSE]%*%(mu.0 + mu.x))
+          xi.x <- t(m$IAi[ii$endo.idx,,drop=FALSE]%*%(mu.0 + mu.x))
       } else {
-          xi.x <- m$xi%*%rep(1,nrow(data))
-          rownames(xi.x) <- ii$endogenous
+          xi.x <- m$xi%x%rep(1,nrow(data))
+          colnames(xi.x) <- ii$endogenous
           ##xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
           ##rownames(xi.x) <- names(mu.0)
       }
-      return(structure(t(xi.x),cond.var=Cy.x,
+      return(structure(xi.x,cond.var=Cy.x,
                        p=m$p,
                        e=m$e))
   }
