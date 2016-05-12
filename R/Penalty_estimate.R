@@ -1,224 +1,279 @@
+#### OVERVIEW
+# estimate.plvm: Estimate a penalized lvm model
+# initializer.lvm: if not given by the user, find an initial solution to LVM that will be used to initialize the regularization path algorithm or the proximal gradient algorithm
+# orthoData.lvm: [ONLY used if regularizationPath = 1] make the non-penalized variables orthogonal to the penalized variables
+# rescaleRes: [ONLY used if regularizationPath = 1]  Cancel the effect of the orthogonalization on the estimated parameters
+
 #' @title Estimate a penalized lvm model
 #
 #' @param x a penalized lvm model
 #' @param data a data.frame containing the data
 #' @param lambda1 L1 penalization parameter
 #' @param lambda2 L2 penalization parameter
-#' @param fn_penalty penalty function relative to the objective function
-#' @param gn_penalty penalty function relative to the first derivative of the objective function
-#' @param hn_penalty penalty function relative to the second derivative of the objective function
-#' @param method optimize to be used
-#' @param ... additional arguments to be passed to estimate
+#' @param regularizationPath the algorithm used to compute the regularization path. 
+#' 0 indicates to estimate the solution for a given lambda
+#' 1 corresponds to the algorithm proposed by (Park 2007) - called GLMpath.  Only works for regression models.  
+#' 2 corresponds to the algorithm proposed by (Zhou 2014) - called EPSODE. 
+#' If regularizationPath>0, the argument lambda1 is ignored but not lambda2
+#' @param stepLambda1 argument for the EPSODE function (see Penalty_EPSODE.R)
+#' @param correctionStep argument for the EPSODE function (see Penalty_EPSODE.R)   [temporary]
+#' @param lavaDerivatives argument for the EPSODE function (see Penalty_EPSODE.R)  [temporary]
+#' @param fast argument for the ISTA function (see Penalty_optims.R) 
+#' @param step argument for the ISTA function (see Penalty_optims.R)
+#' @param BT.n argument for the ISTA function (see Penalty_optims.R)
+#' @param fixSigma should the variance parameter be fixed at 1 ? Only works for regression models. [temporary]
+#' @param ... additional arguments to be passed to lava:::estimate.lvm
 #' 
 #' @details 
-#' Remaining issues with ridge regresion + elastic net to check
 #' 
-#' @return a
+#' @references 
+#' Zhou 2014 - A generic Path Algorithm for Regularized Statistical Estimation
+#' Park 2007 - L1-regularization path algorithm for GLM
 #' 
-#' @examples #' 
+#' @return 
+#' a plvmfit object
+#' 
+#' @examples
 #' set.seed(10)
 #' lvm.model <- lvm(list(y~X1+X2+X3+X4))
 #' df.data <- sim(lvm.model,300)
 #' plvm.model <- penalize(lvm.model)
 #' 
-#' ## unpenalized
+#' #### unpenalized
 #' lvm.fit <- estimate(lvm.model, df.data)
 #' 
-#' ## L1 penalisation
-#'  
-#' p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1,
-#'                control = list(constrain = TRUE, iter.max = 1000))
+#' #### L1 penalisation
+#' 
+#' ## regularization path
+#' rp1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = 1)
+#' rp1lvm.fit
+#' 
+#' ## 
+#' p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1)
 #' p1lvm.fit
 #' 
-#' ls.p1lvm <- lapply(c(0,0.1,0.2,0.25,0.5), 
-#'                  function(x){estimate(plvm.model,  data = df.data, lambda1 = x, control = list(constrain = TRUE, iter.max = 1000))})
-#'                
-#' lapply(ls.p1lvm,coef)
+#' p1lvm.fit_bis <- estimate(plvm.model,  data = df.data, lambda1 = rp1lvm.fit$opt$message[2,"lambda1"])
+#' p1lvm.fit_bis
 #' 
-#' ## L2 penalisation
-#' 
-#' p2lvm.fit <- estimate(plvm.model,  data = df.data, lambda2 = 0.1, 
-#'                control = list(constrain = TRUE, iter.max = 1000))
+#' #### L2 penalisation
+#' p2lvm.fit <- estimate(plvm.model,  data = df.data, lambda2 = 0.1)
 #' p2lvm.fit
 #' 
-#' ls.p2lvm <- lapply(c(0,0.1,0.2,0.25,0.5), 
-#'                  function(x){estimate(plvm.model,  data = df.data, lambda2 = x, control = list(constrain = TRUE, iter.max = 1000))})
-#'                
-#' lapply(ls.p2lvm,coef)
+#' #### elastic net
+#' rp12lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = 1, lambda2 = 5, fixSigma = TRUE)
+#' rp12lvm.fit
 #' 
-#' ## elastic net
-#' 
-#' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1,
-#'                control = list(constrain = TRUE, iter.max = 1000))
+#' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1)
 #' p12lvm.fit
-#' 
-#' ls.p12lvm <- lapply(c(0,0.1,0.2,0.25,0.5), 
-#'                  function(x){estimate(plvm.model,  data = df.data, lambda1 = x, lambda2 = x, control = list(constrain = TRUE, iter.max = 1000))})
-#'                
-#' lapply(ls.p12lvm,coef)
-#' 
-#' 
-`estimate.plvm` <- function(x, data, lambda1, lambda2, fn_penalty, gn_penalty, hn_penalty, 
-                            regularizationPath = FALSE, fix.sigma = FALSE, 
-                            method = penalized_method.lvm, ...) {
+estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
+                          regularizationPath = FALSE, stepLambda1 = 10, correctionStep = TRUE, lavaDerivatives = TRUE,
+                          fast = FALSE, step = 1, BT.n = 10, BT.eta = 0.5, trace = FALSE,
+                          fixSigma = FALSE, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)
   
-  #### penalty
+  #### prepare arguments
+  if("iter.max" %in% names(control) == FALSE){
+    control$iter.max <- 1000
+  }
+  
+  ## penalty
   penalty  <- x$penalty
-
-  ## specific values
+  
   if(!missing(lambda1)){
     penalty$lambda1 <- lambda1
-  }
-  if(regularizationPath > 0){
-    penalty$lambda1 <- 1
   }
   if(!missing(lambda2)){
     penalty$lambda2 <- lambda2
   }
-  if(!missing(fn_penalty)){
-    penalty$fn_penalty <- fn_penalty
-  }
-  if(!missing(gn_penalty)){
-    penalty$gn_penalty <- gn_penalty
-  }
-  if(!missing(hn_penalty)){
-    penalty$hn_penalty <- hn_penalty
-  }
   penalty$names.varCoef <- names.coef[x$index$parBelongsTo$cov]
-
-  ## dots
-  dots <- list(...)
-  names.dots <- names(dots)
-
-  if("control" %in% names.dots == FALSE){
-    dots <- list(control = list())
-  }
-  if("fast" %in% names(dots$control) == FALSE){
-    dots$control$fast <- FALSE
-  }
-  if("iter.max" %in% names(dots$control) == FALSE){
-    dots$control$iter.max <- 5000
-  }
-  if("constrain" %in% names(dots$control) == FALSE){
-    dots$control$constrain <- FALSE
-  }
-  if(all( c("step", "n.BT", "eta.BT") %in% names(dots$control) == FALSE ) ){
-    dots$control$step <- 1
-    dots$control$n.BT <- 10
-    dots$control$eta.BT <- 0.5
-  }
   
-  dots$control$penalty <- penalty
-  dots$control$regularizationPath <- regularizationPath
-  if(regularizationPath == 2){
-    if("step_lambda1" %in% names(dots$control) == FALSE){
-      dots$control$step_lambda1 <- 10
-    }
-    if("correction.step" %in% names(dots$control) == FALSE){
-      dots$control$correction.step <- TRUE
-    }
-  }
-  
-  dots$control$fix.sigma <- fix.sigma
-  
-  #### orthogonalization
   if(regularizationPath > 0){
-    save_lambda2 <- dots$control$penalty$lambda2
-    save_names.coef <- names.coef
+    save_lambda2 <-  penalty$lambda2
   }
-  if(regularizationPath == 1){
-    resOrtho <- prepareDataPath.lvm(model = x, data = data, penalty = penalty)
- 
-    data <- resOrtho$data
-    dots$control$start <- resOrtho$mu.X
-    x <- resOrtho$model
-    dots$control$penalty <- resOrtho$penalty
-    dots$control$penalty$lambda2 <- dots$control$penalty$lambda2 * save_lambda2
-    names.coef <- coef(x)
+  
+  control$penalty <- penalty
+  
+  ## identifiability issue!!
+  if("constrain" %in% names(control) == FALSE){
+    control$constrain <- FALSE
   }
-
-  #### initialization
-  if(is.null(dots$control$start)){
-    dots$control$start <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef, penalty = penalty)
-  }
+  
+  if(fixSigma == TRUE){
+    constrain.sigma <- setNames(1-control$constrain, names.coef[x$index$parBelongsTo$cov[1]])
+    constrain.sigma_max <- var(data[,strsplit(names(constrain.sigma), split = ",", fixed = TRUE)[[1]][1]])
     
-  #### main
-  res <- do.call(lava:::estimate.lvm, args = c(list(x = x, data = data, estimator = "penalized", 
-                                                    method = method), dots)
+    if(any(penalty$names.penaltyCoef %in% names(constrain))){
+      stop("estimate.plvm: wrong specification of the penalty \n",
+           "cannot penalize the variance parameter when fixSigma = TRUE \n",
+           "requested penalisation on variance parameters: ",penalty$names.penaltyCoef[penalty$names.penaltyCoef %in% names(constrain)],"\n")
+    }
+    
+  }else if(regularizationPath == 1){
+    
+    constrain.sigma <- NULL
+    constrain.sigma_max <- var(data[,strsplit(names.coef[x$index$parBelongsTo$cov[1]], split = ",", fixed = TRUE)[[1]][1]])
+    
+  }else{
+    
+    constrain.sigma <- NULL
+    constrain.sigma_max <- NULL
+  }
+  
+  ## pass parameters for the penalty through the control argument
+  
+  control$proxGrad <- list(fast = fast,
+                           step = step,
+                           BT.n = BT.n,
+                           BT.eta = BT.eta,
+                           trace = trace,
+                           fixSigma = constrain.sigma,
+                           sigmaMax = constrain.sigma_max
   )
   
-  res$penalty <-  dots$control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
-  res$penalty$regularizationPath <- regularizationPath
+  control$regPath <- list(type = regularizationPath,
+                          stepLambda1 = stepLambda1,
+                          correctionStep = correctionStep,
+                          lavaDerivatives = lavaDerivatives)
   
-  #### restore the original scale 
+  ## proximal operator 
+  if(any(penalty$group.penaltyCoef>=1)){ # grouped lasso
+    proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){ ## proximal operator
+      levels.penalty <- unique(test.penalty1)
+      for(iter_group in 1:length(levels.penalty)){
+        index_group <- which(test.penalty1==levels.penalty[iter_group])
+        x[index_group] <- proxE2(x = x[index_group], step = step, lambda = lambda1[index_group])
+      }
+      return(x)
+    }
+  }else if(all(penalty$lambda1 == 0) && all(penalty$lambda2 == 0) && regularizationPath == FALSE){ ## no penalty
+    proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){x}
+  }else if(all(penalty$lambda2 == 0)){ ## lasso penalty
+    proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){
+      mapply(proxL1, x = x, step = step, lambda = lambda1, test.penalty = test.penalty1)
+    }
+  }else if(all(penalty$lambda1 == 0) &&  regularizationPath == FALSE){ ## ridge penalty
+    proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){
+      mapply(proxL2, x = x, step = step, lambda = lambda2, test.penalty = test.penalty2)
+    }
+  }else{
+    proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){## elastic net penalty
+      mapply(proxL2, 
+             x = mapply(proxL1, x = x, step = step,  lambda = lambda1, test.penalty = test.penalty1),
+             step = step, lambda = lambda2, test.penalty = test.penalty2)
+    }
+  }
+  control$proxOperator <- proxOperator
+  
+  #### orthogonolize data for glmPath
+  if(regularizationPath == 1){
+    resOrtho <- prepareDataPath.lvm(model = x, data = data, penalty = penalty)
+    
+    data <- resOrtho$data
+    control$start <- resOrtho$mu.X
+    x <- resOrtho$model
+    control$penalty <- resOrtho$penalty
+    control$penalty$lambda2 <- control$penalty$lambda2 * save_lambda2
+    names.coef <- coef(x)
+  }
+  
+  #### initialization
+  if(is.null(control$start)){
+    control$start <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef,
+                                     penalty = control$penalty, regPath = control$regPath, ...)
+  }
+
+  #### main
+  res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
+                             method = if(regularizationPath == 0){"optim.proxGrad"}else{"optim.regPath"}, 
+                             control = control, ...)
+
+  #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
     res$opt$message <- rbind(res$opt$message,
                              c(0,0,coef(do.call(lava:::estimate.lvm, args = c(list(x = x, data = data)))))
     )
-  
+    
     res$opt$message <- rescaleRes(Mres = as.matrix(res$opt$message), 
-                                  penalty = dots$control$penalty, 
+                                  penalty = control$penalty, 
                                   orthogonalizer = resOrtho$orthogonalizer)
     
-   
+    
   }
+  
+  #### export
+  res$penalty <-  control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
+  res$penalty$regularizationPath <- regularizationPath
   if(regularizationPath > 0){
     res$opt$message$lambda2 <- save_lambda2
   }
   
-  
-  #### export
   class(res) <- append("plvmfit", class(res))
   return(res)
 }
 
 
-initializer.lvm <- function(x, data, names.coef, n.coef, penalty){
+#' @title Find an initial solution for the model
+#
+#' @param x a penalized lvm model
+#' @param data a data.frame containing the data
+#' @param n.coef number of coefficients
+#' @param penalty parameter of the penalty
+#' @param regPath parameter of the penalisation path
+#' 
+initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
   
-#   initLVM <- try(do.call(`estimate.lvm`, args = c(list(x = x, data = data, ...))))
+  if(regPath$type == 1 || (regPath$type == 2 && regPath$stepLambda1 > 0)){
+    initLVM <- try(lava:::estimate.lvm(x = x, data = data, ...))
+  }else{
+    initLVM <- 0
+    class(initLVM) <- "try-error"
+  }
   
-#   if("try-error" %in% class(initLVM) == FALSE){ ## normal model
-#     
-#     start <- coef(initLVM)
-#     
-#   }else{ ## hight dimensional model
-    
-    x0 <- x
-    start <- setNames(rep(0,n.coef),names.coef)
-    
-    for(iter_link in penalty$names.penaltyCoef){
+  if("try-error" %in% class(initLVM) == FALSE){ ## normal model
       
-      if(iter_link %in% coef(x)[x$index$parBelongsTo$cov] ){
-        kill(x0) <- strsplit(iter_link, split = ",", fixed = TRUE)[[1]][1]
-        start[iter_link] <- 1
-      }else if(iter_link %in% coef(x)[x$index$parBelongsTo$mean]){
-        cancel(x0) <- as.formula(paste0(iter_link,"~1"))
-      }else {
-        cancel(x0) <- as.formula(iter_link)
-      }
+      start <- coef(initLVM)
+      
+  }else{ ## hight dimensional model
+  
+  x0 <- x
+  start <- setNames(rep(0,n.coef),names.coef)
+  
+  ## removed penalized variables
+  for(iter_link in penalty$names.penaltyCoef){
+    
+    if(iter_link %in% coef(x)[x$index$parBelongsTo$cov] ){
+      kill(x0) <- strsplit(iter_link, split = ",", fixed = TRUE)[[1]][1]
+      start[iter_link] <- 1
+    }else if(iter_link %in% coef(x)[x$index$parBelongsTo$mean]){
+      cancel(x0) <- as.formula(paste0(iter_link,"~1"))
+    }else {
+      cancel(x0) <- as.formula(iter_link)
     }
-    
-    suppressWarnings(
-      x0.fit <- do.call(lava:::estimate.lvm, args = c(list(x = x0, data = data)))
-    )
-    start[names(coef(x0.fit))] <- coef(x0.fit)
-    
-#   }
+  }
+  
+  ## estimate the model
+  suppressWarnings(
+    x0.fit <- lava:::estimate.lvm(x = x0, data = data, ...)
+  )
+  start[names(coef(x0.fit))] <- coef(x0.fit)
+  
+  }
   
   return(start)
 }
-  
-prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
 
+
+#' @title Prepare the data for the glmPath algorithm
+prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
+  
   outcomes <- model$index$endogenous
   n.outcomes <- length(outcomes)
   exogeneous <- model$exogenous
   names.coef <- coef(model)
   n.coef <- length(names.coef)
-
+  
   #### rename penalized variables 
   for(iter_Y in 1:n.outcomes ){
     Y_tempo <- outcomes[iter_Y]
@@ -231,8 +286,8 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
       data <- cbind(data,
                     setNames(data[, names.varData, drop = FALSE], paste0(names.varData, label, Y_tempo))
       )
-     
-       # remove link corresponding to a penalized coefficient
+      
+      # remove link corresponding to a penalized coefficient
       for(iter_link in unlist(ls.tempo)){
         cancel(model) <- as.formula(penalty$names.penaltyCoef[index_coef][iter_link])
       }
@@ -247,7 +302,7 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     }
     
   }
-
+  
   #### remove useless variables
   varCoef <- unlist(strsplit(coef(model), split = "~", fixed = TRUE))
   varCoef <- unlist(strsplit(varCoef, split = ",", fixed = TRUE))
@@ -257,7 +312,7 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     data <- data[,-which(names(data) %in%  model$exogenous[indexRM])]
     kill(model) <- model$exogenous[indexRM]
   }
-
+  
   #### orthogonalize the dataset
   names.coef <- coef(model)
   lambda1 <- setNames(rep(0, n.coef),names.coef)
@@ -271,13 +326,13 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     
     index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
     if( length(index_coef)>0 ){
-
-       # orthogonalize data relative to non penalize coefficients
+      
+      # orthogonalize data relative to non penalize coefficients
       resOrtho <- orthoData.lvm(model, name.Y = Y_tempo,
                                 allCoef = names.coef[grep(Y_tempo, names.coef, fixed = TRUE)], 
                                 penaltyCoef = penalty$names.penaltyCoef[index_coef], 
                                 data = data)
-   
+      
       # update results
       data[, colnames(resOrtho$orthogonalizer)] <- resOrtho$data[, colnames(resOrtho$orthogonalizer),drop = FALSE]
       lambda1[names(resOrtho$lambda1)] <- resOrtho$lambda1
@@ -288,7 +343,7 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     }
     
   }
-
+  
   #### export
   penalty$sd.X <- sd.X
   penalty$lambda1 <- lambda1
@@ -302,7 +357,7 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
   
 }
 
-
+#' @title Orthogonalize the non-penalized variables relatively to the penalized variables for a regression model
 orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   
   ## function
@@ -330,7 +385,7 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   var.penalized <-  extractVar(penaltyCoef)
   var.unpenalized <- setdiff(extractVar(setdiff(allCoef,c(names.covCoef,names.latentCoef))), 
                              c(var.penalized))
-
+  
   ## rebuild data
   X_tempo <- data[,setdiff(c(var.penalized,var.unpenalized),names.interceptCoef), drop = FALSE]
   
@@ -355,31 +410,31 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   
   ## scale
   sd.X <- setNames(rep(1,n.coef), allCoef)
- 
+  
   varNI.penalized <- setdiff(var.penalized, names.interceptCoef)
   index.penalized <- setdiff(which(names(mu.X) %in% penaltyCoef),
                              which(names(mu.X) %in% names.interceptCoef) )
-    
+  
   if(length(varNI.penalized)>0){
-  sd.X[index.penalized] <- sqrt(apply(penalized[,varNI.penalized, drop = FALSE], 2, var)*(n-1)/n)
-  penalized <- sweep(penalized[,varNI.penalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.penalized])
+    sd.X[index.penalized] <- sqrt(apply(penalized[,varNI.penalized, drop = FALSE], 2, var)*(n-1)/n)
+    penalized <- sweep(penalized[,varNI.penalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.penalized])
   }
- 
-   varNI.unpenalized <- setdiff(var.unpenalized, names.interceptCoef)
+  
+  varNI.unpenalized <- setdiff(var.unpenalized, names.interceptCoef)
   index.unpenalized <- setdiff(which(names(mu.X) %in% penaltyCoef == FALSE), 
                                which(names(mu.X) %in% c(names.interceptCoef, names.covCoef))
-                               )
-          
+  )
+  
   if(length(varNI.unpenalized)>0){
-  sd.X[index.unpenalized] <- sqrt(apply(unpenalized[,varNI.unpenalized, drop = FALSE], 2, var)*(n-1)/n)
-  unpenalized <- sweep(unpenalized[,varNI.unpenalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.unpenalized])
+    sd.X[index.unpenalized] <- sqrt(apply(unpenalized[,varNI.unpenalized, drop = FALSE], 2, var)*(n-1)/n)
+    unpenalized <- sweep(unpenalized[,varNI.unpenalized, drop = FALSE], MARGIN = 2, FUN = "/", STATS = sd.X[index.unpenalized])
   }
   mu.X <- mu.X * sd.X
   
   ## update initial dataset
   data[,var.penalized] <- penalized
   if(length(setdiff(var.unpenalized, names.interceptCoef))>0){
-  data[,setdiff(var.unpenalized, names.interceptCoef)] <- unpenalized
+    data[,setdiff(var.unpenalized, names.interceptCoef)] <- unpenalized
   }
   
   ## lambda
@@ -396,6 +451,8 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
               lambda1 = lambda1,
               lambda2 = lambda2))
 }
+
+#' @title Cancel the effect of the orthogonalization on the estimated parameters
 
 rescaleRes <- function(Mres, penalty, orthogonalizer){
   

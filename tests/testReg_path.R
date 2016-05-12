@@ -6,7 +6,7 @@ library(numDeriv)
 library(data.table)
 library(lava)
 
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
+path.lava <- "C:/Users/hpl802/Downloads/lava-penalization/lava-penalization"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
@@ -83,7 +83,7 @@ for(iter_l in 1:length(seq_lambda)){
   
   elvm.fit_tempo <- estimate(plvm.model,  data = df.data, 
                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                             control = list(constrain = TRUE, iter.max = 1000, fast = 3, trace = FALSE))
+                             control = list(constrain = TRUE, trace = FALSE))
   print( range(coef(elvm.fit_tempo) - coef2.penalized(penalized.PathL1, iter_lambda = iter_l)) )
   print( elvm.fit_tempo$opt$iterations )
 }
@@ -143,7 +143,7 @@ rbind(coef(test),
 ####
 library(gglasso)
 data(bardet)
-group1 <- rep(1:5,each=1)
+group1 <- rep(1, times = 5)#rep(1:5,each=1)
 
 bardet$x <- bardet$x[,1:5]
 
@@ -161,12 +161,12 @@ elvm.model_bardety <- estimate(lvm.model_bardety,  data = df.bardet)
 plvm.model_G1 <- penalize(lvm.model_bardety) 
 
 eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
-                           lambda1 = 0,
-                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+                           lambda1 = 0, fix.sigma = TRUE, 
+                           control = list(constrain = FALSE, iter.max = 1000, trace = TRUE))
 coef(eplvm.model_G1) - coef(elvm.model_bardety) ### not really converged
 
 eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
-                           lambda1 = 100,
+                           lambda1 = 100, fix.sigma = TRUE, 
                            control = list(constrain = TRUE, iter.max = 1000, trace = FALSE))
 coef(eplvm.model_G1)
 
@@ -175,19 +175,20 @@ plvm.model_GL <- penalize(lvm.model_bardety)
 plvm.model_GL$penalty$group.penaltyCoef[] <- 1
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                          lambda1 = 0,
+                          lambda1 = 0, fix.sigma = TRUE, 
                           control = list(constrain = TRUE, iter.max = 1000, start = coef(elvm.model_bardety), trace = TRUE))
 coef(eplvm.model_GL) - coef(elvm.model_bardety) 
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                           lambda1 = 0,
-                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+                           lambda1 = 0, fix.sigma = TRUE, 
+                           control = list(constrain = TRUE, iter.max = 10, trace = TRUE))
 coef(eplvm.model_GL)### not really converged
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                           lambda1 = 30,
-                           control = list(constrain = TRUE, iter.max = 1000, trace = TRUE))
+                           lambda1 = m1$lambda[2] * nrow(df.bardet), fix.sigma = TRUE, 
+                           control = list(constrain = FALSE, iter.max = 100, trace = TRUE))
 coef(eplvm.model_GL)
+m1$beta[,2]
 
 #### agreement between lasso and grouped lasso when dealing with one parameter
 plvm.model <- penalize(lvm.model_bardety, value = "bardety~X1")

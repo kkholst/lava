@@ -77,14 +77,20 @@ start1 <- coef(estimate(lvm.model, data = df.data))
 start2 <- coef(estimate(plvm.model, lambda1 = 1e5, data = df.data))
 
 plvm.punctual1 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo,
-                           control = list(start = start1))
+                           control = list(start = start1, iter.max = 5000))
 
 plvm.punctual2 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo,
-                           control = list(start = start2))
+                           control = list(start = start2, iter.max = 5000))
 
 validLVM(plvm.punctual1)
 validLVM(plvm.punctual2)
 coef(plvm.punctual1) - coef(plvm.punctual2)
+
+
+
+plvm.punctual1 <- estimate(plvm.model, data = df.data, lambda1 = lambda_tempo, fixSigma = TRUE, trace = TRUE,
+                           control = list(start = start1, iter.max = 5000))
+
 
 #### 1- Definition of the path ####
 

@@ -69,7 +69,7 @@
       print(x$opt$message)
       cat("estimated using ")
       switch(x$penalty$regularizationPath,
-             "1" = cat("LARS algorithm \n"),
+             "1" = cat("glmPath algorithm \n"),
              "2" = cat("EPSODE algorithm \n"))
     }
     

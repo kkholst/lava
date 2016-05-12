@@ -1,26 +1,62 @@
-EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, Hlava = FALSE,
-                   step_lambda1, resolution_lambda1 = 1000, nstep_max = 15,#length(beta)*5, 
-                   correction.step, ode.method = "euler", # "euler" "bdf_d" "adams"
-                   lambda2, group.lambda1, step, n.BT, eta.BT, proxOperator, control){
+#### OVERVIEW
+# EPSODE: perform the generic Path Algorithm
+# EPSODE_odeBeta: compute the righ side of the ODE linking lambda1 and beta
+
+#' @title Perform the generic Path Algorithm for a LVM
+#' @param beta initial values for the parameters
+#' @param objective likelihood given by lava. Used to adjust the step parameter when using backtracking
+#' @param gradient first derivative of the likelihood given by lava. 
+#' @param hessian second derivative of the likelihood given by lava. Only used to estimate the step parameter of the algorithm when step = NULL
+#' @param V matrix that left multiply beta to define the penalization (identity corresponds to a standard lasso penalty)
+#' @param indexPenalty position of the penalised coefficients in beta
+#' @param lavaDerivatives should the derivative of the likelihood computed by lava be used
+#' @param stepLambda1 the range of lambda values investigated at each step
+#' @param resolution_lambda1 the number of lambda values that form the grid with range stepLambda1
+#' @param nstep_max the maximum number of iterations
+#' @param correctionStep should a correction step (i.e. call to proximal gradient) be used at each step ?
+#' @param ode.method the type of method to use to solve the ode (see the documentation of deSolve:::ode)
+#' @param lambda2 L2 penalization parameter
+#' @param group.lambda1 group of lambda to be penalized together (!! not functional now !!)
+#' @param control additional options to be passed to the proximal algorithm
+#' 
+#' @references 
+#' Zhou 2014 - A generic Path Algorithm for Regularized Statistical Estimation
+
+
+EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, lavaDerivatives,
+                   stepLambda1, resolution_lambda1 = 1000, nstep_max = length(beta)*5,#, 
+                   correctionStep, ode.method = "euler",
+                   lambda2, group.lambda1, control){
   
   #### preparation
   n.coef <- length(beta)
   lambda2_save <- lambda2
   lambda2 <- rep(0, n.coef)
   lambda2[indexPenalty] <- lambda2_save 
- 
-   #### initialization
+  envir <- environment()
+  
+  #### initialization
   iter <- 1
-  if(step_lambda1 > 0){
+  if(stepLambda1 > 0){
     seq_lambda1 <- 0  
   }else{
     seq_lambda1 <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
     beta <- do.call("ISTA",
-                    list(start = beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                         lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, 
-                         step = step, n.BT = n.BT, eta.BT = eta.BT, constrain = NULL,
-                         iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
+                    list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                         lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = NULL,# control$proxGrad$fixSigma,
+                         step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                         iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
   }
+  
+  ##
+#   if(!is.null(control$proxGrad$fixSigma)){
+#     indexAllCoef <- setdiff(1:n.coef, which(names(beta) == names(control$proxGrad$fixSigma)) )
+#     control$proxGrad$fixSigma <- beta[-indexAllCoef]
+#   }else{
+#     indexAllCoef <- 1:n.coef
+#   }
+  
+  ##
   M.beta <- rbind(beta)
   setNE <- intersect(which(V %*% beta < 0),  indexPenalty)
   setZE <- intersect(which(V %*% beta == 0), indexPenalty)
@@ -33,7 +69,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, Hlava = 
     ## current parameters
     iterLambda1 <- seq_lambda1[iter]
     if(iter > 1 && iterLambda1 == seq_lambda1[iter-1]){
-      iterLambda1 <- iterLambda1 + step_lambda1/resolution_lambda1
+      iterLambda1 <- iterLambda1 + stepLambda1/resolution_lambda1
     }
     iterBeta <- M.beta[iter,]
     cat(iter," ",iterLambda1," ", paste(iterBeta, collapse = " "),"\n")  
@@ -44,65 +80,65 @@ EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, Hlava = 
     ## Solve ODE 
     cat("A ")
     
-    lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + step_lambda1), length.out = resolution_lambda1)
-    res.ode <- ode(y = c(0,iterBeta), 
+    lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + stepLambda1), length.out = resolution_lambda1)
+    cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
+    res.ode <- ode(y = iterBeta, 
                    times = unique(round(lambda.ode, digit = 6)), 
                    func = EPSODE_odeBeta, method = ode.method,
-                   parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, indexPenalty = indexPenalty, 
-                               step_lambda1 = step_lambda1, Hlava = Hlava)
+                   parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
+                               indexPenalty = indexPenalty, #indexAllCoef = indexAllCoef, 
+                               lavaDerivatives = lavaDerivatives, stepLambda1 = stepLambda1, envir = envir)
     )
-    
-    ## detect breakpoints
-    res.breakpoint <- EPSODE_breakpoint(res.ode = res.ode, V = V, hessian = hessian, gradient = gradient,
-                                        setNE = setNE, setZE = setZE, setPE = setPE, indexPenalty = indexPenalty, Hlava = Hlava)
+    index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
+    indexM.breakpoint <- max(1, index.breakpoint - 1)
+    indexP.breakpoint <- min(resolution_lambda1, index.breakpoint + 1)
     
     ## more precise estimate
-    if(any(res.breakpoint$breakpoint.sign, res.breakpoint$breakpoint.constrain)){
+    if(cv.ODE["cv"] == 1){
       cat("B ")
-      lambda.ode <- seq(res.ode[res.breakpoint$index_minus, 1], res.ode[res.breakpoint$index_plus, 1], length.out = resolution_lambda1)
-      res.ode <- ode(y = c(0,res.ode[res.breakpoint$index_minus,-(1:2)]), 
+      lambda.ode <- seq(res.ode[indexM.breakpoint, 1], res.ode[indexP.breakpoint, 1], length.out = resolution_lambda1)
+      cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
+      res.ode <- ode(y = res.ode[indexM.breakpoint,-1], 
                      times = unique(round(lambda.ode, digit = 6)), 
                      func = EPSODE_odeBeta, method = ode.method,
-                     parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, indexPenalty = indexPenalty, 
-                                 step_lambda1 = step_lambda1, Hlava = Hlava)
+                     parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
+                                 indexPenalty = indexPenalty, #indexAllCoef = indexAllCoef, 
+                                 lavaDerivatives = lavaDerivatives, stepLambda1 = stepLambda1, envir = envir)
       )
-  
-      res.breakpoint <- EPSODE_breakpoint(res.ode = res.ode, V = V, hessian = hessian, gradient = gradient,
-                                          setNE = setNE, setZE = setZE, setPE = setPE, indexPenalty = indexPenalty, Hlava = Hlava)
-   
-      if(res.breakpoint$breakpoint.sign == TRUE){
-        setNE <- setdiff(setNE,  res.breakpoint$index_coef)
-        setPE <- setdiff(setPE, res.breakpoint$index_coef)
-        setZE <- union(setZE, res.breakpoint$index_coef)
-      }
-    
-      if(res.breakpoint$breakpoint.constrain == TRUE){
-        setZE <- setdiff(setZE, res.breakpoint$index_coef)
-        if(res.breakpoint$sign_coef>0){
-          setPE <- union(setPE, res.breakpoint$index_coef) 
+      index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
+      
+      if(cv.ODE["cv.sign"] == 1){
+        setNE <- setdiff(setNE,  cv.ODE["index"])
+        setPE <- setdiff(setPE, cv.ODE["index"])
+        setZE <- union(setZE, cv.ODE["index"])
+      }else if(cv.ODE["cv.constrain"] == 1){
+        setZE <- setdiff(setZE, cv.ODE["index"])
+        if(cv.ODE["s"]>0){
+          setPE <- union(setPE, cv.ODE["index"]) 
         }else{
-          setNE <- union(setNE,  res.breakpoint$index_coef)  
+          setNE <- union(setNE, cv.ODE["index"])  
         }
       }
+      
     }
      
 #     cat(res.breakpoint$breakpoint.sign, ", ", res.breakpoint$breakpoint.constrain, ": ", res.breakpoint$index_coef,"\n")
     
     ## prepare update
-    newLambda1 <- res.breakpoint$newLambda
-    newBeta <- res.ode[res.breakpoint$index_ode,-(1:2)]
+    newLambda1 <- cv.ODE["lambda"]
+    newBeta <- res.ode[index.breakpoint,-1]
      
     ## correction step
-    if(correction.step){
+    if(correctionStep){
     cat("C ")
     lambda1 <- rep(0, n.coef)
     lambda1[indexPenalty] <- newLambda1
     
     newBeta <- do.call("ISTA",
-                       list(start = newBeta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                            lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, 
-                            step = step, n.BT = n.BT, eta.BT = eta.BT, constrain = NULL,
-                            iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$fast, trace = FALSE))$par
+                       list(start = newBeta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                            lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = NULL,# control$proxGrad$fixSigma,
+                            step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                            iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
     
     setNE <- intersect(which(V %*% newBeta < 0),  indexPenalty)
     setPE <- intersect(which(V %*% newBeta > 0), indexPenalty)
@@ -114,7 +150,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, Hlava = 
     M.beta <- rbind(M.beta, newBeta)
     seq_lambda1 <- c(seq_lambda1, newLambda1)
     iter <- iter + 1
-    if(step_lambda1 > 0){
+    if(stepLambda1 > 0){
       test.ncv <- (length(setNE) > 0 || length(setPE) > 0 )
     }else{
       test.ncv <- length(setZE)
@@ -127,21 +163,26 @@ EPSODE <- function(beta, objective, gradient, hessian, V, indexPenalty, Hlava = 
 }
 
 EPSODE_odeBeta <- function(t, y, ls.args){
-  
+ 
   #### check cv
-  if(abs(y[1])>0){
+  if(get("cv.ODE", envir = ls.args$envir)[1]>0){
     return(list(rep(0,length(y))))
   }
-  y <- y[-1]
   
   #### test knot
   if(length(ls.args$setNE)>0 && any(y[ls.args$setNE]>0)){ ## any negative parameter that becomes positive: stop algorithm
     index <- ls.args$setNE[which.max(y[ls.args$setNE])]
-    return(list(c(1,rep(0,length(y)))))
+    assign("cv.ODE", 
+           value = c(cv = TRUE, lambda = t, cv.sign = TRUE, cv.constrain = FALSE, index = index, s = NA), 
+           envir = ls.args$envir)
+    return(list(rep(0,length(y))))
   }
   if(length(ls.args$setPE)>0 && any(y[ls.args$setPE]<0)){ ## any positive parameter that becomes negative: stop algorithm
-    index <- ls.args$setNE[which.min(y[ls.args$setNE])]
-    return(list(c(1,rep(0,length(y)))))
+    index <- ls.args$setPE[which.min(y[ls.args$setPE])]
+    assign("cv.ODE", 
+           value = c(cv = TRUE, lambda = t, cv.sign = TRUE, cv.constrain = FALSE, index = index, s = NA), 
+           envir = ls.args$envir)
+    return(list(rep(0,length(y))))
   }
   
   #### estimate uz
@@ -154,10 +195,13 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   }
   
   #### estimate Q and P
-  if(ls.args$Hlava){
-    H <- ls.args$hessian(y) #### problem when using LAVA derivatives   
+  if(ls.args$lavaDerivatives){ #### LAVA derivative
+    H <- ls.args$hessian(y)
+#     H[] <- H[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]
+#     attr(H, "grad")  <- attr(H, "grad")[ls.args$indexAllCoef, drop = FALSE]
   }else{
-    H <- -hessianO(y) ; attr(H, "grad") <- -gradientO(y) # 
+    H <- -hessianO(y)#[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]
+    attr(H, "grad") <- -gradientO(y)#[ls.args$indexAllCoef, drop = FALSE] # 
   }
   
   H_m1 <- solve(H)
@@ -167,153 +211,44 @@ EPSODE_odeBeta <- function(t, y, ls.args){
     Q <- NULL
     P <- H_m1
   }else{
-    Uz <- ls.args$V[ls.args$setZE,,drop = FALSE]
+    Uz <- ls.args$V[ls.args$setZE,,drop = FALSE]#[ls.args$setZE,ls.args$indexAllCoef,drop = FALSE]
     
     R <- solve(Uz %*% H_m1 %*% t(Uz))
     Q <- H_m1 %*% t(Uz) %*% R
     P <- H_m1 - Q %*% Uz %*% H_m1 
   }
-    #### ODE algo for P
-    #     res.ode <- ode(y = get(x = "P_hist", envir = ls.args$envir), 
-    #                    times = c(get(x = "t_hist", envir = ls.args$envir),t), 
-    #                    func = EPSODE_odeP,  
-    #                    parm = list(hessian = ls.args$hessian, uz = uz, beta = y)
-    #     )
-    ### same for R and Q
-   
+
   ## check constrains
   if(!is.null(Q)){
-  
-    H_m1 <- solve(H[ls.args$indexPenalty,ls.args$indexPenalty,drop = FALSE])
-    Uz <- Uz[,ls.args$indexPenalty,drop = FALSE]
-    R <- solve(Uz %*% H_m1 %*% t(Uz))
-    Q <- H_m1 %*% t(Uz) %*% R
+    H_m1 <- solve(H[ls.args$indexPenalty, ls.args$indexPenalty,drop = FALSE])  #solve(H[ls.args$indexAllCoef %in% ls.args$indexPenalty, ls.args$indexAllCoef %in% ls.args$indexPenalty,drop = FALSE])
+    Uz <- Uz[,ls.args$indexPenalty, drop = FALSE]                             #Uz[,ls.args$indexAllCoef %in% ls.args$indexPenalty, drop = FALSE]
+    G <- attr(H, "grad")[ls.args$indexPenalty, drop = FALSE]                  #attr(H, "grad")[ls.args$indexAllCoef %in% ls.args$indexPenalty, drop = FALSE] 
     
-    G <- attr(H, "grad")[ls.args$indexPenalty,drop = FALSE] # -gradient(iterBeta)
+    R <- solve(Uz %*% H_m1 %*% t(Uz))
+    Q <- H_m1 %*% t(Uz) %*% R  #     Q <- Q[ls.args$indexPenalty,,drop = FALSE]
     s <- - t(Q) %*% ( (1 / t) * G + uz[ls.args$indexPenalty,drop = FALSE])
-    #     s <- - t(Q[ls.args$indexPenalty,,drop = FALSE]) %*% ( (1 / t) * G + uz[ls.args$indexPenalty,drop = FALSE])
    
     if(any( abs(s) > 1)){
-      index <- ls.args$setZE[which.max(abs(s))]
-      return(list(c(1,rep(0,length(y)))))
+      index <- which.max(abs(s))
+      assign("cv.ODE", 
+             value = c(cv = TRUE,  lambda = t, cv.sign = FALSE, cv.constrain = TRUE, index = ls.args$setZE[index], s = s[index]), 
+             envir = ls.args$envir)
+      return(list(rep(0,length(y))))
     }
     
   }
-  
+
   ## export
+  #Puz <- rep(0, length(y))
+  #Puz[ls.args$indexAllCoef] <- P %*% uz[ls.args$indexAllCoef, drop = FALSE]
   Puz <- P %*% uz
   Puz[ls.args$setZE] <- 0
-  return(list(c(0,-Puz * sign(ls.args$step_lambda1))))
+  
+  return(list(-Puz * sign(ls.args$stepLambda1)))
 }
 
-EPSODE_breakpoint <- function(res.ode, V, hessian, gradient,
-                              setNE, setZE, setPE, indexPenalty, Hlava){
-  
-  n.lambda <- nrow(res.ode)
-  
-  #### detect breakpoint
-  index.breakpoint <- which(abs(res.ode[,2])>0) - 1 # which(duplicated(res.ode[,-(1:2)])) - 1
+# EPSODE_odeP <- function(t, y, ls.args){
+#   dH <- genD(ls.args$hessian, as.numeric(ls.args$beta))
+#   return( (y %x% y) %*% dH %*% y %*% ls.args$uz )
+# }
 
-  if(length(index.breakpoint) == 0){ ## no breakpoint
-    res <- list(breakpoint.sign = FALSE,
-                breakpoint.constrain = FALSE,
-                index_ode = n.lambda,
-                index_coef = NULL,
-                newLambda = res.ode[n.lambda,1])
-  }else{ 
-    index.breakpoint <- index.breakpoint[1]
-    index.changeSign <- apply(res.ode[,2+c(setNE,setPE), drop = FALSE], 2, function(x){which(abs(diff(sign(x)))==2)[1]})
-    
-   if(!all(is.na(index.changeSign))){ ## change sign
-     index.breakpoint <- min(index.changeSign, na.rm = TRUE) ## to be sure
-     
-     res <- list(breakpoint.sign = TRUE,
-                 breakpoint.constrain = FALSE,
-                 index_ode = index.breakpoint,
-                 index_coef = c(setNE,setPE)[which.min(index.changeSign)],
-                 newLambda = res.ode[index.breakpoint,1])
-    }else{ ## no zero parameter
-      
-      y <-  res.ode[index.breakpoint,-(1:2)]
-     
-       uz <- rep(0, length(y))
-      if(length(setNE)>0){
-        uz <- uz - colSums(V[setNE,,drop = FALSE])
-      }
-      if(length(setPE)>0){
-        uz <- uz  + colSums(V[setPE,,drop = FALSE])
-      }
-       
-     if(Hlava){
-       H <- hessian(y) #### problem when using LAVA derivatives
-     }else{
-       H <- -hessianO(y) ; attr(H, "grad") <- -gradientO(y) # 
-     }
-      
-      H_m1 <- solve(H)
-      Uz <- V[setZE,,drop = FALSE]
-      R <- solve(Uz %*% H_m1 %*% t(Uz))
-      Q <- H_m1 %*% t(Uz) %*% R
-      
-      G <- attr(H, "grad")[indexPenalty,drop = FALSE] # -gradient(iterBeta)
-      s <- - t(Q[indexPenalty,,drop = FALSE]) %*% ( (1 / res.ode[index.breakpoint,1]) * G + uz[indexPenalty,drop = FALSE])
-#       G <- attr(H, "grad") # -gradient(iterBeta)
-#       s <- - t(Q) %*% (1 / res.ode[index.breakpoint,1] * G + uz)
-      index <- which.max(abs(s))
-      
-      res <- list(breakpoint.sign = FALSE,
-                  breakpoint.constrain = TRUE,
-                  index_ode = index.breakpoint,
-                  index_coef = setZE[index],
-                  sign_coef =  sign(s[index]),
-                  newLambda = res.ode[index.breakpoint,1])
-    }
-  }
-  
-  #### post treatment
-  res$index_plus <- min(n.lambda, res$index_ode + 1)
-  res$index_minus <- max(1, res$index_ode - 1)
-  
-  #### export
-  return(res)
-  
-}
-
-
-EPSODE_odeP <- function(t, y, ls.args){
-  dH <- genD(ls.args$hessian, as.numeric(ls.args$beta))
-  return( (y %x% y) %*% dH %*% y %*% ls.args$uz )
-}
-
-
-#   cat(t, " : ", paste(y, collapse = " "),"\n")
-#   
-#   if(t > 0){
-#     get("H_lava", envir = ls.args$envir)
-#     get("H_m1_lava", envir = ls.args$envir)  
-#     get("P_lava", envir = ls.args$envir)  
-#     get("uz_lava", envir = ls.args$envir)  
-#     get("y_lava", envir = ls.args$envir)  
-#     get("t_lava", envir = ls.args$envir)  
-#     
-#     H_lava <<- c(H_lava, list(H))
-#     H_m1_lava <<- c(H_m1_lava, list(H_m1))
-#     P_lava <<- c(P_lava, list(P))
-#     uz_lava <<- c(uz_lava, list(uz))
-#     y_lava <<- c(y_lava,list(y))
-#     t_lava <<- c(t_lava,list(t))
-#     
-#   }else{
-#     H_lava <<- list(H)
-#     H_m1_lava <<- list(H_m1)
-#     P_lava <<- list(P)
-#     uz_lava <<- list(uz)
-#     y_lava <<- list(y)
-#     t_lava <<- list(t)
-#   }
-
-
-#   print(P)
-#   print(uz)
-#   browser()
-#   cat("*")
