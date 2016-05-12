@@ -34,8 +34,12 @@
 #' 
 #' @examples
 #' set.seed(10)
-#' lvm.model <- lvm(list(y~X1+X2+X3+X4))
-#' df.data <- sim(lvm.model,300)
+#' n <- 300
+#' formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:4), collapse = "+")))
+#' lvm.modelSim <- lvm(formula.lvm)
+#' df.data <- sim(lvm.modelSim,n)
+#' 
+#' lvm.model <- lvm(formula.lvm)
 #' plvm.model <- penalize(lvm.model)
 #' 
 #' #### unpenalized
@@ -47,11 +51,14 @@
 #' rp1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = 1)
 #' rp1lvm.fit
 #' 
+#' EPSODE1lvm.fit <- estimate(plvm.model,  data = df.data, stepLambda1 = 100, regularizationPath = 2)
+#' EPSODE1lvm.fit
+#' 
 #' ## 
 #' p1lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1)
 #' p1lvm.fit
 #' 
-#' p1lvm.fit_bis <- estimate(plvm.model,  data = df.data, lambda1 = rp1lvm.fit$opt$message[2,"lambda1"])
+#' p1lvm.fit_bis <- estimate(plvm.model,  data = df.data, lambda1 = rp1lvm.fit$opt$message[2,"lambda1.abs"])
 #' p1lvm.fit_bis
 #' 
 #' #### L2 penalisation
@@ -67,7 +74,7 @@
 estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
                           regularizationPath = FALSE, stepLambda1 = 50, correctionStep = FALSE,
                           fast = FALSE, step = 1, BT.n = 20, BT.eta = 0.5, trace = FALSE,
-                          fixSigma = FALSE, ...) {
+                          fixSigma = TRUE, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)

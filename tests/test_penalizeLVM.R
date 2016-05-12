@@ -7,7 +7,7 @@ library(penalized)
 library(optimx)
 library(numDeriv)
 library(data.table)
-
+library(deSolve)
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
