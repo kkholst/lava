@@ -112,7 +112,7 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
 }
 
 normal_hessian.lvm <- function(x,p,n,...) {
-    f (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     ##return(numDeriv::jacobian(function(p0) normal_gradient.lvm(x,p=p0,data=data,indiv=FALSE,...),p,method=lava.options()$Dmethod))
     dots <- list(...); dots$weight <- NULL
     do.call("information", c(list(x=x,p=p,n=n),dots))

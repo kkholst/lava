@@ -36,7 +36,9 @@ l6 <- lm(y6~x,d)
 l7 <- lm(y7~x,d)
 
 (a <- merge(l1,l2,l3,l4,l5,l6,l7,subset=2))
-p.correct(a)
+if (!requireNamespace("mets",quietly=TRUE)) {
+   p.correct(a)
+}
 as.vector(closed.testing(a))
 
 }
