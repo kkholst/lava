@@ -4,7 +4,7 @@
 
 #' @title  Compute the regularization path for a penalized regression 
 #' 
-glmPath <- function(beta0, objectiveLv, hessianLv, gradientLv, 
+glmPath <- function(beta0, objective, hessian, gradient, 
                     indexPenalty, indexNuisance,
                     sd.X, base.lambda1, lambda2, group.lambda1,
                     control, iter.max = length(beta0)*2){
@@ -27,7 +27,7 @@ glmPath <- function(beta0, objectiveLv, hessianLv, gradientLv,
     }
   }
   
-  V.lambda <- max( abs(-gradientLv(M.beta[1,]) * sd.X)[indexPenalty] )
+  V.lambda <- max( abs(-gradient(M.beta[1,]) * sd.X)[indexPenalty] )
   
   cv <- FALSE
   iter <- 1
@@ -37,7 +37,7 @@ glmPath <- function(beta0, objectiveLv, hessianLv, gradientLv,
     cat("*")
 
      ## prediction step: next breakpoint assuming linear path and constant sigma
-    resNode <- nextNode_lvm(hessianLv = hessianLv, gradientLv = gradientLv,  gradientPen = gradientPen,
+    resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1,
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
     
@@ -48,33 +48,13 @@ glmPath <- function(beta0, objectiveLv, hessianLv, gradientLv,
     }else{
       # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
       
-       if(any(lambda2>0)){ ## update beta value with L2 penalization
+      ## correction step or update beta value with L2 penalization
+       if(control$regPath$correctionStep || any(lambda2>0)){
         resNode$beta <- do.call("ISTA",
-                                list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
+                                list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                      lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
                                      step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
-      }
-    
-       
-      if(is.null(control$proxGrad$fixSigma)){ ## estimation of sigma
-        resNode$beta[indexNuisance] <- optim.nuisance(coef = resNode$beta, 
-                                                      index.sigma2 = indexNuisance,
-                                                      sigma_max = control$proxGrad$sigmaMax,
-                                                      gradient = gradientLv)
-      
-        ## update lambda given that the product lambda*sigma must be a constant
-        newLambda <- median(newLambda * M.beta[iter,names(resNode$beta[indexNuisance])] / resNode$beta[indexNuisance])
-      }
-      
-      ## correction step
-      if(control$regPath$correctionStep && (all(lambda2 == 0) || is.null(control$proxGrad$fixSigma))){
-        
-      resNode$beta <- do.call("ISTA",
-                              list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessianLv, gradient = gradientLv, objective = objectiveLv,
-                                   lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
-                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
-                                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
       }
       
       ## update
@@ -86,17 +66,30 @@ glmPath <- function(beta0, objectiveLv, hessianLv, gradientLv,
   }
   cat("\n")
   
+  #### update sigma value
+  M.beta[,names(control$proxGrad$fixSigma)] <- apply(M.beta, 1, optim.nuisance, 
+                                                     index.sigma2 = indexNuisance,
+                                                     sigma_max = if(control$constrain){NULL}else{control$proxGrad$sigmaMax},
+                                                     gradient = gradient,
+                                                     objective = objective)
+  
+  if(control$constrain){
+    M.beta[,names(control$proxGrad$fixSigma)] <- exp(M.beta[,names(control$proxGrad$fixSigma)])
+  }
+
   #### export
-  return(data.frame(lambda1 = V.lambda, lambda2 = NA, M.beta))
+  return(data.frame(lambda1.abs = V.lambda, 
+                    lambda1 = V.lambda/M.beta[,names(control$proxGrad$fixSigma)], 
+                    lambda2 = NA, M.beta))
 }
 
 #' @title  Find the next value of the regularization parameter
-nextNode_lvm <- function(hessianLv, gradientLv, gradientPen,
+nextNode_lvm <- function(hessian, gradient, gradientPen,
                          beta, lambda1, indexPenalty, indexNuisance){
   
   ##
-  hess_Lv <- -hessianLv(beta)  # because hess_Lv in lava is -hess(Lv)
-  grad_Lv <- -attr(hess_Lv, "grad")  # because grad_Lv in lava is -grad(Lv) // gradientLv(beta)
+  hess_Lv <- -hessian(beta)  # because hess_Lv in lava is -hess(Lv)
+  grad_Lv <- -attr(hess_Lv, "grad")  # because grad_Lv in lava is -grad(Lv) // gradient(beta)
   grad_Pen <- gradientPen(beta, grad_Lv = grad_Lv)
   
   set_A <- union(setdiff(which(beta!=0),indexNuisance),

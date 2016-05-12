@@ -182,7 +182,7 @@ penalized_objective.lvm <- lava:::gaussian_objective.lvm
 
 penalized_objectivePen.lvm <- function(x, lambda1, lambda2){
 
-  obj.P <- lambda1 * sum( abs(x) ) + lambda2/2 * sum( x^2 )
+  obj.P <- sum( lambda1 *  abs(x) + lambda2/2 * x^2 )
   
   return( obj.P )
 }

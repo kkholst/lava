@@ -66,8 +66,8 @@
 #' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1)
 #' p12lvm.fit
 estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
-                          regularizationPath = FALSE, stepLambda1 = 10, correctionStep = TRUE, lavaDerivatives = TRUE,
-                          fast = FALSE, step = 1, BT.n = 10, BT.eta = 0.5, trace = FALSE,
+                          regularizationPath = FALSE, stepLambda1 = 50, correctionStep = TRUE, lavaDerivatives = TRUE,
+                          fast = FALSE, step = 1, BT.n = 20, BT.eta = 0.5, trace = FALSE,
                           fixSigma = FALSE, ...) {
   
   names.coef <- coef(x)
@@ -99,6 +99,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   if("constrain" %in% names(control) == FALSE){
     control$constrain <- FALSE
   }
+  if(regularizationPath == 1){fixSigma <- TRUE}
   
   if(fixSigma == TRUE){
     constrain.sigma <- setNames(1-control$constrain, names.coef[x$index$parBelongsTo$cov[1]])
@@ -110,15 +111,11 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
            "requested penalisation on variance parameters: ",penalty$names.penaltyCoef[penalty$names.penaltyCoef %in% names(constrain)],"\n")
     }
     
-  }else if(regularizationPath == 1){
-    
-    constrain.sigma <- NULL
-    constrain.sigma_max <- var(data[,strsplit(names.coef[x$index$parBelongsTo$cov[1]], split = ",", fixed = TRUE)[[1]][1]])
-    
   }else{
     
     constrain.sigma <- NULL
     constrain.sigma_max <- NULL
+    
   }
   
   ## pass parameters for the penalty through the control argument
@@ -188,11 +185,11 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
                              method = if(regularizationPath == 0){"optim.proxGrad"}else{"optim.regPath"}, 
                              control = control, ...)
-
+  
   #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
-    res$opt$message <- rbind(res$opt$message,
-                             c(0,0,coef(do.call(lava:::estimate.lvm, args = c(list(x = x, data = data)))))
+    res$opt$message <- rbind(c(0,0,0,coef(do.call(lava:::estimate.lvm, args = c(list(x = x, data = data))))),
+                             res$opt$message
     )
     
     res$opt$message <- rescaleRes(Mres = as.matrix(res$opt$message), 
@@ -456,6 +453,7 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
 
 rescaleRes <- function(Mres, penalty, orthogonalizer){
   
+ 
   #### rescale
   names.rescale <- names(penalty$sd.X)
   Mres[,names.rescale] <- sweep(Mres[,names.rescale], MARGIN = 2, FUN = "/", STATS = penalty$sd.X)

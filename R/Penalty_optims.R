@@ -7,9 +7,8 @@
 #' @title Estimate a penalized lvm model using a proximal gradient algorithm
 #' 
 optim.proxGrad <- function(start, objective, gradient, hessian,...){
-
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxOperator", "proxGrad")
-  
+ 
   dots <- list(...)
   penalty <- dots$control$penalty
   control <- dots$control[names(dots$control) %in% PGcontrols]
@@ -32,16 +31,17 @@ optim.proxGrad <- function(start, objective, gradient, hessian,...){
               lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = control$proxGrad$fixSigma,
               step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = control$proxGrad$trace,
               iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast)
-  
+ 
   res$objective <- objective(res$par) + penalized_objectivePen.lvm(res$par, lambda1 = lambda1, lambda2 = lambda2)
   
     ## estimate the variance parameter if it has been fixed before
   if(!is.null(control$proxGrad$fixSigma)){
     index.sigma2 <- which(names(res$par) == names(control$proxGrad$fixSigma)) 
-      
+ 
     res2 <- optim.nuisance(coef = res$par, 
                           index.sigma2 = index.sigma2,
-                          sigma_max = control$proxGrad$sigmaMax,
+                          sigma_max = if(control$constrain){NULL}else{control$proxGrad$sigmaMax},
+                          objective = objective,
                           gradient = gradient)
 
     res$par[index.sigma2] <- res2
@@ -72,7 +72,7 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
   
   #### main
   if( regPath$type == 1){
-    resLassoPath <- glmPath(beta0 = start, objectiveLv = objective, gradientLv = gradient, hessianLv = hessian,
+    resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
                             indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
                             sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                             control = control)
@@ -83,23 +83,19 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
     diag(V)[index.penaltyCoef] <- 1
     
     resLassoPath <- EPSODE(beta = start, objective = objective, gradient = gradient, hessian = hessian, V = V, 
-                           indexPenalty = index.penaltyCoef,
+                           indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
                            stepLambda1 = regPath$stepLambda1, correctionStep = regPath$correctionStep, lavaDerivatives = regPath$lavaDerivatives,
                            lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                            control = control)
     
   }
-  names(resLassoPath) <- c("lambda1", "lambda2", names(start))
-  
-  if(control$constrain == TRUE){
-    resLassoPath[,penalty$names.varCoef] <- exp(resLassoPath[,penalty$names.varCoef])
-  }
-  
+  names(resLassoPath) <- c("lambda1.abs", "lambda1", "lambda2", names(start))
+ 
   res <- list(par = start,
               convergence = 0,
               iterations = 0,
               evaluations = c("function" = 0, "gradient" = 0),
-              message = resLassoPath,
+              message = resLassoPath[order(resLassoPath$lambda1),,drop = FALSE],
               objective = NA)
   
   ### export
@@ -108,17 +104,32 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
 
 #' @title Estimate nuisance parameter
 #' 
-optim.nuisance <- function(coef, index.sigma2, sigma_max, gradient, method = "L-BFGS-B"){
+optim.nuisance <- function(coef, index.sigma2, sigma_max, objective, gradient, method = "L-BFGS-B"){
 
+  warperObj <- function(sigma2){
+    pp <- coef
+    pp[index.sigma2] <- sigma2
+    return(objective(pp))
+  }
+  
   warperGrad <- function(sigma2){
     pp <- coef
     pp[index.sigma2] <- sigma2
-    return(sum(abs(gradient(pp)[index.sigma2])))
+    return(gradient(pp)[index.sigma2])
   }
+  
+  if(is.null(sigma_max)){
+    coef[index.sigma2] <- optim(par = coef[index.sigma2], 
+                                fn = warperObj, gr = warperGrad, method = method)$par
+  }else{
+    coef[index.sigma2] <- optim(par = if(coef[index.sigma2]>=sigma_max){sigma_max/2}else{coef[index.sigma2]}, 
+                                fn = warperObj, gr = warperGrad, lower = 1e-12, upper = sigma_max, method = method)$par
+  }
+    
 
-  coef[index.sigma2] <- optim(par = coef[index.sigma2], 
-                              fn = warperGrad, method = method,
-                              lower = 1e-12, upper = sigma_max)$par
+#   coef[index.sigma2] <- optim(par = coef[index.sigma2], 
+#                               fn = warperGrad, method = method,
+#                               lower = 1e-12)$par # , upper = sigma_max
 
 }
 

@@ -107,6 +107,8 @@ plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, lava
                     control = list(constrain = FALSE, step_lambda1 = 10, 
                                    start = coef(estimate(lvm.model, data = df.data))))
 
+plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2)
+
 plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, lavaDerivatives = FALSE, fixSigma = TRUE, correctionStep = FALSE,
                         control = list(constrain = FALSE, step_lambda1 = 10, 
                                        start = coef(estimate(lvm.model, data = df.data))))
