@@ -127,19 +127,17 @@ elvm.PathL1_fixed$opt$message
 #                               control = list(constrain = FALSE, iter.max = 5000))
 # elvm.PathL1_fixed$opt$message
 
-elvm.EPSODE_fixed <- estimate(plvm.model,  data = df.data, 
-                              regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 5.5,
+elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
+                              regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 20, correctionStep = FALSE,
                               control = list(constrain = FALSE, iter.max = 5000))
 
-elvm.EPSODE_free <- estimate(plvm.model,  data = df.data, 
+elvm.EPSODE1_free <- estimate(plvm.model,  data = df.data, 
                              regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 2,
                              control = list(constrain = FALSE, iter.max = 5000))
 
-elvm.fit_tempo <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
-                           lambda1 = 2)
-
-elvm.fit_tempo <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
-                           lambda1 = 1)
+elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
+                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -20, correctionStep = FALSE,
+                               control = list(constrain = FALSE, iter.max = 5000))
 
 #### 2- L1 and L2 ####
 penalized.PathL12 <- penalized(Y ~  ., data = df.data, steps = "Park", lambda2 = 100, trace = FALSE)
@@ -180,6 +178,12 @@ elvm.PathL12_fixed <- estimate(plvm.model,  data = df.data,
                               regularizationPath = 1, lambda2 = 100, 
                               control = list(constrain = FALSE, iter.max = 5000))
 elvm.PathL12_fixed$opt$message
+
+#### TO CHECK
+# elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data, 
+#                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 5.5, lambda2 = 100, 
+#                               control = list(constrain = FALSE, iter.max = 5000))
+
 
 #### 3- Group Lasso ####
 # gglasso

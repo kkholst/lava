@@ -41,7 +41,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V,
   if(stepLambda1 > 0){
     seq_lambda1 <- 0  
   }else{
-    seq_lambda1 <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
+    seq_lambda1 <-  100#max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
     beta <- do.call("ISTA",
                     list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
