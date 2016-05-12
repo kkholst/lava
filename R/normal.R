@@ -35,6 +35,7 @@ dmvn <- function(x,mu,sigma,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
 normal_method.lvm <- "nlminb0"
 
 normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
@@ -48,7 +49,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         if (length(bin)>0) status[bin] <- 2
     }
     status[match(ord,y)] <- 2
-
+    
     Table <- length(y)==length(ord)
     if (Table) {
         pat <- mets::fast.pattern(data,categories=max(data)+1)
@@ -94,6 +95,7 @@ normal_logLik.lvm <- function(object,p,data,weight2=NULL,...) {
 }
 
 normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     if  (is.null(ordinal(x))) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
@@ -110,6 +112,7 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
 }
 
 normal_hessian.lvm <- function(x,p,n,...) {
+    f (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     ##return(numDeriv::jacobian(function(p0) normal_gradient.lvm(x,p=p0,data=data,indiv=FALSE,...),p,method=lava.options()$Dmethod))
     dots <- list(...); dots$weight <- NULL
     do.call("information", c(list(x=x,p=p,n=n),dots))

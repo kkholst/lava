@@ -15,6 +15,7 @@ normal.threshold <- function(object,p=coef(object),...) {
 }
 
 prob.normal <- function(sigma,breaks,breaks2=breaks) {
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     if (ncol(sigma)!=2 || missing(breaks)) stop("Wrong input")
     P <- matrix(ncol=length(breaks2)-1, nrow=length(breaks)-1)
     for (i in seq(length(breaks)-1))

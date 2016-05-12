@@ -102,6 +102,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         idx[ord]
     }
 
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
 
     if (length(x)==0) { 
         wide <- mets::fast.reshape(data,id=id,varying=y,...)

@@ -155,6 +155,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         cl[c("vcov","use")] <- NULL
         return(eval(cl,parent.frame()))
     }
+    if (lava.options()$cluster.index) {
+        if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
+    }
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
         pp <- coef
@@ -394,10 +397,11 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
                     phat <- mean(subset)
                     iid3 <- cbind(-1/phat^2 * (subset-phat)/N) ## check
                     if (!missing(id)) {
-                        if (!lava.options()$cluster.index)
+                        if (!lava.options()$cluster.index) {
                             iid3 <- matrix(unlist(by(iid3,id,colSums)),byrow=TRUE,ncol=ncol(iid3))
-                        else
+                        } else {
                             iid3 <- mets::cluster.index(id,mat=iid3,return.all=FALSE)
+                        }
                     }
                     iidtheta <- (iid1+iid2)/phat + rbind(pp)%x%iid3
                     pp <- pp/phat

@@ -102,6 +102,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
             ids <- c(ids, list(sort(unique(id0))))
 
         } else {
+            if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
             clidx <- mets::cluster.index(id0,mat=iidz,return.all=TRUE)
             iid0 <- clidx$X
             ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))

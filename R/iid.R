@@ -30,8 +30,12 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
         warning("Not available for this class")
         return(NULL)
     }
-    if (folds>0) {
+
+    if (folds>0 || maxsize>0 || (!missing(id) && lava.options()$cluster.index)) {
         if (!requireNamespace("mets",quietly=TRUE)) stop("Requires 'mets'")
+    }
+    
+    if (folds>0) {
         U <- Reduce("rbind",mets::divide.conquer(function(data) score(x,data=data,...),
                                                  id=id,
                                                  data=data,size=round(nrow(data)/folds)))

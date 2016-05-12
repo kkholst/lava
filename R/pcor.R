@@ -8,6 +8,8 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @export
 pcor <- function(x,y,X,start,...) {
+    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
+
     if (is.numeric(x) && is.numeric(y)) {
         e <- estimate(covariance(lvm(),x~y))
         return(estimate(e,function(p) list(rho=p[5]/(p[3]*p[4])^.5),iid=TRUE))
@@ -21,7 +23,6 @@ pcor <- function(x,y,X,start,...) {
                    attr(lava::ordreg(update(f,x~.),fast=TRUE,family=stats::binomial("probit")),"threshold"),
                    attr(lava::ordreg(update(f,y~.),fast=TRUE,family=stats::binomial("probit")),"threshold"))
     }
-
 
     ii <- mets::fast.pattern(cbind(as.numeric(x),as.numeric(y)),categories=max(length(unique(x)),length(unique(y))))
 
