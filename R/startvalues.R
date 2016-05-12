@@ -1,3 +1,27 @@
+mgstart <- function(x,p) {
+    if (is.list(p)) {
+        npar <- with(x, npar+npar.mean+length(unlist(expar)))
+        pos <- modelPar(x,seq(npar))$p
+        start <- matrix(NA,ncol=npar,nrow=x$ngroup)
+        startl <- lapply(pos, function(x) rep(NA,length(x)))
+        for (i in seq_len(x$ngroup)) {
+            p0 <- p[[i]]
+            pos0 <- pos[[i]]            
+            if (!is.null(names(p0))) {
+                ii <- parpos(Model(x)[[i]],names(p0))
+                startl[[i]][ii] <- p0[names(ii)]
+            } else {
+                ii <- seq(min(length(p0),length(startl[[i]])))
+                startl[[i]][ii] <- p0[ii]
+            }
+            start[i,pos0] <- startl[[i]]
+        }
+        start0 <- apply(start,2,function(x) mean(x,na.rm=TRUE))
+    }
+    return(start0)
+}
+
+
 ###{{{ starter.multigroup
 
 ##' @export
