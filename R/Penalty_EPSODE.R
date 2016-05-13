@@ -26,7 +26,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
                    indexPenalty, indexNuisance, 
                    stepLambda1, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,15),#, 
                    correctionStep, ode.method = "euler", control){
-
+  
   #### preparation
   n.coef <- length(beta)
   lambda2_save <- lambda2
@@ -47,7 +47,10 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
   if(stepLambda1 > 0){
     seq_lambda1 <- 0  
   }else{
-    seq_lambda1 <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # to be removed
+    seq_lambda1 <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # initialisation with the fully penalized solution
+  }
+  
+  if(any(lambda2 > 0) | stepLambda1 < 0){
     beta <- do.call("ISTA",
                     list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
@@ -56,11 +59,11 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
   }
   
   
-#   if(!is.null(control$proxGrad$fixSigma)){
-#     control$proxGrad$fixSigma <- beta[-indexAllCoef]
-#   }else{
-#     indexAllCoef <- 1:n.coef
-#   }
+  #   if(!is.null(control$proxGrad$fixSigma)){
+  #     control$proxGrad$fixSigma <- beta[-indexAllCoef]
+  #   }else{
+  #     indexAllCoef <- 1:n.coef
+  #   }
   
   ##
   M.beta <- rbind(beta)
@@ -68,7 +71,7 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
   setZE <- intersect(which(V %*% beta == 0), indexPenalty)
   setPE <- intersect(which(V %*% beta > 0), indexPenalty)
   test.ncv <- TRUE
- 
+  
   #### main loop
   while(iter < nstep_max && test.ncv){
     if(control$regPath$trace){cat("*")}
@@ -79,17 +82,17 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
       iterLambda1 <- iterLambda1 + stepLambda1/resolution_lambda1
     }
     iterBeta <- M.beta[iter,]
-
+    
     
     #cat(iter," ",iterLambda1," ", paste(iterBeta, collapse = " "),"\n")  
     if(length(setZE)>0){
       iterBeta[setZE] <- 0
     }
-     
+    
     ## Solve ODE 
     lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + stepLambda1), length.out = resolution_lambda1)
     cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
-   
+    
     res.ode <- ode(y = iterBeta, 
                    times = lambda.ode, 
                    func = EPSODE_odeBeta, method = ode.method,
@@ -129,32 +132,32 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
       }
       
     }
-     
-#     cat(res.breakpoint$breakpoint.sign, ", ", res.breakpoint$breakpoint.constrain, ": ", res.breakpoint$index_coef,"\n")
+    
+    #     cat(res.breakpoint$breakpoint.sign, ", ", res.breakpoint$breakpoint.constrain, ": ", res.breakpoint$index_coef,"\n")
     
     ## prepare update
     newLambda1 <- cv.ODE["lambda"]
     newBeta <- res.ode[index.breakpoint,-1]
-     
+    
     ## correction step
     if(correctionStep){
-    lambda1 <- rep(0, n.coef)
-    lambda1[indexPenalty] <- newLambda1
-    if(!is.null(control$proxGrad$fixSigma)){
-      lambda1[indexPenalty] <- lambda1[indexPenalty] * newBeta[names(control$proxGrad$fixSigma)]
-    }
-    
-    resISTA <- do.call("ISTA",
-                       list(start = newBeta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                            lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
-                            step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
-                            iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
-   
-    newBeta[setdiff(names(newBeta),names(control$proxGrad$fixSigma))] <- resISTA[setdiff(names(newBeta),names(control$proxGrad$fixSigma))]
-    
-    setNE <- intersect(which(V %*% newBeta < 0),  indexPenalty)
-    setPE <- intersect(which(V %*% newBeta > 0), indexPenalty)
-    setZE <- setdiff(indexPenalty, c(setNE,setPE))
+      lambda1 <- rep(0, n.coef)
+      lambda1[indexPenalty] <- newLambda1
+      if(!is.null(control$proxGrad$fixSigma)){
+        lambda1[indexPenalty] <- lambda1[indexPenalty] * newBeta[names(control$proxGrad$fixSigma)]
+      }
+      
+      resISTA <- do.call("ISTA",
+                         list(start = newBeta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                              lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
+                              step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                              iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
+      
+      newBeta[setdiff(names(newBeta),names(control$proxGrad$fixSigma))] <- resISTA[setdiff(names(newBeta),names(control$proxGrad$fixSigma))]
+      
+      setNE <- intersect(which(V %*% newBeta < 0),  indexPenalty)
+      setPE <- intersect(which(V %*% newBeta > 0), indexPenalty)
+      setZE <- setdiff(indexPenalty, c(setNE,setPE))
     }
     
     ## updates
@@ -164,25 +167,26 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
     if(stepLambda1 > 0){
       test.ncv <- (length(setNE) > 0 || length(setPE) > 0 )
     }else{
-      test.ncv <- length(setZE)
+      test.ncv <- (newLambda1!=0)#length(setZE)
     }
     
   }
-  
+
   if(control$regPath$trace){cat("\n ")}
   
   #### export
   seq_lambda1 <- unname(seq_lambda1)
   rownames(M.beta) <- NULL
-
+  
   return(as.data.frame(cbind(lambda1.abs = if(!is.null(control$proxGrad$fixSigma)){seq_lambda1}else{NA}, 
                              lambda1 = if(!is.null(control$proxGrad$fixSigma)){NA}else{seq_lambda1}, 
+                             lambda2.abs = lambda2_save, 
                              lambda2 = NA,
                              M.beta)))
 }
 
 EPSODE_odeBeta <- function(t, y, ls.args){
- 
+  
   #### check cv
   if(get("cv.ODE", envir = ls.args$envir)[1]>0){
     return(list(rep(0,length(y))))
@@ -246,7 +250,7 @@ EPSODE_odeBeta <- function(t, y, ls.args){
     R <- solve(Uz %*% H_m1 %*% t(Uz))
     Q <- H_m1 %*% t(Uz) %*% R  #     Q <- Q[ls.args$indexPenalty,,drop = FALSE]
     s <- - t(Q) %*% ( (1 / t) * G + uz[ls.args$indexPenalty,drop = FALSE])
-   
+    
     if(any( abs(s) > 1)){
       index <- which.max(abs(s))
       assign("cv.ODE", 
@@ -262,6 +266,8 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   Puz[ls.args$indexAllCoef] <- P %*% uz[ls.args$indexAllCoef, drop = FALSE]
   Puz[ls.args$setZE] <- 0
   #Puz <- P %*% uz
+  
+  # if(length(ls.args$setZE)==0){print(Puz)}
   
   return(list(-Puz))
 }

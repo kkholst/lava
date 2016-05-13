@@ -78,7 +78,7 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
                             indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                             sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                             control = control)
-    
+  
   }else if( regPath$type == 2){
     
     V <- matrix(0, nrow = length(start), ncol = length(start))
@@ -91,7 +91,7 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
                            control = control)
     
   }
-  
+   
   #### update sigma value
   if(!is.null(control$proxGrad$fixSigma)){
   resLassoPath[,names(control$proxGrad$fixSigma)] <- apply(resLassoPath[,names(start), drop = FALSE], 1, optim.nuisance, 
@@ -103,16 +103,15 @@ optim.regPath <- function(start, objective, gradient, hessian,...){
   if(control$constrain){
     resLassoPath[,names(control$proxGrad$fixSigma)] <- exp(resLassoPath[,names(control$proxGrad$fixSigma)])
   }
-  
   resLassoPath$lambda1 <- resLassoPath$lambda1.abs / resLassoPath[,names(control$proxGrad$fixSigma)]
+  resLassoPath$lambda2 <- resLassoPath$lambda2.abs / resLassoPath[,names(control$proxGrad$fixSigma)]
   }
   
- 
   res <- list(par = start,
               convergence = 0,
               iterations = 0,
               evaluations = c("function" = 0, "gradient" = 0),
-              message = resLassoPath[order(resLassoPath$lambda1),,drop = FALSE],
+              message = resLassoPath[order(resLassoPath$lambda1.abs),,drop = FALSE],
               objective = NA)
   
   ### export

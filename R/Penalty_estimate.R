@@ -191,27 +191,18 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
                              method = if(regularizationPath == 0){"optim.proxGrad"}else{"optim.regPath"}, 
                              control = control, ...)
-  
+ 
   #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
-    res$opt$message <- rbind(c(0,0,0,coef(do.call(lava:::estimate.lvm, args = c(list(x = x, data = data))))),
-                             res$opt$message
-    )
-    
-    res$opt$message <- rescaleRes(Mres = as.matrix(res$opt$message), 
+      res$opt$message <- rescaleRes(Mres = as.matrix(res$opt$message), 
                                   penalty = control$penalty, 
                                   orthogonalizer = resOrtho$orthogonalizer)
-    
-    
   }
   
   #### export
   res$penalty <-  control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
   res$penalty$regularizationPath <- regularizationPath
-  if(regularizationPath > 0){
-    res$opt$message$lambda2 <- save_lambda2
-  }
-  
+ 
   class(res) <- append("plvmfit", class(res))
   return(res)
 }
@@ -459,7 +450,6 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
 
 rescaleRes <- function(Mres, penalty, orthogonalizer){
   
- 
   #### rescale
   names.rescale <- names(penalty$sd.X)
   Mres[,names.rescale] <- sweep(Mres[,names.rescale], MARGIN = 2, FUN = "/", STATS = penalty$sd.X)

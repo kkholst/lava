@@ -7,10 +7,10 @@
 glmPath <- function(beta0, objective, hessian, gradient, 
                     indexPenalty, indexNuisance,
                     sd.X, base.lambda1, lambda2, group.lambda1,
-                    control, iter.max = length(beta0)*2){
+                    control, iter.max = length(beta0)*3){
                           
   p <- length(beta0)
-  
+
   gradientPen <- function(beta, grad_Lv, ...){
     ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  # because grad_Lv in lava is -grad(Lv)
   }
@@ -36,15 +36,23 @@ glmPath <- function(beta0, objective, hessian, gradient,
   while(iter < iter.max && cv == FALSE){
     if(control$regPath$trace){cat("*")}
 
-     ## prediction step: next breakpoint assuming linear path and constant sigma
+    ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
-                            beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1,
+                            beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1, lambda2 = lambda2, 
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
-    
+
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
     
     if(newLambda < 0 || is.infinite(newLambda)){
       cv <- TRUE
+      
+      ## no penalization
+      resNode$beta <- do.call("ISTA",
+                              list(start = M.beta[nrow(M.beta),], proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
+                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
+      newLambda <- 0
     }else{
       # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
       
@@ -57,32 +65,38 @@ glmPath <- function(beta0, objective, hessian, gradient,
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
        }
       
-      ## update
-      V.lambda <- c(V.lambda, newLambda)
-      M.beta <- rbind(M.beta, resNode$beta)
     } 
     
+    ## update
+    V.lambda <- c(V.lambda, newLambda)
+    M.beta <- rbind(M.beta, resNode$beta)
     iter <- iter + 1
   }
   if(control$regPath$trace){cat("\n ")}
-
+  
   #### export
   V.lambda <- unname(V.lambda)
   rownames(M.beta) <- NULL
   
   return(as.data.frame(cbind(lambda1.abs = V.lambda, 
                              lambda1 = NA, 
+                             lambda2.abs = median(lambda2[indexPenalty]*sd.X[indexPenalty]^2), 
                              lambda2 = NA, 
                              M.beta)))
 }
 
 #' @title  Find the next value of the regularization parameter
 nextNode_lvm <- function(hessian, gradient, gradientPen,
-                         beta, lambda1, indexPenalty, indexNuisance){
-  
+                         beta, lambda1, lambda2, indexPenalty, indexNuisance){
+ 
   ##
   hess_Lv <- -hessian(beta)  # because hess_Lv in lava is -hess(Lv)
   grad_Lv <- -attr(hess_Lv, "grad")  # because grad_Lv in lava is -grad(Lv) // gradient(beta)
+#   if(any(lambda2 > 0)){
+#     grad_Lv <- grad_Lv + lambda2 * beta
+#     hess_Lv <- hess_Lv + diag(lambda2)
+#   }
+  
   grad_Pen <- gradientPen(beta, grad_Lv = grad_Lv)
   
   set_A <- union(setdiff(which(beta!=0),indexNuisance),
@@ -90,14 +104,14 @@ nextNode_lvm <- function(hessian, gradient, gradientPen,
   )
   
   grad_B.A <- solve(hess_Lv[set_A,set_A, drop = FALSE], grad_Pen[set_A, drop = FALSE] * lambda1[set_A, drop = FALSE])
-  grad_Rho <- hess_Lv[,set_A, drop = FALSE] %*% grad_B.A / lambda1 
+  grad_Rho <- hess_Lv[indexPenalty,set_A, drop = FALSE] %*% grad_B.A / lambda1[indexPenalty, drop = FALSE]
   
   ## find next knot
   gamma1 <- -beta[set_A]/(grad_B.A*lambda1[set_A]) 
-  gamma2Moins <- (1 - grad_Lv/lambda1)/(1 + grad_Rho)
-  gamma2Moins[c(set_A,indexNuisance)] <- Inf
-  gamma2Plus <- (1 + grad_Lv/lambda1)/(1 - grad_Rho)
-  gamma2Plus[c(set_A,indexNuisance)] <- Inf
+  gamma2Moins <- (1 - grad_Lv[indexPenalty, drop = FALSE]/lambda1[indexPenalty, drop = FALSE])/(1 + grad_Rho)
+  gamma2Moins[indexPenalty %in% set_A] <- Inf
+  gamma2Plus <- (1 + grad_Lv[indexPenalty, drop = FALSE]/lambda1[indexPenalty, drop = FALSE])/(1 - grad_Rho)
+  gamma2Plus[indexPenalty %in% set_A] <- Inf
   
   # cat(paste(gamma1, collpase = " ")," | ",paste(gamma2Moins, collpase = " ")," | ",paste(gamma2Plus, collpase = " ")," | \n \n")
   

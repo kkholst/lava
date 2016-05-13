@@ -127,16 +127,16 @@ elvm.PathL1_fixed$opt$message
 #                               control = list(constrain = FALSE, iter.max = 5000))
 # elvm.PathL1_fixed$opt$message
 
-elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
-                              regularizationPath = 2, fixSigma = TRUE,correctionStep = FALSE,
+elvm.EPSODE1_fixedF <- estimate(plvm.model,  data = df.data, 
+                              regularizationPath = 2, fixSigma = TRUE, trace = TRUE,
                               control = list(constrain = FALSE, iter.max = 5000))
 
 elvm.EPSODE1_free <- estimate(plvm.model,  data = df.data, 
                              regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 2,
                              control = list(constrain = FALSE, iter.max = 5000))
 
-elvm.EPSODE1_fixed <- estimate(plvm.model,  data = df.data, 
-                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, correctionStep = FALSE,
+elvm.EPSODE1_fixedB <- estimate(plvm.model,  data = df.data, 
+                               regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, trace = TRUE,
                                control = list(constrain = FALSE, iter.max = 5000))
 
 
@@ -177,18 +177,26 @@ elvm.PathL12_fixed <- estimate(plvm.model,  data = df.data,
                               control = list(constrain = TRUE, iter.max = 5000))
 elvm.PathL12_fixed$opt$message
 
+# [1] 77.065039 77.057332 55.978583 54.126732 53.964039 53.949746 53.944351 18.148683 16.294521 16.198478 16.193504 16.191884  8.298975  8.216425  8.215561  8.214740  6.903110  0.000000
+
 elvm.PathL12_fixed <- estimate(plvm.model,  data = df.data, 
                               regularizationPath = 1, lambda2 = 100, 
                               control = list(constrain = FALSE, iter.max = 5000))
 elvm.PathL12_fixed$opt$message
 
 #### TO CHECK
-elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data, correctionStep = TRUE,
-                              regularizationPath = 2, fixSigma = TRUE, lambda2 = 100, 
+elvm.EPSODE12_fixedF <- estimate(plvm.model,  data = df.data, 
+                              regularizationPath = 2, fixSigma = TRUE, lambda2 = 100, trace = TRUE,
                               control = list(constrain = FALSE, iter.max = 5000))
 
-elvm.EPSODE12_fixed <- estimate(plvm.model,  data = df.data,  lambda2 = 100,
+elvm.EPSODE12_fixedB <- estimate(plvm.model,  data = df.data,  lambda2 = 100,
                                regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, correctionStep = FALSE, trace = TRUE,
+                               control = list(constrain = FALSE, iter.max = 5000))
+
+elvm.EPSODE12_test <- estimate(plvm.model,  data = df.data,  fixSigma = TRUE, lambda2 = 100, lambda1 = 16.193270,
+                               control = list(constrain = FALSE, iter.max = 5000))
+
+elvm.EPSODE12_test <- estimate(plvm.model,  data = df.data,  fixSigma = FALSE, lambda2 = 16.94046, lambda1 = 9.139117,
                                control = list(constrain = FALSE, iter.max = 5000))
 
 #### 3- Group Lasso ####
