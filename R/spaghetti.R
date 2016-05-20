@@ -104,13 +104,15 @@ spaghetti <- function(formula,data,id="id",group=NULL,
 
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
 
-    if (length(x)==0) { 
+    if (length(x)==0) {
+        data <- data[,c(id,y),drop=FALSE]
         wide <- mets::fast.reshape(data,id=id,varying=y,...)
         yidx <- Idx(y,names(wide))
         Y <- wide[,yidx,drop=FALSE]
         X <- NULL
         matplot(t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
     } else {
+        data <- data[,c(id,x,y),drop=FALSE]
         wide <- mets::fast.reshape(dsort(data,c(id,x)),id=id,varying=c(y,x),...)
         yidx <- Idx(y,names(wide))
         xidx <- Idx(x,names(wide))
