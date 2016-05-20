@@ -15,7 +15,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
     ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  # because grad_Lv in lava is -grad(Lv)
   }
  
-  #### initialisation
+   #### initialisation
   M.beta <- matrix(0, nrow = 1, ncol = p)
   colnames(M.beta) <- names(beta0)
   M.beta[1,] <- beta0
@@ -31,7 +31,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
   
   cv <- FALSE
   iter <- 1
-  
+
   #### main loop
   while(iter < iter.max && cv == FALSE){
     if(control$regPath$trace){cat("*")}
@@ -49,7 +49,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
       ## no penalization
       resNode$beta <- do.call("ISTA",
                               list(start = M.beta[nrow(M.beta),], proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
+                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(control$constrain, names(control$proxGrad$fixSigma)),
                                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
       newLambda <- 0
@@ -60,7 +60,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
        if(any(lambda2>0)){
         resNode$beta <- do.call("ISTA",
                                 list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$proxGrad$fixSigma,
+                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(control$constrain, names(control$proxGrad$fixSigma)),
                                      step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
        }

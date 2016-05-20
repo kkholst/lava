@@ -41,12 +41,12 @@ plvm.model <- penalize(lvm.model)
 
 
 #### 2- Estimations ####
-res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 20, trace = TRUE,
+res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 20, trace = TRUE,
                        control = list(constrain = FALSE, iter.max = 5000))
 
 
 system.time(
-res_free <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
+res_free <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
                 lambda1 = res.EPSODE$opt$message[10,"lambda1.abs"],
                 control = list(constrain = TRUE, iter.max = 5000))
 )
@@ -57,11 +57,11 @@ which( res.EPSODE$opt$message[10,names(coef(res_free))] == 0)
 rbind(coef(res_free), res.EPSODE$opt$message[10,names(coef(res_free))])
 
 
-res_free <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
-                     lambda1 = 0,
+res_free <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
+                     lambda1 = 10,
                      control = list(constrain = TRUE, iter.max = 5000))
 res0 <- estimate(lvm.model,  data = df.data)
-coef(res0) - coef(res_free)
+quantile(coef(res0) - coef(res_free))
 
 #### 3- More complex LVM
 lvm.modelSim2 <- lvm(list(Y1 ~ eta1,
@@ -166,7 +166,7 @@ eplvmHIGH.HS <- estimate(plvm.HS, data = HS, lambda1 = 0.35*nrow(HS), control = 
 EPSODE.HS <- estimate(plvm.HS, data = HS, regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 100, trace = TRUE)
 EPSODE.HS$opt$message[,c(1:4,14:21)]
 
-resTest <- estimate(plvm.HS,  data = HS, lambda1 = EPSODE.HS$opt$message[5,"lambda1"])
+resTest <- estimate(plvm.HS,  data = HS, lambda1 = 39.39044)
 
 # quantile(coef(elvm.HS) - coef(eplvm0.HS))
 # quantile(coef(elvm.HS) - coef(eplvm0.fixedHS))

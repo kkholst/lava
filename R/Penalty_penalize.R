@@ -67,7 +67,8 @@
     x$penalty <- list(names.penaltyCoef = NULL,
                       group.penaltyCoef = NULL,
                       lambda1 = 0, 
-                      lambda2 = 0)
+                      lambda2 = 0,
+                      V = NULL)
     class(x) <- append("plvm", class(x))
   }
   
@@ -81,9 +82,9 @@
 }
 
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE, pen.latent = FALSE,
-                              lambda1, lambda2, ..., value){
+                              lambda1, lambda2, V, ..., value){
 
-  ## coefficients
+  #### coefficients
   if(!is.null(value)){
     
     if(any(value %in% coef(x) == FALSE)){
@@ -115,7 +116,7 @@
       
     x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
   } 
- 
+
   #### group penalty if the latent variable is penalized
    names.varLatent <- paste(names(x$latent),names(x$latent),sep = ",")
   if(any(x$penalty$names.penaltyCoef %in% names.varLatent)){
@@ -140,8 +141,19 @@
   }else{
     x$penalty$group.penaltyCoef <- seq(0.1, 0.9, length.out = length(x$penalty$names.penaltyCoef))
   }
+   
+   #### V matrix
+   if(!missing(V)){
+     x$penalty$V <- V
+   }else if(is.null(x$penalty$V)){
+     V <- matrix(0, nrow = length(coef(x)), ncol = length(coef(x)))
+     colnames(V) <- coef(x)
+     rownames(V) <- coef(x)
+     diag(V)[index.penaltyCoef] <- 1
+     x$penalty$V <- V
+  }
   
-  ## penalization parameters
+   #### penalization parameters
   if(!missing(lambda1)){
     x$penalty$lambda1 <- lambda1
   }
@@ -150,27 +162,7 @@
     x$penalty$lambda2 <- lambda2
   }
   
-  ## dots
-  dots <- list(...)
-  names.dots <- names(dots)
-  
-  if(length(names.dots) > 0){
-    
-    
-    if(any(names.dots %in% names(x$penalty) == FALSE)){
-      fixedArgs <- c("names.coef", "index.coef",
-                     setdiff(names(formals("penalty<-.lvm")),c("..."))
-      )
-      
-      stop("penalty<-.lvm: some additional arguments are invalid\n",
-           "invalid arguments: ",paste(names.dots[names.dots %in% names(x$penalty) == FALSE], collapse = " "),"\n",
-           "valid additional arguments: ", paste(setdiff(names(x$penalty), fixedArgs), collapse = " "),"\n")
-      
-    }
-    x$penalty[names(dots)] <- dots
-  }
-  
-  ## export
+  #### export
   return(x)
 }
 

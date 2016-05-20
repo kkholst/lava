@@ -49,9 +49,9 @@ validLVM <- function(x){
   library(penalized)
   
   lambda1 <- x$penalty$lambda1
-  if(is.null(x$control$proxGrad$fixSigma)){lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
+  if(is.null(x$control$proxGrad$sigmaMax)){lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
   lambda2 <- x$penalty$lambda2
-  if(is.null(x$control$proxGrad$fixSigma)){lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
+  if(is.null(x$control$proxGrad$sigmaMax)){lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
   
   resPenalized <- penalized(as.formula(paste0(endogenous(x),"~.")), 
                             lambda1 = lambda1, 
@@ -88,28 +88,27 @@ beta.fixed <- NULL
 for(iter_l in 1:length(seq_lambda)){
   cat(iter_l, " : ",penalized.PathL1[[iter_l]]@lambda1,"\n")
   
-  elvm.fit_tempo <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
+  elvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
                              control = list(constrain = TRUE))
   
   beta.free <- rbind(beta.free, 
-                     c(iter = elvm.fit_tempo$opt$iterations, coef(elvm.fit_tempo), 
-                       range(validLVM(elvm.fit_tempo)))
+                     c(iter = elvm.fit_tempo1$opt$iterations, coef(elvm.fit_tempo1), 
+                       range(validLVM(elvm.fit_tempo1)))
   )
  
-  elvm.fit_tempo <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
+  elvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
                              lambda1 = penalized.PathL1[[iter_l]]@lambda1)
   
   beta.fixed <- rbind(beta.fixed,
-                     c(iter = elvm.fit_tempo$opt$iterations, coef(elvm.fit_tempo), 
-                       range(validLVM(elvm.fit_tempo)))
+                     c(iter = elvm.fit_tempo2$opt$iterations, coef(elvm.fit_tempo2), 
+                       range(validLVM(elvm.fit_tempo2)))
   )
 }
 
 #### check path ####
 elvm.PathL1_fixed <- estimate(plvm.model,  data = df.data, 
-                              regularizationPath = 1,
-                              control = list(constrain = FALSE, iter.max = 5000))
+                              regularizationPath = 1)
 elvm.PathL1_fixed$opt$message
 
 # lambda1.abs   lambda1 lambda2          Y    Y~X1_penY    Y~X2_penY    Y~X3_penY    Y~X4_penY    Y~X5_penY      Y,Y
@@ -131,11 +130,31 @@ elvm.PathL1_fixed$opt$message
 elvm.EPSODE1_fixedF <- estimate(plvm.model,  data = df.data, 
                               regularizationPath = 2, fixSigma = TRUE, trace = TRUE)
 
+# Regularization path: 
+#   lambda1.abs   lambda1 lambda2.abs lambda2          Y          Y~X1          Y~X2          Y~X3          Y~X4          Y~X5      Y,Y
+# 1    0.000000  0.000000           0       0 -0.1524526  5.336037e-02  7.180407e-02  1.975278e-01  7.702844e-01  9.961457e-01 4.871482
+# 2    5.695471  1.164741           0       0 -0.1569030 -3.138120e-07  2.224857e-02  1.362783e-01  6.886170e-01  9.185150e-01 4.889905
+# 3    7.850742  1.600842           0       0 -0.1583223  0.000000e+00 -4.492455e-07  1.148886e-01  6.585696e-01  8.871267e-01 4.904133
+# 4   19.373807  3.856359           0       0 -0.1760161  0.000000e+00  0.000000e+00 -3.058078e-07  5.020681e-01  7.187572e-01 5.023860
+# 5   55.979355  9.694750           0       0 -0.2445928  0.000000e+00  0.000000e+00  0.000000e+00 -1.328305e-06  2.250727e-01 5.774193
+# 6   77.065116 12.688417           0       0 -0.2452854  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00 -1.089087e-06 6.073659
+# estimated using EPSODE algorithm 
+
 elvm.EPSODE1_free <- estimate(plvm.model,  data = df.data, 
                              regularizationPath = 2, fixSigma = FALSE, trace = TRUE)
 
+res.ode <- ode(y = iterBeta, 
+               times = lambda.ode, 
+               func = EPSODE_odeBeta, method = ode.method,
+               parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
+                           lambda2 = lambda2, indexPenalty = indexPenalty, indexAllCoef = indexAllCoef[1:6], 
+                           envir = envir)
+)
 elvm.EPSODE1_fixedB <- estimate(plvm.model,  data = df.data, 
                                regularizationPath = 2, fixSigma = TRUE, stepLambda1 = -50, trace = TRUE)
+
+
+# elvm.fit_tempo <- estimate(plvm.model,  data = df.data, lambda1 = 13)
 
 
 #### 2- L1 and L2 ####
