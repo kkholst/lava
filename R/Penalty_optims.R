@@ -6,7 +6,7 @@
 
 #' @title Estimate a penalized lvm model using a proximal gradient algorithm
 #' 
-optim.proxGrad <- function(start, objective, gradient, hessian, control){
+optim.proxGrad <- function(start, objective, gradient, hessian, control, ...){
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxOperator", "proxGrad")
   
   penalty <- control$penalty
@@ -20,8 +20,7 @@ optim.proxGrad <- function(start, objective, gradient, hessian, control){
   }else{
     constrain <- NULL
   }
-  
-  #### update the penalty according to start 
+ #### update the penalty according to start 
   # (some coefficient have been removed as they are chosen as a reference)
   res <- initPenalty(start = start, penalty = penalty)
   penalty$group.penaltyCoef <- res$group.penaltyCoef
@@ -59,7 +58,7 @@ optim.proxGrad <- function(start, objective, gradient, hessian, control){
 
 #' @title Estimate the penalization path
 #' 
-optim.regPath <- function(start, objective, gradient, hessian, control){
+optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
   
@@ -79,6 +78,7 @@ optim.regPath <- function(start, objective, gradient, hessian, control){
   
   #### main
   if( regPath$type == 1){
+    
     resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
                             indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                             sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,

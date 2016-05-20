@@ -230,54 +230,30 @@ plvm.model_bardety <- penalize(lvm.model_bardety)
 
 
 elvm.model_bardety <- estimate(lvm.model_bardety,  data = df.bardet)
-eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0, fixSigma = TRUE)
+eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0,
+                                control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
 
-eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
-                           lambda1 = 0, fixSigma = TRUE, trace = TRUE, 
-                           control = list(constrain = FALSE, iter.max = 1000))
-
-
-set.seed(20)
-n <- nrow(df.bardet)
-lvm.modelSim <- lvm(formula_bardety)
-regression(lvm.modelSim, formula_bardety) <- as.list( coef(lm(formula_bardety, df.bardet))[-1] )
-distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = sd(lm(formula_bardety, df.bardet)$residuals))
-df.data <- sim(lvm.modelSim,n)
-
-elvm.model <- estimate(lvm.model_bardety,  data = df.data)
-eplvm.model <- estimate(plvm.model_bardety,  data = df.data, lambda1 = 0, fixSigma = TRUE)
-
-
-
-df.data[,3]  <- df.bardet[,3] 
-
-
-coef(eplvm.model_G1) - coef(elvm.model_bardety) ### not really converged
-
-eplvm.model_G1 <- estimate(plvm.model_G1,  data = df.bardet,
-                           lambda1 = 100, fix.sigma = TRUE, 
-                           control = list(constrain = TRUE, iter.max = 1000, trace = FALSE))
-coef(eplvm.model_G1)
+eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1,
+                                control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
 
 
 plvm.model_GL <- penalize(lvm.model_bardety) 
 plvm.model_GL$penalty$group.penaltyCoef[] <- 1
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                          lambda1 = 0, fix.sigma = TRUE, 
-                          control = list(constrain = TRUE, iter.max = 1000, start = coef(elvm.model_bardety), trace = TRUE))
+                          lambda1 = 0, 
+                          control = list(constrain = TRUE, iter.max = 1000, start = coef(elvm.model_bardety)))
 coef(eplvm.model_GL) - coef(elvm.model_bardety) 
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                           lambda1 = 0, fix.sigma = TRUE, 
-                           control = list(constrain = TRUE, iter.max = 10, trace = TRUE))
-coef(eplvm.model_GL)### not really converged
-
-eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                           lambda1 = m1$lambda[2] * nrow(df.bardet), fix.sigma = TRUE, 
-                           control = list(constrain = FALSE, iter.max = 100, trace = TRUE))
+                           lambda1 = m1$lambda[2] * nrow(df.bardet),
+                           control = list(constrain = FALSE, iter.max = 1000))
 coef(eplvm.model_GL)
 m1$beta[,2]
+
+
+
+
 
 #### agreement between lasso and grouped lasso when dealing with one parameter
 plvm.model <- penalize(lvm.model_bardety, value = "bardety~X1")

@@ -1,5 +1,6 @@
 rm(list = ls())
 
+#### load
 library(penalized)
 library(optimx)
 library(numDeriv)
@@ -7,10 +8,11 @@ library(data.table)
 library(deSolve)
 library(lava)
 
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
+path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
+#### simulation
 set.seed(10)
 n <- 500
 formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:5), collapse = "+")))
@@ -23,6 +25,8 @@ lvm.model <- lvm(formula.lvm)
 elvm.model <- estimate(lvm.model, df.data)
 plvm.model <- penalize(lvm.model)
 
+
+#### objective / gradient / hessian
 objectiveO <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
   
   Xint <- cbind(1,X)
@@ -76,11 +80,10 @@ seqPark_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 seqParkNorm_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1/x@nuisance$sigma2}))
 
 #### Internal derivatives
-plvm.EPSODE0 <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE, trace = TRUE,
+plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE, trace = TRUE,
                         control = list(constrain = FALSE))
 
-plvm.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, 
-                        fixSigma = FALSE, trace = TRUE, stepLambda1 = 10,
+plvm.EPSODE_free <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, trace = TRUE,
                         control = list(constrain = FALSE))
 
 ## check
@@ -91,5 +94,13 @@ plvm.test <- estimate(plvm.model, data = df.data, lambda1 = plvm.EPSODE$opt$mess
 external.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE, trace = TRUE,
                             objective = objectiveO, gradient = gradientO, hessian = hessianO, 
                             control = list(constrain = FALSE))
+
+external.EPSODE_free <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, trace = TRUE,
+                            objective = objectiveO, gradient = gradientO, hessian = hessianO, 
+                            control = list(constrain = FALSE))
+
+# external.EPSODE == plvm.EPSODE
+# plvm.EPSODE_free != external.EPSODE_free
+
 
 # graphical model: derivatives dSigma^-1 = Omega^-1 dOmega Omega^-1

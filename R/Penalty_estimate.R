@@ -212,6 +212,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
     return(res)
     
   }else{
+    
     res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
                                method = if(regularizationPath == 0){"optim.proxGrad"}else{"optim.regPath"}, 
                                control = control, ...)

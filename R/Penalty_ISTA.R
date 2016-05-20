@@ -154,13 +154,12 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
     
     if(trace){cat(stepBT," ",iter_back, " ", max(abs(x_k - x_km1))," ",obj_k - obj_km1,"\n")}
   }
-  
   if(trace){cat("\n")}
   
   ## export
   message <- if(test.cv){"Sucessful convergence \n"
   }else{
-    paste("max absolute/relative difference: ",max(absDiff),"/",max(relDiff)," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
+    paste("max absolute/relative difference: ",max(abs(obj_k - obj_km1)),"/",max(abs(obj_k - obj_km1)/abs(obj_k))," for parameter ",which.max(absDiff),"/",which.max(relDiff),"\n")
   }
   
   return(list(par = x_k,
