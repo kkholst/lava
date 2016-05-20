@@ -3,11 +3,13 @@ rm(list = ls())
 
 #### load functions ####
 
+library(lava)
 library(penalized)
 library(optimx)
 library(numDeriv)
 library(data.table)
 library(deSolve)
+library(regsem)
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
@@ -53,6 +55,13 @@ which(coef(res_free) == 0)
 which( res.EPSODE$opt$message[10,names(coef(res_free))] == 0)
 
 rbind(coef(res_free), res.EPSODE$opt$message[10,names(coef(res_free))])
+
+
+res_free <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
+                     lambda1 = 0,
+                     control = list(constrain = TRUE, iter.max = 5000))
+res0 <- estimate(lvm.model,  data = df.data)
+coef(res0) - coef(res_free)
 
 #### 3- More complex LVM
 lvm.modelSim2 <- lvm(list(Y1 ~ eta1,
@@ -102,7 +111,7 @@ coef(res3)
 ##
 
 
-#### LAVA vs REGSEM ####
+#### 99 - LAVA vs REGSEM ####
 
 HS <- data.frame(scale(HolzingerSwineford1939[,7:15]))
 mod <- '
@@ -147,11 +156,24 @@ fitHIGH.multi_optimX <-  try(multi_optim(outt,max.try=40,
 linkLVM <- paste0(paste0("x",1:9),"~eta")
 lvm.HS <- lvm(lapply(linkLVM, as.formula))
 latent(lvm.HS) <- "eta"
-plvm.HS <- penalize(lvm.HS,linkLVM)
+plvm.HS <- penalize(lvm.HS,linkLVM[-1])
 
 elvm.HS <- estimate(lvm.HS, data = HS)
-eplvmLOW.HS <- estimate(plvm.HS, data = HS, lambda1 = 0.1*nrow(HS), control = list(start = coef(elvm.HS)) )
-eplvmHIGH.HS <- estimate(plvm.HS, data = HS, lambda1 = 0.35*nrow(HS), control = list(start = coef(elvm.HS)) )
+eplvm0.HS <- estimate(plvm.HS, data = HS, lambda1 = 0, control = list(start = coef(elvm.HS)), fixSigma = FALSE )
+eplvmLOW.HS <- estimate(plvm.HS, data = HS, lambda1 = 0.1*nrow(HS), control = list(start = coef(elvm.HS)), fixSigma = FALSE )
+eplvmHIGH.HS <- estimate(plvm.HS, data = HS, lambda1 = 0.35*nrow(HS), control = list(start = coef(elvm.HS)), fixSigma = FALSE )
+
+EPSODE.HS <- estimate(plvm.HS, data = HS, regularizationPath = 2, fixSigma = TRUE, stepLambda1 = 100, trace = TRUE)
+EPSODE.HS$opt$message[,c(1:4,14:21)]
+
+resTest <- estimate(plvm.HS,  data = HS, lambda1 = EPSODE.HS$opt$message[5,"lambda1"])
+
+# quantile(coef(elvm.HS) - coef(eplvm0.HS))
+# quantile(coef(elvm.HS) - coef(eplvm0.fixedHS))
+
+
+resTest <- estimate(plvm.HS,  data = HS, lambda1 = 100,  control = list(constrain = TRUE))
+coef(resTest)
 
 rbind(
   LAVA = coef(elvm.HS)[linkLVM[-1]],

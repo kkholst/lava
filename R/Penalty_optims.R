@@ -26,7 +26,7 @@ optim.proxGrad <- function(start, objective, gradient, hessian,...){
   lambda1[index.penaltyCoef] <- penalty$lambda1 
   lambda2 <- rep(0, n.coef)
   lambda2[index.penaltyCoef] <- penalty$lambda2 
-  
+
   res <- ISTA(start = start, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
               lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = control$proxGrad$fixSigma,
               step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = control$proxGrad$trace,

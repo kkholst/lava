@@ -108,8 +108,16 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   if(regularizationPath == 1){fixSigma <- TRUE}
   
   if(fixSigma == TRUE){
-    constrain.sigma <- setNames(1-control$constrain, names.coef[x$index$parBelongsTo$cov[1]])
-    constrain.sigma_max <- var(data[,strsplit(names(constrain.sigma), split = ",", fixed = TRUE)[[1]][1]])
+    
+    if(length(x$latent)>0){
+      names.fixedVar <- penalty$names.varCoef[grep(names(x$latent)[[1]], penalty$names.varCoef)]
+      constrain.sigma_max <-  Inf
+    }else{
+      names.fixedVar <- penalty$names.varCoef[1]
+      constrain.sigma_max <- var(data[,strsplit(names.fixedVar, split = ",", fixed = TRUE)[[1]][1]])
+    }
+    
+    constrain.sigma <- setNames(1-control$constrain, names.fixedVar)
     
     if(any(penalty$names.penaltyCoef %in% names(constrain))){
       stop("estimate.plvm: wrong specification of the penalty \n",

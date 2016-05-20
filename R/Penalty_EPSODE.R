@@ -72,6 +72,11 @@ EPSODE <- function(beta, objective, gradient, hessian, V, lambda2, group.lambda1
   setPE <- intersect(which(V %*% beta > 0), indexPenalty)
   test.ncv <- TRUE
   
+  if(control$regPath$trace){
+    cat("fixed coef      : \"",paste(setdiff(names(beta), names(beta)[indexAllCoef]), collapse = "\" \""),"\" \n", sep = "")
+    cat("value fixed coef: ",paste(beta[setdiff(names(beta), names(beta)[indexAllCoef])], collapse = " ")," \n", sep = "")
+  }
+   
   #### main loop
   while(iter < nstep_max && test.ncv){
     if(control$regPath$trace){cat("*")}
