@@ -54,20 +54,20 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
             p0 <- 0.5
         }
         ## Prevalence
-        p1 <- with(binom.test(nc[positive],n,p=p0),c(estimate,conf.int,p.value))
+        p1 <- with(stats::binom.test(nc[positive],n,p=p0),c(estimate,conf.int,p.value))
         ## Test marginal
-        p2 <- with(binom.test(nr[positive],n,p=p0),c(estimate,conf.int,p.value))
+        p2 <- with(stats::binom.test(nr[positive],n,p=p0),c(estimate,conf.int,p.value))
         ## Sensitivity/Specificity
-        sens <- with(binom.test(table[positive,positive],nc[positive],p=p0),c(estimate,conf.int,p.value))
-        spec <- with(binom.test(table[negative,negative],nc[negative],p=p0),c(estimate,conf.int,p.value))
+        sens <- with(stats::binom.test(table[positive,positive],nc[positive],p=p0),c(estimate,conf.int,p.value))
+        spec <- with(stats::binom.test(table[negative,negative],nc[negative],p=p0),c(estimate,conf.int,p.value))
         ## PPV,NPV
-        ppv <- with(binom.test(table[positive,positive],nr[positive],p=p0),c(estimate,conf.int,p.value))
-        npv <- with(binom.test(table[negative,negative],nr[negative],p=p0),c(estimate,conf.int,p.value))
+        ppv <- with(stats::binom.test(table[positive,positive],nr[positive],p=p0),c(estimate,conf.int,p.value))
+        npv <- with(stats::binom.test(table[negative,negative],nr[negative],p=p0),c(estimate,conf.int,p.value))
         ## Accuracy
-        acc <- with(binom.test(table[positive,positive]+table[negative,negative],n,p=p0),c(estimate,conf.int,p.value))
+        acc <- with(stats::binom.test(table[positive,positive]+table[negative,negative],n,p=p0),c(estimate,conf.int,p.value))
         ## Symmetry (McNemar):
         ##   number of discordant pairs under null: b~bin(b+c,0.5)
-        sym <- with(binom.test(table[positive,negative],table[positive,negative]+table[negative,positive],p=0.5),c(estimate,conf.int,p.value))
+        sym <- with(stats::binom.test(table[positive,negative],table[positive,negative]+table[negative,positive],p=0.5),c(estimate,conf.int,p.value))
         coefmat <- rbind(Prevalence=p1,
                          Test=p2,
                          Sensitivity=sens,

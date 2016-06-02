@@ -12,7 +12,7 @@ vec <- function(x,matrix=FALSE,sep=".",...) {
     if (is.vector(x) && !is.list(x)) {
         res <- x
     } else if (is.list(x)) {
-        res <- setNames(unlist(x),names(x))
+        res <- stats::setNames(unlist(x),names(x))
     } else {
         if (is.matrix(x) && is.null(rownames(x))) {
             nn <- colnames(x)

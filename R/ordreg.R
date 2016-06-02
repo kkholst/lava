@@ -143,3 +143,19 @@ ordreg_score <- function(theta,env,...) {
 ordreg_hessian <- function(theta,env,...) {
     numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta,...)
 }
+
+##' @export
+predict.ordreg <- function(object,p=coef(object),type=c("prob","cumulative"),...) {
+    env <- object$up
+    env$theta <- p
+    if (env$p>0) beta <- with(env,theta[seq(p)+K-1])
+    alpha <- with(env, threshold(theta,K))
+    env$alpha <- alpha
+    env$beta <- beta
+    if (env$p>0) eta <- env$X%*%beta else eta <- cbind(rep(0,env$n))
+    env$lp <- kronecker(-eta,rbind(alpha),"+")
+    F <- with(env,h(lp))
+    if (tolower(type)[1]=="cumulative") return(F)            
+    Pr <- cbind(F,1)-cbind(0,F)
+    return(Pr)
+}
