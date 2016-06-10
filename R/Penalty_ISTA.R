@@ -27,7 +27,7 @@
 #' Bech and Teboulle - 2009 A Fast Iterative Shrinkage-Thresholding Algorithm
 #' Li 2015 - Accelerated Proximal Gradient Methods for Nonconvex Programming
 #' Simon 2013 - A sparse group Lasso
-ISTA <- function(start, proxOperator, hessian, gradient, objective,
+proxGrad <- function(start, proxOperator, hessian, gradient, objective,
                  lambda1, lambda2, group.lambda1,
                  step, BT.n, BT.eta, constrain, 
                  iter.max, abs.tol, rel.tol, fast, trace = FALSE){
@@ -70,8 +70,18 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
     
     while( (iter_back < BT.n) && (diff_back > 0) ){
       stepBT <- step*BT.eta^iter_back
+      # cat("*",stepBT, " ")
       
-      if(fast == 1){ # FISTA
+      if (fast == 0){ # ISTA
+        grad_tempo <- gradient(x_km1)
+        
+        x_k <- proxOperator(x = x_km1 - stepBT * grad_tempo, 
+                            step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
+        
+        if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+        diff_tempo <- x_k - x_km1
+        obj_tempo <- obj_km1
+      }else if (fast == 1){ # FISTA
         grad_tempo <- gradient(y_k)
         
         x_k <- proxOperator(x = y_k - stepBT * grad_tempo, 
@@ -93,9 +103,9 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         x_k <- if(objective(z_k)<=objective(v_k)){z_k}else{v_k}
         if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
         
-        diff_tempo <- x_k - y_k
-        grad_tempo <- gradient(y_k)
-        obj_tempo <- objective(y_k)
+        diff_tempo <- x_k - x_km1#x_k - y_k
+        grad_tempo <- gradient(x_km1)#gradient(y_k)
+        obj_tempo <- obj_km1#objective(y_k)
         
       }else if(fast == 3){ # Nesterov step
         z_km1 <- z_k
@@ -108,15 +118,6 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
         grad_tempo <- try(gradient(z_k))#(x_km1)#
         obj_tempo <- try(objective(z_k))#obj_km1#
         
-      }else{ # ISTA
-        grad_tempo <- gradient(x_km1)
-       
-        x_k <- proxOperator(x = x_km1 - stepBT * grad_tempo, 
-                            step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
-        
-        if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
-        diff_tempo <- x_k - x_km1
-        obj_tempo <- obj_km1
       }
       
       obj_k <- try(objective(x_k))
@@ -128,6 +129,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
       iter_back <- iter_back + 1
     }
     
+    # print(x_k)
     if(fast == 1){
       t_km1 <- t_k
       t_k <- (1 + sqrt(1 + 4 * t_km1^2)) / 2
@@ -146,6 +148,7 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
     }
     # could also be computed using the Barzilai-Borwein Method     
     # step = crossprod(diff_x) / crossprod(diff_x, gradient(x_km1) - gradient(x_k)) 
+    print(obj_k - obj_km1)
     
     iter <- iter + 1
     absDiff <- abs(obj_k - obj_km1) < abs.tol
@@ -169,4 +172,43 @@ ISTA <- function(start, proxOperator, hessian, gradient, objective,
               evaluations = c("function" = 0, "gradient" = iter),
               message = message
   ))
+}
+
+
+ISTA <- function(x, step, gradient, 
+                 constrain, 
+                 lambda1, lambda2, test.penalty1, test.penalty2){
+  
+  grad.x <- gradient(x)
+  
+  x_new <- proxOperator(x = x - step * grad.x, 
+                      step = stepBT, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
+  
+  if(!is.null(constrain)){x_new[names(constrain)] <- constrain}
+  
+  return(list(x_new = x_new,
+              delta_x = x_new - x,
+              gradient_x = diff_tempo))
+}
+
+
+FISTA <- function(x, t, x_old, t_old, step, gradient, 
+                 constrain, 
+                 lambda1, lambda2, test.penalty1, test.penalty2){
+  
+  
+  y <- x + (t_old-1)/t * (x - x_old)
+  grad.y <- gradient(y)
+  x_new <- proxOperator(x = y - step * grad.y, 
+                        step = step, 
+                        lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
+  if(!is.null(constrain)){x_k[names(constrain)] <- constrain}
+  t_new <- (1 + sqrt(1 + 4 * t^2)) / 2
+  
+  diff_tempo <- x_k - y_k
+  obj_tempo <- objective(y_k)
+  
+  return(list(x_new = x_new,
+              delta_x = x_new - x,
+              gradient_x = diff_tempo))
 }

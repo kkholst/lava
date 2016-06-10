@@ -6,7 +6,7 @@
 
 #' @title Estimate a penalized lvm model using a proximal gradient algorithm
 #' 
-optim.proxGrad <- function(start, objective, gradient, hessian, control, ...){
+optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxOperator", "proxGrad")
   
   penalty <- control$penalty
@@ -32,10 +32,10 @@ optim.proxGrad <- function(start, objective, gradient, hessian, control, ...){
   lambda2 <- rep(0, n.coef)
   lambda2[index.penaltyCoef] <- penalty$lambda2 
   
-  res <- ISTA(start = start, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-              lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = constrain,
-              step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = control$proxGrad$trace,
-              iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast)
+  res <- proxGrad(start = start, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                  lambda1 = lambda1, lambda2 = lambda2, group.lambda1 = penalty$group.penaltyCoef, constrain = constrain,
+                  step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = control$proxGrad$trace,
+                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast)
   
   res$objective <- objective(res$par) + penalized_objectivePen.lvm(res$par, lambda1 = lambda1, lambda2 = lambda2)
   
@@ -78,7 +78,6 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
   #### main
   if( regPath$type == 1){
-    
     resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
                             indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                             sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,

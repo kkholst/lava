@@ -16,51 +16,8 @@ library(deSolve)
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #"C:/Users/hpl802/Downloads/lava-penalization/lava-penalization"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
+source(file.path(path.lava,"tests","FCT.R"))
 
-coef2.penalized <- function(x, iter_lambda){
-  
-  if(is.list(x)){
-    
-    if(!missing(iter_lambda)){
-      x <- x[[iter_lambda]]
-    }else{
-      res <- lapply(x, function(model){
-        c(model@lambda1,
-          model@lambda2,
-          model@unpenalized, 
-          model@penalized, 
-          model@nuisance$sigma2)
-      })
-      
-      Mres <- matrix(unlist(res), nrow = length(res), byrow = TRUE)
-      colnames(Mres) <- c("lambda1","lambda2",names(x[[1]]@unpenalized),names(x[[1]]@penalized),"sigma2")
-      return(Mres)
-    }
-    
-  } 
-  
-  coef <- c(x@unpenalized, 
-            x@penalized, 
-            x@nuisance$sigma2)
-  return(coef)
-}
-
-validLVM <- function(x){
-  library(penalized)
-  
-  lambda1 <- x$penalty$lambda1
-  if(is.null(x$control$proxGrad$sigmaMax)){lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
-  lambda2 <- x$penalty$lambda2
-  if(is.null(x$control$proxGrad$sigmaMax)){lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
-  
-  resPenalized <- penalized(as.formula(paste0(endogenous(x),"~.")), 
-                            lambda1 = lambda1, 
-                            lambda2 = lambda2, 
-                            data = x$data$model.frame, trace = FALSE)
-  diffCoef <- coef(x) - coef2.penalized(resPenalized)
-  
-  return(diffCoef)
-}
 
 #### 0- simulation ####
 set.seed(20)
@@ -72,42 +29,14 @@ distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
 df.data <- sim(lvm.modelSim,n)
 
 lvm.model <- lvm(formula.lvm)
+elvm.model <- estimate(lvm.model,  data = df.data)
 plvm.model <- penalize(lvm.model)
 
 
 #### 1- only L1 ####
 
-####
-penalized.PathL1 <- penalized(Y ~  ., data = df.data, steps = "Park", trace = TRUE)
-seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
-
-#### check fix lambda ####
-beta.free <- NULL
-beta.fixed <- NULL
-
-for(iter_l in 1:length(seq_lambda)){
-  cat(iter_l, " : ",penalized.PathL1[[iter_l]]@lambda1,"\n")
-  
-  elvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
-                             lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                             control = list(constrain = TRUE))
-  
-  beta.free <- rbind(beta.free, 
-                     c(iter = elvm.fit_tempo1$opt$iterations, coef(elvm.fit_tempo1), 
-                       range(validLVM(elvm.fit_tempo1)))
-  )
- 
-  elvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
-                             lambda1 = penalized.PathL1[[iter_l]]@lambda1)
-  
-  beta.fixed <- rbind(beta.fixed,
-                     c(iter = elvm.fit_tempo2$opt$iterations, coef(elvm.fit_tempo2), 
-                       range(validLVM(elvm.fit_tempo2)))
-  )
-}
-
 #### check path ####
-elvm.PathL1_fixed <- estimate(plvm.model,  data = df.data, 
+elvm.PathL1_fixed <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
                               regularizationPath = 1)
 elvm.PathL1_fixed$opt$message
 
@@ -161,32 +90,6 @@ elvm.EPSODE1_fixedB <- estimate(plvm.model,  data = df.data,
 penalized.PathL12 <- penalized(Y ~  ., data = df.data, steps = "Park", lambda2 = 100, trace = FALSE)
 seq_lambda <- unlist(lapply(penalized.PathL12, function(x){x@lambda1}))
 
-beta.free <- NULL 
-beta.fixed <- NULL
-
-for(iter_l in 1:length(seq_lambda)){
-  cat(iter_l, " : ",penalized.PathL12[[iter_l]]@lambda1,"\n")
-  
-  elvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, 
-                             lambda1 = penalized.PathL12[[iter_l]]@lambda1/penalized.PathL12[[iter_l]]@nuisance$sigma2, 
-                             lambda2 = penalized.PathL12[[iter_l]]@lambda2/penalized.PathL12[[iter_l]]@nuisance$sigma2)
-  
-  beta.free <- rbind(beta.free,
-                     c(iter = elvm.fit_tempo1$opt$iterations, coef(elvm.fit_tempo1), 
-                       range(validLVM(elvm.fit_tempo1)))
-  )
-  
-  elvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
-                             lambda1 = penalized.PathL12[[iter_l]]@lambda1, lambda2 = penalized.PathL12[[iter_l]]@lambda2)
-  
-  beta.fixed <- rbind(beta.fixed,
-                      c(iter = elvm.fit_tempo2$opt$iterations, coef(elvm.fit_tempo2), 
-                        range(validLVM(elvm.fit_tempo2)))
-  )
-}
-
-coef(estimate(lvm.model,  data = df.data))
-
 #### check path ####
 elvm.PathL12_fixed <- estimate(plvm.model,  data = df.data, 
                               regularizationPath = 1, lambda2 = 100, 
@@ -230,12 +133,28 @@ plvm.model_bardety <- penalize(lvm.model_bardety)
 
 
 elvm.model_bardety <- estimate(lvm.model_bardety,  data = df.bardet)
+eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0, fast = 1,
+                                control = list(constrain = TRUE, iter.max = 2000))
+eplvm.model_bardety$opt$iterations
+
+eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, fast = 1,
+                                     control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
+
+
 eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0,
                                 control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
 
-eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1,
-                                control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
+coef(penalized(Y ~ X1+X2+X3+X4+X5, data = df.bardet, lambda1 = 1))
 
+eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1,
+                                     control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
+
+
+
+
+eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, fixSigma = TRUE,
+                                control = list(constrain = TRUE))
+#
 
 plvm.model_GL <- penalize(lvm.model_bardety) 
 plvm.model_GL$penalty$group.penaltyCoef[] <- 1
@@ -252,6 +171,16 @@ coef(eplvm.model_GL)
 m1$beta[,2]
 
 
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet, fixSigma = TRUE,
+                           lambda1 = m1$lambda[1] * nrow(df.bardet),
+                           control = list(constrain = FALSE, iter.max = 1000))
+
+
+iterLambda <- 100
+eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet, fixSigma = TRUE,
+                           lambda1 = m1$lambda[iterLambda] * nrow(df.bardet),
+                           control = list(constrain = FALSE, iter.max = 1000))
+coef(eplvm.model_GL)[grep("X",names(coef(eplvm.model_GL)), fixed = TRUE)] - m1$beta[,iterLambda]
 
 
 

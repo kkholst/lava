@@ -25,7 +25,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
                    indexPenalty, indexNuisance, 
                    stepLambda1, stepIncreasing, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,15),#, 
                    ode.method = "euler", control, trace){
-  
+
   #### preparation
   n.coef <- length(beta)
   lambda2_save <- lambda2
@@ -47,19 +47,19 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
   #### initialization
   iter <- 1
   if(is.null(stepLambda1)){
-    stepLambda1 <- max( abs(-gradient(beta_lambdaMax) )[indexPenalty] )*stepIncreasing 
+    stepLambda1 <- max( abs(-gradient(beta_lambdaMax) )[indexPenalty] )*if(stepIncreasing){1}else{-1}
     if(length(indexNuisance) > 0){stepLambda1 <- stepLambda1 * sum(beta_lambdaMax[indexNuisance])}
   }
   
   if(stepLambda1 > 0){
     seq_lambda1 <- 0  
   }else{
-    seq_lambda1 <-  max( abs(-gradient(beta_lambdaMax) )[indexPenalty] ) * 1.1 # initialisation with the fully penalized solution
+    seq_lambda1 <-  max( abs(-gradient(beta_lambdaMax) )[indexPenalty] ) * sum(beta_lambdaMax[indexNuisance]) * 1.1 # initialisation with the fully penalized solution
   }
-  
+ 
   if(any(lambda2 > 0) | stepLambda1 < 0){
     if(length(indexNuisance) > 0){
-      constrain <- setNames( rep(1 - dots$control$constrain, length(indexNuisance) ), names(beta)[indexNuisance]) 
+      constrain <- setNames( rep(1 - control$constrain, length(indexNuisance) ), names(beta)[indexNuisance]) 
     }else{
       constrain <- NULL
     }
@@ -101,8 +101,8 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     ## Solve ODE 
     lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + stepLambda1), length.out = resolution_lambda1)
     cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
-
-    res.ode <- ode(y = iterBeta, 
+    
+    res.ode <- deSolve::ode(y = iterBeta, 
                    times = lambda.ode, 
                    func = EPSODE_odeBeta, method = ode.method,
                    parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
@@ -112,13 +112,13 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
     indexM.breakpoint <- max(1, index.breakpoint - 1)
     indexP.breakpoint <- min(resolution_lambda1, index.breakpoint + 1)
-    
+  
     ## more precise estimate
     if(cv.ODE["cv"] == 1){
       lambda.ode <- seq(res.ode[indexM.breakpoint, 1], res.ode[indexP.breakpoint, 1], length.out = resolution_lambda1)
       cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
       
-      res.ode <- ode(y = res.ode[indexM.breakpoint,-1], 
+      res.ode <- deSolve::ode(y = res.ode[indexM.breakpoint,-1], 
                      times = lambda.ode, 
                      func = EPSODE_odeBeta, method = ode.method,
                      parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 

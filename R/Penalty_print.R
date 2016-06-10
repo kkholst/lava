@@ -35,7 +35,6 @@
   invisible(x)
 }
 
-
 ##' @export
 `print.plvmfit` <-
   function(x,level=2,labels=FALSE,...) {

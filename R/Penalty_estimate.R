@@ -73,7 +73,7 @@
 estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
                           regularizationPath = FALSE, stepLambda1 = NULL, increasing = TRUE,
                           fast = FALSE, step = 1, BT.n = 20, BT.eta = 0.5, trace = FALSE,
-                          fixSigma = TRUE, ...) {
+                          fixSigma = FALSE, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)
@@ -101,7 +101,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   control$penalty <- penalty
   
   ## identifiability issue!!
-  if(regularizationPath == 1 || fixSigma == TRUE){
+  if(regularizationPath > 0 || fixSigma == TRUE){
     
     n.varCoef <- length(penalty$names.varCoef)
     constrain.sigma_max <- setNames(rep(Inf, n.varCoef), penalty$names.varCoef)
@@ -118,7 +118,6 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   }
   
   ## pass parameters for the penalty through the control argument
-  
   control$proxGrad <- list(fast = fast,
                            step = step,
                            BT.n = BT.n,
@@ -130,6 +129,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   control$regPath <- list(type = regularizationPath,
                           stepLambda1 = stepLambda1,
                           increasing = increasing,
+                          fixSigma = fixSigma,
                           trace = if(regularizationPath > 0){trace}else{FALSE})
   
   ## proximal operator 
@@ -178,7 +178,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
     res.init  <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef,
                                  penalty = control$penalty, regPath = control$regPath, ...)
     
-    if(regularizationPath == 1 || (regularizationPath == 2 && increasing == TRUE)){
+    if(regularizationPath > 0){
       control$start <- res.init$lambda0
       
       if(regularizationPath == 2){
@@ -194,7 +194,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
   if(all(c("objective", "gradient", "hessian") %in% names(list(...)))){
     
     if(regularizationPath == 0){
-      res <- optim.proxGrad(start = control$start, 
+      res <- optim.regLL(start = control$start, 
                             objective = list(...)$objective, gradient = list(...)$gradient, hessian = list(...)$hessian, 
                             control = control)
     }else{
@@ -212,9 +212,8 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
     return(res)
     
   }else{
-    
     res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
-                               method = if(regularizationPath == 0){"optim.proxGrad"}else{"optim.regPath"}, 
+                               method = if(regularizationPath == 0){"optim.regLL"}else{"optim.regPath"}, 
                                control = control, ...)
   }
   
@@ -243,7 +242,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, control = list(),
 #' @param regPath parameter of the penalisation path
 #' 
 initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
-  
+
   #### normal model
   initLVM <- try(lava:::estimate.lvm(x = x, data = data, ...))
   if("try-error" %in% class(initLVM) == FALSE){
@@ -459,7 +458,7 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
   lambda2[which(names(mu.X) %in% penaltyCoef)] <- 1/(sd.X[which(names(mu.X) %in% penaltyCoef)]^2)
   
   ## export
-  return(list(data = data,
+   return(list(data = data,
               orthogonalizer = orthogonalizer,
               sd.X = sd.X,
               mu.X = mu.X,
