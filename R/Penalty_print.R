@@ -36,8 +36,7 @@
 }
 
 ##' @export
-`print.plvmfit` <-
-  function(x,level=2,labels=FALSE,...) {
+`print.plvmfit` <- function(x,level=2,labels=FALSE,...) {
     
     if(x$penalty$regularizationPath == 0){
     
@@ -52,7 +51,6 @@
     if(x$penalty$lambda2>0){
       Mtempo <- rbind(Mtempo, "   L2 lambda" = c(x$penalty$lambda2, rep("",ncol.M-1)))
     }
-    
     
     print(Mtempo,quote=FALSE,right=TRUE)
     minSV <- attr(vcov(x),"minSV")

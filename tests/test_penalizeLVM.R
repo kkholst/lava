@@ -44,12 +44,48 @@ plvm.model <- penalize(lvm.model)
 res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 20, trace = TRUE,
                        control = list(constrain = FALSE, iter.max = 5000))
 
-
+iterLambda <- 15
+lambda_tempo <- penPath(res.EPSODE, type = "lambda1", row = iterLambda)#res.EPSODE$opt$message[10,"lambda1.abs"],
 system.time(
-res_free <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
-                lambda1 = res.EPSODE$opt$message[10,"lambda1.abs"],
-                control = list(constrain = TRUE, iter.max = 5000))
+  res_free <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
+                       lambda1 = lambda_tempo,
+                       control = list(constrain = TRUE, iter.max = 5000))
 )
+cbind(coef(res_free), as.numeric(penPath(res.EPSODE, type = "coef", row = iterLambda)))
+
+range( coef(res_free) - penPath(res.EPSODE, type = "coef", row = iterLambda) )
+
+lava:::print.lvmfit(res_free)
+
+# lvm.modelC <- lvm.model
+# coeff <- penPath(res.EPSODE, type = "coef")[15,]
+# coefff <- coeff[grep("~", names(coeff), fixed = TRUE)]
+# for(iter_p in 1:length(coefff)){
+#   regression(lvm.modelC, as.formula(names(coefff)[iter_p])) <- coefff[iter_p]
+# }
+# coefff <- coeff[setdiff(1:length(coeff), grep("~|,", names(coeff)))]
+# for(iter_p in 1:length(coefff)){
+#   intercept(lvm.modelC, as.formula(paste0("~",names(coefff)[iter_p]))) <- coefff[iter_p]
+# }
+# 
+# estimate(lvm.modelC, data = df.data)
+
+lvm.model
+?constrain
+penPath(res.EPSODE, type = "coef")[1,]
+res.EPSODE[,1:15]
+
+
+res.EPSODE$opt$message[,c(1,2)]
+
+estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 20, trace = TRUE,
+         control = list(constrain = FALSE, iter.max = 5000))
+
+
+
+coef(res_free)
+cbind(res.EPSODE$opt$message[iterLambda,-(1:4),drop = TRUE], coef(res_free))
+
 coef(res_free) - res.EPSODE$opt$message[10,names(coef(res_free))]
 which(coef(res_free) == 0)
 which( res.EPSODE$opt$message[10,names(coef(res_free))] == 0)

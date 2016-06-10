@@ -133,9 +133,13 @@ plvm.model_bardety <- penalize(lvm.model_bardety)
 
 
 elvm.model_bardety <- estimate(lvm.model_bardety,  data = df.bardet)
-eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0, fast = 1,
+eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0, 
+                                method.proxGrad = "FISTA",
+                                trace =TRUE, 
                                 control = list(constrain = TRUE, iter.max = 2000))
 eplvm.model_bardety$opt$iterations
+
+
 
 eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, fast = 1,
                                      control = list(constrain = TRUE, start = coef(elvm.model_bardety)))

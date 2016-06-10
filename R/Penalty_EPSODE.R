@@ -34,12 +34,12 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
   envir <- environment()
    
   #### constrain 
-  if(length(indexNuisance) > 1){
-    indexAllCoef <- 1:n.coef
-    beta[indexNuisance] <- beta[indexNuisance]/sum(beta[indexNuisance])
-  }else if(length(indexNuisance) == 1){
-    indexAllCoef <- setdiff(1:n.coef, indexNuisance )
-    beta[indexNuisance] <- 1-control$constrain
+  if(length(indexNuisance) > 0){
+    indexAllCoef <- setdiff(1:n.coef, indexNuisance[1])
+    beta[indexNuisance] <- beta[indexNuisance]/beta[indexNuisance[1]]
+    if(control$constrain){
+      beta[indexNuisance] <- log(beta[indexNuisance])
+    }
   }else{
     indexAllCoef <- 1:n.coef
   }
@@ -48,7 +48,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
   iter <- 1
   if(is.null(stepLambda1)){
     stepLambda1 <- max( abs(-gradient(beta_lambdaMax) )[indexPenalty] )*if(stepIncreasing){1}else{-1}
-    if(length(indexNuisance) > 0){stepLambda1 <- stepLambda1 * sum(beta_lambdaMax[indexNuisance])}
+    if(length(indexNuisance) > 0){stepLambda1 <- stepLambda1 * sum(beta_lambdaMax[indexNuisance[1]])}
   }
   
   if(stepLambda1 > 0){
@@ -57,17 +57,17 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     seq_lambda1 <-  max( abs(-gradient(beta_lambdaMax) )[indexPenalty] ) * sum(beta_lambdaMax[indexNuisance]) * 1.1 # initialisation with the fully penalized solution
   }
  
-  if(any(lambda2 > 0) | stepLambda1 < 0){
+  if(any(lambda2 > 0) | stepLambda1 < 0){ ### TOFIX for sum sigma
     if(length(indexNuisance) > 0){
       constrain <- setNames( rep(1 - control$constrain, length(indexNuisance) ), names(beta)[indexNuisance]) 
     }else{
       constrain <- NULL
     }
-    beta <- do.call("ISTA",
+    beta <- do.call("proxGrad",
                     list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = constrain,
                          step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
-                         iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, fast = control$proxGrad$fast))$par
+                         iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
   }
   
   ##
@@ -112,7 +112,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
     indexM.breakpoint <- max(1, index.breakpoint - 1)
     indexP.breakpoint <- min(resolution_lambda1, index.breakpoint + 1)
-  
+    
     ## more precise estimate
     if(cv.ODE["cv"] == 1){
       lambda.ode <- seq(res.ode[indexM.breakpoint, 1], res.ode[indexP.breakpoint, 1], length.out = resolution_lambda1)
@@ -205,12 +205,12 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   #### Hessian and gradient
   Hfull <- ls.args$hessian(y)
   H <- Hfull[ls.args$indexAllCoef,ls.args$indexAllCoef, drop = FALSE]
-  attr(H, "grad")  <- attr(Hfull, "grad")[ls.args$indexAllCoef, drop = FALSE]
+  attr(H, "grad")  <- attr(Hfull, "grad")[ls.args$indexAllCoef, drop = FALSE] ## can we instead set the derivative to 0 ??
   if(any(ls.args$lambda2>0)){
     attr(H, "grad") <- attr(H, "grad") + ls.args$lambda2[ls.args$indexAllCoef, drop = FALSE] * y[ls.args$indexAllCoef, drop = FALSE]
     H[] <- H[] + diag(ls.args$lambda2[ls.args$indexAllCoef, drop = FALSE])
   }
-  
+ 
   #### estimate Q and P
   H_m1 <- solve(H)
   

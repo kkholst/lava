@@ -155,11 +155,11 @@
   
    #### penalization parameters
   if(!missing(lambda1)){
-    x$penalty$lambda1 <- lambda1
+    x$penalty$lambda1 <- as.numeric(lambda1)
   }
   
   if(!missing(lambda1)){
-    x$penalty$lambda2 <- lambda2
+    x$penalty$lambda2 <- as.numeric(lambda2)
   }
   
   #### export

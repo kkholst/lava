@@ -99,8 +99,8 @@ for(iter_l in 1:length(seq_lambda)){
   
   # fixed sigma
   test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=unname(validLVM(eplvm.fit_tempo2)),
-                 expected=rep(0,length(coef(eplvm.fit_tempo2))),
+    expect_equal(object=eplvm.fit_tempo1$coef[,1],
+                 expected=eplvm.fit_tempo1$coef[,1],
                  tolerance=0.001,scale=1)    
   })
  
