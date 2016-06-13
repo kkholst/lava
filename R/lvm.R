@@ -9,6 +9,7 @@
 ##' \code{c("y1","y2")}. Alternatively the argument can be a formula specifying
 ##' a linear model.
 ##' @param \dots Additional arguments to be passed to the low level functions
+##' @param latent (optional) Latent variables
 ##' @param silent Logical variable which indicates whether messages are turned
 ##' on/off.
 ##' @return Returns an object of class \code{lvm}.
@@ -24,10 +25,9 @@
 ##' m2 <- lvm(~y1+y2) # Model with two independent variables (argument)
 ##' m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 ##'
-lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
+lvm <- function(x=NULL, ..., latent=NULL, silent=lava.options()$silent) {
 
   M <- C <- par <- fix <- numeric(); mu <- list()
-
 
   noderender <- list(
                   fill=c(),
@@ -101,6 +101,9 @@ lvm <- function(x=NULL, ..., silent=lava.options()$silent) {
   if (!is.null(myvar)) {
     index(res) <- reindex(res,zeroones=TRUE) }
 
+  if (!is.null(latent)) {
+      latent(res) <- latent
+  }
 
   return(res)
 }

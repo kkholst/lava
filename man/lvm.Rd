@@ -6,7 +6,7 @@
 \alias{summary.lvm}
 \title{Initialize new latent variable model}
 \usage{
-lvm(x = NULL, ..., silent = lava.options()$silent)
+lvm(x = NULL, ..., latent = NULL, silent = lava.options()$silent)
 }
 \arguments{
 \item{x}{Vector of variable names. Optional but gives control of the
@@ -14,6 +14,8 @@ sequence of appearance of the variables. The argument can be given as a
 character vector or formula, e.g. \code{~y1+y2} is equivalent to
 \code{c("y1","y2")}. Alternatively the argument can be a formula specifying
 a linear model.}
+
+\item{latent}{(optional) Latent variables}
 
 \item{silent}{Logical variable which indicates whether messages are turned
 on/off.}
