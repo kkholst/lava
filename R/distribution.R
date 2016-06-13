@@ -8,17 +8,23 @@
 "distribution" <- function(x,...,value) UseMethod("distribution")
 
 ##' @export
-"distribution<-.lvm" <- function(x,variable,parname=NULL,init.par,mdist=FALSE,...,value) {
+"distribution<-.lvm" <- function(x,variable,parname=NULL,init,mdist=FALSE,...,value) {
   if (inherits(variable,"formula")) variable <- all.vars(variable)
   dots <- list(...)
+
+  if (!missing(value)) {
+      for (obj in c("variable","parname","init","mdist"))
+          if (!is.null(attr(value,obj)) && eval(substitute(missing(a),list(a=obj))))
+              assign(obj,attr(value,obj))
+  }
   ## Generator <- (is.function(value) && inherits(try(do.call(value,list()),silent=TRUE),"try-error"))
   ## if (Generator && length(variable)==1) value <- list(value)
   if (!is.null(parname) || length(dots)>0) { ## || Generator) {
       if (length(parname)>1 || (is.character(parname))) {
-          if (missing(init.par)) {
+          if (missing(init)) {
               parameter(x,start=rep(1,length(parname))) <- parname
           } else {
-              parameter(x,start=init.par) <- parname
+              parameter(x,start=init) <- parname
           }
           ## if ("..."%ni%names(formals(value))) formals(value) <- c(formals(value),alist(...=))
           ## formals(value) <- modifyList(formals(value),dots)
@@ -193,7 +199,7 @@ pareto.lvm <- function(lambda=1,...) {   ## shape: lambda, scale: mu
     return(f)
 }
 
-###}}} poisson
+###}}} pareto
 
 ###{{{ threshold
 
@@ -208,7 +214,7 @@ threshold.lvm <- function(p,labels=NULL,...) {
         cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))
 }
 
-###}}}
+###}}} threshold
 
 ###{{{ binomial
 
@@ -249,7 +255,6 @@ probit.lvm <- binomial.lvm("probit")
 
 ###{{{ Gamma
 
-
 ##' @export
 Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
   fam <- stats::Gamma(link); fam$link <- link
@@ -286,14 +291,15 @@ Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,.
 ##' @export
 loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
-
 ###}}} Gamma
 
 ###{{{ chisq
+
 ##' @export
 chisq.lvm <- function(df=1,...) {
     function(n,mu,var,...) mu + rchisq(n,df=df)
 }
+
 ###}}} chisq
 
 ###{{{ student (t-distribution)
@@ -359,6 +365,7 @@ weibull.lvm <- function(scale=100,shape=2) {
 ###}}} weibull
 
 ###{{{ sequence
+
 ##' @export
 sequence.lvm <- function(a=0,b=1,integer=FALSE) {
     if (integer) {
@@ -376,9 +383,11 @@ sequence.lvm <- function(a=0,b=1,integer=FALSE) {
     }
     return(f)
 }
+
 ###}}} sequence
 
 ###{{{ ones
+
 ##' @export
 ones.lvm <- function(p=1,interval=NULL) {
     f <- function(n,...) {
@@ -400,6 +409,55 @@ ones.lvm <- function(p=1,interval=NULL) {
         }
   return(f)
 }
+
 ###}}} ones
 
-###}}}
+###{{{ beta
+
+##' @export
+beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
+    ## CDF: F(x) = B(x,alpha,beta)/B(alpha,beta)
+    ## Mean: alpha/(alpha+beta)
+    ## Var: alpha*beta/((alpha+beta)^2*(alpha+beta+1))
+    if (scale)
+        f <- function(n,mu,var,...) {
+            m <- alpha/(alpha+beta)
+            v <- alpha*beta/((alpha+beta)^2*(alpha+beta+1))
+            y <- stats::rbeta(n,shape1=alpha,shape2=beta) 
+            mu+(y-m)*sqrt(var/v)
+        }
+    else
+        f <- function(n,mu,var,...) stats::rbeta(n,shape1=alpha,shape2=beta)
+    return(f)
+}
+
+###}}} beta
+
+###{{{ Gaussian mixture
+
+##' @export
+GM2.lvm <- function(...,parname=c("Pr","M1","M2","V1","V2"),init=c(0.5,-4,4,1,1)) {
+    f <- function(n,pr,m1,m2,v1,v2) {
+        y1 <- rnorm(n,m1,v1^0.5)
+        if (pr>=1) return(y1)
+        z <- rbinom(n,1,pr)
+        y2 <- rnorm(n,m2,v2^0.5)
+        return(z*y1+(1-z)*y2)       
+    }
+    structure(f,parname=parname,init=init)
+}
+
+##' @export
+GM3.lvm <- function(...,parname=c("Pr1","Pr2","M1","M2","M3","V1","V2","V3"),init=c(0.25,0.5,-4,0,4,1,1,1)) {
+    f <- function(n,pr1,pr2,m1,m2,m3,v1,v2,v3) {
+        p <- c(pr1,pr2,1-pr1-pr2)
+        y1 <- rnorm(n,m1,v1^0.5)
+        y2 <- rnorm(n,m2,v2^0.5)
+        y3 <- rnorm(n,m3,v3^0.5)
+        z <- stats::rmultinom(n,1,p)
+        rowSums(cbind(y1,y2,y3)*t(z))
+    }
+    structure(f,parname=parname,init=init)
+}
+
+###}}} Gaussian mixture
