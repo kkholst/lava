@@ -140,6 +140,7 @@
         if (!silent) {
             cat(paste(res, collapse="\n")); cat("\n")
         }
+        if (!is.null(object$order)) res <- res[object$order]
         res
     }
 
@@ -174,7 +175,7 @@ function(object, level=ifelse(missing(type),-1,2),
           myorder <- match(c1,names(coefs))
           myorder.reg <- order(na.omit(match(names(coefs),c1.)))
           myorder.extra <- c()
-          ##mp <- modelPar(object,seq_len(npar+npar.mean+npar.ex))
+          ##mp <-effect modelPar(object,seq_len(npar+npar.mean+npar.ex))
           ## mp <- modelPar(object,seq_len(npar+npar.mean+npar.ex))
           ## myorder <- c(mp$meanpar,mp$p)
           ## myorder.reg <- seq_len(length(mp$p))
@@ -253,7 +254,6 @@ function(object, level=ifelse(missing(type),-1,2),
   nlincon.estimates <- nlincon.estimates.full[,-(5:6),drop=FALSE]
   matched <- c()
   res <- c()
-
   for (i in seq_len(ncol(A)))
     for (j in seq_len(nrow(A))) {
       val <- A[j,i]
