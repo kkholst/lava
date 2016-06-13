@@ -100,7 +100,7 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
         Y <- as.matrix(data[,manifest(x)])
-        mu <- t(M$xi)%x%rep(1,nrow(Y))
+        mu <- M$xi%x%rep(1,nrow(Y))
         ss <- -mets::scoreMVN(Y,mu,M$C,D$dxi,D$dS)
         if (!indiv) return(colSums(ss))
         return(ss)
@@ -122,4 +122,4 @@ normal_hessian.lvm <- function(x,p,n,...) {
     ## return(J)
 }
 
-normal_gradient.lvm <- normal_hessian.lvm <- NULL
+##normal_gradient.lvm <- normal_hessian.lvm <- NULL

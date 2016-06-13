@@ -1,7 +1,7 @@
 
 ##' @export
 plot.estimate <- function(x,f,idx,intercept=FALSE,data,confint=TRUE,type="l",xlab="x",ylab="f(x)",col=1,add=FALSE,...) {
-    if (!missing(f)) {
+    if (!missing(f) && !is.null(f)) {
         data <- as.list(data)
         env <- new.env()
         for (y in names(data)) {

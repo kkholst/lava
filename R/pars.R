@@ -5,7 +5,9 @@
 ##' @export
 pars.default <- function(x,...) {
   if (!is.null(x$opt$estimate))
-    return(x$opt$estimate)
+      return(x$opt$estimate)
+  if (!is.null(x$opt$par))
+      return(x$opt$par)
   if (!is.null(x$coef))
     return(x$coef)
   return(coef(x))

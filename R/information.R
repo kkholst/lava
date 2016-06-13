@@ -25,7 +25,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     B <- eval.parent(cl)
     return(B%*%A%*%B)
   }
-  if (type[1]%in%c("num","hessian","obs")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
+  if (type[1]%in%c("num","hessian","obs","observed")  | (type[1]%in%c("E","hessian") & model!="gaussian")) {
       ##    requireNamespace("numDeriv")
     myf <- function(p0) score(x, p=p0, model=model,data=data, weight=weight,weight2=weight2,indiv=FALSE,n=n) ##...)
     ##    I <- -hessian(function(p0) logLik(x,p0,dd),p)

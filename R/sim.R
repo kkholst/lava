@@ -13,9 +13,12 @@
 ##' binomial.lvm
 ##' poisson.lvm
 ##' uniform.lvm
+##' beta.lvm
 ##' normal.lvm
 ##' lognormal.lvm
 ##' gaussian.lvm
+##' GM2.lvm
+##' GM3.lvm
 ##' probit.lvm
 ##' logit.lvm
 ##' pareto.lvm
@@ -89,6 +92,15 @@
 ##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
 ##'
+##' ##################################################
+##' ### Beta
+##' ##################################################
+##' m <- lvm()
+##' distribution(m,~y) <- beta.lvm(alpha=2,beta=1)
+##' var(sim(m,100,"y,y"=2))
+##' distribution(m,~y) <- beta.lvm(alpha=2,beta=1,scale=FALSE)
+##' var(sim(m,100))
+##' 
 ##' ##################################################
 ##' ### Transform
 ##' ##################################################
