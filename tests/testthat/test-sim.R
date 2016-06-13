@@ -107,7 +107,7 @@ test_that("distributions", {
     expect_true(all(d[6:10,1]!=0))
 
     m <- lvm()
-    distribution(m,~y,"a",init.par=2) <- function(n,a,...) {
+    distribution(m,~y,parname="a",init=2) <- function(n,a,...) {
         rep(1,n)*a
     }
     expect_true(all(sim(m,2)==2))
