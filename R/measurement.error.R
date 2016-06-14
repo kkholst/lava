@@ -129,8 +129,13 @@ twostage <- function(model1, model2, data=parent.frame(),
     if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
     p1 <- coef(model1)
     uhat <- function(p=p1) {
-        P <- predictlvm(model1,p=p,data=model.frame(model1))
-        cbind(predictfun(P$mean,P$var,model.frame(model1)))
+        if (inherits(model1,"lvm.mixture")) {
+            Pr <- predict(model1,p=p)
+            P <- list(mean=Pr,var=attr(Pr,"cond.var"))
+        }  else {
+            P <- predictlvm(model1,p=p,data=model.frame(model1))
+        }
+        return(cbind(predictfun(P$mean,P$var,model.frame(model1))))
     }
     pp <- uhat()
     newd <- data
