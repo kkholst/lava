@@ -116,8 +116,7 @@
       
     x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
   } 
-
-  #### group penalty if the latent variable is penalized
+    #### group penalty if the latent variable is penalized
    names.varLatent <- paste(names(x$latent),names(x$latent),sep = ",")
   if(any(x$penalty$names.penaltyCoef %in% names.varLatent)){
     
@@ -141,7 +140,7 @@
   }else{
     x$penalty$group.penaltyCoef <- seq(0.1, 0.9, length.out = length(x$penalty$names.penaltyCoef))
   }
-   
+  
    #### V matrix
    if(!missing(V)){
      x$penalty$V <- V
@@ -149,7 +148,7 @@
      V <- matrix(0, nrow = length(coef(x)), ncol = length(coef(x)))
      colnames(V) <- coef(x)
      rownames(V) <- coef(x)
-     diag(V)[index.penaltyCoef] <- 1
+     diag(V)[x$penalty$names.penaltyCoef] <- 1
      x$penalty$V <- V
   }
   

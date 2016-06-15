@@ -15,7 +15,7 @@ proxL2 <- function(x, step, lambda, test.penalty){
 }
 
 proxE2 <- function(x, step, lambda){ # adapted from Simon 2013
-  max(0, 1- sqrt(length(x)) * lambda * step/norm(x, type = "2"))*x
+  max(0, 1 - sqrt(length(x)) * lambda * step/norm(x, type = "2"))*x
 }
 
 
@@ -41,20 +41,20 @@ init.proxOperator <- function(lambda1, lambda2, group.penaltyCoef, regularizatio
     if(all(lambda2 == 0)){
       
       proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2){ ## proximal operator
-        levels.penalty <- unique(test.penalty1)
+        levels.penalty <- setdiff(unique(test.penalty1),0)
         for(iter_group in 1:length(levels.penalty)){
           index_group <- which(test.penalty1==levels.penalty[iter_group])
-          x[index_group] <- proxE2(x = x[index_group], step = step, lambda = lambda1[index_group])
+          x[index_group] <- proxE2(x = x[index_group], step = step, lambda = mean(lambda1[index_group])) # normally lambda1 has the same value for each member of the group
         }
         return(x)
       }
       
       objectivePenalty <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef){
-        levels.penalty <- unique(test.penalty1)
+        levels.penalty <- setdiff(unique(test.penalty1),0)
         res <- 0
         for(iter_group in 1:length(levels.penalty)){
           index_group <- which(test.penalty1==levels.penalty[iter_group])
-          res <- res +  sum(lambda1[index_group] *abs(x[index_group>0]))
+          res <- res +  mean(lambda1[index_group]) * norm(x[index_group], type = "2") # normally lambda1 has the same value  for each member of the group
         }
         
         return(res)

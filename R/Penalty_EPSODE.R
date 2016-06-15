@@ -23,9 +23,9 @@
 
 EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda2, group.lambda1, 
                    indexPenalty, indexNuisance, 
-                   stepLambda1, stepIncreasing, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,15),#, 
+                   stepLambda1, stepIncreasing, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,Inf), 
                    ode.method = "euler", control, trace){
-
+  
   #### preparation
   n.coef <- length(beta)
   lambda2_save <- lambda2
@@ -43,7 +43,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
   }else{
     indexAllCoef <- 1:n.coef
   }
- 
+
   #### initialization
   iter <- 1
   if(is.null(stepLambda1)){
@@ -63,7 +63,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     }else{
       constrain <- NULL
     }
-    beta <- do.call("proxGrad",
+     beta <- do.call("proxGrad",
                     list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = constrain,
                          step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
@@ -81,7 +81,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     cat("fixed coef      : \"",paste(setdiff(names(beta), names(beta)[indexAllCoef]), collapse = "\" \""),"\" \n", sep = "")
     cat("value fixed coef: ",paste(beta[setdiff(names(beta), names(beta)[indexAllCoef])], collapse = " ")," \n", sep = "")
   }
-  
+   
   #### main loop
   while(iter < nstep_max && test.ncv){
     if(trace){cat("*")}
@@ -101,8 +101,8 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     ## Solve ODE 
     lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + stepLambda1), length.out = resolution_lambda1)
     cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
-    
-    res.ode <- deSolve::ode(y = iterBeta, 
+   
+     res.ode <- deSolve::ode(y = iterBeta, 
                    times = lambda.ode, 
                    func = EPSODE_odeBeta, method = ode.method,
                    parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
@@ -158,6 +158,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     }
     
   }
+  if(trace){cat("\n")}
   
   #### export
   seq_lambda1 <- unname(seq_lambda1)

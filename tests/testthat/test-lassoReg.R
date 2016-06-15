@@ -1,15 +1,15 @@
 rm(list = ls())
 
-context("LVM-lassoRegression")
-
-
 library(penalized)
 library(lava)
 library(testthat)
 library(deSolve)
+
+context("LVM-lassoRegression")
+
+
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
 source(file.path(path.lava,"tests","FCT.R"))
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
@@ -21,6 +21,7 @@ lvm.modelSim <- lvm()
 regression(lvm.modelSim, formula.lvm) <-   as.list( c(rep(0,2),1:3) ) # as.list( c(rep(0,2),0.25,0.5,0.75) ) # 
 distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
 df.data <- sim(lvm.modelSim,n)
+df.data <- as.data.frame(scale(df.data))
 
 ### models ###
 lvm.model <- lvm(formula.lvm)
@@ -62,7 +63,7 @@ test_that("LVM(LARS) vs penalize with lasso", {
 
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, regularizationPath = 2, trace = TRUE)
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, regularizationPath = 2, control = list(trace = TRUE))
   
   z = apply(outer(penPath(elvm.PathL1_EPSODE)[,"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
   expect_equal(z, rep(0,length(z)),tolerance=0.01,scale=1)  
@@ -82,14 +83,14 @@ beta.free <- NULL
 beta.fixed <- NULL
 
 for(iter_l in 1:length(seq_lambda)){
-  
+  cat("*")
   eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                               control = list(constrain = TRUE))
+                               control = list(constrain = TRUE, trace = FALSE))
   
   # normal model
   test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=unname(validLVM(eplvm.fit_tempo1)),
+    expect_equal(object=unname(validLVM(eplvm.fit_tempo1, penalized.PathL1[[iter_l]])),
                  expected=rep(0,length(coef(eplvm.fit_tempo1))),
                  tolerance=0.001,scale=1)    
   })
@@ -99,8 +100,8 @@ for(iter_l in 1:length(seq_lambda)){
   
   # fixed sigma
   test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=eplvm.fit_tempo1$coef[,1],
-                 expected=eplvm.fit_tempo1$coef[,1],
+    expect_equal(object=unname(validLVM(eplvm.fit_tempo2, penalized.PathL1[[iter_l]])),
+                 expected=rep(0,length(coef(eplvm.fit_tempo1))),
                  tolerance=0.001,scale=1)    
   })
  

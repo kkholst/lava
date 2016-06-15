@@ -41,19 +41,28 @@ plvm.model <- penalize(lvm.model)
 
 
 #### 2- Estimations ####
-res.EPSODE <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, stepLambda1 = 20, trace = TRUE,
+res.EPSODE_free <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, trace = TRUE,
+                       control = list(constrain = FALSE, iter.max = 5000))
+res.EPSODE_fixed <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE,  trace = TRUE,
                        control = list(constrain = FALSE, iter.max = 5000))
 
-iterLambda <- 15
-lambda_tempo <- penPath(res.EPSODE, type = "lambda1", row = iterLambda)#res.EPSODE$opt$message[10,"lambda1.abs"],
+# rowSums(penPath(res.EPSODE_fixed, type = "coef") == 0)
+penPath(res.EPSODE_free)[,1:2]
+penPath(res.EPSODE_fixed)[,1:2]
+
+iterLambda <- 30
+lambda_tempo <- penPath(res.EPSODE_fixed, type = "lambda1", row = iterLambda)+0.1#res.EPSODE$opt$message[10,"lambda1.abs"],
 system.time(
   res_free <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
                        lambda1 = lambda_tempo,
                        control = list(constrain = TRUE, iter.max = 5000))
 )
-cbind(coef(res_free), as.numeric(penPath(res.EPSODE, type = "coef", row = iterLambda)))
+M <- cbind(coef(res_free), 
+     # free = as.numeric(penPath(res.EPSODE_free, type = "coef", row = iterLambda)),
+      fixed = as.numeric(penPath(res.EPSODE_fixed, type = "coef", row = iterLambda)))
+# colSums(M==0)
 
-range( coef(res_free) - penPath(res.EPSODE, type = "coef", row = iterLambda) )
+range( coef(res_free) - penPath(res.EPSODE_fixed, type = "coef", row = iterLambda) )
 
 lava:::print.lvmfit(res_free)
 

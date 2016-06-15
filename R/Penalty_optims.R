@@ -58,6 +58,7 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   control <- control[names(control) %in% PGcontrols]
   
   n.coef <- length(start)
+  regPath$beta_lambdaMax <- control$regPath$beta_lambdaMax[names(start)] # remove the parameters fixed for identifiability purpose
   
   #### update the penalty according to start 
   # (some coefficient have been removed as they are chosen as a reference)
@@ -65,13 +66,13 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   penalty$group.penaltyCoef <- res$group.penaltyCoef
 
   index.penaltyCoef <- res$index.penaltyCoef
-  indexNuisance <- grep(",", names(start), fixed = TRUE) 
+  indexNuisance <- grep(",", names(start), fixed = TRUE)  # identify the variance parameters
   
   #### main
   if( regPath$type == 1){
     resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
                             indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
-                            sd.X = penalty$sd.X, base.lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
+                            sd.X = penalty$sd.X, base.lambda1 = penalty$scaleLambda1, lambda2 = penalty$scaleLambda2*penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
                             control = control)
     
   }else if( regPath$type == 2){

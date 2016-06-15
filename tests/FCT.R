@@ -27,19 +27,22 @@ coef2.penalized <- function(x, iter_lambda){
 }
 
 
-validLVM <- function(x){
+validLVM <- function(x, GS = NULL){
   library(penalized)
   
-  lambda1 <- x$penalty$lambda1
-  if(is.null(x$control$proxGrad$sigmaMax)){lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
-  lambda2 <- x$penalty$lambda2
-  if(is.null(x$control$proxGrad$sigmaMax)){lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]}
+  if(is.null(GS)){
+    lambda1 <- x$penalty$lambda1
+    lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]
+    lambda2 <- x$penalty$lambda2
+    lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]
+    
+    GS <- penalized(as.formula(paste0(endogenous(x),"~.")), 
+                              lambda1 = lambda1, 
+                              lambda2 = lambda2, 
+                              data = x$data$model.frame, trace = FALSE)
+  }
   
-  resPenalized <- penalized(as.formula(paste0(endogenous(x),"~.")), 
-                            lambda1 = lambda1, 
-                            lambda2 = lambda2, 
-                            data = x$data$model.frame, trace = FALSE)
-  diffCoef <- coef(x) - coef2.penalized(resPenalized)
+  diffCoef <- coef(x) - coef2.penalized(GS)
   
   return(diffCoef)
 }

@@ -1,6 +1,7 @@
 rm(list = ls())
 
-context("LVM-lassoRegression")
+context("LVM-ElasticNetRegression")
+# issues: with LARS - the correction step is not good [in reality issue with the proximal gradient algorithm that is not extremely precise]
 
 
 library(penalized)
@@ -9,7 +10,6 @@ library(testthat)
 library(deSolve)
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
 source(file.path(path.lava,"tests","FCT.R"))
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
 
@@ -21,6 +21,7 @@ lvm.modelSim <- lvm()
 regression(lvm.modelSim, formula.lvm) <-   as.list( c(rep(0,2),1:3) ) # as.list( c(rep(0,2),0.25,0.5,0.75) ) # 
 distribution(lvm.modelSim, ~Y) <- normal.lvm(sd = 2)
 df.data <- sim(lvm.modelSim,n)
+df.data <- as.data.frame(scale(df.data))
 
 ### models ###
 lambda2 <- 50
@@ -79,30 +80,29 @@ beta.fixed <- NULL
 
 for(iter_l in 1:length(seq_lambda)){
   
-  eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, lambda2 = lambda2, 
-                               fast = 2,
-                               lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                               control = list(constrain = TRUE))
-  
-  # normal model
+   eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, method.proxGrad = "ISTA",
+                               lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2, 
+                               lambda2 = lambda2/penalized.PathL1[[iter_l]]@nuisance$sigma2,
+                               control = list(constrain = FALSE, iter.max = 1e3, trace = FALSE))
+   
+   # normal model
   test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=unname(validLVM(eplvm.fit_tempo1)),
+    expect_equal(object=unname(validLVM(eplvm.fit_tempo1, penalized.PathL1[[iter_l]])),
                  expected=rep(0,length(coef(eplvm.fit_tempo1))),
-                 tolerance=0.001,scale=1)    
+                 tolerance=0.01,scale=1)    
   })
   
   eplvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE, lambda2 = lambda2, 
-                               lambda1 = penalized.PathL1[[iter_l]]@lambda1)
+                               lambda1 = penalized.PathL1[[iter_l]]@lambda1, 
+                               control = list(trace = FALSE))
   
   # fixed sigma
   test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=unname(validLVM(eplvm.fit_tempo2)),
+    expect_equal(object=unname(validLVM(eplvm.fit_tempo2, penalized.PathL1[[iter_l]])),
                  expected=rep(0,length(coef(eplvm.fit_tempo2))),
                  tolerance=0.001,scale=1)    
   })
   
 }
-
-
 
 

@@ -8,15 +8,15 @@ glmPath <- function(beta0, objective, hessian, gradient,
                     indexPenalty, indexNuisance,
                     sd.X, base.lambda1, lambda2, group.lambda1,
                     control, iter.max = length(beta0)*3){
-        
+  
   p <- length(beta0)
-
+  
   gradientPen <- function(beta, grad_Lv, ...){
     ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  # because grad_Lv in lava is -grad(Lv)
   }
   
- 
-   #### initialisation
+  
+  #### initialisation
   M.beta <- matrix(0, nrow = 1, ncol = p)
   colnames(M.beta) <- names(beta0)
   M.beta[1,] <- beta0
@@ -30,22 +30,22 @@ glmPath <- function(beta0, objective, hessian, gradient,
   
   cv <- FALSE
   iter <- 1
-
+  
   #### main loop
   while(iter < iter.max && cv == FALSE){
     if(control$regPath$trace){cat("*")}
-
+    
     ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1, lambda2 = lambda2, 
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
-
-    newLambda <- V.lambda[iter] * (1 - resNode$gamma)
     
+    newLambda <- V.lambda[iter] * (1 - resNode$gamma)
     if(newLambda < 0 || is.infinite(newLambda)){
       cv <- TRUE
       
       ## no penalization
+      control$constrain <- setNames(1,names(beta0)[indexNuisance])
       resNode$beta <- do.call("proxGrad",
                               list(start = M.beta[nrow(M.beta),], proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                    lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(control$constrain, names(control$proxGrad$sigmaMax)),
@@ -56,13 +56,14 @@ glmPath <- function(beta0, objective, hessian, gradient,
       # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
       
       ## correction step or update beta value with L2 penalization
-       if(any(lambda2>0)){
+      if(any(lambda2>0)){
+        control$constrain <- setNames(1,names(beta0)[indexNuisance])
         resNode$beta <- do.call("proxGrad",
                                 list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(control$constrain, names(control$proxGrad$sigmaMax)),
+                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$constrain,
                                      step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
-       }
+      }
       
     } 
     
@@ -87,14 +88,14 @@ glmPath <- function(beta0, objective, hessian, gradient,
 #' @title  Find the next value of the regularization parameter
 nextNode_lvm <- function(hessian, gradient, gradientPen,
                          beta, lambda1, lambda2, indexPenalty, indexNuisance){
- 
+  
   ##
   hess_Lv <- -hessian(beta)  # because hess_Lv in lava is -hess(Lv)
   grad_Lv <- -attr(hess_Lv, "grad")  # because grad_Lv in lava is -grad(Lv) // gradient(beta)
-#   if(any(lambda2 > 0)){
-#     grad_Lv <- grad_Lv + lambda2 * beta
-#     hess_Lv <- hess_Lv + diag(lambda2)
-#   }
+  #   if(any(lambda2 > 0)){
+  #     grad_Lv <- grad_Lv + lambda2 * beta
+  #     hess_Lv <- hess_Lv + diag(lambda2)
+  #   }
   
   grad_Pen <- gradientPen(beta, grad_Lv = grad_Lv)
   
@@ -129,7 +130,7 @@ nextNode_lvm <- function(hessian, gradient, gradientPen,
 
 
 #' @title Prepare the data for the glmPath algorithm
-prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
+prepareData_glmPath <- function(model, data, penalty, label = "_pen"){
   
   outcomes <- model$index$endogenous
   n.outcomes <- length(outcomes)
@@ -178,8 +179,8 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
   
   #### orthogonalize the dataset
   names.coef <- coef(model)
-  lambda1 <- setNames(rep(0, n.coef),names.coef)
-  lambda2 <- setNames(rep(0, n.coef),names.coef)
+  scaleLambda1 <- setNames(rep(0, n.coef),names.coef)
+  scaleLambda2 <- setNames(rep(0, n.coef),names.coef)
   mu.X <- setNames(rep(0, n.coef),names.coef)
   sd.X <- setNames(rep(1, n.coef),names.coef)
   orthogonalizer <- setNames(vector("list", n.outcomes), outcomes)
@@ -191,15 +192,15 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
     if( length(index_coef)>0 ){
       
       # orthogonalize data relative to non penalize coefficients
-      resOrtho <- orthoData.lvm(model, name.Y = Y_tempo,
-                                allCoef = names.coef[grep(Y_tempo, names.coef, fixed = TRUE)], 
-                                penaltyCoef = penalty$names.penaltyCoef[index_coef], 
-                                data = data)
+      resOrtho <- orthoData_glmPath(model, name.Y = Y_tempo,
+                                    allCoef = names.coef[grep(Y_tempo, names.coef, fixed = TRUE)], 
+                                    penaltyCoef = penalty$names.penaltyCoef[index_coef], 
+                                    data = data)
       
       # update results
       data[, colnames(resOrtho$orthogonalizer)] <- resOrtho$data[, colnames(resOrtho$orthogonalizer),drop = FALSE]
-      lambda1[names(resOrtho$lambda1)] <- resOrtho$lambda1
-      lambda2[names(resOrtho$lambda2)] <- resOrtho$lambda2
+      scaleLambda1[names(resOrtho$lambda1)] <- resOrtho$lambda1
+      scaleLambda2[names(resOrtho$lambda2)] <- resOrtho$lambda2
       mu.X[names(resOrtho$lambda1)] <- resOrtho$mu.X
       sd.X[names(resOrtho$lambda1)] <- resOrtho$sd.X
       orthogonalizer[[iter_Y]] <- resOrtho$orthogonalizer
@@ -209,8 +210,8 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
   
   #### export
   penalty$sd.X <- sd.X
-  penalty$lambda1 <- lambda1
-  penalty$lambda2 <- lambda2
+  penalty$scaleLambda1 <- scaleLambda1
+  penalty$scaleLambda2 <- scaleLambda2
   
   return(list(model = model,
               penalty = penalty,
@@ -221,7 +222,7 @@ prepareDataPath.lvm <- function(model, data, penalty, label = "_pen"){
 }
 
 #' @title Orthogonalize the non-penalized variables relatively to the penalized variables for a regression model
-orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
+orthoData_glmPath <- function(model, name.Y, allCoef, penaltyCoef, data){
   
   ## function
   extractVar <- function(names){
@@ -316,8 +317,7 @@ orthoData.lvm <- function(model, name.Y, allCoef, penaltyCoef, data){
 }
 
 #' @title Cancel the effect of the orthogonalization on the estimated parameters
-
-rescaleRes <- function(Mres, penalty, orthogonalizer){
+rescaleCoef_glmPath <- function(Mres, penalty, orthogonalizer){
   
   #### rescale
   names.rescale <- names(penalty$sd.X)

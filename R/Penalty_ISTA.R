@@ -31,15 +31,9 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
                      lambda1, lambda2, group.lambda1,
                      step, BT.n, BT.eta, constrain, 
                      iter.max, abs.tol, rel.tol, method, trace = FALSE){
-  
+ 
   stepMax <- step 
-  if(is.null(step)){
-    step <- 1/max(abs(eigen(hessian(start))$value))
-    BT.n <- 1
-    BT.eta <- 1
-  }else{
-    stepMin <- step*BT.eta^BT.n
-  }
+  stepMin <- step*BT.eta^BT.n
   
   ## initialisation
   x_k <- start 
@@ -47,32 +41,24 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
   
   obj.x_k <- try(objective(x_k))
   if("try-error" %in% class(obj.x_k)){obj.x_k <- Inf}
-  
+   
   grad.x_k <- try(gradient(x_k))
   
-  if(method %in% c("FISTA","mFISTA")){
-    t_k <- 1
-    y_k <- x_k
-  }else{
-    t_k <- NA
-    y_k <- NA
-  }
-  
-  if(method == "Nesterov"){
-    z_k <- x_k
-  }else{
-    z_k <- NA
-  }  
+  t_k <- if(method %in% c("FISTA","mFISTA")){1}else{NA}
+  y_k <- if(method %in% c("FISTA","mFISTA")){x_k}else{NA} 
+  z_k <- if(method == "Nesterov"){z_k}else{NA}
   
   test.cv <- FALSE
   iter <- 1
   
   if(trace){cat("stepBT"," ","iter_back", " ", "max(abs(x_k - x_km1))"," ","obj.x_k - obj.x_km1","\n")}
   
-  ## loop
+    ## loop
   while(test.cv == FALSE && iter <= iter.max){
+  
     iter_back <- 0
     diff_back <- 1
+    obj.x_kp1 <- +Inf
     
     if(method %in% c("FISTA","mFISTA")){
       t_kp1 <- (1 + sqrt(1 + 4 * t_k^2)) / 2
@@ -81,10 +67,9 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       if("try-error" %in% class(obj.y_k)){obj.y_k <- Inf}
       grad.y_k <- try(gradient(y_k))
     }
-    
-    while( (iter_back < BT.n) && (diff_back > 0) ){
+   
+    while( (iter_back < BT.n) && (diff_back > 0) ){ # obj.x_kp1 > obj.x_k should not be needed
       stepBT <- step*BT.eta^iter_back
-      # cat("*",stepBT, " ")
       
       if(method == "ISTA"){
         res <- ISTA(x_k = x_k, obj.x_k = obj.x_k, grad.x_k = grad.x_k, 
@@ -108,6 +93,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       
       diff_back <- obj.x_kp1 - res$Q
       iter_back <- iter_back + 1
+      
     }
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol
@@ -128,17 +114,11 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       y_k <- res$y_kp1
       t_k <- t_kp1
     }
+    step <- max(stepMin,min(stepMax, stepBT/sqrt(BT.eta)))
     
-    if(is.null(stepMax)){
-      step <- 1/max(abs(eigen(hessian(x_k))$value)) 
-      # could also be computed using the Barzilai-Borwein Method     
-      # step = crossprod(diff_x) / crossprod(diff_x, gradient(x_km1) - gradient(x_k)) 
-    }else{
-      step <- max(stepMin,min(stepMax, stepBT/sqrt(BT.eta)))
-    }
+    iter <- iter + 1 
     
-    iter <- iter + 1    
-    if(trace){cat(stepBT," ",iter_back, " ", max(abs(x_k - x_km1))," ",obj.x_k - obj.x_km1,"\n")}
+    if(trace){cat("|",stepBT," ",iter_back, " ", max(abs(x_k - x_km1))," ",obj.x_k - obj.x_km1,"\n")}
   }
   if(trace){cat("\n")}
   
@@ -210,24 +190,21 @@ mFISTA <- function(x_k, t_kp1, t_k, y_k, obj.x_k, obj.y_k, grad.x_k, grad.y_k,
   z_kp1 <- proxOperator(x = y_k - step * grad.y_k, 
                         step = step, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
   if(!is.null(constrain)){x_kp1[names(constrain)] <- constrain}
-
-  obj.z_kp1 <- try(objective(z_kp1))
-  if("try-error" %in% class(obj.z_kp1)){obj.z_kp1 <- Inf}
+  Qz <- Qbound(diff.xy = z_kp1 - y_k, obj.y = obj.y_k, grad.y = grad.y_k, L = 1/step)
+  
+  resV <- ISTA(x_k = x_k, obj.x_k = obj.x_k, grad.x_k = grad.x_k,
+              proxOperator = proxOperator, step = step, constrain = constrain, 
+              lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
+  v_kp1 <- resV$x_kp1
+  Qv <- resV$Q
   
   ## Upper bound for backtracking
-  if(obj.z_kp1 <= obj.x_k){
-    cat("*")
+  if(Qz <= Qv){
     x_kp1 <- z_kp1
-    Q <- Qbound(diff.xy = x_kp1 - y_k, obj.y = obj.y_k, grad.y = grad.y_k, L = 1/step)
+    Q <- Qz
   }else{
-    res <- ISTA(x_k = x_k, obj.x_k = obj.x_k, grad.x_k = grad.x_k,
-                proxOperator = proxOperator, step = step, constrain = constrain, 
-                lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
-#    x_kp1 <- proxOperator(x = x_k - step * grad.x_k, 
-#                           step = step, lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2)
-#     Q <- Qbound(diff.xy = x_kp1 - x_k, obj.y = obj.x_k, grad.y = grad.x_k, L = 1/step)
-    x_kp1 <- res$x_kp1
-    Q <- res$Q
+    x_kp1 <- v_kp1
+    Q <- Qv
   }
   
   ## extrapolation

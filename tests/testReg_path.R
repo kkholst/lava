@@ -141,43 +141,57 @@ eplvm.model_bardety$opt$iterations
 
 
 
-eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, fast = 1,
+
+eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, method.proxGrad = "FISTA",
                                      control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
 
-
-eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 0,
-                                control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
-
-coef(penalized(Y ~ X1+X2+X3+X4+X5, data = df.bardet, lambda1 = 1))
-
-eplvm.model_bardetyFixed <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1,
-                                     control = list(constrain = TRUE, start = coef(elvm.model_bardety)))
-
-
-
-
-eplvm.model_bardety <- estimate(plvm.model_bardety,  data = df.bardet, lambda1 = 1, fixSigma = TRUE,
-                                control = list(constrain = TRUE))
 #
 
 plvm.model_GL <- penalize(lvm.model_bardety) 
 plvm.model_GL$penalty$group.penaltyCoef[] <- 1
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
-                          lambda1 = 0, 
-                          control = list(constrain = TRUE, iter.max = 1000, start = coef(elvm.model_bardety)))
+                          lambda1 = 0, method.proxGrad = "FISTA",
+                          control = list(constrain = TRUE, iter.max = 1000))
 coef(eplvm.model_GL) - coef(elvm.model_bardety) 
 
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet,
                            lambda1 = m1$lambda[2] * nrow(df.bardet),
                            control = list(constrain = FALSE, iter.max = 1000))
 coef(eplvm.model_GL)
+
+
 m1$beta[,2]
 
 
+Mcoef <- NULL
+for(iter in 1:100){
+  eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet, fixSigma = TRUE,
+                             lambda1 = m1$lambda[iter] * nrow(df.bardet), method.proxGrad = "ISTA",
+                             control = list(constrain = FALSE, iter.max = 1000,
+                                            start =if(iter>1){Mcoef[nrow(Mcoef),]}else{NULL})
+  )
+  Mcoef <- rbind(Mcoef,
+                 coef(eplvm.model_GL))
+}
+coef(eplvm.model_GL)
+m1$beta[,1]
+par(mfrow = c(1,2))
+matplot(t(m1$beta)[1:100,])
+matplot(Mcoef[1:75,2:6])
+
+m1$lambda
+t(m1$beta)[100,]
+Mcoef[100,2:6]
+Mcoef[100,2:6]
+
+mTEST <- gglasso(x=bardet$x,y=bardet$y,group=group1,loss="ls", lambda = 0)
+coef(mTEST)
+
 eplvm.model_GL <- estimate(plvm.model_GL,  data = df.bardet, fixSigma = TRUE,
-                           lambda1 = m1$lambda[1] * nrow(df.bardet),
-                           control = list(constrain = FALSE, iter.max = 1000))
+                           lambda1 = mTEST$lambda[1] * nrow(df.bardet))
+
+
 
 
 iterLambda <- 100
