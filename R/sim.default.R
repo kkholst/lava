@@ -294,8 +294,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         for (i in seq_along(se)) {
             if (is.character(se[[i]])) se[[i]] <- match(se[[i]],colnames(x))
         }
-    }
 
+    }
     ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
 
     oldpar <- NULL
@@ -503,7 +503,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
 ##' @export
 ##' @export summary.sim
-summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,unique.names=TRUE,...) {
+summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,unique.names=TRUE,level=0.95,...) {
     if (missing(fun)) fun <- function(x) {
         pp <- c(.025,.5,.975)
         res <- c(mean(x,na.rm=TRUE),sd(x,na.rm=TRUE),quantile(x,c(0,pp,1),na.rm=TRUE),
@@ -538,6 +538,20 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
     if (!is.null(confint)) {
         if (is.character(confint)) {
             confint <- match(confint,colnames(object))
+        }
+        if (length(confint)==1 && confint) {
+            if (is.null(se)) stop("Supply confidence limits or SE")
+            confint <- c()
+            pos <- ncol(object)
+            for (i in seq_along(estimate)) {
+                z <- 1-(1-level)/2
+                CI <- cbind(object[,estimate[i]]-qnorm(z)*object[,se[i]],
+                            object[,estimate[i]]+qnorm(z)*object[,se[i]])
+                colnames(CI) <- NULL
+                object <- cbind(object,CI)
+                confint <- c(confint,pos+1:2)
+                pos <- pos+2
+            }
         }
         if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate).")
         Coverage <- c()
