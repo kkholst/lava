@@ -79,7 +79,7 @@ beta.free <- NULL
 beta.fixed <- NULL
 
 for(iter_l in 1:length(seq_lambda)){
-  
+  cat("*")
    eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, method.proxGrad = "ISTA",
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2, 
                                lambda2 = lambda2/penalized.PathL1[[iter_l]]@nuisance$sigma2,

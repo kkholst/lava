@@ -34,8 +34,8 @@ glmPath <- function(beta0, objective, hessian, gradient,
   #### main loop
   while(iter < iter.max && cv == FALSE){
     if(control$regPath$trace){cat("*")}
-    
-    ## prediction step: next breakpoint assuming linear path and constant sigma
+ 
+     ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1, lambda2 = lambda2, 
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
@@ -45,10 +45,9 @@ glmPath <- function(beta0, objective, hessian, gradient,
       cv <- TRUE
       
       ## no penalization
-      control$constrain <- setNames(1,names(beta0)[indexNuisance])
       resNode$beta <- do.call("proxGrad",
                               list(start = M.beta[nrow(M.beta),], proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(control$constrain, names(control$proxGrad$sigmaMax)),
+                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(1-control$constrain,names(beta0)[indexNuisance]),
                                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       newLambda <- 0
@@ -57,10 +56,9 @@ glmPath <- function(beta0, objective, hessian, gradient,
       
       ## correction step or update beta value with L2 penalization
       if(any(lambda2>0)){
-        control$constrain <- setNames(1,names(beta0)[indexNuisance])
         resNode$beta <- do.call("proxGrad",
                                 list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = control$constrain,
+                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(1-control$constrain,names(beta0)[indexNuisance]),
                                      step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                      iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       }
@@ -92,10 +90,6 @@ nextNode_lvm <- function(hessian, gradient, gradientPen,
   ##
   hess_Lv <- -hessian(beta)  # because hess_Lv in lava is -hess(Lv)
   grad_Lv <- -attr(hess_Lv, "grad")  # because grad_Lv in lava is -grad(Lv) // gradient(beta)
-  #   if(any(lambda2 > 0)){
-  #     grad_Lv <- grad_Lv + lambda2 * beta
-  #     hess_Lv <- hess_Lv + diag(lambda2)
-  #   }
   
   grad_Pen <- gradientPen(beta, grad_Lv = grad_Lv)
   
@@ -103,11 +97,15 @@ nextNode_lvm <- function(hessian, gradient, gradientPen,
                  setdiff(which(abs(grad_Lv)/lambda1 > 1-1e-04),indexNuisance)
   )
   
-  grad_B.A <- solve(hess_Lv[set_A,set_A, drop = FALSE], grad_Pen[set_A, drop = FALSE] * lambda1[set_A, drop = FALSE])
+  grad_B.A <- try(solve(hess_Lv[set_A,set_A, drop = FALSE], grad_Pen[set_A, drop = FALSE] * lambda1[set_A, drop = FALSE]), silent = TRUE)
+  if("try-error" %in% class(grad_B.A)){ # cannot invert because high dimensional 
+    return(list(gamma = Inf, beta = rep(NA,length(beta))))
+  }
   grad_Rho <- hess_Lv[indexPenalty,set_A, drop = FALSE] %*% grad_B.A / lambda1[indexPenalty, drop = FALSE]
   
   ## find next knot
   gamma1 <- -beta[set_A]/(grad_B.A*lambda1[set_A]) 
+  gamma1 <- gamma1[set_A %in% indexPenalty] # remove active but non penalized coefficients
   gamma2Moins <- (1 - grad_Lv[indexPenalty, drop = FALSE]/lambda1[indexPenalty, drop = FALSE])/(1 + grad_Rho)
   gamma2Moins[indexPenalty %in% set_A] <- Inf
   gamma2Plus <- (1 + grad_Lv[indexPenalty, drop = FALSE]/lambda1[indexPenalty, drop = FALSE])/(1 - grad_Rho)

@@ -98,7 +98,9 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol
     relDiff <- abs(obj.x_kp1 - obj.x_k)/abs(obj.x_kp1) < rel.tol
-    test.cv <- absDiff + relDiff > 0
+    
+    test.cv <- (absDiff + relDiff > 0)
+   # test.cvAlready <- (iter>1 && all(abs(res$x_kp1 - x_k) < abs.tol))
     
     #### update
     x_km1 <- x_k
@@ -114,7 +116,8 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       y_k <- res$y_kp1
       t_k <- t_kp1
     }
-    step <- max(stepMin,min(stepMax, stepBT/sqrt(BT.eta)))
+    step <- min(stepMax, stepBT/sqrt(BT.eta))
+    
     
     iter <- iter + 1 
     

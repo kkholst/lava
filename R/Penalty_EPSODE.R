@@ -1,5 +1,5 @@
 #### OVERVIEW
-# EPSODE: perform the generic Path Algorithm
+# EPSODE: perform the generic Path Algorithm. Because of solve(H) not suited to high dimensional data
 # EPSODE_odeBeta: compute the righ side of the ODE linking lambda1 and beta
 
 #' @title Perform the generic Path Algorithm for a LVM
@@ -213,15 +213,19 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   }
  
   #### estimate Q and P
-  H_m1 <- solve(H)
   
   if(length(ls.args$setZE) == 0){
     R <- NULL
     Q <- NULL
-    P <- H_m1
+    P <- solve(H)
   }else{
-    Uz <- ls.args$V[ls.args$setZE,ls.args$indexAllCoef,drop = FALSE]#[ls.args$setZE,,drop = FALSE]#
+    Uz <- ls.args$V[ls.args$setZE,ls.args$indexAllCoef,drop = FALSE]
+
+### modif high dimension
+#     H <- H[-ls.args$setZE,-ls.args$setZE, drop = FALSE]
+#     Uz <- Uz[,-ls.args$setZE, drop = FALSE]
     
+    H_m1 <- solve(H)
     R <- solve(Uz %*% H_m1 %*% t(Uz))
     Q <- H_m1 %*% t(Uz) %*% R
     P <- H_m1 - Q %*% Uz %*% H_m1 
@@ -249,11 +253,13 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   
    ## export
   Puz <- rep(0, length(y))
-  Puz[ls.args$indexAllCoef] <- P %*% uz[ls.args$indexAllCoef, drop = FALSE]
-  Puz[ls.args$setZE] <- 0
-  #Puz <- P %*% uz
   
-  # if(length(ls.args$setZE)==0){print(Puz)}
+  if(length(ls.args$setZE)==0){
+    Puz[ls.args$indexAllCoef] <- P %*% uz[ls.args$indexAllCoef, drop = FALSE]
+  }else{
+    # Puz[setdiff(ls.args$indexAllCoef,ls.args$setZE)] <- P %*% uz[setdiff(ls.args$indexAllCoef,ls.args$setZE), drop = FALSE]  
+    Puz[setdiff(ls.args$indexAllCoef,ls.args$setZE)] <- P[-ls.args$setZE,-ls.args$setZE, drop = FALSE] %*% uz[setdiff(ls.args$indexAllCoef,ls.args$setZE), drop = FALSE]  
+  }
   
   return(list(-Puz))
 }

@@ -83,7 +83,7 @@
 
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE, pen.latent = FALSE,
                               lambda1, lambda2, V, ..., value){
-
+  
   #### coefficients
   if(!is.null(value)){
     
@@ -96,7 +96,7 @@
     x$penalty$names.penaltyCoef <- value
     
   } else if(is.null(x$penalty$names.penaltyCoef)){
-  
+
     index.penaltyCoef <- NULL
     if(pen.intercept == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$mean)  
@@ -109,8 +109,11 @@
     }
     
     ## no penalization on parameters related to the latent variables
-    if(pen.latent == FALSE){ 
-      ls.penaltyCoefLatent <- sapply(names(x$latent), grep, x = coef(x), fixed = TRUE)
+    if(pen.latent == FALSE){
+      
+      request <- paste( paste0("^",names(x$latent),"~|~",names(x$latent),"$"), collapse = "|")
+      sapply("^u~", grep, x = coef(x), value = TRUE)
+      ls.penaltyCoefLatent <- sapply(request, grep, x = coef(x), value = FALSE)
       index.penaltyCoef <- setdiff(index.penaltyCoef, unique(unlist(ls.penaltyCoefLatent)))
     }
       
@@ -140,7 +143,7 @@
   }else{
     x$penalty$group.penaltyCoef <- seq(0.1, 0.9, length.out = length(x$penalty$names.penaltyCoef))
   }
-  
+   
    #### V matrix
    if(!missing(V)){
      x$penalty$V <- V
@@ -163,6 +166,19 @@
   
   #### export
   return(x)
+}
+
+
+
+
+
+
+if(newcoef[1] %in% exogenous(lvmfit)){
+  regression(model) <- as.formula(paste(rev(newcoef), collapse = "~"))
+}else if(newcoef[2] %in% exogenous(lvmfit)){
+  regression(model) <- as.formula(paste(newcoef, collapse = "~"))
+}else{
+  covariance(model) <- as.formula(paste(newcoef, collapse = "~"))  
 }
 
 #### 3- optim functions #### 

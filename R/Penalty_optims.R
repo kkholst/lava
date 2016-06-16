@@ -17,10 +17,16 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   
   #### specify constrain
   if(control$proxGrad$fixSigma){
-    indexNuisance <- grep(",", names(start), fixed = TRUE)
-    start[indexNuisance] <- start[indexNuisance]/start[indexNuisance[1]]
     
-    constrain <- setNames(1 - control$constrain, names(start)[indexNuisance[1]]) 
+    indexNuisance <- grep(",", names(start), fixed = TRUE)
+    if(control$constrain){
+       start[indexNuisance] <- start[indexNuisance] - start[indexNuisance[1]]
+      constrain <- setNames(0, names(start)[indexNuisance[1]]) 
+    }else{
+      start[indexNuisance] <- start[indexNuisance]/start[indexNuisance[1]]
+      constrain <- setNames(1, names(start)[indexNuisance[1]]) 
+    }
+    
   }else{
     constrain <- NULL
   }
@@ -76,12 +82,14 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
                             control = control)
     
   }else if( regPath$type == 2){
+    V <- penalty$V[names(start),names(start), drop = FALSE]
+    group.penaltyCoef <- penalty$group.penaltyCoef[names(start)]
     
     resLassoPath <- EPSODE(beta = start, beta_lambdaMax = regPath$beta_lambdaMax, objective = objective, gradient = gradient, hessian = hessian, 
-                           V = penalty$V[intersect(colnames(penalty$V),names(start)),intersect(colnames(penalty$V),names(start)), drop = FALSE], 
+                           V = V, 
                            indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                            stepLambda1 = regPath$stepLambda1, stepIncreasing = regPath$increasing, 
-                           lambda2 = penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
+                           lambda2 = penalty$lambda2, group.lambda1 = group.penaltyCoef,
                            control = control, trace = control$regPath$trace)
     
   }
