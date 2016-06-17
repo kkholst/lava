@@ -137,6 +137,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
 }
 
 
+
 #' @title Estimate an upper bound of obj.x
 Qbound <- function(diff.xy, obj.y, grad.y, L){
   

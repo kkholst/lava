@@ -107,6 +107,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
                                envir = envir)
     )
     index.breakpoint <-  which.min(abs(res.ode[,1] - cv.ODE["lambda"]))
+    
     indexM.breakpoint <- max(1, index.breakpoint - 1)
     indexP.breakpoint <- min(resolution_lambda1, index.breakpoint + 1)
     
@@ -160,6 +161,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
   #### export
   seq_lambda1 <- unname(seq_lambda1)
   rownames(M.beta) <- NULL
+  
   
   return(as.data.frame(cbind(lambda1.abs = if(length(indexNuisance) == 0){NA}else{seq_lambda1}, 
                              lambda1 = if(length(indexNuisance) == 0){seq_lambda1}else{NA}, 

@@ -2,7 +2,7 @@
 ##' @aliases penalize penalize<- penalize.lvm penalize.plvm
 ##' @param x
 ##' @param pen.intercept should the intercept be penalized
-##' @param pen.exogenous should the mean parameters be penalized
+##' @param pen.regression should the mean parameters be penalized
 ##' @param pen.variance should the variance parameters be penalized (not possible now)
 ##' @param lambda1 the lasso penalty
 ##' @param lambda2 the ridge penalty
@@ -82,7 +82,7 @@
   return(x)
 }
 
-`penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE, pen.latent = FALSE,
+`penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.regression = TRUE, pen.variance = FALSE, pen.covariance = FALSE, pen.latent = FALSE,
                               lambda1, lambda2, adaptive, V, ..., value){
   
   #### coefficients
@@ -102,11 +102,15 @@
     if(pen.intercept == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$mean)  
     }
-    if(pen.exogenous == TRUE){
+    if(pen.regression == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$reg) 
     }
     if(pen.variance == TRUE){
-      index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$cov)
+      index.penaltyCoef <- c(index.penaltyCoef, coefVar(x))
+    }
+
+    if(pen.covariance == TRUE){
+      index.penaltyCoef <- c(index.penaltyCoef, coefCov(x))
     }
     
     ## no penalization on parameters related to the latent variables

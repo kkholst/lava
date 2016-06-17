@@ -238,10 +238,11 @@ initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
   start_lambdaMax <- setNames(rep(0,n.coef),names.coef)
   
   ## removed penalized variables
-  for(iter_link in penalty$names.penaltyCoef){
-    x0 <- rmLink(x0, iter_link)
-  }
   
+  for(iter_link in penalty$names.penaltyCoef){
+     x0 <- rmLink(x0, iter_link)
+  }
+
   ## estimate the model
   suppressWarnings(
     x0.fit <- lava:::estimate.lvm(x = x0, data = data, ...)

@@ -4,6 +4,15 @@
 `extendNames` <-
   function(x,...) UseMethod("extendNames")
 
+`coefN0` <-
+  function(x,...) UseMethod("coefN0")
+
+`coefVar` <-
+  function(x,...) UseMethod("coefVar")
+
+`coefCov` <-
+  function(x,...) UseMethod("coefCov")
+
 `addLink` <-
   function(x,...) UseMethod("addLink")
 
@@ -13,9 +22,12 @@
 `rmLink` <-
   function(x,...) UseMethod("rmLink")
 
+`rmLink` <-
+  function(x,...) UseMethod("rmLink")
+
 ###
 
-extendModel.lvm <- function(x, data, type, alpha = 0.05, trace = TRUE, ...){
+extendModel.lvm <- function(x, data, type, alpha = 0.05, cov = TRUE, trace = TRUE, ...){
   
   match.arg(type, choices = c("all","modelsearch"))
   
@@ -31,8 +43,8 @@ extendModel.lvm <- function(x, data, type, alpha = 0.05, trace = TRUE, ...){
       if(tail(p.adjust(resSearch$test[,"P-value"], method = "holm"), 1) < alpha){
         
         x <- addLink(x,
-                         tail(resSearch$var,1)[[1]][,1],
-                         tail(resSearch$var,1)[[1]][,2])
+                     tail(resSearch$var,1)[[1]][,1],
+                     tail(resSearch$var,1)[[1]][,2])
         
       }else{
         cv <- TRUE
@@ -51,7 +63,7 @@ extendModel.lvm <- function(x, data, type, alpha = 0.05, trace = TRUE, ...){
     
     newlinks <- extendNames(x, rm.exoexo = TRUE)
     for(iterLink in 1:nrow(newlinks)){
-      x <- addLink(x, newlinks[iterLink,1], newlinks[iterLink,2],
+      x <- addLink(x, newlinks[iterLink,1], newlinks[iterLink,2], cov = cov,
                    silent = TRUE)
     }
     
@@ -86,7 +98,7 @@ extendNames.lvm <- function(x, rm.exoexo){
 }
 
 
-addLink.lvm <- function(x, var1, var2 = NA, silent = FALSE){
+addLink.lvm <- function(x, var1, var2 = NA, cov, silent = FALSE){
  
   res <- initVar_link(var1, var2)
   var1 <- res$var1
@@ -123,6 +135,7 @@ addLink.lvm <- function(x, var1, var2 = NA, silent = FALSE){
     test.1 <- var1 %in% exogenous(x)
     test.2 <- var2 %in% exogenous(x)
     
+    
     if(test.1 && test.2){
       if(silent == FALSE){
         warning("addLink.lvm: both variable are exogenous, no link is added \n",
@@ -133,7 +146,7 @@ addLink.lvm <- function(x, var1, var2 = NA, silent = FALSE){
       regression(x) <- as.formula(paste(var2, var1,  sep = "~"))
     }else if(test.2){
       regression(x) <- as.formula(paste(var1, var2, sep = "~"))
-    }else{
+    }else if(cov){
       covariance(x) <- as.formula(paste(var1, var2, sep = "~"))  
     }
   }
@@ -190,11 +203,12 @@ rmLink.lvm <- function(x, var1, var2 = NA, silent = FALSE){
     }
   }
   
+  
   #### if unused variable remove it from the model
   if(length(grep(paste0("~",var1,"$|^",var1,"~|^",var1,"$"), x = coef(x), fixed = FALSE))==0){
       kill(x) <- as.formula(paste0(var1,"~1"))
   }
-  if(!is.na(var2) && length(grep(paste0("~",var2,"$|^",var2,"~"), x = coef(x), fixed = FALSE))==0){
+  if(!is.na(var2) && length(grep(paste0("~",var2,"$|^",var2,"~|^",var2,"$"), x = coef(x), fixed = FALSE))==0){
     kill(x) <- as.formula(paste0(var2,"~1"))
   }
   
@@ -216,3 +230,20 @@ initVar_link <- function(var1, var2){
   return(list(var1 = var1,
               var2 = var2))
 }
+
+coefN0.plvmfit <- function(x, tol = 1e-6){
+  coef(x)[abs(coef(x))>tol]
+}
+
+coefVar.lvm <- function(x, index = FALSE){
+  names.var <- paste(x$index$vars, x$index$vars, sep = ",")
+  return(grep(paste(names.var, collapse = "|"), coef(x), value = index))
+}
+
+coefCov.lvm <- function(x, index = FALSE){
+  names.cov <- setdiff(coef(x)[x$index$parBelongsTo$cov],
+                       paste(x$index$vars, x$index$vars, sep = ",")
+  )
+  return(grep(paste(names.cov, collapse = "|"), coef(x), value = index))
+}
+
