@@ -23,7 +23,7 @@
 
 EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda2, group.lambda1, 
                    indexPenalty, indexNuisance, 
-                   stepLambda1, stepIncreasing, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,Inf), 
+                   stepLambda1, increasing, resolution_lambda1 = 1000, nstep_max = min(length(beta)*5,Inf), 
                    ode.method = "euler", control, trace){
   
   #### preparation
@@ -35,53 +35,50 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
    
   #### constrain 
   if(length(indexNuisance) > 0){
-    indexAllCoef <- setdiff(1:n.coef, indexNuisance[1])
-    beta[indexNuisance] <- beta[indexNuisance]/beta[indexNuisance[1]]
-    if(control$constrain){
-      beta[indexNuisance] <- log(beta[indexNuisance])
-    }
+    res <- initSigmaConstrain(beta, constrain = control$constrain, indexNuisance = indexNuisance)
+    beta <- res$start
+    constrain <- res$constrain
+    indexAllCoef <- res$indexAllCoef
   }else{
+    constrain <- NULL
     indexAllCoef <- 1:n.coef
   }
-
+  
   #### initialization
   iter <- 1
-  if(is.null(stepLambda1)){
-    stepLambda1 <- max( abs(-gradient(beta_lambdaMax) )[indexPenalty] )*if(stepIncreasing){1}else{-1}
-    if(length(indexNuisance) > 0){stepLambda1 <- stepLambda1 * sum(beta_lambdaMax[indexNuisance[1]])}
-  }
+  test.ncv <- TRUE
   
-  if(stepLambda1 > 0){
-    seq_lambda1 <- 0  
-  }else{
-    seq_lambda1 <-  max( abs(-gradient(beta_lambdaMax) )[indexPenalty] ) * sum(beta_lambdaMax[indexNuisance]) * 1.1 # initialisation with the fully penalized solution
-  }
- 
-  if(any(lambda2 > 0) | stepLambda1 < 0){ ### TOFIX for sum sigma
-    if(length(indexNuisance) > 0){
-      constrain <- setNames( rep(1 - control$constrain, length(indexNuisance) ), names(beta)[indexNuisance]) 
-    }else{
-      constrain <- NULL
+  ## lambda
+  res <- initLambda_EPSODE(stepLambda = stepLambda1, increasing = increasing,
+                           gradient = gradient, beta = beta_lambdaMax, indexPenalty = indexPenalty, indexNuisance = indexNuisance)
+  seq_lambda1 <- res$seq_lambda
+  stepLambda1 <- res$stepLambda
+  
+  ## beta
+  if(any(lambda2 > 0) | stepLambda1 < 0){
+    
+    proxOperator <- function(x, step){  
+      control$proxOperator(x, step,
+                           lambda1 = seq_lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
     }
-     beta <- do.call("proxGrad",
-                    list(start = beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                         lambda1 = seq_lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = constrain,
+       beta <- do.call("proxGrad",
+                    list(start = beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                         constrain = constrain,
                          step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                          iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
   }
   
-  ##
+  ## res
   M.beta <- rbind(beta)
   setNE <- intersect(which(V %*% beta < 0),  indexPenalty)
   setZE <- intersect(which(V %*% beta == 0), indexPenalty)
   setPE <- intersect(which(V %*% beta > 0), indexPenalty)
-  test.ncv <- TRUE
   
   if(trace){
     cat("fixed coef      : \"",paste(setdiff(names(beta), names(beta)[indexAllCoef]), collapse = "\" \""),"\" \n", sep = "")
     cat("value fixed coef: ",paste(beta[setdiff(names(beta), names(beta)[indexAllCoef])], collapse = " ")," \n", sep = "")
   }
-   
+  
   #### main loop
   while(iter < nstep_max && test.ncv){
     if(trace){cat("*")}
@@ -268,4 +265,32 @@ EPSODE_odeBeta <- function(t, y, ls.args){
 #   dH <- genD(ls.args$hessian, as.numeric(ls.args$beta))
 #   return( (y %x% y) %*% dH %*% y %*% ls.args$uz )
 # }
+
+initLambda_EPSODE <- function(stepLambda, increasing,
+                              gradient, beta, indexPenalty, indexNuisance){
+
+  
+  if(increasing){
+    seq_lambda <- 0 
+    if(is.null(stepLambda)){
+      stepLambda <- max( abs(-gradient(beta) )[indexPenalty] )
+      if(length(indexNuisance) > 0){stepLambda <- stepLambda * beta[indexNuisance[1]]}
+    }
+    
+  }else{
+    
+    seq_lambda <-  max( abs(-gradient(beta) )[indexPenalty] ) * 1.1 # initialisation with the fully penalized solution
+    if(length(indexNuisance) > 0){seq_lambda <- seq_lambda * beta[indexNuisance[1]]}
+    
+    if(is.null(stepLambda)){
+      stepLambda <- -seq_lambda
+    }
+    
+  }
+    
+  return(list(seq_lambda = seq_lambda,
+              stepLambda = stepLambda))
+}
+
+
 

@@ -68,6 +68,7 @@
                       group.penaltyCoef = NULL,
                       lambda1 = 0, 
                       lambda2 = 0,
+                      adaptive = FALSE,
                       V = NULL)
     class(x) <- append("plvm", class(x))
   }
@@ -82,7 +83,7 @@
 }
 
 `penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.exogenous = TRUE, pen.variance = FALSE, pen.latent = FALSE,
-                              lambda1, lambda2, V, ..., value){
+                              lambda1, lambda2, adaptive, V, ..., value){
   
   #### coefficients
   if(!is.null(value)){
@@ -164,22 +165,14 @@
     x$penalty$lambda2 <- as.numeric(lambda2)
   }
   
+   if(!missing(adaptive)){
+     x$penalty$adaptive <- as.numeric(adaptive)
+   }
+   
   #### export
   return(x)
 }
 
-
-
-
-
-
-if(newcoef[1] %in% exogenous(lvmfit)){
-  regression(model) <- as.formula(paste(rev(newcoef), collapse = "~"))
-}else if(newcoef[2] %in% exogenous(lvmfit)){
-  regression(model) <- as.formula(paste(newcoef, collapse = "~"))
-}else{
-  covariance(model) <- as.formula(paste(newcoef, collapse = "~"))  
-}
 
 #### 3- optim functions #### 
 

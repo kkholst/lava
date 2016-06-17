@@ -1,9 +1,5 @@
 rm(list = ls())
 
-context("LVM-ElasticNetRegression")
-# issues: with LARS - the correction step is not good [in reality issue with the proximal gradient algorithm that is not extremely precise]
-
-
 library(penalized)
 library(lava)
 library(testthat)
@@ -12,6 +8,8 @@ path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to 
 source(file.path(path.lava,"tests","FCT.R"))
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
+
+context("Reg-ElasticNet")
 
 #### simulation ###
 set.seed(10)
@@ -46,32 +44,29 @@ StepPenalize <- stepfun(x = rev(seq_lambda),
 test_that("LVM(LARS) vs penalize with ridge regression", {
   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, lambda2 = lambda2, 
                                regularizationPath = 1)
-  indexJump_LARS <- sapply(0:5, function(x){which(x == rowSums(penPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))[1]})
+  pathTempo <- penPath(elvm.PathL1_LARS)[,"lambda1.abs"]
   
-  StepLARS <- stepfun(x = penPath(elvm.PathL1_LARS)$lambda1.abs,
-                      y = c(0,rowSums(penPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))
-  )
-  # curve(StepLARS,0,2000)
-  
-  z = apply(outer(penPath(elvm.PathL1_LARS)[,"lambda1.abs"],seq_lambda,'-'), 2, function(x){min(abs(x))})
-  expect_equal(z, rep(0,length(z)),tolerance=0.01,scale=1)    
+  z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
+  expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  
 })
 
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with ridge regression", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, regularizationPath = 2, lambda2 = lambda2, trace = TRUE)
+  elvm.PathL1_EPSODE.f <- estimate(plvm.model,  data = df.data, regularizationPath = 2, lambda2 = lambda2, trace = TRUE)
+  pathTempo <- penPath(elvm.PathL1_EPSODE.f)[,"lambda1.abs"]
   
-  z = apply(outer(penPath(elvm.PathL1_EPSODE)[,"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
-  expect_equal(z, rep(0,length(z)),tolerance=1,scale=1)  
+  z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
+  expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  
 })
 
 
 test_that("LVM(EPSODE-backward) vs penalize with ridge regression", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE, lambda2 = lambda2,
+  elvm.PathL1_EPSODE.b <- estimate(plvm.model,  data = df.data, increasing = FALSE, lambda2 = lambda2,
                                  regularizationPath = 2, trace = TRUE)
+  pathTempo <- penPath(elvm.PathL1_EPSODE.b)[-nrow(penPath(elvm.PathL1_EPSODE.b)),"lambda1.abs"]
   
-  z = apply(outer(penPath(elvm.PathL1_EPSODE)[-nrow(penPath(elvm.PathL1_EPSODE)),"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
-  expect_equal(z, rep(0,length(z)),tolerance=1,scale=1)    
+  z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
+  expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  
 })
 
 #### check fix lambda ####
@@ -80,11 +75,11 @@ beta.fixed <- NULL
 
 for(iter_l in 1:length(seq_lambda)){
   cat("*")
-   eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, method.proxGrad = "ISTA",
+  eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, 
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2, 
                                lambda2 = lambda2/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                               control = list(constrain = FALSE, iter.max = 1e3, trace = FALSE))
-   
+                               control = list(constrain = TRUE))
+  
    # normal model
   test_that("LVM vs pLVM with lasso", {
     expect_equal(object=unname(validLVM(eplvm.fit_tempo1, penalized.PathL1[[iter_l]])),
@@ -92,8 +87,9 @@ for(iter_l in 1:length(seq_lambda)){
                  tolerance=0.01,scale=1)    
   })
   
-  eplvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE, lambda2 = lambda2, 
+  eplvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE, 
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1, 
+                               lambda2 = lambda2, 
                                control = list(trace = FALSE))
   
   # fixed sigma
@@ -104,5 +100,6 @@ for(iter_l in 1:length(seq_lambda)){
   })
   
 }
+
 
 

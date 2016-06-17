@@ -15,16 +15,15 @@ glmPath <- function(beta0, objective, hessian, gradient,
     ifelse(beta == 0, -sign(grad_Lv), -sign(beta))  # because grad_Lv in lava is -grad(Lv)
   }
   
-  
   #### initialisation
+  ## the nuisance parameter is always fixed
+  res <- initSigmaConstrain(beta0, constrain = control$constrain, indexNuisance = indexNuisance)
+  beta0 <- res$start
+  constrain <- res$constrain
+  
   M.beta <- matrix(0, nrow = 1, ncol = p)
   colnames(M.beta) <- names(beta0)
   M.beta[1,] <- beta0
-  if(control$constrain == TRUE){ ## the nuisance parameter is always fixed
-    M.beta[1,indexNuisance] <- 0
-  }else{
-    M.beta[1,indexNuisance] <- 1  
-  }
   
   V.lambda <- max( abs(-gradient(M.beta[1,]) * sd.X)[indexPenalty] )
   
@@ -34,34 +33,41 @@ glmPath <- function(beta0, objective, hessian, gradient,
   #### main loop
   while(iter < iter.max && cv == FALSE){
     if(control$regPath$trace){cat("*")}
- 
-     ## prediction step: next breakpoint assuming linear path and constant sigma
+    
+    ## prediction step: next breakpoint assuming linear path and constant sigma
     resNode <- nextNode_lvm(hessian = hessian, gradient = gradient,  gradientPen = gradientPen,
                             beta = M.beta[iter,], lambda1 = V.lambda[iter] * base.lambda1, lambda2 = lambda2, 
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
     
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
-    if(newLambda < 0 || is.infinite(newLambda)){
+    
+    if(newLambda < 0 || is.infinite(newLambda)){ ## cv, estimate for no penalization
       cv <- TRUE
       
-      ## no penalization
+      proxOperator <- function(x, step){
+        control$proxOperator(x, step,
+                             lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+      }
+      
+      
       resNode$beta <- do.call("proxGrad",
-                              list(start = M.beta[nrow(M.beta),], proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                   lambda1 = 0*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(1-control$constrain,names(beta0)[indexNuisance]),
+                              list(start = M.beta[nrow(M.beta),], proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                                   constrain = constrain,
                                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       newLambda <- 0
-    }else{
-      # cat(newLambda," : ",paste(resNode$beta, collapse = " - "),"\n")
       
-      ## correction step or update beta value with L2 penalization
-      if(any(lambda2>0)){
-        resNode$beta <- do.call("proxGrad",
-                                list(start = resNode$beta, proxOperator = control$proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                     lambda1 = newLambda*base.lambda1, lambda2 = lambda2, group.lambda1 = group.lambda1, constrain = setNames(1-control$constrain,names(beta0)[indexNuisance]),
-                                     step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
-                                     iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
+    }else if(any(lambda2>0)){ ## correction step or update beta value with L2 penalization
+      proxOperator <- function(x, step){  
+        control$proxOperator(x, step,
+                             lambda1 = newLambda*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
       }
+      
+      resNode$beta <- do.call("proxGrad",
+                              list(start = resNode$beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                                   constrain = constrain,
+                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       
     } 
     
