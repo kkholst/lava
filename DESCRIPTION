@@ -7,6 +7,7 @@ Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models.
 URL: https://github.com/kkholst/lava
+BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
 Depends:

@@ -40,17 +40,16 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     set.seed(1)
-    y.idx <- lava::index(x)$endo.idx
-    y <- lava::endogenous(x)
+    ii <- lava::index(x)
+    y.idx <- ii$endo.idx
+    x.idx <- ii$exo.idx
+    y <- ii$endogenous
     ord <- lava::ordinal(x)
     status <- rep(0,length(y))
-    if (exists("binary.lvm")) {
-        bin <- match(do.call("binary.lvm",list(x=x)),y)
-        if (length(bin)>0) status[bin] <- 2
-    }
+    bin <- tryCatch(match(do.call("binary",list(x=x)),y),error=function(x) NULL)
     status[match(ord,y)] <- 2
     
-    Table <- length(y)==length(ord)
+    Table <- (length(y)==length(ord)) && (length(x.idx)==0)
     if (Table) {
         pat <- mets::fast.pattern(data,categories=max(data)+1)
         data <- pat$pattern

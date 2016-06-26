@@ -210,6 +210,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (is.numeric(subset)) subset <- subset>0
     }
     idstack <- NULL
+    ## Preserve id from 'estimate' object
     if (missing(id) && inherits(x,"estimate") && !is.null(x$id)) id <- x$id
     if (!missing(id)) {
         if (is.null(iidtheta)) stop("'iid' method needed")
