@@ -44,7 +44,7 @@ StepPenalize <- stepfun(x = rev(seq_lambda),
 test_that("LVM(LARS) vs penalize with ridge regression", {
   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, lambda2 = lambda2, 
                                regularizationPath = 1)
-  pathTempo <- penPath(elvm.PathL1_LARS)[,"lambda1.abs"]
+  pathTempo <- getPath(elvm.PathL1_LARS)[,"lambda1.abs"]
   
   z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
   expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  
@@ -53,7 +53,7 @@ test_that("LVM(LARS) vs penalize with ridge regression", {
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with ridge regression", {
   elvm.PathL1_EPSODE.f <- estimate(plvm.model,  data = df.data, regularizationPath = 2, lambda2 = lambda2, trace = TRUE)
-  pathTempo <- penPath(elvm.PathL1_EPSODE.f)[,"lambda1.abs"]
+  pathTempo <- getPath(elvm.PathL1_EPSODE.f)[,"lambda1.abs"]
   
   z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
   expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  
@@ -63,7 +63,7 @@ test_that("LVM(EPSODE-forward) vs penalize with ridge regression", {
 test_that("LVM(EPSODE-backward) vs penalize with ridge regression", {
   elvm.PathL1_EPSODE.b <- estimate(plvm.model,  data = df.data, increasing = FALSE, lambda2 = lambda2,
                                  regularizationPath = 2, trace = TRUE)
-  pathTempo <- penPath(elvm.PathL1_EPSODE.b)[-nrow(penPath(elvm.PathL1_EPSODE.b)),"lambda1.abs"]
+  pathTempo <- getPath(elvm.PathL1_EPSODE.b)[-nrow(getPath(elvm.PathL1_EPSODE.b)),"lambda1.abs"]
   
   z = apply(outer(pathTempo,seq_lambda,'-'), 1, function(x){which.min(abs(x))})
   expect_equal(pathTempo, seq_lambda[z], tolerance=1e-2, scale= NULL)  

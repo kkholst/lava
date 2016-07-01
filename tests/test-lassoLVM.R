@@ -10,6 +10,7 @@ library(numDeriv)
 library(data.table)
 library(deSolve)
 library(regsem)
+library(testthat)
 path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
 vecRfiles <- list.files(file.path(path.lava,"R"))
 sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
@@ -30,6 +31,7 @@ lvm.modelSim <- lvm(list(formula.lvm1,
                          formula.lvm4,
                          formula.lvm5))
 distribution(lvm.modelSim,~eta) <- normal.lvm(sd = 2)
+latent(lvm.modelSim) <- ~eta
 df.data <- sim(lvm.modelSim,n)
 df.data <- df.data[,names(df.data) != "eta"]
 
@@ -38,9 +40,24 @@ formula.All_lvm <- sapply(paste0("Y",1:5,"~eta+", paste0("X",1:5, collapse = "+"
 lvm.model <- lvm(formula.All_lvm)
 latent(lvm.model) <- "eta"
 plvm.model <- penalize(lvm.model)
-
+plvm.modelSim <- penalize(lvm.modelSim)
 
 #### 2- Estimations ####
+
+test_that("LVM vs pLVM (lambda = 0)", {
+  resLVM <- estimate(lvm.modelSim, data = scale(df.data))
+  resPLVM <- estimate(plvm.modelSim, data = df.data, lambda1 = 0)
+  
+  expect_equal(coef(resLVM), coef(resPLVM), tolerance=1e-4, scale= NULL)  
+})
+
+# test_that("LVM vs pLVM (lambda = 0)", {
+#   resLVM <- estimate(lvm.modelSim, data = scale(df.data))
+#   resPLVM <- estimate(plvm.modelSim, data = df.data, lambda1 = 0, fixSigma = TRUE)
+#   
+#   expect_equal(coef(resLVM), coef(resPLVM), tolerance=1e-4, scale= NULL)  
+# })
+
 res.EPSODE_free <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = FALSE, trace = TRUE,
                        control = list(constrain = FALSE, iter.max = 5000))
 res.EPSODE_fixed <- estimate(plvm.model, data = df.data, regularizationPath = 2, fixSigma = TRUE,  trace = TRUE,

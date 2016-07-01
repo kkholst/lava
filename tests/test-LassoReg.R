@@ -31,7 +31,7 @@ plvm.model <- penalize(lvm.model)
 penalized.PathL1 <- penalized(Y ~  ., data = df.data, steps = "Park", trace = TRUE)
 seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 
-eplvm.model <- estimate(plvm.model, df.data, lambda1 = 40, lambda2 = 0, adaptive = TRUE)
+eplvm.model <- estimate(plvm.model, df.data, lambda1 = 40, lambda2 = 0)
 
 StepPenalize <- stepfun(x = rev(seq_lambda),
                           y = c(0,rev(unlist(lapply(penalized.PathL1, function(x){sum(x@penalized==0)} )))))
@@ -51,14 +51,14 @@ test_that("LVM vs pLVM with lasso - lambda=0", {
 test_that("LVM(LARS) vs penalize with lasso", {
   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, 
                                regularizationPath = 1)
-  indexJump_LARS <- sapply(0:5, function(x){which(x == rowSums(penPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))[1]})
+  indexJump_LARS <- sapply(0:5, function(x){which(x == rowSums(getPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))[1]})
   
-  StepLARS <- stepfun(x = penPath(elvm.PathL1_LARS)$lambda1.abs,
-                          y = c(0,rowSums(penPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))
+  StepLARS <- stepfun(x = getPath(elvm.PathL1_LARS)$lambda1.abs,
+                          y = c(0,rowSums(getPath(elvm.PathL1_LARS)[,names(coef(elvm.PathL1_LARS))]==0))
   )
   # curve(StepLARS,0,2000)
   
-  z = apply(outer(penPath(elvm.PathL1_LARS)[,"lambda1.abs"],seq_lambda,'-'), 2, function(x){min(abs(x))})
+  z = apply(outer(getPath(elvm.PathL1_LARS)[,"lambda1.abs"],seq_lambda,'-'), 2, function(x){min(abs(x))})
   expect_equal(z, rep(0,length(z)),tolerance=0.01,scale=1)    
 })
 
@@ -66,7 +66,7 @@ test_that("LVM(LARS) vs penalize with lasso", {
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
   elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, regularizationPath = 2, control = list(trace = TRUE))
   
-  z = apply(outer(penPath(elvm.PathL1_EPSODE)[,"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
+  z = apply(outer(getPath(elvm.PathL1_EPSODE)[,"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
   expect_equal(z, rep(0,length(z)),tolerance=0.01,scale=1)  
 })
 
@@ -83,7 +83,7 @@ test_that("LVM(EPSODE-backward) vs penalize with lasso", {
   elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,
                                  regularizationPath = 2, control = list(trace = TRUE))
   
-  z = apply(outer(penPath(elvm.PathL1_EPSODE)[-nrow(penPath(elvm.PathL1_EPSODE)),"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
+  z = apply(outer(getPath(elvm.PathL1_EPSODE)[-nrow(getPath(elvm.PathL1_EPSODE)),"lambda1.abs"],seq_lambda,'-'), 1, function(x){min(abs(x))})
   expect_equal(z, rep(0,length(z)),tolerance=0.01,scale=1)    
 })
 
@@ -125,12 +125,23 @@ for(iter_l in 1:length(seq_lambda)){
  
 }
 
+#### automatic estimation of sigma
+source(file.path(path.lava,"tests","FCT.R"))
+vecRfiles <- list.files(file.path(path.lava,"R"))
+sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
+
+
+elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, 
+                               regularizationPath = 2, 
+                               control = list(trace = TRUE))
+  
+  
 #### > high dimensional ####
 
 #### simulation ####
 set.seed(10)
-n <- 50
-n.region <- 10
+n <- 30
+n.region <- 50
 formula.lvm <- as.formula(paste0("Y~",paste(paste0("X",1:n.region), collapse = "+")))
 lvm.modelSim <- lvm()
 regression(lvm.modelSim, formula.lvm) <-   as.list( rbinom(n.region, size = 1, prob = 0.3)*rnorm(n.region, 3,1) ) # as.list( c(rep(0,2),0.25,0.5,0.75) ) # 
@@ -151,32 +162,46 @@ seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 beta.free <- NULL
 beta.fixed <- NULL
 
+# iter_l <- 5
+# eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
+#                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
+#                              control = list(constrain = TRUE, trace = TRUE))
+# 
+# eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
+#                              lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
+#                              objective = objectiveO, gradient = gradientO, hessian = hessianO, 
+#                              control = list(constrain = TRUE, trace = TRUE, abs.tol = 1e-10, rel.tol = 1e-9))
+
+
 for(iter_l in 1:length(seq_lambda)){
   cat("*")
+ 
 #   eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE,
 #                                lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-#                                control = list(constrain = TRUE, trace = FALSE))
-#   # coef(eplvm.fit_tempo1)[coef(eplvm.fit_tempo1)!=0]
-#   # coef(penalized.PathL1[[iter_l]])
+#                                objective = objectiveLV, gradient = gradientLV, hessian = hessianLV, 
+#                                control = list(constrain = TRUE, trace = TRUE, abs.tol = 1e-10, rel.tol = 1e-9))
+#   
 #   # normal model
-#   test_that("LVM vs pLVM with lasso", {
-#     expect_equal(object=unname(validLVM(eplvm.fit_tempo1, penalized.PathL1[[iter_l]])),
-#                  expected=rep(0,length(coef(eplvm.fit_tempo1))),
-#                  tolerance=0.01,scale=1)    
+#   test_that("penalized vs pLVM with lasso (high dimensional - sigmaFree)", {
+#         expect_equal(object=unname(eplvm.fit_tempo1$par),
+#                      expected=unname(coef2.penalized( penalized.PathL1[[iter_l]])),
+#                      tolerance=1e-5)    
+# #     expect_equal(object=unname(validLVM(eplvm.fit_tempo1, penalized.PathL1[[iter_l]])),
+# #                  expected=rep(0,length(coef(eplvm.fit_tempo1))),
+# #                  tolerance=0.01,scale=1)    
 #   })
   
   eplvm.fit_tempo2 <- estimate(plvm.model,  data = df.data, fixSigma = TRUE,
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1,
-                               control = list(constrain = TRUE, trace = FALSE))
+                               objective = objectiveLV, gradient = gradientLV, hessian = hessianLV, 
+                               control = list(constrain = FALSE, trace = FALSE, abs.tol = 1e-10, rel.tol = 1e-9))
   
   # fixed sigma
-  test_that("LVM vs pLVM with lasso", {
-    expect_equal(object=unname(validLVM(eplvm.fit_tempo2, penalized.PathL1[[iter_l]])),
-                 expected=rep(0,length(coef(eplvm.fit_tempo2))),
-                 tolerance=0.01,scale=1)    
+  test_that("penalized vs pLVM with lasso (high dimensional - sigmaFixed)", {
+    expect_equal(object=unname(eplvm.fit_tempo2$par)[-length(eplvm.fit_tempo2$par)],
+                 expected=unname(coef2.penalized( penalized.PathL1[[iter_l]]))[-length(eplvm.fit_tempo2$par)],
+                 tolerance=1e-5)    
   })
-  coef(eplvm.fit_tempo2)[coef(eplvm.fit_tempo2)!=0]
-  coef(penalized.PathL1[[iter_l]])
 }
 
 
