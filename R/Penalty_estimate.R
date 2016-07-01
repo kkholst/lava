@@ -72,7 +72,7 @@
 #' p12lvm.fit
 estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control = list(),
                           regularizationPath = FALSE, stepLambda1 = NULL, increasing = TRUE,
-                          method.proxGrad = "ISTA", step = 1, BT.n = 100, BT.eta = 0.8,
+                          method.proxGrad = "ISTA", step = 1, BT.n = 100, BT.eta = 0.8, force.descent = FALSE,
                           fixSigma = FALSE, ...) {
   
   names.coef <- coef(x)
@@ -125,6 +125,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
                            BT.n = BT.n,
                            BT.eta = BT.eta,
                            expX = if(control$constrain){names.coef[x$index$parBelongsTo$cov]}else{NULL},
+                           force.descent = force.descent,
                            trace = if(regularizationPath == 0){control$trace}else{FALSE},
                            fixSigma = fixSigma
   )
@@ -158,7 +159,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     }
     
   }
-  
+ 
   #### main
   if(all(c("objective", "gradient", "hessian") %in% names(list(...)))){
     
@@ -190,17 +191,23 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   res$penalty <-  control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
   res$penalty$regularizationPath <- regularizationPath
   
+  #### regularization path
+  if(regularizationPath>0){
+    res$regularizationPath <- res$opt$message
+    res$opt$message <- ""
+  }
+  
   #### update sigma value
-  if(regularizationPath>0 || fixSigma == TRUE){
+  if( (regularizationPath>0 && fixSigma==FALSE) || fixSigma == TRUE){
      res <- estimateNuisance.lvm(x, plvmfit = res, data = data, control = control,
                                 regularizationPath = regularizationPath)
   }
   
   #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
-    res$opt$message <- rescaleCoef_glmPath(Mres = as.matrix(res$opt$message), 
-                                           penalty = control$penalty, 
-                                           orthogonalizer = orthogonalizer)
+    getPath(res) <- rescaleCoef_glmPath(Mres = as.matrix(getPath(res)), 
+                                        penalty = control$penalty, 
+                                        orthogonalizer = orthogonalizer)
   }
   
   #### export
@@ -223,7 +230,8 @@ initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
     suppressWarnings(
       initLVM <- try(lava:::estimate.lvm(x = x, data = data, ...), silent = TRUE)
     )
-    if(("try-error" %in% class(initLVM) == FALSE) && (initLVM$opt$convergence == 0)){
+    
+    if(("try-error" %in% class(initLVM) == FALSE)){ # should also check convergence
       start_lambda0 <- coef(initLVM)
     }else{ 
       start_lambda0 <- NULL
@@ -338,8 +346,8 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
   names.coefVar <- control$penalty$names.varCoef
     
   if(regularizationPath){
-    names.coef <- setdiff(names(penPath(plvmfit, type = "coef")), names.coefVar)
-    fit.coef <- penPath(plvmfit, type = "coef")[, names.coef, drop = FALSE]
+    names.coef <- setdiff(names(getPath(plvmfit, type = "coef")), names.coefVar)
+    fit.coef <- getPath(plvmfit, type = "coef")[, names.coef, drop = FALSE]
     
   }else{
     names.coef <- setdiff(names( coef(plvmfit)), names.coefVar)
@@ -365,9 +373,9 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
     plvmfit2 <- estimate(xConstrain, data = data, control = control)
     
     if(regularizationPath){
-      penPath(plvmfit, row = iterPath) <- coef(plvmfit2)[names.coefVar]
-      penPath(plvmfit, names = "lambda1", row = iterPath) <- penPath(plvmfit, row = iterPath, type = "lambda1.abs") / coef(plvmfit2)[names.coefVar[1]]
-      penPath(plvmfit, names = "lambda2", row = iterPath) <- penPath(plvmfit, row = iterPath, type = "lambda2.abs") / coef(plvmfit2)[names.coefVar[1]]
+      getPath(plvmfit, row = iterPath) <- coef(plvmfit2)[names.coefVar]
+      getPath(plvmfit, names = "lambda1", row = iterPath) <- getPath(plvmfit, row = iterPath, type = "lambda1.abs") / coef(plvmfit2)[names.coefVar[1]]
+      getPath(plvmfit, names = "lambda2", row = iterPath) <- getPath(plvmfit, row = iterPath, type = "lambda2.abs") / coef(plvmfit2)[names.coefVar[1]]
     }else{
       index1 <- match(names(coef(plvmfit)), names.coefVar, nomatch = 0)>0
       index2 <- match(names(coef(plvmfit2)), names.coefVar, nomatch = 0)>0

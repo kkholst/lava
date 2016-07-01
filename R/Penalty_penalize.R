@@ -1,9 +1,9 @@
 #### 1- S3 Methods ####
 ##' @aliases penalize penalize<- penalize.lvm penalize.plvm
 ##' @param x
-##' @param pen.intercept should the intercept be penalized
-##' @param pen.regression should the mean parameters be penalized
-##' @param pen.variance should the variance parameters be penalized (not possible now)
+##' @param intercept should the intercept be penalized
+##' @param regression should the mean parameters be penalized
+##' @param variance should the variance parameters be penalized (not possible now)
 ##' @param lambda1 the lasso penalty
 ##' @param lambda2 the ridge penalty
 ##' @param fn_penalty user defined penalty function. Arguments coef, lambda1, lambda2.
@@ -82,7 +82,7 @@
   return(x)
 }
 
-`penalize<-.plvm` <- function(x, pen.intercept = FALSE, pen.regression = TRUE, pen.variance = FALSE, pen.covariance = FALSE, pen.latent = FALSE,
+`penalize<-.plvm` <- function(x, intercept = FALSE, regression = TRUE, variance = FALSE, covariance = FALSE, latent = FALSE,
                               lambda1, lambda2, adaptive, V, ..., value){
   
   #### coefficients
@@ -99,22 +99,22 @@
   } else if(is.null(x$penalty$names.penaltyCoef)){
 
     index.penaltyCoef <- NULL
-    if(pen.intercept == TRUE){
+    if(intercept == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$mean)  
     }
-    if(pen.regression == TRUE){
+    if(regression == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, x$index$parBelongsTo$reg) 
     }
-    if(pen.variance == TRUE){
+    if(variance == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, coefVar(x))
     }
 
-    if(pen.covariance == TRUE){
+    if(covariance == TRUE){
       index.penaltyCoef <- c(index.penaltyCoef, coefCov(x))
     }
     
     ## no penalization on parameters related to the latent variables
-    if(pen.latent == FALSE){
+    if(latent == FALSE){
       
       request <- paste( paste0("^",names(x$latent),"~|~",names(x$latent),"$"), collapse = "|")
       sapply("^u~", grep, x = coef(x), value = TRUE)

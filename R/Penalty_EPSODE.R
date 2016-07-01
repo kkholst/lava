@@ -64,7 +64,7 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
        beta <- do.call("proxGrad",
                     list(start = beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                          constrain = constrain,
-                         step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                         step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,  force.descent = control$proxGrad$force.descent, trace = FALSE, 
                          iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
   }
   
@@ -94,11 +94,11 @@ EPSODE <- function(beta, beta_lambdaMax, objective, gradient, hessian, V, lambda
     if(length(setZE)>0){
       iterBeta[setZE] <- 0
     }
-    
+   
     ## Solve ODE 
     lambda.ode <- seq(iterLambda1, max(0, iterLambda1 + stepLambda1), length.out = resolution_lambda1)
     cv.ODE <- c(cv = FALSE, lambda = lambda.ode[resolution_lambda1], cv.sign = FALSE, cv.constrain = FALSE, s = NA)
-   
+  
      res.ode <- deSolve::ode(y = iterBeta, 
                    times = lambda.ode, 
                    func = EPSODE_odeBeta, method = ode.method,
@@ -232,6 +232,7 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   
   ## check constrains
   if(!is.null(Q)){
+    
     H_m1 <- solve(H[ls.args$indexAllCoef %in% ls.args$indexPenalty, ls.args$indexAllCoef %in% ls.args$indexPenalty,drop = FALSE])#solve(H[ls.args$indexPenalty, ls.args$indexPenalty,drop = FALSE])  #
     Uz <- Uz[,ls.args$indexAllCoef %in% ls.args$indexPenalty, drop = FALSE]#Uz[,ls.args$indexPenalty, drop = FALSE]                             #
     G <- attr(H, "grad")[ls.args$indexAllCoef %in% ls.args$indexPenalty, drop = FALSE] #attr(H, "grad")[ls.args$indexPenalty, drop = FALSE]                  #
@@ -239,7 +240,7 @@ EPSODE_odeBeta <- function(t, y, ls.args){
     R <- solve(Uz %*% H_m1 %*% t(Uz))
     Q <- H_m1 %*% t(Uz) %*% R  #     Q <- Q[ls.args$indexPenalty,,drop = FALSE]
     s <- - t(Q) %*% ( (1 / t) * G + uz[ls.args$indexPenalty,drop = FALSE])
-    
+     
     if(any( abs(s) > 1)){
       index <- which.max(abs(s))
       assign("cv.ODE", 

@@ -1,21 +1,29 @@
-`penPath` <- function(x, ...) UseMethod("penPath")
+`getPath` <- function(x, ...) UseMethod("getPath")
 
-`penPath<-` <- function (x, ..., value) {
-  UseMethod("penPath<-", x)
+`isPath` <- function(x, ...) UseMethod("isPath")
+
+`getPath<-` <- function (x, ..., value) {
+  UseMethod("getPath<-", x)
 }
 
-`penPath.plvmfit` <- function(x, type = NULL, row = NULL) {
+`isPath.plvmfit` <- function(x) {
   
-  validNames <- names(x$opt$message)
+  return( is.null(x$regularizationPath) )
+  
+}
+
+`getPath.plvmfit` <- function(x, type = NULL, row = NULL) {
+  
+  validNames <- names(x$regularizationPath)
   
   if(is.null(type)){
-    res <- x$opt$message
+    res <- x$regularizationPath
   }else if(type == "coef"){
-    res <- x$opt$message[,names(coef(x)),drop = FALSE]
+    res <- x$regularizationPath[,names(coef(x)),drop = FALSE]
   }else if(type %in% validNames){
-    res <- x$opt$message[,type,drop = FALSE]
+    res <- x$regularizationPath[,type,drop = FALSE]
   }else{
-    stop("penPath.plvmfit: ",type," is an invalid name \n",
+    stop("getPath.plvmfit: ",type," is an invalid name \n",
          "valid names: \"coef\" ",paste(validNames, collapse = "\" \""),"\n")
   }
   
@@ -29,7 +37,7 @@
 
 
 
-`penPath<-.plvmfit` <- function(x, row = NULL, names = NULL, value) {
+`getPath<-.plvmfit` <- function(x, row = NULL, names = NULL, value) {
   
   if(is.null(names)){
     names.value <- names(value)
@@ -37,14 +45,14 @@
     if(length(names.value)>0){
       names <- names(value)  
     }else{
-      stop("penPath<-: argument names must be specified \n")
+      stop("getPath<-: argument names must be specified \n")
     }
   }
   
   if(is.null(row)){
-    x$opt$message[, names] <- value
+    x$regularizationPath[, names] <- value
   }else{
-    x$opt$message[row, names] <- value
+    x$regularizationPath[row, names] <- value
   }
   
   return(x)

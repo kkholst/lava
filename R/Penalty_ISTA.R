@@ -28,9 +28,12 @@
 #' Li 2015 - Accelerated Proximal Gradient Methods for Nonconvex Programming
 #' Simon 2013 - A sparse group Lasso
 proxGrad <- function(start, proxOperator, hessian, gradient, objective,
-                     step, BT.n, BT.eta, constrain, 
+                     step, BT.n, BT.eta, force.descent, constrain, 
                      iter.max, abs.tol, rel.tol, method, trace = FALSE){
- 
+  
+#   if(is.null(step)){
+#     step <- 100/sum( (gradient(start)/start)^2)#add variance and x
+#   }
   stepMax <- step 
   stepMin <- step*BT.eta^BT.n
   
@@ -43,32 +46,28 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
    
   grad.x_k <- try(gradient(x_k))
   
-  t_k <- if(method %in% c("FISTA","mFISTA")){1}else{NA}
+  t_k <- t_kp1 <- if(method %in% c("FISTA","mFISTA")){1}else{NA}
   y_k <- if(method %in% c("FISTA","mFISTA")){x_k}else{NA} 
   z_k <- if(method == "Nesterov"){z_k}else{NA}
+  obj.y_k <- if(method %in% c("FISTA","mFISTA")){obj.x_k}else{NA} 
+  grad.y_k <- if(method %in% c("FISTA","mFISTA")){grad.x_k}else{NA} 
   
   test.cv <- FALSE
-  iter <- 1
+  iter <- 0
+  iterAll <- 0
   
   if(trace){cat("stepBT"," ","iter_back", " ", "max(abs(x_k - x_km1))"," ","obj.x_k - obj.x_km1","\n")}
   
     ## loop
   while(test.cv == FALSE && iter <= iter.max){
-  
+ 
     iter_back <- 0
     diff_back <- 1
     obj.x_kp1 <- +Inf
     
-    if(method %in% c("FISTA","mFISTA")){
-      t_kp1 <- (1 + sqrt(1 + 4 * t_k^2)) / 2
-      
-      obj.y_k <- try(objective(y_k))
-      if("try-error" %in% class(obj.y_k)){obj.y_k <- Inf}
-      grad.y_k <- try(gradient(y_k))
-    }
-   
-    while( (iter_back < BT.n) && (diff_back > 0) ){ # obj.x_kp1 > obj.x_k should not be needed
+    while( (iter_back < BT.n) && (is.infinite(obj.x_kp1) || diff_back > 0) ){ # obj.x_kp1 > obj.x_k should not be needed
       stepBT <- step*BT.eta^iter_back
+      iterAll <- iterAll + 1
   
       if(method == "ISTA"){
         res <- ISTA(x_k = x_k, obj.x_k = obj.x_k, grad.x_k = grad.x_k, 
@@ -83,20 +82,21 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
                       proxOperator = proxOperator, step = stepBT, constrain = constrain, objective = objective)
       }
       
-      
       obj.x_kp1 <- try(objective(res$x_kp1))
-      if("try-error" %in% class(obj.x_kp1)){obj.x_kp1 <- Inf ; }
-      
+      if("try-error" %in% class(obj.x_kp1) || is.na(obj.x_kp1)){obj.x_kp1 <- Inf ; }
+    
+      #diff_back <- max(obj.x_kp1 - res$Q, obj.x_kp1 - obj.x_k)
       diff_back <- obj.x_kp1 - res$Q
       iter_back <- iter_back + 1
       
+      #cat("obj.x_kp1:",obj.x_kp1," | obj.x_k:",obj.x_k, " | res$Q:",res$Q,"\n")
     }
+    
+    if((force.descent == TRUE) && (obj.x_kp1 > obj.x_k)){break}
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol
     relDiff <- abs(obj.x_kp1 - obj.x_k)/abs(obj.x_kp1) < rel.tol
-    
     test.cv <- (absDiff + relDiff > 0)
-   # test.cvAlready <- (iter>1 && all(abs(res$x_kp1 - x_k) < abs.tol))
     
     #### update
     x_km1 <- x_k
@@ -111,9 +111,13 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       y_km1 <- y_k
       y_k <- res$y_kp1
       t_k <- t_kp1
+      
+      t_kp1 <- (1 + sqrt(1 + 4 * t_k^2)) / 2
+      obj.y_k <- try(objective(y_k))
+      if("try-error" %in% class(obj.y_k)){obj.y_k <- Inf}
+      grad.y_k <- try(gradient(y_k))
     }
     step <- min(stepMax, stepBT/sqrt(BT.eta))
-    
     
     iter <- iter + 1 
     
@@ -131,6 +135,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
               step = stepBT,
               convergence = as.numeric(test.cv==FALSE),
               iterations = iter,
+              iterationsAll = iterAll,
               evaluations = c("function" = 0, "gradient" = iter),
               message = message
   ))
@@ -181,7 +186,7 @@ mFISTA <- function(x_k, t_kp1, t_k, y_k, obj.x_k, obj.y_k, grad.x_k, grad.y_k,
   
   ## step
   z_kp1 <- proxOperator(x = y_k - step * grad.y_k, step = step)
-  if(!is.null(constrain)){x_kp1[names(constrain)] <- constrain}
+  if(!is.null(constrain)){z_kp1[names(constrain)] <- constrain}
   Qz <- Qbound(diff.xy = z_kp1 - y_k, obj.y = obj.y_k, grad.y = grad.y_k, L = 1/step)
   
   resV <- ISTA(x_k = x_k, obj.x_k = obj.x_k, grad.x_k = grad.x_k,

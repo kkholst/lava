@@ -53,7 +53,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
       resNode$beta <- do.call("proxGrad",
                               list(start = M.beta[nrow(M.beta),], proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                    constrain = constrain,
-                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, force.descent = control$proxGrad$force.descent,
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       newLambda <- 0
       
@@ -66,7 +66,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
       resNode$beta <- do.call("proxGrad",
                               list(start = resNode$beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                    constrain = constrain,
-                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, 
+                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE,  force.descent = control$proxGrad$force.descent,
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       
     } 
@@ -147,10 +147,10 @@ prepareData_glmPath <- function(model, data, penalty, label = "_pen"){
     Y_tempo <- outcomes[iter_Y]
     
     index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
+    
     if( length(index_coef)>0 ){
       ls.tempo <- lapply(exogeneous, grep, penalty$names.penaltyCoef[index_coef], fixed = TRUE) # which exogeneous varaible is related to outcome Y_tempo
       names.varData <- exogeneous[unlist(lapply(ls.tempo, function(t){length(t)>0}))] 
-      
       data <- cbind(data,
                     setNames(data[, names.varData, drop = FALSE], paste0(names.varData, label, Y_tempo))
       )

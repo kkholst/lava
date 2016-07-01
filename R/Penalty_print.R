@@ -63,7 +63,7 @@
     
     }else{
       cat("Regularization path: \n")
-      print(x$opt$message)
+      print(getPath(x))
       cat("estimated using ")
       switch(x$penalty$regularizationPath,
              "1" = cat("glmPath algorithm \n"),

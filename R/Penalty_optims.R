@@ -43,7 +43,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
-                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, 
+                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent, 
                   constrain = constrain, method = control$proxGrad$method, trace = control$proxGrad$trace)
   
   if(penalty$adaptive){
@@ -54,7 +54,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
    
     res <- proxGrad(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                     step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
-                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, 
+                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,
                     constrain = constrain, method = control$proxGrad$method, trace = control$proxGrad$trace)
     
   }
@@ -69,7 +69,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
 #' 
 optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
-  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
+ PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
   
   penalty <- control$penalty
   regPath <- control$regPath
@@ -104,6 +104,10 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
     
   }
 
+  #### optimise lambda
+  # browser()
+  
+  #### export
   res <- list(par = start,
               convergence = 0,
               iterations = 0,
@@ -115,7 +119,10 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   return(res)
 }
 
-
+optim.lambda <- function(model, ...){
+  
+}
+  
 
 #' @title initialise the penalty 
 #' 
@@ -125,7 +132,7 @@ initPenalty <- function(start, penalty){
   
   ## check
   if(length(setdiff(penalty$names.penaltyCoef, names(start)))>0){
-    message("initPenalty: some penalty will not be applied because the corresponding parameter is used as a reference \n",
+    warning("initPenalty: some penalty will not be applied because the corresponding parameter is used as a reference \n",
             "non-applied penalty: ",paste(setdiff(penalty$names.penaltyCoef, names(start)), collapse = " "),"\n")
     penalty$group.penaltyCoef <- penalty$group.penaltyCoef[penalty$names.penaltyCoef %in% names(start)]
     penalty$names.penaltyCoef <- penalty$names.penaltyCoef[penalty$names.penaltyCoef %in% names(start)]
