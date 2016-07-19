@@ -36,7 +36,9 @@
 }
 
 ##' @export
-`print.plvmfit` <- function(x,level=2,labels=FALSE,...) {
+`print.plvmfit` <- function(x,level=2,labels=FALSE, 
+                            getCoef = "penalized", getLambda = "abs", rm.duplicated = TRUE,
+                            ...) {
     
     if(x$penalty$regularizationPath == 0){
     
@@ -63,7 +65,10 @@
     
     }else{
       cat("Regularization path: \n")
-      print(getPath(x))
+      printPath <- getPath(x, rm.duplicated = rm.duplicated, getCoef = getCoef, getLambda = getLambda)
+      print(printPath)
+      diffRow <- nrow(getPath(x)) - nrow(printPath)
+      if(diffRow>0){cat("[ omitted ",diffRow," rows ] \n",sep = "")}
       cat("estimated using ")
       switch(x$penalty$regularizationPath,
              "1" = cat("glmPath algorithm \n"),
