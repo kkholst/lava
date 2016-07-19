@@ -1,25 +1,3 @@
-`coefN0` <-
-  function(x,...) UseMethod("coefN0")
-
-`coef0` <-
-  function(x,...) UseMethod("coef0")
-
-coefN0.plvmfit <- function(x, tol = 0, penalized = FALSE){
-  coefTempo <- coef(x)[abs(coef(x))>tol]
-  if(penalized){
-    coefTempo <- coefTempo[names(coefTempo) %in% x$penalty$names.penaltyCoef]
-  }
-  return(coefTempo)
-}
-
-coef0.plvmfit <- function(x, tol = 0, penalized = FALSE){
-  coefTempo <- coef(x)[abs(coef(x))<=tol]
-  if(penalized){
-    coefTempo <- coefTempo[names(coefTempo) %in% x$penalty$names.penaltyCoef]
-  }
-  return(coefTempo)
-}
-
 calcLambda <- function(model, seq_lambda, data.fit, data.test, trace = TRUE, ...){
   # if no test set then CV
   
