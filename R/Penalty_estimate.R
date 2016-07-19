@@ -205,7 +205,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   
   #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
-    getPath(res) <- rescaleCoef_glmPath(Mres = as.matrix(getPath(res)), 
+    setPath(res) <- rescaleCoef_glmPath(Mres = as.matrix(getPath(res)), 
                                         penalty = control$penalty, 
                                         orthogonalizer = orthogonalizer)
   }
@@ -346,8 +346,8 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
   names.coefVar <- control$penalty$names.varCoef
     
   if(regularizationPath){
-    names.coef <- setdiff(names(getPath(plvmfit, type = "coef")), names.coefVar)
-    fit.coef <- getPath(plvmfit, type = "coef")[, names.coef, drop = FALSE]
+    names.coef <- setdiff(names(getPath(plvmfit, getLambda = NULL)), names.coefVar)
+    fit.coef <- getPath(plvmfit, getLambda = NULL)[, names.coef, drop = FALSE]
     
   }else{
     names.coef <- setdiff(names( coef(plvmfit)), names.coefVar)
@@ -373,9 +373,10 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
     plvmfit2 <- estimate(xConstrain, data = data, control = control)
     
     if(regularizationPath){
-      getPath(plvmfit, row = iterPath) <- coef(plvmfit2)[names.coefVar]
-      getPath(plvmfit, names = "lambda1", row = iterPath) <- getPath(plvmfit, row = iterPath, type = "lambda1.abs") / coef(plvmfit2)[names.coefVar[1]]
-      getPath(plvmfit, names = "lambda2", row = iterPath) <- getPath(plvmfit, row = iterPath, type = "lambda2.abs") / coef(plvmfit2)[names.coefVar[1]]
+      setPath(plvmfit, row = iterPath) <- coef(plvmfit2)[names.coefVar]
+      
+      setPath(plvmfit, names = "lambda1", row = iterPath) <- getPath(plvmfit, row = iterPath, getLambda = "lambda1.abs", getCoef = NULL) / coef(plvmfit2)[names.coefVar[1]]
+      setPath(plvmfit, names = "lambda2", row = iterPath) <- getPath(plvmfit, row = iterPath, getLambda = "lambda2.abs", getCoef = NULL) / coef(plvmfit2)[names.coefVar[1]]
     }else{
       index1 <- match(names(coef(plvmfit)), names.coefVar, nomatch = 0)>0
       index2 <- match(names(coef(plvmfit2)), names.coefVar, nomatch = 0)>0
