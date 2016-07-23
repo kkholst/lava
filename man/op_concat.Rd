@@ -2,7 +2,6 @@
 % Please edit documentation in R/zoperators.R
 \name{\%++\%}
 \alias{\%++\%}
-\alias{\%+\%}
 \title{Concatenation operator}
 \usage{
 x \%++\% y

@@ -2,7 +2,7 @@
 ##' data types he operator is a wrapper of \code{paste}.
 ##'
 ##' Concatenation operator
-##' @aliases %+% %++%
+##' @aliases %++%
 ##' @rdname op_concat
 ##' @usage x \%++\% y
 ##' @title Concatenation operator
@@ -17,8 +17,8 @@
 ##' @export
 `%++%` <- function(x,y) UseMethod("%++%",y)
 
-##' @export
-`%+%` <- function(x,y) UseMethod("%+%",y)
+## ##' @export
+## `%+%` <- function(x,y) UseMethod("%+%",y)
 
 ##' @export
 `%++%.default` <- function(x,y) x%++%y

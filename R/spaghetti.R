@@ -12,9 +12,10 @@
 ##' @param lwd Line width
 ##' @param trend.formula Formula for trendline
 ##' @param tau Quantile to estimate (trend)
+##' @param level Confidence level
 ##' @param trend.lty Trend line type
 ##' @param trend.join Trend polygon
-##' @param trend.delta Trend confidence limits
+##' @param trend.delta Length of limit bars
 ##' @param trend Add trend line
 ##' @param trend.col Colour of trend line
 ##' @param trend.alpha Transparency
@@ -40,13 +41,14 @@
 ##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
 ##' }
 spaghetti <- function(formula,data,id="id",group=NULL,
-                     type="l",lty=1,col=1:10,alpha=0.3,lwd=1,
-                     trend.formula=formula,tau=NULL,
-                     trend.lty=1,trend.join=TRUE,trend.delta=0.2,
-                     trend=!is.null(tau),trend.col=col,
-                     trend.alpha=0.2,trend.lwd=3,
-                     legend=NULL,
-                     xlab="Time",ylab="",add=FALSE,...) {
+                      type="l",lty=1,col=1:10,alpha=0.3,lwd=1,
+                      level=0.95,
+                      trend.formula=formula,tau=NULL,
+                      trend.lty=1,trend.join=TRUE,trend.delta=0.2,
+                      trend=!is.null(tau),trend.col=col,
+                      trend.alpha=0.2,trend.lwd=3,
+                      legend=NULL,
+                      xlab="Time",ylab="",add=FALSE,...) {
                          ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
         if (!lava.options()$cluster.index) stop("mets not available? Check 'lava.options()cluster.index'.")    
     if (!is.null(group)) {
@@ -132,15 +134,15 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                 }
                 for (i in trend.formula) {
                     data0 <- data[data[,x]==i,,drop=FALSE]
-                    newdata <- data.frame(i); names(newdata) <- x                    
+                    newdata <- data.frame(i); names(newdata) <- x
                     if (!is.null(tau)) {
                         ##if (!require(quantreg)) stop("Install 'quantreg'")
                         suppressWarnings(r1 <- quantreg::rq(tf,data=data0,tau=tau))
-                        pr <- predict(r1,newdata=newdata)##,interval="confidence")
+                        pr <- predict(r1,newdata=newdata,level=level)
                         res <- rbind(res,pr)
                     } else {
                         l1 <- lm(tf,data0)
-                        pr <- predict(l1,newdata=newdata,interval="confidence")
+                        pr <- predict(l1,newdata=newdata,interval="confidence",level=level)
                         res <- rbind(res,pr)
                     }
                 }
@@ -162,14 +164,14 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     suppressWarnings(r1 <- quantreg::rq(trend.formula,data=data,tau=tau))
                     newdata <- data.frame(seq(min(X,na.rm=TRUE),max(X,na.rm=TRUE),length.out=100))
                     names(newdata) <- x
-                    pr <- predict(r1,newdata=newdata,interval="confidence")
+                    pr <- predict(r1,newdata=newdata,interval="confidence",level=level)
                     ##confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)
                     for (i in seq_along(tau))
                         lines(newdata[,1],pr[,i],col=trend.col,lwd=trend.lwd,lty=trend.lty)
                 } else {
                     l1. <- lm(trend.formula,data)
-                    l1 <- estimate(l1.,id=data[,id])
-                    xy <- plotConf(l1.,vcov=vcov(l1),data=data,partres=FALSE,plot=FALSE,...)
+                    l1 <- estimate(l1.,id=data[,id],level=level)
+                    xy <- plotConf(l1.,vcov=vcov(l1),data=data,partres=FALSE,plot=FALSE,level=level,...)
                     xx <- xy$x
                     pr <- xy$predict$fit
                     confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)

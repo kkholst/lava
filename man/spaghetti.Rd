@@ -5,11 +5,11 @@
 \title{Spaghetti plot}
 \usage{
 spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
-  col = 1:10, alpha = 0.3, lwd = 1, trend.formula = formula,
-  tau = NULL, trend.lty = 1, trend.join = TRUE, trend.delta = 0.2,
-  trend = !is.null(tau), trend.col = col, trend.alpha = 0.2,
-  trend.lwd = 3, legend = NULL, xlab = "Time", ylab = "", add = FALSE,
-  ...)
+  col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
+  trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
+  trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
+  trend.alpha = 0.2, trend.lwd = 3, legend = NULL, xlab = "Time",
+  ylab = "", add = FALSE, ...)
 }
 \arguments{
 \item{formula}{Formula (response ~ time)}
@@ -30,6 +30,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 
 \item{lwd}{Line width}
 
+\item{level}{Confidence level}
+
 \item{trend.formula}{Formula for trendline}
 
 \item{tau}{Quantile to estimate (trend)}
@@ -38,7 +40,7 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 
 \item{trend.join}{Trend polygon}
 
-\item{trend.delta}{Trend confidence limits}
+\item{trend.delta}{Length of limit bars}
 
 \item{trend}{Add trend line}
 
