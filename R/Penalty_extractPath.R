@@ -1,13 +1,25 @@
 `getPath` <- function(x, ...) UseMethod("getPath")
 
-`getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, row = NULL) {
+`getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, ascending = TRUE, row = NULL) {
 
+  if(isPath(x)){
+    stop("plotPath.plvmfit: no penalization path in the plvmfit object \n",
+         "set argument \'regularizationPath\' to 1 or 2 when calling estimate \n")
+  }
+  
   regPath <- x$regularizationPath
   
   if(rm.duplicated){
-    regPath <- regPath[c(1,which(diff(regPath$indexChange)!=0)),]
+    indexChange <- regPath$indexChange
+    test.change <- which(diff(na.omit(indexChange))!=0)
+    index <- sort(union(c(1,NROW(regPath)),which(!is.na(indexChange))[test.change]))
+    regPath <- regPath[index, ,drop = FALSE]
   }
-  
+  if(ascending == TRUE){
+    regPath <- regPath[order(regPath$lambda1.abs, decreasing = FALSE),,drop = FALSE]
+  }else{
+    regPath <- regPath[order(regPath$lambda1.abs, decreasing = TRUE),,drop = FALSE]
+  }
   validNames <- names(regPath)
   
   if(!is.null(names)){
@@ -28,20 +40,22 @@
       names.lambda <- NULL
     }else{
       validValues <- c("abs", "nabs", "lambda1", "lambda2", "lambda1.abs", "lambda2.abs")
-      if(getLambda %in% validValues == FALSE){
+      if(any(getLambda %in% validValues == FALSE)){
         stop("getPath.plvmfit: invalid value for \'getLambda\' \n",
              "getLambda: ",getLambda,"\n",
              "valid values: ",paste(validValues, collapse = "\" \""),"\n")
       }
       
-      names.lambda <- switch(getLambda,
-                             "abs" = c("lambda1.abs", "lambda2.abs"),
-                             "nabs" = c("lambda1", "lambda2"),
-                             "lambda1" = c("lambda1"),
-                             "lambda2" = c("lambda2"),
-                             "lambda1.abs" = c("lambda1.abs"),
-                             "lambda2.abs" = c("lambda2.abs")
-                             )
+      names.lambda <- sapply(getLambda, function(x){
+        switch(x,
+               "abs" = c("lambda1.abs", "lambda2.abs"),
+               "nabs" = c("lambda1", "lambda2"),
+               "lambda1" = c("lambda1"),
+               "lambda2" = c("lambda2"),
+               "lambda1.abs" = c("lambda1.abs"),
+               "lambda2.abs" = c("lambda2.abs")
+        )
+      })
     }
     
     if(missing(getCoef)){
@@ -56,11 +70,12 @@
              "valid values: ",paste(validValues, collapse = "\" \""),"\n")
       }
       
+      names.penalized <- intersect(validNames, x$penalty$names.penaltyCoef)
       names.coef <- switch(getCoef,
-                           "penalized" = intersect(x$penalty$names.penaltyCoef,validNames),
-                           "npenalized" = setdiff(names(coef(x)),x$penalty$names.penaltyCoef),
-                           "coef0" = {regPath$coef0 <- rowSums(abs(regPath[,x$penalty$names.penaltyCoef, drop = FALSE] == 0)) ; "coef0"},
-                           "coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[,x$penalty$names.penaltyCoef, drop = FALSE] != 0)) ; "coefn0"}
+                           "penalized" = names.penalized,
+                           "npenalized" = setdiff(names(coef(x)),names.penalized),
+                           "coef0" = {regPath$coef0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] == 0)) ; "coef0"},
+                           "coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[names.penalized, drop = FALSE] != 0)) ; "coefn0"}
       )
     }
     

@@ -15,14 +15,14 @@
   }
   
   if(all(x$penalty$group.penaltyCoef<1)){
-  cat("Penalty: ", penaltyType,"\n",
-      "On     : ", paste(x$penalty$names.penaltyCoef, collapse = " "),"\n")
+    cat("Penalty: ", penaltyType,"\n",
+        "On     : ", paste(x$penalty$names.penaltyCoef, collapse = " "),"\n")
   }else{
     
     test.lasso <- (x$penalty$group.penaltyCoef<1)*(x$penalty$group.penaltyCoef>0)
     if(any(test.lasso==1)){
-    cat("Penalty: ", penaltyType,"\n",
-        "On     : ", paste(x$penalty$names.penaltyCoef[test.lasso==1], collapse = " "),"\n")
+      cat("Penalty: ", penaltyType,"\n",
+          "On     : ", paste(x$penalty$names.penaltyCoef[test.lasso==1], collapse = " "),"\n")
     }
     
     ls.penalty <- tapply(x$penalty$names.penaltyCoef[test.lasso!=1], x$penalty$group.penaltyCoef[test.lasso!=1],list)
@@ -39,8 +39,13 @@
 `print.plvmfit` <- function(x,level=2,labels=FALSE, 
                             getCoef = "penalized", getLambda = "abs", rm.duplicated = TRUE,
                             ...) {
+  if(!is.null(x$penalty$lambda1.best)){
+    lava:::print.lvmfit(x)
+    cat("\n Model selected using ",attr(x$penalty$performance,"criterion"),"criterion \n")
+    cat("   range of lambda1: ",paste(range(x$penalty$lambda1), collapse = " "),"\n")
+    cat("   best lambda1    : ",x$penalty$lambda1.best,"\n")
     
-    if(x$penalty$regularizationPath == 0){
+  }else if(x$penalty$regularizationPath == 0){
     
     Mtempo <- CoefMat(x,labels=labels,level=level,...) 
     ncol.M <- ncol(Mtempo)
@@ -63,18 +68,18 @@
     if (!is.null(pseudo) && pseudo) warning("Singular covariance matrix. Pseudo-inverse used.")
     
     
-    }else{
-      cat("Regularization path: \n")
-      printPath <- getPath(x, rm.duplicated = rm.duplicated, getCoef = getCoef, getLambda = getLambda)
-      print(printPath)
-      diffRow <- nrow(getPath(x)) - nrow(printPath)
-      if(diffRow>0){cat("[ omitted ",diffRow," rows ] \n",sep = "")}
-      cat("estimated using ")
-      switch(x$penalty$regularizationPath,
-             "1" = cat("glmPath algorithm \n"),
-             "2" = cat("EPSODE algorithm \n"))
-    }
-    
-    
-    invisible(x)
+  }else {
+    cat("Regularization path: \n")
+    printPath <- getPath(x, rm.duplicated = rm.duplicated, getCoef = getCoef, getLambda = getLambda)
+    print(printPath)
+    diffRow <- nrow(getPath(x)) - nrow(printPath)
+    if(diffRow>0){cat("[ omitted ",diffRow," rows ] \n",sep = "")}
+    cat("estimated using ")
+    switch(x$penalty$regularizationPath,
+           "1" = cat("glmPath algorithm \n"),
+           "2" = cat("EPSODE algorithm \n"))
   }
+
+
+invisible(x)
+}

@@ -40,7 +40,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
     control$proxOperator(x, step,
                          lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
   }
-  
+
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent, 
@@ -70,7 +70,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
 optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
-  
+
   penalty <- control$penalty
   regPath <- control$regPath
   control <- control[names(control) %in% PGcontrols]
@@ -95,18 +95,52 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
     V <- penalty$V[names(start),names(start), drop = FALSE]
     group.penaltyCoef <- penalty$group.penaltyCoef[names(start)]
     
+    ## check dimension
+    rankHessian <- tryCatch(Matrix::rankMatrix(hessian(start)), error = function(e){stop("Could not compute the rank of the Hessian \n")})
+    test.HD <- rankHessian < length(start) 
+    if(test.HD){
+      if(regPath$increasing == TRUE){
+        stop("High dimensional lvm (Hessian is singular): argument increasing must be set to FALSE \n")
+      }else if(is.null(regPath$stopLambda) && is.null(regPath$stopParam)){
+        message("Computation of the whole regularization path in high dimensional settings can take a long time \n",
+                "consider using argument stopLambda and stopParam to only compute part of the path \n")
+      }
+      start <- regPath$beta_lambdaMax
+    }  
+    
+    ## check lambda
+    if(regPath$increasing == TRUE){
+      if(any(start[index.penaltyCoef] == 0)){
+        stop("All penalized coefficient should be non-0 when using increasing = TRUE \n",
+             "May be due to automatic initialization - in such a case set increasing to FALSE \n")
+      }
+    }else{
+      if(!all(start[index.penaltyCoef] == 0)){
+        stop("All penalized coefficient should be set to 0 when using increasing = FALSE \n")
+      }
+    }
+   
+    ## nuisance parameter
+    if(is.null(regPath$fixSigma)){
+      if(length(penalty$names.varCoef)==1){fixSigma <- TRUE}else{fixSigma <- FALSE}
+    }
+    
+    if(regPath$fixSigma){
+      indexNuisance <- which(names(start) %in% penalty$names.varCoef)
+    }else{
+      indexNuisance <- NULL
+    }
+    
+    ## EPSODE
     resLassoPath <- EPSODE(beta = start, beta_lambdaMax = regPath$beta_lambdaMax, objective = objective, gradient = gradient, hessian = hessian, 
                            V = V, 
-                           indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                           stepLambda1 = regPath$stepLambda1, increasing = regPath$increasing, 
+                           indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
+                           stepLambda1 = regPath$stepLambda1, increasing = regPath$increasing, stopLambda = regPath$stopLambda, stopParam = regPath$stopParam,
                            lambda2 = penalty$lambda2, group.lambda1 = group.penaltyCoef,
-                           control = control, trace = control$regPath$trace)
+                           control = control, test.HD = test.HD, trace = control$regPath$trace)
     
   }
 
-  #### optimise lambda
-  # browser()
-  
   #### export
   res <- list(par = start,
               convergence = 0,
