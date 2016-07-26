@@ -82,13 +82,18 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       obj.x_kp1 <- tryCatch(objective(res$x_kp1), error = fct_errorLv) 
       
       #diff_back <- max(obj.x_kp1 - res$Q, obj.x_kp1 - obj.x_k)
-      diff_back <- obj.x_kp1 - res$Q
+      if(force.descent == TRUE){
+        diff_back <- obj.x_kp1 - obj.x_k
+      }else{
+        diff_back <- obj.x_kp1 - res$Q
+      }
+      
       iter_back <- iter_back + 1
       
       #cat("obj.x_kp1:",obj.x_kp1," | obj.x_k:",obj.x_k, " | res$Q:",res$Q,"\n")
     }
     
-    if((force.descent == TRUE) && (obj.x_kp1 > obj.x_k)){break}
+    if(force.descent && obj.x_kp1 > obj.x_k){break}
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol
     relDiff <- abs(obj.x_kp1 - obj.x_k)/abs(obj.x_kp1) < rel.tol

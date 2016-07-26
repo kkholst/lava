@@ -1,5 +1,7 @@
 #### objective / gradient / hessian
-objectiveLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
+objectiveLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"]), var = NULL){
+  
+  if(!is.null(var)){coef <- c(coef, var)}
   
   n <- length(Y)
   Xint <- cbind(1,X)
@@ -11,7 +13,9 @@ objectiveLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.da
   return(-as.numeric(lv))
 }
 
-gradientLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
+gradientLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"]), var = NULL){
+  
+  if(!is.null(var)){coef <- c(coef, var)}
   
   n <- length(Y)
   Xint <- cbind(1,X)
@@ -22,29 +26,37 @@ gradientLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.dat
   gradient_sigma2 <- - n/(2*sigma2) + 1/(2*sigma2^2) * t(epsilon) %*% epsilon    
   gradient_beta <- + 1/(sigma2) * t(Xint) %*% epsilon  
   
+  if(!is.null(var)){gradient_sigma2 <- NULL}
+  
   return(-as.numeric(c(gradient_beta,gradient_sigma2)))
 }
 
-hessianLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
+hessianLV <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"]), var = NULL){
+  
+  
+  G <- gradientLV(coef = coef, Y = Y, X = X, intercept = intercept, var = var)
+  
+  if(!is.null(var)){coef <- c(coef, var)}
   
   n <- length(Y)
-  G <- gradientLV(coef = coef, Y = Y, X = X)
-  
   Xint <- cbind(1,X)
   sigma2 <- coef[length(coef)]
   beta <- coef[-length(coef)]
   epsilon <- Y - Xint %*% cbind(beta)
-  
+ 
   hessian_sigma2 <- + n/(2*sigma2^2) - 2/(2*sigma2^3) * t(epsilon) %*% epsilon
   hessian_sigma2FDbeta <- - 1/(sigma2^2) * t(Xint) %*% epsilon
   hessian_beta <- - 1/(sigma2) * t(Xint) %*% Xint
   
-  H <- cbind( rbind(hessian_beta,t(hessian_sigma2FDbeta)),
-              rbind(hessian_sigma2FDbeta,hessian_sigma2)
-  )
+  if(!is.null(var)){
+    H <- hessian_beta
+  }else{
+    H <- cbind( rbind(hessian_beta,t(hessian_sigma2FDbeta)),
+                c(hessian_sigma2FDbeta,hessian_sigma2)
+    )
+  }
   attr(H,"grad") <- G
-  
-  
+    
   return(-H)
 }
 
@@ -61,7 +73,7 @@ objectiveMC <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.da
 
 gradientMC <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
   
-  n <- length(Y)
+   n <- length(Y)
   Xint <- cbind(1,X)
   beta <- coef[-length(coef)]
   epsilon <- Y - Xint %*% cbind(beta)
@@ -72,11 +84,11 @@ gradientMC <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.dat
   return(as.numeric(c(gradient_beta,gradient_sigma2)))
 }
 
-hessianLv <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
+hessianMC <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
   
-  n <- length(Y)
   G <- gradientMC(coef = coef, Y = Y, X = X)
   
+  n <- length(Y)
   Xint <- cbind(1,X)
   beta <- coef[-length(coef)]
   epsilon <- Y - Xint %*% cbind(beta)
@@ -85,12 +97,13 @@ hessianLv <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data
   
   hessian_sigma2 <- 0
   hessian_sigma2FDbeta <- rep(0, length(beta))
+  
   H <- cbind( rbind(hessian_beta,t(hessian_sigma2FDbeta)),
-              rbind(hessian_sigma2FDbeta,hessian_sigma2)
+              c(hessian_sigma2FDbeta,hessian_sigma2)
   )
   attr(H,"grad") <- G
   
-  return(H)
+  return(-H)
 }
 
 coef2.penalized <- function(x, iter_lambda){
@@ -124,25 +137,4 @@ coef2.penalized <- function(x, iter_lambda){
   names(coef)[2:(n.coef-1)] <- paste(names.response, names(coef)[2:(n.coef-1)], sep = "~")
   names(coef)[length(names(coef))] <- paste(names.response, names.response, sep = ",")
   return(coef)
-}
-
-
-validLVM <- function(x, GS = NULL){
-  library(penalized)
-  
-  if(is.null(GS)){
-    lambda1 <- x$penalty$lambda1
-    lambda1 <- lambda1*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]
-    lambda2 <- x$penalty$lambda2
-    lambda2 <- lambda2*coef(x)[ paste(endogenous(x),endogenous(x),sep = ",")]
-    
-    GS <- penalized(as.formula(paste0(endogenous(x),"~.")), 
-                              lambda1 = lambda1, 
-                              lambda2 = lambda2, 
-                              data = x$data$model.frame, trace = FALSE)
-  }
-  
-  diffCoef <- coef(x) - coef2.penalized(GS)
-  
-  return(diffCoef)
 }
