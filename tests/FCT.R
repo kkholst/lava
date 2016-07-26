@@ -118,6 +118,11 @@ coef2.penalized <- function(x, iter_lambda){
   coef <- c(x@unpenalized, 
             x@penalized, 
             x@nuisance$sigma2)
+  n.coef <- length(coef)
+  names.response <- all.vars(x@formula$penalized)[1]
+  names(coef)[1] <- names.response
+  names(coef)[2:(n.coef-1)] <- paste(names.response, names(coef)[2:(n.coef-1)], sep = "~")
+  names(coef)[length(names(coef))] <- paste(names.response, names.response, sep = ",")
   return(coef)
 }
 
