@@ -7,12 +7,10 @@ library(numDeriv)
 library(data.table)
 library(deSolve)
 library(lava)
+library(butils)
+package.source("lava", Rcode = TRUE)
+source(file.path(butils::dir.gitHub(),"lava","tests","FCT.R"))
 
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #### set the local path to the R files
-vecRfiles <- list.files(file.path(path.lava,"R"))
-sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
-
-source(file.path(path.lava,"tests","FCT.R"))
 #### simulation
 set.seed(10)
 n <- 500

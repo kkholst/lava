@@ -5,12 +5,9 @@ library(numDeriv)
 library(data.table)
 library(lava)
 library(deSolve)
-
-
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava" #"C:/Users/hpl802/Downloads/lava-penalization/lava-penalization"
-vecRfiles <- list.files(file.path(path.lava,"R"))
-sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
-source(file.path(path.lava,"tests","FCT.R"))
+library(butils)
+package.source("lava", Rcode = TRUE)
+source(file.path(butils::dir.gitHub(),"lava","tests","FCT.R"))
 
 simForm <- function(n.obs, xmax, ymax, radius, center = NULL, coords.centered = TRUE,
                     distance = "euclidean"){

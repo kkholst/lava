@@ -11,9 +11,9 @@ library(data.table)
 library(deSolve)
 library(regsem)
 library(testthat)
-path.lava <- "C:/Users/hpl802/Documents/GitHub/lava"
-vecRfiles <- list.files(file.path(path.lava,"R"))
-sapply(vecRfiles, function(x){source(file.path(path.lava,"R",x))})
+library(butils)
+package.source("lava", Rcode = TRUE)
+source(file.path(butils::dir.gitHub(),"lava","tests","FCT.R"))
 
 n <- 500
 
