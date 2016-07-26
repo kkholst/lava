@@ -73,7 +73,7 @@
 estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control = list(),
                           regularizationPath = FALSE, stepLambda1 = NULL, increasing = TRUE, stopLambda = NULL, stopParam = NULL, fit = "BIC",
                           method.proxGrad = "ISTA", step = 1, BT.n = 100, BT.eta = 0.8, force.descent = FALSE,
-                          fixSigma = FALSE, ...) {
+                          fixSigma = NULL, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)
@@ -83,14 +83,16 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     control$iter.max <- 1000
   }
   if("trace" %in% names(control) == FALSE){
-    control$trace <- FALSE
+    control$trace <- 0
+  }else{
+    control$trace <- control$trace - 1
   }
   if("constrain" %in% names(control) == FALSE){
     control$constrain <- FALSE
   }
 
   #### prepare data (scaling, orthogonalization)
-  if(control$trace){cat("Scale and center dataset \n")}
+  if(control$trace>=0){cat("Scale and center dataset \n")}
   resData <- prepareData.lvm(x, data = data, penalty = x$penalty,
                              regularizationPath = regularizationPath)
   data <- resData$data
@@ -113,7 +115,10 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     penalty$adaptive <- as.numeric(adaptive)
   }
   penalty$names.varCoef <- names.coef[x$index$parBelongsTo$cov]
-  
+  penalty$names.varCoef <- intersect(penalty$names.varCoef,
+                                     paste(c(endogenous(x), latent(x)), 
+                                           c(endogenous(x), latent(x)), 
+                                           sep = ","))
   if(regularizationPath > 0){
     save_lambda2 <-  penalty$lambda2
   }
@@ -125,18 +130,18 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
                            step = step,
                            BT.n = BT.n,
                            BT.eta = BT.eta,
-                           expX = if(control$constrain){names.coef[x$index$parBelongsTo$cov]}else{NULL},
+                           expX = if(control$constrain){penalty$names.varCoef}else{NULL},
                            force.descent = force.descent,
                            trace = if(regularizationPath == 0){control$trace}else{FALSE},
                            fixSigma = if(is.null(fixSigma)){FALSE}else{fixSigma}
   )
- 
+  
   control$regPath <- list(type = regularizationPath,
                           stepLambda1 = stepLambda1,
                           increasing = increasing,
                           stopParam = stopParam,
                           stopLambda = stopLambda,
-                          fixSigma = fixSigma,
+                          fixSigma = if(is.null(fixSigma)){TRUE}else{fixSigma},
                           trace = if(regularizationPath > 0){control$trace}else{FALSE})
   
   ## proximal operator 
@@ -149,15 +154,15 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   
   #### initialization
   if(is.null(control$start)){
-    if(control$trace){cat("Initilization: ")}
+    if(control$trace>=0){cat("Initilization: ")}
     res.init  <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef,
                                  penalty = control$penalty, regPath = control$regPath, ...)
   
     if(regularizationPath == 1 || (regularizationPath == 2 && increasing)){
-      if(control$trace){cat(" unpenalized LVM \n")}
+      if(control$trace>=0){cat(" unpenalized LVM \n")}
       control$start <- res.init$lambda0
     }else{
-      if(control$trace){cat(" LVM where all penalized coefficient are shrinked to 0 \n")}
+      if(control$trace>=0){cat(" LVM where all penalized coefficient are shrinked to 0 \n")}
       control$start <- res.init$lambdaMax
     }
     
@@ -191,7 +196,6 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
                                method = if(regularizationPath == 0){"optim.regLL"}else{"optim.regPath"}, 
                                control = control, ...)
-    res$model <- x # restaure the penalized model
   }
   class(res) <- append("plvmfit", class(res))
   
@@ -205,14 +209,14 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   }
   
   #### update sigma value
-  if( regularizationPath > 0 || fixSigma == TRUE){
-    if(control$trace){cat("Estimation of the nuisance parameter ")}
+  if( regularizationPath > 0){
+    if(control$trace>=0){cat("Estimation of the nuisance parameter ")}
     res <- estimateNuisance.lvm(x, plvmfit = res, data = data, control = control,
                                 regularizationPath = regularizationPath)
-    if(control$trace){cat("- done \n")}
+    if(control$trace>=0){cat("- done \n")}
   }
   
-  #### rescale parameter to remove the effect of orthogonalization
+   #### rescale parameter to remove the effect of orthogonalization
   if(regularizationPath == 1){
     setPath(res) <- rescaleCoef_glmPath(Mres = as.matrix(getPath(res)), 
                                         penalty = control$penalty, 
@@ -221,8 +225,9 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   
   #### estimate the best model according to the fit parameter
   if(regularizationPath > 0 && !is.null(fit)){
-    cat("Best penalized model according to the",fit,"criteria")
-    res <- calcLambda(res, fit = fit, data.fit = data, trace = control$trace)
+    if(control$trace>=0){cat("Best penalized model according to the",fit,"criteria")}
+    res <- calcLambda(res, model = x, fit = fit, data.fit = data, trace = control$trace)
+    if(control$trace>=0){cat(" - done \n")}
   }
   
   #### export
@@ -356,7 +361,7 @@ prepareData.lvm <- function(x, data, penalty, regularizationPath){
 
 #' @title Estimate nuisance parameter
 estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
-  
+
   control$trace <- FALSE
   names.coefVar <- control$penalty$names.varCoef
     
@@ -370,8 +375,10 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
   }
   n.coef <- length(names.coef)
   n.knot <- nrow(fit.coef)
-  index.knot <- as.numeric(rownames(fit.coef))
+  index.knot <- match(as.numeric(rownames(fit.coef)),rownames(getPath(plvmfit))) # get line index [as.numeric(rownames(fit.coef)) is not enough as the lines may not be sorted in the correct order]
     
+  setPath(plvmfit) <- setNames(rep(NA,length(names.coefVar)),names.coefVar)
+  
   for(iterPath in 1:n.knot){ # build the reduced model associated to each LVM (i.e. fix all penalized parameters to their value)
     xConstrain <- x
     class(xConstrain) <- "lvm"
@@ -389,32 +396,17 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
     plvmfit2 <- estimate(xConstrain, data = data, control = control)
     
     if(regularizationPath){
-      
       setPath(plvmfit, row = index.knot[iterPath]) <- coef(plvmfit2)[names.coefVar]
       
       if(!is.na(getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1.abs", getCoef = NULL))){
-        setPath(plvmfit, names = "lambda1", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1.abs", getCoef = NULL) / coef(plvmfit2)[names.coefVar[1]]
+        setPath(plvmfit, names = "lambda1", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1.abs", getCoef = NULL) / sum(coef(plvmfit2)[names.coefVar])
       }else if(!is.na(getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1", getCoef = NULL))){
-        setPath(plvmfit, names = "lambda1.abs", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1", getCoef = NULL) * coef(plvmfit2)[names.coefVar[1]]
+        setPath(plvmfit, names = "lambda1.abs", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda1", getCoef = NULL) * sum(coef(plvmfit2)[names.coefVar])
       }
-      setPath(plvmfit, names = "lambda2", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda2.abs", getCoef = NULL) / coef(plvmfit2)[names.coefVar[1]]
+      setPath(plvmfit, names = "lambda2", row = index.knot[iterPath]) <- getPath(plvmfit, row = index.knot[iterPath], getLambda = "lambda2.abs", getCoef = NULL) / sum(coef(plvmfit2)[names.coefVar])
       
-    }else{
-      index1 <- match(names(coef(plvmfit)), names.coefVar, nomatch = 0)>0
-      index2 <- match(names(coef(plvmfit2)), names.coefVar, nomatch = 0)>0
-      if (!is.null(plvmfit$coef)){ 
-        plvmfit$coef[index1,] <- plvmfit2$coef[index2,]
-      }
-      if (!is.null(plvmfit$opt$estimate)){ 
-        plvmfit$opt$estimate[index1] <- plvmfit2$coef[index2,"Estimate"]
-      }
-      plvmfit$penalty$lambda1.abs <- plvmfit$penalty$lambda1
-      plvmfit$penalty$lambda1 <- plvmfit$penalty$lambda1.abs/plvmfit2$coef[which(index2)[1],"Estimate"]
-      plvmfit$penalty$lambda2.abs <- plvmfit$penalty$lambda2
-      plvmfit$penalty$lambda2 <- plvmfit$penalty$lambda2.abs/plvmfit2$coef[which(index2)[1],"Estimate"]
     }
   }
-  
   return(plvmfit)
   
 }

@@ -47,18 +47,20 @@ init.proxOperator <- function(lambda1, lambda2, group.penaltyCoef, regularizatio
     if(all(lambda2 == 0)){
       
       proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2, expX){ ## proximal operator
-        #if(!is.null(expX)){x[expX] <- exp(x[expX])}
+        if(!is.null(expX)){x[expX] <- exp(x[expX])}
         
         levels.penalty <- setdiff(unique(test.penalty1),0)
         for(iter_group in 1:length(levels.penalty)){
           index_group <- which(test.penalty1==levels.penalty[iter_group])
           x[index_group] <- proxE2(x = x[index_group], step = step, lambda = mean(lambda1[index_group])) # normally lambda1 has the same value for each member of the group
         }
+        
+        if(!is.null(expX)){x[expX] <- log(x[expX])}
         return(x)
       }
       
       objectivePenalty <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef, expX){
-        #if(!is.null(expX)){x[expX] <- exp(x[expX])}
+        if(!is.null(expX)){x[expX] <- exp(x[expX])}
         
         levels.penalty <- setdiff(unique(test.penalty1),0)
         res <- 0
@@ -83,38 +85,44 @@ init.proxOperator <- function(lambda1, lambda2, group.penaltyCoef, regularizatio
   if(all(lambda2 == 0)){ ## lasso penalty
     
     proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2, expX){
-      #if(!is.null(expX)){x[expX] <- exp(x[expX])}
-      mapply(proxL1, x = x, step = step, lambda = lambda1, test.penalty = test.penalty1)
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      x <- mapply(proxL1, x = x, step = step, lambda = lambda1, test.penalty = test.penalty1)
+      if(!is.null(expX)){x[expX] <- log(x[expX])}
+      x
     }
     
     objectivePenalty <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef, expX){
-      #if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
       sum(lambda1[test.penalty1>0] * abs(x[test.penalty1>0]))
     }
     
   }else if(all(lambda1 == 0) &&  regularizationPath == FALSE){ ## ridge penalty
     
     proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2, expX){
-      # if(!is.null(expX)){x[expX] <- exp(x[expX])}
-      mapply(proxL2, x = x, step = step, lambda = lambda2, test.penalty = test.penalty2)
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      x <- mapply(proxL2, x = x, step = step, lambda = lambda2, test.penalty = test.penalty2)
+      if(!is.null(expX)){x[expX] <- log(x[expX])}
+      x
     }
     
     objectivePenalty <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef, expX){
-      #if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
       sum(lambda2[test.penalty2>0]/2 *(x[test.penalty2>0])^2)
     }
     
   }else{ ## elastic net penalty
     
     proxOperator <- function(x, step, lambda1, lambda2, test.penalty1, test.penalty2, expX){
-      #if(!is.null(expX)){x[expX] <- exp(x[expX])}
-      mapply(proxL2, 
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      x <- mapply(proxL2, 
              x = mapply(proxL1, x = x, step = step,  lambda = lambda1, test.penalty = test.penalty1),
              step = step, lambda = lambda2, test.penalty = test.penalty2)
+      if(!is.null(expX)){x[expX] <- log(x[expX])}
+      x
     }
     
     objectivePenalty <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef, expX){
-      #if(!is.null(expX)){x[expX] <- exp(x[expX])}
+      if(!is.null(expX)){x[expX] <- exp(x[expX])}
       sum(lambda1[test.penalty1>0] * abs(x[test.penalty1>0])) + sum(lambda2[test.penalty2>0]/2 * (x[test.penalty2>0])^2)
     }
     

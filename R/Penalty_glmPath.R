@@ -19,13 +19,14 @@ glmPath <- function(beta0, objective, hessian, gradient,
   ## the nuisance parameter is always fixed
   res <- initSigmaConstrain(beta0, constrain = control$constrain, indexNuisance = indexNuisance)
   beta0 <- res$start
-  constrain <- res$constrain
+  constrain <- NULL#which(names(res$constrain) %in% names(beta0))
   
   M.beta <- matrix(0, nrow = 1, ncol = p)
   colnames(M.beta) <- names(beta0)
   M.beta[1,] <- beta0
   
   V.lambda <- max( abs(-gradient(M.beta[1,]) * sd.X)[indexPenalty] )
+  indexChange <- NA
   
   cv <- FALSE
   iter <- 1
@@ -40,6 +41,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
                             indexPenalty = indexPenalty, indexNuisance = indexNuisance)
     
     newLambda <- V.lambda[iter] * (1 - resNode$gamma)
+    indexChange <-  c(indexChange, resNode$indexChange)
     
     if(newLambda < 0 || is.infinite(newLambda)){ ## cv, estimate for no penalization
       cv <- TRUE
@@ -49,28 +51,25 @@ glmPath <- function(beta0, objective, hessian, gradient,
                              lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
       }
       
-      
       resNode$beta <- do.call("proxGrad",
                               list(start = M.beta[nrow(M.beta),], proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                   constrain = constrain,
                                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, force.descent = control$proxGrad$force.descent,
                                    iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
       newLambda <- 0
       
     }else if(any(lambda2>0)){ ## correction step or update beta value with L2 penalization
-      proxOperator <- function(x, step){  
-        control$proxOperator(x, step,
-                             lambda1 = newLambda*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
-      }
-      
-      resNode$beta <- do.call("proxGrad",
-                              list(start = resNode$beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                                   constrain = constrain,
-                                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE,  force.descent = control$proxGrad$force.descent,
-                                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
-      
-    } 
-    
+        
+        proxOperator <- function(x, step){  
+          control$proxOperator(x, step,
+                               lambda1 = newLambda*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+        }
+        
+        resNode$beta <- do.call("proxGrad",
+                                list(start = resNode$beta, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+                                     step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE,  force.descent = control$proxGrad$force.descent,
+                                     iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, method = control$proxGrad$method))$par
+       
+    }
     ## update
     V.lambda <- c(V.lambda, newLambda)
     M.beta <- rbind(M.beta, resNode$beta)
@@ -81,11 +80,12 @@ glmPath <- function(beta0, objective, hessian, gradient,
   #### export
   V.lambda <- unname(V.lambda)
   rownames(M.beta) <- NULL
-  
+ 
   return(as.data.frame(cbind(lambda1.abs = V.lambda, 
                              lambda1 = NA, 
                              lambda2.abs = median(lambda2[indexPenalty]*sd.X[indexPenalty]^2), 
                              lambda2 = NA, 
+                             indexChange = indexChange,
                              M.beta)))
 }
 
@@ -118,18 +118,23 @@ nextNode_lvm <- function(hessian, gradient, gradientPen,
   gamma2Plus[indexPenalty %in% set_A] <- Inf
   
   # cat(paste(gamma1, collpase = " ")," | ",paste(gamma2Moins, collpase = " ")," | ",paste(gamma2Plus, collpase = " ")," | \n \n")
+  vec.gamma <- c(gamma1,gamma2Moins,gamma2Plus)
+  test.min <- any((vec.gamma>=0)*(!is.infinite(vec.gamma)) > 0)
   
-  test.min <- any(c(gamma1,gamma2Moins,gamma2Plus)>=0)
   if(test.min){
-    gamma <- max(1e-04, min(c(gamma1,gamma2Moins,gamma2Plus)[c(gamma1,gamma2Moins,gamma2Plus)>=0]))
+    min.lambda <- min(vec.gamma[vec.gamma>=0])
+    gamma <- max(1e-04, min.lambda)
+    if(min.lambda %in% gamma1){indexChange <- set_A[set_A %in% indexPenalty][which(gamma1 == min.lambda)]}
+    if(min.lambda %in% gamma2Moins){indexChange <- indexPenalty[which(gamma2Moins == min.lambda)]}
+    if(min.lambda %in% gamma2Plus){indexChange <- indexPenalty[which(gamma2Plus == min.lambda)]}
   }else{
     gamma <- Inf
+    indexChange <- NA
   }
-  
   ## update coef
   beta[set_A] <- beta[set_A] + gamma * grad_B.A
   
-  return(list(gamma = gamma, beta = beta))
+  return(list(gamma = gamma, beta = beta, indexChange = indexChange))
 }
 
 

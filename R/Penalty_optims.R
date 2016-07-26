@@ -17,9 +17,8 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   
   #### specify constrain: divide all variance parameters by the variance fo the first parameter and fix first variance parameter to one
   if(control$proxGrad$fixSigma){
-    res <- initSigmaConstrain(start, constrain = control$constrain, indexNuisance = which(names(start) %in% penalty$names.varCoef))
-    start <- res$start
-    constrain <- res$constrain
+    constrain <- which(names(start) %in% penalty$names.varCoef)
+    if(control$trace>=0){cat("constrains: lambda1=lambda1/sum(", paste(names(start)[constrain], collapse = " "),")\n")}
   }else{
     constrain <- NULL
   }
@@ -36,31 +35,56 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   lambda2 <- rep(0, n.coef)
   lambda2[index.penaltyCoef] <- penalty$lambda2
   
+  test.penalty1<- penalty$group.penaltyCoef
+  test.penalty <- lambda2>0
+  
+ 
+  
   proxOperator <- function(x, step){ 
+    if(length(constrain)>0){
+      if(control$constrain){norm <- sum(exp(x[constrain]))
+      }else{
+        norm <- sum(x[constrain])
+        if(norm < 0){stop("proxGrad: negative variance parameter - set constrain to TRUE in control \n")}
+      }
+    }else{
+      norm <- 1
+    }
     control$proxOperator(x, step,
-                         lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+                         lambda1 = lambda1/norm, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
   }
-
+  
+  
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent, 
-                  constrain = constrain, method = control$proxGrad$method, trace = control$proxGrad$trace)
+                  method = control$proxGrad$method, trace = control$proxGrad$trace)
+  
   
   if(penalty$adaptive){
-    proxOperator <- function(x, step){ 
+    proxOperator <- function(x, step){
+      if(length(constrain)>0){
+        if(control$constrain){norm <- sum(exp(x[constrain]))
+        }else{
+          norm <- sum(x[constrain])
+          if(norm < 0){stop("proxGrad: negative variance parameter - set constrain to TRUE in control \n")}
+        }
+      }else{
+        norm <- 1
+      }
       control$proxOperator(x, step,
-                           lambda1 = lambda1/abs(res$par), lambda2 = lambda2, test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+                           lambda1 = lambda1/(norm*abs(res$par)), lambda2 = lambda2PG, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
     }
-   
+
     res <- proxGrad(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
+                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,
                     iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,
-                    constrain = constrain, method = control$proxGrad$method, trace = control$proxGrad$trace)
-    
+                    method = control$proxGrad$method, trace = control$proxGrad$trace)
+
   }
-  
+ 
   res$objective <- objective(res$par) + control$objectivePenalty(res$par, lambda1 = lambda1, lambda2 = lambda2, 
-                                                                 test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0)
+                                                                 test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
   ### export
   return(res)
 }
@@ -69,8 +93,8 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
 #' 
 optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
- PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
-
+  PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxGrad", "proxOperator", "regPath")
+  
   penalty <- control$penalty
   regPath <- control$regPath
   control <- control[names(control) %in% PGcontrols]
@@ -94,20 +118,7 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   }else if( regPath$type == 2){
     V <- penalty$V[names(start),names(start), drop = FALSE]
     group.penaltyCoef <- penalty$group.penaltyCoef[names(start)]
-    
-    ## check dimension
-    rankHessian <- tryCatch(Matrix::rankMatrix(hessian(start)), error = function(e){stop("Could not compute the rank of the Hessian \n")})
-    test.HD <- rankHessian < length(start) 
-    if(test.HD){
-      if(regPath$increasing == TRUE){
-        stop("High dimensional lvm (Hessian is singular): argument increasing must be set to FALSE \n")
-      }else if(is.null(regPath$stopLambda) && is.null(regPath$stopParam)){
-        message("Computation of the whole regularization path in high dimensional settings can take a long time \n",
-                "consider using argument stopLambda and stopParam to only compute part of the path \n")
-      }
-      start <- regPath$beta_lambdaMax
-    }  
-    
+   
     ## check lambda
     if(regPath$increasing == TRUE){
       if(any(start[index.penaltyCoef] == 0)){
@@ -119,7 +130,7 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
         stop("All penalized coefficient should be set to 0 when using increasing = FALSE \n")
       }
     }
-   
+    
     ## nuisance parameter
     if(is.null(regPath$fixSigma)){
       if(length(penalty$names.varCoef)==1){fixSigma <- TRUE}else{fixSigma <- FALSE}
@@ -137,10 +148,10 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
                            indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
                            stepLambda1 = regPath$stepLambda1, increasing = regPath$increasing, stopLambda = regPath$stopLambda, stopParam = regPath$stopParam,
                            lambda2 = penalty$lambda2, group.lambda1 = group.penaltyCoef,
-                           control = control, test.HD = test.HD, trace = control$regPath$trace)
+                           control = control, trace = control$regPath$trace)
     
   }
-
+ 
   #### export
   res <- list(par = start,
               convergence = 0,
@@ -152,11 +163,6 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   ### export
   return(res)
 }
-
-optim.lambda <- function(model, ...){
-  
-}
-  
 
 #' @title initialise the penalty 
 #' 
@@ -179,7 +185,6 @@ initPenalty <- function(start, penalty){
   
   return(list(index.penaltyCoef = index.penaltyCoef, group.penaltyCoef = group.penaltyCoef))
 }
-
 
 initSigmaConstrain <- function(start, constrain, indexNuisance){
   

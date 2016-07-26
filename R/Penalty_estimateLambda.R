@@ -1,4 +1,4 @@
-calcLambda <- function(object, seq_lambda, data.fit, data.test, fit = "BIC", trace = TRUE, ...){
+calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BIC", trace = TRUE, ...){
   # if no test set then CV
   
  if(fit %in% c("AIC","BIC","P_error") == FALSE){
@@ -6,7 +6,6 @@ calcLambda <- function(object, seq_lambda, data.fit, data.test, fit = "BIC", tra
  }
  if("plvmfit" %in% class(object)){
    penPath <- getPath(object, rm.duplicated = TRUE)
-    model <- object$model
     index.knot <- as.numeric(rownames(penPath))
     seq_lambda <- penPath$lambda1.abs
   }else if("lvm" %in% class(object)){
