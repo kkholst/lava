@@ -54,12 +54,12 @@
     
     df <- data.frame(lambda1 = x$penalty$lambda1,
                      criterion = x$penalty$performance,
-                     color = c("","optimal")[(x$penalty$lambda1 == x$penalty$lambda1.best) + 1])
+                     optimum = c("no","yes")[(x$penalty$lambda1 == x$penalty$lambda1.best) + 1])
     names(df)[2] <- attr(x$penalty$performance,"criterion")
     
     ggPerf <- ggplot(df, aes_string(x = "lambda1", y = names(df)[2]))
     if(add.line){ggPerf <- ggPerf + geom_line(size = line.size)}
-    if(add.point){ggPerf <- ggPerf + geom_point(size = point.size, aes_string(color = "color"))}
+    if(add.point){ggPerf <- ggPerf + geom_point(size = point.size, aes_string(color = "optimum"))}
     
     return(ggPerf)
   }else{
