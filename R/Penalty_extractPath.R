@@ -1,17 +1,16 @@
 `getPath` <- function(x, ...) UseMethod("getPath")
 
 `getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, ascending = TRUE, row = NULL) {
-
+  
   if(isPath(x)){
     stop("plotPath.plvmfit: no penalization path in the plvmfit object \n",
          "set argument \'regularizationPath\' to 1 or 2 when calling estimate \n")
   }
   
   regPath <- x$regularizationPath
-  
   if(rm.duplicated){
     indexChange <- regPath$indexChange
-    test.change <- which(diff(na.omit(indexChange))!=0)
+    test.change <- which(diff(na.omit(indexChange))!=0)+1
     index <- sort(union(c(1,NROW(regPath)),which(!is.na(indexChange))[test.change]))
     regPath <- regPath[index, ,drop = FALSE]
   }

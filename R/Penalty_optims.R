@@ -36,7 +36,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   lambda2[index.penaltyCoef] <- penalty$lambda2
   
   test.penalty1<- penalty$group.penaltyCoef
-  test.penalty <- lambda2>0
+  test.penalty2<- lambda2>0
   
  
   
@@ -51,9 +51,8 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
       norm <- 1
     }
     control$proxOperator(x, step,
-                         lambda1 = lambda1/norm, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
+                         lambda1 = lambda1/norm, lambda2 = lambda2/norm, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
   }
-  
   
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
@@ -73,7 +72,7 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
         norm <- 1
       }
       control$proxOperator(x, step,
-                           lambda1 = lambda1/(norm*abs(res$par)), lambda2 = lambda2PG, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
+                           lambda1 = lambda1/(norm*abs(res$par)), lambda2 = lambda2PG/norm, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
     }
 
     res <- proxGrad(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,

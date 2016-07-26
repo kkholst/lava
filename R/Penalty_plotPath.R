@@ -44,7 +44,7 @@
         ggPath <- ggPath + scale_color_manual(values = color.order)
       }
       
-      if(add.best){ggPath <- ggPath + geom_vline(size = line.size, xintercept = x$penalty$lambda1.best, color = "blue")}
+      if(add.best){ggPath <- ggPath + geom_vline(size = line.size/2, xintercept = x$penalty$lambda1.best, linetype = 2, color = "blue")}
       
     }
     
