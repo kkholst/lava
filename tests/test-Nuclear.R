@@ -63,15 +63,12 @@ MRIaggr:::multiplot(as.data.table(coords), X[1,]) # realisation
 
 #### 2- Model ####
 names.param <- c("intercept",paste0("Z",1:n.confounder),paste0("X",1:n.coord),"Y,Y")
-lambda1 <- 1e3
-lambda1.vec <- setNames(rep(lambda1,n.confounder+n.coord+2), names.param)
+beta <- setNames(c(0,gamma,betaI,1), names.param)
+beta[paste0("X",1:n.coord)] <-  0
 test.penaltyMC <- names(lambda1.vec) %in% paste0("X",1:n.coord)
 test.penaltyLV <- test.penaltyMC[-length(test.penaltyMC)]
-beta <- setNames(c(0,gamma,betaI,1), names.param)
-
 
 #### glmnet
-lambda1 <- 1e3
 glmnet.fit <- glmnet:::glmnet(x = cbind(Z,X), y = Y, family = "gaussian", alpha = 0,
                               penalty.factor = test.penalty1)
 
@@ -90,13 +87,16 @@ loss.glmnet <- sapply(1:length(glmnet.fit$lambda), function(x){
 })
 plot(glmnet.fit$lambda,loss.glmnet)
 
-#beta[test.penalty1>0] <- 0
+beta[test.penalty1>0] <- 0
 
 
 #### estimation using mean square loss 
-res <- objectiveMC(beta)
-res <- gradientMC(beta)
-res <- hessianMC(beta)
+lambda1 <- 5e3
+lambda1.vec <- setNames(rep(lambda1,n.confounder+n.coord+2), names.param)
+
+#res <- objectiveMC(beta)
+#res <- gradientMC(beta)
+#res <- hessianMC(beta)
 
 proxOperator <-  function(x, step){
   x[test.penaltyMC] <- proxNuclear(x = x[test.penaltyMC], step = step,
@@ -107,20 +107,23 @@ proxOperator <-  function(x, step){
 
 resMC <- proxGrad(start = beta, proxOperator,
                   hessian = hessianMC, gradient = gradientMC, objective = objectiveMC,
-                  step = 1, BT.n = 200, BT.eta = 0.5, force.descent = FALSE,
+                  step = 1, BT.n = 200, BT.eta = 0.5, force.descent = TRUE,
                   iter.max = 50, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
 
 B.MC <- matrix(resMC$par[test.penaltyMC>0], nrow = xmax, ncol = ymax, byrow = TRUE)
 image.plot(B.MC)
 
 #### estimation using lv but at fixed sigma
-res1 <- objectiveMC(beta) - objectiveLV(beta[-length(beta)], var = 1/2)
-res2 <- objectiveMC(beta+1) - objectiveLV(beta[-length(beta)]+1, var = 1/2)
-print(res1-res2)
-res1 <- gradientMC(beta)[-length(beta)] - gradientLV(beta[-length(beta)], var = 1/2)
-res2 <- gradientMC(beta+1)[-length(beta)] - gradientLV(beta[-length(beta)]+1, var = 1/2)
-print(res1-res2)
-res <- hessianMC(beta) - objectiveLV(beta[-length(beta)], var = 1/2)
+# res1 <- objectiveMC(beta) - objectiveLV(beta[-length(beta)], var = 1/2)
+# res2 <- objectiveMC(beta+1) - objectiveLV(beta[-length(beta)]+1, var = 1/2)
+# print(res1-res2)
+# res1 <- gradientMC(beta)[-length(beta)] - gradientLV(beta[-length(beta)], var = 1/2)
+# res2 <- gradientMC(beta+1)[-length(beta)] - gradientLV(beta[-length(beta)]+1, var = 1/2)
+# print(res1-res2)
+# res <- hessianMC(beta) - objectiveLV(beta[-length(beta)], var = 1/2)
+lambda1 <- 4e3
+lambda1.vec <- setNames(rep(lambda1,n.confounder+n.coord+2), names.param)
+test.penaltyLV <- test.penaltyMC[-length(test.penaltyMC)]
 
 
 objectiveNuclear <- function(coef){objectiveLV(coef,  var = 1)}
@@ -135,7 +138,7 @@ proxOperator <-  function(x, step){
 }
 
 resLV <- proxGrad(start = beta[-length(beta)], proxOperator,
-                  hessian = hessianNuclear, gradient = gradientNuclear, objective = objectiveNuclear,
+                  objective = objectiveNuclear, gradient = gradientNuclear, hessian = hessianNuclear,
                   step = 1, BT.n = 200, BT.eta = 0.5, force.descent = TRUE,
                   iter.max = 10, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
 
@@ -144,6 +147,7 @@ image.plot(B.LV)
 image.plot(B.LV-B.MC)
 
 
+#### estimation using lv 
 
 proxOperator <-  function(x, step){
   x[test.penaltyMC] <- proxNuclear(x = x[test.penaltyMC], step = step,
@@ -153,7 +157,7 @@ proxOperator <-  function(x, step){
 }
 
 resLV <- proxGrad(start = beta, proxOperator,
-                  hessian = objectiveLV, gradient = gradientLV, objective = hessianLV,
+                  objective = objectiveLV, hessian = hessianLV, gradient = gradientLV, 
                   step = 1, BT.n = 200, BT.eta = 0.5, force.descent = TRUE,
                   iter.max = 10, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
 

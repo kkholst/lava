@@ -40,7 +40,8 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
   x_k <- start 
 
   obj.x_k <- tryCatch(objective(x_k), error = fct_errorLv)
-
+  if(is.na(obj.x_k)){obj.x_k <- Inf}
+  
   grad.x_k <- try(gradient(x_k))
   
   t_k <- t_kp1 <- if(method %in% c("FISTA","mFISTA")){1}else{NA}
@@ -80,6 +81,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       }
       
       obj.x_kp1 <- tryCatch(objective(res$x_kp1), error = fct_errorLv) 
+      if(is.na(obj.x_kp1)){obj.x_kp1 <- Inf}
       
       #diff_back <- max(obj.x_kp1 - res$Q, obj.x_kp1 - obj.x_k)
       if(force.descent == TRUE){
@@ -89,10 +91,10 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       }
       
       iter_back <- iter_back + 1
-      
-      #cat("obj.x_kp1:",obj.x_kp1," | obj.x_k:",obj.x_k, " | res$Q:",res$Q,"\n")
-    }
     
+      # cat("obj.x_kp1:",obj.x_kp1," | obj.x_k:",obj.x_k, " | res$Q:",res$Q,"\n")
+    }
+   
     if(force.descent && obj.x_kp1 > obj.x_k){break}
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol
@@ -115,6 +117,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
       
       t_kp1 <- (1 + sqrt(1 + 4 * t_k^2)) / 2
       obj.y_k <- tryCatch(objective(y_k), error = fct_errorLv)
+      if(is.na(obj.y_k)){obj.y_k <- Inf}
       grad.y_k <- try(gradient(y_k))
     }
     step <- min(stepMax, stepBT/sqrt(BT.eta))
