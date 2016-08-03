@@ -19,7 +19,6 @@ glmPath <- function(beta0, objective, hessian, gradient,
   ## the nuisance parameter is always fixed
   res <- initSigmaConstrain(beta0, constrain = control$constrain, indexNuisance = indexNuisance)
   beta0 <- res$start
-  constrain <- NULL#which(names(res$constrain) %in% names(beta0))
   
   M.beta <- matrix(0, nrow = 1, ncol = p)
   colnames(M.beta) <- names(beta0)
@@ -47,10 +46,10 @@ glmPath <- function(beta0, objective, hessian, gradient,
       cv <- TRUE
       
       proxOperator <- function(x, step){
-        control$proxOperator(x, step,
-                             lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+        control$proxOperator(x, step = step,
+                             lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, 
+                             expX = control$proxGrad$expX)
       }
-      
       resNode$beta <- do.call("proxGrad",
                               list(start = M.beta[nrow(M.beta),], proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                                    step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, trace = FALSE, force.descent = control$proxGrad$force.descent,
@@ -60,8 +59,9 @@ glmPath <- function(beta0, objective, hessian, gradient,
     }else if(any(lambda2>0)){ ## correction step or update beta value with L2 penalization
         
         proxOperator <- function(x, step){  
-          control$proxOperator(x, step,
-                               lambda1 = newLambda*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+          control$proxOperator(x, step = step,
+                               lambda1 = newLambda*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, 
+                               expX = control$proxGrad$expX)
         }
         
         resNode$beta <- do.call("proxGrad",

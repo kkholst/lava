@@ -23,7 +23,7 @@ formula_bardety <- as.formula(paste0("y ~ ", paste(names(df.bardet)[names(df.bar
 lvm.model_bardety <- lvm(formula_bardety)
 lvm.fit_bardety <- estimate(lvm.model_bardety, data = df.bardet)
 
-plvm.model_bardety <- penalize(lvm.model_bardety)
+plvm.model_L1 <- penalize(lvm.model_bardety)
 plvm.model_GL <- penalize(lvm.model_bardety) 
 plvm.model_GL$penalty$group.penaltyCoef[] <- 1
 
@@ -62,6 +62,8 @@ coef(plvm.fit_GL)
 
 
 #### OLD
+test <- FALSE
+if(test){
 
 mTEST <- gglasso(x=bardet$x,y=bardet$y,group=group1,loss="ls", lambda = 0)
 coef(mTEST)
@@ -143,7 +145,7 @@ y <- birthwt.grpreg$bwt
 group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
 fit <- grpreg(X,y,group,penalty="grLasso")
 plot(fit)
-
+}
 
 
 

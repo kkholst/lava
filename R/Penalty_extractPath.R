@@ -10,8 +10,9 @@
   regPath <- x$regularizationPath
   if(rm.duplicated){
     indexChange <- regPath$indexChange
+    indexChange[is.na(indexChange)] <- -1
     test.change <- which(diff(na.omit(indexChange))!=0)+1
-    index <- sort(union(c(1,NROW(regPath)),which(!is.na(indexChange))[test.change]))
+    index <- sort(union(c(1,NROW(regPath)),intersect(which(!is.na(regPath$indexChange)), test.change)))
     regPath <- regPath[index, ,drop = FALSE]
   }
   if(ascending == TRUE){
@@ -58,7 +59,7 @@
     }
     
     if(missing(getCoef)){
-      names.coef <- names(coef(x))
+      names.coef <- setdiff(validNames, c("lambda1.abs", "lambda1", "lambda2.abs", "lambda2", "indexChange"))
     }else if(is.null(getCoef)){
       names.coef <- NULL
     }else{

@@ -127,7 +127,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
     if(trace>0){cat("|",stepBT," ",iter_back, " ", max(abs(x_k - x_km1))," ",obj.x_k - obj.x_km1,"\n")}
   }
   if(trace>0){cat("\n")}
-
+  
   ## export
   message <- if(test.cv){"Sucessful convergence \n"
   }else{

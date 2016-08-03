@@ -10,12 +10,13 @@
 #' @param data a data.frame containing the data
 #' @param lambda1 L1 penalization parameter
 #' @param lambda2 L2 penalization parameter
+#' @param lambdaN Nuclear norm penalization parameter
 #' @param regularizationPath the algorithm used to compute the regularization path. 
 #' 0 indicates to estimate the solution for a given lambda
 #' 1 corresponds to the algorithm proposed by (Park 2007) - called GLMpath.  Only works for regression models.  
 #' 2 corresponds to the algorithm proposed by (Zhou 2014) - called EPSODE. 
 #' If regularizationPath>0, the argument lambda1 is ignored but not lambda2
-#' @param stepLambda1 argument for the EPSODE function (see Penalty_EPSODE.R)
+#' @param resolution_lambda1 argument for the EPSODE function (see Penalty_EPSODE.R)
 #' @param method.proxGrad argument for the proxGrad function (see Penalty_optims.R) 
 #' @param step argument for the proxGrad function (see Penalty_optims.R)
 #' @param BT.n argument for the proxGrad function (see Penalty_optims.R)
@@ -50,7 +51,7 @@
 #' rp1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = 1)
 #' rp1lvm.fit
 #' 
-#' EPSODE1lvm.fit <- estimate(plvm.model,  data = df.data, stepLambda1 = 100, regularizationPath = 2)
+#' EPSODE1lvm.fit <- estimate(plvm.model,  data = df.data, regularizationPath = 2)
 #' EPSODE1lvm.fit
 #' 
 #' ## 
@@ -70,14 +71,14 @@
 #' 
 #' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1)
 #' p12lvm.fit
-estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control = list(),
-                          regularizationPath = FALSE, stepLambda1 = NULL, increasing = TRUE, stopLambda = NULL, stopParam = NULL, fit = "BIC",
+estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, control = list(), estimator = "penalized", 
+                          regularizationPath = FALSE, resolution_lambda1 = c(1e-1,1e-3), increasing = TRUE, stopLambda = NULL, stopParam = NULL, fit = "BIC",
                           method.proxGrad = "ISTA", step = 1, BT.n = 100, BT.eta = 0.8, force.descent = FALSE,
                           fixSigma = NULL, ...) {
   
   names.coef <- coef(x)
   n.coef <- length(names.coef)
-  
+    
   #### prepare control
   if("iter.max" %in% names(control) == FALSE){
     control$iter.max <- 1000
@@ -125,6 +126,20 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   
   control$penalty <- penalty
   
+  
+  ## penaltyNuclear
+  if(!missing(lambdaN)){
+    x$penaltyNuclear$lambdaN <- as.numeric(lambdaN)
+  }
+  x$penaltyNuclear$objective <- function(coef){
+    x$penaltyNuclear$FCTobjective(coef[x$penaltyNuclear$name.coef], 
+                                  Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=FALSE]), 
+                                  X = as.matrix(data[,x$penaltyNuclear$name.X,drop=FALSE]))}
+  x$penaltyNuclear$gradient <- function(coef){x$penaltyNuclear$FCTgradient(coef[x$penaltyNuclear$name.coef], 
+                                                                           Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=FALSE]), 
+                                                                           X = as.matrix(data[,x$penaltyNuclear$name.X,drop=FALSE]))}
+  control$penaltyNuclear <- x$penaltyNuclear
+  
   ## pass parameters for the penalty through the control argument
   control$proxGrad <- list(method = method.proxGrad,
                            step = step,
@@ -137,27 +152,19 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
   )
   
   control$regPath <- list(type = regularizationPath,
-                          stepLambda1 = stepLambda1,
+                          resolution_lambda1 = resolution_lambda1,
                           increasing = increasing,
                           stopParam = stopParam,
                           stopLambda = stopLambda,
                           fixSigma = if(is.null(fixSigma)){TRUE}else{fixSigma},
                           trace = if(regularizationPath > 0){control$trace}else{FALSE})
   
-  ## proximal operator 
-  resOperator <- init.proxOperator(lambda1 = penalty$lambda1, 
-                                   lambda2 = penalty$lambda2, 
-                                   group.penaltyCoef = penalty$group.penaltyCoef,
-                                   regularizationPath = regularizationPath)
-  control$proxOperator <- resOperator$proxOperator
-  control$objectivePenalty <- resOperator$objectivePenalty
-  
   #### initialization
   if(is.null(control$start)){
-    if(control$trace>=0){cat("Initilization: ")}
+    if(control$trace>=0){cat("Initialization: ")}
     res.init  <- initializer.lvm(x, data = data, names.coef = names.coef, n.coef = n.coef,
                                  penalty = control$penalty, regPath = control$regPath, ...)
-  
+    
     if(regularizationPath == 1 || (regularizationPath == 2 && increasing)){
       if(control$trace>=0){cat(" unpenalized LVM \n")}
       control$start <- res.init$lambda0
@@ -168,8 +175,21 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     
     if(regularizationPath == 2){
       control$regPath$beta_lambdaMax <- res.init$lambdaMax
+      control$regPath$beta_lambda0 <- res.init$lambda0
     }
   }
+  
+  ## proximal operator 
+  resOperator <- init.proxOperator(coef = control$start,
+                                   lambda1 = control$penalty$lambda1,  # will be NULL if control$penalty does not exist
+                                   lambda2 = control$penalty$lambda2, 
+                                   lambdaN = control$penaltyNuclear$lambdaN,  # will be NULL if control$penaltyNuclear does not exist
+                                   group.penaltyCoef = control$penalty$group.penaltyCoef,
+                                   regularizationPath = regularizationPath)
+  control$proxOperator <- resOperator$proxOperator
+  control$objectivePenalty <- resOperator$objectivePenalty
+  
+  
  
   #### main
   if(all(c("objective", "gradient", "hessian") %in% names(list(...)))){
@@ -193,15 +213,26 @@ estimate.plvm <- function(x, data, lambda1, lambda2, adaptive = FALSE, control =
     return(res)
     
   }else{
-    res <- lava:::estimate.lvm(x = x, data = data, estimator = "penalized", 
+    res <- lava:::estimate.lvm(x = x, data = data, 
                                method = if(regularizationPath == 0){"optim.regLL"}else{"optim.regPath"}, 
-                               control = control, ...)
+                               control = control, estimator = estimator, ...)
   }
   class(res) <- append("plvmfit", class(res))
   
   res$penalty <-  control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
+  if(!is.null(fixSigma) && fixSigma){
+    res$penalty$lambda1.abs <- res$penalty$lambda1
+    res$penalty$lambda2.abs <- res$penalty$lambda2
+    res$penalty$lambda1 <- res$penalty$lambda1/sum(coef(res)[control$penalty$names.varCoef])
+    res$penalty$lambda2 <- res$penalty$lambda2/sum(coef(res)[control$penalty$names.varCoef])
+  }else{
+    res$penalty$lambda1.abs <- res$penalty$lambda1*sum(coef(res)[control$penalty$names.varCoef])
+    res$penalty$lambda2.abs <- res$penalty$lambda2*sum(coef(res)[control$penalty$names.varCoef])
+  }
   res$penalty$regularizationPath <- regularizationPath
   
+  res$penalty$penaltyNuclear <- control$penaltyNuclear
+ 
   #### regularization path
   if(regularizationPath>0){
     res$regularizationPath <- res$opt$message
@@ -368,7 +399,6 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
   if(regularizationPath){
     names.coef <- setdiff(names(getPath(plvmfit, getLambda = NULL, rm.duplicated = TRUE)), names.coefVar)
     fit.coef <- getPath(plvmfit, getLambda = NULL, rm.duplicated = TRUE)[, names.coef, drop = FALSE]
-    
   }else{
     names.coef <- setdiff(names( coef(plvmfit)), names.coefVar)
     fit.coef <- setNames(data.frame(rbind(coef(plvmfit)[names.coef, drop = FALSE])), names.coef)

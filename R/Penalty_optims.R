@@ -7,20 +7,22 @@
 #' @title Estimate a penalized lvm model using a proximal gradient algorithm
 #' 
 optim.regLL <- function(start, objective, gradient, hessian, control, ...){
+   
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxOperator", "objectivePenalty",
                   "proxGrad")
   
   penalty <- control$penalty
+  penaltyNuclear <- control$penaltyNuclear
   control <- control[names(control) %in% PGcontrols]
   
   n.coef <- length(start)
   
   #### specify constrain: divide all variance parameters by the variance fo the first parameter and fix first variance parameter to one
   if(control$proxGrad$fixSigma){
-    constrain <- which(names(start) %in% penalty$names.varCoef)
-    if(control$trace>=0){cat("constrains: lambda1=lambda1/sum(", paste(names(start)[constrain], collapse = " "),")\n")}
+    index.constrain <- which(names(start) %in% penalty$names.varCoef)
+    if(control$trace>=0){cat("constrains: lambda1=lambda1/sum(", paste(names(start)[index.constrain], collapse = " "),")\n")}
   }else{
-    constrain <- NULL
+    index.constrain <- NULL
   }
   
   #### update the penalty according to start 
@@ -38,43 +40,50 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   test.penalty1<- penalty$group.penaltyCoef
   test.penalty2<- lambda2>0
   
- 
-  
-  proxOperator <- function(x, step){ 
-    if(length(constrain)>0){
-      if(control$constrain){norm <- sum(exp(x[constrain]))
-      }else{
-        norm <- sum(x[constrain])
-        if(norm < 0){stop("proxGrad: negative variance parameter - set constrain to TRUE in control \n")}
-      }
-    }else{
-      norm <- 1
-    }
-    control$proxOperator(x, step,
-                         lambda1 = lambda1/norm, lambda2 = lambda2/norm, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
+  proxOperator <- function(x, step){
+    control$proxOperator(x, step = step,
+                         lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2,
+                         index.constrain = index.constrain, type.constrain = control$constrain, expX = control$proxGrad$expX)
   }
   
+ 
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
-                  step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta, 
-                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent, 
+                  step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,
+                  iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,
                   method = control$proxGrad$method, trace = control$proxGrad$trace)
+
+  
+  # ### TO BE REMOVED
+  # start2 <- c(start, setNames(rep(0, length(penaltyNuclear$name.coef)), penaltyNuclear$name.coef))
+  # test.penaltyN <- names(start2) %in% penaltyNuclear$name.X
+  # 
+  # proxOperator <-  function(x, step){
+  #   x[test.penaltyN] <- proxNuclear(x = x[test.penaltyN], step = step,
+  #                                   lambda = penaltyNuclear$lambdaN, 
+  #                                   nrow = penaltyNuclear$nrow, ncol = penaltyNuclear$ncol)
+  #   return(x)
+  # }
+  # 
+  # penaltyNuclear$objective(start2)
+  # 
+  # browser()
+  # resLV <- proxGrad(start = start2, proxOperator,
+  #                   objective = penaltyNuclear$objective, gradient = penaltyNuclear$gradient, 
+  #                   step = 1, BT.n = 200, BT.eta = 0.5, force.descent = TRUE,
+  #                   iter.max = 10, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
+  # 
+  # 
+  # ###
+  
   
   
   if(penalty$adaptive){
     proxOperator <- function(x, step){
-      if(length(constrain)>0){
-        if(control$constrain){norm <- sum(exp(x[constrain]))
-        }else{
-          norm <- sum(x[constrain])
-          if(norm < 0){stop("proxGrad: negative variance parameter - set constrain to TRUE in control \n")}
-        }
-      }else{
-        norm <- 1
-      }
-      control$proxOperator(x, step,
-                           lambda1 = lambda1/(norm*abs(res$par)), lambda2 = lambda2PG/norm, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, expX = control$proxGrad$expX)
+      control$proxOperator(x, step = step,
+                           lambda1 = lambda1/abs(res$par), lambda2 = lambda2PG, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, 
+                           index.constrain = index.constrain, type.constrain = control$constrain, expX = control$proxGrad$expX)
     }
-
+    
     res <- proxGrad(start = res$par, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                     step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,
                     iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,
@@ -82,8 +91,15 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
 
   }
  
-  res$objective <- objective(res$par) + control$objectivePenalty(res$par, lambda1 = lambda1, lambda2 = lambda2, 
-                                                                 test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, expX = control$proxGrad$expX)
+  ## update objective with penalty - one value for each penalty
+  objective.pen <- lapply(control$objectivePenalty, 
+                          function(fct){do.call(fct, args = list(res$par, 
+                                                                 lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, 
+                                                                 lambdaN = penaltyNuclear$lambdaN, test.penaltyN = penaltyNuclear$test.penaltyN, nrow = penaltyNuclear$penaltyNuclear, ncol = penaltyNuclear$ncol,
+                                                                 expX = control$proxGrad$expX)
+                          )})
+  res$objective <- objective(res$par) + sum(unlist(objective.pen))
+  
   ### export
   return(res)
 }
@@ -142,10 +158,11 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
     }
     
     ## EPSODE
-    resLassoPath <- EPSODE(beta = start, beta_lambdaMax = regPath$beta_lambdaMax, objective = objective, gradient = gradient, hessian = hessian, 
+    resLassoPath <- EPSODE(beta = start, beta_lambdaMax = regPath$beta_lambdaMax,  beta_lambda0 = regPath$beta_lambda0,
+                           objective = objective, gradient = gradient, hessian = hessian, 
                            V = V, 
                            indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
-                           stepLambda1 = regPath$stepLambda1, increasing = regPath$increasing, stopLambda = regPath$stopLambda, stopParam = regPath$stopParam,
+                           resolution_lambda1 = regPath$resolution_lambda1, increasing = regPath$increasing, stopLambda = regPath$stopLambda, stopParam = regPath$stopParam,
                            lambda2 = penalty$lambda2, group.lambda1 = group.penaltyCoef,
                            control = control, trace = control$regPath$trace)
     

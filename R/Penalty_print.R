@@ -1,39 +1,55 @@
 `print.plvm` <- function(x, ...) {
   
   ## normal display
-  lava:::print.lvm(x)
+  out <- capture.output(lava:::print.lvm(x))
+  # if(!is.null(x$penaltyNuclear$name.Y)){
+  #   charY <- paste0(x$penaltyNuclear$name.Y," ~ ")
+  #   indexEq <- grep(charY,out) 
+  #   out[indexEq] <- gsub(charY, replacement = paste0(charY,LCSseq(x$penaltyNuclear$name.X),"+"),x = out[indexEq])
+  # }
+  sapply(out, function(o){cat(o,"\n")})
   
-  ## additional display
-  if(x$penalty$lambda1>0 && x$penalty$lambda2>0){
-    penaltyType <- "Elastic net"
-  }else if(x$penalty$lambda1>0){
-    penaltyType <- "Lasso"
-  }else if(x$penalty$lambda1>0){
-    penaltyType <- "Ridge"
-  }else{
-    penaltyType <- "None"
-  }
-  
-  if(all(x$penalty$group.penaltyCoef<1)){
-    cat("Penalty: ", penaltyType,"\n",
-        "On     : ", paste(x$penalty$names.penaltyCoef, collapse = " "),"\n")
-  }else{
-    
-    test.lasso <- (x$penalty$group.penaltyCoef<1)*(x$penalty$group.penaltyCoef>0)
-    if(any(test.lasso==1)){
-      cat("Penalty: ", penaltyType,"\n",
-          "On     : ", paste(x$penalty$names.penaltyCoef[test.lasso==1], collapse = " "),"\n")
+  ## additional display - lasso
+  if(!is.null(x$penalty$names.penaltyCoef)){
+    if(x$penalty$lambda1>0 && x$penalty$lambda2>0){
+      penaltyType <- "Elastic net"
+    }else if(x$penalty$lambda1>0){
+      penaltyType <- "Lasso"
+    }else if(x$penalty$lambda1>0){
+      penaltyType <- "Ridge"
+    }else{
+      penaltyType <- "None"
     }
     
-    ls.penalty <- tapply(x$penalty$names.penaltyCoef[test.lasso!=1], x$penalty$group.penaltyCoef[test.lasso!=1],list)
-    cat("Penalty: Grouped lasso \n")
-    lapply(ls.penalty, function(x){cat("On     :",paste(x, collapse = " "),"\n")})
+    if(all(x$penalty$group.penaltyCoef<1)){
+      cat("Penalty: ", penaltyType,"\n",
+          "On     : ", paste(x$penalty$names.penaltyCoef, collapse = " "),"\n")
+    }else{
+      
+      test.lasso <- (x$penalty$group.penaltyCoef<1)*(x$penalty$group.penaltyCoef>0)
+      if(any(test.lasso==1)){
+        cat("Penalty: ", penaltyType,"\n",
+            "On     : ", paste(x$penalty$names.penaltyCoef[test.lasso==1], collapse = " "),"\n")
+      }
+      
+      ls.penalty <- tapply(x$penalty$names.penaltyCoef[test.lasso!=1], x$penalty$group.penaltyCoef[test.lasso!=1],list)
+      cat("Penalty: Grouped lasso \n")
+      lapply(ls.penalty, function(x){cat("On     :",paste(x, collapse = " "),"\n")})
+    }
+    cat("\n")
   }
-  cat("\n")
-  
+  if(!is.null(x$penaltyNuclear$name.Y)){
+    penaltyType <- "Nuclear norm"
+    cat("Penalty: ", penaltyType,"\n",
+        "on     : ", LCSseq(x$penaltyNuclear$name.X)," (outcome: ",x$penaltyNuclear$name.Y,")\n",sep = "")
+  }
   ## export
   invisible(x)
 }
+
+
+
+
 
 ##' @export
 `print.plvmfit` <- function(x,level=2,labels=FALSE, 
@@ -53,10 +69,10 @@
       Mtempo <- rbind(Mtempo, "Penalization:" = rep("", ncol.M))
     }
     if(x$penalty$lambda1>0){
-      Mtempo <- rbind(Mtempo, "   L1 lambda" = c(x$penalty$lambda1, rep("",ncol.M-1)))
+      Mtempo <- rbind(Mtempo, "   L1 lambda (abs)" = c(x$penalty$lambda1.abs, rep("",ncol.M-1)))
     }
     if(x$penalty$lambda2>0){
-      Mtempo <- rbind(Mtempo, "   L2 lambda" = c(x$penalty$lambda2, rep("",ncol.M-1)))
+      Mtempo <- rbind(Mtempo, "   L2 lambda (abs)" = c(x$penalty$lambda2.abs, rep("",ncol.M-1)))
     }
     
     print(Mtempo,quote=FALSE,right=TRUE)
@@ -82,4 +98,15 @@
 
 
 invisible(x)
+}
+
+##' @title get the common substring sequence in a vector of strings
+LCSseq <- function(x){
+  affixe <- strsplit(x[[1]], split = "")[[1]]
+  
+  for(iterX in 2:length(x)){
+    affixe <- qualV::LCS(affixe, strsplit(x[[iterX]], split = "")[[1]])$LCS
+  }
+  
+  return(affixe)
 }
