@@ -41,15 +41,18 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
                       iid=TRUE,
                       keep=1:2)
         mgam <- Reduce(function(x,y,...) merge(x,y,...),gam)
+        ps <- estimate(multinomial(strata),data=data,...)
+        mgam <- merge(mgam,ps)
+        psi <- 2*length(gam)+seq(length(coef(ps)))
         res <- estimate(mgam,function(p,...) {
-            k <- length(p)/2
+            k <- length(p)/3
             cd <- lapply(seq(k),function(x) p[(1:2)+2*(x-1)])
             dif <- unlist(lapply(cd,function(x) x[1]-x[2]))
             tot <- unlist(lapply(cd,function(x) x[1]+x[2]))
-            gam <- dif/tot
-            ##w <- tot/sum(tot)
-            ##pgam <- sum(w*gam)            
-            c(gam,pgamma=sum(dif)/sum(tot))
+            gam <- dif/tot ## Conditional gammas given Z=z
+            px2 <- p[psi]^2
+            pgamma <- sum(dif*px2)/sum(tot*px2)
+            c(gam,pgamma=pgamma)
         },labels=c(paste0("\u03b3:",names(dd)),"pgamma"),
         iid=iid)
         if (!iid) {
@@ -94,6 +97,7 @@ print.gkgamma <- function(x,call=TRUE,...) {
                                            "):\n",sep="")))
             e <- attr(x,"strata")[[i]]
             print.estimate(e,level=0)
+            cat("\n")
         }
         printline(50)
         cat("\n")
@@ -114,14 +118,14 @@ print.gkgamma <- function(x,call=TRUE,...) {
     }
     class(x) <- "estimate"
     print(x)
-    if (!is.null(attr(x,"homtest"))) {
-        printline(50)
-        cat("Homogeneity test:\n\n")
-        with(attr(x,"homtest")$compare,
-             cat("\u03c7\u00b2 = ",statistic,
-                 ", df = ",parameter,
-                 ", p-value = ",p.value,"\n",sep=""))
-    }
+    ## if (!is.null(attr(x,"homtest"))) {
+    ##     printline(50)
+    ##     cat("Homogeneity test:\n\n")
+    ##     with(attr(x,"homtest")$compare,
+    ##          cat("\u03c7\u00b2 = ",statistic,
+    ##              ", df = ",parameter,
+    ##              ", p-value = ",p.value,"\n",sep=""))
+    ## }
     invisible(x)
 }
 
