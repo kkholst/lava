@@ -34,7 +34,8 @@ seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 
 #### no penalty ####
 test_that("LVM vs pLVM with lasso - lambda=0", {
-  eplvm.model <- estimate(plvm.model, df.data, lambda1 = 0, lambda2 = 0)
+  eplvm.model <- estimate(plvm.model, df.data,
+                          lambda1 = 0, lambda2 = 0)
   expect_equal(object=coef(elvm.model),expected=coef(eplvm.model), tolerance=test.tolerance, scale=test.scale)    
   
   eplvm.model <- estimate(plvm.model, df.data, lambda1 = 0, lambda2 = 0, fixSigma = TRUE)
@@ -62,8 +63,8 @@ test_that("LVM(LARS) vs penalize with lasso", {
 
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = TRUE,
-                                 regularizationPath = 2, lambda2 = 0,
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "penalized1",
+                                 regularizationPath = 2, lambda2 = 0, 
                                  control = list(trace =TRUE))
   
   lambda1path <- getLambda(elvm.PathL1_EPSODE, lambda1 = TRUE, abs = TRUE)[,1]
@@ -91,8 +92,8 @@ test_that("LVM(EPSODE-forward) vs penalize with lasso", {
 # 6  361.070018 361.79324           0       0 -1.068329e-17  7.349418e-19 -3.339281e-19  9.422789e-19  8.002648e-21 -6.970495e-07 0.9980010
 
 test_that("LVM(EPSODE-backward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,
-                                 regularizationPath = 2, lambda2 = 0,
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,  estimator = "penalized1",
+                                 regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-1,1e-2),
                                  control = list(trace = TRUE))
   
   lambda1path <- getLambda(elvm.PathL1_EPSODE, lambda1 = TRUE, abs = TRUE)[,1]
@@ -269,7 +270,7 @@ for(iter_l in 1:length(seq_lambda)){
   # normal model - can find unexpected solution
   eplvm.fit_tempo1 <- estimate(plvm.model,  data = df.data, fixSigma = FALSE, lambda2 = 0,
                                lambda1 = penalized.PathL1[[iter_l]]@lambda1/penalized.PathL1[[iter_l]]@nuisance$sigma2,
-                               control = list(constrain = TRUE, trace = -1, abs.tol = 1e-10, rel.tol = 1e-9))
+                               control = list(constrain = TRUE, trace = -1))
   
   test_that("penalized vs pLVM with lasso (high dimensional - sigmaFree)", {
     penalized.L1bis <- penalized(Y ~  ., data = df.data, lambda1 = eplvm.fit_tempo1$penalty$lambda1.abs, trace = FALSE, lambda2 = 0)
@@ -356,6 +357,29 @@ test_that("LVM vs pLVM (lambda > 0)", {
   expect_equal(coef(resPLVM2), coef(resPLVM3), tolerance=test.tolerance, scale=test.scale)
 })
 
+
+#### Regularization path
+lvm.Extended <- lvm.modelSim
+lvm.Extended <- regression(lvm.Extended, Y5 ~ X1 + X2 + X3 + X4 + X5)
+plvm.Extended <- penalize(lvm.Extended, setdiff(coef(lvm.Extended), coef(lvm.modelSim)))
+
+Test <- estimate(plvm.Extended,  data = df.data, estimator = "penalized", lambda1 = 10,
+               control = list(trace =TRUE))
+
+
+P1 <- estimate(plvm.Extended,  data = df.data, increasing = TRUE, fit = NULL, estimator = "penalized1",
+               regularizationPath = 2, lambda2 = 0, stopParam = 2,
+               control = list(trace =TRUE))
+
+plot(P1)
+
+getPath(P1)
+
+Test1 <- estimate(plvm.Extended,  data = df.data, estimator = "penalized", fixSigma = TRUE, lambda1 = 1,
+                 control = list(trace =TRUE))
+coef(Test1)
+
+
 #### IN PROGRESS ####
 test <- FALSE
 if(test){
@@ -390,30 +414,30 @@ if(test){
                    regularizationPath = 2, lambda2 = 0,
                    control = list(trace =TRUE))
   )
+  getPath(P1)
   
   system.time(
-    P2 <- estimate(plvm.model,  data = df.data, increasing = TRUE, fit = NULL, estimator = "penalized",
-                   regularizationPath = 2, lambda2 = 0,
+    P2 <- estimate(plvm.model,  data = df.data, increasing = TRUE, fixSigma = FALSE, fit = NULL, estimator = "penalized",
+                   regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-3,1e-2),
                    objective = lvGaussianO, gradient = scoreGaussianO, hessian = hessianGaussianO, 
                    control = list(trace =TRUE))
   )
+  P2$message$lambda1[!is.na(P2$message$indexChange)]
   
   lambda1path <- getLambda(P1, lambda1 = TRUE, abs = TRUE)[,1]
   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
   expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)  
   
-  
-  # check why penalized1 give different results compared to lvGaussian0
-  P3 <- estimate(plvm.model,  data = df.data, increasing = TRUE, fit = NULL, fixSigma = FALSE,
-                 regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-3,1e-2), estimator = "penalized1",
-                 # objective = lvGaussianO, gradient = scoreGaussianO, hessian = hessianGaussianO,
+  P3 <- estimate(plvm.model,  data = df.data, increasing = TRUE, fit = NULL, fixSigma = FALSE, stopParam = 3,
+                 regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-3,1e-3), estimator = "penalized",
                  control = list(trace =TRUE, constrain = FALSE))
   
   getPath(P1)
+  getPath(P3)
   P3$message[!is.na(P3$message[,"indexChange"]),]
   
-  P3bis <- estimate(plvm.model,  data = df.data, increasing = TRUE, fit = NULL, fixSigma = FALSE,
-                    regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-3,1e-4),
+  P3bis <- estimate(plvm.model,  data = df.data, increasing = TRUE, fit = NULL, fixSigma = FALSE, stopParam = 3,
+                    regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-3,1e-3),
                     objective = lvGaussianO, gradient = scoreGaussianO, hessian = hessianGaussianO,
                     control = list(trace =TRUE, constrain = FALSE))
   
@@ -465,15 +489,12 @@ if(test){
   #### lasso path ####
   test <- FALSE
   if(test){
-    PathLVM1_f <- estimate(plvm.modelSim, data = df.data, increasing = TRUE,
+    PathLVM1_f <- estimate(plvm.modelSim, data = df.data, increasing = TRUE, fixSigma = FALSE,
                                     regularizationPath = 2, lambda2 = 0,
                                     control = list(trace = TRUE))
     path <- getPath(PathLVM1_f, names = c("lambda1.abs",paste(endogenous(plvm.modelSim),endogenous(plvm.modelSim),sep = ",")))
     path
     
-    ##
-    ## ISSUE: this is incorrect because sigma is not update along the path
-    ##
     
     getPath(PathLVM1_f)$lambda1^2/getPath(elvm.PathL1_EPSODEf)$lambda1.abs
     

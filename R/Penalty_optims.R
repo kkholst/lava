@@ -46,7 +46,6 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
                          index.constrain = index.constrain, type.constrain = control$constrain, expX = control$proxGrad$expX)
   }
   
- 
   res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,
                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,

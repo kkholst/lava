@@ -62,7 +62,7 @@ extendModel.lvm <- function(x, data, type, alpha = 0.05, covariance = TRUE, warn
     
     newlinks <- findNewLink(x, rm.exoexo = TRUE)
     for(iterLink in 1:nrow(newlinks)){
-      x <- addLink(x, newlinks[iterLink,1], newlinks[iterLink,2], covariance = covariance,
+     x <- addLink(x, newlinks[iterLink,1], newlinks[iterLink,2], covariance = covariance,
                    silent = TRUE)
     }
     

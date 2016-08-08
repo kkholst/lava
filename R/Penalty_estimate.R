@@ -241,10 +241,16 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
   
   #### update sigma value
   if( regularizationPath > 0){
-    if(control$trace>=0){cat("Estimation of the nuisance parameter ")}
-    res <- estimateNuisance.lvm(x, plvmfit = res, data = data, control = control,
-                                regularizationPath = regularizationPath)
-    if(control$trace>=0){cat("- done \n")}
+    
+    if(control$regPath$fixSigma){
+      if(control$trace>=0){cat("Estimation of the nuisance parameter ")}
+      res <- estimateNuisance.lvm(x, plvmfit = res, data = data, control = control,
+                                  regularizationPath = regularizationPath)
+      if(control$trace>=0){cat("- done \n")}
+    }else{
+      setPath(res, names = "lambda1.abs", row = NULL) <- getPath(res, names = "lambda1", row = NULL)*apply(getPath(res, names = control$penalty$names.varCoef, row = NULL),1,sum)
+      setPath(res, names = "lambda2.abs", row = NULL) <- getPath(res, names = "lambda2", row = NULL)*apply(getPath(res, names = control$penalty$names.varCoef, row = NULL),1,sum)
+    }
   }
   
    #### rescale parameter to remove the effect of orthogonalization
@@ -290,7 +296,6 @@ initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
   }else{
     start_lambda0 <- NULL
   }
-  
   
   #### hight dimensional model
   x0 <- x

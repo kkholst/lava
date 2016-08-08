@@ -11,29 +11,7 @@ library(butils)
 package.source("lava", Rcode = TRUE)
 source(file.path(butils:::dir.gitHub(),"lava","tests","FCT.R"))
 
-simForm <- function(n.obs, xmax, ymax, radius, center = NULL, coords.centered = TRUE,
-                    distance = "euclidean"){
 
-  if(is.null(center)){
-    if(coords.centered == TRUE){
-      center <- c(0,0)
-    }else{
-      center <- c(xmax/2,ymax/2)
-    }
-  }
-  
-  coords <- scale(expand.grid(1:xmax, 1:ymax), center = coords.centered, scale = FALSE)
-  n.coord <- nrow(coords) 
-
-  distCenter <- apply(coords, 1, function(x){dist( rbind(x,center), method = distance)})
-  beta <- distCenter<radius
-  
-  return(list(coords = coords,
-              center = center,
-              distCenter = matrix(distCenter, nrow = xmax, ncol = ymax),
-              X = matrix(beta, nrow = xmax, ncol = ymax)
-              ))
-}
 
 #### 1- Simulation ###
 n.obs <- 500

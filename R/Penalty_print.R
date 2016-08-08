@@ -2,11 +2,11 @@
   
   ## normal display
   out <- capture.output(lava:::print.lvm(x))
-  # if(!is.null(x$penaltyNuclear$name.Y)){
-  #   charY <- paste0(x$penaltyNuclear$name.Y," ~ ")
-  #   indexEq <- grep(charY,out) 
-  #   out[indexEq] <- gsub(charY, replacement = paste0(charY,LCSseq(x$penaltyNuclear$name.X),"+"),x = out[indexEq])
-  # }
+  if(!is.null(x$penaltyNuclear$name.Y)){
+    charY <- paste0(x$penaltyNuclear$name.Y," ~ ")
+    indexEq <- grep(charY,out)
+    out[indexEq] <- gsub(charY, replacement = paste0(charY,LCSseq(x$penaltyNuclear$name.X),"(image)+"),x = out[indexEq])
+  }
   sapply(out, function(o){cat(o,"\n")})
   
   ## additional display - lasso

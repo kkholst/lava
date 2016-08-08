@@ -77,11 +77,17 @@ addLink.lvm <- function(x, var1, var2 = NA, covariance, silent = FALSE){
                 "var2: ",var2,"\n")
       }
     }
+    if(var1 %in% endogenous(x) && var2 %in% endogenous(x)){
+      if(missing(covariance)){
+        covariance <- TRUE
+      }else if(covariance == FALSE){
+        if(silent == FALSE){ warning("addLink.lvm: set covariance argument to TRUE to add a covariance link to the lvm \n") }
+        return(x)
+      }
+    }
+    
     test.1 <- var1 %in% exogenous(x)
     test.2 <- var2 %in% exogenous(x)
-    if(var1 %in% endogenous(x) && var1 %in% endogenous(x)){
-      covariance <- TRUE
-    }
     
     if(test.1 && test.2){
       if(silent == FALSE){

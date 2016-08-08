@@ -44,7 +44,12 @@
         ggPath <- ggPath + scale_color_manual(values = color.order)
       }
       
-      if(add.best){ggPath <- ggPath + geom_vline(size = line.size/2, xintercept = x$penalty$lambda1.best, linetype = 2, color = "blue")}
+      if(add.best){
+        indexLambda <- which.min(abs(unlist(getPath(x, names = "lambda1.abs")) - x$penalty$lambda1.best))
+        ggPath <- ggPath + geom_vline(size = line.size/2, 
+                                      xintercept = unlist(getPath(x, names = lambda, row = indexLambda)), 
+                                      linetype = 2, color = "blue")
+        }
       
     }
     

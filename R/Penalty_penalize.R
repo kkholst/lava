@@ -261,9 +261,9 @@ lvm2plvm <- function(x){
   if(name.Y %in% endogenous(x) == FALSE){
     stop("penaltyNuclear: the dependent variable in formula must already be in the model \n")
   }
-  if(any(name.X %in% vars(x) == FALSE)){
-    stop("penaltyNuclear: the independent variable in formula must be in the model \n",
-         "missing name: ",paste(name.X[name.X %in% vars(x) == FALSE],collapse = " "),"\n")
+  if(any(name.X %in% vars(x) == TRUE)){
+    stop("penaltyNuclear: the independent variable in formula must not be in the model \n",
+         "existing variables: ",paste(name.X[name.X %in% vars(x) == TRUE],collapse = " "),"\n")
   }
    coords.factor <- apply(coords, 2, function(x){
     as.numeric(as.factor(x))

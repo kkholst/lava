@@ -99,13 +99,10 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
     ## current parameters
     iterLambda1 <- seq_lambda1[iter]
     if(iter > 1 && iterLambda1 == seq_lambda1[iter-1]){
-      iterLambda1 <- iterLambda1 + stepLambda1*tail(resolution_lambda1,1)
+      iterLambda1 <- iterLambda1 + stepLambda1*resolution_lambda1[2]
     }
     iterBeta <- M.beta[iter,]
     
-    if(length(setZE)>0){
-      iterBeta[setZE] <- 0
-    }
     #### estimate uz and Uz
     uz <- rep(0, n.coef)
     if(length(setNE)>0){uz <- uz - colSums(V[setNE,,drop = FALSE])}
@@ -123,10 +120,10 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
     }
     
     ## Solve ODE 
-    lambda.ode <- seq_len(2000)
+    lambda.ode <- seq_len(1000)
     cv.ode <- NULL
     bridge.ode <- rbind(c(iter = 0, step = 0, lambda = iterLambda1, iterBeta))
-    
+   
     # H1 <- hessian(iterBeta)
     # H2 <- hessianGaussianO(iterBeta)
     # Hdiff <- H1 - H2
@@ -141,34 +138,37 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
                                               uz = uz, Uz = Uz, Uz_pen = Uz_pen, iUz_pen = iUz_pen, B = B, 
                                               resolution = resolution_lambda1, envir = envir)
     ), silent = TRUE)
-    # browser()
+    # print(cv.ode)
     
     ## second chance in case of multiple events
-    # if(!is.null(cv.ode) && cv.ode$cv["cv.sign"]>1){
-    #   bridge.odeS <- bridge.ode
-    #   iterBeta2 <- bridge.ode[nrow(bridge.odeS)-2,-(1:3)]
-    #   lambda.ode2 <- bridge.ode[nrow(bridge.odeS)-2,3]
-    #   
-    #   lambda.ode <- seq_len(10000)
-    #   cv.ode <- NULL
-    #   bridge.ode <- rbind(c(iter = 0, step = 0, lambda = lambda.ode2, iterBeta2))
-    #   
-    #   res.error <- try(deSolve::ode(y = iterBeta2, 
-    #                                 times = lambda.ode, 
-    #                                 func = EPSODE_odeBeta, method = ode.method,
-    #                                 parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE, 
-    #                                             lambda2 = lambda2, indexPenalty = indexPenalty, indexAllCoef = indexAllCoef,
-    #                                             uz = uz, Uz = Uz, Uz_pen = Uz_pen, iUz_pen = iUz_pen, B = B, 
-    #                                             resolution = c(resolution_lambda1[1],resolution_lambda1[2]/10), envir = envir)
-    #   ), silent = TRUE)
-    # }
+    if(!is.null(cv.ode) && cv.ode$cv["cv.sign"]>1){
+      bridge.odeS <- bridge.ode
+      iterBeta2 <- bridge.ode[nrow(bridge.odeS)-2,-(1:3)]
+      lambda.ode2 <- bridge.ode[nrow(bridge.odeS)-2,3]
+
+      lambda.ode <- seq_len(10000)
+      cv.ode <- NULL
+      bridge.ode <- rbind(c(iter = 0, step = 0, lambda = lambda.ode2, iterBeta2))
+
+      res.error <- try(deSolve::ode(y = iterBeta2,
+                                    times = lambda.ode,
+                                    func = EPSODE_odeBeta, method = ode.method,
+                                    parm = list(hessian = hessian, Vpen = V, setNE = setNE, setZE = setZE, setPE = setPE,
+                                                lambda2 = lambda2, indexPenalty = indexPenalty, indexAllCoef = indexAllCoef,
+                                                uz = uz, Uz = Uz, Uz_pen = Uz_pen, iUz_pen = iUz_pen, B = B,
+                                                resolution = resolution_lambda1/10, envir = envir)
+      ), silent = TRUE)
+    }
     
    #  cat("\n iteration ",iter,"\n")
-   # print(cv.ode)
-    
+   
     ## update 
     if(is.null(cv.ode)){
-      seq_index <- c(seq_index, NA)
+      if(all(class(res.error) != "try-error")){ ## not enought interations: continue
+        seq_index <- c(seq_index, NA)  
+      }else{
+        stop(res.error[1])
+      }
     }else if(cv.ode$cv["cv.sign"]==1){
       setNE <- setdiff(setNE,  cv.ode$index)
       setPE <- setdiff(setPE, cv.ode$index)
@@ -182,12 +182,14 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
         setNE <- union(setNE, cv.ode$index)  
       }
       seq_index <- c(seq_index, cv.ode$index)
-    }else {
-        stop(res.error[1])
     }
+   
+    
     
     newLambda1 <- unname(bridge.ode[nrow(bridge.ode),3])
-    M.beta <- rbind(M.beta, bridge.ode[nrow(bridge.ode),-(1:3)])
+    newBeta <- unname(bridge.ode[nrow(bridge.ode),-(1:3)])
+    if(length(setZE)>0){newBeta[setZE] <- 0}
+    M.beta <- rbind(M.beta, newBeta)
     seq_lambda1 <- c(seq_lambda1, newLambda1)
     iter <- iter + 1
     
@@ -323,13 +325,16 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   ## export
   Puz <- rep(0, length(y))
   if(length(ls.args$setZE)==0){
+    coef.n0 <- ls.args$indexAllCoef
     Puz[ls.args$indexAllCoef] <- P %*% ls.args$uz[ls.args$indexAllCoef, drop = FALSE]
   }else{
+    coef.n0 <- setdiff(ls.args$indexAllCoef,ls.args$setZE)
     Puz[setdiff(ls.args$indexAllCoef,ls.args$setZE)] <- P[-ls.args$setZE,-ls.args$setZE, drop = FALSE] %*% ls.args$uz[setdiff(ls.args$indexAllCoef,ls.args$setZE), drop = FALSE]  
   }
   
   if(ls.args$resolution[1]>0){
-    rdiff.max <- max(abs(Puz[setdiff(1:length(y), ls.args$setZE)]/y[setdiff(1:length(y), ls.args$setZE)]))
+    # relative difference
+    rdiff.max <- max(abs(Puz[coef.n0]/y[coef.n0]))
     normTempo <- max(ls.args$resolution[1]/rdiff.max,ls.args$resolution[2])
   }else{
     lPlus <- (- t(Q) %*% G)/(1 + t(Q) %*% ls.args$uz[ls.args$indexPenalty,drop = FALSE])

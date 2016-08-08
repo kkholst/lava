@@ -75,7 +75,7 @@
                            "penalized" = names.penalized,
                            "npenalized" = setdiff(names(coef(x)),names.penalized),
                            "coef0" = {regPath$coef0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] == 0)) ; "coef0"},
-                           "coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[names.penalized, drop = FALSE] != 0)) ; "coefn0"}
+                           "coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] != 0)) ; "coefn0"}
       )
     }
     
