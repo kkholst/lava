@@ -4,16 +4,16 @@ calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BI
  if(fit %in% c("AIC","BIC","P_error") == FALSE){
    stop("fit must be in AIC BIC P_error \n")
  }
- if("plvmfit" %in% class(object)){
-   penPath <- getPath(object, rm.duplicated = TRUE)
-    index.knot <- as.numeric(rownames(penPath))
-    seq_lambda <- penPath$lambda1.abs
-  }else if("lvm" %in% class(object)){
-    penPath <- NULL
-  }else{
+  if(all(c("plvmfit", "lvm") %in% class(object) == FALSE)){
     stop("model must be either a plvmfit or a lvm object \n")
   }
   
+  if("plvmfit" %in% class(object)){
+    regPath <- getPath(object, getLambda = "lambda1.abs", getCoef = "coef0")
+    seq_lambda <- unlist(lapply(regPath, function(x){attr(x,"lambda1.abs")}))
+    seq_row <- unlist(lapply(regPath, function(x){attr(x,"row")}))
+    seq_coef <- lapply(regPath, function(x){as.character(x)})
+  }
   n.lambda <- length(seq_lambda)
   res.cv <- numeric(n.lambda)
   n.endogeneous <- length(endogenous(model))
@@ -21,34 +21,33 @@ calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BI
   best.res <- Inf
   best.lambda <- NA
   best.subset <- NULL
-  coef.penalty <- model$penalty$names.penaltyCoef
+  coef.penalty <- model$penalty$name.coef
   
   if(trace){pb <- txtProgressBar(min = 0, max = n.lambda, style = 3)}
   for(iterLambda in 1:n.lambda){
     if(trace){setTxtProgressBar(pb, iterLambda)}
     
-   
+    
     #### define the variables to include in the model 
-    if(is.null(penPath)){
+    if("plvmfit" %in% class(object) == FALSE){
       fitTempo <- estimate(model, data = data.fit, lambda1 = seq_lambda[iterLambda], ...)
-      coef0_lambda <- coef0(fitTempo, tol = 1e-6, penalized = TRUE)
+      coef0_lambda <- coef0(fitTempo, tol = 1e-6, penalized = TRUE, value = FALSE)
     }else{
-      # fitTempo <- estimate(model, data = data.fit, lambda1 = 10,  control = list(trace = TRUE, constrain = TRUE))
-      coef_lambda <- getPath(object, row = index.knot[iterLambda], getCoef = "penalized", getLambda = NULL)
-      coef0_lambda <- setNames(coef_lambda[coef_lambda == 0],colnames(coef_lambda == 0)[coef_lambda == 0])
+      coef0_lambda <- seq_coef[[iterLambda]]
     }
     
     #### form the reduced model
     model2 <- model
     if(length(coef0_lambda)>0){
-      ToKill <- names(coef0_lambda)
+      ToKill <- coef0_lambda
       for(iterKill in ToKill){
-        model2 <- rmLink.lvm(model2, as.formula(iterKill))  
+        model2 <- rmLink.lvm(model2, iterKill)  
       }
     }
+    
     #### fit the reduced model
     fitTempo2 <- lava:::estimate.lvm(model2, data = data.fit, control = list(constrain = TRUE))
-    
+   
     #### gof criteria
     if(fit %in% c("AIC","BIC")){
       res.cv[iterLambda] <- gof(fitTempo2)[[fit]]
@@ -65,19 +64,17 @@ calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BI
       best.lambda <- seq_lambda[iterLambda]
       best.subset <- names(coef(fitTempo2))
       best.lvm <- fitTempo2
+      if("plvmfit" %in% class(object)){attr(best.lambda,"row") <- seq_row[iterLambda]}
     }
   }
   if(trace){close(pb)}
- 
   if("plvmfit" %in% class(object)){
-    
     best.lvm$penalty <- object$penalty 
     best.lvm$penalty$lambda1 <- seq_lambda 
     attr(res.cv, "criterion") <- fit
     best.lvm$penalty$performance <- res.cv
     best.lvm$penalty$lambda1.best <- best.lambda
     best.lvm$regularizationPath <- object$regularizationPath
-    
     class(best.lvm) <- append("plvmfit", class(best.lvm))
     return(best.lvm)
   }else{

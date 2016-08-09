@@ -1,6 +1,6 @@
 `plot.plvmfit` <- function(x, lambda = "lambda1.abs", type = NULL,
                                add.line = TRUE, line.size = 2,
-                               add.point = TRUE, point.size = 2,
+                               add.point = TRUE, point.shape = 4, point.size = 2,
                                add.best = TRUE, color.selected = TRUE) {
   
   test.best <- !is.null(x$penalty$lambda1.best)
@@ -24,9 +24,8 @@
                                          group = "coefficient", 
                                          col = "coefficient")
     )
-    
     if(add.line){ggPath <- ggPath + geom_line(size = line.size)}
-    if(add.point){ggPath <- ggPath + geom_point(size = point.size)}
+    if(add.point){ggPath <- ggPath + geom_point(size = point.size, shape = point.shape)}
   
     if(!is.null(x$penalty$lambda1.best)){
       if(color.selected){
@@ -45,9 +44,8 @@
       }
       
       if(add.best){
-        indexLambda <- which.min(abs(unlist(getPath(x, names = "lambda1.abs")) - x$penalty$lambda1.best))
         ggPath <- ggPath + geom_vline(size = line.size/2, 
-                                      xintercept = unlist(getPath(x, names = lambda, row = indexLambda)), 
+                                      xintercept = unlist(getPath(x, names = lambda, row = attr(x$penalty$lambda1.best,"row"))), 
                                       linetype = 2, color = "blue")
         }
       

@@ -6,7 +6,7 @@
 #' 
 glmPath <- function(beta0, objective, hessian, gradient, 
                     indexPenalty, indexNuisance,
-                    sd.X, base.lambda1, lambda2, group.lambda1,
+                    sd.X, base.lambda1, lambda2, test.penalty1,
                     control, iter.max = length(beta0)*3){
   
   p <- length(beta0)
@@ -47,7 +47,7 @@ glmPath <- function(beta0, objective, hessian, gradient,
       
       proxOperator <- function(x, step){
         control$proxOperator(x, step = step,
-                             lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, 
+                             lambda1 = 0*base.lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = lambda2>0, 
                              expX = control$proxGrad$expX)
       }
       resNode$beta <- do.call("proxGrad",
@@ -151,10 +151,10 @@ prepareData_glmPath <- function(model, data, penalty, label = "_pen"){
   for(iter_Y in 1:n.outcomes ){
     Y_tempo <- outcomes[iter_Y]
     
-    index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
+    index_coef <- grep(Y_tempo, x = penalty$name.coef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
     
     if( length(index_coef)>0 ){
-      ls.tempo <- lapply(exogeneous, grep, penalty$names.penaltyCoef[index_coef], fixed = TRUE) # which exogeneous varaible is related to outcome Y_tempo
+      ls.tempo <- lapply(exogeneous, grep, penalty$name.coef[index_coef], fixed = TRUE) # which exogeneous varaible is related to outcome Y_tempo
       names.varData <- exogeneous[unlist(lapply(ls.tempo, function(t){length(t)>0}))] 
       data <- cbind(data,
                     setNames(data[, names.varData, drop = FALSE], paste0(names.varData, label, Y_tempo))
@@ -162,16 +162,16 @@ prepareData_glmPath <- function(model, data, penalty, label = "_pen"){
       
       # remove link corresponding to a penalized coefficient
       for(iter_link in unlist(ls.tempo)){
-        cancel(model) <- as.formula(penalty$names.penaltyCoef[index_coef][iter_link])
+        cancel(model) <- as.formula(penalty$name.coef[index_coef][iter_link])
       }
       
       # add new link corresponding to the penalized coeffcient but renaæed
       for(iter_link in unlist(ls.tempo)){
-        regression(model) <- as.formula(paste0(penalty$names.penaltyCoef[index_coef][iter_link], label, Y_tempo))
+        regression(model) <- as.formula(paste0(penalty$name.coef[index_coef][iter_link], label, Y_tempo))
       }
       
       # update penalty
-      penalty$names.penaltyCoef[index_coef][unlist(ls.tempo)] <- paste0(penalty$names.penaltyCoef[index_coef][unlist(ls.tempo)], label, Y_tempo)
+      penalty$name.coef[index_coef][unlist(ls.tempo)] <- paste0(penalty$name.coef[index_coef][unlist(ls.tempo)], label, Y_tempo)
     }
     
   }
@@ -197,13 +197,13 @@ prepareData_glmPath <- function(model, data, penalty, label = "_pen"){
   for(iter_Y in 1:n.outcomes ){
     Y_tempo <- outcomes[iter_Y]
     
-    index_coef <- grep(Y_tempo, x = penalty$names.penaltyCoef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
+    index_coef <- grep(Y_tempo, x = penalty$name.coef, fixed = TRUE) # any penalize coefficient related to outcome Y_tempo
     if( length(index_coef)>0 ){
       
       # orthogonalize data relative to non penalize coefficients
       resOrtho <- orthoData_glmPath(model, name.Y = Y_tempo,
                                     allCoef = names.coef[grep(Y_tempo, names.coef, fixed = TRUE)], 
-                                    penaltyCoef = penalty$names.penaltyCoef[index_coef], 
+                                    penaltyCoef = penalty$name.coef[index_coef], 
                                     data = data)
       
       # update results
@@ -340,7 +340,7 @@ rescaleCoef_glmPath <- function(Mres, penalty, orthogonalizer){
   for(iter_Y in 1:n.Y){
     Y_tempo <- name.Y[iter_Y]
     names.allCoef <- colnames(Mres)[grep(Y_tempo, x = colnames(Mres), fixed = TRUE)] # coefficients related to outcome Y_tempo
-    names.penalizedCoef <- intersect(penalty$names.penaltyCoef, names.allCoef) # penalized coefficient related to outcome Y_tempo
+    names.penalizedCoef <- intersect(penalty$name.coef, names.allCoef) # penalized coefficient related to outcome Y_tempo
     names.unpenalizedCoef <- setdiff(names.allCoef, c(names.penalizedCoef,covCoef)) # penalized coefficient related to outcome Y_tempo
     
     Mres[,names.unpenalizedCoef] <- Mres[,names.unpenalizedCoef] - Mres[,names.penalizedCoef] %*% t(orthogonalizer[[iter_Y]])

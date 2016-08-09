@@ -12,7 +12,7 @@ coef0.plvmfit <- function(x, tol = 0, operator = "<=", penalized = FALSE, value 
   }
   
   if(penalized){
-    coefTempo <- intersect(coefTempo, x$penalty$names.penaltyCoef)
+    coefTempo <- intersect(coefTempo, x$penalty$name.coef)
   }
   
   if(value){

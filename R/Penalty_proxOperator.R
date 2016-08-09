@@ -28,7 +28,7 @@ proxNuclear <-  function(x, step, lambda, nrow, ncol){
 
 
 init.proxOperator <- function(coef,
-                              lambda1, lambda2, group.penaltyCoef, 
+                              lambda1, lambda2, group.coef, 
                               lambdaN, nrow, ncol, 
                               regularizationPath){
   
@@ -37,6 +37,7 @@ init.proxOperator <- function(coef,
   
   test.N <- !is.null(lambdaN) && lambdaN != 0
   test.L1 <- (!is.null(lambda1) && any(lambda1 > 0)) || (regularizationPath >= 0)
+  if(test.N){test.L1 <- FALSE;test.L2 <- FALSE}
   test.L2 <- !is.null(lambda2) && any(lambda2 > 0)
   
   #### No penalty
@@ -52,7 +53,7 @@ init.proxOperator <- function(coef,
       return(x)
     }
     objective$N <- function(x, step, test.penaltyN, nrow, ncol, ...){
-      sum(svd(matrix(x, nrow = nrow, ncol = ncol))$d)
+      sum(svd(matrix(x[test.penaltyN], nrow = nrow, ncol = ncol))$d)
     }
   }else{
     objective$N <- function(...){0}
@@ -60,7 +61,7 @@ init.proxOperator <- function(coef,
 
   #### Lasso penalty
   if(test.L1){
-    if(any(group.penaltyCoef>=1)){ ## group lasso
+    if(any(group.coef>=1)){ ## group lasso
       
       proxOperator$L1 <- function(x, step, lambda1, test.penalty1, expX, ...){
         
@@ -72,7 +73,7 @@ init.proxOperator <- function(coef,
         return(x)
       }
       
-      objective$L1 <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.penaltyCoef, expX){
+      objective$L1 <- function(x, lambda1, lambda2, test.penalty1, test.penalty2, group.coef, expX){
         if(!is.null(expX)){x[expX] <- exp(x[expX])}
         
         levels.penalty <- setdiff(unique(test.penalty1),0)
@@ -90,7 +91,7 @@ init.proxOperator <- function(coef,
       }
     }
     
-    objective$L1 <- function(x, lambda1, test.penalty1, group.penaltyCoef, expX, ...){
+    objective$L1 <- function(x, lambda1, test.penalty1, group.coef, expX, ...){
       if(!is.null(expX)){x[expX] <- exp(x[expX])}
       sum(lambda1[test.penalty1>0] * abs(x[test.penalty1>0]))
     }
@@ -104,7 +105,7 @@ init.proxOperator <- function(coef,
       mapply(proxL2, x = x, step = step, lambda = lambda2, test.penalty = test.penalty2)
     }
     
-    objective$L2 <- function(x, lambda1, test.penalty2, group.penaltyCoef, expX, ...){
+    objective$L2 <- function(x, lambda1, test.penalty2, group.coef, expX, ...){
       if(!is.null(expX)){x[expX] <- exp(x[expX])}
       sum(lambda2[test.penalty2>0]/2 *(x[test.penalty2>0])^2)
     }
@@ -129,7 +130,7 @@ composeOperator <- function (...){
   ls.fct <- lapply(list(...), match.fun)
   
   newfct <- function(x, lambda1, lambda2, index.constrain = NULL, type.constrain, expX, ...) {
- 
+   
     if(length(index.constrain)>0){
       if(type.constrain){norm <- sum(exp(x[index.constrain]))
       }else{

@@ -41,7 +41,6 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
 
   obj.x_k <- tryCatch(objective(x_k), error = fct_errorLv)
   if(is.na(obj.x_k)){obj.x_k <- Inf}
-  
   grad.x_k <- try(gradient(x_k))
   
   t_k <- t_kp1 <- if(method %in% c("FISTA","mFISTA")){1}else{NA}

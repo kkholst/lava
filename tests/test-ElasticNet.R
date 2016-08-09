@@ -75,7 +75,7 @@ test_that("LVM(LARS) vs penalize with ElasticNet", {
   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, fit = NULL,
                                regularizationPath = 1, lambda2 = lambda2, control = list(constrain = TRUE))
   
-  coef0 <- unlist(getPath(elvm.PathL1_LARS, getCoef = "coef0", getLambda = NULL))
+  coef0 <- unlist(getPath(elvm.PathL1_LARS, getCoef = "n.coef0", getLambda = NULL))
   indexJump_LARS <- sapply(0:5, function(x){which(x == coef0)[1]})
   
   lambda1path <- getLambda(elvm.PathL1_LARS, lambda1 = TRUE, abs = TRUE)[,1]

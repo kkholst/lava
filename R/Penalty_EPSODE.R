@@ -22,11 +22,11 @@
 #' Zhou 2014 - A generic Path Algorithm for Regularized Statistical Estimation
 
 
-EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hessian, V, lambda2, group.lambda1, 
+EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hessian, V, lambda2, test.penalty1, 
                    indexPenalty, indexNuisance, 
                    resolution_lambda1, increasing, stopLambda, stopParam,
                    nstep_max = min(length(beta)*50,1e4), 
-                   ode.method = "euler", control, tol.0 = 1e-8, trace){
+                   ode.method = "euler", control, tol.0 = 1e-8, exportAllPath, trace){
   
   #### preparation
   n.coef <- length(beta)
@@ -50,7 +50,7 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
     
     proxOperator <- function(x, step){  
       control$proxOperator(x, step = step,
-                           lambda1 = seq_lambda1, lambda2 = lambda2, test.penalty1 = group.lambda1, test.penalty2 = lambda2>0, 
+                           lambda1 = seq_lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = lambda2>0, 
                            index.constrain = indexNuisance, type.constrain = control$constrain, expX = control$proxGrad$expX)
     }
    
@@ -97,11 +97,11 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
   while(iter < nstep_max && test.ncv>0){
    
     ## current parameters
-    iterLambda1 <- seq_lambda1[iter]
+    iterLambda1 <- tail(seq_lambda1,1)
     if(iter > 1 && iterLambda1 == seq_lambda1[iter-1]){
       iterLambda1 <- iterLambda1 + stepLambda1*resolution_lambda1[2]
     }
-    iterBeta <- M.beta[iter,]
+    iterBeta <- M.beta[nrow(M.beta),]
     
     #### estimate uz and Uz
     uz <- rep(0, n.coef)
@@ -138,7 +138,6 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
                                               uz = uz, Uz = Uz, Uz_pen = Uz_pen, iUz_pen = iUz_pen, B = B, 
                                               resolution = resolution_lambda1, envir = envir)
     ), silent = TRUE)
-    # print(cv.ode)
     
     ## second chance in case of multiple events
     if(!is.null(cv.ode) && cv.ode$cv["cv.sign"]>1){
@@ -158,11 +157,20 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
                                                 uz = uz, Uz = Uz, Uz_pen = Uz_pen, iUz_pen = iUz_pen, B = B,
                                                 resolution = resolution_lambda1/10, envir = envir)
       ), silent = TRUE)
+      
     }
     
    #  cat("\n iteration ",iter,"\n")
-   
+    
     ## update 
+    if(exportAllPath && nrow(bridge.ode)>2){ ## export all the points of the regularization path
+      seq_index <- c(seq_index, rep(NA, nrow(bridge.ode)-2) )  
+      seq_lambda1 <- c(seq_lambda1, 
+                       bridge.ode[c(-1,-nrow(bridge.ode)),"lambda",drop = FALSE])
+      M.beta <- rbind(M.beta, 
+                      bridge.ode[c(-1,-nrow(bridge.ode)),-(1:3),drop = FALSE])
+    }
+    
     if(is.null(cv.ode)){
       if(all(class(res.error) != "try-error")){ ## not enought interations: continue
         seq_index <- c(seq_index, NA)  
@@ -184,11 +192,10 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
       seq_index <- c(seq_index, cv.ode$index)
     }
    
-    
-    
     newLambda1 <- unname(bridge.ode[nrow(bridge.ode),3])
     newBeta <- unname(bridge.ode[nrow(bridge.ode),-(1:3)])
     if(length(setZE)>0){newBeta[setZE] <- 0}
+    
     M.beta <- rbind(M.beta, newBeta)
     seq_lambda1 <- c(seq_lambda1, newLambda1)
     iter <- iter + 1
@@ -199,7 +206,8 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
       if(!is.null(stopLambda) && newLambda1>=stopLambda){test.ncv <- -1}
       if(!is.null(stopParam) && length(setZE)>=stopParam){test.ncv <- -1}
     }else {
-      test.ncv <- (newLambda1!=0) && length(setZE)>0
+      test.ncv <- length(setZE)>0
+      if(newLambda1==0){test.ncv <- -1 ;  seq_index <- c(seq_index, NA) ;}
       if(!is.null(stopLambda) && newLambda1<=stopLambda){test.ncv <- -1}
       if(!is.null(stopParam) && (length(setNE)+length(setPE))>=stopParam){test.ncv <- -1}
     }
@@ -212,7 +220,7 @@ EPSODE <- function(beta, beta_lambda0, beta_lambdaMax, objective, gradient, hess
   if(iter >= nstep_max && trace>=0){
     warning("EPSODE algorithm: maximum number of steps reached \n")
   }
-  if(increasing == FALSE && !is.null(beta_lambda0) && test.ncv==0){
+  if(increasing == FALSE && !is.null(beta_lambda0) && (0 %in% seq_lambda1 == FALSE) && test.ncv==0){
     M.beta <- rbind(M.beta,
                     unname(beta_lambda0))
     seq_lambda1 <- c(seq_lambda1, 0)
@@ -236,6 +244,18 @@ EPSODE_odeBeta <- function(t, y, ls.args){
   bridge <- get("bridge.ode", envir = ls.args$envir)
   lambda <- bridge[tail(which(bridge[,1]==(t-1)),1),3]
  
+  #### test lambda = 0
+  if(ls.args$resolution[1]<0 && lambda == 0){
+    assign("cv.ode", 
+           value = list(param = y, lambda = lambda, index = NA, cv = c(cv.sign = FALSE, cv.constrain = FALSE, s = NA)), 
+           envir = ls.args$envir)
+    assign("bridge.ode",
+           value =  rbind(bridge,c(t, NA, 0, y)),
+           envir = ls.args$envir)
+    stop("EPSODE_odeBeta: lambda = 0 \n",
+         "end of the path \n")
+  }
+  
   #### test knot
   index <- NULL
   if(length(ls.args$setNE)>0){index <- c(index, ls.args$setNE[which(y[ls.args$setNE] > 0)])} ## any negative parameter that becomes positive: stop algorithm
@@ -341,7 +361,7 @@ EPSODE_odeBeta <- function(t, y, ls.args){
     lMinus <- (- t(Q) %*% G)/(-1 + t(Q) %*% ls.args$uz[ls.args$indexPenalty,drop = FALSE])
     lAll <- c(lPlus[lPlus<lambda],lMinus[lMinus<lambda])
     nextKnot <- lAll[which.min(lambda-lAll)]
-    normTempo <- min( (lambda-nextKnot)*ls.args$resolution[1], ls.args$resolution[2])
+    normTempo <- max(-lambda,min( (lambda-nextKnot)*ls.args$resolution[1], ls.args$resolution[2])) ## max(-lambda) to avoid negative lambda
   }
   
   assign("bridge.ode",

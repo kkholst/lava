@@ -3,18 +3,24 @@
 `getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, ascending = TRUE, row = NULL) {
   
   if(isPath(x)){
-    stop("plotPath.plvmfit: no penalization path in the plvmfit object \n",
+    stop("getPath.plvmfit: no penalization path in the plvmfit object \n",
          "set argument \'regularizationPath\' to 1 or 2 when calling estimate \n")
   }
   
+  if(!missing(getCoef) && !is.null(getCoef)){
+    if(length(getCoef)>1){stop("getPath.plvmfit: getCoef must have length 1 \n")}
+    if(getCoef %in% c("coef0", "coefn0")){rm.duplicated <- TRUE}
+  }
+  
   regPath <- x$regularizationPath
-  if(rm.duplicated){
+  if(rm.duplicated == 1){ # only keep points where there is a change in the non 0 coefficients (+ first and last knot)
     indexChange <- regPath$indexChange
     indexChange[is.na(indexChange)] <- -1
     test.change <- which(diff(na.omit(indexChange))!=0)+1
     index <- sort(union(c(1,NROW(regPath)),intersect(which(!is.na(regPath$indexChange)), test.change)))
     regPath <- regPath[index, ,drop = FALSE]
   }
+   
   if(ascending == TRUE){
     regPath <- regPath[order(regPath$lambda1.abs, decreasing = FALSE),,drop = FALSE]
   }else{
@@ -62,30 +68,77 @@
       names.coef <- setdiff(validNames, c("lambda1.abs", "lambda1", "lambda2.abs", "lambda2", "indexChange"))
     }else if(is.null(getCoef)){
       names.coef <- NULL
-    }else{
-      validValues <- c("penalized", "npenalized", "coef0", "coefn0")
+    }else if(getCoef %in% c("coef0","coefn0")){
+      
+      coefChange <- names(coef(x))[regPath$indexChange]
+      
+      
+      if(0 %in% regPath$lambda1.abs){
+        current.coef <- intersect(validNames, x$penalty$name.coef)
+        seqIterator <- 1:NROW(regPath)
+      }else{
+        current.coef <- NULL
+        seqIterator <- NROW(regPath):1
+      }
+     
+      ls.coef <- NULL
+      for(iterPath in seqIterator){
+        if(!is.na(coefChange[iterPath])){
+          if(coefChange[iterPath] %in% current.coef){
+            current.coef <- setdiff(current.coef, coefChange[iterPath])
+          }else{
+            current.coef <- union(current.coef, coefChange[iterPath])
+          }
+        }
+        
+        if(getCoef == "coefn0"){
+          update <- current.coef
+        }else{
+          update <- setdiff(x$penalty$name.coef,current.coef)
+        }
+        
+        ## add names
+        if(!is.null(update)){
+          attr(update, "row") <- rownames(regPath)[iterPath]
+          if(length(names.lambda)>0){
+            for(iterN in names.lambda){
+              attr(update, iterN) <- regPath[iterPath,iterN]
+            } 
+          }
+        }
+        ls.coef <- c(ls.coef, list(update))
+      }
+      
+      if(0 %in% regPath$lambda1.abs == FALSE){ls.coef <- rev(ls.coef)}
+      return(ls.coef)
+            
+    } else {
+      validValues <- c("penalized", "npenalized", "n.coef0", "n.coefn0", "coef0", "coefn0")
       if(getCoef %in% validValues == FALSE){
         stop("getPath.plvmfit: invalid value for \'getCoef\' \n",
              "getCoef: ",getCoef,"\n",
              "valid values: ",paste(validValues, collapse = "\" \""),"\n")
       }
       
-      names.penalized <- intersect(validNames, x$penalty$names.penaltyCoef)
+      names.penalized <- intersect(validNames, x$penalty$name.coef)
+      
       names.coef <- switch(getCoef,
                            "penalized" = names.penalized,
                            "npenalized" = setdiff(names(coef(x)),names.penalized),
-                           "coef0" = {regPath$coef0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] == 0)) ; "coef0"},
-                           "coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] != 0)) ; "coefn0"}
+                           "n.coef0" = {regPath$coef0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] == 0)) ; "n.coef0"},
+                           "n.coefn0" = {regPath$coefn0 <- rowSums(abs(regPath[,names.penalized, drop = FALSE] != 0)) ; "n.coefn0"}
       )
+      
     }
-    
     res <- regPath[,c(names.lambda, names.coef),drop = FALSE]
   }
     
   if(is.null(row)){
     return(res)
-  }else{
+  }else if(is.numeric(row)){
     return(res[row,,drop = FALSE])
+  }else if(is.character(row)){
+    return(res[rownames(res) %in% row,,drop = FALSE])
   }
 }
 
@@ -143,7 +196,7 @@
 # 
 # ### smooth path
 # regPath <- x$regularizationPath
-# n.coef0 <- rowSums(abs(regPath[,x$penalty$names.penaltyCoef, drop = FALSE] == 0))
+# n.coef0 <- rowSums(abs(regPath[,x$penalty$name.coef, drop = FALSE] == 0))
 # nmax.coef0 <- max(nCoef)
 # 
 # nCoefChange <- sapply(seq(0, n.coef0), function(x){which(nCoef==x)[1]})

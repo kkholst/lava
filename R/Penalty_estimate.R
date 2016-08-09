@@ -72,7 +72,8 @@
 #' p12lvm.fit <- estimate(plvm.model,  data = df.data, lambda1 = 0.1, lambda2 = 0.1)
 #' p12lvm.fit
 estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, control = list(), estimator = "penalized", 
-                          regularizationPath = FALSE, resolution_lambda1 = c(1e-1,1e-3), increasing = TRUE, stopLambda = NULL, stopParam = NULL, fit = "BIC",
+                          regularizationPath = FALSE, resolution_lambda1 = c(1e-1,1e-3), increasing = TRUE, stopLambda = NULL, stopParam = NULL, exportAllPath = FALSE, 
+                          fit = "BIC",
                           method.proxGrad = "ISTA", step = 1, BT.n = 100, BT.eta = 0.8, force.descent = FALSE,
                           fixSigma = NULL, ...) {
   
@@ -94,8 +95,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
 
   #### prepare data (scaling, orthogonalization)
   if(control$trace>=0){cat("Scale and center dataset \n")}
-  resData <- prepareData.lvm(x, data = data, penalty = x$penalty,
-                             regularizationPath = regularizationPath)
+  resData <- prepareData.lvm(x, data = data, penalty = x$penalty, regularizationPath = regularizationPath)
   data <- resData$data
   penalty <- resData$penalty
   if(regularizationPath == 1){
@@ -126,19 +126,25 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
   
   control$penalty <- penalty
   
-  
   ## penaltyNuclear
-  if(!missing(lambdaN)){
-    x$penaltyNuclear$lambdaN <- as.numeric(lambdaN)
+  if(!is.null(x$penaltyNuclear$name.coef)){
+    if(!missing(lambdaN)){
+      x$penaltyNuclear$lambdaN <- as.numeric(lambdaN)
+    }
+    if(length(endogenous(x))>1){
+      stop("nuclear norm only implemented for a linear model \n")
+    }
+    
+    x$penaltyNuclear$objective <- function(coef){
+      x$penaltyNuclear$FCTobjective(coef, 
+                                    Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=TRUE]), 
+                                    X = as.matrix(data[,c(exogenous(x),x$penaltyNuclear$name.X),drop=FALSE]))}
+    x$penaltyNuclear$gradient <- function(coef){
+      x$penaltyNuclear$FCTgradient(coef, 
+                                   Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=TRUE]), 
+                                   X = as.matrix(data[,c(exogenous(x),x$penaltyNuclear$name.X),drop=FALSE]))}
+    control$penaltyNuclear <- x$penaltyNuclear
   }
-  x$penaltyNuclear$objective <- function(coef){
-    x$penaltyNuclear$FCTobjective(coef[x$penaltyNuclear$name.coef], 
-                                  Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=FALSE]), 
-                                  X = as.matrix(data[,x$penaltyNuclear$name.X,drop=FALSE]))}
-  x$penaltyNuclear$gradient <- function(coef){x$penaltyNuclear$FCTgradient(coef[x$penaltyNuclear$name.coef], 
-                                                                           Y = as.vector(data[,x$penaltyNuclear$name.Y,drop=FALSE]), 
-                                                                           X = as.matrix(data[,x$penaltyNuclear$name.X,drop=FALSE]))}
-  control$penaltyNuclear <- x$penaltyNuclear
   
   ## pass parameters for the penalty through the control argument
   control$proxGrad <- list(method = method.proxGrad,
@@ -157,6 +163,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
                           stopParam = stopParam,
                           stopLambda = stopLambda,
                           fixSigma = if(is.null(fixSigma)){TRUE}else{fixSigma},
+                          exportAllPath = exportAllPath,
                           trace = if(regularizationPath > 0){control$trace}else{FALSE})
   
   #### initialization
@@ -184,7 +191,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
                                    lambda1 = control$penalty$lambda1,  # will be NULL if control$penalty does not exist
                                    lambda2 = control$penalty$lambda2, 
                                    lambdaN = control$penaltyNuclear$lambdaN,  # will be NULL if control$penaltyNuclear does not exist
-                                   group.penaltyCoef = control$penalty$group.penaltyCoef,
+                                   group.coef = control$penalty$group.coef,
                                    regularizationPath = regularizationPath)
   control$proxOperator <- resOperator$proxOperator
   control$objectivePenalty <- resOperator$objectivePenalty
@@ -219,7 +226,7 @@ estimate.plvm <- function(x, data, lambda1, lambda2, lambdaN, adaptive = FALSE, 
   }
   class(res) <- append("plvmfit", class(res))
   
-  res$penalty <-  control$penalty[c("names.penaltyCoef", "group.penaltyCoef", "lambda1", "lambda2")]
+  res$penalty <-  control$penalty[c("name.coef", "group.coef", "lambda1", "lambda2")]
   if(!is.null(fixSigma) && fixSigma){
     res$penalty$lambda1.abs <- res$penalty$lambda1
     res$penalty$lambda2.abs <- res$penalty$lambda2
@@ -303,7 +310,7 @@ initializer.lvm <- function(x, data, names.coef, n.coef, penalty, regPath, ...){
   
   ## removed penalized variables
   
-  for(iter_link in penalty$names.penaltyCoef){
+  for(iter_link in penalty$name.coef){
      x0 <- rmLink(x0, iter_link)
   }
 
@@ -339,8 +346,8 @@ prepareData.lvm <- function(x, data, penalty, regularizationPath){
   if(any(test.factor)){ # if some manifest variables are factors
     for(iterFactor in manifest(x)[test.factor]){
       levelTempo <- levels(data[[iterFactor]])
-      indexTempo <- grep(paste0("+~",iterFactor,"$"), penalty$names.penaltyCoef)
-      varTempo <- penalty$names.penaltyCoef[indexTempo]
+      indexTempo <- grep(paste0("+~",iterFactor,"$"), penalty$name.coef)
+      varTempo <- penalty$name.coef[indexTempo]
       
       if(length(varTempo)>0){ # if the manifest variable is penalized
         newTempo <- paste0(varTempo, levelTempo[-1]) # replace by the non reference level
@@ -361,12 +368,12 @@ prepareData.lvm <- function(x, data, penalty, regularizationPath){
         }
         penalty$V <- penalty$V[rownames(penalty$V)!=varTempo,colnames(penalty$V)!=varTempo]
         
-        penalty$names.penaltyCoef <- c(setdiff(penalty$names.penaltyCoef,
+        penalty$name.coef <- c(setdiff(penalty$name.coef,
                                                varTempo),
                                        newTempo) 
         
-        penalty$group.penaltyCoef <- c(penalty$group.penaltyCoef[-indexTempo],
-                                       rep(penalty$group.penaltyCoef[indexTempo], length(newTempo))
+        penalty$group.coef <- c(penalty$group.coef[-indexTempo],
+                                       rep(penalty$group.coef[indexTempo], length(newTempo))
         )
         
       }
@@ -400,7 +407,6 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
 
   control$trace <- FALSE
   names.coefVar <- control$penalty$names.varCoef
-    
   if(regularizationPath){
     names.coef <- setdiff(names(getPath(plvmfit, getLambda = NULL, rm.duplicated = TRUE)), names.coefVar)
     fit.coef <- getPath(plvmfit, getLambda = NULL, rm.duplicated = TRUE)[, names.coef, drop = FALSE]
@@ -419,7 +425,7 @@ estimateNuisance.lvm <- function(x, plvmfit, data, control, regularizationPath){
     class(xConstrain) <- "lvm"
     
     for(iter_p in 1:n.coef){
-      if(names.coef[iter_p] %in% control$penalty$names.penaltyCoef){
+      if(names.coef[iter_p] %in% control$penalty$name.coef){
         if(fit.coef[iterPath,iter_p]==0){
           xConstrain <- rmLink(xConstrain, var1 = names.coef[iter_p])
         }else{

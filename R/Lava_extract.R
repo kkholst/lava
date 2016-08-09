@@ -7,17 +7,17 @@
 `loadings` <- function(object, ...) UseMethod("loadings")
 
 #' @title Extract the name or the position of the variance coefficients
-coefVar.lvm <- function(x, index = FALSE){
+coefVar.lvm <- function(x, value = FALSE){
   names.var <- paste(x$index$vars, x$index$vars, sep = ",")
-  return(grep(paste(names.var, collapse = "|"), coef(x), value = index))
+  return(grep(paste(names.var, collapse = "|"), coef(x), value = value))
 }
 
 #' @title Extract the name or the position of the covariance coefficients
-coefCov.lvm <- function(x, index = FALSE){
+coefCov.lvm <- function(x, value = FALSE){
   names.cov <- setdiff(coef(x)[x$index$parBelongsTo$cov],
                        paste(x$index$vars, x$index$vars, sep = ",")
   )
-  return(grep(paste(names.cov, collapse = "|"), coef(x), value = index))
+  return(grep(paste(names.cov, collapse = "|"), coef(x), value = value))
 }
 
 #' @title Extract the summary table for the loadings

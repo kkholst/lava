@@ -44,8 +44,8 @@
 
 lvm2plvm <- function(x){
   
-  x$penalty <- list(names.penaltyCoef = NULL,
-                    group.penaltyCoef = NULL,
+  x$penalty <- list(name.coef = NULL,
+                    group.coef = NULL,
                     lambda1 = 0, 
                     lambda2 = 0,
                     adaptive = FALSE,
@@ -116,9 +116,9 @@ lvm2plvm <- function(x){
            "available coefficients: ",paste(coef(x)[coef(x) %in% value == FALSE], collapse = " "),"\n")
     }
     
-    x$penalty$names.penaltyCoef <- value
+    x$penalty$name.coef <- value
     
-  } else if(is.null(x$penalty$names.penaltyCoef)){
+  } else if(is.null(x$penalty$name.coef)){
 
     index.penaltyCoef <- NULL
     if(intercept == TRUE){
@@ -144,31 +144,31 @@ lvm2plvm <- function(x){
       index.penaltyCoef <- setdiff(index.penaltyCoef, unique(unlist(ls.penaltyCoefLatent)))
     }
       
-    x$penalty$names.penaltyCoef <- coef(x)[index.penaltyCoef]
+    x$penalty$name.coef <- coef(x)[index.penaltyCoef]
   } 
     #### group penalty if the latent variable is penalized
    names.varLatent <- paste(names(x$latent),names(x$latent),sep = ",")
-  if(any(x$penalty$names.penaltyCoef %in% names.varLatent)){
+  if(any(x$penalty$name.coef %in% names.varLatent)){
     
     ## check that all paths related to the latent variable are penalized
-    for(iter_latent in which(names.varLatent %in% x$penalty$names.penaltyCoef) ){
+    for(iter_latent in which(names.varLatent %in% x$penalty$name.coef) ){
       index.groupPenalty <- grep(names(x$latent)[iter_latent], coef(x), fixed = TRUE)
-      if(any( coef(x)[index.groupPenalty]  %in% x$penalty$names.penaltyCoef == FALSE)){
+      if(any( coef(x)[index.groupPenalty]  %in% x$penalty$name.coef == FALSE)){
         message("All paths related to the latent variable ",names(x$latent)[iter_latent]," will be penalized \n",
-                "additional penalized parameters: ",paste(setdiff(coef(x)[index.groupPenalty], x$penalty$names.penaltyCoef), collapse = " "),"\n")
-        x$penalty$names.penaltyCoef <- union(x$penalty$names.penaltyCoef, coef(x)[index.groupPenalty]) 
+                "additional penalized parameters: ",paste(setdiff(coef(x)[index.groupPenalty], x$penalty$name.coef), collapse = " "),"\n")
+        x$penalty$name.coef <- union(x$penalty$name.coef, coef(x)[index.groupPenalty]) 
       }
     }
     
     ## form groups
-    x$penalty$group.penaltyCoef <- seq(0.1, 0.9, length.out = length(x$penalty$names.penaltyCoef))
-    for(iter_latent in which(names.varLatent %in% x$penalty$names.penaltyCoef) ){
-    index.groupPenalty <- grep(names(x$latent)[iter_latent], x$penalty$names.penaltyCoef, fixed = TRUE)
-    x$penalty$group.penaltyCoef[index.groupPenalty] <- iter_latent
+    x$penalty$group.coef <- seq(0.1, 0.9, length.out = length(x$penalty$name.coef))
+    for(iter_latent in which(names.varLatent %in% x$penalty$name.coef) ){
+    index.groupPenalty <- grep(names(x$latent)[iter_latent], x$penalty$name.coef, fixed = TRUE)
+    x$penalty$group.coef[index.groupPenalty] <- iter_latent
     }
     
   }else{
-    x$penalty$group.penaltyCoef <- seq(0.1, 0.9, length.out = length(x$penalty$names.penaltyCoef))
+    x$penalty$group.coef <- seq(0.1, 0.9, length.out = length(x$penalty$name.coef))
   }
    
    #### V matrix
@@ -178,7 +178,7 @@ lvm2plvm <- function(x){
      V <- matrix(0, nrow = length(coef(x)), ncol = length(coef(x)))
      colnames(V) <- coef(x)
      rownames(V) <- coef(x)
-     diag(V)[x$penalty$names.penaltyCoef] <- 1
+     diag(V)[x$penalty$name.coef] <- 1
      x$penalty$V <- V
   }
   

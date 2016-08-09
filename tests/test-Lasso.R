@@ -46,24 +46,24 @@ test_that("LVM vs pLVM with lasso - lambda=0", {
 
 #### LARS
 
-test_that("LVM(LARS) vs penalize with lasso", {
-  elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, 
-                               regularizationPath = 1, lambda2 = 0)
-  
-  coef0 <- unlist(getPath(elvm.PathL1_LARS, getCoef = "coef0", getLambda = NULL))
-  indexJump_LARS <- sapply(0:5, function(x){which(x == coef0)[1]})
-  
-  lambda1path <- getLambda(elvm.PathL1_LARS, lambda1 = TRUE, abs = TRUE)[,1]
-  StepLARS <- stepfun(x = lambda1path, y = c(0,coef0))
-  # curve(StepLARS,0,2000)
-  
-  indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
-  expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
-})
+# test_that("LVM(LARS) vs penalize with lasso", {
+#   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, 
+#                                regularizationPath = 1, lambda2 = 0)
+#   
+#   coef0 <- unlist(getPath(elvm.PathL1_LARS, getCoef = "n.coef0", getLambda = NULL))
+#   indexJump_LARS <- sapply(0:5, function(x){which(x == coef0)[1]})
+#   
+#   lambda1path <- getLambda(elvm.PathL1_LARS, lambda1 = TRUE, abs = TRUE)[,1]
+#   StepLARS <- stepfun(x = lambda1path, y = c(0,coef0))
+#   # curve(StepLARS,0,2000)
+#   
+#   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
+#   expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
+# })
 
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "penalized1",
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "penalized",
                                  regularizationPath = 2, lambda2 = 0, 
                                  control = list(trace =TRUE))
   
@@ -92,7 +92,7 @@ test_that("LVM(EPSODE-forward) vs penalize with lasso", {
 # 6  361.070018 361.79324           0       0 -1.068329e-17  7.349418e-19 -3.339281e-19  9.422789e-19  8.002648e-21 -6.970495e-07 0.9980010
 
 test_that("LVM(EPSODE-backward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,  estimator = "penalized1",
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,  estimator = "penalized",
                                  regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-1,1e-2),
                                  control = list(trace = TRUE))
   

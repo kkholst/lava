@@ -7,7 +7,6 @@
 #' @title Estimate a penalized lvm model using a proximal gradient algorithm
 #' 
 optim.regLL <- function(start, objective, gradient, hessian, control, ...){
-   
   PGcontrols <- c("iter.max","trace","abs.tol","rel.tol", "constrain", "proxOperator", "objectivePenalty",
                   "proxGrad")
   
@@ -25,28 +24,25 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
     index.constrain <- NULL
   }
   
-  #### update the penalty according to start 
-  # (some coefficient have been removed as they are chosen as a reference)
-  res <- initPenalty(start = start, penalty = penalty)
-  penalty$group.penaltyCoef <- res$group.penaltyCoef
-  index.penaltyCoef <- res$index.penaltyCoef
-  
   #### Proximal gradient algorithm
-  lambda1 <- rep(0, n.coef)
-  lambda1[index.penaltyCoef] <- penalty$lambda1
-  lambda2 <- rep(0, n.coef)
-  lambda2[index.penaltyCoef] <- penalty$lambda2
-  
-  test.penalty1<- penalty$group.penaltyCoef
-  test.penalty2<- lambda2>0
+  # update penalty
+  newPenalty <- initPenalty(start = start, penalty = penalty, penaltyNuclear = penaltyNuclear)
   
   proxOperator <- function(x, step){
     control$proxOperator(x, step = step,
-                         lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2,
+                         lambdaN = newPenalty$lambdaN, lambda1 = newPenalty$lambda1, lambda2 = newPenalty$lambda2, 
+                         test.penaltyN = newPenalty$test.penaltyN, test.penalty1 = newPenalty$test.penalty1, test.penalty2 = newPenalty$test.penalty2,
+                         nrow = penaltyNuclear$nrow, ncol = penaltyNuclear$ncol,
                          index.constrain = index.constrain, type.constrain = control$constrain, expX = control$proxGrad$expX)
   }
+  if(!is.na(newPenalty$lambdaN)){
+    gradient <- penaltyNuclear$gradient
+    objective <- penaltyNuclear$objective
+    if(length(index.constrain)>0){index.constrain <- which(names(newPenalty$start) %in% names(start)[index.constrain])}
+  }
   
-  res <- proxGrad(start = start, proxOperator = proxOperator, hessian = hessian, gradient = gradient, objective = objective,
+  res <- proxGrad(start = newPenalty$start, proxOperator = proxOperator, 
+                  hessian = hessian, gradient = gradient, objective = objective,
                   step = control$proxGrad$step, BT.n = control$proxGrad$BT.n, BT.eta = control$proxGrad$BT.eta,
                   iter.max = control$iter.max, abs.tol = control$abs.tol, rel.tol = control$rel.tol, force.descent = control$proxGrad$force.descent,
                   method = control$proxGrad$method, trace = control$proxGrad$trace)
@@ -77,9 +73,11 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   
   
   if(penalty$adaptive){
+    
     proxOperator <- function(x, step){
       control$proxOperator(x, step = step,
-                           lambda1 = lambda1/abs(res$par), lambda2 = lambda2PG, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2, 
+                           lambdaN = newPenalty$lambdaN, lambda1 = newPenalty$lambda1/abs(res$par), lambda2 = newPenalty$lambda2, 
+                           test.penaltyN = newPenalty$test.penaltyN, test.penalty1 = newPenalty$test.penalty1, test.penalty2 = newPenalty$test.penalty2,
                            index.constrain = index.constrain, type.constrain = control$constrain, expX = control$proxGrad$expX)
     }
     
@@ -93,13 +91,17 @@ optim.regLL <- function(start, objective, gradient, hessian, control, ...){
   ## update objective with penalty - one value for each penalty
   objective.pen <- lapply(control$objectivePenalty, 
                           function(fct){do.call(fct, args = list(res$par, 
-                                                                 lambda1 = lambda1, lambda2 = lambda2, test.penalty1 = penalty$group.penaltyCoef, test.penalty2 = lambda2>0, 
-                                                                 lambdaN = penaltyNuclear$lambdaN, test.penaltyN = penaltyNuclear$test.penaltyN, nrow = penaltyNuclear$penaltyNuclear, ncol = penaltyNuclear$ncol,
+                                                                 lambdaN = penaltyNuclear$lambdaN, lambda1 = penalty$lambda1, lambda2 = penalty$lambda2, 
+                                                                 test.penalty1 = newPenalty$test.penalty1, test.penalty2 = newPenalty$test.penalty2, test.penaltyN = newPenalty$test.penaltyN,
+                                                                 nrow = penaltyNuclear$nrow, ncol = penaltyNuclear$ncol,
                                                                  expX = control$proxGrad$expX)
                           )})
+  
   res$objective <- objective(res$par) + sum(unlist(objective.pen))
   
   ### export
+  attr(res$message,"par") <- res$par
+  res$par <- res$par[names(start)]
   return(res)
 }
 
@@ -118,29 +120,27 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
   
   #### update the penalty according to start 
   # (some coefficient have been removed as they are chosen as a reference)
-  res <- initPenalty(start = start, penalty = penalty)
-  penalty$group.penaltyCoef <- res$group.penaltyCoef
-  index.penaltyCoef <- res$index.penaltyCoef
+  newPenalty <- initPenalty(start = start, penalty = penalty, penaltyNuclear = NULL)
   
   #### main
   if( regPath$type == 1){
     resLassoPath <- glmPath(beta0 = start, objective = objective, gradient = gradient, hessian = hessian,
-                            indexPenalty = index.penaltyCoef, indexNuisance = which(names(start) %in% penalty$names.varCoef), 
-                            sd.X = penalty$sd.X, base.lambda1 = penalty$scaleLambda1, lambda2 = penalty$scaleLambda2*penalty$lambda2, group.lambda1 = penalty$group.penaltyCoef,
+                            indexPenalty = which(names(start) %in% penalty$name.coef), indexNuisance = which(names(start) %in% penalty$names.varCoef), 
+                            sd.X = penalty$sd.X, base.lambda1 = penalty$scaleLambda1, lambda2 = penalty$scaleLambda2*penalty$lambda2, test.penalty1 = newPenalty$test.penalty1,
                             control = control)
     
   }else if( regPath$type == 2){
     V <- penalty$V[names(start),names(start), drop = FALSE]
-    group.penaltyCoef <- penalty$group.penaltyCoef[names(start)]
+    group.coef <- penalty$group.coef[names(start)]
    
     ## check lambda
     if(regPath$increasing == TRUE){
-      if(any(start[index.penaltyCoef] == 0)){
+      if(any(start[names(start) %in% penalty$name.coef] == 0)){
         stop("All penalized coefficient should be non-0 when using increasing = TRUE \n",
              "May be due to automatic initialization - in such a case set increasing to FALSE \n")
       }
     }else{
-      if(!all(start[index.penaltyCoef] == 0)){
+      if(!all(start[names(start) %in% penalty$name.coef] == 0)){
         stop("All penalized coefficient should be set to 0 when using increasing = FALSE \n")
       }
     }
@@ -160,10 +160,10 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
     resLassoPath <- EPSODE(beta = start, beta_lambdaMax = regPath$beta_lambdaMax,  beta_lambda0 = regPath$beta_lambda0,
                            objective = objective, gradient = gradient, hessian = hessian, 
                            V = V, 
-                           indexPenalty = index.penaltyCoef, indexNuisance = indexNuisance, 
+                           indexPenalty = which(names(start) %in% penalty$name.coef), indexNuisance = indexNuisance, 
                            resolution_lambda1 = regPath$resolution_lambda1, increasing = regPath$increasing, stopLambda = regPath$stopLambda, stopParam = regPath$stopParam,
-                           lambda2 = penalty$lambda2, group.lambda1 = group.penaltyCoef,
-                           control = control, trace = control$regPath$trace)
+                           lambda2 = penalty$lambda2, test.penalty1 = newPenalty$test.penalty1,
+                           control = control, exportAllPath = control$regPath$exportAllPath, trace = control$regPath$trace)
     
   }
  
@@ -181,24 +181,53 @@ optim.regPath <- function(start, objective, gradient, hessian, control, ...){
 
 #' @title initialise the penalty 
 #' 
-initPenalty <- function(start, penalty){
+initPenalty <- function(start, penalty, penaltyNuclear){
   
-  n.coef <- length(start)
   
-  ## check
-  if(length(setdiff(penalty$names.penaltyCoef, names(start)))>0){
-    warning("initPenalty: some penalty will not be applied because the corresponding parameter is used as a reference \n",
-            "non-applied penalty: ",paste(setdiff(penalty$names.penaltyCoef, names(start)), collapse = " "),"\n")
-    penalty$group.penaltyCoef <- penalty$group.penaltyCoef[penalty$names.penaltyCoef %in% names(start)]
-    penalty$names.penaltyCoef <- penalty$names.penaltyCoef[penalty$names.penaltyCoef %in% names(start)]
+  ## lasso
+  if(!is.null(penalty$name.coef)){
+    n.coef <- length(start)
+    
+    ## check
+    if(length(setdiff(penalty$name.coef, names(start)))>0){
+      warning("initPenalty: some penalty will not be applied because the corresponding parameter is used as a reference \n",
+              "non-applied penalty: ",paste(setdiff(penalty$name.coef, names(start)), collapse = " "),"\n")
+      penalty$group.coef <- penalty$group.coef[penalty$name.coef %in% names(start)]
+      penalty$name.coef <- penalty$name.coef[penalty$name.coef %in% names(start)]
+    }
+    
+    lambdaN <- NA
+    lambda1 <- rep(0, n.coef)
+    lambda1[names(start) %in% penalty$name.coef] <- penalty$lambda1
+    lambda2 <- rep(0, n.coef)
+    lambda2[names(start) %in% penalty$name.coef] <- penalty$lambda2
+    
+    ## grouped lasso: set lasso indexes to 0
+    test.penaltyN <- NULL
+    test.penalty1 <- setNames(rep(0, n.coef), names(start))
+    test.penalty1[penalty$name.coef] <- penalty$group.coef
+    test.penalty2 <- lambda2>0
   }
-  index.penaltyCoef <- which(names(start) %in% penalty$names.penaltyCoef)
   
-  ## grouped lasso: set lasso indexes to 0
-  group.penaltyCoef <- setNames(rep(0, n.coef), names(start))
-  group.penaltyCoef[penalty$names.penaltyCoef] <- penalty$group.penaltyCoef
+  if(!is.null(penaltyNuclear$name.coef)){
+    start <- c(start[setdiff(names(start),penalty$names.varCoef)],
+               setNames(rep(0,length(penaltyNuclear$name.coef)),penaltyNuclear$name.coef),
+               start[penalty$names.varCoef])  
+    
+    n.coef <- length(start)
+    
+    lambdaN <- penaltyNuclear$lambdaN
+    lambda1 <- NA
+    lambda2 <- NA
+   
+    test.penaltyN <- which(names(start) %in% penaltyNuclear$name.coef)
+    test.penalty1 <- NULL
+    test.penalty2 <- NULL
+  }
   
-  return(list(index.penaltyCoef = index.penaltyCoef, group.penaltyCoef = group.penaltyCoef))
+  return(list(start = start, 
+              lambdaN = lambdaN, lambda1 = lambda1, lambda2 = lambda2,
+              test.penaltyN = test.penaltyN, test.penalty1 = test.penalty1, test.penalty2 = test.penalty2))
 }
 
 initSigmaConstrain <- function(start, constrain, indexNuisance){
