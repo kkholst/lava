@@ -1,8 +1,29 @@
-* Version 1.4.3.x <2016-04-11 Mon>
-  - estimate.default print/summary
-  - gkgamma with id
-  - ...
-
+* Version 1.4.4 <2016-09-13 Sat>
+  - estimate.default will now use the id-variable of an 'estimate'
+    object if the 'id' argument is left unspecified.  For
+    multinomial,gkgamma,kappa additional arguments (...) are now
+    parsed on the 'estimate.default' (including id).
+  - Updated print/summary methods for
+    'estimate.default'. Sample/cluster-size added to output.
+  - Code clean-up and optimization. Smarter calculations of kronecker
+    products, and some regular expressions updated.
+  - New function 'predictlvm' which return jacobian.
+  - Intercepts can now be specified via parantheses, e.g., y ~ (-2) + x
+  - 'getoutcome' with sep argument for splitting '|' statements in
+    formulas.
+  - Partial gamma, gkgamma, updated (probability interpretation,
+    homogeneity tests removed)
+  - 'moments' function now returns conditional mean with multiple rows. Side effect fixed across multiple functions
+  - twostage function with support for mixture models
+  - Beta (Beta.lvm) and Finite Gaussian (GM2.lvm,GM3.lvm) Mixtures
+    added.
+  - 'sim': parameters can now be specified as part of '...'
+  - summary.sim: calculate Wald CI if confint=TRUE, otherwise use the
+    user supplied confidence limits.
+  - Clopper-pearson intervals and exact binomial tests added to 'diagtest'.
+  - Interval censoring with 'normal' estimator, which now also works
+    with 'binary' definitions.
+  - default plot style updated.
 
 * Version 1.4.3 <2016-04-11 Mon>
   - partial gamma coefficients (gkgamma)
