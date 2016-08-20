@@ -1,4 +1,4 @@
-calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BIC", trace = TRUE, ...){
+calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BIC", order = "lambda1", trace = TRUE, ...){
   # if no test set then CV
   
  if(fit %in% c("AIC","BIC","P_error") == FALSE){
@@ -9,8 +9,8 @@ calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BI
   }
   
   if("plvmfit" %in% class(object)){
-    regPath <- getPath(object, getLambda = "lambda1.abs", getCoef = "coef0")
-    seq_lambda <- unlist(lapply(regPath, function(x){attr(x,"lambda1.abs")}))
+    regPath <- getPath(object, getLambda = order, getCoef = "coef0", order = order)
+    seq_lambda <- unlist(lapply(regPath, function(x){attr(x,order)}))
     seq_row <- unlist(lapply(regPath, function(x){attr(x,"row")}))
     seq_coef <- lapply(regPath, function(x){as.character(x)})
   }
@@ -44,10 +44,10 @@ calcLambda <- function(object, model, seq_lambda, data.fit, data.test, fit = "BI
         model2 <- rmLink.lvm(model2, iterKill)  
       }
     }
-    
+  
     #### fit the reduced model
     fitTempo2 <- lava:::estimate.lvm(model2, data = data.fit, control = list(constrain = TRUE))
-   
+    
     #### gof criteria
     if(fit %in% c("AIC","BIC")){
       res.cv[iterLambda] <- gof(fitTempo2)[[fit]]

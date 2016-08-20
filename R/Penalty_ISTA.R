@@ -93,7 +93,7 @@ proxGrad <- function(start, proxOperator, hessian, gradient, objective,
     
       # cat("obj.x_kp1:",obj.x_kp1," | obj.x_k:",obj.x_k, " | res$Q:",res$Q,"\n")
     }
-   
+    
     if(force.descent && obj.x_kp1 > obj.x_k){break}
     
     absDiff <- abs(obj.x_kp1 - obj.x_k) < abs.tol

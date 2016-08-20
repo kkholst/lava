@@ -22,11 +22,11 @@ findNewLink.lvm <- function(x, rm.exoexo, output = "names"){
     for (j in seq(i + 1, nrow(AP))){
       test.exo <- (rownames(AP)[i] %in% exogenous(x)) + (colnames(AP)[j] %in% exogenous(x))
       if (AP[j, i] == 0 && (rm.exoexo == FALSE || test.exo!=2)){
-          restricted <- rbind(restricted, c(i, j)) 
+          restricted <- rbind(restricted, c(i, j))
       }
     }
   }
- 
+  
   if (is.null(restricted)){
     return(NULL)
   }

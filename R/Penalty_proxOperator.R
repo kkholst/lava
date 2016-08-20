@@ -6,7 +6,7 @@ proxL1 <- function(x, step, lambda, test.penalty){
   }
 }
 
-proxL2 <- function(x, step, lambda, test.penalty){
+proxL2 <- function(x, step, lambda, test.penalty){ # should be with a factor 2 (1/(1+2*lambda*step))
   if(test.penalty){
     1 / (1 + lambda * step) * x
   }else{
@@ -27,8 +27,7 @@ proxNuclear <-  function(x, step, lambda, nrow, ncol){
 }
 
 
-init.proxOperator <- function(coef,
-                              lambda1, lambda2, group.coef, 
+init.proxOperator <- function(lambda1, lambda2, group.coef, 
                               lambdaN, nrow, ncol, 
                               regularizationPath){
   

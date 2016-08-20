@@ -21,8 +21,7 @@ extendModel.lvm <- function(x, data, type, alpha = 0.05, covariance = TRUE, warn
     while(cv == FALSE){ 
       if(trace){cat("*")}
       resSearch <- do.call(type, args = list(lvmfit, silent = TRUE))
-      print(resSearch)
-      
+     
       if(tail(p.adjust(resSearch$test[,"P-value"], method = "holm"), 1) < alpha){
         var1 <- tail(resSearch$var,1)[[1]][,1]
         var2 <- tail(resSearch$var,1)[[1]][,2]
@@ -78,12 +77,10 @@ extendModel.lvm <- function(x, data, type, alpha = 0.05, covariance = TRUE, warn
 modelsearchLR.lvmfit <- function (object, silent = FALSE, ...){
 
   #### newlinks 
-  restricted <- findNewLink(object$model, rm.exoexo = FALSE, output = "index")
-  restrictedcomb <- utils::combn(seq_len(nrow(restricted)), 1)
-  seq_i <- seq_len(ncol(restrictedcomb))
+  restricted <- findNewLink(object$model, rm.exoexo = FALSE, output = "names")
+  seq_i <- seq_len(NROW(restricted))
   
   #### initialisation
-  V <- vars(object)
   M.test <- cbind("Test Statistic" = rep(NA,length(seq_i)),
                   "P-value" = rep(NA,length(seq_i))
   )
@@ -92,10 +89,9 @@ modelsearchLR.lvmfit <- function (object, silent = FALSE, ...){
   if(silent == FALSE){pb <- utils::txtProgressBar(max = tail(seq_i,1), style = 3) }
   
   for (iterI in seq_i) {
-    myvar <- restricted[restrictedcomb[1, iterI], ]
     
-    newmodel <- addLink(object$model, var1 = V[myvar][1], var2 = V[myvar][2],
-                        covariance = all(V[myvar] %in% endogenous(object$model)))
+    newmodel <- addLink(object$model, var1 = restricted[iterI,1], var2 = restricted[iterI,2],
+                        covariance = all(restricted[iterI,1:2] %in% endogenous(object$model)))
     newcontrol <- object$control
     newcontrol$start <- coef(object)
     newcontrol$trace <- FALSE
@@ -110,7 +106,7 @@ modelsearchLR.lvmfit <- function (object, silent = FALSE, ...){
       M.test[iterI,] <- c(compareT$statistic[[1]], compareT$p.value[[1]])
     }
     
-    ls.var[[iterI]] <- matrix(c(V[myvar][1], V[myvar][2]), nrow = 1)
+    ls.var[[iterI]] <- matrix(c(restricted[iterI,1], restricted[iterI,2]), nrow = 1)
     if(silent == FALSE){ utils::setTxtProgressBar(pb, value = iterI) }
     
   }

@@ -62,7 +62,7 @@ penalized_logLik.lvm <- lava:::gaussian_logLik.lvm
 # here S -> \hat{Sigma}
 #      C -> \Omega
 gaussian_dlv.lvm <- function(x, p, data, S, mu, n, derivative = 0, ...){
- 
+  
   mp <- modelVar(x, p = p, data = data, ...)
   C <- mp$C
   xi <- mp$xi
@@ -170,12 +170,12 @@ gaussian_dlv.lvm <- function(x, p, data, S, mu, n, derivative = 0, ...){
 #### explicit formula ####
 
 lvGaussian <- function(coef, Y, X, var = NULL){
-
   if(!is.null(var)){coef <- c(coef, var)}
-  
+ 
   n <- length(Y)
   Xint <- cbind(1,X)
   sigma2 <- coef[length(coef)]
+  if(sigma2<0){return(Inf)}
   beta <- coef[-length(coef)]
   epsilon <- Y - Xint %*% cbind(beta)
   lv <-  - n/2 * log(2*pi*sigma2) - 1/(2*sigma2) * t(epsilon) %*% epsilon

@@ -14,11 +14,12 @@ source(file.path(butils:::dir.gitHub(),"lava","tests","FCT.R"))
 
 
 #### 1- Simulation ###
+set.seed(10)
 n.obs <- 500
-xmax <- 10#64 #
-ymax <- 10#64 
-center <- 5#c(32,32) 
-radius <- 3#10
+xmax <- 64 #10#
+ymax <- 64 #10#
+center <- c(32,32) #5#
+radius <- 10#3#
 res <- simForm(n.obs, xmax, ymax, radius = radius)
 coords <- res$coords
 n.coord <- nrow(coords)
@@ -36,10 +37,13 @@ Y <- Z %*% gamma + X %*% betaI + rnorm(n.obs)
 formula.lvm <- as.formula( paste0("Y~", paste0("X",1:n.coord, collapse = "+") ) )
 # lvm.model <- lvm(formula.lvm)
 df.data <- data.frame(Y=Y,data.frame(Z),data.frame(X))
+range(unlist(lapply(df.data, sd)))
+df.data[] <- scale(df.data)
 
 ## display
 MRIaggr:::multiplot(as.data.table(coords), betaI) # coeffcient
 MRIaggr:::multiplot(as.data.table(coords), X[1,]) # realisation
+
 
 #### 2- Model ####
 names.param <- c("intercept",paste0("Z",1:n.confounder),paste0("X",1:n.coord),"Y,Y")
@@ -70,7 +74,7 @@ plot(glmnet.fit$lambda,loss.glmnet)
 
 
 #### estimation using mean square loss 
-lambda1 <- 1e3
+lambda1 <- 7e2
 lambda1.vec <- setNames(rep(lambda1,n.confounder+n.coord+2), names.param)
 
 #res <- objectiveMC(beta)
@@ -87,7 +91,7 @@ proxOperator <-  function(x, step){
 
 resMC <- proxGrad(start = beta, proxOperator,
                   hessian = hessianMC, gradient = gradientMC, objective = objectiveMC,
-                  step = 1, BT.n = 200, BT.eta = 0.5, force.descent = FALSE,
+                  step = 1, BT.n = 100, BT.eta = 0.8, force.descent = TRUE,
                   iter.max = 50, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
 
 B.MC <- matrix(resMC$par[test.penaltyMC>0], nrow = xmax, ncol = ymax, byrow = TRUE)
@@ -101,7 +105,7 @@ image.plot(B.MC)
 # res2 <- gradientMC(beta+1)[-length(beta)] - gradientLV(beta[-length(beta)]+1, var = 1/2)
 # print(res1-res2)
 # res <- hessianMC(beta) - objectiveLV(beta[-length(beta)], var = 1/2)
-lambda1 <- 1e3
+lambda1 <- 1e2
 lambda1.vec <- setNames(rep(lambda1,n.confounder+n.coord+2), names.param)
 
 objectiveNuclear <- function(coef){lvGaussian(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"]), var = 1)}
@@ -142,8 +146,8 @@ proxOperator <-  function(x, step){
 
 resLV <- proxGrad(start = beta, proxOperator,
                   objective = objectiveNuclear, gradient = gradientNuclear, hessian = hessianNuclear,
-                  step = 1, BT.n = 200, BT.eta = 0.5, force.descent = TRUE,
-                  iter.max = 10, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
+                  step = 1, BT.n = 100, BT.eta = 0.8, force.descent = TRUE,
+                  iter.max = 100, abs.tol = 1e-9, rel.tol = 1e-10, method = "ISTA", trace = TRUE)
 
 B.LV <- matrix(resLV$par[test.penaltyLV>0], nrow = xmax, ncol = ymax, byrow = TRUE)
 image.plot(B.LV)

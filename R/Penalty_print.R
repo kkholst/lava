@@ -10,7 +10,7 @@
   sapply(out, function(o){cat(o,"\n")})
   
   ## additional display - lasso
-  if(!is.null(x$penalty$names.penaltyCoef)){
+  if(!is.null(x$penalty$name.coef)){
     if(x$penalty$lambda1>0 && x$penalty$lambda2>0){
       penaltyType <- "Elastic net"
     }else if(x$penalty$lambda1>0){
@@ -21,18 +21,18 @@
       penaltyType <- "None"
     }
     
-    if(all(x$penalty$group.penaltyCoef<1)){
+    if(all(x$penalty$group.coef<1)){
       cat("Penalty: ", penaltyType,"\n",
-          "On     : ", paste(x$penalty$names.penaltyCoef, collapse = " "),"\n")
+          "On     : ", paste(x$penalty$name.coef, collapse = " "),"\n")
     }else{
       
-      test.lasso <- (x$penalty$group.penaltyCoef<1)*(x$penalty$group.penaltyCoef>0)
+      test.lasso <- (x$penalty$group.coef<1)*(x$penalty$group.coef>0)
       if(any(test.lasso==1)){
         cat("Penalty: ", penaltyType,"\n",
-            "On     : ", paste(x$penalty$names.penaltyCoef[test.lasso==1], collapse = " "),"\n")
+            "On     : ", paste(x$penalty$name.coef[test.lasso==1], collapse = " "),"\n")
       }
       
-      ls.penalty <- tapply(x$penalty$names.penaltyCoef[test.lasso!=1], x$penalty$group.penaltyCoef[test.lasso!=1],list)
+      ls.penalty <- tapply(x$penalty$name.coef[test.lasso!=1], x$penalty$group.coef[test.lasso!=1],list)
       cat("Penalty: Grouped lasso \n")
       lapply(ls.penalty, function(x){cat("On     :",paste(x, collapse = " "),"\n")})
     }

@@ -1,3 +1,27 @@
+simForm <- function(n.obs, xmax, ymax, radius, center = NULL, coords.centered = TRUE,
+         distance = "euclidean"){
+  
+  if(is.null(center)){
+    if(coords.centered == TRUE){
+      center <- c(0,0)
+    }else{
+      center <- c(xmax/2,ymax/2)
+    }
+  }
+  
+  coords <- scale(expand.grid(1:xmax, 1:ymax), center = coords.centered, scale = FALSE)
+  n.coord <- nrow(coords) 
+  
+  distCenter <- apply(coords, 1, function(x){dist( rbind(x,center), method = distance)})
+  beta <- distCenter<radius
+  
+  return(list(coords = coords,
+              center = center,
+              distCenter = matrix(distCenter, nrow = xmax, ncol = ymax),
+              X = matrix(beta, nrow = xmax, ncol = ymax)
+  ))
+}
+
 #### objective / gradient / hessian
 objectiveMC <- function(coef, Y = df.data$Y, X = as.matrix(df.data[, names(df.data) != "Y"])){
   
@@ -78,3 +102,32 @@ coef2.penalized <- function(x, iter_lambda){
   names(coef)[length(names(coef))] <- paste(names.response, names.response, sep = ",")
   return(coef)
 }
+
+validPath.lvm <- function(x, data, validMean = TRUE, validCov = TRUE, control = list(), ...){
+  
+  Mall <- getPath(x, getLambda = c("lambda1","lambda2"), rm.duplicated = TRUE)
+  Mcoef <- Mall[,-(1:2),drop = FALSE]
+  seqLambda1 <- Mall[,"lambda1"]
+  seqLambda2 <- Mall[,"lambda2"]
+  seqLambda2[is.na(seqLambda2)] <- 0
+  n.Lambda <- length(seqLambda1)
+  
+  if("trace" %in% names(control) == FALSE){
+    control$trace <- FALSE
+  }
+  
+  McoefGS <- NULL
+  for(iterL in 1:n.Lambda){
+    McoefGS <- rbind(McoefGS, coef(estimate(x$x, data = data, control = control,
+                                        lambda1 = seqLambda1[iterL], lambda2 = seqLambda2[iterL],
+                                        ...)))
+  }
+  
+  return(list(proxAlgo = McoefGS,
+              EPSODE = Mcoef,
+              diff = Mcoef-McoefGS,
+              lambda1 = seqLambda1,
+              lambda2 = seqLambda2,
+              diff.range = range(Mcoef-McoefGS)))
+}
+

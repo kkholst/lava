@@ -44,71 +44,95 @@ test_that("LVM vs pLVM with lasso - lambda=0", {
 
 #### lasso path ####
 
-#### LARS
-
-# test_that("LVM(LARS) vs penalize with lasso", {
-#   elvm.PathL1_LARS <- estimate(plvm.model,  data = df.data, 
-#                                regularizationPath = 1, lambda2 = 0)
-#   
-#   coef0 <- unlist(getPath(elvm.PathL1_LARS, getCoef = "n.coef0", getLambda = NULL))
-#   indexJump_LARS <- sapply(0:5, function(x){which(x == coef0)[1]})
-#   
-#   lambda1path <- getLambda(elvm.PathL1_LARS, lambda1 = TRUE, abs = TRUE)[,1]
-#   StepLARS <- stepfun(x = lambda1path, y = c(0,coef0))
-#   # curve(StepLARS,0,2000)
-#   
-#   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
-#   expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
-# })
-
 #### EPSODE
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "penalized",
-                                 regularizationPath = 2, lambda2 = 0, 
-                                 control = list(trace =TRUE))
+  PathFor_fixed <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "gaussian", fixSigma = TRUE,
+                            regularizationPath = TRUE, lambda2 = 0, 
+                            control = list(trace =TRUE))
   
-  lambda1path <- getLambda(elvm.PathL1_EPSODE, lambda1 = TRUE, abs = TRUE)[,1]
+  lambda1path <- getLambda(PathFor_fixed, lambda1 = TRUE, abs = TRUE)[,1]
   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
   
   expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
+  
+  # getPath(PathFor_fixed)
+  # lambda1.abs   lambda1 lambda2.abs lambda2             Y       Y~X1         Y~X2      Y~X3      Y~X4      Y~X5       Y,Y
+  # 1    0.000000   0.00000           0       0 -1.578251e-17 -0.0137584 -0.015867427 0.2384096 0.4476322 0.7105163 0.2110710
+  # 2    5.674446  26.79519           0       0 -1.579584e-17  0.0000000 -0.002844546 0.2265903 0.4357318 0.6993281 0.2117711
+  # 3    6.986304  32.94868           0       0 -1.578430e-17  0.0000000  0.000000000 0.2239554 0.4330664 0.6970147 0.2120359
+  # 4  129.032092 322.69064           0       0 -1.630669e-17  0.0000000  0.000000000 0.0000000 0.1998105 0.4637776 0.3998631
+  # 5  229.350602 334.18505           0       0 -1.437577e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.2639660 0.6862982
+  # 6  361.070618 361.79421           0       0 -1.068329e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9980000
+  
+  system.time(
+    PathFor_free <- estimate(plvm.model,  data = df.data, increasing = TRUE, estimator = "numDeriveSimple",
+                             regularizationPath = TRUE, lambda2 = 0, resolution_lambda1 = c(1e-2,1e-3),  #stopParam = 4,
+                             control = list(trace =TRUE))
+  )
+  lambda1path <- getLambda(PathFor_free, lambda1 = TRUE, abs = TRUE)[,1]
+  indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
+  
+  # getPath(PathFor_free,  rm.duplicated = TRUE)
+  # lambda1.abs   lambda1 lambda2.abs lambda2             Y       Y~X1         Y~X2      Y~X3      Y~X4      Y~X5       Y,Y
+  # 1    0.000000   0.00000          NA      NA -1.578251e-17 -0.0137584 -0.015867427 0.2384096 0.4476322 0.7105163 0.2110710
+  # 3    5.684530  26.84296          NA      NA  8.277667e-08  0.0000000 -0.002846111 0.2265919 0.4357333 0.6993296 0.2117699
+  # 4    6.996451  32.99676          NA      NA  1.141217e-07  0.0000000  0.000000000 0.2239569 0.4330680 0.6970161 0.2120345
+  # 5  129.196502 323.57628          NA      NA  2.229052e-05  0.0000000  0.000000000 0.0000000 0.1998052 0.4637723 0.3992768
+  # 7  236.990412 358.84629          NA      NA  5.321877e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.2494372 0.6604232
+  # 8  361.702913 392.73612          NA      NA  8.407698e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9209820
+  #expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
+  
+  
+  # bruger   system forløbet 
+  # 35.29     0.00    35.53 
 })
-# getPath(elvm.PathL1_EPSODE)
-
-# lambda1.abs   lambda1 lambda2.abs lambda2             Y          Y~X3          Y~X4          Y~X5       Y,Y
-# 1    0.000000   0.00000           0       0 -1.578256e-17  2.384096e-01  4.476322e-01  7.105163e-01 0.2110710
-# 2    5.674446  26.79518           0       0 -1.579584e-17  2.265903e-01  4.357318e-01  6.993281e-01 0.2117711
-# 3    6.986304  32.94868           0       0 -1.578430e-17  2.239554e-01  4.330664e-01  6.970147e-01 0.2120359
-# 4  129.032092 322.69010           0       0 -1.630669e-17 -1.289890e-06  1.998105e-01  4.637776e-01 0.3998638
-# 5  229.350602 334.18454           0       0 -1.437577e-17  0.000000e+00 -1.126323e-06  2.639660e-01 0.6862993
-# 6  361.070618 361.79319           0       0 -1.068329e-17  0.000000e+00  0.000000e+00 -1.942671e-06 0.9980028
-
-# Regularization path: 
-#   lambda1.abs   lambda1 lambda2.abs lambda2             Y          Y~X1          Y~X2          Y~X3          Y~X4          Y~X5       Y,Y
-# 1    0.000000   0.00000           0       0 -1.578256e-17 -1.375840e-02 -1.586743e-02  2.384096e-01  4.476322e-01  7.105163e-01 0.2110710
-# 2    5.673998  26.79308           0       0 -1.579584e-17  9.116710e-07 -2.845574e-03  2.265912e-01  4.357327e-01  6.993290e-01 0.2117710
-# 3    6.986221  32.94829           0       0 -1.578430e-17  0.000000e+00  1.349033e-06  2.239556e-01  4.330666e-01  6.970149e-01 0.2120359
-# 4  129.031622 322.69011           0       0 -1.630669e-17  2.868722e-18  1.217280e-18 -3.795390e-07  1.998114e-01  4.637786e-01 0.3998623
-# 5  229.350637 334.18455           0       0 -1.437575e-17  7.389134e-20 -1.128473e-19  7.909855e-20 -1.195496e-06  2.639660e-01 0.6862993
-# 6  361.070018 361.79324           0       0 -1.068329e-17  7.349418e-19 -3.339281e-19  9.422789e-19  8.002648e-21 -6.970495e-07 0.9980010
-
 test_that("LVM(EPSODE-backward) vs penalize with lasso", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,  estimator = "penalized",
-                                 regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-1,1e-2),
-                                 control = list(trace = TRUE))
+  PathBack_fixed <- estimate(plvm.model,  data = df.data, increasing = FALSE, estimator = "gaussian", fixSigma = TRUE, 
+                             regularizationPath = 2, lambda2 = 0, 
+                             control = list(trace = TRUE))
   
-  lambda1path <- getLambda(elvm.PathL1_EPSODE, lambda1 = TRUE, abs = TRUE)[,1]
+  lambda1path <- getLambda(PathBack_fixed, lambda1 = TRUE, abs = TRUE)[,1]
   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
   
   expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)    
+  
+  # getPath(PathBack_fixed)
+  # lambda1.abs   lambda1 lambda2.abs lambda2             Y       Y~X1         Y~X2      Y~X3      Y~X4      Y~X5       Y,Y
+  # 7    0.000000   0.00000           0       0 -1.578251e-17 -0.0137584 -0.015867427 0.2384096 0.4476322 0.7105163 0.2110710
+  # 6    5.672892  26.78787           0       0 -1.579585e-17  0.0000000 -0.002846495 0.2265923 0.4357330 0.6993306 0.2117709
+  # 5    6.984918  32.94217           0       0 -1.578431e-17  0.0000000  0.000000000 0.2239571 0.4330673 0.6970169 0.2120358
+  # 4  129.030922 322.68868           0       0 -1.630670e-17  0.0000000  0.000000000 0.0000000 0.1998110 0.4637795 0.3998619
+  # 3  229.349111 334.18398           0       0 -1.437579e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.2639685 0.6862959
+  # 2  361.069395 361.79298           0       0 -1.068329e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9980000
+  # 1  397.176622 397.97257           0       0 -1.068329e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9980000
+  
+  PathBack_free <- estimate(plvm.model,  data = df.data, increasing = FALSE, estimator = "numDeriveSimple",
+                             regularizationPath = 2, lambda2 = 0, resolution_lambda1 = c(1e-2,1e-3),
+                             control = list(trace = TRUE))
+
+  lambda1path <- getLambda(PathBack_free, lambda1 = TRUE, abs = TRUE)[,1]
+  indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
+
+  # expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance, scale=test.scale)
+  
+  # getPath(PathBack_free,  rm.duplicated = TRUE)
+  # lambda1.abs    lambda1 lambda2.abs lambda2             Y       Y~X1         Y~X2      Y~X3      Y~X4      Y~X5      Y,Y
+  # 15    0.000000   0.000000          NA      NA -1.578251e-17 -0.0137584 -0.015867427 0.2384096 0.4476322 0.7105163 0.211071
+  # 14    5.672069   1.487624          NA      NA  7.051115e-05  0.0000000 -0.002845238 0.2254063 0.4324297 0.6356873 3.812838
+  # 13    6.983530   1.831920          NA      NA  7.049357e-05  0.0000000  0.000000000 0.2227725 0.4297658 0.6333863 3.812136
+  # 12  129.028452  36.479528          NA      NA  6.360176e-05  0.0000000  0.000000000 0.0000000 0.1978925 0.4058857 3.537010
+  # 11  229.349659  74.981261          NA      NA  5.162176e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.2155615 3.058760
+  # 10  347.912616 170.767081          NA      NA  2.603579e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 2.037352
+  # 9   360.996320 177.188999          NA      NA  2.603579e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 2.037352
+  # 4   361.068164 199.924297          NA      NA  2.024109e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.806024
+  # 8   361.068341 183.897611          NA      NA  2.418383e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.963421
+  # 6   361.069155 191.391584          NA      NA  2.225816e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.886547
+  # 2   361.069415 361.793001          NA      NA -1.068329e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.998000
+  # 7   362.073519 184.409563          NA      NA  2.418383e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.963421
+  # 5   363.407438 192.631035          NA      NA  2.225816e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.886547
+  # 1   397.176622 397.972567          NA      NA -1.068329e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.998000
+  # 3   629.570493 348.594671          NA      NA  2.024109e-05  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 1.806024
 })
-# lambda1.abs   lambda1 lambda2.abs lambda2             Y       Y~X1         Y~X2      Y~X3      Y~X4      Y~X5       Y,Y
-# 7    0.000000   0.00000           0       0 -1.536800e-17 -0.0137584 -0.015866945 0.2384093 0.4476321 0.7105157 0.2110710
-# 6    5.673622  26.79131           0       0 -1.538128e-17  0.0000000 -0.002845955 0.2265917 0.4357334 0.6993291 0.2117710
-# 5    6.985398  32.94444           0       0 -1.536974e-17  0.0000000  0.000000000 0.2239570 0.4330683 0.6970158 0.2120358
-# 4  129.031346 322.68978           0       0 -1.589213e-17  0.0000000  0.000000000 0.0000000 0.1998120 0.4637785 0.3998619
-# 3  229.350069 334.18446           0       0 -1.396121e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.2639665 0.6862978
-# 2  361.069331 361.79292           0       0 -1.026874e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9980000
-# 1  397.176622 397.97257           0       0 -1.026874e-17  0.0000000  0.000000000 0.0000000 0.0000000 0.0000000 0.9980000
 
 
 #### check fix lambda - at the breakpoints ####
@@ -195,23 +219,11 @@ seq_lambda <- unlist(lapply(penalized.PathL1, function(x){x@lambda1}))
 
 plvm.model2 <- penalize(lvm.model, value = Y ~ X1 + X3 + X5) # penalize(lvm.model)
 
-test_that("LVM(LARS) vs penalize with lasso", {
-  elvm.PathL1_LARS <- estimate(plvm.model2,  data = df.data, fit = NULL,
-                                 regularizationPath = 1, lambda2 = 0)
- 
-  lambda1path <- getLambda(elvm.PathL1_LARS, lambda1 = TRUE, abs = TRUE)[,1]
-  indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
-  
-  expect_equal(lambda1path[indexLambda], expected=seq_lambda, tolerance=test.tolerance*100, scale=test.scale)    
-})
-
-
 test_that("LVM(EPSODE-forward) vs penalize with lasso", {
-  
   system.time(
-  elvm.PathL1_EPSODEf <- estimate(plvm.model2,  data = df.data, increasing = TRUE, fit = NULL, estimator = "penalized",
-                                 regularizationPath = 2, lambda2 = 0,
-                                  control = list(trace =TRUE))
+    elvm.PathL1_EPSODEf <- estimate(plvm.model2,  data = df.data, increasing = TRUE, fit = NULL,
+                                    regularizationPath = TRUE, lambda2 = 0,
+                                    control = list(trace =TRUE))
   )
   lambda1path <- getLambda(elvm.PathL1_EPSODEf, lambda1 = TRUE, abs = TRUE)[,1]
   indexLambda <- apply(outer(lambda1path,seq_lambda,'-'), 2, function(x){which.min(abs(x))})
@@ -220,7 +232,7 @@ test_that("LVM(EPSODE-forward) vs penalize with lasso", {
 
 test_that("LVM(EPSODE-backward) vs penalize with lasso", {
   elvm.PathL1_EPSODEb <- estimate(plvm.model2,  data = df.data, increasing = FALSE, fit = NULL,
-                                 regularizationPath = 2, lambda2 = 0,
+                                 regularizationPath = TRUE, lambda2 = 0,
                                  control = list(trace =TRUE))
   
   lambda1path <- getLambda(elvm.PathL1_EPSODEb, lambda1 = TRUE, abs = TRUE)[,1]
@@ -282,8 +294,8 @@ for(iter_l in 1:length(seq_lambda)){
 
 #### regularization path ####
 test_that("LVM(EPSODE-backward) vs penalize with lasso (high dimensional)", {
-  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE,
-                                 regularizationPath = 2, lambda2 = 0, stopLambda = min(seq_lambda)/1.05,
+  elvm.PathL1_EPSODE <- estimate(plvm.model,  data = df.data, increasing = FALSE, fixSigma = TRUE,
+                                 regularizationPath = TRUE, lambda2 = 0, stopLambda = min(seq_lambda)/1.05,
                                  control = list(trace = TRUE))
   lambda1path <- getLambda(elvm.PathL1_EPSODE, lambda1 = TRUE, abs = TRUE)[,1]
   indexLambda <- apply(outer(lambda1path,seq_lambda[-length(seq_lambda)],'-'), 2, function(x){which.min(abs(x))})
@@ -360,24 +372,38 @@ test_that("LVM vs pLVM (lambda > 0)", {
 
 #### Regularization path
 lvm.Extended <- lvm.modelSim
-lvm.Extended <- regression(lvm.Extended, Y5 ~ X1 + X2 + X3 + X4 + X5)
-plvm.Extended <- penalize(lvm.Extended, setdiff(coef(lvm.Extended), coef(lvm.modelSim)))
+# lvm.Extended <- regression(lvm.Extended, Y5 ~ X1 + X2 + X3 + X4 + X5) ### OK
+lvm.Extended <- regression(lvm.Extended, Y5 ~ eta + X1 + X2 + X3 + X4 + X5)
+lvm.Extended <- regression(lvm.Extended, Y4 ~ eta + X1 + X2 + X3 + X4 + X5)
+lvm.Extended <- regression(lvm.Extended, Y3 ~ eta + X1 + X2 + X3 + X4 + X5)
+lvm.Extended <- regression(lvm.Extended, Y2 ~ eta + X1 + X2 + X3 + X4 + X5)
+lvm.Extended <- regression(lvm.Extended, Y1 ~ eta + X1 + X2 + X3 + X4 + X5)
+lvm.Extended <- regression(lvm.Extended, eta ~ X1 + X2 + X3 + X4 + X5)
+keep.coef <- c("Y1 ~ eta","Y2 ~ eta","Y3 ~ eta","Y4 ~ eta", "eta ~ X1",
+               "Y1,Y1", "Y2,Y2", "Y3,Y3", "Y4,Y4", "Y5,Y5" )# coef(lvm.modelSim)
+plvm.Extended <- penalize(lvm.Extended, setdiff(coef(lvm.Extended), keep.coef))
+# coef(lvm.modelSim) # 
 
-Test <- estimate(plvm.Extended,  data = df.data, estimator = "penalized", lambda1 = 10,
-               control = list(trace =TRUE))
 
-
-P1 <- estimate(plvm.Extended,  data = df.data, increasing = TRUE, fit = NULL, estimator = "penalized1",
-               regularizationPath = 2, lambda2 = 0, stopParam = 2,
-               control = list(trace =TRUE))
-
-plot(P1)
-
-getPath(P1)
-
-Test1 <- estimate(plvm.Extended,  data = df.data, estimator = "penalized", fixSigma = TRUE, lambda1 = 1,
+test_that("pLVM EPSODE vs proxGrad", {
+  system.time(
+  Path_For <- estimate(plvm.Extended,  data = df.data, increasing = TRUE, fit = NULL, estimator = "numDeriveSimple",
+                 regularizationPath = 2, lambda2 = 0, stopParam = 2, resolution_lambda1 = c(1e-1,1e-3),
                  control = list(trace =TRUE))
-coef(Test1)
+  )
+  test <- validPath.lvm(Path_For, data = df.data)
+  expect_equal( test$diff.range, c(0,0), tolerance = 1e-3)
+   
+  system.time(             
+  Path_Back <- estimate(plvm.Extended,  data = df.data, increasing = FALSE, fit = NULL, estimator = "numDeriveSimple",
+                        regularizationPath = 2, lambda2 = 0, stopParam = 3, resolution_lambda1 = c(1e-1,1e-3),
+                        control = list(trace =TRUE))
+  )
+  test <- validPath.lvm(Path_Back, data = df.data)
+  #expect_equal( test$diff.range, c(0,0), tolerance = 1e-3)
+  expect_equal( test$diff.range, c(0,0), tolerance = 1e-3)
+})
+
 
 
 #### IN PROGRESS ####

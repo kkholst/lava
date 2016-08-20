@@ -1,11 +1,17 @@
 `getPath` <- function(x, ...) UseMethod("getPath")
 
-`getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, ascending = TRUE, row = NULL) {
+`getPath.plvmfit` <- function(x, names = NULL, getCoef, getLambda, rm.duplicated = FALSE, ascending = TRUE, order = "lambda1", row = NULL) {
   
   if(isPath(x)){
     stop("getPath.plvmfit: no penalization path in the plvmfit object \n",
          "set argument \'regularizationPath\' to 1 or 2 when calling estimate \n")
   }
+  
+  if(order %in% c("lambda1","lambda2","lambda1.abs","lambda2.abs") == FALSE){
+    stop("getPath.plvmfit: order must be one of \"lambda1\" \"lambda2\" \"lambda1.abs\" \"lambda2.abs\" \n",
+         "proposed value: ",paste(order, collapse = " ")," \n")
+  }
+  
   
   if(!missing(getCoef) && !is.null(getCoef)){
     if(length(getCoef)>1){stop("getPath.plvmfit: getCoef must have length 1 \n")}
@@ -22,9 +28,9 @@
   }
    
   if(ascending == TRUE){
-    regPath <- regPath[order(regPath$lambda1.abs, decreasing = FALSE),,drop = FALSE]
+    regPath <- regPath[order(regPath[,order], decreasing = FALSE),,drop = FALSE]
   }else{
-    regPath <- regPath[order(regPath$lambda1.abs, decreasing = TRUE),,drop = FALSE]
+    regPath <- regPath[order(regPath[,order], decreasing = TRUE),,drop = FALSE]
   }
   validNames <- names(regPath)
   
@@ -70,9 +76,7 @@
       names.coef <- NULL
     }else if(getCoef %in% c("coef0","coefn0")){
       
-      coefChange <- names(coef(x))[regPath$indexChange]
-      
-      
+      coefChange <- names(regPath)[regPath$indexChange+5] # 5 corresponds to the five colums "lambda1.abs", "lambda1", "lambda2.abs", "lambda2", "indexChange"
       if(0 %in% regPath$lambda1.abs){
         current.coef <- intersect(validNames, x$penalty$name.coef)
         seqIterator <- 1:NROW(regPath)
