@@ -36,7 +36,7 @@
 ##' sequence.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
-##' sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
+##' sigma = 1, rho = 0.5, X, unlink=FALSE, latent=TRUE,...)
 ##' @param x Model object
 ##' @param n Number of simulated values/individuals
 ##' @param p Parameter value (optional)
@@ -48,6 +48,7 @@
 ##' @param rho Default covariance parameter (0.5)
 ##' @param X Optional matrix of covariates
 ##' @param unlink Return Inverse link transformed data
+##' @param latent Include latent variables (default TRUE)
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords models datagen regression
@@ -275,7 +276,7 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
 
 ##' @export
 sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
-                    X,unlink=FALSE,...) {
+                    X,unlink=FALSE,latent=TRUE,...) {
     if (!missing(X)) {
         n <- nrow(X)
     }
@@ -635,6 +636,7 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     for (v in names(self)) {
         res[,v] <- self[[v]](res[,v])
     }
+    if (!latent) return(subset(res,select=-latent(x)))
     return(res)
 }
 

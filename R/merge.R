@@ -2,6 +2,11 @@
 `%++%.lvm` <- function(x,y) merge(x,y)
 
 ##' @export
+"+.lvm" <- function(x,...) {
+  merge(x,...)
+}
+
+##' @export
 merge.lvm <- function(x,y,...) {
   objects <- list(x,y,...)
   if (length(objects)<2) return(x)
@@ -43,6 +48,11 @@ merge.lvm <- function(x,y,...) {
   return(m)
 }
 
+
+##' @export
+"+.estimate" <- function(x,...) {
+  merge(x,...)
+}
 
 ##' @export
 merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=NULL) {

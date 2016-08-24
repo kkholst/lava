@@ -1,3 +1,8 @@
+* Version 1.4.4.x <2016-09-23 Tue>
+  - '+' operator overloaded for lvm and estimate objects (merge)
+  - R-squared fix
+  - New argument 'latent' in simulate method. If FALSE the latent variables are dropped from the returned data.frame
+
 * Version 1.4.4 <2016-09-13 Sat>
   - estimate.default will now use the id-variable of an 'estimate'
     object if the 'id' argument is left unspecified.  For

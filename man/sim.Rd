@@ -49,7 +49,7 @@
 \title{Simulate model}
 \usage{
 \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
-sigma = 1, rho = 0.5, X, unlink=FALSE, ...)
+sigma = 1, rho = 0.5, X, unlink=FALSE, latent=TRUE,...)
 }
 \arguments{
 \item{x}{Model object}
@@ -71,6 +71,8 @@ ignoring functional/distribution definition}
 \item{X}{Optional matrix of covariates}
 
 \item{unlink}{Return Inverse link transformed data}
+
+\item{latent}{Include latent variables (default TRUE)}
 
 \item{\dots}{Additional arguments to be passed to the low level functions}
 }
