@@ -57,7 +57,8 @@ GLMest <- function(m,data,control=list(),...) {
         res <- c(res, list(p));
     }
     coefs <- unlist(res)
-    idx <- match(coef(m),names(coefs))
+    idx <- na.omit(match(coef(m),names(coefs)))
+    ##idx <- na.omit(names(coefs),coef(m))
     coefs <- coefs[idx]
     ##V <- Reduce(blockdiag,breads)[idx,idx]
     V <- crossprod(iids[,idx])
@@ -80,7 +81,8 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
         count <- count+1
         xx <- parents(x,y)
         pname <- c(y,paste0(y,sep=lava.options()$symbol[1],xx),paste(y,y,sep=lava.options()$symbol[2]))
-        pidx <- match(pname,coef(x))
+        pidx <- na.omit(match(pname,coef(x)))
+        ##pidx <- na.omit(match(coef(x),pname))
         fam <- attributes(distribution(x)[[y]])$family
         if (is.null(fam)) fam <- stats::gaussian()
         if (length(xx)==0) xx <- 1
@@ -115,14 +117,15 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
         pnames <- c(pnames, list(pname));
     }
     coefs <- unlist(pnames)
-    idx <- na.omit(match(coef(x),coefs))
+    idx <- na.omit(match(coefs,coef(x)))
+    idx <- order(idx)
     V <- Reduce(blockdiag,breads)[idx,idx]
-    S <- Reduce(cbind,S)[,idx,drop=FALSE]
-    colnames(S) <- coef(x)
-    attributes(S)$bread <- V
-    attributes(S)$logLik <- structure(L,nobs=nrow(data),nall=nrow(data),df=length(p),class="logLik")
-    if (!indiv) S <- colSums(S)
-    return(S)    
+    S1 <- Reduce(cbind,S)[,idx,drop=FALSE]
+    colnames(S1) <- coef(x)
+    attributes(S1)$bread <- V
+    attributes(S1)$logLik <- structure(L,nobs=nrow(data),nall=nrow(data),df=length(p),class="logLik")
+    if (!indiv) S1 <- colSums(S1)
+    return(S1)
 }
 
 
@@ -249,7 +252,9 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
             p0 <- p[-length(p)]
         }
     }
-    if(any(is.na(p))) stop("Over-parametrized model")
+    if(any(is.na(p))) {
+        warning("Over-parametrized model")
+    }
     Xbeta <- X%*%p0
     if (!is.null(x$offset)) Xbeta <- Xbeta+x$offset
     y <- model.frame(x)[,1]
