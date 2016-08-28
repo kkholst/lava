@@ -8,6 +8,7 @@
 ##' to calculate partial correlation for
 ##' @param data data.frame
 ##' @param level Level of confidence limits
+##' @param ... Additional arguments to lower level functions
 ##' @return A coefficient matrix
 ##' @author Klaus K. Holst
 ##' @keywords models regression
@@ -19,21 +20,29 @@
 ##' partialcor(~x1+x2,d)
 ##'
 ##' @export
-partialcor <- function(formula,data,level=0.95) {
-  if (attributes(terms(formula))$response==0) {
+partialcor <- function(formula,data,level=0.95,...) {
+  y <-  getoutcome(formula)
+  if (length(y)==0) {
     preds <- all.vars(formula)
     yy <- setdiff(names(data),preds)
-    if (length(yy)<2)
+  } else {
+    yy <- decomp.specials(y)  
+    preds <- attr(y,"x")
+  }  
+  if (length(yy)<2)
       return(NULL)
-    res <- c()
-    for (i in seq_len(length(yy)-1))
+  res <- c()
+  for (i in seq_len(length(yy)-1))
       for (j in seq(i+1,length(yy))) {
-        f <- as.formula(paste("cbind(",yy[i],",",yy[j],")", paste(as.character(formula),collapse="")))
-        res <- rbind(res, partialcor(f,data,level=level))
-        rownames(res)[nrow(res)] <- paste(yy[i],yy[j],sep="~")
+          f <- as.formula(paste("cbind(",yy[i],",",yy[j],")~", paste(preds,collapse="+")))
+          res <- rbind(res, partialcorpair(f,data,level=level))
+          rownames(res)[nrow(res)] <- paste(yy[i],yy[j],sep="~")
       }
-    return(res)
-  }
+  return(res)
+}
+
+
+partialcorpair <- function(formula,data,level=0.95,...) {
   l <- lm(formula,data)
   k <- ncol(model.matrix(l))
   n <- nrow(model.matrix(l))

@@ -456,16 +456,6 @@ numberdup <- function(xx) { ## Convert to numbered list
   return(xx.new)
 }
 
-
-##' @export
-logit <- function(p) log(p/(1-p))
-
-##' @export
-expit <- function(z) 1/(1+exp(-z))
-
-##' @export
-tigol <- expit
-
 extractvar <- function(f) {
     yy <- getoutcome(f)
     xx <- attributes(terms(f))$term.labels

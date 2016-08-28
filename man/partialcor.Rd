@@ -4,7 +4,7 @@
 \alias{partialcor}
 \title{Calculate partial correlations}
 \usage{
-partialcor(formula, data, level = 0.95)
+partialcor(formula, data, level = 0.95, ...)
 }
 \arguments{
 \item{formula}{formula speciying the covariates and optionally the outcomes
@@ -13,6 +13,8 @@ to calculate partial correlation for}
 \item{data}{data.frame}
 
 \item{level}{Level of confidence limits}
+
+\item{...}{Additional arguments to lower level functions}
 }
 \value{
 A coefficient matrix

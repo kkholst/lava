@@ -1,7 +1,16 @@
+##' @export
+logit <- function(p) log(p/(1-p))
+
+##' @export
+expit <- function(z) 1/(1+exp(-z))
+
+##' @export
+tigol <- expit
 ##' Calculate prevalence, sensitivity, specificity, and positive and
 ##' negative predictive values
 ##'
 ##' @title Calculate diagnostic tests for 2x2 table
+##' @aliases diagtest odds riskcomp OR Ratio Diff 
 ##' @param table Table or (matrix/data.frame with two columns)
 ##' @param positive Switch reference
 ##' @param exact If TRUE exact binomial proportions CI/test will be used

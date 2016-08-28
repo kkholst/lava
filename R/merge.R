@@ -6,6 +6,11 @@
   merge(x,...)
 }
 
+## ##' @export
+## "+.lm" <- function(x,...) {
+##   merge(x,...)
+## }
+
 ##' @export
 merge.lvm <- function(x,y,...) {
   objects <- list(x,y,...)
