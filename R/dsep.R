@@ -23,6 +23,8 @@
 ##' }
 ##' dsep(m,x5~x1|x2+x4)
 ##' dsep(m,x5~x1|x3+x4)
+##' dsep(m,~x1+x2+x3|x4)
+##' 
 dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
     if (inherits(x,"formula")) {
         xf <- getoutcome(x,sep="|")
@@ -52,7 +54,7 @@ dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
                 }
         }
     }
-    man.sel <- subset(man,setdiff(vars(object),cond))
+    man.sel <- subset(man,setdiff(V,cond))
     if (return.graph) return(man.sel)
     ## with(man.sel, solve(diag(nrow=nrow(M))-M))
     ii <- match(x,vars(man.sel))

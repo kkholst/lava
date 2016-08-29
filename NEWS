@@ -2,6 +2,8 @@
   - '+' operator overloaded for lvm and estimate objects (merge)
   - R-squared fix
   - New argument 'latent' in simulate method. If FALSE the latent variables are dropped from the returned data.frame
+  - ancestors,descendants,D-separation: dsep
+  - New riskcomp, rdiff,rratio,...
 
 * Version 1.4.4 <2016-09-13 Sat>
   - estimate.default will now use the id-variable of an 'estimate'

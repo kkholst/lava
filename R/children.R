@@ -44,6 +44,7 @@ children.lvm <- function(object,var,...) {
 
 ##' @export
 ancestors <- function(m,x,...) {
+   if (inherits(x,"formula")) x <- all.vars(x)
    res <- c()
    left <- setdiff(vars(m),x)
    count <- 0
@@ -55,11 +56,13 @@ ancestors <- function(m,x,...) {
      res <- union(res,child)
      left <- setdiff(left,child)
    }
+   if (length(res)==0) res <- NULL
    return(res)
 }
 
 ##' @export
 descendants <- function(m,x,...) {
+   if (inherits(x,"formula")) x <- all.vars(x)
    res <- c()
    left <- setdiff(vars(m),x)
    count <- 0
@@ -71,6 +74,7 @@ descendants <- function(m,x,...) {
      res <- union(res,parent)
      left <- setdiff(left,parent)
    }
+   if (length(res)==0) res <- NULL
    return(res)
 }
 
