@@ -4,14 +4,18 @@
 ##' Extract and set global parameters of \code{lava}. In particular optimization
 ##' parameters for the \code{estimate} function.
 ##'
-##' \itemize{ \item \code{param}: 'relative' (factor loading and variance of one
+##' \itemize{
+##'   \item \code{param}: 'relative' (factor loading and variance of one
 ##' endogenous variables in each measurement model are fixed to one), 'absolute'
 ##' (mean and variance of latent variables are set to 0 and 1, respectively),
 ##' 'hybrid' (intercept of latent variables is fixed to 0, and factor loading of
 ##' at least one endogenous variable in each measurement model is fixed to 1),
-##' 'none' (no constraints are added) \item \code{silent}: Set to \code{FALSE}
-##' to disable various output messages \item ...  } see \code{control} parameter
-##' of the \code{estimate} function.
+##' 'none' (no constraints are added)
+##'   \item \code{layout}: One of 'dot','fdp','circo','twopi','neato','osage'
+##'   \item \code{silent}: Set to \code{FALSE} to disable various output messages
+##'   \item ...  }
+##'
+##' see \code{control} parameter of the \code{estimate} function.
 ##'
 ##' @param \dots Arguments
 ##' @return \code{list} of parameters
@@ -96,6 +100,7 @@ assign("options", list(
     exogenous=TRUE,
     Rgraphviz=TRUE,
     edgecolor=FALSE,
+    layout="dot",
     ## symbols=c("<-","<->"),
     symbols=c("~",","),
     devel=FALSE,

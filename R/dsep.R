@@ -54,16 +54,18 @@ dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
                 }
         }
     }
-    man.sel <- subset(man,setdiff(V,cond))
-    if (return.graph) return(man.sel)
+    man.sel <- subset(man,setdiff(vars(man),cond))
     ## with(man.sel, solve(diag(nrow=nrow(M))-M))
     ii <- match(x,vars(man.sel))
     A <- with(man.sel, (t(M)+M)>0)
-    res <- c()
+    dsep <- c()
     for (i in ii) {
         conn <- DFS(A,i)
         i0 <- setdiff(ii,i)
-        res <- c(res,!any(i0%in%conn))
+        dsep <- c(dsep,!any(i0%in%conn))
     }
-    return(all(res))
+    res <- all(dsep)
+    attr(man.sel,"dsep") <- res
+    if (return.graph) return(man.sel)
+    return(res)
 }

@@ -70,7 +70,7 @@
          attrs=list(graph=graph),
          unexpr=FALSE,
          addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
-         layout=c("dot","fdp","circo","twopi","neato","osage"),
+         layout=lava.options()$layout,
          edgecolor=lava.options()$edgecolor,
          graph.proc=lava.options()$graph.proc,         
          

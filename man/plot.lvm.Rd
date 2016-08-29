@@ -9,9 +9,8 @@
   intercept = FALSE, addcolor = TRUE, plain = FALSE, cex,
   fontsize1 = 10, noplot = FALSE, graph = list(rankdir = "BT"),
   attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
-  Rgraphviz = lava.options()$Rgraphviz, init = TRUE, layout = c("dot",
-  "fdp", "circo", "twopi", "neato", "osage"),
-  edgecolor = lava.options()$edgecolor,
+  Rgraphviz = lava.options()$Rgraphviz, init = TRUE,
+  layout = lava.options()$layout, edgecolor = lava.options()$edgecolor,
   graph.proc = lava.options()$graph.proc, ...)
 }
 \arguments{
