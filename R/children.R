@@ -2,7 +2,7 @@
 ##'
 ##' @title Extract children or parent elements of object
 ##' @export
-##' @aliases children parents
+##' @aliases children parents ancestors descendants
 ##' @param object Object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
@@ -40,3 +40,37 @@ children.lvm <- function(object,var,...) {
   unique(unlist(res))
 
 }
+
+
+##' @export
+ancestors <- function(m,x,...) {
+   res <- c()
+   left <- setdiff(vars(m),x)
+   count <- 0
+   child <- x
+   while (length(x)>0) {
+     count <- count+1
+     x <- parents(m,child)
+     child <- intersect(x,left)
+     res <- union(res,child)
+     left <- setdiff(left,child)
+   }
+   return(res)
+}
+
+##' @export
+descendants <- function(m,x,...) {
+   res <- c()
+   left <- setdiff(vars(m),x)
+   count <- 0
+   parent <- x
+   while (length(x)>0) {
+     count <- count+1
+     x <- children(m,parent)
+     parent <- intersect(x,left)
+     res <- union(res,parent)
+     left <- setdiff(left,parent)
+   }
+   return(res)
+}
+
