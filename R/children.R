@@ -17,7 +17,14 @@
 "descendants" <- function(object,...) UseMethod("descendants")
 ##' @export
 "ancestors" <- function(object,...) UseMethod("ancestors")
+##' @export
+"adjMat" <- function(object,...) UseMethod("adjMat")
 
+##' @export
+adjMat.lvm <- function(object,...) t(object$M)
+
+##' @export
+adjMat.lvmfit <- function(object,...) adjMat(Model(object),...)
 
 ##' @export
 parents.lvmfit <- function(object,...) parents(Model(object),...)
@@ -48,7 +55,9 @@ parents.lvm <- function(object,var,...) {
   if (inherits(var,"formula"))
     var <- all.vars(var)
   res <- lapply(var, function(v) rownames(A)[A[,v]!=0])
-  unique(unlist(res))
+  res <- unique(unlist(res))
+  if (length(res)==0) res <- NULL
+  res
 }
 
 ##' @export
@@ -60,8 +69,9 @@ children.lvm <- function(object,var,...) {
   if (inherits(var,"formula"))
     var <- all.vars(var)
   res <- lapply(var, function(v) rownames(A)[A[v,]!=0])
-  unique(unlist(res))
-
+  res <- unique(unlist(res))
+  if (length(res)==0) res <- NULL
+  res
 }
 
 
