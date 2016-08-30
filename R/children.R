@@ -2,19 +2,42 @@
 ##'
 ##' @title Extract children or parent elements of object
 ##' @export
-##' @aliases children parents ancestors descendants
+##' @aliases children parents ancestors descendants roots sinks
 ##' @param object Object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
 "children" <- function(object,...) UseMethod("children")
 ##' @export
 "parents" <- function(object,...) UseMethod("parents")
+##' @export
+"roots" <- function(object,...) UseMethod("roots")
+##' @export
+"sinks" <- function(object,...) UseMethod("sinks")
+##' @export
+"descendants" <- function(object,...) UseMethod("descendants")
+##' @export
+"ancestors" <- function(object,...) UseMethod("ancestors")
+
 
 ##' @export
 parents.lvmfit <- function(object,...) parents(Model(object),...)
 
 ##' @export
 children.lvmfit <- function(object,...) children(Model(object),...)
+
+##' @export
+descendants.lvmfit <- function(object,...) descendants(Model(object),...)
+
+##' @export
+ancestors.lvmfit <- function(object,...) ancestors(Model(object),...)
+
+##' @export
+roots.lvmfit <- function(object,...) roots(Model(object),...)
+
+##' @export
+sinks.lvmfit <- function(object,...) sinks(Model(object),...)
+
+
 
 ##' @export
 parents.lvm <- function(object,var,...) {
@@ -43,15 +66,15 @@ children.lvm <- function(object,var,...) {
 
 
 ##' @export
-ancestors <- function(m,x,...) {
+ancestors.lvm <- function(object,x,...) {
    if (inherits(x,"formula")) x <- all.vars(x)
    res <- c()
-   left <- setdiff(vars(m),x)
+   left <- setdiff(vars(object),x)
    count <- 0
    child <- x
    while (length(x)>0) {
      count <- count+1
-     x <- parents(m,child)
+     x <- parents(object,child)
      child <- intersect(x,left)
      res <- union(res,child)
      left <- setdiff(left,child)
@@ -61,15 +84,15 @@ ancestors <- function(m,x,...) {
 }
 
 ##' @export
-descendants <- function(m,x,...) {
+descendants.lvm <- function(object,x,...) {
    if (inherits(x,"formula")) x <- all.vars(x)
    res <- c()
-   left <- setdiff(vars(m),x)
+   left <- setdiff(vars(object),x)
    count <- 0
    parent <- x
    while (length(x)>0) {
      count <- count+1
-     x <- children(m,parent)
+     x <- children(object,parent)
      parent <- intersect(x,left)
      res <- union(res,parent)
      left <- setdiff(left,parent)
@@ -78,3 +101,12 @@ descendants <- function(m,x,...) {
    return(res)
 }
 
+##' @export
+roots.lvm <- function(object,...) {
+    return(exogenous(object,index=FALSE,...))
+}
+
+##' @export
+sinks.lvm <- function(object,...) {
+    return(endogenous(object,top=TRUE,...))
+}

@@ -46,7 +46,7 @@ function(x,latent=FALSE,index=TRUE,...) {
     M <- x$M
     res <- c()
     for (i in allvars)
-      if (!any(M[,i]==1) & any(M[i,]==1))
+        if (!any(M[,i]==1) & !any(is.na(x$cov[i,]))) # & any(M[i,]==1))
         res <- c(res, i)
     return(res)
   }

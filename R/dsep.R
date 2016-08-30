@@ -54,7 +54,7 @@ dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
                 }
         }
     }
-    man.sel <- subset(man,setdiff(vars(man),cond))
+    man.sel <- rmvar(man,cond)
     ## with(man.sel, solve(diag(nrow=nrow(M))-M))
     ii <- match(x,vars(man.sel))
     A <- with(man.sel, (t(M)+M)>0)

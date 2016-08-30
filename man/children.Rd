@@ -5,6 +5,8 @@
 \alias{children}
 \alias{descendants}
 \alias{parents}
+\alias{roots}
+\alias{sinks}
 \title{Extract children or parent elements of object}
 \usage{
 children(object, ...)
