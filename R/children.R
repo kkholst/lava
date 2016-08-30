@@ -1,8 +1,8 @@
-##' Generic method for extracting children or parent elements of object (e.g. a graph)
+##' Generic method for memberships from object (e.g. a graph)
 ##'
 ##' @title Extract children or parent elements of object
 ##' @export
-##' @aliases children parents ancestors descendants roots sinks
+##' @aliases children parents ancestors descendants roots sinks adjMat
 ##' @param object Object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
