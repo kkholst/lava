@@ -40,15 +40,18 @@
 ##' children(Model(e), ~x2)
 ##' children(Model(e), ~x2+eta)
 ##' effects(e,y2~x1)
+##' ## All simple paths (undirected)
+##' path(m,y1~x1,all=TRUE)
 ##'
 ##' @usage
-##' \method{path}{lvm} (object, to = NULL, from, ...)
+##' \method{path}{lvm} (object, to = NULL, from, all=FALSE, ...)
 ##' \method{effects}{lvmfit} (object, to, from, silent=FALSE, ...)
 ##' @param object Model object (\code{lvm})
 ##' @param to Outcome variable (string). Alternatively a formula specifying
 ##' response and predictor in which case the argument \code{from} is ignored.
 ##' @param from Response variable (string), not necessarily directly affected by
 ##' \code{to}.
+##' @param all If TRUE all simple paths (in undirected graph) is returned
 ##' @param silent Logical variable which indicates whether messages are turned
 ##' on/off.
 ##' @param \dots Additional arguments to be passed to the low level functions
@@ -100,7 +103,9 @@ path.lvmfit <- function(object,to=NULL,from,...) {
 }
 
 ##' @export
-path.lvm <- function(object,to=NULL,from,...) pathM(object$M,to=to,from=from,...)
+path.lvm <- function(object,to=NULL,from,all=FALSE,...) {
+    pathM(object$M,to=to,from=from,all=all,...)
+}
 
 ##' @export
 path.graphNEL <- function(object,to,from,...) {
@@ -159,21 +164,26 @@ path.graphNEL <- function(object,to,from,...) {
 }
 
 
-pathM <- function(M,to,from,...) {
+pathM <- function(M,to,from,all=FALSE,...) {
   nn <- colnames(M)
   if (inherits(to,"formula")) {
     fvar <- extractvar(to)
     if (length(fvar$x)==1 & length(fvar$y)==1)
-      return(pathM(M,to=fvar$y,from=fvar$x))
+      return(pathM(M,to=fvar$y,from=fvar$x,all=all))
     res <- list()
     for (y in fvar$y) {
       for (x in fvar$x) {
         cat("x=",x, " y=",y, "\n")
-        res <- c(res, list(pathM(M,to=y,from=x)))
+        res <- c(res, list(pathM(M,to=y,from=x,all=all)))
       }
     }
     return(res)
   }
+  if (all) { ## Get all simple paths
+      res <- simplePaths(to,from,from,M,list())
+      return(res)
+  }
+  
 
   ff <- function(g,from=1,to=NULL,res=list()) {
     i1 <- which(M[from,]==1)
@@ -210,4 +220,26 @@ pathM <- function(M,to,from,...) {
     res <- c(res, list(nn[mypaths[[i]]]))
   }
   return(res)
+}
+
+
+
+## Find all simple paths (no cycles) in an undirected graph
+simplePaths <- function(target,currentpath,visited,adjmat,allpaths) {
+    lastnode <- currentpath[length(currentpath)]
+    A <- (adjmat+t(adjmat))>0
+    if (lastnode==target) {
+        allpaths <- c(allpaths,list(currentpath))
+    } else {
+        for (neighbour in rownames(adjmat)[which(A[,lastnode])]) {            
+            if (!(neighbour%in%visited)) {
+                currentpath <- c(currentpath,neighbour)
+                visited <- c(visited,neighbour)
+                allpaths <- simplePaths(target,currentpath,visited,adjmat,allpaths)
+                visited <- setdiff(visited,neighbour)
+                currentpath <- currentpath[-length(currentpath)]
+            }
+        }
+    }
+    return(allpaths)
 }

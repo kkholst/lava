@@ -8,7 +8,7 @@
 \alias{totaleffects}
 \title{Extract pathways in model graph}
 \usage{
-\method{path}{lvm} (object, to = NULL, from, ...)
+\method{path}{lvm} (object, to = NULL, from, all=FALSE, ...)
 \method{effects}{lvmfit} (object, to, from, silent=FALSE, ...)
 }
 \arguments{
@@ -19,6 +19,8 @@ response and predictor in which case the argument \code{from} is ignored.}
 
 \item{from}{Response variable (string), not necessarily directly affected by
 \code{to}.}
+
+\item{all}{If TRUE all simple paths (in undirected graph) is returned}
 
 \item{silent}{Logical variable which indicates whether messages are turned
 on/off.}
@@ -65,6 +67,8 @@ parents(Model(e), ~y2)
 children(Model(e), ~x2)
 children(Model(e), ~x2+eta)
 effects(e,y2~x1)
+## All simple paths (undirected)
+path(m,y1~x1,all=TRUE)
 
 }
 \author{
