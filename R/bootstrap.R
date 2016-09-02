@@ -171,7 +171,8 @@ bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
     uplow <-(c(0,1) + c(1,-1)*(1-level)/2)
     nn <- paste(uplow*100,"%")
     c1 <- t(apply(x$coef,2,function(x) c(mean(x), sd(x), quantile(x,uplow))))
-    c1 <- cbind(c1[,1],c1[,1]-x$coef0,c1[,-1,drop=FALSE])
+
+    c1 <- cbind(x$coef0,c1[,1]-x$coef0,c1[,-1,drop=FALSE])
     colnames(c1) <- c("Estimate","Bias","Std.Err",nn)
     if (missing(idx)) {
         print(format(c1,...),quote=FALSE)
