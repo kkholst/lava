@@ -2,7 +2,7 @@
 ##'
 ##' @title Extract children or parent elements of object
 ##' @export
-##' @aliases children parents ancestors descendants roots sinks adjMat
+##' @aliases children parents ancestors descendants roots sinks adjMat edgeList
 ##' @param object Object
 ##' @param \dots Additional arguments
 ##' @author Klaus K. Holst
@@ -19,12 +19,30 @@
 "ancestors" <- function(object,...) UseMethod("ancestors")
 ##' @export
 "adjMat" <- function(object,...) UseMethod("adjMat")
+##' @export
+"edgeList" <- function(object,...) UseMethod("edgeList")
 
 ##' @export
 adjMat.lvm <- function(object,...) t(object$M)
 
 ##' @export
 adjMat.lvmfit <- function(object,...) adjMat(Model(object),...)
+
+##' @export
+edgeList.lvmfit <- function(object,...) edgeList(Model(object),...)
+
+##' @export
+edgeList.lvm <- function(object,labels=FALSE,...) {
+    edgelist <- data.frame(from=NULL,to=NULL)
+    A <- adjMat(object)
+    for (i in 1:nrow(A)) {
+        ii <- which(A[,i]>0)
+        if (length(ii)>0)
+            edgelist <- rbind(edgelist,data.frame(from=ii,to=i))
+    }
+    if (labels) edgelist <- as.data.frame(apply(edgelist,2,function(x) vars(object)[x]))
+    edgelist
+}
 
 ##' @export
 parents.lvmfit <- function(object,...) parents(Model(object),...)

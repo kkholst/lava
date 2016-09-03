@@ -9,7 +9,7 @@
   intercept = FALSE, addcolor = TRUE, plain = FALSE, cex,
   fontsize1 = 10, noplot = FALSE, graph = list(rankdir = "BT"),
   attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
-  Rgraphviz = lava.options()$Rgraphviz, init = TRUE,
+  engine = lava.options()$plot.engine, init = TRUE,
   layout = lava.options()$layout, edgecolor = lava.options()$edgecolor,
   graph.proc = lava.options()$graph.proc, ...)
 }
@@ -49,7 +49,7 @@ labels}
 automatically be added to the plot (e.g. dashed lines to double-headed
 arrows)}
 
-\item{Rgraphviz}{if FALSE igraph is used for graphics}
+\item{engine}{default 'Rgraphviz' if available, otherwise visNetwork,igraph}
 
 \item{init}{Reinitialize graph (for internal use)}
 

@@ -27,7 +27,7 @@
 ##' @param addstyle Logical argument indicating whether additional style should
 ##' automatically be added to the plot (e.g. dashed lines to double-headed
 ##' arrows)
-##' @param Rgraphviz if FALSE igraph is used for graphics
+##' @param engine default 'Rgraphviz' if available, otherwise visNetwork,igraph
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
 ##' @param edgecolor if TRUE plot style with colored edges
@@ -69,7 +69,7 @@
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
          unexpr=FALSE,
-         addstyle=TRUE,Rgraphviz=lava.options()$Rgraphviz,init=TRUE,
+         addstyle=TRUE,engine=lava.options()$plot.engine,init=TRUE,
          layout=lava.options()$layout,
          edgecolor=lava.options()$edgecolor,
          graph.proc=lava.options()$graph.proc,         
@@ -89,10 +89,18 @@
     x <- do.call(f, list(x=x,...))
   }
 
-  suppressWarnings(igraphit <- !Rgraphviz || !(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE)))
-  if (igraphit) {
+
+    engine <- tolower(engine)
+    if (suppressWarnings(engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE))))) {
+        engine <- "visnetwork"
+    }
+    if (suppressWarnings(engine=="visNetwork" && (!(requireNamespace("visNetwork",quietly=TRUE))))) {
+        engine <- "igraph"
+    }
+                        
+  if (engine=="igraph") {
     if (!requireNamespace("igraph",quietly=TRUE)) {
-      message("package 'Rgraphviz' or 'igraph' not available")
+      message("package 'Rgraphviz','igraph' or 'visNetwork' not available")
       return(NULL)
     }
     L <- igraph::layout.sugiyama(g <- igraph.lvm(x,...))$layout
@@ -103,6 +111,10 @@
     else plot(g,layout=layout,...)
     return(invisible(g))
   }
+  if (engine=="visnetwork") {
+      return(vis.lvm(x,...))
+  }
+    
     if (init) {
         if (graph.proc || edgecolor) {
             x <- beautify(x,edgecol=edgecolor,...)
@@ -163,6 +175,35 @@
 }
 
 ###}}} plot.lvm
+
+
+###{{{ vis.lvm
+
+vis.lvm <- function(m,randomSeed=1,...) {
+    if (!requireNamespace("visNetwork",quietly=TRUE)) stop("'visNetwork' required")
+    types <- rep("endogenous",length(vars(m)))
+    types[index(m)$eta.idx] <- "latent"
+    types[index(m)$exo.idx] <- "exogenous"
+    colors <- rep("orange",length(types))
+    colors[index(m)$eta.idx] <- "yellowgreen"
+    colors[index(m)$exo.idx] <- "lightblue"
+    shapes <- rep("box",length(types))
+    shapes[index(m)$eta.idx] <- "circle"
+    nodes <- data.frame(id=seq_along(types),
+                        label=vars(m),
+                        color=colors,
+                        shape=shapes,
+                        shadow=TRUE,
+                        size=rep(2,length(types)),
+                        group=types)
+    edges <- edgeList(m,...)
+    v <- visNetwork::visNetwork(nodes,edges)
+    v <- visNetwork::visEdges(v, arrows = 'from', scaling = list(min = 2, max = 2))
+    v <- visNetwork::visLayout(v,randomSeed=randomSeed)
+    v
+}
+
+###}}} vis.lvm
 
 ###{{{ plot.lvmfit
 

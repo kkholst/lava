@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.4.4.3
-Date: 2016-09-30
+Version: 1.4.4.4
+Date: 2016-09-04
 Author: Klaus K. Holst
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models.
@@ -21,11 +21,12 @@ Imports:
     stats
 Suggests:
     mets (>= 1.1),
-    graph,
     optimx,    
     data.table,
     Rgraphviz,
+    graph,
     igraph (>= 0.6),
+    visNetwork,
     Matrix,
     KernSmooth,
     lme4,

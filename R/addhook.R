@@ -98,7 +98,7 @@ assign("options", list(
     graph.proc=TRUE,
     min.weight=1e-3,
     exogenous=TRUE,
-    Rgraphviz=TRUE,
+    plot.engine="Rgraphviz",
     edgecolor=FALSE,
     layout="dot",
     ## symbols=c("<-","<->"),

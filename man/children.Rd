@@ -5,6 +5,7 @@
 \alias{ancestors}
 \alias{children}
 \alias{descendants}
+\alias{edgeList}
 \alias{parents}
 \alias{roots}
 \alias{sinks}
