@@ -111,8 +111,10 @@
     else plot(g,layout=layout,...)
     return(invisible(g))
   }
-  if (engine=="visnetwork") {
-      return(vis.lvm(x,...))
+    if (engine=="visnetwork") {
+        g <- vis.lvm(x,...)
+        if (!noplot) print(g)
+        return(g)
   }
     
     if (init) {
@@ -179,7 +181,7 @@
 
 ###{{{ vis.lvm
 
-vis.lvm <- function(m,randomSeed=1,...) {
+vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",...) {
     if (!requireNamespace("visNetwork",quietly=TRUE)) stop("'visNetwork' required")
     types <- rep("endogenous",length(vars(m)))
     types[index(m)$eta.idx] <- "latent"
@@ -196,8 +198,8 @@ vis.lvm <- function(m,randomSeed=1,...) {
                         shadow=TRUE,
                         size=rep(2,length(types)),
                         group=types)
-    edges <- edgeList(m,...)
-    v <- visNetwork::visNetwork(nodes,edges)
+    edges <- edgeList(m)
+    v <- visNetwork::visNetwork(nodes,edges,width=width,height=height,...)
     v <- visNetwork::visEdges(v, arrows = 'from', scaling = list(min = 2, max = 2))
     v <- visNetwork::visLayout(v,randomSeed=randomSeed)
     v
