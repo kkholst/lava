@@ -19,7 +19,7 @@ mat.lvm <- function(x,ii=index(x),...) {
                          cov=seq_len(ii$npar.var)+ii$npar.mean+ii$npar.reg,
                          epar=seq_len(ii$npar.ex)+with(ii,npar.reg+npar.var+npar.mean),
                          cpar=numeric())
-
+    
     idxA <- which(M1==1)
     pidxA <- parBelongsTo$reg
     if (ii$npar.reg>0) {
@@ -183,6 +183,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     ## Constrained...
     constrain.par <- names(constrain(x))
     constrain.idx <- NULL
+    
     if (length(constrain.par)>0) {
         constrain.idx <- list()
         for (p in constrain.par) {
@@ -226,27 +227,33 @@ mat.lvm <- function(x,ii=index(x),...) {
 
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
-    pp <- c(rep(NA,ii$npar.mean),pars)
-    v <- NULL
+    pp <- c(rep(NA,ii$npar.mean),pars,epars)
+    ##v <- NULL
+    v <- ii$v0
     if (!is.null(meanpar) && length(meanpar)>0) {
         pp[seq(ii$npar.mean)] <- meanpar
-        v <- ii$v0; v[v==0] <- 0 ##unlist(x$mean[which(v==0)])
         v[ii$mean[,1]] <- meanpar[ii$mean[,2]]
     }
+
     A <- ii$A
     A[ii$reg[,1]] <- pp[ii$reg[,2]]
     P <- ii$P
     P[ii$cov[,1]] <- pp[ii$cov[,2]]
     e <- NULL
-    if (!is.null(epars)) {
-        e[ii$epar[,1]] <- pp[ii$epar[,2]]
+    if (length(x$expar)>0) {
+        e <- rep(0,length(x$expar))
+        fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
+        if (any(fixed))
+            e[fixed] <- unlist(x$exfix[fixed])        
+        if (nrow(ii$epar)>0)
+            e[ii$epar[,1]] <- pp[ii$epar[,2]]
+        names(e) <- names(x$expar)
     }
 
     parval <- lapply(ii$parval,function(x) {
         res <- pp[x];
         attributes(res) <- attributes(x);
         res })
-
     ## Constrained...
     constrain.par <- names(constrain(x))
     constrain.idx <- NULL
@@ -262,7 +269,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                     parval[xargs] <- (data)[xargs]
                 } else parval[xargs] <- 0
             }
-            val <- unlist(c(parval,constrainpar,x$mean)[attributes(myc)$args])
+            val <- unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args])
             cpar <- myc(val);
             constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
             if (p%in%ii$parname.all) {
@@ -309,7 +316,7 @@ matrices2 <- function(x,p,...) {
     matrices(x,p0,m0,e0,...)
 }
 
-###{{{ matrices Obsolete
+###{{{ matrices, to be superseeded by above definition
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
     A <- ii$A ## Matrix with fixed parameters and ones where parameters are free
