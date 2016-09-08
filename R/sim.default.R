@@ -521,8 +521,8 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
                  function(x) c(Mean=mean(x,na.rm=TRUE),Missing=mean(is.na(x)),SD=sd(x,na.rm=TRUE)))
     if (!is.null(true)) {
         if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
-        est <- rbind(rbind(True=true),rbind(Bias=true-est["Mean",]),
-                     rbind(RMSE=((true-est["Mean",])^2+(est["SD",])^2)^.5),
+        est <- rbind(rbind(True=true),rbind(Bias=est["Mean",]-true),
+                     rbind(RMSE=((est["Mean",]-true)^2+(est["SD",])^2)^.5),
                      est)
     }
     if (!is.null(se)) {
