@@ -2,7 +2,7 @@
 
 ##' @export
 `coef.lvm` <-
-    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=FALSE, ...) {
+    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=lava.options()$coef.names, ...) {
         if (fix)
             object <- fixsome(object,measurement.fix=FALSE)
         if (!missing(p)) {
@@ -152,7 +152,10 @@
 `coef.lvmfit` <-
 function(object, level=ifelse(missing(type),-1,2),
          symbol=lava.options()$symbol,
-         data, std=NULL, labels=TRUE, vcov, 
+         data, std=NULL,
+         labels=lava.options()$coef.names,
+         ##labels=TRUE,
+         vcov, 
          type, reliability=FALSE, second=FALSE, ...) {
 
     res <- (pars.default(object,...))
@@ -440,7 +443,9 @@ coef.multigroup <- function(object,...) {
 ##' @export
 coef.multigroupfit <-
   function(object, level=0,vcov, ext=FALSE,
-           labels=FALSE,symbol=lava.options()$symbol,covsymb=NULL,groups=NULL,...) {
+           labels=lava.options()$coef.names,
+           symbol=lava.options()$symbol,
+           covsymb=NULL,groups=NULL,...) {
 
     if (level==0) {
       res <- pars(object);
@@ -534,7 +539,10 @@ coef.multigroupfit <-
 ###{{{ CoefMat
 
 ##' @export
-CoefMat.multigroupfit <- function(x,level=9,labels=FALSE,symbol=lava.options()$symbol[1],data=NULL,groups=seq(Model(x)$ngroup),...) {
+CoefMat.multigroupfit <- function(x,level=9,
+                                  labels=lava.options()$coef.names,
+                                  symbol=lava.options()$symbol[1],
+                                  data=NULL,groups=seq(Model(x)$ngroup),...) {
 
   cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)
   parpos <- attributes(cc)$parpos

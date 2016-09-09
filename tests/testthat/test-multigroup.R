@@ -6,8 +6,8 @@ test_that("Multiple group I", {
   d <- sim(m,100)
   ## Just a stratified analysis
   e <- estimate(list("Group A"=m,"Group B"=m),list(d,d))
-  expect_equivalent(coef(e)[c(1,3)],coef(lm(y~x,d)))
-  expect_equivalent(coef(e)[c(2,5)],coef(lm(y~x,d)))
+  expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
+  expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
 })
 
 test_that("Multiple group II", {
@@ -17,7 +17,7 @@ test_that("Multiple group II", {
   ## Just a standard linear regression (single group)
   e <- estimate(list(m,m),list(d,d))
   expect_identical(coef(e,level=2)[[1]],coef(e,level=2)[[2]])
-  expect_equivalent(coef(e,level=2)[[1]][1:2,1],coef(lm(y~x,cbind(d,d)))) 
+  expect_true(mean((coef(e,level=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
 })
 
 context("Missing data")
@@ -72,7 +72,7 @@ test_that("Multiple group, constraints", {
     d <- cbind(d1,d2); names(d) <- c(paste0(names(d1),1),paste0(names(d1),2))
     e <- estimate(m,d)
 
-    b1 <- coef(e,2)["beta2",1]
+    b1 <- coef(e,2,labels=TRUE)["beta2",1]
     b2 <- constraints(ee)[1]
     expect_true(mean((b1-b2)^2)<1e-5)
     

@@ -89,11 +89,12 @@ assign("options", list(
     progressbarstyle=3,
     itol=1e-16,
     cluster.index=versioncheck("mets",c(0,2,7)),
-    Dmethod="simple", ##Richardson"
+    Dmethod="simple", ##"Richardson"
     parallel=TRUE,
     param="relative",
     sparse=FALSE,
     test=TRUE,
+    coef.names=FALSE,
     constrain=TRUE,
     graph.proc=TRUE,
     min.weight=1e-3,
