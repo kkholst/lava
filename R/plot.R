@@ -112,7 +112,7 @@
     return(invisible(g))
   }
     if (engine=="visnetwork") {
-        g <- vis.lvm(x,...)
+        g <- vis.lvm(x,labels=labels,...)
         if (!noplot) print(g)
         return(g)
   }
@@ -178,10 +178,9 @@
 
 ###}}} plot.lvm
 
-
 ###{{{ vis.lvm
 
-vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",...) {
+vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=TRUE,...) {
     if (!requireNamespace("visNetwork",quietly=TRUE)) stop("'visNetwork' required")
     types <- rep("endogenous",length(vars(m)))
     types[index(m)$eta.idx] <- "latent"
@@ -196,12 +195,44 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",...) {
                         color=colors,
                         shape=shapes,
                         shadow=TRUE,
-                        size=rep(2,length(types)),
+                        size=rep(1.0,length(types)),
                         group=types)
-    edges <- edgeList(m)
+    edges <- cbind(edgeList(m))#,shadow=TRUE)
+
+    AP <- matrices(m,paste0("p",seq_len(index(m)$npar)))
+    if (labels) {
+        mylab <- AP$A;
+        mylab[!is.na(m$par)] <- m$par[!is.na(m$par)]
+        lab <- c()
+        for (i in seq(nrow(edges))) {
+            lab <- c(lab,t(mylab)[edges[i,1],edges[i,2]])            
+        }
+        edges <- cbind(edges,label=lab)
+    }
+    edges <- cbind(edges,dashes=FALSE,arrows="from")
+
+
+    if (labels && cor) {
+        mylab <- AP$P
+        mylab[!is.na(m$covpar)] <- m$covpar[!is.na(m$covpar)]
+        coredges <- data.frame(from=numeric(),to=numeric(),label=character())        
+        for (i in seq_len(nrow(mylab)-1)) {
+            for (j in seq(i+1,nrow(mylab))) {
+                if (mylab[i,j]!="0") {
+                    coredges <- rbind(coredges,
+                                      data.frame(from=i,to=j,label=mylab[i,j]))
+                }
+            }
+        }
+        coredges <- cbind(coredges,dashes=TRUE,arrows="false")
+        edges <- rbind(edges,coredges)        
+    }
+    
+    edges$physics <- TRUE    
     v <- visNetwork::visNetwork(nodes,edges,width=width,height=height,...)
-    v <- visNetwork::visEdges(v, arrows = 'from', scaling = list(min = 2, max = 2))
-    v <- visNetwork::visLayout(v,randomSeed=randomSeed)
+    v <- visNetwork::visEdges(v, arrows=list(from=list(enabled=TRUE, scaleFactor = 0.5)),
+                              scaling = list(min = 2, max = 2))
+    v <- visNetwork::visLayout(v,randomSeed=randomSeed)    
     v
 }
 
@@ -378,4 +409,5 @@ beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("bla
         }
     }
     x
+
 }
