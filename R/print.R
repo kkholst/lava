@@ -2,7 +2,7 @@
 
 ##' @export
 `print.lvm` <-
-function(x, ...) {
+function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
   res <- NULL
   myhooks <- gethook("print.hooks")
   for (f in myhooks) {
@@ -12,10 +12,12 @@ function(x, ...) {
     k <- length(vars(x))
     L <- rep(FALSE,k); names(L) <- vars(x); L[latent(x)] <- TRUE
     cat("Latent Variable Model\n") ##;" \n\twith: ", k, " variables.\n", sep="");
-    if (k==0)
-      return()
+    if (k==0) {
+        cat("\nEmpty\n")
+        return()
+    }
     ff <- formula(x,char=TRUE,all=TRUE)
-    R <- Rx <- c()
+    R <- Rx <- Rt <- c()
     exo <- exogenous(x)
     for (f in ff) {
       oneline <- as.character(f);
@@ -28,7 +30,8 @@ function(x, ...) {
         col2 <- x$attributes$type[[y]]
         if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
         if (!is.null(Tr)){
-            col2 <- paste0("tranformed(",Tr$x,")")
+            col1 <- paste0(y,' ~ ',paste0(Tr$x,collapse="+"),sep="")
+            Rt <- rbind(Rt, c(col1,""))
         }
         if (!is.null(D$family)) {
             col2 <- paste0(D$family)
@@ -40,7 +43,9 @@ function(x, ...) {
         if (y%in%exo) {
             Rx <- rbind(Rx,c(col1,col2))
         } else {
-            R <- rbind(R,c(col1,col2))
+            if (is.null(Tr)) {
+                R <- rbind(R,c(col1,col2))
+            }
         }
       }
     }
@@ -48,16 +53,17 @@ function(x, ...) {
         rownames(R) <- paste(" ",R[,1]," "); colnames(R) <- rep("",ncol(R))
         print(R[,2,drop=FALSE],quote=FALSE,...)
     }
-    if (length(Rx)>0) {
+    if (print.exogenous && length(Rx)>0) {
         cat("\nExogenous variables:")
         rownames(Rx) <- paste(" ",Rx[,1]," "); colnames(Rx) <- rep("",ncol(Rx))
         print(Rx[,2,drop=FALSE],quote=FALSE,...)
     }
+    if (print.transform && length(Rt)>0) {
+        cat("\nTransformations:")
+        rownames(Rt) <- paste(" ",Rt[,1]," "); colnames(Rt) <- rep("",ncol(Rt))
+        print(Rt[,2,drop=FALSE],quote=FALSE,...)
+    }
     
-
-##      oneline <- as.character(f);
-##      cat(as.character(oneline),"\n")
-
   }
   cat("\n")
   invisible(x)

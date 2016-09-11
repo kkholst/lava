@@ -7,7 +7,26 @@
 }
 
 ##' @export
+print.transform.lvm <- function(x,...) {
+    for (i in seq_along(x)) {
+        cat("Variable: ", names(x)[i],"\n",sep="")
+        cat("Transformation: (",paste0(x[[i]]$x,collapse=","),") -> ",sep="")
+        print(x[[i]]$fun)
+        cat("\n")
+    }
+    invisible(x)
+}
+
+##' @export
 "transform.lvm" <- function(`_data`,formula,fun,post=TRUE,y,x,...) {
+    if (missing(formula)) {
+        ## print
+        if (length(tr <- `_data`$attributes$transform)==0) {
+            return(NULL)
+        }        
+        return(structure(`_data`$attributes$transform,class="transform.lvm"))
+    }
+    
     if (!missing(y) && !missing(x)) {
         xx <- x
     } else {

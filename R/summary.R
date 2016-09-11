@@ -5,29 +5,33 @@
 function(object,...) {
   k <- length(vars(object))
   ## cat("Latent Variable Model \n\twith: ", k, " variables.\n", sep="");
-  print(object)
+  print(object,print.transform=FALSE,...)
+  if (length(transform(object))>0) {
+      cat("\nTransformations:\n")
+      print(transform(object),quote=FALSE,...)
+  }
   cat("\n")
-  cat("Number of free parameters: ", with(index(object),npar+npar.mean+npar.ex),"\n", sep="")
+  if (length(index(object))>0)
+      cat("Number of free parameters: ", with(index(object),npar+npar.mean+npar.ex),"\n", sep="")
 
   if (k==0)
     return()
-##  cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
+  ##cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
   cat("\n")
-  print(regression(object))
-  print(covariance(object))
-  print(intercept(object))
+  print(regression(object),...)
+  print(covariance(object),...)
+  print(intercept(object),...)
   if (length(object$exfix)>0) {
     cat("Additional parameters:\n")
     val <- unlist(object$exfix)
     M <- rbind(val); colnames(M) <- names(val)
     rownames(M) <- "   "
-    print(M,quote=FALSE)
+    print(M,quote=FALSE,...)
   }
   if (length(constrain(object))>0) {
     cat("Non-linear constraints:\n")
-    print(constrain(object),quote=FALSE)
+    print(constrain(object),quote=FALSE,...)
   }
-
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
   cat("\n")
 }

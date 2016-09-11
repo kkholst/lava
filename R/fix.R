@@ -20,17 +20,21 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
             M <- rbind(unlist(x[idx]))
             rownames(M) <- ""
             M[is.na(M)] <- "*"
-        }else{
+        } else {
             M <- NULL
         }
     } else {
-        M <- x$rel[idx,idx,drop=FALSE]
-        M[M==0] <- NA
-        M[M==1] <- "*"
-        M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
-        M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
-        if (attributes(x)$type=="reg")
-            M <- t(M[,idx0,drop=FALSE])
+        if (length(x$rel)==0) {
+            M <- NULL
+        } else {
+            M <- x$rel[idx,idx,drop=FALSE]
+            M[M==0] <- NA
+            M[M==1] <- "*"
+            M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
+            M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
+            if (attributes(x)$type=="reg")
+                M <- t(M[,idx0,drop=FALSE])
+        }
     }
     if (print) {
         M0 <- M
