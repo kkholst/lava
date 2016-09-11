@@ -47,6 +47,8 @@
 ##'          names=c("Model","Sandwich"))
 ##' }
 sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
+    stm <- proc.time()
+    oldtm <- c(0,0,0)
     if (missing(mc.cores) || .Platform$OS.type=="windows") {
         if (.Platform$OS.type=="windows") { ## Disable parallel processing on windows
             mc.cores <- 1L
@@ -92,6 +94,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     mycall <- match.call(expand.dots=FALSE)
     if (inherits(x,c("data.frame","matrix"))) olddata <- x
     if (inherits(x,"sim")) {
+        oldtm <- attr(x,"time")
         oldcall <- attr(x,"call")
         x <- attr(x,"f")
         if (!is.null(f)) x <- f
@@ -126,6 +129,8 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         if (idx.done<R) {
             res <- res[seq(idx.done),,drop=FALSE]
         }
+        attr(res,"time") <- proc.time()-stm+oldtm
+        
         return(res)
     })
     if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
@@ -142,6 +147,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     idx.done <- 0
     count <- 0
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
+    time <- c()
     for (ii in idx) {
         count <- count+1
         if (!missing(cl) && !is.null(cl)) {
@@ -183,13 +189,41 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     x
 }
 
+
+Time <- function(sec,print=FALSE,...) {
+    h <- sec%/%3600
+    m0 <- (sec%%3600)
+    m <- m0%/%60
+    s <- m0%%60
+    res <- c(h=h,m=m,s=s)
+    if (print) {
+        if (h>0) cat(h,"h ",sep="")
+        if (m>0) cat(m,"m ",sep="")
+        cat(s,"s",sep="")
+        return(invisible(res))
+    }
+    return(res)
+}
+
+Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
+    if (is.null(rownames(x))) rownames(x) <- seq(nrow(x))
+    sep <- rbind('---'=rep('',ncol(x)))
+    xx <- format(x,digits=digits,...)
+    if (n<1) {
+        print(xx,quote=FALSE,...)
+    } else {
+        print(rbind(head(xx,n),sep,tail(xx,n)),quote=FALSE,...)
+    }
+    invisible(x)
+}
+
 ##' @export
 print.sim <- function(x,...) {
     attr(x,"f") <- attr(x,"call") <- NULL
     class(x) <- "matrix"
     print(x,...)
+    return(invisible(x))
 }
-
 
 
 ##' Plot sim object
@@ -515,12 +549,19 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
 }
 
-
+##' @export
 print.summary.sim <- function(x,group=TRUE,
                               na.print="",
-                              digits = max(3, getOption("digits") - 4),
+                              digits = max(3, getOption("digits") - 2),
+                              quote=FALSE,
+                              time=TRUE,
                               ...) {
-    cat(attr(x,"n")," replications\n\n",sep="")
+    cat(attr(x,"n")," replications",sep="")
+    if (time) {
+        cat("\t\t\t\t\tTime: ")
+        Time(attr(x,"time")["elapsed"],print=TRUE)
+    }
+    cat("\n\n")
 
     nn <- tolower(rownames(x))
     g1 <- na.omit(match(c("mean","sd"),nn))
@@ -530,16 +571,16 @@ print.summary.sim <- function(x,group=TRUE,
     g5 <- setdiff(seq_along(nn),c(g1,g2,g3,g4))
 
     x0 <- rbind(x[g1,,drop=FALSE],
-                NA,
+                { if(length(g2)>0) NA},
                 x[g2,,drop=FALSE],
-                NA,
+                { if(length(g3)>0) NA},
                 x[g3,,drop=FALSE],
-                NA,
+                { if(length(g4)>0) NA},
                 x[g4,,drop=FALSE],
-                NA,
+                { if(length(g5)>0) NA},
                 x[g5,,drop=FALSE])
-
-    print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,na.print=na.print,...)
+    
+    print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,quote=quote,na.print=na.print,...)
     invisible(x)
 }
 
@@ -570,6 +611,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         return(structure(res,
                          n=NROW(object),
+                         time=attr(object,"time"),
                          class=c("summary.sim","matrix")))
     }
 
@@ -636,5 +678,6 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
 
     return(structure(est,
                      n=NROW(object),
+                     time=attr(object,"time"),
                      class=c("summary.sim","matrix")))
 }

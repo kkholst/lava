@@ -12,7 +12,7 @@
 ##' @importFrom grDevices xy.coords col2rgb rgb colors rainbow
 ##'     topo.colors gray.colors palette colorRampPalette heat.colors
 ##' @importFrom utils stack combn read.csv getTxtProgressBar
-##'     setTxtProgressBar txtProgressBar tail modifyList
+##'     setTxtProgressBar txtProgressBar head tail modifyList
 ##'     getFromNamespace packageVersion write.table methods data
 ##' @importFrom stats density deriv effects lm family simulate vcov
 ##'     var cov cor coef model.frame model.weights as.formula
