@@ -224,8 +224,10 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
                 }
             }
         }
-        coredges <- cbind(coredges,dashes=TRUE,arrows="false")
-        edges <- rbind(edges,coredges)        
+        if (nrow(coredges)>0) {
+            coredges <- cbind(coredges,dashes=TRUE,arrows="false")
+            edges <- rbind(edges,coredges)
+        }
     }
     
     edges$physics <- TRUE    
