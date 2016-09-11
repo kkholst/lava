@@ -5,14 +5,14 @@
 \alias{plot.sim}
 \title{Plot sim object}
 \usage{
-\method{density}{sim}(x, plot.type = "single", ...)
+\method{density}{sim}(x, ..., plot.type = "single")
 }
 \arguments{
 \item{x}{sim object}
 
-\item{plot.type}{Single or multiple plots}
+\item{...}{Graphical arguments to plot.sim}
 
-\item{...}{Additional graphical arguments}
+\item{plot.type}{Single or multiple plots}
 }
 \description{
 Plot sim object
@@ -31,6 +31,6 @@ plot.sim(val,estimate=c(1,2,3),equal=TRUE,byrow=TRUE)
 plot.sim(val,estimate=c(1,2,3),plot.type="single")
 plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single")
 
-density.sim(val,estimate=c(1,2,3))
+density.sim(val,estimate=c(1,2,3),polygon.density=c(0,10,10),polygon.angle=c(0,45,-45))
 }
 

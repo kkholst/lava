@@ -524,7 +524,7 @@ print.summary.sim <- function(x,group=TRUE,
 
     nn <- tolower(rownames(x))
     g1 <- na.omit(match(c("mean","sd"),nn))
-    g2 <- na.omit(c(match("min",nn),grep("%",rownames(a)),match("max",nn)))
+    g2 <- na.omit(c(match("min",nn),grep("%",nn),match("max",nn)))
     g3 <- na.omit(match(c("na","missing"),nn))
     g4 <- na.omit(match(c("true","bias","rmse"),nn))
     g5 <- setdiff(seq_along(nn),c(g1,g2,g3,g4))
@@ -573,7 +573,12 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
                          class=c("summary.sim","matrix")))
     }
 
-    est <- apply(object[,estimate,drop=FALSE],2,mfun)
+    if (!is.null(estimate)) {
+        est <- apply(object[,estimate,drop=FALSE],2,mfun)
+    } else {
+        est <- apply(object,2,mfun)
+    }
+    
     if (!is.null(true)) {
         if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
         est <- rbind(est,
