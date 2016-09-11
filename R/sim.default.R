@@ -18,7 +18,7 @@
 ##' distribution(m,~y) <- 0
 ##' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
 ##' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
-##'
+
 ##' onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
 ##'     d <- sim(m,n,p=c("y~x"=b0))
 ##'     l <- lm(y~x,d)
@@ -29,14 +29,14 @@
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
 ##' }
-##'
+
 ##' val <- sim(onerun,R=10,b0=1,messages=0,mc.cores=1)
 ##' val
 ##' val <- sim(val,R=40,b0=1,mc.cores=1) ## append results
-##'
+
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-##'
+
 ##' if (interactive()) {
 ##'     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
 ##'     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
@@ -208,14 +208,14 @@ print.sim <- function(x,...) {
 ##' plot.sim(val,estimate=c(1,2,3),plot.type="single")
 ##' plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single")
 ##'
-##' density.sim(val,estimate=c(1,2,3))
+##' density.sim(val,estimate=c(1,2,3),polygon.density=c(0,10,10),polygon.angle=c(0,45,-45))
 ##' @param x sim object
+##' @param ... Graphical arguments to plot.sim
 ##' @param plot.type Single or multiple plots
-##' @param ... Additional graphical arguments
 ##' @aliases density.sim plot.sim
 ##' @export
 ##' @export density.sim
-density.sim <- function(x,plot.type="single",...) {
+density.sim <- function(x,...,plot.type="single") {
     plot.sim(x,...,scatter.plot=FALSE,plot.type=plot.type)
 }
 
@@ -233,10 +233,12 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                      true.lty=2,true.col="gray70",true.lwd=1.2,
                      legend,
                      legendpos="topleft",
-                     cex.legend=0.6,
+                     cex.legend=0.8,
                      plot.type=c("multiple","single"),
                      polygon=TRUE,
-                     cex.axis=0.5,
+                     polygon.density=0,
+                     polygon.angle=-45,
+                     cex.axis=0.8,
                      alpha=0.5,
                      rug=TRUE,
                      rug.alpha=0.5,
@@ -393,7 +395,12 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         }
     }
 
-    my.density.sim <- function(i,add=FALSE,colors,alphas=density.alpha,auto.legend=TRUE,...) {
+    my.density.sim <- function(i,add=FALSE,colors,
+                               alphas=density.alpha,
+                               auto.legend=TRUE,
+                               densities=NULL,
+                               angles=polygon.angle,
+                               ...) {
         ii <- estimate[i]
         y <- as.vector(x[,ii])
         if (!missing(colors)) {
@@ -414,7 +421,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             }
             if (!add) graphics::plot(0,0,type="n",main="",ylab=density.ylab,xlab=xlab,ylim=density.ylim0,xlim=density.xlim0)
             if (polygon) {
-                with(dy, graphics::polygon(c(x,rev(x)),c(y,rep(0,length(y))),col=Col(density.col[1],alpha=alphas[1]),border=NA))
+                with(dy, graphics::polygon(c(x,rev(x)),c(y,rep(0,length(y))),col=Col(density.col[1],alpha=alphas[1]),border=NA,density=densities[1],angle=angles[1]))
                 if (!is.null(border)) with(dy, lines(x,y,col=border[1],lty=density.lty[1],lwd=density.lwd[1]))
             } else {
                 graphics::lines(dy,main="",lty=density.lty[1],col=density.col[1],lwd=density.lwd[1])
@@ -438,7 +445,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 for (j in seq_along(se.pos)) {
                     if (polygon) {
                         yy <- dnorm(xx,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]])
-                        if (se.alpha[j]>0) graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA)
+                        if (se.alpha[j]>0) graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA,density=densities[j],angle=angles[j])
                         if (!is.null(border)) lines(xx,yy,col=se.border[j],lty=se.lty[j],lwd=se.lwd[j])
                     } else {
                         graphics::curve(dnorm(x,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]]),lwd=se.lwd[j],lty=se.lty[j],col=se.col[j],add=TRUE)
@@ -477,10 +484,17 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         legendold <- legend
         legend <- NULL
         density.alpha <- rep(density.alpha,length.out=K)
+        polygon.density <- rep(polygon.density,length.out=K)
+        polygon.angle <- rep(polygon.angle,length.out=K)
         for (i in seq(K)) {
             alphas <- density.alpha[i]
+            densities <- polygon.density[i]
+            if (!is.null(densities) && densities<1) densities <- NULL
             if (length(se)>0) alphas <- c(alphas,rep(0,nk[i]))
-            my.density.sim(i,add=(i>1),colors=col[i],alphas=alphas,auto.legend=FALSE)
+            my.density.sim(i,add=(i>1),colors=col[i],alphas=alphas,
+                           densities=densities,
+                           angles=polygon.angle[i],
+                           auto.legend=FALSE)
         }
         if (!is.null(legendold)) {
             legend <- rep(legendold,length.out=K)
@@ -501,29 +515,71 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
 }
 
+
+print.summary.sim <- function(x,group=TRUE,
+                              na.print="",
+                              digits = max(3, getOption("digits") - 4),
+                              ...) {
+    cat(attr(x,"n")," replications\n\n",sep="")
+
+    nn <- tolower(rownames(x))
+    g1 <- na.omit(match(c("mean","sd"),nn))
+    g2 <- na.omit(c(match("min",nn),grep("%",rownames(a)),match("max",nn)))
+    g3 <- na.omit(match(c("na","missing"),nn))
+    g4 <- na.omit(match(c("true","bias","rmse"),nn))
+    g5 <- setdiff(seq_along(nn),c(g1,g2,g3,g4))
+
+    x0 <- rbind(x[g1,,drop=FALSE],
+                NA,
+                x[g2,,drop=FALSE],
+                NA,
+                x[g3,,drop=FALSE],
+                NA,
+                x[g4,,drop=FALSE],
+                NA,
+                x[g5,,drop=FALSE])
+
+    print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,na.print=na.print,...)
+    invisible(x)
+}
+
+
 ##' @export
 ##' @export summary.sim
-summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,names=NULL,unique.names=TRUE,level=0.95,...) {
-    if (missing(fun)) fun <- function(x) {
-        pp <- c(.025,.5,.975)
-        res <- c(mean(x,na.rm=TRUE),sd(x,na.rm=TRUE),quantile(x,c(0,pp,1),na.rm=TRUE),
+summary.sim <- function(object,estimate=NULL,se=NULL,
+                        confint=NULL,true=NULL,
+                        fun,names=NULL,unique.names=TRUE,
+                        level=0.95,quantiles=c(.025,0.5,.975),...) {
+    mfun <- function(x) {
+        res <- c(mean(x,na.rm=TRUE),
+                 sd(x,na.rm=TRUE),
+                 quantile(x,c(0,quantiles,1),na.rm=TRUE),
                  mean(is.na(x)))
-        names(res) <- c("Mean","SD","Min",paste0(pp*100,"%"),"Max","Missing")
+        names(res) <- c("Mean","SD","Min",paste0(quantiles*100,"%"),"Max","Missing")
         res
     }
-    if (is.null(estimate) && is.null(confint)) return(apply(object,2,fun))
-
-    if (is.character(estimate)) {
+    if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
+    if (!missing(fun)) {
+        if (!is.null(estimate)) object <- object[,estimate,drop=FALSE]
+        res <- apply(object,2,fun)
+        if (is.null(dim(res))) {
+            res <- rbind(res)
+            rownames(res) <- names(fun(0))
+        }
+        return(structure(res,
+                         n=NROW(object),
+                         class=c("summary.sim","matrix")))
+    }
 
-    est <- apply(object[,estimate,drop=FALSE],2,
-                 function(x) c(Mean=mean(x,na.rm=TRUE),Missing=mean(is.na(x)),SD=sd(x,na.rm=TRUE)))
+    est <- apply(object[,estimate,drop=FALSE],2,mfun)
     if (!is.null(true)) {
         if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
-        est <- rbind(rbind(True=true),rbind(Bias=est["Mean",]-true),
-                     rbind(RMSE=((est["Mean",]-true)^2+(est["SD",])^2)^.5),
-                     est)
+        est <- rbind(est,
+                     rbind(True=true),rbind(Bias=est["Mean",]-true),
+                     rbind(RMSE=((est["Mean",]-true)^2+(est["SD",])^2)^.5)
+                     )
     }
     if (!is.null(se)) {
         if (is.character(se)) {
@@ -572,5 +628,8 @@ summary.sim <- function(object,estimate=NULL,se=NULL,confint=NULL,true=NULL,fun,
     if (unique.names) {
         colnames(est) <- make.unique(colnames(est))
     }
-    return(est)
+
+    return(structure(est,
+                     n=NROW(object),
+                     class=c("summary.sim","matrix")))
 }
