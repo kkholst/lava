@@ -48,7 +48,7 @@
 ##' }
 sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
     stm <- proc.time()
-    oldtm <- c(0,0,0)
+    oldtm <- rep(0,5)
     if (missing(mc.cores) || .Platform$OS.type=="windows") {
         if (.Platform$OS.type=="windows") { ## Disable parallel processing on windows
             mc.cores <- 1L
