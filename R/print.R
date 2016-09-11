@@ -24,8 +24,12 @@ function(x, ...) {
       {
         col1 <- as.character(oneline)          
         D <- attributes(distribution(x)[[y]])$family
-        col2 <- x$attributes$type[y]
+        Tr <- x$attributes$transform[[y]]
+        col2 <- x$attributes$type[[y]]
         if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
+        if (!is.null(Tr)){
+            col2 <- paste0("tranformed(",Tr$x,")")
+        }
         if (!is.null(D$family)) {
             col2 <- paste0(D$family)
         }

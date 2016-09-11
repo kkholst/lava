@@ -11,30 +11,34 @@ print.fix <- function(x,exo=FALSE,...) {
 }
 
 linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
-  idx <- seq_len(attributes(x)$nvar)
-  idx0 <- setdiff(idx,attributes(x)$exo.idx)
-  if (!exo & attributes(x)$type!="reg")
-    idx <- idx0
-  if (attributes(x)$type=="mean") {
-    M <- rbind(unlist(x[idx]))
-    rownames(M) <- ""
-    M[is.na(M)] <- "*"
-  } else {
-    M <- x$rel[idx,idx,drop=FALSE]
-    M[M==0] <- NA
-    M[M==1] <- "*"
-    M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
-    M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
-    if (attributes(x)$type=="reg")
-        M <- t(M[,idx0,drop=FALSE])
-  }
-  if (print) {
-    M0 <- M
-    if (NROW(M)>0)
-      rownames(M0) <- paste(indent,rownames(M))
-    print(M0,quote=FALSE,na.print="",...)
-  }
-  invisible(M)
+    idx <- seq_len(attributes(x)$nvar)
+    idx0 <- setdiff(idx,attributes(x)$exo.idx)
+    if (!exo & attributes(x)$type!="reg")
+        idx <- idx0
+    if (attributes(x)$type=="mean") {
+        if (length(idx)>0){
+            M <- rbind(unlist(x[idx]))
+            rownames(M) <- ""
+            M[is.na(M)] <- "*"
+        }else{
+            M <- NULL
+        }
+    } else {
+        M <- x$rel[idx,idx,drop=FALSE]
+        M[M==0] <- NA
+        M[M==1] <- "*"
+        M[which(!is.na(x$labels[idx,idx]))] <- x$labels[idx,idx][which(!is.na(x$labels[idx,idx]))]
+        M[which(!is.na(x$values[idx,idx]))] <- x$values[idx,idx][which(!is.na(x$values[idx,idx]))]
+        if (attributes(x)$type=="reg")
+            M <- t(M[,idx0,drop=FALSE])
+    }
+    if (print) {
+        M0 <- M
+        if (NROW(M)>0)
+            rownames(M0) <- paste(indent,rownames(M))
+        print(M0,quote=FALSE,na.print="",...)
+    }
+    invisible(M)
 }
 
 ###}}} print.fix
