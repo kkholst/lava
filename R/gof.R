@@ -85,13 +85,17 @@ rsq <- function(x,stderr=FALSE) {
             rpar <- paste(v,lat,sep=lava.options()$symbol[1])
             fix <- c(x$model$fix[lat,v,drop=TRUE])
             pp <- coef(x)
+            if (inherits(x,"lvm.missing")) {
+                mp <- match(coef(x$model),names(coef(x)))
+                pp <- pp[mp]
+            }
             idx1 <- x$model$parpos$A[lat,v]
             ##idx2 <- x$model$parpos$P[lat,lat]
             ##idx3 <- x$model$parpos$P[cbind(v,v)]
             p0 <- c(idx1)
             p1 <- setdiff(unique(p0),0)
             p2 <- match(p0,p1)
-            p <- coef(x)[p1]
+            p <- pp[p1]
             p. <- p[p2]
             p.[is.na(p.)] <- fix[is.na(p.)]
             k <- length(v)
