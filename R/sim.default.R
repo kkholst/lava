@@ -18,7 +18,7 @@
 ##' distribution(m,~y) <- 0
 ##' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
 ##' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
-
+##'
 ##' onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
 ##'     d <- sim(m,n,p=c("y~x"=b0))
 ##'     l <- lm(y~x,d)
@@ -29,14 +29,15 @@
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
 ##' }
-
 ##' val <- sim(onerun,R=10,b0=1,messages=0,mc.cores=1)
 ##' val
+##'
 ##' val <- sim(val,R=40,b0=1,mc.cores=1) ## append results
-
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
+##'
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-
+##' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),names=c("Model","Sandwich"),confint=TRUE)
+##'
 ##' if (interactive()) {
 ##'     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
 ##'     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
@@ -130,7 +131,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
             res <- res[seq(idx.done),,drop=FALSE]
         }
         attr(res,"time") <- proc.time()-stm+oldtm
-        
+
         return(res)
     })
     if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
@@ -208,11 +209,12 @@ Time <- function(sec,print=FALSE,...) {
 Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
     if (is.null(rownames(x))) rownames(x) <- seq(nrow(x))
     sep <- rbind('---'=rep('',ncol(x)))
-    xx <- format(x,digits=digits,...)
     if (n<1) {
-        print(xx,quote=FALSE,...)
+        print(x,quote=FALSE,digits=digits,...)
     } else {
-        print(rbind(head(xx,n),sep,tail(xx,n)),quote=FALSE,...)
+        hd <- base::as.matrix(base::format(utils::head(x,n),digits=digits,...))
+        tl <- base::as.matrix(base::format(utils::tail(x,n),digits=digits,...))
+        print(rbind(hd,sep,tl),quote=FALSE,...)
     }
     invisible(x)
 }
@@ -221,7 +223,7 @@ Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
 print.sim <- function(x,...) {
     attr(x,"f") <- attr(x,"call") <- NULL
     class(x) <- "matrix"
-    print(x,...)
+    Print(x,...)
     return(invisible(x))
 }
 
@@ -232,7 +234,7 @@ print.sim <- function(x,...) {
 ##' n <- 1000
 ##' val <- cbind(est1=rnorm(n,sd=1),est2=rnorm(n,sd=0.2),est3=rnorm(n,1,sd=0.5),
 ##'              sd1=runif(n,0.8,1.2),sd2=runif(n,0.1,0.3),sd3=runif(n,0.25,0.75))
-##'
+
 ##' plot.sim(val,estimate=c(1,2),true=c(0,0),se=c(4,5),equal=TRUE)
 ##' plot.sim(val,estimate=c(1,3),true=c(0,1),se=c(4,6),density.xlim=c(-3,3),ylim=c(-3,3))
 ##' plot.sim(val,estimate=c(1,2),true=c(0,0),se=c(4,5),equal=TRUE,plot.type="single")
@@ -241,7 +243,7 @@ print.sim <- function(x,...) {
 ##' plot.sim(val,estimate=c(1,2,3),equal=TRUE,byrow=TRUE)
 ##' plot.sim(val,estimate=c(1,2,3),plot.type="single")
 ##' plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single")
-##'
+
 ##' density.sim(val,estimate=c(1,2,3),polygon.density=c(0,10,10),polygon.angle=c(0,45,-45))
 ##' @param x sim object
 ##' @param ... Graphical arguments to plot.sim
@@ -557,7 +559,7 @@ print.summary.sim <- function(x,group=TRUE,
                               time=TRUE,
                               ...) {
     cat(attr(x,"n")," replications",sep="")
-    if (time) {
+    if (time && !is.null(attr(x,"time"))) {
         cat("\t\t\t\t\tTime: ")
         Time(attr(x,"time")["elapsed"],print=TRUE)
     }
@@ -579,7 +581,7 @@ print.summary.sim <- function(x,group=TRUE,
                 x[g4,,drop=FALSE],
                 { if(length(g5)>0) NA},
                 x[g5,,drop=FALSE])
-    
+
     print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,quote=quote,na.print=na.print,...)
     invisible(x)
 }
@@ -599,6 +601,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         names(res) <- c("Mean","SD","Min",paste0(quantiles*100,"%"),"Max","Missing")
         res
     }
+    tm <- attr(object,"time")
     if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
@@ -611,7 +614,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         return(structure(res,
                          n=NROW(object),
-                         time=attr(object,"time"),
+                         time=tm,
                          class=c("summary.sim","matrix")))
     }
 
@@ -620,7 +623,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     } else {
         est <- apply(object,2,mfun)
     }
-    
+
     if (!is.null(true)) {
         if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
         est <- rbind(est,
@@ -678,6 +681,6 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
 
     return(structure(est,
                      n=NROW(object),
-                     time=attr(object,"time"),
+                     time=tm,
                      class=c("summary.sim","matrix")))
 }
