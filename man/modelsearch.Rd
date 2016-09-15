@@ -35,7 +35,7 @@ m0 <- m; regression(m0) <- y2 ~ x
 dd <- sim(m0,100)[,manifest(m0)]
 e <- estimate(m,dd);
 modelsearch(e,silent=TRUE)
-modelsearch(e,silent=TRUE,type="reg")
+modelsearch(e,silent=TRUE,type="cor")
 }
 \author{
 Klaus K. Holst

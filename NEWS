@@ -8,6 +8,9 @@
   - layout added to lava.options
   - bootstrap.lvmfit return by default original estimates
   - visNetwork support
+  - print, transform methods updated (transform output)
+  - modelsearch by default now shows any directional or undirectional associations (type='all' vs type='cor')
+  - sim.default now stores timings. New print functions (data.table like)
 
 * Version 1.4.4 <2016-08-13 Sat>
   - estimate.default will now use the id-variable of an 'estimate'
