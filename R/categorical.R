@@ -14,7 +14,11 @@ categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) 
         }
     }
     if (!missing(p)) {
-        if (!missing(K) && K!=length(p)+1) stop("Wrong dimension of 'p'")
+        if (!missing(K) && !(K==length(p) || K==length(p)+1)) stop("Wrong dimension of 'p'")
+        if (length(K)==length(p)) {
+            if (!identical(sum(p),1.0)) stop("Not a probability vector")
+            p <- p[-length(p)]
+        }
         if (is.numeric(p) && sum(p)>1) warning("'p' sum > 1")
         if (is.logical(all.equal(1.0,sum(p)))) p <- p[-length(p)]
     }

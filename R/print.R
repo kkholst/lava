@@ -27,7 +27,7 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
         col1 <- as.character(oneline)          
         D <- attributes(distribution(x)[[y]])$family
         Tr <- x$attributes$transform[[y]]
-        col2 <- x$attributes$type[[y]]
+        col2 <- tryCatch(x$attributes$type[[y]],error=function(...) NULL)
         if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
         if (!is.null(Tr)){
             col1 <- paste0(y,' ~ ',paste0(Tr$x,collapse="+"),sep="")

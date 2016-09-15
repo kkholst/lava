@@ -68,6 +68,7 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
         }
         else {
             S0 <- S
+            S0[is.na(S0)] <- 0
             mu0 <- mu
             e0 <- eigen(S0)
             thres <- lava.options()$itol^(1/2)
