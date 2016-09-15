@@ -4,7 +4,7 @@
 \alias{modelsearch}
 \title{Model searching}
 \usage{
-modelsearch(x, k = 1, dir = "forward", ...)
+modelsearch(x, k = 1, dir = "forward", type = "all", ...)
 }
 \arguments{
 \item{x}{\code{lvmfit}-object}
@@ -16,7 +16,9 @@ the number of additional associations to be added instead of \code{rel}.}
 associations/arrows to model/graph (score tests), "backward" := remove
 associations/arrows from model/graph (wald test)}
 
-\item{\dots}{Additional arguments to be passed to the low level functions}
+\item{type}{If equal to 'correlation' only consider score tests for covariance parameters. If equal to 'regression' go through direct effects only  (default 'all' is to do both)}
+
+\item{...}{Additional arguments to be passed to the low level functions}
 }
 \value{
 Matrix of test-statistics and p-values
@@ -33,7 +35,7 @@ m0 <- m; regression(m0) <- y2 ~ x
 dd <- sim(m0,100)[,manifest(m0)]
 e <- estimate(m,dd);
 modelsearch(e,silent=TRUE)
-
+modelsearch(e,silent=TRUE,type="reg")
 }
 \author{
 Klaus K. Holst

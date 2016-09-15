@@ -10,7 +10,8 @@
 ##' @param dir Direction to do model search. "forward" := add
 ##' associations/arrows to model/graph (score tests), "backward" := remove
 ##' associations/arrows from model/graph (wald test)
-##' @param \dots Additional arguments to be passed to the low level functions
+##' @param type If equal to 'correlation' only consider score tests for covariance parameters. If equal to 'regression' go through direct effects only  (default 'all' is to do both)
+##' @param ... Additional arguments to be passed to the low level functions
 ##' @return Matrix of test-statistics and p-values
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{compare}}, \code{\link{equivalence}}
@@ -24,11 +25,16 @@
 ##' dd <- sim(m0,100)[,manifest(m0)]
 ##' e <- estimate(m,dd);
 ##' modelsearch(e,silent=TRUE)
-##'
+##' modelsearch(e,silent=TRUE,type="reg")
 ##' @export
-modelsearch <- function(x,k=1,dir="forward",...) {
+modelsearch <- function(x,k=1,dir="forward",type="all",...) {
     if (dir=="forward") {
-        res <- forwardsearch(x,k,...)
+        if (tolower(type)=="all") {
+            res1 <- forwardsearch(x,k,type="cor",...)
+            res2 <- forwardsearch(x,k,type="reg",...)
+            return(list(regression=res2,correlation=res1))
+        }
+        res <- forwardsearch(x,k,type=type,...)
         return(res)
     }
     if (dir=="backstep") {
@@ -146,7 +152,7 @@ backwardsearch <- function(x,k=1,...) {
     res
 }
 
-forwardsearch <- function(x,k=1,silent=FALSE,...) {
+forwardsearch <- function(x,k=1,silent=FALSE,type='cor',...) {
     if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     
     p <- pars(x,reorder=TRUE)
@@ -165,6 +171,8 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         return()
     }
 
+    directional <- !(tolower(type)%in%c("cor","correlation","cov","covariance"))
+
     Tests <- c(); Vars <- list()
     AP <- with(index(cur),A+t(A)+P)
     restricted <- c()
@@ -175,6 +183,10 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             }
 
     if (is.null(restricted)) return(NULL)
+    if (directional) {
+        restricted <- rbind(restricted,restricted[,2:1])
+    }
+    
     restrictedcomb <- utils::combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
 
     if (!inherits(model.frame(x),c("data.frame","matrix"))) {
@@ -203,6 +215,9 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             if (any(wx <- V[myvar]%in%X)) {
                 altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
             } else {
+                if (directional) {
+                    covariance(altmodel,pairwise=TRUE) <- V[myvar]
+                }
                 covariance(altmodel,pairwise=TRUE) <- V[myvar]
             }
             varlist <- rbind(varlist, V[myvar])

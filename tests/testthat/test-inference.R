@@ -119,8 +119,10 @@ test_that("modelsearch and GoF", {
     e <- estimate(lvm(c(y1,y2)~1,y1~x),d)
     e0 <- estimate(lvm(c(y1,y2)~x,y1~~y2),d)
 
-    s1 <- modelsearch(e,silent=TRUE)
+    s1 <- modelsearch(e,silent=TRUE,type="correlation")
     expect_true(nrow(s1$res)==2)
+    s1b <- modelsearch(e,silent=TRUE,type="regression")
+    expect_true(nrow(s1b$res)==4)
     s2 <- modelsearch(e0,silent=TRUE,dir="backward")
     expect_true(nrow(s2$res)==3)
     e00 <- estimate(e0,vcov=vcov(e0))$coefmat
