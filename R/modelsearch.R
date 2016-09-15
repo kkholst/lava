@@ -10,7 +10,8 @@
 ##' @param dir Direction to do model search. "forward" := add
 ##' associations/arrows to model/graph (score tests), "backward" := remove
 ##' associations/arrows from model/graph (wald test)
-##' @param \dots Additional arguments to be passed to the low level functions
+##' @param type If equal to 'correlation' only consider score tests for covariance parameters. If equal to 'regression' go through direct effects only  (default 'all' is to do both)
+##' @param ... Additional arguments to be passed to the low level functions
 ##' @return Matrix of test-statistics and p-values
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{compare}}, \code{\link{equivalence}}
@@ -24,11 +25,11 @@
 ##' dd <- sim(m0,100)[,manifest(m0)]
 ##' e <- estimate(m,dd);
 ##' modelsearch(e,silent=TRUE)
-##'
+##' modelsearch(e,silent=TRUE,type="cor")
 ##' @export
-modelsearch <- function(x,k=1,dir="forward",...) {
+modelsearch <- function(x,k=1,dir="forward",type='all',...) {
     if (dir=="forward") {
-        res <- forwardsearch(x,k,...)
+        res <- forwardsearch(x,k,type=type,...)
         return(res)
     }
     if (dir=="backstep") {
@@ -146,7 +147,7 @@ backwardsearch <- function(x,k=1,...) {
     res
 }
 
-forwardsearch <- function(x,k=1,silent=FALSE,...) {
+forwardsearch <- function(x,k=1,silent=FALSE,type='all',...) {
     if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     
     p <- pars(x,reorder=TRUE)
@@ -165,6 +166,9 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         return()
     }
 
+    directional <- !(tolower(type)%in%c("cor","correlation","cov","covariance"))
+    all <- tolower(type)%in%c("all","both")
+   
     Tests <- c(); Vars <- list()
     AP <- with(index(cur),A+t(A)+P)
     restricted <- c()
@@ -175,8 +179,20 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             }
 
     if (is.null(restricted)) return(NULL)
+    if (all) {
+        ntest <- nrow(restricted)
+        directional <- rep(FALSE,ntest)
+        restricted <- rbind(restricted,restricted,restricted[,2:1])
+        directional <- c(directional,rep(TRUE,2*ntest))
+    } else {
+        if (directional) {
+            restricted <- rbind(restricted,restricted[,2:1])
+        }
+        directional <- rep(directional, nrow(restricted))
+    }  
+    
     restrictedcomb <- utils::combn(seq_len(nrow(restricted)), k) # Combinations of k-additions to the model
-
+    
     if (!inherits(model.frame(x),c("data.frame","matrix"))) {
         n <- model.frame(x)$n
         S <- model.frame(x)$S
@@ -203,6 +219,9 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
             if (any(wx <- V[myvar]%in%X)) {
                 altmodel <- regression(altmodel,V[myvar][which(!wx)],V[myvar][which(wx)])
             } else {
+                if (directional[i]) {
+                    covariance(altmodel,pairwise=TRUE) <- V[myvar]
+                }
                 covariance(altmodel,pairwise=TRUE) <- V[myvar]
             }
             varlist <- rbind(varlist, V[myvar])
@@ -241,13 +260,12 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
     if (!silent) close(pb)
     ord <- order(Tests);
     Tests <- cbind(Tests, pchisq(Tests,k,lower.tail=FALSE)); colnames(Tests) <- c("Test Statistic", "P-value")
-    Tests <- Tests[ord,,drop=FALSE]
-    Vars <- Vars[ord]
     PM <- c()
     for (i in seq_len(nrow(Tests))) {
         if (!is.na(Tests[i,1])) {
-            vv <- apply(Vars[[i]],1,function(x) paste(x,collapse=lava.options()$symbol[2]))
-            newrow <- c(formatC(Tests[i,1]), formatC(Tests[i,2]), paste(vv,collapse=", "))
+            vv <- apply(Vars[[i]],1,function(x) paste(x,collapse=lava.options()$symbol[2-directional[i]]))
+            newrow <- c(formatC(Tests[i,1]), formatC(Tests[i,2]),                        
+                        paste(vv,collapse=","))
             PM <- rbind(PM, newrow)
         }
     }
@@ -255,8 +273,12 @@ forwardsearch <- function(x,k=1,silent=FALSE,...) {
         message("Saturated model")
         return(invisible(NULL))
     }
+    Tests <- Tests[ord,,drop=FALSE]
+    Vars <- Vars[ord]
+    PM <- PM[ord,,drop=FALSE]
+    
     colnames(PM) <- c("Score: S", "P(S>s)", "Index"); rownames(PM) <- rep("",nrow(PM))
-    res <- list(res=PM, test=Tests, var=Vars)
+    res <- list(res=PM, test=Tests, var=Vars, directional=directional)
     class(res) <- "modelsearch"
     return(res)
 }
