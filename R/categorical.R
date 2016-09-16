@@ -1,5 +1,5 @@
 ##' @export
-categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) {
+categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,exo=TRUE,...) {
 
     if (is.character(formula)) {
         regr <- FALSE
@@ -33,7 +33,7 @@ categorical <- function(x,formula,K,beta,p,liability=FALSE,regr.only=FALSE,...) 
         if (missing(p)) p <- rep(1/K,K-1)
         pname <- names(p)
         if (is.null(pname)) pname <- rep(NA,K-1)
-        ordinal(x,K=K,liability=liability,p=p,constrain=pname,...) <- X
+        ordinal(x,K=K,liability=liability,p=p,constrain=pname,exo=exo,...) <- X
         if (!regr) return(x)
     }
 

@@ -27,7 +27,7 @@
 ##' @param addstyle Logical argument indicating whether additional style should
 ##' automatically be added to the plot (e.g. dashed lines to double-headed
 ##' arrows)
-##' @param engine default 'Rgraphviz' if available, otherwise visNetwork,igraph
+##' @param plot.engine default 'Rgraphviz' if available, otherwise visNetwork,igraph
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
 ##' @param edgecolor if TRUE plot style with colored edges
@@ -69,7 +69,7 @@
   function(x,diag=FALSE,cor=TRUE,labels=FALSE,intercept=FALSE,addcolor=TRUE,plain=FALSE,cex,fontsize1=10,noplot=FALSE,graph=list(rankdir="BT"),
          attrs=list(graph=graph),
          unexpr=FALSE,
-         addstyle=TRUE,engine=lava.options()$plot.engine,init=TRUE,
+         addstyle=TRUE,plot.engine=lava.options()$plot.engine,init=TRUE,
          layout=lava.options()$layout,
          edgecolor=lava.options()$edgecolor,
          graph.proc=lava.options()$graph.proc,         
@@ -80,25 +80,25 @@
       return(NULL)
     }
   index(x) <- reindex(x)
-  if (length(index(x)$vars)<2) {
-    message("Not available for models with fewer than two variables")
-    return(NULL)
-  }
+  ## if (length(index(x)$vars)<2) {
+  ##     message("Not available for models with fewer than two variables")
+  ##     return(NULL)
+  ## }
   myhooks <- gethook("plot.post.hooks")
   for (f in myhooks) {
     x <- do.call(f, list(x=x,...))
   }
 
 
-    engine <- tolower(engine)
-    if (suppressWarnings(engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE))))) {
-        engine <- "visnetwork"
+    plot.engine <- tolower(plot.engine)
+    if (suppressWarnings(plot.engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE))))) {
+        plot.engine <- "visnetwork"
     }
-    if (suppressWarnings(engine=="visNetwork" && (!(requireNamespace("visNetwork",quietly=TRUE))))) {
-        engine <- "igraph"
+    if (suppressWarnings(plot.engine=="visNetwork" && (!(requireNamespace("visNetwork",quietly=TRUE))))) {
+        plot.engine <- "igraph"
     }
                         
-  if (engine=="igraph") {
+  if (plot.engine=="igraph") {
     if (!requireNamespace("igraph",quietly=TRUE)) {
       message("package 'Rgraphviz','igraph' or 'visNetwork' not available")
       return(NULL)
@@ -111,7 +111,7 @@
     else plot(g,layout=layout,...)
     return(invisible(g))
   }
-    if (engine=="visnetwork") {
+    if (plot.engine=="visnetwork") {
         g <- vis.lvm(x,labels=labels,...)
         if (!noplot) print(g)
         return(g)
@@ -185,9 +185,14 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
     types <- rep("endogenous",length(vars(m)))
     types[index(m)$eta.idx] <- "latent"
     types[index(m)$exo.idx] <- "exogenous"
-    colors <- rep("orange",length(types))
-    colors[index(m)$eta.idx] <- "yellowgreen"
-    colors[index(m)$exo.idx] <- "lightblue"
+    col <- lava.options()$node.color
+    colors <- rep(col[2],length(types))
+    colors[index(m)$eta.idx] <- col[3]
+    colors[index(m)$exo.idx] <- col[1]
+    trf <- transform(m)
+    if (length(trf)>0) {
+        colors[which(index(m)$vars%in%names(trf))] <- col[4]
+    }
     shapes <- rep("box",length(types))
     shapes[index(m)$eta.idx] <- "circle"
     nodes <- data.frame(id=seq_along(types),
@@ -209,7 +214,8 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
         }
         edges <- cbind(edges,label=lab)
     }
-    edges <- cbind(edges,dashes=FALSE,arrows="from")
+    if (length(edges)>0)
+        edges <- cbind(edges,dashes=FALSE,arrows="from")
 
 
     if (labels && cor) {
@@ -230,7 +236,7 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
         }
     }
     
-    edges$physics <- TRUE    
+    if (length(edges)>0) edges$physics <- TRUE    
     v <- visNetwork::visNetwork(nodes,edges,width=width,height=height,...)
     v <- visNetwork::visEdges(v, arrows=list(from=list(enabled=TRUE, scaleFactor = 0.5)),
                               scaling = list(min = 2, max = 2))
@@ -354,7 +360,7 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
 ###}}} igraph.lvm
 
 
-beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
+beautify <- function(x,col=lava.options()$node.color,border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
     if (is.null(x$noderender$fill)) notcolored <- vars(x)
     else notcolored <- vars(x)[is.na(x$noderender$fill)]
     x0 <- intersect(notcolored,exogenous(x))

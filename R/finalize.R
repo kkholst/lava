@@ -4,7 +4,7 @@ function(x,...) UseMethod("finalize")
 
 ##' @export
 `finalize.lvm` <-
-function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=c("lightblue","orange","yellowgreen"), unexpr=FALSE, addstyle=TRUE, ...) {
+function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, cex, fontsize1=10, cols=lava.options()$node.color, unexpr=FALSE, addstyle=TRUE, ...) {
 
   g <- as(new("graphAM",adjMat=x$M,"directed"),"graphNEL")
   graph::nodeRenderInfo(g)$fill <- NA
@@ -188,6 +188,9 @@ function(x, diag=FALSE, cor=FALSE, addcolor=TRUE, intercept=FALSE, plain=FALSE, 
       nodecolor(g, intersect(notcolored,exogenous(x))) <- cols[1]
       nodecolor(g, intersect(notcolored,endogenous(x))) <- cols[2]
       nodecolor(g, intersect(notcolored,latent(x))) <- cols[3]
+      if (!is.null(trv <- x$attributes$transform)) {
+          nodecolor (g, names(trv)) <- cols[4]
+      }
       ##        nodecolor(x, intersect(notcolored,survival(x))) <- cols[4]
       myhooks <- gethook("color.hooks")
       count <- 3
