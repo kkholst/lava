@@ -354,7 +354,7 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
 ###}}} igraph.lvm
 
 
-beautify <- function(x,col=c("lightblue","orange","yellowgreen"),border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
+beautify <- function(x,col=lava.options()$node.color,border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
     if (is.null(x$noderender$fill)) notcolored <- vars(x)
     else notcolored <- vars(x)[is.na(x$noderender$fill)]
     x0 <- intersect(notcolored,exogenous(x))

@@ -100,6 +100,7 @@ assign("options", list(
     min.weight=1e-3,
     exogenous=TRUE,
     plot.engine="Rgraphviz",
+    node.color=c("lightblue","orange","yellowgreen","gray85"),
     edgecolor=FALSE,
     layout="dot",
     ## symbols=c("<-","<->"),

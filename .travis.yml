@@ -1,48 +1,42 @@
 language: r
-sudo: required
-
+r:
+ - release
+ - devel
+sudo: false
 r_check_args: --as-cran --run-donttest
-
 warnings_are_errors: true
+cache: packages
 
-r_binary_packages:
+r_packages:
  - numDeriv
  - mets
- - igraph
- - nlme
- - lme4
- - gof
- - maps
- - data.table
- - xtable
- - ascii
- - fields
- - RcppEigen
- - foreach
- - rgl
- - plyr
- - nloptr
- - minqa
- - maps
- - geepack
- - polycor
+ - covr
  - testthat
- - png
- - MatrixModels
- - SparseM
- - lazyeval
+ - optimx
+ - data.table
+ - igraph
+ - visNetwork
+ - Matrix
+ - KernSmooth
+ - lme4
+ - geepack
+ - gof
+ - foreach
  - quantreg
+ - rgl
+ - fields
+ - survival
+ - ascii
  - zoo
- - VGAM
+
+bioc_packages:
+ - graph
+ - Rgraphviz
 
 r_github_packages:
- - jimhester/covr
+# - jimhester/covr
  - mangothecat/visualTest
 
 after_success:
-  - Rscript -e 'library("covr");codecov(type="test")'
+  - Rscript -e 'library("covr"); codecov(type="test")'
 
-before_install:
-  - sudo apt-get install -y r-bioc-rgraphviz r-bioc-graph
-#bioc_packages:
-# - graph
