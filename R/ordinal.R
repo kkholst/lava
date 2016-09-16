@@ -52,7 +52,7 @@ print.ordinal.lvm <- function(x,...) {
 }
 
 ##' @export
-`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, labels, ...) {
+`ordinal.lvm` <- function(x,var=NULL,K=2, constrain, breaks=NULL, p, liability=TRUE, labels, exo=FALSE, ...) {
     if (inherits(var,"formula")) {
         var <- all.vars(var)
     }
@@ -126,7 +126,7 @@ print.ordinal.lvm <- function(x,...) {
             ## }
             x$attributes$ordinalparname[var[i]] <- list(names(newfix))
         }
-        x$attributes$type[var[i]] <- ifelse(K[i]>2,"ordinal","binary")
+        x$attributes$type[var[i]] <- ifelse(K[i]>2,"categorical","binary")
         if (K[i]>2) intfix(x,var[i],NULL) <- 0
         if (!liability) {
             mytr <- function(y,p,idx,...) {
@@ -148,7 +148,7 @@ print.ordinal.lvm <- function(x,...) {
     }
     x$attributes$nordinal[var] <- K
     x$attributes$normal[var] <- FALSE
-    covfix(x,var,NULL) <- 1
+    covfix(x,var,NULL,exo=exo) <- 1
     if (is.null(index(x))) index(x) <- reindex(x)
     return(x)
 }
