@@ -16,20 +16,20 @@
 \arguments{
 \item{x}{Model object}
 
-\item{diag}{Logical argument indicating whether to visualize variance
-parameters (i.e. diagonal of variance matrix)}
+\item{diag}{Logical argument indicating whether to visualize
+variance parameters (i.e. diagonal of variance matrix)}
 
-\item{cor}{Logical argument indicating whether to visualize correlation
-parameters}
+\item{cor}{Logical argument indicating whether to visualize
+correlation parameters}
 
-\item{labels}{Logical argument indiciating whether to add labels to plot
-(Unnamed parameters will be labeled p1,p2,...)}
+\item{labels}{Logical argument indiciating whether to add labels
+to plot (Unnamed parameters will be labeled p1,p2,...)}
 
-\item{intercept}{Logical argument indiciating whether to add intercept
-labels}
+\item{intercept}{Logical argument indiciating whether to add
+intercept labels}
 
-\item{addcolor}{Logical argument indiciating whether to add colors to plot
-(overrides \code{nodecolor} calls)}
+\item{addcolor}{Logical argument indiciating whether to add colors
+to plot (overrides \code{nodecolor} calls)}
 
 \item{plain}{if TRUE strip plot of colors and boxes}
 
@@ -45,11 +45,12 @@ labels}
 
 \item{unexpr}{if TRUE remove expressions from labels}
 
-\item{addstyle}{Logical argument indicating whether additional style should
-automatically be added to the plot (e.g. dashed lines to double-headed
-arrows)}
+\item{addstyle}{Logical argument indicating whether additional
+style should automatically be added to the plot (e.g. dashed
+lines to double-headed arrows)}
 
-\item{plot.engine}{default 'Rgraphviz' if available, otherwise visNetwork,igraph}
+\item{plot.engine}{default 'Rgraphviz' if available, otherwise
+visNetwork,igraph}
 
 \item{init}{Reinitialize graph (for internal use)}
 
@@ -57,9 +58,12 @@ arrows)}
 
 \item{edgecolor}{if TRUE plot style with colored edges}
 
-\item{graph.proc}{If TRUE subscripts are automatically added to labels}
+\item{graph.proc}{Function that post-process the graph object
+(default: subscripts are automatically added to labels of the
+nodes)}
 
-\item{...}{Additional arguments to be passed to the low level functions}
+\item{...}{Additional arguments to be passed to the low level
+functions}
 }
 \description{
 Plot the path diagram of a SEM

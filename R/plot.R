@@ -7,16 +7,16 @@
 ##'
 ##' @aliases plot.lvmfit
 ##' @param x Model object
-##' @param diag Logical argument indicating whether to visualize variance
-##' parameters (i.e. diagonal of variance matrix)
-##' @param cor Logical argument indicating whether to visualize correlation
-##' parameters
-##' @param labels Logical argument indiciating whether to add labels to plot
-##' (Unnamed parameters will be labeled p1,p2,...)
-##' @param intercept Logical argument indiciating whether to add intercept
-##' labels
-##' @param addcolor Logical argument indiciating whether to add colors to plot
-##' (overrides \code{nodecolor} calls)
+##' @param diag Logical argument indicating whether to visualize
+##'     variance parameters (i.e. diagonal of variance matrix)
+##' @param cor Logical argument indicating whether to visualize
+##'     correlation parameters
+##' @param labels Logical argument indiciating whether to add labels
+##'     to plot (Unnamed parameters will be labeled p1,p2,...)
+##' @param intercept Logical argument indiciating whether to add
+##'     intercept labels
+##' @param addcolor Logical argument indiciating whether to add colors
+##'     to plot (overrides \code{nodecolor} calls)
 ##' @param plain if TRUE strip plot of colors and boxes
 ##' @param cex Fontsize of node labels
 ##' @param fontsize1 Fontsize of edge labels
@@ -24,15 +24,19 @@
 ##' @param graph Graph attributes (Rgraphviz)
 ##' @param attrs Attributes (Rgraphviz)
 ##' @param unexpr if TRUE remove expressions from labels
-##' @param addstyle Logical argument indicating whether additional style should
-##' automatically be added to the plot (e.g. dashed lines to double-headed
-##' arrows)
-##' @param plot.engine default 'Rgraphviz' if available, otherwise visNetwork,igraph
+##' @param addstyle Logical argument indicating whether additional
+##'     style should automatically be added to the plot (e.g. dashed
+##'     lines to double-headed arrows)
+##' @param plot.engine default 'Rgraphviz' if available, otherwise
+##'     visNetwork,igraph
 ##' @param init Reinitialize graph (for internal use)
 ##' @param layout Graph layout (see Rgraphviz or igraph manual)
 ##' @param edgecolor if TRUE plot style with colored edges
-##' @param graph.proc If TRUE subscripts are automatically added to labels
-##' @param ... Additional arguments to be passed to the low level functions
+##' @param graph.proc Function that post-process the graph object
+##'     (default: subscripts are automatically added to labels of the
+##'     nodes)
+##' @param ... Additional arguments to be passed to the low level
+##'     functions
 ##' @author Klaus K. Holst
 ##' @keywords hplot regression
 ##' @examples
@@ -118,8 +122,8 @@
   }
     
     if (init) {
-        if (graph.proc || edgecolor) {
-            x <- beautify(x,edgecol=edgecolor,...)
+        if (!is.null(graph.proc)) {
+            x <- do.call(graph.proc, list(x,edgecol=edgecolor,...))
         }
     g <- finalize(x,diag=diag,cor=cor,addcolor=addcolor,intercept=intercept,plain=plain,cex=cex,fontsize1=fontsize1,unexpr=unexpr,addstyle=addstyle)
   } else {
@@ -263,7 +267,7 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
     newgraph <- FALSE
     if (is.null(g)) {
         newgraph <- TRUE
-        if (graph.proc) {
+        if (!is.null(graph.proc)) {
             Model(x) <- beautify(Model(x),edgecol=FALSE,...)
         }
         Graph(x) <- finalize(Model(x), diag=TRUE, cor=FALSE, fontsize1=fontsize1, ...)
