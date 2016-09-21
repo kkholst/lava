@@ -35,8 +35,8 @@
 ##' ones.lvm
 ##' sequence.lvm
 ##' @usage
-##' \method{sim}{lvm}(x, n = 100, p = NULL, normal = FALSE, cond = FALSE,
-##' sigma = 1, rho = 0.5, X, unlink=FALSE, latent=TRUE,...)
+##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
+##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE, use.labels = TRUE, ...)
 ##' @param x Model object
 ##' @param n Number of simulated values/individuals
 ##' @param p Parameter value (optional)
@@ -49,6 +49,7 @@
 ##' @param X Optional matrix of covariates
 ##' @param unlink Return Inverse link transformed data
 ##' @param latent Include latent variables (default TRUE)
+##' @param use.labels convert categorical variables to factors before applying transformation
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords models datagen regression
@@ -62,12 +63,12 @@
 ##' distribution(m,~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' head(d)
-##'
+
 ##' e <- estimate(m,d,estimator="glm")
 ##' e
 ##' ## Simulate a few observation from estimated model
 ##' sim(e,n=5)
-##'
+
 ##' ##################################################
 ##' ## Poisson
 ##' ##################################################
@@ -76,9 +77,9 @@
 ##' head(d)
 ##' estimate(m,d,estimator="glm")
 ##' mean(d$z); lava:::expit(1)
-##'
+
 ##' summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
-##'
+
 ##' ##################################################
 ##' ### Gamma distribution
 ##' ##################################################
@@ -88,11 +89,11 @@
 ##' d <- sim(m,1e4)
 ##' summary(g <- glm(y~x,family=Gamma(),data=d))
 ##' \dontrun{MASS::gamma.shape(g)}
-##'
+
 ##' args(lava::Gamma.lvm)
 ##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
-##'
+
 ##' ##################################################
 ##' ### Beta
 ##' ##################################################
@@ -101,7 +102,7 @@
 ##' var(sim(m,100,"y,y"=2))
 ##' distribution(m,~y) <- beta.lvm(alpha=2,beta=1,scale=FALSE)
 ##' var(sim(m,100))
-##' 
+
 ##' ##################################################
 ##' ### Transform
 ##' ##################################################
@@ -110,7 +111,7 @@
 ##' regression(m) <- y~x+z+xz
 ##' d <- sim(m,1e3)
 ##' summary(lm(y~x+z + x*I(z>0),d))
-##'
+
 ##' ##################################################
 ##' ### Non-random variables
 ##' ##################################################
@@ -120,7 +121,7 @@
 ##'                                ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
 ##'                                ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 ##' sim(m,10)
-##'
+
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard
@@ -129,7 +130,7 @@
 ##' rates <- c(1,0.5); cuts <- c(0,5)
 ##' ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
 ##' distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
-##'
+
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
 ##'     plot(timereg::aalen(survival::Surv(t,status)~x,data=d,
@@ -139,7 +140,7 @@
 ##'                    method="linear")
 ##'     curve(L,0,100,add=TRUE,col="blue")
 ##' }
-##'
+
 ##' ##################################################
 ##' ### Cox model
 ##' ### piecewise constant hazard, gamma frailty
@@ -171,7 +172,7 @@
 ##' \dontrun{
 ##' mets::fast.reshape(sim(m,100),varying="t")
 ##' }
-##'
+
 ##' ##################################################
 ##' ### General multivariate distributions
 ##' ##################################################
@@ -179,17 +180,17 @@
 ##' m <- lvm()
 ##' distribution(m,~y1+y2,oratio=4) <- VGAM::rbiplackcop
 ##' ksmooth2(sim(m,1e4),rgl=FALSE,theta=-20,phi=25)
-##'
+
 ##' m <- lvm()
 ##' distribution(m,~z1+z2,"or1") <- VGAM::rbiplackcop
 ##' distribution(m,~y1+y2,"or2") <- VGAM::rbiplackcop
 ##' sim(m,10,p=c(or1=0.1,or2=4))
 ##' }
-##'
+
 ##' m <- lvm()
 ##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
 ##' var(sim(m,100))
-##'
+
 ##' ## Syntax also useful for univariate generators, e.g.
 ##' m <- lvm(y~x+z)
 ##' distribution(m,~y,TRUE) <- function(n) rnorm(n,mean=1000)
@@ -197,7 +198,7 @@
 ##' distribution(m,~y,"m1",0) <- rnorm
 ##' sim(m,5)
 ##' sim(m,5,p=c(m1=100))
-##'
+
 ##' ##################################################
 ##' ### Regression design in other parameters
 ##' ##################################################
@@ -210,7 +211,7 @@
 ##' constrain(m,sd~x) <- function(x) exp(x)^.5
 ##' distribution(m,~y) <- function(n,mean,sd) rnorm(n,mean,sd)
 ##' if (interactive()) plot(y~x,sim(m,1e3))
-##'
+
 ##' ## Regression on variance parameter
 ##' m <- lvm()
 ##' regression(m) <- y~x
@@ -220,7 +221,7 @@
 ##' ## regression(m) <- v[NA:0]~x
 ##' distribution(m,~y) <- function(n,mean,v) rnorm(n,mean,exp(v)^.5)
 ##' if (interactive()) plot(y~x,sim(m,1e3))
-##'
+
 ##' ## Regression on shape parameter in Weibull model
 ##' m <- lvm()
 ##' regression(m) <- y ~ z+v
@@ -229,27 +230,26 @@
 ##' distribution(m,~cens) <- coxWeibull.lvm(scale=1)
 ##' distribution(m,~y) <- coxWeibull.lvm(scale=0.1,shape=~s)
 ##' eventTime(m) <- time ~ min(y=1,cens=0)
-##'
+
 ##' if (interactive()) {
 ##'     d <- sim(m,1e3)
 ##'     require(survival)
 ##'     (cc <- coxph(Surv(time,status)~v+strata(x,z),data=d))
 ##'     plot(survfit(cc) ,col=1:4,mark.time=FALSE)
 ##' }
-##'
-##'
+
 ##' ##################################################
 ##' ### Categorical predictor
 ##' ##################################################
 ##' m <- lvm()
 ##' ## categorical(m,K=3) <- "v"
 ##' categorical(m,labels=c("A","B","C")) <- "v"
-##'
+
 ##' regression(m,additive=FALSE) <- y~v
 ##' \dontrun{
 ##' plot(y~v,sim(m,1000,p=c("y~v:2"=3)))
 ##' }
-##'
+
 ##' m <- lvm()
 ##' categorical(m,labels=c("A","B","C"),p=c(0.5,0.3)) <- "v"
 ##' regression(m,additive=FALSE,beta=c(0,2,-1)) <- y~v
@@ -259,6 +259,18 @@
 ##' table(sim(m,1e4)$v)
 ##' glm(y~v, data=sim(m,1e4))
 ##' glm(y~v, data=sim(m,1e4,p=c("y~v:1"=3)))
+##'
+##' transform(m,v2~v) <- function(x) x=='A'
+##' sim(m,10)
+##'
+##' ##################################################
+##' ### Pre-calculate object
+##' ##################################################
+##' m <- lvm(y~x)
+##' m2 <- sim(m,'y~x'=2)
+##' sim(m,10,'y~x'=2)
+##' sim(m2,10) ## Faster
+##' 
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @export
@@ -275,124 +287,156 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
 }
 
 ##' @export
-sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
-                    X,unlink=FALSE,latent=TRUE,...) {
-    if (!missing(X)) {
-        n <- nrow(X)
-    }
-    p <- c(p,unlist(list(...)))
-    xx <- exogenous(x)
-    if (!is.null(p)) {
-        i1 <- na.omit(c(match(names(p),xx),
-                        match(names(p),paste0(xx,lava.options()$symbol[2],xx))))
-        if (length(i1)>0) covariance(x) <- xx[i1]
-    }
-    ##  index(x) <- reindex(x)
-    vv <- vars(x)
-    nn <- setdiff(vv,parameter(x))
-    mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
-    xf <- intersect(unique(parlabels(x)),xx)
-    xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
+sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
+            X=NULL,unlink=FALSE,latent=TRUE,use.labels=TRUE,...) {
 
-    ## Match parameter names
-    if (length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
-        nullp <- is.null(p)
-        p0 <- p
-        ep <- NULL
-        ei <- which(index(x)$e1==1)
-        if (length(ei)>0)
-            ep <- unlist(x$expar)[ei]
-        p <- c(rep(1, index(x)$npar+index(x)$npar.mean),ep)
-        p[seq_len(index(x)$npar.mean)] <- 0
-        p[index(x)$npar.mean + variances(x)] <- sigma
-        p[index(x)$npar.mean + offdiags(x)] <- rho
-        if (!nullp) {
-            c1 <- coef(x,mean=TRUE,fix=FALSE)
-            c2 <- coef(x,mean=TRUE,fix=FALSE,labels=TRUE)
-            idx1 <- na.omit(match(names(p0),c1))
-            idx11 <- na.omit(match(names(p0),c2))
-            idx2 <- na.omit(which(names(p0)%in%c1))
-            idx22 <- na.omit(which(names(p0)%in%c2))
-            if (length(idx1)>0 && !is.na(idx1))
-                p[idx1] <- p0[idx2]
-            if (length(idx11)>0 && !is.na(idx11))
-                p[idx11] <- p0[idx22]
-        }
-    }
-    M <- modelVar(x,p,data=NULL)
-    A <- M$A; P <- M$P
-    if (!is.null(M$v)) mu <- M$v
+    v.env <- c("A","M","P","PP","PPdiag","xx","vv","mdist","mdistnam","mii",
+              "nn","mu","xf","xfix","X",
+              "vartrans","multitrans","multitrans.idx",
+              "X.idx","ii.mvn","xconstrain.idx","xconstrain",
+              "xconstrain.par","covparnames","exo_constrainY")
 
-    ## Square root of residual variance matrix
-    PP <- with(svd(P), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
-    ## Multivariate distributions
-    mdist <- distribution(x,multivariate=TRUE)$var
-    mdistnam <- names(mdist)
-    mii <- match(mdistnam,vars(x))
-
-    if (length(distribution(x))>0 ) {
-        ii <- match(names(distribution(x)),vars(x))
-        jj <- setdiff(seq(ncol(P)),c(ii,mii))
-        E <- matrix(0,ncol=ncol(P),nrow=n)
-        if (length(jj)>0)
-            E[,jj] <-  matrix(rnorm(length(jj)*n),ncol=length(jj))%*%PP[jj,jj,drop=FALSE]
+    setup <- is.null(n) ## Save environment (variables v.env) and return sim object
+    loadconfig <- !is.null(x$sim.env) && !setup && (length(list(...))==0 && length(p)==0)
+    if (loadconfig) {
+        for (v in setdiff(v.env,"X")) assign(v, x$sim.env[[v]])
+        if (is.null(X)) X <-  x$sim.env[['X']]
     } else {
-        E <- matrix(rnorm(ncol(P)*n),ncol=ncol(P))%*%PP  ## Error term for conditional normal distributed variables
-    }
-
-    if (length(mdistnam)>0) {
-        fun <- distribution(x,multivariate=TRUE)$fun
-        for (i in seq_along(fun)) {
-            mv <- names(which(unlist(mdist)==i))
-            ii <- match(mv,vars(x))
-            E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x) # ,...)
+        if (!is.null(X)) {
+            n <- nrow(X)
         }
-    }
-
-    ## Simulate exogenous variables (covariates)
-    res <- matrix(0,ncol=length(nn),nrow=n); colnames(res) <- nn
-
-    vartrans <- names(x$attributes$transform)
-    multitrans <- multitrans.idx <- NULL
-    if (length(x$attributes$multitransform)>0) {
-        multitrans <- unlist(lapply(x$attributes$multitransform,function(z) z$y))
-        for (i in (seq_along(x$attributes$multitransform))) {
-            multitrans.idx <- c(multitrans.idx,rep(i,length(x$attributes$multitransform[[i]]$y)))
+        if (!is.null(n) && n<1) return(NULL)
+        p <- c(p,unlist(list(...)))
+        xx <- exogenous(x)
+        if (!is.null(p)) {
+            i1 <- na.omit(c(match(names(p),xx),
+                           match(names(p),paste0(xx,lava.options()$symbol[2],xx))))
+            if (length(i1)>0) covariance(x) <- xx[i1]
         }
-    }
-    xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
-    xx <- setdiff(xx,vartrans)
+        ##  index(x) <- reindex(x)
+        vv <- vars(x)
+        nn <- setdiff(vv,parameter(x))
+        mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
+        xf <- intersect(unique(parlabels(x)),xx)
+        xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
 
-    X.idx <- match(xx,vv)
-    res[,X.idx] <- t(mu[X.idx]+t(E[,X.idx]))
-    if (missing(X)) {
-        if (!is.null(xx) && length(xx)>0)
-            for (i in seq_along(xx)) {
-                mu.x <- mu[X.idx[i]]
-                dist.x <- distribution(x,xx[i])[[1]]
-                if (is.list(dist.x) && is.function(dist.x[[1]])) dist.x <- dist.x[[1]]
-                if (is.list(dist.x)) {
-                    dist.x <- dist.x[[1]]
-                    if (length(dist.x)==1) dist.x <- rep(dist.x,n)
-                }
-                if (is.function(dist.x)) {
-                    res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
-                } else {
-                    if (is.null(dist.x) || is.na(dist.x)) {
+        ## Match parameter names
+        if (length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
+            nullp <- is.null(p)
+            p0 <- p
+            ep <- NULL
+            ei <- which(index(x)$e1==1)
+            if (length(ei)>0)
+                ep <- unlist(x$expar)[ei]
+            p <- c(rep(1, index(x)$npar+index(x)$npar.mean),ep)
+            p[seq_len(index(x)$npar.mean)] <- 0
+            p[index(x)$npar.mean + variances(x)] <- sigma
+            p[index(x)$npar.mean + offdiags(x)] <- rho
+            if (!nullp) {
+                c1 <- coef(x,mean=TRUE,fix=FALSE)
+                c2 <- coef(x,mean=TRUE,fix=FALSE,labels=TRUE)
+                idx1 <- na.omit(match(names(p0),c1))
+                idx11 <- na.omit(match(names(p0),c2))
+                idx2 <- na.omit(which(names(p0)%in%c1))
+                idx22 <- na.omit(which(names(p0)%in%c2))
+                if (length(idx1)>0 && !is.na(idx1))
+                    p[idx1] <- p0[idx2]
+                if (length(idx11)>0 && !is.na(idx11))
+                    p[idx11] <- p0[idx22]
+            }
+        }
+        M <- modelVar(x,p,data=NULL)
+        A <- M$A; P <- M$P
+        if (!is.null(M$v)) mu <- M$v
+
+        ## Square root of residual variance matrix
+        PP <- with(svd(P), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
+        ## Multivariate distributions
+        mdist <- distribution(x,multivariate=TRUE)$var
+        mdistnam <- names(mdist)
+        mii <- match(mdistnam,vars(x))
+        if (length(distribution(x))>0 ) {
+            ii <- match(names(distribution(x)),vv)
+            ii.mvn <- setdiff(seq(ncol(P)),c(ii,mii))
+        } else {
+            ii.mvn <- seq(ncol(P))
+        }
+        PPdiag <- sum(abs(offdiag(PP[ii.mvn,ii.mvn,drop=FALSE])^2))<1e-20
+    }
+
+    if (!setup) {
+        E <- matrix(0,ncol=ncol(P),nrow=n)
+        if (length(ii.mvn)>0) {
+            ## Error term for conditional normal distributed variables
+            if (PPdiag) {
+                for (i in ii.mvn) E[,i] <- rnorm(n,sd=PP[i,i])
+            } else {
+                E[,ii.mvn] <-  matrix(rnorm(length(ii.mvn)*n),ncol=length(ii.mvn))%*%PP[ii.mvn,ii.mvn,drop=FALSE]
+            }
+        }
+
+        if (length(mdistnam)>0) {
+            fun <- distribution(x,multivariate=TRUE)$fun
+            for (i in seq_along(fun)) {
+                mv <- names(which(unlist(mdist)==i))
+                ii <- match(mv,vv)
+                E[,ii] <- distribution(x,multivariate=TRUE)$fun[[i]](n,p=p,object=x) # ,...)
+            }
+        }
+
+        ## Simulate exogenous variables (covariates)
+        res <- matrix(0,ncol=length(nn),nrow=n)
+        colnames(res) <- nn
+    }
+
+    if (!loadconfig) {
+        vartrans <- names(x$attributes$transform)
+        multitrans <- multitrans.idx <- NULL
+        if (length(x$attributes$multitransform)>0) {
+            multitrans <- unlist(lapply(x$attributes$multitransform,function(z) z$y))
+            for (i in (seq_along(x$attributes$multitransform))) {
+                multitrans.idx <- c(multitrans.idx,rep(i,length(x$attributes$multitransform[[i]]$y)))
+            }
+        }
+        xx <- unique(c(exogenous(x, latent=FALSE, index=TRUE),xfix))
+        xx <- setdiff(xx,vartrans)
+
+        X.idx <- match(xx,vv)
+    }
+
+    if (!setup) {
+        res[,X.idx] <- t(mu[X.idx]+t(E[,X.idx]))
+        if (is.null(X)) {
+            if (!is.null(xx) && length(xx)>0)
+                for (i in seq_along(xx)) {
+                    mu.x <- mu[X.idx[i]]
+                    dist.x <- distribution(x,xx[i])[[1]]
+                    if (is.list(dist.x) && is.function(dist.x[[1]])) dist.x <- dist.x[[1]]
+                    if (is.list(dist.x)) {
+                        dist.x <- dist.x[[1]]
+                        if (length(dist.x)==1) dist.x <- rep(dist.x,n)
+                    }
+                    if (is.function(dist.x)) {
+                        res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
                     } else {
-                        if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n,".")
-                        res[,X.idx[i]] <- dist.x ## Deterministic
+                        if (is.null(dist.x) || is.na(dist.x)) {
+                        } else {
+                            if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n,".")
+                            res[,X.idx[i]] <- dist.x ## Deterministic
+                        }
                     }
                 }
-            }
-    } else {
-        res[,X.idx] <- X[,xx]
+        } else {
+            res[,X.idx] <- X[,xx]
+        }
     }
+
     simuled <- c(xx)
     resunlink <- NULL
     if (unlink) {
         resunlink <- res
     }
+
 
     if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) {
         if(cond) { ## Simulate from conditional distribution of Y given X
@@ -414,9 +458,22 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     } else {
 
 
-        xc <- index(x)$vars
-        xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,xc))>0))
-        xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),xc)
+        if (!loadconfig) {
+            xc <- index(x)$vars
+            xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,xc))>0))
+            xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),xc)
+            xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]
+            covparnames <- unique(as.vector(covariance(x)$labels))
+            exo_constrainY <- intersect(exogenous(x),names(x$constrainY))
+        }
+
+        if (setup) {
+            sim.env <- c()
+            sim.env[v.env] <- list(NULL)
+            for (v in v.env) if (!is.null(get(v))) sim.env[[v]] <- get(v)
+            x$sim.env <- sim.env
+            return(x)
+        }
 
         if (length(xconstrain)>0)
           for (i in which(xconstrain.idx)) {
@@ -432,9 +489,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             res <- cbind(res, apply(D,1,ff)); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
           }
 
-        xconstrain.par <- names(xconstrain.idx)[xconstrain.idx]
-        covparnames <- unique(as.vector(covariance(x)$labels))
-
         if (any(xconstrain.par%in%covparnames)) {
             mu0 <- rep(0,ncol(P))
             P0 <- P
@@ -445,7 +499,6 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 PP <- with(svd(P0), v%*%diag(sqrt(d),nrow=length(d))%*%t(u))
                 return(mu0+rbind(rnorm(ncol(P0)))%*%PP)
             }))
-        } else {
         }
 
         colnames(E) <- vv
@@ -468,13 +521,14 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             }
         }
 
-        for (i in intersect(exogenous(x),names(x$constrainY))) {
+        yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
+
+        for (i in exo_constrainY) {
             cc <- x$constrainY[[i]]
             args <- cc$args
             args <- if (is.null(args) || length(args)==0) res[,i] else res[,args]
             res[,i] <- cc$fun(args,p) # ,...)
         }
-        yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
 
         res <- data.frame(res)
         if (length(vartrans)>0) {
@@ -494,13 +548,28 @@ sim.lvm <- function(x,n=100,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
             if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
-            for (i in leftovers) {
+            for (i in leftovers) {                
                 if (i%in%vartrans) {
                     xtrans <- x$attributes$transform[[i]]$x
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
-                        suppressWarnings(yy <- with(x$attributes$transform[[i]],fun(res[,xtrans])))
+                        xtr <- res[,xtrans,drop=FALSE]
+                        if (use.labels) { 
+                            lb <- x$attributes$labels
+                            lb.idx <- na.omit(match(names(lb),xtrans))
+                            ## For categorical variables turn them into factors so we can
+                            ## use the actual labels in function calls/transform
+                            if (length(lb.idx)>0) {
+                                xtr <- as.data.frame(xtr)                                
+                                for (lb0 in lb.idx) {
+                                    lab <- lb[[names(xtr)[lb0]]]
+                                    xtr[,lb0] <- factor(xtr[,lb0],levels=seq_along(lab)-1,labels=lab)
+                                }
+                            }
+                        }                        
+                        suppressWarnings(yy <- with(x$attributes$transform[[i]], fun(xtr))) ##fun(res[,xtrans])))
                         if (NROW(yy) != NROW(res)) { ## apply row-wise
-                            res[,i] <- with(x$attributes$transform[[i]],apply(res[,xtrans,drop=FALSE],1,fun))
+                            res[,i] <- with(x$attributes$transform[[i]], ##apply(res[,xtrans,drop=FALSE],1,fun))
+                                           apply(xtr,1,fun))
                         } else {
                             colnames(yy) <- NULL
                             res[,i] <- yy
