@@ -145,8 +145,7 @@ normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
 gaussian.lvm <- normal.lvm
 
 ##' @export
-lognormal.lvm <- function(...) normal.lvm(...,log=TRUE)
-
+lognormal.lvm <- function(...) structure(normal.lvm(...,log=TRUE),family=list(family="log-normal",...))
 
 ###}}} normal/gaussian
 

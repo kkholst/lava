@@ -14,40 +14,38 @@
 function(x,...) UseMethod("latent")
 
 ##' @export
-`latent.lvm` <-
-function(x,var,clear=FALSE,zero=TRUE,silent=lava.options()$silent,...) {
-  if (missing(var)) {
-    latentidx <- unlist(x$latent)
-    if (length(latentidx)>0)
-       return(names(latentidx))
-    else
-      return(NULL)
-  }
-  if (clear) {
-    x$noderender$shape[var] <- "rectangle"
-    x$latent[var] <- NULL
-    if (zero) {
-      intfix(x,var) <- NA
+`latent.lvm` <- function(x,var,clear=FALSE,silent=lava.options()$silent,...) {
+    if (missing(var)) {
+        latentidx <- unlist(x$latent)
+        if (length(latentidx)>0)
+            return(names(latentidx))
+        else
+            return(NULL)
     }
-  } else {
-    if (!all(var%in%vars(x))) {
-      addvar(x,silent=silent,reindex=FALSE,) <- setdiff(var,vars(x))
+    if (inherits(var,"formula")) var <- all.vars(var)
+    if (clear) {
+        x$noderender$shape[var] <- "rectangle"
+        x$latent[var] <- NULL
+        ## intfix(x,var) <- NA
+    } else {
+        if (!all(var%in%vars(x))) {
+            addvar(x,silent=silent,reindex=FALSE,) <- setdiff(var,vars(x))
+        }
+        x$noderender$shape[var] <- "ellipse"
+        x$latent[var] <- TRUE
+        ## if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
+        ##     intercept(x,var) <- 0
+        ## }
     }
-    x$noderender$shape[var] <- "ellipse"
-    x$latent[var] <- TRUE
-    if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
-      intercept(x,var) <- 0
+    
+    xorg <- exogenous(x)
+    exoset <- setdiff(xorg,var)
+    if (length(exoset)<length(xorg)) {
+        exogenous(x) <- exoset
     }
-  }
-
-  xorg <- exogenous(x)
-  exoset <- setdiff(xorg,var)
-  if (length(exoset)<length(xorg)) {
-    exogenous(x) <- exoset
-  }
-
-  index(x) <- reindex(x)
-  return(x)
+    
+    index(x) <- reindex(x)
+    return(x)
 }
 
 ##' @export
