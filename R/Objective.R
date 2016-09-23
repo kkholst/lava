@@ -132,37 +132,20 @@ gaussian1_gradient.lvm <- function(...) gaussian_gradient.lvm(...)
 gaussian1_hessian.lvm <- function(x,p,...) {
   myg2 <- function(p1) gaussian_gradient.lvm(x,p=p1,...)
   myg3 <- function(p1) numDeriv::jacobian(myg2,p1)
-  myg <- function(p1) gaussian_objective.lvm(x,p=p1,...)
-  numDeriv::hessian(myg,p)
+  return(myg3(p))
+  ## myg <- function(p1) gaussian_objective.lvm(x,p=p1,...)
+  ## numDeriv::hessian(myg,p)
 }
-
-  NULL ##gaussian_hessian.lvm
 
 ## BHHH
 gaussian2_method.lvm <- "NR"
 gaussian2_objective.lvm <- gaussian_objective.lvm
 gaussian2_gradient.lvm <- gaussian_gradient.lvm
 gaussian2_hessian.lvm <- function(x,p,n,data,...) {
-  S <- -score(x,p=p,n=n,data=data,...)
+  S <- -score(x,p=p,n=n,data=data,indiv=TRUE,...)
   I <- t(S)%*%S
   attributes(I)$grad <- colSums(S)
   return(I)
-}
-## Sandwich
-gaussian3_objective.lvm <- gaussian_objective.lvm
-gaussian3_gradient.lvm <- gaussian_gradient.lvm
-gaussian3_hessian.lvm <- function(x,p,n,data,...) {
-  I <- information(x=x,p=p,n=n,...)
-  S <- score(x=x,p=p,n=n,data=data)
-  J <- t(S)%*%S
-  return(J%*%solve(I)%*%J)
-}
-
-gaussian4_objective.lvm <- gaussian_objective.lvm
-gaussian4_gradient.lvm <- gaussian_gradient.lvm
-gaussian4_hessian.lvm <- gaussian_hessian.lvm
-gaussian4_variance.lvm <- function(x,p,data) {
-  matrix(0,ncol=length(p),nrow=length(p))
 }
 
 ###}}}
