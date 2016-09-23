@@ -1,5 +1,5 @@
 ##v <- lmerplot(l1,varcomp=TRUE,colorkey=TRUE,lwd=0,col=rainbow(20))
-lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=TRUE,mar=c(4,4,4,6),col,...) {
+lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=TRUE,mar=c(4,4,4,6),col,index=seq(50),...) {
     if (varcomp) {
         Z <- lme4::getME(model,"Z")
         nn <- unlist(lapply(lme4::getME(model,"Ztlist"),nrow))
@@ -9,10 +9,14 @@ lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=
         V <- Z%*%L%*%(Matrix::t(Z))
         Matrix::diag(V) <- Matrix::diag(V)+ve
         cV <- Matrix::cov2cor(V)
+        if (!is.null(index)) {
+            index <- intersect(seq(nrow(cV)),index)
+            cV <- cV[index,index,drop=FALSE]
+        }
         if (colorbar) { opt <- par(mar=mar) }
         ##if (missing(col)) col <- c("white",rev(heat.colors(16)))
         if (missing(col)) col <- rev(gray.colors(16,0,1))
-        image(seq(nrow(V)),seq(ncol(V)),as.matrix(cV),xlab="",ylab="",col=col,zlim=c(0,1),...)
+        image(seq(nrow(cV)),seq(ncol(cV)),as.matrix(cV),xlab="",ylab="",col=col,zlim=c(0,1),...)
         if (colorbar) {
             uu <- devcoords()
             xrange <- c(uu$fig.x2,uu$dev.x2)
