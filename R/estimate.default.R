@@ -42,6 +42,14 @@ estimate.list <- function(x,...) {
 ##' @param transform.ci (optional) transform of parameters and confidence intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
 ##' @param cluster (obsolete) alias for 'id'.
+##' @param R Number of simulations (simulated p-values)
+##' @param null.sim Mean under the null for simulations
+##' @details
+##'
+##' From iid decomposition
+##' \[\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)\]
+##'
+##' 
 ##' @export
 ##' @examples
 ##'
@@ -126,25 +134,45 @@ estimate.list <- function(x,...) {
 ##' e3 <- estimate(l3,id=id3)
 ##' (a2 <- merge(e1,e2,e3))
 ##'
+##' ## If all models were estimated on the same data we could use the
+##' ## syntax:
+##' ## Reduce(merge,estimate(list(l1,l2,l3)))
+##' 
 ##' ## Same:
 ##' iid(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
 ##'
 ##' iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 ##' iid(merge(l1,l2,l3,id=FALSE)) # independence
-##' @aliases estimate.default estimate.estimate merge.estimate
+##'
+##'
+##' ## Monte Carlo approach, simple trend test example
+##' 
+##' m <- categorical(lvm(),~x,K=5)
+##' regression(m,additive=TRUE) <- y~x
+##' d <- simulate(m,100,seed=1,'y~x'=0.1)
+##' l <- lm(y~-1+factor(x),data=d)
+##' 
+##' f <- function(x) coef(lm(x~seq_along(x)))[2]
+##' null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
+##' estimate(l,f,R=1e2,null.sim=null)
+##'
+##' estimate(l,f)
+##' @aliases estimate estimate.default estimate.estimate merge.estimate
 ##' @method estimate default
 ##' @export
-estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average=FALSE,subset,
-                             score.deriv,level=0.95,iid=TRUE,
-                             type=c("robust","df","mbn"),
-                             keep,use,
-                             contrast,null,vcov,coef,
-                             robust=TRUE,df=NULL,
-                             print=NULL,labels,label.width,
-                             only.coef=FALSE,transform.ci=NULL,
-                             folds=0,
-                             cluster
-                             ) {
+estimate.default <- function(x=NULL,f=NULL,...,data,id,
+                     iddata,stack=TRUE,average=FALSE,subset,
+                     score.deriv,level=0.95,iid=TRUE,
+                     type=c("robust","df","mbn"),
+                     keep,use,
+                     contrast,null,vcov,coef,
+                     robust=TRUE,df=NULL,
+                     print=NULL,labels,label.width,
+                     only.coef=FALSE,transform.ci=NULL,
+                     folds=0,
+                     cluster,
+                     R=0,
+                     null.sim) {
     cl <- match.call(expand.dots=TRUE)
     if (!missing(use)) {
         p0 <- c("f","contrast","only.coef","subset","average","keep","labels")
@@ -154,9 +182,6 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         cl$x <- eval(cl0,parent.frame())
         cl[c("vcov","use")] <- NULL
         return(eval(cl,parent.frame()))
-    }
-    if (lava.options()$cluster.index) {
-        if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     }
     expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
     if (!missing(coef)) {
@@ -168,7 +193,6 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
     }
     if (!missing(cluster)) id <- cluster
-
     if (expr || is.character(f)) { ## || is.call(f)) {
         ## if (is.call(f)) f <- parsedesign(seq(length(pp)),f,...)
         dots <- substitute(list(...))[-1]
@@ -179,8 +203,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
         contrast <- f; f <- NULL
     }
-    if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
 
+    if (lava.options()$cluster.index) {
+        if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
+    }
+    
+    if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
     ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
@@ -200,7 +228,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         if (is.logical(vcov)) vcov <- vcov(x)
         iidtheta <- NULL
     }
-
+       
     if (!missing(subset)) {
         e <- substitute(subset)
         expr <- suppressWarnings(inherits(try(subset,silent=TRUE),"try-error"))
@@ -308,6 +336,29 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
         }
     }
 
+    
+    ## Simulate p-value
+    if (R>0) {
+        if (is.null(f)) stop("Supply function 'f'")
+        if (missing(null.sim)) null.sim <- rep(0,length(pp))
+        est <- f(pp)
+        if (is.list(est)) {
+            nn <- names(est)
+            est <- unlist(est)
+            names(est) <- nn
+        }
+        if (missing(labels)) {
+            labels <- colnames(rbind(est))
+        }
+        res <- simnull(R,f,mu=null.sim,sigma=V,labels=labels)
+        return(structure(res, class=c("estimate.sim","sim"),
+                    coef=pp,
+                    vcov=V,
+                    f=f,
+                    estimate=est))
+    }
+
+    
     if (!is.null(f)) {
         form <- names(formals(f))
         dots <- ("..."%in%names(form))
@@ -508,6 +559,93 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,iddata,stack=TRUE,average
     return(res)
 }
 
+simnull <- function(R,f,mu,sigma,labels=NULL) {
+    X <- rmvn(R,mu=mu,sigma=sigma)
+    est <- f(mu)
+    res <- apply(X,1,f)
+    if (is.list(est)) {
+        nn <- names(est)
+        est <- unlist(est)
+        names(est) <- nn
+        res <- matrix(unlist(res),byrow=TRUE,ncol=length(est))        
+    } else {
+        res <- t(rbind(res))
+    }
+    if (is.null(labels)) {        
+        labels <- colnames(rbind(est))
+        if (is.null(labels)) labels <- paste0("p",seq_along(est))
+    }    
+    colnames(res) <- labels
+    return(res)
+}
+
+##' @export
+estimate.estimate.sim <- function(x,f,R=0,labels,...) {
+    atr <- attributes(x)
+    if (R>0) {        
+        if (missing(f)) {
+            val <- simnull(R,f=atr[["f"]],mu=atr[["coef"]],sigma=atr[["vcov"]])
+            res <- rbind(x,val)
+            for (a in setdiff(names(atr),c("dim","dimnames")))
+                attr(res,a) <- atr[[a]]
+        } else {
+            res <- simnull(R,f=f,mu=atr[["coef"]],sigma=atr[["vcov"]])
+            for (a in setdiff(names(atr),c("dim","dimnames","f")))
+                attr(res,a) <- atr[[a]]
+            attr(f,"f") <- f
+            est <- unlist(f(atr[["coef"]]))            
+            if (missing(labels)) labels <- colnames(rbind(est))
+            attr(res,"estimate") <- est
+        }
+        if (!missing(labels)) colnames(res) <- labels
+        return(res)
+    }
+    if (missing(f)) {
+        if (!missing(labels)) colnames(res) <- labels
+        return(x)
+    }
+
+    est <- f(atr[["coef"]])    
+    res <- apply(x,1,f)
+    if (is.list(est)) {
+        res <- matrix(unlist(res),byrow=TRUE,ncol=length(est))
+    } else {
+        res <- t(rbind(res))
+    }
+    if (missing(labels)) {
+        labels <- colnames(rbind(est))
+        if (is.null(labels)) labels <- paste0("p",seq_along(est))
+    }
+    colnames(res) <- labels
+    for (a in setdiff(names(atr),c("dim","dimnames","f","estimate")))
+        attr(res,a) <- atr[[a]]    
+    attr(f,"f") <- f
+    attr(res,"estimate") <- unlist(est)
+    return(res)
+}
+
+
+##' @export
+print.estimate.sim <- function(x,level=.05,...) {
+    quantiles <- c(level/2,1-level/2)
+    est <- attr(x,"estimate")
+    mysummary <- function(x,i) {
+        x <- as.vector(x)
+        res <- c(mean(x,na.rm=TRUE),
+                sd(x,na.rm=TRUE),
+                quantile(x,quantiles,na.rm=TRUE),
+                est[i],
+                mean(abs(x)>abs(est[i]),na.rm=TRUE))
+        
+                names(res) <- c("Mean","SD",paste0(quantiles*100,"%"),
+                               "Estimate","P-value")
+        res
+    }
+    env <- new.env()    
+    assign("est",attr(x,"estimate"),env)
+    environment(mysummary) <- env
+    print(summary(x,fun=mysummary,...))
+}
 
 estimate.glm <- function(x,...) {
     estimate.default(x,...)
