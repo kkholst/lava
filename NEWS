@@ -11,6 +11,10 @@
   - print, transform methods updated (transform output)
   - modelsearch by default now shows any directional or undirectional associations (type='all' vs type='cor')
   - sim.default now stores timings. New print functions (data.table like)
+  - presets in sim objects: m <- sim(m,...)
+  - estimate.default can now simulate p-values (R argument). Returns an object which can also be called with 'estimate'
+  - bug fix in NR with back-tracing
+  
 
 * Version 1.4.4 <2016-08-13 Sat>
   - estimate.default will now use the id-variable of an 'estimate'

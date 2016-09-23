@@ -58,8 +58,16 @@ estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
 
 ##' @export
 NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
-    control0 <- list(trace=0,gamma=1,lambda=0,ngamma=0,gamma2=0,backtrace=TRUE,
-                     iter.max=200,tol=1e-9,stabil=FALSE,epsilon=1e-9)
+    control0 <- list(trace=0,
+                    gamma=1,
+                    lambda=0,
+                    ngamma=0,
+                    gamma2=0,
+                    backtrace=TRUE,
+                    iter.max=200,
+                    tol=1e-9,
+                    stabil=FALSE,
+                    epsilon=1e-9)
     if (!missing(control)) {
         control0[names(control)] <- control
     }
@@ -114,8 +122,8 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         if (control0$backtrace) {
             mD0 <- mean(Dprev^2)
             mD <- mean(D^2)
+            p <- p.orig + Lambda*Delta
             while (mD>=mD0) {
-                p <- p.orig + Lambda*Delta
                 if (gradFun) {
                     D = gradient(p)
                 } else {
@@ -125,11 +133,12 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                 mD = mean(D^2)
                 if (is.nan(mD)) mD=mD0
                 Lambda <- Lambda/2
-            if (Lambda<1e-12) break;
+                if (Lambda<1e-6) break;
+                p <- p.orig + Lambda*Delta            
             }
+        } else {
+            p <- p.orig + Lambda*Delta
         }
-        p <- p.orig + Lambda*Delta
-        Lambda <- Lambda^.5
         return(list(p=p,D=D,iI=iI))
     }
 
