@@ -46,9 +46,9 @@ estimate.list <- function(x,...) {
 ##' @param null.sim Mean under the null for simulations
 ##' @details
 ##'
-##' From iid decomposition
-##' \[\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)\]
-##'
+##' iid decomposition
+##' \deqn{\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)}
+##' can be extracted with the \code{iid} method.
 ##' 
 ##' @export
 ##' @examples
