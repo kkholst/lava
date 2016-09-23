@@ -552,12 +552,16 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 }
 
 ##' @export
-print.summary.sim <- function(x,group=TRUE,
-                              na.print="",
-                              digits = max(3, getOption("digits") - 2),
-                              quote=FALSE,
-                              time=TRUE,
-                              ...) {
+print.summary.sim <- function(x,group=list(c("mean","sd"),
+                                   c("min","[0-9.]+%$","max"),
+                                   c("na","missing"),
+                                   c("true","bias","rmse")),
+                      lower.case=TRUE,
+                      na.print="",
+                      digits = max(3, getOption("digits") - 2),
+                      quote=FALSE,
+                      time=TRUE,
+                      ...) {
     cat(attr(x,"n")," replications",sep="")
     if (time && !is.null(attr(x,"time"))) {
         cat("\t\t\t\t\tTime: ")
@@ -565,24 +569,21 @@ print.summary.sim <- function(x,group=TRUE,
     }
     cat("\n\n")
 
-    nn <- tolower(rownames(x))
-    g1 <- na.omit(match(c("mean","sd"),nn))
-    g2 <- na.omit(c(match("min",nn),grep("%",nn),match("max",nn)))
-    g3 <- na.omit(match(c("na","missing"),nn))
-    g4 <- na.omit(match(c("true","bias","rmse"),nn))
-    g5 <- setdiff(seq_along(nn),c(g1,g2,g3,g4))
+    nn <- rownames(x)
+    if (lower.case)  nn <- tolower(nn)
+    gg <- lapply(group,
+                 function(x) unlist(lapply(x,function(v) grep(v,nn))))
+    gg <- c(gg,list(setdiff(seq_along(nn),unlist(gg))))
 
-    x0 <- rbind(x[g1,,drop=FALSE],
-                { if(length(g2)>0) NA},
-                x[g2,,drop=FALSE],
-                { if(length(g3)>0) NA},
-                x[g3,,drop=FALSE],
-                { if(length(g4)>0) NA},
-                x[g4,,drop=FALSE],
-                { if(length(g5)>0) NA},
-                x[g5,,drop=FALSE])
+    x0 <- c()
+    ng <- length(gg)
+    for (i in seq(ng)) {
+        x0 <- rbind(x0, x[gg[[i]],,drop=FALSE],
+        { if(i<ng && length(gg[[i+1]])>0) NA})
+    }
 
     print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,quote=quote,na.print=na.print,...)
+    cat("\n")
     invisible(x)
 }
 
@@ -593,7 +594,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
                         confint=NULL,true=NULL,
                         fun,names=NULL,unique.names=TRUE,
                         level=0.95,quantiles=c(.025,0.5,.975),...) {
-    mfun <- function(x) {
+    mfun <- function(x,...) {
         res <- c(mean(x,na.rm=TRUE),
                  sd(x,na.rm=TRUE),
                  quantile(x,c(0,quantiles,1),na.rm=TRUE),
@@ -607,15 +608,22 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     }
     if (!missing(fun)) {
         if (!is.null(estimate)) object <- object[,estimate,drop=FALSE]
-        res <- apply(object,2,fun)
+        res <- lapply(seq(ncol(object)),
+                      function(i,...) fun(object[,i,drop=TRUE],i,...),...)
+        res <- matrix(unlist(res),nrow=length(res[[1]]),byrow=FALSE)
         if (is.null(dim(res))) {
             res <- rbind(res)
-            rownames(res) <- names(fun(0))
+        }
+        if (is.null(rownames(res))) {
+            rownames(res) <- names(fun(0,1,...))
+        }
+        if (is.null(colnames(res))) {
+            colnames(res) <- colnames(object)
         }
         return(structure(res,
-                         n=NROW(object),
-                         time=tm,
-                         class=c("summary.sim","matrix")))
+                    n=NROW(object),
+                    time=tm,
+                    class=c("summary.sim","matrix")))
     }
 
     if (!is.null(estimate)) {
