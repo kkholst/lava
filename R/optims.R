@@ -133,7 +133,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                 mD = mean(D^2)
                 if (is.nan(mD)) mD=mD0
                 Lambda <- Lambda/2
-                if (Lambda<1e-6) break;
+                if (Lambda<0.05) break;
                 p <- p.orig + Lambda*Delta            
             }
         } else {
