@@ -49,15 +49,17 @@ confband(0.8,-0.5,0.5,0,col="darkred",vert=FALSE,pch=1,cex=1.5)
 
 set.seed(1)
 K <- 20
-est <- rnorm(K); est[c(3:4,10:12)] <- NA
+est <- rnorm(K)
 se <- runif(K,0.2,0.4)
 x <- cbind(est,est-2*se,est+2*se,runif(K,0.5,2))
+x[c(3:4,10:12),] <- NA
 rownames(x) <- unlist(lapply(letters[seq(K)],function(x) paste(rep(x,4),collapse="")))
 rownames(x)[which(is.na(est))] <- ""
 signif <- sign(x[,2])==sign(x[,3])
 forestplot(x,text.right=FALSE)
 forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
-##'
+forestplot(x,vert=TRUE,text=FALSE)
+
 z <- seq(10)
 zu <- c(z[-1],10)
 plot(z,type="n")

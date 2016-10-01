@@ -28,15 +28,17 @@
 ##'
 ##' set.seed(1)
 ##' K <- 20
-##' est <- rnorm(K); est[c(3:4,10:12)] <- NA
+##' est <- rnorm(K)
 ##' se <- runif(K,0.2,0.4)
 ##' x <- cbind(est,est-2*se,est+2*se,runif(K,0.5,2))
+##' x[c(3:4,10:12),] <- NA
 ##' rownames(x) <- unlist(lapply(letters[seq(K)],function(x) paste(rep(x,4),collapse="")))
 ##' rownames(x)[which(is.na(est))] <- ""
 ##' signif <- sign(x[,2])==sign(x[,3])
 ##' forestplot(x,text.right=FALSE)
 ##' forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
-##' ##'
+##' forestplot(x,vert=TRUE,text=FALSE)
+##' 
 ##' z <- seq(10)
 ##' zu <- c(z[-1],10)
 ##' plot(z,type="n")
@@ -90,14 +92,15 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
             segments(lower,x-delta,lower,x+delta,...)
         if (!missing(upper))
             segments(upper,x-delta,upper,x+delta,...)
-    }
-    if (!is.null(center)) {
-        if (!missing(pch)) {
-            if (blank)
-                points(center,x,pch=16,col="white")
-            points(center,x,pch=pch,...)
-        } else {
-            ##segments(center,x-centermark,center,x+centermark,...)
+        
+        if (!is.null(center)) {
+            if (!missing(pch)) {
+                if (blank)
+                    points(center,x,pch=16,col="white")
+                points(center,x,pch=pch,...)
+            } else {
+                ##segments(center,x-centermark,center,x+centermark,...)
+            }
         }
     }
     if (missing(lower)) lower <- NULL
@@ -107,45 +110,101 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
 
 
 ##' @export
-forestplot <- function(x,lower,upper,vline=0,labels,text=TRUE,text.right=text,delta=0,axes=TRUE,cex=1,pch=15,xlab="",ylab="",sep,air,xlim,ylim,mar=c(4,8,1,1),box1=FALSE,box2=FALSE,...) {
+forestplot <- function(x,lower,upper,line=0,labels,text=TRUE,text.right=text,delta=0,axes=TRUE,cex=1,pch=15,xlab="",ylab="",sep,air,xlim,ylim,mar,box1=FALSE,box2=FALSE,vert=FALSE,cex.axis=1,cex.estimate=0.6,...) {
     if (is.matrix(x)) {
         lower <- x[,2]; upper <- x[,3]
         if (ncol(x)>3) cex <- x[,4]
         x <- x[,1]
+    }
+    if (missing(mar)) {
+        if (vert) {            
+            mar <- c(8,4,1,1)
+        } else {
+            mar <- c(4,8,1,1)
+        }
     }
     if (missing(labels)) labels <- names(x)
     K <- length(x)
     def.par <- par(no.readonly=TRUE)
     on.exit(par(def.par))
     if (text.right) {
-        layout(cbind(1,2),widths=c(0.8,0.2))
+        if (vert) {
+            layout(rbind(2,1),heights=c(0.2,0.8))
+        } else {
+            layout(cbind(1,2),widths=c(0.8,0.2))
+        }
     } else {
         layout(1)
     }
-    if (missing(ylim)) ylim <- c(1,K)
-    if (missing(xlim)) {
-        if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
-        xlim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
+    if (vert) {
+        if (missing(ylim)) {
+            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
+            ylim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
+        }
+        if (missing(xlim)) xlim <- c(1,K)        
+    } else {
+        if (missing(ylim)) ylim <- c(1,K)
+        if (missing(xlim)) {
+            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
+            xlim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
+        }
     }
     par(mar=mar) ## bottom,left,top,right
     plot(0,type="n",axes=FALSE,xlab=xlab,ylab=ylab,xlim=xlim,ylim=ylim,...)
     if (box1) box()
-    if (axes) axis(1)
-    if (!is.null(vline)) abline(v=vline,lty=2,col="lightgray")
-    if (!missing(sep)) abline(h=sep+.5,col="gray")
-    confband(seq(K),lower,upper,x,pch=pch,cex=cex,vert=FALSE,blank=FALSE,...)
-    mtext(labels,2,at=seq(K),las=2,line=1)
+    if (axes) {
+        if (vert) {
+            axis(2,cex.axis=cex.axis)
+        } else {
+            axis(1,cex.axis=cex.axis)
+        }
+    }
+    if (!is.null(line)) {
+        if (vert) {
+            abline(h=line,lty=2,col="lightgray")
+        } else {
+            abline(v=line,lty=2,col="lightgray")
+        }
+    }
+    if (!missing(sep)) {
+        if (vert) {
+            abline(v=sep+.5,col="gray")
+        } else {
+            abline(h=sep+.5,col="gray")
+        }
+    }
+    confband(seq(K),lower,upper,x,pch=pch,cex=cex,vert=vert,blank=FALSE,...)
+    if (vert) {
+        mtext(labels,1,at=seq(K),las=2,line=1,cex=cex.axis)
+    } else {
+        mtext(labels,2,at=seq(K),las=2,line=1,cex=cex.axis)
+    }
     if (text) {
         xpos <- upper
         if (text.right) {
-            par(mar=c(mar[1],0,mar[3],0))
-            plot.new(); plot.window(ylim=ylim,xlim=c(0,0.5))
+            if (vert) {
+                par(mar=c(0,mar[2],0,mar[4]))
+            } else {
+                par(mar=c(mar[1],0,mar[3],0))
+            }
+            plot.new()
+            if (vert) {
+                plot.window(xlim=xlim,ylim=c(0,0.5))
+            } else {
+                plot.window(ylim=ylim,xlim=c(0,0.5))
+            }
             if (box2) box()
             xpos[] <- 0
         }
         for (i in seq_len(K)) {
             st <- paste0(formatC(x[i])," (",formatC(lower[i]),";",formatC(upper[i]),")")
-            if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=0.6)
+            if (vert) {
+                st <- paste(" ", st)
+                if (!is.na(x[i])) graphics::text(i,xpos[i],st,xpd=TRUE,las=2,srt=90, offset=0, pos=4, cex=cex.estimate)
+            } else {
+                if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=cex.estimate)
+            }
         }
     }
 }
+
