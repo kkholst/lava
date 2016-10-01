@@ -423,8 +423,6 @@ acc <- function(M,v) {
 
 ###}}} Depth-First/acc (accessible)
 
-## Trace operator
-tr <- function(x) sum(diag(x))
 
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean+index(x)$npar.ex)
