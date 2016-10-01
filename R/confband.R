@@ -21,11 +21,12 @@
 ##' @export
 ##' @keywords iplot
 ##' @aliases confband forestplot
+##' @author Klaus K. Holst
 ##' @examples
 ##' plot(0,0,type="n",xlab="",ylab="")
 ##' confband(0.5,-0.5,0.5,0,col="darkblue")
 ##' confband(0.8,-0.5,0.5,0,col="darkred",vert=FALSE,pch=1,cex=1.5)
-##'
+##' 
 ##' set.seed(1)
 ##' K <- 20
 ##' est <- rnorm(K)
@@ -44,11 +45,24 @@
 ##' plot(z,type="n")
 ##' confband(z,zu,rep(0,length(z)),col=Col("darkblue"),polygon=TRUE,step=TRUE)
 ##' confband(z,zu,zu-2,col=Col("darkred"),polygon=TRUE,step=TRUE)
-##' ##'
+##' 
 ##' z <- seq(0,1,length.out=100)
 ##' plot(z,z,type="n")
 ##' confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
-##' @author Klaus K. Holst
+##' 
+##' set.seed(1)
+##' k <- 10
+##' x <- seq(k)
+##' est <- rnorm(k)
+##' sd <- runif(k)
+##' val <- cbind(x,est,est-sd,est+sd)
+##' par(mfrow=c(1,2))
+##' plot(0,type="n",xlim=c(0,k+1),ylim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
+##' axis(2)
+##' confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2)
+##' plot(0,type="n",ylim=c(0,k+1),xlim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
+##' axis(1)
+##' confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
 confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0.03,
                      pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
     if (polygon) {
