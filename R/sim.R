@@ -457,7 +457,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         colnames(res) <- vv
     } else {
 
-
         if (!loadconfig) {
             xc <- index(x)$vars
             xconstrain.idx <- unlist(lapply(lapply(constrain(x),function(z) attributes(z)$args),function(z) length(intersect(z,xc))>0))
@@ -705,7 +704,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     for (v in names(self)) {
         res[,v] <- self[[v]](res[,v])
     }
-    if (!latent) return(subset(res,select=-latent(x)))
+    if (!latent && length(latent(x))>0) return(subset(res[,-which(colnames(res)%in%latent(x))]))
     return(res)
 }
 

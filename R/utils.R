@@ -38,22 +38,14 @@ parsedesign <- function(coef,x,...) {
 
 ##' @export
 contr <- function(p,n,...) {
-  if (length(p)==1) {
-    B <- matrix(0,ncol=p*n,nrow=p*(n-1))
-    pos <- 0
-    for (i in seq_len(p)) {
-      for (j in seq_len(n-1)) {
-        pos <- pos+1
-        B[pos,i] <- 1;  B[pos,j*p+i] <- -1
-      }
+    if (missing(n)) n <- max(unlist(p))
+    if (is.list(p)) {
+        return(Reduce(rbind,lapply(p, function(x) do.call(contr, list(x,n)))))
     }
-    return(B)
-  }
-  if (missing(n)) n <- max(p)
-  B <- matrix(0,ncol=n,nrow=length(p)-1)
-  B[,p[1]] <- 1
-  B[cbind(seq(nrow(B)),p[-1])] <- -1
-  B
+    B <- matrix(0,ncol=n,nrow=length(p)-1)
+    B[,p[1]] <- 1
+    B[cbind(seq(nrow(B)),p[-1])] <- -1
+    B
 }
 
 ###}}} contr

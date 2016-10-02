@@ -21,6 +21,7 @@
 ##'     pchisq confint.default formula fft uniroot rbinom predict sd
 ##'     addmargins residuals dnorm quantile qf cov2cor qchisq
 ##'     get_all_vars p.adjust rpois rgamma printCoefmat rt glm nlminb
+##' @importFrom survival is.Surv
 ##' @importFrom methods new as
 ##' @aliases lava-package lava
 ##' @docType package
