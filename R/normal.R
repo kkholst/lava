@@ -113,7 +113,7 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,...),p,method=lava.options()$Dmethod)
 }
 
-normal_hessian.lvm <- function(x,p,outer=FALSE,...) {
+normal_hessian.lvm <- function(x,p,outer=FALSE,weight2=NULL,...) {
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     dots <- list(...); dots$weight <- NULL
     sseed <- .Random.seed
@@ -121,16 +121,17 @@ normal_hessian.lvm <- function(x,p,outer=FALSE,...) {
     if (!outer) {
         f <- function(p) {
             set.seed(1)
-        do.call("normal_objective.lvm", c(list(x,p=p,indiv=FALSE),dots))
+        do.call("normal_objective.lvm", c(list(x,p=p,indiv=FALSE,weight2=weight2),dots))
         }
         g <- function(p) {
             set.seed(1)
-            do.call("normal_gradient.lvm", c(list(x,p=p,indiv=FALSE),dots))
+            do.call("normal_gradient.lvm", c(list(x,p=p,indiv=FALSE,weight2=weight2),dots))
         }
-        if (is.null(ordinal(x)))
+        if (is.null(ordinal(x)) && is.null(weight2))
             return(numDeriv::jacobian(g,p))
-        else
+        else {
             return(numDeriv::hessian(f,p))
+        }
     }
     ## Else calculate outer product of the score (empirical variance of score)
     S <- normal_gradient.lvm(x,p=p,indiv=TRUE,...)
