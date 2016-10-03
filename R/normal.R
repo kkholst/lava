@@ -82,6 +82,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         yu[,colnames(weight2)] <- weight2
         status[match(colnames(weight2),y)] <- 1
     }
+
     l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
 
     if (Table) {
@@ -97,6 +98,9 @@ normal_logLik.lvm <- function(object,p,data,weight2=NULL,...) {
 }
 
 normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
+    save.seed <- get(".Random.seed", envir = .GlobalEnv)
+    on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     if  (is.null(ordinal(x))) {
         D <- deriv.lvm(x,p=p)
@@ -116,8 +120,9 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
 normal_hessian.lvm <- function(x,p,outer=FALSE,weight2=NULL,...) {
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     dots <- list(...); dots$weight <- NULL
-    sseed <- .Random.seed
-    on.exit(set.seed(sseed))
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
+    save.seed <- get(".Random.seed", envir = .GlobalEnv)
+    on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     if (!outer) {
         f <- function(p) {
             set.seed(1)
