@@ -56,7 +56,7 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
 
     Table <- (length(y)==length(ord)) && (length(x.idx)==0)
     if (Table) {
-        pat <- mets::fast.pattern(data[,y,drop=FALSE],categories=max(data)+1)
+        pat <- mets::fast.pattern(data[,y,drop=FALSE],categories=max(data[,y,drop=FALSE])+1)
         data <- pat$pattern
         colnames(data) <- y
     }
