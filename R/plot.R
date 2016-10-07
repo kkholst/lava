@@ -76,8 +76,8 @@
          addstyle=TRUE,plot.engine=lava.options()$plot.engine,init=TRUE,
          layout=lava.options()$layout,
          edgecolor=lava.options()$edgecolor,
-         graph.proc=lava.options()$graph.proc,         
-         
+         graph.proc=lava.options()$graph.proc,
+
          ...) {
     if (is.null(vars(x))) {
       message("Nothing to plot: model has no variables.")
@@ -95,13 +95,12 @@
 
 
     plot.engine <- tolower(plot.engine)
-    if (suppressWarnings(plot.engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE))))) {
+    if (plot.engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE)))) {
         plot.engine <- "visnetwork"
     }
-    if (suppressWarnings(plot.engine=="visNetwork" && (!(requireNamespace("visNetwork",quietly=TRUE))))) {
+    if (plot.engine=="visnetwork" && (!(requireNamespace("visNetwork",quietly=TRUE)))) {
         plot.engine <- "igraph"
     }
-                        
   if (plot.engine=="igraph") {
     if (!requireNamespace("igraph",quietly=TRUE)) {
       message("package 'Rgraphviz','igraph' or 'visNetwork' not available")
@@ -120,7 +119,7 @@
         if (!noplot) print(g)
         return(g)
   }
-    
+
     if (init) {
         if (!is.null(graph.proc)) {
             x <- do.call(graph.proc, list(x,edgecol=edgecolor,...))
@@ -214,7 +213,7 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
         mylab[!is.na(m$par)] <- m$par[!is.na(m$par)]
         lab <- c()
         for (i in seq(nrow(edges))) {
-            lab <- c(lab,t(mylab)[edges[i,1],edges[i,2]])            
+            lab <- c(lab,t(mylab)[edges[i,1],edges[i,2]])
         }
         edges <- cbind(edges,label=lab)
     }
@@ -222,10 +221,10 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
         edges <- cbind(edges,dashes=FALSE,arrows="from")
 
 
-    if (labels && cor) {
+    if (cor) {
         mylab <- AP$P
         mylab[!is.na(m$covpar)] <- m$covpar[!is.na(m$covpar)]
-        coredges <- data.frame(from=numeric(),to=numeric(),label=character())        
+        coredges <- data.frame(from=numeric(),to=numeric(),label=character())
         for (i in seq_len(nrow(mylab)-1)) {
             for (j in seq(i+1,nrow(mylab))) {
                 if (mylab[i,j]!="0") {
@@ -235,16 +234,17 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
             }
         }
         if (nrow(coredges)>0) {
+            if (!labels) coredges <- coredges[,1:2,drop=FALSE]
             coredges <- cbind(coredges,dashes=TRUE,arrows="false")
             edges <- rbind(edges,coredges)
         }
     }
-    
-    if (length(edges)>0) edges$physics <- TRUE    
+
+    if (length(edges)>0) edges$physics <- TRUE
     v <- visNetwork::visNetwork(nodes,edges,width=width,height=height,...)
     v <- visNetwork::visEdges(v, arrows=list(from=list(enabled=TRUE, scaleFactor = 0.5)),
                               scaling = list(min = 2, max = 2))
-    v <- visNetwork::visLayout(v,randomSeed=randomSeed)    
+    v <- visNetwork::visLayout(v,randomSeed=randomSeed)
     v
 }
 

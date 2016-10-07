@@ -289,9 +289,9 @@ covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,vname=NA,v2name=v
   if (vname!=v2name)
     constrain(object,v2name,l2name) <- ff
   covariance(object,var1,var2) <- cname
-  cpar <- unique(c(vname,v2name,rname))
-  constrain(object,cname,cpar) <- function(x)
-    prod((x[seq(length(cpar)-1)]))^(1/(length(cpar)-1))*tanh(x[length(cpar)])
-
+  cpar <- unique(c(lname,l2name,rname))
+  constrain(object,cname,cpar) <- function(x) {
+      prod(exp(x[seq(length(cpar)-1)]))^(1/(length(cpar)-1))*tanh(x[length(cpar)])
+  }
   return(structure(object,rname=rname,cname=cname))
 }
