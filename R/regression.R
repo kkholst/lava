@@ -69,8 +69,8 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
         ys <- unlist(lapply(yyf,function(x) x[1]))
     }
     
+    notexo <- c()
     if (!is.null(object)) {
-      notexo <- c()
       if (length(lhs)>0) {
         object <- addvar(object,ys,reindex=FALSE,...)
         notexo <- ys

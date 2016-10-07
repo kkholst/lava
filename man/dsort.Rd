@@ -4,7 +4,7 @@
 \alias{dsort}
 \title{Sort data frame}
 \usage{
-dsort(data, x, ...)
+dsort(data, x, ..., decreasing = FALSE)
 }
 \arguments{
 \item{data}{Data frame}
@@ -12,6 +12,8 @@ dsort(data, x, ...)
 \item{x}{variable to order by}
 
 \item{...}{additional variables to order by}
+
+\item{decreasing}{sort order (vector of length x)}
 }
 \value{
 data.frame
@@ -24,5 +26,6 @@ data(hubble)
 dsort(hubble, "sigma")
 dsort(hubble, hubble$sigma,"v")
 dsort(hubble,~sigma+v)
+dsort(hubble,~sigma-v)
 }
 

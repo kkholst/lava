@@ -5,6 +5,7 @@
 ##' @param data Data frame
 ##' @param x variable to order by
 ##' @param ... additional variables to order by
+##' @param decreasing sort order (vector of length x)
 ##' @return data.frame
 ##' @export
 ##' @examples
@@ -12,9 +13,14 @@
 ##' dsort(hubble, "sigma")
 ##' dsort(hubble, hubble$sigma,"v")
 ##' dsort(hubble,~sigma+v)
-dsort <- function(data,x,...) {
+##' dsort(hubble,~sigma-v)
+dsort <- function(data,x,...,decreasing=FALSE) {
     if (missing(x)) return(data)
-    if (inherits(x,"formula")) x <- all.vars(x)
+    if (inherits(x,"formula")) {
+        xx <- procformula(value=x)$res
+        decreasing <- unlist(lapply(xx,function(x) substr(trim(x),1,1)=="-"))
+        x <- all.vars(x)
+    } 
     if (is.character(x) && length(x)<nrow(data)) x <- lapply(x,function(z) data[,z])
     dots <- list(...)
     args <- lapply(dots, function(x) {
@@ -22,5 +28,6 @@ dsort <- function(data,x,...) {
         x
     })
     if (!is.list(x)) x <- list(x)
-    data[do.call("order",c(x,args)),]
+    data[do.call("order",c(c(x,args),list(decreasing=decreasing,method="radix"))),]
 }
+
