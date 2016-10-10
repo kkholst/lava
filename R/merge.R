@@ -144,14 +144,21 @@ merge.lm <- function(x,y,...) {
     nn <- names(formals(merge.estimate)[-seq(3)])
     idx <- na.omit(match(nn,names(args)))
     models <- args; models[idx] <- NULL
-    mm <- lapply(models,estimate); names(mm)[1:2] <- c("x","y")
-    do.call("merge.estimate",c(mm,args[idx]))
+    mm <- lapply(args,function(x) tryCatch(estimate(x),error=function(e) NULL))
+    names(mm)[1:2] <- c("x","y")
+    ii <- which(unlist(lapply(mm,is.null)))
+    if (length(ii)>0) mm[ii] <- NULL
+    do.call(merge,c(mm,args[idx]))
 }
 
 ##' @export
 merge.glm <- merge.lm
 
 ##' @export
+merge.lvmfit <- merge.lm
+
+##' @export
 merge.multinomial <- function(x,...) {
     merge.estimate(x,...)
 }
+
