@@ -49,7 +49,7 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
         x <- model.frame(x,data)
     }
     if (length(gridsize)==1) gridsize <- rep(gridsize,2)
-    if (is.null(h)) h <- sd(as.matrix(x))*nrow(x)^(-1/5)
+    if (is.null(h)) h <- apply(as.matrix(x),2,sd)*nrow(x)^(-1/5)
     est <- KernSmooth::bkde2D(x, bandwidth=h, gridsize=gridsize)
     if (is.null(xlab)) xlab <- names(x)[1]
     if (is.null(ylab)) ylab <- names(x)[2]
