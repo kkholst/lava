@@ -134,7 +134,11 @@ function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { #
   ###
   efixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
   enamed <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
-  eparname <- unlist(unique(x$exfix[enamed]))
+  if(length(enamed)>0){
+      eparname <- unlist(unique(x$exfix[enamed]))
+  } else{
+    eparname <- NULL
+  }
   ## Extra parameters
   e0 <- rep(1,length(x$expar)) ## Indicators of free extra par.
   if (length(efixed)>0)
