@@ -96,7 +96,7 @@
 ##' n <- nrow(dd)
 ##' e0 <- estimate(m,data=list(S=cov(dd)*(n-1)/n,mu=colMeans(dd),n=n))
 ##' rm(dd)
-##' 
+##'
 ##' ## Multiple group analysis
 ##' m <- lvm()
 ##' regression(m) <- c(y1,y2,y3)~u
@@ -282,6 +282,7 @@
         if (!exists(ObjectiveFun) & !exists(GradFun))
             stop("Unknown estimator.")
 
+
         Method <-  paste0(estimator, "_method", ".lvm")
         if (!exists(Method)) {
             Method <- "nlminb1"
@@ -290,7 +291,7 @@
         }
         NoOptim <- "method"%in%names(control) && is.null(control$method)
         if (is.null(optim$method) && !(NoOptim)) {
-            optim$method <- if (missing) "nlminb1" else Method
+            optim$method <- if (missing && Method!="nlminb0") "nlminb1" else Method
         }
 
 
@@ -765,7 +766,7 @@
 ##' @export
 estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
-    formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))    
+    formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))
     formulaSt <- paste0("~.-cluster(",formulaId,")-id(",formulaId,")")
     if (!is.null(formulaId)) {
         id <- formulaId
@@ -791,7 +792,7 @@ estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,
     } else {
         it <- "0"
     }
-    
+
     if (!is.null(id)) covars <- setdiff(covars,id)
     model <- lvm(toformula(yvar,c(it,covars)),silent=TRUE)
     if (!is.null(distribution)) {
