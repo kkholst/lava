@@ -11,7 +11,7 @@ test_that("Simple linear constraint",{
     expect_output(print(e1),"y~x")
     expect_warning(e1,NA)
         
-    expect_equivalent(constraints(e1)[1],coef(lm(y~x+z,d1))["z"])
+    expect_true((constraints(e1)[1]-coef(lm(y~x+z,d1))["z"])^2<1e-9)
     s <- summary(e1)
     expect_output(print(s),"Non-linear constraints:")
 
@@ -77,6 +77,7 @@ test_that("Multiple group constraints I", {
     set.seed(1)
     m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))
     d1 <- sim(m1,500); d2 <- sim(m1,500)
+    ##coef(estimate(m1,d1))
     constrain(m1,beta2~psi) <- function(x) 2*x
     m2 <- lvm(y[m:v] ~ f(x,beta2) + z)
     constrain(m2,beta2~psi) <- function(x) 2*x
@@ -88,16 +89,19 @@ test_that("Multiple group constraints I", {
 })
 
 test_that("Multiple group constraints II", {
-  data(twindata)
+  data("twindata",package="lava")
   twinwide <- reshape(twindata,direction="wide",
                       idvar="id",timevar="twinnum")
   l <- lvm(~bw.1+bw.2)
   covariance(l) <- bw.1 ~ bw.2
   e <- estimate(l,subset(twinwide,zyg.1=="MZ"),control=list(method="NR"))
   B <- cbind(1,-1); colnames(B) <- c("bw.1,bw.1","bw.2,bw.2")
+  colnames(B) <- gsub(",",lava.options()$symbols[2],colnames(B))
   lava::compare(e,contrast=B)
   B2 <- rbind(c(1,-1,0,0),c(0,0,1,-1))
   colnames(B2) <- c("bw.1","bw.2","bw.1,bw.1","bw.2,bw.2")
+  colnames(B2) <- gsub(",",lava.options()$symbols[2],colnames(B2))
+
   lava::compare(e,contrast=B2)
 
   l <- lvm(~bw.1+bw.2)

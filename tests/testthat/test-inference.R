@@ -98,7 +98,7 @@ test_that("equivalence", {
     e <- estimate(m,d)
     ##eq <- equivalence(e,y1~x,k=1)
     dm <- capture.output(eq <- equivalence(e,y2~x,k=1))
-    expect_output(print(eq),"y1,y2")
+    expect_output(print(eq),paste0("y1",lava.options()$symbol[2],"y3"))
     expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))    
 })
 
@@ -330,8 +330,10 @@ test_that("Random slope model", {
     system.time(e <- estimate(m0,d,param="none",control=list(trace=0,constrain=FALSE)))
     
     expect_true(mean(sl$coef-coef(e)[c("u","s")])^2<1e-5)
-    expect_true((logLik(l)-logLik(e))^2<1e-5)    
-    expect_true(mean(diag(sl$varcomp)-coef(e)[c("u,u","s,s")])^2<1e-5)
+    expect_true((logLik(l)-logLik(e))^2<1e-5)
+    varcomp.nam <- c(paste0("u",lava.options()$symbol[2],"u"),
+                paste0("s",lava.options()$symbol[2],"s"))
+    expect_true(mean(diag(sl$varcomp)-coef(e)[varcomp.nam])^2<1e-5)
 
     ## missing
     expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
@@ -364,7 +366,10 @@ test_that("Predictions, jacobians", {
     m <- lvm(c(x1,x2,x3)~u1,u1~z,
              c(y1,y2,y3)~u2,u2~u1+z)
     latent(m) <- ~u1+u2
-    d <- simulate(m,10,"u2,u2"=2,"u1,u1"=0.5,seed=123)
+
+    p <- c("u2,u2"=2,"u1,u1"=0.5)
+    names(p) <- gsub(",",lava.options()$symbols[2],names(p))
+    d <- simulate(m,10,p=p,seed=123)
     e <- estimate(m,d)
 
     object <- e

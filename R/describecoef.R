@@ -9,9 +9,9 @@ describecoef <- function(x,par,from,to,mean=TRUE) {
     attributes(pos) <- NULL
     return(pos)
   }
-  res <- strsplit(p,lava.options()$symbol[2])
+  res <- strsplit(p,lava.options()$symbol[2])  
   var.idx <- which(unlist(lapply(res,length))>1) ## Variance parameters
-  rest.idx <- setdiff(seq_along(p),var.idx)
+  rest.idx <- setdiff(seq_along(p),var.idx)  
   res[rest.idx] <- strsplit(p[rest.idx],lava.options()$symbol[1])
   mean.idx <- which(unlist(lapply(res,length))==1) ## Mean parameters
   reg.idx <- setdiff(rest.idx,mean.idx)

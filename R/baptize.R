@@ -12,7 +12,7 @@
 ##' @export
 baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
   p <- describecoef(x, mean=TRUE)
-  sym <- lava.options()$sym
+  sym <- lava.options()$symbols
   MeanFix <- intfix(x)
   RegFix <- regfix(x)
   CovFix <- covfix(x)

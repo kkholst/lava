@@ -105,6 +105,6 @@ assign("options", list(
     edgecolor=FALSE,
     layout="dot",
     ## symbols=c("<-","<->"),
-    symbols=c("~",","),
+    symbols=c("~","~~"),
     devel=FALSE,
     debug=FALSE), envir=lava.env)

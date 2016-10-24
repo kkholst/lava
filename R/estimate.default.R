@@ -240,7 +240,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     idstack <- NULL
     ## Preserve id from 'estimate' object
     if (missing(id) && inherits(x,"estimate") && !is.null(x$id)) id <- x$id
-    if (!missing(id)) {
+    if (!missing(id) && iid) {
         if (is.null(iidtheta)) stop("'iid' method needed")
         nprev <- nrow(iidtheta)
         if (inherits(id,"formula")) {

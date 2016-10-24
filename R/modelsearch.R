@@ -88,10 +88,10 @@ backwardeliminate <- function(x,
         ordp <- order(p,decreasing=TRUE)
         curp <- p[ordp[1]]
         if (curp<pthres) break;
-        var1 <- unlist(strsplit(names(curp),lava.options()$symbol[1]))
         dots$control$start <- attributes(p)$coef[-ordp[1]]
         if (messages) message("Removed: ",names(curp)," p-value: ",round(curp,3))
-        nn <- strsplit(var1,"~|,")[[1]]
+        ##var1 <- unlist(strsplit(names(curp),lava.options()$symbol[1]))
+        nn <- strsplit(names(curp),paste0(lava.options()$symbol,collapse="|"))[[1]]
         cancel(M) <- nn
     }
 
