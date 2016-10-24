@@ -38,22 +38,27 @@ dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
     if (inherits(cond,"formula")) {
         cond <- all.vars(cond)
     }
-    x <- intersect(x,vars(object))
-    cond <- intersect(cond,vars(object))
+    nod <- vars(object)
+    x <- intersect(x,nod)
+    cond <- intersect(cond,nod)
     V <- c(x,cond)
     ## Ancenstral graph
-    an <- subset(object,c(V,ancestors(object,V)))
+    keep <- c(V,ancestors(object,V))
+    del <- setdiff(nod,keep)
+    if (length(del)>0) object <- rmvar(object,del)
     ## moralized graph
-    man <- an
+    man <- object
     for (v in V) {
-        pa <- parents(an,v)
-        if (length(pa)>1)
-            for (i in seq(length(pa)-1)) {
-                for (j in seq(length(pa)-1)+1) {
-                    man <- regression(man,from=pa[i],to=pa[j])
-                }
-        }
-    }
+        pa <- parents(object,v)
+        if (length(pa)>1)  
+            man$M[pa,pa] <- 1
+        ## for (i in seq(length(pa)-1)) {
+        ##     for (j in seq(length(pa)-1)+1) {
+        ##         man$M[i,j]
+        ##         man <- regression(man,from=pa[i],to=pa[j])
+        ##     }
+        ## }
+    }    
     man.sel <- rmvar(man,cond)
     ## with(man.sel, solve(diag(nrow=nrow(M))-M))
     ii <- match(x,vars(man.sel))
