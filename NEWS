@@ -3,12 +3,18 @@
   - R-squared fix
   - New argument 'latent' in simulate method. If FALSE the latent
     variables are dropped from the returned data.frame
-  - adjMat, edgeList, ancestors,descendants,D-separation: dsep
+  - New graph functions: adjMat, edgeList, ancestors, descendants, dsep
+  - backdoor function
+  - Covariance parameters are now reference with ~~ instead of ,.
+    Applies to setting starting values	    	 
+    in 'estimate', parameters in 'sim','compare','estimate',....
+    To use the old syntax set 'lava.options(symbol=c("<-","<->"))'
+  - All simple paths available with  path(...,all=TRUE)
+  - 'layout' (graph ) added to lava.options
   - New riskcomp, rdiff,rratio,...
-  - All simple paths with path(...,all=TRUE)
-  - layout added to lava.options
+
   - bootstrap.lvmfit return by default original estimates
-  - visNetwork support
+  - visNetwork support, new plot.engine argument.
   - print, transform methods updated (transform output)
   - modelsearch by default now shows any directional or undirectional
     associations (type='all' vs type='cor')
