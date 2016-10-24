@@ -552,10 +552,10 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 }
 
 ##' @export
-print.summary.sim <- function(x,group=list(c("mean","sd"),
-                                   c("min","[0-9.]+%$","max"),
-                                   c("na","missing"),
-                                   c("true","bias","rmse")),
+print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$"),
+                                   c("^min$","^[0-9.]+%$","^max$"),
+                                   c("^na$","^missing$"),
+                                   c("^true$","^bias$","^rmse$")),
                       lower.case=TRUE,
                       na.print="",
                       digits = max(3, getOption("digits") - 2),
@@ -593,7 +593,7 @@ print.summary.sim <- function(x,group=list(c("mean","sd"),
 summary.sim <- function(object,estimate=NULL,se=NULL,
                         confint=NULL,true=NULL,
                         fun,names=NULL,unique.names=TRUE,
-                        level=0.95,quantiles=c(.025,0.5,.975),...) {
+                level=0.95,quantiles=c(.025,0.5,.975),...) {
     mfun <- function(x,...) {
         res <- c(mean(x,na.rm=TRUE),
                  sd(x,na.rm=TRUE),
