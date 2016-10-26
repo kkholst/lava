@@ -34,22 +34,6 @@ parsedesign <- function(coef,x,...) {
 
 ###}}}
 
-###{{{ contr
-
-##' @export
-contr <- function(p,n,...) {
-    if (missing(n)) n <- max(unlist(p))
-    if (is.list(p)) {
-        return(Reduce(rbind,lapply(p, function(x) do.call(contr, list(x,n)))))
-    }
-    B <- matrix(0,ncol=n,nrow=length(p)-1)
-    B[,p[1]] <- 1
-    B[cbind(seq(nrow(B)),p[-1])] <- -1
-    B
-}
-
-###}}} contr
-
 ###{{{ substArg
 
 substArg <- function(x,env,...) {

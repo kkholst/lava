@@ -11,7 +11,6 @@
 \alias{addattr}
 \alias{addhook}
 \alias{checkmultigroup}
-\alias{contr}
 \alias{decomp.specials}
 \alias{deriv}
 \alias{describecoef}

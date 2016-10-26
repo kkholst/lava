@@ -1,32 +1,38 @@
-* Version 1.4.4.x <2016-10-02 Tue>
-  - '+' operator overloaded for lvm and estimate objects (merge)
-  - R-squared fix
-  - New argument 'latent' in simulate method. If FALSE the latent
-    variables are dropped from the returned data.frame
-  - New graph functions: adjMat, edgeList, ancestors, descendants, dsep
-  - backdoor function
+* Version 1.4.5 <2016-10-25 Tue>
+  - New graph functions: 
+    dsep: check for d-separation (conditional independence).
+    backdoor: check backdoor criterion of a graph (lvm-object).
+    adjMat: return adjaceny matrix.
+    edgeList: return edge list.
+    ancestors: return ancenstors of nodes.
+    descendants: return descendants of nodes.
+  - All simple paths in a graph can now be extracted with:
+    path(...,all=TRUE)
   - Covariance parameters are now reference with ~~ instead of ,.
-    Applies to setting starting values	    	 
-    in 'estimate', parameters in 'sim','compare','estimate',....
-    To use the old syntax set 'lava.options(symbol=c("<-","<->"))'
-  - All simple paths available with  path(...,all=TRUE)
-  - 'layout' (graph ) added to lava.options
-  - New riskcomp, rdiff,rratio,...
-
-  - bootstrap.lvmfit return by default original estimates
-  - visNetwork support, new plot.engine argument.
-  - print, transform methods updated (transform output)
-  - modelsearch by default now shows any directional or undirectional
-    associations (type='all' vs type='cor')
-  - sim.default now stores timings. New print functions (data.table like)
-  - presets in sim objects: m <- sim(m,...)
-  - estimate.default can now simulate p-values (R argument). Returns
-    an object which can also be called with 'estimate'
-  - bug fix in NR with back-tracing. Fixed matrices.lvm when called
-    without variance parameters. 
-  - Composite likelihood: complik
-  - contr updated
-  
+    Applies to setting starting values in 'estimate', parameters in
+    'sim','compare','estimate',...  
+    To use the old syntax set 'lava.options(symbol=c("~",","))'
+  - 'layout' argument added to lava.options (default 'dot')
+  - visNetwork support, new 'plot.engine' argument added to plot methods.
+  - bootstrap.lvmfit now default returns original estimates.
+  - print, transform methods updated (transform output).
+  - '+' operator overloaded for lvm and estimate objects (merge).
+  - New composite likelihood function: complik.
+  - New functions for simple association measures: riskcomp, rdiff, rratio,...
+  - New argument 'latent' in simulate method. If FALSE the latent
+    variables are dropped from the returned data.frame.
+  - modelsearch by default now shows both directional or undirectional
+    associations (type='all' vs type='cor').
+  - sim.default now stores timings. New print functions (data.table
+    like output).
+  - lvm model can now be updated with the 'sim' function, 
+    for instance setting parameter values for the simulation only once:
+    m <- sim(m,p=p,...), with faster subsequent calls sim(m,n=n).
+  - estimate.default can now simulate p-values ('R' argument). Returns
+    an object which can also be used as input for 'estimate'.
+  - Bug fixes: NR optimization with back-tracing; fixed matrices.lvm when called
+    without variance parameters; fixed a bug in r-square computations.
+  - Contrast matrix can be specified with the function 'contr'.
 
 * Version 1.4.4 <2016-08-13 Sat>
   - estimate.default will now use the id-variable of an 'estimate'
