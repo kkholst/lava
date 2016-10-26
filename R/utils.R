@@ -214,11 +214,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 `procdata.lvm` <-
   function(x,data,categorical=FALSE,
-    ##na.method=ifelse(any(is.na(data[,intersect(colnames(data),exogenous(x))])),"pairwise.complete.obs","complete.obs")
-    na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"pairwise.complete.obs","complete.obs")
-    ##na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"complete.obs","pairwise.complete.obs")
-    ##na.method=c("pairwise.complete.obs")
-           ) {
+    na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"complete.obs","pairwise.complete.obs")
+    ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
     }
@@ -246,19 +243,20 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       if (n==1) {
         S <- diag(nrow=ncol(mydata)); colnames(S) <- rownames(S) <- obs
       }
-      if (na.method=="pairwise.complete.obs") {
-        mu <- colMeans(mydata,na.rm=TRUE)
-        if (is.null(S)) {
-          S <- (n-1)/n*cov(mydata,use=na.method)
-          S[is.na(S)] <- 1e-3
-        }
-      }
       if (na.method=="complete.obs") {
         mydata <- na.omit(mydata)
         n <- nrow(mydata)
         mu <- colMeans(mydata)
         if (is.null(S))
           S <- (n-1)/n*cov(mydata) ## MLE variance matrix of observed variables
+      }
+      nS <- is.null(S) || any(is.na(S))
+      if (na.method=="pairwise.complete.obs" || nS) {
+          mu <- colMeans(mydata,na.rm=TRUE)
+          if (nS) {
+              S <- (n-1)/n*cov(mydata,use="pairwise.complete.obs")
+              S[is.na(S)] <- 1e-3
+          }
       }
     }
     else
@@ -517,4 +515,5 @@ Decomp.specials <- function(x,pattern="[()]") {
 
 printline <- function(n=70) {
     cat(rep("_", n), "\n", sep="");
+
 }
