@@ -388,7 +388,8 @@ beautify <- function(x,col=lava.options()$node.color,border=rep("black",3),labco
     }
     if (length(keep)>0) {
         trimmed <- trimmed[keep]
-        lab <- paste0(vars(x)[keep],"=",paste0("expression(",trimmed,"[scriptscriptstyle(",num,")])"),collapse=",")
+        trim <- gsub(" ",",",trimmed)
+        lab <- paste0('"',vars(x)[keep],'"',"=",paste0("expression(",trim,"[scriptscriptstyle(",num,")])"),collapse=",")
         labels(x) <- eval(parse(text=paste("c(",lab,")")))
     }
     if (!edgecol) return(x)
