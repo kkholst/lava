@@ -92,9 +92,11 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
                     coefmat=coefmat)
     } else {
         if (inherits(table,"table"))
-            M <- multinomial(M)
+            M <- multinomial(table)        
         else {
             if (inherits(table,"multinomial")) {
+                M <- table
+                table <- round(M$P*nrow(M$data))
             } else {
                 M <- multinomial(table[,1:2],...)
                 table <- base::table(table)
@@ -116,7 +118,7 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
             if (!is.null(confint)) {
                 if (tolower(confint[1])=="logit") {
                     res[seq(length(res)-1)] <- logit(res[seq(length(res)-1)])
-                } else {
+                } else if (tolower(confint[1])=="arcsin") {
                     res[seq(length(res)-1)] <- asin(sqrt(res[seq(length(res)-1)]))
                 }
             }
