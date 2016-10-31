@@ -9,7 +9,7 @@
 ##' @return data.frame
 ##' @export
 ##' @examples
-##' data(hubble)
+##' data(data="hubble",package="lava")
 ##' dsort(hubble, "sigma")
 ##' dsort(hubble, hubble$sigma,"v")
 ##' dsort(hubble,~sigma+v)
