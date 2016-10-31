@@ -136,7 +136,9 @@ IV <- function(m,data,R2thres=0,...) {
       Ecor <- c(Ecor,list(y0))
     }
     else {
-      m.sub <- subset(m,vars(m)[c(e,indicators)])
+      v0 <- vars(m)[-c(e,indicators)] 
+      ##m.sub <- subset(m,vars(m)[c(e,indicators)])
+      m.sub <- rmvar(m,v0)
       i <- 0
       while (i<length(y.indicators)) {
         i <- i+1
