@@ -123,7 +123,7 @@
              weight2,
              id,
              fix,
-             index=TRUE,
+             index=!quick,
              graph=FALSE,
              silent=lava.options()$silent,
              quick=FALSE,
@@ -295,7 +295,7 @@
         }
 
 
-        if (!quick & index) {
+        if (index) {
             ## Proces data and setup some matrices
             x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
             if (!silent)
