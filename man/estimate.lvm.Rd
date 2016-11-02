@@ -6,7 +6,7 @@
 \usage{
 \method{estimate}{lvm}(x, data = parent.frame(), estimator = "gaussian",
   control = list(), missing = FALSE, weight, weightname, weight2, id, fix,
-  index = TRUE, graph = FALSE, silent = lava.options()$silent,
+  index = !quick, graph = FALSE, silent = lava.options()$silent,
   quick = FALSE, method, param, cluster, p, ...)
 }
 \arguments{

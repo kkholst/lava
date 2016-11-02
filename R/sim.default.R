@@ -234,7 +234,7 @@ print.sim <- function(x,...) {
 ##' n <- 1000
 ##' val <- cbind(est1=rnorm(n,sd=1),est2=rnorm(n,sd=0.2),est3=rnorm(n,1,sd=0.5),
 ##'              sd1=runif(n,0.8,1.2),sd2=runif(n,0.1,0.3),sd3=runif(n,0.25,0.75))
-
+##' 
 ##' plot.sim(val,estimate=c(1,2),true=c(0,0),se=c(4,5),equal=TRUE)
 ##' plot.sim(val,estimate=c(1,3),true=c(0,1),se=c(4,6),density.xlim=c(-3,3),ylim=c(-3,3))
 ##' plot.sim(val,estimate=c(1,2),true=c(0,0),se=c(4,5),equal=TRUE,plot.type="single")
@@ -243,7 +243,7 @@ print.sim <- function(x,...) {
 ##' plot.sim(val,estimate=c(1,2,3),equal=TRUE,byrow=TRUE)
 ##' plot.sim(val,estimate=c(1,2,3),plot.type="single")
 ##' plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single")
-
+##' 
 ##' density.sim(val,estimate=c(1,2,3),polygon.density=c(0,10,10),polygon.angle=c(0,45,-45))
 ##' @param x sim object
 ##' @param ... Graphical arguments to plot.sim
@@ -507,7 +507,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
     if (single) {
         N <- K
-        nk <- lapply(se,length)
+        nk <- unlist(lapply(se,length))
         if (!is.null(se)) N <- sum(unlist(nk))+K
         col <- rep(col,length.out=K)
         for (i in seq(K)) {
@@ -522,7 +522,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         density.alpha <- rep(density.alpha,length.out=K)
         polygon.density <- rep(polygon.density,length.out=K)
         polygon.angle <- rep(polygon.angle,length.out=K)
-        for (i in seq(K)) {
+        for (i in seq_len(K)) {
             alphas <- density.alpha[i]
             densities <- polygon.density[i]
             if (!is.null(densities) && densities<1) densities <- NULL
