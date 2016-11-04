@@ -149,12 +149,13 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     count <- 0
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     time <- c()
+    robx <- function(...) tryCatch(x(...),error=function(e) NA)    
     for (ii in idx) {
         count <- count+1
         if (!missing(cl) && !is.null(cl)) {
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=x,SIMPLIFY=FALSE))
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=robx,SIMPLIFY=FALSE))
         } else {
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=x,SIMPLIFY=FALSE))
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=robx,SIMPLIFY=FALSE))
         }
         if (mc.cores>1) {
             if (!missing(cl) && !is.null(cl)) {
@@ -186,7 +187,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     atr.keep <- "call"
     if (missing(j)) atr.keep <- c(atr.keep,"f")
     attributes(x)[atr.keep] <- atr[atr.keep]
-    class(x) <- c("sim","matrix")
+    if (!is.null(dim(x))) class(x) <- c("sim","matrix")
     x
 }
 
