@@ -67,18 +67,26 @@ measurement.error <- function(model1, formula, data=parent.frame(),
     Ia <- -numDeriv::jacobian(function(p) U(p),p1)
     stacked <- stack(e1,e2,Ia)
     res <- c(stacked,list(naive=e2,lm=coef(summary(stage.two)),fun=predictfun))
-    ## res <- list(estimate=stacked, naive=e2, lm=coef(summary(stage.two)),
+    ## res <-  list(estimate=stacked, naive=e2, lm=coef(summary(stage.two)),
     ##             fun=predictfun)
     structure(res,class=c("measurement.error","estimate"))
 }
 
 
+##' Two-stage estimator
+##'
+##' Generic function
+##' @seealso twostage.lvm twostage.lvmfit twostage.lvm.mixture twostage.estimate
+##' @export
+##' @param object Model object
+##' @param ... Additional arguments to lower level functions
+"twostage" <- function(object,...) UseMethod("twostage")
 
 ##' Two-stage estimator (non-linear SEM)
 ##'
 ##' Two-stage estimator for non-linear structural equation models
 ##' @export
-##' @param model1 Stage 1 measurement model
+##' @param object Stage 1 measurement model
 ##' @param model2 Stage 2 SEM
 ##' @param data data.frame
 ##' @param predictfun Prediction of latent variable
@@ -86,6 +94,7 @@ measurement.error <- function(model1, formula, data=parent.frame(),
 ##' @param id2 Optional id-variable (stage 2 model)
 ##' @param all If TRUE return additional output (naive estimates)
 ##' @param ... Additional arguments to lower level functions
+##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate
 ##' @examples
 ##' m <- lvm(c(x1,x2,x3)~f1,f1~z,
 ##'          c(y1,y2,y3)~f2,f2~f1+z)
@@ -112,40 +121,36 @@ measurement.error <- function(model1, formula, data=parent.frame(),
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' pred <- function(mu,var,data,...)
 ##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
-##' (mm <- twostage(m1,m2,data=d,predictfun=pred))
+##' (mm <- twostage(m1,model2=m2,data=d,predictfun=pred))
 ##'
 ##' if (interactive()) {
 ##'     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
 ##'     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
 ##' }
-twostage <- function(model1, model2, data=parent.frame(),
+twostage.lvmfit <- function(object, model2, data=parent.frame(),
                      predictfun=function(mu,var,data,...)
                          cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
                      id1,id2, all=FALSE, ...) {
-    if (inherits(model1,"lvm")) {
-        model1 <- estimate(model1,data=data,...)
-    }
-    if (!inherits(model1,c("estimate","lvmfit","lvm.mixture"))) stop("Expected lava object ('estimate','lvmfit','lvm.mixture',...)")
     if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
-    p1 <- coef(model1)
+    p1 <- coef(object)
     uhat <- function(p=p1) {
-        if (inherits(model1,"lvm.mixture")) {
-            Pr <- predict(model1,p=p)
+        if (inherits(object,"lvm.mixture")) {
+            Pr <- predict(object,p=p)
             P <- list(mean=Pr,var=attr(Pr,"cond.var"))
         }  else {
-            P <- predictlvm(model1,p=p,data=model.frame(model1))
+            P <- predictlvm(object,p=p,data=model.frame(object))
         }
-        return(cbind(predictfun(P$mean,P$var,model.frame(model1))))
+        return(cbind(predictfun(P$mean,P$var,model.frame(object))))
     }
     pp <- uhat()
     newd <- data
     newd[,colnames(pp)] <- pp
     model2 <- estimate(model2,data=newd,...)
     p2 <- coef(model2)
-    if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
+    if (missing(id1)) id1 <- seq(nrow(model.frame(object)))
     if (missing(id2)) id2 <- seq(nrow(model.frame(model2)))
-    if (!inherits(model1,"estimate")) {
-        e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(model1))
+    if (!inherits(object,"estimate")) {
+        e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(object))
     }
     e2 <- estimate(model2, id=id2)
     U <- function(alpha=p1,beta=p2) {
@@ -172,3 +177,15 @@ twostage <- function(model1, model2, data=parent.frame(),
     }
     structure(res,class=c("measurement.error","lvmfit","estimate"))
 }
+
+##' @export
+twostage.lvm <- function(object,model2,...) {
+    model1 <- estimate(object, ...)
+    twostage(object=model1, model2=model2, ...)
+}
+
+##' @export 
+twostage.lvm.mixture <- twostage.lvmfit
+
+##' @export
+twostage.estimate <- twostage.lvmfit
