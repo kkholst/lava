@@ -72,6 +72,31 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     control0[names(control)] <- control
   }
   
+  ## conditions to select the step length
+  if(control0$backtrace == "Armijo"){
+    control0$backtrace <- c(1e-4,0) # page 33
+  }
+  if(control0$backtrace == "curvature"){
+    control0$backtrace <- c(0,0.9) # page 34
+  }
+  if(control0$backtrace == "Wolfe"){
+    control0$backtrace <- c(1e-4,0.9)
+  }
+  if(!is.logical(control0$backtrace) || length(control0$backtrace)!=1){
+    if(length(control0$backtrace) != 2){
+      stop("control$backtrace must have length two if not TRUE or FALSE \n")
+    }
+    if(any(!is.numeric(control0$backtrace)) || any(abs(control0$backtrace)>1)){
+      stop("elements in control$backtrace must be in [0,1] \n")
+    }
+    if(control0$backtrace[1]==0){
+      control0$backtrace[1] <- +Inf # no Armijo condition
+    }
+    if(control0$backtrace[2]==0){
+      control0$backtrace[2] <- +Inf # no Wolfe condition
+    }
+  }
+  
   if (control0$trace>0)
     cat("\nIter=0  LogLik=",objective(as.double(start)),";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
   
@@ -118,39 +143,50 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     Delta = control0$gamma*iI%*%D
     
     Lambda <- 1
-    if (control0$backtrace) {
-      
+    if (identical(control0$backtrace, TRUE)) {
+      mD0 <- mean(Dprev^2)
+      mD <- mean(D^2)
       p <- p.orig + Lambda*Delta
-      
-      if(control0$backtrace == 2){
-        mD0 <- objective(p.orig)#    
-        mD <- objective(p)#
-      }else{
-        mD0 <- mean(Dprev^2)# objective(p.orig)#    
-        mD <- mean(D^2) # objective(p)#
-      }
-      
-      
-      while (mD>mD0) {
+      while (mD>=mD0) {
         if (gradFun) {
           D = gradient(p)
         } else {
           DI <- oneiter(p,return.mat=TRUE)
           D = DI$D
         }
+        mD = mean(D^2)
+        if (is.nan(mD)) mD=mD0
         Lambda <- Lambda/2
         if (Lambda<0.05) break;
         p <- p.orig + Lambda*Delta            
-        if(control0$backtrace == 2){
-          mD <- objective(p)#
-        }else{
-          mD = mean(D^2) #
-        }
-        if (is.nan(mD)) mD=mD0
       }
-    } else {
+      
+    } else if(identical(control0$backtrace, FALSE)){
       p <- p.orig + Lambda*Delta
-    }
+    } else {  # objective(p.orig) - objective(p) <= mu*Lambda*gradient(p.orig)*Delta
+      
+      # curvature
+      c_D.origin_Delta <- control0$backtrace * D %*% Delta
+      objective.origin <- objective(p.orig)
+      p <- p.orig + Lambda*Delta
+      
+      mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#    
+      mD <- c(objective(p), abs(gradient(p) %*% Delta))
+      
+      while (any(mD>mD0)) {
+        Lambda <- Lambda/2
+        if (Lambda<0.05) break;
+        p <- p.orig + Lambda*Delta            
+        if(!is.infinite(mD0[1])){
+          mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1]#  
+          mD[1] <- objective(p)
+        }
+        if(!is.infinite(mD0[2])){
+          mD[2] <- abs(gradient(p) %*% Delta)
+        }
+      }
+    } 
+    
     return(list(p=p,D=D,iI=iI))
   }
   
