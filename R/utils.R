@@ -305,8 +305,9 @@ function(M, upper=TRUE) {
 ###{{{ Inverse/pseudo
 
 ##' @export
-Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE) {
+Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,symmetric=FALSE) {
     n <- NROW(X)
+    # return(structure(solve(X),))
     if (n==1L) {
         res <- 1/X
         if (det) attributes(res)$det <- X
@@ -319,15 +320,28 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE) {
         if (det) attributes(res)$det <- prod(diag(L)^2)
         if (chol) attributes(res)$chol <- X        
     } else {
-        svdX <- svd(X)
+    if(symmetric){
+        decomp <- eigen(X, symmetric = TRUE)
+        D <- decomp$values
+        U <- decomp$vectors
+        V <- decomp$vectors
+      }else{
+        X.svd <- svd(X)
+        U <- X.svd$u
+        V <- X.svd$v
+        D <- X.svd$d
+      }
+      
         id0 <- numeric(n)
-        idx <- which(svdX$d>tol)
-        id0[idx] <- 1/svdX$d[idx]
-        res <- with(svdX, v%*%diag(id0,nrow=length(id0))%*%t(u))
+        idx <- which(D>tol)
+        id0[idx] <- 1/D[idx]
+        res <- V%*%diag(id0,nrow=length(id0))%*%t(U)
+        
         if (det)
-            attributes(res)$det <- prod(svdX$d[svdX$d>tol])
+        attributes(res)$det <- prod(D[D>tol])
         attributes(res)$pseudo <- (length(idx)<n)
-        attributes(res)$minSV <- min(svdX$d)
+        attributes(res)$minSV <- min(D)
+        
     }
     if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
     return(res)

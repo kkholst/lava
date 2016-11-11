@@ -157,7 +157,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         mD = mean(D^2)
         if (is.nan(mD)) mD=mD0
         Lambda <- Lambda/2
-        if (Lambda<0.05) break;
+        if (Lambda<1e-4) break;
         p <- p.orig + Lambda*Delta            
       }
       
@@ -173,9 +173,9 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
       mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#    
       mD <- c(objective(p), abs(gradient(p) %*% Delta))
       
-      while (any(mD>mD0)) {
+      while (any(mD>mD0) || any(is.nan(mD))) {
         Lambda <- Lambda/2
-        if (Lambda<0.05) break;
+        if (Lambda<1e-4) break;
         p <- p.orig + Lambda*Delta            
         if(!is.infinite(mD0[1])){
           mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1]#  
