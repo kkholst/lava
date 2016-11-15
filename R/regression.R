@@ -1,3 +1,4 @@
+##' @export
 procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Split into reponse and covariates by ~ disregarding expressions in parantheses

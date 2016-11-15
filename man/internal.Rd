@@ -49,6 +49,7 @@
 \alias{pars.lvmfit}
 \alias{parsedesign}
 \alias{procdata.lvmfit}
+\alias{procformula}
 \alias{profci}
 \alias{randomslope}
 \alias{randomslope<-}

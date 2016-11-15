@@ -114,8 +114,8 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         X <- NULL
         matplot(t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
     } else {
-        data <- data[,c(id,x,y),drop=FALSE]
-        wide <- mets::fast.reshape(dsort(data,c(id,x)),id=id,varying=c(y,x),...)
+        data <- data[,c(id,x,y),drop=FALSE]        
+        wide <- mets::fast.reshape(data[order(data[,id],data[,x]),],id=id,varying=c(y,x),...)
         yidx <- Idx(y,names(wide))
         xidx <- Idx(x,names(wide))
         Y <- wide[,yidx,drop=FALSE]
