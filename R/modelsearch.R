@@ -147,7 +147,7 @@ backwardsearch <- function(x,k=1,...) {
     res
 }
 
-forwardsearch <- function(x,k=1,silent=FALSE,type='all',...) {
+forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
     if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     
     p <- pars(x,reorder=TRUE)
@@ -172,11 +172,22 @@ forwardsearch <- function(x,k=1,silent=FALSE,type='all',...) {
     Tests <- c(); Vars <- list()
     AP <- with(index(cur),A+t(A)+P)
     restricted <- c()
-    for (i in seq_len(ncol(AP)-1))
-        for (j in seq(i+1,nrow(AP)))
+    ## idx1 <- seq_len(ncol(AP)-1)
+    ## idx2 <- seq(i+1,nrow(AP))
+
+    idx <- seq_len(ncol(AP))
+    if (!is.null(exclude.var)) {
+        if (is.character(exclude.var))
+            exclude.var <- match(exclude.var,V)
+        idx <- setdiff(idx,exclude.var)
+    }
+    for (i0 in seq_len(length(idx)-1))
+        for (j0 in seq(i0+1,length(idx))) {
+            i <- idx[i0]; j <- idx[j0]
             if ( AP[j,i]==0 ) {
                 restricted <- rbind(restricted,  c(i,j))
             }
+        }
 
     if (is.null(restricted)) return(NULL)
     if (all) {
