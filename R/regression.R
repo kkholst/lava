@@ -280,11 +280,12 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 ##' @export
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 
+##' @export
+regression.formula <- function(object,...) regression(lvm(),object,...)
 
 ##' @export
 "regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
     dots <- list(...)
-
     if (length(dots$additive)>0 && !dots$additive && !inherits(value,"formula")) {
         regression(object,beta=value,...) <- to
         return(object)
@@ -359,7 +360,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 ##' @export
 `regression.lvm` <-
     function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
-             additive=TRUE, y,x,value,...) {
+      additive=TRUE, y,x,value,...) {
         if (!missing(y)) {
             if (inherits(y,"formula")) y <- all.vars(y)
             to <- y

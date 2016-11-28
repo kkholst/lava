@@ -104,6 +104,13 @@
 "variance.lvm" <- function(object,...) covariance(object,...)
 
 ##' @export
+"variance.formula" <- function(object,...) covariance(lvm(),object,...)
+
+##' @export
+"covariance.formula" <- function(object,...) covariance(lvm(),object,...)
+
+
+##' @export
 "variance<-.lvm" <- function(object,...,value) {
     covariance(object,...) <- value
     return(object)
