@@ -191,7 +191,7 @@ gaussian_logLik.lvm <- function(object,p,data,
   Debug(list("C=",C),debug)
   k <- nrow(C)
 
-  iC <- Inverse(C,det=TRUE)
+  iC <- Inverse(C,det=TRUE, symmetric = TRUE)
   detC <- attributes(iC)$det
 
   if (!is.null(weight)) {

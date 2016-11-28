@@ -182,12 +182,16 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
 ##' @export
 "[.sim" <- function (x, i, j, drop = FALSE) {
     atr <- attributes(x)
-    class(x) <- "matrix"
-    x <- NextMethod("[",drop=FALSE)
-    atr.keep <- "call"
+    if (!is.null(dim(x))) {
+        class(x) <- "matrix"
+    } else {
+        class(x) <- class(x)[-1]
+    }
+    x <- NextMethod("[",drop=drop)
+    atr.keep <- c("call","time")
     if (missing(j)) atr.keep <- c(atr.keep,"f")
     attributes(x)[atr.keep] <- atr[atr.keep]
-    if (!is.null(dim(x))) class(x) <- c("sim","matrix")
+    if (!drop) class(x) <- c("sim",class(x))
     x
 }
 
@@ -208,14 +212,30 @@ Time <- function(sec,print=FALSE,...) {
 }
 
 Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
-    if (is.null(rownames(x))) rownames(x) <- seq(nrow(x))
-    sep <- rbind('---'=rep('',ncol(x)))
+    mat <- !is.null(dim(x))
+    if (!mat) {
+        x <- cbind(x)
+        colnames(x) <- ""
+    }
+    if (is.null(rownames(x))) {
+        rownames(x) <- seq(nrow(x))
+    }
+    sep <- rbind("---"=rep('',ncol(x)))
     if (n<1) {
         print(x,quote=FALSE,digits=digits,...)
     } else {
-        hd <- base::as.matrix(base::format(utils::head(x,n),digits=digits,...))
-        tl <- base::as.matrix(base::format(utils::tail(x,n),digits=digits,...))
-        print(rbind(hd,sep,tl),quote=FALSE,...)
+        ## hd <- base::as.matrix(base::format(utils::head(x,n),digits=digits,...))
+        ## tl <- base::as.matrix(base::format(utils::tail(x,n),digits=digits,...))
+        ## print(rbind(hd,sep,tl),quote=FALSE,...)
+        if (NROW(x)<=(2*n)) {
+            hd <- base::format(utils::head(x,2*n),digits=digits,...)
+            print(hd, quote=FALSE,...)
+        } else {
+            hd <- base::format(utils::head(x,n),digits=digits,...)
+            tl <- base::format(utils::tail(x,n),digits=digits,...)
+            print(rbind(base::as.matrix(hd),sep,base::as.matrix(tl)),
+                  quote=FALSE,...)
+        }
     }
     invisible(x)
 }
@@ -223,7 +243,9 @@ Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
 ##' @export
 print.sim <- function(x,...) {
     attr(x,"f") <- attr(x,"call") <- NULL
-    class(x) <- "matrix"
+    if (!is.null(dim(x))) {
+        class(x) <- "matrix"
+    }
     Print(x,...)
     return(invisible(x))
 }

@@ -118,7 +118,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
   pp <- modelPar(x,p)
   D <- deriv.lvm(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
   C <- mp$C
-  iC <- Inverse(C,det=FALSE)
+  iC <- Inverse(C,det=FALSE, symmetric = TRUE)
 
   if (is.null(weight)) {
     ##    W <- diag(ncol(iC))
@@ -178,7 +178,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
 
   if (inverse) {
     if (pinv)
-      iI <- Inverse(information)
+      iI <- Inverse(information, symmetric = TRUE)
     else
       iI <- solve(information)
     return(iI)

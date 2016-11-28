@@ -3,7 +3,12 @@ Type: Package
 Title: Latent Variable Models
 Version: 1.4.6
 Date: 2016-10-31
-Author: Klaus K. Holst
+Authors@R: c(person("Klaus", "Holst", email="kkho@biostat.ku.dk", role=c("aut", "cre")),
+             person("Brice", "Ozenne", role = "ctb"),
+             person("Thomas", "Gerds", role = "ctb"))
+Author: Klaus K. Holst [aut, cre],
+        Brice Ozenne [ctb],
+        Thomas Gerds [ctb]
 Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
 Description: Estimation and simulation of latent variable models.
 URL: https://github.com/kkholst/lava
