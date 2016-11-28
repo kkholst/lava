@@ -6,9 +6,9 @@ gaussian_method.lvm <- "nlminb2"
     mp <- modelVar(x,p=p,data=data,...)
     C <- mp$C ## Model specific covariance matrix
     xi <- mp$xi ## Model specific mean-vector
-    iC <- Inverse(C,det=TRUE)
+    
+    iC <- Inverse(C,det=TRUE, symmetric = TRUE)
     detC <- attributes(iC)$det
-
     if (n<2) {
       z <- as.numeric(data-xi)
       val <- log(detC) + tcrossprod(z,crossprod(z,iC))[1]
@@ -47,7 +47,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
     if ((nrow(data)<2 | !is.null(weight))| indiv)
     {
       mp <- modelVar(x,p,data=data[1,])
-      iC <- Inverse(mp$C,det=FALSE)
+      iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
       MeanPar <- attributes(mp)$meanpar
       D <- with(attributes(mp), deriv.lvm(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
       myvars <- (index(x)$manifest)
@@ -92,7 +92,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
   mp <- modelVar(x,p)
   C <- mp$C
   xi <- mp$xi
-  iC <- Inverse(C,det=FALSE)
+  iC <- Inverse(C,det=FALSE, symmetric = TRUE)
   Debug("Sufficient stats.",debug)
   if (!is.null(mu) & !is.null(xi)) {
     W <- crossprod(rbind(mu-xi))
@@ -165,7 +165,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   widx <- match(colnames(weight),myy)
   pp <- modelPar(x,p)
   mp <- moments(x,p=p,conditional=TRUE,data=data[1,])
-  iC <- Inverse(mp$C,det=FALSE)
+  iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
   v <- matrix(0,ncol=length(vars(x)),nrow=NROW(data))
   colnames(v) <- vars(x)
   for (i in mynx) v[,i] <- mp$v[i]
@@ -231,7 +231,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
     z <- as.matrix(data[i,myy])
     mp <- moments(x,p=p,conditional=TRUE,data=data[i,])
     u <- as.numeric(z-mp$xi[,1])
-    iC <- Inverse(mp$C,det=FALSE)
+    iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
     D <- deriv.lvm(x, meanpar=pp$meanpar,
                p=pp$p, mom=mp, mu=NULL)
     W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
@@ -265,7 +265,7 @@ Simple_gradient.lvm <- function(x,p,...) {
     npar.reg <- m.$npar.reg; npar <- m.$npar
     G <- J%*%IAi
     detC <- det(C)
-    iC <- Inverse(C)
+    iC <- Inverse(C, symmetric = TRUE)
     if (detC<0 | inherits(iC, "try-error"))
       return(.Machine$double.xmax)
     res <- n/2*(log(detC) + tr(S%*%iC) - log(det(S)) - npar)

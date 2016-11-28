@@ -153,6 +153,7 @@
             gamma=lava.options()$gamma,
             gamma2=1,
             ngamma=lava.options()$ngamma,
+            backtrack=lava.options()$backtrack,
             lambda=0.05,
             abs.tol=1e-9,
             epsilon=1e-10,
@@ -238,7 +239,7 @@
         }
 
         Debug("procdata")
-        dd <- procdata.lvm(x,data=data)
+        dd <- procdata.lvm(x,data=data,missing=missing)
         S <- dd$S; mu <- dd$mu; n <- dd$n
         ## Debug(list("n=",n))
         ## Debug(list("S=",S))
