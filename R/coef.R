@@ -175,8 +175,9 @@ function(object, level=ifelse(missing(type),-1,2),
           coefs <- coef(object$estimate)
           c1 <- coef(Model(object),mean=TRUE,fix=FALSE)
           c1. <- coef(Model(object),mean=FALSE,fix=FALSE)
-          myorder <- match(c1,names(coefs))
-          myorder.reg <- order(na.omit(match(names(coefs),c1.)))
+          nn <- gsub("^[0-9]*@","",names(coefs))
+          myorder <- match(c1,nn)
+          myorder.reg <- order(na.omit(match(nn,c1.)))
           myorder.extra <- c()
           ##mp <-effect modelPar(object,seq_len(npar+npar.mean+npar.ex))
           ## mp <- modelPar(object,seq_len(npar+npar.mean+npar.ex))
@@ -225,7 +226,7 @@ function(object, level=ifelse(missing(type),-1,2),
     }
   }
   myparnames <- paste0("p",seq_len(npar+npar.ex))[myorder.reg]
-    
+
   p <- matrices(Model(object), myparnames)
   A <- p$A
   P <- p$P
