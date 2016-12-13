@@ -168,9 +168,9 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         c_D.origin_Delta <- control0$backtrack * rbind(D) %*% Delta
         objective.origin <- objective(p.orig)
         p <- p.orig + Lambda*Delta
-        ll <- seq(-0.17,1,length.out=50)
-        pp <- numeric(length(ll))
-        for (ii in seq_along(ll)) pp[ii] <- objective(p.orig + ll[ii]*Delta)
+        ## ll <- seq(-0.17,1,length.out=50)
+        ## pp <- numeric(length(ll))
+        ## for (ii in seq_along(ll)) pp[ii] <- objective(p.orig + ll[ii]*Delta)
            
         mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#    
         mD <- c(objective(p), abs(gradient(p) %*% Delta))
@@ -189,7 +189,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                 mD[2] <- abs(gradient(p) %*% Delta)
             }
         }
-        print(Lambda)
     } 
     
     return(list(p=p,D=D,iI=iI))
