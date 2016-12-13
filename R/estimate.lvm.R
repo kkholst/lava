@@ -348,15 +348,14 @@
                     optim$start <- start
                 }
         }
-
-        coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
-        names(optim$start) <- coefname
-
+        
         ## Missing data
         if (missing) {
             return(estimate.MAR(x=x,data=data,fix=fix,control=optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=id,...))
         }
-
+        coefname <- coef(x,mean=optim$meanstructure,fix=FALSE);
+        names(optim$start) <- coefname
+        
         ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
         constr <- lapply(constrain(x), function(z)(attributes(z)$args))
         xconstrain <- intersect(unlist(constr), manifest(x))
@@ -399,7 +398,7 @@
             names(optim$start) <- nn
         }
         ## Fix problems with starting values?
-        optim$start[is.nan(optim$start)] <- 0
+        optim$start[is.nan(unlist(optim$start))] <- 0
         ## Debug(list("lower=",lower))
 
         ObjectiveFun  <- paste0(estimator, "_objective", ".lvm")

@@ -229,16 +229,18 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         S <- diag(nrow=ncol(mydata)); colnames(S) <- rownames(S) <- obs
       }
       if (na.method=="complete.obs" && !missing) {
-        mydata <- na.omit(mydata)
-        n <- nrow(mydata)
-        mu <- colMeans(mydata)
-        if (is.null(S))
-          S <- (n-1)/n*cov(mydata) ## MLE variance matrix of observed variables
+        mydata0 <- na.omit(mydata)
+        n <- nrow(mydata0)
+        mu <- colMeans(mydata0)
+        if (is.null(S) && n>2) 
+            S <- (n-1)/n*cov(mydata0) ## MLE variance matrix of observed variables
+        rm(mydata0)
       }
       nS <- is.null(S) || any(is.na(S))
       if (na.method=="pairwise.complete.obs" || nS) {
           mu <- colMeans(mydata,na.rm=TRUE)
           if (nS) {
+              n <- nrow(mydata)
               S <- (n-1)/n*cov(mydata,use="pairwise.complete.obs")
               S[is.na(S)] <- 1e-3
           }
