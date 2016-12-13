@@ -10,9 +10,9 @@
 ##' @param col Colour
 ##' @param alpha transparency (0-1)
 ##' @param lwd Line width
+##' @param level Confidence level
 ##' @param trend.formula Formula for trendline
 ##' @param tau Quantile to estimate (trend)
-##' @param level Confidence level
 ##' @param trend.lty Trend line type
 ##' @param trend.join Trend polygon
 ##' @param trend.delta Length of limit bars
@@ -21,6 +21,7 @@
 ##' @param trend.alpha Transparency
 ##' @param trend.lwd Trend line width
 ##' @param legend Legend
+##' @param by make separate plot for each level in 'by' (formula, name of column, or vector)
 ##' @param xlab Label of X-axis
 ##' @param ylab Label of Y-axis
 ##' @param add Add to existing device

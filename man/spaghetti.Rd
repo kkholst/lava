@@ -8,8 +8,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
   col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
   trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
   trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
-  trend.alpha = 0.2, trend.lwd = 3, legend = NULL, xlab = "Time",
-  ylab = "", add = FALSE, ...)
+  trend.alpha = 0.2, trend.lwd = 3, legend = NULL, by = NULL,
+  xlab = "Time", ylab = "", add = FALSE, ...)
 }
 \arguments{
 \item{formula}{Formula (response ~ time)}
@@ -52,6 +52,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 
 \item{legend}{Legend}
 
+\item{by}{make separate plot for each level in 'by' (formula, name of column, or vector)}
+
 \item{xlab}{Label of X-axis}
 
 \item{ylab}{Label of Y-axis}
@@ -71,7 +73,7 @@ m <- lvm()
 regression(m,y=y,x=~u) <- 1
 regression(m,y=y,x=~s) <- seq(K)-1
 regression(m,y=y,x=~x) <- "b"
-d <- sim(m,500)
+d <- sim(m,500); d$z <- rbinom(500,1,0.5)
 dd <- mets::fast.reshape(d);
 dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
 spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
