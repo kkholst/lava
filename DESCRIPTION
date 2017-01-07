@@ -2,8 +2,8 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.4.6
-Date: 2016-10-31
-Authors@R: c(person("Klaus", "Holst", email="kkho@biostat.ku.dk", role=c("aut", "cre")),
+Date: 2016-12-14
+Authors@R: c(person("Klaus K.", "Holst", email="kkho@biostat.ku.dk", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
 Author: Klaus K. Holst [aut, cre],

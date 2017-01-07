@@ -656,7 +656,10 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     }
 
     if (!is.null(true)) {
-        if (length(true)!=length(estimate)) stop("'true' should be of same length as 'estimate'.")
+        if (length(true)!=length(estimate)) {
+            ##stop("'true' should be of same length as 'estimate'.")
+            true <- rep(true,length.out=length(estimate))
+        }
         est <- rbind(est,
                      rbind(True=true),rbind(Bias=est["Mean",]-true),
                      rbind(RMSE=((est["Mean",]-true)^2+(est["SD",])^2)^.5)
