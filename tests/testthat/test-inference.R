@@ -167,7 +167,7 @@ test_that("Bootstrap", {
 
 test_that("Survreg", {
     m <- lvm(y0~x)   
-    transform(m,y~y0) <- function(x) pmin(x,2)
+    transform(m,y~y0) <- function(x) pmin(x[,1],2)
     transform(m,status~y0) <- function(x) x<2
     d <- simulate(m,100,seed=1)
     require('survival')
