@@ -49,7 +49,8 @@
 \title{Simulate model}
 \usage{
 \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
-sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE, use.labels = TRUE, seed=NULL, ...)
+sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,
+use.labels = TRUE, seed=NULL, ...)
 }
 \arguments{
 \item{x}{Model object}

@@ -36,7 +36,8 @@
 ##' sequence.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
-##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE, use.labels = TRUE, seed=NULL, ...)
+##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,
+##' use.labels = TRUE, seed=NULL, ...)
 ##' @param x Model object
 ##' @param n Number of simulated values/individuals
 ##' @param p Parameter value (optional)
