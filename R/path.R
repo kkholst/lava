@@ -151,7 +151,7 @@ path.graphNEL <- function(object,to,from,...) {
   }
 
   if (!(graph::nodes(object)[idxto] %in% names(reachable)))
-##    return(structure(NULL,to=to[1],from=from[1]))
+##    return(structure(list(),to=to[1],from=from[1]))
     return(NULL)
   ##    stop("No directional relationship between variables")
 

@@ -49,7 +49,8 @@
 \title{Simulate model}
 \usage{
 \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
-sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE, use.labels = TRUE, ...)
+sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,
+use.labels = TRUE, seed=NULL, ...)
 }
 \arguments{
 \item{x}{Model object}
@@ -75,6 +76,8 @@ ignoring functional/distribution definition}
 \item{latent}{Include latent variables (default TRUE)}
 
 \item{use.labels}{convert categorical variables to factors before applying transformation}
+
+\item{seed}{Random seed}
 
 \item{\dots}{Additional arguments to be passed to the low level functions}
 }

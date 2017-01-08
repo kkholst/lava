@@ -453,8 +453,8 @@ extractvar <- function(f) {
 }
 
 ##' @export
-getoutcome <- function(formula,sep) {
-  aa <- attributes(terms(formula))
+getoutcome <- function(formula,sep,...) {
+  aa <- attributes(terms(formula,...))
   if (aa$response==0) {
     res <- NULL
   } else {

@@ -36,7 +36,8 @@
 ##' sequence.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
-##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE, use.labels = TRUE, ...)
+##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,
+##' use.labels = TRUE, seed=NULL, ...)
 ##' @param x Model object
 ##' @param n Number of simulated values/individuals
 ##' @param p Parameter value (optional)
@@ -50,6 +51,7 @@
 ##' @param unlink Return Inverse link transformed data
 ##' @param latent Include latent variables (default TRUE)
 ##' @param use.labels convert categorical variables to factors before applying transformation
+##' @param seed Random seed
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @author Klaus K. Holst
 ##' @keywords models datagen regression
@@ -288,7 +290,19 @@ sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
 
 ##' @export
 sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
-            X=NULL,unlink=FALSE,latent=TRUE,use.labels=TRUE,...) {
+            X=NULL,unlink=FALSE,latent=TRUE,use.labels=TRUE,seed=NULL,...) {
+
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        runif(1)
+    if (is.null(seed))
+        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+    else {
+        R.seed <- get(".Random.seed", envir = .GlobalEnv)
+        set.seed(seed)
+        RNGstate <- structure(seed, kind = as.list(RNGkind()))
+        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+    }
+
 
     v.env <- c("A","M","P","PP","PPdiag","xx","vv","mdist","mdistnam","mii",
               "nn","mu","xf","xfix","X",
@@ -712,31 +726,11 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
 ##' @export
 simulate.lvm <- function(object,nsim,seed=NULL,...) {
-    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
-    if (is.null(seed))
-        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
-    else {
-        R.seed <- get(".Random.seed", envir = .GlobalEnv)
-        set.seed(seed)
-        RNGstate <- structure(seed, kind = as.list(RNGkind()))
-        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
-    }
-    sim(object,nsim,...)
+    sim(object,nsim,seed=seed,...)
 }
 
 ##' @export
 simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
-    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
-    if (is.null(seed))
-        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
-    else {
-        R.seed <- get(".Random.seed", envir = .GlobalEnv)
-        set.seed(seed)
-        RNGstate <- structure(seed, kind = as.list(RNGkind()))
-        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
-    }
-    sim(object,nsim,...)
+    sim(object,nsim,seed=seed,...)
 }
 

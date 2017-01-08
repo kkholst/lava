@@ -1,3 +1,6 @@
+* Version 1.4.6.x <2017-01-08 Wed>
+  - ...
+
 * Version 1.4.6 <2016-12-14 Wed>
   - New backtrace algorithms for Newton-Raphson optimization routine.
   - 'diagtest' updated.
