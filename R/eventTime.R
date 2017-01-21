@@ -331,7 +331,6 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
         expr <- gsub("Shape",shape,expr)
     }
     formals(f) <- ff
-    ##e <- c(expression(suppressMessages(browser())), parse(text=expr))
     e <- parse(text=expr)
     body(f) <- as.call(c(as.name("{"), e))
     attr(f,"family") <- list(family="weibull",

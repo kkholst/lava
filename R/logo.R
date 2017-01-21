@@ -23,8 +23,8 @@ gfilter <- function(x,sigma=1) {
 lava <- function(seed,w=128,h=w,bw=4,sigma=5000,bg=20000,numcol=128,col=grDevices::heat.colors(numcol),...) {
   if (!missing(seed))
     set.seed(seed)
-  x <- matrix(rnorm(w*h,bg,5000),nrow=h, ncol=w)
-  x0 <- gfilter(x,sigma=4)
+  x <- matrix(rnorm(w*h,bg,sigma),nrow=h, ncol=w)
+  x0 <- gfilter(x,sigma=bw)
   y <- (x0-min(x0)+1)^1.2
   opt <- graphics::par(mai=c(0,0,0,0))
   graphics::image(y,axes=FALSE,col=col)
