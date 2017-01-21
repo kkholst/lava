@@ -1,9 +1,9 @@
 ##' Spaghetti plot for longitudinal data
 ##'
 ##' @title Spaghetti plot
-##' @param formula Formula (response ~ time) 
+##' @param formula Formula (response ~ time)
 ##' @param data data.frame
-##' @param id Id variable 
+##' @param id Id variable
 ##' @param group group variable
 ##' @param type Type (line 'l', stair 's', ...)
 ##' @param lty Line type
@@ -56,7 +56,8 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         if (is.character(by) && length(by==1)) {
             by <- data[,by]
         } else if (inherits(by,"formula")) {
-            by <- model.matrix(update(by,~-1+.),data)
+            ##by <- model.matrix(update(by,~-1+.), model.frame(~.,data,na.action=na.pass))
+            by <- model.frame(by,data,na.action=na.pass)
         }
         cl <- match.call(expand.dots=TRUE)
         cl$by <- NULL
@@ -72,11 +73,12 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         if (is.character(group) && length(group==1)) {
             M <- data[,group]
         } else if (inherits(group,"formula")) {
-            M <- model.matrix(update(group,~-1+.),data)
+            ##M <- model.matrix(update(group,~-1+.),data)
+            M <- model.frame(group,data,na.action=na.pass)
         } else {
             M <- group
         }
-        if (!add) plot(formula,data=data,xlab=xlab,ylab=ylab,...,type="n")        
+        if (!add) plot(formula,data=data,xlab=xlab,ylab=ylab,...,type="n")
         dd <- split(data,M)
         K <- length(dd)
         if (length(type)<K)        type <- rep(type,K)
@@ -89,7 +91,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         if (length(trend.lty)<K)   trend.lty <- rep(trend.lty,K)
         if (length(trend.alpha)<K) trend.alpha <- rep(trend.alpha,K)
         if (length(trend.lwd)<K)   trend.lwd <- rep(trend.lwd,K)
-        for (i in seq_len(K)) {            
+        for (i in seq_len(K)) {
             spaghetti(formula,data=dd[[i]],id=id,type=type[i],
                      lty=lty[i],col=col[i],lwd=lwd[i],
                      alpha=alpha[i],
@@ -108,10 +110,10 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         }
         return(invisible(NULL))
     }
-    
+
     if (inherits(id,"formula")) id <- all.vars(id)
     if (inherits(group,"formula")) group <- all.vars(group)
-    if (is.character(id) && length(id)==1) Id <- 
+    if (is.character(id) && length(id)==1) Id <-
     y <- getoutcome(formula)
     x <- attributes(y)$x
     Idx <- function(vname,widenames) {
@@ -131,7 +133,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         X <- NULL
         matplot(t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
     } else {
-        data <- data[,c(id,x,y),drop=FALSE]        
+        data <- data[,c(id,x,y),drop=FALSE]
         wide <- mets::fast.reshape(data[order(data[,id],data[,x]),],id=id,varying=c(y,x),...)
         yidx <- Idx(y,names(wide))
         xidx <- Idx(x,names(wide))
@@ -164,16 +166,16 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     }
                 }
                 if (!is.null(tau)) {
-                    for (j in seq_len(ncol(res))) {                        
+                    for (j in seq_len(ncol(res))) {
                             if (trend.join) lines(trend.formula,res[,j],col=trend.col[j],lwd=trend.lwd[j],lty=trend.lty[j],...)
                             if (trend.delta>0) confband(trend.formula,res[,j],line=FALSE,col=trend.col[j],lty=trend.lty[j],lwd=trend.lwd[j],delta=trend.delta,...)
                         }
                 } else {
                     confband(trend.formula,res[,2],res[,3],res[,1],col=Col(trend.col,trend.alpha),lty=trend.lty,lwd=trend.lwd,polygon=trend.join,...)
                 }
-            } else {                
+            } else {
                 tf <- getoutcome(trend.formula)
-                if (is.list(tf)) {                
+                if (is.list(tf)) {
                     trend.formula <- update(trend.formula,toformula(y,"."))
                 }
                 if (!is.null(tau)) {
