@@ -62,11 +62,11 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
     intpos <- which(vapply(xs,function(x) grepl("^[\\+\\-]*[\\.|0-9]+$",x), 0)==1)
     ## Match '(int)'
     intpos0 <- which(vapply(X,function(x) grepl("^\\([\\+\\-]*[\\.|0-9]+\\)$",x),0)==1)
-    
+
     yy <- ys <- NULL
     if (length(lhs)>0) {
         yy <- decomp.specials(lhs)
-        yyf <- lapply(yy,function(y) decomp.specials(y,NULL,pattern2="[",fixed=TRUE))
+        yyf <- lapply(yy,function(y) decomp.specials(y,NULL,pattern2="[",fixed=TRUE,perl=FALSE))
         ys <- unlist(lapply(yyf,function(x) x[1]))
     }
     
@@ -303,7 +303,6 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
         }
 
         if (inherits(value,"formula")) {
-
             fff <- procformula(object,value,...)
             object <- fff$object
             lhs <- fff$lhs

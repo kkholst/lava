@@ -484,19 +484,19 @@ Specials <- function(f,spec,split2="+",...) {
 
 
 ##' @export
-decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep=",",reverse=FALSE,...) {
+decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep="[,\\+]",perl=TRUE,reverse=FALSE,...) {
   st <- gsub(" |^\\(|)$","",x) # Remove white space and leading/trailing parantheses
   if (!is.null(pattern.ignore)) {
-      if (grepl(pattern.ignore,st,...)) return(st)
+      if (grepl(pattern.ignore,st,perl=perl,...)) return(st)
   }
   if (!is.null(pattern)) {
-    st <- rev(unlist(strsplit(st,pattern,...)))[1]
+    st <- rev(unlist(strsplit(st,pattern,perl=perl,...)))[1]
   }
   if (!is.null(pattern2)) {
-    st <- (unlist(strsplit(st,pattern2,...)))
+    st <- (unlist(strsplit(st,pattern2,perl=perl,...)))
     if (reverse) st <- rev(st)
   }
-  unlist(strsplit(st,sep,...))
+  unlist(strsplit(st,sep,perl=perl,...))
 }
 
 Decomp.specials <- function(x,pattern="[()]") {
