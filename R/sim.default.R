@@ -2,7 +2,7 @@
 ##'
 ##' @export
 ##' @param x function or 'sim' object
-##' @param R Number of replications
+##' @param R Number of replications or data.frame with parameters
 ##' @param f Optional function (i.e., if x is a matrix)
 ##' @param colnames Optional column names
 ##' @param messages Messages
@@ -11,6 +11,7 @@
 ##' @param blocksize Split computations in blocks
 ##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
 ##' @param seed (optional) Seed (needed with cl=TRUE)
+##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param ... Additional arguments to (mc)mapply
 ##' @aliases sim.default summary.sim
 ##' @examples
@@ -47,7 +48,14 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,...) {
+##'
+##' f <- function(a=1,b=1) {
+##'   rep(a*b,5)
+##' }
+##' R <- Expand(a=1:3,b=1:3)
+##' a <- sim(f,R,type=0)
+##' a <- sim(function(...,a,b) f(a,b) ,3,args=c(a=5,b=5),type=0)
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,args=list(),...) {
     stm <- proc.time()
     oldtm <- rep(0,5)
     if (missing(mc.cores) || .Platform$OS.type=="windows") {
@@ -134,7 +142,9 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
 
         return(res)
     })
+    parval_provided <- FALSE
     if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
+        parval_provided <- TRUE
         parval <- as.data.frame(R)
         if (is.vector(R)) names(parval) <- NULL
         else if (inherits(R,c("matrix","data.frame"))) names(parval) <- colnames(R)
@@ -149,14 +159,15 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     count <- 0
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     time <- c()
-    robx <- function(...) tryCatch(x(...),error=function(e) NA)    
+    robx <- function(...) tryCatch(x(...),error=function(e) NA)
     for (ii in idx) {
         count <- count+1
-        if (!missing(cl) && !is.null(cl)) {
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=robx,SIMPLIFY=FALSE))
+        if (!missing(cl) && !is.null(cl)) {            
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=robx,SIMPLIFY=FALSE),args)
         } else {
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=robx,SIMPLIFY=FALSE))
+            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=robx,SIMPLIFY=FALSE),args)
         }
+        ##if (!iter.arg & !parval_provided) pp[[1]] <- NULL
         if (mc.cores>1) {
             if (!missing(cl) && !is.null(cl)) {
                 val <- do.call(parallel::clusterMap,pp)
@@ -164,6 +175,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
                 val <- do.call(parallel::mcmapply,pp)
             }
         } else {
+            pp$mc.cores <- NULL
             val <- do.call(mapply,pp)
         }
         if (messages>0)
@@ -709,7 +721,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         colnames(est) <- names
 
     }
-    if (unique.names) {
+    if (unique.names && !is.null(colnames(est))) {
         colnames(est) <- make.unique(colnames(est))
     }
 
