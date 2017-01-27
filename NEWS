@@ -1,5 +1,7 @@
-* Version 1.4.6.x <2017-01-08 Wed>
-  - ...
+* Version 1.4.7 <2017-01-26 Wed>
+  - Maintenance release
+  - models can now be specified as y1+y2~x1+x2 instead of c(y1,2y)~x1+x2
+  - sim method now has a seed argument
 
 * Version 1.4.6 <2016-12-14 Wed>
   - New backtrace algorithms for Newton-Raphson optimization routine.

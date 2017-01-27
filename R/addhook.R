@@ -91,6 +91,7 @@ assign("options", list(
     itol=1e-16,
     cluster.index=versioncheck("mets",c(0,2,7)),
     Dmethod="simple", ##"Richardson"
+    messages=1,
     parallel=TRUE,
     param="relative",
     sparse=FALSE,

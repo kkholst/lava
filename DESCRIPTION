@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.4.6.1
-Date: 2017-01-08
+Version: 1.4.7
+Date: 2017-01-26
 Authors@R: c(person("Klaus K.", "Holst", email="kkho@biostat.ku.dk", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))

@@ -12,6 +12,7 @@
 ##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
 ##' @param seed (optional) Seed (needed with cl=TRUE)
 ##' @param args (optional) list of named arguments passed to (mc)mapply
+##' @param iter If TRUE the iteration number is passed as first argument to (mc)mapply
 ##' @param ... Additional arguments to (mc)mapply
 ##' @aliases sim.default summary.sim
 ##' @examples
@@ -53,9 +54,13 @@
 ##'   rep(a*b,5)
 ##' }
 ##' R <- Expand(a=1:3,b=1:3)
-##' a <- sim(f,R,type=0)
-##' a <- sim(function(...,a,b) f(a,b) ,3,args=c(a=5,b=5),type=0)
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,blocksize=2L*mc.cores,cl,type=1L,seed=NULL,args=list(),...) {
+##' sim(f,R,type=0)
+##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
+##' sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
+sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
+                messages=lava.options()$messages,
+                mc.cores,blocksize=2L*mc.cores,
+                cl,type=1L,seed=NULL,args=list(),iter=FALSE,...) {
     stm <- proc.time()
     oldtm <- rep(0,5)
     if (missing(mc.cores) || .Platform$OS.type=="windows") {
@@ -159,7 +164,8 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
     count <- 0
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     time <- c()
-    robx <- function(...) tryCatch(x(...),error=function(e) NA)
+    robx <- function(iter__,...) tryCatch(x(...),error=function(e) NA)
+    if (!iter) formals(robx)[[1]] <- NULL
     for (ii in idx) {
         count <- count+1
         if (!missing(cl) && !is.null(cl)) {            
@@ -167,7 +173,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,messages=1L,mc.cores,b
         } else {
             pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=robx,SIMPLIFY=FALSE),args)
         }
-        ##if (!iter.arg & !parval_provided) pp[[1]] <- NULL
+        ##if (!iter & !parval_provided) pp[[1]] <- NULL
         if (mc.cores>1) {
             if (!missing(cl) && !is.null(cl)) {
                 val <- do.call(parallel::clusterMap,pp)
