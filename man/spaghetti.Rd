@@ -4,8 +4,8 @@
 \alias{spaghetti}
 \title{Spaghetti plot}
 \usage{
-spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
-  col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
+spaghetti(formula, data, id = "id", group = NULL, type = "o", lty = 1,
+  pch = NA, col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
   trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
   trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
   trend.alpha = 0.2, trend.lwd = 3, legend = NULL, by = NULL,
@@ -23,6 +23,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 \item{type}{Type (line 'l', stair 's', ...)}
 
 \item{lty}{Line type}
+
+\item{pch}{Colour}
 
 \item{col}{Colour}
 

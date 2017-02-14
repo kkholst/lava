@@ -99,6 +99,7 @@ assign("options", list(
     coef.names=FALSE,
     constrain=TRUE,
     graph.proc="beautify",
+    regex=FALSE,
     min.weight=1e-3,
     exogenous=TRUE,
     plot.engine="Rgraphviz",

@@ -59,6 +59,7 @@ signif <- sign(x[,2])==sign(x[,3])
 forestplot(x,text.right=FALSE)
 forestplot(x[,-4],sep=c(2,15),col=signif+1,box1=TRUE,delta=0.2,pch=16,cex=1.5)
 forestplot(x,vert=TRUE,text=FALSE)
+forestplot(x,vert=TRUE,text=FALSE,pch=NA)
 ##forestplot(x,vert=TRUE,text.vert=FALSE)
 ##forestplot(val,vert=TRUE,add=TRUE)
 

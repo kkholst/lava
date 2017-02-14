@@ -7,6 +7,7 @@
 ##' @param group group variable
 ##' @param type Type (line 'l', stair 's', ...)
 ##' @param lty Line type
+##' @param pch Colour
 ##' @param col Colour
 ##' @param alpha transparency (0-1)
 ##' @param lwd Line width
@@ -42,15 +43,15 @@
 ##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
 ##' }
 spaghetti <- function(formula,data,id="id",group=NULL,
-                      type="l",lty=1,col=1:10,alpha=0.3,lwd=1,
-                      level=0.95,
-                      trend.formula=formula,tau=NULL,
-                      trend.lty=1,trend.join=TRUE,trend.delta=0.2,
-                      trend=!is.null(tau),trend.col=col,
-                      trend.alpha=0.2,trend.lwd=3,
-                      legend=NULL, by=NULL,
-                      xlab="Time",ylab="",add=FALSE,...) {
-                         ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
+              type="o",lty=1,pch=NA,col=1:10,alpha=0.3,lwd=1,
+              level=0.95,              
+              trend.formula=formula,tau=NULL,
+              trend.lty=1,trend.join=TRUE,trend.delta=0.2,
+              trend=!is.null(tau),trend.col=col,
+              trend.alpha=0.2,trend.lwd=3,
+              legend=NULL, by=NULL,
+              xlab="Time",ylab="",add=FALSE,...) {
+    ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
     if (!lava.options()$cluster.index) stop("mets not available? Check 'lava.options()cluster.index'.")
     if (!is.null(by)) {
         if (is.character(by) && length(by==1)) {
@@ -67,7 +68,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
             cl$data <- d
             res <- c(res, eval(cl,parent.frame()))
         }
-        return(res)
+        return(invisible(res))
     }
     if (!is.null(group)) {
         if (is.character(group) && length(group==1)) {
@@ -83,6 +84,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         K <- length(dd)
         if (length(type)<K)        type <- rep(type,K)
         if (length(col)<K)         col <- rep(col,K)
+        if (length(pch)<K)         pch <- rep(pch,K)
         if (length(lty)<K)         lty <- rep(lty,K)
         if (length(lwd)<K)         lwd <- rep(lwd,K)
         if (length(alpha)<K)       alpha <- rep(alpha,K)
@@ -93,7 +95,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         if (length(trend.lwd)<K)   trend.lwd <- rep(trend.lwd,K)
         for (i in seq_len(K)) {
             spaghetti(formula,data=dd[[i]],id=id,type=type[i],
-                     lty=lty[i],col=col[i],lwd=lwd[i],
+                     lty=lty[i],pch=pch[i],col=col[i],lwd=lwd[i],
                      alpha=alpha[i],
                      group=NULL,
                      trend=trend[i],tau=tau,
@@ -131,7 +133,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         yidx <- Idx(y,names(wide))
         Y <- wide[,yidx,drop=FALSE]
         X <- NULL
-        matplot(t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
+        matplot(t(Y),type=type,lty=lty,pch=pch,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
     } else {
         data <- data[,c(id,x,y),drop=FALSE]
         wide <- mets::fast.reshape(data[order(data[,id],data[,x]),],id=id,varying=c(y,x),...)
@@ -139,7 +141,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         xidx <- Idx(x,names(wide))
         Y <- wide[,yidx,drop=FALSE]
         X <- wide[,xidx,drop=FALSE]
-        matplot(t(X),t(Y),type=type,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,add=add,...)
+        matplot(t(X),t(Y),type=type,pch=pch,lty=lty,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,add=add,...)
         if (trend) {
             if (is.numeric(trend.formula)) {
                 trend.formula <- sort(trend.formula)
