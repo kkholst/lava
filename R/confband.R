@@ -129,6 +129,7 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
 ##' @export
 forestplot <- function(x,lower,upper,line=0,labels,
                text=TRUE,text.right=text,text.fixed=NULL,text.vert=TRUE,
+               adj=NULL,
                delta=0,axes=TRUE,cex=1,pch=15,
                xlab="",ylab="",sep,air,
                xlim,ylim,mar,box1=FALSE,box2=FALSE,
@@ -232,13 +233,13 @@ forestplot <- function(x,lower,upper,line=0,labels,
                 if (!is.na(x[i])) {
                     if (!text.vert) {
                         if (text.right) xpos[i] <- xpos[i]+0.025
-                        graphics::text(i,xpos[i],paste(st,collapse="\n"),xpd=TRUE, offset=3, cex=cex.estimate)
+                        graphics::text(i,xpos[i],paste(st,collapse="\n"),xpd=TRUE, offset=3, cex=cex.estimate, adj=adj)
                     } else {
-                        if (!is.na(x[i])) graphics::text(i,xpos[i],st,xpd=TRUE, srt=90, offset=0, pos=4, cex=cex.estimate)
+                        if (!is.na(x[i])) graphics::text(i,xpos[i],st,xpd=TRUE, srt=90, offset=0, pos=4, cex=cex.estimate, adj=adj)
                     }
                 }
             } else {
-                if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=cex.estimate)
+                if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=cex.estimate, adj=adj)
             }
         }
     }
@@ -265,9 +266,9 @@ forestplot <- function(x,lower,upper,line=0,labels,
               plotargs))
     if (!add) {
         if (vert) {
-            mtext(labels,1,at=seq(K),las=2,line=1,cex=cex.axis)
+            mtext(labels,1,at=seq(K),las=2,line=1,cex=cex.axis, adj=adj)
         } else {
-            mtext(labels,2,at=seq(K),las=2,line=1,cex=cex.axis)
+            mtext(labels,2,at=seq(K),las=2,line=1,cex=cex.axis, adj=adj)
         }
     }
 }
