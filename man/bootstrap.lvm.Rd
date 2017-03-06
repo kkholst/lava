@@ -48,12 +48,12 @@ included in the bootstrap procedure}
 
 \item{mc.cores}{Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)}
 
+\item{\dots}{Additional arguments, e.g. choice of estimator.}
+
 \item{estimator}{String definining estimator, e.g. 'gaussian' (see
 \code{estimator})}
 
 \item{weight}{Optional weight matrix used by \code{estimator}}
-
-\item{\dots}{Additional arguments, e.g. choice of estimator.}
 }
 \value{
 A \code{bootstrap.lvm} object.
@@ -70,12 +70,11 @@ B <- bootstrap(e,R=50,parallel=FALSE)
 B
 }
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{\link{confint.lvmfit}}
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

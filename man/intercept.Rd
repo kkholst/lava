@@ -2,12 +2,12 @@
 % Please edit documentation in R/fix.R
 \name{intercept}
 \alias{intercept}
-\alias{intercept.lvm}
 \alias{intercept<-}
+\alias{intercept.lvm}
 \alias{intercept<-.lvm}
 \alias{intfix}
-\alias{intfix.lvm}
 \alias{intfix<-}
+\alias{intfix.lvm}
 \alias{intfix<-.lvm}
 \title{Fix mean parameters in 'lvm'-object}
 \usage{
@@ -16,13 +16,13 @@
 \arguments{
 \item{object}{\code{lvm}-object}
 
+\item{\dots}{Additional arguments}
+
 \item{vars}{character vector of variable names}
 
 \item{value}{Vector (or list) of parameter values or labels (numeric or
 character) or a formula defining the linear constraints (see also the
 \code{regression} or \code{covariance} methods).}
-
-\item{\dots}{Additional arguments}
 }
 \value{
 A \code{lvm}-object
@@ -70,14 +70,13 @@ intercept(m) ## Examine intercepts of model (NA translates to free/unique parame
 
 
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{\link{covariance<-}}, \code{\link{regression<-}},
 \code{\link{constrain<-}}, \code{\link{parameter<-}},
 \code{\link{latent<-}}, \code{\link{cancel<-}}, \code{\link{kill<-}}
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

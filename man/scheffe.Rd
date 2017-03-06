@@ -31,4 +31,3 @@ lines(upr~x,d1,lty=2,col="red")
 lines(lwr~x,d2,lty=2,col="blue")
 lines(upr~x,d2,lty=2,col="blue")
 }
-

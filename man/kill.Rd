@@ -12,10 +12,10 @@ kill(x, ...) <- value
 \arguments{
 \item{x}{Model object}
 
+\item{\dots}{additional arguments to lower level functions}
+
 \item{value}{Vector of variables or formula specifying which nodes to
 remove}
-
-\item{\dots}{additional arguments to lower level functions}
 }
 \description{
 Generic method for removing elements of object
@@ -32,12 +32,11 @@ cancel(m) <- y1~y2
 rmvar(m) <- ~y2
 
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{cancel}
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

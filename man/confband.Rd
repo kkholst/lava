@@ -87,11 +87,10 @@ plot(0,type="n",ylim=c(0,k+1),xlim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
 axis(1)
 confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{confband}
 }
+\author{
+Klaus K. Holst
+}
 \keyword{iplot}
-

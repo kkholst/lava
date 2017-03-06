@@ -141,12 +141,11 @@ d0 <- makemissing(d1,cols=1:2)
 e0 <- estimate(m,d0,missing=TRUE)
 e0
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 estimate.default score, information
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

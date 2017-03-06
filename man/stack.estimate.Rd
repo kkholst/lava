@@ -31,4 +31,3 @@
 \description{
 Stack estimating equations
 }
-

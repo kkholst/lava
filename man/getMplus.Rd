@@ -16,10 +16,9 @@ getMplus(infile = "template.out", coef = TRUE, ...)
 \description{
 Read Mplus output files
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 getSAS
 }
-
+\author{
+Klaus K. Holst
+}

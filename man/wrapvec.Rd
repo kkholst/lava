@@ -19,4 +19,3 @@ Wrap vector
 \examples{
 wrapvec(5,2)
 }
-

@@ -102,4 +102,3 @@ Klaus K. Holst
 }
 \keyword{hplot}
 \keyword{regression}
-

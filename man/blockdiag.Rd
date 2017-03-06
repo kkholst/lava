@@ -9,9 +9,9 @@ blockdiag(x, ..., pad = 0)
 \arguments{
 \item{x}{Matrix}
 
-\item{pad}{Vyalue outside block-diagonal}
-
 \item{\dots}{Additional matrices}
+
+\item{pad}{Vyalue outside block-diagonal}
 }
 \description{
 Combine matrices to block diagonal structure
@@ -23,4 +23,3 @@ blockdiag(A,A,A,pad=NA)
 \author{
 Klaus K. Holst
 }
-

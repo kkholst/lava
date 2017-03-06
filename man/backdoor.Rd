@@ -26,4 +26,3 @@ m <- lvm(y~c2,c2~c1,x~c1,m1~x,y~m1, v1~c3, x~c3,v1~y,
 ll <- backdoor(m, y~x)
 backdoor(m, y~x|c1+z1+g1)
 }
-

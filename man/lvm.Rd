@@ -15,12 +15,12 @@ character vector or formula, e.g. \code{~y1+y2} is equivalent to
 \code{c("y1","y2")}. Alternatively the argument can be a formula specifying
 a linear model.}
 
+\item{\dots}{Additional arguments to be passed to the low level functions}
+
 \item{latent}{(optional) Latent variables}
 
 \item{silent}{Logical variable which indicates whether messages are turned
 on/off.}
-
-\item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
 Returns an object of class \code{lvm}.
@@ -36,13 +36,12 @@ m2 <- lvm(~y1+y2) # Model with two independent variables (argument)
 m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{\link{regression}}, \code{\link{covariance}},
 \code{\link{intercept}}, ...
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

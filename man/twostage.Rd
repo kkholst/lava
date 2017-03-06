@@ -17,4 +17,3 @@ Generic function
 \seealso{
 twostage.lvm twostage.lvmfit twostage.lvm.mixture twostage.estimate
 }
-

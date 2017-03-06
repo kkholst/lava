@@ -34,12 +34,11 @@ An object of class \code{clprobit} inheriting methods from \code{lvm}
 Estimate parameters in a probit latent variable model via a composite
 likelihood decomposition.
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 estimate
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

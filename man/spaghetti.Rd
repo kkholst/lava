@@ -8,8 +8,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "o", lty = 1,
   pch = NA, col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
   trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
   trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
-  trend.alpha = 0.2, trend.lwd = 3, legend = NULL, by = NULL,
-  xlab = "Time", ylab = "", add = FALSE, ...)
+  trend.alpha = 0.2, trend.lwd = 3, trend.jitter = 0, legend = NULL,
+  by = NULL, xlab = "Time", ylab = "", add = FALSE, ...)
 }
 \arguments{
 \item{formula}{Formula (response ~ time)}
@@ -52,6 +52,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "o", lty = 1,
 
 \item{trend.lwd}{Trend line width}
 
+\item{trend.jitter}{Jitter amount}
+
 \item{legend}{Legend}
 
 \item{by}{make separate plot for each level in 'by' (formula, name of column, or vector)}
@@ -84,4 +86,3 @@ spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
 \author{
 Klaus K. Holst
 }
-

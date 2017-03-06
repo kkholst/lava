@@ -82,4 +82,3 @@ sim(f,R,type=0)
 sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
 sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
 }
-
