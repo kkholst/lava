@@ -28,7 +28,7 @@ test_that("constrain (Fishers z-transform)",{
     e <- estimate(m,d)
     constrain(e,rho~C+v1+v2) <-
         function(x) x[1]/(x[2]*x[3])^0.5
-    cc1 <- correlation(e)
+    cc1 <- coef(summary(correlation(e)))
     cc2 <- constraints(e)
     expect_equivalent(cc2["rho",1],cc1["y1~y2",1])
     constrain(e,z~C+v1+v2) <- function(x) {

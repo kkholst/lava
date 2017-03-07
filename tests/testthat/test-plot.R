@@ -47,7 +47,7 @@ if (requireNamespace("visualTest",quietly=TRUE) && requireNamespace("png",quietl
         
         d1 <- gropen()
         par(mar=c(0,0,0,0))
-        plotConf(l,var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
+        plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
         dev.off()
         
         newd <- data.frame(x=seq(min(x),max(x),length.out=100))

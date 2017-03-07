@@ -190,6 +190,7 @@ test_that("Combine", { ## Combine model output
     expect_true(nrow(cc)==length(coef(m1))+1)
     expect_equivalent(colnames(cc),c('model A','model B'))
     expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
+
 })
 
 
@@ -465,7 +466,7 @@ test_that("partialcor", {
     d <- sim(m,500)
     c1 <- partialcor(~x1+x2,d)
     e <- estimate(m,d)
-    c2 <- correlation(e)    
+    c2 <- coef(summary(correlation(e)))
     expect_true(mean(c1[,1]-c2[,1])^2<1e-9)
     ## CI, note difference var(z)=1/(n-k-3) vs var(z)=1/(n-3)
     expect_true(mean(c1[,4]-c2[,3])^2<1e-3)
