@@ -265,6 +265,7 @@ forestplot <- function(x,lower,upper,line=0,labels,
                    pch=pch,cex=cex,vert=vert,blank=FALSE),
               plotargs))
     if (!add) {
+        if (is.null(adj)) adj <- NA
         if (vert) {
             mtext(labels,1,at=seq(K),las=2,line=1,cex=cex.axis, adj=adj)
         } else {
