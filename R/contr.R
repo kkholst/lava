@@ -15,8 +15,15 @@
 ##' contr(list(c(1,3),c(2,4),5))
 contr <- function(p,n,change.sign=TRUE,...) {
     if (missing(n)) n <- max(unlist(p))
+    if (is.character(p)) {
+        return(parsedesign(n,p,...))
+    }
     if (is.list(p)) {
         return(Reduce(rbind,lapply(p, function(x) do.call(contr, list(x,n,change.sign)))))
+    }
+    if (is.character(n)) n <- length(n)
+    if (!is.numeric(n)) {
+        try(n <- length(coef(n)),silent=TRUE)
     }
     B <- matrix(0,ncol=n,nrow=max(1,length(p)-1))
     B[,p[1]] <- 1
