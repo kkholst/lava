@@ -44,7 +44,7 @@ offdiag <- function(x,type=0,...) {
     res <- x[ii]
     class(res) <- c("offdiag",class(res))
     attributes(res) <-
-        c(attributes(res),list(type=type,dimension=dim(x),index=ii))
+        c(attributes(res),list(type=type,dimension=dim(x),index=ii,nam=dimnames(x)))
     return(res)
   }
 
@@ -67,5 +67,6 @@ print.offdiag <- function(x,...) {
     nn <- attr(x,"dimension")
     M <- matrix(NA,nn[1],nn[2])
     M[attr(x,"index")] <- x
-    print(M,na.print="")
+    dimnames(M) <- attr(x,"nam")
+    print(M,na.print="",...)
 }
