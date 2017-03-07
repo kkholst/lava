@@ -1,39 +1,3 @@
-###{{{ parsedesign
-
-##' @export
-parsedesign <- function(coef,x,...) {
-    if (!is.vector(coef)) coef <- stats::coef(coef)
-    if (is.numeric(coef) && !is.null(names(coef))) coef <- names(coef)
-    dots <- substitute(list(...))[-1]
-    expr <- suppressWarnings(inherits(try(x,silent=TRUE),"try-error"))
-    if (expr) {
-        ee <- c(deparse(substitute(x)), sapply(dots, deparse))
-    } else {
-        ee <- c(deparse(x), sapply(dots, function(x) deparse(x)))
-    }
-    res <- c()
-    for (e in ee) {
-        e0 <- gsub(" ","",e)
-        ff <- strsplit(e0,'\"')[[1]]
-        Val <- rbind(rep(0,length(coef)))
-        for (i in seq(length(ff)/2)) {
-            val0 <- gsub("[*()]","",ff[2*(i-1)+1])            
-            suppressWarnings(val <- as.numeric(val0))
-            if (is.na(val)) {
-                val <- switch(val0,"-"=-1,1)
-            }
-            par0 <- ff[2*i]
-            par0int <- suppressWarnings(as.integer(par0))
-            if (is.na(par0int)) par0int <- match(par0,coef)
-            if (par0int<=length(Val)) Val[par0int] <- val
-        }
-        if (any(Val!=0)) res <- rbind(res,Val)
-    }
-    res
-}
-
-###}}}
-
 ###{{{ substArg
 
 substArg <- function(x,env,...) {
