@@ -41,10 +41,13 @@
 ##' N <- 50
 ##' d <- sim(m,N); d$z <- rbinom(N,1,0.5)
 ##' dd <- mets::fast.reshape(d); dd$num <- dd$num+3
-##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend.formula=~factor(num),trend=TRUE,trend.col="darkblue")
+##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+##'           trend.formula=~factor(num),trend=TRUE,trend.col="darkblue")
 ##' dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
-##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
-##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend.formula=~num+I(num^2),trend=TRUE,trend.col="darkblue")
+##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+##'           trend=TRUE,trend.col="darkblue")
+##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+##'            trend.formula=~num+I(num^2),trend=TRUE,trend.col="darkblue")
 ##' }
 spaghetti <- function(formula,data,id="id",group=NULL,
               type="o",lty=1,pch=NA,col=1:10,alpha=0.3,lwd=1,
