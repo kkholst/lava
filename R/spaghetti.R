@@ -21,6 +21,7 @@
 ##' @param trend.col Colour of trend line
 ##' @param trend.alpha Transparency
 ##' @param trend.lwd Trend line width
+##' @param trend.jitter Jitter amount
 ##' @param legend Legend
 ##' @param by make separate plot for each level in 'by' (formula, name of column, or vector)
 ##' @param xlab Label of X-axis
@@ -37,18 +38,22 @@
 ##' regression(m,y=y,x=~u) <- 1
 ##' regression(m,y=y,x=~s) <- seq(K)-1
 ##' regression(m,y=y,x=~x) <- "b"
-##' d <- sim(m,500); d$z <- rbinom(500,1,0.5)
-##' dd <- mets::fast.reshape(d);
+##' N <- 50
+##' d <- sim(m,N); d$z <- rbinom(N,1,0.5)
+##' dd <- mets::fast.reshape(d); dd$num <- dd$num+3
+##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend.formula=~factor(num),trend=TRUE,trend.col="darkblue")
 ##' dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
 ##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
+##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend.formula=~num+I(num^2),trend=TRUE,trend.col="darkblue")
 ##' }
 spaghetti <- function(formula,data,id="id",group=NULL,
               type="o",lty=1,pch=NA,col=1:10,alpha=0.3,lwd=1,
-              level=0.95,              
+              level=0.95,
               trend.formula=formula,tau=NULL,
               trend.lty=1,trend.join=TRUE,trend.delta=0.2,
               trend=!is.null(tau),trend.col=col,
               trend.alpha=0.2,trend.lwd=3,
+              trend.jitter=0,
               legend=NULL, by=NULL,
               xlab="Time",ylab="",add=FALSE,...) {
     ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
@@ -195,8 +200,14 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     xy <- plotConf(l1.,vcov=vcov(l1),data=data,partres=FALSE,plot=FALSE,level=level,...)
                     xx <- xy$x
                     pr <- xy$predict$fit
-                    confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)
-                    lines(xx,pr[,1],col=trend.col,lwd=trend.lwd,lty=trend.lty)
+                    if (is.factor(xx)) {
+                        xx <- as.numeric(as.character(xx))
+                        if (trend.jitter>0) xx <- jitter(xx,trend.jitter)                        
+                        confband(xx,pr[,3],pr[,2],pr[,1],col=trend.col,lwd=2)
+                    } else {
+                        confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)
+                        lines(xx,pr[,1],col=trend.col,lwd=trend.lwd,lty=trend.lty)
+                    }
                 }
             }
         }
