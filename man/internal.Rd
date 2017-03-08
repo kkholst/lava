@@ -67,7 +67,6 @@
 \alias{IV}
 \alias{parameter}
 \alias{Specials}
-\alias{parsedesign}
 \alias{procformula}
 \alias{getoutcome}
 \alias{decomp.specials}

@@ -109,7 +109,12 @@ estimate(g,2:3) ## same as cbind(0,1,-1)
 estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g,"z","z"-"x",2*"z"-3*"x")
+estimate(g,z,z-x,2*z-3*x)
+estimate(g,"?")  ## Wilcards
+estimate(g,"*Int*","z")
 estimate(g,"1","2"-"3",null=c(0,1))
+estimate(g,2,3)
+
 ## Usual (non-robust) confidence intervals
 estimate(g,robust=FALSE)
 

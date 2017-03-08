@@ -252,5 +252,5 @@ NULL
 ##' checkmultigroup profci estimate.MAR missingModel Inverse
 ##' gaussian_logLik.lvm addhook gethook multigroup Weight fixsome
 ##' parfix parfix<- merge IV parameter index index<-
-##' Specials parsedesign procformula getoutcome decomp.specials
+##' Specials procformula getoutcome decomp.specials
 NULL

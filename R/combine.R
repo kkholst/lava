@@ -41,7 +41,8 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
 ##' m2 <- lm(cau ~ age + gene1,data=serotonin)
 ##' m3 <- lm(cau ~ age*gene2,data=serotonin)
 ##'
-##' Combine(list(A=m1,B=m2,C=m3),fun=function(x) c("_____"="",R2=" "%++%format(summary(x)$r.squared,digits=2)))
+##' Combine(list(A=m1,B=m2,C=m3),fun=function(x)
+##'      c("_____"="",R2=" "%++%format(summary(x)$r.squared,digits=2)))
 ##' @export
 Combine <- function(x,...) {
     ll <- lapply(x,excoef,...)
