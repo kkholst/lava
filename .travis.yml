@@ -7,28 +7,6 @@ r_check_args: --as-cran --run-donttest
 warnings_are_errors: true
 cache: packages
 
-r_packages:
- - numDeriv
- - mets
- - covr
- - testthat
- - optimx
- - data.table
- - igraph
- - visNetwork
- - Matrix
- - KernSmooth
- - lme4
- - geepack
- - gof
- - foreach
- - quantreg
- - rgl
- - fields
- - survival
- - ascii
- - zoo
-
 bioc_packages:
  - graph
  - Rgraphviz
