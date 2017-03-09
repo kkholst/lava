@@ -199,7 +199,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         }
     }
     if (!missing(cluster)) id <- cluster
-    if (expr || is.character(f)) { ## || is.call(f)) {
+    if (expr || is.character(f) || (is.numeric(f) && !is.matrix(f))) { ## || is.call(f)) {
         dots <- lapply(substitute(placeholder(...))[-1],function(x) x)
         args <- c(list(coef=names(pp),x=substitute(f)),dots)
         f <- do.call(parsedesign,args)
