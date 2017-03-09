@@ -1,9 +1,11 @@
-#+BEGIN_HTML
+[[https://travis-ci.org/kkholst/lava][https://travis-ci.org/kkholst/lava.svg?branch=master]]
+
+#+BEGIN_export HTML
 <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
 <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
 <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="http://www.r-pkg.org/badges/version/lava"></a>
 <a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
-#+END_HTML
+#+END_export
 
 Estimation and simulation of latent variable models
 
@@ -259,7 +261,7 @@ Add additional simulations and visualize results
 
 
 
-* Setup :ignore:
+* COMMENT Setup
 
 #+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
