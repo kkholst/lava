@@ -20,20 +20,16 @@ source("http://bioconductor.org/biocLite.R");
 biocLite("BiocUpgrade") ## Upgrade previous bioconductor installation
 biocLite("Rgraphviz")
 #+END_SRC
-or the =igraph= package
+or the =igraph= or =visNetwork= packages
 #+BEGIN_SRC R :exports both :eval never
 install.packages("igraph",dependencies=TRUE)
+install.packages("visNetwork",dependencies=TRUE)
 #+END_SRC
 
 The development version may be installed directly from =github=:
 #+BEGIN_SRC R :exports both :eval never
 devtools::install_github("kkholst/lava")
 #+END_SRC
-
-or download the source code from
-#+BEGIN_EXAMPLE
-git@github.com:kkholst/lava.git
-#+END_EXAMPLE
 
 ** Citation
 
@@ -263,18 +259,15 @@ Add additional simulations and visualize results
 
 
 
-* COMMENT Setup
+* Setup :ignore:
 
 #+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
-#+PROPERTY: session *R*
-#+PROPERTY: cache no
-#+PROPERTY: results output
-#+PROPERTY: exports results 
-#+PROPERTY: tangle yes 
-#+PROPERTY: eval yes
-#+OPTIONS: timestamp:t author:nil creator:nil
-#+OPTIONS: d:t
+#+PROPERTY: header-args:R  :session *R* :cache no :width 550 :height 450
+#+PROPERTY: header-args  :eval never-export :exports results :results output :tangle yes :comments yes 
+#+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
+#+OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil 
+#+OPTIONS: h:4 num:t tags:nil d:t
 #+PROPERTY: comments yes 
 #+STARTUP: hideall 
 #+OPTIONS: toc:t h:4 num:nil tags:nil
