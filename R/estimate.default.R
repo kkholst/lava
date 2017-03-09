@@ -508,7 +508,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         if (missing(contrast)) contrast <- diag(nrow=p)
         if (missing(null)) null <- 0
         if (is.vector(contrast) || is.list(contrast)) {
-            contrast <- contr(contrast, names(res$coef))
+            contrast <- contr(contrast, names(res$coef), ...)
             ## if (length(contrast)==p) contrast <- rbind(contrast)
             ## else {
             ##     cont <- contrast

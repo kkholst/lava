@@ -32,13 +32,16 @@ parsedesign <- function(coef,x,...,regex=FALSE,diff=TRUE) {
         return(do.call(contr, list(c(list(x),list(...)),n=length(coef),diff=diff)))
     }
     res <- c()
+    diff <- rep(diff,length.out=length(ee))
+    count <- 0
     for (e in ee) {
+        count <- count+1
         diff0 <- FALSE
         Val <- rbind(rep(0,length(coef)))
         if (grepl('\"',e)) {        
-            diff0 <- diff && grepl("^c\\(",e)
+            diff0 <- diff[count] && grepl("^c\\(",e)
             e0 <- gsub(" |\\)$|^c\\(","",e)
-            ff <- strsplit(e0,'\"')[[1]]
+            ff <- strsplit(e0,'\"')[[1L]]
         } else {
             ff <- sumsplit(e)
         }
@@ -53,10 +56,16 @@ parsedesign <- function(coef,x,...,regex=FALSE,diff=TRUE) {
             if (!regex) par0 <- glob2rx(par0)
             if (is.na(par0int)) par0int <- grep(par0,coef)
             if (length(par0int)>1) {
-                diff0 <- diff
+                diff0 <- diff[count]
                 for (k in seq_along(par0int)) {
                     if (par0int[k]<=length(Val)) {
-                        Val[par0int[k]] <- val
+                        if (diff[count]) {
+                            Val[par0int[k]] <- val
+                        } else {
+                            Val0 <- Val; Val0[] <- 0
+                            Val0[par0int[k]] <- val
+                            res <- rbind(res,Val0)
+                        }
                     }
                 }
             } else {
