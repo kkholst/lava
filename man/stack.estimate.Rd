@@ -4,7 +4,7 @@
 \alias{stack.estimate}
 \title{Stack estimating equations}
 \usage{
-\method{stack}{estimate}(x, model2, D1u, inv.D2u, weight, dweight, U, k = 1,
+\method{stack}{estimate}(x, model2, D1u, inv.D2u, weights, dweights, U, k = 1,
   keep1 = FALSE, ...)
 }
 \arguments{
@@ -16,9 +16,9 @@
 
 \item{inv.D2u}{Inverse of deri}
 
-\item{weight}{weight (vector or function)}
+\item{weights}{weights (vector or function)}
 
-\item{dweight}{derivative of weight wrt parameters of model 1}
+\item{dweights}{derivative of weight wrt parameters of model 1}
 
 \item{U}{Optional score function (model 2) as function of all parameters}
 

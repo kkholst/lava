@@ -110,7 +110,7 @@ rsq <- function(x,stderr=FALSE) {
 
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
                      control=list(trace=1),
-                     weight=Weight(object),estimator=object$estimator,
+                     weights=Weights(object),estimator=object$estimator,
                      missing=inherits(object,"lvm.missing"),
                      regr=FALSE,
                      ...) {
@@ -154,7 +154,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
     control$start <- mystart
   }
   message("Calculating MLE of saturated model:\n")
-  e0 <- estimate(m0,data=data,weight=weight,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
+  e0 <- estimate(m0,data=data,weights=weights,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
   if (logLik)
     return(logLik(e0))
   return(e0)
@@ -180,8 +180,8 @@ condition <- function(A) {
 ##' @param p Parameter vector used to calculate statistics
 ##' @param data Data.frame to use
 ##' @param latent If TRUE predictions of latent variables are included in output
-##' @param weight2 Optional second data.frame (only for censored observations)
-##' @param weight Optional weight matrix
+##' @param data2 Optional second data.frame (only for censored observations)
+##' @param weights Optional weight matrix
 ##' @param n Number of observations
 ##' @param conditional If TRUE the conditional moments given the covariates are
 ##' calculated. Otherwise the joint moments are calculated
@@ -207,15 +207,15 @@ condition <- function(A) {
 ##' \method{logLik}{lvmfit}(object, p=coef(object),
 ##'                       data=model.frame(object),
 ##'                       model=object$estimator,
-##'                       weight=Weight(object),
-##'                       weight2=object$data$weight2,
+##'                       weights=Weights(object),
+##'                       data2=object$data$data2,
 ##'                           ...)
 ##'
 ##' \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator,
-##'                    weight=Weight(x), weight2=x$data$weight2, ...)
+##'                    weights=Weights(x), data2=x$data$data2, ...)
 ##'
 ##' \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
-##'                    model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
+##'                    model=x$estimator,weights=Weights(x), data2=x$data$data2, ...)
 ##'
 ##' @return A \code{htest}-object.
 ##' @author Klaus K. Holst

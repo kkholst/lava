@@ -1,5 +1,15 @@
 context("Graphics functions")
 
+test_that("attr", {
+    m <- lvm(y~x)
+    d <- sim(m,10)
+    e <- estimate(m,d)
+    
+    
+
+})
+          
+
 test_that("color", {
     cur <- palette()
     old <- lava:::mypal()

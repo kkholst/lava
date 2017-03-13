@@ -45,10 +45,10 @@
 ##' Setting to FALSE leads to complete case analysis. In the other case
 ##' likelihood based inference is obtained by integrating out the missing data
 ##' under assumption the assumption that data is missing at random (MAR).
-##' @param weight Optional weights to used by the chosen estimator.
-##' @param weightname Weight names (variable names of the model) in case
-##' \code{weight} was given as a vector of column names of \code{data}
-##' @param weight2 Optional additional dataset used by the chosen
+##' @param weights Optional weights to used by the chosen estimator.
+##' @param weightsname Weights names (variable names of the model) in case
+##' \code{weights} was given as a vector of column names of \code{data}
+##' @param data2 Optional additional dataset used by the chosen
 ##' estimator.
 ##' @param id Vector (or name of column in \code{data}) that identifies
 ##' correlated groups of observations in the data leading to variance estimates
@@ -118,8 +118,8 @@
              estimator="gaussian",
              control=list(),
              missing=FALSE,
-             weight, weightname,
-             weight2,
+             weights, weightsname,
+             data2,
              id,
              fix,
              index=!quick,
@@ -199,34 +199,34 @@
         ## commented; don't reduce data
         ## if (!missing & (is.matrix(data) | is.data.frame(data))) {
         ##     includelist <- c(manifest(x),xfix)
-        ##     if (!base::missing(weight) && is.character(weight)) includelist <- c(includelist,weight)
-        ##     if (!base::missing(weight2) && is.character(weight2)) includelist <- c(includelist,weight2)
+        ##     if (!base::missing(weights) && is.character(weights)) includelist <- c(includelist,weights)
+        ##     if (!base::missing(data2) && is.character(data2)) includelist <- c(includelist,data2)
         ##     if (!base::missing(id) && is.character(id)) includelist <- c(includelist,id)
         ##     ##data <- na.omit(data[,intersect(colnames(data),includelist),drop=FALSE])
         ## }
 
         ## Weights...
-        if (!base::missing(weight)) {
-            if (is.character(weight)) {
-                weight <- data[,weight,drop=FALSE]
-                if (!base::missing(weightname)) {
-                    colnames(weight) <- weightname
+        if (!base::missing(weights)) {
+            if (is.character(weights)) {
+                weights <- data[,weights,drop=FALSE]
+                if (!base::missing(weightsname)) {
+                    colnames(weights) <- weightsname
                 } else {
                     yvar <- index(x)$endogenous
-                    nw <- seq_len(min(length(yvar),ncol(weight)))
-                    colnames(weight)[nw] <- yvar[nw]
+                    nw <- seq_len(min(length(yvar),ncol(weights)))
+                    colnames(weights)[nw] <- yvar[nw]
                 }
             }
-            weight <- cbind(weight)
+            weights <- cbind(weights)
         } else {
-            weight <- NULL
+            weights <- NULL
         }
-        if (!base::missing(weight2)) {
-            if (is.character(weight2)) {
-                weight2 <- data[,weight2]
+        if (!base::missing(data2)) {
+            if (is.character(data2)) {
+                data2 <- data[,data2]
             }
         } else {
-            weight2 <- NULL
+            data2 <- NULL
         }
         ## Correlated clusters...
         if (!base::missing(id)) {
@@ -257,11 +257,11 @@
         ## Run hooks (additional lava plugins)
         myhooks <- gethook()
         for (f in myhooks) {
-            res <- do.call(f, list(x=x,data=data,weight=weight,weight2=weight2,estimator=estimator,optim=Optim))
+            res <- do.call(f, list(x=x,data=data,weights=weights,data2=data2,estimator=estimator,optim=Optim))
             if (!is.null(res$x)) x <- res$x
             if (!is.null(res$data)) data <- res$data
-            if (!is.null(res$weight)) weight <- res$weight
-            if (!is.null(res$weight2)) weight2 <- res$weight2
+            if (!is.null(res$weights)) weights <- res$weights
+            if (!is.null(res$data2)) data2 <- res$data2
             if (!is.null(res$optim)) Optim <- res$optim
             if (!is.null(res$estimator)) estimator <- res$estimator
             rm(res)
@@ -350,7 +350,7 @@
 
         ## Missing data
         if (missing) {
-            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weight=weight,weight2=weight2,cluster=id,...))
+            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weights=weights,data2=data2,cluster=id,...))
         }
         coefname <- coef(x,mean=Optim$meanstructure,fix=FALSE);
         names(Optim$start) <- coefname
@@ -449,10 +449,10 @@
                         for (i in seq_along(myfix$var)) {
                             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
                         }
-                    if (is.list(weight2)) {
-                        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2[ii,]))
+                    if (is.list(data2)) {
+                        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weights=weights[ii,], data2=data2[ii,]))
                     } else {
-                        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weight=weight[ii,], weight2=weight2))
+                        res <- do.call(ObjectiveFun, list(x=x0, p=pp, data=mydata[ii,], n=1, weights=weights[ii,], data2=data2))
                     }
                     return(res)
                 }
@@ -468,11 +468,11 @@
                         for (i in seq_along(myfix$var)) {
                             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
                         }
-                    if (is.list(weight2)) {
-                        rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2))
+                    if (is.list(data2)) {
+                        rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weights=weights[ii,], data2=data2))
                     } else
                         {
-                            rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weight=weight[ii,], weight2=weight2[ii,]))
+                            rr <- do.call(GradFun, list(x=x0, p=pp, data=mydata[ii,,drop=FALSE], n=1, weights=weights[ii,], data2=data2[ii,]))
                         }
                     return(rr)
                 }
@@ -490,12 +490,12 @@
                         for (i in seq_along(myfix$var)) {
                             x0$fix[cbind(rowpos[[i]],colpos[[i]])] <- index(x0)$A[cbind(rowpos[[i]],colpos[[i]])] <- data[ii,xfix[i]]
                         }
-                    if (is.list(weight2)) {
+                    if (is.list(data2)) {
                         res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
-                                                            n=1, weight=weight[ii,], weight2=weight2))
+                                                            n=1, weights=weights[ii,], data2=data2))
                     } else {
                         res <- do.call(InformationFun, list(p=pp, obj=myObj, x=x0, data=data[ii,],
-                                                            n=1, weight=weight[ii,], weight2=weight2[ii,]))
+                                                            n=1, weights=weights[ii,], data2=data2[ii,]))
                     }
                     return(res)
                 }
@@ -565,8 +565,8 @@
                     S0 <- pd$S; mu0 <- pd$mu
                     x0$mean[yconstrain] <- 0
                 }
-                do.call(ObjectiveFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weight=weight
-                                          ,weight2=weight2, offset=offset
+                do.call(ObjectiveFun, list(x=x0, p=pp, data=data, S=S0, mu=mu0, n=n, weights=weights
+                                          ,data2=data2, offset=offset
                                            ))
             }
 
@@ -582,8 +582,8 @@
                 ##   pd <- procdata.lvm(x0,data=data0)
                 ##   S0 <- pd$S; mu0 <- pd$mu
                 ## }
-                S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weight=weight
-                                         , weight2=weight2##, offset=offset
+                S <- do.call(GradFun, list(x=x, p=pp, data=data, S=S, mu=mu, n=n, weights=weights
+                                         , data2=data2##, offset=offset
                                            ))
                 if (Optim$constrain) {
                     S[constrained] <- S[constrained]*pp[constrained]
@@ -601,7 +601,7 @@
                                                   x=x, data=data,
                                                   S=S, mu=mu,
                                                   n=n,
-                                                  weight=weight, weight2=weight2,
+                                                  weights=weights, data2=data2,
                                                   type=Optim$information
                                                   ))
                 if (is.null(mu) && index(x)$npar.mean>0) {
@@ -789,17 +789,17 @@
 
 ### OBS: v = t(A)%*%v + e
         res <- list(model=x, call=cl, coef=mycoef,
-                    vcov=asVar, mu=mu, S=S, ##A=A, P=P,
-                    model0=mymodel, ## Random slope hack
-                    estimator=estimator, opt=opt,expar=x$expar,
-                    data=list(model.frame=data, S=S, mu=mu,
-                        C=mom$C, v=mom$v, n=n,
-                        m=length(latent(x)), k=length(index(x)$manifest), weight2=weight2),
-                    weight=weight, weight2=weight2,
-                    cluster=id,
-                    pp.idx=pp.idx,
-                    graph=NULL, control=Optim)
-
+                   vcov=asVar, mu=mu, S=S, ##A=A, P=P,
+                   model0=mymodel, ## Random slope hack
+                   estimator=estimator, opt=opt,expar=x$expar,
+                   data=list(model.frame=data, S=S, mu=mu,
+                             C=mom$C, v=mom$v, n=n,
+                             m=length(latent(x)), k=length(index(x)$manifest), data2=data2),
+                   weights=weights, data2=data2,
+                   cluster=id,
+                   pp.idx=pp.idx,
+                   graph=NULL, control=Optim)
+        
         class(res) <- myclass
 
         myhooks <- gethook("post.hooks")

@@ -1,7 +1,7 @@
 ###{{{ logLik.lvm
 
 ##' @export
-logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weight=NULL,weight2=NULL,...) {
+logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weights=NULL,data2=NULL,...) {
   cl <- match.call()
   xfix <- colnames(data)[(colnames(data)%in%parlabels(object,exo=TRUE))]
 
@@ -48,7 +48,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
         for (i in seq_along(myfix$var)) {
           index(x0)$A[cbind(myfix$row[[i]],myfix$col[[i]])] <- data[ii,myfix$var[[i]]]
         }
-      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=p,weight=weight[ii,,drop=FALSE],weight2=weight2[ii,,drop=FALSE],
+      return(logLikFun(x0,data=data[ii,,drop=FALSE], p=p,weights=weights[ii,,drop=FALSE],data2=data2[ii,,drop=FALSE],
                        model=model,debug=debug,indiv=indiv,...))
     }
     loglik <- sapply(seq_len(nrow(data)),myfun)
@@ -99,7 +99,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       offsets <- Mu%*%t(M$IAi)[,endogenous(object),drop=FALSE]
       object$constrain[iconstrain] <- NULL
       object$mean[yconstrain] <- 0
-      loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weight=weight,weight2=weight2,offset=offsets),list(...)))
+      loglik <- do.call(lname, c(list(object=object,p=p,data=data,indiv=indiv,weights=weights,data2=data2,offset=offsets),list(...)))
     } else {
       cl[[1]] <- logLikFun
       loglik <- eval.parent(cl)
@@ -126,7 +126,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
 ##' @export
 gaussian_logLik.lvm <- function(object,p,data,
                           type=c("cond","sim","exo","sat","cond2"),
-                          weight=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) {
+                          weights=NULL, indiv=FALSE, S, mu, n, offset=NULL, debug=FALSE, meanstructure=TRUE,...) {
   exo.idx <- with(index(object), exo.obsidx)
   endo.idx <- with(index(object), endo.obsidx)
   if (type[1]=="exo") {
@@ -197,23 +197,23 @@ gaussian_logLik.lvm <- function(object,p,data,
   iC <- Inverse(C,det=TRUE, symmetric = TRUE)
   detC <- attributes(iC)$det
 
-  if (!is.null(weight)) {
-    weight <- cbind(weight)
+  if (!is.null(weights)) {
+    weights <- cbind(weights)
     K <- length(exo.idx)+length(endo.idx)
-    if (ncol(weight)!=1 & ncol(weight)!=K) {
-      w.temp <- weight
-      weight <- matrix(1,nrow=nrow(weight),ncol=K)
-      weight[,endo.idx] <- w.temp
+    if (ncol(weights)!=1 & ncol(weights)!=K) {
+      w.temp <- weights
+      weights <- matrix(1,nrow=nrow(weights),ncol=K)
+      weights[,endo.idx] <- w.temp
     }
     if (type=="exo")
-      weight <- NULL
+      weights <- NULL
   }
 
   notdatalist <- (!is.list(data) | is.data.frame(data))
   if (missing(n))
     if (!missing(data)) n <- NROW(data)
   if (!missing(n))
-  if (notdatalist & (n<2 | indiv | !is.null(weight))) {
+  if (notdatalist & (n<2 | indiv | !is.null(weights))) {
     if (n==1)
       data <- rbind(data)
     res <- numeric(n)
@@ -224,8 +224,8 @@ gaussian_logLik.lvm <- function(object,p,data,
       if (meanstructure) {
         ti <- cbind(ti-as.numeric(xi))
       }
-      if (!is.null(weight)) {
-        W <- diag(weight[i,],nrow=length(weight[i,]))
+      if (!is.null(weights)) {
+        W <- diag(weights[i,],nrow=length(weights[i,]))
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*(t(ti)%*%W)%*%iC%*%(ti)
       } else {
         val <- -k/2*log(2*base::pi) -1/2*log(detC) - 1/2*t(ti)%*%iC%*%(ti)
@@ -262,16 +262,16 @@ logLik.lvmfit <- function(object,
                           p=coef(object),
                           data=model.frame(object),
                           model=object$estimator,
-                          weight=Weight(object),
-                          weight2=object$data$weight2,
+                          weights=Weights(object),
+                          data2=object$data$data2,
                           ...) {
 
   logLikFun <- paste0(model,"_logLik.lvm")
   if (!exists(logLikFun)) {
     model <- "gaussian"
   }
-  l <- logLik.lvm(object$model0,p,data,model=model,weight=weight,
-                  weight2=weight2,
+  l <- logLik.lvm(object$model0,p,data,model=model,weights=weights,
+                  data2=data2,
                   ...)
   return(l)
 }
@@ -283,9 +283,9 @@ logLik.lvmfit <- function(object,
 ##' @export
 logLik.lvm.missing <- function(object,
                                p=pars(object), model=object$estimator,
-                               weight=Weight(object$estimate),
+                               weights=Weights(object$estimate),
                                ...) {
-  logLik(object$estimate$model0, p=p, model=model, weight=weight, ...)
+  logLik(object$estimate$model0, p=p, model=model, weights=weights, ...)
 }
 
 ###}}}
@@ -293,7 +293,7 @@ logLik.lvm.missing <- function(object,
 ###{{{ logLik.multigroup
 
 ##' @export
-logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond","sim","exo","sat"),...) {
+logLik.multigroup <- function(object,p,data=object$data,weights=NULL,type=c("cond","sim","exo","sat"),...) {
   res <- procrandomslope(object)
   pp <- with(res, modelPar(model,p)$p)
 
@@ -318,7 +318,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
   n <- 0
   loglik <- 0; for (i in seq_len(object$ngroup)) {
     n <- n + object$samplestat[[i]]$n
-    val <- logLik(object$lvm[[i]],pp[[i]],data[[i]],weight=weight[[i]],type=type,...)
+    val <- logLik(object$lvm[[i]],pp[[i]],data[[i]],weights=weights[[i]],type=type,...)
     loglik <- loglik + val
   }
   attr(loglik, "nall") <- n
@@ -334,7 +334,7 @@ logLik.multigroup <- function(object,p,data=object$data,weight=NULL,type=c("cond
 
 ##' @export
 logLik.multigroupfit <- function(object,
-                                 p=pars(object), weight=Weight(object), model=object$estimator, ...) {
-  logLik(object$model0,p=p,weight=weight,model=model,...)
+                                 p=pars(object), weights=Weights(object), model=object$estimator, ...) {
+  logLik(object$model0,p=p,weights=weights,model=model,...)
 }
 ###}}} logLik.multigroup

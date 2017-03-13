@@ -250,12 +250,12 @@ forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
         }
         if (x$estimator=="gaussian" && !inherits(x,"lvm.missing")) {
             Sc2 <- score(altmodel,p=p1,data=NULL,
-                         model=x$estimator,weight=Weight(x),S=S,mu=mu,n=n)
+                         model=x$estimator,weights=Weights(x),S=S,mu=mu,n=n)
         } else {
             Sc2 <- score(altmodel,p=p1,data=model.frame(x),
-                         model=x$estimator,weight=Weight(x))
+                         model=x$estimator,weights=Weights(x))
         }
-        I <- information(altmodel,p=p1,n=n,data=model.frame(x),weight=Weight(x),estimator=x$estimator) ##[-rmidx,-rmidx]
+        I <- information(altmodel,p=p1,n=n,data=model.frame(x),weights=Weights(x),estimator=x$estimator) ##[-rmidx,-rmidx]
         
         iI <- try(Inverse(I), silent=TRUE)
             Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test

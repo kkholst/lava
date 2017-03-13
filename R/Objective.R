@@ -28,12 +28,12 @@ gaussian_method.lvm <- "nlminb2"
 
 
 `gaussian_hessian.lvm` <- function(x,p,n,...) {
-  dots <- list(...); dots$weight <- NULL
+  dots <- list(...); dots$weights <- NULL
   do.call("information", c(list(x=x,p=p,n=n),dots))
 }
 
 gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
-  dots <- list(...); dots$weight <- NULL
+  dots <- list(...); dots$weights <- NULL
   if (n>2) data <- NULL
   val <- -gaussian_score.lvm(x,p=p,S=S,mu=mu,n=n,data=data,reindex=FALSE,...)
   if (!is.null(nrow(val))) {
@@ -42,10 +42,10 @@ gaussian_gradient.lvm <-  function(x,p,data,S,mu,n,...) {
   val
 }
 
-gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=FALSE,...) {
+gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weights=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=FALSE,...) {
 
   if (!is.null(data)) {
-    if ((nrow(data)<2 | !is.null(weight))| indiv)
+    if ((nrow(data)<2 | !is.null(weights))| indiv)
     {
       mp <- modelVar(x,p,data=data[1,])
       iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
@@ -57,16 +57,16 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weight=NULL, debug=FAL
       }
       score <- matrix(ncol=length(p),nrow=NROW(data))
       score0 <- -1/2*as.vector(iC)%*%D$dS
-      if (!is.null(weight)) {
+      if (!is.null(weights)) {
         W0 <- diag(nrow=length(myvars))
-        widx <- match(colnames(weight),myvars)
+        widx <- match(colnames(weights),myvars)
       }
 
       for (i in seq_len(NROW(data))) {
         z <- as.numeric(data[i,])
         u <- z-as.numeric(mp$xi)
-        if (!is.null(weight)) {
-          W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
+        if (!is.null(weights)) {
+          W <- W0; diag(W)[widx] <- as.numeric(weights[i,])
           score[i,] <-
             as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                        -1/2*(as.vector((iC
@@ -154,7 +154,7 @@ gaussian2_hessian.lvm <- function(x,p,n,data,...) {
 ###{{{ Weighted
 
 weighted_method.lvm <- "NR"
-weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
+weighted_gradient.lvm <- function(x,p,data,weights,indiv=FALSE,...) {
   myvars <- index(x)$manifest
   if (NCOL(data)!=length(myvars))
     data <- subset(data,select=myvars)
@@ -163,7 +163,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   myx <- index(x)$exogenous
   mynx <- setdiff(myvars,myx)
   W0 <- diag(nrow=length(myy))
-  widx <- match(colnames(weight),myy)
+  widx <- match(colnames(weights),myy)
   pp <- modelPar(x,p)
   mp <- moments(x,p=p,conditional=TRUE,data=data[1,])
   iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
@@ -176,7 +176,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   D <- deriv.lvm(x, meanpar=pp$meanpar,
              p=pp$p, mom=mp, mu=NULL)
   if (NROW(data)==1) {
-    W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
+    W <- W0; diag(W)[widx] <- as.numeric(weights[i,])
     score[i,] <-
       as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                  -1/2*(as.vector((iC
@@ -187,7 +187,7 @@ weighted_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   score0 <- -0.5*as.vector(iC)%*%D$dS
   Gdv <- mp$G%*%D$dv
   for (i in seq_len(NROW(data))) {
-    W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
+    W <- W0; diag(W)[widx] <- as.numeric(weights[i,])
     dxi <-
       (t(as.numeric(v[i,]))%x%diag(nrow=length(myy)))%*%D$dG + Gdv
     score[i,] <- -0.5*as.vector(iC%*%W)%*%D$dS +
@@ -217,7 +217,7 @@ weighted0_gradient.lvm <- function(...) {
 weighted0_hessian.lvm <- NULL
 
 weighted2_method.lvm <- "estfun"
-weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
+weighted2_gradient.lvm <- function(x,p,data,weights,indiv=FALSE,...) {
   myvars <- index(x)$manifest
   if (NCOL(data)!=length(myvars))
     data <- subset(data,select=myvars)
@@ -226,7 +226,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
   myx <- index(x)$exogenous
   mynx <- setdiff(myvars,myx)
   W0 <- diag(nrow=length(myy))
-  widx <- match(colnames(weight),myy)
+  widx <- match(colnames(weights),myy)
   pp <- modelPar(x,p)
   for (i in seq_len(NROW(data))) {
     z <- as.matrix(data[i,myy])
@@ -235,7 +235,7 @@ weighted2_gradient.lvm <- function(x,p,data,weight,indiv=FALSE,...) {
     iC <- Inverse(mp$C,det=FALSE, symmetric = TRUE)
     D <- deriv.lvm(x, meanpar=pp$meanpar,
                p=pp$p, mom=mp, mu=NULL)
-    W <- W0; diag(W)[widx] <- as.numeric(weight[i,])
+    W <- W0; diag(W)[widx] <- as.numeric(weights[i,])
     score[i,] <- -0.5*as.vector(iC%*%W)%*%D$dS +
       as.numeric(crossprod(u,iC%*%W)%*%D$dxi +
                  1/2*as.vector(iC%*%crossprod(rbind(u))%*%iC%*%W)%*%D$dS)

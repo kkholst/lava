@@ -483,4 +483,33 @@ test_that("multipletesting", {
 })
 
 
+test_that("Weighted",{
+    m <- lvm(y~x)
+    set.seed(1)
+    d <- sim(m,10)
+    d$w <- runif(nrow(d),0.1,1)
+    e <- estimate(m,data=d)    
+    l <- lm(y~x,data=d)
+    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 
+    w <- estimate(m,data=d,weight=d$w,estimator="normal",control=list(trace=1))
+    lw <- lm(y~x,data=d, weight=d$w)
+    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
+})
+
+
+test_that("Tobit",{
+    ## devtools::load_all("~/biostat/Projects/Software/lava")
+    ## devtools::load_all("~/biostat/Projects/Software/lava.tobit")
+    library(survival)
+    m0 <- lvm(t~x)
+    distribution(m0,~w) <- uniform.lvm(0.1,1)
+    d <- sim(m0,10,seed=1)
+    d$status <- rep(c(TRUE,FALSE),each=nrow(d)/2)
+    d$s <- with(d, Surv(t,status))
+    survreg(s~x,data=d,dist="gaussian")
+    s <- survreg(s~x,data=d,dist="gaussian",weights=d$w)
+    m <- lvm(s~x)
+    e <- estimate(m,data=d,estimator="normal",weights="w")
+    expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)    
+})
