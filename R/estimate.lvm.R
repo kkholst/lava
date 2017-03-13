@@ -115,7 +115,7 @@
 ##' e0
 `estimate.lvm` <-
     function(x, data=parent.frame(),
-             estimator="gaussian",
+             estimator=NULL,
              control=list(),
              missing=FALSE,
              weights, weightsname,
@@ -265,6 +265,11 @@
             if (!is.null(res$optim)) Optim <- res$optim
             if (!is.null(res$estimator)) estimator <- res$estimator
             rm(res)
+        }
+        if (is.null(estimator)) {
+            if (!is.null(weights)) {
+                estimator <- "normal"
+            } else estimator <- "gaussian"
         }
 
         checkestimator <- function(x,...) {
@@ -799,7 +804,7 @@
                    cluster=id,
                    pp.idx=pp.idx,
                    graph=NULL, control=Optim)
-        
+
         class(res) <- myclass
 
         myhooks <- gethook("post.hooks")
