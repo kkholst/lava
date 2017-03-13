@@ -51,16 +51,16 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
       }
     } else
     pattern.compl <- count
-##    d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
+    ## d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
     d0 <- data[which(mis.type==i),c(manifest(m0),keep),drop=FALSE];
-    w0.var <- intersect(manifest(m0),colnames(weights))
-    w0 <- weights[which(mis.type==i),w0.var,drop=FALSE];
+    if (!is.list(weights)) {
+        w0.var <- intersect(manifest(m0),colnames(weights))
+        w0 <- weights[which(mis.type==i),w0.var,drop=FALSE];
+    }
     if (!is.list(data2)) {
       w02.var <- intersect(manifest(m0),colnames(data2))
       w02 <- data2[which(mis.type==i),w02.var,drop=FALSE];
-    } else {
-      data2 <- data2
-    }
+    } 
 
     clust0 <- cluster[which(mis.type==i)]
     ex0 <- exogenous(m0) <- setdiff(exo,exoremove)

@@ -111,10 +111,10 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
     p0 <- numeric(length(coef(altmodel)))
     idx <-  match(coef(Model(object)),coef(altmodel))
     p0[idx] <- coef(object)
-    Sc2 <- score(altmodel,p=p0,data=model.frame(object),weigth=Weight(altmodel),
+    Sc2 <- score(altmodel,p=p0,data=model.frame(object),weigth=Weights(altmodel),
                  estimator=object$estimator,...)
     I <- information(altmodel,p=p0,n=object$data$n,
-                     data=model.frame(object),weigth=Weight(object),
+                     data=model.frame(object),weigth=Weights(object),
                      estimator=object$estimator,...
                      )
     iI <- try(solve(I), silent=TRUE)

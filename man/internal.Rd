@@ -59,7 +59,7 @@
 \alias{addhook}
 \alias{gethook}
 \alias{multigroup}
-\alias{Weight}
+\alias{Weights}
 \alias{fixsome}
 \alias{parfix}
 \alias{parfix<-}
