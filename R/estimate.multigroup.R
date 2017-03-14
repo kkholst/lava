@@ -2,7 +2,7 @@
 
 ##' @export
 `estimate.multigroup` <- function(x, control=list(),
-                                  estimator="gaussian",
+                                  estimator=NULL,
                                   weights, weightsname,
                                   data2,
                                   id=NULL,
@@ -12,7 +12,7 @@
                                   cluster,
                                   ...) {
   cl <- match.call()
-  optim <- list(
+  Optim <- list(
              iter.max=lava.options()$iter.max,
              trace=ifelse(lava.options()$debug,3,0),
              gamma=lava.options()$gamma,
@@ -45,27 +45,27 @@
   if (!missing(cluster)) id <- cluster
 
   defopt <- lava.options()[]
-  defopt <- defopt[intersect(names(defopt),names(optim))]
-  optim[names(defopt)] <- defopt
+  defopt <- defopt[intersect(names(defopt),names(Optim))]
+  Optim[names(defopt)] <- defopt
 
   if (length(control)>0) {
-    optim[names(control)] <- control
+      Optim[names(control)] <- control
   }
 
 
   Debug("Start values...")
-  if (!is.null(optim$start) & length(optim$start)==(x$npar+x$npar.mean)) {
-    mystart <- optim$start
+  if (!is.null(Optim$start) & length(Optim$start)==(x$npar+x$npar.mean)) {
+    mystart <- Optim$start
   } else {
     if (!silent) cat("Obtaining starting value...")
     if (is.null(control$starterfun) && lava.options()$param!="relative")
-        optim$starterfun <- startvalues0
-    mystart <- with(optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,silent=FALSE,fix=FALSE))
-    if (!is.null(optim$start)) {
-      pname <- names(optim$start)
+        Optim$starterfun <- startvalues0
+    mystart <- with(Optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,silent=FALSE,fix=FALSE))
+    if (!is.null(Optim$start)) {
+      pname <- names(Optim$start)
       ppos <- parpos.multigroup(x,p=pname,mean=TRUE)
       if (any(!is.na(ppos)))
-        mystart[ppos] <- optim$start[na.omit(match(attributes(ppos)$name,pname))]
+        mystart[ppos] <- Optim$start[na.omit(match(attributes(ppos)$name,pname))]
     }
     if (!silent) cat("\n")
   }
@@ -76,18 +76,18 @@
   for (i in seq_len(x$ngroup)) {
     vpos <- sapply(x$parlist[[i]][variances(x$lvm[[i]],mean=FALSE)], function(y) as.numeric(substr(y,2,nchar(y))))
     if (length(vpos)>0)
-    lower[vpos] <- optim$lbound
+    lower[vpos] <- Optim$lbound
   }
-  if (optim$meanstructure)
+  if (Optim$meanstructure)
     lower <- c(rep(-Inf,x$npar.mean), lower)
-  if (any(optim$constrain)) {
-    if (length(optim$constrain)!=length(lower))
+  if (any(Optim$constrain)) {
+    if (length(Optim$constrain)!=length(lower))
       constrained <- is.finite(lower)
     else
-      constrained <- optim$constrain
+      constrained <- Optim$constrain
     constrained <- which(constrained)
     lower[] <- -Inf
-    optim$constrain <- TRUE
+    Optim$constrain <- TRUE
     mystart[constrained] <- log(mystart[constrained])
   }
 
@@ -127,7 +127,7 @@
   newoptim <- newestimator <- NULL
   for (f in myhooks) {
     for ( i in seq_len(x$ngroup)) {
-      res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weights=weights[[i]],data2=data2[[i]],estimator=estimator,optim=optim))
+      res <- do.call(f, list(x=x$lvm[[i]],data=x$data[[i]],weights=weights[[i]],data2=data2[[i]],estimator=estimator,optim=Optim))
       if (!is.null(res$x)) x$lvm[[i]] <- res$x
       if (!is.null(res$data)) x$data[[i]] <- res$data
       if (!is.null(res$weights)) newweights <- c(newweights,list(res$weights))
@@ -136,7 +136,7 @@
       if (!is.null(res$estimator)) newestimator <- res$estimator
     }
     if (!is.null(newestimator)) estimator <- newestimator
-    if (!is.null(newoptim)) optim <- newoptim
+    if (!is.null(newoptim)) Optim <- newoptim
     if (!is.null(res$weights))
       if (!any(unlist(lapply(newweights,is.null)))) {
         weights <- newweights
@@ -146,7 +146,11 @@
         data2 <- newdata2
       }
   }
-
+  if (is.null(estimator)) {
+      if (!missing(weights) && !is.null(weights)) {
+          estimator <- "normal"
+      } else estimator <- "gaussian"
+  }
 
   checkestimator <- function(x,...) {
     ffname <- paste0(x,c("_objective","_gradient"),".lvm")
@@ -164,8 +168,8 @@
     Method <- "nlminb1"
   else
     Method <- get(Method)
-  if (is.null(optim$method)) {
-      optim$method <- Method
+  if (is.null(Optim$method)) {
+      Optim$method <- Method
   }
 
   ## Check for random slopes
@@ -204,9 +208,9 @@
           }
         }
       }
-      if (xconstrainM & ((is.null(control$method) || optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian")) ) {
+      if (xconstrainM & ((is.null(control$method) || Optim$method=="nlminb0") & (lava.options()$test & estimator=="gaussian")) ) {
         XconstrStdOpt <- FALSE
-        optim$method <- "nlminb0"
+        Optim$method <- "nlminb0"
         if (is.null(control$constrain)) control$constrain <- TRUE
       }
     }
@@ -268,7 +272,7 @@
     }
 
     myObj <- function(theta) {
-      if (optim$constrain)
+      if (Optim$constrain)
         theta[constrained] <- exp(theta[constrained])
       pp <- modelPar(x,theta)$p
       res <- 0
@@ -307,7 +311,7 @@
     }
 
     myGrad <- function(theta) {
-      if (optim$constrain) {
+      if (Optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
       pp <- modelPar(x,theta)$p
@@ -338,7 +342,7 @@
         D <- D0; D[parord[[k]]] <- rowSums(sapply(seq_len(nrow(mydata[[k]])),myfun))
         res <- res+D
       }
-      if (optim$constrain) {
+      if (Optim$constrain) {
         res[constrained] <- res[constrained]*theta[constrained]
       }
       return(as.vector(res))
@@ -346,7 +350,7 @@
 
     myInformation <- function(theta) {
       theta0 <- theta
-      if (optim$constrain) {
+      if (Optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
       pp <- modelPar(x,theta)$p
@@ -370,7 +374,7 @@
                             S=NULL,
                             weights=weights[[k]][ii,],
                             data2=data2[[k]][ii,],
-                            type=optim$information
+                            type=Optim$information
                             )
                        )
           D <- grad0
@@ -446,7 +450,7 @@
 
     myObj <- function(theta) {
       theta0 <- theta
-      if (optim$constrain) {
+      if (Optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
       pp <- modelPar(x,theta)$p
@@ -478,7 +482,7 @@
     } else  {
       myGrad <- function(theta) {
         theta0 <- theta
-        if (optim$constrain) {
+        if (Optim$constrain) {
           theta[constrained] <- exp(theta[constrained])
         }
         pp <- modelPar(x,theta)$p
@@ -492,7 +496,7 @@
           D <- D0; D[ parord[[i]] ] <- repval
         res <- res + D
         }
-        if (optim$constrain) {
+        if (Optim$constrain) {
           res[constrained] <- res[constrained]*theta[constrained]
         }
         return(as.vector(res))
@@ -501,7 +505,7 @@
 
     myInformation <- function(theta) {
       theta0 <- theta
-      if (optim$constrain) {
+      if (Optim$constrain) {
         theta[constrained] <- exp(theta[constrained])
       }
       pp <- modelPar(x,theta)$p
@@ -511,11 +515,11 @@
         I[ parord[[i]], parord[[i]] ] <- with(x$samplestat[[i]], do.call(InformationFun, list(p=pp[[i]], x=x$lvm[[i]], data=x$data[[i]],
                                                                                               S=S, mu=mu, n=n, weights=weights[[i]],
                                                                                               data2=data2[[i]],
-                                                                                              type=optim$information)))
+                                                                                              type=Optim$information)))
         res <- res + I
       }
       D <- myGrad(theta0)
-      if (optim$constrain) {
+      if (Optim$constrain) {
         res[constrained,-constrained] <- apply(res[constrained,-constrained,drop=FALSE],2,function(x) x*theta[constrained]);
         res[-constrained,constrained] <- t(res[constrained,-constrained])
         if (sum(constrained)==1) {
@@ -539,15 +543,15 @@
   if (!silent) cat("Optimizing objective function...\n")
   if (lava.options()$debug) {
     print(lower)
-    print(optim$constrain)
-    print(optim$method)
+    print(Optim$constrain)
+    print(Optim$method)
   }
-  opt <- do.call(optim$method,
-                 list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=optim))
+  opt <- do.call(Optim$method,
+                 list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=Optim))
 ##  if (!silent) cat("\n")
 
   opt$estimate <- opt$par
-  if (optim$constrain) {
+  if (Optim$constrain) {
     opt$estimate[constrained] <- exp(opt$estimate[constrained])
   }
   if (quick) return(list(opt=opt,vcov=NA))
@@ -582,7 +586,7 @@
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
     
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=optim$meanstructure,
+  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=Optim$meanstructure,
              vcov=asVar, estimator=estimator, weights=weights, data2=data2, cluster=id)
   class(res) <- myclass
 
