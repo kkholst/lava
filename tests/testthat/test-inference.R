@@ -251,7 +251,6 @@ test_that("Optimization", {
     expect_equivalent(op$par,op3$par)
 })
 
-devtools::load_all("~/biostat/Projects/Software/lava")
 
 test_that("Prediction with missing data, random intercept", {
     ## Random intercept model
