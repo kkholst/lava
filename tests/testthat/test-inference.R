@@ -500,7 +500,7 @@ test_that("Weighted",{
 
 
 test_that("Tobit",{
-    if (require("lava.tobit")) {
+    if (require("lava.tobit") && versioncheck("lava.tobit",c(0,5)) ) {
         m0 <- lvm(t~x)
         distribution(m0,~w) <- uniform.lvm(0.1,1)
         d <- sim(m0,10,seed=1)
