@@ -267,7 +267,7 @@
             rm(res)
         }
         if (is.null(estimator)) {
-            if (!is.null(weights)) {
+            if (!missing(weights) && !is.null(weights)) {
                 estimator <- "normal"
             } else estimator <- "gaussian"
         }
