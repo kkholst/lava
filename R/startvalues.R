@@ -41,7 +41,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
       S <- x$samplestat[[i]]$S
       mu <- if (meanstructure) x$samplestat[[i]]$mu else NULL;
       ##      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;
-      s0 <- starterfun(x$lvm[[i]], S=S, mu=mu,silent=TRUE)
+      s0 <- do.call(starterfun, list(x$lvm[[i]], S=S, mu=mu,silent=TRUE))
     }
     s <- c(s, list(s0))
   }
