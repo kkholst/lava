@@ -31,11 +31,11 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     mypattern <- patterns[i,]
     m0 <- mymodel;
     if (any(mypattern)) {
-      latent(m0,zero=FALSE) <- colnames(data.mis)[mypattern]
+      latent(m0) <- colnames(data.mis)[mypattern]
       if (type>1) {
         mytop <- intersect(topendo,colnames(data.mis)[mypattern])
         if (!is.null(mytop)) {
-          kill(m0) <- mytop     
+          kill(m0) <- mytop
           for (xx in exo) {
           ## If exogenous variable only have effect on missing variables,
           ##  then remove it from the model
@@ -198,7 +198,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   }
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
-
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
   if (!is.null(names(control$start))) {
     parorder1 <- attributes(parpos(mg0,p=names(control$start)))$name
@@ -245,8 +244,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     for (i in seq_along(xfix))
       regfix(x, from=vars(x)[rowpos[[i]]],to=vars(x)[colpos[[i]]]) <-
         rep(colMeans(data[,xfix[i],drop=FALSE],na.rm=TRUE),length(rowpos[[i]]))
-    x <-
-      updatelvm(x,zeroones=TRUE,deriv=TRUE)
+    x <- updatelvm(x,zeroones=TRUE,deriv=TRUE)
   }
 
   ord <- c()
@@ -291,3 +289,4 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 }
 
 ###}}} estimate.MAR.lvm
+

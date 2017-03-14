@@ -33,9 +33,8 @@ function(x,...) UseMethod("latent")
         }
         x$noderender$shape[var] <- "ellipse"
         x$latent[var] <- TRUE
-        ## if (zero & tolower(lava.options()$param)%in%c("hybrid","absolute")) {
-        ##     intercept(x,var) <- 0
-        ## }
+        ord <- intersect(var,ordinal(x))
+        if (length(ord)>0) ordinal(x,K=NULL) <- ord
     }
     
     xorg <- exogenous(x)
