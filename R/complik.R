@@ -14,6 +14,7 @@
 ##' flexibility in the specification of the composite likelihood
 ##' @param silent Turn output messsages on/off
 ##' @param \dots Additional arguments parsed on to lower-level functions
+##' @param estimator Model (pseudo-likelihood) to use for the pairs/groups
 ##' @return An object of class \code{clprobit} inheriting methods from \code{lvm}
 ##' @author Klaus K. Holst
 ##' @seealso estimate
