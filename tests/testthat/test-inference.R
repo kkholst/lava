@@ -6,7 +6,7 @@ test_that("Effects",{
     regression(m) <- c(z1,z2,z3)~v; latent(m) <- ~v
     regression(m) <- u~v
     regression(m) <- c(u,v,z3,y1)~x
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     start <- c(rep(0,6),rep(1,17))
     suppressWarnings(e <- estimate(m,d,control=list(iter.max=0,start=start)))
     f <- coef(ef <- effects(e,y1~x))
@@ -32,7 +32,7 @@ test_that("Profile confidence limits", {
     m <- lvm(y~b*x)
     constrain(m,b~psi) <- identity
     set.seed(1)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e <- estimate(m, d)
     ci0 <- confint(e,3)
     ci <- confint(e,3,profile=TRUE)
@@ -42,7 +42,7 @@ test_that("Profile confidence limits", {
 test_that("IV-estimator", {
     m <- lvm(c(y1,y2,y3)~u); latent(m) <- ~u    
     set.seed(1)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e0 <- estimate(m,d)
     e <- estimate(m,d,estimator="iv") ## := MLE
     expect_true(mean((coef(e)-coef(e0))^2)<1e-9)
@@ -53,7 +53,7 @@ test_that("glm-estimator", {
     regression(m) <- x~z
     distribution(m,~y+z) <- binomial.lvm("logit")
     set.seed(1)
-    d <- sim(m,1e3)
+    d <- sim(m,1e3,seed=1)
     head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
@@ -92,7 +92,7 @@ test_that("Association measures", {
 test_that("equivalence", {
     m <- lvm(c(y1,y2,y3)~u,u~x,y1~x)
     latent(m) <- ~u
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     cancel(m) <- y1~x
     regression(m) <- y2~x
     e <- estimate(m,d)
@@ -115,7 +115,7 @@ test_that("multiple testing", {
 
 test_that("modelsearch and GoF", {
     m <- lvm(c(y1,y2)~x)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e <- estimate(lvm(c(y1,y2)~1,y1~x),d)
     e0 <- estimate(lvm(c(y1,y2)~x,y1~~y2),d)
 
@@ -499,7 +499,7 @@ test_that("Weighted",{
 
 
 test_that("Tobit",{
-    if (require("lava.tobit") && versioncheck("lava.tobit",c(0,5)) ) {
+    if (versioncheck("lava.tobit",c(0,5))) {
         m0 <- lvm(t~x)
         distribution(m0,~w) <- uniform.lvm(0.1,1)
         d <- sim(m0,10,seed=1)

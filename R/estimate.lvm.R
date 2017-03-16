@@ -238,21 +238,26 @@
         }
 
         Debug("procdata")
-        dd <- procdata.lvm(x,data=data,missing=missing)
-        S <- dd$S; mu <- dd$mu; n <- dd$n
+        val <- try({
+            dd <- procdata.lvm(x,data=data,missing=missing)
+            S <- dd$S; mu <- dd$mu; n <- dd$n
+            var.missing <- setdiff(vars(x),colnames(S))
+        }, silent=TRUE)
+        if (inherits(val,"try-error")) {
+            var.missing <- setdiff(vars(x),colnames(data))
+            S <- NULL; mu <- NULL; n <- nrow(data)
+        }
         ## Debug(list("n=",n))
         ## Debug(list("S=",S))
         ## Debug(list("mu=",mu))
-
-        ##  if (fix)
-        {
-            var.missing <- setdiff(vars(x),colnames(S))
+        
+        ##  if (fix) {            
             if (length(var.missing)>0) {## Convert to latent:
                 new.lat <- setdiff(var.missing,latent(x))
                 if (length(new.lat)>0)
                     x <- latent(x, new.lat)
             }
-        }
+        ##}
 
         ## Run hooks (additional lava plugins)
         myhooks <- gethook()
