@@ -74,9 +74,8 @@ test_that("Probit constraints", {
 
 
 test_that("Multiple group constraints I", {
-    set.seed(1)
     m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))
-    d1 <- sim(m1,500); d2 <- sim(m1,500)
+    d1 <- sim(m1,500,seed=1); d2 <- sim(m1,500,seed=2)
     ##coef(estimate(m1,d1))
     constrain(m1,beta2~psi) <- function(x) 2*x
     m2 <- lvm(y[m:v] ~ f(x,beta2) + z)
