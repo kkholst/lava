@@ -50,8 +50,6 @@ normal_objective.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,..
     attributes(ord) <- atr
 
     status <- rep(0,length(y))
-    bin <- tryCatch(match(do.call("binary",list(x=x)),y),error=function(x) NULL)
-    ## FIX: binary should be added...
     status[match(ord,y)] <- 2
 
     Table <- (length(y)==length(ord)) && (length(x.idx)==0)

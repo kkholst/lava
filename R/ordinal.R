@@ -35,7 +35,7 @@ ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
 
     ord <- ordinal(x)
     bin <- NULL
-    hasTobit <- lava.options()$tobit #requireNamespace("lava.tobit",quietly=TRUE)
+    hasTobit <- lava.options()$tobit && isNamespaceLoaded("lava.tobit")
     if (hasTobit) {
         bin <- lava.tobit::binary(x)
     }
