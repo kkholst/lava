@@ -58,8 +58,8 @@ versioncheck <- function(pkg="lava",geq,sep=".",...) {
     xyz <- tryCatch(
         as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
         error=function(x) NULL)
-    if (missing(geq)) return(xyz)
     if (is.null(xyz)) return(FALSE)
+    if (missing(geq)) return(xyz)
     for (i in seq(min(length(xyz),length(geq)))) {
         if (xyz[i]>geq[i]) return(TRUE)
         if (xyz[i]<geq[i]) return(FALSE)        
