@@ -54,10 +54,11 @@ addhook <- function(x,hook="estimate.hooks",...) {
   invisible(newhooks)
 }
 
-versioncheck <- function(pkg,geq,sep=".",...) {
+versioncheck <- function(pkg="lava",geq,sep=".",...) {
     xyz <- tryCatch(
         as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
         error=function(x) NULL)
+    if (missing(geq)) return(xyz)
     if (is.null(xyz)) return(FALSE)
     for (i in seq(min(length(xyz),length(geq)))) {
         if (xyz[i]>geq[i]) return(TRUE)
@@ -69,6 +70,7 @@ versioncheck <- function(pkg,geq,sep=".",...) {
 
 lava.env <- new.env()
 assign("init.hooks",c(),envir=lava.env)
+assign("remove.hooks",c(),envir=lava.env)
 assign("estimate.hooks",c(),envir=lava.env)
 assign("color.hooks",c(),envir=lava.env)
 assign("sim.hooks",c(),envir=lava.env)

@@ -1,3 +1,8 @@
+ordinal.remove.hook <- function(x,var,...) {
+    ordinal(x,K=0) <- var
+    return(x)
+}
+
 color.ordinal <- function(x,subset=vars(x),...) {
     return(list(vars=intersect(subset,ordinal(x)),col="indianred1"))
 }

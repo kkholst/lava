@@ -1,7 +1,7 @@
 ##' Generic method for removing elements of object
 ##'
 ##' @title Remove variables from (model) object.
-##' @aliases kill kill<- rmvar rmvar<-
+##' @aliases rmvar rmvar<- kill kill<-
 ##' @param x Model object
 ##' @param value Vector of variables or formula specifying which nodes to
 ##' remove
@@ -23,16 +23,16 @@
 ##' ### Remove y2 from the model
 ##' rmvar(m) <- ~y2
 ##'
-"kill" <- function(x, ...) UseMethod("kill")
-
-##' @export
 "rmvar" <- function(x, ...) UseMethod("rmvar")
 
 ##' @export
+"kill" <- function(x, ...) UseMethod("kill")
+
+##' @export
 "kill<-" <- function(x, ..., value) UseMethod("kill<-")
+
 ##' @export
 "rmvar<-" <- function(x, ..., value) UseMethod("rmvar<-")
-
 
 ##' @export
 "kill<-.lvm" <- function(x, ..., value) {
@@ -67,6 +67,10 @@
   x$mean <- (x$mean)[-idx]
   x$exogenous <- setdiff(exogenous(x),vv)
   x$latent[vv] <- NULL
+  myhooks <- gethook("remove.hooks")
+  for (f in myhooks) {
+      x <- do.call(f, list(x=x,var=vv,...))
+  }  
   index(x) <- reindex(x)
   return(x)
 }
