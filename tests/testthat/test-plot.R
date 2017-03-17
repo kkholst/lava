@@ -143,7 +143,7 @@ if (requireNamespace("visualTest",quietly=TRUE) && requireNamespace("png",quietl
 
     test_that("plot.lvm", {
         ## TODO
-        m <- lvm(y~u,u~x)
+        m <- lvm(y~1*u[0],u~1*x)
         latent(m) <- ~u
         plot(m)
         d <- sim(m,10)

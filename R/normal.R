@@ -99,12 +99,12 @@ normal_logLik.lvm <- function(object,p,data,data2=NULL,...) {
     return(res)
 }
 
-normal_gradient.lvm <- function(x,p,data,data2=NULL,indiv=FALSE,...) {
+normal_gradient.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-    if  (is.null(ordinal(x))) {
+    if  (is.null(ordinal(x)) && is.null(data2) && is.null(weights)) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
         Y <- as.matrix(data[,manifest(x)])
@@ -114,9 +114,9 @@ normal_gradient.lvm <- function(x,p,data,data2=NULL,indiv=FALSE,...) {
         return(ss)
     }
     if (indiv) {
-        return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,data2=data2,indiv=TRUE,...),p,method=lava.options()$Dmethod))
+        return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,weights=weights,data2=data2,indiv=TRUE,...),p,method=lava.options()$Dmethod))
     }
-    numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,data2=data2,...),p,method=lava.options()$Dmethod)
+    numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,weights=weights,data2=data2,...),p,method=lava.options()$Dmethod)
 }
 
 normal_hessian.lvm <- function(x,p,outer=FALSE,data2=NULL,...) {
