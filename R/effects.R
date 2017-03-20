@@ -159,6 +159,10 @@ coef.effects <- function(object,...) {
 }
 
 ##' @export
+summary.effects <- function(object,...) coef(object,...)
+
+
+##' @export
 confint.effects <- function(object,parm,level=0.95,...) {
   mycoef <- coef(object)
   p <- 1-(1-level)/2
