@@ -106,37 +106,43 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
   } else {
     totalinef <- prodsumdelta(coefs.all, inef.list, S.all,...)
   }
-
-  val <- list(paths=P$path, totalef=totalef, directef=directef, totalinef=totalinef, margef=margef, from=from, to=to)
+  
+  nn <- c("total","direct","indirect")
+  for (i in seq_len(length(margef))) {
+    if (length(P$path[[i]])>2) {
+      nn <- c(nn,paste(rev(P$path[[i]]),collapse=lava.options()$symbol[1]))
+    }
+  }
+  b <- c(totalef$est,directef$est,totalinef$est,totalinef$b)
+  names(b) <- nn
+  D <- t(cbind(totalef$grad,directef$grad,totalinef$grad,totalinef$D))
+  V <- D%*%S.all%*%t(D)
+  val <- list(coef=b, vcov=V, grad=D, paths=P$path, totalef=totalef, directef=directef, totalinef=totalinef, margef=margef, from=from, to=to)
   class(val) <- "effects"
-  ##    res <- c(res, list(val))
   val
 }
 
 ##' @export
 print.effects <- function(x,...) {
-  with(x, {
-    cat("\nTotal effect of '", from, "' on '", to, "':\n", sep="")
-    cat("\t\t", totalef$est, " (Approx. Std.Err = ", totalef$sd, ")\n", sep="")
-    cat("Direct effect of '", from, "' on '", to, "':\n", sep="")
-    cat("\t\t", directef$est, " (Approx. Std.Err = ", directef$sd, ")\n", sep="")
-    cat("Total indirect effect of '", from, "' on '", to, "':\n", sep="")
-    cat("\t\t", totalinef$est, " (Approx. Std.Err = ", totalinef$sd, ")\n", sep="")
-
-    cat("Indirect effects:\n");
-    for (i in seq_len(length(margef))) {
-      if (length(paths[[i]])>2) {
-        cat("\tEffect of '", from, "' via ", paste(paths[[i]],collapse="->"), ":\n", sep="");
-        cat("\t\t", margef[[i]]$est, " (Approx. Std.Err = ", margef[[i]]$sd, ")\n", sep="")
-      }
-    }
-  })
-  cat("\n");
-  invisible(x)
+    s <- summary(x,...)
+    print(s$coef,...)
+    cat("\n")
+    print(s$medprop,...)
+    return(invisible(x))
 }
 
 ##' @export
-coef.effects <- function(object,...) {
+coef.effects <- function(object,...) {    
+    object$coef
+}
+
+##' @export
+vcov.effects <- function(object,...) {    
+    object$vcov
+}
+
+##' @export
+summary.effects <- function(object,...) {
   totalef <- with(object$totalef, cbind(est,sd[1]))
   directef <- with(object$directef, cbind(est,sd[1]))
   totindirectef <- with(object$totalinef, cbind(est,sd[1]))
@@ -155,16 +161,14 @@ coef.effects <- function(object,...) {
   mycoef <- cbind(mycoef,mycoef[,1]/mycoef[,2])
   mycoef <- cbind(mycoef,2*(pnorm(abs(mycoef[,3]),lower.tail=FALSE)))
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
-  mycoef
+  medprop <- estimate(object, function(x) list("Mediation proportion"=logit(x[3]/x[1])),back.transform=expit)
+  list(coef=mycoef,medprop=medprop)
 }
-
-##' @export
-summary.effects <- function(object,...) coef(object,...)
 
 
 ##' @export
 confint.effects <- function(object,parm,level=0.95,...) {
-  mycoef <- coef(object)
+  mycoef <- summary(object)$coef
   p <- 1-(1-level)/2
   res <- mycoef[,1] +  + qnorm(p)*cbind(-1,1)%x%mycoef[,2]
   colnames(res) <- paste0(c(1-p,p)*100,"%")
@@ -197,9 +201,11 @@ prodsumdelta <- function(betas,prodidx,S,order=1) { ## Delta-method
   k <- length(prodidx)
   p <- length(betas)
   if (p==1) {
-    return(list(est=betas, sd=sqrt(S), grad=0, hess=0))
+    return(list(est=betas, sd=sqrt(S), grad=0, beta=betas, D=0, hess=0))
   }
   val <- 0; grad <- numeric(p)
+  D <- matrix(0,nrow=p,ncol=k)
+  beta <- numeric(k)
   H <- matrix(0,p,p)
   for (i in seq_len(k)) {
     ii <- prodidx[[i]]
@@ -207,15 +213,14 @@ prodsumdelta <- function(betas,prodidx,S,order=1) { ## Delta-method
     if (order>1) {
       H0 <- attributes(myterm)$hessian
       Sigma <- S[ii,ii]
-       ## print(Sigma)
-       ## print(H0)
-       ## print(Sigma%*%H0)
       print(sum(diag(Sigma%*%H0))/2)
       val <- val + (myterm + sum(diag(Sigma%*%H0))/2)
     } else {
       val <- val + myterm
+      beta[i] <- myterm
     }
+    D[ii,i] <- attributes(myterm)$gradient
     grad[ii] <- grad[ii] + attributes(myterm)$gradient
   }; grad <- matrix(grad,ncol=1)
-  return(list(est=val, sd=sqrt(t(grad)%*%S%*%grad), grad=grad, hess=H))
+  return(list(est=val, sd=sqrt(t(grad)%*%S%*%grad), grad=grad, b=beta, D=D, hess=H))
 }
