@@ -161,7 +161,9 @@ summary.effects <- function(object,...) {
   mycoef <- cbind(mycoef,mycoef[,1]/mycoef[,2])
   mycoef <- cbind(mycoef,2*(pnorm(abs(mycoef[,3]),lower.tail=FALSE)))
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
-  medprop <- estimate(object, function(x) list("Mediation proportion"=logit(x[3]/x[1])),back.transform=expit)
+  medprop <- NULL
+  if (totindirectef[1]!=0)
+      medprop <- estimate(object, function(x) list("Mediation proportion"=logit(x[3]/x[1])),back.transform=expit)
   list(coef=mycoef,medprop=medprop)
 }
 
