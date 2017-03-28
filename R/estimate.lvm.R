@@ -132,10 +132,6 @@
              p,
              ...) {
 
-        if (length(exogenous(x)>0)) {
-            catx <- categorical2dummy(x,data)
-            x <- catx$x; data <- catx$data
-        }
         cl <- match.call()
         if (!base::missing(param)) {
             oldparam <- lava.options()$param
@@ -180,6 +176,10 @@
             innames <- intersect(ls(envir=data),vars(x))
             data <- as.data.frame(lapply(innames,function(x) get(x,envir=data)))
             names(data) <- innames
+        }
+        if (length(exogenous(x)>0)) {
+            catx <- categorical2dummy(x,data)
+            x <- catx$x; data <- catx$data
         }
 
         if (!lava.options()$exogenous) exogenous(x) <- NULL
