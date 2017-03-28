@@ -165,7 +165,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     time <- c()
     robx <- function(iter__,...) tryCatch(x(...),error=function(e) NA)
-    if (!iter) formals(robx)[[1]] <- NULL
+    if (iter) formals(robx)[[1]] <- NULL
     for (ii in idx) {
         count <- count+1
         if (!missing(cl) && !is.null(cl)) {            
