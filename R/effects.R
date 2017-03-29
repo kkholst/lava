@@ -123,11 +123,11 @@ effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
 }
 
 ##' @export
-print.effects <- function(x,...) {
+print.effects <- function(x,digits=4,...) {
     s <- summary(x,...)
-    print(s$coef,...)
+    print(s$coef,digits=digits,...)
     cat("\n")
-    print(s$medprop,...)
+    print(s$medprop$coefmat[,c(1,3,4),drop=FALSE],digits=digits,...)
     return(invisible(x))
 }
 
