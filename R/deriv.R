@@ -79,12 +79,22 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
       if (!is.null(myc)) {
         parval <- mom$parval
         vals <- c(parval,constrainpar,mom$v,mom$e)[attributes(myc)$args]
-        fval <- myc(unlist(vals))
+        fval <- try(myc(unlist(vals)),silent=TRUE)
+        fmat <- inherits(fval,"try-error")
+        if (fmat) fval <- myc(rbind(unlist(vals)))
         if (!is.null(attributes(fval)$grad)) {
-          Gr <- attributes(fval)$grad(unlist(vals))
+            if (fmat) {
+                Gr <- attributes(fval)$grad(rbind(unlist(vals)))
+            } else {
+                Gr <- attributes(fval)$grad(unlist(vals))
+            }
         } else {
             ## if (!requireNamespace("numDeriv")) stop("numDeriv or analytical derivatives needed!")
-          Gr <- as.numeric(numDeriv::jacobian(myc, unlist(vals)))
+            if (fmat) {
+                Gr <- as.numeric(numDeriv::jacobian(myc, rbind(unlist(vals))))
+            } else {
+                Gr <- as.numeric(numDeriv::jacobian(myc, unlist(vals)))
+            }
       }
         mat.idx <- mom$constrain.idx[[pp]]
         cname <- c(cname,pp)

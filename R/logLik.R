@@ -12,7 +12,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     constrainM <- names(constr)%in%unlist(object$mean)
     for (i in seq_len(length(constr))) {
       if (!constrainM[i]) {
-        if (constr[[i]]%in%xconstrain) xconstrainM <- FALSE
+        if (any(constr[[i]]%in%xconstrain)) xconstrainM <- FALSE
       }
     }
   }

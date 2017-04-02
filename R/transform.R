@@ -20,7 +20,6 @@ print.transform.lvm <- function(x,...) {
 ##' @export
 "transform.lvm" <- function(`_data`,formula,fun,post=TRUE,y,x,...) {
     if (missing(formula)) {
-        ## print
         if (length(tr <- `_data`$attributes$transform)==0) {
             return(NULL)
         }        

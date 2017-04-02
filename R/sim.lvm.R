@@ -272,7 +272,7 @@
 ##' m2 <- sim(m,'y~x'=2)
 ##' sim(m,10,'y~x'=2)
 ##' sim(m2,10) ## Faster
-##' 
+##'
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' @export
@@ -335,7 +335,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
 
         ## Match parameter names
-        if (length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
+        if ((!is.null(names(p)) && all(!is.na(names(p)))) || length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
             nullp <- is.null(p)
             p0 <- p
             ep <- NULL
@@ -359,6 +359,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     p[idx11] <- p0[idx22]
             }
         }
+
         M <- modelVar(x,p,data=NULL)
         A <- M$A; P <- M$P
         if (!is.null(M$v)) mu <- M$v
@@ -451,7 +452,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         resunlink <- res
     }
 
-
     if ( normal | ( is.null(distribution(x)) & is.null(functional(x)) & is.null(constrain(x))) ) {
         if(cond) { ## Simulate from conditional distribution of Y given X
             mypar <- pars(x,A,P,mu)
@@ -499,7 +499,9 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
               else
                 D[,j] <- M$parval[[myargs[j]]]
             }
-            res <- cbind(res, apply(D,1,ff)); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
+            val <- try(apply(D,1,ff),silent=TRUE)
+            if (inherits(val,"try-error") || NROW(val)<n) val <- ff(D)
+            res <- cbind(res, val); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
           }
 
         if (any(xconstrain.par%in%covparnames)) {
@@ -535,7 +537,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         }
 
         yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
-
         for (i in exo_constrainY) {
             cc <- x$constrainY[[i]]
             args <- cc$args
@@ -557,28 +558,33 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         }
 
         leftovers <- c()
+        itercount <- 0
         while (length(simuled)<length(nn)) {
             leftoversPrev <- leftovers
             leftovers <- setdiff(nn,simuled)
-            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) stop("Infinite loop (probably problem with 'transform' call in model: Outcome variable should not affect other variables in the model).")
-            for (i in leftovers) {                
+            if (!is.null(leftoversPrev) && length(leftoversPrev)==length(leftovers)) {
+                if (itercount>0)
+                stop("Infinite loop (feedback).")
+                itercount <- itercount+1
+            }
+            for (i in leftovers) {
                 if (i%in%vartrans) {
                     xtrans <- x$attributes$transform[[i]]$x
                     if (all(xtrans%in%c(simuled,names(parvals))))  {
                         xtr <- res[,xtrans,drop=FALSE]
-                        if (use.labels) { 
+                        if (use.labels) {
                             lb <- x$attributes$labels
                             lb.idx <- na.omit(match(names(lb),xtrans))
                             ## For categorical variables turn them into factors so we can
                             ## use the actual labels in function calls/transform
                             if (length(lb.idx)>0) {
-                                xtr <- as.data.frame(xtr)                                
+                                xtr <- as.data.frame(xtr)
                                 for (lb0 in lb.idx) {
                                     lab <- lb[[names(xtr)[lb0]]]
                                     xtr[,lb0] <- factor(xtr[,lb0],levels=seq_along(lab)-1,labels=lab)
                                 }
                             }
-                        }                        
+                        }
                         suppressWarnings(yy <- with(x$attributes$transform[[i]], fun(xtr))) ##fun(res[,xtrans])))
                         if (NROW(yy) != NROW(res)) { ## apply row-wise
                             res[,i] <- with(x$attributes$transform[[i]], ##apply(res[,xtrans,drop=FALSE],1,fun))
@@ -599,7 +605,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                         break;
                     }
                 } else {
-                    ipos <- which(i%in%yconstrain)
+                    ipos <- which(yconstrain%in%i)
                     if (length(ipos)==0 || all(xconstrain[[ipos]]$exo%in%simuled)) {
                         pos <- match(i,vv)
                         relations <- colnames(A)[A[,pos]!=0]
@@ -611,7 +617,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                             dist.args <- setdiff(dist.args0,c("n","mean","mu","var","..."))
                             dist.xx <- intersect(names(res),dist.args) ## Variables influencing distribution
                         }
-
                         if (all(c(relations,simvars,dist.xx)%in%simuled)) { ## Only depending on already simulated variables
                             if (x$mean[[pos]]%in%xconstrain.par && length(ipos)==0) {
                                 mu.i <- res[,x$mean[[pos]] ]
@@ -620,21 +625,25 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                             }
                             if (length(ipos)>0) {
                                 pp <- unlist(M$parval[xconstrain[[ipos]]$warg])
-                                myidx <- with(xconstrain[[i]],order(c(wargidx,exoidx)))
+                                myidx <- with(xconstrain[[ipos]],order(c(wargidx,exoidx)))
+                                ## myidx <- with(xconstrain[[ipos]],
+                                ##              match(attr(func,"args"), c(warg,exo)))
                                 X <- with(xconstrain[[ipos]],
                                           if (length(pp)>0)
                                               cbind(rbind(pp)%x%cbind(rep(1,nrow(res))),
                                                     res[,exo,drop=FALSE])
                                           else res[,exo,drop=FALSE])
                                 yy <- try(with(xconstrain[[ipos]],
-                                               func(X)),silent=TRUE)
+                                              func(X[,myidx])),silent=TRUE)
                                 if (NROW(yy) != NROW(res)) { ## apply row-wise
-                                    mu.i <- mu.i + with(xconstrain[[ipos]],
-                                                        apply(res[,exo,drop=FALSE],1,
-                                                              function(x) func(
-                                                                              unlist(c(pp,x))[myidx])))
+                                    mu.i <- #mu.i +
+                                        with(xconstrain[[ipos]],
+                                             apply(res[,exo,drop=FALSE],1,
+                                                   function(x) func(
+                                                            unlist(c(pp,x))[myidx])))
                                 } else {
-                                    mu.i <- mu.i+yy
+                                    mu.i <- ##mu.i+
+                                        yy
                                 }
                             }
                             for (From in relations) {
@@ -694,7 +703,18 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                             if (length(x$constrainY)>0 && i%in%names(x$constrainY)) {
                                 cc <- x$constrainY[[i]]
                                 args <- cc$args
-                                args <- if (is.null(args) || length(args)==0) res[,pos] else res[,args]
+                                args <- if (is.null(args) || length(args)==0)
+                                           res[,pos]
+                                       else {
+                                           ii <- intersect(names(M$parval),args)
+                                           args0 <- args
+                                           args <- res[,intersect(args,colnames(res)),drop=FALSE]
+                                           if (length(ii)>0) {
+                                               pp <- rbind(unlist(M$parval[ii]))%x%cbind(rep(1,n))
+                                               colnames(pp) <- ii
+                                               args <- cbind(res,pp)[,args0,drop=FALSE]
+                                           }
+                                       }
                                 res[,pos] <- cc$fun(args,p) # ,...)
                             }
                             simuled <- c(simuled,i)

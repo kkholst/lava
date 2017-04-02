@@ -113,7 +113,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     }
     return(val)
   }
-
   mp <- moments(x,p,data=data)
   pp <- modelPar(x,p)
   D <- deriv.lvm(x, meanpar=pp$meanpar, mom=mp, p=p)##, all=length(constrain(x))>0)
