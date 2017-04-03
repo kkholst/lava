@@ -29,3 +29,4 @@ contr(list(c(1,3),c(2,4),5))
 
 parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
 }
+

@@ -74,3 +74,4 @@ sim(m,10)
 \author{
 Thomas A. Gerds <tag@biostat.ku.dk>
 }
+

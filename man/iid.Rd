@@ -33,3 +33,4 @@ g <- glm(y~x+z,data=d,family=binomial)
 crossprod(iid(g))
 
 }
+

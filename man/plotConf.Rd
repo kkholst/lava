@@ -102,11 +102,12 @@ l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
 plotConf(l,var2="Species")
 plotConf(l,var1="Sepal.Width",var2="Species")
 }
-\seealso{
-\code{termplot}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{termplot}
+}
 \keyword{hplot,}
 \keyword{regression}
+

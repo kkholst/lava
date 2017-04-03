@@ -2,8 +2,8 @@
 % Please edit documentation in R/interactive.R
 \name{click}
 \alias{click}
-\alias{idplot}
 \alias{click.default}
+\alias{idplot}
 \title{Identify points on plot}
 \usage{
 \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
@@ -11,8 +11,6 @@ idplot(x,y,...,id=list())
 }
 \arguments{
 \item{x}{X coordinates}
-
-\item{\dots}{Additional arguments parsed to \code{plot} function}
 
 \item{y}{Y coordinates}
 
@@ -27,6 +25,8 @@ idplot(x,y,...,id=list())
 \item{cex}{Size}
 
 \item{id}{List of arguments parsed to \code{click} function}
+
+\item{\dots}{Additional arguments parsed to \code{plot} function}
 }
 \description{
 Extension of the \code{identify} function
@@ -51,10 +51,11 @@ if (interactive()) {
     with(iris, idplot(Sepal.Length,Petal.Length))
 }
 }
-\seealso{
-\code{\link{idplot}}, \code{identify}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{idplot}}, \code{identify}
+}
 \keyword{iplot}
+

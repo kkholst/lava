@@ -2,13 +2,13 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.5.1
-Date: 2017-03-17
+Date: 2017-04-03
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
 Author: Klaus K. Holst [aut, cre],
-        Brice Ozenne [ctb],
-        Thomas Gerds [ctb]
+    Brice Ozenne [ctb],
+    Thomas Gerds [ctb]
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Estimation and simulation of latent variable models.
 URL: https://github.com/kkholst/lava
@@ -40,7 +40,7 @@ Suggests:
     lava.tobit,
     lme4,
     mets (>= 1.1),
-    optimx,    
+    optimx,
     quantreg,
     rgl,
     testthat (>= 0.11),
@@ -48,4 +48,4 @@ Suggests:
     zoo
 ByteCompile: yes
 Roxygen: list(wrap = FALSE)
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1

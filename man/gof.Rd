@@ -3,13 +3,13 @@
 \name{gof}
 \alias{gof}
 \alias{gof.lvmfit}
-\alias{moments}
-\alias{moments.lvm}
 \alias{information}
 \alias{information.lvmfit}
+\alias{logLik.lvmfit}
+\alias{moments}
+\alias{moments.lvm}
 \alias{score}
 \alias{score.lvmfit}
-\alias{logLik.lvmfit}
 \title{Extract model summaries and GOF statistics for model object}
 \usage{
 gof(object, ...)
@@ -35,8 +35,6 @@ moments(x,...)
 }
 \arguments{
 \item{object}{Model object}
-
-\item{\dots}{Additional arguments to be passed to the low level functions}
 
 \item{x}{Model object}
 
@@ -68,6 +66,8 @@ goodness-of-fit (always TRUE for estimator='gaussian')}
 \item{rmsea.threshold}{Which probability to calculate, Pr(RMSEA<rmsea.treshold)}
 
 \item{all}{Calculate all (ad hoc) FIT indices: TLI, CFI, NFI, SRMR, ...}
+
+\item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
 A \code{htest}-object.
@@ -102,3 +102,4 @@ Klaus K. Holst
 }
 \keyword{methods}
 \keyword{models}
+

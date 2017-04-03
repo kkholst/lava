@@ -2,16 +2,16 @@
 % Please edit documentation in R/covariance.R
 \name{covariance}
 \alias{covariance}
-\alias{covariance<-}
 \alias{covariance.lvm}
+\alias{covariance<-}
 \alias{covariance<-.lvm}
-\alias{covfix<-}
 \alias{covfix}
-\alias{covfix<-.lvm}
 \alias{covfix.lvm}
+\alias{covfix<-}
+\alias{covfix<-.lvm}
 \alias{variance}
-\alias{variance<-}
 \alias{variance.lvm}
+\alias{variance<-}
 \alias{variance<-.lvm}
 \title{Add covariance structure to Latent Variable Model}
 \usage{
@@ -19,8 +19,6 @@
 }
 \arguments{
 \item{object}{\code{lvm}-object}
-
-\item{\dots}{Additional arguments to be passed to the low level functions}
 
 \item{var1}{Vector of variables names (or formula)}
 
@@ -30,6 +28,8 @@ covariance between \code{var1} and \code{var2})}
 \item{constrain}{Define non-linear parameter constraints to ensure positive definite structure}
 
 \item{pairwise}{If TRUE and \code{var2} is omitted then pairwise correlation is added between all variables in \code{var1}}
+
+\item{\dots}{Additional arguments to be passed to the low level functions}
 
 \item{value}{List of parameter values or (if \code{var1} is unspecified)}
 }
@@ -108,13 +108,14 @@ covariance(m) ## Examine covariance structure
 
 
 }
+\author{
+Klaus K. Holst
+}
 \seealso{
 \code{\link{regression<-}}, \code{\link{intercept<-}},
 \code{\link{constrain<-}} \code{\link{parameter<-}}, \code{\link{latent<-}},
 \code{\link{cancel<-}}, \code{\link{kill<-}}
 }
-\author{
-Klaus K. Holst
-}
 \keyword{models}
 \keyword{regression}
+

@@ -33,3 +33,4 @@ plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single")
 
 density.sim(val,estimate=c(1,2,3),polygon.density=c(0,10,10),polygon.angle=c(0,45,-45))
 }
+

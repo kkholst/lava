@@ -30,10 +30,11 @@ Convert PDF file to print quality png (default 300 dpi)
 \details{
 Access to ghostscript program 'gs' is needed
 }
-\seealso{
-\code{dev.copy2pdf}, \code{printdev}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{dev.copy2pdf}, \code{printdev}
+}
 \keyword{iplot}
+

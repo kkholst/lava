@@ -56,3 +56,4 @@ if (interactive()) {
 \seealso{
 stack.estimate
 }
+

@@ -12,9 +12,9 @@ Model(x, ...) <- value
 \arguments{
 \item{x}{Fitted model}
 
-\item{\dots}{Additional arguments to be passed to the low level functions}
-
 \item{value}{New model object (e.g. \code{lvm} or \code{multigroup})}
+
+\item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \value{
 Returns a model object (e.g. \code{lvm} or \code{multigroup})
@@ -29,10 +29,11 @@ e <- estimate(m, sim(m,100))
 Model(e)
 
 }
-\seealso{
-\code{\link{Graph}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{Graph}}
+}
 \keyword{models}
+

@@ -26,3 +26,4 @@ Combine(list(A=m1,B=m2,C=m3),fun=function(x)
 \author{
 Klaus K. Holst
 }
+

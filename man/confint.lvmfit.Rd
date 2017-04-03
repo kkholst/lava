@@ -61,11 +61,12 @@ B <- bootstrap(e,R=50)
 B
 }
 }
-\seealso{
-\code{\link{bootstrap}{lvm}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{bootstrap}{lvm}}
+}
 \keyword{models}
 \keyword{regression}
+

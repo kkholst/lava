@@ -68,3 +68,4 @@ images(list(X,X),group,axis2=c(FALSE,FALSE),axis1=c(FALSE,FALSE),
 \author{
 Klaus Holst
 }
+
