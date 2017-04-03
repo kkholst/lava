@@ -23,11 +23,12 @@ a formula expression.
 toformula(c("age","gender"), "weight")
 
 }
-\seealso{
-\code{\link{as.formula}},
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{as.formula}},
+}
 \keyword{models}
 \keyword{utilities}
+
