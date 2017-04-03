@@ -1,3 +1,33 @@
+* Version 1.5 <2017-03-16 Thu>
+  - lava.tobit is longer required for ordinal and censored
+    responses. Default is now to use the implementation in the 'mets' package.
+  - Composite likelihood method (complik) updated
+  - weight argument renamed to weights in agreement with lm, glm, coxph, ...
+  - sim.default: new argument 'arg' passed on to simulation function 
+  - sim.default: new argument 'iter'. If TRUE the iteration number is
+    passed to function call as first argument (default FALSE)
+  - estimate.default: Wildcards/global expressions can now be used for specifying
+    contrasts based on the syntax of the functions 'contr', 'parsedesign'.
+    See examples on the help-page.
+    The argument transform.ci has been renamed to back.transform.
+  - correlation methods for matrices and data.frames (either pairwise or full MLE).
+    All methods can now return the influence functions.
+  - revdiag: dimnames are kept
+  - Combine: output updated
+  - forestplot: point estimates shown by default
+  - backdoor now works without conditioning set (yields all possible conditioning sets)
+  - New formula syntax: y+x~v+z same as c(y,x)~v+z
+  - spaghetti: trend.formula can now contain a factor statement on the rhs
+
+* Version 1.4.7 <2017-01-26 Wed>
+  - Maintenance release
+  - models can now be specified as y1+y2~x1+x2 instead of c(y1,2y)~x1+x2
+  - sim method now has a seed argument
+
+* Version 1.4.6 <2016-12-14 Wed>
+  - New backtrace algorithms for Newton-Raphson optimization routine.
+  - 'diagtest' updated.
+
 * Version 1.4.5 <2016-10-25 Tue>
   - New graph functions: 
     dsep: check for d-separation (conditional independence).

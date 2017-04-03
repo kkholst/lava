@@ -142,7 +142,10 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     A[!is.na(A) & !is.na(mymodel$par)] <- mymodel$par[!is.na(A) & !is.na(mymodel$par)]
 
     mu <- unlist(mymodel$mean)[which(index(mymodel)$v1==1)]
-    ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
+                                        #ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
+    ex <- mymodel$exfix
+    ex[is.na(ex)] <- mymodel$expar[is.na(ex)]
+    ex <- ex[which(index(mymodel)$e1==1)]
 
     p <- pars(mymodel, A, P, e=ex)
     p[p=="1"] <- NA

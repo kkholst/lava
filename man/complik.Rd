@@ -5,7 +5,7 @@
 \title{Composite Likelihood for probit latent variable models}
 \usage{
 complik(x, data, k = 2, type = c("nearest", "all"), pairlist,
-  silent = TRUE, ...)
+  silent = TRUE, estimator = "normal", ...)
 }
 \arguments{
 \item{x}{\code{lvm}-object}
@@ -24,6 +24,8 @@ argument which overrides \code{k} and \code{type} but gives complete
 flexibility in the specification of the composite likelihood}
 
 \item{silent}{Turn output messsages on/off}
+
+\item{estimator}{Model (pseudo-likelihood) to use for the pairs/groups}
 
 \item{\dots}{Additional arguments parsed on to lower-level functions}
 }

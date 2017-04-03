@@ -15,7 +15,7 @@
 \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
                              control=list(start=coef(x)),
                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
-                             estimator=x$estimator,weight=Weight(x),...)
+                             estimator=x$estimator,weights=Weights(x),...)
 }
 \arguments{
 \item{x}{\code{lvm}-object.}
@@ -51,7 +51,7 @@ included in the bootstrap procedure}
 \item{estimator}{String definining estimator, e.g. 'gaussian' (see
 \code{estimator})}
 
-\item{weight}{Optional weight matrix used by \code{estimator}}
+\item{weights}{Optional weights matrix used by \code{estimator}}
 
 \item{\dots}{Additional arguments, e.g. choice of estimator.}
 }

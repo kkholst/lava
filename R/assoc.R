@@ -98,7 +98,7 @@ OR <- function(x,tabulate=FALSE,log=FALSE,...) {
     orfun <- function(p,...) {
         list(logOR=sum(log(p[diag(pos)]))-sum(log(p[revdiag(pos)])))
     }
-    estimate(M,orfun,transform.ci=exp)
+    estimate(M,orfun,back.transform=exp)
 }
 
 

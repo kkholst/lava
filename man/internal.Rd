@@ -7,7 +7,7 @@
 \alias{Inverse}
 \alias{NR}
 \alias{Specials}
-\alias{Weight}
+\alias{Weights}
 \alias{addattr}
 \alias{addhook}
 \alias{checkmultigroup}
@@ -47,8 +47,8 @@
 \alias{pars.glm}
 \alias{pars.lvm}
 \alias{pars.lvmfit}
-\alias{parsedesign}
 \alias{procdata.lvmfit}
+\alias{procformula}
 \alias{profci}
 \alias{randomslope}
 \alias{randomslope<-}

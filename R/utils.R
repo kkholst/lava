@@ -1,51 +1,15 @@
-###{{{ parsedesign
-
-##' @export
-parsedesign <- function(coef,x,...) {
-    if (!is.vector(coef)) coef <- stats::coef(coef)
-    if (is.numeric(coef) && !is.null(names(coef))) coef <- names(coef)
-    dots <- substitute(list(...))[-1]
-    expr <- suppressWarnings(inherits(try(x,silent=TRUE),"try-error"))
-    if (expr) {
-        ee <- c(deparse(substitute(x)), sapply(dots, deparse))
-    } else {
-        ee <- c(deparse(x), sapply(dots, function(x) deparse(x)))
-    }
-    res <- c()
-    for (e in ee) {
-        e0 <- gsub(" ","",e)
-        ff <- strsplit(e0,'\"')[[1]]
-        Val <- rbind(rep(0,length(coef)))
-        for (i in seq(length(ff)/2)) {
-            val0 <- gsub("[*()]","",ff[2*(i-1)+1])            
-            suppressWarnings(val <- as.numeric(val0))
-            if (is.na(val)) {
-                val <- switch(val0,"-"=-1,1)
-            }
-            par0 <- ff[2*i]
-            par0int <- suppressWarnings(as.integer(par0))
-            if (is.na(par0int)) par0int <- match(par0,coef)
-            if (par0int<=length(Val)) Val[par0int] <- val
-        }
-        if (any(Val!=0)) res <- rbind(res,Val)
-    }
-    res
-}
-
-###}}}
-
 ###{{{ substArg
 
 substArg <- function(x,env,...) {
   if (!missing(env)) {
     a <- with(env,substitute(x))
-#    a <- substitute(x,environment(env))
+    #    a <- substitute(x,environment(env))
   } else {
     a <- substitute(x)
   }
   myclass <- tryCatch(class(eval(a)),error=function(e) NULL)
   if (is.null(myclass) || myclass=="name") {
-#  if (is.null(myclass)) {
+    #  if (is.null(myclass)) {
     res <- unlist(sapply(as.character(a),
                          function(z) {
                            trimmed <- gsub(" ","",z,fixed=TRUE)
@@ -53,7 +17,7 @@ substArg <- function(x,env,...) {
                            if (val[1]=="") val <- NULL
                            val
                          })); attributes(res)$names <- NULL
-    return(res)
+                         return(res)
   }
   return(eval(a))
 }
@@ -99,13 +63,13 @@ procrandomslope <- function(object,data=object$data,...) {
         for (j in seq_along(myfix0$col[[i]]))
           regfix(x0,
                  from=vars(x0)[myfix0$row[[i]][j]],to=vars(x0)[myfix0$col[[i]][j]]) <-
-                   colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
+        colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
       index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
       object$lvm[[k]] <- x0
       yvars <- endogenous(x0)
       #parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE)%in%coef(x0,mean=TRUE)])
     }
-#    parkeep <- sort(unique(parkeep))
+    #    parkeep <- sort(unique(parkeep))
     object <- multigroup(object$lvm,data,fix=FALSE,exo.fix=FALSE)
   }
   return(list(model=object,fix=myfix))
@@ -124,13 +88,13 @@ procrandomslope <- function(object,data=object$data,...) {
 ## ' @param Y
 ## ' @author Klaus K. Holst
 kronprod <- function(A,B,Y) {
-    if (missing(Y)) {
-        ## Assume 'B'=Identity, (A otimes B)Y
-        k <- nrow(B)/ncol(A)
-        res <- rbind(apply(B,2,function(x) matrix(x,nrow=k)%*%t(A)))
-        return(res)
-    }
-    rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
+  if (missing(Y)) {
+    ## Assume 'B'=Identity, (A otimes B)Y
+    k <- nrow(B)/ncol(A)
+    res <- rbind(apply(B,2,function(x) matrix(x,nrow=k)%*%t(A)))
+    return(res)
+  }
+  rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
 }
 
 ###}}} kronprod
@@ -167,7 +131,7 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
   f <- as.formula(paste("~ 1+", paste(catX,collapse="+")))
   opt <- options(na.action="na.pass")
   M <- model.matrix(f,data)
-
+  
   options(opt)
   Mnames <- colnames(M)
   Mpos <- attributes(M)$assign
@@ -198,12 +162,13 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 
 `procdata.lvm` <-
   function(x,data,categorical=FALSE,
-    na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"complete.obs","pairwise.complete.obs")
-    ) {
+           na.method=ifelse(any(is.na(data[,intersect(colnames(data),manifest(x))])),"complete.obs","pairwise.complete.obs"),
+           missing=FALSE
+  ) {
     if (is.numeric(data) & !is.list(data)) {
       data <- rbind(data)
     }
-     if (is.data.frame(data) | is.matrix(data)) {
+    if (is.data.frame(data) | is.matrix(data)) {
       nn <- colnames(data)
       data <- as.data.frame(data); colnames(data) <- nn; rownames(data) <- NULL
       obs <- setdiff(intersect(vars(x), colnames(data)),latent(x))
@@ -216,31 +181,33 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         if (is.character(mydata[,i]) | is.factor(mydata[,i]))
           mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
       }
-
-##      mydata <- data[,obs]
-##      if (any(is.na(mydata))) {
-##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)
-##        mydata <- na.omit(mydata)
-##      }
+      
+      ##      mydata <- data[,obs]
+      ##      if (any(is.na(mydata))) {
+      ##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)
+      ##        mydata <- na.omit(mydata)
+      ##      }
       S <- NULL
       n <- nrow(mydata)
       if (n==1) {
         S <- diag(nrow=ncol(mydata)); colnames(S) <- rownames(S) <- obs
       }
-      if (na.method=="complete.obs") {
-        mydata <- na.omit(mydata)
-        n <- nrow(mydata)
-        mu <- colMeans(mydata)
-        if (is.null(S))
-          S <- (n-1)/n*cov(mydata) ## MLE variance matrix of observed variables
+      if (na.method=="complete.obs" && !missing) {
+        mydata0 <- na.omit(mydata)
+        n <- nrow(mydata0)
+        mu <- colMeans(mydata0)
+        if (is.null(S) && n>2) 
+          S <- (n-1)/n*cov(mydata0) ## MLE variance matrix of observed variables
+        rm(mydata0)
       }
       nS <- is.null(S) || any(is.na(S))
       if (na.method=="pairwise.complete.obs" || nS) {
-          mu <- colMeans(mydata,na.rm=TRUE)
-          if (nS) {
-              S <- (n-1)/n*cov(mydata,use="pairwise.complete.obs")
-              S[is.na(S)] <- 1e-3
-          }
+        mu <- colMeans(mydata,na.rm=TRUE)
+        if (nS) {
+          n <- nrow(mydata)
+          S <- (n-1)/n*cov(mydata,use="pairwise.complete.obs")
+          S[is.na(S)] <- 1e-3
+        }
       }
     }
     else
@@ -253,8 +220,8 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
         mu <- reorderdata.lvm(x,data$mu)
         ##      if (is.null(n)) stop("n was not specified");
       }
-      else
-        stop("Unexpected type of data!");
+    else
+      stop("Unexpected type of data!");
     if (nrow(S)!=ncol(S)) stop("Wrong type of data!");
     return(list(S=S,mu=mu,n=n))
   }
@@ -281,24 +248,24 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
 ###{{{ symmetrize
 
 `symmetrize` <-
-function(M, upper=TRUE) {
-  if (length(M)==1) return(M)
-  if (!is.matrix(M) | ncol(M)!=nrow(M)) stop("Only implemented for square matrices.")
-  if (upper) {
-    for (i in seq_len(ncol(M)-1))
-      for (j in seq(i+1,nrow(M)))
-        M[i,j] <- M[j,i]
-    return(M)
-  } else {
-    for (i in seq_len(ncol(M)))
-      for (j in seq_len(nrow(M)))
-        if (M[i,j]==0)
+  function(M, upper=TRUE) {
+    if (length(M)==1) return(M)
+    if (!is.matrix(M) | ncol(M)!=nrow(M)) stop("Only implemented for square matrices.")
+    if (upper) {
+      for (i in seq_len(ncol(M)-1))
+        for (j in seq(i+1,nrow(M)))
           M[i,j] <- M[j,i]
-        else
-          M[j,i] <- M[i,j]
-    return(M)
+        return(M)
+    } else {
+      for (i in seq_len(ncol(M)))
+        for (j in seq_len(nrow(M)))
+          if (M[i,j]==0)
+            M[i,j] <- M[j,i]
+          else
+            M[j,i] <- M[i,j]
+          return(M)
+    }
   }
-}
 
 ###}}}
 
@@ -306,45 +273,44 @@ function(M, upper=TRUE) {
 
 ##' @export
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,symmetric=FALSE) {
-    n <- NROW(X)
-    # return(structure(solve(X),))
-    if (n==1L) {
-        res <- 1/X
-        if (det) attributes(res)$det <- X
-        if (chol) attributes(res)$chol <- X
-        return(res)
-    }
-    if (chol) {
-        L <- chol(X)
-        res <- chol2inv(L)
-        if (det) attributes(res)$det <- prod(diag(L)^2)
-        if (chol) attributes(res)$chol <- X        
-    } else {
-    if(symmetric){
-        decomp <- eigen(X, symmetric = TRUE)
-        D <- decomp$values
-        U <- decomp$vectors
-        V <- decomp$vectors
-      }else{
-        X.svd <- svd(X)
-        U <- X.svd$u
-        V <- X.svd$v
-        D <- X.svd$d
-      }
-      
-        id0 <- numeric(n)
-        idx <- which(D>tol)
-        id0[idx] <- 1/D[idx]
-        res <- V%*%diag(id0,nrow=length(id0))%*%t(U)
-        
-        if (det)
-        attributes(res)$det <- prod(D[D>tol])
-        attributes(res)$pseudo <- (length(idx)<n)
-        attributes(res)$minSV <- min(D)
-        
-    }
-    if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
+  n <- NROW(X)
+  # return(structure(solve(X),))
+  if (n==1L) {
+    res <- 1/X
+    if (det) attributes(res)$det <- X
+    if (chol) attributes(res)$chol <- X
     return(res)
+  }
+  if (chol) {
+    L <- chol(X)
+    res <- chol2inv(L)
+    if (det) attributes(res)$det <- prod(diag(L)^2)
+    if (chol) attributes(res)$chol <- X        
+  } else {
+    if(symmetric){
+      decomp <- eigen(X, symmetric = TRUE)
+      D <- decomp$values
+      U <- decomp$vectors
+      V <- decomp$vectors
+    }else{
+      X.svd <- svd(X)
+      U <- X.svd$u
+      V <- X.svd$v
+      D <- X.svd$d
+    }
+    id0 <- numeric(n)
+    idx <- which(abs(D)>tol)
+    id0[idx] <- 1/D[idx]
+    res <- V%*%diag(id0,nrow=length(id0))%*%t(U)
+    
+    if (det) 
+      attributes(res)$det <- prod(D[D>tol])
+    attributes(res)$pseudo <- (length(idx)<n)
+    attributes(res)$minSV <- min(D)
+    
+  }
+  if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
+  return(res)
 }
 
 ###}}}
@@ -367,7 +333,7 @@ naiveGrad <- function(f, x, h=1e-9) {
 # conditional on Compl(idx)
 CondMom <- function(mu,S,idx,X) {
   idxY <- idx
-
+  
   idxX <- setdiff(seq_len(ncol(S)),idxY)
   SXX <- S[idxX,idxX,drop=FALSE];
   SYY <- S[idxY,idxY,drop=FALSE]
@@ -375,7 +341,7 @@ CondMom <- function(mu,S,idx,X) {
   iSXX <- solve(SXX)
   condvar <- SYY-SYX%*%iSXX%*%t(SYX)
   if (missing(mu)) return(condvar)
-
+  
   muY <- mu[,idxY,drop=FALSE]
   muX <- mu[,idxX,drop=FALSE]
   if (is.matrix(mu))
@@ -383,12 +349,12 @@ CondMom <- function(mu,S,idx,X) {
   else
     Z <- apply(X,1,function(xx) xx-muX)
   SZ  <- t(SYX%*%iSXX%*%Z)
-##  condmean <- matrix(
+  ##  condmean <- matrix(
   if (is.matrix(mu))
     condmean <- SZ+muY
   else
     condmean <- t(apply(SZ,1,function(x) muY+x))
-##  ,ncol=ncol(SZ),nrow=nrow(SZ))
+  ##  ,ncol=ncol(SZ),nrow=nrow(SZ))
   return(list(mean=condmean,var=condvar))
 }
 
@@ -415,7 +381,7 @@ acc <- function(M,v) {
 
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean+index(x)$npar.ex)
-
+  
 }
 
 as.numeric.list <- function(x,...) {
@@ -444,25 +410,25 @@ numberdup <- function(xx) { ## Convert to numbered list
 }
 
 extractvar <- function(f) {
-    yy <- getoutcome(f)
-    xx <- attributes(terms(f))$term.labels
-    myvars <- all.vars(f)
-    return(list(y=yy,x=xx,all=myvars))
+  yy <- getoutcome(f)
+  xx <- attributes(terms(f))$term.labels
+  myvars <- all.vars(f)
+  return(list(y=yy,x=xx,all=myvars))
 }
 
 ##' @export
-getoutcome <- function(formula,sep) {
-  aa <- attributes(terms(formula))
+getoutcome <- function(formula,sep,...) {
+  aa <- attributes(terms(formula,...))
   if (aa$response==0) {
     res <- NULL
   } else {
     res <- paste(deparse(formula[[2]]),collapse="")
   }
-  if (!missing(sep)) {
-      attributes(res)$x <- lapply(strsplit(aa$term.labels,"\\|")[[1]],
-                                  function(x) as.formula(paste0("~",x)))
+  if (!missing(sep) && length(aa$term.labels)>0) {
+    attributes(res)$x <- lapply(strsplit(aa$term.labels,"\\|")[[1]],
+                                function(x) as.formula(paste0("~",x)))
   } else {
-      attributes(res)$x <- aa$term.labels
+    attributes(res)$x <- aa$term.labels
   }
   return(res)
 }
@@ -482,19 +448,19 @@ Specials <- function(f,spec,split2="+",...) {
 
 
 ##' @export
-decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep=",",reverse=FALSE,...) {
+decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep="[,\\+]",perl=TRUE,reverse=FALSE,...) {
   st <- gsub(" |^\\(|)$","",x) # Remove white space and leading/trailing parantheses
   if (!is.null(pattern.ignore)) {
-      if (grepl(pattern.ignore,st,...)) return(st)
+    if (grepl(pattern.ignore,st,perl=perl,...)) return(st)
   }
   if (!is.null(pattern)) {
-    st <- rev(unlist(strsplit(st,pattern,...)))[1]
+    st <- rev(unlist(strsplit(st,pattern,perl=perl,...)))[1]
   }
   if (!is.null(pattern2)) {
-    st <- (unlist(strsplit(st,pattern2,...)))
+    st <- (unlist(strsplit(st,pattern2,perl=perl,...)))
     if (reverse) st <- rev(st)
   }
-  unlist(strsplit(st,sep,...))
+  unlist(strsplit(st,sep,perl=perl,...))
 }
 
 Decomp.specials <- function(x,pattern="[()]") {
@@ -508,10 +474,10 @@ Decomp.specials <- function(x,pattern="[()]") {
     return(paste0(res[1],seq(as.numeric(res[2]))))
   }
   unlist(strsplit(vars,","))
-
+  
 }
 
 printline <- function(n=70) {
-    cat(rep("_", n), "\n", sep="");
-
+  cat(rep("_", n), "\n", sep="");
+  
 }

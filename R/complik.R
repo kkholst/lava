@@ -14,20 +14,22 @@
 ##' flexibility in the specification of the composite likelihood
 ##' @param silent Turn output messsages on/off
 ##' @param \dots Additional arguments parsed on to lower-level functions
+##' @param estimator Model (pseudo-likelihood) to use for the pairs/groups
 ##' @return An object of class \code{clprobit} inheriting methods from \code{lvm}
 ##' @author Klaus K. Holst
 ##' @seealso estimate
 ##' @keywords models regression
 ##' @export
-complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,silent=TRUE,
+complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,silent=TRUE,estimator="normal",
                      ...) {
-    y <- endogenous(x)
+    y <- setdiff(endogenous(x),latent(x))
     x.idx <- index(x)$exo.idx
     binsurv <- rep(FALSE,length(y))
     for (i in 1:length(y)) {
-        z <- data[,y[i]]
+        z <- try(data[,y[i]],silent=TRUE)
         ## binsurv[i] <- is.Surv(z) | (is.factor(z) && length(levels(z))==2)
-        binsurv[i] <- inherits(z,"Surv") | (is.factor(z))
+        if (!inherits(z,"try-error"))
+            binsurv[i] <- inherits(z,"Surv") | (is.factor(z))
     }
     
     ord <- ordinal(x)
@@ -40,8 +42,7 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,silent=TRUE,
     }
     
     if (missing(pairlist)) {
-        if (length(binsurv)<(k+1)) stop("No need for composite likelihood analysis.")
-        
+        #if (length(binsurv)<(k+1)) stop("No need for composite likelihood analysis.")       
         if (type[1]=="all") {
             mypar <- combn(length(binsurv),k) ## all pairs (or multiplets), k=2: k*(k-1)/2
         } else {
@@ -85,17 +86,20 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,silent=TRUE,
         }
         mydata[(1:nrow(data))+(ii-1)*nrow(data),] <- data0
     }
-    
-    suppressWarnings(e0 <- estimate(x,data=mydata,missing=TRUE,silent=silent,
+    suppressWarnings(e0 <- estimate(x,data=mydata,estimator=estimator,missing=TRUE,silent=silent,
                                    ...))
 
     S <- score(e0,indiv=TRUE)
     nd <- nrow(data)
     block1 <- which((1:nd)%in%(rownames(S)))
     blocks <- sapply(1:nblocks, function(x) 1:length(block1)+length(block1)*(x-1))
-    Siid <- matrix(0,nrow=length(block1),ncol=ncol(S))
-    for (j in 1:ncol(blocks)) {
-        Siid <- Siid+S[blocks[,j],]
+    if (nblocks==1) {
+        Siid <- S
+    } else {
+        Siid <- matrix(0,nrow=length(block1),ncol=ncol(S))
+        for (j in 1:ncol(blocks)) {
+            Siid <- Siid+S[blocks[,j],]
+        }
     }
     iI <- solve(information(e0,type="hessian"))
     J <- t(Siid)%*%(Siid)

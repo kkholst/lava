@@ -56,9 +56,10 @@
 ##' data(iris)
 ##' l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)
 ##' plotConf(l,var2="Species")
+##' plotConf(l,var1="Sepal.Width",var2="Species")
 ##' @keywords hplot, regression
 plotConf <- function(model,
-                     var1=all.vars(formula(model))[2],
+                     var1=NULL,
                      var2=NULL,
                      data=NULL,
                      ci.lty=0,
@@ -94,19 +95,23 @@ plotConf <- function(model,
         intercept <- coef(model)["(Intercept)"]
     }
     if (is.na(intercept)) intercept <- 0
-    ##& !is.null(var2)) {
-    ## model <- update(model,.~.+1)
-    ## warning("Refitted model with an intercept term")
-    ## intercept <- coef(model)["(Intercept)"]
-    ##}
+
     if (is.null(data)) {
         curdata <- get_all_vars(model,data=model.frame(model))
     } else {
-        curdata <- get_all_vars(formula(model), data)
+        curdata <- get_all_vars(formula(model), data=data)
     }
+    curdata0 <- model.frame(model,data) ## Checking for factors
+    
+    if (is.null(var1) && is.null(var2)) {
+        var1 <- colnames(curdata)[2]
+        var10 <- colnames(curdata0)[2]
+    } else var10 <- var1
+        
     responseorig <- colnames(curdata)[1]
-    if (inherits(curdata[,var1],c("character","factor"))) {
-        var2 <- var1; var1 <- NULL
+    if (inherits(curdata0[,var10],c("character","factor"))) {
+        curdata <- curdata0
+        var2 <- var10; var1 <- NULL
     }
     dots <- list(...)
 
@@ -135,19 +140,31 @@ plotConf <- function(model,
             xlim <- c(0,length(thelevels))+0.5
     }
     dots$xlim <- xlim
-    x <- seq(xlim[1], xlim[2], length.out=npoints)
+
+    if (is.null(var1) & !is.null(var2)) {
+        ##npoints <- 1
+        x <- unique(curdata[,var2])
+        npoints <- 1#length(x)
+    } else {
+        x <- seq(xlim[1], xlim[2], length.out=npoints)
+    }
     xx <- c()
 
     newdata <- data.frame(id=seq(npoints))
     partdata <- curdata
+    var1.idx <- var2.idx <- 0
+    ii <- 1
     for (nn in cname) {
+        ii <- ii+1
         v <- curdata[,nn]
         if (!is.null(var1) && nn==var1) {
+            var1.idx <- ii
             newdata <- cbind(newdata, rep(x, k))
             partdata[,nn] <- 0
         } else {
             if (is.factor(v)) {
                 if (nn%in%var2) {
+                    var2.idx <- ii
                     newdata <- cbind(newdata, factor(rep(levels(v), each=npoints),levels=thelevels))
                     partdata[,nn] <- factor(rep(levels(v)[1], nrow(partdata)),levels=levels(v))
                 } else {
@@ -162,15 +179,25 @@ plotConf <- function(model,
             }
         }
     };
-    colnames(newdata) <- c("_id", cname)
-    partdata[,response] <- newdata[,response] <- 0
-    newdata <- model.frame(model,data=newdata)
-    partdata <- model.frame(model,data=partdata)
 
+    colnames(newdata) <- c("_id", cname)
+
+    partdata[,response] <- newdata[,response] <- 0
+    var1.newdata <- newdata[,var1.idx]
+    ##newdata <- model.frame(model,data=newdata)
+    ## if (is.factor(newdata[,var1.idx])) {
+    ##     partdata[,var1.idx] <- min(var1.newdata)
+    ## }
+                                        #o#partdata <- model.frame(model,data=partdata)
+    atr <- c("terms")
+    attributes(newdata)[atr] <- attributes(curdata)[atr]
+    attributes(partdata)[atr] <- attributes(partdata)[atr]
+    if (is.factor(newdata[,var1.idx])) {
+        ##partdata[,var1.idx] <- levels(newdata[,var1.idx])[1]
+    }
     Y <- model.frame(model)[,1]
     if(inherits(Y,"Surv")) Y <- Y[,1]
     XX <- model.matrix(formula(terms(model)),data=newdata)
-    XX0 <- model.matrix(formula(terms(model)),data=partdata)
     if (inherits(model,"lmerMod")) {
         bb <- lme4::fixef(model)
     } else {
@@ -193,20 +220,21 @@ plotConf <- function(model,
     bidx <- which(apply(XX,2,function(x) !all(x==0)))
     notbidx <- setdiff(seq(length(bb)),bidx)
     bb0 <- bb; bb0[notbidx] <- 0
-
     myse <- apply(XX[,bidx,drop=FALSE],1,function(x) rbind(x)%*%SS[bidx,bidx,drop=FALSE]%*%cbind(x))^.5
     ci.all <- list(fit=XX%*%bb0,se.fit=myse)
     z <- qnorm(1-(1-level)/2)
     ci.all$fit <- cbind(ci.all$fit,ci.all$fit-z*ci.all$se.fit,ci.all$fit+z*ci.all$se.fit)
 
     ##residuals(model,type="response") ##
-    R <- Y-XX0%*%bb
     ## zero <- bb; zero[-1] <- 0
     ## intercept <- (model.matrix(model,curdata[1,,])%*%zero)[1]
 
     if (!missing(predictfun)) {
         R <- Y-predict(model, newdata=partdata)
         ci.all <- predict(model, newdata=newdata, se.fit=TRUE, interval = "confidence", level=level,...)
+    } else {
+        XX0 <- model.matrix(formula(terms(model)),data=partdata)
+        R <- Y-XX0%*%bb
     }
     if (inherits(model,"lmerMod")) {
         uz <- as.matrix(unlist(lme4::ranef(model))%*%do.call(Matrix::rBind,lme4::getME(model,"Ztlist")))[1,]
@@ -309,7 +337,7 @@ plotConf <- function(model,
                 ci0 <- confint(lm(y0~1))
                 yl <- ci0[1]; yu <- ci0[2]; y <- trans(mean(y0))
             } else {
-                ci0 <- trans(ci.all$fit[(npoints*(pos-1)+1):(pos*npoints),])
+                ci0 <- rbind(trans(ci.all$fit[(npoints*(pos-1)+1):(pos*npoints),]))
                 y <- ci0[,1]; yu <- ci0[,3]; yl <- ci0[,2]
             }
             if (!mean) y <- NULL
@@ -339,4 +367,3 @@ plotConf <- function(model,
     ##  palette(curpal)
     invisible(list(x=xx, y=pr, predict=ci.all, predict.newdata=newdata))
 }
-

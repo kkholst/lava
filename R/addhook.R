@@ -54,11 +54,12 @@ addhook <- function(x,hook="estimate.hooks",...) {
   invisible(newhooks)
 }
 
-versioncheck <- function(pkg,geq,sep=".",...) {
+versioncheck <- function(pkg="lava",geq,sep=".",...) {
     xyz <- tryCatch(
         as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
         error=function(x) NULL)
     if (is.null(xyz)) return(FALSE)
+    if (missing(geq)) return(xyz)
     for (i in seq(min(length(xyz),length(geq)))) {
         if (xyz[i]>geq[i]) return(TRUE)
         if (xyz[i]<geq[i]) return(FALSE)        
@@ -69,7 +70,9 @@ versioncheck <- function(pkg,geq,sep=".",...) {
 
 lava.env <- new.env()
 assign("init.hooks",c(),envir=lava.env)
+assign("remove.hooks",c(),envir=lava.env)
 assign("estimate.hooks",c(),envir=lava.env)
+assign("multigroup.hooks",c(),envir=lava.env)
 assign("color.hooks",c(),envir=lava.env)
 assign("sim.hooks",c(),envir=lava.env)
 assign("post.hooks",c(),envir=lava.env)
@@ -80,16 +83,19 @@ assign("options", list(
     trace=0,
     tol=1e-6,
     gamma=1,
-    backtrace=TRUE,
+    backtrack="wolfe",
     ngamma=0,
     iter.max=300,
     eval.max=250,
     constrain=FALSE,
+    allow.negative.variance=FALSE,
     silent=TRUE,
     progressbarstyle=3,
     itol=1e-16,
     cluster.index=versioncheck("mets",c(0,2,7)),
+    tobit=versioncheck("lava.tobit",c(0,5)),
     Dmethod="simple", ##"Richardson"
+    messages=1,
     parallel=TRUE,
     param="relative",
     sparse=FALSE,
@@ -97,6 +103,7 @@ assign("options", list(
     coef.names=FALSE,
     constrain=TRUE,
     graph.proc="beautify",
+    regex=FALSE,
     min.weight=1e-3,
     exogenous=TRUE,
     plot.engine="Rgraphviz",

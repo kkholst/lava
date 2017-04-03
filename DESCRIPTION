@@ -1,44 +1,50 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.4.6
-Date: 2016-10-31
-Author: Klaus K. Holst
-Maintainer: Klaus K. Holst <kkho@biostat.ku.dk>
+Version: 1.5.1
+Date: 2017-04-03
+Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
+             person("Brice", "Ozenne", role = "ctb"),
+             person("Thomas", "Gerds", role = "ctb"))
+Author: Klaus K. Holst [aut, cre],
+    Brice Ozenne [ctb],
+    Thomas Gerds [ctb]
+Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Estimation and simulation of latent variable models.
 URL: https://github.com/kkholst/lava
 BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
 Depends:
-    R (>= 3.3)
+    R (>= 3.0)
 Imports:
-    numDeriv,
-    methods,
-    graphics,
     grDevices,
-    utils,
+    graphics,
+    methods,
+    numDeriv,
+    stats,
     survival,
-    stats
+    utils
 Suggests:
-    mets (>= 1.1),
-    optimx,    
-    data.table,
-    Rgraphviz,
-    graph,
-    igraph (>= 0.6),
-    visNetwork,
-    Matrix,
     KernSmooth,
-    lme4,
+    Matrix,
+    Rgraphviz,
+    ascii,
+    data.table,
+    fields,
+    foreach,
     geepack,
     gof (>= 0.9),
-    foreach,
+    graph,
+    igraph (>= 0.6),
+    lava.tobit,
+    lme4,
+    mets (>= 1.1),
+    optimx,
     quantreg,
     rgl,
-    fields,
     testthat (>= 0.11),
-    ascii,
+    visNetwork,
     zoo
 ByteCompile: yes
 Roxygen: list(wrap = FALSE)

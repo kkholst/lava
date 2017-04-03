@@ -14,6 +14,7 @@
 ##' @importFrom utils stack combn read.csv getTxtProgressBar
 ##'     setTxtProgressBar txtProgressBar head tail modifyList
 ##'     getFromNamespace packageVersion write.table methods data
+##'     glob2rx
 ##' @importFrom stats density deriv effects lm family simulate vcov
 ##'     var cov cor coef model.frame model.weights as.formula
 ##'     model.matrix rnorm rchisq runif rlnorm pnorm qnorm na.omit AIC
@@ -21,6 +22,7 @@
 ##'     pchisq confint.default formula fft uniroot rbinom predict sd
 ##'     addmargins residuals dnorm quantile qf cov2cor qchisq
 ##'     get_all_vars p.adjust rpois rgamma printCoefmat rt glm nlminb
+##'     na.pass na.omit
 ##' @importFrom survival is.Surv
 ##' @importFrom methods new as
 ##' @aliases lava-package lava
@@ -248,7 +250,7 @@ NULL
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse
-##' gaussian_logLik.lvm addhook gethook multigroup Weight fixsome
-##' parfix parfix<- merge IV parameter parsedesign Specials decomp.specials
-##' getoutcome index index<-
+##' gaussian_logLik.lvm addhook gethook multigroup Weights fixsome
+##' parfix parfix<- merge IV parameter index index<-
+##' Specials procformula getoutcome decomp.specials
 NULL

@@ -23,15 +23,15 @@ moments(x,...)
 \method{logLik}{lvmfit}(object, p=coef(object),
                       data=model.frame(object),
                       model=object$estimator,
-                      weight=Weight(object),
-                      weight2=object$data$weight2,
+                      weights=Weights(object),
+                      data2=object$data$data2,
                           ...)
 
 \method{score}{lvmfit}(x, data=model.frame(x), p=pars(x), model=x$estimator,
-                   weight=Weight(x), weight2=x$data$weight2, ...)
+                   weights=Weights(x), data2=x$data$data2, ...)
 
 \method{information}{lvmfit}(x,p=pars(x),n=x$data$n,data=model.frame(x),
-                   model=x$estimator,weight=Weight(x), weight2=x$data$weight2, ...)
+                   model=x$estimator,weights=Weights(x), data2=x$data$data2, ...)
 }
 \arguments{
 \item{object}{Model object}
@@ -44,9 +44,9 @@ moments(x,...)
 
 \item{latent}{If TRUE predictions of latent variables are included in output}
 
-\item{weight2}{Optional second data.frame (only for censored observations)}
+\item{data2}{Optional second data.frame (only for censored observations)}
 
-\item{weight}{Optional weight matrix}
+\item{weights}{Optional weight matrix}
 
 \item{n}{Number of observations}
 

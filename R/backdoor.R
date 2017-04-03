@@ -5,13 +5,14 @@
 ##' @param f formula. Conditioning, z, set can be given as y~x|z
 ##' @param cond Vector of variables to conditon on
 ##' @param ... Additional arguments to lower level functions
+##' @param return.graph Return moral ancestral graph with z and effects from x removed
 ##' @examples
 ##' m <- lvm(y~c2,c2~c1,x~c1,m1~x,y~m1, v1~c3, x~c3,v1~y,
 ##'          x~z1, z2~z1, z2~z3, y~z3+z2+g1+g2+g3)
 ##' ll <- backdoor(m, y~x)
 ##' backdoor(m, y~x|c1+z1+g1)
 ##' @export
-backdoor <- function(object, f, cond, ...) {
+backdoor <- function(object, f, cond, ..., return.graph=FALSE) {
     y <- getoutcome(f, sep = "|")
     x <- attr(y, "x")
     if (length(x) > 1) {
@@ -24,11 +25,16 @@ backdoor <- function(object, f, cond, ...) {
     g0 <- cancel(object, toformula(x, ch))
 
     if (!base::missing(cond)) {
-        return(dsep(g0, c(y, x), cond = cond) && !any(cond %in% des))
+        val <- dsep(g0, c(y, x), cond = cond) && !any(cond %in% des)
+        if (return.graph) {
+            res <- dsep(g0, c(y, x), cond = cond, return.graph=TRUE)
+            attr(res,"result") <- val
+            return(res)
+        }
+        return(val)
     }
-    
     cset <- base::setdiff(nod, c(des, x, y)) ## possible conditioning set
-    pp <- path(g0,y~x,all=TRUE) ## All backdoor paths
+    pp <- path(g0,from=x,to=y,all=TRUE) ## All backdoor paths
     M <- adjMat(g0)
     Collider <- function(vec) {
         M[vec[2],vec[1]] & M[vec[2],vec[3]]

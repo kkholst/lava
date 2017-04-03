@@ -6,19 +6,19 @@ test_that("Effects",{
     regression(m) <- c(z1,z2,z3)~v; latent(m) <- ~v
     regression(m) <- u~v
     regression(m) <- c(u,v,z3,y1)~x
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     start <- c(rep(0,6),rep(1,17))
     suppressWarnings(e <- estimate(m,d,control=list(iter.max=0,start=start)))
-    f <- coef(ef <- effects(e,y1~x))
+    f <- summary(ef <- effects(e,y1~x))$coef
     expect_true(all(f[,2]>0)) ## Std.err
     expect_equal(f["Total",1],3) 
     expect_equal(f["Direct",1],1)
-    f2 <- coef(effects(e,u~v))
+    f2 <- summary(effects(e,u~v))$coef
     expect_equal(f2["Total",1],1)
     expect_equal(f2["Direct",1],1)
     expect_equal(f2["Indirect",1],0)
 
-    expect_output(print(ef),"Indirect effects")
+    expect_output(print(ef),"Mediation proportion")
     expect_equivalent(confint(ef)["Direct",],
                       confint(e)["y1~x",])
 
@@ -32,7 +32,7 @@ test_that("Profile confidence limits", {
     m <- lvm(y~b*x)
     constrain(m,b~psi) <- identity
     set.seed(1)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e <- estimate(m, d)
     ci0 <- confint(e,3)
     ci <- confint(e,3,profile=TRUE)
@@ -42,7 +42,7 @@ test_that("Profile confidence limits", {
 test_that("IV-estimator", {
     m <- lvm(c(y1,y2,y3)~u); latent(m) <- ~u    
     set.seed(1)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e0 <- estimate(m,d)
     e <- estimate(m,d,estimator="iv") ## := MLE
     expect_true(mean((coef(e)-coef(e0))^2)<1e-9)
@@ -53,7 +53,7 @@ test_that("glm-estimator", {
     regression(m) <- x~z
     distribution(m,~y+z) <- binomial.lvm("logit")
     set.seed(1)
-    d <- sim(m,1e3)
+    d <- sim(m,1e3,seed=1)
     head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
@@ -92,7 +92,7 @@ test_that("Association measures", {
 test_that("equivalence", {
     m <- lvm(c(y1,y2,y3)~u,u~x,y1~x)
     latent(m) <- ~u
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     cancel(m) <- y1~x
     regression(m) <- y2~x
     e <- estimate(m,d)
@@ -115,7 +115,7 @@ test_that("multiple testing", {
 
 test_that("modelsearch and GoF", {
     m <- lvm(c(y1,y2)~x)
-    d <- sim(m,100)
+    d <- sim(m,100,seed=1)
     e <- estimate(lvm(c(y1,y2)~1,y1~x),d)
     e0 <- estimate(lvm(c(y1,y2)~x,y1~~y2),d)
 
@@ -167,7 +167,7 @@ test_that("Bootstrap", {
 
 test_that("Survreg", {
     m <- lvm(y0~x)   
-    transform(m,y~y0) <- function(x) pmin(x,2)
+    transform(m,y~y0) <- function(x) pmin(x[,1],2)
     transform(m,status~y0) <- function(x) x<2
     d <- simulate(m,100,seed=1)
     require('survival')
@@ -190,6 +190,7 @@ test_that("Combine", { ## Combine model output
     expect_true(nrow(cc)==length(coef(m1))+1)
     expect_equivalent(colnames(cc),c('model A','model B'))
     expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
+
 })
 
 
@@ -465,7 +466,7 @@ test_that("partialcor", {
     d <- sim(m,500)
     c1 <- partialcor(~x1+x2,d)
     e <- estimate(m,d)
-    c2 <- correlation(e)    
+    c2 <- coef(summary(correlation(e)))
     expect_true(mean(c1[,1]-c2[,1])^2<1e-9)
     ## CI, note difference var(z)=1/(n-k-3) vs var(z)=1/(n-3)
     expect_true(mean(c1[,4]-c2[,3])^2<1e-3)
@@ -482,4 +483,31 @@ test_that("multipletesting", {
 })
 
 
+test_that("Weighted",{
+    m <- lvm(y~x)
+    set.seed(1)
+    d <- sim(m,10)
+    d$w <- runif(nrow(d),0.1,1)
+    e <- estimate(m,data=d)    
+    l <- lm(y~x,data=d)
+    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 
+    w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=1))
+    lw <- lm(y~x,data=d, weights=d$w)
+    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
+})
+
+
+test_that("Tobit",{
+    if (versioncheck("lava.tobit",c(0,5))) {
+        m0 <- lvm(t~x)
+        distribution(m0,~w) <- uniform.lvm(0.1,1)
+        d <- sim(m0,10,seed=1)
+        d$status <- rep(c(TRUE,FALSE),each=nrow(d)/2)
+        d$s <- with(d, Surv(t,status))
+        s <- survreg(s~x,data=d,dist="gaussian",weights=d$w)
+        m <- lvm(s~x)
+        e <- estimate(m,data=d,estimator="normal",weights="w")
+        expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
+    }
+})

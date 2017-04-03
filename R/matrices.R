@@ -1,3 +1,5 @@
+###{{{
+
 `matrices` <-
     function(x,...) UseMethod("matrices")
 
@@ -240,6 +242,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     P <- ii$P
     P[ii$cov[,1]] <- pp[ii$cov[,2]]
     e <- NULL
+
     if (length(x$expar)>0) {
         e <- rep(0,length(x$expar))
         fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
@@ -317,6 +320,7 @@ matrices2 <- function(x,p,...) {
 }
 
 ###{{{ matrices, to be superseeded by above definition
+
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
     A <- ii$A ## Matrix with fixed parameters and ones where parameters are free
@@ -471,7 +475,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                     parval[xargs] <- (data)[xargs]
                 } else parval[xargs] <- 0
             }
-            val <- unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args])
+            val <- rbind(unlist(c(parval,constrainpar,x$mean,e)[attributes(myc)$args]))
             cpar <- myc(val);
             constrainpar <- c(constrainpar,list(cpar)); names(constrainpar) <- cname
             if (p%in%ii$parname.all) {
@@ -506,4 +510,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     }
     return(list(A=A, P=P, v=v, e=e, parval=parval, constrain.idx=constrain.idx, constrainpar=constrainpar))
 }
+
 ###}}} matrices Obsolete
+

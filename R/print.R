@@ -55,12 +55,12 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
     }
     if (print.exogenous && length(Rx)>0) {
         cat("\nExogenous variables:")
-        rownames(Rx) <- paste(" ",Rx[,1]," "); colnames(Rx) <- rep("",ncol(Rx))
+        rownames(Rx) <- paste(" ",gsub("~ 1","",Rx[,1]),"     "); colnames(Rx) <- rep("",ncol(Rx))
         print(Rx[,2,drop=FALSE],quote=FALSE,...)
     }
     if (print.transform && length(Rt)>0) {
         cat("\nTransformations:")
-        rownames(Rt) <- paste(" ",Rt[,1]," "); colnames(Rt) <- rep("",ncol(Rt))
+        rownames(Rt) <- paste(" ",gsub("~ 1","",Rt[,1]),"     "); colnames(Rt) <- rep("",ncol(Rt))
         print(Rt[,2,drop=FALSE],quote=FALSE,...)
     }
     

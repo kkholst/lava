@@ -26,7 +26,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' constraints should be included in the bootstrap procedure
 ##' @param estimator String definining estimator, e.g. 'gaussian' (see
 ##' \code{estimator})
-##' @param weight Optional weight matrix used by \code{estimator}
+##' @param weights Optional weights matrix used by \code{estimator}
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
 ##' @param silent Suppress messages
@@ -46,7 +46,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
 ##'                              control=list(start=coef(x)),
 ##'                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
-##'                              estimator=x$estimator,weight=Weight(x),...)
+##'                              estimator=x$estimator,weights=Weights(x),...)
 ##'
 ##' @return A \code{bootstrap.lvm} object.
 ##' @author Klaus K. Holst
@@ -162,8 +162,8 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
 bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
                              control=list(start=coef(x)),
                              p=coef(x), parametric=FALSE, bollenstine=FALSE,
-                             estimator=x$estimator,weight=Weight(x),...)
-    bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weight=weight,parametric=parametric,bollenstine=bollenstine,p=p,...)
+                             estimator=x$estimator,weights=Weights(x),...)
+    bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weights=weights,parametric=parametric,bollenstine=bollenstine,p=p,...)
 
 ##' @export
 "print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {
