@@ -604,12 +604,12 @@
 
 ###{{{ estimate.list
 
-estimate.lvmlist <-
-function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
+estimate.lvmlist <- function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
+  
   if (base::missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
   }
-  nm <- length(x)
+   nm <- length(x)
   if (nm==1) {
     return(estimate(x[[1]],data,missing=missing,...))
   }
@@ -639,8 +639,15 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
     fix <- ifelse(Xfix,FALSE,TRUE)
   }
 
-
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
+
+  myhooks <- gethook("multigroup.hooks")
+  myhooks <- "lava.penalty.multigroup.hook"
+  for (f in myhooks) {
+    res <- do.call(f, list(mg=mg,x=x))
+    if (!is.null(res$mg)) mg <- res$mg
+    if (!is.null(res$x)) x <- res$x
+  }
   res <- estimate(mg,...)
 
   return(res)
