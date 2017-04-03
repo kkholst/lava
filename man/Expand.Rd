@@ -29,4 +29,3 @@ Expand(T)
 \author{
 Klaus K. Holst
 }
-

@@ -32,4 +32,3 @@ By(datasets::CO2,~Treatment+Type,colMeans,~conc+uptake)
 \author{
 Klaus K. Holst
 }
-

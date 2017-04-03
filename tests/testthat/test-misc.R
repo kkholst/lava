@@ -29,11 +29,6 @@ test_that("Expand", {
     expect_identical(expand.grid(a=1:2,b=1:2),Expand(a=1:2,b=1:2))
 })
 
-test_that("dsort", {
-    data(hubble)
-    expect_equivalent(order(dsort(hubble, ~sigma)$sigma),
-                      seq_len(nrow(hubble)))
-})
 
 test_that("formulas", {
     f <- toformula(c('y1','y2'),'x'%++%1:5)

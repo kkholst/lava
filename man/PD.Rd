@@ -38,4 +38,3 @@ Dose response calculation for binomial regression models
 \author{
 Klaus K. Holst
 }
-

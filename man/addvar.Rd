@@ -18,4 +18,3 @@ Generic method for adding variables to model object
 \author{
 Klaus K. Holst
 }
-

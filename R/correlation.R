@@ -8,7 +8,7 @@
 "correlation" <- function(x,...) UseMethod("correlation")
 
 ##' @export
-correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
+correlation.lvmfit <- function(x,z=TRUE,iid=FALSE,back.transform=TRUE,...) {
   pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
   pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
   if (length(pos)<1) return(NULL)
@@ -17,41 +17,87 @@ correlation.lvmfit <- function(x,z=TRUE,level=0.05,adj=TRUE,...) {
   coords <- c()
   mynames <- vars(x)
   n <- nrow(pp0)
-  res <- c()
-  for (i in pos) {
-    idx <- which(pp0==i)
-    rowpos <- (idx-1)%%n + 1
-    colpos <- ceiling(idx/n)
-    coefpos <- c(i,pp0[rbind(c(rowpos,rowpos),c(colpos,colpos))])
-    pval <- pp[rbind(c(rowpos,rowpos),c(colpos,colpos))]
-    phi.v1.v2 <- numeric(3);
-    newval <- coef(x)[coefpos]
-    phi.v1.v2[coefpos!=0] <- newval
-    phi.v1.v2[coefpos==0] <- pval[tail(coefpos==0,2)]
-    f <- function(p) {
-      p[1]/sqrt(p[2]*p[3])
-    }
-    rho <- f(phi.v1.v2)
-    if (z) {
-        zrho <- atanh(rho)
-        var.z <- 1/(nrow(model.frame(x))-ifelse(adj,3,0)) ## n-k-3
-        ci.z <- zrho + c(-1,1)*qnorm(1-level/2)*sqrt(var.z)
-        ci.rho <- tanh(ci.z)
-        zs <- 1/sqrt(var.z)*zrho
-        p.z <- 2*(pnorm(-abs(zs))) # p-value using z-transform for H_0: rho=0.
-        est <- c(rho, NA, ci.rho[1], ci.rho[2])
-    } else {
-      Sigma.phi.v1.v2 <- matrix(0,3,3)
-      Sigma.phi.v1.v2[coefpos!=0,coefpos!=0] <- vcov(x)[coefpos,coefpos]
-      nabla.f <- function(p) {
-        c(1/sqrt(p[2]*p[3]), -f(p)/(2*p[2]), -f(p)/(2*p[3]))
+  ff <-  function(p) {
+      res <- numeric(length(pos))
+      nn <- character(length(pos))
+      for (i in seq_along(pos)) {
+          p0 <- pos[i]
+          idx <- which(pp0==p0)
+          rowpos <- (idx-1)%%n + 1
+          colpos <- ceiling(idx/n)
+          coefpos <- c(p0,pp0[rbind(c(rowpos,rowpos),c(colpos,colpos))])
+          pval <- pp[rbind(c(rowpos,rowpos),c(colpos,colpos))]
+          phi.v1.v2 <- numeric(3);
+          newval <- p[coefpos]
+          phi.v1.v2[coefpos!=0] <- newval
+          phi.v1.v2[coefpos==0] <- pval[tail(coefpos==0,2)]
+          rho <- atanh(phi.v1.v2[1]/sqrt(prod(phi.v1.v2[-1])))
+          res[i] <- rho
+          nn[i] <- paste(mynames[c(rowpos,colpos)],collapse="~")
       }
-      rho.var <- t(nabla.f(phi.v1.v2))%*%Sigma.phi.v1.v2%*%nabla.f(phi.v1.v2)
-      est <- c(rho, sqrt(rho.var),  rho + c(-1,1)*qnorm(1-level/2)*sqrt(rho.var))
-    }
-    res <- rbind(res,est)
-    rownames(res)[nrow(res)] <- paste(mynames[c(rowpos,colpos)],collapse="~")
+      structure(res,names=nn)
   }
-  colnames(res) <- c("Correlation","Std.Err","lowerCI","upperCI")
-  return(res)
+  V <- NULL
+  if (!iid) V <- vcov(x)
+  if (back.transform) {
+      back.transform <- tanh
+  } else {
+      back.transform <- NULL
+  }
+  estimate(x,coef=coef(x),vcov=V,f=ff,back.transform=back.transform,iid=iid,...)
 }
+
+
+##' @export
+correlation.matrix <- function(x,z=TRUE,back.transform=TRUE,mreg=FALSE,return.all=FALSE,...) {
+    if (mreg) {
+        m <- lvm()
+        covariance(m,pairwise=TRUE) <- colnames(x)
+        try(e <- estimate(m,as.data.frame(x),...),silent=TRUE)
+        res <- correlation(e,...)
+        if (return.all) {
+            return(list(model=m,estimate=e,correlation=res))            
+        }
+        return(res)
+    }    
+    if (ncol(x)==2) {
+        ii <- iid(x)
+        ee <- estimate(coef=attributes(ii)$coef[3:5], iid=ii[,3:5])
+        if (z) {
+            if (back.transform) {
+                ee <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])), back.transform=tanh)
+            } else {
+                ee <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])))
+            }
+        } else {
+            ee <-  estimate(ee, function(x) x[2]/sqrt(x[1]*x[3]))
+        }
+        return(ee)
+    }
+
+    e <- c()
+    R <- diag(nrow=ncol(x))
+    dimnames(R) <- list(colnames(x),colnames(x))
+    for (i in seq(ncol(x)-1))
+        for (j in seq(i+1,ncol(x))) {
+            e <- c(e,list(correlation(x[,c(i,j)],z=z,back.transform=FALSE,...)))
+            R[j,i] <- coef(e[[length(e)]])
+            if (z) R[j,i] <- tanh(R[j,i])
+        }
+    R <- R[-1,-ncol(R),drop=FALSE]
+    res <- do.call(merge, c(e, paired=TRUE))
+    if (z && back.transform) {
+        res <- estimate(res,back.transform=tanh, print=function(x,digits=1,...) {
+            print(x$coefmat[,-2,drop=FALSE],...)
+            cat("\n")
+            print(offdiag(R,type=4),digits=digits,...)
+        })
+    }
+    return(res)
+}
+
+##' @export
+correlation.data.frame <- function(x,...) {
+    correlation(as.matrix(x),...)
+}
+

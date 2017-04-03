@@ -37,4 +37,3 @@ predictlvm(e,c(u1,y1)~x1+x2)$var
 \seealso{
 predict.lvm
 }
-

@@ -5,7 +5,7 @@
 \title{Composite Likelihood for probit latent variable models}
 \usage{
 complik(x, data, k = 2, type = c("nearest", "all"), pairlist,
-  silent = TRUE, ...)
+  silent = TRUE, estimator = "normal", ...)
 }
 \arguments{
 \item{x}{\code{lvm}-object}
@@ -25,6 +25,8 @@ flexibility in the specification of the composite likelihood}
 
 \item{silent}{Turn output messsages on/off}
 
+\item{estimator}{Model (pseudo-likelihood) to use for the pairs/groups}
+
 \item{\dots}{Additional arguments parsed on to lower-level functions}
 }
 \value{
@@ -34,12 +36,11 @@ An object of class \code{clprobit} inheriting methods from \code{lvm}
 Estimate parameters in a probit latent variable model via a composite
 likelihood decomposition.
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 estimate
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

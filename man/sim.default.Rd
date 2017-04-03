@@ -6,13 +6,13 @@
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
-  messages = 1L, mc.cores, blocksize = 2L * mc.cores, cl, type = 1L,
-  seed = NULL, ...)
+  messages = lava.options()$messages, mc.cores, blocksize = 2L * mc.cores,
+  cl, type = 1L, seed = NULL, args = list(), iter = FALSE, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
 
-\item{R}{Number of replications}
+\item{R}{Number of replications or data.frame with parameters}
 
 \item{f}{Optional function (i.e., if x is a matrix)}
 
@@ -29,6 +29,10 @@
 \item{type}{type=0 is an alias for messages=1,mc.cores=1,blocksize=R}
 
 \item{seed}{(optional) Seed (needed with cl=TRUE)}
+
+\item{args}{(optional) list of named arguments passed to (mc)mapply}
+
+\item{iter}{If TRUE the iteration number is passed as first argument to (mc)mapply}
 
 \item{...}{Additional arguments to (mc)mapply}
 }
@@ -69,5 +73,12 @@ if (interactive()) {
     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
          names=c("Model","Sandwich"))
 }
-}
 
+f <- function(a=1,b=1) {
+  rep(a*b,5)
+}
+R <- Expand(a=1:3,b=1:3)
+sim(f,R,type=0)
+sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
+sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
+}

@@ -141,4 +141,3 @@ Thomas A. Gerds, Klaus K. Holst
 \keyword{models}
 \keyword{regression}
 \keyword{survival}
-

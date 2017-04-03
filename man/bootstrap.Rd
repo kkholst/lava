@@ -14,10 +14,9 @@ bootstrap(x, ...)
 \description{
 Generic method for calculating bootstrap statistics
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{bootstrap.lvm} \code{bootstrap.lvmfit}
 }
-
+\author{
+Klaus K. Holst
+}

@@ -1,3 +1,3 @@
 example(estimate)
 example(constrain)
-example(curereg)
+example(zigreg)

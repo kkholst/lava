@@ -4,7 +4,7 @@
 \alias{backdoor}
 \title{Backdoor criterion}
 \usage{
-backdoor(object, f, cond, ...)
+backdoor(object, f, cond, ..., return.graph = FALSE)
 }
 \arguments{
 \item{object}{lvm object}
@@ -14,6 +14,8 @@ backdoor(object, f, cond, ...)
 \item{cond}{Vector of variables to conditon on}
 
 \item{...}{Additional arguments to lower level functions}
+
+\item{return.graph}{Return moral ancestral graph with z and effects from x removed}
 }
 \description{
 Check backdoor criterion of a lvm object
@@ -24,4 +26,3 @@ m <- lvm(y~c2,c2~c1,x~c1,m1~x,y~m1, v1~c3, x~c3,v1~y,
 ll <- backdoor(m, y~x)
 backdoor(m, y~x|c1+z1+g1)
 }
-

@@ -1,6 +1,6 @@
 ^tmp$
-.travis.yml
-.git
-\.gitignore$
-README.org
+^\.travis\.yml$
+^\.git$
+.gitignore$
+^README\.org$
 ^examples$

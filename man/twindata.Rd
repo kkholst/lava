@@ -21,4 +21,3 @@ Simulated data
 }
 }
 \keyword{datasets}
-

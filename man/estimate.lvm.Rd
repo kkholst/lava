@@ -4,9 +4,9 @@
 \alias{estimate.lvm}
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \usage{
-\method{estimate}{lvm}(x, data = parent.frame(), estimator = "gaussian",
-  control = list(), missing = FALSE, weight, weightname, weight2, id, fix,
-  index = TRUE, graph = FALSE, silent = lava.options()$silent,
+\method{estimate}{lvm}(x, data = parent.frame(), estimator = NULL,
+  control = list(), missing = FALSE, weights, weightsname, data2, id, fix,
+  index = !quick, graph = FALSE, silent = lava.options()$silent,
   quick = FALSE, method, param, cluster, p, ...)
 }
 \arguments{
@@ -23,12 +23,12 @@ Setting to FALSE leads to complete case analysis. In the other case
 likelihood based inference is obtained by integrating out the missing data
 under assumption the assumption that data is missing at random (MAR).}
 
-\item{weight}{Optional weights to used by the chosen estimator.}
+\item{weights}{Optional weights to used by the chosen estimator.}
 
-\item{weightname}{Weight names (variable names of the model) in case
-\code{weight} was given as a vector of column names of \code{data}}
+\item{weightsname}{Weights names (variable names of the model) in case
+\code{weights} was given as a vector of column names of \code{data}}
 
-\item{weight2}{Optional additional dataset used by the chosen
+\item{data2}{Optional additional dataset used by the chosen
 estimator.}
 
 \item{id}{Vector (or name of column in \code{data}) that identifies
@@ -103,12 +103,11 @@ variance parameters.  } }
 \examples{
 dd <- read.table(header=TRUE,
 text="x1 x2 x3
-1.0 2.0 1.4
-2.1 4.1 4.0
-3.1 3.4 7.0
-4.2 6.1 3.5
-5.3 5.2 2.3
-1.1 1.6 2.9")
+ 0.0 -0.5 -2.5
+-0.5 -2.0  0.0
+ 1.0  1.5  1.0
+ 0.0  0.5  0.0
+-2.5 -1.5 -1.0")
 e <- estimate(lvm(c(x1,x2,x3)~u),dd)
 
 ## Simulation example
@@ -141,12 +140,11 @@ d0 <- makemissing(d1,cols=1:2)
 e0 <- estimate(m,d0,missing=TRUE)
 e0
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 estimate.default score, information
 }
+\author{
+Klaus K. Holst
+}
 \keyword{models}
 \keyword{regression}
-

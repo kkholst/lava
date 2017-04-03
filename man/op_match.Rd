@@ -22,12 +22,11 @@ Matching operator
 1:10 \%ni\% c(1,5,10)
 
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{\link{match}}
 }
+\author{
+Klaus K. Holst
+}
 \keyword{misc}
 \keyword{utilities}
-

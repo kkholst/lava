@@ -34,4 +34,3 @@ e <- ordreg(y~x,d)
 \author{
 Klaus K. Holst
 }
-

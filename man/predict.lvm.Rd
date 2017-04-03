@@ -50,4 +50,3 @@ r <- predict(e,vars(e),residual=TRUE)
 \seealso{
 predictlvm
 }
-

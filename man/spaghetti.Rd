@@ -4,12 +4,12 @@
 \alias{spaghetti}
 \title{Spaghetti plot}
 \usage{
-spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
-  col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
+spaghetti(formula, data, id = "id", group = NULL, type = "o", lty = 1,
+  pch = NA, col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
   trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
   trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
-  trend.alpha = 0.2, trend.lwd = 3, legend = NULL, xlab = "Time",
-  ylab = "", add = FALSE, ...)
+  trend.alpha = 0.2, trend.lwd = 3, trend.jitter = 0, legend = NULL,
+  by = NULL, xlab = "Time", ylab = "", add = FALSE, ...)
 }
 \arguments{
 \item{formula}{Formula (response ~ time)}
@@ -23,6 +23,8 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 \item{type}{Type (line 'l', stair 's', ...)}
 
 \item{lty}{Line type}
+
+\item{pch}{Colour}
 
 \item{col}{Colour}
 
@@ -50,7 +52,11 @@ spaghetti(formula, data, id = "id", group = NULL, type = "l", lty = 1,
 
 \item{trend.lwd}{Trend line width}
 
+\item{trend.jitter}{Jitter amount}
+
 \item{legend}{Legend}
+
+\item{by}{make separate plot for each level in 'by' (formula, name of column, or vector)}
 
 \item{xlab}{Label of X-axis}
 
@@ -71,13 +77,18 @@ m <- lvm()
 regression(m,y=y,x=~u) <- 1
 regression(m,y=y,x=~s) <- seq(K)-1
 regression(m,y=y,x=~x) <- "b"
-d <- sim(m,500)
-dd <- mets::fast.reshape(d);
+N <- 50
+d <- sim(m,N); d$z <- rbinom(N,1,0.5)
+dd <- mets::fast.reshape(d); dd$num <- dd$num+3
+spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+          trend.formula=~factor(num),trend=TRUE,trend.col="darkblue")
 dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
-spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
+spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+          trend=TRUE,trend.col="darkblue")
+spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
+           trend.formula=~num+I(num^2),trend=TRUE,trend.col="darkblue")
 }
 }
 \author{
 Klaus K. Holst
 }
-

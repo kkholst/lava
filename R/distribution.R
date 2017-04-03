@@ -331,7 +331,7 @@ uniform.lvm <- function(a,b) {
 ## see also eventTime.R for coxWeibull
 
 ##' @export
-weibull.lvm <- function(scale=100,shape=2) {
+weibull.lvm <- function(scale=1,shape=2) {
     ## accelerated failure time (AFT) regression
     ## parametrization.
     ##
@@ -348,10 +348,7 @@ weibull.lvm <- function(scale=100,shape=2) {
     ## PH regression
     ## scale = exp(b0+ b1*X)
     f <- function(n,mu,var,...) {
-        ## message("weibull.scale=",scale)
-        ## message("weibull.shape=",shape)
-        ## message("coxWeibull.scale=",exp(scale/shape))
-        (- log(runif(n)) * exp(scale/shape) * exp(mu/shape))^{shape}
+        (- log(runif(n)) * exp(log(scale)/shape) * exp(mu/shape))^{shape}
         ## scale * (-log(1-runif(n)))^{1/shape}
         ## (- (log(runif(n)) / (1/scale)^(shape) * exp(-mu)))^(1/shape)
     }

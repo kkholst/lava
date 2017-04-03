@@ -6,7 +6,8 @@
 \usage{
 org(x, ..., ncol, include.rownames = TRUE, include.colnames = TRUE,
   header = TRUE, frame = "topbot", rownames = NULL, colnames = NULL,
-  type = "org", tab = FALSE, margins = TRUE, print = TRUE, html, latex)
+  type = "org", tab = FALSE, margins = TRUE, print = TRUE, html, latex,
+  sep = " ")
 }
 \arguments{
 \item{x}{R object}
@@ -38,6 +39,8 @@ org(x, ..., ncol, include.rownames = TRUE, include.colnames = TRUE,
 \item{html}{HTML prefix (added to ATTR_HTML)}
 
 \item{latex}{LaTeX prefix (added to ATTR_LaTeX)}
+
+\item{sep}{separator with type='ascii'}
 }
 \description{
 Convert object to ascii suitable for org-mode
@@ -45,4 +48,3 @@ Convert object to ascii suitable for org-mode
 \author{
 Klaus K. Holst
 }
-

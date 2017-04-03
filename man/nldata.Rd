@@ -12,4 +12,3 @@ Simulated
 Example data (nonlinear model)
 }
 \keyword{datasets}
-

@@ -1,3 +1,4 @@
+##' @export
 procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Split into reponse and covariates by ~ disregarding expressions in parantheses
@@ -61,11 +62,11 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
     intpos <- which(vapply(xs,function(x) grepl("^[\\+\\-]*[\\.|0-9]+$",x), 0)==1)
     ## Match '(int)'
     intpos0 <- which(vapply(X,function(x) grepl("^\\([\\+\\-]*[\\.|0-9]+\\)$",x),0)==1)
-    
+
     yy <- ys <- NULL
     if (length(lhs)>0) {
         yy <- decomp.specials(lhs)
-        yyf <- lapply(yy,function(y) decomp.specials(y,NULL,pattern2="[",fixed=TRUE))
+        yyf <- lapply(yy,function(y) decomp.specials(y,NULL,pattern2="[",fixed=TRUE,perl=FALSE))
         ys <- unlist(lapply(yyf,function(x) x[1]))
     }
     
@@ -280,11 +281,12 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 ##' @export
 "regression<-" <- function(object,...,value) UseMethod("regression<-")
 
+##' @export
+regression.formula <- function(object,...) regression(lvm(),object,...)
 
 ##' @export
 "regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
     dots <- list(...)
-
     if (length(dots$additive)>0 && !dots$additive && !inherits(value,"formula")) {
         regression(object,beta=value,...) <- to
         return(object)
@@ -301,7 +303,6 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
         }
 
         if (inherits(value,"formula")) {
-
             fff <- procformula(object,value,...)
             object <- fff$object
             lhs <- fff$lhs
@@ -359,7 +360,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 ##' @export
 `regression.lvm` <-
     function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
-             additive=TRUE, y,x,value,...) {
+      additive=TRUE, y,x,value,...) {
         if (!missing(y)) {
             if (inherits(y,"formula")) y <- all.vars(y)
             to <- y

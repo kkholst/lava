@@ -27,10 +27,9 @@ and read results into R with:
 
 \code{getsas("myest.csv","Parameter Estimates")}
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 getMplus
 }
-
+\author{
+Klaus K. Holst
+}

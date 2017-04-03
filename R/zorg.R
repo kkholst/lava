@@ -16,8 +16,16 @@
 ##' @param print print or return result
 ##' @param html HTML prefix (added to ATTR_HTML)
 ##' @param latex LaTeX prefix (added to ATTR_LaTeX)
+##' @param sep separator with type='ascii'
 ##' @author Klaus K. Holst
-org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex) {
+org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex,sep=" ") {
+    if (type=="ascii") {
+        x <- format(x,...)
+        dots <- c(list(x=paste(x,collapse=sep)),list(...))
+        dots <- dots[intersect(names(dots),names(formals(strwrap)))]
+        writeLines(do.call(strwrap,dots))
+        return(invisible(x))        
+    }
     if (!requireNamespace("ascii",quietly=TRUE)) stop("ascii package required")
     dots <- list(...)
     if (tab) {

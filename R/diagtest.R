@@ -156,7 +156,7 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
                 }
             }
         }
-        res <- estimate(M,calc_diag,print=prfun,null=c(rep(p0,7),0),transform.ci=btransform,...)
+        res <- estimate(M,calc_diag,print=prfun,null=c(rep(p0,7),0),back.transform=btransform,...)
     }
 
     CI <- confint[1]

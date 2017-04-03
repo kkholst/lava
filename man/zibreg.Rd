@@ -72,4 +72,3 @@ legend("topleft",levels(d$z),col="darkblue",lty=seq_len(length(levels(d$z))))
 \author{
 Klaus K. Holst
 }
-

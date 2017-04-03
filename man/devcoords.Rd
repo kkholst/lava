@@ -24,4 +24,3 @@ Returns device-coordinates and plot-region
 Klaus K. Holst
 }
 \keyword{hplot}
-

@@ -1,5 +1,15 @@
 context("Graphics functions")
 
+test_that("attr", {
+    m <- lvm(y~x)
+    d <- sim(m,10)
+    e <- estimate(m,d)
+    
+    
+
+})
+          
+
 test_that("color", {
     cur <- palette()
     old <- lava:::mypal()
@@ -47,7 +57,7 @@ if (requireNamespace("visualTest",quietly=TRUE) && requireNamespace("png",quietl
         
         d1 <- gropen()
         par(mar=c(0,0,0,0))
-        plotConf(l,var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
+        plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
         dev.off()
         
         newd <- data.frame(x=seq(min(x),max(x),length.out=100))
@@ -133,7 +143,7 @@ if (requireNamespace("visualTest",quietly=TRUE) && requireNamespace("png",quietl
 
     test_that("plot.lvm", {
         ## TODO
-        m <- lvm(y~u,u~x)
+        m <- lvm(y~1*u[0],u~1*x)
         latent(m) <- ~u
         plot(m)
         d <- sim(m,10)

@@ -20,4 +20,3 @@ pcor(x, y, X, start, ...)
 \description{
 Maximum likelhood estimates of polychoric correlations
 }
-

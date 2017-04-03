@@ -2,16 +2,17 @@
 % Please edit documentation in R/contr.R
 \name{contr}
 \alias{contr}
+\alias{parsedesign}
 \title{Create contrast matrix}
 \usage{
-contr(p, n, change.sign = TRUE, ...)
+contr(p, n, diff = TRUE, ...)
 }
 \arguments{
 \item{p}{index of non-zero entries (see example)}
 
 \item{n}{Total number of parameters (if omitted the max number in p will be used)}
 
-\item{change.sign}{If FALSE all non-zero entries are +1, otherwise the second non-zero element in each row will be -1.}
+\item{diff}{If FALSE all non-zero entries are +1, otherwise the second non-zero element in each row will be -1.}
 
 \item{...}{Additional arguments to lower level functions}
 }
@@ -25,5 +26,6 @@ contr(list(1,2,4),n=5)
 contr(c(2,3,4),n=5)
 contr(list(c(1,3),c(2,4)),n=5)
 contr(list(c(1,3),c(2,4),5))
-}
 
+parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
+}

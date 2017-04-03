@@ -32,4 +32,3 @@ plot(runif(1000),cex=runif(1000,0,4),col=Col(c("darkblue","orange"),0.5),pch=16)
 Klaus K. Holst
 }
 \keyword{color}
-

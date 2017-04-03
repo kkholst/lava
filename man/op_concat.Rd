@@ -22,12 +22,11 @@ Concatenation operator
 matrix(rnorm(25),5)\%++\%matrix(rnorm(25),5)
 "Hello "\%++\%" World"
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{blockdiag}, \code{\link{paste}}, \code{\link{cat}},
 }
+\author{
+Klaus K. Holst
+}
 \keyword{misc}
 \keyword{utilities}
-

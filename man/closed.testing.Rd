@@ -42,4 +42,3 @@ if (requireNamespace("mets",quietly=TRUE)) {
 as.vector(closed.testing(a))
 
 }
-

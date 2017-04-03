@@ -34,7 +34,7 @@ dmvn <- function(x,mu,sigma,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
 
 normal_method.lvm <- "nlminb0"
 
-normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
+normal_objective.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,...) {
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
@@ -50,8 +50,6 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     attributes(ord) <- atr
 
     status <- rep(0,length(y))
-    bin <- tryCatch(match(do.call("binary",list(x=x)),y),error=function(x) NULL)
-    ## FIX: binary should be added...
     status[match(ord,y)] <- 2
 
     Table <- (length(y)==length(ord)) && (length(x.idx)==0)
@@ -78,12 +76,16 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         !inherits(yu[1,1],c("numeric","integer","logical")))
         stop("Unexpected data (normal_objective)")
 
-    if (!is.null(weight2)) {
-        yu[,colnames(weight2)] <- weight2
-        status[match(colnames(weight2),y)] <- 1
+    if (!is.null(data2)) {
+        yu[,colnames(data2)] <- data2
+        status[match(colnames(data2),y)] <- 1
     }
 
     l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
+    if (!is.null(weights)) {
+        ##if (is.matrix(weights)) weights <- weights[,1]
+        l <- l*weights
+    }
 
     if (Table) {
         l <- l[pat$group+1]
@@ -92,17 +94,17 @@ normal_objective.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
     return(-sum(l))
 }
 
-normal_logLik.lvm <- function(object,p,data,weight2=NULL,...) {
-    res <- -normal_objective.lvm(x=object,p=p,data=data,weight2=weight2,...)
+normal_logLik.lvm <- function(object,p,data,data2=NULL,...) {
+    res <- -normal_objective.lvm(x=object,p=p,data=data,data2=data2,...)
     return(res)
 }
 
-normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
+normal_gradient.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,...) {
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-    if  (is.null(ordinal(x))) {
+    if  (is.null(ordinal(x)) && is.null(data2) && is.null(weights)) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
         Y <- as.matrix(data[,manifest(x)])
@@ -112,27 +114,27 @@ normal_gradient.lvm <- function(x,p,data,weight2=NULL,indiv=FALSE,...) {
         return(ss)
     }
     if (indiv) {
-        return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,indiv=TRUE,...),p,method=lava.options()$Dmethod))
+        return(numDeriv::jacobian(function(p0) normal_objective.lvm(x,p=p0,data=data,weights=weights,data2=data2,indiv=TRUE,...),p,method=lava.options()$Dmethod))
     }
-    numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,weight2=weight2,...),p,method=lava.options()$Dmethod)
+    numDeriv::grad(function(p0) normal_objective.lvm(x,p=p0,data=data,weights=weights,data2=data2,...),p,method=lava.options()$Dmethod)
 }
 
-normal_hessian.lvm <- function(x,p,outer=FALSE,weight2=NULL,...) {
+normal_hessian.lvm <- function(x,p,outer=FALSE,data2=NULL,...) {
     if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-    dots <- list(...); dots$weight <- NULL
+    dots <- list(...); dots$weights <- NULL
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) runif(1)
     save.seed <- get(".Random.seed", envir = .GlobalEnv)
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     if (!outer) {
         f <- function(p) {
             set.seed(1)
-        do.call("normal_objective.lvm", c(list(x,p=p,indiv=FALSE,weight2=weight2),dots))
+        do.call("normal_objective.lvm", c(list(x,p=p,indiv=FALSE,data2=data2),dots))
         }
         g <- function(p) {
             set.seed(1)
-            do.call("normal_gradient.lvm", c(list(x,p=p,indiv=FALSE,weight2=weight2),dots))
+            do.call("normal_gradient.lvm", c(list(x,p=p,indiv=FALSE,data2=data2),dots))
         }
-        if (is.null(ordinal(x)) && is.null(weight2))
+        if (is.null(ordinal(x)) && is.null(data2))
             return(numDeriv::jacobian(g,p))
         else {
             return(numDeriv::hessian(f,p))

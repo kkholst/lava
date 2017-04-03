@@ -26,10 +26,9 @@ omit candidates containing \code{rel} from the output}
 \description{
 Identifies candidates of equivalent models
 }
-\author{
-Klaus K. Holst
-}
 \seealso{
 \code{\link{compare}}, \code{\link{modelsearch}}
 }
-
+\author{
+Klaus K. Holst
+}
