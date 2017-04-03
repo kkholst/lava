@@ -12,9 +12,9 @@ Graph(x, ...) <- value
 \arguments{
 \item{x}{Model object}
 
-\item{\dots}{Additional arguments to be passed to the low level functions}
-
 \item{value}{New \code{graphNEL} object}
+
+\item{\dots}{Additional arguments to be passed to the low level functions}
 }
 \description{
 Extract or replace graph object
@@ -25,11 +25,12 @@ m <- lvm(y~x)
 Graph(m)
 
 }
-\seealso{
-\code{\link{Model}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{Model}}
+}
 \keyword{graphs}
 \keyword{models}
+

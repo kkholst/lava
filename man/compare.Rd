@@ -41,10 +41,11 @@ compare(e2,contrast=B)
 
 compare(e,scoretest=list(y3~x,y2~x))
 }
-\seealso{
-\code{\link{modelsearch}}, \code{\link{equivalence}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{modelsearch}}, \code{\link{equivalence}}
+}
 \keyword{htest}
+

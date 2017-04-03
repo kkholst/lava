@@ -21,11 +21,12 @@ Calculates the trace of a square matrix.
 
 tr(diag(1:5))
 }
-\seealso{
-\code{\link{crossprod}}, \code{\link{tcrossprod}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{crossprod}}, \code{\link{tcrossprod}}
+}
 \keyword{algebra}
 \keyword{math}
+

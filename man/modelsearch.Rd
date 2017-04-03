@@ -37,10 +37,11 @@ e <- estimate(m,dd);
 modelsearch(e,silent=TRUE)
 modelsearch(e,silent=TRUE,type="cor")
 }
-\seealso{
-\code{\link{compare}}, \code{\link{equivalence}}
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{\link{compare}}, \code{\link{equivalence}}
+}
 \keyword{htest}
+

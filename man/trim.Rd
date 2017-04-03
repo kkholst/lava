@@ -19,3 +19,4 @@ Trim tring of (leading/trailing/all) white spaces
 \author{
 Klaus K. Holst
 }
+

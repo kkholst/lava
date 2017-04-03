@@ -27,11 +27,12 @@ matrix(rnorm(25),5)\%++\%matrix(rnorm(25),5)
 f <- log \%++\% exp
 f(2)
 }
-\seealso{
-\code{blockdiag}, \code{\link{paste}}, \code{\link{cat}},
-}
 \author{
 Klaus K. Holst
 }
+\seealso{
+\code{blockdiag}, \code{\link{paste}}, \code{\link{cat}},
+}
 \keyword{misc}
 \keyword{utilities}
+

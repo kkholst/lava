@@ -53,3 +53,4 @@ if (!inherits(try(find.package("fields"),silent=TRUE),"try-error")) {
     ksmooth2(f,c(-1,1),rgl=FALSE,image=fields::image.plot)
 }
 }
+

@@ -24,3 +24,4 @@ Convert array into vector
 \author{
 Klaus Holst
 }
+

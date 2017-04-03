@@ -2,8 +2,8 @@
 % Please edit documentation in R/lava-package.R
 \docType{package}
 \name{lava-package}
-\alias{lava-package}
 \alias{lava}
+\alias{lava-package}
 \title{Estimation and simulation of latent variable models}
 \description{
 Framwork for estimating parameters and simulate data from Latent Variable
@@ -18,3 +18,4 @@ lava()
 Klaus K. Holst Maintainer: <k.k.holst@biostat.ku.dk>
 }
 \keyword{package}
+
