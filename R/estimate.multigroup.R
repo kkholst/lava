@@ -642,7 +642,6 @@ estimate.lvmlist <- function(x, data, silent=lava.options()$silent, fix, missing
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
 
   myhooks <- gethook("multigroup.hooks")
-  myhooks <- "lava.penalty.multigroup.hook"
   for (f in myhooks) {
     res <- do.call(f, list(mg=mg,x=x))
     if (!is.null(res$mg)) mg <- res$mg
