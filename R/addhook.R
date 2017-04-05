@@ -70,6 +70,7 @@ versioncheck <- function(pkg="lava",geq,sep=".",...) {
 
 lava.env <- new.env()
 assign("init.hooks",c(),envir=lava.env)
+assign("cancel.hooks",c(),envir=lava.env)
 assign("remove.hooks",c(),envir=lava.env)
 assign("estimate.hooks",c(),envir=lava.env)
 assign("multigroup.hooks",c(),envir=lava.env)
