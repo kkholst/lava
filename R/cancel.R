@@ -30,12 +30,12 @@ cancel.lvm <- function(x,value,...) {
     xx <- unlist(lapply(res, function(z) z[1]))
     for (i in yy) {
       for (j in xx)
-        cancel(x) <- c(i,j)
+        cancel(x,...) <- c(i,j)
       }
     index(x) <- reindex(x)
   return(x)
   }
-
+  
   for (v1 in value)
     for (v2 in value)
       if (v1!=v2)
@@ -46,7 +46,13 @@ cancel.lvm <- function(x,value,...) {
               x$covpar[v1,v2] <- x$covfix[v1,v2] <- NA
             x$cov[v1,v2] <- 0
           }
-        }
+      }
+  
+  myhooks <- gethook("cancel.hooks")
+  for (f in myhooks) {
+    x <- do.call(f, list(x=x,value=value,...))
+  }  
+  
   x$parpos <- NULL
   index(x) <- reindex(x)
   return(x)
