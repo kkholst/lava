@@ -591,8 +591,17 @@
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
     
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=Optim$meanstructure,
-             vcov=asVar, estimator=estimator, weights=weights, data2=data2, cluster=id)
+  res <- list(model=x, 
+              model0=mymodel, 
+              call=cl, 
+              opt=opt, 
+              meanstructure=Optim$meanstructure,
+              vcov=asVar, 
+              estimator=estimator, 
+              weights=weights, 
+              data2=data2, 
+              control=Optim,
+              cluster=id)
   class(res) <- myclass
 
   myhooks <- gethook("post.hooks")
