@@ -1,5 +1,26 @@
+introotpn <- function(p) {
+    ## Find integer root of x^2-x-2*p=0
+    n <- 0.5*(1+sqrt(1+8*p))
+    if (floor(n)!=n) n <- NA
+    return(n)
+}
+rho2sigma <- function(rho) {
+    if (length(rho)==1) return(diag(2)*(1-rho)+rho)
+    p <- introotpn(length(rho))
+    if (is.na(p)) stop("Unexpected length of correlation coefficients (p=n*(n-1)/2).")
+    sigma <- diag(nrow=p)
+    offdiag(sigma,type=2) <- rho
+    offdiag(sigma,type=3) <- offdiag(t(sigma),type=3)
+    return(sigma)
+}
+
 ##' @export
-rmvn <- function(n,mu=rep(0,ncol(sigma)),sigma=diag(nrow=length(mu))*.5+.5,...) {
+rmvn <- function(n,mu,sigma,rho,...) {
+    if (!missing(rho)) sigma <- rho2sigma(rho)
+    if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
+    if (missing(sigma)) sigma <- matrix(1)
+    if (is.vector(sigma)) sigma <- diag(sigma,ncol=length(sigma))
+    if (missing(mu)) mu <- rep(0,ncol(sigma))    
     PP <- with(svd(sigma), v%*%diag(sqrt(d),ncol=length(d))%*%t(u))
     res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
     if (NROW(mu)==nrow(res) && NCOL(mu)==ncol(res)) return(res+mu)
@@ -7,7 +28,13 @@ rmvn <- function(n,mu=rep(0,ncol(sigma)),sigma=diag(nrow=length(mu))*.5+.5,...) 
 }
 
 ##' @export
-dmvn <- function(x,mu,sigma,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
+dmvn <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
+    if (!missing(rho)) sigma <- rho2sigma(rho)
+    if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
+    if (missing(sigma)) sigma <- matrix(1)
+    if (is.vector(sigma)) sigma <- diag(sigma,ncol=length(sigma))
+    if (missing(mu)) mu <- rep(0,ncol(sigma))
+    
     if (length(sigma)==1) {
         k <- 1
         isigma <- structure(cbind(1/sigma),det=as.vector(sigma))

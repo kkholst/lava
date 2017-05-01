@@ -27,9 +27,9 @@
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))
 ##' }
 ##' @export
-confpred <- function(object,newdata,mad,alpha=0.05,...) { ## Split algorithm
+confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,mad,mad.model="loess",...) { ## Split algorithm
     if (missing(newdata)) stop("Please supply new data for predictions")
-    data <- get_all_vars(object)
+    ##data <- get_all_vars(object,data=model.frame(object))
     dd <- csplit(data,0.5)
     muhat.new <- predict(object,newdata=newdata) ## New predictions
     muhat.1 <- predict(object,data=dd[[1]])      ## Training
@@ -39,11 +39,14 @@ confpred <- function(object,newdata,mad,alpha=0.05,...) { ## Split algorithm
     if (missing(mad)) mad <- formula(object)
     if (is.null(mad)) { 
         mad.new <- rep(1,nrow(newdata))
-    } else { ## Locally-weighted conformal inference
+    } else { ## Locally-weighted conformal ffinference
+        browser()
+        do.call(model, 
         X2 <- model.matrix(mad,dd[[2]])
         mad.lm <- stats::lm.fit(x=X2,y=R2)
         mad2 <- X2%*%mad.lm$coefficients
         R2 <- R2/mad2
+        if (names(
         newdata <- cbind(0,newdata); names(newdata)[1] <- names(dd[[2]])[1]
         X0 <- model.matrix(mad,data=newdata)
         mad.new <- X0%*%mad.lm$coefficients
