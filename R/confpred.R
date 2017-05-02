@@ -27,12 +27,12 @@
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))
 ##' }
 ##' @export
-confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,mad,mad.model="loess",...) { ## Split algorithm
+confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,mad,...) { ## Split algorithm
     if (missing(newdata)) stop("Please supply new data for predictions")
     ##data <- get_all_vars(object,data=model.frame(object))
     dd <- csplit(data,0.5)
     muhat.new <- predict(object,newdata=newdata) ## New predictions
-    muhat.1 <- predict(object,data=dd[[1]])      ## Training
+    muhat.1 <- predict(object,newdata=dd[[1]])      ## Training
     R1 <- abs(dd[[1]][,1]-muhat.1)
     muhat.2 <- predict(object,newdata=dd[[2]])   ## Ranking
     R2 <- abs(dd[[2]][,1]-muhat.2)
@@ -40,19 +40,28 @@ confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,ma
     if (is.null(mad)) { 
         mad.new <- rep(1,nrow(newdata))
     } else { ## Locally-weighted conformal ffinference
-        browser()
-        do.call(model, 
-        X2 <- model.matrix(mad,dd[[2]])
-        mad.lm <- stats::lm.fit(x=X2,y=R2)
-        mad2 <- X2%*%mad.lm$coefficients
-        R2 <- R2/mad2
-        if (names(
-        newdata <- cbind(0,newdata); names(newdata)[1] <- names(dd[[2]])[1]
+        if (names(dd[[2]])[1] %ni% names(newdata)) {
+            newdata <- cbind(0,newdata); names(newdata)[1] <- names(dd[[2]])[1]
+        }
         X0 <- model.matrix(mad,data=newdata)
-        mad.new <- X0%*%mad.lm$coefficients
+        if (inherits(mad,"formula")) { 
+            X2 <- model.matrix(mad,dd[[2]])            
+            mad.obj <- stats::lm.fit(x=X2,y=R2)
+            mad2 <- X2%*%mad.obj$coefficients
+            mad.new <- X0%*%mad.obj$coefficients
+        } else {
+            mad.obj <- do.call(mad,list(y=R2,x=dd[[2]]))
+            mad2 <- predict(mad.obj,newdata=dd[[2]])
+            mad.new <- predict(mad.obj,newdata=newdata)
+        }
+        R2 <- R2/mad2
     }
     k <- ceiling((nrow(data)/2+1)*(1-alpha))
+    if (k==0) k <- 1
+    if (k>length(R2)) k <- length(R2)
     q <- sort(R2)[k] ## 1-alpha quantile
+    cat(q, " ", head(mad.new), "\n")
+    if (is.na(q)) browser()
     lo <- muhat.new - q*mad.new
     up <- muhat.new + q*mad.new
     data.frame(fit=muhat.new,lwr=lo,upr=up)
