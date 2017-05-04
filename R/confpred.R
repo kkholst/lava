@@ -1,10 +1,11 @@
 ##' Conformal predicions
 ##'
 ##' @title Conformal prediction
-##' @param object Model object (lm, glm or similar with predict method)
+##' @param object Model object (lm, glm or similar with predict method) or formula (lm)
+##' @param data data.frame
 ##' @param newdata New data.frame to make predictions for
-##' @param mad Conditional model (formula) for the MAD (locally-weighted CP)
 ##' @param alpha Level of prediction interval
+##' @param mad Conditional model (formula) for the MAD (locally-weighted CP)
 ##' @param ... Additional arguments to lower level functions
 ##' @return data.frame with fitted (fit), lower (lwr) and upper (upr) predictions bands.
 ##' @examples
@@ -27,9 +28,10 @@
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))
 ##' }
 ##' @export
-confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,mad,...) { ## Split algorithm
-    if (missing(newdata)) stop("Please supply new data for predictions")
-    ##data <- get_all_vars(object,data=model.frame(object))
+confpred <- function(object,data=parent.frame(),newdata=data,alpha=0.05,mad,...) { ## Split algorithm
+    if (inherits(object,"formula")) {
+        object <- do.call("lm",list(object,data=data,...))
+    }
     dd <- csplit(data,0.5)
     muhat.new <- predict(object,newdata=newdata) ## New predictions
     muhat.1 <- predict(object,newdata=dd[[1]])      ## Training
@@ -60,8 +62,6 @@ confpred <- function(object,data=get_all_vars(object),newdata=data,alpha=0.05,ma
     if (k==0) k <- 1
     if (k>length(R2)) k <- length(R2)
     q <- sort(R2)[k] ## 1-alpha quantile
-    cat(q, " ", head(mad.new), "\n")
-    if (is.na(q)) browser()
     lo <- muhat.new - q*mad.new
     up <- muhat.new + q*mad.new
     data.frame(fit=muhat.new,lwr=lo,upr=up)
