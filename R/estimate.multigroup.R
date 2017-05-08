@@ -8,34 +8,40 @@
                                   id=NULL,
                                   silent=lava.options()$silent,
                                   quick=FALSE,
+                                  method,
                                   param,
                                   cluster,
                                   ...) {
-  cl <- match.call()
-  Optim <- list(
-             iter.max=lava.options()$iter.max,
-             trace=ifelse(lava.options()$debug,3,0),
-             gamma=lava.options()$gamma,
-             ngamma=lava.options()$ngamma,
-	     backtrace=TRUE,
-             gamma2=1,
-             lambda=0.05,
-             abs.tol=1e-9,
-             epsilon=1e-10,
-             delta=1e-10,
-             S.tol=1e-6,
-             stabil=FALSE,
-             start=NULL,
-             constrain=lava.options()$constrain,
-             method=NULL,
-             starterfun=startvalues0,
-             information="E",
-             meanstructure=TRUE,
-             sparse=FALSE,
-             lbound=1e-9,
-             reindex=FALSE,
-             tol=lava.options()$tol)
+    
+    cl <- match.call()
 
+    if (!base::missing(method)) {
+        control["method"] <- list(method)
+    }
+    
+    Optim <- list(
+        iter.max=lava.options()$iter.max,
+        trace=ifelse(lava.options()$debug,3,0),
+        gamma=lava.options()$gamma,
+        ngamma=lava.options()$ngamma,
+        backtrace=TRUE,
+        gamma2=1,
+        lambda=0.05,
+        abs.tol=1e-9,
+        epsilon=1e-10,
+        delta=1e-10,
+        S.tol=1e-6,
+        stabil=FALSE,
+        start=NULL,
+        constrain=lava.options()$constrain,
+        method=NULL,
+        starterfun=startvalues0,
+        information="E",
+        meanstructure=TRUE,
+        sparse=FALSE,
+        lbound=1e-9,
+        reindex=FALSE,
+        tol=lava.options()$tol)
 
   if (!missing(param)) {
     oldparam <- lava.options()$param
@@ -51,7 +57,6 @@
   if (length(control)>0) {
       Optim[names(control)] <- control
   }
-
 
   Debug("Start values...")
   if (!is.null(Optim$start) & length(Optim$start)==(x$npar+x$npar.mean)) {
@@ -581,13 +586,22 @@
       myInformation <- function(theta) numDeriv::hessian(myObj, theta)
     }
   }
-}
+  }
   I <- myInformation(opt$estimate)
   asVar <- tryCatch(Inverse(I),
                     error=function(e) matrix(NA, length(mystart), length(mystart)))
     
-  res <- list(model=x, model0=mymodel, call=cl, opt=opt, meanstructure=Optim$meanstructure,
-             vcov=asVar, estimator=estimator, weights=weights, data2=data2, cluster=id)
+  res <- list(model=x, 
+              model0=mymodel, 
+              call=cl, 
+              opt=opt, 
+              meanstructure=Optim$meanstructure,
+              vcov=asVar, 
+              estimator=estimator, 
+              weights=weights, 
+              data2=data2, 
+              control=Optim,
+              cluster=id)
   class(res) <- myclass
 
   myhooks <- gethook("post.hooks")
@@ -605,7 +619,7 @@
 ###{{{ estimate.list
 
 estimate.lvmlist <- function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
-  
+
   if (base::missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
   }
@@ -642,12 +656,11 @@ estimate.lvmlist <- function(x, data, silent=lava.options()$silent, fix, missing
   mg <- multigroup(x,data,fix=fix,missing=missing,...)
 
   myhooks <- gethook("multigroup.hooks")
-  myhooks <- "lava.penalty.multigroup.hook"
   for (f in myhooks) {
-    res <- do.call(f, list(mg=mg,x=x))
+    res <- do.call(f, list(mg=mg,x=x,...))
     if (!is.null(res$mg)) mg <- res$mg
-    if (!is.null(res$x)) x <- res$x
   }
+
   res <- estimate(mg,...)
 
   return(res)
