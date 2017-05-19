@@ -10,12 +10,13 @@ mSim <- lvm(Y~X1)
 d <- sim(mSim,1e2)
 eSim <- estimate(mSim, d)
 
+
 ## NR
 set.seed(10)
 
 mSim <- lvm(Y~X1+X2+X3)
 d <- sim(mSim,1e2)
-eSim <- estimate(mSim, d)
+eSim <- estimate(mSim, d, control = list(iter.max = 2))
 m.1 <- mSim
 
 eT <- estimate(m.1, d, control = list(trace = 1))
@@ -55,13 +56,16 @@ abline(h = regObj(start, Y = d$Y, X = cbind(1,d[,-1])), col = "red")
 
 #### change in the backtrace ####
 system.time(
-  e0 <- estimate(m.1, d, estimator = "gaussian", control = list(method = "NR", trace = 1, iter.max = 30, constrain = TRUE))
+  e0 <- estimate(m.1, d, estimator = "gaussian1", control = list(method = "NR", trace = 1, iter.max = 30, constrain = TRUE))
 )
 system.time(
   e0 <- estimate(m.1, d, estimator = "gaussian", control = list(method = "nlminb2", trace = 1, iter.max = 30, constrain = TRUE))
 )
 system.time(
-  e2 <- estimate(m.1, d, estimator = "gaussian", control = list(method = "NR", trace = 1, iter.max = 30, constrain = TRUE, backtrace = "Wolfe"))
+  e2 <- estimate(m.1, d, estimator = "gaussian1", control = list(method = "NR", trace = 1, iter.max = 30, constrain = FALSE, backtrace = "Wolfe"))
+)
+system.time(
+  e2 <- estimate(m.1, d, estimator = "gaussian1", control = list(method = "NR", trace = 1, iter.max = 30, constrain = TRUE, backtrace = "Wolfe"))
 )
 coef(e2)-coef(eT)
 
@@ -86,3 +90,20 @@ range(coef(e0bis)-coef(eT))
 e1 <- estimate(m, d, estimator = "gaussian1", control = list(method = "NR", trace = 1, iter.max = 3, constrain = TRUE))
 e1bis <- estimate(m, d, estimator = "gaussian1", control = list(method = "NR", trace = 1, iter.max = 3, constrain = TRUE, backtrace = "Wolfe")) # not good, negative variance parameters ???
 range(coef(e1bis)-coef(eT))
+
+
+logLik(mSim,data=d,p=c(0,0,1))
+lava.options(itol = -Inf)
+eSim <- estimate(mSim, d)
+logLik(mSim,data=d,p=c(0,0,-1))
+
+install.packages("microbenchmark")
+library(microbenchmark)
+A <- rWishart(n=1, Sigma=diag(10),df=10)[,,1]
+
+Inverse(A)
+
+microbenchmark(svd(A),eigen(A))
+
+
+

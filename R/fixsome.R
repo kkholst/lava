@@ -75,7 +75,8 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
             S0[is.na(S0)] <- 0
             mu0 <- mu
             e0 <- eigen(S0)
-            thres <- lava.options()$itol^(1/2)
+            #thres <- lava.options()$itol^(1/2)
+            thres <- 1e-16
              if (any(e0$values<thres)) {
                  ## Projection to nearest positive definite matrix
                  ii <- e0$values

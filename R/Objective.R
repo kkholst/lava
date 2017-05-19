@@ -6,8 +6,7 @@ gaussian_method.lvm <- "nlminb2"
     mp <- modelVar(x,p=p,data=data,...)
     C <- mp$C ## Model specific covariance matrix
     xi <- mp$xi ## Model specific mean-vector
-    if (!lava.options()$allow.negative.variance && any(diag(mp$P)<0)) return(NaN)
-    
+
     iC <- Inverse(C,det=TRUE, symmetric = TRUE)
     detC <- attributes(iC)$det
     if (n<2) {
