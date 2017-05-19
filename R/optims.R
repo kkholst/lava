@@ -63,7 +63,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
                    lambda=0,
                    ngamma=0,
                    gamma2=0,
-                   backtrack=TRUE,
+                   backtrace=TRUE,
                    iter.max=200,
                    tol=1e-9,
                    stabil=FALSE,
@@ -72,32 +72,9 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     control0[names(control)] <- control
   }
   
-
-  ## conditions to select the step length
-  if(control0$backtrack[1] == "armijo"){
-    control0$backtrack <- c(1e-4,0) # page 33
-  }
-  if(control0$backtrack[1] == "curvature"){
-    control0$backtrack <- c(0,0.9) # page 34
-  }
-  if(control0$backtrack[1] == "wolfe"){
-      control0$backtrack <- c(1e-4,0.9)
-  }
-  if(!is.logical(control0$backtrack) || length(control0$backtrack)!=1){
-    if(length(control0$backtrack) != 2){
-      stop("control$backtrack must have length two if not TRUE or FALSE \n")
-    }
-    if(any(!is.numeric(control0$backtrack)) || any(abs(control0$backtrack)>1)){
-      stop("elements in control$backtrack must be in [0,1] \n")
-    }
-    if(control0$backtrack[2]==0){
-      control0$backtrack[2] <- +Inf # no Wolfe condition
-    }
-  }
-  
   if (control0$trace>0)
-    cat("\nIter=0  Objective=",objective(as.double(start)),";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
-  
+    cat("\nIter=0  LogLik=",objective(as.double(start)),";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
+
   gradFun = !missing(gradient)
   if (!gradFun & missing(hessian)) {
     hessian <- function(p) {
@@ -107,7 +84,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
       return(res)
     }
   }
-  oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
+  oneiter <- function(p.orig,Dprev,return.mat=FALSE) {
     if (is.null(hessian)) {
       cat(".")
       I <- -numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
@@ -134,63 +111,46 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
       }
     }
     
-    ## svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
-    ## svdI$d0[abs(svdI$d)>control0$epsilon] <-
-    ##   1/svdI$d[abs(svdI$d)>control0$epsilon]
-    ## iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
-    iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
+    svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
+    svdI$d0[abs(svdI$d)>control0$epsilon] <-
+      1/svdI$d[abs(svdI$d)>control0$epsilon]
+    iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
     Delta = control0$gamma*iI%*%D
     
     Lambda <- 1
-    if (identical(control0$backtrack, TRUE)) {
-      mD0 <- mean(Dprev^2)
-      mD <- mean(D^2)
+    if (control0$backtrace) {
+      
       p <- p.orig + Lambda*Delta
-      while (mD>=mD0) {
+      
+      if(control0$backtrace == 2){
+        mD0 <- objective(p.orig)#    
+        mD <- objective(p)#
+      }else{
+        mD0 <- mean(Dprev^2)# objective(p.orig)#    
+        mD <- mean(D^2) # objective(p)#
+      }
+      
+      
+      while (mD>mD0) {
         if (gradFun) {
           D = gradient(p)
         } else {
           DI <- oneiter(p,return.mat=TRUE)
           D = DI$D
         }
-        mD = mean(D^2)
-        if (is.nan(mD)) mD=mD0
         Lambda <- Lambda/2
-        if (Lambda<1e-4) break;
+        if (Lambda<0.05) break;
         p <- p.orig + Lambda*Delta            
-      }
-      
-    } else if(identical(control0$backtrack, FALSE)) {
-      p <- p.orig + Lambda*Delta
-    } else {  # objective(p.orig) - objective(p) <= mu*Lambda*gradient(p.orig)*Delta
-      
-        ## curvature
-        c_D.origin_Delta <- control0$backtrack * rbind(D) %*% Delta
-        objective.origin <- objective(p.orig)
-        p <- p.orig + Lambda*Delta
-        ## ll <- seq(-0.17,1,length.out=50)
-        ## pp <- numeric(length(ll))
-        ## for (ii in seq_along(ll)) pp[ii] <- objective(p.orig + ll[ii]*Delta)
-           
-        mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#    
-        mD <- c(objective(p), abs(gradient(p) %*% Delta))
-        count <- 0 
-        while (any(mD>mD0) || any(is.nan(mD))) {
-            count <- count+1
-            ##cat(count, " f=",mD[1],"\n")
-            Lambda <- Lambda/2
-            if (Lambda<1e-4) break;
-            p <- p.orig + Lambda*Delta
-            if(!is.infinite(mD0[1])){
-                mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1]#  
-                mD[1] <- objective(p)
-            }
-            if(!is.infinite(mD0[2])){
-                mD[2] <- abs(gradient(p) %*% Delta)
-            }
+        if(control0$backtrace == 2){
+          mD <- objective(p)#
+        }else{
+          mD = mean(D^2) #
         }
-    } 
-    
+        if (is.nan(mD)) mD=mD0
+      }
+    } else {
+      p <- p.orig + Lambda*Delta
+    }
     return(list(p=p,D=D,iI=iI))
   }
   
@@ -203,7 +163,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     count <-  count+1
     count2 <- count2+1
     oldpar <- thetacur
-    newpar <- oneiter(thetacur,Dprev,iter=jj)
+    newpar <- oneiter(thetacur,Dprev)
     Dprev <- newpar$D
     thetacur <- newpar$p
     if (!is.null(control0$ngamma) && control0$ngamma>0) {
