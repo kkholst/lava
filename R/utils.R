@@ -1,3 +1,9 @@
+char2num <- function(x,...) {
+    idx <- grep("^[0-9\\.]+",x,perl=TRUE,invert=TRUE)
+    if (length(idx)>0) x[idx] <- NA
+    as.numeric(x)
+}
+
 ###{{{ substArg
 
 substArg <- function(x,env,...) {
@@ -425,7 +431,7 @@ Decomp.specials <- function(x,pattern="[()]") {
   vars <- mysplit[1]
   res <- unlist(strsplit(vars,","))
   if (type=="s" | type=="seq") {
-    return(paste0(res[1],seq(as.numeric(res[2]))))
+    return(paste0(res[1],seq(char2num(res[2]))))
   }
   unlist(strsplit(vars,","))
 

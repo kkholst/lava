@@ -74,7 +74,7 @@
   ## Setup optimization constraints
   lower <- rep(-Inf, x$npar);
   for (i in seq_len(x$ngroup)) {
-    vpos <- sapply(x$parlist[[i]][variances(x$lvm[[i]],mean=FALSE)], function(y) as.numeric(substr(y,2,nchar(y))))
+    vpos <- sapply(x$parlist[[i]][variances(x$lvm[[i]],mean=FALSE)], function(y) char2num(substr(y,2,nchar(y))))
     if (length(vpos)>0)
     lower[vpos] <- Optim$lbound
   }

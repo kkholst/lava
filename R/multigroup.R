@@ -96,7 +96,9 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 
     models.orig <- models
 
-    suppressWarnings(val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,exo.fix=TRUE,...))
+      suppressWarnings(
+          val <- multigroup(models0,datasets0,fix=FALSE,missing=FALSE,exo.fix=TRUE,...)
+      )
     val$models.orig <- models.orig; val$missing <- TRUE
     val$complete <- complidx-1
     val$mnames <- mynames
@@ -144,8 +146,10 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
     mu <- unlist(mymodel$mean)[which(index(mymodel)$v1==1)]
                                         #ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
     ex <- mymodel$exfix
-    ex[is.na(ex)] <- mymodel$expar[is.na(ex)]
-    ex <- ex[which(index(mymodel)$e1==1)]
+    if (length(ex)>0) {
+        if (any(is.na(ex))) ex[is.na(ex)] <- mymodel$expar[is.na(ex)]
+        ex <- ex[which(index(mymodel)$e1==1)]
+    }
 
     p <- pars(mymodel, A, P, e=ex)
     p[p=="1"] <- NA
@@ -163,7 +167,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 ######
   pp <- unlist(ps)
   parname <- unique(pp[!is.na(pp)])
-  opt <- options(warn=-1); pidx <- is.na(as.numeric(parname)); options(opt)
+  pidx <- is.na(char2num(parname))
   parname <- unique(unlist(pp[!is.na(pp)]));
   nfree <- sum(is.na(pp)) + length(parname)
 
@@ -183,7 +187,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         } else if (!is.na(pidx)) {
           if (!is.na(usedname[pidx,2])) {
             pres[[i]][j] <- usedname[pidx,2]
-            pres0[[i]][j] <- as.numeric(substr(pres[[i]][j],2,nchar(pres[[i]][j])))
+            pres0[[i]][j] <- char2num(substr(pres[[i]][j],2,nchar(pres[[i]][j])))
           } else {
             val <- paste0("p",counter)
             pres[[i]][j] <- val
@@ -211,7 +215,7 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
 
   mm <- unlist(means)
   meanparname <- unique(mm[!is.na(mm)])
-  opt <- options(warn=-1); midx <- is.na(as.numeric(meanparname)); options(opt)
+  midx <- is.na(char2num(meanparname));
   meanparname <- meanparname[midx]
   any.mean <- sum(is.na(mm)) + length(meanparname)
   nfree.mean <- sum(is.na(mm)) + length(setdiff(meanparname,parname))
@@ -236,13 +240,13 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
           pidx <- match(meanparname[midx],pp)
           if (!is.na(pidx)) {
             res[[i]][j] <- unlist(myparlist)[pidx]
-            res0[[i]][j] <- as.numeric(substr(res[[i]][j],2,nchar(res[[i]][j]))) +
+            res0[[i]][j] <- char2num(substr(res[[i]][j],2,nchar(res[[i]][j]))) +
               nfree.mean
               ##nmean[[i]]
           } else {
             if (!is.na(usedname[midx,2])) {
               res[[i]][j] <- usedname[midx,2]
-              res0[[i]][j] <- as.numeric(substr(res[[i]][j],2,nchar(res[[i]][j])))
+              res0[[i]][j] <- char2num(substr(res[[i]][j],2,nchar(res[[i]][j])))
             } else {
               val <- paste0("m",counter)
               res[[i]][j] <- val

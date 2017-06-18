@@ -235,7 +235,7 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
   pl <- 1-(1-level)/2
   D <- rbind(numDeriv::grad(fun,b))
   se <- (D%*%S%*%t(D))^0.5
-  res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*se)
+  res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*c(se))
   pstr <- paste0(format(c(round(1000-1000*pl),round(pl*1000))/10),"%")
   names(res) <- c("Estimate","Std.Err",pstr)
   res

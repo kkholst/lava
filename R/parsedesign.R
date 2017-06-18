@@ -47,12 +47,12 @@ parsedesign <- function(coef,x,...,regex=FALSE,diff=TRUE) {
         }
         for (i in seq(length(ff)/2)) {
             val0 <- gsub("[*()]","",ff[2*(i-1)+1])            
-            suppressWarnings(val <- as.numeric(val0))
+            val <- char2num(val0)
             if (is.na(val)) {
                 val <- switch(val0,"-"=-1,1)
             }
             par0 <- ff[2*i]
-            par0int <- suppressWarnings(as.integer(par0))
+            par0int <- as.integer(char2num(par0))
             if (!regex) par0 <- glob2rx(par0)
             if (is.na(par0int)) par0int <- grep(par0,coef)
             if (length(par0int)>1) {

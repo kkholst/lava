@@ -129,7 +129,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
     Idx <- function(vname,widenames) {
         idx <- which(unlist(lapply(widenames,function(x) length(grep(vname,substr(x,1,nchar(vname))))>0)))
         nn <- widenames[idx]
-        ord <- order(as.numeric(unlist(lapply(nn,function(x) gsub(vname,"",x)))))
+        ord <- order(char2num(unlist(lapply(nn,function(x) gsub(vname,"",x)))))
         idx[ord]
     }
 
@@ -204,7 +204,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
                     xx <- xy$x
                     pr <- xy$predict$fit
                     if (is.factor(xx)) {
-                        xx <- as.numeric(as.character(xx))
+                        xx <- char2num(as.character(xx))
                         if (trend.jitter>0) xx <- jitter(xx,trend.jitter)                        
                         confband(xx,pr[,3],pr[,2],pr[,1],col=trend.col,lwd=2)
                     } else {

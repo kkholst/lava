@@ -27,7 +27,7 @@ function(infile="template.out",coef=TRUE,...) {
       if (i %in% lab.idx) {
         count <- count+1
       } else {
-        val <- as.numeric(res[[i]][-1])
+        val <- char2num(res[[i]][-1])
         if (length(val)<5) val <- c(val,rep(0,5-length(val)))
         mycoef <- rbind(mycoef, val)
         myrownames <- c(myrownames,
@@ -69,7 +69,7 @@ function(infile, startstring, endstring,nlines) {
 
   mycmd1 <- paste0("grep -n \"",startstring,"\" ", infile);  a1 <- system(mycmd1,intern=TRUE);
   if (length(a1)>0)
-    linestart <- as.numeric(strsplit(a1,":")[[1]][1])
+    linestart <- char2num(strsplit(a1,":")[[1]][1])
 
   nn <- length(inp)
   if (!missing(nlines)) nn <- linestart+nlines
@@ -81,7 +81,7 @@ function(infile, startstring, endstring,nlines) {
   } else {
     mycmd2 <- paste0("grep -n \"",endstring,"\" ", infile);  a2 <- system(mycmd2,intern=TRUE);
     if (length(a2)>0)
-      lineend <- as.numeric(strsplit(a2,":")[[1]][1])
+      lineend <- char2num(strsplit(a2,":")[[1]][1])
   }
 
   res <- inp[linestart:lineend-1]

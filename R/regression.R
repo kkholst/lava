@@ -93,7 +93,7 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
           if (xs[intpos[1]]==1 && (!length(intpos0)>0) ) {
               xs[intpos[1]] <- NA
           }
-          intercept(object,ys) <- as.numeric(xs[intpos[1]])
+          intercept(object,ys) <- char2num(xs[intpos[1]])
           xs <- xs[-intpos]
           res[intpos] <- NULL
       }
@@ -120,11 +120,11 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
                 xpar <- strsplit(xf[2],":")[[1]]
                 if (length(xpar)>1) {
                     val <- ifelse(xpar[2]=="NA",NA,xpar[2])
-                    valn <- suppressWarnings(as.numeric(val))
+                    valn <- char2num(val)
                     covariance(object,xs[i]) <- ifelse(is.na(valn),val,valn)
                 }
                 val <- ifelse(xpar[1]=="NA",NA,xpar[1])
-                valn <- suppressWarnings(as.numeric(val))
+                valn <- char2num(val)
                 if (is.na(val) || val!=".") {
                     intercept(object,xs[i]) <- ifelse(is.na(valn),val,valn)
                     notexo <- c(notexo,xs[i])
@@ -139,11 +139,11 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
                 ypar <- strsplit(yf[2],":")[[1]]
                 if (length(ypar)>1) {
                     val <- ifelse(ypar[2]=="NA",NA,ypar[2])
-                    valn <- suppressWarnings(as.numeric(val))
+                    valn <- char2num(val)
                     covariance(object,y) <- ifelse(is.na(valn),val,valn)
                 }
                 val <- ifelse(ypar[1]=="NA",NA,ypar[1])
-                valn <- suppressWarnings(as.numeric(val))
+                valn <- char2num(val)
                 if (is.na(val) || val!=".") {
                     intercept(object,y) <- ifelse(is.na(valn),val,valn)
                 }
@@ -411,7 +411,7 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
         ps <- sapply(sx, FUN=function(i) i[2])
         sx <- strsplit(xx,"$",fixed=TRUE)
         xs <- sapply(sx, FUN=function(i) i[1])
-        fix <- as.numeric(sapply(sx, FUN=function(i) i[2]))
+        fix <- char2num(sapply(sx, FUN=function(i) i[2]))
         allv <- index(object)$vars
 
         object <- addvar(object, c(to,xs), silent=silent,reindex=FALSE)

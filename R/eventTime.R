@@ -156,7 +156,7 @@ eventTime <- function(object,formula,eventName="status",...) {
         }
     }
     events <- gsub(" ","",events)
-    suppressWarnings(eventnum <- as.numeric(events))
+    eventnum <- char2num(events)
     if (all(!is.na(eventnum))) {
         events <- eventnum
     } else {

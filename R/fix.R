@@ -149,7 +149,8 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
     tt <- terms(value)
     xf <- attributes(terms(tt))$term.labels
     res <- lapply(xf,decomp.specials)[[1]]
-    myvalue <- suppressWarnings(as.numeric.list(as.list(res)))
+    
+    myvalue <- char2num(as.list(res))
     myvalue <- lapply(myvalue, function(x) ifelse(x=="NA",NA,x))
     intfix(object,yy) <- myvalue
     object$parpos <- NULL
@@ -214,7 +215,7 @@ covfix.lvm <- function(object,...) {
     for (i in seq_len(length(var1)-1)) {
       for (j in seq(i+1,length(var1))) {
         p <- p+1
-        valp <- suppressWarnings(as.numeric(value[[p]]))
+        valp <- char2num(value[[p]])
         if (is.na(value[[p]]) | value[[p]]=="NA") {
           object$covfix[var1[i],var1[j]] <- object$covpar[var1[i],var1[j]] <- NA
           object$covfix[var1[j],var1[i]] <- object$covpar[var1[j],var1[i]] <- NA
@@ -243,7 +244,7 @@ covfix.lvm <- function(object,...) {
       value <- rep(value,length(var1))
     if (length(value)!=length(var1)) stop("Wrong number of parameters")
     for (i in seq_along(var1)) {
-      vali <- suppressWarnings(as.numeric(value[[i]]))
+      vali <- char2num(value[[i]])
       if (is.na(value[[i]]) | value[[i]]=="NA") {
         object$covfix[var1[i],var1[i]] <- object$covpar[var1[i],var1[i]] <- NA
       }
@@ -267,7 +268,7 @@ covfix.lvm <- function(object,...) {
     p <- 0
     for (i in seq_along(var1)) {
       p <- p+1
-      valp <- suppressWarnings(as.numeric(value[[p]]))
+      valp <- char2num(value[[p]])
       if (is.na(value[[p]]) | value[[p]]=="NA") {
         object$covfix[var1[i],var2[i]] <- object$covpar[var1[i],var2[i]] <- NA
         object$covfix[var2[i],var1[i]] <- object$covpar[var2[i],var1[i]] <- NA
@@ -300,7 +301,7 @@ covfix.lvm <- function(object,...) {
     for (j in seq_along(var2)) {
       if (!pairwise | var1[i]!=var2[j]) {
         p <- p+1
-        valp <- suppressWarnings(as.numeric(value[[p]]))
+        valp <- char2num(value[[p]])
         if (is.na(value[[p]]) | value[[p]]=="NA") {
           object$covfix[var1[i],var2[j]] <- object$covpar[var1[i],var2[j]] <- NA
           object$covfix[var2[j],var1[i]] <- object$covpar[var2[j],var1[i]] <- NA
@@ -382,7 +383,7 @@ regfix.lvm <- function(object,...) {
       if (object$M[from[i],to[i]]==0) { ## Not adjacent! ##!isAdjacent(Graph(object), from[i], to[i])) {
         object <- regression(object, to=to[i], from=from[i])
       }
-      vali <- suppressWarnings(as.numeric(value[[i]]))
+      vali <- char2num(value[[i]])
       if (is.na(value[[i]]) | value[[i]]=="NA") {
         object$fix[from[i],to[i]] <- object$par[from[i],to[i]] <- NA
       }
@@ -418,7 +419,7 @@ regfix.lvm <- function(object,...) {
   for (j in seq_along(to)) {
     for (i in seq_along(from)) {
       p <- (j-1)*length(from) + i
-      valp <- suppressWarnings(as.numeric(value[[p]]))
+      valp <- char2num(value[[p]])
       if (is.na(value[[p]]) | value[[p]]=="NA")
         object$fix[from[i],to[j]] <- object$par[from[i],to[j]] <- NA
       else {

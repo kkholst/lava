@@ -53,11 +53,11 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
 
   for (i in seq_len(x$ngroup)) {
     pp <- modelPar(x$lvm[[i]],s[[i]])
-    pos <- sapply(x$parlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
+    pos <- sapply(x$parlist[[i]], function(y) char2num(substr(y,2,nchar(y))))
     for (j in seq_len(length(pos)))
       pg[[ pos[j] ]][i] <-  pp$p[j]
 
-    pos <- sapply(x$meanlist[[i]], function(y) as.numeric(substr(y,2,nchar(y))))
+    pos <- sapply(x$meanlist[[i]], function(y) char2num(substr(y,2,nchar(y))))
     ptype <- sapply(x$meanlist[[i]], function(y) substr(y,1,1)=="m")
     if (!(any(ptype)))
       pos <- NULL

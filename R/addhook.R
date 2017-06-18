@@ -56,7 +56,7 @@ addhook <- function(x,hook="estimate.hooks",...) {
 
 versioncheck <- function(pkg="lava",geq,sep=".",...) {
     xyz <- tryCatch(
-        as.numeric(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
+        char2num(strsplit(as.character(packageVersion(pkg)),sep,fixed=TRUE)[[1]]),
         error=function(x) NULL)
     if (is.null(xyz)) return(FALSE)
     if (missing(geq)) return(xyz)

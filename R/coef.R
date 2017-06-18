@@ -96,7 +96,7 @@
         ##     }
 
         names(res) <- resname
-        resnum <- sapply(resname, function(s) as.numeric(substr(s,2,nchar(s))))
+        resnum <- sapply(resname, function(s) char2num(substr(s,2,nchar(s))))
         res <- res[order(resnum)]
         if (mean) {
             nmean <- sum(index(object)$v1==1)

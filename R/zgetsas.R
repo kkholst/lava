@@ -24,7 +24,7 @@ getSAS <- function(infile,entry="Parameter Estimates",...) {
   nullstring <- 0
   linestart <- 1; lineend <- length(inp)
   ##  mycmd1 <- paste0("grep -n \"",entry,"\" ", csvfile);  a1 <- system(mycmd1,intern=TRUE);
-  ##  linestart <- as.numeric(strsplit(a1,":")[[1]][1])
+  ##  linestart <- char2num(strsplit(a1,":")[[1]][1])
   idx <- sapply(inp,function(x) length(grep(entry, x))>0)
   if (sum(idx)==1) {
     linestart <- which(idx)

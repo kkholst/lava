@@ -313,6 +313,7 @@ test_that("Random slope model", {
     dw <- sim(m,20)
 
     dd <- mets::fast.reshape(dw)
+    dd$num <- dd$num+runif(nrow(dd),0,0.2)
     dd0 <- dd[-c(1:2*3),]
     library(lme4)
     l <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
@@ -370,7 +371,7 @@ test_that("Predictions, jacobians", {
 
     p <- c("u2,u2"=2,"u1,u1"=0.5)
     names(p) <- gsub(",",lava.options()$symbols[2],names(p))
-    d <- simulate(m,10,p=p,seed=123)
+    d <- simulate(m,50,p=p,seed=123)
     e <- estimate(m,d)
 
     object <- e

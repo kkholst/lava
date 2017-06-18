@@ -165,7 +165,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     } else {  # objective(p.orig) - objective(p) <= mu*Lambda*gradient(p.orig)*Delta
       
         ## curvature
-        c_D.origin_Delta <- control0$backtrack * rbind(D) %*% Delta
+        c_D.origin_Delta <- control0$backtrack * c(rbind(D) %*% Delta)
         objective.origin <- objective(p.orig)
         p <- p.orig + Lambda*Delta
         ## ll <- seq(-0.17,1,length.out=50)
