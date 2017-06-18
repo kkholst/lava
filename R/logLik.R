@@ -62,7 +62,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     }
     return(loglik)
   }
-
+  
   if (xconstrainM) {
     xconstrain <- c()
     for (i in seq_len(length(constrain(object)))) {
@@ -105,8 +105,18 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
       loglik <- eval.parent(cl)
     }
   } else {
-    cl[[1]] <- logLikFun
-    loglik <- eval.parent(cl)
+      loglik <- 0
+      if (length(xconstrain)>0 && NROW(data)>1) {
+          for (ii in seq(nrow(data))) {
+              cl$data <- data[ii,]
+              cl$weights <- weights[ii,]
+              cl$data2 <- data2[ii,]
+              loglik <- loglik+eval.parent(cl)
+          }
+      } else {
+          cl[[1]] <- logLikFun
+          loglik <- eval.parent(cl)
+      }
   }
 
   if (is.null(attr(loglik,"nall")))
