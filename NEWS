@@ -1,3 +1,10 @@
+* Version 1.5.1 <2017-06-18>
+  - curly bracket
+  - conformal predictions: confpred
+  - warnings (char2num used instead of coersion via as.numeric)
+  - %++% for function compositon
+  - mediation proportion
+
 * Version 1.5 <2017-03-16 Thu>
   - lava.tobit is longer required for ordinal and censored
     responses. Default is now to use the implementation in the 'mets' package.

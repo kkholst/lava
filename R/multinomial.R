@@ -52,66 +52,120 @@
 ##' d2$x <- rbinom(nrow(d2),2,0.5)
 ##' gkgamma(z1~z2|x,data=d2)
 ##' @author Klaus K. Holst
-multinomial <- function(x,marginal=FALSE,transform,...) {
-    if (is.table(x)) x <- lava::Expand(x)
+multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE,iid=TRUE,...) {
+    formula <- NULL
+    if (inherits(x,"formula")) {
+        trm <- terms(x)
+        if (length(attr(trm,"term.labels"))>1) {
+            x <- update(x,as.formula(paste0(".~ interaction(",
+                                           paste0(attr(trm,"term.labels"),collapse=","),")")))
+            trm <- terms(x)
+            
+        }
+        formula <- x
+        x <- as.matrix(model.frame(trm,data))
+        if (ncol(x)>1)
+            x <- x[,c(seq(ncol(x)-1)+1,1),drop=FALSE]
+    } else {
+        trm <- NULL
+    }
+    if (!vcov) iid <- FALSE
+    if (is.table(x) && iid) x <- lava::Expand(x)
     if (NCOL(x)==1) {
-        x <- as.factor(x)
-        lev <- levels(x)
-        k <- length(lev)
-        n <- length(x)
-        P <- table(x)/n
-        iid <- matrix(0,n,k)
-        for (i in seq(k)) {
-            iid[,i] <- (1*(x==lev[i])-P[i])/n
-        };
+        if (!is.table(x)) {
+            x <- as.factor(x)
+            lev <- levels(x)
+            k <- length(lev)
+            n <- length(x)
+            P <- table(x)/n
+        } else {
+            n <- sum(x)
+            P <- x/n
+            lev <- names(x)
+            k <- length(lev)
+        }
+        if (iid) {
+            iid <- matrix(0,n,k)
+            for (i in seq(k)) {
+                iid[,i] <- (1*(x==lev[i])-P[i])/n
+            };
+            varcov <- crossprod(iid)
+        } else {
+            iid <- varcov <- NULL
+            if (vcov) {
+                varcov <- tcrossprod(cbind(P))/n
+                diag(varcov) <- P*(1-P)/n
+            }
+        }
         coefs <- as.vector(P); names(coefs) <- paste0("p",seq(k))
-        res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid,position=seq(k),levels=list(lev),data=x)
+        res <- list(call=match.call(), coef=coefs,P=P,vcov=varcov,iid=iid,position=seq(k),levels=list(lev),data=x, terms=trm)
         class(res) <- "multinomial"
         return(res)
     }
-    if (NCOL(x)!=2L) stop("Matrix or data.frame with one or two columns expected")
-    x <- as.data.frame(x)
-    x[,1] <- as.factor(x[,1])
-    x[,2] <- as.factor(x[,2])
-    lev1 <- levels(x[,1])
-    lev2 <- levels(x[,2])
-    k1 <- length(lev1)
-    k2 <- length(lev2)
-    M <- table(x)
-    n <- sum(M)
+
+    if (!is.table(x)) {
+        if (NCOL(x)!=2L) stop("Matrix or data.frame with one or two columns expected")
+        x <- as.data.frame(x)
+        x[,1] <- as.factor(x[,1])
+        x[,2] <- as.factor(x[,2])
+        lev1 <- levels(x[,1])
+        lev2 <- levels(x[,2])
+        k1 <- length(lev1)
+        k2 <- length(lev2)
+        M <- table(x)
+        n <- sum(M)
+    } else {
+        lev1 <- rownames(x)
+        lev2 <- colnames(x)
+        k1 <- length(lev1)
+        k2 <- length(lev2)
+        M <- x
+        n <- sum(x)
+    }
     Pos <- P <- M/n
-    iid <- matrix(0,n,k1*k2)
-    for (j in seq(k2)) {
-        for (i in seq(k1)) {
-            pos <- (j-1)*k1+i
-            iid[,pos] <- (x[,1]==lev1[i])*(x[,2]==lev2[j])-P[i,j]
-            Pos[i,j] <- pos
-        }
-    }; iid <- iid/n
+    if (iid) {
+        iid <- matrix(0,n,k1*k2)
+        for (j in seq(k2)) {
+            for (i in seq(k1)) {
+                pos <- (j-1)*k1+i
+                iid[,pos] <- (x[,1]==lev1[i])*(x[,2]==lev2[j])-P[i,j]
+                Pos[i,j] <- pos
+            }
+        }; iid <- iid/n
+    } else {
+        iid <- varcov <- NULL
+    }
+    
     coefs <- as.vector(P);
     names(coefs) <-  as.vector(outer(seq(k1),seq(k2),function(...) paste0("p",...)))
     position1 <- position2 <- NULL
     if (marginal) {
         p1 <- rowSums(P)
         p2 <- colSums(P)
-        iid1 <- apply(Pos,1,function(x) rowSums(iid[,x]))
-        iid2 <- apply(Pos,2,function(x) rowSums(iid[,x]))
-        iid <- cbind(iid,iid1,iid2)
         names(p1) <- paste0("p",seq(k1),".")
         names(p2) <- paste0("p",".",seq(k2))
         coefs <- c(coefs,p1,p2)
-        colnames(iid) <- names(coefs)
         position1 <- length(P)+seq(k1)
         position2 <- length(P)+k1+seq(k2)
+        if (!is.null(iid)) {
+            iid1 <- apply(Pos,1,function(x) rowSums(iid[,x]))
+            iid2 <- apply(Pos,2,function(x) rowSums(iid[,x]))
+            iid <- cbind(iid,iid1,iid2)
+            colnames(iid) <- names(coefs)
+        }
     }
-    if (!missing(transform)) {
+    if (!missing(transform) && !is.null(iid)) {
         f <- function(p) do.call(transform,list(p))
         D <- diag(numDeriv::grad(f,coefs),ncol=length(coefs))
         coefs <- f(coefs)
         iid <- iid%*%t(D)
     }
-    res <- list(coef=coefs,P=P,vcov=crossprod(iid),iid=iid, position=Pos, call=match.call(), levels=list(lev1,lev2), data=x,
-                position1=position1,position2=position2 ## Position of marginals)
+    if (vcov && !is.null(iid)) varcov <- crossprod(iid)
+    res <- list(call=match.call(),
+               formula=formula,
+               coef=coefs,P=P,vcov=varcov,iid=iid, position=Pos, call=match.call(), levels=list(lev1,lev2), data=x,
+               position1=position1,position2=position2, ## Position of marginals)
+               terms=trm
                 )
     class(res) <- "multinomial"
     if (length(list(...))>0) {
@@ -141,10 +195,33 @@ vcov.multinomial <- function(object,...) {
 }
 
 ##' @export
+predict.multinomial <- function(object,newdata,type=c("prob","map"),...) {    
+    if (missing(newdata) || is.null(newdata)) newdata <- object$data
+    if (!is.null(object$formula) && is.data.frame(newdata)) {
+        trm <- terms(object$formula)
+        newdata <- model.frame(trm,newdata)[,-1]
+    }
+    px <- rowSums(object$P)
+    idx <- match(trim(as.character(newdata)),trim(rownames(object$P)))
+    pcond <- object$P
+    for (i in seq(nrow(pcond))) pcond[i,] <- pcond[i,]/px[i]
+    pr <- pcond[idx,,drop=FALSE]
+    if (tolower(type[1])%in%c("map","class")) {
+        pr <- colnames(pr)[apply(pr,1,which.max)]
+    }
+    return(pr)
+}
+
+## logLik.multinomial <- function(object,...) {
+## }
+
+##' @export
 print.multinomial <- function(x,...) {
     cat("Call: "); print(x$call)
-    cat("\nEstimates:\n")
+    cat("\nJoint probabilities:\n")
     print(x$P,quote=FALSE)
+    cat("\nConditional probabilities:\n")
+    print(predict(x,newdata=rownames(x$P)),quote=FALSE)
     cat("\n")
     print(estimate(NULL,coef=coef(x),vcov=vcov(x)))
     ## stderr <- diag(vcov(x))^.5
