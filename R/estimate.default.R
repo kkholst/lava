@@ -79,7 +79,7 @@ estimate.list <- function(x,...) {
 ##' estimate(g,"*Int*","z")
 ##' estimate(g,"1","2"-"3",null=c(0,1))
 ##' estimate(g,2,3)
-##' 
+##'
 ##' ## Usual (non-robust) confidence intervals
 ##' estimate(g,robust=FALSE)
 ##'
@@ -477,19 +477,24 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         }
     }
 
-    if (length(pp)==1) res <- rbind(c(pp,diag(V)^0.5)) else res <- cbind(pp,diag(V)^0.5)
-    beta0 <- res[,1]
-
-    if (!missing(null) && missing(contrast)) beta0 <- beta0-null
-    if (!is.null(df)) {
-        za <- qt(1-alpha/2,df=df)
-        pval <- 2*pt(abs(res[,1]/res[,2]),df=df,lower.tail=FALSE)
+    if (is.null(V)) {
+        res <- cbind(pp,NA,NA,NA,NA)
     } else {
-        za <- qnorm(1-alpha/2)
-        pval <- 2*pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)
+        if (length(pp)==1) res <- rbind(c(pp,diag(V)^0.5)) else res <- cbind(pp,diag(V)^0.5)
+        beta0 <- res[,1]
+
+        if (!missing(null) && missing(contrast)) beta0 <- beta0-null
+        if (!is.null(df)) {
+            za <- qt(1-alpha/2,df=df)
+            pval <- 2*pt(abs(res[,1]/res[,2]),df=df,lower.tail=FALSE)
+        } else {
+            za <- qnorm(1-alpha/2)
+            pval <- 2*pnorm(abs(res[,1]/res[,2]),lower.tail=FALSE)
+        }
+        res <- cbind(res,res[,1]-za*res[,2],res[,1]+za*res[,2],pval)
     }
-    res <- cbind(res,res[,1]-za*res[,2],res[,1]+za*res[,2],pval)
     colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
+
     if (!is.null(nn)) {
         rownames(res) <- nn
     } else {
