@@ -20,7 +20,7 @@
 ##'
 ##' newd <- data.frame(x=seq(0,6,length.out=50))
 ##' ## cc <- confpred(lm(y~ns(x,knots=c(1,3,5)),d),newdata=newd)
-##' cc <- confpred(lm(y~poly(x,3),d),newdata=newd)
+##' cc <- confpred(lm(y~poly(x,3),d),data=d,newdata=newd)
 ##' if (interactive()) { ##' 
 ##' plot(y~x,pch=16,col=lava::Col("black"),ylim=c(-10,15),xlab="X",ylab="Y")
 ##' with(cc,
@@ -28,7 +28,7 @@
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))
 ##' }
 ##' @export
-confpred <- function(object,data=parent.frame(),newdata=data,alpha=0.05,mad,...) { ## Split algorithm
+confpred <- function(object,data,newdata=data,alpha=0.05,mad,...) { ## Split algorithm
     if (inherits(object,"formula")) {
         object <- do.call("lm",list(object,data=data,...))
     }
