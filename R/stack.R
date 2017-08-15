@@ -25,7 +25,7 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,weights,dweights,U,k=1,keep1=FAL
     }
     if (!missing(weights) && is.function(weights)) {
         dweights <- numDeriv::jacobian(weights,coef(x))
-        weights <- Weights(coef(x))
+        weights <- weights(coef(x))
     }
     if (!missing(dweights)) {
         D2u <- Inverse(inv.D2u)        
