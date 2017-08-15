@@ -3,9 +3,12 @@
 ##'
 ##' @title Estimate probabilities in contingency table
 ##' @aliases multinomial kappa.multinomial kappa.table gkgamma
-##' @param x Matrix or data.frame with observations (1 or 2 columns)
+##' @param x Formula (or matrix or data.frame with observations, 1 or 2 columns)
+##' @param data Optional data.frame
 ##' @param marginal If TRUE the marginals are estimated
 ##' @param transform Optional transformation of parameters (e.g., logit)
+##' @param vcov Calculate asymptotic variance (default TRUE)
+##' @param iid Return iid decomposition (default TRUE)
 ##' @param ... Additional arguments to lower-level functions
 ##' @export
 ##' @examples
@@ -220,8 +223,10 @@ print.multinomial <- function(x,...) {
     cat("Call: "); print(x$call)
     cat("\nJoint probabilities:\n")
     print(x$P,quote=FALSE)
-    cat("\nConditional probabilities:\n")
-    print(predict(x,newdata=rownames(x$P)),quote=FALSE)
+    if (length(dim(x$P))>1) {
+        cat("\nConditional probabilities:\n")
+        print(predict(x,newdata=rownames(x$P)),quote=FALSE)
+    }
     cat("\n")
     print(estimate(NULL,coef=coef(x),vcov=vcov(x)))
     ## stderr <- diag(vcov(x))^.5

@@ -4,16 +4,18 @@
 \alias{confpred}
 \title{Conformal prediction}
 \usage{
-confpred(object, newdata, mad, alpha = 0.05, ...)
+confpred(object, data, newdata = data, alpha = 0.05, mad, ...)
 }
 \arguments{
-\item{object}{Model object (lm, glm or similar with predict method)}
+\item{object}{Model object (lm, glm or similar with predict method) or formula (lm)}
+
+\item{data}{data.frame}
 
 \item{newdata}{New data.frame to make predictions for}
 
-\item{mad}{Conditional model (formula) for the MAD (locally-weighted CP)}
-
 \item{alpha}{Level of prediction interval}
+
+\item{mad}{Conditional model (formula) for the MAD (locally-weighted CP)}
 
 \item{...}{Additional arguments to lower level functions}
 }
@@ -35,7 +37,7 @@ d <- data.frame(y=y,x=x)
 
 newd <- data.frame(x=seq(0,6,length.out=50))
 ## cc <- confpred(lm(y~ns(x,knots=c(1,3,5)),d),newdata=newd)
-cc <- confpred(lm(y~poly(x,3),d),newdata=newd)
+cc <- confpred(lm(y~poly(x,3),d),data=d,newdata=newd)
 if (interactive()) { ##' 
 plot(y~x,pch=16,col=lava::Col("black"),ylim=c(-10,15),xlab="X",ylab="Y")
 with(cc,

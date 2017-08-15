@@ -7,14 +7,21 @@
 \alias{gkgamma}
 \title{Estimate probabilities in contingency table}
 \usage{
-multinomial(x, marginal = FALSE, transform, ...)
+multinomial(x, data = parent.frame(), marginal = FALSE, transform,
+  vcov = TRUE, iid = TRUE, ...)
 }
 \arguments{
-\item{x}{Matrix or data.frame with observations (1 or 2 columns)}
+\item{x}{Formula (or matrix or data.frame with observations, 1 or 2 columns)}
+
+\item{data}{Optional data.frame}
 
 \item{marginal}{If TRUE the marginals are estimated}
 
 \item{transform}{Optional transformation of parameters (e.g., logit)}
+
+\item{vcov}{Calculate asymptotic variance (default TRUE)}
+
+\item{iid}{Return iid decomposition (default TRUE)}
 
 \item{...}{Additional arguments to lower-level functions}
 }
