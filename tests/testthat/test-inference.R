@@ -271,7 +271,7 @@ test_that("Prediction with missing data, random intercept", {
     system.time(e <- estimate(m0,d))
 
     mytol <- 1e-6
-    mse <- function(x,y=0) mean(na.omit(x-y)^2)
+    mse <- function(x,y=0) mean(na.omit(as.matrix(x)-as.matrix(y))^2)
     expect_true(mse(logLik(e),logLik(l))<mytol)
     expect_true(mse(nlme::fixef(l),coef(e)[1:2])<mytol)
     u1 <- nlme::ranef(l)##[[1]][,1]

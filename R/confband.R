@@ -123,7 +123,7 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
                     points(center,x,pch=16,col="white")
                 points(center,x,pch=pch,...)
             } else {
-                ##segments(center,x-centermark,center,x+centermark,...)
+                segments(center,x-centermark,center,x+centermark,...)
             }
         }
     }
