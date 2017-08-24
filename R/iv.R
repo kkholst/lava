@@ -8,10 +8,18 @@ IV_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }
 
+
 IV0_objective.lvm <- function(x,p,data,...) {
-  IV(x,data)
+  IV2(x,data,type="non-robust",...)
 }
 IV0_variance.lvm <- function(x,p,data,opt,...) {
+  opt$vcov
+}
+
+IV1_objective.lvm <- function(x,p,data,...) {
+  IV(x,data)
+}
+IV1_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }
 
@@ -74,7 +82,7 @@ varest <- function(x,data) {
 
 ## Instrumental Variable Estimator / 2SLS
 ##' @export
-IV <- function(m,data,R2thres=0,...) {
+IV <- function(m,data,R2thres=0,type="robust", ...) {
   if (length(constrain(m))>0) stop("Nonlinear constrains not supported!")
   if (inherits(m,"lvmfit")) {
       m <- Model(m)
@@ -243,7 +251,8 @@ IV <- function(m,data,R2thres=0,...) {
   theta <- list(); for (i in seq_along(Y.)) theta <- c(theta, list(ZhatLS[[i]]%*%Y.[[i]]))
   u <- c()
   for (i in seq_along(Y.))
-    u <- cbind(u, Y.[[i]]-Z.[[i]]%*%theta[[i]])
+      u <- cbind(u, Y.[[i]]-Z.[[i]]%*%theta[[i]])
+  
   covu <- crossprod(u)/nrow(u)
 
   theta.npar <- unlist(lapply(theta,length))
@@ -253,14 +262,21 @@ IV <- function(m,data,R2thres=0,...) {
     for (j in seq(i,length(theta))) {
       idx1 <- seq_len(theta.npar[i]) + theta.ncum[i]
       idx2 <- seq_len(theta.npar[j]) + theta.ncum[j]
-      uZZ <- covu[i,j]* (ZhatLS[[i]]%*%t(ZhatLS[[j]]))
+      if (type=="robust") {
+          zi <- ZhatLS[[i]]
+          for (k in seq(nrow(zi))) zi[k,] <- zi[k,]*u[,i]
+          zj <- ZhatLS[[j]]
+          for (k in seq(nrow(zj))) zj[k,] <- zj[k,]*u[,j]
+          uZZ <- zi%*%t(zj)
+      } else {
+          uZZ <- covu[i,j]* (ZhatLS[[i]]%*%t(ZhatLS[[j]]))
+      }
       vartheta[idx1,idx2] <- uZZ
       if (i!=j) {
         vartheta[idx2,idx1] <- t(uZZ)
       }
     }
   }
-
 
   parname[which(parname%in%eta.surrogate)] <- names(eta.surrogate)[which(eta.surrogate%in%parname)]
 
@@ -273,7 +289,7 @@ IV <- function(m,data,R2thres=0,...) {
 
 IV2 <- function(m,data,control=list(),...) {
   if (is.null(control$R2thres)) control$R2thres <- 0
-  res <- IV(m,data,R2thres=control$R2thres)
+  res <- IV(m,data,R2thres=control$R2thres,...)
   p <- res$estimate
   idx <- match(names(p),coef(m,mean=TRUE))
   x0 <- parfix(m,idx,p)
