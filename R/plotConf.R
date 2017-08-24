@@ -58,11 +58,12 @@
 ##' plotConf(l,var2="Species")
 ##' plotConf(l,var1="Sepal.Width",var2="Species")
 ##' 
+##' \dontrun{
 ##' ## lme4 model
 ##' dd$Id <- rbinom(n, size = 3, prob = 0.3)
-##' lmer0 <- lmer(y ~ x0 + x1*x2 + (1|Id), dd)
+##' lmer0 <- lme4::lmer(y ~ x0 + x1*x2 + (1|Id), dd)
 ##' plotConf(lmer0, var1="x1", var2="x2")
-##' 
+##' }
 ##' @keywords hplot, regression
 plotConf <- function(model,
                      var1=NULL,
@@ -109,7 +110,7 @@ plotConf <- function(model,
     }
     
     if (inherits(model,"lmerMod")) {
-      curdata0 <- lme4:::model.frame.merMod(model, data = data, fixed.only = FALSE)
+      curdata0 <- model.frame(model, data = data, fixed.only = FALSE)
     } else {
       curdata0 <- model.frame(model,data) ## Checking for factors
     }

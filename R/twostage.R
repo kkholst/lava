@@ -58,7 +58,7 @@ twostagelvm <- function(object, model2,
 ##' @param all If TRUE return additional output (naive estimates)
 ##' @param formula optional formula specifying non-linear relation
 ##' @param ... Additional arguments to lower level functions
-##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate
+##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate nonlinear nonlinear<-
 ##' @examples
 ##' m <- lvm(c(x1,x2,x3)~f1,f1~z,
 ##'          c(y1,y2,y3)~f2,f2~f1+z)
@@ -90,6 +90,41 @@ twostagelvm <- function(object, model2,
 ##' if (interactive()) {
 ##'     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
 ##'     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
+##' }
+##'
+##' ## Splines
+##' f <- function(x) cos(2*x)+x+-0.25*x^2
+##' m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
+##' functional(m, eta2~eta1) <- f
+##' d <- sim(m,500,seed=1,latent=TRUE)
+##' m1 <- lvm(x1+x2+x3~eta1,latent=~eta1)
+##' m2 <- lvm(y1+y2+y3~eta2,latent=~eta2)
+##' mm <- twostage(m1,m2,formula=eta2~eta1,type="spline")
+##' if (interactive()) plot(mm)
+##'
+##' nonlinear(m2,type="quadratic") <- eta2~eta1
+##' a <- twostage(m1,m2,data=d)
+##' if (interactive()) plot(a)
+##'
+##' kn <- c(-1,0,1)
+##' nonlinear(m2,type="spline",knots=kn,boundary=c(-4,4)) <- eta2~eta1
+##' a <- twostage(m1,m2,data=d)
+##' x <- seq(-3,3,by=0.1)
+##' y <- predict(a, newdata=x)
+##'
+##' if (interactive()) {
+##'   plot(eta2~eta1, data=d)
+##'   lines(x,y, col="red", lwd=5)
+##'
+##'   p <- estimate(a,f=function(p) predict(a,p=p,newdata=x))$coefmat
+##'   plot(eta2~eta1, data=d)
+##'   lines(x,p[,1], col="red", lwd=5)
+##'   confband(x,lower=p[,3],upper=p[,4],center=p[,1], polygon=TRUE, col=Col(2,0.2))
+##'
+##'   l1 <- lm(eta2~splines::ns(eta1,knots=kn),data=d)
+##'   p1 <- predict(l1,newdata=data.frame(eta1=x),interval="confidence")
+##'   lines(x,p1[,1],col="green",lwd=5)
+##'   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
 ##' }
 twostage.lvmfit <- function(object, model2, data=NULL,
                     predictfun=function(mu,var,data,...)
@@ -158,14 +193,14 @@ estimate.twostage.lvm <- function(x,data,...) {
     nl <- x$nonlinear
     if (!inherits(m1,"lvmfit")) {
         args <- c(list(x=m1, data=data), list(...))
-        args <- args[intersect(names(as.list(base::args("estimate.lvm"))),names(args))]
+        args <- args[intersect(names(as.list(base::args(estimate.lvm))),names(args))]
         m1 <- do.call(estimate, args)
     }
     twostage(object=m1,model2=m2,data=data,predictfun=nl[[1]]$pred,...)
 }
 
 ##' @export
-twostage.twostage.lvm <- function(x,...) estimate.twostage.lvm(x,...)
+twostage.twostage.lvm <- function(object,...) estimate.twostage.lvm(object,...)
 
 
 ##' @export
@@ -174,7 +209,7 @@ twostage.lvm <- function(object,model2,data=NULL, ...) {
         return(twostagelvm(object=object, model2=model2, model.object=TRUE, ...))
     }
     args <- c(list(x=object, data=data), list(...))
-    args <- args[intersect(names(as.list(base::args("estimate.lvm"))),names(args))]
+    args <- args[intersect(names(as.list(base::args(estimate.lvm))),names(args))]
     e1 <- do.call(estimate, args)
     twostage(object=e1,model2=model2,data=data, ...)    
 }
@@ -229,6 +264,7 @@ plot.twostage.lvm <- function(x,...) {
 }
 
 
+##' @export
 predict.twostage.lvmfit <- function(object,p=coef(object),variable=1,newdata,...) {
     if (missing(newdata)) stop("provide data for prediction")
     if (is.numeric(variable)) {
@@ -236,7 +272,7 @@ predict.twostage.lvmfit <- function(object,p=coef(object),variable=1,newdata,...
     }
     nl <- nonlinear(object)[[variable]]
     pnam <- c(variable,paste0(variable,"~",nl$newx))
-    pidx <- match(pnam,names(coef(a)))
+    pidx <- match(pnam,names(coef(object)))
     b <- p[pidx]
     F <- nl$f
     yhat <- F(b,newdata)

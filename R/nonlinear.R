@@ -5,7 +5,7 @@
 "nonlinear" <- function(object,...) UseMethod("nonlinear") 
 
 
-naturalcubicspline <- function(x, knots=median(x,na.rm=TRUE), boundary=range(x,na.rm=TRUE)) {
+naturalcubicspline <- function(x, knots=stats::median(x,na.rm=TRUE), boundary=range(x,na.rm=TRUE)) {
     ## C2 functions, piecewise cubic
     breaks <- c(boundary[1],knots,boundary[2])
     K <- length(breaks)
