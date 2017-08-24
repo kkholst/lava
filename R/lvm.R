@@ -62,13 +62,14 @@ lvm <- function(x=NULL, ..., latent=NULL, silent=lava.options()$silent) {
                     "futureinfo"=c())
 
   modelattr <- list(
-                     randomslope=list(),
-                     survival=list(),
-                     parameter=list(),
-                     categorical=list(),
-                     distribution=list(),
-                     functional=list(),
-                     label=list())
+      randomslope=list(),
+      survival=list(),
+      parameter=list(),
+      categorical=list(),
+      distribution=list(),
+      nonlinear=list(),
+      functional=list(),
+      label=list())
 
   res <- list(M=M, par=par, cov=C, covpar=C, fix=fix, covfix=fix,latent=list(),
               mean=mu, index=NULL, exogenous=NA,
