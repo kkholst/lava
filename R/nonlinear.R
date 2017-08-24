@@ -2,7 +2,7 @@
 "nonlinear<-" <- function(object,...,value) UseMethod("nonlinear<-")
 
 ##' @export
-"nonlinear" <- function(object,...) UseMethod("nonlinear") 
+"nonlinear" <- function(object,...) UseMethod("nonlinear")
 
 
 naturalcubicspline <- function(x, knots=stats::median(x,na.rm=TRUE), boundary=range(x,na.rm=TRUE)) {
@@ -26,7 +26,7 @@ naturalcubicspline <- function(x, knots=stats::median(x,na.rm=TRUE), boundary=ra
 ncspred <- function(mu, var, knots=0, boundary=c(-10,10)) {
     breaks <- c(boundary[1],knots,boundary[2])
     K <- length(breaks)
-    
+
     v <- as.vector(var)
     k <- sqrt(v/(2*pi))
     g <- function(x,tau) {
@@ -47,7 +47,7 @@ ncspred <- function(mu, var, knots=0, boundary=c(-10,10)) {
             (breaks[K]-breaks[i])/(breaks[K]-breaks[K-1])*gg[,K-1] +
             (breaks[K-1]-breaks[i])/(breaks[K]-breaks[K-1])*gg[,K]
     }
-    cbind(mu,B)    
+    cbind(mu,B)
 }
 
 
@@ -67,16 +67,27 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=0, b
     newx <- from
     object <- cancel(object, c(from,to))
     newx <- f <- pred <- NULL
-    if (tolower(type)[1]=="quadratic") {        
+
+    if (tolower(type)[1]=="quadratic") {
         newx <- paste0(from,"_",1:2)
-        f <- function(p,x) p[1]+p[2]*x+p[3]*(x*x)        
+        f <- function(p,x) p[1] + p[2]*x + p[3]*(x*x)
         pred <- function(mu,var,data,...) {
             structure(cbind(mu[,1],mu[,1]^2+var[1]),dimnames=list(NULL,newx))
-        }        
+        }
     }
+
     if (tolower(type)[1]%in%c("piecewise","piecewise linear","linear")) {
         if (is.null(knots)) stop("Need cut-points ('knots')")
-    }    
+    }
+
+    if (tolower(type)[1]%in%c("exp","exponential")) {
+        newx <- paste0(from,"_",1)
+        f <- function(p,x) p[1] + p[2]*exp(x)
+        pred <- function(mu,var,...) {
+            structure(cbind(exp(0.5*var[1] + mu[,1])),dimnames=list(NULL,newx))
+        }
+    }
+
     if (tolower(type)[1]%in%c("ncs","spline","naturalspline","cubicspline","natural cubic spline")) {
         if (is.null(knots)) stop("Need cut-points ('knots')")
         newx <- paste0(from,"_",seq(length(knots)+1))
@@ -88,10 +99,10 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=0, b
         pred <- function(mu,var,data,...) {
             B <- ncspred(mu,var,knots=knots,boundary=boundary)
             structure(B,dimnames=list(NULL,newx))
-        }        
+        }
     }
     object$attributes$nonlinear[[to]] <- list(x=from, p=length(newx)+1, newx=newx, f=f, pred=pred, type=tolower(type[1]))
-    return(object)    
+    return(object)
 }
 
 ##' @export
@@ -100,7 +111,7 @@ nonlinear.lvmfit <- function(object, to, ...) {
         return(Model(object)$attributes$nonlinear)
     }
     Model(object) <- nonlinear(Model(object),to=to,...)
-    return(object)    
+    return(object)
 }
 
 ##' @export
