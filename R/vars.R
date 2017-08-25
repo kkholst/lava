@@ -97,3 +97,9 @@ vars.list <- function(x,...) {
   varlist <- unique(varlist)
   return(varlist)
 }
+
+##' @export
+`vars.lm` <-
+  function(x,...) {
+    c(endogenous(x),exogenous(x))
+  }

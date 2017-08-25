@@ -43,3 +43,9 @@ endogenous.list <- function(x,...) {
 function(x,...) {
   endogenous(Model(x))
 }
+
+##' @export
+`endogenous.lm` <-
+function(x,...) {
+  getoutcome(formula(x))[1]
+}

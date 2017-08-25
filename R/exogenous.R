@@ -83,3 +83,9 @@ exogenous.list <- function(x,...) {
 function(x,...) {
   exogenous(Model(x))
 }
+
+##' @export
+`exogenous.lm` <-
+function(x,...) {
+  attr(getoutcome(formula(x)),"x")
+}
