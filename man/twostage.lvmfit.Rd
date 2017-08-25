@@ -31,6 +31,8 @@
 
 \item{formula}{optional formula specifying non-linear relation}
 
+\item{stderr}{If FALSE calculations of standard errors will be skipped}
+
 \item{...}{Additional arguments to lower level functions}
 }
 \description{

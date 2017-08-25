@@ -38,7 +38,8 @@ twostagelvm <- function(object, model2,
 
 ##' Two-stage estimator
 ##'
-##' Generic function
+##' Generic function. 
+##' 
 ##' @seealso twostage.lvm twostage.lvmfit twostage.lvm.mixture twostage.estimate
 ##' @export
 ##' @param object Model object
@@ -57,6 +58,7 @@ twostagelvm <- function(object, model2,
 ##' @param id2 Optional id-variable (stage 2 model)
 ##' @param all If TRUE return additional output (naive estimates)
 ##' @param formula optional formula specifying non-linear relation
+##' @param stderr If FALSE calculations of standard errors will be skipped
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate nonlinear nonlinear<-
 ##' @examples

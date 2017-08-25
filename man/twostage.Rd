@@ -12,7 +12,7 @@ twostage(object, ...)
 \item{...}{Additional arguments to lower level functions}
 }
 \description{
-Generic function
+Generic function.
 }
 \seealso{
 twostage.lvm twostage.lvmfit twostage.lvm.mixture twostage.estimate

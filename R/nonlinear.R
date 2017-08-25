@@ -71,7 +71,7 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5
     if (tolower(type)[1]=="quadratic") {
         newx <- paste0(from,"_",1:2)
         f <- function(p,x) p[1] + p[2]*x + p[3]*(x*x)
-        pred <- function(mu,var,data,...) {
+        pred <- function(mu,var,...) {
             structure(cbind(mu[,1],mu[,1]^2+var[1]),dimnames=list(NULL,newx))
         }
     }
@@ -96,7 +96,7 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5
             colnames(B) <- c("(Intercept)",newx)
             as.vector(B%*%p)
         }
-        pred <- function(mu,var,data,...) {
+        pred <- function(mu,var,...) {
             B <- ncspred(mu,var,knots=knots)
             structure(B,dimnames=list(NULL,newx))
         }
