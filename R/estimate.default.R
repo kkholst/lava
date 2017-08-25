@@ -218,7 +218,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
-    if (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE)) { ## If user supplied vcov, then don't estimate IC
+    if (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1]))) { ## If user supplied vcov, then don't estimate IC
         if (missing(score.deriv)) {
             if (!is.logical(iid)) {
                 iidtheta <- iid
@@ -230,7 +230,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv,folds=folds))
         }
     } else {
-        if (is.logical(vcov)) vcov <- vcov(x)
+        if (is.logical(vcov) && !is.na(vcov)[1]) vcov <- stats::vcov(x)
         iidtheta <- NULL
     }
 
@@ -335,6 +335,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         }
     } else {
         if (!missing(vcov)) {
+            if (length(vcov)==1 && is.na(vcov)) vcov <- matrix(NA,length(pp),length(pp))
             V <- vcov
         } else {
             V <- stats::vcov(x)
