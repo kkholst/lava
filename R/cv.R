@@ -66,6 +66,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, ...) {
               class="CrossValidated")
 }
 
+##' @export
 print.CrossValidated <- function(x,...) {
     ##print(drop(x$cv))
     print(apply(x$cv,3:4,function(x) mean(x)),quote=FALSE)
