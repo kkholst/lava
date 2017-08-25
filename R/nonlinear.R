@@ -23,8 +23,8 @@ naturalcubicspline <- function(x, knots=stats::median(x,na.rm=TRUE), boundary=ra
     cbind(x,B)
 }
 
-ncspred <- function(mu, var, knots=0, boundary=c(-10,10)) {
-    breaks <- c(boundary[1],knots,boundary[2])
+ncspred <- function(mu, var, knots=c(-5,0,5)) {
+    breaks <- knots
     K <- length(breaks)
 
     v <- as.vector(var)
@@ -52,7 +52,7 @@ ncspred <- function(mu, var, knots=0, boundary=c(-10,10)) {
 
 
 ##' @export
-nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=0, boundary=c(-10,10), ...) {
+nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5,0,5), ...) {
     if (missing(to)) {
         return(object$attributes$nonlinear)
     }
@@ -90,14 +90,14 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=0, b
 
     if (tolower(type)[1]%in%c("ncs","spline","naturalspline","cubicspline","natural cubic spline")) {
         if (is.null(knots)) stop("Need cut-points ('knots')")
-        newx <- paste0(from,"_",seq(length(knots)+1))
+        newx <- paste0(from,"_",seq(length(knots)-1))
         f <- function(p,x) {
-            B <- cbind(1,naturalcubicspline(x,knots=knots,boundary=boundary))
+            B <- cbind(1,naturalcubicspline(x,knots=knots[-c(1,length(knots))],boundary=knots[c(1,length(knots))]))
             colnames(B) <- c("(Intercept)",newx)
             as.vector(B%*%p)
         }
         pred <- function(mu,var,data,...) {
-            B <- ncspred(mu,var,knots=knots,boundary=boundary)
+            B <- ncspred(mu,var,knots=knots)
             structure(B,dimnames=list(NULL,newx))
         }
     }
