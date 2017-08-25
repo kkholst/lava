@@ -130,7 +130,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
                     predictfun=function(mu,var,data,...)
                         cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
                     id1=NULL, id2=NULL, all=FALSE,
-                    formula=NULL, ...) {
+                    formula=NULL, stderr=TRUE, ...) {
     val <- twostagelvm(object=object,model2=model2,predictfun=predictfun,
                       id1=id1, id2=id2, all=all, formula=formula, ...)
     object <- val$object
@@ -152,35 +152,45 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     newd[,colnames(pp)] <- pp
     model2 <- estimate(model2,data=newd,...)
     p2 <- coef(model2)
-    if (is.null(id1)) id1 <- seq(nrow(model.frame(object)))
-    if (is.null(id2)) id2 <- seq(nrow(model.frame(model2)))
-    model1 <- object
-    if (!inherits(object,"estimate")) {
-        model1 <- estimate(NULL,coef=p1,id=id1,iid=iid(object))
-    }
-    e2 <- estimate(model2, id=id2)
-    U <- function(alpha=p1,beta=p2) {
-        pp <- uhat(alpha)
-        newd <- model.frame(model2)
-        newd[,colnames(pp)] <- pp
-        score(model2,p=beta,data=newd)
-    }
-    Ia <- -numDeriv::jacobian(function(p) U(p),p1)
-    stacked <- stack(model1,e2,Ia)
 
+    if (stderr) {
+        if (is.null(id1)) id1 <- seq(nrow(model.frame(object)))
+        if (is.null(id2)) id2 <- seq(nrow(model.frame(model2)))
+        model1 <- object
+        if (!inherits(object,"estimate")) {
+            model1 <- estimate(NULL,coef=p1,id=id1,iid=iid(object))
+        }
+    
+        e2 <- estimate(model2, id=id2)
+        U <- function(alpha=p1,beta=p2) {
+            pp <- uhat(alpha)
+            newd <- model.frame(model2)
+            newd[,colnames(pp)] <- pp
+            score(model2,p=beta,data=newd)
+        }
+        Ia <- -numDeriv::jacobian(function(p) U(p),p1)
+        stacked <- stack(model1,e2,Ia)        
+    } else {
+        e2 <- estimate(coef=p2,vcov=NA)
+    }
     coef <- model2$coef
     res <- model2
-    res[names(stacked)] <- stacked
     res$estimator <- "generic"
-    cc <- stacked$coefmat[,c(1,2)];
-    cc <- cbind(cc,cc[,1]/cc[,2],stacked$coefmat[,5])
-    coef[,] <- cc
-    res$coef <- coef
-    res$fun <- predictfun
-    if (all) {
-        res$naive <- model2
-        res$naive.robust <- e2
+
+    if (stderr) {
+        res[names(stacked)] <- stacked
+        cc <- stacked$coefmat[,c(1,2)];
+        cc <- cbind(cc,cc[,1]/cc[,2],stacked$coefmat[,5])
+        coef[,] <- cc
+        res$coef <- coef
+        if (all) {
+            res$naive <- model2
+            res$naive.robust <- e2
+        }
     }
+    res$fun <- predictfun
+    res$estimate1 <- object
+    res$estimate2 <- model2
     res$nonlinear <- val$nonlinear
     structure(res,class=c("twostage.lvmfit","measurement.error","lvmfit","estimate"))
 }
