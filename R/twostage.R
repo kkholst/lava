@@ -10,14 +10,21 @@ twostagelvm <- function(object, model2,
     if (length(nonlinear(object))>0) {
         val <- nonlinear(object)
     }
+    xnam <- c()
     if (length(val)>0) {
-        predictfun <- val[[1]]$pred
-        model2$attributes$nonlinear <- NULL
-        if (inherits(object,"lvmfit")) {
-            object$model$attributes$nonlinear <- NULL
+        predictfun <- NULL
+        for (i in seq_along(val)) {
+            if (!all(val[[i]]$newx%in%xnam)) {
+                xnam <- union(xnam,val[[i]]$newx)
+                predictfun <- c(predictfun, list(val[[i]]$pred))
+            }
+            model2$attributes$nonlinear <- NULL
+            if (inherits(object,"lvmfit")) {
+                object$model$attributes$nonlinear <- NULL
+            }
+            model2 <- regression(model2, to=names(val)[i], from=val[[i]]$newx)
         }
-        model2 <- regression(model2, to=names(val)[1], from=val[[1]]$newx)
-        nonlin <- val[1]
+        nonlin <- val
     }
     if (model.object) {
         model <- Model(object) %++% model2
@@ -33,6 +40,29 @@ twostagelvm <- function(object, model2,
     res$predictfun <- predictfun
     res$nonlinear <- val
     return(res)
+}
+
+
+uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
+    unams <- lapply(nlobj,function(x) x$newx)
+    predictfun <- lapply(nlobj, function(x) x$pred)
+    unam <- unique(unlist(unams))
+    if (inherits(model1, "lvm.mixture")) {
+        Pr <- predict(model1, p=p, data=data)
+        P <- list(mean=Pr, var=attr(Pr,"cond.var"))
+    }  else {
+        P <- predictlvm(model1, p=p, data=data)
+    }
+    if (is.list(predictfun)) {
+        args <- list(P$mean, P$var, data)
+        res <- matrix(0, NROW(data), ncol=length(unam))
+        colnames(res) <- unam
+        for (i in seq_along(predictfun)) {
+            res[, unams[[i]]] <- do.call(predictfun[[i]], args)
+        }
+        return(res)
+    }
+    return(cbind(predictfun(P$mean, P$var, model.frame(model1))))
 }
 
 
@@ -77,7 +107,7 @@ twostagelvm <- function(object, model2,
 ##' pp1 <- predict(e1,f1~x1+x2+x3)
 ##'
 ##' d$u1 <- pp1[,]
-##' d$u2 <- pp1[,]^2+attr(pp1,"cond.var")
+##' d$u2 <- pp1[,]^2+attr(pp1,"cond.var")[1]
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' e2 <- estimate(m2,d)
 ##' }
@@ -102,17 +132,17 @@ twostagelvm <- function(object, model2,
 ##' m1 <- lvm(x1+x2+x3~eta1,latent=~eta1)
 ##' m2 <- lvm(y1+y2+y3~eta2,latent=~eta2)
 ##' mm <- twostage(m1,m2,formula=eta2~eta1,type="spline")
-##' if (interactive()) plot(mm)
+ ##' if (interactive()) plot(mm)
 ##'
 ##' nonlinear(m2,type="quadratic") <- eta2~eta1
 ##' a <- twostage(m1,m2,data=d)
 ##' if (interactive()) plot(a)
 ##'
 ##' kn <- c(-1,0,1)
-##' nonlinear(m2,type="spline",knots=kn,boundary=c(-4,4)) <- eta2~eta1
+##' nonlinear(m2,type="spline",knots=kn) <- eta2~eta1
 ##' a <- twostage(m1,m2,data=d)
 ##' x <- seq(-3,3,by=0.1)
-##' y <- predict(a, newdata=x)
+##' y <- predict(a, newdata=data.frame(eta1=x))
 ##'
 ##' if (interactive()) {
 ##'   plot(eta2~eta1, data=d)
@@ -132,29 +162,21 @@ twostage.lvmfit <- function(object, model2, data=NULL,
                     predictfun=function(mu,var,data,...)
                         cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
                     id1=NULL, id2=NULL, all=FALSE,
-                    formula=NULL, stderr=TRUE, ...) {
+                    formula=NULL, stderr=TRUE,
+                    ...) {
     val <- twostagelvm(object=object,model2=model2,predictfun=predictfun,
                       id1=id1, id2=id2, all=all, formula=formula, ...)
     object <- val$object
     model2 <- val$model2
     predictfun <- val$predictfun
     p1 <- coef(object)
-    uhat <- function(p=p1) {
-        if (inherits(object,"lvm.mixture")) {
-            Pr <- predict(object,p=p)
-            P <- list(mean=Pr,var=attr(Pr,"cond.var"))
-        }  else {
-            P <- predictlvm(object,p=p,data=model.frame(object))
-        }
-        return(cbind(predictfun(P$mean,P$var,model.frame(object))))
-    }
 
-    pp <- uhat()
+    pp <- uhat(p1,object,nlobj=val$nonlinear)
     newd <- data
     newd[,colnames(pp)] <- pp
+
     model2 <- estimate(model2,data=newd,...)
     p2 <- coef(model2)
-
     if (stderr) {
         if (is.null(id1)) id1 <- seq(nrow(model.frame(object)))
         if (is.null(id2)) id2 <- seq(nrow(model.frame(model2)))
@@ -165,7 +187,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     
         e2 <- estimate(model2, id=id2)
         U <- function(alpha=p1,beta=p2) {
-            pp <- uhat(alpha)
+            pp <- uhat(alpha,object,nlobj=val$nonlinear)
             newd <- model.frame(model2)
             newd[,colnames(pp)] <- pp
             score(model2,p=beta,data=newd)
@@ -182,13 +204,16 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     if (stderr) {
         res[names(stacked)] <- stacked
         cc <- stacked$coefmat[,c(1,2)];
-        cc <- cbind(cc,cc[,1]/cc[,2],stacked$coefmat[,5])
+        cc <- cbind(cc,cc[,1]/cc[,2],stacked$coefmat[,5])        
         coef[,] <- cc
         res$coef <- coef
+        res$vcov <- vcov(stacked)
         if (all) {
             res$naive <- model2
             res$naive.robust <- e2
         }
+    } else {
+        res$coef[,-1] <- NA
     }
     res$fun <- predictfun
     res$estimate1 <- object
@@ -208,6 +233,7 @@ estimate.twostage.lvm <- function(x,data,...) {
         args <- args[intersect(names(as.list(base::args(estimate.lvm))),names(args))]
         m1 <- do.call(estimate, args)
     }
+    m2$attributes$nonlinear <- nl
     twostage(object=m1,model2=m2,data=data,predictfun=nl[[1]]$pred,...)
 }
 
@@ -277,16 +303,50 @@ plot.twostage.lvm <- function(x,...) {
 
 
 ##' @export
-predict.twostage.lvmfit <- function(object,p=coef(object),variable=1,newdata,...) {
+predict.twostage.lvmfit <- function(object,
+                            newdata,
+                            variable=names(nonlinear(object)),
+                            p=coef(object),
+                            type=c("model2","latent"),
+                            ...) {
     if (missing(newdata)) stop("provide data for prediction")
+    nl <- nonlinear(object)
+    unam <- unique(unlist(lapply(nl,function(x) x$x)))
+    if (is.vector(newdata) || all(colnames(newdata)%in%unam))
+        type <- "latent"
+    if (tolower(type[1])%ni%c("latent")) {
+        p1 <- coef(object$estimate1)
+        pred1 <- uhat(p1, data=newdata, object$estimate1, nlobj=nl)
+        if (tolower(type[1])==c("model1"))
+            return(pred1)
+        newdata <- as.data.frame(newdata)
+        newdata[,colnames(pred1)] <- pred1
+        pred <- predict(object$estimate2,...,p=p,data=newdata)
+        attr(pred,"p") <- NULL
+        attr(pred,"e") <- NULL
+        return(pred)
+    }
+
+    ## Association between predicted latent variables and child nodes:
     if (is.numeric(variable)) {
         variable <- names(nonlinear(object))[variable]
     }
-    nl <- nonlinear(object)[[variable]]
-    pnam <- c(variable,paste0(variable,"~",nl$newx))
-    pidx <- match(pnam,names(coef(object)))
-    b <- p[pidx]
-    F <- nl$f
-    yhat <- F(b,newdata)
-    return(yhat)
+    nl <- nl[variable]
+    res <- matrix(nrow=NROW(newdata),ncol=length(nl))
+    colnames(res) <- names(nl)
+    ##unam <- unique(unlist(lapply(nl, function(x) x$newx)))
+    #colnames(res) <- unam
+    for (i in seq_along(nl)) {
+        pnam <- c(variable,paste0(variable,"~",nl[[i]]$newx))
+        pidx <- match(pnam,names(coef(object)))
+        b <- p[pidx]
+        F <- nl[[i]]$f
+        if (is.vector(newdata)) {
+            res[,i] <- F(b,newdata)
+        } else {
+            res[,i] <- F(b,newdata[,nl[[i]]$x])
+        }       
+    }
+    return(res)
 }
+

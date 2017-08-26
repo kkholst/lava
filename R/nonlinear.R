@@ -4,7 +4,6 @@
 ##' @export
 "nonlinear" <- function(object,...) UseMethod("nonlinear")
 
-
 naturalcubicspline <- function(x, knots=stats::median(x,na.rm=TRUE), boundary=range(x,na.rm=TRUE)) {
     ## C2 functions, piecewise cubic
     breaks <- c(boundary[1],knots,boundary[2])
@@ -52,7 +51,7 @@ ncspred <- function(mu, var, knots=c(-5,0,5)) {
 
 
 ##' @export
-nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5,0,5), ...) {
+nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5,0,5), names, ...) {
     if (missing(to)) {
         return(object$attributes$nonlinear)
     }
@@ -64,15 +63,43 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5
     }
     if (length(to)>1) stop("Supply only one response variable")
     if (length(from)>1) stop("Supply only one explanatory variable")
-    newx <- from
     object <- cancel(object, c(from,to))
-    newx <- f <- pred <- NULL
+    variance(object) <- to
+    f <- pred <- NULL
 
+    if (tolower(type)[1]%in%c("ncs","spline","naturalspline","cubicspline","natural cubic spline")) {
+        if (is.null(knots)) stop("Need cut-points ('knots')")
+        if (length(knots)<3) {
+            warning("Supply at least three knots (one interior and boundaries)")
+            ## Fall-back to linear
+            type <- "linear"
+        }
+        if (missing(names)) names <- paste0(from,"_",seq(length(knots)-1))
+        f <- function(p,x) {
+            B <- cbind(1,naturalcubicspline(x,knots=knots[-c(1,length(knots))],boundary=knots[c(1,length(knots))]))
+            colnames(B) <- c("(Intercept)",names)
+            as.vector(B%*%p)
+        }
+        pred <- function(mu,var,...) {
+            B <- ncspred(mu,var,knots=knots)
+            structure(B,dimnames=list(NULL,names))
+        }
+    }
+
+    
+    if (tolower(type)[1]=="linear") {
+        if (missing(names)) names <- from
+        f <- function(p,x) p[1] + p[2]*x
+        pred <- function(mu,var,...) {            
+            structure(cbind(mu[,1]),dimnames=list(NULL,names))
+        }
+    }
+    
     if (tolower(type)[1]=="quadratic") {
-        newx <- paste0(from,"_",1:2)
+        if (missing(names)) names <- paste0(from,"_",1:2)
         f <- function(p,x) p[1] + p[2]*x + p[3]*(x*x)
         pred <- function(mu,var,...) {
-            structure(cbind(mu[,1],mu[,1]^2+var[1]),dimnames=list(NULL,newx))
+            structure(cbind(mu[,1],mu[,1]^2+var[1]),dimnames=list(NULL,names))
         }
     }
 
@@ -81,27 +108,14 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5
     }
 
     if (tolower(type)[1]%in%c("exp","exponential")) {
-        newx <- paste0(from,"_",1)
+        if (missing(names)) names <- paste0(from,"_",1)
         f <- function(p,x) p[1] + p[2]*exp(x)
         pred <- function(mu,var,...) {
-            structure(cbind(exp(0.5*var[1] + mu[,1])),dimnames=list(NULL,newx))
+            structure(cbind(exp(0.5*var[1] + mu[,1])),dimnames=list(NULL,names))
         }
     }
 
-    if (tolower(type)[1]%in%c("ncs","spline","naturalspline","cubicspline","natural cubic spline")) {
-        if (is.null(knots)) stop("Need cut-points ('knots')")
-        newx <- paste0(from,"_",seq(length(knots)-1))
-        f <- function(p,x) {
-            B <- cbind(1,naturalcubicspline(x,knots=knots[-c(1,length(knots))],boundary=knots[c(1,length(knots))]))
-            colnames(B) <- c("(Intercept)",newx)
-            as.vector(B%*%p)
-        }
-        pred <- function(mu,var,...) {
-            B <- ncspred(mu,var,knots=knots)
-            structure(B,dimnames=list(NULL,newx))
-        }
-    }
-    object$attributes$nonlinear[[to]] <- list(x=from, p=length(newx)+1, newx=newx, f=f, pred=pred, type=tolower(type[1]))
+    object$attributes$nonlinear[[to]] <- list(x=from, p=length(names)+1, newx=names, f=f, pred=pred, type=tolower(type[1]))
     return(object)
 }
 

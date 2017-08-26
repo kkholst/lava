@@ -2,7 +2,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
     yhat <- predict(fit,newdata=data)
     if (is.null(response)) response <- endogenous(fit)
     y <- data[,response]
-    c(RMSE=mean((y-yhat)^2))
+    c(RMSE=mean(as.matrix(y-yhat)^2))
 }
 
 ##' Cross-validation

@@ -54,7 +54,7 @@ e1 <- estimate(m1,d)
 pp1 <- predict(e1,f1~x1+x2+x3)
 
 d$u1 <- pp1[,]
-d$u2 <- pp1[,]^2+attr(pp1,"cond.var")
+d$u2 <- pp1[,]^2+attr(pp1,"cond.var")[1]
 m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 e2 <- estimate(m2,d)
 }
@@ -86,10 +86,10 @@ a <- twostage(m1,m2,data=d)
 if (interactive()) plot(a)
 
 kn <- c(-1,0,1)
-nonlinear(m2,type="spline",knots=kn,boundary=c(-4,4)) <- eta2~eta1
+nonlinear(m2,type="spline",knots=kn) <- eta2~eta1
 a <- twostage(m1,m2,data=d)
 x <- seq(-3,3,by=0.1)
-y <- predict(a, newdata=x)
+y <- predict(a, newdata=data.frame(eta1=x))
 
 if (interactive()) {
   plot(eta2~eta1, data=d)
