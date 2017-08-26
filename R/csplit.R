@@ -7,10 +7,12 @@
 ##' @param return.index If TRUE index of folds are returned otherwise the actual data splits are returned (default)
 ##' @param ... additional arguments to lower level functions
 ##' @export
+##' @seealso foldr
 ##' @examples
+##' foldsr(5,2,rep=2)
 ##' csplit(10,3)
 ##' csplit(iris[1:10,]) ## Split in two sets 1:(n/2) and (n/2+1):n
-##' csplit(iris[1:10,],0.5) 
+##' csplit(iris[1:10,],0.5)
 ##' @author Klaus K. Holst
 csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,...) {
     if (length(x)==1 & is.numeric(x)) x <- seq(x)
@@ -35,4 +37,9 @@ csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,...) {
         return(lapply(idx,function(ii) x[ii,,drop=FALSE]))
     }
     return(lapply(idx,function(ii) x[ii]))
+}
+
+##' @export
+foldsr <- function(n,K=5,rep=10) {    
+    replicate(rep,split(sample(seq(n)), rep(seq(K), length=n)),simplify=FALSE)
 }

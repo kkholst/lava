@@ -24,7 +24,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
 ##' x <- cv(list(model0=f0,model1=f1,model2=f2),rep=10, data=iris, formula=Sepal.Length~.)
 ##' @export 
-cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, ...) {
+cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
     nam <- names(modelList)
@@ -45,20 +45,37 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, ...) {
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
 
+
+    
     nam <- list(NULL,NULL,nam,namPerf)
     dim <- c(rep,K,M,P)
     PerfArr <- array(0,dim)
     dimnames(PerfArr) <- nam
-    for (j in seq(rep)) {
-        fold <- csplit(n,K)
-        for (i in seq(K)) {
-            dtest <- data[fold[[i]],]
-            dtrain <- data[unlist(fold[-i]),]
-            fits <- lapply(modelList, function(f) do.call(f,c(list(dtrain),args)))
-            perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
-            PerfArr[j,i,,] <- Reduce(rbind,perfs)
-        }
+
+    folds <- foldsr(n,K,rep)
+    arg <- expand.grid(R=seq(rep),K=seq(K)) #,M=seq_along(modelList))
+
+    ff <- function(i) {
+        R <- arg[i,1]
+        k <- arg[i,2]
+        fold <- folds[[R]]
+        dtest <- data[fold[[k]],]
+        dtrain <- data[unlist(fold[-k]),]
+        fits <- lapply(modelList, function(f) do.call(f,c(list(dtrain),args)))
+        perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
+        Reduce(rbind,perfs)        
     }
+    if (mc.cores>1) {
+        val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
+    } else {
+        val <- mapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
+    }
+    for (i in seq(nrow(arg))) {
+        R <- arg[i,1]
+        k <- arg[i,2]
+        PerfArr[R,k,,] <- val[[i]]
+    }
+    
     structure(list(cv=PerfArr,                   
                    call=match.call(),
                    rep=rep, folds=K,
