@@ -10,9 +10,9 @@
 \title{Two-stage estimator (non-linear SEM)}
 \usage{
 \method{twostage}{lvmfit}(object, model2, data = NULL,
-  predictfun = function(mu, var, data, ...) cbind(u1 = mu[, 1], u2 = mu[, 1]^2
-  + var[1]), id1 = NULL, id2 = NULL, all = FALSE, formula = NULL,
-  stderr = TRUE, ...)
+  predict.fun = function(mu, var, data, ...) cbind(u1 = mu[, 1], u2 = mu[,
+  1]^2 + var[1]), id1 = NULL, id2 = NULL, all = FALSE, formula = NULL,
+  std.err = TRUE, ...)
 }
 \arguments{
 \item{object}{Stage 1 measurement model}
@@ -21,7 +21,7 @@
 
 \item{data}{data.frame}
 
-\item{predictfun}{Prediction of latent variable}
+\item{predict.fun}{Prediction of latent variable}
 
 \item{id1}{Optional id-variable (stage 1 model)}
 
@@ -31,7 +31,7 @@
 
 \item{formula}{optional formula specifying non-linear relation}
 
-\item{stderr}{If FALSE calculations of standard errors will be skipped}
+\item{std.err}{If FALSE calculations of standard errors will be skipped}
 
 \item{...}{Additional arguments to lower level functions}
 }
@@ -64,7 +64,7 @@ m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 pred <- function(mu,var,data,...)
     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
-(mm <- twostage(m1,model2=m2,data=d,predictfun=pred))
+(mm <- twostage(m1,model2=m2,data=d,predict.fun=pred))
 
 if (interactive()) {
     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
@@ -104,5 +104,23 @@ if (interactive()) {
   p1 <- predict(l1,newdata=data.frame(eta1=x),interval="confidence")
   lines(x,p1[,1],col="green",lwd=5)
   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
+}
+
+\dontrun{ ## Reduce timing
+ ## Cross-validation example
+ ma <- lvm(c(x1,x2,x3)~u,latent=~u)
+ ms <- functional(ms, y~u, f=function(x) -.4*x^2)
+ d <- sim(ms,500)#,seed=1)
+ ea <- estimate(ma,d)
+
+ mb <- lvm()
+ mb1 <- nonlinear(mb,type="linear",y~u)
+ mb2 <- nonlinear(mb,type="quadratic",y~u)
+ mb3 <- nonlinear(mb,type="spline",knots=c(-3,-1,0,1,3),y~u)
+ mb4 <- nonlinear(mb,type="spline",knots=c(-3,-2,-1,0,1,2,3),y~u)
+ ff <- lapply(list(mb1,mb2,mb3,mb4),
+      function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
+ a <- cv(ff,data=d,rep=1,mc.cores=1)
+ a
 }
 }

@@ -1,5 +1,5 @@
 twostagelvm <- function(object, model2, 
-                formula=NULL, model.object=FALSE, predictfun=NULL,
+                formula=NULL, model.object=FALSE, predict.fun=NULL,
                 type="quadratic",...) {
     if (!inherits(model2,c("lvm"))) stop("Expected lava object ('lvm',...)")
     if (!is.null(formula)) {
@@ -7,16 +7,16 @@ twostagelvm <- function(object, model2,
     }
     nonlin <- NULL
     val <- nonlinear(model2)
-    if (length(nonlinear(object))>0) {
+    if (is.null(formula) && length(val)==0 && length(nonlinear(object))>0) {
         val <- nonlinear(object)
     }
     xnam <- c()
     if (length(val)>0) {
-        predictfun <- NULL
+        predict.fun <- NULL
         for (i in seq_along(val)) {
             if (!all(val[[i]]$newx%in%xnam)) {
                 xnam <- union(xnam,val[[i]]$newx)
-                predictfun <- c(predictfun, list(val[[i]]$pred))
+                predict.fun <- c(predict.fun, list(val[[i]]$pred))
             }
             model2$attributes$nonlinear <- NULL
             if (inherits(object,"lvmfit")) {
@@ -32,12 +32,12 @@ twostagelvm <- function(object, model2,
         cl[[1]] <- twostage
         cl$object <- object
         cl$model2 <- model2
-        cl$predictfun <- predictfun
+        cl$predict.fun <- predict.fun
         cl["model.object"] <- NULL
         return(structure(list(model=model, nonlinear=nonlin, call=cl), class="twostage.lvm"))
     }
     res <- c(list(object=object, model2=model2), list(...))
-    res$predictfun <- predictfun
+    res$predict.fun <- predict.fun
     res$nonlinear <- val
     return(res)
 }
@@ -45,7 +45,7 @@ twostagelvm <- function(object, model2,
 
 uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
     unams <- lapply(nlobj,function(x) x$newx)
-    predictfun <- lapply(nlobj, function(x) x$pred)
+    predict.fun <- lapply(nlobj, function(x) x$pred)
     unam <- unique(unlist(unams))
     if (inherits(model1, "lvm.mixture")) {
         Pr <- predict(model1, p=p, data=data)
@@ -53,16 +53,16 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
     }  else {
         P <- predictlvm(model1, p=p, data=data)
     }
-    if (is.list(predictfun)) {
+    if (is.list(predict.fun)) {
         args <- list(P$mean, P$var, data)
         res <- matrix(0, NROW(data), ncol=length(unam))
         colnames(res) <- unam
-        for (i in seq_along(predictfun)) {
-            res[, unams[[i]]] <- do.call(predictfun[[i]], args)
+        for (i in seq_along(predict.fun)) {
+            res[, unams[[i]]] <- do.call(predict.fun[[i]], args)
         }
         return(res)
     }
-    return(cbind(predictfun(P$mean, P$var, model.frame(model1))))
+    return(cbind(predict.fun(P$mean, P$var, model.frame(model1))))
 }
 
 
@@ -83,12 +83,12 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' @param object Stage 1 measurement model
 ##' @param model2 Stage 2 SEM
 ##' @param data data.frame
-##' @param predictfun Prediction of latent variable
+##' @param predict.fun Prediction of latent variable
 ##' @param id1 Optional id-variable (stage 1 model)
 ##' @param id2 Optional id-variable (stage 2 model)
 ##' @param all If TRUE return additional output (naive estimates)
 ##' @param formula optional formula specifying non-linear relation
-##' @param stderr If FALSE calculations of standard errors will be skipped
+##' @param std.err If FALSE calculations of standard errors will be skipped
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate nonlinear nonlinear<-
 ##' @examples
@@ -117,7 +117,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' pred <- function(mu,var,data,...)
 ##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
-##' (mm <- twostage(m1,model2=m2,data=d,predictfun=pred))
+##' (mm <- twostage(m1,model2=m2,data=d,predict.fun=pred))
 ##'
 ##' if (interactive()) {
 ##'     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
@@ -158,17 +158,35 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##'   lines(x,p1[,1],col="green",lwd=5)
 ##'   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
 ##' }
+##'
+##' \dontrun{ ## Reduce timing
+##'  ## Cross-validation example
+##'  ma <- lvm(c(x1,x2,x3)~u,latent=~u)
+##'  ms <- functional(ms, y~u, f=function(x) -.4*x^2)
+##'  d <- sim(ms,500)#,seed=1)
+##'  ea <- estimate(ma,d)
+##'
+##'  mb <- lvm()
+##'  mb1 <- nonlinear(mb,type="linear",y~u)
+##'  mb2 <- nonlinear(mb,type="quadratic",y~u)
+##'  mb3 <- nonlinear(mb,type="spline",knots=c(-3,-1,0,1,3),y~u)
+##'  mb4 <- nonlinear(mb,type="spline",knots=c(-3,-2,-1,0,1,2,3),y~u)
+##'  ff <- lapply(list(mb1,mb2,mb3,mb4),
+##'	      function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
+##'  a <- cv(ff,data=d,rep=1,mc.cores=1)
+##'  a
+##'}
 twostage.lvmfit <- function(object, model2, data=NULL,
-                    predictfun=function(mu,var,data,...)
+                    predict.fun=function(mu,var,data,...)
                         cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
                     id1=NULL, id2=NULL, all=FALSE,
-                    formula=NULL, stderr=TRUE,
+                    formula=NULL, std.err=TRUE,
                     ...) {
-    val <- twostagelvm(object=object,model2=model2,predictfun=predictfun,
+    val <- twostagelvm(object=object,model2=model2,predict.fun=predict.fun,
                       id1=id1, id2=id2, all=all, formula=formula, ...)
     object <- val$object
     model2 <- val$model2
-    predictfun <- val$predictfun
+    predict.fun <- val$predict.fun
     p1 <- coef(object)
 
     pp <- uhat(p1,object,nlobj=val$nonlinear)
@@ -177,7 +195,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
 
     model2 <- estimate(model2,data=newd,...)
     p2 <- coef(model2)
-    if (stderr) {
+    if (std.err) {
         if (is.null(id1)) id1 <- seq(nrow(model.frame(object)))
         if (is.null(id2)) id2 <- seq(nrow(model.frame(model2)))
         model1 <- object
@@ -201,7 +219,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     res <- model2
     res$estimator <- "generic"
 
-    if (stderr) {
+    if (std.err) {
         res[names(stacked)] <- stacked
         cc <- stacked$coefmat[,c(1,2)];
         cc <- cbind(cc,cc[,1]/cc[,2],stacked$coefmat[,5])        
@@ -215,7 +233,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     } else {
         res$coef[,-1] <- NA
     }
-    res$fun <- predictfun
+    res$fun <- predict.fun
     res$estimate1 <- object
     res$estimate2 <- model2
     res$nonlinear <- val$nonlinear
@@ -234,7 +252,7 @@ estimate.twostage.lvm <- function(x,data,...) {
         m1 <- do.call(estimate, args)
     }
     m2$attributes$nonlinear <- nl
-    twostage(object=m1,model2=m2,data=data,predictfun=nl[[1]]$pred,...)
+    twostage(object=m1,model2=m2,data=data,predict.fun=nl[[1]]$pred,...)
 }
 
 ##' @export

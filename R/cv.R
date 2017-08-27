@@ -15,8 +15,8 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' @param rep Number of repetitions (default 1)
 ##' @param perf Performance measure (default RMSE)
 ##' @param seed Optional random seed
+##' @param mc.cores Number of cores used for parallel computations 
 ##' @param ... Additional arguments parsed to models in modelList and perf
-##' @export 
 ##' @author Klaus K. Holst
 ##' @examples
 ##' f0 <- function(data,...) lm(...,data)
@@ -44,15 +44,12 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
         RNGstate <- structure(seed, kind = as.list(RNGkind()))        
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
-
-
     
     nam <- list(NULL,NULL,nam,namPerf)
     dim <- c(rep,K,M,P)
     PerfArr <- array(0,dim)
     dimnames(PerfArr) <- nam
-
-    folds <- foldsr(n,K,rep)
+    folds <- foldr(n,K,rep)
     arg <- expand.grid(R=seq(rep),K=seq(K)) #,M=seq_along(modelList))
 
     ff <- function(i) {

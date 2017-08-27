@@ -2,6 +2,7 @@
 % Please edit documentation in R/csplit.R
 \name{csplit}
 \alias{csplit}
+\alias{foldr}
 \title{Split data into folds}
 \usage{
 csplit(x, p = NULL, replace = FALSE, return.index = FALSE, ...)
@@ -21,9 +22,10 @@ csplit(x, p = NULL, replace = FALSE, return.index = FALSE, ...)
 Split data into folds
 }
 \examples{
+foldr(5,2,rep=2)
 csplit(10,3)
 csplit(iris[1:10,]) ## Split in two sets 1:(n/2) and (n/2+1):n
-csplit(iris[1:10,],0.5) 
+csplit(iris[1:10,],0.5)
 }
 \author{
 Klaus K. Holst
