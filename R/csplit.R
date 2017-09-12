@@ -5,6 +5,7 @@
 ##' @param p Number of folds, or if a number between 0 and 1 is given two folds of size p and (1-p) will be returned
 ##' @param replace With or with-out replacement
 ##' @param return.index If TRUE index of folds are returned otherwise the actual data splits are returned (default)
+##' @param k (Optional, only used when p=NULL) number of folds without shuffling
 ##' @param ... additional arguments to lower level functions
 ##' @export
 ##' @examples
@@ -12,14 +13,12 @@
 ##' csplit(iris[1:10,]) ## Split in two sets 1:(n/2) and (n/2+1):n
 ##' csplit(iris[1:10,],0.5) 
 ##' @author Klaus K. Holst
-csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,...) {
+csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,k=2,...) {
     if (length(x)==1 & is.numeric(x)) x <- seq(x)
     N <- NROW(x)    
-    if (is.null(p)) { ## 
-        k1 <- base::round(N/2)
-        idx <- list(base::seq(k1),
-
-                   base::seq(k1+1,N))
+    if (is.null(p)) { ##
+        K <- base::round(N/k)
+        idx <- split(seq(N),sort(rep(seq(k),length.out=N,each=K)))
     } else {
         if (p<1) { ## two folds (size N*p and N*(1-p))
             idx1 <- base::sample(N,base::round(p*N),replace=replace)
