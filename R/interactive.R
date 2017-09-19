@@ -48,7 +48,7 @@ colsel <- function(locate,...) {
 ##' @usage
 ##' \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
 ##' idplot(x,y,...,id=list())
-##' @aliases idplot click.default
+##' @aliases idplot click.default click colsel
 ##' @param x X coordinates
 ##' @param y Y coordinates
 ##' @param label Should labels be added?
@@ -60,7 +60,6 @@ colsel <- function(locate,...) {
 ##' @param \dots Additional arguments parsed to \code{plot} function
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{idplot}}, \code{identify}
-##' @aliases click, colsel
 ##' @examples
 ##' if (interactive()) {
 ##'     n <- 10; x <- seq(n); y <- runif(n)
