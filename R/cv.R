@@ -63,9 +63,13 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
         fold <- folds[[R]]
         dtest <- data[fold[[k]],]
         dtrain <- data[unlist(fold[-k]),]
-        fits <- lapply(modelList, function(f) do.call(f,c(list(dtrain),args)))
+        if (is.function(modelList[[1]])) {            
+            fits <- lapply(modelList, function(f) do.call(f,c(list(dtrain),args)))
+        } else {
+            fits <- lapply(modelList, function(m) do.call(update,c(list(m,data=dtrain),args)))
+        }
         perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
-        Reduce(rbind,perfs)        
+        do.call(rbind,perfs)        
     }
     if (mc.cores>1) {
         val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
