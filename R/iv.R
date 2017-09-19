@@ -8,7 +8,7 @@ IV_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }
 
-
+IV0_method.lvm <- NULL
 IV0_objective.lvm <- function(x,p,data,...) {
   IV2(x,data,type="non-robust",...)
 }
@@ -16,6 +16,7 @@ IV0_variance.lvm <- function(x,p,data,opt,...) {
   opt$vcov
 }
 
+IV1_method.lvm <- NULL
 IV1_objective.lvm <- function(x,p,data,...) {
   IV(x,data)
 }

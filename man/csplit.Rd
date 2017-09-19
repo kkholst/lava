@@ -5,7 +5,7 @@
 \alias{foldr}
 \title{Split data into folds}
 \usage{
-csplit(x, p = NULL, replace = FALSE, return.index = FALSE, ...)
+csplit(x, p = NULL, replace = FALSE, return.index = FALSE, k = 2, ...)
 }
 \arguments{
 \item{x}{Data or integer (size)}
@@ -15,6 +15,8 @@ csplit(x, p = NULL, replace = FALSE, return.index = FALSE, ...)
 \item{replace}{With or with-out replacement}
 
 \item{return.index}{If TRUE index of folds are returned otherwise the actual data splits are returned (default)}
+
+\item{k}{(Optional, only used when p=NULL) number of folds without shuffling}
 
 \item{...}{additional arguments to lower level functions}
 }

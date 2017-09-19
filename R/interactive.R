@@ -1,3 +1,4 @@
+##' @export
 colsel <- function(locate,...) {
     ytop    <- rep(seq(1/26,1,by=1/26),each=26)[1:657]
     ybottom <- rep(seq(0,1-1/26,by=1/26),each=26)[1:657]
@@ -19,10 +20,9 @@ colsel <- function(locate,...) {
              ,cex=0.55
         ,col=pall2)
     
-    
-    colmat    <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
-    cols        <- NA
-    i        <- NA
+    if (missing(locate)) return(invisible(NULL))
+    colmat <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
+    cols <- NA    
     for(i in seq_len(locate))
     {
         h    <- locator(1)
@@ -48,7 +48,7 @@ colsel <- function(locate,...) {
 ##' @usage
 ##' \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
 ##' idplot(x,y,...,id=list())
-##' @aliases idplot click.default
+##' @aliases idplot click.default click colsel
 ##' @param x X coordinates
 ##' @param y Y coordinates
 ##' @param label Should labels be added?

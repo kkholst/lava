@@ -18,7 +18,8 @@
 ##' @param latex LaTeX prefix (added to ATTR_LaTeX)
 ##' @param sep separator with type='ascii'
 ##' @author Klaus K. Holst
-org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex,sep=" ") {
+##' @export
+Org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TRUE, frame="topbot",rownames=NULL,colnames=NULL,type="org",tab=FALSE,margins=TRUE,print=TRUE,html,latex,sep=" ") {
     if (type=="ascii") {
         x <- format(x,...)
         dots <- c(list(x=paste(x,collapse=sep)),list(...))
@@ -67,3 +68,5 @@ org <- function(x,...,ncol,include.rownames=TRUE,include.colnames=TRUE,header=TR
     }
     invisible(x)
 }
+
+org <- Org
