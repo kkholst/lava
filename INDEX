@@ -133,6 +133,8 @@ vec                     vec operator
 wrapvec                 Wrap vector
 
 ** Distributions
+
+Missing			Add missing mechanism to model
 normal.lvm		
 lognormal.lvm
 poisson.lvm		
@@ -154,7 +156,6 @@ coxExponential.lvm
 aalenExponential.lvm
 coxGompertz.vlm
 heavytail.lvm
-Missing			Add missing mechanism to model
 
 ** Datasets
 

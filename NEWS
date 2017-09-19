@@ -1,11 +1,20 @@
-* Version 1.5.1 <2017-06-18>
-  - curly bracket
+
+* Version 1.5.1 <2017-09-19 tir>
   - conformal predictions: confpred
   - warnings (char2num used instead of coersion via as.numeric)
   - %++% for function compositon
-  - mediation proportion
+  - New summary.effects methods with mediation proportion in the
+    output
+  - New hook: remove.hooks (see example ordinal.lvm)
+  - constrain methods now handled more robustly in sim.lvm allowing
+    both vectorized and non-vectorized functions
+  - Non-linear associations can now be specified with 'nonlinear'
+    method. Estimation via the 'twostage' function.
+  - Robust standard errors added to the IV estimator (2SLS)
+  - New cross-validation function: cv (and csplit function for
+    creating random sets).  
 
-* Version 1.5 <2017-03-16 Thu>
+* Version 1.5.0 <2017-03-16 Thu>
   - lava.tobit is longer required for ordinal and censored
     responses. Default is now to use the implementation in the 'mets' package.
   - Composite likelihood method (complik) updated
