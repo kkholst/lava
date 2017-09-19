@@ -1,7 +1,7 @@
 language: r
 r:
  - release
-# - devel
+ - devel
 sudo: false
 
 r_check_args: --as-cran --run-donttest

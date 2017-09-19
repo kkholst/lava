@@ -4,6 +4,7 @@
 \alias{click}
 \alias{idplot}
 \alias{click.default}
+\alias{colsel}
 \title{Identify points on plot}
 \usage{
 \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)

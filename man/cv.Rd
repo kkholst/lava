@@ -8,7 +8,7 @@ cv(modelList, data, K = 5, rep = 1, perf, seed = NULL, mc.cores = 1,
   ...)
 }
 \arguments{
-\item{modelList}{List of fitting functions}
+\item{modelList}{List of fitting functions or models}
 
 \item{data}{data.frame}
 
@@ -35,6 +35,7 @@ f0 <- function(data,...) lm(...,data)
 f1 <- function(data,...) lm(Sepal.Length~Species,data)
 f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
 x <- cv(list(model0=f0,model1=f1,model2=f2),rep=10, data=iris, formula=Sepal.Length~.)
+x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
 }
 \author{
 Klaus K. Holst

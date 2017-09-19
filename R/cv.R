@@ -9,7 +9,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##'
 ##' Generic cross-validation function
 ##' @title Cross-validation
-##' @param modelList List of fitting functions
+##' @param modelList List of fitting functions or models
 ##' @param data data.frame
 ##' @param K Number of folds (default 5)
 ##' @param rep Number of repetitions (default 1)
@@ -23,6 +23,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' f1 <- function(data,...) lm(Sepal.Length~Species,data)
 ##' f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
 ##' x <- cv(list(model0=f0,model1=f1,model2=f2),rep=10, data=iris, formula=Sepal.Length~.)
+##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
 ##' @export 
 cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     if (missing(perf)) perf <- rmse1
@@ -30,7 +31,11 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     nam <- names(modelList)
     args <- list(...)
     ## Models run on full data:
-    fit0 <- lapply(modelList, function(f) do.call(f,c(list(data),args)))
+    if (is.function(modelList[[1]])) {
+        fit0 <- lapply(modelList, function(f) do.call(f,c(list(data),args)))
+    } else {
+        fit0 <- modelList
+    }
     ## In-sample predictive performance:
     perf0 <- lapply(fit0, function(fit) do.call(perf,c(list(fit,data=data),args)))
     namPerf <- names(perf0[[1]])
@@ -75,6 +80,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     
     structure(list(cv=PerfArr,                   
                    call=match.call(),
+                   names=nam,
                    rep=rep, folds=K,
                    fit=fit0),
               class="CrossValidated")
@@ -83,6 +89,8 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
 ##' @export
 print.CrossValidated <- function(x,...) {
     ##print(drop(x$cv))
-    print(apply(x$cv,3:4,function(x) mean(x)),quote=FALSE)
+    res <- apply(x$cv,3:4,function(x) mean(x))
+    if (length(x$names)==nrow(res)) rownames(res) <- x$names
+    print(res,quote=FALSE)
 }
 
