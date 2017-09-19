@@ -109,7 +109,7 @@ if (interactive()) {
 \dontrun{ ## Reduce timing
  ## Cross-validation example
  ma <- lvm(c(x1,x2,x3)~u,latent=~u)
- ms <- functional(ms, y~u, f=function(x) -.4*x^2)
+ ms <- functional(ma, y~u, f=function(x) -.4*x^2)
  d <- sim(ms,500)#,seed=1)
  ea <- estimate(ma,d)
 

@@ -29,6 +29,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
     nam <- names(modelList)
+    if (is.null(nam)) nam <- rep("",length(modelList))
     args <- list(...)
     ## Models run on full data:
     if (is.function(modelList[[1]])) {
