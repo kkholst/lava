@@ -44,9 +44,9 @@ twostagelvm <- function(object, model2,
 
 
 uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
-    unams <- lapply(nlobj,function(x) x$newx)
-    predict.fun <- lapply(nlobj, function(x) x$pred)
-    unam <- unique(unlist(unams))
+    if (!is.function(nlobj)) {
+        predict.fun <- lapply(nlobj, function(x) x[["pred"]])
+    } else { predict.fun <- nlobj }
     if (inherits(model1, "lvm.mixture")) {
         Pr <- predict(model1, p=p, data=data)
         P <- list(mean=Pr, var=attr(Pr,"cond.var"))
@@ -54,6 +54,8 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
         P <- predictlvm(model1, p=p, data=data)
     }
     if (is.list(predict.fun)) {
+        unams <- lapply(nlobj,function(x) x$newx)
+        unam <- unique(unlist(unams))
         args <- list(P$mean, P$var, data)
         res <- matrix(0, NROW(data), ncol=length(unam))
         colnames(res) <- unam
@@ -132,7 +134,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' m1 <- lvm(x1+x2+x3~eta1,latent=~eta1)
 ##' m2 <- lvm(y1+y2+y3~eta2,latent=~eta2)
 ##' mm <- twostage(m1,m2,formula=eta2~eta1,type="spline")
- ##' if (interactive()) plot(mm)
+##' if (interactive()) plot(mm)
 ##'
 ##' nonlinear(m2,type="quadratic") <- eta2~eta1
 ##' a <- twostage(m1,m2,data=d)
@@ -188,11 +190,13 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     model2 <- val$model2
     predict.fun <- val$predict.fun
     p1 <- coef(object)
-
+    if (length(val$nonlinear)==0) {
+        val$nonlinear <- predict.fun
+    }
     pp <- uhat(p1,object,nlobj=val$nonlinear)
     newd <- data
     newd[,colnames(pp)] <- pp
-
+    
     model2 <- estimate(model2,data=newd,...)
     p2 <- coef(model2)
     if (std.err) {
