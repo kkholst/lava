@@ -1,3 +1,4 @@
+##' @export
 colsel <- function(locate,...) {
     ytop    <- rep(seq(1/26,1,by=1/26),each=26)[1:657]
     ybottom <- rep(seq(0,1-1/26,by=1/26),each=26)[1:657]
@@ -19,10 +20,9 @@ colsel <- function(locate,...) {
              ,cex=0.55
         ,col=pall2)
     
-    
-    colmat    <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
-    cols        <- NA
-    i        <- NA
+    if (missing(locate)) return(invisible(NULL))
+    colmat <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
+    cols <- NA    
     for(i in seq_len(locate))
     {
         h    <- locator(1)
@@ -60,6 +60,7 @@ colsel <- function(locate,...) {
 ##' @param \dots Additional arguments parsed to \code{plot} function
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{idplot}}, \code{identify}
+##' @aliases click, colsel
 ##' @examples
 ##' if (interactive()) {
 ##'     n <- 10; x <- seq(n); y <- runif(n)
