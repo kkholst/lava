@@ -22,14 +22,14 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' f0 <- function(data,...) lm(...,data)
 ##' f1 <- function(data,...) lm(Sepal.Length~Species,data)
 ##' f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
-##' x <- cv(list(model0=f0,model1=f1,model2=f2),rep=10, data=iris, formula=Sepal.Length~.)
+##' x <- cv(list(m0=f0,m1=f1,m2=f2),rep=10, data=iris, formula=Sepal.Length~.)
 ##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
 ##' @export 
 cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
     nam <- names(modelList)
-    if (is.null(nam)) nam <- rep("",length(modelList))
+    if (is.null(nam)) nam <- paste0("model",seq_along(modelList))
     args <- list(...)
     ## Models run on full data:
     if (is.function(modelList[[1]])) {
@@ -43,18 +43,19 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
     names(fit0) <- names(perf0) <- nam
     n <- nrow(data)
     M <- length(perf0)      # Number of models
-    P <- length(perf0[[1]]) # Number of performance measures
+    P <- length(perf0[[1]]) # Number of performance measures    
     if (!is.null(seed)) {
+        if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+            runif(1)
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
         set.seed(seed)
         RNGstate <- structure(seed, kind = as.list(RNGkind()))        
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
     
-    nam <- list(NULL,NULL,nam,namPerf)
     dim <- c(rep,K,M,P)
     PerfArr <- array(0,dim)
-    dimnames(PerfArr) <- nam
+    dimnames(PerfArr) <- list(NULL,NULL,nam,namPerf)
     folds <- foldr(n,K,rep)
     arg <- expand.grid(R=seq(rep),K=seq(K)) #,M=seq_along(modelList))
 
@@ -73,7 +74,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, ...) {
         do.call(rbind,perfs)        
     }
     if (mc.cores>1) {
-        val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
+        val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE,mc.cores=mc.cores)
     } else {
         val <- mapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
     }
