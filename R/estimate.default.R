@@ -28,6 +28,7 @@ estimate.list <- function(x,...) {
 ##' @param type type of small-sample correction
 ##' @param keep (optional) index of parameters to keep from final result
 ##' @param use (optional) index of parameters to use in calculations
+##' @param regex If TRUE use regular expression (perl compatible) for keep,use arguments
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -171,6 +172,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                      score.deriv,level=0.95,iid=TRUE,
                      type=c("robust","df","mbn"),
                      keep,use,
+                     regex=TRUE,
                      contrast,null,vcov,coef,
                      robust=TRUE,df=NULL,
                      print=NULL,labels,label.width,
@@ -547,7 +549,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
 
     if (!missing(keep) && !is.null(keep)) {
         if (is.character(keep)) {
-            keep <- match(keep,rownames(res$coefmat))
+            if (regex) {
+                nn <- rownames(res$coefmat)
+                keep <- unlist(lapply(keep, function(x) grep(x,nn, perl=TRUE)))
+            } else {
+                keep <- match(keep,rownames(res$coefmat))
+            }
         }
         res$coef <- res$coef[keep]
         res$coefmat <- res$coefmat[keep,,drop=FALSE]

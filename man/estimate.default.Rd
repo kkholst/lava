@@ -9,10 +9,10 @@
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, ..., data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
-  iid = TRUE, type = c("robust", "df", "mbn"), keep, use, contrast, null,
-  vcov, coef, robust = TRUE, df = NULL, print = NULL, labels, label.width,
-  only.coef = FALSE, back.transform = NULL, folds = 0, cluster, R = 0,
-  null.sim)
+  iid = TRUE, type = c("robust", "df", "mbn"), keep, use, regex = TRUE,
+  contrast, null, vcov, coef, robust = TRUE, df = NULL, print = NULL,
+  labels, label.width, only.coef = FALSE, back.transform = NULL,
+  folds = 0, cluster, R = 0, null.sim)
 }
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
@@ -44,6 +44,8 @@
 \item{keep}{(optional) index of parameters to keep from final result}
 
 \item{use}{(optional) index of parameters to use in calculations}
+
+\item{regex}{If TRUE use regular expression (perl compatible) for keep,use arguments}
 
 \item{contrast}{(optional) Contrast matrix for final Wald test}
 
