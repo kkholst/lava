@@ -160,10 +160,10 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
   return(e0)
 }
 
-condition <- function(A) {
-  suppressWarnings(with(eigen(A),tail(values,1)/head(values,1)))
+condition <- function(x) {
+    a <- svd(x)
+    return(max(a$d)/min(a$d))
 }
-
 
 
 ##' Extract model summaries and GOF statistics for model object
