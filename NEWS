@@ -1,3 +1,7 @@
+* Version 1.5.1.1 <2017-10-17 Mon>
+  - estimate.default keep,use arguments now by default regex
+  - predict.twostage updated
+  - 
 
 * Version 1.5.1 <2017-09-25 Mon>
   - conformal predictions: confpred
