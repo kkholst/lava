@@ -61,7 +61,6 @@ test_that("glm-estimator", {
     expect_equivalent(c1,c2)
 })
 
-
 test_that("gaussian", {
     m <- lvm(y~x)
     d <- simulate(m,100,seed=1)
@@ -73,7 +72,6 @@ test_that("gaussian", {
     s2 <- g(c(0,1,1))
     expect_equal(s1,-colSums(s2),tolerance=0.1)
 })
-
 
 test_that("Association measures", {
     P <- matrix(c(0.25,0.25,0.25,0.25),2)
@@ -145,7 +143,7 @@ test_that("modelsearch and GoF", {
 test_that("Bootstrap", {
     y <- rep(c(0,1),each=5)
     x <- 1:10
-    e <- estimate(y~x)
+    e <- estimate(y~x,lvm=TRUE)
     B1 <- bootstrap(e,R=2,silent=TRUE,mc.cores=1,sd=TRUE)    
     B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE,mc.cores=1)
     expect_false(B1$bollenstine)
@@ -192,8 +190,6 @@ test_that("Combine", { ## Combine model output
     expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
 
 })
-
-
 
 test_that("zero-inflated binomial regression (zib)", {
     set.seed(1)
@@ -303,7 +299,6 @@ test_that("Prediction with missing data, random intercept", {
 
 
 test_that("Random slope model", {
-
     set.seed(1)
     m <- lvm()
     regression(m) <- y1 ~ 1*u+1*s
@@ -451,7 +446,7 @@ test_that("predict,residuals", {
     e <- estimate(m,d)
     
     l <- lm(y3~x,data=d)
-    e3 <- estimate(y3~x,d)
+    e3 <- estimate(y3~x,data=d,lvm=TRUE)
     expect_true(mean((residuals(l)-residuals(e3))^2)<1e-12)
     expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-3)
    

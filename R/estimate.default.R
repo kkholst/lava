@@ -671,7 +671,8 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @export
-print.estimate <- function(x,level=0,digits=4,width=25,std.error=TRUE,p.value=TRUE,...) {
+print.estimate <- function(x, level=0, digits=4, width=25,
+                   std.error=TRUE, p.value=TRUE, ...) {
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
         return(invisible(x))

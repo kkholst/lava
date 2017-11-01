@@ -49,7 +49,7 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     iid3 <- t(inv.D2u%*%(D1u%*%t(iid1.)))
     
     if (!keep1) return(estimate(coef=coef(model2),iid=cbind(iid2.+k*iid3),...))
-    estimate(coef=c(coef(x),coef(modl2)),iid=cbind(iid1.,iid2. + k*iid3),...)
+    estimate(coef=c(coef(x),coef(model2)),iid=cbind(iid1.,iid2. + k*iid3),...)
 }
 
 ##' @export

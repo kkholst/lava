@@ -1,26 +1,15 @@
 ##' @export
-estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ...,
+estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
                      model="glm", lvm=FALSE) {
-    if (lvm) return(estimate0(x,data=data,...))
     cl <- match.call()
-    na.pass0 <- function(object,...) {
-        ## Fill in "zeros" in the design matrix where we have missing data
-        df <- na.omit(object) 
-        idx <- attr(df,"na.action")
-        for (i in seq_len(ncol(object))) {
-            if (is.logical(object[0,i])) 
-                object[idx,i] <- FALSE
-            else if (is.character(object[0,i]))
-                object[idx,i] <- df[1,i]
-            else if (is.factor(object[0,i]))
-                object[idx,i] <- levels(object[0,i])[1]
-            else object[idx,i] <- 0                
-        }
-        structure(object,na.action=idx)
+    if (lvm) {
+        cl[[1]] <- quote(estimate0)
+        return(eval(cl,envir=parent.frame()))
     }
-    if (missing(data)) 
+    if (missing(data)) {
         data <- environment(x)
-
+        cl$data <- quote(data)
+    }
     mf <- match.call(expand.dots = FALSE)
     m <- match(c("x", "data", "weights", "subset",
                 "etastart", "mustart", "offset"), names(mf), 0L)
@@ -32,10 +21,12 @@ estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ..
     mf <- eval(mf, parent.frame())
     idx <- attr(na.omit(mf),"na.action")
     weights <- as.vector(model.weights(mf))
-    if (is.null(weights)) weights <- rep(1,nrow(mf))
-    if (length(idx)>0) weights[idx] <- 0
-    cl$weights <- quote(weights)
-    cl$na.action <- quote(na.pass0)
+    if (length(idx)>0) {
+        if (is.null(weights)) weights <- rep(1,nrow(mf))
+        if (length(idx)>0) weights[idx] <- 0
+        cl$weights <- quote(weights)
+        cl$na.action <- quote(na.pass0)
+    }
     argsModelObj <- names(formals(model))
     dots <- list(...)    
     idx <- which(names(dots) %ni% argsModelObj)
@@ -44,7 +35,7 @@ estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ..
     cl[rmarg] <- NULL
     names(cl)[names(cl)=="x"] <- "formula"
     cl[[1]] <- as.name(model)
-    fit <- eval(cl)    
+    fit <- eval(cl)
     if (length(idx)==0) return(fit)
     optarg <- NULL
     if (length(idx)>0) {
@@ -53,6 +44,22 @@ estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ..
     do.call(estimate, c(list(fit),optarg))
 }
 
+
+na.pass0 <- function(object,...) {
+    ## Fill in "zeros" in the design matrix where we have missing data
+    df <- na.omit(object) 
+    idx <- attr(df,"na.action")
+    for (i in seq_len(ncol(object))) {
+        if (is.logical(object[0,i])) 
+            object[idx,i] <- FALSE
+        else if (is.character(object[0,i]))
+            object[idx,i] <- df[1,i]
+        else if (is.factor(object[0,i]))
+                object[idx,i] <- levels(object[0,i])[1]
+            else object[idx,i] <- 0                
+    }
+    structure(object,na.action=idx)
+}
 
 estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
