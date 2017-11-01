@@ -839,9 +839,7 @@
 ##' @export
 estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ...,
                      model="glm", lvm=FALSE) {
-    if (lvm) {
-        return(estimate0(x,data=data,...))
-    }
+    if (lvm) return(estimate0(x,data=data,...))
     cl <- match.call()
     na.pass0 <- function(object,...) {
         ## Fill in "zeros" in the design matrix where we have missing data
@@ -858,10 +856,20 @@ estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ..
         }
         structure(object,na.action=idx)
     }
-    mf <- model.frame(x, data, na.action=na.pass0)
+    if (missing(data)) 
+        data <- environment(x)
+
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("x", "data", "weights", "subset",
+                "etastart", "mustart", "offset"), names(mf), 0L)
+    mf <- mf[c(1L, m)]
+    mf$drop.unused.levels <- TRUE
+    mf[[1L]] <- quote(stats::model.frame)
+    mf$na.action <- na.pass0
+    names(mf)[which(names(mf)=="x")] <- "formula"
+    mf <- eval(mf, parent.frame())
     idx <- attr(na.omit(mf),"na.action")
-    if (missing(weights))
-        weights <- as.vector(model.weights(mf))
+    weights <- as.vector(model.weights(mf))
     if (is.null(weights)) weights <- rep(1,nrow(mf))
     if (length(idx)>0) weights[idx] <- 0
     cl$weights <- quote(weights)
