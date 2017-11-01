@@ -5,7 +5,7 @@
 \title{Create random missing data}
 \usage{
 makemissing(data, p = 0.2, cols = seq_len(ncol(data)), rowwise = FALSE,
-  nafun = function(x) x)
+  nafun = function(x) x, seed = NULL)
 }
 \arguments{
 \item{data}{data.frame}
@@ -17,6 +17,8 @@ makemissing(data, p = 0.2, cols = seq_len(ncol(data)), rowwise = FALSE,
 \item{rowwise}{Should missing occur row-wise (either none or all selected columns are missing)}
 
 \item{nafun}{(Optional) function to be applied on data.frame before return (e.g. \code{na.omit} to return complete-cases only)}
+
+\item{seed}{Random seed}
 }
 \value{
 data.frame
