@@ -5,40 +5,51 @@
 ##' @param model2 Model 2
 ##' @param D1u Derivative of score of model 2 w.r.t. parameter vector of model 1
 ##' @param inv.D2u Inverse of deri
-##' @param weights weights (vector or function)
-##' @param dweights derivative of weight wrt parameters of model 1
+##' @param propensity propensity score (vector or function)
+##' @param dpropensity derivative of propensity score wrt parameters of model 1
 ##' @param U Optional score function (model 2) as function of all parameters
 ##' @param k Debug argument
-##' @param keep1 If TRUE only parameters of model 2 i s returned
+##' @param keep1 If FALSE only parameters of model 2 is returned
+##' @param propensity.arg Arguments to propensity function
+##' @param estimate.arg Arguments to 'estimate'
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases stack.estimate
 ##' @export
-stack.estimate <- function(x,model2,D1u,inv.D2u,weights,dweights,U,k=1,keep1=FALSE,...) {
+stack.estimate <- function(x,model2,D1u,inv.D2u,
+                   propensity,dpropensity,U,
+                   k=1,keep1=FALSE,
+                   propensity.arg,estimate.arg,...) {    
     iid1 <- iid(x)
     iid2 <- iid(model2)
     if (missing(inv.D2u)) {
         inv.D2u <- -attributes(iid2)$bread
-    }
+    }    
     if (is.null(inv.D2u)) stop("Need derivative of second stage score")
     if (!missing(U)) {
         D1u <- numDeriv::jacobian(U,coef(x))
     }
-    if (!missing(weights) && is.function(weights)) {
-        dweights <- numDeriv::jacobian(weights,coef(x))
-        weights <- weights(coef(x))
+    if (!missing(propensity) && is.function(propensity)) {
+        wfun <- propensity
+        if (!missing(propensity.arg)) {
+            wfun <- function(p,...)
+                do.call(propensity, c(list(p),propensity.arg))
+        } 
+        dpropensity <- numDeriv::jacobian(wfun,coef(x),...)
+        propensity <- wfun(coef(x),...)
     }
-    if (!missing(dweights)) {
+    if (!missing(dpropensity)) {
         D2u <- Inverse(inv.D2u)        
         u2 <- iid2%*%D2u ## Score of stage two equation derived from estimated influence function
-        ## Derivative of score wrt first set of parameters (weights model)
-        D1u <- crossprod(apply(u2,2,function(x) -x/weights),dweights)
+        ## Derivative of score wrt first set of parameters (propensity score model)
+        D1u <- crossprod(apply(u2,2,function(x) -x/propensity),dpropensity)
     }
     ii <- iid(merge(x,model2))
     iid1. <- ii[,seq_along(coef(x)),drop=FALSE]
     iid2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
     iid3 <- t(inv.D2u%*%(D1u%*%t(iid1.)))
-    if (!keep1) return(estimate(coef=coef(model2),iid=cbind(iid2.+k*iid3)))
-    estimate(coef=c(coef(x),coef(model2)),iid=cbind(iid1.,iid2. + k*iid3))
+    
+    if (!keep1) return(estimate(coef=coef(model2),iid=cbind(iid2.+k*iid3),...))
+    estimate(coef=c(coef(x),coef(modl2)),iid=cbind(iid1.,iid2. + k*iid3),...)
 }
 
 ##' @export

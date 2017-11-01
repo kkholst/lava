@@ -4,8 +4,8 @@
 \alias{stack.estimate}
 \title{Stack estimating equations}
 \usage{
-\method{stack}{estimate}(x, model2, D1u, inv.D2u, weights, dweights, U, k = 1,
-  keep1 = FALSE, ...)
+\method{stack}{estimate}(x, model2, D1u, inv.D2u, propensity, dpropensity, U,
+  k = 1, keep1 = FALSE, propensity.arg, estimate.arg, ...)
 }
 \arguments{
 \item{x}{Model 1}
@@ -16,15 +16,19 @@
 
 \item{inv.D2u}{Inverse of deri}
 
-\item{weights}{weights (vector or function)}
+\item{propensity}{propensity score (vector or function)}
 
-\item{dweights}{derivative of weight wrt parameters of model 1}
+\item{dpropensity}{derivative of propensity score wrt parameters of model 1}
 
 \item{U}{Optional score function (model 2) as function of all parameters}
 
 \item{k}{Debug argument}
 
-\item{keep1}{If TRUE only parameters of model 2 i s returned}
+\item{keep1}{If FALSE only parameters of model 2 is returned}
+
+\item{propensity.arg}{Arguments to propensity function}
+
+\item{estimate.arg}{Arguments to 'estimate'}
 
 \item{...}{Additional arguments to lower level functions}
 }
