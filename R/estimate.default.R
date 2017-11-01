@@ -7,7 +7,6 @@ estimate.list <- function(x,...) {
     lapply(x,function(x) estimate(x,...))
 }
 
-
 ##' Estimation of functional of parameters
 ##'
 ##' Estimation of functional of parameters.
