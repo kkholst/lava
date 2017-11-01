@@ -837,7 +837,54 @@
 ###{{{ estimate.formula
 
 ##' @export
-estimate.formula <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
+estimate.formula <- function(x,family=gaussian, data=parent.frame(), weights, ...,
+                     model="glm", lvm=FALSE) {
+    if (lvm) {
+        return(estimate0(x,data=data,...))
+    }
+    cl <- match.call()
+    na.pass0 <- function(object,...) {
+        ## Fill in "zeros" in the design matrix where we have missing data
+        df <- na.omit(object) 
+        idx <- attr(df,"na.action")
+        for (i in seq_len(ncol(object))) {
+            if (is.logical(object[0,i])) 
+                object[idx,i] <- FALSE
+            else if (is.character(object[0,i]))
+                object[idx,i] <- df[1,i]
+            else if (is.factor(object[0,i]))
+                object[idx,i] <- levels(object[0,i])[1]
+            else object[idx,i] <- 0                
+        }
+        structure(object,na.action=idx)
+    }
+    mf <- model.frame(x, data, na.action=na.pass0)
+    idx <- attr(na.omit(mf),"na.action")
+    if (missing(weights))
+        weights <- as.vector(model.weights(mf))
+    if (is.null(weights)) weights <- rep(1,nrow(mf))
+    if (length(idx)>0) weights[idx] <- 0
+    cl$weights <- quote(weights)
+    cl$na.action <- quote(na.pass0)
+    argsModelObj <- names(formals(model))
+    dots <- list(...)    
+    idx <- which(names(dots) %ni% argsModelObj)
+    rmarg <- c("model","raw","lvm")
+    if (length(idx)>0) rmarg <- c(names(dots)[idx],rmarg)
+    cl[rmarg] <- NULL
+    names(cl)[names(cl)=="x"] <- "formula"
+    cl[[1]] <- as.name(model)
+    fit <- eval(cl)    
+    if (length(idx)==0) return(fit)
+    optarg <- NULL
+    if (length(idx)>0) {
+        optarg <- dots[idx]
+    }    
+    do.call(estimate, c(list(fit),optarg))
+}
+
+
+estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
     formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))
     formulaSt <- paste0("~.-cluster(",formulaId,")-id(",formulaId,")")
