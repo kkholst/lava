@@ -38,5 +38,7 @@ na.pass0 <- function(object,all=TRUE,na.action=na.omit, ...) {
             object[[i]] <- impute0(object[[i]],rows=idx)
         }
     }
-    structure(object,na.action=structure(idx,class="pass0"))
+    if (!is.null(idx))
+        return(structure(object,na.action=structure(idx,class="pass0")))
+    return(object)
 }
