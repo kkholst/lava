@@ -258,7 +258,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
 ##' @export
 pars.glm <- function(x,...) {
   if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-    res <- c(coef(x),summary(x)$dispersion)
+    res <- c(coef(x),suppressWarnings(summary(x)$dispersion))
     names(res)[length(res)] <- "Dispersion"
     return(res)
   }
