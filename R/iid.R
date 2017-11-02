@@ -45,7 +45,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
     n <- NROW(U)
     pp <- pars(x)
     if (!missing(bread) && is.null(bread)) {
-        bread <- vcov(x)
+        bread <- suppressWarnings(vcov(x))
     }
     if (missing(bread)) bread <- attributes(U)$bread
     if (is.null(bread)) {

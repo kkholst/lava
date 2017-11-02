@@ -103,7 +103,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         idlen <- unlist(lapply(id,length))
         if (!identical(idlen,nn)) stop("Wrong lengths of 'id': ", paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
     }
-    if (any(unlist(lapply(id,is.null)))) stop("Id needed for each model object")
+    ##if (any(unlist(lapply(id,is.null)))) stop("Id needed for each model object")
     ##iid <- Reduce("cbind",lapply(objects,iid))
     ids <- iidall <- c(); count <- 0
     for (z in objects) {
@@ -111,6 +111,10 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         clidx <- NULL
         id0 <- id[[count]]
         iidz <- iid(z)
+        if (is.null(id0)) {
+            id0 <- rownames(iidz)
+            if (is.null(id0)) stop("Need id for object number ", count)
+        }
         if (!missing(subset)) iidz <- iidz[,subset,drop=FALSE]
         if (!lava.options()$cluster.index) {
             iid0 <- matrix(unlist(by(iidz,id0,colSums)),byrow=TRUE,ncol=ncol(iidz))
