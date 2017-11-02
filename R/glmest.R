@@ -163,7 +163,7 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
                       y,X,offset=NULL,weights=NULL,...) {
   response <- all.vars(formula(x))[1]
-  sigma2 <- summary(x)$sigma^2
+  sigma2 <- suppressWarnings(summary(x)$sigma^2)
   if (missing(data)) {
       X <- model.matrix(x)
       y <- model.frame(x)[,1]
