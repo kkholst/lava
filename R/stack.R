@@ -12,13 +12,15 @@
 ##' @param keep1 If FALSE only parameters of model 2 is returned
 ##' @param propensity.arg Arguments to propensity function
 ##' @param estimate.arg Arguments to 'estimate'
+##' @param na.action Method for dealing with missing data in propensity score
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases stack.estimate
 ##' @export
 stack.estimate <- function(x,model2,D1u,inv.D2u,
                    propensity,dpropensity,U,
                    k=1,keep1=FALSE,
-                   propensity.arg,estimate.arg,...) {    
+                   propensity.arg,estimate.arg,
+                   na.action=na.pass, ...) {    
     iid1 <- iid(x)
     iid2 <- iid(model2)
     if (missing(inv.D2u)) {
@@ -29,19 +31,24 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
         D1u <- numDeriv::jacobian(U,coef(x))
     }
     if (!missing(propensity) && is.function(propensity)) {
+        op <- options(na.action=na.action)
         wfun <- propensity
         if (!missing(propensity.arg)) {
             wfun <- function(p,...)
                 do.call(propensity, c(list(p),propensity.arg))
-        } 
+        }
         dpropensity <- numDeriv::jacobian(wfun,coef(x),...)
         propensity <- wfun(coef(x),...)
+        mis <- which(is.na(propensity))
+        propensity[mis] <- 0
+        dpropensity[mis,] <- 0
+        options(op)
     }
     if (!missing(dpropensity)) {
         D2u <- Inverse(inv.D2u)        
         u2 <- iid2%*%D2u ## Score of stage two equation derived from estimated influence function
         ## Derivative of score wrt first set of parameters (propensity score model)
-        D1u <- crossprod(apply(u2,2,function(x) -x/propensity),dpropensity)
+        D1u <- crossprod(apply(u2,2,function(x) -na.pass0(x/propensity)),dpropensity)
     }
     ii <- iid(merge(x,model2))
     iid1. <- ii[,seq_along(coef(x)),drop=FALSE]

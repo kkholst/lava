@@ -126,15 +126,19 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
     }
     id <- unique(unlist(ids))
     iid0 <- matrix(0,nrow=length(id),ncol=length(coefs))
+    model.index <- c()
     colpos <- 0
     for (i in seq(length(objects))) {
-        relpos <- seq_along(coef(objects[[i]]))
+        relpos <- seq_along(coef(objects[[i]]))        
         if (!missing(subset)) relpos <- seq_along(subset)
         iid0[match(ids[[i]],id),relpos+colpos] <- iidall[[i]]
+        model.index <- c(model.index,list(relpos+colpos))
         colpos <- colpos+tail(relpos,1)
     }
     rownames(iid0) <- id
-    estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id, keep=keep)
+    res <- estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id, keep=keep)
+    res$model.index <- model.index
+    return(res)
 }
 
 

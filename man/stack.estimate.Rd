@@ -5,7 +5,8 @@
 \title{Stack estimating equations}
 \usage{
 \method{stack}{estimate}(x, model2, D1u, inv.D2u, propensity, dpropensity, U,
-  k = 1, keep1 = FALSE, propensity.arg, estimate.arg, ...)
+  k = 1, keep1 = FALSE, propensity.arg, estimate.arg, na.action = na.pass,
+  ...)
 }
 \arguments{
 \item{x}{Model 1}
@@ -29,6 +30,8 @@
 \item{propensity.arg}{Arguments to propensity function}
 
 \item{estimate.arg}{Arguments to 'estimate'}
+
+\item{na.action}{Method for dealing with missing data in propensity score}
 
 \item{...}{Additional arguments to lower level functions}
 }

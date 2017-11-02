@@ -253,4 +253,5 @@ NULL
 ##' gaussian_logLik.lvm addhook gethook multigroup Weights fixsome
 ##' parfix parfix<- merge IV parameter index index<-
 ##' Specials procformula getoutcome decomp.specials
+##' na.pass0
 NULL

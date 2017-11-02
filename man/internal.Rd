@@ -70,6 +70,7 @@
 \alias{procformula}
 \alias{getoutcome}
 \alias{decomp.specials}
+\alias{na.pass0}
 \title{For internal use}
 \description{
 For internal use

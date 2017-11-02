@@ -45,22 +45,6 @@ estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
 }
 
 
-na.pass0 <- function(object,...) {
-    ## Fill in "zeros" in the design matrix where we have missing data
-    df <- na.omit(object) 
-    idx <- attr(df,"na.action")
-    for (i in seq_len(ncol(object))) {
-        if (is.logical(object[0,i])) 
-            object[idx,i] <- FALSE
-        else if (is.character(object[0,i]))
-            object[idx,i] <- df[1,i]
-        else if (is.factor(object[0,i]))
-                object[idx,i] <- levels(object[0,i])[1]
-            else object[idx,i] <- 0                
-    }
-    structure(object,na.action=idx)
-}
-
 estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
     formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))

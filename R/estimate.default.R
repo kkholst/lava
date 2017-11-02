@@ -672,7 +672,8 @@ estimate.glm <- function(x,...) {
 
 ##' @export
 print.estimate <- function(x, level=0, digits=4, width=25,
-                   std.error=TRUE, p.value=TRUE, ...) {
+                   std.error=TRUE, p.value=TRUE,
+                   sep="_______",sep.which, na.print="", ...) {
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
         return(invisible(x))
@@ -696,11 +697,33 @@ print.estimate <- function(x, level=0, digits=4, width=25,
 
     cc <- x$coefmat
     rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
-                                              function(x) toString(x,width=width))))
+                                             function(x) toString(x,width=width))))   
     if (!std.error) cc <- cc[,-2,drop=FALSE]
     if (!p.value) cc[,-ncol(cc),drop=FALSE]
 
-    print(cc,digits=digits,...)
+    sep.pos <- c()
+    if (missing(sep.which) && !is.null(x$model.index)) {        
+        sep.which <- unlist(lapply(x$model.index,function(x) tail(x,1)))[-length(x$model.index)]
+    } else {
+        sep.which <- NULL
+    }
+    if (!is.null(sep.which)) {
+        cc0 <- c()
+        sep.which <- c(0,sep.which,nrow(cc))
+        N <- length(sep.which)-1
+        for (i in seq(N)) {
+            if ((sep.which[i]+1)<=nrow(cc))
+                cc0 <- rbind(cc0, cc[seq(sep.which[i]+1,sep.which[i+1]),,drop=FALSE])
+            if (i<N) {
+                cc0 <- rbind(cc0, NA)
+                sep.pos <- c(sep.pos,nrow(cc0))
+            }
+        }
+        cc <- cc0        
+    }
+    if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep("_",max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
+    print(cc,digits=digits,na.print=na.print,...)
+
     if (!is.null(x$compare)) {
         cat("\n",x$compare$method[3],"\n")
         cat(paste(" ",x$compare$method[-(1:3)],collapse="\n"),"\n")
@@ -716,24 +739,30 @@ print.estimate <- function(x, level=0, digits=4, width=25,
 }
 
 ##' @export
-vcov.estimate <- function(object,...) {
+vcov.estimate <- function(object,list=FALSE,...) {
     res <- object$vcov
     nn <- names(coef(object))
+    if (list && !is.null(object$model.index)) {
+        return(lapply(object$model.index, function(x) object$vcov[x,x]))
+    }
     dimnames(res) <- list(nn,nn)
     res
 }
 
 ##' @export
-coef.estimate <- function(object,mat=FALSE,...) {
+coef.estimate <- function(object,mat=FALSE,list=FALSE,...) {
     if (mat) return(object$coefmat)
     if (lava.options()$messages>0 && !is.null(object$back.transform)) message("Note: estimates on original scale (before 'back.transform')")
+    if (list && !is.null(object$model.index)) {
+        return(lapply(object$model.index, function(x) object$coef[x]))
+    }
     object$coef
 }
 
 ##' @export
 summary.estimate <- function(object,...) {
     ##object[c("iid","id","print")] <- NULL
-    object <- object[c("coef","coefmat","vcov","call","ncluster")]
+    object <- object[c("coef","coefmat","vcov","call","ncluster","model.index")]
     class(object) <- "summary.estimate"
     object
 }
