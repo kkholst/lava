@@ -8,7 +8,6 @@
 ##' @param propensity propensity score (vector or function)
 ##' @param dpropensity derivative of propensity score wrt parameters of model 1
 ##' @param U Optional score function (model 2) as function of all parameters
-##' @param k Debug argument
 ##' @param keep1 If FALSE only parameters of model 2 is returned
 ##' @param propensity.arg Arguments to propensity function
 ##' @param estimate.arg Arguments to 'estimate'
@@ -18,7 +17,7 @@
 ##' @export
 stack.estimate <- function(x,model2,D1u,inv.D2u,
                    propensity,dpropensity,U,
-                   k=1,keep1=FALSE,
+                   keep1=FALSE,
                    propensity.arg,estimate.arg,
                    na.action=na.pass, ...) {    
     iid1 <- iid(x)
@@ -55,8 +54,8 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     iid2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
     iid3 <- t(inv.D2u%*%(D1u%*%t(iid1.)))
     
-    if (!keep1) return(estimate(coef=coef(model2),iid=cbind(iid2.+k*iid3),...))
-    estimate(coef=c(coef(x),coef(model2)),iid=cbind(iid1.,iid2. + k*iid3),...)
+    if (!keep1) return(estimate(coef=coef(model2), iid=cbind(iid2. + iid3),...))
+    estimate(coef=c(coef(x), coef(model2)), iid=cbind(iid1., iid2. + iid3),...)
 }
 
 ##' @export

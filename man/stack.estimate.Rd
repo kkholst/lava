@@ -5,8 +5,7 @@
 \title{Stack estimating equations}
 \usage{
 \method{stack}{estimate}(x, model2, D1u, inv.D2u, propensity, dpropensity, U,
-  k = 1, keep1 = FALSE, propensity.arg, estimate.arg, na.action = na.pass,
-  ...)
+  keep1 = FALSE, propensity.arg, estimate.arg, na.action = na.pass, ...)
 }
 \arguments{
 \item{x}{Model 1}
@@ -22,8 +21,6 @@
 \item{dpropensity}{derivative of propensity score wrt parameters of model 1}
 
 \item{U}{Optional score function (model 2) as function of all parameters}
-
-\item{k}{Debug argument}
 
 \item{keep1}{If FALSE only parameters of model 2 is returned}
 
