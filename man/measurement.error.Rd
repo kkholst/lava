@@ -46,7 +46,7 @@ pp <- function(mu,var,data,...) {
 ## uu <- seq(-1,1,length.out=100)
 ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
 if (interactive()) {
-    plot(e,intercept=TRUE,vline=0)
+    plot(e,intercept=TRUE,line=0)
 
     f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
     u <- seq(-1,1,length.out=100)

@@ -131,7 +131,6 @@
              cluster,
              p,
              ...) {
-
         cl <- match.call()
         if (!base::missing(param)) {
             oldparam <- lava.options()$param
@@ -171,7 +170,6 @@
         if (length(control)>0) {
             Optim[names(control)] <- control
         }
-
         if (is.environment(data)) {
             innames <- intersect(ls(envir=data),vars(x))
             data <- as.data.frame(lapply(innames,function(x) get(x,envir=data)))

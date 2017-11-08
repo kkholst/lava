@@ -19,7 +19,7 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
                    propensity,dpropensity,U,
                    keep1=FALSE,
                    propensity.arg,estimate.arg,
-                   na.action=na.pass, ...) {    
+                   na.action=na.pass, ...) {
     iid1 <- iid(x)
     iid2 <- iid(model2)
     if (missing(inv.D2u)) {
@@ -28,7 +28,7 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     if (is.null(inv.D2u)) stop("Need derivative of second stage score")
     if (!missing(U)) {
         D1u <- numDeriv::jacobian(U,coef(x))
-    }
+    }    
     if (!missing(propensity) && is.function(propensity)) {
         op <- options(na.action=na.action)
         wfun <- propensity
@@ -53,14 +53,18 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     iid1. <- ii[,seq_along(coef(x)),drop=FALSE]
     iid2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
     iid3 <- t(inv.D2u%*%(D1u%*%t(iid1.)))
-    
+
     if (!keep1) return(estimate(coef=coef(model2), iid=cbind(iid2. + iid3),...))
     estimate(coef=c(coef(x), coef(model2)), iid=cbind(iid1., iid2. + iid3),...)
 }
 
 ##' @export
 stack.glm <- function(x,model2,...) {
-    stack(estimate(x),estimate(model2),...)
+    stack(estimate(x),model2,...)
 }
 
+##' @export
+stack.lvmfit <- function(x,model2,...) {
+    stack(estimate(x),model2,...)
+}
 

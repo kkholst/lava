@@ -35,7 +35,7 @@ estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
     cl[rmarg] <- NULL
     names(cl)[names(cl)=="x"] <- "formula"
     cl[[1]] <- as.name(model)
-    fit <- eval(cl)
+    fit <- eval(cl, parent.frame())
     if (length(idx)==0) return(fit)
     optarg <- NULL
     if (length(idx)>0) {
