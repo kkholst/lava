@@ -60,9 +60,9 @@ GLMest <- function(m,data,control=list(),...) {
         f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
         isSurv <- inherits(data[1,y],"Surv")
         if (isSurv) {            
-            g <- survival::survreg(f,data=data,dist=fam$family)
+            g <- survival::survreg(f,data=data,dist=fam$family,...)
         } else {
-            g <- glm(f,family=fam,data=data)
+            g <- glm(f,family=fam,data=data,...)
         }
 
         p <- pars(g)
@@ -161,9 +161,8 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
 
 ##' @export
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,offset=NULL,weights=NULL,...) {
+                      y,X,offset=NULL,weights=NULL,dispersion=TRUE,...) {
   response <- all.vars(formula(x))[1]
-  sigma2 <- suppressWarnings(summary(x)$sigma^2)
   if (missing(data)) {
       X <- model.matrix(x)
       y <- model.frame(x)[,1]
@@ -178,7 +177,14 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
   if (!is.null(offset)) Xbeta <- Xbeta+offset
   r <- y-Xbeta
   if (is.null(weights)) weights <- x$weights
-  if (!is.null(weights)) r <- r*weights
+  if (!is.null(weights)) {
+      sigma2 <- sum(r^2*weights)/(length(r)-length(p))
+      r <- r*weights
+  } else {
+      sigma2 <- sum(r^2)/(length(r)-length(p))
+  }
+  if (!dispersion) sigma2 <- 1 
+  ##sigma2 <- suppressWarnings(summary(x)$sigma^2)
   A <- as.vector(r)/sigma2
   S <- apply(X,2,function(x) x*A)
   if (!indiv) return(colSums(S))
@@ -230,20 +236,20 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     pi <- ginv(Xbeta)
     ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
     ##return(res)
-    r <- y-pi
+    r <- y-pi    
     if (!is.null(x$prior.weights) || !is.null(weights)) {
         if (is.null(weights)) weights <- x$prior.weights
     } else {
         weights <- !is.na(r)
     }
-    r <- r*weights
     a.phi <- 1
+    r <- r*weights
     rpearson <- as.vector(r)/link$variance(pi)^.5
     if (length(p)>length(coef(x))) {
         a.phi <- p[length(coef(x))+1]
     } else if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-        ##a.phi <- summary(x)$dispersion*g0$df.residual/sum(weights)
-        a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
+        a.phi <- summary(x)$dispersion
+        ##a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
     }
     A <- as.vector(h(Xbeta)*r)/a.phi
     S <- apply(X,2,function(x) x*A)

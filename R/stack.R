@@ -28,7 +28,7 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     if (is.null(inv.D2u)) stop("Need derivative of second stage score")
     if (!missing(U)) {
         D1u <- numDeriv::jacobian(U,coef(x))
-    }    
+    }
     if (!missing(propensity) && is.function(propensity)) {
         op <- options(na.action=na.action)
         wfun <- propensity
