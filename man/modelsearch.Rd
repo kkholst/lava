@@ -34,8 +34,8 @@ regression(m) <- eta ~ x
 m0 <- m; regression(m0) <- y2 ~ x
 dd <- sim(m0,100)[,manifest(m0)]
 e <- estimate(m,dd);
-modelsearch(e,silent=TRUE)
-modelsearch(e,silent=TRUE,type="cor")
+modelsearch(e,messages=0)
+modelsearch(e,messages=0,type="cor")
 }
 \seealso{
 \code{\link{compare}}, \code{\link{equivalence}}

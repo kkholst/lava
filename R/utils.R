@@ -126,7 +126,7 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
 
 ###{{{ categorical2dummy
 
-categorical2dummy <- function(x,data,silent=TRUE,...) {
+categorical2dummy <- function(x,data,messages=0,...) {
   x0 <- x
   X <- intersect(index(x)$exogenous,colnames(data))
   catX <- c()
@@ -153,9 +153,9 @@ categorical2dummy <- function(x,data,silent=TRUE,...) {
       fix <- as.list(F$labels[i,])
       fixval <- F$values[i,]
       fix[which(!is.na(fixval))] <- fixval[na.omit(fixval)]
-      regression(x0,to=Y,from=mnames,silent=silent) <- fix[Y]
+      regression(x0,to=Y,from=mnames,messages=messages) <- fix[Y]
     } else {
-      x0 <- regression(x0,to=Y,from=mnames,silent=silent)
+      x0 <- regression(x0,to=Y,from=mnames,messages=messages)
     }
   }
   index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)

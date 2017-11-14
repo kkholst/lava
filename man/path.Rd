@@ -9,7 +9,7 @@
 \title{Extract pathways in model graph}
 \usage{
 \method{path}{lvm} (object, to = NULL, from, all=FALSE, ...)
-\method{effects}{lvmfit} (object, to, from, silent=FALSE, ...)
+\method{effects}{lvmfit} (object, to, from, ...)
 }
 \arguments{
 \item{object}{Model object (\code{lvm})}
@@ -22,9 +22,7 @@ response and predictor in which case the argument \code{from} is ignored.}
 \item{from}{Response variable (string), not necessarily directly affected by
 \code{to}.}
 
-\item{all}{If TRUE all simple paths (in undirected graph) is returned}
-
-\item{silent}{Logical variable which indicates whether messages are turned
+\item{all}{If TRUE all simple paths (in undirected graph) is returned
 on/off.}
 }
 \value{

@@ -275,9 +275,9 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
     for (i in args) {
         if (!(i%in%c(parlabels(Model(x)),vars(Model(x)),
                      names(constrain(x))))) {
-            if (!lava.options()$silent)
+            if (lava.options()$messages>1)
                 message("\tAdding parameter '", i,"'\n",sep="")
-            parameter(x,silent=TRUE) <- i
+            parameter(x,messages=0) <- i
         }
     }
 

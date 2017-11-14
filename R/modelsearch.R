@@ -24,8 +24,8 @@
 ##' m0 <- m; regression(m0) <- y2 ~ x
 ##' dd <- sim(m0,100)[,manifest(m0)]
 ##' e <- estimate(m,dd);
-##' modelsearch(e,silent=TRUE)
-##' modelsearch(e,silent=TRUE,type="cor")
+##' modelsearch(e,messages=0)
+##' modelsearch(e,messages=0,type="cor")
 ##' @export
 modelsearch <- function(x,k=1,dir="forward",type='all',...) {
     if (dir=="forward") {
@@ -44,12 +44,11 @@ backwardeliminate <- function(x,
                               keep=NULL,
                               pthres=0.05,
                               AIC=FALSE,
-                              silent=TRUE,
+                              messages=0,
                               missing=FALSE,
                               intercepts=FALSE,
                               maxsteps=Inf,
                               information="E",
-                              messages=TRUE,
                               data,
                               ...) {
 
@@ -58,7 +57,7 @@ backwardeliminate <- function(x,
 
     dots <- list(...)
     if (is.null(dots$control$start)) {
-        p0 <- estimate(M,data,quick=TRUE,silent=silent,missing=FALSE,...)
+        p0 <- estimate(M,data,quick=TRUE,messages=messages,missing=FALSE,...)
         dots$control <- c(dots$control, list(start=p0,information="E"))
     }
 
@@ -66,7 +65,7 @@ backwardeliminate <- function(x,
     ff <- function() {
         ii <- grep("m",names(coef(M)))
         vv <- variances(M,mean=TRUE)
-        args <- c(list(x=M,data=data,missing=missing,quick=TRUE,silent=silent),dots)
+        args <- c(list(x=M,data=data,missing=missing,quick=TRUE,messages=messages),dots)
         cc <- do.call("estimate",args)
         if (is.numeric(cc)) {
             I0 <- information(M,p=cc,data=data,type=information)[-c(ii,vv),-c(ii,vv)]
@@ -116,7 +115,7 @@ backwardsearch <- function(x,k=1,...) {
 
     for (i in seq_len(ncol(freecomb)))
         {
-            cc0 <- coef(cur, mean=FALSE,silent=TRUE,symbol=lava.options()$symbol)
+            cc0 <- coef(cur, mean=FALSE,messages=0,symbol=lava.options()$symbol)
             ii <- freecomb[,i]
             p0 <- p1; p0[ii] <- 0
             R <- diag(nrow=length(p0)); R <- matrix(R[ii,],nrow=length(ii))
@@ -147,7 +146,7 @@ backwardsearch <- function(x,k=1,...) {
     res
 }
 
-forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
+forwardsearch <- function(x,k=1,messages=lava.options()$messages,type='all',exclude.var=NULL,...) {
     if (!inherits(x,"lvmfit")) stop("Expected an object of class 'lvmfit'.")
     
     p <- pars(x,reorder=TRUE)
@@ -213,13 +212,13 @@ forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
         S <- (n-1)/n*var(model.frame(x),na.rm=TRUE)
         mu <- colMeans(model.frame(x),na.rm=TRUE)
     }
-    if (!silent) {
+    if (messages>0) {
         message("Calculating score test for ",ncol(restrictedcomb), " models:")
         count <- 0
         pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     }
     for (i in seq_len(ncol(restrictedcomb))) {
-        if (!silent) {                        
+        if (messages>0) {                        
             count <- count+1
             setTxtProgressBar(pb, count/ncol(restrictedcomb))
         }
@@ -239,8 +238,8 @@ forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
         }
         altmodel$parpos <- NULL
         altmodel <- updatelvm(altmodel,deriv=TRUE,zeroones=TRUE,mean=TRUE)
-        cc <- coef(altmodel, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
-        cc0 <- coef(cur, mean=TRUE,silent=TRUE,symbol=lava.options()$symbol)
+        cc <- coef(altmodel, mean=TRUE,messages=0,symbol=lava.options()$symbol)
+        cc0 <- coef(cur, mean=TRUE,messages=0,symbol=lava.options()$symbol)
         p1 <- numeric(length(p)+k)
         ## Need to be sure we place 0 at the correct position
         for (ic in seq_along(cc)) {
@@ -268,7 +267,7 @@ forwardsearch <- function(x,k=1,silent=FALSE,type='all',exclude.var=NULL,...) {
     Tests0 <- Tests
     Vars0 <- Vars
 
-    if (!silent) close(pb)
+    if (messages>0) close(pb)
     ord <- order(Tests);
     Tests <- cbind(Tests, pchisq(Tests,k,lower.tail=FALSE)); colnames(Tests) <- c("Test Statistic", "P-value")
     PM <- c()

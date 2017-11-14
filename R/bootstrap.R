@@ -29,7 +29,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param weights Optional weights matrix used by \code{estimator}
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
-##' @param silent Suppress messages
+##' @param messages Control amount of messages printed
 ##' @param parallel If TRUE parallel backend will be used
 ##' @param mc.cores Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)
 ##' @param \dots Additional arguments, e.g. choice of estimator.
@@ -38,7 +38,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##'
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
-##'                           constraints=TRUE,sd=FALSE,silent=FALSE,
+##'                           constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
 ##'                           parallel=lava.options()$parallel,
 ##'                           mc.cores=NULL,
 ##'                           ...)
@@ -63,7 +63,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @export
 bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,silent=FALSE,
+                          constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
                           parallel=lava.options()$parallel,
                           mc.cores=NULL,
                           ...) {
@@ -71,7 +71,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     coefs <- sds <- c()
     on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
     pb <- NULL
-    if (!silent) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
+    if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     pmis <- missing(p)
     ##maxcount <- 0
     bootfun <- function(i) {
@@ -85,8 +85,8 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
                 d0 <- sim(x,p=p,n=nrow(data))
             }
         }
-        suppressWarnings(e0 <- estimate(x,data=d0,control=control,silent=TRUE,index=FALSE,...))
-        if (!silent && getTxtProgressBar(pb)<(i/R)) {
+        suppressWarnings(e0 <- estimate(x,data=d0,control=control,messages=messages,index=FALSE,...))
+        if ((messages>0) && getTxtProgressBar(pb)<(i/R)) {
             setTxtProgressBar(pb, i/R)
         }
 
@@ -111,7 +111,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
         return(list(coefs=coefs,sds=newsd))
     }
     if (bollenstine) {
-        e0 <- estimate(x,data=data,control=control,silent=TRUE,index=FALSE,...)
+        e0 <- estimate(x,data=data,control=control,messages=0,index=FALSE,...)
         mm <- modelVar(e0)
         mu <- mm$xi
         Y <- t(t(data[,manifest(e0)])-as.vector(mu))
@@ -134,11 +134,10 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     } else {
         res <- lapply(0:R,bootfun)
     }
-    if (!silent) {
+    if (messages>0) {
         setTxtProgressBar(pb, 1)
         close(pb)
     }
-    ##  if (!silent) message("")
     coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
     nn <- names(res[[1]]$coefs)
     if (!is.null(nn)) colnames(coefs) <- nn

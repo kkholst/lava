@@ -6,7 +6,7 @@
                                   weights, weightsname,
                                   data2,
                                   id=NULL,
-                                  silent=lava.options()$silent,
+                                  messages=lava.options()$messages,
                                   quick=FALSE,
                                   param,
                                   cluster,
@@ -57,17 +57,17 @@
   if (!is.null(Optim$start) & length(Optim$start)==(x$npar+x$npar.mean)) {
     mystart <- Optim$start
   } else {
-    if (!silent) cat("Obtaining starting value...")
+    if (messages>1) cat("Obtaining starting value...")
     if (is.null(control$starterfun) && lava.options()$param!="relative")
         Optim$starterfun <- startvalues0
-    mystart <- with(Optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,silent=FALSE,fix=FALSE))
+    mystart <- with(Optim, starter.multigroup(x,meanstructure=meanstructure,starterfun=starterfun,messages=messages,fix=FALSE))
     if (!is.null(Optim$start)) {
       pname <- names(Optim$start)
       ppos <- parpos.multigroup(x,p=pname,mean=TRUE)
       if (any(!is.na(ppos)))
         mystart[ppos] <- Optim$start[na.omit(match(attributes(ppos)$name,pname))]
     }
-    if (!silent) cat("\n")
+    if (messages>1) cat("\n")
   }
   Debug(mystart)
   Debug("Constraints...")
@@ -540,7 +540,7 @@
   else if (is.null(get(InformationFun))) myInformation <- NULL
   if (is.null(get(GradFun))) myGrad <- NULL
 
-  if (!silent) cat("Optimizing objective function...\n")
+  if (messages>1) cat("Optimizing objective function...\n")
   if (lava.options()$debug) {
     print(lower)
     print(Optim$constrain)
@@ -548,7 +548,6 @@
   }
   opt <- do.call(Optim$method,
                  list(start=mystart, objective=myObj, gradient=myGrad, hessian=myInformation, lower=lower, control=Optim))
-##  if (!silent) cat("\n")
 
   opt$estimate <- opt$par
   if (Optim$constrain) {
@@ -605,7 +604,7 @@
 ###{{{ estimate.list
 
 estimate.lvmlist <-
-function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
+function(x, data, messages=lava.options()$messages, fix, missing=FALSE,  ...) {
   if (base::missing(data)) {
     return(estimate(x[[1]],x[[2]],missing=missing,...))
   }
@@ -618,7 +617,7 @@ function(x, data, silent=lava.options()$silent, fix, missing=FALSE,  ...) {
     warning("Only one dataset - going for standard analysis on each submodel.")
     res <- c()
     for (i in seq_len(nm)) {
-      res <- c(res, list(estimate(x[[i]],data=data,silent=TRUE,missing=missing, ...)))
+      res <- c(res, list(estimate(x[[i]],data=data,messages=0,missing=missing, ...)))
     }
     return(res)
   }

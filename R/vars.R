@@ -36,7 +36,7 @@
 ##'
 ##' latent(x,...)
 ##'
-##' \method{exogenous}{lvm}(x,silent = FALSE, xfree = TRUE,...) <- value
+##' \method{exogenous}{lvm}(x, xfree = TRUE,...) <- value
 ##'
 ##' \method{exogenous}{lvm}(x,latent=FALSE,index=TRUE,...)
 ##'
@@ -48,7 +48,6 @@
 ##' @param index For internal use only
 ##' @param clear Logical indicating whether to add or remove latent variable
 ##' status
-##' @param silent Suppress messages
 ##' @param xfree For internal use only
 ##' @param value Formula or character vector of variable names.
 ##' @param \dots Additional arguments to be passed to the low level functions

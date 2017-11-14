@@ -12,7 +12,7 @@
 \title{Add regression association to latent variable model}
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-silent = lava.options()$silent, additive=TRUE, y, x, value, ...)
+messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
 \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 }
 \arguments{
@@ -30,8 +30,7 @@ silent = lava.options()$silent, additive=TRUE, y, x, value, ...)
 \item{fn}{Real function defining the functional form of predictors (for
 simulation only).}
 
-\item{silent}{Logical variable which indicates whether messages are turned
-on/off.}
+\item{messages}{Controls which messages are turned on/off (0: all off)}
 
 \item{additive}{If FALSE and predictor is categorical a non-additive effect is assumed}
 

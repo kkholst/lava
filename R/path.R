@@ -45,14 +45,13 @@
 ##'
 ##' @usage
 ##' \method{path}{lvm} (object, to = NULL, from, all=FALSE, ...)
-##' \method{effects}{lvmfit} (object, to, from, silent=FALSE, ...)
+##' \method{effects}{lvmfit} (object, to, from, ...)
 ##' @param object Model object (\code{lvm})
 ##' @param to Outcome variable (string). Alternatively a formula specifying
 ##' response and predictor in which case the argument \code{from} is ignored.
 ##' @param from Response variable (string), not necessarily directly affected by
 ##' \code{to}.
 ##' @param all If TRUE all simple paths (in undirected graph) is returned
-##' @param silent Logical variable which indicates whether messages are turned
 ##' on/off.
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @export

@@ -222,7 +222,7 @@
       return(covarianceconst(object,allvars[1],allvars[2],...))
     }
 
-    object <- addvar(object, allvars, silent=TRUE, reindex=FALSE)
+    object <- addvar(object, allvars, messages=0, reindex=FALSE)
 
     xorg <- exogenous(object)
     exoset <- setdiff(xorg,allvars)

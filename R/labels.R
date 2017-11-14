@@ -108,7 +108,7 @@ labels.lvmfit <- function(object,lab=NULL,...) {
   val <- c()
   for (i in seq_along(edges)) {
     val <- c(val,
-             formatC(effects(object,from=fromto[[i]][1],to=fromto[[i]][2],silent=TRUE)$directef[[1]])
+             formatC(effects(object,from=fromto[[i]][1],to=fromto[[i]][2],messages=0)$directef[[1]])
              )
   }
   if (est)
