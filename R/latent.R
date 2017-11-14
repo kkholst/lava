@@ -14,7 +14,7 @@
 function(x,...) UseMethod("latent")
 
 ##' @export
-`latent.lvm` <- function(x,var,clear=FALSE,silent=lava.options()$silent,...) {
+`latent.lvm` <- function(x,var,clear=FALSE,messages=lava.options()$messages,...) {
     if (missing(var)) {
         latentidx <- unlist(x$latent)
         if (length(latentidx)>0)
@@ -29,7 +29,7 @@ function(x,...) UseMethod("latent")
         ## intfix(x,var) <- NA
     } else {
         if (!all(var%in%vars(x))) {
-            addvar(x,silent=silent,reindex=FALSE,) <- setdiff(var,vars(x))
+            addvar(x,messages=messages,reindex=FALSE,) <- setdiff(var,vars(x))
         }
         x$noderender$shape[var] <- "ellipse"
         x$latent[var] <- TRUE

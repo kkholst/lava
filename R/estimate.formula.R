@@ -45,7 +45,7 @@ estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
 }
 
 
-estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=TRUE,id=NULL,distribution=NULL,estimator="gaussian",...) {
+estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,messages=0,id=NULL,distribution=NULL,estimator="gaussian",...) {
     cl <- match.call()
     formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))
     formulaSt <- paste0("~.-cluster(",formulaId,")-id(",formulaId,")")
@@ -75,7 +75,7 @@ estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=
     }
 
     if (!is.null(id)) covars <- setdiff(covars,id)
-    model <- lvm(toformula(yvar,c(it,covars)),silent=TRUE)
+    model <- lvm(toformula(yvar,c(it,covars)),messages=0)
     if (!is.null(distribution)) {
         lava::distribution(model,yvar) <- distribution
         estimator <- "glm"
@@ -85,6 +85,6 @@ estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,silent=
     if (unstruct) {
         model <- covariance(model,pred.norm,pairwise=TRUE)
     }
-    estimate(model,mydata,silent=silent,id=id,estimator=estimator,...)
+    estimate(model,mydata,messages=messages,id=id,estimator=estimator,...)
 }
 

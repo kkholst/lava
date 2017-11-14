@@ -299,7 +299,7 @@ IV2 <- function(m,data,control=list(),...) {
   p0 <- p[idx0]
   V0 <- res$vcov[idx0,idx0]
   if (is.null(control$variance) || control$variance) {
-    suppressWarnings(e0 <- estimate(x0,data,...,silent=TRUE,quick=TRUE))
+    suppressWarnings(e0 <- estimate(x0,data,...,messages=0,quick=TRUE))
     p0 <- c(p0,e0)
     V0 <- V0%++%matrix(0,ncol=length(e0),nrow=length(e0))
   }

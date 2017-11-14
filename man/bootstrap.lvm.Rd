@@ -7,7 +7,7 @@
 \usage{
 \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,silent=FALSE,
+                          constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
                           parallel=lava.options()$parallel,
                           mc.cores=NULL,
                           ...)
@@ -42,7 +42,7 @@ constraints should be included in the bootstrap procedure}
 \item{sd}{Logical indicating whether standard error estimates should be
 included in the bootstrap procedure}
 
-\item{silent}{Suppress messages}
+\item{messages}{Control amount of messages printed}
 
 \item{parallel}{If TRUE parallel backend will be used}
 

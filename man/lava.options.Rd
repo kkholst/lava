@@ -25,7 +25,7 @@ endogenous variables in each measurement model are fixed to one), 'absolute'
 at least one endogenous variable in each measurement model is fixed to 1),
 'none' (no constraints are added)
   \item \code{layout}: One of 'dot','fdp','circo','twopi','neato','osage'
-  \item \code{silent}: Set to \code{FALSE} to disable various output messages
+  \item \code{messages}: Set to 0 to disable various output messages
   \item ...  }
 
 see \code{control} parameter of the \code{estimate} function.
@@ -33,7 +33,7 @@ see \code{control} parameter of the \code{estimate} function.
 \examples{
 
 \dontrun{
-lava.options(iter.max=100,silent=TRUE)
+lava.options(iter.max=100,messages=0)
 }
 
 }

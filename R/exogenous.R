@@ -6,9 +6,9 @@ function(x,...) UseMethod("exogenous")
 "exogenous<-" <- function(x,...,value) UseMethod("exogenous<-")
 
 ##' @export
-`exogenous<-.lvm` <- function(x,silent=FALSE,
-                              xfree=TRUE,
-                              ...,value) {
+`exogenous<-.lvm` <- function(x,
+                     xfree=TRUE,
+                     ...,value) {
   if (inherits(value,"formula")) {
     exogenous(x,...) <- all.vars(value)
     return(x)

@@ -68,8 +68,7 @@
 ##' @param from Character vector of predictor(s).
 ##' @param fn Real function defining the functional form of predictors (for
 ##' simulation only).
-##' @param silent Logical variable which indicates whether messages are turned
-##' on/off.
+##' @param messages Controls which messages are turned on/off (0: all off)
 ##' @param additive If FALSE and predictor is categorical a non-additive effect is assumed
 ##' @param y Alias for 'to'
 ##' @param x Alias for 'from'
@@ -77,7 +76,7 @@
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
-##' silent = lava.options()$silent, additive=TRUE, y, x, value, ...)
+##' messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
 ##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.
@@ -183,7 +182,7 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
 
 ##' @export
 `regression.lvm` <-
-    function(object=lvm(),to,from,fn=NA,silent=lava.options()$silent,
+    function(object=lvm(),to,from,fn=NA,messages=lava.options()$messages,
       additive=TRUE, y,x,value,...) {
         if (!missing(y)) {
             if (inherits(y,"formula")) y <- all.vars(y)
@@ -216,16 +215,16 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
         }
         if (inherits(to,"formula")) {
             if (!missing(value)) {
-                regression(object,to,silent=silent,...) <- value
+                regression(object,to,messages=messages,...) <- value
             } else {
-                regression(object,silent=silent,...) <- to
+                regression(object,messages=messages,...) <- to
             }
             object$parpos <- NULL
             return(object)
         }
         if (is.list(to)) {
             for (t in to)
-                regression(object,silent=silent,...) <- t
+                regression(object,messages=messages,...) <- t
             object$parpos <- NULL
             return(object)
         }
@@ -238,7 +237,7 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
         fix <- char2num(sapply(sx, FUN=function(i) i[2]))
         allv <- index(object)$vars
 
-        object <- addvar(object, c(to,xs), silent=silent,reindex=FALSE)
+        object <- addvar(object, c(to,xs), messages=messages, reindex=FALSE)
 
         for (i in to)
             for (j in xs) {

@@ -19,7 +19,6 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
         index(mm)$exfix[i] <- tau0
     }
     dots <- list(...)
-    dots$silent <- FALSE
     if (!is.null(dots$control))
       control <- dots$control
     else
@@ -28,7 +27,7 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     dots$control <- control
     dots$index <- FALSE
     dots$fix <- FALSE
-    dots$silent <- TRUE
+    dots$messages <- 0
     dots$quick <- TRUE
     dots$data <- model.frame(fitted)
     dots$x <- mm

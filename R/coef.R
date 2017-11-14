@@ -2,7 +2,7 @@
 
 ##' @export
 `coef.lvm` <-
-    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, silent=TRUE, p, data, vcov, level=9, labels=lava.options()$coef.names, ...) {
+    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, messages=lava.options()$messages, p, data, vcov, level=9, labels=lava.options()$coef.names, ...) {
         if (fix)
             object <- fixsome(object,measurement.fix=FALSE)
         if (!missing(p)) {
@@ -137,7 +137,7 @@
             res <- c(res,n2)
         }
 
-        if (!silent) {
+        if (messages>1) {
             cat(paste(res, collapse="\n")); cat("\n")
         }
         if (!is.null(object$order)) res <- res[object$order]
@@ -486,10 +486,10 @@ coef.multigroupfit <-
     if (is.null(groups)) groups <- seq(model$ngroup)
     if (length(groups)==0) groups <- seq(model$ngroup)
     for (i in groups) {
-      orignames <- coef(object$model0$lvm[[i]],fix=FALSE,mean=object$meanstructure, silent=TRUE, symbol=lava.options()$symbol)
+      orignames <- coef(object$model0$lvm[[i]],fix=FALSE,mean=object$meanstructure, messages=0, symbol=lava.options()$symbol)
       if (ext) {
-        newnames. <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, silent=TRUE, labels=labels, symbol=symbol)
-        newnames <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, silent=TRUE, labels=labels,symbol=lava.options()$symbol)
+        newnames. <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, messages=0, labels=labels, symbol=symbol)
+        newnames <- coef(Model(model)[[i]],fix=FALSE, mean=object$meanstructure, messages=0, labels=labels,symbol=lava.options()$symbol)
         newcoef <- matrix(NA,ncol=4,nrow=length(newnames))
         rownames(newcoef) <- newnames.
         idx <- match(orignames,newnames)
@@ -506,7 +506,7 @@ coef.multigroupfit <-
       ## Position of variance parameters:
       varpos <- variances(Model(model)[[i]],mean=FALSE)
       ## Number of parameters resp mean-parameters
-      p <- nrow(newcoef); p0 <- length(coef(Model(model)[[i]],fix=FALSE, mean=FALSE, silent=TRUE))
+      p <- nrow(newcoef); p0 <- length(coef(Model(model)[[i]],fix=FALSE, mean=FALSE, messages=0))
       newcoef[(p-p0) + varpos,4] <- NA
       res <- c(res, list(newcoef))
     }

@@ -13,7 +13,7 @@
         for (y in yy) {
             count <- count+1
             for (i in seq_along(xx)) {
-                suppressWarnings(x <- regression(x,to=y,from=xx[i],silent=TRUE))
+                suppressWarnings(x <- regression(x,to=y,from=xx[i],messages=0))
                 count <- count+1
                 if (length(value)==1) {
                     functional(x, to=y, from=xx[i],...) <- value

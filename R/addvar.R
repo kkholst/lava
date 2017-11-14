@@ -26,7 +26,7 @@ function(x,...,value) UseMethod("addvar<-")
 
 ##' @export
 `addvar.lvm` <-
-function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
+function(x, var, messages=lava.options()$messages,reindex=TRUE,...) {
   new <- setdiff(var,vars(x))
   k <- length(new)
   Debug(new)
@@ -89,9 +89,7 @@ function(x, var, silent=lava.options()$silent,reindex=TRUE,...) {
     ##             colnames(x$cov)[N+1] <- rownames(x$cov)[N+1] <- i
     ## myexpr <- paste("c(",i,"=expression(",i,"))", sep="\"")
     ## labels(x) <- (eval(parse(text=myexpr)))
-    ## if (!silent)
-    ##   message("\tAdded '", i, "' to model.\n", sep="")
-    if (!silent) {
+    if (messages>1) {
       if (k==1)
         message("\tAdded '", new, "' to model.\n", sep="")
       else

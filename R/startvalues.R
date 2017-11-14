@@ -25,7 +25,7 @@ mgstart <- function(x,p) {
 ###{{{ starter.multigroup
 
 ##' @export
-starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,silent=TRUE,...) {
+starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,messages=0,...) {
   ## Initial values:
   W <- c() ## Weight-vector
   s <- list()
@@ -41,7 +41,7 @@ starter.multigroup <- function(x, starterfun=startvalues2, meanstructure=TRUE,si
       S <- x$samplestat[[i]]$S
       mu <- if (meanstructure) x$samplestat[[i]]$mu else NULL;
       ##      S <- cov(mydata); mu <- if (meanstructure) colMeans(mydata) else NULL;
-      s0 <- do.call(starterfun, list(x$lvm[[i]], S=S, mu=mu,silent=TRUE))
+      s0 <- do.call(starterfun, list(x$lvm[[i]], S=S, mu=mu,messages=messages))
     }
     s <- c(s, list(s0))
   }
@@ -198,12 +198,12 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
 ## Estimate sub-models (measurement models)
 ##' @export
 `startvalues2` <-
-  function(x, S, mu=NULL, debug=FALSE, silent=FALSE,...) {
-    if (!silent) cat("Obtaining start values...\n")
+  function(x, S, mu=NULL, debug=FALSE, messages=0,...) {
+    if (messages>0) cat("Obtaining start values...\n")
     S <- reorderdata.lvm(x,S)
     ss <- startvalues(x,S)
     Debug(list("ss=",ss),debug);
-    g <- measurement(x,silent=TRUE)
+    g <- measurement(x,messages=0)
     keep <- c()
     if (length(g)>1) {
       for (i in seq_len(length(g))) {
@@ -214,10 +214,10 @@ function(x, S, debug=FALSE, tol=1e-6,...) {
     }
     if (length(g)<2)
       return(startmean(x,ss,mu=mu))
-    ## if (!silent) cat("Fitting marginal measurement models...\n")
+    ## if (messages>0) cat("Fitting marginal measurement models...\n")
     op <- options(warn=-1)
     e <- lapply(g, function(y) {
-        estimate(y, data=list(S=S[manifest(y),manifest(y),drop=FALSE], mu=mu[manifest(y)], n=100), control=list(meanstructure=FALSE, starterfun="startvalues", estimator="Simple", method="nlminb1"), optcontrol=list(), debug=FALSE, silent=TRUE)
+        estimate(y, data=list(S=S[manifest(y),manifest(y),drop=FALSE], mu=mu[manifest(y)], n=100), control=list(meanstructure=FALSE, starterfun="startvalues", estimator="Simple", method="nlminb1"), optcontrol=list(), debug=FALSE, messages=0)
     })
     for (l in e) {
       ##    a <- coef(l$estimate)[,1]
@@ -289,7 +289,7 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     ##     if (length(meanstart)>0)
     ##         pp[seq(length(meanstart))] <- meanstart
     ## }
-    names(pp) <- coef(x, silent=TRUE, fixed=FALSE, mean=TRUE)[seq_len(length(pp))]
+    names(pp) <- coef(x, messages=0, fixed=FALSE, mean=TRUE)[seq_len(length(pp))]
     pp[!is.finite(pp) | is.nan(pp) | is.na(pp)] <- 0.01
     return(pp)
 }
@@ -301,7 +301,7 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
 ## McDonald & Hartmann, 1992
 ##' @export
 startvalues <-
-function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
+function(x, S, mu=NULL, debug=FALSE, messages=lava.options()$messages, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992.
   ## Implementation based on John Fox's implementation in the 'sem' R-package
   S <- reorderdata.lvm(x,S)
@@ -379,7 +379,7 @@ function(x, S, mu=NULL, debug=FALSE, silent=FALSE, tol=1e-6, delta=1e-6,...) {
 
   Debug(list("start=",start), debug)
   start <- pars(x, A=t(Ahat*A0), P=(Phat*P0))
-  names(start) <- coef(x, silent=TRUE, fixed=FALSE, mean=FALSE)[seq_len(length(start))]
+  names(start) <- coef(x, messages=0, fixed=FALSE, mean=FALSE)[seq_len(length(start))]
   res <- startmean(x,start,mu)
   res[!is.finite(res) | is.nan(res) | is.na(res)] <- 1
   res

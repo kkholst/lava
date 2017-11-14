@@ -36,7 +36,7 @@ manifest(x,...)
 
 latent(x,...)
 
-\method{exogenous}{lvm}(x,silent = FALSE, xfree = TRUE,...) <- value
+\method{exogenous}{lvm}(x, xfree = TRUE,...) <- value
 
 \method{exogenous}{lvm}(x,latent=FALSE,index=TRUE,...)
 
@@ -54,8 +54,6 @@ should be included in the result}
 
 \item{clear}{Logical indicating whether to add or remove latent variable
 status}
-
-\item{silent}{Suppress messages}
 
 \item{xfree}{For internal use only}
 

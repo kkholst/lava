@@ -6,7 +6,7 @@
 \alias{summary.lvm}
 \title{Initialize new latent variable model}
 \usage{
-lvm(x = NULL, ..., latent = NULL, silent = lava.options()$silent)
+lvm(x = NULL, ..., latent = NULL, messages = lava.options()$messages)
 }
 \arguments{
 \item{x}{Vector of variable names. Optional but gives control of the
@@ -19,8 +19,7 @@ a linear model.}
 
 \item{latent}{(optional) Latent variables}
 
-\item{silent}{Logical variable which indicates whether messages are turned
-on/off.}
+\item{messages}{Controls what messages are printed (0: none)}
 }
 \value{
 Returns an object of class \code{lvm}.

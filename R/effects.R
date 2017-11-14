@@ -36,7 +36,7 @@ totaleffects.lvmfit <- function(object,to,...,level=0.95) {
 }
 
 ##' @export
-effects.lvmfit <- function(object,to,from,silent=FALSE,...) {
+effects.lvmfit <- function(object,to,from,...) {
   if (missing(to)) {
     return(summary(object))
   }

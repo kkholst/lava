@@ -59,8 +59,8 @@
 ##' ensure identifiability.)
 ##' @param index For internal use only
 ##' @param graph For internal use only
-##' @param silent Logical argument indicating whether information should be
-##' printed during estimation
+##' @param messages Control how much information should be
+##' printed during estimation (0: none)
 ##' @param quick If TRUE the parameter estimates are calculated but all
 ##' additional information such as standard errors are skipped
 ##' @param method Optimization method
@@ -124,7 +124,7 @@
              fix,
              index=!quick,
              graph=FALSE,
-             silent=lava.options()$silent,
+             messages=lava.options()$messages,
              quick=FALSE,
              method,
              param,
@@ -305,8 +305,8 @@
 
         if (index) {
             ## Proces data and setup some matrices
-            x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=!silent)
-            if (!silent)
+            x <- fixsome(x, measurement.fix=fix, S=S, mu=mu, n=n,debug=messages>1)
+            if (messages>1)
                 message("Reindexing model...\n")
             if (length(xfix)>0) {
                 index(x) <- reindex(x,sparse=Optim$sparse,zeroones=TRUE,deriv=TRUE)
@@ -343,7 +343,7 @@
                 if (is.null(Optim$start) || sum(paragree)<length(myparnames)) {
                     if (is.null(Optim$starterfun) && lava.options()$param!="relative")
                         Optim$starterfun <- startvalues0
-                    start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,silent=silent,data=data,...)))
+                    start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,messages=messages,data=data,...)))
                     if (!is.null(x$expar) && length(start)<nparall) {
                         ii <- which(index(x)$e1==1)
                         start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
@@ -358,7 +358,7 @@
 
         ## Missing data
         if (missing) {
-            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,silent=silent,estimator=estimator,weights=weights,data2=data2,cluster=id,...))
+            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,messages=messages,estimator=estimator,weights=weights,data2=data2,cluster=id,...))
         }
         coefname <- coef(x,mean=Optim$meanstructure,fix=FALSE);
         names(Optim$start) <- coefname
@@ -653,8 +653,8 @@
         if (is.null(tryCatch(get(GradFun),error = function (x) NULL)))
             myGrad <- NULL
 
-        if (!silent) message("Optimizing objective function...")
-        if (Optim$trace>0 & !silent) message("\n")
+        if (messages>1) message("Optimizing objective function...")
+        if (Optim$trace>0 & (messages>1)) message("\n")
         ## Optimize with lower constraints on the variance-parameters
         if ((is.data.frame(data) | is.matrix(data)) && nrow(data)==0) stop("No observations")
         if (!missing(p)) {
@@ -768,7 +768,7 @@
             asVar <- matrix(NA,ncol=length(pp),nrow=length(pp))
         } else {
 
-            if (!silent) message("\nCalculating asymptotic variance...\n")
+            if (messages>1) message("\nCalculating asymptotic variance...\n")
             asVarFun  <- paste0(estimator, "_variance", ".lvm")
 
             if (!exists(asVarFun)) {

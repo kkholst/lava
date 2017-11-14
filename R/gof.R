@@ -154,7 +154,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
     control$start <- mystart
   }
   message("Calculating MLE of saturated model:\n")
-  e0 <- estimate(m0,data=data,weights=weights,estimator=estimator,silent=TRUE,control=control,missing=missing,...)
+  e0 <- estimate(m0,data=data,weights=weights,estimator=estimator,messages=0,control=control,missing=missing,...)
   if (logLik)
     return(logLik(e0))
   return(e0)

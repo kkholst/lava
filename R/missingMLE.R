@@ -131,12 +131,12 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
 ###{{{ estimate.MAR.lvm
 
 ##' @export
-estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),silent=FALSE,weights,data2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
+estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),messages=lava.options()$messages,weights,data2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
   cl <- match.call()
 
   Debug("estimate.MAR")
   redvar <- intersect(intersect(parlabels(x),latent(x)),colnames(data))
-  if (length(redvar)>0 & !silent)
+  if (length(redvar)>0 & (messages>0))
     warning(paste("Remove latent variable colnames from dataset",redvar))
 
   xfix <- setdiff(colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))],latent(x))
@@ -170,30 +170,31 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   x0 <- x
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
-  if (!silent)
+  if (messages>1)
     message("Identifying missing patterns...")
 
   val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weights=weights,data2=data2,cluster=cluster,...)
-  if (!silent)
+  if (messages>1)
     message("\n")
 
   if (nrow(val$patterns)==1) {
-    res <- estimate(x,data=data,fix=fix,weights=weights,data2=data2,estimator=estimator,silent=silent,control=control,...)
+      res <- estimate(x, data=data, fix=fix, weights=weights, data2=data2,
+                     estimator=estimator, messages=messages, control=control, ...)
     return(res)
   }
 
   if (startcc & is.null(control$start)) {
-    if (!silent)
+    if (messages>1)
       message("Obtaining starting value...")
     start0 <- rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
     mystart <- tryCatch(
-                        (estimate(x,data=na.omit(data),silent=TRUE,
+                        (estimate(x,data=na.omit(data),messages=0,
                                      weights=weights,data2=data2,estimator=estimator,quick=TRUE,...
                                       )),
                         error=function(e) rep(1,sum(unlist(index(x)[c("npar","npar.mean")])))
                         )
     control$start <- mystart
-    if (!silent)
+    if (messages>1)
       message("\n")
   }
   if (is.null(control$meanstructure))
@@ -216,7 +217,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (all(unlist(lapply(val$data2,is.null)))) val$data2 <- NULL
   if (all(unlist(lapply(val$clusters,is.null)))) val$clusters <- NULL
 
-  e.mis <- estimate(mg0,control=control,silent=silent,
+  e.mis <- estimate(mg0,control=control,messages=messages,
                     weights=val$weights,data2=val$data2,
                     cluster=val$clusters,estimator=estimator,...)
 
@@ -278,7 +279,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     class(res) <- c(class(res),"lvmfit.randomslope")
 
   if (hessian & is.null(cluster)) {
-    if (!silent)
+    if (messages>1)
       message("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
     cc[] <- coef(e.mis,level=1,vcov=res$vcov)

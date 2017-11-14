@@ -10,8 +10,7 @@
 ##' a linear model.
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @param latent (optional) Latent variables
-##' @param silent Logical variable which indicates whether messages are turned
-##' on/off.
+##' @param messages Controls what messages are printed (0: none)
 ##' @return Returns an object of class \code{lvm}.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{regression}}, \code{\link{covariance}},
@@ -25,7 +24,7 @@
 ##' m2 <- lvm(~y1+y2) # Model with two independent variables (argument)
 ##' m3 <- lvm(list(c(y1,y2,y3)~u,u~x+z)) # SEM with three items
 ##'
-lvm <- function(x=NULL, ..., latent=NULL, silent=lava.options()$silent) {
+lvm <- function(x=NULL, ..., latent=NULL, messages=lava.options()$messages) {
 
   M <- C <- par <- fix <- numeric(); mu <- list()
 
@@ -89,15 +88,15 @@ lvm <- function(x=NULL, ..., latent=NULL, silent=lava.options()$silent) {
   for (myvar in x) {
     if (inherits(myvar,"formula")) {
         ## if (length(getoutcome(myvar))>0) {
-        ##   regression(res,...,silent=silent) <- myvar
+        ##   regression(res,...,messages=messages) <- myvar
         ## } else {
         ##   myvar <- all.vars(myvar)
         ## }
-        ## regression(res,...,silent=silent) <- myvar
-      regression(res,silent=silent) <- myvar
+        ## regression(res,...,messages=messages) <- myvar
+      regression(res,messages=messages) <- myvar
     }
     if (is.character(myvar)) {
-      res <- addvar(res, myvar, silent=silent)  }
+      res <- addvar(res, myvar, messages=messages)  }
   }
   if (!is.null(myvar)) {
     index(res) <- reindex(res,zeroones=TRUE) }

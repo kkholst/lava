@@ -32,7 +32,7 @@ merge.lvm <- function(x,y,...) {
           val[idx.] <- m2$par[j,idx][idx.]
         if (any(idx. <- !is.na(m2$fix[j,idx])))
           val[idx.] <- m2$fix[j,idx][idx.]
-        regression(m,to=nn[idx],from=nn[j],silent=TRUE) <- val
+        regression(m,to=nn[idx],from=nn[j],messages=0) <- val
       }
       P0 <- P[j,]; P0[seq_len(j-1)] <- 0
         if (any(idx <- P[j,]!=0)) {
@@ -41,7 +41,7 @@ merge.lvm <- function(x,y,...) {
             val[idx.] <- m2$covpar[j,idx][idx.]
           if (any(idx. <- !is.na(m2$covfix[j,idx])))
             val[idx.] <- m2$covfix[j,idx][idx.]
-          covariance(m,nn[idx],nn[j],silent=TRUE) <- val
+          covariance(m,nn[idx],nn[j],messages=0) <- val
         }
       }
     intercept(m,nn) <- intercept(m2)
