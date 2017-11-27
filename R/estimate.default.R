@@ -168,7 +168,7 @@ estimate.list <- function(x,...) {
 ##' @export
 estimate.default <- function(x=NULL,f=NULL,...,data,id,
                      iddata,stack=TRUE,average=FALSE,subset,
-                     score.deriv,level=0.95,iid=TRUE,
+                     score.deriv,level=0.95,iid=robust,
                      type=c("robust","df","mbn"),
                      keep,use,
                      regex=TRUE,
@@ -213,13 +213,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     if (lava.options()$cluster.index) {
         if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
     }
-
     if (missing(data)) data <- tryCatch(model.frame(x),error=function(...) NULL)
     ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
-    if (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1]))) { ## If user supplied vcov, then don't estimate IC
+    if (((iid || length(iid)>0) && robust) && (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) { ## If user supplied vcov, then don't estimate IC
         if (missing(score.deriv)) {
             if (!is.logical(iid)) {
                 iidtheta <- iid
@@ -231,7 +230,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             suppressWarnings(iidtheta <- iid(x,score.deriv=score.deriv,folds=folds))
         }
     } else {
-        if (is.logical(vcov) && !is.na(vcov)[1]) vcov <- stats::vcov(x)
+        if (missing(vcov) || (is.logical(vcov) && !is.na(vcov)[1])) suppressWarnings(vcov <- stats::vcov(x))
         iidtheta <- NULL
     }
 
@@ -303,9 +302,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     if (!is.null(iidtheta) && (length(idstack)==nrow(iidtheta))) rownames(iidtheta) <- idstack
     if (!robust) {
         if (inherits(x,"lm") && family(x)$family=="gaussian" && is.null(df)) df <- x$df.residual
-        if (missing(vcov)) vcov <- stats::vcov(x)
+        if (missing(vcov)) supppresWarnings(vcov <- stats::vcov(x))
     }
-    if (!is.null(iidtheta) && (missing(vcov) || is.null(vcov))) {
+    if (!is.null(iidtheta) && robust && (missing(vcov) || is.null(vcov))) {
         ## if (is.null(f))
         V <- crossprod(iidtheta)
         ### Small-sample corrections for clustered data
@@ -339,7 +338,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             if (length(vcov)==1 && is.na(vcov)) vcov <- matrix(NA,length(pp),length(pp))
             V <- vcov
         } else {
-            V <- stats::vcov(x)
+            suppressWarnings(V <- stats::vcov(x))
         }
     }
 

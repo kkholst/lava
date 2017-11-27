@@ -1,6 +1,7 @@
 ##' @export
-estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
-                     model="glm", lvm=FALSE) {
+estimate.formula <- function(x, data, weights, family=stats::gaussian,
+                     ..., model="glm", lvm=FALSE) {
+
     cl <- match.call()
     if (lvm) {
         cl[[1]] <- quote(estimate0)
@@ -24,9 +25,10 @@ estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
     if (length(idx)>0) {
         if (is.null(weights)) weights <- rep(1,nrow(mf))
         if (length(idx)>0) weights[idx] <- 0
-        cl$weights <- quote(weights)
+        cl$weights <- quote(weights)        
         cl$na.action <- quote(na.pass0)
     }
+    cl$data <- quote(data)
     argsModelObj <- names(formals(model))
     dots <- list(...)    
     idx <- which(names(dots) %ni% argsModelObj)
@@ -35,7 +37,7 @@ estimate.formula <- function(x,family=stats::gaussian, data, weights, ...,
     cl[rmarg] <- NULL
     names(cl)[names(cl)=="x"] <- "formula"
     cl[[1]] <- as.name(model)
-    fit <- eval(cl, parent.frame())
+    fit <- eval(cl)
     if (length(idx)==0) return(fit)
     optarg <- NULL
     if (length(idx)>0) {
