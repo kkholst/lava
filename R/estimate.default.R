@@ -302,7 +302,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     if (!is.null(iidtheta) && (length(idstack)==nrow(iidtheta))) rownames(iidtheta) <- idstack
     if (!robust) {
         if (inherits(x,"lm") && family(x)$family=="gaussian" && is.null(df)) df <- x$df.residual
-        if (missing(vcov)) suppresWarnings(vcov <- stats::vcov(x))
+        if (missing(vcov)) suppressWarnings(vcov <- stats::vcov(x))
     }
     if (!is.null(iidtheta) && robust && (missing(vcov) || is.null(vcov))) {
         ## if (is.null(f))
