@@ -260,11 +260,14 @@ Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
 
 ##' @export
 print.sim <- function(x,...) {
+    s <- summary(x,short=TRUE,...)
     attr(x,"f") <- attr(x,"call") <- NULL
     if (!is.null(dim(x))) {
         class(x) <- "matrix"
     }
     Print(x,...)
+    cat("\n")
+    print(s,extra=FALSE,...)
     return(invisible(x))
 }
 
@@ -348,7 +351,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         if (!is.null(true)) abline(h=true,lty=true.lty,...)
         if (missing(legend)) legend <- colnames(x)
         if (!is.null(legend))
-            graphics::legend(legendpos,legend=legend,bg="white",col=col,lty=lty,pch=pch,...)
+            graphics::legend(legendpos,legend=legend,bg="white",
+                             col=col,lty=lty,pch=pch,...)
         return(invisible(NULL))
     }
     if (is.character(estimate)) {
@@ -532,13 +536,22 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 if (!is.null(legend)) {
                     if (polygon) {
                         dcol <- c(density.col[1],se.col)
+                        fill <- Col(dcol,density.alpha)
+                        fill[which(density.alpha==0)] <- NA
+                        border[which(density.alpha==0)] <- NA
+                        dcol[which(density.alpha!=0)] <- NA
                         graphics::legend(legendpos,legend,
-                                         fill=Col(dcol,density.alpha),border=dcol,cex=cex.legend)
+                                         fill=fill,
+                                         lty=1,
+                                         col=dcol,
+                                         border=border,
+                                         cex=cex.legend)
                     } else {
                         graphics::legend(legendpos,legend,
                                          col=c(density.col[1],se.col),
                                          lty=c(density.lty[1],se.lty),
-                                         lwd=c(density.lwd[1],se.lwd),cex=cex.legend)
+                                         lwd=c(density.lwd[1],se.lwd),
+                                         cex=cex.legend)
                     }
                 }
             }
@@ -593,7 +606,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 }
 
 ##' @export
-print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$"),
+print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^coverage"),
                                    c("^min$","^[0-9.]+%$","^max$"),
                                    c("^na$","^missing$"),
                                    c("^true$","^bias$","^rmse$")),
@@ -602,13 +615,16 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$"),
                       digits = max(3, getOption("digits") - 2),
                       quote=FALSE,
                       time=TRUE,
+                      extra=TRUE,
                       ...) {
-    cat(attr(x,"n")," replications",sep="")
-    if (time && !is.null(attr(x,"time"))) {
-        cat("\t\t\t\t\tTime: ")
-        Time(attr(x,"time")["elapsed"],print=TRUE)
+    if (extra) {
+        cat(attr(x,"n")," replications",sep="")
+        if (time && !is.null(attr(x,"time"))) {
+            cat("\t\t\t\t\tTime: ")
+            Time(attr(x,"time")["elapsed"],print=TRUE)
+        }
+        cat("\n\n")
     }
-    cat("\n\n")
 
     nn <- rownames(x)
     if (lower.case)  nn <- tolower(nn)
@@ -624,7 +640,7 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$"),
     }
 
     print(structure(x0,class="matrix")[,,drop=FALSE],digits=digits,quote=quote,na.print=na.print,...)
-    cat("\n")
+    if (extra) cat("\n")
     invisible(x)
 }
 
@@ -632,9 +648,20 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$"),
 ##' @export
 ##' @export summary.sim
 summary.sim <- function(object,estimate=NULL,se=NULL,
-                        confint=NULL,true=NULL,
-                        fun,names=NULL,unique.names=TRUE,
+                        confint=!is.null(se)&&!is.null(true),true=NULL,
+                fun,names=NULL,unique.names=TRUE,short=FALSE,
                 level=0.95,quantiles=c(.025,0.5,.975),...) {
+    if (short) {
+        fun <- function(x,se,confint,...) {
+            res <- c(Mean=mean(x,na.rm=TRUE),
+                    SD=sd(x,na.rm=TRUE))
+            if (!missing(se) && !is.null(se)) {
+                res <- c(res, c(SE=mean(se,na.rm=TRUE)))
+                res <- c(res, c("SE/SD"=res[["SE"]]/res[["SD"]]))
+            }            
+            return(res)
+        }
+    }
     mfun <- function(x,...) {
         res <- c(mean(x,na.rm=TRUE),
                  sd(x,na.rm=TRUE),
@@ -644,22 +671,33 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         res
     }
     tm <- attr(object,"time")
+    N <- max(length(estimate),length(se),length(true))
+    if (!is.null(estimate)) estimate <- rep(estimate,length.out=N)
+    if (!is.null(se)) se <- rep(se,length.out=N)
+    if (!is.null(true)) true <- rep(true,length.out=N)
+    
     if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
     if (!missing(fun)) {
-        if (!is.null(estimate)) object <- object[,estimate,drop=FALSE]
-        res <- lapply(seq(ncol(object)),
-                      function(i,...) fun(object[,i,drop=TRUE],i,...),...)
+        if (!is.null(estimate)) m.est <- object[,estimate,drop=FALSE]
+        else m.est <- object
+        m.se <- NULL
+        if (!is.null(se)) m.se <- object[,se,drop=FALSE]
+        m.ci <- NULL
+        if (!is.null(confint)) m.ci <- object[,confint,drop=FALSE]
+        res <- lapply(seq(ncol(m.est)),
+                      function(i,...) fun(m.est[,i,drop=TRUE],se=m.se[,i,drop=TRUE],confint=m.ci[,1:2+(i-1)*2],...,INDEX=i),...)
         res <- matrix(unlist(res),nrow=length(res[[1]]),byrow=FALSE)
         if (is.null(dim(res))) {
             res <- rbind(res)
         }
         if (is.null(rownames(res))) {
-            rownames(res) <- names(fun(0,1,...))
+            rownames(res) <- names(fun(0,m.se,m.ci,INDEX=1,...))
+            if (is.null(rownames(res))) rownames(res) <- rep("",nrow(res))
         }
         if (is.null(colnames(res))) {
-            colnames(res) <- colnames(object)
+            colnames(res) <- colnames(m.est)
         }
         return(structure(res,
                     n=NROW(object),
@@ -693,7 +731,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         est <- rbind(est,"SE/SD"=est["SE",]/est["SD",])
 
     }
-    if (!is.null(confint)) {
+    if (!is.null(confint) && (length(confint)>1 || confint)) {
         if (is.character(confint)) {
             confint <- match(confint,colnames(object))
         }
