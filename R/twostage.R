@@ -214,7 +214,7 @@ twostage.lvmfit <- function(object, model2, data=NULL,
             newd[,colnames(pp)] <- pp
             score(model2,p=beta,data=newd)
         }
-        Ia <- -numDeriv::jacobian(function(p) U(p),p1)
+        Ia <- numDeriv::jacobian(function(p) U(p),p1)
         stacked <- stack(model1,e2,Ia)
     } else {
         e2 <- estimate(coef=p2,vcov=NA)
