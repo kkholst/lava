@@ -188,7 +188,7 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
   A <- as.vector(r)/sigma2
   S <- apply(X,2,function(x) x*A)
   if (!indiv) return(colSums(S))
-  attributes(S)$bread <- vcov(x)
+  suppressWarnings(attributes(S)$bread <- vcov(x))
   return(S)
 }
 
@@ -248,14 +248,14 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if (length(p)>length(coef(x))) {
         a.phi <- p[length(coef(x))+1]
     } else if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-        a.phi <- summary(x)$dispersion
+        suppressWarnings(a.phi <- summary(x)$dispersion)
         ##a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
     }
     A <- as.vector(h(Xbeta)*r)/a.phi
     S <- apply(X,2,function(x) x*A)
     if (!indiv) return(colSums(S))
     if (pearson) attr(S,"pearson") <- rpearson
-    attributes(S)$bread <- vcov(x)
+    suppressWarnings(attributes(S)$bread <- vcov(x))
     if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
         attributes(S)$bread <- -Inverse(information.glm(x))
     return(S)
