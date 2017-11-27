@@ -15,7 +15,7 @@ Grep(x, pattern, subset = TRUE, ignore.case = TRUE, ...)
 
 \item{ignore.case}{Default ignore case}
 
-\item{...}{}
+\item{...}{Additional arguments to 'grep'}
 }
 \value{
 A data.frame with 2 columns with the indices in the first and the

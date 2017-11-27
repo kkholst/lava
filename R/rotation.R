@@ -1,7 +1,7 @@
 ##' Performs a rotation in the plane
 ##'
 ##' @title Performs a rotation in the plane
-##' @aliases rot2D, rot3D
+##' @aliases rotate2 rot2D rot3D
 ##' @param x Matrix to be rotated (2 times n)
 ##' @param theta Rotation in radians
 ##' @return Returns a matrix of the same dimension as \code{x}

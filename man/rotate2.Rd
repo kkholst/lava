@@ -2,7 +2,7 @@
 % Please edit documentation in R/rotation.R
 \name{rotate2}
 \alias{rotate2}
-\alias{rot2D,}
+\alias{rot2D}
 \alias{rot3D}
 \title{Performs a rotation in the plane}
 \usage{

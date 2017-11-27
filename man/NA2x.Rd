@@ -16,11 +16,13 @@ NA2x(s, x = 0)
 \value{
 A vector with same dimension and class as \code{s}.
 }
+\description{
+Convert vector to/from NA
+}
 \examples{
-
+##' 
 x2NA(1:10, 1:5)
-NA2x(x2NA(c(1:10),5),5)
-
+NA2x(x2NA(c(1:10),5),5)##'
 }
 \author{
 Klaus K. Holst

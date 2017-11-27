@@ -5,7 +5,7 @@
 ##' @param pattern regular expression to search for
 ##' @param subset If TRUE returns subset of data.frame/matrix otherwise just the matching column names
 ##' @param ignore.case Default ignore case
-##' @param ... 
+##' @param ... Additional arguments to 'grep'
 ##' @return A data.frame with 2 columns with the indices in the first and the
 ##' matching names in the second.
 ##' @author Klaus K. Holst
