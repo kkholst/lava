@@ -108,6 +108,14 @@ nonlinear.lvm <- function(object, to, from=NULL, type=c("quadratic"), knots=c(-5
     }
 
     if (tolower(type)[1]%in%c("exp","exponential")) {
+        if (missing(names)) names <- paste0(from,"_",1:2)
+        f <- function(p,x) p[1] + p[2]*x + p[3]*exp(x)
+        pred <- function(mu,var,...) {
+            structure(cbind(mu[,1], exp(0.5*var[1] + mu[,1])),dimnames=list(NULL,names))
+        }
+    }
+
+    if (tolower(type)[1]%in%c("exp0")) {
         if (missing(names)) names <- paste0(from,"_",1)
         f <- function(p,x) p[1] + p[2]*exp(x)
         pred <- function(mu,var,...) {
