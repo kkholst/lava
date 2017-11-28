@@ -1,6 +1,6 @@
 ##' Stack estimating equations
 ##'
-##' Stack estimating equations
+##' Stack estimating equations (two-stage estimator)
 ##' @param x Model 1
 ##' @param model2 Model 2
 ##' @param D1u Derivative of score of model 2 w.r.t. parameter vector of model 1
@@ -15,6 +15,17 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases stack.estimate
 ##' @export
+##' @examples
+##' m <- lvm(z0~x)
+##' Missing(m, z ~ z0) <- r~x
+##' distribution(m,~x) <- binomial.lvm()
+##' p <- c(r=-1,'r~x'=0.5,'z0~x'=2)
+##' beta <- p[3]/2
+##' d <- sim(m,500,p=p)
+##' m1 <- estimate(r~x,data=d,family=binomial)
+##' d$w <- d$r/predict(m1,type="response")
+##' m2 <- estimate(z~1, weights=w, data=d)
+##' (e <- stack(m1,m2,propensity=TRUE))
 stack.estimate <- function(x,model2,D1u,inv.D2u,
                    propensity,dpropensity,U,
                    keep1=FALSE,
