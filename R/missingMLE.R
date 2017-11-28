@@ -1,5 +1,4 @@
 ###{{{ missingModel
-
 missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weights=NULL,data2=NULL,cluster=NULL,...) {
   if (!inherits(model,"lvm")) stop("Needs a lvm-object")
   if (type==3) {
@@ -33,9 +32,9 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
     if (any(mypattern)) {
       latent(m0) <- colnames(data.mis)[mypattern]
       if (type>1) {
-        mytop <- intersect(topendo,colnames(data.mis)[mypattern])
+          mytop <- intersect(topendo,colnames(data.mis)[mypattern])
         if (!is.null(mytop)) {
-          kill(m0) <- mytop
+          rmvar(m0) <- mytop
           for (xx in exo) {
           ## If exogenous variable only have effect on missing variables,
           ##  then remove it from the model
@@ -44,13 +43,13 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
                   ##&& !(xx%in%names(index(m0))$parval)
                   ) {
                   exoremove <- c(exoremove,xx)
-                  kill(m0) <- xx
+                  rmvar(m0) <- xx
               }
           }
         }
       }
     } else
-    pattern.compl <- count
+        pattern.compl <- count
     ## d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
     d0 <- data[which(mis.type==i),c(manifest(m0),keep),drop=FALSE];
     if (!is.list(weights)) {
@@ -176,7 +175,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weights=weights,data2=data2,cluster=cluster,...)
   if (messages>1)
     message("\n")
-
   if (nrow(val$patterns)==1) {
       res <- estimate(x, data=data, fix=fix, weights=weights, data2=data2,
                      estimator=estimator, messages=messages, control=control, ...)
@@ -197,6 +195,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (messages>1)
       message("\n")
   }
+
   if (is.null(control$meanstructure))
     control$meanstructure <- TRUE
   mg0 <- with(val, suppressWarnings(multigroup(models,datasets,fix=FALSE,exo.fix=FALSE,missing=FALSE)))
@@ -209,7 +208,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     names(start0)[which(!is.na(paridx))] <- names(control$start[na.omit(paridx)])
     control$start <- start0
   }
-
 
   if (onlymodel) return(list(mg=mg0,val=val,weights=val$weights,data2=val$data2,cluster=val$clusters))
 

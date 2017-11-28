@@ -7,13 +7,12 @@
 ##' remove
 ##' @param \dots additional arguments to lower level functions
 ##' @usage
-##' kill(x, ...) <- value
+##' rmvar(x, ...) <- value
 ##' @seealso \code{cancel}
 ##' @author Klaus K. Holst
 ##' @keywords models regression
 ##' @export
 ##' @examples
-##'
 ##' m <- lvm()
 ##' addvar(m) <- ~y1+y2+x
 ##' covariance(m) <- y1~y2

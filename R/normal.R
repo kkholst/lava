@@ -109,6 +109,7 @@ normal_objective.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,..
     }
 
     l <- mets::loglikMVN(yl,yu,status,mu,S,thres)
+    
     if (!is.null(weights)) {
         ##if (is.matrix(weights)) weights <- weights[,1]
         l <- l*weights
@@ -120,6 +121,7 @@ normal_objective.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,..
     if (indiv) return(-l)
     return(-sum(l))
 }
+
 
 normal_logLik.lvm <- function(object,p,data,data2=NULL,...) {
     res <- -normal_objective.lvm(x=object,p=p,data=data,data2=data2,...)

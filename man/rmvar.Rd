@@ -7,7 +7,7 @@
 \alias{kill<-}
 \title{Remove variables from (model) object.}
 \usage{
-kill(x, ...) <- value
+rmvar(x, ...) <- value
 }
 \arguments{
 \item{x}{Model object}
@@ -21,7 +21,6 @@ remove}
 Generic method for removing elements of object
 }
 \examples{
-
 m <- lvm()
 addvar(m) <- ~y1+y2+x
 covariance(m) <- y1~y2

@@ -20,6 +20,11 @@
 ##' @seealso estimate
 ##' @keywords models regression
 ##' @export
+##' @examples
+##' m <- lvm(c(y1,y2,y3)~b*x+1*u[0],latent=~u)
+##' ordinal(m,K=2) <- ~y1+y2+y3
+##' d <- sim(m,50,seed=1)
+##' e1 <- complik(m,d,control=list(trace=1),type="all")
 complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estimator="normal",
                      ...) {
     y <- setdiff(endogenous(x),latent(x))
@@ -40,7 +45,6 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
     } else {
         binsurvpos <- which(colnames(data)%in%binsurv)
     }
-    
     if (missing(pairlist)) {
         #if (length(binsurv)<(k+1)) stop("No need for composite likelihood analysis.")       
         if (type[1]=="all") {
