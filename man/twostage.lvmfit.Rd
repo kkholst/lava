@@ -9,10 +9,9 @@
 \alias{nonlinear<-}
 \title{Two-stage estimator (non-linear SEM)}
 \usage{
-\method{twostage}{lvmfit}(object, model2, data = NULL,
-  predict.fun = function(mu, var, data, ...) cbind(u1 = mu[, 1], u2 = mu[,
-  1]^2 + var[1]), id1 = NULL, id2 = NULL, all = FALSE, formula = NULL,
-  std.err = TRUE, ...)
+\method{twostage}{lvmfit}(object, model2, data = NULL, predict.fun = NULL,
+  id1 = NULL, id2 = NULL, all = FALSE, formula = NULL, std.err = TRUE,
+  ...)
 }
 \arguments{
 \item{object}{Stage 1 measurement model}

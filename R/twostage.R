@@ -180,8 +180,6 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##'}
 twostage.lvmfit <- function(object, model2, data=NULL,
                     predict.fun=NULL,
-                        ##function(mu,var,data,...)
-                        ##cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1]),
                     id1=NULL, id2=NULL, all=FALSE,
                     formula=NULL, std.err=TRUE,
                     ...) {
