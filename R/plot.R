@@ -116,7 +116,7 @@
   }
     if (plot.engine=="visnetwork") {
         g <- vis.lvm(x,labels=labels,...)
-        if (!noplot) print(g)
+        ##if (!noplot) print(g)
         return(g)
   }
 
