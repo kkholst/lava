@@ -9,7 +9,7 @@
 \usage{
 \method{estimate}{default}(x = NULL, f = NULL, ..., data, id, iddata,
   stack = TRUE, average = FALSE, subset, score.deriv, level = 0.95,
-  iid = robust, type = c("robust", "df", "mbn"), keep, use, regex = TRUE,
+  iid = robust, type = c("robust", "df", "mbn"), keep, use, regex = FALSE,
   contrast, null, vcov, coef, robust = TRUE, df = NULL, print = NULL,
   labels, label.width, only.coef = FALSE, back.transform = NULL,
   folds = 0, cluster, R = 0, null.sim)

@@ -171,7 +171,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                      score.deriv,level=0.95,iid=robust,
                      type=c("robust","df","mbn"),
                      keep,use,
-                     regex=TRUE,
+                     regex=FALSE,
                      contrast,null,vcov,coef,
                      robust=TRUE,df=NULL,
                      print=NULL,labels,label.width,
@@ -202,7 +202,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     if (!missing(cluster)) id <- cluster
     if (expr || is.character(f) || (is.numeric(f) && !is.matrix(f))) { ## || is.call(f)) {
         dots <- lapply(substitute(placeholder(...))[-1],function(x) x)
-        args <- c(list(coef=names(pp),x=substitute(f)),dots)
+        args <- c(list(coef=names(pp),x=substitute(f),regex=regex),dots)
         f <- do.call(parsedesign,args)
     }
     if (!is.null(f) && !is.function(f)) {
@@ -740,7 +740,7 @@ print.estimate <- function(x, level=0, digits=4, width=25,
 ##' @export
 vcov.estimate <- function(object,list=FALSE,...) {
     res <- object$vcov
-    nn <- names(coef(object))
+    nn <- names(coef(object,...))
     if (list && !is.null(object$model.index)) {
         return(lapply(object$model.index, function(x) object$vcov[x,x]))
     }
@@ -749,9 +749,9 @@ vcov.estimate <- function(object,list=FALSE,...) {
 }
 
 ##' @export
-coef.estimate <- function(object,mat=FALSE,list=FALSE,...) {
+coef.estimate <- function(object,mat=FALSE,list=FALSE,messages=lava.options()$messages,...) {
     if (mat) return(object$coefmat)
-    if (lava.options()$messages>0 && !is.null(object$back.transform)) message("Note: estimates on original scale (before 'back.transform')")
+    if (messages>0 && !is.null(object$back.transform)) message("Note: estimates on original scale (before 'back.transform')")
     if (list && !is.null(object$model.index)) {
         return(lapply(object$model.index, function(x) object$coef[x]))
     }
@@ -760,8 +760,11 @@ coef.estimate <- function(object,mat=FALSE,list=FALSE,...) {
 
 ##' @export
 summary.estimate <- function(object,...) {
-    ##object[c("iid","id","print")] <- NULL
-    object <- object[c("coef","coefmat","vcov","call","ncluster","model.index")]
+    p <- coef(object,messages=0)
+    test <- estimate(coef=p,vcov=vcov(object,messages=0),
+                    contrast=as.list(seq_along(p)),...)
+    object$compare <- test$compare
+    object <- object[c("coef","coefmat","vcov","call","ncluster","model.index","compare")]
     class(object) <- "summary.estimate"
     object
 }
