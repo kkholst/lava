@@ -48,8 +48,21 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
         predict.fun <- lapply(nlobj, function(x) x[["pred"]])
     } else { predict.fun <- nlobj }
     if (inherits(model1, "lvm.mixture")) {
-        Pr <- predict(model1, p=p, data=data)
-        P <- list(mean=Pr, var=attr(Pr,"cond.var"))
+        if (is.list(predict.fun)) {
+            unams <- lapply(nlobj,function(x) x$newx)
+            unam <- unique(unlist(unams))
+            res <- matrix(0, NROW(data), ncol=length(unam))
+            colnames(res) <- unam
+            for (i in seq_along(predict.fun)) {
+                res[, unams[[i]]] <-
+                    predict(model1, p=p, data=data, predict.fun=predict.fun[[i]])
+            }
+            return(res)
+        } else {            
+            Pr <- cbind(predict(model1, p=p, data=data, predict.fun=predict.fun))
+            return(Pr)
+        }
+        ##P <- list(mean=Pr, var=attr(Pr,"cond.var"))
     }  else {
         P <- predictlvm(model1, p=p, data=data)
     }
