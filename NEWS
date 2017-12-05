@@ -1,9 +1,23 @@
-* Version 1.5.1.1 <2017-10-17 Mon>
-  - estimate.default keep,use arguments now by default regex
+* Version 1.5.2 <2017-12-04 Mon>
+  - estimate.default keep,use arguments now  regex
+    summary updated
   - predict.twostage updated
   - estimate.formula -> na.pass full iid
   - seed argument to makemissing
- 
+  - condition number calc. via svd
+  - weights argument in stack renamed to propensity
+    If given as TRUE will automatically ...
+  - estimate.formula now by default wraps glm and uses na.pass such that iid return matrix of same size as full data
+    Stack function deals nicer with missing data in propensity score model. Better print.estimate for merged objects. na.pass0 method for imputation.
+  - Stack updated (checked all derivatives)
+  - na.pass0
+  - summary.estimate now returns Wald test for al parameters being zero
+  - Changing 'silent' argument to 'messages'
+  - Updated output functions for class 'sim'. Plot method updated so density.alpha is applied to each 'se' level
+  - New utility functions: Grep,Na2x,x2NA,wait,waitclick,rotation,Rot2d,Rot3d
+  - composite likelihood cleaned (complik) + example. ordinal now cleans up properly
+  - twostage help, stack.estimate example
+  - twostage fixed for mixture models
 
 * Version 1.5.1 <2017-09-25 Mon>
   - conformal predictions: confpred

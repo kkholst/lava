@@ -8,7 +8,7 @@
 ##' @importFrom graphics plot lines points abline points text layout
 ##'     par plot.new plot.window title rect locator segments image
 ##'     mtext box axis polygon matplot contour contour.default
-##'     identify
+##'     identify rug curve
 ##' @importFrom grDevices xy.coords col2rgb rgb colors rainbow
 ##'     topo.colors gray.colors palette colorRampPalette heat.colors
 ##' @importFrom utils stack combn read.csv getTxtProgressBar
