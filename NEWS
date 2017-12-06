@@ -1,5 +1,6 @@
-* Version 1.5.2 <2017-12-04 Mon>
-  - estimate.default keep,use arguments now  regex
+* Version 1.5.2 <2017-12-05 tir>
+  - lava.mixture: mixture, km, mvnmix
+  - estimate.default keep, use arguments now  regex
     summary updated
   - predict.twostage updated
   - estimate.formula -> na.pass full iid

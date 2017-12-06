@@ -81,8 +81,7 @@ Specify structurual equation models with two factors
 
 Simulation
 #+BEGIN_SRC R :exports code
-  set.seed(1)
-  d <- sim(m,100)
+  d <- sim(m,100,seed=1)
 #+END_SRC
 
 #+RESULTS:
@@ -144,8 +143,7 @@ m <- lvm(c(y1,y2,y3)~u,u~x)
 transform(m,u2~u) <- function(x) x^2
 regression(m) <- z~u2+u
 
-set.seed(1)
-d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.5))
+d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.5),seed=1)
 #+END_SRC
 
 #+RESULTS:
@@ -178,11 +176,11 @@ Stage 2
 
 #+RESULTS:
 #+BEGIN_example
-            Estimate Std.Err   2.5%  97.5%  P-value
-(Intercept)  -1.1068  0.1380 -1.377 -0.836 1.04e-15
-x            -0.0899  0.1496 -0.383  0.203 5.48e-01
-u             1.1108  0.1350  0.846  1.375 1.89e-16
-u2           -0.4266  0.0586 -0.541 -0.312 3.41e-13
+            Estimate Std.Err    2.5%   97.5%   P-value
+(Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16
+x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01
+u             1.0039 0.11504  0.7785  1.2294 2.609e-18
+u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
 #+END_example
 
 
@@ -222,32 +220,21 @@ onerun <- function(...) {
     d <- sim(m,100)
     m0 <- lvm(S~x+z,x~z)
     e <- estimate(m0,d,estimator="glm")
-    vec(coef(effects(e,S~z))[,1:2])
+    vec(summary(effects(e,S~z))$coef[,1:2])
 }
 val <- sim(onerun,100)
-summary(val)
+summary(val, estimate=1:4, se=5:8, short=TRUE)
 #+END_SRC
 
 #+RESULTS:
 #+BEGIN_example
-        Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
-Mean         2.0162354       0.9932393         1.0229961      1.0229961
-SD           0.1684448       0.1936356         0.1698821      0.1698821
-Min          1.7405642       0.5912522         0.6255221      0.6255221
-2.5%         1.7499169       0.6293145         0.6986610      0.6986610
-50%          2.0029443       0.9709732         1.0195000      1.0195000
-97.5%        2.3844601       1.3921685         1.4005224      1.4005224
-Max          2.4469513       1.7187305         1.4383459      1.4383459
-Missing      0.0000000       0.0000000         0.0000000      0.0000000
-        Total.Std.Err Direct.Std.Err Indirect.Std.Err S~x~z.Std.Err
-Mean       0.19195276     0.18473452        0.1722835     0.1722835
-SD         0.02263971     0.02536669        0.0199476     0.0199476
-Min        0.14387867     0.13318518        0.1246594     0.1246594
-2.5%       0.14977002     0.13860194        0.1345885     0.1345885
-50%        0.19375670     0.17976077        0.1723076     0.1723076
-97.5%      0.23488476     0.24059604        0.2147245     0.2147245
-Max        0.23689616     0.25184711        0.2201178     0.2201178
-Missing    0.00000000     0.00000000        0.0000000     0.0000000
+100 replications					Time: 4.806s
+
+      Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
+Mean         2.01736         1.01154           1.00582        1.00582
+SD           0.18457         0.22535           0.18828        0.18828
+SE           0.18796         0.18621           0.16855        0.16855
+SE/SD        1.01840         0.82633           0.89522        0.89522
 #+END_example
 
 
@@ -261,7 +248,6 @@ Add additional simulations and visualize results
 
 #+RESULTS:
 [[file:inst/mediation2.png]]
-
 
 
 * COMMENT Setup
