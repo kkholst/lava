@@ -538,6 +538,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         res$compare$estimate <- NULL
         res$coef <- res$compare$coef
         res$vcov <- res$compare$vcov
+        names(res$coef) <- gsub("(^\\[)|(\\]$)","",rownames(res$coefmat))
     }
 
     if (!is.null(back.transform)) {
