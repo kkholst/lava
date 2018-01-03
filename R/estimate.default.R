@@ -645,8 +645,8 @@ estimate.estimate.sim <- function(x,f,R=0,labels,...) {
 
 
 ##' @export
-print.estimate.sim <- function(x,level=.05,...) {
-    quantiles <- c(level/2,1-level/2)
+print.estimate.sim <- function(x,level=.95,...) {
+    quantiles <- c((1-level)/2,1-(1-level)/2)
     est <- attr(x,"estimate")
     mysummary <- function(x,INDEX,...) {
         x <- as.vector(x)
@@ -671,18 +671,18 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @export
-print.estimate <- function(x, level=0, digits=4, width=25,
+print.estimate <- function(x, type=0L, digits=4L, width=25L,
                    std.error=TRUE, p.value=TRUE,
                    sep="_______",sep.which, na.print="", ...) {
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
         return(invisible(x))
     }
-    if (level>0 && !is.null(x$call)) {
+    if (type>0 && !is.null(x$call)) {
         cat("Call: "); print(x$call)
         printline(50)
     }
-    if (level>0) {
+    if (type>0) {
         if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
             cat("n = ",x[["n"]],", clusters = ",x[["k"]],"\n\n",sep="")
         } else {
@@ -777,7 +777,7 @@ coef.summary.estimate <- function(object,...) {
 
 ##' @export
 print.summary.estimate <- function(x,...) {
-    print.estimate(x,level=2,...)
+    print.estimate(x,type=2L,...)
 }
 
 ##' @export

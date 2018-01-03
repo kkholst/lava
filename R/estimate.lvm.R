@@ -67,7 +67,7 @@
 ##' @param param set parametrization (see \code{help(lava.options)})
 ##' @param cluster Obsolete. Alias for 'id'.
 ##' @param p Evaluate model in parameter 'p' (no optimization)
-##' @param ... Additional arguments to be passed to the low level functions
+##' @param ... Additional arguments to be passed to lower-level functions
 ##' @return A \code{lvmfit}-object.
 ##' @author Klaus K. Holst
 ##' @seealso estimate.default score, information

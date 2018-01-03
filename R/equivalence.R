@@ -12,7 +12,7 @@
 ##' the number of additional associations to be added instead of \code{rel}.
 ##' @param omitrel if \code{k} greater than 1, this boolean defines wether to
 ##' omit candidates containing \code{rel} from the output
-##' @param \dots Additional arguments to be passed to the low level functions
+##' @param \dots Additional arguments to be passed to the lower-level functions
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{compare}}, \code{\link{modelsearch}}
 ##' @export

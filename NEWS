@@ -5,7 +5,7 @@
     requires 'mets' packages; Gaussian mixture models (mvnmix);
     weighted k-means (km)
   - estimate.default: 'keep', 'use' arguments can be specified as
-    regular expressions (regex=TRUE).
+    regular expressions (with argument regex=TRUE).
     Summary method now returns Wald test (null: all parameters being zero).
   - makemissing: seed argument added.
   - Global change: 'silent' argument renamed to 'messages'

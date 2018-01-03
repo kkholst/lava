@@ -11,7 +11,7 @@
 ##' @param z Z variable (optional)
 ##' @param xlab x-axis label
 ##' @param ylab y-axis label
-##' @param ... additional arggument to lower level plot functions
+##' @param ... additional arggument to lower-level plot functions
 ##' @param z.col Color 
 ##' @param data data.frame
 ##' @param add If TRUE use current active device

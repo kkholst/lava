@@ -18,7 +18,7 @@ fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
 
 \item{ylab}{y-axis label}
 
-\item{...}{additional arggument to lower level plot functions}
+\item{...}{additional arggument to lower-level plot functions}
 
 \item{z.col}{Color}
 

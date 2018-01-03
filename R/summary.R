@@ -42,9 +42,9 @@ function(object,...) {
 
 ##' @export
 `summary.lvmfit` <-
-function(object,std="xy", level=9, labels=2, ...) {
-  cc <- CoefMat(object,labels=labels,std=std,level=level,...)
-  mycoef <- coef(object,level=9)
+function(object,std="xy", type=9, labels=2, ...) {
+  cc <- CoefMat(object,labels=labels,std=std,type=type,...)
+  mycoef <- coef(object,type=9)
   nlincon <- attributes(mycoef)$nlincon
   nonexo <- setdiff(vars(object),index(Model(object))$exogenous)
   attributes(mycoef) <- attributes(mycoef)[1:2]
@@ -140,7 +140,7 @@ summary.multigroupfit <- function(object,groups=NULL,...) {
     }
   }
   cc <- CoefMat.multigroupfit(object,groups=groups,...)
-  res <- list(coef=coef(object,level=2,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
+  res <- list(coef=coef(object,type=2,groups=groups,...), object=object, coefmat=cc, gof=gof(object), object=object, opt=object$opt, latent=object$latent, estimator=object$estimator)
   class(res) <- "summary.multigroupfit"
   res
 }

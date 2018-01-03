@@ -6,7 +6,7 @@
 ##' @param replace With or with-out replacement
 ##' @param return.index If TRUE index of folds are returned otherwise the actual data splits are returned (default)
 ##' @param k (Optional, only used when p=NULL) number of folds without shuffling
-##' @param ... additional arguments to lower level functions
+##' @param ... additional arguments to lower-level functions
 ##' @export
 ##' @aliases csplit foldr
 ##' @examples

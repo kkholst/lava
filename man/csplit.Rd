@@ -18,7 +18,7 @@ csplit(x, p = NULL, replace = FALSE, return.index = FALSE, k = 2, ...)
 
 \item{k}{(Optional, only used when p=NULL) number of folds without shuffling}
 
-\item{...}{additional arguments to lower level functions}
+\item{...}{additional arguments to lower-level functions}
 }
 \description{
 Split data into folds

@@ -9,7 +9,7 @@ Combine(x, ...)
 \arguments{
 \item{x}{list of model objects}
 
-\item{...}{additional arguments to lower level functions}
+\item{...}{additional arguments to lower-level functions}
 }
 \description{
 Report estimates across different models
