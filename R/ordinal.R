@@ -167,8 +167,22 @@ ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
 }
 
 
-
+##' Define variables as ordinal
+##'
+##' Define variables as ordinal in latent variable model object
 ##' @export
+##' @aliases ordinal ordinal<-
+##' @param x Object
+##' @param ... additional arguments to lower level functions
+##' @param value variable (formula or character vector)
+##' @examples
+##' if (requireNamespace("mets")) {
+##' m <- lvm(y + z ~ x + 1*u[0], latent=~u)
+##' ordinal(m, K=3) <- ~y+z
+##' d <- sim(m, 100, seed=1)
+##' e <- estimate(m, d)
+##' }
+##' 
 "ordinal<-" <- function(x,...,value) UseMethod("ordinal<-")
 
 ##' @export

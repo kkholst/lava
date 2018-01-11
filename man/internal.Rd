@@ -29,8 +29,6 @@
 \alias{index<-}
 \alias{survival}
 \alias{survival<-}
-\alias{ordinal}
-\alias{ordinal<-}
 \alias{rmvn}
 \alias{dmvn}
 \alias{NR}
