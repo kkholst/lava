@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 
-* Version 1.6.0 <2017-12-11 Mon>
+* Version 1.6.0 <2018-01-11 Thu>
   - Mixture Latent variable models (mixture). Fast version
     requires 'mets' packages; Gaussian mixture models (mvnmix);
     weighted k-means (km)
