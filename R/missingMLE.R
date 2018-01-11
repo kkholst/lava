@@ -219,7 +219,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
                     weights=val$weights,data2=val$data2,
                     cluster=val$clusters,estimator=estimator,...)
 
-  cc <- coef(e.mis,level=1)
+  cc <- coef(e.mis,type=1)
   mynames <- c()
   if (e.mis$model$npar.mean>0)
     mynames <- c(mynames,paste0("m",seq_len(e.mis$model$npar.mean)))
@@ -280,7 +280,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     if (messages>1)
       message("Calculating asymptotic variance...\n")
     res$vcov <- solve(information(res$estimate,type="hessian"))
-    cc[] <- coef(e.mis,level=1,vcov=res$vcov)
+    cc[] <- coef(e.mis,type=1,vcov=res$vcov)
     res$coef <- cc
   }
 

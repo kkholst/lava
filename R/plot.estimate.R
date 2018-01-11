@@ -1,5 +1,20 @@
-
+##' Plot method for 'estimate' objects
+##'
+##' Plot method for 'estimate' objects
 ##' @export
+##' @param x estimate object
+##' @param f function of parameter coefficients and data parsed on to 'estimate'.
+##'          If omitted a forest-plot will be produced.
+##' @param idx Index of parameters (default all)
+##' @param intercept include intercept in forest-plot
+##' @param data data.frame
+##' @param confint Add confidence limits
+##' @param type plot type ('l')
+##' @param xlab x-axis label
+##' @param ylab y-axis label
+##' @param col color
+##' @param add add plot to current device
+##' @param ... additional arguments to lower-level functions
 plot.estimate <- function(x,f,idx,intercept=FALSE,data,confint=TRUE,type="l",xlab="x",ylab="f(x)",col=1,add=FALSE,...) {
     if (!missing(f) && !is.null(f)) {
         data <- as.list(data)

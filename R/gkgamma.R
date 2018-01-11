@@ -96,7 +96,7 @@ print.gkgamma <- function(x,call=TRUE,...) {
                                            if (strata[[i]]$ncluster<strata[[i]]$n) paste0(",clusters=",strata[[i]]$ncluster),
                                            "):\n",sep="")))
             e <- attr(x,"strata")[[i]]
-            print.estimate(e,level=0)
+            print.estimate(e,type=0)
             cat("\n")
         }
         printline(50)

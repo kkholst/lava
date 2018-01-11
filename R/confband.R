@@ -66,8 +66,9 @@
 ##' plot(0,type="n",ylim=c(0,k+1),xlim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
 ##' axis(1)
 ##' confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
-confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0.03,
-                     pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
+confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
+             centermark=0.03,
+             pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
     if (polygon) {
         if (step) {
             x1 <- rep(x,each=2)[-1]
@@ -84,7 +85,7 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
         }
         polygon(xx,yy,...)
         if (line && !is.null(center)) {
-            mlines <- function(x,y,...,density,angle,border,fillOddEven)
+            mlines <- function(x,y,...,border,fillOddEven)
                 lines(x,y,...)
             mlines(xx[seq(length(xx)/2)],center,...)
         }

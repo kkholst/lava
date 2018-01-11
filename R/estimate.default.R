@@ -342,7 +342,6 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         }
     }
 
-
     ## Simulate p-value
     if (R>0) {
         if (is.null(f)) stop("Supply function 'f'")
@@ -496,18 +495,25 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     }
     colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
 
-    if (!is.null(nn)) {
-        rownames(res) <- nn
-    } else {
-        nn <- attributes(res)$varnames
-        if (!is.null(nn)) rownames(res) <- nn
-        if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
-    }
+    if (nrow(res)>0)
+        if (!is.null(nn)) {
+            rownames(res) <- nn
+        } else {
+            nn <- attributes(res)$varnames
+            if (!is.null(nn)) rownames(res) <- nn
+            if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
+        }    
 
-    coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
+
+    if (NROW(res)==0L) {
+        coefs <- NULL
+    } else {
+        coefs <- res[,1,drop=TRUE]; names(coefs) <- rownames(res)
+    }
     res <- structure(list(coef=coefs,coefmat=res,vcov=V, iid=NULL, print=print, id=idstack),class="estimate")
     if (iid) ## && is.null(back.transform))
         res$iid <- iidtheta
+    if (length(coefs)==0L) return(res)
 
     if (!missing(contrast) | !missing(null)) {
         p <- length(res$coef)
@@ -645,8 +651,8 @@ estimate.estimate.sim <- function(x,f,R=0,labels,...) {
 
 
 ##' @export
-print.estimate.sim <- function(x,level=.05,...) {
-    quantiles <- c(level/2,1-level/2)
+print.estimate.sim <- function(x,level=.95,...) {
+    quantiles <- c((1-level)/2,1-(1-level)/2)
     est <- attr(x,"estimate")
     mysummary <- function(x,INDEX,...) {
         x <- as.vector(x)
@@ -671,18 +677,19 @@ estimate.glm <- function(x,...) {
 }
 
 ##' @export
-print.estimate <- function(x, level=0, digits=4, width=25,
+print.estimate <- function(x, type=0L, digits=4L, width=25L,
                    std.error=TRUE, p.value=TRUE,
                    sep="_______",sep.which, na.print="", ...) {
+
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
         return(invisible(x))
     }
-    if (level>0 && !is.null(x$call)) {
+    if (type>0 && !is.null(x$call)) {
         cat("Call: "); print(x$call)
         printline(50)
     }
-    if (level>0) {
+    if (type>0) {
         if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
             cat("n = ",x[["n"]],", clusters = ",x[["k"]],"\n\n",sep="")
         } else {
@@ -696,6 +703,7 @@ print.estimate <- function(x, level=0, digits=4, width=25,
     }
 
     cc <- x$coefmat
+    if (!is.null(rownames(cc)))
     rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
                                              function(x) toString(x,width=width))))   
     if (!std.error) cc <- cc[,-2,drop=FALSE]
@@ -777,7 +785,7 @@ coef.summary.estimate <- function(object,...) {
 
 ##' @export
 print.summary.estimate <- function(x,...) {
-    print.estimate(x,level=2,...)
+    print.estimate(x,type=2L,...)
 }
 
 ##' @export

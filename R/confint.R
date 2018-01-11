@@ -67,6 +67,6 @@ confint.multigroupfit <- function(object,parm=seq_along(pars(object)),level=0.95
   res <- cbind(pars(object),pars(object)) + qnorm(p)*cbind(-1,1)%x%diag(vcov(object))^0.5
   colnames(res) <- paste0(c(1-p,p)*100,"%")
   rownames(res) <- parpos(object); rownames(res)[is.na(rownames(res))] <- ""
-  if (estimates) res <- cbind(coef(object,level=0)[,c(1,2,4)],res)
+  if (estimates) res <- cbind(coef(object,type=0)[,c(1,2,4)],res)
   res[parm,,drop=FALSE]
 }

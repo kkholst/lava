@@ -33,7 +33,7 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
 ##'
 ##' @title Report estimates across different models
 ##' @param x list of model objects
-##' @param ... additional arguments to lower level functions
+##' @param ... additional arguments to lower-level functions
 ##' @author Klaus K. Holst
 ##' @examples
 ##' data(serotonin)

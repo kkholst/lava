@@ -16,8 +16,8 @@ test_that("Multiple group II", {
   d <- sim(m,100)
   ## Just a standard linear regression (single group)
   e <- estimate(list(m,m),list(d,d))
-  expect_identical(coef(e,level=2)[[1]],coef(e,level=2)[[2]])
-  expect_true(mean((coef(e,level=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
+  expect_identical(coef(e,type=2)[[1]],coef(e,type=2)[[2]])
+  expect_true(mean((coef(e,type=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
 })
 
 context("Missing data")

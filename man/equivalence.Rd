@@ -21,7 +21,7 @@ the number of additional associations to be added instead of \code{rel}.}
 \item{omitrel}{if \code{k} greater than 1, this boolean defines wether to
 omit candidates containing \code{rel} from the output}
 
-\item{\dots}{Additional arguments to be passed to the low level functions}
+\item{\dots}{Additional arguments to be passed to the lower-level functions}
 }
 \description{
 Identifies candidates of equivalent models

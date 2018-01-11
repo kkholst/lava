@@ -58,7 +58,7 @@ additional information such as standard errors are skipped}
 
 \item{p}{Evaluate model in parameter 'p' (no optimization)}
 
-\item{...}{Additional arguments to be passed to the low level functions}
+\item{...}{Additional arguments to be passed to lower-level functions}
 }
 \value{
 A \code{lvmfit}-object.

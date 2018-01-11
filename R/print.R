@@ -75,8 +75,8 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
 
 ##' @export
 `print.lvmfit` <-
-function(x,level=2,labels=FALSE,...) {
-    print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
+function(x,type=2,labels=FALSE,...) {
+    print(CoefMat(x,labels=labels,type=type,...),quote=FALSE,right=TRUE)
     minSV <- attr(vcov(x),"minSV")
     if (!is.null(minSV) && minSV<1e-12) {
         warning("Small singular value: ", format(minSV))
@@ -91,8 +91,8 @@ function(x,level=2,labels=FALSE,...) {
 ###{{{ print.lvmfit.randomslope
 
 ##' @export
-print.lvmfit.randomslope <- function(x,labels=FALSE,level=2,...) {
-  print(CoefMat(x,labels=labels,level=level,...),quote=FALSE,right=TRUE)
+print.lvmfit.randomslope <- function(x,labels=FALSE,type=2,...) {
+  print(CoefMat(x,labels=labels,type=type,...),quote=FALSE,right=TRUE)
   invisible(x)
 }
 
@@ -120,13 +120,13 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
       groups <- seq_len(length(x$model$lvm))
     }
   }
-  res <- coef(x,level=2,groups=groups,...)
+  res <- coef(x,type=2,groups=groups,...)
   counter <- 0
   dots <- list(...)
   dots$groups <- groups
-  level <- if (is.null(dots$level)) {
-    dots$level <- 2
-##    dots$level <- ifelse("lvmfit.randomslope"%in%class(x),2,9)
+  type <- if (is.null(dots$type)) {
+    dots$type <- 2
+##    dots$type <- ifelse("lvmfit.randomslope"%in%class(x),2,9)
   }
   myargs <- c(list(x=x), dots)
   myargs$groups <- groups

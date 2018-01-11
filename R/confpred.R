@@ -19,10 +19,9 @@
 ##' d <- data.frame(y=y,x=x)
 ##'
 ##' newd <- data.frame(x=seq(0,6,length.out=50))
-##' ## cc <- confpred(lm(y~ns(x,knots=c(1,3,5)),d),newdata=newd)
-##' cc <- confpred(lm(y~poly(x,3),d),data=d,newdata=newd)
-##' if (interactive()) { ##' 
-##' plot(y~x,pch=16,col=lava::Col("black"),ylim=c(-10,15),xlab="X",ylab="Y")
+##' cc <- confpred(lm(y~splines::ns(x,knots=c(1,3,5)),data=d), data=d, newdata=newd)
+##' if (interactive()) {
+##' plot(y~x,pch=16,col=lava::Col("black"),ylim=c(-10,10),xlab="X",ylab="Y")
 ##' with(cc,
 ##'      lava::confband(newd$x,lwr,upr,fit,
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))

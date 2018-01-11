@@ -4,14 +4,14 @@
 \alias{scheffe}
 \title{Calculate simultaneous confidence limits by Scheffe's method}
 \usage{
-scheffe(model, newdata = model.frame(model), conf.level = 0.95)
+scheffe(model, newdata = model.frame(model), level = 0.95)
 }
 \arguments{
 \item{model}{Linear model}
 
 \item{newdata}{new data frame}
 
-\item{conf.level}{confidence level (0.95)}
+\item{level}{confidence level (0.95)}
 }
 \description{
 Function to compute the Scheffe corrected confidence

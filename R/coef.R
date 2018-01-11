@@ -2,7 +2,7 @@
 
 ##' @export
 `coef.lvm` <-
-    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, messages=lava.options()$messages, p, data, vcov, level=9, labels=lava.options()$coef.names, ...) {
+    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, messages=lava.options()$messages, p, data, vcov, type=9, labels=lava.options()$coef.names, ...) {
         if (fix)
             object <- fixsome(object,measurement.fix=FALSE)
         if (!missing(p)) {
@@ -24,7 +24,7 @@
             coefs[,4] <-  2*(pnorm(abs(coefs[,3]),lower.tail=FALSE))
             colnames(coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
             object$coefficients <- coefs;
-            return(coef.lvmfit(object,level=level,labels=labels,symbol=symbol,...))
+            return(coef.lvmfit(object,type=type,labels=labels,symbol=symbol,...))
         }
 
 
@@ -150,16 +150,16 @@
 
 ##' @export
 `coef.lvmfit` <-
-function(object, level=ifelse(missing(type),-1,2),
+function(object, type=ifelse(missing(type),-1,2),
          symbol=lava.options()$symbol,
          data, std=NULL,
          labels=lava.options()$coef.names,
          ##labels=TRUE,
          vcov, 
-         type, reliability=FALSE, second=FALSE, ...) {
+         vcov.type, reliability=FALSE, second=FALSE, ...) {
 
     res <- (pars.default(object,...))
-    if (level<0 && !is.null(names(res))) return(res)
+    if (type<0 && !is.null(names(res))) return(res)
 
     if (is.null(object$control$meanstructure)) meanstructure <- TRUE
   else meanstructure <- object$control$meanstructure
@@ -203,7 +203,7 @@ function(object, level=ifelse(missing(type),-1,2),
   ## myorder <- c(myorder,myorder.extra)
 
 
-    if (level<0) {
+    if (type<0) {
         names(res)[seq_len(length(myorder))] <- coef(Model(object),fix=FALSE, mean=meanstructure, symbol=symbol)[order(myorder)]
         return(res)
     }
@@ -231,14 +231,14 @@ function(object, level=ifelse(missing(type),-1,2),
   A <- p$A
   P <- p$P
   mycoef <- object$coef
-  if (!missing(type) | !missing(vcov)) {
+  if (!missing(vcov.type) | !missing(vcov)) {
     if (!missing(vcov)) {
       mycoef[,2] <- sqrt(diag(vcov))[myorder]
     } else {
       if (!missing(data))
-        myvcov <- information(object,type=type,data=data,inverse=TRUE)
+        myvcov <- information(object,type=vcov.type,data=data,inverse=TRUE)
       else
-        myvcov <- information(object,type=type,inverse=TRUE)
+        myvcov <- information(object,type=vcov.type,inverse=TRUE)
       mycoef[,2] <- sqrt(diag(myvcov))[myorder]
     }
     mycoef[,3] <- mycoef[,1]/mycoef[,2]
@@ -291,7 +291,7 @@ function(object, level=ifelse(missing(type),-1,2),
         } else {
           rownames(newrow) <- paste0(nn[i],symbol[1],nn[j])
         }
-        if (free[j,i] | level>2) {
+        if (free[j,i] | type>2) {
           res <- rbind(res, newrow)
           Type <- c(Type,"regression")
           Var <- c(Var, nn[i])
@@ -303,7 +303,7 @@ function(object, level=ifelse(missing(type),-1,2),
   free.var[index(object)$P1!=1] <- FALSE
   nlincon.var <- matrix(Model(object)$covpar%in%names(constrain(Model(object))),nrow(P))
 
-    if (level>0)
+    if (type>0)
       ## Variance estimates:
       for (i in seq_len(ncol(p$P)))
         for (j in seq(i,nrow(p$P))) {
@@ -311,7 +311,7 @@ function(object, level=ifelse(missing(type),-1,2),
 
           if (!(i%in%para.idx))
           if (val!="0" & !any(vars(object)[c(i,j)]%in%index(Model(object))$exogenous))
-            if (level>1 | !all(vars(object)[c(i,j)]%in%index(Model(object))$manifest))
+            if (type>1 | !all(vars(object)[c(i,j)]%in%index(Model(object))$manifest))
             {
             matching <- match(val,rownames(coefs))
             matched <- c(matched,matching)
@@ -351,7 +351,7 @@ function(object, level=ifelse(missing(type),-1,2),
             } else {
               rownames(newrow) <- part2
             }
-            if ((free.var[j,i]) | level>2) {
+            if ((free.var[j,i]) | type>2) {
               res <- rbind(res, newrow)
               Type <- c(Type,"variance")
               Var <- c(Var, nn[i])
@@ -364,7 +364,7 @@ function(object, level=ifelse(missing(type),-1,2),
   ## Mean parameter:
   nlincon.mean <- lapply(Model(object)$mean, function(x) x%in%names(constrain(Model(object))) )
 
-  if (level>0 & npar.mean>0) {
+  if (type>0 & npar.mean>0) {
     midx <- seq_len(npar.mean)
     rownames(coefs)[midx] <- paste0("m",myorder[midx])
     munames <- rownames(coefs)[seq_len(npar.mean)]
@@ -396,7 +396,7 @@ function(object, level=ifelse(missing(type),-1,2),
         } else {
           rownames(newrow) <- index(Model(object))$vars[i]
         }
-        if ((index(object)$v1[i]==1) | level>2) {
+        if ((index(object)$v1[i]==1) | type>2) {
           res <- rbind(res, newrow)
           Type <- c(Type,ifelse(!(i%in%para.idx),"intercept","parameter"))
           Var <- c(Var, index(Model(object))$vars[i])
@@ -406,7 +406,7 @@ function(object, level=ifelse(missing(type),-1,2),
     }
   }
 
-  if (level>0 && length(myorder.extra>0)) {
+  if (type>0 && length(myorder.extra>0)) {
       cc <- coefs[myorder.extra,,drop=FALSE]
       rownames(cc) <- rownames(index(object)$epar)[which(index(object)$e1==1)]
       cc <- cbind(cc,rep(NA,ncol(res)-ncol(cc)))
@@ -443,17 +443,17 @@ coef.multigroup <- function(object,...) {
 
 ##' @export
 coef.multigroupfit <-
-  function(object, level=0,vcov, ext=FALSE,
+  function(object, type=0,vcov, ext=FALSE,
            labels=lava.options()$coef.names,
            symbol=lava.options()$symbol,
            covsymb=NULL,groups=NULL,...) {
 
-    if (level==0) {
+    if (type==0) {
       res <- pars(object);
       if (is.null(names(res))) names(res) <- object$model$name
       return(res)
     }
-    if (level==1) {
+    if (type==1) {
       theta <- pars(object)
       if (missing(vcov))
         theta.sd <- sqrt(diag(object$vcov))
@@ -466,7 +466,7 @@ coef.multigroupfit <-
       return(res)
     }
 
-    cc <- coef(object, level=1, symbol=symbol, ...)
+    cc <- coef(object, type=1, symbol=symbol, ...)
     model <- Model(object)
     parpos <- modelPar(model, seq_len(nrow(cc)))$p
     npar.mean <- object$model$npar.mean
@@ -540,12 +540,12 @@ coef.multigroupfit <-
 ###{{{ CoefMat
 
 ##' @export
-CoefMat.multigroupfit <- function(x,level=9,
+CoefMat.multigroupfit <- function(x,type=9,
                                   labels=lava.options()$coef.names,
                                   symbol=lava.options()$symbol[1],
                                   data=NULL,groups=seq(Model(x)$ngroup),...) {
 
-  cc <- coef(x,level=level,ext=TRUE,symbol=symbol,data=data,groups=groups)
+  cc <- coef(x,type=type,ext=TRUE,symbol=symbol,data=data,groups=groups)
   parpos <- attributes(cc)$parpos
   res <- c()
   nlincon.estimates <- c()
@@ -564,7 +564,7 @@ CoefMat.multigroupfit <- function(x,level=9,
     m0$opt$estimate <- mycoef[,1]
     Vcov <- vcov(x)[parpos[[k]],parpos[[k]],drop=FALSE]; colnames(Vcov) <- rownames(Vcov) <- rownames(mycoef)
     m0$vcov <- Vcov
-    cc0 <- coef.lvmfit(m0,level=level,labels=labels,symbol=symbol)
+    cc0 <- coef.lvmfit(m0,type=type,labels=labels,symbol=symbol)
     attributes(cc0)$dispname <- x$opt$dispname
     res <- c(res, list(CoefMat(cc0)))
     newnlin <- attributes(cc0)$nlincon
@@ -591,11 +591,11 @@ CoefMat.multigroupfit <- function(x,level=9,
 ##' @export
 CoefMat <- function(x,
                     digits = max(3, getOption("digits") - 2),
-                    level=9,
+                    type=9,
                     symbol=lava.options()$symbol[1],...) {
   cc <- x
   if (!is.matrix(x)) {
-    cc <- coef(x,level=level,symbol=symbol,...)
+    cc <- coef(x,type=type,symbol=symbol,...)
   }
   res <- c()
   mycoef <- format(round(cc,max(1,digits)),digits=digits)

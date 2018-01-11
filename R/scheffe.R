@@ -4,7 +4,7 @@
 ##' @title Calculate simultaneous confidence limits by Scheffe's method
 ##' @param model Linear model
 ##' @param newdata new data frame
-##' @param conf.level confidence level (0.95)
+##' @param level confidence level (0.95)
 ##' @export
 ##' @examples
 ##' x <- rnorm(100)
@@ -19,13 +19,13 @@
 ##' lines(upr~x,d1,lty=2,col="red")
 ##' lines(lwr~x,d2,lty=2,col="blue")
 ##' lines(upr~x,d2,lty=2,col="blue")
-scheffe <- function(model,newdata=model.frame(model),conf.level=0.95) {
+scheffe <- function(model,newdata=model.frame(model),level=0.95) {
     df <- model$df.residual
     p <- model$rank
-    alpha <- 1-conf.level
+    alpha <- 1-level
     ## Scheffe value uses 1-tailed F critical value
     scheffe.crit <- sqrt(p*qf(1-alpha,p,df))
-    ci <- predict(model,newdata,interval="confidence",level=conf.level)
+    ci <- predict(model,newdata,interval="confidence",level=level)
     delta <- scheffe.crit/qt(1-alpha/2,df)
     ci[,2] <- ci[,1] -(ci[,1]-ci[,2])*delta
     ci[,3] <- ci[,1] +(ci[,3]-ci[,1])*delta

@@ -60,10 +60,10 @@ path <- function(object,...) UseMethod("path")
 ##' @export
 path.lvmfit <- function(object,to=NULL,from,...) {
   mypath <- pathM(Model(object)$M,to,from,...)
-  cc <- coef(object,level=9,labels=FALSE) ## All parameters (fixed and variable)
+  cc <- coef(object,type=9,labels=FALSE) ## All parameters (fixed and variable)
 
-  #cc0 <- coef(object,level=1) ## Estimated parameters
-  cc0 <- coef(object,level=2) ## Estimated parameters
+  #cc0 <- coef(object,type=1) ## Estimated parameters
+  cc0 <- coef(object,type=2) ## Estimated parameters
   i1 <- na.omit(match(rownames(cc),rownames(cc0)))
   idx.cc0 <-  which(rownames(cc)%in%rownames(cc0)); ## Position of estimated parameters among all parameters
   S <- matrix(0,nrow(cc),nrow(cc)); rownames(S) <- colnames(S) <- rownames(cc)

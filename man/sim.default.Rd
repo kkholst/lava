@@ -2,7 +2,6 @@
 % Please edit documentation in R/sim.default.R
 \name{sim.default}
 \alias{sim.default}
-\alias{summary.sim}
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
@@ -81,4 +80,7 @@ R <- Expand(a=1:3,b=1:3)
 sim(f,R,type=0)
 sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
 sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
+}
+\seealso{
+summary.sim plot.sim print.sim
 }
