@@ -27,8 +27,6 @@
 \alias{index}
 \alias{reindex}
 \alias{index<-}
-\alias{survival}
-\alias{survival<-}
 \alias{rmvn}
 \alias{dmvn}
 \alias{NR}

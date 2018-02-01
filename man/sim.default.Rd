@@ -67,7 +67,7 @@ if (interactive()) {
     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
          true=c(1,1),names=c("Model","Sandwich"),
-         line.lwd=1,density.col=c("gray20","gray60"),
+         line.lwd=1,col=c("gray20","gray60"),
          rug=FALSE)
     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
          names=c("Model","Sandwich"))
