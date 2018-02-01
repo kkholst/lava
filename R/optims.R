@@ -57,7 +57,7 @@ estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
 ###{{{ Newton-Raphson/Scoring
 
 ##' @export
-NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
+NR <- function(start,objective=NULL,gradient,hessian=NULL,debug=FALSE,control,...) {
   control0 <- list(trace=0,
                    gamma=1,
                    lambda=0,
@@ -95,11 +95,15 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
     }
   }
   
-  if (control0$trace>0)
-    cat("\nIter=0  Objective=",objective(as.double(start)),";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
+  if (control0$trace>0) {
+      cat("\nIter=0")
+      if (!is.null(objective))
+          cat("Objective=",objective(as.double(start)))
+      cat(";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
+  }
   
-  gradFun = !missing(gradient)
-  if (!gradFun & missing(hessian)) {
+  gradFun = !is.null(gradient)
+  if (!gradFun & is.null(hessian)) {
     hessian <- function(p) {
       ff <- objective(p)
       res <- attributes(ff)$hessian
@@ -109,7 +113,6 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
   }
   oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
     if (is.null(hessian)) {
-      cat(".")
       I <- -numDeriv::jacobian(gradient,p.orig,method=lava.options()$Dmethod)
     } else {
       I <- -hessian(p.orig)
@@ -133,19 +136,15 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         I <- I+control0$gamma2*(sigma)
       }
     }
-    
-    ## svdI <- svd(I); svdI$d0 <- numeric(length(svdI$d));
-    ## svdI$d0[abs(svdI$d)>control0$epsilon] <-
-    ##   1/svdI$d[abs(svdI$d)>control0$epsilon]
-    ## iI <- with(svdI,  (v)%*%diag(d0,nrow=length(d0))%*%t(u))
+
+    Delta = control0$gamma*solve(I, D)
     iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
-    Delta = control0$gamma*iI%*%D
-    
+    ## Delta = control0$gamma*iI%*%as.vector(D)    
     Lambda <- 1
     if (identical(control0$backtrack, TRUE)) {
       mD0 <- mean(Dprev^2)
       mD <- mean(D^2)
-      p <- p.orig + Lambda*Delta
+      p <- p.orig + as.vector(Lambda*Delta)
       while (mD>=mD0) {
         if (gradFun) {
           D = gradient(p)
@@ -157,7 +156,7 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         if (is.nan(mD)) mD=mD0
         Lambda <- Lambda/2
         if (Lambda<1e-4) break;
-        p <- p.orig + Lambda*Delta            
+        p <- p.orig + as.vector(Lambda*Delta)
       }
       
     } else if(identical(control0$backtrack, FALSE)) {
@@ -167,17 +166,13 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
         ## curvature
         c_D.origin_Delta <- control0$backtrack * c(rbind(D) %*% Delta)
         objective.origin <- objective(p.orig)
-        p <- p.orig + Lambda*Delta
-        ## ll <- seq(-0.17,1,length.out=50)
-        ## pp <- numeric(length(ll))
-        ## for (ii in seq_along(ll)) pp[ii] <- objective(p.orig + ll[ii]*Delta)
+        p <- p.orig + as.vector(Lambda*Delta)
            
         mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#    
         mD <- c(objective(p), abs(gradient(p) %*% Delta))
         count <- 0 
         while (any(mD>mD0) || any(is.nan(mD))) {
             count <- count+1
-            ##cat(count, " f=",mD[1],"\n")
             Lambda <- Lambda/2
             if (Lambda<1e-4) break;
             p <- p.orig + Lambda*Delta
@@ -213,11 +208,14 @@ NR <- function(start,objective,gradient,hessian,debug=FALSE,control,...) {
       }
     }
     if (count2==control0$trace) {
-      cat("Iter=", count,"LogLik=",objective(as.double(newpar$p)),";\n\tD=", paste0(formatC(newpar$D), 
-                                                                                    collapse = " "), "\n")
-      cat("\tp=", paste0(formatC(thetacur), collapse = " "), 
-          "\n")
-      count2 <- 0
+        cat("Iter=", count)
+        if (!is.null(objective))
+            cat("Objective=",objective(as.double(newpar$p)))
+        cat(";\n\tD=", paste0(formatC(newpar$D), 
+                               collapse = " "), "\n")
+        cat("\tp=", paste0(formatC(thetacur), collapse = " "), 
+            "\n")
+        count2 <- 0
     }
     if (mean(newpar$D^2)<control0$tol) break;
   }
