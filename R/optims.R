@@ -1,5 +1,3 @@
-###{{{ nlminb
-
 nlminb2 <- function(start,objective,gradient,hessian,...) {
   nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min")
   dots <- list(...)
@@ -18,10 +16,6 @@ nlminb1 <- function(start,objective,gradient,hessian,...) {
 nlminb0 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
 }
-
-###}}} nlminb
-
-###{{{ estfun
 
 estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
@@ -52,12 +46,11 @@ estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
 
 estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
 
-###}}}
 
-###{{{ Newton-Raphson/Scoring
+## Newton-Raphson/Scoring
 
 ##' @export
-NR <- function(start,objective=NULL,gradient,hessian=NULL,debug=FALSE,control,...) {
+NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,debug=FALSE,control,...) {
   control0 <- list(trace=0,
                    gamma=1,
                    lambda=0,
@@ -137,7 +130,7 @@ NR <- function(start,objective=NULL,gradient,hessian=NULL,debug=FALSE,control,..
       }
     }
 
-    Delta = control0$gamma*solve(I, D)
+    Delta = control0$gamma*solve(I, cbind(as.vector(D)))
     iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
     ## Delta = control0$gamma*iI%*%as.vector(D)    
     Lambda <- 1
@@ -224,4 +217,3 @@ NR <- function(start,objective=NULL,gradient,hessian=NULL,debug=FALSE,control,..
   return(res)
 }
 
-###}}} Newton Raphson/Scoring

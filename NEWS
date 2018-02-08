@@ -1,5 +1,8 @@
 # -*- mode: org -*-
 
+* Version 1.6.0.x
+  - Newton-raphson more robust (using cholesky decomposition)
+
 * Version 1.6.0 <2018-01-11 Thu>
   - Mixture Latent variable models (mixture). Fast version
     requires 'mets' packages; Gaussian mixture models (mvnmix);
