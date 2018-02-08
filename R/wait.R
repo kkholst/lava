@@ -9,5 +9,5 @@ wait <- function() {
   cat(gettext("\nPress <Enter> to continue..."))
   res <- try(scan("", what=0, quiet=TRUE, nlines=1), silent=TRUE)
 }
-waitclick <- function() if(is.null(locator(1))) {break}
+waitclick <- function() if(is.null(locator(1))) invisible(NULL)
 
