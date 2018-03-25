@@ -250,7 +250,7 @@ plotConf <- function(model,
         R <- Y-XX0%*%bb
     }
     if (inherits(model,"lmerMod")) {
-        uz <- as.matrix(unlist(lme4::ranef(model))%*%do.call(Matrix::rBind,lme4::getME(model,"Ztlist")))[1,]
+        uz <- as.matrix(unlist(lme4::ranef(model))%*%do.call(rbind,lme4::getME(model,"Ztlist")))[1,]
         R <- R-uz
     }
 
