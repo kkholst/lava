@@ -10,22 +10,22 @@ test_that("Effects",{
     start <- c(rep(0,6),rep(1,17))
     suppressWarnings(e <- estimate(m,d,control=list(iter.max=0,start=start)))
     f <- summary(ef <- effects(e,y1~x))$coef
-    expect_true(all(f[,2]>0)) ## Std.err
-    expect_equal(f["Total",1],3) 
-    expect_equal(f["Direct",1],1)
+    testthat::expect_true(all(f[,2]>0)) ## Std.err
+    testthat::expect_equal(f["Total",1],3) 
+    testthat::expect_equal(f["Direct",1],1)
     f2 <- summary(effects(e,u~v))$coef
-    expect_equal(f2["Total",1],1)
-    expect_equal(f2["Direct",1],1)
-    expect_equal(f2["Indirect",1],0)
+    testthat::expect_equal(f2["Total",1],1)
+    testthat::expect_equal(f2["Direct",1],1)
+    testthat::expect_equal(f2["Indirect",1],0)
 
-    expect_output(print(ef),"Mediation proportion")
-    expect_equivalent(confint(ef)["Direct",],
-                      confint(e)["y1~x",])
+    testthat::expect_output(print(ef),"Mediation proportion")
+    testthat::expect_equivalent(confint(ef)["Direct",],
+                                confint(e)["y1~x",])
 
-    expect_equivalent(totaleffects(e,y1~x)[,1:4],f["Total",])
+    testthat::expect_equivalent(totaleffects(e,y1~x)[,1:4],f["Total",])
     
     g <- graph::updateGraph(plot(m,noplot=TRUE))
-    expect_equivalent(path(g,y1~x),path(m,y1~x))    
+    testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))    
 })
 
 test_that("Profile confidence limits", {
@@ -36,7 +36,7 @@ test_that("Profile confidence limits", {
     e <- estimate(m, d)
     ci0 <- confint(e,3)
     ci <- confint(e,3,profile=TRUE)
-    expect_true(mean((ci0-ci)^2)<0.1)
+    testthat::expect_true(mean((ci0-ci)^2)<0.1)
 })
 
 test_that("IV-estimator", {
@@ -45,7 +45,7 @@ test_that("IV-estimator", {
     d <- sim(m,100,seed=1)
     e0 <- estimate(m,d)
     e <- estimate(m,d,estimator="iv") ## := MLE
-    expect_true(mean((coef(e)-coef(e0))^2)<1e-9)
+    testthat::expect_true(mean((coef(e)-coef(e0))^2)<1e-9)
 })
 
 test_that("glm-estimator", {         
@@ -58,7 +58,7 @@ test_that("glm-estimator", {
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]  
-    expect_equivalent(c1,c2)
+    testthat::expect_equivalent(c1,c2)
 })
 
 test_that("gaussian", {
@@ -70,17 +70,17 @@ test_that("gaussian", {
     g <- function(p) lava:::gaussian_score.lvm(p,x=m,n=nrow(d),data=d,indiv=TRUE)
     s1 <- numDeriv::grad(f,c(0,1,1))
     s2 <- g(c(0,1,1))
-    expect_equal(s1,-colSums(s2),tolerance=0.1)
+    testthat::expect_equal(s1,-colSums(s2),tolerance=0.1)
 })
 
 test_that("Association measures", {
     P <- matrix(c(0.25,0.25,0.25,0.25),2)
     a1 <- lava:::assoc(P)
-    expect_equivalent(-log(0.25),a1$H)
-    expect_true(with(a1, all(c(kappa,gamma,MI,U.sym)==0)))
+    testthat::expect_equivalent(-log(0.25),a1$H)
+    testthat::expect_true(with(a1, all(c(kappa,gamma,MI,U.sym)==0)))
     
     p <- lava:::prob.normal(sigma=diag(nrow=2),breaks=c(-Inf,0),breaks2=c(-Inf,0))[1]
-    expect_equal(p[1],0.25)
+    testthat::expect_equal(p[1],0.25)
     ## q <- qnorm(0.75)
     ## m <- ordinal(lvm(y~x),~y, K=3)#, breaks=c(-q,q))
     ## normal.threshold(m,p=c(0,1,2))
@@ -96,18 +96,18 @@ test_that("equivalence", {
     e <- estimate(m,d)
     ##eq <- equivalence(e,y1~x,k=1)
     dm <- capture.output(eq <- equivalence(e,y2~x,k=1))
-    expect_output(print(eq),paste0("y1",lava.options()$symbol[2],"y3"))
-    expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))    
+    testthat::expect_output(print(eq),paste0("y1",lava.options()$symbol[2],"y3"))
+    testthat::expect_true(all(c("y1","y3")%in%eq$equiv[[1]][1,]))    
 })
 
 test_that("multiple testing", {
-    expect_equivalent(lava:::holm(c(0.05/3,0.025,0.05)),rep(0.05,3))
+    testthat::expect_equivalent(lava:::holm(c(0.05/3,0.025,0.05)),rep(0.05,3))
     
     ci1 <- scheffe(l <- lm(1:5~c(0.5,0.7,1,1.3,1.5)))
     ci2 <- predict(l,interval="confidence")
-    expect_equivalent(ci1[,1],ci2[,1])
-    expect_true(all(ci1[,2]<ci2[,2]))
-    expect_true(all(ci1[,3]>ci2[,3]))
+    testthat::expect_equivalent(ci1[,1],ci2[,1])
+    testthat::expect_true(all(ci1[,2]<ci2[,2]))
+    testthat::expect_true(all(ci1[,3]>ci2[,3]))
 })
 
 
@@ -118,26 +118,25 @@ test_that("modelsearch and GoF", {
     e0 <- estimate(lvm(c(y1,y2)~x,y1~~y2),d)
 
     s1 <- modelsearch(e,silent=TRUE,type="correlation")
-    expect_true(nrow(s1$res)==2)
+    testthat::expect_true(nrow(s1$res)==2)
     s1b <- modelsearch(e,silent=TRUE,type="regression")
-    expect_true(nrow(s1b$res)==4)
+    testthat::expect_true(nrow(s1b$res)==4)
     s2 <- modelsearch(e0,silent=TRUE,dir="backward")
-    expect_true(nrow(s2$res)==3)
+    testthat::expect_true(nrow(s2$res)==3)
     e00 <- estimate(e0,vcov=vcov(e0))$coefmat
     ii <- match(s2$res[,"Index"],rownames(e00))
-    expect_equivalent(e00[ii,5],s2$test[,2])
+    testthat::expect_equivalent(e00[ii,5],s2$test[,2])
 
     s3 <- modelsearch(e0,dir="backward",k=3)
-    expect_true(nrow(s3$res)==1)
+    testthat::expect_true(nrow(s3$res)==1)
     
     ee <- modelsearch(e0,dir="backstep",messages=FALSE)
-    expect_true(inherits(ee,"lvm"))
+    testthat::expect_true(inherits(ee,"lvm"))
 
     ## TODO
     gof(e,all=TRUE)    
     r <- rsq(e)[[1]]
-    expect_true(abs(summary(lm(y1~x,d))$r.square-r["y1"])<1e-5)
-    
+    testthat::expect_true(abs(summary(lm(y1~x,d))$r.square-r["y1"])<1e-5)    
 })
 
 test_that("Bootstrap", {
@@ -146,12 +145,12 @@ test_that("Bootstrap", {
     e <- estimate(y~x,lvm=TRUE)
     B1 <- bootstrap(e,R=2,silent=TRUE,mc.cores=1,sd=TRUE)    
     B2 <- bootstrap(e,R=2,silent=TRUE,bollenstine=TRUE,mc.cores=1)
-    expect_false(B1$bollenstine)
-    expect_true(B2$bollenstine)
-    expect_true(nrow(B1$coef)==2)
-    expect_output(print(B1),"Standard errors:")
+    testthat::expect_false(B1$bollenstine)
+    testthat::expect_true(B2$bollenstine)
+    testthat::expect_true(nrow(B1$coef)==2)
+    testthat::expect_output(print(B1),"Standard errors:")
     dm <- capture.output(B3 <- bootstrap(e,R=2,fun=function(x) coef(x)[2]^2+10))
-    expect_true(all(mean(B3$coef)>10))
+    testthat::expect_true(all(mean(B3$coef)>10))
 
     y <- rep(c(0,1),each=5)
     x <- 1:10
@@ -159,7 +158,7 @@ test_that("Bootstrap", {
     constrain(m,alpha~b) <- function(x) x^2
     e <- estimate(m,data.frame(y=y,x=x))
     b <- bootstrap(e,R=1,silent=TRUE)
-    expect_output(print(b),"alpha")
+    testthat::expect_output(print(b),"alpha")
 })
 
 
@@ -171,10 +170,10 @@ test_that("Survreg", {
     require('survival')
     m <- survreg(Surv(y,status)~x,data=d,dist='gaussian')
     s <- score(m)
-    expect_true(length(pars(m))==length(coef(m))+1)
-    expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
-    expect_true(mean(colSums(s)^2)<1e-6)
-    expect_equivalent(vcov(m),attr(s,'bread'))
+    testthat::expect_true(length(pars(m))==length(coef(m))+1)
+    testthat::expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
+    testthat::expect_true(mean(colSums(s)^2)<1e-6)
+    testthat::expect_equivalent(vcov(m),attr(s,'bread'))
 })
 
 
@@ -185,9 +184,9 @@ test_that("Combine", { ## Combine model output
     m2 <- lm(cau ~ age + gene1,data=serotonin)
 
     cc <- Combine(list('model A'=m1,'model B'=m2),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
-    expect_true(nrow(cc)==length(coef(m1))+1)
-    expect_equivalent(colnames(cc),c('model A','model B'))
-    expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
+    testthat::expect_true(nrow(cc)==length(coef(m1))+1)
+    testthat::expect_equivalent(colnames(cc),c('model A','model B'))
+    testthat::expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
 
 })
 
@@ -208,13 +207,13 @@ test_that("zero-inflated binomial regression (zib)", {
     e0 <- zibreg(y~x*z,~1+z+age,data=d)    
     e <- zibreg(y~x,~1+z+age,data=d)
     compare(e,e0)
-    expect_equivalent(score(e,data=d),
+    testthat::expect_equivalent(score(e,data=d),
                       colSums(score(e,indiv=TRUE)))
-    expect_equivalent(logLik(e,data=d),
+    testthat::expect_equivalent(logLik(e,data=d),
                       logLik(e)) 
-    expect_equivalent(vcov(e), Inverse(information(e,type="obs",data=d)))
+    testthat::expect_equivalent(vcov(e), Inverse(information(e,type="obs",data=d)))
 
-    expect_output(print(e), "Prevalence probabilities:")
+    testthat::expect_output(print(e), "Prevalence probabilities:")
     
     PD(e0,intercept=c(1,3),slope=c(2,6))
 
@@ -234,17 +233,17 @@ test_that("Optimization", {
     d <- simulate(m,20,seed=1)
     e1 <- estimate(m,d,control=list(method="nlminb0"))
     e2 <- estimate(m,d,control=list(method="NR"))
-    expect_equivalent(round(coef(e1),3),round(coef(e2),3))
+    testthat::expect_equivalent(round(coef(e1),3),round(coef(e2),3))
 
     f <- function(x) x^2*log(x) # x>0
     df <- function(x) 2*x*log(x) + x
     df2 <- function(x) 2*log(x) + 3
     op <- NR(5,f,df,df2,control=list(tol=1e-40)) ## Find root
-    expect_equivalent(round(op$par,digits=7),.6065307)
+    testthat::expect_equivalent(round(op$par,digits=7),.6065307)
     op2 <- estfun0(5,gradient=df)
     op3 <- estfun(5,gradient=df,hessian=df2,control=list(tol=1e-40))
-    expect_equivalent(op$par,op2$par)
-    expect_equivalent(op$par,op3$par)
+    testthat::expect_equivalent(op$par,op2$par)
+    testthat::expect_equivalent(op$par,op3$par)
 })
 
 
@@ -268,11 +267,11 @@ test_that("Prediction with missing data, random intercept", {
 
     mytol <- 1e-6
     mse <- function(x,y=0) mean(na.omit(as.matrix(x)-as.matrix(y))^2)
-    expect_true(mse(logLik(e),logLik(l))<mytol)
-    expect_true(mse(nlme::fixef(l),coef(e)[1:2])<mytol)
+    testthat::expect_true(mse(logLik(e),logLik(l))<mytol)
+    testthat::expect_true(mse(nlme::fixef(l),coef(e)[1:2])<mytol)
     u1 <- nlme::ranef(l)##[[1]][,1]
     u2 <- predict(e,endogenous(e))
-    expect_true(mse(u1,u2)<1e-9)
+    testthat::expect_true(mse(u1,u2)<1e-9)
 
     ## Missing data
     idx <- sample(seq(nrow(dd)),nrow(dd)*0.5)
@@ -282,17 +281,17 @@ test_that("Prediction with missing data, random intercept", {
     system.time(e0 <- estimate(m0,d0,missing=TRUE))
     ##system.time(l0 <- lme4::lmer(y~x+(1|id), data=dd0, REML=FALSE))
     system.time(l0 <- nlme::lme(y~x,random=~1|id, data=dd0, method="ML"))
-    expect_true(mse(logLik(e0),logLik(l0))<mytol)
-    expect_true(mse(nlme::fixef(l0),coef(e0)[1:2])<mytol)
+    testthat::expect_true(mse(logLik(e0),logLik(l0))<mytol)
+    testthat::expect_true(mse(nlme::fixef(l0),coef(e0)[1:2])<mytol)
     u01 <- nlme::ranef(l0)##[[1]][,1]
     u02 <- predict(e0,endogenous(e0))
     expect_true(mse(u01,u02)<1e-9)
 
     s <- summary(e0)
-    expect_output(print(s),paste0("data=",nrow(d0)))
-    expect_true(inherits(e0$estimate,"multigroupfit"))
-    expect_output(print(e0$estimate),"Group 1")
-    expect_output(print(summary(e0$estimate)),paste0("observations = ",nrow(d0)))
+    testthat::expect_output(print(s),paste0("data=",nrow(d0)))
+    testthat::expect_true(inherits(e0$estimate,"multigroupfit"))
+    testthat::expect_output(print(e0$estimate),"Group 1")
+    testthat::expect_output(print(summary(e0$estimate)),paste0("observations = ",nrow(d0)))
 
 })
 
@@ -326,17 +325,17 @@ test_that("Random slope model", {
     regression(m0) <- y3 ~ num3*s
     system.time(e <- estimate(m0,d,param="none",control=list(trace=0,constrain=FALSE)))
     
-    expect_true(mean(sl$coef-coef(e)[c("u","s")])^2<1e-5)
-    expect_true((logLik(l)-logLik(e))^2<1e-5)
+    testthat::expect_true(mean(sl$coef-coef(e)[c("u","s")])^2<1e-5)
+    testthat::expect_true((logLik(l)-logLik(e))^2<1e-5)
     varcomp.nam <- c(paste0("u",lava.options()$symbol[2],"u"),
                 paste0("s",lava.options()$symbol[2],"s"))
-    expect_true(mean(diag(sl$varcomp)-coef(e)[varcomp.nam])^2<1e-5)
+    testthat::expect_true(mean(diag(sl$varcomp)-coef(e)[varcomp.nam])^2<1e-5)
 
     ## missing
-    expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
-                  "Iter=")
+    testthat::expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
+                            "Iter=")
     l0 <- lmer(y~ 1+num +(1+num|id),dd0,REML=FALSE)    
-    expect_true((logLik(l0)-logLik(e0))^2<1e-5)    
+    testthat::expect_true((logLik(l0)-logLik(e0))^2<1e-5)    
     
     m1 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
     addvar(m1) <- ~num1+num2+num3
@@ -349,7 +348,7 @@ test_that("Random slope model", {
     constrain(m1,b2~num2) <- function(x) x
     constrain(m1,b3~num3) <- function(x) x
     system.time(e1 <- estimate(m1,d,param="none",p=coef(e)))
-    expect_true((logLik(e1)-logLik(e))^2<1e-5)
+    testthat::expect_true((logLik(e1)-logLik(e))^2<1e-5)
 
     ## TODO    
     ## missing    
@@ -371,18 +370,18 @@ test_that("Predictions, jacobians", {
 
     object <- e
     f <- function(p,x=vars(object)) predict(object,x,p=p)
-    expect_true(sum(abs(numDeriv::jacobian(f,coef(object))-predictlvm(object)$mean.jacobian))
-                <1e-6)
-    expect_true(sum(abs(numDeriv::jacobian(function(p) predictlvm(object,p=p)$var,coef(object))-predictlvm(object)$var.jacobian))
-                <1e-6)
+    testthat::expect_true(sum(abs(numDeriv::jacobian(f,coef(object))-predictlvm(object)$mean.jacobian))
+                          <1e-6)
+    testthat::expect_true(sum(abs(numDeriv::jacobian(function(p) predictlvm(object,p=p)$var,coef(object))-predictlvm(object)$var.jacobian))
+                          <1e-6)
 
-    expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,x1~1),coef(object))-
-                        predictlvm(object,x1~1)$mean.jacobian))
-                <1e-6)
+    testthat::expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,x1~1),coef(object))-
+                                  predictlvm(object,x1~1)$mean.jacobian))
+                          <1e-6)
     
-    expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,u1~x1+x2+x3),coef(object))-
-                        predictlvm(object,u1~x1+x2+x3)$mean.jacobian))
-                <1e-6)
+    testthat::expect_true(sum(abs(numDeriv::jacobian(function(p) f(p,u1~x1+x2+x3),coef(object))-
+                                  predictlvm(object,u1~x1+x2+x3)$mean.jacobian))
+                          <1e-6)
 })
 
 
@@ -399,27 +398,27 @@ test_that("multinomial", {
     m <- multinomial(d[,5])
     lev <- levels(d[,5])    
     e <- estimate(l <- lm(d[,5]==lev[1]~1))
-    expect_true(abs(vcov(e)[1]-vcov(m)[1])<1e-9)
+    testthat::expect_true(abs(vcov(e)[1]-vcov(m)[1])<1e-9)
         
     (a1 <- multinomial(d[,5:6],marginal=TRUE))
     K1 <- kappa(a1) ## Cohen's kappa
     P <- a1$P
     marg1 <- rowSums(P)
     marg2 <- colSums(P)
-    expect_equivalent(K1$coef,sum(diag(P)-marg1*marg2)/(1-sum(marg1*marg2)))
+    testthat::expect_equivalent(K1$coef,sum(diag(P)-marg1*marg2)/(1-sum(marg1*marg2)))
     
     K2 <- kappa(d[,7:8])
     ## Testing difference K1-K2:
     e1 <- estimate(merge(K1,K2,id=TRUE),diff)
     e2 <- estimate(merge(K1,K2,id=NULL),diff)
-    expect_true(vcov(e1)!=vcov(e2))
-    expect_equivalent(vcov(e2),(vcov(K1)+vcov(K2)))
+    testthat::expect_true(vcov(e1)!=vcov(e2))
+    testthat::expect_equivalent(vcov(e2),(vcov(K1)+vcov(K2)))
 
     g1 <- gkgamma(d[,5:6])
     g2 <- gkgamma(table(d[,5:6]))
     g3 <- gkgamma(multinomial(d[,5:6]))
-    expect_equivalent(g1$coefmat,g2$coefmat)
-    expect_equivalent(g3$coefmat,g2$coefmat)
+    testthat::expect_equivalent(g1$coefmat,g2$coefmat)
+    testthat::expect_equivalent(g3$coefmat,g2$coefmat)
 
     
     ## TODO
@@ -431,9 +430,9 @@ test_that("multinomial", {
         require('mvtnorm')
         system.time(rho <- pcor(d[,5],d[,6]))
         rho2 <- polycor::polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
-        expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
-        expect_true(abs(rho$vcov[1]-rho2$var[1])^2<1e-5)
-        expect_true(mean(score(rho))^2<1e-5)
+        testthat::expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
+        testthat::expect_true(abs(rho$vcov[1]-rho2$var[1])^2<1e-5)
+        testthat::expect_true(mean(score(rho))^2<1e-5)
     }
 })
 
@@ -447,11 +446,11 @@ test_that("predict,residuals", {
     
     l <- lm(y3~x,data=d)
     e3 <- estimate(y3~x,data=d,lvm=TRUE)
-    expect_true(mean((residuals(l)-residuals(e3))^2)<1e-12)
-    expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-3)
+    testthat::expect_true(mean((residuals(l)-residuals(e3))^2)<1e-12)
+    testthat::expect_true(mean(var(residuals(e3,std=TRUE))[1]*99/100-1)<1e-3)
    
     r <- residuals(e)
-    expect_true(ncol(r)==3)         
+    testthat::expect_true(ncol(r)==3)         
 })
 
 
@@ -464,10 +463,10 @@ test_that("partialcor", {
     e <- estimate(m,d)
     ec <- correlation(e)
     c2 <- coef(summary(correlation(e)))
-    expect_true(mean(c1[,1]-c2[,1])^2<1e-9)
+    testthat::expect_true(mean(c1[,1]-c2[,1])^2<1e-9)
     ## CI, note difference var(z)=1/(n-k-3) vs var(z)=1/(n-3)
-    expect_true(mean(c1[,4]-c2[,3])^2<1e-3)
-    expect_true(mean(c1[,5]-c2[,4])^2<1e-3)
+    testthat::expect_true(mean(c1[,4]-c2[,3])^2<1e-3)
+    testthat::expect_true(mean(c1[,5]-c2[,4])^2<1e-3)
 })
 
 test_that("partialgamma", {
@@ -486,11 +485,11 @@ test_that("Weighted",{
     d$w <- runif(nrow(d),0.1,1)
     e <- estimate(m,data=d)    
     l <- lm(y~x,data=d)
-    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
+    testthat::expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 
     w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=1))
     lw <- lm(y~x,data=d, weights=d$w)
-    expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
+    testthat::expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 })
 
 
@@ -504,6 +503,6 @@ test_that("Tobit",{
         s <- survreg(s~x,data=d,dist="gaussian",weights=d$w)
         m <- lvm(s~x)
         e <- estimate(m,data=d,estimator="normal",weights="w")
-        expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
+        testthat::expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
     }
 })

@@ -6,8 +6,8 @@ test_that("Multiple group I", {
   d <- sim(m,100)
   ## Just a stratified analysis
   e <- estimate(list("Group A"=m,"Group B"=m),list(d,d))
-  expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
-  expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
+  testthat::expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
+  testthat::expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
 })
 
 test_that("Multiple group II", {
@@ -16,8 +16,8 @@ test_that("Multiple group II", {
   d <- sim(m,100)
   ## Just a standard linear regression (single group)
   e <- estimate(list(m,m),list(d,d))
-  expect_identical(coef(e,type=2)[[1]],coef(e,type=2)[[2]])
-  expect_true(mean((coef(e,type=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
+  testthat::expect_identical(coef(e,type=2)[[1]],coef(e,type=2)[[2]])
+  testthat::expect_true(mean((coef(e,type=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
 })
 
 context("Missing data")
@@ -29,12 +29,12 @@ test_that("Missing data analysis", {
   ## Missing on first two outcomes
   d <- makemissing(sim(m,200),p=0.3,cols=c("y1","y2"))  
   e <- estimate(m,d,missing=TRUE)
-  expect_true("lvm.missing"%in%class(e))
-  expect_true(sum(unlist(lapply(e$estimate$model$data,nrow)))==200)
+  testthat::expect_true("lvm.missing"%in%class(e))
+  testthat::expect_true(sum(unlist(lapply(e$estimate$model$data,nrow)))==200)
   ## Convergence:
   g <- gof(e)
-  expect_true(mean(score(e))<1e-3)
-  expect_true(g$rankV==length(pars(e)))
+  testthat::expect_true(mean(score(e))<1e-3)
+  testthat::expect_true(g$rankV==length(pars(e)))
 })
 
 test_that("Multiple group, missing data analysis", {
@@ -48,9 +48,9 @@ test_that("Multiple group, missing data analysis", {
   d2 <- makemissing(sim(m,500),cols=c("y1","y2"),p=0.3)
   e <- estimate(list(m,m),list(d1,d2),missing=TRUE)
   g <- gof(e)
-  expect_true(g$n==1000)
-  expect_true(mean(score(e))<1e-3)
-  expect_true(g$rankV==length(pars(e)))
+  testthat::expect_true(g$n==1000)
+  testthat::expect_true(mean(score(e))<1e-3)
+  testthat::expect_true(g$rankV==length(pars(e)))
 })
 
 
@@ -74,7 +74,7 @@ test_that("Multiple group, constraints", {
 
     b1 <- coef(e,2,labels=TRUE)["beta2",1]
     b2 <- constraints(ee)[1]
-    expect_true(mean((b1-b2)^2)<1e-5)
+    testthat::expect_true(mean((b1-b2)^2)<1e-5)
     
     ## "Multiple group, constraints (non-linear in x)
     m <- lvm(y[m:v] ~ 1)
@@ -84,7 +84,7 @@ test_that("Multiple group, constraints", {
     ee <- estimate(list(m,m),list(d1[1:5,],d1[6:10,]))
     b1 <- coef(lm(y~x,d1[1:10,]))
     b2 <- coef(ee)[c("1@a","1@b")]
-    expect_true(mean(b1-b2)^2<1e-4)
+    testthat::expect_true(mean(b1-b2)^2<1e-4)
 
 })
 
