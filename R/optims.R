@@ -17,12 +17,6 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
 }
 
-optim0 <- function(start,objective,gradient,hessian,...) {
-    res <- optim(start,fn=objective,gr=NULL,...)
-    res
-}
-
-
 estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
     S <- gradient(x,...)
