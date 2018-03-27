@@ -9,5 +9,5 @@ trim <- function(x,all=FALSE,...) {
     ## y <- gsub("^ .", "", x) # remove leading white space
     ## y <- gsub(". $", "", x) # remove trailing white space
     if (!all) return(gsub("^\\s+|\\s+$", "", x))
-    return(gsub(" ","",x,fixed=TRUE))
+    return(gsub("\\s","",x))
 }
