@@ -14,11 +14,11 @@ Description: A general implementation of Structural Equation Models
 	with latent variables (MLE, 2SLS, and composite likelihood
 	estimators) with both continuous, censored, and ordinal
 	outcomes (Holst and Budtz-Joergensen (2013)
-	<doi:10.1007/s00180-012-0344-y>). The package also provides
-	methods for graph exploration (d-separation, back-door criterion),
-	simulation of general non-linear latent variable models, and
-	estimation of influence functions for a broad range of statistical 
-	models.
+	<doi:10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear latent variable models (two-stage)...		
+	The package also provides methods for graph exploration (d-separation,
+	back-door criterion), simulation of general non-linear latent variable
+	models, and estimation of influence functions for a broad range of
+	statistical models. 
 URL: https://github.com/kkholst/lava
 BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
@@ -47,7 +47,7 @@ Suggests:
 	gof (>= 0.9),
 	graph,
 	igraph (>= 0.6),
-	lava.tobit,
+	lava.tobit (>= 0.4.7),
 	lme4,
 	mets (>= 1.1),
 	optimx,

@@ -17,6 +17,12 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
 }
 
+optim0 <- function(start,objective,gradient,hessian,...) {
+    res <- optim(start,fn=objective,gr=NULL,...)
+    res
+}
+
+
 estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
     S <- gradient(x,...)
@@ -130,10 +136,11 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,debug=FALSE,contr
       }
     }
 
-    Delta = control0$gamma*solve(I, cbind(as.vector(D)))
     iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
-    ## Delta = control0$gamma*iI%*%as.vector(D)    
-    Lambda <- 1
+    Delta <- control0$gamma*tryCatch(solve(I, cbind(as.vector(D))),
+                            error=function(...) { ## Fall back to Pseudo-Inverse using SVD:
+                                iI%*%cbind(as.vector(D))})
+    Lambda <- 1 ## Initial step-size
     if (identical(control0$backtrack, TRUE)) {
       mD0 <- mean(Dprev^2)
       mD <- mean(D^2)
