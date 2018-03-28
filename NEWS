@@ -1,7 +1,10 @@
 # -*- mode: org -*-
 
-* Version 1.6.0.x
-  - Newton-raphson more robust (using cholesky decomposition)
+* Version 1.6.1 <2018-03-28 Wed>
+  - Newton-raphson algorithm made more robust.
+  - New sim.as method. plot.sim method now by default only plots
+    density estimates
+  - Compatibility fix with Matrix library 
 
 * Version 1.6.0 <2018-01-11 Thu>
   - Mixture Latent variable models (mixture). Fast version

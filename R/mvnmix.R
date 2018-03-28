@@ -127,8 +127,6 @@ mvnmix <- function(data, k=2, theta, steps=500,
         mu.new <- colSums(gammas[,j]*data)/sum(gammas[,j])
         mus.new <- rbind(mus.new, mu.new)
       }
-      ##      browser()
-      ##tcrossprod(t(y)-mus.new[[j]])
       wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
       Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
       ## Sigma.new <- 0

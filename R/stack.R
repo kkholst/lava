@@ -92,7 +92,6 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     iid2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
     iid3 <- -t(inv.D2u%*%(D1u%*%t(iid1.)))
     val <- cbind(iid2. + iid3)
-    ##browser()
     if (!keep1) return(estimate(coef=coef(model2), iid=val, ...))
     estimate(coef=c(coef(x), coef(model2)), iid=cbind(iid1., val),...)
 }
