@@ -2,6 +2,7 @@
 % Please edit documentation in R/sim.default.R
 \name{sim.default}
 \alias{sim.default}
+\alias{as.sim}
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,

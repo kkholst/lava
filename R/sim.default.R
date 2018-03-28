@@ -14,7 +14,7 @@
 ##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param iter If TRUE the iteration number is passed as first argument to (mc)mapply
 ##' @param ... Additional arguments to (mc)mapply
-##' @aliases sim.default
+##' @aliases sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim
 ##' @examples
 ##' m <- lvm(y~x+e)
@@ -214,6 +214,15 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
     x
 }
 
+##' @export
+"as.sim" <- function (object, name, ...) {
+    if (is.vector(object)) {
+        object <- (structure(cbind(object), class=c("sim", "matrix")))
+        if (!missing(name)) colnames(object) <- name
+        return(object)
+    }
+    structure(object, class=c("sim", class(object)))
+}
 
 Time <- function(sec,print=FALSE,...) {
     h <- sec%/%3600
