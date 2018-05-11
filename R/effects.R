@@ -162,8 +162,13 @@ summary.effects <- function(object,...) {
   mycoef <- cbind(mycoef,2*(pnorm(abs(mycoef[,3]),lower.tail=FALSE)))
   colnames(mycoef) <- c("Estimate","Std.Err","z value","Pr(>|z|)")
   medprop <- NULL
-  if (totindirectef[1]!=0)
-      medprop <- estimate(object, function(x) list("Mediation proportion"=logit(x[3]/x[1])),back.transform=expit)
+  if (totindirectef[1]!=0) {
+      if (abs(coef(object)[2])<1e-12) {
+          medprop <- estimate(NULL,coef=c("Mediation proportion"=1),vcov=matrix(NA))
+      } else {
+          medprop <- estimate(object, function(x) list("Mediation proportion"=logit(x[3]/x[1])),back.transform=expit)
+      }
+  }
   list(coef=mycoef,medprop=medprop)
 }
 
