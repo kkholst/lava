@@ -5,7 +5,7 @@
 \title{Cross-validation}
 \usage{
 cv(modelList, data, K = 5, rep = 1, perf, seed = NULL, mc.cores = 1,
-  ...)
+  shared = NULL, ...)
 }
 \arguments{
 \item{modelList}{List of fitting functions or models}
@@ -21,6 +21,8 @@ cv(modelList, data, K = 5, rep = 1, perf, seed = NULL, mc.cores = 1,
 \item{seed}{Optional random seed}
 
 \item{mc.cores}{Number of cores used for parallel computations}
+
+\item{shared}{function applied to each fold with results send to each model}
 
 \item{...}{Additional arguments parsed to models in modelList and perf}
 }
