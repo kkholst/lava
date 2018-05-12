@@ -412,3 +412,66 @@ predict.twostage.lvmfit <- function(object,
     return(res)
 }
 
+##' Cross-validated two-stage estimator  
+##'
+##' Cross-validated two-stage estimator for non-linear SEM
+##' @export
+##' @param model1 model 1 (exposure measurement error model)
+##' @param model2 model 2
+##' @param data data.frame
+##' @param control1 optimization parameters for model 1
+##' @param control2 optimization parameters for model 1
+##' @param knots.boundary boundary points for natural cubic spline basis
+##' @param mc.cores number of cores to use for parallel computations
+##' @param K number of mixture components
+##' @param nknots number of knots
+##' @param fix automatically fix parameters for identification (TRUE)
+##' @param std.err calculation of standard errors (TRUE)
+##' @param ... additional arguments to lower level functions
+twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0), knots.boundary, mc.cores=1, K=1:4, nknots=1:9, fix=TRUE, std.err=TRUE, ...) {
+    op <- options(warn=-1)
+    if (fix) {
+        model1 <- baptize(fixsome(model1, param="relative"))
+        intercept(model1, latent(model1)) <- NA
+    }  
+    e1a <- estimate(model1, data=data, control=control1)
+    if (missing(knots.boundary))
+        knots.boundary <- range(predict(e1a,vars(e1a)))
+    ## Starting values for mixture models
+    plab <- parlabels(model1)
+    pfree <- setdiff(coef(model1),plab)
+    pfree.idx <- match(pfree,coef(model1)) ## Index of unlabeled parameters    
+    intpos <- setdiff(parpos(model1)$v,0)
+    pfree.int <- intersect(pfree.idx,intpos) ## Free intercept parameters
+    p0 <- coef(e1a)
+    pint <- p0[setdiff(intpos,pfree.int)]
+    p0i <- p0[-intpos]
+    startf <- function(n) {
+        u0 <- seq(knots.boundary[1],knots.boundary[2],length.out=n); names(u0) <- paste0("p",seq_along(u0))
+        c(pint,u0,p0[-intpos])
+    }
+    control1$start <- NULL
+    ee <- list(e1a)
+    for (k in setdiff(K,1)) {
+        ee <- c(ee, list(mixture(model1, k=k, data=data,
+                           control=c(control1,list(start=startf(k))))))
+    }
+    ii <- which.min(unlist(lapply(ee,AIC)))
+    ## Exposure measurement model 
+    e1 <- ee[[ii]] ## Selected model by AIC
+
+    MM <- list(nonlinear(model2, u2 ~ u1, type="linear"))
+    for (i in setdiff(nknots, 1))
+        MM <- c(MM,         
+               list(nonlinear(model2, u2 ~ u1, type="spline",
+                              knots=seq(knots.boundary[1],knots.boundary[2],length.out=i+1))))
+    f0 <- function(data) list(e0=mixture(model1,data=data,k=e1$k,control=list(start=coef(e1),trace=0)))
+    ff <- lapply(MM,
+                function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
+    a <- cv(ff,data=data,K=5,rep=1,mc.cores=parallel::detectCores(),shared=f0)
+    M <- MM[[which.min(coef(a))]]
+    e2 <- twostage(e1,M,data,control=control2, std.err=std.err)
+
+    options(op)
+    list(model1=e1, model2=e2, cv=a)
+}
