@@ -423,12 +423,26 @@ predict.twostage.lvmfit <- function(object,
 ##' @param control2 optimization parameters for model 1
 ##' @param knots.boundary boundary points for natural cubic spline basis
 ##' @param mc.cores number of cores to use for parallel computations
-##' @param K number of mixture components
+##' @param k number of mixture components
 ##' @param nknots number of knots
 ##' @param fix automatically fix parameters for identification (TRUE)
 ##' @param std.err calculation of standard errors (TRUE)
+##' @param nfolds Number of folds (cross-validation)
+##' @param rep Number of repeats of cross-validation
 ##' @param ... additional arguments to lower level functions
-twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0), knots.boundary, mc.cores=1, K=1:4, nknots=1:9, fix=TRUE, std.err=TRUE, ...) {
+##' @examples
+##' \donttest{ ## Reduce Ex.Timings
+##' m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
+##' m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
+##' m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
+##' n <- 200
+##' distribution(m, ~u1) <- uniform.lvm(-6,6)
+##' d <- sim(m,n=200,seed=1)##' 
+##' val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=4, nfolds=5)
+##' }
+twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
+               knots.boundary, mc.cores=1, k=1:4, nknots=1:9, fix=TRUE, std.err=TRUE,
+               nfolds=5, rep=1, ...) {
     op <- options(warn=-1)
     if (fix) {
         model1 <- baptize(fixsome(model1, param="relative"))
@@ -452,7 +466,7 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     }
     control1$start <- NULL
     ee <- list(e1a)
-    for (k in setdiff(K,1)) {
+    for (k in setdiff(k,1)) {
         ee <- c(ee, list(mixture(model1, k=k, data=data,
                            control=c(control1,list(start=startf(k))))))
     }
@@ -465,10 +479,14 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
         MM <- c(MM,         
                list(nonlinear(model2, u2 ~ u1, type="spline",
                               knots=seq(knots.boundary[1],knots.boundary[2],length.out=i+1))))
-    f0 <- function(data) list(e0=mixture(model1,data=data,k=e1$k,control=list(start=coef(e1),trace=0)))
+    if (!inherits(e1, "lvm.mixture")) {
+        f0 <- function(data) list(e0=estimate(model1,data=data,control=c(control1,list(start=coef(e1)))))
+    } else {
+        f0 <- function(data) list(e0=mixture(model1,data=data,k=e1$k,control=c(control1,list(start=coef(e1)))))
+    }    
     ff <- lapply(MM,
                 function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
-    a <- cv(ff,data=data,K=5,rep=1,mc.cores=parallel::detectCores(),shared=f0)
+    a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=parallel::detectCores(),shared=f0)
     M <- MM[[which.min(coef(a))]]
     e2 <- twostage(e1,M,data,control=control2, std.err=std.err)
 

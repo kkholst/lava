@@ -11,7 +11,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' @title Cross-validation
 ##' @param modelList List of fitting functions or models
 ##' @param data data.frame
-##' @param K Number of folds (default 5)
+##' @param K Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part used for testing)
 ##' @param rep Number of repetitions (default 1)
 ##' @param perf Performance measure (default RMSE)
 ##' @param seed Optional random seed
@@ -27,6 +27,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
 ##' @export 
 cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=NULL, ...) {
+    if (is.vector(data)) data <- cbind(data)
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
     nam <- names(modelList)
@@ -47,7 +48,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
     perf0 <- lapply(fit0, function(fit) do.call(perf,c(list(fit,data=data),args)))
     namPerf <- names(perf0[[1]])
     names(fit0) <- names(perf0) <- nam
-    n <- nrow(data)
+    n <- NROW(data)
     M <- length(perf0)      # Number of models
     P <- length(perf0[[1]]) # Number of performance measures    
     if (!is.null(seed)) {
@@ -58,19 +59,24 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
         RNGstate <- structure(seed, kind = as.list(RNGkind()))        
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
-    
+    if (K==0) {
+        rep <- 1
+        K <- 1
+        folds <- list(csplit(seq(n)))
+    } else {
+        folds <- foldr(n,K,rep)
+    }
+    arg <- expand.grid(R=seq(rep),K=seq(K)) #,M=seq_along(modelList))
     dim <- c(rep,K,M,P)
     PerfArr <- array(0,dim)
     dimnames(PerfArr) <- list(NULL,NULL,nam,namPerf)
-    folds <- foldr(n,K,rep)
-    arg <- expand.grid(R=seq(rep),K=seq(K)) #,M=seq_along(modelList)) 
-
+    
     ff <- function(i) {
         R <- arg[i,1]
         k <- arg[i,2]
         fold <- folds[[R]]
-        dtest <- data[fold[[k]],]
-        dtrain <- data[unlist(fold[-k]),]
+        dtest <- data[fold[[k]],,drop=FALSE]
+        dtrain <- data[unlist(fold[-k]),,drop=FALSE]
         args <- args0
         if (!is.null(shared)) {
             sharedres <- shared(dtrain,...)            
@@ -84,6 +90,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
         perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
         do.call(rbind,perfs)        
     }
+    
     if (mc.cores>1) {
         val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE,mc.cores=mc.cores)
     } else {

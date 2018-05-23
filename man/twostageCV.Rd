@@ -5,8 +5,8 @@
 \title{Cross-validated two-stage estimator}
 \usage{
 twostageCV(model1, model2, data, control1 = list(trace = 0),
-  control2 = list(trace = 0), knots.boundary, mc.cores = 1, K = 1:4,
-  nknots = 1:9, fix = TRUE, std.err = TRUE, ...)
+  control2 = list(trace = 0), knots.boundary, mc.cores = 1, k = 1:4,
+  nknots = 1:9, fix = TRUE, std.err = TRUE, nfolds = 5, rep = 1, ...)
 }
 \arguments{
 \item{model1}{model 1 (exposure measurement error model)}
@@ -23,7 +23,7 @@ twostageCV(model1, model2, data, control1 = list(trace = 0),
 
 \item{mc.cores}{number of cores to use for parallel computations}
 
-\item{K}{number of mixture components}
+\item{k}{number of mixture components}
 
 \item{nknots}{number of knots}
 
@@ -31,8 +31,23 @@ twostageCV(model1, model2, data, control1 = list(trace = 0),
 
 \item{std.err}{calculation of standard errors (TRUE)}
 
+\item{nfolds}{Number of folds (cross-validation)}
+
+\item{rep}{Number of repeats of cross-validation}
+
 \item{...}{additional arguments to lower level functions}
 }
 \description{
 Cross-validated two-stage estimator for non-linear SEM
+}
+\examples{
+\donttest{ ## Reduce Ex.Timings
+m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
+m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
+m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
+n <- 200
+distribution(m, ~u1) <- uniform.lvm(-6,6)
+d <- sim(m,n=200,seed=1)##' 
+val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=4, nfolds=5)
+}
 }
