@@ -129,7 +129,7 @@ polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
             return(0)
         }
         if (type==1) ## rho
-            return(dmvn(c(a0[i],b0[j]),sigma=S))
+            return(dmvn0(c(a0[i],b0[j]),sigma=S))
         if (type==2) { ## threshold a
             if (k!=i) return(0)
             return(dnorm(a0[i])*pnorm((b0[j]-rho*a0[i])/sqrt(1-rho^2)))

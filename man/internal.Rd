@@ -27,8 +27,8 @@
 \alias{index}
 \alias{reindex}
 \alias{index<-}
-\alias{rmvn}
-\alias{dmvn}
+\alias{rmvn0}
+\alias{dmvn0}
 \alias{NR}
 \alias{logit}
 \alias{expit}

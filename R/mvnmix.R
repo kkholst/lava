@@ -109,7 +109,7 @@ mvnmix <- function(data, k=2, theta, steps=500,
     phis <- c()
     for (j in 1:k) {
         C <- matrix(Sigmas[j,],ncol=D); diag(C) <- diag(C)+lambda ## Assure C is not singular
-        phis <- cbind(phis, lava::dmvn(data,mus[j,],C))
+        phis <- cbind(phis, lava::dmvn0(data,mus[j,],C))
     }
     gammas <- c()
     denom <- t(ps%*%t(phis))

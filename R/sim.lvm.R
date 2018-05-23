@@ -190,7 +190,7 @@
 ##' }
 
 ##' m <- lvm()
-##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn(n,sigma=diag(3)+1)
+##' distribution(m,~y1+y2+y3,TRUE) <- function(n,...) rmvn0(n,sigma=diag(3)+1)
 ##' var(sim(m,100))
 
 ##' ## Syntax also useful for univariate generators, e.g.

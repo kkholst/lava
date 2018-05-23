@@ -60,7 +60,7 @@ test_that("Non-linear in exogenous variables", {
 test_that("Probit constraints", {
     if (!requireNamespace("mets",quietly=TRUE)) {
         if (as.numeric(strsplit(sessionInfo()$otherPkgs$mets$Version,".",fixed=TRUE)[[1]][1])>0) { ## At least major version 1
-            x <- transform(data.frame(lava:::rmvn(1000,sigma=0.5*diag(2)+0.5)),
+            x <- transform(data.frame(lava:::rmvn0(1000,sigma=0.5*diag(2)+0.5)),
                            X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
             m <- covariance(lvm(),X1~X2)
             ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1

@@ -245,7 +245,7 @@ NULL
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
 ##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##' index.lvm index.lvmfit index reindex index<-
-##' rmvn dmvn NR logit expit tigol
+##' rmvn0 dmvn0 NR logit expit tigol
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse

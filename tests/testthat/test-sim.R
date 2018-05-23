@@ -116,7 +116,7 @@ test_that("distributions", {
 
     ## Multivariate distribution
     m <- lvm()
-    rmr <- function(n,rho,...) rmvn(n,sigma=diag(2)*(1-rho)+rho)
+    rmr <- function(n,rho,...) rmvn0(n,sigma=diag(2)*(1-rho)+rho)
     distribution(m,~y1+y2,rho=0.9) <- rmr
     testthat::expect_equivalent(c("y1","y2"),colnames(d <- sim(m,5)))
 

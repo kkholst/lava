@@ -585,7 +585,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
 }
 
 simnull <- function(R,f,mu,sigma,labels=NULL) {
-    X <- rmvn(R,mu=mu,sigma=sigma)
+    X <- rmvn0(R,mu=mu,sigma=sigma)
     est <- f(mu)
     res <- apply(X,1,f)
     if (is.list(est)) {

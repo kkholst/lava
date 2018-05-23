@@ -364,10 +364,13 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         res
     }
     tm <- attr(object,"time")
-    N <- max(length(estimate),length(se),length(true))
+    N <- max(length(estimate),length(se),length(true))    
     if (!is.null(estimate)) estimate <- rep(estimate,length.out=N)
     if (!is.null(se)) se <- rep(se,length.out=N)
-    if (!is.null(true)) true <- rep(true,length.out=N)
+    if (!is.null(true)) {
+        if (is.null(estimate)) N <- ncol(object)
+        true <- rep(true,length.out=N)
+    }
     
     if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
@@ -405,9 +408,9 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     }
 
     if (!is.null(true)) {
-        if (length(true)!=length(estimate)) {
+        if (length(true)!=ncol(est)) {
             ##stop("'true' should be of same length as 'estimate'.")
-            true <- rep(true,length.out=length(estimate))
+            true <- rep(true,length.out=ncol(estimate))
         }
         est <- rbind(est,
                      rbind(True=true),rbind(Bias=est["Mean",]-true),
@@ -418,7 +421,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         if (is.character(se)) {
             se <- match(se,colnames(object))
         }
-        if (length(se)!=length(estimate)) stop("'se' should be of same length as 'estimate'.")
+        if (length(se)!=ncol(est)) stop("'se' should be of same length as 'estimate'.")
         est <- rbind(est, SE=apply(object[,se,drop=FALSE],2,
                                   function(x) c(mean(x,na.rm=TRUE))))
         est <- rbind(est,"SE/SD"=est["SE",]/est["SD",])

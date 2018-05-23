@@ -15,7 +15,7 @@ rho2sigma <- function(rho) {
 }
 
 ##' @export
-rmvn <- function(n,mu,sigma,rho,...) {
+rmvn0 <- function(n,mu,sigma,rho,...) {
     if (!missing(rho)) sigma <- rho2sigma(rho)
     if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
     if (missing(sigma)) sigma <- matrix(1)
@@ -28,7 +28,7 @@ rmvn <- function(n,mu,sigma,rho,...) {
 }
 
 ##' @export
-dmvn <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
+dmvn0 <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
     if (!missing(rho)) sigma <- rho2sigma(rho)
     if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
     if (missing(sigma)) sigma <- matrix(1)
