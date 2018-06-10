@@ -44,6 +44,7 @@ lisrel <- function(model,p,X=NULL,muX=NULL,varX=NULL,...) {
 
 ##  Sigma <- Vy.x + Phi%*%varX%*%t(Phi)
 
-  return(list(Lambda=Lambda, K=K, B=B, I=I, Gamma=Gamma, Psi=Psi, Theta=Theta, IBi=IBi, LIBi=LIBi, Phi=Phi,
+  return(list(mu=mom$v,
+      Lambda=Lambda, K=K, B=B, I=I, Gamma=Gamma, Psi=Psi, Theta=Theta, IBi=IBi, LIBi=LIBi, Phi=Phi,
          Vy.x=Vy.x, Veta.x=Veta.x, COVetay.x=COVetay.x, CV=CV, Ey.x=Ey.x))
 }

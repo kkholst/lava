@@ -68,7 +68,7 @@ predict.lvm.missing <- function(object,x=NULL,y=NULL,data=model.frame(object),p=
 ##' ##  Conditional mean of y3 giving covariates and y1,y2
 ##' r <- predict(e,y3~y1+y2)
 ##' ##  Conditional mean  gives covariates and y1
-##' r <- predict(e,~y1+y2)
+##' r <- predict(e,~y1)
 ##' ##  Predicted residuals (conditional on all observed variables)
 ##' r <- predict(e,vars(e),residual=TRUE)
 ##'
