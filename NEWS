@@ -1,5 +1,13 @@
 # -*- mode: org -*-
 
+* Version 1.6.2 <2018-07-02 Mon>
+  - twostageCV: cross-validate two-stage estimator
+  - rmvn, dmvn moved to mets package (C++ implementation, old versions
+    renamed to lava::rmvn0, lava::dmvn0)
+  - mediation proportion handled correctly when direct effect is zero
+  - unit tests clean-up (namespace)
+  - merge.lvm now correctly handles fixed covariance parameters
+
 * Version 1.6.1 <2018-03-28 Wed>
   - Newton-raphson algorithm made more robust.
   - New sim.as method. plot.sim method now by default only plots

@@ -32,7 +32,7 @@ test_that("color", {
     
 })
 
-if (requireNamespace("visualTest",quietly=TRUE) && requireNamespace("png",quietly=TRUE)) {
+if (requireNamespace("visualTest",quietly=TRUE)) {
 
     gropen <- function(resolution=200,...) {
         tmpfile <- tempfile(fileext=".png")

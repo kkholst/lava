@@ -35,15 +35,17 @@ merge.lvm <- function(x,y,...) {
         regression(m,to=nn[idx],from=nn[j],messages=0) <- val
       }
       P0 <- P[j,]; P0[seq_len(j-1)] <- 0
-        if (any(idx <- P[j,]!=0)) {
+      idx <- P[j,]!=0 | m2$covfix[j,]==0
+      idx[is.na(idx)] <- FALSE
+      if (any(idx)) {
           val <- as.list(rep(NA,sum(idx==TRUE)))
           if (any(idx. <- !is.na(m2$covpar[j,idx])))
             val[idx.] <- m2$covpar[j,idx][idx.]
           if (any(idx. <- !is.na(m2$covfix[j,idx])))
             val[idx.] <- m2$covfix[j,idx][idx.]
           covariance(m,nn[idx],nn[j],messages=0) <- val
-        }
       }
+    }
     intercept(m,nn) <- intercept(m2)
     m2x <- exogenous(m2)
     if (length(m2x)>0)

@@ -76,8 +76,8 @@ test_that("Linear constraints", {
 })
 
 
+if (requireNamespace("graph",quietly = TRUE))
 test_that("Graph attributes", {
-    require("graph")
     m <- lvm(y~x)
     g1 <- graph::updateGraph(plot(m,noplot=TRUE))
     m1 <- graph2lvm(g1)
