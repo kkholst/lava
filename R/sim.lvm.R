@@ -14,7 +14,7 @@
 ##' poisson.lvm
 ##' uniform.lvm
 ##' beta.lvm
-##' normal.lvm
+##' normal.lvm mvn.lvm
 ##' lognormal.lvm
 ##' gaussian.lvm
 ##' GM2.lvm

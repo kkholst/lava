@@ -431,7 +431,7 @@ predict.twostage.lvmfit <- function(object,
 ##' @param rep Number of repeats of cross-validation
 ##' @param ... additional arguments to lower level functions
 ##' @examples
-##' \donttest{ ## Reduce Ex.Timings
+##' \dontrun{ ## Reduce Ex.Timings
 ##' m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
 ##' m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
 ##' m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
