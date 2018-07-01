@@ -47,7 +47,7 @@ m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
 m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
 n <- 200
 distribution(m, ~u1) <- uniform.lvm(-6,6)
-d <- sim(m,n=200,seed=1)##' 
-val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=4, nfolds=5)
+d <- sim(m,n=200,seed=1) 
+val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=1, nfolds=5)
 }
 }
