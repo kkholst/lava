@@ -431,14 +431,15 @@ predict.twostage.lvmfit <- function(object,
 ##' @param rep Number of repeats of cross-validation
 ##' @param ... additional arguments to lower level functions
 ##' @examples
-##' \dontrun{ ## Reduce Ex.Timings
+##' \donttest{ ## Reduce Ex.Timings
 ##' m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
 ##' m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
 ##' m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
 ##' n <- 200
 ##' distribution(m, ~u1) <- uniform.lvm(-6,6)
 ##' d <- sim(m,n=200,seed=1) 
-##' val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=1, nfolds=5)
+##' val <- twostageCV(m1, m2, data=d, std.err=FALSE, nknots=2:5, K=1:3,
+##'                   mc.cores=parallel::detectCores(), nfolds=5)
 ##' }
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
                knots.boundary, mc.cores=1, k=1:4, nknots=1:9, fix=TRUE, std.err=TRUE,
