@@ -5,7 +5,6 @@
 "functional<-.lvm" <- function(x,to,from,...,value) {
     if (inherits(to,"formula")) {
         yy <- decomp.specials(getoutcome(to))
-        ##xx <- attributes(terms(to))$term.labels
         myvars <- all.vars(to)
         xx <- setdiff(myvars,yy)
         if (length(yy)*length(xx)>length(value) & length(value)!=1) stop("Wrong number of values")

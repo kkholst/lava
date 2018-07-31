@@ -1,6 +1,6 @@
 ##' @export
 `dsep` <-
-  function(object,...) UseMethod("dsep")
+    function(object,...) UseMethod("dsep")
 
 ##' Check d-separation criterion
 ##'
@@ -24,7 +24,7 @@
 ##' dsep(m,x5~x1|x2+x4)
 ##' dsep(m,x5~x1|x3+x4)
 ##' dsep(m,~x1+x2+x3|x4)
-##' 
+##'
 dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
     if (inherits(x,"formula")) {
         xf <- getoutcome(x,sep="|")
@@ -50,17 +50,10 @@ dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
     man <- object
     for (v in V) {
         pa <- parents(object,v)
-        if (length(pa)>1)  
+        if (length(pa)>1)
             man$M[pa,pa] <- 1
-        ## for (i in seq(length(pa)-1)) {
-        ##     for (j in seq(length(pa)-1)+1) {
-        ##         man$M[i,j]
-        ##         man <- regression(man,from=pa[i],to=pa[j])
-        ##     }
-        ## }
-    }    
+    }
     man.sel <- rmvar(man,cond)
-    ## with(man.sel, solve(diag(nrow=nrow(M))-M))
     ii <- match(x,vars(man.sel))
     A <- with(man.sel, (t(M)+M)>0)
     dsep <- c()

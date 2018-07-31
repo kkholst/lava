@@ -2,12 +2,12 @@
 
 ##' @export
 print.fix <- function(x,exo=FALSE,...) {
-  switch(attributes(x)$type,
-        reg = cat("Regression parameters:\n"),
-        cov = cat("Covariance parameters:\n"),
-        mean = cat("Intercept parameters:\n"))
-  M <- linconstrain(x,print=TRUE)
-  invisible(x)
+    switch(attributes(x)$type,
+           reg = cat("Regression parameters:\n"),
+           cov = cat("Covariance parameters:\n"),
+           mean = cat("Intercept parameters:\n"))
+    M <- linconstrain(x,print=TRUE)
+    invisible(x)
 }
 
 linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
@@ -138,32 +138,32 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
 ##' @export
 ##' @export
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
-  if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
-  if (inherits(value,"formula")) {
-    lhs <- getoutcome(value)
-    yy <- decomp.specials(lhs)
-    if ((inherits(value[[3]],"logical") && is.na(value[[3]]))) {
-      intfix(object,yy) <- NA
-      return(object)
+    if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
+    if (inherits(value,"formula")) {
+        lhs <- getoutcome(value)
+        yy <- decomp.specials(lhs)
+        if ((inherits(value[[3]],"logical") && is.na(value[[3]]))) {
+            intfix(object,yy) <- NA
+            return(object)
+        }
+        tt <- terms(value)
+        xf <- attributes(terms(tt))$term.labels
+        res <- lapply(xf,decomp.specials)[[1]]
+
+        myvalue <- char2num(as.list(res))
+        myvalue <- lapply(myvalue, function(x) ifelse(x=="NA",NA,x))
+        intfix(object,yy) <- myvalue
+        object$parpos <- NULL
+        return(object)
     }
-    tt <- terms(value)
-    xf <- attributes(terms(tt))$term.labels
-    res <- lapply(xf,decomp.specials)[[1]]
-    
-    myvalue <- char2num(as.list(res))
-    myvalue <- lapply(myvalue, function(x) ifelse(x=="NA",NA,x))
-    intfix(object,yy) <- myvalue
+    if (inherits(vars,"formula")) {
+        vars <- all.vars(vars)
+    }
+    object$mean[vars] <- value
+    newindex <- reindex(object)
     object$parpos <- NULL
+    index(object)[names(newindex)] <- newindex
     return(object)
-  }
-  if (inherits(vars,"formula")) {
-    vars <- all.vars(vars)
-  }
-  object$mean[vars] <- value
-  newindex <- reindex(object)
-  object$parpos <- NULL
-  index(object)[names(newindex)] <- newindex
-  return(object)
 }
 
 ###}}} intfix
@@ -175,11 +175,11 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
 
 ##' @export
 covfix.lvm <- function(object,...) {
-  res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
-  attr(res,"exo.idx") <- index(object)$exo.idx
-  attr(res,"nvar") <- NROW(res$rel)
-  class(res) <- "fix"
-  return(res)
+    res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
+    attr(res,"exo.idx") <- index(object)$exo.idx
+    attr(res,"nvar") <- NROW(res$rel)
+    class(res) <- "fix"
+    return(res)
 }
 
 
@@ -189,140 +189,140 @@ covfix.lvm <- function(object,...) {
 ##' @export
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
 
-  if (inherits(var1,"formula")) {
-      var1 <- all.vars(var1)
-  }
-  if (inherits(var2,"formula")) {
-      var2 <- all.vars(var2)
-  }
-  object <- addvar(object,c(var1,var2),reindex=FALSE,...)
+    if (inherits(var1,"formula")) {
+        var1 <- all.vars(var1)
+    }
+    if (inherits(var2,"formula")) {
+        var2 <- all.vars(var2)
+    }
+    object <- addvar(object,c(var1,var2),reindex=FALSE,...)
 
-  allvars <- c(var1,var2)
-  xorg <- exogenous(object)
-  exoset <- setdiff(xorg,allvars)
+    allvars <- c(var1,var2)
+    xorg <- exogenous(object)
+    exoset <- setdiff(xorg,allvars)
 
-  if (!exo & length(exoset)<length(xorg)) {
-    exogenous(object) <- exoset
-  }
+    if (!exo & length(exoset)<length(xorg)) {
+        exogenous(object) <- exoset
+    }
 
-  if (inherits(value,"formula")) value <- all.vars(value)
-  if (pairwise) {
-    p <- 0
-    K <- length(var1)*(length(var1)-1)/2
+    if (inherits(value,"formula")) value <- all.vars(value)
+    if (pairwise) {
+        p <- 0
+        K <- length(var1)*(length(var1)-1)/2
+        if (length(value)==1)
+            value <- rep(value,K)
+        if (length(value)!=K) stop("Wrong number of parameters")
+        for (i in seq_len(length(var1)-1)) {
+            for (j in seq(i+1,length(var1))) {
+                p <- p+1
+                valp <- char2num(value[[p]])
+                if (is.na(value[[p]]) | value[[p]]=="NA") {
+                    object$covfix[var1[i],var1[j]] <- object$covpar[var1[i],var1[j]] <- NA
+                    object$covfix[var1[j],var1[i]] <- object$covpar[var1[j],var1[i]] <- NA
+                }
+                else {
+                    object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1
+                    if (is.numeric(value[[p]]) | !is.na(valp)) {
+                        object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- valp
+                        object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- NA
+                    } else {
+                        object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- value[[p]]
+                        object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- NA
+                    }
+                }
+            }
+        }
+        newindex <- reindex(object)
+        object$parpos <- NULL
+        index(object)[names(newindex)] <- newindex
+        return(object)
+    }
+
+
+    if (is.null(var2)) {
+        if (length(value)==1)
+            value <- rep(value,length(var1))
+        if (length(value)!=length(var1)) stop("Wrong number of parameters")
+        for (i in seq_along(var1)) {
+            vali <- char2num(value[[i]])
+            if (is.na(value[[i]]) | value[[i]]=="NA") {
+                object$covfix[var1[i],var1[i]] <- object$covpar[var1[i],var1[i]] <- NA
+            }
+            else {
+                if (is.numeric(value[[i]]) | !is.na(vali)) {
+                    object$covfix[var1[i],var1[i]] <- vali
+                    object$covpar[var1[i],var1[i]] <- NA
+                } else {
+                    object$covfix[var1[i],var1[i]] <- NA
+                    object$covpar[var1[i],var1[i]] <- value[[i]]
+                }
+            }
+        }
+        newindex <- reindex(object)
+        object$parpos <- NULL
+        index(object)[names(newindex)] <- newindex
+        return(object)
+    }
+
+    if (length(var1)==length(var2) & length(var1)==length(value)) {
+        p <- 0
+        for (i in seq_along(var1)) {
+            p <- p+1
+            valp <- char2num(value[[p]])
+            if (is.na(value[[p]]) | value[[p]]=="NA") {
+                object$covfix[var1[i],var2[i]] <- object$covpar[var1[i],var2[i]] <- NA
+                object$covfix[var2[i],var1[i]] <- object$covpar[var2[i],var1[i]] <- NA
+            }
+            else {
+                object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1
+                if (is.numeric(value[[p]]) | !is.na(valp)) {
+                    object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- valp
+                    object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- NA
+                } else {
+                    object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- value[[p]]
+                    object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- NA
+                }
+            }
+        }
+        newindex <- reindex(object)
+        object$parpos <- NULL
+        index(object)[names(newindex)] <- newindex
+        return(object)
+    }
+
+
+    K <- length(var1)*length(var2)
     if (length(value)==1)
-      value <- rep(value,K)
+        value <- rep(value,K)
     if (length(value)!=K) stop("Wrong number of parameters")
-    for (i in seq_len(length(var1)-1)) {
-      for (j in seq(i+1,length(var1))) {
-        p <- p+1
-        valp <- char2num(value[[p]])
-        if (is.na(value[[p]]) | value[[p]]=="NA") {
-          object$covfix[var1[i],var1[j]] <- object$covpar[var1[i],var1[j]] <- NA
-          object$covfix[var1[j],var1[i]] <- object$covpar[var1[j],var1[i]] <- NA
-        }
-        else {
-          object$cov[var1[i],var1[j]] <-  object$cov[var1[j],var1[i]] <- 1
-          if (is.numeric(value[[p]]) | !is.na(valp)) {
-            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- valp
-            object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- NA
-          } else {
-            object$covpar[var1[i],var1[j]] <- object$covpar[var1[j],var1[i]] <- value[[p]]
-            object$covfix[var1[i],var1[j]] <- object$covfix[var1[j],var1[i]] <- NA
-          }
-        }
-      }
-    }
-    newindex <- reindex(object)
-    object$parpos <- NULL
-    index(object)[names(newindex)] <- newindex
-    return(object)
-  }
 
-
-  if (is.null(var2)) {
-    if (length(value)==1)
-      value <- rep(value,length(var1))
-    if (length(value)!=length(var1)) stop("Wrong number of parameters")
-    for (i in seq_along(var1)) {
-      vali <- char2num(value[[i]])
-      if (is.na(value[[i]]) | value[[i]]=="NA") {
-        object$covfix[var1[i],var1[i]] <- object$covpar[var1[i],var1[i]] <- NA
-      }
-      else {
-        if (is.numeric(value[[i]]) | !is.na(vali)) {
-          object$covfix[var1[i],var1[i]] <- vali
-          object$covpar[var1[i],var1[i]] <- NA
-        } else {
-          object$covfix[var1[i],var1[i]] <- NA
-          object$covpar[var1[i],var1[i]] <- value[[i]]
-        }
-      }
-    }
-    newindex <- reindex(object)
-    object$parpos <- NULL
-    index(object)[names(newindex)] <- newindex
-    return(object)
-  }
-
-  if (length(var1)==length(var2) & length(var1)==length(value)) {
     p <- 0
     for (i in seq_along(var1)) {
-      p <- p+1
-      valp <- char2num(value[[p]])
-      if (is.na(value[[p]]) | value[[p]]=="NA") {
-        object$covfix[var1[i],var2[i]] <- object$covpar[var1[i],var2[i]] <- NA
-        object$covfix[var2[i],var1[i]] <- object$covpar[var2[i],var1[i]] <- NA
-      }
-      else {
-        object$cov[var1[i],var2[i]] <-  object$cov[var2[i],var1[i]] <- 1
-        if (is.numeric(value[[p]]) | !is.na(valp)) {
-          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- valp
-          object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- NA
-        } else {
-          object$covpar[var1[i],var2[i]] <- object$covpar[var2[i],var1[i]] <- value[[p]]
-          object$covfix[var1[i],var2[i]] <- object$covfix[var2[i],var1[i]] <- NA
+        for (j in seq_along(var2)) {
+            if (!pairwise | var1[i]!=var2[j]) {
+                p <- p+1
+                valp <- char2num(value[[p]])
+                if (is.na(value[[p]]) | value[[p]]=="NA") {
+                    object$covfix[var1[i],var2[j]] <- object$covpar[var1[i],var2[j]] <- NA
+                    object$covfix[var2[j],var1[i]] <- object$covpar[var2[j],var1[i]] <- NA
+                }
+                else {
+                    object$cov[var1[i],var2[j]] <-  object$cov[var2[j],var1[i]] <- 1
+                    if (is.numeric(value[[p]]) | !is.na(valp)) {
+                        object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- valp
+                        object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- NA
+                    } else {
+                        object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- value[[p]]
+                        object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- NA
+                    }
+                }
+            }
         }
-      }
     }
     newindex <- reindex(object)
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
     return(object)
-  }
-
-
-  K <- length(var1)*length(var2)
-  if (length(value)==1)
-    value <- rep(value,K)
-  if (length(value)!=K) stop("Wrong number of parameters")
-
-  p <- 0
-  for (i in seq_along(var1)) {
-    for (j in seq_along(var2)) {
-      if (!pairwise | var1[i]!=var2[j]) {
-        p <- p+1
-        valp <- char2num(value[[p]])
-        if (is.na(value[[p]]) | value[[p]]=="NA") {
-          object$covfix[var1[i],var2[j]] <- object$covpar[var1[i],var2[j]] <- NA
-          object$covfix[var2[j],var1[i]] <- object$covpar[var2[j],var1[i]] <- NA
-        }
-        else {
-          object$cov[var1[i],var2[j]] <-  object$cov[var2[j],var1[i]] <- 1
-          if (is.numeric(value[[p]]) | !is.na(valp)) {
-            object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- valp
-            object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- NA
-          } else {
-            object$covpar[var1[i],var2[j]] <- object$covpar[var2[j],var1[i]] <- value[[p]]
-            object$covfix[var1[i],var2[j]] <- object$covfix[var2[j],var1[i]] <- NA
-          }
-        }
-      }
-    }
-  }
-  newindex <- reindex(object)
-  object$parpos <- NULL
-  index(object)[names(newindex)] <- newindex
-  return(object)
 }
 
 ###}}} covfix
@@ -334,11 +334,11 @@ covfix.lvm <- function(object,...) {
 
 ##' @export
 regfix.lvm <- function(object,...) {
-  res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
-  attr(res,"exo.idx") <- index(object)$exo.idx
-  attr(res,"nvar") <- NROW(res$rel)
-  class(res) <- "fix"
-  return(res)
+    res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
+    attr(res,"exo.idx") <- index(object)$exo.idx
+    attr(res,"nvar") <- NROW(res$rel)
+    class(res) <- "fix"
+    return(res)
 }
 
 ##' @export
@@ -355,89 +355,89 @@ regfix.lvm <- function(object,...) {
         from <- x
     }
     if (is.null(to)) stop("variable list needed")
-    
-  if (inherits(to,"formula")) {
-      val <- procformula(object,to,exo=exo)
-      object <- val$object
-      ys <- val$ys
-      xs <- val$xs      
-      if (!missing(variance))
-          covariance(object,ys) <- variance      
-      to <- ys; from <- xs 
-  } else {
-      object <- addvar(object,c(to,from),reindex=FALSE,...)
-      newexo <- from
-      notexo <- to
-      curvar <- index(object)$var  
-      if (exo) {
-          oldexo <- exogenous(object)
-          newexo <- setdiff(newexo,c(notexo,curvar))
-          exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
-      }
-  }
-    
-  if (inherits(value,"formula")) value <- all.vars(value)
 
-  if (length(from)==length(to) & length(from)==length(value)) {
-    for (i in seq_along(from)) {
-      if (object$M[from[i],to[i]]==0) { ## Not adjacent! ##!isAdjacent(Graph(object), from[i], to[i])) {
-        object <- regression(object, to=to[i], from=from[i])
-      }
-      vali <- char2num(value[[i]])
-      if (is.na(value[[i]]) | value[[i]]=="NA") {
-        object$fix[from[i],to[i]] <- object$par[from[i],to[i]] <- NA
-      }
-      else {
-        if (is.numeric(value[[i]]) | !is.na(vali)) {
-          object$fix[from[i],to[i]] <- vali
-          object$par[from[i],to[i]] <- NA
-        } else {
-          object$par[from[i],to[i]] <- value[[i]]
-          object$fix[from[i],to[i]] <- NA
+    if (inherits(to,"formula")) {
+        val <- procformula(object,to,exo=exo)
+        object <- val$object
+        ys <- val$ys
+        xs <- val$xs
+        if (!missing(variance))
+            covariance(object,ys) <- variance
+        to <- ys; from <- xs
+    } else {
+        object <- addvar(object,c(to,from),reindex=FALSE,...)
+        newexo <- from
+        notexo <- to
+        curvar <- index(object)$var
+        if (exo) {
+            oldexo <- exogenous(object)
+            newexo <- setdiff(newexo,c(notexo,curvar))
+            exogenous(object) <- union(newexo,setdiff(oldexo,notexo))
         }
-      }
+    }
+
+    if (inherits(value,"formula")) value <- all.vars(value)
+
+    if (length(from)==length(to) & length(from)==length(value)) {
+        for (i in seq_along(from)) {
+            if (object$M[from[i],to[i]]==0) { ## Not adjacent! ##!isAdjacent(Graph(object), from[i], to[i])) {
+                object <- regression(object, to=to[i], from=from[i])
+            }
+            vali <- char2num(value[[i]])
+            if (is.na(value[[i]]) | value[[i]]=="NA") {
+                object$fix[from[i],to[i]] <- object$par[from[i],to[i]] <- NA
+            }
+            else {
+                if (is.numeric(value[[i]]) | !is.na(vali)) {
+                    object$fix[from[i],to[i]] <- vali
+                    object$par[from[i],to[i]] <- NA
+                } else {
+                    object$par[from[i],to[i]] <- value[[i]]
+                    object$fix[from[i],to[i]] <- NA
+                }
+            }
+        }
+        newindex <- reindex(object)
+        object$parpos <- NULL
+        index(object)[names(newindex)] <- newindex
+        return(object)
+    }
+
+    for (i in from) {
+        for (j in to) {
+            if (object$M[i,j]==0) { ##!isAdjacent(Graph(object), i, j)) {
+                object <- regression(object,to=j,from=i)
+            }
+        }
+    }
+
+    K <- length(from)*length(to)
+    if (length(value)==1)
+        value <- rep(value,K)
+    if (length(value)!=K) stop("Wrong number of parameters")
+
+    for (j in seq_along(to)) {
+        for (i in seq_along(from)) {
+            p <- (j-1)*length(from) + i
+            valp <- char2num(value[[p]])
+            if (is.na(value[[p]]) | value[[p]]=="NA")
+                object$fix[from[i],to[j]] <- object$par[from[i],to[j]] <- NA
+            else {
+                if (is.numeric(value[[p]]) | !is.na(valp)) {
+                    object$fix[from[i],to[j]] <- valp
+                    object$par[from[i],to[j]] <- NA
+                } else {
+                    object$par[from[i],to[j]] <- value[[p]]
+                    object$fix[from[i],to[j]] <- NA
+                }
+            }
+        }
     }
     newindex <- reindex(object)
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
+    index(object) <- reindex(object)
     return(object)
-  }
-
-  for (i in from) {
-    for (j in to) {
-      if (object$M[i,j]==0) { ##!isAdjacent(Graph(object), i, j)) {
-        object <- regression(object,to=j,from=i)
-      }
-    }
-  }
-
-  K <- length(from)*length(to)
-  if (length(value)==1)
-    value <- rep(value,K)
-  if (length(value)!=K) stop("Wrong number of parameters")
-
-  for (j in seq_along(to)) {
-    for (i in seq_along(from)) {
-      p <- (j-1)*length(from) + i
-      valp <- char2num(value[[p]])
-      if (is.na(value[[p]]) | value[[p]]=="NA")
-        object$fix[from[i],to[j]] <- object$par[from[i],to[j]] <- NA
-      else {
-        if (is.numeric(value[[p]]) | !is.na(valp)) {
-        object$fix[from[i],to[j]] <- valp
-        object$par[from[i],to[j]] <- NA
-      } else {
-        object$par[from[i],to[j]] <- value[[p]]
-        object$fix[from[i],to[j]] <- NA
-      }
-      }
-    }
-  }
-  newindex <- reindex(object)
-  object$parpos <- NULL
-  index(object)[names(newindex)] <- newindex
-  index(object) <- reindex(object)
-  return(object)
 }
 
 ###}}} regfix
@@ -449,7 +449,7 @@ regfix.lvm <- function(object,...) {
 
 ##' @export
 "parfix<-.lvm" <- function(x,idx,...,value) {
-  parfix(x,idx,value,...)
+    parfix(x,idx,value,...)
 }
 
 ##' @export
@@ -461,56 +461,56 @@ regfix.lvm <- function(object,...) {
 
 ##' @export
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
-  object <- Model(x)
-  if (fix)
-    object <- fixsome(object)
-  if (length(idx)!=length(value))
-    value <- rep(value,length.out=length(idx))
-  value <- as.list(value)
-  I <- index(object)
-  V <- with(I, matrices2(Model(object), seq_len(npar.mean+npar+npar.ex)))
-  V$A[I$M0!=1] <- 0; V$P[I$P0!=1] <- 0
-  v.fix <- which(V$v%in%idx) ## Intercepts
-  vval <- V$v[v.fix]
-  v.ord <- match(vval,idx)
-  Pval <- V$P[V$P%in%idx] ## Variance/covariance
-  P.fix <- which(matrix(V$P%in%idx,nrow=nrow(V$P)),arr.ind=TRUE)
-  P.ord <- match(Pval,idx)
-  Aval <- V$A[which(V$A%in%idx)] ## Regression parameters
-  A.fix <- which(matrix(V$A%in%idx,nrow=nrow(V$A)),arr.ind=TRUE)
-  A.ord <- match(Aval,idx)
-  e.fix <- which(V$e%in%idx)
-  eval <- V$e[e.fix]
-  e.ord <- match(eval,idx)
-  for (i in seq_len(length(e.fix))) {
-      object$exfix[[e.fix[i]]] <- value[[e.ord[i]]]
-  }
-  for (i in seq_len(length(v.fix))) {
-      object$mean[[v.fix[i]]] <- value[[v.ord[i]]]
-  }
-  for (i in seq_len(nrow(A.fix))) {
-      if (is.numeric(value[[ A.ord[i] ]])){
-          object$fix[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
-          object$par[A.fix[i,1],A.fix[i,2]] <- NA
-      } else {
-          object$par[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
-          object$fix[A.fix[i,1],A.fix[i,2]] <- NA
-      }
-  }
-  for (i in seq_len(nrow(P.fix))) {
-      if (is.numeric(value[[ P.ord[i] ]])) {
-          object$covfix[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
-          object$covpar[P.fix[i,1],P.fix[i,2]] <- NA
-      } else {
-          object$covpar[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
-          object$covfix[P.fix[i,1],P.fix[i,2]] <- NA
-      }
-  }
-  newindex <- reindex(object)
-  object$parpos <- NULL
-  index(object)[names(newindex)] <- newindex
-  attributes(object)$fixed <- list(v=v.fix,A=A.fix,P=P.fix,e=e.fix)
-  return(object)
+    object <- Model(x)
+    if (fix)
+        object <- fixsome(object)
+    if (length(idx)!=length(value))
+        value <- rep(value,length.out=length(idx))
+    value <- as.list(value)
+    I <- index(object)
+    V <- with(I, matrices2(Model(object), seq_len(npar.mean+npar+npar.ex)))
+    V$A[I$M0!=1] <- 0; V$P[I$P0!=1] <- 0
+    v.fix <- which(V$v%in%idx) ## Intercepts
+    vval <- V$v[v.fix]
+    v.ord <- match(vval,idx)
+    Pval <- V$P[V$P%in%idx] ## Variance/covariance
+    P.fix <- which(matrix(V$P%in%idx,nrow=nrow(V$P)),arr.ind=TRUE)
+    P.ord <- match(Pval,idx)
+    Aval <- V$A[which(V$A%in%idx)] ## Regression parameters
+    A.fix <- which(matrix(V$A%in%idx,nrow=nrow(V$A)),arr.ind=TRUE)
+    A.ord <- match(Aval,idx)
+    e.fix <- which(V$e%in%idx)
+    eval <- V$e[e.fix]
+    e.ord <- match(eval,idx)
+    for (i in seq_len(length(e.fix))) {
+        object$exfix[[e.fix[i]]] <- value[[e.ord[i]]]
+    }
+    for (i in seq_len(length(v.fix))) {
+        object$mean[[v.fix[i]]] <- value[[v.ord[i]]]
+    }
+    for (i in seq_len(nrow(A.fix))) {
+        if (is.numeric(value[[ A.ord[i] ]])){
+            object$fix[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
+            object$par[A.fix[i,1],A.fix[i,2]] <- NA
+        } else {
+            object$par[A.fix[i,1],A.fix[i,2]] <- value[[A.ord[i]]]
+            object$fix[A.fix[i,1],A.fix[i,2]] <- NA
+        }
+    }
+    for (i in seq_len(nrow(P.fix))) {
+        if (is.numeric(value[[ P.ord[i] ]])) {
+            object$covfix[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
+            object$covpar[P.fix[i,1],P.fix[i,2]] <- NA
+        } else {
+            object$covpar[P.fix[i,1],P.fix[i,2]] <- value[[P.ord[i]]]
+            object$covfix[P.fix[i,1],P.fix[i,2]] <- NA
+        }
+    }
+    newindex <- reindex(object)
+    object$parpos <- NULL
+    index(object)[names(newindex)] <- newindex
+    attributes(object)$fixed <- list(v=v.fix,A=A.fix,P=P.fix,e=e.fix)
+    return(object)
 }
 
 ###}}} parfix

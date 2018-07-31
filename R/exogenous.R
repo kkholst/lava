@@ -28,7 +28,6 @@
             intercept(x,notexo.idx) <- x$mean[notexo.idx]
         }
     }
-    ##  x$exogenous <- value
     index(x) <- reindex(x)
     return(x)
 }
@@ -37,17 +36,17 @@
 `exogenous.lvm` <-
     function(x,variable,latent=FALSE,index=TRUE,...) {
         dots <- list(...)
-        if (!missing(variable)) {            
+        if (!missing(variable)) {
             exogenous(x) <- variable
             return(x)
         }
-            
+
         if (!index) {
             if (latent) {
                 allvars <- vars(x)
-                } else {
-                    allvars <- manifest(x)
-                }
+            } else {
+                allvars <- manifest(x)
+            }
             M <- x$M
             res <- c()
             for (i in allvars)
@@ -61,7 +60,7 @@
         }
         if (!latent)
             return(index(x)$exogenous)
-            return(exogenous(x,latent=latent,index=FALSE,...))
+        return(exogenous(x,latent=latent,index=FALSE,...))
     }
 
 ##' @export

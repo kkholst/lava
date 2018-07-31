@@ -76,12 +76,12 @@ fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FA
             mu0 <- mu
             e0 <- eigen(S0)
             thres <- lava.options()$itol^(1/2)
-             if (any(e0$values<thres)) {
-                 ## Projection to nearest positive definite matrix
-                 ii <- e0$values
-                 ii[ii<thres] <- thres
-                 S0 <- e0$vectors%*%diag(ii,nrow=length(ii))%*%t(e0$vectors)
-             }
+            if (any(e0$values<thres)) {
+                ## Projection to nearest positive definite matrix
+                ii <- e0$values
+                ii[ii<thres] <- thres
+                S0 <- e0$vectors%*%diag(ii,nrow=length(ii))%*%t(e0$vectors)
+            }
 
         }
         exo.idx <- index(x)$exo.obsidx;

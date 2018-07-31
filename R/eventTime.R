@@ -164,9 +164,6 @@ eventTime <- function(object,formula,eventName="status",...) {
     }
 
     addvar(object) <- timeName
-    ##distribution(object,timeName) <- NA
-    ##m <- regression(m,formula(paste0("~",timeName)))
-    ##if (missing(eventName)) eventName <- "Event"
     eventTime <- list(names=c(timeName,eventName),
                       latentTimes=gsub(" ","",latentTimes),
                       events=events
@@ -175,12 +172,12 @@ eventTime <- function(object,formula,eventName="status",...) {
     transform(object,
               y=eventTime$names,
               x=eventTime$latentTimes) <-
-                                         function(z) {
-                                             idx <- apply(z,1,which.min)
-                                             cbind(z[cbind(seq(NROW(z)),idx)],
-                                                   eventTime$events[idx])
-                                         }
-    
+        function(z) {
+            idx <- apply(z,1,which.min)
+            cbind(z[cbind(seq(NROW(z)),idx)],
+                  eventTime$events[idx])
+        }
+
     if (is.null(object$attributes$eventHistory)) {
         object$attributes$eventHistory <- list(eventTime)
         names(object$attributes$eventHistory) <- timeName
@@ -202,23 +199,23 @@ eventTime <- function(object,formula,eventName="status",...) {
 
 addhook("plothook.eventHistory","plot.post.hooks")
 plothook.eventHistory <- function(x,...) {
-  eh <- x$attributes$eventHistory
-  ehnames <- unlist(lapply(eh,function(x) x$names))
-  for (f in eh) {
-      x <- regression(x,to=f$names[1],from=f$latentTimes)
-      latent(x) <- f$latentTimes
-      kill(x) <- f$names[2]
-  }
-  timedep <- x$attributes$timedep
-  for (i in seq_len(length(timedep))) {
-      x <- regression(x,to=names(timedep)[i],from=timedep[[i]])
-  }
-  return(x)
+    eh <- x$attributes$eventHistory
+    ehnames <- unlist(lapply(eh,function(x) x$names))
+    for (f in eh) {
+        x <- regression(x,to=f$names[1],from=f$latentTimes)
+        latent(x) <- f$latentTimes
+        kill(x) <- f$names[2]
+    }
+    timedep <- x$attributes$timedep
+    for (i in seq_len(length(timedep))) {
+        x <- regression(x,to=names(timedep)[i],from=timedep[[i]])
+    }
+    return(x)
 }
 
 addhook("colorhook.eventHistory","color.hooks")
 colorhook.eventHistory <- function(x,subset=vars(x),...) {
-  return(list(vars=intersect(subset,unlist(x$attributes$timedep)),col="lightblue4"))
+    return(list(vars=intersect(subset,unlist(x$attributes$timedep)),col="lightblue4"))
 }
 
 addhook("print.eventHistory","print.hooks")
@@ -420,9 +417,9 @@ aalenExponential.lvm <- function(scale=1,rate,timecut=0){
 
 ##' @export
 coxGompertz.lvm <- function(shape=1,scale) {
-  f <- function(n,mu,var,...) {
-    (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
-  }
-  attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
-  return(f)
+    f <- function(n,mu,var,...) {
+        (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
+    }
+    attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
+    return(f)
 }

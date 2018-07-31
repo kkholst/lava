@@ -1,6 +1,6 @@
 ##' @export
 estimate.formula <- function(x, data, weights, family=stats::gaussian,
-                     ..., model="glm", lvm=FALSE) {
+                      ..., model="glm", lvm=FALSE) {
 
     cl <- match.call()
     if (lvm) {
@@ -13,7 +13,7 @@ estimate.formula <- function(x, data, weights, family=stats::gaussian,
     }
     mf <- match.call(expand.dots = FALSE)
     m <- match(c("x", "data", "weights", "subset",
-                "etastart", "mustart", "offset"), names(mf), 0L)
+                 "etastart", "mustart", "offset"), names(mf), 0L)
     mf <- mf[c(1L, m)]
     mf$drop.unused.levels <- TRUE
     mf[[1L]] <- quote(stats::model.frame)
@@ -25,12 +25,12 @@ estimate.formula <- function(x, data, weights, family=stats::gaussian,
     if (length(idx)>0) {
         if (is.null(weights)) weights <- rep(1,nrow(mf))
         if (length(idx)>0) weights[idx] <- 0
-        cl$weights <- quote(weights)        
+        cl$weights <- quote(weights)
         cl$na.action <- quote(na.pass0)
     }
     cl$data <- quote(data)
     argsModelObj <- names(formals(model))
-    dots <- list(...)    
+    dots <- list(...)
     idx <- which(names(dots) %ni% argsModelObj)
     rmarg <- c("model","raw","lvm")
     if (length(idx)>0) rmarg <- c(names(dots)[idx],rmarg)
@@ -42,7 +42,7 @@ estimate.formula <- function(x, data, weights, family=stats::gaussian,
     optarg <- NULL
     if (length(idx)>0) {
         optarg <- dots[idx]
-    }    
+    }
     do.call(estimate, c(list(fit),optarg))
 }
 
@@ -89,4 +89,3 @@ estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,message
     }
     estimate(model,mydata,messages=messages,id=id,estimator=estimator,...)
 }
-

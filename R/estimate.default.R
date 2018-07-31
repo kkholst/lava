@@ -167,19 +167,19 @@ estimate.list <- function(x,...) {
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL,f=NULL,...,data,id,
-                     iddata,stack=TRUE,average=FALSE,subset,
-                     score.deriv,level=0.95,iid=robust,
-                     type=c("robust","df","mbn"),
-                     keep,use,
-                     regex=FALSE,
-                     contrast,null,vcov,coef,
-                     robust=TRUE,df=NULL,
-                     print=NULL,labels,label.width,
-                     only.coef=FALSE,back.transform=NULL,
-                     folds=0,
-                     cluster,
-                     R=0,
-                     null.sim) {
+                      iddata,stack=TRUE,average=FALSE,subset,
+                      score.deriv,level=0.95,iid=robust,
+                      type=c("robust","df","mbn"),
+                      keep,use,
+                      regex=FALSE,
+                      contrast,null,vcov,coef,
+                      robust=TRUE,df=NULL,
+                      print=NULL,labels,label.width,
+                      only.coef=FALSE,back.transform=NULL,
+                      folds=0,
+                      cluster,
+                      R=0,
+                      null.sim) {
     cl <- match.call(expand.dots=TRUE)
     if (!missing(use)) {
         p0 <- c("f","contrast","only.coef","subset","average","keep","labels")
@@ -357,10 +357,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         }
         res <- simnull(R,f,mu=null.sim,sigma=V,labels=labels)
         return(structure(res, class=c("estimate.sim","sim"),
-                    coef=pp,
-                    vcov=V,
-                    f=f,
-                    estimate=est))
+                         coef=pp,
+                         vcov=V,
+                         f=f,
+                         estimate=est))
     }
 
 
@@ -502,7 +502,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             nn <- attributes(res)$varnames
             if (!is.null(nn)) rownames(res) <- nn
             if (is.null(rownames(res))) rownames(res) <- paste0("p",seq(nrow(res)))
-        }    
+        }
 
 
     if (NROW(res)==0L) {
@@ -657,13 +657,13 @@ print.estimate.sim <- function(x,level=.95,...) {
     mysummary <- function(x,INDEX,...) {
         x <- as.vector(x)
         res <- c(mean(x,na.rm=TRUE),
-                sd(x,na.rm=TRUE),
-                quantile(x,quantiles,na.rm=TRUE),
-                est[INDEX],
-                mean(abs(x)>abs(est[INDEX]),na.rm=TRUE))
+                 sd(x,na.rm=TRUE),
+                 quantile(x,quantiles,na.rm=TRUE),
+                 est[INDEX],
+                 mean(abs(x)>abs(est[INDEX]),na.rm=TRUE))
 
-                names(res) <- c("Mean","SD",paste0(quantiles*100,"%"),
-                               "Estimate","P-value")
+        names(res) <- c("Mean","SD",paste0(quantiles*100,"%"),
+                        "Estimate","P-value")
         res
     }
     env <- new.env()
@@ -678,8 +678,8 @@ estimate.glm <- function(x,...) {
 
 ##' @export
 print.estimate <- function(x, type=0L, digits=4L, width=25L,
-                   std.error=TRUE, p.value=TRUE,
-                   sep="_______",sep.which, na.print="", ...) {
+                    std.error=TRUE, p.value=TRUE,
+                    sep="_______",sep.which, na.print="", ...) {
 
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
@@ -704,13 +704,13 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
 
     cc <- x$coefmat
     if (!is.null(rownames(cc)))
-    rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
-                                             function(x) toString(x,width=width))))   
+        rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
+                                                  function(x) toString(x,width=width))))
     if (!std.error) cc <- cc[,-2,drop=FALSE]
     if (!p.value) cc[,-ncol(cc),drop=FALSE]
 
     sep.pos <- c()
-    if (missing(sep.which) && !is.null(x$model.index)) {        
+    if (missing(sep.which) && !is.null(x$model.index)) {
         sep.which <- unlist(lapply(x$model.index,function(x) tail(x,1)))[-length(x$model.index)]
     } else {
         sep.which <- NULL
@@ -727,7 +727,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
                 sep.pos <- c(sep.pos,nrow(cc0))
             }
         }
-        cc <- cc0        
+        cc <- cc0
     }
     if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep("_",max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
     print(cc,digits=digits,na.print=na.print,...)
@@ -771,7 +771,7 @@ coef.estimate <- function(object,mat=FALSE,list=FALSE,messages=lava.options()$me
 summary.estimate <- function(object,...) {
     p <- coef(object,messages=0)
     test <- estimate(coef=p,vcov=vcov(object,messages=0),
-                    contrast=as.list(seq_along(p)),...)
+                     contrast=as.list(seq_along(p)),...)
     object$compare <- test$compare
     object <- object[c("coef","coefmat","vcov","call","ncluster","model.index","compare")]
     class(object) <- "summary.estimate"

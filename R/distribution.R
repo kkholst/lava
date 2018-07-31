@@ -9,96 +9,96 @@
 
 ##' @export
 "distribution<-.lvm" <- function(x,variable,parname=NULL,init,mdist=FALSE,...,value) {
-  if (inherits(variable,"formula")) variable <- all.vars(variable)
-  dots <- list(...)
-  
-  if (!missing(value)) {
-      for (obj in c("variable","parname","init","mdist"))
-          if (!is.null(attr(value,obj)) && eval(substitute(missing(a),list(a=obj))))
-              assign(obj,attr(value,obj))
-      
-      if (is.function(value) & mdist & is.null(parname)) parname <- TRUE
-  }
-  if (!is.null(parname) || length(dots)>0) { 
-      if (length(parname)>1 || (is.character(parname))) {
-          if (missing(init)) {
-              parameter(x,start=rep(1,length(parname))) <- parname
-          } else {
-              parameter(x,start=init) <- parname
-          }
-          gen <- function(n,p,...) {
-              args <- c(n,as.list(p[parname]),dots)
-              names(args) <- names(formals(value))[seq(length(parname)+1)]
-              do.call(value,args)
-          }
-      } else {
-          gen <- value
-          if ("..."%ni%names(formals(gen))) formals(gen) <- c(formals(gen),alist(...=))
-          formals(gen) <- modifyList(formals(gen),dots)
-      }
-      distribution(x,variable,mdist=TRUE) <- list(gen)
-      return(x)
-  }
+    if (inherits(variable,"formula")) variable <- all.vars(variable)
+    dots <- list(...)
 
-  if (length(variable)==1 && !mdist) {
-      addvar(x) <- as.formula(paste("~",variable))
-      if (is.numeric(value)) value <- list(value)
-      if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
-      if (!is.null(attributes(value)$variance)) variance(x,variable,exo=TRUE) <- attributes(value)$variance
-      x$attributes$distribution[[variable]] <- value
-      ## Remove from 'mdistribution'
-      vars <- which(names(x$attributes$mdistribution$var)%in%variable)
-      for (i in vars) {
-          pos <- x$attributes$mdistribution$var[[i]]
-          x$attributes$mdistribution$fun[pos] <- NULL
-          x$attributes$mdistribution$var[which(x$attributes$mdistribution$var==pos)] <- NULL
-          above <- which(x$attributes$mdistribution$var>pos)
-          if (length(above)>0)
-              x$attributes$mdistribution$var[above] <- lapply(x$attributes$mdistribution$var[above],function(x) x-1)
-      }
-      return(x)
-  }
+    if (!missing(value)) {
+        for (obj in c("variable","parname","init","mdist"))
+            if (!is.null(attr(value,obj)) && eval(substitute(missing(a),list(a=obj))))
+                assign(obj,attr(value,obj))
 
-  if (is.list(value) && length(value)==1 && (is.function(value[[1]]) || is.null(value[[1]]))) {
-      addvar(x) <- variable
-      ## Multivariate distribution
-      if (is.null(x$attributes$mdistribution)) x$attributes$mdistribution <- list(var=list(), fun=list())
-      vars <- x$attributes$mdistribution$var
+        if (is.function(value) & mdist & is.null(parname)) parname <- TRUE
+    }
+    if (!is.null(parname) || length(dots)>0) {
+        if (length(parname)>1 || (is.character(parname))) {
+            if (missing(init)) {
+                parameter(x,start=rep(1,length(parname))) <- parname
+            } else {
+                parameter(x,start=init) <- parname
+            }
+            gen <- function(n,p,...) {
+                args <- c(n,as.list(p[parname]),dots)
+                names(args) <- names(formals(value))[seq(length(parname)+1)]
+                do.call(value,args)
+            }
+        } else {
+            gen <- value
+            if ("..."%ni%names(formals(gen))) formals(gen) <- c(formals(gen),alist(...=))
+            formals(gen) <- modifyList(formals(gen),dots)
+        }
+        distribution(x,variable,mdist=TRUE) <- list(gen)
+        return(x)
+    }
 
-      if (any(ii <- which(names(vars)%in%variable))) {
-          num <- unique(unlist(vars[ii]))
-          vars[which(unlist(vars)%in%num)] <- NULL
-          newfunlist <- list()
-          numleft <- unique(unlist(vars))
-          for (i in seq_along(numleft)) {
-              newfunlist <- c(newfunlist, x$attributes$mdistribution$fun[[numleft[i]]])
-              ii <- which(unlist(vars)==numleft[i])
-              vars[ii] <- i
-          }
-          K <- length(numleft)
-          x$attributes$mdistribution$var <- vars
-          x$attributes$mdistribution$fun <- newfunlist
-      } else {
-          K <- length(x$attributes$mdistribution$fun)
-      }
-      if (length(distribution(x))>0)
-          distribution(x,variable) <- rep(list(NULL),length(variable))
+    if (length(variable)==1 && !mdist) {
+        addvar(x) <- as.formula(paste("~",variable))
+        if (is.numeric(value)) value <- list(value)
+        if (!is.null(attributes(value)$mean)) intercept(x,variable) <- attributes(value)$mean
+        if (!is.null(attributes(value)$variance)) variance(x,variable,exo=TRUE) <- attributes(value)$variance
+        x$attributes$distribution[[variable]] <- value
+        ## Remove from 'mdistribution'
+        vars <- which(names(x$attributes$mdistribution$var)%in%variable)
+        for (i in vars) {
+            pos <- x$attributes$mdistribution$var[[i]]
+            x$attributes$mdistribution$fun[pos] <- NULL
+            x$attributes$mdistribution$var[which(x$attributes$mdistribution$var==pos)] <- NULL
+            above <- which(x$attributes$mdistribution$var>pos)
+            if (length(above)>0)
+                x$attributes$mdistribution$var[above] <- lapply(x$attributes$mdistribution$var[above],function(x) x-1)
+        }
+        return(x)
+    }
 
-      x$attributes$mdistribution$var[variable] <- K+1
-      x$attributes$mdistribution$fun <- c(x$attributes$mdistribution$fun,value)
+    if (is.list(value) && length(value)==1 && (is.function(value[[1]]) || is.null(value[[1]]))) {
+        addvar(x) <- variable
+        ## Multivariate distribution
+        if (is.null(x$attributes$mdistribution)) x$attributes$mdistribution <- list(var=list(), fun=list())
+        vars <- x$attributes$mdistribution$var
 
-      return(x)
-  }
+        if (any(ii <- which(names(vars)%in%variable))) {
+            num <- unique(unlist(vars[ii]))
+            vars[which(unlist(vars)%in%num)] <- NULL
+            newfunlist <- list()
+            numleft <- unique(unlist(vars))
+            for (i in seq_along(numleft)) {
+                newfunlist <- c(newfunlist, x$attributes$mdistribution$fun[[numleft[i]]])
+                ii <- which(unlist(vars)==numleft[i])
+                vars[ii] <- i
+            }
+            K <- length(numleft)
+            x$attributes$mdistribution$var <- vars
+            x$attributes$mdistribution$fun <- newfunlist
+        } else {
+            K <- length(x$attributes$mdistribution$fun)
+        }
+        if (length(distribution(x))>0)
+            distribution(x,variable) <- rep(list(NULL),length(variable))
 
-  if ((length(value)!=length(variable) & length(value)!=1))
-      stop("Wrong number of values")
-  for (i in seq_along(variable))
-      if (length(value)==1) {
-      distribution(x,variable[i],...) <- value
-  } else {
-      distribution(x,variable[i],...) <- value[[i]]
-  }
-  return(x)
+        x$attributes$mdistribution$var[variable] <- K+1
+        x$attributes$mdistribution$fun <- c(x$attributes$mdistribution$fun,value)
+
+        return(x)
+    }
+
+    if ((length(value)!=length(variable) & length(value)!=1))
+        stop("Wrong number of values")
+    for (i in seq_along(variable))
+        if (length(value)==1) {
+            distribution(x,variable[i],...) <- value
+        } else {
+            distribution(x,variable[i],...) <- value[[i]]
+        }
+    return(x)
 
 }
 
@@ -109,7 +109,7 @@
         return(x)
     }
     if (multivariate) return(x$attributes$mdistribution)
-  x$attributes$distribution[var]
+    x$attributes$distribution[var]
 }
 
 ###}}} distribution
@@ -118,13 +118,13 @@
 
 ##' @export
 normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
-  rnormal <- if(log) rlnorm else rnorm
-  fam <- stats::gaussian(link); fam$link <- link
-  f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))
-  if (!missing(mean)) attr(f,"mean") <- mean
-  if (!missing(sd)) attr(f,"variance") <- sd^2
-  attr(f,"family") <- fam
-  return(f)
+    rnormal <- if(log) rlnorm else rnorm
+    fam <- stats::gaussian(link); fam$link <- link
+    f <- function(n,mu,var,...) rnormal(n,fam$linkinv(mu),sqrt(var))
+    if (!missing(mean)) attr(f,"mean") <- mean
+    if (!missing(sd)) attr(f,"variance") <- sd^2
+    attr(f,"family") <- fam
+    return(f)
 }
 
 ##' @export
@@ -191,9 +191,9 @@ pareto.lvm <- function(lambda=1,...) {   ## shape: lambda, scale: mu
 threshold.lvm <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
     if (!is.null(labels))
-    return(function(n,...) {
-        return(cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf),labels=labels))
-    })
+        return(function(n,...) {
+            return(cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf),labels=labels))
+        })
     function(n,...)
         cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))
 }
@@ -241,35 +241,35 @@ probit.lvm <- binomial.lvm("probit")
 
 ##' @export
 Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
-  fam <- stats::Gamma(link); fam$link <- link
-  rgam <- if (!log) rgamma else function(...) log(rgamma(...))
-  if (!missing(shape) & !missing(rate))
-    f <- function(n,mu,var,...) rgam(n,shape=shape,rate=rate)
-  if (!missing(shape) & missing(rate)) {
-    if (unit)
-      f <- function(n,mu,var,...) rgam(n,shape=shape,rate=shape)
-    else if (var)
-      f <- function(n,mu,var,...) rgam(n,shape=shape,rate=sqrt(shape/var))
-    else
-      f <- function(n,mu,var,...) rgam(n,shape=shape,rate=shape/fam$linkinv(mu))
-  }
-  if (missing(shape) & !missing(rate)) {
-    if (unit)
-      f <- function(n,mu,var,...) rgam(n,shape=shape,rate=rate)
-    else if (var)
-      f <- function(n,mu,var,...) rgam(n,shape=rate^2*var,rate=rate)
-    else
-      f <- function(n,mu,var,...) rgam(n,shape=rate*fam$linkinv(mu),rate=rate)
-  }
-  if (missing(shape) & missing(rate)) {
-    if (var)
-      f <- function(n,mu,var,...) rgam(n,shape=var,rate=1)
-    else
-      f <- function(n,mu,var,...) rgam(n,shape=fam$linkinv(mu),rate=1)
-  }
-  attr(f,"family") <- fam
-  attr(f,"var") <- FALSE
-  return(f)
+    fam <- stats::Gamma(link); fam$link <- link
+    rgam <- if (!log) rgamma else function(...) log(rgamma(...))
+    if (!missing(shape) & !missing(rate))
+        f <- function(n,mu,var,...) rgam(n,shape=shape,rate=rate)
+    if (!missing(shape) & missing(rate)) {
+        if (unit)
+            f <- function(n,mu,var,...) rgam(n,shape=shape,rate=shape)
+        else if (var)
+            f <- function(n,mu,var,...) rgam(n,shape=shape,rate=sqrt(shape/var))
+        else
+            f <- function(n,mu,var,...) rgam(n,shape=shape,rate=shape/fam$linkinv(mu))
+    }
+    if (missing(shape) & !missing(rate)) {
+        if (unit)
+            f <- function(n,mu,var,...) rgam(n,shape=shape,rate=rate)
+        else if (var)
+            f <- function(n,mu,var,...) rgam(n,shape=rate^2*var,rate=rate)
+        else
+            f <- function(n,mu,var,...) rgam(n,shape=rate*fam$linkinv(mu),rate=rate)
+    }
+    if (missing(shape) & missing(rate)) {
+        if (var)
+            f <- function(n,mu,var,...) rgam(n,shape=var,rate=1)
+        else
+            f <- function(n,mu,var,...) rgam(n,shape=fam$linkinv(mu),rate=1)
+    }
+    attr(f,"family") <- fam
+    attr(f,"var") <- FALSE
+    return(f)
 }
 
 ##' @export
@@ -302,12 +302,12 @@ student.lvm <- function(df=2,mu,sigma,...) {
 
 ##' @export
 uniform.lvm <- function(a,b) {
-  if (!missing(a) & !missing(b))
-    f <- function(n,mu,var,...) mu+runif(n,a,b)
-  else
-    f <- function(n,mu,var,...)
-      (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
-  return(f)
+    if (!missing(a) & !missing(b))
+        f <- function(n,mu,var,...) mu+runif(n,a,b)
+    else
+        f <- function(n,mu,var,...)
+    (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
+    return(f)
 }
 
 ###}}} uniform
@@ -387,8 +387,8 @@ ones.lvm <- function(p=1,interval=NULL) {
         val <- rep(1L,n)
         if (p>0 && p<1) val[seq(n*(1-p))] <- 0L
         val
-        }
-  return(f)
+    }
+    return(f)
 }
 
 ###}}} ones
@@ -404,7 +404,7 @@ beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
         f <- function(n,mu,var,...) {
             m <- alpha/(alpha+beta)
             v <- alpha*beta/((alpha+beta)^2*(alpha+beta+1))
-            y <- stats::rbeta(n,shape1=alpha,shape2=beta) 
+            y <- stats::rbeta(n,shape1=alpha,shape2=beta)
             mu+(y-m)*sqrt(var/v)
         }
     else
@@ -418,7 +418,7 @@ beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
 ##' @export
 mvn.lvm <- function(N=2,rho=0.5,sigma=NULL,parname="rho") {
     f <- function(n,rho) {
-        if (is.null(sigma)) {            
+        if (is.null(sigma)) {
             sigma <- diag(nrow=N)*(1-rho) + rho
         }
         rmvn0(n,sigma=sigma)
@@ -437,7 +437,7 @@ GM2.lvm <- function(...,parname=c("Pr","M1","M2","V1","V2"),init=c(0.5,-4,4,1,1)
         if (pr>=1) return(y1)
         z <- rbinom(n,1,pr)
         y2 <- rnorm(n,m2,v2^0.5)
-        return(z*y1+(1-z)*y2)       
+        return(z*y1+(1-z)*y2)
     }
     structure(f,parname=parname,init=init)
 }
