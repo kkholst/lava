@@ -17,19 +17,19 @@
 ##' head(Grep(iris,"(len)|(sp)"))
 ##' @export
 `Grep` <-
-function(x, pattern, subset=TRUE, ignore.case = TRUE,...) {
-  if (is.data.frame(x))
-    nn <- names(x)
-  else if (is.matrix(x))
-      nn <- colnames(nn)
-  else nn <-  x
-  ii <- grep(pattern,nn,ignore.case=ignore.case,...)
-  if (subset) {
-      if (is.matrix(x) || is.data.frame(x))
-          return(x[,ii,drop=FALSE])
-      else return(x[ii])
-  }  
-  res <- data.frame(index=ii,name=nn[ii]);
-  res
-}
+    function(x, pattern, subset=TRUE, ignore.case = TRUE,...) {
+        if (is.data.frame(x))
+            nn <- names(x)
+        else if (is.matrix(x))
+            nn <- colnames(nn)
+        else nn <-  x
+        ii <- grep(pattern,nn,ignore.case=ignore.case,...)
+        if (subset) {
+            if (is.matrix(x) || is.data.frame(x))
+                return(x[,ii,drop=FALSE])
+            else return(x[ii])
+        }  
+        res <- data.frame(index=ii,name=nn[ii]);
+        res
+    }
 

@@ -1,18 +1,18 @@
 
 glm.estimate.hook <- function(x,estimator,...) {
-  yy <- c()
-  if (length(estimator)>0 && estimator=="glm") {
-    for (y in endogenous(x)) {
-      fam <- attributes(distribution(x)[[y]])$family
-      if (is.null(fam)) fam <- stats::gaussian()
-      if (!(tolower(fam$family)%in%
-            c("gaussian","gamma","inverse.gaussian","weibull"))) {
-        yy <- c(yy,y)
-      }
+    yy <- c()
+    if (length(estimator)>0 && estimator=="glm") {
+        for (y in endogenous(x)) {
+            fam <- attributes(distribution(x)[[y]])$family
+            if (is.null(fam)) fam <- stats::gaussian()
+            if (!(tolower(fam$family)%in%
+                  c("gaussian","gamma","inverse.gaussian","weibull"))) {
+                yy <- c(yy,y)
+            }
+        }
+        if (length(yy)>0) covariance(x,yy) <- 1
     }
-    if (length(yy)>0) covariance(x,yy) <- 1
-  }
-  return(c(list(x=x,estimator=estimator,...)))
+    return(c(list(x=x,estimator=estimator,...)))
 }
 
 GLMest <- function(m,data,control=list(),...) {
@@ -37,7 +37,7 @@ GLMest <- function(m,data,control=list(),...) {
             yvar.et[et[[i]]$latentTimes[1]] <- et[[i]]$names[1]
         }
     }
-    ## newpar <- c()
+
     for (y in yvar) {
         count <- count+1
         xx <- parents(m,y)
@@ -59,7 +59,7 @@ GLMest <- function(m,data,control=list(),...) {
 
         f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
         isSurv <- inherits(data[1,y],"Surv")
-        if (isSurv) {            
+        if (isSurv) {
             g <- survival::survreg(f,data=data,dist=fam$family,...)
         } else {
             g <- glm(f,family=fam,data=data,...)
@@ -76,9 +76,6 @@ GLMest <- function(m,data,control=list(),...) {
             names(p)[seq_along(nn)+1] <- nn0
             if (length(p)>length(nn)+1) names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
         }
-        ## if (isEventTime) {
-        ##     newpar <- c(newpar,names(p))
-        ## }        
         if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
             iids <- cbind(iids,0)
             null <- matrix(0); dimnames(null) <- list("scale","scale")
@@ -92,11 +89,11 @@ GLMest <- function(m,data,control=list(),...) {
     coefs <- coefs[idx]
     ##V <- Reduce(blockdiag,breads)[idx,idx]
     V <- crossprod(iids[,idx])
-    ##V <- crossprod(iids[,idx])    
+    ##V <- crossprod(iids[,idx])
     mymsg <- noquote(cbind(mymsg))
     colnames(mymsg) <- "Family(Link)"; rownames(mymsg) <- paste(yvar,":")
     list(estimate=coefs,vcov=V,breads=breads,iid=iids[,idx],summary.message=function(...)  {
-        mymsg }, dispname="Dispersion:") ##, new.parameters=newpar)
+        mymsg }, dispname="Dispersion:")
 }
 
 GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
@@ -112,14 +109,13 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
         xx <- parents(x,y)
         pname <- c(y,paste0(y,sep=lava.options()$symbol[1],xx),paste(y,y,sep=lava.options()$symbol[2]))
         pidx <- na.omit(match(pname,coef(x)))
-        ##pidx <- na.omit(match(coef(x),pname))
         fam <- attributes(distribution(x)[[y]])$family
         if (is.null(fam)) fam <- stats::gaussian()
         if (length(xx)==0) xx <- 1
         f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
         isSurv <- inherits(data[1,y],"Surv")
-        if (inherits(data[,y],"Surv")) {            
-            g <- survival::survreg(f,data=data,dist=fam$family)            
+        if (inherits(data[,y],"Surv")) {
+            g <- survival::survreg(f,data=data,dist=fam$family)
         } else {
             g <- glm(f,family=fam,data=data)
         }
@@ -161,40 +157,40 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
 
 ##' @export
 score.lm <- function(x,p=coef(x),data,indiv=FALSE,
-                      y,X,offset=NULL,weights=NULL,dispersion=TRUE,...) {
-  response <- all.vars(formula(x))[1]
-  if (missing(data)) {
-      X <- model.matrix(x)
-      y <- model.frame(x)[,1]
-  } else {
-      X <- model.matrix(formula(x),data=data)
-      y <- model.frame(formula(x),data=data)[,1]
-  }
-  n <- nrow(X)
-  if(any(is.na(p))) warning("Over-parameterized model")
-  Xbeta <- X%*%p
-  if (is.null(offset)) offset <- x$offset
-  if (!is.null(offset)) Xbeta <- Xbeta+offset
-  r <- y-Xbeta
-  if (is.null(weights)) weights <- x$weights
-  if (!is.null(weights)) {
-      sigma2 <- sum(r^2*weights)/(length(r)-length(p))
-      r <- r*weights
-  } else {
-      sigma2 <- sum(r^2)/(length(r)-length(p))
-  }
-  if (!dispersion) sigma2 <- 1 
-  ##sigma2 <- suppressWarnings(summary(x)$sigma^2)
-  A <- as.vector(r)/sigma2
-  S <- apply(X,2,function(x) x*A)
-  if (!indiv) return(colSums(S))
-  suppressWarnings(attributes(S)$bread <- vcov(x))
-  return(S)
+              y,X,offset=NULL,weights=NULL,dispersion=TRUE,...) {
+    response <- all.vars(formula(x))[1]
+    if (missing(data)) {
+        X <- model.matrix(x)
+        y <- model.frame(x)[,1]
+    } else {
+        X <- model.matrix(formula(x),data=data)
+        y <- model.frame(formula(x),data=data)[,1]
+    }
+    n <- nrow(X)
+    if(any(is.na(p))) warning("Over-parameterized model")
+    Xbeta <- X%*%p
+    if (is.null(offset)) offset <- x$offset
+    if (!is.null(offset)) Xbeta <- Xbeta+offset
+    r <- y-Xbeta
+    if (is.null(weights)) weights <- x$weights
+    if (!is.null(weights)) {
+        sigma2 <- sum(r^2*weights)/(length(r)-length(p))
+        r <- r*weights
+    } else {
+        sigma2 <- sum(r^2)/(length(r)-length(p))
+    }
+    if (!dispersion) sigma2 <- 1
+    ##sigma2 <- suppressWarnings(summary(x)$sigma^2)
+    A <- as.vector(r)/sigma2
+    S <- apply(X,2,function(x) x*A)
+    if (!indiv) return(colSums(S))
+    suppressWarnings(attributes(S)$bread <- vcov(x))
+    return(S)
 }
 
 ##' @export
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
-                      y,X,link,dispersion,offset=NULL,weights=NULL,...) {
+               y,X,link,dispersion,offset=NULL,weights=NULL,...) {
 
     response <- all.vars(formula(x))[1]
     if (inherits(x,"glm")) {
@@ -234,9 +230,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if (!is.null(offset)) Xbeta <- Xbeta+offset
     if (missing(data) && !is.null(x$offset) && is.null(offset) ) Xbeta <- Xbeta+x$offset
     pi <- ginv(Xbeta)
-    ##res <- as.vector(y/pi*dginv(Xbeta)-(1-y)/(1-pi)*dginv(Xbeta))*X
-    ##return(res)
-    r <- y-pi    
+    r <- y-pi
     if (!is.null(x$prior.weights) || !is.null(weights)) {
         if (is.null(weights)) weights <- x$prior.weights
     } else {
@@ -263,12 +257,12 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
 
 ##' @export
 pars.glm <- function(x,...) {
-  if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-    res <- c(coef(x),suppressWarnings(summary(x)$dispersion))
-    names(res)[length(res)] <- "Dispersion"
-    return(res)
-  }
-  return(coef(x))
+    if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+        res <- c(coef(x),suppressWarnings(summary(x)$dispersion))
+        names(res)[length(res)] <- "Dispersion"
+        return(res)
+    }
+    return(coef(x))
 }
 
 logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
@@ -313,28 +307,28 @@ iid.glm <- function(x,...) {
 }
 
 hessian.glm <- function(x,p=coef(x),...) {
-  numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
+    numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
 }
 
 ##' @export
 information.glm <- function(x,...) hessian.glm(x,...)
 
 robustvar <- function(x,id=NULL,...) {
-  U <- score(x,indiv=TRUE)
-  II <- unique(id)
-  K <- length(II)
-  J <- 0
-  if (is.null(id)) {
-    J <- crossprod(U)
-  } else {
-    for (ii in II) {
-      J <- J+tcrossprod(colSums(U[which(id==ii),,drop=FALSE]))
+    U <- score(x,indiv=TRUE)
+    II <- unique(id)
+    K <- length(II)
+    J <- 0
+    if (is.null(id)) {
+        J <- crossprod(U)
+    } else {
+        for (ii in II) {
+            J <- J+tcrossprod(colSums(U[which(id==ii),,drop=FALSE]))
+        }
+        J <- K/(K-1)*J
     }
-    J <- K/(K-1)*J
-  }
-  iI <- vcov(x)
-  V <- iI%*%J%*%iI
-  return(V)
+    iI <- vcov(x)
+    V <- iI%*%J%*%iI
+    return(V)
 }
 
 glm_logLik.lvm <- function(object,...) {
@@ -343,12 +337,12 @@ glm_logLik.lvm <- function(object,...) {
 
 glm_method.lvm <- NULL
 glm_objective.lvm <- function(x,p,data,...) {
-  GLMest(x,data,...)
+    GLMest(x,data,...)
 }
 glm_gradient.lvm <- function(x,p,data,...) {
-  -GLMscore(x,p,data,...)
+    -GLMscore(x,p,data,...)
 }
 
 glm_variance.lvm <- function(x,p,data,opt,...) {
-  opt$vcov
+    opt$vcov
 }

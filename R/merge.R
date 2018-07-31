@@ -34,7 +34,7 @@ merge.lvm <- function(x,y,...) {
           val[idx.] <- m2$fix[j,idx][idx.]
         regression(m,to=nn[idx],from=nn[j],messages=0) <- val
       }
-      browser()
+
       P0 <- P[j,]; P0[seq_len(j-1)] <- 0
       idx <- P[j,]!=0 | m2$covfix[j,]==0
       idx[is.na(idx)] <- FALSE

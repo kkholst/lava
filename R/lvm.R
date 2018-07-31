@@ -87,12 +87,6 @@ lvm <- function(x=NULL, ..., latent=NULL, messages=lava.options()$messages) {
   if (!is.list(x)) x <- list(x,...)
   for (myvar in x) {
     if (inherits(myvar,"formula")) {
-        ## if (length(getoutcome(myvar))>0) {
-        ##   regression(res,...,messages=messages) <- myvar
-        ## } else {
-        ##   myvar <- all.vars(myvar)
-        ## }
-        ## regression(res,...,messages=messages) <- myvar
       regression(res,messages=messages) <- myvar
     }
     if (is.character(myvar)) {

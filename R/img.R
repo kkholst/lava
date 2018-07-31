@@ -1,7 +1,7 @@
 img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
-                ylab="Item",xlab="Subject",lab=TRUE,
-                border=1,rowcol=FALSE,plotfun=NULL,
-                axis1=TRUE,axis2=TRUE,yaxs="r",xaxs="r",cex.axis=0.4,...) {
+         ylab="Item",xlab="Subject",lab=TRUE,
+         border=1,rowcol=FALSE,plotfun=NULL,
+         axis1=TRUE,axis2=TRUE,yaxs="r",xaxs="r",cex.axis=0.4,...) {
     x0 <- seq(nrow(x))
     y0 <- seq(ncol(x))
     image(x=x0,y=y0,as.matrix(x),col=col[[1]],axes=FALSE,ylab=ylab,xlab=xlab,xaxs=xaxs,yaxs=yaxs,...)
@@ -66,13 +66,13 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
 ##'       mar=list(c(0,0,0,0),c(0,0,0,0)),yaxs="i",xaxs="i",zlim=c(0,3))
 ##' @export
 images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label.offset=0.02,
-                 order=TRUE,colorbar.border=0,main,rowcol=FALSE,plotfun=NULL,
-                   axis1,axis2,mar,
-                   col=list(c("#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5"),
-                       c("#FEE5D9", "#FCAE91", "#FB6A4A", "#CB181D"),
-                       c("#EDF8E9", "#BAE4B3", "#74C476", "#238B45"),
-                       c("#FEEDDE", "#FDBE85", "#FD8D3C", "#D94701")),
-                   ...) {
+            order=TRUE,colorbar.border=0,main,rowcol=FALSE,plotfun=NULL,
+            axis1,axis2,mar,
+            col=list(c("#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5"),
+                     c("#FEE5D9", "#FCAE91", "#FB6A4A", "#CB181D"),
+                     c("#EDF8E9", "#BAE4B3", "#74C476", "#238B45"),
+                     c("#FEEDDE", "#FDBE85", "#FD8D3C", "#D94701")),
+            ...) {
     if (is.data.frame(x) || is.matrix(x)) x <- list(x)
     K <- length(x)
     lout <- matrix(seq(K),ncol=ncol,byrow=byrow)
@@ -98,9 +98,9 @@ images <- function(x,group,ncol=2,byrow=TRUE,colorbar=1,colorbar.space=0.1,label
     if (missing(axis2)) axis2 <- c(TRUE,rep(FALSE,K-1))
     if (missing(axis1)) axis1 <- rep(TRUE,K)
     for (i in seq(length(x))) {
-##        if (!missing(mar)) par(mar=mar[[i]])
+        ##        if (!missing(mar)) par(mar=mar[[i]])
         img(x[[i]],idxs,col,axis2=axis2[i],axis1=axis1[i],main=main[i],rowcol=rowcol,plotfun=plotfun[[i]],...)
-##        if (missing(mar)) par(mar=c(4,2,3,2))
+        ##        if (missing(mar)) par(mar=c(4,2,3,2))
     }
     G <- nlevels(group)
     M <- length(col[[1]])

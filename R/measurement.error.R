@@ -38,8 +38,8 @@
 ##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
 ##' }
 measurement.error <- function(model1, formula, data=parent.frame(),
-                              predictfun=function(mu,var,data,...) mu[,1]^2+var[1],
-                              id1, id2, ...) {
+                       predictfun=function(mu,var,data,...) mu[,1]^2+var[1],
+                       id1, id2, ...) {
     if (!inherits(model1,c("lvmfit","lvm.mixture"))) stop("Expected lava object ('lvmfit','lvm.mixture',...)")
     if (missing(formula)) stop("formula needed for stage two (right-hand side additional covariates)")
     p1 <- coef(model1,full=TRUE)
@@ -67,8 +67,6 @@ measurement.error <- function(model1, formula, data=parent.frame(),
     Ia <- -numDeriv::jacobian(function(p) U(p),p1)
     stacked <- stack(e1,e2,Ia)
     res <- c(stacked,list(naive=e2,lm=coef(summary(stage.two)),fun=predictfun))
-    ## res <-  list(estimate=stacked, naive=e2, lm=coef(summary(stage.two)),
-    ##             fun=predictfun)
     structure(res,class=c("measurement.error","estimate"))
 }
 

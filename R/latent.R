@@ -3,15 +3,15 @@
 
 ##' @export
 "latent<-.lvm" <- function(x, clear=FALSE,..., value) {
-  if (inherits(value,"formula")) {
-    return(latent(x,all.vars(value),clear=clear,...))
-  }
-  latent(x, var=value, clear=clear,...)
+    if (inherits(value,"formula")) {
+        return(latent(x,all.vars(value),clear=clear,...))
+    }
+    latent(x, var=value, clear=clear,...)
 }
 
 ##' @export
 `latent` <-
-function(x,...) UseMethod("latent")
+    function(x,...) UseMethod("latent")
 
 ##' @export
 `latent.lvm` <- function(x,var,clear=FALSE,messages=lava.options()$messages,...) {
@@ -36,35 +36,35 @@ function(x,...) UseMethod("latent")
         ord <- intersect(var,ordinal(x))
         if (length(ord)>0) ordinal(x,K=NULL) <- ord
     }
-    
+
     xorg <- exogenous(x)
     exoset <- setdiff(xorg,var)
     if (length(exoset)<length(xorg)) {
         exogenous(x) <- exoset
     }
-    
+
     index(x) <- reindex(x)
     return(x)
 }
 
 ##' @export
 `latent.lvmfit` <-
-  function(x,clear=FALSE,...) {
-    latent(Model(x),...)
-  }
+    function(x,clear=FALSE,...) {
+        latent(Model(x),...)
+    }
 
 ##' @export
 latent.list <- function(x,...) {
-  latlist <- c()
-  for (i in seq_along(x)) {
-    latlist <- c(latlist, latent(x[[i]]))
-  }
-  latlist <- unique(latlist)
-  return(latlist)
+    latlist <- c()
+    for (i in seq_along(x)) {
+        latlist <- c(latlist, latent(x[[i]]))
+    }
+    latlist <- unique(latlist)
+    return(latlist)
 }
 
 ##' @export
 `latent.multigroup` <-
-function(x,...) {
-  latent(Model(x))
-}
+    function(x,...) {
+        latent(Model(x))
+    }

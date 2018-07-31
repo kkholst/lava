@@ -18,27 +18,24 @@
 ##' @export
 ##' @seealso getMplus
 getSAS <- function(infile,entry="Parameter Estimates",...) {
-  con <- file(infile, blocking = FALSE)
-  inp <- readLines(con)
-  close(con)
-  nullstring <- 0
-  linestart <- 1; lineend <- length(inp)
-  ##  mycmd1 <- paste0("grep -n \"",entry,"\" ", csvfile);  a1 <- system(mycmd1,intern=TRUE);
-  ##  linestart <- char2num(strsplit(a1,":")[[1]][1])
-  idx <- sapply(inp,function(x) length(grep(entry, x))>0)
-  if (sum(idx)==1) {
-    linestart <- which(idx)
-    for (i in seq(linestart,length(inp))) {
-      lineend <- i-1
-      ##      if (inp[i]==inp[i-1]) break;
-      if (inp[i]=="") break;
+    con <- file(infile, blocking = FALSE)
+    inp <- readLines(con)
+    close(con)
+    nullstring <- 0
+    linestart <- 1; lineend <- length(inp)
+    idx <- sapply(inp,function(x) length(grep(entry, x))>0)
+    if (sum(idx)==1) {
+        linestart <- which(idx)
+        for (i in seq(linestart,length(inp))) {
+            lineend <- i-1
+            if (inp[i]=="") break;
+        }
+    } else {
+        stop("No match or duplicate entries!")
     }
-  } else {
-    stop("No match or duplicate entries!")
-  }
-  subinp <- inp[(linestart+1):(lineend)]
-  con <- textConnection(subinp)
-  res <- read.csv(con,header=TRUE)
-  close(con)
-  return(res)
+    subinp <- inp[(linestart+1):(lineend)]
+    con <- textConnection(subinp)
+    res <- read.csv(con,header=TRUE)
+    close(con)
+    return(res)
 }

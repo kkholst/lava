@@ -14,7 +14,6 @@ lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=
             cV <- cV[index,index,drop=FALSE]
         }
         if (colorbar) { opt <- par(mar=mar) }
-        ##if (missing(col)) col <- c("white",rev(heat.colors(16)))
         if (missing(col)) col <- rev(gray.colors(16,0,1))
         image(seq(nrow(cV)),seq(ncol(cV)),as.matrix(cV),xlab="",ylab="",col=col,zlim=c(0,1),...)
         if (colorbar) {

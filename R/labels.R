@@ -25,7 +25,7 @@
 ##' if (interactive()) {
 ##'     plot(m,addstyle=FALSE)
 ##' }
-##' 
+##'
 ##' m <- lvm(y~x)
 ##' labels(m) <- list(x="multiple\nlines")
 ##' if (interactive()) {
@@ -33,7 +33,7 @@
 ##' plot(m,plain=TRUE)
 ##' plot(m)
 ##' par(op)
-##' 
+##'
 ##' d <- sim(m,100)
 ##' e <- estimate(m,d)
 ##' plot(e,type="sd")
@@ -128,12 +128,12 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
     }
     if (missing(type))
         return(graph::edgeRenderInfo(Graph(object))$label)
-    
+
 
     Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
     Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
     mfix <- index(object)$v0
-    
+
     npar.mean <- index(object)$npar.mean
     Par <- object$coef
     mpar <- c()
@@ -152,9 +152,9 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
     AP <- matrices(Model(object), Par,mpar) ## Ignore expar
     A <- AP$A; P <- AP$P
     P[exogenous(object),exogenous(object)] <- NA
-    
+
     gr <- finalize(Model(object), ...)
-    Anz <- A; Anz[Afix==0] <- NA    
+    Anz <- A; Anz[Afix==0] <- NA
     gr <- edgelabels(gr, lab=Anz)
     Pnz <- P; Pnz[Model(object)$cov==0] <- NA
     if (intercept) {
@@ -295,7 +295,7 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
                              expr=TRUE, debug=FALSE,...) {
     if (inherits(to,"formula")) {
         yy <- decomp.specials(getoutcome(to))
-        from <- all.vars(to[[3]])##setdiff(all.vars(to),yy)
+        from <- all.vars(to[[3]])
         if (length(from)==0) from <- yy
         to <- yy
     }

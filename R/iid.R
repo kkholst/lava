@@ -54,7 +54,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
         if (is.null(bread)) {
             if (maxsize>0) {
                 ff <- function(p) colSums(Reduce("rbind",mets::divide.conquer(function(data) score(x,data=data,p=p,...),
-                                                                              data=data,size=maxsize)))
+                                                                       data=data,size=maxsize)))
                 I <- -numDeriv::jacobian(ff,pp,method=lava.options()$Dmethod)
             } else {
                 I <- -numDeriv::jacobian(function(p) score(x,p=p,indiv=FALSE,...),pp,method=lava.options()$Dmethod)
@@ -73,7 +73,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
         attributes(iid0)$N <- N
     }
     colnames(iid0) <- colnames(U)
-  return(structure(iid0,bread=bread))
+    return(structure(iid0,bread=bread))
 }
 
 

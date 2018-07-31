@@ -18,7 +18,7 @@ vec <- function(x,matrix=FALSE,sep=".",...) {
             nn <- colnames(x)
         } else {
             nn <- apply(expand.grid(dimnames(x)),1,function(x) paste(x,collapse=sep))
-        }        
+        }
         res <- as.vector(x); names(res) <- nn
     }
     if (matrix) return(cbind(res))

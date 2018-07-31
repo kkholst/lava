@@ -21,7 +21,7 @@ mat.lvm <- function(x,ii=index(x),...) {
                          cov=seq_len(ii$npar.var)+ii$npar.mean+ii$npar.reg,
                          epar=seq_len(ii$npar.ex)+with(ii,npar.reg+npar.var+npar.mean),
                          cpar=numeric())
-    
+
     idxA <- which(M1==1)
     pidxA <- parBelongsTo$reg
     if (ii$npar.reg>0) {
@@ -185,7 +185,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     ## Constrained...
     constrain.par <- names(constrain(x))
     constrain.idx <- NULL
-    
+
     if (length(constrain.par)>0) {
         constrain.idx <- list()
         for (p in constrain.par) {
@@ -247,7 +247,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
         e <- rep(0,length(x$expar))
         fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
         if (any(fixed))
-            e[fixed] <- unlist(x$exfix[fixed])        
+            e[fixed] <- unlist(x$exfix[fixed])
         if (nrow(ii$epar)>0)
             e[ii$epar[,1]] <- pp[ii$epar[,2]]
         names(e) <- names(x$expar)
@@ -303,11 +303,11 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 ###{{{ matrices.multigroup
 
 matrices.multigroup <- function(x, p, ...) {
-  pp <- modelPar(x,p)
-  res <- list()
-  for (i in seq_len(x$ngroup))
-    res <- c(res, list(matrices2(x$lvm[[i]],pp$p[[i]])))
-  return(res)
+    pp <- modelPar(x,p)
+    res <- list()
+    for (i in seq_len(x$ngroup))
+        res <- c(res, list(matrices2(x$lvm[[i]],pp$p[[i]])))
+    return(res)
 }
 
 ###}}}
@@ -354,7 +354,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     } else {
         pars.var <- pars[-seq_len(ii$npar.reg)]
     }
-    
+
     diag(P)[ii$which.diag] <- pars.var[seq_along(ii$which.diag)]
     pars.off.diag <- pars.var
     if (length(ii$which.diag)>0)

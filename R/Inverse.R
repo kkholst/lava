@@ -1,7 +1,6 @@
 ##' @export
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,symmetric=FALSE) {
     n <- NROW(X)
-                                        # return(structure(solve(X),))
     if (n==1L) {
         res <- 1/X
         if (det) attributes(res)$det <- X
@@ -12,7 +11,7 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,sy
         L <- chol(X)
         res <- chol2inv(L)
         if (det) attributes(res)$det <- prod(diag(L)^2)
-        if (chol) attributes(res)$chol <- X        
+        if (chol) attributes(res)$chol <- X
     } else {
         if(symmetric){
             decomp <- eigen(X, symmetric = TRUE)
@@ -29,12 +28,12 @@ Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,sy
         idx <- which(abs(D)>tol)
         id0[idx] <- 1/D[idx]
         res <- V%*%diag(id0,nrow=length(id0))%*%t(U)
-        
-        if (det) 
+
+        if (det)
             attributes(res)$det <- prod(D[D>tol])
         attributes(res)$pseudo <- (length(idx)<n)
         attributes(res)$minSV <- min(D)
-        
+
     }
     if (names && !is.null(colnames(X))) dimnames(res) <- list(colnames(X),colnames(X))
     return(res)

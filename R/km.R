@@ -9,9 +9,9 @@
 ##' @param iter.max Max number of iterations
 ##' @param n.start Number of restarts
 ##' @param ... Additional arguments to lower level functions
-##' @export 
+##' @export
 ##' @author Klaus K. Holst
-##' 
+##'
 km <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...) { ## Lloyd's algorithm
     if (inherits(x, "formula")) x <- stats::model.matrix(x,data=data)
     x <- cbind(x)
@@ -50,10 +50,10 @@ km <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...)
             sswmin <- ssw
             clmin <- cl
             mumin <- mu
-        }       
+        }
     }
     mu <- structure(mu,class="by",dim=K,dimnames=list(class=seq(K)))
     withinclusterss <- as.vector(by(d[cbind(seq(NROW(d)),cl)],cl,sum))
     return(list(cluster=cl,
-           center=mu, ssw=withinclusterss)) ##, ssws,mu=Reduce(cbind,mus)))
+           center=mu, ssw=withinclusterss))
 }

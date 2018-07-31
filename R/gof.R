@@ -109,55 +109,55 @@ rsq <- function(x,stderr=FALSE) {
 }
 
 satmodel <- function(object,logLik=TRUE,data=model.frame(object),
-                     control=list(trace=1),
-                     weights=Weights(object),estimator=object$estimator,
-                     missing=inherits(object,"lvm.missing"),
-                     regr=FALSE,
-                     ...) {
-  if (object$estimator=="gaussian" & logLik & !missing) {
-    if (class(object)[1]%in%c("multigroupfit","multigroup")) {
+              control=list(trace=1),
+              weights=Weights(object),estimator=object$estimator,
+              missing=inherits(object,"lvm.missing"),
+              regr=FALSE,
+              ...) {
+    if (object$estimator=="gaussian" & logLik & !missing) {
+        if (class(object)[1]%in%c("multigroupfit","multigroup")) {
 
-      ll <- structure(0,nall=0,nobs=0,df=0,class="logLik")
-      for (i in seq_len(Model(object)$ngroup)) {
-        l0 <- logLik(Model(Model(object))[[i]],data=model.frame(object)[[i]],type="sat")
+            ll <- structure(0,nall=0,nobs=0,df=0,class="logLik")
+            for (i in seq_len(Model(object)$ngroup)) {
+                l0 <- logLik(Model(Model(object))[[i]],data=model.frame(object)[[i]],type="sat")
 
-        ll <- ll+l0
-        for (atr in c("nall","nobs","df"))
-          attributes(ll)[[atr]] <- attributes(ll)[[atr]]+attributes(l0)[[atr]]
-      }
+                ll <- ll+l0
+                for (atr in c("nall","nobs","df"))
+                    attributes(ll)[[atr]] <- attributes(ll)[[atr]]+attributes(l0)[[atr]]
+            }
 
+        }
+        return(logLik(object, type="sat"))
     }
-    return(logLik(object, type="sat"))
-  }
-  covar <- exogenous(object)
-  y <- endogenous(object)
-  m0 <- Model(object)
-  if (length(covar)>0)
-    suppressWarnings(m0 <- regression(m0,y,covar))
-  if (length(latent(m0))>0)
-    kill(m0) <- latent(m0)
-  cancel(m0) <- y
-  if (!regr)
-    suppressWarnings(covariance(m0) <- y)
-  else {
-    if (length(y)>1) {
-      for (i in seq_len(length(y)-1))
-       for (j in seq(i+1,length(y))) {
-         m0 <- regression(m0,y[i],y[j])
-       }
+    covar <- exogenous(object)
+    y <- endogenous(object)
+    m0 <- Model(object)
+    if (length(covar)>0)
+        suppressWarnings(m0 <- regression(m0,y,covar))
+    if (length(latent(m0))>0)
+        kill(m0) <- latent(m0)
+    cancel(m0) <- y
+    if (!regr)
+        suppressWarnings(covariance(m0) <- y)
+    else {
+        if (length(y)>1) {
+            for (i in seq_len(length(y)-1))
+                for (j in seq(i+1,length(y))) {
+                    m0 <- regression(m0,y[i],y[j])
+                }
+        }
+        exogenous(m0) <- covar
     }
-    exogenous(m0) <- covar
-  }
-  if (is.null(control$start)) {
-    mystart <- rep(0,with(index(m0), npar.mean+npar))
-    mystart[variances(m0,mean=TRUE)] <- 1
-    control$start <- mystart
-  }
-  message("Calculating MLE of saturated model:\n")
-  e0 <- estimate(m0,data=data,weights=weights,estimator=estimator,messages=0,control=control,missing=missing,...)
-  if (logLik)
-    return(logLik(e0))
-  return(e0)
+    if (is.null(control$start)) {
+        mystart <- rep(0,with(index(m0), npar.mean+npar))
+        mystart[variances(m0,mean=TRUE)] <- 1
+        control$start <- mystart
+    }
+    message("Calculating MLE of saturated model:\n")
+    e0 <- estimate(m0,data=data,weights=weights,estimator=estimator,messages=0,control=control,missing=missing,...)
+    if (logLik)
+        return(logLik(e0))
+    return(e0)
 }
 
 condition <- function(x) {
@@ -241,131 +241,128 @@ condition <- function(x) {
 ##' estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
 ##'
 `gof` <-
-  function(object,...) UseMethod("gof")
+    function(object,...) UseMethod("gof")
 
 ##' @export
 gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FALSE,...) {
-  n <- object$data$n
-  if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
-  loglik <- logLik(object,...)
+    n <- object$data$n
+    if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
+    loglik <- logLik(object,...)
 
-  df <- attributes(loglik)$df
-  nobs <- attributes(loglik)$nall*length(endogenous(object))
-  myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
-  myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
+    df <- attributes(loglik)$df
+    nobs <- attributes(loglik)$nall*length(endogenous(object))
+    myAIC <- -2*(loglik - df); attributes(myAIC) <- NULL
+    myBIC <- -2*loglik + df*log(nobs); attributes(myBIC) <- NULL
 
-  xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
+    xconstrain <- intersect(unlist(lapply(constrain(object),function(z) attributes(z)$args)),manifest(object))
 
-  l2D <- mean(object$opt$grad^2)
-  S <- vcov(object)
-  rnkV <- tryCatch(qr(S)$rank,error=function(...) 0)
-  minSV <- attr(S,"minSV")
-  condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
+    l2D <- mean(object$opt$grad^2)
+    S <- vcov(object)
+    rnkV <- tryCatch(qr(S)$rank,error=function(...) 0)
+    minSV <- attr(S,"minSV")
+    condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
 
-##  if (class(object)[1]=="lvmfit" & (object$estimator=="gaussian" | chisq) & length(xconstrain)==0 ) {
-  if (((object$estimator=="gaussian" & class(object)[1]!="lvm.missing") | chisq) & length(xconstrain)==0 ) {
-    res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-    q <- res$fit$statistic
-    qdf <- res$fit$parameter
-    if (all) {
-      m0 <- lvm(manifest(object)); exogenous(m0) <- NULL
-      e0 <- estimate(m0,model.frame(object))
-      g0 <- gof(e0)
-      logLikbaseline <- g0$logLik
-      qbaseline <- g0$fit$statistic
-      qdfbaseline <- g0$fit$parameter
-      CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
-      NFI <- (qbaseline-q)/qbaseline
-      TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)
-      S <- object$data$S
-      mu <- object$data$mu
-      C <- modelVar(object)$C
-      xi <- as.vector(modelVar(object)$xi)
-      if (is.null(S)) S <- cov(model.frame(object))
-      if (is.null(mu)) mu <- colMeans(model.frame(object))
-      L <- diag(S)^0.5
-      idx <- index(object)$endo.idx
-      R <- (diag(1/L))%*%(S-C)%*%(diag(1/L))
-      R2 <- (mu-xi)/L
-      SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
-      res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR))
-      ## if (length(latent(object))>0) {
-      ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5
-      ##   res <- c(res,list("SRMR(endogenous)"=SRMR.endo))
-      ## }
-    }
-    ##    if (class(object)[1]=="lvmfit")
-    if (rnkV==ncol(vcov(object)) && (!is.null(minSV) && minSV>1e-12)) {
-
-      rmseafun <- function(...) {
-        epsilon <- function(lambda) sapply(lambda,function(x)
-                                           ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n))),0)) ## n-1,n vs. n-df
-        opf <- function(l,p) suppressWarnings(p-pchisq(q,df=qdf,ncp=l))
-        ## pchisq(... lower.tail=FALSE)-1
-        alpha <- (1-level)/2
-        RMSEA <- epsilon(q-qdf)
-        B <- max(q-qdf,0)
-        lo <- hi <- list(root=0)
-        if (RMSEA>0 && opf(0,p=1-alpha)<0) {
-          hi <- uniroot(function(x) opf(x,p=1-alpha),c(0,B))
+    if (((object$estimator=="gaussian" & class(object)[1]!="lvm.missing") | chisq) & length(xconstrain)==0 ) {
+        res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
+        q <- res$fit$statistic
+        qdf <- res$fit$parameter
+        if (all) {
+            m0 <- lvm(manifest(object)); exogenous(m0) <- NULL
+            e0 <- estimate(m0,model.frame(object))
+            g0 <- gof(e0)
+            logLikbaseline <- g0$logLik
+            qbaseline <- g0$fit$statistic
+            qdfbaseline <- g0$fit$parameter
+            CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
+            NFI <- (qbaseline-q)/qbaseline
+            TLI <- (qbaseline/qdfbaseline-q/qdf)/(qbaseline/qdfbaseline-1)
+            S <- object$data$S
+            mu <- object$data$mu
+            C <- modelVar(object)$C
+            xi <- as.vector(modelVar(object)$xi)
+            if (is.null(S)) S <- cov(model.frame(object))
+            if (is.null(mu)) mu <- colMeans(model.frame(object))
+            L <- diag(S)^0.5
+            idx <- index(object)$endo.idx
+            R <- (diag(1/L))%*%(S-C)%*%(diag(1/L))
+            R2 <- (mu-xi)/L
+            SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
+            res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR))
+            ## if (length(latent(object))>0) {
+            ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5
+            ##   res <- c(res,list("SRMR(endogenous)"=SRMR.endo))
+            ## }
         }
-        if (opf(B,p=alpha)<0) {
-          lo <- uniroot(function(x) opf(x,p=alpha),c(B,n))
-        }
-        ci <- c(epsilon(c(hi$root,lo$root)))
-        RMSEA <- c(RMSEA=RMSEA,ci);
-        names(RMSEA) <- c("RMSEA",paste0(100*c(alpha,(1-alpha)),"%"))
-        pval <- pchisq(q,qdf,(n*qdf*rmsea.threshold^2),lower.tail=FALSE)
-        res <- list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level, rmsea.threshold=rmsea.threshold, pval.rmsea=pval)
-        return(res)
-      }
-      rmseaval <- tryCatch(rmseafun(),error=function(e) NULL)
-      res <- c(res,rmseaval)
-    }
-  } else {
-    res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
-  }
+        if (rnkV==ncol(vcov(object)) && (!is.null(minSV) && minSV>1e-12)) {
 
-  res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
-  class(res) <- "gof.lvmfit"
-  return(res)
+            rmseafun <- function(...) {
+                epsilon <- function(lambda) sapply(lambda,function(x)
+                    ifelse(x>0 & qdf>0,sqrt(x/(qdf*(n))),0)) ## n-1,n vs. n-df
+                opf <- function(l,p) suppressWarnings(p-pchisq(q,df=qdf,ncp=l))
+                alpha <- (1-level)/2
+                RMSEA <- epsilon(q-qdf)
+                B <- max(q-qdf,0)
+                lo <- hi <- list(root=0)
+                if (RMSEA>0 && opf(0,p=1-alpha)<0) {
+                    hi <- uniroot(function(x) opf(x,p=1-alpha),c(0,B))
+                }
+                if (opf(B,p=alpha)<0) {
+                    lo <- uniroot(function(x) opf(x,p=alpha),c(B,n))
+                }
+                ci <- c(epsilon(c(hi$root,lo$root)))
+                RMSEA <- c(RMSEA=RMSEA,ci);
+                names(RMSEA) <- c("RMSEA",paste0(100*c(alpha,(1-alpha)),"%"))
+                pval <- pchisq(q,qdf,(n*qdf*rmsea.threshold^2),lower.tail=FALSE)
+                res <- list(aa=((q-qdf)/(2*qdf)^0.5),RMSEA=RMSEA, level=level, rmsea.threshold=rmsea.threshold, pval.rmsea=pval)
+                return(res)
+            }
+            rmseaval <- tryCatch(rmseafun(),error=function(e) NULL)
+            res <- c(res,rmseaval)
+        }
+    } else {
+        res <- list(n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
+    }
+
+    res <- c(res, L2score=l2D, rankV=rnkV, cond=condnum, k=nrow(vcov(object)))
+    class(res) <- "gof.lvmfit"
+    return(res)
 }
 
 ##' @export
 print.gof.lvmfit <- function(x,optim=TRUE,...) {
-  if (!is.null(x$n)) {
-    with(x,
-         cat("\n Number of observations =", n, "\n"))
-  }
-  if (is.null(x$fit)) {
-    with(x,
-         cat(" Log-Likelihood =", logLik, "\n"))
-  }
-  with(x,  cat(" BIC =", BIC, "\n",
-               "AIC =", AIC, "\n"))
-  if (!is.null(x$fit))
-  with(x,
-       cat(" log-Likelihood of model =", fit$estimate[1], "\n\n",
-           "log-Likelihood of saturated model =", fit$estimate[2], "\n",
-           "Chi-squared statistic: q =", fit$statistic,
-           ", df =", fit$parameter,
-           "\n  P(Q>q) =", fit$p.value, "\n"))
-  if (!is.null(x$RMSEA)) {
-    rr <- round(x$RMSEA*10000)/10000
-      rmsea <- paste0(rr[1]," (",rr[2],";",rr[3],")")
-    cat("\n RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
-    cat("  P(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n",sep="")
-  }
-  for (i in c("TLI","CFI","NFI","SRMR","SRMR(endogenous)"))
-    if (!is.null(x[[i]])) cat("", i,"=",x[[i]],"\n")
+    if (!is.null(x$n)) {
+        with(x,
+             cat("\n Number of observations =", n, "\n"))
+    }
+    if (is.null(x$fit)) {
+        with(x,
+             cat(" Log-Likelihood =", logLik, "\n"))
+    }
+    with(x,  cat(" BIC =", BIC, "\n",
+                 "AIC =", AIC, "\n"))
+    if (!is.null(x$fit))
+        with(x,
+             cat(" log-Likelihood of model =", fit$estimate[1], "\n\n",
+                 "log-Likelihood of saturated model =", fit$estimate[2], "\n",
+                 "Chi-squared statistic: q =", fit$statistic,
+                 ", df =", fit$parameter,
+                 "\n  P(Q>q) =", fit$p.value, "\n"))
+    if (!is.null(x$RMSEA)) {
+        rr <- round(x$RMSEA*10000)/10000
+        rmsea <- paste0(rr[1]," (",rr[2],";",rr[3],")")
+        cat("\n RMSEA (",x$level*100,"% CI): ", rmsea,"\n",sep="")
+        cat("  P(RMSEA<",x$rmsea.threshold,")=",  x$pval.rmsea,"\n",sep="")
+    }
+    for (i in c("TLI","CFI","NFI","SRMR","SRMR(endogenous)"))
+        if (!is.null(x[[i]])) cat("", i,"=",x[[i]],"\n")
 
-  if (optim) {
-    cat("\nrank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
-    cat("condition(Information) = ",x$cond,"\n",sep="")
-    cat("mean(score^2) =",x$L2score,"\n")
-  }
+    if (optim) {
+        cat("\nrank(Information) = ",x$rankV," (p=", x$k,")\n",sep="")
+        cat("condition(Information) = ",x$cond,"\n",sep="")
+        cat("mean(score^2) =",x$L2score,"\n")
+    }
 
-  invisible(x)
+    invisible(x)
 }
 
 

@@ -13,23 +13,23 @@
 ##' @examples
 ##' ksmooth2(rmvn0(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1,
 ##'         rgl=FALSE,theta=30)
-##' 
+##'
 ##' if (interactive()) {
 ##'     ksmooth2(rmvn0(1e4,sigma=diag(2)*.5+.5),c(-3.5,3.5),h=1)
 ##'     ksmooth2(function(x,y) x^2+y^2, c(-20,20))
 ##'     ksmooth2(function(x,y) x^2+y^2, xlim=c(-5,5), ylim=c(0,10))
-##' 
+##'
 ##'     f <- function(x,y) 1-sqrt(x^2+y^2)
 ##'     surface(f,xlim=c(-1,1),alpha=0.9,aspect=c(1,1,0.75))
 ##'     surface(f,xlim=c(-1,1),clut=heat.colors(128))
 ##'     ##play3d(spin3d(axis=c(0,0,1), rpm=8), duration=5)
 ##' }
-##' 
+##'
 ##' if (interactive()) {
 ##'     surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
-##'     surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),box=FALSE,specular="black")##' 
+##'     surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),box=FALSE,specular="black")##'
 ##' }
-##' 
+##'
 ##' if (!inherits(try(find.package("fields"),silent=TRUE),"try-error")) {
 ##'     f <- function(x,y) 1-sqrt(x^2+y^2)
 ##'     ksmooth2(f,c(-1,1),rgl=FALSE,image=fields::image.plot)
@@ -68,13 +68,13 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",clut.ce
     }
     if (is.function(f)) {
         xy <- as.matrix(expand.grid(x,y))
-        if (inherits(try(f(c(x[1],y[1])),silent=TRUE),"try-error")) {            
+        if (inherits(try(f(c(x[1],y[1])),silent=TRUE),"try-error")) {
             f <- matrix(f(xy[,1],xy[,2]),nrow=length(x),ncol=length(y))
         } else {
             val <- f(xy)
             if (length(val)<NROW(xy)) {
                 f <- matrix(apply(xy,1,f),nrow=length(x),ncol=length(y))
-            } else {            
+            } else {
                 f <- matrix(val,nrow=length(x),ncol=length(y))
             }
         }
@@ -91,7 +91,7 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",clut.ce
                        france=colorRampPalette(c("blue","white","red"))(ncolour),
                        rainbow=rainbow(n=128,start=0,end=1),
                        heat=heat.colors(ncolour),
-                       heatrev=rev(heat.colors(ncolour)),                       
+                       heatrev=rev(heat.colors(ncolour)),
                        colorRampPalette(c("white","goldenrod1"),bias=1)(ncolour)
                        )
     }
@@ -112,14 +112,14 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",clut.ce
         op <- do.call(par,parargs)
         if (persp) graphics::persp(x=x,y=x,z=f, col=col, expand=expand, ...)
         if (contour | !is.null(image)) {
-            par(mar=c(3,3,0.5,3)) ##c(bottom, left, top, right)
+            par(mar=c(3,3,0.5,3)) ## (bottom, left, top, right)
             if (!is.null(image)) {
                 do.call(image,list(x=x,y=y,z=f,col=clut,xlim=range(x),ylim=range(y),xlab="",ylab=""))
             }
             if (contour) {
                 args <- c(list(x=x,y=y,z=f,nlevels=nlevels,col=col.contour,add=!is.null(image)),dots)
                 args <- args[names(formals(contour.default))]
-                do.call("contour",args) ##nlevels=20
+                do.call("contour",args)
             }
         }
         suppressWarnings(par(op))
