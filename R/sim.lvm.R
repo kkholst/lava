@@ -310,22 +310,27 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
               "X.idx","ii.mvn","xconstrain.idx","xconstrain",
               "xconstrain.par","covparnames","exo_constrainY")
 
-    setup <- is.null(n) ## Save environment (variables v.env) and return sim object
+    setup <- is.null(n) && is.null(X) ## Save environment (variables v.env) and return sim object
     loadconfig <- !is.null(x$sim.env) && !setup && (length(list(...))==0 && length(p)==0)
     if (loadconfig) {
         for (v in setdiff(v.env,"X")) assign(v, x$sim.env[[v]])
         if (is.null(X)) X <-  x$sim.env[['X']]
     } else {
-        if (!is.null(X)) {
-            n <- nrow(X)
-        }
         if (!is.null(n) && n<1) return(NULL)
         p <- c(p,unlist(list(...)))
         xx <- exogenous(x)
-        if (!is.null(p)) {
-            i1 <- na.omit(c(match(names(p),xx),
-                           match(names(p),paste0(xx,lava.options()$symbol[2],xx))))
-            if (length(i1)>0) covariance(x) <- xx[i1]
+
+        if (!is.null(X)) {
+            n <- nrow(X)
+            if (!is.null(colnames(X))) {                
+                X <- as.matrix(X[,xx,drop=FALSE])
+            }
+        } else {
+            if (!is.null(p)) {
+                i1 <- unique(na.omit(c(match(names(p),xx),
+                                       match(names(p),paste0(xx,lava.options()$symbol[2],xx)))))
+                covariance(x) <- xx[i1]
+            }
         }
         ##  index(x) <- reindex(x)
         vv <- vars(x)
