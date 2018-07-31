@@ -45,7 +45,7 @@ if (interactive()) {
 
 if (interactive()) {
     surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),lit=FALSE,smooth=FALSE,box=FALSE,alpha=0.8)
-    surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),box=FALSE,specular="black")##' 
+    surface(function(x) dmvn0(x,sigma=diag(2)),c(-3,3),box=FALSE,specular="black")##'
 }
 
 if (!inherits(try(find.package("fields"),silent=TRUE),"try-error")) {

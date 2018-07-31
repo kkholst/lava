@@ -38,11 +38,12 @@
 ##'
 ##' \method{exogenous}{lvm}(x, xfree = TRUE,...) <- value
 ##'
-##' \method{exogenous}{lvm}(x,latent=FALSE,index=TRUE,...)
+##' \method{exogenous}{lvm}(x,variable,latent=FALSE,index=TRUE,...)
 ##'
 ##' \method{latent}{lvm}(x,clear=FALSE,...) <- value
 ##'
 ##' @param x \code{lvm}-object
+##' @param variable list of variables to alter
 ##' @param latent Logical defining whether latent variables without parents
 ##' should be included in the result
 ##' @param index For internal use only

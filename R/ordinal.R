@@ -238,7 +238,7 @@ print.ordinal.lvm <- function(x,...) {
             x$attributes$liability <- x$attributes$liability[-idx]
             x$attributes$nordinal <- x$attributes$nordinal[-idx]
             x$attributes$normal <- x$attributes$normal[-idx]
-            exo <- intersect(var,exogenous(x,TRUE))
+            exo <- intersect(var,exogenous(x,latent=TRUE))
             if (length(exo)>0) {
                 intercept(x,var) <- NA
                 covariance(x,var) <- NA

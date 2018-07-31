@@ -38,7 +38,7 @@ latent(x,...)
 
 \method{exogenous}{lvm}(x, xfree = TRUE,...) <- value
 
-\method{exogenous}{lvm}(x,latent=FALSE,index=TRUE,...)
+\method{exogenous}{lvm}(x,variable,latent=FALSE,index=TRUE,...)
 
 \method{latent}{lvm}(x,clear=FALSE,...) <- value
 }
@@ -46,6 +46,8 @@ latent(x,...)
 \item{x}{\code{lvm}-object}
 
 \item{\dots}{Additional arguments to be passed to the low level functions}
+
+\item{variable}{list of variables to alter}
 
 \item{latent}{Logical defining whether latent variables without parents
 should be included in the result}
