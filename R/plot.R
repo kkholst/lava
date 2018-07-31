@@ -84,10 +84,6 @@
       return(NULL)
     }
   index(x) <- reindex(x)
-  ## if (length(index(x)$vars)<2) {
-  ##     message("Not available for models with fewer than two variables")
-  ##     return(NULL)
-  ## }
   myhooks <- gethook("plot.post.hooks")
   for (f in myhooks) {
     x <- do.call(f, list(x=x,...))
@@ -116,7 +112,6 @@
   }
     if (plot.engine=="visnetwork") {
         g <- vis.lvm(x,labels=labels,...)
-        ##if (!noplot) print(g)
         return(g)
   }
 
@@ -154,22 +149,14 @@
     graph::nodeRenderInfo(g)$fill <- graph::nodeRenderInfo(dots$x)$fill
     graph::nodeRenderInfo(g)$col <- graph::nodeRenderInfo(dots$x)$col
     graph::edgeRenderInfo(g)$col <- graph::edgeRenderInfo(dots$x)$col
-    if (noplot)
-      return(g)
-      res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
-    { # Redo nodes to avoid edges overlapping node borders
-      par(new=TRUE)
-      res <- tryCatch(Rgraphviz::renderGraph(g,drawEdges=NULL,new=FALSE),error=function(e) NULL)
-    }
+    if (noplot) return(g)
+    res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
+    ## Redo nodes to avoid edges overlapping node borders
+    ##par(new=TRUE)
+    ##res <- tryCatch(Rgraphviz::renderGraph(g,drawEdges=NULL,new=FALSE),error=function(e) NULL)
+    ##
     options(.savedOpt)
   }
-  ## if (!is.null(legend)) {
-  ##   op <- par(xpd=TRUE)
-  ##   legend(legend, c("Exogenous","Endogenous","Latent","Time to event"),
-  ##          pt.cex=1.5, pch=15, lty=0, col=cols[1:4], cex=0.8)
-  ##   par(op)
-  ## }
-
 
   myhooks <- gethook("plot.hooks")
   for (f in myhooks) {
@@ -258,7 +245,7 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
         if (!missing(f)) {
             return(plot.estimate(x,f=f,...))
         }
-    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a stupid warning when labels are given as "expression"
+    .savedOpt <- options(warn=-1) ## Temporarily disable warnings as renderGraph comes with a warning when labels are given as "expression"
     if (!requireNamespace("graph",quietly=TRUE)) {
       plot(Model(x),...)
       return(invisible(x))
