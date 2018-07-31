@@ -33,7 +33,6 @@ By <- function(x,INDICES,FUN,COLUMNS,array=FALSE,...) {
         ##DimElem <- length(a[rep(1,length(dim(a)))][[1]])
         a <- a[]
         attr(a,"call") <- NULL
-        ##        a <- array(a,)
     }
     return(a)
 }

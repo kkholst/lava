@@ -122,79 +122,79 @@
 ##' @export
 "covariance<-.lvm" <- function(object, var1=NULL, var2=NULL, constrain=FALSE, pairwise=FALSE, ..., value) {
 
-  if (!is.null(var1)) {
-    if (inherits(var1,"formula")) {
-      lhs <- getoutcome(var1)
-      xf <- attributes(terms(var1))$term.labels
-      xx <- unlist(lapply(xf, function(x) x[1]))
-      if (length(lhs)==0) {
-        covfix(object,var1,var2,pairwise=pairwise,...) <- value
+    if (!is.null(var1)) {
+        if (inherits(var1,"formula")) {
+            lhs <- getoutcome(var1)
+            xf <- attributes(terms(var1))$term.labels
+            xx <- unlist(lapply(xf, function(x) x[1]))
+            if (length(lhs)==0) {
+                covfix(object,var1,var2,pairwise=pairwise,...) <- value
+                object$parpos <- NULL
+                return(object)
+            }
+            else {
+                yy <- decomp.specials(lhs)
+            }
+        } else {
+            yy <- var1; xx <- var2
+        }
+        covfix(object,var1=yy,var2=xx,pairwise=pairwise,...) <- value
         object$parpos <- NULL
         return(object)
-      }
-      else {
-        yy <- decomp.specials(lhs)
-      }
-    } else {
-      yy <- var1; xx <- var2
-    }
-    covfix(object,var1=yy,var2=xx,pairwise=pairwise,...) <- value
-    object$parpos <- NULL
-    return(object)
-  }
-
-  if (is.list(value)) {
-    for (v in value) {
-        covariance(object,pairwise=pairwise,constrain=constrain,...) <- v
-      }
-      return(object)
-  }
-
-  if (inherits(value,"formula")) {
-    lhs <- getoutcome(value)
-    if (length(lhs)==0) {
-      return(covariance(object,all.vars(value),constrain=constrain,pairwise=pairwise,...))
-    }
-    yy <- decomp.specials(lhs)
-
-    tt <- terms(value, specials=c("f","v"))
-    xf <- attributes(terms(tt))$term.labels
-    res <- lapply(xf,decomp.specials)
-    nx <- length(xf)
-    if (nx==1) {
-      if(is.null(attr(tt,"specials")$f) | length(res[[1]])<2) {
-        if(is.null(attr(tt,"specials")$v) & is.null(attr(tt,"specials")$f))
-
-          {
-            for (i in yy)
-              for (j in res[[1]])
-                object <- covariance(object, c(i,j), pairwise=TRUE, constrain=constrain, ...)
-          } else {
-            covfix(object,var1=yy,var2=NULL) <- res[[1]]
-          }
-      } else {
-        covfix(object,var1=yy,var2=res[[1]][1]) <- res[[1]][2]
-      }
-      object$parpos <- NULL
-      return(object)
     }
 
-    xx <- unlist(lapply(res, function(z) z[1]))
-    for (y in yy)
-      for (i in seq_along(xx)) {
-        if (length(res[[i]])>1) {
-          covfix(object, var1=y, var2=res[[i]][1]) <- res[[i]][2]
-        } else if ((i+1)%in%attr(tt,"specials")$f | (i+1)%in%attr(tt,"specials")$v) {
-          covfix(object, var1=y, var2=NULL) <- res[[i]]
-        } else {
-          object <- covariance(object,c(y,xx[i]),pairwise=TRUE,...)
+    if (is.list(value)) {
+        for (v in value) {
+            covariance(object,pairwise=pairwise,constrain=constrain,...) <- v
         }
-      }
+        return(object)
+    }
 
-    object$parpos <- NULL
-    return(object)
-  }
-  else covariance(object,value,pairwise=pairwise,...)
+    if (inherits(value,"formula")) {
+        lhs <- getoutcome(value)
+        if (length(lhs)==0) {
+            return(covariance(object,all.vars(value),constrain=constrain,pairwise=pairwise,...))
+        }
+        yy <- decomp.specials(lhs)
+
+        tt <- terms(value, specials=c("f","v"))
+        xf <- attributes(terms(tt))$term.labels
+        res <- lapply(xf,decomp.specials)
+        nx <- length(xf)
+        if (nx==1) {
+            if(is.null(attr(tt,"specials")$f) | length(res[[1]])<2) {
+                if(is.null(attr(tt,"specials")$v) & is.null(attr(tt,"specials")$f))
+
+                {
+                    for (i in yy)
+                        for (j in res[[1]])
+                            object <- covariance(object, c(i,j), pairwise=TRUE, constrain=constrain, ...)
+                } else {
+                    covfix(object,var1=yy,var2=NULL) <- res[[1]]
+                }
+            } else {
+                covfix(object,var1=yy,var2=res[[1]][1]) <- res[[1]][2]
+            }
+            object$parpos <- NULL
+            return(object)
+        }
+
+        xx <- unlist(lapply(res, function(z) z[1]))
+        for (y in yy)
+            for (i in seq_along(xx)) {
+                if (length(res[[i]])>1) {
+                    covfix(object, var1=y, var2=res[[i]][1]) <- res[[i]][2]
+                } else if ((i+1)%in%attr(tt,"specials")$f | (i+1)%in%attr(tt,"specials")$v) {
+                    covfix(object, var1=y, var2=NULL) <- res[[i]]
+                } else {
+                    object <- covariance(object,c(y,xx[i]),pairwise=TRUE,...)
+                }
+            }
+
+        object$parpos <- NULL
+        return(object)
+    }
+    else covariance(object,value,pairwise=pairwise,...)
 }
 
 ##' @export
@@ -208,97 +208,97 @@
         if (!is.null(var1)) {
             if (inherits(var1,"formula")) {
                 covariance(object,constrain=constrain,
-                 pairwise=pairwise,exo=exo,...) <- var1
+                           pairwise=pairwise,exo=exo,...) <- var1
                 return(object)
             }
-    allvars <- var1
-    if (!missing(var2)) {
-      if (inherits(var2,"formula"))
-        var2 <- all.vars(var2)
-      allvars <- c(allvars,var2)
-    }
-    if (constrain) {
-      if (length(allvars)!=2) stop("Constraints only implemented for pairs")
-      return(covarianceconst(object,allvars[1],allvars[2],...))
-    }
-
-    object <- addvar(object, allvars, messages=0, reindex=FALSE)
-
-    xorg <- exogenous(object)
-    exoset <- setdiff(xorg,allvars)
-    if (!exo & length(exoset)<length(xorg)) {
-      exogenous(object) <- exoset
-    }
-
-    if (!missing(var2)) {
-      for (i in seq_len(length(var1))) {
-        c1 <- var1[i]
-        for (j in seq_len(length(var2))) {
-          c2 <- var2[j]
-          object$cov[c1,c2] <- object$cov[c2,c1] <- 1
-          object$parpos <- NULL
-          index(object) <- reindex(object)
-        }
-      }
-    }
-    else {
-      if (pairwise) {
-        for (i in seq_len(length(var1))) {
-          c1 <- var1[i]
-            for (j in seq_len(length(var1))) {
-              c2 <- var1[j]
-              object$cov[c1,c2] <- object$cov[c2,c1] <- 1
-              object$parpos <- NULL
-              index(object) <- reindex(object)
+            allvars <- var1
+            if (!missing(var2)) {
+                if (inherits(var2,"formula"))
+                    var2 <- all.vars(var2)
+                allvars <- c(allvars,var2)
             }
+            if (constrain) {
+                if (length(allvars)!=2) stop("Constraints only implemented for pairs")
+                return(covarianceconst(object,allvars[1],allvars[2],...))
+            }
+
+            object <- addvar(object, allvars, messages=0, reindex=FALSE)
+
+            xorg <- exogenous(object)
+            exoset <- setdiff(xorg,allvars)
+            if (!exo & length(exoset)<length(xorg)) {
+                exogenous(object) <- exoset
+            }
+
+            if (!missing(var2)) {
+                for (i in seq_len(length(var1))) {
+                    c1 <- var1[i]
+                    for (j in seq_len(length(var2))) {
+                        c2 <- var2[j]
+                        object$cov[c1,c2] <- object$cov[c2,c1] <- 1
+                        object$parpos <- NULL
+                        index(object) <- reindex(object)
+                    }
+                }
+            }
+            else {
+                if (pairwise) {
+                    for (i in seq_len(length(var1))) {
+                        c1 <- var1[i]
+                        for (j in seq_len(length(var1))) {
+                            c2 <- var1[j]
+                            object$cov[c1,c2] <- object$cov[c2,c1] <- 1
+                            object$parpos <- NULL
+                            index(object) <- reindex(object)
+                        }
+                    }
+                }
+            }
+            return(object)
         }
-      }
+        else
+            return(covfix(object))
     }
-    return(object)
-  }
-  else
-    return(covfix(object))
-}
 
 covarianceconst <- function(object,var1,var2,cname=NA,rname=NA,vname=NA,v2name=vname,lname=NA,l2name=lname,...) {
-  if (inherits(var1,"formula")) {
-    var1 <- getoutcome(var1)
-    var2 <- attributes(var1)$x
-  }
-  curpar <- parlabels(object)
-  if (is.na(cname)) {
-    cname <- object$covpar[var1,var2]
-  }
-
-  if (is.na(v2name)) {
-    v2name <- object$covpar[var2,var2]
-  }
-  if (is.na(vname)) {
-    vname <- object$covpar[var1,var1]
-  }
-
-  nvarname <- c("rname","cname","vname","v2name","lname","l2name")[is.na(c(rname,cname,vname,v2name,lname,l2name))]
-
-  nprefix <- sapply(nvarname, function(x) substr(x,1,1))
-  for (i in seq_len(length(nvarname))) {
-    count <- 0
-    repeat {
-      count <- count+1
-      curname <- paste0(nprefix[i],count)
-      if (!(curname%in%curpar)) break;
+    if (inherits(var1,"formula")) {
+        var1 <- getoutcome(var1)
+        var2 <- attributes(var1)$x
     }
-    curpar <- c(curname,curpar)
-    assign(nvarname[i],curname)
-  }
-  covariance(object,c(var1,var2)) <- c(vname,v2name)
-  ff <- function(x) exp(x)
-  constrain(object,vname,lname) <- ff
-  if (vname!=v2name)
-    constrain(object,v2name,l2name) <- ff
-  covariance(object,var1,var2) <- cname
-  cpar <- unique(c(lname,l2name,rname))
-  constrain(object,cname,cpar) <- function(x) {
-      prod(exp(x[seq(length(cpar)-1)]))^(1/(length(cpar)-1))*tanh(x[length(cpar)])
-  }
-  return(structure(object,rname=rname,cname=cname))
+    curpar <- parlabels(object)
+    if (is.na(cname)) {
+        cname <- object$covpar[var1,var2]
+    }
+
+    if (is.na(v2name)) {
+        v2name <- object$covpar[var2,var2]
+    }
+    if (is.na(vname)) {
+        vname <- object$covpar[var1,var1]
+    }
+
+    nvarname <- c("rname","cname","vname","v2name","lname","l2name")[is.na(c(rname,cname,vname,v2name,lname,l2name))]
+
+    nprefix <- sapply(nvarname, function(x) substr(x,1,1))
+    for (i in seq_len(length(nvarname))) {
+        count <- 0
+        repeat {
+            count <- count+1
+            curname <- paste0(nprefix[i],count)
+            if (!(curname%in%curpar)) break;
+        }
+        curpar <- c(curname,curpar)
+        assign(nvarname[i],curname)
+    }
+    covariance(object,c(var1,var2)) <- c(vname,v2name)
+    ff <- function(x) exp(x)
+    constrain(object,vname,lname) <- ff
+    if (vname!=v2name)
+        constrain(object,v2name,l2name) <- ff
+    covariance(object,var1,var2) <- cname
+    cpar <- unique(c(lname,l2name,rname))
+    constrain(object,cname,cpar) <- function(x) {
+        prod(exp(x[seq(length(cpar)-1)]))^(1/(length(cpar)-1))*tanh(x[length(cpar)])
+    }
+    return(structure(object,rname=rname,cname=cname))
 }

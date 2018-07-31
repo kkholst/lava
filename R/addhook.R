@@ -44,14 +44,14 @@ lava.options <- function(...) {
 
 ##' @export
 gethook <- function(hook="estimate.hooks",...) {
-  get(hook,envir=lava.env)
+    get(hook,envir=lava.env)
 }
 
 ##' @export
 addhook <- function(x,hook="estimate.hooks",...) {
-  newhooks <- unique(c(gethook(hook),x))
-  assign(hook,newhooks,envir=lava.env)
-  invisible(newhooks)
+    newhooks <- unique(c(gethook(hook),x))
+    assign(hook,newhooks,envir=lava.env)
+    invisible(newhooks)
 }
 
 versioncheck <- function(pkg="lava",geq,sep=".",...) {
@@ -62,7 +62,7 @@ versioncheck <- function(pkg="lava",geq,sep=".",...) {
     if (missing(geq)) return(xyz)
     for (i in seq(min(length(xyz),length(geq)))) {
         if (xyz[i]>geq[i]) return(TRUE)
-        if (xyz[i]<geq[i]) return(FALSE)        
+        if (xyz[i]<geq[i]) return(FALSE)
     }
     if (length(xyz)>=length(geq)) return(TRUE)
     return(FALSE)
@@ -79,37 +79,37 @@ assign("print.hooks",c(),envir=lava.env)
 assign("plot.post.hooks",c(),envir=lava.env)
 assign("plot.hooks",c(),envir=lava.env)
 assign("options", list(
-    trace=0,
-    tol=1e-6,
-    gamma=1,
-    backtrack="wolfe",
-    ngamma=0,
-    iter.max=300,
-    eval.max=250,
-    constrain=FALSE,
-    allow.negative.variance=FALSE,
-    progressbarstyle=3,
-    itol=1e-16,
-    cluster.index=versioncheck("mets",c(0,2,7)),
-    tobit=versioncheck("lava.tobit",c(0,5)),
-    Dmethod="simple", ##"Richardson"
-    messages=ifelse(interactive(), 1, 0),
-    parallel=TRUE,
-    param="relative",
-    sparse=FALSE,
-    test=TRUE,
-    coef.names=FALSE,
-    constrain=TRUE,
-    graph.proc="beautify",
-    regex=FALSE,
-    min.weight=1e-3,
-    exogenous=TRUE,
-    plot.engine="Rgraphviz",
-    node.color=c(exogenous="lightblue",endogenous="orange",
-                 latent="yellowgreen",transform="lightgray"),
-    edgecolor=FALSE,
-    layout="dot",
-    ## symbols=c("<-","<->"),
-    symbols=c("~","~~"),
-    devel=FALSE,
-    debug=FALSE), envir=lava.env)
+                      trace=0,
+                      tol=1e-6,
+                      gamma=1,
+                      backtrack="wolfe",
+                      ngamma=0,
+                      iter.max=300,
+                      eval.max=250,
+                      constrain=FALSE,
+                      allow.negative.variance=FALSE,
+                      progressbarstyle=3,
+                      itol=1e-16,
+                      cluster.index=versioncheck("mets",c(0,2,7)),
+                      tobit=versioncheck("lava.tobit",c(0,5)),
+                      Dmethod="simple", ##"Richardson"
+                      messages=ifelse(interactive(), 1, 0),
+                      parallel=TRUE,
+                      param="relative",
+                      sparse=FALSE,
+                      test=TRUE,
+                      coef.names=FALSE,
+                      constrain=TRUE,
+                      graph.proc="beautify",
+                      regex=FALSE,
+                      min.weight=1e-3,
+                      exogenous=TRUE,
+                      plot.engine="Rgraphviz",
+                      node.color=c(exogenous="lightblue",endogenous="orange",
+                                   latent="yellowgreen",transform="lightgray"),
+                      edgecolor=FALSE,
+                      layout="dot",
+                      ## symbols=c("<-","<->"),
+                      symbols=c("~","~~"),
+                      devel=FALSE,
+                      debug=FALSE), envir=lava.env)

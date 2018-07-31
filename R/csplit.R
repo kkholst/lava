@@ -17,15 +17,15 @@
 ##' @author Klaus K. Holst
 csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,k=2,...) {
     if (length(x)==1 & is.numeric(x)) x <- seq(x)
-    N <- NROW(x)    
+    N <- NROW(x)
     if (is.null(p)) { ##
         K <- base::round(N/k)
         idx <- split(seq(N),sort(rep(seq(k),length.out=N,each=K)))
     } else {
         if (p<1) { ## two folds (size N*p and N*(1-p))
             idx1 <- base::sample(N,base::round(p*N),replace=replace)
-            idx <- list(idx1,                       
-                       base::sample(setdiff(seq(N),idx1),replace=replace))
+            idx <- list(idx1,
+                        base::sample(setdiff(seq(N),idx1),replace=replace))
         } else { ## Number of folds (equal size)
             idx <- split(sample(seq(N)), rep(seq(p), length=N))
         }
@@ -39,6 +39,6 @@ csplit <- function(x,p=NULL,replace=FALSE,return.index=FALSE,k=2,...) {
 }
 
 ##' @export
-foldr <- function(n,K=5,rep=10) {    
+foldr <- function(n,K=5,rep=10) {
     replicate(rep,split(sample(seq(n)), rep(seq(K), length=n)),simplify=FALSE)
 }

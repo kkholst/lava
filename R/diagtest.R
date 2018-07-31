@@ -10,7 +10,7 @@ tigol <- expit
 ##' negative predictive values
 ##'
 ##' @title Calculate diagnostic tests for 2x2 table
-##' @aliases diagtest odds riskcomp OR Ratio Diff 
+##' @aliases diagtest odds riskcomp OR Ratio Diff
 ##' @param table Table or (matrix/data.frame with two columns)
 ##' @param positive Switch reference
 ##' @param exact If TRUE exact binomial proportions CI/test will be used
@@ -32,7 +32,7 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
         stop("Expecting a table or data.frame.")
     if (is.table(table)) {
         lev <- dimnames(table)[[2]]
-        }
+    }
     if (inherits(table,"multinomial")) {
         lev <- dimnames(table$P)[[2]]
     }
@@ -92,7 +92,7 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
                     coefmat=coefmat)
     } else {
         if (inherits(table,"table"))
-            M <- multinomial(table)        
+            M <- multinomial(table)
         else {
             if (inherits(table,"multinomial")) {
                 M <- table

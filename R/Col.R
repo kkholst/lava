@@ -27,7 +27,7 @@ mypal <- function(set=TRUE,...) {
 ##' @export
 Col <- function(col,alpha=0.2,locate=0) {
     if (locate>0) return(colsel(locate))
-    
+
     mapply(function(x,alpha)
         do.call(rgb,as.list(c(col2rgb(x)/255,alpha))),
         col,alpha)

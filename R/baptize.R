@@ -7,7 +7,6 @@
 ##' @export
 `baptize` <- function(x,...) UseMethod("baptize")
 
-###{{{ baptize.lvm
 
 ##' @export
 baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
@@ -26,7 +25,6 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       curlab <- RegFix$labels[p0[2],p0[1]]
       if (all(is.na(c(curfix,curlab))) | overwrite) {
         count <- count+1
-##        st <- ifelse(missing(labels),paste0("p",count),labels[count])
         st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[1]),labels[count])
         regfix(x,from=p0[2],to=p0[1]) <- st
       }
@@ -35,8 +33,6 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       curlab <- CovFix$labels[p0[2],p0[1]]
       if (all(is.na(c(curfix,curlab))) | overwrite) {
         count <- count+1
-##        st <- ifelse(missing(labels),paste0("p",count),labels[count])
-##        st <- paste0("p",count)
         st <- ifelse(missing(labels),paste(p0[1],p0[2],sep=sym[2]),labels[count])
         covfix(x,p0[2],p0[1],exo=FALSE) <- st
       }
@@ -46,7 +42,6 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
       if (is.na(curfix) | overwrite) {
         count <- count+1
         st <- ifelse(missing(labels),p0,labels[count])
-##        st <- ifelse(missing(labels),paste0("m",count),labels[count])
         intfix(x,p0) <- st
       }
     }
@@ -57,5 +52,3 @@ baptize.lvm <- function(x,labels,overwrite=FALSE,unique=FALSE,...) {
   }
   return(x)
 }
-
-###}}}

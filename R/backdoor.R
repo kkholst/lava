@@ -67,7 +67,7 @@ backdoor <- function(object, f, cond, ..., return.graph=FALSE) {
         blockList0 <- lapply(blockList0, function(x) setdiff(x,unlist(collideList[col])))
         if (!any(unlist(lapply(blockList0,is.null)))) {
             res <- c(res, list(blockList0))
-        }            
+        }
         for (i in seq_along(col)) {
             col0 <- col[-i]
             if (length(col0)>0)

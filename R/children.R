@@ -66,67 +66,67 @@ sinks.lvmfit <- function(object,...) sinks(Model(object),...)
 
 ##' @export
 parents.lvm <- function(object,var,...) {
-  A <- index(object)$A
-  if (missing(var)) {
-    return(rownames(A))
-  }
-  if (inherits(var,"formula"))
-    var <- all.vars(var)
-  res <- lapply(var, function(v) rownames(A)[A[,v]!=0])
-  res <- unique(unlist(res))
-  if (length(res)==0) res <- NULL
-  res
+    A <- index(object)$A
+    if (missing(var)) {
+        return(rownames(A))
+    }
+    if (inherits(var,"formula"))
+        var <- all.vars(var)
+    res <- lapply(var, function(v) rownames(A)[A[,v]!=0])
+    res <- unique(unlist(res))
+    if (length(res)==0) res <- NULL
+    res
 }
 
 ##' @export
 children.lvm <- function(object,var,...) {
-  A <- index(object)$A
-  if (missing(var)) {
-    return(rownames(A))
-  }
-  if (inherits(var,"formula"))
-    var <- all.vars(var)
-  res <- lapply(var, function(v) rownames(A)[A[v,]!=0])
-  res <- unique(unlist(res))
-  if (length(res)==0) res <- NULL
-  res
+    A <- index(object)$A
+    if (missing(var)) {
+        return(rownames(A))
+    }
+    if (inherits(var,"formula"))
+        var <- all.vars(var)
+    res <- lapply(var, function(v) rownames(A)[A[v,]!=0])
+    res <- unique(unlist(res))
+    if (length(res)==0) res <- NULL
+    res
 }
 
 
 ##' @export
 ancestors.lvm <- function(object,x,...) {
-   if (inherits(x,"formula")) x <- all.vars(x)
-   res <- c()
-   left <- setdiff(vars(object),x)
-   count <- 0
-   child <- x
-   while (length(x)>0) {
-     count <- count+1
-     x <- parents(object,child)
-     child <- intersect(x,left)
-     res <- union(res,child)
-     left <- setdiff(left,child)
-   }
-   if (length(res)==0) res <- NULL
-   return(res)
+    if (inherits(x,"formula")) x <- all.vars(x)
+    res <- c()
+    left <- setdiff(vars(object),x)
+    count <- 0
+    child <- x
+    while (length(x)>0) {
+        count <- count+1
+        x <- parents(object,child)
+        child <- intersect(x,left)
+        res <- union(res,child)
+        left <- setdiff(left,child)
+    }
+    if (length(res)==0) res <- NULL
+    return(res)
 }
 
 ##' @export
 descendants.lvm <- function(object,x,...) {
-   if (inherits(x,"formula")) x <- all.vars(x)
-   res <- c()
-   left <- setdiff(vars(object),x)
-   count <- 0
-   parent <- x
-   while (length(x)>0) {
-     count <- count+1
-     x <- children(object,parent)
-     parent <- intersect(x,left)
-     res <- union(res,parent)
-     left <- setdiff(left,parent)
-   }
-   if (length(res)==0) res <- NULL
-   return(res)
+    if (inherits(x,"formula")) x <- all.vars(x)
+    res <- c()
+    left <- setdiff(vars(object),x)
+    count <- 0
+    parent <- x
+    while (length(x)>0) {
+        count <- count+1
+        x <- children(object,parent)
+        parent <- intersect(x,left)
+        res <- union(res,parent)
+        left <- setdiff(left,parent)
+    }
+    if (length(res)==0) res <- NULL
+    return(res)
 }
 
 ##' @export

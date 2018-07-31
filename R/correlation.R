@@ -9,42 +9,42 @@
 
 ##' @export
 correlation.lvmfit <- function(x,z=TRUE,iid=FALSE,back.transform=TRUE,...) {
-  pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
-  pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
-  if (length(pos)<1) return(NULL)
-  pp0 <- pp
-  pp0[index(x)$P0!=1] <- 0; pp0[lower.tri(pp0)] <- 0
-  coords <- c()
-  mynames <- vars(x)
-  n <- nrow(pp0)
-  ff <-  function(p) {
-      res <- numeric(length(pos))
-      nn <- character(length(pos))
-      for (i in seq_along(pos)) {
-          p0 <- pos[i]
-          idx <- which(pp0==p0)
-          rowpos <- (idx-1)%%n + 1
-          colpos <- ceiling(idx/n)
-          coefpos <- c(p0,pp0[rbind(c(rowpos,rowpos),c(colpos,colpos))])
-          pval <- pp[rbind(c(rowpos,rowpos),c(colpos,colpos))]
-          phi.v1.v2 <- numeric(3);
-          newval <- p[coefpos]
-          phi.v1.v2[coefpos!=0] <- newval
-          phi.v1.v2[coefpos==0] <- pval[tail(coefpos==0,2)]
-          rho <- atanh(phi.v1.v2[1]/sqrt(prod(phi.v1.v2[-1])))
-          res[i] <- rho
-          nn[i] <- paste(mynames[c(rowpos,colpos)],collapse="~")
-      }
-      structure(res,names=nn)
-  }
-  V <- NULL
-  if (!iid) V <- vcov(x)
-  if (back.transform) {
-      back.transform <- tanh
-  } else {
-      back.transform <- NULL
-  }
-  estimate(x,coef=coef(x),vcov=V,f=ff,back.transform=back.transform,iid=iid,...)
+    pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
+    pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
+    if (length(pos)<1) return(NULL)
+    pp0 <- pp
+    pp0[index(x)$P0!=1] <- 0; pp0[lower.tri(pp0)] <- 0
+    coords <- c()
+    mynames <- vars(x)
+    n <- nrow(pp0)
+    ff <-  function(p) {
+        res <- numeric(length(pos))
+        nn <- character(length(pos))
+        for (i in seq_along(pos)) {
+            p0 <- pos[i]
+            idx <- which(pp0==p0)
+            rowpos <- (idx-1)%%n + 1
+            colpos <- ceiling(idx/n)
+            coefpos <- c(p0,pp0[rbind(c(rowpos,rowpos),c(colpos,colpos))])
+            pval <- pp[rbind(c(rowpos,rowpos),c(colpos,colpos))]
+            phi.v1.v2 <- numeric(3);
+            newval <- p[coefpos]
+            phi.v1.v2[coefpos!=0] <- newval
+            phi.v1.v2[coefpos==0] <- pval[tail(coefpos==0,2)]
+            rho <- atanh(phi.v1.v2[1]/sqrt(prod(phi.v1.v2[-1])))
+            res[i] <- rho
+            nn[i] <- paste(mynames[c(rowpos,colpos)],collapse="~")
+        }
+        structure(res,names=nn)
+    }
+    V <- NULL
+    if (!iid) V <- vcov(x)
+    if (back.transform) {
+        back.transform <- tanh
+    } else {
+        back.transform <- NULL
+    }
+    estimate(x,coef=coef(x),vcov=V,f=ff,back.transform=back.transform,iid=iid,...)
 }
 
 
@@ -56,10 +56,10 @@ correlation.matrix <- function(x,z=TRUE,back.transform=TRUE,mreg=FALSE,return.al
         try(e <- estimate(m,as.data.frame(x),...),silent=TRUE)
         res <- correlation(e,...)
         if (return.all) {
-            return(list(model=m,estimate=e,correlation=res))            
+            return(list(model=m,estimate=e,correlation=res))
         }
         return(res)
-    }    
+    }
     if (ncol(x)==2) {
         ii <- iid(x)
         ee <- estimate(coef=attributes(ii)$coef[3:5], iid=ii[,3:5])

@@ -7,7 +7,6 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
         res <- base::format(res,digits=digits,...)
         pval <- format(pvalround,p.digits=p.digits,...)
     } else {
-        ## res <- format(res)
         pval <- format(pvalround)
     }
     pval <- paste0("p=",pvalround)
@@ -17,9 +16,9 @@ excoef <- function(x,digits=2,p.digits=3,format=FALSE,fun,se=FALSE,ci=TRUE,pvalu
     res2 <- c()
     for (i in seq(nrow(res))) {
         row <- paste0(if(res[i,1]>=0) " " else "", res[i,1], paste(rep(" ",nc[i,1]),collapse=""), if (res[i,1]<0) " ",
-                     if (se) paste0(" (", res[i,2], ")", paste(rep(" ",nc[i,2]), collapse="")),
-                     if (ci) paste0(" [", res[i,4], ";", res[i,5], "]", paste(rep(" ",nc[i,4]+nc[i,5]),collapse="")),
-                     if (pvalue) paste0(" ", res[i,6]))
+                      if (se) paste0(" (", res[i,2], ")", paste(rep(" ",nc[i,2]), collapse="")),
+                      if (ci) paste0(" [", res[i,4], ";", res[i,5], "]", paste(rep(" ",nc[i,4]+nc[i,5]),collapse="")),
+                      if (pvalue) paste0(" ", res[i,6]))
         res2 <- rbind(res2," "=row)
     }
     names(res2) <- names(coef(x))

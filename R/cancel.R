@@ -20,7 +20,6 @@
 ##' @export
 cancel.lvm <- function(x,value,...) {
   if (inherits(value,"formula")) {
-      ##      yx <- all.vars(value)
     lhs <- getoutcome(value)
     if (length(lhs)==0) yy <- NULL else yy <- decomp.specials(lhs)
     xf <- attributes(terms(value))$term.labels

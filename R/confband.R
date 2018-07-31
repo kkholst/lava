@@ -67,8 +67,8 @@
 ##' axis(1)
 ##' confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
 confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
-             centermark=0.03,
-             pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
+              centermark=0.03,
+              pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
     if (polygon) {
         if (step) {
             x1 <- rep(x,each=2)[-1]
@@ -92,9 +92,6 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
         return(invisible(NULL))
     }
     if (vert) {
-        ## lower <- lower[length(x)]
-        ## upper <- upper[length(x)]
-        ## center <- center[length(x)]
         if (line && !missing(lower) && !missing(upper))
             segments(x,lower,x,upper,...)
         if (!missing(lower))
@@ -136,14 +133,14 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
 
 ##' @export
 forestplot <- function(x,lower,upper,line=0,labels,
-               text=TRUE,text.right=text,text.fixed=NULL,text.vert=TRUE,
-               adj=NULL,
-               delta=0,axes=TRUE,cex=1,pch=15,
-               xlab="",ylab="",sep,air,
-               xlim,ylim,mar,box1=FALSE,box2=FALSE,
-               vert=FALSE,cex.axis=1,cex.estimate=0.6,
-               add=FALSE,
-               reset.par=FALSE,...) {
+                text=TRUE,text.right=text,text.fixed=NULL,text.vert=TRUE,
+                adj=NULL,
+                delta=0,axes=TRUE,cex=1,pch=15,
+                xlab="",ylab="",sep,air,
+                xlim,ylim,mar,box1=FALSE,box2=FALSE,
+                vert=FALSE,cex.axis=1,cex.estimate=0.6,
+                add=FALSE,
+                reset.par=FALSE,...) {
     if (is.matrix(x)) {
         lower <- x[,2]; upper <- x[,3]
         if (ncol(x)>3) cex <- x[,4]
@@ -230,9 +227,9 @@ forestplot <- function(x,lower,upper,line=0,labels,
         args <- args0[nn]
         for (i in seq_len(K)) {
             st <- c(do.call(formatC,c(list(x=x[i]),args)),
-                   paste0("(",
-                          do.call(formatC,c(list(x=lower[i]),args)),"; ",
-                          do.call(formatC,c(list(x=upper[i]),args)),")"))
+                    paste0("(",
+                           do.call(formatC,c(list(x=lower[i]),args)),"; ",
+                           do.call(formatC,c(list(x=upper[i]),args)),")"))
             if (text.vert) {
                 st <- paste0(" ",st[1]," ",st[2],collapse="")
                 st <- paste(" ", st)

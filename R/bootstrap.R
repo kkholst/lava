@@ -73,9 +73,7 @@ bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
     pb <- NULL
     if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
     pmis <- missing(p)
-    ##maxcount <- 0
     bootfun <- function(i) {
-        ##maxcount <- max(i,maxcount)
         if (i==0) {
             d0 <- data
         } else {

@@ -8,28 +8,28 @@
 ##' @author Klaus K. Holst
 ##' @export
 Range.lvm <- function(a=0,b=1) {
-  if (b==Inf) {
+    if (b==Inf) {
+        f <- function(x) {
+            res <- a+exp(x)
+            attributes(res)$grad <- exp
+            res
+        }
+        return(f)
+    }
+    if (a==-Inf) {
+        f <- function(x) {
+            res <- -exp(x)+b
+            attributes(res)$grad <- function(x) -exp(x)
+            res
+        }
+        return(f)
+    }
     f <- function(x) {
-      res <- a+exp(x)
-      attributes(res)$grad <- exp
-      res
+        res <- (a+b*exp(x))/(1+exp(x))
+        attributes(res)$grad <- function(x) exp(x)*(b-a-a*b*exp(x))/(1+exp(x))^2
+        res
     }
     return(f)
-  }
-  if (a==-Inf) {
-    f <- function(x) {
-      res <- -exp(x)+b
-      attributes(res)$grad <- function(x) -exp(x)
-      res
-    }
-    return(f)
-  }
-  f <- function(x) {
-    res <- (a+b*exp(x))/(1+exp(x))
-    attributes(res)$grad <- function(x) exp(x)*(b-a-a*b*exp(x))/(1+exp(x))^2
-    res
-  }
-  return(f)
 }
 
 ##' Add non-linear constraints to latent variable model
@@ -204,49 +204,49 @@ Range.lvm <- function(a=0,b=1) {
 
 ##' @export
 constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...) {
-  if (estimate) {
-    return(constraints(x,...))
-  }
-  if (missing(fun)) {
-    if (inherits(Model(x),"multigroup")) {
-      res <- list()
-      for (m in Model(x)$lvm) {
-        if (length(constrain(m))>0)
-          res <- c(res, constrain(m))
-      }
-      return(res)
+    if (estimate) {
+        return(constraints(x,...))
     }
-    return(Model(x)$constrain)
-  }
-  if (is.numeric(x)) {
-     b <- x
-   } else {
-     b <- pars(x)
-   }
-  if (missing(vcov)) {
-    S <- stats::vcov(x)
-  } else {
-    S <- vcov
-  }
-  if (!missing(idx)) {
-    b <- b[idx]; S <- S[idx,idx,drop=FALSE]
-  }
-  fb <- fun(b)
-  pl <- 1-(1-level)/2
-  D <- rbind(numDeriv::grad(fun,b))
-  se <- (D%*%S%*%t(D))^0.5
-  res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*c(se))
-  pstr <- paste0(format(c(round(1000-1000*pl),round(pl*1000))/10),"%")
-  names(res) <- c("Estimate","Std.Err",pstr)
-  res
+    if (missing(fun)) {
+        if (inherits(Model(x),"multigroup")) {
+            res <- list()
+            for (m in Model(x)$lvm) {
+                if (length(constrain(m))>0)
+                    res <- c(res, constrain(m))
+            }
+            return(res)
+        }
+        return(Model(x)$constrain)
+    }
+    if (is.numeric(x)) {
+        b <- x
+    } else {
+        b <- pars(x)
+    }
+    if (missing(vcov)) {
+        S <- stats::vcov(x)
+    } else {
+        S <- vcov
+    }
+    if (!missing(idx)) {
+        b <- b[idx]; S <- S[idx,idx,drop=FALSE]
+    }
+    fb <- fun(b)
+    pl <- 1-(1-level)/2
+    D <- rbind(numDeriv::grad(fun,b))
+    se <- (D%*%S%*%t(D))^0.5
+    res <- c(fb,se,fb+c(-1,1)*qnorm(pl)*c(se))
+    pstr <- paste0(format(c(round(1000-1000*pl),round(pl*1000))/10),"%")
+    names(res) <- c("Estimate","Std.Err",pstr)
+    res
 }
 
 ##' @export
 "constrain<-.multigroupfit" <-
-  "constrain<-.multigroup" <- function(x,par,k=1,...,value) {
-    constrain(Model(x)$lvm[[k]],par=par,...) <- value
-    return(x)
-}
+    "constrain<-.multigroup" <- function(x,par,k=1,...,value) {
+        constrain(Model(x)$lvm[[k]],par=par,...) <- value
+        return(x)
+    }
 
 ##' @export
 "constrain<-.default" <- function(x,par,args,...,value) {
@@ -295,129 +295,127 @@ constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...)
         attributes(Model(x)$constrain[[par]])$args <- args
         index(Model(x)) <- reindex(Model(x))
     }
-  return(x)
+    return(x)
 }
 
 ##' @export
 constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0.95,
-                        p=pars.default(object),k,idx,...) {
-  if (class(object)[1]=="multigroupfit") {
-    if (!missing(k)) {
-      if (class(data)[1]=="list") data <- data[[k]]
-      parpos <- modelPar(object, seq_len(length(p)))$p[[k]]
-      if (nrow(data)>1 & !missing(idx)) {
-        res <- t(apply(data,1,function(x) constraints(Model(object)$lvm[[k]],data=x,p=p[parpos],vcov=vcov[parpos,parpos],level=level)[idx,]))
-        return(res)
-      }
-      return(constraints(Model(object)$lvm[[k]],data=data,p=p[parpos],vcov=vcov[parpos,parpos],level=level))
-    }
-    return(attributes(CoefMat.multigroupfit(object,data=data,vcov=vcov,...))$nlincon)
-  }
-
-  if (NROW(data)>1 & !missing(idx)) {
-    res <- t(apply(data,1,function(x) constraints(object,data=x,p=p,vcov=vcov,level=level)[idx,],...))
-    return(res)
-  }
-
-  if (length(index(object)$constrain.par)<1) return(NULL)
-  parpos <- Model(object)$parpos
-  if (is.null(parpos)) {
-      parpos <- with(index(object),matrices2(Model(object),seq_len(npar+npar.mean+npar.ex)))
-      parpos$A[index(object)$M0==0] <- 0
-      parpos$P[index(object)$P0==0] <- 0
-      parpos$v[index(object)$v1==0] <- 0
-      parpos$e[index(object)$e1==0] <- 0
-  }
-  myidx <- unlist(lapply(parpos$parval, function(x) {
-    if (!is.null(attributes(x)$reg.idx)) {
-      return(parpos$A[attributes(x)$reg.idx[1]])
-    } else if (!is.null(attributes(x)$cov.idx)) {
-      return(parpos$P[attributes(x)$cov.idx[1]])
-    } else if (!is.null(attributes(x)$m.idx)) {
-      return(parpos$v[attributes(x)$m.idx[1]])
-    } else if (!is.null(attributes(x)$e.idx))
-        return(parpos$e[attributes(x)$e.idx[1]])
-    else NA
-  }))
-  names(myidx) <- names(parpos$parval)
-  mynames <- c()
-  N <- length(index(object)$constrain.par)
-  if (N>0)
-  res <- c()
-  count <- 0
-  mydata <- rbind(numeric(length(manifest(object))))
-  colnames(mydata) <- manifest(object)
-  data <- rbind(data)
-  iname <- intersect(colnames(mydata),colnames(data))
-  mydata[1,iname] <- unlist(data[1,iname])
-  for (pp in index(object)$constrain.par) {
-    count <- count+1
-    myc <- constrain(Model(object))[[pp]]
-    mycoef <- numeric(6)
-    val.idx <- myidx[attributes(myc)$args]
-    val.idx0 <- na.omit(val.idx)
-    M <- modelVar(Model(object),p=p,data=as.data.frame(mydata))
-    vals <- with(M,c(parval,constrainpar))[attributes(myc)$args]
-    fval <- try(myc(unlist(vals)),silent=TRUE)
-    fmat <- inherits(fval,"try-error")
-    if (fmat) {
-        fval <- myc(rbind(unlist(vals)))
-    }
-    mycoef[1] <- fval
-    myc0 <- function(theta) {
-      theta0 <- unlist(vals);
-##    theta0[val.idx0] <- theta[val.idx0];
-      theta0[!is.na(val.idx)] <- theta
-      if (fmat) {
-          res <- myc(rbind(theta0))
-      } else {
-          res <- myc(theta0)
-      }
-      return(res)
-    }
-    vals0 <- unlist(vals)[!is.na(val.idx)]
-##  vals0 <- unlist(vals)[na.omit(val.idx)]
-    if (length(vals0)==0)
-      mycoef[2] <- NA
-    else {
-        if (!is.null(attributes(fval)$grad)) {
-            if (fmat) {
-                Gr <- cbind(attributes(fval)$grad(rbind(unlist(vals0))))
-            } else {
-                Gr <- cbind(attributes(fval)$grad(unlist(vals0)))
+                 p=pars.default(object),k,idx,...) {
+    if (class(object)[1]=="multigroupfit") {
+        if (!missing(k)) {
+            if (class(data)[1]=="list") data <- data[[k]]
+            parpos <- modelPar(object, seq_len(length(p)))$p[[k]]
+            if (nrow(data)>1 & !missing(idx)) {
+                res <- t(apply(data,1,function(x) constraints(Model(object)$lvm[[k]],data=x,p=p[parpos],vcov=vcov[parpos,parpos],level=level)[idx,]))
+                return(res)
             }
-        } else {
-            if (fmat) {
-                Gr <- cbind(as.numeric(numDeriv::jacobian(myc0, unlist(vals0))))
-            } else {
-                Gr <- cbind(as.numeric(numDeriv::jacobian(myc0, rbind(unlist(vals0)))))
-            }
+            return(constraints(Model(object)$lvm[[k]],data=data,p=p[parpos],vcov=vcov[parpos,parpos],level=level))
         }
-      V <- vcov[val.idx0,val.idx0]
-      mycoef[2] <- (t(Gr)%*%V%*%Gr)^0.5
+        return(attributes(CoefMat.multigroupfit(object,data=data,vcov=vcov,...))$nlincon)
     }
-    ## if (second) {
-    ##   if (!is.null(attributes(fval)$hessian)) {
-    ##     H <- attributes(fval)$hessian(unlist(vals))
-    ##   } else {
-    ##     H <- hessian(myc, unlist(vals))
-    ##   }
-    ##   HV <- H%*%vcov[val.idx,val.idx]
-    ##   mycoef[1] <- mycoef[1] + 0.5*sum(diag(HV))
-    ##   mycoef[2] <- mycoef[2] + 0.5*sum(diag(HV%*%HV))
-    ## }
-    mycoef[3] <- mycoef[1]/mycoef[2]
-    mycoef[4] <- 2*(pnorm(abs(mycoef[3]),lower.tail=FALSE))
-    mycoef[5:6] <- mycoef[1] + c(1,-1)*qnorm((1-level)/2)*mycoef[2]
-    res <- rbind(res,mycoef)
-    mynames <- c(mynames,pp)
-    if (!is.null(attributes(fval)$inv)){
-      res2 <- attributes(fval)$inv(mycoef[c(1,5,6)])
-      res <- rbind(res, c(res2[1],NA,NA,NA,res2[2],res2[3]))
-      mynames <- c(mynames,paste0("inv(",pp,")"))
+
+    if (NROW(data)>1 & !missing(idx)) {
+        res <- t(apply(data,1,function(x) constraints(object,data=x,p=p,vcov=vcov,level=level)[idx,],...))
+        return(res)
     }
-  }
-  rownames(res) <- mynames
-  colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)", "2.5%", "97.5%")
-  return(res)
+
+    if (length(index(object)$constrain.par)<1) return(NULL)
+    parpos <- Model(object)$parpos
+    if (is.null(parpos)) {
+        parpos <- with(index(object),matrices2(Model(object),seq_len(npar+npar.mean+npar.ex)))
+        parpos$A[index(object)$M0==0] <- 0
+        parpos$P[index(object)$P0==0] <- 0
+        parpos$v[index(object)$v1==0] <- 0
+        parpos$e[index(object)$e1==0] <- 0
+    }
+    myidx <- unlist(lapply(parpos$parval, function(x) {
+        if (!is.null(attributes(x)$reg.idx)) {
+            return(parpos$A[attributes(x)$reg.idx[1]])
+        } else if (!is.null(attributes(x)$cov.idx)) {
+            return(parpos$P[attributes(x)$cov.idx[1]])
+        } else if (!is.null(attributes(x)$m.idx)) {
+            return(parpos$v[attributes(x)$m.idx[1]])
+        } else if (!is.null(attributes(x)$e.idx))
+            return(parpos$e[attributes(x)$e.idx[1]])
+        else NA
+    }))
+    names(myidx) <- names(parpos$parval)
+    mynames <- c()
+    N <- length(index(object)$constrain.par)
+    if (N>0)
+        res <- c()
+    count <- 0
+    mydata <- rbind(numeric(length(manifest(object))))
+    colnames(mydata) <- manifest(object)
+    data <- rbind(data)
+    iname <- intersect(colnames(mydata),colnames(data))
+    mydata[1,iname] <- unlist(data[1,iname])
+    for (pp in index(object)$constrain.par) {
+        count <- count+1
+        myc <- constrain(Model(object))[[pp]]
+        mycoef <- numeric(6)
+        val.idx <- myidx[attributes(myc)$args]
+        val.idx0 <- na.omit(val.idx)
+        M <- modelVar(Model(object),p=p,data=as.data.frame(mydata))
+        vals <- with(M,c(parval,constrainpar))[attributes(myc)$args]
+        fval <- try(myc(unlist(vals)),silent=TRUE)
+        fmat <- inherits(fval,"try-error")
+        if (fmat) {
+            fval <- myc(rbind(unlist(vals)))
+        }
+        mycoef[1] <- fval
+        myc0 <- function(theta) {
+            theta0 <- unlist(vals);
+            theta0[!is.na(val.idx)] <- theta
+            if (fmat) {
+                res <- myc(rbind(theta0))
+            } else {
+                res <- myc(theta0)
+            }
+            return(res)
+        }
+        vals0 <- unlist(vals)[!is.na(val.idx)]
+        if (length(vals0)==0)
+            mycoef[2] <- NA
+        else {
+            if (!is.null(attributes(fval)$grad)) {
+                if (fmat) {
+                    Gr <- cbind(attributes(fval)$grad(rbind(unlist(vals0))))
+                } else {
+                    Gr <- cbind(attributes(fval)$grad(unlist(vals0)))
+                }
+            } else {
+                if (fmat) {
+                    Gr <- cbind(as.numeric(numDeriv::jacobian(myc0, unlist(vals0))))
+                } else {
+                    Gr <- cbind(as.numeric(numDeriv::jacobian(myc0, rbind(unlist(vals0)))))
+                }
+            }
+            V <- vcov[val.idx0,val.idx0]
+            mycoef[2] <- (t(Gr)%*%V%*%Gr)^0.5
+        }
+        ## if (second) {
+        ##   if (!is.null(attributes(fval)$hessian)) {
+        ##     H <- attributes(fval)$hessian(unlist(vals))
+        ##   } else {
+        ##     H <- hessian(myc, unlist(vals))
+        ##   }
+        ##   HV <- H%*%vcov[val.idx,val.idx]
+        ##   mycoef[1] <- mycoef[1] + 0.5*sum(diag(HV))
+        ##   mycoef[2] <- mycoef[2] + 0.5*sum(diag(HV%*%HV))
+        ## }
+        mycoef[3] <- mycoef[1]/mycoef[2]
+        mycoef[4] <- 2*(pnorm(abs(mycoef[3]),lower.tail=FALSE))
+        mycoef[5:6] <- mycoef[1] + c(1,-1)*qnorm((1-level)/2)*mycoef[2]
+        res <- rbind(res,mycoef)
+        mynames <- c(mynames,pp)
+        if (!is.null(attributes(fval)$inv)){
+            res2 <- attributes(fval)$inv(mycoef[c(1,5,6)])
+            res <- rbind(res, c(res2[1],NA,NA,NA,res2[2],res2[3]))
+            mynames <- c(mynames,paste0("inv(",pp,")"))
+        }
+    }
+    rownames(res) <- mynames
+    colnames(res) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)", "2.5%", "97.5%")
+    return(res)
 }

@@ -26,7 +26,7 @@
 ##' d <- sim(m,50,seed=1)
 ##' e1 <- complik(m,d,control=list(trace=1),type="all")
 complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estimator="normal",
-                     ...) {
+             ...) {
     y <- setdiff(endogenous(x),latent(x))
     x.idx <- index(x)$exo.idx
     binsurv <- rep(FALSE,length(y))
@@ -36,17 +36,15 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
         if (!inherits(z,"try-error"))
             binsurv[i] <- inherits(z,"Surv") | (is.factor(z))
     }
-    
+
     ord <- ordinal(x)
-    binsurv <- unique(c(y[binsurv],ord)) ## ,binary(x))
-    ##  binsurvpos <- which(colnames(data)%in%binsurv)
+    binsurv <- unique(c(y[binsurv],ord))
     if (!missing(pairlist)) {
         binsurvpos <- which(colnames(data)%in%endogenous(x))
     } else {
         binsurvpos <- which(colnames(data)%in%binsurv)
     }
     if (missing(pairlist)) {
-        #if (length(binsurv)<(k+1)) stop("No need for composite likelihood analysis.")       
         if (type[1]=="all") {
             mypar <- combn(length(binsurv),k) ## all pairs (or multiplets), k=2: k*(k-1)/2
         } else {
@@ -54,16 +52,16 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
         }
     } else {
         mypar <- pairlist
-    }  
-    
+    }
+
     if (is.matrix(mypar)) {
         mypar0 <- mypar; mypar <- c()
         for (i in seq(ncol(mypar0)))
             mypar <- c(mypar, list(mypar0[,i]))
     }
-    
+
     nblocks <- length(mypar)
-    mydata0 <- data[,,drop=FALSE]  
+    mydata0 <- data[,,drop=FALSE]
     mydata <-  as.data.frame(matrix(NA, nblocks*nrow(data), ncol=ncol(data)))
     names(mydata) <- names(mydata0)
     for (i in 1:ncol(mydata)) {
@@ -77,7 +75,7 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
             mydata[,i] <- S
         }
     }
-    for (ii in 1:nblocks) {    
+    for (ii in 1:nblocks) {
         data0 <- data;
         for (i in binsurvpos[-mypar[[ii]]]) {
             if (survival::is.Surv(data[,i])) {
@@ -91,7 +89,7 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
         mydata[(1:nrow(data))+(ii-1)*nrow(data),] <- data0
     }
     suppressWarnings(e0 <- estimate(x,data=mydata,estimator=estimator,missing=TRUE,messages=messages,
-                                   ...))
+                                    ...))
 
     S <- score(e0,indiv=TRUE)
     nd <- nrow(data)
@@ -109,11 +107,11 @@ complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estim
     J <- t(Siid)%*%(Siid)
     e0$iidscore <- Siid
     e0$blocks <- blocks
-    e0$vcov <- iI%*%J%*%iI ## thetahat-theta0 :=(asymp) I^-1*S => var(thetahat) = iI*var(S)*iI 
+    e0$vcov <- iI%*%J%*%iI ## thetahat-theta0 :=(asymp) I^-1*S => var(thetahat) = iI*var(S)*iI
     cc <- e0$coef; cc[,2] <- sqrt(diag(e0$vcov))
     cc[,3] <- cc[,1]/cc[,2]; cc[,4] <- 2*(1-pnorm(abs(cc[,3])))
     e0$coef <- cc
-    e0$bread <- iI  
+    e0$bread <- iI
     class(e0) <- c("estimate.complik",class(e0))
     return(e0)
 }

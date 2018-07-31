@@ -25,7 +25,7 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
 ##' x <- cv(list(m0=f0,m1=f1,m2=f2),rep=10, data=iris, formula=Sepal.Length~.)
 ##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
-##' @export 
+##' @export
 cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=NULL, ...) {
     if (is.vector(data)) data <- cbind(data)
     if (missing(perf)) perf <- rmse1
@@ -50,13 +50,13 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
     names(fit0) <- names(perf0) <- nam
     n <- NROW(data)
     M <- length(perf0)      # Number of models
-    P <- length(perf0[[1]]) # Number of performance measures    
+    P <- length(perf0[[1]]) # Number of performance measures
     if (!is.null(seed)) {
         if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
             runif(1)
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
         set.seed(seed)
-        RNGstate <- structure(seed, kind = as.list(RNGkind()))        
+        RNGstate <- structure(seed, kind = as.list(RNGkind()))
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
     if (K==0) {
@@ -70,7 +70,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
     dim <- c(rep,K,M,P)
     PerfArr <- array(0,dim)
     dimnames(PerfArr) <- list(NULL,NULL,nam,namPerf)
-    
+
     ff <- function(i) {
         R <- arg[i,1]
         k <- arg[i,2]
@@ -79,18 +79,18 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
         dtrain <- data[unlist(fold[-k]),,drop=FALSE]
         args <- args0
         if (!is.null(shared)) {
-            sharedres <- shared(dtrain,...)            
+            sharedres <- shared(dtrain,...)
             args <- c(args, sharedres)
-        }                
-        if (is.function(modelList[[1]])) {            
+        }
+        if (is.function(modelList[[1]])) {
             fits <- lapply(modelList, function(f) do.call(f,c(list(dtrain),args)))
         } else {
             fits <- lapply(modelList, function(m) do.call(update,c(list(m,data=dtrain),args)))
         }
         perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
-        do.call(rbind,perfs)        
+        do.call(rbind,perfs)
     }
-    
+
     if (mc.cores>1) {
         val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE,mc.cores=mc.cores)
     } else {
@@ -101,8 +101,8 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
         k <- arg[i,2]
         PerfArr[R,k,,] <- val[[i]]
     }
-    
-    structure(list(cv=PerfArr,                   
+
+    structure(list(cv=PerfArr,
                    call=match.call(),
                    names=nam,
                    rep=rep, folds=K,
@@ -119,6 +119,6 @@ print.CrossValidated <- function(x,...) {
 coef.CrossValidated <- function(object,...) {
     res <- apply(object$cv,3:4,function(x) mean(x))
     if (length(object$names)==nrow(res)) rownames(res) <- object$names
-    res    
+    res
 }
 

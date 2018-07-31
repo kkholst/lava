@@ -18,7 +18,8 @@ commutation <- function(m, n=m) {
     }
     K <- matrix(0,m*n,m*n)
     for (i in seq_len(m))
-    for (j in seq_len(n))
-        K <- K + H(i,j)%x%t(H(i,j))
+        for (j in seq_len(n))
+            K <- K + H(i,j)%x%t(H(i,j))
     K
 }
+

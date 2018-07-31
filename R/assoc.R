@@ -35,7 +35,7 @@ assoc <- function(P,sigma,breaks,...) {
     inf <- information_assoc(P)
     res <- c(list(kappa=kap,gamma=gam),inf)
     if (!missing(sigma)) res <- c(res,rho=sigma[1,2])
-    return(res)    
+    return(res)
 }
 
 
@@ -48,7 +48,7 @@ assoc <- function(P,sigma,breaks,...) {
 ##' @export
 riskcomp <- function(x,...,scale,op="/",type=1,struct=FALSE) {
     val <- c(x,unlist(list(...)))
-    if (!missing(scale)) val <- do.call(scale,list(val)) 
+    if (!missing(scale)) val <- do.call(scale,list(val))
     if (!struct && length(val)==2) {
         if (type==2) {
             return(do.call(op,list(val[2],val[1])))
@@ -56,7 +56,7 @@ riskcomp <- function(x,...,scale,op="/",type=1,struct=FALSE) {
             return(do.call(op,list(val[1],val[2])))
         }
         return(c(do.call(op,list(val[2],val[1])),
-                 do.call(op,list(val[1],val[2]))))            
+                 do.call(op,list(val[1],val[2]))))
     }
     outer(val,val,op)
     offdiag(outer(val,val,op) ,type=type)
@@ -167,14 +167,14 @@ independence <- function(x,...) {
         P2 <- A2%*%p
         I <- P1%*%t(P2)
         Q <- P-I
-#        Q <- sum(n*P*(log(I[1,1])-P1
+        #        Q <- sum(n*P*(log(I[1,1])-P1
         sum((P-I)^2)
         ##V <- sqrt(sum((P*n-I*n)^2/I/n) /(n*(min(k1,k2)-1)))
         V <- sqrt(sum((P-I)^2/I)   / ((min(k1,k2)-1)))
         return(V)
         sum(n*Q^2/I)^0.25
         return((sum((P-I)^2))^.5)
-##        V
+        ##        V
     }
 
     ## M <- P*n
