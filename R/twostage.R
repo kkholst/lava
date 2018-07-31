@@ -437,8 +437,9 @@ predict.twostage.lvmfit <- function(object,
 ##' m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
 ##' n <- 200
 ##' distribution(m, ~u1) <- uniform.lvm(-6,6)
-##' d <- sim(m,n=200,seed=1)##' 
-##' val <- twostageCV(m1,m2,data=d, std.err=FALSE,  nknots=2:5, K=1:3, mc.cores=4, nfolds=5)
+##' d <- sim(m,n=200,seed=1) 
+##' val <- twostageCV(m1, m2, data=d, std.err=FALSE, nknots=2:5, K=1:3,
+##'                   mc.cores=parallel::detectCores(), nfolds=5)
 ##' }
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
                knots.boundary, mc.cores=1, k=1:4, nknots=1:9, fix=TRUE, std.err=TRUE,
@@ -486,7 +487,7 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     }    
     ff <- lapply(MM,
                 function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
-    a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=parallel::detectCores(),shared=f0)
+    a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=mc.cores,shared=f0)
     M <- MM[[which.min(coef(a))]]
     e2 <- twostage(e1,M,data,control=control2, std.err=std.err)
 

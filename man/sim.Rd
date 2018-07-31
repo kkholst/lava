@@ -25,6 +25,7 @@
 \alias{uniform.lvm}
 \alias{beta.lvm}
 \alias{normal.lvm}
+\alias{mvn.lvm}
 \alias{lognormal.lvm}
 \alias{gaussian.lvm}
 \alias{GM2.lvm}

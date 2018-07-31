@@ -23,9 +23,9 @@ test_that("Effects",{
                                 confint(e)["y1~x",])
 
     testthat::expect_equivalent(totaleffects(e,y1~x)[,1:4],f["Total",])
-    
-    g <- graph::updateGraph(plot(m,noplot=TRUE))
-    testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))    
+
+    ##g <- graph::updateGraph(plot(m,noplot=TRUE))
+    ##testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))    
 })
 
 test_that("Profile confidence limits", {
@@ -247,6 +247,7 @@ test_that("Optimization", {
 })
 
 
+if (requireNamespace("nlme",quietly = TRUE))
 test_that("Prediction with missing data, random intercept", {
     ## Random intercept model
     m <- lvm(c(y1,y2,y3)~u[0])
@@ -424,10 +425,9 @@ test_that("multinomial", {
     ## TODO
     lava:::independence(d[,5:6])
     information(d[,5:6])
+    
     ## pcor
-
     if (requireNamespace("polycor",quietly=TRUE)) {
-        require('mvtnorm')
         system.time(rho <- pcor(d[,5],d[,6]))
         rho2 <- polycor::polychor(d[,5],d[,6],ML=TRUE,std.err=TRUE)
         testthat::expect_true(abs(rho$coef[1]-rho2$rho)^2<1e-5)
