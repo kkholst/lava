@@ -32,7 +32,7 @@ lava.options <- function(...) {
     dots <- list(...)
     newopt <- curopt <- get("options",envir=lava.env)
     if (length(dots)==0)
-        return(curopt)
+        return(curopt[order(names(curopt))])
     if (length(dots)==1 && is.list(dots[[1]]) && is.null(names(dots))) {
         dots <- dots[[1]]
     }
