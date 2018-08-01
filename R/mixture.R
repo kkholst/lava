@@ -58,11 +58,11 @@
 #'
 #' @export mixture
 mixture <- function(x, data, k=length(x),
-                    control=list(),
-                    vcov="observed",
-            ...) {
-    ##type=c("standard","CEM","SEM"),     
+             control=list(),
+             vcov="observed",
+             ...) {
     MODEL <- "normal"
+    ##type=c("standard","CEM","SEM"),
     ## type <- tolower(type[1])
     ## if (type[1]!="standard") {
     ##     return(mixture0(x,data=data,k=k,control=control,type=type,...))
@@ -249,9 +249,7 @@ mixture <- function(x, data, k=length(x),
             else
                 I0[constrained,constrained] <- I0[constrained,constrained]*outer(p[constrained],p[constrained]) + diag(S[constrained])
         }
-        ##    print(paste(S,collapse=","))
         if (optim$stabil) {
-            ##      I0 <- I0+S%*%t(S)
             if (optim$lambda>0)
                 sigma <- optim$lambda
             else
@@ -259,17 +257,7 @@ mixture <- function(x, data, k=length(x),
             I0 <- I0+optim$gamma2*(sigma)*diag(nrow(I0))
         }
         p.orig + as.vector(optim$gamma*Inverse(I0)%*%S)
-        ##   p.orig + Inverse(I0+optim$lambda*diag(nrow(I0)))%*%S
     }
-    ## env <- new.env()
-    ## assign("mg",mg,env)
-    ## assign("k",k,env)
-    ## assign("data",data,env)
-    ## assign("MODEL",MODEL,env)
-    ## assign("optim",optim,env)
-    ## assign("parpos",parpos,env)
-    ## assign("constrained",constrained,env)
-
 
     EMstep <- function(p,all=FALSE) {
         thetacur0 <- thetacur <- p[seq(Npar)]
@@ -301,7 +289,6 @@ mixture <- function(x, data, k=length(x),
     ## for (i in 1:5) {
     ##     p0 <- EMstep(p0)
     ## }
-
     ## sqem.idx <- match(c("K","method","square","step.min0","step.max0","mstep",
     ##                         "objfn.inc","kr","tol","maxiter","trace"),names(optim))
     ## em.control <- optim[na.omit(sqem.idx)]
@@ -316,15 +303,9 @@ mixture <- function(x, data, k=length(x),
     if (!is.null(em.control$trace)) em.control$trace <- em.control$trace>0
 
     p <- c(thetacur,probcur)
-    ## opt <- turboEM::turboem(p,fixptfn=EMstep,
-    ##                         objfn=myObj,
-    ##                         method="squarem",
-    ##                         ##method = c("em","squarem","pem","decme","qn")
-    ##                         control.method=list(em.control),
-    ##                         control.run=control.run)
+    
     opt <- SQUAREM::squarem(p,fixptfn=EMstep,#objfn=myObj,
                             control=em.control)
-    ## opt <- SQUAREM::fpiter(p,fixptfn=EMstep,control=list(maxiter=100,trace=1))
 
     val <- EMstep(opt$par,all=TRUE)
     delta <- 1e-4
@@ -332,7 +313,7 @@ mixture <- function(x, data, k=length(x),
         val$prob[val$prob<delta] <- delta
         val$prob <- val$prob/sum(val$prob)
     }
-    
+
     val <- c(val, list(member=apply(val$gamma,1,which.max),
                        k=k,
                        data=data,
@@ -343,16 +324,10 @@ mixture <- function(x, data, k=length(x),
                        opt=opt))
     class(val) <- "lvm.mixture"
 
-    ## if (optim$rerun) {
-    ##     p0 <- coef(val)
-    ##     f <- function(p) -logLik(val,p)
-    ##     g <- function(p) -score(val,p)
-    ##     suppressWarnings(opt <- tryCatch(ucminf(p0,f,g),error=function(x) opt))
-    ## }
     np <- length(coef(val))
     if (is.null(vcov)) {
         val$vcov <- matrix(NA,np,np)
-    } else {        
+    } else {
         I <- suppressWarnings(information.lvm.mixture(val,type=vcov))
         val$vcov <- tryCatch(Inverse(I),error=function(...) matrix(NA,np,np))
     }
@@ -366,35 +341,33 @@ mixture <- function(x, data, k=length(x),
 
 ##' @export
 score.lvm.mixture <- function(x,p=coef(x,full=TRUE),prob,indiv=FALSE,model="normal",...) {
-  myp <- lapply(x$parpos,function(x) p[x])
-  if (missing(prob)) {
-      prob <- tail(p,x$k-1)
-      p <- p[seq_len(length(p)-x$k+1)]
-  }
-  ## if (missing(prob))
-  ##   prob <- coef(x,prob=TRUE)
-  if (length(prob)<x$k)
-      prob <- c(prob,1-sum(prob))
-  logff <- sapply(seq(x$k), function(j) (logLik(x$multigroup$lvm[[j]],p=myp[[j]],data=x$data,indiv=TRUE,model=model)))
-  logplogff <- t(apply(logff,1, function(y) y+log(prob)))
-  zmax <- apply(logplogff,1,max)
-  logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
-  aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
-  
-  scoref <- lapply(score(x$multigroup,p=p,indiv=TRUE,model=model),
-                   function(x) { x[which(is.na(x))] <- 0; x })
+    myp <- lapply(x$parpos,function(x) p[x])
+    if (missing(prob)) {
+        prob <- tail(p,x$k-1)
+        p <- p[seq_len(length(p)-x$k+1)]
+    }
+    if (length(prob)<x$k)
+        prob <- c(prob,1-sum(prob))
+    logff <- sapply(seq(x$k), function(j) (logLik(x$multigroup$lvm[[j]],p=myp[[j]],data=x$data,indiv=TRUE,model=model)))
+    logplogff <- t(apply(logff,1, function(y) y+log(prob)))
+    zmax <- apply(logplogff,1,max)
+    logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
+    aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
 
-  Stheta <- matrix(0,ncol=ncol(scoref[[1]]),nrow=nrow(scoref[[1]]))
-  Spi <- matrix(0,ncol=x$k-1,nrow=nrow(Stheta))
-  for (j in 1:x$k) {
-    Stheta <- Stheta + apply(scoref[[j]],2,function(x) x*aji[,j])
-    if (j<x$k)
-      Spi[,j] <- aji[,j]/prob[j] - aji[,x$k]/prob[x$k]
-  }
-  S <- cbind(Stheta,Spi)
-  if (!indiv)
-    return(colSums(S))
-  return(S)
+    scoref <- lapply(score(x$multigroup,p=p,indiv=TRUE,model=model),
+                     function(x) { x[which(is.na(x))] <- 0; x })
+
+    Stheta <- matrix(0,ncol=ncol(scoref[[1]]),nrow=nrow(scoref[[1]]))
+    Spi <- matrix(0,ncol=x$k-1,nrow=nrow(Stheta))
+    for (j in 1:x$k) {
+        Stheta <- Stheta + apply(scoref[[j]],2,function(x) x*aji[,j])
+        if (j<x$k)
+            Spi[,j] <- aji[,j]/prob[j] - aji[,x$k]/prob[x$k]
+    }
+    S <- cbind(Stheta,Spi)
+    if (!indiv)
+        return(colSums(S))
+    return(S)
 }
 
 ##' @export
@@ -403,7 +376,7 @@ information.lvm.mixture <- function(x,p=coef(x,full=TRUE),...,type="observed") {
         S <- function(p=p,...) score.lvm.mixture(x,p=p,indiv=FALSE,...)
         I <- -numDeriv::jacobian(S,p)
         return(I)
-    } 
+    }
     S <- score.lvm.mixture(x,p=p,indiv=TRUE,...)
     res <- t(S)%*%S
     attributes(res)$grad <- colSums(S)
@@ -412,27 +385,27 @@ information.lvm.mixture <- function(x,p=coef(x,full=TRUE),...,type="observed") {
 
 ##' @export
 logLik.lvm.mixture <- function(object,p=coef(object,full=TRUE),prob,model="normal",...) {
-  if (is.null(object$parpos)) {
-    object$parpos <- modelPar(object$multigroup,seq_along(p))$p
-  }
-  myp <- lapply(object$parpos, function(x) p[x])
-  if (missing(prob))
-    prob <- tail(p,object$k-1)
-  if (length(prob)<object$k)
-      prob <- c(prob,1-sum(prob))
-  logff <- sapply(seq(object$k), function(j) (logLik(object$multigroup$lvm[[j]],p=myp[[j]],data=object$data,indiv=TRUE,model=model)))
-  logplogff <- t(apply(logff,1, function(y) y+log(prob)))
-  ## Log-sum-exp (see e.g. NR)
-  zmax <- apply(logplogff,1,max)
-  logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax    
-  loglik <- sum(logsumpff)
-  npar <- length(p)
-  nobs <- nrow(object$data)
-  attr(loglik, "nall") <- nobs
-  attr(loglik, "nobs") <- nobs
-  attr(loglik, "df") <- npar
-  class(loglik) <- "logLik"  
-  return(loglik)
+    if (is.null(object$parpos)) {
+        object$parpos <- modelPar(object$multigroup,seq_along(p))$p
+    }
+    myp <- lapply(object$parpos, function(x) p[x])
+    if (missing(prob))
+        prob <- tail(p,object$k-1)
+    if (length(prob)<object$k)
+        prob <- c(prob,1-sum(prob))
+    logff <- sapply(seq(object$k), function(j) (logLik(object$multigroup$lvm[[j]],p=myp[[j]],data=object$data,indiv=TRUE,model=model)))
+    logplogff <- t(apply(logff,1, function(y) y+log(prob)))
+    ## Log-sum-exp (see e.g. NR)
+    zmax <- apply(logplogff,1,max)
+    logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
+    loglik <- sum(logsumpff)
+    npar <- length(p)
+    nobs <- nrow(object$data)
+    attr(loglik, "nall") <- nobs
+    attr(loglik, "nobs") <- nobs
+    attr(loglik, "df") <- npar
+    class(loglik) <- "logLik"
+    return(loglik)
 }
 
 ###}}} logLik, score, information
@@ -441,7 +414,7 @@ logLik.lvm.mixture <- function(object,p=coef(object,full=TRUE),prob,model="norma
 
 ##' @export
 vcov.lvm.mixture <- function(object,...) {
-  return(object$vcov)
+    return(object$vcov)
 }
 
 ###}}}
@@ -450,48 +423,48 @@ vcov.lvm.mixture <- function(object,...) {
 
 ##' @export
 summary.lvm.mixture <- function(object,labels=0,...) {
-  mm <- object$multigroup$lvm
-  p <- coef(object,list=TRUE)
-  p0 <- coef(object,prob=FALSE)
-  myp <- modelPar(object$multigroup,1:length(p0))$p
-  coefs <- list()
-  ncluster <- c()
-  for (i in 1:length(mm)) {
-    cc <- CoefMat(mm[[i]],p=p[[i]],vcov=vcov(object)[myp[[i]],myp[[i]]],data=NULL,labels=labels)
-    coefs <- c(coefs, list(cc))
-    ncluster <- c(ncluster,sum(object$member==i))
-  }
-  res <- list(coef=coefs,ncluster=ncluster,prob=tail(object$prob,1),
-              AIC=AIC(object),s2=sum(score(object)^2))
-  class(res) <- "summary.lvm.mixture"
-  return(res)
+    mm <- object$multigroup$lvm
+    p <- coef(object,list=TRUE)
+    p0 <- coef(object,prob=FALSE)
+    myp <- modelPar(object$multigroup,1:length(p0))$p
+    coefs <- list()
+    ncluster <- c()
+    for (i in 1:length(mm)) {
+        cc <- CoefMat(mm[[i]],p=p[[i]],vcov=vcov(object)[myp[[i]],myp[[i]]],data=NULL,labels=labels)
+        coefs <- c(coefs, list(cc))
+        ncluster <- c(ncluster,sum(object$member==i))
+    }
+    res <- list(coef=coefs,ncluster=ncluster,prob=tail(object$prob,1),
+                AIC=AIC(object),s2=sum(score(object)^2))
+    class(res) <- "summary.lvm.mixture"
+    return(res)
 }
 
 ##' @export
 print.summary.lvm.mixture <- function(x,...) {
-  space <- paste(rep(" ",12),collapse="")
-  for (i in 1:length(x$coef)) {
-    cat("Cluster ",i," (n=",x$ncluster[i],", Prior=", formatC(x$prob[i]),"):\n",sep="")
+    space <- paste(rep(" ",12),collapse="")
+    for (i in 1:length(x$coef)) {
+        cat("Cluster ",i," (n=",x$ncluster[i],", Prior=", formatC(x$prob[i]),"):\n",sep="")
+        cat(rep("-",50),"\n",sep="")
+        print(x$coef[[i]], quote=FALSE)
+        if (i<length(x$coef)) cat("\n")
+    }
     cat(rep("-",50),"\n",sep="")
-    print(x$coef[[i]], quote=FALSE)
-    if (i<length(x$coef)) cat("\n")
-  }
-  cat(rep("-",50),"\n",sep="")
-  cat("AIC=",x$AIC,"\n")
-  cat("||score||^2=",x$s2,"\n")
-  invisible(par)  
+    cat("AIC=",x$AIC,"\n")
+    cat("||score||^2=",x$s2,"\n")
+    invisible(par)
 }
 
 ##' @export
 print.lvm.mixture <- function(x,...) {
-  space <- paste(rep(" ",12),collapse="")
-  for (i in 1:x$k) {
-    cat("Cluster ",i," (n=",sum(x$member==i),"):\n",sep="")
-    cat(rep("-",50),"\n",sep="")
-    print(coef(x,prob=FALSE)[x$parpos[[i]]], quote=FALSE)
-    cat("\n")   
-  }
-  invisible(par)
+    space <- paste(rep(" ",12),collapse="")
+    for (i in 1:x$k) {
+        cat("Cluster ",i," (n=",sum(x$member==i),"):\n",sep="")
+        cat(rep("-",50),"\n",sep="")
+        print(coef(x,prob=FALSE)[x$parpos[[i]]], quote=FALSE)
+        cat("\n")
+    }
+    invisible(par)
 }
 
 ###}}}
@@ -500,7 +473,7 @@ print.lvm.mixture <- function(x,...) {
 
 ##' @export
 plot.lvm.mixture <- function(x,type="l",...) {
-  matplot(x$theta,type=type,...)
+    matplot(x$theta,type=type,...)
 }
 
 ###}}} plot
@@ -509,36 +482,36 @@ plot.lvm.mixture <- function(x,type="l",...) {
 
 ##' @export
 coef.lvm.mixture <- function(object,iter,list=FALSE,full=TRUE,prob=FALSE,class=FALSE,label=TRUE,...) {
-  N <- nrow(object$theta)
-  res <- object$theta
-  nn <- attr(parpos(object$multigroup),"name")
-  if (length(ii <- which(is.na(nn)))>0 && label) {
-      nn[ii] <- paste0("p",seq_along(ii))
-  }
-  colnames(res) <- nn
-  if (class) return(object$gammas)
-  if (list) {      
-      res <- list()
-      for (i in 1:object$k) {
-          nn <- coef(object$multigroup$lvm[[i]])
-          cc <- coef(object)[object$parpos[[i]]]
-          names(cc) <- nn
-          res <- c(res, list(cc))
-      }
-      return(res)
-  }
-  if (full) {
-      pp <- object$prob[,seq(ncol(object$prob)-1),drop=FALSE]
-      colnames(pp) <- paste0("pr",seq(ncol(pp)))
-      res <- cbind(res,pp)
-  }   
-  if (prob) {
-      res <- object$prob
-  }
-  if (missing(iter))
-      return(res[N,,drop=TRUE])
-  else
-      return(res[iter,])
+    N <- nrow(object$theta)
+    res <- object$theta
+    nn <- attr(parpos(object$multigroup),"name")
+    if (length(ii <- which(is.na(nn)))>0 && label) {
+        nn[ii] <- paste0("p",seq_along(ii))
+    }
+    colnames(res) <- nn
+    if (class) return(object$gammas)
+    if (list) {
+        res <- list()
+        for (i in 1:object$k) {
+            nn <- coef(object$multigroup$lvm[[i]])
+            cc <- coef(object)[object$parpos[[i]]]
+            names(cc) <- nn
+            res <- c(res, list(cc))
+        }
+        return(res)
+    }
+    if (full) {
+        pp <- object$prob[,seq(ncol(object$prob)-1),drop=FALSE]
+        colnames(pp) <- paste0("pr",seq(ncol(pp)))
+        res <- cbind(res,pp)
+    }
+    if (prob) {
+        res <- object$prob
+    }
+    if (missing(iter))
+        return(res[N,,drop=TRUE])
+    else
+        return(res[iter,])
 }
 
 ###}}} coef
