@@ -58,7 +58,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
                     predict(model1, p=p, data=data, predict.fun=predict.fun[[i]])
             }
             return(res)
-        } else {            
+        } else {
             Pr <- cbind(predict(model1, p=p, data=data, predict.fun=predict.fun))
             return(Pr)
         }
@@ -412,7 +412,7 @@ predict.twostage.lvmfit <- function(object,
     return(res)
 }
 
-##' Cross-validated two-stage estimator  
+##' Cross-validated two-stage estimator
 ##'
 ##' Cross-validated two-stage estimator for non-linear SEM
 ##' @export
@@ -423,8 +423,8 @@ predict.twostage.lvmfit <- function(object,
 ##' @param control2 optimization parameters for model 1
 ##' @param knots.boundary boundary points for natural cubic spline basis
 ##' @param mc.cores number of cores to use for parallel computations
-##' @param k number of mixture components
-##' @param nknots number of knots
+##' @param nmix number of mixture components
+##' @param df spline degrees of freedom
 ##' @param fix automatically fix parameters for identification (TRUE)
 ##' @param std.err calculation of standard errors (TRUE)
 ##' @param nfolds Number of folds (cross-validation)
@@ -433,29 +433,29 @@ predict.twostage.lvmfit <- function(object,
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
 ##' m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
-##' m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)
-##' m <- functional(merge(m1,m2), u2~u1, f=function(x) sin(x)+x)
-##' n <- 200
+##' m2 <- lvm( y ~ 1 )
+##' m <- functional(merge(m1,m2), y ~ u, f=function(x) sin(x)+x)
 ##' distribution(m, ~u1) <- uniform.lvm(-6,6)
-##' d <- sim(m,n=200,seed=1) 
-##' val <- twostageCV(m1, m2, data=d, std.err=FALSE, nknots=2:5, K=1:3,
-##'                   mc.cores=parallel::detectCores(), nfolds=5)
+##' d <- sim(m,n=500,seed=1)
+##' val <- twostageCV(m1, m2, data=d, std.err=FALSE, df=2:6, nmix=1:2,
+##'                   nfolds=2, mc.cores=1)
+##' val
 ##' }
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
-               knots.boundary, mc.cores=1, k=1:4, nknots=1:9, fix=TRUE, std.err=TRUE,
-               nfolds=5, rep=1, ...) {
+                knots.boundary, mc.cores=1, nmix=1:4, df=1:9, fix=TRUE, std.err=TRUE,
+                nfolds=5, rep=1, messages=0, ...) {
     op <- options(warn=-1)
     if (fix) {
         model1 <- baptize(fixsome(model1, param="relative"))
         intercept(model1, latent(model1)) <- NA
-    }  
+    }
     e1a <- estimate(model1, data=data, control=control1)
     if (missing(knots.boundary))
         knots.boundary <- range(predict(e1a,vars(e1a)))
     ## Starting values for mixture models
     plab <- parlabels(model1)
     pfree <- setdiff(coef(model1),plab)
-    pfree.idx <- match(pfree,coef(model1)) ## Index of unlabeled parameters    
+    pfree.idx <- match(pfree,coef(model1)) ## Index of unlabeled parameters
     intpos <- setdiff(parpos(model1)$v,0)
     pfree.int <- intersect(pfree.idx,intpos) ## Free intercept parameters
     p0 <- coef(e1a)
@@ -467,30 +467,75 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     }
     control1$start <- NULL
     ee <- list(e1a)
-    for (k in setdiff(k,1)) {
+    nmix <- setdiff(nmix,1)
+    for (k in nmix) {
+        if (messages>0) cat("Fitting mixture model with", k, "components\n")
         ee <- c(ee, list(mixture(model1, k=k, data=data,
                            control=c(control1,list(start=startf(k))))))
     }
-    ii <- which.min(unlist(lapply(ee,AIC)))
-    ## Exposure measurement model 
+    AIC1 <- unlist(lapply(ee,AIC))
+    names(AIC1) <- c(1,nmix)
+    ii <- which.min(AIC1)
+    ## Exposure measurement model
     e1 <- ee[[ii]] ## Selected model by AIC
 
-    MM <- list(nonlinear(model2, u2 ~ u1, type="linear"))
-    for (i in setdiff(nknots, 1))
-        MM <- c(MM,         
-               list(nonlinear(model2, u2 ~ u1, type="spline",
-                              knots=seq(knots.boundary[1],knots.boundary[2],length.out=i+1))))
+    F <- nonlinear(model2)
+    form <- as.formula(paste(names(F)[1], "~", x=F[[1]]$x))
+
+    MM <- list(nonlinear(model2, form, type="linear"))
+    df <- setdiff(df, 1)
+    Knots <- list()
+    for (i in df) {
+        knots <- seq(knots.boundary[1],knots.boundary[2],length.out=i+1)
+        Knots  <- c(Knots, list(knots))
+        MM <- c(MM,
+               list(nonlinear(model2, form, type="spline", knots=knots)))
+    }
     if (!inherits(e1, "lvm.mixture")) {
         f0 <- function(data) list(e0=estimate(model1,data=data,control=c(control1,list(start=coef(e1)))))
     } else {
         f0 <- function(data) list(e0=mixture(model1,data=data,k=e1$k,control=c(control1,list(start=coef(e1)))))
-    }    
+    }
     ff <- lapply(MM,
-                function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
+                 function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
     a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=mc.cores,shared=f0)
     M <- MM[[which.min(coef(a))]]
     e2 <- twostage(e1,M,data,control=control2, std.err=std.err)
-
     options(op)
-    list(model1=e1, model2=e2, cv=a)
+    res <- list(AIC1=cbind(AIC1), model1=e1, model2=e2, cv=coef(a), knots=c(list(NA),Knots),
+                nfolds=nfolds, rep=rep)
+    structure(res, class="twostageCV")
 }
+
+
+##' @export
+print.twostageCV <- function(x,...) {
+    printline(70)
+    i1 <- which.min(x$AIC1)
+    nmix <- names(x$AIC1)[i1]
+    cat("Selected mixture model: ",i1," component", ifelse(i1>1, "s",""),"\n", sep="")
+    print(x$AIC1)
+    printline(70)
+    i2 <- which.min(x$cv)
+    splinedf <- unlist(lapply(x$knots,function(x) if (is.na(x)) return(1) else length(x)-1))
+    cat("Selected spline model degrees of freedom: ", splinedf[i2] ,"\n", sep="")
+    knots <- rbind(x$knots[[i2]])
+    cat("Knots", paste(formatC(knots,...) , collapse=" "), "\n")
+    rmse <- x$cv
+    rownames(rmse) <- paste0("df:",splinedf)
+    colnames(rmse) <- paste0("RMSE(nfolds=",x$nfolds,", rep=",x$rep,")")
+    print(rmse)
+    printline(70)
+    print(CoefMat(x$model2,...),quote=FALSE)
+
+}
+
+
+##' @export
+summary.twostageCV <- function(object,...) {
+    with(object, list(model1=summary(model1),
+                      model2=summary(model2),
+                      AIC1=AIC1, cv=cv, knots=knots))
+}
+
+
