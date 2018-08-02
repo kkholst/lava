@@ -429,6 +429,7 @@ predict.twostage.lvmfit <- function(object,
 ##' @param std.err calculation of standard errors (TRUE)
 ##' @param nfolds Number of folds (cross-validation)
 ##' @param rep Number of repeats of cross-validation
+##' @param messages print information (>0)
 ##' @param ... additional arguments to lower level functions
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
@@ -520,22 +521,42 @@ print.twostageCV <- function(x,...) {
     splinedf <- unlist(lapply(x$knots,function(x) if (is.na(x)) return(1) else length(x)-1))
     cat("Selected spline model degrees of freedom: ", splinedf[i2] ,"\n", sep="")
     knots <- rbind(x$knots[[i2]])
-    cat("Knots", paste(formatC(knots,...) , collapse=" "), "\n")
+    cat("Knots:", paste(formatC(knots,...) , collapse=" "), "\n\n")
     rmse <- x$cv
     rownames(rmse) <- paste0("df:",splinedf)
     colnames(rmse) <- paste0("RMSE(nfolds=",x$nfolds,", rep=",x$rep,")")
     print(rmse)
     printline(70)
+    cat("\n")
     print(CoefMat(x$model2,...),quote=FALSE)
+}
 
+##' @export
+coef.twostageCV <- function(object,...) {
+    coef(Model(object),...)
+}
+
+vcov.twostageCV <- function(object,...) {
+    vcov(Model(object),...)
+}
+
+iid.twostageCV <- function(object,...) {
+    iid(Model(object),...)
+}
+
+Model.twostageCV <- function(x,...) {
+    x$model2
 }
 
 
 ##' @export
 summary.twostageCV <- function(object,...) {
     with(object, list(model1=summary(model1),
-                      model2=summary(model2),
-                      AIC1=AIC1, cv=cv, knots=knots))
+                      AIC1=AIC1, cv=cv, knots=knots,
+                      model2=summary(model2)))
 }
 
-
+##' @export
+predict.twostageCV <- function(object,... ) {
+    predict(Model(object),...)
+}

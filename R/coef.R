@@ -2,7 +2,11 @@
 
 ##' @export
 `coef.lvm` <-
-    function(object, mean=TRUE, fix=TRUE, symbol=lava.options()$symbol, messages=lava.options()$messages, p, data, vcov, type=9, labels=lava.options()$coef.names, ...) {
+    function(object, mean=TRUE, fix=TRUE,
+      symbol=lava.options()$symbol,
+      messages=lava.options()$messages,
+      p, data, vcov, type=9,
+      labels=lava.options()$coef.names, ...) {
         if (fix)
             object <- fixsome(object,measurement.fix=FALSE)
         if (!missing(p)) {

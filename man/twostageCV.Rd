@@ -36,6 +36,8 @@ twostageCV(model1, model2, data, control1 = list(trace = 0),
 
 \item{rep}{Number of repeats of cross-validation}
 
+\item{messages}{print information (>0)}
+
 \item{...}{additional arguments to lower level functions}
 }
 \description{

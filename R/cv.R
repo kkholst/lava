@@ -111,8 +111,8 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
 }
 
 ##' @export
-summary.CrossValidated <- function(x,...) {
-    return(coef(x))
+summary.CrossValidated <- function(object,...) {
+    return(coef(object))
 }
 
 ##' @export

@@ -193,6 +193,8 @@ mixture <- function(x, data, k=length(x),
             if (missing(priorprob)) priorprob <- pp[seq(Npar+1,length(pp))]
             pp <- lapply(ParPos,function(x) pp[x])
         }
+        priorprob <- pmax(priorprob,1e-16)
+        priorprob <- priorprob/sum(priorprob)
         k <- length(pp)
         logff <- sapply(seq(k), function(j) (logLik(mg$lvm[[j]],p=pp[[j]],data=data,indiv=TRUE,model=MODEL)))
         logplogff <- t(apply(logff,1, function(z) z+log(priorprob)))
@@ -207,13 +209,17 @@ mixture <- function(x, data, k=length(x),
         if (optim$constrain) {
             p[constrained] <- exp(p[constrained])
         }
-        if (missing(gamma)) {
-            gamma <- PosteriorProb(p)
-        }
+        ## if (missing(gamma)) {
+        ##     gamma <- PosteriorProb(p)
+        ## }
         myp <- lapply(ParPos,function(x) p[x])
         prob <- p[seq(Npar+1,length(p))]
-
         logff <- sapply(1:length(myp), function(j) (logLik(mg$lvm[[j]],p=myp[[j]],data=data,indiv=TRUE,model=MODEL)))
+        ##logff <- sapply(1:length(myp),
+          ##              function(j) -normal_objective.lvm(mg$lvm[[j]],p=myp[[j]],data=data,indiv=TRUE))
+        
+        return(logff)
+    
         logplogff <- t(apply(logff,1, function(y) y+log(prob)))
         zmax <- apply(logplogff,1,max)
         logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
@@ -303,7 +309,6 @@ mixture <- function(x, data, k=length(x),
     if (!is.null(em.control$trace)) em.control$trace <- em.control$trace>0
 
     p <- c(thetacur,probcur)
-    
     opt <- SQUAREM::squarem(p,fixptfn=EMstep,#objfn=myObj,
                             control=em.control)
 
