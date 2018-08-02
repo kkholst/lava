@@ -1,5 +1,9 @@
 # -*- mode: org -*-
 
+* Version 1.6.3 <2018-08-03 Fri>
+  - Fixed problems with plots (Rgraphviz)
+  - Better print method for twostageCV
+
 * Version 1.6.2 <2018-07-02 Mon>
   - twostageCV: cross-validate two-stage estimator
   - rmvn, dmvn moved to mets package (C++ implementation, old versions
