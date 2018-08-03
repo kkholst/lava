@@ -55,7 +55,6 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weights=NULL,
     }
     pp <- modelPar(x0,p)
     ##p0 <- with(pp, c(meanpar,p,p2))
-    k <- length(index(x0)$manifest)
 
     myfun <- function(ii) {
       if (length(xfix)>0)

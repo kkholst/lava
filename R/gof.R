@@ -82,7 +82,6 @@ rsq <- function(x,stderr=FALSE) {
             v <- intersect(children(x,lat),endogenous(x))
             varl <- M$Cfull[lat,lat]
             varv <- M$Cfull[cbind(v,v)]
-            rpar <- paste(v,lat,sep=lava.options()$symbol[1])
             fix <- c(x$model$fix[lat,v,drop=TRUE])
             pp <- coef(x)
             if (inherits(x,"lvm.missing")) {
@@ -270,7 +269,6 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
             m0 <- lvm(manifest(object)); exogenous(m0) <- NULL
             e0 <- estimate(m0,model.frame(object))
             g0 <- gof(e0)
-            logLikbaseline <- g0$logLik
             qbaseline <- g0$fit$statistic
             qdfbaseline <- g0$fit$parameter
             CFI <- ((qbaseline-qdfbaseline) - (q-qdf))/(qbaseline-qdfbaseline)
@@ -283,11 +281,11 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
             if (is.null(S)) S <- cov(model.frame(object))
             if (is.null(mu)) mu <- colMeans(model.frame(object))
             L <- diag(S)^0.5
-            idx <- index(object)$endo.idx
             R <- (diag(1/L))%*%(S-C)%*%(diag(1/L))
             R2 <- (mu-xi)/L
             SRMR <- mean(c(R[upper.tri(R,diag=TRUE)],R2)^2)^0.5
             res <- c(res,list(CFI=CFI,NFI=NFI,TLI=TLI,C=C,S=S,SRMR=SRMR))
+            ## idx <- index(object)$endo.idx
             ## if (length(latent(object))>0) {
             ##   SRMR.endo <- mean(c(R[idx,idx][upper.tri(R[idx,idx],diag=TRUE)],R2[idx])^2)^0.5
             ##   res <- c(res,list("SRMR(endogenous)"=SRMR.endo))

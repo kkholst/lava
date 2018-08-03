@@ -8,7 +8,6 @@ cluster.post.hook <- function(x,...) {
         G <- x$model$ngroup
         S0 <- lapply(score(x,indiv=TRUE), function(x) { x[which(is.na(x))] <- 0; x })
         S <- matrix(0,length(pars(x)),nrow=K)
-        aS <- c() ##matrix(0,S[[1]]
         for (i in uclust) {
             for (j in seq_len(G)) {
                 idx <- which(x$cluster[[j]]==i)
@@ -38,8 +37,8 @@ cluster.post.hook <- function(x,...) {
             count <- count+1
             S0[count,] <- colSums(S[which(x$cluster==i),,drop=FALSE])
         };
-        p <- ncol(S)
         adj1 <- K/(K-1)
+        ## p <- ncol(S)
         ## adj1 <- K/(K-p) ## Mancl & DeRouen, 2001
 
         J <- adj1*crossprod(S0)

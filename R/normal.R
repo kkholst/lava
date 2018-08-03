@@ -68,7 +68,6 @@ normal_objective.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,..
     on.exit(assign(".Random.seed", save.seed, envir = .GlobalEnv))
     set.seed(1)
     ii <- lava::index(x)
-    y.idx <- ii$endo.idx
     x.idx <- ii$exo.idx
     y <- ii$endogenous
     ord <- lava::ordinal(x)

@@ -25,7 +25,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   warned <- FALSE
   for (i in setdiff(seq_len(nrow(patterns)),pattern.allmis)) {
     exoremove <- c()
-    includemodel <- TRUE
     count <- count+1
     mypattern <- patterns[i,]
     m0 <- mymodel;
@@ -202,7 +201,7 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   if (!is.null(names(control$start))) {
     parorder1 <- attributes(parpos(mg0,p=names(control$start)))$name
     paridx <- match(parorder1,names(control$start))
-    newpos <- paridx[which(!is.na(paridx))]
+    ## newpos <- paridx[which(!is.na(paridx))]
     start0 <- control$start
     start0[which(!is.na(paridx))] <- control$start[na.omit(paridx)]
     names(start0)[which(!is.na(paridx))] <- names(control$start[na.omit(paridx)])
@@ -239,7 +238,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
     xpos <- lapply(xfix,function(y) which(regfix(x)$labels==y))
     colpos <- lapply(xpos, function(y) ceiling(y/nrow))
     rowpos <- lapply(xpos, function(y) (y-1)%%nrow+1)
-    myfix <- list(var=xfix, col=colpos, row=rowpos)
     for (i in seq_along(xfix))
       regfix(x, from=vars(x)[rowpos[[i]]],to=vars(x)[colpos[[i]]]) <-
         rep(colMeans(data[,xfix[i],drop=FALSE],na.rm=TRUE),length(rowpos[[i]]))

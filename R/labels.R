@@ -131,8 +131,8 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
 
 
     Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
-    Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
-    mfix <- index(object)$v0
+    ##Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
+    ##mfix <- index(object)$v0
 
     npar.mean <- index(object)$npar.mean
     Par <- object$coef

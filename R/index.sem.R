@@ -85,13 +85,12 @@ updatelvm <- function(x,mean=TRUE,...) {
         }
 
         npar.var <- sum(c(diag(P1),P1[lower.tri(P1)]))
-        parnames <- paste0("p", seq_len(npar.reg+npar.var))
 
         A <- M
         A[fix.idx] <- x$fix[fix.idx] ## ... with fixed parameters in plac
         P[covfix.idx] <- x$covfix[covfix.idx] ## ... with fixed parameters in plac
 
-        px <- Jy <- J <- I <- diag(nrow=length(vars(x)))
+        px <- Jy <- J <- diag(nrow=length(vars(x)))
         if (m>0) {
             J[eta.idx,eta.idx] <- 0; J <- J[-eta.idx,,drop=FALSE]
         } ## Selection matrix (selecting observed variables)
@@ -176,7 +175,6 @@ updatelvm <- function(x,mean=TRUE,...) {
                                npar.mean=sum(v1),
                                npar.ex=sum(e1),
                                constrain.par=constrain.par))
-            npar.total <- res$npar+res$npar.mean+res$npar.ex
             which.diag <- NULL
             if (length(P1)>0)
                 which.diag <- which(diag(P1==1))

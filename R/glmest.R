@@ -16,7 +16,6 @@ glm.estimate.hook <- function(x,estimator,...) {
 }
 
 GLMest <- function(m,data,control=list(),...) {
-    v <- vars(m)
     yvar <- endogenous(m)
     res <- c()
     count <- 0
@@ -97,11 +96,9 @@ GLMest <- function(m,data,control=list(),...) {
 }
 
 GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
-    v <- vars(x)
     yvar <- endogenous(x)
     S <- pnames <- c()
     count <- 0
-    pos <- 0
     breads <- c()
     L <- 0
     for (y in yvar) {
@@ -119,8 +116,6 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
         } else {
             g <- glm(f,family=fam,data=data)
         }
-        pdispersion <- NULL
-        npar <- length(xx)+2
         p0 <- p[pidx]
         if (!isSurv) L0 <- logL.glm(g,p=p0,indiv=TRUE,...)
         if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
@@ -128,7 +123,7 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
             S0 <- score(g,p=p0,indiv=TRUE,pearson=TRUE,...)
             V0 <- attr(S0,"bread")
             r <- attr(S0,"pearson")
-            dispersion <- mean(r^2)
+            ## dispersion <- mean(r^2)
             S0 <- cbind(S0,scale=0)
             null <- matrix(0); dimnames(null) <- list("scale","scale")
             V0 <- blockdiag(V0,null,pad=0)
@@ -156,9 +151,8 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
 
 
 ##' @export
-score.lm <- function(x,p=coef(x),data,indiv=FALSE,
-              y,X,offset=NULL,weights=NULL,dispersion=TRUE,...) {
-    response <- all.vars(formula(x))[1]
+score.lm <- function(x, p=coef(x), data, indiv=FALSE,
+              y, X, offset=NULL, weights=NULL, dispersion=TRUE, ...) {
     if (missing(data)) {
         X <- model.matrix(x)
         y <- model.frame(x)[,1]
@@ -166,7 +160,6 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
         X <- model.matrix(formula(x),data=data)
         y <- model.frame(formula(x),data=data)[,1]
     }
-    n <- nrow(X)
     if(any(is.na(p))) warning("Over-parameterized model")
     Xbeta <- X%*%p
     if (is.null(offset)) offset <- x$offset
@@ -192,7 +185,6 @@ score.lm <- function(x,p=coef(x),data,indiv=FALSE,
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
                y,X,link,dispersion,offset=NULL,weights=NULL,...) {
 
-    response <- all.vars(formula(x))[1]
     if (inherits(x,"glm")) {
         link <- family(x)
         if (missing(data)) {
@@ -212,13 +204,12 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if (is.character(y) || is.factor(y)) {
         y <- as.numeric(as.factor(y))-1
     }
-    n <- nrow(X)
-    g <- link$linkfun
+    ## g <- link$linkfun
     ginv <- link$linkinv
     dginv <- link$mu.eta ## D[linkinv]
     ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
     canonf <- do.call(link$family,list())
-    caninvlink <- canonf$linkinv
+    ## caninvlink <- canonf$linkinv
     canlink <- canonf$linkfun
     Dcaninvlink <- canonf$mu.eta
     Dcanlink <- function(x) 1/Dcaninvlink(canlink(x))
@@ -273,12 +264,13 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
     ginv <- f$linkinv
     X <- model.matrix(x)
     n <- nrow(X)
-    disp <- 1; p0 <- p
+    ##disp <- 1;
+    p0 <- p
     if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
         if (length(p)==ncol(X)) {
-            disp <- suppressWarnings((summary(x)$dispersion))
+            ##disp <- suppressWarnings((summary(x)$dispersion))
         } else {
-            disp <- tail(p,1)
+            ##disp <- tail(p,1)
             p0 <- p[-length(p)]
         }
     }

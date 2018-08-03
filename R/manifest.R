@@ -23,7 +23,7 @@ manifest.list <- function(x,...) {
     for (i in seq_along(x)) {
         manifestlist <- c(manifestlist, manifest(x[[i]]))
     }
-    endolist <- unique(manifestlist)
+    ## endolist <- unique(manifestlist)
     return(manifestlist)
 }
 

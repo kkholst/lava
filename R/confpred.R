@@ -34,7 +34,6 @@ confpred <- function(object,data,newdata=data,alpha=0.05,mad,...) { ## Split alg
     dd <- csplit(data,0.5)
     muhat.new <- predict(object,newdata=newdata) ## New predictions
     muhat.1 <- predict(object,newdata=dd[[1]])      ## Training
-    R1 <- abs(dd[[1]][,1]-muhat.1)
     muhat.2 <- predict(object,newdata=dd[[2]])   ## Ranking
     R2 <- abs(dd[[2]][,1]-muhat.2)
     if (missing(mad)) mad <- formula(object)

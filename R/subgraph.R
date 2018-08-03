@@ -1,6 +1,5 @@
 subgraph <- function(g,from,to,Tree=new("graphNEL",node=c(to,from),edgemode="directed"),...) {
     adjnodes <- graph::adj(g,from)[[1]]
-    newnodes <- !(adjnodes %in% graph::nodes(Tree))
     if (length(adjnodes)==0)
         return(Tree)
     for (v in adjnodes) {

@@ -24,7 +24,7 @@ km <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...)
         K <- mu
     }
     sswmin <- Inf
-    mus <- ssws <- clmin <- mumin <- NULL
+    mus <- ssws <- NULL
     cl0 <- rep(1,NROW(x))
     for (k in seq(n.start)) {
         if (random.start) {

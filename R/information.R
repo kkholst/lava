@@ -72,7 +72,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
             }
             pp <- modelPar(x0,p)
             p0 <- with(pp, c(meanpar,p,p2))
-            k <- length(index(x)$manifest)
             myfun <- function(ii) {
                 if (length(xfix)>0)
                     for (i in seq_along(myfix$var)) {

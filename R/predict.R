@@ -124,8 +124,6 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
 
 
   IAi <- m$IAi
-  P <- m$P
-  X.idx <- match(X,manifest(object))
   eta.idx <- match(latent(object),vars(object))
   obs.idx <- match(manifest(object),vars(object))
   X.idx.all <- match(X, vars(object))
@@ -136,7 +134,6 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
   C.x <- (IAi%*% P.x %*%t(IAi))
   Cy.x <- C.x[Y.idx.all,Y.idx.all,drop=FALSE]
   ## Calculation of conditional mean given X=x
-  G <- m$J%*%IAi
   mu.0 <- m$v; mu.0[X.idx.all] <- 0
   if (length(X)>0) {
     xs <- data[,X,drop=FALSE]
@@ -152,7 +149,7 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
   Ey.x <- xi.x[Y.idx.all,,drop=FALSE]
   Eeta.x <- xi.x[eta.idx,,drop=FALSE]
   Cy.epsilon <- P.x%*%t(IAi) ## Covariance y,residual
-  Czeta.y <- Cy.epsilon[eta.idx,index(object)$endo.idx]
+    ##Czeta.y <- Cy.epsilon[eta.idx,index(object)$endo.idx]
   A <- m$A
   IA <- diag(nrow=nrow(A))-t(A)
 
@@ -220,7 +217,6 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
   Vhat[,obs.idx] <- as.matrix(data[,manifest(object)])
   if (length(eta.idx)>0)
     Vhat[,latent(object)] <- t(Eeta.y)
-  I <- diag(nrow=nrow(A));
   epsilonhat <- (t( IA%*%t(Vhat) - m$v ))[,c(endogenous(object),latent(object)),drop=FALSE]
   if (residual) {
     return(epsilonhat)
@@ -231,7 +227,6 @@ predict.lvm <- function(object,x=NULL,y=NULL,residual=FALSE,p,data,path=FALSE,qu
   for (i in latent(object))
     mydata[,i] <- m$v[i]
 
-  Yhat <- t(mydata%*%t(A)) + (m$v)
   res <- cbind(t(Ey.x)) ## Conditional mean
 
   attr(res, "cond.var") <- Cy.x

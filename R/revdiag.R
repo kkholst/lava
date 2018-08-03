@@ -63,7 +63,7 @@ offdiag <- function(x,type=0,...) {
 
 ##' @export
 print.offdiag <- function(x,...) {
-    type <- attr(x,"type")
+    ## type <- attr(x,"type")
     nn <- attr(x,"dimension")
     M <- matrix(NA,nn[1],nn[2])
     M[attr(x,"index")] <- x

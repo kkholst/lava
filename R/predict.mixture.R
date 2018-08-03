@@ -9,9 +9,9 @@ predict.lvm.mixture <- function(object,x=lava::vars(object$model),p=coef(object,
     logplogff <- t(apply(logff,1, function(y) y+log(pr)))
     zmax <- apply(logplogff,1,max)
     logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
-    aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
+    ##aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
     gamma <- exp(apply(logplogff,2,function(y) y - logsumpff)) ## Posterior class probabilities, conditional mean
-    Vgamma <- gamma-gamma^2 ## conditional variance
+    ##Vgamma <- gamma-gamma^2 ## conditional variance
     M <- 0; V <- 0
     for (i in seq(object$k)) {
         m <- Model(object$multigroup)[[i]]

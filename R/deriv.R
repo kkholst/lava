@@ -13,7 +13,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
     npar.mean <- ifelse(is.null(meanpar),0,ii$npar.mean)
     npar.ex <- ii$npar.ex
     meanpar <- seq_len(npar.mean)
-    epar <- seq_len(npar.ex)
     nn <- expr$parpos
 
     if (is.null(nn))
@@ -121,7 +120,6 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
         ##    ii$Kkk <- commutation(nobs,sparse=FALSE)
     }
 
-    N <- NCOL(ii$A)
     K <- nobs
     ## if (N>10) {
     if (!lava.options()$devel) {
@@ -196,7 +194,7 @@ deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=
             ( as.vector(mom$G) %x% I2 )%*% dG
         ) %*% t(dP)
         )
-        vec.d2S <- d2S1+d2S3+d2S3
+        vec.d2S <- d2S1+d2S2+d2S3
         res <- c(res, list(d2vecS=vec.d2S))
     }
 

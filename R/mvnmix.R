@@ -79,7 +79,6 @@ mvnmix <- function(data, k=2, theta, steps=500,
   if (is.data.frame(data)) data <- as.matrix(data)  
   i <- 0
   E <- tol
-  n <- nrow(data)
   D <- ncol(data)
   yunique <- unique(data)
 
@@ -230,7 +229,7 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
     {
       mycurve <- function(xx) {
         a <- 0;
-        for (i in 1:(x$k)) 
+        for (i in 1:(x$k))
           a <- a+pi[i]*dnorm(xx,pp[[i]]$mean,sqrt(pp[[i]]$var[1]))
         a
       }

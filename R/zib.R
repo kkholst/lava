@@ -221,7 +221,6 @@ predict.zibreg <- function(object,p=coef(object),gamma,newdata,link=TRUE,subdist
         gamma <- p[object$gamma.idx]
         p <- p[object$beta.idx]
     }
-    g <- object$family$linkfun
     ginv <- object$family$linkinv
     dginv <- object$family$mu.eta ## D[linkinv]
     Xbeta <- as.vector(X%*%p)
@@ -317,9 +316,7 @@ logLik.zibreg <- function(object,beta=object$beta,gamma=object$gamma,data,offset
     zibreg_logL(beta,gamma,object$y,object$X,object$Z,offset,object$family,indiv=indiv,...)
 }
 zibreg_logL <- function(beta,gamma,y,X,Z,offset=NULL,family=stats::binomial(),indiv=FALSE,...) {
-    g <- family$linkfun
     ginv <- family$linkinv
-    dginv <- family$mu.eta ## D[linkinv]
     n <- nrow(X)
     Xbeta <- as.vector(X%*%beta)
     Zgamma <- as.vector(Z%*%gamma)
@@ -347,10 +344,8 @@ score.zibreg <- function(x,beta=x$beta,gamma=x$gamma,data,offset=x$offset,indiv=
 }
 
 zibreg_score <- function(beta,gamma,y,X,Z,offset=NULL,family=stats::binomial(),indiv=FALSE,...) {
-    g <- family$linkfun
     ginv <- family$linkinv
     dginv <- family$mu.eta ## D[linkinv]
-    n <- nrow(X)
     Xbeta <- as.vector(X%*%beta)
     Zgamma <- as.vector(Z%*%gamma)
     p0 <- ginv(Zgamma)

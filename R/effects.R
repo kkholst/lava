@@ -87,7 +87,6 @@ effects.lvmfit <- function(object,to,from,...) {
         for (i in seq_len(length(idx.list))) {
             margef <- c(margef, list(prodsumdelta(coefs.all, idx.list[i], S.all,...)))
         }
-        paths <- list()
     }
 
     directidx <- which(lapply(P$path,length)==2)

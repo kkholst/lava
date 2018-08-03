@@ -31,7 +31,6 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
                    keep1=FALSE,
                    propensity.arg,estimate.arg,
                    na.action=na.pass, ...) {
-    iid1 <- iid(x)
     iid2 <- iid(model2)
     if (missing(inv.D2u)) {
         inv.D2u <- -attributes(iid2)$bread
@@ -80,7 +79,6 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
         dpropensity[mis,] <- 0
         options(op)
     }
-    N <- nrow(iid2)
     if (!missing(dpropensity)) {
         D2u <- Inverse(inv.D2u)
         u2 <- -iid2%*%D2u ## Score of stage two equation derived from estimated influence function

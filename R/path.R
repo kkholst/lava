@@ -59,46 +59,41 @@ path <- function(object,...) UseMethod("path")
 
 ##' @export
 path.lvmfit <- function(object,to=NULL,from,...) {
-  mypath <- pathM(Model(object)$M,to,from,...)
-  cc <- coef(object,type=9,labels=FALSE) ## All parameters (fixed and variable)
+    mypath <- pathM(Model(object)$M,to,from,...)
+    cc <- coef(object,type=9,labels=FALSE) ## All parameters (fixed and variable)
+    cc0 <- coef(object,type=2) ## Estimated parameters
+    i1 <- na.omit(match(rownames(cc),rownames(cc0)))
+    idx.cc0 <-  which(rownames(cc)%in%rownames(cc0)); ## Position of estimated parameters among all parameters
+    S <- matrix(0,nrow(cc),nrow(cc)); rownames(S) <- colnames(S) <- rownames(cc)
+    V <- object$vcov
+    S[idx.cc0,idx.cc0] <- V[i1,i1]  ## "Covariance matrix" of all parameters
 
-  #cc0 <- coef(object,type=1) ## Estimated parameters
-  cc0 <- coef(object,type=2) ## Estimated parameters
-  i1 <- na.omit(match(rownames(cc),rownames(cc0)))
-  idx.cc0 <-  which(rownames(cc)%in%rownames(cc0)); ## Position of estimated parameters among all parameters
-  S <- matrix(0,nrow(cc),nrow(cc)); rownames(S) <- colnames(S) <- rownames(cc)
-  V <- object$vcov
-  npar.mean <- index(object)$npar.mean
-#  if (object$control$meanstructure & npar.mean>0)
-#    V <- V[-c(seq_len(npar.mean)),-c(seq_len(npar.mean))]
-  S[idx.cc0,idx.cc0] <- V[i1,i1]  ## "Covariance matrix" of all parameters
-
-  idx <- list()
-  coefs <- list()
-  V <- list()
-  for (i in seq_along(mypath)) {
-    xx <- mypath[[i]]
-    ii <- c()
-    for (j in seq_len(length(xx)-1)) {
-      st <- paste0(xx[j+1], lava.options()$symbol[1], xx[j])
-      ii <- c(ii, match(st,rownames(cc)))
+    idx <- list()
+    coefs <- list()
+    V <- list()
+    for (i in seq_along(mypath)) {
+        xx <- mypath[[i]]
+        ii <- c()
+        for (j in seq_len(length(xx)-1)) {
+            st <- paste0(xx[j+1], lava.options()$symbol[1], xx[j])
+            ii <- c(ii, match(st,rownames(cc)))
+        }
+        idx <- c(idx, list(ii))
+        V <- c(V, list(S[ii,ii]))
+        coefs <- c(coefs, list(cc[ii]))
     }
-    idx <- c(idx, list(ii))
-    V <- c(V, list(S[ii,ii]))
-    coefs <- c(coefs, list(cc[ii]))
-  }
 
-  edges <- list()
-  for (i in seq_along(mypath)) {
-    p0 <- mypath[[i]]
-    ee <- c()
-    for (i in seq_len(length(p0)-1)) {
-      ee <- c(ee, paste(p0[i],p0[i+1],sep="~"))
+    edges <- list()
+    for (i in seq_along(mypath)) {
+        p0 <- mypath[[i]]
+        ee <- c()
+        for (i in seq_len(length(p0)-1)) {
+            ee <- c(ee, paste(p0[i],p0[i+1],sep="~"))
+        }
+        edges <- c(edges, list(ee))
     }
-    edges <- c(edges, list(ee))
-  }
-  res <- list(idx=idx,V=V,coef=coefs, path=mypath, edges=edges)
-  return(res)
+    res <- list(idx=idx,V=V,coef=coefs, path=mypath, edges=edges)
+    return(res)
 }
 
 ##' @export
@@ -108,117 +103,117 @@ path.lvm <- function(object,to=NULL,from,all=FALSE,...) {
 
 ##' @export
 path.graphNEL <- function(object,to,from,...) {
-  if (inherits(to,"formula")) {
-    fvar <- extractvar(to)
-    if (length(fvar$x)==1 & length(fvar$y)==1)
-      return(path(object,to=fvar$y,from=fvar$x))
+    if (inherits(to,"formula")) {
+        fvar <- extractvar(to)
+        if (length(fvar$x)==1 & length(fvar$y)==1)
+            return(path(object,to=fvar$y,from=fvar$x))
+        res <- list()
+        for (y in fvar$y) {
+            for (x in fvar$x) {
+                cat("x=",x, " y=",y, "\n")
+                res <- c(res, list(path(object,to=y,from=x)))
+            }
+        }
+        return(res)
+    }
+    ff <- function(g,from=1,to=NULL,res=list()) {
+        M <- graph::edgeMatrix(g)
+        i1 <- which(M[1,]==from)
+        for (i in i1) {
+            e <- M[,i]; newto <- e[2];
+            if (is.null(to) || M[2,i]==to) {
+                res <- c(res, list(M[,i]))
+            }
+            newpath <- ff(g,from=newto,to=to,list())
+            if (length(newpath)>0)
+                for (j in seq_along(newpath)) {
+                    if (is.null(to) || (tail(newpath[[j]],1)==to))
+                        res <- c(res, list(c(M[,i],newpath[[j]][-1])))
+                }
+        }
+        return(res)
+    }
+    idxfrom <- ifelse(is.numeric(from),from,which(from==graph::nodes(object)))
+    ##M <- as(object,"matrix")
+    ##reachable <- acc(M,graph::nodes(object)[idxfrom])
+    reachable <- graph::acc(object,graph::nodes(object)[idxfrom])[[1]]
+
+    if (is.null(to)) {
+        idxto <- reachable
+    } else {
+        idxto <- ifelse(is.numeric(to),to,which(to==graph::nodes(object)))
+    }
+
+    if (!(graph::nodes(object)[idxto] %in% names(reachable)))
+        ##    return(structure(list(),to=to[1],from=from[1]))
+        return(NULL)
+    ##    stop("No directional relationship between variables")
+
+    mypaths <- ff(object,idxfrom,idxto)
     res <- list()
-    for (y in fvar$y) {
-      for (x in fvar$x) {
-        cat("x=",x, " y=",y, "\n")
-        res <- c(res, list(path(object,to=y,from=x)))
-      }
+    for (i in seq_along(mypaths)) {
+        res <- c(res, list(graph::nodes(object)[mypaths[[i]]]))
     }
     return(res)
-  }
-  ff <- function(g,from=1,to=NULL,res=list()) {
-    M <- graph::edgeMatrix(g)
-    i1 <- which(M[1,]==from)
-    for (i in i1) {
-      e <- M[,i]; newto <- e[2];
-      if (is.null(to) || M[2,i]==to) {
-        res <- c(res, list(M[,i]))
-      }
-      newpath <- ff(g,from=newto,to=to,list())
-      if (length(newpath)>0)
-      for (j in seq_along(newpath)) {
-        if (is.null(to) || (tail(newpath[[j]],1)==to))
-          res <- c(res, list(c(M[,i],newpath[[j]][-1])))
-      }
-    }
-    return(res)
-  }
-  idxfrom <- ifelse(is.numeric(from),from,which(from==graph::nodes(object)))
-  ##M <- as(object,"matrix")
-  ##reachable <- acc(M,graph::nodes(object)[idxfrom])
-  reachable <- graph::acc(object,graph::nodes(object)[idxfrom])[[1]]
-  
-  if (is.null(to)) {
-    idxto <- reachable
-  } else {
-    idxto <- ifelse(is.numeric(to),to,which(to==graph::nodes(object)))
-  }
-
-  if (!(graph::nodes(object)[idxto] %in% names(reachable)))
-##    return(structure(list(),to=to[1],from=from[1]))
-    return(NULL)
-  ##    stop("No directional relationship between variables")
-
-  mypaths <- ff(object,idxfrom,idxto)
-  res <- list()
-  for (i in seq_along(mypaths)) {
-    res <- c(res, list(graph::nodes(object)[mypaths[[i]]]))
-  }
-  return(res)
 }
 
 
 pathM <- function(M,to,from,all=FALSE,...) {
-  nn <- colnames(M)
-  if (inherits(to,"formula")) {
-    fvar <- extractvar(to)
-    if (length(fvar$x)==1 & length(fvar$y)==1)
-      return(pathM(M,to=fvar$y,from=fvar$x,all=all))
+    nn <- colnames(M)
+    if (inherits(to,"formula")) {
+        fvar <- extractvar(to)
+        if (length(fvar$x)==1 & length(fvar$y)==1)
+            return(pathM(M,to=fvar$y,from=fvar$x,all=all))
+        res <- list()
+        for (y in fvar$y) {
+            for (x in fvar$x) {
+                cat("x=",x, " y=",y, "\n")
+                res <- c(res, list(pathM(M,to=y,from=x,all=all)))
+            }
+        }
+        return(res)
+    }
+    if (all) { ## Get all simple paths
+        res <- simplePaths(to,from,from,M,list())
+        return(res)
+    }
+
+
+    ff <- function(g,from=1,to=NULL,res=list()) {
+        i1 <- which(M[from,]==1)
+        for (i in i1) {
+            ##      e <- M[,i]; newto <- e[2];
+            if (is.null(to) || i==to) {
+                res <- c(res, list(c(from,i)))
+            }
+            newpath <- ff(g,from=i,to=to,list())
+            if (length(newpath)>0)
+                for (j in seq_along(newpath)) {
+                    if (is.null(to) || (tail(newpath[[j]],1)==to))
+                        res <- c(res, list(c(c(from,i),newpath[[j]][-1])))
+                }
+        }
+        return(res)
+    }
+    idxfrom <- ifelse(is.numeric(from),from,which(from==nn))
+    reachable <- acc(M,nn[idxfrom])
+
+    if (is.null(to)) {
+        idxto <- reachable
+    } else {
+        idxto <- ifelse(is.numeric(to),to,which(to==nn))
+    }
+
+    if (!(nn[idxto] %in% reachable))
+        return(NULL)
+    ##    stop("No directional relationship between variables")
+
+    mypaths <- ff(M,idxfrom,idxto)
     res <- list()
-    for (y in fvar$y) {
-      for (x in fvar$x) {
-        cat("x=",x, " y=",y, "\n")
-        res <- c(res, list(pathM(M,to=y,from=x,all=all)))
-      }
+    for (i in seq_along(mypaths)) {
+        res <- c(res, list(nn[mypaths[[i]]]))
     }
     return(res)
-  }
-  if (all) { ## Get all simple paths
-      res <- simplePaths(to,from,from,M,list())
-      return(res)
-  }
-  
-
-  ff <- function(g,from=1,to=NULL,res=list()) {
-    i1 <- which(M[from,]==1)
-    for (i in i1) {
-      ##      e <- M[,i]; newto <- e[2];
-      if (is.null(to) || i==to) {
-        res <- c(res, list(c(from,i)))
-      }
-      newpath <- ff(g,from=i,to=to,list())
-      if (length(newpath)>0)
-      for (j in seq_along(newpath)) {
-        if (is.null(to) || (tail(newpath[[j]],1)==to))
-          res <- c(res, list(c(c(from,i),newpath[[j]][-1])))
-      }
-    }
-    return(res)
-  }
-  idxfrom <- ifelse(is.numeric(from),from,which(from==nn))
-  reachable <- acc(M,nn[idxfrom])
-  
-  if (is.null(to)) {
-    idxto <- reachable
-  } else {
-    idxto <- ifelse(is.numeric(to),to,which(to==nn))
-  }
-
-  if (!(nn[idxto] %in% reachable))
-    return(NULL)
-  ##    stop("No directional relationship between variables")
-
-  mypaths <- ff(M,idxfrom,idxto)
-  res <- list()
-  for (i in seq_along(mypaths)) {
-    res <- c(res, list(nn[mypaths[[i]]]))
-  }
-  return(res)
 }
 
 
@@ -230,7 +225,7 @@ simplePaths <- function(target,currentpath,visited,adjmat,allpaths) {
     if (lastnode==target) {
         allpaths <- c(allpaths,list(currentpath))
     } else {
-        for (neighbour in rownames(adjmat)[which(A[,lastnode])]) {            
+        for (neighbour in rownames(adjmat)[which(A[,lastnode])]) {
             if (!(neighbour%in%visited)) {
                 currentpath <- c(currentpath,neighbour)
                 visited <- c(visited,neighbour)

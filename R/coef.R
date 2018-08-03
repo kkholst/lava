@@ -38,11 +38,9 @@
         P <- AP$P; P[index(object)$P1==0] <- "0"; P[upper.tri(P)] <- "0"
         nn <- vars(object)
 
-        counter <- 0
         res <- c()
         resname <- c()
 
-        ## if (DEBUG) {
         ii <- which(t(A)!="0",arr.ind=TRUE)
         rname <- paste(nn[ii[,1]],nn[ii[,2]],sep=symbol[1])
         if (labels) {
@@ -52,7 +50,6 @@
         res <- rname
         resname <- c(resname,t(A)[ii])
 
-        ## if (DEBUG) {
         ii <- which(P!="0",arr.ind=TRUE)
         if (length(symbol)<2)
             rname <- paste(nn[ii[,2]],nn[ii[,1]],sep=lava.options()$symbol[2])
@@ -170,10 +167,9 @@
 
 
         latent.var <- latent(object)
-        latent.idx <- which(vars(object)%in%latent.var)
-        Type <- Var <- From <- VarType <- FromType <- c()
+        Type <- Var <- From <- c()
 
-        Astd <- Pstd <- vstd <- mytype <- NULL
+        Astd <- Pstd <- vstd <- NULL
         if (!is.null(std)) {
             stdCoef <- stdcoef(object)
             {
@@ -319,7 +315,6 @@
                                 }
                             }
                 }
-        res0 <- res
 
         ## Mean parameter:
         nlincon.mean <- lapply(Model(object)$mean, function(x) x%in%names(constrain(Model(object))) )
@@ -565,11 +560,9 @@ CoefMat <- function(x,
     mycoef[cc[,4]<1e-12,4] <- "  <1e-12"
 
     M <- ncol(cc)
-    N <- nrow(cc)
     Nreg <- sum(attributes(cc)$type=="regression")
     Nvar <- sum(attributes(cc)$type=="variance")
     Nint <- sum(attributes(cc)$type=="intercept")
-    Nextra <- sum(attributes(cc)$type=="extra")
 
     latent.var <- attributes(cc)$latent
 
@@ -704,7 +697,6 @@ stdcoef <- function(x,p=coef(x),...) {
         vstarY <- iNy%*%v
     else
         vstarY <- NULL
-    pstdY <- pars(Model(x),A=AstarY,P=PstarY,v=vstarY)
     ## Standardized w.r.t. latent only:
     Astar <- t(iNn%*%A%*%Nn)
     Pstar <- iNn%*%P%*%iNn

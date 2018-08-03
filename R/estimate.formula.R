@@ -48,7 +48,6 @@ estimate.formula <- function(x, data, weights, family=stats::gaussian,
 
 
 estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,messages=0,id=NULL,distribution=NULL,estimator="gaussian",...) {
-    cl <- match.call()
     formulaId <- union(Specials(x,c("cluster")),Specials(x,c("id")))
     formulaSt <- paste0("~.-cluster(",formulaId,")-id(",formulaId,")")
     if (!is.null(formulaId)) {
@@ -57,9 +56,7 @@ estimate0 <- function(x,data=parent.frame(),pred.norm=c(),unstruct=FALSE,message
     }
     if (!is.null(id))
         x <- update(x,as.formula(paste(".~.+",id)))
-    varnames <- all.vars(x)
     mf <- model.frame(x,data)
-    mt <- attr(mf, "terms")
     yvar <- names(mf)[1]
     y <- mf[,yvar]
     opt <- options(na.action="na.pass")

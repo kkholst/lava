@@ -423,7 +423,6 @@
                             colMeans(data[,myfix$var[[i]],drop=FALSE])
                 x0 <- updatelvm(x0,zeroones=TRUE,deriv=TRUE)
                 x <- x0
-                yvars <- endogenous(x0)
                 ## Alter start-values/constraints:
                 new.par.idx <- which(coef(mymodel,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE))
                 if (length(Optim$start)>length(new.par.idx))
@@ -689,7 +688,6 @@
                 opt <- do.call(Optim$method,
                                optarg)
                 if (inherits(opt,"optimx")) {
-                    opt0 <- opt
                     opt <- list(par=coef(opt)[1,])
                 }
                 if (is.null(opt$estimate))
@@ -715,8 +713,10 @@
         }
 
         if (!is.null(opt$convergence)) {
-            if (opt$convergence!=0) warning("Lack of convergence. Increase number of iteration or change starting values.")
-        } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3) warning("Lack of convergence. Increase number of iteration or change starting values.")
+            if (opt$convergence != 0)
+                warning("Lack of convergence. Increase number of iteration or change starting values.")
+        } else if (!is.null(opt$gradient) && mean(opt$gradient)^2>1e-3)
+            warning("Lack of convergence. Increase number of iteration or change starting values.")
         if (quick) {
             return(opt$estimate)
         }
