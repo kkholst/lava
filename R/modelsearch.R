@@ -62,6 +62,7 @@ backwardeliminate <- function(x,
     }
 
     ff <- function() {
+        ii <- grep("m",names(coef(M)))
         vv <- variances(M,mean=TRUE)
         args <- c(list(x=M,data=data,missing=missing,quick=TRUE,messages=messages),dots)
         cc <- do.call("estimate",args)
@@ -101,7 +102,6 @@ backwardsearch <- function(x,k=1,...) {
     p <- pars(x)
     cur <- Model(x)
     pp <- modelPar(cur,p)
-
     p1 <- pp$p
     Tests <- c(); Vars <- list()
 
@@ -111,6 +111,7 @@ backwardsearch <- function(x,k=1,...) {
     for (i in seq_len(ncol(freecomb)))
         {
             cc0 <- coef(cur, mean=FALSE,messages=0,symbol=lava.options()$symbol)
+            ii <- freecomb[,i]
             p0 <- p1; p0[ii] <- 0
             R <- diag(nrow=length(p0)); R <- matrix(R[ii,],nrow=length(ii))
             I <- information(Model(x), p=p1, n=x$data$n, data=model.frame(x))

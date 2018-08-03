@@ -81,7 +81,8 @@ iid.multigroupfit <- function(x,...) iid.default(x,combine=TRUE,...)
 
 ##' @export
 iid.matrix <- function(x,...) {
-    p <- ncol(x)
+    p <- NCOL(x)
+    n <- NROW(x)
     mu <- colMeans(x,na.rm=TRUE); S <- var(x,use="pairwise.complete.obs")*(n-1)/n
     iid1 <- t(t(x)-mu)
     iid2 <- matrix(ncol=(p+1)*p/2,nrow=n)
