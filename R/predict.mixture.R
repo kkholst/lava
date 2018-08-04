@@ -1,5 +1,5 @@
 ##' @export
-predict.lvm.mixture <- function(object,x=lava::vars(object$model),p=coef(object,full=TRUE),model="normal",predict.fun=NULL,...) {
+predict.lvm.mixture <- function(object,p=coef(object,full=TRUE),model="normal",predict.fun=NULL,...) {
     p0 <- coef(object,full=FALSE)
     pp <- p[seq_along(p0)]
     pr <- p[length(p0)+seq(length(p)-length(p0))];
@@ -11,8 +11,8 @@ predict.lvm.mixture <- function(object,x=lava::vars(object$model),p=coef(object,
     logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
     aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
     gamma <- exp(apply(logplogff,2,function(y) y - logsumpff)) ## Posterior class probabilities, conditional mean
-    Vgamma <- gamma-gamma^2 ## conditional variance
     M <- 0; V <- 0
+    x <- lava::vars(object$model)
     for (i in seq(object$k)) {
         m <- Model(object$multigroup)[[i]]
         P <- predict(m,data=object$data,p=myp[[i]],x=x)
@@ -20,9 +20,12 @@ predict.lvm.mixture <- function(object,x=lava::vars(object$model),p=coef(object,
             M <- M+gamma[,i]*predict.fun(P,as.vector(attributes(P)$cond.var), ...)
         } else {
             M <- M+gamma[,i]*P
-            V <- V+gamma[,i]^2*as.vector(attributes(P)$cond.var)
+            V <- V+gamma[,i]*as.vector(attributes(P)$cond.var) + gamma[,i]*P^2
         }
     }
+    ## Var(X) = E[(X-m)^2] = EX^2 - m^2 
+    ##        = sum(pi*Xi^2) - [sum(pi*mi)]^2 = sum(pi*sigmai^2) + sum(pi*mi^2) - [sum(pi*mi)]^2
     if (!is.null(predict.fun)) return(M)
+    V <- V-M^2    
     structure(M,cond.var=V)
 }
