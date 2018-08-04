@@ -7,7 +7,6 @@
 
 mat.lvm <- function(x,ii=index(x),...) {
     A <- ii$A ## Matrix with fixed parameters and ones where parameters are free
-    J <- ii$J ## Manifest variable selection matrix
     M1 <- ii$M1 ## Index of free and _unique_ regression parameters
     P <- ii$P  ## Matrix with fixed variance parameters and ones where parameters are free
     P1 <- ii$P1 ## Index of free and _unique_ regression parameters
@@ -94,7 +93,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     pidxM <- seq_len(ii$npar.mean)
     v <- NULL
 
-    named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
+    ## named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
     fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
     v <- rep(0,length(x$mean))
     names(v) <- colnames(P)
@@ -135,7 +134,7 @@ mat.lvm <- function(x,ii=index(x),...) {
     ## Ex-parameters
     idxE <- NULL
     pidxE <- parBelongsTo$epar
-    named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
+    ## named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
     fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
     epar <- rep(0,length(x$exfix))
     names(epar) <- names(x$expar)
@@ -324,14 +323,10 @@ matrices2 <- function(x,p,...) {
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
     A <- ii$A ## Matrix with fixed parameters and ones where parameters are free
-    J <- ii$J ## Manifest variable selection matrix
-    M0 <- ii$M0 ## Index of free regression parameters
     M1 <- ii$M1 ## Index of free and _unique_ regression parameters
     P <- ii$P  ## Matrix with fixed variance parameters and ones where parameters are free
-    P0 <- ii$P0 ## Index of free variance parameters
     P1 <- ii$P1 ## Index of free and _unique_ regression parameters
 
-    P1.lower <- P1[lower.tri(P1)]
     constrain.par <- names(constrain(x))
     parval <- list()
 
@@ -392,7 +387,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
     v <- NULL
     {
-        named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
+        ## named <- sapply(x$mean, function(y) is.character(y) & !is.na(y))
         fixed <- sapply(x$mean, function(y) is.numeric(y) & !is.na(y))
         v <- rep(0,length(x$mean))
         names(v) <- colnames(P)
@@ -426,7 +421,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ## Ex-parameters
     e <- NULL
     {
-        named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
+        ## named <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
         fixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
 
         e <- rep(0,length(x$exfix))

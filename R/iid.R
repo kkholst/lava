@@ -42,7 +42,6 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
     } else {
         U <- score(x,indiv=TRUE,...)
     }
-    n <- NROW(U)
     pp <- pars(x)
     if (!missing(bread) && is.null(bread)) {
         bread <- suppressWarnings(vcov(x))
@@ -82,7 +81,8 @@ iid.multigroupfit <- function(x,...) iid.default(x,combine=TRUE,...)
 
 ##' @export
 iid.matrix <- function(x,...) {
-    p <- ncol(x); n <- nrow(x)
+    p <- NCOL(x)
+    n <- NROW(x)
     mu <- colMeans(x,na.rm=TRUE); S <- var(x,use="pairwise.complete.obs")*(n-1)/n
     iid1 <- t(t(x)-mu)
     iid2 <- matrix(ncol=(p+1)*p/2,nrow=n)

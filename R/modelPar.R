@@ -53,9 +53,6 @@ modelPar.multigroup <- function(x,p, ...) {
     res <- list(p=pp, par=pp, mean=NULL)
     return(res)
   }
-  Nmean <- unlist(lapply(x$meanposN,length))
-  Npar <- unlist(lapply(x$parposN,length))
-  ##ppos <- mapply("+",x$parposN,as.list(Nmean),SIMPLIFY=FALSE)
   ppos <- x$parposN
   pp <- lapply(ppos,function(z) p[z+x$npar.mean])
 

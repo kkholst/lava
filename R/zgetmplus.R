@@ -41,7 +41,7 @@
 
         start <- "Estimate       S.E.  Est./S.E."
         end1 <- "MODEL RESULTS"
-        end2 <- "QUALITY OF NUMERICAL RESULTS"
+        ## end2 <- "QUALITY OF NUMERICAL RESULTS"
         res <- findfileseg(infile,start,end1);
         cat(paste(res,"\n"))
 
@@ -56,7 +56,6 @@
         con <- file(infile, blocking = FALSE)
         inp <- readLines(con)
         close(con)
-        nullstring <- 0
         linestart <- 1; lineend <- length(inp)
 
         mycmd1 <- paste0("grep -n \"",startstring,"\" ", infile);  a1 <- system(mycmd1,intern=TRUE);
@@ -198,7 +197,6 @@
                 if (M[i,j]!=0) {
                     var1 <- nn[i]; var2 <- nn[j];
                     if (i %in% lat.idx & !(j %in% lat.idx)) {## & !(j %in% lat.idx)) {
-                        key <- " on "
                         mymodel <- paste0(mymodel, "\n", var1, " by ", var2, ";")
                     } else {
                         mymodel <- paste0(mymodel, "\n", var2, " on ", var1, ";")

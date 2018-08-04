@@ -54,7 +54,6 @@ varest <- function(x,data) {
 
     var.eta <- c()
     for (eta in latent(x)) {
-        m.sub <- subset(Model(x),c(eta,indicators))
         reachable <- acc(x$M,eta)
         ys <- intersect(names(reachable),y.indicators)
         lambdas <- c()
@@ -99,7 +98,6 @@ IV <- function(m,data,R2thres=0,type="robust", ...) {
     B <- rbind(I,solve(I-A))
     VV <- B%*%P%*%t(B)
     u.var <- index(m)$vars
-    all.idx <- seq_along(u.var)
     lat.idx <- with(index(m), which(vars%in%latent))
     if (length(lat.idx)==0) stop("Estimator only defined for models with latent variable")
     y.var <- endogenous(m)
@@ -162,13 +160,8 @@ IV <- function(m,data,R2thres=0,type="robust", ...) {
     };
     names(eta.surrogate) <- latent(m)
 
-    dd <- list()
-    ll  <- list()
     coefname <- coef(m,mean=TRUE)
-    mycoef <- rep(0,length(coefname))
-    A0 <- A
     P0 <- P
-    D <- c()
     V. <- list()
     Z. <- list()
     Y. <- list()
@@ -217,7 +210,7 @@ IV <- function(m,data,R2thres=0,type="robust", ...) {
             if (any(R2max<R2thres)) intpred <- intpred[R2max>=R2thres]
             newf <- list(intpred); names(newf) <- vars(m)[v]
             instruments <- c(instruments, newf)
-            covariates <- unique(c(setdiff(colnames(A)[A[v,]==1],latent(m)),intpred))##allpred)
+            covariates <- unique(c(setdiff(colnames(A)[A[v,]==1],latent(m)),intpred))
             if (length(covariates)==0) stop("No instruments")
             Z <- model.matrix(toformula("",c("1",XX)),data)
             Y <- as.matrix(data[,vars(m)[v0]])
@@ -244,7 +237,7 @@ IV <- function(m,data,R2thres=0,type="robust", ...) {
     LS <- function(X) {
         with(svd(X), v%*%diag(1/d,nrow=length(d))%*%t(u))
     }
-    projection <- function(X) X%*%LS(X)
+    ##projection <- function(X) X%*%LS(X)
     P0 <- lapply(V.,LS)
     Zhat <- list(); for (i in seq_along(Z.)) Zhat <- c(Zhat, list(V.[[i]]%*%(P0[[i]]%*%Z.[[i]])))
     ZhatLS <- lapply(Zhat,LS)

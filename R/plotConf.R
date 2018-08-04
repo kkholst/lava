@@ -165,7 +165,7 @@ plotConf <- function(model,
 
     newdata <- data.frame(id=seq(npoints))
     partdata <- curdata
-    var1.idx <- var2.idx <- 0
+    var1.idx <- 0
     ii <- 1
     for (nn in cname) {
         ii <- ii+1
@@ -177,7 +177,6 @@ plotConf <- function(model,
         } else {
             if (is.factor(v)) {
                 if (nn%in%var2) {
-                    var2.idx <- ii
                     newdata <- cbind(newdata, factor(rep(levels(v), each=npoints),levels=thelevels))
                     partdata[,nn] <- factor(rep(levels(v)[1], nrow(partdata)),levels=levels(v))
                 } else {
@@ -196,18 +195,9 @@ plotConf <- function(model,
     colnames(newdata) <- c("_id", cname)
 
     partdata[,response] <- newdata[,response] <- 0
-    var1.newdata <- newdata[,var1.idx]
-    ##newdata <- model.frame(model,data=newdata)
-    ## if (is.factor(newdata[,var1.idx])) {
-    ##     partdata[,var1.idx] <- min(var1.newdata)
-    ## }
-                                        #o#partdata <- model.frame(model,data=partdata)
     atr <- c("terms")
     attributes(newdata)[atr] <- attributes(curdata)[atr]
     attributes(partdata)[atr] <- attributes(partdata)[atr]
-    if (is.factor(newdata[,var1.idx])) {
-        ##partdata[,var1.idx] <- levels(newdata[,var1.idx])[1]
-    }
     Y <- model.frame(model)[,1]
     if(inherits(Y,"Surv")) Y <- Y[,1]
     XX <- model.matrix(formula(terms(model)),data=newdata)
@@ -223,13 +213,6 @@ plotConf <- function(model,
             SS <- as.matrix(stats::vcov(model))
         }
     }
-    ## coefnames <- c("(Intercept)",var1)
-    ## if (!is.null(var2)) {
-    ##     var2n <- paste0(var2,thelevels[-1])
-    ##     coefnames <- c(coefnames,var2n,paste(var1,var2n,sep=":"),
-    ##                    paste(var2n,var1,sep=":"))
-    ## }
-    ##bidx <- which(names(bb)%in%coefnames)
     bidx <- which(apply(XX,2,function(x) !all(x==0)))
     notbidx <- setdiff(seq(length(bb)),bidx)
     bb0 <- bb; bb0[notbidx] <- 0
@@ -237,10 +220,6 @@ plotConf <- function(model,
     ci.all <- list(fit=XX%*%bb0,se.fit=myse)
     z <- qnorm(1-(1-level)/2)
     ci.all$fit <- cbind(ci.all$fit,ci.all$fit-z*ci.all$se.fit,ci.all$fit+z*ci.all$se.fit)
-
-    ##residuals(model,type="response") ##
-    ## zero <- bb; zero[-1] <- 0
-    ## intercept <- (model.matrix(model,curdata[1,,])%*%zero)[1]
 
     if (!missing(predictfun)) {
         R <- Y-predict(model, newdata=partdata)
@@ -255,12 +234,10 @@ plotConf <- function(model,
     }
 
     pr <- trans(intercept + R)
-    intercept0 <- 0
     if (is.na(intercept)) {
         intercept <- 0
         if (!is.null(var2)) {
             intercept <- coef(model)[paste0(var2,thelevels)][as.numeric(curdata[,var2])]
-            intercept0 <- coef(model)[paste0(var2,thelevels[1])]
         }
     }
 
@@ -329,7 +306,6 @@ plotConf <- function(model,
         if (missing(colpt)) colpt <- Col(col[1],alpha)
         if (partres>0)
             points(pr ~ x,pch=pch[1], col=colpt[1], cex=cex, ...)
-        positions <- seq(k)
         mycoef <- bb[paste0(var2,thelevels)][-1]
         if (inherits(model,c("lm","glm")))
             myconf <- confint(model)[paste0(var2,thelevels)[-1],,drop=FALSE]
@@ -377,6 +353,5 @@ plotConf <- function(model,
             legend(legend, legend=thelevels, col=col.k, pch=pch.k, bg="white",cex=cex)
     }
 
-    ##  palette(curpal)
     invisible(list(x=xx, y=pr, predict=ci.all, predict.newdata=newdata))
 }

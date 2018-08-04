@@ -61,7 +61,6 @@ backwardeliminate <- function(x,
         dots$control <- c(dots$control, list(start=p0,information="E"))
     }
 
-    if (intercepts) ii <- NULL
     ff <- function() {
         ii <- grep("m",names(coef(M)))
         vv <- variances(M,mean=TRUE)
@@ -103,10 +102,6 @@ backwardsearch <- function(x,k=1,...) {
     p <- pars(x)
     cur <- Model(x)
     pp <- modelPar(cur,p)
-    Y <- endogenous(x)
-    X <- exogenous(x)
-    V <- vars(x)
-
     p1 <- pp$p
     Tests <- c(); Vars <- list()
 
@@ -151,14 +146,12 @@ forwardsearch <- function(x,k=1,messages=lava.options()$messages,type='all',excl
     
     p <- pars(x,reorder=TRUE)
     cur <- Model(x)
-    pp <- modelPar(cur,p)
     Y <- endogenous(x)
     X <- exogenous(x)
     V <- vars(x)
     q <- length(Y); qx <- length(X)
     npar.sat <- q+q*(q-1)/2 + q*qx
     npar.cur <- index(cur)$npar
-    npar.mean <- index(cur)$npar.mean
     nfree <- npar.sat-npar.cur
     if (nfree<k) {
         message("Cannot free ",k," variables from model.\n");
@@ -264,9 +257,6 @@ forwardsearch <- function(x,k=1,messages=lava.options()$messages,type='all',excl
         Vars <- c(Vars, list(varlist))
     }
     
-    Tests0 <- Tests
-    Vars0 <- Vars
-
     if (messages>0) close(pb)
     ord <- order(Tests);
     Tests <- cbind(Tests, pchisq(Tests,k,lower.tail=FALSE)); colnames(Tests) <- c("Test Statistic", "P-value")

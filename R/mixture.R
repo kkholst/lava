@@ -175,8 +175,6 @@ mixture <- function(x, data, k=length(x),
         optim$prob <- rep(1/k,k-1)
     thetacur <- optim$start
     probcur <- with(optim, c(prob,1-sum(prob)))
-    probs <- rbind(probcur);
-    thetas <- rbind(thetacur)
 
     if (optim$constrain) {
         thetacur[constrained] <- log(thetacur[constrained])
@@ -266,7 +264,7 @@ mixture <- function(x, data, k=length(x),
     }
 
     EMstep <- function(p,all=FALSE) {
-        thetacur0 <- thetacur <- p[seq(Npar)]
+        thetacur <- p[seq(Npar)]
         gamma <- PosteriorProb(p,constrain=optim$constrain)
         probcur <- colMeans(gamma)
         count2 <- 0
@@ -276,7 +274,7 @@ mixture <- function(x, data, k=length(x),
             thetacur <- Scoring(thetacur,gamma)
             if (frobnorm(oldpar-thetacur)<optim$delta) break;
         }
-        theteacur0 <- thetacur
+        thetacur0 <- thetacur
         if (optim$constrain) {
             thetacur0[constrained] <- exp(thetacur[constrained])
         }
@@ -447,7 +445,6 @@ summary.lvm.mixture <- function(object,labels=0,...) {
 
 ##' @export
 print.summary.lvm.mixture <- function(x,...) {
-    space <- paste(rep(" ",12),collapse="")
     for (i in 1:length(x$coef)) {
         cat("Cluster ",i," (n=",x$ncluster[i],", Prior=", formatC(x$prob[i]),"):\n",sep="")
         cat(rep("-",50),"\n",sep="")
@@ -462,7 +459,6 @@ print.summary.lvm.mixture <- function(x,...) {
 
 ##' @export
 print.lvm.mixture <- function(x,...) {
-    space <- paste(rep(" ",12),collapse="")
     for (i in 1:x$k) {
         cat("Cluster ",i," (n=",sum(x$member==i),"):\n",sep="")
         cat(rep("-",50),"\n",sep="")

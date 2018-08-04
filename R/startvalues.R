@@ -112,12 +112,8 @@ startmean <- function(x,p,mu) {
 function(x, S, debug=FALSE, tol=1e-6,...) {
   S <- reorderdata.lvm(x,S)
   if (nrow(S)!=length(manifest(x))) stop("Number of observed variables in data and models does not agree.")
-  J <- index(x)$J ## Manifest selection
-  P0 <- index(x)$P0 ## covariance 'adjacency'
   A <- t(index(x)$M) ## Adjacency matrix
-  n <- nrow(S) ## Number of manifest variables
   m <- nrow(A) ## Number of variables
-  A1 <- t(index(x)$M1) ## Adjacency matrix (without fixed parameters and duplicates)
   A0 <- t(index(x)$M0) ## Adjacency matrix (without fixed parameters)
 
   obs.idx <- index(x)$obs.idx;
@@ -251,7 +247,7 @@ startvalues00 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     ##P0[!is.na(x$covfix)] <-
     ##P0 <- x$covfix; P0[is.na(P0)] <- 0
     ##diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.obsidx]/2
-    lu <- min(diag(P0)[index(x)$endo.idx])/2
+    ##lu <- min(diag(P0)[index(x)$endo.idx])/2
     ##    diag(P0)[] <- 0.1
     ## diag(P0)[index(x)$endo.idx] <- 1
     diag(P0)[index(x)$eta.idx] <- 0.1 ##mean(diag(S)[index(x)$endo.idx])/2
@@ -279,8 +275,8 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
     lu <- 0.9
     diag(P0)[index(x)$eta.idx] <- lu##mean(diag(S)[index(x)$endo.idx])/2
     pp <- pars(x,A=t(A0),P=P0,v=rep(1,length(index(x)$vars)))
-    nu <- numeric(length(vars(x)))
     pp[pp==1] <- p0[pp==1]
+    ## nu <- numeric(length(vars(x)))
     ## if (!is.null(mu)) {
     ##     nu[vars(x)%in%manifest(x)] <- mu
     ##     (diag(nrow(A0))-t(A0))%*%nu

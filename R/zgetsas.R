@@ -21,7 +21,6 @@ getSAS <- function(infile,entry="Parameter Estimates",...) {
     con <- file(infile, blocking = FALSE)
     inp <- readLines(con)
     close(con)
-    nullstring <- 0
     linestart <- 1; lineend <- length(inp)
     idx <- sapply(inp,function(x) length(grep(entry, x))>0)
     if (sum(idx)==1) {

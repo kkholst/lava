@@ -14,7 +14,6 @@ correlation.lvmfit <- function(x,z=TRUE,iid=FALSE,back.transform=TRUE,...) {
     if (length(pos)<1) return(NULL)
     pp0 <- pp
     pp0[index(x)$P0!=1] <- 0; pp0[lower.tri(pp0)] <- 0
-    coords <- c()
     mynames <- vars(x)
     n <- nrow(pp0)
     ff <-  function(p) {

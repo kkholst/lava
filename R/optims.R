@@ -191,7 +191,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,debug=FALSE,contr
     gammacount <- gammacount+1
     count <-  count+1
     count2 <- count2+1
-    oldpar <- thetacur
     newpar <- oneiter(thetacur,Dprev,iter=jj)
     Dprev <- newpar$D
     thetacur <- newpar$p

@@ -35,7 +35,6 @@
 ##' @export
 `exogenous.lvm` <-
     function(x,variable,latent=FALSE,index=TRUE,...) {
-        dots <- list(...)
         if (!missing(variable)) {
             exogenous(x) <- variable
             return(x)

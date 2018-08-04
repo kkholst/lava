@@ -339,9 +339,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
 
     if (single) {
-        N <- K
         nk <- unlist(lapply(se,length))
-        if (!is.null(se)) N <- sum(unlist(nk))+K
         col <- rep(col,length.out=K)
         for (i in seq(K)) {
             my.scatter.sim(i,add=(i>1),colors=col[i])

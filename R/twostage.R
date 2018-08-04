@@ -462,7 +462,6 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     pfree.int <- intersect(pfree.idx,intpos) ## Free intercept parameters
     p0 <- coef(e1a)
     pint <- p0[setdiff(intpos,pfree.int)]
-    p0i <- p0[-intpos]
     startf <- function(n) {
         u0 <- seq(knots.boundary[1],knots.boundary[2],length.out=n); names(u0) <- paste0("p",seq_along(u0))
         c(pint,u0,p0[-intpos])
@@ -515,7 +514,7 @@ print.twostageCV <- function(x,...) {
     printline(70)
     i1 <- which.min(x$AIC1)
     nmix <- names(x$AIC1)[i1]
-    cat("Selected mixture model: ",i1," component", ifelse(i1>1, "s",""),"\n", sep="")
+    cat("Selected mixture model: ",nmix," component", ifelse(i1>1, "s",""),"\n", sep="")
     print(x$AIC1)
     printline(70)
     i2 <- which.min(x$cv)

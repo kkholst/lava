@@ -319,7 +319,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             V0 <- V
             iI0 <- attributes(iidtheta)$bread
             I0 <- Inverse(iI0)
-            I1 <- crossprod(iidtheta%*%I0)
+            ##I1 <- crossprod(iidtheta%*%I0)
             delta <- min(0.5,p/(K-p))
             phi <- max(1,tr(I0%*%V0)*adj2/p)
             V <- adj2*V0 + delta*phi*iI0

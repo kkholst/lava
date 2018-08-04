@@ -1,6 +1,8 @@
 
 ##' @export
-fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE, S, mu, n, data, x0=FALSE, na.method="complete.obs", param=lava.options()$param,...) {
+fixsome <- function(x, exo.fix=TRUE, measurement.fix=TRUE,
+             S, mu, n, data, x0=FALSE, na.method="complete.obs",
+             param=lava.options()$param,...) {
 
     if (is.null(param)) {
         param <- "none"

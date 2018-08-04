@@ -173,7 +173,6 @@
     }
 
     ## Check for random slopes
-    xXx <- exogenous(x)
     Xfix <- FALSE
     Xconstrain <- FALSE
     xfix <- list()
@@ -188,7 +187,6 @@
     }
 
     ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
-    constr <- c()
     XconstrStdOpt <- TRUE
     xconstrainM <- TRUE
     xconstrain <- c()
@@ -253,7 +251,6 @@
                             colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
                 index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
                 x$lvm[[k]] <- x0
-                yvars <- endogenous(x0)
                 parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE,fix=FALSE)%in%coef(x0,mean=TRUE,fix=FALSE)])
             }
             parkeep <- sort(unique(parkeep))
@@ -612,7 +609,8 @@ estimate.lvmlist <-
         if (nm==1) {
             return(estimate(x[[1]],data,missing=missing,...))
         }
-        if (!all(unlist(lapply(x, function(y) inherits(y,"lvm"))))) stop ("Expected a list of 'lvm' objects.")
+        if (!all(unlist(lapply(x, function(y) inherits(y,"lvm")))))
+            stop ("Expected a list of 'lvm' objects.")
         if (is.data.frame(data)) {
             warning("Only one dataset - going for standard analysis on each submodel.")
             res <- c()

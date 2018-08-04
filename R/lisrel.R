@@ -1,12 +1,9 @@
 
 lisrel <- function(model,p,X=NULL,muX=NULL,varX=NULL,...) {
-    pp <- modelPar(model,p)
     mom <- moments(model,p)
     A <- t(index(model)$M)
-    J <- index(model)$J ## Observed var. selection matrix
 
     eta.idx <- match(latent(model),vars(model))
-    obs.idx <- match(manifest(model),vars(model))
     exo.idx <- match(exogenous(model),vars(model))
     y <- setdiff(manifest(model), exogenous(model))
     y.idx <- match(y, vars(model))
@@ -39,9 +36,7 @@ lisrel <- function(model,p,X=NULL,muX=NULL,varX=NULL,...) {
         Ey.x <- t(apply(as.matrix(X)%*% t(LIBi%*%Gamma + K),1,function(x) x + mom$v[y.idx]))
     } else Ey.x <- NULL
 
-    Sigma <- mom$Cfull
     CV <- COVetay.x%*%Vy.x
-
     ##  Sigma <- Vy.x + Phi%*%varX%*%t(Phi)
 
     return(list(mu=mom$v,

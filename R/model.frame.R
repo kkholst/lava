@@ -1,6 +1,5 @@
 ##' @export
 model.frame.lvmfit <- function(formula, all=FALSE,...) {
-  dots <- list(...)
   mydata <- formula$data$model.frame
   if (!is.data.frame(mydata) & !is.matrix(mydata))
     return(mydata)
@@ -12,7 +11,6 @@ model.frame.lvmfit <- function(formula, all=FALSE,...) {
 
 ##' @export
 model.frame.multigroupfit <- function(formula,...) {
-  dots <- list(...)
   mydata <- formula$model$data
   return(mydata)
 }

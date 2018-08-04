@@ -9,21 +9,19 @@ char2num <- function(x,...) {
 substArg <- function(x,env,...) {
   if (!missing(env)) {
     a <- with(env,substitute(x))
-#    a <- substitute(x,environment(env))
   } else {
     a <- substitute(x)
   }
   myclass <- tryCatch(class(eval(a)),error=function(e) NULL)
   if (is.null(myclass) || myclass=="name") {
-#  if (is.null(myclass)) {
-    res <- unlist(sapply(as.character(a),
-                         function(z) {
-                           trimmed <- gsub(" ","",z,fixed=TRUE)
-                           val <- strsplit(trimmed,"+",fixed=TRUE)
-                           if (val[1]=="") val <- NULL
-                           val
-                         })); attributes(res)$names <- NULL
-    return(res)
+      res <- unlist(sapply(as.character(a),
+                           function(z) {
+                               trimmed <- gsub(" ","",z,fixed=TRUE)
+                               val <- strsplit(trimmed,"+",fixed=TRUE)
+                               if (val[1]=="") val <- NULL
+                               val
+                           })); attributes(res)$names <- NULL
+      return(res)
   }
   return(eval(a))
 }
@@ -57,7 +55,7 @@ procrandomslope <- function(object,data=object$data,...) {
   }
   if (Xfix) {
     for (k in seq_len(object$ngroup)) {
-      x1 <- x0 <- object$lvm[[k]]
+      x0 <- object$lvm[[k]]
       data0 <- data[[k]]
       nrow <- length(vars(x0))
       xpos <- lapply(xfix[[k]],function(y) which(regfix(x0)$labels==y))
@@ -72,10 +70,7 @@ procrandomslope <- function(object,data=object$data,...) {
                    colMeans(data0[,myfix0$var[[i]],drop=FALSE],na.rm=TRUE)
       index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
       object$lvm[[k]] <- x0
-      yvars <- endogenous(x0)
-      #parkeep <- c(parkeep, parord[[k]][coef(x1,mean=TRUE)%in%coef(x0,mean=TRUE)])
     }
-#    parkeep <- sort(unique(parkeep))
     object <- multigroup(object$lvm,data,fix=FALSE,exo.fix=FALSE)
   }
   return(list(model=object,fix=myfix))
@@ -187,12 +182,7 @@ categorical2dummy <- function(x,data,messages=0,...) {
         if (is.character(mydata[,i]) | is.factor(mydata[,i]))
           mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
       }
-
-##      mydata <- data[,obs]
-##      if (any(is.na(mydata))) {
-##        warning("Discovered missing data. Going for a complete-case analysis. For data missing at random see 'missingMLE'.\n", immediate.=TRUE)
-##        mydata <- na.omit(mydata)
-##      }
+      
       S <- NULL
       n <- nrow(mydata)
       if (n==1) {
@@ -345,8 +335,6 @@ npar.lvm <- function(x) {
 }
 
 as.numeric.list <- function(x,...) {
-  res <- list()
-  asnum <- as.numeric(x)
   lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
 }
 
@@ -355,7 +343,7 @@ edge2pair <- function(e) {
 }
 numberdup <- function(xx) { ## Convert to numbered list
   dup.xx <- duplicated(xx)
-  dups <- xx[dup.xx]
+  ## dups <- xx[dup.xx]
   xx.new <- numeric(length(xx))
   count <- 0
   for (i in seq_along(xx)) {

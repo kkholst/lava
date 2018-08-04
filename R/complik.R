@@ -28,7 +28,6 @@
 complik <- function(x,data,k=2,type=c("nearest","all"),pairlist,messages=0,estimator="normal",
              ...) {
     y <- setdiff(endogenous(x),latent(x))
-    x.idx <- index(x)$exo.idx
     binsurv <- rep(FALSE,length(y))
     for (i in 1:length(y)) {
         z <- try(data[,y[i]],silent=TRUE)

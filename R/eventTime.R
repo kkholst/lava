@@ -200,7 +200,6 @@ eventTime <- function(object,formula,eventName="status",...) {
 addhook("plothook.eventHistory","plot.post.hooks")
 plothook.eventHistory <- function(x,...) {
     eh <- x$attributes$eventHistory
-    ehnames <- unlist(lapply(eh,function(x) x$names))
     for (f in eh) {
         x <- regression(x,to=f$names[1],from=f$latentTimes)
         latent(x) <- f$latentTimes

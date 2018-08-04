@@ -42,7 +42,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
                 }
             index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
         }
-        k <- length(index(x0)$manifest)
         myfun <- function(ii) {
             if (length(xfix)>0)
                 for (i in seq_along(myfix$var)) {

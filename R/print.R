@@ -166,16 +166,13 @@ print.multigroup <- function(x,...) {
 ###{{{ printmany
 
 printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,emptystr=" ",bothrows=!is.table(A),right=TRUE,print=TRUE,...) {
-  cA <- colnames(A); cB <- colnames(B)
   A <- format(A, digits=digits, right=right, ...)
   B <- format(B, digits=digits, right=right, ...)
   nA <- nrow(A); nB <- nrow(B)
   if (nrow(A)<nrow(B)) {
-    rA <- rownames(A)
     A <- rbind(A, matrix("", nrow=nB-nA, ncol=ncol(A)))
   }
   if (nrow(B)<nrow(A)) {
-    rB <- rownames(B)
     B <- rbind(B, rep("", nrow=nA-nB, ncol=ncol(B)))
   }
   if (!is.null(rownames) & length(rownames)==nrow(A))
