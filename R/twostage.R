@@ -513,12 +513,12 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
 print.twostageCV <- function(x,...) {
     printline(70)
     i1 <- which.min(x$AIC1)
-    nmix <- names(x$AIC1)[i1]
+    nmix <- rownames(x$AIC1)[i1]
     cat("Selected mixture model: ",nmix," component", ifelse(i1>1, "s",""),"\n", sep="")
     print(x$AIC1)
     printline(70)
     i2 <- which.min(x$cv)
-    splinedf <- unlist(lapply(x$knots,function(x) if (is.na(x)) return(1) else length(x)-1))
+    splinedf <- unlist(lapply(x$knots,function(x) if (any(is.na(x))) return(1) else length(x)-1))
     cat("Selected spline model degrees of freedom: ", splinedf[i2] ,"\n", sep="")
     knots <- rbind(x$knots[[i2]])
     cat("Knots:", paste(formatC(knots,...) , collapse=" "), "\n\n")
