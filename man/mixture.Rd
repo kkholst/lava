@@ -51,11 +51,10 @@ Note that the algorithm can be aborted any time (C-c) and still be saved
 \donttest{
 m0 <- lvm(list(y~x+z,x~z))
 distribution(m0,~z) <- binomial.lvm()
-d <- sim(m0,2000,p=c("y<-z"=2,"y<-x"=1),seed=1)
+d <- sim(m0,2000,p=c("y~z"=2,"y~x"=1),seed=1)
 
 ## unmeasured confounder example
-m <- baptize(lvm(y~x));
-covariance(m,~x) <- "v"
+m <- baptize(lvm(y~x, x~1));
 intercept(m,~x+y) <- NA
 
 set.seed(42)

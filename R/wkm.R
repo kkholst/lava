@@ -12,7 +12,7 @@
 ##' @export
 ##' @author Klaus K. Holst
 ##'
-km <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...) { ## Lloyd's algorithm
+wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...) { ## Lloyd's algorithm
     if (inherits(x, "formula")) x <- stats::model.matrix(x,data=data)
     x <- cbind(x)
     random.start <- TRUE
