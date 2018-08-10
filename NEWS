@@ -3,6 +3,7 @@
 * Version 1.6.3 <2018-08-03 Fri>
   - Fixed problems with plots (Rgraphviz)
   - Better print method for twostageCV
+  - Improved M-step in mixture.method
 
 * Version 1.6.2 <2018-07-02 Mon>
   - twostageCV: cross-validate two-stage estimator
