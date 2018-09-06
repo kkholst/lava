@@ -446,6 +446,13 @@ predict.twostage.lvmfit <- function(object,
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
                 knots.boundary, mc.cores=1, nmix=1:4, df=1:9, fix=TRUE, std.err=TRUE,
                 nfolds=5, rep=1, messages=0, ...) {
+
+    F <- nonlinear(model2)
+    if (length(F)==0) {
+        stop("Specify at least one nonlinear association in 'model2' (using the 'nonlinear' method)")
+    }
+    form <- as.formula(paste(names(F)[1], "~", x=F[[1]]$x))
+    
     op <- options(warn=-1)
     if (fix) {
         model1 <- baptize(fixsome(model1, param="relative"))
@@ -468,20 +475,26 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     }
     control1$start <- NULL
     ee <- list(e1a)
+
     nmix <- setdiff(nmix,1)
-    for (k in nmix) {
-        if (messages>0) cat("Fitting mixture model with", k, "components\n")
-        ee <- c(ee, list(mixture(model1, k=k, data=data,
-                           control=c(control1,list(start=startf(k))))))
+    if (mc.cores>1) {
+        val <- parallel::mclapply(as.list(nmix), function(k) {
+            if (messages>0) cat("Fitting mixture model with", k, "components\n")
+            mixture(model1, k=k, data=data, control=c(control1,list(start=startf(k))))
+        }, mc.cores=mc.cores)
+        ee <- c(ee, val)
+    } else {
+        for (k in nmix) {
+            if (messages>0) cat("Fitting mixture model with", k, "components\n")
+            ee <- c(ee, list(mixture(model1, k=k, data=data,
+                                     control=c(control1,list(start=startf(k))))))
+        }
     }
     AIC1 <- unlist(lapply(ee,AIC))
     names(AIC1) <- c(1,nmix)
     ii <- which.min(AIC1)
     ## Exposure measurement model
     e1 <- ee[[ii]] ## Selected model by AIC
-
-    F <- nonlinear(model2)
-    form <- as.formula(paste(names(F)[1], "~", x=F[[1]]$x))
 
     MM <- list(nonlinear(model2, form, type="linear"))
     df <- setdiff(df, 1)
@@ -497,6 +510,7 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     } else {
         f0 <- function(data) list(e0=mixture(model1,data=data,k=e1$k,control=c(control1,list(start=coef(e1)))))
     }
+    
     ff <- lapply(MM,
                  function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
     a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=mc.cores,shared=f0)
