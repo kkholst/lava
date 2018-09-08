@@ -5,7 +5,7 @@
 \title{fplot}
 \usage{
 fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
-  data = parent.frame(), add = FALSE)
+  data = parent.frame(), add = FALSE, aspect = c(1, 1), zoom = 0.8)
 }
 \arguments{
 \item{x}{X variable}
@@ -20,11 +20,15 @@ fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
 
 \item{...}{additional arggument to lower-level plot functions}
 
-\item{z.col}{Color}
+\item{z.col}{color (use argument alpha to set transparency)}
 
 \item{data}{data.frame}
 
-\item{add}{If TRUE use current active device}
+\item{add}{if TRUE use current active device}
+
+\item{aspect}{aspect ratio}
+
+\item{zoom}{zoom level}
 }
 \description{
 Faster plot via RGL

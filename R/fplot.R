@@ -12,10 +12,11 @@
 ##' @param xlab x-axis label
 ##' @param ylab y-axis label
 ##' @param ... additional arggument to lower-level plot functions
-##' @param z.col Color (use argument alpha to set transparency)
+##' @param z.col color (use argument alpha to set transparency)
 ##' @param data data.frame
-##' @param add If TRUE use current active device
-##' @param aspect Aspect ratio
+##' @param add if TRUE use current active device
+##' @param aspect aspect ratio
+##' @param zoom zoom level
 fplot <- function(x,y,z=NULL,xlab,ylab,...,z.col=topo.colors(64), 
                   data=parent.frame(),add=FALSE,aspect=c(1,1),zoom=0.8) {
     if (!requireNamespace("rgl",quietly=TRUE)) stop("Requires 'rgl'")    
