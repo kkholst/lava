@@ -1,0 +1,22 @@
+#+TITLE: Simulation study for "A two-stage estimation procedure for non-linear structural equation models"
+#+AUTHOR: Klaus Kähler Holst & Esben Budtz-Jørgensen
+#+DATE: 2018-09-08
+
+- =requirements.R=: Script for installing R dependencies
+- =nlinsem.R=: Simulation function for correctly specified models (Table 1) 
+- =proc.R=:  Post-processing of simulations (table creation)
+- =sim1.R=: Batch script for simulations with n=500 
+- =sim2.R=: Batch script for simulations with n=1000
+- =robustness.R=: Simulations for misspecified models (Table 2)
+- =wall.R=: Implementation of Wall&Amemiya Methods of Moments estimator.
+
+- =nonpar_sim.R=: Batch script for the simulation of the non-parametric estimation .
+- =nonpar_proc.R=: Post-processing and tabulation of results.
+- =simkevala.m=: Matlab script for running the Kevala et al (2017) estimation procedure.
+- =kevala2017=: matlab implementation of the estimator of [[https://github.com/tifasch/nonparametric/tree/ead709097d6][Kevala et al (2017)]].
+   
+
+# Local Variables:
+# mode: org-mode
+# coding: utf-8
+# End:
