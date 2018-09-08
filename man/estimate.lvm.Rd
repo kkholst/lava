@@ -5,9 +5,10 @@
 \title{Estimation of parameters in a Latent Variable Model (lvm)}
 \usage{
 \method{estimate}{lvm}(x, data = parent.frame(), estimator = NULL,
-  control = list(), missing = FALSE, weights, weightsname, data2, id, fix,
-  index = !quick, graph = FALSE, messages = lava.options()$messages,
-  quick = FALSE, method, param, cluster, p, ...)
+  control = list(), missing = FALSE, weights, weightsname, data2, id,
+  fix, index = !quick, graph = FALSE,
+  messages = lava.options()$messages, quick = FALSE, method, param,
+  cluster, p, ...)
 }
 \arguments{
 \item{x}{\code{lvm}-object}

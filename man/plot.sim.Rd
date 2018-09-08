@@ -12,12 +12,13 @@
   lwd = 0.3, legend, legendpos = "topleft", cex.legend = 0.8,
   plot.type = c("multiple", "single"), polygon = TRUE, density = 0,
   angle = -45, cex.axis = 0.8, alpha = 0.2, main, cex.main = 1,
-  equal = FALSE, delta = 1.15, ylim = NULL, xlim = NULL, ylab = "",
-  xlab = "", rug = TRUE, rug.alpha = 0.5, line.col = scatter.col,
-  line.lwd = 1, line.lty = 1, line.alpha = 1, scatter.ylab = "Estimate",
-  scatter.ylim = NULL, scatter.xlim = NULL, scatter.alpha = 0.5,
-  scatter.col = col, border = col, true.lty = 2, true.col = "gray70",
-  true.lwd = 1.2, density.plot = TRUE, scatter.plot = FALSE,
+  equal = FALSE, delta = 1.15, ylim = NULL, xlim = NULL,
+  ylab = "", xlab = "", rug = TRUE, rug.alpha = 0.5,
+  line.col = scatter.col, line.lwd = 1, line.lty = 1,
+  line.alpha = 1, scatter.ylab = "Estimate", scatter.ylim = NULL,
+  scatter.xlim = NULL, scatter.alpha = 0.5, scatter.col = col,
+  border = col, true.lty = 2, true.col = "gray70", true.lwd = 1.2,
+  density.plot = TRUE, scatter.plot = FALSE,
   running.mean = scatter.plot, ...)
 }
 \arguments{

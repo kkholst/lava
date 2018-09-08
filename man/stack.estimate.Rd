@@ -4,8 +4,9 @@
 \alias{stack.estimate}
 \title{Stack estimating equations}
 \usage{
-\method{stack}{estimate}(x, model2, D1u, inv.D2u, propensity, dpropensity, U,
-  keep1 = FALSE, propensity.arg, estimate.arg, na.action = na.pass, ...)
+\method{stack}{estimate}(x, model2, D1u, inv.D2u, propensity, dpropensity,
+  U, keep1 = FALSE, propensity.arg, estimate.arg, na.action = na.pass,
+  ...)
 }
 \arguments{
 \item{x}{Model 1}

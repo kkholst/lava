@@ -4,8 +4,8 @@
 \alias{makemissing}
 \title{Create random missing data}
 \usage{
-makemissing(data, p = 0.2, cols = seq_len(ncol(data)), rowwise = FALSE,
-  nafun = function(x) x, seed = NULL)
+makemissing(data, p = 0.2, cols = seq_len(ncol(data)),
+  rowwise = FALSE, nafun = function(x) x, seed = NULL)
 }
 \arguments{
 \item{data}{data.frame}

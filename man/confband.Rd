@@ -6,8 +6,8 @@
 \title{Add Confidence limits bar to plot}
 \usage{
 confband(x, lower, upper, center = NULL, line = TRUE, delta = 0.07,
-  centermark = 0.03, pch, blank = TRUE, vert = TRUE, polygon = FALSE,
-  step = FALSE, ...)
+  centermark = 0.03, pch, blank = TRUE, vert = TRUE,
+  polygon = FALSE, step = FALSE, ...)
 }
 \arguments{
 \item{x}{Position (x-coordinate if vert=TRUE, y-coordinate otherwise)}

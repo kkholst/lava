@@ -5,7 +5,8 @@
 \alias{foldr}
 \title{Split data into folds}
 \usage{
-csplit(x, p = NULL, replace = FALSE, return.index = FALSE, k = 2, ...)
+csplit(x, p = NULL, replace = FALSE, return.index = FALSE, k = 2,
+  ...)
 }
 \arguments{
 \item{x}{Data or integer (size)}

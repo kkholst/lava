@@ -5,8 +5,8 @@
 \title{Adds curly brackets to plot}
 \usage{
 curly(x, y, len = 1, theta = 0, wid, shape = 1, col = 1, lwd = 1,
-  lty = 1, grid = FALSE, npoints = 50, text = NULL, offset = c(0.05,
-  0))
+  lty = 1, grid = FALSE, npoints = 50, text = NULL,
+  offset = c(0.05, 0))
 }
 \arguments{
 \item{x}{center of the x axis of the curly brackets (or start end coordinates (x1,x2))}

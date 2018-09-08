@@ -4,12 +4,13 @@
 \alias{spaghetti}
 \title{Spaghetti plot}
 \usage{
-spaghetti(formula, data, id = "id", group = NULL, type = "o", lty = 1,
-  pch = NA, col = 1:10, alpha = 0.3, lwd = 1, level = 0.95,
-  trend.formula = formula, tau = NULL, trend.lty = 1, trend.join = TRUE,
-  trend.delta = 0.2, trend = !is.null(tau), trend.col = col,
-  trend.alpha = 0.2, trend.lwd = 3, trend.jitter = 0, legend = NULL,
-  by = NULL, xlab = "Time", ylab = "", add = FALSE, ...)
+spaghetti(formula, data, id = "id", group = NULL, type = "o",
+  lty = 1, pch = NA, col = 1:10, alpha = 0.3, lwd = 1,
+  level = 0.95, trend.formula = formula, tau = NULL, trend.lty = 1,
+  trend.join = TRUE, trend.delta = 0.2, trend = !is.null(tau),
+  trend.col = col, trend.alpha = 0.2, trend.lwd = 3,
+  trend.jitter = 0, legend = NULL, by = NULL, xlab = "Time",
+  ylab = "", add = FALSE, ...)
 }
 \arguments{
 \item{formula}{Formula (response ~ time)}
