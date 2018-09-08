@@ -272,12 +272,54 @@ mixture <- function(x, data, k=length(x),
         return(-as.vector(S))
     }
 
+   Information <- function(p,gamma,pr) {
+        if (optim$constrain) {
+            p[constrained] <- exp(p[constrained])
+        }
+        myp <- lapply(ParPos,function(x) p[x])
+        D <- lapply(1:length(myp), function(j) {
+            ## K <- ffz[,j]/sffz
+            val <- score(mg$lvm[[j]],p=myp[[j]],data=data,indiv=TRUE,model=MODEL)
+            apply(val,2,function(x) x*gamma[,j])
+        })
+        D0 <- matrix(0,nrow(data),length(p))
+        for (j in 1:k) D0[,ParPos[[j]]] <- D0[,ParPos[[j]]]+D[[j]]
+        if (optim$constrain) {
+            for (j in constrained)
+                D0[,j] <- D0[,j]*p[j]
+        }
+        S <- colSums(D0)
+        structure(crossprod(D0), grad=S)
+    }
+
     EMstep <- function(p,all=FALSE) {
         thetacur <- p[seq(Npar)]
         gamma <- PosteriorProb(p,constrain=optim$constrain)
         probcur <- colMeans(gamma)
-
+        I <- function(p) {            
+            I <- Information(p,gamma,probcur)
+            D <- attr(I, "grad")
+            res <- -Inverse(I)
+            res <- -I
+            attributes(res)$grad <- D
+            res
+        }
+        ## D <- function(p) GradEstep(p,gamma,probcur)
+        ## I2 <- function(p) numDeriv::jacobian(D, p, method="simple")
+        ## browser()
+        ## newpar <- NR(thetacur, D, I)
         newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur))
+        ## ff <- function(p) ObjEstep(p,gamma,probcur)
+        ## gg <- function(p) GradEstep(p,gamma,probcur)
+        ## hh <- function(p) numDeriv::jacobian(gg, p)
+        ## newpar <- nlminb(thetacur,ff,gg,hh)        
+        ## newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), D)        
+        ## p0 <- newpar$par
+        ## J0 <- numDeriv::jacobian(D,p0)
+        ## I0 <- I(p0)
+        ## J[1:5,1:5]
+        ## I0[1:5,1:5]        
+        ## newpar <- nlminb(p0,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur),I)
         thetacur <- newpar$par
         thetacur0 <- thetacur
         if (optim$constrain) {
