@@ -4,8 +4,8 @@
 \alias{cv}
 \title{Cross-validation}
 \usage{
-cv(modelList, data, K = 5, rep = 1, perf, seed = NULL, mc.cores = 1,
-  shared = NULL, ...)
+cv(modelList, data, K = 5, rep = 1, perf, seed = NULL,
+  mc.cores = 1, shared = NULL, ...)
 }
 \arguments{
 \item{modelList}{List of fitting functions or models}

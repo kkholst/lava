@@ -5,9 +5,9 @@
 \title{Convert object to ascii suitable for org-mode}
 \usage{
 Org(x, ..., ncol, include.rownames = TRUE, include.colnames = TRUE,
-  header = TRUE, frame = "topbot", rownames = NULL, colnames = NULL,
-  type = "org", tab = FALSE, margins = TRUE, print = TRUE, html, latex,
-  sep = " ")
+  header = TRUE, frame = "topbot", rownames = NULL,
+  colnames = NULL, type = "org", tab = FALSE, margins = TRUE,
+  print = TRUE, html, latex, sep = " ")
 }
 \arguments{
 \item{x}{R object}

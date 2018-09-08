@@ -4,8 +4,8 @@
 \alias{predictlvm}
 \title{Predict function for latent variable models}
 \usage{
-predictlvm(object, formula, p = coef(object), data = model.frame(object),
-  ...)
+predictlvm(object, formula, p = coef(object),
+  data = model.frame(object), ...)
 }
 \arguments{
 \item{object}{Model object}
