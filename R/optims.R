@@ -1,6 +1,3 @@
-optim1 <- function(start,objective,gradient, ...) {
-    optim(start,objective,gradient)#,method="")
-}
 
 nlminb2 <- function(start,objective,gradient,hessian,...) {
   nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min")
@@ -133,7 +130,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,debug=FALSE,contr
         I <- I+control0$gamma2*(sigma)
       }
     }
-    browser()
     iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
     Delta <- control0$gamma*tryCatch(solve(I, cbind(as.vector(D))),
                             error=function(...) { ## Fall back to Pseudo-Inverse using SVD:
