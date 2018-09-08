@@ -12,11 +12,12 @@
 ##' @param xlab x-axis label
 ##' @param ylab y-axis label
 ##' @param ... additional arggument to lower-level plot functions
-##' @param z.col Color 
+##' @param z.col Color (use argument alpha to set transparency)
 ##' @param data data.frame
 ##' @param add If TRUE use current active device
+##' @param aspect Aspect ratio
 fplot <- function(x,y,z=NULL,xlab,ylab,...,z.col=topo.colors(64), 
-                  data=parent.frame(),add=FALSE) {
+                  data=parent.frame(),add=FALSE,aspect=c(1,1),zoom=0.8) {
     if (!requireNamespace("rgl",quietly=TRUE)) stop("Requires 'rgl'")    
     if (inherits(x,"formula")) {
         y <- getoutcome(x)
@@ -48,11 +49,13 @@ fplot <- function(x,y,z=NULL,xlab,ylab,...,z.col=topo.colors(64),
     if (!is.null(z)) {
         ncol <- length(z.col);
         glut <- approxfun(seq(min(z),max(z),length.out=ncol),seq(ncol))
-        rgl::plot3d(x,y,0,col=z.col[round(glut(z))],xlab=xlab,ylab=ylab,...)
+        rgl::plot3d(x,y,0,col=z.col[round(glut(z))],xlab=xlab,ylab=ylab,add=add,...)
     } else {
-        rgl::plot3d(x,y,0,xlab=xlab,ylab=ylab,...)
+        rgl::plot3d(x,y,0,xlab=xlab,ylab=ylab,add=add,...)
+        
     }
-    rgl::view3d(0,0,fov=0)
+    rgl::view3d(0,0,fov=0,zoom=zoom)
+    rgl::aspect3d(c(aspect,1))
 }
 
 
