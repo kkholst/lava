@@ -1,39 +1,12 @@
-if (exists("Test") && Test) {
-    require(mets)
-    require(lava)
-    require(lava.nlin)
-    source("wall.R")
+require(mets)
+require(lava)
+require(lava.nlin)
+require(lava.mixture)
+library(SQUAREM)
+library(doParallel)
+library(parallel)
 
-    SAS <- FALSE
-    SAS.remote <- TRUE
-    trace <- 1
-    covariate <- TRUE
-    ## File postfix
-    fpostfixalph <- ""
-    fpostfixnum <- 250
-    ## Sample-size
-    n <- 5e2
-    ## Parameters used in simulation
-    param <- c(vy1=1,vy2=1,vy3=1,
-               vz1=1,vz2=1,vz3=1,
-               bx1=-1,bx2=1,
-               gam1=1,gam2=0.5,
-               m2=1,v2=1,
-               m1a=-1,m1b=3,
-               v1a=1,v1b=1,
-               p1a=0.5)
-
-    param <- c(vy1=2,vy2=2,vy3=2,
-               vz1=1,vz2=1,vz3=1,
-               bx1=-1,bx2=1,
-               gam1=1,gam2=0.5,
-               m2=1,v2=1,
-               m1a=-3,m1b=3,
-               v1a=1,v1b=1,
-               p1a=1)
-
-    d <- read.csv("data/data_1_normal.csv")    
-}
+system("mkdir -p data")
 
 ##################################################
 

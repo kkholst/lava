@@ -1,5 +1,6 @@
 library(lava)
 matlabcmd <- "/usr/local/MATLAB/current/bin/matlab -nodisplay -r"
+system("mkdir -p save")
 
 m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
 m2 <- lvm( y1+y2+y3 ~ u2, latent= ~u2)

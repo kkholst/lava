@@ -1,14 +1,7 @@
-require(mets)
-require(lava)
-require(lava.nlin)
-require(lava.mixture)
-library(SQUAREM)
-library(doParallel)
-library(parallel)
 source("nlinsem.R")
 
 seqR <- seq(1,1000)
-n <- 5e2
+n <- 1e3
 mc.cores <- min(detectCores()-1,38)
 
 onerun <- function(x,...) {
@@ -21,7 +14,7 @@ onerun <- function(x,...) {
 }
 
 
-fpostfixalph <- "_normalb"
+fpostfixalph <- "_normalc"
 param <- c(vy1=1,vy2=1,vy3=1,
            vz1=1,vz2=1,vz3=1,
            bx1=0,bx2=0,
@@ -32,7 +25,7 @@ param <- c(vy1=1,vy2=1,vy3=1,
            p1a=1)
 res <- mclapply(seqR,onerun, mc.cores=mc.cores,covariate=FALSE)
 
-fpostfixalph <- "_mixture2b"
+fpostfixalph <- "_mixture2c"
 param <- c(vy1=1,vy2=1,vy3=1,
            vz1=1,vz2=1,vz3=1,
            bx1=0,bx2=0,
@@ -47,7 +40,7 @@ res <- mclapply(seqR,onerun, mc.cores=mc.cores,covariate=FALSE,mle=FALSE)
 ################################################################################
 
 
-fpostfixalph <- "_normalxb"
+fpostfixalph <- "_normalxc"
 param <- c(vy1=1,vy2=1,vy3=1,
            vz1=1,vz2=1,vz3=1,
            bx1=-1,bx2=1,
@@ -58,7 +51,7 @@ param <- c(vy1=1,vy2=1,vy3=1,
            p1a=1)
 res <- mclapply(seqR,onerun, mc.cores=mc.cores,covariate=TRUE)
 
-fpostfixalph <- "_mixture2xb"
+fpostfixalph <- "_mixture2xc"
 param <- c(vy1=1,vy2=1,vy3=1,
            vz1=1,vz2=1,vz3=1,
            bx1=-1,bx2=1,
