@@ -10,7 +10,8 @@ plotConf(model, var1 = NULL, var2 = NULL, data = NULL, ci.lty = 0,
   delta = 0.07, centermark = 0.03, jitter = 0.2, cidiff = FALSE,
   mean = TRUE, legend = ifelse(is.null(var1), FALSE, "topright"),
   trans = function(x) {     x }, partres = inherits(model, "lm"),
-  partse = FALSE, labels, vcov, predictfun, plot = TRUE, new = TRUE, ...)
+  partse = FALSE, labels, vcov, predictfun, plot = TRUE, new = TRUE,
+  ...)
 }
 \arguments{
 \item{model}{Model object (e.g. \code{lm})}

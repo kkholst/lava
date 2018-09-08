@@ -6,8 +6,9 @@
 \title{Wrapper function for mclapply}
 \usage{
 \method{sim}{default}(x = NULL, R = 100, f = NULL, colnames = NULL,
-  messages = lava.options()$messages, mc.cores, blocksize = 2L * mc.cores,
-  cl, type = 1L, seed = NULL, args = list(), iter = FALSE, ...)
+  messages = lava.options()$messages, mc.cores, blocksize = 2L *
+  mc.cores, cl, type = 1L, seed = NULL, args = list(),
+  iter = FALSE, ...)
 }
 \arguments{
 \item{x}{function or 'sim' object}
