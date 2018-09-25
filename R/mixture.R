@@ -296,30 +296,21 @@ mixture <- function(x, data, k=length(x),
         thetacur <- p[seq(Npar)]
         gamma <- PosteriorProb(p,constrain=optim$constrain)
         probcur <- colMeans(gamma)
-        I <- function(p) {            
-            I <- Information(p,gamma,probcur)
-            D <- attr(I, "grad")
-            res <- -Inverse(I)
-            res <- -I
-            attributes(res)$grad <- D
-            res
-        }
-        ## D <- function(p) GradEstep(p,gamma,probcur)
-        ## I2 <- function(p) numDeriv::jacobian(D, p, method="simple")
-        ## browser()
-        ## newpar <- NR(thetacur, D, I)
-        newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur))
-        ## ff <- function(p) ObjEstep(p,gamma,probcur)
-        ## gg <- function(p) GradEstep(p,gamma,probcur)
-        ## hh <- function(p) numDeriv::jacobian(gg, p)
-        ## newpar <- nlminb(thetacur,ff,gg,hh)        
-        ## newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), D)        
-        ## p0 <- newpar$par
-        ## J0 <- numDeriv::jacobian(D,p0)
-        ## I0 <- I(p0)
-        ## J[1:5,1:5]
-        ## I0[1:5,1:5]        
-        ## newpar <- nlminb(p0,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur),I)
+        ## I <- function(p) {            
+        ##     I <- Information(p,gamma,probcur)
+        ##     D <- attr(I, "grad")
+        ##     res <- -Inverse(I)
+        ##     res <- -I
+        ##     attributes(res)$grad <- D
+        ##     res
+        ## }
+        D <- function(p) GradEstep(p,gamma,probcur)
+        ## if (optim$newton>0) {
+        ##     newpar <- NR(thetacur, gradient=D)
+        ## }
+        ## if (mean(newpar$gradient^2)>optim$tol) {
+        newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), D)
+        ## }
         thetacur <- newpar$par
         thetacur0 <- thetacur
         if (optim$constrain) {
