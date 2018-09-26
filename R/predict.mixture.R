@@ -9,7 +9,6 @@ predict.lvm.mixture <- function(object,p=coef(object,full=TRUE),model="normal",p
     logplogff <- t(apply(logff,1, function(y) y+log(pr)))
     zmax <- apply(logplogff,1,max)
     logsumpff <- log(rowSums(exp(logplogff-zmax)))+zmax
-    ##aji <- apply(logplogff,2,function(x) exp(x-logsumpff))
     gamma <- exp(apply(logplogff,2,function(y) y - logsumpff)) ## Posterior class probabilities, conditional mean
     ##Vgamma <- gamma-gamma^2 ## conditional variance
     M <- 0; V <- 0
@@ -26,7 +25,7 @@ predict.lvm.mixture <- function(object,p=coef(object,full=TRUE),model="normal",p
     }
     ## Var(X) = E[(X-m)^2] = EX^2 - m^2 
     ##        = sum(pi*Xi^2) - [sum(pi*mi)]^2 = sum(pi*sigmai^2) + sum(pi*mi^2) - [sum(pi*mi)]^2
-    ## V <- V-M^2    
+    V <- V-M^2    
     return(M)
     ## if (!is.null(predict.fun)) return(M)
     ## structure(M,cond.var=V)

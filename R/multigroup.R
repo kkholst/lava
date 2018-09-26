@@ -286,9 +286,11 @@ multigroup <- function(models, datasets, fix, exo.fix=TRUE, keep=NULL, missing=F
         mm0 <- c(mm0,list(match(m1,mi)))
         pp <- c(pp,list(c(m1,p1+nfree.mean)))
         if (length(p1)>0)
-            coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],sep="@"))
+            coefs <- c(coefs,paste(coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],i,sep="@"))
+            #coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],sep="@"))
         if (length(m1)>0) {
-            coefsm0 <- paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@")
+            coefsm0 <- paste(coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],i,sep="@")
+            #coefsm0 <- paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@")
             coefsm <- c(coefsm,coefsm0)
         }
     }

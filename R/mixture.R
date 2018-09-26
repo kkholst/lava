@@ -312,31 +312,21 @@ mixture <- function(x, data, k=length(x),
         thetacur <- p[seq(Npar)]
         gamma <- PosteriorProb(p,constrain=optim$constrain)
         probcur <- colMeans(gamma)
-        I <- function(p) {            
-            I <- Information(p,gamma,probcur)
-            D <- attr(I, "grad")
-            res <- -Inverse(I)
-            res <- -I
-            attributes(res)$grad <- D
-            res
-        }
-        ## D <- function(p) GradEstep(p,gamma,probcur)
-        ## I2 <- function(p) numDeriv::jacobian(D, p, method="simple")
-        ## browser()
-        ## newpar <- NR(thetacur, D, I)
-        print(p)
-        newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur))
-        ## ff <- function(p) ObjEstep(p,gamma,probcur)
-        ## gg <- function(p) GradEstep(p,gamma,probcur)
-        ## hh <- function(p) numDeriv::jacobian(gg, p)
-        ## newpar <- nlminb(thetacur,ff,gg,hh)        
-        ## newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), D)        
-        ## p0 <- newpar$par
-        ## J0 <- numDeriv::jacobian(D,p0)
-        ## I0 <- I(p0)
-        ## J[1:5,1:5]
-        ## I0[1:5,1:5]        
-        ## newpar <- nlminb(p0,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur),I)
+        ## I <- function(p) {            
+        ##     I <- Information(p,gamma,probcur)
+        ##     D <- attr(I, "grad")
+        ##     res <- -Inverse(I)
+        ##     res <- -I
+        ##     attributes(res)$grad <- D
+        ##     res
+        ## }
+        D <- function(p) GradEstep(p,gamma,probcur)
+        ## if (optim$newton>0) {
+        ##     newpar <- NR(thetacur, gradient=D)
+        ## }
+        ## if (mean(newpar$gradient^2)>optim$tol) {
+        newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), D)
+        ## }
         thetacur <- newpar$par
         thetacur0 <- thetacur
         if (optim$constrain) {
@@ -375,6 +365,7 @@ mixture <- function(x, data, k=length(x),
                        parpos=ParPos,
                        multigroup=mg,
                        model=mg$lvm,
+                       parname=parname,
                        logLik=NA,
                        opt=opt))
     class(val) <- "lvm.mixture"
@@ -477,26 +468,61 @@ vcov.lvm.mixture <- function(object,...) {
 ###{{{ summary/print
 
 ##' @export
-summary.lvm.mixture <- function(object,labels=0,...) {
+summary.lvm.mixture <- function(object,type=0,labels=0,...) {
+    ppos <- parpos(object$multigroup)
+    parname <- attr(ppos,"name")
+    naparname <- which(is.na(parname))
+    parname[naparname]  <- object$multigroup$name[naparname]
+    ParPos <- modelPar(object$multigroup,seq_along(coef(object)))$p
+       
     mm <- object$multigroup$lvm
     p <- coef(object,list=TRUE)
     p0 <- coef(object,prob=FALSE)
     myp <- modelPar(object$multigroup,1:length(p0))$p
     coefs <- list()
     ncluster <- c()
+    Coefs <- matrix(NA,ncol=4,nrow=length(parname))
+    colnames(Coefs) <- c("Estimate","Std. Error", "Z value", "Pr(>|z|)")
+    Types <- rep("other",length(parname))
+    Variable  <- rep(NA,length(parname))
+    From  <- rep(NA,length(parname))
+    Latent <- c()
     for (i in 1:length(mm)) {
+        cc.idx <- order(coef(mm[[i]],p=seq_along(p[[i]]),type=2)[,1])
+        
+        cc <- coef(mm[[i]],p=p[[i]],vcov=vcov(object)[myp[[i]],myp[[i]]],data=NULL,labels=labels,type=2)
+        Latent <- union(Latent,attr(cc,"latent"))
+        Coefs[ParPos[[i]],] <- cc[cc.idx,,drop=FALSE]
+        Types[ParPos[[i]]] <- attr(cc,"type")[cc.idx]
+        Variable[ParPos[[i]]] <- attr(cc, "var")[cc.idx]
+        From[ParPos[[i]]] <- attr(cc, "from")[cc.idx]
         cc <- CoefMat(mm[[i]],p=p[[i]],vcov=vcov(object)[myp[[i]],myp[[i]]],data=NULL,labels=labels)
         coefs <- c(coefs, list(cc))
         ncluster <- c(ncluster,sum(object$member==i))
     }
-    res <- list(coef=coefs,ncluster=ncluster,prob=tail(object$prob,1),
-                AIC=AIC(object),s2=sum(score(object)^2))
+    rownames(Coefs) <- parname
+    
+    res <- list(coef=coefs, coefmat=Coefs, coeftype=Types,
+                type=type, var=Variable, from=From, latent=Latent,
+                ncluster=ncluster, prob=tail(object$prob,1),
+                AIC=AIC(object), s2=sum(score(object)^2))
     class(res) <- "summary.lvm.mixture"
     return(res)
 }
 
 ##' @export
 print.summary.lvm.mixture <- function(x,...) {
+    if (x$type>0) {
+        cc <- x$coefmat
+        attr(cc,"type") <- x$coeftype
+        attr(cc,"latent") <- x$latent
+        attr(cc,"var") <- x$var
+        attr(cc,"from") <- x$from
+        cat("Mixing parameters:\n")
+        cat("  ", paste(as.vector(formatC(s$prob))),"\n")
+        print(CoefMat(cc), quote=FALSE)        
+        return(invisible())
+    }
     for (i in 1:length(x$coef)) {
         cat("Cluster ",i," (n=",x$ncluster[i],", Prior=", formatC(x$prob[i]),"):\n",sep="")
         cat(rep("-",50),"\n",sep="")
@@ -506,18 +532,18 @@ print.summary.lvm.mixture <- function(x,...) {
     cat(rep("-",50),"\n",sep="")
     cat("AIC=",x$AIC,"\n")
     cat("||score||^2=",x$s2,"\n")
-    invisible(par)
+    invisible()
 }
 
 ##' @export
 print.lvm.mixture <- function(x,...) {
-    for (i in 1:x$k) {
-        cat("Cluster ",i," (pr=",x$prob[i],"):\n",sep="")
-        cat(rep("-",50),"\n",sep="")
-        print(coef(x,prob=FALSE)[x$parpos[[i]]], quote=FALSE)
-        cat("\n")
-    }
-    invisible(par)
+    ## for (i in 1:x$k) {
+    ##     cat("Cluster ",i," (pr=",x$prob[i],"):\n",sep="")
+    ##     cat(rep("-",50),"\n",sep="")
+    ##     print(coef(x,prob=FALSE)[x$parpos[[i]]], quote=FALSE)
+    ##     cat("\n")
+    ## }
+    print(summary(x,type=1,...))
 }
 
 ###}}}
@@ -537,10 +563,11 @@ plot.lvm.mixture <- function(x,type="l",...) {
 coef.lvm.mixture <- function(object,iter,list=FALSE,full=TRUE,prob=FALSE,class=FALSE,label=TRUE,...) {
     N <- nrow(object$theta)
     res <- object$theta
-    nn <- attr(parpos(object$multigroup),"name")
-    if (length(ii <- which(is.na(nn)))>0 && label) {
-        nn[ii] <- paste0("p",seq_along(ii))
-    }
+    ## nn <- attr(parpos(object$multigroup),"name")
+    ## if (length(ii <- which(is.na(nn)))>0 && label) {
+    ##     nn[ii] <- paste0("p",seq_along(ii))
+    ## }
+    nn <- object$parname
     colnames(res) <- nn
     if (class) return(object$gammas)
     if (list) {
