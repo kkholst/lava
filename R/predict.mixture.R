@@ -26,7 +26,8 @@ predict.lvm.mixture <- function(object,p=coef(object,full=TRUE),model="normal",p
     }
     ## Var(X) = E[(X-m)^2] = EX^2 - m^2 
     ##        = sum(pi*Xi^2) - [sum(pi*mi)]^2 = sum(pi*sigmai^2) + sum(pi*mi^2) - [sum(pi*mi)]^2
-    if (!is.null(predict.fun)) return(M)
-    V <- V-M^2    
-    structure(M,cond.var=V)
+    ## V <- V-M^2    
+    return(M)
+    ## if (!is.null(predict.fun)) return(M)
+    ## structure(M,cond.var=V)
 }

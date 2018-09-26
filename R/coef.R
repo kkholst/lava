@@ -434,7 +434,7 @@ coef.multigroupfit <-
         if (npar>0) {
             mynames <- c(mynames,object$model$par)
         }
-
+        browser()
         res <- list()
         misrow <- list()
         parpos2 <- list()

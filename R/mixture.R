@@ -59,6 +59,7 @@
 mixture <- function(x, data, k=length(x),
              control=list(),
              vcov="observed",
+             names=FALSE,
              ...) {
     MODEL <- "normal"
     ##type=c("standard","CEM","SEM"),
@@ -102,8 +103,8 @@ mixture <- function(x, data, k=length(x),
     )
 
     if (!missing(control))
-        optim[names(control)] <- control
-    if ("iter.max"%in%names(optim)) optim$maxiter <- optim$iter.max
+        optim[base::names(control)] <- control
+    if ("iter.max"%in%base::names(optim)) optim$maxiter <- optim$iter.max
 
     if (k==1) {
         if (is.list(x))
@@ -112,16 +113,30 @@ mixture <- function(x, data, k=length(x),
             res <- estimate(x,data,...)
         return(res)
     }
+    
     start0 <- NULL
-    if (class(x)[1]=="lvm") {
-        index(x) <- reindex(x,zeroones=TRUE,deriv=TRUE)
-        if (is.null(optim$start)) {
-            start0 <- estimate(x,data,quick=TRUE)
-        }
-        x <- rep(list(x),k)
+
+    xx <- x
+    if (inherits(x,"lvm")) {
+        xx <- rep(list(x), k)
+    }
+    mg <- multigroup(xx, rep(list(data),k), fix=FALSE)    
+    ppos <- parpos(mg)
+    parname <- attr(ppos,"name")
+    naparname <- which(is.na(parname))
+    parname[naparname]  <- mg$name[naparname]                       
+    if (names) {
+        return(parname)
     }
 
-    mg <- multigroup(x,rep(list(data),k),fix=FALSE)
+    if (class(x)[1]=="lvm") {
+        index(x) <- reindex(x,zeroones=TRUE,deriv=TRUE)
+        if ((is.null(optim$start) || length(optim$start)<length(parname))) {
+            start0 <- tryCatch(estimate(x,data,quick=TRUE),
+                               error=function(...) NULL)
+        }
+    } 
+    
     ## Bounds on variance parameters
     Npar <- with(mg, npar+npar.mean)
     ParPos <- modelPar(mg,1:Npar)$p
@@ -141,8 +156,9 @@ mixture <- function(x, data, k=length(x),
     if (!any(constrained)) optim$constrain <- FALSE
 
     mymodel <- list(multigroup=mg,k=k,data=data,parpos=ParPos); class(mymodel) <- "lvm.mixture"
-
-    if (is.null(optim$start)) {
+    
+    
+    if (any(is.na(optim$start)) || length(optim$start)<length(ppos)) {
         constrLogLikS <- function(p) {
             if (optim$constrain) {
                 p[constrained] <- exp(p[constrained])
@@ -152,9 +168,6 @@ mixture <- function(x, data, k=length(x),
 
         start <- rep(NA,Npar)
         if (!is.null(start0)) {
-            if (optim$constrain) {
-                start0[constrained] <- log(start0[constrained])
-            }
             start[ParPos[[1]]] <- start0[seq_along(ParPos[[1]])]
             ii <- which(is.na(start))
             start[ii] <- runif(length(ii),optim$startbounds[1],optim$startbounds[2])
@@ -173,9 +186,13 @@ mixture <- function(x, data, k=length(x),
                 }
             }
         }
-        if (optim$constrain) {
-            start[constrained] <- exp(start[constrained])
+        if (!is.null(optim$start)) {
+            iistart <- match(names(optim$start), parname)
+            start[iistart] <- optim$start
         }
+        ## if (optim$constrain) {
+        ##     start[constrained] <- exp(start[constrained])
+        ## }
         optim$start <- start
     }
     if (length(optim$start)>Npar) {
@@ -191,7 +208,6 @@ mixture <- function(x, data, k=length(x),
     if (optim$constrain) {
         thetacur[constrained] <- log(thetacur[constrained])
     }
-
 
     PosteriorProb <- function(pp,priorprob,constrain=FALSE) {
         if (!is.list(pp)) {
@@ -308,6 +324,7 @@ mixture <- function(x, data, k=length(x),
         ## I2 <- function(p) numDeriv::jacobian(D, p, method="simple")
         ## browser()
         ## newpar <- NR(thetacur, D, I)
+        print(p)
         newpar <- nlminb(thetacur,function(p) ObjEstep(p,gamma,probcur), function(p) GradEstep(p,gamma,probcur))
         ## ff <- function(p) ObjEstep(p,gamma,probcur)
         ## gg <- function(p) GradEstep(p,gamma,probcur)
@@ -337,7 +354,7 @@ mixture <- function(x, data, k=length(x),
     em.idx <- match(c("K","method","square","step.min0","step.max0","mstep",
                       "objfn.inc","kr",
                       ##"keep.objfval","convtype",
-                      "maxiter","tol","trace"),names(optim))
+                      "maxiter","tol","trace"),base::names(optim))
     em.control <- optim[na.omit(em.idx)]
     if (!is.null(em.control$trace)) em.control$trace <- em.control$trace>0
 
@@ -495,7 +512,7 @@ print.summary.lvm.mixture <- function(x,...) {
 ##' @export
 print.lvm.mixture <- function(x,...) {
     for (i in 1:x$k) {
-        cat("Cluster ",i," (n=",sum(x$member==i),"):\n",sep="")
+        cat("Cluster ",i," (pr=",x$prob[i],"):\n",sep="")
         cat(rep("-",50),"\n",sep="")
         print(coef(x,prob=FALSE)[x$parpos[[i]]], quote=FALSE)
         cat("\n")
@@ -531,7 +548,7 @@ coef.lvm.mixture <- function(object,iter,list=FALSE,full=TRUE,prob=FALSE,class=F
         for (i in 1:object$k) {
             nn <- coef(object$multigroup$lvm[[i]])
             cc <- coef(object)[object$parpos[[i]]]
-            names(cc) <- nn
+            base::names(cc) <- nn
             res <- c(res, list(cc))
         }
         return(res)
