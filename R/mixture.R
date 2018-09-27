@@ -519,7 +519,7 @@ print.summary.lvm.mixture <- function(x,...) {
         attr(cc,"var") <- x$var
         attr(cc,"from") <- x$from
         cat("Mixing parameters:\n")
-        cat("  ", paste(as.vector(formatC(s$prob))),"\n")
+        cat("  ", paste(as.vector(formatC(x$prob))),"\n")
         print(CoefMat(cc), quote=FALSE)        
         return(invisible())
     }
