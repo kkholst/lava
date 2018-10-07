@@ -18,7 +18,7 @@ print.transform.lvm <- function(x,...) {
 }
 
 ##' @export
-"transform.lvm" <- function(`_data`,formula,fun,post=TRUE,y,x,...) {
+"transform.lvm" <- function(`_data`,formula,value,post=TRUE,y,x,...) {
     if (missing(formula)) {
         if (length(tr <- `_data`$attributes$transform)==0) {
             return(NULL)
@@ -43,11 +43,11 @@ print.transform.lvm <- function(x,...) {
             `_data`$constrain[xx] <- NULL
             if (is.null(`_data`$attributes$selftransform))
                 `_data`$attributes$selftransform <- list()
-            `_data`$attributes$selftransform[[xx]] <- fun
+            `_data`$attributes$selftransform[[xx]] <- value
             return(`_data`)
         }
         `_data`$attributes$selftransform[xx] <- NULL
-        constrain(`_data`,xx,y,...) <- fun
+        constrain(`_data`,xx,y,...) <- value
         return(`_data`)
     }
     
@@ -57,7 +57,7 @@ print.transform.lvm <- function(x,...) {
     intercept(`_data`,y) <- 0; covariance(`_data`,y) <- 0
     if (is.null(`_data`$attributes$transform))
         `_data`$attributes$transform <- list()
-    if (is.null(fun)) `_data`$attributes$transform[y] <- NULL
+    if (is.null(value)) `_data`$attributes$transform[y] <- NULL
     else {
         if (length(y)>1) {
             if (is.null(`_data`$attributes$multitransform))
@@ -73,9 +73,9 @@ print.transform.lvm <- function(x,...) {
             }
             if (length(rmidx)>0) `_data`$attributes$transform[rmidx] <- NULL            
             `_data`$attributes$multitransform <- c(`_data`$attributes$multitransform,                                                   
-                                                   list(list(fun=fun,y=y,x=xx)))
+                                                   list(list(fun=value,y=y,x=xx)))
         } else {
-            `_data`$attributes$transform[[y]] <- list(fun=fun,x=xx)
+            `_data`$attributes$transform[[y]] <- list(fun=value,x=xx)
         }
     }
     return(`_data`)
