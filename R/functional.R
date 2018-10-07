@@ -35,9 +35,9 @@
 "functional" <- function(x,...) UseMethod("functional")
 
 ##' @export
-functional.lvm <- function(x,to,from,f,...) {
-    if (!missing(f)) {
-        functional(x,to,from,...) <- f
+functional.lvm <- function(x,to,from,value,...) {
+    if (!missing(value)) {
+        functional(x,to,from,...) <- value
         return(x)
     }
     if (missing(from))
