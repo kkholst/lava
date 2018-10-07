@@ -1,4 +1,17 @@
 ##' @export
+deriv.function <- function(expr, parameter_, ..., parameter_.increment =.Machine$double.xmin) {
+    p <- length(parameter_)
+    f0 <- expr(parameter_)
+    z0 <- numeric(p)
+    res <- matrix(NA,nrow=length(f0),ncol=p)
+    for (i in seq(p)) {
+        z <- z0; z[i] <- parameter_.increment*1i
+        res[,i] <- Im(expr(parameter_+z,...))/parameter_.increment
+    }
+    res       
+}
+
+##' @export
 deriv.lvm <- function(expr, p, mom, conditional=FALSE, meanpar=TRUE, mu=NULL, S=NULL, second=FALSE, zeroones=FALSE, all=!missing(mom),...) {
 
     if (missing(mom) & !missing(p)) {
