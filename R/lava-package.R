@@ -248,7 +248,7 @@ NULL
 ##' rmvn0 dmvn0 NR logit expit tigol
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
-##' checkmultigroup profci estimate.MAR missingModel Inverse
+##' checkmultigroup profci estimate.MAR missingModel Inverse Identical
 ##' gaussian_logLik.lvm addhook gethook multigroup Weights fixsome
 ##' parfix parfix<- merge IV parameter index index<-
 ##' Specials procformula getoutcome decomp.specials

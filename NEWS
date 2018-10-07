@@ -1,5 +1,16 @@
 # -*- mode: org -*-
 
+* Version 1.6.4
+  - multiple inputs (binomial.rd)
+  - starting values mixture 
+    Naming conventions for parameters in mixutre model
+    (mixture: argument names=TRUE returns just the names of the
+    model). New print,summary methods
+  - starting values multigroup
+  - renaming km to wkm
+  - parallel computations for mixture in twostageCV 
+  - complex step derivative: deriv.function
+
 * Version 1.6.3 <2018-08-03 Fri>
   - Fixed problems with plots (Rgraphviz)
   - Better print method for twostageCV
