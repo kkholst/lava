@@ -5,7 +5,7 @@
 \title{Estimate mixture latent variable model.}
 \usage{
 mixture(x, data, k = length(x), control = list(), vcov = "observed",
-  ...)
+  names = FALSE, ...)
 }
 \arguments{
 \item{x}{List of \code{lvm} objects. If only a single \code{lvm} object is
@@ -17,9 +17,11 @@ varying between mixture components).}
 \item{k}{Number of mixture components}
 
 \item{control}{Optimization parameters (see details)
-# @param type Type of EM algorithm (standard, classification, stochastic)}
+#type Type of EM algorithm (standard, classification, stochastic)}
 
 \item{vcov}{of asymptotic covariance matrix (NULL to omit)}
+
+\item{names}{If TRUE returns the names of the parameters (for defining starting values)}
 
 \item{...}{Additional arguments parsed to lower-level functions}
 }

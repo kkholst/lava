@@ -51,6 +51,7 @@
 \alias{estimate.MAR}
 \alias{missingModel}
 \alias{Inverse}
+\alias{Identical}
 \alias{gaussian_logLik.lvm}
 \alias{addhook}
 \alias{gethook}

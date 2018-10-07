@@ -30,8 +30,9 @@
 #' @param data \code{data.frame}
 #' @param k Number of mixture components
 #' @param control Optimization parameters (see details)
-#' # @param type Type of EM algorithm (standard, classification, stochastic)
+#' #type Type of EM algorithm (standard, classification, stochastic)
 #' @param vcov of asymptotic covariance matrix (NULL to omit)
+#' @param names If TRUE returns the names of the parameters (for defining starting values)
 #' @param ... Additional arguments parsed to lower-level functions
 #' @author Klaus K. Holst
 #' @seealso \code{mvnmix}
