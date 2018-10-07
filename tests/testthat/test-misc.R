@@ -62,15 +62,6 @@ test_that("Matrix operations:", {
 })
 
 
-test_that("plotConf", {
-    m <- lvm(y~x+g)
-    distribution(m,~g) <- binomial.lvm()
-    d <- sim(m,50)
-    l <- lm(y~x+g,d)
-    g1 <- plotConf(l,var2="g",plot=FALSE)
-    g2 <- plotConf(l,var1=NULL,var2="g",plot=FALSE)
-})
-
 
 test_that("wrapvev", {
     testthat::expect_equivalent(wrapvec(5,2),c(3,4,5,1,2))
@@ -95,12 +86,6 @@ test_that("matrix functions", {
     
     testthat::expect_equivalent(solve(A),Inverse(A))
     testthat::expect_equivalent(det(B),attr(Inverse(B,chol=TRUE),"det"))
-})
-
-
-test_that("getmplus", {
-})
-test_that("getsas", {
 })
 
 

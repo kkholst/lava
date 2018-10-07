@@ -83,7 +83,7 @@ test_that("Multiple group constraints I", {
     mg <- multigroup(list(m1,m2),list(d1,d2))
     ee <- estimate(mg)
     testthat::expect_true(length(coef(ee))==5)    
-    testthat::expect_equivalent(constraints(ee)[1],2*coef(ee)["1@psi"]) # Est
+    testthat::expect_equivalent(constraints(ee)[1],2*coef(ee)["psi@1"]) # Est
     testthat::expect_equivalent(constraints(ee)[2],2*coef(ee,2)[[1]]["psi",2]) # Std.Err    
 })
 

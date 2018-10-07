@@ -83,7 +83,7 @@ test_that("Multiple group, constraints", {
     constrain(m,m~a+b+x) <- function(z) z[1]+z[2]*z[3]
     ee <- estimate(list(m,m),list(d1[1:5,],d1[6:10,]))
     b1 <- coef(lm(y~x,d1[1:10,]))
-    b2 <- coef(ee)[c("1@a","1@b")]
+    b2 <- coef(ee)[c("a@1","b@1")]
     testthat::expect_true(mean(b1-b2)^2<1e-4)
 
 })

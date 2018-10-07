@@ -163,8 +163,7 @@ test_that("eventTime", {
     d <- sim(m,100)
     testthat::expect_equivalent((d$time<d$cens)*1L,d$status)
 
-    ## TODO
-    plot(m)
+    ## TODO: plot(m)
     testthat::expect_output(print(m),"Event History Model")
 
     ## Time varying effect
