@@ -40,7 +40,7 @@ Newton-Raphson method
 \examples{
 # Objective function with gradient and hessian as attributes
 f <- function(z) {
-    x <- z[1]; x <- z[2]
+    x <- z[1]; y <- z[2]
     val <- x^2 + x*y^2 + x + y
     structure(val, gradient=function(x) c(2*x+y^2+1, x+1),
               hessian=function(x) c(2, 0))

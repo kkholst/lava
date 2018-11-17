@@ -29,7 +29,6 @@
 \alias{index<-}
 \alias{rmvn0}
 \alias{dmvn0}
-\alias{NR}
 \alias{logit}
 \alias{expit}
 \alias{tigol}
