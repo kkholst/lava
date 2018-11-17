@@ -679,7 +679,9 @@ estimate.glm <- function(x,...) {
 ##' @export
 print.estimate <- function(x, type=0L, digits=4L, width=25L,
                     std.error=TRUE, p.value=TRUE,
-                    sep="_______",sep.which, na.print="", ...) {
+                    sep="_______",sep.which, sep.labels=NULL,indent=" ",
+                    unique.names=TRUE,
+                    na.print="", ...) {
 
     if (!is.null(x$print)) {
         x$print(x,digits=digits,width=width,...)
@@ -703,7 +705,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
     }
 
     cc <- x$coefmat
-    if (!is.null(rownames(cc)))
+    if (!is.null(rownames(cc)) && unique.names)
         rownames(cc) <- make.unique(unlist(lapply(rownames(cc),
                                                   function(x) toString(x,width=width))))
     if (!std.error) cc <- cc[,-2,drop=FALSE]
@@ -712,10 +714,13 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
     sep.pos <- c()
     if (missing(sep.which) && !is.null(x$model.index)) {
         sep.which <- unlist(lapply(x$model.index,function(x) tail(x,1)))[-length(x$model.index)]
-    } else {
-        sep.which <- NULL
     }
+    if (missing(sep.which)) sep.which <- NULL
+
+    
     if (!is.null(sep.which)) {
+        sep0 <- 0%in%sep.which
+        if (sep0) sep.which <- setdiff(sep.which,0)
         cc0 <- c()
         sep.which <- c(0,sep.which,nrow(cc))
         N <- length(sep.which)-1
@@ -727,9 +732,19 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
                 sep.pos <- c(sep.pos,nrow(cc0))
             }
         }
+        if (sep0) {
+            sep.pos <- c(1,sep.pos+1)
+            cc0 <- rbind(NA, cc0)
+        }
         cc <- cc0
     }
-    if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep("_",max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
+    if (!is.null(sep.labels)) {
+        sep.labels <- rep(sep.labels, length.out=length(sep.pos))
+        rownames(cc)[sep.pos] <- sep.labels
+        rownames(cc)[-sep.pos] <- paste0(indent, rownames(cc)[-sep.pos])
+    } else {
+        if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep("_",max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
+    }
     print(cc,digits=digits,na.print=na.print,...)
 
     if (!is.null(x$compare)) {
