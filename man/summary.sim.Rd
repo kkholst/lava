@@ -7,7 +7,7 @@
 \method{summary}{sim}(object, estimate = NULL, se = NULL,
   confint = !is.null(se) && !is.null(true), true = NULL, fun,
   names = NULL, unique.names = TRUE, minimal = FALSE, level = 0.95,
-  quantiles = c(0.025, 0.5, 0.975), ...)
+  quantiles = c(0, 0.025, 0.5, 0.975, 1), ...)
 }
 \arguments{
 \item{object}{sim object}

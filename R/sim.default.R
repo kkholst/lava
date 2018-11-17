@@ -177,7 +177,7 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
         if (mc.cores>1) {
             if (!missing(cl) && !is.null(cl)) {
                 val <- do.call(parallel::clusterMap,pp)
-            } else {
+            } else {                
                 val <- do.call(parallel::mcmapply,pp)
             }
         } else {
@@ -342,7 +342,23 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^
 summary.sim <- function(object,estimate=NULL,se=NULL,
                 confint=!is.null(se)&&!is.null(true),true=NULL,
                 fun,names=NULL,unique.names=TRUE,minimal=FALSE,
-                level=0.95,quantiles=c(.025,0.5,.975),...) {
+                level=0.95,quantiles=c(0,.025,0.5,.975,1),...) {
+    if (is.list(estimate)) {
+        est <- estimate
+        if (is.null(names)) names <- base::names(est)
+        estimate <- c()
+        nse  <- is.null(se)
+        ntrue <- is.null(true)
+        elen <- unlist(lapply(est,length))
+        est <- lapply(est, function(e) c(e, rep(NA,max(elen)-length(e))))
+        for (e in est) {            
+            estimate <- c(estimate,e[1])
+            if (length(e)>1 && nse) se <- c(se,e[2])
+            if (length(e)>2 && ntrue) true <- c(true,e[3])
+        }
+        cl <- match.call()
+        cl[c("estimate","se","true","names")] <- list(estimate,se,true,names)
+    }
     if (minimal) {
         fun <- function(x,se,confint,...) {
             res <- c(Mean=mean(x,na.rm=TRUE),
@@ -357,9 +373,18 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     mfun <- function(x,...) {
         res <- c(mean(x,na.rm=TRUE),
                  sd(x,na.rm=TRUE),
-                 quantile(x,c(0,quantiles,1),na.rm=TRUE),
+                 if (length(quantiles)>0) quantile(x,quantiles,na.rm=TRUE),
                  mean(is.na(x)))
-        names(res) <- c("Mean","SD","Min",paste0(quantiles*100,"%"),"Max","Missing")
+        if (length(quantiles)>0) {
+            nq <- paste0(quantiles*100,"%")
+            idx <- which(quantiles==1)
+            if (length(idx)>0) nq[idx] <- "Max"
+            idx <- which(quantiles==0)
+            if (length(idx)>0) nq[idx] <- "Min"
+        }
+        names(res) <- c("Mean","SD",
+                        if (length(quantiles)>0) nq,
+                        "Missing")
         res
     }
     tm <- attr(object,"time")
@@ -422,9 +447,8 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         if (length(se)!=ncol(est)) stop("'se' should be of same length as 'estimate'.")
         est <- rbind(est, SE=apply(object[,se,drop=FALSE],2,
-                                  function(x) c(mean(x,na.rm=TRUE))))
+                                   function(x) val <- c(mean(x,na.rm=TRUE))))
         est <- rbind(est,"SE/SD"=est["SE",]/est["SD",])
-
     }
     if (!is.null(confint) && (length(confint)>1 || confint)) {
         if (is.character(confint)) {
@@ -463,6 +487,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     if (unique.names && !is.null(colnames(est))) {
         colnames(est) <- make.unique(colnames(est))
     }
+    est[is.nan(est)] <- NA
 
     return(structure(est,
                      n=NROW(object),
