@@ -72,7 +72,7 @@ ignoring functional/distribution definition}
 
 \item{rho}{Default covariance parameter (0.5)}
 
-\item{X}{Optional matrix of covariates}
+\item{X}{Optional matrix of fixed values of variables (manipulation)}
 
 \item{unlink}{Return Inverse link transformed data}
 
