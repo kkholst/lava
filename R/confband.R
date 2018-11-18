@@ -75,12 +75,19 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,centermark=0
             x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]
             y2 <- rep(rev(upper),each=2)[-1]
             xx <- c(x1,x2)
+            if (!is.null(center))
+                center <- rep(center,each=2)[-1]
             yy <- c(y1,y2)
         } else {
             xx <- c(x,rev(x))
             yy <- c(lower,rev(upper))
         }
         polygon(xx,yy,...)
+        if (line && !is.null(center)) {
+            mlines <- function(x,y,...,density,angle,border,fillOddEven)
+                lines(x,y,...)
+            mlines(xx[seq(length(xx)/2)],center,...)
+        }
         return(invisible(NULL))
     }
     if (vert) {

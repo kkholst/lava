@@ -12,16 +12,18 @@
 ##' @keywords utilities misc
 ##' @seealso \code{blockdiag}, \code{\link{paste}}, \code{\link{cat}},
 ##' @examples
+##' ## Block diagonal
 ##' matrix(rnorm(25),5)%++%matrix(rnorm(25),5)
+##' ## String concatenation
 ##' "Hello "%++%" World"
+##' ## Function composition
+##' f <- log %++% exp
+##' f(2)
 ##' @export
 `%++%` <- function(x,y) UseMethod("%++%",y)
 
 ## ##' @export
 ## `%+%` <- function(x,y) UseMethod("%+%",y)
-
-##' @export
-`%++%.default` <- function(x,y) x%++%y
 
 ##' @export
 `%++%.default` <- function(x,y) paste0(x,y)
@@ -31,6 +33,9 @@
 
 ##' @export
 `%++%.matrix` <- function(x,y) blockdiag(x,y)
+
+##' @export
+`%++%.function` <- function(x,y) function(...) x(y(...))
 
 
 notin <- Negate(get("%in%"))

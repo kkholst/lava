@@ -19,8 +19,13 @@ data types he operator is a wrapper of \code{paste}.
 Concatenation operator
 }
 \examples{
+## Block diagonal
 matrix(rnorm(25),5)\%++\%matrix(rnorm(25),5)
+## String concatenation
 "Hello "\%++\%" World"
+## Function composition
+f <- log \%++\% exp
+f(2)
 }
 \author{
 Klaus K. Holst
