@@ -160,7 +160,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
     if (is.null(hess)) {
       I <- -numDeriv::jacobian(grad,p.orig,method=lava.options()$Dmethod)
     } else {
-        browser()
       I <- -hess(p.orig)
     }
     D <- attributes(I)$grad
