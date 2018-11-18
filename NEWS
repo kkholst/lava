@@ -1,15 +1,29 @@
 # -*- mode: org -*-
 
-* Version 1.6.4
-  - multiple inputs (binomial.rd)
-  - starting values mixture 
-    Naming conventions for parameters in mixutre model
-    (mixture: argument names=TRUE returns just the names of the
-    model). New print,summary methods
-  - starting values multigroup
-  - renaming km to wkm
-  - parallel computations for mixture in twostageCV 
-  - complex step derivative: deriv.function
+* Version 1.6.4 <2018-11-19 Mon>
+  - New simulation distributions: constant relative risk and risk
+    difference models as in Richardson, Robins and Wang, 2017):
+    binomial.rd, binomial.rr.  
+    Base on new hook 'simulate.multiple.inputs' which allows the
+    distribution to depend non-linearly on multiple different input
+    variables.
+  - sim.lvm: 'X' argument can now fix (manipulate) any variable and not
+    only exogenous variables.
+  - Summary function for sim.default updated (the 'estimate' argument
+    can now be a list with each element being the estimate position
+    and optionally standard error and true value).
+  - Starting values updated for mixture models. The parameter names
+    can be obtained with mixture(...,names=TRUE) and set with
+    mixture(...,control=list(start=...))).
+  - Naming conventions for multigroup parameters: 'par@g' (par: name
+    of parameter, g: first group number where 'par' is
+    observed). Starting values can be specified with
+    estimate(...,control(list(start=...))).
+  - New print and summary methods for mixture models.  
+  - Renamed (weighted) K-means function 'km' to 'wkm'.
+  - Derivative method deriv.function based on complex step derivatives.
+  - twostageCV: estimation of mixture models are now parallelized if
+    mc.cores>1.
 
 * Version 1.6.3 <2018-08-03 Fri>
   - Fixed problems with plots (Rgraphviz)

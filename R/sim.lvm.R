@@ -312,6 +312,8 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
     setup <- is.null(n) && is.null(X) ## Save environment (variables v.env) and return sim object
     loadconfig <- !is.null(x$sim.env) && !setup && (length(list(...))==0 && length(p)==0)
+    Yfix <- NULL
+
     if (loadconfig) {
         for (v in setdiff(v.env,"X")) assign(v, x$sim.env[[v]])
         if (is.null(X)) X <-  x$sim.env[['X']]
@@ -320,7 +322,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         p <- c(p,unlist(list(...)))
         xx <- exogenous(x)
 
-        Yfix <- NULL
         if (!is.null(X)) {
             if (is.null(n))
                 n <- nrow(X)

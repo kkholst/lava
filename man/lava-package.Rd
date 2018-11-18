@@ -15,6 +15,6 @@ lava()
 
 }
 \author{
-Klaus K. Holst Maintainer: <k.k.holst@biostat.ku.dk>
+Klaus K. Holst Maintainer: <klaus@holst.it>
 }
 \keyword{package}

@@ -27,7 +27,7 @@
 ##' @importFrom methods new as
 ##' @aliases lava-package lava
 ##' @docType package
-##' @author Klaus K. Holst Maintainer: <k.k.holst@@biostat.ku.dk>
+##' @author Klaus K. Holst Maintainer: <klaus@@holst.it>
 ##' @keywords package
 ##' @examples
 ##'
@@ -245,7 +245,7 @@ NULL
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
 ##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##' index.lvm index.lvmfit index reindex index<-
-##' rmvn0 dmvn0 NR logit expit tigol
+##' rmvn0 dmvn0 logit expit tigol
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
 ##' checkmultigroup profci estimate.MAR missingModel Inverse Identical

@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.6.3
-Date: 2018-08-03
+Version: 1.6.4
+Date: 2018-11-19
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
@@ -13,8 +13,9 @@ Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: A general implementation of Structural Equation Models
 	with latent variables (MLE, 2SLS, and composite likelihood
 	estimators) with both continuous, censored, and ordinal
-	outcomes (Holst and Budtz-Joergensen (2013)
-	<doi:10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear latent variable models (two-stage)...		
+	outcomes (Holst and Budtz-Joergensen (2013) <doi:10.1007/s00180-012-0344-y>).
+	Mixture latent variable models and non-linear latent variable models
+	(Holst and Budtz-Joergensen (2018) <doi:>).
 	The package also provides methods for graph exploration (d-separation,
 	back-door criterion), simulation of general non-linear latent variable
 	models, and estimation of influence functions for a broad range of
