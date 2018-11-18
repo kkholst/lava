@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 
-* Version 1.6.4 <2018-11-19 Mon>
+* Version 1.6.4 <2018-11-18 Mon>
   - New simulation distributions: constant relative risk and risk
     difference models as in Richardson, Robins and Wang, 2017):
     binomial.rd, binomial.rr.  

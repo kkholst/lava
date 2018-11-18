@@ -9,8 +9,8 @@
 }
 
 '.onAttach' <- function(libname, pkgname="lava") {
-    desc <- utils::packageDescription(pkgname)
-    packageStartupMessage(desc$Package, " version ",desc$Version)
+    #desc <- utils::packageDescription(pkgname)
+    #packageStartupMessage(desc$Package, " version ",desc$Version)
     lava.options(cluster.index=versioncheck("mets",c(0,2,7)),
                  tobit=versioncheck("lava.tobit",c(0,5)))
 }
