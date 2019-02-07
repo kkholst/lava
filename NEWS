@@ -1,5 +1,9 @@
 # -*- mode: org -*-
 
+* Version 1.6.5 <2019-02-07 Thu>
+
+  - Maintenance release
+
 * Version 1.6.4 <2018-11-18 Mon>
   - New simulation distributions: constant relative risk and risk
     difference models as in Richardson, Robins and Wang, 2017):

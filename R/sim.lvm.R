@@ -345,7 +345,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         mu <- unlist(lapply(x$mean, function(l) ifelse(is.na(l)|is.character(l),0,l)))
         xf <- intersect(unique(parlabels(x)),xx)
         xfix <- c(randomslope(x),xf); if (length(xfix)>0) normal <- FALSE
-
         ## Match parameter names
         if ((!is.null(names(p)) && all(!is.na(names(p)))) || length(p)!=(index(x)$npar+index(x)$npar.mean+index(x)$npar.ex) | is.null(names(p))) {
             nullp <- is.null(p)
@@ -371,7 +370,6 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     p[idx11] <- p0[idx22]
             }
         }
-
         M <- modelVar(x,p,data=NULL)
         A <- M$A; P <- M$P
         if (!is.null(M$v)) mu <- M$v

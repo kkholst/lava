@@ -28,7 +28,13 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
         D <- attributes(distribution(x)[[y]])$family
         Tr <- x$attributes$transform[[y]]
         col2 <- tryCatch(x$attributes$type[[y]],error=function(...) NULL)
-        if (is.null(col2) || is.na(col2)) col2 <- "gaussian"
+        if (is.null(col2) || is.na(col2)) {
+            if (!is.na(x$covfix[y,y]) && x$covfix[y,y]==0L) {
+                col2 <- "deterministic"
+            } else {
+                col2 <- "gaussian"
+            }
+        }
         if (!is.null(Tr)){
             col1 <- paste0(y,' ~ ',paste0(Tr$x,collapse="+"),sep="")
             Rt <- rbind(Rt, c(col1,""))

@@ -24,10 +24,23 @@ binomial.rr <- function(x,response,exposure,
 }
 
 
-binomial.rrw <- function(x,response,exposure,
-                 target.model,nuisance.model,
-                 exposure.model=binomial.lvm(),type="rd",...) {
-    if (inherits(response,"formula")) respones <- all.vars(response)
+binomial.rrw <- function(x, response, exposure,
+                 target.model, nuisance.model,
+                 exposure.model=binomial.lvm(), type="rd", ...) {
+    if (inherits(response,"formula")) {
+        vars <- all.vars(response)
+        if (length(vars)==1L) {
+            response <- vars
+        } else {
+            yf <- getoutcome(response, sep="|")
+            exposure  <- attr(yf,"x")[[1]]
+            if (length(attr(yf,"x"))>1)
+                target.model  <- attr(yf,"x")[[2]]
+            if (length(attr(yf,"x"))>2)
+                nuisance.model  <- attr(yf,"x")[[3]]
+            response <- yf[1]
+        }
+    }
     if (inherits(exposure,"formula")) exposure <- all.vars(exposure)
     if (inherits(target.model,"formula")) target.model <- all.vars(target.model)
     if (inherits(nuisance.model,"formula")) nuisance.model <- all.vars(nuisance.model)
@@ -41,6 +54,8 @@ binomial.rrw <- function(x,response,exposure,
                          fun=simulate.binomial.rr,
                          type="Binomial regression (exposure | relative-risk | odds-product)"))
     }
+    if (is.null(distribution(x)[[exposure]]))
+        distribution(x, exposure) <- binomial.lvm(link="logit")
     covariance(x,c(target.model,nuisance.model)) <- 0
     distribution(x,exposure) <- exposure.model
     names(val) <- response
