@@ -139,7 +139,7 @@ gaussian_logLik.lvm <- function(object,p,data,
     exo.idx <- with(index(object), exo.obsidx)
     endo.idx <- with(index(object), endo.obsidx)
     if (type[1]=="exo") {
-        if (length(exo.idx)==0 || is.na(exo.idx))
+        if (length(exo.idx)==0 || any(is.na(exo.idx)))
             return(0)
     }
 

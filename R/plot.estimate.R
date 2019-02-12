@@ -37,7 +37,7 @@ plot.estimate <- function(x,f,idx,intercept=FALSE,data,confint=TRUE,type="l",xla
     if (!missing(idx)) pp <- pp[idx,,drop=FALSE]
     if (!intercept) {
         idx <- match("(Intercept)",rownames(pp))
-        if (length(idx)>0 && !is.na(idx)) pp <- pp[-idx,,drop=FALSE]
+        if (length(idx)>0 && !any(is.na(idx))) pp <- pp[-idx,,drop=FALSE]
     }
     forestplot(pp[rev(seq(nrow(pp))),,drop=FALSE],...)
 }

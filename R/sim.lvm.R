@@ -364,9 +364,9 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 idx11 <- na.omit(match(names(p0),c2))
                 idx2 <- na.omit(which(names(p0)%in%c1))
                 idx22 <- na.omit(which(names(p0)%in%c2))
-                if (length(idx1)>0 && !is.na(idx1))
+                if (length(idx1)>0 && !any(is.na(idx1)))
                     p[idx1] <- p0[idx2]
-                if (length(idx11)>0 && !is.na(idx11))
+                if (length(idx11)>0 && !any(is.na(idx11)))
                     p[idx11] <- p0[idx22]
             }
         }

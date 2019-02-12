@@ -218,7 +218,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1-alpha/2)*100,"",sep="%")
     nn <- NULL
-    if (((iid || length(iid)>0) && robust) && (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) { ## If user supplied vcov, then don't estimate IC
+    if ((( (is.logical(iid) && iid) || length(iid)>0) && robust) && (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) { ## If user supplied vcov, then don't estimate IC
         if (missing(score.deriv)) {
             if (!is.logical(iid)) {
                 iidtheta <- iid

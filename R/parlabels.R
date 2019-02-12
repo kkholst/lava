@@ -5,7 +5,7 @@ parlabels <- function(x,exo=FALSE) {
            covfix(x)$labels[!is.na(covfix(x)$labels)])
   if (!is.null(x$exfix))
     res <- c(res,
-           unlist(x$exfix[!is.na(x$exfix) && !is.numeric(x$exfix)]))
+           unlist(x$exfix[!is.na(x$exfix) & !is.numeric(x$exfix)]))
   if (exo)
     res <- intersect(res,index(Model(x))$exogenous)
   return(res)
