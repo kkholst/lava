@@ -68,10 +68,10 @@ getMeanVar <- function(object,k,iter,...) {
 #' 
 #' @export mvnmix
 mvnmix <- function(data, k=2, theta, steps=500,
-                 tol=1e-16, lambda=0,
-                 mu=NULL,
-                 silent=TRUE, extra=FALSE, ...
-                 )  {
+            tol=1e-16, lambda=0,
+            mu=NULL,
+            silent=TRUE, extra=FALSE, ...
+            )  {
 
   if (k<2) stop("Only one cluster")
   ## theta = (mu1, ..., muk, Sigma1, ..., Sigmak, p1, ..., p[k-1])
@@ -87,9 +87,9 @@ mvnmix <- function(data, k=2, theta, steps=500,
     if (!is.null(mu)) {
       mus <- mu
     } else
-    for (j in 1:k) {
-      mus <- c(mus, yunique[sample(nrow(yunique),1),])
-    }
+        for (j in 1:k) {
+            mus <- c(mus, yunique[sample(nrow(yunique),1),])
+        }
     Sigmas <- rep(as.vector(cov(data)),k)
     ps <- rep(1/k,k-1)
     theta <- c(mus,Sigmas,ps)
@@ -104,7 +104,7 @@ mvnmix <- function(data, k=2, theta, steps=500,
       thetas <- rbind(thetas, theta)
     pp <- toPar(theta,D,k)
     mus <- pp$mu; Sigmas <- pp$Sigma; ps <- pp$p
-    ## E(expectation step)
+    ## E(xpectation step)
     phis <- c()
     for (j in 1:k) {
         C <- matrix(Sigmas[j,],ncol=D); diag(C) <- diag(C)+lambda ## Assure C is not singular
@@ -121,18 +121,19 @@ mvnmix <- function(data, k=2, theta, steps=500,
     mus.new <- c()
     Sigmas.new <- c()
     for (j in 1:k) {
-      if (!is.null(mu)) mus.new <- mu
-      else {
+        ##if (!is.null(mu)) mus.new <- mu      
+        ##else
+    {
         mu.new <- colSums(gammas[,j]*data)/sum(gammas[,j])
         mus.new <- rbind(mus.new, mu.new)
-      }
-      wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
-      Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
-      ## Sigma.new <- 0
-      ## for (l in 1:n) {
-      ##    Sigma.new <- Sigma.new + gammas[l,j]*(y[l,]-mu.new)%*%t(y[l,]-mu.new)
-      ##  }; Sigma.new <- Sigma.new/sum(gammas[,j])      
-      Sigmas.new <- rbind(Sigmas.new, as.vector(Sigma.new))
+    }
+        wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
+        Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
+        ## Sigma.new <- 0
+        ## for (l in 1:n) {
+        ##    Sigma.new <- Sigma.new + gammas[l,j]*(y[l,]-mu.new)%*%t(y[l,]-mu.new)
+        ##  }; Sigma.new <- Sigma.new/sum(gammas[,j])      
+        Sigmas.new <- rbind(Sigmas.new, as.vector(Sigma.new))
     }; ps.new <- colMeans(gammas)
     theta.old <- theta
     if (extra)
@@ -269,4 +270,18 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
         rgl::plot3d(ee, col=col[i], alpha=alpha, add = TRUE)      
     }
   }  
+}
+
+##' @export
+sim.mvn.mixture <- function(x,n,...) {
+    pars <- getMeanVar(fit)
+    K <- length(pars)
+    p <- tail(coef(x),K-1); p <- c(p,1-sum(p))
+    ng <- as.vector(rmultinom(1,n,p))
+    res <- c()
+    for (i in seq(K)) {
+        res <- rbind(res,
+                     mets::rmvn(ng[i],pars[[i]]$mean,pars[[i]]$var))
+    }
+    return(res)    
 }
