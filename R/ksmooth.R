@@ -49,6 +49,7 @@ ksmooth2 <- function(x,data,h=NULL,xlab=NULL,ylab=NULL,zlab="",gridsize=rep(51L,
         x <- model.frame(x,data)
     }
     if (length(gridsize)==1) gridsize <- rep(gridsize,2)
+    
     if (is.null(h)) h <- apply(as.matrix(x),2,sd)*nrow(x)^(-1/5)
     est <- KernSmooth::bkde2D(x, bandwidth=h, gridsize=gridsize)
     if (is.null(xlab)) xlab <- names(x)[1]
@@ -112,9 +113,10 @@ surface <- function(f,xlim=c(0,1),ylim=xlim,n=rep(100,2),col,clut="gold",clut.ce
         op <- do.call(par,parargs)
         if (persp) graphics::persp(x=x,y=x,z=f, col=col, expand=expand, ...)
         if (contour | !is.null(image)) {
-            par(mar=c(3,3,0.5,3)) ## (bottom, left, top, right)
-            if (!is.null(image)) {
+            if (persp) par(mar=c(3,3,0.5,3)) ## (bottom, left, top, right)
+            if (!is.null(image)) {                
                 do.call(image,list(x=x,y=y,z=f,col=clut,xlim=range(x),ylim=range(y),xlab="",ylab=""))
+                box()
             }
             if (contour) {
                 args <- c(list(x=x,y=y,z=f,nlevels=nlevels,col=col.contour,add=!is.null(image)),dots)
