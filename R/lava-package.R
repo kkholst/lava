@@ -21,8 +21,8 @@
 ##'     terms logLik qt pt update update.formula confint approxfun
 ##'     pchisq confint.default formula fft uniroot rbinom predict sd
 ##'     addmargins residuals dnorm quantile qf cov2cor qchisq
-##'     get_all_vars p.adjust rpois rgamma printCoefmat rt glm nlminb
-##'     na.pass na.omit
+##'     get_all_vars p.adjust rpois rt rmultinom rgamma printCoefmat 
+##'     glm nlminb na.pass na.omit
 ##' @importFrom survival is.Surv
 ##' @importFrom methods new as
 ##' @aliases lava-package lava

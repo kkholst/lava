@@ -173,7 +173,8 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
           D <- attributes(objective.origin)$grad
           I <- attributes(objective.origin)$hess
           if (!is.null(I)) I <- -I
-      } else {
+      }
+      if (is.null(D) || is.null(I)) {
           if (!is.null(hess)) {
               H <- hess(p.orig)
           }
