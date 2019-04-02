@@ -1,3 +1,24 @@
+## kmeans++
+## Assign centre of first cluster randomly from observations.
+## 1) Calculate min distances of observations to current clusters, D
+## 2) Sample new cluster centre from distribution p(x) = D^2(x)/sum(D^2)
+## Repeat 1-2 until all clusters are assigned
+kmpp <- function(y,k=2) {
+    Dist <- function(y1,y2) sum(y1-y2)^2
+    n <- NROW(y)
+    ii <- numeric(k)
+    u <- runif(k)
+    ii[1] <- sample(n,1)
+    D <- matrix(0,n,k-1)
+    for (i in seq_len(k-1)+1) { 
+        D[,i-1] <- apply(y,1,function(x) Dist(x,y[ii[i-1],]))
+        D2 <- apply(D[,seq(i-1),drop=FALSE],1,min)
+        pdist <- cumsum(D2/sum(D2))
+        ii[i] <- mets::fast.approx(pdist,u[i])
+    }
+    return(ii)
+}
+
 
 ##' Weighted K-means
 ##'
@@ -8,11 +29,12 @@
 ##' @param weights Optional weights
 ##' @param iter.max Max number of iterations
 ##' @param n.start Number of restarts
+##' @param init method to create initial centres (default kmeans++)
 ##' @param ... Additional arguments to lower level functions
 ##' @export
 ##' @author Klaus K. Holst
 ##'
-wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...) { ## Lloyd's algorithm
+wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, init="kmpp", ...) { ## Lloyd's algorithm
     if (inherits(x, "formula")) x <- stats::model.matrix(x,data=data)
     x <- cbind(x)
     random.start <- TRUE
@@ -28,7 +50,12 @@ wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ...
     cl0 <- rep(1,NROW(x))
     for (k in seq(n.start)) {
         if (random.start) {
-            mu <- lapply(sample(NROW(x),K), function(i) cbind(x)[i,,drop=TRUE])
+            if (!exists(init)) { ## Random select centres
+                idx <- sample(NROW(x),K)
+            } else {
+                idx <- do.call(init, list(x, K))
+            }            
+            mu <- lapply(idx, function(i) cbind(x)[i,,drop=TRUE])
         }
         mus <- c(mus, list(mu))
         for (i in seq(iter.max)) {

@@ -5,7 +5,8 @@
 \title{Estimate mixture latent variable model}
 \usage{
 mvnmix(data, k = 2, theta, steps = 500, tol = 1e-16, lambda = 0,
-  mu = NULL, silent = TRUE, extra = FALSE, ...)
+  mu = NULL, silent = TRUE, extra = FALSE, n.start = 1,
+  init = "kmpp", ...)
 }
 \arguments{
 \item{data}{\code{data.frame}}
@@ -18,7 +19,7 @@ mvnmix(data, k = 2, theta, steps = 500, tol = 1e-16, lambda = 0,
 
 \item{tol}{Convergence tolerance of EM algorithm}
 
-\item{lambda}{Added to diagonal of covariance matrix (to avoid
+\item{lambda}{Regularisation parameter. Added to diagonal of covariance matrix (to avoid
 singularities)}
 
 \item{mu}{Initial centres (if unspecified random centres will be chosen)}
@@ -26,6 +27,10 @@ singularities)}
 \item{silent}{Turn on/off output messages}
 
 \item{extra}{Extra debug information}
+
+\item{n.start}{Number of restarts}
+
+\item{init}{Function to choose initial centres}
 
 \item{...}{Additional arguments parsed to lower-level functions}
 }

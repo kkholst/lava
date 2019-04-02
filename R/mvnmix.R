@@ -44,11 +44,13 @@ getMeanVar <- function(object,k,iter,...) {
 #' @param theta Optional starting values
 #' @param steps Maximum number of iterations
 #' @param tol Convergence tolerance of EM algorithm
-#' @param lambda Added to diagonal of covariance matrix (to avoid
+#' @param lambda Regularisation parameter. Added to diagonal of covariance matrix (to avoid
 #' singularities)
 #' @param mu Initial centres (if unspecified random centres will be chosen)
 #' @param silent Turn on/off output messages
 #' @param extra Extra debug information
+#' @param n.start Number of restarts
+#' @param init Function to choose initial centres
 #' @param ... Additional arguments parsed to lower-level functions
 #' @return A \code{mixture} object
 #' @author Klaus K. Holst
@@ -70,117 +72,140 @@ getMeanVar <- function(object,k,iter,...) {
 mvnmix <- function(data, k=2, theta, steps=500,
             tol=1e-16, lambda=0,
             mu=NULL,
-            silent=TRUE, extra=FALSE, ...
+            silent=TRUE, extra=FALSE,
+            n.start=1,
+            init="kmpp", ...
             )  {
 
-  if (k<2) stop("Only one cluster")
-  ## theta = (mu1, ..., muk, Sigma1, ..., Sigmak, p1, ..., p[k-1])
-  if (is.vector(data)) data <- matrix(data,ncol=1)
-  if (is.data.frame(data)) data <- as.matrix(data)  
-  i <- 0
-  E <- tol
-  D <- ncol(data)
-  yunique <- unique(data)
+    if (k<2) stop("Only one cluster")
+    ## theta = (mu1, ..., muk, Sigma1, ..., Sigmak, p1, ..., p[k-1])
+    if (is.vector(data)) data <- matrix(data,ncol=1)
+    if (is.data.frame(data)) data <- as.matrix(data)  
+    i <- 0
+    E <- tol
+    D <- ncol(data)
+    yunique <- unique(data)
+    if (n.start>1) extra <- FALSE
+    
+    logllmax <- -Inf
+    for (ii in seq(n.start)) {
+      if (ii>1) mu <- NULL
+      if (missing(theta)) {
+          mus <- c()
+          if (!is.null(mu)) {
+              mus <- mu
+          } else {
+              if (!exists(init)) { ## Random select centres
+                  idx <- sample(NROW(data),k)
+              } else {
+                  idx <- do.call(init, list(data, k))
+              }            
+              mus <- unlist(lapply(idx, function(i) cbind(data)[i,,drop=TRUE]))
+          }
+          Sigmas <- rep(as.vector(cov(data)),k)
+          ps <- rep(1/k,k-1)
+          theta <- c(mus,Sigmas,ps)
+      }    
 
-  if (missing(theta)) {
-    mus <- c()
-    if (!is.null(mu)) {
-      mus <- mu
-    } else
-        for (j in 1:k) {
-            mus <- c(mus, yunique[sample(nrow(yunique),1),])
-        }
-    Sigmas <- rep(as.vector(cov(data)),k)
-    ps <- rep(1/k,k-1)
-    theta <- c(mus,Sigmas,ps)
-  }
-
-  theta0 <- theta
-  if (!silent)
-    cat(i,":\t", paste(formatC(theta0),collapse=" "),"\n")
-  thetas <- members <- c()
-  while ((i<steps) & (E>=tol)) {
-    if (extra)
-      thetas <- rbind(thetas, theta)
-    pp <- toPar(theta,D,k)
-    mus <- pp$mu; Sigmas <- pp$Sigma; ps <- pp$p
-    ## E(xpectation step)
-    phis <- c()
-    for (j in 1:k) {
-        C <- matrix(Sigmas[j,],ncol=D); diag(C) <- diag(C)+lambda ## Assure C is not singular
-        phis <- cbind(phis, lava::dmvn0(data,mus[j,],C))
+      theta0 <- theta
+      if (!silent)
+          cat(i,":\t", paste(formatC(theta0),collapse=" "),"\n")
+      thetas <- members <- c()
+      while ((i<steps) & (E>=tol)) {
+          if (extra)
+              thetas <- rbind(thetas, theta)
+          pp <- toPar(theta,D,k)
+          mus <- pp$mu; Sigmas <- pp$Sigma; ps <- pp$p
+          ## E(xpectation step)
+          lphis <- c()
+          for (j in 1:k) {
+              C <- matrix(Sigmas[j,],ncol=D); diag(C) <- diag(C)+lambda ## Assure C is not singular
+              lphis <- cbind(lphis, lava::dmvn0(data,mus[j,],C,log=TRUE))
+          }
+          gammas <- c()
+          ## denom <- t(ps%*%t(phis))
+          for (j in 1:k) {
+              gammas <- cbind(gammas, log(ps[j]) + lphis[,j])
+          }
+          ## llmax <- apply(gammas,1,max)
+          ## for (j in 1:k) {
+          ##     gammas[,j] <- gammas[,j]-llmax
+          ## }
+          gammas <- exp(gammas) #
+          denom <- rowSums(gammas)
+          for (j in 1:k) gammas[,j] <- gammas[,j]/denom # Posterior
+          sqrtgammas <- sqrt(gammas)
+          ## M(aximization step)
+          mus.new <- c()
+          Sigmas.new <- c()
+          for (j in 1:k) {
+              mu.new <- colSums(gammas[,j]*data)/sum(gammas[,j])
+              mus.new <- rbind(mus.new, mu.new)
+              wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
+              Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
+              Sigmas.new <- rbind(Sigmas.new, as.vector(Sigma.new))
+          }; ps.new <- colMeans(gammas)
+          theta.old <- theta
+          if (extra)
+              members <- cbind(members,
+                               apply(gammas,1,function(x) order(x,decreasing=TRUE)[1]))
+          theta <- toTheta(mus.new,Sigmas.new,ps.new)
+          E <- sum((theta-theta.old)^2)
+          i <- i+1
+          iter <- i    
+          if (!silent)
+              cat(i,":\t", paste(formatC(theta),collapse=" "),
+                  ",\t\te=",formatC(E), "\n",sep="")
+      }
+      if (n.start>1) {
+          logll <- sum(log(denom))
+          if (logll>logllmax) {
+              logllmax <- logll
+              theta.keep <- theta
+              gammas.keep <- gammas
+              E.keep <- E
+          }          
+      }      
     }
-    gammas <- c()
-    denom <- t(ps%*%t(phis))
-    for (j in 1:k) {
-      gammas <- cbind(gammas, ps[j]*phis[,j]/denom)
+    if (n.start>1) {
+        theta <- theta.keep
+        gammas <- gammas.keep
+        E <- E.keep
+    }
+        
+        myvars <- colnames(data)
+    if (is.null(myvars)) myvars <- colnames(data) <- paste("y",1:NCOL(data),sep="")
+    data <- as.data.frame(data)
+    m <- lvm(myvars,silent=TRUE); m <- covariance(m,myvars,pairwise=TRUE)
+    models <- datas <- c()
+    for (i in 1:k) {
+        models <- c(models, list(m))
+        datas <- c(datas, list(data))
     }
     
-    sqrtgammas <- sqrt(gammas)
-    ## M(aximization step)
-    mus.new <- c()
-    Sigmas.new <- c()
-    for (j in 1:k) {
-        ##if (!is.null(mu)) mus.new <- mu      
-        ##else
-    {
-        mu.new <- colSums(gammas[,j]*data)/sum(gammas[,j])
-        mus.new <- rbind(mus.new, mu.new)
-    }
-        wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
-        Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
-        ## Sigma.new <- 0
-        ## for (l in 1:n) {
-        ##    Sigma.new <- Sigma.new + gammas[l,j]*(y[l,]-mu.new)%*%t(y[l,]-mu.new)
-        ##  }; Sigma.new <- Sigma.new/sum(gammas[,j])      
-        Sigmas.new <- rbind(Sigmas.new, as.vector(Sigma.new))
-    }; ps.new <- colMeans(gammas)
-    theta.old <- theta
-    if (extra)
-      members <- cbind(members,
-                       apply(gammas,1,function(x) order(x,decreasing=TRUE)[1]))
-  theta <- toTheta(mus.new,Sigmas.new,ps.new)
-  E <- sum((theta-theta.old)^2)
-    i <- i+1
-    iter <- i    
-    if (!silent)
-      cat(i,":\t", paste(formatC(theta),collapse=" "),
-          ",\t\te=",formatC(E), "\n",sep="")
-  }
-
-  myvars <- colnames(data)
-  if (is.null(myvars)) myvars <- colnames(data) <- paste("y",1:NCOL(data),sep="")
-  data <- as.data.frame(data)
-  m <- lvm(myvars,silent=TRUE); m <- covariance(m,myvars,pairwise=TRUE)
-  models <- datas <- c()
-  for (i in 1:k) {
-    models <- c(models, list(m))
-    datas <- c(datas, list(data))
-  }
-
-  membership <- apply(gammas,1,function(x) order(x,decreasing=TRUE)[1])
-  res <- list(pars=theta, thetas=thetas , gammas=gammas, member=membership,
-              members=members, k=k, D=D, data=data, E=E,
-              prob=rbind(colMeans(gammas)),
+    membership <- apply(gammas,1,function(x) order(x,decreasing=TRUE)[1])
+    res <- list(pars=theta, thetas=thetas , gammas=gammas, member=membership,
+                members=members, k=k, D=D, data=data, E=E,
+                prob=rbind(colMeans(gammas)),
               iter=iter,
               models=models,      
               multigroup=multigroup(models,datas)              
               )
-  class(res) <- c("mvn.mixture","lvm.mixture")
-
-  parpos <- c()
-  npar1 <- D+D*(D-1)/2  
-  for (i in 1:k)
-    parpos <- c(parpos, list(c(seq_len(D)+(i-1)*D, k*D + seq_len(npar1)+
-                               (i-1)*(npar1))))
-  
-  theta <- c(unlist(lapply(getMeanVar(res),function(x) x$mean)),
+    class(res) <- c("mvn.mixture","lvm.mixture")
+    
+    parpos <- c()
+    npar1 <- D+D*(D-1)/2  
+    for (i in 1:k)
+        parpos <- c(parpos, list(c(seq_len(D)+(i-1)*D, k*D + seq_len(npar1)+
+                                                       (i-1)*(npar1))))
+    
+    theta <- c(unlist(lapply(getMeanVar(res),function(x) x$mean)),
              unlist(lapply(getMeanVar(res),function(x) c(diag(x$var),unlist(x$var[upper.tri(x$var)])))))
-  res$theta <- rbind(theta)
-  res$parpos <- parpos
-  res$opt <- list(estimate=theta)
-  res$vcov <- solve(information(res,type="E"))   
-  return(res)
+    res$theta <- rbind(theta)
+    res$parpos <- parpos
+    res$opt <- list(estimate=theta)
+    res$vcov <- solve(information(res,type="E"))   
+    return(res)
 }
 
 
@@ -248,13 +273,13 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
     
     if (!is.null(label)) {
       for (i in 1:x$k) {
-        if (label==1 | missing(iter)) {
+          if (label==1 | missing(iter)) {
           pot <- y[which(x$member==i),]
         }
         else {
           pot <- y[which(x$members[,iter]==i),]
         }
-        points(pot, cex=cex, pch=16, col=do.call(rgb, as.list(col2rgb(col[i])/255,alpha)))
+        points(pot, cex=cex, pch=16, col=Col(col[i],alpha))
       }
     }
     else

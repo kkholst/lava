@@ -5,7 +5,7 @@
 \title{Weighted K-means}
 \usage{
 wkm(x, mu, data, weights = rep(1, NROW(x)), iter.max = 20,
-  n.start = 5, ...)
+  n.start = 5, init = "kmpp", ...)
 }
 \arguments{
 \item{x}{Data (or formula)}
@@ -19,6 +19,8 @@ wkm(x, mu, data, weights = rep(1, NROW(x)), iter.max = 20,
 \item{iter.max}{Max number of iterations}
 
 \item{n.start}{Number of restarts}
+
+\item{init}{method to create initial centres (default kmeans++)}
 
 \item{...}{Additional arguments to lower level functions}
 }
