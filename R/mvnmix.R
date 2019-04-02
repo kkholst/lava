@@ -299,7 +299,7 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
 
 ##' @export
 sim.mvn.mixture <- function(x,n,...) {
-    pars <- getMeanVar(fit)
+    pars <- getMeanVar(x)
     K <- length(pars)
     p <- tail(coef(x),K-1); p <- c(p,1-sum(p))
     ng <- as.vector(rmultinom(1,n,p))
