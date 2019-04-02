@@ -13,9 +13,12 @@ nlminb2 <- function(start,objective,gradient,hessian,...) {
 nlminb1 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=gradient,hessian=NULL,...)
 }
+
 nlminb0 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
 }
+
+################################################################################
 
 estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
@@ -46,8 +49,9 @@ estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
 
 estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
 
-
+################################################################################
 ## Newton-Raphson/Scoring
+################################################################################
 
 ##' @title Newton-Raphson method
 ##' 
@@ -73,13 +77,12 @@ estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
 ##' @examples
 ##' # Objective function with gradient and hessian as attributes
 ##' f <- function(z) {
-##'     x <- z[1]; y <- z[2]
-##'     val <- x^2 + x*y^2 + x + y
-##'     structure(val, gradient=function(x) c(2*x+y^2+1, x+1),
-##'               hessian=function(x) c(2, 0))
+##'    x <- z[1]; y <- z[2]
+##'    val <- x^2 + x*y^2 + x + y
+##'    structure(val, gradient=c(2*x+y^2+1, 2*y*x+1),
+##'              hessian=rbind(c(2,2*y),c(2*y,2*x)))
 ##' }
 ##' NR(c(0,0),f)
-##' 
 ##' 
 ##' # Parsing arguments to the function and
 ##' g <- function(x,y) (x*y+1)^2
@@ -139,33 +142,53 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
   }
 
   if (control0$trace>0) {
-      cat("\nIter=0")
+       cat("\nIter=0\t")
       if (!is.null(obj))
           cat("Objective=",obj(as.double(start)))
       cat(";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
   }
-
   gradFun = !is.null(grad)
   if (!gradFun & is.null(hess)) {
     hess <- function(p) {
       ff <- obj(p)
-      res <- attributes(ff)$hessian
-      attributes(res)$grad <- as.vector(attributes(ff)$grad)
+      res <- attributes(ff)$hess
+      if (is.function(res)) {
+          res <- res(p)
+          attributes(res)$grad <- as.vector(attributes(ff)$grad(p))
+      } else {      
+          attributes(res)$grad <- as.vector(attributes(ff)$grad)
+      }
       return(res)
     }
-    grad <- function(p) numDeriv::jacobian(obj,p)
-    hess <- NULL
+    grad <- function(p) {
+        if (control0$trace>0) print("Numerical gradient")
+        numDeriv::jacobian(obj,p)
+    }
   }
+
   oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
-    if (is.null(hess)) {
-      I <- -numDeriv::jacobian(grad,p.orig,method=lava.options()$Dmethod)
-    } else {
-      I <- -hess(p.orig)
-    }
-    D <- attributes(I)$grad
-    if (is.null(D)) {
-      D <- grad(p.orig)
-    }
+      D <- I <- NULL # Place-holders for gradient and negative hessian
+      if (!is.logical(control0$backtrack)) { # Back-tracking based on objective function evaluations
+          objective.origin <- obj(p.orig)
+          D <- attributes(objective.origin)$grad
+          I <- attributes(objective.origin)$hess
+          if (!is.null(I)) I <- -I
+      } else {
+          if (!is.null(hess)) {
+              H <- hess(p.orig)
+          }
+          if (is.null(hess) || is.null(H)) {
+              if (control0$trace>0) print("Numerical Hessian")
+              I <- -numDeriv::jacobian(grad,p.orig,method=lava.options()$Dmethod)
+          } else {
+              I <- -H
+          }
+          D <- attributes(I)$grad
+          if (is.null(D)) {
+              D <- grad(p.orig)
+          }
+      }
+      
     if (return.mat) return(list(D=D,I=I))
     if (control0$stabil) {
       if (control0$lambda!=0) {
@@ -207,26 +230,34 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
     } else if(identical(control0$backtrack, FALSE)) {
       p <- p.orig + Lambda*Delta
     } else {  # objective(p.orig) - obj(p) <= mu*Lambda*grad(p.orig)*Delta
-
         ## curvature
         c_D.origin_Delta <- control0$backtrack * c(rbind(D) %*% Delta)
-        objective.origin <- obj(p.orig)
         p <- p.orig + as.vector(Lambda*Delta)
 
         mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#
-        mD <- c(obj(p), abs(grad(p) %*% Delta))
+        objective.new <- obj(p)
+        grad.new <- attributes(objective.new)$grad
+        if (is.null(grad.new)) {
+            grad.new <- grad(p)
+        }
+        mD <- c(objective.new, abs(grad.new %*% Delta))
         count <- 0
         while (any(mD>mD0) || any(is.nan(mD))) {
             count <- count+1
             Lambda <- Lambda/2
             if (Lambda<1e-4) break;
             p <- p.orig + Lambda*Delta
+            objective.new <- obj(p)
+            grad.new <- attributes(objective.new)$grad
             if(!is.infinite(mD0[1])){
                 mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1]#
-                mD[1] <- obj(p)
+                mD[1] <- objective.new
             }
             if(!is.infinite(mD0[2])){
-                mD[2] <- abs(grad(p) %*% Delta)
+                if (is.null(grad.new)) {
+                    grad.new <- grad(p)
+                }
+                mD[2] <- abs(grad.new %*% Delta)
             }
         }
     }
@@ -252,7 +283,7 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
       }
     }
     if (count2==control0$trace) {
-        cat("Iter=", count)
+        cat("Iter=", count,"\t",sep="")
         if (!is.null(obj))
             cat("Objective=",obj(as.double(newpar$p)))
         cat(";\n\tD=", paste0(formatC(newpar$D),
@@ -263,6 +294,7 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
     }
     if (mean(newpar$D^2)^.5<control0$tol) break;
   }
+
   res <- list(par=as.vector(thetacur), iterations=count, method="NR",
               gradient=newpar$D, iH=newpar$iI)
   return(res)
