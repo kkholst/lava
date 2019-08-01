@@ -23,6 +23,7 @@
 \alias{binomial.lvm}
 \alias{poisson.lvm}
 \alias{uniform.lvm}
+\alias{multinomial.lvm}
 \alias{beta.lvm}
 \alias{normal.lvm}
 \alias{mvn.lvm}

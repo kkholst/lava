@@ -13,6 +13,7 @@
 ##' binomial.lvm
 ##' poisson.lvm
 ##' uniform.lvm
+##' multinomial.lvm
 ##' beta.lvm
 ##' normal.lvm mvn.lvm
 ##' lognormal.lvm

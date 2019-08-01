@@ -1,10 +1,15 @@
 # -*- mode: org -*-
 
-* Version 1.6.5.1 <2019-02-12 Tue>
-  - ...
+* Version 1.6.6 <2019-08-01 Thu>
+  - Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now
+    initialized by default using kmeans++.
+  - sim method implemented for mvnmix models.
+  - Bug fix: Newton-Raphson method (lava::NR) used a numerical
+    approximation of the Hessian even when submitted as attribute to
+    the objective function.
 
 * Version 1.6.5 <2019-02-07 Thu>
-  - Maintenance release
+  - Maintenance release.
 
 * Version 1.6.4 <2018-11-18 Mon>
   - New simulation distributions: constant relative risk and risk
