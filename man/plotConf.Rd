@@ -116,5 +116,5 @@ plotConf(lmer0, var1="x1", var2="x2")
 \author{
 Klaus K. Holst
 }
-\keyword{hplot,}
+\keyword{hplot}
 \keyword{regression}

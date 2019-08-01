@@ -55,7 +55,7 @@ getMeanVar <- function(object,k,iter,...) {
 #' @return A \code{mixture} object
 #' @author Klaus K. Holst
 #' @seealso \code{mixture}
-#' @keywords models, regression
+#' @keywords models regression
 #' @examples
 #' 
 #' data(faithful)

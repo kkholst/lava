@@ -63,5 +63,5 @@ if (interactive()) {
 \author{
 Klaus K. Holst
 }
-\keyword{models,}
+\keyword{models}
 \keyword{regression}

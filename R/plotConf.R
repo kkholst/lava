@@ -64,7 +64,7 @@
 ##' lmer0 <- lme4::lmer(y ~ x0 + x1*x2 + (1|Id), dd)
 ##' plotConf(lmer0, var1="x1", var2="x2")
 ##' }
-##' @keywords hplot, regression
+##' @keywords hplot regression
 plotConf <- function(model,
                      var1=NULL,
                      var2=NULL,

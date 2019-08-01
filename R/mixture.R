@@ -36,7 +36,7 @@
 #' @param ... Additional arguments parsed to lower-level functions
 #' @author Klaus K. Holst
 #' @seealso \code{mvnmix}
-#' @keywords models, regression
+#' @keywords models regression
 #' @examples
 #'
 #' \donttest{

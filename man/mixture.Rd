@@ -75,5 +75,5 @@ estimate(M,"y~x")
 \author{
 Klaus K. Holst
 }
-\keyword{models,}
+\keyword{models}
 \keyword{regression}
