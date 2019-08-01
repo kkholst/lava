@@ -535,6 +535,7 @@ print.twostageCV <- function(x,...) {
     splinedf <- unlist(lapply(x$knots,function(x) if (any(is.na(x))) return(1) else length(x)-1))
     cat("Selected spline model degrees of freedom: ", splinedf[i2] ,"\n", sep="")
     knots <- rbind(x$knots[[i2]])
+    if (is.na(knots)) knots <- "none"
     cat("Knots:", paste(formatC(knots,...) , collapse=" "), "\n\n")
     rmse <- x$cv
     rownames(rmse) <- paste0("df:",splinedf)
