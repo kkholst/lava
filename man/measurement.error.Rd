@@ -4,9 +4,15 @@
 \alias{measurement.error}
 \title{Two-stage (non-linear) measurement error}
 \usage{
-measurement.error(model1, formula, data = parent.frame(),
-  predictfun = function(mu, var, data, ...) mu[, 1]^2 + var[1], id1, id2,
-  ...)
+measurement.error(
+  model1,
+  formula,
+  data = parent.frame(),
+  predictfun = function(mu, var, data, ...) mu[, 1]^2 + var[1],
+  id1,
+  id2,
+  ...
+)
 }
 \arguments{
 \item{model1}{Stage 1 model}

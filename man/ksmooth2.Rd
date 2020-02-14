@@ -5,8 +5,16 @@
 \alias{surface}
 \title{Plot/estimate surface}
 \usage{
-ksmooth2(x, data, h = NULL, xlab = NULL, ylab = NULL, zlab = "",
-  gridsize = rep(51L, 2), ...)
+ksmooth2(
+  x,
+  data,
+  h = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  zlab = "",
+  gridsize = rep(51L, 2),
+  ...
+)
 }
 \arguments{
 \item{x}{formula or data}

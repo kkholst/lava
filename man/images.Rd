@@ -4,13 +4,27 @@
 \alias{images}
 \title{Organize several image calls (for visualizing categorical data)}
 \usage{
-images(x, group, ncol = 2, byrow = TRUE, colorbar = 1,
-  colorbar.space = 0.1, label.offset = 0.02, order = TRUE,
-  colorbar.border = 0, main, rowcol = FALSE, plotfun = NULL, axis1,
-  axis2, mar, col = list(c("#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5"),
-  c("#FEE5D9", "#FCAE91", "#FB6A4A", "#CB181D"), c("#EDF8E9", "#BAE4B3",
-  "#74C476", "#238B45"), c("#FEEDDE", "#FDBE85", "#FD8D3C", "#D94701")),
-  ...)
+images(
+  x,
+  group,
+  ncol = 2,
+  byrow = TRUE,
+  colorbar = 1,
+  colorbar.space = 0.1,
+  label.offset = 0.02,
+  order = TRUE,
+  colorbar.border = 0,
+  main,
+  rowcol = FALSE,
+  plotfun = NULL,
+  axis1,
+  axis2,
+  mar,
+  col = list(c("#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5"), c("#FEE5D9", "#FCAE91",
+    "#FB6A4A", "#CB181D"), c("#EDF8E9", "#BAE4B3", "#74C476", "#238B45"), c("#FEEDDE",
+    "#FDBE85", "#FD8D3C", "#D94701")),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame or matrix}

@@ -9,8 +9,14 @@
 \alias{Diff}
 \title{Calculate diagnostic tests for 2x2 table}
 \usage{
-diagtest(table, positive = 2, exact = FALSE, p0 = NA,
-  confint = c("logit", "arcsin", "pseudoscore", "exact"), ...)
+diagtest(
+  table,
+  positive = 2,
+  exact = FALSE,
+  p0 = NA,
+  confint = c("logit", "arcsin", "pseudoscore", "exact"),
+  ...
+)
 }
 \arguments{
 \item{table}{Table or (matrix/data.frame with two columns)}

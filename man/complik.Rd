@@ -4,8 +4,16 @@
 \alias{complik}
 \title{Composite Likelihood for probit latent variable models}
 \usage{
-complik(x, data, k = 2, type = c("nearest", "all"), pairlist,
-  messages = 0, estimator = "normal", ...)
+complik(
+  x,
+  data,
+  k = 2,
+  type = c("nearest", "all"),
+  pairlist,
+  messages = 0,
+  estimator = "normal",
+  ...
+)
 }
 \arguments{
 \item{x}{\code{lvm}-object}

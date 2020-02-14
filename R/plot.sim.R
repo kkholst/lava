@@ -102,7 +102,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
              xlim=NULL,
              ylab="",
              xlab="",
-             rug=TRUE,
+             rug=FALSE,
              rug.alpha=0.5,
              line.col=scatter.col,             
              line.lwd=1,
@@ -168,10 +168,11 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
 
     single <- tolower(plot.type[1])=="single"
 
-    if (auto.layout) {
-        nc <- (scatter.plot || running.mean) + density.plot
-        nr <- min(6,K)
-        if (single) nr <- 1
+    nc <- (scatter.plot || running.mean) + density.plot
+    nr <- min(6,K)
+    if (single) nr <- 1
+    
+    if (auto.layout && (nc>1 || nr>1)) {
         oma.multi = c(2, 0, 2, 0)
         mar.multi = c(1.5, 4.1, 1, 1)
         oldpar <- par(mar=mar.multi, oma=oma.multi,
@@ -376,7 +377,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 title(main[i],cex.main=cex.main)
             }
             my.density.sim(i,auto.legend=missing(legend))
-            if (i==1 && ask) par(ask=ask)
+            if (i==1 && ask && K>1) par(ask=ask)
         }
     }
 

@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.6.6
-Date: 2019-08-01
+Version: 1.6.7
+Date: 2020-02-13
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
@@ -60,5 +60,4 @@ Suggests:
 	zoo
 ByteCompile: yes
 Encoding: UTF-8
-Roxygen: list(wrap = FALSE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2

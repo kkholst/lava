@@ -4,8 +4,16 @@
 \alias{zibreg}
 \title{Regression model for binomial data with unkown group of immortals}
 \usage{
-zibreg(formula, formula.p = ~1, data, family = stats::binomial(),
-  offset = NULL, start, var = "hessian", ...)
+zibreg(
+  formula,
+  formula.p = ~1,
+  data,
+  family = stats::binomial(),
+  offset = NULL,
+  start,
+  var = "hessian",
+  ...
+)
 }
 \arguments{
 \item{formula}{Formula specifying}

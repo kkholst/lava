@@ -4,8 +4,19 @@
 \alias{fplot}
 \title{fplot}
 \usage{
-fplot(x, y, z = NULL, xlab, ylab, ..., z.col = topo.colors(64),
-  data = parent.frame(), add = FALSE, aspect = c(1, 1), zoom = 0.8)
+fplot(
+  x,
+  y,
+  z = NULL,
+  xlab,
+  ylab,
+  ...,
+  z.col = topo.colors(64),
+  data = parent.frame(),
+  add = FALSE,
+  aspect = c(1, 1),
+  zoom = 0.8
+)
 }
 \arguments{
 \item{x}{X variable}

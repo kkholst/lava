@@ -4,8 +4,18 @@
 \alias{PD}
 \title{Dose response calculation for binomial regression models}
 \usage{
-PD(model, intercept = 1, slope = 2, prob = NULL, x, level = 0.5,
-  ci.level = 0.95, vcov, family, EB = NULL)
+PD(
+  model,
+  intercept = 1,
+  slope = 2,
+  prob = NULL,
+  x,
+  level = 0.5,
+  ci.level = 0.95,
+  vcov,
+  family,
+  EB = NULL
+)
 }
 \arguments{
 \item{model}{Model object or vector of parameter estimates}

@@ -5,8 +5,15 @@
 \alias{binomial.rr}
 \title{Define constant risk difference or relative risk association for binary exposure}
 \usage{
-binomial.rd(x, response, exposure, target.model, nuisance.model,
-  exposure.model = binomial.lvm(), ...)
+binomial.rd(
+  x,
+  response,
+  exposure,
+  target.model,
+  nuisance.model,
+  exposure.model = binomial.lvm(),
+  ...
+)
 }
 \arguments{
 \item{x}{model}

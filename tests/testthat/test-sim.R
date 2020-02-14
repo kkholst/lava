@@ -2,12 +2,12 @@ context("Simulation")
 
 test_that("Constrain, transform I", {
     m <- lvm(,~y+x)
-    distribution(m,~x) <- sequence.lvm()
+    distribution(m,~x) <- Sequence.lvm()
     transform(m,y~x) <- function(x) x
     with(sim(m,10),testthat::expect_equivalent(y,x))
 
     m <- lvm(y~1,~x)
-    distribution(m,~x) <- sequence.lvm()
+    distribution(m,~x) <- Sequence.lvm()
     intercept(m,~y) <- "ym"
     covariance(m,~y) <- 0.001
     constrain(m,ym~x) <- function(x) x
@@ -122,10 +122,10 @@ test_that("distributions", {
 
     ## Special 'distributions'
     m <- lvm()
-    distribution(m,~x1) <- sequence.lvm(int=TRUE)
-    distribution(m,~x2) <- sequence.lvm(a=1,b=2)
-    distribution(m,~x3) <- sequence.lvm(a=NULL,b=2)
-    distribution(m,~x4) <- sequence.lvm(a=2,b=NULL)
+    distribution(m,~x1) <- Sequence.lvm(int=TRUE)
+    distribution(m,~x2) <- Sequence.lvm(a=1,b=2)
+    distribution(m,~x3) <- Sequence.lvm(a=NULL,b=2)
+    distribution(m,~x4) <- Sequence.lvm(a=2,b=NULL)
     ex <- sim(m,5)
     testthat::expect_equivalent(ex$x1,1:5)
     testthat::expect_equivalent(ex$x2,seq(1,2,length.out=5))
@@ -133,9 +133,9 @@ test_that("distributions", {
     testthat::expect_equivalent(ex$x4,seq(2,6))
 
     m <- lvm()
-    distribution(m,~x1) <- ones.lvm()
-    distribution(m,~x2) <- ones.lvm(p=0.5)
-    distribution(m,~x3) <- ones.lvm(interval=c(0.4,0.6))
+    distribution(m,~x1) <- Binary.lvm()
+    distribution(m,~x2) <- Binary.lvm(p=0.5)
+    distribution(m,~x3) <- Binary.lvm(interval=c(0.4,0.6))
     ex <- sim(m,10)
     testthat::expect_equivalent(ex$x1,rep(1,10))
     testthat::expect_equivalent(ex$x2,c(rep(0,5),rep(1,5)))
@@ -168,7 +168,7 @@ test_that("eventTime", {
 
     ## Time varying effect
     m <- lvm(y~1)
-    distribution(m,~z1) <- ones.lvm(0.5)
+    distribution(m,~z1) <- Binary.lvm(0.5)
     R <- log(cbind(c(0.2,0.7,0.9),c(0.5,0.3,0.3)))
     m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
    

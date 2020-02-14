@@ -4,9 +4,20 @@
 \alias{plot.estimate}
 \title{Plot method for 'estimate' objects}
 \usage{
-\method{plot}{estimate}(x, f, idx, intercept = FALSE, data,
-  confint = TRUE, type = "l", xlab = "x", ylab = "f(x)", col = 1,
-  add = FALSE, ...)
+\method{plot}{estimate}(
+  x,
+  f,
+  idx,
+  intercept = FALSE,
+  data,
+  confint = TRUE,
+  type = "l",
+  xlab = "x",
+  ylab = "f(x)",
+  col = 1,
+  add = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{estimate object}

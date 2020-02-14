@@ -4,8 +4,16 @@
 \alias{wkm}
 \title{Weighted K-means}
 \usage{
-wkm(x, mu, data, weights = rep(1, NROW(x)), iter.max = 20,
-  n.start = 5, init = "kmpp", ...)
+wkm(
+  x,
+  mu,
+  data,
+  weights = rep(1, NROW(x)),
+  iter.max = 20,
+  n.start = 5,
+  init = "kmpp",
+  ...
+)
 }
 \arguments{
 \item{x}{Data (or formula)}

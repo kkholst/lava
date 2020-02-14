@@ -348,7 +348,7 @@ weibull.lvm <- function(scale=1,shape=2) {
 ###{{{ sequence
 
 ##' @export
-sequence.lvm <- function(a=0,b=1,integer=FALSE) {
+Sequence.lvm <- function(a=0,b=1,integer=FALSE) {
     if (integer) {
         f <- function(n,...) seq(n)
         return(f)
@@ -390,6 +390,12 @@ ones.lvm <- function(p=1,interval=NULL) {
     }
     return(f)
 }
+
+##' @export
+Binary.lvm <- ones.lvm
+
+##' @export
+binary.lvm <- ones.lvm
 
 ###}}} ones
 

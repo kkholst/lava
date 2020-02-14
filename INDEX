@@ -147,8 +147,8 @@ chisq.lvm
 student.lvm
 uniform.lvm
 weibull.lvm
-sequence.lvm
-ones.lvm
+Sequence.lvm
+Binary.lvm
 beta.lvm
 GM2.lvm
 GM3.lvm

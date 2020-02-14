@@ -5,9 +5,18 @@
 \alias{confint.multigroupfit}
 \title{Calculate confidence limits for parameters}
 \usage{
-\method{confint}{lvmfit}(object, parm = seq_len(length(coef(object))),
-  level = 0.95, profile = FALSE, curve = FALSE, n = 20,
-  interval = NULL, lower = TRUE, upper = TRUE, ...)
+\method{confint}{lvmfit}(
+  object,
+  parm = seq_len(length(coef(object))),
+  level = 0.95,
+  profile = FALSE,
+  curve = FALSE,
+  n = 20,
+  interval = NULL,
+  lower = TRUE,
+  upper = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{\code{lvm}-object.}

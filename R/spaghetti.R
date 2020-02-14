@@ -49,7 +49,7 @@
 ##' spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),
 ##'            trend.formula=~num+I(num^2),trend=TRUE,trend.col="darkblue")
 ##' }
-spaghetti <- function(formula,data,id="id",group=NULL,
+spaghetti <- function(formula,data=NULL,id="id",group=NULL,
               type="o",lty=1,pch=NA,col=1:10,alpha=0.3,lwd=1,
               level=0.95,
               trend.formula=formula,tau=NULL,
@@ -123,11 +123,12 @@ spaghetti <- function(formula,data,id="id",group=NULL,
 
     if (inherits(id,"formula")) id <- all.vars(id)
     if (inherits(group,"formula")) group <- all.vars(group)
-    if (is.character(id) && length(id)==1) Id <-
+    if (is.character(id) && length(id)==1) Id <- data[,id]
     y <- getoutcome(formula)
     x <- attributes(y)$x
     Idx <- function(vname,widenames) {
-        idx <- which(unlist(lapply(widenames,function(x) length(grep(vname,substr(x,1,nchar(vname))))>0)))
+        idx <- which(unlist(lapply(widenames,function(x)
+            length(grep(paste0(vname,"[0-9]+$"),x))>0)))
         nn <- widenames[idx]
         ord <- order(char2num(unlist(lapply(nn,function(x) gsub(vname,"",x)))))
         idx[ord]
@@ -142,7 +143,7 @@ spaghetti <- function(formula,data,id="id",group=NULL,
         Y <- wide[,yidx,drop=FALSE]
         X <- NULL
         matplot(t(Y),type=type,lty=lty,pch=pch,lwd=lwd,col=Col(col[1],alpha[1]),xlab=xlab,ylab=ylab,...)
-    } else {
+    } else {        
         data <- data[,c(id,x,y),drop=FALSE]
         wide <- mets::fast.reshape(data[order(data[,id],data[,x]),],id=id,varying=c(y,x),...)
         yidx <- Idx(y,names(wide))

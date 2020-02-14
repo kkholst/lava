@@ -4,8 +4,15 @@
 \alias{mixture}
 \title{Estimate mixture latent variable model.}
 \usage{
-mixture(x, data, k = length(x), control = list(), vcov = "observed",
-  names = FALSE, ...)
+mixture(
+  x,
+  data,
+  k = length(x),
+  control = list(),
+  vcov = "observed",
+  names = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{List of \code{lvm} objects. If only a single \code{lvm} object is

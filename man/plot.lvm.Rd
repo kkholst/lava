@@ -5,13 +5,28 @@
 \alias{plot.lvmfit}
 \title{Plot path diagram}
 \usage{
-\method{plot}{lvm}(x, diag = FALSE, cor = TRUE, labels = FALSE,
-  intercept = FALSE, addcolor = TRUE, plain = FALSE, cex,
-  fontsize1 = 10, noplot = FALSE, graph = list(rankdir = "BT"),
-  attrs = list(graph = graph), unexpr = FALSE, addstyle = TRUE,
-  plot.engine = lava.options()$plot.engine, init = TRUE,
-  layout = lava.options()$layout, edgecolor = lava.options()$edgecolor,
-  graph.proc = lava.options()$graph.proc, ...)
+\method{plot}{lvm}(
+  x,
+  diag = FALSE,
+  cor = TRUE,
+  labels = FALSE,
+  intercept = FALSE,
+  addcolor = TRUE,
+  plain = FALSE,
+  cex,
+  fontsize1 = 10,
+  noplot = FALSE,
+  graph = list(rankdir = "BT"),
+  attrs = list(graph = graph),
+  unexpr = FALSE,
+  addstyle = TRUE,
+  plot.engine = lava.options()$plot.engine,
+  init = TRUE,
+  layout = lava.options()$layout,
+  edgecolor = lava.options()$edgecolor,
+  graph.proc = lava.options()$graph.proc,
+  ...
+)
 }
 \arguments{
 \item{x}{Model object}

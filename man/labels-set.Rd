@@ -61,7 +61,7 @@ if (interactive()) {
 }
 
 m <- lvm(y~x)
-labels(m) <- list(x="multiple\\nlines")
+labels(m) <- list(x="multiple\nlines")
 if (interactive()) {
 op <- par(mfrow=c(1,2))
 plot(m,plain=TRUE)

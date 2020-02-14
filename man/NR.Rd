@@ -4,8 +4,15 @@
 \alias{NR}
 \title{Newton-Raphson method}
 \usage{
-NR(start, objective = NULL, gradient = NULL, hessian = NULL, control,
-  args = NULL, ...)
+NR(
+  start,
+  objective = NULL,
+  gradient = NULL,
+  hessian = NULL,
+  control,
+  args = NULL,
+  ...
+)
 }
 \arguments{
 \item{start}{Starting value}

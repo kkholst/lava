@@ -7,8 +7,15 @@
 \alias{gkgamma}
 \title{Estimate probabilities in contingency table}
 \usage{
-multinomial(x, data = parent.frame(), marginal = FALSE, transform,
-  vcov = TRUE, iid = TRUE, ...)
+multinomial(
+  x,
+  data = parent.frame(),
+  marginal = FALSE,
+  transform,
+  vcov = TRUE,
+  iid = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{Formula (or matrix or data.frame with observations, 1 or 2 columns)}

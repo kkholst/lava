@@ -4,14 +4,39 @@
 \alias{plotConf}
 \title{Plot regression lines}
 \usage{
-plotConf(model, var1 = NULL, var2 = NULL, data = NULL, ci.lty = 0,
-  ci = TRUE, level = 0.95, pch = 16, lty = 1, lwd = 2,
-  npoints = 100, xlim, col = NULL, colpt, alpha = 0.5, cex = 1,
-  delta = 0.07, centermark = 0.03, jitter = 0.2, cidiff = FALSE,
-  mean = TRUE, legend = ifelse(is.null(var1), FALSE, "topright"),
-  trans = function(x) {     x }, partres = inherits(model, "lm"),
-  partse = FALSE, labels, vcov, predictfun, plot = TRUE, new = TRUE,
-  ...)
+plotConf(
+  model,
+  var1 = NULL,
+  var2 = NULL,
+  data = NULL,
+  ci.lty = 0,
+  ci = TRUE,
+  level = 0.95,
+  pch = 16,
+  lty = 1,
+  lwd = 2,
+  npoints = 100,
+  xlim,
+  col = NULL,
+  colpt,
+  alpha = 0.5,
+  cex = 1,
+  delta = 0.07,
+  centermark = 0.03,
+  jitter = 0.2,
+  cidiff = FALSE,
+  mean = TRUE,
+  legend = ifelse(is.null(var1), FALSE, "topright"),
+  trans = function(x) {     x },
+  partres = inherits(model, "lm"),
+  partse = FALSE,
+  labels,
+  vcov,
+  predictfun,
+  plot = TRUE,
+  new = TRUE,
+  ...
+)
 }
 \arguments{
 \item{model}{Model object (e.g. \code{lm})}

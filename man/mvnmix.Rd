@@ -4,9 +4,20 @@
 \alias{mvnmix}
 \title{Estimate mixture latent variable model}
 \usage{
-mvnmix(data, k = 2, theta, steps = 500, tol = 1e-16, lambda = 0,
-  mu = NULL, silent = TRUE, extra = FALSE, n.start = 1,
-  init = "kmpp", ...)
+mvnmix(
+  data,
+  k = 2,
+  theta,
+  steps = 500,
+  tol = 1e-16,
+  lambda = 0,
+  mu = NULL,
+  silent = TRUE,
+  extra = FALSE,
+  n.start = 1,
+  init = "kmpp",
+  ...
+)
 }
 \arguments{
 \item{data}{\code{data.frame}}

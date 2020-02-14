@@ -4,10 +4,23 @@
 \alias{twostageCV}
 \title{Cross-validated two-stage estimator}
 \usage{
-twostageCV(model1, model2, data, control1 = list(trace = 0),
-  control2 = list(trace = 0), knots.boundary, mc.cores = 1,
-  nmix = 1:4, df = 1:9, fix = TRUE, std.err = TRUE, nfolds = 5,
-  rep = 1, messages = 0, ...)
+twostageCV(
+  model1,
+  model2,
+  data,
+  control1 = list(trace = 0),
+  control2 = list(trace = 0),
+  knots.boundary,
+  mc.cores = 1,
+  nmix = 1:4,
+  df = 1:9,
+  fix = TRUE,
+  std.err = TRUE,
+  nfolds = 5,
+  rep = 1,
+  messages = 0,
+  ...
+)
 }
 \arguments{
 \item{model1}{model 1 (exposure measurement error model)}

@@ -47,7 +47,9 @@
 \alias{categorical<-}
 \alias{threshold.lvm}
 \alias{ones.lvm}
-\alias{sequence.lvm}
+\alias{Binary.lvm}
+\alias{binary.lvm}
+\alias{Sequence.lvm}
 \title{Simulate model}
 \usage{
 \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
@@ -141,10 +143,10 @@ summary(lm(y~x+z + x*I(z>0),d))
 ### Non-random variables
 ##################################################
 m <- lvm()
-distribution(m,~x+z+v+w) <- list(sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
-                               ones.lvm(),       ## Vector of ones
-                               ones.lvm(0.5),    ##  0.8n 0, 0.2n 1
-                               ones.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
+distribution(m,~x+z+v+w) <- list(Sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
+                               Binary.lvm(),       ## Vector of ones
+                               Binary.lvm(0.5),    ##  0.5n 0, 0.5n 1
+                               Binary.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
 sim(m,10)
 ##################################################
 ### Cox model

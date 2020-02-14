@@ -4,8 +4,16 @@
 \alias{pdfconvert}
 \title{Convert pdf to raster format}
 \usage{
-pdfconvert(files, dpi = 300, resolution = 1024, gs, gsopt, resize,
-  format = "png", ...)
+pdfconvert(
+  files,
+  dpi = 300,
+  resolution = 1024,
+  gs,
+  gsopt,
+  resize,
+  format = "png",
+  ...
+)
 }
 \arguments{
 \item{files}{Vector of (pdf-)filenames to process}

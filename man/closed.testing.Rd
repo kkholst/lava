@@ -5,8 +5,12 @@
 \alias{p.correct}
 \title{Closed testing procedure}
 \usage{
-closed.testing(object, idx = seq_along(coef(object)), null = rep(0,
-  length(idx)), ...)
+closed.testing(
+  object,
+  idx = seq_along(coef(object)),
+  null = rep(0, length(idx)),
+  ...
+)
 }
 \arguments{
 \item{object}{estimate object}
