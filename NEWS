@@ -1,9 +1,12 @@
 # -*- mode: org -*-
 
-* TODO Version 1.6.7 <2020-02-13 Thu> 
-  - Fixed regular expression in spaghetti
-  - rug default FALSE in plot.sim. auto.layout disabled when nr=nc=1
-  - renamed sequence -> Sequence. New alias Binary.lvm <- ones.lvm
+* Version 1.6.7 <2020-02-13 Thu> 
+  - Fixed regular expression in 'spaghetti' function
+  - plot.sim: 'rug' argument is now by default FALSE and 'auto.layout'
+    disabled when nr=nc=1
+  - base::sequence() is now a generic function and as a consequence
+    sequence.lvm has been renamed to Sequence.lvm. The function 
+    binary.lvm is now an alias of ones.lvm.
 
 * Version 1.6.6 <2019-08-01 Thu>
   - Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now
