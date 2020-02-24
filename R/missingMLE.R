@@ -13,7 +13,9 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
                   function(x) which(apply(patterns,1,function(y) identical(x,y))))
   pattern.allmis <- which(apply(patterns,1,all)) ## Remove entry with all missing
 
-  models <- datasets <- weights <- data2 <- clusters <- c()
+  data2.list.provided <- is.list(data2) & !is.data.frame(data2)
+  weights.list.provided <- is.list(weights) & !is.data.frame(weights)
+  models <- datasets <- datasets2 <- weightsdata <- clusters <- c()
   mymodel <- baptize(model)
   pattern.compl <- 0
   count <- 0
@@ -51,11 +53,17 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
         pattern.compl <- count
     ## d0 <- data[mis.type==i,manifest(m0),drop=FALSE];
     d0 <- data[which(mis.type==i),c(manifest(m0),keep),drop=FALSE];
-    if (!is.list(weights)) {
-        w0.var <- intersect(manifest(m0),colnames(weights))
-        w0 <- weights[which(mis.type==i),w0.var,drop=FALSE];
+    w0 <- NULL
+    if (!is.null(weights))
+    if (!weights.list.provided) {
+        if (NCOL(weights)==1) {
+            w0 <- as.matrix(weights) [which(mis.type==i)];
+        } else {
+            w0.var <- intersect(manifest(m0),colnames(weights))
+            w0 <- weights[which(mis.type==i),w0.var,drop=FALSE];
+        }
     }
-    if (!is.list(data2)) {
+    if (!data2.list.provided) {
       w02.var <- intersect(manifest(m0),colnames(data2))
       w02 <- data2[which(mis.type==i),w02.var,drop=FALSE];
     } 
@@ -71,7 +79,11 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
                   ". Removing rows...")
       warned <- TRUE
       d0 <- d0[-xmis,,drop=FALSE]
-      w0 <- w0[-xmis,,drop=FALSE]
+      if (NCOL(weights)==1) {
+          w0 <- w0[-xmis]
+      } else {
+          w0 <- w0[-xmis,,drop=FALSE]
+      }
       clust0 <- clust0[-xmis]
       w02 <- w02[-xmis,,drop=FALSE]
     }
@@ -84,9 +96,10 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
       if( sum(unlist(index(m0)[c("npar","npar.mean")]))>0 ) {
         models <- c(models, list(m0))
         datasets <- c(datasets, list(d0))
-        weights <- c(weights, list(w0))
-        if (!is.list(data2))
-          data2 <- c(data2, list(w02))
+        if (!weights.list.provided)
+          weightsdata <- c(weightsdata, list(w0))
+        if (!data2.list.provided)
+          datasets2 <- c(datasets2, list(w02))
         clusters <- c(clusters, list(clust0))
       } else {
         exclude <- c(exclude,count)
@@ -101,11 +114,13 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   if (length(rmset)>0) {
     models[[rmset]] <- NULL
     datasets[[rmset]] <- NULL
-    weights[[rmset]] <- NULL
-    data2[[rmset]] <- NULL
+    weightsdata[[rmset]] <- NULL
+    datasets2[[rmset]] <- NULL
     clusters[[rmset]] <- NULL
     patterns <- patterns[-rmset,,drop=FALSE]
   }
+  if (data2.list.provided) datasets2 <- data2
+  if (weights.list.provided) weightsdata <- weights
 
   Patterns <- patterns
   if (length(exclude)>0)
@@ -113,8 +128,8 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
   pattern.allcomp<- which(apply(Patterns,1,function(x) all(!x))) ## Complete cases
 
   res <- list(models=models, datasets=datasets,
-              weights=weights,
-              data2=data2,
+              weights=weightsdata,
+              data2=datasets2,
               clusters=clusters,
               patterns=Patterns,
               pattern.compl=pattern.compl,
@@ -170,7 +185,6 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
   x <- fixsome(x, measurement.fix=fix, exo.fix=TRUE, S=S, mu=mu, n=1)
   if (messages>1)
     message("Identifying missing patterns...")
-
   val <- missingModel(x,data,var=which,type=type,keep=c(keep,xfix),weights=weights,data2=data2,cluster=cluster,...)
   if (messages>1)
     message("\n")

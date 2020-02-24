@@ -331,7 +331,8 @@
                 if (is.null(Optim$start) || sum(paragree)<length(myparnames)) {
                     if (is.null(Optim$starterfun) && lava.options()$param!="relative")
                         Optim$starterfun <- startvalues0
-                    start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,messages=messages,data=data,...)))
+                    start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,
+                                                                             messages=messages,data=data,...)))
                     if (!is.null(x$expar) && length(start)<nparall) {
                         ii <- which(index(x)$e1==1)
                         start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
@@ -346,7 +347,8 @@
 
         ## Missing data
         if (missing) {
-            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,messages=messages,estimator=estimator,weights=weights,data2=data2,cluster=id,...))
+            return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,
+                                messages=messages,estimator=estimator,weights=weights,data2=data2,cluster=id,...))
         }
         coefname <- coef(x,mean=Optim$meanstructure,fix=FALSE);
         names(Optim$start) <- coefname

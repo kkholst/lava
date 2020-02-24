@@ -8,7 +8,7 @@ complik(
   x,
   data,
   k = 2,
-  type = c("nearest", "all"),
+  type = c("all", "nearest"),
   pairlist,
   messages = 0,
   estimator = "normal",
@@ -38,7 +38,7 @@ flexibility in the specification of the composite likelihood}
 \item{\dots}{Additional arguments parsed on to lower-level functions}
 }
 \value{
-An object of class \code{clprobit} inheriting methods from \code{lvm}
+An object of class \code{estimate.complik} inheriting methods from \code{lvm}
 }
 \description{
 Estimate parameters in a probit latent variable model via a composite
