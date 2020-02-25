@@ -1,9 +1,11 @@
 # -*- mode: org -*-
 
-* Version 1.6.7 <2020-02-13 Thu> 
+* Version 1.6.7 <2020-02-25 Tue> 
+  - Fixed bug in the composite likelihood 'complik' when used with
+    censored variables (Surv objects).
   - Fixed regular expression in 'spaghetti' function
   - plot.sim: 'rug' argument is now by default FALSE and 'auto.layout'
-    disabled when nr=nc=1
+    disabled when nr=nc=1.
   - base::sequence() is now a generic function and as a consequence
     sequence.lvm has been renamed to Sequence.lvm. The function 
     binary.lvm is now an alias of ones.lvm.
