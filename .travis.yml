@@ -10,6 +10,10 @@ warnings_are_errors: true
 
 cache: packages
 
+r_binary_packages:
+  - rgl
+  - ggplot2
+
 bioc_packages:
  - graph
  - Rgraphviz
