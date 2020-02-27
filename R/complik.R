@@ -109,29 +109,42 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
     }
     ##B <- solve(information(e0, type="hessian"))
     D <- numDeriv::jacobian(function(p) score(e0, p=p), coef(e0), method=lava.options()$Dmethod)
-    B <- solve(D)
-    J <- crossprod(Siid)
+    B <- -Inverse(D)
+    A <- crossprod(Siid)
+    e0$bread <- B
+    e0$meat <- A
     e0$iidscore <- Siid
     e0$blocks <- blocks
-    e0$vcov <- B%*%J%*%B ## thetahat-theta0 :=(asymp) I^-1*S => var(thetahat) = iI*var(S)*iI
+    BA <- B%*%A
+    eig <- eigen(BA)$values
+    e0$vcov <- BA%*%B
     cc <- e0$coef; cc[,2] <- sqrt(diag(e0$vcov))
     cc[,3] <- cc[,1]/cc[,2]; cc[,4] <- 2*(1-pnorm(abs(cc[,3])))
     e0$coef <- cc
-    e0$bread <- B
+    e0$eigenvalues <- eig
+    e0$n <- nrow(data)
     class(e0) <- c("estimate.complik",class(e0))
     return(e0)
 }
 
-
+##' @export
 score.estimate.complik <- function(x,indiv=FALSE,...) {
     if (!indiv)
         return(colSums(x$iidscore))
     x$iidscore
 }
 
+##' @export
 iid.estimate.complik <- function(x,...) {
     iid.default(x,bread=x$bread,...)
 }
 
-
+##' @export
+logLik.estimate.complik <- function(object,...) {    
+    with(object, structure(opt$objective,
+              nall=n,
+              nobs=n,
+              df=sum(eigenvalues),
+              class="logLik"))
+}
 

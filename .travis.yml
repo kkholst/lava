@@ -13,6 +13,8 @@ cache: packages
 r_binary_packages:
   - rgl
   - ggplot2
+  - igraph
+  - nloptr
 
 bioc_packages:
  - graph

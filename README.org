@@ -241,9 +241,10 @@ SE/SD        1.01840         0.82633           0.89522        0.89522
 Add additional simulations and visualize results 
 
 #+BEGIN_SRC R :exports both :results output graphics :file inst/mediation2.png
-  val <- sim(val,500) ## Add 500 simulations
-  plot(val,estimate=c("Total.Estimate","Indirect.Estimate"),
-       true=c(2,1),se=c("Total.Std.Err","Indirect.Std.Err"))
+    val <- sim(val,500) ## Add 500 simulations
+    plot(val,estimate=c("Total.Estimate","Indirect.Estimate"),
+	 true=c(2,1),se=c("Total.Std.Err","Indirect.Std.Err"),
+	 scatter.plot=TRUE)
 #+END_SRC
 
 #+RESULTS:

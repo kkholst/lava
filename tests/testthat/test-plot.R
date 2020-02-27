@@ -1,6 +1,6 @@
 context("Graphics functions")
       
-test_that("color", {
+testthat::test_that("color", {
     cur <- palette()
     old <- lava:::mypal()
     testthat::expect_equivalent(col2rgb(cur),col2rgb(old))
@@ -37,7 +37,7 @@ if (requireNamespace("visualTest",quietly=TRUE)) {
     }
 
     
-    test_that("plotConf", {
+    testthat::test_that("plotConf", {
         set.seed(1)
         x <- rnorm(50)
         y <- rnorm(50,x)
@@ -88,7 +88,7 @@ if (requireNamespace("visualTest",quietly=TRUE)) {
   })
 
 
-    test_that("forestplot", {
+    testthat::test_that("forestplot", {
         set.seed(1)
         K <- 20
         est <- rnorm(K); est[c(3:4,10:12)] <- NA        

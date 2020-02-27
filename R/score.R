@@ -86,14 +86,15 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weights=NULL,
 
 ##' @export
 score.lvm.missing <- function(x,
-                          p=pars(x), estimator=x$estimator,
-                              weights=Weights(x$estimate),
-                              indiv=FALSE,
-                              list=FALSE,
-                              ...) {
+                       p=pars(x), estimator=x$estimator,
+                       weights=Weights(x$estimate),
+                       data2=x$estimate$data2,
+                       indiv=FALSE,
+                       list=FALSE,
+                       ...) {
     dots <- list(...)
     dots$combine <- FALSE
-    S <- do.call("score",c(list(x=x$estimate$model0,p=p, model=estimator, weights=weights, indiv=indiv),dots))
+    S <- do.call("score",c(list(x=x$estimate$model0,p=p, model=estimator, weights=weights, data2=data2, indiv=indiv),dots))
     if (indiv & !list) {
         S0 <- matrix(ncol=length(p),nrow=length(x$order))
         rownames(S0) <- seq_len(nrow(S0))
@@ -117,8 +118,8 @@ score.lvm.missing <- function(x,
 ###{{{ score.multigroupfit
 
 ##' @export
-score.multigroupfit <- function(x,p=pars(x), weights=Weights(x), estimator=x$estimator, ...) {
-  score(x$model0, p=p, weights=weights, model=estimator,...)
+score.multigroupfit <- function(x,p=pars(x), weights=Weights(x), estimator=x$estimator, data2=x$data2, ...) {
+  score(x$model0, p=p, weights=weights, data2=data2, model=estimator,...)
 }
 
 ###}}} score.multigroupfit
