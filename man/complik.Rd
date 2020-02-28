@@ -12,6 +12,7 @@ complik(
   pairlist,
   messages = 0,
   estimator = "normal",
+  quick = FALSE,
   ...
 )
 }
@@ -34,6 +35,9 @@ flexibility in the specification of the composite likelihood}
 \item{messages}{Control amount of messages printed}
 
 \item{estimator}{Model (pseudo-likelihood) to use for the pairs/groups}
+
+\item{quick}{If TRUE the parameter estimates are calculated but all additional
+information such as standard errors are skipped}
 
 \item{\dots}{Additional arguments parsed on to lower-level functions}
 }
