@@ -1,6 +1,10 @@
+TODO
+^org$
 ^tmp$
 ^\.travis\.yml$
 ^\.git$
 .gitignore$
 ^README\.org$
 ^examples$
+^doc$
+^Meta$

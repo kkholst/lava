@@ -1,5 +1,9 @@
 # -*- mode: org -*-
 
+* Version 1.6.8 <2020-04-25 Sat> 
+  - Bug-fix: parameter(m,x) now returns lvm object and not just x
+  - Vignette
+
 * Version 1.6.7 <2020-02-25 Tue> 
   - Fixed bug in the composite likelihood 'complik' when used with
     censored variables (Surv objects).

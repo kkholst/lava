@@ -1,8 +1,8 @@
 Package: lava
 Type: Package
 Title: Latent Variable Models
-Version: 1.6.7
-Date: 2020-02-25
+Version: 1.6.8
+Date: 2020-04-02
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
@@ -48,6 +48,7 @@ Suggests:
 	graph,
 	igraph (>= 0.6),
 	lava.tobit (>= 0.4.7),
+	lavaSearch2,
 	lme4,
 	mets (>= 1.1),
 	nlme,
@@ -55,9 +56,11 @@ Suggests:
 	polycor,
 	quantreg,
 	rgl,
+	R,rsp (>= 0.40),
 	testthat (>= 0.11),
 	visNetwork,
 	zoo
+VignetteBuilder: R.rsp
 ByteCompile: yes
 Encoding: UTF-8
 RoxygenNote: 7.0.2
