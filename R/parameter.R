@@ -44,4 +44,5 @@
 parameter <- function(x,var,...) {
     if (missing(var)) return (names(unlist(x$attributes$parameter)))
     parameter(x,...) <- var
+    return(x)
 }
