@@ -1,0 +1,532 @@
+#+TITLE: Estimating partial correlations with \texttt{lava}
+#+AUTHOR: Klaus Kähler Holst
+# +INCLUDE: header.org
+#+DATE: \today
+#+LATEX_CLASS: article+listings
+#+LATEX_CLASS_OPTIONS: [a4paper,12pt]
+#+LATEX_HEADER: \usepackage{a4wide}
+#+LATEX_HEADER: \usepackage{tikz}
+#+PROPERTY: header-args:python :session :results value
+#+PROPERTY: header-args:julia :session *julia*
+#+PROPERTY: header-args:R :session *R* :cache no :width 550 :height 450
+#+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
+#+PROPERTY: header-args :eval never-export :exports both :results output :tangle yes :comments yes 
+#+OPTIONS: timestamp:nil title:t date:t author:t creator:nil toc:nil 
+#+OPTIONS: h:4 num:t tags:nil d:t ^:{}
+
+#+BEGIN_SRC emacs-lisp :results silent :exports results :eval
+(setq org-latex-listings t)
+(setq org-latex-compiler-file-string 
+"%%\\VignetteIndexEntry{Manipulation of data-frame data with dutility functions}\n%%\\VignetteEngine{R.rsp::tex}\n%%\\VignetteKeyword{R}\n%%\\VignetteKeyword{package}\n%%\\VignetteKeyword{vignette}\n%%\\VignetteKeyword{LaTeX}\n")
+#+END_SRC
+
+----- 
+# +LaTeX: \clearpage
+
+
+This document illustrates how to estimate partial correlation
+coefficients using =lava=.
+
+
+\vspace*{2em}
+
+Assume that \(Y_{1}\) and \(Y_{2}\) are conditionally normal
+distributed given \(\bm{X}\) with the following linear structure
+\begin{gather}\label{eq:model1}
+  \begin{split}    
+    Y_1 = \bm{\beta}_1^{t}\bm{X} + \epsilon_1 \\
+    Y_2 = \bm{\beta}_2^{t}\bm{X} + \epsilon_2
+\end{split}
+\end{gather}
+with covariates \(\bm{X} = (X_1,\ldots,X_k)^{t}\) and measurement errors
+\begin{align*}
+  \begin{pmatrix}
+    \epsilon_{1} \\
+    \epsilon_{2}
+  \end{pmatrix} \sim \mathcal{N}\left(0, \bm{\Sigma} \right), \quad \bm{\Sigma}
+    = 
+    \begin{pmatrix}
+      \sigma_1^2 & \rho\sigma_{1}\sigma_{2} \\
+      \rho\sigma_{1}\sigma_{2} & \sigma_2^2
+    \end{pmatrix}.
+\end{align*}
+
+
+#+BEGIN_export latex
+\begin{center}
+\usetikzlibrary{shapes,arrows,shadows,shadows.blur}
+\tikzstyle{plain}=[rectangle,thick,fill=white,align=left, minimum size=1cm,draw=gray!80,blur shadow={shadow blur steps=5}]
+\begin{tikzpicture}[scale=0.6]
+	\matrix[row sep=2em,column sep=0.3cm,ampersand replacement=\&]{
+	  \node(y1) [plain] {$Y_{1}$}; \& \& \node(y2) [plain] {$Y_{2}$}; \\
+	  \& \node(x) [plain] {$X$}; \\
+	}; 
+	\path[<->] (y1) edge[thick,dashed,bend left=20] node [above] {$\rho$} (y2) ; %% left,rigth,above,below
+	\path[->] (x) edge[thick] node [left] {$\beta_{1}$} (y1);
+	\path[->] (x) edge[thick] node [right] {$\beta_{2}$} (y2); 
+  \end{tikzpicture}
+\end{center}
+#+END_export
+
+Here we focus on inference with respect to the correlation parameter \(\rho\).
+
+\vspace*{2em}
+
+* Simulation
+
+As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:
+
+#+BEGIN_SRC R :exports code
+library('lava')
+library('mets')
+library('magrittr')
+#+END_SRC
+
+#+RESULTS:
+The model can be specified (here using the pipe notation via =magrittr=)
+with the following syntax where the correlation parameter here is
+given the label '=r=':
+#+BEGIN_SRC R
+  m0 <- lvm() %>% 
+    covariance(y1 ~ y2, value='r') %>% 
+    regression(y1 + y2 ~ x)
+#+END_SRC
+
+#+RESULTS:
+
+To simulate from the model we can now simply use the =sim= method. The
+parameters of the models are set through the argument =p= which must be a
+named numeric vector of parameters of the model. The parameter names
+can be inspected with the =coef= method
+#+BEGIN_SRC R
+coef(m0, labels=TRUE)
+#+END_SRC
+
+#+RESULTS:
+:       m1       m2       p1       p2       p3       p4       p5 
+:     "y1"     "y2"   "y1~x"   "y2~x" "y1~~y1" "y2~~y2"      "r"
+
+The default simulation parameters are zero for all intercepts (=y1=, =y2=)
+and one for all regression coefficients (=y1~x=, =y2~x=) and residual
+variance parameters (=y1~~y1=, =y2~~y2=). 
+
+#+BEGIN_SRC R
+  d <- sim(m0, 500, p=c(r=0.9), seed=1)
+  head(d)
+#+END_SRC
+
+#+RESULTS:
+: 
+:           y1         y2           x          s1         s2
+: 1  0.6452154  0.8677628  1.13496509   0.6452154  0.8677628
+: 2  1.1098723  0.9579211  1.11193185   1.1098723  0.9579211
+: 3 -2.2072258 -2.3171509 -0.87077763 -2.0000000- -2.3171509
+: 4  1.5684365  1.0675354  0.21073159   1.5684365  1.0675354
+: 5  0.8752209  1.0845932  0.06939565   0.8752209  1.0845932
+: 6 -1.5113072 -0.7477956 -1.66264885  -1.5113072 -0.7477956
+
+Under Gaussian and coarsening at random assumptions we can also
+consistently estimate the correlation in the presence of censoring or
+missing data. To illustrate this, we add left and right censored data
+types to the model output using the =transform= method.
+
+#+BEGIN_SRC R
+    cens1 <- function(threshold,type='right') {
+      function(x) {
+	x <- unlist(x)
+	if (type=='left')
+	  return( Surv(pmax(x,threshold), x>=threshold, type='left') )
+	return ( Surv(pmin(x,threshold), x<=threshold) )
+      }
+    }
+  
+    m0 %<>% 
+      transform(s1 ~ y1, cens1(-2, 'left')) %>%
+      transform(s2 ~ y2, cens1(2,  'right'))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R
+  d <- sim(m0, 500, p=c(r=0.9), seed=1)
+  head(d)
+#+END_SRC
+
+#+RESULTS:
+: 
+:           y1         y2           x          s1         s2
+: 1  0.6452154  0.8677628  1.13496509   0.6452154  0.8677628
+: 2  1.1098723  0.9579211  1.11193185   1.1098723  0.9579211
+: 3 -2.2072258 -2.3171509 -0.87077763 -2.0000000- -2.3171509
+: 4  1.5684365  1.0675354  0.21073159   1.5684365  1.0675354
+: 5  0.8752209  1.0845932  0.06939565   0.8752209  1.0845932
+: 6 -1.5113072 -0.7477956 -1.66264885  -1.5113072 -0.7477956
+
+
+* Estimation and inference
+
+The Maximum Likelihood Estimate can be obtainted using the =estimate= method:
+
+#+BEGIN_SRC R
+  m <- lvm() %>% 
+       regression(y1 + y2 ~ x) %>%
+       covariance(y1 ~ y2)
+
+  e <- estimate(m, data=d)
+  e
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+                    Estimate Std. Error  Z-value  P-value
+Regressions:                                             
+   y1~x              0.93300    0.04443 20.99871   <1e-12
+    y2~x             0.91652    0.04527 20.24500   <1e-12
+Intercepts:                                              
+   y1               -0.00541    0.04482 -0.12076   0.9039
+   y2               -0.02715    0.04566 -0.59457   0.5521
+Residual Variances:                                      
+   y1                1.00419    0.06351 15.81139         
+   y1~~y2            0.91221    0.06130 14.88041   <1e-12
+   y2                1.04252    0.06593 15.81139
+#+end_example
+
+The estimate =y1~~y2= gives us the estimated covariance between the
+residual terms in the model. To estimate the correlation we can apply
+the delta method using the =estimate= method again
+
+#+BEGIN_SRC R
+estimate(e, function(p) p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)
+#+END_SRC
+
+#+RESULTS:
+:        Estimate  Std.Err   2.5%  97.5% P-value
+: y1~~y2   0.8915 0.008703 0.8745 0.9086       0
+
+Alternatively, the correlations can be extracted using the =correlation= method
+#+BEGIN_SRC R
+correlation(e)
+#+END_SRC
+
+#+RESULTS:
+:       Estimate Std.Err   2.5%  97.5%   P-value
+: y1~y2   0.8915         0.8721 0.9082 3.58e-224
+
+
+Note, that in this case the confidence intervals are constructed
+by using a variance stabilizing transformation, Fishers
+\(z\)-transform citep:MR2135927, 
+#+LATEX: \newcommand{\arctanh}{\operatorname{arctanh}}
+\begin{align*}
+  z = \arctanh(\widehat{\rho}) =
+  \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)
+\end{align*}
+where \(\widehat{\rho}\) is the MLE.  This estimate has an approximate
+asymptotic normal distribution
+$\mathcal{N}(\arctanh(\rho),\frac{1}{n-3-k})$. Hence a asymptotic 95%
+confidence interval is given by
+\begin{align*}
+  \widehat{z} \pm \frac{1.96}{\sqrt{n-3-k}}
+\end{align*}
+and the confidence interval for $\widehat{\rho}$ can directly be calculated by
+the inverse transformation:
+\begin{align*}
+  \widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.
+\end{align*}
+
+This is equivalent to the direct calculations using the delta method
+(except for the small sample bias correction \(3+k\)) where the
+estimate and confidence interval are transformed back to the original
+scale using the =back.transform= argument.
+#+BEGIN_SRC R
+estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5), back.transform=tanh)
+#+END_SRC
+
+#+RESULTS:
+:        Estimate Std.Err   2.5%  97.5%    P-value
+: y1~~y2   0.8915         0.8732 0.9074 7.445e-249
+
+The transformed confidence interval will generally have improved
+coverage especially near the boundary \(\rho \approx \pm 1\).
+
+
+While the estimates of this particular model can be obtained in closed
+form, this is generally not the case when for example considering
+parameter constraints, latent variables, or missing and censored
+observations. The MLE is therefore obtained using iterative
+optimization procedures (typically Fisher scoring or Newton-Raphson
+methods). To ensure that the estimated variance parameters leads to a
+meaningful positive definite structure and to avoid potential problems
+with convergence it can often be a good idea to parametrize the model
+in a way that such parameter constraints are naturally fulfilled.
+This can be achieved with the =constrain= method. 
+
+First we will add new parameters =l1= and =l2= to hold the log-variance
+parameters, and =z= which will be the z-transform of the correlation
+parameter.  Next we label the actual variances and covariance: =v1=, =v2=,
+and =c=. Finally, these parameters are tied to the previously defined
+parameters using the =constrain= method. In this way there is no
+constraints on the actual estimated parameters =l1=, =l2=, and =z= which can
+take any values in \(\R^{3}\), while we at the same time are
+guaranteed a proper covariance matrix which is positive definite.
+
+#+BEGIN_SRC R
+m2 <- m
+parameter(m2) <- c('l1','l2','z')
+
+covariance(m2, 'y1') <- 'v1'
+covariance(m2, 'y2') <- 'v2'
+covariance(m2, 'y1','y2') <- 'c'
+
+constrain(m2, v1 ~ l1) <- exp
+constrain(m2, v2 ~ l2) <- exp
+constrain(m2, c ~ z+l1+l2) <- function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3]))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R
+e2 <- estimate(m2, d)
+e2
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+                       Estimate Std. Error  Z-value  P-value
+Regressions:                                                
+   y1~x                 0.93300    0.04443 20.99871   <1e-12
+    y2~x                0.91652    0.04527 20.24500   <1e-12
+Intercepts:                                                 
+   y1                  -0.00541    0.04482 -0.12076   0.9039
+   y2                  -0.02715    0.04566 -0.59457   0.5521
+Additional Parameters:                                      
+   l1                   0.00418    0.06325  0.06617   0.9472
+   l2                   0.04164    0.06325  0.65832   0.5103
+   z                    1.42942    0.04472 31.96286   <1e-12
+#+end_example
+
+The correlation coefficient can then be obtained as
+
+#+BEGIN_SRC R
+estimate(e2, 'z', back.transform=tanh)
+#+END_SRC
+
+#+RESULTS:
+:     Estimate Std.Err   2.5%  97.5%    P-value
+: [z]   0.8915         0.8729 0.9076 5.606e-243
+: 
+:  Null Hypothesis: 
+:   [z] = 0
+
+
+In practice, a much shorter syntax can be used to obtain the above
+parametrization. We can simply use the argument =constrain= argument
+when specifying the covariances (the argument =rname= specifies the
+parameter name of the \(\arctanh\) transformed correlation
+coefficient, and =lname=, =lname2= can be used to specify the parameter
+names for the log variance parameters):
+#+BEGIN_SRC R
+  m2 <- lvm() %>% 
+    regression(y1 + y2 ~ x) %>%
+    covariance(y1 ~ y2, constrain=TRUE, rname='z')
+
+  e2 <- estimate(m2, data=d)
+  e2
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+                       Estimate Std. Error  Z-value  P-value
+Regressions:                                                
+   y1~x                 0.93300    0.04443 20.99871   <1e-12
+    y2~x                0.91652    0.04527 20.24500   <1e-12
+Intercepts:                                                 
+   y1                  -0.00541    0.04482 -0.12076   0.9039
+   y2                  -0.02715    0.04566 -0.59457   0.5521
+Additional Parameters:                                      
+   l1                   0.00418    0.06325  0.06617   0.9472
+   l2                   0.04164    0.06325  0.65832   0.5103
+   z                    1.42942    0.04472 31.96286   <1e-12
+#+end_example
+
+#+BEGIN_SRC R
+ estimate(e2, 'z', back.transform=tanh)
+#+END_SRC
+
+#+RESULTS:
+:     Estimate Std.Err   2.5%  97.5%    P-value
+: [z]   0.8915         0.8729 0.9076 5.606e-243
+: 
+:  Null Hypothesis: 
+:   [z] = 0
+
+
+
+As an alternative to the Wald confidence intervals (with or without
+transformation) is to profile the likelihood. The profile likelihood
+confidence intervals can easily be obtained with the =confint= method:
+#+BEGIN_SRC R
+tanh(confint(e2, 'z', profile=TRUE))
+#+END_SRC
+
+#+RESULTS:
+:       2.5 %    97.5 %
+: z 0.8720834 0.9081964
+
+
+Finally, a non-parametric bootstrap can be calculated in the following way
+#+BEGIN_SRC R
+b <- bootstrap(e2, data=d, R=1000, mc.cores=4)
+b
+#+END_SRC
+
+#+RESULTS:
+: Non-parametric bootstrap statistics (R=1000):
+: 
+:      Estimate      Bias          Std.Err       2.5 %         97.5 %       
+: y1   -0.0054119135 -0.0004334131  0.0433534650 -0.0882761496  0.0788776969
+: y2   -0.0271494916  0.0004712609  0.0453349810 -0.1117355111  0.0661302370
+: y1~x  0.9330043509  0.0006810105  0.0463422472  0.8438843284  1.0240749480
+: y2~x  0.9165185250  0.0010476559  0.0462828153  0.8285635449  1.0087551143
+: l1    0.0041846522 -0.0037812339  0.0627076280 -0.1272095254  0.1209469484
+: l2    0.0416361064 -0.0044080645  0.0593992309 -0.0753924638  0.1530905181
+: z     1.4294227075  0.0030290810  0.0437822297  1.3471111584  1.5184390493
+: v1    1.0041934200 -0.0018261652  0.0627706735  0.8805491559  1.1285650488
+: v2    1.0425150452 -0.0027544052  0.0618219765  0.9273794938  1.1654305631
+: c1    0.9122097189 -0.0016010759  0.0587621582  0.7995238981  1.0313182256
+
+#+BEGIN_SRC R
+quantile(tanh(b$coef[,'z']), c(.025,.975))
+#+END_SRC
+
+#+RESULTS:
+:      2.5%     97.5% 
+: 0.8733697 0.9084252
+
+
+** Censored observations
+
+Letting one of the variables be right-censored (Tobit-type model) we
+can proceed in exactly the same way. The only difference is that the
+variables that are censored must all be defined as =Surv= objects (from
+the =survival= package which is automatically loaded when using the =mets=
+package). Note, that this functionality is only available with the
+=mets= package loaded.
+
+#+BEGIN_SRC R
+  m3 <- lvm() %>% 
+    regression(y1 + s2 ~ x) %>%
+    covariance(y1 ~ s2, constrain=TRUE, rname='z')
+
+  e3 <- estimate(m3, d)  
+  e3
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+                       Estimate Std. Error  Z-value  P-value
+Regressions:                                                
+   y1~x                 0.93301    0.04443 20.99884   <1e-12
+    s2~x                0.92402    0.04643 19.90118   <1e-12
+Intercepts:                                                 
+   y1                  -0.00541    0.04482 -0.12081   0.9038
+   s2                  -0.02119    0.04638 -0.45684   0.6478
+Additional Parameters:                                      
+   l1                   0.00418    0.06325  0.06607   0.9473
+   l2                   0.06318    0.06492  0.97313   0.3305
+   z                    1.42834    0.04546 31.41832   <1e-12
+#+end_example
+
+#+BEGIN_SRC R
+estimate(e3, 'z', back.transform=tanh)
+#+END_SRC
+
+#+RESULTS:
+:     Estimate Std.Err  2.5%  97.5%    P-value
+: [z]   0.8913         0.872 0.9079 1.503e-226
+: 
+:  Null Hypothesis: 
+:   [z] = 0
+
+
+And here the same analysis with =s1= being left-censored and =s2= right-censored:
+#+BEGIN_SRC R
+  m3b <- lvm() %>% 
+    regression(s1 + s2 ~ x) %>%
+    covariance(s1 ~ s2, constrain=TRUE, rname='z')
+
+  e3b <- estimate(m3b, d)  
+  e3b
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+                       Estimate Std. Error  Z-value  P-value
+Regressions:                                                
+   s1~x                 0.92834    0.04479 20.72738   <1e-12
+    s2~x                0.92466    0.04648 19.89510   <1e-12
+Intercepts:                                                 
+   s1                  -0.00233    0.04492 -0.05196   0.9586
+   s2                  -0.02083    0.04641 -0.44874   0.6536
+Additional Parameters:                                      
+   l1                  -0.00076    0.06500 -0.01163   0.9907
+   l2                   0.06425    0.06498  0.98869   0.3228
+   z                    1.42627    0.04609 30.94303   <1e-12
+#+end_example
+
+#+BEGIN_SRC R
+estimate(e3b, 'z', back.transform=tanh)
+#+END_SRC
+
+#+RESULTS:
+:     Estimate Std.Err   2.5%  97.5%    P-value
+: [z]   0.8909         0.8713 0.9077 8.962e-222
+: 
+:  Null Hypothesis: 
+:   [z] = 0
+
+* SessionInfo 
+  :PROPERTIES:
+  :UNNUMBERED: t
+  :END:
+
+#+BEGIN_SRC R
+  sessionInfo()
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+R version 3.6.3 (2020-02-29)
+Platform: x86_64-redhat-linux-gnu (64-bit)
+Running under: Fedora 32 (Workstation Edition)
+
+Matrix products: default
+BLAS/LAPACK: /usr/lib64/libopenblas-r0.3.9.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     grDevices utils     datasets  graphics  methods   base     
+
+other attached packages:
+[1] survival_3.1-11 lava_1.6.7     
+
+loaded via a namespace (and not attached):
+[1] compiler_3.6.3  Matrix_1.2-18   splines_3.6.3   grid_3.6.3     
+[5] lattice_0.20-40
+#+end_example
+
+
+bibliographystyle:unsrtnat
+bibliography:ref.bib

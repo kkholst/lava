@@ -1,4 +1,3 @@
-
 ##' Add covariance structure to Latent Variable Model
 ##'
 ##' Define covariances between residual terms in a \code{lvm}-object.
@@ -161,10 +160,10 @@
         xf <- attributes(terms(tt))$term.labels
         res <- lapply(xf,decomp.specials)
         nx <- length(xf)
+
         if (nx==1) {
             if(is.null(attr(tt,"specials")$f) | length(res[[1]])<2) {
                 if(is.null(attr(tt,"specials")$v) & is.null(attr(tt,"specials")$f))
-
                 {
                     for (i in yy)
                         for (j in res[[1]])
@@ -217,12 +216,13 @@
                     var2 <- all.vars(var2)
                 allvars <- c(allvars,var2)
             }
+            object <- addvar(object, allvars, messages=0, reindex=FALSE)
+
             if (constrain) {
                 if (length(allvars)!=2) stop("Constraints only implemented for pairs")
                 return(covarianceconst(object,allvars[1],allvars[2],...))
             }
 
-            object <- addvar(object, allvars, messages=0, reindex=FALSE)
 
             xorg <- exogenous(object)
             exoset <- setdiff(xorg,allvars)
