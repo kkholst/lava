@@ -30,9 +30,12 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     dots$messages <- 0
     dots$quick <- TRUE
     dots$data <- model.frame(fitted)
+    dots$data2 <- fitted$data2
+    dots$estimator <- fitted$estimator
+    dots$weights <- fitted$weights
     dots$x <- mm
     ee <- do.call("estimate",dots)
-    return(logLik(mm,p=ee,data=dots$data))
+    return(logLik(mm,p=ee,data=dots$data,data2=dots$data2,weights=fitted$weights,model=dots$estimator))
   }
   val <- sapply(tau,plogl)
   attributes(val) <- NULL
