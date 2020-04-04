@@ -56,7 +56,7 @@ Suggests:
 	polycor,
 	quantreg,
 	rgl,
-	R,rsp (>= 0.40),
+	R.rsp (>= 0.40),
 	testthat (>= 0.11),
 	visNetwork,
 	zoo

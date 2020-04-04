@@ -167,7 +167,7 @@ Here we focus on inference with respect to the correlation parameter \(\rho\).
 \vspace*{2em}
 
 \section{Simulation}
-\label{sec:org66f2a55}
+\label{sec:org107ee7e}
 
 As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:
 
@@ -264,7 +264,7 @@ head(d)
 
 
 \section{Estimation and inference}
-\label{sec:orgd4c2ab5}
+\label{sec:org9ffa0e2}
 
 The Maximum Likelihood Estimate can be obtainted using the \texttt{estimate} method:
 
@@ -531,14 +531,14 @@ quantile(tanh(b$coef[,'z']), c(.025,.975))
 
 
 \subsection{Censored observations}
-\label{sec:org21af6da}
+\label{sec:orgb6037e5}
 
 Letting one of the variables be right-censored (Tobit-type model) we
-can proceed in exactly the same way. The only difference is that the
-variables that are censored must all be defined as \texttt{Surv} objects (from
-the \texttt{survival} package which is automatically loaded when using the \texttt{mets}
-package). Note, that this functionality is only available with the
-\texttt{mets} package loaded.
+can proceed in exactly the same way\footnote{This functionality is only
+available with the \texttt{mets} package installed (available from CRAN)}. The
+only difference is that the variables that are censored must all be
+defined as \texttt{Surv} objects (from the \texttt{survival} package which is
+automatically loaded when using the \texttt{mets} package).
 
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
@@ -620,7 +620,7 @@ estimate(e3b, 'z', back.transform=tanh)
 \end{verbatim}
 
 \section*{SessionInfo}
-\label{sec:org1bf7e21}
+\label{sec:orgf680deb}
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
 sessionInfo()

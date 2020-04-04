@@ -6,6 +6,8 @@
 #+LATEX_CLASS_OPTIONS: [a4paper,12pt]
 #+LATEX_HEADER: \usepackage{a4wide}
 #+LATEX_HEADER: \usepackage{tikz}
+# +EXPORT_FILE_NAME: aaa
+#+PROPERTY: EXPORT_FILE_NAME correlation.ltx
 #+PROPERTY: header-args:python :session :results value
 #+PROPERTY: header-args:julia :session *julia*
 #+PROPERTY: header-args:R :session *R* :cache no :width 550 :height 450
@@ -117,13 +119,13 @@ variance parameters (=y1~~y1=, =y2~~y2=).
 
 #+RESULTS:
 : 
-:           y1         y2           x          s1         s2
-: 1  0.6452154  0.8677628  1.13496509   0.6452154  0.8677628
-: 2  1.1098723  0.9579211  1.11193185   1.1098723  0.9579211
-: 3 -2.2072258 -2.3171509 -0.87077763 -2.0000000- -2.3171509
-: 4  1.5684365  1.0675354  0.21073159   1.5684365  1.0675354
-: 5  0.8752209  1.0845932  0.06939565   0.8752209  1.0845932
-: 6 -1.5113072 -0.7477956 -1.66264885  -1.5113072 -0.7477956
+:           y1         y2           x
+: 1  0.6452154  0.8677628  1.13496509
+: 2  1.1098723  0.9579211  1.11193185
+: 3 -2.2072258 -2.3171509 -0.87077763
+: 4  1.5684365  1.0675354  0.21073159
+: 5  0.8752209  1.0845932  0.06939565
+: 6 -1.5113072 -0.7477956 -1.66264885
 
 Under Gaussian and coarsening at random assumptions we can also
 consistently estimate the correlation in the presence of censoring or
@@ -272,10 +274,10 @@ take any values in \(\R^{3}\), while we at the same time are
 guaranteed a proper covariance matrix which is positive definite.
 
 #+BEGIN_SRC R
-m2 <- m
-parameter(m2) <- c('l1','l2','z')
+m2 <- m %>%
+    parameter(c('l1','l2','z')) %>%
+    covariance('y1', value='v1')
 
-covariance(m2, 'y1') <- 'v1'
 covariance(m2, 'y2') <- 'v2'
 covariance(m2, 'y1','y2') <- 'c'
 
@@ -378,7 +380,7 @@ tanh(confint(e2, 'z', profile=TRUE))
 
 
 Finally, a non-parametric bootstrap can be calculated in the following way
-#+BEGIN_SRC R
+#+BEGIN_SRC R :eval never
 b <- bootstrap(e2, data=d, R=1000, mc.cores=4)
 b
 #+END_SRC
@@ -403,18 +405,18 @@ quantile(tanh(b$coef[,'z']), c(.025,.975))
 #+END_SRC
 
 #+RESULTS:
-:      2.5%     97.5% 
-: 0.8733697 0.9084252
+: Error in quantile(tanh(b$coef[, "z"]), c(0.025, 0.975)) : 
+:   object 'b' not found
 
 
 ** Censored observations
 
 Letting one of the variables be right-censored (Tobit-type model) we
-can proceed in exactly the same way. The only difference is that the
-variables that are censored must all be defined as =Surv= objects (from
-the =survival= package which is automatically loaded when using the =mets=
-package). Note, that this functionality is only available with the
-=mets= package loaded.
+can proceed in exactly the same way[fn:mets:This functionality is only
+available with the =mets= package installed (available from CRAN)]. The
+only difference is that the variables that are censored must all be
+defined as =Surv= objects (from the =survival= package which is
+automatically loaded when using the =mets= package).
 
 #+BEGIN_SRC R
   m3 <- lvm() %>% 
@@ -517,16 +519,35 @@ locale:
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
-[1] stats     grDevices utils     datasets  graphics  methods   base     
+[1] grid      parallel  stats     grDevices utils     datasets  graphics 
+[8] methods   base     
 
 other attached packages:
-[1] survival_3.1-11 lava_1.6.7     
+[1] magrittr_1.5        mets_1.2.7.1        lava_1.6.7         
+[4] timereg_1.9.4       survival_3.1-11     graph_1.60.0       
+[7] BiocGenerics_0.32.0
 
 loaded via a namespace (and not attached):
-[1] compiler_3.6.3  Matrix_1.2-18   splines_3.6.3   grid_3.6.3     
-[5] lattice_0.20-40
+ [1] Rcpp_1.0.4          compiler_3.6.3      prettyunits_1.1.1  
+ [4] R.methodsS3_1.8.0   R.utils_2.9.2       remotes_2.1.1      
+ [7] tools_3.6.3         testthat_2.3.2      digest_0.6.25      
+[10] pkgbuild_1.0.6      pkgload_1.0.2       lattice_0.20-40    
+[13] memoise_1.1.0       R.cache_0.14.0      rlang_0.4.5        
+[16] Matrix_1.2-18       cli_2.0.2           mvtnorm_1.1-0      
+[19] R.rsp_0.43.2        withr_2.1.2         desc_1.2.0         
+[22] fs_1.3.2            devtools_2.2.2      stats4_3.6.3       
+[25] rprojroot_1.3-2     glue_1.3.2          R6_2.4.1           
+[28] processx_3.4.2      fansi_0.4.1         sessioninfo_1.1.1  
+[31] callr_3.4.3         splines_3.6.3       backports_1.1.5    
+[34] ps_1.3.2            clisymbols_1.2.0    ellipsis_0.3.0     
+[37] usethis_1.5.1       assertthat_0.2.1    numDeriv_2016.8-1.1
+[40] crayon_1.3.4        R.oo_1.23.0
 #+end_example
 
 
 bibliographystyle:unsrtnat
 bibliography:ref.bib
+
+# Local Variables:
+# after-save-hook: (lambda nil (when (org-html-export-to-html) (rename-file "correlation.tex" "correlation.ltx" t)))
+# End:
