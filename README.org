@@ -1,6 +1,6 @@
 #+HTML: <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
 #+HTML: <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
-#+HTML: <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="http://www.r-pkg.org/badges/version/lava"></a>
+#+HTML: <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="https://www.r-pkg.org/badges/version-last-release/lava"></a>
 #+HTML: <a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
 
 A general implementation of Structural Equation Models with latent
@@ -14,26 +14,24 @@ models.
 
 ** Installation
 #+BEGIN_SRC R :exports both :eval never
-install.packages("lava",dependencies=TRUE)
+install.packages("lava", dependencies=TRUE)
 library("lava")
 demo("lava")
 #+END_SRC
 
-For graphical capabilities the =Rgraphviz= package is needed
+For graphical capabilities the =Rgraphviz= package is needed (first install the =BiocManager= package)
 #+BEGIN_SRC R :exports both :eval never
-source("http://bioconductor.org/biocLite.R");
-biocLite("BiocUpgrade") ## Upgrade previous bioconductor installation
-biocLite("Rgraphviz")
+BiocManager::install("Rgraphviz")
 #+END_SRC
 or the =igraph= or =visNetwork= packages
 #+BEGIN_SRC R :exports both :eval never
-install.packages("igraph",dependencies=TRUE)
-install.packages("visNetwork",dependencies=TRUE)
+install.packages("igraph", dependencies=TRUE)
+install.packages("visNetwork", dependencies=TRUE)
 #+END_SRC
 
-The development version may be installed directly from =github=:
+The development version of =lava= may also be installed directly from =github=:
 #+BEGIN_SRC R :exports both :eval never
-devtools::install_github("kkholst/lava")
+remotes::install_github("kkholst/lava")
 #+END_SRC
 
 ** Citation
@@ -41,9 +39,9 @@ devtools::install_github("kkholst/lava")
 To cite that =lava= package please use the following reference
 
 #+BEGIN_QUOTE
-  Klaus K. Holst and Esben Budtz-Joergensen (2013). 
-  Linear Latent Variable Models: The lava-package. 
-  Computational Statistics 28 (4), pp 1385-1453. 
+  Klaus K. Holst and Esben Budtz-Joergensen (2013).
+  Linear Latent Variable Models: The lava-package.
+  Computational Statistics 28 (4), pp 1385-1453.
   http://dx.doi.org/10.1007/s00180-012-0344-y
 #+END_QUOTE
 
@@ -64,15 +62,15 @@ To cite that =lava= package please use the following reference
 
 *** Structural Equation Model
 Specify structurual equation models with two factors
-#+BEGIN_SRC R :exports both :results output graphics :file inst/lava1.png  
+#+BEGIN_SRC R :exports both :results output graphics :file inst/lava1.png
   m <- lvm()
-  regression(m) <- c(y1,y2,y3) ~ eta1
-  regression(m) <- c(z1,z2,z3) ~ eta2
-  latent(m) <- ~eta1+eta2
-  regression(m) <- eta2~eta1+x
-  regression(m) <- eta1~x
+  regression(m) <- y1 + y2 + y3 ~ eta1
+  regression(m) <- z1 + z2 + z3 ~ eta2
+  latent(m) <- ~ eta1 + eta2
+  regression(m) <- eta2 ~ eta1 + x
+  regression(m) <- eta1 ~ x
 
-  labels(m) <- c(eta1=expression(eta[1]),eta2=expression(eta[2]))
+  labels(m) <- c(eta1=expression(eta[1]), eta2=expression(eta[2]))
   plot(m)
 #+END_SRC
 
@@ -81,53 +79,54 @@ Specify structurual equation models with two factors
 
 Simulation
 #+BEGIN_SRC R :exports code
-  d <- sim(m,100,seed=1)
+  d <- sim(m, 100, seed=1)
 #+END_SRC
 
 #+RESULTS:
 
 Estimation
 #+BEGIN_SRC R :exports both :wrap example
-  e <- estimate(m,d)
+  e <- estimate(m, d)
   e
 #+END_SRC
 
 #+RESULTS:
 #+BEGIN_example
                     Estimate Std. Error  Z-value   P-value
-Measurements:                                             
+Measurements:
    y2~eta1           0.95462    0.08083 11.80993    <1e-12
    y3~eta1           0.98476    0.08922 11.03722    <1e-12
     z2~eta2          0.97038    0.05368 18.07714    <1e-12
     z3~eta2          0.95608    0.05643 16.94182    <1e-12
-Regressions:                                              
+Regressions:
    eta1~x            1.24587    0.11486 10.84694    <1e-12
     eta2~eta1        0.95608    0.18008  5.30910 1.102e-07
     eta2~x           1.11495    0.25228  4.41951 9.893e-06
-Intercepts:                                               
+Intercepts:
    y2               -0.13896    0.12458 -1.11537    0.2647
    y3               -0.07661    0.13869 -0.55241    0.5807
    eta1              0.15801    0.12780  1.23644    0.2163
    z2               -0.00441    0.14858 -0.02969    0.9763
    z3               -0.15900    0.15731 -1.01076    0.3121
    eta2             -0.14143    0.18380 -0.76949    0.4416
-Residual Variances:                                       
-   y1                0.69684    0.14858  4.69004          
-   y2                0.89804    0.16630  5.40026          
-   y3                1.22456    0.21182  5.78109          
-   eta1              0.93620    0.19623  4.77084          
-   z1                1.41422    0.26259  5.38570          
-   z2                0.87569    0.19463  4.49934          
-   z3                1.18155    0.22640  5.21883          
+Residual Variances:
+   y1                0.69684    0.14858  4.69004
+   y2                0.89804    0.16630  5.40026
+   y3                1.22456    0.21182  5.78109
+   eta1              0.93620    0.19623  4.77084
+   z1                1.41422    0.26259  5.38570
+   z2                0.87569    0.19463  4.49934
+   z3                1.18155    0.22640  5.21883
    eta2              1.24430    0.28992  4.29195
 #+END_example
 
 *** Model assessment
 
-Assessing goodness-of-fit (linearity between eta2 and eta1)
-#+BEGIN_SRC R :exports both :results output graphics :file inst/gof1.png  
+Assessing goodness-of-fit, here the linearity between eta2 and eta1
+(requires the =gof= package which can installed from CRAN)
+#+BEGIN_SRC R :exports both :results output graphics :file inst/gof1.png
   library(gof)
-  g <- cumres(e,eta2~eta1)
+  g <- cumres(e, eta2 ~ eta1)
   plot(g)
 #+END_SRC
 
@@ -136,41 +135,41 @@ Assessing goodness-of-fit (linearity between eta2 and eta1)
 
 *** Non-linear measurement error model
 
-Simulate non-linear model 
+Simulate non-linear model
 
 #+BEGIN_SRC R :exports code
-m <- lvm(c(y1,y2,y3)~u,u~x)
-transform(m,u2~u) <- function(x) x^2
+m <- lvm(y1 + y2 + y3 ~ u, u ~ x)
+transform(m,u2 ~ u) <- function(x) x^2
 regression(m) <- z~u2+u
 
-d <- sim(m,200,p=c("z"=-1,"z~u2"=-0.5),seed=1)
+d <- sim(m,200,p=c("z"=-1, "z~u2"=-0.5), seed=1)
 #+END_SRC
 
 #+RESULTS:
 
 Stage 1:
 #+BEGIN_SRC R :exports both :wrap example
-  m1 <- lvm(c(y1[0:s],y2[0:s],y3[0:s])~1*u,u~x)
-  latent(m1) <- ~u
-  (e1 <- estimate(m1,d))
+  m1 <- lvm(c(y1[0:s], y2[0:s], y3[0:s]) ~ 1*u, u ~ x)
+  latent(m1) <- ~ u
+  (e1 <- estimate(m1, d))
 #+END_SRC
 
 #+RESULTS:
 #+BEGIN_example
                     Estimate Std. Error  Z-value  P-value
-Regressions:                                             
+Regressions:
    u~x               1.06998    0.08208 13.03542   <1e-12
-Intercepts:                                              
+Intercepts:
    u                -0.08871    0.08753 -1.01344   0.3108
-Residual Variances:                                      
-   y1                1.00054    0.07075 14.14214         
+Residual Variances:
+   y1                1.00054    0.07075 14.14214
    u                 1.19873    0.15503  7.73233
 #+END_example
 
- 
+
 Stage 2
 #+BEGIN_SRC R :exports both :wrap example
-  pp <- function(mu,var,data,...) cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"])
+  pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
   (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 #+END_SRC
 
@@ -186,7 +185,7 @@ u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
 
 #+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png
   f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
-  u <- seq(-1,1,length.out=100)
+  u <- seq(-1, 1, length.out=100)
   plot(e, f, data=data.frame(u))
 #+END_SRC
 
@@ -195,11 +194,11 @@ u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
 
 *** Simulation
 
-Studying the small-sample properties of mediation analysis 
+Studying the small-sample properties of a mediation analysis
 #+BEGIN_SRC R :exports both
-m <- lvm(y~x,c~1)
-regression(m) <- c(y,x)~z
-eventTime(m) <- t~min(y=1,c=0)
+m <- lvm(y~x, c~1)
+regression(m) <- y+x ~ z
+eventTime(m) <- t~min(y=1, c=0)
 transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
 #+END_SRC
 
@@ -217,12 +216,12 @@ Simulate from model and estimate indirect effects
 
 #+BEGIN_SRC R :exports both :wrap example
 onerun <- function(...) {
-    d <- sim(m,100)
-    m0 <- lvm(S~x+z,x~z)
-    e <- estimate(m0,d,estimator="glm")
-    vec(summary(effects(e,S~z))$coef[,1:2])
+    d <- sim(m, 100)
+    m0 <- lvm(S~x+z, x~z)
+    e <- estimate(m0, d, estimator="glm")
+    vec(summary(effects(e, S~z))$coef[,1:2])
 }
-val <- sim(onerun,100)
+val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
 #+END_SRC
 
@@ -238,12 +237,12 @@ SE/SD        1.01840         0.82633           0.89522        0.89522
 #+END_example
 
 
-Add additional simulations and visualize results 
+Add additional simulations and visualize results
 
 #+BEGIN_SRC R :exports both :results output graphics :file inst/mediation2.png
     val <- sim(val,500) ## Add 500 simulations
-    plot(val,estimate=c("Total.Estimate","Indirect.Estimate"),
-	 true=c(2,1),se=c("Total.Std.Err","Indirect.Std.Err"),
+    plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
+	 true=c(2, 1), se=c("Total.Std.Err", "Indirect.Std.Err"),
 	 scatter.plot=TRUE)
 #+END_SRC
 
@@ -256,14 +255,13 @@ Add additional simulations and visualize results
 #+TITLE: Latent Variable Models (=lava=)
 #+AUTHOR: Klaus K. Holst
 #+PROPERTY: header-args:R  :session *R* :cache no :width 550 :height 450
-#+PROPERTY: header-args  :eval never-export :exports results :results output :tangle yes :comments yes 
+#+PROPERTY: header-args  :eval never-export :exports results :results output :tangle yes :comments yes
 #+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
-#+OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil 
+#+OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
 #+OPTIONS: h:4 num:t tags:nil d:t
-#+PROPERTY: comments yes 
-#+STARTUP: hideall 
+#+PROPERTY: comments yes
+#+STARTUP: hideall
 #+OPTIONS: toc:t h:4 num:nil tags:nil
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.biostat.ku.dk/~kkho/styles/orgmode2.css"/>
 #+HTML_HEAD: <link rel="icon" type="image/x-icon" href="http://www.biostat.ku.dk/~kkho/styles/logo.ico"/>
 #+HTML_HEAD: <style type="text/css">body { background-image: url(http://www.biostat.ku.dk/~kkho/styles/logo.png); }</style>
-
