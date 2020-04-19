@@ -1,17 +1,18 @@
 # -*- mode: org -*-
 
-* Version 1.6.8 <2020-04-25 Sat> 
-  - Bug-fix: parameter(m,x) now returns lvm object and not just x
-  - Vignette
+* Version 1.6.8 <2020-04-25 Sat>
+  - Bug-fix: parameter(m,x) now returns an lvm object and not just x
+  - constrain
+  - Vignette added (Estimating partial correlations)
 
-* Version 1.6.7 <2020-02-25 Tue> 
+* Version 1.6.7 <2020-02-25 Tue>
   - Fixed bug in the composite likelihood 'complik' when used with
     censored variables (Surv objects).
   - Fixed regular expression in 'spaghetti' function
   - plot.sim: 'rug' argument is now by default FALSE and 'auto.layout'
     disabled when nr=nc=1.
   - base::sequence() is now a generic function and as a consequence
-    sequence.lvm has been renamed to Sequence.lvm. The function 
+    sequence.lvm has been renamed to Sequence.lvm. The function
     binary.lvm is now an alias of ones.lvm.
 
 * Version 1.6.6 <2019-08-01 Thu>
@@ -28,7 +29,7 @@
 * Version 1.6.4 <2018-11-18 Mon>
   - New simulation distributions: constant relative risk and risk
     difference models as in Richardson, Robins and Wang, 2017):
-    binomial.rd, binomial.rr.  
+    binomial.rd, binomial.rr.
     Base on new hook 'simulate.multiple.inputs' which allows the
     distribution to depend non-linearly on multiple different input
     variables.
@@ -44,7 +45,7 @@
     of parameter, g: first group number where 'par' is
     observed). Starting values can be specified with
     estimate(...,control(list(start=...))).
-  - New print and summary methods for mixture models.  
+  - New print and summary methods for mixture models.
   - Renamed (weighted) K-means function 'km' to 'wkm'.
   - Derivative method deriv.function based on complex step derivatives.
   - twostageCV: estimation of mixture models are now parallelized if
@@ -67,7 +68,7 @@
   - Newton-raphson algorithm made more robust.
   - New sim.as method. plot.sim method now by default only plots
     density estimates
-  - Compatibility fix with Matrix library 
+  - Compatibility fix with Matrix library
 
 * Version 1.6.0 <2018-01-11 Thu>
   - Mixture Latent variable models (mixture). Fast version
@@ -86,7 +87,7 @@
   - stack: 'weights' argument renamed to 'propensity'. If
     propensity=TRUE, the first argument (model) will be treated as
     propensity score model (glm) and 'predict' method will be
-    used for the predictions. 
+    used for the predictions.
   - estimate.formula now by default wraps glm such that 'iid' method
     return matrix of same size as full data (with zero rows where data
     are missing).
@@ -112,14 +113,14 @@
     method. Estimation via the 'twostage' function.
   - Robust standard errors added to the IV estimator (2SLS)
   - New cross-validation function: cv (and csplit function for
-    creating random sets).  
+    creating random sets).
 
 * Version 1.5.0 <2017-03-16 Thu>
   - lava.tobit is longer required for ordinal and censored
     responses. Default is now to use the implementation in the 'mets' package.
   - Composite likelihood method (complik) updated
   - weight argument renamed to weights in agreement with lm, glm, coxph, ...
-  - sim.default: new argument 'arg' passed on to simulation function 
+  - sim.default: new argument 'arg' passed on to simulation function
   - sim.default: new argument 'iter'. If TRUE the iteration number is
     passed to function call as first argument (default FALSE)
   - estimate.default: Wildcards/global expressions can now be used for specifying
@@ -145,7 +146,7 @@
   - 'diagtest' updated.
 
 * Version 1.4.5 <2016-10-25 Tue>
-  - New graph functions: 
+  - New graph functions:
     dsep: check for d-separation (conditional independence).
     backdoor: check backdoor criterion of a graph (lvm-object).
     adjMat: return adjaceny matrix.
@@ -156,7 +157,7 @@
     path(...,all=TRUE)
   - Covariance parameters are now reference with ~~ instead of ,.
     Applies to setting starting values in 'estimate', parameters in
-    'sim','compare','estimate',...  
+    'sim','compare','estimate',...
     To use the old syntax set 'lava.options(symbol=c("~",","))'
   - 'layout' argument added to lava.options (default 'dot')
   - visNetwork support, new 'plot.engine' argument added to plot methods.
@@ -171,7 +172,7 @@
     associations (type='all' vs type='cor').
   - sim.default now stores timings. New print functions (data.table
     like output).
-  - lvm model can now be updated with the 'sim' function, 
+  - lvm model can now be updated with the 'sim' function,
     for instance setting parameter values for the simulation only once:
     m <- sim(m,p=p,...), with faster subsequent calls sim(m,n=n).
   - estimate.default can now simulate p-values ('R' argument). Returns
@@ -220,7 +221,7 @@
   - New utility functions: wrapvec, offdiag
   - simulation: regression design on parameters (see weibull +
     variance hetereogeneity example in help('sim'))
-  - Byte compile by default 
+  - Byte compile by default
 
 * Version 1.4.1 <2015-06-13 Sat>
   - New plot.estimate method
@@ -247,7 +248,7 @@
   - estimate.default:
     - small-sample corrections
     - Default id from row names in estimate.default (used with merge method)
-    - iid decompostion also returned for hypothesis contrasts 
+    - iid decompostion also returned for hypothesis contrasts
     - keep argument added to estimate.default and merge
     - labels argument added to estimate.default
   - 'images' function for visualization of tabular data added to namespace
@@ -291,7 +292,7 @@
   - Improved flexibility in simulations with 'transform','constrain'
     (ex: categorical predictors)
   - Added 'dataid' argument to estimate.default allowing different id
-    for 'data' and i.i.d. decomposition of model parameter estimates. 
+    for 'data' and i.i.d. decomposition of model parameter estimates.
     With the argument 'stack=FALSE' influence functions within
     clusters will not be stacked together.
   - R-squared values (+ approximate standard
@@ -312,7 +313,7 @@
   - Covariance structure may now be specified using '~~', e.g.
     'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
     (y,z),(y,u),(v,z),(v,u).
-    
+
 * Version 1.2.4 <2013-12-01 Sun>
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
@@ -320,8 +321,8 @@
   - Time-varying effects via 'timedep'
   - R-squared added to summary
   - alias: covariance->variance
-  - added size argument to binomial.lvm; 
-    
+  - added size argument to binomial.lvm;
+
 * Version 1.2.3 <2013-10-27 Sun>
   - 'subset' argument added to estimate.default. Calculates empirical
     averages conditional on subsets of data
@@ -344,7 +345,7 @@
   - progress bar for 'bootstrap' and 'modelsearch'
   - various minor bug fixes
   - new functions: Expand (expand.grid wrapper), By (by wrapper)
-  
+
 * Version 1.2.1 <2013-05-10 Fri>
   - Optimization + minor bug fixes
 
@@ -361,6 +362,3 @@
   - New distributions: Gamma.lvm, coxWeibull.lvm, coxExponential.lvm,
     coxGompertz.lvm. New method 'eventTime' (for simulation of
     competing risks data)
-
-
-

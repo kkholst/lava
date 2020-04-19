@@ -284,7 +284,7 @@ parameter.
 Next we label the variances and covariances: The variance of =y1= is called =v1=;
 the variance of =y2= is called =v2=; the covariance of =y1= and =y2= is called =c=.
 Finally, these parameters are tied to the previously defined
-parameters using the =constrain= method such that =v1= := \(\exp(\mathtt{l1})\),
+parameters using the =constrain= method such that =v1= := \(\exp(\mathtt{l1})\)
 =v2= := \(\exp(\mathtt{l1})\) and =z= := \(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\).
 In this way there is no constraints on the actual estimated parameters
 =l1=, =l2=, and =z= which can take any values in \(\R^{3}\), while we at the
@@ -374,7 +374,7 @@ Additional Parameters:
 
 As an alternative to the Wald confidence intervals (with or without
 transformation) is to profile the likelihood. The profile likelihood
-confidence intervals can easily be obtained with the =confint= method:
+confidence intervals can be obtained with the =confint= method:
 #+BEGIN_SRC R
 tanh(confint(e2, 'z', profile=TRUE))
 #+END_SRC
@@ -424,7 +424,7 @@ can proceed in exactly the same way[fn:mets:This functionality is only
 available with the =mets= package installed (available from CRAN)]. The
 only difference is that the variables that are censored must all be
 defined as =Surv= objects (from the =survival= package which is
-automatically loaded when using the =mets= package).
+automatically loaded when using the =mets= package) in the data frame.
 
 #+BEGIN_SRC R
   m3 <- lvm() %>%

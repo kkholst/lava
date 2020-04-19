@@ -166,7 +166,7 @@ Here we focus on inference with respect to the correlation parameter \(\rho\).
 \vspace*{2em}
 
 \section{Simulation}
-\label{sec:orgcdbb6eb}
+\label{sec:orgaa5d625}
 
 As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:
 
@@ -263,7 +263,7 @@ head(d)
 
 
 \section{Estimation and inference}
-\label{sec:org389847a}
+\label{sec:org1f879ed}
 
 The Maximum Likelihood Estimate can be obtainted using the \texttt{estimate} method:
 
@@ -388,13 +388,12 @@ parameter.
 Next we label the variances and covariances: The variance of \texttt{y1} is called \texttt{v1};
 the variance of \texttt{y2} is called \texttt{v2}; the covariance of \texttt{y1} and \texttt{y2} is called \texttt{c}.
 Finally, these parameters are tied to the previously defined
-parameters using the \texttt{constrain} method such that \texttt{v1} := \(\exp(\mathtt{l1})\),
-\texttt{v2} := \(\exp(\mathtt{l1})\) and \texttt{z} := \(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\)
-
-In this way there is no
-constraints on the actual estimated parameters \texttt{l1}, \texttt{l2}, and \texttt{z} which can
-take any values in \(\R^{3}\), while we at the same time are
-guaranteed a proper covariance matrix which is positive definite.
+parameters using the \texttt{constrain} method such that \texttt{v1} := \(\exp(\mathtt{l1})\)
+\texttt{v2} := \(\exp(\mathtt{l1})\) and \texttt{z} := \(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\).
+In this way there is no constraints on the actual estimated parameters
+\texttt{l1}, \texttt{l2}, and \texttt{z} which can take any values in \(\R^{3}\), while we at the
+same time are guaranteed a proper covariance matrix which is positive
+definite.
 
 
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
@@ -404,7 +403,6 @@ e2
 \end{lstlisting}
 
 \begin{verbatim}
-
                        Estimate Std. Error  Z-value  P-value
 Regressions:
    y1~x                 0.93300    0.04443 20.99871   <1e-12
@@ -484,7 +482,7 @@ estimate(e2, 'z', back.transform=tanh)
 
 As an alternative to the Wald confidence intervals (with or without
 transformation) is to profile the likelihood. The profile likelihood
-confidence intervals can easily be obtained with the \texttt{confint} method:
+confidence intervals can be obtained with the \texttt{confint} method:
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
 tanh(confint(e2, 'z', profile=TRUE))
@@ -533,14 +531,14 @@ quantile(tanh(b$coef[,'z']), c(.025,.975))
 
 
 \subsection{Censored observations}
-\label{sec:orgdaa7f36}
+\label{sec:orgf026bd7}
 
 Letting one of the variables be right-censored (Tobit-type model) we
 can proceed in exactly the same way\footnote{This functionality is only
 available with the \texttt{mets} package installed (available from CRAN)}. The
 only difference is that the variables that are censored must all be
 defined as \texttt{Surv} objects (from the \texttt{survival} package which is
-automatically loaded when using the \texttt{mets} package).
+automatically loaded when using the \texttt{mets} package) in the data frame.
 
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
@@ -634,7 +632,7 @@ z 0.8714569 0.9082484
 
 
 \section*{SessionInfo}
-\label{sec:org4826622}
+\label{sec:org78c4856}
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
 sessionInfo()
