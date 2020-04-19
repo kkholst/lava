@@ -4,7 +4,9 @@
 \name{nsem}
 \alias{nsem}
 \title{Example SEM data (nonlinear)}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

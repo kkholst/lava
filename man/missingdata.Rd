@@ -4,7 +4,9 @@
 \name{missingdata}
 \alias{missingdata}
 \title{Missing data example}
-\format{list of data.frames}
+\format{
+list of data.frames
+}
 \source{
 Simulated
 }

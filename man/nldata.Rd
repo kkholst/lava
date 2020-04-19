@@ -4,7 +4,9 @@
 \name{nldata}
 \alias{nldata}
 \title{Example data (nonlinear model)}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

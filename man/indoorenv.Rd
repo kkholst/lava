@@ -4,7 +4,9 @@
 \name{indoorenv}
 \alias{indoorenv}
 \title{Data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

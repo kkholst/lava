@@ -4,7 +4,9 @@
 \name{hubble}
 \alias{hubble}
 \title{Hubble data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Freedman, W. L., et al. 2001, AstroPhysicalJournal, 553, 47.
 }

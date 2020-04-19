@@ -4,7 +4,9 @@
 \name{semdata}
 \alias{semdata}
 \title{Example SEM data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

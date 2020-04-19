@@ -4,7 +4,9 @@
 \name{twindata}
 \alias{twindata}
 \title{Twin menarche data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

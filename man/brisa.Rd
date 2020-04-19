@@ -4,7 +4,9 @@
 \name{brisa}
 \alias{brisa}
 \title{Simulated data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }

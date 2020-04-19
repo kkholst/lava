@@ -4,7 +4,9 @@
 \name{serotonin}
 \alias{serotonin}
 \title{Serotonin data}
-\format{data.frame}
+\format{
+data.frame
+}
 \source{
 Simulated
 }
