@@ -15,6 +15,7 @@ addons:
     packages:
       - libglu1-mesa-dev
       - mesa-common-dev
+      - texlive-latex-extra
 
 r_binary_packages:
    #   - rgl
