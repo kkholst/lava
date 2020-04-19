@@ -203,7 +203,11 @@ Range.lvm <- function(a=0,b=1) {
 "constrain" <- function(x,...) UseMethod("constrain")
 
 ##' @export
-constrain.default <- function(x,fun, idx, level=0.95, vcov, estimate=FALSE, ...) {
+constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE, ...) {
+    if (!missing(par)) {
+        constrain(x, par, ...) <- fun
+        return(x)
+    }
     if (estimate) {
         return(constraints(x,...))
     }
