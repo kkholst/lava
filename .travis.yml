@@ -16,6 +16,7 @@ addons:
     packages:
       - libglu1-mesa-dev
       - mesa-common-dev
+      - texlive-fonts-extra
       # - texlive-latex-extra
 
 r_binary_packages:

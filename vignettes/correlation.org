@@ -85,6 +85,10 @@ library('magrittr')
 #+END_SRC
 
 #+RESULTS:
+:
+: Loading required package: timereg
+: Loading required package: survival
+: mets version 1.2.7.1
 The model can be specified (here using the pipe notation via =magrittr=)
 with the following syntax where the correlation parameter here is
 given the label '=r=':
@@ -274,16 +278,14 @@ take any values in \(\R^{3}\), while we at the same time are
 guaranteed a proper covariance matrix which is positive definite.
 
 #+BEGIN_SRC R
+Z <- function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3]))
 m2 <- m %>%
-    parameter(c('l1','l2','z')) %>%
-    covariance('y1', value='v1')
-
-covariance(m2, 'y2') <- 'v2'
-covariance(m2, 'y1','y2') <- 'c'
-
-constrain(m2, v1 ~ l1) <- exp
-constrain(m2, v2 ~ l2) <- exp
-constrain(m2, c ~ z+l1+l2) <- function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3]))
+    parameter(~ l1 + l2 + z) %>%
+    variance(~ y1 + y2, value=c('v1','v2')) %>%
+    covariance(y1 ~ y2, value='c') %>%
+    constrain(v1 ~ l1, fun=exp) %>%
+    constrain(v2 ~ l2, fun=exp) %>%
+    constrain(c ~ z+l1+l2, fun=Z)
 #+END_SRC
 
 #+RESULTS:
@@ -324,7 +326,7 @@ estimate(e2, 'z', back.transform=tanh)
 
 
 In practice, a much shorter syntax can be used to obtain the above
-parametrization. We can simply use the argument =constrain= argument
+parametrization. We can simply use the argument =constrain=
 when specifying the covariances (the argument =rname= specifies the
 parameter name of the \(\arctanh\) transformed correlation
 coefficient, and =lname=, =lname2= can be used to specify the parameter
@@ -380,33 +382,36 @@ tanh(confint(e2, 'z', profile=TRUE))
 
 
 Finally, a non-parametric bootstrap can be calculated in the following way
-#+BEGIN_SRC R :eval never
+#+BEGIN_SRC R :cache true
 b <- bootstrap(e2, data=d, R=1000, mc.cores=4)
 b
 #+END_SRC
 
 #+RESULTS:
-: Non-parametric bootstrap statistics (R=1000):
-:
-:      Estimate      Bias          Std.Err       2.5 %         97.5 %
-: y1   -0.0054119135 -0.0004334131  0.0433534650 -0.0882761496  0.0788776969
-: y2   -0.0271494916  0.0004712609  0.0453349810 -0.1117355111  0.0661302370
-: y1~x  0.9330043509  0.0006810105  0.0463422472  0.8438843284  1.0240749480
-: y2~x  0.9165185250  0.0010476559  0.0462828153  0.8285635449  1.0087551143
-: l1    0.0041846522 -0.0037812339  0.0627076280 -0.1272095254  0.1209469484
-: l2    0.0416361064 -0.0044080645  0.0593992309 -0.0753924638  0.1530905181
-: z     1.4294227075  0.0030290810  0.0437822297  1.3471111584  1.5184390493
-: v1    1.0041934200 -0.0018261652  0.0627706735  0.8805491559  1.1285650488
-: v2    1.0425150452 -0.0027544052  0.0618219765  0.9273794938  1.1654305631
-: c1    0.9122097189 -0.0016010759  0.0587621582  0.7995238981  1.0313182256
+#+begin_example
+
+Non-parametric bootstrap statistics (R=1000):
+
+     Estimate      Bias          Std.Err       2.5 %         97.5 %
+y1   -0.0054119135  0.0019882525  0.0452024023 -0.0930118970  0.0818160752
+y2   -0.0271494916  0.0025699085  0.0465362695 -0.1168908519  0.0666351002
+y1~x  0.9330043509 -0.0008669356  0.0482877083  0.8420147683  1.0283778461
+y2~x  0.9165185250 -0.0012522823  0.0473981272  0.8227371020  1.0094390648
+l1    0.0041846522 -0.0043979105  0.0608335861 -0.1168814057  0.1230780830
+l2    0.0416361064 -0.0042215107  0.0590866613 -0.0752208005  0.1555967981
+z     1.4294227075  0.0013286462  0.0421139954  1.3484001202  1.5162645070
+v1    1.0041934200 -0.0025531270  0.0611711794  0.8896906996  1.1309727308
+v2    1.0425150452 -0.0025827313  0.0613581744  0.9275386968  1.1683550254
+c1    0.9122097189 -0.0022165115  0.0573649392  0.8065011182  1.0302001285
+#+end_example
 
 #+BEGIN_SRC R
 quantile(tanh(b$coef[,'z']), c(.025,.975))
 #+END_SRC
 
 #+RESULTS:
-: Error in quantile(tanh(b$coef[, "z"]), c(0.025, 0.975)) :
-:   object 'b' not found
+:      2.5%     97.5%
+: 0.8736751 0.9080445
 
 
 ** Censored observations
@@ -492,6 +497,15 @@ estimate(e3b, 'z', back.transform=tanh)
 :  Null Hypothesis:
 :   [z] = 0
 
+#+BEGIN_SRC R
+tanh(confint(e3, 'z', profile=TRUE))
+#+END_SRC
+
+#+RESULTS:
+:       2.5 %    97.5 %
+: z 0.8714569 0.9082484
+
+
 * SessionInfo
   :PROPERTIES:
   :UNNUMBERED: t
@@ -519,29 +533,16 @@ locale:
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] grid      parallel  stats     grDevices utils     datasets  graphics
-[8] methods   base
+[1] stats     grDevices utils     datasets  graphics  methods   base
 
 other attached packages:
-[1] magrittr_1.5        mets_1.2.7.1        lava_1.6.7
-[4] timereg_1.9.4       survival_3.1-11     graph_1.60.0
-[7] BiocGenerics_0.32.0
+[1] magrittr_1.5    mets_1.2.7.1    timereg_1.9.4   survival_3.1-12
+[5] lava_1.6.8
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.4          compiler_3.6.3      prettyunits_1.1.1
- [4] R.methodsS3_1.8.0   R.utils_2.9.2       remotes_2.1.1
- [7] tools_3.6.3         testthat_2.3.2      digest_0.6.25
-[10] pkgbuild_1.0.6      pkgload_1.0.2       lattice_0.20-40
-[13] memoise_1.1.0       R.cache_0.14.0      rlang_0.4.5
-[16] Matrix_1.2-18       cli_2.0.2           mvtnorm_1.1-0
-[19] R.rsp_0.43.2        withr_2.1.2         desc_1.2.0
-[22] fs_1.3.2            devtools_2.2.2      stats4_3.6.3
-[25] rprojroot_1.3-2     glue_1.3.2          R6_2.4.1
-[28] processx_3.4.2      fansi_0.4.1         sessioninfo_1.1.1
-[31] callr_3.4.3         splines_3.6.3       backports_1.1.5
-[34] ps_1.3.2            clisymbols_1.2.0    ellipsis_0.3.0
-[37] usethis_1.5.1       assertthat_0.2.1    numDeriv_2016.8-1.1
-[40] crayon_1.3.4        R.oo_1.23.0
+[1] compiler_3.6.3      Matrix_1.2-18       tools_3.6.3
+[4] Rcpp_1.0.4.6        mvtnorm_1.1-0       splines_3.6.3
+[7] grid_3.6.3          numDeriv_2016.8-1.1 lattice_0.20-41
 #+end_example
 
 

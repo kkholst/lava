@@ -166,7 +166,7 @@ Here we focus on inference with respect to the correlation parameter \(\rho\).
 \vspace*{2em}
 
 \section{Simulation}
-\label{sec:org073dd53}
+\label{sec:org7a6a14b}
 
 As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:
 
@@ -263,7 +263,7 @@ head(d)
 
 
 \section{Estimation and inference}
-\label{sec:org2e4ead3}
+\label{sec:orgb703183}
 
 The Maximum Likelihood Estimate can be obtainted using the \texttt{estimate} method:
 
@@ -530,7 +530,7 @@ Error in quantile(tanh(b$coef[, "z"]), c(0.025, 0.975)) :
 
 
 \subsection{Censored observations}
-\label{sec:org40b1f39}
+\label{sec:orgc89dd08}
 
 Letting one of the variables be right-censored (Tobit-type model) we
 can proceed in exactly the same way\footnote{This functionality is only
@@ -619,7 +619,7 @@ estimate(e3b, 'z', back.transform=tanh)
 \end{verbatim}
 
 \section*{SessionInfo}
-\label{sec:org153ea08}
+\label{sec:orga7ab0f2}
 \lstset{numbers=left,numberstyle=\ttfamily\tiny\color{gray},language=r,label= ,caption= ,captionpos=b}
 \begin{lstlisting}
 sessionInfo()
@@ -642,29 +642,16 @@ locale:
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] grid      parallel  stats     grDevices utils     datasets  graphics
-[8] methods   base
+[1] stats     grDevices utils     datasets  graphics  methods   base
 
 other attached packages:
-[1] magrittr_1.5        mets_1.2.7.1        lava_1.6.7
-[4] timereg_1.9.4       survival_3.1-11     graph_1.60.0
-[7] BiocGenerics_0.32.0
+[1] magrittr_1.5    mets_1.2.7.1    timereg_1.9.4   survival_3.1-12
+[5] lava_1.6.8
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.4          compiler_3.6.3      prettyunits_1.1.1
- [4] R.methodsS3_1.8.0   R.utils_2.9.2       remotes_2.1.1
- [7] tools_3.6.3         testthat_2.3.2      digest_0.6.25
-[10] pkgbuild_1.0.6      pkgload_1.0.2       lattice_0.20-40
-[13] memoise_1.1.0       R.cache_0.14.0      rlang_0.4.5
-[16] Matrix_1.2-18       cli_2.0.2           mvtnorm_1.1-0
-[19] R.rsp_0.43.2        withr_2.1.2         desc_1.2.0
-[22] fs_1.3.2            devtools_2.2.2      stats4_3.6.3
-[25] rprojroot_1.3-2     glue_1.3.2          R6_2.4.1
-[28] processx_3.4.2      fansi_0.4.1         sessioninfo_1.1.1
-[31] callr_3.4.3         splines_3.6.3       backports_1.1.5
-[34] ps_1.3.2            clisymbols_1.2.0    ellipsis_0.3.0
-[37] usethis_1.5.1       assertthat_0.2.1    numDeriv_2016.8-1.1
-[40] crayon_1.3.4        R.oo_1.23.0
+[1] compiler_3.6.3      Matrix_1.2-18       tools_3.6.3
+[4] Rcpp_1.0.4.6        mvtnorm_1.1-0       splines_3.6.3
+[7] grid_3.6.3          numDeriv_2016.8-1.1 lattice_0.20-41
 \end{verbatim}
 
 
