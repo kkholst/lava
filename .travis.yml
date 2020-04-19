@@ -12,6 +12,7 @@ cache: packages
 
 addons:
   apt:
+    update: true
     packages:
       - libglu1-mesa-dev
       - mesa-common-dev
