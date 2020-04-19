@@ -17,10 +17,10 @@ addons:
       - mesa-common-dev
 
 r_binary_packages:
-  - rgl
-  - ggplot2
-  - igraph
-  - nloptr
+   #   - rgl
+   #   - ggplot2
+   #   - igraph
+   - nloptr
 
 r_packages:
   - covr
