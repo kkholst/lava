@@ -16,13 +16,16 @@ r_binary_packages:
   - igraph
   - nloptr
 
+r_packages:
+  - covr
+
 bioc_packages:
  - graph
  - Rgraphviz
 
-r_github_packages:
- - r-lib/covr
- - mangothecat/visualTest
+# r_github_packages:
+#  - r-lib/covr
+#  - mangothecat/visualTest
 
 after_success:
   - Rscript -e 'library("covr"); codecov(type="all")'
