@@ -4,7 +4,7 @@ r:
  - release
  - devel
 
-r_check_args: --as-cran --run-donttest --no-build-vignettes
+r_check_args: --timing --run-donttest --no-build-vignettes --no-stop-on-test-error
 
 warnings_are_errors: true
 

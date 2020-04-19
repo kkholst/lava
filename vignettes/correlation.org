@@ -268,27 +268,29 @@ with convergence it can often be a good idea to parametrize the model
 in a way that such parameter constraints are naturally fulfilled.
 This can be achieved with the =constrain= method.
 
-First we will add new parameters =l1= and =l2= to hold the log-variance
+#+BEGIN_SRC R
+m2 <- m %>%
+    parameter(~ l1 + l2 + z) %>%
+    variance(~ y1 + y2, value=c('v1','v2')) %>%
+    covariance(y1 ~ y2, value='c') %>%
+    constrain(v1 ~ l1, fun=exp) %>%
+    constrain(v2 ~ l2, fun=exp) %>%
+    constrain(c ~ z+l1+l2, fun=function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3])))
+#+END_SRC
+
+In the above code,  we first add new parameters =l1= and =l2= to hold the log-variance
 parameters, and =z= which will be the z-transform of the correlation
 parameter.
 Next we label the variances and covariances: The variance of =y1= is called =v1=;
 the variance of =y2= is called =v2=; the covariance of =y1= and =y2= is called =c=.
 Finally, these parameters are tied to the previously defined
-parameters using the =constrain= method. In this way there is no
-constraints on the actual estimated parameters =l1=, =l2=, and =z= which can
-take any values in \(\R^{3}\), while we at the same time are
-guaranteed a proper covariance matrix which is positive definite.
+parameters using the =constrain= method such that =v1= := \(\exp(\mathtt{l1})\),
+=v2= := \(\exp(\mathtt{l1})\) and =z= := \(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\).
+In this way there is no constraints on the actual estimated parameters
+=l1=, =l2=, and =z= which can take any values in \(\R^{3}\), while we at the
+same time are guaranteed a proper covariance matrix which is positive
+definite.
 
-#+BEGIN_SRC R
-Z <- function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3]))
-m2 <- m %>%
-    parameter(~ l1 + l2 + z) %>%		## Add parameters \texttt{l1}, \texttt{l2}
-    variance(~ y1 + y2, value=c('v1','v2')) %>%
-    covariance(y1 ~ y2, value='c') %>%
-    constrain(v1 ~ l1, fun=exp) %>%
-    constrain(v2 ~ l2, fun=exp) %>%
-    constrain(c ~ z+l1+l2, fun=Z)
-#+END_SRC
 
 #+RESULTS:
 
@@ -299,7 +301,6 @@ e2
 
 #+RESULTS:
 #+begin_example
-
                        Estimate Std. Error  Z-value  P-value
 Regressions:
    y1~x                 0.93300    0.04443 20.99871   <1e-12
@@ -552,5 +553,5 @@ bibliographystyle:unsrtnat
 bibliography:ref.bib
 
 # Local Variables:
-# after-save-hook: (lambda nil (when (org-html-export-to-html) (rename-file "correlation.tex" "correlation.ltx" t)))
+# after-save-hook: (lambda nil (when (org-latex-export-to-latex) (rename-file "correlation.tex" "correlation.ltx" t)))
 # End:
