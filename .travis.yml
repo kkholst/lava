@@ -1,14 +1,20 @@
 language: r
+
 r:
  - release
  - devel
-sudo: false
 
 r_check_args: --as-cran --run-donttest
 
 warnings_are_errors: true
 
 cache: packages
+
+addons:
+  apt:
+    packages:
+      - libglu1-mesa-dev
+      - mesa-common-de
 
 r_binary_packages:
   - rgl
@@ -20,12 +26,11 @@ r_packages:
   - covr
 
 bioc_packages:
- - graph
- - Rgraphviz
+  - graph
+  - Rgraphviz
 
-# r_github_packages:
-#  - r-lib/covr
-#  - mangothecat/visualTest
+r_github_packages:
+ - mangothecat/visualTest
 
 after_success:
   - Rscript -e 'library("covr"); codecov(type="all")'
