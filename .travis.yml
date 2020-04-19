@@ -4,7 +4,7 @@ r:
  - release
  - devel
 
-r_check_args: --timing --run-donttest --ignore-vignettes --no-stop-on-test-error
+r_check_args: "--timing --run-donttest --ignore-vignettes --no-stop-on-test-error"
 
 warnings_are_errors: true
 
