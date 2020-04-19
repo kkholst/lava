@@ -270,8 +270,10 @@ This can be achieved with the =constrain= method.
 
 First we will add new parameters =l1= and =l2= to hold the log-variance
 parameters, and =z= which will be the z-transform of the correlation
-parameter.  Next we label the actual variances and covariance: =v1=, =v2=,
-and =c=. Finally, these parameters are tied to the previously defined
+parameter.
+Next we label the variances and covariances: The variance of =y1= is called =v1=;
+the variance of =y2= is called =v2=; the covariance of =y1= and =y2= is called =c=.
+Finally, these parameters are tied to the previously defined
 parameters using the =constrain= method. In this way there is no
 constraints on the actual estimated parameters =l1=, =l2=, and =z= which can
 take any values in \(\R^{3}\), while we at the same time are
@@ -280,7 +282,7 @@ guaranteed a proper covariance matrix which is positive definite.
 #+BEGIN_SRC R
 Z <- function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3]))
 m2 <- m %>%
-    parameter(~ l1 + l2 + z) %>%
+    parameter(~ l1 + l2 + z) %>%		## Add parameters \texttt{l1}, \texttt{l2}
     variance(~ y1 + y2, value=c('v1','v2')) %>%
     covariance(y1 ~ y2, value='c') %>%
     constrain(v1 ~ l1, fun=exp) %>%

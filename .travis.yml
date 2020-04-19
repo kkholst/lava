@@ -4,7 +4,7 @@ r:
  - release
  - devel
 
-r_check_args: --as-cran --run-donttest
+r_check_args: --as-cran --run-donttest --no-build-vignettes
 
 warnings_are_errors: true
 
@@ -16,8 +16,6 @@ addons:
     packages:
       - libglu1-mesa-dev
       - mesa-common-dev
-      - texlive-fonts-extra
-      # - texlive-latex-extra
 
 r_binary_packages:
    - nloptr
@@ -30,7 +28,7 @@ bioc_packages:
   - Rgraphviz
 
 r_github_packages:
- - mangothecat/visualTest
+  - mangothecat/visualTest
 
 after_success:
   - Rscript -e 'library("covr"); codecov(type="all")'
