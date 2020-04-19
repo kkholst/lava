@@ -12,17 +12,17 @@
 #+PROPERTY: header-args:julia :session *julia*
 #+PROPERTY: header-args:R :session *R* :cache no :width 550 :height 450
 #+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
-#+PROPERTY: header-args :eval never-export :exports both :results output :tangle yes :comments yes 
-#+OPTIONS: timestamp:nil title:t date:t author:t creator:nil toc:nil 
+#+PROPERTY: header-args :eval never-export :exports both :results output :tangle yes :comments yes
+#+OPTIONS: timestamp:nil title:t date:t author:t creator:nil toc:nil
 #+OPTIONS: h:4 num:t tags:nil d:t ^:{}
 
 #+BEGIN_SRC emacs-lisp :results silent :exports results :eval
 (setq org-latex-listings t)
-(setq org-latex-compiler-file-string 
+(setq org-latex-compiler-file-string
 "%%\\VignetteIndexEntry{Manipulation of data-frame data with dutility functions}\n%%\\VignetteEngine{R.rsp::tex}\n%%\\VignetteKeyword{R}\n%%\\VignetteKeyword{package}\n%%\\VignetteKeyword{vignette}\n%%\\VignetteKeyword{LaTeX}\n")
 #+END_SRC
 
------ 
+-----
 # +LaTeX: \clearpage
 
 
@@ -35,7 +35,7 @@ coefficients using =lava=.
 Assume that \(Y_{1}\) and \(Y_{2}\) are conditionally normal
 distributed given \(\bm{X}\) with the following linear structure
 \begin{gather}\label{eq:model1}
-  \begin{split}    
+  \begin{split}
     Y_1 = \bm{\beta}_1^{t}\bm{X} + \epsilon_1 \\
     Y_2 = \bm{\beta}_2^{t}\bm{X} + \epsilon_2
 \end{split}
@@ -46,7 +46,7 @@ with covariates \(\bm{X} = (X_1,\ldots,X_k)^{t}\) and measurement errors
     \epsilon_{1} \\
     \epsilon_{2}
   \end{pmatrix} \sim \mathcal{N}\left(0, \bm{\Sigma} \right), \quad \bm{\Sigma}
-    = 
+    =
     \begin{pmatrix}
       \sigma_1^2 & \rho\sigma_{1}\sigma_{2} \\
       \rho\sigma_{1}\sigma_{2} & \sigma_2^2
@@ -62,10 +62,10 @@ with covariates \(\bm{X} = (X_1,\ldots,X_k)^{t}\) and measurement errors
 	\matrix[row sep=2em,column sep=0.3cm,ampersand replacement=\&]{
 	  \node(y1) [plain] {$Y_{1}$}; \& \& \node(y2) [plain] {$Y_{2}$}; \\
 	  \& \node(x) [plain] {$X$}; \\
-	}; 
+	};
 	\path[<->] (y1) edge[thick,dashed,bend left=20] node [above] {$\rho$} (y2) ; %% left,rigth,above,below
 	\path[->] (x) edge[thick] node [left] {$\beta_{1}$} (y1);
-	\path[->] (x) edge[thick] node [right] {$\beta_{2}$} (y2); 
+	\path[->] (x) edge[thick] node [right] {$\beta_{2}$} (y2);
   \end{tikzpicture}
 \end{center}
 #+END_export
@@ -89,8 +89,8 @@ The model can be specified (here using the pipe notation via =magrittr=)
 with the following syntax where the correlation parameter here is
 given the label '=r=':
 #+BEGIN_SRC R
-  m0 <- lvm() %>% 
-    covariance(y1 ~ y2, value='r') %>% 
+  m0 <- lvm() %>%
+    covariance(y1 ~ y2, value='r') %>%
     regression(y1 + y2 ~ x)
 #+END_SRC
 
@@ -105,12 +105,12 @@ coef(m0, labels=TRUE)
 #+END_SRC
 
 #+RESULTS:
-:       m1       m2       p1       p2       p3       p4       p5 
+:       m1       m2       p1       p2       p3       p4       p5
 :     "y1"     "y2"   "y1~x"   "y2~x" "y1~~y1" "y2~~y2"      "r"
 
 The default simulation parameters are zero for all intercepts (=y1=, =y2=)
 and one for all regression coefficients (=y1~x=, =y2~x=) and residual
-variance parameters (=y1~~y1=, =y2~~y2=). 
+variance parameters (=y1~~y1=, =y2~~y2=).
 
 #+BEGIN_SRC R
   d <- sim(m0, 500, p=c(r=0.9), seed=1)
@@ -118,7 +118,7 @@ variance parameters (=y1~~y1=, =y2~~y2=).
 #+END_SRC
 
 #+RESULTS:
-: 
+:
 :           y1         y2           x
 : 1  0.6452154  0.8677628  1.13496509
 : 2  1.1098723  0.9579211  1.11193185
@@ -141,8 +141,8 @@ types to the model output using the =transform= method.
 	return ( Surv(pmin(x,threshold), x<=threshold) )
       }
     }
-  
-    m0 %<>% 
+
+    m0 %<>%
       transform(s1 ~ y1, cens1(-2, 'left')) %>%
       transform(s2 ~ y2, cens1(2,  'right'))
 #+END_SRC
@@ -155,7 +155,7 @@ types to the model output using the =transform= method.
 #+END_SRC
 
 #+RESULTS:
-: 
+:
 :           y1         y2           x          s1         s2
 : 1  0.6452154  0.8677628  1.13496509   0.6452154  0.8677628
 : 2  1.1098723  0.9579211  1.11193185   1.1098723  0.9579211
@@ -170,7 +170,7 @@ types to the model output using the =transform= method.
 The Maximum Likelihood Estimate can be obtainted using the =estimate= method:
 
 #+BEGIN_SRC R
-  m <- lvm() %>% 
+  m <- lvm() %>%
        regression(y1 + y2 ~ x) %>%
        covariance(y1 ~ y2)
 
@@ -182,14 +182,14 @@ The Maximum Likelihood Estimate can be obtainted using the =estimate= method:
 #+begin_example
 
                     Estimate Std. Error  Z-value  P-value
-Regressions:                                             
+Regressions:
    y1~x              0.93300    0.04443 20.99871   <1e-12
     y2~x             0.91652    0.04527 20.24500   <1e-12
-Intercepts:                                              
+Intercepts:
    y1               -0.00541    0.04482 -0.12076   0.9039
    y2               -0.02715    0.04566 -0.59457   0.5521
-Residual Variances:                                      
-   y1                1.00419    0.06351 15.81139         
+Residual Variances:
+   y1                1.00419    0.06351 15.81139
    y1~~y2            0.91221    0.06130 14.88041   <1e-12
    y2                1.04252    0.06593 15.81139
 #+end_example
@@ -218,7 +218,7 @@ correlation(e)
 
 Note, that in this case the confidence intervals are constructed
 by using a variance stabilizing transformation, Fishers
-\(z\)-transform citep:MR2135927, 
+\(z\)-transform citep:MR2135927,
 #+LATEX: \newcommand{\arctanh}{\operatorname{arctanh}}
 \begin{align*}
   z = \arctanh(\widehat{\rho}) =
@@ -262,7 +262,7 @@ methods). To ensure that the estimated variance parameters leads to a
 meaningful positive definite structure and to avoid potential problems
 with convergence it can often be a good idea to parametrize the model
 in a way that such parameter constraints are naturally fulfilled.
-This can be achieved with the =constrain= method. 
+This can be achieved with the =constrain= method.
 
 First we will add new parameters =l1= and =l2= to hold the log-variance
 parameters, and =z= which will be the z-transform of the correlation
@@ -297,13 +297,13 @@ e2
 #+begin_example
 
                        Estimate Std. Error  Z-value  P-value
-Regressions:                                                
+Regressions:
    y1~x                 0.93300    0.04443 20.99871   <1e-12
     y2~x                0.91652    0.04527 20.24500   <1e-12
-Intercepts:                                                 
+Intercepts:
    y1                  -0.00541    0.04482 -0.12076   0.9039
    y2                  -0.02715    0.04566 -0.59457   0.5521
-Additional Parameters:                                      
+Additional Parameters:
    l1                   0.00418    0.06325  0.06617   0.9472
    l2                   0.04164    0.06325  0.65832   0.5103
    z                    1.42942    0.04472 31.96286   <1e-12
@@ -318,8 +318,8 @@ estimate(e2, 'z', back.transform=tanh)
 #+RESULTS:
 :     Estimate Std.Err   2.5%  97.5%    P-value
 : [z]   0.8915         0.8729 0.9076 5.606e-243
-: 
-:  Null Hypothesis: 
+:
+:  Null Hypothesis:
 :   [z] = 0
 
 
@@ -330,7 +330,7 @@ parameter name of the \(\arctanh\) transformed correlation
 coefficient, and =lname=, =lname2= can be used to specify the parameter
 names for the log variance parameters):
 #+BEGIN_SRC R
-  m2 <- lvm() %>% 
+  m2 <- lvm() %>%
     regression(y1 + y2 ~ x) %>%
     covariance(y1 ~ y2, constrain=TRUE, rname='z')
 
@@ -342,13 +342,13 @@ names for the log variance parameters):
 #+begin_example
 
                        Estimate Std. Error  Z-value  P-value
-Regressions:                                                
+Regressions:
    y1~x                 0.93300    0.04443 20.99871   <1e-12
     y2~x                0.91652    0.04527 20.24500   <1e-12
-Intercepts:                                                 
+Intercepts:
    y1                  -0.00541    0.04482 -0.12076   0.9039
    y2                  -0.02715    0.04566 -0.59457   0.5521
-Additional Parameters:                                      
+Additional Parameters:
    l1                   0.00418    0.06325  0.06617   0.9472
    l2                   0.04164    0.06325  0.65832   0.5103
    z                    1.42942    0.04472 31.96286   <1e-12
@@ -361,8 +361,8 @@ Additional Parameters:
 #+RESULTS:
 :     Estimate Std.Err   2.5%  97.5%    P-value
 : [z]   0.8915         0.8729 0.9076 5.606e-243
-: 
-:  Null Hypothesis: 
+:
+:  Null Hypothesis:
 :   [z] = 0
 
 
@@ -387,8 +387,8 @@ b
 
 #+RESULTS:
 : Non-parametric bootstrap statistics (R=1000):
-: 
-:      Estimate      Bias          Std.Err       2.5 %         97.5 %       
+:
+:      Estimate      Bias          Std.Err       2.5 %         97.5 %
 : y1   -0.0054119135 -0.0004334131  0.0433534650 -0.0882761496  0.0788776969
 : y2   -0.0271494916  0.0004712609  0.0453349810 -0.1117355111  0.0661302370
 : y1~x  0.9330043509  0.0006810105  0.0463422472  0.8438843284  1.0240749480
@@ -405,7 +405,7 @@ quantile(tanh(b$coef[,'z']), c(.025,.975))
 #+END_SRC
 
 #+RESULTS:
-: Error in quantile(tanh(b$coef[, "z"]), c(0.025, 0.975)) : 
+: Error in quantile(tanh(b$coef[, "z"]), c(0.025, 0.975)) :
 :   object 'b' not found
 
 
@@ -419,11 +419,11 @@ defined as =Surv= objects (from the =survival= package which is
 automatically loaded when using the =mets= package).
 
 #+BEGIN_SRC R
-  m3 <- lvm() %>% 
+  m3 <- lvm() %>%
     regression(y1 + s2 ~ x) %>%
     covariance(y1 ~ s2, constrain=TRUE, rname='z')
 
-  e3 <- estimate(m3, d)  
+  e3 <- estimate(m3, d)
   e3
 #+END_SRC
 
@@ -431,13 +431,13 @@ automatically loaded when using the =mets= package).
 #+begin_example
 
                        Estimate Std. Error  Z-value  P-value
-Regressions:                                                
+Regressions:
    y1~x                 0.93301    0.04443 20.99884   <1e-12
     s2~x                0.92402    0.04643 19.90118   <1e-12
-Intercepts:                                                 
+Intercepts:
    y1                  -0.00541    0.04482 -0.12081   0.9038
    s2                  -0.02119    0.04638 -0.45684   0.6478
-Additional Parameters:                                      
+Additional Parameters:
    l1                   0.00418    0.06325  0.06607   0.9473
    l2                   0.06318    0.06492  0.97313   0.3305
    z                    1.42834    0.04546 31.41832   <1e-12
@@ -450,18 +450,18 @@ estimate(e3, 'z', back.transform=tanh)
 #+RESULTS:
 :     Estimate Std.Err  2.5%  97.5%    P-value
 : [z]   0.8913         0.872 0.9079 1.503e-226
-: 
-:  Null Hypothesis: 
+:
+:  Null Hypothesis:
 :   [z] = 0
 
 
 And here the same analysis with =s1= being left-censored and =s2= right-censored:
 #+BEGIN_SRC R
-  m3b <- lvm() %>% 
+  m3b <- lvm() %>%
     regression(s1 + s2 ~ x) %>%
     covariance(s1 ~ s2, constrain=TRUE, rname='z')
 
-  e3b <- estimate(m3b, d)  
+  e3b <- estimate(m3b, d)
   e3b
 #+END_SRC
 
@@ -469,13 +469,13 @@ And here the same analysis with =s1= being left-censored and =s2= right-censored
 #+begin_example
 
                        Estimate Std. Error  Z-value  P-value
-Regressions:                                                
+Regressions:
    s1~x                 0.92834    0.04479 20.72738   <1e-12
     s2~x                0.92466    0.04648 19.89510   <1e-12
-Intercepts:                                                 
+Intercepts:
    s1                  -0.00233    0.04492 -0.05196   0.9586
    s2                  -0.02083    0.04641 -0.44874   0.6536
-Additional Parameters:                                      
+Additional Parameters:
    l1                  -0.00076    0.06500 -0.01163   0.9907
    l2                   0.06425    0.06498  0.98869   0.3228
    z                    1.42627    0.04609 30.94303   <1e-12
@@ -488,11 +488,11 @@ estimate(e3b, 'z', back.transform=tanh)
 #+RESULTS:
 :     Estimate Std.Err   2.5%  97.5%    P-value
 : [z]   0.8909         0.8713 0.9077 8.962e-222
-: 
-:  Null Hypothesis: 
+:
+:  Null Hypothesis:
 :   [z] = 0
 
-* SessionInfo 
+* SessionInfo
   :PROPERTIES:
   :UNNUMBERED: t
   :END:
@@ -511,35 +511,35 @@ Matrix products: default
 BLAS/LAPACK: /usr/lib64/libopenblas-r0.3.9.so
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] grid      parallel  stats     grDevices utils     datasets  graphics 
-[8] methods   base     
+[1] grid      parallel  stats     grDevices utils     datasets  graphics
+[8] methods   base
 
 other attached packages:
-[1] magrittr_1.5        mets_1.2.7.1        lava_1.6.7         
-[4] timereg_1.9.4       survival_3.1-11     graph_1.60.0       
+[1] magrittr_1.5        mets_1.2.7.1        lava_1.6.7
+[4] timereg_1.9.4       survival_3.1-11     graph_1.60.0
 [7] BiocGenerics_0.32.0
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.4          compiler_3.6.3      prettyunits_1.1.1  
- [4] R.methodsS3_1.8.0   R.utils_2.9.2       remotes_2.1.1      
- [7] tools_3.6.3         testthat_2.3.2      digest_0.6.25      
-[10] pkgbuild_1.0.6      pkgload_1.0.2       lattice_0.20-40    
-[13] memoise_1.1.0       R.cache_0.14.0      rlang_0.4.5        
-[16] Matrix_1.2-18       cli_2.0.2           mvtnorm_1.1-0      
-[19] R.rsp_0.43.2        withr_2.1.2         desc_1.2.0         
-[22] fs_1.3.2            devtools_2.2.2      stats4_3.6.3       
-[25] rprojroot_1.3-2     glue_1.3.2          R6_2.4.1           
-[28] processx_3.4.2      fansi_0.4.1         sessioninfo_1.1.1  
-[31] callr_3.4.3         splines_3.6.3       backports_1.1.5    
-[34] ps_1.3.2            clisymbols_1.2.0    ellipsis_0.3.0     
+ [1] Rcpp_1.0.4          compiler_3.6.3      prettyunits_1.1.1
+ [4] R.methodsS3_1.8.0   R.utils_2.9.2       remotes_2.1.1
+ [7] tools_3.6.3         testthat_2.3.2      digest_0.6.25
+[10] pkgbuild_1.0.6      pkgload_1.0.2       lattice_0.20-40
+[13] memoise_1.1.0       R.cache_0.14.0      rlang_0.4.5
+[16] Matrix_1.2-18       cli_2.0.2           mvtnorm_1.1-0
+[19] R.rsp_0.43.2        withr_2.1.2         desc_1.2.0
+[22] fs_1.3.2            devtools_2.2.2      stats4_3.6.3
+[25] rprojroot_1.3-2     glue_1.3.2          R6_2.4.1
+[28] processx_3.4.2      fansi_0.4.1         sessioninfo_1.1.1
+[31] callr_3.4.3         splines_3.6.3       backports_1.1.5
+[34] ps_1.3.2            clisymbols_1.2.0    ellipsis_0.3.0
 [37] usethis_1.5.1       assertthat_0.2.1    numDeriv_2016.8-1.1
 [40] crayon_1.3.4        R.oo_1.23.0
 #+end_example

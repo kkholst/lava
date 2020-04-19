@@ -16,12 +16,9 @@ addons:
     packages:
       - libglu1-mesa-dev
       - mesa-common-dev
-      - texlive-latex-extra
+      # - texlive-latex-extra
 
 r_binary_packages:
-   #   - rgl
-   #   - ggplot2
-   #   - igraph
    - nloptr
 
 r_packages:
