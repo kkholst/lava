@@ -1,6 +1,6 @@
 #+HTML: <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
 #+HTML: <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
-#+HTML: <a href="http://cran.rstudio.com/web/packages/lava/index.html"><img src="https://www.r-pkg.org/badges/version-last-release/lava"></a>
+#+HTML: <a href="https://CRAN.R-project.org/package=lava"><img src="https://www.r-pkg.org/badges/version-last-release/lava"></a>
 #+HTML: <a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
 
 A general implementation of Structural Equation Models with latent
