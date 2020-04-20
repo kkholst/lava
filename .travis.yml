@@ -1,10 +1,9 @@
-language: r
-
 r:
  - release
  - devel
 
-r_check_args: "--timing --run-donttest --ignore-vignettes --no-stop-on-test-error"
+r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_check_args: --no-build-vignettes --no-manual --timing --run-donttest --no-stop-on-test-error
 
 warnings_are_errors: true
 
