@@ -4,7 +4,7 @@ r:
  - release
  - devel
 
-r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_build_args: --ignore-vignettes --no-manual --no-resave-data
 r_check_args: --ignore-vignettes --no-manual --timings --run-donttest --no-stop-on-test-error
 
 warnings_are_errors: true
@@ -18,8 +18,8 @@ addons:
       - libglu1-mesa-dev
       - mesa-common-dev
 
-r_binary_packages:
-   - nloptr
+# r_binary_packages:
+   # - nloptr
 
 r_packages:
   - covr
