@@ -1,7 +1,38 @@
-#+HTML: <a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master"></a>
-#+HTML: <a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master"></a>
-#+HTML: <a href="https://CRAN.R-project.org/package=lava"><img src="https://www.r-pkg.org/badges/version-last-release/lava"></a>
-#+HTML: <a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava"></a>
+#+TITLE: Latent Variable Models (=lava=)
+#+AUTHOR: Klaus K. Holst
+#+STARTUP: showall
+#+OPTIONS: ^:{}
+#+OPTIONS: title:nil author:nil
+#+PROPERTY: header-args :exports both :eval yes :results output
+#+PROPERTY: header-args:R :session *R*
+#+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
+# +OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
+# +OPTIONS: h:4 num:t tags:nil d:t toc:t
+
+# +BEGIN_EXPORT yaml
+# output: md_document
+# +END_EXPORT
+
+#+BEGIN_export md
+<!-- badges: start -->
+  [![travis](https://travis-ci.org/kkholst/lava.svg?branch=master)](https://travis-ci.org/kkholst/lava)
+  [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=master)](https://codecov.io/github/kkholst/lava?branch=master)
+  [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
+  [![cran-dl](http://cranlogs.r-pkg.org/badges/lava)](http://cranlogs.r-pkg.org/downloads/total/last-month/lava)
+<!-- badges: end -->
+
+```{r include=FALSE}
+options(family="Times")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "inst/",
+  out.width = "50%"
+)
+```
+#+END_export
+
+* Latent Variable Models: lava
 
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
@@ -13,24 +44,26 @@ estimation of influence functions for a broad range of statistical
 models.
 
 ** Installation
-#+BEGIN_SRC R :exports both :eval never
+#+BEGIN_SRC R :exports both :ravel eval=FALSE
 install.packages("lava", dependencies=TRUE)
 library("lava")
 demo("lava")
 #+END_SRC
 
 For graphical capabilities the =Rgraphviz= package is needed (first install the =BiocManager= package)
-#+BEGIN_SRC R :exports both :eval never
+#+ATTR_RAVEL: eval=FALSE
+#+BEGIN_SRC R :exports both :ravel eval=FALSE
 BiocManager::install("Rgraphviz")
 #+END_SRC
 or the =igraph= or =visNetwork= packages
-#+BEGIN_SRC R :exports both :eval never
-install.packages("igraph", dependencies=TRUE)
-install.packages("visNetwork", dependencies=TRUE)
+#+BEGIN_SRC R :exports both :ravel eval=FALSE
+install.packages("igraph")
+install.packages("visNetwork")
 #+END_SRC
 
 The development version of =lava= may also be installed directly from =github=:
-#+BEGIN_SRC R :exports both :eval never
+#+ATTR_RAVEL: eval=FALSE
+#+BEGIN_SRC R :exports both :ravel eval=FALSE
 remotes::install_github("kkholst/lava")
 #+END_SRC
 
@@ -45,7 +78,7 @@ To cite that =lava= package please use the following reference
   http://dx.doi.org/10.1007/s00180-012-0344-y
 #+END_QUOTE
 
-#+BEGIN_SRC bibtex
+#+BEGIN_SRC LATEX
   @Article{lava,
     title = {Linear Latent Variable Models: The lava-package},
     author = {Klaus K. Holst and Esben Budtz-Joergensen},
@@ -56,13 +89,21 @@ To cite that =lava= package please use the following reference
     journal = {Computational Statistics},
     doi = {10.1007/s00180-012-0344-y}
   }
-#+END_SRC bibtex
+#+END_SRC
 
 ** Examples
 
+#+BEGIN_SRC R :ravel results='hide', echo=FALSE
+library(lava)
+#+END_SRC
+
+#+RESULTS:
+
 *** Structural Equation Model
-Specify structurual equation models with two factors
-#+BEGIN_SRC R :exports both :results output graphics :file inst/lava1.png
+
+Specify structural equation models with two factors
+#+NAME: lvm1
+#+BEGIN_SRC R :ravel warning=FALSE, message=FALSE, fig.align='center' :exports both
   m <- lvm()
   regression(m) <- y1 + y2 + y3 ~ eta1
   regression(m) <- z1 + z2 + z3 ~ eta2
@@ -74,8 +115,7 @@ Specify structurual equation models with two factors
   plot(m)
 #+END_SRC
 
-#+RESULTS:
-[[file:inst/lava1.png]]
+#+RESULTS: lvm1
 
 Simulation
 #+BEGIN_SRC R :exports code
@@ -91,7 +131,8 @@ Estimation
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
+#+begin_example
+
                     Estimate Std. Error  Z-value   P-value
 Measurements:
    y2~eta1           0.95462    0.08083 11.80993    <1e-12
@@ -118,25 +159,26 @@ Residual Variances:
    z2                0.87569    0.19463  4.49934
    z3                1.18155    0.22640  5.21883
    eta2              1.24430    0.28992  4.29195
-#+END_example
+#+end_example
 
 *** Model assessment
 
 Assessing goodness-of-fit, here the linearity between eta2 and eta1
 (requires the =gof= package which can installed from CRAN)
-#+BEGIN_SRC R :exports both :results output graphics :file inst/gof1.png
+
+#+NAME: gof1
+#+BEGIN_SRC R :ravel message=FALSE, fig.align='center' :exports both
+  # install.packages("gof")
   library(gof)
   g <- cumres(e, eta2 ~ eta1)
   plot(g)
 #+END_SRC
 
-#+RESULTS:
-[[file:inst/gof1.png]]
+#+RESULTS: gof1
 
 *** Non-linear measurement error model
 
 Simulate non-linear model
-
 #+BEGIN_SRC R :exports code
 m <- lvm(y1 + y2 + y3 ~ u, u ~ x)
 transform(m,u2 ~ u) <- function(x) x^2
@@ -155,7 +197,8 @@ Stage 1:
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
+#+begin_example
+
                     Estimate Std. Error  Z-value  P-value
 Regressions:
    u~x               1.06998    0.08208 13.03542   <1e-12
@@ -164,7 +207,7 @@ Intercepts:
 Residual Variances:
    y1                1.00054    0.07075 14.14214
    u                 1.19873    0.15503  7.73233
-#+END_example
+#+end_example
 
 
 Stage 2
@@ -174,23 +217,26 @@ Stage 2
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_example
+#+begin_example
+
             Estimate Std.Err    2.5%   97.5%   P-value
 (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16
 x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01
 u             1.0039 0.11504  0.7785  1.2294 2.609e-18
 u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
-#+END_example
+#+end_example
 
 
-#+BEGIN_SRC R :exports both :results output graphics :file inst/me1.png
+#+NAME: nlin1
+#+BEGIN_SRC R :ravel message=FALSE, fig.align='center' :exports both
   f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
   u <- seq(-1, 1, length.out=100)
   plot(e, f, data=data.frame(u))
 #+END_SRC
 
 #+RESULTS:
-[[file:inst/me1.png]]
+
+
 
 *** Simulation
 
@@ -204,17 +250,18 @@ transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
 
 #+RESULTS:
 
-#+BEGIN_SRC R :exports both :results output graphics :file inst/mediation1.png
+#+NAME: mediation1
+#+BEGIN_SRC R :ravel message=FALSE, fig.align='center' :exports both
   plot(m)
 #+END_SRC
 
-#+RESULTS:
-[[file:inst/mediation1.png]]
+#+RESULTS: mediation1
 
 
 Simulate from model and estimate indirect effects
 
-#+BEGIN_SRC R :exports both :wrap example
+#+NAME: sim1
+#+BEGIN_SRC R :ravel cache=TRUE :exports both :wrap example
 onerun <- function(...) {
     d <- sim(m, 100)
     m0 <- lvm(S~x+z, x~z)
@@ -225,43 +272,46 @@ val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
 #+END_SRC
 
-#+RESULTS:
-#+BEGIN_example
-100 replications					Time: 4.806s
+#+RESULTS: sim1
+#+begin_example
 
-      Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
-Mean         2.01736         1.01154           1.00582        1.00582
-SD           0.18457         0.22535           0.18828        0.18828
-SE           0.18796         0.18621           0.16855        0.16855
-SE/SD        1.01840         0.82633           0.89522        0.89522
-#+END_example
+100 replications					Time: 4.859s
+
+        Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
+Mean           1.97895         0.98166           0.99729        0.99729
+SD             0.20383         0.16523           0.18452        0.18452
+SE             0.18149         0.17857           0.16476        0.16476
+SE/SD          0.89041         1.08070           0.89290        0.89290
+
+Min            1.56201         0.51205           0.58638        0.58638
+2.5%           1.64021         0.66656           0.64491        0.64491
+50%            1.94437         0.98567           0.98406        0.98406
+97.5%          2.43580         1.30093           1.41001        1.41001
+Max            2.51655         1.50968           1.45584        1.45584
+
+Missing        0.00000         0.00000           0.00000        0.00000
+#+end_example
 
 
 Add additional simulations and visualize results
 
-#+BEGIN_SRC R :exports both :results output graphics :file inst/mediation2.png
+#+NAME: simres1
+#+BEGIN_SRC R :ravel cache=TRUE, message=FALSE, fig.align='center' :exports both
     val <- sim(val,500) ## Add 500 simulations
     plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
 	 true=c(2, 1), se=c("Total.Std.Err", "Indirect.Std.Err"),
 	 scatter.plot=TRUE)
 #+END_SRC
 
-#+RESULTS:
-[[file:inst/mediation2.png]]
 
-
-* COMMENT Setup
-
-#+TITLE: Latent Variable Models (=lava=)
-#+AUTHOR: Klaus K. Holst
-#+PROPERTY: header-args:R  :session *R* :cache no :width 550 :height 450
-#+PROPERTY: header-args  :eval never-export :exports results :results output :tangle yes :comments yes
-#+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
-#+OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
-#+OPTIONS: h:4 num:t tags:nil d:t
-#+PROPERTY: comments yes
-#+STARTUP: hideall
-#+OPTIONS: toc:t h:4 num:nil tags:nil
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.biostat.ku.dk/~kkho/styles/orgmode2.css"/>
-#+HTML_HEAD: <link rel="icon" type="image/x-icon" href="http://www.biostat.ku.dk/~kkho/styles/logo.ico"/>
-#+HTML_HEAD: <style type="text/css">body { background-image: url(http://www.biostat.ku.dk/~kkho/styles/logo.png); }</style>
+* COMMENT Local Variables                                           :ARCHIVE:
+# Local Variables:
+# coding: utf-8
+# eval: (add-hook 'after-save-hook
+#        '(lambda () (org-ravel-export-to-file 'ravel-markdown)) nil t)
+# my-org-buffer-local-mode: t
+# eval: (defun myknit() (interactive) (save-buffer)
+#        (let ((cmd (concat "R-devel --slave -e 'knitr::knit(\"" (replace-regexp-in-string "org$" "Rmd" (buffer-file-name)) "\")'")))
+# 	   (shell-command-to-string cmd)))
+# eval: (define-key my-org-buffer-local-mode-map (kbd "<f10>") 'myknit)
+# End:

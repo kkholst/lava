@@ -6,6 +6,7 @@ TODO
 ^\.git$
 ^.gitignore$
 ^README\.Rmd$
+^README\.org$
 ^examples$
 ^TODO$
 ^doc$
