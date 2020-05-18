@@ -114,6 +114,388 @@
       <small>Source: <a href='https://github.com/kkholst/lava/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="lava-1-6-8" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.8">
+<a href="#lava-1-6-8" class="anchor"></a>lava 1.6.8<small> Unreleased </small>
+</h1>
+<ul>
+<li>Bug-fix: parameter(m,x) now returns an lvm object and not just x</li>
+<li>constrain</li>
+<li>Vignette added (Estimating partial correlations)</li>
+</ul>
+</div>
+    <div id="lava-1-6-7" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.7">
+<a href="#lava-1-6-7" class="anchor"></a>lava 1.6.7<small> 2020-03-05 </small>
+</h1>
+<ul>
+<li>Fixed bug in the composite likelihood ‘complik’ when used with censored variables (Surv objects).</li>
+<li>Fixed regular expression in ‘spaghetti’ function</li>
+<li>plot.sim: ‘rug’ argument is now by default FALSE and ‘auto.layout’ disabled when nr=nc=1.</li>
+<li>base::sequence() is now a generic function and as a consequence sequence.lvm has been renamed to Sequence.lvm. The function binary.lvm is now an alias of ones.lvm.</li>
+</ul>
+</div>
+    <div id="lava-1-6-6" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.6">
+<a href="#lava-1-6-6" class="anchor"></a>lava 1.6.6<small> 2019-08-01 </small>
+</h1>
+<ul>
+<li>Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now initialized by default using kmeans++.</li>
+<li>sim method implemented for mvnmix models.</li>
+<li>Bug fix: Newton-Raphson method (lava::NR) used a numerical approximation of the Hessian even when submitted as attribute to the objective function.</li>
+</ul>
+</div>
+    <div id="lava-1-6-5" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.5">
+<a href="#lava-1-6-5" class="anchor"></a>lava 1.6.5<small> 2019-02-12 </small>
+</h1>
+<ul>
+<li>Maintenance release.</li>
+</ul>
+</div>
+    <div id="lava-1-6-4" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.4">
+<a href="#lava-1-6-4" class="anchor"></a>lava 1.6.4<small> 2018-11-25 </small>
+</h1>
+<ul>
+<li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): binomial.rd, binomial.rr. Base on new hook ‘simulate.multiple.inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
+<li>sim.lvm: ‘X’ argument can now fix (manipulate) any variable and not only exogenous variables.</li>
+<li>Summary function for sim.default updated (the ‘estimate’ argument can now be a list with each element being the estimate position and optionally standard error and true value).</li>
+<li>Starting values updated for mixture models. The parameter names can be obtained with mixture(…,names=TRUE) and set with mixture(…,control=list(start=…))).</li>
+<li>Naming conventions for multigroup parameters: ‘<a href="mailto:par@g">par@g</a>’ (par: name of parameter, g: first group number where ‘par’ is observed). Starting values can be specified with estimate(…,control(list(start=…))).</li>
+<li>New print and summary methods for mixture models.</li>
+<li>Renamed (weighted) K-means function ‘km’ to ‘wkm’.</li>
+<li>Derivative method deriv.function based on complex step derivatives.</li>
+<li>twostageCV: estimation of mixture models are now parallelized if mc.cores&gt;1.</li>
+</ul>
+</div>
+    <div id="lava-1-6-3" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.3">
+<a href="#lava-1-6-3" class="anchor"></a>lava 1.6.3<small> 2018-08-10 </small>
+</h1>
+<ul>
+<li>Fixed problems with plots (Rgraphviz)</li>
+<li>Better print method for twostageCV</li>
+<li>Improved M-step in mixture.method</li>
+</ul>
+</div>
+    <div id="lava-1-6-2" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.2">
+<a href="#lava-1-6-2" class="anchor"></a>lava 1.6.2<small> 2018-07-02 </small>
+</h1>
+<ul>
+<li>twostageCV: cross-validate two-stage estimator</li>
+<li>rmvn, dmvn moved to mets package (C++ implementation, old versions renamed to lava::rmvn0, lava::dmvn0)</li>
+<li>mediation proportion handled correctly when direct effect is zero</li>
+<li>unit tests clean-up (namespace)</li>
+<li>merge.lvm now correctly handles fixed covariance parameters</li>
+</ul>
+</div>
+    <div id="lava-1-6-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.1">
+<a href="#lava-1-6-1" class="anchor"></a>lava 1.6.1<small> 2018-03-28 </small>
+</h1>
+<ul>
+<li>Newton-raphson algorithm made more robust.</li>
+<li>New sim.as method. plot.sim method now by default only plots density estimates</li>
+<li>Compatibility fix with Matrix library</li>
+</ul>
+</div>
+    <div id="lava-1-6" class="section level1">
+<h1 class="page-header" data-toc-text="1.6">
+<a href="#lava-1-6" class="anchor"></a>lava 1.6<small> 2018-01-12 </small>
+</h1>
+<ul>
+<li>Mixture Latent variable models (mixture). Fast version requires ‘mets’ packages; Gaussian mixture models (mvnmix); weighted k-means (km)</li>
+<li>estimate.default: ‘keep’, ‘use’ arguments can be specified as regular expressions (with argument regex=TRUE). Summary method now returns Wald test (null: all parameters being zero).</li>
+<li>makemissing: seed argument added.</li>
+<li>Global change: ‘silent’ argument renamed to ‘messages’</li>
+<li>New utility functions: Grep, Na2x, x2NA, wait, waitclick, rotation, Rot2d, Rot3d</li>
+<li>Condition numbers calculated via SVD</li>
+<li>na.pass0: returns data.frame with original number of rows but with zeros (or first level of factors) in the rows with missing data.</li>
+<li>stack: ‘weights’ argument renamed to ‘propensity’. If propensity=TRUE, the first argument (model) will be treated as propensity score model (glm) and ‘predict’ method will be used for the predictions.</li>
+<li>estimate.formula now by default wraps glm such that ‘iid’ method return matrix of same size as full data (with zero rows where data are missing).</li>
+<li>Updated output functions for class ‘sim’ (print method and plot).. Plot method: density.alpha is applied to each standard error (‘se’) level.</li>
+<li>composite likelihood (complik) refactored + new example. ‘ordinal’ method now cleans up properly when variables are removed (rmvar, subset).</li>
+<li>twostage: fixed for mixture model (class ‘lvm.mixture’). New help page + examples. Predict function updated (newdata argument where covariate levels can be specified).</li>
+</ul>
+</div>
+    <div id="lava-1-5-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.1">
+<a href="#lava-1-5-1" class="anchor"></a>lava 1.5.1<small> 2017-09-27 </small>
+</h1>
+<ul>
+<li>conformal predictions: confpred</li>
+<li>warnings (char2num used instead of coersion via as.numeric)</li>
+<li>%++% for function compositon</li>
+<li>New summary.effects methods with mediation proportion in the output</li>
+<li>New hook: remove.hooks (see example ordinal.lvm)</li>
+<li>constrain methods now handled more robustly in sim.lvm allowing both vectorized and non-vectorized functions</li>
+<li>Non-linear associations can now be specified with ‘nonlinear’ method. Estimation via the ‘twostage’ function.</li>
+<li>Robust standard errors added to the IV estimator (2SLS)</li>
+<li>New cross-validation function: cv (and csplit function for creating random sets).</li>
+</ul>
+</div>
+    <div id="lava-1-5" class="section level1">
+<h1 class="page-header" data-toc-text="1.5">
+<a href="#lava-1-5" class="anchor"></a>lava 1.5<small> 2017-03-16 </small>
+</h1>
+<ul>
+<li>lava.tobit is longer required for ordinal and censored responses. Default is now to use the implementation in the ‘mets’ package.</li>
+<li>Composite likelihood method (complik) updated</li>
+<li>weight argument renamed to weights in agreement with lm, glm, coxph, …</li>
+<li>sim.default: new argument ‘arg’ passed on to simulation function</li>
+<li>sim.default: new argument ‘iter’. If TRUE the iteration number is passed to function call as first argument (default FALSE)</li>
+<li>estimate.default: Wildcards/global expressions can now be used for specifying contrasts based on the syntax of the functions ‘contr’, ‘parsedesign’. See examples on the help-page. The argument transform.ci has been renamed to back.transform.</li>
+<li>correlation methods for matrices and data.frames (either pairwise or full MLE). All methods can now return the influence functions.</li>
+<li>revdiag: dimnames are kept</li>
+<li>Combine: output updated</li>
+<li>forestplot: point estimates shown by default</li>
+<li>backdoor now works without conditioning set (yields all possible conditioning sets)</li>
+<li>New formula syntax: y+x~v+z same as c(y,x)~v+z</li>
+<li>spaghetti: trend.formula can now contain a factor statement on the rhs</li>
+</ul>
+</div>
+    <div id="lava-1-4-7" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.7">
+<a href="#lava-1-4-7" class="anchor"></a>lava 1.4.7<small> 2017-01-27 </small>
+</h1>
+<ul>
+<li>Maintenance release</li>
+<li>models can now be specified as y1+y2~x1+x2 instead of c(y1,2y)~x1+x2</li>
+<li>sim method now has a seed argument</li>
+</ul>
+</div>
+    <div id="lava-1-4-6" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.6">
+<a href="#lava-1-4-6" class="anchor"></a>lava 1.4.6<small> 2016-12-20 </small>
+</h1>
+<ul>
+<li>New backtrace algorithms for Newton-Raphson optimization routine.</li>
+<li>‘diagtest’ updated.</li>
+</ul>
+</div>
+    <div id="lava-1-4-5" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.5">
+<a href="#lava-1-4-5" class="anchor"></a>lava 1.4.5<small> 2016-10-26 </small>
+</h1>
+<ul>
+<li>New graph functions: dsep: check for d-separation (conditional independence). backdoor: check backdoor criterion of a graph (lvm-object). adjMat: return adjaceny matrix. edgeList: return edge list. ancestors: return ancenstors of nodes. descendants: return descendants of nodes.</li>
+<li>All simple paths in a graph can now be extracted with: path(…,all=TRUE)</li>
+<li>Covariance parameters are now reference with ~~ instead of ,. Applies to setting starting values in ‘estimate’, parameters in ‘sim’,‘compare’,‘estimate’,… To use the old syntax set ‘lava.options(symbol=c(“~”,“,”))’</li>
+<li>‘layout’ argument added to lava.options (default ‘dot’)</li>
+<li>visNetwork support, new ‘plot.engine’ argument added to plot methods.</li>
+<li>bootstrap.lvmfit now default returns original estimates.</li>
+<li>print, transform methods updated (transform output).</li>
+<li>‘+’ operator overloaded for lvm and estimate objects (merge).</li>
+<li>New composite likelihood function: complik.</li>
+<li>New functions for simple association measures: riskcomp, rdiff, rratio,…</li>
+<li>New argument ‘latent’ in simulate method. If FALSE the latent variables are dropped from the returned data.frame.</li>
+<li>modelsearch by default now shows both directional or undirectional associations (type=‘all’ vs type=‘cor’).</li>
+<li>sim.default now stores timings. New print functions (data.table like output).</li>
+<li>lvm model can now be updated with the ‘sim’ function, for instance setting parameter values for the simulation only once: m &lt;- sim(m,p=p,…), with faster subsequent calls sim(m,n=n).</li>
+<li>estimate.default can now simulate p-values (‘R’ argument). Returns an object which can also be used as input for ‘estimate’.</li>
+<li>Bug fixes: NR optimization with back-tracing; fixed matrices.lvm when called without variance parameters; fixed a bug in r-square computations.</li>
+<li>Contrast matrix can be specified with the function ‘contr’.</li>
+</ul>
+</div>
+    <div id="lava-1-4-4" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.4">
+<a href="#lava-1-4-4" class="anchor"></a>lava 1.4.4<small> 2016-08-13 </small>
+</h1>
+<ul>
+<li>estimate.default will now use the id-variable of an ‘estimate’ object if the ‘id’ argument is left unspecified. For multinomial,gkgamma,kappa additional arguments (…) are now parsed on the ‘estimate.default’ (including id).</li>
+<li>Updated print/summary methods for ‘estimate.default’. Sample/cluster-size added to output.</li>
+<li>Code clean-up and optimization. Smarter calculations of kronecker products, and some regular expressions updated.</li>
+<li>New function ‘predictlvm’ which return jacobian.</li>
+<li>Intercepts can now be specified via parantheses, e.g., y ~ (-2) + x</li>
+<li>‘getoutcome’ with sep argument for splitting ‘|’ statements in formulas.</li>
+<li>Partial gamma, gkgamma, updated (probability interpretation, homogeneity tests removed)</li>
+<li>‘moments’ function now returns conditional mean with multiple rows. Side effect fixed across multiple functions</li>
+<li>twostage function with support for mixture models</li>
+<li>Beta (Beta.lvm) and Finite Gaussian (GM2.lvm,GM3.lvm) Mixtures added.</li>
+<li>‘sim’: parameters can now be specified as part of ‘…’</li>
+<li>summary.sim: calculate Wald CI if confint=TRUE, otherwise use the user supplied confidence limits.</li>
+<li>Clopper-pearson intervals and exact binomial tests added to ‘diagtest’.</li>
+<li>Interval censoring with ‘normal’ estimator, which now also works with ‘binary’ definitions.</li>
+<li>default plot style updated.</li>
+</ul>
+</div>
+    <div id="lava-1-4-3" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.3">
+<a href="#lava-1-4-3" class="anchor"></a>lava 1.4.3<small> 2016-04-11 </small>
+</h1>
+<ul>
+<li>partial gamma coefficients (gkgamma)</li>
+<li>Unit tests works with new testthat version</li>
+<li>Avoid trying to fork new processes on windows (bootstrap,sim.default)</li>
+</ul>
+</div>
+    <div id="lava-1-4-2" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.2">
+<a href="#lava-1-4-2" class="anchor"></a>lava 1.4.2<small> 2016-04-05 </small>
+</h1>
+<ul>
+<li>Code optimization and minor bug fixes</li>
+<li>Travis-CI, unit-tests</li>
+<li>glm estimator update (censored regression)</li>
+<li>polychoric correlations (pcor)</li>
+<li>New utility functions: wrapvec, offdiag</li>
+<li>simulation: regression design on parameters (see weibull + variance hetereogeneity example in help(‘sim’))</li>
+<li>Byte compile by default</li>
+</ul>
+</div>
+    <div id="lava-1-4-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.1">
+<a href="#lava-1-4-1" class="anchor"></a>lava 1.4.1<small> 2015-06-22 </small>
+</h1>
+<ul>
+<li>New plot.estimate method</li>
+<li>Documentation and examples updated</li>
+</ul>
+</div>
+    <div id="lava-1-4-0" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.0">
+<a href="#lava-1-4-0" class="anchor"></a>lava 1.4.0<small> 2015-02-17 </small>
+</h1>
+<ul>
+<li>Linear measurement error model: ‘measurement.error’</li>
+<li>Diagnostic tests: ‘diagtest’</li>
+<li>‘plotConf’ updated with support for special function terms (I, poly, ns, …). Old version is available (not in namespace) as lava:::plotConf0</li>
+<li>Pareto distribution: ‘pareto.lvm’</li>
+<li>Code clean-up/optimization: ‘EventTime’, ‘stack’</li>
+<li>‘estimate.default’ new syntax for contrast specification (parsedesign)</li>
+<li>‘regression.lvm’ with y,x argument (as alias for to,from)</li>
+<li>plot longitudinal data: ‘spaghetti’</li>
+<li>Examples updated</li>
+</ul>
+</div>
+    <div id="lava-1-3" class="section level1">
+<h1 class="page-header" data-toc-text="1.3">
+<a href="#lava-1-3" class="anchor"></a>lava 1.3<small> 2014-11-18 </small>
+</h1>
+<ul>
+<li>New syntax for categorical predictors (method ‘categorical’ and argument ‘additive=FALSE’ with ’regression method)</li>
+<li>Argument ‘intervals’ added to ‘ones.lvm’ for piece-wise constant effects</li>
+<li>Argument ‘average=TRUE’ now needed for empirical averages in estimate.default</li>
+<li>Fixed a bug in score.glm (with weights and offset) introduced in version 1.2.6</li>
+<li>estimate.default:
+<ul>
+<li>small-sample corrections</li>
+<li>Default id from row names in estimate.default (used with merge method)</li>
+<li>iid decompostion also returned for hypothesis contrasts</li>
+<li>keep argument added to estimate.default and merge</li>
+<li>labels argument added to estimate.default</li>
+</ul>
+</li>
+<li>‘images’ function for visualization of tabular data added to namespace</li>
+<li>‘ksmooth’ and ‘surface’ for surface estimation and visualization of bivariate data and functions</li>
+<li>‘dsort’: Sort data.frames</li>
+<li>general multivariate distributions in simulations. see example in ‘sim’</li>
+<li>‘or2prob’, ‘tetrachoric’ for conversion from OR to probabilities (and tetrachoric correlations). ‘prob.normal’: calculates probabilities from threshold model given thresholds and variance See also mets:::assoc for calculations of kappa, gamma, uncer.coef. ‘normal.threshold’: returns thresholds,variance,mu from model with categorical outcomes.</li>
+<li>Multiple testing routines: closed.testing, p.correct, …</li>
+<li>‘Missing’ method updated with a simple ‘suffix’ argument</li>
+<li>Back-tracing updated in Newton-Raphson routine</li>
+</ul>
+</div>
+    <div id="lava-1-2-6" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.6">
+<a href="#lava-1-2-6" class="anchor"></a>lava 1.2.6<small> 2014-05-07 </small>
+</h1>
+<ul>
+<li>New ‘stack’ function for two-stage estimation (via ‘estimate’ objects)</li>
+<li>New ‘blocksample’ function for resampling clustered data.</li>
+<li>New function ‘Missing’ to generate complex missing data patterns</li>
+<li>Weibull parametrization of ‘coxWeibull.lvm’ rolled back (ver. 1.2.4). The function ‘weibull.lvm’ now leads to Accelerated Failure Time model (see examples of ‘eventTime’)</li>
+<li>iid function cleanup (new ‘bread’ attribute). iid.glm now gives correct estimated influence functions for ‘quasi’ link (constant variance)</li>
+<li>Parameter constraints on (co)variance parameters now possible with the syntax lvm(…,y~~a*x) (corresponding to covariance(…,y~x)&lt;-“a”)</li>
+<li>Some additional utilities: pdfconvert, scheffe, images, click. confband updated with ‘polygon’ argument.</li>
+<li>New function getMplus: Import results from Mplus</li>
+<li>New function getSAS: Import SAS ODS</li>
+<li>New ‘edgecolor’ argument of plot-function</li>
+</ul>
+</div>
+    <div id="lava-1-2-5" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.5">
+<a href="#lava-1-2-5" class="anchor"></a>lava 1.2.5<small> 2014-03-14 </small>
+</h1>
+<ul>
+<li>‘merge’ method added for combining ‘estimate’ objects</li>
+<li>Adjustments to starting values</li>
+<li>Function ‘categorical’ for adding categorical predictors to simulation model</li>
+<li>Improved flexibility in simulations with ‘transform’,‘constrain’ (ex: categorical predictors)</li>
+<li>Added ‘dataid’ argument to estimate.default allowing different id for ‘data’ and i.i.d. decomposition of model parameter estimates. With the argument ‘stack=FALSE’ influence functions within clusters will not be stacked together.</li>
+<li>R-squared values (+ approximate standard errors/i.i.d. decomposition) via ‘rsq(model,TRUE)’</li>
+<li>New infrastructure for adding additional parameters to models (no user-visible changes).</li>
+<li>multinomial function for calculating influence curves for multinomial probabilities. ‘gammagk’ and ‘kappa’ methods for calculating Goodman-Kruskals gamma and Cohens kappa coefficients.</li>
+<li>ordreg function for univariate ordinal regression models</li>
+<li>iid methods for data.frames/matrices (empirical mean and variance)</li>
+<li>Support for using ‘mets::cluster.index’ in GEE-type models (much faster).</li>
+<li>plotConf updated (vcov argument added and more graphical arguments parsed to plotting functions)</li>
+<li>Additional unit-tests implemented</li>
+<li>New ‘forestplot’ and ‘Combine’ functions</li>
+<li>Covariance structure may now be specified using ‘<del>’, e.g. ’lvm(c(y,v)</del>z+u)’ specifies correlation between residuals of (y,z),(y,u),(v,z),(v,u).</li>
+</ul>
+</div>
+    <div id="lava-1-2-4" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.4">
+<a href="#lava-1-2-4" class="anchor"></a>lava 1.2.4<small> 2013-12-17 </small>
+</h1>
+<ul>
+<li>Avoid estimating IC in ‘estimate.default’ when ‘vcov’ argument is given.</li>
+<li>New default starting values</li>
+<li>Time-varying effects via ‘timedep’</li>
+<li>R-squared added to summary</li>
+<li>alias: covariance-&gt;variance</li>
+<li>added size argument to binomial.lvm;</li>
+</ul>
+</div>
+    <div id="lava-1-2-3" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.3">
+<a href="#lava-1-2-3" class="anchor"></a>lava 1.2.3<small> 2013-10-28 </small>
+</h1>
+<ul>
+<li>‘subset’ argument added to estimate.default. Calculates empirical averages conditional on subsets of data</li>
+<li>Improved output from compare/estimate functions</li>
+<li>Minor bug fixes (plot, predict)</li>
+<li>sim: Piecewise constant rates with coxEponential.lvm. New aalenExponential.lvm function for additive models. Functions ones.lvm and sequence.lvm for deterministic variables.</li>
+</ul>
+</div>
+    <div id="lava-1-2-2" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.2">
+<a href="#lava-1-2-2" class="anchor"></a>lava 1.2.2<small> 2013-07-12 </small>
+</h1>
+<ul>
+<li>Regression parameters are now by default referenced using ‘~’, e.g. “y~x” instead of “y&lt;-x”. Applies to setting starting values in ‘estimate’, parameters in ‘sim’,‘compare’,‘estimate’,…. To use the old syntax set ‘lava.options(symbol=c(“&lt;-”,“&lt;-&gt;”))’</li>
+<li>Newton-Raphson/scoring procedure updated</li>
+<li>Search-interval for profile likelihood CI improved (for variance parameters)</li>
+<li>‘estimate.default’ updated (LRT)</li>
+<li>‘iid’ updated (variance now obtained as tensor product of the result)</li>
+<li>progress bar for ‘bootstrap’ and ‘modelsearch’</li>
+<li>various minor bug fixes</li>
+<li>new functions: Expand (expand.grid wrapper), By (by wrapper)</li>
+</ul>
+</div>
+    <div id="lava-1-2-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.1">
+<a href="#lava-1-2-1" class="anchor"></a>lava 1.2.1<small> 2013-05-21 </small>
+</h1>
+<ul>
+<li>Optimization + minor bug fixes</li>
+</ul>
+</div>
+    <div id="lava-1-2-0" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.0">
+<a href="#lava-1-2-0" class="anchor"></a>lava 1.2.0<small> 2013-04-24 </small>
+</h1>
+<ul>
+<li>New method ‘iid’ for extracting i.i.d. decomposition (influence functions) from model objects (e.g. glm, lvm, …)</li>
+<li>Method ‘estimate’ can now be used on model objects to transform parameters (Delta method) or conduct Wald tests. Average effects, i.e. averaging functionals over the empirical distribution is also possible including calculation of standard errors.</li>
+<li>‘curereg’ function for estimating mixtures of binary data.</li>
+<li>Instrumental Variable (IV) estimator (two-stage least-squares) optimized.</li>
+<li>New distributions: Gamma.lvm, coxWeibull.lvm, coxExponential.lvm, coxGompertz.lvm. New method ‘eventTime’ (for simulation of competing risks data)</li>
+</ul>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
