@@ -10,14 +10,7 @@
 
 # Latent Variable Models: lava
 
-A general implementation of Structural Equation Models with latent
-variables (MLE, 2SLS, and composite likelihood estimators) with both
-continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen
-(2013) <10.1007/s00180-012-0344-y>). The package also provides
-methods for graph exploration (d-separation, back-door criterion),
-simulation of general non-linear latent variable models, and
-estimation of influence functions for a broad range of statistical
-models.
+A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <10.1007/s00180-012-0344-y>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.
 
 
 ## Installation
@@ -141,8 +134,7 @@ e
 
 ### Model assessment
 
-Assessing goodness-of-fit, here the linearity between eta2 and eta1
-(requires the `gof` package which can installed from CRAN)
+Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the `gof` package which can installed from CRAN)
 
 
 ```r
