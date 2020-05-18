@@ -1,11 +1,10 @@
-# -*- mode: org -*-
 
-* Version 1.6.8 <2020-04-25 Sat>
+* lava 1.6.8
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x
   - constrain
   - Vignette added (Estimating partial correlations)
 
-* Version 1.6.7 <2020-02-25 Tue>
+* lava 1.6.7
   - Fixed bug in the composite likelihood 'complik' when used with
     censored variables (Surv objects).
   - Fixed regular expression in 'spaghetti' function
@@ -15,7 +14,7 @@
     sequence.lvm has been renamed to Sequence.lvm. The function
     binary.lvm is now an alias of ones.lvm.
 
-* Version 1.6.6 <2019-08-01 Thu>
+* lava 1.6.6
   - Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now
     initialized by default using kmeans++.
   - sim method implemented for mvnmix models.
@@ -23,10 +22,10 @@
     approximation of the Hessian even when submitted as attribute to
     the objective function.
 
-* Version 1.6.5 <2019-02-07 Thu>
+* lava 1.6.5
   - Maintenance release.
 
-* Version 1.6.4 <2018-11-18 Mon>
+* lava 1.6.4
   - New simulation distributions: constant relative risk and risk
     difference models as in Richardson, Robins and Wang, 2017):
     binomial.rd, binomial.rr.
@@ -51,12 +50,12 @@
   - twostageCV: estimation of mixture models are now parallelized if
     mc.cores>1.
 
-* Version 1.6.3 <2018-08-03 Fri>
+* lava 1.6.3
   - Fixed problems with plots (Rgraphviz)
   - Better print method for twostageCV
   - Improved M-step in mixture.method
 
-* Version 1.6.2 <2018-07-02 Mon>
+* lava 1.6.2
   - twostageCV: cross-validate two-stage estimator
   - rmvn, dmvn moved to mets package (C++ implementation, old versions
     renamed to lava::rmvn0, lava::dmvn0)
@@ -64,13 +63,13 @@
   - unit tests clean-up (namespace)
   - merge.lvm now correctly handles fixed covariance parameters
 
-* Version 1.6.1 <2018-03-28 Wed>
+* lava 1.6.1
   - Newton-raphson algorithm made more robust.
   - New sim.as method. plot.sim method now by default only plots
     density estimates
   - Compatibility fix with Matrix library
 
-* Version 1.6.0 <2018-01-11 Thu>
+* lava 1.6
   - Mixture Latent variable models (mixture). Fast version
     requires 'mets' packages; Gaussian mixture models (mvnmix);
     weighted k-means (km)
@@ -100,7 +99,7 @@
     page + examples.  Predict function updated (newdata argument where
     covariate levels can be specified).
 
-* Version 1.5.1 <2017-09-25 Mon>
+* lava 1.5.1
   - conformal predictions: confpred
   - warnings (char2num used instead of coersion via as.numeric)
   - %++% for function compositon
@@ -115,7 +114,7 @@
   - New cross-validation function: cv (and csplit function for
     creating random sets).
 
-* Version 1.5.0 <2017-03-16 Thu>
+* lava 1.5
   - lava.tobit is longer required for ordinal and censored
     responses. Default is now to use the implementation in the 'mets' package.
   - Composite likelihood method (complik) updated
@@ -136,16 +135,16 @@
   - New formula syntax: y+x~v+z same as c(y,x)~v+z
   - spaghetti: trend.formula can now contain a factor statement on the rhs
 
-* Version 1.4.7 <2017-01-26 Wed>
+* lava 1.4.7
   - Maintenance release
   - models can now be specified as y1+y2~x1+x2 instead of c(y1,2y)~x1+x2
   - sim method now has a seed argument
 
-* Version 1.4.6 <2016-12-14 Wed>
+* lava 1.4.6
   - New backtrace algorithms for Newton-Raphson optimization routine.
   - 'diagtest' updated.
 
-* Version 1.4.5 <2016-10-25 Tue>
+* lava 1.4.5
   - New graph functions:
     dsep: check for d-separation (conditional independence).
     backdoor: check backdoor criterion of a graph (lvm-object).
@@ -181,7 +180,7 @@
     without variance parameters; fixed a bug in r-square computations.
   - Contrast matrix can be specified with the function 'contr'.
 
-* Version 1.4.4 <2016-08-13 Sat>
+* lava 1.4.4
   - estimate.default will now use the id-variable of an 'estimate'
     object if the 'id' argument is left unspecified.  For
     multinomial,gkgamma,kappa additional arguments (...) are now
@@ -208,12 +207,12 @@
     with 'binary' definitions.
   - default plot style updated.
 
-* Version 1.4.3 <2016-04-11 Mon>
+* lava 1.4.3
   - partial gamma coefficients (gkgamma)
   - Unit tests works with new testthat version
   - Avoid trying to fork new processes on windows (bootstrap,sim.default)
 
-* Version 1.4.2 <2016-04-05 Wed>
+* lava 1.4.2
   - Code optimization and minor bug fixes
   - Travis-CI, unit-tests
   - glm estimator update (censored regression)
@@ -223,11 +222,11 @@
     variance hetereogeneity example in help('sim'))
   - Byte compile by default
 
-* Version 1.4.1 <2015-06-13 Sat>
+* lava 1.4.1
   - New plot.estimate method
   - Documentation and examples updated
 
-* Version 1.4.0 <2015-02-15 Sun>
+* lava 1.4.0
   - Linear measurement error model: 'measurement.error'
   - Diagnostic tests: 'diagtest'
   - 'plotConf' updated with support for special function terms (I, poly, ns, ...).
@@ -239,7 +238,7 @@
   - plot longitudinal data: 'spaghetti'
   - Examples updated
 
-* Version 1.3.0 <2014-11-18 Tue>
+* lava 1.3
   - New syntax for categorical predictors (method 'categorical' and
     argument 'additive=FALSE' with 'regression method)
   - Argument 'intervals' added to 'ones.lvm' for piece-wise constant effects
@@ -265,7 +264,7 @@
   - 'Missing' method updated with a simple 'suffix' argument
   - Back-tracing updated in Newton-Raphson routine
 
-* Version 1.2.6 <2014-05-07 Wed>
+* lava 1.2.6
   - New 'stack' function for two-stage estimation (via 'estimate' objects)
   - New 'blocksample' function for resampling clustered data.
   - New function 'Missing' to generate complex missing data patterns
@@ -284,7 +283,7 @@
   - New function getSAS: Import SAS ODS
   - New 'edgecolor' argument of plot-function
 
-* Version 1.2.5 <2014-03-13 Thu>
+* lava 1.2.5
   - 'merge' method added for combining 'estimate' objects
   - Adjustments to starting values
   - Function 'categorical' for adding categorical predictors to
@@ -314,7 +313,7 @@
     'lvm(c(y,v)~~z+u)' specifies correlation between residuals of
     (y,z),(y,u),(v,z),(v,u).
 
-* Version 1.2.4 <2013-12-01 Sun>
+* lava 1.2.4
   - Avoid estimating IC in 'estimate.default' when 'vcov' argument is
     given.
   - New default starting values
@@ -323,7 +322,7 @@
   - alias: covariance->variance
   - added size argument to binomial.lvm;
 
-* Version 1.2.3 <2013-10-27 Sun>
+* lava 1.2.3
   - 'subset' argument added to estimate.default. Calculates empirical
     averages conditional on subsets of data
   - Improved output from compare/estimate functions
@@ -332,7 +331,7 @@
     aalenExponential.lvm function for additive models. Functions
     ones.lvm and sequence.lvm for deterministic variables.
 
-* Version 1.2.2 <2013-07-10 Wed>
+* lava 1.2.2
   - Regression parameters are now by default referenced using '~',
     e.g. "y~x" instead of "y<-x". Applies to setting starting values
     in 'estimate', parameters in 'sim','compare','estimate',....
@@ -346,10 +345,10 @@
   - various minor bug fixes
   - new functions: Expand (expand.grid wrapper), By (by wrapper)
 
-* Version 1.2.1 <2013-05-10 Fri>
+* lava 1.2.1
   - Optimization + minor bug fixes
 
-* Version 1.2.0 <2013-03-28 Thu>
+* lava 1.2.0
   - New method 'iid' for extracting i.i.d. decomposition (influence
     functions) from model objects (e.g. glm, lvm, ...)
   - Method 'estimate' can now be used on model objects to transform
