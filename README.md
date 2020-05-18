@@ -88,7 +88,7 @@ labels(m) <- c(eta1=expression(eta[1]), eta2=expression(eta[2]))
 plot(m)
 ```
 
-<img src="inst/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;" />
 
 Simulation
 
@@ -140,11 +140,12 @@ Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires th
 ```r
 # install.packages("gof")
 library(gof)
+set.seed(1)
 g <- cumres(e, eta2 ~ eta1)
 plot(g)
 ```
 
-<img src="inst/gof1-1.png" title="plot of chunk gof1" alt="plot of chunk gof1" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/gof1-1.png" title="plot of chunk gof1" alt="plot of chunk gof1" width="50%" style="display: block; margin: auto;" />
 
 
 ### Non-linear measurement error model
@@ -197,7 +198,7 @@ u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
 ```
 
-<img src="inst/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;" />
 
 
 ### Simulation
@@ -217,7 +218,7 @@ transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
 plot(m)
 ```
 
-<img src="inst/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;" />
 
 Simulate from model and estimate indirect effects
 
@@ -231,19 +232,19 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications					Time: 4.932s
+#> 100 replications					Time: 6.262s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
-#> Mean           2.00971         0.98922           1.02049        1.02049
-#> SD             0.22850         0.20135           0.16827        0.16827
-#> SE             0.18716         0.18177           0.16359        0.16359
-#> SE/SD          0.81909         0.90272           0.97222        0.97222
+#> Mean           2.00474         0.99861           1.00613        1.00613
+#> SD             0.18702         0.18093           0.17725        0.17725
+#> SE             0.18177         0.17833           0.16712        0.16712
+#> SE/SD          0.97193         0.98567           0.94281        0.94281
 #>                                                                        
-#> Min            1.43624         0.64412           0.64225        0.64225
-#> 2.5%           1.58070         0.67399           0.69534        0.69534
-#> 50%            2.01106         0.97463           1.01676        1.01676
-#> 97.5%          2.42934         1.32716           1.36411        1.36411
-#> Max            2.56438         1.67971           1.46038        1.46038
+#> Min            1.45404         0.64551           0.56796        0.56796
+#> 2.5%           1.67841         0.67819           0.66470        0.66470
+#> 50%            1.99356         0.99182           1.00337        1.00337
+#> 97.5%          2.38899         1.39802           1.32637        1.32637
+#> Max            2.49742         1.51590           1.49962        1.49962
 #>                                                                        
 #> Missing        0.00000         0.00000           0.00000        0.00000
 ```
@@ -258,4 +259,4 @@ plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
      scatter.plot=TRUE)
 ```
 
-<img src="inst/simres1-1.png" title="plot of chunk simres1" alt="plot of chunk simres1" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/simres1-1.png" title="plot of chunk simres1" alt="plot of chunk simres1" width="50%" style="display: block; margin: auto;" />

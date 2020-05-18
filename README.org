@@ -26,7 +26,7 @@ options(family="Times")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "inst/",
+  fig.path = "man/figures/",
   out.width = "50%"
 )
 ```
@@ -162,6 +162,7 @@ Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires th
 #+BEGIN_SRC R :ravel message=FALSE, fig.align='center' :exports both
   # install.packages("gof")
   library(gof)
+  set.seed(1)
   g <- cumres(e, eta2 ~ eta1)
   plot(g)
 #+END_SRC
