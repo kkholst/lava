@@ -55,6 +55,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/correlation.html">Estimating partial correlations with ``lava``</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
@@ -82,7 +94,7 @@
 
 <div id="latent-variable-models-lava" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#latent-variable-models-lava" class="anchor"></a>Latent Variable Models: lava <a href="&lt;https://kkholst.github.io/lava/&gt;"><img src="reference/figures/lvm1-1.png" align="right" height="75"></a>
+<a href="#latent-variable-models-lava" class="anchor"></a>Latent Variable Models: lava <a href="https://kkholst.github.io/lava/"><img src="reference/figures/lvm1-1.png" align="right" height="150"></a>
 </h1></div>
 <p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) &lt;10.1007/s00180-012-0344-y&gt;). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
 <div id="installation" class="section level2">
@@ -102,13 +114,13 @@
 <div id="citation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#citation" class="anchor"></a>Citation</h2>
-<p>To cite that <code>lava</code> package please use the following reference</p>
+<p>To cite that <code>lava</code> package please use one of the following references</p>
 <blockquote>
 <p>Klaus K. Holst and Esben Budtz-Joergensen (2013). Linear Latent Variable Models: The lava-package. Computational Statistics 28 (4), pp 1385-1453. <a href="http://dx.doi.org/10.1007/s00180-012-0344-y" class="uri">http://dx.doi.org/10.1007/s00180-012-0344-y</a></p>
 </blockquote>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="op">@</span>Article{lava,</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">  title =<span class="st"> </span>{Linear Latent Variable Models<span class="op">:</span><span class="st"> </span>The lava<span class="op">-</span>package},</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">  author =<span class="st"> </span>{Klaus K. Holst and Esben Budtz<span class="op">-</span>Joergensen},</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  author =<span class="st"> </span>{Klaus Kähler Holst and Esben Budtz<span class="op">-</span>Jørgensen},</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">  year =<span class="st"> </span>{<span class="dv">2013</span>},</a>
 <a class="sourceLine" id="cb5-5" data-line-number="5">  volume =<span class="st"> </span>{<span class="dv">28</span>},</a>
 <a class="sourceLine" id="cb5-6" data-line-number="6">  number =<span class="st"> </span>{<span class="dv">4</span>},</a>
@@ -116,6 +128,17 @@
 <a class="sourceLine" id="cb5-8" data-line-number="8">  journal =<span class="st"> </span>{Computational Statistics},</a>
 <a class="sourceLine" id="cb5-9" data-line-number="9">  doi =<span class="st"> </span>{<span class="fl">10.1007</span><span class="op">/</span>s00180<span class="dv">-012-0344</span><span class="op">-</span>y}</a>
 <a class="sourceLine" id="cb5-10" data-line-number="10">}</a></code></pre></div>
+<blockquote>
+<p>Klaus K. Holst and Esben Budtz-Jørgensen (2020). A two-stage estimation procedure for non-linear structural equation models. Biostatistics, <a href="http://dx.doi.org/10.1093/biostatistics/kxy082" class="uri">http://dx.doi.org/10.1093/biostatistics/kxy082</a></p>
+</blockquote>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">@</span>article{lava_nlin,</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  Title =<span class="st"> </span>{A two<span class="op">-</span>stage estimation procedure <span class="cf">for</span> non<span class="op">-</span>linear structural equation models},</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  Author =<span class="st"> </span>{Klaus Kähler Holst and Esben Budtz<span class="op">-</span>Jørgensen},</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">  Journal =<span class="st"> </span>{Biostatistics},</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  Year =<span class="st"> </span>{<span class="dv">2020</span>},</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  doi =<span class="st"> </span>{<span class="fl">10.1093</span><span class="op">/</span>biostatistics<span class="op">/</span>kxy082},</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">  volume =<span class="st"> </span>{(<span class="cf">in</span> press)},</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">}</a></code></pre></div>
 </div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
@@ -124,7 +147,7 @@
 <h3 class="hasAnchor">
 <a href="#structural-equation-model" class="anchor"></a>Structural Equation Model</h3>
 <p>Specify structural equation models with two factors</p>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>()
+<div class="sourceCode" id="cb7"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>()
 <span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">y1</span> + <span class="no">y2</span> + <span class="no">y3</span> ~ <span class="no">eta1</span>
 <span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">z1</span> + <span class="no">z2</span> + <span class="no">z3</span> ~ <span class="no">eta2</span>
 <span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> ~ <span class="no">eta1</span> + <span class="no">eta2</span>
@@ -135,9 +158,9 @@
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">m</span>)</pre></div>
 <p><img src="reference/figures/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulation</p>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>, <span class="fl">100</span>, <span class="kw">seed</span><span class="kw">=</span><span class="fl">1</span>)</pre></div>
+<div class="sourceCode" id="cb8"><pre class="r"><span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>, <span class="fl">100</span>, <span class="kw">seed</span><span class="kw">=</span><span class="fl">1</span>)</pre></div>
 <p>Estimation</p>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m</span>, <span class="no">d</span>)
+<div class="sourceCode" id="cb9"><pre class="r"><span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m</span>, <span class="no">d</span>)
 <span class="no">e</span>
 <span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span>
 <span class="co">#&gt; Measurements:                                             </span>
@@ -170,7 +193,7 @@
 <h3 class="hasAnchor">
 <a href="#model-assessment" class="anchor"></a>Model assessment</h3>
 <p>Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the <code>gof</code> package which can installed from CRAN)</p>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="co"># install.packages("gof")</span>
+<div class="sourceCode" id="cb10"><pre class="r"><span class="co"># install.packages("gof")</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">gof</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
 <span class="no">g</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html">cumres</a></span>(<span class="no">e</span>, <span class="no">eta2</span> ~ <span class="no">eta1</span>)
@@ -181,13 +204,13 @@
 <h3 class="hasAnchor">
 <a href="#non-linear-measurement-error-model" class="anchor"></a>Non-linear measurement error model</h3>
 <p>Simulate non-linear model</p>
-<div class="sourceCode" id="cb10"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y1</span> + <span class="no">y2</span> + <span class="no">y3</span> ~ <span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
+<div class="sourceCode" id="cb11"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y1</span> + <span class="no">y2</span> + <span class="no">y3</span> ~ <span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">m</span>,<span class="no">u2</span> ~ <span class="no">u</span>) <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">x</span>^<span class="fl">2</span>
 <span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">z</span>~<span class="no">u2</span>+<span class="no">u</span>
 
 <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>,<span class="fl">200</span>,<span class="kw">p</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"z"</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="st">"z~u2"</span><span class="kw">=</span>-<span class="fl">0.5</span>), <span class="kw">seed</span><span class="kw">=</span><span class="fl">1</span>)</pre></div>
 <p>Stage 1:</p>
-<div class="sourceCode" id="cb11"><pre class="r"><span class="no">m1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">y1</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y2</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y3</span>[<span class="fl">0</span>:<span class="no">s</span>]) ~ <span class="fl">1</span>*<span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
+<div class="sourceCode" id="cb12"><pre class="r"><span class="no">m1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">y1</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y2</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y3</span>[<span class="fl">0</span>:<span class="no">s</span>]) ~ <span class="fl">1</span>*<span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
 <span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="no">m1</span>) <span class="kw">&lt;-</span> ~ <span class="no">u</span>
 (<span class="no">e1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m1</span>, <span class="no">d</span>))
 <span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span>
@@ -199,14 +222,14 @@
 <span class="co">#&gt;    y1                1.00054    0.07075 14.14214         </span>
 <span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span></pre></div>
 <p>Stage 2</p>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="no">pp</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">mu</span>,<span class="no">var</span>,<span class="no">data</span>,<span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">u</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>], <span class="kw">u2</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>]^<span class="fl">2</span>+<span class="no">var</span>[<span class="st">"u"</span>,<span class="st">"u"</span>])
+<div class="sourceCode" id="cb13"><pre class="r"><span class="no">pp</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">mu</span>,<span class="no">var</span>,<span class="no">data</span>,<span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">u</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>], <span class="kw">u2</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>]^<span class="fl">2</span>+<span class="no">var</span>[<span class="st">"u"</span>,<span class="st">"u"</span>])
 (<span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span>(<span class="no">e1</span>, <span class="no">z</span>~<span class="fl">1</span>+<span class="no">x</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>, <span class="kw">predictfun</span><span class="kw">=</span><span class="no">pp</span>))
 <span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
 <span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span>
 <span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.608e-18</span>
 <span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></pre></div>
-<div class="sourceCode" id="cb13"><pre class="r"><span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">p</span>) <span class="no">p</span>[<span class="fl">1</span>]+<span class="no">p</span>[<span class="st">"u"</span>]*<span class="no">u</span>+<span class="no">p</span>[<span class="st">"u2"</span>]*<span class="no">u</span>^<span class="fl">2</span>
+<div class="sourceCode" id="cb14"><pre class="r"><span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">p</span>) <span class="no">p</span>[<span class="fl">1</span>]+<span class="no">p</span>[<span class="st">"u"</span>]*<span class="no">u</span>+<span class="no">p</span>[<span class="st">"u2"</span>]*<span class="no">u</span>^<span class="fl">2</span>
 <span class="no">u</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(-<span class="fl">1</span>, <span class="fl">1</span>, <span class="kw">length.out</span><span class="kw">=</span><span class="fl">100</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">e</span>, <span class="no">f</span>, <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">u</span>))</pre></div>
 <p><img src="reference/figures/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;"></p>
@@ -215,14 +238,14 @@
 <h3 class="hasAnchor">
 <a href="#simulation" class="anchor"></a>Simulation</h3>
 <p>Studying the small-sample properties of a mediation analysis</p>
-<div class="sourceCode" id="cb14"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y</span>~<span class="no">x</span>, <span class="no">c</span>~<span class="fl">1</span>)
+<div class="sourceCode" id="cb15"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y</span>~<span class="no">x</span>, <span class="no">c</span>~<span class="fl">1</span>)
 <span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">y</span>+<span class="no">x</span> ~ <span class="no">z</span>
 <span class="fu"><a href="reference/eventTime.html">eventTime</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">t</span>~<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="kw">y</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">c</span><span class="kw">=</span><span class="fl">0</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">m</span>,<span class="no">S</span>~<span class="no">t</span>+<span class="no">status</span>) <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="kw pkg">survival</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">x</span>[,<span class="fl">1</span>],<span class="no">x</span>[,<span class="fl">2</span>])</pre></div>
-<div class="sourceCode" id="cb15"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">m</span>)</pre></div>
+<div class="sourceCode" id="cb16"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">m</span>)</pre></div>
 <p><img src="reference/figures/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulate from model and estimate indirect effects</p>
-<div class="sourceCode" id="cb16"><pre class="r"><span class="no">onerun</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>) {
+<div class="sourceCode" id="cb17"><pre class="r"><span class="no">onerun</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>) {
     <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>, <span class="fl">100</span>)
     <span class="no">m0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">S</span>~<span class="no">x</span>+<span class="no">z</span>, <span class="no">x</span>~<span class="no">z</span>)
     <span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m0</span>, <span class="no">d</span>, <span class="kw">estimator</span><span class="kw">=</span><span class="st">"glm"</span>)
@@ -246,7 +269,7 @@
 <span class="co">#&gt;                                                                        </span>
 <span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span></pre></div>
 <p>Add additional simulations and visualize results</p>
-<div class="sourceCode" id="cb17"><pre class="r"><span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">val</span>,<span class="fl">500</span>) <span class="co">## Add 500 simulations</span>
+<div class="sourceCode" id="cb18"><pre class="r"><span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">val</span>,<span class="fl">500</span>) <span class="co">## Add 500 simulations</span>
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">val</span>, <span class="kw">estimate</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span>),
      <span class="kw">true</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>, <span class="fl">1</span>), <span class="kw">se</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span>),
      <span class="kw">scatter.plot</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></div>
