@@ -82,7 +82,8 @@
 
 <div id="latent-variable-models-lava" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#latent-variable-models-lava" class="anchor"></a>Latent Variable Models: lava</h1></div>
+<a href="#latent-variable-models-lava" class="anchor"></a>Latent Variable Models: lava <a href="&lt;https://kkholst.github.io/lava/&gt;"><img src="reference/figures/lvm1-1.png" align="right" height="75"></a>
+</h1></div>
 <p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) &lt;10.1007/s00180-012-0344-y&gt;). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -203,7 +204,7 @@
 <span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
 <span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span>
-<span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.609e-18</span>
+<span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.608e-18</span>
 <span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></pre></div>
 <div class="sourceCode" id="cb13"><pre class="r"><span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">p</span>) <span class="no">p</span>[<span class="fl">1</span>]+<span class="no">p</span>[<span class="st">"u"</span>]*<span class="no">u</span>+<span class="no">p</span>[<span class="st">"u2"</span>]*<span class="no">u</span>^<span class="fl">2</span>
 <span class="no">u</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(-<span class="fl">1</span>, <span class="fl">1</span>, <span class="kw">length.out</span><span class="kw">=</span><span class="fl">100</span>)
