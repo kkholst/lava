@@ -1,5 +1,3 @@
-#+TITLE: Estimating partial correlations with \texttt{lava}
-#+AUTHOR: Klaus Kähler Holst
 #+STARTUP: showall
 #+OPTIONS: ^:{}
 #+OPTIONS: title:nil author:nil
@@ -17,7 +15,7 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{riskregression}
+  %\VignetteIndexEntry{correlation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 #+END_EXPORT
@@ -599,7 +597,7 @@ bibliography:ref.bib
 #        '(lambda () (org-ravel-export-to-file 'ravel-markdown)) nil t)
 # my-org-buffer-local-mode: t
 # eval: (defun myknit() (interactive) (save-buffer)
-#        (let ((cmd (concat "R-devel --slave -e 'knitr::knit(\"" (replace-regexp-in-string "org$" "Rmd" (buffer-file-name)) "\")'")))
+#        (let ((cmd (concat "R-devel --slave -e 'rmarkdown::render(\"" (replace-regexp-in-string "org$" "Rmd" (buffer-file-name)) "\")'")))
 # 	   (shell-command-to-string cmd)))
 # eval: (define-key my-org-buffer-local-mode-map (kbd "<f10>") 'myknit)
 # End:

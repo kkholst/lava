@@ -4,6 +4,7 @@
   - profile likelihood CI w. tobit/censored observations.
   - Vignette added (Estimating partial correlations)
   - Pseudo-inverse used in 'normal'
+  - Starting values for mixture fixed
 
 # lava 1.6.7
   - Fixed bug in the composite likelihood 'complik' when used with

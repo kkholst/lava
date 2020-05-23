@@ -24,7 +24,7 @@
 #' Note that the algorithm can be aborted any time (C-c) and still be saved
 #' (via on.exit call).
 #'
-#' @param x List of \code{lvm} objects. If only a single \code{lvm} object is
+ #' @param x List of \code{lvm} objects. If only a single \code{lvm} object is
 #' given, then a \code{k}-mixture of this model is fitted (free parameters
 #' varying between mixture components).
 #' @param data \code{data.frame}
@@ -114,18 +114,18 @@ mixture <- function(x, data, k=length(x),
             res <- estimate(x,data,...)
         return(res)
     }
-    
+
     start0 <- NULL
 
     xx <- x
     if (inherits(x,"lvm")) {
         xx <- rep(list(x), k)
     }
-    mg <- multigroup(xx, rep(list(data),k), fix=FALSE)    
+    mg <- multigroup(xx, rep(list(data),k), fix=FALSE)
     ppos <- parpos(mg)
     parname <- attr(ppos,"name")
     naparname <- which(is.na(parname))
-    parname[naparname]  <- mg$name[naparname]                       
+    parname[naparname]  <- mg$name[naparname]
     if (names) {
         return(parname)
     }
@@ -136,8 +136,8 @@ mixture <- function(x, data, k=length(x),
             start0 <- tryCatch(estimate(x,data,quick=TRUE),
                                error=function(...) NULL)
         }
-    } 
-    
+    }
+
     ## Bounds on variance parameters
     Npar <- with(mg, npar+npar.mean)
     ParPos <- modelPar(mg,1:Npar)$p
@@ -157,8 +157,8 @@ mixture <- function(x, data, k=length(x),
     if (!any(constrained)) optim$constrain <- FALSE
 
     mymodel <- list(multigroup=mg,k=k,data=data,parpos=ParPos); class(mymodel) <- "lvm.mixture"
-    
-    
+
+    selfstarter <- FALSE
     if (any(is.na(optim$start)) || length(optim$start)<length(ppos)) {
         constrLogLikS <- function(p) {
             if (optim$constrain) {
@@ -173,6 +173,7 @@ mixture <- function(x, data, k=length(x),
             ii <- which(is.na(start))
             start[ii] <- runif(length(ii),optim$startbounds[1],optim$startbounds[2])
         } else {
+            selfstarter <- TRUE
             start <- runif(Npar,optim$startbounds[1],optim$startbounds[2]);
             if (length(offdiagpos)>0)
                 start[mg$npar.mean + offdiagpos] <- 0
@@ -191,9 +192,6 @@ mixture <- function(x, data, k=length(x),
             iistart <- match(names(optim$start), parname)
             start[iistart] <- optim$start
         }
-        ## if (optim$constrain) {
-        ##     start[constrained] <- exp(start[constrained])
-        ## }
         optim$start <- start
     }
     if (length(optim$start)>Npar) {
@@ -204,9 +202,10 @@ mixture <- function(x, data, k=length(x),
     if (is.null(optim$prob))
         optim$prob <- rep(1/k,k-1)
     thetacur <- optim$start
+
     probcur <- with(optim, c(prob,1-sum(prob)))
 
-    if (optim$constrain) {
+    if (optim$constrain & !selfstarter) {
         thetacur[constrained] <- log(thetacur[constrained])
     }
 
@@ -313,7 +312,7 @@ mixture <- function(x, data, k=length(x),
         thetacur <- p[seq(Npar)]
         gamma <- PosteriorProb(p,constrain=optim$constrain)
         probcur <- colMeans(gamma)
-        ## I <- function(p) {            
+        ## I <- function(p) {
         ##     I <- Information(p,gamma,probcur)
         ##     D <- attr(I, "grad")
         ##     res <- -Inverse(I)
@@ -475,7 +474,7 @@ summary.lvm.mixture <- function(object,type=0,labels=0,...) {
     naparname <- which(is.na(parname))
     parname[naparname]  <- object$multigroup$name[naparname]
     ParPos <- modelPar(object$multigroup,seq_along(coef(object)))$p
-       
+
     mm <- object$multigroup$lvm
     p <- coef(object,list=TRUE)
     p0 <- coef(object,prob=FALSE)
@@ -490,7 +489,7 @@ summary.lvm.mixture <- function(object,type=0,labels=0,...) {
     Latent <- c()
     for (i in 1:length(mm)) {
         cc.idx <- order(coef(mm[[i]],p=seq_along(p[[i]]),type=2)[,1])
-        
+
         cc <- coef(mm[[i]],p=p[[i]],vcov=vcov(object)[myp[[i]],myp[[i]]],data=NULL,labels=labels,type=2)
         Latent <- union(Latent,attr(cc,"latent"))
         Coefs[ParPos[[i]],] <- cc[cc.idx,,drop=FALSE]
@@ -502,7 +501,7 @@ summary.lvm.mixture <- function(object,type=0,labels=0,...) {
         ncluster <- c(ncluster,sum(object$member==i))
     }
     rownames(Coefs) <- parname
-    
+
     res <- list(coef=coefs, coefmat=Coefs, coeftype=Types,
                 type=type, var=Variable, from=From, latent=Latent,
                 ncluster=ncluster, prob=tail(object$prob,1),
@@ -521,7 +520,7 @@ print.summary.lvm.mixture <- function(x,...) {
         attr(cc,"from") <- x$from
         cat("Mixing parameters:\n")
         cat("  ", paste(as.vector(formatC(x$prob))),"\n")
-        print(CoefMat(cc), quote=FALSE)        
+        print(CoefMat(cc), quote=FALSE)
         return(invisible())
     }
     for (i in 1:length(x$coef)) {

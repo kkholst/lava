@@ -49,3 +49,4 @@ deploy:
   local-dir: docs
   on:
     branch: master
+    condition: "$TRAVIS_R_VERSION_STRING = release"
