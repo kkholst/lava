@@ -3,6 +3,7 @@
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x
   - profile likelihood CI w. tobit/censored observations.
   - Vignette added (Estimating partial correlations)
+  - Pseudo-inverse used in 'normal'
 
 # lava 1.6.7
   - Fixed bug in the composite likelihood 'complik' when used with

@@ -46,6 +46,7 @@ Suggests:
 	geepack,
 	gof (>= 0.9),
 	graph,
+	knitr,
 	igraph (>= 0.6),
 	lava.tobit (>= 0.4.7),
 	lavaSearch2,
@@ -60,7 +61,7 @@ Suggests:
 	testthat (>= 0.11),
 	visNetwork,
 	zoo
-VignetteBuilder: R.rsp
+VignetteBuilder: knitr
 ByteCompile: yes
 Encoding: UTF-8
 RoxygenNote: 7.1.0

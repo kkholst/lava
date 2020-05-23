@@ -8,7 +8,7 @@
 
 
 
-# Latent Variable Models: lava <a href="<https://kkholst.github.io/lava/>"><img src="man/figures/lvm1-1.png" align="right" height="75" /></a>
+# Latent Variable Models: lava [<img src=man/figures/lvm1-1.png align="right" height="150">](https://kkholst.github.io/lava/)
 
 A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <10.1007/s00180-012-0344-y>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.
 
@@ -47,7 +47,7 @@ remotes::install_github("kkholst/lava")
 
 ## Citation
 
-To cite that `lava` package please use the following reference
+To cite that `lava` package please use one of the following references
 
 > Klaus K. Holst and Esben Budtz-Joergensen (2013).
 > Linear Latent Variable Models: The lava-package.
@@ -56,13 +56,26 @@ To cite that `lava` package please use the following reference
 
     @Article{lava,
       title = {Linear Latent Variable Models: The lava-package},
-      author = {Klaus K. Holst and Esben Budtz-Joergensen},
+      author = {Klaus Kähler Holst and Esben Budtz-Jørgensen},
       year = {2013},
       volume = {28},
       number = {4},
       pages = {1385-1452},
       journal = {Computational Statistics},
       doi = {10.1007/s00180-012-0344-y}
+    }
+
+> Klaus K. Holst and Esben Budtz-Jørgensen (2020). A two-stage estimation
+> procedure for non-linear structural equation models. Biostatistics,
+> <http://dx.doi.org/10.1093/biostatistics/kxy082>
+
+    @article{lava_nlin,
+      Title = {A two-stage estimation procedure for non-linear structural equation models},
+      Author = {Klaus Kähler Holst and Esben Budtz-Jørgensen},
+      Journal = {Biostatistics},
+      Year = {2020},
+      doi = {10.1093/biostatistics/kxy082},
+      volume = {(in press)},
     }
 
 

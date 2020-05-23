@@ -1,3 +1,9 @@
+inst/doc
+vignettes/*.html
+vignettes/figure/*chunk*
+vignettes/*_cache
+vignettes/*_files
+vignettes/*.R
 README.Rmd
 cache
 docs
