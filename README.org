@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 ```
 #+END_export
 
-* Latent Variable Models: lava
+* Latent Variable Models: lava <a href="https://kkholst.github.io/lava/"><img src="man/figures/lvm1-1.png" align="right" height="75" /></a>
 
 A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) doi:10.1007/s00180-012-0344-y). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.
 

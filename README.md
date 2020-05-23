@@ -8,7 +8,7 @@
 
 
 
-# Latent Variable Models: lava
+# Latent Variable Models: lava <a href="<https://kkholst.github.io/lava/>"><img src="man/figures/lvm1-1.png" align="right" height="75" /></a>
 
 A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <10.1007/s00180-012-0344-y>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.
 
@@ -187,7 +187,7 @@ pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16
 #> x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01
-#> u             1.0039 0.11504  0.7785  1.2294 2.609e-18
+#> u             1.0039 0.11504  0.7785  1.2294 2.608e-18
 #> u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
 ```
 
