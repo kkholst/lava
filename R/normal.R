@@ -20,7 +20,7 @@ rmvn0 <- function(n,mu,sigma,rho,...) {
     if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
     if (missing(sigma)) sigma <- matrix(1)
     if (is.vector(sigma)) sigma <- diag(sigma,ncol=length(sigma))
-    if (missing(mu)) mu <- rep(0,ncol(sigma))    
+    if (missing(mu)) mu <- rep(0,ncol(sigma))
     PP <- with(svd(sigma), v%*%diag(sqrt(d),ncol=length(d))%*%t(u))
     res <- matrix(rnorm(ncol(sigma)*n),ncol=ncol(sigma))%*%PP
     if (NROW(mu)==nrow(res) && NCOL(mu)==ncol(res)) return(res+mu)
@@ -34,7 +34,7 @@ dmvn0 <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,norm=TRUE,...) {
     if (missing(sigma)) sigma <- matrix(1)
     if (is.vector(sigma)) sigma <- diag(sigma,ncol=length(sigma))
     if (missing(mu)) mu <- rep(0,ncol(sigma))
-    
+
     if (length(sigma)==1) {
         k <- 1
         isigma <- structure(cbind(1/sigma),det=as.vector(sigma))

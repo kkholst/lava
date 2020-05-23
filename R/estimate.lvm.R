@@ -713,7 +713,6 @@
                 }
             }
         }
-
         if (!is.null(opt$convergence)) {
             if (opt$convergence != 0)
                 warning("Lack of convergence. Increase number of iteration or change starting values.")
@@ -806,4 +805,3 @@
     }
 
 ###}}} estimate.lvm
-

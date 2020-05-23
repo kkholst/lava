@@ -19,8 +19,8 @@ Description: A general implementation of Structural Equation Models
 	The package also provides methods for graph exploration (d-separation,
 	back-door criterion), simulation of general non-linear latent variable
 	models, and estimation of influence functions for a broad range of
-	statistical models. 
-URL: https://github.com/kkholst/lava
+	statistical models.
+URL: https://kkholst.github.io/lava/
 BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
