@@ -8,7 +8,7 @@
 # +OPTIONS: h:4 num:t tags:nil d:t toc:t
 
 #+BEGIN_EXPORT yaml
-title: Estimating partial correlations with ``lava``
+title: Estimating partial correlations with lava
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:

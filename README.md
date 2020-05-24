@@ -26,6 +26,7 @@ For graphical capabilities the `Rgraphviz` package is needed (first install the 
 
 
 ```r
+# install.packages("BiocManager")
 BiocManager::install("Rgraphviz")
 ```
 
@@ -41,6 +42,7 @@ The development version of `lava` may also be installed directly from `github`:
 
 
 ```r
+# install.packages("remotes")
 remotes::install_github("kkholst/lava")
 ```
 
@@ -200,7 +202,7 @@ pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16
 #> x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01
-#> u             1.0039 0.11504  0.7785  1.2294 2.608e-18
+#> u             1.0039 0.11504  0.7785  1.2294 2.609e-18
 #> u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
 ```
 
@@ -245,19 +247,19 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications					Time: 6.262s
+#> 100 replications					Time: 4.49s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
-#> Mean           2.00474         0.99861           1.00613        1.00613
-#> SD             0.18702         0.18093           0.17725        0.17725
-#> SE             0.18177         0.17833           0.16712        0.16712
-#> SE/SD          0.97193         0.98567           0.94281        0.94281
+#> Mean           2.02077         1.04080           0.97997        0.97997
+#> SD             0.20260         0.19016           0.16079        0.16079
+#> SE             0.18026         0.18018           0.16354        0.16354
+#> SE/SD          0.88971         0.94749           1.01709        1.01709
 #>                                                                        
-#> Min            1.45404         0.64551           0.56796        0.56796
-#> 2.5%           1.67841         0.67819           0.66470        0.66470
-#> 50%            1.99356         0.99182           1.00337        1.00337
-#> 97.5%          2.38899         1.39802           1.32637        1.32637
-#> Max            2.49742         1.51590           1.49962        1.49962
+#> Min            1.50738         0.63296           0.57620        0.57620
+#> 2.5%           1.64480         0.67154           0.66439        0.66439
+#> 50%            2.01884         1.05200           0.96656        0.96656
+#> 97.5%          2.37284         1.39552           1.30304        1.30304
+#> Max            2.51380         1.56400           1.48856        1.48856
 #>                                                                        
 #> Missing        0.00000         0.00000           0.00000        0.00000
 ```

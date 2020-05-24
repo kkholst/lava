@@ -1,6 +1,6 @@
 ---
 # YAML header created by ox-ravel
-title: Estimating partial correlations with ``lava``
+title: Estimating partial correlations with lava
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:

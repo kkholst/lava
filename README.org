@@ -47,6 +47,7 @@ demo("lava")
 For graphical capabilities the =Rgraphviz= package is needed (first install the =BiocManager= package)
 #+ATTR_RAVEL: eval=FALSE
 #+BEGIN_SRC R :exports both :ravel eval=FALSE
+# install.packages("BiocManager")
 BiocManager::install("Rgraphviz")
 #+END_SRC
 or the =igraph= or =visNetwork= packages
@@ -58,6 +59,7 @@ install.packages("visNetwork")
 The development version of =lava= may also be installed directly from =github=:
 #+ATTR_RAVEL: eval=FALSE
 #+BEGIN_SRC R :exports both :ravel eval=FALSE
+# install.packages("remotes")
 remotes::install_github("kkholst/lava")
 #+END_SRC
 
