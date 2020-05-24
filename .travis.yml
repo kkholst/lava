@@ -1,7 +1,8 @@
-language:
+language: r
 
 r:
  - release
+#- devel
 
 r_build_args: --no-build-vignettes --no-manual --no-resave-data
 r_check_args: --ignore-vignettes --no-manual --timings --run-donttest --no-stop-on-test-error
