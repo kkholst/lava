@@ -95,7 +95,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/correlation.html">Estimating partial correlations with ``lava``</a>
+      <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -198,12 +198,12 @@
 <span class='no'>y</span>[<span class='no'>u</span><span class='kw'>==</span><span class='fl'>0</span>] <span class='kw'>&lt;-</span> <span class='fl'>0</span>
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>x</span><span class='kw'>=</span><span class='no'>x</span>,<span class='kw'>u</span><span class='kw'>=</span><span class='no'>u</span>*<span class='fl'>1</span>,<span class='kw'>z</span><span class='kw'>=</span><span class='no'>z</span>,<span class='kw'>age</span><span class='kw'>=</span><span class='no'>age</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>d</span>)</div><div class='output co'>#&gt;   y         x u         z      age
-#&gt; 1 1 18.185681 1    (-1,0] 17.42067
-#&gt; 2 0  3.038473 0 (-Inf,-1] 14.23094
-#&gt; 3 0 14.756065 0 (-Inf,-1] 20.43406
-#&gt; 4 0  5.195484 0     (0,1] 11.95945
-#&gt; 5 0  4.611123 0    (-1,0] 26.63732
-#&gt; 6 0 14.103129 0    (-1,0] 21.86533</div><div class='input'>
+#&gt; 1 0  1.464937 0     (0,1] 18.21027
+#&gt; 2 0  8.471168 0    (-1,0] 24.61046
+#&gt; 3 0 10.616487 0 (-Inf,-1] 27.67200
+#&gt; 4 1 18.854095 1    (-1,0] 12.28950
+#&gt; 5 0 14.244491 0    (-1,0] 16.48295
+#&gt; 6 0 14.489812 0    (-1,0] 17.33514</div><div class='input'>
 <span class='co'>## Estimation</span>
 <span class='no'>e0</span> <span class='kw'>&lt;-</span> <span class='fu'>zibreg</span>(<span class='no'>y</span>~<span class='no'>x</span>*<span class='no'>z</span>,~<span class='fl'>1</span>+<span class='no'>z</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
 <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>zibreg</span>(<span class='no'>y</span>~<span class='no'>x</span>,~<span class='fl'>1</span>+<span class='no'>z</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
@@ -211,29 +211,29 @@
 #&gt; 	- Likelihood ratio test -
 #&gt; 
 #&gt; data:  
-#&gt; chisq = 3.7545, df = 6, p-value = 0.7099
+#&gt; chisq = 2.4545, df = 6, p-value = 0.8735
 #&gt; sample estimates:
 #&gt; log likelihood (model 1) log likelihood (model 2) 
-#&gt;                -857.6591                -855.7819 
-#&gt; </div><div class='input'><span class='no'>e</span></div><div class='output co'>#&gt;                   Estimate        2.5%       97.5%      P-value
-#&gt; (Intercept)    -1.27987390 -1.92213063 -0.63761717 9.392602e-05
-#&gt; x               0.32361699  0.15892691  0.48830707 1.174728e-04
-#&gt; pr:(Intercept) -0.47628212 -1.02916014  0.07659591 9.132873e-02
-#&gt; pr:z(-1,0]     -0.05213012 -0.45201921  0.34775897 7.983341e-01
-#&gt; pr:z(0,1]       0.34519088 -0.05961541  0.74999717 9.465808e-02
-#&gt; pr:z(1, Inf]    2.14389751  1.67992725  2.60786778 1.346629e-19
-#&gt; pr:age         -0.05997483 -0.08441624 -0.03553341 1.513847e-06
+#&gt;                -845.5394                -844.3122 
+#&gt; </div><div class='input'><span class='no'>e</span></div><div class='output co'>#&gt;                  Estimate        2.5%       97.5%      P-value
+#&gt; (Intercept)    -0.8096962 -1.34568375 -0.27370865 3.067975e-03
+#&gt; x               0.2247970  0.06065481  0.38893919 7.269888e-03
+#&gt; pr:(Intercept) -0.1388121 -0.78249152  0.50486730 6.725329e-01
+#&gt; pr:z(-1,0]     -0.3544657 -0.78800432  0.07907295 1.090480e-01
+#&gt; pr:z(0,1]       0.4362824  0.02118711  0.85137778 3.939820e-02
+#&gt; pr:z(1, Inf]    2.3908142  1.81380254  2.96782578 4.623694e-16
+#&gt; pr:age         -0.0752326 -0.10102715 -0.04943804 1.087750e-08
 #&gt; 
 #&gt; Prevalence probabilities:
 #&gt;                              Estimate      2.5%     97.5%
-#&gt; {(Intercept)}               0.3831304 0.2632470 0.5191396
-#&gt; {(Intercept)} + {z(-1,0]}   0.3708873 0.2564860 0.5018722
-#&gt; {(Intercept)} + {z(0,1]}    0.4672740 0.3299376 0.6097555
-#&gt; {(Intercept)} + {z(1, Inf]} 0.8412576 0.7255538 0.9139660
-#&gt; {(Intercept)} + {age}       0.3690587 0.2553350 0.4994610</div><div class='input'><span class='fu'><a href='PD.html'>PD</a></span>(<span class='no'>e0</span>,<span class='kw'>intercept</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='kw'>slope</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>6</span>))</div><div class='output co'>#&gt;     Estimate  Std.Err      2.5%    97.5%
-#&gt; 50% 37.41569 29.78654 -20.96485 95.79623
+#&gt; {(Intercept)}               0.4653526 0.3137832 0.6236025
+#&gt; {(Intercept)} + {z(-1,0]}   0.3791217 0.2487184 0.5296910
+#&gt; {(Intercept)} + {z(0,1]}    0.5738240 0.4098366 0.7230380
+#&gt; {(Intercept)} + {z(1, Inf]} 0.9048231 0.7876751 0.9605714
+#&gt; {(Intercept)} + {age}       0.4466922 0.3018984 0.6011322</div><div class='input'><span class='fu'><a href='PD.html'>PD</a></span>(<span class='no'>e0</span>,<span class='kw'>intercept</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='kw'>slope</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>6</span>))</div><div class='output co'>#&gt;     Estimate  Std.Err      2.5%    97.5%
+#&gt; 50% 4.655517 6.753757 -8.581603 17.89264
 #&gt; attr(,"b")
-#&gt; [1] -1.5078036  0.0402987</div><div class='input'>
+#&gt; [1] -0.7921916  0.1701619</div><div class='input'>
 <span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),
            <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),
            <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),

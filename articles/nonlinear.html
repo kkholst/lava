@@ -54,7 +54,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/correlation.html">Estimating partial correlations with ``lava``</a>
+      <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -244,53 +244,45 @@
       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"linear"</span>,<span class="st">"quadratic"</span>,<span class="st">"spline(df=4)"</span>,<span class="st">"spline(df=6)"</span>),
       <span class="kw">col</span><span class="kw">=</span><span class="no">col</span>, <span class="kw">lty</span><span class="kw">=</span><span class="no">lty</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">3</span>)</pre></body></html></div>
 <p><img src="nonlinear_files/figure-html/multifit-1.png" width="700"></p>
-<p>For convenience, the function <code>twostageCV</code> can be used to do the cross-validation. For example,</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">selmod</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/twostageCV.html">twostageCV</a></span>(<span class="no">m1</span>, <span class="no">m2</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>, <span class="kw">df</span><span class="kw">=</span><span class="fl">2</span>:<span class="fl">6</span>, <span class="kw">nmix</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">3</span>,
-          <span class="kw">nfolds</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">rep</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw pkg">parallel</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html">detectCores</a></span>())</pre></body></html></div>
-<p>applies 5-fold cross-validation to select the best splines with degrees of freedom varying from from 1-6 (the linear model is automatically included)</p>
+<p>For convenience, the function <code>twostageCV</code> can be used to do the cross-validation (also for choosing the mixture, see the section below). For example,</p>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">selmod</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/twostageCV.html">twostageCV</a></span>(<span class="no">m1</span>, <span class="no">m2</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>, <span class="kw">df</span><span class="kw">=</span><span class="fl">2</span>:<span class="fl">3</span>, <span class="kw">nmix</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">2</span>,
+          <span class="kw">nfolds</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">rep</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw pkg">parallel</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html">detectCores</a></span>())</pre></body></html></div>
+<p>applies cross-validation (here just 2 folds for simplicity) to select the best splines with degrees of freedom varying from from 1-3 (the linear model is automatically included)</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">selmod</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
 <span class="co">#&gt; Selected mixture model: 2 components</span>
 <span class="co">#&gt;       AIC1</span>
 <span class="co">#&gt; 1 1961.839</span>
 <span class="co">#&gt; 2 1958.803</span>
-<span class="co">#&gt; 3 1962.046</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
-<span class="co">#&gt; Selected spline model degrees of freedom: 4</span>
-<span class="co">#&gt; Warning in if (is.na(knots)) knots &lt;- "none": the condition has length &gt; 1 and</span>
-<span class="co">#&gt; only the first element will be used</span>
-<span class="co">#&gt; Knots: -3.958 -1.968 0.02149 2.011 4.001 </span>
+<span class="co">#&gt; Selected spline model degrees of freedom: 2</span>
+<span class="co">#&gt; Knots: -3.958 0.02149 4.001 </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      RMSE(nfolds=5, rep=1)</span>
-<span class="co">#&gt; df:1              4.481598</span>
-<span class="co">#&gt; df:2              3.477828</span>
-<span class="co">#&gt; df:3              3.608122</span>
-<span class="co">#&gt; df:4              3.450897</span>
-<span class="co">#&gt; df:5              3.701081</span>
-<span class="co">#&gt; df:6              3.524759</span>
+<span class="co">#&gt;      RMSE(nfolds=2, rep=1)</span>
+<span class="co">#&gt; df:1              4.737407</span>
+<span class="co">#&gt; df:2              3.749820</span>
+<span class="co">#&gt; df:3              4.305330</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                     Estimate Std. Error Z-value  P-value </span>
 <span class="co">#&gt; Measurements:                                            </span>
 <span class="co">#&gt;    y1~eta2           1.00000                             </span>
-<span class="co">#&gt;    y2~eta2           0.97827  0.03475   28.15519   &lt;1e-12</span>
-<span class="co">#&gt;    y3~eta2           1.04529  0.03491   29.94240   &lt;1e-12</span>
+<span class="co">#&gt;    y2~eta2           0.97794  0.03463   28.24076   &lt;1e-12</span>
+<span class="co">#&gt;    y3~eta2           1.04520  0.03473   30.09595   &lt;1e-12</span>
 <span class="co">#&gt; Regressions:                                             </span>
-<span class="co">#&gt;    eta2~z            1.02727  0.22343    4.59778 4.27e-06</span>
-<span class="co">#&gt;    eta2~eta1_1       2.61253  0.90640    2.88230 0.003948</span>
-<span class="co">#&gt;    eta2~eta1_2       0.01369  0.06463    0.21175 0.8323  </span>
-<span class="co">#&gt;    eta2~eta1_3      -0.19030  0.17483   -1.08849 0.2764  </span>
-<span class="co">#&gt;    eta2~eta1_4       0.35253  0.19186    1.83744 0.06614 </span>
+<span class="co">#&gt;    eta2~z            1.02819  0.22297    4.61136 4e-06   </span>
+<span class="co">#&gt;    eta2~eta1_1       3.41775  0.36900    9.26223   &lt;1e-12</span>
+<span class="co">#&gt;    eta2~eta1_2      -0.05122  0.00706   -7.25310   &lt;1e-12</span>
 <span class="co">#&gt; Intercepts:                                              </span>
 <span class="co">#&gt;    y1                0.00000                             </span>
-<span class="co">#&gt;    y2               -0.12170  0.10924   -1.11407 0.2652  </span>
-<span class="co">#&gt;    y3               -0.09870  0.10545   -0.93606 0.3492  </span>
-<span class="co">#&gt;    eta2              1.54942  2.64160    0.58654 0.5575  </span>
+<span class="co">#&gt;    y2               -0.12176  0.10921   -1.11495 0.2649  </span>
+<span class="co">#&gt;    y3               -0.09872  0.10547   -0.93600 0.3493  </span>
+<span class="co">#&gt;    eta2              3.93715  0.54021    7.28822   &lt;1e-12</span>
 <span class="co">#&gt; Residual Variances:                                      </span>
-<span class="co">#&gt;    y1                1.31890  0.17665    7.46608         </span>
-<span class="co">#&gt;    y2                1.09634  0.14485    7.56885         </span>
-<span class="co">#&gt;    y3                0.81386  0.13260    6.13771         </span>
-<span class="co">#&gt;    eta2              1.99292  0.28646    6.95694</span></pre></body></html></div>
+<span class="co">#&gt;    y1                1.31625  0.17654    7.45594         </span>
+<span class="co">#&gt;    y2                1.09975  0.14507    7.58078         </span>
+<span class="co">#&gt;    y3                0.81270  0.13258    6.12987         </span>
+<span class="co">#&gt;    eta2              2.01822  0.28971    6.96633</span></pre></body></html></div>
 </div>
 <div id="specification-of-general-functional-forms" class="section level1">
 <h1 class="hasAnchor">
@@ -332,7 +324,8 @@
 <span class="fu"><a href="../reference/intercept.html">intercept</a></span>(<span class="no">m1</span>, ~<span class="no">x1</span>+<span class="no">eta1</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">0</span>,<span class="fl">NA</span>) <span class="co">## Set intercept of x1 to zero. Remove the label of eta1</span>
 <span class="fu"><a href="../reference/regression-set.html">regression</a></span>(<span class="no">m1</span>,<span class="no">x1</span>~<span class="no">eta1</span>) <span class="kw">&lt;-</span> <span class="fl">1</span> <span class="co">## Factor loading fixed to 1</span></pre></body></html></div>
 <p>The mixture model may then be estimated using the <code>mixture</code> method, where the Parameter names shared across the different mixture components given in the <code>list</code> will be constrained to be identical in the mixture model. Thus, only the intercept of <span class="math inline">\(\eta_{1}\)</span> is allowed to vary between the mixtures.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">em0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/mixture.html">mixture</a></span>(<span class="no">m1</span>, <span class="kw">k</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
+<span class="no">em0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/mixture.html">mixture</a></span>(<span class="no">m1</span>, <span class="kw">k</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>)</pre></body></html></div>
 <p>To decrease the risk of using a local maximizer of the likelihood we can rerun the estimation with different random starting values</p>
 <div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">em0</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">ll</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>()
@@ -349,43 +342,43 @@
 <span class="co">#&gt;                     Estimate Std. Error Z value  Pr(&gt;|z|)</span>
 <span class="co">#&gt; Measurements:                                            </span>
 <span class="co">#&gt;    x1~eta1           1.00000                             </span>
-<span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54097   &lt;1e-12</span>
-<span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60536   &lt;1e-12</span>
+<span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54099   &lt;1e-12</span>
+<span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60541   &lt;1e-12</span>
 <span class="co">#&gt; Regressions:                                             </span>
-<span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50988   &lt;1e-12</span>
+<span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50984   &lt;1e-12</span>
 <span class="co">#&gt; Intercepts:                                              </span>
 <span class="co">#&gt;    x1                0.00000                             </span>
-<span class="co">#&gt;    x2                0.03845  0.09890    0.38883 0.6974  </span>
-<span class="co">#&gt;    x3               -0.02549  0.10333   -0.24667 0.8052  </span>
-<span class="co">#&gt;    eta1              0.20922  0.13162    1.58959 0.1119  </span>
+<span class="co">#&gt;    x2                0.03845  0.09890    0.38882 0.6974  </span>
+<span class="co">#&gt;    x3               -0.02549  0.10333   -0.24668 0.8052  </span>
+<span class="co">#&gt;    eta1              0.20925  0.13162    1.58976 0.1119  </span>
 <span class="co">#&gt; Residual Variances:                                      </span>
-<span class="co">#&gt;    x1                0.98539  0.13316    7.40021         </span>
-<span class="co">#&gt;    x2                0.97181  0.13156    7.38694         </span>
-<span class="co">#&gt;    x3                1.01317  0.14294    7.08808         </span>
-<span class="co">#&gt;    eta1              0.29047  0.11129    2.61001         </span>
+<span class="co">#&gt;    x1                0.98539  0.13316    7.40022         </span>
+<span class="co">#&gt;    x2                0.97181  0.13156    7.38693         </span>
+<span class="co">#&gt;    x3                1.01316  0.14294    7.08811         </span>
+<span class="co">#&gt;    eta1              0.29047  0.11129    2.61002         </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Cluster 2 (n=38, Prior=0.224):</span>
 <span class="co">#&gt; --------------------------------------------------</span>
 <span class="co">#&gt;                     Estimate Std. Error Z value  Pr(&gt;|z|) </span>
 <span class="co">#&gt; Measurements:                                             </span>
 <span class="co">#&gt;    x1~eta1           1.00000                              </span>
-<span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54097   &lt;1e-12 </span>
-<span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60536   &lt;1e-12 </span>
+<span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54099   &lt;1e-12 </span>
+<span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60541   &lt;1e-12 </span>
 <span class="co">#&gt; Regressions:                                              </span>
-<span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50988   &lt;1e-12 </span>
+<span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50984   &lt;1e-12 </span>
 <span class="co">#&gt; Intercepts:                                               </span>
 <span class="co">#&gt;    x1                0.00000                              </span>
-<span class="co">#&gt;    x2                0.03845  0.09890    0.38883 0.6974   </span>
-<span class="co">#&gt;    x3               -0.02549  0.10333   -0.24667 0.8052   </span>
-<span class="co">#&gt;    eta1             -1.44297  0.25868   -5.57813 2.431e-08</span>
+<span class="co">#&gt;    x2                0.03845  0.09890    0.38882 0.6974   </span>
+<span class="co">#&gt;    x3               -0.02549  0.10333   -0.24668 0.8052   </span>
+<span class="co">#&gt;    eta1             -1.44292  0.25868   -5.57807 2.432e-08</span>
 <span class="co">#&gt; Residual Variances:                                       </span>
-<span class="co">#&gt;    x1                0.98539  0.13316    7.40021          </span>
-<span class="co">#&gt;    x2                0.97181  0.13156    7.38694          </span>
-<span class="co">#&gt;    x3                1.01317  0.14294    7.08808          </span>
-<span class="co">#&gt;    eta1              0.29047  0.11129    2.61001          </span>
+<span class="co">#&gt;    x1                0.98539  0.13316    7.40022          </span>
+<span class="co">#&gt;    x2                0.97181  0.13156    7.38693          </span>
+<span class="co">#&gt;    x3                1.01316  0.14294    7.08811          </span>
+<span class="co">#&gt;    eta1              0.29047  0.11129    2.61002          </span>
 <span class="co">#&gt; --------------------------------------------------</span>
 <span class="co">#&gt; AIC= 1958.803 </span>
-<span class="co">#&gt; ||score||^2= 3.464657e-06</span></pre></body></html></div>
+<span class="co">#&gt; ||score||^2= 9.053462e-06</span></pre></body></html></div>
 <p>Measured by AIC there is a slight improvement in the model fit using the mixture model</p>
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">e0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span>(<span class="no">m1</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">d</span>)
 <span class="fu"><a href="https://rdrr.io/r/stats/AIC.html">AIC</a></span>(<span class="no">e0</span>,<span class="no">em0</span>)
@@ -397,23 +390,23 @@
 <span class="no">em2</span>
 <span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span>
 <span class="co">#&gt; Measurements:                                             </span>
-<span class="co">#&gt;    y2~eta2           0.97823    0.03469 28.19903    &lt;1e-12</span>
+<span class="co">#&gt;    y2~eta2           0.97823    0.03469 28.19904    &lt;1e-12</span>
 <span class="co">#&gt;    y3~eta2           1.04530    0.03484 30.00720    &lt;1e-12</span>
 <span class="co">#&gt; Regressions:                                              </span>
-<span class="co">#&gt;    eta2~z            1.02886    0.22330  4.60761 4.073e-06</span>
-<span class="co">#&gt;    eta2~eta1_1       2.80407    0.65493  4.28148 1.857e-05</span>
-<span class="co">#&gt;    eta2~eta1_2      -0.02248    0.09996 -0.22494     0.822</span>
-<span class="co">#&gt;    eta2~eta1_3      -0.17334    0.28933 -0.59910    0.5491</span>
-<span class="co">#&gt;    eta2~eta1_4       0.38673    0.33983  1.13802    0.2551</span>
+<span class="co">#&gt;    eta2~z            1.02885    0.22330  4.60760 4.074e-06</span>
+<span class="co">#&gt;    eta2~eta1_1       2.80411    0.65493  4.28152 1.856e-05</span>
+<span class="co">#&gt;    eta2~eta1_2      -0.02249    0.09996 -0.22498     0.822</span>
+<span class="co">#&gt;    eta2~eta1_3      -0.17333    0.28933 -0.59907    0.5491</span>
+<span class="co">#&gt;    eta2~eta1_4       0.38672    0.33983  1.13801    0.2551</span>
 <span class="co">#&gt; Intercepts:                                               </span>
 <span class="co">#&gt;    y2               -0.12171    0.10925 -1.11407    0.2653</span>
 <span class="co">#&gt;    y3               -0.09870    0.10546 -0.93592    0.3493</span>
-<span class="co">#&gt;    eta2              2.12362    1.66553  1.27504    0.2023</span>
+<span class="co">#&gt;    eta2              2.12369    1.66553  1.27509    0.2023</span>
 <span class="co">#&gt; Residual Variances:                                       </span>
 <span class="co">#&gt;    y1                1.31872    0.17657  7.46861          </span>
-<span class="co">#&gt;    y2                1.09691    0.14503  7.56340          </span>
-<span class="co">#&gt;    y3                0.81345    0.13259  6.13508          </span>
-<span class="co">#&gt;    eta2              1.99590    0.28454  7.01452</span></pre></body></html></div>
+<span class="co">#&gt;    y2                1.09690    0.14503  7.56340          </span>
+<span class="co">#&gt;    y3                0.81345    0.13259  6.13509          </span>
+<span class="co">#&gt;    eta2              1.99590    0.28454  7.01453</span></pre></body></html></div>
 <p>In this example the results are very similar to the Gaussian model:</p>
 <div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">eta2</span>-<span class="no">z</span>) ~ <span class="no">eta1</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>, <span class="kw">col</span><span class="kw">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span>(<span class="st">"black"</span>,<span class="fl">0.5</span>), <span class="kw">pch</span><span class="kw">=</span><span class="fl">16</span>,
      <span class="kw">xlab</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">eta</span>[<span class="fl">1</span>]), <span class="kw">ylab</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">eta</span>[<span class="fl">2</span>]))

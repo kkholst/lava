@@ -63,7 +63,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/correlation.html">Estimating partial correlations with ``lava``</a>
+      <a href="articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
       <a href="articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -107,12 +107,14 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"lava"</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/demo.html">demo</a></span>(<span class="st">"lava"</span>)</pre></div>
 <p>For graphical capabilities the <code>Rgraphviz</code> package is needed (first install the <code>BiocManager</code> package)</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"Rgraphviz"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="co"># install.packages("BiocManager")</span>
+<span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"Rgraphviz"</span>)</pre></div>
 <p>or the <code>igraph</code> or <code>visNetwork</code> packages</p>
 <div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"igraph"</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"visNetwork"</span>)</pre></div>
 <p>The development version of <code>lava</code> may also be installed directly from <code>github</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/lava"</span>)</pre></div>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="co"># install.packages("remotes")</span>
+<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/lava"</span>)</pre></div>
 </div>
 <div id="citation" class="section level2">
 <h2 class="hasAnchor">
@@ -230,7 +232,7 @@
 <span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
 <span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span>
-<span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.608e-18</span>
+<span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.609e-18</span>
 <span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></pre></div>
 <div class="sourceCode" id="cb14"><pre class="r"><span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">p</span>) <span class="no">p</span>[<span class="fl">1</span>]+<span class="no">p</span>[<span class="st">"u"</span>]*<span class="no">u</span>+<span class="no">p</span>[<span class="st">"u2"</span>]*<span class="no">u</span>^<span class="fl">2</span>
 <span class="no">u</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(-<span class="fl">1</span>, <span class="fl">1</span>, <span class="kw">length.out</span><span class="kw">=</span><span class="fl">100</span>)
@@ -256,19 +258,19 @@
 }
 <span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">onerun</span>, <span class="fl">100</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">val</span>, <span class="kw">estimate</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">4</span>, <span class="kw">se</span><span class="kw">=</span><span class="fl">5</span>:<span class="fl">8</span>, <span class="kw">short</span><span class="kw">=</span><span class="fl">TRUE</span>)
-<span class="co">#&gt; 100 replications                 Time: 6.262s</span>
+<span class="co">#&gt; 100 replications                 Time: 4.49s</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span>
-<span class="co">#&gt; Mean           2.00474         0.99861           1.00613        1.00613</span>
-<span class="co">#&gt; SD             0.18702         0.18093           0.17725        0.17725</span>
-<span class="co">#&gt; SE             0.18177         0.17833           0.16712        0.16712</span>
-<span class="co">#&gt; SE/SD          0.97193         0.98567           0.94281        0.94281</span>
+<span class="co">#&gt; Mean           2.02077         1.04080           0.97997        0.97997</span>
+<span class="co">#&gt; SD             0.20260         0.19016           0.16079        0.16079</span>
+<span class="co">#&gt; SE             0.18026         0.18018           0.16354        0.16354</span>
+<span class="co">#&gt; SE/SD          0.88971         0.94749           1.01709        1.01709</span>
 <span class="co">#&gt;                                                                        </span>
-<span class="co">#&gt; Min            1.45404         0.64551           0.56796        0.56796</span>
-<span class="co">#&gt; 2.5%           1.67841         0.67819           0.66470        0.66470</span>
-<span class="co">#&gt; 50%            1.99356         0.99182           1.00337        1.00337</span>
-<span class="co">#&gt; 97.5%          2.38899         1.39802           1.32637        1.32637</span>
-<span class="co">#&gt; Max            2.49742         1.51590           1.49962        1.49962</span>
+<span class="co">#&gt; Min            1.50738         0.63296           0.57620        0.57620</span>
+<span class="co">#&gt; 2.5%           1.64480         0.67154           0.66439        0.66439</span>
+<span class="co">#&gt; 50%            2.01884         1.05200           0.96656        0.96656</span>
+<span class="co">#&gt; 97.5%          2.37284         1.39552           1.30304        1.30304</span>
+<span class="co">#&gt; Max            2.51380         1.56400           1.48856        1.48856</span>
 <span class="co">#&gt;                                                                        </span>
 <span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span></pre></div>
 <p>Add additional simulations and visualize results</p>
