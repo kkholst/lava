@@ -1,7 +1,7 @@
 #+STARTUP: showall
 #+OPTIONS: ^:{}
 #+OPTIONS: title:nil author:nil
-#+PROPERTY: header-args :exports both :eval yes :results output
+#+PROPERTY: header-args :exports both :eval yes :results output :tangle yes
 #+PROPERTY: header-args:R :session *R*
 #+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
 # +OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
@@ -276,17 +276,18 @@ Here the RMSE is in favour of the splines model with 4 degrees of freedom:
 
 
 For convenience, the function =twostageCV= can be used to do the
-cross-validation. For example,
+cross-validation (also for choosing the mixture, see the section
+below). For example,
 #+NAME: twostageCV
 #+BEGIN_SRC R :exports code :ravel cache=TRUE
-  selmod <- twostageCV(m1, m2, data=d, df=2:6, nmix=1:3,
-            nfolds=5, rep=1, mc.cores=parallel::detectCores())
+  selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
+            nfolds=2, rep=1, mc.cores=parallel::detectCores())
 #+END_SRC
 
 #+RESULTS: twostageCV
 
-applies 5-fold cross-validation to select the best splines with
-degrees of freedom varying from from 1-6 (the linear model is
+applies cross-validation (here just 2 folds for simplicity) to select the best splines with
+degrees of freedom varying from from 1-3 (the linear model is
 automatically included)
 
 #+BEGIN_SRC R :exports both
@@ -402,6 +403,8 @@ parameter of the same variable to one.
   regression(m1,x1~eta1) <- 1 ## Factor loading fixed to 1
 #+END_SRC
 
+#+RESULTS:
+
 The mixture model may then be estimated using the =mixture= method,
 where the Parameter names shared across the different mixture
 components given in the =list= will be constrained to be identical in
@@ -409,6 +412,7 @@ the mixture model. Thus, only the intercept of \(\eta_{1}\) is
 allowed to vary between the mixtures.
 #+NAME: mixture1
 #+BEGIN_SRC R :ravel cache=TRUE
+set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 #+END_SRC
 
@@ -417,7 +421,7 @@ em0 <- mixture(m1, k=2, data=d)
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 #+NAME: estmixture
-#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE
+#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE
   em0 <- NULL
   ll <- c()
   for (i in 1:5) {

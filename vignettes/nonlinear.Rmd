@@ -176,15 +176,16 @@ legend("bottomright",
 ```
 
 For convenience, the function `twostageCV` can be used to do the
-cross-validation. For example,
+cross-validation (also for choosing the mixture, see the section
+below). For example,
 
 ```{r  twostageCV, cache=TRUE }
-selmod <- twostageCV(m1, m2, data=d, df=2:6, nmix=1:3,
-          nfolds=5, rep=1, mc.cores=parallel::detectCores())
+selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
+          nfolds=2, rep=1, mc.cores=parallel::detectCores())
 ```
 
-applies 5-fold cross-validation to select the best splines with
-degrees of freedom varying from from 1-6 (the linear model is
+applies cross-validation (here just 2 folds for simplicity) to select the best splines with
+degrees of freedom varying from from 1-3 (the linear model is
 automatically included)
 
 ```{r   }
@@ -242,13 +243,14 @@ the mixture model. Thus, only the intercept of \(\eta_{1}\) is
 allowed to vary between the mixtures.
 
 ```{r  mixture1, cache=TRUE }
+set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 ```
 
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 
-```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE }
+```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE }
 em0 <- NULL
 ll <- c()
 for (i in 1:5) {
