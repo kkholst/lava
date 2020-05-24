@@ -77,7 +77,7 @@ model specification.
 
 ** Estimation
 
-To estimate the parameters using the two-stage estimator described in ref:lava_nlin,  the first step is now to specify the measurement models
+To estimate the parameters using the two-stage estimator described in cite:lava_nlin,  the first step is now to specify the measurement models
 #+BEGIN_SRC R :exports code
 m1 <- lvm(x1+x2+x3 ~ eta1, eta1 ~ z, latent=~eta1)
 m2 <- lvm(y1+y2+y3 ~ eta2, eta2 ~ z, latent=~eta2)
@@ -523,7 +523,7 @@ Residual Variances:
 #+end_example
 
 
-In practice the results are very similar to the Gaussian model:
+In this example the results are very similar to the Gaussian model:
 #+NAME: mixturefit
 #+BEGIN_SRC R :exports both
   plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,

@@ -34,8 +34,8 @@ r_github_packages:
   - mangothecat/visualTest
 
 after_success:
-  - Rscript -e 'covr::codecov(type="all")'
-  - Rscript -e 'pkgdown::build_site()'
+  - travis_wait 30 Rscript -e 'covr::codecov(type="all")'
+  - travis_wait 30 Rscript -e 'pkgdown::build_site()'
 
 notifications:
   slack:
