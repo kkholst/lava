@@ -58,7 +58,7 @@ Cross-validated two-stage estimator for non-linear SEM
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
-m1 <- lvm( x1+x2+x3 ~ u1, latent= ~u1)
+m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
 m2 <- lvm( y ~ 1 )
 m <- functional(merge(m1,m2), y ~ u, value=function(x) sin(x)+x)
 distribution(m, ~u1) <- uniform.lvm(-6,6)

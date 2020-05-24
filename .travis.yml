@@ -1,4 +1,4 @@
-language: r
+language:
 
 r:
  - release
@@ -42,10 +42,10 @@ notifications:
 
 deploy:
   provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  local-dir: docs
+  cleanup: false
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  #local_dir: docs
   script: travis_wait 30 Rscript -e 'pkgdown::deploy_site_github()'
   on:
     branch: master
