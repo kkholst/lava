@@ -279,19 +279,19 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -5.411914e-03  9.597168e-04  4.472280e-02 -9.208872e-02  8.577996e-02</span>
-<span class="co">#&gt; y2   -2.714949e-02 -1.460264e-05  4.534986e-02 -1.168302e-01  6.265883e-02</span>
-<span class="co">#&gt; y1~x  9.330044e-01 -1.819361e-03  4.747078e-02  8.408234e-01  1.029108e+00</span>
-<span class="co">#&gt; y2~x  9.165185e-01 -1.906442e-03  4.735165e-02  8.220917e-01  1.011169e+00</span>
-<span class="co">#&gt; l1    4.184652e-03 -9.267785e-03  6.440885e-02 -1.401980e-01  1.217880e-01</span>
-<span class="co">#&gt; l2    4.163611e-02 -7.441442e-03  6.133324e-02 -8.670895e-02  1.566467e-01</span>
-<span class="co">#&gt; z     1.429423e+00 -6.615554e-04  4.397105e-02  1.345708e+00  1.511280e+00</span>
-<span class="co">#&gt; v1    1.004193e+00 -7.200615e-03  6.424452e-02  8.691861e-01  1.129515e+00</span>
-<span class="co">#&gt; v2    1.042515e+00 -5.784747e-03  6.354948e-02  9.169439e-01  1.169582e+00</span>
-<span class="co">#&gt; c1    9.122097e-01 -6.115670e-03  6.051606e-02  7.908432e-01  1.030523e+00</span></pre></body></html></div>
+<span class="co">#&gt; y1   -0.0054119135 -0.0002876555  0.0432478063 -0.0940310944  0.0786966605</span>
+<span class="co">#&gt; y2   -0.0271494916 -0.0003344002  0.0440709863 -0.1167389138  0.0567015001</span>
+<span class="co">#&gt; y1~x  0.9330043509  0.0011625648  0.0476949795  0.8397901394  1.0280662513</span>
+<span class="co">#&gt; y2~x  0.9165185250  0.0007349690  0.0476755526  0.8249019657  1.0125578166</span>
+<span class="co">#&gt; l1    0.0041846522 -0.0069579083  0.0626166875 -0.1245577645  0.1172506324</span>
+<span class="co">#&gt; l2    0.0416361064 -0.0081872304  0.0597704093 -0.0814431750  0.1547482530</span>
+<span class="co">#&gt; z     1.4294227061 -0.0014519054  0.0434756872  1.3468672294  1.5115811744</span>
+<span class="co">#&gt; v1    1.0041934200 -0.0050105022  0.0624866284  0.8828872604  1.1244012058</span>
+<span class="co">#&gt; v2    1.0425150452 -0.0066508978  0.0621054617  0.9217850901  1.1673640875</span>
+<span class="co">#&gt; c1    0.9122097186 -0.0056890107  0.0586637170  0.7980862294  1.0193509503</span></pre></body></html></div>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="no">b</span>$<span class="no">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8730365 0.9071660</span></pre></body></html></div>
+<span class="co">#&gt; 0.8733118 0.9072192</span></pre></body></html></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#censored-observations" class="anchor"></a>Censored observations</h2>
