@@ -7,7 +7,7 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{nonlinear}
+  %\VignetteIndexEntry{Non-linear latent variable models and error-in-variable models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -176,12 +176,12 @@ legend("bottomright",
 ```
 
 For convenience, the function `twostageCV` can be used to do the
-cross-validation (also for choosing the mixture, see the section
+cross-validation (also for choosing the mixture distribution via the \`\`nmix\`\` argument, see the section
 below). For example,
 
 ```{r  twostageCV, cache=TRUE }
 selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
-          nfolds=2, rep=1, mc.cores=parallel::detectCores())
+	  nfolds=2, rep=1, mc.cores=parallel::detectCores())
 ```
 
 applies cross-validation (here just 2 folds for simplicity) to select the best splines with

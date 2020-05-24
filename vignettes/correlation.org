@@ -15,7 +15,7 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{correlation}
+  %\VignetteIndexEntry{Estimating partial correlations with lava}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 #+END_EXPORT

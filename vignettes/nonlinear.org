@@ -15,7 +15,7 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{nonlinear}
+  %\VignetteIndexEntry{Non-linear latent variable models and error-in-variable models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 #+END_EXPORT
@@ -276,12 +276,12 @@ Here the RMSE is in favour of the splines model with 4 degrees of freedom:
 
 
 For convenience, the function =twostageCV= can be used to do the
-cross-validation (also for choosing the mixture, see the section
+cross-validation (also for choosing the mixture distribution via the ``nmix`` argument, see the section
 below). For example,
 #+NAME: twostageCV
 #+BEGIN_SRC R :exports code :ravel cache=TRUE
   selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
-            nfolds=2, rep=1, mc.cores=parallel::detectCores())
+	    nfolds=2, rep=1, mc.cores=parallel::detectCores())
 #+END_SRC
 
 #+RESULTS: twostageCV
