@@ -1,0 +1,21 @@
+---
+# YAML header created by ox-ravel
+title: Goodness-of-fit statistics
+author: Klaus Kähler Holst
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{XXX}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+<!-- XXX.Rmd is generated from XXX.org. Please edit that file -->
+
+```{r  include=FALSE }
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```

@@ -2,7 +2,9 @@
 # lava 1.6.8
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x
   - profile likelihood CI w. tobit/censored observations.
-  - Vignette added (Estimating partial correlations)
+  - Vignettes added
+    - Estimating partial correlations
+	- Non-linear latent variable omdels
   - Pseudo-inverse used in 'normal'
   - Starting values for mixture fixed
 
