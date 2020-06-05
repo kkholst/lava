@@ -57,6 +57,9 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
+      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
+    </li>
+    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -88,7 +91,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-05-24</h4>
+            <h4 class="date">2020-06-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/correlation.Rmd"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -279,19 +282,19 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -0.0054119135 -0.0002876555  0.0432478063 -0.0940310944  0.0786966605</span>
-<span class="co">#&gt; y2   -0.0271494916 -0.0003344002  0.0440709863 -0.1167389138  0.0567015001</span>
-<span class="co">#&gt; y1~x  0.9330043509  0.0011625648  0.0476949795  0.8397901394  1.0280662513</span>
-<span class="co">#&gt; y2~x  0.9165185250  0.0007349690  0.0476755526  0.8249019657  1.0125578166</span>
-<span class="co">#&gt; l1    0.0041846522 -0.0069579083  0.0626166875 -0.1245577645  0.1172506324</span>
-<span class="co">#&gt; l2    0.0416361064 -0.0081872304  0.0597704093 -0.0814431750  0.1547482530</span>
-<span class="co">#&gt; z     1.4294227061 -0.0014519054  0.0434756872  1.3468672294  1.5115811744</span>
-<span class="co">#&gt; v1    1.0041934200 -0.0050105022  0.0624866284  0.8828872604  1.1244012058</span>
-<span class="co">#&gt; v2    1.0425150452 -0.0066508978  0.0621054617  0.9217850901  1.1673640875</span>
-<span class="co">#&gt; c1    0.9122097186 -0.0056890107  0.0586637170  0.7980862294  1.0193509503</span></pre></body></html></div>
+<span class="co">#&gt; y1   -0.0054119135 -0.0006436098  0.0447242174 -0.0979064758  0.0810045266</span>
+<span class="co">#&gt; y2   -0.0271494916  0.0001078341  0.0459077984 -0.1188771086  0.0600420452</span>
+<span class="co">#&gt; y1~x  0.9330043509  0.0003453364  0.0482543784  0.8362304412  1.0265553860</span>
+<span class="co">#&gt; y2~x  0.9165185250 -0.0001480702  0.0478677873  0.8231392979  1.0073046754</span>
+<span class="co">#&gt; l1    0.0041846522 -0.0076663482  0.0595639038 -0.1133229652  0.1086880564</span>
+<span class="co">#&gt; l2    0.0416361064 -0.0068702381  0.0568509806 -0.0764052679  0.1386164845</span>
+<span class="co">#&gt; z     1.4294227061  0.0011202496  0.0424009583  1.3484628682  1.5157291252</span>
+<span class="co">#&gt; v1    1.0041934200 -0.0059024002  0.0594639737  0.8928622662  1.1148145377</span>
+<span class="co">#&gt; v2    1.0425150452 -0.0054673455  0.0588751769  0.9264406739  1.1486834795</span>
+<span class="co">#&gt; c1    0.9122097186 -0.0050780023  0.0551012533  0.8021544176  1.0137896680</span></pre></body></html></div>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="no">b</span>$<span class="no">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8733118 0.9072192</span></pre></body></html></div>
+<span class="co">#&gt; 0.8736900 0.9079505</span></pre></body></html></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#censored-observations" class="anchor"></a>Censored observations</h2>
@@ -372,7 +375,7 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] magrittr_1.5    mets_1.2.7.1    timereg_1.9.4   survival_3.1-12</span>
+<span class="co">#&gt; [1] magrittr_1.5    mets_1.2.7.1    timereg_1.9.5   survival_3.1-12</span>
 <span class="co">#&gt; [5] lava_1.6.8     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>

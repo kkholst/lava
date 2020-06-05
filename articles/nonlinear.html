@@ -57,6 +57,9 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
+      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
+    </li>
+    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -88,7 +91,7 @@
       <h1 data-toc-skip>Non-linear latent variable models and error-in-variable models</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-05-24</h4>
+            <h4 class="date">2020-06-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/nonlinear.Rmd"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="hidden name"><code>nonlinear.Rmd</code></div>
@@ -255,34 +258,35 @@
 <span class="co">#&gt; 1 1961.839</span>
 <span class="co">#&gt; 2 1958.803</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
-<span class="co">#&gt; Selected spline model degrees of freedom: 2</span>
-<span class="co">#&gt; Knots: -3.958 0.02149 4.001 </span>
+<span class="co">#&gt; Selected spline model degrees of freedom: 3</span>
+<span class="co">#&gt; Knots: -3.958 -1.305 1.348 4.001 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;      RMSE(nfolds=2, rep=1)</span>
-<span class="co">#&gt; df:1              4.683297</span>
-<span class="co">#&gt; df:2              3.787852</span>
-<span class="co">#&gt; df:3              4.021287</span>
+<span class="co">#&gt; df:1              5.394187</span>
+<span class="co">#&gt; df:2              4.334365</span>
+<span class="co">#&gt; df:3              4.313659</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;                     Estimate Std. Error Z-value  P-value </span>
-<span class="co">#&gt; Measurements:                                            </span>
-<span class="co">#&gt;    y1~eta2           1.00000                             </span>
-<span class="co">#&gt;    y2~eta2           0.97794  0.03463   28.24076   &lt;1e-12</span>
-<span class="co">#&gt;    y3~eta2           1.04520  0.03473   30.09595   &lt;1e-12</span>
-<span class="co">#&gt; Regressions:                                             </span>
-<span class="co">#&gt;    eta2~z            1.02819  0.22297    4.61136 4e-06   </span>
-<span class="co">#&gt;    eta2~eta1_1       3.41775  0.36900    9.26223   &lt;1e-12</span>
-<span class="co">#&gt;    eta2~eta1_2      -0.05122  0.00706   -7.25310   &lt;1e-12</span>
-<span class="co">#&gt; Intercepts:                                              </span>
-<span class="co">#&gt;    y1                0.00000                             </span>
-<span class="co">#&gt;    y2               -0.12176  0.10921   -1.11495 0.2649  </span>
-<span class="co">#&gt;    y3               -0.09872  0.10547   -0.93600 0.3493  </span>
-<span class="co">#&gt;    eta2              3.93715  0.54021    7.28822   &lt;1e-12</span>
-<span class="co">#&gt; Residual Variances:                                      </span>
-<span class="co">#&gt;    y1                1.31625  0.17654    7.45594         </span>
-<span class="co">#&gt;    y2                1.09975  0.14507    7.58078         </span>
-<span class="co">#&gt;    y3                0.81270  0.13258    6.12987         </span>
-<span class="co">#&gt;    eta2              2.01822  0.28971    6.96633</span></pre></body></html></div>
+<span class="co">#&gt;                     Estimate Std. Error Z-value  P-value  </span>
+<span class="co">#&gt; Measurements:                                             </span>
+<span class="co">#&gt;    y1~eta2           1.00000                              </span>
+<span class="co">#&gt;    y2~eta2           0.97784  0.03460   28.25978   &lt;1e-12 </span>
+<span class="co">#&gt;    y3~eta2           1.04516  0.03472   30.10241   &lt;1e-12 </span>
+<span class="co">#&gt; Regressions:                                              </span>
+<span class="co">#&gt;    eta2~z            1.02615  0.22371    4.58698 4.497e-06</span>
+<span class="co">#&gt;    eta2~eta1_1       3.54905  0.63735    5.56848 2.57e-08 </span>
+<span class="co">#&gt;    eta2~eta1_2      -0.06054  0.02462   -2.45891 0.01394  </span>
+<span class="co">#&gt;    eta2~eta1_3       0.05953  0.07251    0.82099 0.4117   </span>
+<span class="co">#&gt; Intercepts:                                               </span>
+<span class="co">#&gt;    y1                0.00000                              </span>
+<span class="co">#&gt;    y2               -0.12178  0.10922   -1.11502 0.2648   </span>
+<span class="co">#&gt;    y3               -0.09873  0.10547   -0.93607 0.3492   </span>
+<span class="co">#&gt;    eta2              4.32773  1.45958    2.96505 0.003026 </span>
+<span class="co">#&gt; Residual Variances:                                       </span>
+<span class="co">#&gt;    y1                1.31538  0.17614    7.46773          </span>
+<span class="co">#&gt;    y2                1.10068  0.14566    7.55649          </span>
+<span class="co">#&gt;    y3                0.81251  0.13272    6.12201          </span>
+<span class="co">#&gt;    eta2              2.02943  0.29264    6.93490</span></pre></body></html></div>
 </div>
 <div id="specification-of-general-functional-forms" class="section level1">
 <h1 class="hasAnchor">
