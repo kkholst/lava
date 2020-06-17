@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-06-05</h4>
+            <h4 class="date">2020-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/correlation.Rmd"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -281,20 +281,20 @@ z 0.8720834 0.9081964</code></pre>
 <span class="no">b</span>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -0.0054119135 -0.0006436098  0.0447242174 -0.0979064758  0.0810045266</span>
-<span class="co">#&gt; y2   -0.0271494916  0.0001078341  0.0459077984 -0.1188771086  0.0600420452</span>
-<span class="co">#&gt; y1~x  0.9330043509  0.0003453364  0.0482543784  0.8362304412  1.0265553860</span>
-<span class="co">#&gt; y2~x  0.9165185250 -0.0001480702  0.0478677873  0.8231392979  1.0073046754</span>
-<span class="co">#&gt; l1    0.0041846522 -0.0076663482  0.0595639038 -0.1133229652  0.1086880564</span>
-<span class="co">#&gt; l2    0.0416361064 -0.0068702381  0.0568509806 -0.0764052679  0.1386164845</span>
-<span class="co">#&gt; z     1.4294227061  0.0011202496  0.0424009583  1.3484628682  1.5157291252</span>
-<span class="co">#&gt; v1    1.0041934200 -0.0059024002  0.0594639737  0.8928622662  1.1148145377</span>
-<span class="co">#&gt; v2    1.0425150452 -0.0054673455  0.0588751769  0.9264406739  1.1486834795</span>
-<span class="co">#&gt; c1    0.9122097186 -0.0050780023  0.0551012533  0.8021544176  1.0137896680</span></pre></body></html></div>
+<span class="co">#&gt;      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
+<span class="co">#&gt; y1   -0.005411914  0.001184204  0.047685269 -0.094838042  0.088447891</span>
+<span class="co">#&gt; y2   -0.027149492  0.001072362  0.047058444 -0.114704380  0.067204892</span>
+<span class="co">#&gt; y1~x  0.933004351 -0.002667413  0.047655746  0.843389881  1.023267546</span>
+<span class="co">#&gt; y2~x  0.916518525 -0.002656706  0.048284952  0.821965029  1.013244250</span>
+<span class="co">#&gt; l1    0.004184652 -0.007239365  0.064658315 -0.127955298  0.116326708</span>
+<span class="co">#&gt; l2    0.041636106 -0.006349077  0.062019055 -0.085410195  0.148291211</span>
+<span class="co">#&gt; z     1.429422706  0.001331551  0.044032454  1.348131537  1.517602429</span>
+<span class="co">#&gt; v1    1.004193420 -0.005161707  0.064551973  0.879892740  1.123362833</span>
+<span class="co">#&gt; v2    1.042515045 -0.004604733  0.064497993  0.918135596  1.159850657</span>
+<span class="co">#&gt; c1    0.912209719 -0.004284047  0.060694284  0.794146191  1.032468463</span></pre></body></html></div>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="no">b</span>$<span class="no">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8736900 0.9079505</span></pre></body></html></div>
+<span class="co">#&gt; 0.8736116 0.9082789</span></pre></body></html></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#censored-observations" class="anchor"></a>Censored observations</h2>
@@ -379,18 +379,18 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; [5] lava_1.6.8     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] graph_1.66.0        Rcpp_1.0.4.6        knitr_1.28         </span>
+<span class="co">#&gt;  [1] Rcpp_1.0.4.6        graph_1.66.0        knitr_1.28         </span>
 <span class="co">#&gt;  [4] BiocGenerics_0.34.0 splines_4.0.0       MASS_7.3-51.5      </span>
 <span class="co">#&gt;  [7] lattice_0.20-41     R6_2.4.1            rlang_0.4.6        </span>
 <span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.0         parallel_4.0.0     </span>
-<span class="co">#&gt; [13] grid_4.0.0          xfun_0.14           htmltools_0.4.0    </span>
+<span class="co">#&gt; [13] grid_4.0.0          xfun_0.14           htmltools_0.5.0    </span>
 <span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    digest_0.6.25      </span>
 <span class="co">#&gt; [19] rprojroot_1.3-2     numDeriv_2016.8-1.1 pkgdown_1.5.1      </span>
 <span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       Rgraphviz_2.32.0   </span>
 <span class="co">#&gt; [25] codetools_0.2-16    fs_1.4.1            memoise_1.1.0      </span>
 <span class="co">#&gt; [28] evaluate_0.14       rmarkdown_2.1       stringi_1.4.6      </span>
-<span class="co">#&gt; [31] compiler_4.0.0      desc_1.2.0          backports_1.1.7    </span>
-<span class="co">#&gt; [34] stats4_4.0.0        mvtnorm_1.1-0</span></pre></body></html></div>
+<span class="co">#&gt; [31] compiler_4.0.0      desc_1.2.0          backports_1.1.8    </span>
+<span class="co">#&gt; [34] stats4_4.0.0        mvtnorm_1.1-1</span></pre></body></html></div>
 </div>
 <div id="bibliography" class="section level1">
 <h1 class="hasAnchor">
