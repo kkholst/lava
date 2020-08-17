@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-07-17</h4>
+            <h4 class="date">2020-08-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/correlation.Rmd"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -281,20 +281,20 @@ z 0.8720834 0.9081964</code></pre>
 <span class="no">b</span>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -0.0054119135 -0.0006425552  0.0454770384 -0.0961372306  0.0790144038</span>
-<span class="co">#&gt; y2   -0.0271494916  0.0011374173  0.0458259079 -0.1169546304  0.0636812910</span>
-<span class="co">#&gt; y1~x  0.9330043509  0.0005235062  0.0478448441  0.8411607152  1.0229023440</span>
-<span class="co">#&gt; y2~x  0.9165185250  0.0013144547  0.0466627773  0.8257848277  1.0069350922</span>
-<span class="co">#&gt; l1    0.0041846522 -0.0068069944  0.0610428713 -0.1260824166  0.1163887614</span>
-<span class="co">#&gt; l2    0.0416361064 -0.0061291253  0.0585563238 -0.0848756120  0.1502861136</span>
-<span class="co">#&gt; z     1.4294227061  0.0012139553  0.0423381619  1.3473980186  1.5152184064</span>
-<span class="co">#&gt; v1    1.0041934200 -0.0049530494  0.0611143556  0.8815421961  1.1234325482</span>
-<span class="co">#&gt; v2    1.0425150452 -0.0045964088  0.0607052758  0.9186266098  1.1621667076</span>
-<span class="co">#&gt; c1    0.9122097186 -0.0042150445  0.0571173670  0.7991735889  1.0282944524</span></pre></body></html></div>
+<span class="co">#&gt;      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
+<span class="co">#&gt; y1   -0.005411914 -0.001488609  0.042949657 -0.088618358  0.075973010</span>
+<span class="co">#&gt; y2   -0.027149492 -0.000191445  0.043815869 -0.109604815  0.058854117</span>
+<span class="co">#&gt; y1~x  0.933004351 -0.002078080  0.048534713  0.841384487  1.025687243</span>
+<span class="co">#&gt; y2~x  0.916518525 -0.002190315  0.048156700  0.813710367  1.001120838</span>
+<span class="co">#&gt; l1    0.004184652 -0.004947683  0.063294019 -0.123668571  0.121750762</span>
+<span class="co">#&gt; l2    0.041636106 -0.004862530  0.062292639 -0.085298606  0.160860302</span>
+<span class="co">#&gt; z     1.429422706  0.002346007  0.044436978  1.345803006  1.513914108</span>
+<span class="co">#&gt; v1    1.004193420 -0.002959823  0.063197035  0.883672675  1.129472577</span>
+<span class="co">#&gt; v2    1.042515045 -0.003044626  0.064808627  0.918238069  1.174520962</span>
+<span class="co">#&gt; c1    0.912209719 -0.002392742  0.060296341  0.794281978  1.027554054</span></pre></body></html></div>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="no">b</span>$<span class="no">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8734377 0.9078607</span></pre></body></html></div>
+<span class="co">#&gt; 0.8730590 0.9076312</span></pre></body></html></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#censored-observations" class="anchor"></a>Censored observations</h2>
@@ -383,11 +383,11 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt;  [4] BiocGenerics_0.34.0 splines_4.0.0       MASS_7.3-51.5      </span>
 <span class="co">#&gt;  [7] lattice_0.20-41     R6_2.4.1            rlang_0.4.7        </span>
 <span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.0         parallel_4.0.0     </span>
-<span class="co">#&gt; [13] grid_4.0.0          xfun_0.15           htmltools_0.5.0    </span>
+<span class="co">#&gt; [13] grid_4.0.0          xfun_0.16           htmltools_0.5.0    </span>
 <span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    digest_0.6.25      </span>
 <span class="co">#&gt; [19] rprojroot_1.3-2     numDeriv_2016.8-1.1 pkgdown_1.5.1      </span>
 <span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       Rgraphviz_2.32.0   </span>
-<span class="co">#&gt; [25] codetools_0.2-16    fs_1.4.2            memoise_1.1.0      </span>
+<span class="co">#&gt; [25] codetools_0.2-16    fs_1.5.0            memoise_1.1.0      </span>
 <span class="co">#&gt; [28] evaluate_0.14       rmarkdown_2.3       stringi_1.4.6      </span>
 <span class="co">#&gt; [31] compiler_4.0.0      desc_1.2.0          backports_1.1.8    </span>
 <span class="co">#&gt; [34] stats4_4.0.0        mvtnorm_1.1-1</span></pre></body></html></div>
