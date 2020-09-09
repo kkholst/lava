@@ -139,37 +139,37 @@
     </div>
 
     <pre class="usage"><span class='fu'>plotConf</span>(
-  <span class='no'>model</span>,
-  <span class='kw'>var1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ci.lty</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ci</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
-  <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>npoints</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='no'>xlim</span>,
-  <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>colpt</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>0.07</span>,
-  <span class='kw'>centermark</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
-  <span class='kw'>jitter</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>cidiff</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>var1</span>), <span class='fl'>FALSE</span>, <span class='st'>"topright"</span>),
-  <span class='kw'>trans</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>) {     <span class='no'>x</span> },
-  <span class='kw'>partres</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='no'>model</span>, <span class='st'>"lm"</span>),
-  <span class='kw'>partse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>labels</span>,
-  <span class='no'>vcov</span>,
-  <span class='no'>predictfun</span>,
-  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>model</span>,
+  var1 = <span class='kw'>NULL</span>,
+  var2 = <span class='kw'>NULL</span>,
+  data = <span class='kw'>NULL</span>,
+  ci.lty = <span class='fl'>0</span>,
+  ci = <span class='fl'>TRUE</span>,
+  level = <span class='fl'>0.95</span>,
+  pch = <span class='fl'>16</span>,
+  lty = <span class='fl'>1</span>,
+  lwd = <span class='fl'>2</span>,
+  npoints = <span class='fl'>100</span>,
+  <span class='kw'>xlim</span>,
+  col = <span class='kw'>NULL</span>,
+  <span class='kw'>colpt</span>,
+  alpha = <span class='fl'>0.5</span>,
+  cex = <span class='fl'>1</span>,
+  delta = <span class='fl'>0.07</span>,
+  centermark = <span class='fl'>0.03</span>,
+  jitter = <span class='fl'>0.2</span>,
+  cidiff = <span class='fl'>FALSE</span>,
+  mean = <span class='fl'>TRUE</span>,
+  legend = <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>var1</span>), <span class='fl'>FALSE</span>, <span class='st'>"topright"</span>),
+  trans = <span class='fu'>function</span>(<span class='kw'>x</span>) {     <span class='kw'>x</span> },
+  partres = <span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='kw'>model</span>, <span class='st'>"lm"</span>),
+  partse = <span class='fl'>FALSE</span>,
+  <span class='kw'>labels</span>,
+  <span class='kw'>vcov</span>,
+  <span class='kw'>predictfun</span>,
+  plot = <span class='fl'>TRUE</span>,
+  new = <span class='fl'>TRUE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -311,26 +311,35 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>termplot</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-<span class='no'>x0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)
-<span class='no'>x1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>3</span>,<span class='fl'>3</span>, <span class='kw'>length.out</span><span class='kw'>=</span><span class='no'>n</span>)
-<span class='no'>x2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>each</span><span class='kw'>=</span><span class='no'>n</span>/<span class='fl'>2</span>), <span class='kw'>labels</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>,<span class='st'>"B"</span>))
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span> + <span class='fl'>2</span>*<span class='no'>x0</span> + <span class='fl'>0.5</span>*<span class='no'>x1</span> + -<span class='fl'>1</span>*(<span class='no'>x2</span><span class='kw'>==</span><span class='st'>"B"</span>)*<span class='no'>x1</span> + <span class='fl'>0.5</span>*(<span class='no'>x2</span><span class='kw'>==</span><span class='st'>"B"</span>) + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>, <span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>0.25</span>)
-<span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>, <span class='kw'>x1</span><span class='kw'>=</span><span class='no'>x1</span>, <span class='kw'>x2</span><span class='kw'>=</span><span class='no'>x2</span>)
-<span class='no'>lm0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>y</span> ~ <span class='no'>x0</span> + <span class='no'>x1</span>*<span class='no'>x2</span>, <span class='no'>dd</span>)
-<span class='fu'>plotConf</span>(<span class='no'>lm0</span>, <span class='kw'>var1</span><span class='kw'>=</span><span class='st'>"x1"</span>, <span class='kw'>var2</span><span class='kw'>=</span><span class='st'>"x2"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='kw'>a</span><span class='kw'>=</span><span class='fl'>5</span>,<span class='kw'>b</span><span class='kw'>=</span><span class='fl'>0.5</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"red"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='kw'>a</span><span class='kw'>=</span><span class='fl'>5.5</span>,<span class='kw'>b</span><span class='kw'>=</span>-<span class='fl'>0.5</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"red"</span>)</div><div class='img'><img src='plotConf-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)</span>
+    <pre class="examples"><div class='input'><span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='kw'>x0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>)
+<span class='kw'>x1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>3</span>,<span class='fl'>3</span>, length.out=<span class='kw'>n</span>)
+<span class='kw'>x2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),each=<span class='kw'>n</span><span class='op'>/</span><span class='fl'>2</span>), labels=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>,<span class='st'>"B"</span>))
+<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fl'>5</span> <span class='op'>+</span> <span class='fl'>2</span><span class='op'>*</span><span class='kw'>x0</span> <span class='op'>+</span> <span class='fl'>0.5</span><span class='op'>*</span><span class='kw'>x1</span> <span class='op'>+</span> <span class='op'>-</span><span class='fl'>1</span><span class='op'>*</span>(<span class='kw'>x2</span><span class='op'>==</span><span class='st'>"B"</span>)<span class='op'>*</span><span class='kw'>x1</span> <span class='op'>+</span> <span class='fl'>0.5</span><span class='op'>*</span>(<span class='kw'>x2</span><span class='op'>==</span><span class='st'>"B"</span>) <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>, sd=<span class='fl'>0.25</span>)
+<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y=<span class='kw'>y</span>, x1=<span class='kw'>x1</span>, x2=<span class='kw'>x2</span>)
+<span class='kw'>lm0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x0</span> <span class='op'>+</span> <span class='kw'>x1</span><span class='op'>*</span><span class='kw'>x2</span>, <span class='kw'>dd</span>)
+<span class='fu'>plotConf</span>(<span class='kw'>lm0</span>, var1=<span class='st'>"x1"</span>, var2=<span class='st'>"x2"</span>)
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(a=<span class='fl'>5</span>,b=<span class='fl'>0.5</span>,col=<span class='st'>"red"</span>)
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(a=<span class='fl'>5.5</span>,b=<span class='op'>-</span><span class='fl'>0.5</span>,col=<span class='st'>"red"</span>)
+</div><div class='img'><img src='plotConf-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>iris</span>)
-<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>Sepal.Length</span> ~ <span class='no'>Sepal.Width</span>*<span class='no'>Species</span>,<span class='no'>iris</span>)
-<span class='fu'>plotConf</span>(<span class='no'>l</span>,<span class='kw'>var2</span><span class='kw'>=</span><span class='st'>"Species"</span>)</div><div class='img'><img src='plotConf-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotConf</span>(<span class='no'>l</span>,<span class='kw'>var1</span><span class='kw'>=</span><span class='st'>"Sepal.Width"</span>,<span class='kw'>var2</span><span class='kw'>=</span><span class='st'>"Species"</span>)</div><div class='img'><img src='plotConf-3.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>iris</span>)
+<span class='kw'>l</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>Sepal.Length</span> <span class='op'>~</span> <span class='kw'>Sepal.Width</span><span class='op'>*</span><span class='kw'>Species</span>,<span class='kw'>iris</span>)
+<span class='fu'>plotConf</span>(<span class='kw'>l</span>,var2=<span class='st'>"Species"</span>)
+</div><div class='img'><img src='plotConf-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotConf</span>(<span class='kw'>l</span>,var1=<span class='st'>"Sepal.Width"</span>,var2=<span class='st'>"Species"</span>)
+</div><div class='img'><img src='plotConf-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'>## lme4 model</span>
-<span class='no'>dd</span>$<span class='no'>Id</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.3</span>)
-<span class='no'>lmer0</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>y</span> ~ <span class='no'>x0</span> + <span class='no'>x1</span>*<span class='no'>x2</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Id</span>), <span class='no'>dd</span>)
-<span class='fu'>plotConf</span>(<span class='no'>lmer0</span>, <span class='kw'>var1</span><span class='kw'>=</span><span class='st'>"x1"</span>, <span class='kw'>var2</span><span class='kw'>=</span><span class='st'>"x2"</span>)
-}</div></pre>
+<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>Id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span>, size = <span class='fl'>3</span>, prob = <span class='fl'>0.3</span>)
+<span class='kw'>lmer0</span> <span class='op'>&lt;-</span> <span class='kw'>lme4</span>::<span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x0</span> <span class='op'>+</span> <span class='kw'>x1</span><span class='op'>*</span><span class='kw'>x2</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>Id</span>), <span class='kw'>dd</span>)
+<span class='fu'>plotConf</span>(<span class='kw'>lmer0</span>, var1=<span class='st'>"x1"</span>, var2=<span class='st'>"x2"</span>)
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -346,7 +355,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

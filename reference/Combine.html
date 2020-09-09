@@ -138,7 +138,7 @@
     <p>Report estimates across different models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Combine</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Combine</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,15 +153,19 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>serotonin</span>)
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>cau</span> ~ <span class='no'>age</span>*<span class='no'>gene1</span> + <span class='no'>age</span>*<span class='no'>gene2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>serotonin</span>)
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>cau</span> ~ <span class='no'>age</span> + <span class='no'>gene1</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>serotonin</span>)
-<span class='no'>m3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>cau</span> ~ <span class='no'>age</span>*<span class='no'>gene2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>serotonin</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>serotonin</span>)
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>cau</span> <span class='op'>~</span> <span class='kw'>age</span><span class='op'>*</span><span class='kw'>gene1</span> <span class='op'>+</span> <span class='kw'>age</span><span class='op'>*</span><span class='kw'>gene2</span>,data=<span class='kw'>serotonin</span>)
+<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>cau</span> <span class='op'>~</span> <span class='kw'>age</span> <span class='op'>+</span> <span class='kw'>gene1</span>,data=<span class='kw'>serotonin</span>)
+<span class='kw'>m3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>cau</span> <span class='op'>~</span> <span class='kw'>age</span><span class='op'>*</span><span class='kw'>gene2</span>,data=<span class='kw'>serotonin</span>)
 
-<span class='fu'>Combine</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>A</span><span class='kw'>=</span><span class='no'>m1</span>,<span class='kw'>B</span><span class='kw'>=</span><span class='no'>m2</span>,<span class='kw'>C</span><span class='kw'>=</span><span class='no'>m3</span>),<span class='kw'>fun</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>x</span>)
-     <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_____"</span><span class='kw'>=</span><span class='st'>""</span>,<span class='kw'>R2</span><span class='kw'>=</span><span class='st'>" "</span><span class='kw'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>x</span>)$<span class='no'>r.squared</span>,<span class='kw'>digits</span><span class='kw'>=</span><span class='fl'>2</span>)))</div><div class='output co'>#&gt;             A                            B                          
+<span class='fu'>Combine</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(A=<span class='kw'>m1</span>,B=<span class='kw'>m2</span>,C=<span class='kw'>m3</span>),fun=<span class='fu'>function</span>(<span class='kw'>x</span>)
+     <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_____"</span>=<span class='st'>""</span>,R2=<span class='st'>" "</span><span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>x</span>)<span class='op'>$</span><span class='kw'>r.squared</span>,digits=<span class='fl'>2</span>)))
+</div><div class='output co'>#&gt;             A                            B                          
 #&gt; (Intercept)  0.88  [0.85;0.91]   p&lt;0.001  0.89  [0.86;0.91]  p&lt;0.001
 #&gt; age          0.02  [-0.01;0.05]  p=0.108 -0.01  [-0.02;0.01] p=0.414
 #&gt; gene1       -0.02  [-0.06;0.01]  p=0.228 -0.02  [-0.06;0.01] p=0.219
@@ -194,7 +198,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

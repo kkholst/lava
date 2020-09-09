@@ -138,7 +138,7 @@
     <p>Function that constructs a new latent variable model object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lvm</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>latent</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>messages</span> <span class='kw'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span>()$<span class='no'>messages</span>)</pre>
+    <pre class="usage"><span class='fu'>lvm</span>(x = <span class='kw'>NULL</span>, <span class='kw'>...</span>, latent = <span class='kw'>NULL</span>, messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -170,15 +170,20 @@ a linear model.</p></td>
     <p>Returns an object of class <code>lvm</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='regression-set.html'>regression</a></code>, <code><a href='covariance.html'>covariance</a></code>,
+    <div class='dont-index'><p><code><a href='regression<-.html'>regression</a></code>, <code><a href='covariance.html'>covariance</a></code>,
 <code><a href='intercept.html'>intercept</a></code>, ...</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>lvm</span>() <span class='co'># Empty model</span>
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>lvm</span>(<span class='no'>y</span>~<span class='no'>x</span>) <span class='co'># Simple linear regression</span>
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'>lvm</span>(~<span class='no'>y1</span>+<span class='no'>y2</span>) <span class='co'># Model with two independent variables (argument)</span>
-<span class='no'>m3</span> <span class='kw'>&lt;-</span> <span class='fu'>lvm</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>u</span>,<span class='no'>u</span>~<span class='no'>x</span>+<span class='no'>z</span>)) <span class='co'># SEM with three items</span></div></pre>
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>() <span class='co'># Empty model</span>
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>) <span class='co'># Simple linear regression</span>
+<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span>) <span class='co'># Model with two independent variables (argument)</span>
+<span class='kw'>m3</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span>,<span class='kw'>u</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>z</span>)) <span class='co'># SEM with three items</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -194,7 +199,7 @@ a linear model.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

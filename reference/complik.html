@@ -141,15 +141,15 @@ likelihood decomposition.</p>
     </div>
 
     <pre class="usage"><span class='fu'>complik</span>(
-  <span class='no'>x</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"nearest"</span>),
-  <span class='no'>pairlist</span>,
-  <span class='kw'>messages</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>estimator</span> <span class='kw'>=</span> <span class='st'>"normal"</span>,
-  <span class='kw'>quick</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>data</span>,
+  k = <span class='fl'>2</span>,
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"nearest"</span>),
+  <span class='kw'>pairlist</span>,
+  messages = <span class='fl'>0</span>,
+  estimator = <span class='st'>"normal"</span>,
+  quick = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -205,12 +205,16 @@ information such as standard errors are skipped</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>estimate</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>b</span>*<span class='no'>x</span>+<span class='fl'>1</span>*<span class='no'>u</span>[<span class='fl'>0</span>],<span class='kw'>latent</span><span class='kw'>=</span>~<span class='no'>u</span>)
-<span class='fu'><a href='ordinal-set.html'>ordinal</a></span>(<span class='no'>m</span>,<span class='kw'>K</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='kw'>&lt;-</span> ~<span class='no'>y1</span>+<span class='no'>y2</span>+<span class='no'>y3</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>50</span>,<span class='kw'>seed</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='no'>e1</span> <span class='kw'>&lt;-</span> <span class='fu'>complik</span>(<span class='no'>m</span>,<span class='no'>d</span>,<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span><span class='kw'>=</span><span class='fl'>1</span>),<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"all"</span>)</div><div class='output co'>#&gt;   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000
+    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>b</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>*</span><span class='kw'>u</span>[<span class='fl'>0</span>],latent=<span class='op'>~</span><span class='kw'>u</span>)
+<span class='fu'><a href='ordinal<-.html'>ordinal</a></span>(<span class='kw'>m</span>,K=<span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>50</span>,seed=<span class='fl'>1</span>)
+<span class='kw'>e1</span> <span class='op'>&lt;-</span> <span class='fu'>complik</span>(<span class='kw'>m</span>,<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>),type=<span class='st'>"all"</span>)
+</div><div class='output co'>#&gt;   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000
 #&gt;   1:     163.15053: 0.540600 0.484448 0.209475 0.939309  1.06729
 #&gt;   2:     160.91018: 0.418339 0.334648 -0.188107  1.05711  1.14818
 #&gt;   3:     160.77829: 0.376957 0.300830 -0.155237  1.00706  1.18949
@@ -222,8 +226,8 @@ information such as standard errors are skipped</p></td>
 #&gt;   9:     160.71668: 0.381244 0.299833 -0.167225  1.06316  1.36877
 #&gt;  10:     160.71655: 0.381339 0.300469 -0.169588  1.06363  1.36932
 #&gt;  11:     160.71647: 0.380400 0.300416 -0.170938  1.06481  1.37402
-#&gt;  12:     160.71645: 0.381360 0.299981 -0.170525  1.06481  1.37453
-#&gt;  13:     160.71644: 0.381181 0.300608 -0.170558  1.06511  1.37554
+#&gt;  12:     160.71645: 0.381359 0.299981 -0.170525  1.06481  1.37453
+#&gt;  13:     160.71644: 0.381181 0.300609 -0.170558  1.06511  1.37554
 #&gt;  14:     160.71644: 0.381382 0.300270 -0.170881  1.06528  1.37649
 #&gt;  15:     160.71644: 0.381626 0.300372 -0.170224  1.06543  1.37730
 #&gt;  16:     160.71643: 0.381497 0.300612 -0.170485  1.06571  1.37828
@@ -245,7 +249,7 @@ information such as standard errors are skipped</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

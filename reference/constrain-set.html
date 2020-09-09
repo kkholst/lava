@@ -139,13 +139,13 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'>constrain</span>(<span class='no'>x</span>,<span class='no'>par</span>,<span class='no'>args</span>,<span class='no'>...</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'>constrain</span>(<span class='kw'>x</span>,<span class='kw'>par</span>,<span class='kw'>args</span>,<span class='kw'>...</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S3 method for multigroup</span>
-<span class='fu'>constrain</span>(<span class='no'>x</span>,<span class='no'>par</span>,<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='no'>...</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'>constrain</span>(<span class='kw'>x</span>,<span class='kw'>par</span>,k=<span class='fl'>1</span>,<span class='kw'>...</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
-<span class='fu'>constraints</span>(<span class='no'>object</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='no'>object</span>),<span class='kw'>vcov</span><span class='kw'>=</span><span class='no'>object</span>$<span class='no'>vcov</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>,
-                        <span class='kw'>p</span><span class='kw'>=</span><span class='fu'>pars.default</span>(<span class='no'>object</span>),<span class='no'>k</span>,<span class='no'>idx</span>,<span class='no'>...</span>)</pre>
+<span class='fu'>constraints</span>(<span class='kw'>object</span>,data=<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='kw'>object</span>),vcov=<span class='kw'>object</span><span class='op'>$</span><span class='kw'>vcov</span>,level=<span class='fl'>0.95</span>,
+                        p=<span class='fu'>pars.default</span>(<span class='kw'>object</span>),<span class='kw'>k</span>,<span class='kw'>idx</span>,<span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -254,98 +254,108 @@ attribute is omitted the chain rule will be applied on a numeric
 approximation of the gradient.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='regression-set.html'>regression</a></code>, <code><a href='intercept.html'>intercept</a></code>,
+    <div class='dont-index'><p><code><a href='regression<-.html'>regression</a></code>, <code><a href='intercept.html'>intercept</a></code>,
 <code><a href='covariance.html'>covariance</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>##############################</span>
 <span class='co'>### Non-linear parameter constraints 1</span>
 <span class='co'>##############################</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>x1</span>,<span class='no'>gamma</span>)+<span class='fu'>f</span>(<span class='no'>x2</span>,<span class='no'>beta</span>))
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>v</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>100</span>)
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='no'>m</span>; <span class='fu'>constrain</span>(<span class='no'>m1</span>,<span class='no'>beta</span> ~ <span class='no'>v</span>) <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span>^<span class='fl'>2</span>
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x1</span>,<span class='kw'>gamma</span>)<span class='op'>+</span><span class='fu'>f</span>(<span class='kw'>x2</span>,<span class='kw'>beta</span>))
+<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>v</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>)
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='kw'>m</span>; <span class='fu'>constrain</span>(<span class='kw'>m1</span>,<span class='kw'>beta</span> <span class='op'>~</span> <span class='kw'>v</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span><span class='op'>^</span><span class='fl'>2</span>
 <span class='co'>## Define slope of x2 to be the square of the residual variance of y</span>
 <span class='co'>## Estimate both restricted and unrestricted model</span>
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m</span>,<span class='no'>d</span>,<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"NR"</span>))
-<span class='no'>e1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m1</span>,<span class='no'>d</span>)
-<span class='no'>p1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>e1</span>)
-<span class='no'>p1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>p1</span>[<span class='fl'>1</span>:<span class='fl'>2</span>],<span class='no'>p1</span>[<span class='fl'>3</span>]^<span class='fl'>2</span>,<span class='no'>p1</span>[<span class='fl'>3</span>])
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method=<span class='st'>"NR"</span>))
+<span class='kw'>e1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m1</span>,<span class='kw'>d</span>)
+<span class='kw'>p1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>e1</span>)
+<span class='kw'>p1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>p1</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>],<span class='kw'>p1</span>[<span class='fl'>3</span>]<span class='op'>^</span><span class='fl'>2</span>,<span class='kw'>p1</span>[<span class='fl'>3</span>])
 <span class='co'>## Likelihood of unrestricted model evaluated in MLE of restricted model</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='no'>e</span>,<span class='no'>p1</span>)</div><div class='output co'>#&gt; 'log Lik.' -144.784 (df=4)</div><div class='input'><span class='co'>## Likelihood of restricted model (MLE)</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='no'>e1</span>)</div><div class='output co'>#&gt; 'log Lik.' -144.784 (df=3)</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='kw'>e</span>,<span class='kw'>p1</span>)
+</div><div class='output co'>#&gt; 'log Lik.' -144.784 (df=4)</div><div class='input'><span class='co'>## Likelihood of restricted model (MLE)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='kw'>e1</span>)
+</div><div class='output co'>#&gt; 'log Lik.' -144.784 (df=3)</div><div class='input'>
 <span class='co'>##############################</span>
 <span class='co'>### Non-linear regression</span>
 <span class='co'>##############################</span>
 
 <span class='co'>## Simulate data</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>)~<span class='fu'>f</span>(<span class='no'>x</span>,<span class='fl'>0</span>)+<span class='fu'>f</span>(<span class='no'>eta</span>,<span class='fl'>1</span>))
-<span class='fu'><a href='vars.html'>latent</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> ~<span class='no'>eta</span>
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='no'>m</span>,~<span class='no'>y1</span>+<span class='no'>y2</span>) <span class='kw'>&lt;-</span> <span class='st'>"v"</span>
-<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='no'>m</span>,~<span class='no'>y1</span>+<span class='no'>y2</span>) <span class='kw'>&lt;-</span> <span class='st'>"mu"</span>
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='no'>m</span>,~<span class='no'>eta</span>) <span class='kw'>&lt;-</span> <span class='st'>"zeta"</span>
-<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='no'>m</span>,~<span class='no'>eta</span>) <span class='kw'>&lt;-</span> <span class='fl'>0</span>
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>)<span class='op'>~</span><span class='fu'>f</span>(<span class='kw'>x</span>,<span class='fl'>0</span>)<span class='op'>+</span><span class='fu'>f</span>(<span class='kw'>eta</span>,<span class='fl'>1</span>))
+<span class='fu'><a href='vars.html'>latent</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>eta</span>
+<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span>) <span class='op'>&lt;-</span> <span class='st'>"v"</span>
+<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span>) <span class='op'>&lt;-</span> <span class='st'>"mu"</span>
+<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>eta</span>) <span class='op'>&lt;-</span> <span class='st'>"zeta"</span>
+<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>eta</span>) <span class='op'>&lt;-</span> <span class='fl'>0</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>100</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>v</span><span class='kw'>=</span><span class='fl'>0.01</span>,<span class='kw'>zeta</span><span class='kw'>=</span><span class='fl'>0.01</span>))[,<span class='fu'><a href='vars.html'>manifest</a></span>(<span class='no'>m</span>)]
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='no'>d</span>,
-               <span class='kw'>y1</span><span class='kw'>=</span><span class='no'>y1</span>+<span class='fl'>2</span>*<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>2</span>*<span class='no'>x</span>),
-               <span class='kw'>y2</span><span class='kw'>=</span><span class='no'>y2</span>+<span class='fl'>2</span>*<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>2</span>*<span class='no'>x</span>))
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(v=<span class='fl'>0.01</span>,zeta=<span class='fl'>0.01</span>))[,<span class='fu'><a href='vars.html'>manifest</a></span>(<span class='kw'>m</span>)]
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>d</span>,
+               y1=<span class='kw'>y1</span><span class='op'>+</span><span class='fl'>2</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>2</span><span class='op'>*</span><span class='kw'>x</span>),
+               y2=<span class='kw'>y2</span><span class='op'>+</span><span class='fl'>2</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>2</span><span class='op'>*</span><span class='kw'>x</span>))
 
 <span class='co'>## Specify model and estimate parameters</span>
-<span class='fu'>constrain</span>(<span class='no'>m</span>, <span class='no'>mu</span> ~ <span class='no'>x</span> + <span class='no'>alpha</span> + <span class='no'>nu</span> + <span class='no'>gamma</span>) <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span>[<span class='fl'>4</span>]*<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='no'>x</span>[<span class='fl'>3</span>]+<span class='no'>x</span>[<span class='fl'>1</span>]*<span class='no'>x</span>[<span class='fl'>2</span>])
+<span class='fu'>constrain</span>(<span class='kw'>m</span>, <span class='kw'>mu</span> <span class='op'>~</span> <span class='kw'>x</span> <span class='op'>+</span> <span class='kw'>alpha</span> <span class='op'>+</span> <span class='kw'>nu</span> <span class='op'>+</span> <span class='kw'>gamma</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span>[<span class='fl'>4</span>]<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='kw'>x</span>[<span class='fl'>3</span>]<span class='op'>+</span><span class='kw'>x</span>[<span class='fl'>1</span>]<span class='op'>*</span><span class='kw'>x</span>[<span class='fl'>2</span>])
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m</span>,<span class='no'>d</span>,<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>constrain</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;   0:     95.152055: -1.59936 -0.105361  0.00000  0.00000  0.00000
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>,constrain=<span class='fl'>TRUE</span>))
+</div><div class='output co'>#&gt;   0:     95.152055: -1.59936 -0.105361  0.00000  0.00000  0.00000
 #&gt;   1:     38.372166: -2.18276 0.313970  0.00000  0.00000 0.695563
 #&gt;   2:    -48.631392: -5.42107 -0.457717  1.00498 0.959271  2.42405
 #&gt;   3:    -105.61594: -4.91886 -0.355240  1.37309 0.129419  1.46668
-#&gt;   4:    -152.46013: -4.25655 -1.25021  1.67211 -0.125548  2.24731
-#&gt;   5:    -180.78971: -4.81503 -2.47787  1.62885 -0.253601  1.83976
-#&gt;   6:    -211.28333: -4.80871 -2.49722  1.70839 -0.00201507  2.15835
-#&gt;   7:    -221.43759: -4.99751 -2.78668  1.85800 -0.174273  2.15106
-#&gt;   8:    -234.66131: -4.89742 -3.07152  1.81950 0.0648691  2.00370
-#&gt;   9:    -235.81872: -4.84621 -3.39006  1.92584 -0.172016  2.00849
-#&gt;  10:    -243.54468: -4.84315 -3.41209  1.93840 -0.0450508  2.11931
-#&gt;  11:    -249.92697: -4.91487 -3.54656  1.94515 -0.0534668  2.04374
-#&gt;  12:    -255.87469: -4.87632 -3.87588  1.88862 -0.0315589  2.09476
-#&gt;  13:    -257.75907: -4.87427 -3.99772  1.89083 -0.0859962  2.04418
-#&gt;  14:    -260.62800: -4.95795 -4.02217  1.97157 -0.00862228  2.02770
-#&gt;  15:    -261.37045: -4.93303 -4.07132  1.96533 0.00792825  1.99765
-#&gt;  16:    -262.57238: -4.90751 -4.12616  1.96599 0.0129978  2.02148
-#&gt;  17:    -263.47561: -4.89103 -4.18618  1.97602 0.000430780  2.01046
-#&gt;  18:    -264.87947: -4.85969 -4.31138  1.98012 0.00245567  2.02871
-#&gt;  19:    -265.31714: -4.81145 -4.38796  1.88692 -0.00882272  2.02647
-#&gt;  20:    -266.24030: -4.85667 -4.48846  1.95618 -0.00918059  2.01806
-#&gt;  21:    -266.36927: -4.85544 -4.49011  1.95708 -0.00250636  2.02374
-#&gt;  22:    -266.42691: -4.85201 -4.49493  1.95785 0.000744905  2.01777
-#&gt;  23:    -266.52903: -4.83732 -4.50263  1.96388 0.00407767  2.02003
-#&gt;  24:    -266.85270: -4.78249 -4.55686  1.98000 0.00102889  2.01598
-#&gt;  25:    -267.11134: -4.79062 -4.63490  1.97189 0.00301232  2.01883
-#&gt;  26:    -267.25830: -4.76838 -4.70957  1.98155 0.00924771  2.01328
-#&gt;  27:    -267.27809: -4.74963 -4.75605  1.97690 0.00627003  2.01510
-#&gt;  28:    -267.27984: -4.74889 -4.75331  1.98104 0.00877020  2.01359
-#&gt;  29:    -267.28003: -4.75020 -4.75214  1.98027 0.00821343  2.01379
-#&gt;  30:    -267.28003: -4.75002 -4.75222  1.98016 0.00820169  2.01385
-#&gt;  31:    -267.28003: -4.75004 -4.75224  1.98020 0.00821070  2.01384
-#&gt;  32:    -267.28003: -4.75004 -4.75223  1.98020 0.00821063  2.01384</div><div class='input'><span class='fu'>constraints</span>(<span class='no'>e</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)</div><div class='output co'>#&gt;    Estimate Std. Error  Z value Pr(&gt;|z|)     2.5%    97.5%
+#&gt;   4:    -152.46012: -4.25655 -1.25021  1.67211 -0.125549  2.24731
+#&gt;   5:    -180.78962: -4.81503 -2.47787  1.62885 -0.253601  1.83976
+#&gt;   6:    -211.28332: -4.80871 -2.49722  1.70839 -0.00201508  2.15835
+#&gt;   7:    -221.43757: -4.99751 -2.78668  1.85800 -0.174274  2.15106
+#&gt;   8:    -234.66131: -4.89742 -3.07152  1.81950 0.0648690  2.00370
+#&gt;   9:    -235.81935: -4.84621 -3.39006  1.92584 -0.172015  2.00849
+#&gt;  10:    -243.54491: -4.84315 -3.41209  1.93840 -0.0450527  2.11931
+#&gt;  11:    -249.92687: -4.91487 -3.54656  1.94515 -0.0534681  2.04374
+#&gt;  12:    -255.87451: -4.87632 -3.87586  1.88862 -0.0315692  2.09477
+#&gt;  13:    -257.75878: -4.87429 -3.99772  1.89084 -0.0860013  2.04418
+#&gt;  14:    -260.62786: -4.95798 -4.02216  1.97158 -0.00860819  2.02769
+#&gt;  15:    -261.37053: -4.93304 -4.07135  1.96534 0.00793481  1.99764
+#&gt;  16:    -262.57314: -4.90750 -4.12622  1.96600 0.0130011  2.02147
+#&gt;  17:    -263.47665: -4.89101 -4.18626  1.97603 0.000428893  2.01046
+#&gt;  18:    -264.88079: -4.85965 -4.31151  1.98011 0.00244872  2.02872
+#&gt;  19:    -265.31708: -4.81139 -4.38809  1.88682 -0.00882891  2.02648
+#&gt;  20:    -266.24106: -4.85664 -4.48864  1.95608 -0.00918971  2.01807
+#&gt;  21:    -266.37013: -4.85542 -4.49030  1.95699 -0.00251682  2.02376
+#&gt;  22:    -266.42778: -4.85199 -4.49512  1.95776 0.000736907  2.01778
+#&gt;  23:    -266.52985: -4.83729 -4.50280  1.96382 0.00406924  2.02005
+#&gt;  24:    -266.85257: -4.78250 -4.55683  1.97996 0.00102834  2.01598
+#&gt;  25:    -267.11111: -4.79056 -4.63471  1.97193 0.00301231  2.01881
+#&gt;  26:    -267.25806: -4.76844 -4.70926  1.98150 0.00920930  2.01330
+#&gt;  27:    -267.27812: -4.74965 -4.75598  1.97692 0.00628198  2.01510
+#&gt;  28:    -267.27983: -4.74890 -4.75331  1.98105 0.00877950  2.01358
+#&gt;  29:    -267.28003: -4.75019 -4.75214  1.98027 0.00821313  2.01379
+#&gt;  30:    -267.28003: -4.75002 -4.75222  1.98016 0.00820189  2.01385
+#&gt;  31:    -267.28003: -4.75004 -4.75224  1.98020 0.00821068  2.01384
+#&gt;  32:    -267.28003: -4.75004 -4.75223  1.98020 0.00821063  2.01384</div><div class='input'><span class='fu'>constraints</span>(<span class='kw'>e</span>,data=<span class='kw'>d</span>)
+</div><div class='output co'>#&gt;    Estimate Std. Error  Z value Pr(&gt;|z|)     2.5%    97.5%
 #&gt; mu 1.598142 0.02227334 71.75133        0 1.554487 1.641797</div><div class='input'><span class='co'>## Plot model-fit</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>y1</span>~<span class='no'>x</span>,<span class='no'>d</span>,<span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>16</span>); <span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(<span class='no'>y2</span>~<span class='no'>x</span>,<span class='no'>d</span>,<span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>16</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"gray"</span>)</div><div class='input'><span class='no'>x0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>4</span>,<span class='fl'>4</span>,<span class='kw'>length.out</span><span class='kw'>=</span><span class='fl'>100</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>x0</span>,<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>e</span>)[<span class='st'>"nu"</span>] + <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>e</span>)[<span class='st'>"gamma"</span>]*<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>e</span>)[<span class='st'>"alpha"</span>]*<span class='no'>x0</span>))</div><div class='img'><img src='constrain-set-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>,pch=<span class='fl'>16</span>); <span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(<span class='kw'>y2</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>,pch=<span class='fl'>16</span>,col=<span class='st'>"gray"</span>)
+</div><div class='input'><span class='kw'>x0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>4</span>,<span class='fl'>4</span>,length.out=<span class='fl'>100</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>x0</span>,<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>e</span>)[<span class='st'>"nu"</span>] <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>e</span>)[<span class='st'>"gamma"</span>]<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>e</span>)[<span class='st'>"alpha"</span>]<span class='op'>*</span><span class='kw'>x0</span>))
+</div><div class='img'><img src='constrain-set-1.png' alt='' width='700' height='433' /></div><div class='input'>
 
 <span class='co'>##############################</span>
 <span class='co'>### Multigroup model</span>
 <span class='co'>##############################</span>
 <span class='co'>### Define two models</span>
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>x</span>,<span class='no'>beta</span>)+<span class='fu'>f</span>(<span class='no'>z</span>,<span class='no'>beta2</span>))
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>x</span>,<span class='no'>psi</span>) + <span class='no'>z</span>)
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>beta</span>)<span class='op'>+</span><span class='fu'>f</span>(<span class='kw'>z</span>,<span class='kw'>beta2</span>))
+<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>psi</span>) <span class='op'>+</span> <span class='kw'>z</span>)
 <span class='co'>### And simulate data from them</span>
-<span class='no'>d1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m1</span>,<span class='fl'>500</span>)
-<span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m2</span>,<span class='fl'>500</span>)
+<span class='kw'>d1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m1</span>,<span class='fl'>500</span>)
+<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m2</span>,<span class='fl'>500</span>)
 <span class='co'>### Add 'non'-linear parameter constraint</span>
-<span class='fu'>constrain</span>(<span class='no'>m2</span>,<span class='no'>psi</span> ~ <span class='no'>beta2</span>) <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span>
+<span class='fu'>constrain</span>(<span class='kw'>m2</span>,<span class='kw'>psi</span> <span class='op'>~</span> <span class='kw'>beta2</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span>
 <span class='co'>## Add parameter beta2 to model 2, now beta2 exists in both models</span>
-<span class='fu'><a href='internal.html'>parameter</a></span>(<span class='no'>m2</span>) <span class='kw'>&lt;-</span> ~ <span class='no'>beta2</span>
-<span class='no'>ee</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>m1</span>,<span class='no'>m2</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>d1</span>,<span class='no'>d2</span>),<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"NR"</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>ee</span>)</div><div class='output co'>#&gt; ||score||^2= 2.642461e-17 
+<span class='fu'><a href='startvalues.html'>parameter</a></span>(<span class='kw'>m2</span>) <span class='op'>&lt;-</span> <span class='op'>~</span> <span class='kw'>beta2</span>
+<span class='kw'>ee</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>m1</span>,<span class='kw'>m2</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>d1</span>,<span class='kw'>d2</span>),control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method=<span class='st'>"NR"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>ee</span>)
+</div><div class='output co'>#&gt; ||score||^2= 2.64252e-17 
 #&gt; Latent variables: 
 #&gt; ____________________________________________________
 #&gt; Group 1 (n=500)
@@ -391,12 +401,13 @@ approximation of the gradient.</p>
 #&gt; 
 #&gt; rank(Information) = 7 (p=7)
 #&gt; condition(Information) = 5.215445
-#&gt; mean(score^2) = 3.774945e-18 
+#&gt; mean(score^2) = 3.775029e-18 
 #&gt; ______________________________________________________________________</div><div class='input'>
-<span class='no'>m3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>x</span>,<span class='no'>beta</span>)+<span class='fu'>f</span>(<span class='no'>z</span>,<span class='no'>beta2</span>))
-<span class='no'>m4</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span> ~ <span class='fu'>f</span>(<span class='no'>x</span>,<span class='no'>beta2</span>) + <span class='no'>z</span>)
-<span class='no'>e2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>m3</span>,<span class='no'>m4</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>d1</span>,<span class='no'>d2</span>),<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"NR"</span>))
-<span class='no'>e2</span></div><div class='output co'>#&gt; ____________________________________________________
+<span class='kw'>m3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>beta</span>)<span class='op'>+</span><span class='fu'>f</span>(<span class='kw'>z</span>,<span class='kw'>beta2</span>))
+<span class='kw'>m4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>beta2</span>) <span class='op'>+</span> <span class='kw'>z</span>)
+<span class='kw'>e2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>m3</span>,<span class='kw'>m4</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>d1</span>,<span class='kw'>d2</span>),control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method=<span class='st'>"NR"</span>))
+<span class='kw'>e2</span>
+</div><div class='output co'>#&gt; ____________________________________________________
 #&gt; Group 1 (n=500)
 #&gt;                     Estimate Std. Error  Z value Pr(&gt;|z|)
 #&gt; Regressions:                                             
@@ -432,7 +443,7 @@ approximation of the gradient.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

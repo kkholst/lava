@@ -138,7 +138,7 @@
     <p>Create a Data Frame from All Combinations of Factors</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Expand</span>(<span class='no'>`_data`</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Expand</span>(<span class='kw'>`_data`</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,18 +158,23 @@
     <p>Simple wrapper of the 'expand.grid' function.  If x is a table
 then a data frame is returned with one row pr individual
 observation.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'>Expand</span>(<span class='no'>iris</span>, <span class='kw'>Sepal.Length</span><span class='kw'>=</span><span class='fl'>2</span>:<span class='fl'>8</span>, <span class='kw'>Species</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"virginica"</span>,<span class='st'>"setosa"</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>dd</span>)</div><div class='output co'>#&gt;   Sepal.Length        Species 
+    <pre class="examples"><div class='input'><span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>Expand</span>(<span class='kw'>iris</span>, Sepal.Length=<span class='fl'>2</span><span class='op'>:</span><span class='fl'>8</span>, Species=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"virginica"</span>,<span class='st'>"setosa"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>dd</span>)
+</div><div class='output co'>#&gt;   Sepal.Length        Species 
 #&gt;  Min.   :2.00   setosa    :7  
 #&gt;  1st Qu.:3.25   versicolor:0  
 #&gt;  Median :5.00   virginica :7  
 #&gt;  Mean   :5.00                 
 #&gt;  3rd Qu.:6.75                 
 #&gt;  Max.   :8.00                 </div><div class='input'>
-<span class='no'>T</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='no'>warpbreaks</span>, <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='no'>wool</span>, <span class='no'>tension</span>))
-<span class='fu'>Expand</span>(<span class='no'>T</span>)</div><div class='output co'>#&gt;     wool tension
+<span class='kw'>T</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>warpbreaks</span>, <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='kw'>wool</span>, <span class='kw'>tension</span>))
+<span class='fu'>Expand</span>(<span class='kw'>T</span>)
+</div><div class='output co'>#&gt;     wool tension
 #&gt; 1      A       L
 #&gt; 1.1    A       L
 #&gt; 1.2    A       L
@@ -239,7 +244,7 @@ observation.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

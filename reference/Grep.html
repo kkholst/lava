@@ -138,7 +138,7 @@
     <p>Pattern matching in a vector or column names of a data.frame or matrix.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Grep</span>(<span class='no'>x</span>, <span class='no'>pattern</span>, <span class='kw'>subset</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ignore.case</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Grep</span>(<span class='kw'>x</span>, <span class='kw'>pattern</span>, subset = <span class='fl'>TRUE</span>, ignore.case = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,10 +173,14 @@ matching names in the second.</p>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/r/base/grep.html'>grep</a></code>, and <code><a href='https://rdrr.io/r/base/agrep.html'>agrep</a></code> for approximate string
 matching,</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>iris</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>Grep</span>(<span class='no'>iris</span>,<span class='st'>"(len)|(sp)"</span>))</div><div class='output co'>#&gt;   Sepal.Length Petal.Length Species
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>iris</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>Grep</span>(<span class='kw'>iris</span>,<span class='st'>"(len)|(sp)"</span>))
+</div><div class='output co'>#&gt;   Sepal.Length Petal.Length Species
 #&gt; 1          5.1          1.4  setosa
 #&gt; 2          4.9          1.4  setosa
 #&gt; 3          4.7          1.3  setosa
@@ -198,7 +202,7 @@ matching,</p></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

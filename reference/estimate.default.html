@@ -144,37 +144,37 @@ LRT (when <code>f</code> is not a function)...</p>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
 <span class='fu'>estimate</span>(
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>f</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='no'>data</span>,
-  <span class='no'>id</span>,
-  <span class='no'>iddata</span>,
-  <span class='kw'>stack</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>average</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>subset</span>,
-  <span class='no'>score.deriv</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>iid</span> <span class='kw'>=</span> <span class='no'>robust</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"robust"</span>, <span class='st'>"df"</span>, <span class='st'>"mbn"</span>),
-  <span class='no'>keep</span>,
-  <span class='no'>use</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>contrast</span>,
-  <span class='no'>null</span>,
-  <span class='no'>vcov</span>,
-  <span class='no'>coef</span>,
-  <span class='kw'>robust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>labels</span>,
-  <span class='no'>label.width</span>,
-  <span class='kw'>only.coef</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>back.transform</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>folds</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>cluster</span>,
-  <span class='kw'>R</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>null.sim</span>
+  x = <span class='kw'>NULL</span>,
+  f = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  <span class='kw'>data</span>,
+  <span class='kw'>id</span>,
+  <span class='kw'>iddata</span>,
+  stack = <span class='fl'>TRUE</span>,
+  average = <span class='fl'>FALSE</span>,
+  <span class='kw'>subset</span>,
+  <span class='kw'>score.deriv</span>,
+  level = <span class='fl'>0.95</span>,
+  iid = <span class='kw'>robust</span>,
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"robust"</span>, <span class='st'>"df"</span>, <span class='st'>"mbn"</span>),
+  <span class='kw'>keep</span>,
+  <span class='kw'>use</span>,
+  regex = <span class='fl'>FALSE</span>,
+  <span class='kw'>contrast</span>,
+  <span class='kw'>null</span>,
+  <span class='kw'>vcov</span>,
+  <span class='kw'>coef</span>,
+  robust = <span class='fl'>TRUE</span>,
+  df = <span class='kw'>NULL</span>,
+  print = <span class='kw'>NULL</span>,
+  <span class='kw'>labels</span>,
+  <span class='kw'>label.width</span>,
+  only.coef = <span class='fl'>FALSE</span>,
+  back.transform = <span class='kw'>NULL</span>,
+  folds = <span class='fl'>0</span>,
+  <span class='kw'>cluster</span>,
+  R = <span class='fl'>0</span>,
+  <span class='kw'>null.sim</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -316,14 +316,15 @@ can be extracted with the <code>iid</code> method.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Simulation from logistic regression model</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='no'>x</span>+<span class='no'>z</span>);
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m</span>,<span class='no'>y</span>~<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(<span class='st'>"logit"</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>1000</span>)
-<span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>y</span>~<span class='no'>z</span>+<span class='no'>x</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
-<span class='no'>g0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>y</span>~<span class='fl'>1</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>z</span>);
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(<span class='st'>"logit"</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>1000</span>)
+<span class='kw'>g</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>z</span><span class='op'>+</span><span class='kw'>x</span>,data=<span class='kw'>d</span>,family=<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
+<span class='kw'>g0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span>,data=<span class='kw'>d</span>,family=<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
 
 <span class='co'>## LRT</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='no'>g0</span>)</div><div class='output co'>#&gt; 
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='kw'>g0</span>)
+</div><div class='output co'>#&gt; 
 #&gt; 	- Likelihood ratio test -
 #&gt; 
 #&gt; data:  
@@ -333,12 +334,14 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;                -572.4913                -672.6041 
 #&gt; </div><div class='input'>
 <span class='co'>## Plain estimates (robust standard errors)</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>)</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>)
+</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; (Intercept)  0.05007 0.09463 -0.1354 0.2355 5.967e-01
 #&gt; z            0.99379 0.08444  0.8283 1.1593 5.666e-32
 #&gt; x            0.87090 0.14726  0.5823 1.1595 3.335e-09</div><div class='input'>
 <span class='co'>## Testing contrasts</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>null</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,null=<span class='fl'>0</span>)
+</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; [(Intercept)]  0.05007 0.09463 -0.1354 0.2355 5.967e-01
 #&gt; [z]            0.99379 0.08444  0.8283 1.1593 5.666e-32
 #&gt; [x]            0.87090 0.14726  0.5823 1.1595 3.335e-09
@@ -348,7 +351,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [z] = 0
 #&gt;   [x] = 0 
 #&gt;  
-#&gt; chisq = 166.6092, df = 3, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>2</span>)))</div><div class='output co'>#&gt;                      Estimate Std.Err   2.5% 97.5%   P-value
+#&gt; chisq = 166.6092, df = 3, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>2</span>)))
+</div><div class='output co'>#&gt;                      Estimate Std.Err   2.5% 97.5%   P-value
 #&gt; [(Intercept)] + [z]     1.044  0.1251 0.7987 1.289 7.172e-17
 #&gt; [(Intercept)] + 2[x]    1.792  0.2441 1.3134 2.270 2.131e-13
 #&gt; 
@@ -356,7 +360,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [(Intercept)] + [z] = 0
 #&gt;   [(Intercept)] + 2[x] = 0 
 #&gt;  
-#&gt; chisq = 140.8145, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>2</span>)),<span class='kw'>null</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))</div><div class='output co'>#&gt;                      Estimate Std.Err   2.5% 97.5% P-value
+#&gt; chisq = 140.8145, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>2</span>)),null=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
+</div><div class='output co'>#&gt;                      Estimate Std.Err   2.5% 97.5% P-value
 #&gt; [(Intercept)] + [z]     1.044  0.1251 0.7987 1.289  0.7259
 #&gt; [(Intercept)] + 2[x]    1.792  0.2441 1.3134 2.270  0.3939
 #&gt; 
@@ -364,11 +369,13 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [(Intercept)] + [z] = 1
 #&gt;   [(Intercept)] + 2[x] = 2 
 #&gt;  
-#&gt; chisq = 0.788, df = 2, p-value = 0.6744</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='fl'>2</span>:<span class='fl'>3</span>) <span class='co'>## same as cbind(0,1,-1)</span></div><div class='output co'>#&gt;           Estimate Std.Err    2.5%  97.5% P-value
+#&gt; chisq = 0.788, df = 2, p-value = 0.6744</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span>) <span class='co'>## same as cbind(0,1,-1)</span>
+</div><div class='output co'>#&gt;           Estimate Std.Err    2.5%  97.5% P-value
 #&gt; [z] - [x]   0.1229  0.1526 -0.1762 0.4219  0.4206
 #&gt; 
 #&gt;  Null Hypothesis: 
-#&gt;   [z] - [x] = 0 </div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span>(<span class='fl'>2</span>:<span class='fl'>3</span>)) <span class='co'>## same as rbind(c(0,1,0),c(0,0,1))</span></div><div class='output co'>#&gt;     Estimate Std.Err   2.5% 97.5%   P-value
+#&gt;   [z] - [x] = 0 </div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span>(<span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span>)) <span class='co'>## same as rbind(c(0,1,0),c(0,0,1))</span>
+</div><div class='output co'>#&gt;     Estimate Std.Err   2.5% 97.5%   P-value
 #&gt; [z]   0.9938 0.08444 0.8283 1.159 5.666e-32
 #&gt; [x]   0.8709 0.14726 0.5823 1.160 3.335e-09
 #&gt; 
@@ -377,7 +384,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [x] = 0 
 #&gt;  
 #&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='co'>## Alternative syntax</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='st'>"z"</span>,<span class='st'>"z"</span>-<span class='st'>"x"</span>,<span class='fl'>2</span>*<span class='st'>"z"</span>-<span class='fl'>3</span>*<span class='st'>"x"</span>)</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='st'>"z"</span>,<span class='st'>"z"</span><span class='op'>-</span><span class='st'>"x"</span>,<span class='fl'>2</span><span class='op'>*</span><span class='st'>"z"</span><span class='op'>-</span><span class='fl'>3</span><span class='op'>*</span><span class='st'>"x"</span>)
+</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; [z]           0.9938 0.08444  0.8283 1.1593 5.666e-32
 #&gt; [z] - [x]     0.1229 0.15258 -0.1762 0.4219 4.206e-01
 #&gt; 2[z] - 3[x]  -0.6251 0.43643 -1.4805 0.2303 1.520e-01
@@ -387,7 +395,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [z] - [x] = 0
 #&gt;   2[z] - 3[x] = 0 
 #&gt;  
-#&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='no'>z</span>,<span class='no'>z</span>-<span class='no'>x</span>,<span class='fl'>2</span>*<span class='no'>z</span>-<span class='fl'>3</span>*<span class='no'>x</span>)</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
+#&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='kw'>z</span>,<span class='kw'>z</span><span class='op'>-</span><span class='kw'>x</span>,<span class='fl'>2</span><span class='op'>*</span><span class='kw'>z</span><span class='op'>-</span><span class='fl'>3</span><span class='op'>*</span><span class='kw'>x</span>)
+</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; [z]           0.9938 0.08444  0.8283 1.1593 5.666e-32
 #&gt; [z] - [x]     0.1229 0.15258 -0.1762 0.4219 4.206e-01
 #&gt; 2[z] - 3[x]  -0.6251 0.43643 -1.4805 0.2303 1.520e-01
@@ -397,11 +406,13 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [z] - [x] = 0
 #&gt;   2[z] - 3[x] = 0 
 #&gt;  
-#&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='st'>"?"</span>)  <span class='co'>## Wilcards</span></div><div class='output co'>#&gt;           Estimate Std.Err    2.5%  97.5% P-value
+#&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='st'>"?"</span>)  <span class='co'>## Wilcards</span>
+</div><div class='output co'>#&gt;           Estimate Std.Err    2.5%  97.5% P-value
 #&gt; [z] - [x]   0.1229  0.1526 -0.1762 0.4219  0.4206
 #&gt; 
 #&gt;  Null Hypothesis: 
-#&gt;   [z] - [x] = 0 </div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='st'>"*Int*"</span>,<span class='st'>"z"</span>)</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
+#&gt;   [z] - [x] = 0 </div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='st'>"*Int*"</span>,<span class='st'>"z"</span>)
+</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; [(Intercept)]  0.05007 0.09463 -0.1354 0.2355 5.967e-01
 #&gt; [z]            0.99379 0.08444  0.8283 1.1593 5.666e-32
 #&gt; 
@@ -409,7 +420,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [(Intercept)] = 0
 #&gt;   [z] = 0 
 #&gt;  
-#&gt; chisq = 139.2215, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='st'>"1"</span>,<span class='st'>"2"</span>-<span class='st'>"3"</span>,<span class='kw'>null</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>))</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
+#&gt; chisq = 139.2215, df = 2, p-value &lt; 2.2e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='st'>"1"</span>,<span class='st'>"2"</span><span class='op'>-</span><span class='st'>"3"</span>,null=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>))
+</div><div class='output co'>#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; [(Intercept)]  0.05007 0.09463 -0.1354 0.2355 5.967e-01
 #&gt; [z] - [x]      0.12289 0.15258 -0.1762 0.4219 8.999e-09
 #&gt; 
@@ -417,7 +429,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;   [(Intercept)] = 0
 #&gt;   [z] - [x] = 1 
 #&gt;  
-#&gt; chisq = 58.99, df = 2, p-value = 1.551e-13</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='fl'>2</span>,<span class='fl'>3</span>)</div><div class='output co'>#&gt;     Estimate Std.Err   2.5% 97.5%   P-value
+#&gt; chisq = 58.99, df = 2, p-value = 1.551e-13</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fl'>2</span>,<span class='fl'>3</span>)
+</div><div class='output co'>#&gt;     Estimate Std.Err   2.5% 97.5%   P-value
 #&gt; [z]   0.9938 0.08444 0.8283 1.159 5.666e-32
 #&gt; [x]   0.8709 0.14726 0.5823 1.160 3.335e-09
 #&gt; 
@@ -427,71 +440,84 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt;  
 #&gt; chisq = 149.9225, df = 2, p-value &lt; 2.2e-16</div><div class='input'>
 <span class='co'>## Usual (non-robust) confidence intervals</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;             Estimate Std.Err    2.5% 97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,robust=<span class='fl'>FALSE</span>)
+</div><div class='output co'>#&gt;             Estimate Std.Err    2.5% 97.5%   P-value
 #&gt; (Intercept)  0.05007 0.09892 -0.1438 0.244 6.127e-01
 #&gt; z            0.99379 0.08513  0.8269 1.161 1.730e-31
 #&gt; x            0.87090 0.14578  0.5852 1.157 2.315e-09</div><div class='input'>
 <span class='co'>## Transformations</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>function</span>(<span class='no'>p</span>) <span class='no'>p</span>[<span class='fl'>1</span>]+<span class='no'>p</span>[<span class='fl'>2</span>])</div><div class='output co'>#&gt;             Estimate Std.Err   2.5% 97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'>function</span>(<span class='kw'>p</span>) <span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>+</span><span class='kw'>p</span>[<span class='fl'>2</span>])
+</div><div class='output co'>#&gt;             Estimate Std.Err   2.5% 97.5%   P-value
 #&gt; (Intercept)    1.044  0.1251 0.7987 1.289 7.172e-17</div><div class='input'>
 <span class='co'>## Multiple parameters</span>
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>function</span>(<span class='no'>p</span>) <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>p</span>[<span class='fl'>1</span>]+<span class='no'>p</span>[<span class='fl'>2</span>],<span class='no'>p</span>[<span class='fl'>1</span>]*<span class='no'>p</span>[<span class='fl'>2</span>]))
-<span class='no'>e</span></div><div class='output co'>#&gt;               Estimate Std.Err    2.5% 97.5%   P-value
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'>function</span>(<span class='kw'>p</span>) <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>+</span><span class='kw'>p</span>[<span class='fl'>2</span>],<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>*</span><span class='kw'>p</span>[<span class='fl'>2</span>]))
+<span class='kw'>e</span>
+</div><div class='output co'>#&gt;               Estimate Std.Err    2.5% 97.5%   P-value
 #&gt; (Intercept)    1.04386 0.12510  0.7987 1.289 7.172e-17
-#&gt; (Intercept).1  0.04976 0.09402 -0.1345 0.234 5.966e-01</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>e</span>)</div><div class='output co'>#&gt;             (Intercept) (Intercept)
+#&gt; (Intercept).1  0.04976 0.09402 -0.1345 0.234 5.966e-01</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>e</span>)
+</div><div class='output co'>#&gt;             (Intercept) (Intercept)
 #&gt; (Intercept) 0.015650224 0.009028627
 #&gt; (Intercept) 0.009028627 0.008839434</div><div class='input'>
 <span class='co'>## Label new parameters</span>
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>function</span>(<span class='no'>p</span>) <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"a1"</span><span class='kw'>=</span><span class='no'>p</span>[<span class='fl'>1</span>]+<span class='no'>p</span>[<span class='fl'>2</span>],<span class='st'>"b1"</span><span class='kw'>=</span><span class='no'>p</span>[<span class='fl'>1</span>]*<span class='no'>p</span>[<span class='fl'>2</span>]))</div><div class='output co'>#&gt;    Estimate Std.Err    2.5% 97.5%   P-value
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'>function</span>(<span class='kw'>p</span>) <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"a1"</span>=<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>+</span><span class='kw'>p</span>[<span class='fl'>2</span>],<span class='st'>"b1"</span>=<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>*</span><span class='kw'>p</span>[<span class='fl'>2</span>]))
+</div><div class='output co'>#&gt;    Estimate Std.Err    2.5% 97.5%   P-value
 #&gt; a1  1.04386 0.12510  0.7987 1.289 7.172e-17
 #&gt; b1  0.04976 0.09402 -0.1345 0.234 5.966e-01</div><div class='input'><span class='co'>##'</span>
 <span class='co'>## Multiple group</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='no'>x</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='no'>m</span>)
-<span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='no'>d1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>50</span>)
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>m</span>,<span class='no'>m</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>d1</span>,<span class='no'>d2</span>))
-<span class='fu'>estimate</span>(<span class='no'>e</span>) <span class='co'>## Wrong</span></div><div class='output co'>#&gt;        Estimate Std.Err    2.5%  97.5%   P-value
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='kw'>m</span>)
+<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='kw'>d1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>50</span>)
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>m</span>,<span class='kw'>m</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>d1</span>,<span class='kw'>d2</span>))
+<span class='fu'>estimate</span>(<span class='kw'>e</span>) <span class='co'>## Wrong</span>
+</div><div class='output co'>#&gt;        Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; y@1      -0.112  0.1157 -0.3388 0.1148 3.330e-01
 #&gt; y~x@1     1.021  0.1094  0.8069 1.2357 9.970e-21
-#&gt; y~~y@1    1.051  0.1296  0.7972 1.3053 4.989e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>e</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>d1</span>)),<span class='fl'>2</span>))</div><div class='output co'>#&gt;        Estimate Std.Err    2.5%  97.5%   P-value
+#&gt; y~~y@1    1.051  0.1296  0.7972 1.3053 4.989e-16</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>e</span>,id=<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d1</span>)),<span class='fl'>2</span>))
+</div><div class='output co'>#&gt;        Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; y@1      -0.112  0.1637 -0.4328 0.2087 4.936e-01
 #&gt; y~x@1     1.021  0.1547  0.7181 1.3245 4.062e-11
-#&gt; y~~y@1    1.051  0.1833  0.6920 1.4105 9.700e-09</div><div class='input'><span class='fu'>estimate</span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>y</span>~<span class='no'>x</span>,<span class='no'>d1</span>))</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
+#&gt; y~~y@1    1.051  0.1833  0.6920 1.4105 9.700e-09</div><div class='input'><span class='fu'>estimate</span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d1</span>))
+</div><div class='output co'>#&gt;             Estimate Std.Err    2.5%  97.5%   P-value
 #&gt; (Intercept)   -0.112  0.1637 -0.4328 0.2087 4.936e-01
 #&gt; x              1.021  0.1547  0.7181 1.3245 4.060e-11</div><div class='input'>
 <span class='co'>## Marginalize</span>
-<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>p</span>,<span class='no'>data</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>p0</span><span class='kw'>=</span><span class='kw pkg'>lava</span><span class='kw ns'>:::</span><span class='fu'><a href='internal.html'>expit</a></span>(<span class='no'>p</span>[<span class='st'>"(Intercept)"</span>] + <span class='no'>p</span>[<span class='st'>"z"</span>]*<span class='no'>data</span>[,<span class='st'>"z"</span>]),
-       <span class='kw'>p1</span><span class='kw'>=</span><span class='kw pkg'>lava</span><span class='kw ns'>:::</span><span class='fu'><a href='internal.html'>expit</a></span>(<span class='no'>p</span>[<span class='st'>"(Intercept)"</span>] + <span class='no'>p</span>[<span class='st'>"x"</span>] + <span class='no'>p</span>[<span class='st'>"z"</span>]*<span class='no'>data</span>[,<span class='st'>"z"</span>]))
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='no'>g</span>, <span class='no'>f</span>, <span class='kw'>average</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>e</span></div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%    P-value
+<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>p</span>,<span class='kw'>data</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(p0=<span class='kw'>lava</span>:::<span class='fu'><a href='startvalues.html'>expit</a></span>(<span class='kw'>p</span>[<span class='st'>"(Intercept)"</span>] <span class='op'>+</span> <span class='kw'>p</span>[<span class='st'>"z"</span>]<span class='op'>*</span><span class='kw'>data</span>[,<span class='st'>"z"</span>]),
+       p1=<span class='kw'>lava</span>:::<span class='fu'><a href='startvalues.html'>expit</a></span>(<span class='kw'>p</span>[<span class='st'>"(Intercept)"</span>] <span class='op'>+</span> <span class='kw'>p</span>[<span class='st'>"x"</span>] <span class='op'>+</span> <span class='kw'>p</span>[<span class='st'>"z"</span>]<span class='op'>*</span><span class='kw'>data</span>[,<span class='st'>"z"</span>]))
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='kw'>g</span>, <span class='kw'>f</span>, average=<span class='fl'>TRUE</span>)
+<span class='kw'>e</span>
+</div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%    P-value
 #&gt; p0   0.5135 0.02106 0.4722 0.5548 2.730e-131
-#&gt; p1   0.6857 0.02015 0.6462 0.7252 8.148e-254</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>e</span>,<span class='no'>diff</span>)</div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%   P-value
-#&gt; p1   0.1722  0.0279 0.1175 0.2269 6.753e-10</div><div class='input'><span class='fu'>estimate</span>(<span class='no'>e</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))</div><div class='output co'>#&gt;             Estimate Std.Err 2.5% 97.5% P-value
+#&gt; p1   0.6857 0.02015 0.6462 0.7252 8.148e-254</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>e</span>,<span class='kw'>diff</span>)
+</div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%   P-value
+#&gt; p1   0.1722  0.0279 0.1175 0.2269 6.753e-10</div><div class='input'><span class='fu'>estimate</span>(<span class='kw'>e</span>,<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
+</div><div class='output co'>#&gt;             Estimate Std.Err 2.5% 97.5% P-value
 #&gt; [p0] + [p1]    1.199 0.03034 1.14 1.259       0
 #&gt; 
 #&gt;  Null Hypothesis: 
 #&gt;   [p0] + [p1] = 0 </div><div class='input'>
 <span class='co'>## Clusters and subset (conditional marginal effects)</span>
-<span class='no'>d</span>$<span class='no'>id</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>d</span>)/<span class='fl'>4</span>),<span class='kw'>each</span><span class='kw'>=</span><span class='fl'>4</span>)
-<span class='fu'>estimate</span>(<span class='no'>g</span>,<span class='kw'>function</span>(<span class='no'>p</span>,<span class='no'>data</span>)
-         <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>p0</span><span class='kw'>=</span><span class='kw pkg'>lava</span><span class='kw ns'>:::</span><span class='fu'><a href='internal.html'>expit</a></span>(<span class='no'>p</span>[<span class='fl'>1</span>] + <span class='no'>p</span>[<span class='st'>"z"</span>]*<span class='no'>data</span>[,<span class='st'>"z"</span>])),
-         <span class='kw'>subset</span><span class='kw'>=</span><span class='no'>d</span>$<span class='no'>z</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='kw'>id</span><span class='kw'>=</span><span class='no'>d</span>$<span class='no'>id</span>, <span class='kw'>average</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;    Estimate Std.Err  2.5%  97.5%    P-value
+<span class='kw'>d</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d</span>)<span class='op'>/</span><span class='fl'>4</span>),each=<span class='fl'>4</span>)
+<span class='fu'>estimate</span>(<span class='kw'>g</span>,<span class='fu'>function</span>(<span class='kw'>p</span>,<span class='kw'>data</span>)
+         <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(p0=<span class='kw'>lava</span>:::<span class='fu'><a href='startvalues.html'>expit</a></span>(<span class='kw'>p</span>[<span class='fl'>1</span>] <span class='op'>+</span> <span class='kw'>p</span>[<span class='st'>"z"</span>]<span class='op'>*</span><span class='kw'>data</span>[,<span class='st'>"z"</span>])),
+         subset=<span class='kw'>d</span><span class='op'>$</span><span class='kw'>z</span><span class='op'>&gt;</span><span class='fl'>0</span>, id=<span class='kw'>d</span><span class='op'>$</span><span class='kw'>id</span>, average=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;    Estimate Std.Err  2.5%  97.5%    P-value
 #&gt; p0   0.6853 0.02364 0.639 0.7316 8.719e-185</div><div class='input'>
 <span class='co'>## More examples with clusters:</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>u</span>+<span class='no'>x</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>10</span>)
-<span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>y1</span>~<span class='no'>x</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
-<span class='no'>l2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>y2</span>~<span class='no'>x</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
-<span class='no'>l3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>y3</span>~<span class='no'>x</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span><span class='op'>+</span><span class='kw'>x</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10</span>)
+<span class='kw'>l1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>x</span>,data=<span class='kw'>d</span>)
+<span class='kw'>l2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>y2</span><span class='op'>~</span><span class='kw'>x</span>,data=<span class='kw'>d</span>)
+<span class='kw'>l3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>y3</span><span class='op'>~</span><span class='kw'>x</span>,data=<span class='kw'>d</span>)
 
 <span class='co'>## Some random id-numbers</span>
-<span class='no'>id1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>)
-<span class='no'>id2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>6</span>,<span class='fl'>7</span>,<span class='fl'>8</span>,<span class='fl'>1</span>,<span class='fl'>1</span>)
-<span class='no'>id3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>10</span>)
+<span class='kw'>id1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>)
+<span class='kw'>id2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>6</span>,<span class='fl'>7</span>,<span class='fl'>8</span>,<span class='fl'>1</span>,<span class='fl'>1</span>)
+<span class='kw'>id3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>10</span>)
 
 <span class='co'>## Un-stacked and stacked i.i.d. decomposition</span>
-<span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'>estimate</span>(<span class='no'>l1</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='no'>id1</span>,<span class='kw'>stack</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;    (Intercept)            x
+<span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'>estimate</span>(<span class='kw'>l1</span>,id=<span class='kw'>id1</span>,stack=<span class='fl'>FALSE</span>))
+</div><div class='output co'>#&gt;    (Intercept)            x
 #&gt; 1  0.172497867  0.008106054
 #&gt; 1 -0.022857634  0.005279655
 #&gt; 4  0.103550277 -0.073419312
@@ -505,7 +531,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt; attr(,"bread")
 #&gt;             (Intercept)           x
 #&gt; (Intercept) 0.089353820 0.005329519
-#&gt; x           0.005329519 0.108811009</div><div class='input'><span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'>estimate</span>(<span class='no'>l1</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='no'>id1</span>))</div><div class='output co'>#&gt;   (Intercept)           x
+#&gt; x           0.005329519 0.108811009</div><div class='input'><span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'>estimate</span>(<span class='kw'>l1</span>,id=<span class='kw'>id1</span>))
+</div><div class='output co'>#&gt;   (Intercept)           x
 #&gt; 1  0.23332064  0.06191311
 #&gt; 2 -0.04733003  0.04720609
 #&gt; 3 -0.12282398  0.04293464
@@ -518,10 +545,11 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt; attr(,"N")
 #&gt; [1] 10</div><div class='input'>
 <span class='co'>## Combined i.i.d. decomposition</span>
-<span class='no'>e1</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='no'>l1</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='no'>id1</span>)
-<span class='no'>e2</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='no'>l2</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='no'>id2</span>)
-<span class='no'>e3</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate</span>(<span class='no'>l3</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='no'>id3</span>)
-(<span class='no'>a2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='internal.html'>merge</a></span>(<span class='no'>e1</span>,<span class='no'>e2</span>,<span class='no'>e3</span>))</div><div class='output co'>#&gt;               Estimate Std.Err     2.5% 97.5%   P-value
+<span class='kw'>e1</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='kw'>l1</span>,id=<span class='kw'>id1</span>)
+<span class='kw'>e2</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='kw'>l2</span>,id=<span class='kw'>id2</span>)
+<span class='kw'>e3</span> <span class='op'>&lt;-</span> <span class='fu'>estimate</span>(<span class='kw'>l3</span>,id=<span class='kw'>id3</span>)
+(<span class='kw'>a2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>e1</span>,<span class='kw'>e2</span>,<span class='kw'>e3</span>))
+</div><div class='output co'>#&gt;               Estimate Std.Err     2.5% 97.5%   P-value
 #&gt; (Intercept)     0.5842  0.2861  0.02351 1.145 0.0411359
 #&gt; x               0.4907  0.2649 -0.02848 1.010 0.0639630
 #&gt; _____________                                          
@@ -535,7 +563,8 @@ can be extracted with the <code>iid</code> method.</p>
 <span class='co'>## Reduce(merge,estimate(list(l1,l2,l3)))</span>
 
 <span class='co'>## Same:</span>
-<span class='fu'><a href='iid.html'>iid</a></span>(<span class='no'>a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='internal.html'>merge</a></span>(<span class='no'>l1</span>,<span class='no'>l2</span>,<span class='no'>l3</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>id1</span>,<span class='no'>id2</span>,<span class='no'>id3</span>)))</div><div class='output co'>#&gt;    (Intercept)           x (Intercept).1         x.1 (Intercept).2          x.2
+<span class='fu'><a href='iid.html'>iid</a></span>(<span class='kw'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>l1</span>,<span class='kw'>l2</span>,<span class='kw'>l3</span>,id=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>id1</span>,<span class='kw'>id2</span>,<span class='kw'>id3</span>)))
+</div><div class='output co'>#&gt;    (Intercept)           x (Intercept).1         x.1 (Intercept).2          x.2
 #&gt; 1   0.23332064  0.06191311    0.07130731  0.01191396   0.093734464  0.004404789
 #&gt; 2  -0.04733003  0.04720609   -0.14841748  0.03428146  -0.123829415  0.028602110
 #&gt; 3  -0.12282398  0.04293464   -0.05696788  0.04039142   0.082113479 -0.058220175
@@ -546,7 +575,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt; 8   0.00000000  0.00000000    0.17210628  0.10834689  -0.002522956 -0.001588288
 #&gt; 9   0.00000000  0.00000000    0.00000000  0.00000000  -0.005749861 -0.012991196
 #&gt; 10  0.00000000  0.00000000    0.00000000  0.00000000   0.085155239 -0.074507054</div><div class='input'>
-<span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'><a href='internal.html'>merge</a></span>(<span class='no'>l1</span>,<span class='no'>l2</span>,<span class='no'>l3</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='fl'>TRUE</span>)) <span class='co'># one-to-one (same clusters)</span></div><div class='output co'>#&gt;     (Intercept)            x (Intercept).1          x.1 (Intercept).2
+<span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>l1</span>,<span class='kw'>l2</span>,<span class='kw'>l3</span>,id=<span class='fl'>TRUE</span>)) <span class='co'># one-to-one (same clusters)</span>
+</div><div class='output co'>#&gt;     (Intercept)            x (Intercept).1          x.1 (Intercept).2
 #&gt; 1   0.172497867  0.008106054    0.02954169  0.001388229   0.093734464
 #&gt; 2  -0.022857634  0.005279655   -0.14841748  0.034281459  -0.123829415
 #&gt; 3   0.103550277 -0.073419312   -0.05696788  0.040391419   0.082113479
@@ -567,7 +597,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt; 7   0.264477932
 #&gt; 8  -0.001588288
 #&gt; 9  -0.012991196
-#&gt; 10 -0.074507054</div><div class='input'><span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'><a href='internal.html'>merge</a></span>(<span class='no'>l1</span>,<span class='no'>l2</span>,<span class='no'>l3</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='fl'>FALSE</span>)) <span class='co'># independence</span></div><div class='output co'>#&gt;     (Intercept)            x (Intercept).1          x.1 (Intercept).2
+#&gt; 10 -0.074507054</div><div class='input'><span class='fu'><a href='iid.html'>iid</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>l1</span>,<span class='kw'>l2</span>,<span class='kw'>l3</span>,id=<span class='fl'>FALSE</span>)) <span class='co'># independence</span>
+</div><div class='output co'>#&gt;     (Intercept)            x (Intercept).1          x.1 (Intercept).2
 #&gt; 1   0.172497867  0.008106054    0.00000000  0.000000000   0.000000000
 #&gt; 2  -0.022857634  0.005279655    0.00000000  0.000000000   0.000000000
 #&gt; 3   0.103550277 -0.073419312    0.00000000  0.000000000   0.000000000
@@ -632,14 +663,15 @@ can be extracted with the <code>iid</code> method.</p>
 
 <span class='co'>## Monte Carlo approach, simple trend test example</span>
 
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>categorical</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(),~<span class='no'>x</span>,<span class='kw'>K</span><span class='kw'>=</span><span class='fl'>5</span>)
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>,<span class='kw'>additive</span><span class='kw'>=</span><span class='fl'>TRUE</span>) <span class='kw'>&lt;-</span> <span class='no'>y</span>~<span class='no'>x</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/simulate.html'>simulate</a></span>(<span class='no'>m</span>,<span class='fl'>100</span>,<span class='kw'>seed</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='st'>'y~x'</span><span class='kw'>=</span><span class='fl'>0.1</span>)
-<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>y</span>~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>x</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>categorical</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(),<span class='op'>~</span><span class='kw'>x</span>,K=<span class='fl'>5</span>)
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,additive=<span class='fl'>TRUE</span>) <span class='op'>&lt;-</span> <span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/simulate.html'>simulate</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>,seed=<span class='fl'>1</span>,<span class='st'>'y~x'</span>=<span class='fl'>0.1</span>)
+<span class='kw'>l</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>x</span>),data=<span class='kw'>d</span>)
 
-<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>x</span>~<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span>(<span class='no'>x</span>)))[<span class='fl'>2</span>]
-<span class='no'>null</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>l</span>)),<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>l</span>))) <span class='co'>## just need to make sure we simulate under H0: slope=0</span>
-<span class='fu'>estimate</span>(<span class='no'>l</span>,<span class='no'>f</span>,<span class='kw'>R</span><span class='kw'>=</span><span class='fl'>1e2</span>,<span class='kw'>null.sim</span><span class='kw'>=</span><span class='no'>null</span>)</div><div class='output co'>#&gt; 100 replications
+<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>x</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span>(<span class='kw'>x</span>)))[<span class='fl'>2</span>]
+<span class='kw'>null</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>l</span>)),<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>l</span>))) <span class='co'>## just need to make sure we simulate under H0: slope=0</span>
+<span class='fu'>estimate</span>(<span class='kw'>l</span>,<span class='kw'>f</span>,R=<span class='fl'>1e2</span>,null.sim=<span class='kw'>null</span>)
+</div><div class='output co'>#&gt; 100 replications
 #&gt; 
 #&gt;          seq_along(x)
 #&gt; Mean        -0.011126
@@ -651,7 +683,8 @@ can be extracted with the <code>iid</code> method.</p>
 #&gt; Estimate     0.080949
 #&gt; P-value      0.250000
 #&gt; </div><div class='input'>
-<span class='fu'>estimate</span>(<span class='no'>l</span>,<span class='no'>f</span>)</div><div class='output co'>#&gt;              Estimate Std.Err     2.5%  97.5% P-value
+<span class='fu'>estimate</span>(<span class='kw'>l</span>,<span class='kw'>f</span>)
+</div><div class='output co'>#&gt;              Estimate Std.Err     2.5%  97.5% P-value
 #&gt; seq_along(x)  0.08095 0.06135 -0.03929 0.2012   0.187</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -668,7 +701,7 @@ can be extracted with the <code>iid</code> method.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

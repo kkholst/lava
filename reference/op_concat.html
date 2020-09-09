@@ -140,7 +140,7 @@ data types he operator is a wrapper of paste." />
 data types he operator is a wrapper of <code>paste</code>.</p>
     </div>
 
-    <pre class="usage"><span class='no'>x</span> <span class='kw'>%++%</span> <span class='no'>y</span></pre>
+    <pre class="usage"><span class='kw'>x</span> <span class='op'>%++%</span> <span class='kw'>y</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,10 +161,14 @@ data types he operator is a wrapper of <code>paste</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>blockdiag</code>, <code><a href='https://rdrr.io/r/base/paste.html'>paste</a></code>, <code><a href='https://rdrr.io/r/base/cat.html'>cat</a></code>,</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Block diagonal</span>
-<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)<span class='kw'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)</div><div class='output co'>#&gt;             [,1]       [,2]       [,3]       [,4]        [,5]         [,6]
+<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)<span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)
+</div><div class='output co'>#&gt;             [,1]       [,2]       [,3]       [,4]        [,5]         [,6]
 #&gt;  [1,] -0.2357066  1.1519118  1.7579031 -1.0655906  0.26613736  0.000000000
 #&gt;  [2,] -0.5428883  0.9921604  0.5607461 -1.5637821 -0.37670272  0.000000000
 #&gt;  [3,] -0.4333103 -0.4295131 -0.4527840  1.1565370  2.44136463  0.000000000
@@ -186,9 +190,11 @@ data types he operator is a wrapper of <code>paste</code>.</p>
 #&gt;  [8,] -1.1476570 -0.8919211  0.13333636 -0.69095384
 #&gt;  [9,] -0.2894616  0.4356833  0.80418951 -1.28459935
 #&gt; [10,] -0.2992151 -1.2375384 -0.05710677  0.04672617</div><div class='input'><span class='co'>## String concatenation</span>
-<span class='st'>"Hello "</span><span class='kw'>%++%</span><span class='st'>" World"</span></div><div class='output co'>#&gt; [1] "Hello  World"</div><div class='input'><span class='co'>## Function composition</span>
-<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='no'>log</span> <span class='kw'>%++%</span> <span class='no'>exp</span>
-<span class='fu'>f</span>(<span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] 2</div></pre>
+<span class='st'>"Hello "</span><span class='op'>%++%</span><span class='st'>" World"</span>
+</div><div class='output co'>#&gt; [1] "Hello  World"</div><div class='input'><span class='co'>## Function composition</span>
+<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='kw'>log</span> <span class='op'>%++%</span> <span class='kw'>exp</span>
+<span class='fu'>f</span>(<span class='fl'>2</span>)
+</div><div class='output co'>#&gt; [1] 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -204,7 +210,7 @@ data types he operator is a wrapper of <code>paste</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

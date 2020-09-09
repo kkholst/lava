@@ -139,13 +139,13 @@
     </div>
 
     <pre class="usage"><span class='fu'>NR</span>(
-  <span class='no'>start</span>,
-  <span class='kw'>objective</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>gradient</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>hessian</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>control</span>,
-  <span class='kw'>args</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>start</span>,
+  objective = <span class='kw'>NULL</span>,
+  gradient = <span class='kw'>NULL</span>,
+  hessian = <span class='kw'>NULL</span>,
+  <span class='kw'>control</span>,
+  args = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -196,13 +196,14 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Objective function with gradient and hessian as attributes</span>
-<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>z</span>) {
-   <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>z</span>[<span class='fl'>1</span>]; <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>z</span>[<span class='fl'>2</span>]
-   <span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='no'>x</span>^<span class='fl'>2</span> + <span class='no'>x</span>*<span class='no'>y</span>^<span class='fl'>2</span> + <span class='no'>x</span> + <span class='no'>y</span>
-   <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>val</span>, <span class='kw'>gradient</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>*<span class='no'>x</span>+<span class='no'>y</span>^<span class='fl'>2</span>+<span class='fl'>1</span>, <span class='fl'>2</span>*<span class='no'>y</span>*<span class='no'>x</span>+<span class='fl'>1</span>),
-             <span class='kw'>hessian</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>*<span class='no'>y</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>*<span class='no'>y</span>,<span class='fl'>2</span>*<span class='no'>x</span>)))
+<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>z</span>) {
+   <span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='kw'>z</span>[<span class='fl'>1</span>]; <span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='kw'>z</span>[<span class='fl'>2</span>]
+   <span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='kw'>x</span><span class='op'>^</span><span class='fl'>2</span> <span class='op'>+</span> <span class='kw'>x</span><span class='op'>*</span><span class='kw'>y</span><span class='op'>^</span><span class='fl'>2</span> <span class='op'>+</span> <span class='kw'>x</span> <span class='op'>+</span> <span class='kw'>y</span>
+   <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='kw'>val</span>, gradient=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>y</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>+</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>*</span><span class='kw'>y</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>+</span><span class='fl'>1</span>),
+             hessian=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>*</span><span class='kw'>y</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span><span class='op'>*</span><span class='kw'>y</span>,<span class='fl'>2</span><span class='op'>*</span><span class='kw'>x</span>)))
 }
-<span class='fu'>NR</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='no'>f</span>)</div><div class='output co'>#&gt; $par
+<span class='fu'>NR</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='kw'>f</span>)
+</div><div class='output co'>#&gt; $par
 #&gt; [1] -0.7324166  0.6825751
 #&gt; 
 #&gt; $iterations
@@ -226,8 +227,9 @@
 #&gt; [1] -2.473621
 #&gt; </div><div class='input'>
 <span class='co'># Parsing arguments to the function and</span>
-<span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>,<span class='no'>y</span>) (<span class='no'>x</span>*<span class='no'>y</span>+<span class='fl'>1</span>)^<span class='fl'>2</span>
-<span class='fu'>NR</span>(<span class='fl'>0</span>, <span class='kw'>gradient</span><span class='kw'>=</span><span class='no'>g</span>, <span class='kw'>args</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>2</span>), <span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>tol</span><span class='kw'>=</span><span class='fl'>1e-20</span>))</div><div class='output co'>#&gt; 
+<span class='kw'>g</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>,<span class='kw'>y</span>) (<span class='kw'>x</span><span class='op'>*</span><span class='kw'>y</span><span class='op'>+</span><span class='fl'>1</span>)<span class='op'>^</span><span class='fl'>2</span>
+<span class='fu'>NR</span>(<span class='fl'>0</span>, gradient=<span class='kw'>g</span>, args=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(y=<span class='fl'>2</span>), control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>,tol=<span class='fl'>1e-20</span>))
+</div><div class='output co'>#&gt; 
 #&gt; Iter=0	;	
 #&gt;  	p= 0 
 #&gt; [1] "Numerical Hessian"
@@ -1065,7 +1067,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

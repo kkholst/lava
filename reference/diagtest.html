@@ -141,12 +141,12 @@ negative predictive values</p>
     </div>
 
     <pre class="usage"><span class='fu'>diagtest</span>(
-  <span class='no'>table</span>,
-  <span class='kw'>positive</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>exact</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>p0</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>confint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"logit"</span>, <span class='st'>"arcsin"</span>, <span class='st'>"pseudoscore"</span>, <span class='st'>"exact"</span>),
-  <span class='no'>...</span>
+  <span class='kw'>table</span>,
+  positive = <span class='fl'>2</span>,
+  exact = <span class='fl'>FALSE</span>,
+  p0 = <span class='fl'>NA</span>,
+  confint = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"logit"</span>, <span class='st'>"arcsin"</span>, <span class='st'>"pseudoscore"</span>, <span class='st'>"exact"</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -183,12 +183,16 @@ negative predictive values</p>
     <p>Table should be in the format with outcome in columns and
     test in rows.  Data.frame should be with test in the first
     column and outcome in the second column.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/table.html'>as.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>42</span>,<span class='fl'>12</span>,
-                       <span class='fl'>35</span>,<span class='fl'>28</span>),<span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-                     <span class='kw'>dimnames</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>rater</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>),<span class='kw'>gold</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>))))
-<span class='fu'>diagtest</span>(<span class='no'>M</span>,<span class='kw'>exact</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;                         Estimate Std.Err   2.5%  97.5%  P-value
+    <pre class="examples"><div class='input'><span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/table.html'>as.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>42</span>,<span class='fl'>12</span>,
+                       <span class='fl'>35</span>,<span class='fl'>28</span>),ncol=<span class='fl'>2</span>,byrow=<span class='fl'>TRUE</span>,
+                     dimnames=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(rater=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>),gold=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>))))
+<span class='fu'>diagtest</span>(<span class='kw'>M</span>,exact=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;                         Estimate Std.Err   2.5%  97.5%  P-value
 #&gt; Prevalence                0.3419         0.2567 0.4353         
 #&gt; Test                      0.5385         0.4439 0.6310         
 #&gt; Sensitivity               0.7000         0.5347 0.8344         
@@ -233,7 +237,7 @@ negative predictive values</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

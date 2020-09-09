@@ -141,10 +141,10 @@ define linear constraints between model equations.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'>regression</span>(<span class='kw'>object</span> <span class='kw'>=</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(), <span class='no'>to</span>, <span class='no'>from</span>, <span class='kw'>fn</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-<span class='kw'>messages</span> <span class='kw'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span>()$<span class='no'>messages</span>, <span class='kw'>additive</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='no'>y</span>, <span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>...</span>)
+<span class='fu'>regression</span>(object = <span class='fu'><a href='lvm.html'>lvm</a></span>(), <span class='kw'>to</span>, <span class='kw'>from</span>, fn = <span class='fl'>NA</span>,
+messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>, additive=<span class='fl'>TRUE</span>, <span class='kw'>y</span>, <span class='kw'>x</span>, <span class='kw'>value</span>, <span class='kw'>...</span>)
 <span class='co'># S3 method for lvm</span>
-<span class='fu'>regression</span>(<span class='no'>object</span>, <span class='kw'>to</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='kw'>quick</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='no'>...</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span></pre>
+<span class='fu'>regression</span>(<span class='kw'>object</span>, to=<span class='kw'>NULL</span>, quick=<span class='fl'>FALSE</span>, <span class='kw'>...</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -248,24 +248,30 @@ can be reset by fixing (with \$) them to <code>NA</code>.</p>
     <div class='dont-index'><p><code>intercept&lt;-</code>, <code>covariance&lt;-</code>,
 <code>constrain&lt;-</code>, <code>parameter&lt;-</code>,
 <code>latent&lt;-</code>, <code>cancel&lt;-</code>, <code>kill&lt;-</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>() <span class='co'>## Initialize empty lvm-object</span>
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>() <span class='co'>## Initialize empty lvm-object</span>
 <span class='co'>### E(y1|z,v) = beta1*z + beta2*v</span>
-<span class='fu'>regression</span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='no'>y1</span> ~ <span class='no'>z</span> + <span class='no'>v</span>
+<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y1</span> <span class='op'>~</span> <span class='kw'>z</span> <span class='op'>+</span> <span class='kw'>v</span>
 <span class='co'>### E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u</span>
-<span class='fu'>regression</span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='no'>y2</span> ~ <span class='fu'>f</span>(<span class='no'>x</span>,<span class='no'>beta</span>) + <span class='fu'>f</span>(<span class='no'>z</span>,<span class='no'>beta</span>)  + <span class='fu'>f</span>(<span class='no'>v</span>,<span class='fl'>2</span>) + <span class='no'>u</span>
+<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y2</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>beta</span>) <span class='op'>+</span> <span class='fu'>f</span>(<span class='kw'>z</span>,<span class='kw'>beta</span>)  <span class='op'>+</span> <span class='fu'>f</span>(<span class='kw'>v</span>,<span class='fl'>2</span>) <span class='op'>+</span> <span class='kw'>u</span>
 <span class='co'>### Clear restriction on association between y and</span>
 <span class='co'>### fix slope coefficient of u to beta</span>
-<span class='fu'>regression</span>(<span class='no'>m</span>, <span class='no'>y2</span> ~ <span class='no'>v</span>+<span class='no'>u</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>NA</span>,<span class='st'>"beta"</span>)
+<span class='fu'>regression</span>(<span class='kw'>m</span>, <span class='kw'>y2</span> <span class='op'>~</span> <span class='kw'>v</span><span class='op'>+</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>NA</span>,<span class='st'>"beta"</span>)
 
-<span class='fu'>regression</span>(<span class='no'>m</span>) <span class='co'>## Examine current linear parameter constraints</span></div><div class='output co'>#&gt; Regression parameters:
+<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='co'>## Examine current linear parameter constraints</span>
+</div><div class='output co'>#&gt; Regression parameters:
 #&gt;       y1 z    v y2 x    u   
 #&gt;    y1    *    *             
 #&gt;    y2    beta *    beta beta</div><div class='input'>
 <span class='co'>## ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:</span>
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>) ~ <span class='no'>x1</span>+<span class='no'>x2</span>)</div></pre>
+<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>) <span class='op'>~</span> <span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>)
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -281,7 +287,7 @@ can be reset by fixing (with \$) them to <code>NA</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

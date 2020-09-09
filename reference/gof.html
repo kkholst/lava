@@ -142,31 +142,31 @@ chi-squared test statistic and AIC. Extract model-specific mean and variance
 structure, residuals and various predicitions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gof</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>gof</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'>gof</span>(<span class='no'>object</span>, <span class='kw'>chisq</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.90</span>, <span class='kw'>rmsea.threshold</span><span class='kw'>=</span><span class='fl'>0.05</span>,<span class='kw'>all</span><span class='kw'>=</span><span class='fl'>FALSE</span>,<span class='no'>...</span>)
+<span class='fu'>gof</span>(<span class='kw'>object</span>, chisq=<span class='fl'>FALSE</span>, level=<span class='fl'>0.90</span>, rmsea.threshold=<span class='fl'>0.05</span>,all=<span class='fl'>FALSE</span>,<span class='kw'>...</span>)
 
-<span class='fu'>moments</span>(<span class='no'>x</span>,<span class='no'>...</span>)
+<span class='fu'>moments</span>(<span class='kw'>x</span>,<span class='kw'>...</span>)
 
 <span class='co'># S3 method for lvm</span>
-<span class='fu'>moments</span>(<span class='no'>x</span>, <span class='no'>p</span>, <span class='kw'>debug</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>conditional</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='kw'>latent</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>moments</span>(<span class='kw'>x</span>, <span class='kw'>p</span>, debug=<span class='fl'>FALSE</span>, conditional=<span class='fl'>FALSE</span>, data=<span class='kw'>NULL</span>, latent=<span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='no'>object</span>, <span class='kw'>p</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>object</span>),
-                      <span class='kw'>data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='no'>object</span>),
-                      <span class='kw'>model</span><span class='kw'>=</span><span class='no'>object</span>$<span class='no'>estimator</span>,
-                      <span class='kw'>weights</span><span class='kw'>=</span><span class='fu'><a href='internal.html'>Weights</a></span>(<span class='no'>object</span>),
-                      <span class='kw'>data2</span><span class='kw'>=</span><span class='no'>object</span>$<span class='no'>data</span>$<span class='no'>data2</span>,
-                          <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/logLik.html'>logLik</a></span>(<span class='kw'>object</span>, p=<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>object</span>),
+                      data=<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='kw'>object</span>),
+                      model=<span class='kw'>object</span><span class='op'>$</span><span class='kw'>estimator</span>,
+                      weights=<span class='fu'><a href='startvalues.html'>Weights</a></span>(<span class='kw'>object</span>),
+                      data2=<span class='kw'>object</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>data2</span>,
+                          <span class='kw'>...</span>)
 
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'>score</span>(<span class='no'>x</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='no'>x</span>), <span class='kw'>p</span><span class='kw'>=</span><span class='fu'><a href='internal.html'>pars</a></span>(<span class='no'>x</span>), <span class='kw'>model</span><span class='kw'>=</span><span class='no'>x</span>$<span class='no'>estimator</span>,
-                   <span class='kw'>weights</span><span class='kw'>=</span><span class='fu'><a href='internal.html'>Weights</a></span>(<span class='no'>x</span>), <span class='kw'>data2</span><span class='kw'>=</span><span class='no'>x</span>$<span class='no'>data</span>$<span class='no'>data2</span>, <span class='no'>...</span>)
+<span class='fu'>score</span>(<span class='kw'>x</span>, data=<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='kw'>x</span>), p=<span class='fu'><a href='startvalues.html'>pars</a></span>(<span class='kw'>x</span>), model=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>estimator</span>,
+                   weights=<span class='fu'><a href='startvalues.html'>Weights</a></span>(<span class='kw'>x</span>), data2=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>data2</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'>information</span>(<span class='no'>x</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='fu'><a href='internal.html'>pars</a></span>(<span class='no'>x</span>),<span class='kw'>n</span><span class='kw'>=</span><span class='no'>x</span>$<span class='no'>data</span>$<span class='no'>n</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='no'>x</span>),
-                   <span class='kw'>model</span><span class='kw'>=</span><span class='no'>x</span>$<span class='no'>estimator</span>,<span class='kw'>weights</span><span class='kw'>=</span><span class='fu'><a href='internal.html'>Weights</a></span>(<span class='no'>x</span>), <span class='kw'>data2</span><span class='kw'>=</span><span class='no'>x</span>$<span class='no'>data</span>$<span class='no'>data2</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>information</span>(<span class='kw'>x</span>,p=<span class='fu'><a href='startvalues.html'>pars</a></span>(<span class='kw'>x</span>),n=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>n</span>,data=<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='kw'>x</span>),
+                   model=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>estimator</span>,weights=<span class='fu'><a href='startvalues.html'>Weights</a></span>(<span class='kw'>x</span>), data2=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>data2</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -243,13 +243,17 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>htest</code>-object.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>y</span>~<span class='no'>v1</span>+<span class='no'>v2</span>+<span class='no'>v3</span>+<span class='no'>v4</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>v1</span>,<span class='no'>v2</span>,<span class='no'>v3</span>,<span class='no'>v4</span>)~<span class='no'>x</span>))
+    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>v1</span><span class='op'>+</span><span class='kw'>v2</span><span class='op'>+</span><span class='kw'>v3</span><span class='op'>+</span><span class='kw'>v4</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>v1</span>,<span class='kw'>v2</span>,<span class='kw'>v3</span>,<span class='kw'>v4</span>)<span class='op'>~</span><span class='kw'>x</span>))
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>1000</span>)
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m</span>, <span class='no'>dd</span>)
-<span class='fu'>gof</span>(<span class='no'>e</span>,<span class='kw'>all</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>rmsea.threshold</span><span class='kw'>=</span><span class='fl'>0.05</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.9</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>1000</span>)
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>, <span class='kw'>dd</span>)
+<span class='fu'>gof</span>(<span class='kw'>e</span>,all=<span class='fl'>TRUE</span>,rmsea.threshold=<span class='fl'>0.05</span>,level=<span class='fl'>0.9</span>)
+</div><div class='output co'>#&gt; 
 #&gt;  Number of observations = 1000 
 #&gt;  BIC = 14585.57 
 #&gt;  AIC = 14468.26 
@@ -268,29 +272,32 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></td>
 #&gt; 
 #&gt; rank(Information) = 18 (p=18)
 #&gt; condition(Information) = 10.37525
-#&gt; mean(score^2) = 4.216767e-09 </div><div class='input'>
+#&gt; mean(score^2) = 4.216768e-09 </div><div class='input'>
 
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>u</span>,<span class='no'>y1</span>~<span class='no'>x</span>)); <span class='fu'><a href='vars.html'>latent</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> ~<span class='no'>u</span>
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>u</span>) <span class='kw'>&lt;-</span> <span class='st'>"b"</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>1000</span>)
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m</span>,<span class='no'>d</span>)
-<span class='fu'><a href='internal.html'>rsq</a></span>(<span class='no'>e</span>)</div><div class='output co'>#&gt; $`R-squared`
-#&gt;           y1           y2           y3            u 
-#&gt; 6.714238e-01 5.109812e-01 5.276472e-01 2.220446e-16 
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span>,<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>x</span>)); <span class='fu'><a href='vars.html'>latent</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>u</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='st'>"b"</span>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>1000</span>)
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,<span class='kw'>d</span>)
+<span class='fu'><a href='startvalues.html'>rsq</a></span>(<span class='kw'>e</span>)
+</div><div class='output co'>#&gt; $`R-squared`
+#&gt;            y1            y2            y3             u 
+#&gt;  6.714238e-01  5.109812e-01  5.276472e-01 -6.661338e-16 
 #&gt; 
 #&gt; $`Variance explained by 'u'`
 #&gt;        y1        y2        y3 
 #&gt; 0.3697894 0.5109812 0.5276472 
 #&gt; </div><div class='input'><span class='co'>##'</span>
-<span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='internal.html'>rsq</a></span>(<span class='no'>e</span>,<span class='fl'>TRUE</span>)
-<span class='no'>rr</span></div><div class='output co'>#&gt; 
+<span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='startvalues.html'>rsq</a></span>(<span class='kw'>e</span>,<span class='fl'>TRUE</span>)
+<span class='kw'>rr</span>
+</div><div class='output co'>#&gt; 
 #&gt; R-squared:
 #&gt; 
 #&gt;     Estimate    Std.Err      2.5%     97.5%       P-value
 #&gt; y1 0.6666507 0.02449714 0.6186372 0.7146642 4.506818e-163
 #&gt; y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75
-#&gt; y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91</div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>rr</span>,<span class='kw'>contrast</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,-<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,-<span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,-<span class='fl'>1</span>)))</div><div class='output co'>#&gt;             Estimate Std.Err     2.5%   97.5%   P-value
+#&gt; y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91</div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>rr</span>,contrast=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='op'>-</span><span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='op'>-</span><span class='fl'>1</span>)))
+</div><div class='output co'>#&gt;             Estimate Std.Err     2.5%   97.5%   P-value
 #&gt; [y1] - [y2]  0.16038 0.04040  0.08119 0.23956 7.197e-05
 #&gt; [y1] - [y3]  0.13469 0.03884  0.05857 0.21081 5.244e-04
 #&gt; [y2] - [y3] -0.02569 0.02786 -0.08029 0.02891 3.565e-01
@@ -317,7 +324,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

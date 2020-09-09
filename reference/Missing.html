@@ -138,7 +138,7 @@
     <p>Missing value generator</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Missing</span>(<span class='no'>object</span>, <span class='no'>formula</span>, <span class='no'>Rformula</span>, <span class='no'>missing.name</span>, <span class='kw'>suffix</span> <span class='kw'>=</span> <span class='st'>"0"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Missing</span>(<span class='kw'>object</span>, <span class='kw'>formula</span>, <span class='kw'>Rformula</span>, <span class='kw'>missing.name</span>, suffix = <span class='st'>"0"</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -188,13 +188,17 @@ the suffix</p></td>
     <p>This function adds a binary variable to a given <code>lvm</code> model
 and also a variable which is equal to the original variable where
 the binary variable is equal to zero</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas A. Gerds &lt;tag@biostat.ku.dk&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>lava</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/lava'>lava</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>17</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y0</span>~<span class='no'>x01</span>+<span class='no'>x02</span>+<span class='no'>x03</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>Missing</span>(<span class='no'>m</span>,<span class='kw'>formula</span><span class='kw'>=</span><span class='no'>x1</span>~<span class='no'>x01</span>,<span class='kw'>Rformula</span><span class='kw'>=</span><span class='no'>R1</span>~<span class='fl'>0.3</span>*<span class='no'>x02</span>+-<span class='fl'>0.7</span>*<span class='no'>x01</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>0.4</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>10</span>)</div><div class='output co'>#&gt;            y0         x01        x02         x03 R1        x1
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y0</span><span class='op'>~</span><span class='kw'>x01</span><span class='op'>+</span><span class='kw'>x02</span><span class='op'>+</span><span class='kw'>x03</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>Missing</span>(<span class='kw'>m</span>,formula=<span class='kw'>x1</span><span class='op'>~</span><span class='kw'>x01</span>,Rformula=<span class='kw'>R1</span><span class='op'>~</span><span class='fl'>0.3</span><span class='op'>*</span><span class='kw'>x02</span><span class='op'>+</span><span class='op'>-</span><span class='fl'>0.7</span><span class='op'>*</span><span class='kw'>x01</span>,p=<span class='fl'>0.4</span>)
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;            y0         x01        x02         x03 R1        x1
 #&gt; 1  -0.3307614  1.18078924  0.6810276 -1.17756957  0        NA
 #&gt; 2  -1.0786445  0.64319207 -0.6820334 -0.96016651  0        NA
 #&gt; 3  -0.5398741  1.29532187 -0.7232567 -0.87895224  0        NA
@@ -206,11 +210,12 @@ the binary variable is equal to zero</p>
 #&gt; 9   1.3153836  0.62595440  0.3823621  0.05183012  1 0.6259544
 #&gt; 10 -0.3278672  0.63358473 -0.7114817 -0.61655131  0        NA</div><div class='input'>
 
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='fl'>1</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>Missing</span>(<span class='no'>m</span>,<span class='st'>"y"</span>,<span class='st'>"r"</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>Missing</span>(<span class='kw'>m</span>,<span class='st'>"y"</span>,<span class='st'>"r"</span>)
 <span class='co'>## same as</span>
 <span class='co'>## m &lt;- Missing(m,y~1,r~1)</span>
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>10</span>)</div><div class='output co'>#&gt;              y r          y0
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;              y r          y0
 #&gt; 1   0.07419352 1  0.07419352
 #&gt; 2   1.75169617 0          NA
 #&gt; 3  -0.23148744 0          NA
@@ -222,9 +227,10 @@ the binary variable is equal to zero</p>
 #&gt; 9  -0.02924337 1 -0.02924337
 #&gt; 10 -0.83078338 0          NA</div><div class='input'>
 <span class='co'>## same as</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='fl'>1</span>)
-<span class='fu'>Missing</span>(<span class='no'>m</span>,<span class='st'>"y"</span>) <span class='kw'>&lt;-</span> <span class='no'>r</span>~<span class='no'>x</span>
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>10</span>)</div><div class='output co'>#&gt;              y r          y0          x
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span>)
+<span class='fu'>Missing</span>(<span class='kw'>m</span>,<span class='st'>"y"</span>) <span class='op'>&lt;-</span> <span class='kw'>r</span><span class='op'>~</span><span class='kw'>x</span>
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;              y r          y0          x
 #&gt; 1   0.03054575 1  0.03054575  0.5602348
 #&gt; 2  -0.78551741 0          NA -1.7924178
 #&gt; 3   0.32544056 0          NA -1.5654169
@@ -235,13 +241,14 @@ the binary variable is equal to zero</p>
 #&gt; 8   0.90587760 0          NA  0.3364643
 #&gt; 9   0.91895485 0          NA -0.6404528
 #&gt; 10 -0.55598749 1 -0.55598749  1.8211204</div><div class='input'>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='fl'>1</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>Missing</span>(<span class='no'>m</span>,<span class='st'>"y"</span>,<span class='st'>"r"</span>,<span class='kw'>suffix</span><span class='kw'>=</span><span class='st'>"."</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>Missing</span>(<span class='kw'>m</span>,<span class='st'>"y"</span>,<span class='st'>"r"</span>,suffix=<span class='st'>"."</span>)
 <span class='co'>## same as</span>
 <span class='co'>## m &lt;- Missing(m,"y","r",missing.name="y.")</span>
 <span class='co'>## same as</span>
 <span class='co'>## m &lt;- Missing(m,y.~y,"r")</span>
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>10</span>)</div><div class='output co'>#&gt;              y r          y.
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;              y r          y.
 #&gt; 1   0.46345064 1  0.46345064
 #&gt; 2   0.88066627 1  0.88066627
 #&gt; 3   0.13942195 0          NA
@@ -268,7 +275,7 @@ the binary variable is equal to zero</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

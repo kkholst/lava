@@ -106,18 +106,26 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"lava"</span>, <span class="kw">dependencies</span><span class="kw">=</span><span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"lava"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/demo.html">demo</a></span>(<span class="st">"lava"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"lava"</span>, dependencies=<span class="fl">TRUE</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://kkholst.github.io/lava">"lava"</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/demo.html">demo</a></span>(<span class="st">"lava"</span>)
+</pre></div>
 <p>For graphical capabilities the <code>Rgraphviz</code> package is needed (first install the <code>BiocManager</code> package)</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="co"># install.packages("BiocManager")</span>
-<span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"Rgraphviz"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># install.packages("BiocManager")</span>
+<span class="kw">BiocManager</span>::<span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"Rgraphviz"</span>)
+</pre></div>
 <p>or the <code>igraph</code> or <code>visNetwork</code> packages</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"igraph"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"visNetwork"</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"igraph"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"visNetwork"</span>)
+</pre></div>
 <p>The development version of <code>lava</code> may also be installed directly from <code>github</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="co"># install.packages("remotes")</span>
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/lava"</span>)</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># install.packages("remotes")</span>
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/lava"</span>)
+</pre></div>
 </div>
 <div id="citation" class="section level2">
 <h2 class="hasAnchor">
@@ -155,21 +163,26 @@
 <h3 class="hasAnchor">
 <a href="#structural-equation-model" class="anchor"></a>Structural Equation Model</h3>
 <p>Specify structural equation models with two factors</p>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>()
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">y1</span> + <span class="no">y2</span> + <span class="no">y3</span> ~ <span class="no">eta1</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">z1</span> + <span class="no">z2</span> + <span class="no">z3</span> ~ <span class="no">eta2</span>
-<span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> ~ <span class="no">eta1</span> + <span class="no">eta2</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">eta2</span> ~ <span class="no">eta1</span> + <span class="no">x</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">eta1</span> ~ <span class="no">x</span>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>()
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">y1</span> <span class="op">+</span> <span class="kw">y2</span> <span class="op">+</span> <span class="kw">y3</span> <span class="op">~</span> <span class="kw">eta1</span>
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">z1</span> <span class="op">+</span> <span class="kw">z2</span> <span class="op">+</span> <span class="kw">z3</span> <span class="op">~</span> <span class="kw">eta2</span>
+<span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="op">~</span> <span class="kw">eta1</span> <span class="op">+</span> <span class="kw">eta2</span>
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">eta2</span> <span class="op">~</span> <span class="kw">eta1</span> <span class="op">+</span> <span class="kw">x</span>
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">eta1</span> <span class="op">~</span> <span class="kw">x</span>
 
-<span class="fu"><a href="reference/labels-set.html">labels</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">eta1</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">eta</span>[<span class="fl">1</span>]), <span class="kw">eta2</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">eta</span>[<span class="fl">2</span>]))
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">m</span>)</pre></div>
+<span class="fu"><a href="reference/labels&lt;-.html">labels</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(eta1=<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw">eta</span>[<span class="fl">1</span>]), eta2=<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw">eta</span>[<span class="fl">2</span>]))
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">m</span>)
+</pre></div>
 <p><img src="reference/figures/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulation</p>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>, <span class="fl">100</span>, <span class="kw">seed</span><span class="kw">=</span><span class="fl">1</span>)</pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">m</span>, <span class="fl">100</span>, seed=<span class="fl">1</span>)
+</pre></div>
 <p>Estimation</p>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m</span>, <span class="no">d</span>)
-<span class="no">e</span>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="kw">m</span>, <span class="kw">d</span>)
+<span class="kw">e</span>
 <span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span>
 <span class="co">#&gt; Measurements:                                             </span>
 <span class="co">#&gt;    y2~eta1           0.95462    0.08083 11.80993    &lt;1e-12</span>
@@ -195,32 +208,38 @@
 <span class="co">#&gt;    z1                1.41422    0.26259  5.38570          </span>
 <span class="co">#&gt;    z2                0.87569    0.19463  4.49934          </span>
 <span class="co">#&gt;    z3                1.18155    0.22640  5.21883          </span>
-<span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span></pre></div>
+<span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span>
+</pre></div>
 </div>
 <div id="model-assessment" class="section level3">
 <h3 class="hasAnchor">
 <a href="#model-assessment" class="anchor"></a>Model assessment</h3>
 <p>Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the <code>gof</code> package which can installed from CRAN)</p>
-<div class="sourceCode" id="cb10"><pre class="r"><span class="co"># install.packages("gof")</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">gof</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="co"># install.packages("gof")</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">gof</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
-<span class="no">g</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html">cumres</a></span>(<span class="no">e</span>, <span class="no">eta2</span> ~ <span class="no">eta1</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">g</span>)</pre></div>
+<span class="kw">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html">cumres</a></span>(<span class="kw">e</span>, <span class="kw">eta2</span> <span class="op">~</span> <span class="kw">eta1</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">g</span>)
+</pre></div>
 <p><img src="reference/figures/gof1-1.png" title="plot of chunk gof1" alt="plot of chunk gof1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 <div id="non-linear-measurement-error-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#non-linear-measurement-error-model" class="anchor"></a>Non-linear measurement error model</h3>
 <p>Simulate non-linear model</p>
-<div class="sourceCode" id="cb11"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y1</span> + <span class="no">y2</span> + <span class="no">y3</span> ~ <span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">m</span>,<span class="no">u2</span> ~ <span class="no">u</span>) <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">x</span>^<span class="fl">2</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">z</span>~<span class="no">u2</span>+<span class="no">u</span>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="kw">y1</span> <span class="op">+</span> <span class="kw">y2</span> <span class="op">+</span> <span class="kw">y3</span> <span class="op">~</span> <span class="kw">u</span>, <span class="kw">u</span> <span class="op">~</span> <span class="kw">x</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="kw">m</span>,<span class="kw">u2</span> <span class="op">~</span> <span class="kw">u</span>) <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) <span class="kw">x</span><span class="op">^</span><span class="fl">2</span>
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">z</span><span class="op">~</span><span class="kw">u2</span><span class="op">+</span><span class="kw">u</span>
 
-<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>,<span class="fl">200</span>,<span class="kw">p</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"z"</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="st">"z~u2"</span><span class="kw">=</span>-<span class="fl">0.5</span>), <span class="kw">seed</span><span class="kw">=</span><span class="fl">1</span>)</pre></div>
+<span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">m</span>,<span class="fl">200</span>,p=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"z"</span>=<span class="op">-</span><span class="fl">1</span>, <span class="st">"z~u2"</span>=<span class="op">-</span><span class="fl">0.5</span>), seed=<span class="fl">1</span>)
+</pre></div>
 <p>Stage 1:</p>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="no">m1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">y1</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y2</span>[<span class="fl">0</span>:<span class="no">s</span>], <span class="no">y3</span>[<span class="fl">0</span>:<span class="no">s</span>]) ~ <span class="fl">1</span>*<span class="no">u</span>, <span class="no">u</span> ~ <span class="no">x</span>)
-<span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="no">m1</span>) <span class="kw">&lt;-</span> ~ <span class="no">u</span>
-(<span class="no">e1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m1</span>, <span class="no">d</span>))
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="kw">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">y1</span>[<span class="fl">0</span><span class="op">:</span><span class="kw">s</span>], <span class="kw">y2</span>[<span class="fl">0</span><span class="op">:</span><span class="kw">s</span>], <span class="kw">y3</span>[<span class="fl">0</span><span class="op">:</span><span class="kw">s</span>]) <span class="op">~</span> <span class="fl">1</span><span class="op">*</span><span class="kw">u</span>, <span class="kw">u</span> <span class="op">~</span> <span class="kw">x</span>)
+<span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="kw">m1</span>) <span class="op">&lt;-</span> <span class="op">~</span> <span class="kw">u</span>
+(<span class="kw">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="kw">m1</span>, <span class="kw">d</span>))
 <span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span>
 <span class="co">#&gt; Regressions:                                             </span>
 <span class="co">#&gt;    u~x               1.06998    0.08208 13.03542   &lt;1e-12</span>
@@ -228,39 +247,49 @@
 <span class="co">#&gt;    u                -0.08871    0.08753 -1.01344   0.3108</span>
 <span class="co">#&gt; Residual Variances:                                      </span>
 <span class="co">#&gt;    y1                1.00054    0.07075 14.14214         </span>
-<span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span></pre></div>
+<span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span>
+</pre></div>
 <p>Stage 2</p>
-<div class="sourceCode" id="cb13"><pre class="r"><span class="no">pp</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">mu</span>,<span class="no">var</span>,<span class="no">data</span>,<span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">u</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>], <span class="kw">u2</span><span class="kw">=</span><span class="no">mu</span>[,<span class="st">"u"</span>]^<span class="fl">2</span>+<span class="no">var</span>[<span class="st">"u"</span>,<span class="st">"u"</span>])
-(<span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span>(<span class="no">e1</span>, <span class="no">z</span>~<span class="fl">1</span>+<span class="no">x</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">d</span>, <span class="kw">predictfun</span><span class="kw">=</span><span class="no">pp</span>))
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="kw">pp</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">mu</span>,<span class="kw">var</span>,<span class="kw">data</span>,<span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(u=<span class="kw">mu</span>[,<span class="st">"u"</span>], u2=<span class="kw">mu</span>[,<span class="st">"u"</span>]<span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="kw">var</span>[<span class="st">"u"</span>,<span class="st">"u"</span>])
+(<span class="kw">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span>(<span class="kw">e1</span>, <span class="kw">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="kw">x</span>, data=<span class="kw">d</span>, predictfun=<span class="kw">pp</span>))
 <span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
 <span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span>
 <span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.609e-18</span>
-<span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></pre></div>
-<div class="sourceCode" id="cb14"><pre class="r"><span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">p</span>) <span class="no">p</span>[<span class="fl">1</span>]+<span class="no">p</span>[<span class="st">"u"</span>]*<span class="no">u</span>+<span class="no">p</span>[<span class="st">"u2"</span>]*<span class="no">u</span>^<span class="fl">2</span>
-<span class="no">u</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(-<span class="fl">1</span>, <span class="fl">1</span>, <span class="kw">length.out</span><span class="kw">=</span><span class="fl">100</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">e</span>, <span class="no">f</span>, <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">u</span>))</pre></div>
+<span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span>
+</pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="kw">f</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">p</span>) <span class="kw">p</span>[<span class="fl">1</span>]<span class="op">+</span><span class="kw">p</span>[<span class="st">"u"</span>]<span class="op">*</span><span class="kw">u</span><span class="op">+</span><span class="kw">p</span>[<span class="st">"u2"</span>]<span class="op">*</span><span class="kw">u</span><span class="op">^</span><span class="fl">2</span>
+<span class="kw">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out=<span class="fl">100</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">e</span>, <span class="kw">f</span>, data=<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">u</span>))
+</pre></div>
 <p><img src="reference/figures/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 <div id="simulation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#simulation" class="anchor"></a>Simulation</h3>
 <p>Studying the small-sample properties of a mediation analysis</p>
-<div class="sourceCode" id="cb15"><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">y</span>~<span class="no">x</span>, <span class="no">c</span>~<span class="fl">1</span>)
-<span class="fu"><a href="reference/regression-set.html">regression</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">y</span>+<span class="no">x</span> ~ <span class="no">z</span>
-<span class="fu"><a href="reference/eventTime.html">eventTime</a></span>(<span class="no">m</span>) <span class="kw">&lt;-</span> <span class="no">t</span>~<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="kw">y</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">c</span><span class="kw">=</span><span class="fl">0</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">m</span>,<span class="no">S</span>~<span class="no">t</span>+<span class="no">status</span>) <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="kw pkg">survival</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">x</span>[,<span class="fl">1</span>],<span class="no">x</span>[,<span class="fl">2</span>])</pre></div>
-<div class="sourceCode" id="cb16"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">m</span>)</pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="kw">y</span><span class="op">~</span><span class="kw">x</span>, <span class="kw">c</span><span class="op">~</span><span class="fl">1</span>)
+<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">y</span><span class="op">+</span><span class="kw">x</span> <span class="op">~</span> <span class="kw">z</span>
+<span class="fu"><a href="reference/eventTime.html">eventTime</a></span>(<span class="kw">m</span>) <span class="op">&lt;-</span> <span class="kw">t</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(y=<span class="fl">1</span>, c=<span class="fl">0</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="kw">m</span>,<span class="kw">S</span><span class="op">~</span><span class="kw">t</span><span class="op">+</span><span class="kw">status</span>) <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) <span class="kw">survival</span>::<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">x</span>[,<span class="fl">1</span>],<span class="kw">x</span>[,<span class="fl">2</span>])
+</pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">m</span>)
+</pre></div>
 <p><img src="reference/figures/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulate from model and estimate indirect effects</p>
-<div class="sourceCode" id="cb17"><pre class="r"><span class="no">onerun</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>) {
-    <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">m</span>, <span class="fl">100</span>)
-    <span class="no">m0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="no">S</span>~<span class="no">x</span>+<span class="no">z</span>, <span class="no">x</span>~<span class="no">z</span>)
-    <span class="no">e</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="no">m0</span>, <span class="no">d</span>, <span class="kw">estimator</span><span class="kw">=</span><span class="st">"glm"</span>)
-    <span class="fu"><a href="reference/vec.html">vec</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="fu"><a href="reference/path.html">effects</a></span>(<span class="no">e</span>, <span class="no">S</span>~<span class="no">z</span>))$<span class="no">coef</span>[,<span class="fl">1</span>:<span class="fl">2</span>])
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="kw">onerun</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">...</span>) {
+    <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">m</span>, <span class="fl">100</span>)
+    <span class="kw">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span>(<span class="kw">S</span><span class="op">~</span><span class="kw">x</span><span class="op">+</span><span class="kw">z</span>, <span class="kw">x</span><span class="op">~</span><span class="kw">z</span>)
+    <span class="kw">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="kw">m0</span>, <span class="kw">d</span>, estimator=<span class="st">"glm"</span>)
+    <span class="fu"><a href="reference/vec.html">vec</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="fu"><a href="reference/path.html">effects</a></span>(<span class="kw">e</span>, <span class="kw">S</span><span class="op">~</span><span class="kw">z</span>))<span class="op">$</span><span class="kw">coef</span>[,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>])
 }
-<span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">onerun</span>, <span class="fl">100</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">val</span>, <span class="kw">estimate</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">4</span>, <span class="kw">se</span><span class="kw">=</span><span class="fl">5</span>:<span class="fl">8</span>, <span class="kw">short</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="kw">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">onerun</span>, <span class="fl">100</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">val</span>, estimate=<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se=<span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short=<span class="fl">TRUE</span>)
 <span class="co">#&gt; 100 replications                 Time: 4.49s</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span>
@@ -275,12 +304,15 @@
 <span class="co">#&gt; 97.5%          2.37284         1.39552           1.30304        1.30304</span>
 <span class="co">#&gt; Max            2.51380         1.56400           1.48856        1.48856</span>
 <span class="co">#&gt;                                                                        </span>
-<span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span></pre></div>
+<span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span>
+</pre></div>
 <p>Add additional simulations and visualize results</p>
-<div class="sourceCode" id="cb18"><pre class="r"><span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="no">val</span>,<span class="fl">500</span>) <span class="co">## Add 500 simulations</span>
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">val</span>, <span class="kw">estimate</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span>),
-     <span class="kw">true</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>, <span class="fl">1</span>), <span class="kw">se</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span>),
-     <span class="kw">scatter.plot</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="kw">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">val</span>,<span class="fl">500</span>) <span class="co">## Add 500 simulations</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">val</span>, estimate=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span>),
+     true=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>, <span class="fl">1</span>), se=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span>),
+     scatter.plot=<span class="fl">TRUE</span>)
+</pre></div>
 <p><img src="reference/figures/simres1-1.png" title="plot of chunk simres1" alt="plot of chunk simres1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -338,7 +370,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

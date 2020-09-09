@@ -145,9 +145,9 @@ standard errors.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'>path</span> (<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>from</span>, <span class='kw'>all</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>path</span> (<span class='kw'>object</span>, to = <span class='kw'>NULL</span>, <span class='kw'>from</span>, all=<span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'>effects</span> (<span class='no'>object</span>, <span class='no'>to</span>, <span class='no'>from</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>effects</span> (<span class='kw'>object</span>, <span class='kw'>to</span>, <span class='kw'>from</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,22 +202,30 @@ effects with approximate standard errors</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>children</code>, <code>parents</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>eta</span>)
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='no'>y2</span>~<span class='no'>x1</span>
-<span class='fu'><a href='vars.html'>latent</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> ~<span class='no'>eta</span>
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='no'>eta</span>~<span class='no'>x1</span>+<span class='no'>x2</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>500</span>)
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>m</span>,<span class='no'>d</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>eta</span>)
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y2</span><span class='op'>~</span><span class='kw'>x1</span>
+<span class='fu'><a href='vars.html'>latent</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>eta</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>eta</span><span class='op'>~</span><span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>500</span>)
+<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,<span class='kw'>d</span>)
 
-<span class='fu'>path</span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='no'>e</span>),<span class='no'>y2</span>~<span class='no'>x1</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>path</span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='kw'>e</span>),<span class='kw'>y2</span><span class='op'>~</span><span class='kw'>x1</span>)
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "x1" "y2"
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] "x1"  "eta" "y2" 
-#&gt; </div><div class='input'><span class='fu'><a href='children.html'>parents</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='no'>e</span>), ~<span class='no'>y2</span>)</div><div class='output co'>#&gt; [1] "eta" "x1" </div><div class='input'><span class='fu'><a href='children.html'>children</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='no'>e</span>), ~<span class='no'>x2</span>)</div><div class='output co'>#&gt; [1] "eta"</div><div class='input'><span class='fu'><a href='children.html'>children</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='no'>e</span>), ~<span class='no'>x2</span>+<span class='no'>eta</span>)</div><div class='output co'>#&gt; [1] "eta" "y1"  "y2"  "y3" </div><div class='input'><span class='fu'>effects</span>(<span class='no'>e</span>,<span class='no'>y2</span>~<span class='no'>x1</span>)</div><div class='output co'>#&gt;           Estimate Std.Err z value   Pr(&gt;|z|)
+#&gt; </div><div class='input'><span class='fu'><a href='children.html'>parents</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='kw'>e</span>), <span class='op'>~</span><span class='kw'>y2</span>)
+</div><div class='output co'>#&gt; [1] "eta" "x1" </div><div class='input'><span class='fu'><a href='children.html'>children</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='kw'>e</span>), <span class='op'>~</span><span class='kw'>x2</span>)
+</div><div class='output co'>#&gt; [1] "eta"</div><div class='input'><span class='fu'><a href='children.html'>children</a></span>(<span class='fu'><a href='Model.html'>Model</a></span>(<span class='kw'>e</span>), <span class='op'>~</span><span class='kw'>x2</span><span class='op'>+</span><span class='kw'>eta</span>)
+</div><div class='output co'>#&gt; [1] "eta" "y1"  "y2"  "y3" </div><div class='input'><span class='fu'>effects</span>(<span class='kw'>e</span>,<span class='kw'>y2</span><span class='op'>~</span><span class='kw'>x1</span>)
+</div><div class='output co'>#&gt;           Estimate Std.Err z value   Pr(&gt;|z|)
 #&gt; Total       2.0041 0.06400   31.31 3.111e-215
 #&gt; Direct      0.9491 0.07118   13.33  1.460e-40
 #&gt; Indirect    1.0549 0.07285   14.48  1.599e-47
@@ -225,7 +233,8 @@ effects with approximate standard errors</p>
 #&gt; 
 #&gt;                      Estimate   2.5%  97.5%
 #&gt; Mediation proportion   0.5264 0.4633 0.5895</div><div class='input'><span class='co'>## All simple paths (undirected)</span>
-<span class='fu'>path</span>(<span class='no'>m</span>,<span class='no'>y1</span>~<span class='no'>x1</span>,<span class='kw'>all</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>path</span>(<span class='kw'>m</span>,<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>x1</span>,all=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "x1"  "y2"  "eta" "y1" 
 #&gt; 
 #&gt; [[2]]
@@ -247,7 +256,7 @@ effects with approximate standard errors</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

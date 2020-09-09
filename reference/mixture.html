@@ -139,13 +139,13 @@
     </div>
 
     <pre class="usage"><span class='fu'>mixture</span>(
-  <span class='no'>x</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>k</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>x</span>),
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>vcov</span> <span class='kw'>=</span> <span class='st'>"observed"</span>,
-  <span class='kw'>names</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>data</span>,
+  k = <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>x</span>),
+  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  vcov = <span class='st'>"observed"</span>,
+  names = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -190,7 +190,7 @@ varying between mixture components).</p></td>
 algorithm.</p>
 <p>The performance of the EM algorithm can be tuned via the <code>control</code>
 argument, a list where a subset of the following members can be altered:</p>
-<dl'>
+<dl>
 <dt>start</dt><dd><p>Optional starting values</p></dd> <dt>nstart</dt><dd><p>Evaluate
 <code>nstart</code> different starting values and run the EM-algorithm on the
 parameters with largest likelihood</p></dd> <dt>tol</dt><dd><p>Convergence tolerance of the
@@ -208,30 +208,35 @@ iteration</p></dd>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>mvnmix</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># \donttest{</span>
-<span class='no'>m0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>y</span>~<span class='no'>x</span>+<span class='no'>z</span>,<span class='no'>x</span>~<span class='no'>z</span>))
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m0</span>,~<span class='no'>z</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>()
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m0</span>,<span class='fl'>2000</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y~z"</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='st'>"y~x"</span><span class='kw'>=</span><span class='fl'>1</span>),<span class='kw'>seed</span><span class='kw'>=</span><span class='fl'>1</span>)
+<span class='kw'>m0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>z</span>,<span class='kw'>x</span><span class='op'>~</span><span class='kw'>z</span>))
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m0</span>,<span class='op'>~</span><span class='kw'>z</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>()
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m0</span>,<span class='fl'>2000</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y~z"</span>=<span class='fl'>2</span>,<span class='st'>"y~x"</span>=<span class='fl'>1</span>),seed=<span class='fl'>1</span>)
 
 <span class='co'>## unmeasured confounder example</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='no'>y</span>~<span class='no'>x</span>, <span class='no'>x</span>~<span class='fl'>1</span>));
-<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='no'>m</span>,~<span class='no'>x</span>+<span class='no'>y</span>) <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>, <span class='kw'>x</span><span class='op'>~</span><span class='fl'>1</span>));
+<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>y</span>) <span class='op'>&lt;-</span> <span class='fl'>NA</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>42</span>)
-<span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fu'>mixture</span>(<span class='no'>m</span>,<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>tol</span><span class='kw'>=</span><span class='fl'>1e-6</span>))</div><div class='output co'>#&gt; Squarem-2 
+<span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'>mixture</span>(<span class='kw'>m</span>,k=<span class='fl'>2</span>,data=<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>,tol=<span class='fl'>1e-6</span>))
+</div><div class='output co'>#&gt; Squarem-2 
 #&gt; Residual:  0.02701133   Extrapolation:  TRUE   Steplength:  1 
 #&gt; Residual:  0.03759283   Extrapolation:  TRUE   Steplength:  4 
 #&gt; Residual:  0.6706137   Extrapolation:  TRUE   Steplength:  16 
 #&gt; Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070703 
-#&gt; Residual:  0.001280268   Extrapolation:  TRUE   Steplength:  3.588919 
-#&gt; Residual:  0.0003419158   Extrapolation:  TRUE   Steplength:  6.54822 
-#&gt; Residual:  0.0001613938   Extrapolation:  TRUE   Steplength:  4.503076 
-#&gt; Residual:  0.000107598   Extrapolation:  TRUE   Steplength:  5.973049 
-#&gt; Residual:  2.075485e-05   Extrapolation:  TRUE   Steplength:  3.791125 
-#&gt; Residual:  2.54089e-06   Extrapolation:  TRUE   Steplength:  4.75328 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>M</span>)</div><div class='output co'>#&gt; Cluster 1 (n=1083, Prior=0.5374):
+#&gt; Residual:  0.00128027   Extrapolation:  TRUE   Steplength:  3.588918 
+#&gt; Residual:  0.0003418988   Extrapolation:  TRUE   Steplength:  6.548221 
+#&gt; Residual:  0.0001613911   Extrapolation:  TRUE   Steplength:  4.503032 
+#&gt; Residual:  0.0001075938   Extrapolation:  TRUE   Steplength:  5.972765 
+#&gt; Residual:  2.07561e-05   Extrapolation:  TRUE   Steplength:  3.791501 
+#&gt; Residual:  2.530773e-06   Extrapolation:  TRUE   Steplength:  4.75204 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>M</span>)
+</div><div class='output co'>#&gt; Cluster 1 (n=1083, Prior=0.5374):
 #&gt; --------------------------------------------------
 #&gt;                     Estimate Std. Error Z value  Pr(&gt;|z|)
 #&gt; Regressions:                                             
@@ -256,19 +261,21 @@ iteration</p></dd>
 #&gt;    x                 1.09065  0.05243   20.80367         
 #&gt; --------------------------------------------------
 #&gt; AIC= 13096.52 
-#&gt; ||score||^2= 1.349112e-06 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>y</span>~<span class='no'>x</span>,<span class='no'>d</span>)</div><div class='output co'>#&gt; 
+#&gt; ||score||^2= 1.07796e-06 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>)
+</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; lm(formula = y ~ x, data = d)
 #&gt; 
 #&gt; Coefficients:
 #&gt; (Intercept)            x  
 #&gt;       0.771        1.403  
-#&gt; </div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='no'>M</span>,<span class='st'>"y~x"</span>)</div><div class='output co'>#&gt;       Estimate Std.Err   2.5% 97.5%    P-value
+#&gt; </div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>M</span>,<span class='st'>"y~x"</span>)
+</div><div class='output co'>#&gt;       Estimate Std.Err   2.5% 97.5%    P-value
 #&gt; [y~x]    1.048 0.03811 0.9737 1.123 1.263e-166
 #&gt; 
 #&gt;  Null Hypothesis: 
-#&gt;   [y~x] = 0 </div><div class='input'>## True slope := 1
-# }
+#&gt;   [y~x] = 0 </div><div class='input'><span class='co'>## True slope := 1</span>
+<span class='co'># }</span>
 
 </div></pre>
   </div>
@@ -286,7 +293,7 @@ iteration</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

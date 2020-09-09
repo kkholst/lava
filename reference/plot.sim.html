@@ -139,57 +139,57 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for sim</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(
-  <span class='no'>x</span>,
-  <span class='no'>estimate</span>,
-  <span class='kw'>se</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>true</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>auto.layout</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>byrow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"p"</span>,
-  <span class='kw'>ask</span> <span class='kw'>=</span> <span class='kw pkg'>grDevices</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span>(),
-  <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gray60"</span>, <span class='st'>"orange"</span>, <span class='st'>"darkblue"</span>, <span class='st'>"seagreen"</span>, <span class='st'>"darkred"</span>),
-  <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
-  <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>0.3</span>,
-  <span class='no'>legend</span>,
-  <span class='kw'>legendpos</span> <span class='kw'>=</span> <span class='st'>"topleft"</span>,
-  <span class='kw'>cex.legend</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>plot.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"multiple"</span>, <span class='st'>"single"</span>),
-  <span class='kw'>polygon</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>density</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>angle</span> <span class='kw'>=</span> -<span class='fl'>45</span>,
-  <span class='kw'>cex.axis</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='no'>main</span>,
-  <span class='kw'>cex.main</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>equal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1.15</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>rug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>rug.alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>line.col</span> <span class='kw'>=</span> <span class='no'>scatter.col</span>,
-  <span class='kw'>line.lwd</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>line.lty</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>line.alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>scatter.ylab</span> <span class='kw'>=</span> <span class='st'>"Estimate"</span>,
-  <span class='kw'>scatter.ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>scatter.xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>scatter.alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>scatter.col</span> <span class='kw'>=</span> <span class='no'>col</span>,
-  <span class='kw'>border</span> <span class='kw'>=</span> <span class='no'>col</span>,
-  <span class='kw'>true.lty</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>true.col</span> <span class='kw'>=</span> <span class='st'>"gray70"</span>,
-  <span class='kw'>true.lwd</span> <span class='kw'>=</span> <span class='fl'>1.2</span>,
-  <span class='kw'>density.plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>scatter.plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>running.mean</span> <span class='kw'>=</span> <span class='no'>scatter.plot</span>,
-  <span class='no'>...</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>estimate</span>,
+  se = <span class='kw'>NULL</span>,
+  true = <span class='kw'>NULL</span>,
+  names = <span class='kw'>NULL</span>,
+  auto.layout = <span class='fl'>TRUE</span>,
+  byrow = <span class='fl'>FALSE</span>,
+  type = <span class='st'>"p"</span>,
+  ask = <span class='kw'>grDevices</span>::<span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span>(),
+  col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gray60"</span>, <span class='st'>"orange"</span>, <span class='st'>"darkblue"</span>, <span class='st'>"seagreen"</span>, <span class='st'>"darkred"</span>),
+  pch = <span class='fl'>16</span>,
+  cex = <span class='fl'>0.5</span>,
+  lty = <span class='fl'>1</span>,
+  lwd = <span class='fl'>0.3</span>,
+  <span class='kw'>legend</span>,
+  legendpos = <span class='st'>"topleft"</span>,
+  cex.legend = <span class='fl'>0.8</span>,
+  plot.type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"multiple"</span>, <span class='st'>"single"</span>),
+  polygon = <span class='fl'>TRUE</span>,
+  density = <span class='fl'>0</span>,
+  angle = <span class='op'>-</span><span class='fl'>45</span>,
+  cex.axis = <span class='fl'>0.8</span>,
+  alpha = <span class='fl'>0.2</span>,
+  <span class='kw'>main</span>,
+  cex.main = <span class='fl'>1</span>,
+  equal = <span class='fl'>FALSE</span>,
+  delta = <span class='fl'>1.15</span>,
+  ylim = <span class='kw'>NULL</span>,
+  xlim = <span class='kw'>NULL</span>,
+  ylab = <span class='st'>""</span>,
+  xlab = <span class='st'>""</span>,
+  rug = <span class='fl'>FALSE</span>,
+  rug.alpha = <span class='fl'>0.5</span>,
+  line.col = <span class='kw'>scatter.col</span>,
+  line.lwd = <span class='fl'>1</span>,
+  line.lty = <span class='fl'>1</span>,
+  line.alpha = <span class='fl'>1</span>,
+  scatter.ylab = <span class='st'>"Estimate"</span>,
+  scatter.ylim = <span class='kw'>NULL</span>,
+  scatter.xlim = <span class='kw'>NULL</span>,
+  scatter.alpha = <span class='fl'>0.5</span>,
+  scatter.col = <span class='kw'>col</span>,
+  border = <span class='kw'>col</span>,
+  true.lty = <span class='fl'>2</span>,
+  true.col = <span class='st'>"gray70"</span>,
+  true.lwd = <span class='fl'>1.2</span>,
+  density.plot = <span class='fl'>TRUE</span>,
+  scatter.plot = <span class='fl'>FALSE</span>,
+  running.mean = <span class='kw'>scatter.plot</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -399,14 +399,23 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>1000</span>
-<span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>est1</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>,<span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>1</span>),<span class='kw'>est2</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>,<span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>0.2</span>),<span class='kw'>est3</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>0.5</span>),
-             <span class='kw'>sd1</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='no'>n</span>,<span class='fl'>0.8</span>,<span class='fl'>1.2</span>),<span class='kw'>sd2</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='no'>n</span>,<span class='fl'>0.1</span>,<span class='fl'>0.3</span>),<span class='kw'>sd3</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='no'>n</span>,<span class='fl'>0.25</span>,<span class='fl'>0.75</span>))
+    <pre class="examples"><div class='input'><span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span>
+<span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(est1=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>,sd=<span class='fl'>1</span>),est2=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>,sd=<span class='fl'>0.2</span>),est3=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>,<span class='fl'>1</span>,sd=<span class='fl'>0.5</span>),
+             sd1=<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='fl'>0.8</span>,<span class='fl'>1.2</span>),sd2=<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='fl'>0.1</span>,<span class='fl'>0.3</span>),sd3=<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='fl'>0.25</span>,<span class='fl'>0.75</span>))
 
-<span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>true</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='kw'>se</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>),<span class='kw'>equal</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='kw'>true</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),<span class='kw'>se</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>6</span>),<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>3</span>,<span class='fl'>3</span>),
-        <span class='kw'>scatter.ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>3</span>,<span class='fl'>3</span>),<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>true</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='kw'>se</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>),<span class='kw'>equal</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-        <span class='kw'>plot.type</span><span class='kw'>=</span><span class='st'>"single"</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>),<span class='kw'>se</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>6</span>),<span class='kw'>plot.type</span><span class='kw'>=</span><span class='st'>"single"</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='kw'>equal</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='kw'>equal</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='kw'>plot.type</span><span class='kw'>=</span><span class='st'>"single"</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>),<span class='kw'>plot.type</span><span class='kw'>=</span><span class='st'>"single"</span>,<span class='kw'>scatter.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='plot.sim-8.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'>density.sim</span>(<span class='no'>val</span>,<span class='kw'>estimate</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='kw'>density</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>10</span>,<span class='fl'>10</span>),<span class='kw'>angle</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>45</span>,-<span class='fl'>45</span>))</div><div class='img'><img src='plot.sim-9.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>),equal=<span class='fl'>TRUE</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>6</span>),xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>3</span>,<span class='fl'>3</span>),
+  scatter.ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>3</span>,<span class='fl'>3</span>),scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>),equal=<span class='fl'>TRUE</span>,
+  plot.type=<span class='st'>"single"</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>6</span>),plot.type=<span class='st'>"single"</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),equal=<span class='fl'>TRUE</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),equal=<span class='fl'>TRUE</span>,byrow=<span class='fl'>TRUE</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),plot.type=<span class='st'>"single"</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot.sim</span>(<span class='kw'>val</span>,estimate=<span class='fl'>1</span>,se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>5</span>),plot.type=<span class='st'>"single"</span>,scatter.plot=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='plot.sim-8.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>density.sim</span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),density=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>10</span>,<span class='fl'>10</span>),angle=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>45</span>,<span class='op'>-</span><span class='fl'>45</span>))
+</div><div class='img'><img src='plot.sim-9.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -422,7 +431,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

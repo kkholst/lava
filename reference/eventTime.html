@@ -142,7 +142,7 @@ are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored),
 then one can specify</p>
     </div>
 
-    <pre class="usage"><span class='fu'>eventTime</span>(<span class='no'>object</span>, <span class='no'>formula</span>, <span class='kw'>eventName</span> <span class='kw'>=</span> <span class='st'>"status"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>eventTime</span>(<span class='kw'>object</span>, <span class='kw'>formula</span>, eventName = <span class='st'>"status"</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,15 +173,19 @@ one gets 2 new columns:</p>
 <p>- "ObsTime": the smallest of T1, T2 and C
 - "ObsEvent": 'a' if T1 is smallest, 'b' if T2 is smallest and '0' if C is smallest</p>
 <p>Note that "ObsEvent" and "ObsTime" are names specified by the user.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas A. Gerds, Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Right censored survival data without covariates</span>
-<span class='no'>m0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m0</span>,<span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m0</span>,<span class='st'>"censtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxExponential.lvm</a></span>(<span class='kw'>rate</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>m0</span> <span class='kw'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='no'>m0</span>,<span class='no'>time</span>~<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='kw'>eventtime</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>censtime</span><span class='kw'>=</span><span class='fl'>0</span>),<span class='st'>"status"</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m0</span>,<span class='fl'>10</span>)</div><div class='output co'>#&gt;    eventtime    censtime        time status
+<span class='kw'>m0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m0</span>,<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,shape=<span class='fl'>2</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m0</span>,<span class='st'>"censtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxExponential.lvm</a></span>(rate=<span class='fl'>10</span>)
+<span class='kw'>m0</span> <span class='op'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='kw'>m0</span>,<span class='kw'>time</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(eventtime=<span class='fl'>1</span>,censtime=<span class='fl'>0</span>),<span class='st'>"status"</span>)
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m0</span>,<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;    eventtime    censtime        time status
 #&gt; 1   7.815469  0.02331809  0.02331809      0
 #&gt; 2  17.591054 44.18145768 17.59105429      1
 #&gt; 3   5.754867 28.57459643  5.75486693      1
@@ -200,15 +204,16 @@ one gets 2 new columns:</p>
 <span class='co'># Weibull regression model. The first specifies</span>
 <span class='co'># the effects of covariates as proportional hazard ratios</span>
 <span class='co'># and works as follows:</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m</span>,<span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m</span>,<span class='st'>"censtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='no'>m</span>,<span class='no'>time</span>~<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='kw'>eventtime</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>censtime</span><span class='kw'>=</span><span class='fl'>0</span>),<span class='st'>"status"</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m</span>,<span class='st'>"sex"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>0.4</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>m</span>,<span class='st'>"sbp"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>normal.lvm</a></span>(<span class='kw'>mean</span><span class='kw'>=</span><span class='fl'>120</span>,<span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>20</span>)
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>,<span class='kw'>from</span><span class='kw'>=</span><span class='st'>"sex"</span>,<span class='kw'>to</span><span class='kw'>=</span><span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fl'>0.4</span>
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>m</span>,<span class='kw'>from</span><span class='kw'>=</span><span class='st'>"sbp"</span>,<span class='kw'>to</span><span class='kw'>=</span><span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> -<span class='fl'>0.01</span>
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>6</span>)</div><div class='output co'>#&gt;   eventtime  censtime      time status sex       sbp
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,shape=<span class='fl'>2</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='st'>"censtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,shape=<span class='fl'>2</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='kw'>m</span>,<span class='kw'>time</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(eventtime=<span class='fl'>1</span>,censtime=<span class='fl'>0</span>),<span class='st'>"status"</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='st'>"sex"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(p=<span class='fl'>0.4</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='st'>"sbp"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>normal.lvm</a></span>(mean=<span class='fl'>120</span>,sd=<span class='fl'>20</span>)
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,from=<span class='st'>"sex"</span>,to=<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fl'>0.4</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,from=<span class='st'>"sbp"</span>,to=<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='op'>-</span><span class='fl'>0.01</span>
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>6</span>)
+</div><div class='output co'>#&gt;   eventtime  censtime      time status sex       sbp
 #&gt; 1 37.577288 12.765574 12.765574      0   0 121.61477
 #&gt; 2 16.421736  5.954529  5.954529      0   1 140.55812
 #&gt; 3 13.326190  3.806308  3.806308      0   1 155.36751
@@ -216,15 +221,15 @@ one gets 2 new columns:</p>
 #&gt; 5 12.986468  8.804785  8.804785      0   1  74.48927
 #&gt; 6 10.541387  9.934873  9.934873      0   0  83.13964</div><div class='input'><span class='co'># The parameters can be recovered using a Cox regression</span>
 <span class='co'># routine or a Weibull regression model. E.g.,</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
     <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>18</span>)
-    <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>1000</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survival</span>)
-    <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>sex</span>+<span class='no'>sbp</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
+    <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>1000</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/therneau/survival'>survival</a></span>)
+    <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>sex</span><span class='op'>+</span><span class='kw'>sbp</span>,data=<span class='kw'>d</span>)
 
-    <span class='no'>sr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/survreg.html'>survreg</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>sex</span>+<span class='no'>sbp</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>SurvRegCensCov</span>)
-    <span class='fu'>ConvertWeibull</span>(<span class='no'>sr</span>)
+    <span class='kw'>sr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/survreg.html'>survreg</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>sex</span><span class='op'>+</span><span class='kw'>sbp</span>,data=<span class='kw'>d</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>SurvRegCensCov</span>)
+    <span class='fu'>ConvertWeibull</span>(<span class='kw'>sr</span>)
 
 }
 
@@ -233,16 +238,17 @@ one gets 2 new columns:</p>
 <span class='co'># of coxWeibull.lvm to specify the event time distributions.</span>
 <span class='co'># Here is an example:</span>
 
-<span class='no'>ma</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>ma</span>,<span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>3</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>0.7</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>ma</span>,<span class='st'>"censtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>0.7</span>)
-<span class='no'>ma</span> <span class='kw'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='no'>ma</span>,<span class='no'>time</span>~<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='kw'>eventtime</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>censtime</span><span class='kw'>=</span><span class='fl'>0</span>),<span class='st'>"status"</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>ma</span>,<span class='st'>"sex"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>0.4</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>ma</span>,<span class='st'>"sbp"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>normal.lvm</a></span>(<span class='kw'>mean</span><span class='kw'>=</span><span class='fl'>120</span>,<span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>20</span>)
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>ma</span>,<span class='kw'>from</span><span class='kw'>=</span><span class='st'>"sex"</span>,<span class='kw'>to</span><span class='kw'>=</span><span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fl'>0.7</span>
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>ma</span>,<span class='kw'>from</span><span class='kw'>=</span><span class='st'>"sbp"</span>,<span class='kw'>to</span><span class='kw'>=</span><span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> -<span class='fl'>0.008</span>
+<span class='kw'>ma</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>ma</span>,<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(scale=<span class='fl'>3</span>,shape=<span class='fl'>0.7</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>ma</span>,<span class='st'>"censtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(scale=<span class='fl'>2</span>,shape=<span class='fl'>0.7</span>)
+<span class='kw'>ma</span> <span class='op'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='kw'>ma</span>,<span class='kw'>time</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(eventtime=<span class='fl'>1</span>,censtime=<span class='fl'>0</span>),<span class='st'>"status"</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>ma</span>,<span class='st'>"sex"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(p=<span class='fl'>0.4</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>ma</span>,<span class='st'>"sbp"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>normal.lvm</a></span>(mean=<span class='fl'>120</span>,sd=<span class='fl'>20</span>)
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>ma</span>,from=<span class='st'>"sex"</span>,to=<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fl'>0.7</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>ma</span>,from=<span class='st'>"sbp"</span>,to=<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='op'>-</span><span class='fl'>0.008</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>17</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>ma</span>,<span class='fl'>6</span>)</div><div class='output co'>#&gt;   eventtime  censtime      time status sex       sbp
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>ma</span>,<span class='fl'>6</span>)
+</div><div class='output co'>#&gt;   eventtime  censtime      time status sex       sbp
 #&gt; 1 0.5531481 1.1285503 0.5531481      1   1  99.69983
 #&gt; 2 4.2973225 1.4665922 1.4665922      0   1 118.40727
 #&gt; 3 1.5884110 0.4704796 0.4704796      0   1 115.34026
@@ -251,13 +257,13 @@ one gets 2 new columns:</p>
 #&gt; 6 1.5803203 0.6912997 0.6912997      0   0 116.68776</div><div class='input'><span class='co'># The regression coefficients of the AFT model</span>
 <span class='co'># can be tranformed into log(hazard ratios):</span>
 <span class='co'>#  coef.coxWeibull = - coef.weibull / shape.weibull</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
     <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>17</span>)
-    <span class='no'>da</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>ma</span>,<span class='fl'>1000</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survival</span>)
-    <span class='no'>fa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>sex</span>+<span class='no'>sbp</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>da</span>)
-    <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>fa</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.7</span>,-<span class='fl'>0.008</span>)/<span class='fl'>0.7</span>
+    <span class='kw'>da</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>ma</span>,<span class='fl'>1000</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/therneau/survival'>survival</a></span>)
+    <span class='kw'>fa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>sex</span><span class='op'>+</span><span class='kw'>sbp</span>,data=<span class='kw'>da</span>)
+    <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>fa</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.7</span>,<span class='op'>-</span><span class='fl'>0.008</span>)<span class='op'>/</span><span class='fl'>0.7</span>
 }
 
 
@@ -268,22 +274,24 @@ one gets 2 new columns:</p>
 <span class='co'># Thus, the following are equivalent parametrizations</span>
 <span class='co'># which produce exactly the same random numbers:</span>
 
-<span class='no'>model.aft</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>model.aft</span>,<span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span>-<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1</span>/<span class='fl'>100</span>)/<span class='fl'>2</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>model.aft</span>,<span class='st'>"censtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span>-<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1</span>/<span class='fl'>100</span>)/<span class='fl'>2</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>0.5</span>)
+<span class='kw'>model.aft</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>model.aft</span>,<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(scale=<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>)<span class='op'>/</span><span class='fl'>2</span>,shape=<span class='fl'>0.5</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>model.aft</span>,<span class='st'>"censtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>weibull.lvm</a></span>(scale=<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>)<span class='op'>/</span><span class='fl'>2</span>,shape=<span class='fl'>0.5</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>17</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>model.aft</span>,<span class='fl'>6</span>)</div><div class='output co'>#&gt;   eventtime  censtime
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>model.aft</span>,<span class='fl'>6</span>)
+</div><div class='output co'>#&gt;   eventtime  censtime
 #&gt; 1  2.890253 3.1436842
 #&gt; 2  2.981019 0.4127472
 #&gt; 3  1.147834 2.0056626
 #&gt; 4  2.948915 1.1571425
 #&gt; 5  2.103028 2.1804985
 #&gt; 6  5.680430 1.8107400</div><div class='input'>
-<span class='no'>model.cox</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>model.cox</span>,<span class='st'>"eventtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>model.cox</span>,<span class='st'>"censtime"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>,<span class='kw'>shape</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>model.cox</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>model.cox</span>,<span class='st'>"eventtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,shape=<span class='fl'>2</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>model.cox</span>,<span class='st'>"censtime"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,shape=<span class='fl'>2</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>17</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>model.cox</span>,<span class='fl'>6</span>)</div><div class='output co'>#&gt;   eventtime  censtime
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>model.cox</span>,<span class='fl'>6</span>)
+</div><div class='output co'>#&gt;   eventtime  censtime
 #&gt; 1 12.552208 13.652847
 #&gt; 2 12.946401  1.792538
 #&gt; 3  4.984980  8.710482
@@ -294,15 +302,16 @@ one gets 2 new columns:</p>
 <span class='co'># being a censoring time, yield</span>
 <span class='co'># right censored competing risks data</span>
 
-<span class='no'>mc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>mc</span>,~<span class='no'>X2</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>()
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>mc</span>) <span class='kw'>&lt;-</span> <span class='no'>T1</span>~<span class='fu'>f</span>(<span class='no'>X1</span>,-<span class='fl'>.5</span>)+<span class='fu'>f</span>(<span class='no'>X2</span>,<span class='fl'>0.3</span>)
-<span class='fu'><a href='regression-set.html'>regression</a></span>(<span class='no'>mc</span>) <span class='kw'>&lt;-</span> <span class='no'>T2</span>~<span class='fu'>f</span>(<span class='no'>X2</span>,<span class='fl'>0.6</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>mc</span>,~<span class='no'>T1</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>mc</span>,~<span class='no'>T2</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='no'>mc</span>,~<span class='no'>C</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(<span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fl'>100</span>)
-<span class='no'>mc</span> <span class='kw'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='no'>mc</span>,<span class='no'>time</span>~<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='kw'>T1</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>T2</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>C</span><span class='kw'>=</span><span class='fl'>0</span>),<span class='st'>"event"</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>mc</span>,<span class='fl'>6</span>)</div><div class='output co'>#&gt;   X2       T1        X1        T2         C     time event
+<span class='kw'>mc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>mc</span>,<span class='op'>~</span><span class='kw'>X2</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span>()
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>mc</span>) <span class='op'>&lt;-</span> <span class='kw'>T1</span><span class='op'>~</span><span class='fu'>f</span>(<span class='kw'>X1</span>,<span class='op'>-</span><span class='fl'>.5</span>)<span class='op'>+</span><span class='fu'>f</span>(<span class='kw'>X2</span>,<span class='fl'>0.3</span>)
+<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>mc</span>) <span class='op'>&lt;-</span> <span class='kw'>T2</span><span class='op'>~</span><span class='fu'>f</span>(<span class='kw'>X2</span>,<span class='fl'>0.6</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>mc</span>,<span class='op'>~</span><span class='kw'>T1</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>mc</span>,<span class='op'>~</span><span class='kw'>T2</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>)
+<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>mc</span>,<span class='op'>~</span><span class='kw'>C</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>coxWeibull.lvm</a></span>(scale=<span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>)
+<span class='kw'>mc</span> <span class='op'>&lt;-</span> <span class='fu'>eventTime</span>(<span class='kw'>mc</span>,<span class='kw'>time</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(T1=<span class='fl'>1</span>,T2=<span class='fl'>2</span>,C=<span class='fl'>0</span>),<span class='st'>"event"</span>)
+<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>mc</span>,<span class='fl'>6</span>)
+</div><div class='output co'>#&gt;   X2       T1        X1        T2         C     time event
 #&gt; 1  0 7.087078 0.9728744 11.814841  3.204723 3.204723     0
 #&gt; 2  0 9.105653 1.7165340  7.716248 15.423587 7.716248     2
 #&gt; 3  1 5.069985 0.2552370  8.918131  7.444486 5.069985     1
@@ -326,7 +335,7 @@ one gets 2 new columns:</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -140,7 +140,7 @@ z-transform" />
 z-transform</p>
     </div>
 
-    <pre class="usage"><span class='fu'>partialcor</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>partialcor</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, level = <span class='fl'>0.95</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,13 +167,17 @@ to calculate partial correlation for</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A coefficient matrix</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>x1</span>+<span class='no'>x2</span>)
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='no'>m</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>)~<span class='no'>y1</span>+<span class='no'>y2</span>+<span class='no'>y3</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>500</span>)
-<span class='fu'>partialcor</span>(~<span class='no'>x1</span>+<span class='no'>x2</span>,<span class='no'>d</span>)</div><div class='output co'>#&gt;             cor        z         pval   lowerCI   upperCI
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>)
+<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>500</span>)
+<span class='fu'>partialcor</span>(<span class='op'>~</span><span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>,<span class='kw'>d</span>)
+</div><div class='output co'>#&gt;             cor        z         pval   lowerCI   upperCI
 #&gt; y1~y2 0.5362128 13.30955 2.037164e-40 0.4704451 0.5960563
 #&gt; y1~y3 0.5179408 12.74715 3.233467e-37 0.4505088 0.5794966
 #&gt; y2~y3 0.5307336 13.13932 1.959856e-39 0.4644598 0.5910959</div><div class='input'>
@@ -193,7 +197,7 @@ to calculate partial correlation for</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>
