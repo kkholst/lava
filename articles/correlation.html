@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-09-09</h4>
+            <h4 class="date">2020-09-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/correlation.Rmd"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -316,22 +316,22 @@ z 0.8720834 0.9081964</code></pre>
 <span class="kw">b</span>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -0.0054119135  0.0012690331  0.0433352513 -0.0905565418  0.0799979226</span>
-<span class="co">#&gt; y2   -0.0271494916  0.0003748677  0.0455135490 -0.1184166340  0.0618234100</span>
-<span class="co">#&gt; y1~x  0.9330043509  0.0007848204  0.0458206895  0.8404128914  1.0227921128</span>
-<span class="co">#&gt; y2~x  0.9165185250  0.0005941837  0.0449754959  0.8325109150  1.0063339584</span>
-<span class="co">#&gt; l1    0.0041846522 -0.0063099434  0.0619878521 -0.1261950334  0.1185723173</span>
-<span class="co">#&gt; l2    0.0416361064 -0.0074801451  0.0607785799 -0.0912781681  0.1487575901</span>
-<span class="co">#&gt; z     1.4294227075  0.0016041389  0.0414845262  1.3502011050  1.5142562632</span>
-<span class="co">#&gt; v1    1.0041934200 -0.0043992608  0.0620319286  0.8814429192  1.1258882926</span>
-<span class="co">#&gt; v2    1.0425150452 -0.0058622972  0.0628506691  0.9127637915  1.1603916706</span>
-<span class="co">#&gt; c1    0.9122097189 -0.0044347637  0.0580865825  0.7961777435  1.0288975697</span>
+<span class="co">#&gt;      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
+<span class="co">#&gt; y1   -0.005411914 -0.001172633  0.045641233 -0.095681252  0.084382238</span>
+<span class="co">#&gt; y2   -0.027149492 -0.000455828  0.045103714 -0.117924690  0.057497237</span>
+<span class="co">#&gt; y1~x  0.933004351 -0.001055459  0.047352547  0.838921807  1.025171887</span>
+<span class="co">#&gt; y2~x  0.916518525 -0.001319299  0.047345777  0.824805874  1.005880603</span>
+<span class="co">#&gt; l1    0.004184652 -0.007262228  0.062351891 -0.126711581  0.122154125</span>
+<span class="co">#&gt; l2    0.041636106 -0.007371904  0.061581789 -0.082031800  0.155479843</span>
+<span class="co">#&gt; z     1.429422707  0.001185955  0.042842182  1.347743380  1.508839440</span>
+<span class="co">#&gt; v1    1.004193420 -0.005329636  0.062277364  0.880987790  1.129928261</span>
+<span class="co">#&gt; v2    1.042515045 -0.005696525  0.063828553  0.921242663  1.168218400</span>
+<span class="co">#&gt; c1    0.912209719 -0.004854787  0.059286166  0.796486098  1.031282548</span>
 </pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="kw">b</span><span class="op">$</span><span class="kw">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8741007 0.9076915</span>
+<span class="co">#&gt; 0.8735196 0.9067329</span>
 </pre></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
@@ -435,11 +435,11 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; [13] parallel_4.0.2      grid_4.0.2          xfun_0.17          </span>
 <span class="co">#&gt; [16] htmltools_0.5.0     systemfonts_0.3.1   yaml_2.2.1         </span>
 <span class="co">#&gt; [19] assertthat_0.2.1    rprojroot_1.3-2     digest_0.6.25      </span>
-<span class="co">#&gt; [22] numDeriv_2016.8-1.1 pkgdown_1.6.0       crayon_1.3.4       </span>
+<span class="co">#&gt; [22] numDeriv_2016.8-1.1 pkgdown_1.6.1       crayon_1.3.4       </span>
 <span class="co">#&gt; [25] Matrix_1.2-18       Rgraphviz_2.32.0    codetools_0.2-16   </span>
 <span class="co">#&gt; [28] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
 <span class="co">#&gt; [31] rmarkdown_2.3       stringi_1.5.3       compiler_4.0.2     </span>
-<span class="co">#&gt; [34] desc_1.2.0          backports_1.1.9     stats4_4.0.2       </span>
+<span class="co">#&gt; [34] desc_1.2.0          backports_1.1.10    stats4_4.0.2       </span>
 <span class="co">#&gt; [37] mvtnorm_1.1-1</span>
 </pre></div>
 </div>
@@ -470,7 +470,7 @@ z 0.8720834 0.9081964</code></pre>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
