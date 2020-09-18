@@ -7,6 +7,7 @@
 # +OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
 # +OPTIONS: h:4 num:t tags:nil d:t toc:t
 
+
 #+BEGIN_EXPORT yaml
 title: Estimating partial correlations with lava
 author: Klaus Kähler Holst
@@ -30,6 +31,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+mets <- lava:::versioncheck('mets', 1)
 #+END_SRC
 
 #+RESULTS:
@@ -74,7 +76,6 @@ As an example, we will simulate data from this model with a single covariate. Fi
 #+NAME: load
 #+BEGIN_SRC R :exports code :ravel results="hide",message=FALSE,warning=FALSE
 library('lava')
-library('mets')
 library('magrittr')
 #+END_SRC
 
@@ -136,18 +137,18 @@ types to the model output using the =transform= method.
 
 #+NAME: defcens
 #+BEGIN_SRC R
-    cens1 <- function(threshold,type='right') {
-      function(x) {
-	x <- unlist(x)
-	if (type=='left')
-	  return( Surv(pmax(x,threshold), x>=threshold, type='left') )
-	return ( Surv(pmin(x,threshold), x<=threshold) )
-      }
+  cens1 <- function(threshold,type='right') {
+    function(x) {
+      x <- unlist(x)
+      if (type=='left')
+	return( survival::Surv(pmax(x,threshold), x>=threshold, type='left') )
+        return ( survival::Surv(pmin(x,threshold), x<=threshold) )
     }
+  }
 
-    m0 %<>%
-      transform(s1 ~ y1, cens1(-2, 'left')) %>%
-      transform(s2 ~ y2, cens1(2,  'right'))
+  m0 %<>%
+    transform(s1 ~ y1, cens1(-2, 'left')) %>%
+    transform(s2 ~ y2, cens1(2,  'right'))
 #+END_SRC
 
 #+RESULTS: defcens
@@ -331,13 +332,6 @@ estimate(e2, 'z', back.transform=tanh)
 :  Null Hypothesis:
 :   [z] = 0
 
-#+RESULTS:
-:     Estimate Std.Err   2.5%  97.5%    P-value
-: [z]   0.8915         0.8729 0.9076 5.606e-243
-:
-:  Null Hypothesis:
-:   [z] = 0
-
 
 In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument =constrain=
@@ -383,13 +377,6 @@ Additional Parameters:
 :  Null Hypothesis:
 :   [z] = 0
 
-#+RESULTS:
-:     Estimate Std.Err   2.5%  97.5%    P-value
-: [z]   0.8915         0.8729 0.9076 5.606e-243
-:
-:  Null Hypothesis:
-:   [z] = 0
-
 
 
 As an alternative to the Wald confidence intervals (with or without
@@ -404,9 +391,6 @@ tanh(confint(e2, 'z', profile=TRUE))
 :       2.5 %    97.5 %
 : z 0.8720834 0.9081964
 
-#+RESULTS:
-:       2.5 %    97.5 %
-: z 0.8720834 0.9081964
 
 
 Finally, a non-parametric bootstrap can be calculated in the following way
@@ -453,13 +437,16 @@ only difference is that the variables that are censored must all be
 defined as =Surv= objects (from the =survival= package which is
 automatically loaded when using the =mets= package) in the data frame.
 
-#+BEGIN_SRC R :ravel cache=TRUE
+#+BEGIN_SRC R :ravel cache=TRUE, eval=mets
   m3 <- lvm() %>%
     regression(y1 + s2 ~ x) %>%
     covariance(y1 ~ s2, constrain=TRUE, rname='z')
 
   e3 <- estimate(m3, d)
-  e3
+#+END_SRC
+
+#+BEGIN_SRC R :ravel eval=mets
+e3
 #+END_SRC
 
 #+RESULTS:
@@ -478,7 +465,7 @@ Additional Parameters:
    z                    1.42834    0.04546 31.41837   <1e-12
 #+end_example
 
-#+BEGIN_SRC R  :ravel cache=TRUE
+#+BEGIN_SRC R  :ravel cache=TRUE, eval=mets
 estimate(e3, 'z', back.transform=tanh)
 #+END_SRC
 
@@ -491,8 +478,7 @@ estimate(e3, 'z', back.transform=tanh)
 
 
 And here the same analysis with =s1= being left-censored and =s2= right-censored:
-#+NAME: tobit2
-#+BEGIN_SRC R :ravel cache=TRUE
+#+BEGIN_SRC R :ravel cache=TRUE, eval=mets
   m3b <- lvm() %>%
     regression(s1 + s2 ~ x) %>%
     covariance(s1 ~ s2, constrain=TRUE, rname='z')
@@ -501,7 +487,11 @@ And here the same analysis with =s1= being left-censored and =s2= right-censored
   e3b
 #+END_SRC
 
-#+RESULTS: tobit2
+#+BEGIN_SRC R :ravel eval=mets
+e3b
+#+END_SRC
+
+
 #+begin_example
 
                        Estimate Std. Error  Z-value  P-value
@@ -517,7 +507,7 @@ Additional Parameters:
    z                    1.42627    0.04609 30.94319   <1e-12
 #+end_example
 
-#+BEGIN_SRC R  :ravel cache=TRUE
+#+BEGIN_SRC R  :ravel cache=TRUE, eval=mets
 estimate(e3b, 'z', back.transform=tanh)
 #+END_SRC
 
@@ -529,8 +519,8 @@ estimate(e3b, 'z', back.transform=tanh)
 :   [z] = 0
 
 #+NAME: profilecens
-#+BEGIN_SRC R  :ravel cache=TRUE
-tanh(confint(e3, 'z', profile=TRUE))
+#+BEGIN_SRC R  :ravel cache=TRUE, eval=mets
+tanh(confint(e3b, 'z', profile=TRUE))
 #+END_SRC
 
 #+RESULTS: profilecens
@@ -593,8 +583,7 @@ bibliography:ref.bib
 * COMMENT Local Variables                                           :ARCHIVE:
 # Local Variables:
 # coding: utf-8
-# eval: (add-hook 'after-save-hook
-#        '(lambda () (org-ravel-export-to-file 'ravel-markdown)) nil t)
+# eval: (add-hook 'after-save-hook '(lambda () (org-ravel-export-to-file 'ravel-markdown)) nil t)
 # my-org-buffer-local-mode: t
 # eval: (defun myknit() (interactive) (save-buffer)
 #        (let ((cmd (concat "R-devel --slave -e 'rmarkdown::render(\"" (replace-regexp-in-string "org$" "Rmd" (buffer-file-name)) "\")'")))

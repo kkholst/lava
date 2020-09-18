@@ -182,7 +182,7 @@ categorical2dummy <- function(x,data,messages=0,...) {
         if (is.character(mydata[,i]) | is.factor(mydata[,i]))
           mydata[,i] <- as.numeric(as.factor(mydata[,i]))-1
       }
-      
+
       S <- NULL
       n <- nrow(mydata)
       if (n==1) {
@@ -192,7 +192,7 @@ categorical2dummy <- function(x,data,messages=0,...) {
         mydata0 <- na.omit(mydata)
         n <- nrow(mydata0)
         mu <- colMeans(mydata0)
-        if (is.null(S) && n>2) 
+        if (is.null(S) && n>2)
             S <- (n-1)/n*cov(mydata0) ## MLE variance matrix of observed variables
         rm(mydata0)
       }
@@ -391,7 +391,7 @@ Specials <- function(f,spec,split2="+",...) {
   st <- gsub(" ","",x)
   res <- unlist(strsplit(st,"[()]"))[2]
   if (is.null(split2)) return(res)
-  unlist(strsplit(res,"+",fixed=TRUE))
+  unlist(strsplit(res,split2,fixed=TRUE))
 }
 
 

@@ -1,22 +1,22 @@
 context("Constraints")
 
 test_that("Simple linear constraint",{
-    m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))    
+    m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))
     constrain(m1,beta2~psi) <- function(x) 2*x
     testthat::expect_output(summary(m1),"Non-linear constraints:")
-   
+
     lava:::matrices.lvm(m1,1:2,0,3)
     d1 <- sim(m1,100)
     e1 <- estimate(m1,d1)
     testthat::expect_output(print(e1),"y~x")
     testthat::expect_warning(e1,NA)
-        
+
     testthat::expect_true((constraints(e1)[1]-coef(lm(y~x+z,d1))["z"])^2<1e-9)
     s <- summary(e1)
     testthat::expect_output(print(s),"Non-linear constraints:")
 
     testthat::expect_equivalent(dim(coef(s)), c(length(coef(e1))+1,4))
-    testthat::expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))    
+    testthat::expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))
 })
 
 
@@ -59,7 +59,7 @@ test_that("Non-linear in exogenous variables", {
 
 test_that("Probit constraints", {
     if (!requireNamespace("mets",quietly=TRUE)) {
-        if (as.numeric(strsplit(sessionInfo()$otherPkgs$mets$Version,".",fixed=TRUE)[[1]][1])>0) { ## At least major version 1
+        if (lava:::versioncheck('mets', c(1,0))) { ## At least major version 1
             x <- transform(data.frame(lava:::rmvn0(1000,sigma=0.5*diag(2)+0.5)),
                            X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
             m <- covariance(lvm(),X1~X2)
@@ -69,7 +69,7 @@ test_that("Probit constraints", {
             e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
             estimate(e)
         }
-    }   
+    }
 })
 
 
@@ -82,9 +82,9 @@ test_that("Multiple group constraints I", {
     constrain(m2,beta2~psi) <- function(x) 2*x
     mg <- multigroup(list(m1,m2),list(d1,d2))
     ee <- estimate(mg)
-    testthat::expect_true(length(coef(ee))==5)    
+    testthat::expect_true(length(coef(ee))==5)
     testthat::expect_equivalent(constraints(ee)[1],2*coef(ee)["psi@1"]) # Est
-    testthat::expect_equivalent(constraints(ee)[2],2*coef(ee,2)[[1]]["psi",2]) # Std.Err    
+    testthat::expect_equivalent(constraints(ee)[2],2*coef(ee,2)[[1]]["psi",2]) # Std.Err
 })
 
 test_that("Multiple group constraints II", {
@@ -120,7 +120,7 @@ test_that("Multiple group constraints II", {
   parameter(l2) <- ~r1
   ee <- estimate(list(MZ=l,DZ=l2),list(MZ,DZ),control=list(method="NR",tol=1e-9,constrain=FALSE))
   testthat::expect_true(mean(score(ee)^2)<1e-9)
-  
+
   constrain(ee,h~r2+r1) <- function(x) 2*(x[1]-x[2])
   ce <- constraints(ee)
   testthat::expect_equivalent(constraints(ee)[1],2*diff(coef(ee)[3:4]))
@@ -128,6 +128,3 @@ test_that("Multiple group constraints II", {
   testthat::expect_true(nrow(ce)==1)
   testthat::expect_true(all(!is.na(ce)))
 })
-
-
-

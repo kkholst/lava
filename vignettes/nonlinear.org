@@ -30,6 +30,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+mets <- lava:::versioncheck('mets', 1)
 #+END_SRC
 
 #+RESULTS:
@@ -279,8 +280,8 @@ For convenience, the function =twostageCV= can be used to do the
 cross-validation (also for choosing the mixture distribution via the ``nmix`` argument, see the section
 below). For example,
 #+NAME: twostageCV
-#+BEGIN_SRC R :exports code :ravel cache=TRUE
-  selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
+#+BEGIN_SRC R :exports code :ravel cache=TRUE, eval=mets
+selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
 	    nfolds=2, rep=1, mc.cores=parallel::detectCores())
 #+END_SRC
 
@@ -290,7 +291,7 @@ applies cross-validation (here just 2 folds for simplicity) to select the best s
 degrees of freedom varying from from 1-3 (the linear model is
 automatically included)
 
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
 selmod
 #+END_SRC
 
@@ -334,10 +335,6 @@ Residual Variances:
    y2                1.09975  0.14507    7.58080
    y3                0.81270  0.13258    6.12986
    eta2              2.01822  0.28971    6.96632
-Warning message:
-In if (is.na(knots)) knots <- "none" :
-  the condition has length
-1 and only the first element will be used
 #+end_example
 
 ** Specification of general functional forms
@@ -410,10 +407,11 @@ where the Parameter names shared across the different mixture
 components given in the =list= will be constrained to be identical in
 the mixture model. Thus, only the intercept of \(\eta_{1}\) is
 allowed to vary between the mixtures.
+
 #+NAME: mixture1
-#+BEGIN_SRC R :ravel cache=TRUE
-set.seed(1)
-em0 <- mixture(m1, k=2, data=d)
+#+BEGIN_SRC R :ravel cache=TRUE, eval=mets
+  set.seed(1)
+  em0 <- mixture(m1, k=2, data=d)
 #+END_SRC
 
 #+RESULTS: mixture1
@@ -436,7 +434,7 @@ can rerun the estimation with different random starting values
 #+RESULTS: estmixture
 
 
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
 summary(em0)
 #+END_SRC
 
@@ -487,7 +485,7 @@ AIC= 1958.803
 #+end_example
 
 Measured by AIC there is a slight improvement in the model fit using the mixture model
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
 e0 <- estimate(m1,data=d)
 AIC(e0,em0)
 #+END_SRC
@@ -498,7 +496,7 @@ AIC(e0,em0)
 : em0 12 1958.803
 
 The spline model may then be estimated as before with the =two-stage= method
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
 em2 <- twostage(em0,m2,data=d)
 em2
 #+END_SRC
@@ -529,7 +527,7 @@ Residual Variances:
 
 In this example the results are very similar to the Gaussian model:
 #+NAME: mixturefit
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
   plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
        xlab=expression(eta[1]), ylab=expression(eta[2]))
 

@@ -26,10 +26,12 @@
 ##' m <- lvm(c(y1,y2,y3)~b*x+1*u[0],latent=~u)
 ##' ordinal(m,K=2) <- ~y1+y2+y3
 ##' d <- sim(m,50,seed=1)
-##' e1 <- complik(m,d,control=list(trace=1),type="all")
+##' if (requireNamespace("mets",quietly=TRUE)) {
+##'    e1 <- complik(m,d,control=list(trace=1),type="all")
+##' }
 complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
              messages=0, estimator="normal", quick=FALSE, ...) {
-    
+
     y <- setdiff(endogenous(x),latent(x))
     binsurv <- rep(FALSE,length(y))
     for (i in 1:length(y)) {
@@ -62,9 +64,9 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
             mypar <- c(mypar, list(mypar0[,i]))
     }
     nblocks <- length(mypar)
-    
+
     mydata0 <- data[,,drop=FALSE]
-    mydata <-  as.data.frame(matrix(NA, nblocks*nrow(data), ncol=ncol(data)))    
+    mydata <-  as.data.frame(matrix(NA, nblocks*nrow(data), ncol=ncol(data)))
     names(mydata) <- names(mydata0)
     for (i in 1:ncol(mydata)) {
         if (is.factor(data[,i])) {
@@ -145,11 +147,10 @@ iid.estimate.complik <- function(x,...) {
 }
 
 ##' @export
-logLik.estimate.complik <- function(object,...) {    
+logLik.estimate.complik <- function(object,...) {
     with(object, structure(opt$objective,
               nall=n,
               nobs=n,
               df=sum(eigenvalues),
               class="logLik"))
 }
-
