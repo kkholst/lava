@@ -239,7 +239,7 @@ cross-validation repeated two times
     ## Repeated 5-fold cross-validation:
     ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
 		function(m) function(data,...) twostage(m1,m,data=data,stderr=FALSE,control=list(start=coef(e0),contrain=TRUE)))
-    fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=4,seed=1)
+    fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=1,seed=1)
     fit.cv
 #+END_SRC
 
@@ -282,7 +282,7 @@ below). For example,
 #+NAME: twostageCV
 #+BEGIN_SRC R :exports code :ravel cache=TRUE, eval=mets
 selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
-	    nfolds=2, rep=1, mc.cores=parallel::detectCores())
+	    nfolds=2, rep=1, mc.cores=1)
 #+END_SRC
 
 #+RESULTS: twostageCV

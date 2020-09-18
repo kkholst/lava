@@ -248,7 +248,7 @@ Finally, a non-parametric bootstrap can be calculated in the following way
 
 ```{r  bootstrap, cache=TRUE }
 set.seed(1)
-b <- bootstrap(e2, data=d, R=1000, mc.cores=4)
+b <- bootstrap(e2, data=d, R=1000, mc.cores=1)
 b
 ```
 
