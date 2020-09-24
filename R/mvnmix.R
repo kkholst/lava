@@ -27,18 +27,18 @@ getMeanVar <- function(object,k,iter,...) {
   if (missing(k))
     return(res)
   else
-    return(res[[k]])  
+    return(res[[k]])
 }
 
 
 
 #' Estimate mixture latent variable model
-#' 
+#'
 #' Estimate mixture latent variable model
-#' 
+#'
 #' Estimate parameters in a mixture of latent variable models via the EM
 #' algorithm.
-#' 
+#'
 #' @param data \code{data.frame}
 #' @param k Number of mixture components
 #' @param theta Optional starting values
@@ -57,7 +57,7 @@ getMeanVar <- function(object,k,iter,...) {
 #' @seealso \code{mixture}
 #' @keywords models regression
 #' @examples
-#' 
+#'
 #' data(faithful)
 #' set.seed(1)
 #' M1 <- mvnmix(faithful[,"waiting",drop=FALSE],k=2)
@@ -67,7 +67,7 @@ getMeanVar <- function(object,k,iter,...) {
 #'     plot(M1,col=c("orange","blue"),ylim=c(0,0.05))
 #'     plot(M2,col=c("orange","blue"))
 #' }
-#' 
+#'
 #' @export mvnmix
 mvnmix <- function(data, k=2, theta, steps=500,
             tol=1e-16, lambda=0,
@@ -80,13 +80,13 @@ mvnmix <- function(data, k=2, theta, steps=500,
     if (k<2) stop("Only one cluster")
     ## theta = (mu1, ..., muk, Sigma1, ..., Sigmak, p1, ..., p[k-1])
     if (is.vector(data)) data <- matrix(data,ncol=1)
-    if (is.data.frame(data)) data <- as.matrix(data)  
+    if (is.data.frame(data)) data <- as.matrix(data)
     i <- 0
     E <- tol
     D <- ncol(data)
     yunique <- unique(data)
     if (n.start>1) extra <- FALSE
-    
+
     logllmax <- -Inf
     for (ii in seq(n.start)) {
       if (ii>1) mu <- NULL
@@ -99,13 +99,13 @@ mvnmix <- function(data, k=2, theta, steps=500,
                   idx <- sample(NROW(data),k)
               } else {
                   idx <- do.call(init, list(data, k))
-              }            
+              }
               mus <- unlist(lapply(idx, function(i) cbind(data)[i,,drop=TRUE]))
           }
           Sigmas <- rep(as.vector(cov(data)),k)
           ps <- rep(1/k,k-1)
           theta <- c(mus,Sigmas,ps)
-      }    
+      }
 
       theta0 <- theta
       if (!silent)
@@ -142,7 +142,7 @@ mvnmix <- function(data, k=2, theta, steps=500,
               mu.new <- colSums(gammas[,j]*data)/sum(gammas[,j])
               mus.new <- rbind(mus.new, mu.new)
               wcy <- sqrtgammas[,j]*t(t(data)-mus.new[j,])
-              Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])      
+              Sigma.new <- t(wcy)%*%wcy/sum(gammas[,j])
               Sigmas.new <- rbind(Sigmas.new, as.vector(Sigma.new))
           }; ps.new <- colMeans(gammas)
           theta.old <- theta
@@ -152,7 +152,7 @@ mvnmix <- function(data, k=2, theta, steps=500,
           theta <- toTheta(mus.new,Sigmas.new,ps.new)
           E <- sum((theta-theta.old)^2)
           i <- i+1
-          iter <- i    
+          iter <- i
           if (!silent)
               cat(i,":\t", paste(formatC(theta),collapse=" "),
                   ",\t\te=",formatC(E), "\n",sep="")
@@ -164,15 +164,15 @@ mvnmix <- function(data, k=2, theta, steps=500,
               theta.keep <- theta
               gammas.keep <- gammas
               E.keep <- E
-          }          
-      }      
+          }
+      }
     }
     if (n.start>1) {
         theta <- theta.keep
         gammas <- gammas.keep
         E <- E.keep
     }
-        
+
         myvars <- colnames(data)
     if (is.null(myvars)) myvars <- colnames(data) <- paste("y",1:NCOL(data),sep="")
     data <- as.data.frame(data)
@@ -182,29 +182,30 @@ mvnmix <- function(data, k=2, theta, steps=500,
         models <- c(models, list(m))
         datas <- c(datas, list(data))
     }
-    
+
     membership <- apply(gammas,1,function(x) order(x,decreasing=TRUE)[1])
     res <- list(pars=theta, thetas=thetas , gammas=gammas, member=membership,
                 members=members, k=k, D=D, data=data, E=E,
                 prob=rbind(colMeans(gammas)),
               iter=iter,
-              models=models,      
-              multigroup=multigroup(models,datas)              
+              models=models,
+              multigroup=multigroup(models,datas)
               )
     class(res) <- c("mvn.mixture","lvm.mixture")
-    
+
     parpos <- c()
-    npar1 <- D+D*(D-1)/2  
+    npar1 <- D+D*(D-1)/2
     for (i in 1:k)
         parpos <- c(parpos, list(c(seq_len(D)+(i-1)*D, k*D + seq_len(npar1)+
                                                        (i-1)*(npar1))))
-    
+
     theta <- c(unlist(lapply(getMeanVar(res),function(x) x$mean)),
              unlist(lapply(getMeanVar(res),function(x) c(diag(x$var),unlist(x$var[upper.tri(x$var)])))))
     res$theta <- rbind(theta)
     res$parpos <- parpos
     res$opt <- list(estimate=theta)
-    res$vcov <- solve(information(res,type="E"))   
+    if (requireNamespace('mets', quietly=TRUE))
+        res$vcov <- solve(information(res,type="E"))
     return(res)
 }
 
@@ -221,7 +222,7 @@ print.mvn.mixture <- function(x,...) {
     V <- matrix(formatC(par$Sigma[i,],flag=" "),ncol=x$D);
     colnames(V) <- rep("",x$D); rownames(V) <- rep(space,x$D)
     print(V, quote=FALSE)
-    cat("\n")   
+    cat("\n")
   }
   invisible(par)
 }
@@ -240,7 +241,7 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
   pi <- colSums(x$gammas)/nrow(x$gammas)
 
   if (D==1) {
-    if (nonpar)      
+    if (nonpar)
       plot(density(as.vector(y)), main="", ...)
     else
       plot(density(y), main="", type="n", col="lightgray", ...)
@@ -268,9 +269,9 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
 
     for (i in 1:x$k) {
       C1 <- with(pp[[i]], ellipse::ellipse(var, centre=mean))
-      lines(C1, col=col[i], lwd=lwd)      
+      lines(C1, col=col[i], lwd=lwd)
     }
-    
+
     if (!is.null(label)) {
       for (i in 1:x$k) {
           if (label==1 | missing(iter)) {
@@ -285,16 +286,16 @@ plot.mvn.mixture <- function(x, label=2,iter,col,alpha=0.5,nonpar=TRUE,...) {
     else
       points(y, cex=cex)
   }
-  if (D==3) {    
+  if (D==3) {
     if (!requireNamespace("rgl")) stop("rgl required")
     rgl::plot3d(y, type="n", box=FALSE)
     for (i in 1:x$k) {
         pot <- y[which(x$member==i),]
         rgl::plot3d(pot, type="s", radius=0.1, col=col[i], add=TRUE)
         ee <- rgl::ellipse3d(pp[[i]]$var,centre=pp[[i]]$mean)
-        rgl::plot3d(ee, col=col[i], alpha=alpha, add = TRUE)      
+        rgl::plot3d(ee, col=col[i], alpha=alpha, add = TRUE)
     }
-  }  
+  }
 }
 
 ##' @export
@@ -308,5 +309,5 @@ sim.mvn.mixture <- function(x,n,...) {
         res <- rbind(res,
                      mets::rmvn(ng[i],pars[[i]]$mean,pars[[i]]$var))
     }
-    return(res)    
+    return(res)
 }

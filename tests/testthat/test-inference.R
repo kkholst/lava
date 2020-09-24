@@ -496,6 +496,7 @@ test_that("Weighted",{
 })
 
 
+if (requireNamespace("mets",quietly = TRUE))
 test_that("Tobit",{
     if (versioncheck("lava.tobit",c(0,5))) {
         m0 <- lvm(t~x)

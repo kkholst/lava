@@ -10,11 +10,15 @@ kmpp <- function(y,k=2) {
     u <- runif(k)
     ii[1] <- sample(n,1)
     D <- matrix(0,n,k-1)
-    for (i in seq_len(k-1)+1) { 
+    hasmets <- requireNamespace("mets", quietly=TRUE)
+    for (i in seq_len(k-1)+1) {
         D[,i-1] <- apply(y,1,function(x) Dist(x,y[ii[i-1],]))
         D2 <- apply(D[,seq(i-1),drop=FALSE],1,min)
         pdist <- cumsum(D2/sum(D2))
-        ii[i] <- mets::fast.approx(pdist,u[i])
+        if (hasmets)
+            ii[i] <- mets::fast.approx(pdist,u[i])
+        else
+            ii[i] <- which.min(abs(pdist-u[i]))
     }
     return(ii)
 }
@@ -54,7 +58,7 @@ wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ini
                 idx <- sample(NROW(x),K)
             } else {
                 idx <- do.call(init, list(x, K))
-            }            
+            }
             mu <- lapply(idx, function(i) cbind(x)[i,,drop=TRUE])
         }
         mus <- c(mus, list(mu))
