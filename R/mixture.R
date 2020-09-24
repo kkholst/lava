@@ -48,12 +48,14 @@
 #' m <- baptize(lvm(y~x, x~1));
 #' intercept(m,~x+y) <- NA
 #'
-#' set.seed(42)
-#' M <- mixture(m,k=2,data=d,control=list(trace=1,tol=1e-6))
-#' summary(M)
-#' lm(y~x,d)
-#' estimate(M,"y~x")
-#' ## True slope := 1
+#' if (requireNamespace('mets', quietly=TRUE)) {
+#'   set.seed(42)
+#'   M <- mixture(m,k=2,data=d,control=list(trace=1,tol=1e-6))
+#'   summary(M)
+#'   lm(y~x,d)
+#'   estimate(M,"y~x")
+#'   ## True slope := 1
+#' }
 #' }
 #'
 #' @export mixture
