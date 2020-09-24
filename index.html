@@ -184,30 +184,30 @@
 <span class="kw">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="kw">m</span>, <span class="kw">d</span>)
 <span class="kw">e</span>
 <span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span>
-<span class="co">#&gt; Measurements:                                             </span>
+<span class="co">#&gt; Measurements:</span>
 <span class="co">#&gt;    y2~eta1           0.95462    0.08083 11.80993    &lt;1e-12</span>
 <span class="co">#&gt;    y3~eta1           0.98476    0.08922 11.03722    &lt;1e-12</span>
 <span class="co">#&gt;     z2~eta2          0.97038    0.05368 18.07714    &lt;1e-12</span>
 <span class="co">#&gt;     z3~eta2          0.95608    0.05643 16.94182    &lt;1e-12</span>
-<span class="co">#&gt; Regressions:                                              </span>
+<span class="co">#&gt; Regressions:</span>
 <span class="co">#&gt;    eta1~x            1.24587    0.11486 10.84694    &lt;1e-12</span>
 <span class="co">#&gt;     eta2~eta1        0.95608    0.18008  5.30910 1.102e-07</span>
 <span class="co">#&gt;     eta2~x           1.11495    0.25228  4.41951 9.893e-06</span>
-<span class="co">#&gt; Intercepts:                                               </span>
+<span class="co">#&gt; Intercepts:</span>
 <span class="co">#&gt;    y2               -0.13896    0.12458 -1.11537    0.2647</span>
 <span class="co">#&gt;    y3               -0.07661    0.13869 -0.55241    0.5807</span>
 <span class="co">#&gt;    eta1              0.15801    0.12780  1.23644    0.2163</span>
 <span class="co">#&gt;    z2               -0.00441    0.14858 -0.02969    0.9763</span>
 <span class="co">#&gt;    z3               -0.15900    0.15731 -1.01076    0.3121</span>
 <span class="co">#&gt;    eta2             -0.14143    0.18380 -0.76949    0.4416</span>
-<span class="co">#&gt; Residual Variances:                                       </span>
-<span class="co">#&gt;    y1                0.69684    0.14858  4.69004          </span>
-<span class="co">#&gt;    y2                0.89804    0.16630  5.40026          </span>
-<span class="co">#&gt;    y3                1.22456    0.21182  5.78109          </span>
-<span class="co">#&gt;    eta1              0.93620    0.19623  4.77084          </span>
-<span class="co">#&gt;    z1                1.41422    0.26259  5.38570          </span>
-<span class="co">#&gt;    z2                0.87569    0.19463  4.49934          </span>
-<span class="co">#&gt;    z3                1.18155    0.22640  5.21883          </span>
+<span class="co">#&gt; Residual Variances:</span>
+<span class="co">#&gt;    y1                0.69684    0.14858  4.69004</span>
+<span class="co">#&gt;    y2                0.89804    0.16630  5.40026</span>
+<span class="co">#&gt;    y3                1.22456    0.21182  5.78109</span>
+<span class="co">#&gt;    eta1              0.93620    0.19623  4.77084</span>
+<span class="co">#&gt;    z1                1.41422    0.26259  5.38570</span>
+<span class="co">#&gt;    z2                0.87569    0.19463  4.49934</span>
+<span class="co">#&gt;    z3                1.18155    0.22640  5.21883</span>
 <span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span>
 </pre></div>
 </div>
@@ -241,12 +241,12 @@
 <span class="fu"><a href="reference/vars.html">latent</a></span>(<span class="kw">m1</span>) <span class="op">&lt;-</span> <span class="op">~</span> <span class="kw">u</span>
 (<span class="kw">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span>(<span class="kw">m1</span>, <span class="kw">d</span>))
 <span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span>
-<span class="co">#&gt; Regressions:                                             </span>
+<span class="co">#&gt; Regressions:</span>
 <span class="co">#&gt;    u~x               1.06998    0.08208 13.03542   &lt;1e-12</span>
-<span class="co">#&gt; Intercepts:                                              </span>
+<span class="co">#&gt; Intercepts:</span>
 <span class="co">#&gt;    u                -0.08871    0.08753 -1.01344   0.3108</span>
-<span class="co">#&gt; Residual Variances:                                      </span>
-<span class="co">#&gt;    y1                1.00054    0.07075 14.14214         </span>
+<span class="co">#&gt; Residual Variances:</span>
+<span class="co">#&gt;    y1                1.00054    0.07075 14.14214</span>
 <span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span>
 </pre></div>
 <p>Stage 2</p>
@@ -291,19 +291,19 @@
 <span class="kw">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span>(<span class="kw">onerun</span>, <span class="fl">100</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">val</span>, estimate=<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se=<span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short=<span class="fl">TRUE</span>)
 <span class="co">#&gt; 100 replications                 Time: 4.49s</span>
-<span class="co">#&gt; </span>
+<span class="co">#&gt;</span>
 <span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span>
 <span class="co">#&gt; Mean           2.02077         1.04080           0.97997        0.97997</span>
 <span class="co">#&gt; SD             0.20260         0.19016           0.16079        0.16079</span>
 <span class="co">#&gt; SE             0.18026         0.18018           0.16354        0.16354</span>
 <span class="co">#&gt; SE/SD          0.88971         0.94749           1.01709        1.01709</span>
-<span class="co">#&gt;                                                                        </span>
+<span class="co">#&gt;</span>
 <span class="co">#&gt; Min            1.50738         0.63296           0.57620        0.57620</span>
 <span class="co">#&gt; 2.5%           1.64480         0.67154           0.66439        0.66439</span>
 <span class="co">#&gt; 50%            2.01884         1.05200           0.96656        0.96656</span>
 <span class="co">#&gt; 97.5%          2.37284         1.39552           1.30304        1.30304</span>
 <span class="co">#&gt; Max            2.51380         1.56400           1.48856        1.48856</span>
-<span class="co">#&gt;                                                                        </span>
+<span class="co">#&gt;</span>
 <span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span>
 </pre></div>
 <p>Add additional simulations and visualize results</p>
@@ -355,10 +355,10 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/kkholst/lava"><img src="https://travis-ci.org/kkholst/lava.svg?branch=master" alt="travis"></a></li>
+<li><a href="https://travis-ci.com/kkholst/lava"><img src="https://travis-ci.com/kkholst/lava.svg?branch=master" alt="travis"></a></li>
 <li><a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master" alt="coverage"></a></li>
 <li><a href="https://CRAN.R-project.org/package=lava"><img src="https://www.r-pkg.org/badges/version-last-release/lava" alt="cran"></a></li>
-<li><a href="http://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="http://cranlogs.r-pkg.org/badges/lava" alt="cran-dl"></a></li>
+<li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="https://cranlogs.r-pkg.org/badges/lava" alt="cran-dl"></a></li>
 </ul>
 </div>
 </div>

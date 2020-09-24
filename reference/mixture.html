@@ -223,8 +223,14 @@ iteration</p></dd>
 <span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>, <span class='kw'>x</span><span class='op'>~</span><span class='fl'>1</span>));
 <span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>y</span>) <span class='op'>&lt;-</span> <span class='fl'>NA</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>42</span>)
-<span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'>mixture</span>(<span class='kw'>m</span>,k=<span class='fl'>2</span>,data=<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>,tol=<span class='fl'>1e-6</span>))
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>'mets'</span>, quietly=<span class='fl'>TRUE</span>)) {
+  <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>42</span>)
+  <span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'>mixture</span>(<span class='kw'>m</span>,k=<span class='fl'>2</span>,data=<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>,tol=<span class='fl'>1e-6</span>))
+  <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>M</span>)
+  <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>)
+  <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>M</span>,<span class='st'>"y~x"</span>)
+  <span class='co'>## True slope := 1</span>
+}
 </div><div class='output co'>#&gt; Squarem-2 
 #&gt; Residual:  0.02701133   Extrapolation:  TRUE   Steplength:  1 
 #&gt; Residual:  0.03759283   Extrapolation:  TRUE   Steplength:  4 
@@ -235,47 +241,11 @@ iteration</p></dd>
 #&gt; Residual:  0.0001613911   Extrapolation:  TRUE   Steplength:  4.503032 
 #&gt; Residual:  0.0001075938   Extrapolation:  TRUE   Steplength:  5.972765 
 #&gt; Residual:  2.07561e-05   Extrapolation:  TRUE   Steplength:  3.791501 
-#&gt; Residual:  2.530773e-06   Extrapolation:  TRUE   Steplength:  4.75204 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>M</span>)
-</div><div class='output co'>#&gt; Cluster 1 (n=1083, Prior=0.5374):
-#&gt; --------------------------------------------------
-#&gt;                     Estimate Std. Error Z value  Pr(&gt;|z|)
-#&gt; Regressions:                                             
-#&gt;    y~x               1.04843  0.03919   26.74956   &lt;1e-12
-#&gt; Intercepts:                                              
-#&gt;    y                 0.04735  0.05471    0.86553 0.3867  
-#&gt;    x                 0.06609  0.05609    1.17828 0.2387  
-#&gt; Residual Variances:                                      
-#&gt;    y                 1.06076  0.06475   16.38310         
-#&gt;    x                 1.09065  0.05243   20.80367         
-#&gt; 
-#&gt; Cluster 2 (n=917, Prior=0.4626):
-#&gt; --------------------------------------------------
-#&gt;                     Estimate Std. Error Z value  Pr(&gt;|z|)
-#&gt; Regressions:                                             
-#&gt;    y~x               1.04843  0.03919   26.74956   &lt;1e-12
-#&gt; Intercepts:                                              
-#&gt;    y                 2.00371  0.07059   28.38673   &lt;1e-12
-#&gt;    x                 1.02906  0.05667   18.15727   &lt;1e-12
-#&gt; Residual Variances:                                      
-#&gt;    y                 1.06076  0.06475   16.38310         
-#&gt;    x                 1.09065  0.05243   20.80367         
-#&gt; --------------------------------------------------
-#&gt; AIC= 13096.52 
-#&gt; ||score||^2= 1.07796e-06 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>)
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; lm(formula = y ~ x, data = d)
-#&gt; 
-#&gt; Coefficients:
-#&gt; (Intercept)            x  
-#&gt;       0.771        1.403  
-#&gt; </div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>M</span>,<span class='st'>"y~x"</span>)
-</div><div class='output co'>#&gt;       Estimate Std.Err   2.5% 97.5%    P-value
+#&gt; Residual:  2.530773e-06   Extrapolation:  TRUE   Steplength:  4.75204 </div><div class='output co'>#&gt;       Estimate Std.Err   2.5% 97.5%    P-value
 #&gt; [y~x]    1.048 0.03811 0.9737 1.123 1.263e-166
 #&gt; 
 #&gt;  Null Hypothesis: 
-#&gt;   [y~x] = 0 </div><div class='input'><span class='co'>## True slope := 1</span>
-<span class='co'># }</span>
+#&gt;   [y~x] = 0 </div><div class='input'><span class='co'># }</span>
 
 </div></pre>
   </div>

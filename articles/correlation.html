@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-09-17</h4>
+            <h4 class="date">2020-09-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/correlation.Rmd"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -129,7 +129,6 @@
 <p>As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://kkholst.github.io/lava">'lava'</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://kkholst.github.io/mets">'mets'</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'magrittr'</span>)
 </pre></div>
 <p>The model can be specified (here using the pipe notation via <code>magrittr</code>) with the following syntax where the correlation parameter here is given the label ‘<code>r</code>’:</p>
@@ -162,8 +161,8 @@
   <span class="fu">function</span>(<span class="kw">x</span>) {
     <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw">x</span>)
     <span class="co">if</span> (<span class="kw">type</span><span class="op">==</span><span class="st">'left'</span>)
-      <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>( <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span>(<span class="kw">x</span>,<span class="kw">threshold</span>), <span class="kw">x</span><span class="op">&gt;=</span><span class="kw">threshold</span>, type=<span class="st">'left'</span>) )
-    <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span> ( <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span>(<span class="kw">x</span>,<span class="kw">threshold</span>), <span class="kw">x</span><span class="op">&lt;=</span><span class="kw">threshold</span>) )
+      <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>( <span class="kw">survival</span>::<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span>(<span class="kw">x</span>,<span class="kw">threshold</span>), <span class="kw">x</span><span class="op">&gt;=</span><span class="kw">threshold</span>, type=<span class="st">'left'</span>) )
+      <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span> ( <span class="kw">survival</span>::<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span>(<span class="kw">x</span>,<span class="kw">threshold</span>), <span class="kw">x</span><span class="op">&lt;=</span><span class="kw">threshold</span>) )
   }
 }
 
@@ -263,13 +262,8 @@
 <span class="co">#&gt;  Null Hypothesis: </span>
 <span class="co">#&gt;   [z] = 0</span>
 </pre></div>
-<pre><code>    Estimate Std.Err   2.5%  97.5%    P-value
-[z]   0.8915         0.8729 0.9076 5.606e-243
-
- Null Hypothesis:
-  [z] = 0</code></pre>
 <p>In practice, a much shorter syntax can be used to obtain the above parametrization. We can simply use the argument <code>constrain</code> when specifying the covariances (the argument <code>rname</code> specifies the parameter name of the <span class="math inline">\(\arctanh\)</span> transformed correlation coefficient, and <code>lname</code>, <code>lname2</code> can be used to specify the parameter names for the log variance parameters):</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
+<div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span>() <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/regression&lt;-.html">regression</a></span>(<span class="kw">y1</span> <span class="op">+</span> <span class="kw">y2</span> <span class="op">~</span> <span class="kw">x</span>) <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/covariance.html">covariance</a></span>(<span class="kw">y1</span> <span class="op">~</span> <span class="kw">y2</span>, constrain=<span class="fl">TRUE</span>, rname=<span class="st">'z'</span>)
@@ -288,7 +282,7 @@
 <span class="co">#&gt;    l2                   0.04164    0.06325  0.65832   0.5103</span>
 <span class="co">#&gt;    z                    1.42942    0.04472 31.96286   &lt;1e-12</span>
 </pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit">
+<div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span>(<span class="kw">e2</span>, <span class="st">'z'</span>, back.transform=<span class="kw">tanh</span>)
 <span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="co">#&gt; [z]   0.8915         0.8729 0.9076 5.606e-243</span>
@@ -296,53 +290,48 @@
 <span class="co">#&gt;  Null Hypothesis: </span>
 <span class="co">#&gt;   [z] = 0</span>
 </pre></div>
-<pre><code>    Estimate Std.Err   2.5%  97.5%    P-value
-[z]   0.8915         0.8729 0.9076 5.606e-243
-
- Null Hypothesis:
-  [z] = 0</code></pre>
 <p>As an alternative to the Wald confidence intervals (with or without transformation) is to profile the likelihood. The profile likelihood confidence intervals can be obtained with the <code>confint</code> method:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
+<div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/confint.html">confint</a></span>(<span class="kw">e2</span>, <span class="st">'z'</span>, profile=<span class="fl">TRUE</span>))
 <span class="co">#&gt;       2.5 %    97.5 %</span>
 <span class="co">#&gt; z 0.8720834 0.9081964</span>
 </pre></div>
-<pre><code>      2.5 %    97.5 %
-z 0.8720834 0.9081964</code></pre>
 <p>Finally, a non-parametric bootstrap can be calculated in the following way</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
-<span class="kw">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span>(<span class="kw">e2</span>, data=<span class="kw">d</span>, R=<span class="fl">1000</span>, mc.cores=<span class="fl">4</span>)
+<span class="kw">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span>(<span class="kw">e2</span>, data=<span class="kw">d</span>, R=<span class="fl">1000</span>, mc.cores=<span class="fl">1</span>)
 <span class="kw">b</span>
 <span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
-<span class="co">#&gt; y1   -0.005411914 -0.001172633  0.045641233 -0.095681252  0.084382238</span>
-<span class="co">#&gt; y2   -0.027149492 -0.000455828  0.045103714 -0.117924690  0.057497237</span>
-<span class="co">#&gt; y1~x  0.933004351 -0.001055459  0.047352547  0.838921807  1.025171887</span>
-<span class="co">#&gt; y2~x  0.916518525 -0.001319299  0.047345777  0.824805874  1.005880603</span>
-<span class="co">#&gt; l1    0.004184652 -0.007262228  0.062351891 -0.126711581  0.122154125</span>
-<span class="co">#&gt; l2    0.041636106 -0.007371904  0.061581789 -0.082031800  0.155479843</span>
-<span class="co">#&gt; z     1.429422707  0.001185955  0.042842182  1.347743380  1.508839440</span>
-<span class="co">#&gt; v1    1.004193420 -0.005329636  0.062277364  0.880987790  1.129928261</span>
-<span class="co">#&gt; v2    1.042515045 -0.005696525  0.063828553  0.921242663  1.168218400</span>
-<span class="co">#&gt; c1    0.912209719 -0.004854787  0.059286166  0.796486098  1.031282548</span>
+<span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
+<span class="co">#&gt; y1   -0.0054119135 -0.0001442235  0.0462826949 -0.0941167930  0.0863838205</span>
+<span class="co">#&gt; y2   -0.0271494916 -0.0003115679  0.0473452067 -0.1148029705  0.0666317590</span>
+<span class="co">#&gt; y1~x  0.9330043509 -0.0043126805  0.0443815258  0.8382028896  1.0170409036</span>
+<span class="co">#&gt; y2~x  0.9165185250 -0.0041471301  0.0449163421  0.8218804405  0.9975543491</span>
+<span class="co">#&gt; l1    0.0041846522 -0.0050973846  0.0633741111 -0.1220146349  0.1172207512</span>
+<span class="co">#&gt; l2    0.0416361064 -0.0056685018  0.0625653515 -0.0877342389  0.1544206725</span>
+<span class="co">#&gt; z     1.4294227075  0.0011226809  0.0442741070  1.3458582646  1.5199882651</span>
+<span class="co">#&gt; v1    1.0041934200 -0.0030996084  0.0634874497  0.8851354253  1.1243676722</span>
+<span class="co">#&gt; v2    1.0425150452 -0.0038661070  0.0649359235  0.9160043344  1.1669817311</span>
+<span class="co">#&gt; c1    0.9122097189 -0.0030738947  0.0603724632  0.7941129271  1.0285950657</span>
 </pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit">
+<div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="kw">b</span><span class="op">$</span><span class="kw">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8735196 0.9067329</span>
+<span class="co">#&gt; 0.8730722 0.9086956</span>
 </pre></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#censored-observations" class="anchor"></a>Censored observations</h2>
 <p>Letting one of the variables be right-censored (Tobit-type model) we can proceed in exactly the same way<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>. The only difference is that the variables that are censored must all be defined as <code>Surv</code> objects (from the <code>survival</code> package which is automatically loaded when using the <code>mets</code> package) in the data frame.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="kw">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span>() <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/regression&lt;-.html">regression</a></span>(<span class="kw">y1</span> <span class="op">+</span> <span class="kw">s2</span> <span class="op">~</span> <span class="kw">x</span>) <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/covariance.html">covariance</a></span>(<span class="kw">y1</span> <span class="op">~</span> <span class="kw">s2</span>, constrain=<span class="fl">TRUE</span>, rname=<span class="st">'z'</span>)
 
 <span class="kw">e3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span>(<span class="kw">m3</span>, <span class="kw">d</span>)
+</pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit">
 <span class="kw">e3</span>
 <span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span>
 <span class="co">#&gt; Regressions:                                                </span>
@@ -356,7 +345,7 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt;    l2                   0.06317    0.06492  0.97311   0.3305</span>
 <span class="co">#&gt;    z                    1.42834    0.04546 31.41837   &lt;1e-12</span>
 </pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit">
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span>(<span class="kw">e3</span>, <span class="st">'z'</span>, back.transform=<span class="kw">tanh</span>)
 <span class="co">#&gt;     Estimate Std.Err  2.5%  97.5%  P-value</span>
 <span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.5e-226</span>
@@ -365,7 +354,7 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt;   [z] = 0</span>
 </pre></div>
 <p>And here the same analysis with <code>s1</code> being left-censored and <code>s2</code> right-censored:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
+<div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="kw">m3b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span>() <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/regression&lt;-.html">regression</a></span>(<span class="kw">s1</span> <span class="op">+</span> <span class="kw">s2</span> <span class="op">~</span> <span class="kw">x</span>) <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/covariance.html">covariance</a></span>(<span class="kw">s1</span> <span class="op">~</span> <span class="kw">s2</span>, constrain=<span class="fl">TRUE</span>, rname=<span class="st">'z'</span>)
@@ -384,6 +373,31 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt;    l2                   0.06425    0.06498  0.98871   0.3228</span>
 <span class="co">#&gt;    z                    1.42627    0.04609 30.94319   &lt;1e-12</span>
 </pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit">
+<span class="kw">e3b</span>
+<span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span>
+<span class="co">#&gt; Regressions:                                                </span>
+<span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72733   &lt;1e-12</span>
+<span class="co">#&gt;     s2~x                0.92466    0.04648 19.89513   &lt;1e-12</span>
+<span class="co">#&gt; Intercepts:                                                 </span>
+<span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05184   0.9587</span>
+<span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span>
+<span class="co">#&gt; Additional Parameters:                                      </span>
+<span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01156   0.9908</span>
+<span class="co">#&gt;    l2                   0.06425    0.06498  0.98871   0.3228</span>
+<span class="co">#&gt;    z                    1.42627    0.04609 30.94319   &lt;1e-12</span>
+</pre></div>
+<pre><code>                       Estimate Std. Error  Z-value  P-value
+Regressions:
+   s1~x                 0.92834    0.04479 20.72733   &lt;1e-12
+    s2~x                0.92466    0.04648 19.89513   &lt;1e-12
+Intercepts:
+   s1                  -0.00233    0.04492 -0.05184   0.9587
+   s2                  -0.02083    0.04641 -0.44874   0.6536
+Additional Parameters:
+   l1                  -0.00075    0.06500 -0.01156   0.9908
+   l2                   0.06425    0.06498  0.98871   0.3228
+   z                    1.42627    0.04609 30.94319   &lt;1e-12</code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span>(<span class="kw">e3b</span>, <span class="st">'z'</span>, back.transform=<span class="kw">tanh</span>)
 <span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span>
@@ -393,9 +407,9 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt;   [z] = 0</span>
 </pre></div>
 <div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/confint.html">confint</a></span>(<span class="kw">e3</span>, <span class="st">'z'</span>, profile=<span class="fl">TRUE</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/confint.html">confint</a></span>(<span class="kw">e3b</span>, <span class="st">'z'</span>, profile=<span class="fl">TRUE</span>))
 <span class="co">#&gt;       2.5 %    97.5 %</span>
-<span class="co">#&gt; z 0.8714569 0.9082484</span>
+<span class="co">#&gt; z 0.8706426 0.9080912</span>
 </pre></div>
 </div>
 </div>
@@ -424,23 +438,23 @@ z 0.8720834 0.9081964</code></pre>
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] magrittr_1.5    mets_1.2.8      timereg_1.9.7   survival_3.1-12</span>
-<span class="co">#&gt; [5] lava_1.6.8     </span>
+<span class="co">#&gt; [1] magrittr_1.5 lava_1.6.8  </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] Rcpp_1.0.5          graph_1.66.0        cpp11_0.2.1        </span>
-<span class="co">#&gt;  [4] knitr_1.29          BiocGenerics_0.34.0 splines_4.0.2      </span>
+<span class="co">#&gt;  [4] knitr_1.30          BiocGenerics_0.34.0 splines_4.0.2      </span>
 <span class="co">#&gt;  [7] lattice_0.20-41     R6_2.4.1            ragg_0.3.1         </span>
-<span class="co">#&gt; [10] rlang_0.4.7         stringr_1.4.0       tools_4.0.2        </span>
-<span class="co">#&gt; [13] parallel_4.0.2      grid_4.0.2          xfun_0.17          </span>
-<span class="co">#&gt; [16] htmltools_0.5.0     systemfonts_0.3.1   yaml_2.2.1         </span>
-<span class="co">#&gt; [19] assertthat_0.2.1    rprojroot_1.3-2     digest_0.6.25      </span>
-<span class="co">#&gt; [22] numDeriv_2016.8-1.1 pkgdown_1.6.1       crayon_1.3.4       </span>
-<span class="co">#&gt; [25] Matrix_1.2-18       Rgraphviz_2.32.0    codetools_0.2-16   </span>
-<span class="co">#&gt; [28] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
-<span class="co">#&gt; [31] rmarkdown_2.3       stringi_1.5.3       compiler_4.0.2     </span>
-<span class="co">#&gt; [34] desc_1.2.0          backports_1.1.10    stats4_4.0.2       </span>
-<span class="co">#&gt; [37] mvtnorm_1.1-1</span>
+<span class="co">#&gt; [10] rlang_0.4.7         stringr_1.4.0       mets_1.2.8.1       </span>
+<span class="co">#&gt; [13] tools_4.0.2         parallel_4.0.2      grid_4.0.2         </span>
+<span class="co">#&gt; [16] xfun_0.17           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [19] yaml_2.2.1          survival_3.1-12     assertthat_0.2.1   </span>
+<span class="co">#&gt; [22] rprojroot_1.3-2     digest_0.6.25       numDeriv_2016.8-1.1</span>
+<span class="co">#&gt; [25] pkgdown_1.6.1       crayon_1.3.4        timereg_1.9.7      </span>
+<span class="co">#&gt; [28] Matrix_1.2-18       Rgraphviz_2.32.0    codetools_0.2-16   </span>
+<span class="co">#&gt; [31] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
+<span class="co">#&gt; [34] rmarkdown_2.3       stringi_1.5.3       compiler_4.0.2     </span>
+<span class="co">#&gt; [37] desc_1.2.0          backports_1.1.10    stats4_4.0.2       </span>
+<span class="co">#&gt; [40] mvtnorm_1.1-1</span>
 </pre></div>
 </div>
 <div id="bibliography" class="section level1">

@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Non-linear latent variable models and error-in-variable models</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-09-17</h4>
+            <h4 class="date">2020-09-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/nonlinear.Rmd"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="hidden name"><code>nonlinear.Rmd</code></div>
@@ -246,7 +246,7 @@
 <span class="co">## Repeated 5-fold cross-validation:</span>
 <span class="kw">ff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(linear=<span class="kw">m2a</span>,quadratic=<span class="kw">m2b</span>,spline4=<span class="kw">m2c</span>,spline6=<span class="kw">m2d</span>),
         <span class="fu">function</span>(<span class="kw">m</span>) <span class="fu">function</span>(<span class="kw">data</span>,<span class="kw">...</span>) <span class="fu"><a href="../reference/twostage.html">twostage</a></span>(<span class="kw">m1</span>,<span class="kw">m</span>,data=<span class="kw">data</span>,stderr=<span class="fl">FALSE</span>,control=<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(start=<span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(<span class="kw">e0</span>),contrain=<span class="fl">TRUE</span>)))
-<span class="kw">fit.cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.html">cv</a></span>(<span class="kw">ff</span>,data=<span class="kw">d</span>,K=<span class="fl">5</span>,rep=<span class="fl">2</span>,mc.cores=<span class="fl">4</span>,seed=<span class="fl">1</span>)
+<span class="kw">fit.cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.html">cv</a></span>(<span class="kw">ff</span>,data=<span class="kw">d</span>,K=<span class="fl">5</span>,rep=<span class="fl">2</span>,mc.cores=<span class="fl">1</span>,seed=<span class="fl">1</span>)
 <span class="kw">fit.cv</span>
 <span class="co">#&gt;               RMSE</span>
 <span class="co">#&gt; linear    4.616861</span>
@@ -278,7 +278,7 @@
 <p>For convenience, the function <code>twostageCV</code> can be used to do the cross-validation (also for choosing the mixture distribution via the ``nmix`` argument, see the section below). For example,</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw">selmod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostageCV.html">twostageCV</a></span>(<span class="kw">m1</span>, <span class="kw">m2</span>, data=<span class="kw">d</span>, df=<span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, nmix=<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,
-      nfolds=<span class="fl">2</span>, rep=<span class="fl">1</span>, mc.cores=<span class="kw">parallel</span>::<span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html">detectCores</a></span>())
+        nfolds=<span class="fl">2</span>, rep=<span class="fl">1</span>, mc.cores=<span class="fl">1</span>)
 </pre></div>
 <p>applies cross-validation (here just 2 folds for simplicity) to select the best splines with degrees of freedom varying from from 1-3 (the linear model is automatically included)</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
@@ -293,9 +293,9 @@
 <span class="co">#&gt; Knots: -3.958 0.02149 4.001 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;      RMSE(nfolds=2, rep=1)</span>
-<span class="co">#&gt; df:1              4.544070</span>
-<span class="co">#&gt; df:2              3.736255</span>
-<span class="co">#&gt; df:3              3.959411</span>
+<span class="co">#&gt; df:1              4.414387</span>
+<span class="co">#&gt; df:2              3.825827</span>
+<span class="co">#&gt; df:3              3.894576</span>
 <span class="co">#&gt; ______________________________________________________________________</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                     Estimate Std. Error Z-value  P-value  </span>
