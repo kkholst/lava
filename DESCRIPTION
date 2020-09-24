@@ -2,7 +2,7 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.6.8
-Date: 2020-09-18
+Date: 2020-09-24
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
@@ -21,6 +21,7 @@ Description: A general implementation of Structural Equation Models
 	models, and estimation of influence functions for a broad range of
 	statistical models.
 URL: https://kkholst.github.io/lava/
+Additional_Repositories: https://kkholst.github.io/r_repo/
 BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
@@ -67,4 +68,4 @@ Suggests:
 VignetteBuilder: knitr
 ByteCompile: yes
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
