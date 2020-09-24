@@ -29,6 +29,8 @@ bioc_packages:
 
 r_github_packages:
   - mangothecat/visualTest
+  - kkholst/gof
+  - kkholst/lava.tobit
 
 after_success:
   - Rscript -e 'covr::codecov(type=c("tests", "examples"))'
