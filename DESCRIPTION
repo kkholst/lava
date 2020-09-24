@@ -55,7 +55,7 @@ Suggests:
 	lavaSearch2,
 	lme4,
 	magrittr,
-	mets (>= 1.1),
+	mets,
 	nlme,
 	optimx,
 	polycor,
