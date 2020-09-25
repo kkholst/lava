@@ -476,7 +476,6 @@ summary.lvm.mixture <- function(object,type=0,labels=0,...) {
     naparname <- which(is.na(parname))
     parname[naparname]  <- object$multigroup$name[naparname]
     ParPos <- modelPar(object$multigroup,seq_along(coef(object)))$p
-
     mm <- object$multigroup$lvm
     p <- coef(object,list=TRUE)
     p0 <- coef(object,prob=FALSE)
@@ -504,10 +503,12 @@ summary.lvm.mixture <- function(object,type=0,labels=0,...) {
     }
     rownames(Coefs) <- parname
 
+    s2 <- tryCatch(sum(score(object)^2), error=function(...) NA)
+    AIC <- tryCatch(AIC(object), error=function(...) NA)
     res <- list(coef=coefs, coefmat=Coefs, coeftype=Types,
                 type=type, var=Variable, from=From, latent=Latent,
                 ncluster=ncluster, prob=tail(object$prob,1),
-                AIC=AIC(object), s2=sum(score(object)^2))
+                AIC=AIC, s2=s2)
     class(res) <- "summary.lvm.mixture"
     return(res)
 }
@@ -532,8 +533,8 @@ print.summary.lvm.mixture <- function(x,...) {
         if (i<length(x$coef)) cat("\n")
     }
     cat(rep("-",50),"\n",sep="")
-    cat("AIC=",x$AIC,"\n")
-    cat("||score||^2=",x$s2,"\n")
+    if (!is.na(x$AIC)) cat("AIC=",x$AIC,"\n")
+    if (!is.na(x$s2)) cat("||score||^2=",x$s2,"\n")
     invisible()
 }
 

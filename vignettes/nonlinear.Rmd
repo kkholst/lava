@@ -274,7 +274,7 @@ em0 <- mixture(m1, k=2, data=d)
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 
-```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE,cache.path="cache/" }
+```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE }
 em0 <- NULL
 ll <- c()
 for (i in 1:5) {
@@ -308,14 +308,14 @@ AIC(e0,em0)
 
 The spline model may then be estimated as before with the `two-stage` method
 
-```{r  eval=mets }
+```{r   }
 em2 <- twostage(em0,m2,data=d)
 em2
 ```
 
 In this example the results are very similar to the Gaussian model:
 
-```{r  mixturefit, eval=mets }
+```{r  mixturefit }
 plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 

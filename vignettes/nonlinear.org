@@ -26,12 +26,12 @@ vignette: >
 #+END_EXPORT
 
 #+BEGIN_SRC R :ravel include=FALSE
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-mets <- lava:::versioncheck('mets', 1)
-fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
+  knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+  )
+  mets <- lava:::versioncheck('mets', 1)
+  fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 #+END_SRC
 
 #+RESULTS:
@@ -264,6 +264,8 @@ cross-validation repeated two times
   }
 #+END_SRC
 
+#+RESULTS:
+
 #+BEGIN_SRC R
 summary(fit.cv)
 #+END_SRC
@@ -320,6 +322,8 @@ below). For example,
   }
 #+END_SRC
 
+#+RESULTS:
+
 
 applies cross-validation (here just 2 folds for simplicity) to select the best splines with
 degrees of freedom varying from from 1-3 (the linear model is
@@ -340,33 +344,33 @@ ______________________________________________________________________
 Selected spline model degrees of freedom: 3
 Knots: -3.958 -1.305 1.348 4.001
 
-     RMSE(nfolds=2, rep=1)
-df:1              4.733689
-df:2              4.148374
-df:3              4.028920
-df:4              4.059291
+     RMSE(nfolds=, rep=)
+df:1            4.733689
+df:2            4.148374
+df:3            4.028920
+df:4            4.059291
 ______________________________________________________________________
 
-                    Estimate Std. Error Z-value  P-value
+                    Estimate Std. Error Z-value  P-value   std.xy
 Measurements:
-   y1~eta2           1.00000
-   y2~eta2           0.97784  0.03460   28.25978   <1e-12
-   y3~eta2           1.04516  0.03472   30.10240   <1e-12
+   y1~eta2           1.00000                                0.93527
+   y2~eta2           0.97784  0.03460   28.25978   <1e-12   0.94267
+   y3~eta2           1.04516  0.03472   30.10240   <1e-12   0.96181
 Regressions:
-   eta2~z            1.02615  0.22371    4.58699 4.497e-06
-   eta2~eta1_1       3.54900  0.63734    5.56849 2.57e-08
-   eta2~eta1_2      -0.06054  0.02462   -2.45885 0.01394
-   eta2~eta1_3       0.05952  0.07251    0.82092 0.4117
+   eta2~z            1.02615  0.22371    4.58699 4.497e-06  0.34656
+   eta2~eta1_1       3.54900  0.63734    5.56849 2.57e-08   1.54239
+   eta2~eta1_2      -0.06054  0.02462   -2.45885 0.01394   -1.34652
+   eta2~eta1_3       0.05952  0.07251    0.82092 0.4117     0.27144
 Intercepts:
-   y1                0.00000
-   y2               -0.12178  0.10922   -1.11502 0.2648
-   y3               -0.09873  0.10547   -0.93606 0.3492
-   eta2              4.32762  1.45956    2.96501 0.003027
+   y1                0.00000                                0.00000
+   y2               -0.12178  0.10922   -1.11502 0.2648    -0.03874
+   y3               -0.09873  0.10547   -0.93606 0.3492    -0.02998
+   eta2              4.32762  1.45956    2.96501 0.003027   1.42794
 Residual Variances:
-   y1                1.31538  0.17614    7.46772
-   y2                1.10068  0.14566    7.55650
-   y3                0.81251  0.13272    6.12200
-   eta2              2.02944  0.29264    6.93490
+   y1                1.31538  0.17614    7.46772            0.12527
+   y2                1.10068  0.14566    7.55650            0.11137
+   y3                0.81251  0.13272    6.12200            0.07491
+   eta2              2.02944  0.29264    6.93490            0.22095
 #+end_example
 
 ** Specification of general functional forms
@@ -446,12 +450,10 @@ allowed to vary between the mixtures.
   em0 <- mixture(m1, k=2, data=d)
 #+END_SRC
 
-#+RESULTS: mixture1
-
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 #+NAME: estmixture
-#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE,cache.path="cache/"
+#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE
   em0 <- NULL
   ll <- c()
   for (i in 1:5) {
@@ -474,56 +476,16 @@ can rerun the estimation with different random starting values
   }
 #+END_SRC
 
+#+RESULTS:
+
 
 #+BEGIN_SRC R :exports both
 summary(em0)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-Cluster 1 (n=162, Prior=0.776):
---------------------------------------------------
-                    Estimate Std. Error Z value  Pr(>|z|)
-Measurements:
-   x1~eta1           1.00000
-   x2~eta1           0.99581  0.07940   12.54099   <1e-12
-   x3~eta1           1.06345  0.08436   12.60541   <1e-12
-Regressions:
-   eta1~z            1.06675  0.08527   12.50989   <1e-12
-Intercepts:
-   x1                0.00000
-   x2                0.03845  0.09890    0.38883 0.6974
-   x3               -0.02549  0.10333   -0.24667 0.8052
-   eta1              0.20925  0.13162    1.58984 0.1119
-Residual Variances:
-   x1                0.98540  0.13316    7.40025
-   x2                0.97180  0.13156    7.38695
-   x3                1.01316  0.14294    7.08815
-   eta1              0.29046  0.11129    2.61004
-
-Cluster 2 (n=38, Prior=0.224):
---------------------------------------------------
-                    Estimate Std. Error Z value  Pr(>|z|)
-Measurements:
-   x1~eta1           1.00000
-   x2~eta1           0.99581  0.07940   12.54099   <1e-12
-   x3~eta1           1.06345  0.08436   12.60541   <1e-12
-Regressions:
-   eta1~z            1.06675  0.08527   12.50989   <1e-12
-Intercepts:
-   x1                0.00000
-   x2                0.03845  0.09890    0.38883 0.6974
-   x3               -0.02549  0.10333   -0.24667 0.8052
-   eta1             -1.44290  0.25867   -5.57812 2.431e-08
-Residual Variances:
-   x1                0.98540  0.13316    7.40025
-   x2                0.97180  0.13156    7.38695
-   x3                1.01316  0.14294    7.08815
-   eta1              0.29046  0.11129    2.61004
---------------------------------------------------
-AIC= 1958.803
-||score||^2= 8.81839e-06
-#+end_example
+: Error in normal_objective.lvm(x = object, p = p, data = data, data2 = data2,  :
+:   'mets' package required
 
 Measured by AIC there is a slight improvement in the model fit using the mixture model
 #+BEGIN_SRC R :exports both :ravel eval=mets
@@ -537,7 +499,7 @@ AIC(e0,em0)
 : em0 12 1958.803
 
 The spline model may then be estimated as before with the =two-stage= method
-#+BEGIN_SRC R :exports both :ravel eval=mets
+#+BEGIN_SRC R :exports both
 em2 <- twostage(em0,m2,data=d)
 em2
 #+END_SRC
@@ -568,7 +530,7 @@ Residual Variances:
 
 In this example the results are very similar to the Gaussian model:
 #+NAME: mixturefit
-#+BEGIN_SRC R :exports both :ravel eval=mets
+#+BEGIN_SRC R :exports both
   plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
        xlab=expression(eta[1]), ylab=expression(eta[2]))
 
