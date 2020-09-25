@@ -546,7 +546,11 @@ print.twostageCV <- function(x,...) {
     print(rmse)
     printline(70)
     cat("\n")
-    print(CoefMat(x$model2,...),quote=FALSE)
+    if (!inherits(x$model2, "lvmfit")) {
+        print(x$model2$coefmat, quote=FALSE)
+    } else {
+        print(CoefMat(x$model2,...),quote=FALSE)
+    }
 }
 
 ##' @export
@@ -569,10 +573,18 @@ Model.twostageCV <- function(x,...) {
 
 ##' @export
 summary.twostageCV <- function(object,...) {
-    with(object, list(model1=summary(model1),
-                      AIC1=AIC1, cv=cv, knots=knots,
-                      model2=summary(model2)))
+    res <- with(object, list(model1=summary(model1),
+                                AIC1=AIC1, cv=cv, knots=knots,
+                                model2=summary(model2)))
+    structure(res, class="summary.twostageCV")
 }
+
+##' @export
+print.summary.twostageCV <- function(x,...) {
+    print.twostageCV(x, ...)
+}
+
+
 
 ##' @export
 predict.twostageCV <- function(object,... ) {
