@@ -2,7 +2,7 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.6.8
-Date: 2020-09-24
+Date: 2020-09-25
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Brice", "Ozenne", role = "ctb"),
              person("Thomas", "Gerds", role = "ctb"))
@@ -26,7 +26,7 @@ BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
 Depends:
-	R (>= 3.0)
+	R (>= 3.5)
 Imports:
 	grDevices,
 	graphics,
