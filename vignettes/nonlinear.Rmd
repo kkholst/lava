@@ -154,7 +154,7 @@ ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
 fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
 ```
 
-```{r  results="hide" }
+```{r  results="hide", echo=FALSE }
 ## To save time building the vignettes on CRAN, we cache time consuming computations
 if (fullVignette) {
   fit.cv$fit <- NULL
@@ -199,7 +199,7 @@ selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
 	    nfolds=2, rep=1, mc.cores=parallel::detectCores())
 ```
 
-```{r  results="hide" }
+```{r  results="hide", echo=FALSE }
 ## To save time building the vignettes on CRAN, we cache time consuming computations
 if (fullVignette) {
   saveRDS(summary(selmod), "nonlinear_selmod.rds")
@@ -287,7 +287,7 @@ for (i in 1:5) {
 }
 ```
 
-```{r  results="hide" }
+```{r  results="hide", echo=FALSE }
 ## To save time building the vignettes on CRAN, we cache time consuming computations
 if (fullVignette) {
   saveRDS(em0, "nonlinear_em0.rds")

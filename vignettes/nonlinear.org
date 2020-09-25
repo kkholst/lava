@@ -254,7 +254,7 @@ cross-validation repeated two times
 
 #+RESULTS[1729f3f75b55a5ad5d4eddbafe8f1f1bdf32fbb8]: cv_fit
 
-#+BEGIN_SRC R :ravel results="hide"
+#+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
     fit.cv$fit <- NULL
@@ -313,7 +313,7 @@ below). For example,
 
 #+RESULTS: twostageCV
 
-#+BEGIN_SRC R :ravel results="hide"
+#+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
     saveRDS(summary(selmod), "nonlinear_selmod.rds")
@@ -468,7 +468,7 @@ can rerun the estimation with different random starting values
 
 #+RESULTS: estmixture
 
-#+BEGIN_SRC R :ravel results="hide"
+#+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
     saveRDS(em0, "nonlinear_em0.rds")
