@@ -260,11 +260,12 @@ intercept(m1, ~x1+eta1) <- list(0,NA) ## Set intercept of x1 to zero. Remove the
 regression(m1,x1~eta1) <- 1 ## Factor loading fixed to 1
 ```
 
-The mixture model may then be estimated using the `mixture` method,
-where the Parameter names shared across the different mixture
-components given in the `list` will be constrained to be identical in
-the mixture model. Thus, only the intercept of \(\eta_{1}\) is
-allowed to vary between the mixtures.
+The mixture model may then be estimated using the `mixture` method
+(note, this requires the `mets` package to be installed), where the
+Parameter names shared across the different mixture components given
+in the `list` will be constrained to be identical in the mixture
+model. Thus, only the intercept of \(\eta_{1}\) is allowed to vary
+between the mixtures.
 
 ```{r  mixture1, cache=TRUE, eval=fullVignette }
 set.seed(1)
