@@ -308,14 +308,14 @@ AIC(e0,em0)
 
 The spline model may then be estimated as before with the `two-stage` method
 
-```{r   }
+```{r  eval=mets }
 em2 <- twostage(em0,m2,data=d)
 em2
 ```
 
 In this example the results are very similar to the Gaussian model:
 
-```{r  mixturefit }
+```{r  mixturefit, eval=mets }
 plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 

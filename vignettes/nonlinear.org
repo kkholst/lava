@@ -438,11 +438,12 @@ parameter of the same variable to one.
 
 #+RESULTS:
 
-The mixture model may then be estimated using the =mixture= method,
-where the Parameter names shared across the different mixture
-components given in the =list= will be constrained to be identical in
-the mixture model. Thus, only the intercept of \(\eta_{1}\) is
-allowed to vary between the mixtures.
+The mixture model may then be estimated using the =mixture= method
+(note, this requires the =mets= package to be installed), where the
+Parameter names shared across the different mixture components given
+in the =list= will be constrained to be identical in the mixture
+model. Thus, only the intercept of \(\eta_{1}\) is allowed to vary
+between the mixtures.
 
 #+NAME: mixture1
 #+BEGIN_SRC R :ravel cache=TRUE, eval=fullVignette
@@ -484,8 +485,48 @@ summary(em0)
 #+END_SRC
 
 #+RESULTS:
-: Error in normal_objective.lvm(x = object, p = p, data = data, data2 = data2,  :
-:   'mets' package required
+#+begin_example
+Cluster 1 (n=162, Prior=0.776):
+--------------------------------------------------
+                    Estimate Std. Error Z value  Pr(>|z|)
+Measurements:
+   x1~eta1           1.00000
+   x2~eta1           0.99581  0.07940   12.54099   <1e-12
+   x3~eta1           1.06345  0.08436   12.60541   <1e-12
+Regressions:
+   eta1~z            1.06675  0.08527   12.50989   <1e-12
+Intercepts:
+   x1                0.00000
+   x2                0.03845  0.09890    0.38883 0.6974
+   x3               -0.02549  0.10333   -0.24667 0.8052
+   eta1              0.20925  0.13162    1.58984 0.1119
+Residual Variances:
+   x1                0.98540  0.13316    7.40025
+   x2                0.97180  0.13156    7.38695
+   x3                1.01316  0.14294    7.08815
+   eta1              0.29046  0.11129    2.61004
+
+Cluster 2 (n=38, Prior=0.224):
+--------------------------------------------------
+                    Estimate Std. Error Z value  Pr(>|z|)
+Measurements:
+   x1~eta1           1.00000
+   x2~eta1           0.99581  0.07940   12.54099   <1e-12
+   x3~eta1           1.06345  0.08436   12.60541   <1e-12
+Regressions:
+   eta1~z            1.06675  0.08527   12.50989   <1e-12
+Intercepts:
+   x1                0.00000
+   x2                0.03845  0.09890    0.38883 0.6974
+   x3               -0.02549  0.10333   -0.24667 0.8052
+   eta1             -1.44290  0.25867   -5.57812 2.431e-08
+Residual Variances:
+   x1                0.98540  0.13316    7.40025
+   x2                0.97180  0.13156    7.38695
+   x3                1.01316  0.14294    7.08815
+   eta1              0.29046  0.11129    2.61004
+--------------------------------------------------
+#+end_example
 
 Measured by AIC there is a slight improvement in the model fit using the mixture model
 #+BEGIN_SRC R :exports both :ravel eval=mets
@@ -499,38 +540,15 @@ AIC(e0,em0)
 : em0 12 1958.803
 
 The spline model may then be estimated as before with the =two-stage= method
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
 em2 <- twostage(em0,m2,data=d)
 em2
 #+END_SRC
 
-#+RESULTS:
-#+begin_example
-                    Estimate Std. Error  Z-value   P-value
-Measurements:
-   y2~eta2           0.97823    0.03469 28.19904    <1e-12
-   y3~eta2           1.04530    0.03484 30.00721    <1e-12
-Regressions:
-   eta2~z            1.02884    0.22330  4.60752 4.075e-06
-   eta2~eta1_1       2.80413    0.65493  4.28155 1.856e-05
-   eta2~eta1_2      -0.02249    0.09996 -0.22499     0.822
-   eta2~eta1_3      -0.17333    0.28933 -0.59906    0.5491
-   eta2~eta1_4       0.38672    0.33982  1.13801    0.2551
-Intercepts:
-   y2               -0.12171    0.10925 -1.11407    0.2653
-   y3               -0.09870    0.10546 -0.93592    0.3493
-   eta2              2.12372    1.66552  1.27511    0.2023
-Residual Variances:
-   y1                1.31872    0.17657  7.46861
-   y2                1.09690    0.14503  7.56340
-   y3                0.81345    0.13259  6.13509
-   eta2              1.99590    0.28454  7.01453
-#+end_example
-
 
 In this example the results are very similar to the Gaussian model:
 #+NAME: mixturefit
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :ravel eval=mets
   plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
        xlab=expression(eta[1]), ylab=expression(eta[2]))
 
