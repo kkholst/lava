@@ -230,12 +230,10 @@
 <span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>, <span class='op'>~</span><span class='kw'>u1</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>uniform.lvm</a></span>(<span class='op'>-</span><span class='fl'>6</span>,<span class='fl'>6</span>)
 <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,n=<span class='fl'>500</span>,seed=<span class='fl'>1</span>)
 <span class='fu'><a href='twostage.lvmfit.html'>nonlinear</a></span>(<span class='kw'>m2</span>) <span class='op'>&lt;-</span> <span class='kw'>y</span><span class='op'>~</span><span class='kw'>u1</span>
-<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>'mets'</span>, quietly=<span class='fl'>TRUE</span>)) {
-  <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-  <span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'>twostageCV</span>(<span class='kw'>m1</span>, <span class='kw'>m2</span>, data=<span class='kw'>d</span>, std.err=<span class='fl'>FALSE</span>, df=<span class='fl'>2</span><span class='op'>:</span><span class='fl'>6</span>, nmix=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
+<span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'>twostageCV</span>(<span class='kw'>m1</span>, <span class='kw'>m2</span>, data=<span class='kw'>d</span>, std.err=<span class='fl'>FALSE</span>, df=<span class='fl'>2</span><span class='op'>:</span><span class='fl'>6</span>, nmix=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,
                   nfolds=<span class='fl'>2</span>, mc.cores=<span class='fl'>1</span>)
-  <span class='kw'>val</span>
-}
+<span class='kw'>val</span>
 </div><div class='output co'>#&gt; ______________________________________________________________________
 #&gt; Selected mixture model: 1 component
 #&gt;       AIC1
