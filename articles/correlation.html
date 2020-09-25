@@ -296,29 +296,29 @@
 <span class="co">#&gt;       2.5 %    97.5 %</span>
 <span class="co">#&gt; z 0.8720834 0.9081964</span>
 </pre></div>
-<p>Finally, a non-parametric bootstrap can be calculated in the following way</p>
+<p>Finally, a non-parametric bootstrap (in practice a larger number of replications would be needed) can be calculated in the following way</p>
 <div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1</span>)
-<span class="kw">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span>(<span class="kw">e2</span>, data=<span class="kw">d</span>, R=<span class="fl">1000</span>, mc.cores=<span class="fl">1</span>)
+<span class="kw">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span>(<span class="kw">e2</span>, data=<span class="kw">d</span>, R=<span class="fl">50</span>, mc.cores=<span class="fl">1</span>)
 <span class="kw">b</span>
-<span class="co">#&gt; Non-parametric bootstrap statistics (R=1000):</span>
+<span class="co">#&gt; Non-parametric bootstrap statistics (R=50):</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;      Estimate      Bias          Std.Err       2.5 %         97.5 %       </span>
-<span class="co">#&gt; y1   -0.0054119135 -0.0001442235  0.0462826949 -0.0941167930  0.0863838205</span>
-<span class="co">#&gt; y2   -0.0271494916 -0.0003115679  0.0473452067 -0.1148029705  0.0666317590</span>
-<span class="co">#&gt; y1~x  0.9330043509 -0.0043126805  0.0443815258  0.8382028896  1.0170409036</span>
-<span class="co">#&gt; y2~x  0.9165185250 -0.0041471301  0.0449163421  0.8218804405  0.9975543491</span>
-<span class="co">#&gt; l1    0.0041846522 -0.0050973846  0.0633741111 -0.1220146349  0.1172207512</span>
-<span class="co">#&gt; l2    0.0416361064 -0.0056685018  0.0625653515 -0.0877342389  0.1544206725</span>
-<span class="co">#&gt; z     1.4294227075  0.0011226809  0.0442741070  1.3458582646  1.5199882651</span>
-<span class="co">#&gt; v1    1.0041934200 -0.0030996084  0.0634874497  0.8851354253  1.1243676722</span>
-<span class="co">#&gt; v2    1.0425150452 -0.0038661070  0.0649359235  0.9160043344  1.1669817311</span>
-<span class="co">#&gt; c1    0.9122097189 -0.0030738947  0.0603724632  0.7941129271  1.0285950657</span>
+<span class="co">#&gt; y1   -0.0054119135 -0.0009992035  0.0467447038 -0.0932389998  0.0770206657</span>
+<span class="co">#&gt; y2   -0.0271494916  0.0002650151  0.0467360144 -0.1211337493  0.0483704809</span>
+<span class="co">#&gt; y1~x  0.9330043509 -0.0149098946  0.0515360969  0.8309736543  0.9998117487</span>
+<span class="co">#&gt; y2~x  0.9165185250 -0.0054613366  0.0515815249  0.8206914258  1.0057939308</span>
+<span class="co">#&gt; l1    0.0041846522 -0.0207541703  0.0680010956 -0.1521461170  0.0970349017</span>
+<span class="co">#&gt; l2    0.0416361064 -0.0172477586  0.0645290353 -0.1102270167  0.1486146877</span>
+<span class="co">#&gt; z     1.4294227075 -0.0086990026  0.0431164145  1.3409919820  1.4973573361</span>
+<span class="co">#&gt; v1    1.0041934200 -0.0184096665  0.0664333005  0.8588861834  1.1019310023</span>
+<span class="co">#&gt; v2    1.0425150452 -0.0157357318  0.0662409478  0.8956329451  1.1602357905</span>
+<span class="co">#&gt; c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892</span>
 </pre></div>
 <div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span>(<span class="kw">b</span><span class="op">$</span><span class="kw">coef</span>[,<span class="st">'z'</span>]), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.025</span>,<span class="fl">.975</span>))
 <span class="co">#&gt;      2.5%     97.5% </span>
-<span class="co">#&gt; 0.8730722 0.9086956</span>
+<span class="co">#&gt; 0.8719025 0.9046521</span>
 </pre></div>
 <div id="censored-observations" class="section level2">
 <h2 class="hasAnchor">
