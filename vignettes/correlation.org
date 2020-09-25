@@ -67,6 +67,8 @@ with covariates \(\mathbf{X} = (X_1,\ldots,X_k)^{t}\) and measurement errors
   plot(m0, layoutType="circo")
 #+END_SRC
 
+#+RESULTS:
+
 Here we focus on inference with respect to the correlation parameter \(\rho\).
 
 * Simulation
@@ -393,11 +395,12 @@ tanh(confint(e2, 'z', profile=TRUE))
 
 
 
-Finally, a non-parametric bootstrap can be calculated in the following way
+Finally, a non-parametric bootstrap (in practice a larger number of
+replications would be needed) can be calculated in the following way
 #+NAME: bootstrap
 #+BEGIN_SRC R :cache true :ravel cache=TRUE
 set.seed(1)
-b <- bootstrap(e2, data=d, R=500, mc.cores=1)
+b <- bootstrap(e2, data=d, R=50, mc.cores=1)
 b
 #+END_SRC
 

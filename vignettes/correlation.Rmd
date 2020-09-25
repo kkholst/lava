@@ -244,11 +244,12 @@ confidence intervals can be obtained with the `confint` method:
 tanh(confint(e2, 'z', profile=TRUE))
 ```
 
-Finally, a non-parametric bootstrap can be calculated in the following way
+Finally, a non-parametric bootstrap (in practice a larger number of
+replications would be needed) can be calculated in the following way
 
 ```{r  bootstrap, cache=TRUE }
 set.seed(1)
-b <- bootstrap(e2, data=d, R=1000, mc.cores=1)
+b <- bootstrap(e2, data=d, R=50, mc.cores=1)
 b
 ```
 

@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 mets <- lava:::versioncheck('mets', 1)
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
 
 ```{r  load, results="hide",message=FALSE,warning=FALSE }
@@ -37,7 +38,7 @@ with iid measurement errors
 j=1,2,3.\) and standard normal distributed covariate \(Z\).  To
 simulate from this model we use the following syntax:
 
-```{r   }
+```{r  sim }
 f <- function(x) cos(1.25*x) + x - 0.25*x^2
 m <- lvm(x1+x2+x3 ~ eta1, y1+y2+y3 ~ eta2, latent=~eta1+eta2)
 regression(m) <- eta1+eta2 ~ z
@@ -58,7 +59,7 @@ model specification.
 
 To estimate the parameters using the two-stage estimator described in <sup id="67e17d4cdc94644cb044c767cf392c2d"><a href="#lava_nlin" title="Klaus K&#228;hler Holst \&amp; Esben Budtz-J&#248;rgensen, A two-stage estimation procedure for non-linear structural equation models, {Biostatistics}, v(), (2020).">lava_nlin</a></sup>,  the first step is now to specify the measurement models
 
-```{r   }
+```{r  specifymodels }
 m1 <- lvm(x1+x2+x3 ~ eta1, eta1 ~ z, latent=~eta1)
 m2 <- lvm(y1+y2+y3 ~ eta2, eta2 ~ z, latent=~eta2)
 ```
@@ -71,7 +72,7 @@ nonlinear(m2, type="quadratic") <- eta2 ~ eta1
 
 and the model can then be estimated using the two-stage estimator
 
-```{r   }
+```{r  twostage1 }
 e1 <- twostage(m1, m2, data=d)
 e1
 ```
@@ -80,7 +81,7 @@ We see a clear statistically significant effect of the second order
 term (`eta2~eta1_2`). For comparison we can also estimate the full MLE
 of the linear model:
 
-```{r   }
+```{r  linear_mle }
 e0 <- estimate(regression(m1%++%m2, eta2~eta1), d)
 estimate(e0,keep="^eta2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
 ```
@@ -90,7 +91,7 @@ Next, we calculate predictions from the quadratic model using the estimated para
 \mathbb{E}_{\widehat{\theta}_{2}}(\eta_{2} \mid \eta_{1}, Z=0),
 \]
 
-```{r   }
+```{r  pred1 }
 newd <- expand.grid(eta1=seq(-4, 4, by=0.1), z=0)
 pred1 <- predict(e1, newdata=newd, x=TRUE)
 head(pred1)
@@ -98,7 +99,7 @@ head(pred1)
 
 To obtain a potential better fit we next proceed with a natural cubic spline
 
-```{r   }
+```{r  spline_twostage }
 kn <- seq(-3,3,length.out=5)
 nonlinear(m2, type="spline", knots=kn) <- eta2 ~ eta1
 e2 <- twostage(m1, m2, data=d)
@@ -107,7 +108,7 @@ e2
 
 Confidence limits can be obtained via the Delta method using the `estimate` method:
 
-```{r   }
+```{r  spline_ci }
 p <- cbind(eta1=newd$eta1,
 	  estimate(e2,f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
 head(p)
@@ -130,7 +131,7 @@ A more formal comparison of the different models can be obtained by
 cross-validation. Here we specify linear, quadratic and cubic spline
 models with 4 and 9 degrees of freedom.
 
-```{r   }
+```{r  spline_several }
 m2a <- nonlinear(m2, type="linear", eta2~eta1)
 m2b <- nonlinear(m2, type="quadratic", eta2~eta1)
 kn1 <- seq(-3,3,length.out=5)
@@ -142,7 +143,7 @@ m2d <- nonlinear(m2, type="spline", knots=kn2, eta2~eta1)
 To assess the model fit average RMSE is estimated with 5-fold
 cross-validation repeated two times
 
-```{r  cache=TRUE }
+```{r  cv_fit, cache=TRUE, eval=fullVignette }
 ## Scale models in stage 2 to allow for a fair RMSE comparison
 d0 <- d
 for (i in endogenous(m2))
@@ -150,8 +151,21 @@ for (i in endogenous(m2))
 ## Repeated 5-fold cross-validation:
 ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
 	    function(m) function(data,...) twostage(m1,m,data=data,stderr=FALSE,control=list(start=coef(e0),contrain=TRUE)))
-fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=1,seed=1)
-fit.cv
+fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
+```
+
+```{r  results="hide" }
+## To save time building the vignettes on CRAN, we cache time consuming computations
+if (fullVignette) {
+  fit.cv$fit <- NULL
+  saveRDS(fit.cv, "nonlinear_fitcv.rds")
+} else {
+  fit.cv <- readRDS("nonlinear_fitcv.rds")
+}
+```
+
+```{r   }
+summary(fit.cv)
 ```
 
 Here the RMSE is in favour of the splines model with 4 degrees of freedom:
@@ -180,16 +194,25 @@ For convenience, the function `twostageCV` can be used to do the
 cross-validation (also for choosing the mixture distribution via the \`\`nmix\`\` argument, see the section
 below). For example,
 
-```{r  twostageCV, cache=TRUE, eval=mets }
-selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
-	    nfolds=2, rep=1, mc.cores=1)
+```{r  twostageCV, cache=TRUE, eval=fullVignette }
+selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
+	    nfolds=2, rep=1, mc.cores=parallel::detectCores())
+```
+
+```{r  results="hide" }
+## To save time building the vignettes on CRAN, we cache time consuming computations
+if (fullVignette) {
+  saveRDS(summary(selmod), "nonlinear_selmod.rds")
+} else {
+  selmod <- readRDS("nonlinear_selmod.rds")
+}
 ```
 
 applies cross-validation (here just 2 folds for simplicity) to select the best splines with
 degrees of freedom varying from from 1-3 (the linear model is
 automatically included)
 
-```{r  eval=mets }
+```{r   }
 selmod
 ```
 
@@ -243,7 +266,7 @@ components given in the `list` will be constrained to be identical in
 the mixture model. Thus, only the intercept of \(\eta_{1}\) is
 allowed to vary between the mixtures.
 
-```{r  mixture1, cache=TRUE, eval=mets }
+```{r  mixture1, cache=TRUE, eval=fullVignette }
 set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 ```
@@ -251,7 +274,7 @@ em0 <- mixture(m1, k=2, data=d)
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 
-```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE }
+```{r  estmixture, cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE,cache.path="cache/" }
 em0 <- NULL
 ll <- c()
 for (i in 1:5) {
@@ -263,7 +286,16 @@ for (i in 1:5) {
 }
 ```
 
-```{r  eval=mets }
+```{r  results="hide" }
+## To save time building the vignettes on CRAN, we cache time consuming computations
+if (fullVignette) {
+  saveRDS(em0, "nonlinear_em0.rds")
+} else {
+  em0 <- readRDS("nonlinear_em0.rds")
+}
+```
+
+```{r   }
 summary(em0)
 ```
 

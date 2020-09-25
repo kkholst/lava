@@ -31,6 +31,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 mets <- lava:::versioncheck('mets', 1)
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 #+END_SRC
 
 #+RESULTS:
@@ -55,6 +56,7 @@ with iid measurement errors
 j=1,2,3.\) and standard normal distributed covariate \(Z\).  To
 simulate from this model we use the following syntax:
 
+#+NAME: sim
 #+BEGIN_SRC R :exports code
   f <- function(x) cos(1.25*x) + x - 0.25*x^2
   m <- lvm(x1+x2+x3 ~ eta1, y1+y2+y3 ~ eta2, latent=~eta1+eta2)
@@ -64,7 +66,7 @@ simulate from this model we use the following syntax:
   d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: sim
 
 #+BEGIN_SRC R
 plot(m)
@@ -79,12 +81,13 @@ model specification.
 ** Estimation
 
 To estimate the parameters using the two-stage estimator described in cite:lava_nlin,  the first step is now to specify the measurement models
+#+NAME: specifymodels
 #+BEGIN_SRC R :exports code
 m1 <- lvm(x1+x2+x3 ~ eta1, eta1 ~ z, latent=~eta1)
 m2 <- lvm(y1+y2+y3 ~ eta2, eta2 ~ z, latent=~eta2)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: specifymodels
 
 Next, we specify a quadratic relationship between the two latent variables
 #+BEGIN_SRC R :exports code
@@ -94,12 +97,13 @@ nonlinear(m2, type="quadratic") <- eta2 ~ eta1
 #+RESULTS:
 
 and the model can then be estimated using the two-stage estimator
+#+NAME: twostage1
 #+BEGIN_SRC R :exports both
 e1 <- twostage(m1, m2, data=d)
 e1
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: twostage1
 #+begin_example
                     Estimate Std. Error  Z-value   P-value
 Measurements:
@@ -120,16 +124,16 @@ Residual Variances:
    eta2              2.08483    0.28985  7.19274
 #+end_example
 
-
 We see a clear statistically significant effect of the second order
 term (=eta2~eta1_2=). For comparison we can also estimate the full MLE
 of the linear model:
+#+NAME: linear_mle
 #+BEGIN_SRC R :exports both
 e0 <- estimate(regression(m1%++%m2, eta2~eta1), d)
 estimate(e0,keep="^eta2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: linear_mle
 :           Estimate Std.Err    2.5% 97.5%   P-value
 : eta2~eta1   1.4140  0.2261 0.97083 1.857 4.014e-10
 : eta2~z      0.6374  0.2778 0.09291 1.182 2.177e-02
@@ -138,6 +142,7 @@ Next, we calculate predictions from the quadratic model using the estimated para
 \[
 \mathbb{E}_{\widehat{\theta}_{2}}(\eta_{2} \mid \eta_{1}, Z=0),
 \]
+#+NAME: pred1
 #+ATTR_LaTeX: :options morekeywords={Col,head},deletekeywords={data,by,col},otherkeywords={<-,\$}
 #+BEGIN_SRC R :exports both :results output
   newd <- expand.grid(eta1=seq(-4, 4, by=0.1), z=0)
@@ -145,7 +150,7 @@ Next, we calculate predictions from the quadratic model using the estimated para
   head(pred1)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: pred1
 :              y1         y2         y3       eta2
 : [1,] -11.093569 -10.958869 -11.689950 -11.093569
 : [2,] -10.623561 -10.499736 -11.198861 -10.623561
@@ -155,6 +160,7 @@ Next, we calculate predictions from the quadratic model using the estimated para
 : [6,]  -8.833641  -8.751230  -9.328656  -8.833641
 
 To obtain a potential better fit we next proceed with a natural cubic spline
+#+NAME: spline_twostage
 #+BEGIN_SRC R :exports both
   kn <- seq(-3,3,length.out=5)
   nonlinear(m2, type="spline", knots=kn) <- eta2 ~ eta1
@@ -162,7 +168,7 @@ To obtain a potential better fit we next proceed with a natural cubic spline
   e2
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: spline_twostage
 #+begin_example
                     Estimate Std. Error  Z-value   P-value
 Measurements:
@@ -186,13 +192,14 @@ Residual Variances:
 #+end_example
 
 Confidence limits can be obtained via the Delta method using the =estimate= method:
+#+NAME: spline_ci
 #+BEGIN_SRC R :exports both :results output
     p <- cbind(eta1=newd$eta1,
 	      estimate(e2,f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
     head(p)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: spline_ci
 :    eta1  Estimate   Std.Err      2.5%     97.5%      P-value
 : p1 -4.0 -9.611119 1.2650975 -12.09066 -7.131573 3.027543e-14
 : p2 -3.9 -9.324887 1.2054915 -11.68761 -6.962167 1.031268e-14
@@ -200,6 +207,7 @@ Confidence limits can be obtained via the Delta method using the =estimate= meth
 : p4 -3.7 -8.752425 1.0889618 -10.88675 -6.618099 9.176275e-16
 : p5 -3.6 -8.466193 1.0323409 -10.48954 -6.442842 2.384613e-16
 : p6 -3.5 -8.179962 0.9770711 -10.09499 -6.264938 5.668675e-17
+
 
 The fitted function can be obtained with the following code:
 #+NAME: fig:pred2
@@ -218,6 +226,7 @@ The fitted function can be obtained with the following code:
 A more formal comparison of the different models can be obtained by
 cross-validation. Here we specify linear, quadratic and cubic spline
 models with 4 and 9 degrees of freedom.
+#+NAME: spline_several
 #+BEGIN_SRC R :exports code
   m2a <- nonlinear(m2, type="linear", eta2~eta1)
   m2b <- nonlinear(m2, type="quadratic", eta2~eta1)
@@ -227,29 +236,44 @@ models with 4 and 9 degrees of freedom.
   m2d <- nonlinear(m2, type="spline", knots=kn2, eta2~eta1)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: spline_several
 
 To assess the model fit average RMSE is estimated with 5-fold
 cross-validation repeated two times
-#+BEGIN_SRC R :cache yes :exports both :ravel cache=TRUE
-    ## Scale models in stage 2 to allow for a fair RMSE comparison
-    d0 <- d
-    for (i in endogenous(m2))
-	d0[,i] <- scale(d0[,i],center=TRUE,scale=TRUE)
-    ## Repeated 5-fold cross-validation:
-    ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
-		function(m) function(data,...) twostage(m1,m,data=data,stderr=FALSE,control=list(start=coef(e0),contrain=TRUE)))
-    fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=1,seed=1)
-    fit.cv
+#+NAME: cv_fit
+#+BEGIN_SRC R :cache yes :exports both :ravel cache=TRUE, eval=fullVignette
+  ## Scale models in stage 2 to allow for a fair RMSE comparison
+  d0 <- d
+  for (i in endogenous(m2))
+      d0[,i] <- scale(d0[,i],center=TRUE,scale=TRUE)
+  ## Repeated 5-fold cross-validation:
+  ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
+	      function(m) function(data,...) twostage(m1,m,data=data,stderr=FALSE,control=list(start=coef(e0),contrain=TRUE)))
+  fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
 #+END_SRC
 
-#+RESULTS[c391d021dd543fa0b3bc13006cbbf7f6564c3fad]:
+#+RESULTS[1729f3f75b55a5ad5d4eddbafe8f1f1bdf32fbb8]: cv_fit
+
+#+BEGIN_SRC R :ravel results="hide"
+  ## To save time building the vignettes on CRAN, we cache time consuming computations
+  if (fullVignette) {
+    fit.cv$fit <- NULL
+    saveRDS(fit.cv, "nonlinear_fitcv.rds")
+  } else {
+    fit.cv <- readRDS("nonlinear_fitcv.rds")
+  }
+#+END_SRC
+
+#+BEGIN_SRC R
+summary(fit.cv)
+#+END_SRC
+
+#+RESULTS:
 :               RMSE
 : linear    4.616861
 : quadratic 3.283140
 : spline4   3.067121
 : spline6   3.119909
-
 
 Here the RMSE is in favour of the splines model with 4 degrees of freedom:
 #+NAME: multifit
@@ -280,18 +304,28 @@ For convenience, the function =twostageCV= can be used to do the
 cross-validation (also for choosing the mixture distribution via the ``nmix`` argument, see the section
 below). For example,
 #+NAME: twostageCV
-#+BEGIN_SRC R :exports code :ravel cache=TRUE, eval=mets
-selmod <- twostageCV(m1, m2, data=d, df=2:3, nmix=1:2,
-	    nfolds=2, rep=1, mc.cores=1)
+#+BEGIN_SRC R :exports code :ravel cache=TRUE, eval=fullVignette
+  selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
+	      nfolds=2, rep=1, mc.cores=parallel::detectCores())
 #+END_SRC
 
 #+RESULTS: twostageCV
+
+#+BEGIN_SRC R :ravel results="hide"
+  ## To save time building the vignettes on CRAN, we cache time consuming computations
+  if (fullVignette) {
+    saveRDS(summary(selmod), "nonlinear_selmod.rds")
+  } else {
+    selmod <- readRDS("nonlinear_selmod.rds")
+  }
+#+END_SRC
+
 
 applies cross-validation (here just 2 folds for simplicity) to select the best splines with
 degrees of freedom varying from from 1-3 (the linear model is
 automatically included)
 
-#+BEGIN_SRC R :exports both :ravel eval=mets
+#+BEGIN_SRC R :exports both
 selmod
 #+END_SRC
 
@@ -302,39 +336,37 @@ Selected mixture model: 2 components
       AIC1
 1 1961.839
 2 1958.803
-3 1962.046
 ______________________________________________________________________
-Selected spline model degrees of freedom: 2
-Knots: -3.958 0.02149 4.001
+Selected spline model degrees of freedom: 3
+Knots: -3.958 -1.305 1.348 4.001
 
-     RMSE(nfolds=5, rep=1)
-df:1              4.541176
-df:2              3.480217
-df:3              3.520422
-df:4              3.520127
-df:5              3.534198
-df:6              3.683033
+     RMSE(nfolds=2, rep=1)
+df:1              4.733689
+df:2              4.148374
+df:3              4.028920
+df:4              4.059291
 ______________________________________________________________________
 
                     Estimate Std. Error Z-value  P-value
 Measurements:
    y1~eta2           1.00000
-   y2~eta2           0.97794  0.03463   28.24076   <1e-12
-   y3~eta2           1.04520  0.03473   30.09595   <1e-12
+   y2~eta2           0.97784  0.03460   28.25978   <1e-12
+   y3~eta2           1.04516  0.03472   30.10240   <1e-12
 Regressions:
-   eta2~z            1.02819  0.22297    4.61138 4e-06
-   eta2~eta1_1       3.41773  0.36899    9.26226   <1e-12
-   eta2~eta1_2      -0.05122  0.00706   -7.25311   <1e-12
+   eta2~z            1.02615  0.22371    4.58699 4.497e-06
+   eta2~eta1_1       3.54900  0.63734    5.56849 2.57e-08
+   eta2~eta1_2      -0.06054  0.02462   -2.45885 0.01394
+   eta2~eta1_3       0.05952  0.07251    0.82092 0.4117
 Intercepts:
    y1                0.00000
-   y2               -0.12176  0.10921   -1.11495 0.2649
-   y3               -0.09872  0.10547   -0.93600 0.3493
-   eta2              3.93712  0.54020    7.28823   <1e-12
+   y2               -0.12178  0.10922   -1.11502 0.2648
+   y3               -0.09873  0.10547   -0.93606 0.3492
+   eta2              4.32762  1.45956    2.96501 0.003027
 Residual Variances:
-   y1                1.31625  0.17654    7.45594
-   y2                1.09975  0.14507    7.58080
-   y3                0.81270  0.13258    6.12986
-   eta2              2.01822  0.28971    6.96632
+   y1                1.31538  0.17614    7.46772
+   y2                1.10068  0.14566    7.55650
+   y3                0.81251  0.13272    6.12200
+   eta2              2.02944  0.29264    6.93490
 #+end_example
 
 ** Specification of general functional forms
@@ -409,7 +441,7 @@ the mixture model. Thus, only the intercept of \(\eta_{1}\) is
 allowed to vary between the mixtures.
 
 #+NAME: mixture1
-#+BEGIN_SRC R :ravel cache=TRUE, eval=mets
+#+BEGIN_SRC R :ravel cache=TRUE, eval=fullVignette
   set.seed(1)
   em0 <- mixture(m1, k=2, data=d)
 #+END_SRC
@@ -419,7 +451,7 @@ allowed to vary between the mixtures.
 To decrease the risk of using a local maximizer of the likelihood we
 can rerun the estimation with different random starting values
 #+NAME: estmixture
-#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE
+#+BEGIN_SRC R :cache t :exports code :ravel cache=TRUE,warnings=FALSE,messages=FALSE,eval=FALSE,cache.path="cache/"
   em0 <- NULL
   ll <- c()
   for (i in 1:5) {
@@ -433,8 +465,17 @@ can rerun the estimation with different random starting values
 
 #+RESULTS: estmixture
 
+#+BEGIN_SRC R :ravel results="hide"
+  ## To save time building the vignettes on CRAN, we cache time consuming computations
+  if (fullVignette) {
+    saveRDS(em0, "nonlinear_em0.rds")
+  } else {
+    em0 <- readRDS("nonlinear_em0.rds")
+  }
+#+END_SRC
 
-#+BEGIN_SRC R :exports both :ravel eval=mets
+
+#+BEGIN_SRC R :exports both
 summary(em0)
 #+END_SRC
 
