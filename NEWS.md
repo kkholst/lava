@@ -1,3 +1,5 @@
+# lava 1.6.8.1
+  - Maintenance release
 
 # lava 1.6.8
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x

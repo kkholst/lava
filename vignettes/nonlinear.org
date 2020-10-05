@@ -258,7 +258,7 @@ cross-validation repeated two times
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
     fit.cv$fit <- NULL
-    saveRDS(fit.cv, "nonlinear_fitcv.rds")
+    saveRDS(fit.cv, "nonlinear_fitcv.rds", version=2)
   } else {
     fit.cv <- readRDS("nonlinear_fitcv.rds")
   }
@@ -316,7 +316,7 @@ below). For example,
 #+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
-    saveRDS(summary(selmod), "nonlinear_selmod.rds")
+    saveRDS(summary(selmod), "nonlinear_selmod.rds", version=2)
   } else {
     selmod <- readRDS("nonlinear_selmod.rds")
   }
@@ -471,7 +471,7 @@ can rerun the estimation with different random starting values
 #+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
-    saveRDS(em0, "nonlinear_em0.rds")
+    saveRDS(em0, "nonlinear_em0.rds", version=2)
   } else {
     em0 <- readRDS("nonlinear_em0.rds")
   }
