@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.8.1</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Non-linear latent variable models and error-in-variable models</h1>
                         <h4 class="author">Klaus Kähler Holst</h4>
             
-            <h4 class="date">2020-09-25</h4>
+            <h4 class="date">2020-10-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/master/vignettes/nonlinear.Rmd"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="hidden name"><code>nonlinear.Rmd</code></div>
@@ -285,42 +285,12 @@
 <p>applies cross-validation (here just 2 folds for simplicity) to select the best splines with degrees of freedom varying from from 1-3 (the linear model is automatically included)</p>
 <div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">selmod</span>
-<span class="co">#&gt; ______________________________________________________________________</span>
-<span class="co">#&gt; Selected mixture model: 2 components</span>
-<span class="co">#&gt;       AIC1</span>
-<span class="co">#&gt; 1 1961.839</span>
-<span class="co">#&gt; 2 1958.803</span>
-<span class="co">#&gt; ______________________________________________________________________</span>
-<span class="co">#&gt; Selected spline model degrees of freedom: 3</span>
-<span class="co">#&gt; Knots: -3.958 -1.305 1.348 4.001 </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;      RMSE(nfolds=, rep=)</span>
-<span class="co">#&gt; df:1            4.733689</span>
-<span class="co">#&gt; df:2            4.148374</span>
-<span class="co">#&gt; df:3            4.028920</span>
-<span class="co">#&gt; df:4            4.059291</span>
-<span class="co">#&gt; ______________________________________________________________________</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                     Estimate Std. Error Z-value  P-value   std.xy  </span>
-<span class="co">#&gt; Measurements:                                                      </span>
-<span class="co">#&gt;    y1~eta2           1.00000                                0.93527</span>
-<span class="co">#&gt;    y2~eta2           0.97784  0.03460   28.25978   &lt;1e-12   0.94267</span>
-<span class="co">#&gt;    y3~eta2           1.04516  0.03472   30.10240   &lt;1e-12   0.96181</span>
-<span class="co">#&gt; Regressions:                                                       </span>
-<span class="co">#&gt;    eta2~z            1.02615  0.22371    4.58699 4.497e-06  0.34656</span>
-<span class="co">#&gt;    eta2~eta1_1       3.54900  0.63734    5.56849 2.57e-08   1.54239</span>
-<span class="co">#&gt;    eta2~eta1_2      -0.06054  0.02462   -2.45885 0.01394   -1.34652</span>
-<span class="co">#&gt;    eta2~eta1_3       0.05952  0.07251    0.82092 0.4117     0.27144</span>
-<span class="co">#&gt; Intercepts:                                                        </span>
-<span class="co">#&gt;    y1                0.00000                                0.00000</span>
-<span class="co">#&gt;    y2               -0.12178  0.10922   -1.11502 0.2648    -0.03874</span>
-<span class="co">#&gt;    y3               -0.09873  0.10547   -0.93606 0.3492    -0.02998</span>
-<span class="co">#&gt;    eta2              4.32762  1.45956    2.96501 0.003027   1.42794</span>
-<span class="co">#&gt; Residual Variances:                                                </span>
-<span class="co">#&gt;    y1                1.31538  0.17614    7.46772            0.12527</span>
-<span class="co">#&gt;    y2                1.10068  0.14566    7.55650            0.11137</span>
-<span class="co">#&gt;    y3                0.81251  0.13272    6.12200            0.07491</span>
-<span class="co">#&gt;    eta2              2.02944  0.29264    6.93490            0.22095</span>
+<span class="co">#&gt;        Length Class               Mode   </span>
+<span class="co">#&gt; model1 11     summary.lvm.mixture list   </span>
+<span class="co">#&gt; AIC1    2     -none-              numeric</span>
+<span class="co">#&gt; cv      4     -none-              numeric</span>
+<span class="co">#&gt; knots   4     -none-              list   </span>
+<span class="co">#&gt; model2 11     summary.lvmfit      list</span>
 </pre></div>
 </div>
 <div id="specification-of-general-functional-forms" class="section level1">
