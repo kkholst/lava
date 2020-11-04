@@ -1,5 +1,6 @@
 # lava 1.6.8.1
   - Maintenance release
+  - confpred: split-conformal prediction method updated
 
 # lava 1.6.8
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x

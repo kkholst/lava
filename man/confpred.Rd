@@ -23,7 +23,7 @@ confpred(object, data, newdata = data, alpha = 0.05, mad, ...)
 data.frame with fitted (fit), lower (lwr) and upper (upr) predictions bands.
 }
 \description{
-Conformal predicions
+Conformal predicions using locally weighted conformal inference with a split-conformal algorithm
 }
 \examples{
 set.seed(123)

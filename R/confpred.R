@@ -1,4 +1,4 @@
-##' Conformal predicions
+##' Conformal predicions using locally weighted conformal inference with a split-conformal algorithm
 ##'
 ##' @title Conformal prediction
 ##' @param object Model object (lm, glm or similar with predict method) or formula (lm)
@@ -27,19 +27,20 @@
 ##'         lwd=3,polygon=TRUE,col=Col("blue"),border=FALSE))
 ##' }
 ##' @export
-confpred <- function(object,data,newdata=data,alpha=0.05,mad,...) { ## Split algorithm
-    if (inherits(object,"formula")) {
-        object <- do.call("lm",list(object,data=data,...))
-    }
+confpred <- function(object,data,newdata=data,alpha=0.05,mad,...) { ## Split-conformal algorithm
     dd <- csplit(data,0.5)
-    muhat.new <- predict(object,newdata=newdata) ## New predictions
-    muhat.1 <- predict(object,newdata=dd[[1]])      ## Training
-    muhat.2 <- predict(object,newdata=dd[[2]])   ## Ranking
+    muhat.new <- predict(object,newdata=newdata, ...) ## New predictions
+    if (inherits(object,"formula")) { ## Training
+        suppressWarnings(object <- do.call("lm",list(object,data=dd[[1]],...)))
+    } else {
+        suppressWarnings(object <- update(object, data=dd[[1]], ...))
+    }
+    muhat.2 <- predict(object,newdata=dd[[2]], ...)   ## Ranking
     R2 <- abs(dd[[2]][,1]-muhat.2)
     if (missing(mad)) mad <- formula(object)
     if (is.null(mad)) {
         mad.new <- rep(1,nrow(newdata))
-    } else { ## Locally-weighted conformal ffinference
+    } else { ## Locally-weighted conformal inference
         if (names(dd[[2]])[1] %ni% names(newdata)) {
             newdata <- cbind(0,newdata); names(newdata)[1] <- names(dd[[2]])[1]
         }
