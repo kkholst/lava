@@ -4,7 +4,7 @@ estimate.formula <- function(x, data, weights, family=stats::gaussian,
 
     cl <- match.call()
     if (lvm) {
-        cl[[1]] <- quote(estimate0)
+        cl[[1]] <- as.call(parse(text="lava:::estimate0"))[[1]]
         return(eval(cl,envir=parent.frame()))
     }
     if (missing(data)) {
