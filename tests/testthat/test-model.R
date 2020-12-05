@@ -8,7 +8,7 @@ test_that("Basic model building blocks", {
 
     ## Children parent,nodes
     testthat::expect_match(children(m,~x),"y")
-    testthat::expect_match(parents(m,~y),"x")    
+    testthat::expect_match(parents(m,~y),"x")
     testthat::expect_equivalent(parents(m),vars(m))
     testthat::expect_equivalent(children(m),vars(m))
 
@@ -20,7 +20,7 @@ test_that("Basic model building blocks", {
     ## Remove variable
     kill(m) <- ~x
     testthat::expect_equivalent(vars(m),c("y","z"))
-    testthat::expect_true(intercept(m)["y"]=="m")  
+    testthat::expect_true(intercept(m)["y"]=="m")
 
     m <- lvm(c(y1,y2,y3)~x)
     d <- sim(m,50)
@@ -66,23 +66,28 @@ test_that("Basic model building blocks", {
     testthat::expect_equivalent(L$B,matrix(0,2,2))
     testthat::expect_equivalent(L$Theta,diag(3))
     testthat::expect_equivalent(L$Psi,diag(2))
-    
-}) 
+
+})
 
 
 test_that("Linear constraints", {
     m <- lvm(c(y[m:v]~b*x))
     constrain(m,b~a) <- base::identity
+    d <- sim(m,100,seed=1)
+    l <- lm(y~x, d)
+    e <- estimate(m, d)
+    err <- sum((coef(l)-coef(e)[c('y','a')])^2)
+    testthat::expect_true(err<1e-12)
 })
 
 
 if (requireNamespace("graph",quietly = TRUE))
 test_that("Graph attributes", {
     m <- lvm(y~x)
-    g1 <- graph::updateGraph(plot(m,noplot=TRUE))
+    suppressMessages(g1 <- graph::updateGraph(plot(m,noplot=TRUE)))
     m1 <- graph2lvm(g1)
     testthat::expect_equivalent(m1$M,m$M)
-    
+
     col <- "blue"; v <- "y"
     g1 <- lava::addattr(g1,"fill",v,col)
     testthat::expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
@@ -106,7 +111,7 @@ test_that("Graph attributes", {
     testthat::expect_true(!is.null(edgelabels(finalize(m))))
 })
 
- 
+
 test_that("Categorical variables", {
     m <- lvm()
     categorical(m,K=3,p=c(0.1,0.5)) <- ~x
@@ -114,10 +119,10 @@ test_that("Categorical variables", {
     categorical(m,K=3) <- ~x
     d2 <- simulate(m,10,seed=1)
     testthat::expect_false(identical(d1,d2))
-    
+
     regression(m,additive=FALSE,y~x) <- c(0,-5,5)
     d <- simulate(m,100,seed=1)
     l <- lm(y~factor(x),d)
     testthat::expect_true(sign(coef(l))[2]==-sign(coef(l))[3])
-     
+
 })

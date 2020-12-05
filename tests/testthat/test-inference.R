@@ -91,7 +91,7 @@ test_that("Association measures", {
 test_that("equivalence", {
     m <- lvm(c(y1,y2,y3)~u,u~x,y1~x)
     latent(m) <- ~u
-    d <- sim(m,100,seed=1)
+    d <- sim(m,100,seed=12)
     cancel(m) <- y1~x
     regression(m) <- y2~x
     e <- estimate(m,d)
@@ -150,6 +150,7 @@ test_that("Bootstrap", {
     testthat::expect_true(B2$bollenstine)
     testthat::expect_true(nrow(B1$coef)==2)
     testthat::expect_output(print(B1),"Standard errors:")
+    if (requireNamespace("foreach",quietly=TRUE)) foreach::registerDoSEQ()
     dm <- capture.output(B3 <- bootstrap(e,R=2,fun=function(x) coef(x)[2]^2+10))
     testthat::expect_true(all(mean(B3$coef)>10))
 
@@ -471,13 +472,13 @@ test_that("partialcor", {
     testthat::expect_true(mean(c1[,5]-c2[,4])^2<1e-3)
 })
 
-test_that("partialgamma", {
+## test_that("partialgamma", {
+## TODO
+## })
 
-})
-
-test_that("multipletesting", {
-    ## TODO
-})
+## test_that("multipletesting", {
+## TODO
+## })
 
 
 if (requireNamespace("mets",quietly = TRUE))
@@ -498,15 +499,13 @@ test_that("Weighted",{
 
 if (requireNamespace("mets",quietly = TRUE))
 test_that("Tobit",{
-    if (versioncheck("lava.tobit",c(0,5))) {
-        m0 <- lvm(t~x)
-        distribution(m0,~w) <- uniform.lvm(0.1,1)
-        d <- sim(m0,10,seed=1)
-        d$status <- rep(c(TRUE,FALSE),each=nrow(d)/2)
-        d$s <- with(d, Surv(t,status))
-        s <- survreg(s~x,data=d,dist="gaussian",weights=d$w)
-        m <- lvm(s~x)
-        e <- estimate(m,data=d,estimator="normal",weights="w")
-        testthat::expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
-    }
+    m0 <- lvm(t~x)
+    distribution(m0,~w) <- uniform.lvm(0.1,1)
+    d <- sim(m0,10,seed=1)
+    d$status <- rep(c(TRUE,FALSE),each=nrow(d)/2)
+    d$s <- with(d, survival::Surv(t,status))
+    s <- survival::survreg(s~x,data=d,dist="gaussian",weights=d$w)
+    m <- lvm(s~x)
+    e <- estimate(m,data=d,estimator="normal",weights="w")
+    testthat::expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
 })

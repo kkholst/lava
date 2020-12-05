@@ -57,19 +57,17 @@ test_that("Non-linear in exogenous variables", {
 })
 
 
+if (lava:::versioncheck('mets', c(1,0)))
 test_that("Probit constraints", {
-    if (!requireNamespace("mets",quietly=TRUE)) {
-        if (lava:::versioncheck('mets', c(1,0))) { ## At least major version 1
-            x <- transform(data.frame(lava:::rmvn0(1000,sigma=0.5*diag(2)+0.5)),
-                           X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
-            m <- covariance(lvm(),X1~X2)
-            ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1
-            ordinal(m,K=3,constrain=list("t1","t2")) <- ~X2
-            ##        e <- estimate(m,x)
-            e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
-            estimate(e)
-        }
-    }
+    x <- transform(data.frame(lava:::rmvn0(1000,sigma=0.5*diag(2)+0.5)),
+                   X1=as.numeric(cut(X1,breaks=3))-1,X2=as.numeric(cut(X2,breaks=3))-1)
+    m <- covariance(lvm(),X1~X2)
+    ordinal(m,K=3,constrain=list("t1","t2")) <- ~X1
+    ordinal(m,K=3,constrain=list("t1","t2")) <- ~X2
+    ##        e <- estimate(m,x)
+    e <- estimate(list(m,m),list(x[1:500,],x[501:1000,]),estimator="normal")
+    res <- estimate(e)
+    testthat::expect_true(length(coef(res))==4)
 })
 
 
