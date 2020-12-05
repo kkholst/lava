@@ -1,3 +1,9 @@
+# lava 1.6.9
+  - bug fixes: estimate.formula fixed, plot.lvm with noplot argument
+    (only worked with Rgraphviz)
+  - Remove lava.tobit
+  - Unit tests updated
+
 # lava 1.6.8.1
   - Maintenance release
   - confpred: split-conformal prediction method updated
