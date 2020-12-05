@@ -89,7 +89,6 @@
     x <- do.call(f, list(x=x,...))
   }
 
-
     plot.engine <- tolower(plot.engine)
     if (plot.engine=="rgraphviz" && (!(requireNamespace("graph",quietly=TRUE)) || !(requireNamespace("Rgraphviz",quietly=TRUE)))) {
         plot.engine <- "visnetwork"
@@ -103,19 +102,20 @@
       return(NULL)
     }
     L <- igraph::layout.sugiyama(g <- igraph.lvm(x,...))$layout
-    if (noplot) return(graph::updateGraph(g))
+    if (noplot) {
+        return(igraph::as_graphnel(g))
+    }
     dots <- list(...)
     if (is.character(layout))
       plot(g,layout=L,...)
     else plot(g,layout=layout,...)
     return(invisible(g))
   }
-    if (plot.engine=="visnetwork") {
+  if (plot.engine=="visnetwork" && !noplot) {
         g <- vis.lvm(x,labels=labels,...)
         return(g)
   }
-
-    if (init) {
+  if (init) {
         if (!is.null(graph.proc)) {
             x <- do.call(graph.proc, list(x,edgecol=edgecolor,...))
         }
@@ -144,12 +144,13 @@
     if (all(index(x)$A==0))
       dots$layoutType <- "circo"
 
-    g <- do.call(getFromNamespace("layoutGraph","Rgraphviz"), dots)
+    if (requireNamespace("Rgraphviz",quietly=TRUE))
+        g <- do.call(getFromNamespace("layoutGraph","Rgraphviz"), dots)
     ## Temporary work around:
     graph::nodeRenderInfo(g)$fill <- graph::nodeRenderInfo(dots$x)$fill
     graph::nodeRenderInfo(g)$col <- graph::nodeRenderInfo(dots$x)$col
     graph::edgeRenderInfo(g)$col <- graph::edgeRenderInfo(dots$x)$col
-    if (noplot) return(g)
+    if (noplot) return(suppressMessages(graph::updateGraph(g)))
     res <- tryCatch(Rgraphviz::renderGraph(g),error=function(e) NULL)
     ## Redo nodes to avoid edges overlapping node borders
     ##par(new=TRUE)
