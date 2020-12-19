@@ -75,7 +75,7 @@ To cite that =lava= package please use one of the following references
 #+END_QUOTE
 
 #+BEGIN_SRC LATEX
-  @Article{lava,
+  @article{lava,
     title = {Linear Latent Variable Models: The lava-package},
     author = {Klaus Kähler Holst and Esben Budtz-Jørgensen},
     year = {2013},
@@ -90,18 +90,20 @@ To cite that =lava= package please use one of the following references
 
 #+BEGIN_QUOTE
   Klaus K. Holst and Esben Budtz-Jørgensen (2020). A two-stage estimation
-  procedure for non-linear structural equation models. Biostatistics,
+  procedure for non-linear structural equation models. Biostatistics 21 (4), pp 676-691.
   http://dx.doi.org/10.1093/biostatistics/kxy082
 #+END_QUOTE
 
 #+BEGIN_SRC LATEX
 @article{lava_nlin,
-  Title = {A two-stage estimation procedure for non-linear structural equation models},
-  Author = {Klaus Kähler Holst and Esben Budtz-Jørgensen},
-  Journal = {Biostatistics},
-  Year = {2020},
+  title = {A two-stage estimation procedure for non-linear structural equation models},
+  author = {Klaus Kähler Holst and Esben Budtz-Jørgensen},
+  journal = {Biostatistics},
+  year = {2020},
+  volume = {21},
+  number = {4},
+  pages = {676-691},
   doi = {10.1093/biostatistics/kxy082},
-  volume = {(in press)},
 }
 #+END_SRC
 
