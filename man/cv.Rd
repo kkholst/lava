@@ -21,7 +21,8 @@ cv(
 
 \item{data}{data.frame}
 
-\item{K}{Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part used for testing)}
+\item{K}{Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part
+used for testing)}
 
 \item{rep}{Number of repetitions (default 1)}
 

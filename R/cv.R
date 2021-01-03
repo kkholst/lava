@@ -1,8 +1,8 @@
-rmse1 <- function(fit,data,response=NULL,...) {
-    yhat <- predict(fit,newdata=data,...)
+rmse1 <- function(fit, data, response=NULL, ...) {
+    yhat <- predict(fit, newdata = data, ...)
     if (is.null(response)) response <- endogenous(fit)
-    y <- data[,response]
-    c(RMSE=mean(as.matrix(y-yhat)^2))
+    y <- data[, response]
+    c(RMSE = mean(as.matrix(y - yhat)^2)^.5)
 }
 
 ##' Cross-validation
@@ -11,7 +11,8 @@ rmse1 <- function(fit,data,response=NULL,...) {
 ##' @title Cross-validation
 ##' @param modelList List of fitting functions or models
 ##' @param data data.frame
-##' @param K Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part used for testing)
+##' @param K Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part
+##'   used for testing)
 ##' @param rep Number of repetitions (default 1)
 ##' @param perf Performance measure (default RMSE)
 ##' @param seed Optional random seed
@@ -31,7 +32,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
     nam <- names(modelList)
-    if (is.null(nam)) nam <- paste0("model",seq_along(modelList))
+    if (is.null(nam)) nam <- paste0("model", seq_along(modelList))
     args0 <- list(...)
     args <- args0
     if (!is.null(shared)) {
