@@ -13,18 +13,18 @@ textver1 <- paste(author1, " (", year1, "). ",
                 ". doi: ", doi1, ".", sep="")
 
 author2 <- "Klaus K. Holst and Esben Budtz-Joergensen"
-year2 <- 2019
+year2 <- 2020
 journal2 <- "Biostatistics"
 title2 <- "A two-stage estimation procedure for non-linear structural equation models"
-doi2 <- "10.1007/s00180-012-0344-y"
-volume2 <- 0
-number2 <- 0
-pages2 <- "1385-1452"
+doi2 <- "10.1093/biostatistics/kxy082"
+volume2 <- 21
+number2 <- 4
+pages2 <- "676-691"
 textver2 <- paste(author2, " (", year2, "). ",
                   title2, ". ", journal2,
-            #    ", ",
-            #    volume2, " (", number2 ,")",
-            #    ", pp. ", pages2,
+                  ", ",
+                  volume2, " (", number2 ,")",
+                  ", pp. ", pages2,
                   ". doi: ", doi2, ".", sep="")
 
 
@@ -46,9 +46,9 @@ citEntry(entry="Article",
          title = title2,
          author = author2,
          year = year2,
-#         volume = volume2,
-#         number = number2,
-#         pages = pages2,
+         volume = volume2,
+         number = number2,
+         pages = pages2,
  	 journal = journal2,
 	 doi = doi2,
          textVersion = textver2)

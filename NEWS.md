@@ -3,6 +3,7 @@
     (only worked with Rgraphviz)
   - Remove lava.tobit
   - Unit tests updated
+  - cv: rmse fixed (sqrt missing)
 
 # lava 1.6.8.1
   - Maintenance release
