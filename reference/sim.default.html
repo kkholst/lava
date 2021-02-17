@@ -251,7 +251,7 @@
 #&gt; SD   0.022141 0.0069279 0.026522 0.025421   0.0099134    0.030085    0.028816</div><div class='input'>
 <span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>val</span>,R=<span class='fl'>40</span>,b0=<span class='fl'>1</span>,mc.cores=<span class='fl'>1</span>) <span class='co'>## append results</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),confint=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>6</span>,<span class='fl'>7</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
-</div><div class='output co'>#&gt; 50 replications					Time: 0.992s
+</div><div class='output co'>#&gt; 50 replications					Time: 1.06s
 #&gt; 
 #&gt;           Estimate Estimate.1
 #&gt; Mean      0.995790   0.995790
@@ -271,7 +271,7 @@
 #&gt; RMSE      0.017318   0.017318
 #&gt; </div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>))
-</div><div class='output co'>#&gt; 50 replications					Time: 0.992s
+</div><div class='output co'>#&gt; 50 replications					Time: 1.06s
 #&gt; 
 #&gt;            Model Sandwich
 #&gt; Mean    0.995790 0.995790
@@ -287,7 +287,7 @@
 #&gt;                          
 #&gt; Missing 0.000000 0.000000
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>),confint=<span class='fl'>TRUE</span>)
-</div><div class='output co'>#&gt; 50 replications					Time: 0.992s
+</div><div class='output co'>#&gt; 50 replications					Time: 1.06s
 #&gt; 
 #&gt;              Model  Sandwich
 #&gt; Mean      0.995790  0.995790
