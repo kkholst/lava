@@ -4,6 +4,8 @@
   - Remove lava.tobit
   - Unit tests updated
   - cv: rmse fixed (sqrt missing)
+  - idplot updated
+  - Score gaussian model data now automatically gets sorted 
 
 # lava 1.6.8.1
   - Maintenance release

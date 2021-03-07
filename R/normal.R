@@ -135,7 +135,7 @@ normal_gradient.lvm <- function(x,p,data,weights=NULL,data2=NULL,indiv=FALSE,...
     if  (is.null(ordinal(x)) && is.null(data2) && is.null(weights)) {
         D <- deriv.lvm(x,p=p)
         M <- moments(x,p)
-        Y <- as.matrix(data[,manifest(x)])
+        Y <- as.matrix(data[,manifest(x),drop=FALSE])
         mu <- M$xi%x%rep(1,nrow(Y))
         ss <- -mets::scoreMVN(Y,mu,M$C,D$dxi,D$dS)
         if (!indiv) return(colSums(ss))

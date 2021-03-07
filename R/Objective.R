@@ -52,9 +52,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weights=NULL, debug=FA
             MeanPar <- attributes(mp)$meanpar
             D <- with(attributes(mp), deriv.lvm(x, meanpar=MeanPar, p=pars, mom=mp, mu=NULL)) ##, all=length(constrain(x))>0))
             myvars <- (index(x)$manifest)
-            if (NCOL(data)!=length(myvars)) {
-                data <- subset(data,select=myvars)
-            }
+            data <- data[,myvars,drop=FALSE]
             score <- matrix(ncol=length(p),nrow=NROW(data))
             score0 <- -1/2*as.vector(iC)%*%D$dS
             if (!is.null(weights)) {
@@ -74,9 +72,9 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weights=NULL, debug=FA
                                        %*% iC)%*%W)) %*% D$dS
                                    )
                 } else {
-                    score[i,] <-
-                        as.numeric(score0 + crossprod(u,iC)%*%D$dxi +
-                                   1/2*as.vector(iC%*%crossprod(rbind(u))%*%iC)%*%D$dS)
+                  score[i, ] <-
+                    as.numeric(score0 + crossprod(u, iC)%*%D$dxi +
+                      1/2*as.vector(iC%*%crossprod(rbind(u))%*%iC)%*%D$dS)
                 }
             }; colnames(score) <- names(p)
             return(score)
