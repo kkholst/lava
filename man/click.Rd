@@ -8,7 +8,7 @@
 \title{Identify points on plot}
 \usage{
 \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
-idplot(x,y,...,id=list())
+idplot(x, y ,..., id=list(), return.data=FALSE)
 }
 \arguments{
 \item{x}{X coordinates}
@@ -28,6 +28,8 @@ idplot(x,y,...,id=list())
 \item{cex}{Size}
 
 \item{id}{List of arguments parsed to \code{click} function}
+
+\item{return.data}{Boolean indicating if selected points should be returned}
 }
 \description{
 Extension of the \code{identify} function

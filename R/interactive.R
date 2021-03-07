@@ -47,7 +47,7 @@ colsel <- function(locate,...) {
 ##' @title Identify points on plot
 ##' @usage
 ##' \method{click}{default}(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
-##' idplot(x,y,...,id=list())
+##' idplot(x, y ,..., id=list(), return.data=FALSE)
 ##' @aliases idplot click.default click colsel
 ##' @param x X coordinates
 ##' @param y Y coordinates
@@ -57,6 +57,7 @@ colsel <- function(locate,...) {
 ##' @param col Colour
 ##' @param cex Size
 ##' @param id List of arguments parsed to \code{click} function
+##' @param return.data Boolean indicating if selected points should be returned
 ##' @param \dots Additional arguments parsed to \code{plot} function
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{idplot}}, \code{identify}
@@ -75,32 +76,35 @@ colsel <- function(locate,...) {
 ##' @keywords iplot
 ##' @export
 click <- function(x,...){
-    UseMethod("click")
+  UseMethod("click")
 }
 
 ##' @export
 click.default <-
-function(x, y=NULL, label=TRUE, n=length(x), pch=19, col="orange", cex=3, ...)
-  {
-    xy <- xy.coords(x, y); x <- xy$x; y <- xy$y
-    sel <- rep(FALSE, length(x)); res <- integer(0)
-    while(sum(sel) < n) {
-      ans <- identify(x[!sel], y[!sel], n=1, plot=FALSE, ...)
-      if(!length(ans)) break
-      ans <- which(!sel)[ans]
-             points(x[ans], y[ans], pch = pch, col=col, cex=cex)
-      if (label)
-        text(x[ans], y[ans], ans)
-      sel[ans] <- TRUE
-      res <- c(res, ans)
-    }
-    res
-
+function(x, y=NULL, label=TRUE, n=length(x),
+         pch=19, col="orange", cex=3, ...) {
+  xy <- xy.coords(x, y); x <- xy$x; y <- xy$y
+  sel <- rep(FALSE, length(x)); res <- integer(0)
+  while(sum(sel) < n) {
+    ans <- identify(x[!sel], y[!sel], n=1, plot=FALSE, ...)
+    if(!length(ans)) break
+    ans <- which(!sel)[ans]
+    points(x[ans], y[ans], pch = pch, col=col, cex=cex)
+    if (label)
+      text(x[ans], y[ans], ans)
+    sel[ans] <- TRUE
+    res <- c(res, ans)
   }
+  res
+}
 
 ##' @export
-idplot <- function(x,y,...,id=list()) {
+idplot <- function(x, y=NULL, ..., id=list(), return.data=FALSE) {
   plot(x,y,...)
   id$x <- x; id$y <- y
-  do.call("click",id)
+  idx <- do.call("click", id)
+  if (return.data) {
+    return(with(id, cbind(x,y)[idx,]))
+  }
+  return(idx)
 }
