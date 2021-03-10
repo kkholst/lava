@@ -1,12 +1,12 @@
 # lava 1.6.9
-  - bug fixes: estimate.formula fixed, plot.lvm with noplot argument
-    (only worked with Rgraphviz)
-  - Remove lava.tobit
-  - Unit tests updated
-  - cv: rmse fixed (sqrt missing)
-  - idplot updated
-  - Score gaussian model data now automatically gets sorted 
-
+  - idplot: now accepts matrix or data.frame as 1st argument. New argument: return.data.
+  - Unit tests updated 
+  - Bug fixes: 
+    cv: rmse output fixed.
+    score: Fixed bug for linear Gaussian model with argument 'indiv=TRUE'. 
+    estimate.formula: call object initialized correctly.
+    plot.lvm: noplot argument now works with all plot engines.
+  
 # lava 1.6.8.1
   - Maintenance release
   - confpred: split-conformal prediction method updated
