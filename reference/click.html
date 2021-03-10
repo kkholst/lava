@@ -140,7 +140,7 @@
 
     <pre class="usage"><span class='co'># S3 method for default</span>
 <span class='fu'>click</span>(<span class='kw'>x</span>, y=<span class='kw'>NULL</span>, label=<span class='fl'>TRUE</span>, n=<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>x</span>), pch=<span class='fl'>19</span>, col=<span class='st'>"orange"</span>, cex=<span class='fl'>3</span>, <span class='kw'>...</span>)
-<span class='fu'>idplot</span>(<span class='kw'>x</span>,<span class='kw'>y</span>,<span class='kw'>...</span>,id=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>())</pre>
+<span class='fu'>idplot</span>(<span class='kw'>x</span>, <span class='kw'>y</span> ,<span class='kw'>...</span>, id=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), return.data=<span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,6 +180,10 @@
     <tr>
       <th>id</th>
       <td><p>List of arguments parsed to <code>click</code> function</p></td>
+    </tr>
+    <tr>
+      <th>return.data</th>
+      <td><p>Boolean indicating if selected points should be returned</p></td>
     </tr>
     </table>
 
