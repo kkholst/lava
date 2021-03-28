@@ -3,6 +3,7 @@
 \name{confband}
 \alias{confband}
 \alias{forestplot}
+\alias{plot_region}
 \title{Add Confidence limits bar to plot}
 \usage{
 confband(
@@ -98,6 +99,14 @@ confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2)
 plot(0,type="n",ylim=c(0,k+1),xlim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
 axis(1)
 confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
+
+x <- seq(0, 3, length.out=20)
+y <- cos(x)
+yl <- y - 1
+yu <- y + 1
+plot_region(x, y, yl, yu)
+plot_region(x, y, yl, yu, type='s', col="darkblue", add=TRUE)
+
 }
 \seealso{
 \code{confband}

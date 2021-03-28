@@ -1,3 +1,6 @@
+# lava 1.6.10
+  - Development version
+  
 # lava 1.6.9
   - idplot: now accepts matrix or data.frame as 1st argument. New argument: return.data.
   - Unit tests updated 

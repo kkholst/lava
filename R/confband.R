@@ -20,7 +20,7 @@
 ##' @seealso \code{confband}
 ##' @export
 ##' @keywords iplot
-##' @aliases confband forestplot
+##' @aliases confband forestplot plot_region
 ##' @author Klaus K. Holst
 ##' @examples
 ##' plot(0,0,type="n",xlab="",ylab="")
@@ -66,6 +66,14 @@
 ##' plot(0,type="n",ylim=c(0,k+1),xlim=range(val[,-1]),axes=FALSE,xlab="",ylab="")
 ##' axis(1)
 ##' confband(val[,1],val[,3],val[,4],val[,2],pch=16,cex=2,vert=FALSE)
+##'
+##' x <- seq(0, 3, length.out=20)
+##' y <- cos(x)
+##' yl <- y - 1
+##' yu <- y + 1
+##' plot_region(x, y, yl, yu)
+##' plot_region(x, y, yl, yu, type='s', col="darkblue", add=TRUE)
+##'
 confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
               centermark=0.03,
               pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
@@ -74,20 +82,25 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
             x1 <- rep(x,each=2)[-1]
             y1 <- rep(lower, each=2);  y1 <- y1[-length(y1)]
             x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]
-            y2 <- rep(rev(upper),each=2)[-1]
+            y2 <- rep(rev(upper), each=2)[-1]
             xx <- c(x1,x2)
             if (!is.null(center))
-                center <- rep(center,each=2)[-1]
+                center <- rep(center, each=2)[-1]
             yy <- c(y1,y2)
         } else {
-            xx <- c(x,rev(x))
-            yy <- c(lower,rev(upper))
+            xx <- c(x, rev(x))
+            yy <- c(lower, rev(upper))
         }
         polygon(xx,yy,...)
         if (line && !is.null(center)) {
-            mlines <- function(x,y,...,border,fillOddEven)
-                lines(x,y,...)
-            mlines(xx[seq(length(xx)/2)],center,...)
+          mlines <- function(x, y, ..., border, fillOddEven) {
+            if (step) {
+              lines(x, y, type="s", ...)
+            } else {
+              lines(x, y, ,...)
+            }
+          }
+          mlines(xx[seq(length(xx)/2)],center,...)
         }
         return(invisible(NULL))
     }
@@ -279,3 +292,45 @@ forestplot <- function(x,lower,upper,line=0,labels,
     }
 }
 
+
+##' @export
+plot_region <- function(x, y=NULL, lower=NULL, upper=NULL,
+                        line=TRUE, add=FALSE,
+                        border=NA, col=1, alpha=0.5,
+                        type="l", ...) {
+  if (is.matrix(x) && ncol(x)==4) {
+    if (ncol(x)>=4) {
+      y <- x[, 2]
+      lower <- x[, 3]
+      upper <- x[, 4]
+      x <- x[, 1]
+    }
+    if (ncol(x)==3) {
+      lower <- x[, 2]
+      upper <- x[, 3]
+      x <- x[, 1]
+      line <- FALSE
+    }
+  } else {
+    if (is.matrix(y)) {
+      if (ncol(y)==2) {
+        lower <- y[, 1]
+        upper <- y[, 2]
+      } else if (ncol(y)>2) {
+        lower <- y[, 2]
+        upper <- y[, 3]
+        y <- y[, 1]
+      }
+    }
+  }
+  if (!add) {
+    yy <- range(c(y,lower,upper))
+    plot(range(x), range(yy), ..., type="n")
+  }
+  confband(x, lower, upper, y, line=FALSE, polygon=TRUE,
+           step=(type=="s"), col=Col(col, alpha),
+           border=border, ...)
+  if (line) {
+    lines(x, y, type=type, col=col, ...)
+  }
+}
