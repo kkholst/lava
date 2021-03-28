@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.10</span>
       </span>
     </div>
 
@@ -265,7 +265,15 @@ bar is used</p></td>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fl'>0</span>,type=<span class='st'>"n"</span>,ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='kw'>k</span><span class='op'>+</span><span class='fl'>1</span>),xlim=<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='kw'>val</span>[,<span class='op'>-</span><span class='fl'>1</span>]),axes=<span class='fl'>FALSE</span>,xlab=<span class='st'>""</span>,ylab=<span class='st'>""</span>)
 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/axis.html'>axis</a></span>(<span class='fl'>1</span>)
 </div><div class='input'><span class='fu'>confband</span>(<span class='kw'>val</span>[,<span class='fl'>1</span>],<span class='kw'>val</span>[,<span class='fl'>3</span>],<span class='kw'>val</span>[,<span class='fl'>4</span>],<span class='kw'>val</span>[,<span class='fl'>2</span>],pch=<span class='fl'>16</span>,cex=<span class='fl'>2</span>,vert=<span class='fl'>FALSE</span>)
-</div><div class='img'><img src='confband-8.png' alt='' width='700' height='433' /></div></pre>
+</div><div class='img'><img src='confband-8.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>, <span class='fl'>3</span>, length.out=<span class='fl'>20</span>)
+<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span>(<span class='kw'>x</span>)
+<span class='kw'>yl</span> <span class='op'>&lt;-</span> <span class='kw'>y</span> <span class='op'>-</span> <span class='fl'>1</span>
+<span class='kw'>yu</span> <span class='op'>&lt;-</span> <span class='kw'>y</span> <span class='op'>+</span> <span class='fl'>1</span>
+<span class='fu'>plot_region</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>yl</span>, <span class='kw'>yu</span>)
+<span class='fu'>plot_region</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>yl</span>, <span class='kw'>yu</span>, type=<span class='st'>'s'</span>, col=<span class='st'>"darkblue"</span>, add=<span class='fl'>TRUE</span>)
+
+</div><div class='img'><img src='confband-9.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
