@@ -317,34 +317,37 @@
             start <- p
             Optim$start <- p
         } else {
-            myparnames <- coef(x,mean=TRUE)
-            paragree <- FALSE
-            paragree.2 <- c()
-            if (!is.null(Optim$start)) {
-                paragree <- myparnames%in%names(Optim$start)
-                paragree.2 <- names(Optim$start)%in%myparnames
+          myparnames <- coef(x,mean=TRUE)
+          paragree <- FALSE
+          paragree_pos <- c()
+          if (!is.null(Optim$start)) {
+            paragree <- myparnames%in%names(Optim$start)
+            paragree_pos <- matrix(0, sum(paragree), 2)
+            count <- 0
+            for (i in which(paragree)) {
+              count <- count + 1
+              paragree_pos[count,] <-  c(i, which(myparnames[i]==names(Optim$start))[1])
             }
-            if (sum(paragree)>=length(myparnames))
-                Optim$start <- Optim$start[which(paragree.2)]
-
-            if (! (length(Optim$start)==length(myparnames) & sum(paragree)==0))
-                if (is.null(Optim$start) || sum(paragree)<length(myparnames)) {
-                    if (is.null(Optim$starterfun) && lava.options()$param!="relative")
-                        Optim$starterfun <- startvalues0
-                    start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,
-                                                                             messages=messages,data=data,...)))
-                    if (!is.null(x$expar) && length(start)<nparall) {
-                        ii <- which(index(x)$e1==1)
-                        start <- c(start, structure(unlist(x$expar[ii]),names=names(x$expar)[ii]))
-                    }
-                    ## Debug(list("start=",start))
-                    if (length(paragree.2)>0) {
-                        start[which(paragree)] <- Optim$start[which(paragree.2)]
-                    }
-                    Optim$start <- start
-                }
+          }
+          ## If starting values are given for all parameters and not named, then
+          ## we just keep the provided starting values as they are.
+          ## Otherwise, calculate starting values and place user-provided
+          ## starting values in the right positions
+          if (! (length(Optim$start)==length(myparnames) & sum(paragree)==0)) {
+            if (is.null(Optim$starterfun) && lava.options()$param!="relative")
+              Optim$starterfun <- startvalues0
+            start <- suppressWarnings(do.call(Optim$starterfun, list(x=x,S=S,mu=mu,debug=lava.options()$debug,
+                                                                     messages=messages,data=data,...)))
+            if (!is.null(x$expar) && length(start)<nparall) {
+              ii <- which(index(x)$e1==1)
+              start <- c(start, structure(unlist(x$expar[ii]), names=names(x$expar)[ii]))
+            }
+            for (i in seq_len(NROW(paragree_pos))) {
+              start[paragree_pos[i, 1]] <- Optim$start[paragree_pos[i, 2]]
+            }
+            Optim$start <- start
+          }
         }
-
         ## Missing data
         if (missing) {
             return(estimate.MAR(x=x,data=data,fix=fix,control=Optim,debug=lava.options()$debug,

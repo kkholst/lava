@@ -165,7 +165,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
         numDeriv::jacobian(obj,p)
     }
   }
-
   oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
       D <- I <- NULL # Place-holders for gradient and negative hessian
       if (!is.logical(control0$backtrack)) { # Back-tracking based on objective function evaluations

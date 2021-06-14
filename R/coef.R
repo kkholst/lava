@@ -379,7 +379,6 @@
         attributes(res)$from <- From
         attributes(res)$latent <- latent.var
         attributes(res)$nlincon <- nlincon.estimates.full
-
         return(res)
     }
 
