@@ -2,7 +2,7 @@
 % Please edit documentation in R/trim.R
 \name{trim}
 \alias{trim}
-\title{Trim tring of (leading/trailing/all) white spaces}
+\title{Trim string of (leading/trailing/all) white spaces}
 \usage{
 trim(x, all = FALSE, ...)
 }
@@ -14,7 +14,7 @@ trim(x, all = FALSE, ...)
 \item{\dots}{additional arguments to lower level functions}
 }
 \description{
-Trim tring of (leading/trailing/all) white spaces
+Trim string of (leading/trailing/all) white spaces
 }
 \author{
 Klaus K. Holst
