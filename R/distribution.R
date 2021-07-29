@@ -200,6 +200,17 @@ threshold.lvm <- function(p,labels=NULL,...) {
 
 ###}}} threshold
 
+##' @export
+multinomial.lvm <- function(prob, labels=NULL) {
+  if (sum(prob)<1)
+    prob <- c(prob, 1-sum(prob))
+  if (is.null(labels)) {
+    labels = seq(0, length(prob)-1)
+  }
+  structure(function(n, ...) sample(labels, n, prob=prob, replace=TRUE),
+            family=list(family='multinomial', par=prob))
+}
+
 ###{{{ binomial
 
 ##' @export
