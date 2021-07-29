@@ -22,7 +22,7 @@ merge.lvm <- function(x,y,...) {
       latent(m) <- latent(m2)
     if (length(m2$constrain)>0)
       m$constrain <- c(m$constrain,m2$constrain)
-    M <- (index(m2)$A)
+    M <- (index(m2)$M)
     P <- (index(m2)$P)
     nn <- vars(m2)
     for (j in seq_len(nrow(M))) {
@@ -59,12 +59,12 @@ merge.lvm <- function(x,y,...) {
 
 ##' @export
 "+.estimate" <- function(x,...) {
-  merge(x,...)
+  merge(x, ..., paired=TRUE)
 }
 
 ##' @export
 merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=NULL) {
-    objects <- list(x,y, ...)
+    objects <- list(x, estimate(y), ...)
     if (length(nai <- names(objects)=="NA")>0)
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
