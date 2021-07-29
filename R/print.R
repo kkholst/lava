@@ -6,70 +6,69 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
   res <- NULL
   myhooks <- gethook("print.hooks")
   for (f in myhooks) {
-      res <- do.call(f, list(x=x,...))
+      res <- do.call(f, list(x=x, ...))
   }
   if (is.null(res)) {
     k <- length(vars(x))
-    L <- rep(FALSE,k); names(L) <- vars(x); L[latent(x)] <- TRUE
+    L <- rep(FALSE, k); names(L) <- vars(x); L[latent(x)] <- TRUE
     cat("Latent Variable Model\n") ##;" \n\twith: ", k, " variables.\n", sep="");
     if (k==0) {
         cat("\nEmpty\n")
         return()
     }
-    ff <- formula(x,char=TRUE,all=TRUE)
+    ff <- formula(x, char=TRUE, all=TRUE)
     R <- Rx <- Rt <- c()
     exo <- exogenous(x)
     for (f in ff) {
       oneline <- as.character(f);
-      y <- strsplit(f,"~")[[1]][1]
+      y <- strsplit(f, "~")[[1]][1]
       y <- trim(y)
       {
-        col1 <- as.character(oneline)          
+        col1 <- as.character(oneline)
         D <- attributes(distribution(x)[[y]])$family
         Tr <- x$attributes$transform[[y]]
-        col2 <- tryCatch(x$attributes$type[[y]],error=function(...) NULL)
+        col2 <- tryCatch(x$attributes$type[[y]], error=function(...) NULL)
         if (is.null(col2) || is.na(col2)) {
-            if (!is.na(x$covfix[y,y]) && x$covfix[y,y]==0L) {
+            if (!is.na(x$covfix[y, y]) && x$covfix[y, y]==0L) {
                 col2 <- "deterministic"
             } else {
                 col2 <- "gaussian"
             }
         }
         if (!is.null(Tr)){
-            col1 <- paste0(y,' ~ ',paste0(Tr$x,collapse="+"),sep="")
-            Rt <- rbind(Rt, c(col1,""))
+            col1 <- paste0(y, " ~ ", paste0(Tr$x, collapse="+"), sep="")
+            Rt <- rbind(Rt, c(col1, ""))
         }
         if (!is.null(D$family)) {
             col2 <- paste0(D$family)
         }
-        if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
-        if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
+        if (!is.null(D$link)) col2 <- paste0(col2, "(", D$link, ")")
+        if (!is.null(D$par)) col2 <- paste0(col2, "(", paste(D$par, collapse=","), ")")
         if (is.list(distribution(x)[[y]]) && is.vector(distribution(x)[[y]][[1]])) col2 <- "fixed"
-        if (L[y]) col2 <- paste0(col2,", latent")
+        if (L[y]) col2 <- paste0(col2, ", latent")
         if (y%in%exo) {
-            Rx <- rbind(Rx,c(col1,col2))
+            Rx <- rbind(Rx,c(col1, col2))
         } else {
             if (is.null(Tr)) {
-                R <- rbind(R,c(col1,col2))
+                R <- rbind(R,c(col1, col2))
             }
         }
       }
     }
     if (length(R)>0) {
-        rownames(R) <- paste(" ",R[,1]," "); colnames(R) <- rep("",ncol(R))
-        print(R[,2,drop=FALSE],quote=FALSE,...)
+        rownames(R) <- paste(" ", R[, 1], " "); colnames(R) <- rep("", ncol(R))
+        print(R[, 2, drop=FALSE], quote=FALSE, ...)
     }
     if (print.exogenous && length(Rx)>0) {
         cat("\nExogenous variables:")
-        rownames(Rx) <- paste(" ",gsub("~ 1","",Rx[,1]),"     "); colnames(Rx) <- rep("",ncol(Rx))
-        print(Rx[,2,drop=FALSE],quote=FALSE,...)
+        rownames(Rx) <- paste(" ", gsub("~ 1", "", Rx[, 1]), "     "); colnames(Rx) <- rep("", ncol(Rx))
+        print(Rx[, 2, drop=FALSE], quote=FALSE, ...)
     }
     if (print.transform && length(Rt)>0) {
         cat("\nTransformations:")
-        rownames(Rt) <- paste(" ",gsub("~ 1","",Rt[,1]),"     "); colnames(Rt) <- rep("",ncol(Rt))
-        print(Rt[,2,drop=FALSE],quote=FALSE,...)
+        rownames(Rt) <- paste(" ", gsub("~ 1", "", Rt[,1]), "     "); colnames(Rt) <- rep("", ncol(Rt))
+        print(Rt[,2,drop=FALSE],quote=FALSE, ...)
     }
-    
   }
   cat("\n")
   invisible(x)

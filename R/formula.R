@@ -1,6 +1,6 @@
 ##' @export
 formula.lvm <- function(x,char=FALSE,all=FALSE,...) {
-    A <- index(x)$A
+    A <- index(x)$M
     res <- c()
     for (i in seq_len(ncol(A))) {
         if (all || !(colnames(A)[i]%in%c(index(x)$exogenous,parameter(x)) )) {
