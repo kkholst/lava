@@ -164,7 +164,6 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
       object$parpos <- NULL
       return(object)
     }
-
     if (!is.list(value) | length(value)>2) stop("Value should contain names of outcome (to) and predictors (from)")
     if (all(c("to","from")%in%names(value))) {
 
@@ -214,7 +213,7 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
             return(regfix(object))
         }
         if (inherits(to,"formula")) {
-            if (!missing(value)) {
+          if (!missing(value)) {
                 regression(object,to,messages=messages,...) <- value
             } else {
                 regression(object,messages=messages,...) <- to

@@ -253,11 +253,15 @@ constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE
     }
 
 ##' @export
-"constrain<-.default" <- function(x,par,args,...,value) {
+"constrain<-.default" <- function(x,par,args,constrainY=TRUE,...,value) {
     if (inherits(par,"formula")) {
         lhs <- getoutcome(par)
         xf <- attributes(terms(par))$term.labels
         par <- lhs
+        if (length(par)==0) {
+          par <- xf
+          xf <- NULL
+        }
         if (par%in%vars(x)) {
             if (is.na(x$mean[[par]])) {
                 intercept(x,par) <- par
@@ -277,25 +281,24 @@ constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE
         return(x)
     }
     for (i in args) {
-        if (!(i%in%c(parlabels(Model(x)),vars(Model(x)),
+        if (!(i%in%c(parlabels(Model(x)), vars(Model(x)),
                      names(constrain(x))))) {
             if (lava.options()$messages>1)
-                message("\tAdding parameter '", i,"'\n",sep="")
-            parameter(x,messages=0) <- i
+                message("\tAdding parameter '", i, "'\n",sep="")
+            parameter(x, messages=0) <- i
         }
     }
-
-    if (par%in%vars(x)) {
-        if (!"..."%in%names(formals(value))) {
-            formals(value) <- c(formals(value),alist(...=))
+    if (par%in%vars(x) && constrainY) {
+        if (!"..."%in%names(formals(value)) && !is.primitive(value)) {
+            formals(value) <- c(formals(value), alist(...=))
         }
-        Model(x)$constrainY[[par]] <- list(fun=value,args=args)
+        Model(x)$constrainY[[par]] <- list(fun=value, args=args)
     } else {
         ## Wrap around do.call, since functions are not really
         ## parsed as call-by-value in R, and hence setting
         ## attributes to e.g. value=cos, will be overwritten
         ## if value=cos is used again later with new args.
-        Model(x)$constrain[[par]] <- function(x) do.call(value,list(x))
+        Model(x)$constrain[[par]] <- function(x) do.call(value, list(x))
         attributes(Model(x)$constrain[[par]])$args <- args
         index(Model(x)) <- reindex(Model(x))
     }
@@ -310,7 +313,7 @@ constraints <- function(object,data=model.frame(object),vcov=object$vcov,level=0
             if (class(data)[1]=="list") data <- data[[k]]
             parpos <- modelPar(object, seq_len(length(p)))$p[[k]]
             if (nrow(data)>1 & !missing(idx)) {
-                res <- t(apply(data,1,function(x) constraints(Model(object)$lvm[[k]],data=x,p=p[parpos],vcov=vcov[parpos,parpos],level=level)[idx,]))
+                res <- t(apply(data, 1, function(x) constraints(Model(object)$lvm[[k]],data=x,p=p[parpos],vcov=vcov[parpos,parpos],level=level)[idx,]))
                 return(res)
             }
             return(constraints(Model(object)$lvm[[k]],data=data,p=p[parpos],vcov=vcov[parpos,parpos],level=level))

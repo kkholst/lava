@@ -98,8 +98,10 @@ procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
           res[intpos] <- NULL
       }
 
+
         object <- addvar(object,xs,reindex=FALSE ,...)
         exolist <- c()
+
 
         for (i in seq_len(length(xs))) {
 

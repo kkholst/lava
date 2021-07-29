@@ -1,5 +1,8 @@
 # lava 1.6.10
-  - Development version
+  - Starting values updated
+  - plot_region function 
+  - multinomial.lvm
+  - regression (sim) - nonlinear
   
 # lava 1.6.9
   - idplot: now accepts matrix or data.frame as 1st argument. New argument: return.data.
@@ -220,7 +223,7 @@
     added.
   - 'sim': parameters can now be specified as part of '...'
   - summary.sim: calculate Wald CI if confint=TRUE, otherwise use the
-    user supplied confidence limits.
+        user supplied confidence limits. 
   - Clopper-pearson intervals and exact binomial tests added to 'diagtest'.
   - Interval censoring with 'normal' estimator, which now also works
     with 'binary' definitions.

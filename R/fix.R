@@ -345,10 +345,12 @@ regfix.lvm <- function(object,...) {
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
 ##' @export
-"regfix<-.lvm" <- function(object, to, from, exo=lava.options()$exogenous, variance, y,x, ..., value) {
+"regfix<-.lvm" <- function(object, to, from=NULL, exo=lava.options()$exogenous, variance, y,x, ..., value) {
     if (!missing(y)) {
-        if (inherits(y,"formula")) y <- all.vars(y)
-        to <- y
+      if (inherits(y,"formula")) {
+        y <- all.vars(y)
+      }
+      to <- y
     }
     if (!missing(x)) {
         if (inherits(x,"formula")) x <- all.vars(x)
@@ -358,6 +360,7 @@ regfix.lvm <- function(object,...) {
 
     if (inherits(to,"formula")) {
         val <- procformula(object,to,exo=exo)
+        constrain_formula <- to
         object <- val$object
         ys <- val$ys
         xs <- val$xs
@@ -378,7 +381,33 @@ regfix.lvm <- function(object,...) {
 
     if (inherits(value,"formula")) value <- all.vars(value)
 
-    if (length(from)==length(to) & length(from)==length(value)) {
+    nonlinear_function <- NULL
+    if (is.function(value)) {
+      vfun <- value
+      aname <- setdiff(names(formals(value)),"...")
+      if (is.null(to)) { # formula was apparently given as  ~outcome
+        to <- from[1]
+        from <- NULL
+      }
+      pname <- parameter(object)
+      if (length(from)==0 || length(aname)>=length(from)) {
+        constrain_formula <- toformula(to, aname)
+        from <- setdiff(aname, pname)
+        nonlinear_function <- function(x) {
+          do.call(vfun,
+                  structure(apply(rbind(x), 2, identity, simplify=FALSE),
+                            names=aname))
+        }
+      } else {
+        nonlinear_function <- vfun
+        from <- setdiff(from, pname)
+      }
+      object <- addvar(object, c(to,from))
+      value <- 0
+    }
+
+    if (length(from)==length(to) && length(from)==length(value)
+        && is.null(nonlinear_function)) {
         for (i in seq_along(from)) {
             if (object$M[from[i],to[i]]==0) { ## Not adjacent! ##!isAdjacent(Graph(object), from[i], to[i])) {
                 object <- regression(object, to=to[i], from=from[i])
@@ -402,7 +431,6 @@ regfix.lvm <- function(object,...) {
         index(object)[names(newindex)] <- newindex
         return(object)
     }
-
     for (i in from) {
         for (j in to) {
             if (object$M[i,j]==0) { ##!isAdjacent(Graph(object), i, j)) {
@@ -410,6 +438,7 @@ regfix.lvm <- function(object,...) {
             }
         }
     }
+
 
     K <- length(from)*length(to)
     if (length(value)==1)
@@ -437,6 +466,11 @@ regfix.lvm <- function(object,...) {
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
     index(object) <- reindex(object)
+
+    if (!is.null(nonlinear_function)) {
+      constrain(object, constrain_formula, constrainY=FALSE, ...) <- nonlinear_function
+    }
+
     return(object)
 }
 

@@ -503,21 +503,21 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             return(x)
         }
 
-        if (length(xconstrain)>0)
-          for (i in which(xconstrain.idx)) {
-            ff <- constrain(x)[[i]]
-            myargs <- attributes(ff)$args
-            D <- matrix(0,n,length(myargs))
-            for (j in seq_len(ncol(D))) {
-              if (myargs[j]%in%xconstrain)
-                D[,j] <- res[,myargs[j]]
-              else
-                D[,j] <- M$parval[[myargs[j]]]
-            }
-            val <- try(apply(D,1,ff),silent=TRUE)
-            if (inherits(val,"try-error") || NROW(val)<n) val <- ff(D)
-            res <- cbind(res, val); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
-          }
+        ## if (length(xconstrain)>0)
+        ##   for (i in which(xconstrain.idx)) {
+        ##     ff <- constrain(x)[[i]]
+        ##     myargs <- attributes(ff)$args
+        ##     D <- matrix(0,n,length(myargs))
+        ##     for (j in seq_len(ncol(D))) {
+        ##       if (myargs[j]%in%xconstrain)
+        ##         D[,j] <- res[,myargs[j]]
+        ##       else
+        ##         D[,j] <- M$parval[[myargs[j]]]
+        ##     }
+        ##     val <- try(apply(D,1,ff),silent=TRUE)
+        ##     if (inherits(val,"try-error") || NROW(val)<n) val <- ff(D)
+        ##     res <- cbind(res, val); colnames(res)[ncol(res)] <- names(xconstrain.idx)[i]
+        ##   }
 
         if (any(xconstrain.par%in%covparnames)) {
             mu0 <- rep(0,ncol(P))
@@ -550,9 +550,8 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                 xconstrain <- c(xconstrain,list(el))
             }
         }
-
         yconstrain <- unlist(lapply(xconstrain,function(x) x$endo))
-        for (i in exo_constrainY) {
+      for (i in exo_constrainY) {
             cc <- x$constrainY[[i]]
             args <- cc$args
             args <- if (is.null(args) || length(args)==0) res[,i] else res[,args]
@@ -657,7 +656,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                                                     res[,exo,drop=FALSE])
                                           else res[,exo,drop=FALSE])
                                 yy <- try(with(xconstrain[[ipos]],
-                                              func(X[,myidx])),silent=TRUE)
+                                               func(X[,myidx,drop=FALSE])),silent=TRUE)
                                 if (NROW(yy) != NROW(res)) { ## apply row-wise
                                     mu.i <- #mu.i +
                                         with(xconstrain[[ipos]],
@@ -726,17 +725,19 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                             if (length(x$constrainY)>0 && i%in%names(x$constrainY)) {
                                 cc <- x$constrainY[[i]]
                                 args <- cc$args
-                                args <- if (is.null(args) || length(args)==0)
+                                args <- if (length(args)==0)
                                            res[,pos]
                                        else {
                                            ii <- intersect(names(M$parval),args)
                                            args0 <- args
-                                           args <- res[,intersect(args,colnames(res)),drop=FALSE]
+                                           args <- res[,intersect(args0,colnames(res)),drop=FALSE]
+
                                            if (length(ii)>0) {
                                                pp <- rbind(unlist(M$parval[ii]))%x%cbind(rep(1,n))
                                                colnames(pp) <- ii
                                                args <- cbind(res,pp)[,args0,drop=FALSE]
                                            }
+                                           args
                                        }
                                 res[,pos] <- cc$fun(args,p) # ,...)
                             }
