@@ -26,7 +26,7 @@
 ##' @export
 `addvar.lvm` <-
     function(x, var, messages=lava.options()$messages,reindex=TRUE,...) {
-        new <- setdiff(var,vars(x))
+        new <- setdiff(var,c(vars(x),parameter(x)))
         k <- length(new)
         Debug(new)
         if (k>0) {
