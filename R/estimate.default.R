@@ -51,6 +51,7 @@ estimate.list <- function(x,...) {
 ##' can be extracted with the \code{iid} method.
 ##'
 ##' @export
+##' @export estimate.default
 ##' @examples
 ##'
 ##' ## Simulation from logistic regression model
