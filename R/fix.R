@@ -395,8 +395,7 @@ regfix.lvm <- function(object,...) {
         from <- setdiff(aname, pname)
         nonlinear_function <- function(x) {
           do.call(vfun,
-                  structure(apply(rbind(x), 2, identity, simplify=FALSE),
-                            names=aname))
+                  structure(as.list(as.data.frame(x)), names=aname))
         }
       } else {
         nonlinear_function <- vfun
