@@ -359,24 +359,38 @@ weibull.lvm <- function(scale=1,shape=2) {
 ###{{{ sequence
 
 ##' @export
+id.lvm <- function(...) Sequence.lvm(integer=TRUE)
+
+##' @export
 Sequence.lvm <- function(a=0,b=1,integer=FALSE) {
-    if (integer) {
-        f <- function(n,...) seq(n)
-        return(f)
-    }
-    if (is.null(a) || is.null(b)) {
-        if (!is.null(a)) {
-            f <- function(n,...) seq(a,length.out=n)
-        } else {
-            f <- function(n,...) seq(n)-(n-b)
-        }
-    } else {
-        f <- function(n,...) seq(a,b,length.out=n)
-    }
+  if (integer) {
+    f <- function(n,...) seq(n)
+    attr(f, "family") <- list(family="sequence")
     return(f)
+  }
+  if (is.null(a) || is.null(b)) {
+    if (!is.null(a)) {
+      f <- function(n,...) seq(a,length.out=n)
+    } else {
+      f <- function(n,...) seq(n)-(n-b)
+    }
+  } else {
+    f <- function(n,...) seq(a,b,length.out=n)
+  }
+  attr(f, "family") <- list(family="sequence")
+  return(f)
 }
 
 ###}}} sequence
+
+##' @export
+none.lvm <- function(...) {
+  f <- function(n, mu, ...) {
+    return(mu)
+  }
+  attr(f, "family") <- list(family="intervention")
+  return(f)
+}
 
 ###{{{ ones
 

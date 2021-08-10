@@ -390,7 +390,7 @@ regfix.lvm <- function(object,...) {
         from <- NULL
       }
       pname <- parameter(object)
-      if (length(from)==0 || length(aname)>=length(from)) {
+      if (length(from)==0) {
         constrain_formula <- toformula(to, aname)
         from <- setdiff(aname, pname)
         nonlinear_function <- function(x) {

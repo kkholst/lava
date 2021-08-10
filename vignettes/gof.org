@@ -1,4 +1,4 @@
-#+STARTUP: showall
+m#+STARTUP: showall
 #+OPTIONS: ^:{}
 #+OPTIONS: title:nil author:nil
 #+PROPERTY: header-args :exports both :eval yes :results output
@@ -15,14 +15,14 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{XXX}
+  %\VignetteIndexEntry{Goodness-of-fit statistics for Latent Variable Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 #+END_EXPORT
 
 
 #+BEGIN_EXPORT markdown
-<!-- XXX.Rmd is generated from XXX.org. Please edit that file -->
+<!-- gof.Rmd is generated from gof.org. Please edit that file -->
 #+END_EXPORT
 
 #+BEGIN_SRC R :ravel include=FALSE
@@ -32,6 +32,13 @@ knitr::opts_chunk$set(
 )
 #+END_SRC
 
+
+#+BEGIN_SRC R
+
+#+END_SRC
+
+#+RESULTS:
+: [1] 4
 
 * COMMENT Local Variables                                           :ARCHIVE:
 # Local Variables:

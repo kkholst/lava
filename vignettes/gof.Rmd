@@ -7,15 +7,22 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{XXX}
+  %\VignetteIndexEntry{Goodness-of-fit statistics for Latent Variable Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-<!-- XXX.Rmd is generated from XXX.org. Please edit that file -->
+m#+STARTUP: showall
+
+<!-- gof.Rmd is generated from gof.org. Please edit that file -->
 
 ```{r  include=FALSE }
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
-)
+) 
 ```
+
+```{r   }
+ 
+```
+
