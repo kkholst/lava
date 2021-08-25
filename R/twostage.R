@@ -188,7 +188,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##'  mb4 <- nonlinear(mb,type="spline",knots=c(-3,-2,-1,0,1,2,3),y~u)
 ##'  ff <- lapply(list(mb1,mb2,mb3,mb4),
 ##'	      function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
-##'  a <- cv(ff,data=d,rep=1,mc.cores=1)
+##'  a <- cv(ff,data=d,rep=1)
 ##'  a
 ##'}
 twostage.lvmfit <- function(object, model2, data=NULL,
@@ -422,7 +422,6 @@ predict.twostage.lvmfit <- function(object,
 ##' @param control1 optimization parameters for model 1
 ##' @param control2 optimization parameters for model 1
 ##' @param knots.boundary boundary points for natural cubic spline basis
-##' @param mc.cores number of cores to use for parallel computations
 ##' @param nmix number of mixture components
 ##' @param df spline degrees of freedom
 ##' @param fix automatically fix parameters for identification (TRUE)
@@ -442,12 +441,12 @@ predict.twostage.lvmfit <- function(object,
 ##' if (requireNamespace('mets', quietly=TRUE)) {
 ##'   set.seed(1)
 ##'   val <- twostageCV(m1, m2, data=d, std.err=FALSE, df=2:6, nmix=1:2,
-##'                   nfolds=2, mc.cores=1)
+##'                   nfolds=2)
 ##'   val
 ##' }
 ##' }
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
-                knots.boundary, mc.cores=1, nmix=1:4, df=1:9, fix=TRUE, std.err=TRUE,
+                knots.boundary, nmix=1:4, df=1:9, fix=TRUE, std.err=TRUE,
                 nfolds=5, rep=1, messages=0, ...) {
 
     F <- nonlinear(model2)
@@ -480,19 +479,11 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     ee <- list(e1a)
 
     nmix <- setdiff(nmix,1)
-    if (mc.cores>1) {
-        val <- parallel::mclapply(as.list(nmix), function(k) {
-            if (messages>0) cat("Fitting mixture model with", k, "components\n")
-            mixture(model1, k=k, data=data, control=c(control1,list(start=startf(k))))
-        }, mc.cores=mc.cores)
-        ee <- c(ee, val)
-    } else {
-        for (k in nmix) {
-            if (messages>0) cat("Fitting mixture model with", k, "components\n")
-            ee <- c(ee, list(mixture(model1, k=k, data=data,
-                                     control=c(control1,list(start=startf(k))))))
-        }
-    }
+    val <- future_lapply(as.list(nmix), function(k) {
+      if (messages>0) cat("Fitting mixture model with", k, "components\n")
+      mixture(model1, k=k, data=data, control=c(control1,list(start=startf(k))))
+    }, ...)
+    ee <- c(ee, val)
     AIC1 <- unlist(lapply(ee,AIC))
     names(AIC1) <- c(1,nmix)
     ii <- which.min(AIC1)
@@ -516,9 +507,9 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
 
     ff <- lapply(MM,
                  function(m) function(data,e0,...)  twostage(e0,m,data=data,std.derr=FALSE))
-    a <- cv(ff,data=data,K=nfolds,rep=rep,mc.cores=mc.cores,shared=f0)
+    a <- cv(ff, data=data, K=nfolds, rep=rep, shared=f0)
     M <- MM[[which.min(coef(a))]]
-    e2 <- twostage(e1,M,data,control=control2, std.err=std.err)
+    e2 <- twostage(e1, M, data, control=control2, std.err=std.err)
     options(op)
     res <- list(AIC1=cbind(AIC1), model1=e1, model2=e2, cv=coef(a), knots=c(list(NA),Knots),
                 nfolds=nfolds, rep=rep)

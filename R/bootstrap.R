@@ -30,8 +30,6 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
 ##' @param messages Control amount of messages printed
-##' @param parallel If TRUE parallel backend will be used
-##' @param mc.cores Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)
 ##' @param \dots Additional arguments, e.g. choice of estimator.
 ##' @aliases bootstrap.lvmfit
 ##' @usage
@@ -39,8 +37,6 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
 ##'                           constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
-##'                           parallel=lava.options()$parallel,
-##'                           mc.cores=NULL,
 ##'                           ...)
 ##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -61,132 +57,116 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' B
 ##' }
 ##' @export
-bootstrap.lvm <- function(x,R=100,data,fun=NULL,control=list(),
-                          p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
-                          parallel=lava.options()$parallel,
-                          mc.cores=NULL,
+bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
+                          p, parametric = FALSE, bollenstine = FALSE,
+                          constraints = TRUE, sd = FALSE,
                           ...) {
-
-    coefs <- sds <- c()
-    on.exit(list(coef=coefs[-1,], sd=sds[-1,], coef0=coefs[1,], sd0=sds[1,], model=x))
-    pb <- NULL
-    if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
-    pmis <- missing(p)
-    bootfun <- function(i) {
-        if (i==0) {
-            d0 <- data
-        } else {
-            if (!parametric | pmis) {
-                d0 <- data[sample(seq_len(nrow(data)),replace=TRUE),]
-            } else {
-                d0 <- sim(x,p=p,n=nrow(data))
-            }
-        }
-        suppressWarnings(e0 <- estimate(x,data=d0,control=control,messages=messages,index=FALSE,...))
-        if ((messages>0) && getTxtProgressBar(pb)<(i/R)) {
-            setTxtProgressBar(pb, i/R)
-        }
-
-        if (!is.null(fun)) {
-            coefs <- fun(e0)
-            newsd <- NULL
-        } else {
-            coefs <- coef(e0)
-            newsd <- c()
-            if (sd) {
-                newsd <- e0$coef[,2]
-            }
-            if (constraints & length(constrain(x))>0) {
-                cc <- constraints(e0,...)
-                coefs <- c(coefs,cc[,1])
-                names(coefs)[seq(length(coefs)-length(cc[,1])+1,length(coefs))] <- rownames(cc)
-                if (sd) {
-                    newsd <- c(newsd,cc[,2])
-                }
-            }
-        }
-        return(list(coefs=coefs,sds=newsd))
-    }
-    if (bollenstine) {
-        e0 <- estimate(x,data=data,control=control,messages=0,index=FALSE,...)
-        mm <- modelVar(e0)
-        mu <- mm$xi
-        Y <- t(t(data[,manifest(e0)])-as.vector(mu))
-        Sigma <- mm$C
-        S <- (ncol(Y)-1)/ncol(Y)*var(Y)
-        sSigma <- with(eigen(Sigma),vectors%*%diag(sqrt(values),ncol=ncol(vectors))%*%t(vectors))
-        isS <- with(eigen(S),vectors%*%diag(1/sqrt(values),ncol=ncol(vectors))%*%t(vectors))
-        data <- as.matrix(Y)%*%(isS%*%sSigma)
-        colnames(data) <- manifest(e0)
-    }
-
-    i <- 0
-    if (parallel) {
-        if (is.null(mc.cores) && requireNamespace("foreach",quietly=TRUE)) {
-            res <- foreach::"%dopar%"(foreach::foreach (i=0:R),bootfun(i))
-        } else {
-            if (is.null(mc.cores)) mc.cores <- 1
-            res <- parallel::mclapply(0:R,bootfun,mc.cores=mc.cores)
-        }
+  coefs <- sds <- c()
+  on.exit(list(coef = coefs[-1, ], sd = sds[-1, ], coef0 = coefs[1, ], sd0 = sds[1, ], model = x))
+  pb <- progressr::progressor(steps = R)
+  pmis <- missing(p)
+  bootfun <- function(i) {
+    if (i == 0) {
+      d0 <- data
     } else {
-        res <- lapply(0:R,bootfun)
+      if (!parametric | pmis) {
+        d0 <- data[sample(seq_len(nrow(data)), replace = TRUE), ]
+      } else {
+        d0 <- sim(x, p = p, n = nrow(data))
+      }
     }
-    if (messages>0) {
-        setTxtProgressBar(pb, 1)
-        close(pb)
-    }
-    coefs <- matrix(unlist(lapply(res, function(x) x$coefs)),nrow=R+1,byrow=TRUE)
-    nn <- names(res[[1]]$coefs)
-    if (!is.null(nn)) colnames(coefs) <- nn
-    sds <- NULL
-    if (sd)
-        sds <- matrix(unlist(lapply(res, function(x) x$sds)),nrow=R+1,byrow=TRUE)
+    suppressWarnings(e0 <- estimate(x, data = d0, control = control, messages = 0, index = FALSE, ...))
+    pb()
 
     if (!is.null(fun)) {
-        rownames(coefs) <- c()
-        res <- list(coef=coefs[-1,,drop=FALSE],coef0=coefs[1,],model=x)
+      coefs <- fun(e0)
+      newsd <- NULL
     } else {
-        colnames(coefs) <- names(res[[1]]$coefs)
-        rownames(coefs) <- c(); if (sd) colnames(sds) <- colnames(coefs)
-        res <- list(coef=coefs[-1,,drop=FALSE], sd=sds[-1,,drop=FALSE], coef0=coefs[1,], sd0=sds[1,], model=x, bollenstine=bollenstine)
+      coefs <- coef(e0)
+      newsd <- c()
+      if (sd) {
+        newsd <- e0$coef[, 2]
+      }
+      if (constraints & length(constrain(x)) > 0) {
+        cc <- constraints(e0, ...)
+        coefs <- c(coefs, cc[, 1])
+        names(coefs)[seq(length(coefs) - length(cc[, 1]) + 1, length(coefs))] <- rownames(cc)
+        if (sd) {
+          newsd <- c(newsd, cc[, 2])
+        }
+      }
     }
-    class(res) <- "bootstrap.lvm"
-    return(res)
+    return(list(coefs = coefs, sds = newsd))
+  }
+  if (bollenstine) {
+    e0 <- estimate(x, data = data, control = control, messages = 0, index = FALSE, ...)
+    mm <- modelVar(e0)
+    mu <- mm$xi
+    Y <- t(t(data[, manifest(e0)]) - as.vector(mu))
+    Sigma <- mm$C
+    S <- (ncol(Y) - 1) / ncol(Y) * var(Y)
+    sSigma <- with(eigen(Sigma), vectors %*% diag(sqrt(values), ncol = ncol(vectors)) %*% t(vectors))
+    isS <- with(eigen(S), vectors %*% diag(1 / sqrt(values), ncol = ncol(vectors)) %*% t(vectors))
+    data <- as.matrix(Y) %*% (isS %*% sSigma)
+    colnames(data) <- manifest(e0)
+  }
+
+  i <- 0
+  res <- future_lapply(0:R, bootfun)
+  coefs <- matrix(unlist(lapply(res, function(x) x$coefs)), nrow = R + 1, byrow = TRUE)
+  nn <- names(res[[1]]$coefs)
+  if (!is.null(nn)) colnames(coefs) <- nn
+  sds <- NULL
+  if (sd) {
+    sds <- matrix(unlist(lapply(res, function(x) x$sds)), nrow = R + 1, byrow = TRUE)
+  }
+
+  if (!is.null(fun)) {
+    rownames(coefs) <- c()
+    res <- list(coef = coefs[-1, , drop = FALSE], coef0 = coefs[1, ], model = x)
+  } else {
+    colnames(coefs) <- names(res[[1]]$coefs)
+    rownames(coefs) <- c()
+    if (sd) colnames(sds) <- colnames(coefs)
+    res <- list(coef = coefs[-1, , drop = FALSE], sd = sds[-1, , drop = FALSE], coef0 = coefs[1, ], sd0 = sds[1, ], model = x, bollenstine = bollenstine)
+  }
+  class(res) <- "bootstrap.lvm"
+  return(res)
 }
 
 ##' @export
-bootstrap.lvmfit <- function(x,R=100,data=model.frame(x),
-                             control=list(start=coef(x)),
-                             p=coef(x), parametric=FALSE, bollenstine=FALSE,
-                             estimator=x$estimator,weights=Weights(x),...)
-    bootstrap.lvm(Model(x),R=R,data=data,control=control,estimator=estimator,weights=weights,parametric=parametric,bollenstine=bollenstine,p=p,...)
+bootstrap.lvmfit <- function(x, R = 100, data = model.frame(x),
+                             control = list(start = coef(x)),
+                             p = coef(x), parametric = FALSE, bollenstine = FALSE,
+                             estimator = x$estimator, weights = Weights(x), ...) {
+  bootstrap.lvm(Model(x), R = R, data = data, control = control, estimator = estimator, weights = weights, parametric = parametric, bollenstine = bollenstine, p = p, ...)
+}
 
 ##' @export
-"print.bootstrap.lvm" <- function(x,idx,level=0.95,...) {
-    cat("Non-parametric bootstrap statistics (R=",nrow(x$coef),"):\n\n",sep="")
-    uplow <-(c(0,1) + c(1,-1)*(1-level)/2)
-    nn <- paste(uplow*100,"%")
-    c1 <- t(apply(x$coef,2,function(x) c(mean(x), sd(x), quantile(x,uplow))))
+"print.bootstrap.lvm" <- function(x, idx, level = 0.95, ...) {
+  cat("Non-parametric bootstrap statistics (R=", nrow(x$coef), "):\n\n", sep = "")
+  uplow <- (c(0, 1) + c(1, -1) * (1 - level) / 2)
+  nn <- paste(uplow * 100, "%")
+  c1 <- t(apply(x$coef, 2, function(x) c(mean(x), sd(x), quantile(x, uplow))))
 
-    c1 <- cbind(x$coef0,c1[,1]-x$coef0,c1[,-1,drop=FALSE])
-    colnames(c1) <- c("Estimate","Bias","Std.Err",nn)
+  c1 <- cbind(x$coef0, c1[, 1] - x$coef0, c1[, -1, drop = FALSE])
+  colnames(c1) <- c("Estimate", "Bias", "Std.Err", nn)
+  if (missing(idx)) {
+    print(format(c1, ...), quote = FALSE)
+  } else {
+    print(format(c1[idx, , drop = FALSE], ...), quote = FALSE)
+  }
+  if (length(x$sd) > 0) {
+    c2 <- t(apply(x$sd, 2, function(x) c(mean(x), sd(x), quantile(x, c(0.025, 0.975)))))
+    c2 <- cbind(c2[, 1], c2[, 1] - x$sd0, c2[, -1])
+    colnames(c2) <- c("Estimate", "Bias", "Std.Err", "2.5%", "97.5%")
+    cat("\nStandard errors:\n")
     if (missing(idx)) {
-        print(format(c1,...),quote=FALSE)
+      print(format(c2, ...), quote = FALSE)
     } else {
-        print(format(c1[idx,,drop=FALSE],...),quote=FALSE)
+      print(format(c2[idx, , drop = FALSE], ...), quote = FALSE)
     }
-    if (length(x$sd)>0) {
-        c2 <- t(apply(x$sd,2,function(x) c(mean(x), sd(x), quantile(x,c(0.025,0.975)))))
-        c2 <- cbind(c2[,1],c2[,1]-x$sd0,c2[,-1])
-        colnames(c2) <- c("Estimate","Bias","Std.Err","2.5%","97.5%")
-        cat("\nStandard errors:\n")
-        if (missing(idx)) {
-            print(format(c2,...),quote=FALSE)
-        } else {
-            print(format(c2[idx,,drop=FALSE],...),quote=FALSE)
-        }
-    }
-    cat("\n")
-    invisible(x)
+  }
+  cat("\n")
+  invisible(x)
 }

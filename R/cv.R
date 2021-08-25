@@ -16,7 +16,6 @@ rmse1 <- function(fit, data, response=NULL, ...) {
 ##' @param rep Number of repetitions (default 1)
 ##' @param perf Performance measure (default RMSE)
 ##' @param seed Optional random seed
-##' @param mc.cores Number of cores used for parallel computations
 ##' @param shared function applied to each fold with results send to each model
 ##' @param ... Additional arguments parsed to models in modelList and perf
 ##' @author Klaus K. Holst
@@ -27,7 +26,7 @@ rmse1 <- function(fit, data, response=NULL, ...) {
 ##' x <- cv(list(m0=f0,m1=f1,m2=f2),rep=10, data=iris, formula=Sepal.Length~.)
 ##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
 ##' @export
-cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=NULL, ...) {
+cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, shared=NULL, ...) {
     if (is.vector(data)) data <- cbind(data)
     if (missing(perf)) perf <- rmse1
     if (!is.list(modelList)) modelList <- list(modelList)
@@ -72,6 +71,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
     PerfArr <- array(0,dim)
     dimnames(PerfArr) <- list(NULL,NULL,nam,namPerf)
 
+    pb <- progressr::progressor(along=seq(nrow(arg)))
     ff <- function(i) {
         R <- arg[i,1]
         k <- arg[i,2]
@@ -89,18 +89,14 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, mc.cores=1, shared=
             fits <- lapply(modelList, function(m) do.call(update,c(list(m,data=dtrain),args)))
         }
         perfs <- lapply(fits, function(fit) do.call(perf,c(list(fit,data=dtest),args)))
+        pb()
         do.call(rbind,perfs)
     }
-
-    if (mc.cores>1) {
-        val <- parallel::mcmapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE,mc.cores=mc.cores)
-    } else {
-        val <- mapply(ff,seq(nrow(arg)),SIMPLIFY=FALSE)
-    }
+    val <- future_mapply(ff, seq(nrow(arg)), SIMPLIFY=FALSE)
     for (i in seq(nrow(arg))) {
-        R <- arg[i,1]
-        k <- arg[i,2]
-        PerfArr[R,k,,] <- val[[i]]
+        R <- arg[i, 1]
+        k <- arg[i, 2]
+        PerfArr[R, k, ,] <- val[[i]]
     }
 
     structure(list(cv=PerfArr,

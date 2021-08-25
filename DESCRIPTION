@@ -29,6 +29,7 @@ Depends:
 	R (>= 3.0)
 Imports:
     future.apply,
+	progressr,
 	grDevices,
 	graphics,
 	methods,
@@ -44,7 +45,6 @@ Suggests:
 	data.table,
 	ellipse,
 	fields,
-	foreach,
 	geepack,
 	gof (>= 0.9),
 	graph,

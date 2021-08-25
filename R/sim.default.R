@@ -6,10 +6,8 @@
 ##' @param f Optional function (i.e., if x is a matrix)
 ##' @param colnames Optional column names
 ##' @param messages Messages
-##' @param mc.cores Number of cores to use
-##' @param cl (optional) cluster to use for parallelization
 ##' @param blocksize Split computations in blocks
-##' @param type type=0 is an alias for messages=1,mc.cores=1,blocksize=R
+##' @param type type=0 is an alias for messages=1, blocksize=R
 ##' @param seed (optional) Seed (needed with cl=TRUE)
 ##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param iter If TRUE the iteration number is passed as first argument to (mc)mapply
@@ -32,10 +30,10 @@
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
 ##' }
-##' val <- sim(onerun,R=10,b0=1,messages=0,mc.cores=1)
+##' val <- sim(onerun,R=10,b0=1,messages=0)
 ##' val
 ##'
-##' val <- sim(val,R=40,b0=1,mc.cores=1) ## append results
+##' val <- sim(val,R=40,b0=1) ## append results
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 ##'
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
@@ -58,28 +56,12 @@
 ##' sim(f,R,type=0)
 ##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
 ##' sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
-sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
+sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
                 messages=lava.options()$messages,
-                mc.cores,blocksize=2L*mc.cores,
-                cl,type=1L,seed=NULL,args=list(),iter=FALSE,...) {
+                seed=NULL, args=list(),
+                iter=FALSE, ...) {
     stm <- proc.time()
     oldtm <- rep(0,5)
-    if (missing(mc.cores) || .Platform$OS.type=="windows") {
-        if (.Platform$OS.type=="windows") { ## Disable parallel processing on windows
-            mc.cores <- 1L
-        } else {
-            mc.cores <- getOption("mc.cores",parallel::detectCores())
-        }
-    }
-    if (type==0L) {
-        mc.cores <- 1L
-        if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
-            blocksize <- NROW(R)
-        } else {
-            blocksize <- R
-        }
-        messages <- 0
-    }
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         runif(1)
     if (is.null(seed))
@@ -90,34 +72,20 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
         RNGstate <- structure(seed, kind = as.list(RNGkind()))
         on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
-    if (mc.cores>1L || !missing(cl)) requireNamespace("parallel",quietly=TRUE)
-    newcl <- FALSE
-    if (!missing(cl) && is.logical(cl)) {
-        if (.Platform$OS.type=="windows" || TRUE) { ## Don't fork processes on windows
-            cl <- NULL
-            mc.cores <- 1
-        } else {
-            if (cl) {
-                cl <- parallel::makeForkCluster(mc.cores)
-                if (!is.null(seed)) parallel::clusterSetRNGStream(cl,seed)
-                newcl <- TRUE
-            }
-        }
-    }
     olddata <- NULL
     dots <- list(...)
     mycall <- match.call(expand.dots=FALSE)
-    if (inherits(x,c("data.frame","matrix"))) olddata <- x
-    if (inherits(x,"sim")) {
-        oldtm <- attr(x,"time")
-        oldcall <- attr(x,"call")
-        x <- attr(x,"f")
+    if (inherits(x, c("data.frame", "matrix"))) olddata <- x
+    if (inherits(x, "sim")) {
+        oldtm <- attr(x, "time")
+        oldcall <- attr(x, "call")
+        x <- attr(x, "f")
         if (!is.null(f)) x <- f
         ex <- oldcall[["..."]]
         for (nn in setdiff(names(ex),names(dots))) {
             dots[[nn]] <- ex[[nn]]
             val <- list(ex[[nn]]); names(val) <- nn
-            mycall[["..."]] <- c(mycall[["..."]],list(val))
+            mycall[["..."]] <- c(mycall[["..."]], list(val))
         }
 
     } else {
@@ -127,8 +95,6 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
     if (is.null(x)) stop("Must give new function argument 'f'.")
     res <- val <- NULL
     on.exit({
-        if (messages>0) close(pb)
-        if (newcl) parallel::stopCluster(cl)
         if (is.null(colnames) && !is.null(val)) {
             if (is.matrix(val[[1]])) {
                 colnames <- base::colnames(val[[1]])
@@ -138,63 +104,34 @@ sim.default <- function(x=NULL,R=100,f=NULL,colnames=NULL,
         }
         base::colnames(res) <- colnames
         if (!is.null(olddata)) res <- rbind(olddata,res)
-        attr(res,"call") <- mycall
-        attr(res,"f") <- x
-        class(res) <- c("sim","matrix")
-        if (idx.done<R) {
-            res <- res[seq(idx.done),,drop=FALSE]
-        }
-        attr(res,"time") <- proc.time()-stm+oldtm
-
+        attr(res, "call") <- mycall
+        attr(res, "f") <- x
+        class(res) <- c("sim", "matrix")
+        attr(res, "time") <- proc.time()-stm+oldtm
         return(res)
     })
     parval_provided <- FALSE
-    if (inherits(R,c("matrix","data.frame")) || length(R)>1) {
+    if (inherits(R, c("matrix", "data.frame")) || length(R)>1) {
         parval_provided <- TRUE
         parval <- as.data.frame(R)
         if (is.vector(R)) names(parval) <- NULL
-        else if (inherits(R,c("matrix","data.frame"))) names(parval) <- colnames(R)
+        else if (inherits(R,c("matrix", "data.frame")))
+          names(parval) <- colnames(R)
         R <- NROW(parval)
     } else {
         parval <- as.data.frame(1:R)
         names(parval) <- NULL
     }
-    nfolds <- max(1,round(R/blocksize))
-    idx <- split(1:R,sort((1:R)%%nfolds))
-    idx.done <- 0
-    count <- 0
-    if (messages>0) pb <- txtProgressBar(style=lava.options()$progressbarstyle,width=40)
-    robx <- function(iter__,...) tryCatch(x(...),error=function(e) NA)
+    robx <- function(iter__, ...) tryCatch(x(...), error=function(e) NA)
     if (iter) formals(robx)[[1]] <- NULL
-    for (ii in idx) {
-        count <- count+1
-        if (!missing(cl) && !is.null(cl)) {            
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(cl=cl,fun=robx,SIMPLIFY=FALSE),args)
-        } else {
-            pp <- c(as.list(parval[ii,,drop=FALSE]),dots,list(mc.cores=mc.cores,FUN=robx,SIMPLIFY=FALSE),args)
-        }
-        ##if (!iter & !parval_provided) pp[[1]] <- NULL
-        if (mc.cores>1) {
-            if (!missing(cl) && !is.null(cl)) {
-                val <- do.call(parallel::clusterMap,pp)
-            } else {                
-                val <- do.call(parallel::mcmapply,pp)
-            }
-        } else {
-            pp$mc.cores <- NULL
-            val <- do.call(mapply,pp)
-        }
-        if (messages>0)
-            setTxtProgressBar(pb, count/length(idx))
-        if (is.null(res)) {
-            ##res <- array(NA,dim=c(R,dim(val[[1]])),dimnames=c(list(NULL),dimnames(val[[1]]),NULL))
-            res <- matrix(NA,ncol=length(val[[1]]),nrow=R)
-        }
-        res[ii,] <- Reduce(rbind,val)
-        ##rr <- abind::abind(val,along=length(dim(res)))
-        ##res[ii,] <- abind(val,along=length(dim(res)))
-        idx.done <- max(ii)
+    val <- future_mapply(robx, parval[,,drop=TRUE], ...,
+                         SIMPLIFY=FALSE, future.seed=TRUE,
+                         MoreArgs=args)
+    res <- Reduce(rbind, val)
+    if (is.null(res)) {
+      res <- matrix(NA, ncol=length(val[[1]]), nrow=R)
     }
+    res
 }
 
 ##' @export
@@ -270,7 +207,7 @@ Print <- function(x,n=5,digits=max(3,getOption("digits")-3),...) {
 ##' @export
 print.sim <- function(x,...) {
     s <- summary(x,minimal=TRUE,...)
-    attr(x,"f") <- attr(x,"call") <- NULL
+    attr(x, "f") <- attr(x, "call") <- NULL
     if (!is.null(dim(x))) {
         class(x) <- "matrix"
     }
