@@ -128,7 +128,7 @@ if (interactive()) {
  mb4 <- nonlinear(mb,type="spline",knots=c(-3,-2,-1,0,1,2,3),y~u)
  ff <- lapply(list(mb1,mb2,mb3,mb4),
       function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
- a <- cv(ff,data=d,rep=1,mc.cores=1)
+ a <- cv(ff,data=d,rep=1)
  a
 }
 }

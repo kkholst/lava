@@ -6,8 +6,6 @@
 ##' @param f Optional function (i.e., if x is a matrix)
 ##' @param colnames Optional column names
 ##' @param messages Messages
-##' @param blocksize Split computations in blocks
-##' @param type type=0 is an alias for messages=1, blocksize=R
 ##' @param seed (optional) Seed (needed with cl=TRUE)
 ##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param iter If TRUE the iteration number is passed as first argument to (mc)mapply
@@ -48,14 +46,14 @@
 ##'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 ##'          names=c("Model","Sandwich"))
 ##' }
-##'
-##' f <- function(a=1,b=1) {
-##'   rep(a*b,5)
+##''
+##' f <- function(a=1, b=1) {
+##'   rep(a*b, 5)
 ##' }
-##' R <- Expand(a=1:3,b=1:3)
-##' sim(f,R,type=0)
-##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5),type=0)
-##' sim(function(iter=1,a=5,b=5) iter*f(a,b), type=0, iter=TRUE, R=5)
+##' R <- Expand(a=1:3, b=1:3)
+##' sim(f, R)
+##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
+##' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
                 messages=lava.options()$messages,
                 seed=NULL, args=list(),
@@ -122,12 +120,18 @@ sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
         parval <- as.data.frame(1:R)
         names(parval) <- NULL
     }
-    robx <- function(iter__, ...) tryCatch(x(...), error=function(e) NA)
+
+    pb <- progressr::progressor(steps = R)
+    robx <- function(iter__, ...) {
+      pb()
+      tryCatch(x(...), error=function(e) NA)
+    }
     if (iter) formals(robx)[[1]] <- NULL
-    val <- future_mapply(robx, parval[,,drop=TRUE], ...,
-                         SIMPLIFY=FALSE, future.seed=TRUE,
-                         MoreArgs=args)
-    res <- Reduce(rbind, val)
+
+    pp <- c(as.list(parval),dots,
+            list(FUN=robx, SIMPLIFY=FALSE, MoreArgs=as.list(args), future.seed=TRUE))
+    val <- do.call(future.apply::future_mapply, pp)
+    res <- do.call(rbind, val)
     if (is.null(res)) {
       res <- matrix(NA, ncol=length(val[[1]]), nrow=R)
     }

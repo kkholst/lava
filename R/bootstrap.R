@@ -29,14 +29,13 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param weights Optional weights matrix used by \code{estimator}
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
-##' @param messages Control amount of messages printed
 ##' @param \dots Additional arguments, e.g. choice of estimator.
 ##' @aliases bootstrap.lvmfit
 ##' @usage
 ##'
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
-##'                           constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
+##'                           constraints=TRUE,sd=FALSE,
 ##'                           ...)
 ##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -77,7 +76,6 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
     }
     suppressWarnings(e0 <- estimate(x, data = d0, control = control, messages = 0, index = FALSE, ...))
     pb()
-
     if (!is.null(fun)) {
       coefs <- fun(e0)
       newsd <- NULL

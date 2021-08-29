@@ -7,9 +7,7 @@
 \usage{
 \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,messages=lava.options()$messages,
-                          parallel=lava.options()$parallel,
-                          mc.cores=NULL,
+                          constraints=TRUE,sd=FALSE,
                           ...)
 
 \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -41,12 +39,6 @@ constraints should be included in the bootstrap procedure}
 
 \item{sd}{Logical indicating whether standard error estimates should be
 included in the bootstrap procedure}
-
-\item{messages}{Control amount of messages printed}
-
-\item{parallel}{If TRUE parallel backend will be used}
-
-\item{mc.cores}{Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)}
 
 \item{\dots}{Additional arguments, e.g. choice of estimator.}
 

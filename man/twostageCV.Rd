@@ -11,7 +11,6 @@ twostageCV(
   control1 = list(trace = 0),
   control2 = list(trace = 0),
   knots.boundary,
-  mc.cores = 1,
   nmix = 1:4,
   df = 1:9,
   fix = TRUE,
@@ -34,8 +33,6 @@ twostageCV(
 \item{control2}{optimization parameters for model 1}
 
 \item{knots.boundary}{boundary points for natural cubic spline basis}
-
-\item{mc.cores}{number of cores to use for parallel computations}
 
 \item{nmix}{number of mixture components}
 
@@ -67,7 +64,7 @@ nonlinear(m2) <- y~u1
 if (requireNamespace('mets', quietly=TRUE)) {
   set.seed(1)
   val <- twostageCV(m1, m2, data=d, std.err=FALSE, df=2:6, nmix=1:2,
-                  nfolds=2, mc.cores=1)
+                  nfolds=2)
   val
 }
 }
