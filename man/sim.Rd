@@ -50,6 +50,9 @@
 \alias{Binary.lvm}
 \alias{binary.lvm}
 \alias{Sequence.lvm}
+\alias{none.lvm}
+\alias{constant.lvm}
+\alias{id.lvm}
 \title{Simulate model}
 \usage{
 \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,

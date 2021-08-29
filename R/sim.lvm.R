@@ -35,6 +35,7 @@
 ##' threshold.lvm
 ##' ones.lvm Binary.lvm binary.lvm
 ##' Sequence.lvm
+##' none.lvm constant.lvm id.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,

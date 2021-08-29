@@ -10,7 +10,7 @@
 \alias{parameter<-}
 \title{Add non-linear constraints to latent variable model}
 \usage{
-\method{constrain}{default}(x,par,args,...) <- value
+\method{constrain}{default}(x,par,args,endogenous=TRUE,...) <- value
 
 \method{constrain}{multigroup}(x,par,k=1,...) <- value
 
@@ -31,6 +31,8 @@ parameters or variable names defining the new parameter (overruling the
 
 \item{args}{Vector of variables names or parameter names that are used in
 defining \code{par}}
+
+\item{endogenous}{TRUE if variable is endogenous (sink node)}
 
 \item{k}{For multigroup models this argument specifies which group to
 add/extract the constraint}

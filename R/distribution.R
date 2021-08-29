@@ -392,6 +392,16 @@ none.lvm <- function(...) {
   return(f)
 }
 
+##' @export
+constant.lvm <- function(value=NA) {
+  f <- function(n, mu, ...) {
+    if (!is.na(value)) return(rep(value, n))
+    return(mu)
+  }
+  attr(f, "family") <- list(family="constant", par=list(value=value))
+  return(f)
+}
+
 ###{{{ ones
 
 ##' @export

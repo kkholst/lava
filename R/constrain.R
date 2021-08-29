@@ -173,7 +173,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' @export
 ##' @usage
 ##'
-##' \method{constrain}{default}(x,par,args,...) <- value
+##' \method{constrain}{default}(x,par,args,endogenous=TRUE,...) <- value
 ##'
 ##' \method{constrain}{multigroup}(x,par,k=1,...) <- value
 ##'
@@ -187,6 +187,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' \code{args} argument).
 ##' @param args Vector of variables names or parameter names that are used in
 ##' defining \code{par}
+##' @param endogenous TRUE if variable is endogenous (sink node)
 ##' @param k For multigroup models this argument specifies which group to
 ##' add/extract the constraint
 ##' @param value Real function taking args as a vector argument
@@ -199,6 +200,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' @param idx Index indicating which constraints to extract
 ##' @param \dots Additional arguments to be passed to the low level functions
 "constrain<-" <- function(x,...,value) UseMethod("constrain<-")
+
 ##' @export
 "constrain" <- function(x,...) UseMethod("constrain")
 
@@ -253,7 +255,7 @@ constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE
     }
 
 ##' @export
-"constrain<-.default" <- function(x,par,args,constrainY=TRUE,...,value) {
+"constrain<-.default" <- function(x,par,args,endogenous=TRUE,...,value) {
     if (inherits(par,"formula")) {
         lhs <- getoutcome(par)
         xf <- attributes(terms(par))$term.labels
@@ -288,7 +290,7 @@ constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE
             parameter(x, messages=0) <- i
         }
     }
-    if (par%in%vars(x) && constrainY) {
+    if (par%in%vars(x) && endogenous) {
         if (!"..."%in%names(formals(value)) && !is.primitive(value)) {
             formals(value) <- c(formals(value), alist(...=))
         }
