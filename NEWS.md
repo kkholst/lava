@@ -1,21 +1,29 @@
 # lava 1.6.10
-  - Starting values updated
-  - plot_region function 
-  - multinomial.lvm
-  - regression (sim) - nonlinear
+  - Improved starting values for MLE optimization.
+  - New simulation distributions: `multinomial.lvm`, `none.lvm`, `constant.lvm`,
+    `id.lvm`.
+  - `regression`, `regression.lvm`: the 'value' argument can now be a
+    (non-linear) function specifying the functional relationship between
+    outcomes and covariates (for simulation with the `sim` method).
+  - New `intervention` method for applying interventions on `lvm`-objects 
+  - Progress updates are now done via the `progressr` library (enabled with 
+    `progressr::handlers(global=TRUE)`).
+  - Parallelization is now controlled via the future library. To enable
+    multicore parallelization: `future::plan("multicore")`.
+  - New `plot_region` function for adding confidence regions to plots.
   
 # lava 1.6.9
-  - idplot: now accepts matrix or data.frame as 1st argument. New argument: return.data.
+  - `idplot`: now accepts matrix or data.frame as 1st argument. New argument: return.data.
   - Unit tests updated 
   - Bug fixes: 
-    cv: rmse output fixed.
+    `cv`: rmse output fixed.
     score: Fixed bug for linear Gaussian model with argument 'indiv=TRUE'. 
     estimate.formula: call object initialized correctly.
-    plot.lvm: noplot argument now works with all plot engines.
+    `plot.lvm`: 'noplot' argument now works with all plot engines.
   
 # lava 1.6.8.1
   - Maintenance release
-  - confpred: split-conformal prediction method updated
+  - `confpred`: split-conformal prediction method updated
 
 # lava 1.6.8
   - Bug-fix: parameter(m,x) now returns an lvm object and not just x
@@ -23,14 +31,14 @@
   - Vignettes added
     - Estimating partial correlations
 	- Non-linear latent variable omdels
-  - Pseudo-inverse used in 'normal'
+  - Pseudo-inverse used with "normal" estimator
   - Starting values for mixture fixed
 
 # lava 1.6.7
-  - Fixed bug in the composite likelihood 'complik' when used with
+  - Fixed bug in the composite likelihood `complik` when used with
     censored variables (Surv objects).
   - Fixed regular expression in 'spaghetti' function
-  - plot.sim: 'rug' argument is now by default FALSE and 'auto.layout'
+  - `plot.sim`: 'rug' argument is now by default FALSE and 'auto.layout'
     disabled when nr=nc=1.
   - base::sequence() is now a generic function and as a consequence
     sequence.lvm has been renamed to Sequence.lvm. The function
