@@ -150,7 +150,7 @@ test_that("Bootstrap", {
     testthat::expect_true(B2$bollenstine)
     testthat::expect_true(nrow(B1$coef)==2)
     testthat::expect_output(print(B1),"Standard errors:")
-    if (requireNamespace("foreach",quietly=TRUE)) foreach::registerDoSEQ()
+    # if (requireNamespace("future",quietly=TRUE)) future::plan("sequential")
     dm <- capture.output(B3 <- bootstrap(e,R=2,fun=function(x) coef(x)[2]^2+10))
     testthat::expect_true(all(mean(B3$coef)>10))
 
