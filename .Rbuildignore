@@ -4,6 +4,7 @@
 ^tmp$
 ^\.travis\.yml$
 ^\.git$
+^.github$
 ^.gitignore$
 ^README\.Rmd$
 ^README\.org$
@@ -15,3 +16,4 @@
 ^docs$
 ^pkgdown$
 ^Meta$
+^\.github$
