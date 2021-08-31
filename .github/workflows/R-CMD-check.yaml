@@ -25,12 +25,9 @@ jobs:
           extra-packages: rcmdcheck
 
       - name: Check
-        env:
-          _R_CHECK_FORCE_SUGGESTS_: false
-          _R_CHECK_CRAN_INCOMING_: false
         run: |
           options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error")
+          rcmdcheck::rcmdcheck(env_vars=c(`_R_CHECK_FORCE_SUGGESTS_` = "false", args = c("--no-manual", "--as-cran"), error_on = "error")
         shell: Rscript {0}
 
       - name: Show testthat output
