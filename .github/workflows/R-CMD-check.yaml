@@ -29,14 +29,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("remotes"), repos="https://cloud.r-project.org")
+          install.packages(c("remotes", "rcmdcheck"), repos="https://cloud.r-project.org")
           remotes::install_github("kkholst/lava.tobit")
           remotes::install_github("kkholst/gof")
+          remotes::install_deps(".", dep=T, upgrade=T)
         shell: Rscript {0}
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
-        with:
-          extra-packages: rcmdcheck
+      # - uses: r-lib/actions/setup-r-dependencies@v1
+        # with:
+          # extra-packages: rcmdcheck
 
       - name: Check
         env:
