@@ -16,16 +16,46 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y pandoc libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+      #- uses: r-lib/actions/setup-pandoc@v1
+
       - uses: r-lib/actions/setup-r@v1
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - name: Cache R packages
+        uses: actions/cache@v1
         with:
-          extra-packages: rcmdcheck
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      - name: Install R dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck", "pkgdown", "covr"), repos="https://cloud.r-project.org")
+          #remotes::install_github("kkholst/lava.tobit")
+          #remotes::install_github("kkholst/gof")
+          remotes::install_deps(".", dep=T, upgrade=T)
+        shell: Rscript {0}
 
       - name: Check
+        env:
+          _R_CHECK_FORCE_SUGGESTS_: false
         run: |
           options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
+        shell: Rscript {0}
+
+      - name: Webpage deployment
+        if: ${{ success() }} && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+
+      - name: Code Coverage
+        if: ${{ success() }} && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: covr::codecov(type=c("tests", "examples"))
         shell: Rscript {0}
