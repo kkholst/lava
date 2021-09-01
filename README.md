@@ -1,5 +1,5 @@
 <!-- badges: start -->
-  [![travis](https://www.travis-ci.com/kkholst/lava.svg?branch=master)](https://www.travis-ci.com/kkholst/lava)
+[![R-CMD-check](https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg)](https://github.com/kkholst/lava/actions)
   [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=master)](https://codecov.io/github/kkholst/lava?branch=master)
   [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
