@@ -82,8 +82,7 @@
 
       
 
-      </header><script src="correlation_files/htmlwidgets-1.5.3/htmlwidgets.js"></script><link href="correlation_files/vis-4.20.1/vis.css" rel="stylesheet">
-<script src="correlation_files/vis-4.20.1/vis.min.js"></script><script src="correlation_files/visNetwork-binding-2.0.9/visNetwork.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
@@ -118,8 +117,8 @@
 <span class="fu"><a href="../reference/labels&lt;-.html">edgelabels</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">beta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/labels&lt;-.html">edgelabels</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">y1</span> <span class="op">~</span> <span class="va">y2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">rho</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m0</span>, layoutType<span class="op">=</span><span class="st">"circo"</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-02c9cfe0490cd14260b8" style="width:100%;height:700px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-02c9cfe0490cd14260b8">{"x":{"nodes":{"id":[1,2,3],"label":["y1","y2","x"],"color":["orange","orange","lightblue"],"shape":["box","box","box"],"shadow":[true,true,true],"size":[1,1,1],"group":["endogenous","endogenous","exogenous"]},"edges":{"from":[1,2,1],"to":[3,3,2],"dashes":[false,false,true],"arrows":["from","from","false"],"physics":[true,true,true]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot"},"manipulation":{"enabled":false},"edges":{"arrows":{"from":{"enabled":true,"scaleFactor":0.5}},"scaling":{"min":2,"max":2}},"layout":{"randomSeed":1}},"groups":["endogenous","exogenous"],"width":"100%","height":"700px","idselection":{"enabled":false},"byselection":{"enabled":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)"},"evals":[],"jsHooks":[]}</script><p>Here we focus on inference with respect to the correlation parameter <span class="math inline">\(\rho\)</span>.</p>
+<p><img src="correlation_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p>Here we focus on inference with respect to the correlation parameter <span class="math inline">\(\rho\)</span>.</p>
 <div id="simulation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#simulation" class="anchor"></a>Simulation</h1>
@@ -411,19 +410,20 @@ Additional Parameters:
 <span class="co">#&gt; [1] magrittr_2.0.1 lava_1.6.9    </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.7          knitr_1.33          splines_4.1.1      </span>
-<span class="co">#&gt;  [4] lattice_0.20-44     R6_2.5.1            ragg_1.1.3         </span>
-<span class="co">#&gt;  [7] rlang_0.4.11        fastmap_1.1.0       stringr_1.4.0      </span>
-<span class="co">#&gt; [10] mets_1.2.8.1        visNetwork_2.0.9    tools_4.1.1        </span>
-<span class="co">#&gt; [13] parallel_4.1.1      grid_4.1.1          xfun_0.25          </span>
-<span class="co">#&gt; [16] htmltools_0.5.2     systemfonts_1.0.2   yaml_2.2.1         </span>
-<span class="co">#&gt; [19] survival_3.2-11     digest_0.6.27       rprojroot_2.0.2    </span>
-<span class="co">#&gt; [22] numDeriv_2016.8-1.1 pkgdown_1.6.1       crayon_1.4.1       </span>
-<span class="co">#&gt; [25] timereg_2.0.0       textshaping_0.3.5   Matrix_1.3-4       </span>
-<span class="co">#&gt; [28] codetools_0.2-18    htmlwidgets_1.5.3   fs_1.5.0           </span>
-<span class="co">#&gt; [31] memoise_2.0.0       cachem_1.0.6        evaluate_0.14      </span>
-<span class="co">#&gt; [34] rmarkdown_2.10      stringi_1.7.4       compiler_4.1.1     </span>
-<span class="co">#&gt; [37] desc_1.3.0          mvtnorm_1.1-2       jsonlite_1.7.2</span></code></pre></div>
+<span class="co">#&gt;  [1] Rcpp_1.0.7          compiler_4.1.1      highr_0.9          </span>
+<span class="co">#&gt;  [4] tools_4.1.1         mets_1.2.8.1        digest_0.6.27      </span>
+<span class="co">#&gt;  [7] evaluate_0.14       memoise_2.0.0       lattice_0.20-44    </span>
+<span class="co">#&gt; [10] rlang_0.4.11        Matrix_1.3-4        graph_1.70.0       </span>
+<span class="co">#&gt; [13] Rgraphviz_2.36.0    yaml_2.2.1          parallel_4.1.1     </span>
+<span class="co">#&gt; [16] mvtnorm_1.1-2       pkgdown_1.6.1       xfun_0.25          </span>
+<span class="co">#&gt; [19] fastmap_1.1.0       stringr_1.4.0       knitr_1.33         </span>
+<span class="co">#&gt; [22] desc_1.3.0          fs_1.5.0            systemfonts_1.0.2  </span>
+<span class="co">#&gt; [25] stats4_4.1.1        rprojroot_2.0.2     grid_4.1.1         </span>
+<span class="co">#&gt; [28] R6_2.5.1            textshaping_0.3.5   timereg_2.0.0      </span>
+<span class="co">#&gt; [31] survival_3.2-11     rmarkdown_2.10      codetools_0.2-18   </span>
+<span class="co">#&gt; [34] htmltools_0.5.2     splines_4.1.1       BiocGenerics_0.38.0</span>
+<span class="co">#&gt; [37] numDeriv_2016.8-1.1 ragg_1.1.3          stringi_1.7.4      </span>
+<span class="co">#&gt; [40] cachem_1.0.6        crayon_1.4.1</span></code></pre></div>
 </div>
 <div id="bibliography" class="section level1">
 <h1 class="hasAnchor">
