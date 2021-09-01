@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,7 +135,7 @@
     <p>Function that constructs a new latent variable model object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lvm</span>(x = <span class='kw'>NULL</span>, <span class='kw'>...</span>, latent = <span class='kw'>NULL</span>, messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>)</pre>
+    <pre class="usage"><span class='fu'>lvm</span><span class='op'>(</span>x <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, latent <span class='op'>=</span> <span class='cn'>NULL</span>, messages <span class='op'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>messages</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,10 +175,10 @@ a linear model.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>() <span class='co'># Empty model</span>
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>) <span class='co'># Simple linear regression</span>
-<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span>) <span class='co'># Model with two independent variables (argument)</span>
-<span class='kw'>m3</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span>,<span class='kw'>u</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>z</span>)) <span class='co'># SEM with three items</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span><span class='op'>(</span><span class='op'>)</span> <span class='co'># Empty model</span>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span> <span class='co'># Simple linear regression</span>
+<span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span><span class='op'>(</span><span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span><span class='op'>)</span> <span class='co'># Model with two independent variables (argument)</span>
+<span class='va'>m3</span> <span class='op'>&lt;-</span> <span class='fu'>lvm</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>u</span>,<span class='va'>u</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='va'>z</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># SEM with three items</span>
 
 </div></pre>
   </div>

@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,14 +135,14 @@
     <p>Generates missing entries in data.frame/matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>makemissing</span>(
-  <span class='kw'>data</span>,
-  p = <span class='fl'>0.2</span>,
-  cols = <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>data</span>)),
-  rowwise = <span class='fl'>FALSE</span>,
-  nafun = <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span>,
-  seed = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>makemissing</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  p <span class='op'>=</span> <span class='fl'>0.2</span>,
+  cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span><span class='op'>)</span>,
+  rowwise <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nafun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='va'>x</span>,
+  seed <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

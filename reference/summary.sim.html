@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -139,20 +136,20 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for sim</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(
-  <span class='kw'>object</span>,
-  estimate = <span class='kw'>NULL</span>,
-  se = <span class='kw'>NULL</span>,
-  confint = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>se</span>) <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>true</span>),
-  true = <span class='kw'>NULL</span>,
-  <span class='kw'>fun</span>,
-  names = <span class='kw'>NULL</span>,
-  unique.names = <span class='fl'>TRUE</span>,
-  minimal = <span class='fl'>FALSE</span>,
-  level = <span class='fl'>0.95</span>,
-  quantiles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0.025</span>, <span class='fl'>0.5</span>, <span class='fl'>0.975</span>, <span class='fl'>1</span>),
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  estimate <span class='op'>=</span> <span class='cn'>NULL</span>,
+  se <span class='op'>=</span> <span class='cn'>NULL</span>,
+  confint <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>true</span><span class='op'>)</span>,
+  true <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>fun</span>,
+  names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  unique.names <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  minimal <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  level <span class='op'>=</span> <span class='fl'>0.95</span>,
+  quantiles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0.025</span>, <span class='fl'>0.5</span>, <span class='fl'>0.975</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,27 +135,27 @@
     <p>Visualize categorical by group variable</p>
     </div>
 
-    <pre class="usage"><span class='fu'>images</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>group</span>,
-  ncol = <span class='fl'>2</span>,
-  byrow = <span class='fl'>TRUE</span>,
-  colorbar = <span class='fl'>1</span>,
-  colorbar.space = <span class='fl'>0.1</span>,
-  label.offset = <span class='fl'>0.02</span>,
-  order = <span class='fl'>TRUE</span>,
-  colorbar.border = <span class='fl'>0</span>,
-  <span class='kw'>main</span>,
-  rowcol = <span class='fl'>FALSE</span>,
-  plotfun = <span class='kw'>NULL</span>,
-  <span class='kw'>axis1</span>,
-  <span class='kw'>axis2</span>,
-  <span class='kw'>mar</span>,
-  col = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#EFF3FF"</span>, <span class='st'>"#BDD7E7"</span>, <span class='st'>"#6BAED6"</span>, <span class='st'>"#2171B5"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#FEE5D9"</span>, <span class='st'>"#FCAE91"</span>,
-    <span class='st'>"#FB6A4A"</span>, <span class='st'>"#CB181D"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#EDF8E9"</span>, <span class='st'>"#BAE4B3"</span>, <span class='st'>"#74C476"</span>, <span class='st'>"#238B45"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#FEEDDE"</span>,
-    <span class='st'>"#FDBE85"</span>, <span class='st'>"#FD8D3C"</span>, <span class='st'>"#D94701"</span>)),
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>images</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>group</span>,
+  ncol <span class='op'>=</span> <span class='fl'>2</span>,
+  byrow <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  colorbar <span class='op'>=</span> <span class='fl'>1</span>,
+  colorbar.space <span class='op'>=</span> <span class='fl'>0.1</span>,
+  label.offset <span class='op'>=</span> <span class='fl'>0.02</span>,
+  order <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  colorbar.border <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>main</span>,
+  rowcol <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  plotfun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>axis1</span>,
+  <span class='va'>axis2</span>,
+  <span class='va'>mar</span>,
+  col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#EFF3FF"</span>, <span class='st'>"#BDD7E7"</span>, <span class='st'>"#6BAED6"</span>, <span class='st'>"#2171B5"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#FEE5D9"</span>, <span class='st'>"#FCAE91"</span>,
+    <span class='st'>"#FB6A4A"</span>, <span class='st'>"#CB181D"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#EDF8E9"</span>, <span class='st'>"#BAE4B3"</span>, <span class='st'>"#74C476"</span>, <span class='st'>"#238B45"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#FEEDDE"</span>,
+    <span class='st'>"#FDBE85"</span>, <span class='st'>"#FD8D3C"</span>, <span class='st'>"#D94701"</span><span class='op'>)</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -238,20 +235,20 @@
     <p>Klaus Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fl'>400</span>,<span class='fl'>3</span>,<span class='fl'>0.5</span>),<span class='fl'>20</span>)
-<span class='kw'>group</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>,each=<span class='fl'>5</span>)
-<span class='fu'>images</span>(<span class='kw'>X</span>,colorbar=<span class='fl'>0</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-</div><div class='img'><img src='images-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>images</span>(<span class='kw'>X</span>,group=<span class='kw'>group</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-</div><div class='img'><img src='images-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>images</span>(<span class='kw'>X</span>,group=<span class='kw'>group</span>,col=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>RColorBrewer</span>::<span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>4</span>,<span class='st'>"Purples"</span>),
-                               <span class='kw'>RColorBrewer</span>::<span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>4</span>,<span class='st'>"Greys"</span>),
-                               <span class='kw'>RColorBrewer</span>::<span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>4</span>,<span class='st'>"YlGn"</span>),
-                               <span class='kw'>RColorBrewer</span>::<span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span>(<span class='fl'>4</span>,<span class='st'>"PuBuGn"</span>)),colorbar=<span class='fl'>2</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-}
-<span class='fu'>images</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>X</span>,<span class='kw'>X</span>,<span class='kw'>X</span>,<span class='kw'>X</span>),group=<span class='kw'>group</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-</div><div class='input'><span class='fu'>images</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>X</span>,<span class='kw'>X</span>,<span class='kw'>X</span>,<span class='kw'>X</span>),ncol=<span class='fl'>1</span>,group=<span class='kw'>group</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-</div><div class='img'><img src='images-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>images</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>X</span>,<span class='kw'>X</span>),<span class='kw'>group</span>,axis2=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>,<span class='fl'>FALSE</span>),axis1=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>,<span class='fl'>FALSE</span>),
-      mar=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>)),yaxs=<span class='st'>"i"</span>,xaxs=<span class='st'>"i"</span>,zlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
+    <pre class="examples"><div class='input'><span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='fl'>400</span>,<span class='fl'>3</span>,<span class='fl'>0.5</span><span class='op'>)</span>,<span class='fl'>20</span><span class='op'>)</span>
+<span class='va'>group</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>,each<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
+<span class='fu'>images</span><span class='op'>(</span><span class='va'>X</span>,colorbar<span class='op'>=</span><span class='fl'>0</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='images-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>images</span><span class='op'>(</span><span class='va'>X</span>,group<span class='op'>=</span><span class='va'>group</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='images-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>images</span><span class='op'>(</span><span class='va'>X</span>,group<span class='op'>=</span><span class='va'>group</span>,col<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'>RColorBrewer</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='st'>"Purples"</span><span class='op'>)</span>,
+                               <span class='fu'>RColorBrewer</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='st'>"Greys"</span><span class='op'>)</span>,
+                               <span class='fu'>RColorBrewer</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='st'>"YlGn"</span><span class='op'>)</span>,
+                               <span class='fu'>RColorBrewer</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html'>brewer.pal</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='st'>"PuBuGn"</span><span class='op'>)</span><span class='op'>)</span>,colorbar<span class='op'>=</span><span class='fl'>2</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>images</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>X</span>,<span class='va'>X</span>,<span class='va'>X</span>,<span class='va'>X</span><span class='op'>)</span>,group<span class='op'>=</span><span class='va'>group</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'>images</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>X</span>,<span class='va'>X</span>,<span class='va'>X</span>,<span class='va'>X</span><span class='op'>)</span>,ncol<span class='op'>=</span><span class='fl'>1</span>,group<span class='op'>=</span><span class='va'>group</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='images-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>images</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>X</span>,<span class='va'>X</span><span class='op'>)</span>,<span class='va'>group</span>,axis2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>FALSE</span>,<span class='cn'>FALSE</span><span class='op'>)</span>,axis1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>FALSE</span>,<span class='cn'>FALSE</span><span class='op'>)</span>,
+      mar<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>,yaxs<span class='op'>=</span><span class='st'>"i"</span>,xaxs<span class='op'>=</span><span class='st'>"i"</span>,zlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='images-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

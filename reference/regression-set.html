@@ -99,9 +99,6 @@ define linear constraints between model equations." />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -141,10 +138,10 @@ define linear constraints between model equations.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'>regression</span>(object = <span class='fu'><a href='lvm.html'>lvm</a></span>(), <span class='kw'>to</span>, <span class='kw'>from</span>, fn = <span class='fl'>NA</span>,
-messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>, additive=<span class='fl'>TRUE</span>, <span class='kw'>y</span>, <span class='kw'>x</span>, <span class='kw'>value</span>, <span class='kw'>...</span>)
+<span class='fu'>regression</span><span class='op'>(</span>object <span class='op'>=</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>to</span>, <span class='va'>from</span>, fn <span class='op'>=</span> <span class='cn'>NA</span>,
+messages <span class='op'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>messages</span>, additive<span class='op'>=</span><span class='cn'>TRUE</span>, <span class='va'>y</span>, <span class='va'>x</span>, <span class='va'>value</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for lvm</span>
-<span class='fu'>regression</span>(<span class='kw'>object</span>, to=<span class='kw'>NULL</span>, quick=<span class='fl'>FALSE</span>, <span class='kw'>...</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>regression</span><span class='op'>(</span><span class='va'>object</span>, to<span class='op'>=</span><span class='cn'>NULL</span>, quick<span class='op'>=</span><span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -254,22 +251,22 @@ can be reset by fixing (with \$) them to <code>NA</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>() <span class='co'>## Initialize empty lvm-object</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'>## Initialize empty lvm-object</span>
 <span class='co'>### E(y1|z,v) = beta1*z + beta2*v</span>
-<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y1</span> <span class='op'>~</span> <span class='kw'>z</span> <span class='op'>+</span> <span class='kw'>v</span>
+<span class='fu'>regression</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>y1</span> <span class='op'>~</span> <span class='va'>z</span> <span class='op'>+</span> <span class='va'>v</span>
 <span class='co'>### E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u</span>
-<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y2</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x</span>,<span class='kw'>beta</span>) <span class='op'>+</span> <span class='fu'>f</span>(<span class='kw'>z</span>,<span class='kw'>beta</span>)  <span class='op'>+</span> <span class='fu'>f</span>(<span class='kw'>v</span>,<span class='fl'>2</span>) <span class='op'>+</span> <span class='kw'>u</span>
+<span class='fu'>regression</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>y2</span> <span class='op'>~</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>x</span>,<span class='va'>beta</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>z</span>,<span class='va'>beta</span><span class='op'>)</span>  <span class='op'>+</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>v</span>,<span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span> <span class='va'>u</span>
 <span class='co'>### Clear restriction on association between y and</span>
 <span class='co'>### fix slope coefficient of u to beta</span>
-<span class='fu'>regression</span>(<span class='kw'>m</span>, <span class='kw'>y2</span> <span class='op'>~</span> <span class='kw'>v</span><span class='op'>+</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>NA</span>,<span class='st'>"beta"</span>)
+<span class='fu'>regression</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>y2</span> <span class='op'>~</span> <span class='va'>v</span><span class='op'>+</span><span class='va'>u</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='cn'>NA</span>,<span class='st'>"beta"</span><span class='op'>)</span>
 
-<span class='fu'>regression</span>(<span class='kw'>m</span>) <span class='co'>## Examine current linear parameter constraints</span>
+<span class='fu'>regression</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='co'>## Examine current linear parameter constraints</span>
 </div><div class='output co'>#&gt; Regression parameters:
 #&gt;       y1 z    v y2 x    u   
 #&gt;    y1    *    *             
 #&gt;    y2    beta *    beta beta</div><div class='input'>
 <span class='co'>## ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:</span>
-<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>) <span class='op'>~</span> <span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>)
+<span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>x1</span><span class='op'>+</span><span class='va'>x2</span><span class='op'>)</span>
 
 </div></pre>
   </div>

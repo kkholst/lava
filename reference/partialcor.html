@@ -99,9 +99,6 @@ z-transform" />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -140,7 +137,7 @@ z-transform" />
 z-transform</p>
     </div>
 
-    <pre class="usage"><span class='fu'>partialcor</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, level = <span class='fl'>0.95</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>partialcor</span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, level <span class='op'>=</span> <span class='fl'>0.95</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,10 +170,10 @@ to calculate partial correlation for</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>)
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>500</span>)
-<span class='fu'>partialcor</span>(<span class='op'>~</span><span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>,<span class='kw'>d</span>)
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x1</span><span class='op'>+</span><span class='va'>x2</span><span class='op'>)</span>
+<span class='fu'><a href='covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span><span class='op'>+</span><span class='va'>y3</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>500</span><span class='op'>)</span>
+<span class='fu'>partialcor</span><span class='op'>(</span><span class='op'>~</span><span class='va'>x1</span><span class='op'>+</span><span class='va'>x2</span>,<span class='va'>d</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             cor        z         pval   lowerCI   upperCI
 #&gt; y1~y2 0.5362128 13.30955 2.037164e-40 0.4704451 0.5960563
 #&gt; y1~y3 0.5179408 12.74715 3.233467e-37 0.4505088 0.5794966

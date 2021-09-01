@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -139,27 +136,27 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'><a href='estimate.default.html'>estimate</a></span>(
-  <span class='kw'>x</span>,
-  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  estimator = <span class='kw'>NULL</span>,
-  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  missing = <span class='fl'>FALSE</span>,
-  <span class='kw'>weights</span>,
-  <span class='kw'>weightsname</span>,
-  <span class='kw'>data2</span>,
-  <span class='kw'>id</span>,
-  <span class='kw'>fix</span>,
-  index = <span class='op'>!</span><span class='kw'>quick</span>,
-  graph = <span class='fl'>FALSE</span>,
-  messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>,
-  quick = <span class='fl'>FALSE</span>,
-  <span class='kw'>method</span>,
-  <span class='kw'>param</span>,
-  <span class='kw'>cluster</span>,
-  <span class='kw'>p</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  estimator <span class='op'>=</span> <span class='cn'>NULL</span>,
+  control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>weights</span>,
+  <span class='va'>weightsname</span>,
+  <span class='va'>data2</span>,
+  <span class='va'>id</span>,
+  <span class='va'>fix</span>,
+  index <span class='op'>=</span> <span class='op'>!</span><span class='va'>quick</span>,
+  graph <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  messages <span class='op'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>messages</span>,
+  quick <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>method</span>,
+  <span class='va'>param</span>,
+  <span class='va'>cluster</span>,
+  <span class='va'>p</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -300,21 +297,21 @@ variance parameters.</p></dd>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.table</a></span>(header=<span class='fl'>TRUE</span>,
-text=<span class='st'>"x1 x2 x3
+    <pre class="examples"><div class='input'><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.table</a></span><span class='op'>(</span>header<span class='op'>=</span><span class='cn'>TRUE</span>,
+text<span class='op'>=</span><span class='st'>"x1 x2 x3
  0.0 -0.5 -2.5
 -0.5 -2.0  0.0
  1.0  1.5  1.0
  0.0  0.5  0.0
--2.5 -1.5 -1.0"</span>)
-<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>x1</span>,<span class='kw'>x2</span>,<span class='kw'>x3</span>)<span class='op'>~</span><span class='kw'>u</span>),<span class='kw'>dd</span>)
+-2.5 -1.5 -1.0"</span><span class='op'>)</span>
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>x1</span>,<span class='va'>x2</span>,<span class='va'>x3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>u</span><span class='op'>)</span>,<span class='va'>dd</span><span class='op'>)</span>
 
 <span class='co'>## Simulation example</span>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>v1</span><span class='op'>+</span><span class='kw'>v2</span><span class='op'>+</span><span class='kw'>v3</span><span class='op'>+</span><span class='kw'>v4</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>v1</span>,<span class='kw'>v2</span>,<span class='kw'>v3</span>,<span class='kw'>v4</span>)<span class='op'>~</span><span class='kw'>x</span>))
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>v1</span><span class='op'>~</span><span class='kw'>v2</span><span class='op'>+</span><span class='kw'>v3</span><span class='op'>+</span><span class='kw'>v4</span>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>10000</span>) <span class='co'>## Simulate 10000 observations from model</span>
-<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>, <span class='kw'>dd</span>) <span class='co'>## Estimate parameters</span>
-<span class='kw'>e</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>v1</span><span class='op'>+</span><span class='va'>v2</span><span class='op'>+</span><span class='va'>v3</span><span class='op'>+</span><span class='va'>v4</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>v1</span>,<span class='va'>v2</span>,<span class='va'>v3</span>,<span class='va'>v4</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>v1</span><span class='op'>~</span><span class='va'>v2</span><span class='op'>+</span><span class='va'>v3</span><span class='op'>+</span><span class='va'>v4</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>10000</span><span class='op'>)</span> <span class='co'>## Simulate 10000 observations from model</span>
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>dd</span><span class='op'>)</span> <span class='co'>## Estimate parameters</span>
+<span class='va'>e</span>
 </div><div class='output co'>#&gt;                      Estimate Std. Error   Z-value  P-value
 #&gt; Regressions:                                               
 #&gt;    y~v1               1.00471    0.01771  56.73304   &lt;1e-12
@@ -341,27 +338,27 @@ text=<span class='st'>"x1 x2 x3
 #&gt;    v3                 1.00394    0.01420  70.71068         
 #&gt;    v4                 0.96123    0.01359  70.71068         </div><div class='input'>
 <span class='co'>## Using just sufficient statistics</span>
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>dd</span>)
-<span class='kw'>e0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,data=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(S=<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cov</a></span>(<span class='kw'>dd</span>)<span class='op'>*</span>(<span class='kw'>n</span><span class='op'>-</span><span class='fl'>1</span>)<span class='op'>/</span><span class='kw'>n</span>,mu=<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>colMeans</a></span>(<span class='kw'>dd</span>),n=<span class='kw'>n</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='kw'>dd</span>)
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
+<span class='va'>e0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='va'>m</span>,data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>S<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cov</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span><span class='op'>*</span><span class='op'>(</span><span class='va'>n</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>/</span><span class='va'>n</span>,mu<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>colMeans</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>,n<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 
 <span class='co'>## Multiple group analysis</span>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>u</span>
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>u</span><span class='op'>~</span><span class='kw'>x</span>
-<span class='kw'>d1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"u,u"</span>=<span class='fl'>1</span>,<span class='st'>"u~x"</span>=<span class='fl'>1</span>))
-<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"u,u"</span>=<span class='fl'>2</span>,<span class='st'>"u~x"</span>=<span class='op'>-</span><span class='fl'>1</span>))
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>u</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>u</span><span class='op'>~</span><span class='va'>x</span>
+<span class='va'>d1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>100</span>,p<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"u,u"</span><span class='op'>=</span><span class='fl'>1</span>,<span class='st'>"u~x"</span><span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>100</span>,p<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"u,u"</span><span class='op'>=</span><span class='fl'>2</span>,<span class='st'>"u~x"</span><span class='op'>=</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span>(<span class='kw'>m</span>)
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>mm</span>,<span class='kw'>u</span><span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fl'>NA</span>
-<span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>mm</span>,<span class='op'>~</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='fl'>NA</span>
-<span class='fu'><a href='intercept.html'>intercept</a></span>(<span class='kw'>mm</span>,<span class='op'>~</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='fl'>NA</span>
-<span class='kw'>ee</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>mm</span>,<span class='kw'>mm</span>),<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>d1</span>,<span class='kw'>d2</span>))
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='baptize.html'>baptize</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>mm</span>,<span class='va'>u</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='fu'><a href='covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>mm</span>,<span class='op'>~</span><span class='va'>u</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='fu'><a href='intercept.html'>intercept</a></span><span class='op'>(</span><span class='va'>mm</span>,<span class='op'>~</span><span class='va'>u</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='va'>ee</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>mm</span>,<span class='va'>mm</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>d1</span>,<span class='va'>d2</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Missing data</span>
-<span class='kw'>d0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='makemissing.html'>makemissing</a></span>(<span class='kw'>d1</span>,cols=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
-<span class='kw'>e0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>m</span>,<span class='kw'>d0</span>,missing=<span class='fl'>TRUE</span>)
-<span class='kw'>e0</span>
+<span class='va'>d0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='makemissing.html'>makemissing</a></span><span class='op'>(</span><span class='va'>d1</span>,cols<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>e0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>d0</span>,missing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>e0</span>
 </div><div class='output co'>#&gt;                     Estimate Std. Error  Z value Pr(&gt;|z|)
 #&gt; Regressions:                                             
 #&gt;    y1~u              0.96989    0.08121 11.94260   &lt;1e-12

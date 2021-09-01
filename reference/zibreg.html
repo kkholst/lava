@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,16 +135,16 @@
     <p>Regression model for binomial data with unkown group of immortals (zero-inflated binomial regression)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>zibreg</span>(
-  <span class='kw'>formula</span>,
-  formula.p = <span class='op'>~</span><span class='fl'>1</span>,
-  <span class='kw'>data</span>,
-  family = <span class='kw'>stats</span>::<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>(),
-  offset = <span class='kw'>NULL</span>,
-  <span class='kw'>start</span>,
-  var = <span class='st'>"hessian"</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>zibreg</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  formula.p <span class='op'>=</span> <span class='op'>~</span><span class='fl'>1</span>,
+  <span class='va'>data</span>,
+  family <span class='op'>=</span> <span class='fu'>stats</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span><span class='op'>(</span><span class='op'>)</span>,
+  offset <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>start</span>,
+  var <span class='op'>=</span> <span class='st'>"hessian"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -193,17 +190,17 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Simulation</span>
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>2e3</span>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='fl'>0</span>,<span class='fl'>20</span>)
-<span class='kw'>age</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='fl'>10</span>,<span class='fl'>30</span>)
-<span class='kw'>z0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>,mean=<span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fl'>0.05</span><span class='op'>*</span><span class='kw'>age</span>)
-<span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>z0</span>,breaks=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>Inf</span>))
-<span class='kw'>p0</span> <span class='op'>&lt;-</span> <span class='kw'>lava</span>:::<span class='fu'><a href='startvalues.html'>expit</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='kw'>z</span><span class='op'>+</span><span class='kw'>age</span>) <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>.4</span>, <span class='op'>-</span><span class='fl'>.4</span>, <span class='fl'>0.2</span>, <span class='fl'>2</span>, <span class='op'>-</span><span class='fl'>0.05</span>))
-<span class='kw'>y</span> <span class='op'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>)<span class='op'>&lt;</span><span class='kw'>lava</span>:::<span class='fu'><a href='startvalues.html'>tigol</a></span>(<span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fl'>0.25</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>-</span><span class='fl'>0</span><span class='op'>*</span><span class='kw'>age</span>))<span class='op'>*</span><span class='fl'>1</span>
-<span class='kw'>u</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>)<span class='op'>&lt;</span><span class='kw'>p0</span>
-<span class='kw'>y</span>[<span class='kw'>u</span><span class='op'>==</span><span class='fl'>0</span>] <span class='op'>&lt;-</span> <span class='fl'>0</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y=<span class='kw'>y</span>,x=<span class='kw'>x</span>,u=<span class='kw'>u</span><span class='op'>*</span><span class='fl'>1</span>,z=<span class='kw'>z</span>,age=<span class='kw'>age</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>d</span>)
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>2e3</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='fl'>0</span>,<span class='fl'>20</span><span class='op'>)</span>
+<span class='va'>age</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='fl'>10</span>,<span class='fl'>30</span><span class='op'>)</span>
+<span class='va'>z0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span>,mean<span class='op'>=</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fl'>0.05</span><span class='op'>*</span><span class='va'>age</span><span class='op'>)</span>
+<span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>z0</span>,breaks<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='cn'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='cn'>Inf</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>p0</span> <span class='op'>&lt;-</span> <span class='fu'>lava</span><span class='fu'>:::</span><span class='fu'><a href='startvalues.html'>expit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='va'>z</span><span class='op'>+</span><span class='va'>age</span><span class='op'>)</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>.4</span>, <span class='op'>-</span><span class='fl'>.4</span>, <span class='fl'>0.2</span>, <span class='fl'>2</span>, <span class='op'>-</span><span class='fl'>0.05</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>&lt;</span><span class='fu'>lava</span><span class='fu'>:::</span><span class='fu'><a href='startvalues.html'>tigol</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fl'>0.25</span><span class='op'>*</span><span class='va'>x</span><span class='op'>-</span><span class='fl'>0</span><span class='op'>*</span><span class='va'>age</span><span class='op'>)</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1</span>
+<span class='va'>u</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>&lt;</span><span class='va'>p0</span>
+<span class='va'>y</span><span class='op'>[</span><span class='va'>u</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y<span class='op'>=</span><span class='va'>y</span>,x<span class='op'>=</span><span class='va'>x</span>,u<span class='op'>=</span><span class='va'>u</span><span class='op'>*</span><span class='fl'>1</span>,z<span class='op'>=</span><span class='va'>z</span>,age<span class='op'>=</span><span class='va'>age</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   y         x u         z      age
 #&gt; 1 0  1.464937 0     (0,1] 18.21027
 #&gt; 2 0  8.471168 0    (-1,0] 24.61046
@@ -212,9 +209,9 @@
 #&gt; 5 0 14.244491 0    (-1,0] 16.48295
 #&gt; 6 0 14.489812 0    (-1,0] 17.33514</div><div class='input'>
 <span class='co'>## Estimation</span>
-<span class='kw'>e0</span> <span class='op'>&lt;-</span> <span class='fu'>zibreg</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>*</span><span class='kw'>z</span>,<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>z</span><span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>d</span>)
-<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'>zibreg</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>z</span><span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>d</span>)
-<span class='fu'><a href='compare.html'>compare</a></span>(<span class='kw'>e</span>,<span class='kw'>e0</span>)
+<span class='va'>e0</span> <span class='op'>&lt;-</span> <span class='fu'>zibreg</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>*</span><span class='va'>z</span>,<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>z</span><span class='op'>+</span><span class='va'>age</span>,data<span class='op'>=</span><span class='va'>d</span><span class='op'>)</span>
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fu'>zibreg</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>x</span>,<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>z</span><span class='op'>+</span><span class='va'>age</span>,data<span class='op'>=</span><span class='va'>d</span><span class='op'>)</span>
+<span class='fu'><a href='compare.html'>compare</a></span><span class='op'>(</span><span class='va'>e</span>,<span class='va'>e0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	- Likelihood ratio test -
 #&gt; 
@@ -223,7 +220,7 @@
 #&gt; sample estimates:
 #&gt; log likelihood (model 1) log likelihood (model 2) 
 #&gt;                -845.5394                -844.3122 
-#&gt; </div><div class='input'><span class='kw'>e</span>
+#&gt; </div><div class='input'><span class='va'>e</span>
 </div><div class='output co'>#&gt;                  Estimate        2.5%       97.5%      P-value
 #&gt; (Intercept)    -0.8096962 -1.34568375 -0.27370865 3.067975e-03
 #&gt; x               0.2247970  0.06065481  0.38893919 7.269888e-03
@@ -239,30 +236,30 @@
 #&gt; {(Intercept)} + {z(-1,0]}   0.3791217 0.2487184 0.5296910
 #&gt; {(Intercept)} + {z(0,1]}    0.5738240 0.4098366 0.7230380
 #&gt; {(Intercept)} + {z(1, Inf]} 0.9048231 0.7876751 0.9605714
-#&gt; {(Intercept)} + {age}       0.4466922 0.3018984 0.6011322</div><div class='input'><span class='fu'><a href='PD.html'>PD</a></span>(<span class='kw'>e0</span>,intercept=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>),slope=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>6</span>))
+#&gt; {(Intercept)} + {age}       0.4466922 0.3018984 0.6011322</div><div class='input'><span class='fu'><a href='PD.html'>PD</a></span><span class='op'>(</span><span class='va'>e0</span>,intercept<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>3</span><span class='op'>)</span>,slope<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     Estimate  Std.Err      2.5%    97.5%
 #&gt; 50% 4.655517 6.753757 -8.581603 17.89264
 #&gt; attr(,"b")
 #&gt; [1] -0.7921916  0.1701619</div><div class='input'>
-<span class='kw'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),
-           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),
-           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>20</span>),
-           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>20</span>))
-<span class='kw'>prev</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>e</span>,pr.contrast=<span class='kw'>B</span>)<span class='op'>$</span><span class='kw'>prevalence</span>
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span><span class='op'>)</span>,
+           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>20</span><span class='op'>)</span>,
+           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>20</span><span class='op'>)</span>,
+           <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>prev</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>e</span>,pr.contrast<span class='op'>=</span><span class='va'>B</span><span class='op'>)</span><span class='op'>$</span><span class='va'>prevalence</span>
 
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>,<span class='fl'>100</span>,length.out=<span class='fl'>100</span>)
-<span class='kw'>newdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/expand.grid.html'>expand.grid</a></span>(x=<span class='kw'>x</span>,age=<span class='fl'>20</span>,z=<span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>z</span>))
-<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>e</span>,newdata=<span class='kw'>newdata</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>,type=<span class='st'>"n"</span>,xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>101</span>),ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),xlab=<span class='st'>"x"</span>,ylab=<span class='st'>"Probability(Event)"</span>)
-</div><div class='input'><span class='kw'>count</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
-<span class='co'>for</span> (<span class='kw'>i</span> <span class='co'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>newdata</span><span class='op'>$</span><span class='kw'>z</span>)) {
-  <span class='kw'>count</span> <span class='op'>&lt;-</span> <span class='kw'>count</span><span class='op'>+</span><span class='fl'>1</span>
-  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>x</span>,<span class='kw'>fit</span>[<span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='kw'>newdata</span><span class='op'>$</span><span class='kw'>z</span><span class='op'>==</span><span class='kw'>i</span>)],col=<span class='st'>"darkblue"</span>,lty=<span class='kw'>count</span>)
-}
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(h=<span class='kw'>prev</span>[<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>1</span>],lty=<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col=<span class='st'>"gray"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(h=<span class='kw'>prev</span>[<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>2</span>],lty=<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col=<span class='st'>"lightgray"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(h=<span class='kw'>prev</span>[<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>3</span>],lty=<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col=<span class='st'>"lightgray"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>,<span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>z</span>),col=<span class='st'>"darkblue"</span>,lty=<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>z</span>))))
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>100</span>,length.out<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>newdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/expand.grid.html'>expand.grid</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>x</span>,age<span class='op'>=</span><span class='fl'>20</span>,z<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>z</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>e</span>,newdata<span class='op'>=</span><span class='va'>newdata</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0</span>,type<span class='op'>=</span><span class='st'>"n"</span>,xlim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>101</span><span class='op'>)</span>,ylim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>1</span><span class='op'>)</span>,xlab<span class='op'>=</span><span class='st'>"x"</span>,ylab<span class='op'>=</span><span class='st'>"Probability(Event)"</span><span class='op'>)</span>
+</div><div class='input'><span class='va'>count</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>newdata</span><span class='op'>$</span><span class='va'>z</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>count</span> <span class='op'>&lt;-</span> <span class='va'>count</span><span class='op'>+</span><span class='fl'>1</span>
+  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>x</span>,<span class='va'>fit</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>newdata</span><span class='op'>$</span><span class='va'>z</span><span class='op'>==</span><span class='va'>i</span><span class='op'>)</span><span class='op'>]</span>,col<span class='op'>=</span><span class='st'>"darkblue"</span>,lty<span class='op'>=</span><span class='va'>count</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span><span class='op'>(</span>h<span class='op'>=</span><span class='va'>prev</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>1</span><span class='op'>]</span>,lty<span class='op'>=</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col<span class='op'>=</span><span class='st'>"gray"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span><span class='op'>(</span>h<span class='op'>=</span><span class='va'>prev</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>2</span><span class='op'>]</span>,lty<span class='op'>=</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col<span class='op'>=</span><span class='st'>"lightgray"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span><span class='op'>(</span>h<span class='op'>=</span><span class='va'>prev</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,<span class='fl'>3</span><span class='op'>]</span>,lty<span class='op'>=</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>,col<span class='op'>=</span><span class='st'>"lightgray"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span><span class='op'>(</span><span class='st'>"topleft"</span>,<span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>z</span><span class='op'>)</span>,col<span class='op'>=</span><span class='st'>"darkblue"</span>,lty<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>z</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='zibreg-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

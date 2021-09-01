@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,7 +135,7 @@
     <p>Check backdoor criterion of a lvm object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>backdoor</span>(<span class='kw'>object</span>, <span class='kw'>f</span>, <span class='kw'>cond</span>, <span class='kw'>...</span>, return.graph = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>backdoor</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>f</span>, <span class='va'>cond</span>, <span class='va'>...</span>, return.graph <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,10 +164,10 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>c2</span>,<span class='kw'>c2</span><span class='op'>~</span><span class='kw'>c1</span>,<span class='kw'>x</span><span class='op'>~</span><span class='kw'>c1</span>,<span class='kw'>m1</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>y</span><span class='op'>~</span><span class='kw'>m1</span>, <span class='kw'>v1</span><span class='op'>~</span><span class='kw'>c3</span>, <span class='kw'>x</span><span class='op'>~</span><span class='kw'>c3</span>,<span class='kw'>v1</span><span class='op'>~</span><span class='kw'>y</span>,
-         <span class='kw'>x</span><span class='op'>~</span><span class='kw'>z1</span>, <span class='kw'>z2</span><span class='op'>~</span><span class='kw'>z1</span>, <span class='kw'>z2</span><span class='op'>~</span><span class='kw'>z3</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>z3</span><span class='op'>+</span><span class='kw'>z2</span><span class='op'>+</span><span class='kw'>g1</span><span class='op'>+</span><span class='kw'>g2</span><span class='op'>+</span><span class='kw'>g3</span>)
-<span class='kw'>ll</span> <span class='op'>&lt;-</span> <span class='fu'>backdoor</span>(<span class='kw'>m</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>)
-<span class='fu'>backdoor</span>(<span class='kw'>m</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>|</span><span class='kw'>c1</span><span class='op'>+</span><span class='kw'>z1</span><span class='op'>+</span><span class='kw'>g1</span>)
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>c2</span>,<span class='va'>c2</span><span class='op'>~</span><span class='va'>c1</span>,<span class='va'>x</span><span class='op'>~</span><span class='va'>c1</span>,<span class='va'>m1</span><span class='op'>~</span><span class='va'>x</span>,<span class='va'>y</span><span class='op'>~</span><span class='va'>m1</span>, <span class='va'>v1</span><span class='op'>~</span><span class='va'>c3</span>, <span class='va'>x</span><span class='op'>~</span><span class='va'>c3</span>,<span class='va'>v1</span><span class='op'>~</span><span class='va'>y</span>,
+         <span class='va'>x</span><span class='op'>~</span><span class='va'>z1</span>, <span class='va'>z2</span><span class='op'>~</span><span class='va'>z1</span>, <span class='va'>z2</span><span class='op'>~</span><span class='va'>z3</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>z3</span><span class='op'>+</span><span class='va'>z2</span><span class='op'>+</span><span class='va'>g1</span><span class='op'>+</span><span class='va'>g2</span><span class='op'>+</span><span class='va'>g3</span><span class='op'>)</span>
+<span class='va'>ll</span> <span class='op'>&lt;-</span> <span class='fu'>backdoor</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span>
+<span class='fu'>backdoor</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>|</span><span class='va'>c1</span><span class='op'>+</span><span class='va'>z1</span><span class='op'>+</span><span class='va'>g1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -139,21 +136,17 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'><a href='sim.html'>sim</a></span>(
-  x = <span class='kw'>NULL</span>,
-  R = <span class='fl'>100</span>,
-  f = <span class='kw'>NULL</span>,
-  colnames = <span class='kw'>NULL</span>,
-  messages = <span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>,
-  <span class='kw'>mc.cores</span>,
-  blocksize = <span class='fl'>2L</span> <span class='op'>*</span> <span class='kw'>mc.cores</span>,
-  <span class='kw'>cl</span>,
-  type = <span class='fl'>1L</span>,
-  seed = <span class='kw'>NULL</span>,
-  args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  iter = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  R <span class='op'>=</span> <span class='fl'>100</span>,
+  f <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colnames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  messages <span class='op'>=</span> <span class='fu'><a href='lava.options.html'>lava.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>messages</span>,
+  seed <span class='op'>=</span> <span class='cn'>NULL</span>,
+  args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  iter <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,22 +172,6 @@
       <td><p>Messages</p></td>
     </tr>
     <tr>
-      <th>mc.cores</th>
-      <td><p>Number of cores to use</p></td>
-    </tr>
-    <tr>
-      <th>blocksize</th>
-      <td><p>Split computations in blocks</p></td>
-    </tr>
-    <tr>
-      <th>cl</th>
-      <td><p>(optional) cluster to use for parallelization</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>type=0 is an alias for messages=1,mc.cores=1,blocksize=R</p></td>
-    </tr>
-    <tr>
       <th>seed</th>
       <td><p>(optional) Seed (needed with cl=TRUE)</p></td>
     </tr>
@@ -216,145 +193,6 @@
 
     <div class='dont-index'><p>summary.sim plot.sim print.sim</p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>e</span>)
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>y</span>) <span class='op'>&lt;-</span> <span class='fl'>0</span>
-<span class='fu'><a href='sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>uniform.lvm</a></span>(a=<span class='op'>-</span><span class='fl'>1.1</span>,b=<span class='fl'>1.1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>m</span>,<span class='kw'>e</span><span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) (<span class='fl'>1</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>^</span><span class='fl'>4</span>)<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>x</span>),sd=<span class='fl'>1</span>)
-
-<span class='kw'>onerun</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>iter</span>=<span class='kw'>NULL</span>,<span class='kw'>...</span>,<span class='kw'>n</span>=<span class='fl'>2e3</span>,<span class='kw'>b0</span>=<span class='fl'>1</span>,<span class='kw'>idx</span>=<span class='fl'>2</span>) {
-    <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='kw'>n</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y~x"</span>=<span class='kw'>b0</span>))
-    <span class='kw'>l</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>,<span class='kw'>d</span>)
-    <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>l</span>))[<span class='kw'>idx</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>],
-             <span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='kw'>l</span>)[<span class='kw'>idx</span>,],
-             <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='kw'>l</span>,only.coef=<span class='fl'>TRUE</span>)[<span class='kw'>idx</span>,<span class='fl'>2</span><span class='op'>:</span><span class='fl'>4</span>])
-    <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>res</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Estimate"</span>,<span class='st'>"Model.se"</span>,<span class='st'>"Model.lo"</span>,<span class='st'>"Model.hi"</span>,
-                    <span class='st'>"Sandwich.se"</span>,<span class='st'>"Sandwich.lo"</span>,<span class='st'>"Sandwich.hi"</span>)
-    <span class='kw'>res</span>
-}
-<span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>onerun</span>,R=<span class='fl'>10</span>,b0=<span class='fl'>1</span>,messages=<span class='fl'>0</span>,mc.cores=<span class='fl'>1</span>)
-<span class='kw'>val</span>
-</div><div class='output co'>#&gt;    Estimate Model.se Model.lo Model.hi Sandwich.se Sandwich.lo Sandwich.hi
-#&gt; 1  0.990539 0.003703 0.983277 0.997800 0.005253    0.980244    1.000833   
-#&gt; 2  0.996057 0.007015 0.982301 1.009814 0.009910    0.976633    1.015482   
-#&gt; 3  0.980200 0.013969 0.952805 1.007595 0.019610    0.941765    1.018635   
-#&gt; 4  1.011792 0.022479 0.967708 1.055876 0.032213    0.948656    1.074928   
-#&gt; 5  0.943638 0.025415 0.893795 0.993481 0.036244    0.872600    1.014675   
-#&gt; 6  0.989287 0.016637 0.956658 1.021915 0.023835    0.942571    1.036003   
-#&gt; 7  1.007052 0.017040 0.973634 1.040469 0.024295    0.959434    1.054669   
-#&gt; 8  0.996222 0.020175 0.956654 1.035789 0.028401    0.940556    1.051887   
-#&gt; 9  0.981231 0.011606 0.958470 1.003992 0.016473    0.948944    1.013518   
-#&gt; 10 1.026004 0.021205 0.984418 1.067590 0.030310    0.966597    1.085410   
-#&gt; 
-#&gt;      Estimate  Model.se Model.lo Model.hi Sandwich.se Sandwich.lo Sandwich.hi
-#&gt; Mean 0.992202 0.0159244 0.960972 1.023432   0.0226545    0.947800    1.036604
-#&gt; SD   0.022141 0.0069279 0.026522 0.025421   0.0099134    0.030085    0.028816</div><div class='input'>
-<span class='kw'>val</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>val</span>,R=<span class='fl'>40</span>,b0=<span class='fl'>1</span>,mc.cores=<span class='fl'>1</span>) <span class='co'>## append results</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),confint=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>6</span>,<span class='fl'>7</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
-</div><div class='output co'>#&gt; 50 replications					Time: 1.087s
-#&gt; 
-#&gt;           Estimate Estimate.1
-#&gt; Mean      0.995790   0.995790
-#&gt; SD        0.016798   0.016798
-#&gt; Coverage  0.780000   0.980000
-#&gt;                              
-#&gt; Min       0.943638   0.943638
-#&gt; 2.5%      0.953101   0.953101
-#&gt; 50%       0.999579   0.999579
-#&gt; 97.5%     1.023974   1.023974
-#&gt; Max       1.027068   1.027068
-#&gt;                              
-#&gt; Missing   0.000000   0.000000
-#&gt;                              
-#&gt; True      1.000000   1.000000
-#&gt; Bias     -0.004210  -0.004210
-#&gt; RMSE      0.017318   0.017318
-#&gt; </div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>))
-</div><div class='output co'>#&gt; 50 replications					Time: 1.087s
-#&gt; 
-#&gt;            Model Sandwich
-#&gt; Mean    0.995790 0.995790
-#&gt; SD      0.016798 0.016798
-#&gt; SE      0.010816 0.015297
-#&gt; SE/SD   0.643871 0.910636
-#&gt;                          
-#&gt; Min     0.943638 0.943638
-#&gt; 2.5%    0.953101 0.953101
-#&gt; 50%     0.999579 0.999579
-#&gt; 97.5%   1.023974 1.023974
-#&gt; Max     1.027068 1.027068
-#&gt;                          
-#&gt; Missing 0.000000 0.000000
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>),confint=<span class='fl'>TRUE</span>)
-</div><div class='output co'>#&gt; 50 replications					Time: 1.087s
-#&gt; 
-#&gt;              Model  Sandwich
-#&gt; Mean      0.995790  0.995790
-#&gt; SD        0.016798  0.016798
-#&gt; SE        0.010816  0.015297
-#&gt; SE/SD     0.643871  0.910636
-#&gt; Coverage  0.780000  0.980000
-#&gt;                             
-#&gt; Min       0.943638  0.943638
-#&gt; 2.5%      0.953101  0.953101
-#&gt; 50%       0.999579  0.999579
-#&gt; 97.5%     1.023974  1.023974
-#&gt; Max       1.027068  1.027068
-#&gt;                             
-#&gt; Missing   0.000000  0.000000
-#&gt;                             
-#&gt; True      1.000000  1.000000
-#&gt; Bias     -0.004210 -0.004210
-#&gt; RMSE      0.017318  0.017318
-#&gt; </div><div class='input'>
-<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>val</span>,estimate=<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),true=<span class='fl'>1</span>,names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>),polygon=<span class='fl'>FALSE</span>)
-    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),main=<span class='kw'>NULL</span>,
-         true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>),
-         line.lwd=<span class='fl'>1</span>,col=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gray20"</span>,<span class='st'>"gray60"</span>),
-         rug=<span class='fl'>FALSE</span>)
-    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>val</span>,estimate=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),se=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>5</span>),true=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),
-         names=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Model"</span>,<span class='st'>"Sandwich"</span>))
-}
-
-<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>a</span>=<span class='fl'>1</span>,<span class='kw'>b</span>=<span class='fl'>1</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='kw'>a</span><span class='op'>*</span><span class='kw'>b</span>,<span class='fl'>5</span>)
-}
-<span class='kw'>R</span> <span class='op'>&lt;-</span> <span class='fu'><a href='Expand.html'>Expand</a></span>(a=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,b=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
-<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>f</span>,<span class='kw'>R</span>,type=<span class='fl'>0</span>)
-</div><div class='output co'>#&gt;   [,1] [,2] [,3] [,4] [,5]
-#&gt; 1 1    1    1    1    1   
-#&gt; 2 2    2    2    2    2   
-#&gt; 3 3    3    3    3    3   
-#&gt; 4 2    2    2    2    2   
-#&gt; 5 4    4    4    4    4   
-#&gt; 6 6    6    6    6    6   
-#&gt; 7 3    3    3    3    3   
-#&gt; 8 6    6    6    6    6   
-#&gt; 9 9    9    9    9    9   
-#&gt; 
-#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]
-#&gt; Mean 4.0000 4.0000 4.0000 4.0000 4.0000
-#&gt; SD   2.5495 2.5495 2.5495 2.5495 2.5495</div><div class='input'><span class='fu'><a href='sim.html'>sim</a></span>(<span class='fu'>function</span>(<span class='kw'>a</span>,<span class='kw'>b</span>) <span class='fu'>f</span>(<span class='kw'>a</span>,<span class='kw'>b</span>), <span class='fl'>3</span>, args=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a=<span class='fl'>5</span>,b=<span class='fl'>5</span>),type=<span class='fl'>0</span>)
-</div><div class='output co'>#&gt;   [,1] [,2] [,3] [,4] [,5]
-#&gt; 1 25   25   25   25   25  
-#&gt; 2 25   25   25   25   25  
-#&gt; 3 25   25   25   25   25  
-#&gt; 
-#&gt;      [,1] [,2] [,3] [,4] [,5]
-#&gt; Mean   25   25   25   25   25
-#&gt; SD      0    0    0    0    0</div><div class='input'><span class='fu'><a href='sim.html'>sim</a></span>(<span class='fu'>function</span>(<span class='kw'>iter</span>=<span class='fl'>1</span>,<span class='kw'>a</span>=<span class='fl'>5</span>,<span class='kw'>b</span>=<span class='fl'>5</span>) <span class='kw'>iter</span><span class='op'>*</span><span class='fu'>f</span>(<span class='kw'>a</span>,<span class='kw'>b</span>), type=<span class='fl'>0</span>, iter=<span class='fl'>TRUE</span>, R=<span class='fl'>5</span>)
-</div><div class='output co'>#&gt;   [,1] [,2] [,3] [,4] [,5]
-#&gt; 1  25   25   25   25   25 
-#&gt; 2  50   50   50   50   50 
-#&gt; 3  75   75   75   75   75 
-#&gt; 4 100  100  100  100  100 
-#&gt; 5 125  125  125  125  125 
-#&gt; 
-#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]
-#&gt; Mean 75.000 75.000 75.000 75.000 75.000
-#&gt; SD   39.528 39.528 39.528 39.528 39.528</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

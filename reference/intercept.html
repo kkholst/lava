@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -139,7 +136,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'>intercept</span>(<span class='kw'>object</span>, <span class='kw'>vars</span>, <span class='kw'>...</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>intercept</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>vars</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -200,11 +197,11 @@ current intercept restrictions of the <code>lvm</code>-object.</p>
     <pre class="examples"><div class='input'>
 
 <span class='co'>## A multivariate model</span>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>) <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x1</span>,<span class='kw'>beta</span>)<span class='op'>+</span><span class='kw'>x2</span>)
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y3</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>x1</span>,<span class='kw'>beta</span>)
-<span class='fu'>intercept</span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='kw'>y1</span> <span class='op'>~</span> <span class='fu'>f</span>(<span class='kw'>mu</span>)
-<span class='fu'>intercept</span>(<span class='kw'>m</span>, <span class='op'>~</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>2</span>,<span class='st'>"mu"</span>)
-<span class='fu'>intercept</span>(<span class='kw'>m</span>) <span class='co'>## Examine intercepts of model (NA translates to free/unique paramete##r)</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span><span class='op'>)</span> <span class='op'>~</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>x1</span>,<span class='va'>beta</span><span class='op'>)</span><span class='op'>+</span><span class='va'>x2</span><span class='op'>)</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>y3</span> <span class='op'>~</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>x1</span>,<span class='va'>beta</span><span class='op'>)</span>
+<span class='fu'>intercept</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>y1</span> <span class='op'>~</span> <span class='fu'>f</span><span class='op'>(</span><span class='va'>mu</span><span class='op'>)</span>
+<span class='fu'>intercept</span><span class='op'>(</span><span class='va'>m</span>, <span class='op'>~</span><span class='va'>y2</span><span class='op'>+</span><span class='va'>y3</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='st'>"mu"</span><span class='op'>)</span>
+<span class='fu'>intercept</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='co'>## Examine intercepts of model (NA translates to free/unique paramete##r)</span>
 </div><div class='output co'>#&gt; Intercept parameters:
 #&gt;     y1 y2 y3
 #&gt;     *  2  mu</div><div class='input'>

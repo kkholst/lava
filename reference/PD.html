@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,18 +135,18 @@
     <p>Dose response calculation for binomial regression models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>PD</span>(
-  <span class='kw'>model</span>,
-  intercept = <span class='fl'>1</span>,
-  slope = <span class='fl'>2</span>,
-  prob = <span class='kw'>NULL</span>,
-  <span class='kw'>x</span>,
-  level = <span class='fl'>0.5</span>,
-  ci.level = <span class='fl'>0.95</span>,
-  <span class='kw'>vcov</span>,
-  <span class='kw'>family</span>,
-  EB = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>PD</span><span class='op'>(</span>
+  <span class='va'>model</span>,
+  intercept <span class='op'>=</span> <span class='fl'>1</span>,
+  slope <span class='op'>=</span> <span class='fl'>2</span>,
+  prob <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>x</span>,
+  level <span class='op'>=</span> <span class='fl'>0.5</span>,
+  ci.level <span class='op'>=</span> <span class='fl'>0.95</span>,
+  <span class='va'>vcov</span>,
+  <span class='va'>family</span>,
+  EB <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

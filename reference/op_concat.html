@@ -99,9 +99,6 @@ data types he operator is a wrapper of paste." />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -140,7 +137,7 @@ data types he operator is a wrapper of paste." />
 data types he operator is a wrapper of <code>paste</code>.</p>
     </div>
 
-    <pre class="usage"><span class='kw'>x</span> <span class='op'>%++%</span> <span class='kw'>y</span></pre>
+    <pre class="usage"><span class='va'>x</span> <span class='op'>%++%</span> <span class='va'>y</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,7 +164,7 @@ data types he operator is a wrapper of <code>paste</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Block diagonal</span>
-<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)<span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>25</span>),<span class='fl'>5</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>25</span><span class='op'>)</span>,<span class='fl'>5</span><span class='op'>)</span><span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>25</span><span class='op'>)</span>,<span class='fl'>5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             [,1]       [,2]       [,3]       [,4]        [,5]         [,6]
 #&gt;  [1,] -0.2357066  1.1519118  1.7579031 -1.0655906  0.26613736  0.000000000
 #&gt;  [2,] -0.5428883  0.9921604  0.5607461 -1.5637821 -0.37670272  0.000000000
@@ -192,8 +189,8 @@ data types he operator is a wrapper of <code>paste</code>.</p>
 #&gt; [10,] -0.2992151 -1.2375384 -0.05710677  0.04672617</div><div class='input'><span class='co'>## String concatenation</span>
 <span class='st'>"Hello "</span><span class='op'>%++%</span><span class='st'>" World"</span>
 </div><div class='output co'>#&gt; [1] "Hello  World"</div><div class='input'><span class='co'>## Function composition</span>
-<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='kw'>log</span> <span class='op'>%++%</span> <span class='kw'>exp</span>
-<span class='fu'>f</span>(<span class='fl'>2</span>)
+<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='va'>log</span> <span class='op'>%++%</span> <span class='va'>exp</span>
+<span class='fu'>f</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

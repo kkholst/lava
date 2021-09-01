@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,15 +135,15 @@
     <p>Estimate probabilities in contingency table</p>
     </div>
 
-    <pre class="usage"><span class='fu'>multinomial</span>(
-  <span class='kw'>x</span>,
-  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  marginal = <span class='fl'>FALSE</span>,
-  <span class='kw'>transform</span>,
-  vcov = <span class='fl'>TRUE</span>,
-  iid = <span class='fl'>TRUE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>multinomial</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  marginal <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>transform</span>,
+  vcov <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  iid <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,16 +183,16 @@
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='kw'>breaks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>Inf</span>)
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(); <span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m</span>,pairwise=<span class='fl'>TRUE</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span><span class='op'>+</span><span class='kw'>y4</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>5e2</span>),
-              z1=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y1</span>,breaks=<span class='kw'>breaks</span>),
-              z2=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y2</span>,breaks=<span class='kw'>breaks</span>),
-              z3=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y3</span>,breaks=<span class='kw'>breaks</span>),
-              z4=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y4</span>,breaks=<span class='kw'>breaks</span>))
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>breaks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='cn'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='cn'>Inf</span><span class='op'>)</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span>; <span class='fu'><a href='covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>m</span>,pairwise<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span><span class='op'>+</span><span class='va'>y3</span><span class='op'>+</span><span class='va'>y4</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span><span class='op'>(</span><span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>5e2</span><span class='op'>)</span>,
+              z1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y1</span>,breaks<span class='op'>=</span><span class='va'>breaks</span><span class='op'>)</span>,
+              z2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y2</span>,breaks<span class='op'>=</span><span class='va'>breaks</span><span class='op'>)</span>,
+              z3<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y3</span>,breaks<span class='op'>=</span><span class='va'>breaks</span><span class='op'>)</span>,
+              z4<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y4</span>,breaks<span class='op'>=</span><span class='va'>breaks</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>multinomial</span>(<span class='kw'>d</span>[,<span class='fl'>5</span>])
+<span class='fu'>multinomial</span><span class='op'>(</span><span class='va'>d</span><span class='op'>[</span>,<span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Call: multinomial(x = d[, 5])
 #&gt; 
 #&gt; Joint probabilities:
@@ -206,7 +203,7 @@
 #&gt;    Estimate Std.Err   2.5%  97.5%    P-value
 #&gt; p1    0.154 0.01614 0.1224 0.1856  1.425e-21
 #&gt; p2    0.350 0.02133 0.3082 0.3918  1.669e-60
-#&gt; p3    0.496 0.02236 0.4522 0.5398 5.068e-109</div><div class='input'>(<span class='kw'>a1</span> <span class='op'>&lt;-</span> <span class='fu'>multinomial</span>(<span class='kw'>d</span>[,<span class='fl'>5</span><span class='op'>:</span><span class='fl'>6</span>]))
+#&gt; p3    0.496 0.02236 0.4522 0.5398 5.068e-109</div><div class='input'><span class='op'>(</span><span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'>multinomial</span><span class='op'>(</span><span class='va'>d</span><span class='op'>[</span>,<span class='fl'>5</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Call: multinomial(x = d[, 5:6])
 #&gt; 
 #&gt; Joint probabilities:
@@ -232,34 +229,34 @@
 #&gt; p32    0.154 0.016142 0.12236 0.18564 1.425e-21
 #&gt; p13    0.028 0.007378 0.01354 0.04246 1.475e-04
 #&gt; p23    0.138 0.015424 0.10777 0.16823 3.657e-19
-#&gt; p33    0.302 0.020533 0.26176 0.34224 5.707e-49</div><div class='input'>(<span class='kw'>K1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/kappa.html'>kappa</a></span>(<span class='kw'>a1</span>)) <span class='co'>## Cohen's kappa</span>
+#&gt; p33    0.302 0.020533 0.26176 0.34224 5.707e-49</div><div class='input'><span class='op'>(</span><span class='va'>K1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/kappa.html'>kappa</a></span><span class='op'>(</span><span class='va'>a1</span><span class='op'>)</span><span class='op'>)</span> <span class='co'>## Cohen's kappa</span>
 </div><div class='output co'>#&gt;       Estimate Std.Err  2.5% 97.5%   P-value
 #&gt; kappa   0.2065 0.03547 0.137 0.276 5.805e-09</div><div class='input'>
-<span class='kw'>K2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/kappa.html'>kappa</a></span>(<span class='kw'>d</span>[,<span class='fl'>7</span><span class='op'>:</span><span class='fl'>8</span>])
+<span class='va'>K2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/kappa.html'>kappa</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>[</span>,<span class='fl'>7</span><span class='op'>:</span><span class='fl'>8</span><span class='op'>]</span><span class='op'>)</span>
 <span class='co'>## Testing difference K1-K2:</span>
-<span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>K1</span>,<span class='kw'>K2</span>,id=<span class='fl'>TRUE</span>),<span class='kw'>diff</span>)
+<span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='startvalues.html'>merge</a></span><span class='op'>(</span><span class='va'>K1</span>,<span class='va'>K2</span>,id<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>,<span class='va'>diff</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         Estimate Std.Err     2.5%  97.5% P-value
 #&gt; kappa.1  0.05756 0.04779 -0.03611 0.1512  0.2284</div><div class='input'>
-<span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>K1</span>,<span class='kw'>K2</span>,id=<span class='fl'>FALSE</span>),<span class='kw'>diff</span>) <span class='co'>## Wrong std.err ignoring dependence</span>
+<span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='startvalues.html'>merge</a></span><span class='op'>(</span><span class='va'>K1</span>,<span class='va'>K2</span>,id<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>,<span class='va'>diff</span><span class='op'>)</span> <span class='co'>## Wrong std.err ignoring dependence</span>
 </div><div class='output co'>#&gt;         Estimate Std.Err     2.5%  97.5% P-value
-#&gt; kappa.1  0.05756 0.04997 -0.04037 0.1555  0.2493</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>K1</span>)<span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>K2</span>))
+#&gt; kappa.1  0.05756 0.04997 -0.04037 0.1555  0.2493</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>K1</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>K2</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;            kappa
 #&gt; kappa 0.04996804</div><div class='input'>
 <span class='co'>## Average of the two kappas:</span>
-<span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>K1</span>,<span class='kw'>K2</span>,id=<span class='fl'>TRUE</span>),<span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>x</span>))
+<span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='startvalues.html'>merge</a></span><span class='op'>(</span><span class='va'>K1</span>,<span class='va'>K2</span>,id<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>,<span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%  P-value
-#&gt; p1   0.2353 0.02603 0.1843 0.2863 1.57e-19</div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='startvalues.html'>merge</a></span>(<span class='kw'>K1</span>,<span class='kw'>K2</span>,id=<span class='fl'>FALSE</span>),<span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>x</span>)) <span class='co'>## Independence</span>
+#&gt; p1   0.2353 0.02603 0.1843 0.2863 1.57e-19</div><div class='input'><span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='startvalues.html'>merge</a></span><span class='op'>(</span><span class='va'>K1</span>,<span class='va'>K2</span>,id<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>,<span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span> <span class='co'>## Independence</span>
 </div><div class='output co'>#&gt;    Estimate Std.Err   2.5%  97.5%  P-value
 #&gt; p1   0.2353 0.02498 0.1863 0.2842 4.64e-21</div><div class='input'><span class='co'>##'</span>
 <span class='co'>## Goodman-Kruskal's gamma</span>
-<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(); <span class='fu'><a href='covariance.html'>covariance</a></span>(<span class='kw'>m2</span>) <span class='op'>&lt;-</span> <span class='kw'>y1</span><span class='op'>~</span><span class='kw'>y2</span>
-<span class='kw'>breaks1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>Inf</span>)
-<span class='kw'>breaks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>Inf</span>,<span class='fl'>0</span>,<span class='fl'>Inf</span>)
-<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m2</span>,<span class='fl'>5e2</span>),
-              z1=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y1</span>,breaks=<span class='kw'>breaks1</span>),
-              z2=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>y2</span>,breaks=<span class='kw'>breaks2</span>))
+<span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span>; <span class='fu'><a href='covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>y1</span><span class='op'>~</span><span class='va'>y2</span>
+<span class='va'>breaks1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='cn'>Inf</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='cn'>Inf</span><span class='op'>)</span>
+<span class='va'>breaks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='cn'>Inf</span>,<span class='fl'>0</span>,<span class='cn'>Inf</span><span class='op'>)</span>
+<span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span><span class='op'>(</span><span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m2</span>,<span class='fl'>5e2</span><span class='op'>)</span>,
+              z1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y1</span>,breaks<span class='op'>=</span><span class='va'>breaks1</span><span class='op'>)</span>,
+              z2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>y2</span>,breaks<span class='op'>=</span><span class='va'>breaks2</span><span class='op'>)</span><span class='op'>)</span>
 
-(<span class='kw'>g1</span> <span class='op'>&lt;-</span> <span class='fu'>gkgamma</span>(<span class='kw'>d2</span>[,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>]))
+<span class='op'>(</span><span class='va'>g1</span> <span class='op'>&lt;-</span> <span class='fu'>gkgamma</span><span class='op'>(</span><span class='va'>d2</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Call: gkgamma(x = d2[, 3:4])
 #&gt; __________________________________________________
 #&gt; n = 500
@@ -268,14 +265,14 @@
 #&gt; C      0.26654 0.013898 0.23931 0.29378 5.522e-82
 #&gt; D      0.06619 0.007974 0.05056 0.08182 1.033e-16
 #&gt; gamma  0.60214 0.053796 0.49670 0.70757 4.411e-29</div><div class='input'><span class='co'>## same as</span>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>gkgamma</span>(<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='kw'>d2</span>[,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>]))
-<span class='fu'>gkgamma</span>(<span class='fu'>multinomial</span>(<span class='kw'>d2</span>[,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>]))
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>gkgamma</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>d2</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>gkgamma</span><span class='op'>(</span><span class='fu'>multinomial</span><span class='op'>(</span><span class='va'>d2</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'>##partial gamma</span>
-<span class='kw'>d2</span><span class='op'>$</span><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d2</span>),<span class='fl'>2</span>,<span class='fl'>0.5</span>)
-<span class='fu'>gkgamma</span>(<span class='kw'>z1</span><span class='op'>~</span><span class='kw'>z2</span><span class='op'>|</span><span class='kw'>x</span>,data=<span class='kw'>d2</span>)
+<span class='va'>d2</span><span class='op'>$</span><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>d2</span><span class='op'>)</span>,<span class='fl'>2</span>,<span class='fl'>0.5</span><span class='op'>)</span>
+<span class='fu'>gkgamma</span><span class='op'>(</span><span class='va'>z1</span><span class='op'>~</span><span class='va'>z2</span><span class='op'>|</span><span class='va'>x</span>,data<span class='op'>=</span><span class='va'>d2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Call: gkgamma(x = z1 ~ z2 | x, data = d2)
 #&gt; __________________________________________________
 #&gt; Strata:

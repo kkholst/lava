@@ -99,9 +99,6 @@ likelihood decomposition." />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -140,17 +137,17 @@ likelihood decomposition." />
 likelihood decomposition.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>complik</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>data</span>,
-  k = <span class='fl'>2</span>,
-  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"nearest"</span>),
-  <span class='kw'>pairlist</span>,
-  messages = <span class='fl'>0</span>,
-  estimator = <span class='st'>"normal"</span>,
-  quick = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>complik</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>data</span>,
+  k <span class='op'>=</span> <span class='fl'>2</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"nearest"</span><span class='op'>)</span>,
+  <span class='va'>pairlist</span>,
+  messages <span class='op'>=</span> <span class='fl'>0</span>,
+  estimator <span class='op'>=</span> <span class='st'>"normal"</span>,
+  quick <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -210,32 +207,33 @@ information such as standard errors are skipped</p></td>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>)<span class='op'>~</span><span class='kw'>b</span><span class='op'>*</span><span class='kw'>x</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>*</span><span class='kw'>u</span>[<span class='fl'>0</span>],latent=<span class='op'>~</span><span class='kw'>u</span>)
-<span class='fu'><a href='ordinal<-.html'>ordinal</a></span>(<span class='kw'>m</span>,K=<span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>y3</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>50</span>,seed=<span class='fl'>1</span>)
-<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"mets"</span>, quietly=<span class='fl'>TRUE</span>)) {
-   <span class='kw'>e1</span> <span class='op'>&lt;-</span> <span class='fu'>complik</span>(<span class='kw'>m</span>,<span class='kw'>d</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>1</span>),type=<span class='st'>"all"</span>)
-}
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span><span class='op'>)</span><span class='op'>~</span><span class='va'>b</span><span class='op'>*</span><span class='va'>x</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>*</span><span class='va'>u</span><span class='op'>[</span><span class='fl'>0</span><span class='op'>]</span>,latent<span class='op'>=</span><span class='op'>~</span><span class='va'>u</span><span class='op'>)</span>
+<span class='fu'><a href='ordinal<-.html'>ordinal</a></span><span class='op'>(</span><span class='va'>m</span>,K<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span><span class='op'>+</span><span class='va'>y3</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>50</span>,seed<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"mets"</span>, quietly<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+   <span class='va'>e1</span> <span class='op'>&lt;-</span> <span class='fu'>complik</span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>d</span>,control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trace<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>,type<span class='op'>=</span><span class='st'>"all"</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div><div class='output co'>#&gt;   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000
 #&gt;   1:     163.15053: 0.540600 0.484448 0.209475 0.939309  1.06729
 #&gt;   2:     160.91018: 0.418339 0.334648 -0.188107  1.05711  1.14818
 #&gt;   3:     160.77829: 0.376957 0.300830 -0.155237  1.00706  1.18949
 #&gt;   4:     160.76097: 0.369541 0.291889 -0.159621  1.03751  1.20710
 #&gt;   5:     160.74923: 0.370653 0.293179 -0.167035  1.02015  1.23923
-#&gt;   6:     160.73021: 0.389084 0.308032 -0.176547  1.05300  1.30117
-#&gt;   7:     160.72405: 0.378467 0.292853 -0.153296  1.07323  1.36654
-#&gt;   8:     160.71872: 0.379911 0.296385 -0.160055  1.06751  1.36767
-#&gt;   9:     160.71668: 0.381244 0.299833 -0.167225  1.06316  1.36877
-#&gt;  10:     160.71655: 0.381339 0.300469 -0.169588  1.06363  1.36932
-#&gt;  11:     160.71647: 0.380400 0.300416 -0.170938  1.06481  1.37402
-#&gt;  12:     160.71645: 0.381359 0.299981 -0.170525  1.06481  1.37453
-#&gt;  13:     160.71644: 0.381181 0.300609 -0.170558  1.06511  1.37554
-#&gt;  14:     160.71644: 0.381382 0.300270 -0.170881  1.06528  1.37649
-#&gt;  15:     160.71644: 0.381626 0.300372 -0.170224  1.06543  1.37730
-#&gt;  16:     160.71643: 0.381497 0.300612 -0.170485  1.06571  1.37828
-#&gt;  17:     160.71643: 0.381626 0.300548 -0.170652  1.06574  1.37858
-#&gt;  18:     160.71643: 0.381584 0.300545 -0.170621  1.06576  1.37856
-#&gt;  19:     160.71643: 0.381588 0.300551 -0.170618  1.06575  1.37856</div></pre>
+#&gt;   6:     160.73532: 0.376191 0.296936 -0.168307  1.04656  1.26468
+#&gt;   7:     160.72558: 0.379780 0.299688 -0.168631  1.04345  1.30158
+#&gt;   8:     160.72091: 0.369539 0.303131 -0.165350  1.05346  1.33569
+#&gt;   9:     160.71897: 0.382701 0.295562 -0.170712  1.05926  1.33925
+#&gt;  10:     160.71733: 0.379230 0.296353 -0.167731  1.05972  1.35609
+#&gt;  11:     160.71701: 0.379746 0.299743 -0.170560  1.06152  1.35778
+#&gt;  12:     160.71683: 0.380300 0.298684 -0.169147  1.06113  1.36250
+#&gt;  13:     160.71663: 0.380886 0.299718 -0.170369  1.06381  1.36647
+#&gt;  14:     160.71650: 0.380928 0.300399 -0.170596  1.06425  1.37148
+#&gt;  15:     160.71645: 0.381806 0.299785 -0.170466  1.06543  1.37630
+#&gt;  16:     160.71643: 0.381561 0.300967 -0.170583  1.06589  1.37944
+#&gt;  17:     160.71643: 0.381542 0.300509 -0.170678  1.06575  1.37858
+#&gt;  18:     160.71643: 0.381620 0.300565 -0.170579  1.06575  1.37852
+#&gt;  19:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856
+#&gt;  20:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

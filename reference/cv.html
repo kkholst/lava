@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,17 +135,7 @@
     <p>Cross-validation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cv</span>(
-  <span class='kw'>modelList</span>,
-  <span class='kw'>data</span>,
-  K = <span class='fl'>5</span>,
-  rep = <span class='fl'>1</span>,
-  <span class='kw'>perf</span>,
-  seed = <span class='kw'>NULL</span>,
-  mc.cores = <span class='fl'>1</span>,
-  shared = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>cv</span><span class='op'>(</span><span class='va'>modelList</span>, <span class='va'>data</span>, K <span class='op'>=</span> <span class='fl'>5</span>, rep <span class='op'>=</span> <span class='fl'>1</span>, <span class='va'>perf</span>, seed <span class='op'>=</span> <span class='cn'>NULL</span>, shared <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,10 +166,6 @@ used for testing)</p></td>
       <td><p>Optional random seed</p></td>
     </tr>
     <tr>
-      <th>mc.cores</th>
-      <td><p>Number of cores used for parallel computations</p></td>
-    </tr>
-    <tr>
       <th>shared</th>
       <td><p>function applied to each fold with results send to each model</p></td>
     </tr>
@@ -200,11 +183,11 @@ used for testing)</p></td>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>f0</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>data</span>,<span class='kw'>...</span>) <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>...</span>,<span class='kw'>data</span>)
-<span class='kw'>f1</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>data</span>,<span class='kw'>...</span>) <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>~</span><span class='kw'>Species</span>,<span class='kw'>data</span>)
-<span class='kw'>f2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>data</span>,<span class='kw'>...</span>) <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>~</span><span class='kw'>Species</span><span class='op'>+</span><span class='kw'>Petal.Length</span>,<span class='kw'>data</span>)
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'>cv</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(m0=<span class='kw'>f0</span>,m1=<span class='kw'>f1</span>,m2=<span class='kw'>f2</span>),rep=<span class='fl'>10</span>, data=<span class='kw'>iris</span>, formula=<span class='kw'>Sepal.Length</span><span class='op'>~</span><span class='kw'>.</span>)
-<span class='kw'>x2</span> <span class='op'>&lt;-</span> <span class='fu'>cv</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'>f0</span>(<span class='kw'>iris</span>),<span class='fu'>f1</span>(<span class='kw'>iris</span>),<span class='fu'>f2</span>(<span class='kw'>iris</span>)),rep=<span class='fl'>10</span>, data=<span class='kw'>iris</span>)
+    <pre class="examples"><div class='input'><span class='va'>f0</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data</span>,<span class='va'>...</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>...</span>,<span class='va'>data</span><span class='op'>)</span>
+<span class='va'>f1</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data</span>,<span class='va'>...</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>Sepal.Length</span><span class='op'>~</span><span class='va'>Species</span>,<span class='va'>data</span><span class='op'>)</span>
+<span class='va'>f2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data</span>,<span class='va'>...</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>Sepal.Length</span><span class='op'>~</span><span class='va'>Species</span><span class='op'>+</span><span class='va'>Petal.Length</span>,<span class='va'>data</span><span class='op'>)</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>cv</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>m0<span class='op'>=</span><span class='va'>f0</span>,m1<span class='op'>=</span><span class='va'>f1</span>,m2<span class='op'>=</span><span class='va'>f2</span><span class='op'>)</span>,rep<span class='op'>=</span><span class='fl'>10</span>, data<span class='op'>=</span><span class='va'>iris</span>, formula<span class='op'>=</span><span class='va'>Sepal.Length</span><span class='op'>~</span><span class='va'>.</span><span class='op'>)</span>
+<span class='va'>x2</span> <span class='op'>&lt;-</span> <span class='fu'>cv</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'>f0</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span>,<span class='fu'>f1</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span>,<span class='fu'>f2</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span><span class='op'>)</span>,rep<span class='op'>=</span><span class='fl'>10</span>, data<span class='op'>=</span><span class='va'>iris</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

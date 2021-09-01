@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,35 +135,35 @@
     <p>Spaghetti plot for longitudinal data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>spaghetti</span>(
-  <span class='kw'>formula</span>,
-  data = <span class='kw'>NULL</span>,
-  id = <span class='st'>"id"</span>,
-  group = <span class='kw'>NULL</span>,
-  type = <span class='st'>"o"</span>,
-  lty = <span class='fl'>1</span>,
-  pch = <span class='fl'>NA</span>,
-  col = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
-  alpha = <span class='fl'>0.3</span>,
-  lwd = <span class='fl'>1</span>,
-  level = <span class='fl'>0.95</span>,
-  trend.formula = <span class='kw'>formula</span>,
-  tau = <span class='kw'>NULL</span>,
-  trend.lty = <span class='fl'>1</span>,
-  trend.join = <span class='fl'>TRUE</span>,
-  trend.delta = <span class='fl'>0.2</span>,
-  trend = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>tau</span>),
-  trend.col = <span class='kw'>col</span>,
-  trend.alpha = <span class='fl'>0.2</span>,
-  trend.lwd = <span class='fl'>3</span>,
-  trend.jitter = <span class='fl'>0</span>,
-  legend = <span class='kw'>NULL</span>,
-  by = <span class='kw'>NULL</span>,
-  xlab = <span class='st'>"Time"</span>,
-  ylab = <span class='st'>""</span>,
-  add = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>spaghetti</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  id <span class='op'>=</span> <span class='st'>"id"</span>,
+  group <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='st'>"o"</span>,
+  lty <span class='op'>=</span> <span class='fl'>1</span>,
+  pch <span class='op'>=</span> <span class='cn'>NA</span>,
+  col <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
+  alpha <span class='op'>=</span> <span class='fl'>0.3</span>,
+  lwd <span class='op'>=</span> <span class='fl'>1</span>,
+  level <span class='op'>=</span> <span class='fl'>0.95</span>,
+  trend.formula <span class='op'>=</span> <span class='va'>formula</span>,
+  tau <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trend.lty <span class='op'>=</span> <span class='fl'>1</span>,
+  trend.join <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  trend.delta <span class='op'>=</span> <span class='fl'>0.2</span>,
+  trend <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>tau</span><span class='op'>)</span>,
+  trend.col <span class='op'>=</span> <span class='va'>col</span>,
+  trend.alpha <span class='op'>=</span> <span class='fl'>0.2</span>,
+  trend.lwd <span class='op'>=</span> <span class='fl'>3</span>,
+  trend.jitter <span class='op'>=</span> <span class='fl'>0</span>,
+  legend <span class='op'>=</span> <span class='cn'>NULL</span>,
+  by <span class='op'>=</span> <span class='cn'>NULL</span>,
+  xlab <span class='op'>=</span> <span class='st'>"Time"</span>,
+  ylab <span class='op'>=</span> <span class='st'>""</span>,
+  add <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -286,24 +283,24 @@
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>() <span class='op'>&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"mets"</span>)) {
-<span class='kw'>K</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='st'>"y"</span><span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>K</span>)
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>()
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,y=<span class='kw'>y</span>,x=<span class='op'>~</span><span class='kw'>u</span>) <span class='op'>&lt;-</span> <span class='fl'>1</span>
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,y=<span class='kw'>y</span>,x=<span class='op'>~</span><span class='kw'>s</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>K</span>)<span class='op'>-</span><span class='fl'>1</span>
-<span class='fu'><a href='regression<-.html'>regression</a></span>(<span class='kw'>m</span>,y=<span class='kw'>y</span>,x=<span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='st'>"b"</span>
-<span class='kw'>N</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='kw'>N</span>); <span class='kw'>d</span><span class='op'>$</span><span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>N</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>)
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='kw'>mets</span>::<span class='fu'><a href='https://rdrr.io/pkg/mets/man/fast.reshape.html'>fast.reshape</a></span>(<span class='kw'>d</span>); <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>num</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>num</span><span class='op'>+</span><span class='fl'>3</span>
-<span class='fu'>spaghetti</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>num</span>,<span class='kw'>dd</span>,id=<span class='st'>"id"</span>,lty=<span class='fl'>1</span>,col=<span class='fu'><a href='Col.html'>Col</a></span>(<span class='fl'>1</span>,<span class='fl'>.4</span>),
-          trend.formula=<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>num</span>),trend=<span class='fl'>TRUE</span>,trend.col=<span class='st'>"darkblue"</span>)
-<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>num</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>dd</span>),sd=<span class='fl'>0.5</span>) <span class='co'>## Unbalance</span>
-<span class='fu'>spaghetti</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>num</span>,<span class='kw'>dd</span>,id=<span class='st'>"id"</span>,lty=<span class='fl'>1</span>,col=<span class='fu'><a href='Col.html'>Col</a></span>(<span class='fl'>1</span>,<span class='fl'>.4</span>),
-          trend=<span class='fl'>TRUE</span>,trend.col=<span class='st'>"darkblue"</span>)
-<span class='fu'>spaghetti</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>num</span>,<span class='kw'>dd</span>,id=<span class='st'>"id"</span>,lty=<span class='fl'>1</span>,col=<span class='fu'><a href='Col.html'>Col</a></span>(<span class='fl'>1</span>,<span class='fl'>.4</span>),
-           trend.formula=<span class='op'>~</span><span class='kw'>num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>num</span><span class='op'>^</span><span class='fl'>2</span>),trend=<span class='fl'>TRUE</span>,trend.col=<span class='st'>"darkblue"</span>)
-}
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"mets"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>K</span> <span class='op'>&lt;-</span> <span class='fl'>5</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='st'>"y"</span><span class='op'>%++%</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>K</span><span class='op'>)</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span>,y<span class='op'>=</span><span class='va'>y</span>,x<span class='op'>=</span><span class='op'>~</span><span class='va'>u</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span>,y<span class='op'>=</span><span class='va'>y</span>,x<span class='op'>=</span><span class='op'>~</span><span class='va'>s</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>K</span><span class='op'>)</span><span class='op'>-</span><span class='fl'>1</span>
+<span class='fu'><a href='regression<-.html'>regression</a></span><span class='op'>(</span><span class='va'>m</span>,y<span class='op'>=</span><span class='va'>y</span>,x<span class='op'>=</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"b"</span>
+<span class='va'>N</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>N</span><span class='op'>)</span>; <span class='va'>d</span><span class='op'>$</span><span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='va'>N</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span><span class='op'>)</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>mets</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/mets/reference/fast.reshape.html'>fast.reshape</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>; <span class='va'>dd</span><span class='op'>$</span><span class='va'>num</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>num</span><span class='op'>+</span><span class='fl'>3</span>
+<span class='fu'>spaghetti</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>num</span>,<span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,lty<span class='op'>=</span><span class='fl'>1</span>,col<span class='op'>=</span><span class='fu'><a href='Col.html'>Col</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.4</span><span class='op'>)</span>,
+          trend.formula<span class='op'>=</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>,trend<span class='op'>=</span><span class='cn'>TRUE</span>,trend.col<span class='op'>=</span><span class='st'>"darkblue"</span><span class='op'>)</span>
+<span class='va'>dd</span><span class='op'>$</span><span class='va'>num</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>,sd<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span> <span class='co'>## Unbalance</span>
+<span class='fu'>spaghetti</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>num</span>,<span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,lty<span class='op'>=</span><span class='fl'>1</span>,col<span class='op'>=</span><span class='fu'><a href='Col.html'>Col</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.4</span><span class='op'>)</span>,
+          trend<span class='op'>=</span><span class='cn'>TRUE</span>,trend.col<span class='op'>=</span><span class='st'>"darkblue"</span><span class='op'>)</span>
+<span class='fu'>spaghetti</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>num</span>,<span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,lty<span class='op'>=</span><span class='fl'>1</span>,col<span class='op'>=</span><span class='fu'><a href='Col.html'>Col</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.4</span><span class='op'>)</span>,
+           trend.formula<span class='op'>=</span><span class='op'>~</span><span class='va'>num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>)</span>,trend<span class='op'>=</span><span class='cn'>TRUE</span>,trend.col<span class='op'>=</span><span class='st'>"darkblue"</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,15 +135,15 @@
     <p>Set up model as defined in Richardson, Robins and Wang (2017).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>binomial.rd</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>response</span>,
-  <span class='kw'>exposure</span>,
-  <span class='kw'>target.model</span>,
-  <span class='kw'>nuisance.model</span>,
-  exposure.model = <span class='fu'><a href='sim.html'>binomial.lvm</a></span>(),
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>binomial.rd</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>response</span>,
+  <span class='va'>exposure</span>,
+  <span class='va'>target.model</span>,
+  <span class='va'>nuisance.model</span>,
+  exposure.model <span class='op'>=</span> <span class='fu'><a href='sim.html'>binomial.lvm</a></span><span class='op'>(</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

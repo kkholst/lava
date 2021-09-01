@@ -97,9 +97,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -132,36 +129,45 @@
       <small>Source: <a href='https://github.com/kkholst/lava/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="lava-1-6-10" class="section level1">
+    <div id="lava-1610" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.10">
-<a href="#lava-1-6-10" class="anchor"></a>lava 1.6.10<small> Unreleased </small>
+<a href="#lava-1610" class="anchor"></a>lava 1.6.10<small> Unreleased </small>
 </h1>
 <ul>
-<li>Development version</li>
+<li>Improved starting values for MLE optimization.</li>
+<li>New simulation distributions: <code>multinomial.lvm</code>, <code>none.lvm</code>, <code>constant.lvm</code>, <code>id.lvm</code>.</li>
+<li>
+<code>regression</code>, <code>regression.lvm</code>: the ‘value’ argument can now be a (non-linear) function specifying the functional relationship between outcomes and covariates (for simulation with the <code>sim</code> method).</li>
+<li>New <code>intervention</code> method for applying interventions on <code>lvm</code>-objects</li>
+<li>Progress updates are now done via the <code>progressr</code> library (enabled with <code><a href="https://progressr.futureverse.org/reference/handlers.html">progressr::handlers(global=TRUE)</a></code>).</li>
+<li>Parallelization is now controlled via the future library. To enable multicore parallelization: <code><a href="https://future.futureverse.org/reference/plan.html">future::plan("multicore")</a></code>.</li>
+<li>New <code>plot_region</code> function for adding confidence regions to plots.</li>
 </ul>
 </div>
-    <div id="lava-1-6-9" class="section level1">
+    <div id="lava-169" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.9">
-<a href="#lava-1-6-9" class="anchor"></a>lava 1.6.9<small> 2021-03-11 </small>
+<a href="#lava-169" class="anchor"></a>lava 1.6.9<small> 2021-03-11 </small>
 </h1>
 <ul>
-<li>idplot: now accepts matrix or data.frame as 1st argument. New argument: return.data.</li>
+<li>
+<code>idplot</code>: now accepts matrix or data.frame as 1st argument. New argument: return.data.</li>
 <li>Unit tests updated</li>
-<li>Bug fixes: cv: rmse output fixed. score: Fixed bug for linear Gaussian model with argument ‘indiv=TRUE’. estimate.formula: call object initialized correctly. plot.lvm: noplot argument now works with all plot engines.</li>
+<li>Bug fixes: <code>cv</code>: rmse output fixed. score: Fixed bug for linear Gaussian model with argument ‘indiv=TRUE’. estimate.formula: call object initialized correctly. <code>plot.lvm</code>: ‘noplot’ argument now works with all plot engines.</li>
 </ul>
 </div>
-    <div id="lava-1-6-8-1" class="section level1">
+    <div id="lava-1681" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.8.1">
-<a href="#lava-1-6-8-1" class="anchor"></a>lava 1.6.8.1<small> 2020-11-04 </small>
+<a href="#lava-1681" class="anchor"></a>lava 1.6.8.1<small> 2020-11-04 </small>
 </h1>
 <ul>
 <li>Maintenance release</li>
-<li>confpred: split-conformal prediction method updated</li>
+<li>
+<code>confpred</code>: split-conformal prediction method updated</li>
 </ul>
 </div>
-    <div id="lava-1-6-8" class="section level1">
+    <div id="lava-168" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.8">
-<a href="#lava-1-6-8" class="anchor"></a>lava 1.6.8<small> 2020-09-26 </small>
+<a href="#lava-168" class="anchor"></a>lava 1.6.8<small> 2020-09-26 </small>
 </h1>
 <ul>
 <li>Bug-fix: parameter(m,x) now returns an lvm object and not just x</li>
@@ -172,24 +178,25 @@
 <li>Non-linear latent variable omdels</li>
 </ul>
 </li>
-<li>Pseudo-inverse used in ‘normal’</li>
+<li>Pseudo-inverse used with “normal” estimator</li>
 <li>Starting values for mixture fixed</li>
 </ul>
 </div>
-    <div id="lava-1-6-7" class="section level1">
+    <div id="lava-167" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.7">
-<a href="#lava-1-6-7" class="anchor"></a>lava 1.6.7<small> 2020-03-05 </small>
+<a href="#lava-167" class="anchor"></a>lava 1.6.7<small> 2020-03-05 </small>
 </h1>
 <ul>
-<li>Fixed bug in the composite likelihood ‘complik’ when used with censored variables (Surv objects).</li>
+<li>Fixed bug in the composite likelihood <code>complik</code> when used with censored variables (Surv objects).</li>
 <li>Fixed regular expression in ‘spaghetti’ function</li>
-<li>plot.sim: ‘rug’ argument is now by default FALSE and ‘auto.layout’ disabled when nr=nc=1.</li>
+<li>
+<code>plot.sim</code>: ‘rug’ argument is now by default FALSE and ‘auto.layout’ disabled when nr=nc=1.</li>
 <li>base::sequence() is now a generic function and as a consequence sequence.lvm has been renamed to Sequence.lvm. The function binary.lvm is now an alias of ones.lvm.</li>
 </ul>
 </div>
-    <div id="lava-1-6-6" class="section level1">
+    <div id="lava-166" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.6">
-<a href="#lava-1-6-6" class="anchor"></a>lava 1.6.6<small> 2019-08-01 </small>
+<a href="#lava-166" class="anchor"></a>lava 1.6.6<small> 2019-08-01 </small>
 </h1>
 <ul>
 <li>Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now initialized by default using kmeans++.</li>
@@ -197,33 +204,33 @@
 <li>Bug fix: Newton-Raphson method (lava::NR) used a numerical approximation of the Hessian even when submitted as attribute to the objective function.</li>
 </ul>
 </div>
-    <div id="lava-1-6-5" class="section level1">
+    <div id="lava-165" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.5">
-<a href="#lava-1-6-5" class="anchor"></a>lava 1.6.5<small> 2019-02-12 </small>
+<a href="#lava-165" class="anchor"></a>lava 1.6.5<small> 2019-02-12 </small>
 </h1>
 <ul>
 <li>Maintenance release.</li>
 </ul>
 </div>
-    <div id="lava-1-6-4" class="section level1">
+    <div id="lava-164" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.4">
-<a href="#lava-1-6-4" class="anchor"></a>lava 1.6.4<small> 2018-11-25 </small>
+<a href="#lava-164" class="anchor"></a>lava 1.6.4<small> 2018-11-25 </small>
 </h1>
 <ul>
 <li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): binomial.rd, binomial.rr. Base on new hook ‘simulate.multiple.inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
 <li>sim.lvm: ‘X’ argument can now fix (manipulate) any variable and not only exogenous variables.</li>
 <li>Summary function for sim.default updated (the ‘estimate’ argument can now be a list with each element being the estimate position and optionally standard error and true value).</li>
 <li>Starting values updated for mixture models. The parameter names can be obtained with mixture(…,names=TRUE) and set with mixture(…,control=list(start=…))).</li>
-<li>Naming conventions for multigroup parameters: ‘<a href="mailto:par@g">par@g</a>’ (par: name of parameter, g: first group number where ‘par’ is observed). Starting values can be specified with estimate(…,control(list(start=…))).</li>
+<li>Naming conventions for multigroup parameters: ‘<a href="mailto:par@g" class="email">par@g</a>’ (par: name of parameter, g: first group number where ‘par’ is observed). Starting values can be specified with estimate(…,control(list(start=…))).</li>
 <li>New print and summary methods for mixture models.</li>
 <li>Renamed (weighted) K-means function ‘km’ to ‘wkm’.</li>
 <li>Derivative method deriv.function based on complex step derivatives.</li>
 <li>twostageCV: estimation of mixture models are now parallelized if mc.cores&gt;1.</li>
 </ul>
 </div>
-    <div id="lava-1-6-3" class="section level1">
+    <div id="lava-163" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.3">
-<a href="#lava-1-6-3" class="anchor"></a>lava 1.6.3<small> 2018-08-10 </small>
+<a href="#lava-163" class="anchor"></a>lava 1.6.3<small> 2018-08-10 </small>
 </h1>
 <ul>
 <li>Fixed problems with plots (Rgraphviz)</li>
@@ -231,9 +238,9 @@
 <li>Improved M-step in mixture.method</li>
 </ul>
 </div>
-    <div id="lava-1-6-2" class="section level1">
+    <div id="lava-162" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.2">
-<a href="#lava-1-6-2" class="anchor"></a>lava 1.6.2<small> 2018-07-02 </small>
+<a href="#lava-162" class="anchor"></a>lava 1.6.2<small> 2018-07-02 </small>
 </h1>
 <ul>
 <li>twostageCV: cross-validate two-stage estimator</li>
@@ -243,9 +250,9 @@
 <li>merge.lvm now correctly handles fixed covariance parameters</li>
 </ul>
 </div>
-    <div id="lava-1-6-1" class="section level1">
+    <div id="lava-161" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.1">
-<a href="#lava-1-6-1" class="anchor"></a>lava 1.6.1<small> 2018-03-28 </small>
+<a href="#lava-161" class="anchor"></a>lava 1.6.1<small> 2018-03-28 </small>
 </h1>
 <ul>
 <li>Newton-raphson algorithm made more robust.</li>
@@ -253,9 +260,9 @@
 <li>Compatibility fix with Matrix library</li>
 </ul>
 </div>
-    <div id="lava-1-6" class="section level1">
+    <div id="lava-16" class="section level1">
 <h1 class="page-header" data-toc-text="1.6">
-<a href="#lava-1-6" class="anchor"></a>lava 1.6<small> 2018-01-12 </small>
+<a href="#lava-16" class="anchor"></a>lava 1.6<small> 2018-01-12 </small>
 </h1>
 <ul>
 <li>Mixture Latent variable models (mixture). Fast version requires ‘mets’ packages; Gaussian mixture models (mvnmix); weighted k-means (km)</li>
@@ -272,9 +279,9 @@
 <li>twostage: fixed for mixture model (class ‘lvm.mixture’). New help page + examples. Predict function updated (newdata argument where covariate levels can be specified).</li>
 </ul>
 </div>
-    <div id="lava-1-5-1" class="section level1">
+    <div id="lava-151" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.1">
-<a href="#lava-1-5-1" class="anchor"></a>lava 1.5.1<small> 2017-09-27 </small>
+<a href="#lava-151" class="anchor"></a>lava 1.5.1<small> 2017-09-27 </small>
 </h1>
 <ul>
 <li>conformal predictions: confpred</li>
@@ -288,9 +295,9 @@
 <li>New cross-validation function: cv (and csplit function for creating random sets).</li>
 </ul>
 </div>
-    <div id="lava-1-5" class="section level1">
+    <div id="lava-15" class="section level1">
 <h1 class="page-header" data-toc-text="1.5">
-<a href="#lava-1-5" class="anchor"></a>lava 1.5<small> 2017-03-16 </small>
+<a href="#lava-15" class="anchor"></a>lava 1.5<small> 2017-03-16 </small>
 </h1>
 <ul>
 <li>lava.tobit is longer required for ordinal and censored responses. Default is now to use the implementation in the ‘mets’ package.</li>
@@ -308,9 +315,9 @@
 <li>spaghetti: trend.formula can now contain a factor statement on the rhs</li>
 </ul>
 </div>
-    <div id="lava-1-4-7" class="section level1">
+    <div id="lava-147" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.7">
-<a href="#lava-1-4-7" class="anchor"></a>lava 1.4.7<small> 2017-01-27 </small>
+<a href="#lava-147" class="anchor"></a>lava 1.4.7<small> 2017-01-27 </small>
 </h1>
 <ul>
 <li>Maintenance release</li>
@@ -318,18 +325,18 @@
 <li>sim method now has a seed argument</li>
 </ul>
 </div>
-    <div id="lava-1-4-6" class="section level1">
+    <div id="lava-146" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.6">
-<a href="#lava-1-4-6" class="anchor"></a>lava 1.4.6<small> 2016-12-20 </small>
+<a href="#lava-146" class="anchor"></a>lava 1.4.6<small> 2016-12-20 </small>
 </h1>
 <ul>
 <li>New backtrace algorithms for Newton-Raphson optimization routine.</li>
 <li>‘diagtest’ updated.</li>
 </ul>
 </div>
-    <div id="lava-1-4-5" class="section level1">
+    <div id="lava-145" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.5">
-<a href="#lava-1-4-5" class="anchor"></a>lava 1.4.5<small> 2016-10-26 </small>
+<a href="#lava-145" class="anchor"></a>lava 1.4.5<small> 2016-10-26 </small>
 </h1>
 <ul>
 <li>New graph functions: dsep: check for d-separation (conditional independence). backdoor: check backdoor criterion of a graph (lvm-object). adjMat: return adjaceny matrix. edgeList: return edge list. ancestors: return ancenstors of nodes. descendants: return descendants of nodes.</li>
@@ -351,9 +358,9 @@
 <li>Contrast matrix can be specified with the function ‘contr’.</li>
 </ul>
 </div>
-    <div id="lava-1-4-4" class="section level1">
+    <div id="lava-144" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.4">
-<a href="#lava-1-4-4" class="anchor"></a>lava 1.4.4<small> 2016-08-13 </small>
+<a href="#lava-144" class="anchor"></a>lava 1.4.4<small> 2016-08-13 </small>
 </h1>
 <ul>
 <li>estimate.default will now use the id-variable of an ‘estimate’ object if the ‘id’ argument is left unspecified. For multinomial,gkgamma,kappa additional arguments (…) are now parsed on the ‘estimate.default’ (including id).</li>
@@ -373,9 +380,9 @@
 <li>default plot style updated.</li>
 </ul>
 </div>
-    <div id="lava-1-4-3" class="section level1">
+    <div id="lava-143" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.3">
-<a href="#lava-1-4-3" class="anchor"></a>lava 1.4.3<small> 2016-04-11 </small>
+<a href="#lava-143" class="anchor"></a>lava 1.4.3<small> 2016-04-11 </small>
 </h1>
 <ul>
 <li>partial gamma coefficients (gkgamma)</li>
@@ -383,9 +390,9 @@
 <li>Avoid trying to fork new processes on windows (bootstrap,sim.default)</li>
 </ul>
 </div>
-    <div id="lava-1-4-2" class="section level1">
+    <div id="lava-142" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.2">
-<a href="#lava-1-4-2" class="anchor"></a>lava 1.4.2<small> 2016-04-05 </small>
+<a href="#lava-142" class="anchor"></a>lava 1.4.2<small> 2016-04-05 </small>
 </h1>
 <ul>
 <li>Code optimization and minor bug fixes</li>
@@ -397,18 +404,18 @@
 <li>Byte compile by default</li>
 </ul>
 </div>
-    <div id="lava-1-4-1" class="section level1">
+    <div id="lava-141" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.1">
-<a href="#lava-1-4-1" class="anchor"></a>lava 1.4.1<small> 2015-06-22 </small>
+<a href="#lava-141" class="anchor"></a>lava 1.4.1<small> 2015-06-22 </small>
 </h1>
 <ul>
 <li>New plot.estimate method</li>
 <li>Documentation and examples updated</li>
 </ul>
 </div>
-    <div id="lava-1-4-0" class="section level1">
+    <div id="lava-140" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.0">
-<a href="#lava-1-4-0" class="anchor"></a>lava 1.4.0<small> 2015-02-17 </small>
+<a href="#lava-140" class="anchor"></a>lava 1.4.0<small> 2015-02-17 </small>
 </h1>
 <ul>
 <li>Linear measurement error model: ‘measurement.error’</li>
@@ -422,9 +429,9 @@
 <li>Examples updated</li>
 </ul>
 </div>
-    <div id="lava-1-3" class="section level1">
+    <div id="lava-13" class="section level1">
 <h1 class="page-header" data-toc-text="1.3">
-<a href="#lava-1-3" class="anchor"></a>lava 1.3<small> 2014-11-18 </small>
+<a href="#lava-13" class="anchor"></a>lava 1.3<small> 2014-11-18 </small>
 </h1>
 <ul>
 <li>New syntax for categorical predictors (method ‘categorical’ and argument ‘additive=FALSE’ with ’regression method)</li>
@@ -450,9 +457,9 @@
 <li>Back-tracing updated in Newton-Raphson routine</li>
 </ul>
 </div>
-    <div id="lava-1-2-6" class="section level1">
+    <div id="lava-126" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.6">
-<a href="#lava-1-2-6" class="anchor"></a>lava 1.2.6<small> 2014-05-07 </small>
+<a href="#lava-126" class="anchor"></a>lava 1.2.6<small> 2014-05-07 </small>
 </h1>
 <ul>
 <li>New ‘stack’ function for two-stage estimation (via ‘estimate’ objects)</li>
@@ -467,9 +474,9 @@
 <li>New ‘edgecolor’ argument of plot-function</li>
 </ul>
 </div>
-    <div id="lava-1-2-5" class="section level1">
+    <div id="lava-125" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.5">
-<a href="#lava-1-2-5" class="anchor"></a>lava 1.2.5<small> 2014-03-14 </small>
+<a href="#lava-125" class="anchor"></a>lava 1.2.5<small> 2014-03-14 </small>
 </h1>
 <ul>
 <li>‘merge’ method added for combining ‘estimate’ objects</li>
@@ -489,9 +496,9 @@
 <li>Covariance structure may now be specified using ‘<del>’, e.g. ’lvm(c(y,v)</del>z+u)’ specifies correlation between residuals of (y,z),(y,u),(v,z),(v,u).</li>
 </ul>
 </div>
-    <div id="lava-1-2-4" class="section level1">
+    <div id="lava-124" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.4">
-<a href="#lava-1-2-4" class="anchor"></a>lava 1.2.4<small> 2013-12-17 </small>
+<a href="#lava-124" class="anchor"></a>lava 1.2.4<small> 2013-12-17 </small>
 </h1>
 <ul>
 <li>Avoid estimating IC in ‘estimate.default’ when ‘vcov’ argument is given.</li>
@@ -502,9 +509,9 @@
 <li>added size argument to binomial.lvm;</li>
 </ul>
 </div>
-    <div id="lava-1-2-3" class="section level1">
+    <div id="lava-123" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.3">
-<a href="#lava-1-2-3" class="anchor"></a>lava 1.2.3<small> 2013-10-28 </small>
+<a href="#lava-123" class="anchor"></a>lava 1.2.3<small> 2013-10-28 </small>
 </h1>
 <ul>
 <li>‘subset’ argument added to estimate.default. Calculates empirical averages conditional on subsets of data</li>
@@ -513,12 +520,12 @@
 <li>sim: Piecewise constant rates with coxEponential.lvm. New aalenExponential.lvm function for additive models. Functions ones.lvm and sequence.lvm for deterministic variables.</li>
 </ul>
 </div>
-    <div id="lava-1-2-2" class="section level1">
+    <div id="lava-122" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.2">
-<a href="#lava-1-2-2" class="anchor"></a>lava 1.2.2<small> 2013-07-12 </small>
+<a href="#lava-122" class="anchor"></a>lava 1.2.2<small> 2013-07-12 </small>
 </h1>
 <ul>
-<li>Regression parameters are now by default referenced using ‘~’, e.g. “y~x” instead of “y&lt;-x”. Applies to setting starting values in ‘estimate’, parameters in ‘sim’,‘compare’,‘estimate’,…. To use the old syntax set ‘lava.options(symbol=c(“&lt;-”,“&lt;-&gt;”))’</li>
+<li>Regression parameters are now by default referenced using ‘~’, e.g. “y~x” instead of “y&lt;-x”. Applies to setting starting values in ‘estimate’, parameters in ‘sim’,‘compare’,‘estimate’,…. To use the old syntax set ‘lava.options(symbol=c(“&lt;-”,“&lt;-&gt;”))’</li>
 <li>Newton-Raphson/scoring procedure updated</li>
 <li>Search-interval for profile likelihood CI improved (for variance parameters)</li>
 <li>‘estimate.default’ updated (LRT)</li>
@@ -528,17 +535,17 @@
 <li>new functions: Expand (expand.grid wrapper), By (by wrapper)</li>
 </ul>
 </div>
-    <div id="lava-1-2-1" class="section level1">
+    <div id="lava-121" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.1">
-<a href="#lava-1-2-1" class="anchor"></a>lava 1.2.1<small> 2013-05-21 </small>
+<a href="#lava-121" class="anchor"></a>lava 1.2.1<small> 2013-05-21 </small>
 </h1>
 <ul>
 <li>Optimization + minor bug fixes</li>
 </ul>
 </div>
-    <div id="lava-1-2-0" class="section level1">
+    <div id="lava-120" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0">
-<a href="#lava-1-2-0" class="anchor"></a>lava 1.2.0<small> 2013-04-24 </small>
+<a href="#lava-120" class="anchor"></a>lava 1.2.0<small> 2013-04-24 </small>
 </h1>
 <ul>
 <li>New method ‘iid’ for extracting i.i.d. decomposition (influence functions) from model objects (e.g. glm, lvm, …)</li>

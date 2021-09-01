@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -139,18 +136,16 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for lvm</span>
-<span class='fu'><a href='bootstrap.html'>bootstrap</a></span>(<span class='kw'>x</span>,R=<span class='fl'>100</span>,<span class='kw'>data</span>,fun=<span class='kw'>NULL</span>,control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-                          <span class='kw'>p</span>, parametric=<span class='fl'>FALSE</span>, bollenstine=<span class='fl'>FALSE</span>,
-                          constraints=<span class='fl'>TRUE</span>,sd=<span class='fl'>FALSE</span>,messages=<span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>messages</span>,
-                          parallel=<span class='fu'><a href='lava.options.html'>lava.options</a></span>()<span class='op'>$</span><span class='kw'>parallel</span>,
-                          mc.cores=<span class='kw'>NULL</span>,
-                          <span class='kw'>...</span>)
+<span class='fu'><a href='bootstrap.html'>bootstrap</a></span><span class='op'>(</span><span class='va'>x</span>,R<span class='op'>=</span><span class='fl'>100</span>,<span class='va'>data</span>,fun<span class='op'>=</span><span class='cn'>NULL</span>,control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+                          <span class='va'>p</span>, parametric<span class='op'>=</span><span class='cn'>FALSE</span>, bollenstine<span class='op'>=</span><span class='cn'>FALSE</span>,
+                          constraints<span class='op'>=</span><span class='cn'>TRUE</span>,sd<span class='op'>=</span><span class='cn'>FALSE</span>,
+                          <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for lvmfit</span>
-<span class='fu'><a href='bootstrap.html'>bootstrap</a></span>(<span class='kw'>x</span>,R=<span class='fl'>100</span>,data=<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span>(<span class='kw'>x</span>),
-                             control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(start=<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>x</span>)),
-                             p=<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>x</span>), parametric=<span class='fl'>FALSE</span>, bollenstine=<span class='fl'>FALSE</span>,
-                             estimator=<span class='kw'>x</span><span class='op'>$</span><span class='kw'>estimator</span>,weights=<span class='fu'><a href='startvalues.html'>Weights</a></span>(<span class='kw'>x</span>),<span class='kw'>...</span>)</pre>
+<span class='fu'><a href='bootstrap.html'>bootstrap</a></span><span class='op'>(</span><span class='va'>x</span>,R<span class='op'>=</span><span class='fl'>100</span>,data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+                             control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>start<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
+                             p<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, parametric<span class='op'>=</span><span class='cn'>FALSE</span>, bollenstine<span class='op'>=</span><span class='cn'>FALSE</span>,
+                             estimator<span class='op'>=</span><span class='va'>x</span><span class='op'>$</span><span class='va'>estimator</span>,weights<span class='op'>=</span><span class='fu'><a href='startvalues.html'>Weights</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,<span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -200,18 +195,6 @@ constraints should be included in the bootstrap procedure</p></td>
 included in the bootstrap procedure</p></td>
     </tr>
     <tr>
-      <th>messages</th>
-      <td><p>Control amount of messages printed</p></td>
-    </tr>
-    <tr>
-      <th>parallel</th>
-      <td><p>If TRUE parallel backend will be used</p></td>
-    </tr>
-    <tr>
-      <th>mc.cores</th>
-      <td><p>Number of threads (if NULL foreach::foreach will be used, otherwise parallel::mclapply)</p></td>
-    </tr>
-    <tr>
       <th>...</th>
       <td><p>Additional arguments, e.g. choice of estimator.</p></td>
     </tr>
@@ -237,12 +220,12 @@ included in the bootstrap procedure</p></td>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>100</span>)
-<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span>(<span class='fu'><a href='lvm.html'>lvm</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>x</span>), data=<span class='kw'>d</span>)
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fu'><a href='estimate.default.html'>estimate</a></span><span class='op'>(</span><span class='fu'><a href='lvm.html'>lvm</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span>, data<span class='op'>=</span><span class='va'>d</span><span class='op'>)</span>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='kw'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='bootstrap.html'>bootstrap</a></span>(<span class='kw'>e</span>,R=<span class='fl'>50</span>,parallel=<span class='fl'>FALSE</span>)
-<span class='kw'>B</span>
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='bootstrap.html'>bootstrap</a></span><span class='op'>(</span><span class='va'>e</span>,R<span class='op'>=</span><span class='fl'>50</span>,parallel<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>B</span>
 </div><div class='output co'>#&gt; Non-parametric bootstrap statistics (R=50):
 #&gt; 
 #&gt;      Estimate    Bias        Std.Err     2.5 %       97.5 %     

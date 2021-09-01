@@ -99,9 +99,6 @@ negative predictive values" />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -140,14 +137,14 @@ negative predictive values" />
 negative predictive values</p>
     </div>
 
-    <pre class="usage"><span class='fu'>diagtest</span>(
-  <span class='kw'>table</span>,
-  positive = <span class='fl'>2</span>,
-  exact = <span class='fl'>FALSE</span>,
-  p0 = <span class='fl'>NA</span>,
-  confint = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"logit"</span>, <span class='st'>"arcsin"</span>, <span class='st'>"pseudoscore"</span>, <span class='st'>"exact"</span>),
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>diagtest</span><span class='op'>(</span>
+  <span class='va'>table</span>,
+  positive <span class='op'>=</span> <span class='fl'>2</span>,
+  exact <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  p0 <span class='op'>=</span> <span class='cn'>NA</span>,
+  confint <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"logit"</span>, <span class='st'>"arcsin"</span>, <span class='st'>"pseudoscore"</span>, <span class='st'>"exact"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -188,10 +185,10 @@ negative predictive values</p>
     <p>Klaus Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/table.html'>as.table</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>42</span>,<span class='fl'>12</span>,
-                       <span class='fl'>35</span>,<span class='fl'>28</span>),ncol=<span class='fl'>2</span>,byrow=<span class='fl'>TRUE</span>,
-                     dimnames=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(rater=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>),gold=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>,<span class='st'>"yes"</span>))))
-<span class='fu'>diagtest</span>(<span class='kw'>M</span>,exact=<span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'><span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/table.html'>as.table</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>42</span>,<span class='fl'>12</span>,
+                       <span class='fl'>35</span>,<span class='fl'>28</span><span class='op'>)</span>,ncol<span class='op'>=</span><span class='fl'>2</span>,byrow<span class='op'>=</span><span class='cn'>TRUE</span>,
+                     dimnames<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>rater<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"no"</span>,<span class='st'>"yes"</span><span class='op'>)</span>,gold<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"no"</span>,<span class='st'>"yes"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>diagtest</span><span class='op'>(</span><span class='va'>M</span>,exact<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                         Estimate Std.Err   2.5%  97.5%  P-value
 #&gt; Prevalence                0.3419         0.2567 0.4353         
 #&gt; Test                      0.5385         0.4439 0.6310         

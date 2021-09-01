@@ -99,9 +99,6 @@ parameters for the estimate function." />
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -140,7 +137,7 @@ parameters for the estimate function." />
 parameters for the <code>estimate</code> function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lava.options</span>(<span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>lava.options</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,9 +173,9 @@ at least one endogenous variable in each measurement model is fixed to 1),
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>lava.options</span>(iter.max=<span class='fl'>100</span>,messages=<span class='fl'>0</span>)
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>lava.options</span><span class='op'>(</span>iter.max<span class='op'>=</span><span class='fl'>100</span>,messages<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 </div></pre>
   </div>

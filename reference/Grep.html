@@ -98,9 +98,6 @@
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
     </li>
     <li>
-      <a href="../articles/gof.html">Goodness-of-fit statistics</a>
-    </li>
-    <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
     </li>
   </ul>
@@ -138,7 +135,7 @@
     <p>Pattern matching in a vector or column names of a data.frame or matrix.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Grep</span>(<span class='kw'>x</span>, <span class='kw'>pattern</span>, subset = <span class='fl'>TRUE</span>, ignore.case = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Grep</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>pattern</span>, subset <span class='op'>=</span> <span class='cn'>TRUE</span>, ignore.case <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,8 +175,8 @@ matching,</p></div>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>iris</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>Grep</span>(<span class='kw'>iris</span>,<span class='st'>"(len)|(sp)"</span>))
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>Grep</span><span class='op'>(</span><span class='va'>iris</span>,<span class='st'>"(len)|(sp)"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   Sepal.Length Petal.Length Species
 #&gt; 1          5.1          1.4  setosa
 #&gt; 2          4.9          1.4  setosa
