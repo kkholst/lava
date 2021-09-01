@@ -34,7 +34,7 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          install.packages(c("remotes", repos="https://cloud.r-project.org")
+          install.packages("remotes", repos="https://cloud.r-project.org")
           #remotes::install_github("kkholst/lava.tobit")
           remotes::install_github("kkholst/gof")
           remotes::install_deps(".", dep=T, upgrade=T)
