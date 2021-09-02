@@ -51,13 +51,13 @@ d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 plot(m, plot.engine="visNetwork")
 ```
 
-We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holstjoergensen_lava" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holstjoergensen_lava</a></sup> for details on the syntax for
+We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holst_budtzjorgensen_2013" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holst_budtzjorgensen_2013</a></sup> for details on the syntax for
 model specification.
 
 
 # Estimation
 
-To estimate the parameters using the two-stage estimator described in <sup id="67e17d4cdc94644cb044c767cf392c2d"><a href="#lava_nlin" title="Klaus K&#228;hler Holst \&amp; Esben Budtz-J&#248;rgensen, A two-stage estimation procedure for non-linear structural equation models, {Biostatistics}, v(), (2020).">lava_nlin</a></sup>,  the first step is now to specify the measurement models
+To estimate the parameters using the two-stage estimator described in <sup id="67e17d4cdc94644cb044c767cf392c2d"><a href="#holst_budtzjorgensen_2020" title="Klaus K&#228;hler Holst \&amp; Esben Budtz-J&#248;rgensen, A two-stage estimation procedure for non-linear structural equation models, {Biostatistics}, v(), (2020).">holst_budtzjorgensen_2020</a></sup>,  the first step is now to specify the measurement models
 
 ```{r  specifymodels }
 m1 <- lvm(x1+x2+x3 ~ eta1, eta1 ~ z, latent=~eta1)
@@ -335,6 +335,6 @@ legend("bottomright", c("Gaussian","Mixture"),
 
 
 # Bibliography
-<a id="holstjoergensen_lava"></a>[holstjoergensen_lava] Holst & Budtz-J\orgensen, Linear latent variable models: the lava-package, <i>Computational Statistics</i>, <b>28(4)</b>, 1385-1452 (2013). <a href="http://dx.doi.org/10.1007/s00180-012-0344-y">doi</a>. [↩](#915607a5e4b7965311f3b3d4e0ccb7d7)
+<a id="holst_budtzjorgensen_2013"></a>[holst_budtzjorgensen_2013] Holst & Budtz-J\orgensen, Linear latent variable models: the lava-package, <i>Computational Statistics</i>, <b>28(4)</b>, 1385-1452 (2013). <a href="http://dx.doi.org/10.1007/s00180-012-0344-y">doi</a>. [↩](#915607a5e4b7965311f3b3d4e0ccb7d7)
 
-<a id="lava_nlin"></a>[lava_nlin] Klaus Kähler Holst & Esben Budtz-Jørgensen, A two-stage estimation procedure for non-linear structural equation models, <i>Biostatistics</i>, <b>(in press)</b>, (2020). <a href="http://dx.doi.org/10.1093/biostatistics/kxy082">doi</a>. [↩](#67e17d4cdc94644cb044c767cf392c2d)
+<a id="holst_budtzjorgensen_2020"></a>[holst_budtzjorgensen_2020] Klaus Kähler Holst & Esben Budtz-Jørgensen, A two-stage estimation procedure for non-linear structural equation models, <i>Biostatistics</i>, <b>(in press)</b>, (2020). <a href="http://dx.doi.org/10.1093/biostatistics/kxy082">doi</a>. [↩](#67e17d4cdc94644cb044c767cf392c2d)
