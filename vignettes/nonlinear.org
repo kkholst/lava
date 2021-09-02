@@ -69,7 +69,7 @@ simulate from this model we use the following syntax:
 #+RESULTS: sim
 
 #+BEGIN_SRC R
-plot(m)
+plot(m, plot.engine="visNetwork")
 #+END_SRC
 
 #+RESULTS:

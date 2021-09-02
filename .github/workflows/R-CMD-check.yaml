@@ -16,7 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y pandoc libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+      #- uses: r-lib/actions/setup-pandoc@v1
 
       - uses: r-lib/actions/setup-r@v1
         with:
@@ -31,15 +34,13 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck"), repos="https://cloud.r-project.org")
+          install.packages("remotes", repos="https://cloud.r-project.org")
           #remotes::install_github("kkholst/lava.tobit")
-          #remotes::install_github("kkholst/gof")
+          remotes::install_github("kkholst/gof")
           remotes::install_deps(".", dep=T, upgrade=T)
+          remotes::install_cran(c("pkgdown","covr","rcmdcheck"))
+          remotes::install_bioc("Rgraphviz", upgrade="always")
         shell: Rscript {0}
-
-      # - name: Install dependencies
-      #   run: |
-      #     sudo apt-get install -y pandoc
 
       - name: Check
         env:
@@ -49,14 +50,14 @@ jobs:
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
 
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
+      - name: Webpage deployment
+        if: ${{ success() }} && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
 
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+      - name: Code Coverage
+        if: ${{ success() }} && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: covr::codecov(type=c("tests", "examples"))
+        shell: Rscript {0}

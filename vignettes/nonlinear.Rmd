@@ -48,7 +48,7 @@ d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 ```
 
 ```{r   }
-plot(m)
+plot(m, plot.engine="visNetwork")
 ```
 
 We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holstjoergensen_lava" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holstjoergensen_lava</a></sup> for details on the syntax for
