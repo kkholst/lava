@@ -505,7 +505,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
 
       if (length(xconstrain)>0) {
         for (i in which(xconstrain.idx)) {
-          if (names(xconstrain.idx[i]) %in% nn) { ## A parameter and not a variable
+          if (!(names(xconstrain.idx[i]) %in% nn)) { ## A parameter and not a variable
             ff <- constrain(x)[[i]]
             myargs <- attributes(ff)$args
             D <- matrix(0,n,length(myargs))
