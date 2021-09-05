@@ -12,7 +12,7 @@ title: Non-linear latent variable models and error-in-variable models
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Non-linear latent variable models and error-in-variable models}

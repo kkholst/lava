@@ -12,7 +12,7 @@ title: Goodness-of-fit statistics
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Goodness-of-fit statistics for Latent Variable Models}

@@ -13,7 +13,7 @@ title: Estimating partial correlations with lava
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Estimating partial correlations with lava}
