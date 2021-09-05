@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.11</span>
       </span>
     </div>
 
@@ -227,7 +227,7 @@ log-likelihood with tau being fixed.</p>
 </div><div class='output co'>#&gt;          2.5 %    97.5 %
 #&gt; y~~y 0.5547589 0.9802276</div><div class='input'> <span class='co'>## Reduce Ex.timings</span>
 <span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='bootstrap.html'>bootstrap</a></span><span class='op'>(</span><span class='va'>e</span>,R<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: executing %dopar% sequentially: no parallel backend registered</span></div><div class='input'><span class='va'>B</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore".</span></div><div class='input'><span class='va'>B</span>
 </div><div class='output co'>#&gt; Non-parametric bootstrap statistics (R=50):
 #&gt; 
 #&gt;      Estimate     Bias         Std.Err      2.5 %        97.5 %      

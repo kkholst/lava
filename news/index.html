@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.11</span>
       </span>
     </div>
 
@@ -129,9 +129,17 @@
       <small>Source: <a href='https://github.com/kkholst/lava/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="lava-1611" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.11">
+<a href="#lava-1611" class="anchor"></a>lava 1.6.11<small> Unreleased </small>
+</h1>
+<ul>
+<li>Development version</li>
+</ul>
+</div>
     <div id="lava-1610" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.10">
-<a href="#lava-1610" class="anchor"></a>lava 1.6.10<small> Unreleased </small>
+<a href="#lava-1610" class="anchor"></a>lava 1.6.10<small> 2021-09-02 </small>
 </h1>
 <ul>
 <li>Improved starting values for MLE optimization.</li>
@@ -170,8 +178,8 @@
 <a href="#lava-168" class="anchor"></a>lava 1.6.8<small> 2020-09-26 </small>
 </h1>
 <ul>
-<li>Bug-fix: parameter(m,x) now returns an lvm object and not just x</li>
-<li>profile likelihood CI w. tobit/censored observations.</li>
+<li>Bug-fix: <code><a href="../reference/startvalues.html">parameter(m,x)</a></code> now returns an lvm object and not just x</li>
+<li>profile likelihood confidence intervals with tobit/censored observations.</li>
 <li>Vignettes added
 <ul>
 <li>Estimating partial correlations</li>
@@ -191,7 +199,7 @@
 <li>Fixed regular expression in ‘spaghetti’ function</li>
 <li>
 <code>plot.sim</code>: ‘rug’ argument is now by default FALSE and ‘auto.layout’ disabled when nr=nc=1.</li>
-<li>base::sequence() is now a generic function and as a consequence sequence.lvm has been renamed to Sequence.lvm. The function binary.lvm is now an alias of ones.lvm.</li>
+<li>base::sequence() is now a generic function and as a consequence <code>sequence.lvm</code> has been renamed to <code>Sequence.lvm</code>. The function <code>binary.lvm</code> is now an alias of <code>ones.lvm</code>.</li>
 </ul>
 </div>
     <div id="lava-166" class="section level1">
@@ -199,9 +207,10 @@
 <a href="#lava-166" class="anchor"></a>lava 1.6.6<small> 2019-08-01 </small>
 </h1>
 <ul>
-<li>Weighted kmeans++ (wkm). Gaussian mixture models (mvnmix) are now initialized by default using kmeans++.</li>
-<li>sim method implemented for mvnmix models.</li>
-<li>Bug fix: Newton-Raphson method (lava::NR) used a numerical approximation of the Hessian even when submitted as attribute to the objective function.</li>
+<li>Weighted kmeans++ (<code>wkm</code>). Gaussian mixture models (<code>mvnmix</code>) are now initialized by default using kmeans++.</li>
+<li>
+<code>sim</code> method implemented for mvnmix models.</li>
+<li>Bug fix: Newton-Raphson method (<code><a href="../reference/NR.html">lava::NR</a></code>) used a numerical approximation of the Hessian even when submitted as attribute to the objective function.</li>
 </ul>
 </div>
     <div id="lava-165" class="section level1">
@@ -217,15 +226,17 @@
 <a href="#lava-164" class="anchor"></a>lava 1.6.4<small> 2018-11-25 </small>
 </h1>
 <ul>
-<li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): binomial.rd, binomial.rr. Base on new hook ‘simulate.multiple.inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
-<li>sim.lvm: ‘X’ argument can now fix (manipulate) any variable and not only exogenous variables.</li>
-<li>Summary function for sim.default updated (the ‘estimate’ argument can now be a list with each element being the estimate position and optionally standard error and true value).</li>
-<li>Starting values updated for mixture models. The parameter names can be obtained with mixture(…,names=TRUE) and set with mixture(…,control=list(start=…))).</li>
+<li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): <code>binomial.rd</code>, <code>binomial.rr</code>. Base on new hook ‘simulate.multiple.inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
+<li>
+<code>sim.lvm</code>: ‘X’ argument can now fix (manipulate) any variable and not only exogenous variables.</li>
+<li>Summary function for <code>sim.default</code> updated (the ‘estimate’ argument can now be a list with each element being the estimate position and optionally standard error and true value).</li>
+<li>Starting values updated for mixture models. The parameter names can be obtained with <code><a href="../reference/mixture.html">mixture(...,names=TRUE)</a></code> and set with <code>mixture(...,control=list(start=...)))</code>.</li>
 <li>Naming conventions for multigroup parameters: ‘<a href="mailto:par@g" class="email">par@g</a>’ (par: name of parameter, g: first group number where ‘par’ is observed). Starting values can be specified with estimate(…,control(list(start=…))).</li>
 <li>New print and summary methods for mixture models.</li>
-<li>Renamed (weighted) K-means function ‘km’ to ‘wkm’.</li>
+<li>Renamed (weighted) K-means function ‘km’ to <code>wkm</code>.</li>
 <li>Derivative method deriv.function based on complex step derivatives.</li>
-<li>twostageCV: estimation of mixture models are now parallelized if mc.cores&gt;1.</li>
+<li>
+<code>twostageCV</code>: estimation of mixture models are now parallelized if mc.cores&gt;1.</li>
 </ul>
 </div>
     <div id="lava-163" class="section level1">
@@ -234,8 +245,9 @@
 </h1>
 <ul>
 <li>Fixed problems with plots (Rgraphviz)</li>
-<li>Better print method for twostageCV</li>
-<li>Improved M-step in mixture.method</li>
+<li>Better print method for <code>twostageCV</code>
+</li>
+<li>Improved M-step in <code>mixture</code> method</li>
 </ul>
 </div>
     <div id="lava-162" class="section level1">
@@ -243,11 +255,13 @@
 <a href="#lava-162" class="anchor"></a>lava 1.6.2<small> 2018-07-02 </small>
 </h1>
 <ul>
-<li>twostageCV: cross-validate two-stage estimator</li>
-<li>rmvn, dmvn moved to mets package (C++ implementation, old versions renamed to lava::rmvn0, lava::dmvn0)</li>
+<li>
+<code>twostageCV</code>: cross-validate two-stage estimator</li>
+<li>rmvn, dmvn moved to mets package (C++ implementation, old versions renamed to <code><a href="../reference/startvalues.html">lava::rmvn0</a></code>, <code><a href="../reference/startvalues.html">lava::dmvn0</a></code>)</li>
 <li>mediation proportion handled correctly when direct effect is zero</li>
 <li>unit tests clean-up (namespace)</li>
-<li>merge.lvm now correctly handles fixed covariance parameters</li>
+<li>
+<code>merge.lvm</code> now correctly handles fixed covariance parameters</li>
 </ul>
 </div>
     <div id="lava-161" class="section level1">
@@ -256,7 +270,7 @@
 </h1>
 <ul>
 <li>Newton-raphson algorithm made more robust.</li>
-<li>New sim.as method. plot.sim method now by default only plots density estimates</li>
+<li>New <code>sim.as</code> method. <code>plot.sim</code> method now by default only plots density estimates</li>
 <li>Compatibility fix with Matrix library</li>
 </ul>
 </div>
@@ -265,18 +279,25 @@
 <a href="#lava-16" class="anchor"></a>lava 1.6<small> 2018-01-12 </small>
 </h1>
 <ul>
-<li>Mixture Latent variable models (mixture). Fast version requires ‘mets’ packages; Gaussian mixture models (mvnmix); weighted k-means (km)</li>
-<li>estimate.default: ‘keep’, ‘use’ arguments can be specified as regular expressions (with argument regex=TRUE). Summary method now returns Wald test (null: all parameters being zero).</li>
-<li>makemissing: seed argument added.</li>
+<li>Mixture Latent variable models (<code>mixture</code>). Fast version requires ‘mets’ packages; Gaussian mixture models (<code>mvnmix</code>); weighted k-means (<code>km</code>)</li>
+<li>
+<code>estimate.default</code>: ‘keep’, ‘use’ arguments can be specified as regular expressions (with argument regex=TRUE). Summary method now returns Wald test (null: all parameters being zero).</li>
+<li>
+<code>makemissing</code>: seed argument added.</li>
 <li>Global change: ‘silent’ argument renamed to ‘messages’</li>
-<li>New utility functions: Grep, Na2x, x2NA, wait, waitclick, rotation, Rot2d, Rot3d</li>
+<li>New utility functions: <code>Grep</code>, <code>Na2x</code>, <code>x2NA</code>, <code>wait</code>, <code>waitclick</code>, <code>rotation</code>, <code>Rot2d</code>, <code>Rot3d</code>
+</li>
 <li>Condition numbers calculated via SVD</li>
-<li>na.pass0: returns data.frame with original number of rows but with zeros (or first level of factors) in the rows with missing data.</li>
-<li>stack: ‘weights’ argument renamed to ‘propensity’. If propensity=TRUE, the first argument (model) will be treated as propensity score model (glm) and ‘predict’ method will be used for the predictions.</li>
-<li>estimate.formula now by default wraps glm such that ‘iid’ method return matrix of same size as full data (with zero rows where data are missing).</li>
+<li>
+<code>na.pass0</code>: returns data.frame with original number of rows but with zeros (or first level of factors) in the rows with missing data.</li>
+<li>
+<code>stack</code>: ‘weights’ argument renamed to ‘propensity’. If propensity=TRUE, the first argument (model) will be treated as propensity score model (glm) and ‘predict’ method will be used for the predictions.</li>
+<li>
+<code>estimate.formula</code> now by default wraps glm such that the <code>iid</code> method return matrix of same size as full data (with zero rows where data are missing).</li>
 <li>Updated output functions for class ‘sim’ (print method and plot).. Plot method: density.alpha is applied to each standard error (‘se’) level.</li>
-<li>composite likelihood (complik) refactored + new example. ‘ordinal’ method now cleans up properly when variables are removed (rmvar, subset).</li>
-<li>twostage: fixed for mixture model (class ‘lvm.mixture’). New help page + examples. Predict function updated (newdata argument where covariate levels can be specified).</li>
+<li>composite likelihood (<code>complik</code>) refactored + new example. <code>ordinal</code> method now cleans up properly when variables are removed (<code>rmvar</code>, <code>subset</code>).</li>
+<li>
+<code>twostage</code>: fixed for mixture model (class ‘lvm.mixture’). New help page + examples. Predict function updated (newdata argument where covariate levels can be specified).</li>
 </ul>
 </div>
     <div id="lava-151" class="section level1">
@@ -284,15 +305,17 @@
 <a href="#lava-151" class="anchor"></a>lava 1.5.1<small> 2017-09-27 </small>
 </h1>
 <ul>
-<li>conformal predictions: confpred</li>
+<li>conformal predictions: <code>confpred</code>
+</li>
 <li>warnings (char2num used instead of coersion via as.numeric)</li>
-<li>%++% for function compositon</li>
-<li>New summary.effects methods with mediation proportion in the output</li>
-<li>New hook: remove.hooks (see example ordinal.lvm)</li>
-<li>constrain methods now handled more robustly in sim.lvm allowing both vectorized and non-vectorized functions</li>
-<li>Non-linear associations can now be specified with ‘nonlinear’ method. Estimation via the ‘twostage’ function.</li>
+<li>
+<code><a href="../reference/%++%.html">%++%</a></code> for function compositon</li>
+<li>New <code>summary.effects</code> methods with mediation proportion in the output</li>
+<li>New hook: <code>remove.hooks</code> (see example <code>ordinal.lvm</code>)</li>
+<li>constrain methods now handled more robustly in <code>sim.lvm</code> allowing both vectorized and non-vectorized functions</li>
+<li>Non-linear associations can now be specified with <code>nonlinear</code> method. Estimation via the <code>twostage</code> function.</li>
 <li>Robust standard errors added to the IV estimator (2SLS)</li>
-<li>New cross-validation function: cv (and csplit function for creating random sets).</li>
+<li>New cross-validation function: <code>cv</code> (and <code>csplit</code> function for creating random sets).</li>
 </ul>
 </div>
     <div id="lava-15" class="section level1">
@@ -301,18 +324,25 @@
 </h1>
 <ul>
 <li>lava.tobit is longer required for ordinal and censored responses. Default is now to use the implementation in the ‘mets’ package.</li>
-<li>Composite likelihood method (complik) updated</li>
+<li>Composite likelihood method (<code>complik</code>) updated</li>
 <li>weight argument renamed to weights in agreement with lm, glm, coxph, …</li>
-<li>sim.default: new argument ‘arg’ passed on to simulation function</li>
-<li>sim.default: new argument ‘iter’. If TRUE the iteration number is passed to function call as first argument (default FALSE)</li>
-<li>estimate.default: Wildcards/global expressions can now be used for specifying contrasts based on the syntax of the functions ‘contr’, ‘parsedesign’. See examples on the help-page. The argument transform.ci has been renamed to back.transform.</li>
+<li>
+<code>sim.default</code>: new argument ‘arg’ passed on to simulation function</li>
+<li>
+<code>sim.default</code>: new argument ‘iter’. If TRUE the iteration number is passed to function call as first argument (default FALSE)</li>
+<li>estimate.default: Wildcards/global expressions can now be used for specifying contrasts based on the syntax of the functions <code>contr</code>, <code>parsedesign</code>. See examples on the help-page. The argument transform.ci has been renamed to back.transform.</li>
 <li>correlation methods for matrices and data.frames (either pairwise or full MLE). All methods can now return the influence functions.</li>
-<li>revdiag: dimnames are kept</li>
-<li>Combine: output updated</li>
-<li>forestplot: point estimates shown by default</li>
-<li>backdoor now works without conditioning set (yields all possible conditioning sets)</li>
+<li>
+<code>revdiag</code>: dimnames are kept</li>
+<li>
+<code>Combine</code>: output updated</li>
+<li>
+<code>forestplot</code>: point estimates shown by default</li>
+<li>
+<code>backdoor</code> now works without conditioning set (yields all possible conditioning sets)</li>
 <li>New formula syntax: y+x~v+z same as c(y,x)~v+z</li>
-<li>spaghetti: trend.formula can now contain a factor statement on the rhs</li>
+<li>
+<code>spaghetti</code>: trend.formula can now contain a factor statement on the rhs</li>
 </ul>
 </div>
     <div id="lava-147" class="section level1">
@@ -322,7 +352,8 @@
 <ul>
 <li>Maintenance release</li>
 <li>models can now be specified as y1+y2~x1+x2 instead of c(y1,2y)~x1+x2</li>
-<li>sim method now has a seed argument</li>
+<li>
+<code>sim</code> method now has a seed argument</li>
 </ul>
 </div>
     <div id="lava-146" class="section level1">
@@ -330,8 +361,9 @@
 <a href="#lava-146" class="anchor"></a>lava 1.4.6<small> 2016-12-20 </small>
 </h1>
 <ul>
-<li>New backtrace algorithms for Newton-Raphson optimization routine.</li>
-<li>‘diagtest’ updated.</li>
+<li>New backtrace algorithms for Newton-Raphson optimization routine (<code>NR</code>).</li>
+<li>
+<code>diagtest</code> updated.</li>
 </ul>
 </div>
     <div id="lava-145" class="section level1">
