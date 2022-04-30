@@ -1,5 +1,11 @@
-# lava 1.6.11
+# lava 1.7.0
   - Development version
+  - cv method moved to the the 'targeted' package
+  - iid now returns the influence function and not the scaled version
+  - fixed bug where
+    regression("y", value=function(x) x)
+    did not work (y~1 did).
+  - 
 
 # lava 1.6.10
   - Improved starting values for MLE optimization.
@@ -16,7 +22,8 @@
   - New `plot_region` function for adding confidence regions to plots.
   
 # lava 1.6.9
-  - `idplot`: now accepts matrix or data.frame as 1st argument. New argument: return.data.
+  - `idplot`: now accepts matrix or data.frame as 1st argument. 
+    New argument: return.data.
   - Unit tests updated 
   - Bug fixes: 
     `cv`: rmse output fixed.
