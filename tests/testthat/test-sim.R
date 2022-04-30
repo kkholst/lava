@@ -47,7 +47,7 @@ test_that("sim.default I", {
         res
     }
 
-    val <- sim(onerun,R=2,b0=1,n=10,messages=0,mc.cores=1)
+    val <- sim(onerun,R=2,b0=1,n=10,messages=0)
     testthat::expect_true(nrow(val)==2)
     val <- sim(val,R=2,b0=1,n=10,type=0) ## append results
     testthat::expect_true(nrow(val)==4)

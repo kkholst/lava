@@ -1,7 +1,7 @@
 ##' @export
 ##' @export density.sim
-density.sim <- function(x,...,plot.type="single") {
-    plot.sim(x,...,scatter.plot=FALSE,plot.type=plot.type)
+density.sim <- function(x, ..., plot.type="single") {
+    plot.sim(x, ..., scatter.plot=FALSE, plot.type=plot.type)
 }
 
 ##' Plot method for simulation 'sim' objects
@@ -147,6 +147,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     } else {
         est <- estimate; tru <- true
     }
+
     for (i in seq_along(estimate)) {
         est <- c(est,list(rep(estimate[i],length(se[[i]]))))
         if (!is.null(true)) tru <- c(tru,list(rep(true[i],length(se[[i]]))))
@@ -158,7 +159,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         }
 
     }
-    ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
+
+  ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
 
     oldpar <- NULL
     on.exit({
@@ -186,11 +188,12 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
 
     dys <- c()
-    maxdy <- 0
-    if (density.plot)
-        for (i in seq(K)) {
+  maxdy <- 0
+
+  if (density.plot)
+    for (i in seq(K)) {
             ii <- estimate[i]
-            y <- as.vector(x[,ii])
+            y <- as.vector(x[,ii,drop=TRUE])
             dy <- stats::density(y,...)
             dys <- c(dys,list(dy))
             maxdy <- max(maxdy,dy$y)
@@ -239,7 +242,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         if (!missing(colors)) {
             scatter.col <- line.col <- true.col <- colors[1]
         }
-        y <- as.vector(x[,ii])
+        y <- as.vector(x[,ii,drop=TRUE])
         args <- list(y,ylab=scatter.ylab[i],col=Col(scatter.col[1],scatter.alpha),cex=cex,pch=pch,type=type)
         if (!is.null(scatter.ylim)) args <- c(args,list(ylim=scatter.ylim[[i]]))
         if (scatter.plot) {
@@ -263,7 +266,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                                angles=angle,
                                ...) {
         ii <- estimate[i]
-        y <- as.vector(x[,ii])
+        y <- as.vector(x[,ii,drop=TRUE])
         if (!missing(colors)) {
             col <- border <- colors
             col <- true.col <- colors
@@ -280,9 +283,14 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             } else {
                 density.xlim0 <- xlim[[i]]
             }
-            if (!add) graphics::plot(0,0,type="n",main="",ylab=ylab,xlab=xlab,ylim=density.ylim0,xlim=density.xlim0)
+            if (!add) graphics::plot(0, 0, type="n",
+                                     main="", ylab=ylab, xlab=xlab,
+                                     ylim=density.ylim0, xlim=density.xlim0)
             if (polygon) {
-                with(dy, graphics::polygon(c(x,rev(x)),c(y,rep(0,length(y))),col=Col(col[1],alpha=alphas[1]),border=NA,density=densities[1],angle=angles[1]))
+              with(dy, graphics::polygon(c(x,rev(x)),
+                                         c(y,rep(0,length(y))),
+                                         col=Col(col[1], alpha=alphas[1]),
+                                         border=NA,density=densities[1],angle=angles[1]))
                 if (!is.null(border)) with(dy, lines(x,y,col=border[1],lty=lty[1],lwd=lwd[1]))
             } else {
                 graphics::lines(dy,main="",lty=lty[1],col=col[1],lwd=lwd[1])
@@ -359,7 +367,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             densities <- density[i]
             if (!is.null(densities) && densities<1) densities <- NULL
             if (length(se)>0) alphas <- c(alphas,rep(0,nk[i]))
-            my.density.sim(i,add=(i>1),colors=col[i],alphas=alphas,
+            my.density.sim(i, add=(i>1),colors=col[i],alphas=alphas,
                            densities=densities,
                            angles=angle[i],
                            auto.legend=FALSE)

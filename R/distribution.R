@@ -103,7 +103,7 @@
 }
 
 ##' @export
-"distribution.lvm" <- function(x,var,value,multivariate=FALSE,...) {
+"distribution.lvm" <- function(x,var,value,...,multivariate=FALSE) {
     if (!missing(value)) {
         distribution(x,var,...) <- value
         return(x)

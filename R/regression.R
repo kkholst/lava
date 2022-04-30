@@ -182,7 +182,7 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
 ##' @export
 `regression.lvm` <-
     function(object=lvm(),to,from,fn=NA,messages=lava.options()$messages,
-      additive=TRUE, y,x,value,...) {
+             additive=TRUE, y,x,value,...) {
         if (!missing(y)) {
             if (inherits(y,"formula")) y <- all.vars(y)
             to <- y
@@ -209,8 +209,13 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
             return(object)
         }
 
+
         if (missing(to)) {
             return(regfix(object))
+        }
+        if ((missing(from) || is.null(from)) &
+            is.character(to)) {
+          to <- as.formula(paste(to, "~1"))
         }
         if (inherits(to,"formula")) {
           if (!missing(value)) {
