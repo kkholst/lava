@@ -8,7 +8,7 @@
 ##'
 ##' \method{iid}{default}(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...)
 ##'
-##' @aliases iid.default vcov_iid
+##' @aliases iid.default var_iid
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
@@ -20,7 +20,7 @@
 ##' distribution(m, ~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
-##' var(iid(g))
+##' var_iid(iid(g))
 ##'
 iid <- function(x,...) UseMethod("iid")
 
@@ -126,5 +126,5 @@ var_iid <- function(x, ...) {
   N <- crossprod(!is.na(x))
   V <- var(x, use="pairwise.complete.obs")*(N-1)/N^2
   V[N==0] <- 0
-  V
+  return(V)
 }

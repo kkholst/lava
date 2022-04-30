@@ -4,11 +4,11 @@ Title: Latent Variable Models
 Version: 1.7.0
 Date: 2022-04-30
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
-             person("Brice", "Ozenne", role = "ctb"),
-             person("Thomas", "Gerds", role = "ctb"))
+		   person("Brice", "Ozenne", role = "ctb"),
+		   person("Thomas", "Gerds", role = "ctb"))
 Author: Klaus K. Holst [aut, cre],
-        Brice Ozenne [ctb],
-        Thomas Gerds [ctb]
+		Brice Ozenne [ctb],
+		Thomas Gerds [ctb]
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: A general implementation of Structural Equation Models
 	with latent variables (MLE, 2SLS, and composite likelihood
@@ -28,12 +28,12 @@ LazyLoad: yes
 Depends:
 	R (>= 3.0)
 Imports:
-    future.apply,
-	progressr,
+	future.apply,
 	grDevices,
 	graphics,
 	methods,
 	numDeriv,
+	progressr,
 	stats,
 	survival,
 	SQUAREM,
@@ -50,7 +50,7 @@ Suggests:
 	graph,
 	knitr,
 	bookdown,
-    rmarkdown,
+	rmarkdown,
 	igraph (>= 0.6),
 	lava.tobit (>= 0.4.7),
 	lavaSearch2,
