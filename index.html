@@ -28,6 +28,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -40,23 +42,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -76,7 +72,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/kkholst/lava/">
+  <a href="https://github.com/kkholst/lava/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -95,38 +91,36 @@
   <div class="contents col-md-9">
 
 
-<div id="latent-variable-models-lava-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#latent-variable-models-lava-" class="anchor"></a>Latent Variable Models: lava <a href="https://kkholst.github.io/lava/"><img src="reference/figures/lvm1-1.png" align="right" height="150"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="latent-variable-models-lava-">Latent Variable Models: lava <a href="https://kkholst.github.io/lava/" class="external-link"><img src="reference/figures/lvm1-1.png" align="right" height="150"></a>
+<a class="anchor" aria-label="anchor" href="#latent-variable-models-lava-"></a>
 </h1></div>
 <p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) &lt;10.1007/s00180-012-0344-y&gt;). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"lava"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/lava/">"lava"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/demo.html">demo</a></span><span class="op">(</span><span class="st">"lava"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lava"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/lava/" class="external-link">"lava"</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/demo.html" class="external-link">demo</a></span><span class="op">(</span><span class="st">"lava"</span><span class="op">)</span></code></pre></div>
 <p>For graphical capabilities the <code>Rgraphviz</code> package is needed (first install the <code>BiocManager</code> package)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("BiocManager")</span>
 <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"Rgraphviz"</span><span class="op">)</span></code></pre></div>
 <p>or the <code>igraph</code> or <code>visNetwork</code> packages</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"igraph"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"visNetwork"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"igraph"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"visNetwork"</span><span class="op">)</span></code></pre></div>
 <p>The development version of <code>lava</code> may also be installed directly from <code>github</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"kkholst/lava"</span><span class="op">)</span></code></pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/lava"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="citation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#citation" class="anchor"></a>Citation</h2>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
 <p>To cite that <code>lava</code> package please use one of the following references</p>
-<blockquote>
-<p>Klaus K. Holst and Esben Budtz-Joergensen (2013). Linear Latent Variable Models: The lava-package. Computational Statistics 28 (4), pp 1385-1453. <a href="http://dx.doi.org/10.1007/s00180-012-0344-y" class="uri">http://dx.doi.org/10.1007/s00180-012-0344-y</a></p>
-</blockquote>
+<blockquote><p>Klaus K. Holst and Esben Budtz-Joergensen (2013). Linear Latent Variable Models: The lava-package. Computational Statistics 28 (4), pp 1385-1453. <a href="http://dx.doi.org/10.1007/s00180-012-0344-y" class="external-link uri">http://dx.doi.org/10.1007/s00180-012-0344-y</a></p></blockquote>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="op">@</span>article{lava,</a>
 <a class="sourceLine" id="cb5-2" title="2">  title =<span class="st"> </span>{Linear Latent Variable Models<span class="op">:</span><span class="st"> </span>The lava<span class="op">-</span>package},</a>
 <a class="sourceLine" id="cb5-3" title="3">  author =<span class="st"> </span>{Klaus Kähler Holst and Esben Budtz<span class="op">-</span>Jørgensen},</a>
@@ -137,9 +131,7 @@
 <a class="sourceLine" id="cb5-8" title="8">  journal =<span class="st"> </span>{Computational Statistics},</a>
 <a class="sourceLine" id="cb5-9" title="9">  doi =<span class="st"> </span>{<span class="fl">10.1007</span><span class="op">/</span>s00180<span class="dv">-012-0344</span><span class="op">-</span>y}</a>
 <a class="sourceLine" id="cb5-10" title="10">}</a></code></pre></div>
-<blockquote>
-<p>Klaus K. Holst and Esben Budtz-Jørgensen (2020). A two-stage estimation procedure for non-linear structural equation models. Biostatistics 21 (4), pp 676-691. <a href="http://dx.doi.org/10.1093/biostatistics/kxy082" class="uri">http://dx.doi.org/10.1093/biostatistics/kxy082</a></p>
-</blockquote>
+<blockquote><p>Klaus K. Holst and Esben Budtz-Jørgensen (2020). A two-stage estimation procedure for non-linear structural equation models. Biostatistics 21 (4), pp 676-691. <a href="http://dx.doi.org/10.1093/biostatistics/kxy082" class="external-link uri">http://dx.doi.org/10.1093/biostatistics/kxy082</a></p></blockquote>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="op">@</span>article{lava_nlin,</a>
 <a class="sourceLine" id="cb6-2" title="2">  title =<span class="st"> </span>{A two<span class="op">-</span>stage estimation procedure <span class="cf">for</span> non<span class="op">-</span>linear structural equation models},</a>
 <a class="sourceLine" id="cb6-3" title="3">  author =<span class="st"> </span>{Klaus Kähler Holst and Esben Budtz<span class="op">-</span>Jørgensen},</a>
@@ -151,23 +143,23 @@
 <a class="sourceLine" id="cb6-9" title="9">  doi =<span class="st"> </span>{<span class="fl">10.1093</span><span class="op">/</span>biostatistics<span class="op">/</span>kxy082},</a>
 <a class="sourceLine" id="cb6-10" title="10">}</a></code></pre></div>
 </div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
-<div id="structural-equation-model" class="section level3">
-<h3 class="hasAnchor">
-<a href="#structural-equation-model" class="anchor"></a>Structural Equation Model</h3>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
+<div class="section level3">
+<h3 id="structural-equation-model">Structural Equation Model<a class="anchor" aria-label="anchor" href="#structural-equation-model"></a>
+</h3>
 <p>Specify structural equation models with two factors</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">eta1</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span> <span class="op">+</span> <span class="va">z3</span> <span class="op">~</span> <span class="va">eta2</span>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">eta1</span>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span> <span class="op">+</span> <span class="va">z3</span> <span class="op">~</span> <span class="va">eta2</span>
 <span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">eta2</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">x</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta1</span> <span class="op">~</span> <span class="va">x</span>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">x</span>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta1</span> <span class="op">~</span> <span class="va">x</span>
 
-<span class="fu"><a href="reference/labels&lt;-.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>eta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, eta2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="reference/labels-set.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>eta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, eta2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulation</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -203,31 +195,31 @@
 <span class="co">#&gt;    z3                1.18155    0.22640  5.21883          </span>
 <span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span></code></pre></div>
 </div>
-<div id="model-assessment" class="section level3">
-<h3 class="hasAnchor">
-<a href="#model-assessment" class="anchor"></a>Model assessment</h3>
+<div class="section level3">
+<h3 id="model-assessment">Model assessment<a class="anchor" aria-label="anchor" href="#model-assessment"></a>
+</h3>
 <p>Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the <code>gof</code> package which can installed from CRAN)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("gof")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gof</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html">cumres</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gof</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html" class="external-link">cumres</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/gof1-1.png" title="plot of chunk gof1" alt="plot of chunk gof1" width="50%" style="display: block; margin: auto;"></p>
 </div>
-<div id="non-linear-measurement-error-model" class="section level3">
-<h3 class="hasAnchor">
-<a href="#non-linear-measurement-error-model" class="anchor"></a>Non-linear measurement error model</h3>
+<div class="section level3">
+<h3 id="non-linear-measurement-error-model">Non-linear measurement error model<a class="anchor" aria-label="anchor" href="#non-linear-measurement-error-model"></a>
+</h3>
 <p>Simulate non-linear model</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span> <span class="op">~</span> <span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span>
+<span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span> <span class="op">~</span> <span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span>
 
-<span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"z"</span><span class="op">=</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"z~u2"</span><span class="op">=</span><span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z"</span><span class="op">=</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"z~u2"</span><span class="op">=</span><span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p>Stage 1:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span><span class="op">*</span><span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span><span class="op">*</span><span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>
 <span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">u</span>
 <span class="op">(</span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">d</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span>
@@ -240,7 +232,7 @@
 <span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span></code></pre></div>
 <p>Stage 2</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>, u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>, u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">)</span>
 <span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span><span class="op">(</span><span class="va">e1</span>, <span class="va">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d</span>, predictfun<span class="op">=</span><span class="va">pp</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
@@ -249,21 +241,21 @@
 <span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span>
-<span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;"></p>
 </div>
-<div id="simulation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#simulation" class="anchor"></a>Simulation</h3>
+<div class="section level3">
+<h3 id="simulation">Simulation<a class="anchor" aria-label="anchor" href="#simulation"></a>
+</h3>
 <p>Studying the small-sample properties of a mediation analysis</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>, <span class="va">c</span><span class="op">~</span><span class="fl">1</span><span class="op">)</span>
-<span class="fu"><a href="reference/regression&lt;-.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">+</span><span class="va">x</span> <span class="op">~</span> <span class="va">z</span>
-<span class="fu"><a href="reference/eventTime.html">eventTime</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">t</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">1</span>, c<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">S</span><span class="op">~</span><span class="va">t</span><span class="op">+</span><span class="va">status</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">+</span><span class="va">x</span> <span class="op">~</span> <span class="va">z</span>
+<span class="fu"><a href="reference/eventTime.html">eventTime</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">t</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">1</span>, c<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">S</span><span class="op">~</span><span class="va">t</span><span class="op">+</span><span class="va">status</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulate from model and estimate indirect effects</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
@@ -271,10 +263,10 @@
     <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">100</span><span class="op">)</span>
     <span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">S</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span>, <span class="va">x</span><span class="op">~</span><span class="va">z</span><span class="op">)</span>
     <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">d</span>, estimator<span class="op">=</span><span class="st">"glm"</span><span class="op">)</span>
-    <span class="fu"><a href="reference/vec.html">vec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="reference/path.html">effects</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">S</span><span class="op">~</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>
+    <span class="fu"><a href="reference/vec.html">vec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="reference/path.html">effects</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">S</span><span class="op">~</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>
 <span class="op">}</span>
 <span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; 100 replications                 Time: 3.667s</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span>
@@ -293,8 +285,8 @@
 <p>Add additional simulations and visualize results</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">val</span>,<span class="fl">500</span><span class="op">)</span> <span class="co">## Add 500 simulations</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span><span class="op">)</span>,
-     true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span><span class="op">)</span>,
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span><span class="op">)</span>,
+     true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span><span class="op">)</span>,
      scatter.plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/simres1-1.png" title="plot of chunk simres1" alt="plot of chunk simres1" width="50%" style="display: block; margin: auto;"></p>
 </div>
@@ -305,55 +297,59 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=lava">https://​cloud.r-project.org/​package=lava</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/kkholst/lava/">https://​github.com/​kkholst/​lava/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/kkholst/lava/issues">https://​github.com/​kkholst/​lava/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
-</ul>
-</div>
-<div class="citation">
-<h2>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html">Citing lava</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="https://cloud.r-project.org/package=lava" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/kkholst/lava/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/kkholst/lava/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/kkholst/lava/actions"><img src="https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/github/kkholst/lava?branch=master"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master" alt="coverage"></a></li>
-<li><a href="https://CRAN.R-project.org/package=lava"><img src="https://www.r-pkg.org/badges/version-last-release/lava" alt="cran"></a></li>
-<li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/lava"><img src="https://cranlogs.r-pkg.org/badges/lava" alt="cran-dl"></a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing lava</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/kkholst/lava/actions" class="external-link"><img src="https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/github/kkholst/lava?branch=master" class="external-link"><img src="https://codecov.io/github/kkholst/lava/coverage.svg?branch=master" alt="coverage"></a></li>
+<li><a href="https://CRAN.R-project.org/package=lava" class="external-link"><img src="https://www.r-pkg.org/badges/version-last-release/lava" alt="cran"></a></li>
+<li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/lava" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/lava" alt="cran-dl"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Klaus K. Holst.</p>
+  <p></p>
+<p>Developed by Klaus K. Holst.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -361,6 +357,8 @@
 
   
 
+
+  
 
   </body>
 </html>
