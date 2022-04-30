@@ -41,7 +41,7 @@ score.survreg <- function(x,p,scale=TRUE,logscale=FALSE,indiv.logLik=FALSE,...) 
     attributes(S)$logLik <- 
                     if (indiv.logLik) derivatives[,"g"]
                     else sum(derivatives[,"g"])    
-    attributes(S)$bread <- V
+    attributes(S)$bread <- V*NROW(S)
     return(S)
 }
 

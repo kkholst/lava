@@ -84,7 +84,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         for (i in seq_along(nn)) id <- c(id,list(seq(nn[i])+cnn[i]))
     }
     if (missing(id)) {
-        if (paired) { ## One-to-one dependence between observations in x,y,...
+      if (paired) { ## One-to-one dependence between observations in x,y,...
             id <- rep(list(seq(nrow(x$iid))),length(objects))
         } else {
             id <- lapply(objects,function(x) x$id)
@@ -132,7 +132,7 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         iidall <- c(iidall, list(iid0))
     }
     id <- unique(unlist(ids))
-    iid0 <- matrix(0,nrow=length(id),ncol=length(coefs))
+    iid0 <- matrix(NA, nrow=length(id),ncol=length(coefs))
     model.index <- c()
     colpos <- 0
     for (i in seq(length(objects))) {
@@ -143,7 +143,15 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         colpos <- colpos+tail(relpos,1)
     }
     rownames(iid0) <- id
-    res <- estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL, iid=iid0, id=id, keep=keep)
+    ## Rescale each column according to I(obs)/pr(obs)
+    for (i in seq(NCOL(iid0))) {
+      pr <- mean(!is.na(iid0[,i]))
+      iid0[,i] <- iid0[,i]/pr
+    }
+    iid0[is.na(iid0)] <- 0
+
+    res <- estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL,
+                            iid=iid0, id=id, keep=keep)
     res$model.index <- model.index
     return(res)
 }

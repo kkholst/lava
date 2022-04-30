@@ -17,7 +17,7 @@ test_that("estimate.default", {
     e1b <- estimate(NULL,coef=coef(l1),vcov=vcov(estimate(l1)))
     e1c <- estimate(NULL,coef=coef(l1),iid=iid(l1))
     testthat::expect_equivalent(vcov(e1b),vcov(e1c))
-    testthat::expect_equivalent(crossprod(iid(e1)),vcov(e1b))
+    testthat::expect_equivalent(var_iid(iid(e1)), vcov(e1b))
 
     f1b <- estimate(e1b,function(x) x^2)
     testthat::expect_equivalent(f1b$coefmat[2,,drop=FALSE],f1$coefmat)

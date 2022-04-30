@@ -101,7 +101,9 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
             }
         }
         coefs <- as.vector(P); names(coefs) <- paste0("p",seq(k))
-        res <- list(call=match.call(), coef=coefs,P=P,vcov=varcov,iid=iid,position=seq(k),levels=list(lev),data=x, terms=trm)
+        res <- list(call=match.call(), coef=coefs,P=P,
+                    vcov=varcov,iid=iid*NROW(iid),
+                    position=seq(k),levels=list(lev),data=x, terms=trm)
         class(res) <- "multinomial"
         return(res)
     }
@@ -166,7 +168,8 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
     if (vcov && !is.null(iid)) varcov <- crossprod(iid)
     res <- list(call=match.call(),
                formula=formula,
-               coef=coefs,P=P,vcov=varcov,iid=iid, position=Pos, call=match.call(), levels=list(lev1,lev2), data=x,
+               coef=coefs,P=P,vcov=varcov,iid=iid*NROW(iid), position=Pos,
+               call=match.call(), levels=list(lev1,lev2), data=x,
                position1=position1,position2=position2, ## Position of marginals)
                terms=trm
                 )
@@ -174,7 +177,7 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
     if (length(list(...))>0) {
         res <- structure(estimate(res,...),class=c("multinomial","estimate"))
     }
-    res
+    return(res)
 }
 
 ##' @export
@@ -214,9 +217,6 @@ predict.multinomial <- function(object,newdata,type=c("prob","map"),...) {
     }
     return(pr)
 }
-
-## logLik.multinomial <- function(object,...) {
-## }
 
 ##' @export
 print.multinomial <- function(x,...) {

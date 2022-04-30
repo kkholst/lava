@@ -139,7 +139,7 @@ estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g,"z","z"-"x",2*"z"-3*"x")
 estimate(g,z,z-x,2*z-3*x)
-estimate(g,"?")  ## Wilcards
+estimate(g,"?")  ## Wildcards
 estimate(g,"*Int*","z")
 estimate(g,"1","2"-"3",null=c(0,1))
 estimate(g,2,3)
@@ -161,10 +161,11 @@ estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
 ## Multiple group
 m <- lvm(y~x)
 m <- baptize(m)
-d2 <- d1 <- sim(m,50)
+d2 <- d1 <- sim(m,50,seed=1)
 e <- estimate(list(m,m),list(d1,d2))
 estimate(e) ## Wrong
-estimate(e,id=rep(seq(nrow(d1)),2))
+ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
+ee
 estimate(lm(y~x,d1))
 
 ## Marginalize

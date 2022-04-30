@@ -175,7 +175,7 @@ test_that("Survreg", {
     testthat::expect_true(length(pars(m))==length(coef(m))+1)
     testthat::expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
     testthat::expect_true(mean(colSums(s)^2)<1e-6)
-    testthat::expect_equivalent(vcov(m),attr(s,'bread'))
+    testthat::expect_equivalent(vcov(m), attr(s,'bread')/nrow(d))
 })
 
 

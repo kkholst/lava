@@ -8,7 +8,7 @@
 ##'
 ##' \method{iid}{default}(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...)
 ##'
-##' @aliases iid.default
+##' @aliases iid.default vcov_iid
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
@@ -20,7 +20,7 @@
 ##' distribution(m, ~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
-##' crossprod(iid(g))
+##' var(iid(g))
 ##'
 iid <- function(x,...) UseMethod("iid")
 
@@ -44,7 +44,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
     }
     pp <- pars(x)
     if (!missing(bread) && is.null(bread)) {
-        bread <- suppressWarnings(vcov(x))
+      bread <- suppressWarnings(vcov(x)*NROW(U))
     }
     if (missing(bread)) bread <- attributes(U)$bread
     if (is.null(bread)) {
@@ -58,7 +58,7 @@ iid.default <- function(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...) {
             } else {
                 I <- -numDeriv::jacobian(function(p) score(x,p=p,indiv=FALSE,...),pp,method=lava.options()$Dmethod)
             }
-            bread <- Inverse(I)
+            bread <- Inverse(I)*NROW(U)
         }
     }
     iid0 <- U%*%bread
@@ -98,9 +98,7 @@ iid.matrix <- function(x,...) {
         }
     colnames(iid1) <- colnames(x); colnames(iid2) <- nn
     names(cc) <- c(colnames(iid1),colnames(iid2))
-    iid1[is.na(iid1)] <- 0
-    iid2[is.na(iid2)] <- 0
-    structure(cbind(iid1/n,iid2/n),
+    structure(cbind(iid1,iid2),
               coef=cc,
               mean=mu, var=S)
 }
@@ -110,7 +108,8 @@ iid.numeric <- function(x,...) {
     n <- length(x)
     mu <- mean(x); S <- var(x)*(n-1)/n
     iid1 <- t(t(x)-mu)
-    structure(cbind(mean=iid1/n,var=(iid1^2-S)/n),coef=c(mean=mu,var=S),mean=mu,var=S)
+    structure(cbind(mean=iid1, var=(iid1^2-S)),
+              coef=c(mean=mu, var=S), mean=mu, var=S)
 }
 
 
@@ -119,4 +118,13 @@ iid.data.frame <- function(x,...) {
     if (!all(apply(x[1,,drop=FALSE],2,function(x) inherits(x,c("numeric","integer")))))
         stop("Don't know how to handle data.frames of this type")
     iid(as.matrix(x))
+}
+
+
+#' @export
+var_iid <- function(x, ...) {
+  N <- crossprod(!is.na(x))
+  V <- var(x, use="pairwise.complete.obs")*(N-1)/N^2
+  V[N==0] <- 0
+  V
 }

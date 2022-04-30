@@ -114,8 +114,8 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
         }
         ##B <- solve(information(e0, type="hessian"))
         D <- numDeriv::jacobian(function(p) score(e0, p=p), coef(e0), method=lava.options()$Dmethod)
-        B <- -Inverse(D)
-        A <- crossprod(Siid)
+        B <- -Inverse(D)*NROW(Siid)
+        A <- crossprod(Siid)/NROW(Siid)
         e0$bread <- B
         e0$meat <- A
         e0$iidscore <- Siid
@@ -123,7 +123,7 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
         BA <- B%*%A
         eig <- eigen(BA)$values
         e0$eigenvalues <- eig
-        e0$vcov <- BA%*%B
+        e0$vcov <- (BA%*%B)/NROW(Siid)
         cc <- e0$coef;
         cc[,2] <- sqrt(diag(e0$vcov))
         cc[,3] <- cc[,1]/cc[,2]; cc[,4] <- 2*(1-pnorm(abs(cc[,3])))

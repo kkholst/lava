@@ -3,6 +3,7 @@
 \name{iid}
 \alias{iid}
 \alias{iid.default}
+\alias{vcov_iid}
 \title{Extract i.i.d. decomposition (influence function) from model object}
 \usage{
 iid(x,...)
@@ -30,6 +31,6 @@ m <- lvm(y~x+z)
 distribution(m, ~y+z) <- binomial.lvm("logit")
 d <- sim(m,1e3)
 g <- glm(y~x+z,data=d,family=binomial)
-crossprod(iid(g))
+var(iid(g))
 
 }

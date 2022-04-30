@@ -190,9 +190,10 @@ zibreg <- function(formula,formula.p=~1,data,family=stats::binomial(),offset=NUL
     } else {
         V <- bread
     }
+    n <- length(y)
     colnames(V) <- rownames(V) <- names(cc)
     res <- list(coef=cc,opt=op,beta=beta,gamma=gamma,
-                beta.idx=beta.idx,gamma.idx=gamma.idx,bread=bread,
+                beta.idx=beta.idx,gamma.idx=gamma.idx,bread=bread*n,
                 formula=formula,formula.p=formula.p, y=y, X=X, Z=Z, offset=offset, vcov=V, model.frame=md,family=family)
     class(res) <- "zibreg"
     res$fitted.values <- predict(res)

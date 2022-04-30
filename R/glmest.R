@@ -86,9 +86,7 @@ GLMest <- function(m,data,control=list(),...) {
     coefs <- unlist(res)
     idx <- na.omit(match(coef(m),names(coefs)))
     coefs <- coefs[idx]
-    ##V <- Reduce(blockdiag,breads)[idx,idx]
-    V <- crossprod(iids[,idx])
-    ##V <- crossprod(iids[,idx])
+    V <- var_iid(iids[, idx])
     mymsg <- noquote(cbind(mymsg))
     colnames(mymsg) <- "Family(Link)"; rownames(mymsg) <- paste(yvar,":")
     list(estimate=coefs,vcov=V,breads=breads,iid=iids[,idx],summary.message=function(...)  {
@@ -177,7 +175,7 @@ score.lm <- function(x, p=coef(x), data, indiv=FALSE,
     A <- as.vector(r)/sigma2
     S <- apply(X,2,function(x) x*A)
     if (!indiv) return(colSums(S))
-    suppressWarnings(attributes(S)$bread <- vcov(x))
+    suppressWarnings(attributes(S)$bread <- vcov(x)*NROW(S))
     return(S)
 }
 
@@ -240,9 +238,9 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     S <- apply(X,2,function(x) x*A)
     if (!indiv) return(colSums(S))
     if (pearson) attr(S,"pearson") <- rpearson
-    suppressWarnings(attributes(S)$bread <- vcov(x))
+    suppressWarnings(attributes(S)$bread <- vcov(x)*NROW(S))
     if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
-        attributes(S)$bread <- -Inverse(information.glm(x))
+        attributes(S)$bread <- -Inverse(information.glm(x)*NROW(S))
     return(S)
 }
 
@@ -292,9 +290,6 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
 
 ##' @export
 iid.glm <- function(x,...) {
-    ## if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant") {
-    ##     return(iid.default(x,information.glm,...))
-    ## }
     iid.default(x,...)
 }
 
