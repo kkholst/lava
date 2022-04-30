@@ -5,27 +5,6 @@ rmse1 <- function(fit, data, response=NULL, ...) {
     c(RMSE = mean(as.matrix(y - yhat)^2)^.5)
 }
 
-##' Cross-validation
-##'
-##' Generic cross-validation function
-##' @title Cross-validation
-##' @param modelList List of fitting functions or models
-##' @param data data.frame
-##' @param K Number of folds (default 5, 0 splits in 1:n/2, n/2:n with last part
-##'   used for testing)
-##' @param rep Number of repetitions (default 1)
-##' @param perf Performance measure (default RMSE)
-##' @param seed Optional random seed
-##' @param shared function applied to each fold with results send to each model
-##' @param ... Additional arguments parsed to models in modelList and perf
-##' @author Klaus K. Holst
-##' @examples
-##' f0 <- function(data,...) lm(...,data)
-##' f1 <- function(data,...) lm(Sepal.Length~Species,data)
-##' f2 <- function(data,...) lm(Sepal.Length~Species+Petal.Length,data)
-##' x <- cv(list(m0=f0,m1=f1,m2=f2),rep=10, data=iris, formula=Sepal.Length~.)
-##' x2 <- cv(list(f0(iris),f1(iris),f2(iris)),rep=10, data=iris)
-##' @export
 cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, shared=NULL, ...) {
     if (is.vector(data)) data <- cbind(data)
     if (missing(perf)) perf <- rmse1
@@ -99,28 +78,13 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, shared=NULL, ...) {
         PerfArr[R, k, ,] <- val[[i]]
     }
 
+    cc <- apply(PerfArr, 3:4, function(x) mean(x))
+    if (length(nam)==nrow(cc)) rownames(cc) <- nam
+
     structure(list(cv=PerfArr,
+                   coef = cc,
                    call=match.call(),
                    names=nam,
                    rep=rep, folds=K,
-                   fit=fit0),
-              class="CrossValidated")
+                   fit=fit0))
 }
-
-##' @export
-summary.CrossValidated <- function(object,...) {
-    return(coef(object))
-}
-
-##' @export
-print.CrossValidated <- function(x,...) {
-    res <- coef(x)
-    print(res,quote=FALSE)
-}
-
-coef.CrossValidated <- function(object,...) {
-    res <- apply(object$cv,3:4,function(x) mean(x))
-    if (length(object$names)==nrow(res)) rownames(res) <- object$names
-    res
-}
-

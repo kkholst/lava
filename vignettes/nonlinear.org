@@ -249,7 +249,7 @@ cross-validation repeated two times
   ## Repeated 5-fold cross-validation:
   ff <- lapply(list(linear=m2a,quadratic=m2b,spline4=m2c,spline6=m2d),
 	      function(m) function(data,...) twostage(m1,m,data=data,stderr=FALSE,control=list(start=coef(e0),contrain=TRUE)))
-  fit.cv <- cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
+  fit.cv <- targeted::cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
 #+END_SRC
 
 #+RESULTS[1729f3f75b55a5ad5d4eddbafe8f1f1bdf32fbb8]: cv_fit
