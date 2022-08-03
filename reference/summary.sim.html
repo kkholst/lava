@@ -66,49 +66,72 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for sim</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  estimate <span class="op">=</span> <span class="cn">NULL</span>,
-  se <span class="op">=</span> <span class="cn">NULL</span>,
-  confint <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">true</span><span class="op">)</span>,
-  true <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">fun</span>,
-  names <span class="op">=</span> <span class="cn">NULL</span>,
-  unique.names <span class="op">=</span> <span class="cn">TRUE</span>,
-  minimal <span class="op">=</span> <span class="cn">FALSE</span>,
-  level <span class="op">=</span> <span class="fl">0.95</span>,
-  quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>, <span class="fl">1</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for sim</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  se <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  confint <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">true</span><span class="op">)</span>,</span>
+<span>  true <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">fun</span>,</span>
+<span>  names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  unique.names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  minimal <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>sim object</p></dd>
+
+
 <dt>estimate</dt>
 <dd><p>(optional) columns with estimates</p></dd>
+
+
 <dt>se</dt>
 <dd><p>(optional) columns with standard error estimates</p></dd>
+
+
 <dt>confint</dt>
 <dd><p>(optional) list of pairs of columns with confidence limits</p></dd>
+
+
 <dt>true</dt>
 <dd><p>(optional) vector of true parameter values</p></dd>
+
+
 <dt>fun</dt>
 <dd><p>(optional) summary function</p></dd>
+
+
 <dt>names</dt>
 <dd><p>(optional) names of</p></dd>
+
+
 <dt>unique.names</dt>
 <dd><p>if TRUE, unique.names will be applied to column names</p></dd>
+
+
 <dt>minimal</dt>
 <dd><p>if TRUE, minimal summary will be returned</p></dd>
+
+
 <dt>level</dt>
 <dd><p>confidence level</p></dd>
+
+
 <dt>quantiles</dt>
 <dd><p>quantiles</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional levels to lower-level functions</p></dd>
+
 </dl></div>
 
   </div>
@@ -123,7 +146,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

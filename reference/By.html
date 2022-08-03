@@ -66,23 +66,34 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">By</span><span class="op">(</span><span class="va">x</span>, <span class="va">INDICES</span>, <span class="va">FUN</span>, <span class="va">COLUMNS</span>, array <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">By</span><span class="op">(</span><span class="va">x</span>, <span class="va">INDICES</span>, <span class="va">FUN</span>, <span class="va">COLUMNS</span>, array <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Data frame</p></dd>
+
+
 <dt>INDICES</dt>
 <dd><p>Indices (vector or list of indices, vector of column names, or formula of column names)</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p>A function to be applied to data frame subsets of 'data'.</p></dd>
+
+
 <dt>COLUMNS</dt>
 <dd><p>(Optional) subset of columns of x to work on</p></dd>
+
+
 <dt>array</dt>
 <dd><p>if TRUE an array/matrix is always returned</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower-level functions</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -95,12 +106,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">By</span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/zCO2.html" class="external-link">CO2</a></span>,<span class="op">~</span><span class="va">Treatment</span><span class="op">+</span><span class="va">Type</span>,<span class="va">colMeans</span>,<span class="op">~</span><span class="va">conc</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">By</span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/zCO2.html" class="external-link">CO2</a></span>,<span class="op">~</span><span class="va">Treatment</span><span class="op">+</span><span class="va">Type</span>,<span class="va">colMeans</span>,<span class="op">~</span><span class="va">conc</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment    Quebec Mississippi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   nonchilled    435         435</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   chilled       435         435</span>
-<span class="r-in"><span class="fu">By</span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/zCO2.html" class="external-link">CO2</a></span>,<span class="op">~</span><span class="va">Treatment</span><span class="op">+</span><span class="va">Type</span>,<span class="va">colMeans</span>,<span class="op">~</span><span class="va">conc</span><span class="op">+</span><span class="va">uptake</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">By</span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/zCO2.html" class="external-link">CO2</a></span>,<span class="op">~</span><span class="va">Treatment</span><span class="op">+</span><span class="va">Type</span>,<span class="va">colMeans</span>,<span class="op">~</span><span class="va">conc</span><span class="op">+</span><span class="va">uptake</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment: nonchilled</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Type: Quebec</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      conc    uptake </span>
@@ -134,7 +145,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -66,33 +66,46 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">measurement.error</span><span class="op">(</span>
-  <span class="va">model1</span>,
-  <span class="va">formula</span>,
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,
-  predictfun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>, <span class="va">var</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span> <span class="va">mu</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">var</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
-  <span class="va">id1</span>,
-  <span class="va">id2</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">measurement.error</span><span class="op">(</span></span>
+<span>  <span class="va">model1</span>,</span>
+<span>  <span class="va">formula</span>,</span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  predictfun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>, <span class="va">var</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span> <span class="va">mu</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">var</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  <span class="va">id1</span>,</span>
+<span>  <span class="va">id2</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>model1</dt>
 <dd><p>Stage 1 model</p></dd>
+
+
 <dt>formula</dt>
 <dd><p>Formula specifying observed covariates in stage 2 model</p></dd>
+
+
 <dt>data</dt>
 <dd><p>data.frame</p></dd>
+
+
 <dt>predictfun</dt>
 <dd><p>Predictions to be used in stage 2</p></dd>
+
+
 <dt>id1</dt>
 <dd><p>Optional id-vector of stage 1</p></dd>
+
+
 <dt>id2</dt>
 <dd><p>Optional id-vector of stage 2</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level functions</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -101,22 +114,22 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y3</span>,<span class="va">y4</span>,<span class="va">y5</span><span class="op">)</span><span class="op">~</span><span class="va">v</span>,<span class="va">u</span><span class="op">~</span><span class="op">~</span><span class="va">v</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">u</span>,<span class="va">v</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span><span class="op">~</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">uv</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">prod</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span><span class="op">+</span><span class="va">v</span><span class="op">+</span><span class="va">uv</span><span class="op">+</span><span class="va">x</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"u,u"</span><span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Stage 1</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">*</span><span class="va">u</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y4</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y5</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">*</span><span class="va">v</span>,<span class="va">u</span><span class="op">~</span><span class="va">b</span><span class="op">*</span><span class="va">x</span>,<span class="va">u</span><span class="op">~</span><span class="op">~</span><span class="va">v</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">v</span></span>
-<span class="r-in"><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>,u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span>,v<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"v"</span><span class="op">]</span>,uv<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"v"</span><span class="op">]</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"v"</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">measurement.error</span><span class="op">(</span><span class="va">e1</span>, <span class="va">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d</span>, predictfun<span class="op">=</span><span class="va">pp</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y3</span>,<span class="va">y4</span>,<span class="va">y5</span><span class="op">)</span><span class="op">~</span><span class="va">v</span>,<span class="va">u</span><span class="op">~</span><span class="op">~</span><span class="va">v</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">u</span>,<span class="va">v</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span><span class="op">~</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">uv</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">prod</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span><span class="op">+</span><span class="va">v</span><span class="op">+</span><span class="va">uv</span><span class="op">+</span><span class="va">x</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"u,u"</span><span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Stage 1</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">*</span><span class="va">u</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y4</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>,<span class="va">y5</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">*</span><span class="va">v</span>,<span class="va">u</span><span class="op">~</span><span class="va">b</span><span class="op">*</span><span class="va">x</span>,<span class="va">u</span><span class="op">~</span><span class="op">~</span><span class="va">v</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">v</span></span></span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>,u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span>,v<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"v"</span><span class="op">]</span>,uv<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"v"</span><span class="op">]</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"v"</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">measurement.error</span><span class="op">(</span><span class="va">e1</span>, <span class="va">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d</span>, predictfun<span class="op">=</span><span class="va">pp</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.1358 0.11619 -0.0919 0.3635 2.424e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x             1.1287 0.11818  0.8971 1.3603 1.290e-21</span>
@@ -124,16 +137,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> u2            0.9374 0.09800  0.7454 1.1295 1.115e-21</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> v             1.1385 0.09988  0.9427 1.3342 4.289e-30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> uv            1.0375 0.10544  0.8309 1.2442 7.559e-23</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## uu &lt;- seq(-1,1,length.out=100)</span></span>
-<span class="r-in"><span class="co">## pp &lt;- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>,intercept<span class="op">=</span><span class="cn">TRUE</span>,line<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span></span>
-<span class="r-in">    <span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.5</span>,<span class="fl">2.5</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## uu &lt;- seq(-1,1,length.out=100)</span></span></span>
+<span class="r-in"><span><span class="co">## pp &lt;- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>,intercept<span class="op">=</span><span class="cn">TRUE</span>,line<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span></span></span>
+<span class="r-in"><span>    <span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.5</span>,<span class="fl">2.5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -148,7 +161,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

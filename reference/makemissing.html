@@ -66,34 +66,47 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">makemissing</span><span class="op">(</span>
-  <span class="va">data</span>,
-  p <span class="op">=</span> <span class="fl">0.2</span>,
-  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,
-  rowwise <span class="op">=</span> <span class="cn">FALSE</span>,
-  nafun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span>,
-  seed <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makemissing</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  p <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  rowwise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  nafun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>data.frame</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Fraction of missing data in each column</p></dd>
+
+
 <dt>cols</dt>
 <dd><p>Which columns (name or index) to alter</p></dd>
+
+
 <dt>rowwise</dt>
 <dd><p>Should missing occur row-wise (either none or all selected columns are missing)</p></dd>
+
+
 <dt>nafun</dt>
 <dd><p>(Optional) function to be applied on data.frame before return (e.g. <code>na.omit</code> to return complete-cases only)</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>Random seed</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>data.frame</p>
+    
+
+<p>data.frame</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -112,7 +125,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

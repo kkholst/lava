@@ -66,25 +66,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">Grep</span><span class="op">(</span><span class="va">x</span>, <span class="va">pattern</span>, subset <span class="op">=</span> <span class="cn">TRUE</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Grep</span><span class="op">(</span><span class="va">x</span>, <span class="va">pattern</span>, subset <span class="op">=</span> <span class="cn">TRUE</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>vector, matrix or data.frame.</p></dd>
+
+
 <dt>pattern</dt>
 <dd><p>regular expression to search for</p></dd>
+
+
 <dt>subset</dt>
 <dd><p>If TRUE returns subset of data.frame/matrix otherwise just the matching column names</p></dd>
+
+
 <dt>ignore.case</dt>
 <dd><p>Default ignore case</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to 'grep'</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.frame with 2 columns with the indices in the first and the
+    
+
+<p>A data.frame with 2 columns with the indices in the first and the
 matching names in the second.</p>
     </div>
     <div id="see-also">
@@ -99,8 +110,8 @@ matching,</p></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">Grep</span><span class="op">(</span><span class="va">iris</span>,<span class="st">"(len)|(sp)"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">Grep</span><span class="op">(</span><span class="va">iris</span>,<span class="st">"(len)|(sp)"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Sepal.Length Petal.Length Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1          5.1          1.4  setosa</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          4.9          1.4  setosa</span>
@@ -122,7 +133,7 @@ matching,</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

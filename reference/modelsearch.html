@@ -66,28 +66,39 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">modelsearch</span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">1</span>, dir <span class="op">=</span> <span class="st">"forward"</span>, type <span class="op">=</span> <span class="st">"all"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">modelsearch</span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">1</span>, dir <span class="op">=</span> <span class="st">"forward"</span>, type <span class="op">=</span> <span class="st">"all"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvmfit</code>-object</p></dd>
+
+
 <dt>k</dt>
 <dd><p>Number of parameters to test simultaneously. For <code>equivalence</code>
 the number of additional associations to be added instead of <code>rel</code>.</p></dd>
+
+
 <dt>dir</dt>
 <dd><p>Direction to do model search. "forward" := add
 associations/arrows to model/graph (score tests), "backward" := remove
 associations/arrows from model/graph (wald test)</p></dd>
+
+
 <dt>type</dt>
 <dd><p>If equal to 'correlation' only consider score tests for covariance parameters. If equal to 'regression' go through direct effects only  (default 'all' is to do both)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Matrix of test-statistics and p-values</p>
+    
+
+<p>Matrix of test-statistics and p-values</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -100,14 +111,14 @@ associations/arrows from model/graph (wald test)</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span>; <span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">x</span></span>
-<span class="r-in"><span class="va">m0</span> <span class="op">&lt;-</span> <span class="va">m</span>; <span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y2</span> <span class="op">~</span> <span class="va">x</span></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">100</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="vars.html">manifest</a></span><span class="op">(</span><span class="va">m0</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">dd</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu">modelsearch</span><span class="op">(</span><span class="va">e</span>,messages<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span>; <span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">x</span></span></span>
+<span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="va">m</span>; <span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y2</span> <span class="op">~</span> <span class="va">x</span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">100</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="vars.html">manifest</a></span><span class="op">(</span><span class="va">m0</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">dd</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">modelsearch</span><span class="op">(</span><span class="va">e</span>,messages<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Score: S P(S&gt;s) Index  holm BH    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.0734   0.7864 y3~~x  1    0.7864</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.0734   0.7864 y3~x   1    0.7864</span>
@@ -127,7 +138,7 @@ associations/arrows from model/graph (wald test)</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.675    0.4113 y1~~y3 1    0.7864</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.675    0.4113 y1~y3  1    0.7864</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.675    0.4113 y3~y1  1    0.7864</span>
-<span class="r-in"><span class="fu">modelsearch</span><span class="op">(</span><span class="va">e</span>,messages<span class="op">=</span><span class="fl">0</span>,type<span class="op">=</span><span class="st">"cor"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">modelsearch</span><span class="op">(</span><span class="va">e</span>,messages<span class="op">=</span><span class="fl">0</span>,type<span class="op">=</span><span class="st">"cor"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Score: S P(S&gt;s) Index  holm BH    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.0734   0.7864 y3~~x  1    0.7864</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.0734   0.7864 y1~~y2 1    0.7864</span>
@@ -149,7 +160,7 @@ associations/arrows from model/graph (wald test)</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

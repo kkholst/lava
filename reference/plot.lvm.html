@@ -66,84 +66,123 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for lvm</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>
-  <span class="va">x</span>,
-  diag <span class="op">=</span> <span class="cn">FALSE</span>,
-  cor <span class="op">=</span> <span class="cn">TRUE</span>,
-  labels <span class="op">=</span> <span class="cn">FALSE</span>,
-  intercept <span class="op">=</span> <span class="cn">FALSE</span>,
-  addcolor <span class="op">=</span> <span class="cn">TRUE</span>,
-  plain <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">cex</span>,
-  fontsize1 <span class="op">=</span> <span class="fl">10</span>,
-  noplot <span class="op">=</span> <span class="cn">FALSE</span>,
-  graph <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rankdir <span class="op">=</span> <span class="st">"BT"</span><span class="op">)</span>,
-  attrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>graph <span class="op">=</span> <span class="va">graph</span><span class="op">)</span>,
-  unexpr <span class="op">=</span> <span class="cn">FALSE</span>,
-  addstyle <span class="op">=</span> <span class="cn">TRUE</span>,
-  plot.engine <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">plot.engine</span>,
-  init <span class="op">=</span> <span class="cn">TRUE</span>,
-  layout <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span>,
-  edgecolor <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">edgecolor</span>,
-  graph.proc <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">graph.proc</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  diag <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  intercept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  addcolor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plain <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">cex</span>,</span>
+<span>  fontsize1 <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  noplot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  graph <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rankdir <span class="op">=</span> <span class="st">"BT"</span><span class="op">)</span>,</span>
+<span>  attrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>graph <span class="op">=</span> <span class="va">graph</span><span class="op">)</span>,</span>
+<span>  unexpr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  addstyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot.engine <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">plot.engine</span>,</span>
+<span>  init <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  layout <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span>,</span>
+<span>  edgecolor <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">edgecolor</span>,</span>
+<span>  graph.proc <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">graph.proc</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Model object</p></dd>
+
+
 <dt>diag</dt>
 <dd><p>Logical argument indicating whether to visualize
 variance parameters (i.e. diagonal of variance matrix)</p></dd>
+
+
 <dt>cor</dt>
 <dd><p>Logical argument indicating whether to visualize
 correlation parameters</p></dd>
+
+
 <dt>labels</dt>
 <dd><p>Logical argument indiciating whether to add labels
 to plot (Unnamed parameters will be labeled p1,p2,...)</p></dd>
+
+
 <dt>intercept</dt>
 <dd><p>Logical argument indiciating whether to add
 intercept labels</p></dd>
+
+
 <dt>addcolor</dt>
 <dd><p>Logical argument indiciating whether to add colors
 to plot (overrides <code>nodecolor</code> calls)</p></dd>
+
+
 <dt>plain</dt>
 <dd><p>if TRUE strip plot of colors and boxes</p></dd>
+
+
 <dt>cex</dt>
 <dd><p>Fontsize of node labels</p></dd>
+
+
 <dt>fontsize1</dt>
 <dd><p>Fontsize of edge labels</p></dd>
+
+
 <dt>noplot</dt>
 <dd><p>if TRUE then return <code>graphNEL</code> object only</p></dd>
+
+
 <dt>graph</dt>
 <dd><p>Graph attributes (Rgraphviz)</p></dd>
+
+
 <dt>attrs</dt>
 <dd><p>Attributes (Rgraphviz)</p></dd>
+
+
 <dt>unexpr</dt>
 <dd><p>if TRUE remove expressions from labels</p></dd>
+
+
 <dt>addstyle</dt>
 <dd><p>Logical argument indicating whether additional
 style should automatically be added to the plot (e.g. dashed
 lines to double-headed arrows)</p></dd>
+
+
 <dt>plot.engine</dt>
 <dd><p>default 'Rgraphviz' if available, otherwise
 visNetwork,igraph</p></dd>
+
+
 <dt>init</dt>
 <dd><p>Reinitialize graph (for internal use)</p></dd>
+
+
 <dt>layout</dt>
 <dd><p>Graph layout (see Rgraphviz or igraph manual)</p></dd>
+
+
 <dt>edgecolor</dt>
 <dd><p>if TRUE plot style with colored edges</p></dd>
+
+
 <dt>graph.proc</dt>
 <dd><p>Function that post-process the graph object
 (default: subscripts are automatically added to labels of the
 nodes)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level
 functions</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -152,33 +191,33 @@ functions</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x2</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">eta</span>,<span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span></span>
-<span class="r-in"><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span>
-<span class="r-in"><span class="fu"><a href="labels-set.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">scriptscriptstyle</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">y2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">scriptscriptstyle</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">x1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">scriptscriptstyle</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">x2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">scriptscriptstyle</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">eta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="labels-set.html">edgelabels</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, cex<span class="op">=</span><span class="fl">2</span>, lwd<span class="op">=</span><span class="fl">3</span>,</span>
-<span class="r-in">           col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"orange"</span>,<span class="st">"lightblue"</span>,<span class="st">"lightblue"</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">rho</span>,<span class="va">phi</span>,<span class="va">psi</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="labels-set.html">nodecolor</a></span><span class="op">(</span><span class="va">m</span>, <span class="fu"><a href="vars.html">vars</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, border<span class="op">=</span><span class="st">"white"</span>, labcol<span class="op">=</span><span class="st">"darkblue"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span class="r-in"><span class="fu"><a href="labels-set.html">nodecolor</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">z</span>, labcol<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="st">"white"</span>,<span class="st">"black"</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span>,cex<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x2</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">eta</span>,<span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span></span>
-<span class="r-in"><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu">beautify</span><span class="op">(</span><span class="va">m</span>,edgecol<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x2</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">eta</span>,<span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="labels-set.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">[</span><span class="fu">scriptscriptstyle</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>y2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">[</span><span class="fu">scriptscriptstyle</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>x1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu">scriptscriptstyle</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>x2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu">scriptscriptstyle</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>eta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="labels-set.html">edgelabels</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, cex<span class="op">=</span><span class="fl">2</span>, lwd<span class="op">=</span><span class="fl">3</span>,</span></span>
+<span class="r-in"><span>           col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"orange"</span>,<span class="st">"lightblue"</span>,<span class="st">"lightblue"</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">rho</span>,<span class="va">phi</span>,<span class="va">psi</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="labels-set.html">nodecolor</a></span><span class="op">(</span><span class="va">m</span>, <span class="fu"><a href="vars.html">vars</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, border<span class="op">=</span><span class="st">"white"</span>, labcol<span class="op">=</span><span class="st">"darkblue"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="labels-set.html">nodecolor</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">z</span>, labcol<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="st">"white"</span>,<span class="st">"black"</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span>,cex<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">x2</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">eta</span>,<span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu">beautify</span><span class="op">(</span><span class="va">m</span>,edgecol<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -193,7 +232,7 @@ functions</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

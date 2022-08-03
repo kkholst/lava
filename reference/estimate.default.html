@@ -70,127 +70,188 @@ LRT (when <code>f</code> is not a function)...</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for default</span>
-<span class="fu">estimate</span><span class="op">(</span>
-  x <span class="op">=</span> <span class="cn">NULL</span>,
-  f <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  <span class="va">data</span>,
-  <span class="va">id</span>,
-  <span class="va">iddata</span>,
-  stack <span class="op">=</span> <span class="cn">TRUE</span>,
-  average <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">subset</span>,
-  <span class="va">score.deriv</span>,
-  level <span class="op">=</span> <span class="fl">0.95</span>,
-  iid <span class="op">=</span> <span class="va">robust</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"robust"</span>, <span class="st">"df"</span>, <span class="st">"mbn"</span><span class="op">)</span>,
-  <span class="va">keep</span>,
-  <span class="va">use</span>,
-  regex <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">contrast</span>,
-  <span class="va">null</span>,
-  <span class="va">vcov</span>,
-  <span class="va">coef</span>,
-  robust <span class="op">=</span> <span class="cn">TRUE</span>,
-  df <span class="op">=</span> <span class="cn">NULL</span>,
-  print <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">labels</span>,
-  <span class="va">label.width</span>,
-  only.coef <span class="op">=</span> <span class="cn">FALSE</span>,
-  back.transform <span class="op">=</span> <span class="cn">NULL</span>,
-  folds <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">cluster</span>,
-  R <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">null.sim</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for default</span></span>
+<span><span class="fu">estimate</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  f <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">id</span>,</span>
+<span>  <span class="va">iddata</span>,</span>
+<span>  stack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  average <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">subset</span>,</span>
+<span>  <span class="va">score.deriv</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  IC <span class="op">=</span> <span class="va">robust</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"robust"</span>, <span class="st">"df"</span>, <span class="st">"mbn"</span><span class="op">)</span>,</span>
+<span>  <span class="va">keep</span>,</span>
+<span>  <span class="va">use</span>,</span>
+<span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">contrast</span>,</span>
+<span>  <span class="va">null</span>,</span>
+<span>  <span class="va">vcov</span>,</span>
+<span>  <span class="va">coef</span>,</span>
+<span>  robust <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  print <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">labels</span>,</span>
+<span>  <span class="va">label.width</span>,</span>
+<span>  only.coef <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  back.transform <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  folds <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">cluster</span>,</span>
+<span>  R <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">null.sim</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>model object (<code>glm</code>, <code>lvmfit</code>, ...)</p></dd>
+
+
 <dt>f</dt>
 <dd><p>transformation of model parameters and (optionally) data, or contrast matrix (or vector)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments to lower level functions</p></dd>
+
+
 <dt>data</dt>
 <dd><p><code>data.frame</code></p></dd>
+
+
 <dt>id</dt>
-<dd><p>(optional) id-variable corresponding to iid decomposition of model parameters.</p></dd>
+<dd><p>(optional) id-variable corresponding to ic decomposition of model parameters.</p></dd>
+
+
 <dt>iddata</dt>
 <dd><p>(optional) id-variable for 'data'</p></dd>
+
+
 <dt>stack</dt>
 <dd><p>if TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'</p></dd>
+
+
 <dt>average</dt>
 <dd><p>if TRUE averages are calculated</p></dd>
+
+
 <dt>subset</dt>
 <dd><p>(optional) subset of data.frame on which to condition (logical expression or variable name)</p></dd>
+
+
 <dt>score.deriv</dt>
 <dd><p>(optional) derivative of mean score function</p></dd>
+
+
 <dt>level</dt>
 <dd><p>level of confidence limits</p></dd>
-<dt>iid</dt>
-<dd><p>if TRUE (default) the iid decompositions are also returned (extract with <code>iid</code> method)</p></dd>
+
+
+<dt>IC</dt>
+<dd><p>if TRUE (default) the influence function decompositions are also returned (extract with <code>IC</code> method)</p></dd>
+
+
 <dt>type</dt>
 <dd><p>type of small-sample correction</p></dd>
+
+
 <dt>keep</dt>
 <dd><p>(optional) index of parameters to keep from final result</p></dd>
+
+
 <dt>use</dt>
 <dd><p>(optional) index of parameters to use in calculations</p></dd>
+
+
 <dt>regex</dt>
 <dd><p>If TRUE use regular expression (perl compatible) for keep,use arguments</p></dd>
+
+
 <dt>contrast</dt>
 <dd><p>(optional) Contrast matrix for final Wald test</p></dd>
+
+
 <dt>null</dt>
 <dd><p>(optional) null hypothesis to test</p></dd>
+
+
 <dt>vcov</dt>
 <dd><p>(optional) covariance matrix of parameter estimates (e.g. Wald-test)</p></dd>
+
+
 <dt>coef</dt>
 <dd><p>(optional) parameter coefficient</p></dd>
+
+
 <dt>robust</dt>
 <dd><p>if TRUE robust standard errors are calculated. If
 FALSE p-values for linear models are calculated from t-distribution</p></dd>
+
+
 <dt>df</dt>
 <dd><p>degrees of freedom (default obtained from 'df.residual')</p></dd>
+
+
 <dt>print</dt>
 <dd><p>(optional) print function</p></dd>
+
+
 <dt>labels</dt>
 <dd><p>(optional) names of coefficients</p></dd>
+
+
 <dt>label.width</dt>
 <dd><p>(optional) max width of labels</p></dd>
+
+
 <dt>only.coef</dt>
 <dd><p>if TRUE only the coefficient matrix is return</p></dd>
+
+
 <dt>back.transform</dt>
 <dd><p>(optional) transform of parameters and confidence intervals</p></dd>
+
+
 <dt>folds</dt>
 <dd><p>(optional) aggregate influence functions (divide and conquer)</p></dd>
+
+
 <dt>cluster</dt>
 <dd><p>(obsolete) alias for 'id'.</p></dd>
+
+
 <dt>R</dt>
 <dd><p>Number of simulations (simulated p-values)</p></dd>
+
+
 <dt>null.sim</dt>
 <dd><p>Mean under the null for simulations</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>iid decomposition
+    <p>influence function decomposition
 $$\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)$$
-can be extracted with the <code>iid</code> method.</p>
+can be extracted with the <code>IC</code> method.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Simulation from logistic regression model</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="st">"logit"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">z</span><span class="op">+</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">g0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="fl">1</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## LRT</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="va">g0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Simulation from logistic regression model</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="st">"logit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">z</span><span class="op">+</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="fl">1</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## LRT</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="va">g0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	- Likelihood ratio test -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -200,16 +261,16 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log likelihood (model 1) log likelihood (model 2) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                -567.6493                -672.6041 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plain estimates (robust standard errors)</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plain estimates (robust standard errors)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x            1.009058 0.14720  0.7205 1.2976 7.135e-12</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Testing contrasts</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Testing contrasts</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
@@ -221,7 +282,7 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 180.732, df = 3, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199 4.075e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487 4.939e-17</span>
@@ -231,7 +292,7 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 153.6241, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199  0.7037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487  0.9462</span>
@@ -241,13 +302,13 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 0.1447, df = 2, p-value = 0.9302</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="co">## same as cbind(0,1,-1)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="co">## same as cbind(0,1,-1)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co">## same as rbind(c(0,1,0),c(0,0,1))</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co">## same as rbind(c(0,1,0),c(0,0,1))</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [x]    1.009 0.14720 0.7205 1.298 7.135e-12</span>
@@ -257,8 +318,8 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="co">## Alternative syntax</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"z"</span>,<span class="st">"z"</span><span class="op">-</span><span class="st">"x"</span>,<span class="fl">2</span><span class="op">*</span><span class="st">"z"</span><span class="op">-</span><span class="fl">3</span><span class="op">*</span><span class="st">"x"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Alternative syntax</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"z"</span>,<span class="st">"z"</span><span class="op">-</span><span class="st">"x"</span>,<span class="fl">2</span><span class="op">*</span><span class="st">"z"</span><span class="op">-</span><span class="fl">3</span><span class="op">*</span><span class="st">"x"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]          0.95397 0.08114  0.7949  1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]   -0.05508 0.15367 -0.3563  0.2461 7.200e-01</span>
@@ -270,7 +331,7 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   2[z] - 3[x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="va">z</span>,<span class="va">z</span><span class="op">-</span><span class="va">x</span>,<span class="fl">2</span><span class="op">*</span><span class="va">z</span><span class="op">-</span><span class="fl">3</span><span class="op">*</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="va">z</span>,<span class="va">z</span><span class="op">-</span><span class="va">x</span>,<span class="fl">2</span><span class="op">*</span><span class="va">z</span><span class="op">-</span><span class="fl">3</span><span class="op">*</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]          0.95397 0.08114  0.7949  1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]   -0.05508 0.15367 -0.3563  0.2461 7.200e-01</span>
@@ -282,13 +343,13 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   2[z] - 3[x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"?"</span><span class="op">)</span>  <span class="co">## Wildcards</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"?"</span><span class="op">)</span>  <span class="co">## Wildcards</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"*Int*"</span>,<span class="st">"z"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"*Int*"</span>,<span class="st">"z"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
@@ -298,7 +359,7 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 138.2721, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">-</span><span class="st">"3"</span>,null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">-</span><span class="st">"3"</span>,null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]     -0.055083 0.15367 -0.3563 0.2461 6.606e-12</span>
@@ -308,7 +369,7 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 77.8686, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [x]    1.009 0.14720 0.7205 1.298 7.135e-12</span>
@@ -318,132 +379,107 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Usual (non-robust) confidence intervals</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,robust<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Usual (non-robust) confidence intervals</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,robust<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09817 -0.1943 0.1905 9.847e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z            0.953974 0.08318  0.7909 1.1170 1.892e-30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x            1.009058 0.14639  0.7221 1.2960 5.469e-12</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Transformations</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Transformations</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.9521   0.126 0.7052 1.199 4.075e-14</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Multiple parameters</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Multiple parameters</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)    0.952086 0.12596  0.7052 1.1990 4.075e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).1 -0.001801 0.09335 -0.1848 0.1812 9.846e-01</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept) (Intercept)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.01586612 0.008982930</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.00898293 0.008714966</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Label new parameters</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"a1"</span><span class="op">=</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="st">"b1"</span><span class="op">=</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Label new parameters</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"a1"</span><span class="op">=</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="st">"b1"</span><span class="op">=</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a1  0.952086 0.12596  0.7052 1.1990 4.075e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.001801 0.09335 -0.1848 0.1812 9.846e-01</span>
-<span class="r-in"><span class="co">##'</span></span>
-<span class="r-in"><span class="co">## Multiple group</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="baptize.html">baptize</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d2</span> <span class="op">&lt;-</span> <span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">50</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">m</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="co">## Wrong</span></span>
+<span class="r-in"><span><span class="co">##'</span></span></span>
+<span class="r-in"><span><span class="co">## Multiple group</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="baptize.html">baptize</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">50</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">m</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="co">## Wrong</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate Std.Err     2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y@1      0.1044 0.08277 -0.05785 0.2666 2.073e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~x@1    0.9665 0.08727  0.79541 1.1375 1.677e-28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y@1   0.6764 0.10629  0.46803 0.8847 1.977e-10</span>
-<span class="r-in"><span class="va">ee</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>, id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d1</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co">## Clustered</span></span>
-<span class="r-in"><span class="va">ee</span></span>
+<span class="r-in"><span><span class="va">ee</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>, id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d1</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co">## Clustered</span></span></span>
+<span class="r-in"><span><span class="va">ee</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y@1      0.1044  0.1171 -0.1250 0.3338 3.725e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~x@1    0.9665  0.1234  0.7246 1.2084 4.859e-15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y@1   0.6764  0.1503  0.3817 0.9710 6.814e-06</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>,<span class="va">d1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>,<span class="va">d1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.1044  0.1171 -0.1251 0.3338 3.726e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x             0.9665  0.1234  0.7246 1.2084 4.853e-15</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Marginalize</span></span>
-<span class="r-in"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">       p1<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"x"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="va">f</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Marginalize</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>       p1<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"x"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="va">f</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.5010 0.02140 0.4591 0.5429 3.025e-121</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.7007 0.01973 0.6620 0.7393 3.516e-276</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="va">diff</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="va">diff</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.1997  0.0279 0.145 0.2543 8.194e-13</span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [p0] + [p1]    1.202 0.03027 1.142 1.261       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [p0] + [p1] = 0 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Clusters and subset (conditional marginal effects)</span></span>
-<span class="r-in"><span class="va">d</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span>,each<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span></span>
-<span class="r-in">         <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">         subset<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">z</span><span class="op">&gt;</span><span class="fl">0</span>, id<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">id</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Clusters and subset (conditional marginal effects)</span></span></span>
+<span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span>,each<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>,<span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         subset<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">z</span><span class="op">&gt;</span><span class="fl">0</span>, id<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">id</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## More examples with clusters:</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y3</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Some random id-numbers</span></span>
-<span class="r-in"><span class="va">id1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">id2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">7</span>,<span class="fl">8</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">id3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Un-stacked and stacked i.i.d. decomposition</span></span>
-<span class="r-in"><span class="fu"><a href="iid.html">iid</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span>,stack<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)            x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.004904705 -0.014189362</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.014744213 -0.015724052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.115168804 -0.054934034</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.037775868  0.006124426</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.001647188 -0.003981494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.175658710  0.238806661</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.048187968 -0.018690182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.056660619 -0.030858145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.077907752 -0.082047631</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.041462553 -0.024506186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"bread")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept)           x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.06136517 -0.01000796</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x           -0.01000796  0.09011828</span>
-<span class="r-in"><span class="fu"><a href="iid.html">iid</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   (Intercept)           x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.12804333  0.21501767</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.04818797 -0.01869018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.05830781 -0.03483964</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.19307656 -0.13698167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.04146255 -0.02450619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"bread")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept)           x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.06136517 -0.01000796</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x           -0.01000796  0.09011828</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"N")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Combined i.i.d. decomposition</span></span>
-<span class="r-in"><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l2</span>,id<span class="op">=</span><span class="va">id2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e3</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l3</span>,id<span class="op">=</span><span class="va">id3</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">(</span><span class="va">a2</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">e1</span>,<span class="va">e2</span>,<span class="va">e3</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## More examples with clusters:</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y3</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Some random id-numbers</span></span></span>
+<span class="r-in"><span><span class="va">id1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">id2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">7</span>,<span class="fl">8</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">id3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Un-stacked and stacked i.i.d. decomposition</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span>,stack<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(estimate(l1, id = id1, stack = FALSE)):</span> could not find function "IC"</span>
+<span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(estimate(l1, id = id1)):</span> could not find function "IC"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Combined i.i.d. decomposition</span></span></span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l2</span>,id<span class="op">=</span><span class="va">id2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e3</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l3</span>,id<span class="op">=</span><span class="va">id3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">a2</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">e1</span>,<span class="va">e2</span>,<span class="va">e3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)     0.5418  0.2472  0.05731 1.026 0.0283949</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x               0.9636  0.2592  0.45568 1.472 0.0002006</span>
@@ -453,134 +489,31 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).2   0.4769  0.2979 -0.10705 1.061 0.1094554</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x.2             1.1545  0.3714  0.42660 1.882 0.0018795</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## If all models were estimated on the same data we could use the</span></span>
-<span class="r-in"><span class="co">## syntax:</span></span>
-<span class="r-in"><span class="co">## Reduce(merge,estimate(list(l1,l2,l3)))</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Same:</span></span>
-<span class="r-in"><span class="fu"><a href="iid.html">iid</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)           x (Intercept).1          x.1 (Intercept).2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.12804333  0.21501767   0.196852295 -0.265993753    0.07554987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.04818797 -0.01869018   0.118540177 -0.070062440    0.05200220</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.05830781 -0.03483964   0.006810688 -0.007263298   -0.01215704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.19307656 -0.13698167   0.108830429 -0.051910711   -0.15561326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   0.04146255 -0.02450619  -0.227428000 -0.036871845   -0.04880168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.00000000  0.00000000   0.025612485  0.061909106    0.16742259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.00000000  0.00000000  -0.262738927  0.357191544    0.08010558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   0.00000000  0.00000000   0.033520853  0.013001396    0.01460747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.00000000  0.00000000   0.000000000  0.000000000   -0.13102941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.00000000  0.00000000   0.000000000  0.000000000   -0.04208633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             x.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.218566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.055458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.005798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.025228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.117960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.227609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.031069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   0.007955428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.137992084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.024874863</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="iid.html">iid</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># one-to-one (same clusters)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     (Intercept)            x (Intercept).1          x.1 (Intercept).2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.004904705 -0.014189362  0.0004626991  0.001338593    0.07554987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.014744213 -0.015724052  0.1185401770 -0.070062440    0.05200220</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.115168804 -0.054934034  0.0068106877 -0.007263298   -0.01215704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.037775868  0.006124426  0.1088304293 -0.051910711   -0.15561326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.001647188 -0.003981494 -0.2274280005 -0.036871845   -0.04880168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.175658710  0.238806661  0.0256124851  0.061909106    0.16742259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.048187968 -0.018690182 -0.2627389265  0.357191544    0.08010558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.056660619 -0.030858145  0.0335208530  0.013001396    0.01460747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.077907752 -0.082047631 -0.0378700581 -0.020624550   -0.13102941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.041462553 -0.024506186  0.2342596539 -0.246707796   -0.04208633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             x.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.218566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.055458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.005798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.025228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.117960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.227609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.031069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   0.007955428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.137992084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.024874863</span>
-<span class="r-in"><span class="fu"><a href="iid.html">iid</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="co"># independence</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     (Intercept)            x (Intercept).1          x.1 (Intercept).2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.004904705 -0.014189362  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.014744213 -0.015724052  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.115168804 -0.054934034  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.037775868  0.006124426  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.001647188 -0.003981494  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.175658710  0.238806661  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.048187968 -0.018690182  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.056660619 -0.030858145  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.077907752 -0.082047631  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.041462553 -0.024506186  0.0000000000  0.000000000    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.000000000  0.000000000  0.0004626991  0.001338593    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.000000000  0.000000000  0.1185401770 -0.070062440    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.000000000  0.000000000  0.0068106877 -0.007263298    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.000000000  0.000000000  0.1088304293 -0.051910711    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.000000000  0.000000000 -0.2274280005 -0.036871845    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.000000000  0.000000000  0.0256124851  0.061909106    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.000000000  0.000000000 -0.2627389265  0.357191544    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.000000000  0.000000000  0.0335208530  0.013001396    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.000000000  0.000000000 -0.0378700581 -0.020624550    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.000000000  0.000000000  0.2342596539 -0.246707796    0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.000000000  0.000000000  0.0000000000  0.000000000    0.07554987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  0.000000000  0.000000000  0.0000000000  0.000000000    0.05200220</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  0.000000000  0.000000000  0.0000000000  0.000000000   -0.01215704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  0.000000000  0.000000000  0.0000000000  0.000000000   -0.15561326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  0.000000000  0.000000000  0.0000000000  0.000000000   -0.04880168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  0.000000000  0.000000000  0.0000000000  0.000000000    0.16742259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.000000000  0.000000000  0.0000000000  0.000000000    0.08010558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  0.000000000  0.000000000  0.0000000000  0.000000000    0.01460747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  0.000000000  0.000000000  0.0000000000  0.000000000   -0.13102941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  0.000000000  0.000000000  0.0000000000  0.000000000   -0.04208633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             x.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.218566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 -0.055458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  0.005798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 -0.025228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 -0.117960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 -0.227609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.031069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  0.007955428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  0.137992084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  0.024874863</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Monte Carlo approach, simple trend test example</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">categorical</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>,<span class="op">~</span><span class="va">x</span>,K<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,additive<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">~</span><span class="va">x</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span>,seed<span class="op">=</span><span class="fl">1</span>,<span class="st">'y~x'</span><span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">x</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">null</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="co">## just need to make sure we simulate under H0: slope=0</span></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">l</span>,<span class="va">f</span>,R<span class="op">=</span><span class="fl">1e2</span>,null.sim<span class="op">=</span><span class="va">null</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## If all models were estimated on the same data we could use the</span></span></span>
+<span class="r-in"><span><span class="co">## syntax:</span></span></span>
+<span class="r-in"><span><span class="co">## Reduce(merge,estimate(list(l1,l2,l3)))</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Same:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(a1 &lt;- merge(l1, l2, l3, id = list(id1, id2, id3))):</span> could not find function "IC"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># one-to-one (same clusters)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(merge(l1, l2, l3, id = TRUE)):</span> could not find function "IC"</span>
+<span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="co"># independence</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(merge(l1, l2, l3, id = FALSE)):</span> could not find function "IC"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Monte Carlo approach, simple trend test example</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">categorical</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>,<span class="op">~</span><span class="va">x</span>,K<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,additive<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">~</span><span class="va">x</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span>,seed<span class="op">=</span><span class="fl">1</span>,<span class="st">'y~x'</span><span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">x</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">null</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="co">## just need to make sure we simulate under H0: slope=0</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">l</span>,<span class="va">f</span>,R<span class="op">=</span><span class="fl">1e2</span>,null.sim<span class="op">=</span><span class="va">null</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 100 replications</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          seq_along(x)</span>
@@ -593,8 +526,8 @@ can be extracted with the <code>iid</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimate     0.080949</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> P-value      0.180000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">estimate</span><span class="op">(</span><span class="va">l</span>,<span class="va">f</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">l</span>,<span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err     2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> seq_along(x)  0.08095 0.06135 -0.03929 0.2012   0.187</span>
 </code></pre></div>
@@ -611,7 +544,7 @@ can be extracted with the <code>iid</code> method.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

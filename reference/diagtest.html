@@ -68,30 +68,41 @@ negative predictive values</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">diagtest</span><span class="op">(</span>
-  <span class="va">table</span>,
-  positive <span class="op">=</span> <span class="fl">2</span>,
-  exact <span class="op">=</span> <span class="cn">FALSE</span>,
-  p0 <span class="op">=</span> <span class="cn">NA</span>,
-  confint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"logit"</span>, <span class="st">"arcsin"</span>, <span class="st">"pseudoscore"</span>, <span class="st">"exact"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">diagtest</span><span class="op">(</span></span>
+<span>  <span class="va">table</span>,</span>
+<span>  positive <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  exact <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  p0 <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  confint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"logit"</span>, <span class="st">"arcsin"</span>, <span class="st">"pseudoscore"</span>, <span class="st">"exact"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>table</dt>
 <dd><p>Table or (matrix/data.frame with two columns)</p></dd>
+
+
 <dt>positive</dt>
 <dd><p>Switch reference</p></dd>
+
+
 <dt>exact</dt>
 <dd><p>If TRUE exact binomial proportions CI/test will be used</p></dd>
+
+
 <dt>p0</dt>
 <dd><p>Optional null hypothesis (test prevalenc, sensitivity, ...)</p></dd>
+
+
 <dt>confint</dt>
 <dd><p>Type of confidence limits</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level functions</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -106,10 +117,10 @@ negative predictive values</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">as.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">42</span>,<span class="fl">12</span>,</span>
-<span class="r-in">                       <span class="fl">35</span>,<span class="fl">28</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">2</span>,byrow<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span class="r-in">                     dimnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rater<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span>,gold<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">diagtest</span><span class="op">(</span><span class="va">M</span>,exact<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">as.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">42</span>,<span class="fl">12</span>,</span></span>
+<span class="r-in"><span>                       <span class="fl">35</span>,<span class="fl">28</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">2</span>,byrow<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                     dimnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rater<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span>,gold<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">diagtest</span><span class="op">(</span><span class="va">M</span>,exact<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate Std.Err   2.5%  97.5%  P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence                0.3419         0.2567 0.4353         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Test                      0.5385         0.4439 0.6310         </span>
@@ -119,27 +130,6 @@ negative predictive values</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NegativePredictiveValue   0.7778         0.6440 0.8796         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Accuracy                  0.5983         0.5036 0.6878         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Homogeneity               0.7447         0.5965 0.8606 0.001089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"names")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Prevalence"              "Test"                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "Sensitivity"             "Specificity"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "PositivePredictiveValue" "NegativePredictiveValue"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "Accuracy"                "Homogeneity"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37]                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39]                                                    </span>
 </code></pre></div>
     </div>
   </div>
@@ -154,7 +144,7 @@ negative predictive values</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

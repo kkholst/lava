@@ -66,33 +66,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for default</span>
-<span class="fu">click</span><span class="op">(</span><span class="va">x</span>, y<span class="op">=</span><span class="cn">NULL</span>, label<span class="op">=</span><span class="cn">TRUE</span>, n<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">19</span>, col<span class="op">=</span><span class="st">"orange"</span>, cex<span class="op">=</span><span class="fl">3</span>, <span class="va">...</span><span class="op">)</span>
-<span class="fu">idplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span> ,<span class="va">...</span>, id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, return.data<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for default</span></span>
+<span><span class="fu">click</span><span class="op">(</span><span class="va">x</span>, y<span class="op">=</span><span class="cn">NULL</span>, label<span class="op">=</span><span class="cn">TRUE</span>, n<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">19</span>, col<span class="op">=</span><span class="st">"orange"</span>, cex<span class="op">=</span><span class="fl">3</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">idplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span> ,<span class="va">...</span>, id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, return.data<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>X coordinates</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments parsed to <code>plot</code> function</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Y coordinates</p></dd>
+
+
 <dt>label</dt>
 <dd><p>Should labels be added?</p></dd>
+
+
 <dt>n</dt>
 <dd><p>Max number of inputs to expect</p></dd>
+
+
 <dt>pch</dt>
 <dd><p>Symbol</p></dd>
+
+
 <dt>col</dt>
 <dd><p>Colour</p></dd>
+
+
 <dt>cex</dt>
 <dd><p>Size</p></dd>
+
+
 <dt>id</dt>
 <dd><p>List of arguments parsed to <code>click</code> function</p></dd>
+
+
 <dt>return.data</dt>
 <dd><p>Boolean indicating if selected points should be returned</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -113,17 +132,17 @@ the pop-up menu equivalent (usually second mouse button or
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">10</span>; <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>; <span class="fu">click</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Sepal.Width</span><span class="op">*</span><span class="va">Species</span>,<span class="va">iris</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="plotConf.html">plotConf</a></span><span class="op">(</span><span class="va">l</span>,var2<span class="op">=</span><span class="st">"Species"</span><span class="op">)</span><span class="co">## ylim=c(6,8), xlim=c(2.5,3.3))</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">click</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu">idplot</span><span class="op">(</span><span class="va">Sepal.Length</span>,<span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">10</span>; <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>; <span class="fu">click</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Sepal.Width</span><span class="op">*</span><span class="va">Species</span>,<span class="va">iris</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="plotConf.html">plotConf</a></span><span class="op">(</span><span class="va">l</span>,var2<span class="op">=</span><span class="st">"Species"</span><span class="op">)</span><span class="co">## ylim=c(6,8), xlim=c(2.5,3.3))</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">click</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu">idplot</span><span class="op">(</span><span class="va">Sepal.Length</span>,<span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -138,7 +157,7 @@ the pop-up menu equivalent (usually second mouse button or
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

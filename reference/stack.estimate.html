@@ -66,63 +66,86 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for estimate</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">model2</span>,
-  <span class="va">D1u</span>,
-  <span class="va">inv.D2u</span>,
-  <span class="va">propensity</span>,
-  <span class="va">dpropensity</span>,
-  <span class="va">U</span>,
-  keep1 <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">propensity.arg</span>,
-  <span class="va">estimate.arg</span>,
-  na.action <span class="op">=</span> <span class="va">na.pass</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for estimate</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">model2</span>,</span>
+<span>  <span class="va">D1u</span>,</span>
+<span>  <span class="va">inv.D2u</span>,</span>
+<span>  <span class="va">propensity</span>,</span>
+<span>  <span class="va">dpropensity</span>,</span>
+<span>  <span class="va">U</span>,</span>
+<span>  keep1 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">propensity.arg</span>,</span>
+<span>  <span class="va">estimate.arg</span>,</span>
+<span>  na.action <span class="op">=</span> <span class="va">na.pass</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Model 1</p></dd>
+
+
 <dt>model2</dt>
 <dd><p>Model 2</p></dd>
+
+
 <dt>D1u</dt>
 <dd><p>Derivative of score of model 2 w.r.t. parameter vector of model 1</p></dd>
+
+
 <dt>inv.D2u</dt>
 <dd><p>Inverse of deri</p></dd>
+
+
 <dt>propensity</dt>
 <dd><p>propensity score (vector or function)</p></dd>
+
+
 <dt>dpropensity</dt>
 <dd><p>derivative of propensity score wrt parameters of model 1</p></dd>
+
+
 <dt>U</dt>
 <dd><p>Optional score function (model 2) as function of all parameters</p></dd>
+
+
 <dt>keep1</dt>
 <dd><p>If FALSE only parameters of model 2 is returned</p></dd>
+
+
 <dt>propensity.arg</dt>
 <dd><p>Arguments to propensity function</p></dd>
+
+
 <dt>estimate.arg</dt>
 <dd><p>Arguments to 'estimate'</p></dd>
+
+
 <dt>na.action</dt>
 <dd><p>Method for dealing with missing data in propensity score</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level functions</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">z0</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="Missing.html">Missing</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">z</span> <span class="op">~</span> <span class="va">z0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">~</span><span class="va">x</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="op">-</span><span class="fl">1</span>,<span class="st">'r~x'</span><span class="op">=</span><span class="fl">0.5</span>,<span class="st">'z0~x'</span><span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">/</span><span class="fl">2</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">500</span>,p<span class="op">=</span><span class="va">p</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">r</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span><span class="op">$</span><span class="va">w</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">$</span><span class="va">r</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">m1</span>,type<span class="op">=</span><span class="st">"response"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">z</span><span class="op">~</span><span class="fl">1</span>, weights<span class="op">=</span><span class="va">w</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span>,propensity<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">z0</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="Missing.html">Missing</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">z</span> <span class="op">~</span> <span class="va">z0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">~</span><span class="va">x</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="op">-</span><span class="fl">1</span>,<span class="st">'r~x'</span><span class="op">=</span><span class="fl">0.5</span>,<span class="st">'z0~x'</span><span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">/</span><span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">500</span>,p<span class="op">=</span><span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">r</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">w</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">$</span><span class="va">r</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">m1</span>,type<span class="op">=</span><span class="st">"response"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">z</span><span class="op">~</span><span class="fl">1</span>, weights<span class="op">=</span><span class="va">w</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span>,propensity<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err   2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.9827  0.0919 0.8025 1.163 1.1e-26</span>
 </code></pre></div>
@@ -139,7 +162,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

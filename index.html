@@ -17,7 +17,7 @@
 	estimators) with both continuous, censored, and ordinal
 	outcomes (Holst and Budtz-Joergensen (2013) &lt;doi:10.1007/s00180-012-0344-y&gt;).
 	Mixture latent variable models and non-linear latent variable models
-	(Holst and Budtz-Joergensen (2019) &lt;doi:10.1093/biostatistics/kxy082&gt;).
+	(Holst and Budtz-Joergensen (2020) &lt;doi:10.1093/biostatistics/kxy082&gt;).
 	The package also provides methods for graph exploration (d-separation,
 	back-door criterion), simulation of general non-linear latent variable
 	models, and estimation of influence functions for a broad range of
@@ -95,26 +95,26 @@
 <div class="page-header"><h1 id="latent-variable-models-lava-">Latent Variable Models: lava <a href="https://kkholst.github.io/lava/" class="external-link"><img src="reference/figures/lvm1-1.png" align="right" height="150"></a>
 <a class="anchor" aria-label="anchor" href="#latent-variable-models-lava-"></a>
 </h1></div>
-<p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) &lt;10.1007/s00180-012-0344-y&gt;). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
+<p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <a href="doi:10.1007/s00180-012-0344-y" class="uri">doi:10.1007/s00180-012-0344-y</a>). Mixture latent variable models and non-linear latent variable models (Holst and Budtz-Joergensen (2020) <a href="doi:10.1093/biostatistics/kxy082" class="uri">doi:10.1093/biostatistics/kxy082</a>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lava"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/lava/" class="external-link">"lava"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/demo.html" class="external-link">demo</a></span><span class="op">(</span><span class="st">"lava"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lava"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/lava/" class="external-link">"lava"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/demo.html" class="external-link">demo</a></span><span class="op">(</span><span class="st">"lava"</span><span class="op">)</span></span></code></pre></div>
 <p>For graphical capabilities the <code>Rgraphviz</code> package is needed (first install the <code>BiocManager</code> package)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("BiocManager")</span>
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"Rgraphviz"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("BiocManager")</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"Rgraphviz"</span><span class="op">)</span></span></code></pre></div>
 <p>or the <code>igraph</code> or <code>visNetwork</code> packages</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"igraph"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"visNetwork"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"igraph"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"visNetwork"</span><span class="op">)</span></span></code></pre></div>
 <p>The development version of <code>lava</code> may also be installed directly from <code>github</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/lava"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/lava"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -151,60 +151,60 @@
 </h3>
 <p>Specify structural equation models with two factors</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">eta1</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span> <span class="op">+</span> <span class="va">z3</span> <span class="op">~</span> <span class="va">eta2</span>
-<span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">eta2</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">x</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta1</span> <span class="op">~</span> <span class="va">x</span>
-
-<span class="fu"><a href="reference/labels-set.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>eta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, eta2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">eta1</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span> <span class="op">+</span> <span class="va">z3</span> <span class="op">~</span> <span class="va">eta2</span></span>
+<span><span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">eta2</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span> <span class="op">+</span> <span class="va">x</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta1</span> <span class="op">~</span> <span class="va">x</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/labels-set.html">labels</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>eta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, eta2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/lvm1-1.png" title="plot of chunk lvm1" alt="plot of chunk lvm1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulation</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">100</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">100</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Estimation</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">d</span><span class="op">)</span>
-<span class="va">e</span>
-<span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span>
-<span class="co">#&gt; Measurements:                                             </span>
-<span class="co">#&gt;    y2~eta1           0.95462    0.08083 11.80993    &lt;1e-12</span>
-<span class="co">#&gt;    y3~eta1           0.98476    0.08922 11.03722    &lt;1e-12</span>
-<span class="co">#&gt;     z2~eta2          0.97038    0.05368 18.07714    &lt;1e-12</span>
-<span class="co">#&gt;     z3~eta2          0.95608    0.05643 16.94182    &lt;1e-12</span>
-<span class="co">#&gt; Regressions:                                              </span>
-<span class="co">#&gt;    eta1~x            1.24587    0.11486 10.84694    &lt;1e-12</span>
-<span class="co">#&gt;     eta2~eta1        0.95608    0.18008  5.30910 1.102e-07</span>
-<span class="co">#&gt;     eta2~x           1.11495    0.25228  4.41951 9.893e-06</span>
-<span class="co">#&gt; Intercepts:                                               </span>
-<span class="co">#&gt;    y2               -0.13896    0.12458 -1.11537    0.2647</span>
-<span class="co">#&gt;    y3               -0.07661    0.13869 -0.55241    0.5807</span>
-<span class="co">#&gt;    eta1              0.15801    0.12780  1.23644    0.2163</span>
-<span class="co">#&gt;    z2               -0.00441    0.14858 -0.02969    0.9763</span>
-<span class="co">#&gt;    z3               -0.15900    0.15731 -1.01076    0.3121</span>
-<span class="co">#&gt;    eta2             -0.14143    0.18380 -0.76949    0.4416</span>
-<span class="co">#&gt; Residual Variances:                                       </span>
-<span class="co">#&gt;    y1                0.69684    0.14858  4.69004          </span>
-<span class="co">#&gt;    y2                0.89804    0.16630  5.40026          </span>
-<span class="co">#&gt;    y3                1.22456    0.21182  5.78109          </span>
-<span class="co">#&gt;    eta1              0.93620    0.19623  4.77084          </span>
-<span class="co">#&gt;    z1                1.41422    0.26259  5.38570          </span>
-<span class="co">#&gt;    z2                0.87569    0.19463  4.49934          </span>
-<span class="co">#&gt;    z3                1.18155    0.22640  5.21883          </span>
-<span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">d</span><span class="op">)</span></span>
+<span><span class="va">e</span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
+<span><span class="co">#&gt; Measurements:                                             </span></span>
+<span><span class="co">#&gt;    y2~eta1           0.95462    0.08083 11.80993    &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y3~eta1           0.98476    0.08922 11.03722    &lt;1e-12</span></span>
+<span><span class="co">#&gt;     z2~eta2          0.97038    0.05368 18.07714    &lt;1e-12</span></span>
+<span><span class="co">#&gt;     z3~eta2          0.95608    0.05643 16.94182    &lt;1e-12</span></span>
+<span><span class="co">#&gt; Regressions:                                              </span></span>
+<span><span class="co">#&gt;    eta1~x            1.24587    0.11486 10.84694    &lt;1e-12</span></span>
+<span><span class="co">#&gt;     eta2~eta1        0.95608    0.18008  5.30910 1.102e-07</span></span>
+<span><span class="co">#&gt;     eta2~x           1.11495    0.25228  4.41951 9.893e-06</span></span>
+<span><span class="co">#&gt; Intercepts:                                               </span></span>
+<span><span class="co">#&gt;    y2               -0.13896    0.12458 -1.11537    0.2647</span></span>
+<span><span class="co">#&gt;    y3               -0.07661    0.13869 -0.55241    0.5807</span></span>
+<span><span class="co">#&gt;    eta1              0.15801    0.12780  1.23644    0.2163</span></span>
+<span><span class="co">#&gt;    z2               -0.00441    0.14858 -0.02969    0.9763</span></span>
+<span><span class="co">#&gt;    z3               -0.15900    0.15731 -1.01076    0.3121</span></span>
+<span><span class="co">#&gt;    eta2             -0.14143    0.18380 -0.76949    0.4416</span></span>
+<span><span class="co">#&gt; Residual Variances:                                       </span></span>
+<span><span class="co">#&gt;    y1                0.69684    0.14858  4.69004          </span></span>
+<span><span class="co">#&gt;    y2                0.89804    0.16630  5.40026          </span></span>
+<span><span class="co">#&gt;    y3                1.22456    0.21182  5.78109          </span></span>
+<span><span class="co">#&gt;    eta1              0.93620    0.19623  4.77084          </span></span>
+<span><span class="co">#&gt;    z1                1.41422    0.26259  5.38570          </span></span>
+<span><span class="co">#&gt;    z2                0.87569    0.19463  4.49934          </span></span>
+<span><span class="co">#&gt;    z3                1.18155    0.22640  5.21883          </span></span>
+<span><span class="co">#&gt;    eta2              1.24430    0.28992  4.29195</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-assessment">Model assessment<a class="anchor" aria-label="anchor" href="#model-assessment"></a>
 </h3>
 <p>Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the <code>gof</code> package which can installed from CRAN)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("gof")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gof</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html" class="external-link">cumres</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("gof")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gof</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gof/man/cumres.glm.html" class="external-link">cumres</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/gof1-1.png" title="plot of chunk gof1" alt="plot of chunk gof1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
@@ -212,37 +212,37 @@
 </h3>
 <p>Simulate non-linear model</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span> <span class="op">~</span> <span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span>
-
-<span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z"</span><span class="op">=</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"z~u2"</span><span class="op">=</span><span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">~</span> <span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">u2</span> <span class="op">~</span> <span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">~</span><span class="va">u2</span><span class="op">+</span><span class="va">u</span></span>
+<span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z"</span><span class="op">=</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"z~u2"</span><span class="op">=</span><span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Stage 1:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span><span class="op">*</span><span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">u</span>
-<span class="op">(</span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">d</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span>
-<span class="co">#&gt; Regressions:                                             </span>
-<span class="co">#&gt;    u~x               1.06998    0.08208 13.03542   &lt;1e-12</span>
-<span class="co">#&gt; Intercepts:                                              </span>
-<span class="co">#&gt;    u                -0.08871    0.08753 -1.01344   0.3108</span>
-<span class="co">#&gt; Residual Variances:                                      </span>
-<span class="co">#&gt;    y1                1.00054    0.07075 14.14214         </span>
-<span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y2</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span>, <span class="va">y3</span><span class="op">[</span><span class="fl">0</span><span class="op">:</span><span class="va">s</span><span class="op">]</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span><span class="op">*</span><span class="va">u</span>, <span class="va">u</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/vars.html">latent</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">u</span></span>
+<span><span class="op">(</span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span></span>
+<span><span class="co">#&gt; Regressions:                                             </span></span>
+<span><span class="co">#&gt;    u~x               1.06998    0.08208 13.03542   &lt;1e-12</span></span>
+<span><span class="co">#&gt; Intercepts:                                              </span></span>
+<span><span class="co">#&gt;    u                -0.08871    0.08753 -1.01344   0.3108</span></span>
+<span><span class="co">#&gt; Residual Variances:                                      </span></span>
+<span><span class="co">#&gt;    y1                1.00054    0.07075 14.14214         </span></span>
+<span><span class="co">#&gt;    u                 1.19873    0.15503  7.73233</span></span></code></pre></div>
 <p>Stage 2</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>, u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">)</span>
-<span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span><span class="op">(</span><span class="va">e1</span>, <span class="va">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d</span>, predictfun<span class="op">=</span><span class="va">pp</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span>
-<span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span>
-<span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span>
-<span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.609e-18</span>
-<span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span>, u2<span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="st">"u"</span>,<span class="st">"u"</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/measurement.error.html">measurement.error</a></span><span class="op">(</span><span class="va">e1</span>, <span class="va">z</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d</span>, predictfun<span class="op">=</span><span class="va">pp</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16</span></span>
+<span><span class="co">#&gt; x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01</span></span>
+<span><span class="co">#&gt; u             1.0039 0.11504  0.7785  1.2294 2.609e-18</span></span>
+<span><span class="co">#&gt; u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span>
-<span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">f</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/nlin1-1.png" title="plot of chunk nlin1" alt="plot of chunk nlin1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
@@ -250,44 +250,44 @@
 </h3>
 <p>Studying the small-sample properties of a mediation analysis</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>, <span class="va">c</span><span class="op">~</span><span class="fl">1</span><span class="op">)</span>
-<span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">+</span><span class="va">x</span> <span class="op">~</span> <span class="va">z</span>
-<span class="fu"><a href="reference/eventTime.html">eventTime</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">t</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">1</span>, c<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">S</span><span class="op">~</span><span class="va">t</span><span class="op">+</span><span class="va">status</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>, <span class="va">c</span><span class="op">~</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">+</span><span class="va">x</span> <span class="op">~</span> <span class="va">z</span></span>
+<span><span class="fu"><a href="reference/eventTime.html">eventTime</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">t</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">1</span>, c<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">S</span><span class="op">~</span><span class="va">t</span><span class="op">+</span><span class="va">status</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/mediation1-1.png" title="plot of chunk mediation1" alt="plot of chunk mediation1" width="50%" style="display: block; margin: auto;"></p>
 <p>Simulate from model and estimate indirect effects</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">onerun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">100</span><span class="op">)</span>
-    <span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">S</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span>, <span class="va">x</span><span class="op">~</span><span class="va">z</span><span class="op">)</span>
-    <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">d</span>, estimator<span class="op">=</span><span class="st">"glm"</span><span class="op">)</span>
-    <span class="fu"><a href="reference/vec.html">vec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="reference/path.html">effects</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">S</span><span class="op">~</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; 100 replications                 Time: 3.667s</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span>
-<span class="co">#&gt; Mean           1.97292         0.96537           1.00755        1.00755</span>
-<span class="co">#&gt; SD             0.16900         0.18782           0.15924        0.15924</span>
-<span class="co">#&gt; SE             0.18665         0.18090           0.16431        0.16431</span>
-<span class="co">#&gt; SE/SD          1.10446         0.96315           1.03183        1.03183</span>
-<span class="co">#&gt;                                                                        </span>
-<span class="co">#&gt; Min            1.47243         0.54497           0.54554        0.54554</span>
-<span class="co">#&gt; 2.5%           1.63496         0.61228           0.64914        0.64914</span>
-<span class="co">#&gt; 50%            1.95574         0.97154           0.99120        0.99120</span>
-<span class="co">#&gt; 97.5%          2.27887         1.32443           1.27807        1.27807</span>
-<span class="co">#&gt; Max            2.45746         1.49491           1.33446        1.33446</span>
-<span class="co">#&gt;                                                                        </span>
-<span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">onerun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">100</span><span class="op">)</span></span>
+<span>    <span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">S</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span>, <span class="va">x</span><span class="op">~</span><span class="va">z</span><span class="op">)</span></span>
+<span>    <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">d</span>, estimator<span class="op">=</span><span class="st">"glm"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="reference/vec.html">vec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="reference/path.html">effects</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">S</span><span class="op">~</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 100 replications                 Time: 3.667s</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span></span>
+<span><span class="co">#&gt; Mean           1.97292         0.96537           1.00755        1.00755</span></span>
+<span><span class="co">#&gt; SD             0.16900         0.18782           0.15924        0.15924</span></span>
+<span><span class="co">#&gt; SE             0.18665         0.18090           0.16431        0.16431</span></span>
+<span><span class="co">#&gt; SE/SD          1.10446         0.96315           1.03183        1.03183</span></span>
+<span><span class="co">#&gt;                                                                        </span></span>
+<span><span class="co">#&gt; Min            1.47243         0.54497           0.54554        0.54554</span></span>
+<span><span class="co">#&gt; 2.5%           1.63496         0.61228           0.64914        0.64914</span></span>
+<span><span class="co">#&gt; 50%            1.95574         0.97154           0.99120        0.99120</span></span>
+<span><span class="co">#&gt; 97.5%          2.27887         1.32443           1.27807        1.27807</span></span>
+<span><span class="co">#&gt; Max            2.45746         1.49491           1.33446        1.33446</span></span>
+<span><span class="co">#&gt;                                                                        </span></span>
+<span><span class="co">#&gt; Missing        0.00000         0.00000           0.00000        0.00000</span></span></code></pre></div>
 <p>Add additional simulations and visualize results</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">val</span>,<span class="fl">500</span><span class="op">)</span> <span class="co">## Add 500 simulations</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span><span class="op">)</span>,
-     true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span><span class="op">)</span>,
-     scatter.plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.html">sim</a></span><span class="op">(</span><span class="va">val</span>,<span class="fl">500</span><span class="op">)</span> <span class="co">## Add 500 simulations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Estimate"</span>, <span class="st">"Indirect.Estimate"</span><span class="op">)</span>,</span>
+<span>     true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total.Std.Err"</span>, <span class="st">"Indirect.Std.Err"</span><span class="op">)</span>,</span>
+<span>     scatter.plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/simres1-1.png" title="plot of chunk simres1" alt="plot of chunk simres1" width="50%" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -349,7 +349,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

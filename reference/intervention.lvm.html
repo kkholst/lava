@@ -66,22 +66,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for lvm</span>
-<span class="fu">intervention</span><span class="op">(</span><span class="va">object</span>, <span class="va">to</span>, <span class="va">value</span>, dist <span class="op">=</span> <span class="fu"><a href="sim.html">none.lvm</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">intervention</span><span class="op">(</span><span class="va">object</span>, <span class="va">to</span>, <span class="va">value</span>, dist <span class="op">=</span> <span class="fu"><a href="sim.html">none.lvm</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>lvm object</p></dd>
+
+
 <dt>to</dt>
 <dd><p>String defining variable or formula</p></dd>
+
+
 <dt>value</dt>
 <dd><p>function defining intervention</p></dd>
+
+
 <dt>dist</dt>
 <dd><p>Distribution</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level functions</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -90,34 +99,34 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x</span>, <span class="va">a</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">y</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu">intervention</span><span class="op">(</span><span class="va">m</span>, <span class="st">"a"</span>, value<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mm</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y a           x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 3  0.07489798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 3  0.45019776</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1 3 -0.16056416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 3  0.84669312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 3 -0.02494173</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1 3  0.40911405</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1 3 -0.14542408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1 3  0.56811111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 3 -0.13628920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 3  0.05464296</span>
-<span class="r-in"><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu">intervention</span><span class="op">(</span><span class="va">m</span>, <span class="va">a</span><span class="op">~</span><span class="va">x</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">(</span><span class="va">x</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mm</span>, <span class="fl">10</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x</span>, <span class="va">a</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">y</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu">intervention</span><span class="op">(</span><span class="va">m</span>, <span class="st">"a"</span>, value<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mm</span>, <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    y a          x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0 0 -1.8275194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 1  0.8734125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0 0 -1.3504169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0 0 -0.1909089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 0 -0.5163645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0 0 -1.6401133</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0 0 -0.4229099</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0 1  0.6295674</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 1  0.1508383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0 0 -0.5078554</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 3  0.4577942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 3  1.6463162</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1 3  1.3117039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 3  0.1758473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 3 -0.7003017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1 3  0.8740681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0 3 -0.7909800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1 3  0.5525168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 3  0.3305292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 3 -0.8173789</span>
+<span class="r-in"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu">intervention</span><span class="op">(</span><span class="va">m</span>, <span class="va">a</span><span class="op">~</span><span class="va">x</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">(</span><span class="va">x</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mm</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y a          x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0 0 -0.2232628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0 0 -0.8529459</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1 1  1.0928103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0 1  0.1812314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0 0 -0.6480695</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1 1  0.3027412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0 0 -0.9283982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0 0 -0.4408714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0 0 -0.3724818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 0 -0.8176981</span>
 </code></pre></div>
     </div>
   </div>
@@ -132,7 +141,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

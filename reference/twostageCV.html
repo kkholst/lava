@@ -66,71 +66,98 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">twostageCV</span><span class="op">(</span>
-  <span class="va">model1</span>,
-  <span class="va">model2</span>,
-  <span class="va">data</span>,
-  control1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
-  control2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
-  <span class="va">knots.boundary</span>,
-  nmix <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,
-  df <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,
-  fix <span class="op">=</span> <span class="cn">TRUE</span>,
-  std.err <span class="op">=</span> <span class="cn">TRUE</span>,
-  nfolds <span class="op">=</span> <span class="fl">5</span>,
-  rep <span class="op">=</span> <span class="fl">1</span>,
-  messages <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">twostageCV</span><span class="op">(</span></span>
+<span>  <span class="va">model1</span>,</span>
+<span>  <span class="va">model2</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  control1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  control2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="va">knots.boundary</span>,</span>
+<span>  nmix <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
+<span>  df <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,</span>
+<span>  fix <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  std.err <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nfolds <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  rep <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  messages <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>model1</dt>
 <dd><p>model 1 (exposure measurement error model)</p></dd>
+
+
 <dt>model2</dt>
 <dd><p>model 2</p></dd>
+
+
 <dt>data</dt>
 <dd><p>data.frame</p></dd>
+
+
 <dt>control1</dt>
 <dd><p>optimization parameters for model 1</p></dd>
+
+
 <dt>control2</dt>
 <dd><p>optimization parameters for model 1</p></dd>
+
+
 <dt>knots.boundary</dt>
 <dd><p>boundary points for natural cubic spline basis</p></dd>
+
+
 <dt>nmix</dt>
 <dd><p>number of mixture components</p></dd>
+
+
 <dt>df</dt>
 <dd><p>spline degrees of freedom</p></dd>
+
+
 <dt>fix</dt>
 <dd><p>automatically fix parameters for identification (TRUE)</p></dd>
+
+
 <dt>std.err</dt>
 <dd><p>calculation of standard errors (TRUE)</p></dd>
+
+
 <dt>nfolds</dt>
 <dd><p>Number of folds (cross-validation)</p></dd>
+
+
 <dt>rep</dt>
 <dd><p>Number of repeats of cross-validation</p></dd>
+
+
 <dt>messages</dt>
 <dd><p>print information (&gt;0)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments to lower level functions</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"> <span class="co">## Reduce Ex.Timings##'</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">+</span><span class="va">x3</span> <span class="op">~</span> <span class="va">u</span>, latent<span class="op">=</span> <span class="op">~</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">)</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">functional</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span><span class="op">)</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">u</span>, value<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">u1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">uniform.lvm</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,n<span class="op">=</span><span class="fl">500</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="twostage.lvmfit.html">nonlinear</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">~</span><span class="va">u1</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'mets'</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">val</span> <span class="op">&lt;-</span> <span class="fu">twostageCV</span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span>, std.err<span class="op">=</span><span class="cn">FALSE</span>, df<span class="op">=</span><span class="fl">2</span><span class="op">:</span><span class="fl">6</span>, nmix<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                  nfolds<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">val</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">## Reduce Ex.Timings##'</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">+</span><span class="va">x3</span> <span class="op">~</span> <span class="va">u</span>, latent<span class="op">=</span> <span class="op">~</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">functional</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span><span class="op">)</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">u</span>, value<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>, <span class="op">~</span><span class="va">u1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">uniform.lvm</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,n<span class="op">=</span><span class="fl">500</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="twostage.lvmfit.html">nonlinear</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">~</span><span class="va">u1</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'mets'</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">val</span> <span class="op">&lt;-</span> <span class="fu">twostageCV</span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span>, std.err<span class="op">=</span><span class="cn">FALSE</span>, df<span class="op">=</span><span class="fl">2</span><span class="op">:</span><span class="fl">6</span>, nmix<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                  nfolds<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">val</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ______________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selected mixture model: 1 component</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       AIC1</span>
@@ -158,7 +185,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>    y                -0.33435                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    y                 1.61964                           </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -173,7 +200,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

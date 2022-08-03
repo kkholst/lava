@@ -66,27 +66,38 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">equivalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">rel</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, k <span class="op">=</span> <span class="fl">1</span>, omitrel <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">equivalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">rel</span>, tol <span class="op">=</span> <span class="fl">0.001</span>, k <span class="op">=</span> <span class="fl">1</span>, omitrel <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvmfit</code>-object</p></dd>
+
+
 <dt>rel</dt>
 <dd><p>Formula or character-vector specifying two variables to omit from
 the model and subsequently search for possible equivalent models</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>Define two models as empirical equivalent if the absolute
 difference in score test is less than <code>tol</code></p></dd>
+
+
 <dt>k</dt>
 <dd><p>Number of parameters to test simultaneously. For <code>equivalence</code>
 the number of additional associations to be added instead of <code>rel</code>.</p></dd>
+
+
 <dt>omitrel</dt>
 <dd><p>if <code>k</code> greater than 1, this boolean defines wether to
 omit candidates containing <code>rel</code> from the output</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the lower-level functions</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -109,7 +120,7 @@ omit candidates containing <code>rel</code> from the output</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -62,12 +62,11 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.7.0" id="lava-170">lava 1.7.0<a class="anchor" aria-label="anchor" href="#lava-170"></a></h2>
-<ul><li>Development version</li>
-<li>cv method moved to the the ‘targeted’ package</li>
-<li>iid now returns the influence function and not the scaled version</li>
-<li>fixed bug where regression(“y”, value=function(x) x) did not work (y~1 did).</li>
-<li>
-</li></ul></div>
+<ul><li>
+<code>cv</code> method moved to the ‘targeted’ package</li>
+<li>New <code>IC</code> method that returns influence function of a model object. The <code>iid</code> argument <code>iid</code> of the <code>estimate</code> method is now replaced with an argument <code>IC</code> (with a user supplied matrix this must now be the actual influence function and not the sample-size scaled version returned by the <code>iid</code> method).</li>
+<li>fixed bug where calls like <code>regression("y", value=function(x) x)</code> did not work.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.10" id="lava-1610">lava 1.6.10<small>2021-09-02</small><a class="anchor" aria-label="anchor" href="#lava-1610"></a></h2>
 <ul><li>Improved starting values for MLE optimization.</li>
@@ -404,7 +403,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

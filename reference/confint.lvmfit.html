@@ -66,50 +66,71 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for lvmfit</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  parm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
-  level <span class="op">=</span> <span class="fl">0.95</span>,
-  profile <span class="op">=</span> <span class="cn">FALSE</span>,
-  curve <span class="op">=</span> <span class="cn">FALSE</span>,
-  n <span class="op">=</span> <span class="fl">20</span>,
-  interval <span class="op">=</span> <span class="cn">NULL</span>,
-  lower <span class="op">=</span> <span class="cn">TRUE</span>,
-  upper <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  parm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  profile <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  curve <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  interval <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  upper <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p><code>lvm</code>-object.</p></dd>
+
+
 <dt>parm</dt>
 <dd><p>Index of which parameters to calculate confidence limits for.</p></dd>
+
+
 <dt>level</dt>
 <dd><p>Confidence level</p></dd>
+
+
 <dt>profile</dt>
 <dd><p>Logical expression defining whether to calculate confidence
 limits via the profile log likelihood</p></dd>
+
+
 <dt>curve</dt>
 <dd><p>if FALSE and profile is TRUE, confidence limits are
 returned. Otherwise, the profile curve is returned.</p></dd>
+
+
 <dt>n</dt>
 <dd><p>Number of points to evaluate profile log-likelihood in
 over the interval defined by <code>interval</code></p></dd>
+
+
 <dt>interval</dt>
 <dd><p>Interval over which the profiling is done</p></dd>
+
+
 <dt>lower</dt>
 <dd><p>If FALSE the lower limit will not be estimated (profile intervals only)</p></dd>
+
+
 <dt>upper</dt>
 <dd><p>If FALSE the upper limit will not be estimated (profile intervals only)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A 2xp matrix with columns of lower and upper confidence limits</p>
+    
+
+<p>A 2xp matrix with columns of lower and upper confidence limits</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -132,20 +153,20 @@ log-likelihood with tau being fixed.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, <span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e</span>,<span class="fl">3</span>,profile<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, <span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e</span>,<span class="fl">3</span>,profile<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          2.5 %   97.5 %</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y 0.5888514 1.026329</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e</span>,<span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          2.5 %    97.5 %</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y 0.5547589 0.9802276</span>
-<span class="r-in"> <span class="co">## Reduce Ex.timings</span></span>
-<span class="r-in"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span>
+<span class="r-in"><span> <span class="co">## Reduce Ex.timings</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
-<span class="r-in"><span class="va">B</span></span>
+<span class="r-in"><span><span class="va">B</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-parametric bootstrap statistics (R=50):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
@@ -153,7 +174,7 @@ log-likelihood with tau being fixed.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~x   1.061750034  0.006653642  0.094422581  0.907870490  1.231099705</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y  0.767493210 -0.003652062  0.104073510  0.572331738  0.960123567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -168,7 +189,7 @@ log-likelihood with tau being fixed.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

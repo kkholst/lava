@@ -66,23 +66,34 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">csplit</span><span class="op">(</span><span class="va">x</span>, p <span class="op">=</span> <span class="cn">NULL</span>, replace <span class="op">=</span> <span class="cn">FALSE</span>, return.index <span class="op">=</span> <span class="cn">FALSE</span>, k <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">csplit</span><span class="op">(</span><span class="va">x</span>, p <span class="op">=</span> <span class="cn">NULL</span>, replace <span class="op">=</span> <span class="cn">FALSE</span>, return.index <span class="op">=</span> <span class="cn">FALSE</span>, k <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Data or integer (size)</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Number of folds, or if a number between 0 and 1 is given two folds of size p and (1-p) will be returned</p></dd>
+
+
 <dt>replace</dt>
 <dd><p>With or with-out replacement</p></dd>
+
+
 <dt>return.index</dt>
 <dd><p>If TRUE index of folds are returned otherwise the actual data splits are returned (default)</p></dd>
+
+
 <dt>k</dt>
 <dd><p>(Optional, only used when p=NULL) number of folds without shuffling</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments to lower-level functions</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -91,7 +102,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">foldr</span><span class="op">(</span><span class="fl">5</span>,<span class="fl">2</span>,rep<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">foldr</span><span class="op">(</span><span class="fl">5</span>,<span class="fl">2</span>,rep<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4 1 3</span>
@@ -108,7 +119,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu">csplit</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">csplit</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 7 8 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -118,7 +129,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`3`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 3 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu">csplit</span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span><span class="op">)</span> <span class="co">## Split in two sets 1:(n/2) and (n/2+1):n</span></span>
+<span class="r-in"><span><span class="fu">csplit</span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span><span class="op">)</span> <span class="co">## Split in two sets 1:(n/2) and (n/2+1):n</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1          5.1         3.5          1.4         0.2  setosa</span>
@@ -135,7 +146,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9           4.4         2.9          1.4         0.2  setosa</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10          4.9         3.1          1.5         0.1  setosa</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu">csplit</span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span>,<span class="fl">0.5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">csplit</span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span>,<span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8           5.0         3.4          1.5         0.2  setosa</span>
@@ -166,7 +177,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

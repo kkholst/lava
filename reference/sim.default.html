@@ -66,40 +66,57 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for default</span>
-<span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span>
-  x <span class="op">=</span> <span class="cn">NULL</span>,
-  R <span class="op">=</span> <span class="fl">100</span>,
-  f <span class="op">=</span> <span class="cn">NULL</span>,
-  colnames <span class="op">=</span> <span class="cn">NULL</span>,
-  messages <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">messages</span>,
-  seed <span class="op">=</span> <span class="cn">NULL</span>,
-  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  iter <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for default</span></span>
+<span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  R <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  f <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colnames <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  messages <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">messages</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  iter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>function or 'sim' object</p></dd>
+
+
 <dt>R</dt>
 <dd><p>Number of replications or data.frame with parameters</p></dd>
+
+
 <dt>f</dt>
 <dd><p>Optional function (i.e., if x is a matrix)</p></dd>
+
+
 <dt>colnames</dt>
 <dd><p>Optional column names</p></dd>
+
+
 <dt>messages</dt>
 <dd><p>Messages</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>(optional) Seed (needed with cl=TRUE)</p></dd>
+
+
 <dt>args</dt>
 <dd><p>(optional) list of named arguments passed to (mc)mapply</p></dd>
+
+
 <dt>iter</dt>
 <dd><p>If TRUE the iteration number is passed as first argument to (mc)mapply</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to (mc)mapply</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -108,23 +125,23 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">e</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">uniform.lvm</a></span><span class="op">(</span>a<span class="op">=</span><span class="op">-</span><span class="fl">1.1</span>,b<span class="op">=</span><span class="fl">1.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">e</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">(</span><span class="fl">1</span><span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">4</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,sd<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">onerun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">iter</span><span class="op">=</span><span class="cn">NULL</span>,<span class="va">...</span>,<span class="va">n</span><span class="op">=</span><span class="fl">2e3</span>,<span class="va">b0</span><span class="op">=</span><span class="fl">1</span>,<span class="va">idx</span><span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">n</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y~x"</span><span class="op">=</span><span class="va">b0</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span>
-<span class="r-in">             <span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="op">]</span>,</span>
-<span class="r-in">             <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">l</span>,only.coef<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Estimate"</span>,<span class="st">"Model.se"</span>,<span class="st">"Model.lo"</span>,<span class="st">"Model.hi"</span>,</span>
-<span class="r-in">                    <span class="st">"Sandwich.se"</span>,<span class="st">"Sandwich.lo"</span>,<span class="st">"Sandwich.hi"</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">res</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>,R<span class="op">=</span><span class="fl">10</span>,b0<span class="op">=</span><span class="fl">1</span>,messages<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">val</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">e</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">uniform.lvm</a></span><span class="op">(</span>a<span class="op">=</span><span class="op">-</span><span class="fl">1.1</span>,b<span class="op">=</span><span class="fl">1.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">e</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">(</span><span class="fl">1</span><span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">4</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,sd<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">onerun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">iter</span><span class="op">=</span><span class="cn">NULL</span>,<span class="va">...</span>,<span class="va">n</span><span class="op">=</span><span class="fl">2e3</span>,<span class="va">b0</span><span class="op">=</span><span class="fl">1</span>,<span class="va">idx</span><span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">n</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y~x"</span><span class="op">=</span><span class="va">b0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>             <span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="op">]</span>,</span></span>
+<span class="r-in"><span>             <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">l</span>,only.coef<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Estimate"</span>,<span class="st">"Model.se"</span>,<span class="st">"Model.lo"</span>,<span class="st">"Model.hi"</span>,</span></span>
+<span class="r-in"><span>                    <span class="st">"Sandwich.se"</span>,<span class="st">"Sandwich.lo"</span>,<span class="st">"Sandwich.hi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">res</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>,R<span class="op">=</span><span class="fl">10</span>,b0<span class="op">=</span><span class="fl">1</span>,messages<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">val</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Model.se Model.lo Model.hi Sandwich.se Sandwich.lo Sandwich.hi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.928718 0.033366 0.863282 0.994155 0.047050    0.836502    1.020935   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.995991 0.001633 0.992788 0.999193 0.002255    0.991571    1.000411   </span>
@@ -140,10 +157,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate  Model.se Model.lo  Model.hi Sandwich.se Sandwich.lo Sandwich.hi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean 0.992421 0.0066400 0.979399 1.0054433   0.0093655    0.974065   1.0107773</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SD   0.022501 0.0097691 0.041125 0.0074485   0.0137735    0.048867   0.0090643</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">val</span>,R<span class="op">=</span><span class="fl">40</span>,b0<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co">## append results</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,confint<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.881s</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">val</span>,R<span class="op">=</span><span class="fl">40</span>,b0<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co">## append results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,confint<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.043s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate Estimate.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean      0.9941568  0.9941568</span>
@@ -162,9 +179,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bias     -0.0058432 -0.0058432</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RMSE      0.0163097  0.0163097</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.881s</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.043s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Model Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean    0.9941568 0.994157</span>
@@ -180,8 +197,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Missing 0.0000000 0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,confint<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.881s</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,confint<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.043s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Model   Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean      0.9941568  0.9941568</span>
@@ -202,22 +219,22 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bias     -0.0058432 -0.0058432</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RMSE      0.0163097  0.0163097</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fl">1</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,polygon<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,main<span class="op">=</span><span class="cn">NULL</span>,</span>
-<span class="r-in">         true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,</span>
-<span class="r-in">         line.lwd<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gray20"</span>,<span class="st">"gray60"</span><span class="op">)</span>,</span>
-<span class="r-in">         rug<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span>
-<span class="r-in">         names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span><span class="op">=</span><span class="fl">1</span>, <span class="va">b</span><span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">a</span><span class="op">*</span><span class="va">b</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="Expand.html">Expand</a></span><span class="op">(</span>a<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, b<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">R</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fl">1</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,polygon<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,main<span class="op">=</span><span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>         true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         line.lwd<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gray20"</span>,<span class="st">"gray60"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         rug<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span><span class="op">=</span><span class="fl">1</span>, <span class="va">b</span><span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">a</span><span class="op">*</span><span class="va">b</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="Expand.html">Expand</a></span><span class="op">(</span>a<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, b<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">R</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1    1    1    1    1   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2    2    2    2    2   </span>
@@ -232,7 +249,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>        [,1]   [,2]   [,3]   [,4]   [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean 4.0000 4.0000 4.0000 4.0000 4.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SD   2.5495 2.5495 2.5495 2.5495 2.5495</span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span> <span class="fu">f</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>, <span class="fl">3</span>, args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a<span class="op">=</span><span class="fl">5</span>,b<span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span> <span class="fu">f</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>, <span class="fl">3</span>, args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a<span class="op">=</span><span class="fl">5</span>,b<span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 25   25   25   25   25  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 25   25   25   25   25  </span>
@@ -241,7 +258,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean   25   25   25   25   25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SD      0    0    0    0    0</span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">iter</span><span class="op">=</span><span class="fl">1</span>,<span class="va">a</span><span class="op">=</span><span class="fl">5</span>,<span class="va">b</span><span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="va">iter</span><span class="op">*</span><span class="fu">f</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>, iter<span class="op">=</span><span class="cn">TRUE</span>, R<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">iter</span><span class="op">=</span><span class="fl">1</span>,<span class="va">a</span><span class="op">=</span><span class="fl">5</span>,<span class="va">b</span><span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="va">iter</span><span class="op">*</span><span class="fu">f</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>, iter<span class="op">=</span><span class="cn">TRUE</span>, R<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  25   25   25   25   25 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  50   50   50   50   50 </span>
@@ -266,7 +283,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

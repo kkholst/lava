@@ -66,36 +66,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wkm</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">mu</span>,
-  <span class="va">data</span>,
-  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,
-  iter.max <span class="op">=</span> <span class="fl">20</span>,
-  n.start <span class="op">=</span> <span class="fl">5</span>,
-  init <span class="op">=</span> <span class="st">"kmpp"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wkm</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">mu</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  iter.max <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  n.start <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  init <span class="op">=</span> <span class="st">"kmpp"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Data (or formula)</p></dd>
+
+
 <dt>mu</dt>
 <dd><p>Initial centers (or number centers chosen randomly among x)</p></dd>
+
+
 <dt>data</dt>
 <dd><p>optional data frmae</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>Optional weights</p></dd>
+
+
 <dt>iter.max</dt>
 <dd><p>Max number of iterations</p></dd>
+
+
 <dt>n.start</dt>
 <dd><p>Number of restarts</p></dd>
+
+
 <dt>init</dt>
 <dd><p>method to create initial centres (default kmeans++)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level functions</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -114,7 +129,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

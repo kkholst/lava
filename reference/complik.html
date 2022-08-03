@@ -68,49 +68,70 @@ likelihood decomposition.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">complik</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">data</span>,
-  k <span class="op">=</span> <span class="fl">2</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"nearest"</span><span class="op">)</span>,
-  <span class="va">pairlist</span>,
-  messages <span class="op">=</span> <span class="fl">0</span>,
-  estimator <span class="op">=</span> <span class="st">"normal"</span>,
-  quick <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">complik</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"nearest"</span><span class="op">)</span>,</span>
+<span>  <span class="va">pairlist</span>,</span>
+<span>  messages <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  estimator <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>  quick <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvm</code>-object</p></dd>
+
+
 <dt>data</dt>
 <dd><p>data.frame</p></dd>
+
+
 <dt>k</dt>
 <dd><p>Size of composite groups</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Determines number of groups. With <code>type="nearest"</code> (default)
 only neighboring items will be grouped, e.g. for <code>k=2</code>
 (y1,y2),(y2,y3),... With <code>type="all"</code> all combinations of size <code>k</code>
 are included</p></dd>
+
+
 <dt>pairlist</dt>
 <dd><p>A list of indices specifying the composite groups. Optional
 argument which overrides <code>k</code> and <code>type</code> but gives complete
 flexibility in the specification of the composite likelihood</p></dd>
+
+
 <dt>messages</dt>
 <dd><p>Control amount of messages printed</p></dd>
+
+
 <dt>estimator</dt>
 <dd><p>Model (pseudo-likelihood) to use for the pairs/groups</p></dd>
+
+
 <dt>quick</dt>
 <dd><p>If TRUE the parameter estimates are calculated but all additional
 information such as standard errors are skipped</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments parsed on to lower-level functions</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>estimate.complik</code> inheriting methods from <code>lvm</code></p>
+    
+
+<p>An object of class <code>estimate.complik</code> inheriting methods from <code>lvm</code></p>
+
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -123,12 +144,12 @@ information such as standard errors are skipped</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">b</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="fl">1</span><span class="op">*</span><span class="va">u</span><span class="op">[</span><span class="fl">0</span><span class="op">]</span>,latent<span class="op">=</span><span class="op">~</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="ordinal-set.html">ordinal</a></span><span class="op">(</span><span class="va">m</span>,K<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">50</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mets"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">complik</span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"all"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">b</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="fl">1</span><span class="op">*</span><span class="va">u</span><span class="op">[</span><span class="fl">0</span><span class="op">]</span>,latent<span class="op">=</span><span class="op">~</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ordinal-set.html">ordinal</a></span><span class="op">(</span><span class="va">m</span>,K<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">50</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mets"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">complik</span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"all"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     163.15053: 0.540600 0.484448 0.209475 0.939309  1.06729</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   2:     160.91018: 0.418339 0.334648 -0.188107  1.05711  1.14818</span>
@@ -164,7 +185,7 @@ information such as standard errors are skipped</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

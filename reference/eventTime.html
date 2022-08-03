@@ -70,19 +70,26 @@ then one can specify</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">eventTime</span><span class="op">(</span><span class="va">object</span>, <span class="va">formula</span>, eventName <span class="op">=</span> <span class="st">"status"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eventTime</span><span class="op">(</span><span class="va">object</span>, <span class="va">formula</span>, eventName <span class="op">=</span> <span class="st">"status"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>Model object</p></dd>
+
+
 <dt>formula</dt>
 <dd><p>Formula (see details)</p></dd>
+
+
 <dt>eventName</dt>
 <dd><p>Event names</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower levels functions</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -100,13 +107,13 @@ one gets 2 new columns:</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Right censored survival data without covariates</span></span>
-<span class="r-in"><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxExponential.lvm</a></span><span class="op">(</span>rate<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m0</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">10</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Right censored survival data without covariates</span></span></span>
+<span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxExponential.lvm</a></span><span class="op">(</span>rate<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m0</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime  censtime      time status</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   2.411880  4.533928  2.411880      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.611888 23.252592 12.611888      1</span>
@@ -118,24 +125,24 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   2.439480  4.756341  2.439480      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  11.931257  4.708455  4.708455      0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10  2.167252 10.303195  2.167252      1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Alternative specification of the right censored survival outcome</span></span>
-<span class="r-in"><span class="co">## eventTime(m,"Status") &lt;- ~min(eventtime=1,censtime=0)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Cox regression:</span></span>
-<span class="r-in"><span class="co"># lava implements two different parametrizations of the same</span></span>
-<span class="r-in"><span class="co"># Weibull regression model. The first specifies</span></span>
-<span class="r-in"><span class="co"># the effects of covariates as proportional hazard ratios</span></span>
-<span class="r-in"><span class="co"># and works as follows:</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"sex"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"sbp"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">normal.lvm</a></span><span class="op">(</span>mean<span class="op">=</span><span class="fl">120</span>,sd<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.4</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.01</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Alternative specification of the right censored survival outcome</span></span></span>
+<span class="r-in"><span><span class="co">## eventTime(m,"Status") &lt;- ~min(eventtime=1,censtime=0)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Cox regression:</span></span></span>
+<span class="r-in"><span><span class="co"># lava implements two different parametrizations of the same</span></span></span>
+<span class="r-in"><span><span class="co"># Weibull regression model. The first specifies</span></span></span>
+<span class="r-in"><span><span class="co"># the effects of covariates as proportional hazard ratios</span></span></span>
+<span class="r-in"><span><span class="co"># and works as follows:</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"sex"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m</span>,<span class="st">"sbp"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">normal.lvm</a></span><span class="op">(</span>mean<span class="op">=</span><span class="fl">120</span>,sd<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.4</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.01</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex       sbp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  8.545196 13.206909  8.545196      1   0  99.50431</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 16.881250 14.468739 14.468739      0   0 126.00263</span>
@@ -143,35 +150,35 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  7.557589  8.422240  7.557589      1   0 109.83046</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.069883 12.497991 12.497991      0   0 120.36231</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  4.874140  6.903913  4.874140      1   0 117.84913</span>
-<span class="r-in"><span class="co"># The parameters can be recovered using a Cox regression</span></span>
-<span class="r-in"><span class="co"># routine or a Weibull regression model. E.g.,</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">18</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="va">sr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SurvRegCensCov</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu">ConvertWeibull</span><span class="op">(</span><span class="va">sr</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The second parametrization is an accelerated failure time</span></span>
-<span class="r-in"><span class="co"># regression model and uses the function weibull.lvm instead</span></span>
-<span class="r-in"><span class="co"># of coxWeibull.lvm to specify the event time distributions.</span></span>
-<span class="r-in"><span class="co"># Here is an example:</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">ma</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">3</span>,shape<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ma</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">ma</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"sex"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"sbp"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">normal.lvm</a></span><span class="op">(</span>mean<span class="op">=</span><span class="fl">120</span>,sd<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">ma</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.7</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">ma</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.008</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">ma</span>,<span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># The parameters can be recovered using a Cox regression</span></span></span>
+<span class="r-in"><span><span class="co"># routine or a Weibull regression model. E.g.,</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">18</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="va">sr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SurvRegCensCov</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">ConvertWeibull</span><span class="op">(</span><span class="va">sr</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The second parametrization is an accelerated failure time</span></span></span>
+<span class="r-in"><span><span class="co"># regression model and uses the function weibull.lvm instead</span></span></span>
+<span class="r-in"><span><span class="co"># of coxWeibull.lvm to specify the event time distributions.</span></span></span>
+<span class="r-in"><span><span class="co"># Here is an example:</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ma</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">3</span>,shape<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ma</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">ma</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"sex"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">ma</span>,<span class="st">"sbp"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">normal.lvm</a></span><span class="op">(</span>mean<span class="op">=</span><span class="fl">120</span>,sd<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">ma</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.7</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">ma</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.008</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">ma</span>,<span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex       sbp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.5531481 1.1285503 0.5531481      1   1  99.69983</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 4.2973225 1.4665922 1.4665922      0   1 118.40727</span>
@@ -179,31 +186,31 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 1.7404946 1.2284359 1.2284359      0   1 103.65464</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.2765550 0.8633771 0.2765550      1   1 135.44182</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 1.5803203 0.6912997 0.6912997      0   0 116.68776</span>
-<span class="r-in"><span class="co"># The regression coefficients of the AFT model</span></span>
-<span class="r-in"><span class="co"># can be tranformed into log(hazard ratios):</span></span>
-<span class="r-in"><span class="co">#  coef.coxWeibull = - coef.weibull / shape.weibull</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">da</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">ma</span>,<span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">da</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fa</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>,<span class="op">-</span><span class="fl">0.008</span><span class="op">)</span><span class="op">/</span><span class="fl">0.7</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The Weibull parameters are related as follows:</span></span>
-<span class="r-in"><span class="co"># shape.coxWeibull = 1/shape.weibull</span></span>
-<span class="r-in"><span class="co"># scale.coxWeibull = exp(-scale.weibull/shape.weibull)</span></span>
-<span class="r-in"><span class="co"># scale.AFT = log(scale.coxWeibull) / shape.coxWeibull</span></span>
-<span class="r-in"><span class="co"># Thus, the following are equivalent parametrizations</span></span>
-<span class="r-in"><span class="co"># which produce exactly the same random numbers:</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">model.aft</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># The regression coefficients of the AFT model</span></span></span>
+<span class="r-in"><span><span class="co"># can be tranformed into log(hazard ratios):</span></span></span>
+<span class="r-in"><span><span class="co">#  coef.coxWeibull = - coef.weibull / shape.weibull</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">da</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">ma</span>,<span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">sbp</span>,data<span class="op">=</span><span class="va">da</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>,<span class="op">-</span><span class="fl">0.008</span><span class="op">)</span><span class="op">/</span><span class="fl">0.7</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The Weibull parameters are related as follows:</span></span></span>
+<span class="r-in"><span><span class="co"># shape.coxWeibull = 1/shape.weibull</span></span></span>
+<span class="r-in"><span><span class="co"># scale.coxWeibull = exp(-scale.weibull/shape.weibull)</span></span></span>
+<span class="r-in"><span><span class="co"># scale.AFT = log(scale.coxWeibull) / shape.coxWeibull</span></span></span>
+<span class="r-in"><span><span class="co"># Thus, the following are equivalent parametrizations</span></span></span>
+<span class="r-in"><span><span class="co"># which produce exactly the same random numbers:</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model.aft</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,shape<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  2.890253 3.1436842</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  2.981019 0.4127472</span>
@@ -211,12 +218,12 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  2.948915 1.1571425</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  2.103028 2.1804985</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  5.680430 1.8107400</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">model.cox</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model.cox</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 12.552208 13.652847</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 12.946401  1.792538</span>
@@ -224,20 +231,20 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 12.806975  5.025406</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  9.133336  9.469785</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 24.669793  7.863944</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The minimum of multiple latent times one of them still</span></span>
-<span class="r-in"><span class="co"># being a censoring time, yield</span></span>
-<span class="r-in"><span class="co"># right censored competing risks data</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">X2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">mc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">T1</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">X1</span>,<span class="op">-</span><span class="fl">.5</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">X2</span>,<span class="fl">0.3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">mc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">T2</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">X2</span>,<span class="fl">0.6</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">T1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">T2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">C</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">mc</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>T1<span class="op">=</span><span class="fl">1</span>,T2<span class="op">=</span><span class="fl">2</span>,C<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"event"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mc</span>,<span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The minimum of multiple latent times one of them still</span></span></span>
+<span class="r-in"><span><span class="co"># being a censoring time, yield</span></span></span>
+<span class="r-in"><span><span class="co"># right censored competing risks data</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">X2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">mc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">T1</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">X1</span>,<span class="op">-</span><span class="fl">.5</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">X2</span>,<span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">mc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">T2</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">X2</span>,<span class="fl">0.6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">T1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">T2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">mc</span>,<span class="op">~</span><span class="va">C</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">mc</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>T1<span class="op">=</span><span class="fl">1</span>,T2<span class="op">=</span><span class="fl">2</span>,C<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"event"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">mc</span>,<span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   X2       T1        X1        T2         C     time event</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  0 7.087078 0.9728744 11.814841  3.204723 3.204723     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  0 9.105653 1.7165340  7.716248 15.423587 7.716248     2</span>
@@ -245,8 +252,8 @@ one gets 2 new columns:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  0 5.150130 0.3665811 11.629342  7.433594 5.150130     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 6.171934 1.1807892  1.627404  2.395786 1.627404     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  0 7.931261 0.6431921  3.930187 12.323722 3.930187     2</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -261,7 +268,7 @@ one gets 2 new columns:</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

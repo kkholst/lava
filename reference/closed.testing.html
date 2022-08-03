@@ -66,43 +66,50 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">closed.testing</span><span class="op">(</span>
-  <span class="va">object</span>,
-  idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,
-  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">closed.testing</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>estimate object</p></dd>
+
+
 <dt>idx</dt>
 <dd><p>Index of parameters to adjust for multiple testing</p></dd>
+
+
 <dt>null</dt>
 <dd><p>Null hypothesis value</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span>,<span class="va">y4</span>,<span class="va">y5</span>,<span class="va">y6</span>,<span class="va">y7</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.25</span>,<span class="fl">0</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>, to<span class="op">=</span><span class="fu"><a href="vars.html">endogenous</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, from<span class="op">=</span><span class="st">"u"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="fu"><a href="covariance.html">variance</a></span><span class="op">(</span><span class="va">m</span>,<span class="fu"><a href="vars.html">endogenous</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y3</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y4</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y5</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y6</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">l7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y7</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">(</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,<span class="va">l4</span>,<span class="va">l5</span>,<span class="va">l6</span>,<span class="va">l7</span>,subset<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span>,<span class="va">y4</span>,<span class="va">y5</span>,<span class="va">y6</span>,<span class="va">y7</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.25</span>,<span class="fl">0</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>, to<span class="op">=</span><span class="fu"><a href="vars.html">endogenous</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, from<span class="op">=</span><span class="st">"u"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="covariance.html">variance</a></span><span class="op">(</span><span class="va">m</span>,<span class="fu"><a href="vars.html">endogenous</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">200</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y3</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y4</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y5</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y6</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y7</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,<span class="va">l4</span>,<span class="va">l5</span>,<span class="va">l6</span>,<span class="va">l7</span>,subset<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err      2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x   -0.02201 0.09932 -0.216676 0.1727 8.246e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ___                                            </span>
@@ -117,14 +124,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> x.5  0.20565 0.10618 -0.002458 0.4138 5.277e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ___                                            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x.6  0.05240 0.11817 -0.179216 0.2840 6.575e-01</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mets"</span>,quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="fu">p.correct</span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mets"</span>,quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="fu">p.correct</span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.009453147</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu">closed.testing</span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu">closed.testing</span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8246281477 0.0207936759 0.6158722827 0.0001020005 0.0821962107</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] 0.1907676602 0.7835113360</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -139,7 +146,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -66,56 +66,83 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for lvm</span>
-<span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>,R<span class="op">=</span><span class="fl">100</span>,<span class="va">data</span>,fun<span class="op">=</span><span class="cn">NULL</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-                          <span class="va">p</span>, parametric<span class="op">=</span><span class="cn">FALSE</span>, bollenstine<span class="op">=</span><span class="cn">FALSE</span>,
-                          constraints<span class="op">=</span><span class="cn">TRUE</span>,sd<span class="op">=</span><span class="cn">FALSE</span>,
-                          <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>,R<span class="op">=</span><span class="fl">100</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
-                             control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,
-                             p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, parametric<span class="op">=</span><span class="cn">FALSE</span>, bollenstine<span class="op">=</span><span class="cn">FALSE</span>,
-                             estimator<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>,R<span class="op">=</span><span class="fl">100</span>,<span class="va">data</span>,fun<span class="op">=</span><span class="cn">NULL</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                          <span class="va">p</span>, parametric<span class="op">=</span><span class="cn">FALSE</span>, bollenstine<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                          constraints<span class="op">=</span><span class="cn">TRUE</span>,sd<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                          <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>,R<span class="op">=</span><span class="fl">100</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<span>                             control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                             p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, parametric<span class="op">=</span><span class="cn">FALSE</span>, bollenstine<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                             estimator<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvm</code>-object.</p></dd>
+
+
 <dt>R</dt>
 <dd><p>Number of bootstrap samples</p></dd>
+
+
 <dt>data</dt>
 <dd><p>The data to resample from</p></dd>
+
+
 <dt>fun</dt>
 <dd><p>Optional function of the (bootstrapped) model-fit defining the
 statistic of interest</p></dd>
+
+
 <dt>control</dt>
 <dd><p>Options to the optimization routine</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Parameter vector of the null model for the parametric bootstrap</p></dd>
+
+
 <dt>parametric</dt>
 <dd><p>If TRUE a parametric bootstrap is calculated. If FALSE a
 non-parametric (row-sampling) bootstrap is computed.</p></dd>
+
+
 <dt>bollenstine</dt>
 <dd><p>Bollen-Stine transformation (non-parametric bootstrap) for bootstrap hypothesis testing.</p></dd>
+
+
 <dt>constraints</dt>
 <dd><p>Logical indicating whether non-linear parameter
 constraints should be included in the bootstrap procedure</p></dd>
+
+
 <dt>sd</dt>
 <dd><p>Logical indicating whether standard error estimates should be
 included in the bootstrap procedure</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments, e.g. choice of estimator.</p></dd>
+
+
 <dt>estimator</dt>
 <dd><p>String definining estimator, e.g. 'gaussian' (see
 <code>estimator</code>)</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>Optional weights matrix used by <code>estimator</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>bootstrap.lvm</code> object.</p>
+    
+
+<p>A <code>bootstrap.lvm</code> object.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -128,13 +155,13 @@ included in the bootstrap procedure</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"> <span class="co">## Reduce Ex.Timings</span></span>
-<span class="r-in"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span>,parallel<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span>,parallel<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
-<span class="r-in"><span class="va">B</span></span>
+<span class="r-in"><span><span class="va">B</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-parametric bootstrap statistics (R=50):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate    Bias        Std.Err     2.5 %       97.5 %     </span>
@@ -142,7 +169,7 @@ included in the bootstrap procedure</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~x   0.91271522 -0.02885440  0.06849834  0.75899923  0.99515857</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y  0.95969487 -0.01217674  0.16545588  0.67932143  1.28333411</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -157,7 +184,7 @@ included in the bootstrap procedure</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

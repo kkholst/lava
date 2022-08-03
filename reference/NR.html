@@ -66,33 +66,46 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">NR</span><span class="op">(</span>
-  <span class="va">start</span>,
-  objective <span class="op">=</span> <span class="cn">NULL</span>,
-  gradient <span class="op">=</span> <span class="cn">NULL</span>,
-  hessian <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">control</span>,
-  args <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">NR</span><span class="op">(</span></span>
+<span>  <span class="va">start</span>,</span>
+<span>  objective <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gradient <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hessian <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">control</span>,</span>
+<span>  args <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>start</dt>
 <dd><p>Starting value</p></dd>
+
+
 <dt>objective</dt>
 <dd><p>Optional objective function (used for selecting step length)</p></dd>
+
+
 <dt>gradient</dt>
 <dd><p>gradient</p></dd>
+
+
 <dt>hessian</dt>
 <dd><p>hessian (if NULL a numerical derivative is used)</p></dd>
+
+
 <dt>control</dt>
 <dd><p>optimization arguments (see details)</p></dd>
+
+
 <dt>args</dt>
 <dd><p>Optional list of arguments parsed to objective, gradient and hessian</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments parsed to lower level functions</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -107,14 +120,14 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Objective function with gradient and hessian as attributes</span></span>
-<span class="r-in"><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>; <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
-<span class="r-in">   <span class="va">val</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span><span class="op">*</span><span class="va">y</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="va">val</span>, gradient<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="va">y</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">*</span><span class="va">y</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span class="r-in">             hessian<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">*</span><span class="va">y</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">y</span>,<span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="fu">NR</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="va">f</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Objective function with gradient and hessian as attributes</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>; <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span>   <span class="va">val</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span><span class="op">*</span><span class="va">y</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="va">val</span>, gradient<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="va">y</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">*</span><span class="va">y</span><span class="op">*</span><span class="va">x</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>             hessian<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">*</span><span class="va">y</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">y</span>,<span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">NR</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $par</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.7324166  0.6825751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -138,10 +151,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"minSV")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -2.473621</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Parsing arguments to the function and</span></span>
-<span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="op">(</span><span class="va">x</span><span class="op">*</span><span class="va">y</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
-<span class="r-in"><span class="fu">NR</span><span class="op">(</span><span class="fl">0</span>, gradient<span class="op">=</span><span class="va">g</span>, args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">2</span><span class="op">)</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span>,tol<span class="op">=</span><span class="fl">1e-20</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Parsing arguments to the function and</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="op">(</span><span class="va">x</span><span class="op">*</span><span class="va">y</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="fu">NR</span><span class="op">(</span><span class="fl">0</span>, gradient<span class="op">=</span><span class="va">g</span>, args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>y<span class="op">=</span><span class="fl">2</span><span class="op">)</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span>,tol<span class="op">=</span><span class="fl">1e-20</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Iter=0	;	</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  	p= 0 </span>
@@ -964,8 +977,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.0004044106</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -980,7 +993,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

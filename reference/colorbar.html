@@ -66,64 +66,89 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">colorbar</span><span class="op">(</span>
-  clut <span class="op">=</span> <span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>, start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>, <span class="va">alpha</span><span class="op">)</span>,
-  x.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,
-  y.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,
-  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">clut</span><span class="op">)</span>,
-  digits <span class="op">=</span> <span class="fl">2</span>,
-  <span class="va">label.offset</span>,
-  srt <span class="op">=</span> <span class="fl">45</span>,
-  cex <span class="op">=</span> <span class="fl">0.5</span>,
-  border <span class="op">=</span> <span class="cn">NA</span>,
-  alpha <span class="op">=</span> <span class="fl">0.5</span>,
-  position <span class="op">=</span> <span class="fl">1</span>,
-  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"horizontal"</span>, <span class="st">"vertical"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">colorbar</span><span class="op">(</span></span>
+<span>  clut <span class="op">=</span> <span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>, start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>, <span class="va">alpha</span><span class="op">)</span>,</span>
+<span>  x.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  y.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">clut</span><span class="op">)</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  <span class="va">label.offset</span>,</span>
+<span>  srt <span class="op">=</span> <span class="fl">45</span>,</span>
+<span>  cex <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  border <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  position <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"horizontal"</span>, <span class="st">"vertical"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>clut</dt>
 <dd><p>Color look-up table</p></dd>
+
+
 <dt>x.range</dt>
 <dd><p>x range</p></dd>
+
+
 <dt>y.range</dt>
 <dd><p>y range</p></dd>
+
+
 <dt>values</dt>
 <dd><p>label values</p></dd>
+
+
 <dt>digits</dt>
 <dd><p>number of digits</p></dd>
+
+
 <dt>label.offset</dt>
 <dd><p>label offset</p></dd>
+
+
 <dt>srt</dt>
 <dd><p>rotation of labels</p></dd>
+
+
 <dt>cex</dt>
 <dd><p>text size</p></dd>
+
+
 <dt>border</dt>
 <dd><p>border of color bar rectangles</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>Alpha (transparency) level 0-1</p></dd>
+
+
 <dt>position</dt>
 <dd><p>Label position left/bottom (1) or top/right (2) or no text (0)</p></dd>
+
+
 <dt>direction</dt>
 <dd><p>horizontal or vertical color bars</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional low level arguments (i.e. parsed to <code>text</code>)</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">plotNeuro</span><span class="op">(</span><span class="va">x</span>,roi<span class="op">=</span><span class="va">R</span>,mm<span class="op">=</span><span class="op">-</span><span class="fl">18</span>,range<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">colorbar</span><span class="op">(</span>clut<span class="op">=</span><span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>,start<span class="op">=</span><span class="fl">0</span>,end<span class="op">=</span><span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>,<span class="fl">0.5</span><span class="op">)</span>,</span>
-<span class="r-in">         x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40</span>,<span class="fl">40</span><span class="op">)</span>,y.range<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">84</span>,<span class="fl">90</span><span class="op">)</span>,values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">colorbar</span><span class="op">(</span>clut<span class="op">=</span><span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>,start<span class="op">=</span><span class="fl">0</span>,end<span class="op">=</span><span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>,<span class="fl">0.5</span><span class="op">)</span>,</span>
-<span class="r-in">         x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>,<span class="fl">10</span><span class="op">)</span>,y.range<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>,<span class="fl">50</span><span class="op">)</span>,values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span>
-<span class="r-in">         direction<span class="op">=</span><span class="st">"vertical"</span>,border<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">plotNeuro</span><span class="op">(</span><span class="va">x</span>,roi<span class="op">=</span><span class="va">R</span>,mm<span class="op">=</span><span class="op">-</span><span class="fl">18</span>,range<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">colorbar</span><span class="op">(</span>clut<span class="op">=</span><span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>,start<span class="op">=</span><span class="fl">0</span>,end<span class="op">=</span><span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>,<span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40</span>,<span class="fl">40</span><span class="op">)</span>,y.range<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">84</span>,<span class="fl">90</span><span class="op">)</span>,values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">colorbar</span><span class="op">(</span>clut<span class="op">=</span><span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">11</span>,start<span class="op">=</span><span class="fl">0</span>,end<span class="op">=</span><span class="fl">0.69</span><span class="op">)</span><span class="op">)</span>,<span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>,<span class="fl">10</span><span class="op">)</span>,y.range<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>,<span class="fl">50</span><span class="op">)</span>,values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         direction<span class="op">=</span><span class="st">"vertical"</span>,border<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -138,7 +163,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

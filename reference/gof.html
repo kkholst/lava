@@ -70,74 +70,107 @@ structure, residuals and various predicitions.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gof</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu">gof</span><span class="op">(</span><span class="va">object</span>, chisq<span class="op">=</span><span class="cn">FALSE</span>, level<span class="op">=</span><span class="fl">0.90</span>, rmsea.threshold<span class="op">=</span><span class="fl">0.05</span>,all<span class="op">=</span><span class="cn">FALSE</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="fu">moments</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvm</span>
-<span class="fu">moments</span><span class="op">(</span><span class="va">x</span>, <span class="va">p</span>, debug<span class="op">=</span><span class="cn">FALSE</span>, conditional<span class="op">=</span><span class="cn">FALSE</span>, data<span class="op">=</span><span class="cn">NULL</span>, latent<span class="op">=</span><span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">object</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,
-                      data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,
-                      model<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">estimator</span>,
-                      weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,
-                      data2<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>,
-                          <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu">score</span><span class="op">(</span><span class="va">x</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,
-                   weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu">information</span><span class="op">(</span><span class="va">x</span>,p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,n<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">n</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
-                   model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gof</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu">gof</span><span class="op">(</span><span class="va">object</span>, chisq<span class="op">=</span><span class="cn">FALSE</span>, level<span class="op">=</span><span class="fl">0.90</span>, rmsea.threshold<span class="op">=</span><span class="fl">0.05</span>,all<span class="op">=</span><span class="cn">FALSE</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">moments</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">moments</span><span class="op">(</span><span class="va">x</span>, <span class="va">p</span>, debug<span class="op">=</span><span class="cn">FALSE</span>, conditional<span class="op">=</span><span class="cn">FALSE</span>, data<span class="op">=</span><span class="cn">NULL</span>, latent<span class="op">=</span><span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">object</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,</span>
+<span>                      data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,</span>
+<span>                      model<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">estimator</span>,</span>
+<span>                      weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,</span>
+<span>                      data2<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>,</span>
+<span>                          <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu">score</span><span class="op">(</span><span class="va">x</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,</span>
+<span>                   weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu">information</span><span class="op">(</span><span class="va">x</span>,p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,n<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">n</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<span>                   model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>Model object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
+
 <dt>x</dt>
 <dd><p>Model object</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Parameter vector used to calculate statistics</p></dd>
+
+
 <dt>data</dt>
 <dd><p>Data.frame to use</p></dd>
+
+
 <dt>latent</dt>
 <dd><p>If TRUE predictions of latent variables are included in output</p></dd>
+
+
 <dt>data2</dt>
 <dd><p>Optional second data.frame (only for censored observations)</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>Optional weight matrix</p></dd>
+
+
 <dt>n</dt>
 <dd><p>Number of observations</p></dd>
+
+
 <dt>conditional</dt>
 <dd><p>If TRUE the conditional moments given the covariates are
 calculated. Otherwise the joint moments are calculated</p></dd>
+
+
 <dt>model</dt>
 <dd><p>String defining estimator, e.g. "gaussian" (see
 <code>estimate</code>)</p></dd>
+
+
 <dt>debug</dt>
 <dd><p>Debugging only</p></dd>
+
+
 <dt>chisq</dt>
 <dd><p>Boolean indicating whether to calculate chi-squared
 goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
+
+
 <dt>level</dt>
 <dd><p>Level of confidence limits for RMSEA</p></dd>
+
+
 <dt>rmsea.threshold</dt>
 <dd><p>Which probability to calculate, Pr(RMSEA&lt;rmsea.treshold)</p></dd>
+
+
 <dt>all</dt>
 <dd><p>Calculate all (ad hoc) FIT indices: TLI, CFI, NFI, SRMR, ...</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>htest</code>-object.</p>
+    
+
+<p>A <code>htest</code>-object.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -146,11 +179,11 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">v1</span><span class="op">+</span><span class="va">v2</span><span class="op">+</span><span class="va">v3</span><span class="op">+</span><span class="va">v4</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">v1</span>,<span class="va">v2</span>,<span class="va">v3</span>,<span class="va">v4</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">dd</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">gof</span><span class="op">(</span><span class="va">e</span>,all<span class="op">=</span><span class="cn">TRUE</span>,rmsea.threshold<span class="op">=</span><span class="fl">0.05</span>,level<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">v1</span><span class="op">+</span><span class="va">v2</span><span class="op">+</span><span class="va">v3</span><span class="op">+</span><span class="va">v4</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">v1</span>,<span class="va">v2</span>,<span class="va">v3</span>,<span class="va">v4</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">dd</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">gof</span><span class="op">(</span><span class="va">e</span>,all<span class="op">=</span><span class="cn">TRUE</span>,rmsea.threshold<span class="op">=</span><span class="fl">0.05</span>,level<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of observations = 1000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  BIC = 14585.57 </span>
@@ -171,14 +204,14 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rank(Information) = 18 (p=18)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> condition(Information) = 10.37525</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mean(score^2) = 4.216767e-09 </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span>,<span class="va">y1</span><span class="op">~</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">u</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"b"</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span>,<span class="va">y1</span><span class="op">~</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">u</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"b"</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`R-squared`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           y1           y2           y3            u </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6.714238e-01 5.109812e-01 5.276472e-01 2.220446e-16 </span>
@@ -187,9 +220,9 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        y1        y2        y3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.3697894 0.5109812 0.5276472 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co">##'</span></span>
-<span class="r-in"><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span>,<span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rr</span></span>
+<span class="r-in"><span><span class="co">##'</span></span></span>
+<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span>,<span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R-squared:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -197,7 +230,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y1 0.6666507 0.02449714 0.6186372 0.7146642 4.506818e-163</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91</span>
-<span class="r-in"><span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">rr</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">rr</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err     2.5%   97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [y1] - [y2]  0.16038 0.04040  0.08119 0.23956 7.197e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [y1] - [y3]  0.13469 0.03884  0.05857 0.21081 5.244e-04</span>
@@ -209,7 +242,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [y2] - [y3] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 16.2844, df = 2, p-value = 0.000291</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -224,7 +257,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

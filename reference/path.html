@@ -72,49 +72,65 @@ standard errors.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for lvm</span>
-<span class="fu">path</span> <span class="op">(</span><span class="va">object</span>, to <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">from</span>, all<span class="op">=</span><span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-<span class="co"># S3 method for lvmfit</span>
-<span class="fu">effects</span> <span class="op">(</span><span class="va">object</span>, <span class="va">to</span>, <span class="va">from</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">path</span> <span class="op">(</span><span class="va">object</span>, to <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">from</span>, all<span class="op">=</span><span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S3 method for lvmfit</span></span>
+<span><span class="fu">effects</span> <span class="op">(</span><span class="va">object</span>, <span class="va">to</span>, <span class="va">from</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>Model object (<code>lvm</code>)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
+
 <dt>to</dt>
 <dd><p>Outcome variable (string). Alternatively a formula specifying
 response and predictor in which case the argument <code>from</code> is ignored.</p></dd>
+
+
 <dt>from</dt>
 <dd><p>Response variable (string), not necessarily directly affected by
 <code>to</code>.</p></dd>
+
+
 <dt>all</dt>
 <dd><p>If TRUE all simple paths (in undirected graph) is returned
 on/off.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>object</code> is of class <code>lvmfit</code> a list with the following
+    
+
+<p>If <code>object</code> is of class <code>lvmfit</code> a list with the following
 elements is returned</p>
 <dl><dt>idx</dt>
 <dd><p>A list where each element defines a
 possible pathway via a integer vector indicating the index of the visited
 nodes.</p></dd>
-<dt>V </dt>
+ <dt>V </dt>
 <dd><p>A List of covariance matrices for each path.</p></dd>
+
 <dt>coef </dt>
 <dd><p>A list of parameters estimates for each path</p></dd>
-<dt>path </dt>
+ <dt>path </dt>
 <dd><p>A
 list where each element defines a possible pathway via a character vector
 naming the visited nodes in order.</p></dd>
-<dt>edges </dt>
+ <dt>edges </dt>
 <dd><p>Description of 'comp2'</p></dd>
+
+
 </dl><p>If <code>object</code> is of class <code>lvm</code> only the <code>path</code> element will be
-returned.
-The <code>effects</code> method returns an object of class <code>effects</code>.</p>
+returned.</p>
+
+
+<p>The <code>effects</code> method returns an object of class <code>effects</code>.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
@@ -134,28 +150,28 @@ effects with approximate standard errors</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">eta</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y2</span><span class="op">~</span><span class="va">x1</span></span>
-<span class="r-in"><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span><span class="op">~</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">500</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">path</span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>,<span class="va">y2</span><span class="op">~</span><span class="va">x1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">eta</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y2</span><span class="op">~</span><span class="va">x1</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta</span><span class="op">~</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">path</span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>,<span class="va">y2</span><span class="op">~</span><span class="va">x1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x1" "y2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x1"  "eta" "y2" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="children.html">parents</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">y2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="children.html">parents</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">y2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "eta" "x1" </span>
-<span class="r-in"><span class="fu"><a href="children.html">children</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">x2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="children.html">children</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">x2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "eta"</span>
-<span class="r-in"><span class="fu"><a href="children.html">children</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">x2</span><span class="op">+</span><span class="va">eta</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="children.html">children</a></span><span class="op">(</span><span class="fu"><a href="Model.html">Model</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, <span class="op">~</span><span class="va">x2</span><span class="op">+</span><span class="va">eta</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "eta" "y1"  "y2"  "y3" </span>
-<span class="r-in"><span class="fu">effects</span><span class="op">(</span><span class="va">e</span>,<span class="va">y2</span><span class="op">~</span><span class="va">x1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">effects</span><span class="op">(</span><span class="va">e</span>,<span class="va">y2</span><span class="op">~</span><span class="va">x1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err z value   Pr(&gt;|z|)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Total       2.0041 0.06400   31.31 3.111e-215</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Direct      0.9491 0.07118   13.33  1.460e-40</span>
@@ -164,15 +180,15 @@ effects with approximate standard errors</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate   2.5%  97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mediation proportion   0.5264 0.4633 0.5895</span>
-<span class="r-in"><span class="co">## All simple paths (undirected)</span></span>
-<span class="r-in"><span class="fu">path</span><span class="op">(</span><span class="va">m</span>,<span class="va">y1</span><span class="op">~</span><span class="va">x1</span>,all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## All simple paths (undirected)</span></span></span>
+<span class="r-in"><span><span class="fu">path</span><span class="op">(</span><span class="va">m</span>,<span class="va">y1</span><span class="op">~</span><span class="va">x1</span>,all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x1"  "y2"  "eta" "y1" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x1"  "eta" "y1" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -187,7 +203,7 @@ effects with approximate standard errors</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

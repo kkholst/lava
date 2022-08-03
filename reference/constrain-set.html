@@ -66,54 +66,81 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for default</span>
-<span class="fu">constrain</span><span class="op">(</span><span class="va">x</span>,<span class="va">par</span>,<span class="va">args</span>,endogenous<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S3 method for multigroup</span>
-<span class="fu">constrain</span><span class="op">(</span><span class="va">x</span>,<span class="va">par</span>,k<span class="op">=</span><span class="fl">1</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="fu">constraints</span><span class="op">(</span><span class="va">object</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,vcov<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">vcov</span>,level<span class="op">=</span><span class="fl">0.95</span>,
-                        p<span class="op">=</span><span class="fu">pars.default</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,<span class="va">k</span>,<span class="va">idx</span>,<span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for default</span></span>
+<span><span class="fu">constrain</span><span class="op">(</span><span class="va">x</span>,<span class="va">par</span>,<span class="va">args</span>,endogenous<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S3 method for multigroup</span></span>
+<span><span class="fu">constrain</span><span class="op">(</span><span class="va">x</span>,<span class="va">par</span>,k<span class="op">=</span><span class="fl">1</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="fu">constraints</span><span class="op">(</span><span class="va">object</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,vcov<span class="op">=</span><span class="va">object</span><span class="op">$</span><span class="va">vcov</span>,level<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span>                        p<span class="op">=</span><span class="fu">pars.default</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,<span class="va">k</span>,<span class="va">idx</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvm</code>-object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
+
 <dt>value</dt>
 <dd><p>Real function taking args as a vector argument</p></dd>
+
+
 <dt>par</dt>
 <dd><p>Name of new parameter. Alternatively a formula with lhs
 specifying the new parameter and the rhs defining the names of the
 parameters or variable names defining the new parameter (overruling the
 <code>args</code> argument).</p></dd>
+
+
 <dt>args</dt>
 <dd><p>Vector of variables names or parameter names that are used in
 defining <code>par</code></p></dd>
+
+
 <dt>endogenous</dt>
 <dd><p>TRUE if variable is endogenous (sink node)</p></dd>
+
+
 <dt>k</dt>
 <dd><p>For multigroup models this argument specifies which group to
 add/extract the constraint</p></dd>
+
+
 <dt>object</dt>
 <dd><p><code>lvm</code>-object</p></dd>
+
+
 <dt>data</dt>
 <dd><p>Data-row from which possible non-linear constraints should be
 calculated</p></dd>
+
+
 <dt>vcov</dt>
 <dd><p>Variance matrix of parameter estimates</p></dd>
+
+
 <dt>level</dt>
 <dd><p>Level of confidence limits</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Parameter vector</p></dd>
+
+
 <dt>idx</dt>
 <dd><p>Index indicating which constraints to extract</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>lvm</code> object.</p>
+    
+
+<p>A <code>lvm</code> object.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -171,47 +198,47 @@ approximation of the gradient.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"><span class="co">### Non-linear parameter constraints 1</span></span>
-<span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x1</span>,<span class="va">gamma</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">x2</span>,<span class="va">beta</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">v</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="va">m</span>; <span class="fu">constrain</span><span class="op">(</span><span class="va">m1</span>,<span class="va">beta</span> <span class="op">~</span> <span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
-<span class="r-in"><span class="co">## Define slope of x2 to be the square of the residual variance of y</span></span>
-<span class="r-in"><span class="co">## Estimate both restricted and unrestricted model</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">d</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p1</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span>,<span class="va">p1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Likelihood of unrestricted model evaluated in MLE of restricted model</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">e</span>,<span class="va">p1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span><span class="co">### Non-linear parameter constraints 1</span></span></span>
+<span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x1</span>,<span class="va">gamma</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">x2</span>,<span class="va">beta</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">v</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="va">m</span>; <span class="fu">constrain</span><span class="op">(</span><span class="va">m1</span>,<span class="va">beta</span> <span class="op">~</span> <span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="co">## Define slope of x2 to be the square of the residual variance of y</span></span></span>
+<span class="r-in"><span><span class="co">## Estimate both restricted and unrestricted model</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p1</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span>,<span class="va">p1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Likelihood of unrestricted model evaluated in MLE of restricted model</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">e</span>,<span class="va">p1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'log Lik.' -144.784 (df=4)</span>
-<span class="r-in"><span class="co">## Likelihood of restricted model (MLE)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Likelihood of restricted model (MLE)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'log Lik.' -144.784 (df=3)</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"><span class="co">### Non-linear regression</span></span>
-<span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Simulate data</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="fl">0</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">eta</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span>
-<span class="r-in"><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"v"</span></span>
-<span class="r-in"><span class="fu"><a href="intercept.html">intercept</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"mu"</span></span>
-<span class="r-in"><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">eta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"zeta"</span></span>
-<span class="r-in"><span class="fu"><a href="intercept.html">intercept</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">eta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>v<span class="op">=</span><span class="fl">0.01</span>,zeta<span class="op">=</span><span class="fl">0.01</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="vars.html">manifest</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">d</span>,</span>
-<span class="r-in">               y1<span class="op">=</span><span class="va">y1</span><span class="op">+</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span>,</span>
-<span class="r-in">               y2<span class="op">=</span><span class="va">y2</span><span class="op">+</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Specify model and estimate parameters</span></span>
-<span class="r-in"><span class="fu">constrain</span><span class="op">(</span><span class="va">m</span>, <span class="va">mu</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">alpha</span> <span class="op">+</span> <span class="va">nu</span> <span class="op">+</span> <span class="va">gamma</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">+</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"> <span class="co">## Reduce Ex.Timings</span></span>
-<span class="r-in"><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span>,constrain<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span><span class="co">### Non-linear regression</span></span></span>
+<span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Simulate data</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span><span class="op">)</span><span class="op">~</span><span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="fl">0</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">eta</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vars.html">latent</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"v"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="intercept.html">intercept</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"mu"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="covariance.html">covariance</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">eta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"zeta"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="intercept.html">intercept</a></span><span class="op">(</span><span class="va">m</span>,<span class="op">~</span><span class="va">eta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>v<span class="op">=</span><span class="fl">0.01</span>,zeta<span class="op">=</span><span class="fl">0.01</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="vars.html">manifest</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span>               y1<span class="op">=</span><span class="va">y1</span><span class="op">+</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               y2<span class="op">=</span><span class="va">y2</span><span class="op">+</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Specify model and estimate parameters</span></span></span>
+<span class="r-in"><span><span class="fu">constrain</span><span class="op">(</span><span class="va">m</span>, <span class="va">mu</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">alpha</span> <span class="op">+</span> <span class="va">nu</span> <span class="op">+</span> <span class="va">gamma</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">+</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span>,constrain<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     95.152055: -1.59936 -0.105361  0.00000  0.00000  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     38.372166: -2.18276 0.313970  0.00000  0.00000 0.695563</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   2:    -48.631392: -5.42107 -0.457717  1.00498 0.959271  2.42405</span>
@@ -245,31 +272,31 @@ approximation of the gradient.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  30:    -267.28003: -4.75002 -4.75222  1.98016 0.00820169  2.01385</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  31:    -267.28003: -4.75004 -4.75224  1.98020 0.00821070  2.01384</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  32:    -267.28003: -4.75004 -4.75223  1.98020 0.00821063  2.01384</span>
-<span class="r-in"><span class="fu">constraints</span><span class="op">(</span><span class="va">e</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">constraints</span><span class="op">(</span><span class="va">e</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std. Error  Z value Pr(&gt;|z|)     2.5%    97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mu 1.598142 0.02227334 71.75133        0 1.554487 1.641797</span>
-<span class="r-in"><span class="co">## Plot model-fit</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span>,pch<span class="op">=</span><span class="fl">16</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span>,pch<span class="op">=</span><span class="fl">16</span>,col<span class="op">=</span><span class="st">"gray"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x0</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"nu"</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"gamma"</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"alpha"</span><span class="op">]</span><span class="op">*</span><span class="va">x0</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Plot model-fit</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y1</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span>,pch<span class="op">=</span><span class="fl">16</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">y2</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span>,pch<span class="op">=</span><span class="fl">16</span>,col<span class="op">=</span><span class="st">"gray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x0</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"nu"</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"gamma"</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">[</span><span class="st">"alpha"</span><span class="op">]</span><span class="op">*</span><span class="va">x0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="constrain-set-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"><span class="co">### Multigroup model</span></span>
-<span class="r-in"><span class="co">##############################</span></span>
-<span class="r-in"><span class="co">### Define two models</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">z</span>,<span class="va">beta2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">psi</span><span class="op">)</span> <span class="op">+</span> <span class="va">z</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">### And simulate data from them</span></span>
-<span class="r-in"><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m1</span>,<span class="fl">500</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m2</span>,<span class="fl">500</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">### Add 'non'-linear parameter constraint</span></span>
-<span class="r-in"><span class="fu">constrain</span><span class="op">(</span><span class="va">m2</span>,<span class="va">psi</span> <span class="op">~</span> <span class="va">beta2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span></span>
-<span class="r-in"><span class="co">## Add parameter beta2 to model 2, now beta2 exists in both models</span></span>
-<span class="r-in"><span class="fu"><a href="internal.html">parameter</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">beta2</span></span>
-<span class="r-in"><span class="va">ee</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ee</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span><span class="co">### Multigroup model</span></span></span>
+<span class="r-in"><span><span class="co">##############################</span></span></span>
+<span class="r-in"><span><span class="co">### Define two models</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">z</span>,<span class="va">beta2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">psi</span><span class="op">)</span> <span class="op">+</span> <span class="va">z</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">### And simulate data from them</span></span></span>
+<span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m1</span>,<span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m2</span>,<span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">### Add 'non'-linear parameter constraint</span></span></span>
+<span class="r-in"><span><span class="fu">constrain</span><span class="op">(</span><span class="va">m2</span>,<span class="va">psi</span> <span class="op">~</span> <span class="va">beta2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span></span></span>
+<span class="r-in"><span><span class="co">## Add parameter beta2 to model 2, now beta2 exists in both models</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="internal.html">parameter</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">beta2</span></span></span>
+<span class="r-in"><span><span class="va">ee</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m2</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ee</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ||score||^2= 2.642461e-17 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Latent variables: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ____________________________________________________</span>
@@ -318,11 +345,11 @@ approximation of the gradient.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> condition(Information) = 5.215445</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mean(score^2) = 3.774945e-18 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ______________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">z</span>,<span class="va">beta2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta2</span><span class="op">)</span> <span class="op">+</span> <span class="va">z</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m3</span>,<span class="va">m4</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">e2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta</span><span class="op">)</span><span class="op">+</span><span class="fu">f</span><span class="op">(</span><span class="va">z</span>,<span class="va">beta2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu">f</span><span class="op">(</span><span class="va">x</span>,<span class="va">beta2</span><span class="op">)</span> <span class="op">+</span> <span class="va">z</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m3</span>,<span class="va">m4</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">d1</span>,<span class="va">d2</span><span class="op">)</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"NR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ____________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Group 1 (n=500)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z value Pr(&gt;|z|)</span>
@@ -358,7 +385,7 @@ approximation of the gradient.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

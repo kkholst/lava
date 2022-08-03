@@ -70,50 +70,67 @@ latent variables (random effects), manifest (observed) variables from a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vars</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="fu">endogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="fu">manifest</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="fu">latent</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvm</span>
-<span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>, xfree <span class="op">=</span> <span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S3 method for lvm</span>
-<span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">variable</span>,latent<span class="op">=</span><span class="cn">FALSE</span>,index<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for lvm</span>
-<span class="fu">latent</span><span class="op">(</span><span class="va">x</span>,clear<span class="op">=</span><span class="cn">FALSE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vars</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">endogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">manifest</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">latent</span><span class="op">(</span><span class="va">x</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>, xfree <span class="op">=</span> <span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">exogenous</span><span class="op">(</span><span class="va">x</span>,<span class="va">variable</span>,latent<span class="op">=</span><span class="cn">FALSE</span>,index<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lvm</span></span>
+<span><span class="fu">latent</span><span class="op">(</span><span class="va">x</span>,clear<span class="op">=</span><span class="cn">FALSE</span>,<span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>lvm</code>-object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to the low level functions</p></dd>
+
+
 <dt>variable</dt>
 <dd><p>list of variables to alter</p></dd>
+
+
 <dt>latent</dt>
 <dd><p>Logical defining whether latent variables without parents
 should be included in the result</p></dd>
+
+
 <dt>index</dt>
 <dd><p>For internal use only</p></dd>
+
+
 <dt>clear</dt>
 <dd><p>Logical indicating whether to add or remove latent variable
 status</p></dd>
+
+
 <dt>xfree</dt>
 <dd><p>For internal use only</p></dd>
+
+
 <dt>value</dt>
 <dd><p>Formula or character vector of variable names.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Vector of variable names.</p>
+    
+
+<p>Vector of variable names.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -144,17 +161,17 @@ latent status of variables in the model.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">eta1</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta1</span></span>
-<span class="r-in"><span class="fu">latent</span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta1</span></span>
-<span class="r-in"><span class="fu">endogenous</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">eta1</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta1</span></span></span>
+<span class="r-in"><span><span class="fu">latent</span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">eta1</span></span></span>
+<span class="r-in"><span><span class="fu">endogenous</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "y1" "y2" "y3"</span>
-<span class="r-in"><span class="fu">exogenous</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">exogenous</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x1" "x2"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">latent</span><span class="op">(</span><span class="va">g</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="va">g</span><span class="op">)</span>,<span class="fu">manifest</span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">latent</span><span class="op">(</span><span class="va">g</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="va">g</span><span class="op">)</span>,<span class="fu">manifest</span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -169,7 +186,7 @@ latent status of variables in the model.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
