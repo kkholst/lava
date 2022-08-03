@@ -12,7 +12,7 @@ pcor <- function(x,y,X,start,...) {
 
     if (is.numeric(x) && is.numeric(y)) {
         e <- estimate(covariance(lvm(),x~y))
-        return(estimate(e,function(p) list(rho=p[5]/(p[3]*p[4])^.5),iid=TRUE))
+        return(estimate(e,function(p) list(rho=p[5]/(p[3]*p[4])^.5), IC=TRUE))
     }
 
     n1 <- 1+seq(nlevels(x)-1)

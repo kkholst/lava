@@ -31,9 +31,9 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
                    keep1=FALSE,
                    propensity.arg,estimate.arg,
                    na.action=na.pass, ...) {
-    iid2 <- iid(model2)
+    ic2 <- IC(model2)
     if (missing(inv.D2u)) {
-        inv.D2u <- -attributes(iid2)$bread
+        inv.D2u <- -attributes(ic2)$bread
     }    
     if (is.null(inv.D2u)) stop("Need derivative of second stage score")
     if (!missing(U)) {
@@ -81,26 +81,27 @@ stack.estimate <- function(x,model2,D1u,inv.D2u,
     }
     if (!missing(dpropensity)) {
         D2u <- Inverse(inv.D2u)
-        u2 <- -iid2%*%D2u ## Score of stage two equation derived from estimated influence function
+        u2 <- -ic2%*%D2u ## Score of stage two equation derived from estimated influence function
         ## Derivative of score wrt first set of parameters (propensity score model)
         D1u <- crossprod(apply(u2,2,function(x) -na.pass0(x/propensity)),dpropensity)
     }
-    ii <- iid(merge(x,model2))
-    iid1. <- ii[,seq_along(coef(x)),drop=FALSE]
-    iid2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
-    iid3 <- -t(inv.D2u%*%(D1u%*%t(iid1.)))
-    val <- cbind(iid2. + iid3)
-    if (!keep1) return(estimate(coef=coef(model2), iid=val, ...))
-    estimate(coef=c(coef(x), coef(model2)), iid=cbind(iid1., val),...)
+    ii <- IC(merge(x,model2))
+    ic1. <- ii[,seq_along(coef(x)),drop=FALSE]
+    ic2. <- ii[,length(coef(x))+seq_along(coef(model2)),drop=FALSE]
+    ic3 <- -t(inv.D2u%*%(D1u%*%t(ic1.)))
+    val <- cbind(ic2. + ic3)
+    if (!keep1) return(estimate(coef=coef(model2), IC=val, ...))
+    estimate(coef=c(coef(x), coef(model2)),
+             IC=cbind(ic1., val), ...)
 }
 
 ##' @export
-stack.glm <- function(x,model2,...) {
-    stack.estimate(x,model2,...)
+stack.glm <- function(x, model2, ...) {
+    stack.estimate(x, model2, ...)
 }
 
 ##' @export
-stack.lvmfit <- function(x,model2,...) {
-    stack(estimate(x),model2,...)
+stack.lvmfit <- function(x, model2, ...) {
+    stack(estimate(x), model2, ...)
 }
 

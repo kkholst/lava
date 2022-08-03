@@ -203,6 +203,6 @@ print.diagtest <- function(x,...) {
 }
 
 summary.diagtest <- function(x,...) {
-    x[c("iid","print","id","compare")] <- NULL
+    x[c("IC","print","id","compare")] <- NULL
     return(x)
 }

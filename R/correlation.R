@@ -8,7 +8,7 @@
 "correlation" <- function(x,...) UseMethod("correlation")
 
 ##' @export
-correlation.lvmfit <- function(x,z=TRUE,iid=FALSE,back.transform=TRUE,...) {
+correlation.lvmfit <- function(x,z=TRUE, IC=FALSE, back.transform=TRUE,...) {
     pp <- matrices2(Model(x), with(index(x),seq_len(npar+npar.mean+npar.ex)))$P
     pos <- pp[lower.tri(pp)][(index(x)$P0)[lower.tri(pp)]==1]
     if (length(pos)<1) return(NULL)
@@ -37,13 +37,14 @@ correlation.lvmfit <- function(x,z=TRUE,iid=FALSE,back.transform=TRUE,...) {
         structure(res,names=nn)
     }
     V <- NULL
-    if (!iid) V <- vcov(x)
+    if (!IC) V <- vcov(x)
     if (back.transform) {
         back.transform <- tanh
     } else {
         back.transform <- NULL
     }
-    estimate(x,coef=coef(x),vcov=V,f=ff,back.transform=back.transform,iid=iid,...)
+    estimate(x,coef=coef(x), vcov=V, f=ff, back.transform=back.transform,
+             IC=IC, ...)
 }
 
 
@@ -60,8 +61,8 @@ correlation.matrix <- function(x,z=TRUE,back.transform=TRUE,mreg=FALSE,return.al
         return(res)
     }
     if (ncol(x)==2) {
-        ii <- iid(x)
-        ee <- estimate(coef=attributes(ii)$coef[3:5], iid=ii[,3:5])
+        ii <- IC(x)
+        ee <- estimate(coef=attributes(ii)$coef[3:5], IC=ii[,3:5])
         if (z) {
             if (back.transform) {
                 ee <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])), back.transform=tanh)

@@ -2,35 +2,15 @@
 % Please edit documentation in R/iid.R
 \name{iid}
 \alias{iid}
-\alias{iid.default}
-\alias{var_iid}
-\title{Extract i.i.d. decomposition (influence function) from model object}
+\title{Extract i.i.d. decomposition from model object}
 \usage{
-iid(x,...)
-
-\method{iid}{default}(x,bread,id=NULL,folds=0,maxsize=(folds>0)*1e6,...)
+iid(x, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{Model object}
 
-\item{...}{additional arguments}
-
-\item{id}{(optional) id/cluster variable}
-
-\item{bread}{(optional) Inverse of derivative of mean score function}
-
-\item{folds}{(optional) Calculate aggregated iid decomposition (0:=disabled)}
-
-\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize' (0:=disabled)}
+\item{...}{Additional arguments (see the man-page of the IC method)}
 }
 \description{
-Extract i.i.d. decomposition (influence function) from model object
-}
-\examples{
-m <- lvm(y~x+z)
-distribution(m, ~y+z) <- binomial.lvm("logit")
-d <- sim(m,1e3)
-g <- glm(y~x+z,data=d,family=binomial)
-var_iid(iid(g))
-
+This function extracts
 }

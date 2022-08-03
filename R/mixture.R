@@ -605,7 +605,7 @@ model.frame.lvm.mixture <- function(formula,...) {
 }
 
 ##' @export
-iid.lvm.mixture <- function(x,...) {
+IC.lvm.mixture <- function(x,...) {
   U <- score(x,indiv=TRUE)
   bread <- vcov(x)*NROW(U)
   structure(t(bread%*%t(U)),bread=bread)

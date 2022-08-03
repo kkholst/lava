@@ -13,7 +13,7 @@ multinomial(
   marginal = FALSE,
   transform,
   vcov = TRUE,
-  iid = TRUE,
+  IC = TRUE,
   ...
 )
 }
@@ -28,7 +28,7 @@ multinomial(
 
 \item{vcov}{Calculate asymptotic variance (default TRUE)}
 
-\item{iid}{Return iid decomposition (default TRUE)}
+\item{IC}{Return ic decomposition (default TRUE)}
 
 \item{...}{Additional arguments to lower-level functions}
 }

@@ -19,7 +19,7 @@
   subset,
   score.deriv,
   level = 0.95,
-  iid = robust,
+  IC = robust,
   type = c("robust", "df", "mbn"),
   keep,
   use,
@@ -50,7 +50,7 @@
 
 \item{data}{\code{data.frame}}
 
-\item{id}{(optional) id-variable corresponding to iid decomposition of model parameters.}
+\item{id}{(optional) id-variable corresponding to ic decomposition of model parameters.}
 
 \item{iddata}{(optional) id-variable for 'data'}
 
@@ -64,7 +64,7 @@
 
 \item{level}{level of confidence limits}
 
-\item{iid}{if TRUE (default) the iid decompositions are also returned (extract with \code{iid} method)}
+\item{IC}{if TRUE (default) the influence function decompositions are also returned (extract with \code{IC} method)}
 
 \item{type}{type of small-sample correction}
 
@@ -111,9 +111,9 @@ Wald tests, robust standard errors, cluster robust standard errors,
 LRT (when \code{f} is not a function)...
 }
 \details{
-iid decomposition
+influence function decomposition
 \deqn{\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)}
-can be extracted with the \code{iid} method.
+can be extracted with the \code{IC} method.
 }
 \examples{
 
@@ -196,8 +196,8 @@ id2 <- c(1,2,3,4,5,6,7,8,1,1)
 id3 <- seq(10)
 
 ## Un-stacked and stacked i.i.d. decomposition
-iid(estimate(l1,id=id1,stack=FALSE))
-iid(estimate(l1,id=id1))
+IC(estimate(l1,id=id1,stack=FALSE))
+IC(estimate(l1,id=id1))
 
 ## Combined i.i.d. decomposition
 e1 <- estimate(l1,id=id1)
@@ -210,10 +210,10 @@ e3 <- estimate(l3,id=id3)
 ## Reduce(merge,estimate(list(l1,l2,l3)))
 
 ## Same:
-iid(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
 
-iid(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
-iid(merge(l1,l2,l3,id=FALSE)) # independence
+IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
+IC(merge(l1,l2,l3,id=FALSE)) # independence
 
 
 ## Monte Carlo approach, simple trend test example

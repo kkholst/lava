@@ -78,19 +78,19 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         names(coefs) <- make.unique(names(coefs))
     }
     if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
-        nn <- unlist(lapply(objects,function(x) nrow(x$iid)))
+        nn <- unlist(lapply(objects,function(x) nrow(x$IC)))
         cnn <- c(0,cumsum(nn))
         id <- list()
         for (i in seq_along(nn)) id <- c(id,list(seq(nn[i])+cnn[i]))
     }
     if (missing(id)) {
       if (paired) { ## One-to-one dependence between observations in x,y,...
-            id <- rep(list(seq(nrow(x$iid))),length(objects))
+            id <- rep(list(seq(nrow(x$IC))),length(objects))
         } else {
             id <- lapply(objects,function(x) x$id)
         }
     } else {
-        nn <- unlist(lapply(objects,function(x) NROW(iid(x))))
+        nn <- unlist(lapply(objects,function(x) NROW(IC(x))))
         if (length(id)==1 && is.logical(id)) {
             if (id) {
                 if (any(nn[1]!=nn)) stop("Expected objects of the same size: ", paste(nn,collapse=","))
@@ -106,52 +106,50 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         idlen <- unlist(lapply(id,length))
         if (!identical(idlen,nn)) stop("Wrong lengths of 'id': ", paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
     }
-    ##if (any(unlist(lapply(id,is.null)))) stop("Id needed for each model object")
-    ##iid <- Reduce("cbind",lapply(objects,iid))
-    ids <- iidall <- c(); count <- 0
+    ids <- ic_all <- c(); count <- 0
     for (z in objects) {
         count <- count+1
         clidx <- NULL
         id0 <- id[[count]]
-        iidz <- iid(z)
+        icz <- IC(z)
         if (is.null(id0)) {
-            id0 <- rownames(iidz)
+            id0 <- rownames(icz)
             if (is.null(id0)) stop("Need id for object number ", count)
         }
-        if (!missing(subset)) iidz <- iidz[,subset,drop=FALSE]
+        if (!missing(subset)) icz <- icz[,subset,drop=FALSE]
         if (!lava.options()$cluster.index) {
-            iid0 <- matrix(unlist(by(iidz,id0,colSums)),byrow=TRUE,ncol=ncol(iidz))
+            ic0 <- matrix(unlist(by(icz,id0,colSums)),byrow=TRUE,ncol=ncol(icz))
             ids <- c(ids, list(sort(unique(id0))))
 
         } else {
             if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-            clidx <- mets::cluster.index(id0,mat=iidz,return.all=TRUE)
-            iid0 <- clidx$X
+            clidx <- mets::cluster.index(id0,mat=icz,return.all=TRUE)
+            ic0 <- clidx$X
             ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
         }
-        iidall <- c(iidall, list(iid0))
+        ic_all <- c(ic_all, list(ic0))
     }
     id <- unique(unlist(ids))
-    iid0 <- matrix(NA, nrow=length(id),ncol=length(coefs))
+    ic0 <- matrix(NA, nrow=length(id),ncol=length(coefs))
     model.index <- c()
     colpos <- 0
     for (i in seq(length(objects))) {
         relpos <- seq_along(coef(objects[[i]]))        
         if (!missing(subset)) relpos <- seq_along(subset)
-        iid0[match(ids[[i]],id),relpos+colpos] <- iidall[[i]]
+        ic0[match(ids[[i]],id),relpos+colpos] <- ic_all[[i]]
         model.index <- c(model.index,list(relpos+colpos))
         colpos <- colpos+tail(relpos,1)
     }
-    rownames(iid0) <- id
+    rownames(ic0) <- id
     ## Rescale each column according to I(obs)/pr(obs)
-    for (i in seq(NCOL(iid0))) {
-      pr <- mean(!is.na(iid0[,i]))
-      iid0[,i] <- iid0[,i]/pr
+    for (i in seq(NCOL(ic0))) {
+      pr <- mean(!is.na(ic0[,i]))
+      ic0[,i] <- ic0[,i]/pr
     }
-    iid0[is.na(iid0)] <- 0
+    ic0[is.na(ic0)] <- 0
 
     res <- estimate.default(NULL, coef=coefs, stack=FALSE, data=NULL,
-                            iid=iid0, id=id, keep=keep)
+                            IC=ic0, id=id, keep=keep)
     res$model.index <- model.index
     return(res)
 }

@@ -23,7 +23,7 @@ plot.estimate <- function(x,f,idx,intercept=FALSE,data,confint=TRUE,type="l",xla
             assign(y,data[[y]],env)
         }
         environment(f) <- env
-        pp <- estimate(x,f,..., vcov=vcov(x),iid=FALSE)$coefmat
+        pp <- estimate(x, f, ..., vcov=vcov(x), IC=FALSE)$coefmat
         if (!add) suppressWarnings(plot(data[[1]],pp[,1],xlab=xlab,ylab=ylab,type=type,...))
         else lines(data[[1]],pp[,1],xlab=xlab,ylab=ylab,type=type,col=col,...)
         if (confint) confband(data[[1]],pp[,3],pp[,4],polygon=TRUE,col=Col(col),lty=0)

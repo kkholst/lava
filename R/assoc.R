@@ -156,7 +156,7 @@ independence <- function(x,...) {
     if (length(x$levels)!=2) stop("Data from two categorical variables expected")
     f <- function(p) {
         P <- x$position; P[] <- p[x$position]
-        n <- nrow(x$iid)
+        n <- nrow(x$IC)
         k1 <- length(x$levels[[1]])
         k2 <- length(x$levels[[2]])
         A1 <- matrix(0,ncol=length(p),nrow=k1)
@@ -189,10 +189,10 @@ independence <- function(x,...) {
     ## M <- P
     ## chisq.test(M,correct=FALSE)
 
-    return(estimate(x,function(p) list(cramersV=f(p)),iid=TRUE,...))
+    return(estimate(x,function(p) list(cramersV=f(p)),IC=TRUE,...))
 
 
-    e <- estimate(x,f,iid=TRUE,print=function(x,...) {
+    e <- estimate(x,f,IC=TRUE,print=function(x,...) {
         cat("\tTest for independence\n\n")
         cat("Test statistc:\t ", formatC(x$coefmat[1]/x$coefmat[2]),
             "\nP-value:\t ", x$coefmat[5],"\n\n")

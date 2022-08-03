@@ -142,8 +142,8 @@ score.estimate.complik <- function(x,indiv=FALSE,...) {
 }
 
 ##' @export
-iid.estimate.complik <- function(x,...) {
-    iid.default(x,bread=x$bread,...)
+IC.estimate.complik <- function(x,...) {
+    IC.default(x,bread=x$bread,...)
 }
 
 ##' @export

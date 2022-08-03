@@ -1,12 +1,11 @@
 # lava 1.7.0
-  - Development version
-  - cv method moved to the the 'targeted' package
-  - iid now returns the influence function and not the scaled version
-  - fixed bug where
-    regression("y", value=function(x) x)
-    did not work (y~1 did).
-  - 
-
+  - `cv` method moved to the 'targeted' package
+  - New `IC` method that returns influence function of a model object. The `iid`
+    argument `iid` of the `estimate` method is now replaced with an argument
+    `IC` (with a user supplied matrix this must now be the actual influence
+    function and not the sample-size scaled version returned by the `iid` method).
+  - fixed bug where calls like `regression("y", value=function(x) x)` did not work.
+  
 # lava 1.6.10
   - Improved starting values for MLE optimization.
   - New simulation distributions: `multinomial.lvm`, `none.lvm`, `constant.lvm`,

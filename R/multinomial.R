@@ -8,7 +8,7 @@
 ##' @param marginal If TRUE the marginals are estimated
 ##' @param transform Optional transformation of parameters (e.g., logit)
 ##' @param vcov Calculate asymptotic variance (default TRUE)
-##' @param iid Return iid decomposition (default TRUE)
+##' @param IC Return ic decomposition (default TRUE)
 ##' @param ... Additional arguments to lower-level functions
 ##' @export
 ##' @examples
@@ -55,7 +55,7 @@
 ##' d2$x <- rbinom(nrow(d2),2,0.5)
 ##' gkgamma(z1~z2|x,data=d2)
 ##' @author Klaus K. Holst
-multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE,iid=TRUE,...) {
+multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE,IC=TRUE,...) {
     formula <- NULL
     if (inherits(x,"formula")) {
         trm <- terms(x)
@@ -72,8 +72,8 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
     } else {
         trm <- NULL
     }
-    if (!vcov) iid <- FALSE
-    if (is.table(x) && iid) x <- lava::Expand(x)
+    if (!vcov) IC <- FALSE
+    if (is.table(x) && IC) x <- lava::Expand(x)
     if (NCOL(x)==1) {
         if (!is.table(x)) {
             x <- as.factor(x)
@@ -87,14 +87,14 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
             lev <- names(x)
             k <- length(lev)
         }
-        if (iid) {
-            iid <- matrix(0,n,k)
+        if (IC) {
+            IC <- matrix(0,n,k)
             for (i in seq(k)) {
-                iid[,i] <- (1*(x==lev[i])-P[i])/n
+                IC[,i] <- (1*(x==lev[i])-P[i])/n
             };
-            varcov <- crossprod(iid)
+            varcov <- crossprod(IC)
         } else {
-            iid <- varcov <- NULL
+            IC <- varcov <- NULL
             if (vcov) {
                 varcov <- tcrossprod(cbind(P))/n
                 diag(varcov) <- P*(1-P)/n
@@ -102,7 +102,7 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
         }
         coefs <- as.vector(P); names(coefs) <- paste0("p",seq(k))
         res <- list(call=match.call(), coef=coefs,P=P,
-                    vcov=varcov,iid=iid*NROW(iid),
+                    vcov=varcov,IC=IC*NROW(IC),
                     position=seq(k),levels=list(lev),data=x, terms=trm)
         class(res) <- "multinomial"
         return(res)
@@ -128,17 +128,17 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
         n <- sum(x)
     }
     Pos <- P <- M/n
-    if (iid) {
-        iid <- matrix(0,n,k1*k2)
+    if (IC) {
+        IC <- matrix(0,n,k1*k2)
         for (j in seq(k2)) {
             for (i in seq(k1)) {
                 pos <- (j-1)*k1+i
-                iid[,pos] <- (x[,1]==lev1[i])*(x[,2]==lev2[j])-P[i,j]
+                IC[,pos] <- (x[,1]==lev1[i])*(x[,2]==lev2[j])-P[i,j]
                 Pos[i,j] <- pos
             }
-        }; iid <- iid/n
+        }; IC <- IC/n
     } else {
-        iid <- varcov <- NULL
+        IC <- varcov <- NULL
     }
     
     coefs <- as.vector(P);
@@ -152,23 +152,23 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
         coefs <- c(coefs,p1,p2)
         position1 <- length(P)+seq(k1)
         position2 <- length(P)+k1+seq(k2)
-        if (!is.null(iid)) {
-            iid1 <- apply(Pos,1,function(x) rowSums(iid[,x]))
-            iid2 <- apply(Pos,2,function(x) rowSums(iid[,x]))
-            iid <- cbind(iid,iid1,iid2)
-            colnames(iid) <- names(coefs)
+        if (!is.null(IC)) {
+            ic1 <- apply(Pos,1,function(x) rowSums(IC[,x]))
+            ic2 <- apply(Pos,2,function(x) rowSums(IC[,x]))
+            IC <- cbind(IC,ic1,ic2)
+            colnames(IC) <- names(coefs)
         }
     }
-    if (!missing(transform) && !is.null(iid)) {
+    if (!missing(transform) && !is.null(IC)) {
         f <- function(p) do.call(transform,list(p))
         D <- diag(numDeriv::grad(f,coefs),ncol=length(coefs))
         coefs <- f(coefs)
-        iid <- iid%*%t(D)
+        IC <- IC%*%t(D)
     }
-    if (vcov && !is.null(iid)) varcov <- crossprod(iid)
+    if (vcov && !is.null(IC)) varcov <- crossprod(IC)
     res <- list(call=match.call(),
                formula=formula,
-               coef=coefs,P=P,vcov=varcov,iid=iid*NROW(iid), position=Pos,
+               coef=coefs,P=P,vcov=varcov,IC=IC*NROW(IC), position=Pos,
                call=match.call(), levels=list(lev1,lev2), data=x,
                position1=position1,position2=position2, ## Position of marginals)
                terms=trm
@@ -186,8 +186,8 @@ model.frame.multinomial <- function(formula,...) {
 }
 
 ##' @export
-iid.multinomial <- function(x,...) {
-    x$iid
+IC.multinomial <- function(x,...) {
+    x$IC
 }
 
 ##' @export
@@ -219,16 +219,16 @@ predict.multinomial <- function(object,newdata,type=c("prob","map"),...) {
 }
 
 ##' @export
-print.multinomial <- function(x,...) {
+print.multinomial <- function(x, ...) {
     cat("Call: "); print(x$call)
     cat("\nJoint probabilities:\n")
-    print(x$P,quote=FALSE)
+    print(x$P, quote=FALSE)
     if (length(dim(x$P))>1) {
         cat("\nConditional probabilities:\n")
-        print(predict(x,newdata=rownames(x$P)),quote=FALSE)
+        print(predict(x, newdata=rownames(x$P)), quote=FALSE)
     }
     cat("\n")
-    print(estimate(NULL,coef=coef(x),vcov=vcov(x)))
+    print(estimate(NULL, coef=coef(x), vcov=vcov(x)))
     ## stderr <- diag(vcov(x))^.5
     ## StdErr <- x$position
     ## StdErr[] <- stderr[StdErr]

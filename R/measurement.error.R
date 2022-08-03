@@ -50,7 +50,8 @@ measurement.error <- function(model1, formula, data=parent.frame(),
     if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
     if (missing(id2)) id2 <- seq(nrow(model.frame(model1)))
     if (!inherits(model1,"estimate"))
-        e1 <- estimate(NULL,coef=p1,id=id1,iid=iid(model1))
+      e1 <- estimate(NULL, coef=p1, id=id1,
+                     IC=IC(model1))
     u <- uhat()
     X0 <- model.matrix(formula, data)
     Y <- model.frame(formula,data)[,1]

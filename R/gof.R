@@ -4,11 +4,11 @@ rsq <- function(x,stderr=FALSE) {
     if (stderr) {
         v <- endogenous(x)
         vpar <- paste(v,v,sep=lava.options()$symbol[2])
-        iid.v <- iid(model.frame(x)[,v])
-        iid.mod <- iid(x)
-        coef0 <- c(attributes(iid.v)$coef[vpar],
+        ic.v <- IC(model.frame(x)[,v])
+        ic.mod <- IC(x)
+        coef0 <- c(attributes(ic.v)$coef[vpar],
                    coef(x)[vpar])
-        iid0 <- cbind(iid.v[,vpar],iid.mod[,vpar])
+        ic0 <- cbind(ic.v[,vpar],ic.mod[,vpar])
         p <- length(v)
         idx <- seq_len(p);
         ee <- estimate(NULL,data=NULL,
@@ -21,7 +21,7 @@ rsq <- function(x,stderr=FALSE) {
                            cat("\nR-squared:\n\n")
                            print(x$coefmat)
                        },
-                       coef=coef0, iid=iid0)
+                       coef=coef0, IC=ic0)
 
         res <- ee
         ##res <- list(ee)
@@ -40,8 +40,8 @@ rsq <- function(x,stderr=FALSE) {
         ##     p2 <- match(p0,p1)
 
         ##     k <- length(v)
-        ##     coef0 <- c(pp[p1],attributes(iid.v)$coef[vpar])
-        ##     iid0 <- cbind(iid.mod[,p1],iid.v[,vpar])
+        ##     coef0 <- c(pp[p1],attributes(ic.v)$coef[vpar])
+        ##     ic0 <- cbind(ic.mod[,p1],ic.v[,vpar])
         ##     ee <- estimate(NULL,data=NULL,
         ##                    function(p) {
         ##                        p. <- p[p2]
@@ -53,7 +53,7 @@ rsq <- function(x,stderr=FALSE) {
         ##                    print=function(x,...) {
         ##                        cat("\nVariance explained by '", lat,"':\n\n",sep="")
         ##                        print(x$coefmat)
-        ##                    },coef=coef0,iid=iid0)
+        ##                    },coef=coef0,IC=ic0)
         ##     res <- c(res,list(ee))
         ## }
 

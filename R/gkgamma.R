@@ -21,7 +21,7 @@ goodmankruskal_gamma <- function(P,...) {
 
 
 ##' @export
-gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
+gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,IC=TRUE,...) {
     if (inherits(x,"formula")) {
         xf <- getoutcome(x,sep="|")
         xx <- attr(xf,"x")
@@ -38,7 +38,7 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
         dd <- split(data,strata)
         gam <- lapply(dd,function(d,...) gkgamma(x,data=d,...),
                       ...,
-                      iid=TRUE,
+                      IC=TRUE,
                       keep=1:2)
         mgam <- Reduce(function(x,y,...) merge(x,y,...),gam)
         ps <- estimate(multinomial(strata),data=data,...)
@@ -56,12 +56,12 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
             #pgamma <- sum(weights*gam)
             c(gam,pgamma=pgamma)
         },labels=c(paste0("\u03b3:",names(dd)),"pgamma"),
-        iid=iid)
-        if (!iid) {
+        IC=IC)
+        if (!IC) {
             for (i in seq_along(gam))
-                gam[[i]][c("iid","id")] <- NULL
+                gam[[i]][c("IC","id")] <- NULL
         }
-        homtest <- estimate(res,lava::contr(seq_along(gam),length(gam)+1),iid=FALSE)
+        homtest <- estimate(res,lava::contr(seq_along(gam),length(gam)+1),IC=FALSE)
         attributes(res) <- c(attributes(res),
                              list(class=c("gkgamma","estimate"),
                                   cl=match.call(),
@@ -76,7 +76,7 @@ gkgamma <- function(x,data=parent.frame(),strata=NULL,all=FALSE,iid=TRUE,...) {
     structure(estimate(x,function(p) {
         P <- x$position; P[] <- p[x$position]
         goodmankruskal_gamma(P)
-    },iid=iid,data=data,...),
+    },IC=IC,data=data,...),
     cl=match.call(),
     class=c("gkgamma","estimate"))
 }
