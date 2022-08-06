@@ -28,6 +28,20 @@ IC <- function(x,...) UseMethod("IC")
 ##' @export
 IC.default <- function(x, bread, id=NULL,
                         folds=0, maxsize=(folds>0)*1e6, ...) {
+
+    if (any(paste("iid",class(x),sep=".") %in% methods("iid"))) {
+      ## 'iid' method exists for the specific class.
+      ## This is a scaled version of the influence function, hence
+      ## we need to rescale.
+      cl <- match.call()
+      cl[[1]] <- substitute(iid)
+      ii <- eval.parent(cl)
+      if (!is.null(attr(ii, "bread"))) {
+        attr(res, "bread") <- attr(res, "bread")*NROW(res)
+      }
+      ii <- ii*NROW(ii)
+      return(ii)
+    }
     if (!any(paste("score",class(x),sep=".") %in% methods("score"))) {
         warning("Not available for this class")
         return(NULL)
