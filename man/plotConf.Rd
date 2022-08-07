@@ -27,7 +27,9 @@ plotConf(
   cidiff = FALSE,
   mean = TRUE,
   legend = ifelse(is.null(var1), FALSE, "topright"),
-  trans = function(x) {     x },
+  trans = function(x) {
+     x
+ },
   partres = inherits(model, "lm"),
   partse = FALSE,
   labels,
