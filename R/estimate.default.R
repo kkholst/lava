@@ -256,7 +256,6 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         if (is.numeric(subset)) subset <- subset>0
     }
     idstack <- NULL
-    ##browser()
     ## Preserve id from 'estimate' object
     if (missing(id) && inherits(x,"estimate") && !is.null(x$id)) id <- x$id
     if (!missing(id) && IC) {
@@ -456,7 +455,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                     ic2 <- ic_theta%*%D
                 }
                 pp <- vec(colMeans(cbind(val)))
-                ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))/N
+                ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))
                 if (!missing(id)) {
                     if (!lava.options()$cluster.index)
                         ic1 <- matrix(unlist(by(ic1,id,colSums)),byrow=TRUE,ncol=ncol(ic1))
