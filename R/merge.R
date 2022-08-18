@@ -77,6 +77,12 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
     } else {
         names(coefs) <- make.unique(names(coefs))
     }
+    if (any(unlist(lapply(objects, function(x) is.null(IC(x)))))) {
+      ## No iid decomposition/influence functions
+      V <- lapply(objects, vcov)
+      V <- Reduce(function(...) blockdiag(..., pad=NA), V)
+      return(estimate(coef=coefs, vcov=V, keep=keep, ...))
+    }
     if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
         nn <- unlist(lapply(objects,function(x) nrow(x$IC)))
         cnn <- c(0,cumsum(nn))

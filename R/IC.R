@@ -26,6 +26,10 @@
 IC <- function(x,...) UseMethod("IC")
 
 ##' @export
+influence.estimate <- function(model, ...)
+  IC(model, ...)
+
+##' @export
 IC.default <- function(x, bread, id=NULL,
                         folds=0, maxsize=(folds>0)*1e6, ...) {
 
