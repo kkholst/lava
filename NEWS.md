@@ -4,7 +4,8 @@
     argument `iid` of the `estimate` method is now replaced with an argument
     `IC` (with a user supplied matrix this must now be the actual influence
     function and not the sample-size scaled version returned by the `iid` method).
-  - fixed bug where calls like `regression("y", value=function(x) x)` did not work.
+  - fixed bug where calls like `regression("y", value=function(x) x)` did not
+    work. merge.estimate works without IC element
   
 # lava 1.6.10
   - Improved starting values for MLE optimization.

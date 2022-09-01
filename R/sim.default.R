@@ -411,13 +411,17 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
             confint <- c()
             pos <- ncol(object)
             for (i in seq_along(estimate)) {
-                z <- 1-(1-level)/2
+              z <- 1-(1-level)/2
+              if (is.na(se[i])) {
+                CI <- matrix(NA, nrow=NROW(object), ncol=2)
+              } else {
                 CI <- cbind(object[,estimate[i]]-qnorm(z)*object[,se[i]],
                             object[,estimate[i]]+qnorm(z)*object[,se[i]])
-                colnames(CI) <- NULL
-                object <- cbind(object,CI)
-                confint <- c(confint,pos+1:2)
-                pos <- pos+2
+              }
+              colnames(CI) <- NULL
+              object <- cbind(object,CI)
+              confint <- c(confint,pos+1:2)
+              pos <- pos+2
             }
         }
         if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate).")
@@ -428,6 +432,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         est <- rbind(est,Coverage=Coverage)
     }
+
     if (!is.null(names)) {
          if (length(names)<ncol(est)) {
             uest <- unique(estimate)

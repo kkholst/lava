@@ -154,12 +154,11 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
 
     if (length(se)>0) {
-        for (i in seq_along(se)) {
+      for (i in seq_along(se)) {
             if (is.character(se[[i]])) se[[i]] <- match(se[[i]],colnames(x))
         }
 
     }
-
   ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
 
     oldpar <- NULL
@@ -177,17 +176,17 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     if (auto.layout && (nc>1 || nr>1)) {
         oma.multi = c(2, 0, 2, 0)
         mar.multi = c(1.5, 4.1, 1, 1)
-        oldpar <- par(mar=mar.multi, oma=oma.multi,
+        opt <- list(mar=mar.multi, oma=oma.multi,
                       cex.axis=cex.axis,las=1,
                       ask=FALSE)
         if (byrow) {
-            par(mfrow=c(nr,nc))
+            opt <- c(opt, list(mfrow=c(nr,nc)))
         } else {
-            par(mfcol=c(nc,nr))
+            opt <- c(opt, list(mfcol=c(nc,nr)))
         }
+        oldpar <- do.call(par, opt)
     }
-
-    dys <- c()
+  dys <- c()
   maxdy <- 0
 
   if (density.plot)
@@ -302,7 +301,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             if (!is.null(true)) {
                 abline(v=true[i],lty=true.lty,col=true.col,lwd=true.lwd)
             }
-            if (!is.null(se)) {
+            if (!is.null(se) && !is.na(se[[i]])) {
                 se.pos <- match(se[[i]],unlist(se))
                 ns <- length(se.pos)+1
                 se.alpha <- rep(alphas,length.out=ns)[-1]
