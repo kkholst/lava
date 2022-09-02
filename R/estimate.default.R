@@ -183,7 +183,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                       R=0,
                       null.sim) {
 
-      cl <- match.call(expand.dots=TRUE)
+    cl <- match.call(expand.dots=TRUE)
+    if ("iid"%in%names(cl)) {
+        stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
+    }
     if (!missing(use)) {
         p0 <- c("f","contrast","only.coef","subset","average","keep","labels")
         cl0 <- cl
