@@ -23,7 +23,7 @@ density.sim <- function(x, ..., plot.type="single") {
 ##' plot.sim(val,estimate=c(1,2,3),plot.type="single",scatter.plot=TRUE)
 ##' plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single",scatter.plot=TRUE)
 ##' 
-##' density.sim(val,estimate=c(1,2,3),density=c(0,10,10),angle=c(0,45,-45))
+##' density.sim(val,estimate=c(1,2,3),density=c(0,10,10), lwd=2, angle=c(0,45,-45),cex.legend=1.3)
 ##' @aliases density.sim plot.sim
 ##' @export
 ##' @export plot.sim
@@ -301,7 +301,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             if (!is.null(true)) {
                 abline(v=true[i],lty=true.lty,col=true.col,lwd=true.lwd)
             }
-            if (!is.null(se) && !is.na(se[[i]])) {
+            if (!is.null(se) && !any(is.na(se[[i]]))) {
                 se.pos <- match(se[[i]],unlist(se))
                 ns <- length(se.pos)+1
                 se.alpha <- rep(alphas,length.out=ns)[-1]

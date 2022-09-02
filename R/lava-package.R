@@ -22,7 +22,7 @@
 ##'     pchisq confint.default formula fft uniroot rbinom predict sd
 ##'     addmargins residuals dnorm quantile qf cov2cor qchisq
 ##'     get_all_vars p.adjust rpois rt rmultinom rgamma printCoefmat 
-##'     glm nlminb na.pass na.omit
+##'     glm nlminb na.pass na.omit influence
 ##' @importFrom survival is.Surv
 ##' @importFrom future.apply future_mapply future_lapply
 ##' @importFrom methods new as

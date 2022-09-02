@@ -178,5 +178,5 @@ plot.sim(val,estimate=c(1,2,3),equal=TRUE,byrow=TRUE,scatter.plot=TRUE)
 plot.sim(val,estimate=c(1,2,3),plot.type="single",scatter.plot=TRUE)
 plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single",scatter.plot=TRUE)
 
-density.sim(val,estimate=c(1,2,3),density=c(0,10,10),angle=c(0,45,-45))
+density.sim(val,estimate=c(1,2,3),density=c(0,10,10), lwd=2, angle=c(0,45,-45),cex.legend=1.3)
 }
