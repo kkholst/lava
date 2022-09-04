@@ -1,17 +1,26 @@
-##' Wrapper function for mclapply
+##' Monte Carlo simulation
 ##'
+##' Applies a function repeatedly for a specified number of replications or over
+##' a list/data.frame with plot and summary methods for summarizing the Monte
+##' Carlo experiment. Can be parallelized via the future package (use the
+##' future::plan function).
 ##' @export
 ##' @param x function or 'sim' object
 ##' @param R Number of replications or data.frame with parameters
 ##' @param f Optional function (i.e., if x is a matrix)
 ##' @param colnames Optional column names
-##' @param messages Messages
 ##' @param seed (optional) Seed (needed with cl=TRUE)
 ##' @param args (optional) list of named arguments passed to (mc)mapply
-##' @param iter If TRUE the iteration number is passed as first argument to (mc)mapply
+##' @param iter If TRUE the iteration number is passed as first argument to
+##'   (mc)mapply
 ##' @param ... Additional arguments to (mc)mapply
 ##' @aliases sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim
+##' @details To parallelize the calculation use the future::plan function (e.g.,
+##'   future::plan(multisession()) to distribute the calculations over the R
+##'   replications on all available cores). The output is controlled via the
+##'   progressr package (e.g., progressr::handlers(global=TRUE) to enable
+##'   progress information).
 ##' @examples
 ##' m <- lvm(y~x+e)
 ##' distribution(m,~y) <- 0
@@ -28,7 +37,7 @@
 ##'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
 ##'     res
 ##' }
-##' val <- sim(onerun,R=10,b0=1,messages=0)
+##' val <- sim(onerun,R=10,b0=1)
 ##' val
 ##'
 ##' val <- sim(val,R=40,b0=1) ## append results
@@ -55,7 +64,6 @@
 ##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 ##' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
-                messages=lava.options()$messages,
                 seed=NULL, args=list(),
                 iter=FALSE, ...) {
     stm <- proc.time()
@@ -285,11 +293,11 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^
 ##' @param confint (optional) list of pairs of columns with confidence limits
 ##' @param true (optional) vector of true parameter values
 ##' @param fun (optional) summary function
-##' @param names (optional) names of 
+##' @param names (optional) names of estimates
 ##' @param unique.names if TRUE, unique.names will be applied to column names
 ##' @param minimal if TRUE, minimal summary will be returned
-##' @param level confidence level 
-##' @param quantiles quantiles
+##' @param level confidence level (0.95)
+##' @param quantiles quantiles (0,0.025,0.5,0.975,1)
 ##' @param ... additional levels to lower-level functions
 summary.sim <- function(object,estimate=NULL,se=NULL,
                 confint=!is.null(se)&&!is.null(true),true=NULL,

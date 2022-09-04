@@ -1,0 +1,38 @@
+---
+title: Test vignette
+author: Klaus Kähler Holst
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5    
+vignette: >
+  %\VignetteIndexEntry{Test vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r  include=FALSE }
+knitr::opts_chunk$set(
+      collapse = TRUE,
+      comment = "#>"
+      ) 
+```
+
+intro
+====================
+
+Her er lidt tekst
+
+$$\int f, dm = \Phi(f)$$
+
+
+```{r   }
+2+2 
+```
+
+
+```{r}
+plot(1:10)
+```

@@ -31,7 +31,8 @@ vignette: >
     comment = "#>"
   )
   mets <- lava:::versioncheck('mets', 1)
-  fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
+  fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE") ||
+    length(list.files("data"))==0
 #+END_SRC
 
 #+RESULTS:
@@ -258,9 +259,9 @@ cross-validation repeated two times
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
     fit.cv$fit <- NULL
-    saveRDS(fit.cv, "nonlinear_fitcv.rds", version=2)
+    saveRDS(fit.cv, "data/nonlinear_fitcv.rds", version=2)
   } else {
-    fit.cv <- readRDS("nonlinear_fitcv.rds")
+    fit.cv <- readRDS("data/nonlinear_fitcv.rds")
   }
 #+END_SRC
 
@@ -316,9 +317,9 @@ below). For example,
 #+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
-    saveRDS(summary(selmod), "nonlinear_selmod.rds", version=2)
+    saveRDS(summary(selmod), "data/nonlinear_selmod.rds", version=2)
   } else {
-    selmod <- readRDS("nonlinear_selmod.rds")
+    selmod <- readRDS("data/nonlinear_selmod.rds")
   }
 #+END_SRC
 
@@ -471,9 +472,9 @@ can rerun the estimation with different random starting values
 #+BEGIN_SRC R :ravel results="hide", echo=FALSE
   ## To save time building the vignettes on CRAN, we cache time consuming computations
   if (fullVignette) {
-    saveRDS(em0, "nonlinear_em0.rds", version=2)
+    saveRDS(em0, "data/nonlinear_em0.rds", version=2)
   } else {
-    em0 <- readRDS("nonlinear_em0.rds")
+    em0 <- readRDS("data/nonlinear_em0.rds")
   }
 #+END_SRC
 
