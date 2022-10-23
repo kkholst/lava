@@ -18,7 +18,7 @@ sumsplit <- function(x,...) {
 }
 
 ##' @export
-parsedesign <- function(coef, x, ..., regex=FALSE, diff=TRUE) {b
+parsedesign <- function(coef, x, ..., regex=FALSE, diff=TRUE) {
     if (!is.vector(coef)) coef <- stats::coef(coef)
     if (is.numeric(coef) && !is.null(names(coef))) coef <- names(coef)
     dots <- lapply(substitute(list(...)), function(x) x)[-1]
