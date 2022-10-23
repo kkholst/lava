@@ -32,15 +32,15 @@
 
 \item{fun}{(optional) summary function}
 
-\item{names}{(optional) names of}
+\item{names}{(optional) names of estimates}
 
 \item{unique.names}{if TRUE, unique.names will be applied to column names}
 
 \item{minimal}{if TRUE, minimal summary will be returned}
 
-\item{level}{confidence level}
+\item{level}{confidence level (0.95)}
 
-\item{quantiles}{quantiles}
+\item{quantiles}{quantiles (0,0.025,0.5,0.975,1)}
 
 \item{...}{additional levels to lower-level functions}
 }

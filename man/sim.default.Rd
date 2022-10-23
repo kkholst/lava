@@ -3,14 +3,13 @@
 \name{sim.default}
 \alias{sim.default}
 \alias{as.sim}
-\title{Wrapper function for mclapply}
+\title{Monte Carlo simulation}
 \usage{
 \method{sim}{default}(
   x = NULL,
   R = 100,
   f = NULL,
   colnames = NULL,
-  messages = lava.options()$messages,
   seed = NULL,
   args = list(),
   iter = FALSE,
@@ -26,18 +25,27 @@
 
 \item{colnames}{Optional column names}
 
-\item{messages}{Messages}
-
 \item{seed}{(optional) Seed (needed with cl=TRUE)}
 
 \item{args}{(optional) list of named arguments passed to (mc)mapply}
 
-\item{iter}{If TRUE the iteration number is passed as first argument to (mc)mapply}
+\item{iter}{If TRUE the iteration number is passed as first argument to
+(mc)mapply}
 
 \item{...}{Additional arguments to (mc)mapply}
 }
 \description{
-Wrapper function for mclapply
+Applies a function repeatedly for a specified number of replications or over
+a list/data.frame with plot and summary methods for summarizing the Monte
+Carlo experiment. Can be parallelized via the future package (use the
+future::plan function).
+}
+\details{
+To parallelize the calculation use the future::plan function (e.g.,
+  future::plan(multisession()) to distribute the calculations over the R
+  replications on all available cores). The output is controlled via the
+  progressr package (e.g., progressr::handlers(global=TRUE) to enable
+  progress information).
 }
 \examples{
 m <- lvm(y~x+e)
@@ -55,7 +63,7 @@ onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
     res
 }
-val <- sim(onerun,R=10,b0=1,messages=0)
+val <- sim(onerun,R=10,b0=1)
 val
 
 val <- sim(val,R=40,b0=1) ## append results
