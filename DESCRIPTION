@@ -55,7 +55,6 @@ Suggests:
 	lava.tobit (>= 0.4.7),
 	lavaSearch2,
 	lme4,
-	magrittr,
 	mets (>= 1.1),
 	nlme,
 	optimx,

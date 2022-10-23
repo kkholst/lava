@@ -60,7 +60,7 @@ ordreg <- function(formula,data=parent.frame(),offset,family=stats::binomial("pr
     I <- -ordreg_hessian(cc,up)
     names(cc) <- nn
     dimnames(I) <- list(nn,nn)
-    res <- list(vcov=solve(I),coef=cc,call=match.call(),up=up,opt=op)
+    res <- list(vcov=solve(I),coef=cc,call=match.call(),up=up,opt=op,levels=lev)
     structure(res,class="ordreg")
 }
 
@@ -157,5 +157,6 @@ predict.ordreg <- function(object,p=coef(object),type=c("prob","cumulative"),...
     F <- with(env,h(lp))
     if (tolower(type)[1]=="cumulative") return(F)            
     Pr <- cbind(F,1)-cbind(0,F)
+    colnames(Pr) <- object$levels
     return(Pr)
 }

@@ -60,16 +60,15 @@ As an example, we will simulate data from this model with a single covariate. Fi
 
 ```{r  load, results="hide",message=FALSE,warning=FALSE }
 library('lava')
-library('magrittr')
 ```
 
-The model can be specified (here using the pipe notation via `magrittr`)
+The model can be specified (here using the pipe notation)
 with the following syntax where the correlation parameter here is
 given the label '`r`':
 
 ```{r  m0 }
-m0 <- lvm() %>%
-  covariance(y1 ~ y2, value='r') %>%
+m0 <- lvm() |>
+  covariance(y1 ~ y2, value='r') |>
   regression(y1 + y2 ~ x)
 ```
 
@@ -106,8 +105,8 @@ cens1 <- function(threshold,type='right') {
   }
 }
 
-m0 %<>%
-  transform(s1 ~ y1, cens1(-2, 'left')) %>%
+m0 <- 
+  transform(m0, s1 ~ y1, cens1(-2, 'left')) |>
   transform(s2 ~ y2, cens1(2,  'right'))
 ```
 
@@ -122,8 +121,8 @@ head(d)
 The Maximum Likelihood Estimate can be obtainted using the `estimate` method:
 
 ```{r  est1 }
-m <- lvm() %>%
-     regression(y1 + y2 ~ x) %>%
+m <- lvm() |>
+     regression(y1 + y2 ~ x) |>
      covariance(y1 ~ y2)
 
 e <- estimate(m, data=d)
@@ -183,12 +182,12 @@ in a way that such parameter constraints are naturally fulfilled.
 This can be achieved with the `constrain` method.
 
 ```{r  constraints }
-m2 <- m %>%
-    parameter(~ l1 + l2 + z) %>%
-    variance(~ y1 + y2, value=c('v1','v2')) %>%
-    covariance(y1 ~ y2, value='c') %>%
-    constrain(v1 ~ l1, fun=exp) %>%
-    constrain(v2 ~ l2, fun=exp) %>%
+m2 <- m |>
+    parameter(~ l1 + l2 + z) |>
+    variance(~ y1 + y2, value=c('v1','v2')) |>
+    covariance(y1 ~ y2, value='c') |>
+    constrain(v1 ~ l1, fun=exp) |>
+    constrain(v2 ~ l2, fun=exp) |>
     constrain(c ~ z+l1+l2, fun=function(x) tanh(x[1])*sqrt(exp(x[2])*exp(x[3])))
 ```
 
@@ -224,8 +223,8 @@ coefficient, and `lname`, `lname2` can be used to specify the parameter
 names for the log variance parameters):
 
 ```{r  constraints2 }
-m2 <- lvm() %>%
-  regression(y1 + y2 ~ x) %>%
+m2 <- lvm() |>
+  regression(y1 + y2 ~ x) |>
   covariance(y1 ~ y2, constrain=TRUE, rname='z')
 
 e2 <- estimate(m2, data=d)
@@ -267,8 +266,8 @@ defined as `Surv` objects (from the `survival` package which is
 automatically loaded when using the `mets` package) in the data frame.
 
 ```{r  cache=TRUE, eval=mets }
-m3 <- lvm() %>%
-  regression(y1 + s2 ~ x) %>%
+m3 <- lvm() |>
+  regression(y1 + s2 ~ x) |>
   covariance(y1 ~ s2, constrain=TRUE, rname='z')
 
 e3 <- estimate(m3, d)
@@ -285,8 +284,8 @@ estimate(e3, 'z', back.transform=tanh)
 And here the same analysis with `s1` being left-censored and `s2` right-censored:
 
 ```{r  cache=TRUE, eval=mets }
-m3b <- lvm() %>%
-  regression(s1 + s2 ~ x) %>%
+m3b <- lvm() |>
+  regression(s1 + s2 ~ x) |>
   covariance(s1 ~ s2, constrain=TRUE, rname='z')
 
 e3b <- estimate(m3b, d)

@@ -29,7 +29,7 @@ predict.lvm.missing <- function(object,x=NULL,y=NULL,data=model.frame(object),p=
     if (!requireNamespace("mets",quietly=TRUE)) stop("Requires 'mets'")
     obs <- mets::fast.pattern(obs0)
     res <- matrix(nrow=nrow(data),ncol=NCOL(pp))
-    for (i in seq(nrow(obs$pattern))) {
+    for (i in seq_len(nrow(obs$pattern))) {
         jj <- which(obs$pattern[i,]==1)
         ii <- which(obs$group==i-1)
         if (length(jj)==0) {
