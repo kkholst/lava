@@ -1,4 +1,3 @@
-
 ###{{{ distribution
 
 ##' @export
@@ -280,6 +279,10 @@ Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,.
     }
     attr(f,"family") <- fam
     attr(f,"var") <- FALSE
+    par <- NULL
+    if (!missing(shape) & !missing(rate))
+      par <- c(shape=shape, rate=rate)
+    attr(f, "family") <- list(family="gamma", par=par)
     return(f)
 }
 
@@ -292,7 +295,9 @@ loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
 ##' @export
 chisq.lvm <- function(df=1,...) {
-    function(n,mu,var,...) mu + rchisq(n,df=df)
+  f <- function(n,mu,var,...) mu + rchisq(n,df=df)
+  attr(f, "family") <- list(family="chisq", par=c(df=df))
+  return(f)
 }
 
 ###}}} chisq
@@ -304,6 +309,7 @@ student.lvm <- function(df=2,mu,sigma,...) {
     f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
     if (!missing(mu)) attr(f,"mean") <- mu
     if (!missing(sigma)) attr(f,"variace") <- sigma^2
+    attr(f, "family") <- list(family="student-t")
     return(f)
 }
 
@@ -316,8 +322,9 @@ uniform.lvm <- function(a,b) {
     if (!missing(a) & !missing(b))
         f <- function(n,mu,var,...) mu+runif(n,a,b)
     else
-        f <- function(n,mu,var,...)
-    (mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var)))
+      f <- function(n,mu,var,...)
+        mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var))
+    attr(f, "family") <- list(family="uniform")
     return(f)
 }
 
@@ -423,7 +430,9 @@ ones.lvm <- function(p=1,interval=NULL) {
         if (p>0 && p<1) val[seq(n*(1-p))] <- 0L
         val
     }
+    attr(f, "family") <- list(family="binary (deterministic)")
     return(f)
+
 }
 
 ##' @export
@@ -449,7 +458,8 @@ beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
             mu+(y-m)*sqrt(var/v)
         }
     else
-        f <- function(n,mu,var,...) stats::rbeta(n,shape1=alpha,shape2=beta)
+      f <- function(n,mu,var,...) stats::rbeta(n,shape1=alpha,shape2=beta)
+    attr(f, "family") <- list(family="beta", par=c(alpha=alpha, beta=beta))
     return(f)
 }
 
