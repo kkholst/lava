@@ -93,14 +93,6 @@ mixture of character and numeric values (and NA's to remove constraints).
 
 The function \code{regression} (called without additional arguments) can be
 used to inspect the linear constraints of a \code{lvm}-object.
-
-For backward compatibility the "$"-symbol can be used to fix parameters at
-a given value. E.g. to add a linear relationship between \code{y} and
-\code{x} with slope 2 to the model \code{m}, we can write
-\code{regression(m,"y") <- "x$2"}.  Similarily we can use the "@"-symbol to
-name parameters. E.g. in a multiple regression we can force the parameters
-to be equal: \code{regression(m,"y") <- c("x1@b","x2@b")}.  Fixed parameters
-can be reset by fixing (with \$) them to \code{NA}.
 }
 \note{
 Variables will be added to the model if not already present.

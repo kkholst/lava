@@ -119,7 +119,6 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 "intercept" <- function(object,...) UseMethod("intercept")
 
 ##' @export
-##' @export
 intercept.lvm <- intfix.lvm <- function(object,value,...) {
     if (!missing(value)) {
         intercept(object,...) <- value
@@ -135,7 +134,6 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
 ##' @export
 "intercept<-" <- function(object,...,value) UseMethod("intercept<-")
 
-##' @export
 ##' @export
 "intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
     if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)

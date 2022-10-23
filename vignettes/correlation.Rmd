@@ -296,19 +296,6 @@ e3b
 e3b
 ```
 
-
-                           Estimate Std. Error  Z-value  P-value
-    Regressions:
-       s1~x                 0.92834    0.04479 20.72733   <1e-12
-        s2~x                0.92466    0.04648 19.89513   <1e-12
-    Intercepts:
-       s1                  -0.00233    0.04492 -0.05184   0.9587
-       s2                  -0.02083    0.04641 -0.44874   0.6536
-    Additional Parameters:
-       l1                  -0.00075    0.06500 -0.01156   0.9908
-       l2                   0.06425    0.06498  0.98871   0.3228
-       z                    1.42627    0.04609 30.94319   <1e-12
-
 ```{r  cache=TRUE, eval=mets }
 estimate(e3b, 'z', back.transform=tanh)
 ```

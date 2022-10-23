@@ -14,9 +14,9 @@ Col(col, alpha = 0.2, locate = 0)
 \item{locate}{Choose colour (with mouse)}
 }
 \value{
-A character vector with elements of 7 or 9 characters, '"\#"'
+A character vector with elements of 7 or 9 characters, `#`
  followed by the red, blue, green and optionally alpha values in
-hexadecimal (after rescaling to '0 ... 255').
+ hexadecimal (after rescaling to '0 ... 255').
 }
 \description{
 This function transforms a standard color (e.g. "red") into an
