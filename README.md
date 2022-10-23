@@ -13,9 +13,9 @@
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
 and ordinal outcomes (Holst and Budtz-Joergensen (2013)
-<doi:10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear
+<10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear
 latent variable models (Holst and Budtz-Joergensen (2020)
-<doi:10.1093/biostatistics/kxy082>). The package also provides methods for graph
+<10.1093/biostatistics/kxy082>). The package also provides methods for graph
 exploration (d-separation, back-door criterion), simulation of general
 non-linear latent variable models, and estimation of influence functions for a
 broad range of statistical models.
