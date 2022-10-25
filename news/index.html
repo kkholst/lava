@@ -61,11 +61,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.7.0" id="lava-170">lava 1.7.0<a class="anchor" aria-label="anchor" href="#lava-170"></a></h2>
+<h2 class="page-header" data-toc-text="1.7.0" id="lava-170">lava 1.7.0<small>2022-10-25</small><a class="anchor" aria-label="anchor" href="#lava-170"></a></h2>
 <ul><li>
 <code>cv</code> method moved to the ‘targeted’ package</li>
 <li>New <code>IC</code> method that returns influence function of a model object. The <code>iid</code> argument <code>iid</code> of the <code>estimate</code> method is now replaced with an argument <code>IC</code> (with a user supplied matrix this must now be the actual influence function and not the sample-size scaled version returned by the <code>iid</code> method).</li>
-<li>fixed bug where calls like <code>regression("y", value=function(x) x)</code> did not work.</li>
+<li>fixed bug where calls like <code>regression("y", value=function(x) x)</code> did not work. <code>merge.estimate</code> now works without IC element</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.10" id="lava-1610">lava 1.6.10<small>2021-09-02</small><a class="anchor" aria-label="anchor" href="#lava-1610"></a></h2>

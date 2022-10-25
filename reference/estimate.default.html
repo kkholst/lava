@@ -455,7 +455,7 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-in"><span>         <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         subset<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">z</span><span class="op">&gt;</span><span class="fl">0</span>, id<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">id</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.03053 0.6156 0.7353 1.774e-108</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## More examples with clusters:</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span></span>
@@ -471,24 +471,49 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Un-stacked and stacked i.i.d. decomposition</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span>,stack<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(estimate(l1, id = id1, stack = FALSE)):</span> could not find function "IC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   (Intercept)           x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.04904705 -0.14189362</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.14744213 -0.15724052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1.15168804 -0.54934034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.37775868  0.06124426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.01647188 -0.03981494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.75658710  2.38806661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.48187968 -0.18690182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.56660619 -0.30858145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.77907752 -0.82047631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.41462553 -0.24506186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"bread")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept)          x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.6136517 -0.1000796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x            -0.1000796  0.9011828</span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(estimate(l1, id = id1)):</span> could not find function "IC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   (Intercept)          x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.3201083  0.5375442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.4818797 -0.1869018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.2915390 -0.1741982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.9653828 -0.6849083</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   0.4146255 -0.2450619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"bread")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept)          x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.6136517 -0.1000796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x            -0.1000796  0.9011828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"N")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Combined i.i.d. decomposition</span></span></span>
 <span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l2</span>,id<span class="op">=</span><span class="va">id2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e3</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l3</span>,id<span class="op">=</span><span class="va">id3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">a2</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">e1</span>,<span class="va">e2</span>,<span class="va">e3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)     0.5418  0.2472  0.05731 1.026 0.0283949</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x               0.9636  0.2592  0.45568 1.472 0.0002006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).1   0.2156  0.5105 -0.78505 1.216 0.6728124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x.1             1.2369  0.4854  0.28554 2.188 0.0108277</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).2   0.4769  0.2979 -0.10705 1.061 0.1094554</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x.2             1.1545  0.3714  0.42660 1.882 0.0018795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err    2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)     0.5418  0.2462  0.0593 1.024 2.775e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x               0.9636  0.1818  0.6072 1.320 1.162e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).1   0.2156  0.4746 -0.7147 1.146 6.497e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x.1             1.2369  0.4723  0.3113 2.163 8.819e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).2   0.4769  0.2979 -0.1070 1.061 1.095e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x.2             1.1545  0.3714  0.4266 1.882 1.880e-03</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## If all models were estimated on the same data we could use the</span></span></span>
 <span class="r-in"><span><span class="co">## syntax:</span></span></span>
@@ -496,12 +521,62 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Same:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(a1 &lt;- merge(l1, l2, l3, id = list(id1, id2, id3))):</span> could not find function "IC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2         x.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -2.5608667  4.3003535     2.4606537 -3.32492191     0.7554987  2.18566521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.9637594 -0.3738036     1.4817522 -0.87578050     0.5200220 -0.55458052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -1.1661561 -0.6967928     0.0851336 -0.09079122    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    3.8615311 -2.7396333     1.3603804 -0.64888388    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.8292511 -0.4901237    -2.8428500 -0.46089806    -0.4880168 -1.17960761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000     0.3201561  0.77386382     1.6742259 -2.27609724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000    -3.2842366  4.46489429     0.8010558  0.31069745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    0.0000000  0.0000000     0.4190107  0.16251745     0.1460747  0.07955428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    0.0000000  0.0000000     0.0000000  0.00000000    -1.3102941  1.37992084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   0.0000000  0.0000000     0.0000000  0.00000000    -0.4208633  0.24874863</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># one-to-one (same clusters)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(merge(l1, l2, l3, id = TRUE)):</span> could not find function "IC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)           x (Intercept).1         x.1 (Intercept).2         x.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.04904705 -0.14189362   0.004626991  0.01338593     0.7554987  2.18566521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.14744213 -0.15724052   1.185401770 -0.70062440     0.5200220 -0.55458052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1.15168804 -0.54934034   0.068106877 -0.07263298    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.37775868  0.06124426   1.088304293 -0.51910711    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.01647188 -0.03981494  -2.274280005 -0.36871845    -0.4880168 -1.17960761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -1.75658710  2.38806661   0.256124851  0.61909106     1.6742259 -2.27609724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.48187968 -0.18690182  -2.627389265  3.57191544     0.8010558  0.31069745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.56660619 -0.30858145   0.335208530  0.13001396     0.1460747  0.07955428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.77907752 -0.82047631  -0.378700581 -0.20624550    -1.3102941  1.37992084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.41462553 -0.24506186   2.342596539 -2.46707796    -0.4208633  0.24874863</span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="co"># independence</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in IC(merge(l1, l2, l3, id = FALSE)):</span> could not find function "IC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2        x.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.14714116 -0.4256809    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.44232639 -0.4717216    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3.45506412 -1.6480210    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1.13327605  0.1837328    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.04941565 -0.1194448    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -5.26976131  7.1641998    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -1.44563904 -0.5607055    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.69981856 -0.9257444    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   2.33723256 -2.4614289    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  1.24387660 -0.7351856    0.00000000  0.00000000     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.00000000  0.0000000    0.01388097  0.04015779     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.00000000  0.0000000    3.55620531 -2.10187319     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.00000000  0.0000000    0.20432063 -0.21789893     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.00000000  0.0000000    3.26491288 -1.55732132     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.00000000  0.0000000   -6.82284001 -1.10615534     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.00000000  0.0000000    0.76837455  1.85727317     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.00000000  0.0000000   -7.88216780 10.71574631     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.00000000  0.0000000    1.00562559  0.39004188     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.00000000  0.0000000   -1.13610174 -0.61873650     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.00000000  0.0000000    7.02778962 -7.40123388     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.00000000  0.0000000    0.00000000  0.00000000     2.2664960  6.5569956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  0.00000000  0.0000000    0.00000000  0.00000000     1.5600661 -1.6637416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  0.00000000  0.0000000    0.00000000  0.00000000    -0.3647111  0.1739625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  0.00000000  0.0000000    0.00000000  0.00000000    -4.6683977 -0.7568656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  0.00000000  0.0000000    0.00000000  0.00000000    -1.4640503 -3.5388228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  0.00000000  0.0000000    0.00000000  0.00000000     5.0226778 -6.8282917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.00000000  0.0000000    0.00000000  0.00000000     2.4031674  0.9320923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  0.00000000  0.0000000    0.00000000  0.00000000     0.4382241  0.2386628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  0.00000000  0.0000000    0.00000000  0.00000000    -3.9308824  4.1397625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  0.00000000  0.0000000    0.00000000  0.00000000    -1.2625898  0.7462459</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Monte Carlo approach, simple trend test example</span></span></span>

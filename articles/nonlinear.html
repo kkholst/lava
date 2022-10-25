@@ -79,13 +79,13 @@
       
 
       </header><script src="nonlinear_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="nonlinear_files/vis-9.1.0/vis-network.min.css" rel="stylesheet">
-<script src="nonlinear_files/vis-9.1.0/vis-network.min.js"></script><script src="nonlinear_files/visNetwork-binding-2.1.0/visNetwork.js"></script><div class="row">
+<script src="nonlinear_files/vis-9.1.0/vis-network.min.js"></script><script src="nonlinear_files/visNetwork-binding-2.1.2/visNetwork.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Non-linear latent variable models and error-in-variable models</h1>
                         <h4 data-toc-skip class="author">Klaus Kähler Holst</h4>
             
-            <h4 data-toc-skip class="date">2022-08-03</h4>
+            <h4 data-toc-skip class="date">2022-10-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/HEAD/vignettes/nonlinear.Rmd" class="external-link"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="hidden name"><code>nonlinear.Rmd</code></div>
@@ -108,8 +108,8 @@
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, n<span class="op">=</span><span class="fl">200</span>, seed<span class="op">=</span><span class="fl">42</span><span class="op">)</span> <span class="co"># Default is all parameters are 1</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span>, plot.engine<span class="op">=</span><span class="st">"visNetwork"</span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-0bcf6e190fbdb4fd45fc" style="width:100%;height:700px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0bcf6e190fbdb4fd45fc">{"x":{"nodes":{"id":[1,2,3,4,5,6,7,8,9],"label":["x1","x2","x3","eta1","y1","y2","y3","eta2","z"],"color":["orange","orange","orange","yellowgreen","orange","orange","orange","yellowgreen","lightblue"],"shape":["box","box","box","circle","box","box","box","circle","box"],"shadow":[true,true,true,true,true,true,true,true,true],"size":[1,1,1,1,1,1,1,1,1],"group":["endogenous","endogenous","endogenous","latent","endogenous","endogenous","endogenous","latent","exogenous"]},"edges":{"from":[1,2,3,8,5,6,7,4,8],"to":[4,4,4,4,8,8,8,9,9],"dashes":[false,false,false,false,false,false,false,false,false],"arrows":["from","from","from","from","from","from","from","from","from"],"physics":[true,true,true,true,true,true,true,true,true]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot"},"manipulation":{"enabled":false},"edges":{"arrows":{"from":{"enabled":true,"scaleFactor":0.5}},"scaling":{"min":2,"max":2}},"layout":{"randomSeed":1}},"groups":["endogenous","latent","exogenous"],"width":"100%","height":"700px","idselection":{"enabled":false},"byselection":{"enabled":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)"},"evals":[],"jsHooks":[]}</script><p>We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holst_budtzjorgensen_2013" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holst_budtzjorgensen_2013</a></sup> for details on the syntax for model specification.</p>
+<div id="htmlwidget-3ca9f876d073430d3f89" style="width:100%;height:700px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3ca9f876d073430d3f89">{"x":{"nodes":{"id":[1,2,3,4,5,6,7,8,9],"label":["x1","x2","x3","eta1","y1","y2","y3","eta2","z"],"color":["orange","orange","orange","yellowgreen","orange","orange","orange","yellowgreen","lightblue"],"shape":["box","box","box","circle","box","box","box","circle","box"],"shadow":[true,true,true,true,true,true,true,true,true],"size":[1,1,1,1,1,1,1,1,1],"group":["endogenous","endogenous","endogenous","latent","endogenous","endogenous","endogenous","latent","exogenous"]},"edges":{"from":[1,2,3,8,5,6,7,4,8],"to":[4,4,4,4,8,8,8,9,9],"dashes":[false,false,false,false,false,false,false,false,false],"arrows":["from","from","from","from","from","from","from","from","from"],"physics":[true,true,true,true,true,true,true,true,true]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot"},"manipulation":{"enabled":false},"edges":{"arrows":{"from":{"enabled":true,"scaleFactor":0.5}},"scaling":{"min":2,"max":2}},"layout":{"randomSeed":1}},"groups":["endogenous","latent","exogenous"],"width":"100%","height":"700px","idselection":{"enabled":false},"byselection":{"enabled":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)"},"evals":[],"jsHooks":[]}</script><p>We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holst_budtzjorgensen_2013" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holst_budtzjorgensen_2013</a></sup> for details on the syntax for model specification.</p>
 <div class="section level2">
 <h2 id="estimation">Estimation<a class="anchor" aria-label="anchor" href="#estimation"></a>
 </h2>
@@ -124,23 +124,23 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">e1</span></span>
-<span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
-<span><span class="co">#&gt; Measurements:                                             </span></span>
-<span><span class="co">#&gt;    y2~eta2           0.97686    0.03451 28.30865    &lt;1e-12</span></span>
-<span><span class="co">#&gt;    y3~eta2           1.04485    0.03485 29.98153    &lt;1e-12</span></span>
-<span><span class="co">#&gt; Regressions:                                              </span></span>
-<span><span class="co">#&gt;    eta2~z            0.88513    0.20778  4.25997 2.045e-05</span></span>
-<span><span class="co">#&gt;    eta2~eta1_1       1.14072    0.17410  6.55194 5.679e-11</span></span>
-<span><span class="co">#&gt;    eta2~eta1_2      -0.45055    0.07161 -6.29199 3.134e-10</span></span>
-<span><span class="co">#&gt; Intercepts:                                               </span></span>
-<span><span class="co">#&gt;    y2               -0.12198    0.10915 -1.11749    0.2638</span></span>
-<span><span class="co">#&gt;    y3               -0.09879    0.10545 -0.93680    0.3489</span></span>
-<span><span class="co">#&gt;    eta2              0.67814    0.17363  3.90567 9.397e-05</span></span>
-<span><span class="co">#&gt; Residual Variances:                                       </span></span>
-<span><span class="co">#&gt;    y1                1.30730    0.17743  7.36790          </span></span>
-<span><span class="co">#&gt;    y2                1.11056    0.14478  7.67064          </span></span>
-<span><span class="co">#&gt;    y3                0.80961    0.13203  6.13219          </span></span>
-<span><span class="co">#&gt;    eta2              2.08483    0.28985  7.19274</span></span></code></pre></div>
+<span><span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span></span>
+<span><span class="co">#&gt; Measurements:                                            </span></span>
+<span><span class="co">#&gt;    y2~eta2           0.97686    0.08406 11.62146   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y3~eta2           1.04485    0.04531 23.06093   &lt;1e-12</span></span>
+<span><span class="co">#&gt; Regressions:                                             </span></span>
+<span><span class="co">#&gt;    eta2~z            0.88513   16.11882  0.05491   0.9562</span></span>
+<span><span class="co">#&gt;    eta2~eta1_1       1.14072   18.98292  0.06009   0.9521</span></span>
+<span><span class="co">#&gt;    eta2~eta1_2      -0.45055    9.16379 -0.04917   0.9608</span></span>
+<span><span class="co">#&gt; Intercepts:                                              </span></span>
+<span><span class="co">#&gt;    y2               -0.12198    0.10935 -1.11549   0.2646</span></span>
+<span><span class="co">#&gt;    y3               -0.09879    0.10569 -0.93471   0.3499</span></span>
+<span><span class="co">#&gt;    eta2              0.67814   15.00825  0.04518    0.964</span></span>
+<span><span class="co">#&gt; Residual Variances:                                      </span></span>
+<span><span class="co">#&gt;    y1                1.30730    0.48572  2.69149         </span></span>
+<span><span class="co">#&gt;    y2                1.11056    1.07092  1.03702         </span></span>
+<span><span class="co">#&gt;    y3                0.80961    0.76919  1.05255         </span></span>
+<span><span class="co">#&gt;    eta2              2.08483    7.57087  0.27537</span></span></code></pre></div>
 <p>We see a clear statistically significant effect of the second order term (<code>eta2~eta1_2</code>). For comparison we can also estimate the full MLE of the linear model:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m1</span><span class="op"><a href="../reference/op_concat.html">%++%</a></span><span class="va">m2</span>, <span class="va">eta2</span><span class="op">~</span><span class="va">eta1</span><span class="op">)</span>, <span class="va">d</span><span class="op">)</span></span>
@@ -168,37 +168,37 @@
 <span><span class="fu"><a href="../reference/twostage.lvmfit.html">nonlinear</a></span><span class="op">(</span><span class="va">m2</span>, type<span class="op">=</span><span class="st">"spline"</span>, knots<span class="op">=</span><span class="va">kn</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta2</span> <span class="op">~</span> <span class="va">eta1</span></span>
 <span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">e2</span></span>
-<span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
-<span><span class="co">#&gt; Measurements:                                             </span></span>
-<span><span class="co">#&gt;    y2~eta2           0.97752    0.03455 28.29248    &lt;1e-12</span></span>
-<span><span class="co">#&gt;    y3~eta2           1.04508    0.03488 29.96248    &lt;1e-12</span></span>
-<span><span class="co">#&gt; Regressions:                                              </span></span>
-<span><span class="co">#&gt;    eta2~z            0.86729    0.20273  4.27795 1.886e-05</span></span>
-<span><span class="co">#&gt;    eta2~eta1_1       2.86231    0.67270  4.25495 2.091e-05</span></span>
-<span><span class="co">#&gt;    eta2~eta1_2       0.00344    0.10097  0.03409    0.9728</span></span>
-<span><span class="co">#&gt;    eta2~eta1_3      -0.26270    0.29398 -0.89360    0.3715</span></span>
-<span><span class="co">#&gt;    eta2~eta1_4       0.50778    0.35191  1.44293     0.149</span></span>
-<span><span class="co">#&gt; Intercepts:                                               </span></span>
-<span><span class="co">#&gt;    y2               -0.12185    0.10922 -1.11563    0.2646</span></span>
-<span><span class="co">#&gt;    y3               -0.09874    0.10545 -0.93638    0.3491</span></span>
-<span><span class="co">#&gt;    eta2              1.83814    1.66416  1.10454    0.2694</span></span>
-<span><span class="co">#&gt; Residual Variances:                                       </span></span>
-<span><span class="co">#&gt;    y1                1.31286    0.17750  7.39647          </span></span>
-<span><span class="co">#&gt;    y2                1.10412    0.14455  7.63850          </span></span>
-<span><span class="co">#&gt;    y3                0.81124    0.13185  6.15286          </span></span>
-<span><span class="co">#&gt;    eta2              1.99404    0.27004  7.38416</span></span></code></pre></div>
+<span><span class="co">#&gt;                     Estimate Std. Error  Z-value  P-value</span></span>
+<span><span class="co">#&gt; Measurements:                                            </span></span>
+<span><span class="co">#&gt;    y2~eta2           0.97752    0.09601 10.18190   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y3~eta2           1.04508    0.08418 12.41422   &lt;1e-12</span></span>
+<span><span class="co">#&gt; Regressions:                                             </span></span>
+<span><span class="co">#&gt;    eta2~z            0.86729   15.75435  0.05505   0.9561</span></span>
+<span><span class="co">#&gt;    eta2~eta1_1       2.86231   21.41242  0.13368   0.8937</span></span>
+<span><span class="co">#&gt;    eta2~eta1_2       0.00344    3.46229  0.00099   0.9992</span></span>
+<span><span class="co">#&gt;    eta2~eta1_3      -0.26270   11.47890 -0.02289   0.9817</span></span>
+<span><span class="co">#&gt;    eta2~eta1_4       0.50778   14.09761  0.03602   0.9713</span></span>
+<span><span class="co">#&gt; Intercepts:                                              </span></span>
+<span><span class="co">#&gt;    y2               -0.12185    0.10980 -1.10974   0.2671</span></span>
+<span><span class="co">#&gt;    y3               -0.09874    0.10627 -0.92918   0.3528</span></span>
+<span><span class="co">#&gt;    eta2              1.83814   69.73223  0.02636    0.979</span></span>
+<span><span class="co">#&gt; Residual Variances:                                      </span></span>
+<span><span class="co">#&gt;    y1                1.31286    0.49428  2.65613         </span></span>
+<span><span class="co">#&gt;    y2                1.10412    1.03272  1.06914         </span></span>
+<span><span class="co">#&gt;    y3                0.81124    0.72916  1.11257         </span></span>
+<span><span class="co">#&gt;    eta2              1.99404    6.88395  0.28966</span></span></code></pre></div>
 <p>Confidence limits can be obtained via the Delta method using the <code>estimate</code> method:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>eta1<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">eta1</span>,</span>
 <span>      <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    eta1  Estimate   Std.Err      2.5%     97.5%      P-value</span></span>
-<span><span class="co">#&gt; p1 -4.0 -9.611119 1.2650975 -12.09066 -7.131573 3.027549e-14</span></span>
-<span><span class="co">#&gt; p2 -3.9 -9.324887 1.2054916 -11.68761 -6.962167 1.031270e-14</span></span>
-<span><span class="co">#&gt; p3 -3.8 -9.038656 1.1467339 -11.28621 -6.791099 3.219588e-15</span></span>
-<span><span class="co">#&gt; p4 -3.7 -8.752425 1.0889619 -10.88675 -6.618099 9.176297e-16</span></span>
-<span><span class="co">#&gt; p5 -3.6 -8.466193 1.0323409 -10.48954 -6.442842 2.384619e-16</span></span>
-<span><span class="co">#&gt; p6 -3.5 -8.179962 0.9770712 -10.09499 -6.264937 5.668692e-17</span></span></code></pre></div>
+<span><span class="co">#&gt;    eta1  Estimate   Std.Err      2.5%    97.5%   P-value</span></span>
+<span><span class="co">#&gt; p1 -4.0 -9.611119 106.92613 -219.1825 199.9602 0.9283781</span></span>
+<span><span class="co">#&gt; p2 -3.9 -9.324887 105.30964 -215.7280 197.0782 0.9294417</span></span>
+<span><span class="co">#&gt; p3 -3.8 -9.038656 103.71216 -212.3108 194.2334 0.9305512</span></span>
+<span><span class="co">#&gt; p4 -3.7 -8.752425 102.13459 -208.9325 191.4277 0.9317089</span></span>
+<span><span class="co">#&gt; p5 -3.6 -8.466193 100.57787 -205.5952 188.6628 0.9329169</span></span>
+<span><span class="co">#&gt; p6 -3.5 -8.179962  99.04297 -202.3006 185.9407 0.9341775</span></span></code></pre></div>
 <p>The fitted function can be obtained with the following code:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">eta2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
@@ -228,14 +228,15 @@
 <span><span class="co">## Repeated 5-fold cross-validation:</span></span>
 <span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>linear<span class="op">=</span><span class="va">m2a</span>,quadratic<span class="op">=</span><span class="va">m2b</span>,spline4<span class="op">=</span><span class="va">m2c</span>,spline6<span class="op">=</span><span class="va">m2d</span><span class="op">)</span>,</span>
 <span>        <span class="kw">function</span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m</span>,data<span class="op">=</span><span class="va">data</span>,stderr<span class="op">=</span><span class="cn">FALSE</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e0</span><span class="op">)</span>,contrain<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">fit.cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/cv.html" class="external-link">cv</a></span><span class="op">(</span><span class="va">ff</span>,data<span class="op">=</span><span class="va">d</span>,K<span class="op">=</span><span class="fl">5</span>,rep<span class="op">=</span><span class="fl">2</span>,mc.cores<span class="op">=</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fit.cv</span> <span class="op">&lt;-</span> <span class="fu">cv</span><span class="op">(</span><span class="va">ff</span>,data<span class="op">=</span><span class="va">d</span>,K<span class="op">=</span><span class="fl">5</span>,rep<span class="op">=</span><span class="fl">2</span>,mc.cores<span class="op">=</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.cv</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               RMSE</span></span>
-<span><span class="co">#&gt; linear    4.616861</span></span>
-<span><span class="co">#&gt; quadratic 3.283140</span></span>
-<span><span class="co">#&gt; spline4   3.067121</span></span>
-<span><span class="co">#&gt; spline6   3.119909</span></span></code></pre></div>
+<span><span class="co">#&gt;       Length Class  Mode     </span></span>
+<span><span class="co">#&gt; cv    40     -none- numeric  </span></span>
+<span><span class="co">#&gt; call   7     -none- call     </span></span>
+<span><span class="co">#&gt; names  4     -none- character</span></span>
+<span><span class="co">#&gt; rep    1     -none- numeric  </span></span>
+<span><span class="co">#&gt; folds  1     -none- numeric</span></span></code></pre></div>
 <p>Here the RMSE is in favour of the splines model with 4 degrees of freedom:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m2a</span>,<span class="va">m2b</span>,<span class="va">m2c</span>,<span class="va">m2d</span><span class="op">)</span>,</span>
@@ -284,25 +285,25 @@
 <span><span class="op">}</span></span>
 <span><span class="va">ee1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">mm1</span>, model2<span class="op">=</span><span class="va">mm2</span>, data<span class="op">=</span><span class="va">d</span>, predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"eta2~u"</span>,regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%   97.5%  P-value</span></span>
-<span><span class="co">#&gt; eta2~u1     0.9891  0.3020  0.3971  1.5810 0.001057</span></span>
-<span><span class="co">#&gt; eta2~u2    -0.3962  0.1443 -0.6791 -0.1133 0.006047</span></span>
-<span><span class="co">#&gt; eta2~u1:g   0.4487  0.4620 -0.4568  1.3543 0.331409</span></span>
-<span><span class="co">#&gt; eta2~u2:g   0.0441  0.2166 -0.3804  0.4686 0.838667</span></span></code></pre></div>
+<span><span class="co">#&gt;           Estimate Std.Err   2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; eta2~u1     0.9891  17.805 -33.91 35.89  0.9557</span></span>
+<span><span class="co">#&gt; eta2~u2    -0.3962   9.971 -19.94 19.15  0.9683</span></span>
+<span><span class="co">#&gt; eta2~u1:g   0.4487  13.679 -26.36 27.26  0.9738</span></span>
+<span><span class="co">#&gt; eta2~u2:g   0.0441   7.178 -14.02 14.11  0.9951</span></span></code></pre></div>
 <p>A formal test show no statistically significant effect of this interaction</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"(:g)"</span>, regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)</span></span>
 <span><span class="co">#&gt; __________________________________________________</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; eta2~u1:g   0.4487  0.4620 -0.4568 1.3543  0.3314</span></span>
-<span><span class="co">#&gt; eta2~u2:g   0.0441  0.2166 -0.3804 0.4686  0.8387</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err   2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; eta2~u1:g   0.4487  13.679 -26.36 27.26  0.9738</span></span>
+<span><span class="co">#&gt; eta2~u2:g   0.0441   7.178 -14.02 14.11  0.9951</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [eta2~u1:g] = 0</span></span>
 <span><span class="co">#&gt;   [eta2~u2:g] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 0.9441, df = 2, p-value = 0.6237</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 0.0016, df = 2, p-value = 0.9992</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="mixture-models">Mixture models<a class="anchor" aria-label="anchor" href="#mixture-models"></a>
@@ -382,25 +383,25 @@
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">em2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">em0</span>,<span class="va">m2</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">em2</span></span>
-<span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
-<span><span class="co">#&gt; Measurements:                                             </span></span>
-<span><span class="co">#&gt;    y2~eta2           0.97823    0.03469 28.19904    &lt;1e-12</span></span>
-<span><span class="co">#&gt;    y3~eta2           1.04530    0.03484 30.00721    &lt;1e-12</span></span>
-<span><span class="co">#&gt; Regressions:                                              </span></span>
-<span><span class="co">#&gt;    eta2~z            1.02884    0.22330  4.60752 4.075e-06</span></span>
-<span><span class="co">#&gt;    eta2~eta1_1       2.80413    0.65493  4.28155 1.856e-05</span></span>
-<span><span class="co">#&gt;    eta2~eta1_2      -0.02249    0.09996 -0.22499     0.822</span></span>
-<span><span class="co">#&gt;    eta2~eta1_3      -0.17333    0.28933 -0.59906    0.5491</span></span>
-<span><span class="co">#&gt;    eta2~eta1_4       0.38672    0.33982  1.13801    0.2551</span></span>
-<span><span class="co">#&gt; Intercepts:                                               </span></span>
-<span><span class="co">#&gt;    y2               -0.12171    0.10925 -1.11407    0.2653</span></span>
-<span><span class="co">#&gt;    y3               -0.09870    0.10546 -0.93592    0.3493</span></span>
-<span><span class="co">#&gt;    eta2              2.12372    1.66552  1.27511    0.2023</span></span>
-<span><span class="co">#&gt; Residual Variances:                                       </span></span>
-<span><span class="co">#&gt;    y1                1.31872    0.17657  7.46861          </span></span>
-<span><span class="co">#&gt;    y2                1.09690    0.14503  7.56340          </span></span>
-<span><span class="co">#&gt;    y3                0.81345    0.13259  6.13509          </span></span>
-<span><span class="co">#&gt;    eta2              1.99590    0.28454  7.01453</span></span></code></pre></div>
+<span><span class="co">#&gt;                      Estimate Std. Error   Z-value   P-value</span></span>
+<span><span class="co">#&gt; Measurements:                                               </span></span>
+<span><span class="co">#&gt;    y2~eta2            0.97823    0.16298   6.00229 1.946e-09</span></span>
+<span><span class="co">#&gt;    y3~eta2            1.04530    0.10922   9.57080    &lt;1e-12</span></span>
+<span><span class="co">#&gt; Regressions:                                                </span></span>
+<span><span class="co">#&gt;    eta2~z             1.02884   20.08620   0.05122    0.9591</span></span>
+<span><span class="co">#&gt;    eta2~eta1_1        2.80413   44.84857   0.06252    0.9501</span></span>
+<span><span class="co">#&gt;    eta2~eta1_2       -0.02249    6.57553  -0.00342    0.9973</span></span>
+<span><span class="co">#&gt;    eta2~eta1_3       -0.17333   19.50619  -0.00889    0.9929</span></span>
+<span><span class="co">#&gt;    eta2~eta1_4        0.38672   22.12310   0.01748    0.9861</span></span>
+<span><span class="co">#&gt; Intercepts:                                                 </span></span>
+<span><span class="co">#&gt;    y2                -0.12171    0.11148  -1.09174    0.2749</span></span>
+<span><span class="co">#&gt;    y3                -0.09870    0.10580  -0.93292    0.3509</span></span>
+<span><span class="co">#&gt;    eta2               2.12372  112.74655   0.01884     0.985</span></span>
+<span><span class="co">#&gt; Residual Variances:                                         </span></span>
+<span><span class="co">#&gt;    y1                 1.31872    0.77923   1.69233          </span></span>
+<span><span class="co">#&gt;    y2                 1.09690    1.23378   0.88906          </span></span>
+<span><span class="co">#&gt;    y3                 0.81345    1.13831   0.71461          </span></span>
+<span><span class="co">#&gt;    eta2               1.99590    9.18508   0.21730</span></span></code></pre></div>
 <p>In this example the results are very similar to the Gaussian model:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">eta2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>

@@ -162,13 +162,6 @@ well. E.g:</p>
 mixture of character and numeric values (and NA's to remove constraints).</p>
 <p>The function <code>regression</code> (called without additional arguments) can be
 used to inspect the linear constraints of a <code>lvm</code>-object.</p>
-<p>For backward compatibility the "$"-symbol can be used to fix parameters at
-a given value. E.g. to add a linear relationship between <code>y</code> and
-<code>x</code> with slope 2 to the model <code>m</code>, we can write
-<code>regression(m,"y") &lt;- "x$2"</code>.  Similarily we can use the "@"-symbol to
-name parameters. E.g. in a multiple regression we can force the parameters
-to be equal: <code>regression(m,"y") &lt;- c("x1@b","x2@b")</code>.  Fixed parameters
-can be reset by fixing (with \$) them to <code>NA</code>.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
