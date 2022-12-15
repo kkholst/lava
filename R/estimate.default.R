@@ -298,15 +298,16 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             atr$dimnames <- NULL
             atr$dim <- NULL
             if (!lava.options()$cluster.index) {
-                ic_theta <- matrix(unlist(by(ic_theta,id,colMeans)),byrow=TRUE,ncol=ncol(ic_theta))
+                ic_theta <- matrix(unlist(by(ic_theta,id,colSums)),byrow=TRUE,ncol=ncol(ic_theta))
                 attributes(ic_theta)[names(atr)] <- atr
                 idstack <- sort(unique(id))
             } else {
                 clidx <- mets::cluster.index(id,mat=ic_theta,return.all=TRUE)
-                ic_theta <- with(clidx, X/cluster.size)
+                ic_theta <- with(clidx, X)
                 attributes(ic_theta)[names(atr)] <- atr
                 idstack <- id[as.vector(clidx$firstclustid)+1]
             }
+            ic_theta <- ic_theta*NROW(ic_theta)/length(id)
             if (is.null(attributes(ic_theta)$N)) {
                 attributes(ic_theta)$N <- N
             }
