@@ -32,7 +32,7 @@ adjMat.lvmfit <- function(object,...) adjMat(Model(object),...)
 edgeList.lvmfit <- function(object,...) edgeList(Model(object),...)
 
 ##' @export
-edgeList.lvm <- function(object,labels=FALSE,...) {
+edgeList.lvm <- function(object, labels=FALSE, list=FALSE, ...) {
     edgelist <- data.frame(from=NULL,to=NULL)
     A <- adjMat(object)
     for (i in 1:nrow(A)) {
@@ -40,7 +40,11 @@ edgeList.lvm <- function(object,labels=FALSE,...) {
         if (length(ii)>0)
             edgelist <- rbind(edgelist,data.frame(from=ii,to=i))
     }
+    if (list) labels <- TRUE
     if (labels) edgelist <- as.data.frame(apply(edgelist,2,function(x) vars(object)[x]))
+    if (list) {
+      edgelist <- apply(edgelist, 1, function(x) paste0(x,collapse="~"))
+    }
     edgelist
 }
 
