@@ -27,7 +27,6 @@ ordinal.sim.hook <- function(x,data,p,modelpar,...) {
             data[,ovar[i]] <- factor(data[,ovar[i]],
                                      levels=seq(K)-1,
                                      labels=lab)
-
     }
     return(data)
 }
@@ -40,10 +39,6 @@ ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
 
     ord <- ordinal(x)
     bin <- NULL
-    hasTobit <- lava.options()$tobit && isNamespaceLoaded("lava.tobit")
-    if (hasTobit) {
-        bin <- lava.tobit::binary(x)
-    }
     if (is.null(estimator) && length(ord)>0) estimator <- nestimator[1]
 
     ## Binary outcomes -> censored regression
@@ -53,53 +48,19 @@ ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
             if (is.character(data[,i]) | is.factor(data[,i])) { # Transform binary 'factor'
                 y <- as.factor(data[,i])
                 data[,i] <- as.numeric(y)-1
-                if (hasTobit && nlevels(y)==2 && !is.null(estimator) && estimator%in%c("gaussian","tobit")) {
-                    lava.tobit::binary(x) <- i
-                } else {
-                    estimator <- nestimator[1]
-                    ordinal(x,K=nlevels(y)) <- i
-                }
+                estimator <- nestimator[1]
+                ordinal(x,K=nlevels(y)) <- i
             }
         }
         ord <- ordinal(x)
         if (length(ord)>0 && !is.null(estimator) && estimator%in%nestimator2) {
-            if (hasTobit) {
-                lava.tobit::binary(x) <- ord
-            } else {
-                estimator <- nestimator[1]
-            }
-        }
-        if (hasTobit) bin <- intersect(lava.tobit::binary(x),vars(x))
-        if (length(bin)>0 && (is.null(estimator) || estimator%in%"normal")) {
-                estimator <- nestimator[1]
-                ordinal(x,K=2) <- bin
-        }
-        
-        if (length(bin)>0 && estimator%in%nestimator2) {
-            estimator <- nestimator2[1]
-            if (is.null(weights)) {
-                W <- data[,bin,drop=FALSE]; W[W==0] <- -1; colnames(W) <- bin
-                weights <- lava::lava.options()$threshold*W
-            } else {
-                ##        if (!all(binary(x)%in%colnames(data)))
-                ##        W <- data[,binary(x),drop=FALSE]; W[W==0] <- -1; colnames(W) <- binary(x)
-                ##        attributes(W)$data2 <- weights
-                ##        weights <- W
-                ##          weights[,binary(x)] <- W
-            }
-            for (b in bin) {
-                data[!is.na(data[,b]),b] <- 0
-            }
-            ##    data[,binary(x)] <- 0
-            if (!is.null(data2)) {
-                estimator <- "tobitw"
-            }
+          estimator <- nestimator[1]
         }
     }
 
     ## Transform 'Surv' objects
     data2 <- mynames <- NULL
-    if (is.null(estimator) || estimator%in%nestimator[1] || (!hasTobit && estimator%in%nestimator2)) {
+    if (is.null(estimator) || estimator%in%nestimator[1] ) {
         for (i in setdiff(lava::endogenous(x),c(bin,ord))) {
             if (survival::is.Surv(data[,i])) {
                 S <- data[,i]
@@ -130,39 +91,6 @@ ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
         }
     }
 
-    W <- NULL
-    if (length(estimator)>0 && estimator%in%nestimator2 && hasTobit) {
-        for (i in setdiff(lava::endogenous(x),bin)) {
-            if (survival::is.Surv(data[,i])) {
-                estimator <- nestimator2[1]
-                S <- data[,i]
-                y <- S[,1]
-                if (attributes(S)$type=="left")
-                    w <- S[,2]-1
-                if (attributes(S)$type=="right")
-                    w <- 1-S[,2]
-                if (attributes(S)$type=="interval2") {
-                    w <- S[,3]; w[w==2] <- (-1)
-                }
-                mynames <- c(mynames,i)
-                W <- cbind(W,w)
-                data[,i] <- y
-            }
-        }
-        if (length(W)>0) {
-            colnames(W) <- mynames
-            if (!is.null(weights)) {
-                wW <- intersect(colnames(weights),colnames(W))
-                if (length(wW)>0)
-                    weights[,wW] <- W[,wW]
-                Wo <- setdiff(colnames(W),wW)
-                if (length(Wo)>0)
-                    weights <- cbind(weights,W[,Wo,drop=FALSE])
-            } else {
-                weights <- W;
-            }
-        }
-    }
     return(c(list(x=x,data=data,weights=weights,data2=data2,estimator=estimator),dots))
 }
 

@@ -46,13 +46,11 @@ Suggests:
 	ellipse,
 	fields,
 	geepack,
-	gof (>= 0.9),
 	graph,
 	knitr,
 	bookdown,
 	rmarkdown,
 	igraph (>= 0.6),
-	lava.tobit (>= 0.4.7),
 	lavaSearch2,
 	lme4,
 	mets (>= 1.1),
@@ -67,6 +65,5 @@ Suggests:
 	visNetwork,
 	zoo
 VignetteBuilder: knitr
-ByteCompile: yes
-Encoding: UTF-8
+ByteCompile: yesEncoding: UTF-8
 RoxygenNote: 7.2.3

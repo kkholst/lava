@@ -91,7 +91,6 @@ assign("options", list(
                       progressbarstyle=3,
                       itol=1e-16,
                       cluster.index=versioncheck("mets",c(0,2,7)),
-                      tobit=versioncheck("lava.tobit",c(0,5)),
                       Dmethod="simple",
                       messages=ifelse(interactive(), 1, 0),
                       parallel=TRUE,
