@@ -65,5 +65,6 @@ Suggests:
 	visNetwork,
 	zoo
 VignetteBuilder: knitr
-ByteCompile: yesEncoding: UTF-8
+ByteCompile: yes
+Encoding: UTF-8
 RoxygenNote: 7.2.3
