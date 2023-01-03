@@ -320,15 +320,15 @@ student.lvm <- function(df=2,mu,sigma,...) {
 ##' @export
 uniform.lvm <- function(a,b, value=NULL) {
   if (!is.null(value)) {
-    f <- function(n, ...)
+    f <- function(n, mu, var, ...)
       sample(value, size=n, replace=TRUE)
     attr(f, "family") <- list(family="discrete uniform")
     return(f)
   }
   if (!missing(a) & !missing(b))
-    f <- function(n,mu,var,...) mu+runif(n,a,b)
+    f <- function(n, mu, var,...) mu+runif(n,a,b)
   else
-    f <- function(n,mu,var,...)
+    f <- function(n, mu, var,...)
       mu+(runif(n,-1,1)*sqrt(12)/2*sqrt(var))
   attr(f, "family") <- list(family="uniform")
   return(f)
