@@ -21,7 +21,6 @@ Description: A general implementation of Structural Equation Models
 	models, and estimation of influence functions for a broad range of
 	statistical models.
 URL: https://kkholst.github.io/lava/
-Additional_repositories: https://kkholst.github.io/r_repo/
 BugReports: https://github.com/kkholst/lava/issues
 License: GPL-3
 LazyLoad: yes
