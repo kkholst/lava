@@ -1,3 +1,7 @@
+# lava 1.7.1
+  - Fixed bug in variance estimates from `estimate` with clustered observations.  
+  - Discrete uniform distributions can now be specified with `uniform.lvm(value=...)`. 
+  
 # lava 1.7.0
   - `cv` method moved to the 'targeted' package
   - New `IC` method that returns influence function of a model object. The `iid`
