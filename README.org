@@ -9,13 +9,9 @@
 # +OPTIONS: timestamp:t title:t date:t author:t creator:nil toc:nil
 # +OPTIONS: h:4 num:t tags:nil d:t toc:t
 
-# +BEGIN_EXPORT yaml
-# output: md_document
-# +END_EXPORT
-
 #+BEGIN_export md
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg)](https://github.com/kkholst/lava/actions)
+  [![R-CMD-check](https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/kkholst/lava/actions)
   [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=master)](https://codecov.io/github/kkholst/lava?branch=master)
   [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
@@ -31,6 +27,10 @@ knitr::opts_chunk$set(
 )
 ```
 #+END_export
+
+# +BEGIN_EXPORT yaml
+# output: md_document
+# +END_EXPORT
 
 * Latent Variable Models: lava [[https://kkholst.github.io/lava/][<img src=man/figures/lvm1-1.png align="right" height="150">]]
 
