@@ -85,10 +85,12 @@ IC.default <- function(x, bread, id=NULL,
     if (!missing(id)) {
         N <- nrow(ic0)
         if (!lava.options()$cluster.index) {
-            ic0 <- matrix(unlist(by(ic0,id,colSums)),byrow=TRUE,ncol=ncol(bread))
+          ic0 <- matrix(unlist(by(ic0,id,colSums)),
+                        byrow=TRUE,ncol=ncol(bread))
         } else {
-            ic0 <- mets::cluster.index(id,mat=ic0,return.all=FALSE)
+          ic0 <- mets::cluster.index(id,mat=ic0,return.all=FALSE)
         }
+        ic0 <- ic0*NROW(ic0)/length(id)
         attributes(ic0)$N <- N
     }
     colnames(ic0) <- colnames(U)

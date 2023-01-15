@@ -466,6 +466,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                     else {
                         ic1 <- mets::cluster.index(id,mat=ic1,return.all=FALSE)
                     }
+                    ic1 <- ic1*NROW(ic1)/length(id)
                 }
                 if (!missing(subset)) { ## Conditional estimate
                     phat <- mean(subset)
@@ -477,6 +478,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                             ic3 <- mets::cluster.index(id,mat=ic3,return.all=FALSE)
                         }
                     }
+                    ic3 <- NROW(ic3)/length(id)
                     ic_theta <- (ic1+ic2)/phat + rbind(pp)%x%ic3
                     pp <- pp/phat
                     V <- var_ic(ic_theta)

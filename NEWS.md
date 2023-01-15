@@ -1,3 +1,8 @@
+# lava 1.7.2
+  - Development version
+  - Further clustering fixes
+  - cluster.index now also works when not loading the package
+
 # lava 1.7.1
   - Fixed bug in variance estimates from `estimate` with clustered observations.  
   - Discrete uniform distributions can now be specified with `uniform.lvm(value=...)`. 

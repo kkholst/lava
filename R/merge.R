@@ -126,13 +126,13 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
         if (!lava.options()$cluster.index) {
             ic0 <- matrix(unlist(by(icz,id0,colSums)),byrow=TRUE,ncol=ncol(icz))
             ids <- c(ids, list(sort(unique(id0))))
-
         } else {
             if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
             clidx <- mets::cluster.index(id0,mat=icz,return.all=TRUE)
             ic0 <- clidx$X
             ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
         }
+        ic0 <- ic0*NROW(ic0)/length(id0)
         ic_all <- c(ic_all, list(ic0))
     }
     id <- unique(unlist(ids))
