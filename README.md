@@ -8,7 +8,7 @@
 
 
 
-# Latent Variable Models: lava [<img src=man/figures/lvm1-1.png align="right" height="150">](https://kkholst.github.io/lava/)
+# Latent Variable Models: `lava` <img src=man/figures/lvm1-1.png align="right" height="150">
 
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
