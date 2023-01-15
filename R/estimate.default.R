@@ -478,7 +478,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                             ic3 <- mets::cluster.index(id,mat=ic3,return.all=FALSE)
                         }
                     }
-                    ic3 <- NROW(ic3)/length(id)
+                    ic3 <- ic3*NROW(ic3)/length(id)
                     ic_theta <- (ic1+ic2)/phat + rbind(pp)%x%ic3
                     pp <- pp/phat
                     V <- var_ic(ic_theta)
