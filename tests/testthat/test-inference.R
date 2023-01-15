@@ -54,7 +54,7 @@ test_that("glm-estimator", {
     distribution(m,~y+z) <- binomial.lvm("logit")
     set.seed(1)
     d <- sim(m,1e3,seed=1)
->    head(d)
+    head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]
