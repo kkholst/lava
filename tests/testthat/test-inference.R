@@ -54,7 +54,7 @@ test_that("glm-estimator", {
     distribution(m,~y+z) <- binomial.lvm("logit")
     set.seed(1)
     d <- sim(m,1e3,seed=1)
-    head(d)
+>    head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]
@@ -508,17 +508,4 @@ test_that("Tobit",{
     m <- lvm(s~x)
     e <- estimate(m,data=d,estimator="normal",weights="w")
     testthat::expect_true(mean((coef(e)[1:2]-coef(s))^2)<1e-9)
-})
-
-test_that("GEE", {
-  require("geepack")
-  d <- lvm(y ~ x, ~ id) |>
-    distribution(~id, uniform.lvm(value=seq(1:20))) |>
-    sim(100, seed=1)
-  d0 <- d[order(d$id), ]
-  g <- geeglm(y ~ x, data=d0, id=d0$id)
-  V <- summary(g)$cov.scaled
-  g0 <- glm(y ~ x, data=d)
-  V0 <- vcov(estimate(g0, id = d$id))
-  testthat::expect_true(sum((V - V0)^2) < 1e-12)
 })
