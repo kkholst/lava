@@ -6,11 +6,11 @@
     addhook("ordinal.sim.hook","sim.hooks")
     addhook("color.ordinal","color.hooks")
     addhook("ordinal.remove.hook","remove.hooks")
+    lava.options(cluster.index = versioncheck("mets", c(0, 2, 7))
+               )
 }
 
 '.onAttach' <- function(libname, pkgname="lava") {
     # desc <- utils::packageDescription(pkgname)
     # packageStartupMessage(desc$Package, " version ",desc$Version)
-  lava.options(cluster.index = versioncheck("mets", c(0, 2, 7))
-               )
 }

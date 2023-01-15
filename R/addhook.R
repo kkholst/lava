@@ -90,7 +90,7 @@ assign("options", list(
                       allow.negative.variance=FALSE,
                       progressbarstyle=3,
                       itol=1e-16,
-                      cluster.index=versioncheck("mets",c(0,2,7)),
+                      cluster.index=versioncheck("mets", c(0, 2, 7)),
                       Dmethod="simple",
                       messages=ifelse(interactive(), 1, 0),
                       parallel=TRUE,
