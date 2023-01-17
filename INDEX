@@ -4,12 +4,12 @@
 
 addvar                  Add variable to (model) object
 addvar<-                -
-adjMat			        Extract adjancey matrix from model/graph
-ancestors		        Extract ancestors of nodes
+adjMat                  Extract adjancey matrix from model/graph
+ancestors               Extract ancestors of nodes
 baptize                 Label elements of object
 cancel                  Remove assocation between variables
 cancel<-                -
-categorical		        Define categorical variables (predictors)
+categorical             Define categorical variables (predictors)
 categorical<-           -
 children                Extract children or parent elements of object
 constrain               Add non-linear constraints to latent variable model
@@ -20,12 +20,12 @@ covfix                  -
 covfix<-                -
 variance                -
 variance<-              -
-descendants		        Extract descendants of nodes
-describecoef		    Show parameter names
+descendants             Extract descendants of nodes
+describecoef            Show parameter names
 distribution            Define distribution of variables
 distribution<-          -
-edgeList		        Extract edge list from model/graph
-edgelabels		        Define labels on edges of graph
+edgeList                Extract edge list from model/graph
+edgelabels              Define labels on edges of graph
 edgelabels<-            -
 edgeList                Extract edges of 'lvm' object
 endogenous              Extract endogenous variables
@@ -33,8 +33,8 @@ exogenous               Extract/define exogenous variables
 exogenous<-             -
 eventTime               Add an observed event time outcome to a latent variable model
 eventTime<-             -
-fixsome			        Constrain parameters in measurement models (identifiability)
-functional		        Add non-linear associations (for simulation only)
+fixsome                 Constrain parameters in measurement models (identifiability)
+functional              Add non-linear associations (for simulation only)
 functional<-            -
 intercept               Fix mean parameters in 'lvm'-object
 intercept<-             -
@@ -53,20 +53,20 @@ latent<-                -
 lvm                     Initialize new latent variable model
 makemissing             Create random missing data
 manifest                Extract observed variables
-measurement		        Extract measurement models
-merge			        Merge model objects (lvm, estimate, ...)
-multigroup		        Define multiple group object
-nodecolor		        Set node colours
+measurement             Extract measurement models
+merge                   Merge model objects (lvm, estimate, ...)
+multigroup              Define multiple group object
+nodecolor               Set node colours
 nodecolor<-             -
-ordinal			        Define variables as ordinal
+ordinal                 Define variables as ordinal
 ordinal<-               -
-parameter		        Define additional parameters of the model
+parameter               Define additional parameters of the model
 parameter<-             -
 parfix                  Fix parameters of model
 parfix<-                -
 parpos                  Generic method for finding indeces of model parameters
 pars                    Extract model parameter names
-parents			        Extract parents of nodes
+parents                 Extract parents of nodes
 path                    Extract pathways in model graph
 plot.lvm                Plot path diagram
 Range.lvm               Define range constraints of parameters
@@ -81,7 +81,7 @@ sinks                   Extract sink nodes of graph
 subset.lvm              Extract subset of latent variable model
 timedep                 Time-dependent parameters
 timedep<-               -
-transform		        Create non-linear parameter constraints
+transform               Create non-linear parameter constraints
 transform<-             -
 vars                    Extract variable names from latent variable model
 
@@ -92,49 +92,49 @@ bootstrap               Generic bootstrap method
 bootstrap.lvm           Calculate bootstrap estimates of a lvm object
 closed.testing          Closed testing procedure
 confint.lvmfit          Calculate confidence limits for parameters
-contr			        Create contrast matrices
+contr                   Create contrast matrices
 compare                 Statistical tests Performs Likelihood-ratio, Wald and score tests
-complik			        Composite likelihood inference
-confpred		        Conformal prediction limits
+complik                 Composite likelihood inference
+confpred                Conformal prediction limits
 correlation             Generic method for extracting correlation coefficients of model object
-cv			            Cross-validation function
-dsep			        Check d-separation criterion in graph
+cv                      Cross-validation function
+dsep                    Check d-separation criterion in graph
 equivalence             Identify candidates of equivalent models
-effects			        Mediation; calculate indirect, direct and total effects
+effects                 Mediation; calculate indirect, direct and total effects
 totaleffects            -
 estimate.default        Aggregation of parameters and data
 estimate.lvm            Estimation of parameters in a Latent Variable Model (lvm)
 gof                     Extract model summaries and GOF statistics for model object
-gkgamma			        Kruskal-Gamma for contigency tables
+gkgamma                 Kruskal-Gamma for contigency tables
 Graph                   Extract graph
 Graph<-                 -
 IC                      Extract i.i.d. decomposition (influence function) from model object
 iid                     - (obsolete)
 information             Calculate information matrix
-IV			            Instrumental variables estimator (2SLS)
-kappa			        Cohens kappa
+IV                      Instrumental variables estimator (2SLS)
+kappa                   Cohens kappa
 lava.options            Set global options for 'lava'
-measurement.error	    Two-stage estimator for (non-linear) measurement error models
+measurement.error       Two-stage estimator for (non-linear) measurement error models
 Model                   Extract model
 Model<-                 -
 modelPar                Extract model parameters
 modelVar                Extract variance structure
 modelsearch             Model searching
-moments			        Estimate model-specific mean and variance
-multinomial		        Estimate probabilities in contingency table
+moments                 Estimate model-specific mean and variance
+multinomial             Estimate probabilities in contingency table
 mvnmix                  Estimate multivariate normal mixture model
-nonlinear		        Define non-linear associations (see 'twostage')
+nonlinear               Define non-linear associations (see 'twostage')
 nonlinear<-             -
-ordreg			        Ordinal regression models
+ordreg                  Ordinal regression models
 partialcor              Calculate partial correlations
-p.correct		        Multiple testing adjustment
-pcor			        Polychoric correlations
-plot.estimate		    Forest-plot or regression line plot
+p.correct               Multiple testing adjustment
+pcor                    Polychoric correlations
+plot.estimate           Forest-plot or regression line plot
 predict.lvm             Prediction in structural equation models
-profile			        Profile likelihood
+profile                 Profile likelihood
 mixture                 Estimate mixture latent variable model
-residuals		        Extract residuals
-riskcomp		        Calculate association measure (see also 'OR,'Diff','Ratio')
+residuals               Extract residuals
+riskcomp                Calculate association measure (see also 'OR,'Diff','Ratio')
 Diff                    -
 OR                      -
 Ratio                   -
@@ -142,9 +142,9 @@ odds                    -
 expit                   -
 logit                   -
 tigol                   -
-scheffe			        Simulatenous confidence bands (lm)
-score			        Extract score function of model fit
-stack.estimate		    Stack estimating equations
+scheffe                 Simulatenous confidence bands (lm)
+score                   Extract score function of model fit
+stack.estimate          Stack estimating equations
 sim                     Simulate model
 sim.default             Wrapper function for mclapply
 as.sim                  Cast matrix as 'sim' object
@@ -154,7 +154,7 @@ startvalues0            -
 startvalues1            -
 startvalues2            -
 twostage                Two-stage estimator (non-linear SEM)
-twostageCV		        Cross-validation for non-linear SEM mixture models
+twostageCV              Cross-validation for non-linear SEM mixture models
 wkm                     Weighted k-means algorithm
 zibreg                  Regression model for binomial data with unknown group of unaffected
 
@@ -169,36 +169,36 @@ wait                    -
 Col                     Generate a transparent RGB color
 Combine                 Report estimates across different models
 commutation             Finds the unique commutation matrix
-csplit			        Define random folds of data
+csplit                  Define random folds of data
 foldr                   -
-curly			        Add curly brackets to plot
+curly                   Add curly brackets to plot
 Expand                  Create a Data Frame from All Combinations of Factors
 fplot                   Faster plots of large data via rgl
 forestplot              Forest plots (confidence/prediciton limits visualization)
-getSAS			        Read SAS output (ODS)
-getMplus		        Read Mplus output
-ksmooth2		        Estimate and visualize bivariate density
+getSAS                  Read SAS output (ODS)
+getMplus                Read Mplus output
+ksmooth2                Estimate and visualize bivariate density
 PD                      Dose response calculation for binomial regression models
-colsel			        Select colour(s) interactively
-colorbar		        Add colorbar to plot
+colsel                  Select colour(s) interactively
+colorbar                Add colorbar to plot
 confband                Add Confidence limits bar to plot
 plot_region             -
 devcoords               Returns device-coordinates and plot-region
-diagtest		        Calculate diagnostic tests for 2x2 table
+diagtest                Calculate diagnostic tests for 2x2 table
 images                  Organize several image calls (for visualizing categorical data)
-Inverse			        Generalized inverse
+Inverse                 Generalized inverse
 org                     Convert object to ascii suitable for org-mode
-parsedesign		        Create contrast matrix from expression
+parsedesign             Create contrast matrix from expression
 plotConf                Plot regression lines
 pdfconvert              Convert pdf to raster format
-procformula		        Process formula
+procformula             Process formula
 revdiag                 Create/extract 'reverse'-diagonal matrix
 revdiag<-               -
-surface			        Visualize function surface
-offdiag			        Extract or set off-diagonal elements of matrix
+surface                 Visualize function surface
+offdiag                 Extract or set off-diagonal elements of matrix
 offdiag<-               -
 density.sim             Plot sim object
-spaghetti		        Plot longitudinal data
+spaghettu               Plot longitudinal data
 toformula               Converts strings to formula
 tr                      Trace operator
 trim                    Trim tring of (leading/trailing/all) white spaces
@@ -215,7 +215,7 @@ Missing<-               -
 normal.lvm              Normal distribution
 gaussian.lvm            -
 lognormal.lvm           Log-normal distribution
-poisson.lvm		        Poisson distribution
+poisson.lvm             Poisson distribution
 threshold.lvm           Threshold model (e.g., Probit)
 binomial.lvm            Binomial family / Bernoulli distribution
 logit.lvm               -
