@@ -586,8 +586,10 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     }
     if (!missing(labels)) {
         names(res$coef) <- labels
-        if (!is.null(res$IC)) colnames(res$IC) <- labels
-        colnames(res$vcov) <- rownames(res$vcov) <- labels
+        if (!is.null(res$IC))
+          colnames(res$IC) <- labels
+        if (!is.null(res$vcov))
+          colnames(res$vcov) <- rownames(res$vcov) <- labels
         rownames(res$coefmat) <- labels
     }
     if (!missing(label.width)) {
