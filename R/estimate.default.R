@@ -174,7 +174,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                       type=c("robust","df","mbn"),
                       keep,use,
                       regex=FALSE,
-                      contrast,null,vcov,coef,
+                      contrast,null,vcov, coef,
                       robust=TRUE,df=NULL,
                       print=NULL,labels,label.width,
                       only.coef=FALSE,back.transform=NULL,
@@ -223,12 +223,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     ##if (is.matrix(x) || is.vector(x)) contrast <- x
     alpha <- 1-level
     alpha.str <- paste(c(alpha/2,1 -alpha/2)*100, "", sep="%")
-    nn <- NULL
+  nn <- NULL
   if ((( (is.logical(IC) && IC) || length(IC)>0) && robust) &&
       (missing(vcov) || is.null(vcov) || (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) { ## If user supplied vcov, then don't estimate IC
         if (missing(score.deriv)) {
             if (!is.logical(IC)) {
-                ic_theta <- IC
+                ic_theta <- cbind(IC)
                 IC <- TRUE
             } else {
                 suppressWarnings(ic_theta <- IC(x,folds=folds))
@@ -237,8 +237,9 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
             suppressWarnings(ic_theta <- IC(x,score.deriv=score.deriv,folds=folds))
         }
     } else {
-        if (missing(vcov) || (is.logical(vcov) && !is.na(vcov)[1])) suppressWarnings(vcov <- stats::vcov(x))
-        ic_theta <- NULL
+      if (!is.null(x) && (missing(vcov) || (is.logical(vcov) && !is.na(vcov)[1])))
+        suppressWarnings(vcov <- stats::vcov(x))
+      ic_theta <- NULL
     }
 
     if (any(is.na(ic_theta))) {
@@ -320,7 +321,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     }
     if (!robust) {
         if (inherits(x,"lm") && family(x)$family=="gaussian" && is.null(df)) df <- x$df.residual
-        if (missing(vcov)) suppressWarnings(vcov <- stats::vcov(x))
+        if (missing(vcov) && !is.null(x))
+          suppressWarnings(vcov <- stats::vcov(x))
     }
 
     if (!is.null(ic_theta) && robust && (missing(vcov) || is.null(vcov))) {
