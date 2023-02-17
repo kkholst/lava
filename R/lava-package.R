@@ -19,7 +19,7 @@
 ##'     topo.colors gray.colors palette colorRampPalette heat.colors
 ##' @importFrom utils stack combn read.csv getTxtProgressBar
 ##'     setTxtProgressBar txtProgressBar head tail modifyList
-##'     getFromNamespace packageVersion write.table methods data
+##'     getFromNamespace write.table methods data
 ##'     glob2rx
 ##' @importFrom stats density deriv effects lm family simulate vcov
 ##'     var cov cor coef model.frame model.weights as.formula
