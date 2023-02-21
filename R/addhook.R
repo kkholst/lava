@@ -61,6 +61,7 @@ addhook <- function(x,hook="estimate.hooks",...) {
 }
 
 versioncheck <- function(pkg="lava",geq,sep=".",...) {
+  if (!is.character(pkg)) return(FALSE)
   if (nzchar(system.file(package=pkg))) {
     xyz <- char2num(strsplit(as.character(utils::packageVersion(pkg)),
                              split=sep,fixed=TRUE)[[1]])

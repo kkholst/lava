@@ -1,9 +1,3 @@
-char2num <- function(x,...) {
-    idx <- grep("^[-]*[0-9\\.]+",x,perl=TRUE,invert=TRUE)
-    if (length(idx)>0) x[idx] <- NA
-    as.numeric(x)
-}
-
 ###{{{ substArg
 
 substArg <- function(x,env,...) {
