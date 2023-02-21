@@ -59,7 +59,7 @@ spaghetti <- function(formula,data=NULL,id="id",group=NULL,
               trend.jitter=0,
               legend=NULL, by=NULL,
               xlab="Time",ylab="",add=FALSE,...) {
-    ##spaghetti <- function(formula,data,id,type="l",lty=1,col=Col(1),trend=FALSE,trend.col="darkblue",trend.alpha=0.2,trend.lwd=3,xlab="Time",ylab="",...) {
+
     if (!lava.options()$cluster.index) stop("mets not available? Check 'lava.options()cluster.index'.")
     if (!is.null(by)) {
         if (is.character(by) && length(by==1)) {
@@ -158,9 +158,9 @@ spaghetti <- function(formula,data=NULL,id="id",group=NULL,
                 res <- c()
                 if (!is.null(tau)) {
                     if (length(trend.alpha)<length(tau)) 	trend.alpha <- rep(trend.alpha,length(tau))
-                    if (length(trend.lty)<length(tau)) 		trend.lty <- rep(trend.lty,length(tau))
-                    if (length(trend.col)<length(tau)) 		trend.col <- rep(trend.col,length(tau))
-                    if (length(trend.lwd)<length(tau)) 		trend.lwd <- rep(trend.lwd,length(tau))
+                    if (length(trend.lty)<length(tau)) 	trend.lty <- rep(trend.lty,length(tau))
+                    if (length(trend.col)<length(tau)) 	trend.col <- rep(trend.col,length(tau))
+                    if (length(trend.lwd)<length(tau)) 	trend.lwd <- rep(trend.lwd,length(tau))
                 }
                 for (i in trend.formula) {
                     data0 <- data[data[,x]==i,,drop=FALSE]
