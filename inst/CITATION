@@ -30,27 +30,27 @@ textver2 <- paste(author2, " (", year2, "). ",
 
 citHeader("To cite 'lava' in publications use:")
 
-citEntry(entry="Article",
+bibentry(bibtype="Article",
          title = title1,
          author = author1,
          year = year1,
          volume = volume1,
          number = number1,
          pages = pages1,
- 	 journal = journal1,
-	 doi = doi1,
+ 	     journal = journal1,
+	     doi = doi1,
          textVersion = textver1)
 
 
-citEntry(entry="Article",
+bibentry(bibtype="Article",
          title = title2,
          author = author2,
          year = year2,
          volume = volume2,
          number = number2,
          pages = pages2,
- 	 journal = journal2,
-	 doi = doi2,
+ 	     journal = journal2,
+	     doi = doi2,
          textVersion = textver2)
 
 
