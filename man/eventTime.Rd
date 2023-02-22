@@ -37,7 +37,7 @@ Note that "ObsEvent" and "ObsTime" are names specified by the user.
 # Right censored survival data without covariates
 m0 <- lvm()
 distribution(m0,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-distribution(m0,"censtime") <- coxExponential.lvm(rate=10)
+distribution(m0,"censtime") <- coxExponential.lvm(rate=1/10)
 m0 <- eventTime(m0,time~min(eventtime=1,censtime=0),"status")
 sim(m0,10)
 
@@ -78,8 +78,8 @@ sim(m,6)
 # Here is an example:
 
 ma <- lvm()
-distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=0.7)
-distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=0.7)
+distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=1/0.7)
+distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=1/0.7)
 ma <- eventTime(ma,time~min(eventtime=1,censtime=0),"status")
 distribution(ma,"sex") <- binomial.lvm(p=0.4)
 distribution(ma,"sbp") <- normal.lvm(mean=120,sd=20)
@@ -100,24 +100,23 @@ sim(ma,6)
 }
 
 
-# The Weibull parameters are related as follows:
-# shape.coxWeibull = 1/shape.weibull
-# scale.coxWeibull = exp(-scale.weibull/shape.weibull)
-# scale.AFT = log(scale.coxWeibull) / shape.coxWeibull
-# Thus, the following are equivalent parametrizations
+# The following are equivalent parametrizations
 # which produce exactly the same random numbers:
 
 model.aft <- lvm()
-distribution(model.aft,"eventtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
-distribution(model.aft,"censtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
-set.seed(17)
-sim(model.aft,6)
+distribution(model.aft,"eventtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
+distribution(model.aft,"censtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
+sim(model.aft,6,seed=17)
+
+model.aft <- lvm()
+distribution(model.aft,"eventtime") <- weibull.lvm(scale=100^(1/2), shape=2)
+distribution(model.aft,"censtime") <- weibull.lvm(scale=100^(1/2), shape=2)
+sim(model.aft,6,seed=17)
 
 model.cox <- lvm()
 distribution(model.cox,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
 distribution(model.cox,"censtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-set.seed(17)
-sim(model.cox,6)
+sim(model.cox,6,seed=17)
 
 # The minimum of multiple latent times one of them still
 # being a censoring time, yield

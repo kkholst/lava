@@ -340,24 +340,27 @@ uniform.lvm <- function(a,b, value=NULL) {
 ## see also eventTime.R for coxWeibull
 
 ##' @export
-weibull.lvm <- function(scale=1,shape=2) {
+weibull.lvm <- function(intercept=0, sigma=.5, scale, shape) {
     ## accelerated failure time (AFT) regression
     ## parametrization.
     ##
     ## We parametrize the Weibull distribution (without covariates) as follows:
-    ## hazard(t) = 1/shape * exp(-scale/shape) * t^(1/shape-1)
+    ## hazard(t) = shape / scale * (t/scale)^(shape-1)
     ## The hazard is:
     ## - rising if shape > 1
     ## - declining if shape <1
     ## - constant if shape=1
     ##
+    ## PH regresion:
+    ## hazard(t|x) =  shape / scale * (t/scale)^(shape-1)*exp(x'b)
     ## AFT regression
-    ## hazard(t|Z) = 1/shape * exp(-scale/shape) * t^(1/shape-1) exp(-beta/shape*Z)
-    ## scale^(-1/shape) = exp(a0+a1*X)
-    ## PH regression
-    ## scale = exp(b0+ b1*X)
-    f <- function(n,mu,var,...) {
-        (- log(runif(n)) * exp(log(scale)/shape) * exp(mu/shape))^{shape}
+    ## log(T) = a0 + x'B + s*W
+    ## Where W is extreme value distributed and,
+    ## a0 = log(scale), B=-sigma*b, sigma = 1/shape
+    if (missing(shape)) shape <- 1/sigma
+    if (missing(scale)) scale <- exp(intercept)
+    f <- function(n,mu=0,var,...) {
+        (- log(runif(n)) * exp(log(scale)*shape) * exp(mu*shape))^{1/shape}
         ## scale * (-log(1-runif(n)))^{1/shape}
         ## (- (log(runif(n)) / (1/scale)^(shape) * exp(-mu)))^(1/shape)
     }

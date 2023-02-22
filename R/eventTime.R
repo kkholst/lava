@@ -21,7 +21,7 @@
 ##' # Right censored survival data without covariates
 ##' m0 <- lvm()
 ##' distribution(m0,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-##' distribution(m0,"censtime") <- coxExponential.lvm(rate=10)
+##' distribution(m0,"censtime") <- coxExponential.lvm(rate=1/10)
 ##' m0 <- eventTime(m0,time~min(eventtime=1,censtime=0),"status")
 ##' sim(m0,10)
 ##'
@@ -62,8 +62,8 @@
 ##' # Here is an example:
 ##'
 ##' ma <- lvm()
-##' distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=0.7)
-##' distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=0.7)
+##' distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=1/0.7)
+##' distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=1/0.7)
 ##' ma <- eventTime(ma,time~min(eventtime=1,censtime=0),"status")
 ##' distribution(ma,"sex") <- binomial.lvm(p=0.4)
 ##' distribution(ma,"sbp") <- normal.lvm(mean=120,sd=20)
@@ -84,24 +84,23 @@
 ##' }
 ##'
 ##'
-##' # The Weibull parameters are related as follows:
-##' # shape.coxWeibull = 1/shape.weibull
-##' # scale.coxWeibull = exp(-scale.weibull/shape.weibull)
-##' # scale.AFT = log(scale.coxWeibull) / shape.coxWeibull
-##' # Thus, the following are equivalent parametrizations
+##' # The following are equivalent parametrizations
 ##' # which produce exactly the same random numbers:
 ##'
 ##' model.aft <- lvm()
-##' distribution(model.aft,"eventtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
-##' distribution(model.aft,"censtime") <- weibull.lvm(scale=-log(1/100)/2,shape=0.5)
-##' set.seed(17)
-##' sim(model.aft,6)
+##' distribution(model.aft,"eventtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
+##' distribution(model.aft,"censtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
+##' sim(model.aft,6,seed=17)
+##'
+##' model.aft <- lvm()
+##' distribution(model.aft,"eventtime") <- weibull.lvm(scale=100^(1/2), shape=2)
+##' distribution(model.aft,"censtime") <- weibull.lvm(scale=100^(1/2), shape=2)
+##' sim(model.aft,6,seed=17)
 ##'
 ##' model.cox <- lvm()
 ##' distribution(model.cox,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
 ##' distribution(model.cox,"censtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-##' set.seed(17)
-##' sim(model.cox,6)
+##' sim(model.cox,6,seed=17)
 ##'
 ##' # The minimum of multiple latent times one of them still
 ##' # being a censoring time, yield
@@ -289,7 +288,7 @@ print.eventHistory <- function(x,...) {
 
 
 ##' @export
-coxWeibull.lvm <- function(scale=1/100,shape=2) {
+coxWeibull.lvm <- function(scale=1/100,shape=2, param=1) {
     ## proportional hazard (Cox) parametrization.
     ##
     ## Here we parametrize the Weibull distribution
@@ -311,7 +310,18 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
     ## - constant if shape=1
     ##
     ## scale = exp(b0 + b1*X)
-    f <- function(n,mu,Scale=scale,Shape=shape,...) {
+    ##
+    ## An alternative parametrization, which can be found in ABGK and
+    ## Kalbfleisch&Prentice, can be obtained with \code{param=2}. This leads to
+    ## hazard(t) = scale*shape*(scale*t)^shape, and cum.hazard(t) = (scale*t)^shape.
+    ## \code{param=3} gives the same parametrization as \code{rweibull}, i.e.,
+    ## scale[rweibull] := 1/scale^shape
+    if (tolower(param)%in%c("2","kp","abgk"))
+       scale <- scale^(shape)
+    if (tolower(param)%in%c("3","r","rweibull")) {
+       scale <- scale^(-shape)
+    }
+    f <- function(n,mu=0,Scale=scale,Shape=shape,...) {
         (- log(runif(n)) / (Scale * exp(mu)))^(1/Shape)
     }
     ff <- formals(f)
@@ -337,18 +347,16 @@ coxWeibull.lvm <- function(scale=1/100,shape=2) {
 
 
 ##' @export
-coxExponential.lvm <- function(scale=1,rate,timecut){
-    if (missing(rate)) rate=1/scale
-    if (missing(scale)) scale=1/rate
+coxExponential.lvm <- function(scale=1,rate=1,timecut){
     if (missing(timecut)) {
-        return(coxWeibull.lvm(shape=1,scale))
+        return(coxWeibull.lvm(shape=1, rate))
     }
     if (NROW(rate)>length(timecut))
         stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
     par <- paste(timecut,rate,sep=":")
     if (is.matrix(rate)) par <- "..."
     timecut <- c(timecut,Inf)
-    f <- function(n,mu,...) {
+    f <- function(n,mu=0,...) {
         Ai <- function() {
             vals <- matrix(0,ncol=length(timecut)-1,nrow=n)
             ival <- numeric(n)
@@ -375,11 +383,9 @@ coxExponential.lvm <- function(scale=1,rate,timecut){
 }
 
 ##' @export
-aalenExponential.lvm <- function(scale=1,rate,timecut=0){
-    if (missing(rate)) rate=1/scale
-    if (missing(scale)) scale=1/rate
+aalenExponential.lvm <- function(rate=1,timecut=0){
     if (missing(timecut)==1) {
-        return(coxWeibull.lvm(shape=1,scale))
+        return(coxWeibull.lvm(shape=1,rate))
     }
 
     if (length(rate)>length(timecut))
