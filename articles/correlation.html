@@ -84,7 +84,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 data-toc-skip class="author">Klaus Kähler Holst</h4>
             
-            <h4 data-toc-skip class="date">2023-01-15</h4>
+            <h4 data-toc-skip class="date">2023-02-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/HEAD/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -276,10 +276,10 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e2</span>, data<span class="op">=</span><span class="va">d</span>, R<span class="op">=</span><span class="fl">50</span>, mc.cores<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: UNRELIABLE VALUE: One of the 'future.apply' iterations</span></span>
-<span><span class="co">#&gt; ('future_lapply-1') unexpectedly generated random numbers without declaring</span></span>
-<span><span class="co">#&gt; so. There is a risk that those random numbers are not statistically sound and</span></span>
-<span><span class="co">#&gt; the overall results might be invalid. To fix this, specify 'future.seed=TRUE'.</span></span>
-<span><span class="co">#&gt; This ensures that proper, parallel-safe random numbers are produced via the</span></span>
+<span><span class="co">#&gt; ('future_lapply-1') unexpectedly generated random numbers without declaring so.</span></span>
+<span><span class="co">#&gt; There is a risk that those random numbers are not statistically sound and the</span></span>
+<span><span class="co">#&gt; overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This</span></span>
+<span><span class="co">#&gt; ensures that proper, parallel-safe random numbers are produced via the</span></span>
 <span><span class="co">#&gt; L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set</span></span>
 <span><span class="co">#&gt; option 'future.rng.onMisuse' to "ignore".</span></span>
 <span><span class="va">b</span></span>
@@ -401,24 +401,24 @@
 <span><span class="co">#&gt; [1] lava_1.7.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Rcpp_1.0.9          progressr_0.13.0    highr_0.10         </span></span>
+<span><span class="co">#&gt;  [1] Rcpp_1.0.10         progressr_0.13.0    highr_0.10         </span></span>
 <span><span class="co">#&gt;  [4] bslib_0.4.2         compiler_4.2.2      jquerylib_0.1.4    </span></span>
-<span><span class="co">#&gt;  [7] mets_1.3.1          tools_4.2.2         digest_0.6.31      </span></span>
-<span><span class="co">#&gt; [10] lattice_0.20-45     jsonlite_1.8.4      evaluate_0.19      </span></span>
+<span><span class="co">#&gt;  [7] mets_1.3.2          tools_4.2.2         digest_0.6.31      </span></span>
+<span><span class="co">#&gt; [10] lattice_0.20-45     jsonlite_1.8.4      evaluate_0.20      </span></span>
 <span><span class="co">#&gt; [13] memoise_2.0.1       lifecycle_1.0.3     rlang_1.0.6        </span></span>
 <span><span class="co">#&gt; [16] graph_1.76.0        Matrix_1.5-1        cli_3.6.0          </span></span>
-<span><span class="co">#&gt; [19] Rgraphviz_2.42.0    yaml_2.3.6          parallel_4.2.2     </span></span>
-<span><span class="co">#&gt; [22] mvtnorm_1.1-3       pkgdown_2.0.7       xfun_0.36          </span></span>
-<span><span class="co">#&gt; [25] fastmap_1.1.0       stringr_1.5.0       knitr_1.41         </span></span>
-<span><span class="co">#&gt; [28] desc_1.4.2          fs_1.5.2            vctrs_0.5.1        </span></span>
-<span><span class="co">#&gt; [31] sass_0.4.4          systemfonts_1.0.4   globals_0.16.2     </span></span>
+<span><span class="co">#&gt; [19] Rgraphviz_2.42.0    yaml_2.3.7          parallel_4.2.2     </span></span>
+<span><span class="co">#&gt; [22] mvtnorm_1.1-3       pkgdown_2.0.7       xfun_0.37          </span></span>
+<span><span class="co">#&gt; [25] fastmap_1.1.0       stringr_1.5.0       knitr_1.42         </span></span>
+<span><span class="co">#&gt; [28] desc_1.4.2          fs_1.6.1            vctrs_0.5.2        </span></span>
+<span><span class="co">#&gt; [31] sass_0.4.5          systemfonts_1.0.4   globals_0.16.2     </span></span>
 <span><span class="co">#&gt; [34] stats4_4.2.2        grid_4.2.2          rprojroot_2.0.3    </span></span>
 <span><span class="co">#&gt; [37] glue_1.6.2          listenv_0.9.0       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [40] timereg_2.0.4       textshaping_0.3.6   future.apply_1.10.0</span></span>
-<span><span class="co">#&gt; [43] parallelly_1.34.0   survival_3.4-0      rmarkdown_2.19     </span></span>
+<span><span class="co">#&gt; [40] timereg_2.0.5       textshaping_0.3.6   future.apply_1.10.0</span></span>
+<span><span class="co">#&gt; [43] parallelly_1.34.0   survival_3.4-0      rmarkdown_2.20     </span></span>
 <span><span class="co">#&gt; [46] purrr_1.0.1         magrittr_2.0.3      BiocGenerics_0.44.0</span></span>
 <span><span class="co">#&gt; [49] codetools_0.2-18    htmltools_0.5.4     splines_4.2.2      </span></span>
-<span><span class="co">#&gt; [52] future_1.30.0       numDeriv_2016.8-1.1 ragg_1.2.5         </span></span>
+<span><span class="co">#&gt; [52] future_1.31.0       numDeriv_2016.8-1.1 ragg_1.2.5         </span></span>
 <span><span class="co">#&gt; [55] stringi_1.7.12      cachem_1.0.6</span></span></code></pre></div>
 </div>
 <div class="section level2">
