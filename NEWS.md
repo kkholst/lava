@@ -1,10 +1,13 @@
 # lava 1.7.2
-  - Development version
-  - Further clustering fixes
-  - cluster.index now also works when not loading the package
-
+  - Compatibility issues with development version of R fixed.
+  - cluster.index now also works when not loading the package (directly calling lava::estimate)
+  - `weibull.lvm` and `coxExponential.lvm` now uses default parametrizations
+    similar to `rweibull`, `rexp`. `weibull.lvm` now has arguments
+    "intercept","sigma" that directly relates to the accelerated failure time formulation. 
+  - Packages `gof`, `lava.tobit` are removed from Suggested packages.
+  
 # lava 1.7.1
-  - Fixed bug in variance estimates from `estimate` with clustered observations.  
+  - Fixed bug in variance estimates from `estimate` with clustered observations.
   - Discrete uniform distributions can now be specified with `uniform.lvm(value=...)`. 
   
 # lava 1.7.0
@@ -171,7 +174,7 @@
   - `sim.default`: new argument 'arg' passed on to simulation function
   - `sim.default`: new argument 'iter'. If TRUE the iteration number is
     passed to function call as first argument (default FALSE)
-  - estimate.default: Wildcards/global expressions can now be used for specifying
+  - `estimate.default`: Wildcards/global expressions can now be used for specifying
     contrasts based on the syntax of the functions `contr`, `parsedesign`.
     See examples on the help-page.
     The argument transform.ci has been renamed to back.transform.
@@ -195,39 +198,40 @@
 
 # lava 1.4.5
   - New graph functions:
-    dsep: check for d-separation (conditional independence).
-    backdoor: check backdoor criterion of a graph (lvm-object).
-    adjMat: return adjaceny matrix.
-    edgeList: return edge list.
-    ancestors: return ancenstors of nodes.
-    descendants: return descendants of nodes.
+    `dsep`: check for d-separation (conditional independence).
+    `backdoor`: check backdoor criterion of a graph (lvm-object).
+    `adjMat`: return adjaceny matrix.
+    `edgeList`: return edge list.
+    `ancestors`: return ancenstors of nodes.
+    `descendants`: return descendants of nodes.
   - All simple paths in a graph can now be extracted with:
-    path(...,all=TRUE)
-  - Covariance parameters are now reference with ~~ instead of ,.
-    Applies to setting starting values in 'estimate', parameters in
-    'sim','compare','estimate',...
-    To use the old syntax set 'lava.options(symbol=c("~",","))'
-  - 'layout' argument added to lava.options (default 'dot')
-  - visNetwork support, new 'plot.engine' argument added to plot methods.
-  - bootstrap.lvmfit now default returns original estimates.
-  - print, transform methods updated (transform output).
-  - '+' operator overloaded for lvm and estimate objects (merge).
-  - New composite likelihood function: complik.
-  - New functions for simple association measures: riskcomp, rdiff, rratio,...
-  - New argument 'latent' in simulate method. If FALSE the latent
+    `path(...,all=TRUE)`
+  - Covariance parameters are now reference with `~~` instead of `,`.
+    Applies to setting starting values in `estimate`, parameters in
+    `sim`,`compare`,`estimate`,...
+    To use the old syntax set `lava.options(symbol=c("~",","))`.
+  - `layout` argument added to `lava.options` (default 'dot')
+  - visNetwork support, new `plot.engine` argument added to plot methods.
+  - `bootstrap.lvmfit` now default returns original estimates.
+  - `print`, `transform` methods updated (transform output).
+  - `+` operator overloaded for lvm and estimate objects (merge).
+  - New composite likelihood function: `complik`.
+  - New functions for simple association measures: `riskcomp`, `rdiff`,
+    `rratio`, ...
+  - New argument 'latent' in `simulate` method. If FALSE the latent
     variables are dropped from the returned data.frame.
-  - modelsearch by default now shows both directional or undirectional
+  - `modelsearch` by default now shows both directional or undirectional
     associations (type='all' vs type='cor').
-  - sim.default now stores timings. New print functions (data.table
+  - `sim.default` now stores timings. New print functions (data.table
     like output).
-  - lvm model can now be updated with the 'sim' function,
+  - lvm model can now be updated with the `sim` function,
     for instance setting parameter values for the simulation only once:
-    m <- sim(m,p=p,...), with faster subsequent calls sim(m,n=n).
-  - estimate.default can now simulate p-values ('R' argument). Returns
-    an object which can also be used as input for 'estimate'.
-  - Bug fixes: NR optimization with back-tracing; fixed matrices.lvm when called
+    `m <- sim(m,p=p,...)`, with faster subsequent calls `sim(m,n=n)`.
+  - `estimate.default` can now simulate p-values ('R' argument). Returns
+    an object which can also be used as input for `estimate`.
+  - Bug fixes: `NR` optimization with back-tracing; fixed `matrices.lvm` when called
     without variance parameters; fixed a bug in r-square computations.
-  - Contrast matrix can be specified with the function 'contr'.
+  - Contrast matrix can be specified with the function `contr`.
 
 # lava 1.4.4
   - estimate.default will now use the id-variable of an 'estimate'
