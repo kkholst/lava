@@ -3,6 +3,7 @@
 \name{contr}
 \alias{contr}
 \alias{parsedesign}
+\alias{pairwise.diff}
 \title{Create contrast matrix}
 \usage{
 contr(p, n, diff = TRUE, ...)

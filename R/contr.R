@@ -6,7 +6,7 @@
 ##' @param n Total number of parameters (if omitted the max number in p will be used)
 ##' @param diff If FALSE all non-zero entries are +1, otherwise the second non-zero element in each row will be -1.
 ##' @param ... Additional arguments to lower level functions
-##' @aliases contr parsedesign
+##' @aliases contr parsedesign pairwise.diff
 ##' @examples
 ##' contr(2,n=5)
 ##' contr(as.list(2:4),n=5)
@@ -40,4 +40,10 @@ contr <- function(p, n, diff = TRUE, ...) {
     B[cbind(seq_len(nrow(B)), p[-1])] <- ifelse(diff[1L], -1, 1)
   }
   return(B)
+}
+
+##' @export
+pairwise.diff <- function(n) {
+  pdiff <- function(n) lava::contr(lapply(seq(n-1), \(x) seq(x, n)))
+  pdiff(n)
 }
