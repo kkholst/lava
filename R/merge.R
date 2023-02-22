@@ -63,6 +63,12 @@ merge.lvm <- function(x,y,...) {
 }
 
 ##' @export
+"-.estimate" <- function(x,...) {
+  res <- merge(x, ..., paired=TRUE)
+  estimate(res, pairwise.diff(length(coef(res))))
+}
+
+##' @export
 merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=NULL) {
     objects <- list(x, estimate(y), ...)
     if (length(nai <- names(objects)=="NA")>0)
