@@ -60,9 +60,13 @@ addhook <- function(x,hook="estimate.hooks",...) {
     invisible(newhooks)
 }
 
+packagecheck <- function(pkg) {
+  nzchar(system.file(package=pkg))
+}
+
 versioncheck <- function(pkg="lava",geq,sep=".",...) {
   if (!is.character(pkg)) return(FALSE)
-  if (nzchar(system.file(package=pkg))) {
+  if (packagecheck(pkg)) {
     xyz <- char2num(strsplit(as.character(utils::packageVersion(pkg)),
                              split=sep,fixed=TRUE)[[1]])
   } else {
@@ -99,7 +103,7 @@ assign("options", list(
                       allow.negative.variance=FALSE,
                       progressbarstyle=3,
                       itol=1e-16,
-                      cluster.index=versioncheck("mets", c(0, 2, 7)),
+                      cluster.index=packagecheck("mets"),
                       Dmethod="simple",
                       messages=ifelse(interactive(), 1, 0),
                       parallel=TRUE,
