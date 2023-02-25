@@ -8,12 +8,13 @@
 
 
 
-# Latent Variable Models: `lava` <img src=man/figures/lvm1-1.png align="right" height="150">
+# Latent Variable Models: `lava` 
 
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
 and ordinal outcomes (Holst and Budtz-Joergensen (2013)
-<10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear
+<10.1007/s00180-012-0344-y>). <img src=man/figures/lvm1-1.png align="right" height="150">
+Mixture latent variable models and non-linear
 latent variable models (Holst and Budtz-Joergensen (2020)
 <10.1093/biostatistics/kxy082>). The package also provides methods for graph
 exploration (d-separation, back-door criterion), simulation of general
