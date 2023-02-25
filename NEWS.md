@@ -1,3 +1,6 @@
+# lava 1.7.2.1
+  - Maintenance release as version 1.7.2 broke compatibility with R<4.1.
+
 # lava 1.7.2
   - Compatibility issues with development version of R fixed.
   - cluster.index now also works when not loading the package (directly calling lava::estimate)
