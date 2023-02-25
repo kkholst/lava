@@ -19,7 +19,7 @@ then one can specify"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2.1</span>
       </span>
     </div>
 
@@ -114,17 +114,17 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxExponential.lvm</a></span><span class="op">(</span>rate<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m0</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime   censtime       time status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   2.411880 0.04533928 0.04533928      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.611888 0.23252592 0.23252592      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  10.065578 0.17943372 0.17943372      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12.901187 0.06581174 0.06581174      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2.272443 0.25195749 0.25195749      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   9.514347 0.03575997 0.03575997      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   6.423498 0.02912756 0.02912756      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2.439480 0.04756341 0.04756341      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  11.931257 0.04708455 0.04708455      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2.167252 0.10303195 0.10303195      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime  censtime      time status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   2.411880  4.533928  2.411880      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.611888 23.252592 12.611888      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  10.065578 17.943372 10.065578      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12.901187  6.581174  6.581174      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2.272443 25.195749  2.272443      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   9.514347  3.575997  3.575997      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   6.423498  2.912756  2.912756      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2.439480  4.756341  2.439480      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  11.931257  4.708455  4.708455      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2.167252 10.303195  2.167252      1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Alternative specification of the right censored survival outcome</span></span></span>
 <span class="r-in"><span><span class="co">## eventTime(m,"Status") &lt;- ~min(eventtime=1,censtime=0)</span></span></span>
@@ -179,13 +179,13 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">ma</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.008</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">ma</span>,<span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime  censtime       time status sex       sbp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.10536773 0.6221121 0.10536773      1   1  99.69983</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 8.07999213 1.0619154 1.06191542      0   1 118.40727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1.03325562 0.1043275 0.10432753      0   1 115.34026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1.12977256 0.7396651 0.73966510      0   1 103.65464</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.03447852 0.3601472 0.03447852      1   1 135.44182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2.14273772 0.2288082 0.22880817      0   0 116.68776</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex       sbp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.5531481 1.1285503 0.5531481      1   1  99.69983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 4.2973225 1.4665922 1.4665922      0   1 118.40727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1.5884110 0.4704796 0.4704796      0   1 115.34026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1.7404946 1.2284359 1.2284359      0   1 103.65464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.2765550 0.8633771 0.2765550      1   1 135.44182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 1.5803203 0.6912997 0.6912997      0   0 116.68776</span>
 <span class="r-in"><span><span class="co"># The regression coefficients of the AFT model</span></span></span>
 <span class="r-in"><span><span class="co"># can be tranformed into log(hazard ratios):</span></span></span>
 <span class="r-in"><span><span class="co">#  coef.coxWeibull = - coef.weibull / shape.weibull</span></span></span>
@@ -204,23 +204,27 @@ one gets 2 new columns:</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model.aft</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>intercept<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,sigma<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in weibull.lvm(intercept = -log(1/100)/2, sigma = 1/2):</span> unused arguments (intercept = -log(1/100)/2, sigma = 1/2)</span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>intercept<span class="op">=</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,sigma<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in weibull.lvm(intercept = -log(1/100)/2, sigma = 1/2):</span> unused arguments (intercept = -log(1/100)/2, sigma = 1/2)</span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="fl">6</span>,seed<span class="op">=</span><span class="fl">17</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rep(1, index(x)$npar + index(x)$npar.mean):</span> invalid 'times' argument</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 12.552208 13.652847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 12.946401  1.792538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  4.984980  8.710482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 12.806975  5.025406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  9.133336  9.469785</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 24.669793  7.863944</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model.aft</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">100</span><span class="op">^</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">weibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">100</span><span class="op">^</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">model.aft</span>,<span class="fl">6</span>,seed<span class="op">=</span><span class="fl">17</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     eventtime    censtime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  24.8245020 34.74504423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  28.0928789  0.01032461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.6175236  5.75663613</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  26.9021076  0.63780020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   6.9585330  8.04193186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 370.3923847  3.82438506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 12.552208 13.652847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 12.946401  1.792538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  4.984980  8.710482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 12.806975  5.025406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  9.133336  9.469785</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 24.669793  7.863944</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model.cox</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.html">distribution</a></span><span class="op">(</span><span class="va">model.cox</span>,<span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">coxWeibull.lvm</a></span><span class="op">(</span>scale<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,shape<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>

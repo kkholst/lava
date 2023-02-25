@@ -19,7 +19,7 @@ LRT (when f is not a function)..."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2.1</span>
       </span>
     </div>
 
@@ -455,7 +455,7 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-in"><span>         <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         subset<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">z</span><span class="op">&gt;</span><span class="fl">0</span>, id<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">id</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.03053 0.6156 0.7353 1.774e-108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## More examples with clusters:</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">y1</span>,<span class="va">y2</span>,<span class="va">y3</span><span class="op">)</span><span class="op">~</span><span class="va">u</span><span class="op">+</span><span class="va">x</span><span class="op">)</span></span></span>
@@ -522,16 +522,16 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-in"><span><span class="co">## Same:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2         x.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -2.5608667  4.3003535     2.4606537 -3.32492191     0.7554987  2.18566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.9637594 -0.3738036     1.4817522 -0.87578050     0.5200220 -0.55458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -1.1661561 -0.6967928     0.0851336 -0.09079122    -0.1215704  0.05798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    3.8615311 -2.7396333     1.3603804 -0.64888388    -1.5561326 -0.25228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.8292511 -0.4901237    -2.8428500 -0.46089806    -0.4880168 -1.17960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000     0.3201561  0.77386382     1.6742259 -2.27609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000    -3.2842366  4.46489429     0.8010558  0.31069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    0.0000000  0.0000000     0.4190107  0.16251745     0.1460747  0.07955428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    0.0000000  0.0000000     0.0000000  0.00000000    -1.3102941  1.37992084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   0.0000000  0.0000000     0.0000000  0.00000000    -0.4208633  0.24874863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -1.2804333  2.1501767    1.96852295 -2.65993753     0.7554987  2.18566521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.4818797 -0.1869018    1.18540177 -0.70062440     0.5200220 -0.55458052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.5830781 -0.3483964    0.06810688 -0.07263298    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    1.9307656 -1.3698167    1.08830429 -0.51910711    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4146255 -0.2450619   -2.27428000 -0.36871845    -0.4880168 -1.17960761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000    0.25612485  0.61909106     1.6742259 -2.27609724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000   -2.62738927  3.57191544     0.8010558  0.31069745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    0.0000000  0.0000000    0.33520853  0.13001396     0.1460747  0.07955428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    0.0000000  0.0000000    0.00000000  0.00000000    -1.3102941  1.37992084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   0.0000000  0.0000000    0.00000000  0.00000000    -0.4208633  0.24874863</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.html">IC</a></span><span class="op">(</span><span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># one-to-one (same clusters)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)           x (Intercept).1         x.1 (Intercept).2         x.2</span>
