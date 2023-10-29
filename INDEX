@@ -198,7 +198,7 @@ surface                 Visualize function surface
 offdiag                 Extract or set off-diagonal elements of matrix
 offdiag<-               -
 density.sim             Plot sim object
-spaghettu               Plot longitudinal data
+spaghetti               Plot longitudinal data
 toformula               Converts strings to formula
 tr                      Trace operator
 trim                    Trim tring of (leading/trailing/all) white spaces

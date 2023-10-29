@@ -41,8 +41,11 @@
 }
 
 ##' @export
-parameter <- function(x,var,...) {
+parameter <- function(x,...,value) UseMethod("parameter")
+
+##' @export
+parameter.default <- function(x, var, ...) {
     if (missing(var)) return (names(unlist(x$attributes$parameter)))
-    parameter(x,...) <- var
+    parameter(x, ...) <- var
     return(x)
 }

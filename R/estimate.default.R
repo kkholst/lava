@@ -804,10 +804,10 @@ coef.estimate <- function(object,mat=FALSE,list=FALSE,messages=lava.options()$me
 }
 
 ##' @export
-summary.estimate <- function(object,...) {
-    p <- coef(object,messages=0)
-    test <- estimate(coef=p,vcov=vcov(object,messages=0),
-                     contrast=as.list(seq_along(p)),...)
+summary.estimate <- function(object, ...) {
+    p <- coef(object, messages=0)
+    test <- estimate(coef=p, vcov=vcov(object, messages=0),
+                     contrast=as.list(seq_along(p)), ...)
     object$compare <- test$compare
     object <- object[c("coef","coefmat","vcov","call","ncluster","model.index","compare")]
     class(object) <- "summary.estimate"
@@ -820,23 +820,28 @@ coef.summary.estimate <- function(object,...) {
 }
 
 ##' @export
-print.summary.estimate <- function(x,...) {
-    print.estimate(x,type=2L,...)
+parameter.estimate <- function(x, ...) {
+  return(x$coefmat)
 }
 
 ##' @export
-IC.estimate <- function(x,...) {
+print.summary.estimate <- function(x, ...) {
+    print.estimate(x, type=2L, ...)
+}
+
+##' @export
+IC.estimate <- function(x, ...) {
     if (is.null(x$IC)) return(NULL)
     dimn <- dimnames(x$IC)
     if (!is.null(dimn)) {
         dimn[[2]] <- names(coef(x))
     } else {
-        dimn <- list(NULL,names(coef(x)))
+        dimn <- list(NULL, names(coef(x)))
     }
     structure(x$IC, dimnames=dimn)
 }
 
 ##' @export
-model.frame.estimate <- function(formula,...) {
+model.frame.estimate <- function(formula, ...) {
     NULL
 }
