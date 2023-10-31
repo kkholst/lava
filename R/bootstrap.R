@@ -14,9 +14,9 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##'
 ##' @param x \code{lvm}-object.
 ##' @param R Number of bootstrap samples
+##' @param data The data to resample from
 ##' @param fun Optional function of the (bootstrapped) model-fit defining the
 ##' statistic of interest
-##' @param data The data to resample from
 ##' @param control Options to the optimization routine
 ##' @param p Parameter vector of the null model for the parametric bootstrap
 ##' @param parametric If TRUE a parametric bootstrap is calculated. If FALSE a
@@ -24,11 +24,13 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param bollenstine Bollen-Stine transformation (non-parametric bootstrap) for bootstrap hypothesis testing.
 ##' @param constraints Logical indicating whether non-linear parameter
 ##' constraints should be included in the bootstrap procedure
+##' @param sd Logical indicating whether standard error estimates should be
+##' included in the bootstrap procedure
+##' @param mc.cores Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)
+##' @param ... arguments to lower level functions
 ##' @param estimator String definining estimator, e.g. 'gaussian' (see
 ##' \code{estimator})
 ##' @param weights Optional weights matrix used by \code{estimator}
-##' @param sd Logical indicating whether standard error estimates should be
-##' included in the bootstrap procedure
 ##' @param \dots Additional arguments, e.g. choice of estimator.
 ##' @aliases bootstrap.lvmfit
 ##' @usage
@@ -52,13 +54,13 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' d <- sim(m,100)
 ##' e <- estimate(lvm(y~x), data=d)
 ##' \donttest{ ## Reduce Ex.Timings
-##' B <- bootstrap(e,R=50,parallel=FALSE)
+##' B <- bootstrap(e,R=50,mc.cores=1)
 ##' B
 ##' }
 ##' @export
 bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
                           p, parametric = FALSE, bollenstine = FALSE,
-                          constraints = TRUE, sd = FALSE,
+                          constraints = TRUE, sd = FALSE, mc.cores,
                           ...) {
   coefs <- sds <- c()
   on.exit(list(coef = coefs[-1, ], sd = sds[-1, ], coef0 = coefs[1, ], sd0 = sds[1, ], model = x))
@@ -110,7 +112,12 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
   }
 
   i <- 0
-  res <- future_lapply(0:R, bootfun)
+  if (!missing(mc.cores)) {
+    res <- parallel::mclapply(0:R, bootfun, mc.cores=mc.cores)
+  } else {
+    res <- future_lapply(0:R, bootfun)
+  }
+
   coefs <- matrix(unlist(lapply(res, function(x) x$coefs)), nrow = R + 1, byrow = TRUE)
   nn <- names(res[[1]]$coefs)
   if (!is.null(nn)) colnames(coefs) <- nn
