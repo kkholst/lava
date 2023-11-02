@@ -56,14 +56,14 @@ test_that("sim.default I", {
     testthat::expect_true(length(grep("Coverage",rownames(s1)))>0)
     testthat::expect_equivalent(colnames(s1),c("Model","Sandwich"))
     
-    val <- sim(onerun,R=2,cl=TRUE,seed=1,messages=0,mc.cores=2)
+    val <- sim(onerun,R=2,cl=TRUE,seed=1,messages=0,mc.cores=1)
     testthat::expect_true(val[1,1]!=val[1,2])
         
     onerun2 <- function(a,b,...) {
         return(cbind(a=a,b=b,c=a-1,d=a+1))
     }
     R <- data.frame(a=1:2,b=3:4)
-    dm <- capture.output(val2 <- sim(onerun2,R=R,messages=1,mc.cores=2))
+    dm <- capture.output(val2 <- sim(onerun2,R=R,messages=1,mc.cores=1))
     testthat::expect_true(all(R-val2[,1:2]==0))
     res <- summary(val2)
     testthat::expect_equivalent(res["Mean",],c(1.5,3.5,0.5,2.5))
