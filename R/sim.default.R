@@ -218,8 +218,13 @@ Time <- function(sec,print=FALSE,...) {
 Print <- function(x, n=5, digits=max(3, getOption("digits")-3), ...) {
     mat <- !is.null(dim(x))
     if (!mat) {
-        x <- cbind(x)
-        colnames(x) <- ""
+      if (is.vector(x)) {
+          x <- cbind(x)
+          colnames(x) <- ""
+      } else {
+        print(x, ...)
+        return(invisible(x))
+      }
     }
     if (is.null(rownames(x))) {
         rownames(x) <- seq(nrow(x))
