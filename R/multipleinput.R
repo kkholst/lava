@@ -1,4 +1,4 @@
-simulate.multiple.inputs <- function(x,data,...) {
+simulatehook_multiple_inputs <- function(x,data,...) {
     minp <- x$attributes$multiple.inputs
     if (length(minp)>0) {
         for (i in seq_along(minp)) {            
@@ -11,9 +11,9 @@ simulate.multiple.inputs <- function(x,data,...) {
     return(data)
 }
 
-addhook("simulate.multiple.inputs","sim.hooks")
+addhook("simulatehook_multiple_inputs","sim.hooks")
 
-printhook.multiple.inputs <- function(x,...) {
+printhook_multiple_inputs <- function(x,...) {
     minp <- x$attributes$multiple.inputs
     if (length(minp)>0) {
         outcomes <- names(minp)
@@ -27,4 +27,4 @@ printhook.multiple.inputs <- function(x,...) {
     return(NULL)
 }
 
-addhook("printhook.multiple.inputs","print.hooks")
+addhook("printhook_multiple_inputs","print.hooks")

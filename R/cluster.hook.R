@@ -1,4 +1,4 @@
-cluster.post.hook <- function(x,...) {
+cluster_post_hook <- function(x,...) {
     if (class(x)[1]=="multigroupfit") {
         if (is.null(x$cluster)) return(NULL)
         if (any(unlist(lapply(x$cluster,is.null)))) return(NULL)

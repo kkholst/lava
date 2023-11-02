@@ -51,6 +51,7 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 
 ##' @export
 "intfix" <- function(object,...) UseMethod("intfix")
+
 ##' @export
 "intfix<-" <- function(object,...,value) UseMethod("intfix<-")
 
@@ -119,7 +120,7 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 "intercept" <- function(object,...) UseMethod("intercept")
 
 ##' @export
-intercept.lvm <- intfix.lvm <- function(object,value,...) {
+intercept.lvm <- function(object,value,...) {
     if (!missing(value)) {
         intercept(object,...) <- value
         return(object)
@@ -132,10 +133,13 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
 }
 
 ##' @export
+intfix.lvm <- intercept.lvm
+
+##' @export
 "intercept<-" <- function(object,...,value) UseMethod("intercept<-")
 
 ##' @export
-"intercept<-.lvm" <- "intfix<-.lvm" <- function(object, vars,...,value) {
+"intercept<-.lvm" <- function(object, vars,...,value) {
     if (!missing(vars) && inherits(value,"formula")) value <- all.vars(value)
     if (inherits(value,"formula")) {
         lhs <- getoutcome(value)
@@ -162,6 +166,12 @@ intercept.lvm <- intfix.lvm <- function(object,value,...) {
     object$parpos <- NULL
     index(object)[names(newindex)] <- newindex
     return(object)
+}
+
+##' @export
+"intfix<-.lvm" <- function(object, ..., value) {
+  intercept(object, ...) <- value
+  object
 }
 
 ###}}} intfix

@@ -600,7 +600,7 @@
 
 ###{{{ estimate.list
 
-estimate.lvmlist <-
+estimate_lvmlist <-
     function(x, data, messages=lava.options()$messages, fix, missing=FALSE,  ...) {
         if (base::missing(data)) {
             return(estimate(x[[1]],x[[2]],missing=missing,...))

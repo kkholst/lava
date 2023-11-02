@@ -1,13 +1,13 @@
-ordinal.remove.hook <- function(x,var,...) {
+ordinal_remove_hook <- function(x,var,...) {
     ordinal(x,K=0) <- var
     return(x)
 }
 
-color.ordinal <- function(x,subset=vars(x),...) {
+color_ordinal <- function(x,subset=vars(x),...) {
     return(list(vars=intersect(subset,ordinal(x)),col="indianred1"))
 }
 
-ordinal.sim.hook <- function(x,data,p,modelpar,...) {
+ordinal_sim_hook <- function(x,data,p,modelpar,...) {
     ovar <- ordinal(x)
 
     for (i in seq_len(length(ovar))) {
@@ -31,7 +31,7 @@ ordinal.sim.hook <- function(x,data,p,modelpar,...) {
     return(data)
 }
 
-ordinal.estimate.hook <- function(x,data,weights,data2,estimator,...) {
+ordinal_estimate_hook <- function(x,data,weights,data2,estimator,...) {
     dots <- list(...)
 
     nestimator <- c("normal")

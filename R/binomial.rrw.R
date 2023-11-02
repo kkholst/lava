@@ -44,14 +44,14 @@ binomial.rrw <- function(x, response, exposure,
     if (inherits(exposure,"formula")) exposure <- all.vars(exposure)
     if (inherits(target.model,"formula")) target.model <- all.vars(target.model)
     if (inherits(nuisance.model,"formula")) nuisance.model <- all.vars(nuisance.model)
-    
+
     if (type=="rd") {
         val <- list(list(input=c(exposure,target.model,nuisance.model),
-                         fun=simulate.binomial.rd,
+                         fun=simulate_binomial_rd,
                          type="Binomial regression (exposure | risk-difference | odds-product)"))
     } else {
         val <- list(list(input=c(exposure,target.model,nuisance.model),
-                         fun=simulate.binomial.rr,
+                         fun=simulate_binomial_rr,
                          type="Binomial regression (exposure | relative-risk | odds-product)"))
     }
     if (is.null(distribution(x)[[exposure]]))
@@ -60,12 +60,12 @@ binomial.rrw <- function(x, response, exposure,
     distribution(x,exposure) <- exposure.model
     names(val) <- response
     x$attributes$multiple.inputs <- val
-    return(x)    
+    return(x)
 }
 
 
-simulate.binomial.rd <- function(x,data,inputs,...) {
-    exposure <- data[,inputs[1]]    
+simulate_binomial_rd <- function(x,data,inputs,...) {
+    exposure <- data[,inputs[1]]
     lp1 <- data[,inputs[2]]
     lp2 <- data[,inputs[3]]
     rd <- tanh(lp1)
@@ -75,8 +75,8 @@ simulate.binomial.rd <- function(x,data,inputs,...) {
     y <- rbinom(NROW(data), 1, pp)
 }
 
-simulate.binomial.rr <- function(x,data,inputs,...) {
-    exposure <- data[,inputs[1]]    
+simulate_binomial_rr <- function(x,data,inputs,...) {
+    exposure <- data[,inputs[1]]
     lp1 <- data[,inputs[2]]
     lp2 <- data[,inputs[3]]
     rr <- exp(lp1)
@@ -97,7 +97,7 @@ RD_OP <- function(rd,op) {
     b <- -op*(2-rd)-rd
     p0 <- (-b - sqrt(b^2 - 4*op*(1-rd)*a))/(2*a)
     op1 <- which(sapply(op,function(x) Identical(x,1)))
-    if (length(op1)>0)   
+    if (length(op1)>0)
         p0[op1] = 0.5 * (1 - rd[op1])
     p1 <- p0 + rd
     cbind(p0,p1)
@@ -109,8 +109,8 @@ RR_OP <- function(rr,op) {
     a <- rr*(1-op)
     p0 <- (-b + sqrt(b^2 + 4*a*op))/(2*a)
     op1 <- which(sapply(op,function(x) Identical(x,1)))
-    if (length(op1)>0)   
-        p0[op1] = 1/(1+rr) 
+    if (length(op1)>0)
+        p0[op1] = 1/(1+rr)
     p1 <- p0*rr
     cbind(p0,p1)
 }

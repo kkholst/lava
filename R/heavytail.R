@@ -31,13 +31,13 @@
         return(x)
     }
 
-heavytail.init.hook <- function(x,...) {
+heavytail_init_hook <- function(x,...) {
     x$attributes$heavytail <- list()
     x$attributes$heavytail.couple <- list()
     return(x)
 }
 
-heavytail.sim.hook <- function(x,data,...) {
+heavytail_sim_hook <- function(x,data,...) {
     n <- nrow(data)
     hvar <- heavytail(x)
     if (length(hvar)==0) return(data)

@@ -1,11 +1,11 @@
 '.onLoad' <- function(libname, pkgname="lava") {
-    addhook("heavytail.init.hook","init.hooks")
-    addhook("glm.estimate.hook","estimate.hooks")
-    addhook("ordinal.estimate.hook","estimate.hooks")
-    addhook("cluster.post.hook","post.hooks")
-    addhook("ordinal.sim.hook","sim.hooks")
-    addhook("color.ordinal","color.hooks")
-    addhook("ordinal.remove.hook","remove.hooks")
+    addhook("heavytail_init_hook","init.hooks")
+    addhook("glm_estimate_hook","estimate.hooks")
+    addhook("ordinal_estimate_hook","estimate.hooks")
+    addhook("cluster_post_hook","post.hooks")
+    addhook("ordinal_sim_hook","sim.hooks")
+    addhook("color_ordinal","color.hooks")
+    addhook("ordinal_remove_hook","remove.hooks")
     lava.options(cluster.index = packagecheck("mets"))
 }
 

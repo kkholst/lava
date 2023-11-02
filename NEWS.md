@@ -93,7 +93,7 @@
   - New simulation distributions: constant relative risk and risk
     difference models as in Richardson, Robins and Wang, 2017):
     `binomial.rd`, `binomial.rr`.
-    Base on new hook 'simulate.multiple.inputs' which allows the
+    Base on new hook 'simulate_multiple_inputs' which allows the
     distribution to depend non-linearly on multiple different input
     variables.
   - `sim.lvm`: 'X' argument can now fix (manipulate) any variable and not

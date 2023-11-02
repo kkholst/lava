@@ -671,7 +671,6 @@ estimate.estimate.sim <- function(x,f,R=0,labels,...) {
     return(res)
 }
 
-
 ##' @export
 print.estimate.sim <- function(x,level=.95,...) {
     quantiles <- c((1-level)/2,1-(1-level)/2)
@@ -694,6 +693,7 @@ print.estimate.sim <- function(x,level=.95,...) {
     print(summary(x,fun=mysummary,...))
 }
 
+##' @export
 estimate.glm <- function(x,...) {
     estimate.default(x,...)
 }

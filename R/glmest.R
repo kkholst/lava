@@ -1,5 +1,5 @@
 
-glm.estimate.hook <- function(x,estimator,...) {
+glm_estimate_hook <- function(x,estimator,...) {
     yy <- c()
     if (length(estimator)>0 && estimator=="glm") {
         for (y in endogenous(x)) {

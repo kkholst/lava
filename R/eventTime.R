@@ -191,13 +191,13 @@ eventTime <- function(object,formula,eventName="status",...) {
     eventTime(object,value,...)
 }
 
-## addhook("color.eventHistory","color.hooks")
+## addhook("color_eventHistory","color.hooks")
 ## color.eventHistory <- function(x,subset=vars(x),...) {
 ##   return(list(vars=intersect(subset,binary(x)),col="indianred1"))
 ## }
 
-addhook("plothook.eventHistory","plot.post.hooks")
-plothook.eventHistory <- function(x,...) {
+addhook("plothook_eventHistory","plot.post.hooks")
+plothook_eventHistory <- function(x,...) {
     eh <- x$attributes$eventHistory
     for (f in eh) {
         x <- regression(x,to=f$names[1],from=f$latentTimes)
@@ -211,13 +211,13 @@ plothook.eventHistory <- function(x,...) {
     return(x)
 }
 
-addhook("colorhook.eventHistory","color.hooks")
-colorhook.eventHistory <- function(x,subset=vars(x),...) {
+addhook("colorhook_eventHistory","color.hooks")
+colorhook_eventHistory <- function(x,subset=vars(x),...) {
     return(list(vars=intersect(subset,unlist(x$attributes$timedep)),col="lightblue4"))
 }
 
-addhook("print.eventHistory","print.hooks")
-print.eventHistory <- function(x,...) {
+addhook("print_eventHistory","print.hooks")
+print_eventHistory <- function(x,...) {
     eh <- x$attributes$eventHistory
     timedep <- x$attributes$timedep
     if (is.null(eh) & is.null(timedep)) return(NULL)
@@ -254,7 +254,7 @@ print.eventHistory <- function(x,...) {
     TRUE
 }
 
-## addhook("simulate.eventHistory","sim.hooks")
+## addhook("simulate_eventHistory","sim.hooks")
 
 ## simulate.eventHistory <- function(x,data,...){
 ##   if (is.null(eventTime(x))) {

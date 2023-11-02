@@ -202,7 +202,7 @@ print.diagtest <- function(x,...) {
     cat("\n")
 }
 
-summary.diagtest <- function(x,...) {
-    x[c("IC","print","id","compare")] <- NULL
-    return(x)
+summary.diagtest <- function(object, ...) {
+    object[c("IC","print","id","compare")] <- NULL
+    return(object)
 }

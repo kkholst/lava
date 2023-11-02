@@ -82,9 +82,9 @@ print.transform.lvm <- function(x,...) {
 }
 
 
-addhook("plothook.transform","plot.post.hooks")
+addhook("plothook_transform","plot.post.hooks")
 
-plothook.transform <- function(x,...) {
+plothook_transform <- function(x,...) {
     trans <- x$attributes$transform
     transnames <- names(trans)
     for (v in transnames) {

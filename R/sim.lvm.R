@@ -481,7 +481,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         I <- diag(nrow=length(nn))
         IAi <- Inverse(I-t(A))
         colnames(E) <- vv
-        dd <- t(apply(heavytail.sim.hook(x,E),1,function(x) x+mu))
+        dd <- t(apply(heavytail_sim_hook(x,E),1,function(x) x+mu))
         res <- dd%*%t(IAi)
         colnames(res) <- vv
     } else {
@@ -535,7 +535,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
         }
 
         colnames(E) <- vv
-        E <- heavytail.sim.hook(x,E)
+        E <- heavytail_sim_hook(x,E)
 
         ## Non-linear regression components
         xconstrain <- c()

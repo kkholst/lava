@@ -248,8 +248,13 @@ constrain.default <- function(x, par, fun, idx, level=0.95, vcov, estimate=FALSE
 }
 
 ##' @export
-"constrain<-.multigroupfit" <-
-    "constrain<-.multigroup" <- function(x,par,k=1,...,value) {
+"constrain<-.multigroupfit" <- function(x,par,k=1,...,value) {
+        constrain(Model(x)$lvm[[k]],par=par,...) <- value
+        return(x)
+    }
+
+##' @export
+"constrain<-.multigroup" <- function(x,par,k=1,...,value) {
         constrain(Model(x)$lvm[[k]],par=par,...) <- value
         return(x)
     }
