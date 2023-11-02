@@ -1,3 +1,12 @@
+# lava 1.7.3 
+-`parameter.estimate` method to extract matrix with estimates, standard errors,
+  and confidence limits from and estimate object (coefmat element)
+- pairwise difference with `'-'.estimate` and `pairwise.diff`
+- Optional mc.cores arguments to `cv` and `bootstrap`
+- `parameter.lvm` now automatically removes previously variables in the lvm
+  object with same name as new added parameters.
+- `Print` function deals more gracefully with non-rectangular objects
+
 # lava 1.7.2.1
   - Maintenance release as version 1.7.2 broke compatibility with R<4.1.
 
