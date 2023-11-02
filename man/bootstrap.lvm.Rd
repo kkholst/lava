@@ -7,7 +7,7 @@
 \usage{
 \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
-                          constraints=TRUE,sd=FALSE,
+                          constraints=TRUE,sd=FALSE, mc.cores,
                           ...)
 
 \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -42,14 +42,12 @@ included in the bootstrap procedure}
 
 \item{mc.cores}{Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)}
 
-\item{...}{arguments to lower level functions}
+\item{\dots}{Additional arguments, e.g. choice of estimator.}
 
 \item{estimator}{String definining estimator, e.g. 'gaussian' (see
 \code{estimator})}
 
 \item{weights}{Optional weights matrix used by \code{estimator}}
-
-\item{\dots}{Additional arguments, e.g. choice of estimator.}
 }
 \value{
 A \code{bootstrap.lvm} object.

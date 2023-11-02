@@ -27,7 +27,6 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
 ##' @param mc.cores Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)
-##' @param ... arguments to lower level functions
 ##' @param estimator String definining estimator, e.g. 'gaussian' (see
 ##' \code{estimator})
 ##' @param weights Optional weights matrix used by \code{estimator}
@@ -37,7 +36,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##'
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
-##'                           constraints=TRUE,sd=FALSE,
+##'                           constraints=TRUE,sd=FALSE, mc.cores,
 ##'                           ...)
 ##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),

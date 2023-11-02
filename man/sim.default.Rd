@@ -68,7 +68,7 @@ onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
 }
 val <- sim(onerun,R=10,b0=1)
 val
-b
+
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 
