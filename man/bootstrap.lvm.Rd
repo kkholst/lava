@@ -40,12 +40,16 @@ constraints should be included in the bootstrap procedure}
 \item{sd}{Logical indicating whether standard error estimates should be
 included in the bootstrap procedure}
 
-\item{\dots}{Additional arguments, e.g. choice of estimator.}
+\item{mc.cores}{Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)}
+
+\item{...}{arguments to lower level functions}
 
 \item{estimator}{String definining estimator, e.g. 'gaussian' (see
 \code{estimator})}
 
 \item{weights}{Optional weights matrix used by \code{estimator}}
+
+\item{\dots}{Additional arguments, e.g. choice of estimator.}
 }
 \value{
 A \code{bootstrap.lvm} object.
@@ -58,7 +62,7 @@ m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(lvm(y~x), data=d)
 \donttest{ ## Reduce Ex.Timings
-B <- bootstrap(e,R=50,parallel=FALSE)
+B <- bootstrap(e,R=50,mc.cores=1)
 B
 }
 }

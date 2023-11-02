@@ -13,6 +13,7 @@
   seed = NULL,
   args = list(),
   iter = FALSE,
+  mc.cores,
   ...
 )
 }
@@ -32,7 +33,9 @@
 \item{iter}{If TRUE the iteration number is passed as first argument to
 (mc)mapply}
 
-\item{...}{Additional arguments to (mc)mapply}
+\item{mc.cores}{Optional number of cores. Will use parallel::mcmapply instead of future}
+
+\item{...}{Additional arguments to future.apply::future_mapply}
 }
 \description{
 Applies a function repeatedly for a specified number of replications or over
@@ -65,7 +68,7 @@ onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
 }
 val <- sim(onerun,R=10,b0=1)
 val
-
+b
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 
