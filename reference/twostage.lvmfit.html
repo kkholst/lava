@@ -152,26 +152,26 @@
 <span class="r-in"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>,<span class="va">var</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="st">"u1"</span><span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="st">"u2"</span><span class="op">=</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">+</span><span class="va">var</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>,model2<span class="op">=</span><span class="va">m2</span>,data<span class="op">=</span><span class="va">d</span>,predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z-value P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Measurements:                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta            0.96270    0.79836  1.20585  0.2279</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta            0.97886    0.85360  1.14674  0.2515</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~u1            -0.10923    2.40443 -0.04543  0.9638</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~u2            -0.00916    0.27115 -0.03378  0.9731</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~z             -0.09088    1.31055 -0.06934  0.9447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~u1           1.23462    7.30469  0.16902  0.8658</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~u2           0.00912    0.25027  0.03645  0.9709</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~z            0.84531    6.66065  0.12691   0.899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2               -0.19048    1.29824 -0.14672  0.8834</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.00979    1.31738  0.00743  0.9941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta              -0.16805    8.00383 -0.02100  0.9832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.15103    0.38028  3.02679        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.97707    0.82980  1.17747        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.13661    0.80801  1.40668        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta               1.58985    1.22509  1.29774        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z-value   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Measurements:                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta            0.96270    0.12462  7.72525    &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta            0.97886    0.12477  7.84516    &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~u1            -0.10923    0.24754 -0.44125     0.659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~u2            -0.00916    0.02941 -0.31149    0.7554</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~z             -0.09088    0.25697 -0.35364    0.7236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~u1           1.23462    0.24891  4.96011 7.045e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~u2           0.00912    0.02417  0.37737    0.7059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eta~z            0.84531    0.27943  3.02508  0.002486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2               -0.19048    0.16526 -1.15257    0.2491</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.00979    0.18282  0.05354    0.9573</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta              -0.16805    0.22950 -0.73226     0.464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.15103    0.24219  4.75250          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.97707    0.20212  4.83411          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.13661    0.20506  5.54289          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta               1.58985    0.37736  4.21312          </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="va">pf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="st">"eta"</span><span class="op">]</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="st">"eta~u1"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"eta~u2"</span><span class="op">]</span><span class="op">*</span><span class="va">u</span><span class="op">^</span><span class="fl">2</span></span></span>
@@ -233,22 +233,22 @@
 <span class="r-in"><span> <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">cv</span><span class="op">(</span><span class="va">ff</span>,data<span class="op">=</span><span class="va">d</span>,rep<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in cv(ff, data = d, rep = 1):</span> could not find function "cv"</span>
 <span class="r-in"><span> <span class="va">a</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z-value P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Measurements:                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta2           1.03076    0.43669  2.36036 0.01826</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta2           0.99635    0.48157  2.06899 0.03855</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_1       2.47344   71.21467  0.03473  0.9723</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_2      -0.48653   13.84816 -0.03513   0.972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.02005    0.13034  0.15383  0.8777</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.07986    0.13650  0.58503  0.5585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.16241   22.78965  0.05101  0.9593</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.11229    1.98430  0.56054        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                1.00927    1.11976  0.90133        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.09169    1.39192  0.78430        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.81941    7.29398  0.24944        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z-value  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Measurements:                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta2           1.03076    0.03876 26.59191   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta2           0.99635    0.04036 24.68596   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_1       2.47344    0.22699 10.89681   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_2      -0.48653    0.05555 -8.75771   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.02005    0.06568  0.30528   0.7602</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.07986    0.06779  1.17797   0.2388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.16241    0.16093  7.22290   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.11229    0.10786 10.31201         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                1.00927    0.09818 10.28011         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.09169    0.09757 11.18840         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.81941    0.18188 10.00346         </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -133,12 +133,12 @@
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">y</span>,x<span class="op">=</span><span class="va">x</span>,u<span class="op">=</span><span class="va">u</span><span class="op">*</span><span class="fl">1</span>,z<span class="op">=</span><span class="va">z</span>,age<span class="op">=</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y         x u         z      age</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0  1.464937 0     (0,1] 18.21027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0  8.471168 0    (-1,0] 24.61046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0 10.616487 0 (-Inf,-1] 27.67200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1 18.854095 1    (-1,0] 12.28950</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0 14.244491 0    (-1,0] 16.48295</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0 14.489812 0    (-1,0] 17.33514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0 10.616487 0    (-1,0] 27.67200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1 18.854095 1 (-Inf,-1] 12.28950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0 14.244491 0    (-1,0] 16.48295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0 14.489812 0    (-1,0] 17.33514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0  9.402572 0    (-1,0] 15.07897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0  2.405645 0  (1, Inf] 12.41499</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Estimation</span></span></span>
 <span class="r-in"><span><span class="va">e0</span> <span class="op">&lt;-</span> <span class="fu">zibreg</span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">*</span><span class="va">z</span>,<span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">z</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
@@ -148,33 +148,33 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	- Likelihood ratio test -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> data:  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 2.4545, df = 6, p-value = 0.8735</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 3.8978, df = 6, p-value = 0.6905</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sample estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log likelihood (model 1) log likelihood (model 2) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                -845.5394                -844.3122 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                -857.7595                -855.8106 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">e</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  Estimate        2.5%       97.5%      P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)    -0.8096962 -1.34568375 -0.27370865 3.067975e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x               0.2247970  0.06065481  0.38893919 7.269888e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pr:(Intercept) -0.1388121 -0.78249152  0.50486730 6.725329e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(-1,0]     -0.3544657 -0.78800432  0.07907295 1.090480e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(0,1]       0.4362824  0.02118711  0.85137778 3.939820e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(1, Inf]    2.3908142  1.81380254  2.96782578 4.623694e-16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pr:age         -0.0752326 -0.10102715 -0.04943804 1.087750e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate       2.5%       97.5%      P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)    -1.04506702 -1.6056511 -0.48448289 2.583311e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x               0.26955285  0.0945194  0.44458631 2.541473e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pr:(Intercept) -0.03873774 -0.6427755  0.56530001 8.999733e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(-1,0]     -0.39644128 -0.8162485  0.02336592 6.418754e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(0,1]       0.50741986  0.1012374  0.91360231 1.434653e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pr:z(1, Inf]    2.33022119  1.7820864  2.87835593 7.937660e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pr:age         -0.07884551 -0.1048220 -0.05286903 2.697676e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence probabilities:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              Estimate      2.5%     97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)}               0.4653526 0.3137832 0.6236025</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(-1,0]}   0.3791217 0.2487184 0.5296910</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(0,1]}    0.5738240 0.4098366 0.7230380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(1, Inf]} 0.9048231 0.7876751 0.9605714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {age}       0.4466922 0.3018984 0.6011322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)}               0.4903168 0.3446194 0.6376780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(-1,0]}   0.3928903 0.2637622 0.5389577</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(0,1]}    0.6150718 0.4548615 0.7536939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {z(1, Inf]} 0.9081692 0.8035858 0.9598482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {(Intercept)} + {age}       0.4706380 0.3314733 0.6145224</span>
 <span class="r-in"><span><span class="fu"><a href="PD.html">PD</a></span><span class="op">(</span><span class="va">e0</span>,intercept<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span>,slope<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Std.Err      2.5%    97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50% 4.655517 6.753757 -8.581603 17.89264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err      2.5%    97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50% 7.426706 5.87661 -4.091238 18.94465</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"b")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.7921916  0.1701619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1.3091313  0.1762735</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>           <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,</span></span>

@@ -165,14 +165,13 @@ log-likelihood with tau being fixed.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~~y 0.5547589 0.9802276</span>
 <span class="r-in"><span> <span class="co">## Reduce Ex.timings</span></span></span>
 <span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
 <span class="r-in"><span><span class="va">B</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-parametric bootstrap statistics (R=50):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y     0.124504326  0.019136487  0.091432200 -0.048940002  0.294380917</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y~x   1.061750034  0.006653642  0.094422581  0.907870490  1.231099705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y~~y  0.767493210 -0.003652062  0.104073510  0.572331738  0.960123567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y     0.124504326 -0.007753062  0.073936733  0.008375347  0.288089457</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y~x   1.061750034  0.013940880  0.074844578  0.949601761  1.235976345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y~~y  0.767493210 -0.026454597  0.100031344  0.584892411  0.986727053</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
