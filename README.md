@@ -1,6 +1,6 @@
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/kkholst/lava/workflows/R-CMD-check/badge.svg?branch=main)](https://github.com/kkholst/lava/actions)
-  [![coverage](https://app.codecov.io/github/kkholst/lava/coverage.svg?branch=main)](https://app.codecov.io/github/kkholst/lava?branch=main)
+  [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=main)](https://app.codecov.io/github/kkholst/lava?branch=main)
   [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
 <!-- badges: end -->
