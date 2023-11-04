@@ -473,14 +473,17 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     control1$start <- NULL
     ee <- list(e1a)
 
-  nmix <- setdiff(nmix, 1)
+    nmix <- setdiff(nmix, 1)
     fit <- function(k, ...) {
         if (messages > 0) cat("Fitting mixture model with", k, "components\n")
         mixture(model1, k = k, data = data, control = c(control1, list(start = startf(k))))
     }
     future.args <- list(...)
-    if (is.null(future.args$future.seed)) future.args$future.seed <- TRUE
-    val <- do.call(future_lapply,list(fit, c(as.list(nmix), future.args)))
+    if (is.null(future.args$future.seed)) {
+      future.args$future.seed <- TRUE
+    }
+    args <-  c(list(FUN = fit, c(as.list(nmix)), future.args))
+    val <- do.call(future_lapply, args)
     ee <- c(ee, val)
     AIC1 <- unlist(lapply(ee,AIC))
     names(AIC1) <- c(1,nmix)
