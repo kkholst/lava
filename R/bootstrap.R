@@ -27,6 +27,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' @param sd Logical indicating whether standard error estimates should be
 ##' included in the bootstrap procedure
 ##' @param mc.cores Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)
+##' @param future.args arguments to future.apply::future_lapply
 ##' @param estimator String definining estimator, e.g. 'gaussian' (see
 ##' \code{estimator})
 ##' @param weights Optional weights matrix used by \code{estimator}
@@ -37,6 +38,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
 ##'                           p, parametric=FALSE, bollenstine=FALSE,
 ##'                           constraints=TRUE,sd=FALSE, mc.cores,
+##'                           future.args=list(future.seed=TRUE),
 ##'                           ...)
 ##'
 ##' \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -60,6 +62,7 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
                           p, parametric = FALSE, bollenstine = FALSE,
                           constraints = TRUE, sd = FALSE, mc.cores,
+                          future.args=list(future.seed=TRUE),
                           ...) {
   coefs <- sds <- c()
   on.exit(list(coef = coefs[-1, ], sd = sds[-1, ], coef0 = coefs[1, ], sd0 = sds[1, ], model = x))
@@ -114,7 +117,7 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
   if (!missing(mc.cores)) {
     res <- parallel::mclapply(0:R, bootfun, mc.cores=mc.cores)
   } else {
-    res <- future_lapply(0:R, bootfun)
+    res <- do.call(future_lapply, c(list(0:R, bootfun), future.args))
   }
 
   coefs <- matrix(unlist(lapply(res, function(x) x$coefs)), nrow = R + 1, byrow = TRUE)

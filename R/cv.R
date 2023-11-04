@@ -71,7 +71,7 @@ cv <- function(modelList, data, K=5, rep=1, perf, seed=NULL, shared=NULL, ...) {
         pb()
         do.call(rbind,perfs)
     }
-    val <- future_mapply(ff, seq(nrow(arg)), SIMPLIFY=FALSE)
+    val <- future_mapply(ff, seq(nrow(arg)), SIMPLIFY=FALSE, future.seed=TRUE)
     for (i in seq(nrow(arg))) {
         R <- arg[i, 1]
         k <- arg[i, 2]

@@ -140,8 +140,10 @@ sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
 
     pp <- c(
         as.list(parval), dots,
-        list(FUN = robx, SIMPLIFY = FALSE, MoreArgs = as.list(args), future.seed = TRUE)
-    )
+      list(FUN = robx, SIMPLIFY = FALSE, MoreArgs = as.list(args)))
+    if (is.null(pp$future.seed)) {
+      pp$future.seed <- TRUE
+    }
     if (!missing(mc.cores)) {
       pp$future.seed <- NULL
       pp$mc.cores <- mc.cores

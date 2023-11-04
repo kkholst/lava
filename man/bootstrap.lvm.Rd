@@ -8,6 +8,7 @@
 \method{bootstrap}{lvm}(x,R=100,data,fun=NULL,control=list(),
                           p, parametric=FALSE, bollenstine=FALSE,
                           constraints=TRUE,sd=FALSE, mc.cores,
+                          future.args=list(future.seed=TRUE),
                           ...)
 
 \method{bootstrap}{lvmfit}(x,R=100,data=model.frame(x),
@@ -41,6 +42,8 @@ constraints should be included in the bootstrap procedure}
 included in the bootstrap procedure}
 
 \item{mc.cores}{Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)}
+
+\item{future.args}{arguments to future.apply::future_lapply}
 
 \item{\dots}{Additional arguments, e.g. choice of estimator.}
 
