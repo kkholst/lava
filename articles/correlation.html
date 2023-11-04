@@ -314,19 +314,19 @@
 <code class="sourceCode R"><span><span class="va">e3</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    y1~x                 0.93302    0.04443 20.99898   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92403    0.04643 19.90142   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y1~x                 0.93300    0.04443 20.99873   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92401    0.04643 19.90115   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    y1                  -0.00541    0.04482 -0.12074   0.9039</span></span>
-<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45684   0.6478</span></span>
+<span><span class="co">#&gt;    y1                  -0.00542    0.04482 -0.12089   0.9038</span></span>
+<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45694   0.6477</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06612   0.9473</span></span>
-<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97307   0.3305</span></span>
-<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41846   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06611   0.9473</span></span>
+<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97300   0.3306</span></span>
+<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41856   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err  2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.496e-226</span></span>
+<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.493e-226</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
@@ -340,32 +340,32 @@
 <span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72738   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89519   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72730   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89510   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05189   0.9586</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05182   0.9587</span></span>
 <span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00076    0.06500 -0.01177   0.9906</span></span>
-<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98846   0.3229</span></span>
-<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94301   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01155   0.9908</span></span>
+<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
+<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94280   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72738   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89519   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72730   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89510   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05189   0.9586</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05182   0.9587</span></span>
 <span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00076    0.06500 -0.01177   0.9906</span></span>
-<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98846   0.3229</span></span>
-<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94301   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01155   0.9908</span></span>
+<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
+<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94280   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077 9.01e-222</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077  9e-222</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
