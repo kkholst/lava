@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -60,6 +60,10 @@
       <small>Source: <a href="https://github.com/kkholst/lava/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.3" id="lava-173">lava 1.7.3<a class="anchor" aria-label="anchor" href="#lava-173"></a></h2>
+<p>-<code>parameter.estimate</code> method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element) - pairwise difference with <code>'-'.estimate</code> and <code>pairwise.diff</code> - Optional mc.cores arguments to <code>cv</code> and <code>bootstrap</code> - <code>parameter.lvm</code> now automatically removes previously variables in the lvm object with same name as new added parameters. - <code>Print</code> function deals more gracefully with non-rectangular objects - bug-fix in <code>stack.estimate</code> (wrong stand-errors in <code>twostage</code> since version 1.7.0)</p>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.7.2.1" id="lava-1721">lava 1.7.2.1<small>2023-02-27</small><a class="anchor" aria-label="anchor" href="#lava-1721"></a></h2>
 <ul><li>Maintenance release as version 1.7.2 broke compatibility with R&lt;4.1.</li></ul></div>
@@ -137,7 +141,7 @@
 <ul><li>Maintenance release.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.4" id="lava-164">lava 1.6.4<small>2018-11-25</small><a class="anchor" aria-label="anchor" href="#lava-164"></a></h2>
-<ul><li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): <code>binomial.rd</code>, <code>binomial.rr</code>. Base on new hook ‘simulate.multiple.inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
+<ul><li>New simulation distributions: constant relative risk and risk difference models as in Richardson, Robins and Wang, 2017): <code>binomial.rd</code>, <code>binomial.rr</code>. Base on new hook ‘simulate_multiple_inputs’ which allows the distribution to depend non-linearly on multiple different input variables.</li>
 <li>
 <code>sim.lvm</code>: ‘X’ argument can now fix (manipulate) any variable and not only exogenous variables.</li>
 <li>Summary function for <code>sim.default</code> updated (the ‘estimate’ argument can now be a list with each element being the estimate position and optionally standard error and true value).</li>

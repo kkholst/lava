@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -69,7 +69,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for lvm</span></span>
 <span><span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>,R<span class="op">=</span><span class="fl">100</span>,<span class="va">data</span>,fun<span class="op">=</span><span class="cn">NULL</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>                          <span class="va">p</span>, parametric<span class="op">=</span><span class="cn">FALSE</span>, bollenstine<span class="op">=</span><span class="cn">FALSE</span>,</span>
-<span>                          constraints<span class="op">=</span><span class="cn">TRUE</span>,sd<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                          constraints<span class="op">=</span><span class="cn">TRUE</span>,sd<span class="op">=</span><span class="cn">FALSE</span>, <span class="va">mc.cores</span>,</span>
+<span>                          future.args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>future.seed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>                          <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for lvmfit</span></span>
@@ -125,6 +126,14 @@ constraints should be included in the bootstrap procedure</p></dd>
 included in the bootstrap procedure</p></dd>
 
 
+<dt>mc.cores</dt>
+<dd><p>Optional number of cores for parallel computing. If omitted future.apply will be used (see future::plan)</p></dd>
+
+
+<dt>future.args</dt>
+<dd><p>arguments to future.apply::future_lapply</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments, e.g. choice of estimator.</p></dd>
 
@@ -159,7 +168,7 @@ included in the bootstrap procedure</p></dd>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
-<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span>,parallel<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span>,mc.cores<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
 <span class="r-in"><span><span class="va">B</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-parametric bootstrap statistics (R=50):</span>
