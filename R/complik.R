@@ -133,7 +133,6 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
     return(e0)
 }
 
-
 ##' @export
 score.estimate.complik <- function(x,indiv=FALSE,...) {
     if (!indiv)

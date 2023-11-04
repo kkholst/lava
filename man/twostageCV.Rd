@@ -48,7 +48,7 @@ twostageCV(
 
 \item{messages}{print information (>0)}
 
-\item{...}{additional arguments to lower level functions}
+\item{...}{additional arguments to lower}
 }
 \description{
 Cross-validated two-stage estimator for non-linear SEM

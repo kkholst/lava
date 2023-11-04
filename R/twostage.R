@@ -222,14 +222,13 @@ twostage.lvmfit <- function(object, model2, data=NULL,
         }
 
         e2 <- estimate(model2, id=id2)
-        U <- function(alpha=p1,beta=p2) {
-            pp <- uhat(alpha,object,nlobj=val$nonlinear)
+        U <- function(alpha = p1, beta = p2) {
+            pp <- uhat(alpha, object, nlobj = val$nonlinear)
             newd <- model.frame(model2)
-            newd[,colnames(pp)] <- pp
-            score(model2,p=beta,data=newd)
+            newd[, colnames(pp)] <- pp
+            score(model2, p = beta, data = newd)
         }
-        Ia <- numDeriv::jacobian(function(p) U(p),p1)
-        stacked <- stack(model1,e2,Ia)
+        stacked <- stack(model1,e2,U=U)
     } else {
         e2 <- estimate(coef=p2,vcov=NA)
     }
@@ -425,7 +424,7 @@ predict.twostage.lvmfit <- function(object,
 ##' @param nfolds Number of folds (cross-validation)
 ##' @param rep Number of repeats of cross-validation
 ##' @param messages print information (>0)
-##' @param ... additional arguments to lower level functions
+##' @param ... additional arguments to lower
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings##'
 ##' m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
@@ -474,11 +473,14 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
     control1$start <- NULL
     ee <- list(e1a)
 
-    nmix <- setdiff(nmix,1)
-    val <- future_lapply(as.list(nmix), function(k) {
-      if (messages>0) cat("Fitting mixture model with", k, "components\n")
-      mixture(model1, k=k, data=data, control=c(control1,list(start=startf(k))))
-    }, ...)
+  nmix <- setdiff(nmix, 1)
+    fit <- function(k, ...) {
+        if (messages > 0) cat("Fitting mixture model with", k, "components\n")
+        mixture(model1, k = k, data = data, control = c(control1, list(start = startf(k))))
+    }
+    future.args <- list(...)
+    if (is.null(future.args$future.seed)) future.args$future.seed <- TRUE
+    val <- do.call(future_lapply,list(fit, c(as.list(nmix), future.args)))
     ee <- c(ee, val)
     AIC1 <- unlist(lapply(ee,AIC))
     names(AIC1) <- c(1,nmix)

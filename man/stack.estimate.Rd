@@ -53,7 +53,7 @@ Missing(m, z ~ z0) <- r~x
 distribution(m,~x) <- binomial.lvm()
 p <- c(r=-1,'r~x'=0.5,'z0~x'=2)
 beta <- p[3]/2
-d <- sim(m,500,p=p)
+d <- sim(m,500,p=p,seed=1)
 m1 <- estimate(r~x,data=d,family=binomial)
 d$w <- d$r/predict(m1,type="response")
 m2 <- estimate(z~1, weights=w, data=d)
