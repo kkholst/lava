@@ -108,8 +108,8 @@
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, n<span class="op">=</span><span class="fl">200</span>, seed<span class="op">=</span><span class="fl">42</span><span class="op">)</span> <span class="co"># Default is all parameters are 1</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span>, plot.engine<span class="op">=</span><span class="st">"visNetwork"</span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-e68daa6d8047d64db1b8" style="width:100%;height:700px;" class="visNetwork html-widget "></div>
-<script type="application/json" data-for="htmlwidget-e68daa6d8047d64db1b8">{"x":{"nodes":{"id":[1,2,3,4,5,6,7,8,9],"label":["x1","x2","x3","eta1","y1","y2","y3","eta2","z"],"color":["orange","orange","orange","yellowgreen","orange","orange","orange","yellowgreen","lightblue"],"shape":["box","box","box","circle","box","box","box","circle","box"],"shadow":[true,true,true,true,true,true,true,true,true],"size":[1,1,1,1,1,1,1,1,1],"group":["endogenous","endogenous","endogenous","latent","endogenous","endogenous","endogenous","latent","exogenous"]},"edges":{"from":[1,2,3,8,5,6,7,4,8],"to":[4,4,4,4,8,8,8,9,9],"dashes":[false,false,false,false,false,false,false,false,false],"arrows":["from","from","from","from","from","from","from","from","from"],"physics":[true,true,true,true,true,true,true,true,true]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot"},"manipulation":{"enabled":false},"edges":{"arrows":{"from":{"enabled":true,"scaleFactor":0.5}},"scaling":{"min":2,"max":2}},"layout":{"randomSeed":1}},"groups":["endogenous","latent","exogenous"],"width":"100%","height":"700px","idselection":{"enabled":false},"byselection":{"enabled":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)"},"evals":[],"jsHooks":[]}</script><p>We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holst_budtzjorgensen_2013" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holst_budtzjorgensen_2013</a></sup> for details on the syntax for model specification.</p>
+<div id="htmlwidget-af87fe7b49ca9457ddd7" style="width:100%;height:700px;" class="visNetwork html-widget "></div>
+<script type="application/json" data-for="htmlwidget-af87fe7b49ca9457ddd7">{"x":{"nodes":{"id":[1,2,3,4,5,6,7,8,9],"label":["x1","x2","x3","eta1","y1","y2","y3","eta2","z"],"color":["orange","orange","orange","yellowgreen","orange","orange","orange","yellowgreen","lightblue"],"shape":["box","box","box","circle","box","box","box","circle","box"],"shadow":[true,true,true,true,true,true,true,true,true],"size":[1,1,1,1,1,1,1,1,1],"group":["endogenous","endogenous","endogenous","latent","endogenous","endogenous","endogenous","latent","exogenous"]},"edges":{"from":[1,2,3,8,5,6,7,4,8],"to":[4,4,4,4,8,8,8,9,9],"dashes":[false,false,false,false,false,false,false,false,false],"arrows":["from","from","from","from","from","from","from","from","from"],"physics":[true,true,true,true,true,true,true,true,true]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot"},"manipulation":{"enabled":false},"edges":{"arrows":{"from":{"enabled":true,"scaleFactor":0.5}},"scaling":{"min":2,"max":2}},"layout":{"randomSeed":1}},"groups":["endogenous","latent","exogenous"],"width":"100%","height":"700px","idselection":{"enabled":false},"byselection":{"enabled":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)"},"evals":[],"jsHooks":[]}</script><p>We refer to <sup id="915607a5e4b7965311f3b3d4e0ccb7d7"><a href="#holst_budtzjorgensen_2013" title="Holst \&amp; Budtz-J\orgensen, Linear latent variable models: the lava-package, {Computational Statistics}, v(4), 1385--1452 (2013).">holst_budtzjorgensen_2013</a></sup> for details on the syntax for model specification.</p>
 <div class="section level2">
 <h2 id="estimation">Estimation<a class="anchor" aria-label="anchor" href="#estimation"></a>
 </h2>
@@ -228,11 +228,12 @@
 <span><span class="co">## Repeated 5-fold cross-validation:</span></span>
 <span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>linear<span class="op">=</span><span class="va">m2a</span>,quadratic<span class="op">=</span><span class="va">m2b</span>,spline4<span class="op">=</span><span class="va">m2c</span>,spline6<span class="op">=</span><span class="va">m2d</span><span class="op">)</span>,</span>
 <span>        <span class="kw">function</span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>,<span class="va">m</span>,data<span class="op">=</span><span class="va">data</span>,stderr<span class="op">=</span><span class="cn">FALSE</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e0</span><span class="op">)</span>,contrain<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">fit.cv</span> <span class="op">&lt;-</span> <span class="fu">cv</span><span class="op">(</span><span class="va">ff</span>,data<span class="op">=</span><span class="va">d</span>,K<span class="op">=</span><span class="fl">5</span>,rep<span class="op">=</span><span class="fl">2</span>,mc.cores<span class="op">=</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fit.cv</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">:::</span><span class="fu">cv</span><span class="op">(</span><span class="va">ff</span>,data<span class="op">=</span><span class="va">d</span>,K<span class="op">=</span><span class="fl">5</span>,rep<span class="op">=</span><span class="fl">2</span>,mc.cores<span class="op">=</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.cv</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       Length Class  Mode     </span></span>
 <span><span class="co">#&gt; cv    40     -none- numeric  </span></span>
+<span><span class="co">#&gt; coef   4     -none- numeric  </span></span>
 <span><span class="co">#&gt; call   7     -none- call     </span></span>
 <span><span class="co">#&gt; names  4     -none- character</span></span>
 <span><span class="co">#&gt; rep    1     -none- numeric  </span></span>
@@ -264,12 +265,41 @@
 <p>applies cross-validation (here just 2 folds for simplicity) to select the best splines with degrees of freedom varying from from 1-3 (the linear model is automatically included)</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">selmod</span></span>
-<span><span class="co">#&gt;        Length Class               Mode   </span></span>
-<span><span class="co">#&gt; model1 11     summary.lvm.mixture list   </span></span>
-<span><span class="co">#&gt; AIC1    2     -none-              numeric</span></span>
-<span><span class="co">#&gt; cv      4     -none-              numeric</span></span>
-<span><span class="co">#&gt; knots   4     -none-              list   </span></span>
-<span><span class="co">#&gt; model2 11     summary.lvmfit      list</span></span></code></pre></div>
+<span><span class="co">#&gt; ______________________________________________________________________</span></span>
+<span><span class="co">#&gt; Selected mixture model: 2 components</span></span>
+<span><span class="co">#&gt;       AIC1</span></span>
+<span><span class="co">#&gt; 1 1961.839</span></span>
+<span><span class="co">#&gt; 2 1958.803</span></span>
+<span><span class="co">#&gt; ______________________________________________________________________</span></span>
+<span><span class="co">#&gt; Selected spline model degrees of freedom: 2</span></span>
+<span><span class="co">#&gt; Knots: -3.958 0.02149 4.001 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      RMSE(nfolds=, rep=)</span></span>
+<span><span class="co">#&gt; df:1            2.113406</span></span>
+<span><span class="co">#&gt; df:2            1.809267</span></span>
+<span><span class="co">#&gt; df:3            1.839144</span></span>
+<span><span class="co">#&gt; df:4            1.891724</span></span>
+<span><span class="co">#&gt; ______________________________________________________________________</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error Z-value  P-value   std.xy  </span></span>
+<span><span class="co">#&gt; Measurements:                                                      </span></span>
+<span><span class="co">#&gt;    y1~eta2           1.00000                                0.93523</span></span>
+<span><span class="co">#&gt;    y2~eta2           0.97794  0.03461   28.25249   &lt;1e-12   0.94272</span></span>
+<span><span class="co">#&gt;    y3~eta2           1.04520  0.03471   30.10995   &lt;1e-12   0.96180</span></span>
+<span><span class="co">#&gt; Regressions:                                                       </span></span>
+<span><span class="co">#&gt;    eta2~z            1.02818  0.22299    4.61089 4.009e-06  0.34726</span></span>
+<span><span class="co">#&gt;    eta2~eta1_1       3.41776  0.36944    9.25131   &lt;1e-12   1.48542</span></span>
+<span><span class="co">#&gt;    eta2~eta1_2      -0.05122  0.00707   -7.24644   &lt;1e-12  -1.03809</span></span>
+<span><span class="co">#&gt; Intercepts:                                                        </span></span>
+<span><span class="co">#&gt;    y1                0.00000                                0.00000</span></span>
+<span><span class="co">#&gt;    y2               -0.12176  0.10921   -1.11498 0.2649    -0.03873</span></span>
+<span><span class="co">#&gt;    y3               -0.09872  0.10546   -0.93607 0.3492    -0.02998</span></span>
+<span><span class="co">#&gt;    eta2              3.93716  0.54062    7.28272   &lt;1e-12   1.29916</span></span>
+<span><span class="co">#&gt; Residual Variances:                                                </span></span>
+<span><span class="co">#&gt;    y1                1.31625  0.17653    7.45608            0.12535</span></span>
+<span><span class="co">#&gt;    y2                1.09975  0.14506    7.58112            0.11127</span></span>
+<span><span class="co">#&gt;    y3                0.81270  0.13258    6.12979            0.07493</span></span>
+<span><span class="co">#&gt;    eta2              2.01821  0.29033    6.95153            0.21975</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="specification-of-general-functional-forms">Specification of general functional forms<a class="anchor" aria-label="anchor" href="#specification-of-general-functional-forms"></a>
@@ -336,19 +366,19 @@
 <span><span class="co">#&gt; Measurements:                                            </span></span>
 <span><span class="co">#&gt;    x1~eta1           1.00000                             </span></span>
 <span><span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54099   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    x3~eta1           1.06345  0.08436   12.60541   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60540   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Regressions:                                             </span></span>
-<span><span class="co">#&gt;    eta1~z            1.06675  0.08527   12.50989   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50988   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                              </span></span>
 <span><span class="co">#&gt;    x1                0.00000                             </span></span>
 <span><span class="co">#&gt;    x2                0.03845  0.09890    0.38883 0.6974  </span></span>
 <span><span class="co">#&gt;    x3               -0.02549  0.10333   -0.24667 0.8052  </span></span>
-<span><span class="co">#&gt;    eta1              0.20925  0.13162    1.58984 0.1119  </span></span>
+<span><span class="co">#&gt;    eta1              0.20925  0.13162    1.58979 0.1119  </span></span>
 <span><span class="co">#&gt; Residual Variances:                                      </span></span>
-<span><span class="co">#&gt;    x1                0.98540  0.13316    7.40025         </span></span>
-<span><span class="co">#&gt;    x2                0.97180  0.13156    7.38695         </span></span>
-<span><span class="co">#&gt;    x3                1.01316  0.14294    7.08815         </span></span>
-<span><span class="co">#&gt;    eta1              0.29046  0.11129    2.61004         </span></span>
+<span><span class="co">#&gt;    x1                0.98540  0.13316    7.40024         </span></span>
+<span><span class="co">#&gt;    x2                0.97181  0.13156    7.38695         </span></span>
+<span><span class="co">#&gt;    x3                1.01316  0.14294    7.08813         </span></span>
+<span><span class="co">#&gt;    eta1              0.29046  0.11129    2.61003         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Cluster 2 (n=38, Prior=0.224):</span></span>
 <span><span class="co">#&gt; --------------------------------------------------</span></span>
@@ -356,22 +386,22 @@
 <span><span class="co">#&gt; Measurements:                                             </span></span>
 <span><span class="co">#&gt;    x1~eta1           1.00000                              </span></span>
 <span><span class="co">#&gt;    x2~eta1           0.99581  0.07940   12.54099   &lt;1e-12 </span></span>
-<span><span class="co">#&gt;    x3~eta1           1.06345  0.08436   12.60541   &lt;1e-12 </span></span>
+<span><span class="co">#&gt;    x3~eta1           1.06344  0.08436   12.60540   &lt;1e-12 </span></span>
 <span><span class="co">#&gt; Regressions:                                              </span></span>
-<span><span class="co">#&gt;    eta1~z            1.06675  0.08527   12.50989   &lt;1e-12 </span></span>
+<span><span class="co">#&gt;    eta1~z            1.06674  0.08527   12.50988   &lt;1e-12 </span></span>
 <span><span class="co">#&gt; Intercepts:                                               </span></span>
 <span><span class="co">#&gt;    x1                0.00000                              </span></span>
 <span><span class="co">#&gt;    x2                0.03845  0.09890    0.38883 0.6974   </span></span>
 <span><span class="co">#&gt;    x3               -0.02549  0.10333   -0.24667 0.8052   </span></span>
-<span><span class="co">#&gt;    eta1             -1.44290  0.25867   -5.57812 2.431e-08</span></span>
+<span><span class="co">#&gt;    eta1             -1.44291  0.25867   -5.57813 2.431e-08</span></span>
 <span><span class="co">#&gt; Residual Variances:                                       </span></span>
-<span><span class="co">#&gt;    x1                0.98540  0.13316    7.40025          </span></span>
-<span><span class="co">#&gt;    x2                0.97180  0.13156    7.38695          </span></span>
-<span><span class="co">#&gt;    x3                1.01316  0.14294    7.08815          </span></span>
-<span><span class="co">#&gt;    eta1              0.29046  0.11129    2.61004          </span></span>
+<span><span class="co">#&gt;    x1                0.98540  0.13316    7.40024          </span></span>
+<span><span class="co">#&gt;    x2                0.97181  0.13156    7.38695          </span></span>
+<span><span class="co">#&gt;    x3                1.01316  0.14294    7.08813          </span></span>
+<span><span class="co">#&gt;    eta1              0.29046  0.11129    2.61003          </span></span>
 <span><span class="co">#&gt; --------------------------------------------------</span></span>
 <span><span class="co">#&gt; AIC= 1958.803 </span></span>
-<span><span class="co">#&gt; ||score||^2= 8.81839e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; ||score||^2= 2.821242e-06</span></span></code></pre></div>
 <p>Measured by AIC there is a slight improvement in the model fit using the mixture model</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m1</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
@@ -385,23 +415,23 @@
 <span><span class="va">em2</span></span>
 <span><span class="co">#&gt;                      Estimate Std. Error   Z-value   P-value</span></span>
 <span><span class="co">#&gt; Measurements:                                               </span></span>
-<span><span class="co">#&gt;    y2~eta2            0.97823    0.16298   6.00228 1.946e-09</span></span>
-<span><span class="co">#&gt;    y3~eta2            1.04530    0.10922   9.57075    &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y2~eta2            0.97823    0.16298   6.00210 1.948e-09</span></span>
+<span><span class="co">#&gt;    y3~eta2            1.04530    0.10922   9.57060    &lt;1e-12</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    eta2~z             1.02884   20.08620   0.05122    0.9591</span></span>
-<span><span class="co">#&gt;    eta2~eta1_1        2.80413   44.84858   0.06252    0.9501</span></span>
-<span><span class="co">#&gt;    eta2~eta1_2       -0.02249    6.57553  -0.00342    0.9973</span></span>
-<span><span class="co">#&gt;    eta2~eta1_3       -0.17333   19.50619  -0.00889    0.9929</span></span>
-<span><span class="co">#&gt;    eta2~eta1_4        0.38672   22.12310   0.01748    0.9861</span></span>
+<span><span class="co">#&gt;    eta2~z             1.02885   20.08583   0.05122    0.9591</span></span>
+<span><span class="co">#&gt;    eta2~eta1_1        2.80412   44.84893   0.06252    0.9501</span></span>
+<span><span class="co">#&gt;    eta2~eta1_2       -0.02249    6.57573  -0.00342    0.9973</span></span>
+<span><span class="co">#&gt;    eta2~eta1_3       -0.17333   19.50676  -0.00889    0.9929</span></span>
+<span><span class="co">#&gt;    eta2~eta1_4        0.38673   22.12373   0.01748    0.9861</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
 <span><span class="co">#&gt;    y2                -0.12171    0.11148  -1.09174    0.2749</span></span>
 <span><span class="co">#&gt;    y3                -0.09870    0.10580  -0.93292    0.3509</span></span>
-<span><span class="co">#&gt;    eta2               2.12372  112.74654   0.01884     0.985</span></span>
+<span><span class="co">#&gt;    eta2               2.12370  112.74911   0.01884     0.985</span></span>
 <span><span class="co">#&gt; Residual Variances:                                         </span></span>
-<span><span class="co">#&gt;    y1                 1.31872    0.77923   1.69233          </span></span>
-<span><span class="co">#&gt;    y2                 1.09690    1.23378   0.88906          </span></span>
-<span><span class="co">#&gt;    y3                 0.81345    1.13831   0.71461          </span></span>
-<span><span class="co">#&gt;    eta2               1.99590    9.18508   0.21730</span></span></code></pre></div>
+<span><span class="co">#&gt;    y1                 1.31872    0.77921   1.69238          </span></span>
+<span><span class="co">#&gt;    y2                 1.09690    1.23380   0.88904          </span></span>
+<span><span class="co">#&gt;    y3                 0.81345    1.13832   0.71461          </span></span>
+<span><span class="co">#&gt;    eta2               1.99590    9.18516   0.21730</span></span></code></pre></div>
 <p>In this example the results are very similar to the Gaussian model:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">eta2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">eta1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
@@ -419,6 +449,54 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Gaussian"</span>,<span class="st">"Mixture"</span><span class="op">)</span>,</span>
 <span>       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"darkblue"</span>,<span class="st">"darkred"</span><span class="op">)</span>, lwd<span class="op">=</span><span class="fl">2</span>, bty<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nonlinear_files/figure-html/mixturefit-1.png" width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
+</h2>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.3.2 (2023-10-31)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.3 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] lava_1.7.2.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] sass_0.4.7          future_1.33.0       stringi_1.7.12     </span></span>
+<span><span class="co">#&gt;  [4] lattice_0.21-9      listenv_0.9.0       digest_0.6.33      </span></span>
+<span><span class="co">#&gt;  [7] magrittr_2.0.3      evaluate_0.23       grid_4.3.2         </span></span>
+<span><span class="co">#&gt; [10] mvtnorm_1.2-3       fastmap_1.1.1       rprojroot_2.0.3    </span></span>
+<span><span class="co">#&gt; [13] jsonlite_1.8.7      Matrix_1.6-1.1      survival_3.5-7     </span></span>
+<span><span class="co">#&gt; [16] purrr_1.0.2         codetools_0.2-19    numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] textshaping_0.3.7   jquerylib_0.1.4     cli_3.6.1          </span></span>
+<span><span class="co">#&gt; [22] rlang_1.1.2         mets_1.3.2          parallelly_1.36.0  </span></span>
+<span><span class="co">#&gt; [25] visNetwork_2.1.2    future.apply_1.11.0 ellipsis_0.3.2     </span></span>
+<span><span class="co">#&gt; [28] splines_4.3.2       cachem_1.0.8        yaml_2.3.7         </span></span>
+<span><span class="co">#&gt; [31] tools_4.3.2         parallel_4.3.2      memoise_2.0.1      </span></span>
+<span><span class="co">#&gt; [34] globals_0.16.2      vctrs_0.6.4         R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [37] lifecycle_1.0.3     stringr_1.5.0       fs_1.6.3           </span></span>
+<span><span class="co">#&gt; [40] htmlwidgets_1.6.2   ragg_1.2.6          desc_1.4.2         </span></span>
+<span><span class="co">#&gt; [43] timereg_2.0.5       pkgdown_2.0.7       bslib_0.5.1        </span></span>
+<span><span class="co">#&gt; [46] glue_1.6.2          Rcpp_1.0.11         systemfonts_1.0.5  </span></span>
+<span><span class="co">#&gt; [49] xfun_0.41           highr_0.10          knitr_1.45         </span></span>
+<span><span class="co">#&gt; [52] htmltools_0.5.7     rmarkdown_2.25      compiler_4.3.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
