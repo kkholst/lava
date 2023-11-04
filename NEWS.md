@@ -1,5 +1,5 @@
 # lava 1.7.3 
--`parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
+- `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
 - pairwise difference with `'-'.estimate` and `pairwise.diff`
 - Optional mc.cores arguments to `cv` and `bootstrap`
 - `parameter.lvm` now automatically removes previously variables in the lvm object with same name as new added parameters.
