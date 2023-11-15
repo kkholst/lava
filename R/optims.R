@@ -20,7 +20,7 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
 
 ################################################################################
 
-estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
+estimatingfunction <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
     S <- gradient(x,...)
     crossprod(S)[1]
@@ -47,7 +47,7 @@ estfun <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   return(op)
 }
 
-estfun0 <- function(...,hessian=NULL) estfun(...,hessian=hessian)
+estimatingfunction0 <- function(...,hessian=NULL) estimatingfunction(...,hessian=hessian)
 
 ################################################################################
 ## Newton-Raphson/Scoring

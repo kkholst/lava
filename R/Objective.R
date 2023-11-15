@@ -206,14 +206,14 @@ weighted_hessian.lvm <- function(...) {
 }
 
 
-weighted0_method.lvm <- "estfun"
+weighted0_method.lvm <- "estimatingfunction"
 weighted0_gradient.lvm <- function(...) {
     val <- -gaussian_score.lvm(...)
     colSums(val)
 }
 weighted0_hessian.lvm <- NULL
 
-weighted2_method.lvm <- "estfun"
+weighted2_method.lvm <- "estimatingfunction"
 weighted2_gradient.lvm <- function(x,p,data,weights,indiv=FALSE,...) {
     myvars <- index(x)$manifest
     if (NCOL(data)!=length(myvars))
