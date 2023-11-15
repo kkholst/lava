@@ -1,3 +1,6 @@
+# lava 1.7.4
+- Development version
+
 # lava 1.7.3 
 - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
 - pairwise difference with `'-'.estimate` and `pairwise.diff`
