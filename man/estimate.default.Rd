@@ -2,9 +2,6 @@
 % Please edit documentation in R/estimate.default.R
 \name{estimate.default}
 \alias{estimate.default}
-\alias{estimate}
-\alias{estimate.estimate}
-\alias{merge.estimate}
 \title{Estimation of functional of parameters}
 \usage{
 \method{estimate}{default}(
@@ -111,8 +108,9 @@ Wald tests, robust standard errors, cluster robust standard errors,
 LRT (when \code{f} is not a function)...
 }
 \details{
-influence function decomposition
-\deqn{\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)}
+influence function decomposition of estimator \eqn{\widehat{\theta}} based on
+data \eqn{Z_1,\ldots,Z_n}:
+\deqn{\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)}
 can be extracted with the \code{IC} method.
 }
 \examples{
@@ -227,5 +225,5 @@ f <- function(x) coef(lm(x~seq_along(x)))[2]
 null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
 estimate(l,f,R=1e2,null.sim=null)
 
-estimate(l,f)
+estimate(l,f)##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array
 }

@@ -7,6 +7,18 @@ estimate.list <- function(x,...) {
     lapply(x,function(x) estimate(x,...))
 }
 
+##' @export
+estimate.array <- function(x, ...) {
+  if (missing(x) || is.null(x))
+    return(estimate(NULL, ...))
+  cc <- apply(x, 2, mean)
+  if (any(c("vcov", "IC") %in% names(list(...)))) {
+    return(estimate(NULL, coef = cc, ...))
+  }
+  ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
+  estimate(NULL, coef=cc, IC=ic, ...)
+}
+
 ##' Estimation of functional of parameters
 ##'
 ##' Estimation of functional of parameters.
@@ -46,8 +58,9 @@ estimate.list <- function(x,...) {
 ##' @param null.sim Mean under the null for simulations
 ##' @details
 ##'
-##' influence function decomposition
-##' \deqn{\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)}
+##' influence function decomposition of estimator \eqn{\widehat{\theta}} based on
+##' data \eqn{Z_1,\ldots,Z_n}:
+##' \deqn{\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)}
 ##' can be extracted with the \code{IC} method.
 ##'
 ##' @export
@@ -164,8 +177,7 @@ estimate.list <- function(x,...) {
 ##' null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
-##' estimate(l,f)
-##' @aliases estimate estimate.default estimate.estimate merge.estimate
+##' estimate(l,f)##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL,f=NULL,...,data,id,
@@ -182,7 +194,6 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                       cluster,
                       R=0,
                       null.sim) {
-
     cl <- match.call(expand.dots=TRUE)
     if ("iid"%in%names(cl)) {
         stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
@@ -196,7 +207,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         cl[c("vcov","use")] <- NULL
         return(eval(cl,parent.frame()))
     }
-    expr <- suppressWarnings(inherits(try(f,silent=TRUE),"try-error"))
+    expr <- suppressWarnings(inherits(try(f, silent=TRUE),"try-error"))
     if (!missing(coef)) {
         pp <- coef
     } else {
@@ -356,7 +367,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     } else {
         if (!missing(vcov)) {
             if (length(vcov)==1 && is.na(vcov)) vcov <- matrix(NA,length(pp),length(pp))
-            V <- vcov
+            V <- cbind(vcov)
         } else {
             suppressWarnings(V <- stats::vcov(x))
         }
@@ -696,6 +707,43 @@ print.estimate.sim <- function(x,level=.95,...) {
 ##' @export
 estimate.glm <- function(x,...) {
     estimate.default(x,...)
+}
+
+##' @export
+IC.mlm <- function(x, ...) {
+  cc <- coef(x)
+  r <- residuals(x)
+  X <- model.matrix(x)
+  w <- weights(x)
+  if (!is.null(w)) {
+    r <- apply(r, 2, function(x) x * w)
+  }
+  p <- NROW(cc)
+  q <- NCOL(cc)
+  ics <- lapply(1:q, function(i) {
+      ic <- apply(X, 2, function(x) x * r[, i])
+  })
+  res <- Reduce("cbind", ics)
+  colnames(res) <- names(pars(x))
+  return(res)
+}
+
+##' @export
+pars.mlm <- function(x, ...) {
+  cc <- coef(x)
+  q <- NCOL(cc)
+  nn <- unlist(lapply(
+    1:q, function(i)
+    paste0(colnames(cc)[i], ":", rownames(cc))
+  ))
+  coefs <- unlist(lapply(1:q, function(x) cc[, x, drop=TRUE]))
+  names(coefs) <- nn
+  coefs
+}
+
+##' @export
+estimate.mlm <- function(x, ...) {
+  estimate.default(x, coef=pars(x), ...)
 }
 
 ##' @export
