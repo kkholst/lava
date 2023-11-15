@@ -1,9 +1,9 @@
 ##' @export
-`%++%.lvm` <- function(x,y) merge(x,y)
+`%++%.lvm` <- function(x, y) merge(x, y)
 
 ##' @export
-"+.lvm" <- function(x,...) {
-  merge(x,...)
+"+.lvm" <- function(x, ...) {
+  merge(x, ...)
 }
 
 ## ##' @export
@@ -12,11 +12,11 @@
 ## }
 
 ##' @export
-merge.lvm <- function(x,y,...) {
-  objects <- list(x,y,...)
+merge.lvm <- function(x, y, ...) {
+  objects <- list(x, y, ...)
   if (length(objects)<2) return(x)
   m <- objects[[1]]
-  for (i in seq(2,length(objects))) {
+  for (i in seq(2, length(objects))) {
     m2 <- objects[[i]]
     if (length(latent(m2))>0)
       latent(m) <- latent(m2)
