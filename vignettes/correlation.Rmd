@@ -10,6 +10,7 @@ vignette: >
   %\VignetteIndexEntry{Estimating partial correlations with lava}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: ref.bib
 ---
 <!-- correlation.Rmd is generated from correlation.org. Please edit that file -->
 
@@ -145,7 +146,7 @@ correlation(e)
 
 Note, that in this case the confidence intervals are constructed
 by using a variance stabilizing transformation, Fishers
-\(z\)-transform <sup id="bd9fb723a778b8030b92a040cc4acf52"><a href="#lehmann_romano_2005" title="Lehmann \&amp; Romano, Testing statistical hypotheses, Springer (2005).">lehmann_romano_2005</a></sup>,
+\(z\)-transform [@lehmann_romano_2005],
 
 \[z = \arctanh(\widehat{\rho}) =
   \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\]
@@ -260,7 +261,8 @@ quantile(tanh(b$coef[,'z']), c(.025,.975))
 ## Censored observations
 
 Letting one of the variables be right-censored (Tobit-type model) we
-can proceed in exactly the same way<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>. The
+can proceed in exactly the same way (note, this functionality is only
+available with the `mets` package installed - available from CRAN). The
 only difference is that the variables that are censored must all be
 defined as `Surv` objects (from the `survival` package which is
 automatically loaded when using the `mets` package) in the data frame.
@@ -310,13 +312,4 @@ tanh(confint(e3b, 'z', profile=TRUE))
 ```{r   }
 sessionInfo()
 ```
-
-
 # Bibliography
-<a id="lehmann_romano_2005"></a>[lehmann_romano_2005] Lehmann & Romano, Testing statistical hypotheses, Springer (2005). [↩](#bd9fb723a778b8030b92a040cc4acf52)
-
-
-# Footnotes
-
-<sup><a id="fn.1" href="#fnr.1">1</a></sup> This functionality is only
-available with the `mets` package installed (available from CRAN)
