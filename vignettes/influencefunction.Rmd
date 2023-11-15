@@ -1,0 +1,458 @@
+---
+title: Working with Influence Functions 
+author: Klaus Kähler Holst
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    toc: true
+    toc_depth: 2
+    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
+vignette: >
+  %\VignetteIndexEntry{Working with Influence Functions}
+  %\Vigne$tteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ref.bib
+---
+<!-- <script id="MathJax-script" async -->
+<!--   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"> -->
+<!-- </script> -->
+
+```{r  include=FALSE }
+library("lava")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+\newcommand{\pr}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\var}{\mathbb{V}\!\text{ar}}
+\newcommand{\cov}{\mathbb{C}\!\ov{text}}
+\newcommand{\IC}{\operatorname{IC}}
+
+# Influence functions
+
+
+Estimators that have parametric convergence rates can often be fully
+characterized by their *influence function* (IF), also referred to as an influence
+curve or canonical gradient. The IF allows for the direct estimation of properties of the estimator, including its asymptotic variance. Moreover,
+estimates of the IF enable the simple combination and transformation of
+estimators into new ones. 
+This vignette describes how to estimate and manipulate IFs using the R-package `lava`.
+
+
+Formally, let \(Z_1,\ldots,Z_n\) be iid, \(Z_i=(Y_{i},A_{i},W_{i})\sim P_0\), and \(\widehat{\theta}\) a
+consistent estimator for the parameter \(\theta\in\mathbb{R}^p\). When
+\(\widehat{\theta}\) is a *regular and asymptotic linear* (RAL) estimator, it has
+a unique iid decomposition \begin{align*} \sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \theta) + o_p(1), \end{align*} where the
+function \(\IC\) is the unique *Influence Function* s.t. \(\mathbb{E}\{\IC(Z_{i};
+\theta)\}=0\) and \(\var\{\IC(Z_{i}; \theta)^{2}\}<\infty\) [@tsiatis2006semiparametric;
+@vaart_1998_asymp]. The influence
+function thus fully characterizes the estimator, and by the central limit
+theorem it follows that the estimator converges weakly to a Gaussian distribution
+\[
+\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow
+\mathcal{N}(0, \var\{\IC(Z; \theta)\}),
+\] where the empirical variance of the plugin estimator, \(\pr_{n}\IC(Z;
+\widehat{\theta})^{\otimes 2} = \frac{1}{n}\sum_{i=1}^n \IC(Z_{i};
+\widehat{\theta})\IC(Z_{i};
+\widehat{\theta})^{\top}\) can be used to obtain a consistent estimate of the
+asymptotic variance.
+
+The IFs are easily derived for the parameters of many parametric statistical
+models as illustrated in the [next example sections](#example-generalized-linear-model). More generally, the IF can
+also be derived for a smooth target parameter \(\Psi:
+\mathcal{P}\to\mathbb{R}\) where \(\mathcal{P}\) is a family of probability
+distributions forming the statistical model, which often can be left completely
+non-parametric. 
+Formally, the parameter must be *pathwise differentiability* see [@vaart_1998_asymp]
+in the sense that there exists linear bounded function  \(\dot\Psi\colon
+L_{2}(P_{0})\to\mathbb{R}\) such that 
+\(
+[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to \dot\Psi(P_{0})(g) 
+\)
+as \(t\to 0\) for any parametric submodel \(P_t\) 
+with score model \(g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}\).  Riesz's
+representation theorem then tells us that the directional derivative has a 
+unique representer, \(\phi_{P_{0}}\) lying in the closure of the submodel score
+space (the *tangent space*), s.t.
+\begin{align*}
+    \dot\Psi(P_0)(g) = \langle\phi_{P_0}, g\rangle =
+    \int \phi_{P_0}(Z)g(X)\,dP_0
+\end{align*}
+The unique representer is exactly the IF which can be found by solving the above
+integral equation.
+For more details on how to derive influence
+functions, we refer to [@targetedlearning_2011; @hines2022].
+
+As an example we might be interested in the target parameter \(\Psi(P) =
+\E_P(Z)\) which can be shown to have the unique (and thereby efficient)
+influence function \(Z\mapsto Z-\E_P(Z)\) under the non-parametric model. 
+Another target parameter could be \(\Psi_{a}(P) = \E_{P}[\E_{P}(Y\mid A=a, W)]\) which is often
+a key interest in causal inference and which has the IF 
+\begin{align*}
+\IC(Y,A,W; P) = \frac{1(A=a)}{\pr(A=a\mid W)}(Y-\E_{P}[Y\mid A=a,W]) + \E_{P}[Y\mid
+A=a,W] - \Psi_{a}(P)
+    \end{align*}
+See section on [average treatment effects](#average-treatment-effects).
+
+
+# Examples
+    
+To illustrate the methods we consider data arising from the model \(Y_{ij} \sim
+Bernoulli\{\operatorname{expit}(X_{ij} + A_{i} + W_{i})\}, A_{i} \sim
+Bernoulli\{\operatorname{expit}(W_{i})\}\) 
+with independent covariates
+\(X_{ij}\sim\mathcal{N}(0,1), U_{i}\sim\mathcal{N}(0,1)\). 
+```{r sim_model}
+m <- lvm() |>
+    regression(y1 ~ x1 + a + w) |>
+    regression(y2 ~ x2 + a + w) |>
+  regression(y3 ~ x3 + a + w) |>
+  regression(a ~ w) |>
+  distribution(~ y1 + y2 + y3 + a, value = binomial.lvm()) |>
+  distribution(~id, value = Sequence.lvm(integer = TRUE))
+```
+
+We simulate from the model where \(Y_3\) is only observed for half of the subjects
+```{r simulate}
+n <- 5e2
+dw <- sim(m, n, seed=1) |>
+  transform(z = y3 * ifelse(id > n / 2, NA, 1))
+dl <- mets::fast.reshape(dw, varying="y")
+lava:::Print(dl)
+```
+
+## Example: population mean
+
+The main functions for working with influence functions are 
+
+- `estimate` which prepares a model object and estimates the IF and
+  corresponding robust standard errors. Can also be used to transform model
+  parameters by application of the Delta Theorem.
+- `merge` method for combining estimates via their estimated IFs
+- `IC` method to extract the estimated IF
+
+Here we first consider the problem of estimating the IF of the mean. For the
+simulated data let
+\(\widehat{p}_1\) denote the MLE of the proportion
+\(\pr(Y_{1}=1)\), it then follows that
+\[
+\sqrt{n}\{\widehat{p}_1 - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
+1(Y_{1i}=1) - \pr(Y_{1}=1)
+\] 
+and hence the IF is given by \(1(Y_{1i}=1) - \pr(Y_{1}=1)\). 
+
+To estimate this parameter and its IF we will use the `estimate` function
+
+```{r}
+inp <- as.matrix(dw[, c("y1", "y2", "y3")])
+e <- estimate(inp[, 1, drop = FALSE])
+e
+```
+The reported standard errors from the `estimate` method
+are the robust standard errors obtained from the IF.
+    The variance estimate and the parameters can be extracted with the `vcov`
+    and `coef`methods.
+The IF itself can be extracted with the `IC` method:
+```{r}
+IC(e) |> Print()
+```
+
+It's also possible to simultaneously estimate the proportions of each of the three
+binary outcomes 
+```{r}
+estimate(inp)
+```
+or alternatively the input can be a model object, here a `mlm` object:
+```{r}
+e <- lm(cbind(y1, y2, y3) ~ 1, data = dw) |>
+  estimate()
+IC(e) |> head()
+```
+
+The IF for both the empirical mean and variance can also be estimated directly with the `IC` method:
+```{r}
+with(dw, IC(y1)) |> head()
+```
+with the point estimates being stored in the attributes "mean" and "variance".
+
+## Example: generalized linear model
+
+For a \(Z\)-estimator defined by the score equation \(E[U(\theta; Z)] = 0\), the
+IF is given by \begin{align*} IC(Z; \theta) =
+\E\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(\theta; Z)
+\end{align*}
+In particular, for a MLE the score, \(U\), is given by the partial derivative of
+the log-likelihood function.
+
+As an example, we can obtain the estimates with robust standard errors for a
+logistic regression model:
+```{r glm}
+g1 <- glm(y1 ~ a + x1, data = dw, family = binomial)
+estimate(g1)
+```
+The IF can be extracted from the `estimate` object or directly from the 
+model object
+```{r}
+IC(g1) |> head()
+```
+
+
+The same estimates can be obtained with a 
+*cumulative link regression* model which also generalizes to 
+ordinal outcomes
+```{r ordreg}
+ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
+```
+
+## Example: right-censored outcomes
+
+To illustrate the methods on survival data we will use the Mayo Clinic Primary
+Biliary Cholangitis Data [@therneau00surv]
+
+```{r mets}
+library("survival")
+data(pbc, package="survival")
+```
+
+The Cox proportional hazards model can be fitted with the `mets::phreg` method
+which can estimate the IF for both the partial likelihood parameters and the
+baseline hazard. Here we fit a survival model with right-censored event times
+```{r phreg}
+fit.phreg <- mets::phreg(Surv(time, status > 0) ~ age + sex, data = pbc)
+fit.phreg
+IC(fit.phreg) |> head()
+```
+
+The IF for the baseline cumulative hazard at a specific time point can be
+estimated in similar way:
+```{r phreg-baseline}
+baseline <- function(object, time, ...) {
+  ic <- IC(object, baseline = TRUE, time = time, ...)
+  est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
+  estimate(NULL, coef = est, IC = ic, labels = paste0("chaz:", time))
+}
+tt <- 2000
+baseline(fit.phreg, tt)
+```
+
+The `estimate` and `IF` methods are also available for parametric survival
+models via `survival::survreg`, here a Weibull model:
+```{r survreg}
+survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull") |>
+  estimate()
+```
+
+<!-- glm poisson -->
+<!-- ```{r lifetable} -->
+<!-- pbc2 <- mets::lifetable(Surv(time, status > 0) ~ sex, data = pbc, breaks = seq(0, 5000, length.out = 10)) -->
+<!-- head(pbc2) -->
+<!-- glm(events ~ offset(log(atrisk)) + sex + factor(int.end), data = pbc2, family=poisson(log)) -->
+<!-- ``` -->
+
+# Combining influence functions
+
+merge, +, id, +.estimate, 
+
+# Transformations and the Delta theorem
+
+estimate(,...)
+
+# Clustered data & GEE
+
+id
+
+##' ## Clusters and subset (conditional marginal effects)
+##' d$id <- rep(seq(nrow(d)/4),each=4)
+##' estimate(g,function(p,data)
+##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+##'          subset=d$z>0, id=d$id, average=TRUE)
+##'
+##' ## More examples with clusters:
+##' m <- lvm(c(y1,y2,y3)~u+x)
+##' d <- sim(m,10)
+##' l1 <- glm(y1~x,data=d)
+##' l2 <- glm(y2~x,data=d)
+##' l3 <- glm(y3~x,data=d)
+##'
+##' ## Some random id-numbers
+##' id1 <- c(1,1,4,1,3,1,2,3,4,5)
+##' id2 <- c(1,2,3,4,5,6,7,8,1,1)
+##' id3 <- seq(10)
+##'
+##' ## Un-stacked and stacked i.i.d. decomposition
+##' IC(estimate(l1,id=id1,stack=FALSE))
+##' IC(estimate(l1,id=id1))
+##'
+##' ## Combined i.i.d. decomposition
+##' e1 <- estimate(l1,id=id1)
+##' e2 <- estimate(l2,id=id2)
+##' e3 <- estimate(l3,id=id3)
+##' (a2 <- merge(e1,e2,e3))
+##'
+##' ## If all models were estimated on the same data we could use the
+##' ## syntax:
+##' ## Reduce(merge,estimate(list(l1,l2,l3)))
+##'
+##' ## Same:
+##' IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+##'
+##' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
+##' IC(merge(l1,l2,l3,id=FALSE)) # independence
+
+# Hypothesis testing
+
+pairwise, -, estimate, compare, var_ic
+
+multiple testing
+
+pzmax,p.correct, closed testing procedure
+
+##' ## Testing contrasts
+##' estimate(g,null=0)
+##' estimate(g,rbind(c(1,1,0),c(1,0,2)))
+##' estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
+##' estimate(g,2:3) ## same as cbind(0,1,-1)
+##' estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
+##' ## Alternative syntax
+##' estimate(g,"z","z"-"x",2*"z"-3*"x")
+##' estimate(g,z,z-x,2*z-3*x)
+##' estimate(g,"?")  ## Wildcards
+##' estimate(g,"*Int*","z")
+##' estimate(g,"1","2"-"3",null=c(0,1))
+##' estimate(g,2,3)
+
+##' ## Usual (non-robust) confidence intervals
+##' estimate(g,robust=FALSE)
+##'
+##' ## Transformations
+##' estimate(g,function(p) p[1]+p[2])
+##'
+##' ## Multiple parameters
+##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
+##' e
+##' vcov(e)
+
+
+```{r}
+m <- categorical(lvm(),~x,K=5)
+regression(m,additive=TRUE) <- y~x
+d <- simulate(m,100,seed=1,'y~x'=0.1)
+l <- lm(y~-1+factor(x),data=d)
+
+f <- function(x) coef(lm(x~seq_along(x)))[2]
+null <- rep(mean(coef(l)), length(coef(l)))
+## just need to make sure we simulate under H0: slope=0
+## estimate(l,f,R=1e2,null.sim=null)
+## estimate(l,f)
+```
+
+
+
+# Averaging
+
+Let \(Z_{1},\ldots,Z_{n}\) be iid observations, \(Z_{1}\sim P\) and let  \(X_{i}\subset Z_{i}\).
+
+Assume that \(\widehat{\theta}\) is RAL estimator of \(\theta\in\Omega\subset \mathbb{R}^{p}\)
+\[\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}\phi(Z_{i}) + o_{p}(1).
+\]
+Let \(f:\mathcal{X}\times\Omega\to\mathbb{R}\) be continuous differentiable in \(\theta\)
+\[\sqrt{n}\{f(X; \widehat{\theta})-f(X; \theta)\} =
+\frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}) + o_{p}(1).
+\]
+
+
+Let \(\Psi = Pf(X;\theta)\) and \(\widehat{\Psi} = P_{n} f(X;\widehat{\theta})\). \(P\) and \(P_{n}\) are here everywhere the integrals wrt. \(X\). It is easily verified that
+\begin{align*}
+\widehat{\Psi}-\Psi &= (P_{n}-P)(f(X; \theta)-\Psi) + P[f(X;\widehat{\theta})-f(X;\theta)] \\
+&\quad + (P_{n}-P)[f(X;\widehat{\theta})-f(X;\theta)]
+\end{align*}
+
+From Lemma 19.24 [@vaart_1998_asymp] it follows that for the last term
+\begin{align*}
+\sqrt{n}(P_{n}-P)[f(X;\widehat{\theta})-f(X;\theta)] = o_{p}(1)
+\end{align*}
+when \(f\) for example is Lipschitz and more generally when \(f(X;\theta)\) forms a \(P\)-Donsker class.
+
+It therefore follows that
+\begin{align*}
+\sqrt{n}(\widehat{\Psi}-\Psi) &= \sqrt{n}P_{n}(f(X; \theta)-\Psi) +
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}) + o_{p}(1) \\
+&=
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X;\theta)-\Psi\} +
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}) + o_{p}(1)
+\end{align*}
+Hence the IF becomes
+\[
+IC(Z) = f(X;\theta)-\Psi +
+[P\nabla_{\theta}f(X;\theta)]\phi(Z).
+\]
+
+estimate(average=TRUE)
+
+##' ## Marginalize
+##' f <- function(p,data)
+##'   list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+##'        p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+##' e <- estimate(g, f, average=TRUE)
+##' e
+##' estimate(e,diff)
+##' estimate(e,cbind(1,1))
+
+
+## Average Treatment Effects
+
+```{r}
+g <- glm
+```
+
+
+targeted::cate
+targeted::riskreg
+targeted::alean
+
+# Stacking 
+stack
+
+## Measurement error
+measurement.error
+
+# Examples diagnostics and ....
+
+diagtest, assoc, riskcomp, Ratio, Diff, odds, OR,
+information_assoc, information.table, independence (not exported) information.multinomial
+gkgamma, kappa
+
+
+# estimate methods
+
+coef, vcov, summary, parameter
+
+level
+
+coef.summary.estimate
+
+estimate.list
+estimate.array
+multinomial
+
+
+
+# Enabling new models 
+
+IC method
+score method
+
+# SessionInfo
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+# Bibliography
+
