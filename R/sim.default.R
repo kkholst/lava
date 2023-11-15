@@ -217,7 +217,18 @@ Time <- function(sec,print=FALSE,...) {
     return(res)
 }
 
-Print <- function(x, n=5, digits=max(3, getOption("digits")-3), ...) {
+
+##' Generic print method
+##'
+##' Nicer print method for tabular data. Falls back to standard print method for
+##' all other data types.
+##' @export
+##' @param x object to print
+##' @param n number of rows to show from top and bottom of tabular data
+##' @param digits precision
+##' @param ... additional arguments to print method
+Print <- function(x, n=5,
+                  digits=max(3, getOption("digits")-3), ...) {
     mat <- !is.null(dim(x))
     if (!mat) {
       if (is.vector(x)) {
