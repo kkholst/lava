@@ -118,7 +118,7 @@ We simulate from the model where \(Y_3\) is only observed for half of the subjec
 ```{r simulate}
 n <- 5e2
 dw <- sim(m, n, seed=1) |>
-  transform(z = y3 * ifelse(id > n / 2, NA, 1))
+  transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
 dl <- mets::fast.reshape(dw, varying="y")
 lava:::Print(dl)
 ```
@@ -253,13 +253,58 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 
 # Combining influence functions
 
-merge, +, id, +.estimate, 
+A key benefit of working with the IFs of estimators is that this allows
+for transforming or combining different estimates while easily deriving
+the resulting IF and thereby asymptotic distribution of the new estimator. 
 
-# Transformations and the Delta theorem
+Let \(\widehat{\theta}_{1}, \ldots, \widehat{\theta}_{M}\) be \(M\)
+different statistics with decompositions
+\begin{align*}
+\sqrt{n}(\widehat{\theta}_{m}-\theta_{m}) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
+\IC_k(Z_i; P) + o_{p}(1)
+\end{align*}
+based on i.i.d. data \(Z_1,\ldots,Z_n\). It then follows immediately that the
+joint distribution of \(\widehat{\theta} - {\theta}=
+(\widehat{\theta},\ldots,\widehat{\theta})^\top-
+({\theta},\ldots,{\theta})^\top
+\) is given by
+\begin{align*}
+\sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
+(\IC_{1}(Z_i; P),\ldots,\IC_{M}(Z_i; P))^{T} + o_{p}(1) \\
+&\overset{\mathcal{D}}{\longrightarrow} \mathcal{N}(0,\Sigma)
+\end{align*}
+by CLT, and \(\frac{1}{n}\sum_{k=1}^n\epsilon_{k}^{\otimes 2} \overset{P}{\longrightarrow}\Sigma\) as \(n\to\infty\).
 
-estimate(,...)
+To illustrate this we consider two marginal logistic regression models fitted
+separately for \(Y_1\) and \(Y_2\) and combine the estimates and IFs using the
+`merge` method
+```{r glmmarg}
+g1 <- glm(y1 ~ a, family=binomial, data=dw)
+g2 <- glm(y2 ~ a, family=binomial, data=dw)
+e <- merge(g1, g2)
+e
+vcov(e)
+```
+As we have access to the joint asymptotic distribution we can for example test
+for whether the odds-ratio is the same for the two responses: 
 
-# Clustered data & GEE
+```{r hypo1}
+estimate(e, f=cbind(0,1,0,-1), null=0)
+```
+
+## Inbalanced data
+
+```{r glmmargmis}
+dd <- dw; rownames(dd) <- NULL
+g3 <- glm(y3 ~ a, family=binomial, data=dw)
+g3 <- glm(y3 ~ a, family=binomial, data=dw)
+e2 <- estimate(g2, id = dw$id, keep = "a")
+e3 <- estimate(g3, id = with(dw, id[!is.na(y3)]), keep="a")
+e <- merge(e1, e3)
+```
+(or the overloaded `+` operator)
+
+## Clustered data (non-iid)
 
 id
 
@@ -300,6 +345,12 @@ id
 ##'
 ##' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 ##' IC(merge(l1,l2,l3,id=FALSE)) # independence
+
+
+
+# Transformations and the Delta theorem
+
+estimate(,...)
 
 # Hypothesis testing
 
@@ -423,6 +474,59 @@ measurement.error
 diagtest, assoc, riskcomp, Ratio, Diff, odds, OR,
 information_assoc, information.table, independence (not exported) information.multinomial
 gkgamma, kappa
+
+
+Example (McKenzie et al. 1996, Clarke et al. 1993)
+
+50 patients from Monash Medical Centre, Melbourne
+- *Diagnosis of depression* (DSM-III-R MDD, Dysthymia, Adjustment
+  Disorder with Depressed Mood, Depression NOS)
+- *Beck Depression Inventory (BDI)* (Beck et al., 1961)
+- *General Health Questionnaire (GHQ)* (Goldberg & Williams, 1988)
+ (classificaiton, see McKenzie, 1992).
+
+| Diagnosis | BDI | GHQ |  n |
+|-----------+-----+-----+----|
+| \(+\)     |   1 |   1 |  7 |
+| \(-\)     |   1 |   1 |  1 |
+| \(-\)     |   1 |   0 |  1 |
+| \(+\)     |   0 |   1 |  4 |
+| \(-\)     |   0 |   1 |  2 |
+| \(+\)     |   0 |   0 |  2 |
+| \(-\)     |   0 |   0 | 33 |
+
+Agreement between a diagnosis of depression,
+and caseness according to the screening test?
+
+Let \(X\in\{0,1,...,k-1\}\) and  \(Y\in\{0,1,...,l-1\}\) 
+be categorical s.v. with the joint probabilities \(\bm{\pi}\) and data \(\bm{n}\)
+
+\begin{align*}
+\pi_{ij} = \pr(X=i,Y=j), \qquad
+\bm{n}= 
+\begin{pmatrix}
+n_{11} & n_{12} & \cdots & n_{1l} \\
+n_{21} & n_{22} & \cdots & n_{2l} \\
+\vdots & \vdots & \ddots & \vdots \\
+n_{k1} & n_{k2} & \cdots & n_{kl}
+\end{pmatrix}
+\end{align*}
+\vspace*{-.5em}
+and association measure 
+# (twice continuous differentiable)
+\begin{align*}
+\alpha = \alpha(\bm{\pi}).
+\end{align*}
+
+We will assume that we have an asymptotically linear estimator of
+\(\bm{\pi} = \bm{\pi}(\theta)\) ,
+e.g., under multinomial distribution with likelihood
+\begin{align*}
+L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{ij}\pi_{ij}=1
+\end{align*}
+\begin{align*}
+\widehat{\pi}_{ij} = \frac{n_{ij}}{\sum_{i,j}n_{ij}}, \quad \widehat{\alpha} = \alpha(\widehat{\bm{\pi}})
+\end{align*}
 
 
 # estimate methods
