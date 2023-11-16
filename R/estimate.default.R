@@ -177,7 +177,8 @@ estimate.array <- function(x, ...) {
 ##' null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
-##' estimate(l,f)##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array
+##' estimate(l,f)
+##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array estimate.mlm
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL,f=NULL,...,data,id,

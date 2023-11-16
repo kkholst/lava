@@ -10,13 +10,10 @@ output:
     mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
 vignette: >
   %\VignetteIndexEntry{Working with Influence Functions}
-  %\Vigne$tteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ref.bib
 ---
-<!-- <script id="MathJax-script" async -->
-<!--   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"> -->
-<!-- </script> -->
 
 ```{r  include=FALSE }
 library("lava")
@@ -25,7 +22,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
 
 \newcommand{\pr}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}

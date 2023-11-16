@@ -2,6 +2,11 @@
 % Please edit documentation in R/estimate.default.R
 \name{estimate.default}
 \alias{estimate.default}
+\alias{estimate}
+\alias{estimate.estimate}
+\alias{merge.estimate}
+\alias{estimate.array}
+\alias{estimate.mlm}
 \title{Estimation of functional of parameters}
 \usage{
 \method{estimate}{default}(
@@ -225,5 +230,5 @@ f <- function(x) coef(lm(x~seq_along(x)))[2]
 null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
 estimate(l,f,R=1e2,null.sim=null)
 
-estimate(l,f)##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array
+estimate(l,f)
 }
