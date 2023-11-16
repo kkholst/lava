@@ -84,7 +84,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
   if (x$nc!=x$n) {
     cat(" (",x$nc," complete cases, ", x$ngroup, " groups)",sep="")
   }; cat("\n")
-  printline()
+  print(cli::rule())
   print(x$coefmat,quote=FALSE,right=TRUE)
 ##  if (varmat) {
 ##    cat("\nResidual covariance matrix:\n")
@@ -94,9 +94,9 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
     cat("\nNon-linear constraints:\n")
     printCoefmat(x$nlincon,signif.stars=FALSE)
   }
-  printline()
+  print(cli::rule())
   cat("Estimator:",x$estimator,"\n")
-  printline()
+  print(cli::rule())
   if (!is.null(x$gof)) {
     if (class(x$gof)[1]=="list") {
       for (i in x$gof) {
@@ -105,7 +105,7 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
     } else {
       print(x$gof,optim=FALSE)
     }
-    printline()
+    print(cli::rule())
   }
   if (!is.null(x$rsq)) {
       if (!is.list(x$rsq)) {
@@ -153,17 +153,17 @@ print.summary.multigroupfit <- function(x,...) {
   cat("Latent variables:", x$latent, "\n")
   print(x$object,...)
   ##print(x$coefmat,quote=FALSE,right=TRUE)
-  printline()
+  print(cli::rule())
   if (!is.null(attributes(x$coefmat)$nlincon)) {
     cat("Non-linear constraints:\n")
     print(attributes(x$coefmat)$nlincon)
-    printline()
+    print(cli::rule())
   }
   cat("Estimator:",x$estimator,"\n")
-  printline()
+  print(cli::rule())
   if (!is.null(x$gof)) {
     print(x$gof)
-    printline()
+    print(cli::rule())
   }
   invisible(x)
 }
@@ -175,7 +175,7 @@ print.summary.multigroupfit <- function(x,...) {
 ##' @export
 summary.multigroup <- function(object,...) {
   for (m in object$lvm)
-    print(m,...)
+    print(m, ...)
   print(object)
   invisible(object)
 }

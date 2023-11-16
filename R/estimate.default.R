@@ -750,8 +750,8 @@ estimate.mlm <- function(x, ...) {
 ##' @export
 print.estimate <- function(x, type=0L, digits=4L, width=25L,
                     std.error=TRUE, p.value=TRUE,
-                    sep="_______",sep.which, sep.labels=NULL,indent=" ",
-                    unique.names=TRUE,
+                    sep=cli::symbol[["line"]], sep.which, sep.labels=NULL,
+                    indent=" ", unique.names=TRUE,
                     na.print="", ...) {
 
     if (!is.null(x$print)) {
@@ -760,7 +760,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
     }
     if (type>0 && !is.null(x$call)) {
         cat("Call: "); print(x$call)
-        printline(50)
+        print(cli::rule())
     }
     if (type>0) {
         if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
@@ -813,7 +813,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
         rownames(cc)[sep.pos] <- sep.labels
         rownames(cc)[-sep.pos] <- paste0(indent, rownames(cc)[-sep.pos])
     } else {
-        if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep("_",max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
+        if (length(sep.pos)>0) rownames(cc)[sep.pos] <- rep(paste0(rep(sep,max(nchar(rownames(cc)))),collapse=""),length(sep.pos))
     }
     print(cc,digits=digits,na.print=na.print,...)
 

@@ -27,6 +27,7 @@ LazyLoad: yes
 Depends:
 	R (>= 3.0)
 Imports:
+    cli,
     future.apply,
     graphics,
     grDevices,
@@ -46,7 +47,6 @@ Suggests:
     geepack,
     graph,
     knitr,
-    bookdown,
     rmarkdown,
     igraph (>= 0.6),
     lavaSearch2,
@@ -57,7 +57,6 @@ Suggests:
     polycor,
     quantreg,
     rgl,
-    R.rsp (>= 0.40),
     targeted (>= 0.2),
     testthat (>= 0.11),
     visNetwork,

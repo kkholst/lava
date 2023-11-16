@@ -294,10 +294,10 @@ twostage.estimate <- twostage.lvmfit
 
 ##' @export
 print.twostage.lvm <- function(x,...) {
-    printline()
+    print(cli::rule())
     cat("Model 1:\n")
     print(Model(x$call$object))
-    printline()
+    print(cli::rule())
     cat("Model 2:\n")
     print(Model(x$call$model2))
 }
@@ -519,12 +519,12 @@ twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=li
 
 ##' @export
 print.twostageCV <- function(x,...) {
-    printline(70)
+    print(cli::rule())
     i1 <- which.min(x$AIC1)
     nmix <- rownames(x$AIC1)[i1]
     cat("Selected mixture model: ",nmix," component", ifelse(i1>1, "s",""),"\n", sep="")
     print(x$AIC1)
-    printline(70)
+    print(cli::rule())
     i2 <- which.min(x$cv)
     splinedf <- unlist(lapply(x$knots,function(x) if (any(is.na(x))) return(1) else length(x)-1))
     cat("Selected spline model degrees of freedom: ", splinedf[i2] ,"\n", sep="")
@@ -535,7 +535,7 @@ print.twostageCV <- function(x,...) {
     rownames(rmse) <- paste0("df:",splinedf)
     colnames(rmse) <- paste0("RMSE(nfolds=",x$nfolds,", rep=",x$rep,")")
     print(rmse)
-    printline(70)
+    print(cli::rule())
     cat("\n")
     if (!inherits(x$model2, "lvmfit")) {
         print(x$model2$coefmat, quote=FALSE)

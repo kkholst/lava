@@ -86,7 +86,7 @@ print.gkgamma <- function(x,call=TRUE,...) {
     if (call) {
         cat("Call: ")
         print(attr(x,"cl"))
-        printline(50)
+        print(cli::rule())
     }
     n <- x$n
 
@@ -101,7 +101,7 @@ print.gkgamma <- function(x,call=TRUE,...) {
             print.estimate(e,type=0)
             cat("\n")
         }
-        printline(50)
+        print(cli::rule())
         cat("\n")
         n <- sum(unlist(lapply(attr(x,"strata"),"[[","n")))
     }
@@ -121,7 +121,7 @@ print.gkgamma <- function(x,call=TRUE,...) {
     class(x) <- "estimate"
     print(x)
     ## if (!is.null(attr(x,"homtest"))) {
-    ##     printline(50)
+    ##     print(cli::rule())
     ##     cat("Homogeneity test:\n\n")
     ##     with(attr(x,"homtest")$compare,
     ##          cat("\u03c7\u00b2 = ",statistic,

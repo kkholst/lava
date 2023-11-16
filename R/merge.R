@@ -58,8 +58,8 @@ merge.lvm <- function(x, y, ...) {
 
 
 ##' @export
-"+.estimate" <- function(x,...) {
-  merge(x, ..., paired=TRUE)
+"+.estimate" <- function(x, ...) {
+  merge(x, ...)
 }
 
 ##' @export
@@ -148,8 +148,16 @@ merge.estimate <- function(x,y,...,id,paired=FALSE,labels=NULL,keep=NULL,subset=
     for (i in seq(length(objects))) {
         relpos <- seq_along(coef(objects[[i]]))        
         if (!missing(subset)) relpos <- seq_along(subset)
-        ic0[match(ids[[i]],id),relpos+colpos] <- ic_all[[i]]
-        model.index <- c(model.index,list(relpos+colpos))
+        ic0[match(ids[[i]], id), relpos + colpos] <- ic_all[[i]]
+        midx <- objects[[i]]$model.index
+        if (!is.null(midx)) {
+          midx <- lapply(midx, function(x) {
+            intersect(x, relpos) + colpos
+          })
+        } else {
+          midx <- list(relpos + colpos)
+        }
+        model.index <- c(model.index, midx)
         colpos <- colpos+tail(relpos,1)
     }
     rownames(ic0) <- id
