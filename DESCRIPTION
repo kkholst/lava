@@ -51,7 +51,7 @@ Suggests:
 	rmarkdown,
 	igraph (>= 0.6),
 	lavaSearch2,
-	lme4,
+	lme4 (>=1.1-35.1),
 	mets (>= 1.1),
 	nlme,
 	optimx,
