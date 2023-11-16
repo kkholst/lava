@@ -28,8 +28,8 @@ Depends:
 	R (>= 3.0)
 Imports:
     future.apply,
-    grDevices,
     graphics,
+    grDevices,
     methods,
     numDeriv,
     progressr,
@@ -51,7 +51,7 @@ Suggests:
     igraph (>= 0.6),
     lavaSearch2,
     lme4 (>= 1.1.35.1),
-    Matrix (>= 1.6.3)
+    Matrix (>= 1.6.3),
     mets (>= 1.1),
     optimx,
     polycor,
