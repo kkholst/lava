@@ -39,7 +39,6 @@ Imports:
     utils
 Suggests:
     KernSmooth,
-    Matrix,
     Rgraphviz,
     data.table,
     ellipse,
@@ -52,6 +51,7 @@ Suggests:
     igraph (>= 0.6),
     lavaSearch2,
     lme4 (>= 1.1.35.1),
+    Matrix (>= 1.6.3)
     mets (>= 1.1),
     optimx,
     polycor,
