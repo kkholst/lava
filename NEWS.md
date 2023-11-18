@@ -1,10 +1,16 @@
 # lava 1.7.4
-- Development version
-- TODO: 
-  - Rewrite DESCRIPTION/lava-package.Rd
-  - IF vignette
- - estimate.mlm, IC.mlm, pars.mlm, estimate.array
+ 
+ Development version
+ 
+ - estimate.mlm, IC.mlm, pars.mlm, estimate.array, estimate.data.frame
  - Print method
+ - merge regex 
+ - IC should generally return row-names (default id) as obtained from
+   model.matrix or similar
+ - TODO: 
+   + Rewrite DESCRIPTION/lava-package.Rd
+   + IF vignette
+
 
 # lava 1.7.3 
 - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)

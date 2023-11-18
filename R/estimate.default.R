@@ -8,6 +8,11 @@ estimate.list <- function(x,...) {
 }
 
 ##' @export
+estimate.data.frame <- function(x, ...) {
+  estimate(as.matrix(x), ...)
+}
+
+##' @export
 estimate.array <- function(x, ...) {
   if (missing(x) || is.null(x))
     return(estimate(NULL, ...))
@@ -40,6 +45,7 @@ estimate.array <- function(x, ...) {
 ##' @param keep (optional) index of parameters to keep from final result
 ##' @param use (optional) index of parameters to use in calculations
 ##' @param regex If TRUE use regular expression (perl compatible) for keep,use arguments
+##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
 ##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
@@ -185,8 +191,8 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                       iddata,stack=TRUE,average=FALSE,subset,
                       score.deriv,level=0.95,IC=robust,
                       type=c("robust","df","mbn"),
-                      keep,use,
-                      regex=FALSE,
+                      keep, use,
+                      regex=FALSE, ignore.case=FALSE,
                       contrast,null,vcov, coef,
                       robust=TRUE,df=NULL,
                       print=NULL,labels,label.width,
@@ -220,8 +226,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
     if (!missing(cluster)) id <- cluster
     if (expr || is.character(f) || (is.numeric(f) && !is.matrix(f))) { ## || is.call(f)) {
         dots <- lapply(substitute(placeholder(...))[-1],function(x) x)
-        args <- c(list(coef=names(pp),x=substitute(f),regex=regex),dots)
-        f <- do.call(parsedesign,args)
+        args <- c(list(
+          coef = names(pp),
+          x = substitute(f),
+          regex = regex
+        ), dots)
+        f <- do.call(parsedesign, args)
     }
     if (!is.null(f) && !is.function(f)) {
         if (!(is.matrix(f) | is.vector(f))) return(compare(x,f,...))
@@ -588,7 +598,12 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
         if (is.character(keep)) {
             if (regex) {
                 nn <- rownames(res$coefmat)
-                keep <- unlist(lapply(keep, function(x) grep(x,nn, perl=TRUE)))
+                keep <- unlist(lapply(keep, function(x) {
+                    grep(x, nn,
+                         perl = TRUE,
+                         ignore.case = ignore.case
+                    )
+                }))
             } else {
                 keep <- match(keep,rownames(res$coefmat))
             }

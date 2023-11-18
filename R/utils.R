@@ -419,6 +419,6 @@ Decomp.specials <- function(x,pattern="[()]") {
 
 }
 
-printline <- function(n=getOption("width"), sep="─") {
+printline <- function(n=getOption("width"), sep="\u2500") {
     cat(rep(sep, n), "\n", sep="")
 }

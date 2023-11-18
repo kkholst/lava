@@ -119,8 +119,10 @@ IC.matrix <- function(x,...) {
             nn <- c(nn,paste(colnames(x)[c(i,j)],collapse=lava.options()$symbols[2]))
         }
     colnames(ic1) <- colnames(x); colnames(ic2) <- nn
-    names(cc) <- c(colnames(ic1),colnames(ic2))
-    structure(cbind(ic1,ic2),
+    names(cc) <- c(colnames(ic1), colnames(ic2))
+    res <- cbind(ic1, ic2)
+    rownames(res) <- rownames(x)
+    structure(res,
               coef=cc,
               mean=mu, var=S)
 }

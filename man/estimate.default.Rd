@@ -26,6 +26,7 @@
   keep,
   use,
   regex = FALSE,
+  ignore.case = FALSE,
   contrast,
   null,
   vcov,
@@ -75,6 +76,8 @@
 \item{use}{(optional) index of parameters to use in calculations}
 
 \item{regex}{If TRUE use regular expression (perl compatible) for keep,use arguments}
+
+\item{ignore.case}{Ignore case-sensitiveness in regular expression}
 
 \item{contrast}{(optional) Contrast matrix for final Wald test}
 

@@ -83,7 +83,11 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
                 Bidx <- which(B[i,]!=0)
                 Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
                 sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - ";
-                if (sgn[1]==" + ") sgn[1] <- "" else sgn[1] <- "-"
+                if (sgn[1] == " + ") {
+                  sgn[1] <- ""
+                } else {
+                    sgn[1] <- "-"
+                }
                 cnames <- c(cnames,paste0(sgn,Bval,paste0("[",pname[Bidx],"]"),collapse=""))
                 msg <- c(msg,paste0(cnames[i]," = ",null[i]))
             }
