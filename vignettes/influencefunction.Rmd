@@ -23,11 +23,16 @@ knitr::opts_chunk$set(
 )
 ```
 
+\newcommand{\indep}{\!\perp\!\!\!\!\perp\!} 
 \newcommand{\pr}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\var}{\mathbb{V}\!\text{ar}}
 \newcommand{\cov}{\mathbb{C}\!\ov{text}}
 \newcommand{\IC}{\operatorname{IC}}
+\newcommand{\one}{\mathbb{1}}
+<!-- \newcommand{\Dto}{\rightsquigarrow} -->
+\newcommand{\Dto}{\overset{\mathcal{D}}{\longrightarrow}}
+\newcommand{\bm}[1]{\mathbf{#1}}
 
 # Influence functions
 
@@ -51,7 +56,7 @@ function \(\IC\) is the unique *Influence Function* s.t. \(\mathbb{E}\{\IC(Z_{i}
 function thus fully characterizes the estimator, and by the central limit
 theorem it follows that the estimator converges weakly to a Gaussian distribution
 \[
-\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow
+\sqrt{n}(\widehat{\theta}-\theta) \Dto
 \mathcal{N}(0, \var\{\IC(Z; \theta)\}),
 \] where the empirical variance of the plugin estimator, \(\pr_{n}\IC(Z;
 \widehat{\theta})^{\otimes 2} = \frac{1}{n}\sum_{i=1}^n \IC(Z_{i};
@@ -91,7 +96,7 @@ influence function \(Z\mapsto Z-\E_P(Z)\) under the non-parametric model.
 Another target parameter could be \(\Psi_{a}(P) = \E_{P}[\E_{P}(Y\mid A=a, W)]\) which is often
 a key interest in causal inference and which has the IF 
 \begin{align*}
-\IC(Y,A,W; P) = \frac{1(A=a)}{\pr(A=a\mid W)}(Y-\E_{P}[Y\mid A=a,W]) + \E_{P}[Y\mid
+\IC(Y,A,W; P) = \frac{\one(A=a)}{\pr(A=a\mid W)}(Y-\E_{P}[Y\mid A=a,W]) + \E_{P}[Y\mid
 A=a,W] - \Psi_{a}(P)
     \end{align*}
 See section on [average treatment effects](#average-treatment-effects).
@@ -139,9 +144,9 @@ simulated data let
 \(\pr(Y_{1}=1)\), it then follows that
 \[
 \sqrt{n}\{\widehat{p}_1 - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-1(Y_{1i}=1) - \pr(Y_{1}=1)
+\one(Y_{1i}=1) - \pr(Y_{1}=1)
 \] 
-and hence the IF is given by \(1(Y_{1i}=1) - \pr(Y_{1}=1)\). 
+and hence the IF is given by \(\one(Y_{1i}=1) - \pr(Y_{1}=1)\). 
 
 To estimate this parameter and its IF we will use the `estimate` function
 
@@ -225,8 +230,7 @@ fit.phreg
 IC(fit.phreg) |> head()
 ```
 
-The IF for the baseline cumulative hazard at a specific time point can be
-estimated in similar way:
+The IF for the baseline cumulative hazard at a specific time point can be estimated in similar way:
 ```{r phreg-baseline}
 baseline <- function(object, time, ...) {
   ic <- IC(object, baseline = TRUE, time = time, ...)
@@ -271,7 +275,7 @@ joint distribution of \(\widehat{\theta} - {\theta}=
 \begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 (\IC_{1}(Z_i; P),\ldots,\IC_{M}(Z_i; P))^{T} + o_{p}(1) \\
-&\overset{\mathcal{D}}{\longrightarrow} \mathcal{N}(0,\Sigma)
+&\Dto \mathcal{N}(0,\Sigma)
 \end{align*}
 by CLT, and \(\frac{1}{n}\sum_{k=1}^n\epsilon_{k}^{\otimes 2} \overset{P}{\longrightarrow}\Sigma\) as \(n\to\infty\).
 
@@ -292,21 +296,147 @@ for whether the odds-ratio is the same for the two responses:
 estimate(e, f=cbind(0,1,0,-1), null=0)
 ```
 
+
+
+
 ## Inbalanced data
 
+Let \(O_{1} = (Z_{1}R_{1}, R_{1}), \ldots, O_{N}=(Z_{N}R_{N}, R_{N})\) be iid with
+\(R_{i}\indep Z_i\) and let the full-data IF for some estimator of a parameter
+\(\theta\in\mathbb{R}^p\) be \(IC(\cdot; P)\). For convenience let
+\(R_{i}=\one(i\leq n)\) then the complete-case estimator is consistent and based
+on same if
+\begin{align*}
+\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1).
+\end{align*}
+This estimator can also be decomposed in terms the observed data
+\(O_1,\ldots,O_n\) noting that
+\begin{align*}
+\sqrt{N}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}\sum_{i=1}^N IC(Z_i;
+P)\frac{R_i N}{n} + o_p(1).
+\end{align*}
+where the term \(\frac{R_i N}{n}\) corresponds to an inverse probability
+weighting with the empirical plugin estimate of the proportion of observed data \(R=1\).
+Under a missing completely at random assumption we can therefore combine estimators that are estimated
+on different datasets. Let the observed data be
+\((Z_{11}R_{11}, R_{11}, Z_{21}R_{21}, R_{21}), \ldots, (Z_{1N}R_{1N}, R_{1N},
+Z_{2N}R_{2N}, R_{2N}))\) with complete-case estimators \(\widehat{\theta}_1\) and
+\(\widehat{\theta}_2\) for parameters \(\theta_1\) and
+\(\theta_2\) based on \((Z_{11}R_{11}, \ldots, Z_{1N}R_{1N})\) and
+\((Z_{21}R_{21}, \ldots, Z_{2N}R_{2N})\), respectively, and let the
+corresponding IFs be
+\(IC_{1}(\cdot; P)\) and \(IC_{2}(\cdot; P)\). It then follows that
+\begin{align*}
+\sqrt{N}\left\{
+\begin{pmatrix}{}
+\widehat{\theta}_1 \\
+\widehat{\theta}_2 
+\end{pmatrix}
+- 
+\begin{pmatrix}
+\vphantom{\widehat{\theta}_1}\theta_1 \\
+\vphantom{\widehat{\theta}_1}\theta_2 
+\end{pmatrix}
+\right\}
+= 
+\frac{1}{\sqrt{N}}\sum_{i=1}^N 
+\begin{pmatrix}
+IC_1(Z_{1i}; P)\frac{R_{1i}N}{R_{1\bullet}} \\
+IC_2(Z_{2i}; P)\frac{R_{2i}N}{R_{2\bullet}}
+\end{pmatrix} 
++ o_p(1)
+\end{align*}
+with \(R_{k\bullet} = \sum_{i=1}^{N}R_{ki}.\) Returning to the example, we can
+combine the marginal estimates of two model objects that have been estimated
+from different datasets (as the outcome \(Y_3\) is only available in half of the
+data). Here we will use the overloaded `+` operator 
+
 ```{r glmmargmis}
-dd <- dw; rownames(dd) <- NULL
-g3 <- glm(y3 ~ a, family=binomial, data=dw)
-g3 <- glm(y3 ~ a, family=binomial, data=dw)
-e2 <- estimate(g2, id = dw$id, keep = "a")
-e3 <- estimate(g3, id = with(dw, id[!is.na(y3)]), keep="a")
-e <- merge(e1, e3)
+g2 <- glm(y2 ~ 1, family = binomial, data = dw)
+summary(g2)
+dwc <- na.omit(dw) 
+g3 <- glm(y3 ~ 1, family = binomial, data = dwc)
+summary(g3)
+
+e2 <- estimate(g2, id = dw$id)
+e3 <- estimate(g3, id = "id", data=dwc)
+
+merge(e2,e3) |> IC() |> Print()
+vcov(e2 + e3)
+## Same marginals as
+list(vcov(e2), vcov(e3))
 ```
-(or the overloaded `+` operator)
 
-## Clustered data (non-iid)
+In the above example the `id` argument defines the identifier that makes it
+possible to link the rows in the different IFs that should be glued together. 
+If omitted then the `id` will automatically be extracted from the model-specific
+`IC` method (deriving it from the original data.frame used for estimating the
+model). This automatically works with all models and `IC` methods described in this document.
+```{r estimatenoid}
+estimate(g2) |>
+  IC() |> head()
+vcov(estimate(g2) + estimate(g3))
+```
 
-id
+To force that the id variables are not overlapping between the merged model
+objects, i.e., assuming that there is complete independence between the
+estimates, the argument `id=NULL` can be used
+```{r merge_idnull}
+merge(g1, g2, id = NULL) |> (Print %++% IC)()
+merge(g1, g2, id = NULL) |> vcov()
+```
+
+
+## Renaming and subsetting parameters
+
+To only keep a subset of the parameters the `keep` argument can be used.  
+```{r mergekeep}
+merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
+```
+The argument can be given either as character vector or a vector of indices:
+```{r}
+merge(g1,g2, keep=c(1, 3))
+```
+or as a vector of regular expressions
+```{r}
+merge(g1, g2, keep = "cept", regex = TRUE)
+merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
+```
+
+When merging estimates unique parameter names are created. It is also possible
+to rename the parameters with the `labels` argument 
+```{r}
+merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
+merge(g1, g2,
+      labels = c("a", "b", "c"),
+      keep = c("a", "c")
+)
+estimate(g1, labels=c("a", "b"))
+```
+
+Finally, the `subset` argument can be used to subset the parameters and IFs
+before the actual merging is being done 
+```{r}
+merge(g1, g2, subset="(Intercept)")
+```
+
+## TODO: Clustered data (non-iid case)
+
+```{r}
+dd <- lapply(1:4, function(x) data.frame(y = runif(2), id = 1:2))
+d0 <- Reduce(rbind, dd)
+e0 <- estimate(lm(y ~ 1, data = d0), id = d0[, "id"])
+ee <- lapply(dd, function(x) estimate(lm(y ~ 1, data = x), id = x[, "id"]))
+e <- do.call(merge, ee)
+
+d <- data.frame(x=1:4, id=c(1,1,1,1))
+
+e |> (rownames %++% IC) ()
+
+IC(do.call(merge, ee))
+```
+
+```{r}
 
 ##' ## Clusters and subset (conditional marginal effects)
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
@@ -345,14 +475,14 @@ id
 ##'
 ##' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 ##' IC(merge(l1,l2,l3,id=FALSE)) # independence
+```
 
 
-
-# Transformations and the Delta theorem
+# TODO: IF building blocks: transformations and the Delta theorem
 
 estimate(,...)
 
-# Hypothesis testing
+# TODO: Hypothesis testing
 
 pairwise, -, estimate, compare, var_ic
 
@@ -385,23 +515,33 @@ pzmax,p.correct, closed testing procedure
 ##' e
 ##' vcov(e)
 
+##' contr(2,n=5)
+##' contr(as.list(2:4),n=5)
+##' contr(list(1,2,4),n=5)
+##' contr(c(2,3,4),n=5)
+##' contr(list(c(1,3),c(2,4)),n=5)
+##' contr(list(c(1,3),c(2,4),5))
+##'
+##' parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
+##'
+##' ## All pairs comparisons:
+##' pdiff <- function(n) lava::contr(lapply(seq(n-1), \(x) seq(x, n)))
+##' pdiff(4)
+
 
 ```{r}
-m <- categorical(lvm(),~x,K=5)
-regression(m,additive=TRUE) <- y~x
-d <- simulate(m,100,seed=1,'y~x'=0.1)
-l <- lm(y~-1+factor(x),data=d)
-
-f <- function(x) coef(lm(x~seq_along(x)))[2]
-null <- rep(mean(coef(l)), length(coef(l)))
+## m <- categorical(lvm(),~x,K=5)
+## regression(m,additive=TRUE) <- y~x
+## d <- simulate(m,100,seed=1,'y~x'=0.1)
+## l <- lm(y~-1+factor(x),data=d)
+## f <- function(x) coef(lm(x~seq_along(x)))[2]
+## null <- rep(mean(coef(l)), length(coef(l)))
 ## just need to make sure we simulate under H0: slope=0
 ## estimate(l,f,R=1e2,null.sim=null)
 ## estimate(l,f)
 ```
 
-
-
-# Averaging
+# TODO: Averaging
 
 Let \(Z_{1},\ldots,Z_{n}\) be iid observations, \(Z_{1}\sim P\) and let  \(X_{i}\subset Z_{i}\).
 
@@ -452,7 +592,7 @@ estimate(average=TRUE)
 ##' estimate(e,cbind(1,1))
 
 
-## Average Treatment Effects
+## TODO: Average Treatment Effects
 
 ```{r}
 g <- glm
@@ -463,13 +603,13 @@ targeted::cate
 targeted::riskreg
 targeted::alean
 
-# Stacking 
+# TODO: Two-stage estimation
 stack
 
-## Measurement error
+## TODO: Measurement error
 measurement.error
 
-# Examples diagnostics and ....
+# TODO: Examples diagnostics and ....
 
 diagtest, assoc, riskcomp, Ratio, Diff, odds, OR,
 information_assoc, information.table, independence (not exported) information.multinomial
@@ -529,7 +669,7 @@ L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{
 \end{align*}
 
 
-# estimate methods
+# TODO: estimate methods
 
 coef, vcov, summary, parameter
 
@@ -543,7 +683,7 @@ multinomial
 
 
 
-# Enabling new models 
+# TODO: Enabling new models 
 
 IC method
 score method
