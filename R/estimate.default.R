@@ -16,7 +16,7 @@ estimate.data.frame <- function(x, ...) {
 estimate.array <- function(x, ...) {
   if (missing(x) || is.null(x))
     return(estimate(NULL, ...))
-  cc <- apply(x, 2, mean)
+  cc <- apply(x, 2, function(y) function(y, na.rm = TRUE))
   if (any(c("vcov", "IC") %in% names(list(...)))) {
     return(estimate(NULL, coef = cc, ...))
   }

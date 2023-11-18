@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 \newcommand{\var}{\mathbb{V}\!\text{ar}}
 \newcommand{\cov}{\mathbb{C}\!\ov{text}}
 \newcommand{\IC}{\operatorname{IC}}
-\newcommand{\one}{\mathbb{1}}
+\newcommand{\one}{\mathbf{1}}
 <!-- \newcommand{\Dto}{\rightsquigarrow} -->
 \newcommand{\Dto}{\overset{\mathcal{D}}{\longrightarrow}}
 \newcommand{\bm}[1]{\mathbf{#1}}
@@ -122,8 +122,9 @@ m <- lvm() |>
 We simulate from the model where \(Y_3\) is only observed for half of the subjects
 ```{r simulate}
 n <- 5e2
-dw <- sim(m, n, seed=1) |>
+dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
+lava:::Print(dw)
 dl <- mets::fast.reshape(dw, varying="y")
 lava:::Print(dl)
 ```
@@ -197,6 +198,11 @@ logistic regression model:
 g1 <- glm(y1 ~ a + x1, data = dw, family = binomial)
 estimate(g1)
 ```
+We can compare that to the usual (non-robust) standard errors:
+```{r glm.std}
+estimate(g1, robust = FALSE)
+```
+
 The IF can be extracted from the `estimate` object or directly from the 
 model object
 ```{r}
@@ -295,9 +301,6 @@ for whether the odds-ratio is the same for the two responses:
 ```{r hypo1}
 estimate(e, f=cbind(0,1,0,-1), null=0)
 ```
-
-
-
 
 ## Inbalanced data
 
@@ -480,9 +483,26 @@ IC(do.call(merge, ee))
 
 # TODO: IF building blocks: transformations and the Delta theorem
 
-estimate(,...)
+```{r}
+##' ## Transformations
+##' estimate(g,function(p) p[1]+p[2])
+##'
+##' ## Multiple parameters
+##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
+##' e
+##' vcov(e)
+##'
+##' ## Label new parameters
+##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
+```
 
-# TODO: Hypothesis testing
+Correlation
+
+method argument to estimate (Richardson vs complex)
+
+Refer examples (categorical data for example)
+
+## Linear contrasts and hypothesis testing
 
 pairwise, -, estimate, compare, var_ic
 
@@ -503,17 +523,6 @@ pzmax,p.correct, closed testing procedure
 ##' estimate(g,"*Int*","z")
 ##' estimate(g,"1","2"-"3",null=c(0,1))
 ##' estimate(g,2,3)
-
-##' ## Usual (non-robust) confidence intervals
-##' estimate(g,robust=FALSE)
-##'
-##' ## Transformations
-##' estimate(g,function(p) p[1]+p[2])
-##'
-##' ## Multiple parameters
-##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
-##' e
-##' vcov(e)
 
 ##' contr(2,n=5)
 ##' contr(as.list(2:4),n=5)
@@ -672,6 +681,8 @@ L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{
 # TODO: estimate methods
 
 coef, vcov, summary, parameter
+
+back.transform
 
 level
 
