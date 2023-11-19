@@ -3,8 +3,10 @@ title: Working with Influence Functions
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
 output:
+  # html_document:  
   rmarkdown::html_vignette:
-    fig_caption: yes
+    # toc_float: true
+    fig_caption: true
     toc: true
     toc_depth: 2
     mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
@@ -39,13 +41,13 @@ knitr::opts_chunk$set(
 
 Estimators that have parametric convergence rates can often be fully
 characterized by their *influence function* (IF), also referred to as an influence
-curve or canonical gradient. The IF allows for the direct estimation of properties of the estimator, including its asymptotic variance. Moreover,
+curve or canonical gradient [@bickel_effic_adapt_estim_semip_model; @vaart_1998_asymp]. The IF allows for the direct estimation of properties of the estimator, including its asymptotic variance. Moreover,
 estimates of the IF enable the simple combination and transformation of
 estimators into new ones. 
 This vignette describes how to estimate and manipulate IFs using the R-package `lava`.
 
 
-Formally, let \(Z_1,\ldots,Z_n\) be iid, \(Z_i=(Y_{i},A_{i},W_{i})\sim P_0\), and \(\widehat{\theta}\) a
+Formally, let \(Z_1,\ldots,Z_n\) be iid \(k\)-dimensional stochastic variables, \(Z_i=(Y_{i},A_{i},W_{i})\sim P_0\), and \(\widehat{\theta}\) a
 consistent estimator for the parameter \(\theta\in\mathbb{R}^p\). When
 \(\widehat{\theta}\) is a *regular and asymptotic linear* (RAL) estimator, it has
 a unique iid decomposition \begin{align*} \sqrt{n}(\widehat{\theta}-\theta) =
@@ -136,52 +138,74 @@ The main functions for working with influence functions are
 - `estimate` which prepares a model object and estimates the IF and
   corresponding robust standard errors. Can also be used to transform model
   parameters by application of the Delta Theorem.
-- `merge` method for combining estimates via their estimated IFs
+- `merge`, `+` method for combining estimates via their estimated IFs
 - `IC` method to extract the estimated IF
 
-Here we first consider the problem of estimating the IF of the mean. For the
-simulated data let
-\(\widehat{p}_1\) denote the MLE of the proportion
-\(\pr(Y_{1}=1)\), it then follows that
+
+Here we first consider the problem of estimating the IF of the mean. For a
+general transformation \(f: \mathbb{R}^k\to\mathbb{R}^p\) we have that
 \[
-\sqrt{n}\{\widehat{p}_1 - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-\one(Y_{1i}=1) - \pr(Y_{1}=1)
-\] 
-and hence the IF is given by \(\one(Y_{1i}=1) - \pr(Y_{1}=1)\). 
+\sqrt{n}\{\mathbb{P}_{n}f(X) - \E[f(X)]\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} 
+f(X_{i}) - \E[f(X)]
+\]
+<!-- \[
+<!-- \sqrt{n}\{\mathbb{P}_{n}f(X) - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} -->
+<!-- \one(Y_{1i}=1) - \pr(Y_{1}=1) -->
+<!-- \]  -->
+and hence for the problem of estimating the proportion of the binary outcome
+\(Y_1\), the IF is given by \(\one(Y_{1}=1) - \pr(Y_{1}=1)\). 
 
 To estimate this parameter and its IF we will use the `estimate` function
 
 ```{r}
-inp <- as.matrix(dw[, c("y1", "y2", "y3")])
-e <- estimate(inp[, 1, drop = FALSE])
+inp <- as.matrix(dw[, c("y1", "y2")])
+e <- estimate(inp[, 1, drop = FALSE], type="mean")
+class(e)
 e
 ```
 The reported standard errors from the `estimate` method
 are the robust standard errors obtained from the IF.
     The variance estimate and the parameters can be extracted with the `vcov`
     and `coef`methods.
-The IF itself can be extracted with the `IC` method:
+The IF itself can be extracted with the `IC` (or  `influence`) method:
 ```{r}
 IC(e) |> Print()
 ```
 
-It's also possible to simultaneously estimate the proportions of each of the three
+It is also possible to simultaneously estimate the proportions of each of the two
 binary outcomes 
 ```{r}
 estimate(inp)
 ```
 or alternatively the input can be a model object, here a `mlm` object:
 ```{r}
-e <- lm(cbind(y1, y2, y3) ~ 1, data = dw) |>
+e <- lm(cbind(y1, y2) ~ 1, data = dw) |>
   estimate()
 IC(e) |> head()
 ```
 
-The IF for both the empirical mean and variance can also be estimated directly with the `IC` method:
+Different methods are available for inspecting an `estimate`  object
 ```{r}
-with(dw, IC(y1)) |> head()
+summary(e)
+## extract parameter coefficients
+coef(e)
+## ## Asymptotic (robust) variance estimate
+vcov(e)
+## Matrix with estimates and confidence limits
+estimate(e, level = 0.99) |> parameter()
+## Influence curve
+IC(e) |> head()
+## Join estimates
+e + e # Same as merge(e,e)
 ```
-with the point estimates being stored in the attributes "mean" and "variance".
+
+<!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->
+<!-- ```{r} -->
+<!-- with(dw, IC(y1)) |> head() -->
+<!-- ## point estimates stores in the attributes -->
+<!-- with(dw, IC(y1)) |> attributes() -->
+<!-- ``` -->
+
 
 ## Example: generalized linear model
 
@@ -189,7 +213,7 @@ For a \(Z\)-estimator defined by the score equation \(E[U(\theta; Z)] = 0\), the
 IF is given by \begin{align*} IC(Z; \theta) =
 \E\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(\theta; Z)
 \end{align*}
-In particular, for a MLE the score, \(U\), is given by the partial derivative of
+In particular, for a maximum likelihood estimator the score, \(U\), is given by the partial derivative of
 the log-likelihood function.
 
 As an example, we can obtain the estimates with robust standard errors for a
@@ -212,10 +236,15 @@ IC(g1) |> head()
 
 The same estimates can be obtained with a 
 *cumulative link regression* model which also generalizes to 
-ordinal outcomes
+ordinal outcomes. Here we consider the proportional odds model given by 
+\begin{align*}
+\log \frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)} = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
+\end{align*}
 ```{r ordreg}
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 ```
+
+
 
 ## Example: right-censored outcomes
 
@@ -261,6 +290,24 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 <!-- glm(events ~ offset(log(atrisk)) + sex + factor(int.end), data = pbc2, family=poisson(log)) -->
 <!-- ``` -->
 
+## Example: structural equation model
+
+General structural equation models (SEMs) can be estimated with `lava::lvm`. 
+Here we fit a random effects Probit model
+\[
+\pr(Y_{ij} = 1 \mid U_{i}, W_{ij})\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2})
+\]
+to the simulated data
+```{r}
+sem <- lvm(y1 + y2 ~ 1 * u + w) |>
+  latent(~u) |>
+  ordinal(K=2, ~y1+y2)
+estimate(sem, data = dw) |>
+  estimate() |>
+  summary() ## Robust standard errors
+```
+
+
 # Combining influence functions
 
 A key benefit of working with the IFs of estimators is that this allows
@@ -271,19 +318,21 @@ Let \(\widehat{\theta}_{1}, \ldots, \widehat{\theta}_{M}\) be \(M\)
 different statistics with decompositions
 \begin{align*}
 \sqrt{n}(\widehat{\theta}_{m}-\theta_{m}) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-\IC_k(Z_i; P) + o_{p}(1)
+\IC_m(Z_i; P) + o_{p}(1)
 \end{align*}
 based on i.i.d. data \(Z_1,\ldots,Z_n\). It then follows immediately that the
 joint distribution of \(\widehat{\theta} - {\theta}=
-(\widehat{\theta},\ldots,\widehat{\theta})^\top-
-({\theta},\ldots,{\theta})^\top
+(\widehat{\theta}_{1}^{\top},\ldots,\widehat{\theta}_{M}^{\top})^\top-
+({\theta}_{1}^{\top},\ldots,{\theta}_{M}^{\top})^\top
 \) is given by
 \begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-(\IC_{1}(Z_i; P),\ldots,\IC_{M}(Z_i; P))^{T} + o_{p}(1) \\
+[\IC_{1}(Z_i; P)^\top,\ldots,\IC_{M}(Z_i; P)^\top]^{\top} + o_{p}(1) \\
 &\Dto \mathcal{N}(0,\Sigma)
 \end{align*}
-by CLT, and \(\frac{1}{n}\sum_{k=1}^n\epsilon_{k}^{\otimes 2} \overset{P}{\longrightarrow}\Sigma\) as \(n\to\infty\).
+by CLT, and
+\(\frac{1}{n}\sum_{k=1}^n [\IC_{1}(Z_i; P)^\top,\ldots,\IC_{M}(Z_i; P)^\top]^{\top \otimes 2} \overset{P}{\longrightarrow}\Sigma\)
+as \(n\to\infty\).
 
 To illustrate this we consider two marginal logistic regression models fitted
 separately for \(Y_1\) and \(Y_2\) and combine the estimates and IFs using the
@@ -292,8 +341,7 @@ separately for \(Y_1\) and \(Y_2\) and combine the estimates and IFs using the
 g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
-e
-vcov(e)
+summary(e)
 ```
 As we have access to the joint asymptotic distribution we can for example test
 for whether the odds-ratio is the same for the two responses: 
@@ -301,6 +349,7 @@ for whether the odds-ratio is the same for the two responses:
 ```{r hypo1}
 estimate(e, f=cbind(0,1,0,-1), null=0)
 ```
+More details an be found in the Section on [hypothesis testing](#linear-contrasts-and-hypothesis-testing).
 
 ## Inbalanced data
 
@@ -370,6 +419,11 @@ vcov(e2 + e3)
 list(vcov(e2), vcov(e3))
 ```
 
+Note, it is also possible to directly specify the id-variables in the `merge` call:
+```{r}
+merge(e2, e3, id = list(dw$id, dwc$id))
+```
+
 In the above example the `id` argument defines the identifier that makes it
 possible to link the rows in the different IFs that should be glued together. 
 If omitted then the `id` will automatically be extracted from the model-specific
@@ -379,6 +433,8 @@ model). This automatically works with all models and `IC` methods described in t
 estimate(g2) |>
   IC() |> head()
 vcov(estimate(g2) + estimate(g3))
+(estimate(g2) + estimate(g3)) |>
+  (rownames %++% head %++% IC)()
 ```
 
 To force that the id variables are not overlapping between the merged model
@@ -388,7 +444,6 @@ estimates, the argument `id=NULL` can be used
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 merge(g1, g2, id = NULL) |> vcov()
 ```
-
 
 ## Renaming and subsetting parameters
 
@@ -400,7 +455,7 @@ The argument can be given either as character vector or a vector of indices:
 ```{r}
 merge(g1,g2, keep=c(1, 3))
 ```
-or as a vector of regular expressions
+or as a vector of perl-style regqular expressions 
 ```{r}
 merge(g1, g2, keep = "cept", regex = TRUE)
 merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
@@ -424,6 +479,53 @@ merge(g1, g2, subset="(Intercept)")
 ```
 
 ## TODO: Clustered data (non-iid case)
+
+```{r}
+minimal <- lvm(c(y1, y2, y3) ~ x) |>
+  distribution(~ id1 + id2 + id3, value = list(c(1, 2, 3, 4, 5), c(1, 1, 2, 2, 2), c(1, 2, 6, 7, 8))) |>
+  distribution(~ y1 + y2 + y3, value = binomial.lvm()) |>
+  sim(5, seed = 123)
+
+l1 <- glm(y1~x,family=binomial,data=minimal)
+l2 <- glm(y2~x,family=binomial,data=minimal)
+l3 <- glm(y3~x,family=binomial,data=minimal)
+```
+
+```{r}
+merge(l1, l2, l3) |> iid()
+```
+
+```{r}
+merge(l1, l2, l3, id=NULL) |> iid()
+```
+
+```{r}
+g <- merge(l1, l2, l3, id = with(minimal, list(id1, id2, id3)))
+iid(g)
+g
+```
+
+Let (Z_{1}, Z_)
+\[
+\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}
+\sum_{i=1}^{N} IC(Z_{i}; P) + o_{p}(1)
+\]
+
+\[
+\frac{1}{\sqrt{N}}
+\sum_{i=1}^{n} \sum_{k_{i}=1}^{N_{i}} IC(Z_{ik}; P)
+\]
+
+\(n=\sum_{i=1}^n N_i\)x
+```{r}
+estimate(l2, id = minimal$id2) |> IC()
+```
+
+```{r}
+ii <- IC(l2)
+```
+
+
 
 ```{r}
 dd <- lapply(1:4, function(x) data.frame(y = runif(2), id = 1:2))
@@ -498,9 +600,12 @@ IC(do.call(merge, ee))
 
 Correlation
 
-method argument to estimate (Richardson vs complex)
+TODO: method argument to estimate (Richardson vs complex)
 
 Refer examples (categorical data for example)
+
+back.transform
+
 
 ## Linear contrasts and hypothesis testing
 
@@ -678,21 +783,8 @@ L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{
 \end{align*}
 
 
-# TODO: estimate methods
-
-coef, vcov, summary, parameter
-
-back.transform
-
-level
-
-coef.summary.estimate
-
-estimate.list
-estimate.array
-multinomial
-
-
+- estimate.array
+- multinomial
 
 # TODO: Enabling new models 
 

@@ -445,7 +445,7 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
                     if (is.function(dist.x)) {
                         res[,X.idx[i]] <- dist.x(n=n,mu=mu.x,var=P[X.idx[i],X.idx[i]])
                     } else {
-                        if (is.null(dist.x) || is.na(dist.x)) {
+                        if (is.null(dist.x) || any(is.na(dist.x))) {
                         } else {
                             if (length(dist.x)!=n) stop("'",vv[X.idx[i]], "' fixed at length ", length(dist.x)," != ",n,".")
                             res[,X.idx[i]] <- dist.x ## Deterministic

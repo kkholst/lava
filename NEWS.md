@@ -9,7 +9,9 @@
    model.matrix or similar
  - TODO: 
    + Rewrite DESCRIPTION/lava-package.Rd
+   + Update README to reflect current state of package
    + IF vignette
+   + Update help pages for merge, estimate, IC, ...
 
 
 # lava 1.7.3 

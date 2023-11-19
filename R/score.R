@@ -156,7 +156,9 @@ score.multigroup <- function(x,data=x$data,weights=NULL,data2=NULL,p,indiv=combi
 
 ##' @export
 score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weights=Weights(x), data2=x$data$data2, ...) {
-  score(x$model0,data=data,p=p,model=model,weights=weights,data2=data2,...)
+  res <- score(x$model0, data = data, p = p, model = model, weights = weights, data2 = data2, ...)
+  tryCatch(rownames(res) <- rownames(data), error = function(...) NULL)
+  res
 }
 
 ###}}} score.lvmfit

@@ -8,7 +8,7 @@ iid <- function(x, ...) UseMethod("iid")
 
 ##' @export
 iid.default <- function(x, ...) {
-  res <- IC(x,...)
+  res <- IC(x, ...)
   if (!is.null(attr(res, "bread"))) {
     attr(res, "bread") <- attr(res, "bread")/NROW(res)
   }

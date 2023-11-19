@@ -13,14 +13,23 @@ estimate.data.frame <- function(x, ...) {
 }
 
 ##' @export
-estimate.array <- function(x, ...) {
-  if (missing(x) || is.null(x))
-    return(estimate(NULL, ...))
+estimate.array <- function(x, type="mean", ...) {
+  if (missing(x) || is.null(x)) {
+      return(estimate(NULL, ...))
+  }
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
+  ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
+  if (type == "var") {
+      n <- NROW(x)
+      cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
+      ic <- ic^2
+      for (i in seq_len(NCOL(ic))) {
+          ic[, i] <- ic[, i] - cc[i]
+      }
+  }
   if (any(c("vcov", "IC") %in% names(list(...)))) {
     return(estimate(NULL, coef = cc, ...))
   }
-  ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
   estimate(NULL, coef=cc, IC=ic, ...)
 }
 
@@ -311,7 +320,7 @@ estimate.default <- function(x=NULL,f=NULL,...,data,id,
                 if (!is.null(x$na.action) && (length(id)==length(x$na.action)+nrow(data))) {
                     warning("Applying na.action")
                     id <- id[-x$na.action]
-                } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+                } else stop("Dimensions of IC and 'id' does not agree")
             }
         }
         if (stack) {
