@@ -118,7 +118,7 @@ head(p)
 
 The fitted function can be obtained with the following code:
 
-```{r  fig:pred2 }
+```{r  figpred2 }
 plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]), xlim=c(-4,4))
 lines(Estimate ~ eta1, data=as.data.frame(p), col="darkblue", lwd=5)
