@@ -127,7 +127,7 @@ n <- 5e2
 dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
 lava:::Print(dw)
-dl <- mets::fast.reshape(dw, varying="y")
+dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
 lava:::Print(dl)
 ```
 
@@ -455,7 +455,7 @@ The argument can be given either as character vector or a vector of indices:
 ```{r}
 merge(g1,g2, keep=c(1, 3))
 ```
-or as a vector of perl-style regqular expressions 
+or as a vector of perl-style regular expressions 
 ```{r}
 merge(g1, g2, keep = "cept", regex = TRUE)
 merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
@@ -478,7 +478,62 @@ before the actual merging is being done
 merge(g1, g2, subset="(Intercept)")
 ```
 
-## TODO: Clustered data (non-iid case)
+## Clustered data (non-iid case)
+
+Let \(Z_i = (Z_{i1},\ldots,Z_{iN_{i}})\) and assume that
+\((Z_{i}, N_{i}) \sim P\), \(i=1,\ldots,n\) are iid and \(N_i\indep
+Z_{ij}\). The variables \(Z_{i1},\ldots,Z_{iN_{i}}\) we assume are exchangeable
+but not necessarily independent. Define \(N = \sum_{i=1}^{n} N_i\), and
+assume that a parameter estimate, \(\widehat{\theta}\in\mathbb{R}^p\) has the decomposition 
+\[
+\sqrt{N}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{N}}
+\sum_{i=1}^{n} \sum_{k=1}^{N_{i}} IC(Z_{ik}; P) + o_{p}(1).
+\]
+It then follows that 
+\[
+\sqrt{n}(\widehat{\theta}-\theta) = 
+\frac{1}{\sqrt{n}}
+\sum_{i=1}^{n} \widetilde{\IC}(Z_{i}; P) + o_{p}(1)
+\]
+with \(\widetilde{\IC}(Z_{i}; P)
+= \sum_{k=1}^{N_{i}} \frac{n}{N}IC(Z_{ik}; P)\), \(i=1,\ldots,n\) which are iid
+an therefore admits the usual CLT to derive the asymptotic variance of \(\widehat{\theta}\). 
+
+Turning back to the example data, we can estimate the marginal model
+```{r}
+g0 <- glm(y ~ a + w + x, data = dl, family = binomial())
+```
+The asymptotic variance estimate ignoring that the observations are not
+independent is not consistent. Instead we can calcualte the cluster robust
+standard errors from the above iid decomposition
+```{r}
+estimate(g0, id=dl$id)
+```
+We can confirm that this situation is equivalent to the variance estimates we
+obtain from a GEE marginal model with working independence correlation structure
+```{r}
+gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
+summary(gee0)
+```
+
+
+
+# TODO: IF building blocks: transformations and the Delta theorem
+
+```{r}
+##' ## Transformations
+##' estimate(g,function(p) p[1]+p[2])
+##'
+##' ## Multiple parameters
+##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
+##' e
+##' vcov(e)
+##'
+##' ## Label new parameters
+##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
+```
+
 
 ```{r}
 minimal <- lvm(c(y1, y2, y3) ~ x) |>
@@ -489,56 +544,14 @@ minimal <- lvm(c(y1, y2, y3) ~ x) |>
 l1 <- glm(y1~x,family=binomial,data=minimal)
 l2 <- glm(y2~x,family=binomial,data=minimal)
 l3 <- glm(y3~x,family=binomial,data=minimal)
-```
 
-```{r}
 merge(l1, l2, l3) |> iid()
-```
-
-```{r}
 merge(l1, l2, l3, id=NULL) |> iid()
-```
-
-```{r}
 g <- merge(l1, l2, l3, id = with(minimal, list(id1, id2, id3)))
 iid(g)
 g
-```
-
-Let (Z_{1}, Z_)
-\[
-\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}
-\sum_{i=1}^{N} IC(Z_{i}; P) + o_{p}(1)
-\]
-
-\[
-\frac{1}{\sqrt{N}}
-\sum_{i=1}^{n} \sum_{k_{i}=1}^{N_{i}} IC(Z_{ik}; P)
-\]
-
-\(n=\sum_{i=1}^n N_i\)x
-```{r}
 estimate(l2, id = minimal$id2) |> IC()
-```
-
-```{r}
 ii <- IC(l2)
-```
-
-
-
-```{r}
-dd <- lapply(1:4, function(x) data.frame(y = runif(2), id = 1:2))
-d0 <- Reduce(rbind, dd)
-e0 <- estimate(lm(y ~ 1, data = d0), id = d0[, "id"])
-ee <- lapply(dd, function(x) estimate(lm(y ~ 1, data = x), id = x[, "id"]))
-e <- do.call(merge, ee)
-
-d <- data.frame(x=1:4, id=c(1,1,1,1))
-
-e |> (rownames %++% IC) ()
-
-IC(do.call(merge, ee))
 ```
 
 ```{r}
@@ -548,18 +561,6 @@ IC(do.call(merge, ee))
 ##' estimate(g,function(p,data)
 ##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
 ##'          subset=d$z>0, id=d$id, average=TRUE)
-##'
-##' ## More examples with clusters:
-##' m <- lvm(c(y1,y2,y3)~u+x)
-##' d <- sim(m,10)
-##' l1 <- glm(y1~x,data=d)
-##' l2 <- glm(y2~x,data=d)
-##' l3 <- glm(y3~x,data=d)
-##'
-##' ## Some random id-numbers
-##' id1 <- c(1,1,4,1,3,1,2,3,4,5)
-##' id2 <- c(1,2,3,4,5,6,7,8,1,1)
-##' id3 <- seq(10)
 ##'
 ##' ## Un-stacked and stacked i.i.d. decomposition
 ##' IC(estimate(l1,id=id1,stack=FALSE))
@@ -582,21 +583,6 @@ IC(do.call(merge, ee))
 ##' IC(merge(l1,l2,l3,id=FALSE)) # independence
 ```
 
-
-# TODO: IF building blocks: transformations and the Delta theorem
-
-```{r}
-##' ## Transformations
-##' estimate(g,function(p) p[1]+p[2])
-##'
-##' ## Multiple parameters
-##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
-##' e
-##' vcov(e)
-##'
-##' ## Label new parameters
-##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
-```
 
 Correlation
 
