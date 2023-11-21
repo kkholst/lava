@@ -25,19 +25,28 @@ knitr::opts_chunk$set(
 )
 ```
 
+\newcommand{\arctanh}{\operatorname{arctanh}}
 \newcommand{\indep}{\!\perp\!\!\!\!\perp\!} 
 \newcommand{\pr}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\var}{\mathbb{V}\!\text{ar}}
-\newcommand{\cov}{\mathbb{C}\!\ov{text}}
+\newcommand{\cov}{\mathbb{C}\!\text{ov}}
+\newcommand{\cor}{\mathbb{C}\!\text{or}}
+
 \newcommand{\IC}{\operatorname{IC}}
 \newcommand{\one}{\mathbf{1}}
 <!-- \newcommand{\Dto}{\rightsquigarrow} -->
 \newcommand{\Dto}{\overset{\mathcal{D}}{\longrightarrow}}
 \newcommand{\bm}[1]{\mathbf{#1}}
 
-# Influence functions
+# TODO
 
+- More catchy title
+- Quantile regression and Zeng&Lin procedure?
+- Diagnostics Cohens Kappa, partial gamma example
+- method argument to estimate (Richardson vs complex)
+
+# Influence functions
 
 Estimators that have parametric convergence rates can often be fully
 characterized by their *influence function* (IF), also referred to as an influence
@@ -50,8 +59,11 @@ This vignette describes how to estimate and manipulate IFs using the R-package `
 Formally, let \(Z_1,\ldots,Z_n\) be iid \(k\)-dimensional stochastic variables, \(Z_i=(Y_{i},A_{i},W_{i})\sim P_0\), and \(\widehat{\theta}\) a
 consistent estimator for the parameter \(\theta\in\mathbb{R}^p\). When
 \(\widehat{\theta}\) is a *regular and asymptotic linear* (RAL) estimator, it has
-a unique iid decomposition \begin{align*} \sqrt{n}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \theta) + o_p(1), \end{align*} where the
+a unique iid decomposition 
+\begin{align*} \sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \theta) + o_p(1), 
+\end{align*} 
+where the
 function \(\IC\) is the unique *Influence Function* s.t. \(\mathbb{E}\{\IC(Z_{i};
 \theta)\}=0\) and \(\var\{\IC(Z_{i}; \theta)^{2}\}<\infty\) [@tsiatis2006semiparametric;
 @vaart_1998_asymp]. The influence
@@ -113,8 +125,8 @@ with independent covariates
 \(X_{ij}\sim\mathcal{N}(0,1), U_{i}\sim\mathcal{N}(0,1)\). 
 ```{r sim_model}
 m <- lvm() |>
-    regression(y1 ~ x1 + a + w) |>
-    regression(y2 ~ x2 + a + w) |>
+  regression(y1 ~ x1 + a + w) |>
+  regression(y2 ~ x2 + a + w) |>
   regression(y3 ~ x3 + a + w) |>
   regression(a ~ w) |>
   distribution(~ y1 + y2 + y3 + a, value = binomial.lvm()) |>
@@ -126,9 +138,10 @@ We simulate from the model where \(Y_3\) is only observed for half of the subjec
 n <- 5e2
 dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
-lava:::Print(dw)
+Print(dw)
+## Data in long format
 dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
-lava:::Print(dl)
+Print(dl)
 ```
 
 ## Example: population mean
@@ -166,7 +179,7 @@ e
 The reported standard errors from the `estimate` method
 are the robust standard errors obtained from the IF.
     The variance estimate and the parameters can be extracted with the `vcov`
-    and `coef`methods.
+    and `coef` methods.
 The IF itself can be extracted with the `IC` (or  `influence`) method:
 ```{r}
 IC(e) |> Print()
@@ -244,7 +257,9 @@ ordinal outcomes. Here we consider the proportional odds model given by
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 ```
 
-
+Note that the `sandwich::estfun` function from the `sandwich` library [@r_sandwich] can also estimate the IF
+for different parametric models, but does not provide the tools for combining
+and transforming these.
 
 ## Example: right-censored outcomes
 
@@ -290,23 +305,37 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 <!-- glm(events ~ offset(log(atrisk)) + sex + factor(int.end), data = pbc2, family=poisson(log)) -->
 <!-- ``` -->
 
-## Example: structural equation model
+
+## Example: random effects model / structural equation model
 
 General structural equation models (SEMs) can be estimated with `lava::lvm`. 
 Here we fit a random effects Probit model
 \[
-\pr(Y_{ij} = 1 \mid U_{i}, W_{ij})\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2})
+\pr(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}), j=1,2
 \]
-to the simulated data
+to the simulated dataset
 ```{r}
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
-  latent(~u) |>
-  ordinal(K=2, ~y1+y2)
-estimate(sem, data = dw) |>
-  estimate() |>
-  summary() ## Robust standard errors
+  latent(~ u) |>
+  ordinal(K=2, ~ y1 + y2)
+semfit <- estimate(sem, data = dw)
+
+## Robust standard errors
+estimate(semfit)
 ```
 
+## TODO Example: quantile
+
+Let \(\beta\) denote the \(\tau\)th quantile of \(X\), with IF
+\begin{align*}
+\IC(x; P) = \tau - \one(x\leq \beta)f(\beta)^{-1} 
+\end{align*}
+
+where \(f\) is the density function of \(X\).
+
+To calculate the variance estimate an estimate of \(f\) is needed which can be
+obtained by a kernel estimate. Alternatively, 
+the resampling method of [@zenglin2008] can be applied.
 
 # Combining influence functions
 
@@ -327,11 +356,11 @@ joint distribution of \(\widehat{\theta} - {\theta}=
 \) is given by
 \begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-[\IC_{1}(Z_i; P)^\top,\ldots,\IC_{M}(Z_i; P)^\top]^{\top} + o_{p}(1) \\
+\underbrace{[\IC_{1}(Z_i; P)^\top,\ldots,\IC_{M}(Z_i; P)^\top]^{\top}}_{\overline{\IC}(Z_i; P)} + o_{p}(1) \\
 &\Dto \mathcal{N}(0,\Sigma)
 \end{align*}
 by CLT, and
-\(\frac{1}{n}\sum_{k=1}^n [\IC_{1}(Z_i; P)^\top,\ldots,\IC_{M}(Z_i; P)^\top]^{\top \otimes 2} \overset{P}{\longrightarrow}\Sigma\)
+\(\mathbb{P}_{n}\overline{\IC}(Z_i; P)^{\otimes 2} \overset{P}{\longrightarrow}\Sigma\)
 as \(n\to\infty\).
 
 To illustrate this we consider two marginal logistic regression models fitted
@@ -499,7 +528,6 @@ It then follows that
 with \(\widetilde{\IC}(Z_{i}; P)
 = \sum_{k=1}^{N_{i}} \frac{n}{N}IC(Z_{ik}; P)\), \(i=1,\ldots,n\) which are iid
 an therefore admits the usual CLT to derive the asymptotic variance of \(\widehat{\theta}\). 
-
 Turning back to the example data, we can estimate the marginal model
 ```{r}
 g0 <- glm(y ~ a + w + x, data = dl, family = binomial())
@@ -511,96 +539,138 @@ standard errors from the above iid decomposition
 estimate(g0, id=dl$id)
 ```
 We can confirm that this situation is equivalent to the variance estimates we
-obtain from a GEE marginal model with working independence correlation structure
+obtain from a GEE marginal model with working independence correlation structure [@r_geepack]
 ```{r}
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
 summary(gee0)
 ```
 
+# IF building blocks: transformations and the delta theorem
 
+Let \(\phi\colon \mathbb{R}^p\to\mathbb{R}^m\) be differentiable at \(\theta\)
+and assume that \(\widehat{\theta}_n\) is RAL estimator with IF given by
+\(\IC(\cdot;P)\) such that 
+\begin{align*} 
+\sqrt{n}(\widehat{\theta}_n - \theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \theta) + o_p(1), 
+\end{align*} 
+then by the delta method [@vaart_1998_asymp Theorem 3.1]
+\begin{align*} 
+\sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\}  =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla\phi(\theta)\IC(Z_i; \theta) + o_p(1), 
+\end{align*} 
 
-# TODO: IF building blocks: transformations and the Delta theorem
+where \(\phi\colon \theta\mapsto
+(\phi_{1}(\theta),\ldots,\phi_{m}(\theta))^\top\) and \(\nabla\) is the partial
+derivative operator
+\begin{align*}
+\nabla\phi(\theta) = 
+\begin{pmatrix}
+\tfrac{\partial}{\partial\theta_1}\phi_1(\theta) & \cdots &
+\tfrac{\partial}{\partial\theta_p}\phi_1(\theta) \\
+\vdots & \ddots & \vdots \\
+\tfrac{\partial}{\partial\theta_1}\phi_m(\theta) & \cdots &
+\tfrac{\partial}{\partial\theta_p}\phi_m(\theta) \\
+\end{pmatrix}.
+\end{align*}
 
+Together with the ability to derive the joint IF from marginal IFs, this
+provides us with a powerful tool for constructing new estimates using the IFs as
+the fundamental building blocks.
+
+To apply the delta method the transformation of the parameters function must be
+supplied to the `estimate` method (argument `f`)
 ```{r}
-##' ## Transformations
-##' estimate(g,function(p) p[1]+p[2])
-##'
-##' ## Multiple parameters
-##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
-##' e
-##' vcov(e)
-##'
-##' ## Label new parameters
-##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
+estimate(g1, sum)
+estimate(g1, function(p) list(a = sum(p))) # named list
+## Multiple parameters
+estimate(g1, function(x) c(x, x[1] + exp(x[2]), inv = 1 / x[2]))
+estimate(g1, exp)         
+```
+The gradient can be supplied as the attributes `grad`  and otherwise numerical differentiation is applied. 
+
+## Example: Pearson correlation
+As a simple toy example consider the problem of estimating the covariance of two
+variables \(X_1\) and \(X_2\)
+\begin{align*}
+\widehat{\cov}(X_1,X_2) = \mathbb{P}_n(X_1-\mathbb{P}_n X_1)(Y_1-\mathbb{P}_n Y_1).
+\end{align*}
+It is easily verified that the IF of the sample estimate of \((\E X_{1}, \E
+X_{2}, \E\{X_{1}X_{2}\})^\top\) given by
+is \(\IC(X1,X2; P) = (X_{1}-\E X_{1}, X_{2}-\E X_{2},
+X_{1}X_{2}-\E\{X_{1}X_{2}\})^\top\). By the delta theorem with \(\phi(x,y,z) =
+z-xy\) we have  \(\nabla\phi(x,y,z) = (-y -x 1)\) and thus the IF for the
+sample covariance estimate becomes
+\begin{align*}
+\IC_{x_1, x_2}(X_1, X_2; P) = (X_1 - \E X_1)(X_2 - \E X_2) - \cov(X_1,X_2)
+\end{align*}
+
+We can implement this directly using the `estimate` function via the `IC`
+argument which allows us to provide a user-specificed IF and with the point
+estimate given by the `coef` argument
+```{r cov}
+Cov <- function(x, y, ...) {
+  est <- mean(x * y)-mean(x)*mean(y)
+    estimate(
+      coef = est,
+      IC = (x - mean(x)) * (y - mean(y)) - est,
+      ...
+    )
+}
+with(dw, Cov(x1, x2))
 ```
 
-
-```{r}
-minimal <- lvm(c(y1, y2, y3) ~ x) |>
-  distribution(~ id1 + id2 + id3, value = list(c(1, 2, 3, 4, 5), c(1, 1, 2, 2, 2), c(1, 2, 6, 7, 8))) |>
-  distribution(~ y1 + y2 + y3, value = binomial.lvm()) |>
-  sim(5, seed = 123)
-
-l1 <- glm(y1~x,family=binomial,data=minimal)
-l2 <- glm(y2~x,family=binomial,data=minimal)
-l3 <- glm(y3~x,family=binomial,data=minimal)
-
-merge(l1, l2, l3) |> iid()
-merge(l1, l2, l3, id=NULL) |> iid()
-g <- merge(l1, l2, l3, id = with(minimal, list(id1, id2, id3)))
-iid(g)
-g
-estimate(l2, id = minimal$id2) |> IC()
-ii <- IC(l2)
+As an illustration we could also derive this estimate from simpler building
+blocks of \(\E X_{1}\), \(\E X_{2}\), and \(\E(X_{1}X_{2})\).
+```{r cov2}
+e1 <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
+  estimate(labels = c("Ex1", "Ex2", "Ex1x2"))
+e1
+estimate(e1, function(x) c(x, cov=with(as.list(x), Ex1x2 - Ex2* Ex1)))
+```
+The variance estimates can be estimated in the same way and the combined
+estimates be used to estimate the correlation
+```{r rho}
+e2 <- with(dw, Cov(x1, x2, labels = "c", id = id) +
+               Cov(x1, x1, labels = "v1", id = id) +
+               Cov(x2, x2, labels = "v2", id = id))
+rho <- estimate(e2, function(x) list(rho = x[1] / (x[2] * x[3])^.5))
+rho
 ```
 
-```{r}
-
-##' ## Clusters and subset (conditional marginal effects)
-##' d$id <- rep(seq(nrow(d)/4),each=4)
-##' estimate(g,function(p,data)
-##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
-##'          subset=d$z>0, id=d$id, average=TRUE)
-##'
-##' ## Un-stacked and stacked i.i.d. decomposition
-##' IC(estimate(l1,id=id1,stack=FALSE))
-##' IC(estimate(l1,id=id1))
-##'
-##' ## Combined i.i.d. decomposition
-##' e1 <- estimate(l1,id=id1)
-##' e2 <- estimate(l2,id=id2)
-##' e3 <- estimate(l3,id=id3)
-##' (a2 <- merge(e1,e2,e3))
-##'
-##' ## If all models were estimated on the same data we could use the
-##' ## syntax:
-##' ## Reduce(merge,estimate(list(l1,l2,l3)))
-##'
-##' ## Same:
-##' IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
-##'
-##' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
-##' IC(merge(l1,l2,l3,id=FALSE)) # independence
+by using a variance stabilizing transformation, Fishers
+\(z\)-transform [@lehmann_romano_2005],
+\(z = \arctanh(\widehat{\rho}) = \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\)
+<!-- This estimate has an approximate -->
+<!-- asymptotic normal distribution -->
+<!-- \(\mathcal{N}(\arctanh(\rho),\frac{1}{n-3-k})\). Hence a asymptotic 95% -->
+<!-- confidence interval is given by -->
+<!-- \[\widehat{z} \pm \frac{1.96}{\sqrt{n-3-k}}\] -->
+<!-- and the confidence interval for \(\widehat{\rho}\) can directly be calculated by -->
+<!-- the inverse transformation: -->
+<!-- \[\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.\] -->
+<!-- This is equivalent to the direct calculations using the delta method -->
+<!-- (except for the small sample bias correction \(3+k\)) where the -->
+<!-- estimate and confidence interval are transformed back to the original -->
+<!-- scale using the `back.transform` argument. -->
+```{r tanh}
+estimate(rho, atanh, back.transform = tanh)
 ```
+The confidence limits are calculated on the \(\arctanh\)-scale and transformed
+back to the original correlation scale via the `back.transform` argument.
+In this case where the estimates are far away from the boundary of the parameter space the variance
+stabilizing transform does not have any impact.
+
+## TODO Example: survival probabilities
 
 
-Correlation
+## TODO Linear contrasts and hypothesis testing
 
-TODO: method argument to estimate (Richardson vs complex)
+- pairwise, -, estimate, compare, var_ic
+- multiple testing
+- pzmax,p.correct, closed testing procedure
 
-Refer examples (categorical data for example)
-
-back.transform
-
-
-## Linear contrasts and hypothesis testing
-
-pairwise, -, estimate, compare, var_ic
-
-multiple testing
-
-pzmax,p.correct, closed testing procedure
-
+```{r hypo}
 ##' ## Testing contrasts
 ##' estimate(g,null=0)
 ##' estimate(g,rbind(c(1,1,0),c(1,0,2)))
@@ -628,6 +698,7 @@ pzmax,p.correct, closed testing procedure
 ##' pdiff <- function(n) lava::contr(lapply(seq(n-1), \(x) seq(x, n)))
 ##' pdiff(4)
 
+```
 
 ```{r}
 ## m <- categorical(lvm(),~x,K=5)
@@ -641,7 +712,7 @@ pzmax,p.correct, closed testing procedure
 ## estimate(l,f)
 ```
 
-# TODO: Averaging
+## TODO: Averaging
 
 Let \(Z_{1},\ldots,Z_{n}\) be iid observations, \(Z_{1}\sim P\) and let  \(X_{i}\subset Z_{i}\).
 
@@ -652,7 +723,6 @@ Let \(f:\mathcal{X}\times\Omega\to\mathbb{R}\) be continuous differentiable in \
 \[\sqrt{n}\{f(X; \widehat{\theta})-f(X; \theta)\} =
 \frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}) + o_{p}(1).
 \]
-
 
 Let \(\Psi = Pf(X;\theta)\) and \(\widehat{\Psi} = P_{n} f(X;\widehat{\theta})\). \(P\) and \(P_{n}\) are here everywhere the integrals wrt. \(X\). It is easily verified that
 \begin{align*}
@@ -698,15 +768,14 @@ estimate(average=TRUE)
 g <- glm
 ```
 
+- `targeted::cate`
+- `targeted::riskreg`
+- `targeted::alean`
 
-targeted::cate
-targeted::riskreg
-targeted::alean
-
-# TODO: Two-stage estimation
+## TODO: Two-stage estimation
 stack
 
-## TODO: Measurement error
+### TODO: Measurement error
 measurement.error
 
 # TODO: Examples diagnostics and ....
@@ -776,6 +845,25 @@ L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{
 
 IC method
 score method
+
+```{r}
+minimal <- lvm(c(y1, y2, y3) ~ x) |>
+  distribution(~ id1 + id2 + id3, value = list(c(1, 2, 3, 4, 5), c(1, 1, 2, 2, 2), c(1, 2, 6, 7, 8))) |>
+  distribution(~ y1 + y2 + y3, value = binomial.lvm()) |>
+  sim(5, seed = 123)
+
+l1 <- glm(y1~x,family=binomial,data=minimal)
+l2 <- glm(y2~x,family=binomial,data=minimal)
+l3 <- glm(y3~x,family=binomial,data=minimal)
+
+merge(l1, l2, l3) |> iid()
+merge(l1, l2, l3, id=NULL) |> iid()
+g <- merge(l1, l2, l3, id = with(minimal, list(id1, id2, id3)))
+iid(g)
+g
+estimate(l2, id = minimal$id2) |> IC()
+ii <- IC(l2)
+```
 
 # SessionInfo
 

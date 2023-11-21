@@ -152,15 +152,15 @@ by using a variance stabilizing transformation, Fishers
   \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\]
 where \(\widehat{\rho}\) is the MLE.  This estimate has an approximate
 asymptotic normal distribution
-\(\mathcal{N}(\arctanh(\rho),\frac{1}{n-3-k})\). Hence a asymptotic 95%
+\(\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})\). Hence a asymptotic 95%
 confidence interval is given by
-\[\widehat{z} \pm \frac{1.96}{\sqrt{n-3-k}}\]
+\[\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}\]
 and the confidence interval for \(\widehat{\rho}\) can directly be calculated by
 the inverse transformation:
 \[\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.\]
 
 This is equivalent to the direct calculations using the delta method
-(except for the small sample bias correction \(3+k\)) where the
+(except for the small sample bias correction \(3\)) where the
 estimate and confidence interval are transformed back to the original
 scale using the `back.transform` argument.
 
@@ -201,7 +201,7 @@ Finally, these parameters are tied to the previously defined
 parameters using the `constrain` method such that `v1` := \(\exp(\mathtt{l1})\)
 `v2` := \(\exp(\mathtt{l1})\) and `z` := \(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\).
 In this way there is no constraints on the actual estimated parameters
-`l1`, `l2`, and `z` which can take any values in \(\R^{3}\), while we at the
+`l1`, `l2`, and `z` which can take any values in \(\mathbb{R}^{3}\), while we at the
 same time are guaranteed a proper covariance matrix which is positive
 definite.
 
