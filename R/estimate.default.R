@@ -1,3 +1,4 @@
+
 ##' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
@@ -12,19 +13,44 @@ estimate.data.frame <- function(x, ...) {
   estimate(as.matrix(x), ...)
 }
 
+
+IC.quantile <- function(x, estimate, probs=0.5, ...) {
+  x <- na.omit(x)
+  f0 <- density(x, ...)
+  ## U <- function(est) (tau - (x <= est))
+  if (missing(estimate)) {
+    estimate <- quantile(x, probs=probs)
+  }
+  res <- c()
+  for (i in seq_len(length(estimate))) {
+    res <- cbind(res,
+    (probs[i] - (x <= estimate[i]))/with(f0, approx(x, y, estimate[i]))$y
+    )
+  }
+  res
+}
+
 ##' @export
-estimate.array <- function(x, type="mean", ...) {
+estimate.array <- function(x, type="mean", probs=0.5, ...) {
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
   }
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
-  if (type == "var") {
+  if (tolower(type) %in% c("var", "variance")) {
     n <- NROW(x)
     cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
     ic <- ic^2
     for (i in seq_len(NCOL(ic))) {
       ic[, i] <- ic[, i] - cc[i]
+    }
+  }
+  if (tolower(type) %in% c("quantile")) {
+    cc <- unlist(apply(x, 2, function(y) quantile(y, probs=probs, na.rm = TRUE),
+                simplify=FALSE))
+    ic <- c()
+    for (i in seq_len(NCOL(x))) {
+      ic <- cbind(ic, IC.quantile(x[,i], probs=probs))
     }
   }
   if (any(c("vcov", "IC") %in% names(list(...)))) {
@@ -499,6 +525,9 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
         }
         pp <- vec(colMeans(cbind(val)))
         ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))
+        if (NROW(ic_theta)==NROW(ic1)) {
+          rownames(ic1) <- rownames(ic_theta)
+        }
         if (!missing(id)) {
           if (!lava.options()$cluster.index)
             ic1 <- matrix(unlist(by(ic1, id, colSums)),

@@ -262,7 +262,7 @@ As an example, we can obtain the estimates with robust standard errors for a
 logistic regression model:
 ```{r glm}
 g <- glm(y1 ~ a + x1, data = dw, family = binomial)
-estimate(g1)
+estimate(g)
 ```
 We can compare that to the usual (non-robust) standard errors:
 ```{r glm.std}
@@ -366,6 +366,11 @@ where \(f_{0}\) is the density function of \(X\).
 To calculate the variance estimate an estimate of the density is needed which can be
 obtained by a kernel estimate. Alternatively, 
 the resampling method of [@zenglin2008] can be applied.
+
+
+```{r quantiles}
+estimate(dw[, c("w","x1")], type="quantile", probs=c(0.25, 0.5, 0.75))
+```
 
 # Combining influence functions
 
@@ -587,9 +592,7 @@ when combining IFs.
 set.seed(1)
 y <- cbind(rnorm(1e5))
 N <- 1e3 ## Number of aggregated groups, the number of observations in the new IF
-ff <- foldr(NROW(y), N, 1)[[1]] ## Create the random group variable
-ids <- rep(seq_len(length(ff)), unlist(lapply(ff, length)))
-id <- ids[order(unlist(ff))]
+id <- foldr(nrow(y), N, list=FALSE)
 Print(cbind(table(id)))
 
 ## Aggregated IF
@@ -693,7 +696,9 @@ rho
 
 by using a variance stabilizing transformation, Fishers
 \(z\)-transform [@lehmann2023_testing],
-\(z = \arctanh(\widehat{\rho}) = \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\)
+\(z = \arctanh(\widehat{\rho}) =
+\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\),
+confidence limits with general better coverage can be obtained
 ```{r tanh}
 estimate(rho, atanh, back.transform = tanh)
 ```
@@ -788,7 +793,7 @@ Let \(f:\mathcal{X}\times\Omega\to\mathbb{R}\) be continuous differentiable in \
 
 Let \(\Psi = \Pz f(X;\theta)\) and \(\widehat{\Psi} = P_{n} f(X;\widehat{\theta})\). \(\Pz\) and \(P_{n}\) are here everywhere the integrals wrt. \(X\). It is easily verified that
 \begin{align*}
-\widehat{\Psi}-\Psi &= (P_{n}-\P)(f(X; \theta)-\Psi) + P[f(X;\widehat{\theta})-f(X;\theta)] \\
+\widehat{\Psi}-\Psi &= (P_{n}-\Pz)(f(X; \theta)-\Psi) + P[f(X;\widehat{\theta})-f(X;\theta)] \\
 &\quad + (P_{n}-\Pz)[f(X;\widehat{\theta})-f(X;\theta)]
 \end{align*}
 
@@ -806,7 +811,7 @@ It therefore follows that
 \frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X;\theta)-\Psi\} +
 \frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}, \Pz) + \op(1)
 \end{align*}
-Hence the IF becomes
+Hence the IF for \(\widehat{\Psi}\) becomes
 \[
 IC(Z; \Pz) = f(X;\theta)-\Psi +
 [\Pz\nabla_{\theta}f(X;\theta)]\phi(Z).
@@ -814,8 +819,8 @@ IC(Z; \Pz) = f(X;\theta)-\Psi +
 
 
 Turning back to the example we can estimate the logistic regression model
-\(\operatorname{logit}\{E(Y_1 | A,X_1,W)\} = \beta_0 + \beta_a A + \beta_{x_1}
-X_1 + \beta_w W\) and from this we want to estimate the target parameter 
+\(\operatorname{logit}(E\{Y_1 | A,X_1,W\}) = \beta_0 + \beta_a A + \beta_{x_1}
+X_1 + \beta_w W\), and from this we want to estimate the target parameter 
 \[
 \theta(P) = \E_{P}[E(Y\mid A=1, X_{1}, W)].
 \]
@@ -831,7 +836,8 @@ pr(coef(g), dw) |> head()
 ```
 The target parameter can now be estimated with the syntax
 ```{r average}
-ea <- estimate(g, pr, average=TRUE)
+id <- foldr(500, 50, list=FALSE)
+ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 IC(ea) |> head()
 ```
