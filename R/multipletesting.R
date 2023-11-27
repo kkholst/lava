@@ -1,17 +1,37 @@
-pzmax <- function(alpha,S) {
-    ##P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
-    if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-    k <- nrow(S)
-    z <- qnorm(1-alpha/2)
-    1-mets::pmvn(lower=rep(-z,k),upper=rep(z,k),sigma=cov2cor(S))
+
+pzmax <- function(alpha, S) {
+  ## P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
+  if (!requireNamespace("mets",quietly=TRUE))
+    stop("'mets' package required")
+  k <- nrow(S)
+  zz <- qnorm(1-alpha/2)
+  unlist(lapply(zz, function(z)
+    1 - mets::pmvn(lower=rep(-z, k),
+                   upper=rep(z, k),
+                   sigma=cov2cor(S))
+    ))
 }
 
 
 ##' @export
-p.correct <- function(object,idx,alpha=0.05) {
-    S <- vcov(object); if (!missing(idx)) S <- S[idx,idx,drop=FALSE]
-    f <- function(a) pzmax(a,S)-alpha
-    uniroot(f,lower=0,upper=0.05)$root
+p.correct <- function(object, method, alpha=0.05, ...) {
+  if (!inherits(object, "estimate"))
+    stop("Expected an 'estimate' object")
+  dots <- list(...)
+  null <- object$compare$null
+  if (is.null(null))
+    null <- rep(0, nrow(est))
+  if (!("null" %in% names(dots)))
+    dots$null <- null
+  object <- do.call(estimate, c(list(object), dots))
+  est <- parameter(object)[, c(1,5), drop=FALSE]
+  padj <- pzmax(est[,2], vcov(object))
+  res <- cbind(est, padj)
+  colnames(res)[3] <- paste0("Adj.",colnames(res)[2])
+  f <- function(a) pzmax(a, vcov(object)) - alpha
+  adj <- uniroot(f, lower=0, upper=alpha)$root
+  attributes(res)["adjusted.significance.level"] <- adj
+  res
 }
 
 ##' Closed testing procedure
@@ -44,27 +64,40 @@ p.correct <- function(object,idx,alpha=0.05) {
 ##' }
 ##' as.vector(closed.testing(a))
 ##'
-closed.testing <- function(object,idx=seq_along(coef(object)),null=rep(0,length(idx)),...) {
-    B <- diag(nrow=length(idx))
-    e <- estimate(object,keep=idx)
-    combs <- pvals <- c()
+closed.testing <- function(object, idx=seq_along(coef(object)),
+                            null, return.all=FALSE, ...) {
+  if (missing(null)) {
+    null <- object$compare$null
+    if (is.null(null))
+      null <- rep(0, length(idx))
+  }
+  if (length(idx)>15) stop("Too many tests. Consider some other adjustment method")
+  B <- diag(nrow=length(idx))
+  e <- estimate(object, keep=idx)
+  combs <- pvals <- c()
+  for (i in seq_along(idx)) {
+    co <- combn(length(idx),i)
+    pp <- numeric(ncol(co))
+    for (j in seq_along(pp)) {
+      pp[j] <- compare(e, contrast=B[co[, j], , drop=FALSE],
+                       null=null[co[, j]], ...)$p.value
+    }
+    combs <- c(combs, list(co))
+    pvals <- c(pvals, list(pp))
+  }
+  pmax <- c()
+  for (k in seq_along(idx)) {
+    pk <- c()
     for (i in seq_along(idx)) {
-        co <- combn(length(idx),i)
-        pp <- numeric(ncol(co))
-        for (j in seq_along(pp)) {
-            pp[j] <- compare(e,contrast=B[co[,j],,drop=FALSE],null=null[co[,j]],...)$p.value
-        }
-        combs <- c(combs,list(co))
-        pvals <- c(pvals,list(pp))
+      cols <- apply(combs[[i]], 2, function(x) k%in%x)
+      pk <- c(pk,pvals[[i]][which(cols)])
     }
-    pmax <- c()
-    for (k in seq_along(idx)) {
-        pk <- c()
-        for (i in seq_along(idx)) {
-            cols <- apply(combs[[i]],2,function(x) k%in%x)
-            pk <- c(pk,pvals[[i]][which(cols)])
-        }
-        pmax <- c(pmax,max(pk))
-    }
+    pmax <- c(pmax,max(pk))
+  }
+  if (return.all)
     return(structure(pmax,comb=combs,pval=pvals))
+
+  res <- cbind(parameter(e)[, c(1,5)], pmax)
+  colnames(res)[3] <- paste0("Adj.", colnames(res)[2])
+  return(res)
 }
