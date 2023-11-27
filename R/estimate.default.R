@@ -35,28 +35,39 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
   }
+  dots <- list(...)
+  density.args <- dots[]
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
   if (tolower(type) %in% c("var", "variance")) {
     n <- NROW(x)
-    cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
+     cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
     ic <- ic^2
     for (i in seq_len(NCOL(ic))) {
       ic[, i] <- ic[, i] - cc[i]
     }
   }
   if (tolower(type) %in% c("quantile")) {
-    cc <- unlist(apply(x, 2, function(y) quantile(y, probs=probs, na.rm = TRUE),
-                simplify=FALSE))
+    density.args <- list()
+    dargs <- names(formals(density.default))
+    didx <- which(dargs %in% names(dots))
+    if (length(didx)>0) {
+      density.args <- dots[dargs[didx]]
+      dots[dargs[didx]] <- NULL
+    }
+    cc <- unlist(apply(x, 2, function(y)
+      quantile(y, probs=probs, na.rm = TRUE),
+      simplify=FALSE))
     ic <- c()
     for (i in seq_len(NCOL(x))) {
-      ic <- cbind(ic, IC.quantile(x[,i], probs=probs))
+      ic <- cbind(ic, do.call(IC.quantile,
+                        c(list(x[,i], probs=probs), density.args)))
     }
   }
   if (any(c("vcov", "IC") %in% names(list(...)))) {
     return(estimate(NULL, coef = cc, ...))
   }
-  estimate(NULL, coef=cc, IC=ic, ...)
+  do.call(estimate, c(list(NULL, coef=cc, IC=ic), dots))
 }
 
 ##' Estimation of functional of parameters
@@ -241,7 +252,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
   }
   if (!missing(use)) {
-    p0 <- c("f","contrast","only.coef","subset","average","keep","labels")
+
+    p0 <- c("f","contrast","only.coef","subset","average","keep","labels","null")
     cl0 <- cl
     cl0[c("use", p0)] <- NULL
     cl0$keep <- use
