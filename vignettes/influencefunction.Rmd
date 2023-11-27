@@ -12,7 +12,7 @@ output:
     toc_depth: 2
     mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
 vignette: >
-  %\VignetteIndexEntry{The Power of Influence}
+  %\VignetteIndexEntry{The Art of Influence}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ref.bib
@@ -880,38 +880,52 @@ ea
 IC(ea) |> head()
 ```
 
-
 ## TODO: Example: Average Treatment Effects
-
-```{r}
-
-```
 
 - `targeted::cate`
 - `targeted::riskreg`
 - `targeted::alean`
+- `targeted::riskreg_surv`
+- `mets::binregTSR`
+- `mets::binregATE`
+- `mets::logitATE`
+- `mets::doubleFGR`
+- `mets::resmeanATE`
+- `mets::recregIPCW`
+_ `mets::recurrentMarginalAIPCWdata_`
+- `mets::normalATE`
+- `mets::binregATEbin`
+- `mets::mediatorSurv`
 
 ## TODO: Two-stage estimation
+
+```{r stack}
 stack
+```
+
 
 ### TODO: Measurement error
+
+```{r measurementerror}
 measurement.error
+```
+
 
 # TODO: Examples diagnostics and ....
 
-diagtest, assoc, riskcomp, Ratio, Diff, odds, OR,
-information_assoc, information.table, independence (not exported) information.multinomial
-gkgamma, kappa
+- diagtest
+- assoc, riskcomp Ratio, Diff, odds, OR,
+- information_assoc, information.table, independence (not exported) - information.multinomial
+- gkgamma, kappa
 
-
-Example (McKenzie et al. 1996, Clarke et al. 1993)
+Example [@mckenzie1996; @clarke1993]
 
 50 patients from Monash Medical Centre, Melbourne
 - *Diagnosis of depression* (DSM-III-R MDD, Dysthymia, Adjustment
   Disorder with Depressed Mood, Depression NOS)
 - *Beck Depression Inventory (BDI)* (Beck et al., 1961)
 - *General Health Questionnaire (GHQ)* (Goldberg & Williams, 1988)
- (classificaiton, see McKenzie, 1992).
+ (classification, see McKenzie, 1992).
 
 | Diagnosis | BDI | GHQ |  n |
 |-----------+-----+-----+----|
@@ -962,8 +976,8 @@ L(\pi_{ij}\mid n_{ij})  = A\prod_{i,j} \pi_{ij}^{n_{ij}}, \pi_{ij}\geq 0, \sum_{
 
 # TODO: Enabling new models 
 
-IC method
-score method
+- IC method
+- score method
 
 ```{r}
 minimal <- lvm(c(y1, y2, y3) ~ x) |>
