@@ -44,7 +44,6 @@ knitr::opts_chunk$set(
 # TODO
 
 - Quantile regression and Zeng&Lin procedure?
-- Quantiles, estimate.data.frame, estimate.array via kernel estimator
 - Diagnostics Cohens Kappa, partial gamma example
 - method argument to estimate (Richardson vs complex)
 - Explain that the `type` argument is important (first example): it defines the
@@ -53,7 +52,6 @@ knitr::opts_chunk$set(
 - Need to elaborate on the baseline and time argument. Add documentation to
   IC.phreg and reference to that perhaps since these arguments are not documented
   in lava and not required arguments for the IC S3method
-- multiple testing: pzmax, p.correct, closed testing procedure
 
 
 # Influence functions
@@ -143,14 +141,15 @@ m <- lvm() |>
   regression(y1 ~ x1 + a + w) |>
   regression(y2 ~ x2 + a + w) |>
   regression(y3 ~ x3 + a + w) |>
+  regression(y4 ~ x4 + a + w) |>
   regression(a ~ w) |>
-  distribution(~ y1 + y2 + y3 + a, value = binomial.lvm()) |>
+  distribution(~ y1 + y2 + y3 + y4 + a, value = binomial.lvm()) |>
   distribution(~id, value = Sequence.lvm(integer = TRUE))
 ```
 
 We simulate from the model where \(Y_3\) is only observed for half of the subjects
 ```{r simulate}
-n <- 5e2
+n <- 4e2
 dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
 Print(dw)
@@ -313,7 +312,7 @@ The IF for the baseline cumulative hazard at a specific time point can be
 estimated in similar way:
 ```{r phreg-baseline}
 baseline <- function(object, time, ...) {
-  ic <- IC(object, baseline = TRUE, time = time, ...)
+  ic <- mets::IC(object, baseline = TRUE, time = time, ...)
   est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
   estimate(NULL, coef = est, IC = ic, labels = paste0("chaz:", time))
 }
@@ -722,11 +721,11 @@ H_0\colon\quad \bm{B}\theta = \bm{b}_0
 where \(\bm{B}\in\mathbb{R}^{m\times p}\) is a matrix of estimable contrasts and
 \(\bm{b}_0\in\mathbb{R}^{m}\). 
 
-As an example consider marginal models for the three binary response variables
-  \(Y_1, Y_2, Y_3\) 
+As an example consider marginal models for the binary response variables
+  \(Y_1, Y_2, Y_3, Y_4\) 
 ```{r}
 g <- lapply(
-  list(y1 ~ a, y2 ~ a, y3 ~ a),
+  list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
   function(f) glm(f, family = binomial, data = dw)
 )
 gg <- Reduce(merge, g)
@@ -736,11 +735,11 @@ gg
 A linear transformation can be specified via the `f` as a matrix argument
 instead of function object
 ```{r}
-B <- cbind(0,1,0,-1,0,0)
+B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
 ```
 
-The \(\bm{b}_0\) vector (default assumed to be zero) can be specied via the `null` argument
+The \(\bm{b}_0\) vector (default assumed to be zero) can be specified via the `null` argument
 ```{r}
 estimate(gg, B, null=1)
 ```
@@ -753,8 +752,8 @@ For testing multiple hypotheses we use that
  \(\widehat{\Sigma}\) is the estimated variance of \(\theta\) (i.e., 
 `vcov(gg)`) 
 ```{r}
-B <- rbind(cbind(0,1,0,-1,0,0),
-           cbind(0,1,0,0,0,-1))
+B <- rbind(cbind(0,1, 0,-1, 0,0),
+           cbind(0,1, 0,0, 0,-1))
 estimate(gg, B)
 ```
 
@@ -773,8 +772,45 @@ comparisons of different exposure estimates:
 
 ```{r pairwise.diff}
 pairwise.diff(3)
-estimate(gg, pairwise.diff(3), use=c(2,4,6))
+estimate(gg, pairwise.diff(3), null=c(1,1,1), use=c(2,4,6))
 ```
+
+When conducting multiple tests each at a nominal-level of \(\alpha\) the overall
+type I error is not controlled at \(\alpha\)-level.  
+The influence function also allows for adjusting for multiple comparisons.
+Let \(Z_{1},\ldots,Z_{p}\) denote \(Z\)-statistics from \(p\) distinct two-sided
+hypothesis tests which we will assume is asymptotically distributed under the
+null hypothesis as a zero-mean Gaussian distribution with correlation matrix
+\(R\). Let \( Z_{max} = \max_{i=1,\ldots,p} |Z_i|\) then the family-wise error
+rate (FWER) under the null can be approximated by \[ P(Z_{max} > z) =
+1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{p})
+\,dx_{1}\cdots\,dx_{p} \] where \(\phi_{R}\) is the multivariate normal density
+function with mean 0 and variance given by the correlation matrix \(R\). The
+adjusted \(p\)-values can then be calculated as \[P(Z_{max} >
+\Phi^{-1}(1-p/2))\] where \(\Phi\) is the standard Gaussian CDF. As described in 
+in [@RitzPipper_multcomp] the joint distribution of \(Z_{1},\ldots,Z_{p}\)
+can be estimated from the IFs. This is implemented in the `p.correct` method
+
+```{r pcorrect}
+gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
+p.correct(gg0)
+```
+
+While this always yields a more powerful test compared to Bonferroni
+adjustments, a more powerful closed-testing procedure [@marcus1976], can be generally
+obtained by considering all intersection hypotheses. 
+    ![Closed testing via Wald tests of all intersections hypotheses.](figs/closedtesting.pdf)
+To reject the \(H_{1}\) at
+an correct \(\alpha\)-level we should test all intersection hypotheses involving
+\(H_{1}\) and check if there all are rejected at the \(\alpha\)-level. The
+adjusted \(p\)-values can here be obtained as the maximum \(p\)-value across all
+the composite hypothesis tests. Unfortunately, this only works for relatively
+few comparisons as the number of tests grows exponentially.
+
+```{r closedtesting}
+closed.testing(gg0)
+```
+
 
 ## Averaging
 
@@ -836,7 +872,7 @@ pr(coef(g), dw) |> head()
 ```
 The target parameter can now be estimated with the syntax
 ```{r average}
-id <- foldr(500, 50, list=FALSE)
+id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 IC(ea) |> head()
