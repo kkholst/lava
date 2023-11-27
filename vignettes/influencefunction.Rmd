@@ -1,5 +1,5 @@
 ---
-title: The Power of Influence
+title: The Art of Influence
 subtitle: A Practical Guide to Working with Influence Functions 
 author: Klaus Kähler Holst
 Rdate: "`r Sys.Date()`"
@@ -799,7 +799,9 @@ p.correct(gg0)
 While this always yields a more powerful test compared to Bonferroni
 adjustments, a more powerful closed-testing procedure [@marcus1976], can be generally
 obtained by considering all intersection hypotheses. 
-    ![Closed testing via Wald tests of all intersections hypotheses.](figs/closedtesting.pdf)
+
+![*Figure: closed testing via Wald tests of all intersections hypotheses.*](figs/closedtesting.pdf)
+
 To reject the \(H_{1}\) at
 an correct \(\alpha\)-level we should test all intersection hypotheses involving
 \(H_{1}\) and check if there all are rejected at the \(\alpha\)-level. The
