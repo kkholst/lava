@@ -44,7 +44,7 @@ knitr::opts_chunk$set(
 # TODO
 
 - Quantile regression and Zeng&Lin procedure?
-- Diagnostics Cohens Kappa, partial gamma example
+- Diagnostics Cohen's Kappa, partial gamma example
 - method argument to estimate (Richardson vs complex)
 - Explain that the `type` argument is important (first example): it defines the
   target parameter and the influence function
@@ -279,7 +279,7 @@ The same estimates can be obtained with a
 *cumulative link regression* model which also generalizes to 
 ordinal outcomes. Here we consider the proportional odds model given by 
 \begin{align*}
-\log \frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)} = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
+\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
 \end{align*}
 ```{r ordreg}
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
@@ -308,8 +308,11 @@ fit.phreg
 IC(fit.phreg) |> head()
 ```
 
-The IF for the baseline cumulative hazard at a specific time point can be
-estimated in similar way:
+The IF for the baseline cumulative hazard at a specific time point
+\begin{align*}
+\Lambda_0(t) = \int_0^t \lambda_0(u)\,du, 
+\end{align*}
+where \(\lambda_0(t)\) is the baseline hazard, can be estimated in similar way:
 ```{r phreg-baseline}
 baseline <- function(object, time, ...) {
   ic <- mets::IC(object, baseline = TRUE, time = time, ...)
@@ -334,7 +337,7 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 <!-- glm(events ~ offset(log(atrisk)) + sex + factor(int.end), data = pbc2, family=poisson(log)) -->
 <!-- ``` -->
 
-
+  
 ## Example: random effects model / structural equation model
 
 General structural equation models (SEMs) can be estimated with `lava::lvm`. 
@@ -572,17 +575,18 @@ Turning back to the example data, we can estimate the marginal model
 g0 <- glm(y ~ a + w + x, data = dl, family = binomial())
 ```
 The asymptotic variance estimate ignoring that the observations are not
-independent is not consistent. Instead we can calcualte the cluster robust
+independent is not consistent. Instead we can calculate the cluster robust
 standard errors from the above iid decomposition
 ```{r cluster2}
 estimate(g0, id=dl$id)
 ```
-We can confirm that this situation is equivalent to the variance estimates we
+We can confirm that this situation is equivalent to the variance estimates we 
 obtain from a GEE marginal model with working independence correlation structure [@r_geepack]
 ```{r geepack}
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
 summary(gee0)
 ```
+
 ## Computational aspects 
 
 Working with large and potentially multiple different IFs can be memory-intensive. A
@@ -594,7 +598,7 @@ when combining IFs.
 ```{r aggregate}
 set.seed(1)
 y <- cbind(rnorm(1e5))
-N <- 1e3 ## Number of aggregated groups, the number of observations in the new IF
+N <- 2e2 ## Number of aggregated groups, the number of observations in the new IF
 id <- foldr(nrow(y), N, list=FALSE)
 Print(cbind(table(id)))
 
@@ -647,7 +651,7 @@ estimate(g1, function(x) c(x, x[1] + exp(x[2]), inv = 1 / x[2]))
 estimate(g1, exp)         
 ```
 The gradient can be provided as the attribute `grad` and otherwise numerical differentiation is applied. 
-
+  
 ## Example: Pearson correlation
 As a simple toy example consider the problem of estimating the covariance of two
 variables \(X_1\) and \(X_2\)
@@ -785,7 +789,7 @@ The influence function also allows for adjusting for multiple comparisons.
 Let \(Z_{1},\ldots,Z_{p}\) denote \(Z\)-statistics from \(p\) distinct two-sided
 hypothesis tests which we will assume is asymptotically distributed under the
 null hypothesis as a zero-mean Gaussian distribution with correlation matrix
-\(R\). Let \( Z_{max} = \max_{i=1,\ldots,p} |Z_i|\) then the family-wise error
+\(R.\) Let \( Z_{max} = \max_{i=1,\ldots,p} |Z_i|\) then the family-wise error
 rate (FWER) under the null can be approximated by \[ P(Z_{max} > z) =
 1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{p})
 \,dx_{1}\cdots\,dx_{p} \] where \(\phi_{R}\) is the multivariate normal density
@@ -886,9 +890,25 @@ IC(ea) |> head()
 
 ## TODO: Example: Average Treatment Effects
 
-```{r targeted}
 
+```{r targeted, cache=TRUE}
+a1 <- targeted::cate(a ~ 1,
+                     data = dw,
+                     response_model = y1 ~ x1+w+a,
+                     propensity_model = a ~ x1*w
+                     )
+a1
+IC(a1) |> head()
 ```
+
+```{r targeted2, cache=TRUE}
+targeted::cate(a ~ w,
+               data = dw,
+               response_model = targeted::ML(y1 ~ x1+w+a, "xgboost.binary"),
+               propensity_model = targeted::ML(a ~ x1*w, "xgboost.binary")
+               )
+```
+
 
 
 - `targeted::cate`
