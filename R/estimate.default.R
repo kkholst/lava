@@ -31,6 +31,11 @@ IC.quantile <- function(x, estimate, probs=0.5, ...) {
 }
 
 ##' @export
+##' @aliases estimate.array estimate.data.frame
+##' @param x numeric matrix
+##' @param type target parameter ("mean", "variance", "quantile")
+##' @param probs numeric vector of probabilities (for type="quantile")
+##' @param ... Additional arguments to lower level functions (i.e., stats::density.default when type="quantile")
 estimate.array <- function(x, type="mean", probs=0.5, ...) {
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
@@ -230,7 +235,8 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
 ##' estimate(l,f)
-##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.array estimate.mlm
+##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.mlm
+##' @seealso estimate.array
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,

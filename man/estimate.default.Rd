@@ -5,7 +5,6 @@
 \alias{estimate}
 \alias{estimate.estimate}
 \alias{merge.estimate}
-\alias{estimate.array}
 \alias{estimate.mlm}
 \title{Estimation of functional of parameters}
 \usage{
@@ -234,4 +233,7 @@ null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate
 estimate(l,f,R=1e2,null.sim=null)
 
 estimate(l,f)
+}
+\seealso{
+estimate.array
 }

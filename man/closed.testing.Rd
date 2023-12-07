@@ -8,7 +8,8 @@
 closed.testing(
   object,
   idx = seq_along(coef(object)),
-  null = rep(0, length(idx)),
+  null,
+  return.all = FALSE,
   ...
 )
 }
