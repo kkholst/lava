@@ -40,6 +40,7 @@ IC.quantile <- function(x, estimate, probs=0.5, ...) {
 ##' @param probs numeric vector of probabilities (for type="quantile")
 ##' @param ... Additional arguments to lower level functions (i.e., stats::density.default when type="quantile")
 estimate.array <- function(x, type="mean", probs=0.5, ...) {
+  cl <- match.call()
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
   }
@@ -75,7 +76,9 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
   if (any(c("vcov", "IC") %in% names(list(...)))) {
     return(estimate(NULL, coef = cc, ...))
   }
-  do.call(estimate, c(list(NULL, coef=cc, IC=ic), dots))
+  res <- do.call(estimate, c(list(NULL, coef = cc, IC = ic), dots))
+  res$call <- cl
+  return(res)
 }
 
 ##' Estimation of functional of parameters
@@ -256,12 +259,12 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              cluster,
                              R=0,
                              null.sim) {
-  cl <- match.call(expand.dots=TRUE)
+  cl <- match.call(expand.dots = TRUE)
+  cal <- match.call()
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
   }
   if (!missing(use)) {
-
     p0 <- c("f","contrast","only.coef","subset","average","keep","labels","null")
     cl0 <- cl
     cl0[c("use", p0)] <- NULL
@@ -708,7 +711,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     )
   }
   if (only.coef) return(res$coefmat)
-  res$call <- cl
+  res$call <- cal
   res$back.transform <- back.transform
   res$n <- nrow(data)
   res$ncluster <- nrow(res$IC)
