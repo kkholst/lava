@@ -19,9 +19,7 @@ p.correct <- function(object, method, alpha=0.05, ...) {
     stop("Expected an 'estimate' object")
   dots <- list(...)
   null <- object$compare$null
-  if (is.null(null))
-    null <- rep(0, nrow(est))
-  if (!("null" %in% names(dots)))
+  if (!("null" %in% names(dots)) && !is.null(null))
     dots$null <- null
   object <- do.call(estimate, c(list(object), dots))
   est <- parameter(object)[, c(1,5), drop=FALSE]

@@ -30,6 +30,9 @@ IC.quantile <- function(x, estimate, probs=0.5, ...) {
   res
 }
 
+##' Estimate parameters and influence function.
+##'
+##' Estimate parameters for the sample mean, variance, and quantiles
 ##' @export
 ##' @aliases estimate.array estimate.data.frame
 ##' @param x numeric matrix
