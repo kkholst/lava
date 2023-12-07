@@ -39,6 +39,7 @@ p.correct <- function(object, method, alpha=0.05, ...) {
 ##' @param object estimate object
 ##' @param idx Index of parameters to adjust for multiple testing
 ##' @param null Null hypothesis value
+##' @param return.all If TRUE details on all intersection hypotheses are returned
 ##' @param ... Additional arguments
 ##' @export
 ##' @examples
