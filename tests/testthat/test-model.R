@@ -81,7 +81,7 @@ test_that("Linear constraints", {
 })
 
 
-if (requireNamespace("graph",quietly = TRUE))
+if (requireNamespace("Rgraphviz",quietly = TRUE))
 test_that("Graph attributes", {
     m <- lvm(y~x)
     suppressMessages(g1 <- graph::updateGraph(plot(m,noplot=TRUE)))
@@ -93,8 +93,9 @@ test_that("Graph attributes", {
     g1 <- lava::addattr(g1, "fill", v, col)
     testthat::expect_true(col == graph::nodeRenderInfo(g1)$fill[[v]])
     nodecolor(m, v) <- "blue"
+
     g2 <- Graph(m, add=TRUE)
-    testthat::expect_true(inherits(g2,"graph"))
+    testthat::expect_true(inherits(g2, "graph"))
     testthat::expect_true(col == graph::nodeRenderInfo(g2)$fill[[v]])
     testthat::expect_true(addattr(g2, "fill")[[v]] == "blue")
     graph::graphRenderInfo(g2)$rankdir <- "LR"
