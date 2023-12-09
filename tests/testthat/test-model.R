@@ -7,8 +7,8 @@ test_that("Basic model building blocks", {
     testthat::expect_true(regression(m)$rel["x","y"]==1)
 
     ## Children parent,nodes
-    testthat::expect_match(children(m,~x),"y")
-    testthat::expect_match(parents(m,~y),"x")
+    testthat::expect_true(children(m,~x)=="y")
+    testthat::expect_true(parents(m,~y)=="x")
     testthat::expect_equivalent(parents(m),vars(m))
     testthat::expect_equivalent(children(m),vars(m))
 
@@ -90,12 +90,12 @@ test_that("Graph attributes", {
 
     col <- "blue"; v <- "y"
     g1 <- lava::addattr(g1,"fill",v,col)
-    testthat::expect_match(col,graph::nodeRenderInfo(g1)$fill[v])
+    testthat::expect_true(col==graph::nodeRenderInfo(g1)$fill[v])
     nodecolor(m,v) <- "blue"
     g2 <- Graph(m,add=TRUE)
     testthat::expect_true(inherits(g2,"graph"))
-    testthat::expect_match(col,graph::nodeRenderInfo(g2)$fill[v])
-    testthat::expect_match(addattr(g2,"fill")["y"],"blue")
+    testthat::expect_true(col==graph::nodeRenderInfo(g2)$fill[v])
+    testthat::expect_true(addattr(g2,"fill")["y"]=="blue")
     graph::graphRenderInfo(g2)$rankdir <- "LR"
     Graph(m) <- g2
     testthat::expect_true(graph::graphRenderInfo(Graph(m))$rankdir=="LR")
