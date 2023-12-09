@@ -20,6 +20,8 @@ closed.testing(
 
 \item{null}{Null hypothesis value}
 
+\item{return.all}{If TRUE details on all intersection hypotheses are returned}
+
 \item{...}{Additional arguments}
 }
 \description{

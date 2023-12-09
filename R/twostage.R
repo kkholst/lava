@@ -87,7 +87,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' @export
 ##' @param object Model object
 ##' @param ... Additional arguments to lower level functions
-"twostage" <- function(object,...) UseMethod("twostage")
+"twostage" <- function(object, ...) UseMethod("twostage")
 
 ##' Two-stage estimator (non-linear SEM)
 ##'
@@ -137,6 +137,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##'     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
 ##' }
 ##'
+##' \donttest{ ## Reduce test timing
 ##' ## Splines
 ##' f <- function(x) cos(2*x)+x+-0.25*x^2
 ##' m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
@@ -171,6 +172,7 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##'   lines(x,p1[,1],col="green",lwd=5)
 ##'   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
 ##' }
+##' } ## Reduce test timing
 ##'
 ##' \dontrun{ ## Reduce timing
 ##'  ## Cross-validation example
