@@ -1,16 +1,8 @@
 # lava 1.7.4
-  Development version
- 
  - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`,  `estimate.array`, `estimate.data.frame`
- - `Print` method for nicer print of tabular data (matrix, data.frame)
- - `merge` regex 
- - `IC` should generally return row-names (default id) as obtained from model.matrix or similar
- - TODO: 
-   + Rewrite DESCRIPTION/lava-package.Rd
-   + Update README to reflect current state of package
-   + IF vignette
-   + Update help pages for merge, estimate, IC, ...
-
+ - `Print` method for tabular data (matrix, data.frame)
+ - `merge` now supports regular expressions  
+ - `IC` returns row-names (default id) as obtained from model.matrix or similar
 
 # lava 1.7.3 
 - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
