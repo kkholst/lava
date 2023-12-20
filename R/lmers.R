@@ -48,20 +48,32 @@ lmerplot <- function(model,x,id,y,transform,re.form=NULL,varcomp=FALSE,colorbar=
     }
 }
 
-varcomp <- function(x,profile=TRUE,...) {
-    cc <- cbind(lme4::fixef(x),diag(as.matrix(vcov(x)))^.5)
-    cc <- cbind(cc,cc[,1]-qnorm(0.975)*cc[,2],cc[,1]+qnorm(0.975)*cc[,2],
-                2*(1-pnorm(abs(cc[,1])/cc[,2])))
-    pr <- NULL
-    if (profile) pr <- confint(x)
-    colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
-    vc <- lme4::VarCorr(x)
-    res <- structure(list(coef=lme4::fixef(x), vcov=as.matrix(vcov(x)),
-                          coefmat=cc,
-                          confint=pr,
-                          varcomp=vc[[1]][,],
-                          residual=attributes(vc)$sc^2
-                          ),
-                     class="estimate.lmer")
-    res
+varcomp <- function(x, profile=TRUE, ...) {
+  if (inherits(x, "lme")) {
+    coefs <- nlme::fixef(x)
+    varcomp <- nlme::getVarCov(x)
+    pr <- nlme::intervals(x)
+    resvar <- summary(x)$sigma
+  } else if (inherits(x, "lmerMod")) {
+    coefs <- lme4::fixef(x)
+    varcomp <- lme4::VarCorr(x)[[1]][, ]
+    resvar <- attributes(VarCorr(x))$sc^2
+    pr <- confint(x) ## Profile likelihood intervals
+  } else {
+    stop("unrecognized model object")
+  }
+  cc <- cbind(coefs, diag(as.matrix(vcov(x)))^.5)
+  cc <- cbind(cc,cc[,1]-qnorm(0.975)*cc[,2],
+              cc[,1]+qnorm(0.975)*cc[,2],
+              2*(1-pnorm(abs(cc[,1])/cc[,2])))
+  colnames(cc) <- c("Estimate","Std.Err","2.5%","97.5%","p-value")
+  res <- structure(list(coef=coefs,
+                        vcov=as.matrix(vcov(x)),
+                        coefmat=cc,
+                        confint=pr,
+                        varcomp=varcomp,
+                        varresidual=resvar
+                        ),
+                   class="estimate.lmer")
+  res
 }

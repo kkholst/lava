@@ -299,13 +299,14 @@ test_that("Prediction with missing data, random intercept", {
 })
 
 
-if (requireNamespace("lme4",quietly = TRUE) && requireNamespace("mets",quietly = TRUE))
+## if (requireNamespace("lme4", quietly = TRUE) && requireNamespace("mets", quietly = TRUE)) {
+if (requireNamespace("mets",quietly = TRUE))
 test_that("Random slope model", {
     set.seed(1)
     m <- lvm()
-    regression(m) <- y1 ~ 1*u+1*s
-    regression(m) <- y2 ~ 1*u+2*s
-    regression(m) <- y3 ~ 1*u+3*s
+    regression(m) <- y1 ~ 1*u + 1*s
+    regression(m) <- y2 ~ 1*u + 2*s
+    regression(m) <- y3 ~ 1*u + 3*s
     latent(m) <- ~u+s
     dw <- sim(m,20)
 
@@ -313,8 +314,9 @@ test_that("Random slope model", {
     dd$num <- dd$num+runif(nrow(dd),0,0.2)
     dd0 <- dd[-c(1:2*3),]
     library(lme4)
-    l <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
-    sl <- lava:::varcomp(l,profile=FALSE)
+    l <- lme(y ~ 1+num, random=~1+num|id, data=dd, method="ML")
+    ##l0 <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
+    sl0 <- lava:::varcomp(l)
 
     d <- mets::fast.reshape(dd,id="id")
     d0 <- mets::fast.reshape(dd0,id="id")
@@ -337,7 +339,8 @@ test_that("Random slope model", {
     ## missing
     testthat::expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
                             "Iter=")
-    l0 <- lmer(y~ 1+num +(1+num|id),dd0,REML=FALSE)
+    ## l0 <- lmer(y ~ 1 + num + (1 + num | id), dd0, REML = FALSE)
+    l0 <- lme(y~ 1+num, random=~1+num|id, data=dd0, method="ML")
     testthat::expect_true((logLik(l0)-logLik(e0))^2<1e-5)
 
     m1 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
