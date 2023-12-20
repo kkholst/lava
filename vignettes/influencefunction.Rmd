@@ -901,13 +901,13 @@ a1
 IC(a1) |> head()
 ```
 
-```{r targeted2, cache=TRUE}
-targeted::cate(a ~ w,
-               data = dw,
-               response_model = targeted::ML(y1 ~ x1+w+a, "xgboost.binary"),
-               propensity_model = targeted::ML(a ~ x1*w, "xgboost.binary")
-               )
-```
+<!-- ```{r targeted2, cache=TRUE} -->
+<!-- targeted::cate(a ~ w, -->
+<!--                data = dw, -->
+<!--                response_model = targeted::ML(y1 ~ x1+w+a, "xgboost.binary"), -->
+<!--                propensity_model = targeted::ML(a ~ x1*w, "xgboost.binary") -->
+<!--                ) -->
+<!-- ``` -->
 
 
 

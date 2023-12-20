@@ -58,7 +58,7 @@ Suggests:
     polycor,
     quantreg,
     rgl,
-    targeted (>= 0.2),
+    targeted (>= 0.4),
     testthat (>= 0.11),
     visNetwork
 VignetteBuilder: knitr
