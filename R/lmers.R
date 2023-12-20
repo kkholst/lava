@@ -57,7 +57,7 @@ varcomp <- function(x, profile=TRUE, ...) {
   } else if (inherits(x, "lmerMod")) {
     coefs <- lme4::fixef(x)
     varcomp <- lme4::VarCorr(x)[[1]][, ]
-    resvar <- attributes(VarCorr(x))$sc^2
+    resvar <- attributes(lme4::VarCorr(x))$sc^2
     pr <- confint(x) ## Profile likelihood intervals
   } else {
     stop("unrecognized model object")

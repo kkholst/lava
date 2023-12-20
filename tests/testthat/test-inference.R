@@ -313,10 +313,9 @@ test_that("Random slope model", {
     dd <- mets::fast.reshape(dw)
     dd$num <- dd$num+runif(nrow(dd),0,0.2)
     dd0 <- dd[-c(1:2*3),]
-    library(lme4)
+    ##l <- lme4::lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
     l <- nlme::lme(y ~ 1+num, random=~1+num|id, data=dd, method="ML")
-    ##l0 <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
-    sl0 <- lava:::varcomp(l)
+    sl <- lava:::varcomp(l)
 
     d <- mets::fast.reshape(dd,id="id")
     d0 <- mets::fast.reshape(dd0,id="id")
