@@ -146,7 +146,7 @@ correlation(e)
 
 Note, that in this case the confidence intervals are constructed
 by using a variance stabilizing transformation, Fishers
-\(z\)-transform [@lehmann_romano_2005],
+\(z\)-transform [@lehmann2023_testing],
 
 \[z = \arctanh(\widehat{\rho}) =
   \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\]

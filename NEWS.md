@@ -1,12 +1,10 @@
 # lava 1.7.4
+  Development version
  
- Development version
- 
- - estimate.mlm, IC.mlm, pars.mlm, estimate.array, estimate.data.frame
- - Print method
- - merge regex 
- - IC should generally return row-names (default id) as obtained from
-   model.matrix or similar
+ - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`,  `estimate.array`, `estimate.data.frame`
+ - `Print` method for nicer print of tabular data (matrix, data.frame)
+ - `merge` regex 
+ - `IC` should generally return row-names (default id) as obtained from model.matrix or similar
  - TODO: 
    + Rewrite DESCRIPTION/lava-package.Rd
    + Update README to reflect current state of package
