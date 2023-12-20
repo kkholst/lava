@@ -33,20 +33,29 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Cache R packages
-        uses: actions/cache@v3
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          dependencies: '"all"'
+          cache: true
+          extra-packages: |
+            any::rcmdcheck
+            any::pkgdown
+            any::remotes
+            any::covr
+          needs: check
+
+      # - name: Cache R packages
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.R_LIBS_USER }}
+      #     key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+      #     restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install R dependencies
         run: |
-          install.packages("remotes", repos="https://cloud.r-project.org")
           remotes::install_github("kkholst/gof")
           remotes::install_deps(".", dep=T, upgrade=T)
-          remotes::install_cran(c("pkgdown","covr","rcmdcheck"))
-          remotes::install_bioc("Rgraphviz", upgrade="always")
+          # remotes::install_bioc("Rgraphviz", upgrade="always")
         shell: Rscript {0}
 
       - name: Check

@@ -314,7 +314,7 @@ test_that("Random slope model", {
     dd$num <- dd$num+runif(nrow(dd),0,0.2)
     dd0 <- dd[-c(1:2*3),]
     library(lme4)
-    l <- lme(y ~ 1+num, random=~1+num|id, data=dd, method="ML")
+    l <- nlme::lme(y ~ 1+num, random=~1+num|id, data=dd, method="ML")
     ##l0 <- lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
     sl0 <- lava:::varcomp(l)
 
@@ -340,7 +340,7 @@ test_that("Random slope model", {
     testthat::expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
                             "Iter=")
     ## l0 <- lmer(y ~ 1 + num + (1 + num | id), dd0, REML = FALSE)
-    l0 <- lme(y~ 1+num, random=~1+num|id, data=dd0, method="ML")
+    l0 <- nlme::lme(y~ 1+num, random=~1+num|id, data=dd0, method="ML")
     testthat::expect_true((logLik(l0)-logLik(e0))^2<1e-5)
 
     m1 <- lvm(c(y1[0:v],y2[0:v],y3[0:v])~1*u)
