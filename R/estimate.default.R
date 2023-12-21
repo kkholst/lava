@@ -14,7 +14,7 @@ estimate.data.frame <- function(x, ...) {
 }
 
 
-IC.quantile <- function(x, estimate, probs=0.5, ...) {
+IC_quantile <- function(x, estimate, probs=0.5, ...) {
   x <- na.omit(x)
   f0 <- density(x, ...)
   ## U <- function(est) (tau - (x <= est))
@@ -69,7 +69,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
       simplify=FALSE))
     ic <- c()
     for (i in seq_len(NCOL(x))) {
-      ic <- cbind(ic, do.call(IC.quantile,
+      ic <- cbind(ic, do.call(IC_quantile,
                         c(list(x[,i], probs=probs), density.args)))
     }
   }
