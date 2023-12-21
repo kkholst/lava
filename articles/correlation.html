@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -51,6 +51,9 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
+    </li>
+    <li>
+      <a href="../articles/influencefunction.html">The Art of Influence</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -84,7 +87,7 @@
       <h1 data-toc-skip>Estimating partial correlations with lava</h1>
                         <h4 data-toc-skip class="author">Klaus Kähler Holst</h4>
             
-            <h4 data-toc-skip class="date">2023-11-04</h4>
+            <h4 data-toc-skip class="date">2023-12-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/HEAD/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="hidden name"><code>correlation.Rmd</code></div>
@@ -199,10 +202,10 @@
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/correlation.html">correlation</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%  97.5%   P-value</span></span>
 <span><span class="co">#&gt; y1~y2   0.8915         0.8721 0.9082 3.58e-224</span></span></code></pre></div>
-<p>Note, that in this case the confidence intervals are constructed by using a variance stabilizing transformation, Fishers <span class="math inline">\(z\)</span>-transform <sup id="bd9fb723a778b8030b92a040cc4acf52"><a href="#lehmann_romano_2005" title="Lehmann \&amp; Romano, Testing statistical hypotheses, Springer (2005).">lehmann_romano_2005</a></sup>,</p>
+<p>Note, that in this case the confidence intervals are constructed by using a variance stabilizing transformation, Fishers <span class="math inline">\(z\)</span>-transform <span class="citation">(Lehmann and Romano 2023)</span>,</p>
 <p><span class="math display">\[z = \arctanh(\widehat{\rho}) =
-  \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\]</span> where <span class="math inline">\(\widehat{\rho}\)</span> is the MLE. This estimate has an approximate asymptotic normal distribution <span class="math inline">\(\mathcal{N}(\arctanh(\rho),\frac{1}{n-3-k})\)</span>. Hence a asymptotic 95% confidence interval is given by <span class="math display">\[\widehat{z} \pm \frac{1.96}{\sqrt{n-3-k}}\]</span> and the confidence interval for <span class="math inline">\(\widehat{\rho}\)</span> can directly be calculated by the inverse transformation: <span class="math display">\[\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.\]</span></p>
-<p>This is equivalent to the direct calculations using the delta method (except for the small sample bias correction <span class="math inline">\(3+k\)</span>) where the estimate and confidence interval are transformed back to the original scale using the <code>back.transform</code> argument.</p>
+  \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)\]</span> where <span class="math inline">\(\widehat{\rho}\)</span> is the MLE. This estimate has an approximate asymptotic normal distribution <span class="math inline">\(\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})\)</span>. Hence a asymptotic 95% confidence interval is given by <span class="math display">\[\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}\]</span> and the confidence interval for <span class="math inline">\(\widehat{\rho}\)</span> can directly be calculated by the inverse transformation: <span class="math display">\[\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.\]</span></p>
+<p>This is equivalent to the direct calculations using the delta method (except for the small sample bias correction <span class="math inline">\(3\)</span>) where the estimate and confidence interval are transformed back to the original scale using the <code>back.transform</code> argument.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y2'</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y1'</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="st">'y2~~y2'</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5%  97.5%    P-value</span></span>
@@ -217,7 +220,7 @@
 <span>    <span class="fu"><a href="../reference/constrain-set.html">constrain</a></span><span class="op">(</span><span class="va">v1</span> <span class="op">~</span> <span class="va">l1</span>, fun<span class="op">=</span><span class="va">exp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/constrain-set.html">constrain</a></span><span class="op">(</span><span class="va">v2</span> <span class="op">~</span> <span class="va">l2</span>, fun<span class="op">=</span><span class="va">exp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/constrain-set.html">constrain</a></span><span class="op">(</span><span class="va">c</span> <span class="op">~</span> <span class="va">z</span><span class="op">+</span><span class="va">l1</span><span class="op">+</span><span class="va">l2</span>, fun<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">tanh</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>In the above code, we first add new parameters <code>l1</code> and <code>l2</code> to hold the log-variance parameters, and <code>z</code> which will be the z-transform of the correlation parameter. Next we label the variances and covariances: The variance of <code>y1</code> is called <code>v1</code>; the variance of <code>y2</code> is called <code>v2</code>; the covariance of <code>y1</code> and <code>y2</code> is called <code>c</code>. Finally, these parameters are tied to the previously defined parameters using the <code>constrain</code> method such that <code>v1</code> := <span class="math inline">\(\exp(\mathtt{l1})\)</span> <code>v2</code> := <span class="math inline">\(\exp(\mathtt{l1})\)</span> and <code>z</code> := <span class="math inline">\(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\)</span>. In this way there is no constraints on the actual estimated parameters <code>l1</code>, <code>l2</code>, and <code>z</code> which can take any values in <span class="math inline">\(\R^{3}\)</span>, while we at the same time are guaranteed a proper covariance matrix which is positive definite.</p>
+<p>In the above code, we first add new parameters <code>l1</code> and <code>l2</code> to hold the log-variance parameters, and <code>z</code> which will be the z-transform of the correlation parameter. Next we label the variances and covariances: The variance of <code>y1</code> is called <code>v1</code>; the variance of <code>y2</code> is called <code>v2</code>; the covariance of <code>y1</code> and <code>y2</code> is called <code>c</code>. Finally, these parameters are tied to the previously defined parameters using the <code>constrain</code> method such that <code>v1</code> := <span class="math inline">\(\exp(\mathtt{l1})\)</span> <code>v2</code> := <span class="math inline">\(\exp(\mathtt{l1})\)</span> and <code>z</code> := <span class="math inline">\(\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}\)</span>. In this way there is no constraints on the actual estimated parameters <code>l1</code>, <code>l2</code>, and <code>z</code> which can take any values in <span class="math inline">\(\mathbb{R}^{3}\)</span>, while we at the same time are guaranteed a proper covariance matrix which is positive definite.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">e2</span></span>
@@ -296,7 +299,7 @@
 <div class="section level3">
 <h3 id="censored-observations">Censored observations<a class="anchor" aria-label="anchor" href="#censored-observations"></a>
 </h3>
-<p>Letting one of the variables be right-censored (Tobit-type model) we can proceed in exactly the same way<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>. The only difference is that the variables that are censored must all be defined as <code>Surv</code> objects (from the <code>survival</code> package which is automatically loaded when using the <code>mets</code> package) in the data frame.</p>
+<p>Letting one of the variables be right-censored (Tobit-type model) we can proceed in exactly the same way (note, this functionality is only available with the <code>mets</code> package installed - available from CRAN). The only difference is that the variables that are censored must all be defined as <code>Surv</code> objects (from the <code>survival</code> package which is automatically loaded when using the <code>mets</code> package) in the data frame.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">s2</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -307,19 +310,19 @@
 <code class="sourceCode R"><span><span class="va">e3</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    y1~x                 0.93302    0.04443 20.99898   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92403    0.04643 19.90142   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y1~x                 0.93300    0.04443 20.99873   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92401    0.04643 19.90115   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    y1                  -0.00541    0.04482 -0.12074   0.9039</span></span>
-<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45684   0.6478</span></span>
+<span><span class="co">#&gt;    y1                  -0.00542    0.04482 -0.12089   0.9038</span></span>
+<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45694   0.6477</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06612   0.9473</span></span>
-<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97307   0.3305</span></span>
-<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41846   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06611   0.9473</span></span>
+<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97300   0.3306</span></span>
+<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41856   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err  2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.496e-226</span></span>
+<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.493e-226</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
@@ -333,32 +336,32 @@
 <span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72738   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89519   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72730   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89510   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05189   0.9586</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05182   0.9587</span></span>
 <span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00076    0.06500 -0.01177   0.9906</span></span>
-<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98846   0.3229</span></span>
-<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94301   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01155   0.9908</span></span>
+<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
+<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94280   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72738   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89519   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72730   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89510   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05189   0.9586</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05182   0.9587</span></span>
 <span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00076    0.06500 -0.01177   0.9906</span></span>
-<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98846   0.3229</span></span>
-<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94301   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01155   0.9908</span></span>
+<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
+<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94280   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077 9.01e-222</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077  9e-222</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
@@ -394,38 +397,37 @@
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] lava_1.7.3</span></span>
+<span><span class="co">#&gt; [1] lava_1.7.4</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] sass_0.4.7          future_1.33.0       stringi_1.7.12     </span></span>
+<span><span class="co">#&gt;  [1] sass_0.4.8          future_1.33.0       stringi_1.8.3      </span></span>
 <span><span class="co">#&gt;  [4] lattice_0.21-9      listenv_0.9.0       digest_0.6.33      </span></span>
 <span><span class="co">#&gt;  [7] magrittr_2.0.3      evaluate_0.23       grid_4.3.2         </span></span>
-<span><span class="co">#&gt; [10] mvtnorm_1.2-3       fastmap_1.1.1       rprojroot_2.0.3    </span></span>
-<span><span class="co">#&gt; [13] jsonlite_1.8.7      Matrix_1.6-1.1      graph_1.80.0       </span></span>
-<span><span class="co">#&gt; [16] survival_3.5-7      purrr_1.0.2         Rgraphviz_2.46.0   </span></span>
-<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 codetools_0.2-19    textshaping_0.3.7  </span></span>
-<span><span class="co">#&gt; [22] jquerylib_0.1.4     cli_3.6.1           rlang_1.1.2        </span></span>
-<span><span class="co">#&gt; [25] mets_1.3.2          parallelly_1.36.0   future.apply_1.11.0</span></span>
-<span><span class="co">#&gt; [28] splines_4.3.2       cachem_1.0.8        yaml_2.3.7         </span></span>
-<span><span class="co">#&gt; [31] tools_4.3.2         parallel_4.3.2      memoise_2.0.1      </span></span>
-<span><span class="co">#&gt; [34] globals_0.16.2      BiocGenerics_0.48.0 vctrs_0.6.4        </span></span>
-<span><span class="co">#&gt; [37] R6_2.5.1            stats4_4.3.2        lifecycle_1.0.3    </span></span>
-<span><span class="co">#&gt; [40] stringr_1.5.0       fs_1.6.3            ragg_1.2.6         </span></span>
-<span><span class="co">#&gt; [43] desc_1.4.2          progressr_0.14.0    timereg_2.0.5      </span></span>
-<span><span class="co">#&gt; [46] pkgdown_2.0.7       bslib_0.5.1         glue_1.6.2         </span></span>
-<span><span class="co">#&gt; [49] Rcpp_1.0.11         systemfonts_1.0.5   xfun_0.41          </span></span>
-<span><span class="co">#&gt; [52] highr_0.10          knitr_1.45          htmltools_0.5.7    </span></span>
-<span><span class="co">#&gt; [55] rmarkdown_2.25      compiler_4.3.2</span></span></code></pre></div>
+<span><span class="co">#&gt; [10] mvtnorm_1.2-4       fastmap_1.1.1       jsonlite_1.8.8     </span></span>
+<span><span class="co">#&gt; [13] Matrix_1.6-4        graph_1.80.0        survival_3.5-7     </span></span>
+<span><span class="co">#&gt; [16] purrr_1.0.2         Rgraphviz_2.46.0    codetools_0.2-19   </span></span>
+<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 textshaping_0.3.7   jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt; [22] cli_3.6.2           rlang_1.1.2         mets_1.3.3         </span></span>
+<span><span class="co">#&gt; [25] parallelly_1.36.0   future.apply_1.11.0 splines_4.3.2      </span></span>
+<span><span class="co">#&gt; [28] cachem_1.0.8        yaml_2.3.8          tools_4.3.2        </span></span>
+<span><span class="co">#&gt; [31] parallel_4.3.2      memoise_2.0.1       globals_0.16.2     </span></span>
+<span><span class="co">#&gt; [34] BiocGenerics_0.48.1 vctrs_0.6.5         R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [37] stats4_4.3.2        lifecycle_1.0.4     stringr_1.5.1      </span></span>
+<span><span class="co">#&gt; [40] fs_1.6.3            ragg_1.2.7          desc_1.4.3         </span></span>
+<span><span class="co">#&gt; [43] progressr_0.14.0    timereg_2.0.5       pkgdown_2.0.7      </span></span>
+<span><span class="co">#&gt; [46] bslib_0.6.1         glue_1.6.2          Rcpp_1.0.11        </span></span>
+<span><span class="co">#&gt; [49] systemfonts_1.0.5   xfun_0.41           highr_0.10         </span></span>
+<span><span class="co">#&gt; [52] knitr_1.45          htmltools_0.5.7     rmarkdown_2.25     </span></span>
+<span><span class="co">#&gt; [55] compiler_4.3.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
+<h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
 </h2>
-<p><a id="lehmann_romano_2005"></a>[lehmann_romano_2005] Lehmann &amp; Romano, Testing statistical hypotheses, Springer (2005). <a href="#bd9fb723a778b8030b92a040cc4acf52">↩︎</a></p>
+<div id="refs" class="references hanging-indent">
+<div id="ref-lehmann2023_testing">
+<p>Lehmann, E. L., and Joseph P. Romano. 2023. <em>Testing Statistical Hypotheses</em>. Fourth. Springer Texts in Statistics. New York: Springer. <a href="https://doi.org/10.1007/978-3-030-70578-7" class="external-link">https://doi.org/10.1007/978-3-030-70578-7</a>.</p>
 </div>
-<div class="section level2">
-<h2 id="footnotes">Footnotes<a class="anchor" aria-label="anchor" href="#footnotes"></a>
-</h2>
-<p><sup><a id="fn.1" href="#fnr.1">1</a></sup> This functionality is only available with the <code>mets</code> package installed (available from CRAN)</p>
+</div>
 </div>
   </div>
 

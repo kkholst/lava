@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -33,6 +33,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
+    </li>
+    <li>
+      <a href="../articles/influencefunction.html">The Art of Influence</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -197,7 +200,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">gkgamma</span><span class="op">(</span><span class="va">d2</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: gkgamma(x = d2[, 3:4])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> __________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n = 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate  Std.Err    2.5%   97.5%   P-value</span>
@@ -214,7 +217,7 @@
 <span class="r-in"><span><span class="va">d2</span><span class="op">$</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d2</span><span class="op">)</span>,<span class="fl">2</span>,<span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">gkgamma</span><span class="op">(</span><span class="va">z1</span><span class="op">~</span><span class="va">z2</span><span class="op">|</span><span class="va">x</span>,data<span class="op">=</span><span class="va">d2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: gkgamma(x = z1 ~ z2 | x, data = d2)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> __________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Strata:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0 (n=112):</span>
@@ -232,7 +235,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> C  0.28520 0.02604 0.23417 0.3362 6.415e-28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D  0.05806 0.01436 0.02992 0.0862 5.261e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> __________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n = 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

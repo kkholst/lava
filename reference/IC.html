@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -33,6 +33,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
+    </li>
+    <li>
+      <a href="../articles/influencefunction.html">The Art of Influence</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -106,10 +109,10 @@
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">1e3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span>,data<span class="op">=</span><span class="va">d</span>,family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">var_ic</span><span class="op">(</span><span class="fu">IC</span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               (Intercept)             x            z</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.0091039791 -0.0001246315 -0.009151068</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x           -0.0001246315  0.0070990057  0.002070756</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> z           -0.0091510675  0.0020707560  0.022098393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               (Intercept)            x            z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.0096004858 0.0002383694 -0.009547186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x            0.0002383694 0.0068794652  0.001307109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> z           -0.0095471859 0.0013071090  0.020175485</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

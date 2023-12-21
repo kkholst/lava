@@ -19,7 +19,7 @@ LRT (when f is not a function)..."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -35,6 +35,9 @@ LRT (when f is not a function)..."><!-- mathjax --><script src="https://cdnjs.cl
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/correlation.html">Estimating partial correlations with lava</a>
+    </li>
+    <li>
+      <a href="../articles/influencefunction.html">The Art of Influence</a>
     </li>
     <li>
       <a href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a>
@@ -88,6 +91,7 @@ LRT (when <code>f</code> is not a function)...</p>
 <span>  <span class="va">keep</span>,</span>
 <span>  <span class="va">use</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ignore.case <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">contrast</span>,</span>
 <span>  <span class="va">null</span>,</span>
 <span>  <span class="va">vcov</span>,</span>
@@ -172,6 +176,10 @@ LRT (when <code>f</code> is not a function)...</p>
 <dd><p>If TRUE use regular expression (perl compatible) for keep,use arguments</p></dd>
 
 
+<dt>ignore.case</dt>
+<dd><p>Ignore case-sensitiveness in regular expression</p></dd>
+
+
 <dt>contrast</dt>
 <dd><p>(optional) Contrast matrix for final Wald test</p></dd>
 
@@ -235,9 +243,14 @@ FALSE p-values for linear models are calculated from t-distribution</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>influence function decomposition
-$$\sqrt{n}(\widehat{\theta}-\theta) = \sum_{i=1}^n\epsilon_i + o_p(1)$$
+    <p>influence function decomposition of estimator \(\widehat{\theta}\) based on
+data \(Z_1,\ldots,Z_n\):
+$$\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)$$
 can be extracted with the <code>IC</code> method.</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p>estimate.array</p></div>
     </div>
 
     <div id="ref-examples">
@@ -508,10 +521,10 @@ can be extracted with the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)     0.5418  0.2472  0.05731 1.026 0.0283949</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x               0.9636  0.2592  0.45568 1.472 0.0002006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ─────────────                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).1   0.2156  0.5105 -0.78505 1.216 0.6728124</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x.1             1.2369  0.4854  0.28554 2.188 0.0108277</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _____________                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ─────────────                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept).2   0.4769  0.2979 -0.10705 1.061 0.1094554</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x.2             1.1545  0.3714  0.42660 1.882 0.0018795</span>
 <span class="r-in"><span></span></span>
