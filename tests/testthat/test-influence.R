@@ -39,3 +39,37 @@ test_that("merge, IC, estimate with 'id' argument", {
   testthat::expect_true(sum((VV[1:2,1:2] - V)^2) < 1e-12)
   testthat::expect_true(sum((VV[3:4,3:4] - V)^2) < 1e-12)
 })
+
+test_that("negative binomial regression (glm.nb)", {
+  set.seed(1)
+  n <- 500
+  z <- rgamma(n, .5, .5)
+  x <- rnorm(n)
+  lam <- z * exp(x)
+  y <- rpois(n, lam)
+  m <- MASS::glm.nb(y ~ x)
+  testthat::expect_true(abs(lava:::logL.glm(m) - logLik(m)) < 1e-6)
+  p <- coef(m)+1
+  u1 <- as.vector(numDeriv::jacobian(function(p) lava:::logL.glm(m, p = p), p))
+  u2 <- score(m, p = p)
+  testthat::expect_true(sum((u1 - u2)^2) < 1e-6)
+  p <- coef(m)
+  u1 <- as.vector(numDeriv::jacobian(function(p) lava:::logL.glm(m, p = p), p))
+  u2 <- score(m, p = p)
+  testthat::expect_true(sum((u1 - u2)^2) < 1e-6)
+})
+
+
+test_that("quasipossion", {
+  set.seed(1)
+  n <- 500
+  z <- rgamma(n, .5, .5)
+  x <- rnorm(n)
+  lam <- z * exp(x)
+  y <- rpois(n, lam)
+  m1 <- glm(y ~ x, family=poisson)
+  m2 <- glm(y ~ x, family = quasipoisson)
+  i1 <- IC(m1)
+  i2 <- IC(m2)
+  testthat::expect_true(sum((i1 - i2)^2) < 1e-6)
+})

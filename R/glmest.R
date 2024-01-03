@@ -200,17 +200,21 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
         y <- model.frame(formula(x),data=data)[,1]
     }
     if (is.character(y) || is.factor(y)) {
-        y <- as.numeric(as.factor(y))-1
+        y <- as.numeric(as.factor(y)) - 1
     }
     ## g <- link$linkfun
     ginv <- link$linkinv
     dginv <- link$mu.eta ## D[linkinv]
     ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
-    canonf <- do.call(link$family,list())
-    ## caninvlink <- canonf$linkinv
-    canlink <- canonf$linkfun
-    Dcaninvlink <- canonf$mu.eta
-    Dcanlink <- function(x) 1/Dcaninvlink(canlink(x))
+    if (inherits(x, "negbin")) {
+        Dcanlink <- function(x) 1/x
+    } else {
+        canonf <- do.call(link$family,list())
+        ## caninvlink <- canonf$linkinv
+        canlink <- canonf$linkfun
+        Dcaninvlink <- canonf$mu.eta
+        Dcanlink <- function(x) 1 / Dcaninvlink(canlink(x))
+    }
     ##gmu <- function(x) g(caninvlink(x))
     ##invgmu <- function(z) canlink(ginv(z))
     h <- function(z) Dcanlink(ginv(z))*dginv(z)
@@ -228,14 +232,18 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     a.phi <- 1
     r <- r*weights
     rpearson <- as.vector(r)/link$variance(pi)^.5
-    if (length(p)>length(coef(x))) {
-        a.phi <- p[length(coef(x))+1]
-    } else if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-        suppressWarnings(a.phi <- summary(x)$dispersion)
-        ##a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
+    if (length(p) > length(coef(x))) {
+        a.phi <- p[length(coef(x)) + 1]
+    } else { ## if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian"))
+        suppressWarnings(disp <- summary(x)$dispersion)
+        if (!is.null(disp)) a.phi <- disp
+        if (inherits(x, "negbin")) {
+            a.phi <- link$variance(pi) / pi
+        }
+        ## a.phi <- sum(rpearson^2)*x$df.residual/x$df.residual^2
     }
-    A <- as.vector(h(Xbeta)*r)/a.phi
-    S <- apply(X,2,function(x) x*A)
+    A <- as.vector(h(Xbeta) * r) / a.phi
+    S <- apply(X, 2, function(x) x * A)
     if (!indiv) return(colSums(S))
     if (pearson) attr(S,"pearson") <- rpearson
     suppressWarnings(attributes(S)$bread <- vcov(x)*NROW(S))
