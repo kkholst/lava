@@ -2,6 +2,8 @@
 % Please edit documentation in R/operators.R
 \name{\%ni\%}
 \alias{\%ni\%}
+\alias{\%in.open\%}
+\alias{\%in.closed\%}
 \title{Matching operator (x not in y) oposed to the \code{\%in\%}-operator (x in y)}
 \usage{
 x \%ni\% y

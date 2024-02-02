@@ -43,7 +43,7 @@ notin <- Negate(get("%in%"))
 ##'
 ##' Matching operator
 ##' @rdname op_match
-##' @aliases %ni%
+##' @aliases %ni% %in.open% %in.closed%
 ##' @usage x \%ni\% y
 ##' @param x vector
 ##' @param y vector of same type as \code{x}
@@ -61,3 +61,17 @@ notin <- Negate(get("%in%"))
 ## function(x,y) {
 ##   is.na(match(x,y))
 ## }
+
+##' @export
+"%in.open%" <- function(x, y) {
+  if (length(y) == 1) y <- c(y, y)
+  if (length(y) != 2 || !is.numeric(y)) stop("rhs should be a range (numeric vector of length 2)")
+  x > y[1] & x < y[2]
+}
+
+##' @export
+"%in.closed%" <- function(x,y) {
+  if (length(y) == 1) y <- c(y, y)
+  if (length(y) != 2 || !is.numeric(y)) stop("rhs should be a range (numeric vector of length 2)")
+  x >= y[1] & x <= y[2]
+}
