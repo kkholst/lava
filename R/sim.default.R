@@ -176,19 +176,28 @@ as.vector.sim <- function(x, mode="any") {
 }
 
 ##' @export
+as.matrix.sim <- function(x, ...) {
+  class(x) <- "matrix"
+  attr(x, "call") <- NULL
+  attr(x, "f") <- NULL
+  attr(x, "time") <- NULL
+  return(x)
+}
+
+##' @export
 "[.sim" <- function(x, i, j, drop = FALSE) {
-    atr <- attributes(x)
-    if (!is.null(dim(x))) {
-        class(x) <- class(x)[2]
-    } else {
-        class(x) <- class(x)[-1]
-    }
-    x <- NextMethod("[", drop=drop)
-    atr.keep <- c("call", "time")
-    if (missing(j)) atr.keep <- c(atr.keep, "f")
-    attributes(x)[atr.keep] <- atr[atr.keep]
-    if (!drop) class(x) <- c("sim", class(x))
-    x
+  atr <- attributes(x)
+  if (!is.null(dim(x))) {
+    class(x) <- class(x)[2]
+  } else {
+    class(x) <- class(x)[-1]
+  }
+  x <- NextMethod("[", drop=drop)
+  atr.keep <- c("call", "time")
+  if (missing(j)) atr.keep <- c(atr.keep, "f")
+  attributes(x)[atr.keep] <- atr[atr.keep]
+  if (!drop) class(x) <- c("sim", class(x))
+  return(x)
 }
 
 ##' @export
