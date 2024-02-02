@@ -3,7 +3,8 @@
  - `Print` method for tabular data (matrix, data.frame)
  - `merge` now supports regular expressions  
  - `IC` returns row-names (default id) as obtained from model.matrix or similar
- - New vignette on Influence Functions
+ - New vignette: Influence Functions
+ - operators %in.open%, %in.closed% for checking if elements are within a range `3 %in.open% c(0,1)`)
 
 # lava 1.7.3 
 - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
