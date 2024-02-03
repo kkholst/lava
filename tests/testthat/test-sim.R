@@ -26,7 +26,10 @@ test_that("Missing", {
     testthat::expect_equal(sum(d$r),sum(!is.na(d$y0)))
 
     g <- glm(r~x,data=d,family=binomial)
-    testthat::expect_true(all.equal(coef(g),c(0,1),tolerance=0.2,check.attributes=FALSE))
+    testthat::expect_true(all.equal(coef(g), c(0, 1),
+                                    tolerance = 0.2,
+                                    check.attributes = FALSE
+    ))
 })
 
 
@@ -52,7 +55,10 @@ test_that("sim.default I", {
     val <- sim(val,R=2,b0=1,n=10,type=0) ## append results
     testthat::expect_true(nrow(val)==4)
 
-    s1 <- summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1),names=c("Model","Sandwich"))
+    s1 <- summary(val,
+                  estimate = c(1, 1), confint = c(3, 4, 6, 7),
+                  true = c(1, 1), names = c("Model", "Sandwich")
+    )
     testthat::expect_true(length(grep("Coverage",rownames(s1)))>0)
     testthat::expect_equivalent(colnames(s1),c("Model","Sandwich"))
     

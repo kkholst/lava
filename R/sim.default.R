@@ -176,17 +176,15 @@ as.vector.sim <- function(x, mode="any") {
 }
 
 ##' @export
-as.data.frame.sim <- function(x, ...) {
-  class(x) <- "data.frame"
+as.matrix.sim <- function(x, ...) {
+  if (inherits(x, "data.frame")) {
+    return(as.matrix(as.data.frame(x)))
+  }
+  class(x) <- "matrix"
   attr(x, "call") <- NULL
   attr(x, "f") <- NULL
   attr(x, "time") <- NULL
-  return(x)
-}
-
-##' @export
-as.matrix.sim <- function(x, ...) {
-  as.data.frame(x) |> as.matrix()
+  x
 }
 
 ##' @export
