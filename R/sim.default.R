@@ -176,12 +176,17 @@ as.vector.sim <- function(x, mode="any") {
 }
 
 ##' @export
-as.matrix.sim <- function(x, ...) {
-  class(x) <- "matrix"
+as.data.frame.sim <- function(x, ...) {
+  class(x) <- "data.frame"
   attr(x, "call") <- NULL
   attr(x, "f") <- NULL
   attr(x, "time") <- NULL
   return(x)
+}
+
+##' @export
+as.matrix.sim <- function(x, ...) {
+  as.data.frame(x) |> as.matrix()
 }
 
 ##' @export
