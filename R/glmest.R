@@ -39,7 +39,7 @@ GLMest <- function(m,data,control=list(),...) {
 
     for (y in yvar) {
         count <- count+1
-        xx <- parents(m,y)
+        xx <- parents(m, y)
         fam <- attributes(distribution(m)[[y]])$family
         if (is.null(fam)) fam <- stats::gaussian()
         if (!is.null(fam$link)) {
@@ -63,7 +63,6 @@ GLMest <- function(m,data,control=list(),...) {
         } else {
             g <- glm(f,family=fam,data=data,...)
         }
-
         p <- pars(g)
         ii <- IC(g)
         V0 <- attr(ii, "bread")
@@ -71,9 +70,12 @@ GLMest <- function(m,data,control=list(),...) {
         y <- y0
         names(p)[1] <- y
         if (length(p)>1) {
-            nn <- paste(y,xx,sep=lava.options()$symbol[1])
-            names(p)[seq_along(nn)+1] <- nn0
-            if (length(p)>length(nn)+1) names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
+          xx0 <- setdiff(xx, 1)
+          if (length(xx0) > 0) {
+            nn0 <- paste(y, xx0, sep = lava.options()$symbol[1])
+            names(p)[seq_along(nn0) + 1] <- nn0
+          }
+          if (length(p)>length(xx0)+1) names(p)[length(p)] <- paste(y,y,sep=lava.options()$symbol[2])
         }
         if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
             ics <- cbind(ics,0)
