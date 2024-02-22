@@ -1,10 +1,14 @@
-# lava 1.7.4
+# lava 1.8.0
  - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`,  `estimate.array`, `estimate.data.frame`
- - `Print` method for tabular data (matrix, data.frame)
- - `merge` now supports regular expressions  
+ - `Print` method for tabular data (matrix, data.frame, data.table)
+ - `merge` now supports regular expressions
  - `IC` returns row-names (default id) as obtained from model.matrix or similar
  - New vignette: Influence Functions
- - operators %in.open%, %in.closed% for checking if elements are within a range `3 %in.open% c(0,1)`)
+ - operators `%in.open%`, `%in.closed%` for checking if elements are within a range
+   `3 %in.open% c(0,1)`)
+- `estimate(..., estimator='glm')` now works with formulas with just an intercept
+- `as.data.frame.sim`, `as.matrix.sim`
+- fixed issues with quasi* families and negative binomial regr (MASS:glm.nb)
 
 # lava 1.7.3 
 - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)

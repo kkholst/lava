@@ -54,14 +54,16 @@ GLMest <- function(m,data,control=list(),...) {
         ## if (isEventTime) {
         ##     y <- yvar.et[y]
         ## }
-        #nn0 <- paste(y,xx,sep=lava.options()$symbol[1])
+        # nn0 <- paste(y,xx,sep=lava.options()$symbol[1])
 
-        f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
-        isSurv <- inherits(data[1,y],"Surv")
+        f <- as.formula(paste0(y, "~",
+          paste(xx, collapse = "+")
+        ))
+        isSurv <- inherits(data[1, y], "Surv")
         if (isSurv) {
-            g <- survival::survreg(f,data=data,dist=fam$family,...)
+          g <- survival::survreg(f,data=data,dist=fam$family,...)
         } else {
-            g <- glm(f,family=fam,data=data,...)
+          g <- glm(f,family=fam,data=data,...)
         }
         p <- pars(g)
         ii <- IC(g)
