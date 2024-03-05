@@ -2,7 +2,6 @@ Package: lava
 Type: Package
 Title: Latent Variable Models
 Version: 1.8.0
-Date: 2024-02-22
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
 		   person("Brice", "Ozenne", role = "ctb"),
 		   person("Thomas", "Gerds", role = "ctb"))

@@ -277,7 +277,7 @@ print.sim <- function(x, ...) {
     attr(x, "f") <- attr(x, "call") <- NULL
     Print(x, ...)
     cat("\n")
-    print(s, extra=FALSE, ...)
+    if (nrow(x)>1) print(s, extra=FALSE, ...)
     return(invisible(x))
 }
 
