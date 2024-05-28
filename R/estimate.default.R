@@ -38,7 +38,8 @@ IC_quantile <- function(x, estimate, probs=0.5, ...) {
 ##' @param x numeric matrix
 ##' @param type target parameter ("mean", "variance", "quantile")
 ##' @param probs numeric vector of probabilities (for type="quantile")
-##' @param ... Additional arguments to lower level functions (i.e., stats::density.default when type="quantile")
+##' @param ... Additional arguments to lower level functions (i.e.,
+##'   stats::density.default when type="quantile")
 estimate.array <- function(x, type="mean", probs=0.5, ...) {
   cl <- match.call()
   if (missing(x) || is.null(x)) {
@@ -83,38 +84,45 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 
 ##' Estimation of functional of parameters
 ##'
-##' Estimation of functional of parameters.
-##' Wald tests, robust standard errors, cluster robust standard errors,
-##' LRT (when \code{f} is not a function)...
+##' Estimation of functional of parameters. Wald tests, robust standard errors,
+##' cluster robust standard errors, LRT (when \code{f} is not a function)...
 ##' @param x model object (\code{glm}, \code{lvmfit}, ...)
-##' @param f transformation of model parameters and (optionally) data, or contrast matrix (or vector)
+##' @param f transformation of model parameters and (optionally) data, or
+##'   contrast matrix (or vector)
 ##' @param ... additional arguments to lower level functions
 ##' @param data \code{data.frame}
-##' @param id (optional) id-variable corresponding to ic decomposition of model parameters.
+##' @param id (optional) id-variable corresponding to ic decomposition of model
+##'   parameters.
 ##' @param iddata (optional) id-variable for 'data'
-##' @param stack if TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'
+##' @param stack if TRUE (default) the i.i.d. decomposition is automatically
+##'   stacked according to 'id'
 ##' @param average if TRUE averages are calculated
-##' @param subset (optional) subset of data.frame on which to condition (logical expression or variable name)
+##' @param subset (optional) subset of data.frame on which to condition (logical
+##'   expression or variable name)
 ##' @param score.deriv (optional) derivative of mean score function
 ##' @param level level of confidence limits
-##' @param IC if TRUE (default) the influence function decompositions are also returned (extract with \code{IC} method)
+##' @param IC if TRUE (default) the influence function decompositions are also
+##'   returned (extract with \code{IC} method)
 ##' @param type type of small-sample correction
 ##' @param keep (optional) index of parameters to keep from final result
 ##' @param use (optional) index of parameters to use in calculations
-##' @param regex If TRUE use regular expression (perl compatible) for keep,use arguments
+##' @param regex If TRUE use regular expression (perl compatible) for keep, use
+##'   arguments
 ##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
-##' @param vcov (optional) covariance matrix of parameter estimates (e.g. Wald-test)
+##' @param vcov (optional) covariance matrix of parameter estimates (e.g.
+##'   Wald-test)
 ##' @param coef (optional) parameter coefficient
-##' @param robust if TRUE robust standard errors are calculated. If
-##' FALSE p-values for linear models are calculated from t-distribution
+##' @param robust if TRUE robust standard errors are calculated. If FALSE
+##'   p-values for linear models are calculated from t-distribution
 ##' @param df degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
-##' @param back.transform (optional) transform of parameters and confidence intervals
+##' @param back.transform (optional) transform of parameters and confidence
+##'   intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
 ##' @param cluster (obsolete) alias for 'id'.
 ##' @param R Number of simulations (simulated p-values)
@@ -237,7 +245,8 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' l <- lm(y~-1+factor(x),data=d)
 ##'
 ##' f <- function(x) coef(lm(x~seq_along(x)))[2]
-##' null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
+##' null <- rep(mean(coef(l)),length(coef(l)))
+##' ##  just need to make sure we simulate under H0: slope=0
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
 ##' estimate(l,f)
@@ -265,7 +274,10 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
   }
   if (!missing(use)) {
-    p0 <- c("f","contrast","only.coef","subset","average","keep","labels","null")
+    p0 <- c(
+      "f", "contrast", "only.coef",
+      "subset", "average", "keep", "labels", "null"
+    )
     cl0 <- cl
     cl0[c("use", p0)] <- NULL
     cl0$keep <- use
@@ -283,7 +295,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     }
   }
   if (!missing(cluster)) id <- cluster
-  if (expr || is.character(f) || (is.numeric(f) && !is.matrix(f))) { ## || is.call(f)) {
+  if (expr || is.character(f) || (is.numeric(f)
+    && !is.matrix(f))) { ## || is.call(f)) {
     dots <- lapply(substitute(placeholder(...))[-1], function(x) x)
     args <- c(list(
       coef = names(pp),
@@ -293,7 +306,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     f <- do.call(parsedesign, args)
   }
   if (!is.null(f) && !is.function(f)) {
-    if (!(is.matrix(f) | is.vector(f)))
+    if (!(is.matrix(f) || is.vector(f)))
       return(compare(x, f, ...))
     contrast <- f
     f <- NULL
@@ -307,7 +320,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   alpha <- 1 - level
   alpha.str <- paste(c(alpha/2, 1 -alpha/2)*100, "", sep="%")
   nn <- NULL
-  if ((( (is.logical(IC) && IC) || length(IC)>0) && robust) &&
+  if ((((is.logical(IC) && IC) || length(IC)>0) && robust) &&
       (missing(vcov) || is.null(vcov) ||
        (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
     ## If user supplied vcov, then don't estimate IC
@@ -346,7 +359,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
   idstack <- NULL
   ## Preserve id from 'estimate' object
-  if (missing(id) && inherits(x,"estimate") && !is.null(x$id))
+  if (missing(id) && inherits(x, "estimate") && !is.null(x$id))
     id <- x$id
   if (!missing(id) && IC) {
     if (is.null(ic_theta)) stop("'IC' method needed")
@@ -359,21 +372,23 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     ## if (expr) id <- eval(e,envir=data)
     ##if (!is.null(data)) id <- eval(e, data)
     if (is.logical(id) && length(id)==1) {
-      id <- if(is.null(ic_theta)) seq(nrow(data)) else seq(nprev)
+      id <- if(is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
       stack <- FALSE
     }
     if (is.character(id) && length(id)==1)
       id <- data[,id,drop=TRUE]
     if (!is.null(ic_theta)) {
       if (length(id)!=nprev) {
-        if (!is.null(x$na.action) && (length(id)==length(x$na.action) + nprev)) {
+        if (!is.null(x$na.action) &&
+            (length(id)==length(x$na.action) + nprev)) {
           warning("Applying na.action")
           id <- id[-x$na.action]
         } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
       }
     } else {
       if (length(id)!=nrow(data)) {
-        if (!is.null(x$na.action) && (length(id)==length(x$na.action)+nrow(data))) {
+        if (!is.null(x$na.action) &&
+            (length(id)==length(x$na.action)+nrow(data))) {
           warning("Applying na.action")
           id <- id[-x$na.action]
         } else stop("Dimensions of IC and 'id' does not agree")
@@ -408,7 +423,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     rownames(ic_theta) <- idstack
   }
   if (!robust) {
-    if (inherits(x,"lm") && family(x)$family=="gaussian"
+    if (inherits(x, "lm") && family(x)$family=="gaussian"
         && is.null(df))
       df <- x$df.residual
     if (missing(vcov) && !is.null(x))
@@ -429,7 +444,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       V0 <- V
       iI0 <- attributes(ic_theta)$bread
       I0 <- Inverse(iI0)
-      delta <- min(0.5 ,p/(K-p))
+      delta <- min(0.5, p / (K - p))
       phi <- max(1, tr(I0%*%V0)*adj2/p)
       V <- adj2*V0 + delta*phi*iI0
     }
@@ -444,7 +459,9 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     }
   } else {
     if (!missing(vcov)) {
-      if (length(vcov)==1 && is.na(vcov)) vcov <- matrix(NA,length(pp),length(pp))
+      if (length(vcov) == 1 && is.na(vcov)) {
+        vcov <- matrix(NA, length(pp), length(pp))
+      }
       V <- cbind(vcov)
     } else {
       suppressWarnings(V <- stats::vcov(x))
@@ -464,8 +481,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (missing(labels)) {
       labels <- colnames(rbind(est))
     }
-    res <- simnull(R,f,mu=null.sim,sigma=V,labels=labels)
-    return(structure(res, class=c("estimate.sim","sim"),
+    res <- simnull(R, f, mu = null.sim, sigma = V, labels = labels)
+    return(structure(res, class=c("estimate.sim", "sim"),
                      coef=pp,
                      vcov=V,
                      f=f,
@@ -483,7 +500,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       ##names(formals(f))[1] <- "p"
       parname <- form0
     }
-    if (!is.null(ic_theta) ) {
+    if (!is.null(ic_theta)) {
       arglist <- c(list(object=x, data=data, p=vec(pp)), list(...))
       names(arglist)[3] <- parname
     } else {
@@ -521,21 +538,21 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       pp <- structure(as.vector(val), names=names(val))
       V <- D%*%V%*%t(D)
     } else {
-      if (!average || (N<NROW(data))) { ## || NROW(data)==0)) { ## transformation not depending on data
+      if (!average || (N<NROW(data))) {  ## transformation not depending on data
         pp <- structure(as.vector(val), names=names(val))
         ic_theta <- ic_theta%*%t(D)
         V <- var_ic(ic_theta)
       } else {
         if (k>1) { ## More than one parameter (and depends on data)
           if (!missing(subset)) { ## Conditional estimate
-            val <- apply(val,2,function(x) x*subset)
+            val <- apply(val, 2, function(x) x*subset)
           }
           D0 <- matrix(nrow=k, ncol=length(pp))
           for (i in seq_len(k)) {
             D1 <- D[seq(N)+(i-1)*N, , drop=FALSE]
             if (!missing(subset)) ## Conditional estimate
               D1 <- apply(D1, 2, function(x) x*subset)
-            D0[i,] <- colMeans(D1)
+            D0[i, ] <- colMeans(D1)
           }
           D <- D0
           ic2 <- ic_theta%*%t(D)
@@ -548,7 +565,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
           ic2 <- ic_theta%*%D
         }
         pp <- vec(colMeans(cbind(val)))
-        ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1,N)))
+        ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1, N)))
         if (NROW(ic_theta)==NROW(ic1)) {
           rownames(ic1) <- rownames(ic_theta)
         }

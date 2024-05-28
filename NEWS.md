@@ -1,3 +1,6 @@
+# lava 1.8.1
+ - Development version
+
 # lava 1.8.0
  - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`,  `estimate.array`, `estimate.data.frame`
  - `Print` method for tabular data (matrix, data.frame, data.table)

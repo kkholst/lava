@@ -13,7 +13,9 @@
 ##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param iter If TRUE the iteration number is passed as first argument to
 ##'   (mc)mapply
-##' @param mc.cores Optional number of cores. Will use parallel::mcmapply instead of future
+##' @param mc.cores Optional number of cores. Will use parallel::mcmapply
+##'   instead of future
+##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param ... Additional arguments to future.apply::future_mapply
 ##' @aliases sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim
@@ -45,10 +47,12 @@
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 ##'
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-##' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),names=c("Model","Sandwich"),confint=TRUE)
+##' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
+##'         names=c("Model","Sandwich"),confint=TRUE)
 ##'
 ##' if (interactive()) {
-##'     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
+##'     plot(val,estimate=1,c(2,5),true=1,
+##'          names=c("Model","Sandwich"),polygon=FALSE)
 ##'     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
 ##'          true=c(1,1),names=c("Model","Sandwich"),
 ##'          line.lwd=1,col=c("gray20","gray60"),
@@ -65,8 +69,10 @@
 ##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 ##' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
-                seed=NULL, args=list(),
-                iter=FALSE, mc.cores, ...) {
+                        seed=NULL, args=list(),
+                        iter=FALSE, mc.cores,
+                        progressr.message = NULL,
+                        ...) {
     stm <- proc.time()
     oldtm <- rep(0,5)
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
@@ -133,8 +139,12 @@ sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
 
     pb <- progressr::progressor(steps = R)
     robx <- function(iter__, ...) {
-      pb()
-      tryCatch(x(...), error=function(e) NA)
+      if (!is.null(progressr.message)) {
+        pb(message = progressr.message(...))
+      } else {
+        pb()
+      }
+      tryCatch(x(...), error = function(e) NA)
     }
     if (iter) formals(robx)[[1]] <- NULL
 
