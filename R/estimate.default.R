@@ -4,7 +4,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 
 ##' @export
 estimate.list <- function(x, ...) {
-  if (inherits(x[[1]], "lvm")) return(estimate.lvmlist(x, ...))
+  if (inherits(x[[1]], "lvm")) return(estimate_lvmlist(x, ...))
   lapply(x, function(x) estimate(x, ...))
 }
 
@@ -50,8 +50,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
   if (tolower(type) %in% c("var", "variance")) {
-    n <- NROW(x)
-     cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
+    cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
     ic <- ic^2
     for (i in seq_len(NCOL(ic))) {
       ic[, i] <- ic[, i] - cc[i]
@@ -71,7 +70,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
     ic <- c()
     for (i in seq_len(NCOL(x))) {
       ic <- cbind(ic, do.call(IC_quantile,
-                        c(list(x[,i], probs=probs), density.args)))
+                        c(list(x[, i], probs=probs), density.args)))
     }
   }
   if (any(c("vcov", "IC") %in% names(list(...)))) {
@@ -129,10 +128,10 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param null.sim Mean under the null for simulations
 ##' @details
 ##'
-##' influence function decomposition of estimator \eqn{\widehat{\theta}} based on
-##' data \eqn{Z_1,\ldots,Z_n}:
-##' \deqn{\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)}
-##' can be extracted with the \code{IC} method.
+##' influence function decomposition of estimator \eqn{\widehat{\theta}} based
+##' on data \eqn{Z_1,\ldots,Z_n}: \deqn{\sqrt{n}(\widehat{\theta}-\theta) =
+##' \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)} can be extracted with
+##' the \code{IC} method.
 ##'
 ##' @export
 ##' @export estimate.default
@@ -159,7 +158,6 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' ## Alternative syntax
 ##' estimate(g,"z","z"-"x",2*"z"-3*"x")
-##' estimate(g,z,z-x,2*z-3*x)
 ##' estimate(g,"?")  ## Wildcards
 ##' estimate(g,"*Int*","z")
 ##' estimate(g,"1","2"-"3",null=c(0,1))
@@ -172,12 +170,12 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' estimate(g,function(p) p[1]+p[2])
 ##'
 ##' ## Multiple parameters
-##' e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
+##' e <- estimate(g,function(p) c(p[1]+p[2], p[1]*p[2]))
 ##' e
 ##' vcov(e)
 ##'
 ##' ## Label new parameters
-##' estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
+##' estimate(g,function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
 ##' ##'
 ##' ## Multiple group
 ##' m <- lvm(y~x)
@@ -250,7 +248,8 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
 ##' estimate(l,f)
-##' @aliases estimate estimate.default estimate.estimate merge.estimate estimate.mlm
+##' @aliases estimate estimate.default estimate.estimate merge.estimate
+##'   estimate.mlm
 ##' @seealso estimate.array
 ##' @method estimate default
 ##' @export
@@ -343,7 +342,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
 
   if (any(is.na(ic_theta))) {
     ## Rescale each column according to I(obs)/pr(obs)
-    for (i in seq(NCOL(ic_theta))) {
+    for (i in seq_len(NCOL(ic_theta))) {
       pr <- mean(!is.na(ic_theta[, i]))
       ic_theta[, i] <- ic_theta[, i]/pr
     }
@@ -376,7 +375,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       stack <- FALSE
     }
     if (is.character(id) && length(id)==1)
-      id <- data[,id,drop=TRUE]
+      id <- data[, id, drop=TRUE]
     if (!is.null(ic_theta)) {
       if (length(id)!=nprev) {
         if (!is.null(x$na.action) &&
@@ -401,7 +400,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       atr$dimnames <- NULL
       atr$dim <- NULL
       if (!lava.options()$cluster.index) {
-        ic_theta <- matrix(unlist(by(ic_theta,id,colSums)),
+        ic_theta <- matrix(unlist(by(ic_theta, id, colSums)),
                            byrow=TRUE, ncol=ncol(ic_theta))
         attributes(ic_theta)[names(atr)] <- atr
         idstack <- sort(unique(id))
@@ -595,7 +594,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
           V <- var_ic(ic_theta)
         } else {
           if (nrow(ic1)!=nrow(ic2)) {
-            message("Assuming independence between model iid decomposition and new data frame")
+            message("Assuming independence between model iid decomposition and new data frame") #nolint
             V <- var_ic(ic1) + var_ic(ic2)
           } else {
             ic_theta <- ic1+ic2
@@ -619,14 +618,14 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       beta0 <- beta0-null
     if (!is.null(df)) {
       za <- qt(1-alpha/2, df=df)
-      pval <- 2*pt(abs(res[,1]/res[,2]), df=df, lower.tail=FALSE)
+      pval <- 2*pt(abs(res[, 1]/res[, 2]), df=df, lower.tail=FALSE)
     } else {
       za <- qnorm(1-alpha/2)
-      pval <- 2*pnorm(abs(res[,1]/res[,2]), lower.tail=FALSE)
+      pval <- 2*pnorm(abs(res[, 1]/res[, 2]), lower.tail=FALSE)
     }
-    res <- cbind(res, res[,1]-za*res[,2], res[,1]+za*res[,2], pval)
+    res <- cbind(res, res[, 1]-za*res[, 2], res[, 1] + za*res[, 2], pval)
   }
-  colnames(res) <- c("Estimate","Std.Err",alpha.str,"P-value")
+  colnames(res) <- c("Estimate", "Std.Err", alpha.str, "P-value")
 
   if (nrow(res)>0)
     if (!is.null(nn)) {
@@ -636,7 +635,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       if (!is.null(nn))
         rownames(res) <- nn
       if (is.null(rownames(res)))
-        rownames(res) <- paste0("p", seq(nrow(res)))
+        rownames(res) <- paste0("p", seq_len(nrow(res)))
     }
 
   if (NROW(res)==0L) {
@@ -652,7 +651,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     res$IC <- ic_theta
   if (length(coefs)==0L) return(res)
 
-  if (!missing(contrast) | !missing(null)) {
+  if (!missing(contrast) || !missing(null)) {
     p <- length(res$coef)
     if (missing(contrast)) contrast <- diag(nrow=p)
     if (missing(null)) null <- 0
@@ -668,7 +667,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                   vcov=V, level=level, df=df)
     res <- structure(c(res, list(compare=cc)), class="estimate")
     if (!is.null(df)) {
-      pval <- with(cc, pt(abs(estimate[,1]-null)/estimate[, 2],
+      pval <- with(cc, pt(abs(estimate[, 1]-null)/estimate[, 2],
                           df=df, lower.tail=FALSE)*2)
     } else {
       pval <- with(cc, pnorm(abs(estimate[, 1]-null)/estimate[, 2],
@@ -690,7 +689,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
 
   if (!is.null(back.transform)) {
     res$coefmat[, c(1, 3, 4)] <- do.call(back.transform,
-                                         list(res$coefmat[,c(1, 3, 4)]))
+                                         list(res$coefmat[, c(1, 3, 4)]))
     res$coefmat[, 2] <- NA
   }
 
@@ -738,7 +737,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
 simnull <- function(R, f, mu, sigma, labels=NULL) {
   X <- rmvn0(R, mu=mu, sigma=sigma)
   est <- f(mu)
-  res <- apply(X,1,f)
+  res <- apply(X, 1, f)
   if (is.list(est)) {
     nn <- names(est)
     est <- unlist(est)
@@ -761,18 +760,18 @@ estimate.estimate.sim <- function(x, f, R=0, labels, ...) {
   atr <- attributes(x)
   if (R>0) {
     if (missing(f)) {
-      val <- simnull(R,f=atr[["f"]],mu=atr[["coef"]],sigma=atr[["vcov"]])
-      res <- rbind(x,val)
-      for (a in setdiff(names(atr),c("dim","dimnames")))
-        attr(res,a) <- atr[[a]]
+      val <- simnull(R, f=atr[["f"]], mu=atr[["coef"]], sigma=atr[["vcov"]])
+      res <- rbind(x, val)
+      for (a in setdiff(names(atr), c("dim", "dimnames")))
+        attr(res, a) <- atr[[a]]
     } else {
-      res <- simnull(R,f=f,mu=atr[["coef"]],sigma=atr[["vcov"]])
-      for (a in setdiff(names(atr),c("dim","dimnames","f")))
-        attr(res,a) <- atr[[a]]
-      attr(f,"f") <- f
+      res <- simnull(R, f=f, mu=atr[["coef"]], sigma=atr[["vcov"]])
+      for (a in setdiff(names(atr), c("dim", "dimnames", "f")))
+        attr(res, a) <- atr[[a]]
+      attr(f, "f") <- f
       est <- unlist(f(atr[["coef"]]))
       if (missing(labels)) labels <- colnames(rbind(est))
-      attr(res,"estimate") <- est
+      attr(res, "estimate") <- est
     }
     if (!missing(labels)) colnames(res) <- labels
     return(res)
@@ -783,21 +782,21 @@ estimate.estimate.sim <- function(x, f, R=0, labels, ...) {
   }
 
   est <- f(atr[["coef"]])
-  res <- apply(x,1,f)
+  res <- apply(x, 1, f)
   if (is.list(est)) {
-    res <- matrix(unlist(res),byrow=TRUE,ncol=length(est))
+    res <- matrix(unlist(res), byrow=TRUE, ncol=length(est))
   } else {
     res <- t(rbind(res))
   }
   if (missing(labels)) {
     labels <- colnames(rbind(est))
-    if (is.null(labels)) labels <- paste0("p",seq_along(est))
+    if (is.null(labels)) labels <- paste0("p", seq_along(est))
   }
   colnames(res) <- labels
-  for (a in setdiff(names(atr),c("dim","dimnames","f","estimate")))
-    attr(res,a) <- atr[[a]]
-  attr(f,"f") <- f
-  attr(res,"estimate") <- unlist(est)
+  for (a in setdiff(names(atr), c("dim", "dimnames", "f", "estimate")))
+    attr(res, a) <- atr[[a]]
+  attr(f, "f") <- f
+  attr(res, "estimate") <- unlist(est)
   return(res)
 }
 
@@ -818,7 +817,7 @@ print.estimate.sim <- function(x, level=.95, ...) {
     res
   }
   env <- new.env()
-  assign("est", attr(x,"estimate"), env)
+  assign("est", attr(x, "estimate"), env)
   environment(mysummary) <- env
   print(summary(x, fun=mysummary, ...))
 }
@@ -837,10 +836,9 @@ IC.mlm <- function(x, ...) {
   if (!is.null(w)) {
     r <- apply(r, 2, function(x) x * w)
   }
-  p <- NROW(cc)
   q <- NCOL(cc)
   ics <- lapply(1:q, function(i) {
-    ic <- apply(X, 2, function(x) x * r[, i])
+    apply(X, 2, function(x) x * r[, i])
   })
   res <- Reduce("cbind", ics)
   colnames(res) <- names(pars(x))
@@ -868,16 +866,19 @@ estimate.mlm <- function(x, ...) {
 ##' @export
 print.estimate <- function(x, type=0L, digits=4L, width=25L,
                            std.error=TRUE, p.value=TRUE,
-                           sep=cli::symbol[["line"]], sep.which, sep.labels=NULL,
+                           sep=cli::symbol[["line"]],
+                           sep.which,
+                           sep.labels=NULL,
                            indent=" ", unique.names=TRUE,
                            na.print="", ...) {
 
   if (!is.null(x$print)) {
-    x$print(x,digits=digits,width=width,...)
+    x$print(x, digits=digits, width=width, ...)
     return(invisible(x))
   }
   if (type>0 && !is.null(x$call)) {
-    cat("Call: "); print(x$call)
+    cat("Call: ")
+    print(x$call)
     print(cli::rule())
   }
   if (type>0) {
@@ -888,7 +889,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
         cat("n = ", x[["n"]], "\n\n", sep="")
       }
       if (!is.null(x[["k"]])) {
-        cat("n = ", x[["k"]], "\n\n",sep="")
+        cat("n = ", x[["k"]], "\n\n", sep="")
       }
     }
   }
@@ -899,14 +900,14 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
       unlist(lapply(rownames(cc),
                     function(x) toString(x, width=width)))
     )
-  if (!std.error) cc <- cc[,-2, drop=FALSE]
+  if (!std.error) cc <- cc[, -2, drop=FALSE]
   if (!p.value) cc[, -ncol(cc), drop=FALSE]
 
   sep.pos <- c()
   if (missing(sep.which) && !is.null(x$model.index)) {
     sep.which <- unlist(lapply(x$model.index,
                                function(x)
-                                 tail(x,1)))[-length(x$model.index)]
+                                 tail(x, 1)))[-length(x$model.index)]
   }
   if (missing(sep.which)) sep.which <- NULL
 
@@ -915,7 +916,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
     if (sep0)
       sep.which <- setdiff(sep.which, 0)
     cc0 <- c()
-    sep.which <- c(0, sep.which,nrow(cc))
+    sep.which <- c(0, sep.which, nrow(cc))
     N <- length(sep.which)-1
     for (i in seq(N)) {
       if ((sep.which[i]+1)<=nrow(cc))
@@ -926,7 +927,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
       }
     }
     if (sep0) {
-      sep.pos <- c(1,sep.pos+1)
+      sep.pos <- c(1, sep.pos+1)
       cc0 <- rbind(NA, cc0)
     }
     cc <- cc0
@@ -943,18 +944,18 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   print(cc, digits=digits, na.print=na.print, ...)
 
   if (!is.null(x$compare)) {
-    cat("\n", x$compare$method[3],"\n")
+    cat("\n", x$compare$method[3], "\n")
     cat(paste(" ", x$compare$method[-(1:3)], collapse="\n"), "\n")
     if (length(x$compare$method)>4) {
       out <- character()
       out <- with(x$compare, c(out, paste(names(statistic),
                                           "=", format(round(statistic, 4)))))
       out <- with(x$compare, c(out, paste(names(parameter),
-                                          "=", format(round(parameter,3)))))
+                                          "=", format(round(parameter, 3)))))
       fp  <- with(x$compare, format.pval(p.value, digits = digits))
       out <- c(out, paste("p-value", if (substr(fp, 1L, 1L) == "<")
                                        fp else paste("=", fp)))
-      cat(" ",strwrap(paste(out, collapse = ", ")), sep = "\n")
+      cat(" ", strwrap(paste(out, collapse = ", ")), sep = "\n")
     }
   }
 }
@@ -964,16 +965,22 @@ vcov.estimate <- function(object, list=FALSE, ...) {
   res <- object$vcov
   nn <- names(coef(object, ...))
   if (list && !is.null(object$model.index)) {
-    return(lapply(object$model.index, function(x) object$vcov[x,x]))
+    return(lapply(object$model.index, function(x) object$vcov[x, x]))
   }
   dimnames(res) <- list(nn, nn)
   res
 }
 
 ##' @export
-coef.estimate <- function(object,mat=FALSE,list=FALSE,messages=lava.options()$messages,...) {
+coef.estimate <- function(object,
+                          mat=FALSE,
+                          list=FALSE,
+                          messages=lava.options()$messages,
+                          ...) {
   if (mat) return(object$coefmat)
-  if (messages>0 && !is.null(object$back.transform)) message("Note: estimates on original scale (before 'back.transform')")
+  if (messages > 0 && !is.null(object$back.transform)) {
+    message("Note: estimates on original scale (before 'back.transform')")
+  }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))
   }
