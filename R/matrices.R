@@ -5,6 +5,7 @@
 
 ###{{{ matrices.lvm
 
+##' @export
 mat.lvm <- function(x,ii=index(x),...) {
     A <- ii$A ## Matrix with fixed parameters and ones where parameters are free
     M1 <- ii$M1 ## Index of free and _unique_ regression parameters
@@ -224,8 +225,7 @@ mat.lvm <- function(x,ii=index(x),...) {
 
 }
 
-
-
+##' @export
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
     pp <- c(rep(NA,ii$npar.mean),pars,epars)
@@ -301,6 +301,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
 
 ###{{{ matrices.multigroup
 
+##' @export
 matrices.multigroup <- function(x, p, ...) {
     pp <- modelPar(x,p)
     res <- list()

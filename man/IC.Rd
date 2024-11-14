@@ -21,7 +21,8 @@ IC(x,...)
 
 \item{folds}{(optional) Calculate aggregated iid decomposition (0:=disabled)}
 
-\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize' (0:=disabled)}
+\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize'
+(0:=disabled)}
 }
 \description{
 Extract i.i.d. decomposition (influence function) from model object

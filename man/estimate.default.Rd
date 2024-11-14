@@ -46,27 +46,32 @@
 \arguments{
 \item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
 
-\item{f}{transformation of model parameters and (optionally) data, or contrast matrix (or vector)}
+\item{f}{transformation of model parameters and (optionally) data, or
+contrast matrix (or vector)}
 
 \item{...}{additional arguments to lower level functions}
 
 \item{data}{\code{data.frame}}
 
-\item{id}{(optional) id-variable corresponding to ic decomposition of model parameters.}
+\item{id}{(optional) id-variable corresponding to ic decomposition of model
+parameters.}
 
 \item{iddata}{(optional) id-variable for 'data'}
 
-\item{stack}{if TRUE (default)  the i.i.d. decomposition is automatically stacked according to 'id'}
+\item{stack}{if TRUE (default) the i.i.d. decomposition is automatically
+stacked according to 'id'}
 
 \item{average}{if TRUE averages are calculated}
 
-\item{subset}{(optional) subset of data.frame on which to condition (logical expression or variable name)}
+\item{subset}{(optional) subset of data.frame on which to condition (logical
+expression or variable name)}
 
 \item{score.deriv}{(optional) derivative of mean score function}
 
 \item{level}{level of confidence limits}
 
-\item{IC}{if TRUE (default) the influence function decompositions are also returned (extract with \code{IC} method)}
+\item{IC}{if TRUE (default) the influence function decompositions are also
+returned (extract with \code{IC} method)}
 
 \item{type}{type of small-sample correction}
 
@@ -74,7 +79,8 @@
 
 \item{use}{(optional) index of parameters to use in calculations}
 
-\item{regex}{If TRUE use regular expression (perl compatible) for keep,use arguments}
+\item{regex}{If TRUE use regular expression (perl compatible) for keep, use
+arguments}
 
 \item{ignore.case}{Ignore case-sensitiveness in regular expression}
 
@@ -82,12 +88,13 @@
 
 \item{null}{(optional) null hypothesis to test}
 
-\item{vcov}{(optional) covariance matrix of parameter estimates (e.g. Wald-test)}
+\item{vcov}{(optional) covariance matrix of parameter estimates (e.g.
+Wald-test)}
 
 \item{coef}{(optional) parameter coefficient}
 
-\item{robust}{if TRUE robust standard errors are calculated. If
-FALSE p-values for linear models are calculated from t-distribution}
+\item{robust}{if TRUE robust standard errors are calculated. If FALSE
+p-values for linear models are calculated from t-distribution}
 
 \item{df}{degrees of freedom (default obtained from 'df.residual')}
 
@@ -99,7 +106,8 @@ FALSE p-values for linear models are calculated from t-distribution}
 
 \item{only.coef}{if TRUE only the coefficient matrix is return}
 
-\item{back.transform}{(optional) transform of parameters and confidence intervals}
+\item{back.transform}{(optional) transform of parameters and confidence
+intervals}
 
 \item{folds}{(optional) aggregate influence functions (divide and conquer)}
 
@@ -110,15 +118,14 @@ FALSE p-values for linear models are calculated from t-distribution}
 \item{null.sim}{Mean under the null for simulations}
 }
 \description{
-Estimation of functional of parameters.
-Wald tests, robust standard errors, cluster robust standard errors,
-LRT (when \code{f} is not a function)...
+Estimation of functional of parameters. Wald tests, robust standard errors,
+cluster robust standard errors, LRT (when \code{f} is not a function)...
 }
 \details{
-influence function decomposition of estimator \eqn{\widehat{\theta}} based on
-data \eqn{Z_1,\ldots,Z_n}:
-\deqn{\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)}
-can be extracted with the \code{IC} method.
+influence function decomposition of estimator \eqn{\widehat{\theta}} based
+on data \eqn{Z_1,\ldots,Z_n}: \deqn{\sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)} can be extracted with
+the \code{IC} method.
 }
 \examples{
 
@@ -143,7 +150,6 @@ estimate(g,2:3) ## same as cbind(0,1,-1)
 estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g,"z","z"-"x",2*"z"-3*"x")
-estimate(g,z,z-x,2*z-3*x)
 estimate(g,"?")  ## Wildcards
 estimate(g,"*Int*","z")
 estimate(g,"1","2"-"3",null=c(0,1))
@@ -156,12 +162,12 @@ estimate(g,robust=FALSE)
 estimate(g,function(p) p[1]+p[2])
 
 ## Multiple parameters
-e <- estimate(g,function(p) c(p[1]+p[2],p[1]*p[2]))
+e <- estimate(g,function(p) c(p[1]+p[2], p[1]*p[2]))
 e
 vcov(e)
 
 ## Label new parameters
-estimate(g,function(p) list("a1"=p[1]+p[2],"b1"=p[1]*p[2]))
+estimate(g,function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
 ##'
 ## Multiple group
 m <- lvm(y~x)
@@ -229,7 +235,8 @@ d <- simulate(m,100,seed=1,'y~x'=0.1)
 l <- lm(y~-1+factor(x),data=d)
 
 f <- function(x) coef(lm(x~seq_along(x)))[2]
-null <- rep(mean(coef(l)),length(coef(l))) ## just need to make sure we simulate under H0: slope=0
+null <- rep(mean(coef(l)),length(coef(l)))
+##  just need to make sure we simulate under H0: slope=0
 estimate(l,f,R=1e2,null.sim=null)
 
 estimate(l,f)

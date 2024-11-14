@@ -1,3 +1,5 @@
+#' @keywords internal
+"_PACKAGE"
 
 ##' Estimation and simulation of latent variable models
 ##'
@@ -33,7 +35,6 @@
 ##' @importFrom future.apply future_mapply future_lapply
 ##' @importFrom methods new as
 ##' @aliases lava-package lava
-##' @docType package
 ##' @author Klaus K. Holst Maintainer: <klaus@@holst.it>
 ##' @keywords package
 ##' @examples

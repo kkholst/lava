@@ -1,8 +1,11 @@
 # lava 1.8.1
  - Development version
+ - `sim.default` now accepts the argument `R` to be a list (of list) of
+ arguments.
 
 # lava 1.8.0
- - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`,  `estimate.array`, `estimate.data.frame`
+ - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`, `estimate.array`,
+   `estimate.data.frame`
  - `Print` method for tabular data (matrix, data.frame, data.table)
  - `merge` now supports regular expressions
  - `IC` returns row-names (default id) as obtained from model.matrix or similar

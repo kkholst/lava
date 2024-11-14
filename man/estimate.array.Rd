@@ -14,7 +14,8 @@
 
 \item{probs}{numeric vector of probabilities (for type="quantile")}
 
-\item{...}{Additional arguments to lower level functions (i.e., stats::density.default when type="quantile")}
+\item{...}{Additional arguments to lower level functions (i.e.,
+stats::density.default when type="quantile")}
 }
 \description{
 Estimate parameters for the sample mean, variance, and quantiles

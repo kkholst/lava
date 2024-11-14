@@ -176,15 +176,20 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
     return(res)
 }
 
+##' @export
 print.diagtest <- function(x,...) {
-    cat("Call: "); print(x$call)
-    cat("Confidence limits: ", x$confint,"\n",sep="")
+    cat("Call: ")
+    print(x$call)
+    cat("Confidence limits: ", x$confint, "\n", sep="")
     print(cli::rule())
-    printmany(x$table,x$prop.table,nspace=2,...)
-    cat("\nPositive outcome: '", x$levels[[2]][x$positive],"'\n",sep="")
+    printmany(x$table, x$prop.table,nspace=2, ...)
+    cat("\nPositive outcome: '",
+        x$levels[[2]][x$positive], "'\n",
+      sep = ""
+    )
     ## cat("\tNegative outcome: '", x$levels[[2]][x$positive%%2+1],"'\n",sep="")
     print(cli::rule())
-    printCoefmat(x$coefmat[,c(-2)],na.print="",...)
+    printCoefmat(x$coefmat[, c(-2)], na.print="", ...)
     print(cli::rule())
     cat("\n")
     cat("Prevalence:				Prob( outcome+ )\n")
@@ -194,7 +199,7 @@ print.diagtest <- function(x,...) {
     cat("Positive predictive value (Precision):	Prob( outcome+ | test+ )\n")
     cat("Negative predictive value:		Prob( outcome- | test- )\n")
     cat("Accuracy:				Prob( correct classification )\n")
-    if (x$confint=="exact") {
+    if (x$confint == "exact") {
         cat("Homogeneity/Symmetry:			Prob( outcome+, test- | discordant ), H0: p=0.5 \n")
     } else {
         cat("Homogeneity/Symmetry:			H0: Prob( outcome+ ) - Prob( test+ ), H0: p=0\n")
@@ -202,7 +207,8 @@ print.diagtest <- function(x,...) {
     cat("\n")
 }
 
+##' @export
 summary.diagtest <- function(object, ...) {
-    object[c("IC","print","id","compare")] <- NULL
+    object[c("IC", "print", "id", "compare")] <- NULL
     return(object)
 }
