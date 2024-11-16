@@ -1005,6 +1005,11 @@ coef.summary.estimate <- function(object, ...) {
 }
 
 ##' @export
+subset.estimate <- function(x, keep, ...) {
+  estimate(x, keep = keep, ...)
+}
+
+##' @export
 parameter.estimate <- function(x, ...) {
   return(x$coefmat)
 }
