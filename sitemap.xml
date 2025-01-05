@@ -1,390 +1,131 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/articles/correlation.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/influencefunction.html</loc>
-  </url>
-  <url>
-    <loc>/articles/nonlinear.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/By.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Col.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Combine.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Expand.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Graph.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Grep.html</loc>
-  </url>
-  <url>
-    <loc>/reference/IC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Missing.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NA2x.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Print.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Range.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addvar.html</loc>
-  </url>
-  <url>
-    <loc>/reference/backdoor.html</loc>
-  </url>
-  <url>
-    <loc>/reference/baptize.html</loc>
-  </url>
-  <url>
-    <loc>/reference/binomial.rd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/blockdiag.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bmd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bmidata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bootstrap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bootstrap.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/brisa.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calcium.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cancel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/children.html</loc>
-  </url>
-  <url>
-    <loc>/reference/click.html</loc>
-  </url>
-  <url>
-    <loc>/reference/closed.testing.html</loc>
-  </url>
-  <url>
-    <loc>/reference/colorbar.html</loc>
-  </url>
-  <url>
-    <loc>/reference/commutation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/complik.html</loc>
-  </url>
-  <url>
-    <loc>/reference/confband.html</loc>
-  </url>
-  <url>
-    <loc>/reference/confint.lvmfit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/confpred.html</loc>
-  </url>
-  <url>
-    <loc>/reference/constrain-set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/contr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/correlation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/covariance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/csplit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/curly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/devcoords.html</loc>
-  </url>
-  <url>
-    <loc>/reference/diagtest.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dsep.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/equivalence.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimate.array.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimate.default.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimate.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/eventTime.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fplot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getMplus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getSAS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/gof.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hubble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hubble2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/iid.html</loc>
-  </url>
-  <url>
-    <loc>/reference/images.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/indoorenv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/intercept.html</loc>
-  </url>
-  <url>
-    <loc>/reference/internal.html</loc>
-  </url>
-  <url>
-    <loc>/reference/intervention.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ksmooth2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/labels-set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lava-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lava.options.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/makemissing.html</loc>
-  </url>
-  <url>
-    <loc>/reference/measurement.error.html</loc>
-  </url>
-  <url>
-    <loc>/reference/missingdata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mixture.html</loc>
-  </url>
-  <url>
-    <loc>/reference/modelsearch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/multinomial.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mvnmix.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nldata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nsem.html</loc>
-  </url>
-  <url>
-    <loc>/reference/op_concat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/op_match.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ordinal-set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ordreg.html</loc>
-  </url>
-  <url>
-    <loc>/reference/parpos.html</loc>
-  </url>
-  <url>
-    <loc>/reference/partialcor.html</loc>
-  </url>
-  <url>
-    <loc>/reference/path.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pcor.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pdfconvert.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.estimate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.sim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotConf.html</loc>
-  </url>
-  <url>
-    <loc>/reference/predict.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/predictlvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rbind.Surv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/regression-set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/revdiag.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rmvar.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rotate2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/scheffe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/semdata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/serotonin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/serotonin2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sim.default.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/spaghetti.html</loc>
-  </url>
-  <url>
-    <loc>/reference/stack.estimate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subset.lvm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.sim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/timedep.html</loc>
-  </url>
-  <url>
-    <loc>/reference/toformula.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/trim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/twindata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/twostage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/twostage.lvmfit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/twostageCV.html</loc>
-  </url>
-  <url>
-    <loc>/reference/vars.html</loc>
-  </url>
-  <url>
-    <loc>/reference/vec.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wait.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wkm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapvec.html</loc>
-  </url>
-  <url>
-    <loc>/reference/zibreg.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/correlation.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/influencefunction.html</loc></url>
+<url><loc>/articles/nonlinear.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/By.html</loc></url>
+<url><loc>/reference/Col.html</loc></url>
+<url><loc>/reference/Combine.html</loc></url>
+<url><loc>/reference/Expand.html</loc></url>
+<url><loc>/reference/Graph.html</loc></url>
+<url><loc>/reference/Grep.html</loc></url>
+<url><loc>/reference/IC.html</loc></url>
+<url><loc>/reference/Missing.html</loc></url>
+<url><loc>/reference/Model.html</loc></url>
+<url><loc>/reference/NA2x.html</loc></url>
+<url><loc>/reference/NR.html</loc></url>
+<url><loc>/reference/PD.html</loc></url>
+<url><loc>/reference/Print.html</loc></url>
+<url><loc>/reference/Range.lvm.html</loc></url>
+<url><loc>/reference/addvar.html</loc></url>
+<url><loc>/reference/backdoor.html</loc></url>
+<url><loc>/reference/baptize.html</loc></url>
+<url><loc>/reference/binomial.rd.html</loc></url>
+<url><loc>/reference/blockdiag.html</loc></url>
+<url><loc>/reference/bmd.html</loc></url>
+<url><loc>/reference/bmidata.html</loc></url>
+<url><loc>/reference/bootstrap.html</loc></url>
+<url><loc>/reference/bootstrap.lvm.html</loc></url>
+<url><loc>/reference/brisa.html</loc></url>
+<url><loc>/reference/calcium.html</loc></url>
+<url><loc>/reference/cancel.html</loc></url>
+<url><loc>/reference/children.html</loc></url>
+<url><loc>/reference/click.html</loc></url>
+<url><loc>/reference/closed.testing.html</loc></url>
+<url><loc>/reference/colorbar.html</loc></url>
+<url><loc>/reference/commutation.html</loc></url>
+<url><loc>/reference/compare.html</loc></url>
+<url><loc>/reference/complik.html</loc></url>
+<url><loc>/reference/confband.html</loc></url>
+<url><loc>/reference/confint.lvmfit.html</loc></url>
+<url><loc>/reference/confpred.html</loc></url>
+<url><loc>/reference/constrain-set.html</loc></url>
+<url><loc>/reference/contr.html</loc></url>
+<url><loc>/reference/correlation.html</loc></url>
+<url><loc>/reference/covariance.html</loc></url>
+<url><loc>/reference/csplit.html</loc></url>
+<url><loc>/reference/curly.html</loc></url>
+<url><loc>/reference/devcoords.html</loc></url>
+<url><loc>/reference/diagtest.html</loc></url>
+<url><loc>/reference/dsep.lvm.html</loc></url>
+<url><loc>/reference/equivalence.html</loc></url>
+<url><loc>/reference/estimate.array.html</loc></url>
+<url><loc>/reference/estimate.default.html</loc></url>
+<url><loc>/reference/estimate.lvm.html</loc></url>
+<url><loc>/reference/eventTime.html</loc></url>
+<url><loc>/reference/fplot.html</loc></url>
+<url><loc>/reference/getMplus.html</loc></url>
+<url><loc>/reference/getSAS.html</loc></url>
+<url><loc>/reference/gof.html</loc></url>
+<url><loc>/reference/hubble.html</loc></url>
+<url><loc>/reference/hubble2.html</loc></url>
+<url><loc>/reference/iid.html</loc></url>
+<url><loc>/reference/images.html</loc></url>
+<url><loc>/reference/indoorenv.html</loc></url>
+<url><loc>/reference/intercept.html</loc></url>
+<url><loc>/reference/internal.html</loc></url>
+<url><loc>/reference/intervention.lvm.html</loc></url>
+<url><loc>/reference/ksmooth2.html</loc></url>
+<url><loc>/reference/labels-set.html</loc></url>
+<url><loc>/reference/lava-package.html</loc></url>
+<url><loc>/reference/lava.options.html</loc></url>
+<url><loc>/reference/lvm.html</loc></url>
+<url><loc>/reference/makemissing.html</loc></url>
+<url><loc>/reference/measurement.error.html</loc></url>
+<url><loc>/reference/missingdata.html</loc></url>
+<url><loc>/reference/mixture.html</loc></url>
+<url><loc>/reference/modelsearch.html</loc></url>
+<url><loc>/reference/multinomial.html</loc></url>
+<url><loc>/reference/mvnmix.html</loc></url>
+<url><loc>/reference/nldata.html</loc></url>
+<url><loc>/reference/nsem.html</loc></url>
+<url><loc>/reference/op_concat.html</loc></url>
+<url><loc>/reference/op_match.html</loc></url>
+<url><loc>/reference/ordinal-set.html</loc></url>
+<url><loc>/reference/ordreg.html</loc></url>
+<url><loc>/reference/parpos.html</loc></url>
+<url><loc>/reference/partialcor.html</loc></url>
+<url><loc>/reference/path.html</loc></url>
+<url><loc>/reference/pcor.html</loc></url>
+<url><loc>/reference/pdfconvert.html</loc></url>
+<url><loc>/reference/plot.estimate.html</loc></url>
+<url><loc>/reference/plot.lvm.html</loc></url>
+<url><loc>/reference/plot.sim.html</loc></url>
+<url><loc>/reference/plotConf.html</loc></url>
+<url><loc>/reference/predict.lvm.html</loc></url>
+<url><loc>/reference/predictlvm.html</loc></url>
+<url><loc>/reference/rbind.Surv.html</loc></url>
+<url><loc>/reference/regression-set.html</loc></url>
+<url><loc>/reference/revdiag.html</loc></url>
+<url><loc>/reference/rmvar.html</loc></url>
+<url><loc>/reference/rotate2.html</loc></url>
+<url><loc>/reference/scheffe.html</loc></url>
+<url><loc>/reference/semdata.html</loc></url>
+<url><loc>/reference/serotonin.html</loc></url>
+<url><loc>/reference/serotonin2.html</loc></url>
+<url><loc>/reference/sim.default.html</loc></url>
+<url><loc>/reference/sim.html</loc></url>
+<url><loc>/reference/spaghetti.html</loc></url>
+<url><loc>/reference/stack.estimate.html</loc></url>
+<url><loc>/reference/subset.lvm.html</loc></url>
+<url><loc>/reference/summary.sim.html</loc></url>
+<url><loc>/reference/timedep.html</loc></url>
+<url><loc>/reference/toformula.html</loc></url>
+<url><loc>/reference/tr.html</loc></url>
+<url><loc>/reference/trim.html</loc></url>
+<url><loc>/reference/twindata.html</loc></url>
+<url><loc>/reference/twostage.html</loc></url>
+<url><loc>/reference/twostage.lvmfit.html</loc></url>
+<url><loc>/reference/twostageCV.html</loc></url>
+<url><loc>/reference/vars.html</loc></url>
+<url><loc>/reference/vec.html</loc></url>
+<url><loc>/reference/wait.html</loc></url>
+<url><loc>/reference/wkm.html</loc></url>
+<url><loc>/reference/wrapvec.html</loc></url>
+<url><loc>/reference/zibreg.html</loc></url>
 </urlset>
+
