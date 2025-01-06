@@ -13,7 +13,9 @@
 ##' @param args (optional) list of named arguments passed to (mc)mapply
 ##' @param iter If TRUE the iteration number is passed as first argument to
 ##'   (mc)mapply
-##' @param mc.cores Optional number of cores. Will use parallel::mcmapply instead of future
+##' @param mc.cores Optional number of cores. Will use parallel::mcmapply
+##'   instead of future
+##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param ... Additional arguments to future.apply::future_mapply
 ##' @aliases sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim
@@ -45,10 +47,12 @@
 ##' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 ##'
 ##' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-##' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),names=c("Model","Sandwich"),confint=TRUE)
+##' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
+##'         names=c("Model","Sandwich"),confint=TRUE)
 ##'
 ##' if (interactive()) {
-##'     plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
+##'     plot(val,estimate=1,c(2,5),true=1,
+##'          names=c("Model","Sandwich"),polygon=FALSE)
 ##'     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
 ##'          true=c(1,1),names=c("Model","Sandwich"),
 ##'          line.lwd=1,col=c("gray20","gray60"),
@@ -64,98 +68,127 @@
 ##' sim(f, R)
 ##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 ##' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
-sim.default <- function(x=NULL, R=100, f=NULL, colnames=NULL,
-                seed=NULL, args=list(),
-                iter=FALSE, mc.cores, ...) {
-    stm <- proc.time()
-    oldtm <- rep(0,5)
-    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
-    if (is.null(seed))
-        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
-    else {
-        R.seed <- get(".Random.seed", envir = .GlobalEnv)
-        set.seed(seed)
-        RNGstate <- structure(seed, kind = as.list(RNGkind()))
-        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
+                        seed = NULL, args = list(),
+                        iter = FALSE, mc.cores,
+                        progressr.message = NULL,
+                        ...) {
+  stm <- proc.time()
+  oldtm <- rep(0, 5)
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+    runif(1)
+  }
+  if (is.null(seed)) {
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+  } else {
+    R.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(seed)
+    RNGstate <- structure(seed, kind = as.list(RNGkind()))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+  }
+  olddata <- NULL
+  dots <- list(...)
+  mycall <- match.call(expand.dots = FALSE)
+  if (inherits(x, c("data.frame", "matrix"))) olddata <- x
+  if (inherits(x, "sim")) {
+    oldtm <- attr(x, "time")
+    oldcall <- attr(x, "call")
+    x <- attr(x, "f")
+    if (!is.null(f)) x <- f
+    ex <- oldcall[["..."]]
+    for (nn in setdiff(names(ex), names(dots))) {
+      dots[[nn]] <- ex[[nn]]
+      val <- list(ex[[nn]])
+      names(val) <- nn
+      mycall[["..."]] <- c(mycall[["..."]], list(val))
     }
-    olddata <- NULL
-    dots <- list(...)
-    mycall <- match.call(expand.dots=FALSE)
-    if (inherits(x, c("data.frame", "matrix"))) olddata <- x
-    if (inherits(x, "sim")) {
-        oldtm <- attr(x, "time")
-        oldcall <- attr(x, "call")
-        x <- attr(x, "f")
-        if (!is.null(f)) x <- f
-        ex <- oldcall[["..."]]
-        for (nn in setdiff(names(ex),names(dots))) {
-            dots[[nn]] <- ex[[nn]]
-            val <- list(ex[[nn]]); names(val) <- nn
-            mycall[["..."]] <- c(mycall[["..."]], list(val))
-        }
+  } else {
+    if (!is.null(f)) x <- f
+    if (!is.function(x)) stop("Expected a function or 'sim' object.")
+  }
+  if (is.null(x)) stop("Must give new function argument 'f'.")
+  res <- val <- NULL
+  on.exit({
+    if (is.null(colnames) && !is.null(val)) {
+      if (is.matrix(val[[1]])) {
+        colnames <- base::colnames(val[[1]])
+      } else {
+        colnames <- names(val[[1]])
+      }
+    }
+    base::colnames(res) <- colnames
+    if (!is.null(olddata)) res <- rbind(olddata, res)
+    attr(res, "call") <- mycall
+    attr(res, "f") <- x
+    cls <- ifelse(is.data.frame(res), "data.frame", "matrix")
+    class(res) <- c("sim", cls)
+    attr(res, "time") <- proc.time() - stm + oldtm
+    return(res)
+  })
+  if (inherits(R, c("matrix", "data.frame")) || length(R) > 1) {
+    if (is.list(R)) {
+      parval <- R
+      ## list of parameters for each iteration
+    } else if (inherits(R, c("matrix", "data.frame"))) {
+      parval <- as.data.frame(R)
+      names(parval) <- colnames(R)
+      R <- NROW(parval)
+    }
+  } else {
+    parval <- as.data.frame(1:R)
+    names(parval) <- NULL
+  }
 
+  repl <- NROW(parval)
+  pb <- progressr::progressor(steps = repl)
+  robx <- function(iter__, ...) {
+    if (!is.null(progressr.message)) {
+      pb(message = progressr.message(...))
     } else {
-        if (!is.null(f)) x <- f
-        if (!is.function(x)) stop("Expected a function or 'sim' object.")
-    }
-    if (is.null(x)) stop("Must give new function argument 'f'.")
-    res <- val <- NULL
-    on.exit({
-        if (is.null(colnames) && !is.null(val)) {
-            if (is.matrix(val[[1]])) {
-                colnames <- base::colnames(val[[1]])
-            } else {
-                colnames <- names(val[[1]])
-            }
-        }
-        base::colnames(res) <- colnames
-        if (!is.null(olddata)) res <- rbind(olddata, res)
-        attr(res, "call") <- mycall
-        attr(res, "f") <- x
-        cls <- ifelse(is.data.frame(res), "data.frame", "matrix")
-        class(res) <- c("sim", cls)
-        attr(res, "time") <- proc.time()-stm+oldtm
-        return(res)
-    })
-    parval_provided <- FALSE
-    if (inherits(R, c("matrix", "data.frame")) || length(R)>1) {
-        parval_provided <- TRUE
-        parval <- as.data.frame(R)
-        if (is.vector(R)) names(parval) <- NULL
-        else if (inherits(R,c("matrix", "data.frame")))
-          names(parval) <- colnames(R)
-        R <- NROW(parval)
-    } else {
-        parval <- as.data.frame(1:R)
-        names(parval) <- NULL
-    }
-
-    pb <- progressr::progressor(steps = R)
-    robx <- function(iter__, ...) {
       pb()
-      tryCatch(x(...), error=function(e) NA)
     }
-    if (iter) formals(robx)[[1]] <- NULL
+    tryCatch(x(...), error = function(e) NA)
+  }
+  if (iter || !is.data.frame(parval)) {
+    formals(robx)[[1]] <- NULL
+  }
 
+  if (is.data.frame(parval)) {
     pp <- c(
-        as.list(parval), dots,
-      list(FUN = robx, SIMPLIFY = FALSE, MoreArgs = as.list(args)))
-    if (is.null(pp$future.seed)) {
-      pp$future.seed <- TRUE
+      as.list(parval), dots,
+      list(FUN = robx, SIMPLIFY = FALSE, MoreArgs = as.list(args))
+    )
+  } else { ## parameters as a list
+    for (i in seq_along(parval)) {
+      parval[i] <- c(parval[i], dots, args)
     }
-    if (!missing(mc.cores)) {
-      pp$future.seed <- NULL
-      pp$mc.cores <- mc.cores
-      val <- do.call(parallel::mcmapply, pp)
+    pp <- c(
+      list(parval),
+      list(FUN = robx, SIMPLIFY = FALSE)
+    )
+  }
+  if (is.null(pp$future.seed)) {
+    pp$future.seed <- TRUE
+  }
+  if (!missing(mc.cores)) {
+    pp$future.seed <- NULL
+    pp$mc.cores <- mc.cores
+  }
+
+  if (!missing(mc.cores)) {
+    if (is.null(mc.cores)) {
+      val <- do.call(mapply, pp)
     } else {
-      val <- do.call(future.apply::future_mapply, pp)
+      val <- do.call(parallel::mcmapply, pp)
     }
-    res <- do.call(rbind, val)
-    if (is.null(res)) {
-      res <- matrix(NA, ncol=length(val[[1]]), nrow=R)
-    }
-    res
+  } else {
+    val <- do.call(future.apply::future_mapply, pp)
+  }
+  res <- do.call(rbind, val)
+  if (is.null(res)) {
+    res <- matrix(NA, ncol=length(val[[1]]), nrow=repl)
+  }
+  res
 }
 
 ##' @export
@@ -277,7 +310,7 @@ print.sim <- function(x, ...) {
     attr(x, "f") <- attr(x, "call") <- NULL
     Print(x, ...)
     cat("\n")
-    print(s, extra=FALSE, ...)
+    if (nrow(x)>1) print(s, extra=FALSE, ...)
     return(invisible(x))
 }
 

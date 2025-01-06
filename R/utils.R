@@ -328,13 +328,17 @@ npar.lvm <- function(x) {
 
 }
 
-as.numeric.list <- function(x,...) {
-  lapply(x,function(y) ifelse(is.na(as.numeric(y)),y,as.numeric(y)))
+##' @export
+as.numeric.list <- function(x, ...) {
+  lapply(x, function(y) {
+    ifelse(is.na(as.numeric(y)), y, as.numeric(y))
+  })
 }
 
 edge2pair <- function(e) {
-  sapply(e,function(x) strsplit(x,"~"))
+  sapply(e, function(x) strsplit(x, "~"))
 }
+
 numberdup <- function(xx) { ## Convert to numbered list
   dup.xx <- duplicated(xx)
   ## dups <- xx[dup.xx]

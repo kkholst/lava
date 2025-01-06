@@ -122,7 +122,7 @@ To illustrate the methods we consider data arising from the model \(Y_{ij} \sim
 Bernoulli\{\operatorname{expit}(X_{ij} + A_{i} + W_{i})\}, A_{i} \sim
 Bernoulli\{\operatorname{expit}(W_{i})\}\) 
 with independent covariates
-\(X_{ij}\sim\mathcal{N}(0,1), U_{i}\sim\mathcal{N}(0,1)\). 
+\(X_{ij}\sim\mathcal{N}(0,1), W_{i}\sim\mathcal{N}(0,1)\).
 ```{r sim_model}
 m <- lvm() |>
   regression(y1 ~ x1 + a + w) |>
@@ -157,7 +157,7 @@ The main functions for working with influence functions are
 
 The `estimate` function is the primary tool for obtaining parameter estimates
 and related information. It returns an object of the class type `estimate`,
-which is general container for holding information about estimated parameters.
+which is a general container for holding information about estimated parameters.
 The estimate function takes as input either a model object (the first argument
 `x`), or a parameter vector and corresponding influence function (IF) matrix
 specified using the `coef` and `IF` arguments. If the primary goal is to apply the

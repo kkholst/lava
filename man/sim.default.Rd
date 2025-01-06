@@ -14,6 +14,7 @@
   args = list(),
   iter = FALSE,
   mc.cores,
+  progressr.message = NULL,
   ...
 )
 }
@@ -33,7 +34,10 @@
 \item{iter}{If TRUE the iteration number is passed as first argument to
 (mc)mapply}
 
-\item{mc.cores}{Optional number of cores. Will use parallel::mcmapply instead of future}
+\item{mc.cores}{Optional number of cores. Will use parallel::mcmapply
+instead of future}
+
+\item{progressr.message}{Optional message for the progressr progress-bar}
 
 \item{...}{Additional arguments to future.apply::future_mapply}
 }
@@ -73,10 +77,12 @@ val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),names=c("Model","Sandwich"),confint=TRUE)
+summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
+        names=c("Model","Sandwich"),confint=TRUE)
 
 if (interactive()) {
-    plot(val,estimate=1,c(2,5),true=1,names=c("Model","Sandwich"),polygon=FALSE)
+    plot(val,estimate=1,c(2,5),true=1,
+         names=c("Model","Sandwich"),polygon=FALSE)
     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
          true=c(1,1),names=c("Model","Sandwich"),
          line.lwd=1,col=c("gray20","gray60"),
