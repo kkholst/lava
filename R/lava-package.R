@@ -251,7 +251,7 @@ NULL
 ##' starter.multigroup
 ##' addattr modelPar modelVar matrices pars pars.lvm
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
-##' matrices reorderdata graph2lvm igraph.lvm subgraph finalize
+##' mat.lvm matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##' index.lvm index.lvmfit index reindex index<-
 ##' rmvn0 dmvn0 logit expit tigol
 ##' randomslope randomslope<- lisrel variances offdiags describecoef

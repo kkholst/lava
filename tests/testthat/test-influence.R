@@ -22,23 +22,23 @@ test_that("merge, IC, estimate with 'id' argument", {
 
   l <- glm(y ~ x, data=d)
   e1 <- estimate(l, id=d$id1)
-  e <- merge(estimate(l), estimate(l), id=list(d$id, d$id1))
-  V0 <- vcov(e)
-  V1 <- vcov(estimate(e1, id=c(1,2,2,3,4)))
+  V1 <- vcov(e1)
+  e0 <- estimate(e1, id=c(1,2,2,3,4))
+  V0 <- vcov(e0)
 
   if (requireNamespace("geepack",quietly=TRUE)) {
     V <- summary(geepack::geeglm(y ~ x, id=d$id0, data=d))$cov.scaled
     testthat::expect_true(sum((V - V0)^2) < 1e-12)
-    testthat::expect_true(sum((V - V1)^2) < 1e-12)
   }
 
-  testthat::expect_true(sum((vcov(e1) - vcov(e)[3:4,3:4])^2) < 1e-12)
-  testthat::expect_true(sum((V1 - vcov(e)[1:2,1:2])^2) < 1e-12)
+  e <- merge(estimate(l), estimate(l), id=list(d$id, d$id1))
+  testthat::expect_true(sum((V1 - vcov(e)[3:4,3:4])^2) < 1e-12)
+  testthat::expect_true(sum((V0 - vcov(e)[1:2,1:2])^2) < 1e-12)
 
   ee <- estimate(e, id=c(1,2,3,4,2,2))
   VV <- vcov(ee)
-  testthat::expect_true(sum((VV[1:2,1:2] - V)^2) < 1e-12)
-  testthat::expect_true(sum((VV[3:4,3:4] - V)^2) < 1e-12)
+  testthat::expect_true(sum((VV[1:2,1:2] - V0)^2) < 1e-12)
+  testthat::expect_true(sum((VV[3:4,3:4] - V0)^2) < 1e-12)
 })
 
 test_that("negative binomial regression (glm.nb)", {
