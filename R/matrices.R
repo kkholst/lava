@@ -213,17 +213,22 @@ mat.lvm <- function(x,ii=index(x),...) {
 
     parBelongsTo <- lapply(parBelongsTo,function(x) sort(unique(x)))
 
+    meanl <- idxM
+    if (!is.null(meanl)) meanl <- cbind(meanl, pidxM)
+    regl <- idxA
+    if (!is.null(regl)) regl <- cbind(regl, pidxA)
+    covl <- idxP
+    if (!is.null(covl)) covl <- cbind(covl, pidxP)
 
-    return(list(mean=cbind(idxM,pidxM),
-                reg=cbind(idxA,pidxA),
-                cov=cbind(idxP,pidxP),
+    return(list(mean=meanl,
+                reg=regl,
+                cov=covl,
                 epar=ee,
                 parval=parval,
                 constrain.idx=constrain.idx,
                 parBelongsTo=parBelongsTo))
 
 }
-
 
 
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
