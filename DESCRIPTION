@@ -61,7 +61,7 @@ Suggests:
     targeted (>= 0.4),
     testthat (>= 0.11),
     visNetwork
-VignetteBuilder: knitr
+VignetteBuilder: knitr,rmarkdown
 ByteCompile: yes
 Encoding: UTF-8
 RoxygenNote: 7.3.2

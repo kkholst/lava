@@ -22,6 +22,7 @@ test_that("merge, IC, estimate with 'id' argument", {
 
   l <- glm(y ~ x, data=d)
   e1 <- estimate(l, id=d$id1)
+  e <- merge(estimate(l), estimate(l), id=list(d$id, d$id1))
   V0 <- vcov(e)
   V1 <- vcov(estimate(e1, id=c(1,2,2,3,4)))
 
@@ -31,7 +32,6 @@ test_that("merge, IC, estimate with 'id' argument", {
     testthat::expect_true(sum((V - V1)^2) < 1e-12)
   }
 
-  e <- merge(estimate(l), estimate(l), id=list(d$id, d$id1))
   testthat::expect_true(sum((vcov(e1) - vcov(e)[3:4,3:4])^2) < 1e-12)
   testthat::expect_true(sum((V1 - vcov(e)[1:2,1:2])^2) < 1e-12)
 
