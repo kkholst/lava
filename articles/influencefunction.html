@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.1</span>
       </span>
     </div>
 
@@ -202,7 +202,7 @@ A=a,W] - \Psi_{a}(P)
 <p>To illustrate the methods we consider data arising from the model
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∼</mo><mi>B</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>o</mi><mi>u</mi><mi>l</mi><mi>l</mi><mi>i</mi><mo stretchy="false" form="prefix">{</mo><mo>expit</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>A</mi><mi>i</mi></msub><mo>+</mo><msub><mi>W</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>,</mo><msub><mi>A</mi><mi>i</mi></msub><mo>∼</mo><mi>B</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>o</mi><mi>u</mi><mi>l</mi><mi>l</mi><mi>i</mi><mo stretchy="false" form="prefix">{</mo><mo>expit</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>W</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Y_{ij} \sim Bernoulli\{\operatorname{expit}(X_{ij} + A_{i} + W_{i})\}, A_{i} \sim Bernoulli\{\operatorname{expit}(W_{i})\}</annotation></semantics></math>
 with independent covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>U</mi><mi>i</mi></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">X_{ij}\sim\mathcal{N}(0,1), U_{i}\sim\mathcal{N}(0,1)</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>W</mi><mi>i</mi></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">X_{ij}\sim\mathcal{N}(0,1), W_{i}\sim\mathcal{N}(0,1)</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -264,14 +264,15 @@ via their estimated IFs</li>
 </ul>
 <p>The <code>estimate</code> function is the primary tool for obtaining
 parameter estimates and related information. It returns an object of the
-class type <code>estimate</code>, which is general container for holding
-information about estimated parameters. The estimate function takes as
-input either a model object (the first argument <code>x</code>), or a
-parameter vector and corresponding influence function (IF) matrix
-specified using the <code>coef</code> and <code>IF</code> arguments. If
-the primary goal is to apply the delta method or test linear hypotheses,
-it is also possible to provide the asymptotic variance estimate via the
-<code>vcov</code> argument, without specifying the IF matrix.</p>
+class type <code>estimate</code>, which is a general container for
+holding information about estimated parameters. The estimate function
+takes as input either a model object (the first argument
+<code>x</code>), or a parameter vector and corresponding influence
+function (IF) matrix specified using the <code>coef</code> and
+<code>IF</code> arguments. If the primary goal is to apply the delta
+method or test linear hypotheses, it is also possible to provide the
+asymptotic variance estimate via the <code>vcov</code> argument, without
+specifying the IF matrix.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>x<span class="op">=</span>, <span class="va">...</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span>, IF<span class="op">=</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -1525,7 +1526,7 @@ kept fixed at the value
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] survival_3.7-0 lava_1.8.0    </span></span>
+<span><span class="co">#&gt; [1] survival_3.7-0 lava_1.8.1    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] tidyr_1.3.1          sass_0.4.9           future_1.34.0       </span></span>

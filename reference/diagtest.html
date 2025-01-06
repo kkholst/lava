@@ -18,7 +18,7 @@ negative predictive values"><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lava</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.1</span>
       </span>
     </div>
 
@@ -126,15 +126,36 @@ negative predictive values</p>
 <span class="r-in"><span>                       <span class="fl">35</span>,<span class="fl">28</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">2</span>,byrow<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                     dimnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rater<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span>,gold<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>,<span class="st">"yes"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">diagtest</span><span class="op">(</span><span class="va">M</span>,exact<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate Std.Err   2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence                0.3419         0.2567 0.4353         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Test                      0.5385         0.4439 0.6310         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sensitivity               0.7000         0.5347 0.8344         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Specificity               0.5455         0.4279 0.6594         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PositivePredictiveValue   0.4444         0.3192 0.5751         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NegativePredictiveValue   0.7778         0.6440 0.8796         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Accuracy                  0.5983         0.5036 0.6878         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Homogeneity               0.7447         0.5965 0.8606 0.001089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: diagtest(table = M, exact = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Confidence limits: exact</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      gold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rater no yes        no   yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   no  42  12     0.359 0.103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   yes 35  28     0.299 0.239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Positive outcome: 'yes'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate    2.5%   97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence               0.34188 0.25670 0.43528        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Test                     0.53846 0.44389 0.63104        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sensitivity              0.70000 0.53468 0.83437        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Specificity              0.54545 0.42790 0.65940        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PositivePredictiveValue  0.44444 0.31917 0.57511        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NegativePredictiveValue  0.77778 0.64400 0.87956        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Accuracy                 0.59829 0.50363 0.68785        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Homogeneity              0.74468 0.59650 0.86055  0.0011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence:				Prob( outcome+ )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Test:					Prob( test+ )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sensitivity (True positive rate):	Prob( test+ | outcome+ )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Specificity (True negative rate):	Prob( test- | outcome- )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Positive predictive value (Precision):	Prob( outcome+ | test+ )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Negative predictive value:		Prob( outcome- | test- )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Accuracy:				Prob( correct classification )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Homogeneity/Symmetry:			Prob( outcome+, test- | discordant ), H0: p=0.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>
