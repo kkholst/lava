@@ -1,8 +1,7 @@
 # lava 1.8.1
- - Development version
- - `sim.default` now accepts the argument `R` to be a list (of list) of
+ - `sim.default` now accepts the argument `R` to be a list (of lists) of
  arguments.
- - `subset.estimate` method
+ - New methods `subset.estimate`, `transform.estimate`, `labels.estimate`
 
 # lava 1.8.0
  - New methods `estimate.mlm`, `IC.mlm`, `pars.mlm`, `estimate.array`,
