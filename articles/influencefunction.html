@@ -971,8 +971,6 @@ correlation structure <span class="citation">(Halekoh, Højsgaard, and
 Yan 2006)</span></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gee0</span> <span class="op">&lt;-</span> <span class="fu">geepack</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html" class="external-link">geeglm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span> <span class="op">+</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">dl</span>, id <span class="op">=</span> <span class="va">dl</span><span class="op">$</span><span class="va">id</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gee0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -1547,9 +1545,9 @@ kept fixed at the value
 <span><span class="co">#&gt; [46] fs_1.6.5             htmlwidgets_1.6.4    MASS_7.3-61         </span></span>
 <span><span class="co">#&gt; [49] ragg_1.3.3           pkgconfig_2.0.3      desc_1.4.3          </span></span>
 <span><span class="co">#&gt; [52] progressr_0.15.1     timereg_2.0.6        pkgdown_2.1.1       </span></span>
-<span><span class="co">#&gt; [55] bslib_0.8.0          pillar_1.10.0        data.table_1.16.4   </span></span>
+<span><span class="co">#&gt; [55] bslib_0.8.0          pillar_1.10.1        data.table_1.16.4   </span></span>
 <span><span class="co">#&gt; [58] glue_1.8.0           Rcpp_1.0.13-1        systemfonts_1.1.0   </span></span>
-<span><span class="co">#&gt; [61] tidyselect_1.2.1     xfun_0.49            tibble_3.2.1        </span></span>
+<span><span class="co">#&gt; [61] tidyselect_1.2.1     xfun_0.50            tibble_3.2.1        </span></span>
 <span><span class="co">#&gt; [64] knitr_1.49           htmltools_0.5.8.1    rmarkdown_2.29      </span></span>
 <span><span class="co">#&gt; [67] compiler_4.4.2</span></span></code></pre></div>
 </div>
