@@ -794,7 +794,7 @@ adjusted \(p\)-values can then be calculated as \[P(Z_{max} >
 in [@RitzPipper_multcomp] the joint distribution of \(Z_{1},\ldots,Z_{p}\)
 can be estimated from the IFs. This is implemented in the `p.correct` method
 
-```{r pcorrect}
+```{r pcorrect, eval=has_mets }
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
 p.correct(gg0)
 ```
