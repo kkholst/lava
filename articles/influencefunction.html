@@ -233,20 +233,26 @@ is only observed for half of the subjects</p>
 <span><span class="co">#&gt; 399 0  -0.71513 0 -2.59611 0  -1.63801 NA -2.62616 0   1.004233 399</span></span>
 <span><span class="co">#&gt; 400 1   0.86522 1  1.16912 0  -0.64140 NA  0.01746 1  -0.311973 400</span></span>
 <span><span class="co">## Data in long format</span></span>
-<span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/fast.reshape.html" class="external-link">fast.reshape</a></span><span class="op">(</span><span class="va">dw</span>, varying <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="st">"x"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">dw</span>,</span>
+<span>        varying <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,</span>
+<span>                       <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        v.names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="st">"x"</span><span class="op">)</span>, direction<span class="op">=</span><span class="st">"long"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="va">dl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">dl</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="co">## dl &lt;- mets::fast.reshape(dw, varying = c("y", "x")) |&gt; na.omit()</span></span>
 <span><span class="fu"><a href="../reference/Print.html">Print</a></span><span class="op">(</span><span class="va">dl</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      a w      id  y x       num</span></span>
-<span><span class="co">#&gt; 1    1 1.074  1   1 -0.6265 1  </span></span>
-<span><span class="co">#&gt; 2    1 1.074  1   0 -1.0869 2  </span></span>
-<span><span class="co">#&gt; 3    1 1.074  1   1 -1.5570 3  </span></span>
-<span><span class="co">#&gt; 4    1 1.074  1   1  0.3442 4  </span></span>
-<span><span class="co">#&gt; 5    1 1.896  2   1  0.1836 1  </span></span>
-<span><span class="co">#&gt; ---                            </span></span>
-<span><span class="co">#&gt; 1594 0 -2.596 399 0 -1.6380 2  </span></span>
-<span><span class="co">#&gt; 1596 0 -2.596 399 0  1.0042 4  </span></span>
-<span><span class="co">#&gt; 1597 1  1.169 400 1  0.8652 1  </span></span>
-<span><span class="co">#&gt; 1598 1  1.169 400 0 -0.6414 2  </span></span>
-<span><span class="co">#&gt; 1600 1  1.169 400 1 -0.3120 4</span></span></code></pre></div>
+<span><span class="co">#&gt;       a w      id  time y x      </span></span>
+<span><span class="co">#&gt; 1.1   1 1.074  1   1    1 -0.6265</span></span>
+<span><span class="co">#&gt; 1.2   1 1.074  1   2    0 -1.0869</span></span>
+<span><span class="co">#&gt; 1.3   1 1.074  1   3    1 -1.5570</span></span>
+<span><span class="co">#&gt; 1.4   1 1.074  1   4    1  0.3442</span></span>
+<span><span class="co">#&gt; 2.1   1 1.896  2   1    1  0.1836</span></span>
+<span><span class="co">#&gt; ---                              </span></span>
+<span><span class="co">#&gt; 399.2 0 -2.596 399 2    0 -1.6380</span></span>
+<span><span class="co">#&gt; 399.4 0 -2.596 399 4    0  1.0042</span></span>
+<span><span class="co">#&gt; 400.1 1  1.169 400 1    1  0.8652</span></span>
+<span><span class="co">#&gt; 400.2 1  1.169 400 2    0 -0.6414</span></span>
+<span><span class="co">#&gt; 400.4 1  1.169 400 4    1 -0.3120</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="example-population-mean">Example: population mean<a class="anchor" aria-label="anchor" href="#example-population-mean"></a>
 </h3>
@@ -1471,37 +1477,22 @@ kept fixed at the value
 <span><span class="co">#&gt; 4  0.03143</span></span>
 <span><span class="co">#&gt; 5  0.02478</span></span>
 <span><span class="co">#&gt; 6 -0.61997</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="example-average-treatment-effects">Example: Average Treatment Effects<a class="anchor" aria-label="anchor" href="#example-average-treatment-effects"></a>
-</h3>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/targeted/man/cate.html" class="external-link">cate</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="fl">1</span>,</span>
-<span></span>
-<span>                     data <span class="op">=</span> <span class="va">dw</span>,</span>
-<span>                     response_model <span class="op">=</span> <span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">w</span><span class="op">+</span><span class="va">a</span>,</span>
-<span>                     propensity_model <span class="op">=</span> <span class="va">a</span> <span class="op">~</span> <span class="va">x1</span><span class="op">*</span><span class="va">w</span></span>
-<span>                     <span class="op">)</span></span>
-<span><span class="va">a1</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; E[y1(1)]      0.6983 0.03500 0.62970 0.7669 1.502e-88</span></span>
-<span><span class="co">#&gt; E[y1(0)]      0.5375 0.03587 0.46725 0.6078 8.911e-51</span></span>
-<span><span class="co">#&gt; ───────────                                          </span></span>
-<span><span class="co">#&gt; (Intercept)   0.1608 0.04696 0.06871 0.2528 6.189e-04</span></span>
-<span><span class="fu"><a href="../reference/IC.html">IC</a></span><span class="op">(</span><span class="va">a1</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   E[y1(1)] E[y1(0)] (Intercept)</span></span>
-<span><span class="co">#&gt; 1   0.3927  0.02231     0.37042</span></span>
-<span><span class="co">#&gt; 2   0.2923  0.36519    -0.07294</span></span>
-<span><span class="co">#&gt; 3  -0.2022 -0.71701     0.51486</span></span>
-<span><span class="co">#&gt; 4   0.2210 -1.18578     1.40680</span></span>
-<span><span class="co">#&gt; 5  -1.5965 -0.03709    -1.55939</span></span>
-<span><span class="co">#&gt; 6  -0.2002 -0.82485     0.62466</span></span></code></pre></div>
+<!-- ## Example: Average Treatment Effects -->
+<!-- ```{r targeted, cache=TRUE, eval=has_targeted } -->
+<!-- a1 <- targeted::cate(a ~ 1, -->
+<!--                      data = dw, -->
+<!--                      response_model = y1 ~ x1+w+a, -->
+<!--                      propensity_model = a ~ x1*w -->
+<!--                      ) -->
+<!-- a1 -->
+<!-- IC(a1) |> head() -->
+<!-- ``` -->
 </div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -1527,29 +1518,25 @@ kept fixed at the value
 <span><span class="co">#&gt; [1] survival_3.7-0 lava_1.8.1    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] tidyr_1.3.1          sass_0.4.9           future_1.34.0       </span></span>
-<span><span class="co">#&gt;  [4] generics_0.1.3       futile.options_1.0.1 lattice_0.22-6      </span></span>
-<span><span class="co">#&gt;  [7] pracma_2.4.4         listenv_0.9.1        digest_0.6.37       </span></span>
-<span><span class="co">#&gt; [10] magrittr_2.0.3       evaluate_1.0.1       grid_4.4.2          </span></span>
-<span><span class="co">#&gt; [13] mvtnorm_1.3-2        fastmap_1.2.0        jsonlite_1.8.9      </span></span>
-<span><span class="co">#&gt; [16] Matrix_1.7-1         backports_1.5.0      formatR_1.14        </span></span>
-<span><span class="co">#&gt; [19] targeted_0.5         purrr_1.0.2          codetools_0.2-20    </span></span>
-<span><span class="co">#&gt; [22] numDeriv_2016.8-1.1  textshaping_0.4.1    jquerylib_0.1.4     </span></span>
-<span><span class="co">#&gt; [25] cli_3.6.3            rlang_1.1.4          futile.logger_1.4.3 </span></span>
-<span><span class="co">#&gt; [28] mets_1.3.4           parallelly_1.41.0    future.apply_1.11.3 </span></span>
-<span><span class="co">#&gt; [31] splines_4.4.2        geepack_1.3.12       cachem_1.1.0        </span></span>
-<span><span class="co">#&gt; [34] yaml_2.3.10          tools_4.4.2          parallel_4.4.2      </span></span>
-<span><span class="co">#&gt; [37] nloptr_2.1.1         dplyr_1.1.4          optimx_2024-12.2    </span></span>
-<span><span class="co">#&gt; [40] lambda.r_1.2.4       globals_0.16.3       broom_1.0.7         </span></span>
-<span><span class="co">#&gt; [43] vctrs_0.6.5          R6_2.5.1             lifecycle_1.0.4     </span></span>
-<span><span class="co">#&gt; [46] fs_1.6.5             htmlwidgets_1.6.4    MASS_7.3-61         </span></span>
-<span><span class="co">#&gt; [49] ragg_1.3.3           pkgconfig_2.0.3      desc_1.4.3          </span></span>
-<span><span class="co">#&gt; [52] progressr_0.15.1     timereg_2.0.6        pkgdown_2.1.1       </span></span>
-<span><span class="co">#&gt; [55] bslib_0.8.0          pillar_1.10.1        data.table_1.16.4   </span></span>
-<span><span class="co">#&gt; [58] glue_1.8.0           Rcpp_1.0.13-1        systemfonts_1.1.0   </span></span>
-<span><span class="co">#&gt; [61] tidyselect_1.2.1     xfun_0.50            tibble_3.2.1        </span></span>
-<span><span class="co">#&gt; [64] knitr_1.49           htmltools_0.5.8.1    rmarkdown_2.29      </span></span>
-<span><span class="co">#&gt; [67] compiler_4.4.2</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] tidyr_1.3.1         sass_0.4.9          future_1.34.0      </span></span>
+<span><span class="co">#&gt;  [4] generics_0.1.3      lattice_0.22-6      listenv_0.9.1      </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.37       magrittr_2.0.3      evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [10] grid_4.4.2          mvtnorm_1.3-3       fastmap_1.2.0      </span></span>
+<span><span class="co">#&gt; [13] jsonlite_1.8.9      Matrix_1.7-1        backports_1.5.0    </span></span>
+<span><span class="co">#&gt; [16] purrr_1.0.2         codetools_0.2-20    numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] textshaping_0.4.1   jquerylib_0.1.4     cli_3.6.3          </span></span>
+<span><span class="co">#&gt; [22] rlang_1.1.4         mets_1.3.5          parallelly_1.41.0  </span></span>
+<span><span class="co">#&gt; [25] future.apply_1.11.3 splines_4.4.2       geepack_1.3.12     </span></span>
+<span><span class="co">#&gt; [28] cachem_1.1.0        yaml_2.3.10         tools_4.4.2        </span></span>
+<span><span class="co">#&gt; [31] parallel_4.4.2      dplyr_1.1.4         globals_0.16.3     </span></span>
+<span><span class="co">#&gt; [34] broom_1.0.7         vctrs_0.6.5         R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [37] lifecycle_1.0.4     fs_1.6.5            htmlwidgets_1.6.4  </span></span>
+<span><span class="co">#&gt; [40] MASS_7.3-61         ragg_1.3.3          pkgconfig_2.0.3    </span></span>
+<span><span class="co">#&gt; [43] desc_1.4.3          timereg_2.0.6       pkgdown_2.1.1      </span></span>
+<span><span class="co">#&gt; [46] bslib_0.8.0         pillar_1.10.1       glue_1.8.0         </span></span>
+<span><span class="co">#&gt; [49] Rcpp_1.0.13-1       systemfonts_1.1.0   tidyselect_1.2.1   </span></span>
+<span><span class="co">#&gt; [52] xfun_0.50           tibble_3.2.1        knitr_1.49         </span></span>
+<span><span class="co">#&gt; [55] htmltools_0.5.8.1   rmarkdown_2.29      compiler_4.4.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
