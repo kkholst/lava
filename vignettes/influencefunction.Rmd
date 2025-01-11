@@ -812,7 +812,7 @@ adjusted \(p\)-values can here be obtained as the maximum \(p\)-value across all
 the composite hypothesis tests. Unfortunately, this only works for relatively
 few comparisons as the number of tests grows exponentially.
 
-```{r closedtesting, eval=has_mets }
+```{r closedtesting, eval=has_mets}
 closed.testing(gg0)
 ```
 
