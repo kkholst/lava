@@ -25,6 +25,7 @@ knitr::opts_chunk$set(
   comment = "#>"
   )
 has_mets <- lava:::versioncheck('mets', 1)
+has_geepack <- lava:::versioncheck('geepack', 1)
 ```
 
 \newcommand{\arctanh}{\operatorname{arctanh}}
@@ -576,7 +577,7 @@ estimate(g0, id=dl$id)
 ```
 We can confirm that this situation is equivalent to the variance estimates we 
 obtain from a GEE marginal model with working independence correlation structure [@r_geepack]
-```{r geepack}
+```{r geepack, eval=has_geepack }
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
 summary(gee0)
 ```
