@@ -340,7 +340,7 @@ Here we fit a random effects probit model
 \pr(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
 \]
 to the simulated dataset
-```{r semfit, eval=has_mets}
+```{r semfit, eval=has_mets }
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
   latent(~ u) |>
   ordinal(K=2, ~ y1 + y2)
