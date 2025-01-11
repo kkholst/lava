@@ -216,7 +216,7 @@ or alternatively the input can be a model object, here a `mlm` object:
 ```{r mlm}
 e <- lm(cbind(y1, y2) ~ 1, data = dw) |>
   estimate()
-IC(2e) |> head()
+IC(e) |> head()
 ```
 
 Different methods are available for inspecting an `estimate`  object
