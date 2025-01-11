@@ -23,7 +23,8 @@ library("lava")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
-)
+  )
+has_mets <- lava:::versioncheck('mets', 1)
 ```
 
 \newcommand{\arctanh}{\operatorname{arctanh}}
@@ -141,7 +142,13 @@ dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
 Print(dw)
 ## Data in long format
-dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
+dl <- reshape(dw,
+        varying = list(paste0("y",1:4),
+                       paste0("x",1:4)),
+        v.names=c("y", "x"), direction="long") |>
+  na.omit()
+dl <- dl[order(dl$id), ]
+## dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
 Print(dl)
 ```
 
@@ -209,7 +216,7 @@ or alternatively the input can be a model object, here a `mlm` object:
 ```{r mlm}
 e <- lm(cbind(y1, y2) ~ 1, data = dw) |>
   estimate()
-IC(e) |> head()
+IC(2e) |> head()
 ```
 
 Different methods are available for inspecting an `estimate`  object
@@ -289,7 +296,7 @@ data(pbc, package="survival")
 The Cox proportional hazards model can be fitted with the `mets::phreg` method
 which can estimate the IF for both the partial likelihood parameters and the
 baseline hazard. Here we fit a survival model with right-censored event times
-```{r phreg}
+```{r phreg, eval=has_mets }
 fit.phreg <- mets::phreg(Surv(time, status > 0) ~ age + sex, data = pbc)
 fit.phreg
 IC(fit.phreg) |> head()
@@ -300,7 +307,7 @@ The IF for the baseline cumulative hazard at a specific time point
 \Lambda_0(t) = \int_0^t \lambda_0(u)\,du, 
 \end{align*}
 where \(\lambda_0(t)\) is the baseline hazard, can be estimated in similar way:
-```{r phreg-baseline}
+```{r phreg-baseline, eval=has_mets }
 baseline <- function(object, time, ...) {
   ic <- mets::IC(object, baseline = TRUE, time = time, ...)
   est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
@@ -312,7 +319,7 @@ baseline(fit.phreg, tt)
 
 The `estimate` and `IF` methods are also available for parametric survival
 models via `survival::survreg`, here a Weibull model:
-```{r survreg}
+```{r survreg, eval=has_mets }
 survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull") |>
   estimate()
 ```
@@ -875,20 +882,21 @@ ea
 IC(ea) |> head()
 ```
 
-## Example: Average Treatment Effects
+<!-- ## Example: Average Treatment Effects -->
 
-```{r targeted, cache=TRUE}
-a1 <- targeted::cate(a ~ 1,
+<!-- ```{r targeted, cache=TRUE, eval=has_targeted } -->
+<!-- a1 <- targeted::cate(a ~ 1, -->
 
 
 
-                     data = dw,
-                     response_model = y1 ~ x1+w+a,
-                     propensity_model = a ~ x1*w
-                     )
-a1
-IC(a1) |> head()
-```
+<!--                      data = dw, -->
+<!--                      response_model = y1 ~ x1+w+a, -->
+<!--                      propensity_model = a ~ x1*w -->
+<!--                      ) -->
+<!-- a1 -->
+<!-- IC(a1) |> head() -->
+<!-- ``` -->
+
 # SessionInfo
 
 ```{r sessionInfo}
