@@ -1010,6 +1010,16 @@ subset.estimate <- function(x, keep, ...) {
 }
 
 ##' @export
+transform.estimate <- function(`_data`, ...) {
+  estimate(`_data`, ...)
+}
+
+##' @export
+labels.estimate <- function(object, str, ...) {
+  estimate(object, labels=str, ...)
+}
+
+##' @export
 parameter.estimate <- function(x, ...) {
   return(x$coefmat)
 }

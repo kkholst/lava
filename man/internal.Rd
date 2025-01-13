@@ -17,6 +17,7 @@
 \alias{pars.glm}
 \alias{score.glm}
 \alias{procdata.lvmfit}
+\alias{mat.lvm}
 \alias{reorderdata}
 \alias{graph2lvm}
 \alias{igraph.lvm}
