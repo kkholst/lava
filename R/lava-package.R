@@ -92,10 +92,31 @@ NULL
 ##' @keywords datasets
 NULL
 
+
+##' 50 patients from Monash Medical Centre, Melbourne
+##'
+##' Diagnosis of depression (DSM-III-R MDD, Dysthymia, Adjustment Disorder with
+##' Depressed Mood, Depression NOS), Beck Depression Inventory (BDI) (Beck et
+##' al., 1961) General Health Questionnaire (GHQ) (Goldberg & Williams, 1988)
+##'
+##' @name deprdiag
+##' @docType data
+##' @format data.frame
+##' @source Clarke, D. M., Smith, G. C., & Herrman, H. E. (1993). A comparative
+##'   study of screening instruments for mental disorders in general hospital
+##'   patients. International Journal Psychiatry in Medicine, 23, pp. 323-337.
+##'
+##' McKenzie et al. (1996). Comparing correlated Kappas by resampling: Is one
+##' level of agreement significantly different from another? J. Psychiat. Res.
+##' 30 (6), pp. 483-492.
+##' @keywords datasets
+NULL
+
+
 ##' Hubble data
 ##'
-##' Velocity (v) and distance (D) measures of 36 Type Ia super-novae from the Hubble
-##' Space Telescope
+##' Velocity (v) and distance (D) measures of 36 Type Ia super-novae from the
+##' Hubble Space Telescope
 ##' @name hubble
 ##' @docType data
 ##' @format data.frame
@@ -201,17 +222,6 @@ NULL
 ##'         par \tab numeric \tab 5-HT2A binding, Parietal cortex \cr
 ##' }
 ##' @name serotonin
-##' @docType data
-##' @format data.frame
-##' @source Simulated
-##' @keywords datasets
-NULL
-
-##' Data
-##'
-##' Description
-##' @seealso serotonin
-##' @name serotonin2
 ##' @docType data
 ##' @format data.frame
 ##' @source Simulated
