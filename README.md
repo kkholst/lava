@@ -8,12 +8,12 @@
 
 
 
-# Latent Variable Models: `lava` 
+# Latent Variable Models: `lava` <a href="https://kkholst.github.io/lava/"><img src="man/figures/logohex.png" align="right" height="200" /></a>
 
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
 and ordinal outcomes (Holst and Budtz-Joergensen (2013)
-<10.1007/s00180-012-0344-y>). <img src=man/figures/lvm1-1.png align="right" height="150">
+<10.1007/s00180-012-0344-y>).
 Mixture latent variable models and non-linear
 latent variable models (Holst and Budtz-Joergensen (2020)
 <10.1093/biostatistics/kxy082>). The package also provides methods for graph

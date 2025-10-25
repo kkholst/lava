@@ -1,3 +1,6 @@
+# lava 1.8.2 (development version)
+ - New data `deprdiag`
+
 # lava 1.8.1
  - `sim.default` now accepts the argument `R` to be a list (of lists) of
  arguments.
