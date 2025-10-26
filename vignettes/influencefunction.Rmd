@@ -890,34 +890,6 @@ ea
 IC(ea) |> head()
 ```
 
-<!-- ## Example: Average Treatment Effects -->
-
-<<<<<<< HEAD
-```{r targeted, cache=TRUE}
-a1 <- targeted::cate(
-                     response.model = y1 ~ x1+w+a,
-                     propensity.model = a ~ x1*w,
-                     data = dw,
-                     )
-a1
-IC(a1) |> head()
-```
-
-## Example: survival
-
-<!-- ```{r targeted, cache=TRUE, eval=has_targeted } -->
-<!-- a1 <- targeted::cate(a ~ 1, -->
-
-
-
-<!--                      data = dw, -->
-<!--                      response_model = y1 ~ x1+w+a, -->
-<!--                      propensity_model = a ~ x1*w -->
-<!--                      ) -->
-<!-- a1 -->
-<!-- IC(a1) |> head() -->
-<!-- ``` -->
-
 # SessionInfo
 
 ```{r sessionInfo}
