@@ -308,16 +308,8 @@ The IF for the baseline cumulative hazard at a specific time point
 \begin{align*}
 \Lambda_0(t) = \int_0^t \lambda_0(u)\,du, 
 \end{align*}
-<<<<<<< HEAD
 where $\lambda_0(t)$ is the baseline hazard, can be estimated in similar way:
-```{r phreg-baseline}
-||||||| 512324e
-where \(\lambda_0(t)\) is the baseline hazard, can be estimated in similar way:
-```{r phreg-baseline}
-=======
-where \(\lambda_0(t)\) is the baseline hazard, can be estimated in similar way:
 ```{r phreg-baseline, eval=has_mets }
->>>>>>> 771d62a062f5705e07cc0a1ad7565d68c331436d
 baseline <- function(object, time, ...) {
   ic <- mets::IC(object, baseline = TRUE, time = time, ...)
   est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
