@@ -288,7 +288,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   if (!missing(coef)) {
     pp <- coef
   } else {
-    pp <- suppressWarnings(try(stats::coef(x), "try-error"))
+    pp <- suppressWarnings(try(stats::coef(x), silent = TRUE))
     if (inherits(x, "survreg") && length(pp) < NROW(x$var)) {
       pp <- c(pp, scale=x$scale)
     }
