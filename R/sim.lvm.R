@@ -275,19 +275,6 @@
 ##' sim(m,10,'y~x'=2)
 ##' sim(m2,10) ## Faster
 ##' @export
-sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
-    m <- Model(x)
-    if ((nrow(model.frame(x))==n) & xfix) {
-        X <- exogenous(x)
-        mydata <- model.frame(x)
-        for (pred in X) {
-            distribution(m, pred) <- list(mydata[,pred])
-        }
-    }
-    sim(m,n=n,p=p,...)
-}
-
-##' @export
 sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
             X=NULL,unlink=FALSE,latent=TRUE,use.labels=TRUE,seed=NULL,...) {
 
@@ -767,15 +754,25 @@ sim.lvm <- function(x,n=NULL,p=NULL,normal=FALSE,cond=FALSE,sigma=1,rho=.5,
     return(res)
 }
 
-
-
 ##' @export
-simulate.lvm <- function(object,nsim,seed=NULL,...) {
-    sim(object,nsim,seed=seed,...)
+sim.lvmfit <- function(x, n = nrow(model.frame(x)), p = pars(x), xfix = TRUE, ...) {
+  m <- Model(x)
+  if ((nrow(model.frame(x)) == n) & xfix) {
+    X <- exogenous(x)
+    mydata <- model.frame(x)
+    for (pred in X) {
+      distribution(m, pred) <- list(mydata[, pred])
+    }
+  }
+  sim(m, n = n, p = p, ...)
 }
 
 ##' @export
-simulate.lvmfit <- function(object,nsim,seed=NULL,...) {
-    sim(object,nsim,seed=seed,...)
+simulate.lvm <- function(object, nsim, seed = NULL, ...) {
+  sim(object, nsim, seed = seed, ...)
 }
 
+##' @export
+simulate.lvmfit <- function(object, nsim, seed = NULL, ...) {
+  sim(object, nsim, seed = seed, ...)
+}
