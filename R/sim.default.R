@@ -1,3 +1,6 @@
+##' @export
+"sim" <- function(x,...) UseMethod("sim")
+
 ##' Monte Carlo simulation
 ##'
 ##' Applies a function repeatedly for a specified number of replications or over
@@ -18,7 +21,7 @@
 ##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param ... Additional arguments to future.apply::future_mapply
 ##' @aliases sim sim.default as.sim
-##' @seealso summary.sim plot.sim print.sim
+##' @seealso summary.sim plot.sim print.sim sim.lvm
 ##' @details To parallelize the calculation use the future::plan function (e.g.,
 ##'   future::plan(multisession()) to distribute the calculations over the R
 ##'   replications on all available cores). The output is controlled via the

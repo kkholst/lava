@@ -1,3 +1,4 @@
+##' @export
 "sim" <- function(x,...) UseMethod("sim")
 
 ##' Simulate model

@@ -101,5 +101,5 @@ sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 }
 \seealso{
-summary.sim plot.sim print.sim
+summary.sim plot.sim print.sim sim.lvm
 }
