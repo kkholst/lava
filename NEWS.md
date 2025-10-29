@@ -1,4 +1,7 @@
-# lava 1.8.2 (development version)
+# lava 1.8.3 (development version)
+ - development
+
+# lava 1.8.2
  - Improved closed testing procedure `closed_testing` (depr. `closed.testing`)
  - More tests and documentation
  - New data `deprdiag`
