@@ -182,14 +182,14 @@ with independent covariates
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y3</span> <span class="op">~</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y4</span> <span class="op">~</span> <span class="va">x4</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.html">Sequence.lvm</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">Sequence.lvm</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We simulate from the model where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>3</mn></msub><annotation encoding="application/x-tex">Y_3</annotation></semantics></math>
 is only observed for half of the subjects</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">4e2</span></span>
-<span><span class="va">dw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">n</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">dw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">n</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span>y3 <span class="op">=</span> <span class="va">y3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">id</span> <span class="op">&gt;</span> <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span>, <span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Print.html">Print</a></span><span class="op">(</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     y1 x1       a w        y2 x2       y3 x3       y4 x4        id </span></span>
@@ -1310,10 +1310,10 @@ is the standard Gaussian CDF. As described in in <span class="citation">(Pipper,
 distribution of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">Z_{1},\ldots,Z_{p}</annotation></semantics></math>
 can be estimated from the IFs. This is implemented in the
-<code>p.correct</code> method</p>
+<code>alpha_zmax</code> method</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, use<span class="op">=</span><span class="st">"^a"</span>, regex<span class="op">=</span><span class="cn">TRUE</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/closed.testing.html">p.correct</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/closed_testing.html">alpha_zmax</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       Estimate  P-value Adj.P-value</span></span>
 <span><span class="co">#&gt; [a]      1.324 0.015891    0.046870</span></span>
 <span><span class="co">#&gt; [a.1]    1.506 0.001015    0.003043</span></span>
@@ -1343,11 +1343,13 @@ across all the composite hypothesis tests. Unfortunately, this only
 works for relatively few comparisons as the number of tests grows
 exponentially.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/closed.testing.html">closed.testing</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Estimate   P-value Adj.P-value</span></span>
-<span><span class="co">#&gt; a      1.324 1.105e-09    0.033802</span></span>
-<span><span class="co">#&gt; a.1    1.506 2.385e-12    0.003413</span></span>
-<span><span class="co">#&gt; a.2    1.105 1.914e-04    0.303571</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: closed_testing(object = gg0)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Estimate     adj.p</span></span>
+<span><span class="co">#&gt; a      1.324 1.105e-09</span></span>
+<span><span class="co">#&gt; a.1    1.506 2.385e-12</span></span>
+<span><span class="co">#&gt; a.2    1.105 1.914e-04</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="averaging">Averaging<a class="anchor" aria-label="anchor" href="#averaging"></a>

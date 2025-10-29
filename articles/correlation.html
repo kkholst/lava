@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2025-10-26</h4>
+            <h4 data-toc-skip class="date">2025-10-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="d-none name"><code>correlation.Rmd</code></div>
@@ -133,7 +133,7 @@ method</p>
 coefficients (<code>y1~x</code>, <code>y2~x</code>) and residual
 variance parameters (<code>y1~~y1</code>, <code>y2~~y2</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>, <span class="fl">500</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">m0</span>, <span class="fl">500</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           y1         y2           x</span></span>
 <span><span class="co">#&gt; 1  0.6452154  0.8677628  1.13496509</span></span>
@@ -160,7 +160,7 @@ types to the model output using the <code>transform</code> method.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">m0</span>, <span class="va">s1</span> <span class="op">~</span> <span class="va">y1</span>, <span class="fu">cens1</span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="st">'left'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">s2</span> <span class="op">~</span> <span class="va">y2</span>, <span class="fu">cens1</span><span class="op">(</span><span class="fl">2</span>,  <span class="st">'right'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m0</span>, <span class="fl">500</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">m0</span>, <span class="fl">500</span>, p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>r<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           y1         y2           x          s1         s2</span></span>
 <span><span class="co">#&gt; 1  0.6452154  0.8677628  1.13496509   0.6452154  0.8677628</span></span>

@@ -35,7 +35,7 @@
 <url><loc>/reference/cancel.html</loc></url>
 <url><loc>/reference/children.html</loc></url>
 <url><loc>/reference/click.html</loc></url>
-<url><loc>/reference/closed.testing.html</loc></url>
+<url><loc>/reference/closed_testing.html</loc></url>
 <url><loc>/reference/colorbar.html</loc></url>
 <url><loc>/reference/commutation.html</loc></url>
 <url><loc>/reference/compare.html</loc></url>
@@ -108,7 +108,7 @@
 <url><loc>/reference/semdata.html</loc></url>
 <url><loc>/reference/serotonin.html</loc></url>
 <url><loc>/reference/sim.default.html</loc></url>
-<url><loc>/reference/sim.html</loc></url>
+<url><loc>/reference/sim.lvm.html</loc></url>
 <url><loc>/reference/spaghetti.html</loc></url>
 <url><loc>/reference/stack.estimate.html</loc></url>
 <url><loc>/reference/subset.lvm.html</loc></url>

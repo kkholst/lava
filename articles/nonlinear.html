@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2025-10-26</h4>
+            <h4 data-toc-skip class="date">2025-10-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/nonlinear.Rmd" class="external-link"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="d-none name"><code>nonlinear.Rmd</code></div>
@@ -85,9 +85,9 @@ To simulate from this model we use the following syntax:</p>
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">1.25</span><span class="op">*</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="va">x</span> <span class="op">-</span> <span class="fl">0.25</span><span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">+</span><span class="va">x3</span> <span class="op">~</span> <span class="va">eta1</span>, <span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span> <span class="op">~</span> <span class="va">eta2</span>, latent<span class="op">=</span><span class="op">~</span><span class="va">eta1</span><span class="op">+</span><span class="va">eta2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">eta1</span><span class="op">+</span><span class="va">eta2</span> <span class="op">~</span> <span class="va">z</span></span>
-<span><span class="fu"><a href="../reference/sim.html">functional</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">eta2</span><span class="op">~</span><span class="va">eta1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">f</span></span>
+<span><span class="fu"><a href="../reference/sim.lvm.html">functional</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">eta2</span><span class="op">~</span><span class="va">eta1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">f</span></span>
 <span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.html">sim</a></span><span class="op">(</span><span class="va">m</span>, n<span class="op">=</span><span class="fl">200</span>, seed<span class="op">=</span><span class="fl">42</span><span class="op">)</span> <span class="co"># Default is all parameters are 1</span></span></code></pre></div>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>, n<span class="op">=</span><span class="fl">200</span>, seed<span class="op">=</span><span class="fl">42</span><span class="op">)</span> <span class="co"># Default is all parameters are 1</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## plot(m, plot.engine="visNetwork")</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div>
