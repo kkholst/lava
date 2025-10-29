@@ -87,10 +87,11 @@ vars                    Extract variable names from latent variable model
 
 ** Model inference
 
+alpha_zmax              Multiple testing adjustment
 backdoor                Check backdoor criterion
 bootstrap               Generic bootstrap method
 bootstrap.lvm           Calculate bootstrap estimates of a lvm object
-closed.testing          Closed testing procedure
+closed_testing          Closed testing procedure
 confint.lvmfit          Calculate confidence limits for parameters
 contr                   Create contrast matrices
 compare                 Statistical tests Performs Likelihood-ratio, Wald and score tests
@@ -127,7 +128,6 @@ nonlinear               Define non-linear associations (see 'twostage')
 nonlinear<-             -
 ordreg                  Ordinal regression models
 partialcor              Calculate partial correlations
-p.correct               Multiple testing adjustment
 pcor                    Polychoric correlations
 plot.estimate           Forest-plot or regression line plot
 predict.lvm             Prediction in structural equation models
@@ -261,7 +261,5 @@ nldata                  Example data (nonlinear model)
 missingdata             Data
 nsem                    Example SEM data (nonlinear)
 semdata                 Example SEM data
-serotonin               Serotonin data
-serotonin2              Data
+serotonin               Serotonin simulated data
 twindata                Twin menarche data
-
