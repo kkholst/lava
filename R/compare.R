@@ -1,6 +1,6 @@
 ##' Performs Likelihood-ratio, Wald and score tests
 ##' @title Statistical tests
-##' @aliases compare
+##' @aliases compare test_wald
 ##' @export
 ##' @param object \code{lvmfit}-object
 ##' @param \dots Additional arguments to low-level functions

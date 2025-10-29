@@ -31,6 +31,6 @@ contr(list(c(1,3),c(2,4),5))
 parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
 
 ## All pairs comparisons:
-pdiff <- function(n) lava::contr(lapply(seq(n-1), \(x) seq(x, n)))
+pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
 pdiff(4)
 }

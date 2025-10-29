@@ -2,6 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{compare}
 \alias{compare}
+\alias{test_wald}
 \title{Statistical tests}
 \usage{
 compare(object, ...)
