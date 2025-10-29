@@ -18,8 +18,8 @@ closed_testing(object, test = test_wald, ...)
 Given p hypotheses H1, ..., Hp all 2^p-1 intersection hypotheses are
 calculated and adjusted p-values are obtained for Hj is calculated as the
 max p-value of all intersection hypotheses containing Hj. Example, for p=3,
-the adjusted p-value for H1 will be obtained from {(H1, H2, H3), (H1,H2),
-(H1,H3), (H1)}.
+the adjusted p-value for H1 will be obtained from \{(H1, H2, H3), (H1,H2),
+(H1,H3), (H1)\}.
 }
 \details{
 The function `test` should be a function `function(object, index,

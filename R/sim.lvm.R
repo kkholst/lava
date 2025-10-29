@@ -1,3 +1,5 @@
+"sim" <- function(x,...) UseMethod("sim")
+
 ##' Simulate model
 ##'
 ##' Simulate data from a general SEM model including non-linear effects and
@@ -274,8 +276,6 @@
 ##' m2 <- sim(m,'y~x'=2)
 ##' sim(m,10,'y~x'=2)
 ##' sim(m2,10) ## Faster
-"sim" <- function(x,...) UseMethod("sim")
-
 ##' @export
 sim.lvmfit <- function(x,n=nrow(model.frame(x)),p=pars(x),xfix=TRUE,...) {
     m <- Model(x)
