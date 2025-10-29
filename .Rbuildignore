@@ -19,3 +19,5 @@
 ^Meta$
 ^\.github$
 _cache$
+_files$
+^revdep$

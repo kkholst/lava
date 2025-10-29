@@ -2,6 +2,7 @@
 % Please edit documentation in R/sim.default.R
 \name{sim.default}
 \alias{sim.default}
+\alias{sim}
 \alias{as.sim}
 \title{Monte Carlo simulation}
 \usage{

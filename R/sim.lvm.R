@@ -3,7 +3,7 @@
 ##' Simulate data from a general SEM model including non-linear effects and
 ##' general link and distribution of variables.
 ##'
-##' @aliases sim sim.lvmfit sim.lvm
+##' @aliases sim.lvmfit sim.lvm
 ##' simulate.lvmfit simulate.lvm
 ##' transform<- transform<-.lvm transform.lvm
 ##' functional functional<-  functional.lvm functional<-.lvm

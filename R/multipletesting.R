@@ -1,4 +1,3 @@
-
 pzmax <- function(alpha, S) {
   ## P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
   if (!requireNamespace("mets",quietly=TRUE))
@@ -11,7 +10,6 @@ pzmax <- function(alpha, S) {
                    sigma=cov2cor(S))
     ))
 }
-
 
 ##' @export
 alpha_zmax <- function(object, method, alpha = 0.05, ...) {
@@ -36,7 +34,11 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 
 ##' Closed testing procedure
 ##'
-##' Closed testing procedure
+##' Given p hypotheses H1, ..., Hp all 2^p-1 intersection hypotheses are
+##' calculated and adjusted p-values are obtained for Hj is calculated as the
+##' max p-value of all intersection hypotheses containing Hj. Example, for p=3,
+##' the adjusted p-value for H1 will be obtained from {(H1, H2, H3), (H1,H2),
+##' (H1,H3), (H1)}.
 ##' @aliases closed_testing alpha_zmax
 ##' @param object `estimate` object
 ##' @param test function that conducts hypothesis test. See details below.
@@ -49,6 +51,9 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##'   arguments used in the test function. The function \code{test_wald} is an
 ##'   example of valid test function (which has an additional argument `null` in
 ##'   reference to the above mentioned ellipsis arguments).
+##' @references Marcus, R; Peritz, E; Gabriel, KR (1976).
+##'   "On closed testing procedures with special reference to ordered analysis
+##'   of variance". Biometrika. 63 (3): 655–660.
 ##' @examples
 ##' m <- lvm()
 ##' regression(m, c(y1,y2,y3,y4)~x) <- c(0, 0.25, 0, 0.25)
@@ -68,6 +73,7 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##' adj <- closed_testing(a)
 ##' adj
 ##' adj$p.value
+##' summary(adj)
 closed_testing <- function(object, test = test_wald, ...) {
   if (!inherits(object, "estimate")) stop("`estimate` object needed")
   idx <- seq_along(coef(object))
@@ -111,6 +117,43 @@ closed_testing <- function(object, test = test_wald, ...) {
   )
 }
 
+
+#' @export
+print.test_adj <- function(x, ...) {
+  cat("Call: ")
+  print(x$call, quote = FALSE)
+  cat("\n")
+  print(x$adjp)
+}
+
+#' @export
+summary.test_adj <- function(object, ...) {
+  cat("Call: ")
+  print(object$call, quote = FALSE)
+  # Print adjusted p-values
+  cli::cli_h2("Adjusted p-values")
+  print(object$adjp)
+  cat("\n")
+  # Print raw p-values for intersection hypotheses
+  cli::cli_h2("Raw p-values for intersection hypotheses")
+  param_names <- names(object$estimate)
+  for (i in seq_along(object$hypotheses)) {
+    cat(sprintf("%d-way intersections:\n", i))
+    comb_matrix <- object$hypotheses[[i]]
+    pvals <- object$raw.pval[[i]]
+    for (j in seq_len(ncol(comb_matrix))) {
+      indices <- comb_matrix[, j]
+      hyp_names <- param_names[indices]
+      # Create hypothesis notation
+      hyp_str <- paste0("{", paste(hyp_names, collapse = ", "), "}")
+      # Print with p-value
+      cat(sprintf("  %-40s p = %.4f\n", hyp_str, pvals[j]))
+    }
+    cat("\n")
+  }
+  invisible(object)
+}
+
 #' @export
 test_wald <- function(par,
                       vcov,
@@ -129,12 +172,4 @@ test_wald <- function(par,
     B <- B[index, , drop=FALSE]
   }
   lava::compare(par, contrast = B, null=null)
-}
-
-#' @export
-print.test_adj <- function(x, ...) {
-  cat("Call: ")
-  print(x$call, quote = FALSE)
-  cat("\n")
-  print(x$adjp)
 }

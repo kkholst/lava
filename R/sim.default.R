@@ -17,7 +17,7 @@
 ##'   instead of future
 ##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param ... Additional arguments to future.apply::future_mapply
-##' @aliases sim.default as.sim
+##' @aliases sim sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim
 ##' @details To parallelize the calculation use the future::plan function (e.g.,
 ##'   future::plan(multisession()) to distribute the calculations over the R

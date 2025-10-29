@@ -799,11 +799,11 @@ P(Z_{max} >
 $$
 where $\Phi$ is the standard Gaussian CDF. As described in
 in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{p}$
-can be estimated from the IFs. This is implemented in the `p.correct` method
+can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect, eval=has_mets }
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
-p.correct(gg0)
+alpha_zmax(gg0)
 ```
 
 While this always yields a more powerful test compared to Bonferroni
