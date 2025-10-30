@@ -5,7 +5,7 @@ Carlo experiment. Can be parallelized via the future package (use the
 future::plan function)."><meta property="og:description" content="Applies a function repeatedly for a specified number of replications or over
 a list/data.frame with plot and summary methods for summarizing the Monte
 Carlo experiment. Can be parallelized via the future package (use the
-future::plan function)."></head><body>
+future::plan function)."><meta property="og:image" content="/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -13,7 +13,7 @@ future::plan function)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,8 +39,7 @@ future::plan function)."></head><body>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Monte Carlo simulation</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Monte Carlo simulation</h1>
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/R/sim.default.R" class="external-link"><code>R/sim.default.R</code></a></small>
       <div class="d-none name"><code>sim.default.Rd</code></div>
     </div>
@@ -165,7 +164,7 @@ instead of future</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu">sim</span><span class="op">(</span><span class="va">val</span>,R<span class="op">=</span><span class="fl">40</span>,b0<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co">## append results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,confint<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.974s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.182s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate Estimate.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean      0.9961265  0.9961265</span>
@@ -186,7 +185,7 @@ instead of future</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.974s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.182s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Model Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean    0.9961265 0.996127</span>
@@ -204,7 +203,7 @@ instead of future</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>        names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,confint<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.974s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.182s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Model   Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean      0.9961265  0.9961265</span>
