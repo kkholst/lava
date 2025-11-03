@@ -21,7 +21,7 @@ Description: A general implementation of Structural Equation Models
 	statistical models.
 URL: https://kkholst.github.io/lava/
 BugReports: https://github.com/kkholst/lava/issues
-License: GPL-3
+License: Apache License (== 2.0)
 LazyLoad: yes
 Depends:
 	R (>= 3.0)
