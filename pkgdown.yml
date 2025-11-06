@@ -5,4 +5,7 @@ articles:
   correlation: correlation.html
   influencefunction: influencefunction.html
   nonlinear: nonlinear.html
-last_built: 2025-11-06T09:13Z
+last_built: 2025-11-06T09:40Z
+urls:
+  reference: http://kkholst.github.io/lava/reference
+  article: http://kkholst.github.io/lava/articles

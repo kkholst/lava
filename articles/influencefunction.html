@@ -849,8 +849,6 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 argument can be used.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span>, <span class="st">"(Intercept).1"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
-<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span></code></pre></div>
@@ -868,8 +866,6 @@ indices:</p>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
 <span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"\\)$"</span>, <span class="st">"^a$"</span><span class="op">)</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
-<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  -0.1861  0.1442 -0.4688 0.09655 1.969e-01</span></span>
 <span><span class="co">#&gt; a             1.3239  0.2173  0.8981 1.74978 1.105e-09</span></span></code></pre></div>
@@ -878,8 +874,6 @@ possible to rename the parameters with the <code>labels</code>
 argument</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
-<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; a  -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; c   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
@@ -887,10 +881,6 @@ argument</p>
 <span>      labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>,</span>
 <span>      keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
-<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
-<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; a  -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; c   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
@@ -902,8 +892,6 @@ argument</p>
 parameters and IFs before the actual merging is being done</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, subset<span class="op">=</span><span class="st">"(Intercept)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): invalid formula</span></span>
-<span><span class="co">#&gt; "(Intercept)": extraneous call to `(` is deprecated</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; ─────────────                                          </span></span>
@@ -1488,7 +1476,7 @@ kept fixed at the value
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] survival_3.8-3 lava_1.8.3    </span></span>
+<span><span class="co">#&gt; [1] survival_3.8-3 lava_1.8.2    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] tidyr_1.3.1         sass_0.4.10         future_1.67.0      </span></span>
