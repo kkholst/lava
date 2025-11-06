@@ -1,4 +1,4 @@
-destination: docs
-
+url: http://kkholst.github.io/lava/
 template:
   bootstrap: 5
+
