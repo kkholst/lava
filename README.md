@@ -1,13 +1,11 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
-
 [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=main)](https://app.codecov.io/github/kkholst/lava?branch=main)
-  [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
-  [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
+[![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
+[![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
+
 <!-- badges: end -->
-
-
 
 # Latent Variable Models: `lava` <a href="https://kkholst.github.io/lava/"><img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="lava website"/></a>
 
