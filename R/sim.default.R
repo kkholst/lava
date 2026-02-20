@@ -75,6 +75,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
                         seed = NULL, args = list(),
                         iter = FALSE, mc.cores,
                         progressr.message = NULL,
+                        estimate.index = 1:2,
                         ...) {
   stm <- proc.time()
   oldtm <- rep(0, 5)
@@ -150,7 +151,21 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
     } else {
       pb()
     }
-    tryCatch(x(...), error = function(e) NA)
+    res <- tryCatch(x(...), error = function(e) NA)
+    if (inherits(res, "estimate")) {
+      idx <- intersect(seq_along(cn), estimate.index)
+      cmat <- lava::parameter(res)[, idx, drop=FALSE]
+      res <- as.vector(cmat)
+      cn <- colnames(cmat)
+      nam <- c()
+      for (i in idx) {
+        newn <- rownames(cmat)
+        if (i > 1L) newn <- paste(cn[i], newn, sep=".")
+        nam <- c(nam, newn)
+      }
+      names(res) <- nam
+    }
+    return(res)
   }
   if (iter || !is.data.frame(parval)) {
     formals(robx)[[1]] <- NULL
