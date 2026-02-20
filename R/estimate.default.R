@@ -267,6 +267,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              cluster,
                              R=0,
                              null.sim) {
+  # browser()
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
   if ("iid" %in% names(cl)) {
@@ -712,20 +713,11 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (!is.null(res$IC)) res$IC <- res$IC[, keep, drop=FALSE]
     res$vcov <- res$vcov[keep, keep, drop=FALSE]
   }
-  if (!missing(labels)) {
-    names(res$coef) <- labels
-    if (!is.null(res$IC))
-      colnames(res$IC) <- labels
-    if (!is.null(res$vcov))
-      colnames(res$vcov) <- rownames(res$vcov) <- labels
-    rownames(res$coefmat) <- labels
-  }
-  if (!missing(label.width)) {
-    rownames(res$coefmat) <- make.unique(
-      unlist(lapply(rownames(res$coefmat),
-                    function(x) toString(x, width=label.width)))
-    )
-  }
+
+  res <- labels.estimate(
+    object = res, str = labels, label.width = label.width
+  )
+
   if (only.coef) return(res$coefmat)
   res$call <- cal
   res$back.transform <- back.transform
@@ -733,6 +725,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$ncluster <- nrow(res$IC)
   return(res)
 }
+
 
 simnull <- function(R, f, mu, sigma, labels=NULL) {
   X <- rmvn0(R, mu=mu, sigma=sigma)
@@ -1015,8 +1008,22 @@ transform.estimate <- function(`_data`, ...) {
 }
 
 ##' @export
-labels.estimate <- function(object, str, ...) {
-  estimate(object, labels=str, ...)
+labels.estimate <- function(object, str, label.width, ...) {
+  if (!missing(str)) {
+    names(object$coef) <- str
+    if (!is.null(object$IC))
+      colnames(object$IC) <- str
+    if (!is.null(object$vcov))
+      colnames(object$vcov) <- rownames(object$vcov) <- str
+    rownames(object$coefmat) <- str
+  }
+  if (!missing(label.width)) {
+    rownames(object$coefmat) <- make.unique(
+      unlist(lapply(rownames(object$coefmat),
+                    function(x) toString(x, width = label.width)))
+    )
+  }
+  return(object)
 }
 
 ##' @export
