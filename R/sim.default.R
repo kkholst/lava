@@ -19,6 +19,8 @@
 ##' @param mc.cores Optional number of cores. Will use parallel::mcmapply
 ##'   instead of future
 ##' @param progressr.message Optional message for the progressr progress-bar
+##' @param estimate.index If return object inherits from `estimate` then only
+##'   these column indices are extracted
 ##' @param ... Additional arguments to future.apply::future_mapply
 ##' @aliases sim sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim sim.lvm

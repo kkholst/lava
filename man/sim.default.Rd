@@ -16,6 +16,7 @@
   iter = FALSE,
   mc.cores,
   progressr.message = NULL,
+  estimate.index = 1:2,
   ...
 )
 }
@@ -39,6 +40,9 @@
 instead of future}
 
 \item{progressr.message}{Optional message for the progressr progress-bar}
+
+\item{estimate.index}{If return object inherits from `estimate` then only
+these column indices are extracted}
 
 \item{...}{Additional arguments to future.apply::future_mapply}
 }
