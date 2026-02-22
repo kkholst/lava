@@ -155,7 +155,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
     }
     res <- tryCatch(x(...), error = function(e) NA)
     if (inherits(res, "estimate")) {
-      idx <- intersect(seq_along(cn), estimate.index)
+      idx <- intersect(seq_len(5L), estimate.index)
       cmat <- lava::parameter(res)[, idx, drop=FALSE]
       res <- as.vector(cmat)
       cn <- colnames(cmat)
