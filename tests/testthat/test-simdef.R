@@ -17,3 +17,15 @@ test_that("sim.default, list in put", {
     unname(unlist(R))
   )
 })
+
+test_that("sim.default with estimate objects", {
+  onerun <- function(...) estimate(coef=runif(2),
+                                   vcov=diag(runif(2)),
+                                   labels=c("a","b"))
+  res <- sim(onerun, 100)
+  s <- summary(res)
+  expect_true(ncol(s) == 2L)
+  expect_equivalent(colnames(s), c("a", "b"))
+  expect_equivalent(s["SE",], colMeans(res[, c("Std.Err.a", "Std.Err.b")]))
+  expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
+})
