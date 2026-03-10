@@ -73,15 +73,19 @@ merge.estimate <- function(x,y,...,
                            regex=FALSE,
                            ignore.case=FALSE) {
     objects <- list(x, estimate(y), ...)
+    trans <- unlist(lapply(
+      objects, function(x) !is.null(x[["back.transform"]])
+    ))
+    if (any(trans)) warning("back-transformation ignored (`back.transform`)")
     if (length(nai <- names(objects)=="NA")>0)
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
       if (regex) {
 
       }
-      coefs <- unlist(lapply(objects, function(x) coef(x)[subset]))
+      coefs <- unlist(lapply(objects, function(x) coef(x,messages=0)[subset]))
     } else {
-      coefs <- unlist(lapply(objects,coef))
+      coefs <- unlist(lapply(objects, function(x) coef(x, messages=0)))
     }
     if (!is.null(labels)) {
       names(coefs) <- labels
@@ -98,7 +102,7 @@ merge.estimate <- function(x,y,...,
     }
     if (any(unlist(lapply(objects, function(x) is.null(IC(x)))))) {
       ## No iid decomposition/influence functions
-      V <- lapply(objects, vcov)
+      V <- suppressMessages(lapply(objects, vcov))
       V <- Reduce(function(...) blockdiag(..., pad=NA), V)
       return(estimate(coef=coefs, vcov=V, keep=keep, ...))
     }
@@ -166,7 +170,7 @@ merge.estimate <- function(x,y,...,
     model.index <- c()
     colpos <- 0
     for (i in seq(length(objects))) {
-        relpos <- seq_along(coef(objects[[i]]))        
+        relpos <- seq_along(coef(objects[[i]], messages=0))
         if (!missing(subset)) relpos <- seq_along(subset)
         ic0[match(ids[[i]], id), relpos + colpos] <- ic_all[[i]]
         midx <- objects[[i]]$model.index
