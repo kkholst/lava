@@ -62,7 +62,6 @@ test_that("negative binomial regression (glm.nb)", {
   }
 })
 
-
 test_that("quasipossion", {
   set.seed(1)
   n <- 500
@@ -75,4 +74,14 @@ test_that("quasipossion", {
   i1 <- IC(m1)
   i2 <- IC(m2)
   testthat::expect_true(sum((i1 - i2)^2) < 1e-6)
+})
+
+test_that("merge back.transform", {
+  tmp <- estimate(coef = 1, IC = c(1,2,3), id = 1:3, f = exp, back.transform = log)
+  tmp2 <- estimate(coef = 2, IC = c(3,2,1), id = 1:3, f = exp, back.transform = log)
+
+  expect_warning(
+    m <- merge(tmp, tmp2) # should throw a warning
+  )
+  expect_equivalent(coef(m), exp(c(1, 2)))
 })
