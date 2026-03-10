@@ -220,7 +220,6 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   if (attr(val[[1]], "estimate")) {
     if (ncol(res) %% length(estimate.index) != 0L) {
       warning("unexpected number of columns")
-      break;
     }
     idx <- seq_len(ncol(res))
     np <- ncol(res) / length(estimate.index)
