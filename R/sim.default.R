@@ -20,7 +20,7 @@
 ##'   instead of future
 ##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param estimate.index If return object inherits from `estimate` then only
-##'   these column indices are extracted
+##'   these column indices are extracted (estimate, se, lower, upper, p-val)
 ##' @param ... Additional arguments to future.apply::future_mapply
 ##' @aliases sim sim.default as.sim
 ##' @seealso summary.sim plot.sim print.sim sim.lvm
@@ -114,6 +114,9 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     if (!is.function(x)) stop("Expected a function or 'sim' object.")
   }
   if (is.null(x)) stop("Must give new function argument 'f'.")
+  # `par.index`: list for storing position of estimate, se, confint when
+  # the returned simulation object is an `estimate` object
+  par.index <- list()
   res <- val <- NULL
   on.exit({
     if (is.null(colnames) && !is.null(val)) {
@@ -130,6 +133,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     cls <- ifelse(is.data.frame(res), "data.frame", "matrix")
     class(res) <- c("sim", cls)
     attr(res, "time") <- proc.time() - stm + oldtm
+    attr(res, "par.index") <- par.index
     return(res)
   })
   if (inherits(R, c("matrix", "data.frame")) || length(R) > 1) {
@@ -144,6 +148,10 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   } else {
     parval <- as.data.frame(1:R)
     names(parval) <- NULL
+  }
+  estimate.index <- sort(estimate.index)
+  if (!all(estimate.index %in% 1:5)) {
+    stop("wrong estimate.index")
   }
   repl <- NROW(parval)
   pb <- progressr::progressor(steps = repl)
@@ -209,10 +217,34 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   if (is.null(res)) {
     res <- matrix(NA, ncol=length(val[[1]]), nrow=repl)
   }
-  # `par.index`: list for storing position of estimate, se, confint when
-  # the returned simulation object is an `estimate` object
-  par.index <- NULL
-  browser()
+  if (attr(val[[1]], "estimate")) {
+    if (ncol(res) %% length(estimate.index) != 0L) {
+      warning("unexpected number of columns")
+      break;
+    }
+    idx <- seq_len(ncol(res))
+    np <- ncol(res) / length(estimate.index)
+    if (1 %in% estimate.index) {
+      par.index[["estimate"]] <- seq_len(np)
+      idx <- setdiff(idx, par.index[["estimate"]])
+    }
+    if (2 %in% estimate.index) {
+      par.index[["se"]] <- idx[seq_len(np)]
+      idx <- setdiff(idx, par.index[["se"]])
+    }
+    if (3 %in% estimate.index) {
+      par.index[["lower"]] <- idx[seq_len(np)]
+      idx <- setdiff(idx, par.index[["lower"]])
+    }
+    if (4 %in% estimate.index) {
+      par.index[["upper"]] <- idx[seq_len(np)]
+      idx <- setdiff(idx, par.index[["upper"]])
+    }
+    if (5 %in% estimate.index) {
+      par.index[["pval"]] <- idx[seq_len(np)]
+      idx <- setdiff(idx, par.index[["pval"]])
+    }
+  }
   res
 }
 
@@ -397,7 +429,8 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^
 ##' @param quantiles quantiles (0,0.025,0.5,0.975,1)
 ##' @param ... additional levels to lower-level functions
 summary.sim <- function(object,estimate=NULL,se=NULL,
-                confint=!is.null(se)&&!is.null(true),true=NULL,
+                confint,
+                true=NULL,
                 fun,names=NULL,unique.names=TRUE,minimal=FALSE,
                 level=0.95,quantiles=c(0,.025,0.5,.975,1),...) {
     if (is.list(estimate)) {
@@ -415,6 +448,27 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         cl <- match.call()
         cl[c("estimate","se","true","names")] <- list(estimate,se,true,names)
+    }
+    par.index <- attr(object, "par.index")
+    if (is.null(estimate) && length(par.index) > 0) {
+      estimate <- par.index[["estimate"]]
+    }
+    np <- length(estimate)
+    if (is.null(se) && length(par.index) > 0) {
+      se <- par.index[["se"]]
+    }
+    if (missing(confint)) {
+      lo <- par.index[["lower"]]
+      up <- par.index[["upper"]]
+      if (length(par.index) > 0 &&
+          (!is.null(lo) || !is.null(up))) {
+        if (is.null(lo)) lo <- rep(-Inf, np)
+        if (is.null(up)) up <- rep(Inf, np)
+        confint <- list()
+        for (i in seq_len(np)) {
+          confint <- c(confint, list(c(lo[i], up[i])))
+        }
+      } else confint <- !is.null(se)&&!is.null(true)
     }
     if (minimal) {
         fun <- function(x,se,confint,...) {
@@ -456,6 +510,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
+    if (is.list(confint)) confint <- unlist(confint)
     if (!missing(fun)) {
         if (!is.null(estimate)) m.est <- object[,estimate,drop=FALSE]
         else m.est <- object
