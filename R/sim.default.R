@@ -73,7 +73,8 @@
 ##' sim(f, R)
 ##' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 ##' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
-sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
+sim.default <- function(x = NULL, R = 100, f = NULL,
+                        colnames = NULL,
                         seed = NULL, args = list(),
                         iter = FALSE, mc.cores,
                         progressr.message = NULL,
@@ -144,7 +145,6 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
     parval <- as.data.frame(1:R)
     names(parval) <- NULL
   }
-
   repl <- NROW(parval)
   pb <- progressr::progressor(steps = repl)
   robx <- function(iter__, ...) {
@@ -154,7 +154,8 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
-    if (inherits(res, "estimate")) {
+    is_estimate <- inherits(res, "estimate")
+    if (is_estimate) {
       idx <- intersect(seq_len(5L), estimate.index)
       cmat <- lava::parameter(res)[, idx, drop=FALSE]
       res <- as.vector(cmat)
@@ -167,7 +168,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
       }
       names(res) <- nam
     }
-    return(res)
+    return(structure(res, "estimate" = is_estimate))
   }
   if (iter || !is.data.frame(parval)) {
     formals(robx)[[1]] <- NULL
@@ -208,6 +209,10 @@ sim.default <- function(x = NULL, R = 100, f = NULL, colnames = NULL,
   if (is.null(res)) {
     res <- matrix(NA, ncol=length(val[[1]]), nrow=repl)
   }
+  # `par.index`: list for storing position of estimate, se, confint when
+  # the returned simulation object is an `estimate` object
+  par.index <- NULL
+  browser()
   res
 }
 
