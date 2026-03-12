@@ -8,7 +8,7 @@
   object,
   estimate = NULL,
   se = NULL,
-  confint = !is.null(se) && !is.null(true),
+  confint,
   true = NULL,
   fun,
   names = NULL,

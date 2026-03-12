@@ -51,7 +51,6 @@ merge.lvm <- function(x, y, ...) {
   return(m)
 }
 
-
 ##' @export
 "+.estimate" <- function(x, ...) {
   merge(x, ...)
