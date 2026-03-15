@@ -162,7 +162,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
-    is_estimate <- inherits(res, "estimate")
+    is_estimate <- inherits(res, c("estimate", "targeted"))
     if (is_estimate) {
       idx <- intersect(seq_len(5L), estimate.index)
       cmat <- lava::parameter(res)[, idx, drop=FALSE]
