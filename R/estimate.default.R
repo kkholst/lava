@@ -255,7 +255,9 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              iddata, stack=TRUE, average=FALSE, subset,
-                             score.deriv, level=0.95, IC=robust,
+                             score.deriv,
+                             level=0.95,
+                             IC=robust,
                              type=c("robust", "df", "mbn"),
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,

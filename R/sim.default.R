@@ -371,7 +371,8 @@ print.sim <- function(x, ...) {
 }
 
 ##' @export
-print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^coverage"),
+print.summary.sim <- function(x,
+                              group=list(c("^mean$","^sd$","^se$","^se/sd$","^coverage"),
                                    c("^min$","^[0-9.]+%$","^max$"),
                                    c("^na$","^missing$"),
                                    c("^true$","^bias$","^rmse$")),
@@ -381,7 +382,7 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^
                       quote=FALSE,
                       time=TRUE,
                       extra=TRUE,
-                      ...) {
+                      ...) {c
     if (extra) {
         cat(attr(x,"n")," replications",sep="")
         if (time && !is.null(attr(x,"time"))) {
@@ -426,12 +427,17 @@ print.summary.sim <- function(x,group=list(c("^mean$","^sd$","^se$","^se/sd$","^
 ##' @param minimal if TRUE, minimal summary will be returned
 ##' @param level confidence level (0.95)
 ##' @param quantiles quantiles (0,0.025,0.5,0.975,1)
+##' @param df degrees of freedom in t-distribution used for constructing CIs
+##'   (default Gaussian approximation)
 ##' @param ... additional levels to lower-level functions
 summary.sim <- function(object,estimate=NULL,se=NULL,
                 confint,
                 true=NULL,
                 fun,names=NULL,unique.names=TRUE,minimal=FALSE,
-                level=0.95,quantiles=c(0,.025,0.5,.975,1),...) {
+                level=0.95,
+                quantiles=c(0,.025,0.5,.975,1),
+                df = Inf,
+                ...) {
     if (is.list(estimate)) {
         est <- estimate
         if (is.null(names)) names <- base::names(est)
@@ -518,7 +524,10 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         m.ci <- NULL
         if (!is.null(confint)) m.ci <- object[,confint,drop=FALSE]
         res <- lapply(seq(ncol(m.est)),
-                      function(i,...) fun(m.est[,i,drop=TRUE],se=m.se[,i,drop=TRUE],confint=m.ci[,1:2+(i-1)*2],...,INDEX=i),...)
+                      function(i,...) fun(m.est[,i,drop=TRUE],
+                                          se=m.se[,i,drop=TRUE],
+                                          confint=m.ci[,1:2+(i-1)*2],...,
+                                          INDEX=i),...)
         res <- matrix(unlist(res),nrow=length(res[[1]]),byrow=FALSE)
         if (is.null(dim(res))) {
             res <- rbind(res)
@@ -574,8 +583,9 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
               if (is.na(se[i])) {
                 CI <- matrix(NA, nrow=NROW(object), ncol=2)
               } else {
-                CI <- cbind(object[,estimate[i]]-qnorm(z)*object[,se[i]],
-                            object[,estimate[i]]+qnorm(z)*object[,se[i]])
+                q <- qt(z, df = df)
+                CI <- cbind(object[,estimate[i]] - q*object[,se[i]],
+                            object[,estimate[i]] + q*object[,se[i]])
               }
               colnames(CI) <- NULL
               object <- cbind(object,CI)
