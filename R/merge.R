@@ -103,7 +103,9 @@ merge.estimate <- function(x,y,...,
       ## No iid decomposition/influence functions
       V <- suppressMessages(lapply(objects, vcov))
       V <- Reduce(function(...) blockdiag(..., pad=NA), V)
-      return(estimate(coef=coefs, vcov=V, keep=keep, ...))
+      return(estimate(coef=coefs, vcov=V,
+                      keep=keep
+                      ))
     }
     if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
         nn <- unlist(lapply(

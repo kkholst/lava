@@ -3,6 +3,7 @@
   - `summary.sim`: automatically derives estimate, se, confint parameters if the
      sim routine returns an `estimate` object
   - `merge.estimate`: cast warning if `back.transform` was used
+  - `summary.sim` df argument for calculating CIs based on t-dist. approximation
 
 # lava 1.8.2
   - Improved closed testing procedure `closed_testing` (depr. `closed.testing`)
