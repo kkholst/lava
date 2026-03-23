@@ -99,14 +99,39 @@ merge.estimate <- function(x,y,...,
         }))
       }
     }
-    if (any(unlist(lapply(objects, function(x) is.null(IC(x)))))) {
-      ## No iid decomposition/influence functions
-      V <- suppressMessages(lapply(objects, vcov))
-      V <- Reduce(function(...) blockdiag(..., pad=NA), V)
-      return(estimate(coef=coefs, vcov=V,
-                      keep=keep
-                      ))
+    hasIC <- unlist(lapply(objects, function(x) !is.null(IC(x))))
+    if (sum(!hasIC) > 0L) { # Some objects do not have influence function
+      ## if (!missing(id) && !is.null(id)) {
+      ##   warning(
+      ##     "Argument 'id' is only applicable to objects with an influence function. ",
+      ##     "It will be used only for objects with IC; ",
+      ##     "cross-terms involving objects without IC will be NA."
+      ##   )
+      ## }
+      npar       <- unlist(lapply(objects, function(x) length(coef(x, messages=0))))
+      col_ends   <- cumsum(npar)
+      col_starts <- col_ends - npar + 1L
+      V <- matrix(NA, nrow=sum(npar), ncol=sum(npar))
+
+      ic_idx <- which(hasIC)
+      if (length(ic_idx) > 0L) {
+        if (length(ic_idx) > 1L) {
+          ic_args <- c(objects[ic_idx],
+                       list(paired = paired),
+                       if (!missing(id)) list(id = id[ic_idx]))
+          m_ic  <- do.call(merge, ic_args)
+        } else m_ic <- objects[[ic_idx]]
+        ic_cols <- unlist(Map(`:`, col_starts[ic_idx], col_ends[ic_idx]))
+        V[ic_cols, ic_cols] <- vcov(m_ic)
+      }
+      # Fill diagonal blocks for non-IC objects
+      for (k in which(!hasIC)) {
+        pos <- col_starts[k]:col_ends[k]
+        V[pos, pos] <- suppressMessages(vcov(objects[[k]]))
+      }
+      return(estimate(coef=coefs, vcov=V, keep=keep))
     }
+
     if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
         nn <- unlist(lapply(
           objects,

@@ -16,6 +16,7 @@
   minimal = FALSE,
   level = 0.95,
   quantiles = c(0, 0.025, 0.5, 0.975, 1),
+  df = Inf,
   ...
 )
 }
@@ -41,6 +42,9 @@
 \item{level}{confidence level (0.95)}
 
 \item{quantiles}{quantiles (0,0.025,0.5,0.975,1)}
+
+\item{df}{degrees of freedom in t-distribution used for constructing CIs
+(default Gaussian approximation)}
 
 \item{...}{additional levels to lower-level functions}
 }
