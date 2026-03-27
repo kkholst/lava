@@ -68,21 +68,21 @@ jobs:
 
       - name: Webpage deployment
         if: success() && contains('refs/heads/main', github.ref)
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        # run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
-        # run: |
-        #   git config --local user.name "$GITHUB_ACTOR"
-        #   git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        #   Rscript -e 'remotes::install_local()'
-        #   Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          Rscript -e 'remotes::install_local()'
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
 
-      - name: Deploy to GitHub pages 🚀
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4.5.0
-        with:
-          clean: false
-          branch: gh-pages
-          folder: docs
+      # - name: Deploy to GitHub pages 🚀
+      #   if: github.event_name != 'pull_request'
+      #   uses: JamesIves/github-pages-deploy-action@v4.5.0
+      #   with:
+      #     clean: false
+      #     branch: gh-pages
+      #     folder: docs
 
       - name: Code Coverage
         if: success() && contains('refs/heads/main', github.ref)
