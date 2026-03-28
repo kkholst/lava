@@ -145,37 +145,37 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' g0 <- glm(y~1,data=d,family=binomial())
 ##'
 ##' ## LRT
-##' estimate(g,g0)
+##' estimate(g, g0)
 ##'
 ##' ## Plain estimates (robust standard errors)
 ##' estimate(g)
 ##'
 ##' ## Testing contrasts
-##' estimate(g,null=0)
-##' estimate(g,rbind(c(1,1,0),c(1,0,2)))
-##' estimate(g,rbind(c(1,1,0),c(1,0,2)),null=c(1,2))
-##' estimate(g,2:3) ## same as cbind(0,1,-1)
-##' estimate(g,as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
+##' estimate(g, null=0)
+##' estimate(g, rbind(c(1,1,0), c(1,0,2)))
+##' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
+##' estimate(g, 2:3) ## same as cbind(0,1,-1)
+##' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' ## Alternative syntax
-##' estimate(g,"z","z"-"x",2*"z"-3*"x")
-##' estimate(g,"?")  ## Wildcards
-##' estimate(g,"*Int*","z")
-##' estimate(g,"1","2"-"3",null=c(0,1))
-##' estimate(g,2,3)
+##' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
+##' estimate(g, "?")  ## Wildcards
+##' estimate(g, "*Int*", "z")
+##' estimate(g, "1", "2"-"3", null = c(0,1))
+##' estimate(g, 2, 3)
 ##'
 ##' ## Usual (non-robust) confidence intervals
-##' estimate(g,robust=FALSE)
+##' estimate(g, robust=FALSE)
 ##'
 ##' ## Transformations
-##' estimate(g,function(p) p[1]+p[2])
+##' estimate(g, function(p) p[1]+p[2])
 ##'
 ##' ## Multiple parameters
-##' e <- estimate(g,function(p) c(p[1]+p[2], p[1]*p[2]))
+##' e <- estimate(g, function(p) c(p[1]+p[2], p[1]*p[2]))
 ##' e
 ##' vcov(e)
 ##'
 ##' ## Label new parameters
-##' estimate(g,function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
+##' estimate(g, function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
 ##' ##'
 ##' ## Multiple group
 ##' m <- lvm(y~x)
