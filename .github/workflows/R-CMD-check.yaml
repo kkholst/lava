@@ -17,7 +17,6 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          # - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: '4.1'}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -44,13 +43,6 @@ jobs:
             any::covr
           needs: check website
 
-      # - name: Cache R packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.R_LIBS_USER }}
-      #     key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-      #     restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
       - name: Install R dependencies
         run: |
           remotes::install_github("kkholst/gof")
@@ -68,21 +60,11 @@ jobs:
 
       - name: Webpage deployment
         if: success() && contains('refs/heads/main', github.ref)
-        # run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
-        shell: Rscript {0}
         run: |
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           Rscript -e 'remotes::install_local()'
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
-
-      # - name: Deploy to GitHub pages 🚀
-      #   if: github.event_name != 'pull_request'
-      #   uses: JamesIves/github-pages-deploy-action@v4.5.0
-      #   with:
-      #     clean: false
-      #     branch: gh-pages
-      #     folder: docs
 
       - name: Code Coverage
         if: success() && contains('refs/heads/main', github.ref)
