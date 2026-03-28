@@ -1,4 +1,7 @@
-# lava 1.8.3
+# lava 1.9.0
+  - `estimate`: estimate objects can now be transformed via functions: `log`,
+    `exp`, `+`, `-`, `*`, `/`, `^`
+  - breaking change: `+` operator for estimate objects no longer merges objects.
   - `sim.default`: the simulation function `f`'s return object can now be an
     `estimate` object
   - `summary.sim`: automatically derives estimate, se, confint parameters if the
@@ -28,13 +31,15 @@
     `3 %in.open% c(0,1)`)
   - `estimate(..., estimator='glm')` now works with formulas with just an intercept
   - `as.data.frame.sim`, `as.matrix.sim`
-  - fixed issues with quasi* families and negative binomial regr (MASS:glm.nb)
+  - fixed issues with quasi* families and negative binomial regression (`MASS:glm.nb`)
 
 # lava 1.7.3 
- - `parameter.estimate` method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)
+ - `parameter.estimate` method to extract matrix with estimates, standard
+   errors, and confidence limits from and estimate object (coefmat element)
   - pairwise difference with `'-'.estimate` and `pairwise.diff`
   - optional mc.cores arguments to `cv` and `bootstrap`
-  - `parameter.lvm` now automatically removes previously variables in the lvm object with same name as new added parameters.
+  - `parameter.lvm` now automatically removes previously variables in the lvm
+    object with same name as new added parameters.
   - `Print` function deals more gracefully with non-rectangular objects
   - bug-fix in `stack.estimate` (wrong stand-errors in `twostage` since version 1.7.0)
 

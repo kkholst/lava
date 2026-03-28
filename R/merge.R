@@ -51,16 +51,59 @@ merge.lvm <- function(x, y, ...) {
   return(m)
 }
 
-##' @export
-"+.estimate" <- function(x, ...) {
-  merge(x, ...)
+
+log.estimate <- function(x, base = exp(1), ...) {
+  f <- function(p) log(p, base = base)
+  attr(f, "grad") <- function(x) 1e3 * 1/x
+  estimate(x, f)
 }
 
-##' @export
-"-.estimate" <- function(x,...) {
-  res <- merge(x, ...)
-  estimate(res, pairwise.diff(length(coef(res))))
+exp.estimate <- function(x, ...) {
+  estimate(x, function(p) exp(p), ...)
 }
+
+"^.estimate" <- function(e1, e2, ...) {
+  if (!is.numeric(e2) && length(e2) != 1L) stop("exponent should be a scalar")
+  estimate(e1, function(p) p**e2, ...)
+}
+
+operator_estimate <- function(x, y, op, ...) {
+  np1 <- length(coef(x))
+  np2 <- length(coef(y))
+  if (length(np1) != 1L ||
+      length(np2) != 1L ||
+      length(np1) != length(np2)) {
+    stop("expecting equal length objects or one of them to be a scalar")
+  }
+  e <- merge(x, y)
+  estimate(e, function(p) {
+    p1 <- p[seq_len(np1)]
+    p2 <- p[seq_len(np2)+np1]
+    op(p1, p2)
+  }, ...)
+}
+
+"/.estimate" <- function(e1, e2, ...) {
+  operator_estimate(
+    e1, e2,
+    function(x,y) x / y
+  )
+}
+
+"*.estimate" <- function(e1, e2, ...) {
+  operator_estimate(
+    e1, e2,
+    function(x,y) x * y
+  )
+}
+
+## ##' @export
+## "%+%.estimate" <- function(x, ...) {
+##   merge(x, ...)
+## }
+
+##' @export
+merge.list <- function(x, ...) Reduce(merge, c(list(x), list(...)))
 
 ##' @export
 merge.estimate <- function(x,y,...,
