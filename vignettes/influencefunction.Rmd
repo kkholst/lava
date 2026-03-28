@@ -22,6 +22,7 @@ bibliography: ref.bib
 library("lava")
 knitr::opts_chunk$set(
   collapse = TRUE,
+  cache = TRUE,
   comment = "#>"
   )
 has_mets <- lava:::versioncheck('mets', 1)
@@ -90,9 +91,7 @@ non-parametric.
 Formally, the parameter must be *pathwise differentiable* see [@vaart_1998_asymp]
 in the sense that there exists linear bounded function  $\dot\Psi\colon
 L_{2}(P_{0})\to\mathbb{R}$ such that
-$
-[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to \dot\Psi(P_{0})(g) 
-$
+$[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to \dot\Psi(P_{0})(g)$
 as $t\to 0$ for any parametric submodel $P_t$
 with score model $g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}$.  Riesz's
 representation theorem then tells us that the directional derivative has a 
@@ -115,7 +114,7 @@ a key interest in causal inference and which has the IF
 \begin{align*}
 \IC(Y,A,W; P) = \frac{\one(A=a)}{\pr(A=a\mid W)}(Y-\E_{P}[Y\mid A=a,W]) + \E_{P}[Y\mid
 A=a,W] - \Psi_{a}(P)
-    \end{align*}
+\end{align*}
 See section on [average treatment effects](#average-treatment-effects).
 
 
@@ -161,7 +160,7 @@ The main functions for working with influence functions are
 - `estimate` which prepares a model object and estimates the IF and
   corresponding robust standard errors. Can also be used to transform model
   parameters by application of the Delta Theorem.
-- `merge`, `+` method for combining estimates via their estimated IFs
+- `merge` method for combining estimates via their estimated IFs
 - `IC` method to extract the estimated IF
 
 The `estimate` function is the primary tool for obtaining parameter estimates
@@ -233,7 +232,7 @@ estimate(e, level = 0.99) |> parameter()
 ## Influence curve
 IC(e) |> head()
 ## Join estimates
-e + e # Same as merge(e,e)
+merge(e, e)
 ```
 
 <!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->
@@ -248,7 +247,7 @@ e + e # Same as merge(e,e)
 
 For a $Z$-estimator defined by the score equation $E[U(Z; \theta)] = 0$, the
 IF is given by \begin{align*} IC(Z; \theta) =
-\E\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
+-\E\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
 \end{align*}
 In particular, for a maximum likelihood estimator the score, $U$, is given by the partial derivative of
 the log-likelihood function.
@@ -468,7 +467,7 @@ IC_2(Z_{2i}; \Pz)\frac{R_{2i}N}{R_{2\bullet}}
 with $R_{k\bullet} = \sum_{i=1}^{N}R_{ki}.$ Returning to the example, we can
 combine the marginal estimates of two model objects that have been estimated
 from different datasets (as the outcome $Y_3$ is only available in half of the
-data). Here we will use the overloaded `+` operator 
+data) with the `merge` function
 
 ```{r glmmargmis}
 g2 <- glm(y2 ~ 1, family = binomial, data = dw)
@@ -480,8 +479,9 @@ summary(g3)
 e2 <- estimate(g2, id = dw$id)
 e3 <- estimate(g3, id = "id", data=dwc)
 
-merge(e2,e3) |> IC() |> Print()
-vcov(e2 + e3)
+ecomb <- merge(e2, e3)
+IC(ecomb) |> Print()
+vcov(ecomb)
 ## Same marginals as
 list(vcov(e2), vcov(e3))
 ```
@@ -499,8 +499,8 @@ model). This automatically works with all models and `IC` methods described in t
 ```{r estimatenoid}
 estimate(g2) |>
   IC() |> head()
-vcov(estimate(g2) + estimate(g3))
-(estimate(g2) + estimate(g3)) |>
+vcov(merge(estimate(g2), estimate(g3)))
+merge(estimate(g2), estimate(g3)) |>
   (rownames %++% head %++% IC)()
 ```
 
@@ -520,7 +520,7 @@ merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
 ```
 The argument can be given either as character vector or a vector of indices:
 ```{r merge2}
-merge(g1,g2, keep=c(1, 3))
+merge(g1, g2, keep=c(1, 3))
 ```
 or as a vector of perl-style regular expressions 
 ```{r merge3}
@@ -810,7 +810,7 @@ While this always yields a more powerful test compared to Bonferroni
 adjustments, a more powerful closed-testing procedure [@marcus1976], can be generally
 obtained by considering all intersection hypotheses. 
 
-![*Figure: closed testing via Wald tests of all intersections hypotheses.*](figs/closedtesting.pdf)
+![*Figure: closed testing via Wald tests of all intersections hypotheses.*](figs/closedtesting.svg){width=60%}
 
 To reject the $H_{1}$ at
 an correct $\alpha$-level we should test all intersection hypotheses involving
@@ -820,7 +820,7 @@ the composite hypothesis tests. Unfortunately, this only works for relatively
 few comparisons as the number of tests grows exponentially.
 
 ```{r closedtesting, eval=has_mets}
-closed_testing(gg0)
+closed_testing(gg0, test = test_wald)
 ```
 
 
@@ -888,6 +888,97 @@ id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 IC(ea) |> head()
+```
+
+## Average Treatment Effects
+
+Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a binary treatment
+variable, and $Y$ the outcome.
+In the following we are interested in estimating the target parameter
+$\psi_a(P)
+= E_P[Y(a)]$, where $Y(a)$ is the *potential outcome* we would have
+observed if treatment $a$ had been administered, possibly contrary to
+the actual treatment that was observed, i.e., $Y = Y(A)$. To assess the
+treatment effect we can then the consider the *average treatment effect*
+(ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of interest
+$g(\psi_1(P), \psi_0(P))$. Under the following assumptions
+
+1)  Stable Unit Treatment Values Assumption (the treatment of a specific
+    subject is not affecting the potential outcome of other subjects)
+2)  Positivity, $P(A\mid W)>\epsilon$ for some $\epsilon>0$ and baseline
+    covariates $W$
+3)  No unmeasured confounders, $Y(a)\perp \!\!\! \perp A|W$
+
+
+then the target parameter can be identified from the observed data
+distribution as $$E(E[Y|W,A=a]) = E(E[Y(a)|W]) = E[Y(a)]$$ or
+$$E[Y I(A=a)/P(A=a|W)] = E[Y(a)].$$
+
+This suggests estimators based on outcome regression ($g$-computation)
+or inverse probability weighting. More generally, under the above
+assumption we can constructor a *one-step* estimator from the *Efficient
+Influence Function* combining these two
+$$ E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].$$
+In practice, this requires plugin estimates of both the outcome model,
+$Q(W,A) := E(Y\mid A, W)$, and of the treatment propensity model
+$\Pi_a(W) := P(A=a\mid W)$. The corresponding estimator is consistent
+even if just one of the two nuisance models is correctly specified.
+
+To illustrate this we manually construct the above estimating equations based on
+logistic regressions models for the two nuisance models
+```{r}
+qmod <- glm(y1 ~ a * w, family = binomial, data = dw) # E(Y|W,A) := Q(W,A)
+amod <- glm(a ~ w, family = binomial, data = dw) # P(A=1|W) = Pi_1(W)
+q0 <- predict(qmod, transform(dw, a=0), type="response") # Q(W,0)
+q1 <- predict(qmod, transform(dw, a=1), type="response") # Q(W,1)
+p1 <- predict(amod, dw, type="response") # P(A=1|W)
+e0 <- with(dw, (1-a) / (1-p1) * (y1 - q0) + q0)
+e1 <- with(dw, a / p1 * (y1 - q1) + q1)
+head(cbind(e0, e1))
+```
+
+We can then easily construct estimates of the two expected potential outcomes
+and estimate their joint asymptotic distribution
+```{r}
+est0 <- estimate(coef=mean(e0), IC=e0-mean(e0)) # E[Y(0)]
+est1 <- estimate(coef=mean(e1), IC=e1-mean(e1)) # E[Y(1)]
+
+potential_outcomes <- merge(est0, est1, paired=TRUE, labels=c("y(0)", "y(1)"))
+potential_outcomes
+head(IC(potential_outcomes))
+vcov(potential_outcomes)
+```
+
+Finally, we can obtain the Average Treatment Effect (ATE) (risk-difference)
+\begin{align*}
+E[Y(1)]  - E[Y(0)]
+\end{align*}
+
+```{r}
+estimate(potential_outcomes, cbind(-1, 1), labels="ate")
+```
+
+Alternatively, we could get the estimate of the treatment effect on the log-odds
+scale:
+```{r}
+logor <- function(p) logit(p[2]) - logit(p[1])
+transform(potential_outcomes, logor, labels="logOR")
+transform(potential_outcomes, logor, labels="OR", back.transform=exp)
+```
+
+We refer to the `targeted` package [@r-targeted] for a general implementation
+where the nuisance models can be based on machine learning models using
+cross-fitting. The above estimation can be obtained with the  `targeted::cate` function in the following way
+```{r}
+#| eval: false
+amod <- targeted::learner_glm(a ~ w, family=binomial)
+qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
+est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
+#>             Estimate Std.Err    2.5%  97.5%   P-value
+#> E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80
+#> E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52
+#> ───────────
+#> (Intercept)   0.1691 0.04996 0.07115 0.2670 7.138e-04
 ```
 
 # SessionInfo
