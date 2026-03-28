@@ -690,9 +690,10 @@ estimate(e1, function(x) c(x, cov=with(as.list(x), Ex1x2 - Ex2* Ex1)))
 The variance estimates can be estimated in the same way and the combined
 estimates be used to estimate the correlation
 ```{r rho}
-e2 <- with(dw, Cov(x1, x2, labels = "c", id = id) +
-               Cov(x1, x1, labels = "v1", id = id) +
-               Cov(x2, x2, labels = "v2", id = id))
+e2 <- with(dw, list(Cov(x1, x2, labels = "c", id = id),
+                    Cov(x1, x1, labels = "v1", id = id),
+                    Cov(x2, x2, labels = "v2", id = id))) |>
+  merge()
 rho <- estimate(e2, function(x) list(rho = x[1] / (x[2] * x[3])^.5))
 rho
 ```

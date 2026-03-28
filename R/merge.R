@@ -103,7 +103,7 @@ operator_estimate <- function(x, y, op, ...) {
 ## }
 
 ##' @export
-merge.list <- function(x, ...) Reduce(merge, c(list(x), list(...)))
+merge.list <- function(x, ...) Reduce(function(l) merge(l, ...), x)
 
 ##' @export
 merge.estimate <- function(x,y,...,
