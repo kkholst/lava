@@ -269,7 +269,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              cluster,
                              R=0,
                              null.sim) {
-  # browser()
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
   if ("iid" %in% names(cl)) {
@@ -431,7 +430,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (missing(vcov) && !is.null(x))
       suppressWarnings(vcov <- stats::vcov(x))
   }
-
   if (!is.null(ic_theta) && robust && (missing(vcov) || is.null(vcov))) {
     V <- var_ic(ic_theta)
     ## Small-sample corrections for clustered data
@@ -491,6 +489,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                      estimate=est))
   }
 
+  derivative <- NULL
   if (!is.null(f)) {
     form <- names(formals(f))
     dots <- ("..."%in%names(form))
@@ -528,6 +527,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     k <- NCOL(val)
     N <- NROW(val)
     D <- attributes(val)$grad
+    if (!is.null(D)) derivative <- D
     if (is.null(D)) {
       D <- numDeriv::jacobian(function(p, ...) {
         if (length(form)==0) arglist[[1]] <- p
@@ -668,6 +668,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     }
     cc <- compare(res, contrast=contrast, null=null,
                   vcov=V, level=level, df=df)
+    class(res) <- "list"
     res <- structure(c(res, list(compare=cc)), class="estimate")
     if (!is.null(df)) {
       pval <- with(cc, pt(abs(estimate[, 1]-null)/estimate[, 2],
@@ -725,6 +726,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$back.transform <- back.transform
   res$n <- nrow(data)
   res$ncluster <- nrow(res$IC)
+  res$derivative <- derivative
   return(res)
 }
 
