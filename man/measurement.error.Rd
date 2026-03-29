@@ -46,7 +46,8 @@ latent(m1) <- ~u+v
 e1 <- estimate(m1,d)
 
 pp <- function(mu,var,data,...) {
-    cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
+    cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],
+          v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 }
 (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 
@@ -54,7 +55,7 @@ pp <- function(mu,var,data,...) {
 ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
 if (interactive()) {
     plot(e,intercept=TRUE,line=0)
-
+    dev.off()
     f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
     u <- seq(-1,1,length.out=100)
     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
