@@ -5,8 +5,8 @@ a1 <- estimate(coef=1, IC=rnorm(10), id=1:10, labels="a1")
 a2 <- estimate(coef=2, IC=rnorm(10), id=1:10, labels="a2")
 a <- merge(a1, a2)
 
-b1 <- estimate(coef=1, IC=rnorm(10), id=1:10, labels="b1")
-b2 <- estimate(coef=2, IC=rnorm(10), id=1:10, labels="b2")
+b1 <- estimate(coef=0.5, IC=rnorm(10), id=1:10, labels="b1")
+b2 <- estimate(coef=0.9, IC=rnorm(10), id=1:10, labels="b2")
 b <- merge(b1, b2)
 
 test_that("+.estimate", {
@@ -165,7 +165,6 @@ test_that("/.estimate", {
 })
 
 test_that("math functions", {
-
   e <- c(a, b) # merge
   e2 <- merge(a, b); e2$model.index <- NULL
   expect_equivalent(e, e2)
@@ -207,6 +206,11 @@ test_that("math functions", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
+  e1 <- log1p(b)
+  e2 <- estimate(b, function(p) log1p(p))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
   # exp
   e1 <- exp(e["a1"])
   e2 <- estimate(e, function(p) exp(p[1]))
@@ -214,6 +218,11 @@ test_that("math functions", {
   testthat::expect_equivalent(coef(e1), coef(e2))
   e1 <- exp(e)
   e2 <- estimate(e, function(p) exp(p))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
+  e1 <- expm1(b)
+  e2 <- estimate(b, function(p) expm1(p))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
@@ -226,6 +235,49 @@ test_that("math functions", {
   e2 <- estimate(e, function(p) sqrt(p))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
+
+  # trigonometric
+  for (f in c(cos, sin, tan, acos, asin, atan)) {
+      e1 <- f(b)
+      e2 <- estimate(b, function(p) f(p))
+      testthat::expect_equivalent(IC(e1), IC(e2))
+      testthat::expect_equivalent(coef(e1), coef(e2))
+  }
+  e1 <- sin(asin(b))
+  testthat::expect_equivalent(IC(e1), IC(b))
+  testthat::expect_equivalent(coef(e1), coef(b))
+
+  # hyberbolic
+  for (f in c(cosh, sinh, tanh)) {
+      e1 <- f(b)
+      e2 <- estimate(b, function(p) f(p))
+      testthat::expect_equivalent(IC(e1), IC(e2))
+      testthat::expect_equivalent(coef(e1), coef(e2))
+  }
+  e1 <- acosh(cosh(b))
+  testthat::expect_equivalent(IC(e1), IC(b))
+  testthat::expect_equivalent(coef(e1), coef(b))
+  e1 <- asinh(sinh(b))
+  testthat::expect_equivalent(IC(e1), IC(b))
+  testthat::expect_equivalent(coef(e1), coef(b))
+  e1 <- atanh(tanh(b))
+  testthat::expect_equivalent(IC(e1), IC(b))
+  testthat::expect_equivalent(coef(e1), coef(b))
+
 })
 
-# missing: cos, sin, tan, tanh, acos, asin, atan, atanh
+test_that("custom functions", {
+  e1 <- logit(expit(a))
+  testthat::expect_equivalent(IC(e1), IC(a))
+  testthat::expect_equivalent(coef(e1), coef(a))
+
+  e1 <- 2 * log(e["a2"]) * sqrt(e["b2"])
+  e2 <- estimate(e, function(p) 2 * log(p["a2"]) * sqrt(p["b2"]))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
+  e1 <- odds(b)
+  e2 <- estimate(b, odds)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+})
