@@ -271,8 +271,9 @@ test_that("custom functions", {
   testthat::expect_equivalent(IC(e1), IC(a))
   testthat::expect_equivalent(coef(e1), coef(a))
 
-  e1 <- 2 * log(e["a2"]) * sqrt(e["b2"])
-  e2 <- estimate(e, function(p) 2 * log(p["a2"]) * sqrt(p["b2"]))
+  e1 <- 2 * log(a["a2"]) * sqrt(b["b2"])
+  e2 <- estimate(merge(a,b),
+                 function(p) 2 * log(p["a2"]) * sqrt(p["b2"]))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
