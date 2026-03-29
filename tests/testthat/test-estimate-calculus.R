@@ -277,6 +277,12 @@ test_that("custom functions", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
+  e1 <- 1 / cos(a) - sqrt(a^2 + 1) + 1
+  e2 <- estimate(a,
+                 function(p) 1 / cos(p) - sqrt(p^2 + 1) + 1)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
   e1 <- odds(b)
   e2 <- estimate(b, odds)
   testthat::expect_equivalent(IC(e1), IC(e2))
