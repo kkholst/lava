@@ -24,7 +24,8 @@
 ##' e1 <- estimate(m1,d)
 ##'
 ##' pp <- function(mu,var,data,...) {
-##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
+##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],
+##'           v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 ##' }
 ##' (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 ##'
@@ -32,7 +33,7 @@
 ##' ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
 ##' if (interactive()) {
 ##'     plot(e,intercept=TRUE,line=0)
-##'
+##'     dev.off()
 ##'     f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
 ##'     u <- seq(-1,1,length.out=100)
 ##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
@@ -65,9 +66,12 @@ measurement.error <- function(model1, formula, data=parent.frame(),
         r <- (Y-X%*%beta)/summary(stage.two)$sigma^2
         apply(X,2,function(x) sum(x*r))
     }
-    Ia <- -numDeriv::jacobian(function(p) U(p),p1)
-    stacked <- stack(e1,e2,Ia)
-    res <- c(stacked,list(naive=e2,lm=coef(summary(stage.two)),fun=predictfun))
+    ## Ia <- -numDeriv::jacobian(function(p) U(p),p1)
+    stacked <- stack(e1,e2,U=U)
+    class(stacked) <- NULL
+    res <- c(stacked,
+             list(naive=e2,lm=coef(summary(stage.two)),
+                  fun=predictfun))
     structure(res,class=c("measurement.error","estimate"))
 }
 
