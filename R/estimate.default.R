@@ -13,7 +13,6 @@ estimate.data.frame <- function(x, ...) {
   estimate(as.matrix(x), ...)
 }
 
-
 IC_quantile <- function(x, estimate, probs=0.5, ...) {
   x <- na.omit(x)
   f0 <- density(x, ...)
@@ -254,7 +253,8 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
-                             iddata, stack=TRUE, average=FALSE, subset,
+                             iddata, stack=TRUE,
+                             average=FALSE, subset,
                              score.deriv,
                              level=0.95,
                              IC=robust,
@@ -328,6 +328,9 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (missing(score.deriv)) {
       if (!is.logical(IC)) {
         ic_theta <- cbind(IC)
+        if (NCOL(ic_theta) != length(pp)) {
+          warning("Wrong dimension of influence function IC")
+        }
         IC <- TRUE
       } else {
         suppressWarnings(ic_theta <- IC(x, folds=folds))
@@ -660,11 +663,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (missing(null)) null <- 0
     if (is.vector(contrast) || is.list(contrast)) {
       contrast <- contr(contrast, names(res$coef), ...)
-      ## if (length(contrast)==p) contrast <- rbind(contrast)
-      ## else {
-      ##     cont <- contrast
-      ##     contrast <- diag(nrow=p)[cont,,drop=FALSE]
-      ## }
     }
     cc <- compare(res, contrast=contrast, null=null,
                   vcov=V, level=level, df=df)
@@ -989,9 +987,10 @@ summary.estimate <- function(object, ...) {
   p <- coef(object, messages=0)
   test <- estimate(coef=p, vcov=vcov(object, messages=0),
                    contrast=as.list(seq_along(p)), ...)
-  object$compare <- test$compare
-  object <- object[c("coef", "coefmat", "vcov", "call",
-                     "ncluster", "model.index", "compare")]
+  class(test) <- "NULL"
+  test$compare <- test$compare
+  object <- test[c("coef", "coefmat", "vcov", "call",
+                   "ncluster", "model.index", "compare")]
   class(object) <- "summary.estimate"
   object
 }

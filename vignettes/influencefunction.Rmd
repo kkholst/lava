@@ -153,14 +153,13 @@ dl <- dl[order(dl$id), ]
 Print(dl)
 ```
 
-## Example: population mean
 
 The main functions for working with influence functions are 
 
 - `estimate` which prepares a model object and estimates the IF and
   corresponding robust standard errors. Can also be used to transform model
   parameters by application of the Delta Theorem.
-- `merge` method for combining estimates via their estimated IFs
+- `merge`  method for combining estimates via their estimated IFs
 - `IC` method to extract the estimated IF
 
 The `estimate` function is the primary tool for obtaining parameter estimates
@@ -178,7 +177,9 @@ estimate(x=, ...)
 estimate(coef=, IF=, ...)
 estimate(coef=, vcov=, ...)
 ```
- 
+
+## Example: population mean
+
 Here we first consider the problem of estimating the IF of the mean. For a
 general transformation $f: \mathbb{R}^k\to\mathbb{R}^p$ we have that
 $$
@@ -424,15 +425,19 @@ $R_{i}\indep Z_i$ and let the full-data IF for some estimator of a parameter
 $\theta\in\mathbb{R}^p$ be $IC(\cdot; \Pz)$. For convenience let the data be ordered
 $R_{i}=\one(i\leq n)$ where $n$ is the number of observed data points, then the complete-case estimator is consistent and based
 on same IF
+
 \begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; \Pz) + \op(1).
 \end{align*}
+
 This estimator can also be decomposed in terms of the observed data
 $O_1,\ldots,O_N$ noting that
+
 \begin{align*}
 \sqrt{N}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}\sum_{i=1}^N IC(Z_i;
 P)\frac{R_i N}{n} + \op(1).
 \end{align*}
+
 where the term $\frac{R_i N}{n}$ corresponds to an inverse probability
 weighting with the empirical plugin estimate of the proportion of observed data $R=1$.
 Under a missing completely at random assumption we can therefore combine estimators that are estimated
@@ -444,6 +449,7 @@ $\theta_2$ based on $(Z_{11}R_{11}, \ldots, Z_{1N}R_{1N})$ and
 $(Z_{21}R_{21}, \ldots, Z_{2N}R_{2N})$, respectively, and let the
 corresponding IFs be
 $IC_{1}(\cdot; \Pz)$ and $IC_{2}(\cdot;\ P)$. It then follows that
+
 \begin{align*}
 \sqrt{N}\left\{
 \begin{pmatrix}
@@ -464,6 +470,7 @@ IC_2(Z_{2i}; \Pz)\frac{R_{2i}N}{R_{2\bullet}}
 \end{pmatrix} 
 + \op(1)
 \end{align*}
+
 with $R_{k\bullet} = \sum_{i=1}^{N}R_{ki}.$ Returning to the example, we can
 combine the marginal estimates of two model objects that have been estimated
 from different datasets (as the outcome $Y_3$ is only available in half of the
@@ -647,7 +654,15 @@ estimate(g1, function(x) c(x, x[1] + exp(x[2]), inv = 1 / x[2]))
 estimate(g1, exp)         
 ```
 The gradient can be provided as the attribute `grad` and otherwise numerical differentiation is applied. 
-  
+
+
+subset: `[`
+merge: `c`
+trigonometric functions: `cos`, `sin`, `tan`
+
+
+
+
 ## Example: Pearson correlation
 As a simple toy example consider the problem of estimating the covariance of two
 variables $X_1$ and $X_2$
@@ -765,8 +780,7 @@ Such linear statistics can also be specified directly as expressions of the para
 estimate(gg, a + a.1, 2*a - a.2, a, null=c(2,1,1))
 ```
 
-We refer to the function `lava::contr`  and `lava::parsedesigns` for defining
-contrast matrices. 
+We refer to the function `lava::contr`  and `lava::parsedesigns` for defining contrast matrices.
 ```{r contr}
 contr(list(1, c(1, 2), c(1, 4)), n = 5)
 ```

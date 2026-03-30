@@ -70,7 +70,7 @@ merge.estimate <- function(x,y,...,
                            subset=NULL,
                            regex=FALSE,
                            ignore.case=FALSE) {
-    objects <- list(x, estimate(y), ...)
+    objects <- c(list(x), list(estimate(y)), list(...))
     trans <- unlist(lapply(
       objects, function(x) !is.null(x[["back.transform"]])
     ))
@@ -79,7 +79,7 @@ merge.estimate <- function(x,y,...,
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
       if (regex) {
-
+        # TODO
       }
       coefs <- unlist(lapply(objects, function(x) coef(x,messages=0)[subset]))
     } else {
@@ -216,8 +216,7 @@ merge.estimate <- function(x,y,...,
       ic0[,i] <- ic0[,i]/pr
     }
     ic0[is.na(ic0)] <- 0
-
-    res <- estimate.default(NULL,
+    res <- estimate.default(
       coef = coefs, stack = FALSE, data = NULL,
       IC = ic0, id = id, keep = keep
       )
@@ -228,15 +227,16 @@ merge.estimate <- function(x,y,...,
 
 ##' @export
 merge.lm <- function(x,y,...) {
-    args <- c(list(x,y),list(...))
-    nn <- names(formals(merge.estimate)[-seq(3)])
-    idx <- na.omit(match(nn,names(args)))
-    models <- args; models[idx] <- NULL
-    mm <- lapply(args,function(x) tryCatch(estimate(x),error=function(e) NULL))
-    names(mm)[1:2] <- c("x","y")
-    ii <- which(unlist(lapply(mm,is.null)))
-    if (length(ii)>0) mm[ii] <- NULL
-    do.call(merge,c(mm,args[idx]))
+  args <- c(list(x, y), list(...))
+  nn <- names(formals(merge.estimate)[-seq(3)])
+  idx <- na.omit(match(nn, names(args)))
+  models <- args
+  models[idx] <- NULL
+  mm <- lapply(models, function(x) tryCatch(estimate(x),error=function(e) NULL))
+  names(mm)[1:2] <- c("x", "y")
+  ii <- which(unlist(lapply(mm, is.null)))
+  if (length(ii) > 0) mm[ii] <- NULL
+  do.call(merge,c(mm,args[idx]))
 }
 
 ##' @export
