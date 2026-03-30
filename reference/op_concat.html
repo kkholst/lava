@@ -9,7 +9,7 @@ data types he operator is a wrapper of paste."><meta property="og:image" content
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,27 +80,27 @@ data types he operator is a wrapper of <code>paste</code>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Block diagonal</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">25</span><span class="op">)</span>,<span class="fl">5</span><span class="op">)</span><span class="op">%++%</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">25</span><span class="op">)</span>,<span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]       [,2]       [,3]       [,4]        [,5]         [,6]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -0.5428883  0.9921604  0.5607461 -1.5637821 -0.37670272  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -0.4333103 -0.4295131 -0.4527840  1.1565370  2.44136463  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -0.6494716  1.2383041 -0.8320433  0.8320471 -0.79533912  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  0.7267507 -0.2793463 -1.1665705 -0.2273287 -0.05487747  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  1.1519118  1.7579031 -1.0655906  0.2661374  0.25014132  0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.928567035</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.294720447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.005767173</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000  2.404653389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000  0.763593461</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -0.2357066  1.1519118  1.7579031 -1.0655906  0.26613736  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -0.5428883  0.9921604  0.5607461 -1.5637821 -0.37670272  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -0.4333103 -0.4295131 -0.4527840  1.1565370  2.44136463  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -0.6494716  1.2383041 -0.8320433  0.8320471 -0.79533912  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.7267507 -0.2793463 -1.1665705 -0.2273287 -0.05487747  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -1.539950042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.928567035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.294720447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000 -0.005767173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]  0.0000000  0.0000000  0.0000000  0.0000000  0.00000000  2.404653389</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             [,7]       [,8]        [,9]       [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  0.0000000  0.0000000  0.00000000  0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]  0.0000000  0.0000000  0.00000000  0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  0.0000000  0.0000000  0.00000000  0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  0.0000000  0.0000000  0.00000000  0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.0000000  0.0000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -0.7990092  0.2522234  0.37739565  1.08576936</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -1.1476570 -0.8919211  0.13333636 -0.69095384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -0.2894616  0.4356833  0.80418951 -1.28459935</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -0.2992151 -1.2375384 -0.05710677  0.04672617</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.4115108 -0.2242679  0.50360797 -0.23570656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]  0.7635935 -0.4115108 -0.22426789  0.50360797</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -0.7990092  0.2522234  0.37739565  1.08576936</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.1476570 -0.8919211  0.13333636 -0.69095384</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -0.2894616  0.4356833  0.80418951 -1.28459935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.2992151 -1.2375384 -0.05710677  0.04672617</span>
 <span class="r-in"><span><span class="co">## String concatenation</span></span></span>
 <span class="r-in"><span><span class="st">"Hello "</span><span class="op">%++%</span><span class="st">" World"</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hello  World"</span>
@@ -119,7 +119,7 @@ data types he operator is a wrapper of <code>paste</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

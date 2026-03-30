@@ -11,7 +11,7 @@ then one can specify"><meta property="og:image" content="http://kkholst.github.i
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,17 +96,17 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="sim.lvm.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.lvm.html">coxExponential.lvm</a></span><span class="op">(</span>rate<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m0</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime    censtime        time status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   8.846923 18.79067364  8.84692274      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  14.009893  3.39319492  3.39319492      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  14.029624  4.81329027  4.81329027      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.929567 22.09611099 17.92956695      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  10.537679 16.55291245 10.53767868      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   8.534200  0.06189218  0.06189218      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   8.161939 11.85611149  8.16193939      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   7.802480  0.31966069  0.31966069      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  13.206909  6.78797323  6.78797323      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 14.468739  2.16618630  2.16618630      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime  censtime      time status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   2.411880  4.533928  2.411880      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.611888 23.252592 12.611888      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  10.065578 17.943372 10.065578      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12.901187  6.581174  6.581174      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2.272443 25.195749  2.272443      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   9.514347  3.575997  3.575997      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   6.423498  2.912756  2.912756      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2.439480  4.756341  2.439480      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  11.931257  4.708455  4.708455      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2.167252 10.303195  2.167252      1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Alternative specification of the right censored survival outcome</span></span></span>
 <span class="r-in"><span><span class="co">## eventTime(m,"Status") &lt;- ~min(eventtime=1,censtime=0)</span></span></span>
@@ -125,13 +125,13 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.4</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.01</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime   censtime       time status sex      sbp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  4.503515 10.3321280  4.5035153      1   0 106.6415</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  7.788162  8.9109949  7.7881625      1   0 103.8519</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  9.875467  2.0632497  2.0632497      0   1 134.3462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 12.386353 12.8740043 12.3863532      1   1 107.2798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 16.413136  0.4363755  0.4363755      0   1 113.6455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 18.454376 13.7010274 13.7010274      0   0 122.3273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex       sbp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  8.545196 13.206909  8.545196      1   0  99.50431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 16.881250 14.468739 14.468739      0   0 126.00263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 19.312301 11.738692 11.738692      0   0 102.51833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  7.557589  8.422240  7.557589      1   0 109.83046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.069883 12.497991 12.497991      0   0 120.36231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  4.874140  6.903913  4.874140      1   0 117.84913</span>
 <span class="r-in"><span><span class="co"># The parameters can be recovered using a Cox regression</span></span></span>
 <span class="r-in"><span><span class="co"># routine or a Weibull regression model. E.g.,</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
@@ -253,7 +253,7 @@ one gets 2 new columns:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

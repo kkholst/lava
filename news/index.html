@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,8 +38,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.8.3" id="lava-183-development-version">lava 1.8.3 (development version)<a class="anchor" aria-label="anchor" href="#lava-183-development-version"></a></h2>
-<ul><li>development</li>
+<h2 class="pkg-version" data-toc-text="1.9.0" id="lava-190">lava 1.9.0<a class="anchor" aria-label="anchor" href="#lava-190"></a></h2>
+<ul><li>
+<code>estimate</code>: estimate objects can now be transformed via functions: <code>log</code>, <code>exp</code>, <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>
+</li>
+<li>breaking change: <code>+</code> operator for estimate objects no longer merges objects.</li>
+<li>
+<code>sim.default</code>: the simulation function <code>f</code>’s return object can now be an <code>estimate</code> object</li>
+<li>
+<code>summary.sim</code>: automatically derives estimate, se, confint parameters if the sim routine returns an <code>estimate</code> object</li>
+<li>
+<code>merge.estimate</code>: cast warning if <code>back.transform</code> was used</li>
+<li>
+<code>merge.estimate</code>: works with objects with and without influence function</li>
+<li>
+<code>summary.sim</code> <code>df</code> argument for calculating CIs based on t-dist. approximation</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.2" id="lava-182">lava 1.8.2<a class="anchor" aria-label="anchor" href="#lava-182"></a></h2><p class="text-muted">CRAN release: 2025-10-30</p>
@@ -72,7 +85,7 @@
 <li>
 <code>as.data.frame.sim</code>, <code>as.matrix.sim</code>
 </li>
-<li>fixed issues with quasi* families and negative binomial regr (MASS:glm.nb)</li>
+<li>fixed issues with quasi* families and negative binomial regression (<code>MASS:glm.nb</code>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.7.3" id="lava-173">lava 1.7.3<a class="anchor" aria-label="anchor" href="#lava-173"></a></h2><p class="text-muted">CRAN release: 2023-11-04</p>
@@ -80,7 +93,7 @@
 <code>parameter.estimate</code> method to extract matrix with estimates, standard errors, and confidence limits from and estimate object (coefmat element)</li>
 <li>pairwise difference with <code>'-'.estimate</code> and <code>pairwise.diff</code>
 </li>
-<li>Optional mc.cores arguments to <code>cv</code> and <code>bootstrap</code>
+<li>optional mc.cores arguments to <code>cv</code> and <code>bootstrap</code>
 </li>
 <li>
 <code>parameter.lvm</code> now automatically removes previously variables in the lvm object with same name as new added parameters.</li>
@@ -456,7 +469,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,7 @@ for the direct estimation of properties of the estimator, including its
 asymptotic variance. Moreover, estimates of the IF enable the simple
 combination and transformation of estimators into new ones. This
 vignette describes how to estimate and manipulate IFs using the
-R-package <code>lava</code> <span class="citation">(Holst and
+R-package <code>lava</code> <span class="citation">(K. K. Holst and
 Budtz-Jørgensen 2013)</span>.</p>
 <p>Formally, let
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Z_1,\ldots,Z_n</annotation></semantics></math>
@@ -135,7 +135,9 @@ which often can be left completely non-parametric. Formally, the
 parameter must be <em>pathwise differentiable</em> see <span class="citation">(Vaart 1998)</span> in the sense that there exists
 linear bounded function
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Ψ</mi><mo accent="true">̇</mo></mover><mo>:</mo><msub><mi>L</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>→</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">\dot\Psi\colon L_{2}(P_{0})\to\mathbb{R}</annotation></semantics></math>
-such that $ [(P_{t}) - (P_{0}))]t^{-1} (P_{0})(g) $ as
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="true" form="postfix">]</mo></mrow><msup><mi>t</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>→</mo><mover><mi>Ψ</mi><mo accent="true">̇</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to \dot\Psi(P_{0})(g)</annotation></semantics></math>
+as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>→</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">t\to 0</annotation></semantics></math>
 for any parametric submodel
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_t</annotation></semantics></math>
@@ -165,7 +167,7 @@ which is often a key interest in causal inference and which has the IF
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>,</mo><mi>A</mi><mo>,</mo><mi>W</mi><mo>;</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>𝟏</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>−</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><msub><mi>Ψ</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
 \operatorname{IC}(Y,A,W; P) = \frac{\mathbf{1}(A=a)}{\mathbb{P}(A=a\mid W)}(Y-\mathbb{E}_{P}[Y\mid A=a,W]) + \mathbb{E}_{P}[Y\mid
 A=a,W] - \Psi_{a}(P)
-    \end{align*}</annotation></semantics></math> See section on <a href="#average-treatment-effects">average treatment effects</a>.</p>
+\end{align*}</annotation></semantics></math> See section on <a href="#average-treatment-effects">average treatment effects</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
@@ -234,8 +236,8 @@ is only observed for half of the subjects</p>
 the IF and corresponding robust standard errors. Can also be used to
 transform model parameters by application of the Delta Theorem.</li>
 <li>
-<code>merge</code>, <code>+</code> method for combining estimates
-via their estimated IFs</li>
+<code>merge</code> method for combining estimates via their
+estimated IFs</li>
 <li>
 <code>IC</code> method to extract the estimated IF</li>
 </ul>
@@ -320,17 +322,16 @@ each of the two binary outcomes</p>
 <code>estimate</code> object</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(x = x, coef = pars(x))</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = x, keep = keep)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;                Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138</span></span>
-<span><span class="co">#&gt; y2:(Intercept)    0.535 0.02494 0.4861 0.5839 4.316e-102</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [y1:(Intercept)] = 0</span></span>
-<span><span class="co">#&gt;   [y2:(Intercept)] = 0 </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 955.6986, df = 2, p-value &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt;      Estimate Std.Err 2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; NA                                      </span></span>
+<span><span class="co">#&gt; NA.1                                    </span></span>
+<span><span class="co">#&gt; NA.2                                    </span></span>
+<span><span class="co">#&gt; NA.3                                    </span></span>
+<span><span class="co">#&gt; NA.4                                    </span></span>
+<span><span class="co">#&gt; NA.5                                    </span></span>
+<span><span class="co">#&gt; NA.6</span></span>
 <span><span class="co">## extract parameter coefficients</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt; y1:(Intercept) y2:(Intercept) </span></span>
@@ -355,7 +356,7 @@ each of the two binary outcomes</p>
 <span><span class="co">#&gt; 5          -0.61         -0.535</span></span>
 <span><span class="co">#&gt; 6          -0.61          0.465</span></span>
 <span><span class="co">## Join estimates</span></span>
-<span><span class="va">e</span> <span class="op">+</span> <span class="va">e</span> <span class="co"># Same as merge(e,e)</span></span>
+<span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; y1:(Intercept)      0.610 0.02439 0.5622 0.6578 4.435e-138</span></span>
 <span><span class="co">#&gt; y2:(Intercept)      0.535 0.02494 0.4861 0.5839 4.316e-102</span></span>
@@ -377,8 +378,8 @@ each of the two binary outcomes</p>
 defined by the score equation
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E[U(Z; \theta)] = 0</annotation></semantics></math>,
 the IF is given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝔼</mi><mo minsize="1.8" maxsize="1.8" stretchy="false" form="prefix">{</mo><mfrac><mi>∂</mi><mrow><mi>∂</mi><msup><mi>θ</mi><mi>⊤</mi></msup></mrow></mfrac><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>;</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mo minsize="1.8" maxsize="1.8" stretchy="false" form="postfix">}</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} IC(Z; \theta) =
-\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><mi>𝔼</mi><mo minsize="1.8" maxsize="1.8" stretchy="false" form="prefix">{</mo><mfrac><mi>∂</mi><mrow><mi>∂</mi><msup><mi>θ</mi><mi>⊤</mi></msup></mrow></mfrac><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>;</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mo minsize="1.8" maxsize="1.8" stretchy="false" form="postfix">}</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} IC(Z; \theta) =
+-\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
 \end{align*}</annotation></semantics></math> In particular, for a
 maximum likelihood estimator the score,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>,
@@ -438,11 +439,11 @@ and Grambsch 2000)</span></p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/therneau/survival" class="external-link">"survival"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbc</span>, package<span class="op">=</span><span class="st">"survival"</span><span class="op">)</span></span></code></pre></div>
 <p>The Cox proportional hazards model can be fitted with the
-<code><a href="https://kkholst.github.io/mets/reference/phreg.html" class="external-link">mets::phreg</a></code> method which can estimate the IF for both the
+<code><a href="http://kkholst.github.io/mets/reference/phreg.html" class="external-link">mets::phreg</a></code> method which can estimate the IF for both the
 partial likelihood parameters and the baseline hazard. Here we fit a
 survival model with right-censored event times</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit.phreg</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/phreg.html" class="external-link">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">pbc</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fit.phreg</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/mets/reference/phreg.html" class="external-link">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">pbc</span><span class="op">)</span></span>
 <span><span class="va">fit.phreg</span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; mets::phreg(formula = Surv(time, status &gt; 0) ~ age + sex, data = pbc)</span></span>
@@ -459,13 +460,13 @@ survival model with right-censored event times</p>
 <span><span class="co">#&gt; age   1.02234 1.00834 1.0365</span></span>
 <span><span class="co">#&gt; sexf  0.74085 0.49843 1.1012</span></span>
 <span><span class="fu"><a href="../reference/IC.html">IC</a></span><span class="op">(</span><span class="va">fit.phreg</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           age       sexf</span></span>
-<span><span class="co">#&gt; 1  0.12691175  2.9551968</span></span>
-<span><span class="co">#&gt; 2 -0.16011629 -4.3755455</span></span>
-<span><span class="co">#&gt; 3  0.19322595 -8.1786480</span></span>
-<span><span class="co">#&gt; 4  0.04668109  0.8548021</span></span>
-<span><span class="co">#&gt; 5 -0.22936186  0.9721761</span></span>
-<span><span class="co">#&gt; 6  0.07015171  0.5644414</span></span></code></pre></div>
+<span><span class="co">#&gt;              age       sexf</span></span>
+<span><span class="co">#&gt; [1,]  0.12691175  2.9551968</span></span>
+<span><span class="co">#&gt; [2,] -0.16011629 -4.3755455</span></span>
+<span><span class="co">#&gt; [3,]  0.19322595 -8.1786480</span></span>
+<span><span class="co">#&gt; [4,]  0.04668109  0.8548021</span></span>
+<span><span class="co">#&gt; [5,] -0.22936186  0.9721761</span></span>
+<span><span class="co">#&gt; [6,]  0.07015171  0.5644414</span></span></code></pre></div>
 <p>The IF for the baseline cumulative hazard at a specific time point
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>Λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>u</mi><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
 \Lambda_0(t) = \int_0^t \lambda_0(u)\,du, 
@@ -474,8 +475,8 @@ survival model with right-censored event times</p>
 is the baseline hazard, can be estimated in similar way:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">time</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">ic</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">object</span>, baseline <span class="op">=</span> <span class="cn">TRUE</span>, time <span class="op">=</span> <span class="va">time</span>, <span class="va">...</span><span class="op">)</span></span>
-<span>  <span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/fast.approx.html" class="external-link">predictCumhaz</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">cumhaz</span>, new.time <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span>  <span class="va">ic</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/IC.html">IC</a></span><span class="op">(</span><span class="va">object</span>, baseline <span class="op">=</span> <span class="cn">TRUE</span>, time <span class="op">=</span> <span class="va">time</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/mets/reference/fast.approx.html" class="external-link">predictCumhaz</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">cumhaz</span>, new.time <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span></span>
 <span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="cn">NULL</span>, coef <span class="op">=</span> <span class="va">est</span>, IC <span class="op">=</span> <span class="va">ic</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chaz:"</span>, <span class="va">time</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">tt</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
@@ -612,23 +613,16 @@ method</p>
 <span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, family<span class="op">=</span><span class="va">binomial</span>, data<span class="op">=</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(x = NULL, data = NULL, id = id, stack = FALSE, </span></span>
-<span><span class="co">#&gt;     IC = ic0, keep = keep, coef = coefs)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = x, keep = keep)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;               Estimate Std.Err    2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01</span></span>
-<span><span class="co">#&gt; a               1.3239  0.2173  0.8981  1.74978 1.105e-09</span></span>
-<span><span class="co">#&gt; ─────────────                                            </span></span>
-<span><span class="co">#&gt; (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05</span></span>
-<span><span class="co">#&gt; a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [(Intercept)] = 0</span></span>
-<span><span class="co">#&gt;   [a] = 0</span></span>
-<span><span class="co">#&gt;   [(Intercept).1] = 0</span></span>
-<span><span class="co">#&gt;   [a.1] = 0 </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 96.4362, df = 4, p-value &lt; 2.2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;      Estimate Std.Err 2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; NA                                      </span></span>
+<span><span class="co">#&gt; NA.1                                    </span></span>
+<span><span class="co">#&gt; NA.2                                    </span></span>
+<span><span class="co">#&gt; NA.3                                    </span></span>
+<span><span class="co">#&gt; NA.4                                    </span></span>
+<span><span class="co">#&gt; NA.5                                    </span></span>
+<span><span class="co">#&gt; NA.6</span></span></code></pre></div>
 <p>As we have access to the joint asymptotic distribution we can for
 example test for whether the odds-ratio is the same for the two
 responses:</p>
@@ -717,8 +711,8 @@ Returning to the example, we can combine the marginal estimates of two
 model objects that have been estimated from different datasets (as the
 outcome
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>3</mn></msub><annotation encoding="application/x-tex">Y_3</annotation></semantics></math>
-is only available in half of the data). Here we will use the overloaded
-<code>+</code> operator</p>
+is only available in half of the data) with the <code>merge</code>
+function</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span></span>
@@ -761,7 +755,8 @@ is only available in half of the data). Here we will use the overloaded
 <span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g2</span>, id <span class="op">=</span> <span class="va">dw</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
 <span><span class="va">e3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g3</span>, id <span class="op">=</span> <span class="st">"id"</span>, data<span class="op">=</span><span class="va">dwc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">e2</span>,<span class="va">e3</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/IC.html">IC</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/Print.html">Print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ecomb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">e2</span>, <span class="va">e3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/IC.html">IC</a></span><span class="op">(</span><span class="va">ecomb</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/Print.html">Print</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     (Intercept) (Intercept).1</span></span>
 <span><span class="co">#&gt; 1   -2.151       3.540       </span></span>
 <span><span class="co">#&gt; 2    1.869       3.540       </span></span>
@@ -774,7 +769,7 @@ is only available in half of the data). Here we will use the overloaded
 <span><span class="co">#&gt; 398 -2.151       0.000       </span></span>
 <span><span class="co">#&gt; 399 -2.151       0.000       </span></span>
 <span><span class="co">#&gt; 400 -2.151       0.000</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">e2</span> <span class="op">+</span> <span class="va">e3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">ecomb</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               (Intercept) (Intercept).1</span></span>
 <span><span class="co">#&gt; (Intercept)   0.010049191   0.002102598</span></span>
 <span><span class="co">#&gt; (Intercept).1 0.002102598   0.020342639</span></span>
@@ -812,11 +807,11 @@ methods described in this document.</p>
 <span><span class="co">#&gt; 4    1.869154</span></span>
 <span><span class="co">#&gt; 5   -2.150532</span></span>
 <span><span class="co">#&gt; 6    1.869154</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span>, <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               (Intercept) (Intercept).1</span></span>
 <span><span class="co">#&gt; (Intercept)   0.010049191   0.002102598</span></span>
 <span><span class="co">#&gt; (Intercept).1 0.002102598   0.020342639</span></span>
-<span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span>, <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="op">(</span><span class="va">rownames</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">head</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1"   "10"  "100" "101" "102" "103"</span></span></code></pre></div>
 <p>To force that the id variables are not overlapping between the merged
@@ -849,13 +844,15 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 argument can be used.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span>, <span class="st">"(Intercept).1"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span></code></pre></div>
 <p>The argument can be given either as character vector or a vector of
 indices:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>,<span class="va">g2</span>, keep<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span></code></pre></div>
@@ -866,6 +863,8 @@ indices:</p>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
 <span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"\\)$"</span>, <span class="st">"^a$"</span><span class="op">)</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  -0.1861  0.1442 -0.4688 0.09655 1.969e-01</span></span>
 <span><span class="co">#&gt; a             1.3239  0.2173  0.8981 1.74978 1.105e-09</span></span></code></pre></div>
@@ -874,6 +873,8 @@ possible to rename the parameters with the <code>labels</code>
 argument</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; a  -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; c   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
@@ -881,6 +882,10 @@ argument</p>
 <span>      labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>,</span>
 <span>      keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; a  -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; c   0.1402  0.1002 -0.05625 0.33671  0.1619</span></span>
@@ -892,6 +897,8 @@ argument</p>
 parameters and IFs before the actual merging is being done</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, subset<span class="op">=</span><span class="st">"(Intercept)"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in formula.character(object, env = baseenv()): invalid formula</span></span>
+<span><span class="co">#&gt; "(Intercept)": extraneous call to `(` is deprecated</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969</span></span>
 <span><span class="co">#&gt; ─────────────                                          </span></span>
@@ -1130,9 +1137,10 @@ and
 <p>The variance estimates can be estimated in the same way and the
 combined estimates be used to estimate the correlation</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, labels <span class="op">=</span> <span class="st">"c"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
-<span>               <span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x1</span>, labels <span class="op">=</span> <span class="st">"v1"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
-<span>               <span class="fu">Cov</span><span class="op">(</span><span class="va">x2</span>, <span class="va">x2</span>, labels <span class="op">=</span> <span class="st">"v2"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, labels <span class="op">=</span> <span class="st">"c"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>                    <span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x1</span>, labels <span class="op">=</span> <span class="st">"v1"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>                    <span class="fu">Cov</span><span class="op">(</span><span class="va">x2</span>, <span class="va">x2</span>, labels <span class="op">=</span> <span class="st">"v2"</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rho <span class="op">=</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="va">x</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">rho</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
@@ -1323,7 +1331,7 @@ can be estimated from the IFs. This is implemented in the
 adjustments, a more powerful closed-testing procedure <span class="citation">(Marcus, Eric, and Gabriel 1976)</span>, can be
 generally obtained by considering all intersection hypotheses.</p>
 <div class="float">
-<embed src="figs/closedtesting.pdf"></embed><div class="figcaption"><em>Figure: closed testing via Wald tests of all
+<img src="figs/closedtesting.svg" style="width:60.0%" alt="Figure: closed testing via Wald tests of all intersections hypotheses."><div class="figcaption"><em>Figure: closed testing via Wald tests of all
 intersections hypotheses.</em></div>
 </div>
 <p>To reject the
@@ -1342,8 +1350,8 @@ across all the composite hypothesis tests. Unfortunately, this only
 works for relatively few comparisons as the number of tests grows
 exponentially.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: closed_testing(object = gg0)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span>, test <span class="op">=</span> <span class="va">test_wald</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: closed_testing(object = gg0, test = test_wald)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Estimate     adj.p</span></span>
 <span><span class="co">#&gt; a      1.324 1.105e-09</span></span>
@@ -1449,15 +1457,153 @@ kept fixed at the value
 <span><span class="co">#&gt; 5  0.02478</span></span>
 <span><span class="co">#&gt; 6 -0.61997</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="average-treatment-effects">Average Treatment Effects<a class="anchor" aria-label="anchor" href="#average-treatment-effects"></a>
+</h3>
+<p>Let the observed data be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z = (W,A,Y)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+are covariates,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+a binary treatment variable, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+the outcome. In the following we are interested in estimating the target
+parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ψ</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\psi_a(P) = E_P[Y(a)]</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(a)</annotation></semantics></math>
+is the <em>potential outcome</em> we would have observed if treatment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+had been administered, possibly contrary to the actual treatment that
+was observed, i.e.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y = Y(A)</annotation></semantics></math>.
+To assess the treatment effect we can then the consider the <em>average
+treatment effect</em> (ATE)
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">E_P[Y(1)]-E_P[Y(0)],</annotation></semantics></math>
+or some other contrast of interest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ψ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>ψ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(\psi_1(P), \psi_0(P))</annotation></semantics></math>.
+Under the following assumptions</p>
+<ol style="list-style-type: decimal">
+<li>Stable Unit Treatment Values Assumption (the treatment of a specific
+subject is not affecting the potential outcome of other subjects)</li>
+<li>Positivity,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">P(A\mid W)&gt;\epsilon</annotation></semantics></math>
+for some
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\epsilon&gt;0</annotation></semantics></math>
+and baseline covariates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+</li>
+<li>No unmeasured confounders,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⊥</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⊥</mo><mi>A</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi></mrow><annotation encoding="application/x-tex">Y(a)\perp \!\!\! \perp A|W</annotation></semantics></math>
+</li>
+</ol>
+<p>then the target parameter can be identified from the observed data
+distribution as
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E(E[Y|W,A=a]) = E(E[Y(a)|W]) = E[Y(a)]</annotation></semantics></math>
+or
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">E[Y I(A=a)/P(A=a|W)] = E[Y(a)].</annotation></semantics></math></p>
+<p>This suggests estimators based on outcome regression
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>-computation)
+or inverse probability weighting. More generally, under the above
+assumption we can constructor a <em>one-step</em> estimator from the
+<em>Efficient Influence Function</em> combining these two
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mfrac><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>Π</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>−</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex"> E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].</annotation></semantics></math>
+In practice, this requires plugin estimates of both the outcome model,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>:=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q(W,A) := E(Y\mid A, W)</annotation></semantics></math>,
+and of the treatment propensity model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Π</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>:=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Pi_a(W) := P(A=a\mid W)</annotation></semantics></math>.
+The corresponding estimator is consistent even if just one of the two
+nuisance models is correctly specified.</p>
+<p>To illustrate this we manually construct the above estimating
+equations based on logistic regressions models for the two nuisance
+models</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">qmod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">*</span> <span class="va">w</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span> <span class="co"># E(Y|W,A) := Q(W,A)</span></span>
+<span><span class="va">amod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span> <span class="co"># P(A=1|W) = Pi_1(W)</span></span>
+<span><span class="va">q0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">qmod</span>, <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">dw</span>, a<span class="op">=</span><span class="fl">0</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"response"</span><span class="op">)</span> <span class="co"># Q(W,0)</span></span>
+<span><span class="va">q1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">qmod</span>, <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">dw</span>, a<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"response"</span><span class="op">)</span> <span class="co"># Q(W,1)</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">amod</span>, <span class="va">dw</span>, type<span class="op">=</span><span class="st">"response"</span><span class="op">)</span> <span class="co"># P(A=1|W)</span></span>
+<span><span class="va">e0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">p1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">y1</span> <span class="op">-</span> <span class="va">q0</span><span class="op">)</span> <span class="op">+</span> <span class="va">q0</span><span class="op">)</span></span>
+<span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="va">a</span> <span class="op">/</span> <span class="va">p1</span> <span class="op">*</span> <span class="op">(</span><span class="va">y1</span> <span class="op">-</span> <span class="va">q1</span><span class="op">)</span> <span class="op">+</span> <span class="va">q1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">e0</span>, <span class="va">e1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        e0      e1</span></span>
+<span><span class="co">#&gt; 1  0.7381  1.0447</span></span>
+<span><span class="co">#&gt; 2  0.8434  1.0119</span></span>
+<span><span class="co">#&gt; 3 -0.2967  0.6236</span></span>
+<span><span class="co">#&gt; 4 -0.3878  0.6656</span></span>
+<span><span class="co">#&gt; 5  0.4649 -0.8175</span></span>
+<span><span class="co">#&gt; 6 -0.3952  0.6685</span></span></code></pre></div>
+<p>We can then easily construct estimates of the two expected potential
+outcomes and estimate their joint asymptotic distribution</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">est0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">e0</span><span class="op">)</span>, IC<span class="op">=</span><span class="va">e0</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">e0</span><span class="op">)</span><span class="op">)</span> <span class="co"># E[Y(0)]</span></span>
+<span><span class="va">est1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span>, IC<span class="op">=</span><span class="va">e1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">e1</span><span class="op">)</span><span class="op">)</span> <span class="co"># E[Y(1)]</span></span>
+<span></span>
+<span><span class="va">potential_outcomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">est0</span>, <span class="va">est1</span>, paired<span class="op">=</span><span class="cn">TRUE</span>, labels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y(0)"</span>, <span class="st">"y(1)"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">potential_outcomes</span></span>
+<span><span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; y(0)   0.5359 0.03535 0.4667 0.6052 6.290e-52</span></span>
+<span><span class="co">#&gt; ────                                         </span></span>
+<span><span class="co">#&gt; y(1)   0.7050 0.03721 0.6321 0.7779 4.934e-80</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/IC.html">IC</a></span><span class="op">(</span><span class="va">potential_outcomes</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       y(0)     y(1)</span></span>
+<span><span class="co">#&gt; 1  0.20211  0.33973</span></span>
+<span><span class="co">#&gt; 2  0.30750  0.30690</span></span>
+<span><span class="co">#&gt; 3 -0.83262 -0.08136</span></span>
+<span><span class="co">#&gt; 4 -0.92373 -0.03944</span></span>
+<span><span class="co">#&gt; 5 -0.07105 -1.52251</span></span>
+<span><span class="co">#&gt; 6 -0.93115 -0.03652</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">potential_outcomes</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           y(0)      y(1)</span></span>
+<span><span class="co">#&gt; y(0) 1.249e-03 6.938e-05</span></span>
+<span><span class="co">#&gt; y(1) 6.938e-05 1.385e-03</span></span></code></pre></div>
+<p>Finally, we can obtain the Average Treatment Effect (ATE)
+(risk-difference)
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+E[Y(1)]  - E[Y(0)]
+\end{align*}</annotation></semantics></math></p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, labels<span class="op">=</span><span class="st">"ate"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; ate   0.1691 0.04996 0.07115 0.267 0.0007138</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   -[y(0)] + [y(1)] = 0</span></span></code></pre></div>
+<p>Alternatively, we could get the estimate of the treatment effect on
+the log-odds scale:</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">logor</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="va">logor</span>, labels<span class="op">=</span><span class="st">"logOR"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err  2.5% 97.5%  P-value</span></span>
+<span><span class="co">#&gt; logOR   0.7272  0.2226 0.291 1.163 0.001085</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="va">logor</span>, labels<span class="op">=</span><span class="st">"OR"</span>, back.transform<span class="op">=</span><span class="va">exp</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%  P-value</span></span>
+<span><span class="co">#&gt; OR    2.069         1.338 3.201 0.001085</span></span></code></pre></div>
+<p>We refer to the <code>targeted</code> package <span class="citation">(Klaus K. Holst, Sommer, and Nordland 2026)</span> for
+a general implementation where the nuisance models can be based on
+machine learning models using cross-fitting. The above estimation can be
+obtained with the <code><a href="https://kkholst.github.io/targeted/reference/cate.html" class="external-link">targeted::cate</a></code> function in the following
+way</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">amod</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/learner_glm.html" class="external-link">learner_glm</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
+<span><span class="va">qmod</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/learner_glm.html" class="external-link">learner_glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">*</span> <span class="va">w</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
+<span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/cate.html" class="external-link">cate</a></span><span class="op">(</span><span class="va">qmod</span>, <span class="va">amod</span>, data<span class="op">=</span><span class="va">dw</span>, second.order <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80</span></span>
+<span><span class="co">#&gt; E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52</span></span>
+<span><span class="co">#&gt; ───────────</span></span>
+<span><span class="co">#&gt; (Intercept)   0.1691 0.04996 0.07115 0.2670 7.138e-04</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.3 (2026-03-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1476,28 +1622,29 @@ kept fixed at the value
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] survival_3.8-3 lava_1.8.2    </span></span>
+<span><span class="co">#&gt; [1] survival_3.8-6 lava_1.9.0    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] tidyr_1.3.1         sass_0.4.10         future_1.67.0      </span></span>
-<span><span class="co">#&gt;  [4] generics_0.1.4      lattice_0.22-7      listenv_0.10.0     </span></span>
-<span><span class="co">#&gt;  [7] digest_0.6.37       magrittr_2.0.4      evaluate_1.0.5     </span></span>
-<span><span class="co">#&gt; [10] grid_4.5.2          mvtnorm_1.3-3       fastmap_1.2.0      </span></span>
-<span><span class="co">#&gt; [13] jsonlite_2.0.0      Matrix_1.7-4        backports_1.5.0    </span></span>
-<span><span class="co">#&gt; [16] purrr_1.2.0         codetools_0.2-20    numDeriv_2016.8-1.1</span></span>
-<span><span class="co">#&gt; [19] textshaping_1.0.4   jquerylib_0.1.4     cli_3.6.5          </span></span>
-<span><span class="co">#&gt; [22] rlang_1.1.6         mets_1.3.8          parallelly_1.45.1  </span></span>
-<span><span class="co">#&gt; [25] future.apply_1.20.0 splines_4.5.2       geepack_1.3.13     </span></span>
-<span><span class="co">#&gt; [28] cachem_1.1.0        yaml_2.3.10         tools_4.5.2        </span></span>
-<span><span class="co">#&gt; [31] parallel_4.5.2      dplyr_1.1.4         globals_0.18.0     </span></span>
-<span><span class="co">#&gt; [34] broom_1.0.10        vctrs_0.6.5         R6_2.6.1           </span></span>
-<span><span class="co">#&gt; [37] lifecycle_1.0.4     fs_1.6.6            htmlwidgets_1.6.4  </span></span>
-<span><span class="co">#&gt; [40] MASS_7.3-65         ragg_1.5.0          pkgconfig_2.0.3    </span></span>
-<span><span class="co">#&gt; [43] desc_1.4.3          timereg_2.0.7       pkgdown_2.1.3      </span></span>
-<span><span class="co">#&gt; [46] bslib_0.9.0         pillar_1.11.1       glue_1.8.0         </span></span>
-<span><span class="co">#&gt; [49] Rcpp_1.1.0          systemfonts_1.3.1   tidyselect_1.2.1   </span></span>
-<span><span class="co">#&gt; [52] xfun_0.54           tibble_3.3.0        knitr_1.50         </span></span>
-<span><span class="co">#&gt; [55] htmltools_0.5.8.1   rmarkdown_2.30      compiler_4.5.2</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         </span></span>
+<span><span class="co">#&gt;  [4] generics_0.1.4         lattice_0.22-9         listenv_0.10.1        </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.39          magrittr_2.0.4         evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt; [10] grid_4.5.3             mvtnorm_1.3-6          fastmap_1.2.0         </span></span>
+<span><span class="co">#&gt; [13] jsonlite_2.0.0         Matrix_1.7-4           backports_1.5.0       </span></span>
+<span><span class="co">#&gt; [16] purrr_1.2.1            codetools_0.2-20       numDeriv_2016.8-1.1   </span></span>
+<span><span class="co">#&gt; [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.5             </span></span>
+<span><span class="co">#&gt; [22] rlang_1.1.7            mets_1.3.9             parallelly_1.46.1     </span></span>
+<span><span class="co">#&gt; [25] future.apply_1.20.2    splines_4.5.3          RcppArmadillo_15.2.4-1</span></span>
+<span><span class="co">#&gt; [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           </span></span>
+<span><span class="co">#&gt; [31] tools_4.5.3            parallel_4.5.3         dplyr_1.2.0           </span></span>
+<span><span class="co">#&gt; [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.2           </span></span>
+<span><span class="co">#&gt; [37] R6_2.6.1               lifecycle_1.0.5        fs_2.0.1              </span></span>
+<span><span class="co">#&gt; [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            </span></span>
+<span><span class="co">#&gt; [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         </span></span>
+<span><span class="co">#&gt; [46] pkgdown_2.2.0          bslib_0.10.0           pillar_1.11.1         </span></span>
+<span><span class="co">#&gt; [49] glue_1.8.0             Rcpp_1.1.1             systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [52] tidyselect_1.2.1       xfun_0.57              tibble_3.3.1          </span></span>
+<span><span class="co">#&gt; [55] knitr_1.51             htmltools_0.5.9        rmarkdown_2.31        </span></span>
+<span><span class="co">#&gt; [58] compiler_4.5.3</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
@@ -1524,6 +1671,10 @@ February, 1–13. <a href="https://doi.org/10.1080/00031305.2021.2021984" class=
 Holst, K. K., and E. Budtz-Jørgensen. 2013. <span>“Linear Latent
 Variable Models: The Lava-Package.”</span> <em>Computational
 Statistics</em> 28 (4): 1385–1452. <a href="https://doi.org/10.1007/s00180-012-0344-y" class="external-link">https://doi.org/10.1007/s00180-012-0344-y</a>.
+</div>
+<div id="ref-r-targeted" class="csl-entry">
+Holst, Klaus K., Benedikt Sommer, and Andreas Nordland. 2026.
+<em>Targeted: Targeted Inference</em>. <a href="https://kkholst.github.io/targeted/" class="external-link">https://kkholst.github.io/targeted/</a>.
 </div>
 <div id="ref-targetedlearning_2011" class="csl-entry">
 Laan, Mark J. van der, and Sherri Rose. 2011. <em>Targeted Learning.
@@ -1582,7 +1733,7 @@ for Nonsmooth Estimating Functions.”</span> <em>Biostatistics</em> 9
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

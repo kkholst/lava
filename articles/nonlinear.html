@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2025-11-06</h4>
+            <h4 data-toc-skip class="date">2026-03-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/nonlinear.Rmd" class="external-link"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="d-none name"><code>nonlinear.Rmd</code></div>
@@ -90,7 +90,7 @@ To simulate from this model we use the following syntax:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## plot(m, plot.engine="visNetwork")</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nonlinear_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 <p>We refer to <span class="citation">(K. K. Holst and Budtz-Jørgensen
 2013)</span> for details on the syntax for model specification.</p>
 <div class="section level2">
@@ -199,7 +199,7 @@ spline</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">Estimate</span> <span class="op">~</span> <span class="va">eta1</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"darkblue"</span>, lwd<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/confband.html">confband</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, lower<span class="op">=</span><span class="va">p</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span>, upper<span class="op">=</span><span class="va">p</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span>, polygon<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>     border<span class="op">=</span><span class="cn">NA</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"darkblue"</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nonlinear_files/figure-html/figpred2-1.png" width="700"></p>
+<p><img src="nonlinear_files/figure-html/figpred2-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="cross-validation">Cross-validation<a class="anchor" aria-label="anchor" href="#cross-validation"></a>
@@ -253,7 +253,7 @@ freedom:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>,</span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"linear"</span>,<span class="st">"quadratic"</span>,<span class="st">"spline(df=4)"</span>,<span class="st">"spline(df=6)"</span><span class="op">)</span>,</span>
 <span>      col<span class="op">=</span><span class="va">col</span>, lty<span class="op">=</span><span class="va">lty</span>, lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nonlinear_files/figure-html/multifit-1.png" width="700"></p>
+<p><img src="nonlinear_files/figure-html/multifit-1.png" class="r-plt" alt="" width="700"></p>
 <p>For convenience, the function <code>twostageCV</code> can be used to
 do the cross-validation (also for choosing the mixture distribution via
 the ``nmix`` argument, see the section below). For example,</p>
@@ -301,17 +301,16 @@ and a dichotomized version of the covariate
 interaction</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"(:g)"</span>, regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = x, keep = keep)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; eta2~u1:g   0.4487  0.4620 -0.4568 1.3543  0.3314</span></span>
-<span><span class="co">#&gt; eta2~u2:g   0.0441  0.2166 -0.3804 0.4686  0.8387</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [eta2~u1:g] = 0</span></span>
-<span><span class="co">#&gt;   [eta2~u2:g] = 0 </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 0.9441, df = 2, p-value = 0.6237</span></span></code></pre></div>
+<span><span class="co">#&gt;      Estimate Std.Err 2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; NA                                      </span></span>
+<span><span class="co">#&gt; NA.1                                    </span></span>
+<span><span class="co">#&gt; NA.2                                    </span></span>
+<span><span class="co">#&gt; NA.3                                    </span></span>
+<span><span class="co">#&gt; NA.4                                    </span></span>
+<span><span class="co">#&gt; NA.5                                    </span></span>
+<span><span class="co">#&gt; NA.6</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="mixture-models">Mixture models<a class="anchor" aria-label="anchor" href="#mixture-models"></a>
@@ -444,16 +443,16 @@ model:</p>
 <span>     border<span class="op">=</span><span class="cn">NA</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"darkred"</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Gaussian"</span>,<span class="st">"Mixture"</span><span class="op">)</span>,</span>
 <span>       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"darkblue"</span>,<span class="st">"darkred"</span><span class="op">)</span>, lwd<span class="op">=</span><span class="fl">2</span>, bty<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nonlinear_files/figure-html/mixturefit-1.png" width="700"></p>
+<p><img src="nonlinear_files/figure-html/mixturefit-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.3 (2026-03-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -472,25 +471,26 @@ model:</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] lava_1.8.2</span></span>
+<span><span class="co">#&gt; [1] lava_1.9.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-4        future.apply_1.20.0 jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.5.2      Rcpp_1.1.0          parallel_4.5.2     </span></span>
-<span><span class="co">#&gt;  [7] Rgraphviz_2.54.0    jquerylib_0.1.4     globals_0.18.0     </span></span>
-<span><span class="co">#&gt; [10] splines_4.5.2       systemfonts_1.3.1   textshaping_1.0.4  </span></span>
-<span><span class="co">#&gt; [13] yaml_2.3.10         fastmap_1.2.0       lattice_0.22-7     </span></span>
-<span><span class="co">#&gt; [16] R6_2.6.1            generics_0.1.4      knitr_1.50         </span></span>
-<span><span class="co">#&gt; [19] BiocGenerics_0.56.0 htmlwidgets_1.6.4   graph_1.88.0       </span></span>
-<span><span class="co">#&gt; [22] future_1.67.0       desc_1.4.3          bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [25] rlang_1.1.6         cachem_1.1.0        xfun_0.54          </span></span>
-<span><span class="co">#&gt; [28] fs_1.6.6            sass_0.4.10         cli_3.6.5          </span></span>
-<span><span class="co">#&gt; [31] pkgdown_2.1.3       digest_0.6.37       grid_4.5.2         </span></span>
-<span><span class="co">#&gt; [34] mvtnorm_1.3-3       lifecycle_1.0.4     timereg_2.0.7      </span></span>
-<span><span class="co">#&gt; [37] evaluate_1.0.5      numDeriv_2016.8-1.1 listenv_0.10.0     </span></span>
-<span><span class="co">#&gt; [40] codetools_0.2-20    ragg_1.5.0          survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [43] stats4_4.5.2        parallelly_1.45.1   rmarkdown_2.30     </span></span>
-<span><span class="co">#&gt; [46] mets_1.3.8          tools_4.5.2         htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] Matrix_1.7-4           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [4] compiler_4.5.3         Rcpp_1.1.1             parallel_4.5.3        </span></span>
+<span><span class="co">#&gt;  [7] Rgraphviz_2.54.0       jquerylib_0.1.4        globals_0.19.1        </span></span>
+<span><span class="co">#&gt; [10] splines_4.5.3          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
+<span><span class="co">#&gt; [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        </span></span>
+<span><span class="co">#&gt; [16] R6_2.6.1               generics_0.1.4         knitr_1.51            </span></span>
+<span><span class="co">#&gt; [19] BiocGenerics_0.56.0    htmlwidgets_1.6.4      graph_1.88.1          </span></span>
+<span><span class="co">#&gt; [22] future_1.70.0          desc_1.4.3             bslib_0.10.0          </span></span>
+<span><span class="co">#&gt; [25] rlang_1.1.7            cachem_1.1.0           xfun_0.57             </span></span>
+<span><span class="co">#&gt; [28] fs_2.0.1               sass_0.4.10            cli_3.6.5             </span></span>
+<span><span class="co">#&gt; [31] pkgdown_2.2.0          digest_0.6.39          grid_4.5.3            </span></span>
+<span><span class="co">#&gt; [34] mvtnorm_1.3-6          lifecycle_1.0.5        timereg_2.0.7         </span></span>
+<span><span class="co">#&gt; [37] RcppArmadillo_15.2.4-1 evaluate_1.0.5         numDeriv_2016.8-1.1   </span></span>
+<span><span class="co">#&gt; [40] listenv_0.10.1         codetools_0.2-20       ragg_1.5.2            </span></span>
+<span><span class="co">#&gt; [43] survival_3.8-6         stats4_4.5.3           parallelly_1.46.1     </span></span>
+<span><span class="co">#&gt; [46] rmarkdown_2.31         mets_1.3.9             tools_4.5.3           </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.9</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
@@ -519,7 +519,7 @@ Estimation Procedure for Non-Linear Structural Equation Models.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

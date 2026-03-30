@@ -1,11 +1,11 @@
 pandoc: 3.1.3
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   correlation: correlation.html
   influencefunction: influencefunction.html
   nonlinear: nonlinear.html
-last_built: 2025-11-06T09:41Z
+last_built: 2026-03-30T10:09Z
 urls:
   reference: http://kkholst.github.io/lava/reference
   article: http://kkholst.github.io/lava/articles
