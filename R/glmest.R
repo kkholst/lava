@@ -50,11 +50,6 @@ GLMest <- function(m,data,control=list(),...) {
         if (length(xx)==0) xx <- 1
         nn0 <- paste(y,xx,sep=lava.options()$symbol[1])
         y0 <- y
-        ## isEventTime <- !is.na(yvar.et[y])
-        ## if (isEventTime) {
-        ##     y <- yvar.et[y]
-        ## }
-        # nn0 <- paste(y,xx,sep=lava.options()$symbol[1])
 
         f <- as.formula(paste0(y, "~",
           paste(xx, collapse = "+")

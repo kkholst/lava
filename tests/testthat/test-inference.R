@@ -71,6 +71,15 @@ test_that("gaussian", {
     s1 <- numDeriv::grad(f,c(0,1,1))
     s2 <- g(c(0,1,1))
     testthat::expect_equal(s1,-colSums(s2),tolerance=0.1)
+
+    e <- estimate(m, d, estimator="gaussian")
+    e0 <- estimate(m, d, estimator="gaussian0") # numerical grad.
+    expect_true(mean((coef(e)- coef(e0))^2)<1e-9)
+    expect_equivalent(logLik(e), logLik(e0))
+    e1 <- estimate(m, d, estimator="gaussian1") # numerical hessian
+    expect_equivalent(logLik(e), logLik(e1))
+    e2 <- estimate(m, d, estimator="gaussian2") # numerical hessian
+    expect_equivalent(logLik(e), logLik(e2)) # BHHH
 })
 
 if (requireNamespace("mets",quietly = TRUE))
@@ -86,7 +95,6 @@ test_that("Association measures", {
     ## m <- ordinal(lvm(y~x),~y, K=3)#, breaks=c(-q,q))
     ## normal.threshold(m,p=c(0,1,2))
 })
-
 
 test_that("equivalence", {
     m <- lvm(c(y1,y2,y3)~u,u~x,y1~x)
@@ -110,7 +118,6 @@ test_that("multiple testing", {
     testthat::expect_true(all(ci1[,2]<ci2[,2]))
     testthat::expect_true(all(ci1[,3]>ci2[,3]))
 })
-
 
 test_that("modelsearch and GoF", {
     m <- lvm(c(y1,y2)~x)
@@ -163,7 +170,6 @@ test_that("Bootstrap", {
     testthat::expect_output(print(b),"alpha")
 })
 
-
 test_that("Survreg", {
     m <- lvm(y0~x)
     transform(m,y~y0) <- function(x) pmin(x[,1],2)
@@ -178,7 +184,17 @@ test_that("Survreg", {
     testthat::expect_equivalent(vcov(m), attr(s,'bread')/nrow(d))
 })
 
-
+test_that("diagtest", {
+  M <- as.table(matrix(c(42,12,
+                         35,28),ncol=2,byrow=TRUE,
+                       dimnames=list(rater=c("no","yes"),gold=c("no","yes"))))
+  d1 <- diagtest(M,exact=TRUE)
+  d2 <- diagtest(M,exact=FALSE)
+  e1 <- d1$coefmat[1:7,]
+  e2 <- d2$coefmat[1:7,]
+  expect_equivalent(e1[,1], e2[,1])
+  expect_true(e1[1,1] == (sum(M[,2])/sum(M)))
+})
 
 test_that("Combine", { ## Combine model output
     data(serotonin)
@@ -482,6 +498,27 @@ test_that("partialcor", {
 ## TODO
 ## })
 
+test_that("correlation", {
+  set.seed(1)
+  d <- matrix(rnorm(500), ncol=2)
+  e1 <- parameter(correlation(d, z=FALSE))
+  e2 <- cor.test(d[,1],d[,2])
+  expect_equivalent(e2$estimate, e1[1])
+  ci <- e1[3:4]
+  ci2 <- e2$conf.int
+  expect_true(mean((ci-ci2)^2)< sqrt(1/nrow(d))) # df discrepancy
+  e1 <- parameter(correlation(d, z=TRUE))
+  ci <- e1[3:4]
+  ci2 <- atanh(e2$estimate) + qnorm(0.975)*c(-1,1)*1/sqrt(nrow(d))
+  expect_true(mean((ci-ci2)^2)< sqrt(1/nrow(d)))
+
+  d <- matrix(rnorm(500), ncol=5)
+  e1 <- parameter(correlation(d, z=FALSE))
+  e2 <- parameter(correlation(d, z=TRUE))
+  e3 <- parameter(correlation(d, z=TRUE, back.transform=FALSE))
+  expect_equivalent(e1[,1], e2[,1]) # est same, but not pval
+  expect_equivalent(e2[,5], e3[,5]) # p.vals same, but z vs r
+})
 
 if (requireNamespace("mets",quietly = TRUE))
 test_that("Weighted",{
@@ -493,9 +530,11 @@ test_that("Weighted",{
     l <- lm(y~x,data=d)
     testthat::expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 
+    w2 <- estimate(m,data=d,weights=d$w,control=list(trace=1))
     w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=1))
+    expect_equivalent(coef(w2), coef(w))
     lw <- lm(y~x,data=d, weights=d$w)
-    testthat::expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
+    testthat::expect_true(mean((coef(w)[1:2]-coef(lw))^2)<1e-12)
 })
 
 

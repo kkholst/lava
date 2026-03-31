@@ -198,14 +198,14 @@ merge.estimate <- function(x,y,...,
         relpos <- seq_along(coef(objects[[i]], messages=0))
         if (!missing(subset)) relpos <- seq_along(subset)
         ic0[match(ids[[i]], id), relpos + colpos] <- ic_all[[i]]
-        midx <- objects[[i]]$model.index
-        if (!is.null(midx)) {
-          midx <- lapply(midx, function(x) {
-            intersect(x, relpos) + colpos
-          })
-        } else {
+        ## midx <- objects[[i]]$model.index
+        ## if (!is.null(midx)) {
+        ##   midx <- lapply(midx, function(x) {
+        ##     intersect(x, relpos) + colpos
+        ##   })
+        ## } else {
           midx <- list(relpos + colpos)
-        }
+        ## }
         model.index <- c(model.index, midx)
         colpos <- colpos+tail(relpos,1)
     }
@@ -220,8 +220,9 @@ merge.estimate <- function(x,y,...,
       coef = coefs, stack = FALSE, data = NULL,
       IC = ic0, id = id, keep = keep
       )
-    if (is.null(keep))
+    if (is.null(keep)) {
       res$model.index <- model.index
+    }
     return(res)
 }
 

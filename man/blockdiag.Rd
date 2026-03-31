@@ -7,11 +7,11 @@
 blockdiag(x, ..., pad = 0)
 }
 \arguments{
-\item{x}{Matrix}
+\item{x}{matrix}
 
-\item{\dots}{Additional matrices}
+\item{\dots}{additional matrices}
 
-\item{pad}{Vyalue outside block-diagonal}
+\item{pad}{value outside block-diagonal}
 }
 \description{
 Combine matrices to block diagonal structure

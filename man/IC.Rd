@@ -18,11 +18,6 @@ IC(x,...)
 \item{id}{(optional) id/cluster variable}
 
 \item{bread}{(optional) Inverse of derivative of mean score function}
-
-\item{folds}{(optional) Calculate aggregated iid decomposition (0:=disabled)}
-
-\item{maxsize}{(optional) Data is split in groups of size up to 'maxsize'
-(0:=disabled)}
 }
 \description{
 Extract i.i.d. decomposition (influence function) from model object
@@ -33,5 +28,4 @@ distribution(m, ~y+z) <- binomial.lvm("logit")
 d <- sim(m,1e3)
 g <- glm(y~x+z,data=d,family=binomial)
 var_ic(IC(g))
-
 }

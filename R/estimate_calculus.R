@@ -1,6 +1,5 @@
 # ---- Merge, subset ------------------------------------------------------
 
-
 ##' @export
 "[.estimate" <- function(x, i, ...) {
   subset(x, i, ...)
@@ -15,7 +14,6 @@
     args$labels <- labels
   }
   res <- do.call(merge, args)
-  res$model.index <- NULL
   return(res)
 }
 

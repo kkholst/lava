@@ -62,11 +62,10 @@ confint.lvmfit <- function(object,parm=seq_len(length(coef(object))),level=0.95,
 
 ##' @export
 confint.multigroupfit <- function(object,parm=seq_along(pars(object)),level=0.95,
-                           estimates=TRUE,...) {
-    p <- 1-(1-level)/2
-    res <- cbind(pars(object),pars(object)) + qnorm(p)*cbind(-1,1)%x%diag(vcov(object))^0.5
-    colnames(res) <- paste0(c(1-p,p)*100,"%")
-    rownames(res) <- parpos(object); rownames(res)[is.na(rownames(res))] <- ""
-    if (estimates) res <- cbind(coef(object,type=0)[,c(1,2,4)],res)
-    res[parm,,drop=FALSE]
+                           ...) {
+  p <- 1-(1-level)/2
+  res <- cbind(pars(object),pars(object)) + qnorm(p)*cbind(-1,1)%x%diag(vcov(object))^0.5
+  colnames(res) <- paste0(c(1-p,p)*100,"%")
+  rownames(res) <- names(coef(object))
+  res[parm,,drop=FALSE]
 }

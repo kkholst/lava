@@ -21,8 +21,8 @@
         if (is.data.frame(x))
             nn <- names(x)
         else if (is.matrix(x))
-            nn <- colnames(nn)
-        else nn <-  x
+            nn <- colnames(x)
+        else nn <- x
         ii <- grep(pattern,nn,ignore.case=ignore.case,...)
         if (subset) {
             if (is.matrix(x) || is.data.frame(x))

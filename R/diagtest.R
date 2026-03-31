@@ -158,10 +158,10 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
         }
         res <- estimate(M,calc_diag,print=prfun,null=c(rep(p0,7),0),back.transform=btransform,...)
     }
-
     CI <- confint[1]
     if (exact) CI <- "exact"
     if (is.null(CI)) CI <- "wald"
+    class(res) <- NULL
     res <- structure(c(res,
                        list(table=table, prop.table=table/sum(table),
                             confint=CI,

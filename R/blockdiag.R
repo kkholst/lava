@@ -1,8 +1,8 @@
 ##' Combine matrices to block diagonal structure
 ##' @title Combine matrices to block diagonal structure
-##' @param x Matrix
-##' @param \dots Additional matrices
-##' @param pad Vyalue outside block-diagonal
+##' @param x matrix
+##' @param \dots additional matrices
+##' @param pad value outside block-diagonal
 ##' @author Klaus K. Holst
 ##' @export
 ##' @examples

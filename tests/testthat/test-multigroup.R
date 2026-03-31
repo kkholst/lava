@@ -3,11 +3,13 @@ context("Multiple Group")
 test_that("Multiple group I", {
   m <- lvm(y~x)
   set.seed(1)
-  d <- sim(m,100)
+  d <- sim(m,1000)
   ## Just a stratified analysis
   e <- estimate(list("Group A"=m,"Group B"=m),list(d,d))
   testthat::expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
   testthat::expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
+  ci <- confint(e)
+  testthat::expect_true(mean((confint(e)[c(1,3),]-confint(lm(y~x,d)))^2)<1e-4)
 })
 
 test_that("Multiple group II", {
@@ -52,7 +54,6 @@ test_that("Multiple group, missing data analysis", {
   testthat::expect_true(mean(score(e))<1e-3)
   testthat::expect_true(g$rankV==length(pars(e)))
 })
-
 
 test_that("Multiple group, constraints", {
     m1 <- lvm(y ~ f(x,beta)+f(z,beta2))

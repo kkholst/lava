@@ -262,7 +262,6 @@
                 estimator <- "normal"
             } else estimator <- "gaussian"
         }
-
         checkestimator <- function(x,...) {
             ffname <- paste0(x,c("_objective","_gradient"),".lvm")
             exists(ffname[1])||exists(ffname[2])
@@ -574,6 +573,8 @@
                                           ,data2=data2, offset=offset
                                            ))
             }
+            if (!exists(ObjectiveFun) || is.null(get(ObjectiveFun)))
+              myObj <- NULL
 
             myGrad <- function(pp) {
                 if (Optim$constrain)

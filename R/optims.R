@@ -106,7 +106,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
       if (!is.null(control0$gammma)) control0$stepsize <- control0$gamma
   }
 
-
   ## conditions to select the step length
   if(control0$backtrack[1] == "armijo"){
     control0$backtrack <- c(1e-4,0) # page 33
@@ -140,7 +139,6 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
       if (!is.null(hessian))
           hess <- function(p) do.call(hessian, c(list(p),args))
   }
-
   if (control0$trace>0) {
        cat("\nIter=0\t")
       if (!is.null(obj))
@@ -167,7 +165,7 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
   }
   oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
       D <- I <- NULL # Place-holders for gradient and negative hessian
-      if (!is.logical(control0$backtrack)) { # Back-tracking based on objective function evaluations
+      if (!is.logical(control0$backtrack) && !is.null(obj)) { # Back-tracking based on objective function evaluations
           objective.origin <- obj(p.orig)
           D <- attributes(objective.origin)$grad
           I <- attributes(objective.origin)$hess

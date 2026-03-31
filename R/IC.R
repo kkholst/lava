@@ -13,9 +13,9 @@
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
-##' @param folds (optional) Calculate aggregated iid decomposition (0:=disabled)
-##' @param maxsize (optional) Data is split in groups of size up to 'maxsize'
-##'   (0:=disabled)
+# #' @param folds (optional) Calculate aggregated iid decomposition (0:=disabled)
+# #' @param maxsize (optional) Data is split in groups of size up to 'maxsize'
+# #'   (0:=disabled)
 ##' @param ... additional arguments
 ##' @examples
 ##' m <- lvm(y~x+z)
@@ -23,7 +23,6 @@
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
 ##' var_ic(IC(g))
-##'
 IC <- function(x, ...) UseMethod("IC")
 
 ##' @export
@@ -32,84 +31,81 @@ influence.estimate <- function(model, ...)
 
 ##' @export
 IC.default <- function(x, bread, id=NULL,
-                        folds=0, maxsize=(folds>0)*1e6, ...) {
+                       ...) {
+  if (any(paste("iid", class(x), sep=".") %in% methods("iid"))) {
+    ## 'iid' method exists for the specific class.
+    ## This is a scaled version of the influence function, hence
+    ## we need to rescale.
+    cl <- match.call()
+    cl[[1]] <- substitute(iid)
+    ii <- eval.parent(cl)
+    if (!is.null(attr(ii, "bread"))) {
+      attr(res, "bread") <- attr(res, "bread")*NROW(res)
+    }
+    ii <- ii*NROW(ii)
+    return(ii)
+  }
+  if (!any(paste("score", class(x), sep=".") %in% methods("score"))) {
+    warning("Not available for this class")
+    return(NULL)
+  }
 
-    if (any(paste("iid", class(x), sep=".") %in% methods("iid"))) {
-      ## 'iid' method exists for the specific class.
-      ## This is a scaled version of the influence function, hence
-      ## we need to rescale.
-      cl <- match.call()
-      cl[[1]] <- substitute(iid)
-      ii <- eval.parent(cl)
-      if (!is.null(attr(ii, "bread"))) {
-        attr(res, "bread") <- attr(res, "bread")*NROW(res)
-      }
-      ii <- ii*NROW(ii)
-      return(ii)
-    }
-    if (!any(paste("score", class(x), sep=".") %in% methods("score"))) {
-        warning("Not available for this class")
-        return(NULL)
-    }
-
-  if (folds>0 || maxsize>0 ||
-      (!missing(id) && lava.options()$cluster.index)) {
-        if (!requireNamespace("mets", quietly=TRUE)) stop("Requires 'mets'")
-    }
-
-    if (folds>0) {
-      U <- Reduce(
-        "rbind",
-        mets::divide.conquer(function(data) score(x, data = data, ...),
-          id = id,
-          data = data, size = round(nrow(data) / folds)
-        )
-      )
-    } else {
-        U <- score(x, indiv=TRUE, ...)
-    }
-    pp <- pars(x)
-    if (!missing(bread) && is.null(bread)) {
-      bread <- suppressWarnings(vcov(x)*NROW(U))
-    }
-    if (missing(bread)) bread <- attributes(U)$bread
+  ## if (folds>0 || maxsize>0 ||
+  ##     (!missing(id) && lava.options()$cluster.index)) {
+  ##   if (!requireNamespace("mets", quietly=TRUE)) stop("Requires 'mets'")
+  ## }
+  ## if (folds>0) {
+  ##   U <- Reduce(
+  ##     "rbind",
+  ##     mets::divide.conquer(function(data) score(x, data = data, ...),
+  ##                          id = id,
+  ##                          data = data, size = round(nrow(data) / folds)
+  ##       )
+  ##   )
+  ## } else {
+  U <- score(x, indiv=TRUE, ...)
+  pp <- pars(x)
+  if (!missing(bread) && is.null(bread)) {
+    bread <- suppressWarnings(vcov(x)*NROW(U))
+  }
+  if (missing(bread)) bread <- attributes(U)$bread
+  if (is.null(bread)) {
+    bread <- attributes(x)$bread
+    if (is.null(bread)) bread <- x$bread
     if (is.null(bread)) {
-        bread <- attributes(x)$bread
-        if (is.null(bread)) bread <- x$bread
-        if (is.null(bread)) {
-            if (maxsize>0) {
-              ff <- function(p) {
-                colSums(Reduce(
-                  "rbind",
-                  mets::divide.conquer(function(data)
-                    score(x, data = data, p = p, ...),
-                    data = data, size = maxsize
-                  )
-                ))
-              }
-              I <- -numDeriv::jacobian(ff, pp, method = lava.options()$Dmethod)
-            } else {
-              I <- -numDeriv::jacobian(function(p) {
-                score(x, p = p, indiv = FALSE, ...)
-                }, pp, method = lava.options()$Dmethod)
-            }
-            bread <- Inverse(I)*NROW(U)
-        }
+      ## if (maxsize>0) {
+      ##   ff <- function(p) {
+      ##     colSums(Reduce(
+      ##       "rbind",
+      ##       mets::divide.conquer(function(data)
+      ##         score(x, data = data, p = p, ...),
+      ##         data = data, size = maxsize
+      ##       )
+      ##     ))
+      ##   }
+      ##   I <- -numDeriv::jacobian(ff, pp, method = lava.options()$Dmethod)
+      ## } else {
+      I <- -numDeriv::jacobian(function(p) {
+        score(x, p = p, indiv = FALSE, ...)
+      }, pp, method = lava.options()$Dmethod)
+      bread <- Inverse(I)*NROW(U)
     }
-    ic0 <- U%*%bread
-    if (!missing(id)) {
-        N <- nrow(ic0)
-        if (!lava.options()$cluster.index) {
-          ic0 <- matrix(unlist(by(ic0, id, colSums)),
-                        byrow=TRUE, ncol=ncol(bread))
-        } else {
-          ic0 <- mets::cluster.index(id, mat=ic0, return.all=FALSE)
-        }
-        ic0 <- ic0*NROW(ic0)/length(id)
-        attributes(ic0)$N <- N
-    }
-    colnames(ic0) <- colnames(U)
-    return(structure(ic0, bread=bread))
+  }
+
+  ic0 <- U%*%bread
+  if (!missing(id)) {
+  N <- nrow(ic0)
+  if (!lava.options()$cluster.index) {
+    ic0 <- matrix(unlist(by(ic0, id, colSums)),
+                  byrow=TRUE, ncol=ncol(bread))
+  } else {
+    ic0 <- mets::cluster.index(id, mat=ic0, return.all=FALSE)
+  }
+  ic0 <- ic0*NROW(ic0)/length(id)
+  attributes(ic0)$N <- N
+}
+colnames(ic0) <- colnames(U)
+return(structure(ic0, bread=bread))
 }
 
 
