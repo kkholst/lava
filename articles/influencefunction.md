@@ -135,8 +135,6 @@ Print(dl)
 #> 400.4 1  1.169 400 4    1 -0.3120
 ```
 
-### Example: population mean
-
 The main functions for working with influence functions are
 
 - `estimate` which prepares a model object and estimates the IF and
@@ -161,6 +159,8 @@ estimate(x=, ...)
 estimate(coef=, IF=, ...)
 estimate(coef=, vcov=, ...)
 ```
+
+### Example: population mean
 
 Here we first consider the problem of estimating the IF of the mean. For
 a general transformation
@@ -234,16 +234,18 @@ Different methods are available for inspecting an `estimate` object
 
 ``` r
 summary(e)
-#> Call: estimate.default(x = x, keep = keep)
+#> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
+#>     messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────────────────────────
-#>      Estimate Std.Err 2.5% 97.5% P-value
-#> NA                                      
-#> NA.1                                    
-#> NA.2                                    
-#> NA.3                                    
-#> NA.4                                    
-#> NA.5                                    
-#> NA.6
+#>                  Estimate Std.Err   2.5%  97.5%    P-value
+#> [y1:(Intercept)]    0.610 0.02439 0.5622 0.6578 4.435e-138
+#> [y2:(Intercept)]    0.535 0.02494 0.4861 0.5839 4.316e-102
+#> 
+#>  Null Hypothesis: 
+#>   [y1:(Intercept)] = 0
+#>   [y2:(Intercept)] = 0 
+#>  
+#> chisq = 955.6986, df = 2, p-value < 2.2e-16
 ## extract parameter coefficients
 coef(e)
 #> y1:(Intercept) y2:(Intercept) 
@@ -438,7 +440,7 @@ estimate(semfit)
 #>      Estimate Std.Err    2.5%    97.5%   P-value
 #> y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02
 #> u     0.36025 0.06659  0.2297  0.49075 6.295e-08
-#> y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15
+#> y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15
 #> y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15
 #> u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01
 ```
@@ -510,16 +512,22 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(x = x, keep = keep)
+#> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
+#>     messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────────────────────────
-#>      Estimate Std.Err 2.5% 97.5% P-value
-#> NA                                      
-#> NA.1                                    
-#> NA.2                                    
-#> NA.3                                    
-#> NA.4                                    
-#> NA.5                                    
-#> NA.6
+#>                 Estimate Std.Err    2.5%    97.5%   P-value
+#> [(Intercept)]    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
+#> [a]               1.3239  0.2173  0.8981  1.74978 1.105e-09
+#> [(Intercept).1]  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
+#> [a.1]             1.5060  0.2148  1.0849  1.92712 2.385e-12
+#> 
+#>  Null Hypothesis: 
+#>   [(Intercept)] = 0
+#>   [a] = 0
+#>   [(Intercept).1] = 0
+#>   [a.1] = 0 
+#>  
+#> chisq = 96.4362, df = 4, p-value < 2.2e-16
 ```
 
 As we have access to the joint asymptotic distribution we can for
@@ -547,35 +555,45 @@ for some estimator of a parameter $\theta \in {\mathbb{R}}^{p}$ be
 $IC\left( \cdot ;P_{0} \right)$. For convenience let the data be ordered
 $R_{i} = \mathbf{1}(i \leq n)$ where $n$ is the number of observed data
 points, then the complete-case estimator is consistent and based on same
-IF $$\begin{array}{r}
+IF
+
+$$\begin{array}{r}
 {\sqrt{n}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}IC\left( Z_{i};P_{0} \right) + o_{P}(1).}
-\end{array}$$ This estimator can also be decomposed in terms of the
-observed data $O_{1},\ldots,O_{N}$ noting that $$\begin{array}{r}
+\end{array}$$
+
+This estimator can also be decomposed in terms of the observed data
+$O_{1},\ldots,O_{N}$ noting that
+
+$$\begin{array}{r}
 {\sqrt{N}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{N}}\sum\limits_{i = 1}^{N}IC\left( Z_{i};P \right)\frac{R_{i}N}{n} + o_{P}(1).}
-\end{array}$$ where the term $\frac{R_{i}N}{n}$ corresponds to an
-inverse probability weighting with the empirical plugin estimate of the
-proportion of observed data $R = 1$. Under a missing completely at
-random assumption we can therefore combine estimators that are estimated
-on different datasets. Let the observed data be
+\end{array}$$
+
+where the term $\frac{R_{i}N}{n}$ corresponds to an inverse probability
+weighting with the empirical plugin estimate of the proportion of
+observed data $R = 1$. Under a missing completely at random assumption
+we can therefore combine estimators that are estimated on different
+datasets. Let the observed data be
 $\left( Z_{11}R_{11},R_{11},Z_{21}R_{21},R_{21} \right),\ldots,\left( Z_{1N}R_{1N},R_{1N},Z_{2N}R_{2N},R_{2N} \right))$
 with complete-case estimators ${\widehat{\theta}}_{1}$ and
 ${\widehat{\theta}}_{2}$ for parameters $\theta_{1}$ and $\theta_{2}$
 based on $\left( Z_{11}R_{11},\ldots,Z_{1N}R_{1N} \right)$ and
 $\left( Z_{21}R_{21},\ldots,Z_{2N}R_{2N} \right)$, respectively, and let
 the corresponding IFs be $IC_{1}\left( \cdot ;P_{0} \right)$ and
-$IC_{2}( \cdot ;\ P)$. It then follows that \$\$\begin{align\*}
-\sqrt{N}\left\\ \begin{pmatrix} \widehat{\theta}\_1 \\
-\widehat{\theta}\_2 \end{pmatrix} - \begin{pmatrix}
+$IC_{2}( \cdot ;\ P)$. It then follows that
+
+\$\$\begin{align\*} \sqrt{N}\left\\ \begin{pmatrix} \widehat{\theta}\_1
+\\ \widehat{\theta}\_2 \end{pmatrix} - \begin{pmatrix}
 \vphantom{\widehat{\theta}\_1}\theta_1 \\
 \vphantom{\widehat{\theta}\_1}\theta_2 \end{pmatrix} \right\\ =
 \frac{1}{\sqrt{N}}\sum\_{i=1}^N \begin{pmatrix} IC_1(Z\_{1i};
 P\_{0})\frac{R\_{1i}N}{R\_{1\bullet}} \\ IC_2(Z\_{2i};
 P\_{0})\frac{R\_{2i}N}{R\_{2\bullet}} \end{pmatrix} + o\_{P}(1)
-\end{align\*}\$\$ with $R_{k \bullet} = \sum_{i = 1}^{N}R_{ki}.$
-Returning to the example, we can combine the marginal estimates of two
-model objects that have been estimated from different datasets (as the
-outcome $Y_{3}$ is only available in half of the data) with the `merge`
-function
+\end{align\*}\$\$
+
+with $R_{k \bullet} = \sum_{i = 1}^{N}R_{ki}.$ Returning to the example,
+we can combine the marginal estimates of two model objects that have
+been estimated from different datasets (as the outcome $Y_{3}$ is only
+available in half of the data) with the `merge` function
 
 ``` r
 g2 <- glm(y2 ~ 1, family = binomial, data = dw)
@@ -692,11 +710,11 @@ between the estimates, the argument `id=NULL` can be used
 ``` r
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>     (Intercept) a          (Intercept).1
-#> 1    1.104e-15   5.128e+00  0.000e+00   
-#> 2    1.104e-15   5.128e+00  0.000e+00   
+#> 1   -2.714e-17   5.128e+00  0.000e+00   
+#> 2   -2.714e-17   5.128e+00  0.000e+00   
 #> 3   -7.547e+00   7.547e+00  0.000e+00   
 #> 4   -7.547e+00   7.547e+00  0.000e+00   
-#> 5   -2.200e-15  -1.600e+01  0.000e+00   
+#> 5    4.006e-16  -1.600e+01  0.000e+00   
 #> ---                                     
 #> 796  0.000       0.000      3.738       
 #> 797  0.000       0.000      3.738       
@@ -705,9 +723,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 800  0.000       0.000     -4.301
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29
-#> a             -2.079760e-02  4.720777e-02 -1.554863e-25
-#> (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02
+#> (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29
+#> a             -2.079760e-02  4.720777e-02 -1.554401e-25
+#> (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02
 ```
 
 ### Renaming and subsetting parameters
@@ -716,8 +734,6 @@ To only keep a subset of the parameters the `keep` argument can be used.
 
 ``` r
 merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
-#> Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length > 1.
-#>   Consider formula(paste(x, collapse = " ")) instead.
 #>               Estimate Std.Err     2.5%   97.5% P-value
 #> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
 #> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
@@ -741,8 +757,6 @@ merge(g1, g2, keep = "cept", regex = TRUE)
 #> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
 #> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
 merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
-#> Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length > 1.
-#>   Consider formula(paste(x, collapse = " ")) instead.
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -0.1861  0.1442 -0.4688 0.09655 1.969e-01
 #> a             1.3239  0.2173  0.8981 1.74978 1.105e-09
@@ -753,8 +767,6 @@ possible to rename the parameters with the `labels` argument
 
 ``` r
 merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
-#> Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length > 1.
-#>   Consider formula(paste(x, collapse = " ")) instead.
 #>   Estimate Std.Err     2.5%   97.5% P-value
 #> a  -0.1861  0.1442 -0.46876 0.09655  0.1969
 #> c   0.1402  0.1002 -0.05625 0.33671  0.1619
@@ -762,10 +774,6 @@ merge(g1, g2,
       labels = c("a", "b", "c"),
       keep = c("a", "c")
 )
-#> Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length > 1.
-#>   Consider formula(paste(x, collapse = " ")) instead.
-#> Warning in formula.character(object, env = baseenv()): Using formula(x) is deprecated when x is a character vector of length > 1.
-#>   Consider formula(paste(x, collapse = " ")) instead.
 #>   Estimate Std.Err     2.5%   97.5% P-value
 #> a  -0.1861  0.1442 -0.46876 0.09655  0.1969
 #> c   0.1402  0.1002 -0.05625 0.33671  0.1619
@@ -780,8 +788,6 @@ IFs before the actual merging is being done
 
 ``` r
 merge(g1, g2, subset="(Intercept)")
-#> Warning in formula.character(object, env = baseenv()): invalid formula
-#> "(Intercept)": extraneous call to `(` is deprecated
 #>               Estimate Std.Err     2.5%   97.5% P-value
 #> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
 #> ─────────────                                          
@@ -943,6 +949,16 @@ estimate(g1, exp)
 The gradient can be provided as the attribute `grad` and otherwise
 numerical differentiation is applied.
 
+subset: `[` merge: `c` - `subset` - `labels` - `transform`
+
+- trigonometric functions: `cos`, `sin`, `tan`
+- inverse trigonometric functions: `acos`, `asin`, `atan`
+- hyperbolic functions: `cosh`, `sinh`, `tanh`
+- inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
+- other mathematical: `log`, `log1p`, `exp`, `expm1`, `sqrt`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`
+- `prod`, `sum`, `%*%`,
+
 ### Example: Pearson correlation
 
 As a simple toy example consider the problem of estimating the
@@ -1053,7 +1069,6 @@ gg
 #>               Estimate Std.Err    2.5%    97.5%   P-value
 #> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
 #> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
-#> ─────────────                                            
 #> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
 #> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
 #> ─────────────                                            

@@ -12,15 +12,15 @@ blockdiag(x, ..., pad = 0)
 
 - x:
 
-  Matrix
+  matrix
 
 - ...:
 
-  Additional matrices
+  additional matrices
 
 - pad:
 
-  Vyalue outside block-diagonal
+  value outside block-diagonal
 
 ## Author
 

@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2026-03-30</h4>
+            <h4 data-toc-skip class="date">2026-03-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="d-none name"><code>correlation.Rmd</code></div>
@@ -210,18 +210,20 @@ again</p>
 using a variance stabilizing transformation, Fishers
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>-transform
 <span class="citation">(Lehmann and Romano 2023)</span>,</p>
-<p><span class="math display">$$z = \arctanh(\widehat{\rho}) =
-  \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)$$</span>
-where
+<p><span class="math display">$$
+z = \arctanh(\widehat{\rho}) =
+\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)
+$$</span></p>
+<p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\rho}</annotation></semantics></math>
 is the MLE. This estimate has an approximate asymptotic normal
 distribution <span class="math inline">$\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})$</span>.
-Hence a asymptotic 95% confidence interval is given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>z</mi><mo accent="true">̂</mo></mover><mo>±</mo><mfrac><mn>1.96</mn><msqrt><mrow><mi>n</mi><mo>−</mo><mn>3</mn></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}</annotation></semantics></math>
-and the confidence interval for
+Hence a asymptotic 95% confidence interval is given by</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>z</mi><mo accent="true">̂</mo></mover><mo>±</mo><mfrac><mn>1.96</mn><msqrt><mrow><mi>n</mi><mo>−</mo><mn>3</mn></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}</annotation></semantics></math></p>
+<p>and the confidence interval for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\rho}</annotation></semantics></math>
-can directly be calculated by the inverse transformation:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>−</mo><mn>1</mn></mrow><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>+</mo><mn>1</mn></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.</annotation></semantics></math></p>
+can directly be calculated by the inverse transformation:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>−</mo><mn>1</mn></mrow><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>+</mo><mn>1</mn></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.</annotation></semantics></math></p>
 <p>This is equivalent to the direct calculations using the delta method
 (except for the small sample bias correction
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>)
@@ -347,10 +349,10 @@ replications would be needed) can be calculated in the following way</p>
 <span><span class="co">#&gt; y2~x  0.9165185250 -0.0054613366  0.0515815249  0.8206914258  1.0057939308</span></span>
 <span><span class="co">#&gt; l1    0.0041846522 -0.0207541703  0.0680010956 -0.1521461170  0.0970349017</span></span>
 <span><span class="co">#&gt; l2    0.0416361064 -0.0172477586  0.0645290353 -0.1102270167  0.1486146877</span></span>
-<span><span class="co">#&gt; z     1.4294227075 -0.0086990026  0.0431164145  1.3409919820  1.4973573361</span></span>
+<span><span class="co">#&gt; z     1.4294227061 -0.0086990013  0.0431164145  1.3409919820  1.4973573361</span></span>
 <span><span class="co">#&gt; v1    1.0041934200 -0.0184096665  0.0664333005  0.8588861834  1.1019310023</span></span>
 <span><span class="co">#&gt; v2    1.0425150452 -0.0157357318  0.0662409478  0.8956329451  1.1602357905</span></span>
-<span><span class="co">#&gt; c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892</span></span></code></pre></div>
+<span><span class="co">#&gt; c1    0.9122097186 -0.0171972063  0.0627102019  0.7706302260  1.0085879892</span></span></code></pre></div>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">tanh</a></span><span class="op">(</span><span class="va">b</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="st">'z'</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.025</span>,<span class="fl">.975</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      2.5%     97.5% </span></span>
@@ -375,19 +377,19 @@ the <code>mets</code> package) in the data frame.</p>
 <code class="sourceCode R"><span><span class="va">e3</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    y1~x                 0.93301    0.04443 20.99891   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92402    0.04643 19.90128   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y1~x                 0.93300    0.04443 20.99869   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92402    0.04643 19.90112   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    y1                  -0.00542    0.04482 -0.12083   0.9038</span></span>
-<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45687   0.6478</span></span>
+<span><span class="co">#&gt;    y1                  -0.00541    0.04482 -0.12076   0.9039</span></span>
+<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45683   0.6478</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06607   0.9473</span></span>
-<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97307   0.3305</span></span>
-<span><span class="co">#&gt;    z                    1.42835    0.04546 31.41861   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                   0.00419    0.06325  0.06618   0.9472</span></span>
+<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97310   0.3305</span></span>
+<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41841   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err  2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.491e-226</span></span>
+<span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.498e-226</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
@@ -402,32 +404,32 @@ and <code>s2</code> right-censored:</p>
 <span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72734   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89515   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72739   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89518   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05185   0.9586</span></span>
-<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05190   0.9586</span></span>
+<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44875   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01156   0.9908</span></span>
-<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
-<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94282   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00077    0.06500 -0.01177   0.9906</span></span>
+<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98844   0.3229</span></span>
+<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94291   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72734   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89515   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72739   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89518   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05185   0.9586</span></span>
-<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05190   0.9586</span></span>
+<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44875   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01156   0.9908</span></span>
-<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
-<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94282   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00077    0.06500 -0.01177   0.9906</span></span>
+<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98844   0.3229</span></span>
+<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94291   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077 9.006e-222</span></span>
+<span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077 9.005e-222</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
@@ -476,7 +478,7 @@ and <code>s2</code> right-censored:</p>
 <span><span class="co">#&gt; [22] future_1.70.0          desc_1.4.3             bslib_0.10.0          </span></span>
 <span><span class="co">#&gt; [25] rlang_1.1.7            cachem_1.1.0           xfun_0.57             </span></span>
 <span><span class="co">#&gt; [28] fs_2.0.1               sass_0.4.10            cli_3.6.5             </span></span>
-<span><span class="co">#&gt; [31] progressr_0.18.0       pkgdown_2.2.0          digest_0.6.39         </span></span>
+<span><span class="co">#&gt; [31] progressr_0.19.0       pkgdown_2.2.0          digest_0.6.39         </span></span>
 <span><span class="co">#&gt; [34] grid_4.5.3             mvtnorm_1.3-6          lifecycle_1.0.5       </span></span>
 <span><span class="co">#&gt; [37] timereg_2.0.7          RcppArmadillo_15.2.4-1 evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [40] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      </span></span>

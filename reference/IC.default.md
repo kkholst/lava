@@ -1,14 +1,12 @@
-# Extract i.i.d. decomposition (influence function) from model object
+# Extract influence function from model object
 
 Extract i.i.d. decomposition (influence function) from model object
 
 ## Usage
 
 ``` r
-IC(x,...)
-
 # Default S3 method
-IC(x, bread, id=NULL, folds=0, maxsize=(folds>0)*1e6,...)
+IC(x, bread, id = NULL, ...)
 ```
 
 ## Arguments
@@ -17,26 +15,17 @@ IC(x, bread, id=NULL, folds=0, maxsize=(folds>0)*1e6,...)
 
   model object
 
-- ...:
+- bread:
 
-  additional arguments
+  (optional) Inverse of derivative of mean score function
 
 - id:
 
   (optional) id/cluster variable
 
-- bread:
+- ...:
 
-  (optional) Inverse of derivative of mean score function
-
-- folds:
-
-  (optional) Calculate aggregated iid decomposition (0:=disabled)
-
-- maxsize:
-
-  (optional) Data is split in groups of size up to 'maxsize'
-  (0:=disabled)
+  additional arguments
 
 ## Examples
 
