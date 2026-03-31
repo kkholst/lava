@@ -162,15 +162,6 @@ exp.estimate <- function(x, ...) {
 }
 
 ##' @export
-"^.estimate" <- function(e1, e2, ...) {
-  if (!is.numeric(e2) && length(e2) != 1L) stop("exponent should be a scalar")
-  estimate(e1, function(p) {
-    y <- p**e2
-    structure(y, grad = diag(e2*p**(e2-1), nrow=length(p)))
-  }, ...)
-}
-
-##' @export
 sqrt.estimate <- function(x, ...) {
   estimate(x^.5, ...)
 }
@@ -184,7 +175,7 @@ sum.estimate <- function(x, ...) {
            ...)
 }
 
-##' @export
+ ##' @export
 "%*%.estimate" <- function(x, y, ...) {
   sum(x * y)
 }
@@ -207,6 +198,7 @@ prod.estimate <- function(x, ...) {
 }
 
 # ---- +,-,*,/ ------------------------------------------------------------
+
 
 operator_estimate <- function(x, y, op, ...) {
   x_const <- is.numeric(x)
@@ -238,43 +230,48 @@ operator_estimate <- function(x, y, op, ...) {
   }, ...)
 }
 
+operator_grad <- function(x, y, x_const, y_const, dx, dy) {
+  nx <- length(x)
+  ny <- length(y)
+  n <- max(nx, ny)
+  grad <-
+    if (y_const) { # y is constant: df/dx only
+      if (nx > 1L || ny == 1L) { # ny = nx or ny = 1
+        diag(dx, ncol=nx, nrow=nx)
+      } else { # ny > 1, nx = 1
+        matrix(dx, nrow = n, ncol = 1L)
+      }
+    } else if (x_const) { # x is constant: df/dy only
+      if (ny > 1L || nx == 1L) { # ny = nx or nx = 1
+        diag(dy, ncol=ny, nrow=ny)
+      } else { # ny > 1, nx = 1
+        matrix(dy, nrow = n, ncol = 1L)
+      }
+    } else {
+      # both estimates: df/d(c(x,y)) = [dx | dy]
+      D <- matrix(0, nrow = n, ncol = nx + ny)
+      if (nx == 1L) {
+        D[, 1] <- dx
+        D[, 2:ncol(D)] <- diag(dy, ny, ny)
+        D
+      } else if (ny == 1L) {
+        cbind(diag(dx, nrow=n, ncol=n), dy)
+      } else {
+        cbind(diag(dx, nrow = n, ncol=n), diag(dy, nrow = n, ncol=n))
+      }
+    }
+  return(grad)
+}
+
 ##' @export
 "+.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
     function(x, y, x_const=FALSE, y_const=FALSE) {
-      nx <- length(x)
-      ny <- length(y)
-      n <- max(nx, ny)
-      grad <-
-        if (y_const) { # y is constant: df/dx only
-          if (nx > 1L || ny == 1L) { # ny = nx or ny = 1
-            diag(1, ncol=nx, nrow=nx)
-          } else { # ny > 1, nx = 1
-            matrix(1, nrow = n, ncol = 1L)
-          }
-        } else if (x_const) { # x is constant: df/dy only
-          if (ny > 1L || nx == 1L) { # ny = nx or nx = 1
-            diag(1, ncol=ny, nrow=ny)
-          } else { # ny > 1, nx = 1
-            matrix(1, nrow = n, ncol = 1L)
-          }
-        } else {
-          # both estimates: df/d(c(x,y)) = [I | I]
-          D <- matrix(0, nrow = n, ncol = nx + ny)
-          if (nx == 1L) {
-            D[, 1] <- 1
-            D[, 2:ncol(D)] <- diag(1, ny, ny)
-            D
-          } else if (ny == 1L) {
-            cbind(diag(1, nrow=n, ncol=n), 1)
-          } else {
-            cbind(diag(1, nrow = n, ncol=n), diag(1, nrow = n, ncol=n))
-          }
-        }
       structure(
         x + y,
-        grad = grad
+        grad = operator_grad(x, y, x_const, y_const,
+                             dx = 1, dy = 1)
       )
       }, ...)
 }
@@ -285,38 +282,10 @@ operator_estimate <- function(x, y, op, ...) {
   operator_estimate(
     e1, e2,
     function(x, y, x_const=FALSE, y_const=FALSE) {
-      nx <- length(x)
-      ny <- length(y)
-      n <- max(nx, ny)
-      grad <-
-        if (y_const) { # y is constant: df/dx only
-          if (nx > 1L || ny == 1L) { # ny = nx or ny = 1
-            diag(1, ncol=nx, nrow=nx)
-          } else { # ny > 1, nx = 1
-            matrix(1, nrow = n, ncol = 1L)
-          }
-        } else if (x_const) { # x is constant: df/dy only
-          if (ny > 1L || nx == 1L) { # ny = nx or nx = 1
-            diag(-1, ncol=ny, nrow=ny)
-          } else { # ny > 1, nx = 1
-            matrix(-1, nrow = n, ncol = 1L)
-          }
-        } else {
-          # both estimates: df/d(c(x,y)) = [I | I]
-          D <- matrix(0, nrow = n, ncol = nx + ny)
-          if (nx == 1L) {
-            D[, 1] <- 1
-            D[, 2:ncol(D)] <- diag(-1, ny, ny)
-            D
-          } else if (ny == 1L) {
-            cbind(diag(1, nrow=n, ncol=n), -1)
-          } else {
-            cbind(diag(1, nrow = n, ncol=n), diag(-1, nrow = n, ncol=n))
-          }
-        }
       structure(
         x - y,
-        grad = grad
+        grad = operator_grad(x, y, x_const, y_const,
+                             dx=1, dy=-1)
       )
       }, ...)
 }
@@ -326,38 +295,10 @@ operator_estimate <- function(x, y, op, ...) {
   operator_estimate(
     e1, e2,
     function(x, y, x_const=FALSE, y_const=FALSE) {
-      nx <- length(x)
-      ny <- length(y)
-      n <- max(nx, ny)
-      grad <-
-        if (y_const) { # y is constant: df/dx = y only
-          if (nx > 1L || ny == 1L) { # ny = nx or ny = 1
-            diag(y, ncol=nx, nrow=nx)
-          } else { # ny > 1, nx = 1
-            matrix(y, nrow = n, ncol = 1L)
-          }
-        } else if (x_const) { # x is constant: df/dy = x only
-          if (ny > 1L || nx == 1L) { # ny = nx or nx = 1
-            diag(x, ncol=ny, nrow=ny)
-          } else { # ny > 1, nx = 1
-            matrix(x, nrow = n, ncol = 1L)
-          }
-        } else {
-          # both estimates: df/d(c(x,y)) = [y | x]
-          D <- matrix(0, nrow = n, ncol = nx + ny)
-          if (nx == 1L) {
-            D[, 1] <- y
-            D[, 2:ncol(D)] <- diag(x, ny, ny)
-            D
-          } else if (ny == 1L) {
-            cbind(diag(y, nrow=n, ncol=n), x)
-          } else {
-            cbind(diag(y, nrow = n, ncol=n), diag(x, nrow = n, ncol=n))
-          }
-        }
       structure(
         x * y,
-        grad = grad
+        grad = operator_grad(x, y, x_const, y_const,
+                             dx=y, dy=x)
       )
       }, ...)
 }
@@ -367,38 +308,27 @@ operator_estimate <- function(x, y, op, ...) {
   operator_estimate(
     e1, e2,
     function(x, y, x_const=FALSE, y_const=FALSE) {
+      structure(
+        x / y,
+        grad = operator_grad(x, y, x_const, y_const,
+                             dx = 1 / y, dy = -x / y^2)
+      )
+      }, ...)
+}
+
+##' @export
+"^.estimate" <- function(e1, e2, ...) {
+  operator_estimate(
+    e1, e2,
+    function(x, y, x_const=FALSE, y_const=FALSE) {
       nx <- length(x)
       ny <- length(y)
       n <- max(nx, ny)
-      grad <-
-        if (y_const) { # y is constant: df/dx = 1/y only
-          if (nx > 1L || ny == 1L) { # ny = nx or ny = 1
-            diag(1/y, ncol=nx, nrow=nx)
-          } else { # ny > 1, nx = 1
-            matrix(1/y, nrow = n, ncol = 1L)
-          }
-        } else if (x_const) { # x is constant: df/dy = -x/y^2 only
-          if (ny > 1L || nx == 1L) { # ny = nx or nx = 1
-            diag(-x / y^2, ncol=ny, nrow=ny)
-          } else { # ny > 1, nx = 1
-            matrix(-x / y^2, nrow = n, ncol = 1L)
-          }
-        } else {
-          # both estimates: df/d(c(x,y)) = [1/y | -x/y^2]
-          D <- matrix(0, nrow = n, ncol = nx + ny)
-          if (nx == 1L) {
-            D[, 1] <- 1/y
-            D[, 2:ncol(D)] <- diag(-x / y^2, ny, ny)
-            D
-          } else if (ny == 1L) {
-            cbind(diag(1/y, nrow=n, ncol=n), -x/y^2)
-          } else {
-            cbind(diag(1/y, nrow = n, ncol=n), diag(-x/y^2, nrow = n, ncol=n))
-          }
-        }
+      f <- x^y
       structure(
-        x / y,
-        grad = grad
+        f,
+        grad = operator_grad(x, y, x_const, y_const,
+                             dx = y*x^(y-1), dy = log(x)*f)
       )
-      }, ...)
+    }, ...)
 }

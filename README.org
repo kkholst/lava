@@ -123,6 +123,16 @@ library(lava)
 
 #+RESULTS:
 
+*** Influence functions
+
+#+BEGIN_SRC R
+2+2
+#+END_SRC
+
+#+RESULTS:
+: [1] 4
+
+
 *** Structural Equation Model
 
 Specify structural equation models with two factors
@@ -286,6 +296,8 @@ Simulate from model and estimate indirect effects
 
 #+NAME: sim1
 #+BEGIN_SRC R :ravel cache=TRUE :exports both :wrap example
+future::plan("multicore") # parallelization via future
+## progressr::handlers(global=TRUE) # add progress-bar
 onerun <- function(...) {
     d <- sim(m, 100)
     m0 <- lvm(S~x+z, x~z)
