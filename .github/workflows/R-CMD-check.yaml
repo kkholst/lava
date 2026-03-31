@@ -66,7 +66,7 @@ jobs:
           Rscript -e 'remotes::install_local()'
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
 
-      - name: Code Coverage
-        if: success() && contains('refs/heads/main', github.ref)
-        run: covr::codecov(type=c("tests", "examples"))
-        shell: Rscript {0}
+      # - name: Code Coverage
+      #   if: success() && contains('refs/heads/main', github.ref)
+      #   run: covr::codecov(type=c("tests", "examples"))
+      #   shell: Rscript {0}
