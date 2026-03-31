@@ -53,13 +53,13 @@ test_that("-.estimate", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  ## check subtraction: estimate + numeric with dim(estimate)=1
+  ## estimate + numeric with dim(estimate)=1
   e1 <- a1 - c(2,4,6)
   e2 <- estimate(a1, \(p) p - c(2,4,6))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  ## check subtraction: estimate + numeric with dim(estimate)>1
+  ## estimate + numeric with dim(estimate)>1
   e1 <- a - 2
   e2 <- estimate(a, \(p) p - 2)
   testthat::expect_equivalent(IC(e1), IC(e2))
@@ -97,7 +97,7 @@ test_that("*.estimate", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  ## check multiplication: estimate + numeric with dim(estimate)>1
+  ## estimate + numeric with dim(estimate)>1
   e1 <- a * 2
   e2 <- estimate(a, \(p) p * 2)
   testthat::expect_equivalent(IC(e1), IC(e2))
@@ -106,7 +106,7 @@ test_that("*.estimate", {
   e2 <- estimate(a, \(p) p * c(2,4))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
-  # commutative
+  # change order
   e1 <- c(2,4) * a # 2.dim. estimate
   e2 <- estimate(a, \(p) p * c(2,4))
   testthat::expect_equivalent(IC(e1), IC(e2))
@@ -116,7 +116,7 @@ test_that("*.estimate", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  # multiplication with two estimate objects
+  # with two estimate objects
   e1 <- a1 * a2
   e2 <- estimate(a, prod)
   testthat::expect_equivalent(IC(e1), IC(e2))
@@ -134,7 +134,7 @@ test_that("/.estimate", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  ## check addition: estimate + numeric with dim(estimate)>1
+  ## estimate + numeric with dim(estimate)>1
   e1 <- a / 2
   e2 <- estimate(a, \(p) p / 2)
   testthat::expect_equivalent(IC(e1), IC(e2))
@@ -153,13 +153,54 @@ test_that("/.estimate", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 
-  # addition with two estimate objects
+  # with two estimate objects
   e1 <- a1 / a2
   e2 <- estimate(a, function(p) p[1] / p[2])
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
   e1 <- a / b # 2d. estimates
   e2 <- estimate(merge(a, b), function(p) c(p[1]/p[3], p[2]/p[4]))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+})
+
+test_that("^.estimate", {
+  ## check power-func: estimate + numeric with dim(estimate)=1
+  e1 <- a1^0.25
+  e2 <- estimate(a1, function(p) p**0.25)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+  e1 <- a1 / c(2,4,6)
+  e2 <- estimate(a1, \(p) p / c(2,4,6))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
+  ## estimate + numeric with dim(estimate)>1
+  e1 <- a ^ 3
+  e2 <- estimate(a, \(p) p ^ 3)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+  e1 <- a ^ c(2,4)
+  e2 <- estimate(a, \(p) p ^ c(2,4))
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+  # numeric first
+  e1 <- c(2,4) ^ a # 2.dim. estimate
+  e2 <- estimate(a, \(p) c(2,4) ^ p)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+  e1 <- c(2,4) ^ a1 # 1.dim
+  e2 <- estimate(a1, \(p) c(2,4) ^ p)
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+
+  # addition with two estimate objects
+  e1 <- a1 ^ a2
+  e2 <- estimate(a, function(p) p[1] ^ p[2])
+  testthat::expect_equivalent(IC(e1), IC(e2))
+  testthat::expect_equivalent(coef(e1), coef(e2))
+  e1 <- a ^ b # 2d. estimates
+  e2 <- estimate(merge(a, b), function(p) c(p[1]^p[3], p[2]^p[4]))
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 })
@@ -227,10 +268,6 @@ test_that("math functions", {
   testthat::expect_equivalent(coef(e1), coef(e2))
 
   # pow, sqrt
-  e1 <- e["a1"]^0.25
-  e2 <- estimate(e, function(p) p[1]**0.25)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
   e1 <- sqrt(e)
   e2 <- estimate(e, function(p) sqrt(p))
   testthat::expect_equivalent(IC(e1), IC(e2))
