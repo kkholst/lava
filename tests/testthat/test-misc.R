@@ -134,3 +134,16 @@ test_that("All the rest", {
     testthat::expect_output(lava:::printmany(A,A,2,rownames=c("A","B"),name1="no.1",name2="no.2",
                             bothrows=TRUE),"no.1")
 })
+
+test_that("napass.0", {
+  n <- 10
+  d <- data.frame(y=rnorm(n), a=rbinom(n,1,0.5)*2-1)
+  idx1 <- c(1,3,5)
+  idx2 <- c(1,3,8,9)
+  d$y[idx1] <- NA
+  d$a[idx2] <- NA
+  d0 <- na.pass0(d)
+  expect_true(nrow(d0)==n)
+  expect_true(all(d0$a[idx2]==0))
+  expect_true(all(d0$a[idx1]==0))
+})
