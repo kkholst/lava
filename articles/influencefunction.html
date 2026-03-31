@@ -425,7 +425,7 @@ we consider the proportional odds model given by
 <span><span class="co">#&gt; 0|1   0.2687  0.1622 -0.04932 0.5867 9.772e-02</span></span>
 <span><span class="co">#&gt; a     1.5595  0.2429  1.08349 2.0355 1.350e-10</span></span>
 <span><span class="co">#&gt; x1    0.9728  0.1435  0.69157 1.2540 1.200e-11</span></span></code></pre></div>
-<p>Note that the <code><a href="https://sandwich.R-Forge.R-project.org/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
+<p>Note that the <code><a href="https://rdrr.io/pkg/sandwich/man/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
 <code>sandwich</code> library <span class="citation">(Zeileis, Köll, and
 Graham 2020)</span> can also estimate the IF for different parametric
 models, but does not provide the tools for combining and transforming
@@ -522,7 +522,7 @@ available for parametric survival models via
 <span><span class="co">#&gt;      Estimate Std.Err    2.5%    97.5%   P-value</span></span>
 <span><span class="co">#&gt; y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02</span></span>
 <span><span class="co">#&gt; u     0.36025 0.06659  0.2297  0.49075 6.295e-08</span></span>
-<span><span class="co">#&gt; y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15</span></span>
+<span><span class="co">#&gt; y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15</span></span>
 <span><span class="co">#&gt; y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15</span></span>
 <span><span class="co">#&gt; u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01</span></span></code></pre></div>
 </div>
@@ -831,11 +831,11 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1   -2.714e-17   5.128e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2   -2.714e-17   5.128e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    1.104e-15   5.128e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    1.104e-15   5.128e+00  0.000e+00   </span></span>
 <span><span class="co">#&gt; 3   -7.547e+00   7.547e+00  0.000e+00   </span></span>
 <span><span class="co">#&gt; 4   -7.547e+00   7.547e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5    4.006e-16  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5   -2.200e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                     </span></span>
 <span><span class="co">#&gt; 796  0.000       0.000      3.738       </span></span>
 <span><span class="co">#&gt; 797  0.000       0.000      3.738       </span></span>
@@ -844,9 +844,9 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 <span><span class="co">#&gt; 800  0.000       0.000     -4.301</span></span>
 <span><span class="fu"><a href="../reference/internal.html">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29</span></span>
-<span><span class="co">#&gt; a             -2.079760e-02  4.720777e-02 -1.554401e-25</span></span>
-<span><span class="co">#&gt; (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29</span></span>
+<span><span class="co">#&gt; a             -2.079760e-02  4.720777e-02 -1.554863e-25</span></span>
+<span><span class="co">#&gt; (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="renaming-and-subsetting-parameters">Renaming and subsetting parameters<a class="anchor" aria-label="anchor" href="#renaming-and-subsetting-parameters"></a>
