@@ -5,11 +5,12 @@ test_that("Multiple group I", {
   set.seed(1)
   d <- sim(m,1000)
   ## Just a stratified analysis
-  e <- estimate(list("Group A"=m,"Group B"=m),list(d,d))
-  testthat::expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
-  testthat::expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
-  ci <- confint(e)
-  testthat::expect_true(mean((confint(e)[c(1,3),]-confint(lm(y~x,d)))^2)<1e-4)
+  e <- estimate(list("Group A"=m,"Group B"=m), list(d,d))
+  expect_true(mean((coef(e)[c(1,3)]-coef(lm(y~x,d)))^2)<1e-9)
+  expect_true(mean((coef(e)[c(2,5)]-coef(lm(y~x,d)))^2)<1e-9)
+  ci <- confint(e)[c(1,3),]
+  ci2 <- confint(lm(y~x,d))
+  expect_true(mean((ci-ci2)^2)<1e-5)
 })
 
 test_that("Multiple group II", {

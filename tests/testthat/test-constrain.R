@@ -19,8 +19,7 @@ test_that("Simple linear constraint",{
     testthat::expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))
 })
 
-
-test_that("constrain (Fishers z-transform)",{
+test_that("constrain (Fishers z-transform)", {
     set.seed(1)
     m <- lvm(c(y1[m1:v1],y2[m2:v2])~x)
     covariance(m,y1~y2) <- "C"
@@ -45,7 +44,6 @@ test_that("constrain (Fishers z-transform)",{
     testthat::expect_equivalent(cc2["inv(z)",1],cc1["y1~y2",1])
 })
 
-
 test_that("Non-linear in exogenous variables", {
     d <- data.frame(x=1:5,y=c(0.5,1.5,2,3,3.5))
     m <- lvm(y[m] ~ 1)
@@ -55,7 +53,6 @@ test_that("Non-linear in exogenous variables", {
     e <- estimate(m,d,control=list(method="NR"))
     testthat::expect_true(mean(coef(lm(y~x,d))-coef(e)[c("a","b")])^2<1e-3)
 })
-
 
 if (lava:::versioncheck('mets', c(1,0)))
 test_that("Probit constraints", {
@@ -69,7 +66,6 @@ test_that("Probit constraints", {
     res <- estimate(e)
     testthat::expect_true(length(coef(res))==4)
 })
-
 
 test_that("Multiple group constraints I", {
     m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))

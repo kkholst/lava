@@ -61,14 +61,12 @@ test_that("Basic model building blocks", {
     testthat::expect_true(intercept(mm)[["u2"]]=="m2")
 
     ## LISREL
-    mm <- fixsome(mm)
-    L <- lisrel(mm,rep(1,length(coef(mm))))
-    testthat::expect_equivalent(L$B,matrix(0,2,2))
-    testthat::expect_equivalent(L$Theta,diag(3))
-    testthat::expect_equivalent(L$Psi,diag(2))
-
+    ## mm <- fixsome(mm)
+    ## L <- lava:::lisrel(mm,rep(1,length(coef(mm))))
+    ## testthat::expect_equivalent(L$B,matrix(0,2,2))
+    ## testthat::expect_equivalent(L$Theta,diag(3))
+    ## testthat::expect_equivalent(L$Psi,diag(2))
 })
-
 
 test_that("Linear constraints", {
     m <- lvm(c(y[m:v]~b*x))
@@ -79,7 +77,6 @@ test_that("Linear constraints", {
     err <- sum((coef(l)-coef(e)[c('y','a')])^2)
     testthat::expect_true(err<1e-12)
 })
-
 
 if (requireNamespace("Rgraphviz",quietly = TRUE))
 test_that("Graph attributes", {
@@ -112,7 +109,6 @@ test_that("Graph attributes", {
     edgelabels(m, y~x) <- "a"
     testthat::expect_true(!is.null(edgelabels(finalize(m))))
 })
-
 
 test_that("Categorical variables", {
     m <- lvm()

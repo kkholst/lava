@@ -122,5 +122,5 @@ test_that("IC misc", {
   expect_equivalent(ic1, ic2)
 
   ic <- IC(l, folds=10)
-  lava.options(opt)
+  ## lava.options(opt)
 })

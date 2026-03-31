@@ -1,31 +1,25 @@
-
-##' Extract i.i.d. decomposition (influence function) from model object
-##'
-##' Extract i.i.d. decomposition (influence function) from model object
-##' @usage
-##'
-##' IC(x,...)
-##'
-##' \method{IC}{default}(x, bread, id=NULL, folds=0, maxsize=(folds>0)*1e6,...)
-##'
-##' @aliases IC.default var_ic
-##' @param x model object
-##' @param id (optional) id/cluster variable
-##' @param bread (optional) Inverse of derivative of mean score function
-##' @param ... additional arguments
 ##' @export
-##' @examplesIf
-##' m <- lvm(y~x+z)
-##' distribution(m, ~y+z) <- binomial.lvm("logit")
-##' d <- sim(m,1e3)
-##' g <- glm(y~x+z,data=d,family=binomial)
-##' var_ic(IC(g))
 IC <- function(x, ...) UseMethod("IC")
 
 ##' @export
 influence.estimate <- function(model, ...)
     IC(model, ...)
 
+
+##' Extract influence function from model object
+##'
+##' Extract i.i.d. decomposition (influence function) from model object
+##' @aliases IC var_ic
+##' @param x model object
+##' @param id (optional) id/cluster variable
+##' @param bread (optional) Inverse of derivative of mean score function
+##' @param ... additional arguments
+##' @examples
+##' m <- lvm(y~x+z)
+##' distribution(m, ~y+z) <- binomial.lvm("logit")
+##' d <- sim(m,1e3)
+##' g <- glm(y~x+z,data=d,family=binomial)
+##' var_ic(IC(g))
 ##' @export
 IC.default <- function(x, bread, id=NULL,
                        ...) {
@@ -104,7 +98,6 @@ IC.default <- function(x, bread, id=NULL,
 colnames(ic0) <- colnames(U)
 return(structure(ic0, bread=bread))
 }
-
 
 ##' @export
 IC.multigroupfit <- function(x, ...) IC.default(x, combine=TRUE, ...)

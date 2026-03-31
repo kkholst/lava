@@ -206,12 +206,13 @@ test_that("^.estimate", {
 })
 
 test_that("math functions", {
-  e <- c(a, b) # merge
-  e2 <- merge(a, b); e2$model.index <- NULL
-  expect_equivalent(e, e2)
+  e0 <- c(a, b) # merge
+  e <- merge(a, b)
+  expect_equivalent(e, e0)
 
   # subset and merge
-  e1 <- c(a=a["a1"], b=b["b1"])
+  ## e1 <- c(a=a["a1"], b=b["b1"])
+  e1 <- merge(a["a1"], b["b1"], labels=c("a", "b"))
   expect_true(length(coef(e1)) == 2L)
   expect_equivalent(names(coef(e1)), c("a", "b"))
 

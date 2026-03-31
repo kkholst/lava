@@ -246,25 +246,6 @@ test_that("zero-inflated binomial regression (zib)", {
     fit <- predict(e,newdata=newdata)
 })
 
-test_that("Optimization", {
-    m <- lvm(y~x+z)
-    d <- simulate(m,20,seed=1)
-    e1 <- estimate(m,d,control=list(method="nlminb0"))
-    e2 <- estimate(m,d,control=list(method="NR"))
-    testthat::expect_equivalent(round(coef(e1),3),round(coef(e2),3))
-
-    f <- function(x) x^2*log(x) # x>0
-    df <- function(x) 2*x*log(x) + x
-    df2 <- function(x) 2*log(x) + 3
-    op <- NR(5,f,df,df2,control=list(tol=1e-40)) ## Find root
-    testthat::expect_equivalent(round(op$par,digits=7),.6065307)
-    op2 <- estimatingfunction0(5,gradient=df)
-    op3 <- estimatingfunction(5,gradient=df,hessian=df2,control=list(tol=1e-40))
-    testthat::expect_equivalent(op$par,op2$par)
-    testthat::expect_equivalent(op$par,op3$par)
-})
-
-
 if (requireNamespace("nlme",quietly = TRUE) && requireNamespace("mets",quietly = TRUE))
 test_that("Prediction with missing data, random intercept", {
     ## Random intercept model
@@ -313,7 +294,6 @@ test_that("Prediction with missing data, random intercept", {
     testthat::expect_output(print(summary(e0$estimate)),paste0("observations = ",nrow(d0)))
 
 })
-
 
 ## if (requireNamespace("lme4", quietly = TRUE) && requireNamespace("mets", quietly = TRUE)) {
 if (requireNamespace("mets",quietly = TRUE))

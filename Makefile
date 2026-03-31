@@ -54,10 +54,10 @@ vignette:
 
 test: test-installed
 test-installed: # tests locally installed version package
-	@echo 'tinytest::test_package("$(PKG)")' | $(R)
+	@echo 'testthat::test_package("$(PKG)")' | $(R)
 
 test-loadall:
-	@echo 'devtools::load_all("."); tinytest::test_all(".")' | $(R)
+	@echo 'devtools::load_all("."); tinytest::testthat(".")' | $(R)
 
 slowtest: test-slow
 test-slow:
