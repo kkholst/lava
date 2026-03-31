@@ -2,7 +2,6 @@
 ##' Extract i.i.d. decomposition (influence function) from model object
 ##'
 ##' Extract i.i.d. decomposition (influence function) from model object
-##' @export
 ##' @usage
 ##'
 ##' IC(x,...)
@@ -13,11 +12,9 @@
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
-# #' @param folds (optional) Calculate aggregated iid decomposition (0:=disabled)
-# #' @param maxsize (optional) Data is split in groups of size up to 'maxsize'
-# #'   (0:=disabled)
 ##' @param ... additional arguments
-##' @examples
+##' @export
+##' @examplesIf
 ##' m <- lvm(y~x+z)
 ##' distribution(m, ~y+z) <- binomial.lvm("logit")
 ##' d <- sim(m,1e3)

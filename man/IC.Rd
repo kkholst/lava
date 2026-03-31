@@ -23,9 +23,11 @@ IC(x,...)
 Extract i.i.d. decomposition (influence function) from model object
 }
 \examples{
+\dontshow{if () withAutoprint(\{ # examplesIf}
 m <- lvm(y~x+z)
 distribution(m, ~y+z) <- binomial.lvm("logit")
 d <- sim(m,1e3)
 g <- glm(y~x+z,data=d,family=binomial)
 var_ic(IC(g))
+\dontshow{\}) # examplesIf}
 }
