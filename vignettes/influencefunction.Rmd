@@ -178,6 +178,9 @@ estimate(coef=, IF=, ...)
 estimate(coef=, vcov=, ...)
 ```
 
+
+
+
 ## Example: population mean
 
 Here we first consider the problem of estimating the IF of the mean. For a
@@ -658,9 +661,17 @@ The gradient can be provided as the attribute `grad` and otherwise numerical dif
 
 subset: `[`
 merge: `c`
-trigonometric functions: `cos`, `sin`, `tan`
+- `subset`
+- `labels`
+- `transform`
 
-
+- trigonometric functions: `cos`, `sin`, `tan`
+- inverse trigonometric functions: `acos`, `asin`, `atan`
+- hyperbolic functions: `cosh`, `sinh`, `tanh`
+- inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
+- other mathematical: `log`, `log1p`, `exp`, `expm1`, `sqrt`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`
+- `prod`, `sum`, `%*%`,
 
 
 ## Example: Pearson correlation
