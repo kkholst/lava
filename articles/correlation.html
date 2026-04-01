@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Estimating partial correlations with lava • lava</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -70,31 +71,26 @@ Holst</h4>
     
     
 <!-- correlation.Rmd is generated from correlation.org. Please edit that file -->
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">
 \newcommand{\arctanh}{\operatorname{arctanh}}
-</annotation></semantics></math></p>
+</span></p>
 <p>This document illustrates how to estimate partial correlation
 coefficients using <code>lava</code>.</p>
-<p>Assume that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>1</mn></msub><annotation encoding="application/x-tex">Y_{1}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>2</mn></msub><annotation encoding="application/x-tex">Y_{2}</annotation></semantics></math>
-are conditionally normal distributed given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐗</mi><annotation encoding="application/x-tex">\mathbf{X}</annotation></semantics></math>
-with the following linear structure
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>1</mn></msub><mo>=</mo><msubsup><mi>𝛃</mi><mn>1</mn><mi>t</mi></msubsup><mi>𝐗</mi><mo>+</mo><msub><mi>ϵ</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">Y_1 = \mathbf{\beta}_1^{t}\mathbf{X} + \epsilon_1</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>2</mn></msub><mo>=</mo><msubsup><mi>𝛃</mi><mn>2</mn><mi>t</mi></msubsup><mi>𝐗</mi><mo>+</mo><msub><mi>ϵ</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">Y_2 = \mathbf{\beta}_2^{t}\mathbf{X} + \epsilon_2</annotation></semantics></math>
-with covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐗</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>X</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>t</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{X} = (X_1,\ldots,X_k)^{t}</annotation></semantics></math>
-and measurement errors
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ϵ</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ϵ</mi><mn>2</mn></msub></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>𝚺</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mspace width="1.0em"></mspace><mi>𝚺</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>σ</mi><mn>1</mn><mn>2</mn></msubsup></mtd><mtd columnalign="center" style="text-align: center"><mi>ρ</mi><msub><mi>σ</mi><mn>1</mn></msub><msub><mi>σ</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>ρ</mi><msub><mi>σ</mi><mn>1</mn></msub><msub><mi>σ</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msubsup><mi>σ</mi><mn>2</mn><mn>2</mn></msubsup></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\begin{pmatrix}
+<p>Assume that <span class="math inline">Y_{1}</span> and <span class="math inline">Y_{2}</span> are conditionally normal distributed
+given <span class="math inline">\mathbf{X}</span> with the following
+linear structure <span class="math display">Y_1 =
+\mathbf{\beta}_1^{t}\mathbf{X} + \epsilon_1</span> <span class="math display">Y_2 = \mathbf{\beta}_2^{t}\mathbf{X} +
+\epsilon_2</span> with covariates <span class="math inline">\mathbf{X} =
+(X_1,\ldots,X_k)^{t}</span> and measurement errors <span class="math display">\begin{pmatrix}
     \epsilon_{1} \\
     \epsilon_{2}
-    \end{pmatrix} \sim \mathcal{N}\left(0, \mathbf{\Sigma} \right), \quad \mathbf{\Sigma}
+    \end{pmatrix} \sim \mathcal{N}\left(0, \mathbf{\Sigma} \right),
+\quad \mathbf{\Sigma}
     =
     \begin{pmatrix}
     \sigma_1^2 &amp; \rho\sigma_{1}\sigma_{2} \\
     \rho\sigma_{1}\sigma_{2} &amp; \sigma_2^2
-    \end{pmatrix}.</annotation></semantics></math></p>
+    \end{pmatrix}.</span></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/lava/" class="external-link">'lava'</a></span><span class="op">)</span></span>
 <span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">y1</span> <span class="op">~</span><span class="op">~</span> <span class="va">y2</span><span class="op">)</span></span>
@@ -103,7 +99,7 @@ and measurement errors
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m0</span>, layoutType<span class="op">=</span><span class="st">"circo"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="correlation_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 <p>Here we focus on inference with respect to the correlation parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>.</p>
+<span class="math inline">\rho</span>.</p>
 <div class="section level2">
 <h2 id="simulation">Simulation<a class="anchor" aria-label="anchor" href="#simulation"></a>
 </h2>
@@ -207,35 +203,32 @@ again</p>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%  97.5%   P-value</span></span>
 <span><span class="co">#&gt; y1~y2   0.8915         0.8721 0.9082 3.58e-224</span></span></code></pre></div>
 <p>Note, that in this case the confidence intervals are constructed by
-using a variance stabilizing transformation, Fishers
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>-transform
-<span class="citation">(Lehmann and Romano 2023)</span>,</p>
-<p><span class="math display">$$
+using a variance stabilizing transformation, Fishers <span class="math inline">z</span>-transform <span class="citation">(Lehmann
+and Romano 2023)</span>,</p>
+<p><span class="math display">
 z = \arctanh(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)
-$$</span></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\rho}</annotation></semantics></math>
-is the MLE. This estimate has an approximate asymptotic normal
-distribution <span class="math inline">$\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})$</span>.
+</span></p>
+<p>where <span class="math inline">\widehat{\rho}</span> is the MLE.
+This estimate has an approximate asymptotic normal distribution <span class="math inline">\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})</span>.
 Hence a asymptotic 95% confidence interval is given by</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>z</mi><mo accent="true">̂</mo></mover><mo>±</mo><mfrac><mn>1.96</mn><msqrt><mrow><mi>n</mi><mo>−</mo><mn>3</mn></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}</annotation></semantics></math></p>
-<p>and the confidence interval for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\rho}</annotation></semantics></math>
-can directly be calculated by the inverse transformation:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>−</mo><mn>1</mn></mrow><mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>z</mi></mrow></msup><mo>+</mo><mn>1</mn></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.</annotation></semantics></math></p>
+<p><span class="math display">\widehat{z} \pm
+\frac{1.96}{\sqrt{n-3}}</span></p>
+<p>and the confidence interval for <span class="math inline">\widehat{\rho}</span> can directly be calculated by
+the inverse transformation:</p>
+<p><span class="math display">\widehat{\rho} = \tanh(z) =
+\frac{e^{2z}-1}{e^{2z}+1}.</span></p>
 <p>This is equivalent to the direct calculations using the delta method
-(except for the small sample bias correction
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>)
-where the estimate and confidence interval are transformed back to the
-original scale using the <code>back.transform</code> argument.</p>
+(except for the small sample bias correction <span class="math inline">3</span>) where the estimate and confidence interval
+are transformed back to the original scale using the
+<code>back.transform</code> argument.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y2'</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y1'</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="st">'y2~~y2'</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; y1~~y2   0.8915         0.8732 0.9074 7.445e-249</span></span></code></pre></div>
 <p>The transformed confidence interval will generally have improved
-coverage especially near the boundary
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>≈</mo><mo>±</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\rho \approx \pm 1</annotation></semantics></math>.</p>
+coverage especially near the boundary <span class="math inline">\rho
+\approx \pm 1</span>.</p>
 <p>While the estimates of this particular model can be obtained in
 closed form, this is generally not the case when for example considering
 parameter constraints, latent variables, or missing and censored
@@ -262,17 +255,12 @@ called <code>v1</code>; the variance of <code>y2</code> is called
 <code>v2</code>; the covariance of <code>y1</code> and <code>y2</code>
 is called <code>c</code>. Finally, these parameters are tied to the
 previously defined parameters using the <code>constrain</code> method
-such that <code>v1</code> :=
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi>𝚕</mi><mn>𝟷</mn></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\exp(\mathtt{l1})</annotation></semantics></math><code>v2</code> :=
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi>𝚕</mi><mn>𝟷</mn></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\exp(\mathtt{l1})</annotation></semantics></math>
-and <code>z</code> :=
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝚣</mi><mo stretchy="true" form="postfix">)</mo></mrow><msqrt><mrow><mrow><mi>𝚟</mi><mn>𝟷</mn></mrow><mrow><mi>𝚟</mi><mn>𝟸</mn></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}</annotation></semantics></math>.
+such that <code>v1</code> := <span class="math inline">\exp(\mathtt{l1})</span> <code>v2</code> := <span class="math inline">\exp(\mathtt{l1})</span> and <code>z</code> := <span class="math inline">\tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}</span>.
 In this way there is no constraints on the actual estimated parameters
 <code>l1</code>, <code>l2</code>, and <code>z</code> which can take any
-values in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^{3}</annotation></semantics></math>,
-while we at the same time are guaranteed a proper covariance matrix
-which is positive definite.</p>
+values in <span class="math inline">\mathbb{R}^{3}</span>, while we at
+the same time are guaranteed a proper covariance matrix which is
+positive definite.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">e2</span></span>
@@ -298,9 +286,9 @@ which is positive definite.</p>
 <p>In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument <code>constrain</code>
 when specifying the covariances (the argument <code>rname</code>
-specifies the parameter name of the <span class="math inline">$\arctanh$</span> transformed correlation
-coefficient, and <code>lname</code>, <code>lname2</code> can be used to
-specify the parameter names for the log variance parameters):</p>
+specifies the parameter name of the <span class="math inline">\arctanh</span> transformed correlation coefficient,
+and <code>lname</code>, <code>lname2</code> can be used to specify the
+parameter names for the log variance parameters):</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span></span>

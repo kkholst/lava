@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>The Art of Influence • lava</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -83,91 +84,65 @@ combination and transformation of estimators into new ones. This
 vignette describes how to estimate and manipulate IFs using the
 R-package <code>lava</code> <span class="citation">(K. K. Holst and
 Budtz-Jørgensen 2013)</span>.</p>
-<p>Formally, let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Z_1,\ldots,Z_n</annotation></semantics></math>
-be iid
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-dimensional
-stochastic variables,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>,</mo><msub><mi>A</mi><mi>i</mi></msub><mo>,</mo><msub><mi>W</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><msub><mi>P</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">Z_i=(Y_{i},A_{i},W_{i})\sim P_{0}</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\theta}</annotation></semantics></math>
-a consistent estimator for the parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>∈</mo><msup><mi>ℝ</mi><mi>p</mi></msup></mrow><annotation encoding="application/x-tex">\theta\in\mathbb{R}^p</annotation></semantics></math>.
-When
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\theta}</annotation></semantics></math>
-is a <em>regular and asymptotic linear</em> (RAL) estimator, it has a
-unique iid decomposition
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} \sqrt{n}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \operatorname{IC}(Z_i; P_{0}) + o_{P}(1), 
-\end{align*}</annotation></semantics></math> where the function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>IC</mo><annotation encoding="application/x-tex">\operatorname{IC}</annotation></semantics></math>
-is the unique <em>Influence Function</em> s.t.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mo stretchy="false" form="prefix">{</mo><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbb{E}\{\operatorname{IC}(Z_{i}; P_{0})\}=0</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝕍</mi><mspace width="-0.167em"></mspace><mtext mathvariant="normal">ar</mtext><mo stretchy="false" form="prefix">{</mo><mo>IC</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="false" form="postfix">}</mo><mo>&lt;</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">\mathbb{V}\!\text{ar}\{\operatorname{IC}(Z_{i}; P_{0})^{2}\}&lt;\infty</annotation></semantics></math><span class="citation">(Tsiatis 2006; Vaart 1998)</span>. The influence
-function thus fully characterizes the asymptotic behaviour of the
-estimator and by the central limit theorem it follows that the estimator
-converges weakly to a Gaussian distribution
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mover><mo>→</mo><mi>𝒟</mi></mover><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>𝕍</mi><mspace width="-0.167em"></mspace><mtext mathvariant="normal">ar</mtext><mo stretchy="false" form="prefix">{</mo><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p>Formally, let <span class="math inline">Z_1,\ldots,Z_n</span> be iid
+<span class="math inline">k</span>-dimensional stochastic variables,
+<span class="math inline">Z_i=(Y_{i},A_{i},W_{i})\sim P_{0}</span>, and
+<span class="math inline">\widehat{\theta}</span> a consistent estimator
+for the parameter <span class="math inline">\theta\in\mathbb{R}^p</span>. When <span class="math inline">\widehat{\theta}</span> is a <em>regular and
+asymptotic linear</em> (RAL) estimator, it has a unique iid
+decomposition <span class="math display">\begin{align*}
+\sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \operatorname{IC}(Z_i; P_{0}) + o_{P}(1),
+\end{align*}</span> where the function <span class="math inline">\operatorname{IC}</span> is the unique <em>Influence
+Function</em> s.t. <span class="math inline">\mathbb{E}\{\operatorname{IC}(Z_{i};
+P_{0})\}=0</span> and <span class="math inline">\mathbb{V}\!\text{ar}\{\operatorname{IC}(Z_{i};
+P_{0})^{2}\}&lt;\infty</span> <span class="citation">(Tsiatis 2006;
+Vaart 1998)</span>. The influence function thus fully characterizes the
+asymptotic behaviour of the estimator and by the central limit theorem
+it follows that the estimator converges weakly to a Gaussian
+distribution <span class="math display">
 \sqrt{n}(\widehat{\theta}-\theta) \overset{\mathcal{D}}{\longrightarrow}
 \mathcal{N}(0, \mathbb{V}\!\text{ar}\{\operatorname{IC}(Z; P_{0})\}),
-</annotation></semantics></math> where the empirical variance of the
-plugin estimator,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ℙ</mi><mi>n</mi></msub><mo>IC</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mover><mi>P</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>⊗</mo><mn>2</mn></mrow></msup><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><mover><mi>P</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>IC</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><mover><mi>P</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">\mathbb{P}_{n}\operatorname{IC}(Z; \widehat{P})^{\otimes 2} = \frac{1}{n}\sum_{i=1}^n \operatorname{IC}(Z_{i}; \widehat{P})\operatorname{IC}(Z_{i}; \widehat{P})^{\top}</annotation></semantics></math>
-can be used to obtain a consistent estimate of the asymptotic variance.
-Note, in practice the estimate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>P</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{P}</annotation></semantics></math>
-used in the plugin-estimate, needs only to capture the parts of the
-distribution of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-that is necessary to evaluate the IF. In some cases this nuisance
-parameter can be estimated using flexible machine learning components
-and in other (parametric) cases be derived directly from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\theta}</annotation></semantics></math>.</p>
+</span> where the empirical variance of the plugin estimator, <span class="math inline">\mathbb{P}_{n}\operatorname{IC}(Z;
+\widehat{P})^{\otimes 2} = \frac{1}{n}\sum_{i=1}^n
+\operatorname{IC}(Z_{i}; \widehat{P})\operatorname{IC}(Z_{i};
+\widehat{P})^{\top}</span> can be used to obtain a consistent estimate
+of the asymptotic variance. Note, in practice the estimate <span class="math inline">\widehat{P}</span> used in the plugin-estimate,
+needs only to capture the parts of the distribution of <span class="math inline">Z</span> that is necessary to evaluate the IF. In
+some cases this nuisance parameter can be estimated using flexible
+machine learning components and in other (parametric) cases be derived
+directly from <span class="math inline">\widehat{\theta}</span>.</p>
 <p>The IFs are easily derived for the parameters of many parametric
 statistical models as illustrated in the <a href="#example-generalized-linear-model">next example sections</a>. More
 generally, the IF can also be derived for a smooth target parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Ψ</mi><mo>:</mo><mi>𝒫</mi><mo>→</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">\Psi: \mathcal{P}\to\mathbb{R}</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒫</mi><annotation encoding="application/x-tex">\mathcal{P}</annotation></semantics></math>
-is a family of probability distributions forming the statistical model,
-which often can be left completely non-parametric. Formally, the
-parameter must be <em>pathwise differentiable</em> see <span class="citation">(Vaart 1998)</span> in the sense that there exists
-linear bounded function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Ψ</mi><mo accent="true">̇</mo></mover><mo>:</mo><msub><mi>L</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>→</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">\dot\Psi\colon L_{2}(P_{0})\to\mathbb{R}</annotation></semantics></math>
-such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="true" form="postfix">]</mo></mrow><msup><mi>t</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>→</mo><mover><mi>Ψ</mi><mo accent="true">̇</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to \dot\Psi(P_{0})(g)</annotation></semantics></math>
-as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>→</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">t\to 0</annotation></semantics></math>
-for any parametric submodel
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_t</annotation></semantics></math>
-with score model
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>∂</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>∂</mi><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>p</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo stretchy="false" form="prefix">|</mo><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow></msub></mrow><annotation encoding="application/x-tex">g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}</annotation></semantics></math>.
-Riesz’s representation theorem then tells us that the directional
-derivative has a unique representer,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><msub><mi>P</mi><mn>0</mn></msub></msub><annotation encoding="application/x-tex">\phi_{P_{0}}</annotation></semantics></math>
-lying in the closure of the submodel score space (the <em>tangent
-space</em>), s.t.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>Ψ</mi><mo accent="true">̇</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><msub><mi>ϕ</mi><msub><mi>P</mi><mn>0</mn></msub></msub><mo>,</mo><mi>g</mi><mo stretchy="false" form="postfix">⟩</mo><mo>=</mo><mo>∫</mo><msub><mi>ϕ</mi><msub><mi>P</mi><mn>0</mn></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><msub><mi>P</mi><mn>0</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+<span class="math inline">\Psi: \mathcal{P}\to\mathbb{R}</span> where
+<span class="math inline">\mathcal{P}</span> is a family of probability
+distributions forming the statistical model, which often can be left
+completely non-parametric. Formally, the parameter must be <em>pathwise
+differentiable</em> see <span class="citation">(Vaart 1998)</span> in
+the sense that there exists linear bounded function <span class="math inline">\dot\Psi\colon L_{2}(P_{0})\to\mathbb{R}</span> such
+that <span class="math inline">[\Psi(P_{t}) - \Psi(P_{0}))]t^{-1} \to
+\dot\Psi(P_{0})(g)</span> as <span class="math inline">t\to 0</span> for
+any parametric submodel <span class="math inline">P_t</span> with score
+model <span class="math inline">g(z)= \partial/(\partial t) \log
+(p_t)(z)|_{t=0}</span>. Riesz’s representation theorem then tells us
+that the directional derivative has a unique representer, <span class="math inline">\phi_{P_{0}}</span> lying in the closure of the
+submodel score space (the <em>tangent space</em>), s.t. <span class="math display">\begin{align*}
     \dot\Psi(P_0)(g) = \langle\phi_{P_0}, g\rangle =
     \int \phi_{P_0}(Z)g(X)\,dP_0
-\end{align*}</annotation></semantics></math> The unique representer is
-exactly the IF which can be found by solving the above integral
-equation. For more details on how to derive influence functions, we
-refer to <span class="citation">(Laan and Rose 2011; Hines et al.
-2022)</span>.</p>
-<p>As an example we might be interested in the target parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Psi(P) = \mathbb{E}_P(Z)</annotation></semantics></math>
-which can be shown to have the unique (and thereby efficient) influence
-function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>↦</mo><mi>Z</mi><mo>−</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z\mapsto Z-\mathbb{E}_P(Z)</annotation></semantics></math>
-under the non-parametric model. Another target parameter could be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Ψ</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\Psi_{a}(P) = \mathbb{E}_{P}[\mathbb{E}_{P}(Y\mid A=a, W)]</annotation></semantics></math>
-which is often a key interest in causal inference and which has the IF
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>,</mo><mi>A</mi><mo>,</mo><mi>W</mi><mo>;</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>𝟏</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>−</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><msub><mi>Ψ</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\operatorname{IC}(Y,A,W; P) = \frac{\mathbf{1}(A=a)}{\mathbb{P}(A=a\mid W)}(Y-\mathbb{E}_{P}[Y\mid A=a,W]) + \mathbb{E}_{P}[Y\mid
+\end{align*}</span> The unique representer is exactly the IF which can
+be found by solving the above integral equation. For more details on how
+to derive influence functions, we refer to <span class="citation">(Laan
+and Rose 2011; Hines et al. 2022)</span>.</p>
+<p>As an example we might be interested in the target parameter <span class="math inline">\Psi(P) = \mathbb{E}_P(Z)</span> which can be shown
+to have the unique (and thereby efficient) influence function <span class="math inline">Z\mapsto Z-\mathbb{E}_P(Z)</span> under the
+non-parametric model. Another target parameter could be <span class="math inline">\Psi_{a}(P) = \mathbb{E}_{P}[\mathbb{E}_{P}(Y\mid
+A=a, W)]</span> which is often a key interest in causal inference and
+which has the IF <span class="math display">\begin{align*}
+\operatorname{IC}(Y,A,W; P) = \frac{\mathbf{1}(A=a)}{\mathbb{P}(A=a\mid
+W)}(Y-\mathbb{E}_{P}[Y\mid A=a,W]) + \mathbb{E}_{P}[Y\mid
 A=a,W] - \Psi_{a}(P)
-\end{align*}</annotation></semantics></math> See section on <a href="#average-treatment-effects">average treatment effects</a>.</p>
+\end{align*}</span> See section on <a href="#average-treatment-effects">average treatment effects</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="working-with-influence-functions-with-lavaestimate">Working with influence functions with
@@ -227,9 +202,11 @@ building blocks</a> for more details.</p>
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <p>To illustrate the methods we consider data arising from the model
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∼</mo><mi>B</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>o</mi><mi>u</mi><mi>l</mi><mi>l</mi><mi>i</mi><mo stretchy="false" form="prefix">{</mo><mo>expit</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>A</mi><mi>i</mi></msub><mo>+</mo><msub><mi>W</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>,</mo><msub><mi>A</mi><mi>i</mi></msub><mo>∼</mo><mi>B</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>o</mi><mi>u</mi><mi>l</mi><mi>l</mi><mi>i</mi><mo stretchy="false" form="prefix">{</mo><mo>expit</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>W</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Y_{ij} \sim Bernoulli\{\operatorname{expit}(X_{ij} + A_{i} + W_{i})\}, A_{i} \sim Bernoulli\{\operatorname{expit}(W_{i})\}</annotation></semantics></math>
-with independent covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>W</mi><mi>i</mi></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">X_{ij}\sim\mathcal{N}(0,1), W_{i}\sim\mathcal{N}(0,1)</annotation></semantics></math>.</p>
+<span class="math inline">Y_{ij} \sim
+Bernoulli\{\operatorname{expit}(X_{ij} + A_{i} + W_{i})\}, A_{i} \sim
+Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent
+covariates <span class="math inline">X_{ij}\sim\mathcal{N}(0,1),
+W_{i}\sim\mathcal{N}(0,1)</span>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -239,8 +216,7 @@ with independent covariates
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">Sequence.lvm</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>We simulate from the model where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>3</mn></msub><annotation encoding="application/x-tex">Y_3</annotation></semantics></math>
+<p>We simulate from the model where <span class="math inline">Y_3</span>
 is only observed for half of the subjects</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">4e2</span></span>
@@ -284,18 +260,16 @@ is only observed for half of the subjects</p>
 <h3 id="example-population-mean">Example: population mean<a class="anchor" aria-label="anchor" href="#example-population-mean"></a>
 </h3>
 <p>Here we first consider the problem of estimating the IF of the mean.
-For a general transformation
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>:</mo><msup><mi>ℝ</mi><mi>k</mi></msup><mo>→</mo><msup><mi>ℝ</mi><mi>p</mi></msup></mrow><annotation encoding="application/x-tex">f: \mathbb{R}^k\to\mathbb{R}^p</annotation></semantics></math>
-we have that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>n</mi></msqrt><mo stretchy="false" form="prefix">{</mo><msub><mi>ℙ</mi><mi>n</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">
-\sqrt{n}\{\mathbb{P}_{n}f(X) - \mathbb{E}[f(X)]\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} 
+For a general transformation <span class="math inline">f:
+\mathbb{R}^k\to\mathbb{R}^p</span> we have that <span class="math display">
+\sqrt{n}\{\mathbb{P}_{n}f(X) - \mathbb{E}[f(X)]\} =
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 f(X_{i}) - \mathbb{E}[f(X)]
-</annotation></semantics></math><!-- $$
-<!-- \sqrt{n}\{\mathbb{P}_{n}f(X) - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} --><!-- \one(Y_{1i}=1) - \pr(Y_{1}=1) --><!-- $$  --> and hence for the
-problem of estimating the proportion of the binary outcome
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>1</mn></msub><annotation encoding="application/x-tex">Y_1</annotation></semantics></math>,
-the IF is given by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>𝟏</mn><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mn>1</mn></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mn>1</mn></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{1}(Y_{1}=1) - \mathbb{P}(Y_{1}=1)</annotation></semantics></math>.</p>
+</span> <!-- $$
+<!-- \sqrt{n}\{\mathbb{P}_{n}f(X) - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} -->
+<!-- \one(Y_{1i}=1) - \pr(Y_{1}=1) --> <!-- $$  --> and hence for the
+problem of estimating the proportion of the binary outcome <span class="math inline">Y_1</span>, the IF is given by <span class="math inline">\mathbf{1}(Y_{1}=1) -
+\mathbb{P}(Y_{1}=1)</span>.</p>
 <p>To estimate this parameter and its IF we will use the
 <code>estimate</code> function</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -402,17 +376,14 @@ each of the two binary outcomes</p>
 <div class="section level3">
 <h3 id="example-generalized-linear-model">Example: generalized linear model<a class="anchor" aria-label="anchor" href="#example-generalized-linear-model"></a>
 </h3>
-<p>For a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>-estimator
-defined by the score equation
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E[U(Z; \theta)] = 0</annotation></semantics></math>,
-the IF is given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><mi>𝔼</mi><mo minsize="1.8" maxsize="1.8" stretchy="false" form="prefix">{</mo><mfrac><mi>∂</mi><mrow><mi>∂</mi><msup><mi>θ</mi><mi>⊤</mi></msup></mrow></mfrac><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>;</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mo minsize="1.8" maxsize="1.8" stretchy="false" form="postfix">}</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} IC(Z; \theta) =
--\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
-\end{align*}</annotation></semantics></math> In particular, for a
-maximum likelihood estimator the score,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>,
-is given by the partial derivative of the log-likelihood function.</p>
+<p>For a <span class="math inline">Z</span>-estimator defined by the
+score equation <span class="math inline">E[U(Z; \theta)] = 0</span>, the
+IF is given by <span class="math display">\begin{align*} IC(Z; \theta) =
+-\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta;
+Z)\Big\}^{-1}U(Z; \theta)
+\end{align*}</span> In particular, for a maximum likelihood estimator
+the score, <span class="math inline">U</span>, is given by the partial
+derivative of the log-likelihood function.</p>
 <p>As an example, we can obtain the estimates with robust standard
 errors for a logistic regression model:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -442,10 +413,10 @@ directly from the model object</p>
 <span><span class="co">#&gt; 6 -2.77584564   3.340948  1.8677174</span></span></code></pre></div>
 <p>The same estimates can be obtained with a <em>cumulative link
 regression</em> model which also generalizes to ordinal outcomes. Here
-we consider the proportional odds model given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>≤</mo><mi>j</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>−</mo><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>≤</mo><mi>j</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>j</mi></msub><mo>+</mo><msup><mi>β</mi><mi>t</mi></msup><mi>x</mi><mo>,</mo><mspace width="1.0em"></mspace><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>J</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
-\end{align*}</annotation></semantics></math></p>
+we consider the proportional odds model given by <span class="math display">\begin{align*}
+\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
+x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
+\end{align*}</span></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ordreg.html">ordreg</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x1</span>, <span class="va">dw</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5%   P-value</span></span>
@@ -497,10 +468,9 @@ survival model with right-censored event times</p>
 <span><span class="co">#&gt; [5,] -0.22936186  0.9721761</span></span>
 <span><span class="co">#&gt; [6,]  0.07015171  0.5644414</span></span></code></pre></div>
 <p>The IF for the baseline cumulative hazard at a specific time point
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>Λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>u</mi><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\Lambda_0(t) = \int_0^t \lambda_0(u)\,du, 
-\end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_0(t)</annotation></semantics></math>
+<span class="math display">\begin{align*}
+\Lambda_0(t) = \int_0^t \lambda_0(u)\,du,
+\end{align*}</span> where <span class="math inline">\lambda_0(t)</span>
 is the baseline hazard, can be estimated in similar way:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">time</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -534,10 +504,11 @@ available for parametric survival models via
 <h3 id="example-random-effects-model-structural-equation-model">Example: random effects model / structural equation model<a class="anchor" aria-label="anchor" href="#example-random-effects-model-structural-equation-model"></a>
 </h3>
 <p>General structural equation models (SEMs) can be estimated with
-<code><a href="../reference/lvm.html">lava::lvm</a></code>. Here we fit a random effects probit model
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>U</mi><mi>i</mi></msub><mo>,</mo><msub><mi>W</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>Φ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>μ</mi><mi>j</mi></msub><mo>+</mo><msub><mi>β</mi><mi>j</mi></msub><msub><mi>W</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>U</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>U</mi><mi>i</mi></msub><mo>∼</mo><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msubsup><mi>σ</mi><mi>u</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mspace width="1.0em"></mspace><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">
-\mathbb{P}(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
-</annotation></semantics></math> to the simulated dataset</p>
+<code><a href="../reference/lvm.html">lava::lvm</a></code>. Here we fit a random effects probit model <span class="math display">
+\mathbb{P}(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j}
+W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad
+j=1,2
+</span> to the simulated dataset</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sem</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">*</span> <span class="va">u</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/vars.html">latent</a></span><span class="op">(</span><span class="op">~</span> <span class="va">u</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -556,30 +527,19 @@ available for parametric survival models via
 <div class="section level3">
 <h3 id="example-quantile">Example: quantile<a class="anchor" aria-label="anchor" href="#example-quantile"></a>
 </h3>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-denote the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>th
-quantile of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>,
-with IF
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>τ</mi><mo>−</mo><mn>𝟏</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>≤</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>f</mi><mn>0</mn></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\operatorname{IC}(x; P_{0}) = \tau - \mathbf{1}(x\leq \beta)f_{0}(\beta)^{-1} 
-\end{align*}</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mn>0</mn></msub><annotation encoding="application/x-tex">f_{0}</annotation></semantics></math>
-is the density function of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
+<p>Let <span class="math inline">\beta</span> denote the <span class="math inline">\tau</span>th quantile of <span class="math inline">X</span>, with IF <span class="math display">\begin{align*}
+\operatorname{IC}(x; P_{0}) = \tau - \mathbf{1}(x\leq
+\beta)f_{0}(\beta)^{-1}
+\end{align*}</span></p>
+<p>where <span class="math inline">f_{0}</span> is the density function
+of <span class="math inline">X</span>.</p>
 <p>To calculate the variance estimate, an estimate of the density is
 thus needed which can be obtained by a kernel estimate. Alternatively,
 the resampling method of <span class="citation">(Zeng and Lin
 2008)</span> can be applied. Here we use a kernel smoother (additional
 arguments to the <code>estimate</code> function are parsed on to
 <code><a href="https://rdrr.io/r/stats/density.html" class="external-link">stats::density.default</a></code>) to estimate the quantiles and IF
-for the 25%, 50%, and 75% quantiles of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>1</mn></msub><annotation encoding="application/x-tex">X_1</annotation></semantics></math></p>
+for the 25%, 50%, and 75% quantiles of <span class="math inline">W</span> and <span class="math inline">X_1</span></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">dw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"w"</span>, <span class="st">"x1"</span><span class="op">)</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"quantile"</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">eq</span></span>
@@ -607,36 +567,30 @@ and
 allows for transforming or combining different estimates while easily
 deriving the resulting IF and thereby asymptotic distribution of the new
 estimator.</p>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{\theta}_{1}, \ldots, \widehat{\theta}_{M}</annotation></semantics></math>
-be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-different estimators with decompositions
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>m</mi></msub><mo>−</mo><msub><mi>θ</mi><mi>m</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mo>IC</mo><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sqrt{n}(\widehat{\theta}_{m}-\theta_{m}) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
+<p>Let <span class="math inline">\widehat{\theta}_{1}, \ldots,
+\widehat{\theta}_{M}</span> be <span class="math inline">M</span>
+different estimators with decompositions <span class="math display">\begin{align*}
+\sqrt{n}(\widehat{\theta}_{m}-\theta_{m}) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 \operatorname{IC}_m(Z_i; P_{0}) + o_{P}(1)
-\end{align*}</annotation></semantics></math> based on iid data
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Z_1,\ldots,Z_n</annotation></semantics></math>.
-It then follows immediately <span class="citation">(Vaart 1998 Theorem
-18.10[vi])</span> that the joint distribution of $ - {}=
-(<em>{1}<sup>{},,<em>{M}<sup>{})</sup>-
-({}</em>{1}</sup>{},,{}</em>{M}<sup>{})</sup> $ is given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><munder><munder><msup><mrow><mo stretchy="true" form="prefix">[</mo><msub><mo>IC</mo><mn>1</mn></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup><mo>,</mo><mi>…</mi><mo>,</mo><msub><mo>IC</mo><mi>M</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mi>⊤</mi></msup><mo accent="true">⏟</mo></munder><mrow><mover><mo>IC</mo><mo accent="true">¯</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></munder><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mover><mo>→</mo><mi>𝒟</mi></mover><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>Σ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sqrt{n}(\widehat{\theta}-\theta) &amp;= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
-\underbrace{[\operatorname{IC}_{1}(Z_i; P_{0})^\top,\ldots,\operatorname{IC}_{M}(Z_i; P_{0})^\top]^{\top}}_{\overline{\operatorname{IC}}(Z_i; P_{0})} + o_{P}(1) \\
+\end{align*}</span> based on iid data <span class="math inline">Z_1,\ldots,Z_n</span>. It then follows immediately
+<span class="citation">(Vaart 1998 Theorem 18.10[vi])</span> that the
+joint distribution of $ - {}= (<em>{1}<sup>{},,<em>{M}<sup>{})</sup>-
+({}</em>{1}</sup>{},,{}</em>{M}<sup>{})</sup> $ is given by <span class="math display">\begin{align*}
+\sqrt{n}(\widehat{\theta}-\theta) &amp;=
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}
+\underbrace{[\operatorname{IC}_{1}(Z_i;
+P_{0})^\top,\ldots,\operatorname{IC}_{M}(Z_i;
+P_{0})^\top]^{\top}}_{\overline{\operatorname{IC}}(Z_i; P_{0})} +
+o_{P}(1) \\
 &amp;\overset{\mathcal{D}}{\longrightarrow}\mathcal{N}(0,\Sigma)
-\end{align*}</annotation></semantics></math> by the CLT, and under
-regulatory conditions
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ℙ</mi><mi>n</mi></msub><mover><mo>IC</mo><mo accent="true">¯</mo></mover><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><mover><mi>P</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>⊗</mo><mn>2</mn></mrow></msup><mover><mo>→</mo><mi>P</mi></mover><mi>Σ</mi></mrow><annotation encoding="application/x-tex">\mathbb{P}_{n}\overline{\operatorname{IC}}(Z_i; \widehat{P})^{\otimes 2} \overset{P}{\longrightarrow}\Sigma</annotation></semantics></math>
-as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">n\to\infty</annotation></semantics></math>.</p>
+\end{align*}</span> by the CLT, and under regulatory conditions <span class="math inline">\mathbb{P}_{n}\overline{\operatorname{IC}}(Z_i;
+\widehat{P})^{\otimes 2} \overset{P}{\longrightarrow}\Sigma</span> as
+<span class="math inline">n\to\infty</span>.</p>
 <p>To illustrate this we consider two marginal logistic regression
-models fitted separately for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>1</mn></msub><annotation encoding="application/x-tex">Y_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>2</mn></msub><annotation encoding="application/x-tex">Y_2</annotation></semantics></math>
-and combine the estimates and IFs using the <code>merge</code>
-method</p>
+models fitted separately for <span class="math inline">Y_1</span> and
+<span class="math inline">Y_2</span> and combine the estimates and IFs
+using the <code>merge</code> method</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span>, family<span class="op">=</span><span class="va">binomial</span>, data<span class="op">=</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, family<span class="op">=</span><span class="va">binomial</span>, data<span class="op">=</span><span class="va">dw</span><span class="op">)</span></span>
@@ -673,57 +627,34 @@ testing</a>.</p>
 <div class="section level3">
 <h3 id="imbalanced-data">Imbalanced data<a class="anchor" aria-label="anchor" href="#imbalanced-data"></a>
 </h3>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>O</mi><mn>1</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><msub><mi>R</mi><mn>1</mn></msub><mo>,</mo><msub><mi>R</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>O</mi><mi>N</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>N</mi></msub><msub><mi>R</mi><mi>N</mi></msub><mo>,</mo><msub><mi>R</mi><mi>N</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">O_{1} = (Z_{1}R_{1}, R_{1}), \ldots, O_{N}=(Z_{N}R_{N}, R_{N})</annotation></semantics></math>
-be iid with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mspace width="-0.167em"></mspace><mo>⊥</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⊥</mo><mspace width="-0.167em"></mspace><msub><mi>Z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">R_{i}\!\perp\!\!\!\!\perp\!Z_i</annotation></semantics></math>
-and let the full-data IF for some estimator of a parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>∈</mo><msup><mi>ℝ</mi><mi>p</mi></msup></mrow><annotation encoding="application/x-tex">\theta\in\mathbb{R}^p</annotation></semantics></math>
-be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">IC(\cdot; P_{0})</annotation></semantics></math>.
-For convenience let the data be ordered
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>𝟏</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>≤</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">R_{i}=\mathbf{1}(i\leq n)</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
-is the number of observed data points, then the complete-case estimator
-is consistent and based on same IF</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P_{0}) + o_{P}(1).
-\end{align*}</annotation></semantics></math></p>
+<p>Let <span class="math inline">O_{1} = (Z_{1}R_{1}, R_{1}), \ldots,
+O_{N}=(Z_{N}R_{N}, R_{N})</span> be iid with <span class="math inline">R_{i}\!\perp\!\!\!\!\perp\!Z_i</span> and let the
+full-data IF for some estimator of a parameter <span class="math inline">\theta\in\mathbb{R}^p</span> be <span class="math inline">IC(\cdot; P_{0})</span>. For convenience let the
+data be ordered <span class="math inline">R_{i}=\mathbf{1}(i\leq
+n)</span> where <span class="math inline">n</span> is the number of
+observed data points, then the complete-case estimator is consistent and
+based on same IF</p>
+<p><span class="math display">\begin{align*}
+\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n
+IC(Z_i; P_{0}) + o_{P}(1).
+\end{align*}</span></p>
 <p>This estimator can also be decomposed in terms of the observed data
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>O</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>O</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">O_1,\ldots,O_N</annotation></semantics></math>
-noting that</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>N</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>N</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mfrac><mrow><msub><mi>R</mi><mi>i</mi></msub><mi>N</mi></mrow><mi>n</mi></mfrac><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sqrt{N}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}\sum_{i=1}^N IC(Z_i;
+<span class="math inline">O_1,\ldots,O_N</span> noting that</p>
+<p><span class="math display">\begin{align*}
+\sqrt{N}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}\sum_{i=1}^N
+IC(Z_i;
 P)\frac{R_i N}{n} + o_{P}(1).
-\end{align*}</annotation></semantics></math></p>
-<p>where the term
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><msub><mi>R</mi><mi>i</mi></msub><mi>N</mi></mrow><mi>n</mi></mfrac><annotation encoding="application/x-tex">\frac{R_i N}{n}</annotation></semantics></math>
+\end{align*}</span></p>
+<p>where the term <span class="math inline">\frac{R_i N}{n}</span>
 corresponds to an inverse probability weighting with the empirical
-plugin estimate of the proportion of observed data
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">R=1</annotation></semantics></math>.
-Under a missing completely at random assumption we can therefore combine
-estimators that are estimated on different datasets. Let the observed
-data be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>11</mn></msub><msub><mi>R</mi><mn>11</mn></msub><mo>,</mo><msub><mi>R</mi><mn>11</mn></msub><mo>,</mo><msub><mi>Z</mi><mn>21</mn></msub><msub><mi>R</mi><mn>21</mn></msub><mo>,</mo><msub><mi>R</mi><mn>21</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>…</mi><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mn>1</mn><mi>N</mi></mrow></msub><msub><mi>R</mi><mrow><mn>1</mn><mi>N</mi></mrow></msub><mo>,</mo><msub><mi>R</mi><mrow><mn>1</mn><mi>N</mi></mrow></msub><mo>,</mo><msub><mi>Z</mi><mrow><mn>2</mn><mi>N</mi></mrow></msub><msub><mi>R</mi><mrow><mn>2</mn><mi>N</mi></mrow></msub><mo>,</mo><msub><mi>R</mi><mrow><mn>2</mn><mi>N</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Z_{11}R_{11}, R_{11}, Z_{21}R_{21}, R_{21}), \ldots, (Z_{1N}R_{1N}, R_{1N}, Z_{2N}R_{2N}, R_{2N}))</annotation></semantics></math>
-with complete-case estimators
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><annotation encoding="application/x-tex">\widehat{\theta}_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mn>2</mn></msub><annotation encoding="application/x-tex">\widehat{\theta}_2</annotation></semantics></math>
-for parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\theta_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\theta_2</annotation></semantics></math>
-based on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>11</mn></msub><msub><mi>R</mi><mn>11</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mrow><mn>1</mn><mi>N</mi></mrow></msub><msub><mi>R</mi><mrow><mn>1</mn><mi>N</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Z_{11}R_{11}, \ldots, Z_{1N}R_{1N})</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>21</mn></msub><msub><mi>R</mi><mn>21</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mrow><mn>2</mn><mi>N</mi></mrow></msub><msub><mi>R</mi><mrow><mn>2</mn><mi>N</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Z_{21}R_{21}, \ldots, Z_{2N}R_{2N})</annotation></semantics></math>,
-respectively, and let the corresponding IFs be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><msub><mi>C</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">IC_{1}(\cdot; P_{0})</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><msub><mi>C</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo>;</mo><mspace width="0.222em"></mspace><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">IC_{2}(\cdot;\ P)</annotation></semantics></math>.
-It then follows that</p>
-<p><span class="math display">$$\begin{align*}
+plugin estimate of the proportion of observed data <span class="math inline">R=1</span>. Under a missing completely at random
+assumption we can therefore combine estimators that are estimated on
+different datasets. Let the observed data be <span class="math inline">(Z_{11}R_{11}, R_{11}, Z_{21}R_{21}, R_{21}),
+\ldots, (Z_{1N}R_{1N}, R_{1N}, Z_{2N}R_{2N}, R_{2N}))</span> with
+complete-case estimators <span class="math inline">\widehat{\theta}_1</span> and <span class="math inline">\widehat{\theta}_2</span> for parameters <span class="math inline">\theta_1</span> and <span class="math inline">\theta_2</span> based on <span class="math inline">(Z_{11}R_{11}, \ldots, Z_{1N}R_{1N})</span> and
+<span class="math inline">(Z_{21}R_{21}, \ldots, Z_{2N}R_{2N})</span>,
+respectively, and let the corresponding IFs be <span class="math inline">IC_{1}(\cdot; P_{0})</span> and <span class="math inline">IC_{2}(\cdot;\ P)</span>. It then follows that</p>
+<p><span class="math display">\begin{align*}
 \sqrt{N}\left\{
 \begin{pmatrix}
 \widehat{\theta}_1 \\
@@ -742,15 +673,12 @@ IC_1(Z_{1i}; P_{0})\frac{R_{1i}N}{R_{1\bullet}} \\
 IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 \end{pmatrix}
 + o_{P}(1)
-\end{align*}$$</span></p>
-<p>with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi>k</mi><mo>•</mo></mrow></msub><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><msub><mi>R</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">R_{k\bullet} = \sum_{i=1}^{N}R_{ki}.</annotation></semantics></math>
-Returning to the example, we can combine the marginal estimates of two
-model objects that have been estimated from different datasets (as the
-outcome
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>3</mn></msub><annotation encoding="application/x-tex">Y_3</annotation></semantics></math>
-is only available in half of the data) with the <code>merge</code>
-function</p>
+\end{align*}</span></p>
+<p>with <span class="math inline">R_{k\bullet} =
+\sum_{i=1}^{N}R_{ki}.</span> Returning to the example, we can combine
+the marginal estimates of two model objects that have been estimated
+from different datasets (as the outcome <span class="math inline">Y_3</span> is only available in half of the data)
+with the <code>merge</code> function</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">g2</span><span class="op">)</span></span>
@@ -933,36 +861,24 @@ parameters and IFs before the actual merging is being done</p>
 <div class="section level3">
 <h3 id="clustered-data-non-iid-case">Clustered data (non-iid case)<a class="anchor" aria-label="anchor" href="#clustered-data-non-iid-case"></a>
 </h3>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mrow><mi>i</mi><msub><mi>N</mi><mi>i</mi></msub></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z_i = (Z_{i1},\ldots,Z_{iN_{i}})</annotation></semantics></math>
-and assume that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>,</mo><msub><mi>N</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>P</mi></mrow><annotation encoding="application/x-tex">(Z_{i}, N_{i}) \sim P</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">i=1,\ldots,n</annotation></semantics></math>
-are iid and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>i</mi></msub><mspace width="-0.167em"></mspace><mo>⊥</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⊥</mo><mspace width="-0.167em"></mspace><msub><mi>Z</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_i\!\perp\!\!\!\!\perp\!Z_{ij}</annotation></semantics></math>.
-The variables
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mrow><mi>i</mi><msub><mi>N</mi><mi>i</mi></msub></mrow></msub></mrow><annotation encoding="application/x-tex">Z_{i1},\ldots,Z_{iN_{i}}</annotation></semantics></math>
-we assume are exchangeable but not necessarily independent. Define
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><msub><mi>N</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">N = \sum_{i=1}^{n} N_i</annotation></semantics></math>,
-and assume that a parameter estimate,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>∈</mo><msup><mi>ℝ</mi><mi>p</mi></msup></mrow><annotation encoding="application/x-tex">\widehat{\theta}\in\mathbb{R}^p</annotation></semantics></math>
-has the decomposition
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>N</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>N</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>i</mi></msub></munderover><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+<p>Let <span class="math inline">Z_i = (Z_{i1},\ldots,Z_{iN_{i}})</span>
+and assume that <span class="math inline">(Z_{i}, N_{i}) \sim P</span>,
+<span class="math inline">i=1,\ldots,n</span> are iid and <span class="math inline">N_i\!\perp\!\!\!\!\perp\!Z_{ij}</span>. The
+variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}</span> we
+assume are exchangeable but not necessarily independent. Define <span class="math inline">N = \sum_{i=1}^{n} N_i</span>, and assume that a
+parameter estimate, <span class="math inline">\widehat{\theta}\in\mathbb{R}^p</span> has the
+decomposition <span class="math display">
 \sqrt{N}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{N}}
 \sum_{i=1}^{n} \sum_{k=1}^{N_{i}} IC(Z_{ik}; P_{0}) + o_{P}(1).
-</annotation></semantics></math> It then follows that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mover><mo>IC</mo><mo accent="true">̃</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\sqrt{n}(\widehat{\theta}-\theta) = 
+</span> It then follows that <span class="math display">
+\sqrt{n}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{n}}
 \sum_{i=1}^{n} \widetilde{\operatorname{IC}}(Z_{i}; P_{0}) + o_{P}(1)
-</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mo>IC</mo><mo accent="true">̃</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>i</mi></msub></msubsup><mfrac><mi>n</mi><mi>N</mi></mfrac><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widetilde{\operatorname{IC}}(Z_{i}; P_{0}) = \sum_{k=1}^{N_{i}} \frac{n}{N}IC(Z_{ik}; P_{0})</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">i=1,\ldots,n</annotation></semantics></math>
-which are iid an therefore admits the usual CLT to derive the asymptotic
-variance of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\theta}</annotation></semantics></math>.
-Turning back to the example data, we can estimate the marginal model</p>
+</span> with <span class="math inline">\widetilde{\operatorname{IC}}(Z_{i}; P_{0}) =
+\sum_{k=1}^{N_{i}} \frac{n}{N}IC(Z_{ik}; P_{0})</span>, <span class="math inline">i=1,\ldots,n</span> which are iid an therefore
+admits the usual CLT to derive the asymptotic variance of <span class="math inline">\widehat{\theta}</span>. Turning back to the example
+data, we can estimate the marginal model</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span> <span class="op">+</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">dl</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The asymptotic variance estimate ignoring that the observations are
@@ -1043,31 +959,21 @@ same grouping must be used across estimates when combining IFs.</p>
 <div class="section level2">
 <h2 id="if-building-blocks-transformations-and-the-delta-theorem">IF building blocks: transformations and the delta theorem<a class="anchor" aria-label="anchor" href="#if-building-blocks-transformations-and-the-delta-theorem"></a>
 </h2>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>:</mo><msup><mi>ℝ</mi><mi>p</mi></msup><mo>→</mo><msup><mi>ℝ</mi><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">\phi\colon \mathbb{R}^p\to\mathbb{R}^m</annotation></semantics></math>
-be differentiable at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-and assume that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>n</mi></msub><annotation encoding="application/x-tex">\widehat{\theta}_n</annotation></semantics></math>
-is RAL estimator with IF given by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{IC}(\cdot; P_{0})</annotation></semantics></math>
-such that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>n</mi></msub><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} 
+<p>Let <span class="math inline">\phi\colon
+\mathbb{R}^p\to\mathbb{R}^m</span> be differentiable at <span class="math inline">\theta</span> and assume that <span class="math inline">\widehat{\theta}_n</span> is RAL estimator with IF
+given by <span class="math inline">\operatorname{IC}(\cdot;
+P_{0})</span> such that <span class="math display">\begin{align*}
 \sqrt{n}(\widehat{\theta}_n - \theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \operatorname{IC}(Z_i; P_{0}) + o_{P}(1), 
-\end{align*}</annotation></semantics></math> then by the delta method
-<span class="citation">(Vaart 1998 Theorem 3.1)</span>
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mo stretchy="false" form="prefix">{</mo><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>∇</mi><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} 
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \operatorname{IC}(Z_i; P_{0}) + o_{P}(1),
+\end{align*}</span> then by the delta method <span class="citation">(Vaart 1998 Theorem 3.1)</span> <span class="math display">\begin{align*}
 \sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\}  =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla\phi(\theta)\operatorname{IC}(Z_i; P_{0}) + o_{P}(1), 
-\end{align*}</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>:</mo><mi>θ</mi><mo>↦</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ϕ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>ϕ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">\phi\colon \theta\mapsto (\phi_{1}(\theta),\ldots,\phi_{m}(\theta))^\top</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>∇</mi><annotation encoding="application/x-tex">\nabla</annotation></semantics></math>
-is the partial derivative operator
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>∇</mi><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mfrac displaystyle="false"><mi>∂</mi><mrow><mi>∂</mi><msub><mi>θ</mi><mn>1</mn></msub></mrow></mfrac><msub><mi>ϕ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mfrac displaystyle="false"><mi>∂</mi><mrow><mi>∂</mi><msub><mi>θ</mi><mi>p</mi></msub></mrow></mfrac><msub><mi>ϕ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mfrac displaystyle="false"><mi>∂</mi><mrow><mi>∂</mi><msub><mi>θ</mi><mn>1</mn></msub></mrow></mfrac><msub><mi>ϕ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mfrac displaystyle="false"><mi>∂</mi><mrow><mi>∂</mi><msub><mi>θ</mi><mi>p</mi></msub></mrow></mfrac><msub><mi>ϕ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\nabla\phi(\theta) = 
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla\phi(\theta)\operatorname{IC}(Z_i;
+P_{0}) + o_{P}(1),
+\end{align*}</span></p>
+<p>where <span class="math inline">\phi\colon \theta\mapsto
+(\phi_{1}(\theta),\ldots,\phi_{m}(\theta))^\top</span> and <span class="math inline">\nabla</span> is the partial derivative operator
+<span class="math display">\begin{align*}
+\nabla\phi(\theta) =
 \begin{pmatrix}
 \tfrac{\partial}{\partial\theta_1}\phi_1(\theta) &amp; \cdots &amp;
 \tfrac{\partial}{\partial\theta_p}\phi_1(\theta) \\
@@ -1075,7 +981,7 @@ is the partial derivative operator
 \tfrac{\partial}{\partial\theta_1}\phi_m(\theta) &amp; \cdots &amp;
 \tfrac{\partial}{\partial\theta_p}\phi_m(\theta) \\
 \end{pmatrix}.
-\end{align*}</annotation></semantics></math></p>
+\end{align*}</span></p>
 <p>Together with the ability to derive the joint IF from marginal IFs,
 this provides us with a powerful tool for constructing new estimates
 using the IFs as the fundamental building blocks.</p>
@@ -1165,24 +1071,36 @@ matrix (see also Section on <a href="#linear-contrasts-and-hypothesis-testing">L
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 10.66, df = 2, p-value = 0.004855</span></span></code></pre></div>
-<p>The following transformations are implemented - trigonometric
-functions: <code>cos</code>, <code>sin</code>, <code>tan</code> -
-inverse trigonometric functions: <code>acos</code>, <code>asin</code>,
-<code>atan</code> - hyperbolic functions: <code>cosh</code>,
-<code>sinh</code>, <code>tanh</code> - inverse hyperbolic functions:
-<code>acosh</code>, <code>asinh</code>, <code>atanh</code> - other
-mathematical functions: <code>log</code>, <code>log1p</code>,
-<code>exp</code>, <code>expm1</code>, <code>sqrt</code> - mathematical
-operators: <code>+</code>, <code>-</code>, <code>*</code>,
-<code>/</code>, <code>^</code>, <code>prod</code>, <code>sum</code>,
-<code>%*%</code> and any compositions of these functions, which also
-means we can immediately apply most existing user-defined functions. To
-give an example consider the <code>logit</code> function</p>
+<p>The following transformations are implemented</p>
+<ul>
+<li>trigonometric functions: <code>cos</code>, <code>sin</code>,
+<code>tan</code>
+</li>
+<li>inverse trigonometric functions: <code>acos</code>,
+<code>asin</code>, <code>atan</code>
+</li>
+<li>hyperbolic functions: <code>cosh</code>, <code>sinh</code>,
+<code>tanh</code>
+</li>
+<li>inverse hyperbolic functions: <code>acosh</code>,
+<code>asinh</code>, <code>atanh</code>
+</li>
+<li>other mathematical functions: <code>log</code>, <code>log1p</code>,
+<code>exp</code>, <code>expm1</code>, <code>sqrt</code>
+</li>
+<li>mathematical operators: <code>+</code>, <code>-</code>,
+<code>*</code>, <code>/</code>, <code>^</code>, <code>prod</code>,
+<code>sum</code>, <code>%*%</code>
+</li>
+</ul>
+<p>and any compositions of these functions, which also means we can
+immediately apply most existing user-defined functions. To give an
+example consider the <code>logit</code> function</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55ff6d143620&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x56151c860f08&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1216,24 +1134,20 @@ parameter names</p>
 <h3 id="example-pearson-correlation">Example: Pearson correlation<a class="anchor" aria-label="anchor" href="#example-pearson-correlation"></a>
 </h3>
 <p>As a simple toy example consider the problem of estimating the
-covariance of two variables
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>1</mn></msub><annotation encoding="application/x-tex">X_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>2</mn></msub><annotation encoding="application/x-tex">X_2</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mrow><mi>ℂ</mi><mspace width="-0.167em"></mspace><mtext mathvariant="normal">ov</mtext></mrow><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>ℙ</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>−</mo><msub><mi>ℙ</mi><mi>n</mi></msub><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mn>1</mn></msub><mo>−</mo><msub><mi>ℙ</mi><mi>n</mi></msub><msub><mi>Y</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\widehat{\mathbb{C}\!\text{ov}}(X_1,X_2) = \mathbb{P}_n(X_1-\mathbb{P}_n X_1)(Y_1-\mathbb{P}_n Y_1).
-\end{align*}</annotation></semantics></math> It is easily verified that
-the IF of the sample estimate of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝔼</mi><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>𝔼</mi><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><mi>𝔼</mi><mo stretchy="false" form="prefix">{</mo><msub><mi>X</mi><mn>1</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup><annotation encoding="application/x-tex">(\mathbb{E}X_{1}, \mathbb{E}X_{2}, \mathbb{E}\{X_{1}X_{2}\})^\top</annotation></semantics></math>
-given by is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>IC</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mn>1</mn><mo>,</mo><mi>X</mi><mn>2</mn><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>−</mo><mi>𝔼</mi><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>−</mo><mi>𝔼</mi><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo>−</mo><mi>𝔼</mi><mo stretchy="false" form="prefix">{</mo><msub><mi>X</mi><mn>1</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">\operatorname{IC}(X1,X2; P_{0}) = (X_{1}-\mathbb{E}X_{1}, X_{2}-\mathbb{E}X_{2}, X_{1}X_{2}-\mathbb{E}\{X_{1}X_{2}\})^\top</annotation></semantics></math>.
-By the delta theorem with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>z</mi><mo>−</mo><mi>x</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\phi(x,y,z) = z-xy</annotation></semantics></math>
-we have
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∇</mi><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>y</mi><mo>,</mo><mo>−</mo><mi>x</mi><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">\nabla\phi(x,y,z) = (-y, -x, 1)^\top</annotation></semantics></math>
-and thus the IF for the sample covariance estimate becomes
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mo>IC</mo><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>−</mo><mi>𝔼</mi><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>2</mn></msub><mo>−</mo><mi>𝔼</mi><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>ℂ</mi><mspace width="-0.167em"></mspace><mtext mathvariant="normal">ov</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\operatorname{IC}_{x_1, x_2}(X_1, X_2; P_{0}) = (X_1 - \mathbb{E}X_1)(X_2 - \mathbb{E}X_2) - \mathbb{C}\!\text{ov}(X_1,X_2)
-\end{align*}</annotation></semantics></math></p>
+covariance of two variables <span class="math inline">X_1</span> and
+<span class="math inline">X_2</span> <span class="math display">\begin{align*}
+\widehat{\mathbb{C}\!\text{ov}}(X_1,X_2) = \mathbb{P}_n(X_1-\mathbb{P}_n
+X_1)(Y_1-\mathbb{P}_n Y_1).
+\end{align*}</span> It is easily verified that the IF of the sample
+estimate of <span class="math inline">(\mathbb{E}X_{1}, \mathbb{E}X_{2},
+\mathbb{E}\{X_{1}X_{2}\})^\top</span> given by is <span class="math inline">\operatorname{IC}(X1,X2; P_{0}) =
+(X_{1}-\mathbb{E}X_{1}, X_{2}-\mathbb{E}X_{2},
+X_{1}X_{2}-\mathbb{E}\{X_{1}X_{2}\})^\top</span>. By the delta theorem
+with <span class="math inline">\phi(x,y,z) = z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)^\top</span> and thus
+the IF for the sample covariance estimate becomes <span class="math display">\begin{align*}
+\operatorname{IC}_{x_1, x_2}(X_1, X_2; P_{0}) = (X_1 -
+\mathbb{E}X_1)(X_2 - \mathbb{E}X_2) - \mathbb{C}\!\text{ov}(X_1,X_2)
+\end{align*}</span></p>
 <p>We can implement this directly using the <code>estimate</code>
 function via the <code>IC</code> argument which allows us to provide a
 user-specificed IF and with the point estimate given by the
@@ -1251,11 +1165,8 @@ user-specificed IF and with the point estimate given by the
 <span><span class="co">#&gt;  Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt;  0.004043 0.04976 -0.09349 0.1016  0.9352</span></span></code></pre></div>
 <p>As an illustration we could also derive this estimate from simpler
-building blocks of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><msub><mi>X</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\mathbb{E}X_{1}</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><msub><mi>X</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\mathbb{E}X_{2}</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb{E}(X_{1}X_{2})</annotation></semantics></math>.</p>
+building blocks of <span class="math inline">\mathbb{E}X_{1}</span>,
+<span class="math inline">\mathbb{E}X_{2}</span>, and <span class="math inline">\mathbb{E}(X_{1}X_{2})</span>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, <span class="va">x1</span> <span class="op">*</span> <span class="va">x2</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E1"</span>, <span class="st">"E2"</span>, <span class="st">"E12"</span><span class="op">)</span><span class="op">)</span></span>
@@ -1280,18 +1191,17 @@ to estimate the correlation</p>
 <span><span class="va">rho</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; rho 0.004025 0.04953 -0.09306 0.1011  0.9352</span></span></code></pre></div>
-<p>by using a variance stabilizing transformation, Fishers
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>-transform
-<span class="citation">(Lehmann and Romano 2023)</span>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mo>arctanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>ρ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mn>1</mn><mo>+</mo><mover><mi>ρ</mi><mo accent="true">̂</mo></mover></mrow><mrow><mn>1</mn><mo>−</mo><mover><mi>ρ</mi><mo accent="true">̂</mo></mover></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">z = \operatorname{arctanh}(\widehat{\rho}) = \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)</annotation></semantics></math>,
+<p>by using a variance stabilizing transformation, Fishers <span class="math inline">z</span>-transform <span class="citation">(Lehmann
+and Romano 2023)</span>, <span class="math inline">z =
+\operatorname{arctanh}(\widehat{\rho}) =
+\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)</span>,
 confidence limits with general better coverage can be obtained</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">rho</span><span class="op">)</span>, back.transform <span class="op">=</span> <span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; rho 0.004025         -0.09279 0.1008  0.9352</span></span></code></pre></div>
-<p>The confidence limits are calculated on the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>arctanh</mo><annotation encoding="application/x-tex">\operatorname{arctanh}</annotation></semantics></math>-scale
-and transformed back to the original correlation scale via the
+<p>The confidence limits are calculated on the <span class="math inline">\operatorname{arctanh}</span>-scale and transformed
+back to the original correlation scale via the
 <code>back.transform</code> argument. In this case, where the estimates
 are far away from the boundary of the parameter space, the variance
 stabilizing transform does almost not have any impact, and the
@@ -1303,17 +1213,13 @@ limits.</p>
 </h3>
 <p>An important special case of parameter transformations are linear
 transformations. A particular interest may be formulated around testing
-null-hypotheses of the form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mspace width="1.0em"></mspace><mi>𝐁</mi><mi>θ</mi><mo>=</mo><msub><mi>𝐛</mi><mn>0</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+null-hypotheses of the form <span class="math display">\begin{align*}
 H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
-\end{align*}</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐁</mi><mo>∈</mo><msup><mi>ℝ</mi><mrow><mi>m</mi><mo>×</mo><mi>p</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\mathbf{B}\in\mathbb{R}^{m\times p}</annotation></semantics></math>
-is a matrix of estimable contrasts and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐛</mi><mn>0</mn></msub><mo>∈</mo><msup><mi>ℝ</mi><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{b}_0\in\mathbb{R}^{m}</annotation></semantics></math>.</p>
+\end{align*}</span></p>
+<p>where <span class="math inline">\mathbf{B}\in\mathbb{R}^{m\times
+p}</span> is a matrix of estimable contrasts and <span class="math inline">\mathbf{b}_0\in\mathbb{R}^{m}</span>.</p>
 <p>As an example consider marginal models for the binary response
-variables
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>1</mn></msub><mo>,</mo><msub><mi>Y</mi><mn>2</mn></msub><mo>,</mo><msub><mi>Y</mi><mn>3</mn></msub><mo>,</mo><msub><mi>Y</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">Y_1, Y_2, Y_3, Y_4</annotation></semantics></math></p>
+variables <span class="math inline">Y_1, Y_2, Y_3, Y_4</span></p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y3</span> <span class="op">~</span> <span class="va">a</span><span class="op">)</span>, <span class="co">#, y4 ~ a+x4),</span></span>
@@ -1339,10 +1245,9 @@ matrix argument instead of function object</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 0</span></span></code></pre></div>
-<p>The
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐛</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathbf{b}_0</annotation></semantics></math>
-vector (default assumed to be zero) can be specified via the
-<code>null</code> argument</p>
+<p>The <span class="math inline">\mathbf{b}_0</span> vector (default
+assumed to be zero) can be specified via the <code>null</code>
+argument</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="va">B</span>, null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
@@ -1350,13 +1255,13 @@ vector (default assumed to be zero) can be specified via the
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 1</span></span></code></pre></div>
-<p>For testing multiple hypotheses we use that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐁</mi><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><msub><mi>𝐛</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐁</mi><mover><mi>Σ</mi><mo accent="true">̂</mo></mover><msup><mi>𝐁</mi><mi>⊤</mi></msup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐁</mi><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><msub><mi>𝐛</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><msubsup><mi>χ</mi><mrow><mo>rank</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">(\mathbf{B}\widehat{\theta}-\mathbf{b}_0)^{\top} (\mathbf{B}\widehat{\Sigma}\mathbf{B}^{\top})^{-1} (\mathbf{B}\widehat{\theta}-\mathbf{b}_0) \sim  \chi^2_{\operatorname{rank}(B)}</annotation></semantics></math>
-under the null hypothesis where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>Σ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\Sigma}</annotation></semantics></math>
-is the estimated variance of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-(i.e., <code>vcov(gg)</code>)</p>
+<p>For testing multiple hypotheses we use that <span class="math inline">(\mathbf{B}\widehat{\theta}-\mathbf{b}_0)^{\top}
+(\mathbf{B}\widehat{\Sigma}\mathbf{B}^{\top})^{-1}
+(\mathbf{B}\widehat{\theta}-\mathbf{b}_0)
+\sim  \chi^2_{\operatorname{rank}(B)}</span> under the null hypothesis
+where <span class="math inline">\widehat{\Sigma}</span> is the estimated
+variance of <span class="math inline">\theta</span> (i.e.,
+<code>vcov(gg)</code>)</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,</span>
 <span>           <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -1413,45 +1318,28 @@ pairwise comparisons of different exposure estimates:</p>
 <span><span class="co">#&gt;   [a.1] - [a.2] = 1 </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 11.96, df = 2, p-value = 0.002523</span></span></code></pre></div>
-<p>When conducting multiple tests each at a nominal-level of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
-the overall type I error is not controlled at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>-level.
-The influence function also allows for adjusting for multiple
-comparisons. Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">Z_{1},\ldots,Z_{p}</annotation></semantics></math>
-denote
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>-statistics
-from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
-distinct two-sided hypothesis tests which we will assume is
-asymptotically distributed under the null hypothesis as a zero-mean
-Gaussian distribution with correlation matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">R.</annotation></semantics></math>
-Let $ Z_{max} = _{i=1,,p} |Z_i|$ then the family-wise error rate (FWER)
-under the null can be approximated by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>&gt;</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><msubsup><mo>∫</mo><mrow><mo>−</mo><mi>z</mi></mrow><mi>z</mi></msubsup><mi>⋯</mi><msubsup><mo>∫</mo><mrow><mo>−</mo><mi>z</mi></mrow><mi>z</mi></msubsup><msub><mi>ϕ</mi><mi>R</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>x</mi><mi>p</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><msub><mi>x</mi><mn>1</mn></msub><mi>⋯</mi><mspace width="0.167em"></mspace><mi>d</mi><msub><mi>x</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">
+<p>When conducting multiple tests each at a nominal-level of <span class="math inline">\alpha</span> the overall type I error is not
+controlled at <span class="math inline">\alpha</span>-level. The
+influence function also allows for adjusting for multiple comparisons.
+Let <span class="math inline">Z_{1},\ldots,Z_{p}</span> denote <span class="math inline">Z</span>-statistics from <span class="math inline">p</span> distinct two-sided hypothesis tests which
+we will assume is asymptotically distributed under the null hypothesis
+as a zero-mean Gaussian distribution with correlation matrix <span class="math inline">R.</span> Let $ Z_{max} = _{i=1,,p} |Z_i|$ then the
+family-wise error rate (FWER) under the null can be approximated by
+<span class="math display">
 P(Z_{max} &gt; z) =
 1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{p})
 \,dx_{1}\cdots\,dx_{p}
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\phi_{R}</annotation></semantics></math>
-is the multivariate normal density function with mean 0 and variance
-given by the correlation matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>.
-The adjusted
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values
-can then be calculated as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>&gt;</mo><msup><mi>Φ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mi>/</mi><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+</span> where <span class="math inline">\phi_{R}</span> is the
+multivariate normal density function with mean 0 and variance given by
+the correlation matrix <span class="math inline">R</span>. The adjusted
+<span class="math inline">p</span>-values can then be calculated as
+<span class="math display">
 P(Z_{max} &gt;
 \Phi^{-1}(1-p/2))
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Φ</mi><annotation encoding="application/x-tex">\Phi</annotation></semantics></math>
-is the standard Gaussian CDF. As described in in <span class="citation">(Pipper, Ritz, and Bisgaard 2012)</span> the joint
-distribution of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">Z_{1},\ldots,Z_{p}</annotation></semantics></math>
-can be estimated from the IFs. This is implemented in the
-<code>alpha_zmax</code> method</p>
+</span> where <span class="math inline">\Phi</span> is the standard
+Gaussian CDF. As described in in <span class="citation">(Pipper, Ritz,
+and Bisgaard 2012)</span> the joint distribution of <span class="math inline">Z_{1},\ldots,Z_{p}</span> can be estimated from the
+IFs. This is implemented in the <code>alpha_zmax</code> method</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, use<span class="op">=</span><span class="st">"^a"</span>, regex<span class="op">=</span><span class="cn">TRUE</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/closed_testing.html">alpha_zmax</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
@@ -1468,21 +1356,13 @@ generally obtained by considering all intersection hypotheses.</p>
 <img src="figs/closedtesting.svg" style="width:60.0%" alt="Figure: closed testing via Wald tests of all intersections hypotheses."><div class="figcaption"><em>Figure: closed testing via Wald tests of all
 intersections hypotheses.</em></div>
 </div>
-<p>To reject the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_{1}</annotation></semantics></math>
-at an correct
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>-level
-we should test all intersection hypotheses involving
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_{1}</annotation></semantics></math>
-and check if there all are rejected at the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>-level.
-The adjusted
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values
-can here be obtained as the maximum
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-value
-across all the composite hypothesis tests. Unfortunately, this only
-works for relatively few comparisons as the number of tests grows
-exponentially.</p>
+<p>To reject the <span class="math inline">H_{1}</span> at an correct
+<span class="math inline">\alpha</span>-level we should test all
+intersection hypotheses involving <span class="math inline">H_{1}</span>
+and check if there all are rejected at the <span class="math inline">\alpha</span>-level. The adjusted <span class="math inline">p</span>-values can here be obtained as the maximum
+<span class="math inline">p</span>-value across all the composite
+hypothesis tests. Unfortunately, this only works for relatively few
+comparisons as the number of tests grows exponentially.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span>, test <span class="op">=</span> <span class="va">test_wald</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Call: closed_testing(object = gg0, test = test_wald)</span></span>
@@ -1498,77 +1378,55 @@ exponentially.</p>
 <p>Some parameters of interest are expressed as averages over functions
 of the observed data and estimated parameters of a model. The asymptotic
 distribution can in some of these cases also be derived from the
-influence function. Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Z</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Z_{1},\ldots,Z_{n}</annotation></semantics></math>
-be iid observations,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo>∼</mo><msub><mi>P</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">Z_{1}\sim P_{0}</annotation></semantics></math>
-and let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>⊂</mo><msub><mi>Z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">X_{i}\subset Z_{i}</annotation></semantics></math>.</p>
-<p>Assume that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\theta}</annotation></semantics></math>
-is RAL estimator of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>∈</mo><mi>Ω</mi><mo>⊂</mo><msup><mi>ℝ</mi><mi>p</mi></msup></mrow><annotation encoding="application/x-tex">\theta\in\Omega\subset \mathbb{R}^{p}</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1).
-</annotation></semantics></math> Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>:</mo><mi>𝒳</mi><mo>×</mo><mi>Ω</mi><mo>→</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">f:\mathcal{X}\times\Omega\to\mathbb{R}</annotation></semantics></math>
-be continuous differentiable in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>n</mi></msqrt><mo stretchy="false" form="prefix">{</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><msub><mi>∇</mi><mi>θ</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\sqrt{n}\{f(X; \widehat{\theta})-f(X; \theta)\} =
-\frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P) + o_{P}(1).
-</annotation></semantics></math></p>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Ψ</mi><mo>=</mo><msub><mi>P</mi><mn>0</mn></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Psi = P_{0}f(X;\theta)</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Ψ</mi><mo accent="true">̂</mo></mover><mo>=</mo><msub><mi>P</mi><mi>n</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widehat{\Psi} = P_{n} f(X;\widehat{\theta})</annotation></semantics></math>.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>0</mn></msub><annotation encoding="application/x-tex">P_{0}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>n</mi></msub><annotation encoding="application/x-tex">P_{n}</annotation></semantics></math>
-are here everywhere the integrals wrt.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.
-It is easily verified that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>Ψ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>Ψ</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>n</mi></msub><mo>−</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mspace width="1.0em"></mspace><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>n</mi></msub><mo>−</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\widehat{\Psi}-\Psi &amp;= (P_{n}-P_{0})(f(X; \theta)-\Psi) + P[f(X;\widehat{\theta})-f(X;\theta)] \\
+influence function. Let <span class="math inline">Z_{1},\ldots,Z_{n}</span> be iid observations, <span class="math inline">Z_{1}\sim P_{0}</span> and let <span class="math inline">X_{i}\subset Z_{i}</span>.</p>
+<p>Assume that <span class="math inline">\widehat{\theta}</span> is RAL
+estimator of <span class="math inline">\theta\in\Omega\subset
+\mathbb{R}^{p}</span> <span class="math display">\sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1).
+</span> Let <span class="math inline">f:\mathcal{X}\times\Omega\to\mathbb{R}</span> be
+continuous differentiable in <span class="math inline">\theta</span>
+<span class="math display">\sqrt{n}\{f(X; \widehat{\theta})-f(X;
+\theta)\} =
+\frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P)
++ o_{P}(1).
+</span></p>
+<p>Let <span class="math inline">\Psi = P_{0}f(X;\theta)</span> and
+<span class="math inline">\widehat{\Psi} = P_{n}
+f(X;\widehat{\theta})</span>. <span class="math inline">P_{0}</span> and
+<span class="math inline">P_{n}</span> are here everywhere the integrals
+wrt. <span class="math inline">X</span>. It is easily verified that
+<span class="math display">\begin{align*}
+\widehat{\Psi}-\Psi &amp;= (P_{n}-P_{0})(f(X; \theta)-\Psi) +
+P[f(X;\widehat{\theta})-f(X;\theta)] \\
 &amp;\quad + (P_{n}-P_{0})[f(X;\widehat{\theta})-f(X;\theta)]
-\end{align*}</annotation></semantics></math></p>
+\end{align*}</span></p>
 <p>From Lemma 19.24 <span class="citation">(Vaart 1998)</span> it
-follows that for the last term
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>n</mi></msub><mo>−</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+follows that for the last term <span class="math display">\begin{align*}
 \sqrt{n}(P_{n}-P_{0})[f(X;\widehat{\theta})-f(X;\theta)] = o_{P}(1)
-\end{align*}</annotation></semantics></math> when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
-for example is Lipschitz and more generally when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(X;\theta)</annotation></semantics></math>
-forms a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>0</mn></msub><annotation encoding="application/x-tex">P_{0}</annotation></semantics></math>-Donsker
-class.</p>
-<p>It therefore follows that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msqrt><mi>n</mi></msqrt><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>Ψ</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>Ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msqrt><mi>n</mi></msqrt><msub><mi>P</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><mi>P</mi><msub><mi>∇</mi><mi>θ</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo stretchy="false" form="prefix">{</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mo stretchy="false" form="postfix">}</mo><mo>+</mo><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><mi>P</mi><msub><mi>∇</mi><mi>θ</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mi>i</mi></msub><mo>,</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>o</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+\end{align*}</span> when <span class="math inline">f</span> for example
+is Lipschitz and more generally when <span class="math inline">f(X;\theta)</span> forms a <span class="math inline">P_{0}</span>-Donsker class.</p>
+<p>It therefore follows that <span class="math display">\begin{align*}
 \sqrt{n}(\widehat{\Psi}-\Psi) &amp;= \sqrt{n}P_{n}(f(X; \theta)-\Psi) +
-\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1) \\
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i};
+P_{0}) + o_{P}(1) \\
 &amp;=
 \frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X;\theta)-\Psi\} +
-\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}, P_{0}) + o_{P}(1)
-\end{align*}</annotation></semantics></math> Hence the IF for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>Ψ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\Psi}</annotation></semantics></math>
-becomes
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>;</mo><msub><mi>P</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Ψ</mi><mo>+</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>P</mi><mn>0</mn></msub><msub><mi>∇</mi><mi>θ</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i},
+P_{0}) + o_{P}(1)
+\end{align*}</span> Hence the IF for <span class="math inline">\widehat{\Psi}</span> becomes <span class="math display">
 IC(Z; P_{0}) = f(X;\theta)-\Psi +
 [P_{0}\nabla_{\theta}f(X;\theta)]\phi(Z).
-</annotation></semantics></math></p>
+</span></p>
 <p>Turning back to the example we can estimate the logistic regression
-model
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>logit</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mo stretchy="false" form="prefix">{</mo><msub><mi>Y</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><mi>A</mi><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>W</mi><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>β</mi><mi>a</mi></msub><mi>A</mi><mo>+</mo><msub><mi>β</mi><msub><mi>x</mi><mn>1</mn></msub></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mi>w</mi></msub><mi>W</mi></mrow><annotation encoding="application/x-tex">\operatorname{logit}(E\{Y_1 | A,X_1,W\}) = \beta_0 + \beta_a A + \beta_{x_1} X_1 + \beta_w W</annotation></semantics></math>,
-and from this we want to estimate the target parameter
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>𝔼</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+model <span class="math inline">\operatorname{logit}(E\{Y_1 | A,X_1,W\})
+= \beta_0 + \beta_a A + \beta_{x_1} X_1 + \beta_w W</span>, and from
+this we want to estimate the target parameter <span class="math display">
 \theta(P) = \mathbb{E}_{P}[E(Y\mid A=1, X_{1}, W)].
-</annotation></semantics></math> To do this we need first to estimate
-the model and then define a function that gives the predicted
-probability
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>=</mo><mn>1</mn><mo>∣</mo><mo>,</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb{P}(Y=1\mid,A=a,X_{1},W)</annotation></semantics></math>
-for any observed values of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>W</mi></mrow><annotation encoding="application/x-tex">X_1,W</annotation></semantics></math>
-but with the treatment variable
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
-kept fixed at the value
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math></p>
+</span> To do this we need first to estimate the model and then define a
+function that gives the predicted probability <span class="math inline">\mathbb{P}(Y=1\mid,A=a,X_{1},W)</span> for any
+observed values of <span class="math inline">X_1,W</span> but with the
+treatment variable <span class="math inline">A</span> kept fixed at the
+value <span class="math inline">1</span></p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">dw</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
 <span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -1594,61 +1452,43 @@ kept fixed at the value
 <div class="section level3">
 <h3 id="average-treatment-effects">Average Treatment Effects<a class="anchor" aria-label="anchor" href="#average-treatment-effects"></a>
 </h3>
-<p>Let the observed data be
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z = (W,A,Y)</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
-are covariates,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
-a binary treatment variable, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
-the outcome. In the following we are interested in estimating the target
-parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ψ</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\psi_a(P) = E_P[Y(a)]</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(a)</annotation></semantics></math>
-is the <em>potential outcome</em> we would have observed if treatment
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
-had been administered, possibly contrary to the actual treatment that
-was observed, i.e.,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y = Y(A)</annotation></semantics></math>.
-To assess the treatment effect we can then the consider the <em>average
-treatment effect</em> (ATE)
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><msub><mi>E</mi><mi>P</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">E_P[Y(1)]-E_P[Y(0)],</annotation></semantics></math>
-or some other contrast of interest
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ψ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>ψ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(\psi_1(P), \psi_0(P))</annotation></semantics></math>.
-Under the following assumptions</p>
+<p>Let the observed data be <span class="math inline">Z =
+(W,A,Y)</span>, where <span class="math inline">W</span> are covariates,
+<span class="math inline">A</span> a binary treatment variable, and
+<span class="math inline">Y</span> the outcome. In the following we are
+interested in estimating the target parameter <span class="math inline">\psi_a(P) = E_P[Y(a)]</span>, where <span class="math inline">Y(a)</span> is the <em>potential outcome</em> we
+would have observed if treatment <span class="math inline">a</span> had
+been administered, possibly contrary to the actual treatment that was
+observed, i.e., <span class="math inline">Y = Y(A)</span>. To assess the
+treatment effect we can then the consider the <em>average treatment
+effect</em> (ATE) <span class="math display">E_P[Y(1)]-E_P[Y(0)],</span>
+or some other contrast of interest <span class="math inline">g(\psi_1(P), \psi_0(P))</span>. Under the following
+assumptions</p>
 <ol style="list-style-type: decimal">
 <li>Stable Unit Treatment Values Assumption (the treatment of a specific
 subject is not affecting the potential outcome of other subjects)</li>
-<li>Positivity,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">P(A\mid W)&gt;\epsilon</annotation></semantics></math>
-for some
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\epsilon&gt;0</annotation></semantics></math>
-and baseline covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+<li>Positivity, <span class="math inline">P(A\mid W)&gt;\epsilon</span>
+for some <span class="math inline">\epsilon&gt;0</span> and baseline
+covariates <span class="math inline">W</span>
 </li>
-<li>No unmeasured confounders,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⊥</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⊥</mo><mi>A</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi></mrow><annotation encoding="application/x-tex">Y(a)\perp \!\!\! \perp A|W</annotation></semantics></math>
+<li>No unmeasured confounders, <span class="math inline">Y(a)\perp
+\!\!\! \perp A|W</span>
 </li>
 </ol>
 <p>then the target parameter can be identified from the observed data
-distribution as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E(E[Y|W,A=a]) = E(E[Y(a)|W]) = E[Y(a)]</annotation></semantics></math>
-or
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="false" form="prefix">|</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">E[Y I(A=a)/P(A=a|W)] = E[Y(a)].</annotation></semantics></math></p>
-<p>This suggests estimators based on outcome regression
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>-computation)
-or inverse probability weighting. More generally, under the above
-assumption we can constructor a <em>one-step</em> estimator from the
-<em>Efficient Influence Function</em> combining these two
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mfrac><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>Π</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>−</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex"> E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].</annotation></semantics></math>
-In practice, this requires plugin estimates of both the outcome model,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo>,</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>:=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>A</mi><mo>,</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q(W,A) := E(Y\mid A, W)</annotation></semantics></math>,
-and of the treatment propensity model
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Π</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>:=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo>=</mo><mi>a</mi><mo>∣</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Pi_a(W) := P(A=a\mid W)</annotation></semantics></math>.
-The corresponding estimator is consistent even if just one of the two
-nuisance models is correctly specified.</p>
+distribution as <span class="math display">E(E[Y|W,A=a]) = E(E[Y(a)|W])
+= E[Y(a)]</span> or <span class="math display">E[Y I(A=a)/P(A=a|W)] =
+E[Y(a)].</span></p>
+<p>This suggests estimators based on outcome regression (<span class="math inline">g</span>-computation) or inverse probability
+weighting. More generally, under the above assumption we can constructor
+a <em>one-step</em> estimator from the <em>Efficient Influence
+Function</em> combining these two <span class="math display">
+E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].</span> In
+practice, this requires plugin estimates of both the outcome model,
+<span class="math inline">Q(W,A) := E(Y\mid A, W)</span>, and of the
+treatment propensity model <span class="math inline">\Pi_a(W) :=
+P(A=a\mid W)</span>. The corresponding estimator is consistent even if
+just one of the two nuisance models is correctly specified.</p>
 <p>To illustrate this we manually construct the above estimating
 equations based on logistic regressions models for the two nuisance
 models</p>
@@ -1693,10 +1533,9 @@ outcomes and estimate their joint asymptotic distribution</p>
 <span><span class="co">#&gt; y(0) 1.249e-03 6.938e-05</span></span>
 <span><span class="co">#&gt; y(1) 6.938e-05 1.385e-03</span></span></code></pre></div>
 <p>Finally, we can obtain the Average Treatment Effect (ATE)
-(risk-difference)
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+(risk-difference) <span class="math display">\begin{align*}
 E[Y(1)]  - E[Y(0)]
-\end{align*}</annotation></semantics></math></p>
+\end{align*}</span></p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, labels<span class="op">=</span><span class="st">"ate"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5%   P-value</span></span>

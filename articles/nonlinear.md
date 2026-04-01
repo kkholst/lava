@@ -6,13 +6,13 @@ library('lava')
 
 We consider the measurement models given by
 
-$$X_{j} = \eta_{1} + \epsilon_{j}^{x},\quad j = 1,2,3$$$$Y_{j} = \eta_{2} + \epsilon_{j}^{y},\quad j = 1,2,3$$
-and with a structural model given by
-$$\eta_{2} = f\left( \eta_{1} \right) + Z + \zeta_{2}$$$$\eta_{1} = Z + \zeta_{1}$$
-with iid measurement errors
-$\epsilon_{j}^{x},\epsilon_{j}^{y},\zeta_{1},\zeta_{2} \sim \mathcal{N}(0,1),j = 1,2,3.$
-and standard normal distributed covariate $Z$. To simulate from this
-model we use the following syntax:
+X\_{j} = \eta\_{1} + \epsilon\_{j}^{x}, \quad j=1,2,3 Y\_{j} =
+\eta\_{2} + \epsilon\_{j}^{y}, \quad j=1,2,3 and with a structural model
+given by \eta\_{2} = f(\eta\_{1}) + Z + \zeta\_{2}\label{ex:eta2}
+\eta\_{1} = Z + \zeta\_{1}\label{ex:eta1} with iid measurement errors
+\epsilon\_{j}^{x},\epsilon\_{j}^{y},\zeta\_{1},\zeta\_{2}\sim\mathcal{N}(0,1),
+j=1,2,3. and standard normal distributed covariate Z. To simulate from
+this model we use the following syntax:
 
 ``` r
 f <- function(x) cos(1.25*x) + x - 0.25*x^2
@@ -89,7 +89,7 @@ estimate(e0,keep="^eta2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
 
 Next, we calculate predictions from the quadratic model using the
 estimated parameter coefficients
-$${\mathbb{E}}_{{\widehat{\theta}}_{2}}\left( \eta_{2} \mid \eta_{1},Z = 0 \right),$$
+\mathbb{E}\_{\widehat{\theta}\_{2}}(\eta\_{2} \mid \eta\_{1}, Z=0),
 
 ``` r
 newd <- expand.grid(eta1=seq(-4, 4, by=0.1), z=0)
@@ -253,8 +253,8 @@ selmod
 Next, we show how to specify a general functional relation of multiple
 different latent or exogenous variables. This is achieved via the
 `predict.fun` argument. To illustrate this we include interactions
-between the latent variable $\eta_{1}$ and a dichotomized version of the
-covariate $z$
+between the latent variable \eta\_{1} and a dichotomized version of the
+covariate z
 
 ``` r
 d$g <- (d$z<0)*1 ## Group variable
@@ -298,7 +298,7 @@ Lastly, we demonstrate how the distributional assumptions of stage 1
 model can be relaxed by letting the conditional distribution of the
 latent variable given covariates follow a Gaussian mixture distribution.
 The following code explictly defines the parameter constraints of the
-model by setting the intercept of the first indicator variable, $x_{1}$,
+model by setting the intercept of the first indicator variable, x\_{1},
 to zero and the factor loading parameter of the same variable to one.
 
 ``` r
@@ -311,7 +311,7 @@ The mixture model may then be estimated using the `mixture` method
 (note, this requires the `mets` package to be installed), where the
 Parameter names shared across the different mixture components given in
 the `list` will be constrained to be identical in the mixture model.
-Thus, only the intercept of $\eta_{1}$ is allowed to vary between the
+Thus, only the intercept of \eta\_{1} is allowed to vary between the
 mixtures.
 
 ``` r

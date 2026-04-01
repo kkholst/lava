@@ -11,67 +11,62 @@ the simple combination and transformation of estimators into new ones.
 This vignette describes how to estimate and manipulate IFs using the
 R-package `lava` (K. K. Holst and Budtz-Jørgensen 2013).
 
-Formally, let $Z_{1},\ldots,Z_{n}$ be iid $k$-dimensional stochastic
-variables, $Z_{i} = \left( Y_{i},A_{i},W_{i} \right) \sim P_{0}$, and
-$\widehat{\theta}$ a consistent estimator for the parameter
-$\theta \in {\mathbb{R}}^{p}$. When $\widehat{\theta}$ is a *regular and
-asymptotic linear* (RAL) estimator, it has a unique iid decomposition
-$$\begin{array}{r}
-{\sqrt{n}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\operatorname{IC}\left( Z_{i};P_{0} \right) + o_{P}(1),}
-\end{array}$$ where the function $\operatorname{IC}$ is the unique
-*Influence Function* s.t.
-${\mathbb{E}}\{\operatorname{IC}\left( Z_{i};P_{0} \right)\} = 0$ and
-${\mathbb{V}}\!\text{ar}\{\operatorname{IC}\left( Z_{i};P_{0} \right)^{2}\} < \infty$(Tsiatis
-2006; Vaart 1998). The influence function thus fully characterizes the
-asymptotic behaviour of the estimator and by the central limit theorem
-it follows that the estimator converges weakly to a Gaussian
-distribution
-$$\sqrt{n}\left( \widehat{\theta} - \theta \right)\overset{\mathcal{D}}{\rightarrow}\mathcal{N}\left( 0,{\mathbb{V}}\!\text{ar}\{\operatorname{IC}\left( Z;P_{0} \right)\} \right),$$
-where the empirical variance of the plugin estimator,
-${\mathbb{P}}_{n}\operatorname{IC}\left( Z;\widehat{P} \right)^{\otimes 2} = \frac{1}{n}\sum_{i = 1}^{n}\operatorname{IC}\left( Z_{i};\widehat{P} \right)\operatorname{IC}\left( Z_{i};\widehat{P} \right)^{\top}$
-can be used to obtain a consistent estimate of the asymptotic variance.
-Note, in practice the estimate $\widehat{P}$ used in the
-plugin-estimate, needs only to capture the parts of the distribution of
-$Z$ that is necessary to evaluate the IF. In some cases this nuisance
-parameter can be estimated using flexible machine learning components
-and in other (parametric) cases be derived directly from
-$\widehat{\theta}$.
+Formally, let Z_1,\ldots,Z_n be iid k-dimensional stochastic variables,
+Z_i=(Y\_{i},A\_{i},W\_{i})\sim P\_{0}, and \widehat{\theta} a consistent
+estimator for the parameter \theta\in\mathbb{R}^p. When \widehat{\theta}
+is a *regular and asymptotic linear* (RAL) estimator, it has a unique
+iid decomposition \begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^n \operatorname{IC}(Z_i; P\_{0}) +
+o\_{P}(1), \end{align\*} where the function \operatorname{IC} is the
+unique *Influence Function* s.t. \mathbb{E}\\\operatorname{IC}(Z\_{i};
+P\_{0})\\=0 and \mathbb{V}\\\text{ar}\\\operatorname{IC}(Z\_{i};
+P\_{0})^{2}\\\<\infty (Tsiatis 2006; Vaart 1998). The influence function
+thus fully characterizes the asymptotic behaviour of the estimator and
+by the central limit theorem it follows that the estimator converges
+weakly to a Gaussian distribution \sqrt{n}(\widehat{\theta}-\theta)
+\overset{\mathcal{D}}{\longrightarrow} \mathcal{N}(0,
+\mathbb{V}\\\text{ar}\\\operatorname{IC}(Z; P\_{0})\\), where the
+empirical variance of the plugin estimator,
+\mathbb{P}\_{n}\operatorname{IC}(Z; \widehat{P})^{\otimes 2} =
+\frac{1}{n}\sum\_{i=1}^n \operatorname{IC}(Z\_{i};
+\widehat{P})\operatorname{IC}(Z\_{i}; \widehat{P})^{\top} can be used to
+obtain a consistent estimate of the asymptotic variance. Note, in
+practice the estimate \widehat{P} used in the plugin-estimate, needs
+only to capture the parts of the distribution of Z that is necessary to
+evaluate the IF. In some cases this nuisance parameter can be estimated
+using flexible machine learning components and in other (parametric)
+cases be derived directly from \widehat{\theta}.
 
 The IFs are easily derived for the parameters of many parametric
 statistical models as illustrated in the [next example
 sections](#example-generalized-linear-model). More generally, the IF can
-also be derived for a smooth target parameter
-$\left. \Psi:\mathcal{P}\rightarrow{\mathbb{R}} \right.$ where
-$\mathcal{P}$ is a family of probability distributions forming the
-statistical model, which often can be left completely non-parametric.
-Formally, the parameter must be *pathwise differentiable* see (Vaart
-1998) in the sense that there exists linear bounded function
-$\left. \dot{\Psi}:L_{2}\left( P_{0} \right)\rightarrow{\mathbb{R}} \right.$
-such that
-$\left. \left\lbrack \Psi\left( P_{t} \right) - \Psi\left( P_{0} \right)) \right\rbrack t^{- 1}\rightarrow\dot{\Psi}\left( P_{0} \right)(g) \right.$
-as $\left. t\rightarrow 0 \right.$ for any parametric submodel $P_{t}$
-with score model
-$g(z) = \partial/(\partial t)\log\left( p_{t} \right)(z)|_{t = 0}$.
-Riesz’s representation theorem then tells us that the directional
-derivative has a unique representer, $\phi_{P_{0}}$ lying in the closure
-of the submodel score space (the *tangent space*), s.t.
-$$\begin{array}{r}
-{\dot{\Psi}\left( P_{0} \right)(g) = \langle\phi_{P_{0}},g\rangle = \int\phi_{P_{0}}(Z)g(X)\, dP_{0}}
-\end{array}$$ The unique representer is exactly the IF which can be
+also be derived for a smooth target parameter \Psi:
+\mathcal{P}\to\mathbb{R} where \mathcal{P} is a family of probability
+distributions forming the statistical model, which often can be left
+completely non-parametric. Formally, the parameter must be *pathwise
+differentiable* see (Vaart 1998) in the sense that there exists linear
+bounded function \dot\Psi\colon L\_{2}(P\_{0})\to\mathbb{R} such that
+\[\Psi(P\_{t}) - \Psi(P\_{0}))\]t^{-1} \to \dot\Psi(P\_{0})(g) as t\to 0
+for any parametric submodel P_t with score model g(z)=
+\partial/(\partial t) \log (p_t)(z)\|\_{t=0}. Riesz’s representation
+theorem then tells us that the directional derivative has a unique
+representer, \phi\_{P\_{0}} lying in the closure of the submodel score
+space (the *tangent space*), s.t. \begin{align\*} \dot\Psi(P_0)(g) =
+\langle\phi\_{P_0}, g\rangle = \int \phi\_{P_0}(Z)g(X)\\dP_0
+\end{align\*} The unique representer is exactly the IF which can be
 found by solving the above integral equation. For more details on how to
 derive influence functions, we refer to (Laan and Rose 2011; Hines et
 al. 2022).
 
-As an example we might be interested in the target parameter
-$\Psi(P) = {\mathbb{E}}_{P}(Z)$ which can be shown to have the unique
-(and thereby efficient) influence function
-$\left. Z\mapsto Z - {\mathbb{E}}_{P}(Z) \right.$ under the
-non-parametric model. Another target parameter could be
-$\Psi_{a}(P) = {\mathbb{E}}_{P}\left\lbrack {\mathbb{E}}_{P}(Y \mid A = a,W) \right\rbrack$
-which is often a key interest in causal inference and which has the IF
-$$\begin{array}{r}
-{\operatorname{IC}(Y,A,W;P) = \frac{\mathbf{1}(A = a)}{{\mathbb{P}}(A = a \mid W)}\left( Y - {\mathbb{E}}_{P}\lbrack Y \mid A = a,W\rbrack \right) + {\mathbb{E}}_{P}\lbrack Y \mid A = a,W\rbrack - \Psi_{a}(P)}
-\end{array}$$ See section on [average treatment
+As an example we might be interested in the target parameter \Psi(P) =
+\mathbb{E}\_P(Z) which can be shown to have the unique (and thereby
+efficient) influence function Z\mapsto Z-\mathbb{E}\_P(Z) under the
+non-parametric model. Another target parameter could be \Psi\_{a}(P) =
+\mathbb{E}\_{P}\[\mathbb{E}\_{P}(Y\mid A=a, W)\] which is often a key
+interest in causal inference and which has the IF \begin{align\*}
+\operatorname{IC}(Y,A,W; P) = \frac{\mathbf{1}(A=a)}{\mathbb{P}(A=a\mid
+W)}(Y-\mathbb{E}\_{P}\[Y\mid A=a,W\]) + \mathbb{E}\_{P}\[Y\mid A=a,W\] -
+\Psi\_{a}(P) \end{align\*} See section on [average treatment
 effects](#average-treatment-effects).
 
 ## Working with influence functions with `lava::estimate`
@@ -129,9 +124,10 @@ more details.
 ## Examples
 
 To illustrate the methods we consider data arising from the model
-$Y_{ij} \sim Bernoulli\{\operatorname{expit}\left( X_{ij} + A_{i} + W_{i} \right)\},A_{i} \sim Bernoulli\{\operatorname{expit}\left( W_{i} \right)\}$
-with independent covariates
-$X_{ij} \sim \mathcal{N}(0,1),W_{i} \sim \mathcal{N}(0,1)$.
+Y\_{ij} \sim Bernoulli\\\operatorname{expit}(X\_{ij} + A\_{i} +
+W\_{i})\\, A\_{i} \sim Bernoulli\\\operatorname{expit}(W\_{i})\\ with
+independent covariates X\_{ij}\sim\mathcal{N}(0,1),
+W\_{i}\sim\mathcal{N}(0,1).
 
 ``` r
 m <- lvm() |>
@@ -144,8 +140,8 @@ m <- lvm() |>
   distribution(~id, value = Sequence.lvm(integer = TRUE))
 ```
 
-We simulate from the model where $Y_{3}$ is only observed for half of
-the subjects
+We simulate from the model where Y_3 is only observed for half of the
+subjects
 
 ``` r
 n <- 4e2
@@ -190,13 +186,11 @@ Print(dl)
 ### Example: population mean
 
 Here we first consider the problem of estimating the IF of the mean. For
-a general transformation
-$\left. f:{\mathbb{R}}^{k}\rightarrow{\mathbb{R}}^{p} \right.$ we have
-that
-$$\sqrt{n}\{{\mathbb{P}}_{n}f(X) - {\mathbb{E}}\left\lbrack f(X) \right\rbrack\} = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}f\left( X_{i} \right) - {\mathbb{E}}\left\lbrack f(X) \right\rbrack$$
-and hence for the problem of estimating the proportion of the binary
-outcome $Y_{1}$, the IF is given by
-$\mathbf{1}\left( Y_{1} = 1 \right) - {\mathbb{P}}\left( Y_{1} = 1 \right)$.
+a general transformation f: \mathbb{R}^k\to\mathbb{R}^p we have that
+\sqrt{n}\\\mathbb{P}\_{n}f(X) - \mathbb{E}\[f(X)\]\\ =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} f(X\_{i}) - \mathbb{E}\[f(X)\] and
+hence for the problem of estimating the proportion of the binary outcome
+Y_1, the IF is given by \mathbf{1}(Y\_{1}=1) - \mathbb{P}(Y\_{1}=1).
 
 To estimate this parameter and its IF we will use the `estimate`
 function
@@ -308,13 +302,12 @@ merge(e, e)
 
 ### Example: generalized linear model
 
-For a $Z$-estimator defined by the score equation
-$E\left\lbrack U(Z;\theta) \right\rbrack = 0$, the IF is given by
-$$\begin{array}{r}
-{IC(Z;\theta) = - {\mathbb{E}}\{\frac{\partial}{\partial\theta^{\top}}U(\theta;Z)\}^{- 1}U(Z;\theta)}
-\end{array}$$ In particular, for a maximum likelihood estimator the
-score, $U$, is given by the partial derivative of the log-likelihood
-function.
+For a Z-estimator defined by the score equation E\[U(Z; \theta)\] = 0,
+the IF is given by \begin{align\*} IC(Z; \theta) =
+-\mathbb{E}\Big\\\frac{\partial}{\partial\theta^\top}U(\theta;
+Z)\Big\\^{-1}U(Z; \theta) \end{align\*} In particular, for a maximum
+likelihood estimator the score, U, is given by the partial derivative of
+the log-likelihood function.
 
 As an example, we can obtain the estimates with robust standard errors
 for a logistic regression model:
@@ -354,9 +347,9 @@ IC(g) |> head()
 
 The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
-proportional odds model given by $$\begin{array}{r}
-{\log\left( \frac{{\mathbb{P}}(Y \leq j \mid x)}{1 - {\mathbb{P}}(Y \leq j \mid x)} \right) = \alpha_{j} + \beta^{t}x,\quad j = 1,\ldots,J}
-\end{array}$$
+proportional odds model given by \begin{align\*}
+\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
+x)}\right) = \alpha\_{j} + \beta^{t}x, \quad j=1,\ldots,J \end{align\*}
 
 ``` r
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
@@ -416,10 +409,9 @@ IC(fit.phreg) |> head()
 ```
 
 The IF for the baseline cumulative hazard at a specific time point
-$$\begin{array}{r}
-{\Lambda_{0}(t) = \int_{0}^{t}\lambda_{0}(u)\, du,}
-\end{array}$$ where $\lambda_{0}(t)$ is the baseline hazard, can be
-estimated in similar way:
+\begin{align\*} \Lambda_0(t) = \int_0^t \lambda_0(u)\\du, \end{align\*}
+where \lambda_0(t) is the baseline hazard, can be estimated in similar
+way:
 
 ``` r
 baseline <- function(object, time, ...) {
@@ -452,9 +444,10 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 
 General structural equation models (SEMs) can be estimated with
 [`lava::lvm`](http://kkholst.github.io/lava/reference/lvm.md). Here we
-fit a random effects probit model
-$${\mathbb{P}}\left( Y_{ij} = 1 \mid U_{i},W_{ij} \right) = \Phi\left( \mu_{j} + \beta_{j}W_{ij} + U_{i} \right),\quad U_{i} \sim \mathcal{N}\left( 0,\sigma_{u}^{2} \right),\quad j = 1,2$$
-to the simulated dataset
+fit a random effects probit model \mathbb{P}(Y\_{ij} = 1 \mid U\_{i},
+W\_{ij})=\Phi(\mu\_{j} + \beta\_{j} W\_{ij} + U\_{i}), \quad
+U\_{i}\sim\mathcal{N}(0,\sigma\_{u}^{2}),\quad j=1,2 to the simulated
+dataset
 
 ``` r
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
@@ -474,12 +467,11 @@ estimate(semfit)
 
 ### Example: quantile
 
-Let $\beta$ denote the $\tau$th quantile of $X$, with IF
-$$\begin{array}{r}
-{\operatorname{IC}\left( x;P_{0} \right) = \tau - \mathbf{1}(x \leq \beta)f_{0}(\beta)^{- 1}}
-\end{array}$$
+Let \beta denote the \tauth quantile of X, with IF \begin{align\*}
+\operatorname{IC}(x; P\_{0}) = \tau - \mathbf{1}(x\leq
+\beta)f\_{0}(\beta)^{-1} \end{align\*}
 
-where $f_{0}$ is the density function of $X$.
+where f\_{0} is the density function of X.
 
 To calculate the variance estimate, an estimate of the density is thus
 needed which can be obtained by a kernel estimate. Alternatively, the
@@ -487,8 +479,8 @@ resampling method of (Zeng and Lin 2008) can be applied. Here we use a
 kernel smoother (additional arguments to the `estimate` function are
 parsed on to
 [`stats::density.default`](https://rdrr.io/r/stats/density.html)) to
-estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of $W$
-and $X_{1}$
+estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of W
+and X_1
 
 ``` r
 eq <- estimate(dw[, c("w", "x1")], type = "quantile", probs = c(0.25, 0.5, 0.75))
@@ -517,22 +509,27 @@ for transforming or combining different estimates while easily deriving
 the resulting IF and thereby asymptotic distribution of the new
 estimator.
 
-Let ${\widehat{\theta}}_{1},\ldots,{\widehat{\theta}}_{M}$ be $M$
-different estimators with decompositions $$\begin{array}{r}
-{\sqrt{n}\left( {\widehat{\theta}}_{m} - \theta_{m} \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\operatorname{IC}_{m}\left( Z_{i};P_{0} \right) + o_{P}(1)}
-\end{array}$$ based on iid data $Z_{1},\ldots,Z_{n}$. It then follows
-immediately (Vaart 1998 Theorem 18.10\[vi\]) that the joint distribution
-of \$ - {}= (*{1}^({},,*{M}^({}))- ({}*{1}){},,{}*{M}^({})) \$ is given
-by $$\begin{aligned}
-{\sqrt{n}\left( \widehat{\theta} - \theta \right)} & {= \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\underset{\overline{\operatorname{IC}}{(Z_{i};P_{0})}}{\underbrace{\left\lbrack \operatorname{IC}_{1}\left( Z_{i};P_{0} \right)^{\top},\ldots,\operatorname{IC}_{M}\left( Z_{i};P_{0} \right)^{\top} \right\rbrack^{\top}}} + o_{P}(1)} \\
- & {\overset{\mathcal{D}}{\rightarrow}\mathcal{N}(0,\Sigma)}
-\end{aligned}$$ by the CLT, and under regulatory conditions
-${\mathbb{P}}_{n}\overline{\operatorname{IC}}\left( Z_{i};\widehat{P} \right)^{\otimes 2}\overset{P}{\rightarrow}\Sigma$
-as $\left. n\rightarrow\infty \right.$.
+Let \widehat{\theta}\_{1}, \ldots, \widehat{\theta}\_{M} be M different
+estimators with decompositions \begin{align\*}
+\sqrt{n}(\widehat{\theta}\_{m}-\theta\_{m}) =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} \operatorname{IC}\_m(Z_i; P\_{0}) +
+o\_{P}(1) \end{align\*} based on iid data Z_1,\ldots,Z_n. It then
+follows immediately (Vaart 1998 Theorem 18.10\[vi\]) that the joint
+distribution of \$ - {}= (*{1}^({},,*{M}^({}))- ({}*{1}){},,{}*{M}^({}))
+\$ is given by \begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) &=
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}
+\underbrace{\[\operatorname{IC}\_{1}(Z_i;
+P\_{0})^\top,\ldots,\operatorname{IC}\_{M}(Z_i;
+P\_{0})^\top\]^{\top}}\_{\overline{\operatorname{IC}}(Z_i; P\_{0})} +
+o\_{P}(1) \\
+&\overset{\mathcal{D}}{\longrightarrow}\mathcal{N}(0,\Sigma)
+\end{align\*} by the CLT, and under regulatory conditions
+\mathbb{P}\_{n}\overline{\operatorname{IC}}(Z_i; \widehat{P})^{\otimes
+2} \overset{P}{\longrightarrow}\Sigma as n\to\infty.
 
 To illustrate this we consider two marginal logistic regression models
-fitted separately for $Y_{1}$ and $Y_{2}$ and combine the estimates and
-IFs using the `merge` method
+fitted separately for Y_1 and Y_2 and combine the estimates and IFs
+using the `merge` method
 
 ``` r
 g1 <- glm(y1 ~ a, family=binomial, data=dw)
@@ -575,51 +572,50 @@ testing](#linear-contrasts-and-hypothesis-testing).
 
 ### Imbalanced data
 
-Let
-$O_{1} = \left( Z_{1}R_{1},R_{1} \right),\ldots,O_{N} = \left( Z_{N}R_{N},R_{N} \right)$
-be iid with $R_{i}\!\bot\!\!\!\!\bot\! Z_{i}$ and let the full-data IF
-for some estimator of a parameter $\theta \in {\mathbb{R}}^{p}$ be
-$IC\left( \cdot ;P_{0} \right)$. For convenience let the data be ordered
-$R_{i} = \mathbf{1}(i \leq n)$ where $n$ is the number of observed data
+Let O\_{1} = (Z\_{1}R\_{1}, R\_{1}), \ldots, O\_{N}=(Z\_{N}R\_{N},
+R\_{N}) be iid with R\_{i}\\\perp\\\\\\\\\perp\\Z_i and let the
+full-data IF for some estimator of a parameter \theta\in\mathbb{R}^p be
+IC(\cdot; P\_{0}). For convenience let the data be ordered
+R\_{i}=\mathbf{1}(i\leq n) where n is the number of observed data
 points, then the complete-case estimator is consistent and based on same
 IF
 
-$$\begin{array}{r}
-{\sqrt{n}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}IC\left( Z_{i};P_{0} \right) + o_{P}(1).}
-\end{array}$$
+\begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^n IC(Z_i; P\_{0}) + o\_{P}(1).
+\end{align\*}
 
 This estimator can also be decomposed in terms of the observed data
-$O_{1},\ldots,O_{N}$ noting that
+O_1,\ldots,O_N noting that
 
-$$\begin{array}{r}
-{\sqrt{N}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{N}}\sum\limits_{i = 1}^{N}IC\left( Z_{i};P \right)\frac{R_{i}N}{n} + o_{P}(1).}
-\end{array}$$
+\begin{align\*} \sqrt{N}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{N}}\sum\_{i=1}^N IC(Z_i; P)\frac{R_i N}{n} + o\_{P}(1).
+\end{align\*}
 
-where the term $\frac{R_{i}N}{n}$ corresponds to an inverse probability
+where the term \frac{R_i N}{n} corresponds to an inverse probability
 weighting with the empirical plugin estimate of the proportion of
-observed data $R = 1$. Under a missing completely at random assumption
-we can therefore combine estimators that are estimated on different
-datasets. Let the observed data be
-$\left( Z_{11}R_{11},R_{11},Z_{21}R_{21},R_{21} \right),\ldots,\left( Z_{1N}R_{1N},R_{1N},Z_{2N}R_{2N},R_{2N} \right))$
-with complete-case estimators ${\widehat{\theta}}_{1}$ and
-${\widehat{\theta}}_{2}$ for parameters $\theta_{1}$ and $\theta_{2}$
-based on $\left( Z_{11}R_{11},\ldots,Z_{1N}R_{1N} \right)$ and
-$\left( Z_{21}R_{21},\ldots,Z_{2N}R_{2N} \right)$, respectively, and let
-the corresponding IFs be $IC_{1}\left( \cdot ;P_{0} \right)$ and
-$IC_{2}( \cdot ;\ P)$. It then follows that
+observed data R=1. Under a missing completely at random assumption we
+can therefore combine estimators that are estimated on different
+datasets. Let the observed data be (Z\_{11}R\_{11}, R\_{11},
+Z\_{21}R\_{21}, R\_{21}), \ldots, (Z\_{1N}R\_{1N}, R\_{1N},
+Z\_{2N}R\_{2N}, R\_{2N})) with complete-case estimators
+\widehat{\theta}\_1 and \widehat{\theta}\_2 for parameters \theta_1 and
+\theta_2 based on (Z\_{11}R\_{11}, \ldots, Z\_{1N}R\_{1N}) and
+(Z\_{21}R\_{21}, \ldots, Z\_{2N}R\_{2N}), respectively, and let the
+corresponding IFs be IC\_{1}(\cdot; P\_{0}) and IC\_{2}(\cdot;\\ P). It
+then follows that
 
-\$\$\begin{align\*} \sqrt{N}\left\\ \begin{pmatrix} \widehat{\theta}\_1
-\\ \widehat{\theta}\_2 \end{pmatrix} - \begin{pmatrix}
+\begin{align\*} \sqrt{N}\left\\ \begin{pmatrix} \widehat{\theta}\_1 \\
+\widehat{\theta}\_2 \end{pmatrix} - \begin{pmatrix}
 \vphantom{\widehat{\theta}\_1}\theta_1 \\
 \vphantom{\widehat{\theta}\_1}\theta_2 \end{pmatrix} \right\\ =
 \frac{1}{\sqrt{N}}\sum\_{i=1}^N \begin{pmatrix} IC_1(Z\_{1i};
 P\_{0})\frac{R\_{1i}N}{R\_{1\bullet}} \\ IC_2(Z\_{2i};
 P\_{0})\frac{R\_{2i}N}{R\_{2\bullet}} \end{pmatrix} + o\_{P}(1)
-\end{align\*}\$\$
+\end{align\*}
 
-with $R_{k \bullet} = \sum_{i = 1}^{N}R_{ki}.$ Returning to the example,
+with R\_{k\bullet} = \sum\_{i=1}^{N}R\_{ki}. Returning to the example,
 we can combine the marginal estimates of two model objects that have
-been estimated from different datasets (as the outcome $Y_{3}$ is only
+been estimated from different datasets (as the outcome Y_3 is only
 available in half of the data) with the `merge` function
 
 ``` r
@@ -823,21 +819,20 @@ merge(g1, g2, subset="(Intercept)")
 
 ### Clustered data (non-iid case)
 
-Let $Z_{i} = \left( Z_{i1},\ldots,Z_{iN_{i}} \right)$ and assume that
-$\left( Z_{i},N_{i} \right) \sim P$, $i = 1,\ldots,n$ are iid and
-$N_{i}\!\bot\!\!\!\!\bot\! Z_{ij}$. The variables
-$Z_{i1},\ldots,Z_{iN_{i}}$ we assume are exchangeable but not
-necessarily independent. Define $N = \sum_{i = 1}^{n}N_{i}$, and assume
-that a parameter estimate, $\widehat{\theta} \in {\mathbb{R}}^{p}$ has
-the decomposition
-$$\sqrt{N}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{N}}\sum\limits_{i = 1}^{n}\sum\limits_{k = 1}^{N_{i}}IC\left( Z_{ik};P_{0} \right) + o_{P}(1).$$
-It then follows that
-$$\sqrt{n}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\widetilde{\operatorname{IC}}\left( Z_{i};P_{0} \right) + o_{P}(1)$$
-with
-$\widetilde{\operatorname{IC}}\left( Z_{i};P_{0} \right) = \sum_{k = 1}^{N_{i}}\frac{n}{N}IC\left( Z_{ik};P_{0} \right)$,
-$i = 1,\ldots,n$ which are iid an therefore admits the usual CLT to
-derive the asymptotic variance of $\widehat{\theta}$. Turning back to
-the example data, we can estimate the marginal model
+Let Z_i = (Z\_{i1},\ldots,Z\_{iN\_{i}}) and assume that (Z\_{i}, N\_{i})
+\sim P, i=1,\ldots,n are iid and N_i\\\perp\\\\\\\\\perp\\Z\_{ij}. The
+variables Z\_{i1},\ldots,Z\_{iN\_{i}} we assume are exchangeable but not
+necessarily independent. Define N = \sum\_{i=1}^{n} N_i, and assume that
+a parameter estimate, \widehat{\theta}\in\mathbb{R}^p has the
+decomposition \sqrt{N}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{N}}
+\sum\_{i=1}^{n} \sum\_{k=1}^{N\_{i}} IC(Z\_{ik}; P\_{0}) + o\_{P}(1). It
+then follows that \sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}
+\sum\_{i=1}^{n} \widetilde{\operatorname{IC}}(Z\_{i}; P\_{0}) +
+o\_{P}(1) with \widetilde{\operatorname{IC}}(Z\_{i}; P\_{0}) =
+\sum\_{k=1}^{N\_{i}} \frac{n}{N}IC(Z\_{ik}; P\_{0}), i=1,\ldots,n which
+are iid an therefore admits the usual CLT to derive the asymptotic
+variance of \widehat{\theta}. Turning back to the example data, we can
+estimate the marginal model
 
 ``` r
 g0 <- glm(y ~ a + w + x, data = dl, family = binomial())
@@ -924,27 +919,24 @@ e
 
 ## IF building blocks: transformations and the delta theorem
 
-Let $\left. \phi:{\mathbb{R}}^{p}\rightarrow{\mathbb{R}}^{m} \right.$ be
-differentiable at $\theta$ and assume that ${\widehat{\theta}}_{n}$ is
-RAL estimator with IF given by
-$\operatorname{IC}\left( \cdot ;P_{0} \right)$ such that
-$$\begin{array}{r}
-{\sqrt{n}\left( {\widehat{\theta}}_{n} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\operatorname{IC}\left( Z_{i};P_{0} \right) + o_{P}(1),}
-\end{array}$$ then by the delta method (Vaart 1998 Theorem 3.1)
-$$\begin{array}{r}
-{\sqrt{n}\{\phi\left( {\widehat{\theta}}_{n} \right) - \phi(\theta)\} = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\nabla\phi(\theta)\operatorname{IC}\left( Z_{i};P_{0} \right) + o_{P}(1),}
-\end{array}$$
+Let \phi\colon \mathbb{R}^p\to\mathbb{R}^m be differentiable at \theta
+and assume that \widehat{\theta}\_n is RAL estimator with IF given by
+\operatorname{IC}(\cdot; P\_{0}) such that \begin{align\*}
+\sqrt{n}(\widehat{\theta}\_n - \theta) = \frac{1}{\sqrt{n}}\sum\_{i=1}^n
+\operatorname{IC}(Z_i; P\_{0}) + o\_{P}(1), \end{align\*} then by the
+delta method (Vaart 1998 Theorem 3.1) \begin{align\*}
+\sqrt{n}\\\phi(\widehat{\theta}\_n) - \phi(\theta)\\ =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^n \nabla\phi(\theta)\operatorname{IC}(Z_i;
+P\_{0}) + o\_{P}(1), \end{align\*}
 
-where
-$\left. \phi:\theta\mapsto\left( \phi_{1}(\theta),\ldots,\phi_{m}(\theta) \right)^{\top} \right.$
-and $\nabla$ is the partial derivative operator $$\begin{array}{r}
-{\nabla\phi(\theta) = \begin{pmatrix}
-{\frac{\partial}{\partial\theta_{1}}\phi_{1}(\theta)} & \cdots & {\frac{\partial}{\partial\theta_{p}}\phi_{1}(\theta)} \\
-\vdots & \ddots & \vdots \\
-{\frac{\partial}{\partial\theta_{1}}\phi_{m}(\theta)} & \cdots & {\frac{\partial}{\partial\theta_{p}}\phi_{m}(\theta)} \\
- & & 
-\end{pmatrix}.}
-\end{array}$$
+where \phi\colon \theta\mapsto
+(\phi\_{1}(\theta),\ldots,\phi\_{m}(\theta))^\top and \nabla is the
+partial derivative operator \begin{align\*} \nabla\phi(\theta) =
+\begin{pmatrix} \tfrac{\partial}{\partial\theta_1}\phi_1(\theta) &
+\cdots & \tfrac{\partial}{\partial\theta_p}\phi_1(\theta) \\ \vdots &
+\ddots & \vdots \\ \tfrac{\partial}{\partial\theta_1}\phi_m(\theta) &
+\cdots & \tfrac{\partial}{\partial\theta_p}\phi_m(\theta) \\
+\end{pmatrix}. \end{align\*}
 
 Together with the ability to derive the joint IF from marginal IFs, this
 provides us with a powerful tool for constructing new estimates using
@@ -1048,21 +1040,24 @@ B %*% e
 #> chisq = 10.66, df = 2, p-value = 0.004855
 ```
 
-The following transformations are implemented - trigonometric functions:
-`cos`, `sin`, `tan` - inverse trigonometric functions: `acos`, `asin`,
-`atan` - hyperbolic functions: `cosh`, `sinh`, `tanh` - inverse
-hyperbolic functions: `acosh`, `asinh`, `atanh` - other mathematical
-functions: `log`, `log1p`, `exp`, `expm1`, `sqrt` - mathematical
-operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `%*%` and any
-compositions of these functions, which also means we can immediately
-apply most existing user-defined functions. To give an example consider
-the `logit` function
+The following transformations are implemented
+
+- trigonometric functions: `cos`, `sin`, `tan`
+- inverse trigonometric functions: `acos`, `asin`, `atan`
+- hyperbolic functions: `cosh`, `sinh`, `tanh`
+- inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
+- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `%*%`
+
+and any compositions of these functions, which also means we can
+immediately apply most existing user-defined functions. To give an
+example consider the `logit` function
 
 ``` r
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55ff6d143620>
+#> <bytecode: 0x56151c860f08>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1102,18 +1097,18 @@ with(e, c(est = e1*e2))
 ### Example: Pearson correlation
 
 As a simple toy example consider the problem of estimating the
-covariance of two variables $X_{1}$ and $X_{2}$$$\begin{array}{r}
-{\widehat{{\mathbb{C}}\!\text{ov}}\left( X_{1},X_{2} \right) = {\mathbb{P}}_{n}\left( X_{1} - {\mathbb{P}}_{n}X_{1} \right)\left( Y_{1} - {\mathbb{P}}_{n}Y_{1} \right).}
-\end{array}$$ It is easily verified that the IF of the sample estimate
-of
-$\left( {\mathbb{E}}X_{1},{\mathbb{E}}X_{2},{\mathbb{E}}\{ X_{1}X_{2}\} \right)^{\top}$
-given by is
-$\operatorname{IC}\left( X1,X2;P_{0} \right) = \left( X_{1} - {\mathbb{E}}X_{1},X_{2} - {\mathbb{E}}X_{2},X_{1}X_{2} - {\mathbb{E}}\{ X_{1}X_{2}\} \right)^{\top}$.
-By the delta theorem with $\phi(x,y,z) = z - xy$ we have
-$\nabla\phi(x,y,z) = ( - y, - x,1)^{\top}$ and thus the IF for the
-sample covariance estimate becomes $$\begin{array}{r}
-{\operatorname{IC}_{x_{1},x_{2}}\left( X_{1},X_{2};P_{0} \right) = \left( X_{1} - {\mathbb{E}}X_{1} \right)\left( X_{2} - {\mathbb{E}}X_{2} \right) - {\mathbb{C}}\!\text{ov}\left( X_{1},X_{2} \right)}
-\end{array}$$
+covariance of two variables X_1 and X_2 \begin{align\*}
+\widehat{\mathbb{C}\\\text{ov}}(X_1,X_2) =
+\mathbb{P}\_n(X_1-\mathbb{P}\_n X_1)(Y_1-\mathbb{P}\_n Y_1).
+\end{align\*} It is easily verified that the IF of the sample estimate
+of (\mathbb{E}X\_{1}, \mathbb{E}X\_{2}, \mathbb{E}\\X\_{1}X\_{2}\\)^\top
+given by is \operatorname{IC}(X1,X2; P\_{0}) = (X\_{1}-\mathbb{E}X\_{1},
+X\_{2}-\mathbb{E}X\_{2}, X\_{1}X\_{2}-\mathbb{E}\\X\_{1}X\_{2}\\)^\top.
+By the delta theorem with \phi(x,y,z) = z-xy we have \nabla\phi(x,y,z) =
+(-y, -x, 1)^\top and thus the IF for the sample covariance estimate
+becomes \begin{align\*} \operatorname{IC}\_{x_1, x_2}(X_1, X_2; P\_{0})
+= (X_1 - \mathbb{E}X_1)(X_2 - \mathbb{E}X_2) -
+\mathbb{C}\\\text{ov}(X_1,X_2) \end{align\*}
 
 We can implement this directly using the `estimate` function via the
 `IC` argument which allows us to provide a user-specificed IF and with
@@ -1134,8 +1129,8 @@ with(dw, Cov(x1, x2))
 ```
 
 As an illustration we could also derive this estimate from simpler
-building blocks of ${\mathbb{E}}X_{1}$, ${\mathbb{E}}X_{2}$, and
-${\mathbb{E}}\left( X_{1}X_{2} \right)$.
+building blocks of \mathbb{E}X\_{1}, \mathbb{E}X\_{2}, and
+\mathbb{E}(X\_{1}X\_{2}).
 
 ``` r
 est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
@@ -1166,9 +1161,9 @@ rho
 #> rho 0.004025 0.04953 -0.09306 0.1011  0.9352
 ```
 
-by using a variance stabilizing transformation, Fishers $z$-transform
-(Lehmann and Romano 2023),
-$z = \operatorname{arctanh}\left( \widehat{\rho} \right) = \frac{1}{2}\log\left( \frac{1 + \widehat{\rho}}{1 - \widehat{\rho}} \right)$,
+by using a variance stabilizing transformation, Fishers z-transform
+(Lehmann and Romano 2023), z = \operatorname{arctanh}(\widehat{\rho}) =
+\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right),
 confidence limits with general better coverage can be obtained
 
 ``` r
@@ -1177,26 +1172,25 @@ estimate(atanh(rho), back.transform = tanh)
 #> rho 0.004025         -0.09279 0.1008  0.9352
 ```
 
-The confidence limits are calculated on the
-$\operatorname{arctanh}$-scale and transformed back to the original
-correlation scale via the `back.transform` argument. In this case, where
-the estimates are far away from the boundary of the parameter space, the
-variance stabilizing transform does almost not have any impact, and the
-confidence limits agrees with the original symmetric confidence limits.
+The confidence limits are calculated on the \operatorname{arctanh}-scale
+and transformed back to the original correlation scale via the
+`back.transform` argument. In this case, where the estimates are far
+away from the boundary of the parameter space, the variance stabilizing
+transform does almost not have any impact, and the confidence limits
+agrees with the original symmetric confidence limits.
 
 ### Linear contrasts and hypothesis testing
 
 An important special case of parameter transformations are linear
 transformations. A particular interest may be formulated around testing
-null-hypotheses of the form $$\begin{array}{r}
-{H_{0}:\quad\mathbf{B}\theta = \mathbf{b}_{0}}
-\end{array}$$
+null-hypotheses of the form \begin{align\*} H_0\colon\quad
+\mathbf{B}\theta = \mathbf{b}\_0 \end{align\*}
 
-where $\mathbf{B} \in {\mathbb{R}}^{m \times p}$ is a matrix of
-estimable contrasts and $\mathbf{b}_{0} \in {\mathbb{R}}^{m}$.
+where \mathbf{B}\in\mathbb{R}^{m\times p} is a matrix of estimable
+contrasts and \mathbf{b}\_0\in\mathbb{R}^{m}.
 
 As an example consider marginal models for the binary response variables
-$Y_{1},Y_{2},Y_{3},Y_{4}$
+Y_1, Y_2, Y_3, Y_4
 
 ``` r
 g <- lapply(
@@ -1228,8 +1222,8 @@ estimate(gg, B)
 #>   [a] - [a.1] = 0
 ```
 
-The $\mathbf{b}_{0}$ vector (default assumed to be zero) can be
-specified via the `null` argument
+The \mathbf{b}\_0 vector (default assumed to be zero) can be specified
+via the `null` argument
 
 ``` r
 estimate(gg, B, null=1)
@@ -1241,9 +1235,11 @@ estimate(gg, B, null=1)
 ```
 
 For testing multiple hypotheses we use that
-$\left( \mathbf{B}\widehat{\theta} - \mathbf{b}_{0} \right)^{\top}\left( \mathbf{B}\widehat{\Sigma}\mathbf{B}^{\top} \right)^{- 1}\left( \mathbf{B}\widehat{\theta} - \mathbf{b}_{0} \right) \sim \chi_{\operatorname{rank}{(B)}}^{2}$
-under the null hypothesis where $\widehat{\Sigma}$ is the estimated
-variance of $\theta$ (i.e., `vcov(gg)`)
+(\mathbf{B}\widehat{\theta}-\mathbf{b}\_0)^{\top}
+(\mathbf{B}\widehat{\Sigma}\mathbf{B}^{\top})^{-1}
+(\mathbf{B}\widehat{\theta}-\mathbf{b}\_0) \sim
+\chi^2\_{\operatorname{rank}(B)} under the null hypothesis where
+\widehat{\Sigma} is the estimated variance of \theta (i.e., `vcov(gg)`)
 
 ``` r
 B <- rbind(cbind(0,1, 0,-1, 0,0),
@@ -1313,22 +1309,22 @@ estimate(gg, pairwise.diff(3), null=c(1,1,1), use=c(2,4,6))
 #> chisq = 11.96, df = 2, p-value = 0.002523
 ```
 
-When conducting multiple tests each at a nominal-level of $\alpha$ the
-overall type I error is not controlled at $\alpha$-level. The influence
+When conducting multiple tests each at a nominal-level of \alpha the
+overall type I error is not controlled at \alpha-level. The influence
 function also allows for adjusting for multiple comparisons. Let
-$Z_{1},\ldots,Z_{p}$ denote $Z$-statistics from $p$ distinct two-sided
+Z\_{1},\ldots,Z\_{p} denote Z-statistics from p distinct two-sided
 hypothesis tests which we will assume is asymptotically distributed
 under the null hypothesis as a zero-mean Gaussian distribution with
-correlation matrix $R.$ Let \$ Z\_{max} = \_{i=1,,p} \|Z_i\|\$ then the
+correlation matrix R. Let \$ Z\_{max} = \_{i=1,,p} \|Z_i\|\$ then the
 family-wise error rate (FWER) under the null can be approximated by
-$$P\left( Z_{max} > z \right) = 1 - \int_{- z}^{z}\cdots\int_{- z}^{z}\phi_{R}\left( x_{1},\ldots,x_{p} \right)\, dx_{1}\cdots\, dx_{p}$$
-where $\phi_{R}$ is the multivariate normal density function with mean 0
-and variance given by the correlation matrix $R$. The adjusted
-$p$-values can then be calculated as
-$$P\left( Z_{max} > \Phi^{- 1}(1 - p/2) \right)$$ where $\Phi$ is the
-standard Gaussian CDF. As described in in (Pipper, Ritz, and Bisgaard
-2012) the joint distribution of $Z_{1},\ldots,Z_{p}$ can be estimated
-from the IFs. This is implemented in the `alpha_zmax` method
+P(Z\_{max} \> z) = 1-\int\_{-z}^{z} \cdots \int\_{-z}^{z}
+\phi\_{R}(x\_{1},\ldots,x\_{p}) \\dx\_{1}\cdots\\dx\_{p} where \phi\_{R}
+is the multivariate normal density function with mean 0 and variance
+given by the correlation matrix R. The adjusted p-values can then be
+calculated as P(Z\_{max} \> \Phi^{-1}(1-p/2)) where \Phi is the standard
+Gaussian CDF. As described in in (Pipper, Ritz, and Bisgaard 2012) the
+joint distribution of Z\_{1},\ldots,Z\_{p} can be estimated from the
+IFs. This is implemented in the `alpha_zmax` method
 
 ``` r
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
@@ -1351,12 +1347,12 @@ hypotheses.](figs/closedtesting.svg)
 
 *Figure: closed testing via Wald tests of all intersections hypotheses.*
 
-To reject the $H_{1}$ at an correct $\alpha$-level we should test all
-intersection hypotheses involving $H_{1}$ and check if there all are
-rejected at the $\alpha$-level. The adjusted $p$-values can here be
-obtained as the maximum $p$-value across all the composite hypothesis
-tests. Unfortunately, this only works for relatively few comparisons as
-the number of tests grows exponentially.
+To reject the H\_{1} at an correct \alpha-level we should test all
+intersection hypotheses involving H\_{1} and check if there all are
+rejected at the \alpha-level. The adjusted p-values can here be obtained
+as the maximum p-value across all the composite hypothesis tests.
+Unfortunately, this only works for relatively few comparisons as the
+number of tests grows exponentially.
 
 ``` r
 closed_testing(gg0, test = test_wald)
@@ -1373,45 +1369,48 @@ closed_testing(gg0, test = test_wald)
 Some parameters of interest are expressed as averages over functions of
 the observed data and estimated parameters of a model. The asymptotic
 distribution can in some of these cases also be derived from the
-influence function. Let $Z_{1},\ldots,Z_{n}$ be iid observations,
-$Z_{1} \sim P_{0}$ and let $X_{i} \subset Z_{i}$.
+influence function. Let Z\_{1},\ldots,Z\_{n} be iid observations,
+Z\_{1}\sim P\_{0} and let X\_{i}\subset Z\_{i}.
 
-Assume that $\widehat{\theta}$ is RAL estimator of
-$\theta \in \Omega \subset {\mathbb{R}}^{p}$$$\sqrt{n}\left( \widehat{\theta} - \theta \right) = \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\phi\left( Z_{i};P_{0} \right) + o_{P}(1).$$
-Let $\left. f:\mathcal{X} \times \Omega\rightarrow{\mathbb{R}} \right.$
-be continuous differentiable in
-$\theta$$$\sqrt{n}\{ f\left( X;\widehat{\theta} \right) - f(X;\theta)\} = \frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum\limits_{i = 1}^{n}\phi\left( Z_{i};P \right) + o_{P}(1).$$
+Assume that \widehat{\theta} is RAL estimator of \theta\in\Omega\subset
+\mathbb{R}^{p} \sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\phi(Z\_{i}; P\_{0}) + o\_{P}(1). Let
+f:\mathcal{X}\times\Omega\to\mathbb{R} be continuous differentiable in
+\theta \sqrt{n}\\f(X; \widehat{\theta})-f(X; \theta)\\ =
+\frac{1}{\sqrt{n}}\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
+P) + o\_{P}(1).
 
-Let $\Psi = P_{0}f(X;\theta)$ and
-$\widehat{\Psi} = P_{n}f\left( X;\widehat{\theta} \right)$. $P_{0}$ and
-$P_{n}$ are here everywhere the integrals wrt. $X$. It is easily
-verified that $$\begin{aligned}
-{\widehat{\Psi} - \Psi} & {= \left( P_{n} - P_{0} \right)\left( f(X;\theta) - \Psi \right) + P\left\lbrack f\left( X;\widehat{\theta} \right) - f(X;\theta) \right\rbrack} \\
- & {\quad + \left( P_{n} - P_{0} \right)\left\lbrack f\left( X;\widehat{\theta} \right) - f(X;\theta) \right\rbrack}
-\end{aligned}$$
+Let \Psi = P\_{0}f(X;\theta) and \widehat{\Psi} = P\_{n}
+f(X;\widehat{\theta}). P\_{0} and P\_{n} are here everywhere the
+integrals wrt. X. It is easily verified that \begin{align\*}
+\widehat{\Psi}-\Psi &= (P\_{n}-P\_{0})(f(X; \theta)-\Psi) +
+P\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
+(P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] \end{align\*}
 
 From Lemma 19.24 (Vaart 1998) it follows that for the last term
-$$\begin{array}{r}
-{\sqrt{n}\left( P_{n} - P_{0} \right)\left\lbrack f\left( X;\widehat{\theta} \right) - f(X;\theta) \right\rbrack = o_{P}(1)}
-\end{array}$$ when $f$ for example is Lipschitz and more generally when
-$f(X;\theta)$ forms a $P_{0}$-Donsker class.
+\begin{align\*}
+\sqrt{n}(P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] = o\_{P}(1)
+\end{align\*} when f for example is Lipschitz and more generally when
+f(X;\theta) forms a P\_{0}-Donsker class.
 
-It therefore follows that $$\begin{aligned}
-{\sqrt{n}\left( \widehat{\Psi} - \Psi \right)} & {= \sqrt{n}P_{n}\left( f(X;\theta) - \Psi \right) + \frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum\limits_{i = 1}^{n}\phi\left( Z_{i};P_{0} \right) + o_{P}(1)} \\
- & {= \frac{1}{\sqrt{n}}\sum\limits_{i = 1}^{n}\{ f(X;\theta) - \Psi\} + \frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum\limits_{i = 1}^{n}\phi\left( Z_{i},P_{0} \right) + o_{P}(1)}
-\end{aligned}$$ Hence the IF for $\widehat{\Psi}$ becomes
-$$IC\left( Z;P_{0} \right) = f(X;\theta) - \Psi + \left\lbrack P_{0}\nabla_{\theta}f(X;\theta) \right\rbrack\phi(Z).$$
+It therefore follows that \begin{align\*} \sqrt{n}(\widehat{\Psi}-\Psi)
+&= \sqrt{n}P\_{n}(f(X; \theta)-\Psi) +
+\frac{1}{\sqrt{n}}P\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
+P\_{0}) + o\_{P}(1) \\ &=
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\\f(X;\theta)-\Psi\\ +
+\frac{1}{\sqrt{n}}P\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i},
+P\_{0}) + o\_{P}(1) \end{align\*} Hence the IF for \widehat{\Psi}
+becomes IC(Z; P\_{0}) = f(X;\theta)-\Psi +
+\[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z).
 
 Turning back to the example we can estimate the logistic regression
-model
-$\operatorname{logit}\left( E\{ Y_{1}|A,X_{1},W\} \right) = \beta_{0} + \beta_{a}A + \beta_{x_{1}}X_{1} + \beta_{w}W$,
-and from this we want to estimate the target parameter
-$$\theta(P) = {\mathbb{E}}_{P}\left\lbrack E\left( Y \mid A = 1,X_{1},W \right) \right\rbrack.$$
+model \operatorname{logit}(E\\Y_1 \| A,X_1,W\\) = \beta_0 + \beta_a A +
+\beta\_{x_1} X_1 + \beta_w W, and from this we want to estimate the
+target parameter \theta(P) = \mathbb{E}\_{P}\[E(Y\mid A=1, X\_{1}, W)\].
 To do this we need first to estimate the model and then define a
 function that gives the predicted probability
-${\mathbb{P}}\left( Y = 1 \mid ,A = a,X_{1},W \right)$ for any observed
-values of $X_{1},W$ but with the treatment variable $A$ kept fixed at
-the value $1$
+\mathbb{P}(Y=1\mid,A=a,X\_{1},W) for any observed values of X_1,W but
+with the treatment variable A kept fixed at the value 1
 
 ``` r
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
@@ -1441,40 +1440,35 @@ IC(ea) |> head()
 
 ### Average Treatment Effects
 
-Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a
-binary treatment variable, and $Y$ the outcome. In the following we are
-interested in estimating the target parameter
-$\psi_{a}(P) = E_{P}\left\lbrack Y(a) \right\rbrack$, where $Y(a)$ is
-the *potential outcome* we would have observed if treatment $a$ had been
-administered, possibly contrary to the actual treatment that was
-observed, i.e., $Y = Y(A)$. To assess the treatment effect we can then
-the consider the *average treatment effect* (ATE)
-$$E_{P}\left\lbrack Y(1) \right\rbrack - E_{P}\left\lbrack Y(0) \right\rbrack,$$
-or some other contrast of interest
-$g\left( \psi_{1}(P),\psi_{0}(P) \right)$. Under the following
-assumptions
+Let the observed data be Z = (W,A,Y), where W are covariates, A a binary
+treatment variable, and Y the outcome. In the following we are
+interested in estimating the target parameter \psi_a(P) = E_P\[Y(a)\],
+where Y(a) is the *potential outcome* we would have observed if
+treatment a had been administered, possibly contrary to the actual
+treatment that was observed, i.e., Y = Y(A). To assess the treatment
+effect we can then the consider the *average treatment effect* (ATE)
+E_P\[Y(1)\]-E_P\[Y(0)\], or some other contrast of interest g(\psi_1(P),
+\psi_0(P)). Under the following assumptions
 
 1.  Stable Unit Treatment Values Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
-2.  Positivity, $P(A \mid W) > \epsilon$ for some $\epsilon > 0$ and
-    baseline covariates $W$
-3.  No unmeasured confounders, $Y(a)\bot\!\!\!\bot A|W$
+2.  Positivity, P(A\mid W)\>\epsilon for some \epsilon\>0 and baseline
+    covariates W
+3.  No unmeasured confounders, Y(a)\perp \\\\\\ \perp A\|W
 
 then the target parameter can be identified from the observed data
-distribution as
-$$E\left( E\left\lbrack Y|W,A = a \right\rbrack \right) = E\left( E\left\lbrack Y(a)|W \right\rbrack \right) = E\left\lbrack Y(a) \right\rbrack$$
-or
-$$E\left\lbrack YI(A = a)/P\left( A = a|W \right) \right\rbrack = E\left\lbrack Y(a) \right\rbrack.$$
+distribution as E(E\[Y\|W,A=a\]) = E(E\[Y(a)\|W\]) = E\[Y(a)\] or E\[Y
+I(A=a)/P(A=a\|W)\] = E\[Y(a)\].
 
-This suggests estimators based on outcome regression ($g$-computation)
-or inverse probability weighting. More generally, under the above
+This suggests estimators based on outcome regression (g-computation) or
+inverse probability weighting. More generally, under the above
 assumption we can constructor a *one-step* estimator from the *Efficient
 Influence Function* combining these two
-$$E\left\lbrack \frac{I(A = a)}{\Pi_{a}(W)}\left( Y - Q(W,A) \right) + Q(W,a) \right\rbrack.$$
-In practice, this requires plugin estimates of both the outcome model,
-$Q(W,A):=E(Y \mid A,W)$, and of the treatment propensity model
-$\Pi_{a}(W):=P(A = a \mid W)$. The corresponding estimator is consistent
-even if just one of the two nuisance models is correctly specified.
+E\left\[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right\]. In practice,
+this requires plugin estimates of both the outcome model, Q(W,A) :=
+E(Y\mid A, W), and of the treatment propensity model \Pi_a(W) :=
+P(A=a\mid W). The corresponding estimator is consistent even if just one
+of the two nuisance models is correctly specified.
 
 To illustrate this we manually construct the above estimating equations
 based on logistic regressions models for the two nuisance models
@@ -1525,9 +1519,7 @@ vcov(potential_outcomes)
 ```
 
 Finally, we can obtain the Average Treatment Effect (ATE)
-(risk-difference) $$\begin{array}{r}
-{E\left\lbrack Y(1) \right\rbrack - E\left\lbrack Y(0) \right\rbrack}
-\end{array}$$
+(risk-difference) \begin{align\*} E\[Y(1)\] - E\[Y(0)\] \end{align\*}
 
 ``` r
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")

@@ -3,7 +3,8 @@
 ## lava 1.9.0
 
 - `estimate`: estimate objects can now be transformed via functions:
-  `log`, `exp`, `+`, `-`, `*`, `/`, `^`
+  `log`, `exp`, `+`, `-`, `*`, `/`, `^`, … See the influence vignette
+  for full details and list of available mathematical transformations.
 - breaking change: `+` operator for estimate objects no longer merges
   objects.
 - `sim.default`: the simulation function `f`’s return object can now be

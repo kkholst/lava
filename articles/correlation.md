@@ -1,19 +1,19 @@
 # Estimating partial correlations with lava
 
+\newcommand{\arctanh}{\operatorname{arctanh}}
+
 This document illustrates how to estimate partial correlation
 coefficients using `lava`.
 
-Assume that $Y_{1}$ and $Y_{2}$ are conditionally normal distributed
-given $\mathbf{X}$ with the following linear structure
-$$Y_{1} = {\mathbf{β}}_{1}^{t}\mathbf{X} + \epsilon_{1}$$$$Y_{2} = {\mathbf{β}}_{2}^{t}\mathbf{X} + \epsilon_{2}$$
-with covariates $\mathbf{X} = \left( X_{1},\ldots,X_{k} \right)^{t}$ and
-measurement errors $$\begin{pmatrix}
-\epsilon_{1} \\
-\epsilon_{2}
-\end{pmatrix} \sim \mathcal{N}(0,\mathbf{\Sigma}),\quad\mathbf{\Sigma} = \begin{pmatrix}
-\sigma_{1}^{2} & {\rho\sigma_{1}\sigma_{2}} \\
-{\rho\sigma_{1}\sigma_{2}} & \sigma_{2}^{2}
-\end{pmatrix}.$$
+Assume that Y\_{1} and Y\_{2} are conditionally normal distributed given
+\mathbf{X} with the following linear structure Y_1 =
+\mathbf{\beta}\_1^{t}\mathbf{X} + \epsilon_1 Y_2 =
+\mathbf{\beta}\_2^{t}\mathbf{X} + \epsilon_2 with covariates \mathbf{X}
+= (X_1,\ldots,X_k)^{t} and measurement errors \begin{pmatrix}
+\epsilon\_{1} \\ \epsilon\_{2} \end{pmatrix} \sim \mathcal{N}\left(0,
+\mathbf{\Sigma} \right), \quad \mathbf{\Sigma} = \begin{pmatrix}
+\sigma_1^2 & \rho\sigma\_{1}\sigma\_{2} \\ \rho\sigma\_{1}\sigma\_{2} &
+\sigma_2^2 \end{pmatrix}.
 
 ``` r
 library('lava')
@@ -26,7 +26,7 @@ plot(m0, layoutType="circo")
 ![](correlation_files/figure-html/unnamed-chunk-2-1.png)
 
 Here we focus on inference with respect to the correlation parameter
-$\rho$.
+\rho.
 
 ## Simulation
 
@@ -151,27 +151,26 @@ correlation(e)
 ```
 
 Note, that in this case the confidence intervals are constructed by
-using a variance stabilizing transformation, Fishers $z$-transform
+using a variance stabilizing transformation, Fishers z-transform
 (Lehmann and Romano 2023),
 
-\$\$ z = \arctanh(\widehat{\rho}) =
+z = \arctanh(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)
-\$\$
 
-where $\widehat{\rho}$ is the MLE. This estimate has an approximate
+where \widehat{\rho} is the MLE. This estimate has an approximate
 asymptotic normal distribution
-\$\mathcal{N}(\arctanh(\rho),\frac{1}{n-3})\$. Hence a asymptotic 95%
+\mathcal{N}(\arctanh(\rho),\frac{1}{n-3}). Hence a asymptotic 95%
 confidence interval is given by
 
-$$\widehat{z} \pm \frac{1.96}{\sqrt{n - 3}}$$
+\widehat{z} \pm \frac{1.96}{\sqrt{n-3}}
 
-and the confidence interval for $\widehat{\rho}$ can directly be
+and the confidence interval for \widehat{\rho} can directly be
 calculated by the inverse transformation:
 
-$$\widehat{\rho} = \tanh(z) = \frac{e^{2z} - 1}{e^{2z} + 1}.$$
+\widehat{\rho} = \tanh(z) = \frac{e^{2z}-1}{e^{2z}+1}.
 
 This is equivalent to the direct calculations using the delta method
-(except for the small sample bias correction $3$) where the estimate and
+(except for the small sample bias correction 3) where the estimate and
 confidence interval are transformed back to the original scale using the
 `back.transform` argument.
 
@@ -182,7 +181,7 @@ estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5), back.tr
 ```
 
 The transformed confidence interval will generally have improved
-coverage especially near the boundary $\rho \approx \pm 1$.
+coverage especially near the boundary \rho \approx \pm 1.
 
 While the estimates of this particular model can be obtained in closed
 form, this is generally not the case when for example considering
@@ -211,13 +210,11 @@ correlation parameter. Next we label the variances and covariances: The
 variance of `y1` is called `v1`; the variance of `y2` is called `v2`;
 the covariance of `y1` and `y2` is called `c`. Finally, these parameters
 are tied to the previously defined parameters using the `constrain`
-method such that `v1` := $\exp\left( {\mathtt{l}\mathtt{1}} \right)$`v2`
-:= $\exp\left( {\mathtt{l}\mathtt{1}} \right)$ and `z` :=
-$\tanh(\mathtt{z})\sqrt{{\mathtt{v}\mathtt{1}}{\mathtt{v}\mathtt{2}}}$.
-In this way there is no constraints on the actual estimated parameters
-`l1`, `l2`, and `z` which can take any values in ${\mathbb{R}}^{3}$,
-while we at the same time are guaranteed a proper covariance matrix
-which is positive definite.
+method such that `v1` := \exp(\mathtt{l1}) `v2` := \exp(\mathtt{l1}) and
+`z` := \tanh(\mathtt{z})\sqrt{\mathtt{v1}\mathtt{v2}}. In this way there
+is no constraints on the actual estimated parameters `l1`, `l2`, and `z`
+which can take any values in \mathbb{R}^{3}, while we at the same time
+are guaranteed a proper covariance matrix which is positive definite.
 
 ``` r
 e2 <- estimate(m2, d)
@@ -249,9 +246,9 @@ estimate(e2, 'z', back.transform=tanh)
 In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument `constrain` when
 specifying the covariances (the argument `rname` specifies the parameter
-name of the \$\arctanh\$ transformed correlation coefficient, and
-`lname`, `lname2` can be used to specify the parameter names for the log
-variance parameters):
+name of the \arctanh transformed correlation coefficient, and `lname`,
+`lname2` can be used to specify the parameter names for the log variance
+parameters):
 
 ``` r
 m2 <- lvm() |>
