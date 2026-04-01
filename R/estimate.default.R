@@ -83,7 +83,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' Estimation of functional of parameters
 ##'
 ##' Estimation of functional of parameters. Wald tests, robust standard errors,
-##' cluster robust standard errors, LRT (when \code{f} is not a function)...
+##' cluster robust standard errors
 ##' @param x model object (\code{glm}, \code{lvmfit}, ...)
 ##' @param f transformation of model parameters and (optionally) data, or
 ##'   contrast matrix (or vector)
@@ -247,6 +247,35 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' estimate(l,f,R=1e2,null.sim=null)
 ##'
 ##' estimate(l,f)
+##'
+##' # ------ influence function calculus -------
+##' a <- estimate(coef = c("a" = 0.5), IC = rnorm(10), id = 1:10)
+##' b <- estimate(coef = c("b" = 0.8), IC = rnorm(10), id = 1:10)
+##'
+##' e <- c(a, b) # merge
+##' merge(a, b)
+##' c(e1=a, b) # naming of par
+##' labels(e, c("p1", "p2")) # renaming parameters
+##' e["a"] # subset
+##' subset(e, "a")
+##'
+##' # pipes
+##' # c(a, b) |>
+##' #  transform(function(x) x^2) |>
+##' #  subset("a") |>
+##' #  labels("sq")
+##'
+##' # Parameter transformation with automatic calculation of derivatives
+##' a * b
+##' (3 * cos(a) / sqrt(b) + 1) / a
+##' expit(c(a,b))
+##' c(sum=sum(e), sum2=a+b,
+##'   prod=prod(e), prod2=a*b)
+##' e %*% e # inner prod.
+##' c(1, 2) %*% e
+##' c(pow = a^b)
+##' a^c(0.5, 2)
+##' c(b=e["a"] * e["b"] / a, also.b=e["b"])
 ##' @aliases estimate estimate.default estimate.estimate merge.estimate
 ##'   estimate.mlm
 ##' @seealso estimate.array
@@ -725,7 +754,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$n <- nrow(data)
   res$ncluster <- nrow(res$IC)
   res$derivative <- derivative
-  return(res)
+  return(structure(res, class="estimate"))
 }
 
 
