@@ -8,13 +8,53 @@
 ##' @export
 "c.estimate" <- function(...) {
   args <- list(...)
-  labels <- names(args)
-  if (!is.null(labels)) {
-    names(args) <- NULL
-    args$labels <- labels
+  is_estimate <- unlist(lapply(args, function(x)
+    inherits(x, c("estimate", "glm", "targeted", "phreg"))))
+  if (!all(is_estimate)) { # fallback to default concatenation
+    return(.Primitive("c")(...))
   }
+  lab <- names(args)
+  names(args) <- NULL
   res <- do.call(merge, args)
+  newlabels <- names(coef(res))
+  if (!is.null(lab)) {
+    idx <- which(lab != "")
+    newlabels[idx] <- lab[idx]
+    return(labels(res, newlabels))
+  }
   return(res)
+}
+
+##' @export
+with.estimate <- function(data, expr, ...) {
+    # Recursively walk the expression tree and replace symbols
+  # that match names in `data` with data["symbol"] calls
+  replace_syms <- function(e) {
+    # Base case: if it's a symbol, check if it matches a name in data
+    if (is.symbol(e)) {
+      nm <- as.character(e)
+      if (nm %in% names(coef(data))) {
+        # Replace symbol with data["nm"] call
+        return(call("[", quote(data), nm))
+      }
+      return(e)
+    }
+    # Recursive case: walk the call tree
+    if (is.call(e)) {
+      return(as.call(lapply(e, replace_syms)))
+    }
+    # Literals (numbers, strings, etc.) — return as-is
+    return(e)
+  }
+  # Substitute and transform the expression
+  expr_sub  <- substitute(expr)
+  expr_new  <- replace_syms(expr_sub)
+  # Create a local environment where `data` exists,
+  # with the parent frame as the enclosing environment
+  eval_env <- new.env(parent = parent.frame())
+  eval_env$data <- data
+  # Evaluate in calling environment so non-estimate symbols still resolve
+  eval(expr_new, envir = eval_env)
 }
 
 # ---- Trigonometric Functions --------------------------------------------
@@ -68,7 +108,6 @@ atan.estimate <- function(x, ...) {
     structure(y, grad = diag(1 / (1 + p^2), nrow = length(p)))
   }, ...)
 }
-
 
 # ---- Hyperbolic Functions -----------------------------------------------
 
@@ -175,6 +214,11 @@ sum.estimate <- function(x, ...) {
 
  ##' @export
 "%*%.estimate" <- function(x, y, ...) {
+  if (is.matrix(x)) {
+    return(estimate(y, contrast=x, ...))
+  } else if (is.matrix(y)) {
+    return(estimate(x, contrast=t(y), ...))
+  }
   sum(x * y)
 }
 
@@ -196,7 +240,6 @@ prod.estimate <- function(x, ...) {
 }
 
 # ---- +,-,*,/ ------------------------------------------------------------
-
 
 operator_estimate <- function(x, y, op, ...) {
   x_const <- is.numeric(x)
