@@ -70,7 +70,11 @@ merge.estimate <- function(x,y,...,
                            subset=NULL,
                            regex=FALSE,
                            ignore.case=FALSE) {
-    objects <- c(list(x), list(estimate(y)), list(...))
+    if (missing(y)) {
+      objects <- c(list(x), list(...))
+    } else {
+      objects <- c(list(x), list(estimate(y)), list(...))
+    }
     trans <- unlist(lapply(
       objects, function(x) !is.null(x[["back.transform"]])
     ))
