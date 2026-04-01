@@ -709,6 +709,7 @@ B %*% e
 ```
 
 The following transformations are implemented
+
 - trigonometric functions: `cos`, `sin`, `tan`
 - inverse trigonometric functions: `acos`, `asin`, `atan`
 - hyperbolic functions: `cosh`, `sinh`, `tanh`
@@ -716,6 +717,7 @@ The following transformations are implemented
 - other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`
 - mathematical operators: `+`, `-`, `*`, `/`, `^`,
  `prod`, `sum`, `%*%`
+
 and any compositions of these functions, which also means we can immediately
  apply most existing user-defined functions. To give an example consider the `logit` function
 ```{r}

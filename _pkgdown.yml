@@ -1,4 +1,5 @@
 url: http://kkholst.github.io/lava/
 template:
+  math-rendering: katex
   bootstrap: 5
 
