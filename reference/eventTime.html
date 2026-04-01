@@ -96,17 +96,17 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="sim.lvm.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="st">"censtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.lvm.html">coxExponential.lvm</a></span><span class="op">(</span>rate<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu">eventTime</span><span class="op">(</span><span class="va">m0</span>,<span class="va">time</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>eventtime<span class="op">=</span><span class="fl">1</span>,censtime<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="st">"status"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime  censtime      time status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   2.411880  4.533928  2.411880      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.611888 23.252592 12.611888      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  10.065578 17.943372 10.065578      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12.901187  6.581174  6.581174      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2.272443 25.195749  2.272443      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   9.514347  3.575997  3.575997      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   6.423498  2.912756  2.912756      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2.439480  4.756341  2.439480      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  11.931257  4.708455  4.708455      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2.167252 10.303195  2.167252      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eventtime   censtime       time status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   7.775310 13.7796884  7.7753101      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  12.285109  7.0934129  7.0934129      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  15.396895 15.6199780 15.3968954      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  15.795398  4.7664010  4.7664010      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5.351330  2.6996180  2.6996180      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   2.158865  8.0832631  2.1588648      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   6.828698 13.3793979  6.8286979      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  13.521635  1.9044909  1.9044909      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  10.332128  9.7990463  9.7990463      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  8.910995  0.7311118  0.7311118      0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Alternative specification of the right censored survival outcome</span></span></span>
 <span class="r-in"><span><span class="co">## eventTime(m,"Status") &lt;- ~min(eventtime=1,censtime=0)</span></span></span>
@@ -125,13 +125,13 @@ one gets 2 new columns:</p>
 <span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sex"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.4</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="regression-set.html">regression</a></span><span class="op">(</span><span class="va">m</span>,from<span class="op">=</span><span class="st">"sbp"</span>,to<span class="op">=</span><span class="st">"eventtime"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.01</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex       sbp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  8.545196 13.206909  8.545196      1   0  99.50431</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 16.881250 14.468739 14.468739      0   0 126.00263</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 19.312301 11.738692 11.738692      0   0 102.51833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  7.557589  8.422240  7.557589      1   0 109.83046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.069883 12.497991 12.497991      0   0 120.36231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  4.874140  6.903913  4.874140      1   0 117.84913</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eventtime  censtime      time status sex      sbp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 36.921926  7.448510  7.448510      0   0 154.6311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 18.130309  6.757759  6.757759      0   1 177.8781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 35.747975  2.942973  2.942973      0   1 149.9032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  8.547178 14.147578  8.547178      1   1 129.5842</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 11.795046  1.662079  1.662079      0   0 108.0632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 11.760196 20.535047 11.760196      1   0 117.8530</span>
 <span class="r-in"><span><span class="co"># The parameters can be recovered using a Cox regression</span></span></span>
 <span class="r-in"><span><span class="co"># routine or a Weibull regression model. E.g.,</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>

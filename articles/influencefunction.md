@@ -74,6 +74,58 @@ $$\begin{array}{r}
 \end{array}$$ See section on [average treatment
 effects](#average-treatment-effects).
 
+## Working with influence functions with `lava::estimate`
+
+The main functions for working with influence functions are
+
+- `estimate` which prepares a model object and estimates the IF and
+  corresponding robust standard errors. Can also be used to transform
+  model parameters by application of the Delta Theorem.
+- `merge` method for combining estimates via their estimated IFs
+- `IC`, `coef`, `vcov` methods to extract the estimated IF,
+  coefficients, and asymptotic covariance matrix
+- `subset` for extracting subset of parameters and IFs
+- `transform` method for transforming parameter estimates
+- `labels` for renaming parameters
+
+The `estimate` function is the primary tool for obtaining parameter
+estimates and related information. It returns an object of the class
+type `estimate`, which is a general container for holding information
+about estimated parameters. The estimate function takes as input either
+a model object (the first argument `x`), or a parameter vector and
+corresponding influence function (IF) matrix specified using the `coef`
+and `IC` arguments. If the primary goal is to apply the delta method or
+test linear hypotheses, it is also possible to provide the asymptotic
+variance estimate via the `vcov` argument, without specifying the IC
+matrix.
+
+``` r
+estimate(x=, ...) 
+estimate(coef=, IC=, ...)
+estimate(coef=, vcov=, ...)
+```
+
+A typical call could look like
+
+``` r
+merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |> # merge two estimate objects
+  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter tranfsormation
+  labels(c("a", "b")) # rename parameters
+```
+
+Direct calculations is also possible, if `a` and `b` are estimate
+objects we can obtain new transformed parameter estimates with the
+syntax
+
+``` r
+c(exp(b)^0.5, exp(b * a) / (1 + exp(-b)))
+```
+
+with the necessary derivatives exactly calculated automatically. We
+refer to section [IF building
+blocks](#if-building-blocks-transformations-and-the-delta-theorem) for
+more details.
+
 ## Examples
 
 To illustrate the methods we consider data arising from the model
@@ -133,31 +185,6 @@ Print(dl)
 #> 400.1 1  1.169 400 1    1  0.8652
 #> 400.2 1  1.169 400 2    0 -0.6414
 #> 400.4 1  1.169 400 4    1 -0.3120
-```
-
-The main functions for working with influence functions are
-
-- `estimate` which prepares a model object and estimates the IF and
-  corresponding robust standard errors. Can also be used to transform
-  model parameters by application of the Delta Theorem.
-- `merge` method for combining estimates via their estimated IFs
-- `IC` method to extract the estimated IF
-
-The `estimate` function is the primary tool for obtaining parameter
-estimates and related information. It returns an object of the class
-type `estimate`, which is a general container for holding information
-about estimated parameters. The estimate function takes as input either
-a model object (the first argument `x`), or a parameter vector and
-corresponding influence function (IF) matrix specified using the `coef`
-and `IF` arguments. If the primary goal is to apply the delta method or
-test linear hypotheses, it is also possible to provide the asymptotic
-variance estimate via the `vcov` argument, without specifying the IF
-matrix.
-
-``` r
-estimate(x=, ...)
-estimate(coef=, IF=, ...)
-estimate(coef=, vcov=, ...)
 ```
 
 ### Example: population mean
@@ -949,15 +976,128 @@ estimate(g1, exp)
 The gradient can be provided as the attribute `grad` and otherwise
 numerical differentiation is applied.
 
-subset: `[` merge: `c` - `subset` - `labels` - `transform`
+An often more convenient syntax is to directly transform the `estimate`
+objects via standard mathematical R operations. An advantage of this is
+also that the necessary derivatives are automatically calculated
+exactly. To illustrate this consider the following simple example where
+we consider two `estimate` objects each with a single parameter estimate
 
-- trigonometric functions: `cos`, `sin`, `tan`
-- inverse trigonometric functions: `acos`, `asin`, `atan`
-- hyperbolic functions: `cosh`, `sinh`, `tanh`
-- inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
-- other mathematical: `log`, `log1p`, `exp`, `expm1`, `sqrt`
-- mathematical operators: `+`, `-`, `*`, `/`, `^`
-- `prod`, `sum`, `%*%`,
+``` r
+a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=1:10)
+```
+
+Parameter transformation can now be calculated directly as in the
+following examples
+
+``` r
+a * b
+#>   Estimate Std.Err    2.5%  97.5% P-value
+#> a      0.4  0.2741 -0.1372 0.9372  0.1445
+(3 * cos(a) / sqrt(b) + 1) / a
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a    7.887   5.283 -2.467 18.24  0.1354
+c(sum=sum(e), sum2=a+b,
+  prod=prod(e), prod2=a*b) # sum and prod function
+#>        Estimate Std.Err      2.5%    97.5% P-value
+#> sum   -0.002244 0.00332 -0.008751 0.004263  0.4991
+#> ─────                                             
+#> sum2   1.300000 0.56369  0.195179 2.404821  0.0211
+#> ─────                                             
+#> prod  -0.002244 0.00332 -0.008751 0.004263  0.4991
+#> ─────                                             
+#> prod2  0.400000 0.36223 -0.309967 1.109967  0.2695
+e <- c(a,b) # merge
+e %*% e # inner prod.
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> p1     0.89  0.5491 -0.1863 1.966  0.1051
+c(1, 2) %*% e
+#>    Estimate Std.Err   2.5% 97.5% P-value
+#> p1      2.1  0.6439 0.8379 3.362 0.00111
+c(pow = a^b) # power-function, rename parameter
+#>     Estimate Std.Err   2.5% 97.5% P-value
+#> pow   0.5743  0.2335 0.1167 1.032 0.01391
+a^c(0.5, 2)
+#>    Estimate Std.Err    2.5%  97.5%   P-value
+#> p1   0.7071  0.1840  0.3465 1.0677 0.0001212
+#> p2   0.2500  0.2602 -0.2599 0.7599 0.3365994
+c(e["a"] * e["b"] / a, e["b"])
+#>   Estimate Std.Err   2.5% 97.5%  P-value
+#> a      0.8  0.2614 0.2876 1.312 0.002212
+#> ─                                       
+#> b      0.8  0.2614 0.2876 1.312 0.002212
+```
+
+For the \`%*%* operator we can also use a general contrast matrix (see
+also Section on [Linear
+contrasts](#linear-contrasts-and-hypothesis-testing)
+
+``` r
+B <- rbind(c(1,-1), c(1,0), c(0,1))
+B %*% e
+#>           Estimate Std.Err      2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915
+#> [a]            0.5  0.2602 -0.009926 1.0099 0.054629
+#> [b]            0.8  0.2614  0.287617 1.3124 0.002212
+#> 
+#>  Null Hypothesis: 
+#>   [a] - [b] = 0
+#>   [a] = 0
+#>   [b] = 0 
+#>  
+#> chisq = 10.66, df = 2, p-value = 0.004855
+```
+
+The following transformations are implemented - trigonometric functions:
+`cos`, `sin`, `tan` - inverse trigonometric functions: `acos`, `asin`,
+`atan` - hyperbolic functions: `cosh`, `sinh`, `tanh` - inverse
+hyperbolic functions: `acosh`, `asinh`, `atanh` - other mathematical
+functions: `log`, `log1p`, `exp`, `expm1`, `sqrt` - mathematical
+operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `%*%` and any
+compositions of these functions, which also means we can immediately
+apply most existing user-defined functions. To give an example consider
+the `logit` function
+
+``` r
+lava::logit
+#> function (p) 
+#> log(p/(1 - p))
+#> <bytecode: 0x55ff6d143620>
+#> <environment: namespace:lava>
+logit(b)
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> b    1.386   1.634 -1.816 4.589  0.3962
+expit(c(a,b))
+#>   Estimate Std.Err   2.5%  97.5%   P-value
+#> a   0.6225 0.06114 0.5026 0.7423 2.418e-24
+#> b   0.6900 0.05592 0.5804 0.7996 5.632e-35
+```
+
+In the above example we also demonstrated the user of the subset
+operator `[]` and the merge method
+[`c()`](https://rdrr.io/r/base/c.html). These are basically equivalent
+to the `subset` and `merge` methods. There is also a `transform` method
+for constructing parameter transformations above, and the `labels`
+function for renaming parameters. Together we can combine these methods
+via the pipe operator to create readable code:
+
+``` r
+merge(a, b) |>  # merges the two `estimate` objects
+  transform(prod) |> # calculates product of parameter estimates
+  subset(1) |> # nothing happens here as the result was already 1-dim.
+  labels("prod") # rename parameter
+#>      Estimate Std.Err    2.5%  97.5% P-value
+#> prod      0.4  0.2741 -0.1372 0.9372  0.1445
+```
+
+Finally, the `with` function can be used to reference parameter names
+
+``` r
+e <- c("e1"=a, "e2"=b)
+with(e, c(est = e1*e2))
+#>     Estimate Std.Err    2.5%  97.5% P-value
+#> est      0.4  0.2741 -0.1372 0.9372  0.1445
+```
 
 ### Example: Pearson correlation
 
@@ -970,8 +1110,8 @@ $\left( {\mathbb{E}}X_{1},{\mathbb{E}}X_{2},{\mathbb{E}}\{ X_{1}X_{2}\} \right)^
 given by is
 $\operatorname{IC}\left( X1,X2;P_{0} \right) = \left( X_{1} - {\mathbb{E}}X_{1},X_{2} - {\mathbb{E}}X_{2},X_{1}X_{2} - {\mathbb{E}}\{ X_{1}X_{2}\} \right)^{\top}$.
 By the delta theorem with $\phi(x,y,z) = z - xy$ we have
-$\nabla\phi(x,y,z) = ( - y - x1)$ and thus the IF for the sample
-covariance estimate becomes $$\begin{array}{r}
+$\nabla\phi(x,y,z) = ( - y, - x,1)^{\top}$ and thus the IF for the
+sample covariance estimate becomes $$\begin{array}{r}
 {\operatorname{IC}_{x_{1},x_{2}}\left( X_{1},X_{2};P_{0} \right) = \left( X_{1} - {\mathbb{E}}X_{1} \right)\left( X_{2} - {\mathbb{E}}X_{2} \right) - {\mathbb{C}}\!\text{ov}\left( X_{1},X_{2} \right)}
 \end{array}$$
 
@@ -998,30 +1138,29 @@ building blocks of ${\mathbb{E}}X_{1}$, ${\mathbb{E}}X_{2}$, and
 ${\mathbb{E}}\left( X_{1}X_{2} \right)$.
 
 ``` r
-e1 <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
-  estimate(labels = c("Ex1", "Ex2", "Ex1x2"))
-e1
-#>        Estimate Std.Err     2.5%   97.5% P-value
-#> Ex1    0.038089 0.04842 -0.05681 0.13298  0.4315
-#> Ex2   -0.037026 0.05187 -0.13869 0.06464  0.4753
-#> Ex1x2  0.002633 0.05003 -0.09541 0.10068  0.9580
-estimate(e1, function(x) c(x, cov=with(as.list(x), Ex1x2 - Ex2* Ex1)))
-#>        Estimate Std.Err     2.5%   97.5% P-value
-#> Ex1    0.038089 0.04842 -0.05681 0.13298  0.4315
-#> Ex2   -0.037026 0.05187 -0.13869 0.06464  0.4753
-#> Ex1x2  0.002633 0.05003 -0.09541 0.10068  0.9580
-#> cov    0.004043 0.04976 -0.09349 0.10158  0.9352
+est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
+  estimate(labels = c("E1", "E2", "E12"))
+est
+#>      Estimate Std.Err     2.5%   97.5% P-value
+#> E1   0.038089 0.04842 -0.05681 0.13298  0.4315
+#> E2  -0.037026 0.05187 -0.13869 0.06464  0.4753
+#> E12  0.002633 0.05003 -0.09541 0.10068  0.9580
+
+est["E12"] - est["E2"]*est["E1"] 
+#>     Estimate Std.Err     2.5%  97.5% P-value
+#> E12 0.004043 0.04976 -0.09349 0.1016  0.9352
+# transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
 
-The variance estimates can be estimated in the same way and the combined
-estimates be used to estimate the correlation
+The variance estimates can be estimated in the same way and combined to
+estimate the correlation
 
 ``` r
-e2 <- with(dw, list(Cov(x1, x2, labels = "c", id = id),
-                    Cov(x1, x1, labels = "v1", id = id),
-                    Cov(x2, x2, labels = "v2", id = id))) |>
-  merge()
-rho <- estimate(e2, function(x) list(rho = x[1] / (x[2] * x[3])^.5))
+v12 <- with(dw, Cov(x1, x2, id = id))
+v1  <- with(dw, Cov(x1, x1, id = id))
+v2  <- with(dw, Cov(x2, x2, id = id))
+
+rho <- c(rho = v12 / sqrt(v1 * v2)) 
 rho
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> rho 0.004025 0.04953 -0.09306 0.1011  0.9352
@@ -1033,7 +1172,7 @@ $z = \operatorname{arctanh}\left( \widehat{\rho} \right) = \frac{1}{2}\log\left(
 confidence limits with general better coverage can be obtained
 
 ``` r
-estimate(rho, atanh, back.transform = tanh)
+estimate(atanh(rho), back.transform = tanh)
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> rho 0.004025         -0.09279 0.1008  0.9352
 ```
@@ -1195,9 +1334,9 @@ from the IFs. This is implemented in the `alpha_zmax` method
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
 alpha_zmax(gg0)
 #>       Estimate  P-value Adj.P-value
-#> [a]      1.324 0.015891    0.046870
+#> [a]      1.324 0.015891    0.046873
 #> [a.1]    1.506 0.001015    0.003043
-#> [a.2]    1.105 0.303571    0.661497
+#> [a.2]    1.105 0.303571    0.661496
 #> attr(,"adjusted.significance.level")
 #> [1] 0.01698
 ```
@@ -1289,15 +1428,15 @@ id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 #>     Estimate Std.Err   2.5%  97.5%    P-value
-#> val   0.7006 0.02966 0.6425 0.7587 2.561e-123
+#> val   0.7006 0.03124 0.6394 0.7618 2.035e-111
 IC(ea) |> head()
 #>        val
-#> 1 -0.41685
-#> 2 -0.22444
-#> 3  0.34679
-#> 4  0.03143
-#> 5  0.02478
-#> 6 -0.61997
+#> 1  0.05127
+#> 2 -0.69871
+#> 3  0.33584
+#> 4 -0.15036
+#> 5  0.29918
+#> 6 -0.08264
 ```
 
 ### Average Treatment Effects
@@ -1403,13 +1542,16 @@ Alternatively, we could get the estimate of the treatment effect on the
 log-odds scale:
 
 ``` r
-logor <- function(p) logit(p[2]) - logit(p[1])
-transform(potential_outcomes, logor, labels="logOR")
-#>       Estimate Std.Err  2.5% 97.5%  P-value
-#> logOR   0.7272  0.2226 0.291 1.163 0.001085
-transform(potential_outcomes, logor, labels="OR", back.transform=exp)
+est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
+est
+#>      Estimate Std.Err  2.5% 97.5%  P-value
+#> y(1)   0.7272  0.2226 0.291 1.163 0.001085
+transform(est, labels="OR", back.transform=exp)
 #>    Estimate Std.Err  2.5% 97.5%  P-value
 #> OR    2.069         1.338 3.201 0.001085
+#logor <- function(p) logit(p[2]) - logit(p[1])
+#transform(potential_outcomes, logor, labels="logOR")
+#transform(potential_outcomes, logor, labels="OR", back.transform=exp)
 ```
 
 We refer to the `targeted` package (Klaus K. Holst, Sommer, and Nordland

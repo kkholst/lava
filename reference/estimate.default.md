@@ -1,8 +1,7 @@
 # Estimation of functional of parameters
 
 Estimation of functional of parameters. Wald tests, robust standard
-errors, cluster robust standard errors, LRT (when `f` is not a
-function)...
+errors, cluster robust standard errors
 
 ## Usage
 
@@ -546,4 +545,77 @@ estimate(l,f,R=1e2,null.sim=null)
 estimate(l,f)
 #>              Estimate Std.Err     2.5%  97.5% P-value
 #> seq_along(x)  0.08095 0.06135 -0.03929 0.2012   0.187
+
+# ------ influence function calculus -------
+a <- estimate(coef = c("a" = 0.5), IC = rnorm(10), id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = rnorm(10), id = 1:10)
+
+e <- c(a, b) # merge
+merge(a, b)
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.5  0.2778 -0.0444 1.044 0.07184
+#> ─                                       
+#> b      0.8  0.3420  0.1296 1.470 0.01934
+c(e1=a, b) # naming of par
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> e1      0.5  0.2778 -0.0444 1.044 0.07184
+#> ──                                       
+#> b       0.8  0.3420  0.1296 1.470 0.01934
+labels(e, c("p1", "p2")) # renaming parameters
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> p1      0.5  0.2778 -0.0444 1.044 0.07184
+#> ──                                       
+#> p2      0.8  0.3420  0.1296 1.470 0.01934
+e["a"] # subset
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.5  0.2778 -0.0444 1.044 0.07184
+subset(e, "a")
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.5  0.2778 -0.0444 1.044 0.07184
+
+# pipes
+# c(a, b) |>
+#  transform(function(x) x^2) |>
+#  subset("a") |>
+#  labels("sq")
+
+# Parameter transformation with automatic calculation of derivatives
+a * b
+#>   Estimate Std.Err    2.5%  97.5% P-value
+#> a      0.4  0.2799 -0.1486 0.9486   0.153
+(3 * cos(a) / sqrt(b) + 1) / a
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a    7.887   5.418 -2.733 18.51  0.1455
+expit(c(a,b))
+#>   Estimate Std.Err   2.5%  97.5%   P-value
+#> a   0.6225 0.06527 0.4945 0.7504 1.484e-21
+#> b   0.6900 0.07317 0.5466 0.8334 4.099e-21
+c(sum=sum(e), sum2=a+b,
+  prod=prod(e), prod2=a*b)
+#>       Estimate Std.Err    2.5%  97.5%  P-value
+#> sum        1.3  0.4399  0.4379 2.1621 0.003121
+#> ─────                                         
+#> sum2       1.3  0.4399  0.4379 2.1621 0.003121
+#> ─────                                         
+#> prod       0.4  0.2799 -0.1486 0.9486 0.153010
+#> ─────                                         
+#> prod2      0.4  0.2799 -0.1486 0.9486 0.153010
+e %*% e # inner prod.
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> p1     0.89  0.6128 -0.3112 2.091  0.1464
+c(1, 2) %*% e
+#>    Estimate Std.Err   2.5% 97.5%  P-value
+#> p1      2.1  0.7374 0.6547 3.545 0.004403
+c(pow = a^b)
+#>     Estimate Std.Err     2.5% 97.5% P-value
+#> pow   0.5743  0.2897 0.006493 1.142 0.04744
+a^c(0.5, 2)
+#>    Estimate Std.Err    2.5%  97.5%   P-value
+#> p1   0.7071  0.1964  0.3222 1.0921 0.0003179
+#> p2   0.2500  0.2778 -0.2944 0.7944 0.3680875
+c(b=e["a"] * e["b"] / a, also.b=e["b"])
+#>        Estimate Std.Err   2.5% 97.5% P-value
+#> b           0.8   0.342 0.1296  1.47 0.01934
+#> ──────                                      
+#> also.b      0.8   0.342 0.1296  1.47 0.01934
 ```
