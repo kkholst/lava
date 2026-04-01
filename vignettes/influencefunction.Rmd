@@ -117,6 +117,52 @@ A=a,W] - \Psi_{a}(P)
 \end{align*}
 See section on [average treatment effects](#average-treatment-effects).
 
+# Working with influence functions with `lava::estimate`
+
+The main functions for working with influence functions are
+
+- `estimate` which prepares a model object and estimates the IF and
+  corresponding robust standard errors. Can also be used to transform model
+  parameters by application of the Delta Theorem.
+- `merge`  method for combining estimates via their estimated IFs
+- `IC`, `coef`, `vcov` methods to extract the estimated IF, coefficients, and
+  asymptotic covariance matrix
+- `subset` for extracting subset of parameters and IFs
+- `transform` method for transforming parameter estimates
+- `labels` for renaming parameters
+
+The `estimate` function is the primary tool for obtaining parameter estimates
+and related information. It returns an object of the class type `estimate`,
+which is a general container for holding information about estimated parameters.
+The estimate function takes as input either a model object (the first argument
+`x`), or a parameter vector and corresponding influence function (IF) matrix
+specified using the `coef` and `IC` arguments. If the primary goal is to apply the
+delta method or test linear hypotheses, it is also possible to provide the
+asymptotic variance estimate via the `vcov` argument, without specifying the IC
+matrix.
+
+```{r estimate.syntax, eval=FALSE}
+estimate(x=, ...) 
+estimate(coef=, IC=, ...)
+estimate(coef=, vcov=, ...)
+```
+
+A typical call could look like
+```{r estimate.examples, eval=FALSE}
+merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |> # merge two estimate objects
+  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter tranfsormation
+  labels(c("a", "b")) # rename parameters
+```
+
+Direct calculations is also possible, if `a` and `b` are estimate objects we can
+obtain new transformed parameter estimates with the syntax
+```{r estimate.direct, eval=FALSE}
+c(exp(b)^0.5, exp(b * a) / (1 + exp(-b)))
+```
+with the necessary derivatives exactly calculated automatically.
+We refer to section
+[IF building blocks](#if-building-blocks-transformations-and-the-delta-theorem) for more details.
+
 
 # Examples
     
@@ -152,34 +198,6 @@ dl <- dl[order(dl$id), ]
 ## dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
 Print(dl)
 ```
-
-
-The main functions for working with influence functions are 
-
-- `estimate` which prepares a model object and estimates the IF and
-  corresponding robust standard errors. Can also be used to transform model
-  parameters by application of the Delta Theorem.
-- `merge`  method for combining estimates via their estimated IFs
-- `IC` method to extract the estimated IF
-
-The `estimate` function is the primary tool for obtaining parameter estimates
-and related information. It returns an object of the class type `estimate`,
-which is a general container for holding information about estimated parameters.
-The estimate function takes as input either a model object (the first argument
-`x`), or a parameter vector and corresponding influence function (IF) matrix
-specified using the `coef` and `IF` arguments. If the primary goal is to apply the
-delta method or test linear hypotheses, it is also possible to provide the
-asymptotic variance estimate via the `vcov` argument, without specifying the IF
-matrix.
-
-```{r estimate.syntax, eval=FALSE}
-estimate(x=, ...)
-estimate(coef=, IF=, ...)
-estimate(coef=, vcov=, ...)
-```
-
-
-
 
 ## Example: population mean
 
@@ -659,19 +677,71 @@ estimate(g1, exp)
 The gradient can be provided as the attribute `grad` and otherwise numerical differentiation is applied. 
 
 
-subset: `[`
-merge: `c`
-- `subset`
-- `labels`
-- `transform`
+An often more convenient syntax is to directly transform the `estimate` objects
+via standard mathematical R operations. An advantage of this is also that the
+necessary derivatives are automatically calculated exactly.
+To illustrate this consider the following simple example where we consider two
+`estimate` objects each with a single parameter estimate
+```{r estimate_calculus_models}
+a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=1:10)
+```
 
+Parameter transformation can now be calculated directly as in the following examples
+```{r estimate_calc_ex}
+a * b
+(3 * cos(a) / sqrt(b) + 1) / a
+c(sum=sum(e), sum2=a+b,
+  prod=prod(e), prod2=a*b) # sum and prod function
+e <- c(a,b) # merge
+e %*% e # inner prod.
+c(1, 2) %*% e
+c(pow = a^b) # power-function, rename parameter
+a^c(0.5, 2)
+c(e["a"] * e["b"] / a, e["b"])
+```
+
+For the `%*%* operator we can also use a general contrast matrix
+(see also Section on [Linear contrasts](#linear-contrasts-and-hypothesis-testing)
+```{r estimate-contrast}
+B <- rbind(c(1,-1), c(1,0), c(0,1))
+B %*% e
+```
+
+The following transformations are implemented
 - trigonometric functions: `cos`, `sin`, `tan`
 - inverse trigonometric functions: `acos`, `asin`, `atan`
 - hyperbolic functions: `cosh`, `sinh`, `tanh`
 - inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
-- other mathematical: `log`, `log1p`, `exp`, `expm1`, `sqrt`
-- mathematical operators: `+`, `-`, `*`, `/`, `^`
-- `prod`, `sum`, `%*%`,
+- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`,
+ `prod`, `sum`, `%*%`
+and any compositions of these functions, which also means we can immediately
+ apply most existing user-defined functions. To give an example consider the `logit` function
+```{r}
+lava::logit
+logit(b)
+expit(c(a,b))
+```
+
+In the above example we also demonstrated the user of the subset operator `[]`
+and the merge method `c()`. These are basically equivalent to the `subset` and
+`merge` methods. There is also a `transform` method for constructing parameter
+transformations above, and the `labels` function for renaming parameters.
+Together we can combine these methods via the pipe operator to create readable
+code:
+```{r estimate-pipe}
+merge(a, b) |>  # merges the two `estimate` objects
+  transform(prod) |> # calculates product of parameter estimates
+  subset(1) |> # nothing happens here as the result was already 1-dim.
+  labels("prod") # rename parameter
+```
+
+Finally, the `with` function can be used to reference parameter names
+```{r estimate-with}
+e <- c("e1"=a, "e2"=b)
+with(e, c(est = e1*e2))
+```
 
 
 ## Example: Pearson correlation
@@ -684,7 +754,7 @@ It is easily verified that the IF of the sample estimate of $(\E X_{1}, \E
 X_{2}, \E\{X_{1}X_{2}\})^\top$ given by
 is $\IC(X1,X2; \Pz) = (X_{1}-\E X_{1}, X_{2}-\E X_{2},
 X_{1}X_{2}-\E\{X_{1}X_{2}\})^\top$. By the delta theorem with $\phi(x,y,z) =
-z-xy$ we have  $\nabla\phi(x,y,z) = (-y -x 1)$ and thus the IF for the
+z-xy$ we have  $\nabla\phi(x,y,z) = (-y, -x, 1)^\top$ and thus the IF for the
 sample covariance estimate becomes
 \begin{align*}
 \IC_{x_1, x_2}(X_1, X_2; \Pz) = (X_1 - \E X_1)(X_2 - \E X_2) - \cov(X_1,X_2)
@@ -708,19 +778,20 @@ with(dw, Cov(x1, x2))
 As an illustration we could also derive this estimate from simpler building
 blocks of $\E X_{1}$, $\E X_{2}$, and $\E(X_{1}X_{2})$.
 ```{r cov2}
-e1 <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
-  estimate(labels = c("Ex1", "Ex2", "Ex1x2"))
-e1
-estimate(e1, function(x) c(x, cov=with(as.list(x), Ex1x2 - Ex2* Ex1)))
+est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
+  estimate(labels = c("E1", "E2", "E12"))
+est
+
+est["E12"] - est["E2"]*est["E1"] 
+# transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
-The variance estimates can be estimated in the same way and the combined
-estimates be used to estimate the correlation
+The variance estimates can be estimated in the same way and combined to estimate the correlation
 ```{r rho}
-e2 <- with(dw, list(Cov(x1, x2, labels = "c", id = id),
-                    Cov(x1, x1, labels = "v1", id = id),
-                    Cov(x2, x2, labels = "v2", id = id))) |>
-  merge()
-rho <- estimate(e2, function(x) list(rho = x[1] / (x[2] * x[3])^.5))
+v12 <- with(dw, Cov(x1, x2, id = id))
+v1  <- with(dw, Cov(x1, x1, id = id))
+v2  <- with(dw, Cov(x2, x2, id = id))
+
+rho <- c(rho = v12 / sqrt(v1 * v2)) 
 rho
 ```
 
@@ -730,7 +801,7 @@ $z = \arctanh(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)$,
 confidence limits with general better coverage can be obtained
 ```{r tanh}
-estimate(rho, atanh, back.transform = tanh)
+estimate(atanh(rho), back.transform = tanh)
 ```
 The confidence limits are calculated on the $\arctanh$-scale and transformed
 back to the original correlation scale via the `back.transform` argument.
@@ -752,7 +823,7 @@ $\bm{b}_0\in\mathbb{R}^{m}$.
 
 As an example consider marginal models for the binary response variables
   $Y_1, Y_2, Y_3, Y_4$
-```{r}
+```{r estglmmerge}
 g <- lapply(
   list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
   function(f) glm(f, family = binomial, data = dw)
@@ -952,7 +1023,7 @@ even if just one of the two nuisance models is correctly specified.
 
 To illustrate this we manually construct the above estimating equations based on
 logistic regressions models for the two nuisance models
-```{r}
+```{r ate-nuisancemodels}
 qmod <- glm(y1 ~ a * w, family = binomial, data = dw) # E(Y|W,A) := Q(W,A)
 amod <- glm(a ~ w, family = binomial, data = dw) # P(A=1|W) = Pi_1(W)
 q0 <- predict(qmod, transform(dw, a=0), type="response") # Q(W,0)
@@ -965,7 +1036,7 @@ head(cbind(e0, e1))
 
 We can then easily construct estimates of the two expected potential outcomes
 and estimate their joint asymptotic distribution
-```{r}
+```{r est-potentialoutcomes}
 est0 <- estimate(coef=mean(e0), IC=e0-mean(e0)) # E[Y(0)]
 est1 <- estimate(coef=mean(e1), IC=e1-mean(e1)) # E[Y(1)]
 
@@ -980,22 +1051,25 @@ Finally, we can obtain the Average Treatment Effect (ATE) (risk-difference)
 E[Y(1)]  - E[Y(0)]
 \end{align*}
 
-```{r}
+```{r est-ate}
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")
 ```
 
 Alternatively, we could get the estimate of the treatment effect on the log-odds
 scale:
-```{r}
-logor <- function(p) logit(p[2]) - logit(p[1])
-transform(potential_outcomes, logor, labels="logOR")
-transform(potential_outcomes, logor, labels="OR", back.transform=exp)
+```{r est-ate-or}
+est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
+est
+transform(est, labels="OR", back.transform=exp)
+#logor <- function(p) logit(p[2]) - logit(p[1])
+#transform(potential_outcomes, logor, labels="logOR")
+#transform(potential_outcomes, logor, labels="OR", back.transform=exp)
 ```
 
 We refer to the `targeted` package [@r-targeted] for a general implementation
 where the nuisance models can be based on machine learning models using
 cross-fitting. The above estimation can be obtained with the  `targeted::cate` function in the following way
-```{r}
+```{r est-cate}
 #| eval: false
 amod <- targeted::learner_glm(a ~ w, family=binomial)
 qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
