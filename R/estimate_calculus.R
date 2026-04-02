@@ -180,7 +180,9 @@ merge.estimate <- function(x,y,...,
   is_estimate <- unlist(lapply(args, function(x)
     inherits(x, c("estimate", "glm", "targeted", "phreg"))))
   if (!all(is_estimate)) { # fallback to default concatenation
-    return(.Primitive("c")(...))
+    cl <- class(args[[1]])
+    class(args[[1]]) <- "list"
+    return(do.call(c, args))
   }
   lab <- names(args)
   names(args) <- NULL
