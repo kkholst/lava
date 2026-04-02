@@ -251,14 +251,18 @@ NULL
 ##' @keywords internal
 ##' @rdname internal
 ##' @export
-##' @aliases startvalues startvalues0 startvalues1 startvalues2 startvalues3
-##'   starter.multigroup addattr modelPar modelVar matrices pars pars.lvm
-##'   pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar mat.lvm
-##'   matrices reorderdata graph2lvm igraph.lvm subgraph finalize index.lvm
-##'   index.lvmfit reindex index<- randomslope randomslope<- lisrel
+##' @aliases startvalues startvalues0 startvalues1 startvalues2
+##'   starter.multigroup
+##'   modelPar modelVar matrices pars pars.lvm
+##'   pars.lvmfit pars.glm score.glm procdata.lvmfit mat.lvm
+##'   matrices reorderdata graph2lvm igraph.lvm subgraph finalize
+##'   randomslope randomslope<- lisrel
 ##'   variances offdiags describecoef parlabels rsq stdcoef CoefMat
-##'   CoefMat.multigroupfit deriv updatelvm checkmultigroup profci estimate.MAR
-##'   missingModel Identical gaussian_logLik.lvm addhook gethook multigroup
-##'   Weights fixsome parfix parfix<- IV parameter index index<- Specials
-##'   procformula getoutcome decomp.specials rmvn0 dmvn0 logit expit tigol
+##'   CoefMat.multigroupfit deriv updatelvm checkmultigroup profci
+##'   estimate.MAR
+##'   missingModel Identical gaussian_logLik.lvm
+##'   addhook gethook multigroup
+##'   Weights fixsome parfix parfix<- IV parameter Specials
+##'   procformula getoutcome decomp.specials
+##'   rmvn0 dmvn0 logit expit tigol
 NULL

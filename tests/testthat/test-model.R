@@ -87,22 +87,22 @@ test_that("Graph attributes", {
 
     col <- "blue"
     v <- "y"
-    g1 <- lava::addattr(g1, "fill", v, col)
+    g1 <- lava:::addattr(g1, "fill", v, col)
     testthat::expect_true(col == graph::nodeRenderInfo(g1)$fill[[v]])
     nodecolor(m, v) <- "blue"
 
     g2 <- Graph(m, add=TRUE)
     testthat::expect_true(inherits(g2, "graph"))
     testthat::expect_true(col == graph::nodeRenderInfo(g2)$fill[[v]])
-    testthat::expect_true(addattr(g2, "fill")[[v]] == "blue")
+    testthat::expect_true(lava:::addattr(g2, "fill")[[v]] == "blue")
     graph::graphRenderInfo(g2)$rankdir <- "LR"
     Graph(m) <- g2
     testthat::expect_true(graph::graphRenderInfo(Graph(m))$rankdir=="LR")
 
     ## Labels
     labels(m) <- c(y = "Y")
-    addattr(Graph(m, add=TRUE), "label")
-    testthat::expect_true(addattr(finalize(m), "label")[["y"]]=="Y")
+    lava:::addattr(Graph(m, add=TRUE), "label")
+    testthat::expect_true(lava:::addattr(finalize(m), "label")[["y"]]=="Y")
     labels(g2) <- c(y = "Y")
     testthat::expect_true(!is.null(graph::nodeRenderInfo(g2)$label["y"]))
 

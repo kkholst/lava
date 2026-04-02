@@ -5,9 +5,7 @@
 \alias{startvalues0}
 \alias{startvalues1}
 \alias{startvalues2}
-\alias{startvalues3}
 \alias{starter.multigroup}
-\alias{addattr}
 \alias{modelPar}
 \alias{modelVar}
 \alias{matrices}
@@ -23,10 +21,6 @@
 \alias{igraph.lvm}
 \alias{subgraph}
 \alias{finalize}
-\alias{index.lvm}
-\alias{index.lvmfit}
-\alias{reindex}
-\alias{index<-}
 \alias{randomslope}
 \alias{randomslope<-}
 \alias{lisrel}
@@ -55,7 +49,6 @@
 \alias{parfix<-}
 \alias{IV}
 \alias{parameter}
-\alias{index}
 \alias{Specials}
 \alias{procformula}
 \alias{getoutcome}
