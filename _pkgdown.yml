@@ -138,8 +138,6 @@ reference:
   - constrain
   - covariance
   - covariance<-
-  - covfix
-  - covfix<-
   - variance
   - variance<-
   - descendants
@@ -160,7 +158,6 @@ reference:
   - functional<-
   - intercept
   - intercept<-
-  - intfix
   - intervention
   - intervention<-
   - rmvar
@@ -182,8 +179,6 @@ reference:
   - ordinal<-
   - parameter
   - parameter<-
-  - parfix
-  - parfix<-
   - parpos
   - pars
   - parents
@@ -193,8 +188,6 @@ reference:
   - randomslope<-
   - regression
   - regression<-
-  - regfix
-  - regfix<-
   - roots
   - sinks
   - timedep

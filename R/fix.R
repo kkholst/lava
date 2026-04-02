@@ -49,10 +49,8 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 
 ###{{{ intfix
 
-##' @export
 "intfix" <- function(object,...) UseMethod("intfix")
 
-##' @export
 "intfix<-" <- function(object,...,value) UseMethod("intfix<-")
 
 ##' Fix mean parameters in 'lvm'-object
@@ -84,8 +82,7 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 ##' Calling \code{intercept} with no additional arguments will return the
 ##' current intercept restrictions of the \code{lvm}-object.
 ##'
-##' @aliases intercept intercept<- intercept.lvm intercept<-.lvm intfix intfix
-##' intfix<- intfix.lvm intfix<-.lvm
+##' @aliases intercept intercept<- intercept.lvm intercept<-.lvm
 ##' @param object \code{lvm}-object
 ##' @param vars character vector of variable names
 ##' @param value Vector (or list) of parameter values or labels (numeric or
@@ -132,7 +129,6 @@ intercept.lvm <- function(object,value,...) {
     return(res)
 }
 
-##' @export
 intfix.lvm <- intercept.lvm
 
 ##' @export
@@ -168,7 +164,6 @@ intfix.lvm <- intercept.lvm
     return(object)
 }
 
-##' @export
 "intfix<-.lvm" <- function(object, ..., value) {
   intercept(object, ...) <- value
   object
@@ -178,10 +173,8 @@ intfix.lvm <- intercept.lvm
 
 ###{{{ covfix
 
-##' @export
 "covfix" <- function(object,...) UseMethod("covfix")
 
-##' @export
 covfix.lvm <- function(object,...) {
     res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
     attr(res,"exo.idx") <- index(object)$exo.idx
@@ -191,10 +184,8 @@ covfix.lvm <- function(object,...) {
 }
 
 
-##' @export
 "covfix<-" <- function(object,...,value) UseMethod("covfix<-")
 
-##' @export
 "covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
 
     if (inherits(var1,"formula")) {
@@ -337,10 +328,8 @@ covfix.lvm <- function(object,...) {
 
 ###{{{ regfix
 
-##' @export
 "regfix" <- function(object,...) UseMethod("regfix")
 
-##' @export
 regfix.lvm <- function(object,...) {
     res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
     attr(res,"exo.idx") <- index(object)$exo.idx
@@ -349,10 +338,8 @@ regfix.lvm <- function(object,...) {
     return(res)
 }
 
-##' @export
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
-##' @export
 "regfix<-.lvm" <- function(object, to, from=NULL, exo=lava.options()$exogenous, variance, y,x, ..., value) {
     if (!missing(y)) {
       if (inherits(y,"formula")) {
@@ -486,22 +473,18 @@ regfix.lvm <- function(object,...) {
 
 ###{{{ parfix
 
-##' @export
 "parfix<-" <- function(x,...,value) UseMethod("parfix<-")
 
-##' @export
 "parfix<-.lvm" <- function(x,idx,...,value) {
     parfix(x,idx,value,...)
 }
 
-##' @export
 "parfix" <- function(x,...) UseMethod("parfix")
 
 
 ## m <- lvm(c(y[m:v]~b*x))
 ## constrain(m,b~a) <- base::identity
 
-##' @export
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
     object <- Model(x)
     if (fix)

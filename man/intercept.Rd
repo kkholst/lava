@@ -5,10 +5,6 @@
 \alias{intercept<-}
 \alias{intercept.lvm}
 \alias{intercept<-.lvm}
-\alias{intfix}
-\alias{intfix<-}
-\alias{intfix.lvm}
-\alias{intfix<-.lvm}
 \title{Fix mean parameters in 'lvm'-object}
 \usage{
 \method{intercept}{lvm}(object, vars, ...) <- value
