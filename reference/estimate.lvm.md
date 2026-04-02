@@ -105,7 +105,7 @@ estimate(
 - param:
 
   set parametrization (see
-  [`help(lava.options)`](http://kkholst.github.io/lava/reference/lava.options.md))
+  [`help(lava.options)`](https://kkholst.github.io/lava/reference/lava.options.md))
 
 - cluster:
 

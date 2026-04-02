@@ -179,7 +179,7 @@ CRAN release: 2019-08-01
   initialized by default using kmeans++.
 - `sim` method implemented for mvnmix models.
 - Bug fix: Newton-Raphson method
-  ([`lava::NR`](http://kkholst.github.io/lava/reference/NR.md)) used a
+  ([`lava::NR`](https://kkholst.github.io/lava/reference/NR.md)) used a
   numerical approximation of the Hessian even when submitted as
   attribute to the objective function.
 
@@ -230,8 +230,8 @@ CRAN release: 2018-07-02
 - `twostageCV`: cross-validate two-stage estimator
 - rmvn, dmvn moved to mets package (C++ implementation, old versions
   renamed to
-  [`lava::rmvn0`](http://kkholst.github.io/lava/reference/internal.md),
-  [`lava::dmvn0`](http://kkholst.github.io/lava/reference/internal.md))
+  [`lava::rmvn0`](https://kkholst.github.io/lava/reference/startvalues.md),
+  [`lava::dmvn0`](https://kkholst.github.io/lava/reference/startvalues.md))
 - mediation proportion handled correctly when direct effect is zero
 - unit tests clean-up (namespace)
 - `merge.lvm` now correctly handles fixed covariance parameters

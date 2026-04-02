@@ -443,7 +443,7 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 ### Example: random effects model / structural equation model
 
 General structural equation models (SEMs) can be estimated with
-[`lava::lvm`](http://kkholst.github.io/lava/reference/lvm.md). Here we
+[`lava::lvm`](https://kkholst.github.io/lava/reference/lvm.md). Here we
 fit a random effects probit model \mathbb{P}(Y\_{ij} = 1 \mid U\_{i},
 W\_{ij})=\Phi(\mu\_{j} + \beta\_{j} W\_{ij} + U\_{i}), \quad
 U\_{i}\sim\mathcal{N}(0,\sigma\_{u}^{2}),\quad j=1,2 to the simulated
@@ -1057,7 +1057,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55d08467f210>
+#> <bytecode: 0x5564f1a78670>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1275,7 +1275,7 @@ estimate(gg, a + a.1, 2*a - a.2, a, null=c(2,1,1))
 ```
 
 We refer to the function
-[`lava::contr`](http://kkholst.github.io/lava/reference/contr.md) and
+[`lava::contr`](https://kkholst.github.io/lava/reference/contr.md) and
 `lava::parsedesigns` for defining contrast matrices.
 
 ``` r

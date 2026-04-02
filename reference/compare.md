@@ -24,8 +24,8 @@ Matrix of test-statistics and p-values
 
 ## See also
 
-[`modelsearch`](http://kkholst.github.io/lava/reference/modelsearch.md),
-[`equivalence`](http://kkholst.github.io/lava/reference/equivalence.md)
+[`modelsearch`](https://kkholst.github.io/lava/reference/modelsearch.md),
+[`equivalence`](https://kkholst.github.io/lava/reference/equivalence.md)
 
 ## Author
 

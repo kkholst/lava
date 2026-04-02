@@ -30,7 +30,7 @@ Returns a model object (e.g. `lvm` or `multigroup`)
 
 ## See also
 
-[`Graph`](http://kkholst.github.io/lava/reference/Graph.md)
+[`Graph`](https://kkholst.github.io/lava/reference/Graph.md)
 
 ## Author
 

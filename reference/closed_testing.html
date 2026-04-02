@@ -7,7 +7,7 @@ the adjusted p-value for H1 will be obtained from {(H1, H2, H3), (H1,H2),
 calculated and adjusted p-values are obtained for Hj is calculated as the
 max p-value of all intersection hypotheses containing Hj. Example, for p=3,
 the adjusted p-value for H1 will be obtained from {(H1, H2, H3), (H1,H2),
-(H1,H3), (H1)}."><meta property="og:image" content="http://kkholst.github.io/lava/logo.png"></head><body>
+(H1,H3), (H1)}."><meta property="og:image" content="https://kkholst.github.io/lava/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -105,7 +105,7 @@ the adjusted p-value for H1 will be obtained from {(H1, H2, H3), (H1,H2),
 <span class="r-in"><span><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y3</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">l4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y4</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">(</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">merge</a></span><span class="op">(</span><span class="va">l1</span>, <span class="va">l2</span>, <span class="va">l3</span>, <span class="va">l4</span>, subset<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="startvalues.html">merge</a></span><span class="op">(</span><span class="va">l1</span>, <span class="va">l2</span>, <span class="va">l3</span>, <span class="va">l4</span>, subset<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err     2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x   -0.04472 0.08929 -0.21971 0.1303 0.61650</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ───                                         </span>

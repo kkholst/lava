@@ -26,7 +26,7 @@ Graph(x, ...) <- value
 
 ## See also
 
-[`Model`](http://kkholst.github.io/lava/reference/Model.md)
+[`Model`](https://kkholst.github.io/lava/reference/Model.md)
 
 ## Author
 

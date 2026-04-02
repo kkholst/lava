@@ -86,7 +86,7 @@ log-likelihood with tau being fixed.
 
 ## See also
 
-[`bootstrap`](http://kkholst.github.io/lava/reference/bootstrap.md)`{lvm}`
+[`bootstrap`](https://kkholst.github.io/lava/reference/bootstrap.md)`{lvm}`
 
 ## Author
 

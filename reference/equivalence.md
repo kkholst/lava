@@ -40,8 +40,8 @@ equivalence(x, rel, tol = 0.001, k = 1, omitrel = TRUE, ...)
 
 ## See also
 
-[`compare`](http://kkholst.github.io/lava/reference/compare.md),
-[`modelsearch`](http://kkholst.github.io/lava/reference/modelsearch.md)
+[`compare`](https://kkholst.github.io/lava/reference/compare.md),
+[`modelsearch`](https://kkholst.github.io/lava/reference/modelsearch.md)
 
 ## Author
 

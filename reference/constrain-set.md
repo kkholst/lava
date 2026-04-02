@@ -142,9 +142,9 @@ numeric approximation of the gradient.
 
 ## See also
 
-[`regression`](http://kkholst.github.io/lava/reference/regression-set.md),
-[`intercept`](http://kkholst.github.io/lava/reference/intercept.md),
-[`covariance`](http://kkholst.github.io/lava/reference/covariance.md)
+[`regression`](https://kkholst.github.io/lava/reference/regression-set.md),
+[`intercept`](https://kkholst.github.io/lava/reference/intercept.md),
+[`covariance`](https://kkholst.github.io/lava/reference/covariance.md)
 
 ## Author
 

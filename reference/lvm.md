@@ -36,9 +36,10 @@ Returns an object of class `lvm`.
 
 ## See also
 
-[`regression`](http://kkholst.github.io/lava/reference/regression-set.md),
-[`covariance`](http://kkholst.github.io/lava/reference/covariance.md),
-[`intercept`](http://kkholst.github.io/lava/reference/intercept.md), ...
+[`regression`](https://kkholst.github.io/lava/reference/regression-set.md),
+[`covariance`](https://kkholst.github.io/lava/reference/covariance.md),
+[`intercept`](https://kkholst.github.io/lava/reference/intercept.md),
+...
 
 ## Author
 

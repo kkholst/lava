@@ -1,7 +1,5 @@
 # Estimating partial correlations with lava
 
-\newcommand{\arctanh}{\operatorname{arctanh}}
-
 This document illustrates how to estimate partial correlation
 coefficients using `lava`.
 
@@ -16,14 +14,14 @@ Assume that Y\_{1} and Y\_{2} are conditionally normal distributed given
 \sigma_2^2 \end{pmatrix}.
 
 ``` r
-library('lava')
+library("lava")
 m0 <- lvm(y1+y2 ~ x, y1 ~~ y2)
-edgelabels(m0, y1 + y2 ~ x) <- c(expression(beta[1]), expression(beta[2]))
-edgelabels(m0, y1 ~ y2) <- expression(rho)
+edgelabels(m0, y1 + y2 ~ x) <- c(expression(b[1]), expression(b[2]))
+edgelabels(m0, y1 ~ y2) <- "r"
 plot(m0, layoutType="circo")
 ```
 
-![](correlation_files/figure-html/unnamed-chunk-2-1.png)
+![](correlation_files/figure-html/plotload-1.png)
 
 Here we focus on inference with respect to the correlation parameter
 \rho.
@@ -31,11 +29,7 @@ Here we focus on inference with respect to the correlation parameter
 ## Simulation
 
 As an example, we will simulate data from this model with a single
-covariate. First we load the necessary libraries:
-
-``` r
-library('lava')
-```
+covariate.
 
 The model can be specified (here using the pipe notation) with the
 following syntax where the correlation parameter here is given the label
@@ -89,7 +83,7 @@ cens1 <- function(threshold,type='right') {
   }
 }
 
-m0 <- 
+m0 <-
   transform(m0, s1 ~ y1, cens1(-2, 'left')) |>
   transform(s2 ~ y2, cens1(2,  'right'))
 ```
@@ -154,13 +148,13 @@ Note, that in this case the confidence intervals are constructed by
 using a variance stabilizing transformation, Fishers z-transform
 (Lehmann and Romano 2023),
 
-z = \arctanh(\widehat{\rho}) =
+z = \operatorname{arctanh}(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)
 
 where \widehat{\rho} is the MLE. This estimate has an approximate
 asymptotic normal distribution
-\mathcal{N}(\arctanh(\rho),\frac{1}{n-3}). Hence a asymptotic 95%
-confidence interval is given by
+\mathcal{N}(\operatorname{arctanh}(\rho),\frac{1}{n-3}). Hence a
+asymptotic 95% confidence interval is given by
 
 \widehat{z} \pm \frac{1.96}{\sqrt{n-3}}
 
@@ -246,9 +240,9 @@ estimate(e2, 'z', back.transform=tanh)
 In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument `constrain` when
 specifying the covariances (the argument `rname` specifies the parameter
-name of the \arctanh transformed correlation coefficient, and `lname`,
-`lname2` can be used to specify the parameter names for the log variance
-parameters):
+name of the \operatorname{arctanh} transformed correlation coefficient,
+and `lname`, `lname2` can be used to specify the parameter names for the
+log variance parameters):
 
 ``` r
 m2 <- lvm() |>

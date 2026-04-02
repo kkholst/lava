@@ -93,7 +93,7 @@ A `bootstrap.lvm` object.
 
 ## See also
 
-[`confint.lvmfit`](http://kkholst.github.io/lava/reference/confint.lvmfit.md)
+[`confint.lvmfit`](https://kkholst.github.io/lava/reference/confint.lvmfit.md)
 
 ## Author
 
