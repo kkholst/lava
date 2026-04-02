@@ -82,6 +82,18 @@ To cite that `lava` package please use one of the following references
 
 ## Examples
 
+### Influence functions
+
+```` R
+2+2
+
+
+``` r
+2+2
+#> [1] 4
+```
+````
+
 ### Structural Equation Model
 
 Specify structural equation models with two factors
@@ -93,12 +105,12 @@ regression(m) <- z1 + z2 + z3 ~ eta2
 latent(m) <- ~ eta1 + eta2
 regression(m) <- eta2 ~ eta1 + x
 regression(m) <- eta1 ~ x
-
+    
 labels(m) <- c(eta1=expression(eta[1]), eta2=expression(eta[2]))
 plot(m)
 ```
 
-![plot of chunk lvm1](reference/figures/lvm1-1.png "plot of chunk lvm1")
+![](reference/figures/lvm1-1.svg)
 
 Simulation
 
@@ -152,7 +164,7 @@ g <- cumres(e, eta2 ~ eta1)
 plot(g)
 ```
 
-![plot of chunk gof1](reference/figures/gof1-1.png "plot of chunk gof1")
+![](reference/figures/gof1-1.svg)
 
 ### Non-linear measurement error model
 
@@ -188,10 +200,10 @@ Stage 2
 pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -1.1181 0.13795 -1.3885 -0.8477 5.273e-16
-#> x            -0.0537 0.13213 -0.3127  0.2053 6.844e-01
-#> u             1.0039 0.11504  0.7785  1.2294 2.609e-18
-#> u2           -0.4718 0.05213 -0.5740 -0.3697 1.410e-19
+#> (Intercept)  -1.1181 0.13555 -1.3838 -0.8524 1.602e-16
+#> x            -0.0537 0.14361 -0.3352  0.2278 7.085e-01
+#> u             1.0039 0.12651  0.7560  1.2519 2.093e-15
+#> u2           -0.4718 0.05858 -0.5867 -0.3570 7.974e-16
 ```
 
 ``` r
@@ -200,8 +212,7 @@ u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
 ```
 
-![plot of chunk
-nlin1](reference/figures/nlin1-1.png "plot of chunk nlin1")
+![](reference/figures/nlin1-1.svg)
 
 ### Simulation
 
@@ -214,37 +225,40 @@ eventTime(m) <- t~min(y=1, c=0)
 transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
 ```
 
+plot(m)
+
 ``` r
 plot(m)
 ```
 
-![plot of chunk
-mediation1](reference/figures/mediation1-1.png "plot of chunk mediation1")
+![](reference/figures/mediation1-1.svg)
 
 Simulate from model and estimate indirect effects
 
 ``` r
+future::plan("multicore") # parallelization via future
+## progressr::handlers(global=TRUE) # add progress-bar
 onerun <- function(...) {
-    d <- sim(m, 100)
-    m0 <- lvm(S~x+z, x~z)
-    e <- estimate(m0, d, estimator="glm")
-    vec(summary(effects(e, S~z))$coef[,1:2])
+  d <- sim(m, 100)
+  m0 <- lvm(S~x+z, x~z)
+  e <- estimate(m0, d, estimator="glm")
+  vec(summary(effects(e, S~z))$coef[,1:2])
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 3.667s
+#> 100 replications                 Time: 5.277s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
-#> Mean           1.97292         0.96537           1.00755        1.00755
-#> SD             0.16900         0.18782           0.15924        0.15924
-#> SE             0.18665         0.18090           0.16431        0.16431
-#> SE/SD          1.10446         0.96315           1.03183        1.03183
+#> Mean           1.99533         1.00468           0.99066        0.99066
+#> SD             0.18662         0.16553           0.17792        0.17792
+#> SE             0.18258         0.17507           0.16503        0.16503
+#> SE/SD          0.97835         1.05767           0.92755        0.92755
 #>                                                                        
-#> Min            1.47243         0.54497           0.54554        0.54554
-#> 2.5%           1.63496         0.61228           0.64914        0.64914
-#> 50%            1.95574         0.97154           0.99120        0.99120
-#> 97.5%          2.27887         1.32443           1.27807        1.27807
-#> Max            2.45746         1.49491           1.33446        1.33446
+#> Min            1.49759         0.56922           0.50331        0.50331
+#> 2.5%           1.66826         0.68806           0.67154        0.67154
+#> 50%            1.96614         1.00175           0.97848        0.97848
+#> 97.5%          2.39620         1.29212           1.35790        1.35790
+#> Max            2.63461         1.42005           1.47636        1.47636
 #>                                                                        
 #> Missing        0.00000         0.00000           0.00000        0.00000
 ```
@@ -258,8 +272,7 @@ plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
      scatter.plot=TRUE)
 ```
 
-![plot of chunk
-simres1](reference/figures/simres1-1.png "plot of chunk simres1")
+![](reference/figures/simres1-1.svg)
 
 # Package index
 
