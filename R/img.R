@@ -7,11 +7,11 @@ img <- function(x,idx,col=list(gray.colors(10,1,0.2)),
     image(x=x0,y=y0,as.matrix(x),col=col[[1]],axes=FALSE,ylab=ylab,xlab=xlab,xaxs=xaxs,yaxs=yaxs,...)
     if (axis1) {
         axis(1,at=seq(nrow(x)),lwd=0.5,cex.axis=cex.axis,las=3)
-        if (lab) suppressWarnings(title("",xlab=xlab,...))
+        if (lab) suppressWarnings(title("",xlab=xlab))
     }
     if (axis2) {
         axis(2,at=seq(ncol(x)),lwd=0.5,cex.axis=cex.axis,las=1)
-        if (lab) suppressWarnings(title("",ylab=ylab,...))
+        if (lab) suppressWarnings(title("",ylab=ylab))
     }
     if (!is.null(plotfun)) {
         plotfun(...)
