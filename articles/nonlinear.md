@@ -6,19 +6,19 @@ library('lava')
 
 We consider the measurement models given by
 
-X\_{j} = \eta\_{1} + \epsilon\_{j}^{x}, \quad j=1,2,3 Y\_{j} =
-\eta\_{2} + \epsilon\_{j}^{y}, \quad j=1,2,3 and with a structural model
-given by \eta\_{2} = f(\eta\_{1}) + Z + \zeta\_{2}\label{ex:eta2}
-\eta\_{1} = Z + \zeta\_{1}\label{ex:eta1} with iid measurement errors
+X\_{j} = u\_{1} + \epsilon\_{j}^{x}, \quad j=1,2,3 Y\_{j} = u\_{2} +
+\epsilon\_{j}^{y}, \quad j=1,2,3 and with a structural model given by
+u\_{2} = f(u\_{1}) + Z + \zeta\_{2} u\_{1} = Z + \zeta\_{1} with iid
+measurement errors
 \epsilon\_{j}^{x},\epsilon\_{j}^{y},\zeta\_{1},\zeta\_{2}\sim\mathcal{N}(0,1),
 j=1,2,3. and standard normal distributed covariate Z. To simulate from
 this model we use the following syntax:
 
 ``` r
 f <- function(x) cos(1.25*x) + x - 0.25*x^2
-m <- lvm(x1+x2+x3 ~ eta1, y1+y2+y3 ~ eta2, latent=~eta1+eta2)
-regression(m) <- eta1+eta2 ~ z
-functional(m, eta2~eta1) <- f
+m <- lvm(x1+x2+x3 ~ u1, y1+y2+y3 ~ u2, latent=~u1+u2)
+regression(m) <- u1+u2 ~ z
+functional(m, u2~u1) <- f
 
 d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 ```
@@ -40,15 +40,15 @@ To estimate the parameters using the two-stage estimator described in
 specify the measurement models
 
 ``` r
-m1 <- lvm(x1+x2+x3 ~ eta1, eta1 ~ z, latent=~eta1)
-m2 <- lvm(y1+y2+y3 ~ eta2, eta2 ~ z, latent=~eta2)
+m1 <- lvm(x1+x2+x3 ~ u1, u1 ~ z, latent=~u1)
+m2 <- lvm(y1+y2+y3 ~ u2, u2 ~ z, latent=~u2)
 ```
 
 Next, we specify a quadratic relationship between the two latent
 variables
 
 ``` r
-nonlinear(m2, type="quadratic") <- eta2 ~ eta1
+nonlinear(m2, type="quadratic") <- u2 ~ u1
 ```
 
 and the model can then be estimated using the two-stage estimator
@@ -58,44 +58,44 @@ e1 <- twostage(m1, m2, data=d)
 e1
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
-#>    y2~eta2           0.97686    0.03451 28.30873    <1e-12
-#>    y3~eta2           1.04485    0.03485 29.98162    <1e-12
+#>    y2~u2             0.97686    0.03451 28.30873    <1e-12
+#>    y3~u2             1.04485    0.03485 29.98162    <1e-12
 #> Regressions:                                              
-#>    eta2~z            0.88513    0.20778  4.25996 2.045e-05
-#>    eta2~eta1_1       1.14072    0.17410  6.55194 5.679e-11
-#>    eta2~eta1_2      -0.45055    0.07161 -6.29195 3.135e-10
+#>    u2~z              0.88513    0.20778  4.25996 2.045e-05
+#>    u2~u1_1           1.14072    0.17410  6.55194 5.679e-11
+#>    u2~u1_2          -0.45055    0.07161 -6.29195 3.135e-10
 #> Intercepts:                                               
 #>    y2               -0.12198    0.10915 -1.11749    0.2638
 #>    y3               -0.09879    0.10545 -0.93680    0.3489
-#>    eta2              0.67814    0.17363  3.90567 9.396e-05
+#>    u2                0.67814    0.17363  3.90567 9.396e-05
 #> Residual Variances:                                       
 #>    y1                1.30730    0.17743  7.36790          
 #>    y2                1.11056    0.14478  7.67064          
 #>    y3                0.80961    0.13203  6.13219          
-#>    eta2              2.08483    0.28986  7.19258
+#>    u2                2.08483    0.28986  7.19258
 ```
 
 We see a clear statistically significant effect of the second order term
-(`eta2~eta1_2`). For comparison we can also estimate the full MLE of the
+(`u2~u1_2`). For comparison we can also estimate the full MLE of the
 linear model:
 
 ``` r
-e0 <- estimate(regression(m1%++%m2, eta2~eta1), d)
-estimate(e0,keep="^eta2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
-#>           Estimate Std.Err    2.5% 97.5%   P-value
-#> eta2~eta1   1.4140  0.2261 0.97083 1.857 4.014e-10
-#> eta2~z      0.6374  0.2778 0.09291 1.182 2.177e-02
+e0 <- estimate(regression(m1%++%m2, u2~u1), d)
+estimate(e0,keep="^u2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
+#>       Estimate Std.Err    2.5% 97.5%   P-value
+#> u2~u1   1.4140  0.2261 0.97083 1.857 4.014e-10
+#> u2~z    0.6374  0.2778 0.09291 1.182 2.177e-02
 ```
 
 Next, we calculate predictions from the quadratic model using the
 estimated parameter coefficients
-\mathbb{E}\_{\widehat{\theta}\_{2}}(\eta\_{2} \mid \eta\_{1}, Z=0),
+\mathbb{E}\_{\widehat{\theta}\_{2}}(u\_{2} \mid u\_{1}, Z=0),
 
 ``` r
-newd <- expand.grid(eta1=seq(-4, 4, by=0.1), z=0)
+newd <- expand.grid(u1=seq(-4, 4, by=0.1), z=0)
 pred1 <- predict(e1, newdata=newd, x=TRUE)
 head(pred1)
-#>              y1         y2         y3       eta2
+#>              y1         y2         y3         u2
 #> [1,] -11.093569 -10.958869 -11.689950 -11.093569
 #> [2,] -10.623561 -10.499736 -11.198861 -10.623561
 #> [3,] -10.162565 -10.049406 -10.717187 -10.162565
@@ -109,52 +109,52 @@ spline
 
 ``` r
 kn <- seq(-3,3,length.out=5)
-nonlinear(m2, type="spline", knots=kn) <- eta2 ~ eta1
+nonlinear(m2, type="spline", knots=kn) <- u2 ~ u1
 e2 <- twostage(m1, m2, data=d)
 e2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
-#>    y2~eta2           0.97752    0.03453 28.31279    <1e-12
-#>    y3~eta2           1.04508    0.03487 29.97132    <1e-12
+#>    y2~u2             0.97752    0.03453 28.31279    <1e-12
+#>    y3~u2             1.04508    0.03487 29.97132    <1e-12
 #> Regressions:                                              
-#>    eta2~z            0.86729    0.20272  4.27816 1.884e-05
-#>    eta2~eta1_1       2.86231    0.67275  4.25464 2.094e-05
-#>    eta2~eta1_2       0.00344    0.10097  0.03409    0.9728
-#>    eta2~eta1_3      -0.26270    0.29398 -0.89362    0.3715
-#>    eta2~eta1_4       0.50778    0.35189  1.44301     0.149
+#>    u2~z              0.86729    0.20272  4.27816 1.884e-05
+#>    u2~u1_1           2.86231    0.67275  4.25464 2.094e-05
+#>    u2~u1_2           0.00344    0.10097  0.03409    0.9728
+#>    u2~u1_3          -0.26270    0.29398 -0.89362    0.3715
+#>    u2~u1_4           0.50778    0.35189  1.44301     0.149
 #> Intercepts:                                               
 #>    y2               -0.12185    0.10922 -1.11563    0.2646
 #>    y3               -0.09874    0.10545 -0.93638    0.3491
-#>    eta2              1.83814    1.66430  1.10445    0.2694
+#>    u2                1.83814    1.66430  1.10445    0.2694
 #> Residual Variances:                                       
 #>    y1                1.31286    0.17750  7.39636          
 #>    y2                1.10412    0.14455  7.63858          
 #>    y3                0.81124    0.13184  6.15312          
-#>    eta2              1.99404    0.26939  7.40217
+#>    u2                1.99404    0.26939  7.40217
 ```
 
 Confidence limits can be obtained via the Delta method using the
 `estimate` method:
 
 ``` r
-p <- cbind(eta1=newd$eta1,
+p <- cbind(u1=newd$u1,
       estimate(e2,f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
 head(p)
-#>    eta1  Estimate   Std.Err      2.5%     97.5%      P-value
-#> p1 -4.0 -9.611119 1.2647438 -12.08997 -7.132266 2.978258e-14
-#> p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962888 1.012298e-14
-#> p3 -3.8 -9.038656 1.1463511 -11.28546 -6.791849 3.152449e-15
-#> p4 -3.7 -8.752425 1.0885636 -10.88597 -6.618879 8.958735e-16
-#> p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320163e-16
-#> p6 -3.5 -8.179962 0.9766402 -10.09414 -6.265782 5.493627e-17
+#>      u1  Estimate   Std.Err      2.5%     97.5%      P-value
+#> p1 -4.0 -9.611119 1.2647437 -12.08997 -7.132266 2.978251e-14
+#> p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962889 1.012296e-14
+#> p3 -3.8 -9.038656 1.1463510 -11.28546 -6.791849 3.152439e-15
+#> p4 -3.7 -8.752425 1.0885635 -10.88597 -6.618879 8.958702e-16
+#> p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320153e-16
+#> p6 -3.5 -8.179962 0.9766401 -10.09414 -6.265782 5.493600e-17
 ```
 
 The fitted function can be obtained with the following code:
 
 ``` r
-plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
-     xlab=expression(eta[1]), ylab=expression(eta[2]), xlim=c(-4,4))
-lines(Estimate ~ eta1, data=as.data.frame(p), col="darkblue", lwd=5)
+plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
+     xlab=expression(u[1]), ylab=expression(u[2]), xlim=c(-4,4))
+lines(Estimate ~ u1, data=as.data.frame(p), col="darkblue", lwd=5)
 confband(p[,1], lower=p[,4], upper=p[,5], polygon=TRUE,
      border=NA, col=Col("darkblue",0.2))
 ```
@@ -168,12 +168,12 @@ cross-validation. Here we specify linear, quadratic and cubic spline
 models with 4 and 9 degrees of freedom.
 
 ``` r
-m2a <- nonlinear(m2, type="linear", eta2~eta1)
-m2b <- nonlinear(m2, type="quadratic", eta2~eta1)
+m2a <- nonlinear(m2, type="linear", u2~u1)
+m2b <- nonlinear(m2, type="quadratic", u2~u1)
 kn1 <- seq(-3,3,length.out=5)
 kn2 <- seq(-3,3,length.out=8)
-m2c <- nonlinear(m2, type="spline", knots=kn1, eta2~eta1)
-m2d <- nonlinear(m2, type="spline", knots=kn2, eta2~eta1)
+m2c <- nonlinear(m2, type="spline", knots=kn1, u2~u1)
+m2d <- nonlinear(m2, type="spline", knots=kn2, u2~u1)
 ```
 
 To assess the model fit average RMSE is estimated with 5-fold
@@ -191,13 +191,12 @@ fit.cv <- lava:::cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
 ```
 
 ``` r
-summary(fit.cv)
-#>       Length Class  Mode     
-#> cv    40     -none- numeric  
-#> call   7     -none- call     
-#> names  4     -none- character
-#> rep    1     -none- numeric  
-#> folds  1     -none- numeric
+fit.cv$coef
+#>               RMSE
+#> linear    2.137633
+#> quadratic 1.806409
+#> spline4   1.747002
+#> spline6   1.760896
 ```
 
 Here the RMSE is in favour of the splines model with 4 degrees of
@@ -207,16 +206,16 @@ freedom:
 fit <- lapply(list(m2a,m2b,m2c,m2d),
          function(x) {
          e <- twostage(m1,x,data=d)
-         pr <- cbind(eta1=newd$eta1,predict(e,newdata=newd$eta1,x=TRUE))
+         pr <- cbind(u1=newd$u1,predict(e,newdata=newd$u1,x=TRUE))
          return(list(estimate=e,predict=as.data.frame(pr)))
          })
 
-plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
+plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]), xlim=c(-4,4))
 col <- c("orange","darkred","darkgreen","darkblue")
 lty <- c(3,4,1,5)
 for (i in seq_along(fit)) {
-    with(fit[[i]]$pr, lines(eta2 ~ eta1, col=col[i], lwd=4, lty=lty[i]))
+    with(fit[[i]]$pr, lines(u2 ~ u1, col=col[i], lwd=4, lty=lty[i]))
 }
 legend("bottomright",
       c("linear","quadratic","spline(df=4)","spline(df=6)"),
@@ -227,25 +226,55 @@ legend("bottomright",
 
 For convenience, the function `twostageCV` can be used to do the
 cross-validation (also for choosing the mixture distribution via the
-\`\`nmix\`\` argument, see the section below). For example,
+`nmix` argument, see the section below). For example,
 
 ``` r
+set.seed(1)
 selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
-        nfolds=2, rep=1, mc.cores=parallel::detectCores())
+        nfolds=5, rep=2, mc.cores=parallel::detectCores())
 ```
 
 applies cross-validation (here just 2 folds for simplicity) to select
-the best splines with degrees of freedom varying from from 1-3 (the
-linear model is automatically included)
+the best splines with degrees of freedom varying from 1-3 (the linear
+model is automatically included)
 
 ``` r
 selmod
-#>        Length Class               Mode   
-#> model1 11     summary.lvm.mixture list   
-#> AIC1    2     -none-              numeric
-#> cv      4     -none-              numeric
-#> knots   4     -none-              list   
-#> model2 11     summary.lvmfit      list
+#> ────────────────────────────────────────────────────────────────────────────────
+#> Selected mixture model: 2 components
+#>       AIC1
+#> 1 1961.839
+#> 2 1958.803
+#> ────────────────────────────────────────────────────────────────────────────────
+#> Selected spline model degrees of freedom: 2
+#> Knots: -3.958 0.02149 4.001 
+#> 
+#>      RMSE(nfolds=, rep=)
+#> df:1            2.138133
+#> df:2            1.856094
+#> df:3            1.917310
+#> df:4            1.897830
+#> ────────────────────────────────────────────────────────────────────────────────
+#> 
+#>                     Estimate Std. Error Z-value  P-value  std.xy  
+#> Measurements:                                                     
+#>    y1~eta2           1.00000                               0.93523
+#>    y2~eta2           0.97794  0.03461   28.25249   <1e-12  0.94272
+#>    y3~eta2           1.04520  0.03471   30.10996   <1e-12  0.96180
+#> Regressions:                                                      
+#>    eta2~z            1.02818  0.22299    4.61084 4.01e-06  0.34726
+#>    eta2~eta1_1       3.41779  0.36944    9.25125   <1e-12  1.48543
+#>    eta2~eta1_2      -0.05122  0.00707   -7.24641   <1e-12 -1.03810
+#> Intercepts:                                                       
+#>    y1                0.00000                               0.00000
+#>    y2               -0.12176  0.10921   -1.11498 0.2649   -0.03873
+#>    y3               -0.09872  0.10546   -0.93607 0.3492   -0.02998
+#>    eta2              3.93719  0.54062    7.28270   <1e-12  1.29917
+#> Residual Variances:                                               
+#>    y1                1.31625  0.17653    7.45609           0.12535
+#>    y2                1.09974  0.14506    7.58110           0.11127
+#>    y3                0.81270  0.13258    6.12980           0.07493
+#>    eta2              2.01821  0.29032    6.95154           0.21975
 ```
 
 ## Specification of general functional forms
@@ -253,24 +282,24 @@ selmod
 Next, we show how to specify a general functional relation of multiple
 different latent or exogenous variables. This is achieved via the
 `predict.fun` argument. To illustrate this we include interactions
-between the latent variable \eta\_{1} and a dichotomized version of the
+between the latent variable u\_{1} and a dichotomized version of the
 covariate z
 
 ``` r
 d$g <- (d$z<0)*1 ## Group variable
 mm1 <- regression(m1, ~g)  # Add grouping variable as exogenous variable (effect specified via 'predict.fun')
-mm2 <- regression(m2, eta2~ u1+u2+u1:g+u2:g+z)
+mm2 <- regression(m2, u2~ u1+u2+u1:g+u2:g+z)
 pred <- function(mu,var,data,...) {
     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1],
       "u1:g"=mu[,1]*data[,"g"],"u2:g"=(mu[,1]^2+var[1])*data[,"g"])
 }
 ee1 <- twostage(mm1, model2=mm2, data=d, predict.fun=pred)
-estimate(ee1,keep="eta2~u",regex=TRUE)
-#>           Estimate Std.Err    2.5%   97.5%  P-value
-#> eta2~u1     0.9891  0.3020  0.3971  1.5810 0.001057
-#> eta2~u2    -0.3962  0.1443 -0.6791 -0.1133 0.006047
-#> eta2~u1:g   0.4487  0.4620 -0.4568  1.3543 0.331409
-#> eta2~u2:g   0.0441  0.2166 -0.3804  0.4686 0.838667
+estimate(ee1,keep="u2~u",regex=TRUE)
+#>         Estimate Std.Err     2.5%    97.5%    P-value
+#> u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191
+#> u2~u1     0.2315 0.12694 -0.01733  0.48026  6.823e-02
+#> u2~u1:g   0.5926 0.23212  0.13768  1.04756  1.068e-02
+#> u2~u2:g  -0.1973 0.08832 -0.37041 -0.02419  2.549e-02
 ```
 
 A formal test show no statistically significant effect of this
@@ -281,15 +310,15 @@ summary(estimate(ee1,keep="(:g)", regex=TRUE))
 #> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
 #>     messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────────────────────────
-#>             Estimate Std.Err    2.5%  97.5% P-value
-#> [eta2~u1:g]   0.4487  0.4620 -0.4568 1.3543  0.3314
-#> [eta2~u2:g]   0.0441  0.2166 -0.3804 0.4686  0.8387
+#>           Estimate Std.Err    2.5%    97.5% P-value
+#> [u2~u1:g]   0.5926 0.23212  0.1377  1.04756 0.01068
+#> [u2~u2:g]  -0.1973 0.08832 -0.3704 -0.02419 0.02549
 #> 
 #>  Null Hypothesis: 
-#>   [eta2~u1:g] = 0
-#>   [eta2~u2:g] = 0 
+#>   [u2~u1:g] = 0
+#>   [u2~u2:g] = 0 
 #>  
-#> chisq = 0.9441, df = 2, p-value = 0.6237
+#> chisq = 43.1318, df = 2, p-value = 4.306e-10
 ```
 
 ## Mixture models
@@ -303,15 +332,15 @@ to zero and the factor loading parameter of the same variable to one.
 
 ``` r
 m1 <- baptize(m1)  ## Label all parameters
-intercept(m1, ~x1+eta1) <- list(0,NA) ## Set intercept of x1 to zero. Remove the label of eta1
-regression(m1,x1~eta1) <- 1 ## Factor loading fixed to 1
+intercept(m1, ~x1+u1) <- list(0,NA) ## Set intercept of x1 to zero. Remove the label of u1
+regression(m1,x1~u1) <- 1 ## Factor loading fixed to 1
 ```
 
 The mixture model may then be estimated using the `mixture` method
 (note, this requires the `mets` package to be installed), where the
 Parameter names shared across the different mixture components given in
 the `list` will be constrained to be identical in the mixture model.
-Thus, only the intercept of \eta\_{1} is allowed to vary between the
+Thus, only the intercept of u\_{1} is allowed to vary between the
 mixtures.
 
 ``` r
@@ -341,43 +370,43 @@ summary(em0)
 #>                     Estimate Std. Error Z value  Pr(>|z|)
 #> Measurements:                                            
 #>    x1~eta1           1.00000                             
-#>    x2~eta1           0.99581  0.07940   12.54099   <1e-12
+#>    x2~eta1           0.99581  0.07940   12.54098   <1e-12
 #>    x3~eta1           1.06345  0.08436   12.60541   <1e-12
 #> Regressions:                                             
-#>    eta1~z            1.06675  0.08527   12.50989   <1e-12
+#>    eta1~z            1.06674  0.08527   12.50988   <1e-12
 #> Intercepts:                                              
 #>    x1                0.00000                             
-#>    x2                0.03845  0.09890    0.38883 0.6974  
-#>    x3               -0.02549  0.10333   -0.24667 0.8052  
-#>    eta1              0.20925  0.13162    1.58984 0.1119  
+#>    x2                0.03845  0.09890    0.38882 0.6974  
+#>    x3               -0.02549  0.10333   -0.24668 0.8052  
+#>    eta1              0.20926  0.13162    1.58988 0.1119  
 #> Residual Variances:                                      
-#>    x1                0.98540  0.13316    7.40025         
-#>    x2                0.97180  0.13156    7.38695         
+#>    x1                0.98540  0.13316    7.40026         
+#>    x2                0.97181  0.13156    7.38695         
 #>    x3                1.01316  0.14294    7.08815         
-#>    eta1              0.29046  0.11129    2.61004         
+#>    eta1              0.29046  0.11128    2.61004         
 #> 
 #> Cluster 2 (n=38, Prior=0.224):
 #> --------------------------------------------------
 #>                     Estimate Std. Error Z value  Pr(>|z|) 
 #> Measurements:                                             
 #>    x1~eta1           1.00000                              
-#>    x2~eta1           0.99581  0.07940   12.54099   <1e-12 
+#>    x2~eta1           0.99581  0.07940   12.54098   <1e-12 
 #>    x3~eta1           1.06345  0.08436   12.60541   <1e-12 
 #> Regressions:                                              
-#>    eta1~z            1.06675  0.08527   12.50989   <1e-12 
+#>    eta1~z            1.06674  0.08527   12.50988   <1e-12 
 #> Intercepts:                                               
 #>    x1                0.00000                              
-#>    x2                0.03845  0.09890    0.38883 0.6974   
-#>    x3               -0.02549  0.10333   -0.24667 0.8052   
-#>    eta1             -1.44290  0.25867   -5.57812 2.431e-08
+#>    x2                0.03845  0.09890    0.38882 0.6974   
+#>    x3               -0.02549  0.10333   -0.24668 0.8052   
+#>    eta1             -1.44289  0.25867   -5.57813 2.431e-08
 #> Residual Variances:                                       
-#>    x1                0.98540  0.13316    7.40025          
-#>    x2                0.97180  0.13156    7.38695          
+#>    x1                0.98540  0.13316    7.40026          
+#>    x2                0.97181  0.13156    7.38695          
 #>    x3                1.01316  0.14294    7.08815          
-#>    eta1              0.29046  0.11129    2.61004          
+#>    eta1              0.29046  0.11128    2.61004          
 #> --------------------------------------------------
 #> AIC= 1958.803 
-#> ||score||^2= 8.81839e-06
+#> ||score||^2= 7.906111e-06
 ```
 
 Measured by AIC there is a slight improvement in the model fit using the
@@ -399,38 +428,38 @@ em2 <- twostage(em0,m2,data=d)
 em2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
-#>    y2~eta2           0.97823    0.03464 28.23707    <1e-12
-#>    y3~eta2           1.04530    0.03480 30.04033    <1e-12
+#>    y2~u2             0.97823    0.03464 28.23707    <1e-12
+#>    y3~u2             1.04530    0.03480 30.04033    <1e-12
 #> Regressions:                                              
-#>    eta2~z            1.02884    0.22333  4.60676  4.09e-06
-#>    eta2~eta1_1       2.80413    0.65543  4.27831 1.883e-05
-#>    eta2~eta1_2      -0.02249    0.09997 -0.22496     0.822
-#>    eta2~eta1_3      -0.17333    0.28932 -0.59909    0.5491
-#>    eta2~eta1_4       0.38672    0.33978  1.13816    0.2551
+#>    u2~z              1.02884    0.22333  4.60677  4.09e-06
+#>    u2~u1_1           2.80414    0.65543  4.27832 1.883e-05
+#>    u2~u1_2          -0.02249    0.09997 -0.22498     0.822
+#>    u2~u1_3          -0.17332    0.28932 -0.59908    0.5491
+#>    u2~u1_4           0.38672    0.33978  1.13815    0.2551
 #> Intercepts:                                               
 #>    y2               -0.12171    0.10925 -1.11401    0.2653
 #>    y3               -0.09870    0.10546 -0.93588    0.3493
-#>    eta2              2.12372    1.66609  1.27467    0.2024
+#>    u2                2.12374    1.66609  1.27468    0.2024
 #> Residual Variances:                                       
 #>    y1                1.31872    0.17654  7.46974          
 #>    y2                1.09690    0.14502  7.56379          
-#>    y3                0.81345    0.13259  6.13511          
-#>    eta2              1.99590    0.28291  7.05501
+#>    y3                0.81345    0.13259  6.13512          
+#>    u2                1.99590    0.28290  7.05501
 ```
 
 In this example the results are very similar to the Gaussian model:
 
 ``` r
-plot(I(eta2-z) ~ eta1, data=d, col=Col("black",0.5), pch=16,
+plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 
-lines(Estimate ~ eta1, data=as.data.frame(p), col="darkblue", lwd=5)
+lines(Estimate ~ u1, data=as.data.frame(p), col="darkblue", lwd=5)
 confband(p[,1], lower=p[,4], upper=p[,5], polygon=TRUE,
      border=NA, col=Col("darkblue",0.2))
 
-pm <- cbind(eta1=newd$eta1,
+pm <- cbind(u1=newd$u1,
         estimate(em2, f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
-lines(Estimate ~ eta1, data=as.data.frame(pm), col="darkred", lwd=5)
+lines(Estimate ~ u1, data=as.data.frame(pm), col="darkred", lwd=5)
 confband(pm[,1], lower=pm[,4], upper=pm[,5], polygon=TRUE,
      border=NA, col=Col("darkred",0.2))
 legend("bottomright", c("Gaussian","Mixture"),
