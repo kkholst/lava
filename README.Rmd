@@ -1,18 +1,11 @@
 ---
 output:
   github_document:
-  toc: true
-  toc_depth: 2
+    toc: true
+    toc_depth: 2
 ---
 
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
-  [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=main)](https://codecov.io/github/kkholst/lava?branch=main)
-  [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
-  [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
-[![Codecov test coverage](https://codecov.io/gh/kkholst/lava/graph/badge.svg)](https://app.codecov.io/gh/kkholst/lava)
-
-<!-- badges: end -->
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r include=FALSE}
 options(family="Times")
@@ -25,10 +18,20 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/",
   out.width = "70%"
 )
+library(lava)
+lava.options(plot.engine="Rgraphviz")
 ```
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
+  [![coverage](https://codecov.io/github/kkholst/lava/coverage.svg?branch=main)](https://codecov.io/github/kkholst/lava?branch=main)
+  [![cran](https://www.r-pkg.org/badges/version-last-release/lava)](https://CRAN.R-project.org/package=lava)
+  [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
+<!-- badges: end -->
 
-# Latent Variable Models: `lava` <a href="https://kkholst.github.io/lava/"><img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="lava website"/></a>
+
+# Latent Variable Models: `lava`
+<a href="https://kkholst.github.io/lava/"><img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="lava website"/></a>
 
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
@@ -120,11 +123,43 @@ library(lava)
 
 ### Influence functions
 
-    2+2
+Construct `estimate` objects from parameter coefficients and estimated influence
+functions
+```{r estimate_calculus_models}
+a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
+```
 
-    ```{r}
-    2+2
-    ```
+Alternatively, we can construct estimate objects directly from an existing model
+object (`glm`, `mets::phreg`, `lava::lvm`, ...)
+
+```{r}
+#| eval: FALSE
+estimate(modelobj, id, ...)
+```
+
+We can now merge the `estimate` objects to obtain their joint distribution via their estimated influence functions
+```{r estimate-merge}
+e <- c(a, b) # joint distribution
+vcov(e)
+```
+
+Parameter transformation can be calculated directly as in the following examples
+```{r estimate_calc_ex}
+a * b # product
+(3 * cos(a) / sqrt(b) + 1) / a^0.5 # general transformation
+e %*% e # inner prod.
+c(pow = a^b) # power-function, rename parameter
+c(e["a"] * e["b"] / a, e["b"]) # transformation with subsetting
+```
+
+For the `%*%*` operator we can also use a general contrast matrix
+(see also Section on [Linear contrasts](#linear-contrasts-and-hypothesis-testing)
+```{r estimate-contrast}
+B <- rbind(c(1,-1), c(1,0), c(0,1))
+B %*% e
+plot(B %*% e)
+```
 
 
 ### Structural Equation Model
@@ -159,7 +194,6 @@ Estimation
 e <- estimate(m, d)
 e
 ```
-
 
 ### Model assessment
 
@@ -212,7 +246,6 @@ f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
 u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
 ```
-
 
 ### Simulation
 
