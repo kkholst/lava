@@ -1,5 +1,13 @@
 # Latent Variable Models: `lava`
 
+- [Latent Variable Models: `lava`](#latent-variable-models-lava)
+  - [Installation](#installation)
+  - [Citation](#citation)
+  - [Examples](#examples)
+
+[![lava
+website](reference/figures/logo.png)](https://kkholst.github.io/lava/)
+
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
 continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen
@@ -84,15 +92,79 @@ To cite that `lava` package please use one of the following references
 
 ### Influence functions
 
-```` R
-2+2
-
+Construct `estimate` objects from parameter coefficients and estimated
+influence functions
 
 ``` r
-2+2
-#> [1] 4
+a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
 ```
-````
+
+Alternatively, we can construct estimate objects directly from an
+existing model object (`glm`,
+[`mets::phreg`](http://kkholst.github.io/mets/reference/phreg.md),
+[`lava::lvm`](https://kkholst.github.io/lava/reference/lvm.md), …)
+
+``` r
+estimate(modelobj, id, ...)
+```
+
+We can now merge the `estimate` objects to obtain their joint
+distribution via their estimated influence functions
+
+``` r
+e <- c(a, b) # joint distribution
+vcov(e)
+#>              a            b
+#> a 0.1023667491 0.0001747415
+#> b 0.0001747415 0.0625808426
+```
+
+Parameter transformation can be calculated directly as in the following
+examples
+
+``` r
+a * b # product
+#>   Estimate Std.Err    2.5%  97.5% P-value
+#> a      0.4  0.2851 -0.1588 0.9588  0.1607
+(3 * cos(a) / sqrt(b) + 1) / a^0.5 # general transformation
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a    5.577   2.596 0.4884 10.67 0.03171
+e %*% e # inner prod.
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> p1     0.89   0.513 -0.1154 1.895 0.08274
+c(pow = a^b) # power-function, rename parameter
+#>     Estimate Std.Err     2.5% 97.5% P-value
+#> pow   0.5743  0.3102 -0.03368 1.182 0.06411
+c(e["a"] * e["b"] / a, e["b"]) # transformation with subsetting
+#>   Estimate Std.Err   2.5% 97.5%  P-value
+#> a      0.8  0.2502 0.3097  1.29 0.001384
+#> ─                                       
+#> b      0.8  0.2502 0.3097  1.29 0.001384
+```
+
+For the `%*%*` operator we can also use a general contrast matrix (see
+also Section on [Linear
+contrasts](#linear-contrasts-and-hypothesis-testing)
+
+``` r
+B <- rbind(c(1,-1), c(1,0), c(0,1))
+B %*% e
+#>           Estimate Std.Err    2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.4057 -1.0952 0.4952 0.459634
+#> [a]            0.5  0.3199 -0.1271 1.1271 0.118111
+#> [b]            0.8  0.2502  0.3097 1.2903 0.001384
+#> 
+#>  Null Hypothesis: 
+#>   [a] - [b] = 0
+#>   [a] = 0
+#>   [b] = 0 
+#>  
+#> chisq = 12.6472, df = 2, p-value = 0.001793
+plot(B %*% e)
+```
+
+![](reference/figures/estimate-contrast-1.svg)
 
 ### Structural Equation Model
 
@@ -246,7 +318,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 5.277s
+#> 100 replications                 Time: 2.457s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
