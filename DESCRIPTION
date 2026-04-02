@@ -58,6 +58,7 @@ Suggests:
     polycor,
     quantreg,
     rgl,
+    svglite,
     targeted (>= 0.4),
     testthat (>= 0.11),
     visNetwork

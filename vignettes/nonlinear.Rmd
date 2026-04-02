@@ -18,14 +18,15 @@ bibliography: ref.bib
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev = "svg"
+  dev = "svglite"
 )
+library("svglite")
 mets <- lava:::versioncheck('mets', 1)
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
 
 ```{r  load, results="hide",message=FALSE,warning=FALSE }
-library('lava')
+library("lava")
 ```
 
 We consider the measurement models given by
