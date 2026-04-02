@@ -1,4 +1,222 @@
 url: https://kkholst.github.io/lava/
+
 template:
   math-rendering: katex
   bootstrap: 5
+
+
+reference:
+- title: "Working with Influence Functions"
+  desc: >
+    Functions for working with Influence Functions
+  contents:
+  - estimate.default
+  - IC.default
+  - multinomial
+  - estimate.array
+  - iid
+  - stack.estimate
+  - plot.estimate
+
+- title: "Simulation functions"
+  contents:
+  - sim.lvm
+  - sim.default
+  - density.sim
+  - summary.sim
+
+- title: "Statistical Inference and model tools"
+  contents:
+  - diagtest
+  - parsedesign
+  - bootstrap
+  - backdoor
+  - closed_testing
+  - scheffe
+  - zibreg
+  - wkm
+  - dsep.lvm
+  - pcor
+  - partialcor
+  - ordreg
+  - mvnmix
+  - equivalence
+  - gof
+  - confpred
+  - mixture
+  - plot.lvm
+  - predict.lvm
+  - predictlvm
+
+- title: "Data sets"
+  contents:
+  - bmd
+  - bmidata
+  - brisa
+  - calcium
+  - deprdiag
+  - hubble
+  - hubble2
+  - indoorenv
+  - nldata
+  - missingdata
+  - nsem
+  - semdata
+  - serotonin
+  - twindata
+
+- title: "Graphics functions"
+  contents:
+  - Col
+  - curly
+  - fplot
+  - forestplot
+  - ksmooth2
+  - colsel
+  - colorbar
+  - confband
+  - plot_region
+  - devcoords
+  - surface
+  - images
+  - plotConf
+  - spaghetti
+
+- title: "Matrix functions and linear algebra utilities"
+  contents:
+  - blockdiag
+  - Inverse
+  - vec
+  - revdiag
+  - revdiag<-
+  - offdiag
+  - offdiag<-
+  - tr
+  - rotate2
+
+- title: "Utility functions"
+  contents:
+  - By
+  - click
+  - wait
+  - Combine
+  - commutation
+  - csplit
+  - foldr
+  - Expand
+  - getSAS
+  - getMplus
+  - PD
+  - pdfconvert
+  - procformula
+  - toformula
+  - trim
+  - wrapvec
+  - x2NA
+  - NA2x
+  - na.pass0
+  - Grep
+  - NR
+  - Print
+  - starts_with("%")
+  - lava.options
+  - rbind.Surv
+
+- title: "Latent variable model building"
+  contents:
+  - Model
+  - Graph
+  - addvar
+  - addvar<-
+  - adjMat
+  - ancestors
+  - baptize
+  - cancel
+  - cancel<-
+  - categorical
+  - categorical<-
+  - children
+  - constrain
+  - constrain
+  - covariance
+  - covariance<-
+  - covfix
+  - covfix<-
+  - variance
+  - variance<-
+  - descendants
+  - describecoef
+  - distribution
+  - distribution<-
+  - edgeList
+  - edgelabels
+  - edgelabels<-
+  - edgeList
+  - endogenous
+  - exogenous
+  - exogenous<-
+  - eventTime
+  - eventTime<-
+  - fixsome
+  - functional
+  - functional<-
+  - intercept
+  - intercept<-
+  - intfix
+  - intervention
+  - intervention<-
+  - rmvar
+  - rmvar<-
+  - kill
+  - kill<-
+  - labels
+  - labels<-
+  - latent
+  - latent<-
+  - lvm
+  - makemissing
+  - manifest
+  - measurement
+  - multigroup
+  - nodecolor
+  - nodecolor<-
+  - ordinal
+  - ordinal<-
+  - parameter
+  - parameter<-
+  - parfix
+  - parfix<-
+  - parpos
+  - pars
+  - parents
+  - path
+  - Range.lvm
+  - randomslope
+  - randomslope<-
+  - regression
+  - regression<-
+  - regfix
+  - regfix<-
+  - roots
+  - sinks
+  - timedep
+  - timedep<-
+  - transform<-
+  - vars
+  - Missing
+  - binomial.rr
+  - binomial.rd
+
+- title: "Latent variable model estimation"
+  contents:
+  - estimate.lvm
+  - bootstrap.lvm
+  - confint.lvmfit
+  - complik
+  - correlation
+  - twostageCV
+  - modelsearch
+  - twostage.lvmfit
+  - measurement.error
+  - twostage
+  - compare
