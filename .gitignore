@@ -1,3 +1,5 @@
+vignettes/test.*
+pkgdown
 tests/*.html
 tests/lib
 .DS_Store

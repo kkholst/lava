@@ -49,6 +49,10 @@ check:
 lint:
 	@echo 'lintr::lint_package(show_progress = TRUE)' | $(R)
 
+.PHONY: pkgdown
+pkgdown:
+	@$(R) -q -e "pkgdown::build_site(install=FALSE)"
+
 vignette:
 	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
 
