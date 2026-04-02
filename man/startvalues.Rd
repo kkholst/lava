@@ -28,11 +28,6 @@
 \alias{index}
 \alias{reindex}
 \alias{index<-}
-\alias{rmvn0}
-\alias{dmvn0}
-\alias{logit}
-\alias{expit}
-\alias{tigol}
 \alias{randomslope}
 \alias{randomslope<-}
 \alias{lisrel}
@@ -50,7 +45,6 @@
 \alias{profci}
 \alias{estimate.MAR}
 \alias{missingModel}
-\alias{Inverse}
 \alias{Identical}
 \alias{gaussian_logLik.lvm}
 \alias{addhook}
@@ -67,7 +61,12 @@
 \alias{procformula}
 \alias{getoutcome}
 \alias{decomp.specials}
-\alias{na.pass0}
+\alias{rmvn0}
+\alias{dmvn0}
+\alias{logit}
+\alias{expit}
+\alias{tigol}
+\alias{Inverse}
 \title{For internal use}
 \description{
 For internal use
