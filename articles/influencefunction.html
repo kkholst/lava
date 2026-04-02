@@ -423,7 +423,7 @@ x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
 <span><span class="co">#&gt; 0|1   0.2687  0.1622 -0.04932 0.5867 9.772e-02</span></span>
 <span><span class="co">#&gt; a     1.5595  0.2429  1.08349 2.0355 1.350e-10</span></span>
 <span><span class="co">#&gt; x1    0.9728  0.1435  0.69157 1.2540 1.200e-11</span></span></code></pre></div>
-<p>Note that the <code><a href="https://rdrr.io/pkg/sandwich/man/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
+<p>Note that the <code><a href="https://sandwich.R-Forge.R-project.org/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
 <code>sandwich</code> library <span class="citation">(Zeileis, Köll, and
 Graham 2020)</span> can also estimate the IF for different parametric
 models, but does not provide the tools for combining and transforming
@@ -474,7 +474,7 @@ survival model with right-censored event times</p>
 is the baseline hazard, can be estimated in similar way:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">time</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">ic</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/IC.default.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">object</span>, baseline <span class="op">=</span> <span class="cn">TRUE</span>, time <span class="op">=</span> <span class="va">time</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="va">ic</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/IC.default.html">IC</a></span><span class="op">(</span><span class="va">object</span>, baseline <span class="op">=</span> <span class="cn">TRUE</span>, time <span class="op">=</span> <span class="va">time</span>, <span class="va">...</span><span class="op">)</span></span>
 <span>  <span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/mets/reference/fast.approx.html" class="external-link">predictCumhaz</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">cumhaz</span>, new.time <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span></span>
 <span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="cn">NULL</span>, coef <span class="op">=</span> <span class="va">est</span>, IC <span class="op">=</span> <span class="va">ic</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chaz:"</span>, <span class="va">time</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -1100,7 +1100,7 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/startvalues.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5564f1a78670&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x56146f22b760&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/startvalues.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
