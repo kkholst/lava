@@ -17,14 +17,13 @@ bibliography: ref.bib
 ```{r  include=FALSE }
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dev = "svg"
 )
 mets <- lava:::versioncheck('mets', 1)
 ```
 
-$$
 \newcommand{\arctanh}{\operatorname{arctanh}}
-$$
 
 This document illustrates how to estimate partial correlation
 coefficients using `lava`.
@@ -44,11 +43,11 @@ $$\begin{pmatrix}
     \rho\sigma_{1}\sigma_{2} & \sigma_2^2
     \end{pmatrix}.$$
 
-```{r   }
-library('lava')
+```{r  plotload, results="hide",message=FALSE,warning=FALSE }
+library("lava")
 m0 <- lvm(y1+y2 ~ x, y1 ~~ y2)
-edgelabels(m0, y1 + y2 ~ x) <- c(expression(beta[1]), expression(beta[2]))
-edgelabels(m0, y1 ~ y2) <- expression(rho)
+edgelabels(m0, y1 + y2 ~ x) <- c(expression(b[1]), expression(b[2]))
+edgelabels(m0, y1 ~ y2) <- "r"
 plot(m0, layoutType="circo")
 ```
 
@@ -57,11 +56,7 @@ Here we focus on inference with respect to the correlation parameter $\rho$.
 
 # Simulation
 
-As an example, we will simulate data from this model with a single covariate. First we load the necessary libraries:
-
-```{r  load, results="hide",message=FALSE,warning=FALSE }
-library('lava')
-```
+As an example, we will simulate data from this model with a single covariate.
 
 The model can be specified (here using the pipe notation)
 with the following syntax where the correlation parameter here is
@@ -106,7 +101,7 @@ cens1 <- function(threshold,type='right') {
   }
 }
 
-m0 <- 
+m0 <-
   transform(m0, s1 ~ y1, cens1(-2, 'left')) |>
   transform(s2 ~ y2, cens1(2,  'right'))
 ```
@@ -115,7 +110,6 @@ m0 <-
 d <- sim(m0, 500, p=c(r=0.9), seed=1)
 head(d)
 ```
-
 
 # Estimation and inference
 

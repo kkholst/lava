@@ -23,7 +23,8 @@ library("lava")
 knitr::opts_chunk$set(
   collapse = TRUE,
   cache = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dev = "svg"
   )
 has_mets <- lava:::versioncheck('mets', 1)
 has_geepack <- lava:::versioncheck('geepack', 1)
