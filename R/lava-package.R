@@ -255,7 +255,7 @@ NULL
 ##'   starter.multigroup addattr modelPar modelVar matrices pars pars.lvm
 ##'   pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar mat.lvm
 ##'   matrices reorderdata graph2lvm igraph.lvm subgraph finalize index.lvm
-##'   index.lvmfit index reindex index<- randomslope randomslope<- lisrel
+##'   index.lvmfit reindex index<- randomslope randomslope<- lisrel
 ##'   variances offdiags describecoef parlabels rsq stdcoef CoefMat
 ##'   CoefMat.multigroupfit deriv updatelvm checkmultigroup profci estimate.MAR
 ##'   missingModel Identical gaussian_logLik.lvm addhook gethook multigroup

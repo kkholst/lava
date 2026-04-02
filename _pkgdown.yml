@@ -108,7 +108,6 @@ reference:
   - getMplus
   - PD
   - pdfconvert
-  - procformula
   - toformula
   - trim
   - wrapvec

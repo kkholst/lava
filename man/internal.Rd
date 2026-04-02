@@ -25,7 +25,6 @@
 \alias{finalize}
 \alias{index.lvm}
 \alias{index.lvmfit}
-\alias{index}
 \alias{reindex}
 \alias{index<-}
 \alias{randomslope}
@@ -56,6 +55,7 @@
 \alias{parfix<-}
 \alias{IV}
 \alias{parameter}
+\alias{index}
 \alias{Specials}
 \alias{procformula}
 \alias{getoutcome}
