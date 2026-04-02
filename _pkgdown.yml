@@ -105,7 +105,6 @@ reference:
   - foldr
   - Expand
   - getSAS
-  - getMplus
   - PD
   - pdfconvert
   - toformula
