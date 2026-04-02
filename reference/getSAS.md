@@ -31,10 +31,6 @@ and read results into R with:
 
 `getsas("myest.csv","Parameter Estimates")`
 
-## See also
-
-getMplus
-
 ## Author
 
 Klaus K. Holst

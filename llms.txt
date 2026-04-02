@@ -441,9 +441,6 @@ Functions for working with Influence Functions
 - [`getSAS()`](https://kkholst.github.io/lava/reference/getSAS.md) :
   Read SAS output
 
-- [`getMplus()`](https://kkholst.github.io/lava/reference/getMplus.md) :
-  Read Mplus output
-
 - [`PD()`](https://kkholst.github.io/lava/reference/PD.md) : Dose
   response calculation for binomial regression models
 
