@@ -247,12 +247,10 @@ NULL
 ##' @source Simulated
 NULL
 
-
 ##' For internal use
 ##'
 ##' @title For internal use
 ##' @name startvalues
-##' @rdname internal
 ##' @author Klaus K. Holst
 ##' @keywords utilities
 ##' @export
@@ -263,12 +261,11 @@ NULL
 ##' pars.lvmfit pars.glm score.glm procdata.lvmfit modelPar modelVar
 ##' mat.lvm matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##' index.lvm index.lvmfit index reindex index<-
-##' rmvn0 dmvn0 logit expit tigol
 ##' randomslope randomslope<- lisrel variances offdiags describecoef
 ##' parlabels rsq stdcoef CoefMat CoefMat.multigroupfit deriv updatelvm
-##' checkmultigroup profci estimate.MAR missingModel Inverse Identical
+##' checkmultigroup profci estimate.MAR missingModel Identical
 ##' gaussian_logLik.lvm addhook gethook multigroup Weights fixsome
 ##' parfix parfix<- merge IV parameter index index<-
 ##' Specials procformula getoutcome decomp.specials
-##' na.pass0
+##' rmvn0 dmvn0 logit expit tigol Inverse
 NULL

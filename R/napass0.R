@@ -28,8 +28,20 @@ impute0 <- function(object,rows,idx,na.action=na.omit,value,...) {
     return(object)
 }
 
-##' @export 
-na.pass0 <- function(object,all=TRUE,na.action=na.omit, ...) {
+##' @title Handle Missing Values in Objects
+##' @description Returns the object with missing data replaced by zeros. This is
+##'   sometimes useful for example when working with inverse probability
+##'   weighting of the complete-case data.
+##' @seealso [na.pass], [na.omit], [na.fail]
+##' @export
+##' @param object data.frame, vector
+##' @param na.action function used to identify missing values
+##' @param ... additional arguments to lower level functions
+##' @examples
+##' d <- data.frame(y=c(1,1,NA,2,NA,2), r=c(1,1,0,1,1,1))
+##' na.pass0(d)
+##' glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
+na.pass0 <- function(object, na.action=na.omit, ...) {
     ## Fill in "zeros" in the design matrix where we have missing data    
     df <- na.action(object,...)
     idx <- attr(df,"na.action")
