@@ -18,7 +18,8 @@ bibliography: ref.bib
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev = "svg"
+  dev = "svg",
+  fig.ext = "svg"
 )
 mets <- lava:::versioncheck('mets', 1)
 ```

@@ -54,7 +54,6 @@
 \alias{fixsome}
 \alias{parfix}
 \alias{parfix<-}
-\alias{merge}
 \alias{IV}
 \alias{parameter}
 \alias{Specials}
@@ -66,7 +65,6 @@
 \alias{logit}
 \alias{expit}
 \alias{tigol}
-\alias{Inverse}
 \title{For internal use}
 \description{
 For internal use
@@ -74,4 +72,4 @@ For internal use
 \author{
 Klaus K. Holst
 }
-\keyword{utilities}
+\keyword{internal}

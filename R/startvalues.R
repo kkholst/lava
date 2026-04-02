@@ -157,10 +157,8 @@ startvalues0 <- function(x,S,mu=NULL,tol=1e-6,delta=1e-6,...) {
   return(pp)
 }
 
-
-## McDonald & Hartmann, 1992
 ##' @export
-startvalues <-
+startvalues <- ## McDonald & Hartmann, 1992
 function(x, S, mu=NULL, debug=FALSE, messages=lava.options()$messages, tol=1e-6, delta=1e-6,...) {
   ## As proposed by McDonald & Hartmann, 1992.
   ## Implementation based on John Fox's implementation in the 'sem' R-package

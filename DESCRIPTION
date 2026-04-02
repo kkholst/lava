@@ -19,12 +19,12 @@ Description: A general implementation of Structural Equation Models
 	back-door criterion), simulation of general non-linear latent variable
 	models, and estimation of influence functions for a broad range of
 	statistical models.
-URL: https://kkholst.github.io/lava/
+URL: https://kkholst.github.io/lava/, https://github.com/kkholst/lava
 BugReports: https://github.com/kkholst/lava/issues
 License: Apache License (== 2.0)
 LazyLoad: yes
 Depends:
-	R (>= 3.0)
+	R (>= 3.5.0)
 Imports:
     cli,
     future.apply,

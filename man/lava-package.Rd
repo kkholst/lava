@@ -21,14 +21,13 @@ non-linear latent variable models, and estimation of influence functions for
 a broad range of statistical models.
 }
 \examples{
-
 lava()
-
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://kkholst.github.io/lava/}
+  \item \url{https://github.com/kkholst/lava}
   \item Report bugs at \url{https://github.com/kkholst/lava/issues}
 }
 

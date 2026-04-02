@@ -1,4 +1,11 @@
+##' @title Generalized matrix inverse
 ##' @export
+##' @param X nxn matrix
+##' @param tol tolerance for pseudo inverse
+##' @param det logical, if true the determinant is returned
+##' @param names preserve dimnames
+##' @param chol use Cholesky decomposition for calculating inverse otherwise SVD
+##' @param symmetric set to true if matrix is symmetric
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,symmetric=FALSE) {
     n <- NROW(X)
     if (n==1L) {
