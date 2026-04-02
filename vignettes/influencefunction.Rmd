@@ -149,8 +149,8 @@ estimate(coef=, vcov=, ...)
 
 A typical call could look like
 ```{r estimate.examples, eval=FALSE}
-merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |> # merge two estimate objects
-  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter tranfsormation
+merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |> 
+  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
 ```
 
