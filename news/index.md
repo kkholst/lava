@@ -230,8 +230,8 @@ CRAN release: 2018-07-02
 - `twostageCV`: cross-validate two-stage estimator
 - rmvn, dmvn moved to mets package (C++ implementation, old versions
   renamed to
-  [`lava::rmvn0`](https://kkholst.github.io/lava/reference/startvalues.md),
-  [`lava::dmvn0`](https://kkholst.github.io/lava/reference/startvalues.md))
+  [`lava::rmvn0`](https://kkholst.github.io/lava/reference/internal.md),
+  [`lava::dmvn0`](https://kkholst.github.io/lava/reference/internal.md))
 - mediation proportion handled correctly when direct effect is zero
 - unit tests clean-up (namespace)
 - `merge.lvm` now correctly handles fixed covariance parameters

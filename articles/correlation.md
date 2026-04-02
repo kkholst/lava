@@ -21,7 +21,7 @@ edgelabels(m0, y1 ~ y2) <- "r"
 plot(m0, layoutType="circo")
 ```
 
-![](correlation_files/figure-html/plotload-1.png)
+![](correlation_files/figure-html/plotload-1.svg)
 
 Here we focus on inference with respect to the correlation parameter
 \rho.

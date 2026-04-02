@@ -29,6 +29,8 @@ Useful links:
 
 - <https://kkholst.github.io/lava/>
 
+- <https://github.com/kkholst/lava>
+
 - Report bugs at <https://github.com/kkholst/lava/issues>
 
 ## Author
@@ -47,5 +49,4 @@ Klaus K. Holst Maintainer: \<klaus@holst.it\>
 
 ``` r
 lava()
-
 ```

@@ -15,6 +15,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/Graph.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/Grep.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/IC.default.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/Inverse.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/Missing.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/Model.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/NA2x.html</loc></url>
@@ -69,6 +70,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/images.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/indoorenv.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/intercept.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/internal.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/intervention.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/ksmooth2.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/labels-set.html</loc></url>
@@ -112,7 +114,6 @@
 <url><loc>https://kkholst.github.io/lava/reference/sim.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/spaghetti.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/stack.estimate.html</loc></url>
-<url><loc>https://kkholst.github.io/lava/reference/startvalues.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/subset.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/summary.sim.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/timedep.html</loc></url>

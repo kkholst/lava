@@ -1,7 +1,7 @@
 # Non-linear latent variable models and error-in-variable models
 
 ``` r
-library('lava')
+library("lava")
 ```
 
 We consider the measurement models given by
@@ -28,7 +28,7 @@ d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 plot(m)
 ```
 
-![](nonlinear_files/figure-html/unnamed-chunk-2-1.png)
+![](nonlinear_files/figure-html/unnamed-chunk-2-1.svg)
 
 We refer to (K. K. Holst and Budtz-Jørgensen 2013) for details on the
 syntax for model specification.
@@ -159,7 +159,7 @@ confband(p[,1], lower=p[,4], upper=p[,5], polygon=TRUE,
      border=NA, col=Col("darkblue",0.2))
 ```
 
-![](nonlinear_files/figure-html/figpred2-1.png)
+![](nonlinear_files/figure-html/figpred2-1.svg)
 
 ## Cross-validation
 
@@ -222,7 +222,7 @@ legend("bottomright",
       col=col, lty=lty, lwd=3)
 ```
 
-![](nonlinear_files/figure-html/multifit-1.png)
+![](nonlinear_files/figure-html/multifit-1.svg)
 
 For convenience, the function `twostageCV` can be used to do the
 cross-validation (also for choosing the mixture distribution via the
@@ -246,35 +246,37 @@ selmod
 #> 1 1961.839
 #> 2 1958.803
 #> ────────────────────────────────────────────────────────────────────────────────
-#> Selected spline model degrees of freedom: 2
-#> Knots: -3.958 0.02149 4.001 
+#> Selected spline model degrees of freedom: 4
+#> Knots: -3.958 -1.968 0.02149 2.011 4.001 
 #> 
 #>      RMSE(nfolds=, rep=)
-#> df:1            2.138133
-#> df:2            1.856094
-#> df:3            1.917310
-#> df:4            1.897830
+#> df:1            2.135108
+#> df:2            1.883176
+#> df:3            1.918421
+#> df:4            1.860711
 #> ────────────────────────────────────────────────────────────────────────────────
 #> 
-#>                     Estimate Std. Error Z-value  P-value  std.xy  
-#> Measurements:                                                     
-#>    y1~eta2           1.00000                               0.93523
-#>    y2~eta2           0.97794  0.03461   28.25249   <1e-12  0.94272
-#>    y3~eta2           1.04520  0.03471   30.10996   <1e-12  0.96180
-#> Regressions:                                                      
-#>    eta2~z            1.02818  0.22299    4.61084 4.01e-06  0.34726
-#>    eta2~eta1_1       3.41779  0.36944    9.25125   <1e-12  1.48543
-#>    eta2~eta1_2      -0.05122  0.00707   -7.24641   <1e-12 -1.03810
-#> Intercepts:                                                       
-#>    y1                0.00000                               0.00000
-#>    y2               -0.12176  0.10921   -1.11498 0.2649   -0.03873
-#>    y3               -0.09872  0.10546   -0.93607 0.3492   -0.02998
-#>    eta2              3.93719  0.54062    7.28270   <1e-12  1.29917
-#> Residual Variances:                                               
-#>    y1                1.31625  0.17653    7.45609           0.12535
-#>    y2                1.09974  0.14506    7.58110           0.11127
-#>    y3                0.81270  0.13258    6.12980           0.07493
-#>    eta2              2.01821  0.29032    6.95154           0.21975
+#>                     Estimate Std. Error Z-value  P-value   std.xy  
+#> Measurements:                                                      
+#>    y1~u2             1.00000                                0.93509
+#>    y2~u2             0.97827  0.03464   28.24164   <1e-12   0.94291
+#>    y3~u2             1.04529  0.03482   30.01849   <1e-12   0.96175
+#> Regressions:                                                       
+#>    u2~z              1.02726  0.22350    4.59630 4.301e-06  0.34700
+#>    u2~u1_1           2.61264  0.90770    2.87830 0.003998   1.13566
+#>    u2~u1_2           0.01368  0.06464    0.21164 0.8324     0.30984
+#>    u2~u1_3          -0.19029  0.17477   -1.08879 0.2762    -1.48961
+#>    u2~u1_4           0.35252  0.19173    1.83859 0.06597    0.52314
+#> Intercepts:                                                        
+#>    y1                0.00000                                0.00000
+#>    y2               -0.12170  0.10925   -1.11391 0.2653    -0.03871
+#>    y3               -0.09870  0.10546   -0.93592 0.3493    -0.02997
+#>    u2                1.54968  2.64293    0.58635 0.5576     0.51143
+#> Residual Variances:                                                
+#>    y1                1.31889  0.17659    7.46873            0.12560
+#>    y2                1.09634  0.14483    7.56960            0.11093
+#>    y3                0.81386  0.13260    6.13772            0.07504
+#>    u2                1.99291  0.28189    7.06988            0.21706
 ```
 
 ## Specification of general functional forms
@@ -369,41 +371,41 @@ summary(em0)
 #> --------------------------------------------------
 #>                     Estimate Std. Error Z value  Pr(>|z|)
 #> Measurements:                                            
-#>    x1~eta1           1.00000                             
-#>    x2~eta1           0.99581  0.07940   12.54098   <1e-12
-#>    x3~eta1           1.06345  0.08436   12.60541   <1e-12
+#>    x1~u1             1.00000                             
+#>    x2~u1             0.99581  0.07940   12.54098   <1e-12
+#>    x3~u1             1.06345  0.08436   12.60541   <1e-12
 #> Regressions:                                             
-#>    eta1~z            1.06674  0.08527   12.50988   <1e-12
+#>    u1~z              1.06674  0.08527   12.50988   <1e-12
 #> Intercepts:                                              
 #>    x1                0.00000                             
 #>    x2                0.03845  0.09890    0.38882 0.6974  
 #>    x3               -0.02549  0.10333   -0.24668 0.8052  
-#>    eta1              0.20926  0.13162    1.58988 0.1119  
+#>    u1                0.20926  0.13162    1.58988 0.1119  
 #> Residual Variances:                                      
 #>    x1                0.98540  0.13316    7.40026         
 #>    x2                0.97181  0.13156    7.38695         
 #>    x3                1.01316  0.14294    7.08815         
-#>    eta1              0.29046  0.11128    2.61004         
+#>    u1                0.29046  0.11128    2.61004         
 #> 
 #> Cluster 2 (n=38, Prior=0.224):
 #> --------------------------------------------------
 #>                     Estimate Std. Error Z value  Pr(>|z|) 
 #> Measurements:                                             
-#>    x1~eta1           1.00000                              
-#>    x2~eta1           0.99581  0.07940   12.54098   <1e-12 
-#>    x3~eta1           1.06345  0.08436   12.60541   <1e-12 
+#>    x1~u1             1.00000                              
+#>    x2~u1             0.99581  0.07940   12.54098   <1e-12 
+#>    x3~u1             1.06345  0.08436   12.60541   <1e-12 
 #> Regressions:                                              
-#>    eta1~z            1.06674  0.08527   12.50988   <1e-12 
+#>    u1~z              1.06674  0.08527   12.50988   <1e-12 
 #> Intercepts:                                               
 #>    x1                0.00000                              
 #>    x2                0.03845  0.09890    0.38882 0.6974   
 #>    x3               -0.02549  0.10333   -0.24668 0.8052   
-#>    eta1             -1.44289  0.25867   -5.57813 2.431e-08
+#>    u1               -1.44289  0.25867   -5.57813 2.431e-08
 #> Residual Variances:                                       
 #>    x1                0.98540  0.13316    7.40026          
 #>    x2                0.97181  0.13156    7.38695          
 #>    x3                1.01316  0.14294    7.08815          
-#>    eta1              0.29046  0.11128    2.61004          
+#>    u1                0.29046  0.11128    2.61004          
 #> --------------------------------------------------
 #> AIC= 1958.803 
 #> ||score||^2= 7.906111e-06
@@ -466,7 +468,7 @@ legend("bottomright", c("Gaussian","Mixture"),
        col=c("darkblue","darkred"), lwd=2, bty="n")
 ```
 
-![](nonlinear_files/figure-html/mixturefit-1.png)
+![](nonlinear_files/figure-html/mixturefit-1.svg)
 
 ## SessionInfo
 
