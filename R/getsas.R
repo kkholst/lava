@@ -16,7 +16,6 @@
 ##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
-##' @seealso getMplus
 getSAS <- function(infile,entry="Parameter Estimates",...) {
     con <- file(infile, blocking = FALSE)
     inp <- readLines(con)
