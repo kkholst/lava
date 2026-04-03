@@ -664,6 +664,52 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b           0.8   0.342 0.1296  1.47 0.01934</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────                                      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> also.b      0.8   0.342 0.1296  1.47 0.01934</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a] - [b]     -0.3  0.4414 -1.1651 0.5651 0.49671</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a]            0.5  0.2778 -0.0444 1.0444 0.07184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [b]            0.8  0.3420  0.1296 1.4704 0.01934</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] - [b] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [b] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 8.7407, df = 2, p-value = 0.01265</span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">==</span> <span class="fl">1</span> <span class="co"># wald-test, null-hypothesis H0: b=1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5% 97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a]      0.5  0.2778 -0.0444 1.044 0.07184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [b]      0.8  0.3420  0.1296 1.470 0.55874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [b] = 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 3.5899, df = 2, p-value = 0.1661</span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a]      0.5  0.2778 -0.0444 1.044 0.071841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [b]      0.8  0.3420  0.1296 1.470 0.000451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [b] = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 15.5935, df = 2, p-value = 0.0004111</span>
+<span class="r-in"><span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="op">==</span> <span class="fl">1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a] - [b]     -0.3  0.4414 -1.1651 0.5651 0.003227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [a]            0.5  0.2778 -0.0444 1.0444 0.071841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [b]            0.8  0.3420  0.1296 1.4704 0.558742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] - [b] = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [b] = 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 9.145, df = 2, p-value = 0.01033</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
