@@ -6,6 +6,8 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
+    fig_width: 6
+    fig_height: 4
 vignette: >
   %\VignetteIndexEntry{Estimating partial correlations with lava}
   %\VignetteEngine{knitr::rmarkdown}
