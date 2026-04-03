@@ -277,10 +277,10 @@ vcov(e)
 #> y1:(Intercept)     5.9475e-04   0.0000841250
 #> y2:(Intercept)     8.4125e-05   0.0006219375
 ## Matrix with estimates and confidence limits
-estimate(e, level = 0.99) |> parameter()
-#>                Estimate    Std.Err      0.5%     99.5%       P-value
-#> y1:(Intercept)    0.610 0.02438750 0.5471820 0.6728180 4.434692e-138
-#> y2:(Intercept)    0.535 0.02493867 0.4707622 0.5992378 4.316104e-102
+estimate(e, null=0, level = 0.99) |> parameter()
+#>                  Estimate    Std.Err      0.5%     99.5%       P-value
+#> [y1:(Intercept)]    0.610 0.02438750 0.5471820 0.6728180 4.434692e-138
+#> [y2:(Intercept)]    0.535 0.02493867 0.4707622 0.5992378 4.316104e-102
 ## Influence curve
 IC(e) |> head()
 #>   y1:(Intercept) y2:(Intercept)
@@ -291,14 +291,19 @@ IC(e) |> head()
 #> 5          -0.61         -0.535
 #> 6          -0.61          0.465
 ## Join estimates
-merge(e, e)
+ee <- merge(e, e)
+ee
 #>                  Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)      0.610 0.02439 0.5622 0.6578 4.435e-138
 #> y2:(Intercept)      0.535 0.02494 0.4861 0.5839 4.316e-102
 #> ────────────────                                          
 #> y1:(Intercept).1    0.610 0.02439 0.5622 0.6578 4.435e-138
 #> y2:(Intercept).1    0.535 0.02494 0.4861 0.5839 4.316e-102
+## Forest plots
+plot(ee, null=0)
 ```
+
+![](influencefunction_files/figure-html/estimatemethods-1.png)
 
 ### Example: generalized linear model
 
@@ -460,7 +465,7 @@ estimate(semfit)
 #>      Estimate Std.Err    2.5%    97.5%   P-value
 #> y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02
 #> u     0.36025 0.06659  0.2297  0.49075 6.295e-08
-#> y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15
+#> y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15
 #> y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15
 #> u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01
 ```
@@ -733,11 +738,11 @@ between the estimates, the argument `id=NULL` can be used
 ``` r
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>     (Intercept) a          (Intercept).1
-#> 1    1.104e-15   5.128e+00  0.000e+00   
-#> 2    1.104e-15   5.128e+00  0.000e+00   
+#> 1   -2.714e-17   5.128e+00  0.000e+00   
+#> 2   -2.714e-17   5.128e+00  0.000e+00   
 #> 3   -7.547e+00   7.547e+00  0.000e+00   
 #> 4   -7.547e+00   7.547e+00  0.000e+00   
-#> 5   -2.200e-15  -1.600e+01  0.000e+00   
+#> 5    4.006e-16  -1.600e+01  0.000e+00   
 #> ---                                     
 #> 796  0.000       0.000      3.738       
 #> 797  0.000       0.000      3.738       
@@ -746,9 +751,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 800  0.000       0.000     -4.301
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29
-#> a             -2.079760e-02  4.720777e-02 -1.554863e-25
-#> (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02
+#> (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29
+#> a             -2.079760e-02  4.720777e-02 -1.554401e-25
+#> (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02
 ```
 
 ### Renaming and subsetting parameters
@@ -1057,7 +1062,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55e959df0f20>
+#> <bytecode: 0x555aad772d30>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value

@@ -18,6 +18,7 @@ plot(
   ylab = "f(x)",
   col = 1,
   add = FALSE,
+  null = 0,
   ...
 )
 ```
@@ -68,6 +69,10 @@ plot(
 - add:
 
   add plot to current device
+
+- null:
+
+  null value for forest-plot
 
 - ...:
 
