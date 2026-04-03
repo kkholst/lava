@@ -713,7 +713,9 @@ For the `%*%*` operator we can also use a general contrast matrix
 ```{r estimate-contrast}
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
+B %*% e == c(1,1,0)
 ```
+
 
 The following transformations are implemented
 
