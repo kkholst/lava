@@ -16,14 +16,15 @@
   ylab = "f(x)",
   col = 1,
   add = FALSE,
+  null = 0,
   ...
 )
 }
 \arguments{
 \item{x}{estimate object}
 
-\item{f}{function of parameter coefficients and data parsed on to 'estimate'.
-If omitted a forest-plot will be produced.}
+\item{f}{function of parameter coefficients and data parsed on to
+'estimate'. If omitted a forest-plot will be produced.}
 
 \item{idx}{Index of parameters (default all)}
 
@@ -42,6 +43,8 @@ If omitted a forest-plot will be produced.}
 \item{col}{color}
 
 \item{add}{add plot to current device}
+
+\item{null}{null value for forest-plot}
 
 \item{...}{additional arguments to lower-level functions}
 }

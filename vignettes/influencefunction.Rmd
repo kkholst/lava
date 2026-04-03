@@ -250,11 +250,14 @@ coef(e)
 ## ## Asymptotic (robust) variance estimate
 vcov(e)
 ## Matrix with estimates and confidence limits
-estimate(e, level = 0.99) |> parameter()
+estimate(e, null=0, level = 0.99) |> parameter()
 ## Influence curve
 IC(e) |> head()
 ## Join estimates
-merge(e, e)
+ee <- merge(e, e)
+ee
+## Forest plots
+plot(ee, null=0)
 ```
 
 <!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->

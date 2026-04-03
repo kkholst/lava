@@ -74,9 +74,11 @@
 ##' plot_region(x, y, yl, yu)
 ##' plot_region(x, y, yl, yu, type='s', col="darkblue", add=TRUE)
 ##'
-confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
-              centermark=0.03,
-              pch,blank=TRUE,vert=TRUE,polygon=FALSE,step=FALSE,...) {
+confband <- function(x, lower, upper, center=NULL,
+                     line=TRUE, delta=0.07,
+                     centermark=0.03,
+                     pch, blank=TRUE, vert=TRUE,
+                     polygon=FALSE, step=FALSE,...) {
     if (polygon) {
         if (step) {
             x1 <- rep(x,each=2)[-1]
@@ -113,8 +115,9 @@ confband <- function(x,lower,upper,center=NULL,line=TRUE,delta=0.07,
             segments(x-delta,upper,x+delta,upper,...)
         if (!is.null(center)) {
             if (!missing(pch)) {
-                if (blank)
-                    points(x,center,pch=16,col="white")
+                if (blank) {
+                  points(x,center,pch=16,col="white")
+                }
                 points(x,center,pch=pch,...)
             } else {
                 segments(x-centermark,center,x+centermark,center,...)
@@ -151,7 +154,7 @@ forestplot <- function(x,lower,upper,line=0,labels,
                 delta=0,axes=TRUE,cex=1,pch=15,
                 xlab="",ylab="",sep,air,
                 xlim,ylim,mar,box1=FALSE,box2=FALSE,
-                vert=FALSE,cex.axis=1,cex.estimate=0.6,
+                vert=FALSE,cex.axis=1,cex.estimate=0.8,
                 add=FALSE,
                 reset.par=FALSE,...) {
     if (is.matrix(x)) {
@@ -188,9 +191,9 @@ forestplot <- function(x,lower,upper,line=0,labels,
             if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
             ylim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
         }
-        if (missing(xlim)) xlim <- c(1,K)
+        if (missing(xlim)) xlim <- c(0,K) + 0.5
     } else {
-        if (missing(ylim)) ylim <- c(1,K)
+        if (missing(ylim)) ylim <- c(0,K) + 0.5
         if (missing(xlim)) {
             if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
             xlim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
