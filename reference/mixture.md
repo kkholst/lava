@@ -129,8 +129,8 @@ if (requireNamespace('mets', quietly=TRUE)) {
 #> Residual:  0.0001075834   Extrapolation:  TRUE   Steplength:  5.972323 
 #> Residual:  2.075601e-05   Extrapolation:  TRUE   Steplength:  3.792669 
 #> Residual:  2.528599e-06   Extrapolation:  TRUE   Steplength:  4.761634 
-#>       Estimate Std.Err   2.5% 97.5%    P-value
-#> [y~x]    1.048 0.03811 0.9737 1.123 1.263e-166
+#>     Estimate Std.Err   2.5% 97.5%    P-value
+#> y~x    1.048 0.03811 0.9737 1.123 1.263e-166
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [y~x] = 0 
