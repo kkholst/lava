@@ -71,7 +71,7 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
         colnames(ct) <- c("Estimate","Std.Err",paste0(c(1-p,p)*100,"%"))
         rownames(ct) <- rep("",nrow(ct))
         Q <- t(Bp-null)%*%Inverse(V)%*%(Bp-null)
-        df <- qr(B)$rank; names(df) <- "df"
+        df <- qr(V)$rank; names(df) <- "df"
         attributes(Q) <- NULL; names(Q) <- "chisq";
         pQ <- ifelse(df==0,NA,pchisq(Q,df,lower.tail=FALSE))
 
