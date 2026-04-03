@@ -39,9 +39,8 @@
 ##' \code{regression(m) <- y ~ beta*x1 + beta*x2}
 ##'
 ##' All the parameter values of the linear constraints can be given as the right
-##' handside expression of the assigment function \code{regression<-} (or
-##' \code{regfix<-}) if the first (and possibly second) argument is defined as
-##' well. E.g:
+##' handside expression of the assigment function \code{regression<-} if the
+##' first (and possibly second) argument is defined as well. E.g:
 ##'
 ##' \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 ##'
@@ -51,8 +50,7 @@
 ##' The function \code{regression} (called without additional arguments) can be
 ##' used to inspect the linear constraints of a \code{lvm}-object.
 ##'
-##' @aliases regression regression<- regression<-.lvm regression.lvm regfix
-##' regfix regfix<- regfix.lvm regfix<-.lvm
+##' @aliases regression regression<- regression<-.lvm regression.lvm
 ##' @param object \code{lvm}-object.
 ##' @param value A formula specifying the linear constraints or if
 ##' \code{to=NULL} a \code{list} of parameter values.

@@ -262,7 +262,7 @@ NULL
 ##'   estimate.MAR
 ##'   missingModel Identical gaussian_logLik.lvm
 ##'   addhook gethook multigroup
-##'   Weights fixsome parfix parfix<- IV parameter Specials
+##'   Weights fixsome IV parameter Specials
 ##'   procformula getoutcome decomp.specials
 ##'   rmvn0 dmvn0 logit expit tigol
 NULL

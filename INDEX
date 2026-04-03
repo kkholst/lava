@@ -16,8 +16,6 @@ constrain               Add non-linear constraints to latent variable model
 constrain<-             -
 covariance              Add covariance structure to Latent Variable Model
 covariance<-            -
-covfix                  -
-covfix<-                -
 variance                -
 variance<-              -
 descendants             Extract descendants of nodes
@@ -38,8 +36,6 @@ functional              Add non-linear associations (for simulation only)
 functional<-            -
 intercept               Fix mean parameters in 'lvm'-object
 intercept<-             -
-intfix                  -
-intfix<-                -
 intervention            Define intervention variable
 intervention<-          -
 rmvar                   Remove variables from (model) object.
@@ -74,8 +70,6 @@ randomslope             Define random slope component
 randomslope<-           -
 regression              Add regression association to latent variable model
 regression<-            -
-regfix                  -
-regfix<-                -
 roots                   Extract root nodes of graph
 sinks                   Extract sink nodes of graph
 subset.lvm              Extract subset of latent variable model
@@ -187,7 +181,6 @@ devcoords               Returns device-coordinates and plot-region
 diagtest                Calculate diagnostic tests for 2x2 table
 images                  Organize several image calls (for visualizing categorical data)
 Inverse                 Generalized inverse
-org                     Convert object to ascii suitable for org-mode
 parsedesign             Create contrast matrix from expression
 plotConf                Plot regression lines
 pdfconvert              Convert pdf to raster format
