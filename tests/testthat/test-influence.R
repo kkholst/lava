@@ -92,15 +92,15 @@ test_that("IC.numeric", {
   expect_true(ncol(res) == 2L)
   ic1 <- IC(lm(x ~ 1))
   expect_true(mean((ic1-res[,1])^2) < 1e-9)
-  expect_true(mean(x) == attr(res, "coef")["mean"])
+  expect_equal(mean(x), unname(attr(res, "coef")["mean"]))
   expect_true(var(x)*(length(x)-1)/length(x) == attr(res, "coef")["var"])
 
   res <- IC(cbind(x1=x, x2=x))
   expect_true(NCOL(res) == 5) # 2 mean, 2 var, 1 cov
-  expect_true(mean(x) == attr(res, "coef")["x1"])
-  expect_true(mean(x) == attr(res, "coef")["x2"])
-  expect_true(var(x)*(length(x)-1)/length(x) == attr(res, "coef")[3])
-  expect_true(var(x)*(length(x)-1)/length(x) == attr(res, "coef")[5])
+  expect_equal(mean(x), unname(attr(res, "coef")["x1"]))
+  expect_equal(mean(x), unname(attr(res, "coef")["x2"]))
+  expect_equal(var(x)*(length(x)-1)/length(x), unname(attr(res, "coef")[3]))
+  expect_equal(var(x)*(length(x)-1)/length(x), unname(attr(res, "coef")[5]))
 })
 
 y <- rnorm(100)
