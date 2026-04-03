@@ -186,12 +186,12 @@ spline</p>
 <span>      <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      u1  Estimate   Std.Err      2.5%     97.5%      P-value</span></span>
-<span><span class="co">#&gt; p1 -4.0 -9.611119 1.2647438 -12.08997 -7.132266 2.978258e-14</span></span>
-<span><span class="co">#&gt; p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962888 1.012298e-14</span></span>
-<span><span class="co">#&gt; p3 -3.8 -9.038656 1.1463511 -11.28546 -6.791849 3.152449e-15</span></span>
-<span><span class="co">#&gt; p4 -3.7 -8.752425 1.0885636 -10.88597 -6.618879 8.958735e-16</span></span>
-<span><span class="co">#&gt; p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320163e-16</span></span>
-<span><span class="co">#&gt; p6 -3.5 -8.179962 0.9766402 -10.09414 -6.265782 5.493627e-17</span></span></code></pre></div>
+<span><span class="co">#&gt; p1 -4.0 -9.611119 1.2647437 -12.08997 -7.132266 2.978251e-14</span></span>
+<span><span class="co">#&gt; p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962889 1.012296e-14</span></span>
+<span><span class="co">#&gt; p3 -3.8 -9.038656 1.1463510 -11.28546 -6.791849 3.152439e-15</span></span>
+<span><span class="co">#&gt; p4 -3.7 -8.752425 1.0885635 -10.88597 -6.618879 8.958702e-16</span></span>
+<span><span class="co">#&gt; p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320153e-16</span></span>
+<span><span class="co">#&gt; p6 -3.5 -8.179962 0.9766401 -10.09414 -6.265782 5.493600e-17</span></span></code></pre></div>
 <p>The fitted function can be obtained with the following code:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">u2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">u1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
@@ -321,11 +321,11 @@ covariate <span class="math inline">z</span></p>
 <span><span class="op">}</span></span>
 <span><span class="va">ee1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">mm1</span>, model2<span class="op">=</span><span class="va">mm2</span>, data<span class="op">=</span><span class="va">d</span>, predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"u2~u"</span>,regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; u2~u2     0.4553 0.04660  0.36393  0.54660 1.523e-22</span></span>
-<span><span class="co">#&gt; u2~u1     0.2294 0.12241 -0.01047  0.46936 6.087e-02</span></span>
-<span><span class="co">#&gt; u2~u1:g   0.5874 0.25055  0.09637  1.07852 1.905e-02</span></span>
-<span><span class="co">#&gt; u2~u2:g  -0.1956 0.08673 -0.36556 -0.02559 2.413e-02</span></span></code></pre></div>
+<span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5%    P-value</span></span>
+<span><span class="co">#&gt; u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191</span></span>
+<span><span class="co">#&gt; u2~u1     0.2315 0.12694 -0.01733  0.48026  6.823e-02</span></span>
+<span><span class="co">#&gt; u2~u1:g   0.5926 0.23212  0.13768  1.04756  1.068e-02</span></span>
+<span><span class="co">#&gt; u2~u2:g  -0.1973 0.08832 -0.37041 -0.02419  2.549e-02</span></span></code></pre></div>
 <p>A formal test show no statistically significant effect of this
 interaction</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -333,15 +333,15 @@ interaction</p>
 <span><span class="co">#&gt; Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, </span></span>
 <span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; [u2~u1:g]   0.5874 0.25055  0.09637  1.07852 0.01905</span></span>
-<span><span class="co">#&gt; [u2~u2:g]  -0.1956 0.08673 -0.36556 -0.02559 0.02413</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err    2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; [u2~u1:g]   0.5926 0.23212  0.1377  1.04756 0.01068</span></span>
+<span><span class="co">#&gt; [u2~u2:g]  -0.1973 0.08832 -0.3704 -0.02419 0.02549</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [u2~u1:g] = 0</span></span>
 <span><span class="co">#&gt;   [u2~u2:g] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 27.4922, df = 2, p-value = 1.072e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 43.1318, df = 2, p-value = 4.306e-10</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="mixture-models">Mixture models<a class="anchor" aria-label="anchor" href="#mixture-models"></a>
