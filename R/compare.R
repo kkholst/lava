@@ -34,7 +34,9 @@
 compare <- function(object,...) UseMethod("compare")
 
 ##' @export
-compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.95,df=NULL) {
+compare.default <- function(object,...,
+                            par,contrast,null,
+                            scoretest,Sigma,level=.95,df=NULL) {
     if (!missing(par) || (!missing(contrast) && is.character(contrast))) {
         if (!missing(contrast) && is.character(contrast)) par <- contrast
         contrast <- rep(0,length(coef(object)))
@@ -88,7 +90,9 @@ compare.default <- function(object,...,par,contrast,null,scoretest,Sigma,level=.
                 } else {
                     sgn[1] <- "-"
                 }
-                cnames <- c(cnames,paste0(sgn,Bval,paste0("[",pname[Bidx],"]"),collapse=""))
+                cnames <- c(cnames,
+                            paste0(sgn,Bval,
+                                   paste0("[",pname[Bidx],"]"),collapse=""))
                 msg <- c(msg,paste0(cnames[i]," = ",null[i]))
             }
             method <- c(method,"","Null Hypothesis:",msg)

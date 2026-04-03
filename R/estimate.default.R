@@ -720,8 +720,9 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     res$compare$estimate <- NULL
     res$coef <- res$compare$coef
     res$vcov <- res$compare$vcov
-    names(res$coef) <- gsub("(^\\[)|(\\]$)", "",
-                            rownames(res$coefmat))
+
+    names(res$coef) <- gsub("^\\[(.*)\\]$", "\\1", rownames(res$coefmat))
+    rownames(res$coefmat) <- names(res$coef)
   }
 
   if (!is.null(back.transform)) {
@@ -762,7 +763,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$derivative <- derivative
   return(structure(res, class="estimate"))
 }
-
 
 simnull <- function(R, f, mu, sigma, labels=NULL) {
   X <- rmvn0(R, mu=mu, sigma=sigma)
