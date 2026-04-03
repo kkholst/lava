@@ -5,7 +5,6 @@
   - [Examples](#examples)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
@@ -16,15 +15,17 @@
 
 # Latent Variable Models: `lava`
 
-<a href="https://kkholst.github.io/lava/"><img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="lava website"/></a>
+<a href="https://kkholst.github.io/lava/">
+<img src="man/figures/logo.png" align="right" style="float:right; height:150px;"  alt="lava website"/>
+</a>
 
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
 continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen
-(2013) \<10.1007/s00180-012-0344-y\>). Mixture latent variable models
+(2013) <doi:10.1007/s00180-012-0344-y>). Mixture latent variable models
 and non-linear latent variable models (Holst and Budtz-Joergensen (2020)
-\<10.1093/biostatistics/kxy082\>). The package also provides methods for
-graph exploration (d-separation, back-door criterion), simulation of
+<doi:10.1093/biostatistics/kxy082>). The package also provides methods
+for graph exploration (d-separation, back-door criterion), simulation of
 general non-linear latent variable models, and estimation of influence
 functions for a broad range of statistical models.
 
@@ -107,7 +108,7 @@ b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
 ```
 
 Alternatively, we can construct estimate objects directly from an
-existing model object (`glm`, `mets::phreg`, `lava::lvm`, …)
+existing model object (`glm()`, `mets::phreg()`, `targeted::cate()`, …)
 
 ``` r
 estimate(modelobj, id, ...)
@@ -117,54 +118,91 @@ We can now merge the `estimate` objects to obtain their joint
 distribution via their estimated influence functions
 
 ``` r
-e <- c(a, b) # joint distribution
-vcov(e)
-#>              a            b
-#> a 0.1023667491 0.0001747415
-#> b 0.0001747415 0.0625808426
+e <- c(a, b)
+vcov(e) # joint distribution
+#>               a             b
+#> a  0.1244667505 -0.0005049007
+#> b -0.0005049007  0.1113819802
+summary(e, null=c(0, 0))
+#> Call: estimate.default(contrast = as.list(seq_along(p)), null = ..1, 
+#>     vcov = vcov(object, messages = 0), coef = p)
+#> ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> [a]      0.5  0.3528 -0.1915 1.191 0.15641
+#> [b]      0.8  0.3337  0.1459 1.454 0.01653
+#> 
+#>  Null Hypothesis: 
+#>   [a] = 0
+#>   [b] = 0 
+#>  
+#> chisq = 7.7838, df = 2, p-value = 0.02041
 ```
 
-Parameter transformation can be calculated directly as in the following
-examples
+Parameter transformations can be calculated directly as in the following
+examples.
+
+Products
 
 ``` r
-a * b # product
-#>   Estimate Std.Err    2.5%  97.5% P-value
-#> a      0.4  0.2851 -0.1588 0.9588  0.1607
-(3 * cos(a) / sqrt(b) + 1) / a^0.5 # general transformation
-#>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    5.577   2.596 0.4884 10.67 0.03171
-e %*% e # inner prod.
-#>    Estimate Std.Err    2.5% 97.5% P-value
-#> p1     0.89   0.513 -0.1154 1.895 0.08274
-c(pow = a^b) # power-function, rename parameter
-#>     Estimate Std.Err     2.5% 97.5% P-value
-#> pow   0.5743  0.3102 -0.03368 1.182 0.06411
-c(e["a"] * e["b"] / a, e["b"]) # transformation with subsetting
-#>   Estimate Std.Err   2.5% 97.5%  P-value
-#> a      0.8  0.2502 0.3097  1.29 0.001384
-#> ─                                       
-#> b      0.8  0.2502 0.3097  1.29 0.001384
+a * b
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.4  0.3273 -0.2414 1.041  0.2216
 ```
 
-For the `%*%*` operator we can also use a general contrast matrix (see
-also Section on [Linear
-contrasts](#linear-contrasts-and-hypothesis-testing)
+General transformations
+
+``` r
+(3 * cos(a) / sqrt(b) + 1) / a^2
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a    15.77   24.64 -32.52 64.07  0.5221
+```
+
+Inner product, sums, and products
+
+``` r
+c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
+#>       Estimate Std.Err    2.5% 97.5%  P-value
+#> iprod    0.762  0.7302 -0.6691 2.193 0.296664
+#> ─────                                        
+#> sum      1.300  0.4846  0.3502 2.250 0.007305
+#> ─────                                        
+#> prod     0.400  0.3273 -0.2414 1.041 0.221608
+```
+
+Exponentiation and renaming of parameter
+
+``` r
+c(pow = a^b)
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> pow   0.5743  0.3509 -0.1134 1.262  0.1017
+```
+
+Transformation and subsetting
+
+``` r
+c(e["a"] * e["b"] / a, e["b"])
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a      0.8  0.3337 0.1459 1.454 0.01653
+#> ─                                      
+#> b      0.8  0.3337 0.1459 1.454 0.01653
+```
+
+For the `%*%*` operator we can also use a general contrast matrix
 
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err    2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.4057 -1.0952 0.4952 0.459634
-#> [a]            0.5  0.3199 -0.1271 1.1271 0.118111
-#> [b]            0.8  0.2502  0.3097 1.2903 0.001384
+#>           Estimate Std.Err    2.5%  97.5% P-value
+#> [a] - [b]     -0.3  0.4867 -1.2539 0.6539 0.53762
+#> [a]            0.5  0.3528 -0.1915 1.1915 0.15641
+#> [b]            0.8  0.3337  0.1459 1.4541 0.01653
 #> 
 #>  Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 12.6472, df = 2, p-value = 0.001793
+#> chisq = 7.7838, df = 2, p-value = 0.02041
 plot(B %*% e)
 ```
 
@@ -176,13 +214,12 @@ Specify structural equation models with two factors
 
 ``` r
 m <- lvm()
-regression(m) <- y1 + y2 + y3 ~ eta1
-regression(m) <- z1 + z2 + z3 ~ eta2
-latent(m) <- ~ eta1 + eta2
-regression(m) <- eta2 ~ eta1 + x
-regression(m) <- eta1 ~ x
+regression(m) <- y1 + y2 + y3 ~ u1
+regression(m) <- z1 + z2 + z3 ~ u2
+latent(m) <- ~ u1 + u2
+regression(m) <- u2 ~ u1 + x
+regression(m) <- u1 ~ x
     
-labels(m) <- c(eta1=expression(eta[1]), eta2=expression(eta[2]))
 plot(m)
 ```
 
@@ -201,30 +238,30 @@ e <- estimate(m, d)
 e
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
-#>    y2~eta1           0.95462    0.08083 11.80993    <1e-12
-#>    y3~eta1           0.98476    0.08922 11.03722    <1e-12
-#>     z2~eta2          0.97038    0.05368 18.07714    <1e-12
-#>     z3~eta2          0.95608    0.05643 16.94182    <1e-12
+#>    y2~u1             0.95462    0.08083 11.80993    <1e-12
+#>    y3~u1             0.98476    0.08922 11.03722    <1e-12
+#>     z2~u2            0.97038    0.05368 18.07714    <1e-12
+#>     z3~u2            0.95608    0.05643 16.94182    <1e-12
 #> Regressions:                                              
-#>    eta1~x            1.24587    0.11486 10.84694    <1e-12
-#>     eta2~eta1        0.95608    0.18008  5.30910 1.102e-07
-#>     eta2~x           1.11495    0.25228  4.41951 9.893e-06
+#>    u1~x              1.24587    0.11486 10.84694    <1e-12
+#>     u2~u1            0.95608    0.18008  5.30910 1.102e-07
+#>     u2~x             1.11495    0.25228  4.41951 9.893e-06
 #> Intercepts:                                               
 #>    y2               -0.13896    0.12458 -1.11537    0.2647
 #>    y3               -0.07661    0.13869 -0.55241    0.5807
-#>    eta1              0.15801    0.12780  1.23644    0.2163
+#>    u1                0.15801    0.12780  1.23644    0.2163
 #>    z2               -0.00441    0.14858 -0.02969    0.9763
 #>    z3               -0.15900    0.15731 -1.01076    0.3121
-#>    eta2             -0.14143    0.18380 -0.76949    0.4416
+#>    u2               -0.14143    0.18380 -0.76949    0.4416
 #> Residual Variances:                                       
 #>    y1                0.69684    0.14858  4.69004          
 #>    y2                0.89804    0.16630  5.40026          
 #>    y3                1.22456    0.21182  5.78109          
-#>    eta1              0.93620    0.19623  4.77084          
+#>    u1                0.93620    0.19623  4.77084          
 #>    z1                1.41422    0.26259  5.38570          
 #>    z2                0.87569    0.19463  4.49934          
 #>    z3                1.18155    0.22640  5.21883          
-#>    eta2              1.24430    0.28992  4.29195
+#>    u2                1.24430    0.28992  4.29195
 ```
 
 ### Model assessment
@@ -236,7 +273,7 @@ Assessing goodness-of-fit, here the linearity between eta2 and eta1
 # install.packages("gof", repos="https://kkholst.github.io/r_repo/")
 library("gof")
 set.seed(1)
-g <- cumres(e, eta2 ~ eta1)
+g <- cumres(e, u2 ~ u1)
 plot(g)
 ```
 
@@ -322,7 +359,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.457s
+#> 100 replications                 Time: 3.864s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066

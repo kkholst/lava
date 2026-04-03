@@ -8,7 +8,7 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r include=FALSE}
-options(family="Times")
+## options(family="Times")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -31,17 +31,21 @@ lava.options(plot.engine="Rgraphviz")
 
 
 # Latent Variable Models: `lava`
-<a href="https://kkholst.github.io/lava/"><img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="lava website"/></a>
+<a href="https://kkholst.github.io/lava/">
+<img src="man/figures/logo.png" align="right" style="float:right; height:150px;"  alt="lava website"/>
+</a>
+
 
 A general implementation of Structural Equation Models with latent variables
 (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored,
 and ordinal outcomes (Holst and Budtz-Joergensen (2013)
-<10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear
+<doi:10.1007/s00180-012-0344-y>). Mixture latent variable models and non-linear
 latent variable models (Holst and Budtz-Joergensen (2020)
-<10.1093/biostatistics/kxy082>). The package also provides methods for graph
+<doi:10.1093/biostatistics/kxy082>). The package also provides methods for graph
 exploration (d-separation, back-door criterion), simulation of general
 non-linear latent variable models, and estimation of influence functions for a
 broad range of statistical models.
+
 
 
 ## Installation
@@ -131,7 +135,7 @@ b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
 ```
 
 Alternatively, we can construct estimate objects directly from an existing model
-object (`glm`, `mets::phreg`, `lava::lvm`, ...)
+object (`glm()`, `mets::phreg()`, `targeted::cate()`, ...)
 
 ```{r}
 #| eval: FALSE
@@ -140,27 +144,44 @@ estimate(modelobj, id, ...)
 
 We can now merge the `estimate` objects to obtain their joint distribution via their estimated influence functions
 ```{r estimate-merge}
-e <- c(a, b) # joint distribution
-vcov(e)
+e <- c(a, b)
+vcov(e) # joint distribution
+summary(e, null=c(0, 0))
 ```
 
-Parameter transformation can be calculated directly as in the following examples
-```{r estimate_calc_ex}
-a * b # product
-(3 * cos(a) / sqrt(b) + 1) / a^0.5 # general transformation
-e %*% e # inner prod.
-c(pow = a^b) # power-function, rename parameter
-c(e["a"] * e["b"] / a, e["b"]) # transformation with subsetting
+Parameter transformations can be calculated directly as in the following examples.
+
+Products
+```{r estimate-calc1}
+a * b
+```
+
+General transformations
+```{r estimate-calc2}
+(3 * cos(a) / sqrt(b) + 1) / a^2
+```
+
+Inner product, sums, and products
+```{r estimate-calc3}
+c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
+```
+
+Exponentiation and renaming of parameter
+```{r estimate-calc4}
+c(pow = a^b)
+```
+
+Transformation and subsetting
+```{r estimate-calc5}
+c(e["a"] * e["b"] / a, e["b"])
 ```
 
 For the `%*%*` operator we can also use a general contrast matrix
-(see also Section on [Linear contrasts](#linear-contrasts-and-hypothesis-testing)
 ```{r estimate-contrast}
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
 plot(B %*% e)
 ```
-
 
 ### Structural Equation Model
 
@@ -172,13 +193,12 @@ Specify structural equation models with two factors
 #| message: FALSE
 #| fig.align: 'center'
 m <- lvm()
-regression(m) <- y1 + y2 + y3 ~ eta1
-regression(m) <- z1 + z2 + z3 ~ eta2
-latent(m) <- ~ eta1 + eta2
-regression(m) <- eta2 ~ eta1 + x
-regression(m) <- eta1 ~ x
+regression(m) <- y1 + y2 + y3 ~ u1
+regression(m) <- z1 + z2 + z3 ~ u2
+latent(m) <- ~ u1 + u2
+regression(m) <- u2 ~ u1 + x
+regression(m) <- u1 ~ x
     
-labels(m) <- c(eta1=expression(eta[1]), eta2=expression(eta[2]))
 plot(m)
 ```
 
@@ -206,7 +226,7 @@ Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires th
 # install.packages("gof", repos="https://kkholst.github.io/r_repo/")
 library("gof")
 set.seed(1)
-g <- cumres(e, eta2 ~ eta1)
+g <- cumres(e, u2 ~ u1)
 plot(g)
 ```
 
