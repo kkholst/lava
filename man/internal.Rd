@@ -11,6 +11,7 @@
 \alias{matrices}
 \alias{pars}
 \alias{pars.lvm}
+\alias{regfix}
 \alias{pars.lvmfit}
 \alias{pars.glm}
 \alias{score.glm}

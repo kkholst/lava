@@ -253,7 +253,7 @@ NULL
 ##' @export
 ##' @aliases startvalues startvalues0 startvalues1 startvalues2
 ##'   starter.multigroup
-##'   modelPar modelVar matrices pars pars.lvm
+##'   modelPar modelVar matrices pars pars.lvm regfix
 ##'   pars.lvmfit pars.glm score.glm procdata.lvmfit mat.lvm
 ##'   matrices reorderdata graph2lvm igraph.lvm subgraph finalize
 ##'   randomslope randomslope<- lisrel

@@ -328,8 +328,10 @@ covfix.lvm <- function(object,...) {
 
 ###{{{ regfix
 
+##' @export
 "regfix" <- function(object,...) UseMethod("regfix")
 
+##' @export
 regfix.lvm <- function(object,...) {
     res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
     attr(res,"exo.idx") <- index(object)$exo.idx
