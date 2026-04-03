@@ -1057,7 +1057,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x5591a02c7d28>
+#> <bytecode: 0x55e959df0f20>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1602,7 +1602,7 @@ sessionInfo()
 #> [22] rlang_1.1.7            mets_1.3.9             parallelly_1.46.1     
 #> [25] future.apply_1.20.2    splines_4.5.3          RcppArmadillo_15.2.4-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
-#> [31] tools_4.5.3            parallel_4.5.3         dplyr_1.2.0           
+#> [31] tools_4.5.3            parallel_4.5.3         dplyr_1.2.1           
 #> [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.2           
 #> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.0.1              
 #> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
