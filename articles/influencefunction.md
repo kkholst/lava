@@ -300,7 +300,7 @@ ee
 #> y1:(Intercept).1    0.610 0.02439 0.5622 0.6578 4.435e-138
 #> y2:(Intercept).1    0.535 0.02494 0.4861 0.5839 4.316e-102
 ## Forest plots
-plot(ee, null=0)
+plot(ee, null=0.5, digits=2)
 ```
 
 ![](influencefunction_files/figure-html/estimatemethods-1.svg)
@@ -1074,7 +1074,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55c315caf3a8>
+#> <bytecode: 0x563c720020d8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value

@@ -368,7 +368,7 @@ each of the two binary outcomes</p>
 <span><span class="co">#&gt; y1:(Intercept).1    0.610 0.02439 0.5622 0.6578 4.435e-138</span></span>
 <span><span class="co">#&gt; y2:(Intercept).1    0.535 0.02494 0.4861 0.5839 4.316e-102</span></span>
 <span><span class="co">## Forest plots</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ee</span>, null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ee</span>, null<span class="op">=</span><span class="fl">0.5</span>, digits<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="influencefunction_files/figure-html/estimatemethods-1.svg" class="r-plt" alt="" width="700"></p>
 <!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->
 <!-- ```{r} -->
@@ -1116,7 +1116,7 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55c315caf3a8&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x563c720020d8&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
