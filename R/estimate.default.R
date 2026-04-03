@@ -721,7 +721,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     res$coef <- res$compare$coef
     res$vcov <- res$compare$vcov
 
-    names(res$coef) <- gsub("^\\[(.*)\\]$", "\\1", rownames(res$coefmat))
+    names(res$coef) <- strip_bracket(rownames(res$coefmat))
     rownames(res$coefmat) <- names(res$coef)
   }
 

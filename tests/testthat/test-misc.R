@@ -147,3 +147,12 @@ test_that("napass.0", {
   expect_true(all(d0$a[idx2]==0))
   expect_true(all(d0$a[idx1]==0))
 })
+
+test_that("strip_bracket", {
+  expect_equal(strip_bracket("[a]+[b]"), "[a]+[b]")
+  expect_equal(strip_bracket("[-[a]-[b]]"), "-[a]-[b]")
+  expect_equal(strip_bracket("[[a]]"), "[a]")
+  expect_equal(strip_bracket("[2[a]+[b]]"), "2[a]+[b]")
+  # vector
+  expect_equal(strip_bracket(c("[a]", "[[a]]")), c("a", "[a]"))
+})

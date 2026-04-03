@@ -1,4 +1,32 @@
-###{{{ substArg
+strip_bracket <- function(s) {
+  if (length(s) > 1L) {
+    return(unlist(lapply(s, function(x) strip_bracket(x))))
+  }
+  # Check if it starts and ends with brackets
+  if (!grepl("^\\[.*\\]$", s)) return(s)
+
+  # Calculate cumulative bracket depth
+  chars <- strsplit(s, "")[[1]]
+  depth <- 0
+  is_wrapped <- TRUE
+
+  for (i in 1:(length(chars) - 1)) {
+    if (chars[i] == "[") depth <- depth + 1
+    if (chars[i] == "]") depth <- depth - 1
+
+    # If depth hits 0 before the end, it's side-by-side like [a] + [b]
+    if (depth == 0 && i < length(chars)) {
+      is_wrapped <- FALSE
+      break
+    }
+  }
+
+  if (is_wrapped) {
+    return(sub("^\\[(.*)\\]$", "\\1", s))
+  } else {
+    return(s)
+  }
+}
 
 substArg <- function(x,env,...) {
   if (!missing(env)) {
@@ -29,7 +57,6 @@ substArg <- function(x,env,...) {
 ##   substArg(x,env=TRUE)
 ## }
 
-###}}}
 
 ###{{{ procrandomslope
 
@@ -407,22 +434,4 @@ decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL,
     if (reverse) st <- rev(st)
   }
   unlist(strsplit(st,sep,perl=perl,...))
-}
-
-Decomp.specials <- function(x,pattern="[()]") {
-  st <- gsub(" ","",x)
-  st <- gsub("\n","",st)
-  mysplit <- rev(unlist(strsplit(st,pattern)))
-  type <- mysplit[2]
-  vars <- mysplit[1]
-  res <- unlist(strsplit(vars,","))
-  if (type=="s" | type=="seq") {
-    return(paste0(res[1],seq(char2num(res[2]))))
-  }
-  unlist(strsplit(vars,","))
-
-}
-
-printline <- function(n=getOption("width"), sep="\u2500") {
-    cat(rep(sep, n), "\n", sep="")
 }
