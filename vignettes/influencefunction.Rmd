@@ -261,7 +261,7 @@ IC(e) |> head()
 ee <- merge(e, e)
 ee
 ## Forest plots
-plot(ee, null=0)
+plot(ee, null=0.5, digits=2)
 ```
 
 <!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->

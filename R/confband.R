@@ -156,7 +156,8 @@ forestplot <- function(x,lower,upper,line=0,labels,
                 xlim,ylim,mar,box1=FALSE,box2=FALSE,
                 vert=FALSE,cex.axis=1,cex.estimate=0.8,
                 add=FALSE,
-                reset.par=FALSE,...) {
+                reset.par=FALSE,
+                ...) {
     if (is.matrix(x)) {
         lower <- x[,2]; upper <- x[,3]
         if (ncol(x)>3) cex <- x[,4]
@@ -177,9 +178,9 @@ forestplot <- function(x,lower,upper,line=0,labels,
         if (reset.par) on.exit(par(def.par))
         if (text.right) {
             if (vert) {
-                layout(rbind(1,2),heights=c(0.2,0.8))
+                layout(rbind(1,2),heights=c(0.25,0.75))
             } else {
-                layout(cbind(2,1),widths=c(0.8,0.2))
+                layout(cbind(2,1),widths=c(0.75,0.25))
             }
         } else {
             onelayout <- TRUE
@@ -188,14 +189,14 @@ forestplot <- function(x,lower,upper,line=0,labels,
     }
     if (vert) {
         if (missing(ylim)) {
-            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
+            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.5
             ylim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
         }
         if (missing(xlim)) xlim <- c(0,K) + 0.5
     } else {
         if (missing(ylim)) ylim <- c(0,K) + 0.5
         if (missing(xlim)) {
-            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.4
+            if (missing(air)) air <- max(upper-lower,na.rm=TRUE)*0.5
             xlim <- range(c(x,lower-air,upper+air),na.rm=TRUE)
         }
     }
@@ -254,13 +255,18 @@ forestplot <- function(x,lower,upper,line=0,labels,
                 if (!is.na(x[i])) {
                     if (!text.vert) {
                         if (text.right) xpos[i] <- xpos[i]+0.025
-                        graphics::text(i,xpos[i],paste(st,collapse="\n"),xpd=TRUE, offset=3, cex=cex.estimate, adj=adj)
+                        graphics::text(i,xpos[i],paste(st,collapse="\n"),xpd=TRUE,
+                                       offset=3, cex=cex.estimate, adj=adj)
                     } else {
-                        if (!is.na(x[i])) graphics::text(i,xpos[i],st,xpd=TRUE, srt=90, offset=0, pos=4, cex=cex.estimate, adj=adj)
+                        if (!is.na(x[i])) {
+                          graphics::text(i,xpos[i],st,xpd=TRUE, srt=90, offset=0, pos=4, cex=cex.estimate, adj=adj)
+                        }
                     }
                 }
             } else {
-                if (!is.na(x[i])) graphics::text(xpos[i],i,st,xpd=TRUE,pos=4,cex=cex.estimate, adj=adj)
+                if (!is.na(x[i])) {
+                  graphics::text(xpos[i],i,trim(st),xpd=TRUE,pos=4,cex=cex.estimate, adj=adj)
+                }
             }
         }
     }
