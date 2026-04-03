@@ -269,6 +269,12 @@ c(1, 2) \%*\% e
 c(pow = a^b)
 a^c(0.5, 2)
 c(b=e["a"] * e["b"] / a, also.b=e["b"])
+
+B <- rbind(c(1,-1), c(1,0), c(0,1))
+B \%*\% e
+e == 1 # wald-test, null-hypothesis H0: b=1
+e == c(1,2)
+B \%*\% e == 1
 }
 \seealso{
 estimate.array
