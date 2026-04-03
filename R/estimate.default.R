@@ -903,7 +903,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   if (type>0 && !is.null(x$call)) {
     cat("Call: ")
     print(x$call)
-    print(cli::rule())
+    print(cli::rule(width=min(cli::console_width(),60)))
   }
   if (type>0) {
     if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
@@ -968,7 +968,8 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   print(cc, digits=digits, na.print=na.print, ...)
 
   if (!is.null(x$compare)) {
-    cat("\n", x$compare$method[3], "\n")
+    print(cli::rule(width=min(cli::console_width(),60)))
+    cat(x$compare$method[3], "\n")
     cat(paste(" ", x$compare$method[-(1:3)], collapse="\n"), "\n")
     if (length(x$compare$method)>4) {
       out <- character()
