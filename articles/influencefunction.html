@@ -621,8 +621,8 @@ example test for whether the odds-ratio is the same for the two
 responses:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; a] - [a.1  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 0</span></span></code></pre></div>
@@ -1064,10 +1064,10 @@ matrix (see also Section on <a href="#linear-contrasts-and-hypothesis-testing">L
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
-<span><span class="co">#&gt;         Estimate Std.Err      2.5%  97.5%  P-value</span></span>
-<span><span class="co">#&gt; a] - [b     -0.3  0.3150 -0.917403 0.3174 0.340915</span></span>
-<span><span class="co">#&gt; a            0.5  0.2602 -0.009926 1.0099 0.054629</span></span>
-<span><span class="co">#&gt; b            0.8  0.2614  0.287617 1.3124 0.002212</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%  P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915</span></span>
+<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 0.054629</span></span>
+<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 0.002212</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [b] = 0</span></span>
@@ -1076,13 +1076,13 @@ matrix (see also Section on <a href="#linear-contrasts-and-hypothesis-testing">L
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 10.66, df = 2, p-value = 0.004855</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         Estimate Std.Err      2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; a] - [b     -0.3  0.3150 -0.917403 0.3174 3.677e-05</span></span>
-<span><span class="co">#&gt; a            0.5  0.2602 -0.009926 1.0099 5.463e-02</span></span>
-<span><span class="co">#&gt; b            0.8  0.2614  0.287617 1.3124 2.212e-03</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05</span></span>
+<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 5.463e-02</span></span>
+<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 2.212e-03</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [a] - [b] = 1</span></span>
+<span><span class="co">#&gt;   [[a] - [b]] = 1</span></span>
 <span><span class="co">#&gt;   [a] = 1</span></span>
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
@@ -1116,7 +1116,7 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5565ad765430&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55c315caf3a8&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1256,8 +1256,8 @@ matrix argument instead of function object</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="va">B</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; a] - [a.1  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 0</span></span></code></pre></div>
@@ -1266,8 +1266,8 @@ assumed to be zero) can be specified via the <code>null</code>
 argument</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="va">B</span>, null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; a] - [a.1  -0.1821  0.3003 -0.7707 0.4065 8.281e-05</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 1</span></span></code></pre></div>
@@ -1282,9 +1282,9 @@ variance of <span class="math inline">\theta</span> (i.e.,
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,</span>
 <span>           <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="va">B</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; a] - [a.1  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
-<span><span class="co">#&gt; a] - [a.2   0.2192  0.3637 -0.4936 0.9321  0.5466</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
+<span><span class="co">#&gt; [a] - [a.2]   0.2192  0.3637 -0.4936 0.9321  0.5466</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 0</span></span>
@@ -1296,7 +1296,7 @@ of the parameter names</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="va">a</span> <span class="op">+</span> <span class="va">a.1</span>, <span class="fl">2</span><span class="op">*</span><span class="va">a</span> <span class="op">-</span> <span class="va">a.2</span>, <span class="va">a</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              Estimate Std.Err   2.5% 97.5%  P-value</span></span>
-<span><span class="co">#&gt; a] + [a.1       2.830  0.3107 2.2210 3.439 0.007557</span></span>
+<span><span class="co">#&gt; [a] + [a.1]     2.830  0.3107 2.2210 3.439 0.007557</span></span>
 <span><span class="co">#&gt; 2[a] - [a.2]    1.543  0.5208 0.5224 2.564 0.296991</span></span>
 <span><span class="co">#&gt; a               1.324  0.2173 0.8981 1.750 0.135985</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
@@ -1323,10 +1323,10 @@ pairwise comparisons of different exposure estimates:</p>
 <span><span class="co">#&gt; [2,]    1    0   -1</span></span>
 <span><span class="co">#&gt; [3,]    0    1   -1</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="fu"><a href="../reference/contr.html">pairwise.diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, use<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; a] - [a.1    -0.1821  0.3003 -0.7707 0.4065 8.281e-05</span></span>
-<span><span class="co">#&gt; a] - [a.2     0.2192  0.3637 -0.4936 0.9321 3.182e-02</span></span>
-<span><span class="co">#&gt; a.1] - [a.2   0.4013  0.3506 -0.2858 1.0885 8.773e-02</span></span>
+<span><span class="co">#&gt;               Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; [a] - [a.1]    -0.1821  0.3003 -0.7707 0.4065 8.281e-05</span></span>
+<span><span class="co">#&gt; [a] - [a.2]     0.2192  0.3637 -0.4936 0.9321 3.182e-02</span></span>
+<span><span class="co">#&gt; [a.1] - [a.2]   0.4013  0.3506 -0.2858 1.0885 8.773e-02</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [a.1] = 1</span></span>
