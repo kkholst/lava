@@ -232,8 +232,8 @@ The correlation coefficient can then be obtained as
 estimate(e2, 'z', back.transform=tanh)
 #>     Estimate Std.Err   2.5%  97.5%    P-value
 #> [z]   0.8915         0.8729 0.9076 5.606e-243
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [z] = 0
 ```
 
@@ -268,8 +268,8 @@ e2
 estimate(e2, 'z', back.transform=tanh)
 #>     Estimate Std.Err   2.5%  97.5%    P-value
 #> [z]   0.8915         0.8729 0.9076 5.606e-243
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [z] = 0
 ```
 
@@ -347,8 +347,8 @@ e3
 estimate(e3, 'z', back.transform=tanh)
 #>     Estimate Std.Err  2.5%  97.5%    P-value
 #> [z]   0.8913         0.872 0.9079 1.491e-226
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [z] = 0
 ```
 
@@ -394,8 +394,8 @@ e3b
 estimate(e3b, 'z', back.transform=tanh)
 #>     Estimate Std.Err   2.5%  97.5%    P-value
 #> [z]   0.8909         0.8713 0.9077 9.006e-222
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [z] = 0
 ```
 

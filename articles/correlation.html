@@ -275,8 +275,8 @@ positive definite.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; [z]   0.8915         0.8729 0.9076 5.606e-243</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
 <p>In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument <code>constrain</code>
@@ -307,8 +307,8 @@ parameters):</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; [z]   0.8915         0.8729 0.9076 5.606e-243</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
 <p>As an alternative to the Wald confidence intervals (with or without
 transformation) is to profile the likelihood. The profile likelihood
@@ -374,8 +374,8 @@ the <code>mets</code> package) in the data frame.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err  2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; [z]   0.8913         0.872 0.9079 1.491e-226</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
 <p>And here the same analysis with <code>s1</code> being left-censored
 and <code>s2</code> right-censored:</p>
@@ -414,8 +414,8 @@ and <code>s2</code> right-censored:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; [z]   0.8909         0.8713 0.9077 9.006e-222</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">tanh</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, profile<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>

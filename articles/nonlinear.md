@@ -311,12 +311,12 @@ interaction
 summary(estimate(ee1,keep="(:g)", regex=TRUE))
 #> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
 #>     messages = 0), coef = p)
-#> ────────────────────────────────────────────────────────────────────────────────
+#> ────────────────────────────────────────────────────────────
 #>           Estimate Std.Err    2.5%    97.5% P-value
 #> [u2~u1:g]   0.5926 0.23212  0.1377  1.04756 0.01068
 #> [u2~u2:g]  -0.1973 0.08832 -0.3704 -0.02419 0.02549
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [u2~u1:g] = 0
 #>   [u2~u2:g] = 0 
 #>  

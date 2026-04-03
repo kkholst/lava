@@ -257,12 +257,12 @@ Different methods are available for inspecting an `estimate` object
 summary(e)
 #> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
 #>     messages = 0), coef = p)
-#> ────────────────────────────────────────────────────────────────────────────────
+#> ────────────────────────────────────────────────────────────
 #>                  Estimate Std.Err   2.5%  97.5%    P-value
 #> [y1:(Intercept)]    0.610 0.02439 0.5622 0.6578 4.435e-138
 #> [y2:(Intercept)]    0.535 0.02494 0.4861 0.5839 4.316e-102
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [y1:(Intercept)] = 0
 #>   [y2:(Intercept)] = 0 
 #>  
@@ -543,14 +543,14 @@ e <- merge(g1, g2)
 summary(e)
 #> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
 #>     messages = 0), coef = p)
-#> ────────────────────────────────────────────────────────────────────────────────
+#> ────────────────────────────────────────────────────────────
 #>                 Estimate Std.Err    2.5%    97.5%   P-value
 #> [(Intercept)]    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
 #> [a]               1.3239  0.2173  0.8981  1.74978 1.105e-09
 #> [(Intercept).1]  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
 #> [a.1]             1.5060  0.2148  1.0849  1.92712 2.385e-12
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [(Intercept)] = 0
 #>   [a] = 0
 #>   [(Intercept).1] = 0
@@ -567,8 +567,8 @@ responses:
 estimate(e, cbind(0,1,0,-1), null=0)
 #>             Estimate Std.Err    2.5%  97.5% P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [a.1] = 0
 ```
 
@@ -1036,8 +1036,8 @@ B %*% e
 #> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915
 #> [a]            0.5  0.2602 -0.009926 1.0099 0.054629
 #> [b]            0.8  0.2614  0.287617 1.3124 0.002212
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
@@ -1062,7 +1062,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x562a2bdd9af8>
+#> <bytecode: 0x55604bad2258>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1222,8 +1222,8 @@ B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [a.1] = 0
 ```
 
@@ -1234,8 +1234,8 @@ via the `null` argument
 estimate(gg, B, null=1)
 #>             Estimate Std.Err    2.5%  97.5%   P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [a.1] = 1
 ```
 
@@ -1253,8 +1253,8 @@ estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
 #> [a] - [a.2]   0.2192  0.3637 -0.4936 0.9321  0.5466
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [a.1] = 0
 #>   [a] - [a.2] = 0 
 #>  
@@ -1270,8 +1270,8 @@ estimate(gg, a + a.1, 2*a - a.2, a, null=c(2,1,1))
 #> [a] + [a.1]     2.830  0.3107 2.2210 3.439 0.007557
 #> 2[a] - [a.2]    1.543  0.5208 0.5224 2.564 0.296991
 #> [a]             1.324  0.2173 0.8981 1.750 0.135985
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] + [a.1] = 2
 #>   2[a] - [a.2] = 1
 #>   [a] = 1 
@@ -1305,8 +1305,8 @@ estimate(gg, pairwise.diff(3), null=c(1,1,1), use=c(2,4,6))
 #> [a] - [a.1]    -0.1821  0.3003 -0.7707 0.4065 8.281e-05
 #> [a] - [a.2]     0.2192  0.3637 -0.4936 0.9321 3.182e-02
 #> [a.1] - [a.2]   0.4013  0.3506 -0.2858 1.0885 8.773e-02
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [a.1] = 1
 #>   [a] - [a.2] = 1
 #>   [a.1] - [a.2] = 1 
@@ -1530,8 +1530,8 @@ Finally, we can obtain the Average Treatment Effect (ATE)
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")
 #>     Estimate Std.Err    2.5% 97.5%   P-value
 #> ate   0.1691 0.04996 0.07115 0.267 0.0007138
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   -[y(0)] + [y(1)] = 0
 ```
 

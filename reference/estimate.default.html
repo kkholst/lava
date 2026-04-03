@@ -272,8 +272,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [x]            1.009058 0.14720  0.7205 1.2976 7.135e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
@@ -283,8 +283,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199 4.075e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487 4.939e-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + [z] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -293,8 +293,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199  0.7037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487  0.9462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + [z] = 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -302,15 +302,15 @@ the <code>IC</code> method.</p>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="co">## same as cbind(0,1,-1)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co">## same as rbind(c(0,1,0),c(0,0,1))</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [x]    1.009 0.14720 0.7205 1.298 7.135e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -321,8 +321,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]          0.95397 0.08114  0.7949  1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]   -0.05508 0.15367 -0.3563  0.2461 7.200e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2[z] - 3[x] -1.11922 0.43991 -1.9814 -0.2570 1.095e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   2[z] - 3[x] = 0 </span>
@@ -331,15 +331,15 @@ the <code>IC</code> method.</p>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"?"</span><span class="op">)</span>  <span class="co">## Wildcards</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"*Int*"</span>, <span class="st">"z"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -348,8 +348,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]     -0.055083 0.15367 -0.3563 0.2461 6.606e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -358,8 +358,8 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z]    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [x]    1.009 0.14720 0.7205 1.298 7.135e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -430,8 +430,8 @@ the <code>IC</code> method.</p>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [p0] + [p1]    1.202 0.03027 1.142 1.261       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [p0] + [p1] = 0 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Clusters and subset (conditional marginal effects)</span></span></span>
