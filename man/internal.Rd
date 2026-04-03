@@ -46,8 +46,6 @@
 \alias{multigroup}
 \alias{Weights}
 \alias{fixsome}
-\alias{parfix}
-\alias{parfix<-}
 \alias{IV}
 \alias{parameter}
 \alias{Specials}

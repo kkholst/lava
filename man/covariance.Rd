@@ -5,10 +5,6 @@
 \alias{covariance<-}
 \alias{covariance.lvm}
 \alias{covariance<-.lvm}
-\alias{covfix<-}
-\alias{covfix}
-\alias{covfix<-.lvm}
-\alias{covfix.lvm}
 \alias{variance}
 \alias{variance<-}
 \alias{variance.lvm}

@@ -5,10 +5,6 @@
 \alias{regression}
 \alias{regression<-.lvm}
 \alias{regression.lvm}
-\alias{regfix}
-\alias{regfix<-}
-\alias{regfix.lvm}
-\alias{regfix<-.lvm}
 \title{Add regression association to latent variable model}
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
@@ -82,9 +78,8 @@ Alternatively, a more straight forward notation can be used:
 \code{regression(m) <- y ~ beta*x1 + beta*x2}
 
 All the parameter values of the linear constraints can be given as the right
-handside expression of the assigment function \code{regression<-} (or
-\code{regfix<-}) if the first (and possibly second) argument is defined as
-well. E.g:
+handside expression of the assigment function \code{regression<-} if the
+first (and possibly second) argument is defined as well. E.g:
 
 \code{regression(m,y1~x1+x2) <- list("a1","b1")}
 
