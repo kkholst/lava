@@ -99,9 +99,8 @@ Alternatively, a more straight forward notation can be used:
 `regression(m) <- y ~ beta*x1 + beta*x2`
 
 All the parameter values of the linear constraints can be given as the
-right handside expression of the assigment function `regression<-` (or
-`regfix<-`) if the first (and possibly second) argument is defined as
-well. E.g:
+right handside expression of the assigment function `regression<-` if
+the first (and possibly second) argument is defined as well. E.g:
 
 `regression(m,y1~x1+x2) <- list("a1","b1")`
 

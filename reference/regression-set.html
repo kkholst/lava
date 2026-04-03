@@ -133,9 +133,8 @@ linear constraints.</p>
 <p>Alternatively, a more straight forward notation can be used:</p>
 <p><code>regression(m) &lt;- y ~ beta*x1 + beta*x2</code></p>
 <p>All the parameter values of the linear constraints can be given as the right
-handside expression of the assigment function <code>regression&lt;-</code> (or
-<code>regfix&lt;-</code>) if the first (and possibly second) argument is defined as
-well. E.g:</p>
+handside expression of the assigment function <code>regression&lt;-</code> if the
+first (and possibly second) argument is defined as well. E.g:</p>
 <p><code>regression(m,y1~x1+x2) &lt;- list("a1","b1")</code></p>
 <p>defines \(E(Y_1|X_1,X_2) = a1 X_1 + b1 X_2\). The rhs argument can be a
 mixture of character and numeric values (and NA's to remove constraints).</p>
