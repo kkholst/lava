@@ -5,8 +5,6 @@
   - [Citation](#citation)
   - [Examples](#examples)
 
-![lava website](reference/figures/logo.png)
-
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
 continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen
