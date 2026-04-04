@@ -320,6 +320,11 @@ Functions for working with Influence Functions
   : Extract variable names from latent variable model
 - [`eventTime()`](https://kkholst.github.io/lava/reference/eventTime.md)
   : Add an observed event time outcome to a latent variable model.
+- [`index(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/index-lvm.md)
+  : Extract the parameter indicies of a lvm object
+- [`index()`](https://kkholst.github.io/lava/reference/index-method.md)
+  [`` `index<-`() ``](https://kkholst.github.io/lava/reference/index-method.md)
+  : Generic method for extract index of an object
 - [`` `intercept<-`( ``*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/intercept.md)
   : Fix mean parameters in 'lvm'-object
 - [`intervention(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/intervention.lvm.md)

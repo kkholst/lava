@@ -1,12 +1,10 @@
-# Latent Variable Models: `lava`
+# Latent Variable Models (`lava`)
 
-- [Latent Variable Models: `lava`](#latent-variable-models-lava)
+- [Latent Variable Models (`lava`) ![lava
+  website](reference/figures/logo.png)](#latent-variable-models-lava-)
   - [Installation](#installation)
   - [Citation](#citation)
   - [Examples](#examples)
-
-[![lava
-website](reference/figures/logo.png)](https://kkholst.github.io/lava/)
 
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both

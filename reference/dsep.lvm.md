@@ -34,7 +34,7 @@ dsep(object, x, cond = NULL, return.graph = FALSE, ...)
 
 ## Details
 
-The argument 'x' can be given as a formula, e.g. x~y\|z+v or ~x+y\|z+v
+The argument `x` can be given as a formula, e.g. `x~y|z+v` or `~x+y|z+v`
 With everything on the rhs of the bar defining the variables on which to
 condition on.
 

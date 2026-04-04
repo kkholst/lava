@@ -34,8 +34,10 @@ eventTime(object, formula, eventName = "status", ...)
 
 when data are simulated from the model one gets 2 new columns:
 
-\- "ObsTime": the smallest of T1, T2 and C - "ObsEvent": 'a' if T1 is
-smallest, 'b' if T2 is smallest and '0' if C is smallest
+- "ObsTime": the smallest of T1, T2 and C
+
+- "ObsEvent": 'a' if T1 is smallest, 'b' if T2 is smallest and '0' if C
+  is smallest
 
 Note that "ObsEvent" and "ObsTime" are names specified by the user.
 

@@ -46,7 +46,7 @@ plotConf(
 
 - model:
 
-  Model object (e.g. `lm`)
+  Model object (e.g. [`lm()`](https://rdrr.io/r/stats/lm.html))
 
 - var1:
 
@@ -173,21 +173,15 @@ plotConf(
 
 list with following members:
 
-- x:
+- `x` Variable on the x-axis `var1`
 
-  Variable on the x-axis (`var1`)
+- `y` Variable on the y-axis (partial residuals)
 
-- y:
-
-  Variable on the y-axis (partial residuals)
-
-- predict:
-
-  Matrix with confidence limits and predicted values
+- `predict` Matrix with confidence limits and predicted startvalues.R
 
 ## See also
 
-`termplot`
+[`termplot()`](https://rdrr.io/r/stats/termplot.html)
 
 ## Author
 

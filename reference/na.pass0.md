@@ -26,7 +26,9 @@ na.pass0(object, na.action = na.omit, ...)
 
 ## See also
 
-\[na.pass\], \[na.omit\], \[na.fail\]
+[`na.pass()`](https://rdrr.io/r/stats/na.fail.html),
+[`na.omit()`](https://rdrr.io/r/stats/na.fail.html),
+[`na.fail()`](https://rdrr.io/r/stats/na.fail.html)
 
 ## Examples
 

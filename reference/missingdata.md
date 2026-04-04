@@ -13,8 +13,15 @@ Simulated
 
 ## Details
 
-The list contains four data sets 1) Complete data 2) MCAR 3) MAR 4) MNAR
-(missing mechanism depends on variable V correlated with Y1,Y2)
+The list contains four data sets
+
+1.  Complete data
+
+2.  MCAR
+
+3.  MAR
+
+4.  MNAR (missing mechanism depends on variable V correlated with Y1,Y2)
 
 ## Examples
 

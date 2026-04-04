@@ -54,7 +54,7 @@ variable is equal to zero
 
 ## Author
 
-Thomas A. Gerds \<tag@biostat.ku.dk\>
+Thomas A. Gerds <tag@biostat.ku.dk>
 
 ## Examples
 

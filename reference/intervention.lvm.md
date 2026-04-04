@@ -1,6 +1,6 @@
 # Define intervention
 
-Define intervention in a \`lvm\` object
+Define intervention in a `lvm` object
 
 ## Usage
 

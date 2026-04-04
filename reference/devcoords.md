@@ -12,37 +12,21 @@ devcoords()
 
 A `list` with elements
 
-- dev.x1:
+- `dev.x1`: device left x-coordinate
 
-  Device: Left x-coordinate
+- `dev.x2`: device right x-coordinate
 
-- dev.x2:
+- `dev.y1`: device bottom y-coordinate
 
-  Device: Right x-coordinate
+- `dev.y2`: device top y-coordinate
 
-- dev.y1:
+- `fig.x1`: plot left x-coordinate
 
-  Device Bottom y-coordinate
+- `fig.x2`: plot right x-coordinate
 
-- dev.y2:
+- `fig.y1`: plot bottom y-coordinate
 
-  Device Top y-coordinate
-
-- fig.x1:
-
-  Plot: Left x-coordinate
-
-- fig.x2:
-
-  Plot: Right x-coordinate
-
-- fig.y1:
-
-  Plot: Bottom y-coordinate
-
-- fig.y2:
-
-  Plot: Top y-coordinate
+- `fig.y2`: plot top y-coordinate
 
 ## Author
 

@@ -3,7 +3,9 @@
 Applies a function repeatedly for a specified number of replications or
 over a list/data.frame with plot and summary methods for summarizing the
 Monte Carlo experiment. Can be parallelized via the future package (use
-the future::plan function).
+the
+[`future::plan()`](https://future.futureverse.org/reference/plan.html)
+function).
 
 ## Usage
 
@@ -65,24 +67,28 @@ sim(
 
 - estimate.index:
 
-  If return object inherits from \`estimate\` then only these column
+  If return object inherits from `estimate` then only these column
   indices are extracted (estimate, se, lower, upper, p-val)
 
 - ...:
 
-  Additional arguments to future.apply::future_mapply
+  Additional arguments to
+  [`future.apply::future_mapply()`](https://future.apply.futureverse.org/reference/future_mapply.html)
 
 ## Details
 
-To parallelize the calculation use the future::plan function (e.g.,
-future::plan(multisession()) to distribute the calculations over the R
-replications on all available cores). The output is controlled via the
-progressr package (e.g., progressr::handlers(global=TRUE) to enable
-progress information).
+To parallelize the calculation use the
+[`future::plan()`](https://future.futureverse.org/reference/plan.html)
+function (e.g., `future::plan(multisession())` to distribute the
+calculations over the `R` replications on all available cores). The
+output is controlled via the progressr package (e.g.,
+`progressr::handlers(global=TRUE)` to enable progress information).
 
 ## See also
 
-summary.sim plot.sim print.sim sim.lvm
+[`summary.sim()`](https://kkholst.github.io/lava/reference/summary.sim.md)
+[`plot.sim()`](https://kkholst.github.io/lava/reference/plot.sim.md)
+[`sim.lvm()`](https://kkholst.github.io/lava/reference/sim.lvm.md)
 
 ## Examples
 
@@ -122,7 +128,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.134s
+#> 50 replications                  Time: 1.235s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -143,7 +149,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.134s
+#> 50 replications                  Time: 1.235s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -161,7 +167,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.134s
+#> 50 replications                  Time: 1.235s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
