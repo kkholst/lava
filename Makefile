@@ -59,12 +59,8 @@ vignette:
 readme:
 	@$(R) -q -e "rmarkdown::render('README.Rmd')"
 
-test: test-installed
-test-installed: # tests locally installed version package
-	@echo 'testthat::test_package("$(PKG)")' | $(R)
-
-test-loadall:
-	@echo 'devtools::load_all("."); tinytest::testthat(".")' | $(R)
+test:
+	@echo 'devtools::test()' | $(R)
 
 slowtest: test-slow
 test-slow:

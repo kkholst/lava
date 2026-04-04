@@ -90,8 +90,15 @@ test_that("Multiple group, constraints", {
 
 })
 
-
-
-
-
-
+test_that("Multiple cluster", {
+  m <- lvm(y~x)
+  set.seed(1)
+  d <- sim(m,100)
+  ## Just a stratified analysis
+  ## e <- estimate(list("Group A"=m,"Group B"=m), list(d,d))
+  l <- lm(y ~ x, data=d)
+  e <- estimate(list("Group A"=m,"Group B"=m), list(d,d),
+                id=list(1:nrow(d),1:nrow(d)))
+  e2 <- estimate(l, id=1:nrow(d))
+  expect_true(mean((vcov(e2)-vcov(e)[c(1,3),c(1,3)])^2)<1e-9)
+})

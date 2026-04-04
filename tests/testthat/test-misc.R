@@ -156,3 +156,9 @@ test_that("strip_bracket", {
   # vector
   expect_equal(strip_bracket(c("[a]", "[[a]]")), c("a", "[a]"))
 })
+
+test_that("frobnorm", {
+  x <- rmvn0(100, sigma=diag(3))
+  y <- rmvn0(100, sigma=diag(3))
+  expect_equal(frobnorm(x, y), sum((x-y)^2)^.5)
+})
