@@ -918,7 +918,7 @@ While this always yields a more powerful test compared to Bonferroni
 adjustments, a more powerful closed-testing procedure [@marcus1976], can be generally
 obtained by considering all intersection hypotheses. 
 
-![*Figure: closed testing via Wald tests of all intersections hypotheses.*](figs/closedtesting.svg){width=60%}
+![*Figure: closed testing via Wald tests of all intersections hypotheses.*](../man/figures/closedtesting.svg){width=60%}
 
 To reject the $H_{1}$ at
 an correct $\alpha$-level we should test all intersection hypotheses involving

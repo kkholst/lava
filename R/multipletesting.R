@@ -40,13 +40,20 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##' all intersection hypotheses containing Hj. Example, for p=3, the adjusted
 ##' p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
 ##' (H1,H2), (H1,H3), (H1)\}}.
+##'
+##' \if{html}{
+##'   \figure{closedtesting.svg}{options: width="65\%"}
+##' }
+##' \if{latex}{
+##'   \figure{closedtesting.pdf}{options: width=7cm}
+##' }
 ##' @aliases closed_testing alpha_zmax
 ##' @param object `estimate` object
 ##' @param test function that conducts hypothesis test. See details below.
 ##' @param ... Additional arguments passed to `test`
 ##' @export
 ##' @details The function `test` should be a function `function(object, index,
-##'   ...)` which as its first argument takes an `estimate` object and and wit
+##'   ...)` which as its first argument takes an `estimate` object and with
 ##'   an argument `index` which is a integer vector specifying which
 ##'   subcomponents of `object` to test. The ellipsis argument can be any other
 ##'   arguments used in the test function. The function [test_wald()] is an

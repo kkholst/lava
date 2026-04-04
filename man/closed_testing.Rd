@@ -23,7 +23,14 @@ p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
 (H1,H2), (H1,H3), (H1)\}}.
 }
 \details{
-The function \code{test} should be a function \verb{function(object, index, ...)} which as its first argument takes an \code{estimate} object and and wit
+\if{html}{
+  \figure{closedtesting.svg}{options: width="65\%"}
+}
+\if{latex}{
+  \figure{closedtesting.pdf}{options: width=7cm}
+}
+
+The function \code{test} should be a function \verb{function(object, index, ...)} which as its first argument takes an \code{estimate} object and with
 an argument \code{index} which is a integer vector specifying which
 subcomponents of \code{object} to test. The ellipsis argument can be any other
 arguments used in the test function. The function \code{\link[=test_wald]{test_wald()}} is an
