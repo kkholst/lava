@@ -24,7 +24,6 @@ test_that("color, devcoords", {
 
 test_that("plotConf", {
   skip_on_cran()
-  skip_on_ci()
 
   set.seed(1)
   x <- rnorm(50)
@@ -61,7 +60,6 @@ test_that("plotConf", {
 
 test_that("forestplot", {
   skip_on_cran()
-  skip_on_ci()
 
   set.seed(1)
   K <- 20
@@ -78,7 +76,7 @@ test_that("forestplot", {
 
 test_that("plot.sim", {
   skip_on_cran()
-  skip_on_ci()
+  skip_on_ci() # Skips the test on GitHub Actions
 
   onerun2 <- function(a,b,...) {
     return(cbind(a=a,b=b,c=a-1,d=a+1))
@@ -98,7 +96,6 @@ test_that("plot.sim", {
 
 test_that("plot.estimate", {
   skip_on_cran()
-  skip_on_ci()
 
   set.seed(1)
   e1 <- estimate(coef=1, IC=1:10, id=1:10)
@@ -110,7 +107,6 @@ test_that("plot.estimate", {
 
 test_that("spaghetti", {
   skip_on_cran()
-  skip_on_ci() # Skips the test on GitHub Actions
 
   K <- 5
   y <- "y"%++%seq(K)
@@ -128,7 +124,6 @@ test_that("spaghetti", {
 
 test_that("plot.lvm", {
   skip_on_cran()
-  skip_on_ci() # Skips the test on GitHub Actions
 
   ## TODO
   m <- lvm(y~1*u[0:1],u~1*x)
@@ -152,56 +147,48 @@ test_that("plot.lvm", {
 
 test_that("ksmooth", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("images", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("labels,edgelabels", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("colorbar", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("fplot", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("interactive", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("pdfconvert", {
   skip_on_cran()
-  skip_on_ci()
 
   ## TODO
 })
 
 test_that("logo", {
   skip_on_cran()
-  skip_on_ci()
 
   val <- expect_doppelganger("logo", {
     lava:::lava(w=10, seed=42)
