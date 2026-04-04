@@ -17,7 +17,6 @@ test_that("Constrain, transform I", {
 
 })
 
-
 test_that("Missing", {
     m <- lvm(y~1)
     m <- Missing(m,y~1,r~x)
@@ -31,7 +30,6 @@ test_that("Missing", {
                                     check.attributes = FALSE
     ))
 })
-
 
 test_that("sim.default I", {
     m <- lvm(y~x+e)
@@ -82,7 +80,6 @@ test_that("sim.default I", {
     testthat::expect_true(res["SE/SD",]==mean(val2[,"b"])/sd(val2[,"a"]))
       
 })
-
 
 test_that("distributions", {
     m <- lvm(y1~x)
@@ -157,7 +154,6 @@ test_that("distributions", {
     ## testthat::expect_equivalent(c("a","b","c"),sort(unique(sim(m,200))[,1]))
         
 })
-
 
 test_that("eventTime", {
     m <- lvm(eventtime~x)

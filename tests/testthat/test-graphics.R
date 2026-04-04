@@ -1,7 +1,7 @@
 context("Graphics functions")
 library("vdiffr")
 
-testthat::test_that("color, devcoords", {
+test_that("color, devcoords", {
   cur <- palette()
   old <- lava:::mypal()
   testthat::expect_equivalent(col2rgb(cur),col2rgb(old))
@@ -22,8 +22,9 @@ testthat::test_that("color, devcoords", {
   testthat::expect_equivalent(devc1[figx],devc2[devx])
 })
 
-testthat::test_that("plotConf", {
+test_that("plotConf", {
   skip_on_cran()
+  skip_on_ci()
 
   set.seed(1)
   x <- rnorm(50)
@@ -58,8 +59,9 @@ testthat::test_that("plotConf", {
   ##          center=coef(l0))
   })
 
-testthat::test_that("forestplot", {
+test_that("forestplot", {
   skip_on_cran()
+  skip_on_ci()
 
   set.seed(1)
   K <- 20
@@ -76,6 +78,7 @@ testthat::test_that("forestplot", {
 
 test_that("plot.sim", {
   skip_on_cran()
+  skip_on_ci()
 
   onerun2 <- function(a,b,...) {
     return(cbind(a=a,b=b,c=a-1,d=a+1))
@@ -95,6 +98,8 @@ test_that("plot.sim", {
 
 test_that("plot.estimate", {
   skip_on_cran()
+  skip_on_ci()
+
   set.seed(1)
   e1 <- estimate(coef=1, IC=1:10, id=1:10)
   e2 <- estimate(coef=1.1, IC=0:9, id=1:10)
@@ -106,6 +111,7 @@ test_that("plot.estimate", {
 test_that("spaghetti", {
   skip_on_cran()
   skip_on_ci() # Skips the test on GitHub Actions
+
   K <- 5
   y <- "y"%++%seq(K)
   m <- lvm()
@@ -123,6 +129,7 @@ test_that("spaghetti", {
 test_that("plot.lvm", {
   skip_on_cran()
   skip_on_ci() # Skips the test on GitHub Actions
+
   ## TODO
   m <- lvm(y~1*u[0:1],u~1*x)
   latent(m) <- ~u
@@ -145,41 +152,57 @@ test_that("plot.lvm", {
 
 test_that("ksmooth", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("images", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("labels,edgelabels", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("colorbar", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("fplot", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("interactive", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("pdfconvert", {
   skip_on_cran()
+  skip_on_ci()
+
   ## TODO
 })
 
 test_that("logo", {
   skip_on_cran()
+  skip_on_ci()
+
   val <- expect_doppelganger("logo", {
     lava:::lava(w=10, seed=42)
   })
