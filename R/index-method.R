@@ -40,15 +40,17 @@ updatelvm <- function(x,mean=TRUE,...) {
 ##' * npar.var:   Number of covariance parameters
 ##' @rdname index-lvm
 ##' @inherit index
-##' @aliases index.lvmfit index.lvm index<-lvm index<-.lvmfit
+##' @aliases index.lvmfit index.lvm
 ##' @seealso [modelPar()]
-##' @param value new index
 ##' @export
 "index.lvm" <- function(x,...) { x$index }
 
 ##' @export
 "index.lvmfit" <- function(x,...) { index(Model(x)) }
 
+##' @rdname index-lvm
+##' @param value new index
+##' @aliases index<-.lvmfit index<-.lvm
 ##' @export
 "index<-.lvm" <- function(x,...,value)  { x$index <- value; return(x) }
 
