@@ -10,6 +10,7 @@ updatelvm <- function(x,mean=TRUE,...) {
 ##' @param x object from which to extract index
 ##' @param ... further arguments to be passed to or from other methods.
 ##' @seealso [index<-]
+##' @keywords utilities
 ##' @rdname index-method
 "index" <- function(x,...) UseMethod("index")
 
@@ -37,7 +38,7 @@ updatelvm <- function(x,mean=TRUE,...) {
 ##' * P0:  Index of free variance parameters
 ##' * P1:  Index of free and _unique_ regression parameters
 ##' * npar.var:   Number of covariance parameters
-##' @rdname index-method
+##' @rdname index-lvm
 ##' @inherit index
 ##' @aliases index.lvmfit index.lvm index<-lvm index<-.lvmfit
 ##' @seealso [modelPar()]

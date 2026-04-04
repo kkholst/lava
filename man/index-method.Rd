@@ -3,44 +3,27 @@
 \name{index}
 \alias{index}
 \alias{index<-}
-\alias{index.lvm}
-\alias{index.lvmfit}
-\alias{index<-lvm}
-\alias{index<-.lvmfit}
 \title{Generic method for extract index of an object}
 \usage{
 index(x, ...)
 
 index(x, ...) <- value
-
-\method{index}{lvm}(x, ...)
 }
 \arguments{
 \item{x}{object on which to set the index}
 
 \item{...}{further arguments to be passed to or from other methods.}
 
-\item{value}{new index}
+\item{value}{the new index}
 }
 \description{
-Extracts the matrices with indices of model parameters from a
-latent variable model (\code{lvm}). Returns a list with
-\itemize{
-\item A:   Matrix with fixed parameters and ones where parameters are free
-\item J:   Manifest variable selection matrix
-\item M0:  Index of free regression parameters
-\item M1:  Index of free and \emph{unique} regression parameters
-\item P:   Matrix with fixed variance parameters and ones where parameters are free
-\item P0:  Index of free variance parameters
-\item P1:  Index of free and \emph{unique} regression parameters
-\item npar.var:   Number of covariance parameters
-}
+Generic method for extract index of an object
+
+Generic method for setting the index of an object
 }
 \seealso{
 \link{index<-}
 
 \link{index}
-
-\code{\link[=modelPar]{modelPar()}}
 }
 \keyword{utilities}

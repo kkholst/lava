@@ -1,5 +1,6 @@
 
-- [Latent Variable Models: `lava`](#latent-variable-models-lava)
+- [Latent Variable Models (`lava`)
+  <img src="man/figures/logo.png" align="right" height=200 style="float:right; height:200px;"  alt="lava website"/>](#latent-variable-models-lava-)
   - [Installation](#installation)
   - [Citation](#citation)
   - [Examples](#examples)
@@ -13,11 +14,7 @@
 [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
 <!-- badges: end -->
 
-# Latent Variable Models: `lava`
-
-<a href="https://kkholst.github.io/lava/">
-<img src="man/figures/logo.png" align="right" style="float:right; height:150px;"  alt="lava website"/>
-</a>
+# Latent Variable Models (`lava`) <img src="man/figures/logo.png" align="right" height=200 style="float:right; height:200px;"  alt="lava website"/>
 
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
