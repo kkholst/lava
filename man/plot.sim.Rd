@@ -25,7 +25,7 @@
   cex.legend = 0.8,
   plot.type = c("multiple", "single"),
   polygon = TRUE,
-  density = 0,
+  density = NULL,
   angle = -45,
   cex.axis = 0.8,
   alpha = 0.2,
