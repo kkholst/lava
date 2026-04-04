@@ -42,7 +42,7 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##' (H1,H2), (H1,H3), (H1)\}}.
 ##'
 ##' \if{html}{
-##'   \figure{closedtesting.svg}{options: width="65\%"}
+##'   \figure{closedtesting.svg}{options: width=500}
 ##' }
 ##' \if{latex}{
 ##'   \figure{closedtesting.pdf}{options: width=7cm}

@@ -24,7 +24,7 @@ p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
 }
 \details{
 \if{html}{
-  \figure{closedtesting.svg}{options: width="65\%"}
+  \figure{closedtesting.svg}{options: width=500}
 }
 \if{latex}{
   \figure{closedtesting.pdf}{options: width=7cm}
