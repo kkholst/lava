@@ -4,26 +4,56 @@ updatelvm <- function(x,mean=TRUE,...) {
     return(x)
 }
 
+##' Generic method for extract index of an object
+##'
+##' @export
+##' @param x object from which to extract index
+##' @param ... further arguments to be passed to or from other methods.
+##' @seealso [index<-]
+##' @rdname index-method
 "index" <- function(x,...) UseMethod("index")
 
+##' Generic method for setting the index of an object
+##'
+##' @export
+##' @param x object on which to set the index
+##' @param value the new index
+##' @param ... further arguments to be passed to or from other methods.
+##' @seealso [index]
+##' @keywords utilities
+##' @rdname index-method
+##' @export
 "index<-" <- function(x,...,value) UseMethod("index<-")
 
+##' @title Extract the parameter indicies of a lvm object
+##'
+##' @description Extracts the matrices with indices of model parameters from a
+##'   latent variable model (`lvm`). Returns a list with
+##' * A:   Matrix with fixed parameters and ones where parameters are free
+##' * J:   Manifest variable selection matrix
+##' * M0:  Index of free regression parameters
+##' * M1:  Index of free and _unique_ regression parameters
+##' * P:   Matrix with fixed variance parameters and ones where parameters are free
+##' * P0:  Index of free variance parameters
+##' * P1:  Index of free and _unique_ regression parameters
+##' * npar.var:   Number of covariance parameters
+##' @rdname index-method
+##' @inherit index
+##' @aliases index.lvmfit index.lvm index<-lvm index<-.lvmfit
+##' @seealso [modelPar()]
+##' @param value new index
+##' @export
 "index.lvm" <- function(x,...) { x$index }
 
+##' @export
 "index.lvmfit" <- function(x,...) { index(Model(x)) }
 
+##' @export
 "index<-.lvm" <- function(x,...,value)  { x$index <- value; return(x) }
 
+##' @export
 "index<-.lvmfit" <- function(x,...,value) { Model(x)$index <- value; return(x) }
 
-###   A  ## Matrix with fixed parameters and ones where parameters are free
-###   J  ## Manifest variable selection matrix
-###   M0 ## Index of free regression parameters
-###   M1 ## Index of free and _unique_ regression parameters
-###   P  ## Matrix with fixed variance parameters and ones where parameters are free
-###   P0 ## Index of free variance parameters
-###   P1 ## Index of free and _unique_ regression parameters
-###   npar.var  ## Number of covariance parameters
 
 `reindex` <-
     function(x, sparse=FALSE,standard=TRUE,zeroones=FALSE,deriv=FALSE,mean=TRUE) { ## Extract indices of parameters from model
