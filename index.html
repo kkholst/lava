@@ -58,7 +58,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><ul>
 <li>
-<a href="#latent-variable-models-lava-">Latent Variable Models (<code>lava</code>) <img src="reference/figures/logo.png" align="right" height="200" style="float:right; height:200px;" alt="lava website"></a>
+<a href="#latent-variable-models-lava">Latent Variable Models (<code>lava</code>)</a>
 <ul>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#citation">Citation</a></li>
@@ -67,9 +67,10 @@
 </li>
 </ul>
 <!-- README.md is generated from README.Rmd. Please edit that file --><!-- badges: start -->
+<p><img src="reference/figures/logo.png" align="right" height="200" style="float:right; height:200px;" alt="lava website"></p>
 <div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="latent-variable-models-lava-">Latent Variable Models (<code>lava</code>) <a class="anchor" aria-label="anchor" href="#latent-variable-models-lava-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="latent-variable-models-lava">Latent Variable Models (<code>lava</code>)<a class="anchor" aria-label="anchor" href="#latent-variable-models-lava"></a>
 </h1>
 </div>
 <p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <a href="doi:10.1007/s00180-012-0344-y" class="uri">doi:10.1007/s00180-012-0344-y</a>). Mixture latent variable models and non-linear latent variable models (Holst and Budtz-Joergensen (2020) <a href="doi:10.1093/biostatistics/kxy082" class="uri">doi:10.1093/biostatistics/kxy082</a>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
@@ -141,69 +142,69 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="co"># joint distribution</span></span>
-<span><span class="co">#&gt;               a             b</span></span>
-<span><span class="co">#&gt; a  0.1244667505 -0.0005049007</span></span>
-<span><span class="co">#&gt; b -0.0005049007  0.1113819802</span></span>
+<span><span class="co">#&gt;             a           b</span></span>
+<span><span class="co">#&gt; a  0.07514259 -0.01509644</span></span>
+<span><span class="co">#&gt; b -0.01509644  0.03372599</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Call: estimate.default(contrast = as.list(seq_along(p)), null = ..1, </span></span>
 <span><span class="co">#&gt;     vcov = vcov(object, messages = 0), coef = p)</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; [a]      0.5  0.3528 -0.1915 1.191 0.15641</span></span>
-<span><span class="co">#&gt; [b]      0.8  0.3337  0.1459 1.454 0.01653</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt;   Estimate Std.Err     2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; a      0.5  0.2741 -0.03727 1.037 6.815e-02</span></span>
+<span><span class="co">#&gt; b      0.8  0.1836  0.44006 1.160 1.323e-05</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] = 0</span></span>
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 7.7838, df = 2, p-value = 0.02041</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 29.7439, df = 2, p-value = 3.477e-07</span></span></code></pre></div>
 <p>Parameter transformations can be calculated directly as in the following examples.</p>
 <p>Products</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">a</span> <span class="op">*</span> <span class="va">b</span></span>
-<span><span class="co">#&gt;   Estimate Std.Err    2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; a      0.4  0.3273 -0.2414 1.041  0.2216</span></span></code></pre></div>
+<span><span class="co">#&gt;   Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; a      0.4  0.2108 -0.0132 0.8132 0.05778</span></span></code></pre></div>
 <p>General transformations</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="va">a</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; a    15.77   24.64 -32.52 64.07  0.5221</span></span></code></pre></div>
+<span><span class="co">#&gt; a    15.77    18.7 -20.87 52.42  0.3989</span></span></code></pre></div>
 <p>Inner product, sums, and products</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>iprod<span class="op">=</span><span class="va">e</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, sum<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, prod<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/prod.html" class="external-link">prod</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Estimate Std.Err    2.5% 97.5%  P-value</span></span>
-<span><span class="co">#&gt; iprod    0.762  0.7302 -0.6691 2.193 0.296664</span></span>
-<span><span class="co">#&gt; ─────                                        </span></span>
-<span><span class="co">#&gt; sum      1.300  0.4846  0.3502 2.250 0.007305</span></span>
-<span><span class="co">#&gt; ─────                                        </span></span>
-<span><span class="co">#&gt; prod     0.400  0.3273 -0.2414 1.041 0.221608</span></span></code></pre></div>
+<span><span class="co">#&gt;       Estimate Std.Err     2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; iprod    0.762  0.3762  0.02473 1.4993 4.279e-02</span></span>
+<span><span class="co">#&gt; ─────                                           </span></span>
+<span><span class="co">#&gt; sum      1.300  0.2805  0.75025 1.8498 3.574e-06</span></span>
+<span><span class="co">#&gt; ─────                                           </span></span>
+<span><span class="co">#&gt; prod     0.400  0.2108 -0.01320 0.8132 5.778e-02</span></span></code></pre></div>
 <p>Exponentiation and renaming of parameter</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>pow <span class="op">=</span> <span class="va">a</span><span class="op">^</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; pow   0.5743  0.3509 -0.1134 1.262  0.1017</span></span></code></pre></div>
+<span><span class="co">#&gt; pow   0.5743  0.2826 0.02051 1.128  0.0421</span></span></code></pre></div>
 <p>Transformation and subsetting</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">e</span><span class="op">[</span><span class="st">"a"</span><span class="op">]</span> <span class="op">*</span> <span class="va">e</span><span class="op">[</span><span class="st">"b"</span><span class="op">]</span> <span class="op">/</span> <span class="va">a</span>, <span class="va">e</span><span class="op">[</span><span class="st">"b"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; a      0.8  0.3337 0.1459 1.454 0.01653</span></span>
-<span><span class="co">#&gt; ─                                      </span></span>
-<span><span class="co">#&gt; b      0.8  0.3337 0.1459 1.454 0.01653</span></span></code></pre></div>
+<span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; a      0.8  0.1836 0.4401  1.16 1.323e-05</span></span>
+<span><span class="co">#&gt; ─                                        </span></span>
+<span><span class="co">#&gt; b      0.8  0.1836 0.4401  1.16 1.323e-05</span></span></code></pre></div>
 <p>For the <code>%*%*</code> operator we can also use a general contrast matrix</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; [a] - [b]     -0.3  0.4867 -1.2539 0.6539 0.53762</span></span>
-<span><span class="co">#&gt; [a]            0.5  0.3528 -0.1915 1.1915 0.15641</span></span>
-<span><span class="co">#&gt; [b]            0.8  0.3337  0.1459 1.4541 0.01653</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;           Estimate Std.Err     2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3729 -1.03089 0.4309 4.211e-01</span></span>
+<span><span class="co">#&gt; a              0.5  0.2741 -0.03727 1.0373 6.815e-02</span></span>
+<span><span class="co">#&gt; b              0.8  0.1836  0.44006 1.1599 1.323e-05</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [b] = 0</span></span>
 <span><span class="co">#&gt;   [a] = 0</span></span>
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 7.7838, df = 2, p-value = 0.02041</span></span>
+<span><span class="co">#&gt; chisq = 29.7439, df = 2, p-value = 3.477e-07</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/estimate-contrast-1.svg" alt="" width="70%"></p>
 </div>
@@ -330,7 +331,7 @@
 <span><span class="op">}</span></span>
 <span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 100 replications                 Time: 3.864s</span></span>
+<span><span class="co">#&gt; 100 replications                 Time: 3.275s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span></span>
 <span><span class="co">#&gt; Mean           1.99533         1.00468           0.99066        0.99066</span></span>

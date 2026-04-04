@@ -1,10 +1,11 @@
 # Latent Variable Models (`lava`)
 
-- [Latent Variable Models (`lava`) ![lava
-  website](reference/figures/logo.png)](#latent-variable-models-lava-)
+- [Latent Variable Models (`lava`)](#latent-variable-models-lava)
   - [Installation](#installation)
   - [Citation](#citation)
   - [Examples](#examples)
+
+![lava website](reference/figures/logo.png)
 
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
@@ -114,22 +115,22 @@ distribution via their estimated influence functions
 ``` r
 e <- c(a, b)
 vcov(e) # joint distribution
-#>               a             b
-#> a  0.1244667505 -0.0005049007
-#> b -0.0005049007  0.1113819802
+#>             a           b
+#> a  0.07514259 -0.01509644
+#> b -0.01509644  0.03372599
 summary(e, null=c(0, 0))
 #> Call: estimate.default(contrast = as.list(seq_along(p)), null = ..1, 
 #>     vcov = vcov(object, messages = 0), coef = p)
-#> ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-#>     Estimate Std.Err    2.5% 97.5% P-value
-#> [a]      0.5  0.3528 -0.1915 1.191 0.15641
-#> [b]      0.8  0.3337  0.1459 1.454 0.01653
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#>   Estimate Std.Err     2.5% 97.5%   P-value
+#> a      0.5  0.2741 -0.03727 1.037 6.815e-02
+#> b      0.8  0.1836  0.44006 1.160 1.323e-05
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 7.7838, df = 2, p-value = 0.02041
+#> chisq = 29.7439, df = 2, p-value = 3.477e-07
 ```
 
 Parameter transformations can be calculated directly as in the following
@@ -139,8 +140,8 @@ Products
 
 ``` r
 a * b
-#>   Estimate Std.Err    2.5% 97.5% P-value
-#> a      0.4  0.3273 -0.2414 1.041  0.2216
+#>   Estimate Std.Err    2.5%  97.5% P-value
+#> a      0.4  0.2108 -0.0132 0.8132 0.05778
 ```
 
 General transformations
@@ -148,19 +149,19 @@ General transformations
 ``` r
 (3 * cos(a) / sqrt(b) + 1) / a^2
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    15.77   24.64 -32.52 64.07  0.5221
+#> a    15.77    18.7 -20.87 52.42  0.3989
 ```
 
 Inner product, sums, and products
 
 ``` r
 c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
-#>       Estimate Std.Err    2.5% 97.5%  P-value
-#> iprod    0.762  0.7302 -0.6691 2.193 0.296664
-#> ─────                                        
-#> sum      1.300  0.4846  0.3502 2.250 0.007305
-#> ─────                                        
-#> prod     0.400  0.3273 -0.2414 1.041 0.221608
+#>       Estimate Std.Err     2.5%  97.5%   P-value
+#> iprod    0.762  0.3762  0.02473 1.4993 4.279e-02
+#> ─────                                           
+#> sum      1.300  0.2805  0.75025 1.8498 3.574e-06
+#> ─────                                           
+#> prod     0.400  0.2108 -0.01320 0.8132 5.778e-02
 ```
 
 Exponentiation and renaming of parameter
@@ -168,17 +169,17 @@ Exponentiation and renaming of parameter
 ``` r
 c(pow = a^b)
 #>     Estimate Std.Err    2.5% 97.5% P-value
-#> pow   0.5743  0.3509 -0.1134 1.262  0.1017
+#> pow   0.5743  0.2826 0.02051 1.128  0.0421
 ```
 
 Transformation and subsetting
 
 ``` r
 c(e["a"] * e["b"] / a, e["b"])
-#>   Estimate Std.Err   2.5% 97.5% P-value
-#> a      0.8  0.3337 0.1459 1.454 0.01653
-#> ─                                      
-#> b      0.8  0.3337 0.1459 1.454 0.01653
+#>   Estimate Std.Err   2.5% 97.5%   P-value
+#> a      0.8  0.1836 0.4401  1.16 1.323e-05
+#> ─                                        
+#> b      0.8  0.1836 0.4401  1.16 1.323e-05
 ```
 
 For the `%*%*` operator we can also use a general contrast matrix
@@ -186,17 +187,17 @@ For the `%*%*` operator we can also use a general contrast matrix
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err    2.5%  97.5% P-value
-#> [a] - [b]     -0.3  0.4867 -1.2539 0.6539 0.53762
-#> [a]            0.5  0.3528 -0.1915 1.1915 0.15641
-#> [b]            0.8  0.3337  0.1459 1.4541 0.01653
-#> 
-#>  Null Hypothesis: 
+#>           Estimate Std.Err     2.5%  97.5%   P-value
+#> [a] - [b]     -0.3  0.3729 -1.03089 0.4309 4.211e-01
+#> a              0.5  0.2741 -0.03727 1.0373 6.815e-02
+#> b              0.8  0.1836  0.44006 1.1599 1.323e-05
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 7.7838, df = 2, p-value = 0.02041
+#> chisq = 29.7439, df = 2, p-value = 3.477e-07
 plot(B %*% e)
 ```
 
@@ -353,7 +354,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 3.864s
+#> 100 replications                 Time: 3.275s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
