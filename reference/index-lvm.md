@@ -25,6 +25,9 @@ variable model (`lvm`). Returns a list with
 ``` r
 # S3 method for class 'lvm'
 index(x, ...)
+
+# S3 method for class 'lvm'
+index(x, ...) <- value
 ```
 
 ## Arguments
