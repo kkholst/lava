@@ -73,7 +73,12 @@ compare.default <- function(object,...,
         colnames(ct) <- c("Estimate","Std.Err",paste0(c(1-p,p)*100,"%"))
         rownames(ct) <- rep("",nrow(ct))
         Q <- t(Bp-null)%*%Inverse(V)%*%(Bp-null)
-        df <- qr(V)$rank; names(df) <- "df"
+        if (any(is.nan(V)) ||any(is.na(V))) {
+          df <- 0
+        } else {
+          df <- tryCatch(qr(V)$rank, error=function(...) 0)
+        }
+        names(df) <- "df"
         attributes(Q) <- NULL; names(Q) <- "chisq";
         pQ <- ifelse(df==0,NA,pchisq(Q,df,lower.tail=FALSE))
 
