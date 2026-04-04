@@ -6,7 +6,7 @@ test_that("complik", {
   ordinal(m,K=2) <- ~y1+y2+y3
   d <- sim(m,50,seed=1)
   if (requireNamespace("mets", quietly=TRUE)) {
-    e1 <- complik(m,d,control=list(trace=1),type="all")
+    e1 <- complik(m,d,control=list(trace=0),type="all")
     dl <- mets::fast.reshape(d)
     g <- lme4::glmer(y~x+(1|id), family=binomial("probit"), data=dl)
     # MLE and complik should agree reasonably

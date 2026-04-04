@@ -90,7 +90,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
              cex.legend=0.8,
              plot.type=c("multiple","single"),
              polygon=TRUE,
-             density=0,
+             polygon.col,
+             density=NULL,
              angle=-45,
              cex.axis=0.8,
              alpha=0.2,
@@ -242,7 +243,9 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             scatter.col <- line.col <- true.col <- colors[1]
         }
         y <- as.vector(x[,ii,drop=TRUE])
-        args <- list(y,ylab=scatter.ylab[i],col=Col(scatter.col[1],scatter.alpha),cex=cex,pch=pch,type=type)
+        args <- list(y,ylab=scatter.ylab[i],
+                     col=Col(scatter.col[1], scatter.alpha),
+                     cex=cex,pch=pch,type=type)
         if (!is.null(scatter.ylim)) args <- c(args,list(ylim=scatter.ylim[[i]]))
         if (scatter.plot) {
             if (!add) {
@@ -258,7 +261,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         }
     }
 
-    my.density.sim <- function(i,add=FALSE,colors,
+    my.density.sim <- function(i,add=FALSE,
+                               colors,
                                alphas=alpha,
                                auto.legend=TRUE,
                                densities=NULL,
@@ -286,10 +290,15 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                                      main="", ylab=ylab, xlab=xlab,
                                      ylim=density.ylim0, xlim=density.xlim0)
             if (polygon) {
+              pcol <- col[1]
+              if (alphas[1]<1 && alphas[1]>0) {
+                pcol <- Col(pcol, alpha=alphas[1])
+              }
               with(dy, graphics::polygon(c(x,rev(x)),
                                          c(y,rep(0,length(y))),
-                                         col=Col(col[1], alpha=alphas[1]),
-                                         border=NA,density=densities[1],angle=angles[1]))
+                                         col=pcol,
+                                         border=NA,
+                                         density=densities[1],angle=angles[1]))
                 if (!is.null(border)) with(dy, lines(x,y,col=border[1],lty=lty[1],lwd=lwd[1]))
             } else {
                 graphics::lines(dy,main="",lty=lty[1],col=col[1],lwd=lwd[1])
@@ -313,7 +322,9 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 for (j in seq_along(se.pos)) {
                     if (polygon) {
                         yy <- dnorm(xx,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]])
-                        if (se.alpha[j]>0) graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA,density=densities[j],angle=angles[j])
+                        if (se.alpha[j]>0) {
+                          graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA,density=densities[j],angle=angles[j])
+                        }
                         if (!is.null(border)) lines(xx,yy,col=se.border[j],lty=se.lty[j],lwd=se.lwd[j])
                     } else {
                         graphics::curve(dnorm(x,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]]),lwd=se.lwd[j],lty=se.lty[j],col=se.col[j],add=TRUE)
@@ -373,8 +384,9 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         }
         if (!is.null(legendold)) {
             legend <- rep(legendold,length.out=K)
+            lcol <- Col(col,alpha)
             graphics::legend(legendpos,legend,
-                             fill=Col(col,alpha),border=col,cex=cex.legend)
+                             fill=lcol,border=col,cex=cex.legend)
         }
 
     } else {
@@ -383,7 +395,10 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             if (!is.null(main) && !byrow && scatter.plot) {
                 title(main[i],cex.main=cex.main)
             }
-            my.density.sim(i,auto.legend=missing(legend))
+            my.density.sim(i,auto.legend=missing(legend),
+                           densities = rep(density, K),
+                           angles = rep(angle, K)
+                           )
             if (i==1 && ask && K>1) par(ask=ask)
         }
     }

@@ -31,8 +31,8 @@ testthat::test_that("plotConf", {
   z <- rbinom(50,1,0.5)
   d <- data.frame(y,z,x)
   l <- lm(y~x*z)
-  expect_doppelganger("plotConf1", {
-    plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
+  val <- expect_doppelganger("plotConf1", {
+    val <- plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
   })
   ##par(mar=c(0,0,0,0))
   ## newd <- data.frame(x=seq(min(x),max(x),length.out=100))
@@ -48,8 +48,8 @@ testthat::test_that("plotConf", {
   ## points(y~x,col=c("black","blue")[z+1],pch=16)
   #testthat::expect_true(grcompare(d1,d2,threshold=5))
   l <- lm(y~z)
-  expect_doppelganger("plotConf2", {
-    plotConf(l,var2="z",var1=NULL,jitter=0,col="black",alpha=0.5,xlim=c(.5,2.5),ylim=range(y))
+  val <- expect_doppelganger("plotConf2", {
+    val <- plotConf(l,var2="z",var1=NULL,jitter=0,col="black",alpha=0.5,xlim=c(.5,2.5),ylim=range(y))
   })
   ## par(mar=c(0,0,0,0))
   ## plot(y~I(z+1),ylim=range(y),xlim=c(0.5,2.5),pch=16,col=Col("black",0.5))
@@ -69,8 +69,8 @@ testthat::test_that("forestplot", {
   rownames(x) <- unlist(lapply(letters[seq(K)],function(x) paste(rep(x,4),collapse="")))
   rownames(x)[which(is.na(est))] <- ""
   signif <- sign(x[,2])==sign(x[,3])
-  expect_doppelganger("forestplot1", {
-    forestplot(x)
+  val <- expect_doppelganger("forestplot1", {
+    val <- forestplot(x)
   })
 })
 
@@ -82,37 +82,47 @@ test_that("plot.sim", {
   }
   R <- data.frame(a=1:2,b=3:4)
   val2 <- sim(onerun2,R=R,type=0)
-  expect_doppelganger("plot.sim-1", {
-    plot(val2)
+  val <- expect_doppelganger("plot.sim-1", {
+    val <- plot(val2, alpha=1)
   })
-  expect_doppelganger("plot.sim-2", {
-    plot(val2,plot.type="single")
+  val <- expect_doppelganger("plot.sim-2", {
+    val <- plot(val2,plot.type="single",alpha=1)
   })
-  expect_doppelganger("density.sim-1", {
-    density(val2)
+  val <- expect_doppelganger("density.sim-1", {
+    val <- density(val2, alpha=1)
+  })
+})
+
+test_that("plot.estimate", {
+  skip_on_cran()
+  set.seed(1)
+  e1 <- estimate(coef=1, IC=1:10, id=1:10)
+  e2 <- estimate(coef=1.1, IC=0:9, id=1:10)
+  val <- expect_doppelganger("plot.estimate-1", {
+     val <- plot(c(e1, e2), null=1)
   })
 })
 
 test_that("spaghetti", {
   skip_on_cran()
-
+  skip_on_ci() # Skips the test on GitHub Actions
   K <- 5
   y <- "y"%++%seq(K)
   m <- lvm()
   regression(m,y=y,x=~u) <- 1
   regression(m,y=y,x=~s) <- seq(K)-1
   regression(m,y=y,x=~x) <- "b"
-  d <- sim(m,5)
+  d <- sim(m,5,seed=1)
   dd <- mets::fast.reshape(d);
   dd$num <- dd$num+rnorm(nrow(dd),sd=0.5) ## Unbalance
-  expect_doppelganger("spaghetti-1", {
-  spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
+  val <- expect_doppelganger("spaghetti-1", {
+    val <- spaghetti(y~num,dd,id="id",lty=1,col=Col(1,.4),trend=TRUE,trend.col="darkblue")
   })
 })
 
 test_that("plot.lvm", {
   skip_on_cran()
-
+  skip_on_ci() # Skips the test on GitHub Actions
   ## TODO
   m <- lvm(y~1*u[0:1],u~1*x)
   latent(m) <- ~u
@@ -168,14 +178,9 @@ test_that("pdfconvert", {
   ## TODO
 })
 
-test_that("plot.estimate", {
-  skip_on_cran()
-  ## TODO
-})
-
 test_that("logo", {
   skip_on_cran()
-  expect_doppelganger("logo", {
+  val <- expect_doppelganger("logo", {
     lava:::lava(w=10, seed=42)
   })
 })

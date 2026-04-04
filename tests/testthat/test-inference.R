@@ -54,7 +54,6 @@ test_that("glm-estimator", {
     distribution(m,~y+z) <- binomial.lvm("logit")
     set.seed(1)
     d <- sim(m,1e3,seed=1)
-    head(d)
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]
@@ -142,7 +141,7 @@ test_that("modelsearch and GoF", {
     testthat::expect_true(inherits(ee,"lvm"))
 
     ## TODO
-    gof(e,all=TRUE)
+    g <- gof(e,all=TRUE)
     r <- rsq(e)[[1]]
     testthat::expect_true(abs(summary(lm(y1~x,d))$r.square-r["y1"])<1e-5)
 })
@@ -224,7 +223,7 @@ test_that("zero-inflated binomial regression (zib)", {
     ## Estimation
     e0 <- zibreg(y~x*z,~1+z+age,data=d)
     e <- zibreg(y~x,~1+z+age,data=d)
-    compare(e,e0)
+    lrt <- compare(e,e0)
     testthat::expect_equivalent(score(e,data=d),
                       colSums(score(e,indiv=TRUE)))
     testthat::expect_equivalent(logLik(e,data=d),
@@ -233,7 +232,7 @@ test_that("zero-inflated binomial regression (zib)", {
 
     testthat::expect_output(print(e), "Prevalence probabilities:")
 
-    PD(e0,intercept=c(1,3),slope=c(2,6))
+    pdval <- PD(e0,intercept=c(1,3),slope=c(2,6))
 
     B <- rbind(c(1,0,0,0,20),
                c(1,1,0,0,20),
@@ -292,7 +291,6 @@ test_that("Prediction with missing data, random intercept", {
     testthat::expect_true(inherits(e0$estimate,"multigroupfit"))
     testthat::expect_output(print(e0$estimate),"Group 1")
     testthat::expect_output(print(summary(e0$estimate)),paste0("observations = ",nrow(d0)))
-
 })
 
 ## if (requireNamespace("lme4", quietly = TRUE) && requireNamespace("mets", quietly = TRUE)) {
@@ -332,7 +330,8 @@ test_that("Random slope model", {
     testthat::expect_true(mean(diag(sl$varcomp)-coef(e)[varcomp.nam])^2<1e-5)
 
     ## missing
-    testthat::expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
+    testthat::expect_output(e0 <- estimate(m0,d0,missing=TRUE,param="none",
+                                           control=list(method="NR",constrain=FALSE,start=coef(e),trace=1)),
                             "Iter=")
     ## l0 <- lmer(y ~ 1 + num + (1 + num | id), dd0, REML = FALSE)
     l0 <- nlme::lme(y~ 1+num, random=~1+num|id, data=dd0, method="ML")
@@ -402,7 +401,7 @@ test_that("multinomial", {
     e <- estimate(l <- lm(d[,5]==lev[1]~1))
     testthat::expect_true(abs(vcov(e)[1]-vcov(m)[1])<1e-9)
 
-    (a1 <- multinomial(d[,5:6],marginal=TRUE))
+    a1 <- multinomial(d[,5:6],marginal=TRUE)
     K1 <- kappa(a1) ## Cohen's kappa
     P <- a1$P
     marg1 <- rowSums(P)
@@ -424,8 +423,8 @@ test_that("multinomial", {
 
 
     ## TODO
-    lava:::independence(d[,5:6])
-    information(d[,5:6])
+    indep <- lava:::independence(d[,5:6])
+    inf <- information(d[,5:6])
 
     ## pcor
     if (requireNamespace("polycor",quietly=TRUE)) {
@@ -474,10 +473,6 @@ test_that("partialcor", {
 ## TODO
 ## })
 
-## test_that("multipletesting", {
-## TODO
-## })
-
 test_that("correlation", {
   set.seed(1)
   d <- matrix(rnorm(500), ncol=2)
@@ -510,8 +505,8 @@ test_that("Weighted",{
     l <- lm(y~x,data=d)
     testthat::expect_true(mean((coef(e)[1:2]-coef(l))^2)<1e-12)
 
-    w2 <- estimate(m,data=d,weights=d$w,control=list(trace=1))
-    w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=1))
+    w2 <- estimate(m,data=d,weights=d$w,control=list(trace=0))
+    w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=0))
     expect_equivalent(coef(w2), coef(w))
     lw <- lm(y~x,data=d, weights=d$w)
     testthat::expect_true(mean((coef(w)[1:2]-coef(lw))^2)<1e-12)
