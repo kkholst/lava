@@ -13,7 +13,7 @@
 [![cran-dl](https://cranlogs.r-pkg.org/badges/lava)](https://cranlogs.r-pkg.org/downloads/total/last-month/lava)
 <!-- badges: end -->
 
-<img src="man/figures/logo.png" align="right" height=200 style="float:right; height:200px;"  alt="lava website"/>
+<img src="man/figures/logo.png" align="right" height=200 style="float:right; height:200px;" class="pkgdown-hide" alt="lava website"/>
 
 # Latent Variable Models (`lava`)
 
