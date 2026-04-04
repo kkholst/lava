@@ -16,10 +16,12 @@ Simulated data generated from model
 }
 \details{
 The list contains four data sets
-1) Complete data
-2) MCAR
-3) MAR
-4) MNAR (missing mechanism depends on variable V correlated with Y1,Y2)
+\enumerate{
+\item Complete data
+\item MCAR
+\item MAR
+\item MNAR (missing mechanism depends on variable V correlated with Y1,Y2)
+}
 }
 \examples{
 data(missingdata)

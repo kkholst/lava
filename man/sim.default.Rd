@@ -41,23 +41,23 @@ instead of future}
 
 \item{progressr.message}{Optional message for the progressr progress-bar}
 
-\item{estimate.index}{If return object inherits from `estimate` then only
+\item{estimate.index}{If return object inherits from \code{estimate} then only
 these column indices are extracted (estimate, se, lower, upper, p-val)}
 
-\item{...}{Additional arguments to future.apply::future_mapply}
+\item{...}{Additional arguments to \code{\link[future.apply:future_mapply]{future.apply::future_mapply()}}}
 }
 \description{
 Applies a function repeatedly for a specified number of replications or over
 a list/data.frame with plot and summary methods for summarizing the Monte
 Carlo experiment. Can be parallelized via the future package (use the
-future::plan function).
+\code{\link[future:plan]{future::plan()}} function).
 }
 \details{
-To parallelize the calculation use the future::plan function (e.g.,
-  future::plan(multisession()) to distribute the calculations over the R
-  replications on all available cores). The output is controlled via the
-  progressr package (e.g., progressr::handlers(global=TRUE) to enable
-  progress information).
+To parallelize the calculation use the \code{\link[future:plan]{future::plan()}} function
+(e.g., \code{future::plan(multisession())} to distribute the calculations over
+the \code{R} replications on all available cores). The output is controlled via
+the progressr package (e.g., \code{progressr::handlers(global=TRUE)} to enable
+progress information).
 }
 \examples{
 m <- lvm(y~x+e)
@@ -105,5 +105,5 @@ sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 }
 \seealso{
-summary.sim plot.sim print.sim sim.lvm
+\code{\link[=summary.sim]{summary.sim()}} \code{\link[=plot.sim]{plot.sim()}} \code{\link[=sim.lvm]{sim.lvm()}}
 }

@@ -21,7 +21,7 @@
 \item{...}{Additional arguments to lower level functions}
 }
 \description{
-Define intervention in a `lvm` object
+Define intervention in a \code{lvm} object
 }
 \examples{
 m <- lvm(y ~ a + x, a ~ x)

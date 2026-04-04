@@ -8,14 +8,16 @@ devcoords()
 }
 \value{
 A \code{list} with elements
- \item{dev.x1}{Device: Left x-coordinate}
- \item{dev.x2}{Device: Right x-coordinate}
- \item{dev.y1}{Device Bottom y-coordinate}
- \item{dev.y2}{Device Top y-coordinate}
- \item{fig.x1}{Plot: Left x-coordinate}
- \item{fig.x2}{Plot: Right x-coordinate}
- \item{fig.y1}{Plot: Bottom y-coordinate}
- \item{fig.y2}{Plot: Top y-coordinate}
+\itemize{
+\item \code{dev.x1}: device left x-coordinate
+\item \code{dev.x2}: device right x-coordinate
+\item \code{dev.y1}: device bottom y-coordinate
+\item \code{dev.y2}: device top y-coordinate
+\item \code{fig.x1}: plot left x-coordinate
+\item \code{fig.x2}: plot right x-coordinate
+\item \code{fig.y1}: plot bottom y-coordinate
+\item \code{fig.y2}: plot top y-coordinate
+}
 }
 \description{
 Returns device-coordinates and plot-region

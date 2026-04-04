@@ -8,27 +8,27 @@
 closed_testing(object, test = test_wald, ...)
 }
 \arguments{
-\item{object}{`estimate` object}
+\item{object}{\code{estimate} object}
 
 \item{test}{function that conducts hypothesis test. See details below.}
 
-\item{...}{Additional arguments passed to `test`}
+\item{...}{Additional arguments passed to \code{test}}
 }
 \description{
-Given p hypotheses H1, ..., Hp all 2^p-1 intersection hypotheses are
-calculated and adjusted p-values are obtained for Hj is calculated as the
-max p-value of all intersection hypotheses containing Hj. Example, for p=3,
-the adjusted p-value for H1 will be obtained from \{(H1, H2, H3), (H1,H2),
-(H1,H3), (H1)\}.
+Given p hypotheses \eqn{H_1, \ldots, H_p}{H1, ..., Hp} all
+\eqn{2^p-1}{2^p-1} intersection hypotheses are calculated and adjusted
+p-values are obtained for \eqn{H_j}{Hj} is calculated as the max p-value of
+all intersection hypotheses containing Hj. Example, for p=3, the adjusted
+p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
+(H1,H2), (H1,H3), (H1)\}}.
 }
 \details{
-The function `test` should be a function `function(object, index,
-  ...)` which as its first argument takes an `estimate` object and and wit
-  an argument `index` which is a integer vector specifying which
-  subcomponents of `object` to test. The ellipsis argument can be any other
-  arguments used in the test function. The function \code{test_wald} is an
-  example of valid test function (which has an additional argument `null` in
-  reference to the above mentioned ellipsis arguments).
+The function \code{test} should be a function \verb{function(object, index, ...)} which as its first argument takes an \code{estimate} object and and wit
+an argument \code{index} which is a integer vector specifying which
+subcomponents of \code{object} to test. The ellipsis argument can be any other
+arguments used in the test function. The function \code{\link[=test_wald]{test_wald()}} is an
+example of valid test function (which has an additional argument \code{null} in
+reference to the above mentioned ellipsis arguments).
 }
 \examples{
 m <- lvm()
@@ -53,6 +53,6 @@ summary(adj)
 }
 \references{
 Marcus, R; Peritz, E; Gabriel, KR (1976).
-  "On closed testing procedures with special reference to ordered analysis
-  of variance". Biometrika. 63 (3): 655–660.
+"On closed testing procedures with special reference to ordered analysis of variance".
+Biometrika. 63 (3): 655–660.
 }

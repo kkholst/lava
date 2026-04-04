@@ -88,7 +88,6 @@ NULL
 ##' @keywords datasets
 NULL
 
-
 ##' 50 patients from Monash Medical Centre, Melbourne
 ##'
 ##' Diagnosis of depression (DSM-III-R MDD, Dysthymia, Adjustment Disorder with
@@ -107,7 +106,6 @@ NULL
 ##' 30 (6), pp. 483-492.
 ##' @keywords datasets
 NULL
-
 
 ##' Hubble data
 ##'

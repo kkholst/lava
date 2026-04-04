@@ -6,7 +6,7 @@
 ##' Applies a function repeatedly for a specified number of replications or over
 ##' a list/data.frame with plot and summary methods for summarizing the Monte
 ##' Carlo experiment. Can be parallelized via the future package (use the
-##' future::plan function).
+##' [future::plan()] function).
 ##' @export
 ##' @param x function or 'sim' object
 ##' @param R Number of replications or data.frame with parameters
@@ -21,13 +21,13 @@
 ##' @param progressr.message Optional message for the progressr progress-bar
 ##' @param estimate.index If return object inherits from `estimate` then only
 ##'   these column indices are extracted (estimate, se, lower, upper, p-val)
-##' @param ... Additional arguments to future.apply::future_mapply
+##' @param ... Additional arguments to [future.apply::future_mapply()]
 ##' @aliases sim sim.default as.sim
-##' @seealso summary.sim plot.sim print.sim sim.lvm
-##' @details To parallelize the calculation use the future::plan function (e.g.,
-##'   future::plan(multisession()) to distribute the calculations over the R
-##'   replications on all available cores). The output is controlled via the
-##'   progressr package (e.g., progressr::handlers(global=TRUE) to enable
+##' @seealso [summary.sim()] [plot.sim()] [sim.lvm()]
+##' @details To parallelize the calculation use the [future::plan()] function
+##'   (e.g., `future::plan(multisession())` to distribute the calculations over
+##'   the `R` replications on all available cores). The output is controlled via
+##'   the progressr package (e.g., `progressr::handlers(global=TRUE)` to enable
 ##'   progress information).
 ##' @examples
 ##' m <- lvm(y~x+e)

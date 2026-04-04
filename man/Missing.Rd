@@ -72,5 +72,5 @@ sim(m,10)
 
 }
 \author{
-Thomas A. Gerds <tag@biostat.ku.dk>
+Thomas A. Gerds \href{mailto:tag@biostat.ku.dk}{tag@biostat.ku.dk}
 }

@@ -41,7 +41,7 @@ plotConf(
 )
 }
 \arguments{
-\item{model}{Model object (e.g. \code{lm})}
+\item{model}{Model object (e.g. \code{\link[=lm]{lm()}})}
 
 \item{var1}{predictor (Continuous or factor)}
 
@@ -105,9 +105,11 @@ plotConf(
 }
 \value{
 list with following members:
-\item{x}{Variable on the x-axis (\code{var1})}
-\item{y}{Variable on the y-axis (partial residuals)}
-\item{predict}{Matrix with confidence limits and predicted values}
+\itemize{
+\item \code{x} Variable on the x-axis \code{var1}
+\item \code{y} Variable on the y-axis (partial residuals)
+\item \code{predict} Matrix with confidence limits and predicted startvalues.R
+}
 }
 \description{
 Plot regression line (with interactions) and partial residuals.
@@ -138,7 +140,7 @@ plotConf(lmer0, var1="x1", var2="x2")
 }
 }
 \seealso{
-\code{termplot}
+\code{\link[=termplot]{termplot()}}
 }
 \author{
 Klaus K. Holst

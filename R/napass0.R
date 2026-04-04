@@ -32,7 +32,7 @@ impute0 <- function(object,rows,idx,na.action=na.omit,value,...) {
 ##' @description Returns the object with missing data replaced by zeros. This is
 ##'   sometimes useful for example when working with inverse probability
 ##'   weighting of the complete-case data.
-##' @seealso [na.pass], [na.omit], [na.fail]
+##' @seealso [na.pass()], [na.omit()], [na.fail()]
 ##' @export
 ##' @param object data.frame, vector
 ##' @param na.action function used to identify missing values

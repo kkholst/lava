@@ -9,8 +9,8 @@ data.frame
 }
 \source{
 Clarke, D. M., Smith, G. C., & Herrman, H. E. (1993). A comparative
-  study of screening instruments for mental disorders in general hospital
-  patients. International Journal Psychiatry in Medicine, 23, pp. 323-337.
+study of screening instruments for mental disorders in general hospital
+patients. International Journal Psychiatry in Medicine, 23, pp. 323-337.
 
 McKenzie et al. (1996). Comparing correlated Kappas by resampling: Is one
 level of agreement significantly different from another? J. Psychiat. Res.

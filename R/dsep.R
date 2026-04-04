@@ -13,8 +13,8 @@
 ##' @param return.graph If TRUE the moralized ancestral graph with the
 ##'     conditioning set removed is returned
 ##' @param ... Additional arguments to lower level functions
-##' @details The argument 'x' can be given as a formula, e.g.  x~y|z+v
-##'     or ~x+y|z+v With everything on the rhs of the bar defining the
+##' @details The argument `x` can be given as a formula, e.g. `x~y|z+v`
+##'     or `~x+y|z+v` With everything on the rhs of the bar defining the
 ##'     variables on which to condition on.
 ##' @examples
 ##' m <- lvm(x5 ~ x4+x3, x4~x3+x1, x3~x2, x2~x1)

@@ -34,11 +34,12 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 
 ##' Closed testing procedure
 ##'
-##' Given p hypotheses H1, ..., Hp all 2^p-1 intersection hypotheses are
-##' calculated and adjusted p-values are obtained for Hj is calculated as the
-##' max p-value of all intersection hypotheses containing Hj. Example, for p=3,
-##' the adjusted p-value for H1 will be obtained from \{(H1, H2, H3), (H1,H2),
-##' (H1,H3), (H1)\}.
+##' Given p hypotheses \eqn{H_1, \ldots, H_p}{H1, ..., Hp} all
+##' \eqn{2^p-1}{2^p-1} intersection hypotheses are calculated and adjusted
+##' p-values are obtained for \eqn{H_j}{Hj} is calculated as the max p-value of
+##' all intersection hypotheses containing Hj. Example, for p=3, the adjusted
+##' p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
+##' (H1,H2), (H1,H3), (H1)\}}.
 ##' @aliases closed_testing alpha_zmax
 ##' @param object `estimate` object
 ##' @param test function that conducts hypothesis test. See details below.
@@ -48,12 +49,12 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##'   ...)` which as its first argument takes an `estimate` object and and wit
 ##'   an argument `index` which is a integer vector specifying which
 ##'   subcomponents of `object` to test. The ellipsis argument can be any other
-##'   arguments used in the test function. The function \code{test_wald} is an
+##'   arguments used in the test function. The function [test_wald()] is an
 ##'   example of valid test function (which has an additional argument `null` in
 ##'   reference to the above mentioned ellipsis arguments).
 ##' @references Marcus, R; Peritz, E; Gabriel, KR (1976).
-##'   "On closed testing procedures with special reference to ordered analysis
-##'   of variance". Biometrika. 63 (3): 655–660.
+##'   "On closed testing procedures with special reference to ordered analysis of variance".
+##'   Biometrika. 63 (3): 655–660.
 ##' @examples
 ##' m <- lvm()
 ##' regression(m, c(y1,y2,y3,y4)~x) <- c(0, 0.25, 0, 0.25)

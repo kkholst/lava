@@ -37,8 +37,8 @@ negative predictive values
 }
 \details{
 Table should be in the format with outcome in columns and
-    test in rows.  Data.frame should be with test in the first
-    column and outcome in the second column.
+test in rows.  Data.frame should be with test in the first
+column and outcome in the second column.
 }
 \examples{
 M <- as.table(matrix(c(42,12,

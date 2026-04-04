@@ -15,8 +15,8 @@ na.pass0(object, na.action = na.omit, ...)
 }
 \description{
 Returns the object with missing data replaced by zeros. This is
-  sometimes useful for example when working with inverse probability
-  weighting of the complete-case data.
+sometimes useful for example when working with inverse probability
+weighting of the complete-case data.
 }
 \examples{
 d <- data.frame(y=c(1,1,NA,2,NA,2), r=c(1,1,0,1,1,1))
@@ -24,5 +24,5 @@ na.pass0(d)
 glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
 }
 \seealso{
-[na.pass], [na.omit], [na.fail]
+\code{\link[=na.pass]{na.pass()}}, \code{\link[=na.omit]{na.omit()}}, \code{\link[=na.fail]{na.fail()}}
 }

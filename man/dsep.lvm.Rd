@@ -23,9 +23,9 @@ conditioning set removed is returned}
 Check for conditional independence (d-separation)
 }
 \details{
-The argument 'x' can be given as a formula, e.g.  x~y|z+v
-    or ~x+y|z+v With everything on the rhs of the bar defining the
-    variables on which to condition on.
+The argument \code{x} can be given as a formula, e.g. \code{x~y|z+v}
+or \code{~x+y|z+v} With everything on the rhs of the bar defining the
+variables on which to condition on.
 }
 \examples{
 m <- lvm(x5 ~ x4+x3, x4~x3+x1, x3~x2, x2~x1)

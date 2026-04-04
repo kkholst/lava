@@ -1,44 +1,43 @@
 ##' Plot regression line (with interactions) and partial residuals.
 ##'
 ##' @title Plot regression lines
-##' @param model Model object (e.g. \code{lm})
+##' @param model Model object (e.g. [lm()])
 ##' @param var1 predictor (Continuous or factor)
-##' @param var2 Factor that interacts with \code{var1}
+##' @param var2 Factor that interacts with `var1`
 ##' @param data data.frame to use for prediction (model.frame is used as default)
 ##' @param ci.lty Line type for confidence limits
-##' @param ci Boolean indicating wether to draw pointwise 95\% confidence limits
-##' @param level Level of confidence limits (default 95\%)
+##' @param ci Boolean indicating wether to draw pointwise 95% confidence limits
+##' @param level Level of confidence limits (default 95%)
 ##' @param pch Point type for partial residuals
 ##' @param lty Line type for estimated regression lines
 ##' @param lwd Line width for regression lines
 ##' @param npoints Number of points used to plot curves
 ##' @param xlim Range of x axis
-##' @param col Color (for each level in \code{var2})
+##' @param col Color (for each level in `var2`)
 ##' @param colpt Color of partial residual points
 ##' @param alpha Alpha level
 ##' @param cex Point size
-##' @param delta For categorical \code{var1}
-##' @param centermark For categorical \code{var1}
-##' @param jitter For categorical \code{var1}
-##' @param cidiff For categorical \code{var1}
-##' @param mean For categorical \code{var1}
+##' @param delta For categorical `var1`
+##' @param centermark For categorical `var1`
+##' @param jitter For categorical `var1`
+##' @param cidiff For categorical `var1`
+##' @param mean For categorical `var1`
 ##' @param legend Boolean (add legend)
 ##' @param trans Transform estimates (e.g. exponential)
 ##' @param partres Boolean indicating whether to plot partial residuals
 ##' @param partse .
-##' @param labels Optional labels of \code{var2}
+##' @param labels Optional labels of `var2`
 ##' @param vcov Optional variance estimates
 ##' @param predictfun Optional predict-function used to calculate confidence limits and predictions
 ##' @param plot If FALSE return only predictions and confidence bands
 ##' @param new If FALSE add to current plot
 ##' @param \dots additional arguments to lower level functions
 ##' @return list with following members:
-##' \item{x}{Variable on the x-axis (\code{var1})}
-##' \item{y}{Variable on the y-axis (partial residuals)}
-##' \item{predict}{Matrix with confidence limits and predicted values}
+##' * `x` Variable on the x-axis `var1`
+##' * `y` Variable on the y-axis (partial residuals)
+##' * `predict` Matrix with confidence limits and predicted startvalues.R
 ##' @author Klaus K. Holst
-##' @seealso \code{termplot}
-##' @aliases plotConf
+##' @seealso [termplot()]
 ##' @export
 ##' @examples
 ##' n <- 100
