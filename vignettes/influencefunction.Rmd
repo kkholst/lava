@@ -416,10 +416,11 @@ different estimators with decompositions
 \end{align*}
 based on iid data $Z_1,\ldots,Z_n$. It then follows immediately
 [@vaart_1998_asymp Theorem 18.10[vi]] that the
-joint distribution of $\widehat{\theta} - {\theta}=
-(\widehat{\theta}_{1}^{\top},\ldots,\widehat{\theta}_{M}^{\top})^\top-
-({\theta}_{1}^{\top},\ldots,{\theta}_{M}^{\top})^\top
-$ is given by
+joint distribution of
+$\widehat{\theta} - {\theta} =
+(\widehat{\theta}_{1}^{\top},\ldots,\widehat{\theta}_{M}^{\top})^\top -
+({\theta}_{1}^{\top},\ldots,{\theta}_{M}^{\top})^\top$
+is given by
 \begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 \underbrace{[\IC_{1}(Z_i; \Pz)^\top,\ldots,\IC_{M}(Z_i; \Pz)^\top]^{\top}}_{\overline{\IC}(Z_i; \Pz)} + \op(1) \\

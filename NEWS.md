@@ -1,8 +1,11 @@
+# lava 1.9.1
+  Development version
+  - Safe evaluation of rank in `wald_test`
+
 # lava 1.9.0
   - `estimate`: estimate objects can now be transformed via functions: `log`,
     `exp`, `+`, `-`, `*`, `/`, `^`, ... See the influence vignette for full
     details and list of available mathematical transformations.
-  - breaking change: `+` operator for estimate objects no longer merges objects.
   - `sim.default`: the simulation function `f`'s return object can now be an
     `estimate` object
   - `summary.sim`: automatically derives estimate, se, confint parameters if the
@@ -10,6 +13,9 @@
   - `merge.estimate`: cast warning if `back.transform` was used
   - `merge.estimate`: works with objects with and without influence function
   - `summary.sim` `df` argument for calculating CIs based on t-dist. approximation
+  - breaking change: `+` operator for estimate objects no longer merges objects,
+    use `%++%` or `c(...)` instead
+  - breaking change: `addattr`, `intfix`, `covfix` no longer exported.
 
 # lava 1.8.2
   - Improved closed testing procedure `closed_testing` (depr. `closed.testing`)
