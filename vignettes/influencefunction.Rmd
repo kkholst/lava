@@ -708,7 +708,7 @@ a^c(0.5, 2)
 c(e["a"] * e["b"] / a, e["b"])
 ```
 
-For the `%*%*` operator we can also use a general contrast matrix
+For the `%*%` operator we can also use a general contrast matrix
 (see also Section on [Linear contrasts](#linear-contrasts-and-hypothesis-testing)
 ```{r estimate-contrast}
 B <- rbind(c(1,-1), c(1,0), c(0,1))
