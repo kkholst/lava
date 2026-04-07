@@ -214,7 +214,7 @@ e
 
 ### Model assessment
 
-Assessing goodness-of-fit, here the linearity between eta2 and eta1 (requires the `gof` package)
+Assessing goodness-of-fit, here the linearity between u2 and u1 (requires the `gof` package)
 
 ```{r}
 #| label: gof1
