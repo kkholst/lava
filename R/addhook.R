@@ -101,7 +101,7 @@ assign("options", list(
                       eval.max=250,
                       allow.negative.variance=FALSE,
                       progressbarstyle=3,
-                      itol=1e-16,
+                      itol=(.Machine$double.eps)**.5,
                       cluster.index=packagecheck("mets"),
                       Dmethod="simple",
                       messages=ifelse(interactive(), 1, 0),

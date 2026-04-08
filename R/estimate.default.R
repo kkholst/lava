@@ -122,7 +122,6 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
-##' @param cluster (obsolete) alias for 'id'.
 ##' @param R Number of simulations (simulated p-values)
 ##' @param null.sim Mean under the null for simulations
 ##' @details
@@ -301,7 +300,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              print=NULL, labels, label.width,
                              only.coef=FALSE, back.transform=NULL,
                              folds=0,
-                             cluster,
                              R=0,
                              null.sim) {
   cl <- match.call(expand.dots = TRUE)
@@ -330,7 +328,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       pp <- c(pp, scale=x$scale)
     }
   }
-  if (!missing(cluster)) id <- cluster
   if (expr || is.character(f) || (is.numeric(f)
     && !is.matrix(f))) { ## || is.call(f)) {
     dots <- lapply(substitute(placeholder(...))[-1], function(x) x)
@@ -494,6 +491,13 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     }
     if (tolower(type[1])=="df2") {
       V <- adj2*V
+    }
+    if (tolower(type[1])=="hc3") {
+      S <- Inverse(crossprod(ic_theta), tol=sqrt(.Machine$double.eps))
+      h <- apply(ic_theta, 1, function(x) t(x) %*% S %*% x)
+      ic <- cbind(ic_theta)
+      for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i]/(1-h)
+      V <- var_ic(ic)
     }
   } else {
     if (!missing(vcov)) {
