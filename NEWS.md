@@ -1,6 +1,8 @@
 # lava 1.9.1
   Development version
   - Safe evaluation of rank in `wald_test`
+  - adding CI Length to `summary.sim` output
+  - fixing bug wrt `estimate.index` in `summary.sim`
 
 # lava 1.9.0
   - `estimate`: estimate objects can now be transformed via functions: `log`,

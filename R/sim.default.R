@@ -169,9 +169,9 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       res <- as.vector(cmat)
       cn <- colnames(cmat)
       nam <- c()
-      for (i in idx) {
+      for (i in seq_along(idx)) {
         newn <- rownames(cmat)
-        if (i > 1L) newn <- paste(cn[i], newn, sep=".")
+        if (idx[i] > 1L) newn <- paste(newn, cn[i], sep=".")
         nam <- c(nam, newn)
       }
       names(res) <- nam
@@ -372,7 +372,8 @@ print.sim <- function(x, ...) {
 
 ##' @export
 print.summary.sim <- function(x,
-                              group=list(c("^mean$","^sd$","^se$","^se/sd$","^coverage"),
+                              group=list(c("^mean$","^sd$","^se$","^se/sd$",
+                                           "^coverage","^length"),
                                    c("^min$","^[0-9.]+%$","^max$"),
                                    c("^na$","^missing$"),
                                    c("^true$","^bias$","^rmse$")),
@@ -595,11 +596,13 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         }
         if (length(confint)!=2*length(estimate)) stop("'confint' should be of length 2*length(estimate).")
         Coverage <- c()
+        Length <- c()
         for (i in seq_along(estimate)) {
             Coverage <- c(Coverage,
                           mean((object[,confint[2*(i-1)+1]]<true[i]) & (object[,confint[2*i]]>true[i]),na.rm=TRUE))
+            Length <- c(Length, mean(abs(object[,confint[2*i]] - object[,confint[2*(i-1)+1]])))
         }
-        est <- rbind(est,Coverage=Coverage)
+        est <- rbind(est,Coverage=Coverage, Length=Length)
     }
 
     if (!is.null(names)) {

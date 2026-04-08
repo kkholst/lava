@@ -34,12 +34,12 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 
 ##' Closed testing procedure
 ##'
-##' Given p hypotheses \eqn{H_1, \ldots, H_p}{H1, ..., Hp} all
-##' \eqn{2^p-1}{2^p-1} intersection hypotheses are calculated and adjusted
-##' p-values are obtained for \eqn{H_j}{Hj} is calculated as the max p-value of
-##' all intersection hypotheses containing Hj. Example, for p=3, the adjusted
-##' p-value for \eqn{H_1}{H1} will be obtained from \eqn{\{(H1, H2, H3),
-##' (H1,H2), (H1,H3), (H1)\}}.
+##' Given \eqn{k} hypotheses \eqn{H_1, \ldots, H_k}{H1, ..., Hp} all
+##' \eqn{2^k-1}{2^k-1} intersection hypotheses are calculated and adjusted
+##' p-values are obtained for \eqn{H_j}{Hj} is calculated as the max
+##' \eqn{p}-value of all intersection hypotheses containing \eqn{H_j}{Hj}.
+##' Example, for \eqn{k=3}, the adjusted \eqn{p}-value for \eqn{H_1}{H1} will be
+##' obtained from \eqn{\{(H_1, H_2, H_3), (H_1,H_2), (H_1,H_3), (H_1)\}}.
 ##'
 ##' \if{html}{
 ##'   \figure{closedtesting.svg}{options: width=500}
@@ -78,7 +78,7 @@ alpha_zmax <- function(object, method, alpha = 0.05, ...) {
 ##' if (requireNamespace("mets",quietly=TRUE)) {
 ##'    alpha_zmax(a)
 ##' }
-##' adj <- closed_testing(a)
+##' adj <- closed_testing(a, test = test_wald, null = 0)
 ##' adj
 ##' adj$p.value
 ##' summary(adj)
