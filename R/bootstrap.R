@@ -66,7 +66,7 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
                           ...) {
   coefs <- sds <- c()
   on.exit(list(coef = coefs[-1, ], sd = sds[-1, ], coef0 = coefs[1, ], sd0 = sds[1, ], model = x))
-  pb <- progressr::progressor(steps = R)
+  pb <- progressr::progressor(steps = R+1)
   pmis <- missing(p)
   bootfun <- function(i) {
     if (i == 0) {
