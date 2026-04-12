@@ -8,11 +8,18 @@ merge.estimate <- function(x,y,...,
                            keep=NULL,
                            subset=NULL,
                            regex=FALSE,
+                           drop.ic = FALSE,
                            ignore.case=FALSE) {
     if (missing(y)) {
       objects <- c(list(x), list(...))
     } else {
-      objects <- c(list(x), list(estimate(y)), list(...))
+      objects <- c(list(x), list(y), list(...))
+    }
+    if (drop.ic) {
+      for (i in seq_along(objects))
+      if (inherits(objects[[i]], "estimate")) {
+        objects[[i]]$IC <- NULL
+      }
     }
     trans <- unlist(lapply(
       objects, function(x) !is.null(x[["back.transform"]])
@@ -177,15 +184,26 @@ merge.estimate <- function(x,y,...,
 ##' @export
 "c.estimate" <- function(...) {
   args <- list(...)
+  n_args <- length(args)
+  # Handle names robustly
+  arg_names <- names(args)
+  # If names are NULL, create a vector of empty strings
+  if (is.null(arg_names)) {
+    arg_names <- character(n_args)
+  }
   is_estimate <- unlist(lapply(args, function(x)
-    inherits(x, c("estimate", "glm", "targeted", "phreg"))))
-  if (!all(is_estimate)) { # fallback to default concatenation
+    inherits(x, c("estimate"))
+    ))
+  merge_args <- c("drop.ic", "paired")
+  not_merge_arg <- which(arg_names %ni% merge_args)
+  if (!all(is_estimate[not_merge_arg])) { # fallback to default concatenation
     cl <- class(args[[1]])
     class(args[[1]]) <- "list"
-    return(do.call(c, args))
+    return(confdo.call(c, args))
   }
-  lab <- names(args)
-  names(args) <- NULL
+  lab <- arg_names[not_merge_arg]
+  arg_names[not_merge_arg] <- ""
+  names(args) <- arg_names
   res <- do.call(merge, args)
   newlabels <- names(coef(res))
   if (!is.null(lab)) {
