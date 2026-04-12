@@ -1,7 +1,10 @@
 ##' @export
 ##' @export density.sim
-density.sim <- function(x, ..., plot.type="single") {
-    plot.sim(x, ..., scatter.plot=FALSE, plot.type=plot.type)
+density.sim <- function(x, ..., add=FALSE, plot.type="single") {
+    plot.sim(x, ...,
+             add=add,
+             scatter.plot=FALSE,
+             plot.type=plot.type)
 }
 
 ##' Plot method for simulation 'sim' objects
@@ -76,6 +79,7 @@ density.sim <- function(x, ..., plot.type="single") {
 ##' @param density.plot if TRUE add density plot
 ##' @param scatter.plot if TRUE add scatter plot 
 ##' @param running.mean if TRUE add running average estimate to scatter plot
+##' @param add if TRUE add to existing plot
 ##' @param ... additional arguments to lower level functions
 plot.sim <- function(x,estimate,se=NULL,true=NULL,
              names=NULL,
@@ -118,6 +122,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
              density.plot=TRUE,
              scatter.plot=FALSE,
              running.mean=scatter.plot,
+             add = FALSE,
              ...) {
 
     if (missing(estimate)) {
@@ -159,7 +164,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         }
 
     }
-  ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names)
+  ss <- summary.sim(x,estimate=unlist(est),se=unlist(se),true=unlist(tru),names=names, confint=FALSE)
 
     oldpar <- NULL
     on.exit({
@@ -225,8 +230,8 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
     }
     if (missing(main)) {
         main <- NULL
-        if (!missing(names)) main <- names
-        else if (K>1 && !single) main <- colnames(ss)
+        ## if (!missing(names)) main <- names
+        ## else if (K>1 && !single) main <- colnames(ss)
     }
     if (!is.null(main)) main <- rep(main,length.out=K)
     if (missing(lty)) {
@@ -244,8 +249,9 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         y <- as.vector(x[,ii,drop=TRUE])
         args <- list(y,ylab=scatter.ylab[i],
                      col=Col(scatter.col[1], scatter.alpha),
-                     cex=cex,pch=pch,type=type)
+                     cex=cex,pch=pch,type=type,...)
         if (!is.null(scatter.ylim)) args <- c(args,list(ylim=scatter.ylim[[i]]))
+        if (!is.null(scatter.xlim)) args <- c(args, list(xlim=scatter.xlim[[i]]))
         if (scatter.plot) {
             if (!add) {
                 do.call(graphics::plot,args)
@@ -296,8 +302,9 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
               with(dy, graphics::polygon(c(x,rev(x)),
                                          c(y,rep(0,length(y))),
                                          col=pcol,
-                                         border=NA,
-                                         density=densities[1],angle=angles[1]))
+                                         border=NA, #col[1],
+                                         density=densities[1],
+                                         angle=angles[1]))
                 if (!is.null(border)) with(dy, lines(x,y,col=border[1],lty=lty[1],lwd=lwd[1]))
             } else {
                 graphics::lines(dy,main="",lty=lty[1],col=col[1],lwd=lwd[1])
@@ -319,17 +326,27 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                 se.lwd <- rep(lwd,length.out=ns)[-1]
                 xx <- dy$x
                 for (j in seq_along(se.pos)) {
-                    if (polygon) {
-                        yy <- dnorm(xx,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]])
-                        if (se.alpha[j]>0) {
-                          graphics::polygon(c(xx,rev(xx)),c(yy,rep(0,length(yy))),col=Col(se.col[j],alpha=se.alpha[j]),border=NA,density=densities[j],angle=angles[j])
-                        }
-                        if (!is.null(border)) lines(xx,yy,col=se.border[j],lty=se.lty[j],lwd=se.lwd[j])
-                    } else {
-                        graphics::curve(dnorm(x,mean=ss["Mean",se.pos[j]],sd=ss["SE",se.pos[j]]),lwd=se.lwd[j],lty=se.lty[j],col=se.col[j],add=TRUE)
-                    }
-                 }
-                if (auto.legend) legend <- c("Kernel",colnames(ss)[se.pos])
+                  if (polygon) {
+                    yy <- dnorm(xx, mean=ss["Mean",se.pos[j]], sd=ss["SE",se.pos[j]])
+                    ## Mirror the same fill logic as the empirical polygon
+                    se.fill <- if (is.null(densities[j+1]) || is.na(densities[j+1])) {
+                                 Col(se.col[j], alpha=se.alpha[j])
+                               } else {
+                                 se.col[j]
+                               }
+                    graphics::polygon(c(xx,rev(xx)), c(yy,rep(0,length(yy))),
+                                      col     = se.fill,
+                                      border  = NA, #se.col[j],
+                                      density = densities[j+1],
+                                      angle   = angles[j+1])
+                    if (!is.null(border)) lines(xx, yy, col=se.col[j],
+                                                lty=se.lty[j], lwd=se.lwd[j])
+                  } else {
+                    graphics::curve(dnorm(x, mean=ss["Mean",se.pos[j]], sd=ss["SE",se.pos[j]]),
+                                    lwd=se.lwd[j], lty=se.lty[j], col=se.col[j], add=TRUE)
+                  }
+                }
+                if (auto.legend) legend <- c("Empirical",colnames(ss)[se.pos])
                 if (!is.null(legend)) {
                     if (polygon) {
                         dcol <- c(col[1],se.col)
@@ -339,7 +356,7 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
                         dcol[which(alpha!=0)] <- NA
                         graphics::legend(legendpos,legend,
                                          fill=fill,
-                                         lty=1,
+                                         ## lty=1,
                                          col=dcol,
                                          border=border,
                                          cex=cex.legend)
@@ -369,17 +386,17 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
         legendold <- legend
         legend <- NULL
         alpha <- rep(alpha,length.out=K)
-        density <- rep(density,length.out=K)
+        density <- if (!is.null(density)) rep(density, length.out=K) else NULL
         angle <- rep(angle,length.out=K)
         for (i in seq_len(K)) {
-            alphas <- if (K==1L) alpha else alpha[i]
-            densities <- density[i]
-            if (!is.null(densities) && densities<1) densities <- NULL
-            if (length(se)>0) alphas <- c(alphas,rep(0,nk[i]))
-            my.density.sim(i, add=(i>1),colors=col[i],alphas=alphas,
-                           densities=densities,
-                           angles=angle[i],
-                           auto.legend=FALSE)
+          alphas <- if (K==1L) alpha else alpha[i]
+          ## if (length(se)>0) alphas <- c(alphas, rep(0, nk[i]))
+          my.density.sim(i, add=if(i>1) TRUE else add, # first panel respects add
+                   colors    = col[i],
+                   alphas    = alphas,
+                   densities = density,
+                   angles    = angle,
+                   auto.legend=FALSE, ...)
         }
         if (!is.null(legendold)) {
             legend <- rep(legendold,length.out=K)
@@ -394,9 +411,11 @@ plot.sim <- function(x,estimate,se=NULL,true=NULL,
             if (!is.null(main) && !byrow && scatter.plot) {
                 title(main[i],cex.main=cex.main)
             }
-            my.density.sim(i,auto.legend=missing(legend),
-                           densities = rep(density, K),
-                           angles = rep(angle, K)
+            nse_i <- if (length(se) > 0) length(se[[i]]) else 0
+            my.density.sim(i, add=add,
+                           auto.legend=missing(legend),
+                           densities = density,
+                           angles = angle, ...
                            )
             if (i==1 && ask && K>1) par(ask=ask)
         }

@@ -383,7 +383,7 @@ print.summary.sim <- function(x,
                       quote=FALSE,
                       time=TRUE,
                       extra=TRUE,
-                      ...) {c
+                      ...) {
     if (extra) {
         cat(attr(x,"n")," replications",sep="")
         if (time && !is.null(attr(x,"time"))) {
