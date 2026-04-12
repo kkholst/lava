@@ -14,7 +14,6 @@
   ...,
   data,
   id,
-  iddata,
   stack = TRUE,
   average = FALSE,
   subset,
@@ -22,6 +21,7 @@
   level = 0.95,
   IC = robust,
   type = c("robust", "df", "mbn"),
+  var.adj,
   keep,
   use,
   regex = FALSE,
@@ -38,7 +38,6 @@
   only.coef = FALSE,
   back.transform = NULL,
   folds = 0,
-  cluster,
   R = 0,
   null.sim
 )
@@ -55,8 +54,6 @@ contrast matrix (or vector)}
 
 \item{id}{(optional) id-variable corresponding to ic decomposition of model
 parameters.}
-
-\item{iddata}{(optional) id-variable for 'data'}
 
 \item{stack}{if TRUE (default) the i.i.d. decomposition is automatically
 stacked according to 'id'}
@@ -75,6 +72,8 @@ returned (extract with \code{IC} method)}
 
 \item{type}{type of small-sample correction}
 
+\item{var.adj}{variance adjustment parameter for small-sample correction}
+
 \item{keep}{(optional) index of parameters to keep from final result}
 
 \item{use}{(optional) index of parameters to use in calculations}
@@ -88,17 +87,15 @@ arguments}
 
 \item{null}{(optional) null hypothesis to test}
 
-\item{vcov}{(optional) covariance matrix of parameter estimates (e.g.
-Wald-test)}
+\item{vcov}{(optional) covariance matrix of parameter estimates}
 
 \item{coef}{(optional) parameter coefficient}
 
-\item{robust}{if TRUE robust standard errors are calculated. If FALSE
-p-values for linear models are calculated from t-distribution}
+\item{robust}{if TRUE robust standard errors are calculated}
 
 \item{df}{degrees of freedom (default obtained from 'df.residual')}
 
-\item{print}{(optional) print function}
+\item{print}{(optional) print function for the resulting estimate objecta}
 
 \item{labels}{(optional) names of coefficients}
 
@@ -110,8 +107,6 @@ p-values for linear models are calculated from t-distribution}
 intervals}
 
 \item{folds}{(optional) aggregate influence functions (divide and conquer)}
-
-\item{cluster}{(obsolete) alias for 'id'.}
 
 \item{R}{Number of simulations (simulated p-values)}
 

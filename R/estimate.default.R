@@ -100,6 +100,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param IC if TRUE (default) the influence function decompositions are also
 ##'   returned (extract with \code{IC} method)
 ##' @param type type of small-sample correction
+##' @param var.adj variance adjustment parameter for small-sample correction
 ##' @param keep (optional) index of parameters to keep from final result
 ##' @param use (optional) index of parameters to use in calculations
 ##' @param regex If TRUE use regular expression (perl compatible) for keep, use

@@ -32,7 +32,7 @@ test_that("plotConf", {
   d <- data.frame(y,z,x)
   l <- lm(y~x*z)
   val <- expect_doppelganger("plotConf1", {
-    val <- plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
+    plotConf(l,var1="x",var2="z",col=c("black","blue"),alpha=0.5,legend=FALSE)
   })
   ##par(mar=c(0,0,0,0))
   ## newd <- data.frame(x=seq(min(x),max(x),length.out=100))
@@ -82,7 +82,7 @@ test_that("plot.sim", {
     return(cbind(a=a,b=b,c=a-1,d=a+1))
   }
   R <- data.frame(a=1:2,b=3:4)
-  val2 <- sim(onerun2,R=R,type=0)
+  val2 <- sim(onerun2,R=R,type=0,mc.cores=1)
   val <- expect_doppelganger("plot.sim-1", {
     val <- plot(val2, alpha=1)
   })

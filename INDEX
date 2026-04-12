@@ -58,8 +58,6 @@ ordinal                 Define variables as ordinal
 ordinal<-               -
 parameter               Define additional parameters of the model
 parameter<-             -
-parfix                  Fix parameters of model
-parfix<-                -
 parpos                  Generic method for finding indeces of model parameters
 pars                    Extract model parameter names
 parents                 Extract parents of nodes

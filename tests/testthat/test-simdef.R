@@ -26,7 +26,7 @@ test_that("sim.default with estimate objects", {
   s <- summary(res)
   expect_true(ncol(s) == 2L)
   expect_equivalent(colnames(s), c("a", "b"))
-  expect_equivalent(s["SE",], colMeans(res[, c("Std.Err.a", "Std.Err.b")]))
+  expect_equivalent(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]))
   expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
 })
 

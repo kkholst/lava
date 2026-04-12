@@ -199,7 +199,7 @@ merge.estimate <- function(x,y,...,
   if (!all(is_estimate[not_merge_arg])) { # fallback to default concatenation
     cl <- class(args[[1]])
     class(args[[1]]) <- "list"
-    return(confdo.call(c, args))
+    return(do.call(c, args))
   }
   lab <- arg_names[not_merge_arg]
   arg_names[not_merge_arg] <- ""
