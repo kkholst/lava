@@ -55,6 +55,7 @@
   density.plot = TRUE,
   scatter.plot = FALSE,
   running.mean = scatter.plot,
+  add = FALSE,
   ...
 )
 }
@@ -156,6 +157,8 @@
 \item{scatter.plot}{if TRUE add scatter plot}
 
 \item{running.mean}{if TRUE add running average estimate to scatter plot}
+
+\item{add}{if TRUE add to existing plot}
 
 \item{...}{additional arguments to lower level functions}
 }
