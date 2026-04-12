@@ -1,4 +1,3 @@
-
 ##' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
@@ -91,7 +90,6 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param data \code{data.frame}
 ##' @param id (optional) id-variable corresponding to ic decomposition of model
 ##'   parameters.
-##' @param iddata (optional) id-variable for 'data'
 ##' @param stack if TRUE (default) the i.i.d. decomposition is automatically
 ##'   stacked according to 'id'
 ##' @param average if TRUE averages are calculated
@@ -109,13 +107,11 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
-##' @param vcov (optional) covariance matrix of parameter estimates (e.g.
-##'   Wald-test)
+##' @param vcov (optional) covariance matrix of parameter estimates
 ##' @param coef (optional) parameter coefficient
-##' @param robust if TRUE robust standard errors are calculated. If FALSE
-##'   p-values for linear models are calculated from t-distribution
+##' @param robust if TRUE robust standard errors are calculated
 ##' @param df degrees of freedom (default obtained from 'df.residual')
-##' @param print (optional) print function
+##' @param print (optional) print function for the resulting estimate objecta
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
@@ -287,12 +283,13 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
-                             iddata, stack=TRUE,
+                             stack=TRUE,
                              average=FALSE, subset,
                              score.deriv,
                              level=0.95,
                              IC=robust,
                              type=c("robust", "df", "mbn"),
+                             var.adj,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
                              contrast, null, vcov, coef,
@@ -492,11 +489,25 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (tolower(type[1])=="df2") {
       V <- adj2*V
     }
-    if (tolower(type[1])=="hc3") {
-      S <- Inverse(crossprod(ic_theta), tol=sqrt(.Machine$double.eps))
-      h <- apply(ic_theta, 1, function(x) t(x) %*% S %*% x)
+    if (tolower(type[1])%in%c("hc3", "hc4")) {
       ic <- cbind(ic_theta)
-      for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i]/(1-h)
+      S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
+      h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
+      n <- nrow(ic)
+      ## h_emp <- pmin(h_emp, 0.99) * (n-1)/n  # Truncate leverage to prevent division by zero
+      if (tolower(type[1])=="hc3") {
+        ## phi_norm <- sqrt(rowSums(ic^2))
+        ## ex_kurt <- (mean((phi_norm - mean(phi_norm))^4) / var(phi_norm)^2) - 3
+        ## alpha <- exp(-max(0, ex_kurt) / 25)
+        v.alpha <- ifelse(missing(var.adj), 0.25, var.adj)
+        h <- v.alpha * h_emp + (1 - v.alpha) * (ncol(ic) / n)
+        adj <- 1 / (1 - h)
+      } else {
+        ## Cribari-Neto (2004)
+        delta <- pmin(1.5, n/ncol(ic) * h_emp)
+        adj <- 1 / (1 - h_emp)**delta
+      }
+      for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
       V <- var_ic(ic)
     }
   } else {
