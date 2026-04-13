@@ -430,7 +430,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.0
+#> [1] lava_1.9.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-4           future.apply_1.20.2    jsonlite_2.0.0        
@@ -441,8 +441,8 @@ sessionInfo()
 #> [16] R6_2.6.1               generics_0.1.4         knitr_1.51            
 #> [19] BiocGenerics_0.56.0    htmlwidgets_1.6.4      graph_1.88.1          
 #> [22] future_1.70.0          desc_1.4.3             bslib_0.10.0          
-#> [25] rlang_1.1.7            cachem_1.1.0           xfun_0.57             
-#> [28] fs_2.0.1               sass_0.4.10            cli_3.6.5             
+#> [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
+#> [28] fs_2.0.1               sass_0.4.10            cli_3.6.6             
 #> [31] progressr_0.19.0       pkgdown_2.2.0          digest_0.6.39         
 #> [34] grid_4.5.3             mvtnorm_1.3-6          lifecycle_1.0.5       
 #> [37] timereg_2.0.7          RcppArmadillo_15.2.4-1 evaluate_1.0.5        

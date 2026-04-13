@@ -9,7 +9,7 @@ cluster robust standard errors"><meta property="og:image" content="https://kkhol
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,6 @@ cluster robust standard errors</p>
 <span>  <span class="va">...</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">id</span>,</span>
-<span>  <span class="va">iddata</span>,</span>
 <span>  stack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  average <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">subset</span>,</span>
@@ -62,6 +61,7 @@ cluster robust standard errors</p>
 <span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  IC <span class="op">=</span> <span class="va">robust</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"robust"</span>, <span class="st">"df"</span>, <span class="st">"mbn"</span><span class="op">)</span>,</span>
+<span>  <span class="va">var.adj</span>,</span>
 <span>  <span class="va">keep</span>,</span>
 <span>  <span class="va">use</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -78,7 +78,6 @@ cluster robust standard errors</p>
 <span>  only.coef <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  back.transform <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  folds <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  <span class="va">cluster</span>,</span>
 <span>  R <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">null.sim</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -108,10 +107,6 @@ contrast matrix (or vector)</p></dd>
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>(optional) id-variable corresponding to ic decomposition of model
 parameters.</p></dd>
-
-
-<dt id="arg-iddata">iddata<a class="anchor" aria-label="anchor" href="#arg-iddata"></a></dt>
-<dd><p>(optional) id-variable for 'data'</p></dd>
 
 
 <dt id="arg-stack">stack<a class="anchor" aria-label="anchor" href="#arg-stack"></a></dt>
@@ -145,6 +140,10 @@ returned (extract with <code>IC</code> method)</p></dd>
 <dd><p>type of small-sample correction</p></dd>
 
 
+<dt id="arg-var-adj">var.adj<a class="anchor" aria-label="anchor" href="#arg-var-adj"></a></dt>
+<dd><p>variance adjustment parameter for small-sample correction</p></dd>
+
+
 <dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
 <dd><p>(optional) index of parameters to keep from final result</p></dd>
 
@@ -171,8 +170,7 @@ arguments</p></dd>
 
 
 <dt id="arg-vcov">vcov<a class="anchor" aria-label="anchor" href="#arg-vcov"></a></dt>
-<dd><p>(optional) covariance matrix of parameter estimates (e.g.
-Wald-test)</p></dd>
+<dd><p>(optional) covariance matrix of parameter estimates</p></dd>
 
 
 <dt id="arg-coef">coef<a class="anchor" aria-label="anchor" href="#arg-coef"></a></dt>
@@ -180,8 +178,7 @@ Wald-test)</p></dd>
 
 
 <dt id="arg-robust">robust<a class="anchor" aria-label="anchor" href="#arg-robust"></a></dt>
-<dd><p>if TRUE robust standard errors are calculated. If FALSE
-p-values for linear models are calculated from t-distribution</p></dd>
+<dd><p>if TRUE robust standard errors are calculated</p></dd>
 
 
 <dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
@@ -189,7 +186,7 @@ p-values for linear models are calculated from t-distribution</p></dd>
 
 
 <dt id="arg-print">print<a class="anchor" aria-label="anchor" href="#arg-print"></a></dt>
-<dd><p>(optional) print function</p></dd>
+<dd><p>(optional) print function for the resulting estimate objecta</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
@@ -211,10 +208,6 @@ intervals</p></dd>
 
 <dt id="arg-folds">folds<a class="anchor" aria-label="anchor" href="#arg-folds"></a></dt>
 <dd><p>(optional) aggregate influence functions (divide and conquer)</p></dd>
-
-
-<dt id="arg-cluster">cluster<a class="anchor" aria-label="anchor" href="#arg-cluster"></a></dt>
-<dd><p>(obsolete) alias for 'id'.</p></dd>
 
 
 <dt id="arg-r">R<a class="anchor" aria-label="anchor" href="#arg-r"></a></dt>
@@ -507,29 +500,29 @@ the <code>IC</code> method.</p>
 <span class="r-in"><span><span class="co">## Same:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.default.html">IC</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2         x.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -1.2804333  2.1501767    1.96852295 -2.65993753     0.7554987  2.18566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.4818797 -0.1869018    1.18540177 -0.70062440     0.5200220 -0.55458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.5830781 -0.3483964    0.06810688 -0.07263298    -0.1215704  0.05798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    1.9307656 -1.3698167    1.08830429 -0.51910711    -1.5561326 -0.25228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4146255 -0.2450619   -2.27428000 -0.36871845    -0.4880168 -1.17960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000    0.25612485  0.61909106     1.6742259 -2.27609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000   -2.62738927  3.57191544     0.8010558  0.31069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    0.0000000  0.0000000    0.33520853  0.13001396     0.1460747  0.07955428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -1.2804333  2.1501767    3.53262530 -3.15431642     0.7554987  2.18566521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.4818797 -0.1869018    0.06810688 -0.07263298     0.5200220 -0.55458052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.5830781 -0.3483964    1.08830429 -0.51910711    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    1.9307656 -1.3698167   -2.27428000 -0.36871845    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4146255 -0.2450619    0.25612485  0.61909106    -0.4880168 -1.17960761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000   -2.62738927  3.57191544     1.6742259 -2.27609724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000    0.33520853  0.13001396     0.8010558  0.31069745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    0.0000000  0.0000000   -0.37870058 -0.20624550     0.1460747  0.07955428</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9    0.0000000  0.0000000    0.00000000  0.00000000    -1.3102941  1.37992084</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10   0.0000000  0.0000000    0.00000000  0.00000000    -0.4208633  0.24874863</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="IC.default.html">IC</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># one-to-one (same clusters)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)           x (Intercept).1         x.1 (Intercept).2         x.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.04904705 -0.14189362   0.004626991  0.01338593     0.7554987  2.18566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.14744213 -0.15724052   1.185401770 -0.70062440     0.5200220 -0.55458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1.15168804 -0.54934034   0.068106877 -0.07263298    -0.1215704  0.05798750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.37775868  0.06124426   1.088304293 -0.51910711    -1.5561326 -0.25228854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.01647188 -0.03981494  -2.274280005 -0.36871845    -0.4880168 -1.17960761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -1.75658710  2.38806661   0.256124851  0.61909106     1.6742259 -2.27609724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.48187968 -0.18690182  -2.627389265  3.57191544     0.8010558  0.31069745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.56660619 -0.30858145   0.335208530  0.13001396     0.1460747  0.07955428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.77907752 -0.82047631  -0.378700581 -0.20624550    -1.3102941  1.37992084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.41462553 -0.24506186   2.342596539 -2.46707796    -0.4208633  0.24874863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.14744213 -0.15724052   0.068106877 -0.07263298     0.5200220 -0.55458052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1.15168804 -0.54934034   1.088304293 -0.51910711    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.37775868  0.06124426  -2.274280005 -0.36871845    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.01647188 -0.03981494   0.256124851  0.61909106    -0.4880168 -1.17960761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -1.75658710  2.38806661  -2.627389265  3.57191544     1.6742259 -2.27609724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.48187968 -0.18690182   0.335208530  0.13001396     0.8010558  0.31069745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.56660619 -0.30858145  -0.378700581 -0.20624550     0.1460747  0.07955428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.77907752 -0.82047631   2.342596539 -2.46707796    -1.3102941  1.37992084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.41462553 -0.24506186   1.185401770 -0.70062440    -0.4208633  0.24874863</span>
 <span class="r-in"><span><span class="fu"><a href="IC.default.html">IC</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="co"># independence</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2        x.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.14714116 -0.4256809    0.00000000  0.00000000     0.0000000  0.0000000</span>
@@ -543,15 +536,15 @@ the <code>IC</code> method.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9   2.33723256 -2.4614289    0.00000000  0.00000000     0.0000000  0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10  1.24387660 -0.7351856    0.00000000  0.00000000     0.0000000  0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.00000000  0.0000000    0.01388097  0.04015779     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.00000000  0.0000000    3.55620531 -2.10187319     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.00000000  0.0000000    0.20432063 -0.21789893     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.00000000  0.0000000    3.26491288 -1.55732132     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.00000000  0.0000000   -6.82284001 -1.10615534     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.00000000  0.0000000    0.76837455  1.85727317     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.00000000  0.0000000   -7.88216780 10.71574631     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.00000000  0.0000000    1.00562559  0.39004188     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.00000000  0.0000000   -1.13610174 -0.61873650     0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.00000000  0.0000000    7.02778962 -7.40123388     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.00000000  0.0000000    0.20432063 -0.21789893     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.00000000  0.0000000    3.26491288 -1.55732132     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.00000000  0.0000000   -6.82284001 -1.10615534     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.00000000  0.0000000    0.76837455  1.85727317     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.00000000  0.0000000   -7.88216780 10.71574631     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.00000000  0.0000000    1.00562559  0.39004188     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.00000000  0.0000000   -1.13610174 -0.61873650     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.00000000  0.0000000    7.02778962 -7.40123388     0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.00000000  0.0000000    3.55620531 -2.10187319     0.0000000  0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.00000000  0.0000000    0.00000000  0.00000000     2.2664960  6.5569956</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22  0.00000000  0.0000000    0.00000000  0.00000000     1.5600661 -1.6637416</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23  0.00000000  0.0000000    0.00000000  0.00000000    -0.3647111  0.1739625</span>

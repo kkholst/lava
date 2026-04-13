@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,10 +38,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0" id="lava-190">lava 1.9.0<a class="anchor" aria-label="anchor" href="#lava-190"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.9.1" id="lava-191">lava 1.9.1<a class="anchor" aria-label="anchor" href="#lava-191"></a></h2>
+<p>Development version - Safe evaluation of rank in <code>wald_test</code> - adding CI Length to <code>summary.sim</code> output - fixing bug wrt <code>estimate.index</code> in <code>summary.sim</code> - updated <code>plot.sim</code>, <code>forestplot</code>, <code>plot.estimate</code> - <code>estimate</code>: <code>type="hc3"</code> variance estimates - <code>merge</code>, <code>c.estimate</code>: new <code>drop.ic</code> argument for dropping influence functions before merging</p>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.9.0" id="lava-190">lava 1.9.0<a class="anchor" aria-label="anchor" href="#lava-190"></a></h2><p class="text-muted">CRAN release: 2026-04-05</p>
 <ul><li>
 <code>estimate</code>: estimate objects can now be transformed via functions: <code>log</code>, <code>exp</code>, <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, … See the influence vignette for full details and list of available mathematical transformations.</li>
-<li>breaking change: <code>+</code> operator for estimate objects no longer merges objects.</li>
 <li>
 <code>sim.default</code>: the simulation function <code>f</code>’s return object can now be an <code>estimate</code> object</li>
 <li>
@@ -52,6 +55,8 @@
 <code>merge.estimate</code>: works with objects with and without influence function</li>
 <li>
 <code>summary.sim</code> <code>df</code> argument for calculating CIs based on t-dist. approximation</li>
+<li>breaking change: <code>+</code> operator for estimate objects no longer merges objects, use <code>%++%</code> or <code>c(...)</code> instead</li>
+<li>breaking change: <code>addattr</code>, <code>intfix</code>, <code>covfix</code> no longer exported.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.2" id="lava-182">lava 1.8.2<a class="anchor" aria-label="anchor" href="#lava-182"></a></h2><p class="text-muted">CRAN release: 2025-10-30</p>

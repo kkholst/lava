@@ -1,12 +1,20 @@
 # Changelog
 
+## lava 1.9.1
+
+Development version - Safe evaluation of rank in `wald_test` - adding CI
+Length to `summary.sim` output - fixing bug wrt `estimate.index` in
+`summary.sim` - updated `plot.sim`, `forestplot`, `plot.estimate` -
+`estimate`: `type="hc3"` variance estimates - `merge`, `c.estimate`: new
+`drop.ic` argument for dropping influence functions before merging
+
 ## lava 1.9.0
+
+CRAN release: 2026-04-05
 
 - `estimate`: estimate objects can now be transformed via functions:
   `log`, `exp`, `+`, `-`, `*`, `/`, `^`, … See the influence vignette
   for full details and list of available mathematical transformations.
-- breaking change: `+` operator for estimate objects no longer merges
-  objects.
 - `sim.default`: the simulation function `f`’s return object can now be
   an `estimate` object
 - `summary.sim`: automatically derives estimate, se, confint parameters
@@ -16,6 +24,9 @@
   function
 - `summary.sim` `df` argument for calculating CIs based on t-dist.
   approximation
+- breaking change: `+` operator for estimate objects no longer merges
+  objects, use `%++%` or `c(...)` instead
+- breaking change: `addattr`, `intfix`, `covfix` no longer exported.
 
 ## lava 1.8.2
 

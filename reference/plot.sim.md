@@ -56,6 +56,7 @@ plot(
   density.plot = TRUE,
   scatter.plot = FALSE,
   running.mean = scatter.plot,
+  add = FALSE,
   ...
 )
 ```
@@ -258,6 +259,10 @@ plot(
 
   if TRUE add running average estimate to scatter plot
 
+- add:
+
+  if TRUE add to existing plot
+
 - ...:
 
   additional arguments to lower level functions
@@ -276,20 +281,16 @@ plot.sim(val,estimate=c(1,3),true=c(0,1),se=c(4,6),xlim=c(-3,3),
 
 plot.sim(val,estimate=c(1,2),true=c(0,0),se=c(4,5),equal=TRUE,
   plot.type="single",scatter.plot=TRUE)
-#> Warning: 'x' is NULL so the result will be NULL
 
 plot.sim(val,estimate=c(1),se=c(4,5,6),plot.type="single",scatter.plot=TRUE)
-#> Warning: 'x' is NULL so the result will be NULL
 
 plot.sim(val,estimate=c(1,2,3),equal=TRUE,scatter.plot=TRUE)
 
 plot.sim(val,estimate=c(1,2,3),equal=TRUE,byrow=TRUE,scatter.plot=TRUE)
 
 plot.sim(val,estimate=c(1,2,3),plot.type="single",scatter.plot=TRUE)
-#> Warning: 'x' is NULL so the result will be NULL
 
 plot.sim(val,estimate=1,se=c(3,4,5),plot.type="single",scatter.plot=TRUE)
-#> Warning: 'x' is NULL so the result will be NULL
 
 
 density.sim(val,estimate=c(1,2,3),density=c(0,10,10), lwd=2, angle=c(0,45,-45),cex.legend=1.3)

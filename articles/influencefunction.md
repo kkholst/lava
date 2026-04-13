@@ -365,7 +365,7 @@ ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 ```
 
 Note that the
-[`sandwich::estfun`](https://sandwich.R-Forge.R-project.org/reference/estfun.html)
+[`sandwich::estfun`](https://rdrr.io/pkg/sandwich/man/estfun.html)
 function from the `sandwich` library (Zeileis, Köll, and Graham 2020)
 can also estimate the IF for different parametric models, but does not
 provide the tools for combining and transforming these.
@@ -520,8 +520,10 @@ estimators with decompositions \begin{align\*}
 \frac{1}{\sqrt{n}}\sum\_{i=1}^{n} \operatorname{IC}\_m(Z_i; P\_{0}) +
 o\_{P}(1) \end{align\*} based on iid data Z_1,\ldots,Z_n. It then
 follows immediately (Vaart 1998 Theorem 18.10\[vi\]) that the joint
-distribution of \$ - {}= (*{1}^({},,*{M}^({}))- ({}*{1}){},,{}*{M}^({}))
-\$ is given by \begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) &=
+distribution of \widehat{\theta} - {\theta} =
+(\widehat{\theta}\_{1}^{\top},\ldots,\widehat{\theta}\_{M}^{\top})^\top -
+({\theta}\_{1}^{\top},\ldots,{\theta}\_{M}^{\top})^\top is given by
+\begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) &=
 \frac{1}{\sqrt{n}}\sum\_{i=1}^{n}
 \underbrace{\[\operatorname{IC}\_{1}(Z_i;
 P\_{0})^\top,\ldots,\operatorname{IC}\_{M}(Z_i;
@@ -744,7 +746,7 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 4   -7.547e+00   7.547e+00  0.000e+00   
 #> 5   -2.200e-15  -1.600e+01  0.000e+00   
 #> ---                                     
-#> 796  0.000       0.000      3.738       
+#> 796  0.000       0.000     -4.301       
 #> 797  0.000       0.000      3.738       
 #> 798  0.000       0.000     -4.301       
 #> 799  0.000       0.000     -4.301       
@@ -1025,7 +1027,7 @@ c(e["a"] * e["b"] / a, e["b"])
 #> b      0.8  0.2614 0.2876 1.312 0.002212
 ```
 
-For the `%*%*` operator we can also use a general contrast matrix (see
+For the `%*%` operator we can also use a general contrast matrix (see
 also Section on [Linear
 contrasts](#linear-contrasts-and-hypothesis-testing)
 
@@ -1074,7 +1076,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x5623490fb1a0>
+#> <bytecode: 0x55eaf7b277f8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1606,7 +1608,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6 lava_1.9.0    
+#> [1] survival_3.8-6 lava_1.9.1    
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         
@@ -1614,13 +1616,13 @@ sessionInfo()
 #>  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        
 #> [10] grid_4.5.3             mvtnorm_1.3-6          fastmap_1.2.0         
 #> [13] jsonlite_2.0.0         Matrix_1.7-4           backports_1.5.1       
-#> [16] purrr_1.2.1            codetools_0.2-20       numDeriv_2016.8-1.1   
-#> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.5             
-#> [22] rlang_1.1.7            mets_1.3.9             parallelly_1.46.1     
+#> [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   
+#> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             
+#> [22] rlang_1.2.0            mets_1.3.9             parallelly_1.46.1     
 #> [25] future.apply_1.20.2    splines_4.5.3          RcppArmadillo_15.2.4-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
 #> [31] tools_4.5.3            parallel_4.5.3         dplyr_1.2.1           
-#> [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.2           
+#> [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.3           
 #> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.0.1              
 #> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
 #> [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         

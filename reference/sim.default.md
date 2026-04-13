@@ -128,12 +128,15 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.316s
+#> Warning: argument is not numeric or logical: returning NA
+#> Warning: argument is not numeric or logical: returning NA
+#> 50 replications                  Time: 1.263s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
 #> SD       0.0139658  0.0139658
 #> Coverage 0.8600000  0.9800000
+#> Length                       
 #>                              
 #> Min      0.9637795  0.9637795
 #> 2.5%     0.9810376  0.9810376
@@ -149,7 +152,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.316s
+#> 50 replications                  Time: 1.263s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -167,7 +170,9 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.316s
+#> Warning: argument is not numeric or logical: returning NA
+#> Warning: argument is not numeric or logical: returning NA
+#> 50 replications                  Time: 1.263s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
@@ -175,6 +180,7 @@ summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
 #> SE       0.0101918 0.0143398
 #> SE/SD    0.7297662 1.0267787
 #> Coverage 0.8600000 0.9800000
+#> Length                      
 #>                             
 #> Min      0.9637795 0.9637795
 #> 2.5%     0.9810376 0.9810376

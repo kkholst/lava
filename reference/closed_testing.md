@@ -1,10 +1,11 @@
 # Closed testing procedure
 
-Given p hypotheses \\H_1, \ldots, H_p\\ all \\2^p-1\\ intersection
+Given \\k\\ hypotheses \\H_1, \ldots, H_k\\ all \\2^k-1\\ intersection
 hypotheses are calculated and adjusted p-values are obtained for \\H_j\\
-is calculated as the max p-value of all intersection hypotheses
-containing Hj. Example, for p=3, the adjusted p-value for \\H_1\\ will
-be obtained from \\\\(H1, H2, H3), (H1,H2), (H1,H3), (H1)\\\\.
+is calculated as the max \\p\\-value of all intersection hypotheses
+containing \\H_j\\. Example, for \\k=3\\, the adjusted \\p\\-value for
+\\H_1\\ will be obtained from \\\\(H_1, H_2, H_3), (H_1,H_2), (H_1,H_3),
+(H_1)\\\\.
 
 ## Usage
 
@@ -78,52 +79,52 @@ if (requireNamespace("mets",quietly=TRUE)) {
 #> x.3  0.22271748 0.01576576  0.05254759
 #> attr(,"adjusted.significance.level")
 #> [1] 0.01486995
-adj <- closed_testing(a)
+adj <- closed_testing(a, test = test_wald, null = 0)
 adj
-#> Call: closed_testing(object = a)
+#> Call: closed_testing(object = a, test = test_wald, null = 0)
 #> 
-#>        Estimate      adj.p
-#> x   -0.04471577 0.84238106
-#> x.1  0.23835177 0.01928037
-#> x.2 -0.04899862 0.84238106
-#> x.3  0.22271748 0.01928037
+#>        Estimate adj.p
+#> x   -0.04471577    NA
+#> x.1  0.23835177    NA
+#> x.2 -0.04899862    NA
+#> x.3  0.22271748    NA
 adj$p.value
-#>          x        x.1        x.2        x.3 
-#> 0.84238106 0.01928037 0.84238106 0.01928037 
+#>   x x.1 x.2 x.3 
+#>  NA  NA  NA  NA 
 summary(adj)
-#> Call: closed_testing(object = a)
+#> Call: closed_testing(object = a, test = test_wald, null = 0)
 #> 
 #> ── Adjusted p-values ──
 #> 
-#>        Estimate      adj.p
-#> x   -0.04471577 0.84238106
-#> x.1  0.23835177 0.01928037
-#> x.2 -0.04899862 0.84238106
-#> x.3  0.22271748 0.01928037
+#>        Estimate adj.p
+#> x   -0.04471577    NA
+#> x.1  0.23835177    NA
+#> x.2 -0.04899862    NA
+#> x.3  0.22271748    NA
 #> 
 #> ── Raw p-values for intersection hypotheses ──
 #> 
 #> 1-way intersections:
 #>   {x}                                      p = 0.6165
-#>   {x.1}                                    p = 0.0107
-#>   {x.2}                                    p = 0.6011
-#>   {x.3}                                    p = 0.0158
+#>   {x.1}                                    p = NA
+#>   {x.2}                                    p = NA
+#>   {x.3}                                    p = NA
 #> 
 #> 2-way intersections:
-#>   {x, x.1}                                 p = 0.0036
-#>   {x, x.2}                                 p = 0.8424
-#>   {x, x.3}                                 p = 0.0086
-#>   {x.1, x.2}                               p = 0.0032
-#>   {x.1, x.3}                               p = 0.0193
-#>   {x.2, x.3}                               p = 0.0046
+#>   {x, x.1}                                 p = NA
+#>   {x, x.2}                                 p = NA
+#>   {x, x.3}                                 p = NA
+#>   {x.1, x.2}                               p = NA
+#>   {x.1, x.3}                               p = NA
+#>   {x.2, x.3}                               p = NA
 #> 
 #> 3-way intersections:
-#>   {x, x.1, x.2}                            p = 0.0033
-#>   {x, x.1, x.3}                            p = 0.0022
-#>   {x, x.2, x.3}                            p = 0.0068
-#>   {x.1, x.2, x.3}                          p = 0.0012
+#>   {x, x.1, x.2}                            p = NA
+#>   {x, x.1, x.3}                            p = NA
+#>   {x, x.2, x.3}                            p = NA
+#>   {x.1, x.2, x.3}                          p = NA
 #> 
 #> 4-way intersections:
-#>   {x, x.1, x.2, x.3}                       p = 0.0006
+#>   {x, x.1, x.2, x.3}                       p = NA
 #> 
 ```
