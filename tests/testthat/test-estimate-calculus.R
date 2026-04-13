@@ -1,4 +1,4 @@
-context("Inference")
+context("estimate calculus")
 
 set.seed(1)
 a1 <- estimate(coef=1, IC=rnorm(10), id=1:10, labels="a1")

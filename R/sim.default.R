@@ -277,16 +277,28 @@ as.matrix.sim <- function(x, ...) {
 }
 
 ##' @export
-"[.sim" <- function(x, i, j, drop = FALSE) {
+"[.sim" <- function(x, i, j, drop = FALSE, keep.index = FALSE) {
   atr <- attributes(x)
   if (!is.null(dim(x))) {
     class(x) <- class(x)[2]
   } else {
     class(x) <- class(x)[-1]
   }
+  cname <- colnames(x)
   x <- NextMethod("[", drop=drop)
-  atr.keep <- c("call", "time")
-  if (missing(j)) atr.keep <- c(atr.keep, "f")
+  atr.keep <- c("call", "time", "par.index")
+  if (missing(j)) {
+    atr.keep <- c(atr.keep, "f")
+  } else {
+    pidx <- atr[["par.index"]]
+    if (!is.null(pidx)) {
+      if (is.character(j)) {
+        j <- which(cname %in% j)
+      }
+      pidx <- lapply(pidx, function(x) which(j %in% x))
+      atr[["par.index"]] <- pidx
+    }
+  }
   attributes(x)[atr.keep] <- atr[atr.keep]
   if (!drop) class(x) <- c("sim", class(x))
   return(x)

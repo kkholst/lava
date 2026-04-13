@@ -58,6 +58,10 @@ test_that("glm-estimator", {
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]
     testthat::expect_equivalent(c1,c2)
+    testthat::expect_true(mean(colSums(score(e))^2)<1e-9)
+    testthat::expect_true(
+                mean((colSums(score(e,p=coef(e)+1, indiv=TRUE))-
+                score(e,p=coef(e)+1, indiv=FALSE))**2)<1e-9)
 })
 
 test_that("gaussian", {

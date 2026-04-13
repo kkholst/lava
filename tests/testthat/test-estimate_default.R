@@ -1,6 +1,6 @@
-context("Inference")
+context("estimate.default")
 
-test_that("estimate.default", {
+test_that("estimate.default misc", {
     m <- lvm(c(y1,y2)~x+z,y1~~y2)
 ##    set.seed(1)
     d <- sim(m,20)

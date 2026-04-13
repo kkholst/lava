@@ -146,7 +146,6 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
     return(S1)
 }
 
-
 ##' @export
 score.lm <- function(x, p=coef(x), data, indiv=FALSE,
               y, X, offset=NULL, weights=NULL, dispersion=TRUE, ...) {
