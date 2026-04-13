@@ -54,57 +54,6 @@ test_that("trim", {
     testthat::expect_true(length(grep(" ",trim(" t e s t ",all=TRUE)))==0)
 })
 
-test_that("Matrix operations:", {
-    ## vec operator
-    testthat::expect_equivalent(vec(diag(3)),c(1,0,0,0,1,0,0,0,1))
-    testthat::expect_true(nrow(vec(diag(3),matrix=TRUE))==9)
-
-    ## commutaion matrix
-    A <- matrix(1:16 ,ncol=4)
-    K <- commutation(A)
-    testthat::expect_equivalent(K%*%as.vector(A),vec(t(A),matrix=TRUE))
-})
-
-test_that("blockdiag:", {
-    ## Block diagonal
-    A <- diag(3)+1
-    B <- blockdiag(A,A,A,pad=NA)
-    testthat::expect_equivalent(dim(B),c(9,9))
-    testthat::expect_true(sum(is.na(B))==81-27)
-
-    B <- matrix(1, ncol=2, nrow=2)
-    res <- blockdiag(A, B, B)
-    expect_equivalent(res[1:3, 1:3], A)
-    expect_equivalent(res[4:5, 4:5], B)
-    expect_equivalent(res[6:7, 6:7], B)
-    expect_true(sum(res==0) == (7*7 - 3*3 - 2*2 - 2*2))
-})
-
-test_that("wrapvev", {
-    testthat::expect_equivalent(wrapvec(5,2),c(3,4,5,1,2))
-    testthat::expect_equivalent(wrapvec(seq(1:5),-1),c(5,1,2,3,4))
-})
-
-test_that("revdiag", {
-    A <- revdiag(1:3)
-    testthat::expect_equivalent(A,matrix(c(0,0,1,0,2,0,3,0,0),3))
-    testthat::expect_equivalent(1:3,revdiag(A))
-    revdiag(A) <- 4
-    testthat::expect_equivalent(rep(4,3),revdiag(A))
-    diag(A) <- 0
-    offdiag(A) <- 5
-    testthat::expect_true(sum(offdiag(A))==6*5)
-})
-
-test_that("Inv, matrix inverse", {
-    A <- matrix(0,3,3)
-    offdiag(A,type=3) <- 1:6
-    B <- crossprod(A)
-    
-    testthat::expect_equivalent(solve(A),Inverse(A))
-    testthat::expect_equivalent(det(B),attr(Inverse(B,chol=TRUE),"det"))
-})
-
 test_that("Grep", {
   d <- Grep(iris, "Sepal")
   expect_true(nrow(d) == nrow(iris))

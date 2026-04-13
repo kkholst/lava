@@ -1,0 +1,5 @@
+# sample regex patterns
+ignore:
+  - "R/interactive.R"
+  - "R/onload.R"
+  - "R/fplot.R"
