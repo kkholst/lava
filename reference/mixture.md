@@ -134,5 +134,7 @@ if (requireNamespace('mets', quietly=TRUE)) {
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [y~x] = 0 
+#>  
+#> chisq = 756.9071, df = 1, p-value < 2.2e-16
 # }
 ```

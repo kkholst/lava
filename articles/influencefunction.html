@@ -323,8 +323,8 @@ each of the two binary outcomes</p>
 <code>estimate</code> object</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, </span></span>
-<span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), </span></span>
+<span><span class="co">#&gt;     coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;                Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138</span></span>
@@ -603,8 +603,8 @@ using the <code>merge</code> method</p>
 <span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, family<span class="op">=</span><span class="va">binomial</span>, data<span class="op">=</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, </span></span>
-<span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), </span></span>
+<span><span class="co">#&gt;     coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err    2.5%    97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01</span></span>
@@ -628,7 +628,9 @@ responses:</p>
 <span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [a] - [a.1] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [a] - [a.1] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 0.3677, df = 1, p-value = 0.5443</span></span></code></pre></div>
 <p>More details an be found in the Section on <a href="#linear-contrasts-and-hypothesis-testing">hypothesis
 testing</a>.</p>
 <div class="section level3">
@@ -1079,10 +1081,10 @@ matrix (see also Section on <a href="#linear-contrasts-and-hypothesis-testing">L
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 10.66, df = 2, p-value = 0.004855</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05</span></span>
-<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 5.463e-02</span></span>
-<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 2.212e-03</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%  P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915</span></span>
+<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 0.054629</span></span>
+<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 0.002212</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [[a] - [b]] = 1</span></span>
@@ -1119,7 +1121,7 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x557576713498&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55f4f834f990&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1263,7 +1265,9 @@ matrix argument instead of function object</p>
 <span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [a] - [a.1] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [a] - [a.1] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 0.3677, df = 1, p-value = 0.5443</span></span></code></pre></div>
 <p>The <span class="math inline">\mathbf{b}_0</span> vector (default
 assumed to be zero) can be specified via the <code>null</code>
 argument</p>
@@ -1273,7 +1277,9 @@ argument</p>
 <span><span class="co">#&gt; [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [a] - [a.1] = 1</span></span></code></pre></div>
+<span><span class="co">#&gt;   [a] - [a.1] = 1 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 15.49, df = 1, p-value = 8.281e-05</span></span></code></pre></div>
 <p>For testing multiple hypotheses we use that <span class="math inline">(\mathbf{B}\widehat{\theta}-\mathbf{b}_0)^{\top}
 (\mathbf{B}\widehat{\Sigma}\mathbf{B}^{\top})^{-1}
 (\mathbf{B}\widehat{\theta}-\mathbf{b}_0)
@@ -1362,10 +1368,10 @@ IFs. This is implemented in the <code>alpha_zmax</code> method</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, use<span class="op">=</span><span class="st">"^a"</span>, regex<span class="op">=</span><span class="cn">TRUE</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/closed_testing.html">alpha_zmax</a></span><span class="op">(</span><span class="va">gg0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Estimate  P-value Adj.P-value</span></span>
-<span><span class="co">#&gt; a      1.324 0.015891    0.046873</span></span>
-<span><span class="co">#&gt; a.1    1.506 0.001015    0.003043</span></span>
-<span><span class="co">#&gt; a.2    1.105 0.303571    0.661496</span></span>
+<span><span class="co">#&gt;     Estimate   P-value Adj.P-value</span></span>
+<span><span class="co">#&gt; a      1.324 1.105e-09   3.317e-09</span></span>
+<span><span class="co">#&gt; a.1    1.506 2.385e-12   7.172e-12</span></span>
+<span><span class="co">#&gt; a.2    1.105 1.914e-04   5.741e-04</span></span>
 <span><span class="co">#&gt; attr(,"adjusted.significance.level")</span></span>
 <span><span class="co">#&gt; [1] 0.01698</span></span></code></pre></div>
 <p>While this always yields a more powerful test compared to Bonferroni
@@ -1561,7 +1567,9 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; ate   0.1691 0.04996 0.07115 0.267 0.0007138</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   -[y(0)] + [y(1)] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   -[y(0)] + [y(1)] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 11.45, df = 1, p-value = 0.0007138</span></span></code></pre></div>
 <p>Alternatively, we could get the estimate of the treatment effect on
 the log-odds scale:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">

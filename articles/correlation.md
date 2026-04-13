@@ -234,7 +234,9 @@ estimate(e2, 'z', back.transform=tanh)
 #> z   0.8915         0.8729 0.9076 5.606e-243
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [z] = 0
+#>   [z] = 0 
+#>  
+#> chisq = 1108.145, df = 1, p-value < 2.2e-16
 ```
 
 In practice, a much shorter syntax can be used to obtain the above
@@ -270,7 +272,9 @@ estimate(e2, 'z', back.transform=tanh)
 #> z   0.8915         0.8729 0.9076 5.606e-243
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [z] = 0
+#>   [z] = 0 
+#>  
+#> chisq = 1108.145, df = 1, p-value < 2.2e-16
 ```
 
 As an alternative to the Wald confidence intervals (with or without
@@ -349,7 +353,9 @@ estimate(e3, 'z', back.transform=tanh)
 #> z   0.8913         0.872 0.9079 1.491e-226
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [z] = 0
+#>   [z] = 0 
+#>  
+#> chisq = 1032.577, df = 1, p-value < 2.2e-16
 ```
 
 And here the same analysis with `s1` being left-censored and `s2`
@@ -396,7 +402,9 @@ estimate(e3b, 'z', back.transform=tanh)
 #> z   0.8909         0.8713 0.9077 9.006e-222
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [z] = 0
+#>   [z] = 0 
+#>  
+#> chisq = 1010.58, df = 1, p-value < 2.2e-16
 ```
 
 ``` r

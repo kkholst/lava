@@ -311,8 +311,8 @@ interaction
 
 ``` r
 summary(estimate(ee1,keep="(:g)", regex=TRUE))
-#> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>         Estimate Std.Err    2.5%    97.5% P-value
 #> u2~u1:g   0.5926 0.23212  0.1377  1.04756 0.01068

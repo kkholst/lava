@@ -255,8 +255,8 @@ Different methods are available for inspecting an `estimate` object
 
 ``` r
 summary(e)
-#> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>                Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138
@@ -543,8 +543,8 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(contrast = as.list(seq_along(p)), vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%    97.5%   P-value
 #> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
@@ -571,7 +571,9 @@ estimate(e, cbind(0,1,0,-1), null=0)
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] - [a.1] = 0
+#>   [a] - [a.1] = 0 
+#>  
+#> chisq = 0.3677, df = 1, p-value = 0.5443
 ```
 
 More details an be found in the Section on [hypothesis
@@ -1046,10 +1048,10 @@ B %*% e
 #>  
 #> chisq = 10.66, df = 2, p-value = 0.004855
 B %*% e == c(1,1,0)
-#>           Estimate Std.Err      2.5%  97.5%   P-value
-#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05
-#> a              0.5  0.2602 -0.009926 1.0099 5.463e-02
-#> b              0.8  0.2614  0.287617 1.3124 2.212e-03
+#>           Estimate Std.Err      2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915
+#> a              0.5  0.2602 -0.009926 1.0099 0.054629
+#> b              0.8  0.2614  0.287617 1.3124 0.002212
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [b]] = 1
@@ -1076,7 +1078,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x557576713498>
+#> <bytecode: 0x55f4f834f990>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1238,7 +1240,9 @@ estimate(gg, B)
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] - [a.1] = 0
+#>   [a] - [a.1] = 0 
+#>  
+#> chisq = 0.3677, df = 1, p-value = 0.5443
 ```
 
 The \mathbf{b}\_0 vector (default assumed to be zero) can be specified
@@ -1250,7 +1254,9 @@ estimate(gg, B, null=1)
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] - [a.1] = 1
+#>   [a] - [a.1] = 1 
+#>  
+#> chisq = 15.49, df = 1, p-value = 8.281e-05
 ```
 
 For testing multiple hypotheses we use that
@@ -1348,10 +1354,10 @@ IFs. This is implemented in the `alpha_zmax` method
 ``` r
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
 alpha_zmax(gg0)
-#>     Estimate  P-value Adj.P-value
-#> a      1.324 0.015891    0.046873
-#> a.1    1.506 0.001015    0.003043
-#> a.2    1.105 0.303571    0.661496
+#>     Estimate   P-value Adj.P-value
+#> a      1.324 1.105e-09   3.317e-09
+#> a.1    1.506 2.385e-12   7.172e-12
+#> a.2    1.105 1.914e-04   5.741e-04
 #> attr(,"adjusted.significance.level")
 #> [1] 0.01698
 ```
@@ -1546,7 +1552,9 @@ estimate(potential_outcomes, cbind(-1, 1), labels="ate")
 #> ate   0.1691 0.04996 0.07115 0.267 0.0007138
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   -[y(0)] + [y(1)] = 0
+#>   -[y(0)] + [y(1)] = 0 
+#>  
+#> chisq = 11.45, df = 1, p-value = 0.0007138
 ```
 
 Alternatively, we could get the estimate of the treatment effect on the

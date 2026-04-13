@@ -277,7 +277,9 @@ positive definite.</p>
 <span><span class="co">#&gt; z   0.8915         0.8729 0.9076 5.606e-243</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [z] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1108.145, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument <code>constrain</code>
 when specifying the covariances (the argument <code>rname</code>
@@ -309,7 +311,9 @@ parameters):</p>
 <span><span class="co">#&gt; z   0.8915         0.8729 0.9076 5.606e-243</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [z] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1108.145, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>As an alternative to the Wald confidence intervals (with or without
 transformation) is to profile the likelihood. The profile likelihood
 confidence intervals can be obtained with the <code>confint</code>
@@ -376,7 +380,9 @@ the <code>mets</code> package) in the data frame.</p>
 <span><span class="co">#&gt; z   0.8913         0.872 0.9079 1.491e-226</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [z] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1032.577, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>And here the same analysis with <code>s1</code> being left-censored
 and <code>s2</code> right-censored:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -416,7 +422,9 @@ and <code>s2</code> right-censored:</p>
 <span><span class="co">#&gt; z   0.8909         0.8713 0.9077 9.006e-222</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [z] = 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [z] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1010.58, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">tanh</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, profile<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       2.5 %    97.5 %</span></span>
