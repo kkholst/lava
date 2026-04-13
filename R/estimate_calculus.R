@@ -414,9 +414,9 @@ sum.estimate <- function(x, ...) {
  ##' @export
 "%*%.estimate" <- function(x, y, ...) {
   if (is.matrix(x)) {
-    return(estimate(y, contrast=x, ...))
+    return(estimate(y, f=x, ...))
   } else if (is.matrix(y)) {
-    return(estimate(x, contrast=t(y), ...))
+    return(estimate(x, f=t(y), ...))
   }
   sum(x * y)
 }
