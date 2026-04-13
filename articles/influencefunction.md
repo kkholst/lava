@@ -365,7 +365,7 @@ ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 ```
 
 Note that the
-[`sandwich::estfun`](https://rdrr.io/pkg/sandwich/man/estfun.html)
+[`sandwich::estfun`](https://sandwich.R-Forge.R-project.org/reference/estfun.html)
 function from the `sandwich` library (Zeileis, Köll, and Graham 2020)
 can also estimate the IF for different parametric models, but does not
 provide the tools for combining and transforming these.
@@ -1076,7 +1076,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55eaf7b277f8>
+#> <bytecode: 0x557576713498>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value

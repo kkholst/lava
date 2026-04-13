@@ -130,7 +130,7 @@ val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> Warning: argument is not numeric or logical: returning NA
 #> Warning: argument is not numeric or logical: returning NA
-#> 50 replications                  Time: 1.263s
+#> 50 replications                  Time: 1.172s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -152,7 +152,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.263s
+#> 50 replications                  Time: 1.172s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -172,7 +172,7 @@ summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
 #> Warning: argument is not numeric or logical: returning NA
 #> Warning: argument is not numeric or logical: returning NA
-#> 50 replications                  Time: 1.263s
+#> 50 replications                  Time: 1.172s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
