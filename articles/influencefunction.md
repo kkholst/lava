@@ -255,8 +255,8 @@ Different methods are available for inspecting an `estimate` object
 
 ``` r
 summary(e)
-#> Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), 
-#>     coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, 
+#>     messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────
 #>                Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138
@@ -296,7 +296,6 @@ ee
 #>                  Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)      0.610 0.02439 0.5622 0.6578 4.435e-138
 #> y2:(Intercept)      0.535 0.02494 0.4861 0.5839 4.316e-102
-#> ────────────────                                          
 #> y1:(Intercept).1    0.610 0.02439 0.5622 0.6578 4.435e-138
 #> y2:(Intercept).1    0.535 0.02494 0.4861 0.5839 4.316e-102
 ## Forest plots
@@ -543,8 +542,8 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(contrast = contrast, vcov = vcov(object, messages = 0), 
-#>     coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, 
+#>     messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%    97.5%   P-value
 #> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
@@ -705,7 +704,6 @@ Note, it is also possible to directly specify the id-variables in the
 merge(e2, e3, id = list(dw$id, dwc$id))
 #>               Estimate Std.Err     2.5%  97.5% P-value
 #> (Intercept)     0.1402  0.1002 -0.05625 0.3367 0.16186
-#> ─────────────                                         
 #> (Intercept).1   0.2615  0.1426 -0.01807 0.5410 0.06676
 ```
 
@@ -822,7 +820,6 @@ IFs before the actual merging is being done
 merge(g1, g2, subset="(Intercept)")
 #>               Estimate Std.Err     2.5%   97.5% P-value
 #> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> ─────────────                                          
 #> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
 ```
 
@@ -1002,11 +999,8 @@ c(sum=sum(e), sum2=a+b,
   prod=prod(e), prod2=a*b) # sum and prod function
 #>        Estimate Std.Err      2.5%    97.5% P-value
 #> sum   -0.002244 0.00332 -0.008751 0.004263  0.4991
-#> ─────                                             
 #> sum2   1.300000 0.56369  0.195179 2.404821  0.0211
-#> ─────                                             
 #> prod  -0.002244 0.00332 -0.008751 0.004263  0.4991
-#> ─────                                             
 #> prod2  0.400000 0.36223 -0.309967 1.109967  0.2695
 e <- c(a,b) # merge
 e %*% e # inner prod.
@@ -1025,7 +1019,6 @@ a^c(0.5, 2)
 c(e["a"] * e["b"] / a, e["b"])
 #>   Estimate Std.Err   2.5% 97.5%  P-value
 #> a      0.8  0.2614 0.2876 1.312 0.002212
-#> ─                                       
 #> b      0.8  0.2614 0.2876 1.312 0.002212
 ```
 
@@ -1048,10 +1041,10 @@ B %*% e
 #>  
 #> chisq = 10.66, df = 2, p-value = 0.004855
 B %*% e == c(1,1,0)
-#>           Estimate Std.Err      2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915
-#> a              0.5  0.2602 -0.009926 1.0099 0.054629
-#> b              0.8  0.2614  0.287617 1.3124 0.002212
+#>           Estimate Std.Err      2.5%  97.5%   P-value
+#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05
+#> a              0.5  0.2602 -0.009926 1.0099 5.463e-02
+#> b              0.8  0.2614  0.287617 1.3124 2.212e-03
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [b]] = 1
@@ -1078,7 +1071,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55f4f834f990>
+#> <bytecode: 0x56052a5dd348>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1225,7 +1218,6 @@ gg
 #> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
 #> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
 #> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
-#> ─────────────                                            
 #> (Intercept).2  -0.2938  0.2063 -0.6982  0.11064 1.545e-01
 #> a.2             1.1047  0.2962  0.5242  1.68515 1.914e-04
 ```
@@ -1354,10 +1346,10 @@ IFs. This is implemented in the `alpha_zmax` method
 ``` r
 gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
 alpha_zmax(gg0)
-#>     Estimate   P-value Adj.P-value
-#> a      1.324 1.105e-09   3.317e-09
-#> a.1    1.506 2.385e-12   7.172e-12
-#> a.2    1.105 1.914e-04   5.741e-04
+#>     Estimate  P-value Adj.P-value
+#> a      1.324 0.015891    0.046873
+#> a.1    1.506 0.001015    0.003043
+#> a.2    1.105 0.303571    0.661496
 #> attr(,"adjusted.significance.level")
 #> [1] 0.01698
 ```
@@ -1527,7 +1519,6 @@ potential_outcomes <- merge(est0, est1, paired=TRUE, labels=c("y(0)", "y(1)"))
 potential_outcomes
 #>      Estimate Std.Err   2.5%  97.5%   P-value
 #> y(0)   0.5359 0.03535 0.4667 0.6052 6.290e-52
-#> ────                                         
 #> y(1)   0.7050 0.03721 0.6321 0.7779 4.934e-80
 head(IC(potential_outcomes))
 #>       y(0)     y(1)
