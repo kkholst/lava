@@ -354,7 +354,7 @@ Print <- function(x, n=5,
         print(x, ...)
         return(invisible(x))
       }
-    } 
+    }
     if (is.null(rownames(x))) {
         rownames(x) <- seq(nrow(x))
     }
@@ -462,7 +462,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         ntrue <- is.null(true)
         elen <- unlist(lapply(est,length))
         est <- lapply(est, function(e) c(e, rep(NA,max(elen)-length(e))))
-        for (e in est) {            
+        for (e in est) {
             estimate <- c(estimate,e[1])
             if (length(e)>1 && nse) se <- c(se,e[2])
             if (length(e)>2 && ntrue) true <- c(true,e[3])
@@ -498,7 +498,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
             if (!missing(se) && !is.null(se)) {
                 res <- c(res, c(SE=mean(se,na.rm=TRUE)))
                 res <- c(res, c("SE/SD"=res[["SE"]]/res[["SD"]]))
-            }            
+            }
             return(res)
         }
     }
@@ -520,14 +520,14 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         res
     }
     tm <- attr(object,"time")
-    N <- max(length(estimate),length(se),length(true))    
+    N <- max(length(estimate),length(se),length(true))
     if (!is.null(estimate)) estimate <- rep(estimate,length.out=N)
     if (!is.null(se)) se <- rep(se,length.out=N)
     if (!is.null(true)) {
         if (is.null(estimate)) N <- ncol(object)
         true <- rep(true,length.out=N)
     }
-    
+
     if (!is.null(estimate) && is.character(estimate)) {
         estimate <- match(estimate,colnames(object))
     }
@@ -613,9 +613,16 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         Coverage <- c()
         Length <- c()
         for (i in seq_along(estimate)) {
-            Coverage <- c(Coverage,
-                          mean((object[,confint[2*(i-1)+1]]<true[i]) & (object[,confint[2*i]]>true[i]),na.rm=TRUE))
-            Length <- c(Length, mean(abs(object[,confint[2*i]] - object[,confint[2*(i-1)+1]])))
+            upper <- object[,confint[2*i]][[1]]
+            lower <- object[,confint[2*(i-1)+1]][[1]]
+            Coverage <- c(
+              Coverage,
+              mean((lower < true[i]) & (upper > true[i]), na.rm=TRUE)
+            )
+            Length <- c(
+              Length,
+              mean(abs(upper - lower), na.rm = TRUE)
+            )
         }
         est <- rbind(est,Coverage=Coverage, Length=Length)
     }
