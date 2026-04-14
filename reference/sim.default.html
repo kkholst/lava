@@ -170,15 +170,13 @@ progress information).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu">sim</span><span class="op">(</span><span class="va">val</span>,R<span class="op">=</span><span class="fl">40</span>,b0<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co">## append results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,confint<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>argument is not numeric or logical: returning NA</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>argument is not numeric or logical: returning NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.253s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.125s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Estimate.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean     1.0051843  1.0051843</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SD       0.0139658  0.0139658</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coverage 0.8600000  0.9800000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Length                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Length   0.0399752  0.0562109</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Min      0.9637795  0.9637795</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%     0.9810376  0.9810376</span>
@@ -194,7 +192,7 @@ progress information).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.253s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.125s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Model Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean    1.005184 1.005184</span>
@@ -212,9 +210,7 @@ progress information).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>        names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,confint<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>argument is not numeric or logical: returning NA</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>argument is not numeric or logical: returning NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.253s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.125s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Model  Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean     1.0051843 1.0051843</span>
@@ -222,7 +218,7 @@ progress information).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SE       0.0101918 0.0143398</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SE/SD    0.7297662 1.0267787</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coverage 0.8600000 0.9800000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Length                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Length   0.0399510 0.0562109</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Min      0.9637795 0.9637795</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%     0.9810376 0.9810376</span>
