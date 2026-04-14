@@ -336,14 +336,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     ), dots)
     f <- do.call(parsedesign, args)
   }
-  contrast.transform <- FALSE # if contrast is provided, only calculate the
-                              # wald-test and do not alter the parameter estimates
+  contrast.transform <- TRUE  # parameter estimates should be transformed
+                              # according to contrast matrix
   if (!is.null(f) && !is.function(f)) {
     if (!(is.matrix(f) || is.vector(f)))
-      return(compare(x, f, ...))
-    contrast <- f
-    contrast.transform <- TRUE # parameter estimates should be transformed
-                               # according to contrast matrix
+      return(compare(x, f, ...)) ## LRT
+    if (missing(contrast)) contrast <- f
+    if (length(f)==1L && !f) {
+      contrast.transform <- FALSE # Wald-test and do not alter the parameter estimates
+    }
     f <- NULL
   }
 
@@ -1045,11 +1046,12 @@ summary.estimate <- function(object,
                              contrast,
                              ...) {
   p <- coef(object, messages=0)
-  if (missing(contrast)) contrast <- as.list(seq_along(p))
+  if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
   test <- estimate(coef=p,
-                   contrast = contrast,
                    vcov=vcov(object, messages=0),
-                   , ...)
+                   f = FALSE,
+                   contrast = contrast,
+                   ...)
   class(test) <- "NULL"
   test$compare <- test$compare
   object <- test[c("coef", "coefmat", "vcov", "call",
