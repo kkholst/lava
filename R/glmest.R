@@ -146,7 +146,6 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
     return(S1)
 }
 
-
 ##' @export
 score.lm <- function(x, p=coef(x), data, indiv=FALSE,
               y, X, offset=NULL, weights=NULL, dispersion=TRUE, ...) {
@@ -306,24 +305,6 @@ hessian.glm <- function(x,p=coef(x),...) {
 
 ##' @export
 information.glm <- function(x,...) hessian.glm(x,...)
-
-robustvar <- function(x,id=NULL,...) {
-    U <- score(x,indiv=TRUE)
-    II <- unique(id)
-    K <- length(II)
-    J <- 0
-    if (is.null(id)) {
-        J <- crossprod(U)
-    } else {
-        for (ii in II) {
-            J <- J+tcrossprod(colSums(U[which(id==ii),,drop=FALSE]))
-        }
-        J <- K/(K-1)*J
-    }
-    iI <- vcov(x)
-    V <- iI%*%J%*%iI
-    return(V)
-}
 
 glm_logLik.lvm <- function(object,...) {
     attr(GLMscore(object,...),"logLik")

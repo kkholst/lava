@@ -175,7 +175,6 @@ test_that("curly", {
   expect_doppelganger("curly-1", myplot)
 })
 
-
 test_that("ksmooth", {
   skip_on_cran()
 

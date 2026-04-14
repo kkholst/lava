@@ -336,10 +336,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     ), dots)
     f <- do.call(parsedesign, args)
   }
+  contrast.transform <- TRUE  # parameter estimates should be transformed
+                              # according to contrast matrix
   if (!is.null(f) && !is.function(f)) {
     if (!(is.matrix(f) || is.vector(f)))
-      return(compare(x, f, ...))
-    contrast <- f
+      return(compare(x, f, ...)) ## LRT
+    if (missing(contrast)) contrast <- f
+    if (length(f)==1L && !f) {
+      contrast.transform <- FALSE # Wald-test and do not alter the parameter estimates
+    }
     f <- NULL
   }
 
@@ -719,26 +724,28 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                   vcov=V, level=level, df=df)
     class(res) <- "list"
     res <- structure(c(res, list(compare=cc)), class="estimate")
-    if (!is.null(df)) {
-      pval <- with(cc, pt(abs(estimate[, 1]-null)/estimate[, 2],
-                          df=df, lower.tail=FALSE)*2)
-    } else {
-      pval <- with(cc, pnorm(abs(estimate[, 1]-null)/estimate[, 2],
-                             lower.tail=FALSE)*2)
-    }
-    res$coefmat <- with(cc, cbind(estimate, pval))
-    colnames(res$coefmat)[5] <- "P-value"
-    rownames(res$coefmat) <- cc$cnames
-    if (!is.null(res$IC)) {
-      res$IC <- res$IC%*%t(contrast)
-      colnames(res$IC) <- cc$cnames
-    }
-    res$compare$estimate <- NULL
-    res$coef <- res$compare$coef
-    res$vcov <- res$compare$vcov
+    if (contrast.transform) {
+      if (!is.null(df)) {
+        pval <- with(cc, pt(abs(estimate[, 1]-null)/estimate[, 2],
+                            df=df, lower.tail=FALSE)*2)
+      } else {
+        pval <- with(cc, pnorm(abs(estimate[, 1]-null)/estimate[, 2],
+                               lower.tail=FALSE)*2)
+      }
+      res$coefmat <- with(cc, cbind(estimate, pval))
+      colnames(res$coefmat)[5] <- "P-value"
+      rownames(res$coefmat) <- cc$cnames
+      if (!is.null(res$IC)) {
+        res$IC <- res$IC%*%t(contrast)
+        colnames(res$IC) <- cc$cnames
+      }
+      res$compare$estimate <- NULL
+      res$coef <- res$compare$coef
+      res$vcov <- res$compare$vcov
 
-    names(res$coef) <- strip_bracket(rownames(res$coefmat))
-    rownames(res$coefmat) <- names(res$coef)
+      names(res$coef) <- strip_bracket(rownames(res$coefmat))
+      rownames(res$coefmat) <- names(res$coef)
+    }
   }
 
   if (!is.null(back.transform)) {
@@ -993,7 +1000,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
     print(cli::rule(width=min(cli::console_width(),60)))
     cat(x$compare$method[3], "\n")
     cat(paste(" ", x$compare$method[-(1:3)], collapse="\n"), "\n")
-    if (length(x$compare$method)>4) {
+    if (length(x$compare$method)>=4) {
       out <- character()
       out <- with(x$compare, c(out, paste(names(statistic),
                                           "=", format(round(statistic, 4)))))
@@ -1035,10 +1042,16 @@ coef.estimate <- function(object,
 }
 
 ##' @export
-summary.estimate <- function(object, ...) {
+summary.estimate <- function(object,
+                             contrast,
+                             ...) {
   p <- coef(object, messages=0)
-  test <- estimate(coef=p, vcov=vcov(object, messages=0),
-                   contrast=as.list(seq_along(p)), ...)
+  if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
+  test <- estimate(coef=p,
+                   vcov=vcov(object, messages=0),
+                   f = FALSE,
+                   contrast = contrast,
+                   ...)
   class(test) <- "NULL"
   test$compare <- test$compare
   object <- test[c("coef", "coefmat", "vcov", "call",
