@@ -128,7 +128,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.125s
+#> 50 replications                  Time: 1.234s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -150,7 +150,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.125s
+#> 50 replications                  Time: 1.234s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -168,7 +168,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.125s
+#> 50 replications                  Time: 1.234s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
