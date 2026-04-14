@@ -598,20 +598,15 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
         Coverage <- c()
         Length <- c()
         for (i in seq_along(estimate)) {
+            upper <- object[,confint[2*i]][[1]]
+            lower <- object[,confint[2*(i-1)+1]][[1]]
             Coverage <- c(
               Coverage,
-              mean(
-                (object[,confint[2*(i-1)+1]] < true[i]) &
-                (object[,confint[2*i]] > true[i]),
-                na.rm=TRUE)
-              )
+              mean((lower < true[i]) & (upper > true[i]), na.rm=TRUE)
+            )
             Length <- c(
               Length,
-              mean(
-                abs(
-                  object[,confint[2*i]] - object[,confint[2*(i-1)+1]]
-                )[[1]], na.rm = TRUE
-              )
+              mean(abs(upper - lower), na.rm = TRUE)
             )
         }
         est <- rbind(est,Coverage=Coverage, Length=Length)
