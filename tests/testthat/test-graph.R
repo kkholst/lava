@@ -1,4 +1,4 @@
-context("Inference")
+context("Graph routines")
 
 test_that("d-separation",{
     m <- lvm(x5 ~ x4+x3, x4~x3+x1, x3~x2, x2~x1)
