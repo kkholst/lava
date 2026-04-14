@@ -8,6 +8,7 @@ merge.estimate <- function(x,y,...,
                            keep=NULL,
                            subset=NULL,
                            regex=FALSE,
+                           sep=FALSE,
                            drop.ic = FALSE,
                            ignore.case=FALSE) {
     if (missing(y)) {
@@ -170,7 +171,7 @@ merge.estimate <- function(x,y,...,
       coef = coefs, stack = FALSE, data = NULL,
       IC = ic0, id = id, keep = keep
       )
-    if (is.null(keep)) {
+    if (is.null(keep) && sep) {
       res$model.index <- model.index
     }
     return(res)
@@ -194,7 +195,7 @@ merge.estimate <- function(x,y,...,
   is_estimate <- unlist(lapply(args, function(x)
     inherits(x, c("estimate"))
     ))
-  merge_args <- c("drop.ic", "paired")
+  merge_args <- c("drop.ic", "paired", "sep")
   not_merge_arg <- which(arg_names %ni% merge_args)
   if (!all(is_estimate[not_merge_arg])) { # fallback to default concatenation
     cl <- class(args[[1]])
