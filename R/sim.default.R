@@ -117,6 +117,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   # `par.index`: list for storing position of estimate, se, confint when
   # the returned simulation object is an `estimate` object
   par.index <- list()
+  seed_sequence <- NULL
   res <- val <- NULL
   on.exit({
     if (is.null(colnames) && !is.null(val)) {
@@ -134,6 +135,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     class(res) <- c("sim", cls)
     attr(res, "time") <- proc.time() - stm + oldtm
     attr(res, "par.index") <- par.index
+    attr(res, "seeds") <- seed_sequence
     return(res)
   })
   if (inherits(R, c("matrix", "data.frame")) || length(R) > 1) {
@@ -156,6 +158,9 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   repl <- NROW(parval)
   pb <- progressr::progressor(steps = repl)
   robx <- function(iter__, ...) {
+    rng_seed <- if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+                  get(".Random.seed", envir = .GlobalEnv)
+                else NULL
     if (!is.null(progressr.message)) {
       pb(message = progressr.message(...))
     } else {
@@ -176,7 +181,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       }
       names(res) <- nam
     }
-    return(structure(res, "estimate" = is_estimate))
+    return(structure(res, "estimate" = is_estimate, ".rng_seed" = rng_seed))
   }
   if (iter || !is.data.frame(parval)) {
     formals(robx)[[1]] <- NULL
@@ -213,6 +218,11 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   } else {
     val <- do.call(future.apply::future_mapply, pp)
   }
+  seed_sequence <- lapply(val, attr, ".rng_seed")
+  val <- lapply(val, function(v) {
+    attr(v, ".rng_seed") <- NULL
+    v
+  })
   res <- do.call(rbind, val)
   if (is.null(res)) {
     res <- matrix(NA, ncol=length(val[[1]]), nrow=repl)

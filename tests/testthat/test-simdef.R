@@ -30,6 +30,47 @@ test_that("sim.default with estimate objects", {
   expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
 })
 
+test_that("sim.default exports seed sequences as attribute", {
+  foo <- function() runif(1)
+  future::plan("sequential")
+  result <- sim(foo, R = 5, future.seed = 42L)
+  seeds <- attr(result, "seeds")
+
+  expect_true(is.list(seeds))
+  expect_equal(length(seeds), 5L)
+  expect_true(is.integer(seeds[[1]]))
+})
+
+test_that("sim.default exported seeds reproduce results (sequential)", {
+  foo <- function() runif(1)
+  future::plan("sequential")
+  result <- sim(foo, R = 5, future.seed = 42L)
+  seeds <- attr(result, "seeds")
+
+  old_seed <- get(".Random.seed", envir = .GlobalEnv)
+  on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv))
+
+  for (i in seq_len(5)) {
+    assign(".Random.seed", seeds[[i]], envir = .GlobalEnv)
+    expect_equal(foo(), as.numeric(result[i, 1]))
+  }
+})
+
+test_that("sim.default exported seeds reproduce results (mc.cores = 1)", {
+  skip_on_os("windows")
+  foo <- function() runif(1)
+  result <- sim(foo, R = 5, mc.cores = 1L)
+  seeds <- attr(result, "seeds")
+
+  old_seed <- get(".Random.seed", envir = .GlobalEnv)
+  on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv))
+
+  for (i in seq_len(5)) {
+    assign(".Random.seed", seeds[[i]], envir = .GlobalEnv)
+    expect_equal(foo(), as.numeric(result[i, 1]))
+  }
+})
+
 test_that("sim.default subsets", {
   onerun <- function(...) estimate(coef=runif(2),
                                    vcov=diag(runif(2)),
