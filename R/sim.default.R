@@ -611,7 +611,7 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
                 abs(
                   object[,confint[2*i]] - object[,confint[2*(i-1)+1]]
                 )[[1]]
-              )
+              ), na.rm=TRUE
             )
         }
         est <- rbind(est,Coverage=Coverage, Length=Length)
