@@ -95,7 +95,7 @@ arguments}
 
 \item{df}{degrees of freedom (default obtained from 'df.residual')}
 
-\item{print}{(optional) print function for the resulting estimate objecta}
+\item{print}{(optional) print function for the resulting estimate object}
 
 \item{labels}{(optional) names of coefficients}
 
