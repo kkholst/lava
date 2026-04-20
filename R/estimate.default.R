@@ -112,7 +112,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
 ##' @param coef (optional) parameter coefficient
 ##' @param robust if TRUE robust standard errors are calculated
 ##' @param df degrees of freedom (default obtained from 'df.residual')
-##' @param print (optional) print function for the resulting estimate objecta
+##' @param print (optional) print function for the resulting estimate object
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef if TRUE only the coefficient matrix is return
