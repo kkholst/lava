@@ -65,20 +65,23 @@ ordinal_estimate_hook <- function(x,data,weights,data2,estimator,...) {
             if (survival::is.Surv(data[,i])) {
                 S <- data[,i]
                 y1 <- S[,1]
+                y2 <- y1
                 if (attributes(S)$type=="left")  {
-                    y2 <- y1
                     y1[S[,2]==0] <- -Inf
                 }
                 if (attributes(S)$type=="right") {
-                    y2 <- y1
                     y2[S[,2]==0] <- Inf
                 }
                 if (attributes(S)$type=="interval2") {
                     y2 <- S[,2]
                 }
                 if (attributes(S)$type=="interval") {
-                    y2 <- S[,2]
-                    y2[S[,3]==1L] <- y1[S[,3]==1L]
+                  rcens <- which(S[,3]==0L)
+                  if (length(rcens)>0) y2[rcens] <- Inf
+                  lcens <- which(S[,3]==2L)
+                  if (length(lcens)>0) y1[lcens] <- -Inf
+                  icens <- which(S[,3]==3L)
+                  y2[icens] <- S[icens, 2]
                 }
                 if (!(attributes(S)$type%in%c("left","right","interval2","interval"))) stop("Surv type not supported.")
                 mynames <- c(mynames,i)

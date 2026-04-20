@@ -1,4 +1,4 @@
-context("estimate lvm")
+context("estimate.lvm")
 
 test_that("estimate.lvm cluster", {
   set.seed(1)

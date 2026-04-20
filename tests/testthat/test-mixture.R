@@ -1,6 +1,6 @@
 library(testthat)
 
-context("mixture lvm")
+context("mixture.lvm")
 
 setup_mixture_data <- function(seed = 42, n = 500) {
   set.seed(seed)

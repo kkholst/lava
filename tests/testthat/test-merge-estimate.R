@@ -1,3 +1,5 @@
+context("merge.estimate")
+
 library(testthat)
 library(lava)
 

@@ -7,6 +7,8 @@
   - `estimate`: `type="hc3"` variance estimates
   - `merge`, `c.estimate`: new `drop.ic` argument for dropping influence
     functions before merging
+  - `sim.default`: export seeds to replicate results
+  - bugfix: `estimate.lvm` fixed issue with interval censored observations.
 
 # lava 1.9.0
   - `estimate`: estimate objects can now be transformed via functions: `log`,

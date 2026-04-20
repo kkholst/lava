@@ -1,6 +1,5 @@
 context("Linear algebra functions")
 
-
 test_that("Matrix operations:", {
     ## vec operator
     testthat::expect_equivalent(vec(diag(3)),c(1,0,0,0,1,0,0,0,1))
