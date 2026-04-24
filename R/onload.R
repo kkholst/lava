@@ -6,7 +6,7 @@
     addhook("ordinal_sim_hook","sim.hooks")
     addhook("color_ordinal","color.hooks")
     addhook("ordinal_remove_hook","remove.hooks")
-    lava.options(cluster.index = packagecheck("mets"))
+    lava.options(cluster.index = packagecheck("mets"), messages = 1)
 }
 
 '.onAttach' <- function(libname, pkgname="lava") {
