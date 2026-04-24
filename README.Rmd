@@ -122,6 +122,14 @@ To cite that `lava` package please use one of the following references
 library(lava)
 ```
 
+The package uses the `message` function to provide additional information to
+users. All messages can be disabled session-wide with
+
+```{r lava_options}
+#| eval: FALSE
+lava.options(messages = 0) # the default is 1
+```
+
 ### Influence functions
 
 Construct `estimate` objects from parameter coefficients and estimated influence
@@ -195,7 +203,7 @@ regression(m) <- z1 + z2 + z3 ~ u2
 latent(m) <- ~ u1 + u2
 regression(m) <- u2 ~ u1 + x
 regression(m) <- u1 ~ x
-    
+
 plot(m)
 ```
 
