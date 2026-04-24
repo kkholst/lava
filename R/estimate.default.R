@@ -1029,11 +1029,10 @@ vcov.estimate <- function(object, list=FALSE, ...) {
 coef.estimate <- function(object,
                           mat=FALSE,
                           list=FALSE,
-                          messages=lava.options()$messages,
                           ...) {
   if (mat) return(object$coefmat)
-  if (messages > 0 && !is.null(object$back.transform)) {
-    message("Note: estimates on original scale (before 'back.transform')")
+  if (!is.null(object$back.transform)) {
+    warning("Note: estimates on original scale (before 'back.transform')")
   }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))
@@ -1045,10 +1044,11 @@ coef.estimate <- function(object,
 summary.estimate <- function(object,
                              contrast,
                              ...) {
-  p <- coef(object, messages=0)
+  # TODO: check how to avoid casting warning twice
+  p <- coef(object)
   if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
   test <- estimate(coef=p,
-                   vcov=vcov(object, messages=0),
+                   vcov=vcov(object),
                    f = FALSE,
                    contrast = contrast,
                    ...)

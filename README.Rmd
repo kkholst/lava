@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dev = "svg",
   fig.ext = "svg",
   fig.path = "man/figures/",
-  out.width = "70%"
+  out.width = "70%" # TODO: use pixels instead of %  672px | H: 480px
 )
 library(lava)
 lava.options(plot.engine="Rgraphviz")
