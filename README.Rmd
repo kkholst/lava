@@ -120,6 +120,7 @@ To cite that `lava` package please use one of the following references
 #| results: 'hide'
 #| echo: FALSE
 library(lava)
+set.seed(42)
 ```
 
 The package uses the `message` function to provide additional information to

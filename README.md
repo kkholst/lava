@@ -127,21 +127,21 @@ distribution via their estimated influence functions
 e <- c(a, b)
 vcov(e) # joint distribution
 #>            a          b
-#> a 0.14496254 0.01064961
-#> b 0.01064961 0.09579131
+#> a 0.07280218 0.03491347
+#> b 0.03491347 0.24018309
 summary(e, null=c(0, 0))
 #> Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, 
 #>     vcov = vcov(object, messages = 0), coef = p)
 #> ────────────────────────────────────────────────────────────
-#>   Estimate Std.Err    2.5% 97.5%  P-value
-#> a      0.5  0.3807 -0.2462 1.246 0.189104
-#> b      0.8  0.3095  0.1934 1.407 0.009744
+#>   Estimate Std.Err     2.5% 97.5% P-value
+#> a      0.5  0.2698 -0.02884 1.029 0.06387
+#> b      0.8  0.4901 -0.16055 1.761 0.10260
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 7.8564, df = 2, p-value = 0.01968
+#> chisq = 4.8386, df = 2, p-value = 0.08899
 ```
 
 Parameter transformations can be calculated directly as in the following
@@ -151,26 +151,26 @@ Products
 
 ``` r
 a * b
-#>   Estimate Std.Err    2.5% 97.5% P-value
-#> a      0.4  0.3539 -0.2936 1.094  0.2584
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a      0.4  0.3668 -0.319 1.119  0.2755
 ```
 
 General transformations
 
 ``` r
 (3 * cos(a) / sqrt(b) + 1) / a^2
-#>   Estimate Std.Err  2.5% 97.5% P-value
-#> a    15.77   26.77 -36.7 68.25  0.5558
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a    15.77   20.02 -23.46 55.01  0.4307
 ```
 
 Inner product, sums, and products
 
 ``` r
 c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
-#>       Estimate Std.Err    2.5% 97.5% P-value
-#> iprod    0.762  0.7342 -0.6769 2.201  0.2993
-#> sum      1.300  0.5119  0.2967 2.303  0.0111
-#> prod     0.400  0.3539 -0.2936 1.094  0.2584
+#>       Estimate Std.Err     2.5% 97.5% P-value
+#> iprod    0.762  1.0451 -1.28640 2.810 0.46594
+#> sum      1.300  0.6187  0.08733 2.513 0.03563
+#> prod     0.400  0.3668 -0.31899 1.119 0.27554
 ```
 
 Exponentiation and renaming of parameter
@@ -178,16 +178,16 @@ Exponentiation and renaming of parameter
 ``` r
 c(pow = a^b)
 #>     Estimate Std.Err    2.5% 97.5% P-value
-#> pow   0.5743  0.3603 -0.1318 1.281  0.1109
+#> pow   0.5743   0.272 0.04118 1.108 0.03474
 ```
 
 Transformation and subsetting
 
 ``` r
 c(e["a"] * e["b"] / a, e["b"])
-#>   Estimate Std.Err   2.5% 97.5%  P-value
-#> a      0.8  0.3095 0.1934 1.407 0.009744
-#> b      0.8  0.3095 0.1934 1.407 0.009744
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.8  0.4901 -0.1605 1.761  0.1026
+#> b      0.8  0.4901 -0.1605 1.761  0.1026
 ```
 
 For the `%*%*` operator we can also use a general contrast matrix
@@ -195,17 +195,17 @@ For the `%*%*` operator we can also use a general contrast matrix
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err    2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.4685 -1.2182 0.6182 0.521915
-#> a              0.5  0.3807 -0.2462 1.2462 0.189104
-#> b              0.8  0.3095  0.1934 1.4066 0.009744
+#>           Estimate Std.Err     2.5%  97.5% P-value
+#> [a] - [b]     -0.3  0.4931 -1.26648 0.6665 0.54293
+#> a              0.5  0.2698 -0.02884 1.0288 0.06387
+#> b              0.8  0.4901 -0.16055 1.7605 0.10260
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 7.8564, df = 2, p-value = 0.01968
+#> chisq = 4.8386, df = 2, p-value = 0.08899
 plot(B %*% e)
 ```
 
@@ -362,7 +362,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.483s
+#> 100 replications                 Time: 2.641s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
