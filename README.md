@@ -202,7 +202,7 @@ B %*% e
 plot(B %*% e)
 ```
 
-<img src="man/figures/estimate-contrast-1.svg" alt="" width="672px" height="480px" />
+![](man/figures/estimate-contrast-1.svg)<!-- -->
 
 ### Structural Equation Model
 
@@ -219,7 +219,7 @@ regression(m) <- u1 ~ x
 plot(m)
 ```
 
-<img src="man/figures/lvm1-1.svg" alt="" width="672px" height="480px" style="display: block; margin: auto;" />
+<img src="man/figures/lvm1-1.svg" alt="" style="display: block; margin: auto;" />
 
 Simulation
 
@@ -273,7 +273,7 @@ g <- cumres(e, u2 ~ u1)
 plot(g)
 ```
 
-<img src="man/figures/gof1-1.svg" alt="" width="672px" height="480px" style="display: block; margin: auto;" />
+<img src="man/figures/gof1-1.svg" alt="" style="display: block; margin: auto;" />
 
 ### Non-linear measurement error model
 
@@ -321,7 +321,7 @@ u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
 ```
 
-<img src="man/figures/nlin1-1.svg" alt="" width="672px" height="480px" style="display: block; margin: auto;" />
+<img src="man/figures/nlin1-1.svg" alt="" style="display: block; margin: auto;" />
 
 ### Simulation
 
@@ -340,7 +340,7 @@ plot(m)
 plot(m)
 ```
 
-<img src="man/figures/mediation1-1.svg" alt="" width="672px" height="480px" style="display: block; margin: auto;" />
+<img src="man/figures/mediation1-1.svg" alt="" style="display: block; margin: auto;" />
 
 Simulate from model and estimate indirect effects
 
@@ -355,7 +355,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.635s
+#> 100 replications                 Time: 2.596s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
@@ -381,4 +381,4 @@ plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
      scatter.plot=TRUE)
 ```
 
-<img src="man/figures/simres1-1.svg" alt="" width="672px" height="480px" style="display: block; margin: auto;" />
+<img src="man/figures/simres1-1.svg" alt="" style="display: block; margin: auto;" />
