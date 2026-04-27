@@ -1,3 +1,15 @@
+with_unique_warnings <- function(expr) {
+  seen <- character(0)
+  withCallingHandlers(expr, warning = function(w) {
+    msg <- conditionMessage(w)
+    if (msg %in% seen) {
+      invokeRestart("muffleWarning")
+    } else {
+      seen <<- c(seen, msg)
+    }
+  })
+}
+
 ##' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
@@ -1044,20 +1056,21 @@ coef.estimate <- function(object,
 summary.estimate <- function(object,
                              contrast,
                              ...) {
-  # TODO: check how to avoid casting warning twice
-  p <- coef(object)
-  if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
-  test <- estimate(coef=p,
-                   vcov=vcov(object),
-                   f = FALSE,
-                   contrast = contrast,
-                   ...)
-  class(test) <- "NULL"
-  test$compare <- test$compare
-  object <- test[c("coef", "coefmat", "vcov", "call",
-                   "ncluster", "model.index", "compare")]
-  class(object) <- "summary.estimate"
-  object
+  with_unique_warnings({
+    p <- coef(object)
+    if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
+    test <- estimate(coef=p,
+                     vcov=vcov(object),
+                     f = FALSE,
+                     contrast = contrast,
+                     ...)
+    class(test) <- "NULL"
+    test$compare <- test$compare
+    object <- test[c("coef", "coefmat", "vcov", "call",
+                     "ncluster", "model.index", "compare")]
+    class(object) <- "summary.estimate"
+    object
+  })
 }
 
 ##' @export

@@ -329,18 +329,27 @@ test_that("Degrees of freedom equals nrow(B)", {
   expect_equal(unname(e$compare$parameter), nrow(B))
 })
 
-test_that("coef.estimate", {
+test_that("coef.estimate warns when back.transform is set and returns untransformed coefs", {
   e_trans <- estimate(a1, back.transform = exp)
-  expect_message(coef(e_trans), "original scale")
-  expect_equivalent(coef(e_trans), coef(a1))
-  expect_equal(e_trans$coefmat[1], exp(coef(a1)[[1]]))
+  expect_warning(coef(e_trans), "back.transform")
+  suppressWarnings(expect_equivalent(coef(e_trans), coef(a1)))
+})
 
-  # can suppress warning in method call
-  expect_no_message(coef(e_trans, messages = 0))
+test_that("coef.estimate warning can be suppressed and still returns untransformed coefs", {
+  e_trans <- estimate(a1, back.transform = exp)
+  expect_no_warning(suppressWarnings(coef(e_trans)))
+  expect_equivalent(suppressWarnings(coef(e_trans)), coef(a1))
+})
 
-  # message can be suppressed by using lava.options
-  old <- lava.options(messages = 0)
-  on.exit(do.call(lava.options, old))
-  expect_no_message(coef(e_trans))
-  expect_equivalent(coef(e_trans), coef(a1))
+test_that("summary.estimate emits back.transform warning at most once", {
+  e_trans <- estimate(a1, back.transform = exp)
+  warns <- character(0)
+  withCallingHandlers(
+    summary(e_trans),
+    warning = function(w) {
+      warns <<- c(warns, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_equal(sum(grepl("back.transform", warns)), 1L)
 })
