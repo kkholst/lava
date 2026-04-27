@@ -342,7 +342,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (!(is.matrix(f) || is.vector(f)))
       return(compare(x, f, ...)) ## LRT
     if (missing(contrast)) contrast <- f
-    if (length(f)==1L && !f) {
+    if (length(f)==1L && is.logical(f) && !f) {
       contrast.transform <- FALSE # Wald-test and do not alter the parameter estimates
     }
     f <- NULL
