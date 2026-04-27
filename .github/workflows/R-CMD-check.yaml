@@ -59,11 +59,12 @@ jobs:
         shell: Rscript {0}
 
       # verify that readme is up-to-date with code changes
+      # ignore lines with timings
       - name: Check readme
         run: |
           cp -r README.md .README.md
           make readme
-          diff -r README.md .README.md
+          diff <(grep -v 'Time:' README.md) <(grep -v 'Time:' .README.md)
 
       - name: Webpage deployment
         if: success() && contains('refs/heads/main', github.ref)

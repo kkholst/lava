@@ -355,7 +355,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.596s
+#> 100 replications                 Time: 2.697s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
