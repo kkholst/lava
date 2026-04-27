@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dev = "svg",
   fig.ext = "svg",
   fig.path = "man/figures/",
-  out.width = "70%" # TODO: use pixels instead of %  672px | H: 480px
+  out.width = "70%"
 )
 library(lava)
 lava.options(plot.engine="Rgraphviz")
@@ -120,15 +120,6 @@ To cite that `lava` package please use one of the following references
 #| results: 'hide'
 #| echo: FALSE
 library(lava)
-set.seed(42)
-```
-
-The package uses the `message` function to provide additional information to
-users. All messages can be disabled session-wide with
-
-```{r lava_options}
-#| eval: FALSE
-lava.options(messages = 0) # the default is 1
 ```
 
 ### Influence functions
@@ -204,7 +195,7 @@ regression(m) <- z1 + z2 + z3 ~ u2
 latent(m) <- ~ u1 + u2
 regression(m) <- u2 ~ u1 + x
 regression(m) <- u1 ~ x
-
+    
 plot(m)
 ```
 
