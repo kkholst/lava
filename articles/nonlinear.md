@@ -476,7 +476,7 @@ legend("bottomright", c("Gaussian","Mixture"),
 
 ``` r
 sessionInfo()
-#> R version 4.5.3 (2026-03-11)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -500,22 +500,22 @@ sessionInfo()
 #> [1] lava_1.9.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-4           future.apply_1.20.2    jsonlite_2.0.0        
-#>  [4] compiler_4.5.3         Rcpp_1.1.1             parallel_4.5.3        
-#>  [7] Rgraphviz_2.54.0       jquerylib_0.1.4        globals_0.19.1        
-#> [10] splines_4.5.3          systemfonts_1.3.2      textshaping_1.0.5     
+#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
+#>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
+#>  [7] Rgraphviz_2.55.0       jquerylib_0.1.4        globals_0.19.1        
+#> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
 #> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
 #> [16] R6_2.6.1               generics_0.1.4         knitr_1.51            
-#> [19] BiocGenerics_0.56.0    htmlwidgets_1.6.4      graph_1.88.1          
+#> [19] BiocGenerics_0.57.1    htmlwidgets_1.6.4      graph_1.89.1          
 #> [22] future_1.70.0          desc_1.4.3             bslib_0.10.0          
 #> [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
-#> [28] fs_2.0.1               sass_0.4.10            cli_3.6.6             
-#> [31] pkgdown_2.2.0          digest_0.6.39          grid_4.5.3            
-#> [34] mvtnorm_1.3-6          lifecycle_1.0.5        timereg_2.0.7         
-#> [37] RcppArmadillo_15.2.4-1 evaluate_1.0.5         numDeriv_2016.8-1.1   
+#> [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             
+#> [31] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            
+#> [34] mvtnorm_1.3-7          lifecycle_1.0.5        timereg_2.0.7         
+#> [37] RcppArmadillo_15.2.6-1 evaluate_1.0.5         numDeriv_2016.8-1.1   
 #> [40] listenv_0.10.1         codetools_0.2-20       ragg_1.5.2            
-#> [43] survival_3.8-6         stats4_4.5.3           parallelly_1.46.1     
-#> [46] rmarkdown_2.31         mets_1.3.9             tools_4.5.3           
+#> [43] survival_3.8-6         stats4_4.6.0           parallelly_1.47.0     
+#> [46] rmarkdown_2.31         mets_1.3.9             tools_4.6.0           
 #> [49] htmltools_0.5.9
 ```
 

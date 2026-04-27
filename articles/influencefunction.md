@@ -1071,7 +1071,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55d98b5f1698>
+#> <bytecode: 0x55d0620cfba0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1586,7 +1586,7 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 
 ``` r
 sessionInfo()
-#> R version 4.5.3 (2026-03-11)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -1613,23 +1613,23 @@ sessionInfo()
 #>  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         
 #>  [4] generics_0.1.4         lattice_0.22-9         listenv_0.10.1        
 #>  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        
-#> [10] grid_4.5.3             mvtnorm_1.3-6          fastmap_1.2.0         
-#> [13] jsonlite_2.0.0         Matrix_1.7-4           backports_1.5.1       
+#> [10] grid_4.6.0             mvtnorm_1.3-7          fastmap_1.2.0         
+#> [13] jsonlite_2.0.0         Matrix_1.7-5           backports_1.5.1       
 #> [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   
 #> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             
-#> [22] rlang_1.2.0            mets_1.3.9             parallelly_1.46.1     
-#> [25] future.apply_1.20.2    splines_4.5.3          RcppArmadillo_15.2.4-1
+#> [22] rlang_1.2.0            mets_1.3.9             parallelly_1.47.0     
+#> [25] future.apply_1.20.2    splines_4.6.0          RcppArmadillo_15.2.6-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
-#> [31] tools_4.5.3            parallel_4.5.3         dplyr_1.2.1           
+#> [31] tools_4.6.0            parallel_4.6.0         dplyr_1.2.1           
 #> [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.3           
-#> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.0.1              
+#> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.1.0              
 #> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
 #> [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         
 #> [46] pkgdown_2.2.0          bslib_0.10.0           pillar_1.11.1         
-#> [49] glue_1.8.0             Rcpp_1.1.1             systemfonts_1.3.2     
+#> [49] glue_1.8.1             Rcpp_1.1.1-1.1         systemfonts_1.3.2     
 #> [52] tidyselect_1.2.1       xfun_0.57              tibble_3.3.1          
 #> [55] knitr_1.51             htmltools_0.5.9        rmarkdown_2.31        
-#> [58] compiler_4.5.3
+#> [58] compiler_4.6.0
 ```
 
 ## Bibliography

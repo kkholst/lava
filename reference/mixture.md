@@ -123,18 +123,18 @@ if (requireNamespace('mets', quietly=TRUE)) {
 #> Residual:  0.03759283   Extrapolation:  TRUE   Steplength:  4 
 #> Residual:  0.6706137   Extrapolation:  TRUE   Steplength:  16 
 #> Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070702 
-#> Residual:  0.001280273   Extrapolation:  TRUE   Steplength:  3.588918 
-#> Residual:  0.0003418473   Extrapolation:  TRUE   Steplength:  6.548224 
-#> Residual:  0.0001613898   Extrapolation:  TRUE   Steplength:  4.502928 
-#> Residual:  0.0001075834   Extrapolation:  TRUE   Steplength:  5.972323 
-#> Residual:  2.075601e-05   Extrapolation:  TRUE   Steplength:  3.792669 
-#> Residual:  2.528599e-06   Extrapolation:  TRUE   Steplength:  4.761634 
+#> Residual:  0.001280272   Extrapolation:  TRUE   Steplength:  3.588918 
+#> Residual:  0.0003418479   Extrapolation:  TRUE   Steplength:  6.548223 
+#> Residual:  0.0001613932   Extrapolation:  TRUE   Steplength:  4.502941 
+#> Residual:  0.0001075714   Extrapolation:  TRUE   Steplength:  5.9717 
+#> Residual:  2.075845e-05   Extrapolation:  TRUE   Steplength:  3.793239 
+#> Residual:  2.519482e-06   Extrapolation:  TRUE   Steplength:  4.763772 
 #>     Estimate Std.Err   2.5% 97.5%    P-value
 #> y~x    1.048 0.03811 0.9737 1.123 1.263e-166
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [y~x] = 0 
 #>  
-#> chisq = 756.9071, df = 1, p-value < 2.2e-16
+#> chisq = 756.9072, df = 1, p-value < 2.2e-16
 # }
 ```
