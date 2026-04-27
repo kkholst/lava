@@ -191,3 +191,21 @@ test_that("riskcomp with scale=odds gives odds ratio", {
     testthat::expect_equal(riskcomp(p[1], p[2], scale = odds, type = 2),
                            o[2] / o[1])
 })
+
+## ---------------------------------------------------------------------------
+## Regression: simulate_binomial_* errors clearly on out-of-range probabilities
+## ---------------------------------------------------------------------------
+test_that("simulate_binomial_rd errors when implied probability is out of [0,1]", {
+    sim_rd <- lava:::simulate_binomial_rd
+    ## NaN linear predictor propagates to NaN probabilities -> guard triggers
+    data <- data.frame(z = c(0, 1), lp = c(NaN, NaN), op = c(0, 0))
+    testthat::expect_error(sim_rd(NULL, data, inputs = c("z", "lp", "op")),
+                           regexp = "outside")
+})
+
+test_that("simulate_binomial_rr errors when implied probability is out of [0,1]", {
+    sim_rr <- lava:::simulate_binomial_rr
+    data <- data.frame(z = c(0, 1), lp = c(NaN, NaN), op = c(0, 0))
+    testthat::expect_error(sim_rr(NULL, data, inputs = c("z", "lp", "op")),
+                           regexp = "outside")
+})
