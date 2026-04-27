@@ -4,7 +4,7 @@
 ## 2) Sample new cluster centre from distribution p(x) = D^2(x)/sum(D^2)
 ## Repeat 1-2 until all clusters are assigned
 kmpp <- function(y,k=2) {
-    Dist <- function(y1,y2) sum(y1-y2)^2
+    Dist <- function(y1,y2) sum((y1-y2)^2)
     n <- NROW(y)
     ii <- numeric(k)
     u <- runif(k)
@@ -37,7 +37,24 @@ kmpp <- function(y,k=2) {
 ##' @param ... Additional arguments to lower level functions
 ##' @export
 ##' @author Klaus K. Holst
+##' @examples
+##' ## Two well-separated Gaussian blobs in 2-D
+##' set.seed(1)
+##' x <- rbind(matrix(rnorm(100, mean = -3), ncol = 2),
+##'            matrix(rnorm(100, mean =  3), ncol = 2))
+##' res <- wkm(x, mu = 2)
+##' table(res$cluster)
+##' res$center
 ##'
+##' ## Supply explicit initial centers (as a list)
+##' res2 <- wkm(x, mu = list(c(-3, -3), c(3, 3)))
+##'
+##' ## Weighted clustering: up-weight the second blob
+##' w <- c(rep(1, 50), rep(10, 50))
+##' res3 <- wkm(x, mu = 2, weights = w)
+##'
+##' ## Formula interface on a data.frame
+##' wkm(~ Sepal.Length + Sepal.Width, data = iris, mu = 3)
 wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, init="kmpp", ...) { ## Lloyd's algorithm
     if (inherits(x, "formula")) x <- stats::model.matrix(x,data=data)
     x <- cbind(x)
@@ -50,7 +67,8 @@ wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ini
         K <- mu
     }
     sswmin <- Inf
-    mus <- ssws <- NULL
+    ssws <- NULL
+    dmin <- NULL
     cl0 <- rep(1,NROW(x))
     for (k in seq(n.start)) {
         if (random.start) {
@@ -61,9 +79,8 @@ wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ini
             }
             mu <- lapply(idx, function(i) cbind(x)[i,,drop=TRUE])
         }
-        mus <- c(mus, list(mu))
         for (i in seq(iter.max)) {
-            d <- Reduce(cbind,lapply(mu, function(m) weights*colSums((t(x)-m)*(t(x)-m))))
+            d <- cbind(Reduce(cbind,lapply(mu, function(m) weights*colSums((t(x)-m)*(t(x)-m)))))
             cl <- apply(d,1,which.min)
             for (j in seq_along(mu)) {
                 idx <- which(cl==j)
@@ -81,10 +98,11 @@ wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, ini
             sswmin <- ssw
             clmin <- cl
             mumin <- mu
+            dmin <- d
         }
     }
-    mu <- structure(mu,class="by",dim=K,dimnames=list(class=seq(K)))
-    withinclusterss <- as.vector(by(d[cbind(seq(NROW(d)),cl)],cl,sum))
-    return(list(cluster=cl,
+    mu <- structure(mumin,class="by",dim=K,dimnames=list(class=seq(K)))
+    withinclusterss <- as.vector(by(dmin[cbind(seq(NROW(dmin)),clmin)],clmin,sum))
+    return(list(cluster=clmin,
            center=mu, ssw=withinclusterss))
 }

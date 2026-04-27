@@ -172,3 +172,56 @@ test_that("wkm is reproducible under set.seed", {
     testthat::expect_equal(a$cluster, b$cluster)
     testthat::expect_equal(a$ssw, b$ssw)
 })
+
+## ---------------------------------------------------------------------------
+## Regression: K = 1 should not crash (was apply(d,1,which.min) bug)
+## ---------------------------------------------------------------------------
+test_that("wkm runs with K = 1", {
+    set.seed(11)
+    x <- matrix(rnorm(40), ncol = 2)
+    res <- wkm(x, mu = list(c(0, 0)), n.start = 1)
+    testthat::expect_length(res$cluster, nrow(x))
+    testthat::expect_true(all(res$cluster == 1L))
+    ## with one cluster the center should equal the (weighted) mean
+    expected <- colMeans(x)
+    testthat::expect_equal(as.numeric(res$center[[1]]),
+                           as.numeric(expected), tolerance = 1e-8)
+})
+
+## ---------------------------------------------------------------------------
+## Regression: best-start (lowest SSW) is actually returned across n.start
+## ---------------------------------------------------------------------------
+test_that("wkm returns the best-SSW solution across multiple starts", {
+    set.seed(13)
+    n <- 80
+    x <- rbind(matrix(rnorm(n * 2, mean = -3), ncol = 2),
+               matrix(rnorm(n * 2, mean =  3), ncol = 2))
+    res <- wkm(x, mu = 2, n.start = 10)
+    ## Recompute SSW from returned cluster + centers; must match res$ssw
+    centers <- do.call(rbind, lapply(res$center, as.numeric))
+    sq <- vapply(seq_len(nrow(x)),
+                 function(i) sum((x[i, ] - centers[res$cluster[i], ])^2),
+                 numeric(1))
+    recomputed <- as.vector(by(sq, res$cluster, sum))
+    testthat::expect_equal(sort(recomputed), sort(res$ssw),
+                           tolerance = 1e-8)
+})
+
+## ---------------------------------------------------------------------------
+## Regression: kmpp distance metric (sum of squared diffs, not (sum diff)^2)
+## ---------------------------------------------------------------------------
+test_that("kmpp distance metric distinguishes points with equal coord-sum", {
+    ## (5,-5) and (-5,5) have identical coordinate sums.  Under the buggy
+    ## metric sum(y1-y2)^2 they have distance 0, which makes the kmeans++
+    ## sampling distribution degenerate (D2/sum(D2) = NaN) and kmpp errors
+    ## out.  With the correct metric sum((y1-y2)^2) the points are far
+    ## apart and kmpp must complete and return two valid indices.
+    y <- rbind(c( 5, -5),
+               c(-5,  5))
+    for (s in 1:5) {
+        set.seed(s)
+        idx <- lava:::kmpp(y, k = 2)
+        testthat::expect_length(idx, 2L)
+        testthat::expect_true(all(idx %in% c(1L, 2L)))
+    }
+})
