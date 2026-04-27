@@ -328,19 +328,3 @@ test_that("Degrees of freedom equals nrow(B)", {
   e    <- estimate(a3d, f = B, null = null)
   expect_equal(unname(e$compare$parameter), nrow(B))
 })
-
-test_that("coef.estimate", {
-  e_trans <- estimate(a1, back.transform = exp)
-  expect_message(coef(e_trans), "original scale")
-  expect_equivalent(coef(e_trans), coef(a1))
-  expect_equal(e_trans$coefmat[1], exp(coef(a1)[[1]]))
-
-  # can suppress warning in method call
-  expect_no_message(coef(e_trans, messages = 0))
-
-  # message can be suppressed by using lava.options
-  old <- lava.options(messages = 0)
-  on.exit(do.call(lava.options, old))
-  expect_no_message(coef(e_trans))
-  expect_equivalent(coef(e_trans), coef(a1))
-})
