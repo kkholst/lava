@@ -11,5 +11,6 @@ rchisqsum <- function(n,lambda) {
 pchisqsum <- function(x, lambda=1, B=1e6, seed=NULL) {
     if (!is.null(seed)) set.seed(seed)
     y <- rchisqsum(B,lambda)
-    mean(y<=x)
+    if (length(x) == 1L) return(mean(y <= x))
+    vapply(x, function(xi) mean(y <= xi), numeric(1))
 }

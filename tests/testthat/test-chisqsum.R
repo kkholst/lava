@@ -80,3 +80,17 @@ test_that("pchisqsum approximates pchisq when lambda = 1", {
         testthat::expect_lt(abs(p_mc - p_exact), 0.01)
     }
 })
+
+## ---------------------------------------------------------------------------
+## Regression: pchisqsum vectorized over x
+## ---------------------------------------------------------------------------
+test_that("pchisqsum returns one probability per element of vector x", {
+    xs <- c(0.5, 1, 2, 4)
+    p_vec <- lava:::pchisqsum(xs, lambda = c(1, 0.5), B = 5e3, seed = 7)
+    testthat::expect_length(p_vec, length(xs))
+    testthat::expect_true(all(p_vec >= 0 & p_vec <= 1))
+    testthat::expect_true(all(diff(p_vec) >= 0))
+    ## scalar call agrees with vectorized call (same seed, same B)
+    p1 <- lava:::pchisqsum(xs[2], lambda = c(1, 0.5), B = 5e3, seed = 7)
+    testthat::expect_equal(p_vec[2], p1)
+})
