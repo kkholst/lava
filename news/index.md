@@ -6,7 +6,9 @@ Development version - Safe evaluation of rank in `wald_test` - adding CI
 Length to `summary.sim` output - fixing bug wrt `estimate.index` in
 `summary.sim` - updated `plot.sim`, `forestplot`, `plot.estimate` -
 `estimate`: `type="hc3"` variance estimates - `merge`, `c.estimate`: new
-`drop.ic` argument for dropping influence functions before merging
+`drop.ic` argument for dropping influence functions before merging -
+`sim.default`: export seeds to replicate results - bugfix:
+`estimate.lvm` fixed issue with interval censored observations.
 
 ## lava 1.9.0
 

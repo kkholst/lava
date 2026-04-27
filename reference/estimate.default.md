@@ -144,7 +144,7 @@ estimate(
 
 - print:
 
-  (optional) print function for the resulting estimate objecta
+  (optional) print function for the resulting estimate object
 
 - labels:
 
