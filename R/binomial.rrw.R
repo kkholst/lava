@@ -10,6 +10,53 @@
 ##' @param ... additional arguments to lower level functions
 ##' @aliases binomial.rd binomial.rr
 ##' @export
+##' @examples
+##' ## ---------------------------------------------------------------
+##' ## binomial.rd: constant risk-difference model
+##' ##   P(Y=1|Z=1) - P(Y=1|Z=0) = tanh(lp)
+##' ## ---------------------------------------------------------------
+##' m <- lvm()
+##' regression(m) <- z ~ x
+##' regression(m) <- lp ~ x
+##' regression(m) <- op ~ x
+##' intercept(m, ~lp) <- 0.4   ## constant linear predictor for RD
+##' intercept(m, ~op) <- 0     ## odds product = exp(0) = 1
+##' distribution(m, ~lp) <- normal.lvm(sd = 0)
+##' distribution(m, ~op) <- normal.lvm(sd = 0)
+##' m <- binomial.rd(m, response = "y", exposure = "z",
+##'                  target.model = "lp", nuisance.model = "op")
+##' set.seed(1)
+##' d <- sim(m, n = 2000)
+##' ## Empirical risk difference should be close to tanh(0.4)
+##' mean(d$y[d$z == 1]) - mean(d$y[d$z == 0])
+##' tanh(0.4)
+##'
+##' ## Formula interface: response ~ exposure | target | nuisance
+##' m2 <- lvm()
+##' regression(m2) <- z ~ x
+##' regression(m2) <- lp ~ x
+##' regression(m2) <- op ~ x
+##' m2 <- binomial.rd(m2, y ~ z | lp | op)
+##'
+##' ## ---------------------------------------------------------------
+##' ## binomial.rr: constant relative-risk model
+##' ##   log(P(Y=1|Z=1) / P(Y=1|Z=0)) = lp
+##' ## ---------------------------------------------------------------
+##' m <- lvm()
+##' regression(m) <- z ~ x
+##' regression(m) <- lp ~ x
+##' regression(m) <- op ~ x
+##' intercept(m, ~lp) <- log(1.5)   ## constant log relative-risk
+##' intercept(m, ~op) <- 0          ## odds product = 1
+##' distribution(m, ~lp) <- normal.lvm(sd = 0)
+##' distribution(m, ~op) <- normal.lvm(sd = 0)
+##' m <- binomial.rr(m, response = "y", exposure = "z",
+##'                  target.model = "lp", nuisance.model = "op")
+##' set.seed(1)
+##' d <- sim(m, n = 2000)
+##' ## Empirical log-RR should be close to log(1.5)
+##' log(mean(d$y[d$z == 1]) / mean(d$y[d$z == 0]))
+##' log(1.5)
 binomial.rd <- function(x,response,exposure,
                  target.model,nuisance.model,
                  exposure.model=binomial.lvm(),...) {
@@ -72,7 +119,9 @@ simulate_binomial_rd <- function(x,data,inputs,...) {
     op <- exp(lp2)
     pp <- RD_OP(rd,op)
     pp <- pp[,1]*(1-exposure) + pp[,2]*exposure
-    y <- rbinom(NROW(data), 1, pp)
+    if (anyNA(pp) || any(pp < 0) || any(pp > 1))
+        stop("simulate_binomial_rd: implied probabilities outside [0,1]; check (rd, op) inputs")
+    return(rbinom(NROW(data), 1, pp))
 }
 
 simulate_binomial_rr <- function(x,data,inputs,...) {
@@ -83,11 +132,11 @@ simulate_binomial_rr <- function(x,data,inputs,...) {
     op <- exp(lp2)
     pp <- RR_OP(rr,op)
     pp <- pp[,1]*(1-exposure) + pp[,2]*exposure
-    y <- rbinom(NROW(data), 1, pp)
+    if (anyNA(pp) || any(pp < 0) || any(pp > 1))
+        stop("simulate_binomial_rr: implied probabilities outside [0,1]; check (rr, op) inputs")
+    return(rbinom(NROW(data), 1, pp))
 }
 
-
-##' @export
 Identical <- function(x,y=1,tolerance = .Machine$double.eps^0.5) {
     Mod(x-y)<tolerance
 }

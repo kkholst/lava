@@ -26,60 +26,6 @@ IV1_variance.lvm <- function(x,p,data,opt,...) {
 
 ###}}} Objective
 
-CondVar <- function(S,idx) {
-    idx2 <- setdiff(seq_len(ncol(S)),idx)
-    S11 <- S[idx2,idx2];
-    S22 <- S[idx,idx]
-    S12 <- S[idx2,idx]
-    S11-S12%*%solve(S22)%*%t(S12)
-}
-
-varest <- function(x,data) {
-    p <- IV(x,data)$estimate
-    idx <- match(names(p),coef(x,mean=TRUE))
-    x0 <- parfix(Model(x),idx,p)
-    index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
-
-    A <- t(index(x)$A)
-    Afix <- A; Afix[t(index(x)$M0)==1] <- 0
-    A[A!=0] <- 1
-    k <- nrow(A)
-    I <- diag(nrow=k)
-    Ap <- modelVar(x)$A ## Estimated parameter matrix
-
-    indicators <- setdiff(vars(x)[rowSums(A)==1],exogenous(x))
-    responses <- endogenous(x,top=TRUE)
-    y.indicators <- responses[rowSums(A[responses,])==1]
-    Sigma <- var(data[,manifest(x)])
-
-    var.eta <- c()
-    for (eta in latent(x)) {
-        reachable <- acc(x$M,eta)
-        ys <- intersect(names(reachable),y.indicators)
-        lambdas <- c()
-        for (y in ys) {
-            pp <- path(Model(x), from=eta, to=y)
-            lambda1 <- 0
-            for (i in seq_along(pp)) {
-                lambda <- 1
-                for (j in seq_len(length(pp[[i]])-1))
-                    lambda <- lambda*Ap[pp[[i]][j],pp[[i]][j+1]]
-                lambda1 <- lambda1+lambda
-            }
-            lambdas <- c(lambdas,lambda1)
-        }
-        val <- outer(1/lambdas,1/lambdas)*Sigma[ys,ys]
-        var.eta <- c(var.eta, mean(val[upper.tri(val)]))
-    }
-
-    S <- rep(0,k); S[match(manifest(x),vars(x))] <- diag(Sigma); S[match(latent(x),vars(x))] <- var.eta; names(S) <- vars(x)
-    I <- diag(nrow=k)
-    IA <- (I-t(Ap))
-    IA%*%cbind(S)%*%t(IA)
-
-}
-
-
 ## Instrumental Variable Estimator / 2SLS
 ##' @export
 IV <- function(m,data,R2thres=0,type="robust", ...) {
