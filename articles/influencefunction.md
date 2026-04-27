@@ -1071,7 +1071,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55d0620cfba0>
+#> <bytecode: 0x55e5eac66428>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
