@@ -124,14 +124,6 @@ library(lava)
 set.seed(42)
 ```
 
-The package uses the `message` function to provide additional information to
-users. All messages can be disabled session-wide with
-
-```{r lava_options}
-#| eval: FALSE
-lava.options(messages = 0) # the default is 1
-```
-
 ### Influence functions
 
 Construct `estimate` objects from parameter coefficients and estimated influence

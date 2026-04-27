@@ -96,13 +96,6 @@ To cite that `lava` package please use one of the following references
 
 ## Examples
 
-The package uses the `message` function to provide additional
-information to users. All messages can be disabled session-wide with
-
-``` r
-lava.options(messages = 0) # the default is 1
-```
-
 ### Influence functions
 
 Construct `estimate` objects from parameter coefficients and estimated
@@ -362,7 +355,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.626s
+#> 100 replications                 Time: 2.635s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
