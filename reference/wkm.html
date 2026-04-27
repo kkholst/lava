@@ -97,6 +97,69 @@
     <p>Klaus K. Holst</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Two well-separated Gaussian blobs in 2-D</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">3</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span>  <span class="fl">3</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">wkm</span><span class="op">(</span><span class="va">x</span>, mu <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1  2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 50 </span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">center</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.847515 3.076869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -2.899552 -2.882674</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Supply explicit initial centers (as a list)</span></span></span>
+<span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">wkm</span><span class="op">(</span><span class="va">x</span>, mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Weighted clustering: up-weight the second blob</span></span></span>
+<span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu">wkm</span><span class="op">(</span><span class="va">x</span>, mu <span class="op">=</span> <span class="fl">2</span>, weights <span class="op">=</span> <span class="va">w</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Formula interface on a data.frame</span></span></span>
+<span class="r-in"><span><span class="fu">wkm</span><span class="op">(</span><span class="op">~</span> <span class="va">Sepal.Length</span> <span class="op">+</span> <span class="va">Sepal.Width</span>, data <span class="op">=</span> <span class="va">iris</span>, mu <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  41  42  43  44  45  46  47  48  49  50  51  52  53  54  55  56  57  58  59  60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3   3   3   3   3   3   3   3   3   3   2   2   2   1   2   1   2   1   2   1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1   1   1   1   1   2   1   1   1   1   1   1   1   1   2   2   2   2   1   1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  81  82  83  84  85  86  87  88  89  90  91  92  93  94  95  96  97  98  99 100 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1   1   1   1   1   1   2   1   1   1   1   1   1   1   1   1   1   1   1   1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2   1   2   2   2   2   1   2   2   2   2   2   2   1   1   2   2   2   2   1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2   1   2   1   2   2   1   1   2   2   2   2   2   1   1   2   2   2   1   2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141 142 143 144 145 146 147 148 149 150 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2   2   1   2   2   2   1   2   2   1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $center</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (Intercept) Sepal.Length  Sepal.Width </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1.000000     5.773585     2.692453 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (Intercept) Sepal.Length  Sepal.Width </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1.000000     6.812766     3.074468 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (Intercept) Sepal.Length  Sepal.Width </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        1.000        5.006        3.428 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ssw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11.3000 12.6217 13.1290</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
