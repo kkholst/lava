@@ -124,7 +124,7 @@ vcov(e) # joint distribution
 #> b 0.03491347 0.24018309
 summary(e, null=c(0, 0))
 #> Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, 
-#>     vcov = vcov(object, messages = 0), coef = p)
+#>     vcov = vcov(object), coef = p)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err     2.5% 97.5% P-value
 #> a      0.5  0.2698 -0.02884 1.029 0.06387
@@ -355,7 +355,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.697s
+#> 100 replications                 Time: 2.567s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
