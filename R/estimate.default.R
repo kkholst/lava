@@ -1,15 +1,3 @@
-with_unique_warnings <- function(expr) {
-  seen <- character(0)
-  withCallingHandlers(expr, warning = function(w) {
-    msg <- conditionMessage(w)
-    if (msg %in% seen) {
-      invokeRestart("muffleWarning")
-    } else {
-      seen <<- c(seen, msg)
-    }
-  })
-}
-
 ##' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
@@ -1050,6 +1038,19 @@ coef.estimate <- function(object,
     return(lapply(object$model.index, function(x) object$coef[x]))
   }
   object$coef
+}
+
+with_unique_warnings <- function(expr) {
+  # utility function that prevents the same warning being cast more than once
+  seen <- character(0)
+  withCallingHandlers(expr, warning = function(w) {
+    msg <- conditionMessage(w)
+    if (msg %in% seen) {
+      invokeRestart("muffleWarning")
+    } else {
+      seen <<- c(seen, msg)
+    }
+  })
 }
 
 ##' @export
