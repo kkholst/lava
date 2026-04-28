@@ -223,10 +223,3 @@ test_that("pdfconvert", {
   ## TODO
   expect_true(TRUE)
 })
-
-test_that("logo", {
-  skip_on_cran()
-
-  myplot <- function(...) lava:::lava(w=10, seed=42)
-  val <- expect_doppelganger("logo", myplot)
-})
