@@ -328,3 +328,22 @@ test_that("Degrees of freedom equals nrow(B)", {
   e    <- estimate(a3d, f = B, null = null)
   expect_equal(unname(e$compare$parameter), nrow(B))
 })
+
+test_that("coef.estimate warns when back.transform is set and returns untransformed coefs", {
+  e_trans <- estimate(a1, back.transform = exp)
+  expect_warning(coef(e_trans), "back.transform")
+  suppressWarnings(expect_equal(coef(e_trans), coef(a1)))
+
+  # verify that estimate.summary casts only a single argument when used
+  # for a back.transformed object
+  warns <- character(0)
+  res <- withCallingHandlers(
+    summary(e_trans),
+    warning = function(w) {
+      warns <<- c(warns, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_equal(sum(grepl("back.transform", warns)), 1L)
+  expect_equal(res$coefmat, summary(a1)$coefmat)
+})
