@@ -1044,7 +1044,7 @@ coef.estimate <- function(object,
                           ...) {
   if (mat) return(object$coefmat)
   if (!is.null(object$back.transform)) {
-    warning("Note: estimates on original scale (before 'back.transform')")
+    warning("Return estimates on original scale (before 'back.transform')")
   }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))

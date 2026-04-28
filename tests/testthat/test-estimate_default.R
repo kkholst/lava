@@ -332,19 +332,12 @@ test_that("Degrees of freedom equals nrow(B)", {
 test_that("coef.estimate warns when back.transform is set and returns untransformed coefs", {
   e_trans <- estimate(a1, back.transform = exp)
   expect_warning(coef(e_trans), "back.transform")
-  suppressWarnings(expect_equivalent(coef(e_trans), coef(a1)))
-})
+  suppressWarnings(expect_equal(coef(e_trans), coef(a1)))
 
-test_that("coef.estimate warning can be suppressed and still returns untransformed coefs", {
-  e_trans <- estimate(a1, back.transform = exp)
-  expect_no_warning(suppressWarnings(coef(e_trans)))
-  expect_equivalent(suppressWarnings(coef(e_trans)), coef(a1))
-})
-
-test_that("summary.estimate emits back.transform warning at most once", {
-  e_trans <- estimate(a1, back.transform = exp)
+  # verify that estimate.summary casts only a single argument when used
+  # for a back.transformed object
   warns <- character(0)
-  withCallingHandlers(
+  res <- withCallingHandlers(
     summary(e_trans),
     warning = function(w) {
       warns <<- c(warns, conditionMessage(w))
@@ -352,4 +345,5 @@ test_that("summary.estimate emits back.transform warning at most once", {
     }
   )
   expect_equal(sum(grepl("back.transform", warns)), 1L)
+  expect_equal(res$coefmat, summary(a1)$coefmat)
 })
