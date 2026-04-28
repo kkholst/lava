@@ -119,22 +119,22 @@ distribution via their estimated influence functions
 ``` r
 e <- c(a, b)
 vcov(e) # joint distribution
-#>              a            b
-#> a 0.1023667491 0.0001747415
-#> b 0.0001747415 0.0625808426
+#>            a          b
+#> a 0.07280218 0.03491347
+#> b 0.03491347 0.24018309
 summary(e, null=c(0, 0))
-#> Call: estimate.default(contrast = as.list(seq_along(p)), null = ..1, 
-#>     vcov = vcov(object, messages = 0), coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, 
+#>     vcov = vcov(object), coef = p)
 #> ────────────────────────────────────────────────────────────
-#>   Estimate Std.Err    2.5% 97.5%  P-value
-#> a      0.5  0.3199 -0.1271 1.127 0.118111
-#> b      0.8  0.2502  0.3097 1.290 0.001384
+#>   Estimate Std.Err     2.5% 97.5% P-value
+#> a      0.5  0.2698 -0.02884 1.029 0.06387
+#> b      0.8  0.4901 -0.16055 1.761 0.10260
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 12.6472, df = 2, p-value = 0.001793
+#> chisq = 4.8386, df = 2, p-value = 0.08899
 ```
 
 Parameter transformations can be calculated directly as in the following
@@ -144,8 +144,8 @@ Products
 
 ``` r
 a * b
-#>   Estimate Std.Err    2.5%  97.5% P-value
-#> a      0.4  0.2851 -0.1588 0.9588  0.1607
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> a      0.4  0.3668 -0.319 1.119  0.2755
 ```
 
 General transformations
@@ -153,37 +153,34 @@ General transformations
 ``` r
 (3 * cos(a) / sqrt(b) + 1) / a^2
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    15.77   22.33 -27.98 59.53  0.4798
+#> a    15.77   20.02 -23.46 55.01  0.4307
 ```
 
 Inner product, sums, and products
 
 ``` r
 c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
-#>       Estimate Std.Err    2.5%  97.5%  P-value
-#> iprod    0.762  0.5777 -0.3703 1.8943 0.187160
-#> ─────                                         
-#> sum      1.300  0.4066  0.5031 2.0969 0.001386
-#> ─────                                         
-#> prod     0.400  0.2851 -0.1588 0.9588 0.160658
+#>       Estimate Std.Err     2.5% 97.5% P-value
+#> iprod    0.762  1.0451 -1.28640 2.810 0.46594
+#> sum      1.300  0.6187  0.08733 2.513 0.03563
+#> prod     0.400  0.3668 -0.31899 1.119 0.27554
 ```
 
 Exponentiation and renaming of parameter
 
 ``` r
 c(pow = a^b)
-#>     Estimate Std.Err     2.5% 97.5% P-value
-#> pow   0.5743  0.3102 -0.03368 1.182 0.06411
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> pow   0.5743   0.272 0.04118 1.108 0.03474
 ```
 
 Transformation and subsetting
 
 ``` r
 c(e["a"] * e["b"] / a, e["b"])
-#>   Estimate Std.Err   2.5% 97.5%  P-value
-#> a      0.8  0.2502 0.3097  1.29 0.001384
-#> ─                                       
-#> b      0.8  0.2502 0.3097  1.29 0.001384
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.8  0.4901 -0.1605 1.761  0.1026
+#> b      0.8  0.4901 -0.1605 1.761  0.1026
 ```
 
 For the `%*%*` operator we can also use a general contrast matrix
@@ -191,21 +188,21 @@ For the `%*%*` operator we can also use a general contrast matrix
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err    2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.4057 -1.0952 0.4952 0.459634
-#> [a]            0.5  0.3199 -0.1271 1.1271 0.118111
-#> [b]            0.8  0.2502  0.3097 1.2903 0.001384
-#> 
-#>  Null Hypothesis: 
+#>           Estimate Std.Err     2.5%  97.5% P-value
+#> [a] - [b]     -0.3  0.4931 -1.26648 0.6665 0.54293
+#> a              0.5  0.2698 -0.02884 1.0288 0.06387
+#> b              0.8  0.4901 -0.16055 1.7605 0.10260
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 12.6472, df = 2, p-value = 0.001793
+#> chisq = 4.8386, df = 2, p-value = 0.08899
 plot(B %*% e)
 ```
 
-<img src="man/figures/estimate-contrast-1.svg" alt="" width="70%" />
+![](man/figures/estimate-contrast-1.svg)<!-- -->
 
 ### Structural Equation Model
 
@@ -218,11 +215,11 @@ regression(m) <- z1 + z2 + z3 ~ u2
 latent(m) <- ~ u1 + u2
 regression(m) <- u2 ~ u1 + x
 regression(m) <- u1 ~ x
-    
+
 plot(m)
 ```
 
-<img src="man/figures/lvm1-1.svg" alt="" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/lvm1-1.svg" alt="" style="display: block; margin: auto;" />
 
 Simulation
 
@@ -276,7 +273,7 @@ g <- cumres(e, u2 ~ u1)
 plot(g)
 ```
 
-<img src="man/figures/gof1-1.svg" alt="" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/gof1-1.svg" alt="" style="display: block; margin: auto;" />
 
 ### Non-linear measurement error model
 
@@ -324,7 +321,7 @@ u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
 ```
 
-<img src="man/figures/nlin1-1.svg" alt="" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/nlin1-1.svg" alt="" style="display: block; margin: auto;" />
 
 ### Simulation
 
@@ -343,7 +340,7 @@ plot(m)
 plot(m)
 ```
 
-<img src="man/figures/mediation1-1.svg" alt="" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/mediation1-1.svg" alt="" style="display: block; margin: auto;" />
 
 Simulate from model and estimate indirect effects
 
@@ -358,7 +355,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.457s
+#> 100 replications                 Time: 2.567s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
@@ -384,4 +381,4 @@ plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
      scatter.plot=TRUE)
 ```
 
-<img src="man/figures/simres1-1.svg" alt="" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/simres1-1.svg" alt="" style="display: block; margin: auto;" />
