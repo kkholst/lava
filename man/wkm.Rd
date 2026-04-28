@@ -35,6 +35,25 @@ wkm(
 \description{
 Weighted K-means via Lloyd's algorithm
 }
+\examples{
+## Two well-separated Gaussian blobs in 2-D
+set.seed(1)
+x <- rbind(matrix(rnorm(100, mean = -3), ncol = 2),
+           matrix(rnorm(100, mean =  3), ncol = 2))
+res <- wkm(x, mu = 2)
+table(res$cluster)
+res$center
+
+## Supply explicit initial centers (as a list)
+res2 <- wkm(x, mu = list(c(-3, -3), c(3, 3)))
+
+## Weighted clustering: up-weight the second blob
+w <- c(rep(1, 50), rep(10, 50))
+res3 <- wkm(x, mu = 2, weights = w)
+
+## Formula interface on a data.frame
+wkm(~ Sepal.Length + Sepal.Width, data = iris, mu = 3)
+}
 \author{
 Klaus K. Holst
 }
