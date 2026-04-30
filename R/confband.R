@@ -14,7 +14,8 @@
 ##' added to the plot
 ##' @param vert If TRUE a vertical bar is plotted. Otherwise a horizontal
 ##' bar is used
-##' @param polygon If TRUE polygons are added between 'lower' and 'upper'.
+##' @param polygon If TRUE polygons are added between 'lower' and 'upper'
+##' @param alpha transparency of fill-color of polygon (alpha<1)
 ##' @param step Type of polygon (step-function or piecewise linear)
 ##' @param ... Additional low level arguments (e.g. col, lwd, lty,...)
 ##' @seealso \code{confband}
@@ -51,7 +52,7 @@
 ##'
 ##' z <- seq(0,1,length.out=100)
 ##' plot(z,z,type="n")
-##' confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
+##' confband(z,z,z^2,polygon=TRUE,col="darkred", alpha=0.1)
 ##'
 ##' set.seed(1)
 ##' k <- 10
@@ -78,72 +79,81 @@ confband <- function(x, lower, upper, center=NULL,
                      line=TRUE, delta=0.07,
                      centermark=0.03,
                      pch, blank=TRUE, vert=TRUE,
-                     polygon=FALSE, step=FALSE,...) {
-    if (polygon) {
-        if (step) {
-            x1 <- rep(x,each=2)[-1]
-            y1 <- rep(lower, each=2);  y1 <- y1[-length(y1)]
-            x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]
-            y2 <- rep(rev(upper), each=2)[-1]
-            xx <- c(x1,x2)
-            if (!is.null(center))
-                center <- rep(center, each=2)[-1]
-            yy <- c(y1,y2)
-        } else {
-            xx <- c(x, rev(x))
-            yy <- c(lower, rev(upper))
-        }
-        polygon(xx,yy,...)
-        if (line && !is.null(center)) {
-          mlines <- function(x, y, ..., border, fillOddEven) {
-            if (step) {
-              lines(x, y, type="s", ...)
-            } else {
-              lines(x, y, ,...)
-            }
-          }
-          mlines(xx[seq(length(xx)/2)],center,...)
-        }
-        return(invisible(NULL))
-    }
-    if (vert) {
-        if (line && !missing(lower) && !missing(upper))
-            segments(x,lower,x,upper,...)
-        if (!missing(lower))
-            segments(x-delta,lower,x+delta,lower,...)
-        if (!missing(upper))
-            segments(x-delta,upper,x+delta,upper,...)
-        if (!is.null(center)) {
-            if (!missing(pch)) {
-                if (blank) {
-                  points(x,center,pch=16,col="white")
-                }
-                points(x,center,pch=pch,...)
-            } else {
-                segments(x-centermark,center,x+centermark,center,...)
-            }
-        }
+                     polygon=FALSE, alpha=1.0,
+                     step=FALSE,...) {
+  if (polygon) {
+    if (step) {
+      x1 <- rep(x,each=2)[-1]
+      y1 <- rep(lower, each=2);  y1 <- y1[-length(y1)]
+      x2 <- rep(rev(x),each=2); x2 <- x2[-length(x2)]
+      y2 <- rep(rev(upper), each=2)[-1]
+      xx <- c(x1,x2)
+      if (!is.null(center))
+        center <- rep(center, each=2)[-1]
+      yy <- c(y1,y2)
     } else {
-        if (line && !missing(lower) && !missing(upper))
-            segments(lower,x,upper,x,...)
-        if (!missing(lower))
-            segments(lower,x-delta,lower,x+delta,...)
-        if (!missing(upper))
-            segments(upper,x-delta,upper,x+delta,...)
-
-        if (!is.null(center)) {
-            if (!missing(pch)) {
-                if (blank)
-                    points(center,x,pch=16,col="white")
-                points(center,x,pch=pch,...)
-            } else {
-                segments(center,x-centermark,center,x+centermark,...)
-            }
-        }
+      xx <- c(x, rev(x))
+      yy <- c(lower, rev(upper))
     }
-    if (missing(lower)) lower <- NULL
-    if (missing(upper)) upper <- NULL
-    invisible(c(x,lower,upper,center))
+    dots <- list(...)
+    dots$x <- xx
+    dots$y <- yy
+    if (alpha<1.0 && !is.null(dots$col)) {
+      dots$col <- Col(dots$col, alpha)
+    }
+    do.call(graphics::polygon, dots)
+    if (line && !is.null(center)) {
+      mlines <- function(x, y, ...,
+                         angle, density,
+                         border, fillOddEven) {
+        if (step) {
+          lines(x, y, type="s", ...)
+        } else {
+          lines(x, y, ,...)
+        }
+      }
+      mlines(xx[seq(length(xx)/2)],center,...)
+    }
+    return(invisible(NULL))
+  }
+  if (vert) {
+    if (line && !missing(lower) && !missing(upper))
+      segments(x,lower,x,upper,...)
+    if (!missing(lower))
+      segments(x-delta,lower,x+delta,lower,...)
+    if (!missing(upper))
+      segments(x-delta,upper,x+delta,upper,...)
+    if (!is.null(center)) {
+      if (!missing(pch)) {
+        if (blank) {
+          points(x,center,pch=16,col="white")
+        }
+        points(x,center,pch=pch,...)
+      } else {
+        segments(x-centermark,center,x+centermark,center,...)
+      }
+    }
+  } else {
+    if (line && !missing(lower) && !missing(upper))
+      segments(lower,x,upper,x,...)
+    if (!missing(lower))
+      segments(lower,x-delta,lower,x+delta,...)
+    if (!missing(upper))
+      segments(upper,x-delta,upper,x+delta,...)
+
+    if (!is.null(center)) {
+      if (!missing(pch)) {
+        if (blank)
+          points(center,x,pch=16,col="white")
+        points(center,x,pch=pch,...)
+      } else {
+        segments(center,x-centermark,center,x+centermark,...)
+      }
+    }
+  }
+  if (missing(lower)) lower <- NULL
+  if (missing(upper)) upper <- NULL
+  invisible(c(x,lower,upper,center))
 }
 
 

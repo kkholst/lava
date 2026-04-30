@@ -18,6 +18,7 @@ confband(
   blank = TRUE,
   vert = TRUE,
   polygon = FALSE,
+  alpha = 1,
   step = FALSE,
   ...
 )
@@ -46,7 +47,9 @@ added to the plot}
 \item{vert}{If TRUE a vertical bar is plotted. Otherwise a horizontal
 bar is used}
 
-\item{polygon}{If TRUE polygons are added between 'lower' and 'upper'.}
+\item{polygon}{If TRUE polygons are added between 'lower' and 'upper'}
+
+\item{alpha}{transparency of fill-color of polygon (alpha<1)}
 
 \item{step}{Type of polygon (step-function or piecewise linear)}
 
@@ -84,7 +87,7 @@ confband(z,zu,zu-2,col=Col("darkred"),polygon=TRUE,step=TRUE)
 
 z <- seq(0,1,length.out=100)
 plot(z,z,type="n")
-confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
+confband(z,z,z^2,polygon=TRUE,col="darkred", alpha=0.1)
 
 set.seed(1)
 k <- 10
