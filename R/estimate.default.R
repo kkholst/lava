@@ -1,84 +1,6 @@
 ##' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
-##' @export
-estimate.list <- function(x, ...) {
-  if (inherits(x[[1]], "lvm")) return(estimate_lvmlist(x, ...))
-  lapply(x, function(x) estimate(x, ...))
-}
-
-##' @export
-estimate.data.frame <- function(x, ...) {
-  estimate(as.matrix(x), ...)
-}
-
-IC_quantile <- function(x, estimate, probs=0.5, ...) {
-  x <- na.omit(x)
-  f0 <- density(x, ...)
-  ## U <- function(est) (tau - (x <= est))
-  if (missing(estimate)) {
-    estimate <- quantile(x, probs=probs)
-  }
-  res <- c()
-  for (i in seq_len(length(estimate))) {
-    res <- cbind(res,
-    (probs[i] - (x <= estimate[i]))/with(f0, approx(x, y, estimate[i]))$y
-    )
-  }
-  res
-}
-
-##' Estimate parameters and influence function.
-##'
-##' Estimate parameters for the sample mean, variance, and quantiles
-##' @export
-##' @aliases estimate.array estimate.data.frame
-##' @param x numeric matrix
-##' @param type target parameter ("mean", "variance", "quantile")
-##' @param probs numeric vector of probabilities (for type="quantile")
-##' @param ... Additional arguments to lower level functions (i.e.,
-##'   stats::density.default when type="quantile")
-estimate.array <- function(x, type="mean", probs=0.5, ...) {
-  cl <- match.call()
-  if (missing(x) || is.null(x)) {
-    return(estimate(NULL, ...))
-  }
-  dots <- list(...)
-  density.args <- dots[]
-  cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
-  ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
-  if (tolower(type) %in% c("var", "variance")) {
-    cc <- apply(x, 2, function(y) mean((y - mean(y)^2), na.rm = TRUE))
-    ic <- ic^2
-    for (i in seq_len(NCOL(ic))) {
-      ic[, i] <- ic[, i] - cc[i]
-    }
-  }
-  if (tolower(type) %in% c("quantile")) {
-    density.args <- list()
-    dargs <- names(formals(density.default))
-    didx <- which(dargs %in% names(dots))
-    if (length(didx)>0) {
-      density.args <- dots[dargs[didx]]
-      dots[dargs[didx]] <- NULL
-    }
-    cc <- unlist(apply(x, 2, function(y)
-      quantile(y, probs=probs, na.rm = TRUE),
-      simplify=FALSE))
-    ic <- c()
-    for (i in seq_len(NCOL(x))) {
-      ic <- cbind(ic, do.call(IC_quantile,
-                        c(list(x[, i], probs=probs), density.args)))
-    }
-  }
-  if (any(c("vcov", "IC") %in% names(list(...)))) {
-    return(estimate(NULL, coef = cc, ...))
-  }
-  res <- do.call(estimate, c(list(NULL, coef = cc, IC = ic), dots))
-  res$call <- cl
-  return(res)
-}
-
 ##' Estimation of functional of parameters
 ##'
 ##' Estimation of functional of parameters. Wald tests, robust standard errors,
@@ -342,7 +264,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (!(is.matrix(f) || is.vector(f)))
       return(compare(x, f, ...)) ## LRT
     if (missing(contrast)) contrast <- f
-    if (length(f)==1L && is.logical(f) && !f) {
+    if (length(f)==1L && (is.logical(f)||is.numeric(f)) && !f) { # f = 0 or FALSE
       contrast.transform <- FALSE # Wald-test and do not alter the parameter estimates
     }
     f <- NULL
@@ -873,47 +795,6 @@ print.estimate.sim <- function(x, level=.95, ...) {
   assign("est", attr(x, "estimate"), env)
   environment(mysummary) <- env
   print(summary(x, fun=mysummary, ...))
-}
-
-##' @export
-estimate.glm <- function(x, ...) {
-  estimate.default(x, ...)
-}
-
-##' @export
-IC.mlm <- function(x, ...) {
-  cc <- coef(x)
-  r <- residuals(x)
-  X <- model.matrix(x)
-  w <- weights(x)
-  if (!is.null(w)) {
-    r <- apply(r, 2, function(x) x * w)
-  }
-  q <- NCOL(cc)
-  ics <- lapply(1:q, function(i) {
-    apply(X, 2, function(x) x * r[, i])
-  })
-  res <- Reduce("cbind", ics)
-  colnames(res) <- names(pars(x))
-  return(res)
-}
-
-##' @export
-pars.mlm <- function(x, ...) {
-  cc <- coef(x)
-  q <- NCOL(cc)
-  nn <- unlist(lapply(
-    1:q, function(i)
-      paste0(colnames(cc)[i], ":", rownames(cc))
-  ))
-  coefs <- unlist(lapply(1:q, function(x) cc[, x, drop=TRUE]))
-  names(coefs) <- nn
-  coefs
-}
-
-##' @export
-estimate.mlm <- function(x, ...) {
-  estimate.default(x, coef=pars(x), ...)
 }
 
 ##' @export
