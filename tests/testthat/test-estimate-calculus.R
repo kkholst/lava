@@ -326,3 +326,67 @@ test_that("custom functions", {
   testthat::expect_equivalent(IC(e1), IC(e2))
   testthat::expect_equivalent(coef(e1), coef(e2))
 })
+
+## ---------------------------------------------------------------------------
+## operator_grad shape correctness vs numerical jacobian (Issue C)
+## ---------------------------------------------------------------------------
+make_est <- function(coefs, seed) {
+  set.seed(seed)
+  k <- length(coefs)
+  ic <- matrix(rnorm(20 * k), nrow = 20, ncol = k)
+  nm <- if (is.null(names(coefs))) paste0("p", seq_along(coefs)) else names(coefs)
+  names(coefs) <- nm
+  estimate(coef = coefs, IC = ic, id = 1:20)
+}
+
+ops <- list(
+  "+" = `+`,
+  "-" = `-`,
+  "*" = `*`,
+  "/" = `/`,
+  "^" = `^`
+)
+
+shapes <- list(
+  c(1, 1),
+  c(1, 3),
+  c(3, 1),
+  c(3, 3)
+)
+
+for (opname in names(ops)) {
+  for (sh in shapes) {
+    nx <- sh[1]; ny <- sh[2]
+    label <- sprintf("operator_grad: %s with shape (%d,%d)", opname, nx, ny)
+    test_that(label, {
+      ## Use strictly positive coefs to keep ^ and / well-defined.
+      a <- make_est(setNames(seq_len(nx) + 1.0, paste0("a", seq_len(nx))),
+                    seed = 100 + nx)
+      b <- make_est(setNames(seq_len(ny) + 0.5, paste0("b", seq_len(ny))),
+                    seed = 200 + ny)
+      op_est <- ops[[opname]]
+      op_num <- switch(opname,
+                       "+" = function(p) p[seq_len(nx)] + p[nx + seq_len(ny)],
+                       "-" = function(p) p[seq_len(nx)] - p[nx + seq_len(ny)],
+                       "*" = function(p) p[seq_len(nx)] * p[nx + seq_len(ny)],
+                       "/" = function(p) p[seq_len(nx)] / p[nx + seq_len(ny)],
+                       "^" = function(p) p[seq_len(nx)] ^ p[nx + seq_len(ny)])
+      ## Analytic via the operator
+      res <- op_est(a, b)
+      res_coef <- coef(res)
+      ## Numerical jacobian
+      pp <- c(coef(a), coef(b))
+      Jnum <- numDeriv::jacobian(op_num, pp)
+      ## Reconstruct analytic D from IC: IC_res = IC_ab %*% t(D)
+      ## We instead validate by comparing variance: an incorrect D shape
+      ## would produce wrong vcov dims or wrong values.
+      ## Build merged IC manually:
+      ic_ab <- cbind(IC(a), IC(b))
+      V_expected <- Jnum %*% var_ic(ic_ab) %*% t(Jnum)
+      V_actual   <- vcov(res)
+      expect_equal(dim(V_actual), dim(V_expected))
+      expect_equivalent(V_actual, V_expected, tolerance = 1e-5)
+      expect_equal(length(res_coef), max(nx, ny))
+    })
+  }
+}
