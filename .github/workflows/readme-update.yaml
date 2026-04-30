@@ -1,0 +1,64 @@
+name: Update README
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'  # Every Monday at 04:00 UTC
+  workflow_dispatch:       # Also allow manual triggering
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc libcurl4-openssl-dev libharfbuzz-dev \
+          libfribidi-dev xfonts-100dpi xfonts-75dpi
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"all"'
+          cache: true
+          extra-packages: |
+            any::rmarkdown
+            any::remotes
+          needs: website
+
+      - name: Install R dependencies
+        run: |
+          remotes::install_github("kkholst/gof")
+          remotes::install_deps(".", dep=TRUE, upgrade=TRUE)
+        shell: Rscript {0}
+
+      - name: Render README
+        run: make readme
+
+      - name: Check for changes
+        id: diff
+        run: |
+          diff <(grep -v 'Time:' README.md) <(git show HEAD:README.md | grep -v 'Time:') \
+            && echo "changed=false" >> $GITHUB_OUTPUT \
+            || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Open PR if README changed
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/update-readme
+          base: develop
+          commit-message: "docs: regenerate README.md"
+          title: "docs: regenerate README.md"
+          body: |
+            Automated weekly re-render of `README.md` from `README.Rmd`.
+            Please review and merge if the changes look correct.
+          delete-branch: true

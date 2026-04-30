@@ -910,11 +910,10 @@ vcov.estimate <- function(object, list=FALSE, ...) {
 coef.estimate <- function(object,
                           mat=FALSE,
                           list=FALSE,
-                          messages=lava.options()$messages,
                           ...) {
   if (mat) return(object$coefmat)
-  if (messages > 0 && !is.null(object$back.transform)) {
-    message("Note: estimates on original scale (before 'back.transform')")
+  if (!is.null(object$back.transform)) {
+    warning("Return estimates on original scale (before 'back.transform')")
   }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))
@@ -922,23 +921,38 @@ coef.estimate <- function(object,
   object$coef
 }
 
+with_unique_warnings <- function(expr) {
+  # utility function that prevents the same warning being cast more than once
+  seen <- character(0)
+  withCallingHandlers(expr, warning = function(w) {
+    msg <- conditionMessage(w)
+    if (msg %in% seen) {
+      invokeRestart("muffleWarning")
+    } else {
+      seen <<- c(seen, msg)
+    }
+  })
+}
+
 ##' @export
 summary.estimate <- function(object,
                              contrast,
                              ...) {
-  p <- coef(object, messages=0)
-  if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
-  test <- estimate(coef=p,
-                   vcov=vcov(object, messages=0),
-                   f = FALSE,
-                   contrast = contrast,
-                   ...)
-  class(test) <- "NULL"
-  test$compare <- test$compare
-  object <- test[c("coef", "coefmat", "vcov", "call",
-                   "ncluster", "model.index", "compare")]
-  class(object) <- "summary.estimate"
-  object
+  with_unique_warnings({
+    p <- coef(object)
+    if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
+    test <- estimate(coef=p,
+                     vcov=vcov(object),
+                     f = FALSE,
+                     contrast = contrast,
+                     ...)
+    class(test) <- "NULL"
+    test$compare <- test$compare
+    object <- test[c("coef", "coefmat", "vcov", "call",
+                     "ncluster", "model.index", "compare")]
+    class(object) <- "summary.estimate"
+    object
+  })
 }
 
 ##' @export
