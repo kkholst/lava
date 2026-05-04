@@ -35,6 +35,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Klaus K. Holst \email{klaus@holst.it}
 
+Authors:
+\itemize{
+  \item Klaus K. Holst \email{klaus@holst.it}
+}
+
 Other contributors:
 \itemize{
   \item Brice Ozenne [contributor]
