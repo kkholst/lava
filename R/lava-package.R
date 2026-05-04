@@ -13,24 +13,10 @@
 ##' non-linear latent variable models, and estimation of influence functions for
 ##' a broad range of statistical models.
 ##' @name lava-package
-##' @importFrom graphics plot lines points abline points text layout
-##'     par plot.new plot.window title rect locator segments image
-##'     mtext box axis polygon matplot contour contour.default
-##'     identify rug curve
-##' @importFrom grDevices xy.coords col2rgb rgb colors rainbow
-##'     topo.colors gray.colors palette colorRampPalette heat.colors
-##' @importFrom utils stack combn read.csv getTxtProgressBar
-##'     setTxtProgressBar txtProgressBar head tail modifyList
-##'     getFromNamespace write.table methods data
-##'     glob2rx
-##' @importFrom stats density deriv effects lm family simulate vcov
-##'     var cov cor coef model.frame model.weights as.formula
-##'     model.matrix rnorm rchisq runif rlnorm pnorm qnorm na.omit AIC
-##'     terms logLik qt pt update update.formula confint approxfun
-##'     pchisq confint.default formula fft uniroot rbinom predict sd
-##'     addmargins residuals dnorm quantile qf cov2cor qchisq
-##'     get_all_vars p.adjust rpois rt rmultinom rgamma printCoefmat 
-##'     glm nlminb na.pass na.omit influence weights density.default
+##' @importFrom graphics plot lines points abline points text layout par plot.new plot.window title rect locator segments image mtext box axis polygon matplot contour contour.default identify rug curve
+##' @importFrom grDevices xy.coords col2rgb rgb colors rainbow topo.colors gray.colors palette colorRampPalette heat.colors
+##' @importFrom utils stack combn read.csv getTxtProgressBar setTxtProgressBar txtProgressBar head tail modifyList getFromNamespace write.table methods data glob2rx
+##' @importFrom stats density deriv effects lm family simulate vcov var cov cor coef model.frame model.weights as.formula model.matrix rnorm rchisq runif rlnorm pnorm qnorm na.omit AIC terms logLik qt pt update update.formula confint approxfun pchisq confint.default formula fft uniroot rbinom predict sd addmargins residuals dnorm quantile qf cov2cor qchisq get_all_vars p.adjust rpois rt rmultinom rgamma printCoefmat glm nlminb na.pass na.omit influence weights density.default
 ##' @importFrom survival is.Surv
 ##' @importFrom future.apply future_mapply future_lapply
 ##' @importFrom methods new as
