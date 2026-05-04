@@ -51,7 +51,7 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
 
 "intfix" <- function(object,...) UseMethod("intfix")
 
-"intfix<-" <- function(object,...,value) UseMethod("intfix<-")
+`intfix<-` <- function(object,...,value) UseMethod("intfix<-")
 
 ##' Fix mean parameters in 'lvm'-object
 ##'
@@ -164,7 +164,8 @@ intfix.lvm <- intercept.lvm
     return(object)
 }
 
-"intfix<-.lvm" <- function(object, ..., value) {
+#' @export
+`intfix<-.lvm` <- function(object, ..., value) {
   intercept(object, ...) <- value
   object
 }
@@ -175,6 +176,7 @@ intfix.lvm <- intercept.lvm
 
 "covfix" <- function(object,...) UseMethod("covfix")
 
+#' @exportS3Method
 covfix.lvm <- function(object,...) {
     res <- list(rel=object$cov, labels=object$covpar, values=object$covfix); attr(res,"type") <- "cov"
     attr(res,"exo.idx") <- index(object)$exo.idx
@@ -184,9 +186,10 @@ covfix.lvm <- function(object,...) {
 }
 
 
-"covfix<-" <- function(object,...,value) UseMethod("covfix<-")
+`covfix<-` <- function(object,...,value) UseMethod("covfix<-")
 
-"covfix<-.lvm" <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
+#' @export
+`covfix<-.lvm` <- function(object, var1, var2=var1, pairwise=FALSE, exo=FALSE, ..., value) {
 
     if (inherits(var1,"formula")) {
         var1 <- all.vars(var1)
@@ -342,7 +345,8 @@ regfix.lvm <- function(object,...) {
 
 "regfix<-" <- function(object,...,value) UseMethod("regfix<-")
 
-"regfix<-.lvm" <- function(object, to, from=NULL, exo=lava.options()$exogenous, variance, y,x, ..., value) {
+#' @export
+`regfix<-.lvm` <- function(object, to, from=NULL, exo=lava.options()$exogenous, variance, y,x, ..., value) {
     if (!missing(y)) {
       if (inherits(y,"formula")) {
         y <- all.vars(y)
@@ -477,7 +481,8 @@ regfix.lvm <- function(object,...) {
 
 "parfix<-" <- function(x,...,value) UseMethod("parfix<-")
 
-"parfix<-.lvm" <- function(x,idx,...,value) {
+#' @export
+`parfix<-.lvm` <- function(x,idx,...,value) {
     parfix(x,idx,value,...)
 }
 
@@ -487,6 +492,7 @@ regfix.lvm <- function(object,...) {
 ## m <- lvm(c(y[m:v]~b*x))
 ## constrain(m,b~a) <- base::identity
 
+#' @exportS3Method
 parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
     object <- Model(x)
     if (fix)
