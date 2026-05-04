@@ -4,38 +4,38 @@
 ##' general link and distribution of variables.
 ##'
 ##' @aliases sim.lvmfit sim.lvm
-##' simulate.lvmfit simulate.lvm
-##' transform<- transform<-.lvm transform.lvm
-##' functional functional<-  functional.lvm functional<-.lvm
-##' distribution distribution distribution<- distribution.lvm distribution<-.lvm
-##' heavytail heavytail<-
-##' weibull.lvm
-##' binomial.lvm
-##' poisson.lvm
-##' uniform.lvm
-##' multinomial.lvm
-##' beta.lvm
-##' normal.lvm mvn.lvm
-##' lognormal.lvm
-##' gaussian.lvm
-##' GM2.lvm
-##' GM3.lvm
-##' probit.lvm
-##' logit.lvm
-##' pareto.lvm
-##' student.lvm
-##' chisq.lvm
-##' coxGompertz.lvm
-##' coxWeibull.lvm
-##' coxExponential.lvm
-##' aalenExponential.lvm
-##' Gamma.lvm gamma.lvm
-##' loggamma.lvm
-##' categorical categorical<-
-##' threshold.lvm
-##' ones.lvm Binary.lvm binary.lvm
-##' Sequence.lvm
-##' none.lvm constant.lvm id.lvm
+##' @aliases simulate.lvmfit simulate.lvm
+##' @aliases transform<- transform<-.lvm transform.lvm
+##' @aliases functional functional<-  functional.lvm functional<-.lvm
+##' @aliases distribution distribution distribution<- distribution.lvm distribution<-.lvm
+##' @aliases heavytail heavytail<-
+##' @aliases weibull.lvm
+##' @aliases binomial.lvm
+##' @aliases poisson.lvm
+##' @aliases uniform.lvm
+##' @aliases multinomial.lvm
+##' @aliases beta.lvm
+##' @aliases normal.lvm mvn.lvm
+##' @aliases lognormal.lvm
+##' @aliases gaussian.lvm
+##' @aliases GM2.lvm
+##' @aliases GM3.lvm
+##' @aliases probit.lvm
+##' @aliases logit.lvm
+##' @aliases pareto.lvm
+##' @aliases student.lvm
+##' @aliases chisq.lvm
+##' @aliases coxGompertz.lvm
+##' @aliases coxWeibull.lvm
+##' @aliases coxExponential.lvm
+##' @aliases aalenExponential.lvm
+##' @aliases Gamma.lvm gamma.lvm
+##' @aliases loggamma.lvm
+##' @aliases categorical categorical<-
+##' @aliases threshold.lvm
+##' @aliases ones.lvm Binary.lvm binary.lvm
+##' @aliases Sequence.lvm
+##' @aliases none.lvm constant.lvm id.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,

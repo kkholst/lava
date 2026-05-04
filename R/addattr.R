@@ -1,7 +1,9 @@
 `addattr` <- function(x,...) UseMethod("addattr")
 
+#' @exportS3Method
 `addattr.lvmfit` <- function(x,...) addattr(Model(x),...)
 
+#' @exportS3Method
 `addattr.lvm` <- function(x, attr, var=NULL, val=TRUE, fun=graph::nodeRenderInfo,debug=FALSE,...) {
     if (!is.null(var)) {
         Graph(x) <- addattr(Graph(x), attr=attr, var=var, val=val, fun=fun, debug=debug)
@@ -11,6 +13,7 @@
     }
 }
 
+#' @exportS3Method
 `addattr.graphNEL` <- function(x, attr, var=NULL, val=TRUE,fun="graph::nodeRenderInfo",debug=FALSE,...) {
     if (is.null(var)) {
         ff <- strsplit(fun,"::")[[1]]

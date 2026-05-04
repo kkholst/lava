@@ -173,7 +173,7 @@ condition <- function(x) {
 ##'
 ##'
 ##' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
-##' score score.lvmfit logLik.lvmfit
+##' @aliases score score.lvmfit logLik.lvmfit
 ##' @param object Model object
 ##' @param x Model object
 ##' @param p Parameter vector used to calculate statistics

@@ -201,7 +201,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' e == c(1,2)
 ##' B %*% e == 1
 ##' @aliases estimate estimate.default estimate.estimate merge.estimate
-##'   estimate.mlm
+##' @aliases estimate.mlm
 ##' @seealso estimate.array
 ##' @method estimate default
 ##' @export

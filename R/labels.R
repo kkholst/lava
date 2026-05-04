@@ -6,8 +6,8 @@
 ##'
 ##'
 ##' @aliases labels<- labels labels<-.default labels.lvm labels.lvmfit
-##' labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
-##' nodecolor<- nodecolor<-.default
+##' @aliases labels.graphNEL edgelabels edgelabels<- edgelabels<-.lvm nodecolor
+##' @aliases nodecolor<- nodecolor<-.default
 ##' @author Klaus K. Holst
 ##' @export
 ##' @keywords graphs aplot
