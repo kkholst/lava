@@ -63,7 +63,7 @@
 #
 ##'
 ##' @aliases covariance covariance<- covariance.lvm covariance<-.lvm
-##' variance variance<- variance.lvm variance<-.lvm
+##' @aliases variance variance<- variance.lvm variance<-.lvm
 ##' @param object \code{lvm}-object
 ##' @param var1 Vector of variables names (or formula)
 ##' @param var2 Vector of variables names (or formula) defining pairwise

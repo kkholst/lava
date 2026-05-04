@@ -97,7 +97,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' attribute is omitted the chain rule will be applied on a numeric
 ##' approximation of the gradient.
 ##' @aliases constrain constrain<- constrain.default constrain<-.multigroup
-##' constrain<-.default constraints parameter<-
+##' @aliases constrain<-.default constraints parameter<-
 ##' @return A \code{lvm} object.
 ##' @author Klaus K. Holst
 ##' @seealso \code{\link{regression}}, \code{\link{intercept}},

@@ -6,7 +6,7 @@
 ##' @title Extract pathways in model graph
 ##' @export
 ##' @aliases path effects path.lvm effects.lvmfit
-##' totaleffects
+##' @aliases totaleffects
 ##' @seealso \code{children}, \code{parents}
 ##' @return If \code{object} is of class \code{lvmfit} a list with the following
 ##' elements is returned \item{idx}{ A list where each element defines a

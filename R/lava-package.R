@@ -236,17 +236,17 @@ NULL
 ##' @rdname internal
 ##' @export
 ##' @aliases startvalues startvalues0 startvalues1 startvalues2
-##'   starter.multigroup
-##'   modelPar modelVar matrices pars pars.lvm regfix
-##'   pars.lvmfit pars.glm score.glm procdata.lvmfit mat.lvm
-##'   matrices reorderdata graph2lvm igraph.lvm subgraph finalize
-##'   randomslope randomslope<- lisrel
-##'   variances offdiags describecoef parlabels rsq stdcoef CoefMat
-##'   CoefMat.multigroupfit deriv updatelvm checkmultigroup profci
-##'   estimate.MAR
-##'   missingModel Identical gaussian_logLik.lvm
-##'   addhook gethook multigroup
-##'   Weights fixsome IV parameter Specials
-##'   procformula getoutcome decomp.specials
-##'   rmvn0 dmvn0 logit expit tigol
+##' @aliases starter.multigroup
+##' @aliases modelPar modelVar matrices pars pars.lvm regfix
+##' @aliases pars.lvmfit pars.glm score.glm procdata.lvmfit mat.lvm
+##' @aliases matrices reorderdata graph2lvm igraph.lvm subgraph finalize
+##' @aliases randomslope randomslope<- lisrel
+##' @aliases variances offdiags describecoef parlabels rsq stdcoef CoefMat
+##' @aliases CoefMat.multigroupfit deriv updatelvm checkmultigroup profci
+##' @aliases estimate.MAR
+##' @aliases missingModel Identical gaussian_logLik.lvm
+##' @aliases addhook gethook multigroup
+##' @aliases Weights fixsome IV parameter Specials
+##' @aliases procformula getoutcome decomp.specials
+##' @aliases rmvn0 dmvn0 logit expit tigol
 NULL

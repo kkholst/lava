@@ -20,10 +20,10 @@
 ##' latent status of variables in the model.
 ##'
 ##' @aliases vars vars.lvm vars.lvmfit latent latent<- latent.lvm latent<-.lvm
-##' latent.lvmfit latent.multigroup manifest manifest.lvm manifest.lvmfit
-##' manifest.multigroup exogenous exogenous<- exogenous.lvm exogenous<-.lvm
-##' exogenous.lvmfit exogenous.multigroup endogenous endogenous.lvm
-##' endogenous.lvmfit endogenous.multigroup
+##' @aliases latent.lvmfit latent.multigroup manifest manifest.lvm manifest.lvmfit
+##' @aliases manifest.multigroup exogenous exogenous<- exogenous.lvm exogenous<-.lvm
+##' @aliases exogenous.lvmfit exogenous.multigroup endogenous endogenous.lvm
+##' @aliases endogenous.lvmfit endogenous.multigroup
 ##' @usage
 ##'
 ##' vars(x,...)
