@@ -392,52 +392,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
   if (!is.null(ic_theta) && robust && (missing(vcov) || is.null(vcov))) {
     V <- var_ic(ic_theta)
-    ## Small-sample corrections for clustered data
-    K <- NROW(ic_theta)
-    N <- attributes(ic_theta)$N
-    if (is.null(N)) N <- K
-    p <- NCOL(ic_theta)
-    adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
-    adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
-    adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
-    if (tolower(type[1])=="mbn" && !is.null(attributes(ic_theta)$bread)) {
-      V0 <- V
-      iI0 <- attributes(ic_theta)$bread
-      I0 <- Inverse(iI0)
-      delta <- min(0.5, p / (K - p))
-      phi <- max(1, tr(I0%*%V0)*adj2/p)
-      V <- adj2*V0 + delta*phi*iI0
-    }
-    if (tolower(type[1])=="df") {
-      V <- adj0*V
-    }
-    if (tolower(type[1])=="df1") {
-      V <- adj1*V
-    }
-    if (tolower(type[1])=="df2") {
-      V <- adj2*V
-    }
-    if (tolower(type[1])%in%c("hc3", "hc4")) {
-      ic <- cbind(ic_theta)
-      S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
-      h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
-      n <- nrow(ic)
-      ## h_emp <- pmin(h_emp, 0.99) * (n-1)/n  # Truncate leverage to prevent division by zero
-      if (tolower(type[1])=="hc3") {
-        ## phi_norm <- sqrt(rowSums(ic^2))
-        ## ex_kurt <- (mean((phi_norm - mean(phi_norm))^4) / var(phi_norm)^2) - 3
-        ## alpha <- exp(-max(0, ex_kurt) / 25)
-        v.alpha <- ifelse(missing(var.adj), 0.25, var.adj)
-        h <- v.alpha * h_emp + (1 - v.alpha) * (ncol(ic) / n)
-        adj <- 1 / (1 - h)
-      } else {
-        ## Cribari-Neto (2004)
-        delta <- pmin(1.5, n/ncol(ic) * h_emp)
-        adj <- 1 / (1 - h_emp)**delta
-      }
-      for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
-      V <- var_ic(ic)
-    }
   } else {
     if (!missing(vcov)) {
       if (length(vcov) == 1 && is.na(vcov)) {
@@ -452,6 +406,10 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   ## Simulate p-value
   if (R>0) {
     if (is.null(f)) stop("Supply function 'f'")
+    if (!is.null(ic_theta) && robust && (missing(vcov) || is.null(vcov))) {
+      V <- apply_ssc(ic_theta, V, type,
+                     if (missing(var.adj)) NULL else var.adj)
+    }
     if (missing(null.sim)) null.sim <- rep(0, length(pp))
     est <- f(pp)
     if (is.list(est)) {
@@ -471,6 +429,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
 
   derivative <- NULL
+  skip_ssc <- FALSE
   if (!is.null(f)) {
     form <- names(formals(f))
     dots <- ("..."%in%names(form))
@@ -580,6 +539,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
           if (nrow(ic1)!=nrow(ic2)) {
             message("Assuming independence between model iid decomposition and new data frame") #nolint
             V <- var_ic(ic1) + var_ic(ic2)
+            ## ic_theta no longer matches V dimensions; skip SSC below.
+            skip_ssc <- TRUE
           } else {
             ic_theta <- ic1+ic2
             V <- var_ic(ic_theta)
@@ -587,6 +548,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
         }
       }
     }
+  }
+
+  ## Apply small-sample correction (after any f-transformation, so that
+  ## the correction operates on the influence functions of the final
+  ## estimand). See issue #22.
+  if (!skip_ssc && !is.null(ic_theta) && robust &&
+      (missing(vcov) || is.null(vcov))) {
+    V <- apply_ssc(ic_theta, V, type,
+                   if (missing(var.adj)) NULL else var.adj)
   }
 
   if (is.null(V)) {
@@ -707,6 +677,61 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$ncluster <- nrow(res$IC)
   res$derivative <- derivative
   return(structure(res, class="estimate"))
+}
+
+## Apply small-sample correction to a robust covariance matrix V derived
+## from the influence functions in 'ic_theta'. Extracted from
+## estimate.default() so that the correction can be re-applied to the
+## transformed influence functions after a user-supplied 'f' has been
+## evaluated (see issue #22).
+apply_ssc <- function(ic_theta, V, type, var.adj = NULL) {
+  type1 <- tolower(type[1])
+  K <- NROW(ic_theta)
+  N <- attributes(ic_theta)$N
+  if (is.null(N)) N <- K
+  p <- NCOL(ic_theta)
+  adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
+  adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
+  adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
+  if (type1 == "mbn" && !is.null(attributes(ic_theta)$bread)) {
+    V0 <- V
+    iI0 <- attributes(ic_theta)$bread
+    I0 <- Inverse(iI0)
+    delta <- min(0.5, p / (K - p))
+    phi <- max(1, tr(I0%*%V0)*adj2/p)
+    V <- adj2*V0 + delta*phi*iI0
+  }
+  if (type1 == "df") {
+    V <- adj0*V
+  }
+  if (type1 == "df1") {
+    V <- adj1*V
+  }
+  if (type1 == "df2") {
+    V <- adj2*V
+  }
+  if (type1 %in% c("hc3", "hc4")) {
+    ic <- cbind(ic_theta)
+    S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
+    h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
+    n <- nrow(ic)
+    ## h_emp <- pmin(h_emp, 0.99) * (n-1)/n  # Truncate leverage to prevent division by zero
+    if (type1 == "hc3") {
+      ## phi_norm <- sqrt(rowSums(ic^2))
+      ## ex_kurt <- (mean((phi_norm - mean(phi_norm))^4) / var(phi_norm)^2) - 3
+      ## alpha <- exp(-max(0, ex_kurt) / 25)
+      v.alpha <- if (is.null(var.adj)) 0.25 else var.adj
+      h <- v.alpha * h_emp + (1 - v.alpha) * (ncol(ic) / n)
+      adj <- 1 / (1 - h)
+    } else {
+      ## Cribari-Neto (2004)
+      delta <- pmin(1.5, n/ncol(ic) * h_emp)
+      adj <- 1 / (1 - h_emp)**delta
+    }
+    for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
+    V <- var_ic(ic)
+  }
+  V
 }
 
 simnull <- function(R, f, mu, sigma, labels=NULL) {
