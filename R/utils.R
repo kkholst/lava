@@ -48,18 +48,6 @@ substArg <- function(x,env,...) {
   return(eval(a))
 }
 
-## g <- function(zz,...) {
-##   env=new.env(); assign("x",substitute(zz),env)
-##   substArg(zz,env=env)
-## }
-## h <- function(x,...) {
-##   env=new.env(); assign("x",substitute(x),env)
-##   substArg(x,env=TRUE)
-## }
-
-
-###{{{ procrandomslope
-
 procrandomslope <- function(object,data=object$data,...) {
   Xfix <- FALSE
   xfix <- myfix <- list()
@@ -97,10 +85,6 @@ procrandomslope <- function(object,data=object$data,...) {
   return(list(model=object,fix=myfix))
 }
 
-###}}} procrandomslope
-
-###{{{ kronprod
-
 ## ' Calculate matrix product with kronecker product
 ## '
 ## ' \deqn{(A\crossprod B) Y}
@@ -119,18 +103,11 @@ kronprod <- function(A,B,Y) {
     rbind(apply(Y,2,function(x) B%*%matrix(x,nrow=ncol(B))%*%t(A)))
 }
 
-###}}} kronprod
-
-###{{{ izero
 
 izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
   x <- rep(0,n); x[i] <- 1
   x
 }
-
-###}}}
-
-###{{{ Debug
 
 `Debug` <-
   function(msg, cond=lava.options()$debug) {
@@ -138,9 +115,6 @@ izero <- function(i,n) { ## n-1 zeros and 1 at ith entry
       print(paste(msg, collapse=" "))
   }
 
-###}}}
-
-###{{{ categorical2dummy
 
 categorical2dummy <- function(x,data,messages=0,...) {
   x0 <- x
@@ -177,10 +151,6 @@ categorical2dummy <- function(x,data,messages=0,...) {
   index(x0) <- reindex(x0,zeroones=TRUE,deriv=TRUE)
   return(list(x=x0,data=cbind(data,M)))
 }
-
-###}}}
-
-###{{{ procdata.lvm
 
 `procdata.lvm` <-
   function(x,data,categorical=FALSE,
@@ -243,10 +213,6 @@ categorical2dummy <- function(x,data,messages=0,...) {
     return(list(S=S,mu=mu,n=n))
   }
 
-###}}}
-
-###{{{ reorderdata.lvm
-
 `reorderdata.lvm` <-
   function(x, data) {
     if (is.vector(data)) {
@@ -259,10 +225,6 @@ categorical2dummy <- function(x,data,messages=0,...) {
       data[ii,ii,drop=FALSE]
     }
   }
-
-###}}}
-
-###{{{ symmetrize
 
 `symmetrize` <-
 function(M, upper=TRUE) {
@@ -284,10 +246,6 @@ function(M, upper=TRUE) {
   }
 }
 
-###}}}
-
-###{{{ naiveGrad
-
 naiveGrad <- function(f, x, h=1e-9) {
   nabla <- numeric(length(x))
   for (i in seq_along(x)) {
@@ -296,10 +254,6 @@ naiveGrad <- function(f, x, h=1e-9) {
   }
   return(nabla)
 }
-
-###}}}
-
-###{{{ CondMom
 
 # conditional on Compl(idx)
 CondMom <- function(mu,S,idx,X) {
@@ -331,8 +285,7 @@ CondMom <- function(mu,S,idx,X) {
 
 ###}}} CondMom
 
-###{{{ Depth-First/acc (accessible)
-
+## Depth-First/acc (accessible)
 DFS <- function(M,v,explored=c()) {
   explored <- union(explored,v)
   incident <- M[v,]
@@ -342,13 +295,11 @@ DFS <- function(M,v,explored=c()) {
   return(explored)
 }
 
+## Depth-First/acc (accessible)
 acc <- function(M,v) {
   if (is.character(v)) v <- which(colnames(M)==v)
   colnames(M)[setdiff(DFS(M,v),v)]
 }
-
-###}}} Depth-First/acc (accessible)
-
 
 npar.lvm <- function(x) {
   return(index(x)$npar+ index(x)$npar.mean+index(x)$npar.ex)
@@ -406,7 +357,6 @@ getoutcome <- function(formula,sep,...) {
   return(res)
 }
 
-
 ##' @export
 Specials <- function(f,spec,split2="+",...) {
   tt <- terms(f,spec)
@@ -418,7 +368,6 @@ Specials <- function(f,spec,split2="+",...) {
   if (is.null(split2)) return(res)
   unlist(strsplit(res,split2,fixed=TRUE))
 }
-
 
 ##' @export
 decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL, sep="[,\\+]",perl=TRUE,reverse=FALSE,...) {
@@ -434,4 +383,23 @@ decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL,
     if (reverse) st <- rev(st)
   }
   unlist(strsplit(st,sep,perl=perl,...))
+}
+
+## Check that IC columns have empirical mean zero (relative to RMS)
+check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
+  ic <- cbind(ic)
+  n <- nrow(ic)
+  if (is.null(n) || n < 2L) return(invisible(NULL))
+  m <- colMeans(ic, na.rm = TRUE)
+  rms <- sqrt(colMeans(ic^2, na.rm = TRUE))
+  ratio <- abs(m) / rms
+  flag <- any(ratio > tol)
+  if (flag) {
+    warning(
+      sprintf(
+        "IC does not have mean zero (max |mean|/rms = %.2g).",
+        max(ratio)
+      ))
+  }
+  return(invisible(flag))
 }
