@@ -390,3 +390,13 @@ test_that("estimate.default parsedesign dispatch", {
   e <- estimate(a3d, "a1", "a1", null = c(0, 1))
   expect_true(e$coefmat[1, "P-value"] != e$coefmat[2, "P-value"])
 })
+
+test_that("estimate.default keep with regex=TRUE", {
+  e0 <- estimate(a3d, keep = ".*2", regex = TRUE)
+  expect_equal(rownames(e0$coefmat), "a2")
+  # the regex behavior differs from the above tests when supplying strings
+  # to obtain contrasts (no matches return all coefficients)
+  e1 <- estimate(a3d, keep = ".*2") # no literal matches return object with NAs
+  expect_true(all(is.na(e1$coefmat)))
+  expect_true(nrow(e1$coefmat) == 1)
+})
