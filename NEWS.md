@@ -9,6 +9,8 @@
     functions before merging
   - `sim.default`: export seeds to replicate results
   - bugfix: `estimate.lvm` fixed issue with interval censored observations.
+  - deprecated: `only.coef` argument in `estimate.default()`. Use
+    `coef(estimate(...), mat=TRUE)` instead.
 
 # lava 1.9.0
   - `estimate`: estimate objects can now be transformed via functions: `log`,
