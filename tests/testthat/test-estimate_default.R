@@ -347,3 +347,46 @@ test_that("coef.estimate warns when back.transform is set and returns untransfor
   expect_equal(sum(grepl("back.transform", warns)), 1L)
   expect_equal(res$coefmat, summary(a1)$coefmat)
 })
+
+
+test_that("estimate.default parsedesign dispatch", {
+  # Single character name selects that coefficient.
+  e <- estimate(a3d, "a2")
+  expect_equal(e$coefmat[, 1], 2)
+  ef <- estimate(a3d, \(x) x["a2"])
+  expect_equal(e$coefmat, ef$coefmat)
+
+  # Multiple symbolic ... args: arithmetic on quoted names captured unevaluated.
+  e <- estimate(a3d, "a1", "a2" - "a1", 2 * "a3" - 3 * "a1")
+  expect_equal(e$coefmat[1, 1], 1)
+  expect_equal(e$coefmat[2, 1], 2 - 1)
+  expect_equal(e$coefmat[3, 1], 2 * 3 - 3 * 1)
+
+  # Numeric (non-matrix) f treated as parameter index.
+  e1 <- estimate(a3d, 2, 3)
+  e2 <- estimate(a3d, "a2", "a3")
+  expect_equal(e1$coefmat[, 1], e2$coefmat[, 1])
+
+  # Multi-match wildcard "a*" produces pairwise contrasts (first vs rest).
+  e_multi <- estimate(a3d, "a*")
+  expect_equal(unname(e_multi$coefmat[, 1]), c(1 - 2, 1 - 3))
+
+  # regex argument: pattern ".*2" diverges between glob and regex semantics.
+  #   regex=FALSE: literal ".*2" matches nothing -> falls back to all coefs.
+  #   regex=TRUE:  regex ".*2" matches "a2" only.
+  e_glob  <- suppressWarnings(estimate(a3d, ".*2", regex = FALSE))
+  e_regex <- suppressWarnings(estimate(a3d, ".*2", regex = TRUE))
+  expect_equal(rownames(e_glob$coefmat), c("a1", "a2", "a3"))
+  expect_equal(rownames(e_regex$coefmat), "a2")
+
+  # Character f with user-supplied coef vector (no model object).
+  pp <- c("(Intercept)" = 1.0, x = 2.0, z = -0.5)
+  V  <- diag(3)
+  dimnames(V) <- list(names(pp), names(pp))
+  e <- estimate(f = "x", coef = pp, vcov = V)
+  expect_equal(e$coefmat[, 1], 2.0)
+
+  # Character contrasts combine with null hypothesis vector.
+  e <- estimate(a3d, "a1", "a1", null = c(0, 1))
+  expect_true(e$coefmat[1, "P-value"] != e$coefmat[2, "P-value"])
+})
