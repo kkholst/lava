@@ -62,14 +62,18 @@ compute_wald <- function(B, p, S, null) {
 }
 
 set.seed(1)
-a1 <- estimate(coef = 1,   IC = rnorm(10), id = 1:10, labels = "a1")
-a2 <- estimate(coef = 2,   IC = rnorm(10), id = 1:10, labels = "a2")
-a3 <- estimate(coef = 3,   IC = rnorm(10), id = 1:10, labels = "a3")
-a4 <- estimate(coef = 4,   IC = rnorm(10), id = 1:10, labels = "a4")
+# Generate mean-zero random IC matrix (for internal testing)
+center_ic <- function(n, p = 1) {
+  x <- matrix(rnorm(n * p), n, p)
+  scale(x, center = TRUE, scale = FALSE)
+}
+a1 <- estimate(coef = 1,   IC = lava:::center_ic(10), id = 1:10, labels = "a1")
+a2 <- estimate(coef = 2,   IC = lava:::center_ic(10), id = 1:10, labels = "a2")
+a3 <- estimate(coef = 3,   IC = lava:::center_ic(10), id = 1:10, labels = "a3")
+a4 <- estimate(coef = 4,   IC = lava:::center_ic(10), id = 1:10, labels = "a4")
 a  <- merge(a1, a2)           # 2-dimensional
 a3d <- merge(a1, a2, a3)      # 3-dimensional
 a4d <- merge(a1, a2, a3, a4)  # 4-dimensional
-
 
 test_that("summary.estimate compared with estimate", {
   B <- rbind(c(1,-1, 0), c(0, 1,-1), c(1,0,-1))

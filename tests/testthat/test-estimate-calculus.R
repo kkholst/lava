@@ -1,12 +1,17 @@
 context("estimate calculus")
 
 set.seed(1)
-a1 <- estimate(coef=1, IC=rnorm(10), id=1:10, labels="a1")
-a2 <- estimate(coef=2, IC=rnorm(10), id=1:10, labels="a2")
+# Generate mean-zero random IC matrix (for internal testing)
+center_ic <- function(n, p = 1) {
+  x <- matrix(rnorm(n * p), n, p)
+  scale(x, center = TRUE, scale = FALSE)
+}
+a1 <- estimate(coef=1, IC=lava:::center_ic(10), id=1:10, labels="a1")
+a2 <- estimate(coef=2, IC=lava:::center_ic(10), id=1:10, labels="a2")
 a <- merge(a1, a2)
 
-b1 <- estimate(coef=0.5, IC=rnorm(10), id=1:10, labels="b1")
-b2 <- estimate(coef=0.9, IC=rnorm(10), id=1:10, labels="b2")
+b1 <- estimate(coef=0.5, IC=lava:::center_ic(10), id=1:10, labels="b1")
+b2 <- estimate(coef=0.9, IC=lava:::center_ic(10), id=1:10, labels="b2")
 b <- merge(b1, b2)
 
 test_that("+.estimate", {
@@ -333,7 +338,7 @@ test_that("custom functions", {
 make_est <- function(coefs, seed) {
   set.seed(seed)
   k <- length(coefs)
-  ic <- matrix(rnorm(20 * k), nrow = 20, ncol = k)
+  ic <- lava:::center_ic(20, k)
   nm <- if (is.null(names(coefs))) paste0("p", seq_along(coefs)) else names(coefs)
   names(coefs) <- nm
   estimate(coef = coefs, IC = ic, id = 1:20)
