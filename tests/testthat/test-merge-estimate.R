@@ -5,8 +5,8 @@ library(lava)
 
 set.seed(42)
 n    <- 100
-ic1  <- matrix(rnorm(n * 2), nrow=n, ncol=2)
-ic2  <- matrix(rnorm(n * 2), nrow=n, ncol=2)
+ic1  <- matrix(rnorm(n * 2), nrow=n, ncol=2) |> scale(center=TRUE, scale=FALSE)
+ic2  <- matrix(rnorm(n * 2), nrow=n, ncol=2) |> scale(center=TRUE, scale=FALSE)
 e_ic1  <- estimate(coef=c(a=1, b=2), IC=ic1, id=1:n)
 e_ic2  <- estimate(coef=c(c=3, d=4), IC=ic2, id=1:n+50)
 e_noic  <- estimate(coef=c(e=5, f=6), vcov=diag(2))

@@ -1,4 +1,10 @@
 context("Graphics functions")
+skip_if_not_installed("vdiffr")
+skip_if(
+  identical(getOption("device"), "httpgd") ||
+    grepl("httpgd", names(grDevices::dev.cur()), ignore.case = TRUE),
+  "httpgd device active; vdiffr snapshot tests skipped"
+)
 library("vdiffr")
 
 test_that("color, devcoords", {
@@ -113,9 +119,9 @@ test_that("plot.estimate", {
   skip_on_cran()
 
   set.seed(1)
-  e1 <- estimate(coef=1, IC=1:10, id=1:10)
-  e2 <- estimate(coef=1.1, IC=0:9, id=1:10)
-  myplot <- function(...) plot(c(e1, e2), null=1)
+  e1 <- estimate(coef=1, IC=1:10-mean(1:10), id=1:10)
+  e2 <- estimate(coef=1.1, IC=0:9-mean(0:9), id=1:10)
+  myplot <- function(...) suppressWarnings(plot(c(e1, e2), null=1))
   val <- expect_doppelganger("plot.estimate-1", myplot)
 })
 
