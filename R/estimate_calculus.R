@@ -30,7 +30,7 @@ merge.estimate <- function(x,y,...,
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
       if (regex) {
-        # TODO
+        warning("regular expression not supported by `merge` operation")
       }
       coefs <- unlist(lapply(objects, function(x) coef(x,messages=0)[subset]))
     } else {
@@ -129,6 +129,9 @@ merge.estimate <- function(x,y,...,
             if (is.null(id0)) stop("Need id for object number ", count)
         }
         if (!missing(subset)) icz <- icz[,subset,drop=FALSE]
+        if (lava.options()$check.ic) {
+          check_ic_mean_zero(icz)
+        }
         if (!lava.options()$cluster.index) {
             ic0 <- matrix(unlist(by(icz,id0,colSums)),byrow=TRUE,ncol=ncol(icz))
             ids <- c(ids, list(sort(unique(id0))))
@@ -138,7 +141,7 @@ merge.estimate <- function(x,y,...,
             ic0 <- clidx$X
             ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
         }
-        ic0 <- ic0*NROW(ic0)/length(id0)
+        ic0 <- ic0 * NROW(ic0) / length(id0)
         ic_all <- c(ic_all, list(ic0))
     }
     id <- unique(unlist(ids))
@@ -155,7 +158,7 @@ merge.estimate <- function(x,y,...,
         ##     intersect(x, relpos) + colpos
         ##   })
         ## } else {
-          midx <- list(relpos + colpos)
+        midx <- list(relpos + colpos)
         ## }
         model.index <- c(model.index, midx)
         colpos <- colpos+tail(relpos,1)
