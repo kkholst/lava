@@ -705,7 +705,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     .Deprecated(
       msg = paste0(
         "The 'only.coef' argument is deprecated. ",
-        "Use coef(estimate(...), mat=TRUE) instead."
+        "Use `parameter(estimate(...))` instead."
       )
     )
     return(res$coefmat)
