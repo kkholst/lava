@@ -1,9 +1,10 @@
 context("Graphics functions")
 skip_if_not_installed("vdiffr")
 skip_if(
-  identical(getOption("device"), "httpgd") ||
+  is.function(getOption("device")) ||
+    identical(getOption("device"), "httpgd") ||
     grepl("httpgd", names(grDevices::dev.cur()), ignore.case = TRUE),
-  "httpgd device active; vdiffr snapshot tests skipped"
+  "non-standard or httpgd device active; vdiffr snapshot tests skipped"
 )
 library("vdiffr")
 

@@ -707,7 +707,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$call <- cal
   res$back.transform <- back.transform
   res$n <- nrow(data)
-  res$ncluster <- nrow(res$IC)
+  res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
   return(structure(res, class="estimate"))
 }

@@ -83,8 +83,12 @@ test_that("quasipossion", {
 })
 
 test_that("merge back.transform", {
-  tmp <- estimate(coef = 1, IC = c(1,2,3), id = 1:3, f = exp, back.transform = log)
-  tmp2 <- estimate(coef = 2, IC = c(3,2,1), id = 1:3, f = exp, back.transform = log)
+  suppressWarnings(
+    tmp <- estimate(coef = 1, IC = c(1,2,3), id = 1:3, f = exp, back.transform = log)
+  )
+  suppressWarnings(
+    tmp2 <- estimate(coef = 2, IC = c(3,2,1), id = 1:3, f = exp, back.transform = log)
+  )
 
   expect_warning(
     m <- merge(tmp, tmp2) # should throw a warning
