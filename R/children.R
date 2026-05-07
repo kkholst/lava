@@ -35,7 +35,7 @@ edgeList.lvmfit <- function(object,...) edgeList(Model(object),...)
 edgeList.lvm <- function(object, labels=FALSE, list=FALSE, ...) {
     edgelist <- data.frame(from=NULL,to=NULL)
     A <- adjMat(object)
-    for (i in 1:nrow(A)) {
+    for (i in seq_len(nrow(A))) {
         ii <- which(A[,i]>0)
         if (length(ii)>0)
             edgelist <- rbind(edgelist,data.frame(from=ii,to=i))

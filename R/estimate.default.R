@@ -107,8 +107,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##'
 ##' ## Marginalize
 ##' f <- function(p,data)
-##'   list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-##'        p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+##'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+##'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 ##' e <- estimate(g, f, average=TRUE)
 ##' e
 ##' estimate(e,diff)
@@ -117,7 +117,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' ## Clusters and subset (conditional marginal effects)
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
 ##' estimate(g,function(p,data)
-##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+##'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
 ##'          subset=d$z>0, id=d$id, average=TRUE)
 ##'
 ##' ## More examples with clusters:
@@ -168,8 +168,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' estimate(l,f)
 ##'
 ##' # ------ influence function calculus -------
-##' a <- estimate(coef = c("a" = 0.5), IC = rnorm(10), id = 1:10)
-##' b <- estimate(coef = c("b" = 0.8), IC = rnorm(10), id = 1:10)
+##' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+##' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
 ##'
 ##' e <- c(a, b) # merge
 ##' merge(a, b)
@@ -288,6 +288,9 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
         ic_theta <- cbind(IC)
         if (NCOL(ic_theta) != length(pp)) {
           warning("Wrong dimension of influence function IC")
+        }
+        if (lava.options()$check.ic) {
+          check_ic_mean_zero(ic_theta)
         }
         IC <- TRUE
       } else {
@@ -713,7 +716,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$call <- cal
   res$back.transform <- back.transform
   res$n <- nrow(data)
-  res$ncluster <- nrow(res$IC)
+  res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
   return(structure(res, class="estimate"))
 }
@@ -844,7 +847,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
                     function(x) toString(x, width=width)))
     )
   if (!std.error) cc <- cc[, -2, drop=FALSE]
-  if (!p.value) cc[, -ncol(cc), drop=FALSE]
+  if (!p.value) cc <- cc[, -ncol(cc), drop=FALSE]
 
   sep.pos <- c()
   if (missing(sep.which) && !is.null(x$model.index)) {

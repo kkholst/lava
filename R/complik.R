@@ -34,7 +34,7 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
 
     y <- setdiff(endogenous(x),latent(x))
     binsurv <- rep(FALSE,length(y))
-    for (i in 1:length(y)) {
+    for (i in seq_along(y)) {
         z <- try(data[,y[i]],silent=TRUE)
         ## binsurv[i] <- is.Surv(z) | (is.factor(z) && length(levels(z))==2)
         if (!inherits(z,"try-error"))
@@ -68,7 +68,7 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
     mydata0 <- data[,,drop=FALSE]
     mydata <-  as.data.frame(matrix(NA, nblocks*nrow(data), ncol=ncol(data)))
     names(mydata) <- names(mydata0)
-    for (i in 1:ncol(mydata)) {
+    for (i in seq_len(ncol(mydata))) {
         if (is.factor(data[,i])) {
             mydata[,i] <- factor(mydata[,i],levels=levels(mydata0[,i]))
         }
@@ -91,7 +91,7 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
                 if (is.factor(data[,i])) data0[,i] <- factor(data0[,i],levels=levels(data[,i]))
             }
         }
-        mydata[(1:nrow(data))+(ii-1)*nrow(data),] <- data0
+        mydata[seq_len(nrow(data))+(ii-1)*nrow(data),] <- data0
     }
     suppressWarnings(e0 <- estimate(x,data=mydata,estimator=estimator,missing=TRUE,messages=messages,
                                     hessian=!quick,
@@ -103,12 +103,12 @@ complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
         S <- score(e0,indiv=TRUE)
         nd <- nrow(data)
         block1 <- which((1:nd)%in%(rownames(S)))
-        blocks <- sapply(1:nblocks, function(x) 1:length(block1)+length(block1)*(x-1))
+        blocks <- sapply(seq_len(nblocks), function(x) seq_along(block1)+length(block1)*(x-1))
         if (nblocks==1) {
             Siid <- S
         } else {
             Siid <- matrix(0,nrow=length(block1),ncol=ncol(S))
-            for (j in 1:ncol(blocks)) {
+            for (j in seq_len(ncol(blocks))) {
                 Siid <- Siid+S[blocks[,j],]
             }
         }

@@ -691,8 +691,8 @@ necessary derivatives are automatically calculated exactly.
 To illustrate this consider the following simple example where we consider two
 `estimate` objects each with a single parameter estimate
 ```{r estimate_calculus_models}
-a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=1:10)
+a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=1:10)
 ```
 
 Parameter transformation can now be calculated directly as in the following examples

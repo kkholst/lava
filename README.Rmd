@@ -129,8 +129,8 @@ set.seed(42)
 Construct `estimate` objects from parameter coefficients and estimated influence
 functions
 ```{r estimate_calculus_models}
-a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
+a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=6:15)
 ```
 
 Alternatively, we can construct estimate objects directly from an existing model

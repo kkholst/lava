@@ -101,13 +101,13 @@ assign("options", list(
                       eval.max=250,
                       allow.negative.variance=FALSE,
                       progressbarstyle=3,
-                      itol=(.Machine$double.eps)**.5,
-                      cluster.index=packagecheck("mets"),
-                      Dmethod="simple",
-                      messages=ifelse(interactive(), 1, 0),
-                      parallel=TRUE,
-                      param="relative",
-                      sparse=FALSE,
+                      itol=(.Machine$double.eps)**.5, # Tolerance for pseudo-inverses
+                      cluster.index=packagecheck("mets"), # Whether to use mets::cluster.index
+                      Dmethod="simple", # Type of numerical derivative for optimization problems
+                      messages=ifelse(interactive(), 1, 0), # extra messages
+                      parallel=TRUE, # parallelization enabled
+                      param="relative", # parametrization type for latent variable models
+                      sparse=FALSE, #
                       test=TRUE,
                       coef.names=FALSE,
                       constrain=FALSE,
@@ -115,12 +115,15 @@ assign("options", list(
                       regex=FALSE,
                       min.weight=1e-3,
                       exogenous=TRUE,
-                      plot.engine="Rgraphviz",
+                      plot.engine="Rgraphviz", # rgraphviz, igraph, visnetwork, ...
                       node.color=c(exogenous="lightblue",endogenous="orange",
                                    latent="yellowgreen",transform="lightgray"),
                       edgecolor=FALSE,
-                      layout="dot",
+                      layout="dot", # graphviz graph layout function
                       ## symbols=c("<-","<->"),
                       symbols=c("~","~~"),
-                      devel=FALSE,
-                      debug=FALSE), envir=lava.env)
+                      devel=FALSE, # development flag, extra debug information
+                      check.ic=TRUE, # check if influence functions has zero-mean
+                      check.ic.tol=1e-6, # tolerance for checking zero-mean mean(ic)/rms(ic) > check.ic.tol
+                      debug=FALSE),
+       envir=lava.env)
