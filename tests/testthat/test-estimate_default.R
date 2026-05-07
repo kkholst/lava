@@ -67,13 +67,14 @@ center_ic <- function(n, p = 1) {
   x <- matrix(rnorm(n * p), n, p)
   scale(x, center = TRUE, scale = FALSE)
 }
-a1 <- estimate(coef = 1,   IC = lava:::center_ic(10), id = 1:10, labels = "a1")
-a2 <- estimate(coef = 2,   IC = lava:::center_ic(10), id = 1:10, labels = "a2")
-a3 <- estimate(coef = 3,   IC = lava:::center_ic(10), id = 1:10, labels = "a3")
-a4 <- estimate(coef = 4,   IC = lava:::center_ic(10), id = 1:10, labels = "a4")
+a1 <- estimate(coef = 1,   IC = center_ic(10), id = 1:10, labels = "a1")
+a2 <- estimate(coef = 2,   IC = center_ic(10), id = 1:10, labels = "a2")
+a3 <- estimate(coef = 3,   IC = center_ic(10), id = 1:10, labels = "a3")
+a4 <- estimate(coef = 4,   IC = center_ic(10), id = 1:10, labels = "a4")
 a  <- merge(a1, a2)           # 2-dimensional
 a3d <- merge(a1, a2, a3)      # 3-dimensional
 a4d <- merge(a1, a2, a3, a4)  # 4-dimensional
+
 
 test_that("summary.estimate compared with estimate", {
   B <- rbind(c(1,-1, 0), c(0, 1,-1), c(1,0,-1))
@@ -350,4 +351,36 @@ test_that("coef.estimate warns when back.transform is set and returns untransfor
   )
   expect_equal(sum(grepl("back.transform", warns)), 1L)
   expect_equal(res$coefmat, summary(a1)$coefmat)
+})
+
+test_that("estimate warns when user-supplied IC has non-zero mean", {
+  set.seed(42)
+  ic_bad <- rnorm(50, mean = 10)
+  expect_warning(
+    estimate(coef = c(a = 1), IC = ic_bad, id = 1:50),
+    "mean zero"
+  )
+  ## IC with empirical mean zero — no warning
+  ic_good <- center_ic(50)
+  expect_no_warning(
+    estimate(coef = c(a = 1), IC = ic_good, id = 1:50)
+  )
+})
+
+test_that("merge.estimate warns when input IC has non-zero mean", {
+  set.seed(43)
+  ic_bad <- rnorm(50, mean = 5)
+  a <- suppressWarnings(estimate(coef = c(a = 1), IC = ic_bad, id = 1:50))
+  b <- estimate(coef = c(b = 2), IC = center_ic(50), id = 1:50)
+  expect_warning(merge(a, b), "mean zero")
+})
+
+test_that("IC mean-zero warning can be suppressed via lava.options", {
+  set.seed(44)
+  ic_bad <- rnorm(50, mean = 10)
+  old <- lava.options(check.ic = FALSE)
+  on.exit(lava.options(old))
+  expect_no_warning(
+    estimate(coef = c(a = 1), IC = ic_bad, id = 1:50)
+  )
 })
