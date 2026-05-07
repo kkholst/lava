@@ -107,8 +107,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##'
 ##' ## Marginalize
 ##' f <- function(p,data)
-##'   list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-##'        p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+##'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+##'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 ##' e <- estimate(g, f, average=TRUE)
 ##' e
 ##' estimate(e,diff)
@@ -117,7 +117,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' ## Clusters and subset (conditional marginal effects)
 ##' d$id <- rep(seq(nrow(d)/4),each=4)
 ##' estimate(g,function(p,data)
-##'          list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+##'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
 ##'          subset=d$z>0, id=d$id, average=TRUE)
 ##'
 ##' ## More examples with clusters:
@@ -844,7 +844,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
                     function(x) toString(x, width=width)))
     )
   if (!std.error) cc <- cc[, -2, drop=FALSE]
-  if (!p.value) cc[, -ncol(cc), drop=FALSE]
+  if (!p.value) cc <- cc[, -ncol(cc), drop=FALSE]
 
   sep.pos <- c()
   if (missing(sep.which) && !is.null(x$model.index)) {
