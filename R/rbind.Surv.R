@@ -28,10 +28,10 @@ rbind.Surv <- function(...)
   nrow <- unlist(lapply(dots,nrow))
   cnrow <- c(0,cumsum(nrow))
   M <- matrix(ncol=ncol,nrow=sum(nrow))
-  for (i in 1:length(dots)) {
+  for (i in seq_along(dots)) {
     M[(cnrow[i]+1):cnrow[i+1],] <- dots[[i]]
   }
-  x <- c(); for (i in 1:ncol(M)) x <- c(x,list(M[,i]))
+  x <- c(); for (i in seq_len(ncol(M))) x <- c(x,list(M[,i]))
   x <- c(x,list(type=type))
   do.call(survival::Surv, x)
 } 

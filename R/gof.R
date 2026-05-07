@@ -114,7 +114,7 @@ satmodel <- function(object,logLik=TRUE,data=model.frame(object),
               regr=FALSE,
               ...) {
     if (object$estimator=="gaussian" & logLik & !missing) {
-        if (class(object)[1]%in%c("multigroupfit","multigroup")) {
+        if (inherits(object, c("multigroupfit","multigroup"))) {
 
             ll <- structure(0,nall=0,nobs=0,df=0,class="logLik")
             for (i in seq_len(Model(object)$ngroup)) {
@@ -245,7 +245,7 @@ condition <- function(x) {
 ##' @export
 gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FALSE,...) {
     n <- object$data$n
-    if (class(object)[1]=="multigroupfit") n <- sum(unlist(lapply(object$model$data,nrow)))
+    if (inherits(object, "multigroupfit")) n <- sum(unlist(lapply(object$model$data,nrow)))
     loglik <- logLik(object,...)
 
     df <- attributes(loglik)$df
@@ -261,7 +261,7 @@ gof.lvmfit <- function(object,chisq=FALSE,level=0.90,rmsea.threshold=0.05,all=FA
     minSV <- attr(S,"minSV")
     condnum <- tryCatch(condition(vcov(object)),error=function(...) NULL)
 
-    if (((object$estimator=="gaussian" & class(object)[1]!="lvm.missing") | chisq) & length(xconstrain)==0 ) {
+    if (((object$estimator=="gaussian" & !inherits(object, "lvm.missing")) | chisq) & length(xconstrain)==0 ) {
         res <- list(fit=compare(object), n=n, logLik=loglik, BIC=myBIC, AIC=myAIC)
         q <- res$fit$statistic
         qdf <- res$fit$parameter
