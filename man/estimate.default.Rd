@@ -102,7 +102,7 @@ arguments}
 \item{label.width}{(optional) max width of labels}
 
 \item{only.coef}{(Deprecated) if TRUE only the coefficient matrix is
-returned. Use \code{coef(estimate(...), mat=TRUE)} instead.}
+returned. Use \code{parameter(estimate(...))} instead.}
 
 \item{back.transform}{(optional) transform of parameters and confidence
 intervals}

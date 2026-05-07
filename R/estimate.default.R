@@ -38,7 +38,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
 ##' @param only.coef (Deprecated) if TRUE only the coefficient matrix is
-##'   returned. Use `coef(estimate(...), mat=TRUE)` instead.
+##'   returned. Use `parameter(estimate(...))` instead.
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
