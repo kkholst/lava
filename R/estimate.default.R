@@ -37,7 +37,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param print (optional) print function for the resulting estimate object
 ##' @param labels (optional) names of coefficients
 ##' @param label.width (optional) max width of labels
-##' @param only.coef if TRUE only the coefficient matrix is return
+##' @param only.coef (Deprecated) if TRUE only the coefficient matrix is
+##'   returned. Use `parameter(estimate(...))` instead.
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
 ##' @param folds (optional) aggregate influence functions (divide and conquer)
@@ -703,7 +704,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     object = res, str = labels, label.width = label.width
   )
 
-  if (only.coef) return(res$coefmat)
+  if (only.coef) {
+    .Deprecated(
+      msg = paste0(
+        "The 'only.coef' argument is deprecated. ",
+        "Use `parameter(estimate(...))` instead."
+      )
+    )
+    return(res$coefmat)
+  }
   res$call <- cal
   res$back.transform <- back.transform
   res$n <- nrow(data)
