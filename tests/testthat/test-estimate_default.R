@@ -347,3 +347,13 @@ test_that("coef.estimate warns when back.transform is set and returns untransfor
   expect_equal(sum(grepl("back.transform", warns)), 1L)
   expect_equal(res$coefmat, summary(a1)$coefmat)
 })
+
+test_that("only.coef argument is deprecated", {
+  expect_warning(
+    result <- estimate(a3d, only.coef = TRUE),
+    regexp = "only.coef.*deprecated"
+  )
+
+  # Verify it still returns the coefficient matrix
+  expect_equal(result, coef(estimate(a3d), mat = TRUE))
+})

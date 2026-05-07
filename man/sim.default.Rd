@@ -70,7 +70,7 @@ onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
     l <- lm(y~x,d)
     res <- c(coef(summary(l))[idx,1:2],
              confint(l)[idx,],
-             estimate(l,only.coef=TRUE)[idx,2:4])
+             coef(estimate(l), mat=TRUE)[idx,2:4])
     names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
     res
