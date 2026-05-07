@@ -237,8 +237,8 @@ estimate(l,f,R=1e2,null.sim=null)
 estimate(l,f)
 
 # ------ influence function calculus -------
-a <- estimate(coef = c("a" = 0.5), IC = rnorm(10), id = 1:10)
-b <- estimate(coef = c("b" = 0.8), IC = rnorm(10), id = 1:10)
+a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
 
 e <- c(a, b) # merge
 merge(a, b)

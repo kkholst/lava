@@ -5,7 +5,6 @@
   - [Examples](#examples)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
@@ -102,8 +101,8 @@ Construct `estimate` objects from parameter coefficients and estimated
 influence functions
 
 ``` r
-a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=6:15)
+a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=6:15)
 ```
 
 Alternatively, we can construct estimate objects directly from an
@@ -120,21 +119,21 @@ distribution via their estimated influence functions
 e <- c(a, b)
 vcov(e) # joint distribution
 #>            a          b
-#> a 0.07280218 0.03491347
-#> b 0.03491347 0.24018309
+#> a 0.09000000 0.01469326
+#> b 0.01469326 0.09000000
 summary(e, null=c(0, 0))
 #> Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, 
 #>     vcov = vcov(object), coef = p)
 #> ────────────────────────────────────────────────────────────
-#>   Estimate Std.Err     2.5% 97.5% P-value
-#> a      0.5  0.2698 -0.02884 1.029 0.06387
-#> b      0.8  0.4901 -0.16055 1.761 0.10260
+#>   Estimate Std.Err     2.5% 97.5%  P-value
+#> a      0.5     0.3 -0.08799 1.088 0.095581
+#> b      0.8     0.3  0.21201 1.388 0.007661
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 4.8386, df = 2, p-value = 0.08899
+#> chisq = 8.6688, df = 2, p-value = 0.01311
 ```
 
 Parameter transformations can be calculated directly as in the following
@@ -145,7 +144,7 @@ Products
 ``` r
 a * b
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a      0.4  0.3668 -0.319 1.119  0.2755
+#> a      0.4  0.3031 -0.194 0.994  0.1869
 ```
 
 General transformations
@@ -153,17 +152,17 @@ General transformations
 ``` r
 (3 * cos(a) / sqrt(b) + 1) / a^2
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    15.77   20.02 -23.46 55.01  0.4307
+#> a    15.77   21.33 -26.03 57.58  0.4596
 ```
 
 Inner product, sums, and products
 
 ``` r
 c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
-#>       Estimate Std.Err     2.5% 97.5% P-value
-#> iprod    0.762  1.0451 -1.28640 2.810 0.46594
-#> sum      1.300  0.6187  0.08733 2.513 0.03563
-#> prod     0.400  0.3668 -0.31899 1.119 0.27554
+#>       Estimate Std.Err    2.5% 97.5%  P-value
+#> iprod    0.762  0.6915 -0.5934 2.117 0.270495
+#> sum      1.300  0.4576  0.4031 2.197 0.004497
+#> prod     0.400  0.3031 -0.1940 0.994 0.186900
 ```
 
 Exponentiation and renaming of parameter
@@ -171,16 +170,16 @@ Exponentiation and renaming of parameter
 ``` r
 c(pow = a^b)
 #>     Estimate Std.Err    2.5% 97.5% P-value
-#> pow   0.5743   0.272 0.04118 1.108 0.03474
+#> pow   0.5743   0.282 0.02166 1.127 0.04167
 ```
 
 Transformation and subsetting
 
 ``` r
 c(e["a"] * e["b"] / a, e["b"])
-#>   Estimate Std.Err    2.5% 97.5% P-value
-#> a      0.8  0.4901 -0.1605 1.761  0.1026
-#> b      0.8  0.4901 -0.1605 1.761  0.1026
+#>   Estimate Std.Err  2.5% 97.5%  P-value
+#> a      0.8     0.3 0.212 1.388 0.007661
+#> b      0.8     0.3 0.212 1.388 0.007661
 ```
 
 For the `%*%*` operator we can also use a general contrast matrix
@@ -188,17 +187,17 @@ For the `%*%*` operator we can also use a general contrast matrix
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err     2.5%  97.5% P-value
-#> [a] - [b]     -0.3  0.4931 -1.26648 0.6665 0.54293
-#> a              0.5  0.2698 -0.02884 1.0288 0.06387
-#> b              0.8  0.4901 -0.16055 1.7605 0.10260
+#>           Estimate Std.Err     2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.3881 -1.06064 0.4606 0.439512
+#> a              0.5  0.3000 -0.08799 1.0880 0.095581
+#> b              0.8  0.3000  0.21201 1.3880 0.007661
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 4.8386, df = 2, p-value = 0.08899
+#> chisq = 8.6688, df = 2, p-value = 0.01311
 plot(B %*% e)
 ```
 
@@ -355,7 +354,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.567s
+#> 100 replications                 Time: 7.381s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
