@@ -42,7 +42,7 @@ test_that("sim.default I", {
         l <- lm(y~x,d)
         res <- c(coef(summary(l))[idx,1:2],
                  confint(l)[idx,],
-                 estimate(l,only.coef=TRUE)[idx,2:4])
+                 coef(estimate(l), mat=TRUE)[idx,2:4])
         names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
                         "Sandwich.se","Sandwich.lo","Sandwich.hi")
         res

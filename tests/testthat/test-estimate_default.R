@@ -348,7 +348,6 @@ test_that("coef.estimate warns when back.transform is set and returns untransfor
   expect_equal(res$coefmat, summary(a1)$coefmat)
 })
 
-
 test_that("estimate.default parsedesign dispatch", {
   # Single character name selects that coefficient.
   e <- estimate(a3d, "a2")
@@ -399,4 +398,14 @@ test_that("estimate.default keep with regex=TRUE", {
   e1 <- estimate(a3d, keep = ".*2") # no literal matches return object with NAs
   expect_true(all(is.na(e1$coefmat)))
   expect_true(nrow(e1$coefmat) == 1)
+})
+
+test_that("only.coef argument is deprecated", {
+  expect_warning(
+    result <- estimate(a3d, only.coef = TRUE),
+    regexp = "only.coef.*deprecated"
+  )
+
+  # Verify it still returns the coefficient matrix
+  expect_equal(result, coef(estimate(a3d), mat = TRUE))
 })
