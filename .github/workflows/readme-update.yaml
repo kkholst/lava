@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: dev
           fetch-depth: 0
 
       - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/update-readme
-          base: develop
+          base: dev
           commit-message: "docs: regenerate README.md"
           title: "docs: regenerate README.md"
           body: |

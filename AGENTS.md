@@ -38,7 +38,7 @@ devtools::test(filter = "estimate_default")  # substring match on test file name
 
 ## CI
 
-- CI (`R-CMD-check.yaml`) runs on `ubuntu-latest` with R `devel` only; triggers on push/PR to `main`, `master`, `develop`.
+- CI (`R-CMD-check.yaml`) runs on `ubuntu-latest` with R `devel` only; triggers on push/PR to `main`, `master`, `dev`.
 - pkgdown deploys to `gh-pages` on successful push to `main`.
 - Coverage (`test-coverage.yaml`, Codecov) runs on push/PR to `main`/`master`; covers tests + `@examples`.
 - Cross-platform R-hub checks are manual (`workflow_dispatch` only, requires `RHUB_TOKEN`).
