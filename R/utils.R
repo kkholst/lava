@@ -397,8 +397,9 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   if (flag) {
     warning(
       sprintf(
-        "IC does not have mean zero (max |mean|/rms = %.2g).",
-        max(ratio)
+        "IC does not have mean zero (max |mean|/rms = %.2g). %s",
+        max(ratio),
+        "Using lava.options(check.ic = FALSE) disables the warning globally."
       ))
   }
   return(invisible(flag))
