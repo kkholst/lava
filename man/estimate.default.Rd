@@ -3,7 +3,6 @@
 \name{estimate.default}
 \alias{estimate.default}
 \alias{estimate}
-\alias{estimate.estimate}
 \alias{merge.estimate}
 \alias{estimate.mlm}
 \title{Estimation of functional of parameters}
@@ -37,9 +36,7 @@
   label.width,
   only.coef = FALSE,
   back.transform = NULL,
-  folds = 0,
-  R = 0,
-  null.sim
+  folds = 0
 )
 }
 \arguments{
@@ -108,10 +105,6 @@ returned. Use \code{parameter(estimate(...))} instead.}
 intervals}
 
 \item{folds}{(optional) aggregate influence functions (divide and conquer)}
-
-\item{R}{Number of simulations (simulated p-values)}
-
-\item{null.sim}{Mean under the null for simulations}
 }
 \description{
 Estimation of functional of parameters. Wald tests, robust standard errors,
@@ -177,8 +170,8 @@ estimate(lm(y~x,d1))
 
 ## Marginalize
 f <- function(p,data)
-  list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-       p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+  list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+       p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
@@ -187,7 +180,7 @@ estimate(e,cbind(1,1))
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
 estimate(g,function(p,data)
-         list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+         list(p0=expit(p[1] + p["z"]*data[,"z"])),
          subset=d$z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:
@@ -222,20 +215,6 @@ IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
 IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 IC(merge(l1,l2,l3,id=FALSE)) # independence
 
-
-## Monte Carlo approach, simple trend test example
-
-m <- categorical(lvm(),~x,K=5)
-regression(m,additive=TRUE) <- y~x
-d <- simulate(m,100,seed=1,'y~x'=0.1)
-l <- lm(y~-1+factor(x),data=d)
-
-f <- function(x) coef(lm(x~seq_along(x)))[2]
-null <- rep(mean(coef(l)),length(coef(l)))
-##  just need to make sure we simulate under H0: slope=0
-estimate(l,f,R=1e2,null.sim=null)
-
-estimate(l,f)
 
 # ------ influence function calculus -------
 a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
@@ -273,5 +252,6 @@ e == c(1,2)
 B \%*\% e == 1
 }
 \seealso{
-estimate.array
+estimate.array summary.estimate coef.estimate vcov.estimate
+transform.estimate labels.estimate IC.estimate
 }
