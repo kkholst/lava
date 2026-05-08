@@ -30,7 +30,9 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
-##' @param vcov (optional) covariance matrix of parameter estimates
+##' @param vcov (optional) covariance matrix of parameter estimates or logical.
+##' If TRUE, then [stats::vcov] is used to obtain the covariance matrix from the
+##' provided model object `x`
 ##' @param coef (optional) parameter coefficient
 ##' @param df degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function for the resulting estimate object
@@ -81,7 +83,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' estimate(g, 2, 3)
 ##'
 ##' ## Usual (non-robust) confidence intervals
-##' estimate(g, robust=FALSE)
+##' estimate(g, vcov=TRUE)
+##' estimate(g, vcov=vcov(g))
 ##'
 ##' ## Transformations
 ##' estimate(g, function(p) p[1]+p[2])

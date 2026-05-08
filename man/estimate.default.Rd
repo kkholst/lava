@@ -86,7 +86,9 @@ arguments}
 
 \item{null}{(optional) null hypothesis to test}
 
-\item{vcov}{(optional) covariance matrix of parameter estimates}
+\item{vcov}{(optional) covariance matrix of parameter estimates or logical.
+If TRUE, then \link[stats:vcov]{stats::vcov} is used to obtain the covariance matrix from the
+provided model object \code{x}}
 
 \item{coef}{(optional) parameter coefficient}
 
@@ -149,7 +151,8 @@ estimate(g, "1", "2"-"3", null = c(0,1))
 estimate(g, 2, 3)
 
 ## Usual (non-robust) confidence intervals
-estimate(g, robust=FALSE)
+estimate(g, vcov=TRUE)
+estimate(g, vcov=vcov(g))
 
 ## Transformations
 estimate(g, function(p) p[1]+p[2])
