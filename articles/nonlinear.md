@@ -502,11 +502,11 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
 #>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
-#>  [7] Rgraphviz_2.55.0       jquerylib_0.1.4        globals_0.19.1        
+#>  [7] Rgraphviz_2.56.0       jquerylib_0.1.4        globals_0.19.1        
 #> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
 #> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
 #> [16] R6_2.6.1               generics_0.1.4         knitr_1.51            
-#> [19] BiocGenerics_0.57.1    htmlwidgets_1.6.4      graph_1.89.1          
+#> [19] BiocGenerics_0.58.0    htmlwidgets_1.6.4      graph_1.90.0          
 #> [22] future_1.70.0          desc_1.4.3             bslib_0.10.0          
 #> [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
 #> [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             
