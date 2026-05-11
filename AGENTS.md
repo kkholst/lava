@@ -35,6 +35,7 @@ devtools::test(filter = "estimate_default")  # substring match on test file name
 
 - 2-space indent, LF line endings, UTF-8 (enforced by `.editorconfig`).
 - R and C/C++ files require a final newline; general files do not.
+- Single hashes for comments and roxygen documentation
 
 ## CI
 

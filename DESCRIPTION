@@ -3,9 +3,11 @@ Type: Package
 Title: Latent Variable Models
 Version: 1.9.1
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
+       person("Benedikt", "Sommer", role = "ctb"),
 		   person("Brice", "Ozenne", role = "ctb"),
 		   person("Thomas", "Gerds", role = "ctb"))
 Author: Klaus K. Holst [aut, cre],
+    Benedikt Sommer [ctb]
 		Brice Ozenne [ctb],
 		Thomas Gerds [ctb]
 Maintainer: Klaus K. Holst <klaus@holst.it>
