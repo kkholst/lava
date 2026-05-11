@@ -33,17 +33,7 @@
   labels,
   label.width,
   only.coef = FALSE,
-  back.transform = NULL,
-<<<<<<< HEAD
-  R = 0,
-  null.sim
-||||||| 317ea90f
-  folds = 0,
-  R = 0,
-  null.sim
-=======
-  folds = 0
->>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
+  back.transform = NULL
 )
 }
 \arguments{
@@ -108,20 +98,6 @@ returned. Use \code{parameter(estimate(...))} instead.}
 
 \item{back.transform}{(optional) transform of parameters and confidence
 intervals}
-
-<<<<<<< HEAD
-\item{R}{Number of simulations (simulated p-values)}
-
-\item{null.sim}{Mean under the null for simulations}
-||||||| 317ea90f
-\item{folds}{(optional) aggregate influence functions (divide and conquer)}
-
-\item{R}{Number of simulations (simulated p-values)}
-
-\item{null.sim}{Mean under the null for simulations}
-=======
-\item{folds}{(optional) aggregate influence functions (divide and conquer)}
->>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
 }
 \description{
 Estimation of functional of parameters. Wald tests, robust standard errors,

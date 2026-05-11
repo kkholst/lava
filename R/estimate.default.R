@@ -204,7 +204,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              df=NULL,
                              print=NULL, labels, label.width,
                              only.coef=FALSE, back.transform=NULL) {
->>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
   if ("iid" %in% names(cl)) {
