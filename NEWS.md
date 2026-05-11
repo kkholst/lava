@@ -1,6 +1,7 @@
 # lava 1.9.1
   Development version
-  - `estimate.default()`: The `score.deriv` and `folds` arguments have been removed.
+  - `estimate.default`: remove `score.deriv` and `folds` arguments.
+  - `estimate.default`: removed `R` and `null.sim` arguments
   - Safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
   - fixing bug wrt `estimate.index` in `summary.sim`

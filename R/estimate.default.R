@@ -41,8 +41,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##'   returned. Use `parameter(estimate(...))` instead.
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
-##' @param R Number of simulations (simulated p-values)
-##' @param null.sim Mean under the null for simulations
 ##' @details
 ##'
 ##' influence function decomposition of estimator \eqn{\widehat{\theta}} based
@@ -153,20 +151,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' IC(merge(l1,l2,l3,id=FALSE)) # independence
 ##'
 ##'
-##' ## Monte Carlo approach, simple trend test example
-##'
-##' m <- categorical(lvm(),~x,K=5)
-##' regression(m,additive=TRUE) <- y~x
-##' d <- simulate(m,100,seed=1,'y~x'=0.1)
-##' l <- lm(y~-1+factor(x),data=d)
-##'
-##' f <- function(x) coef(lm(x~seq_along(x)))[2]
-##' null <- rep(mean(coef(l)),length(coef(l)))
-##' ##  just need to make sure we simulate under H0: slope=0
-##' estimate(l,f,R=1e2,null.sim=null)
-##'
-##' estimate(l,f)
-##'
 ##' # ------ influence function calculus -------
 ##' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
 ##' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
@@ -201,9 +185,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' e == 1 # wald-test, null-hypothesis H0: b=1
 ##' e == c(1,2)
 ##' B %*% e == 1
-##' @aliases estimate estimate.default estimate.estimate merge.estimate
+##' @aliases estimate estimate.default merge.estimate
 ##' @aliases estimate.mlm
-##' @seealso estimate.array
+##' @seealso estimate.array summary.estimate coef.estimate vcov.estimate
+##' transform.estimate labels.estimate IC.estimate
 ##' @method estimate default
 ##' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
@@ -218,13 +203,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              contrast, null, vcov, coef,
                              df=NULL,
                              print=NULL, labels, label.width,
-                             only.coef=FALSE, back.transform=NULL,
-                             R=0,
-                             null.sim) {
+                             only.coef=FALSE, back.transform=NULL) {
+>>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
+  }
+  if ("R" %in% names(cl) || "null.sim" %in% names(cl)) {
+    stop("The 'R' and 'null.sim' arguments have been removed. ")
   }
   if ("robust" %in% names(cl)) {
     warning(
@@ -449,27 +436,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     } else {
       suppressWarnings(V <- stats::vcov(x))
     }
-  }
-
-  ## Simulate p-value
-  if (R>0) {
-    if (is.null(f)) stop("Supply function 'f'")
-    if (missing(null.sim)) null.sim <- rep(0, length(pp))
-    est <- f(pp)
-    if (is.list(est)) {
-      nn <- names(est)
-      est <- unlist(est)
-      names(est) <- nn
-    }
-    if (missing(labels)) {
-      labels <- colnames(rbind(est))
-    }
-    res <- simnull(R, f, mu = null.sim, sigma = V, labels = labels)
-    return(structure(res, class=c("estimate.sim", "sim"),
-                     coef=pp,
-                     vcov=V,
-                     f=f,
-                     estimate=est))
   }
 
   derivative <- NULL
@@ -717,94 +683,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
   return(structure(res, class="estimate"))
-}
-
-simnull <- function(R, f, mu, sigma, labels=NULL) {
-  X <- rmvn0(R, mu=mu, sigma=sigma)
-  est <- f(mu)
-  res <- apply(X, 1, f)
-  if (is.list(est)) {
-    nn <- names(est)
-    est <- unlist(est)
-    names(est) <- nn
-    res <- matrix(unlist(res), byrow=TRUE, ncol=length(est))
-  } else {
-    res <- t(rbind(res))
-  }
-  if (is.null(labels)) {
-    labels <- colnames(rbind(est))
-    if (is.null(labels))
-      labels <- paste0("p", seq_along(est))
-  }
-  colnames(res) <- labels
-  return(res)
-}
-
-##' @export
-estimate.estimate.sim <- function(x, f, R=0, labels, ...) {
-  atr <- attributes(x)
-  if (R>0) {
-    if (missing(f)) {
-      val <- simnull(R, f=atr[["f"]], mu=atr[["coef"]], sigma=atr[["vcov"]])
-      res <- rbind(x, val)
-      for (a in setdiff(names(atr), c("dim", "dimnames")))
-        attr(res, a) <- atr[[a]]
-    } else {
-      res <- simnull(R, f=f, mu=atr[["coef"]], sigma=atr[["vcov"]])
-      for (a in setdiff(names(atr), c("dim", "dimnames", "f")))
-        attr(res, a) <- atr[[a]]
-      attr(f, "f") <- f
-      est <- unlist(f(atr[["coef"]]))
-      if (missing(labels)) labels <- colnames(rbind(est))
-      attr(res, "estimate") <- est
-    }
-    if (!missing(labels)) colnames(res) <- labels
-    return(res)
-  }
-  if (missing(f)) {
-    if (!missing(labels)) colnames(res) <- labels
-    return(x)
-  }
-
-  est <- f(atr[["coef"]])
-  res <- apply(x, 1, f)
-  if (is.list(est)) {
-    res <- matrix(unlist(res), byrow=TRUE, ncol=length(est))
-  } else {
-    res <- t(rbind(res))
-  }
-  if (missing(labels)) {
-    labels <- colnames(rbind(est))
-    if (is.null(labels)) labels <- paste0("p", seq_along(est))
-  }
-  colnames(res) <- labels
-  for (a in setdiff(names(atr), c("dim", "dimnames", "f", "estimate")))
-    attr(res, a) <- atr[[a]]
-  attr(f, "f") <- f
-  attr(res, "estimate") <- unlist(est)
-  return(res)
-}
-
-##' @export
-print.estimate.sim <- function(x, level=.95, ...) {
-  quantiles <- c((1-level)/2, 1-(1-level)/2)
-  est <- attr(x, "estimate")
-  mysummary <- function(x, INDEX, ...) {
-    x <- as.vector(x)
-    res <- c(mean(x, na.rm=TRUE),
-             sd(x, na.rm=TRUE),
-             quantile(x, quantiles, na.rm=TRUE),
-             est[INDEX],
-             mean(abs(x)>abs(est[INDEX]), na.rm=TRUE))
-
-    names(res) <- c("Mean", "SD", paste0(quantiles*100, "%"),
-                    "Estimate", "P-value")
-    res
-  }
-  env <- new.env()
-  assign("est", attr(x, "estimate"), env)
-  environment(mysummary) <- env
-  print(summary(x, fun=mysummary, ...))
 }
 
 ##' @export

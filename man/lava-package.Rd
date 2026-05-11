@@ -42,6 +42,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Benedikt Sommer [contributor]
   \item Brice Ozenne [contributor]
   \item Thomas Gerds [contributor]
 }

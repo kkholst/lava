@@ -3,7 +3,6 @@
 \name{estimate.default}
 \alias{estimate.default}
 \alias{estimate}
-\alias{estimate.estimate}
 \alias{merge.estimate}
 \alias{estimate.mlm}
 \title{Estimation of functional of parameters}
@@ -35,8 +34,16 @@
   label.width,
   only.coef = FALSE,
   back.transform = NULL,
+<<<<<<< HEAD
   R = 0,
   null.sim
+||||||| 317ea90f
+  folds = 0,
+  R = 0,
+  null.sim
+=======
+  folds = 0
+>>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
 )
 }
 \arguments{
@@ -102,9 +109,19 @@ returned. Use \code{parameter(estimate(...))} instead.}
 \item{back.transform}{(optional) transform of parameters and confidence
 intervals}
 
+<<<<<<< HEAD
 \item{R}{Number of simulations (simulated p-values)}
 
 \item{null.sim}{Mean under the null for simulations}
+||||||| 317ea90f
+\item{folds}{(optional) aggregate influence functions (divide and conquer)}
+
+\item{R}{Number of simulations (simulated p-values)}
+
+\item{null.sim}{Mean under the null for simulations}
+=======
+\item{folds}{(optional) aggregate influence functions (divide and conquer)}
+>>>>>>> 8ed18880459617f2f6f7849f084398765ba37663
 }
 \description{
 Estimation of functional of parameters. Wald tests, robust standard errors,
@@ -217,20 +234,6 @@ IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
 IC(merge(l1,l2,l3,id=FALSE)) # independence
 
 
-## Monte Carlo approach, simple trend test example
-
-m <- categorical(lvm(),~x,K=5)
-regression(m,additive=TRUE) <- y~x
-d <- simulate(m,100,seed=1,'y~x'=0.1)
-l <- lm(y~-1+factor(x),data=d)
-
-f <- function(x) coef(lm(x~seq_along(x)))[2]
-null <- rep(mean(coef(l)),length(coef(l)))
-##  just need to make sure we simulate under H0: slope=0
-estimate(l,f,R=1e2,null.sim=null)
-
-estimate(l,f)
-
 # ------ influence function calculus -------
 a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
 b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
@@ -267,5 +270,6 @@ e == c(1,2)
 B \%*\% e == 1
 }
 \seealso{
-estimate.array
+estimate.array summary.estimate coef.estimate vcov.estimate
+transform.estimate labels.estimate IC.estimate
 }
