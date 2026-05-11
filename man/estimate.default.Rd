@@ -17,7 +17,6 @@
   stack = TRUE,
   average = FALSE,
   subset,
-  score.deriv,
   level = 0.95,
   IC = robust,
   type = c("robust", "df", "mbn"),
@@ -62,8 +61,6 @@ stacked according to 'id'}
 
 \item{subset}{(optional) subset of data.frame on which to condition (logical
 expression or variable name)}
-
-\item{score.deriv}{(optional) derivative of mean score function}
 
 \item{level}{level of confidence limits}
 
@@ -177,8 +174,8 @@ estimate(lm(y~x,d1))
 
 ## Marginalize
 f <- function(p,data)
-  list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-       p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+  list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+       p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
@@ -187,7 +184,7 @@ estimate(e,cbind(1,1))
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
 estimate(g,function(p,data)
-         list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+         list(p0=expit(p[1] + p["z"]*data[,"z"])),
          subset=d$z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:

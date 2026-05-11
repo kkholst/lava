@@ -17,7 +17,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param average if TRUE averages are calculated
 ##' @param subset (optional) subset of data.frame on which to condition (logical
 ##'   expression or variable name)
-##' @param score.deriv (optional) derivative of mean score function
 ##' @param level level of confidence limits
 ##' @param IC if TRUE (default) the influence function decompositions are also
 ##'   returned (extract with \code{IC} method)
@@ -209,7 +208,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              stack=TRUE,
                              average=FALSE, subset,
-                             score.deriv,
                              level=0.95,
                              IC=robust,
                              type=c("robust", "df", "mbn"),
@@ -283,21 +281,17 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       (missing(vcov) || is.null(vcov) ||
        (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
     ## If user supplied vcov, then don't estimate IC
-    if (missing(score.deriv)) {
-      if (!is.logical(IC)) {
-        ic_theta <- cbind(IC)
-        if (NCOL(ic_theta) != length(pp)) {
-          warning("Wrong dimension of influence function IC")
-        }
-        if (lava.options()$check.ic) {
-          check_ic_mean_zero(ic_theta)
-        }
-        IC <- TRUE
-      } else {
-        suppressWarnings(ic_theta <- IC(x, folds=folds))
+    if (!is.logical(IC)) {
+      ic_theta <- cbind(IC)
+      if (NCOL(ic_theta) != length(pp)) {
+        warning("Wrong dimension of influence function IC")
       }
+      if (lava.options()$check.ic) {
+        check_ic_mean_zero(ic_theta)
+      }
+      IC <- TRUE
     } else {
-      suppressWarnings(ic_theta <- IC(x, score.deriv=score.deriv, folds=folds))
+      suppressWarnings(ic_theta <- IC(x, folds=folds))
     }
   } else {
     if (!is.null(x) && (missing(vcov) ||

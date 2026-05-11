@@ -1,5 +1,7 @@
 # lava 1.9.1
   Development version
+  - `estimate.default()`: The `score.deriv` argument has been removed. To supply
+    a custom bread matrix use `IC.default(x, bread = ...)` directly.
   - Safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
   - fixing bug wrt `estimate.index` in `summary.sim`
@@ -50,7 +52,7 @@
   - `as.data.frame.sim`, `as.matrix.sim`
   - fixed issues with quasi* families and negative binomial regression (`MASS:glm.nb`)
 
-# lava 1.7.3 
+# lava 1.7.3
  - `parameter.estimate` method to extract matrix with estimates, standard
    errors, and confidence limits from and estimate object (coefmat element)
   - pairwise difference with `'-'.estimate` and `pairwise.diff`
@@ -68,13 +70,13 @@
   - cluster.index now also works when not loading the package (directly calling lava::estimate)
   - `weibull.lvm` and `coxExponential.lvm` now uses default parametrizations
     similar to `rweibull`, `rexp`. `weibull.lvm` now has arguments
-    "intercept","sigma" that directly relates to the accelerated failure time formulation. 
+    "intercept","sigma" that directly relates to the accelerated failure time formulation.
   - Packages `gof`, `lava.tobit` are removed from Suggested packages.
-  
+
 # lava 1.7.1
   - Fixed bug in variance estimates from `estimate` with clustered observations.
-  - Discrete uniform distributions can now be specified with `uniform.lvm(value=...)`. 
-  
+  - Discrete uniform distributions can now be specified with `uniform.lvm(value=...)`.
+
 # lava 1.7.0
   - `cv` method moved to the 'targeted' package
   - New `IC` method that returns influence function of a model object. The `iid`
@@ -83,7 +85,7 @@
     function and not the sample-size scaled version returned by the `iid` method).
   - fixed bug where calls like `regression("y", value=function(x) x)` did not
     work. `merge.estimate` now works without IC element
-  
+
 # lava 1.6.10
   - Improved starting values for MLE optimization.
   - New simulation distributions: `multinomial.lvm`, `none.lvm`, `constant.lvm`,
@@ -91,23 +93,23 @@
   - `regression`, `regression.lvm`: the 'value' argument can now be a
     (non-linear) function specifying the functional relationship between
     outcomes and covariates (for simulation with the `sim` method).
-  - New `intervention` method for applying interventions on `lvm`-objects 
-  - Progress updates are now done via the `progressr` library (enabled with 
+  - New `intervention` method for applying interventions on `lvm`-objects
+  - Progress updates are now done via the `progressr` library (enabled with
     `progressr::handlers(global=TRUE)`).
   - Parallelization is now controlled via the future library. To enable
     multicore parallelization: `future::plan("multicore")`.
   - New `plot_region` function for adding confidence regions to plots.
-  
+
 # lava 1.6.9
-  - `idplot`: now accepts matrix or data.frame as 1st argument. 
+  - `idplot`: now accepts matrix or data.frame as 1st argument.
     New argument: return.data.
-  - Unit tests updated 
-  - Bug fixes: 
+  - Unit tests updated
+  - Bug fixes:
     `cv`: rmse output fixed.
-    score: Fixed bug for linear Gaussian model with argument 'indiv=TRUE'. 
+    score: Fixed bug for linear Gaussian model with argument 'indiv=TRUE'.
     estimate.formula: call object initialized correctly.
     `plot.lvm`: 'noplot' argument now works with all plot engines.
-  
+
 # lava 1.6.8.1
   - Maintenance release
   - `confpred`: split-conformal prediction method updated
@@ -319,7 +321,7 @@
     added.
   - 'sim': parameters can now be specified as part of '...'
   - summary.sim: calculate Wald CI if confint=TRUE, otherwise use the
-        user supplied confidence limits. 
+        user supplied confidence limits.
   - Clopper-pearson intervals and exact binomial tests added to 'diagtest'.
   - Interval censoring with 'normal' estimator, which now also works
     with 'binary' definitions.
