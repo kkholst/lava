@@ -437,6 +437,30 @@ test_that("estimate.default keep with regex=TRUE", {
   expect_true(nrow(e1$coefmat) == 1)
 })
 
+test_that("robust argument backwards compatibility", {
+  d <- data.frame(y = rnorm(50), x = rnorm(50))
+  g <- lm(y ~ x, data = d)
+
+  # Both robust=TRUE and robust=FALSE emit a deprecation warning
+  e0 <- expect_warning(estimate(g, robust = FALSE), "deprecated and ignored")
+  e1 <- expect_warning(estimate(g, robust = TRUE), "deprecated and ignored")
+  expect_equal(e0$coefmat, e1$coefmat)
+
+  e <- estimate(g)
+  # The robust argument is ignored: results are identical to the default
+  # (sandwich SEs)
+  expect_equal(e$coefmat, e0$coefmat)
+
+  expect_equal(e$coefmat, e0$coefmat)
+
+  # model-based SE can be obtained either via logical variable or supplying
+  # covariance matrix
+  e0m <- estimate(g, vcov = TRUE)
+  expect_false(all(e$coefmat == e0m$coefmat))
+  e1m <- estimate(g, vcov = vcov(g))
+  expect_equal(e0m$coefmat, e1m$coefmat)
+})
+
 test_that("only.coef argument is deprecated", {
   expect_warning(
     result <- estimate(a3d, only.coef = TRUE),

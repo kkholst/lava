@@ -29,9 +29,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
 ##' @param null (optional) null hypothesis to test
-##' @param vcov (optional) covariance matrix of parameter estimates
+##' @param vcov (optional) covariance matrix of parameter estimates or logical.
+##' If TRUE, then [stats::vcov] is used to obtain the covariance matrix from the
+##' provided model object `x`
 ##' @param coef (optional) parameter coefficient
-##' @param robust if TRUE robust standard errors are calculated
 ##' @param df degrees of freedom (default obtained from 'df.residual')
 ##' @param print (optional) print function for the resulting estimate object
 ##' @param labels (optional) names of coefficients
@@ -81,7 +82,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' estimate(g, 2, 3)
 ##'
 ##' ## Usual (non-robust) confidence intervals
-##' estimate(g, robust=FALSE)
+##' estimate(g, vcov=TRUE)
+##' estimate(g, vcov=vcov(g))
 ##'
 ##' ## Transformations
 ##' estimate(g, function(p) p[1]+p[2])
@@ -209,13 +211,13 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              stack=TRUE,
                              average=FALSE, subset,
                              level=0.95,
-                             IC=robust,
+                             IC=TRUE,
                              type=c("robust", "df", "mbn"),
                              var.adj,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
                              contrast, null, vcov, coef,
-                             robust=TRUE, df=NULL,
+                             df=NULL,
                              print=NULL, labels, label.width,
                              only.coef=FALSE, back.transform=NULL,
                              folds=0,
@@ -225,6 +227,13 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   cal <- match.call()
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
+  }
+  if ("robust" %in% names(cl)) {
+    warning(
+      "The 'robust' argument is deprecated and ignored. ",
+      "Robust standard errors are now always computed. ",
+      "Use the 'vcov' argument to compute model-based SEs."
+    )
   }
   if (!missing(use)) {
     p0 <- c(
@@ -277,7 +286,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   alpha <- 1 - level
   alpha.str <- paste(c(alpha/2, 1 -alpha/2)*100, "", sep="%")
   nn <- NULL
-  if ((((is.logical(IC) && IC) || length(IC)>0) && robust) &&
+  if (((is.logical(IC) && IC) || length(IC)>0) &&
       (missing(vcov) || is.null(vcov) ||
        (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
     ## If user supplied vcov, then don't estimate IC
@@ -381,14 +390,11 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
-  if (!robust) {
-    if (inherits(x, "lm") && family(x)$family=="gaussian"
-        && is.null(df))
-      df <- x$df.residual
-    if (missing(vcov) && !is.null(x))
-      suppressWarnings(vcov <- stats::vcov(x))
+  if (inherits(x, "lm") && family(x)$family == "gaussian"
+      && is.null(df) && !missing(vcov)) {
+    df <- x$df.residual
   }
-  if (!is.null(ic_theta) && robust && (missing(vcov) || is.null(vcov))) {
+  if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
     V <- var_ic(ic_theta)
     ## Small-sample corrections for clustered data
     K <- NROW(ic_theta)
