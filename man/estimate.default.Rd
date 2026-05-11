@@ -35,7 +35,6 @@
   label.width,
   only.coef = FALSE,
   back.transform = NULL,
-  folds = 0,
   R = 0,
   null.sim
 )
@@ -102,8 +101,6 @@ returned. Use \code{parameter(estimate(...))} instead.}
 
 \item{back.transform}{(optional) transform of parameters and confidence
 intervals}
-
-\item{folds}{(optional) aggregate influence functions (divide and conquer)}
 
 \item{R}{Number of simulations (simulated p-values)}
 

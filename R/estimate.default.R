@@ -41,7 +41,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##'   returned. Use `parameter(estimate(...))` instead.
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
-##' @param folds (optional) aggregate influence functions (divide and conquer)
 ##' @param R Number of simulations (simulated p-values)
 ##' @param null.sim Mean under the null for simulations
 ##' @details
@@ -220,7 +219,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              df=NULL,
                              print=NULL, labels, label.width,
                              only.coef=FALSE, back.transform=NULL,
-                             folds=0,
                              R=0,
                              null.sim) {
   cl <- match.call(expand.dots = TRUE)
@@ -300,7 +298,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       }
       IC <- TRUE
     } else {
-      suppressWarnings(ic_theta <- IC(x, folds=folds))
+      suppressWarnings(ic_theta <- IC(x))
     }
   } else {
     if (!is.null(x) && (missing(vcov) ||

@@ -1,7 +1,6 @@
 # lava 1.9.1
   Development version
-  - `estimate.default()`: The `score.deriv` argument has been removed. To supply
-    a custom bread matrix use `IC.default(x, bread = ...)` directly.
+  - `estimate.default()`: The `score.deriv` and `folds` arguments have been removed.
   - Safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
   - fixing bug wrt `estimate.index` in `summary.sim`
