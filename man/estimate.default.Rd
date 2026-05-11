@@ -19,7 +19,7 @@
   subset,
   score.deriv,
   level = 0.95,
-  IC = robust,
+  IC = TRUE,
   type = c("robust", "df", "mbn"),
   var.adj,
   keep,
@@ -30,7 +30,6 @@
   null,
   vcov,
   coef,
-  robust = TRUE,
   df = NULL,
   print = NULL,
   labels,
@@ -87,11 +86,11 @@ arguments}
 
 \item{null}{(optional) null hypothesis to test}
 
-\item{vcov}{(optional) covariance matrix of parameter estimates}
+\item{vcov}{(optional) covariance matrix of parameter estimates or logical.
+If TRUE, then \link[stats:vcov]{stats::vcov} is used to obtain the covariance matrix from the
+provided model object \code{x}}
 
 \item{coef}{(optional) parameter coefficient}
-
-\item{robust}{if TRUE robust standard errors are calculated}
 
 \item{df}{degrees of freedom (default obtained from 'df.residual')}
 
@@ -152,7 +151,8 @@ estimate(g, "1", "2"-"3", null = c(0,1))
 estimate(g, 2, 3)
 
 ## Usual (non-robust) confidence intervals
-estimate(g, robust=FALSE)
+estimate(g, vcov=TRUE)
+estimate(g, vcov=vcov(g))
 
 ## Transformations
 estimate(g, function(p) p[1]+p[2])
@@ -177,8 +177,8 @@ estimate(lm(y~x,d1))
 
 ## Marginalize
 f <- function(p,data)
-  list(p0=lava:::expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-       p1=lava:::expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+  list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+       p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
 e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
@@ -187,7 +187,7 @@ estimate(e,cbind(1,1))
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
 estimate(g,function(p,data)
-         list(p0=lava:::expit(p[1] + p["z"]*data[,"z"])),
+         list(p0=expit(p[1] + p["z"]*data[,"z"])),
          subset=d$z>0, id=d$id, average=TRUE)
 
 ## More examples with clusters:
