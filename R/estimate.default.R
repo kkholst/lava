@@ -384,6 +384,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
   if (inherits(x, "lm") && family(x)$family == "gaussian"
       && is.null(df) && !missing(vcov)) {
+    # defaults to t-distribution when calculating p-values with model-based
+    # SEs
     df <- x$df.residual
   }
   if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
@@ -576,6 +578,8 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     if (!missing(null) && missing(contrast))
       beta0 <- beta0-null
     if (!is.null(df)) {
+      # the idea should be to assign df as an attribute to the returned
+      # object, and re-use it inside summary.estimate
       za <- qt(1-alpha/2, df=df)
       pval <- 2*pt(abs(res[, 1]/res[, 2]), df=df, lower.tail=FALSE)
     } else {
