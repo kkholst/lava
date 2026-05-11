@@ -600,10 +600,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       res <- rbind(c(pp, diag(V)^0.5))
     else
       res <- cbind(pp, diag(V)^0.5)
-    beta0 <- res[, 1]
 
-    if (!missing(null) && missing(contrast))
-      beta0 <- beta0-null
     if (!is.null(df)) {
       za <- qt(1-alpha/2, df=df)
       pval <- 2*pt(abs(res[, 1]/res[, 2]), df=df, lower.tail=FALSE)
