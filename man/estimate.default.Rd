@@ -62,9 +62,11 @@ expression or variable name)}
 \item{IC}{if TRUE (default) the influence function decompositions are also
 returned (extract with \code{IC} method)}
 
-\item{type}{type of small-sample correction}
+\item{type}{type of small-sample correction (deprecated; see
+\link{summary.estimate})}
 
-\item{var.adj}{variance adjustment parameter for small-sample correction}
+\item{var.adj}{variance adjustment parameter for small-sample correction
+(deprecated; see \link{summary.estimate})}
 
 \item{keep}{(optional) index of parameters to keep from final result}
 
@@ -75,9 +77,11 @@ arguments}
 
 \item{ignore.case}{Ignore case-sensitiveness in regular expression}
 
-\item{contrast}{(optional) Contrast matrix for final Wald test}
+\item{contrast}{(optional) Contrast matrix for final Wald test
+(deprecated; see \link{summary.estimate})}
 
-\item{null}{(optional) null hypothesis to test}
+\item{null}{(optional) null hypothesis to test (deprecated; see
+\link{summary.estimate})}
 
 \item{vcov}{(optional) covariance matrix of parameter estimates or logical.
 If TRUE, then \link[stats:vcov]{stats::vcov} is used to obtain the covariance matrix from the
@@ -125,16 +129,15 @@ estimate(g, g0)
 estimate(g)
 
 ## Testing contrasts
-estimate(g, null=0)
 estimate(g, rbind(c(1,1,0), c(1,0,2)))
-estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
+summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
 estimate(g, 2:3) ## same as cbind(0,1,-1)
 estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 estimate(g, "?")  ## Wildcards
 estimate(g, "*Int*", "z")
-estimate(g, "1", "2"-"3", null = c(0,1))
+summary(estimate(g, "1", "2"-"3"), null = c(0,1))
 estimate(g, 2, 3)
 
 ## Usual (non-robust) confidence intervals

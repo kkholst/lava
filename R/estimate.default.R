@@ -20,15 +20,19 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param level level of confidence limits
 ##' @param IC if TRUE (default) the influence function decompositions are also
 ##'   returned (extract with \code{IC} method)
-##' @param type type of small-sample correction
+##' @param type type of small-sample correction (deprecated; see
+##'   [summary.estimate])
 ##' @param var.adj variance adjustment parameter for small-sample correction
+##'   (deprecated; see [summary.estimate])
 ##' @param keep (optional) index of parameters to keep from final result
 ##' @param use (optional) index of parameters to use in calculations
 ##' @param regex If TRUE use regular expression (perl compatible) for keep, use
 ##'   arguments
 ##' @param ignore.case Ignore case-sensitiveness in regular expression
 ##' @param contrast (optional) Contrast matrix for final Wald test
-##' @param null (optional) null hypothesis to test
+##'   (deprecated; see [summary.estimate])
+##' @param null (optional) null hypothesis to test (deprecated; see
+##'   [summary.estimate])
 ##' @param vcov (optional) covariance matrix of parameter estimates or logical.
 ##' If TRUE, then [stats::vcov] is used to obtain the covariance matrix from the
 ##' provided model object `x`
@@ -66,16 +70,15 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' estimate(g)
 ##'
 ##' ## Testing contrasts
-##' estimate(g, null=0)
 ##' estimate(g, rbind(c(1,1,0), c(1,0,2)))
-##' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
+##' summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
 ##' estimate(g, 2:3) ## same as cbind(0,1,-1)
 ##' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ##' ## Alternative syntax
 ##' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 ##' estimate(g, "?")  ## Wildcards
 ##' estimate(g, "*Int*", "z")
-##' estimate(g, "1", "2"-"3", null = c(0,1))
+##' summary(estimate(g, "1", "2"-"3"), null = c(0,1))
 ##' estimate(g, 2, 3)
 ##'
 ##' ## Usual (non-robust) confidence intervals
@@ -217,6 +220,16 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       "The 'robust' argument is deprecated and ignored. ",
       "Robust standard errors are now always computed. ",
       "Use the 'vcov' argument to compute model-based SEs."
+    )
+  }
+  if (!missing(null) || !missing(contrast) ||
+      !missing(type) || !missing(var.adj)) {
+    .Deprecated(
+      msg = paste0(
+        "The 'null', 'contrast', 'type', and 'var.adj' arguments of ",
+        "estimate.default() are deprecated. Use ",
+        "summary(estimate(...), null=, contrast=, type=, var.adj=) instead."
+      )
     )
   }
   if (!missing(use)) {
@@ -600,7 +613,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     names(coefs) <- rownames(res)
   }
   res <- structure(list(coef=coefs, coefmat=res, vcov=V,
-                        IC=NULL, print=print, id=idstack),
+                        IC=NULL, print=print, id=idstack, df=df),
                    class="estimate")
   if (IC) ## && is.null(back.transform))
     res$IC <- ic_theta
@@ -640,7 +653,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       rownames(res$coefmat) <- names(res$coef)
     }
   }
-
+  
   if (!is.null(back.transform)) {
     res$coefmat[, c(1, 3, 4)] <- do.call(back.transform,
                                          list(res$coefmat[, c(1, 3, 4)]))
@@ -825,20 +838,78 @@ with_unique_warnings <- function(expr) {
   })
 }
 
+##' Summary of estimate objects
+##'
+##' Computes hypothesis tests, contrasts, and small-sample corrections for
+##' an [estimate] object. The arguments `null`, `contrast`, `type`, and
+##' `var.adj` were previously available on [estimate.default()] and have
+##' been moved here.
+##'
+##' @param object an `estimate` object.
+##' @param contrast (optional) contrast matrix for the final Wald test.
+##' @param null (optional) null hypothesis to test.
+##' @param type type of small-sample correction. Requires the estimate
+##'   to have been computed with `IC=TRUE` (the default).
+##' @param var.adj variance adjustment parameter for small-sample
+##'   correction. Requires the estimate to have been computed with
+##'   `IC=TRUE` (the default).
+##' @param ... additional arguments passed to [estimate()].
+##' @seealso [estimate.default()]
 ##' @export
 summary.estimate <- function(object,
                              contrast,
+                             null,
+                             type,
+                             var.adj,
                              ...) {
   with_unique_warnings({
     p <- coef(object)
-    if (missing(contrast)) contrast <- diag(1,nrow=length(p))#as.list(seq_along(p))
-    test <- estimate(coef=p,
-                     vcov=vcov(object),
-                     f = FALSE,
-                     contrast = contrast,
-                     ...)
+    df <- object$df
+    correction <- !missing(type) || !missing(var.adj)
+    user_contrast <- !missing(contrast)
+    user_null <- !missing(null)
+    if (missing(contrast)) contrast <- diag(1, nrow=length(p))
+    args <- list(
+      coef = p,
+      contrast = contrast,
+      df = df
+    )
+    ## When the user supplies any of null/contrast/type/var.adj we want
+    ## the recall to run the full Wald-test override (contrast.transform
+    ## must be TRUE). In the no-op case we preserve the historical
+    ## behavior of passing f=FALSE so the H0:beta=0 p-values in coefmat
+    ## are kept verbatim.
+    if (!user_contrast && !user_null && !correction) {
+      args$f <- FALSE
+    }
+    if (user_null) args$null <- null
+    if (correction) {
+      if (is.null(object$IC)) {
+        stop(
+          "Small-sample corrections in summary() require an estimate ",
+          "computed with IC=TRUE."
+        )
+      }
+      args$IC <- object$IC
+      args$id <- object$id
+      if (!missing(type)) args$type <- type
+      if (!missing(var.adj)) args$var.adj <- var.adj
+    } else {
+      args$vcov <- vcov(object)
+    }
+    args <- c(args, list(...))
+    test <- suppressWarnings(do.call(estimate, args))
     class(test) <- "NULL"
     test$compare <- test$compare
+    ## Preserve dimnames on vcov: the recall path through type/var.adj
+    ## corrections builds V from the influence function and may drop
+    ## dimnames. Restore them from the original coef names so the
+    ## summary output is consistent with the deprecated estimate() path.
+    if (!is.null(test$vcov) && is.null(dimnames(test$vcov)) &&
+        !is.null(names(test$coef)) &&
+        nrow(test$vcov) == length(test$coef)) {
+      dimnames(test$vcov) <- list(names(test$coef), names(test$coef))
+    }
     object <- test[c("coef", "coefmat", "vcov", "call",
                      "ncluster", "model.index", "compare")]
     class(object) <- "summary.estimate"

@@ -1,5 +1,10 @@
 # lava 1.9.1
   Development version
+  - `estimate.default`: the `null`, `contrast`, `type`, and `var.adj`
+    arguments are soft-deprecated. Use
+    `summary(estimate(...), null=, contrast=, type=, var.adj=)` instead.
+    The default-path Wald p-value (H0: beta = 0) continues to be reported by
+    `estimate()`.
   - `estimate.default`: removed `score.deriv` and `folds` arguments.
   - `estimate.default`: removed `R` and `null.sim` arguments
   - Safe evaluation of rank in `wald_test`
