@@ -16,7 +16,6 @@
   stack = TRUE,
   average = FALSE,
   subset,
-  score.deriv,
   level = 0.95,
   IC = TRUE,
   type = c("robust", "df", "mbn"),
@@ -34,8 +33,7 @@
   labels,
   label.width,
   only.coef = FALSE,
-  back.transform = NULL,
-  folds = 0
+  back.transform = NULL
 )
 }
 \arguments{
@@ -58,8 +56,6 @@ stacked according to 'id'}
 
 \item{subset}{(optional) subset of data.frame on which to condition (logical
 expression or variable name)}
-
-\item{score.deriv}{(optional) derivative of mean score function}
 
 \item{level}{level of confidence limits}
 
@@ -102,8 +98,6 @@ returned. Use \code{parameter(estimate(...))} instead.}
 
 \item{back.transform}{(optional) transform of parameters and confidence
 intervals}
-
-\item{folds}{(optional) aggregate influence functions (divide and conquer)}
 }
 \description{
 Estimation of functional of parameters. Wald tests, robust standard errors,
