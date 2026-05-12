@@ -17,7 +17,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##' @param average if TRUE averages are calculated
 ##' @param subset (optional) subset of data.frame on which to condition (logical
 ##'   expression or variable name)
-##' @param score.deriv (optional) derivative of mean score function
 ##' @param level level of confidence limits
 ##' @param IC if TRUE (default) the influence function decompositions are also
 ##'   returned (extract with \code{IC} method)
@@ -42,7 +41,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 ##'   returned. Use `parameter(estimate(...))` instead.
 ##' @param back.transform (optional) transform of parameters and confidence
 ##'   intervals
-##' @param folds (optional) aggregate influence functions (divide and conquer)
 ##' @details
 ##'
 ##' influence function decomposition of estimator \eqn{\widehat{\theta}} based
@@ -196,7 +194,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              stack=TRUE,
                              average=FALSE, subset,
-                             score.deriv,
                              level=0.95,
                              IC=TRUE,
                              type=c("robust", "df", "mbn"),
@@ -206,12 +203,14 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              contrast, null, vcov, coef,
                              df=NULL,
                              print=NULL, labels, label.width,
-                             only.coef=FALSE, back.transform=NULL,
-                             folds=0) {
+                             only.coef=FALSE, back.transform=NULL) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
+  }
+  if ("R" %in% names(cl) || "null.sim" %in% names(cl)) {
+    stop("The 'R' and 'null.sim' arguments have been removed. ")
   }
   if ("robust" %in% names(cl)) {
     warning(
@@ -219,9 +218,6 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       "Robust standard errors are now always computed. ",
       "Use the 'vcov' argument to compute model-based SEs."
     )
-  }
-  if ("R" %in% names(cl) || "null.sim" %in% names(cl)) {
-    stop("The 'R' and 'null.sim' arguments have been removed. ")
   }
   if (!missing(use)) {
     p0 <- c(
@@ -278,21 +274,17 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       (missing(vcov) || is.null(vcov) ||
        (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
     ## If user supplied vcov, then don't estimate IC
-    if (missing(score.deriv)) {
-      if (!is.logical(IC)) {
-        ic_theta <- cbind(IC)
-        if (NCOL(ic_theta) != length(pp)) {
-          warning("Wrong dimension of influence function IC")
-        }
-        if (lava.options()$check.ic) {
-          check_ic_mean_zero(ic_theta)
-        }
-        IC <- TRUE
-      } else {
-        suppressWarnings(ic_theta <- IC(x, folds=folds))
+    if (!is.logical(IC)) {
+      ic_theta <- cbind(IC)
+      if (NCOL(ic_theta) != length(pp)) {
+        warning("Wrong dimension of influence function IC")
       }
+      if (lava.options()$check.ic) {
+        check_ic_mean_zero(ic_theta)
+      }
+      IC <- TRUE
     } else {
-      suppressWarnings(ic_theta <- IC(x, score.deriv=score.deriv, folds=folds))
+      suppressWarnings(ic_theta <- IC(x))
     }
   } else {
     if (!is.null(x) && (missing(vcov) ||

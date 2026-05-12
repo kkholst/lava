@@ -64,18 +64,6 @@ IC.default <- function(x, bread, id=NULL,
     bread <- attributes(x)$bread
     if (is.null(bread)) bread <- x$bread
     if (is.null(bread)) {
-      ## if (maxsize>0) {
-      ##   ff <- function(p) {
-      ##     colSums(Reduce(
-      ##       "rbind",
-      ##       mets::divide.conquer(function(data)
-      ##         score(x, data = data, p = p, ...),
-      ##         data = data, size = maxsize
-      ##       )
-      ##     ))
-      ##   }
-      ##   I <- -numDeriv::jacobian(ff, pp, method = lava.options()$Dmethod)
-      ## } else {
       I <- -numDeriv::jacobian(function(p) {
         score(x, p = p, indiv = FALSE, ...)
       }, pp, method = lava.options()$Dmethod)
