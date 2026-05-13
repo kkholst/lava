@@ -64,7 +64,8 @@ Suggests:
     targeted (>= 0.4),
     testthat (>= 0.11),
     vdiffr,
-    visNetwork
+    visNetwork,
+    future
 VignetteBuilder: knitr,rmarkdown
 ByteCompile: yes
 Encoding: UTF-8
