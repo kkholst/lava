@@ -1,3 +1,6 @@
+^.tool-versions$
+^AGENTS.md$
+^README.html$
 ^.codecov.yml$
 ^.editorconfig$
 ^TODO$
