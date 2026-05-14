@@ -77,3 +77,10 @@ man:
 	@$(make_build_dir)
 	@echo 'devtools::build_manual(".", path = "$(BUILD_DIR)")' | $(R)
 	@open build/$(PKG)_$(GETVER).pdf
+
+.PHONY: revdep
+revdep:
+	@Rscript tools/revdep-check.R
+
+revdep-clean:
+	@rm -rf revdep

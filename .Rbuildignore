@@ -26,3 +26,4 @@
 _cache$
 _files$
 ^revdep$
+^tools$
