@@ -84,7 +84,7 @@
 ##' @examples
 ##'
 ##' m <- lvm()
-##' ### Define covariance between residuals terms of y1 and y2
+##' ## Define covariance between residuals terms of y1 and y2
 ##' covariance(m) <- y1~y2
 ##' covariance(m) <- c(y1,y2)~f(v) ## Same marginal variance
 ##' covariance(m) ## Examine covariance structure

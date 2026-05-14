@@ -45,7 +45,7 @@ compare.default <- function(object,...,
         contrast <- diag(contrast,nrow=length(contrast))[which(contrast!=0),,drop=FALSE]
         if (!missing(null) && length(null)>1) null <- null[attributes(myidx)$ord]
     }
-    ### Wald test
+    ## Wald test
     if (!missing(contrast)) {
         B <- contrast
         p <- coef(object)
@@ -114,7 +114,7 @@ compare.default <- function(object,...,
         return(res)
     }
 
-    ### Score test
+    ## Score test
     if (!missing(scoretest)) {
         altmodel <- Model(object)
         if (inherits(scoretest,"formula")) scoretest <- list(scoretest)
@@ -145,7 +145,7 @@ compare.default <- function(object,...,
         return(res)
     }
 
-    ### Likelihood ratio test
+    ## Likelihood ratio test
     objects <- list(object,...)
     if (length(objects)<2) {
         if (!(inherits(object,"lvmfit"))) {

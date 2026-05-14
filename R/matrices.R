@@ -1,9 +1,5 @@
-###{{{
-
 `matrices` <-
     function(x,...) UseMethod("matrices")
-
-###{{{ matrices.lvm
 
 ##' @export
 mat.lvm <- function(x,ii=index(x),...) {
@@ -303,10 +299,6 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                 constrain.idx=ii$constrain.idx, constrainpar=constrainpar))
 }
 
-###}}} matrices.lvm
-
-###{{{ matrices.multigroup
-
 ##' @export
 matrices.multigroup <- function(x, p, ...) {
     pp <- modelPar(x,p)
@@ -316,16 +308,12 @@ matrices.multigroup <- function(x, p, ...) {
     return(res)
 }
 
-###}}}
-
 matrices2 <- function(x,p,...) {
     m0 <- p[seq_len(index(x)$npar.mean)]
     p0 <- p[with(index(x),seq_len(npar)+npar.mean)]
     e0 <- p[with(index(x),seq_len(npar.ex)+npar.mean+npar)]
     matrices(x,p0,m0,e0,...)
 }
-
-###{{{ matrices, to be superseeded by above definition
 
 matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     ii <- index(x)
@@ -385,7 +373,7 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
                 idx.reg <- which(x$par==p)
                 P[idx] <- A[idx.reg[1]]
                 atr <- attributes(parval[[p]])
-                parval[[p]] <- A[idx.reg[1]] ###?????
+                parval[[p]] <- A[idx.reg[1]] # CHECK
                 attributes(parval[[p]]) <- atr
             }
         } ## duplicate parameters
@@ -512,6 +500,3 @@ matrices.lvm <- function(x,pars,meanpar=NULL,epars=NULL,data=NULL,...) {
     }
     return(list(A=A, P=P, v=v, e=e, parval=parval, constrain.idx=constrain.idx, constrainpar=constrainpar))
 }
-
-###}}} matrices Obsolete
-

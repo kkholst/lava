@@ -1,5 +1,5 @@
-### Return position of variance elements in the parameter vector (without mean parameters)
-### Optimization constraints are needed on these parameters
+## Return position of variance elements in the parameter vector (without mean parameters)
+## Optimization constraints are needed on these parameters
 ##' @export
 variances <- function(x,mean=FALSE) {
 ##  if (is.null(x$parpos))

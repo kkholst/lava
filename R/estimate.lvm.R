@@ -1,5 +1,3 @@
-###{{{ estimate.lvm
-
 ##' Estimation of parameters in a Latent Variable Model (lvm)
 ##'
 ##' Estimate parameters. MLE, IV or user-defined estimator.
@@ -507,7 +505,6 @@
                 return(val)
             }
 
-            ##################################################
         } else { ## No, standard model
 
             ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
@@ -808,4 +805,3 @@
         return(res)
     }
 
-###}}} estimate.lvm

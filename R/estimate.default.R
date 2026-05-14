@@ -891,7 +891,7 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   }
 }
 
-##' @export
+#' @export
 vcov.estimate <- function(object, list=FALSE, ...) {
   res <- object$vcov
   nn <- names(coef(object, ...))
@@ -902,7 +902,7 @@ vcov.estimate <- function(object, list=FALSE, ...) {
   res
 }
 
-##' @export
+#' @export
 coef.estimate <- function(object,
                           mat=FALSE,
                           list=FALSE,
@@ -930,7 +930,7 @@ with_unique_warnings <- function(expr) {
   })
 }
 
-##' @export
+#' @export
 summary.estimate <- function(object,
                              contrast,
                              ...) {
@@ -951,17 +951,17 @@ summary.estimate <- function(object,
   })
 }
 
-##' @export
+#' @export
 coef.summary.estimate <- function(object, ...) {
   object$coefmat
 }
 
-##' @export
+#' @export
 transform.estimate <- function(`_data`, ...) {
   estimate(`_data`, ...)
 }
 
-##' @export
+#' @export
 labels.estimate <- function(object, str, label.width, ...) {
   if (!missing(str)) {
     names(object$coef) <- str
@@ -980,17 +980,17 @@ labels.estimate <- function(object, str, label.width, ...) {
   return(object)
 }
 
-##' @export
+#' @export
 parameter.estimate <- function(x, ...) {
   return(x$coefmat)
 }
 
-##' @export
+#' @export
 print.summary.estimate <- function(x, ...) {
   print.estimate(x, type=2L, ...)
 }
 
-##' @export
+#' @export
 IC.estimate <- function(x, ...) {
   if (is.null(x$IC)) return(NULL)
   dimn <- dimnames(x$IC)
@@ -1002,7 +1002,7 @@ IC.estimate <- function(x, ...) {
   structure(x$IC, dimnames=dimn)
 }
 
-##' @export
+#' @export
 model.frame.estimate <- function(formula, ...) {
   NULL
 }

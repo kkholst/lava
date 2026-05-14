@@ -218,17 +218,17 @@ merge.estimate <- function(x,y,...,
   return(res)
 }
 
-##' @export
+#' @export
 subset.estimate <- function(x, keep, ...) {
   estimate(x, keep = keep, ...)
 }
 
-##' @export
+#' @export
 "[.estimate" <- function(x, i, ...) {
   subset(x, i, ...)
 }
 
-##' @export
+#' @export
 with.estimate <- function(data, expr, ...) {
     # Recursively walk the expression tree and replace symbols
   # that match names in `data` with data["symbol"] calls
@@ -262,7 +262,7 @@ with.estimate <- function(data, expr, ...) {
 
 # ---- Trigonometric Functions --------------------------------------------
 
-##' @export
+#' @export
 sin.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- sin(p)
@@ -270,7 +270,7 @@ sin.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 cos.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- cos(p)
@@ -278,7 +278,7 @@ cos.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 tan.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- tan(p)
@@ -288,7 +288,7 @@ tan.estimate <- function(x, ...) {
 
 # ---- Inverse Trigonometric Functions ------------------------------------
 
-##' @export
+#' @export
 asin.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- asin(p)
@@ -296,7 +296,7 @@ asin.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 acos.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- acos(p)
@@ -304,7 +304,7 @@ acos.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 atan.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- atan(p)
@@ -314,7 +314,7 @@ atan.estimate <- function(x, ...) {
 
 # ---- Hyperbolic Functions -----------------------------------------------
 
-##' @export
+#' @export
 sinh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- sinh(p)
@@ -322,7 +322,7 @@ sinh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 cosh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- cosh(p)
@@ -330,7 +330,7 @@ cosh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 tanh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- tanh(p)
@@ -340,7 +340,7 @@ tanh.estimate <- function(x, ...) {
 
 # ---- Inverse Hyperbolic Functions ---------------------------------------
 
-##' @export
+#' @export
 asinh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- asinh(p)
@@ -348,7 +348,7 @@ asinh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 acosh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- acosh(p)
@@ -356,7 +356,7 @@ acosh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 atanh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- atanh(p)
@@ -366,7 +366,7 @@ atanh.estimate <- function(x, ...) {
 
 # ---- Other Common Functions ---------------------------------------------
 
-##' @export
+#' @export
 log1p.estimate <- function(x, ...) {
   # log(1 + p) — more numerically stable than log(p+1) for small p
   estimate(x, function(p) {
@@ -375,7 +375,7 @@ log1p.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 expm1.estimate <- function(x, ...) {
   # exp(p) - 1 — more numerically stable than exp(p)-1 for small p
   estimate(x, function(p) {
@@ -384,7 +384,7 @@ expm1.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 log.estimate <- function(x, base = exp(1), ...) {
   estimate(x, function(p) {
     y <- log(p, base = base)
@@ -393,7 +393,7 @@ log.estimate <- function(x, base = exp(1), ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 exp.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- exp(p)
@@ -401,12 +401,12 @@ exp.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 sqrt.estimate <- function(x, ...) {
   estimate(x^.5, ...)
 }
 
-##' @export
+#' @export
 sum.estimate <- function(x, ...) {
   estimate(x,
            function(p)
@@ -415,7 +415,7 @@ sum.estimate <- function(x, ...) {
            ...)
 }
 
- ##' @export
+ #' @export
 "%*%.estimate" <- function(x, y, ...) {
   if (is.matrix(x)) {
     return(estimate(y, f=x, ...))
@@ -433,7 +433,7 @@ prod_except <- function(p) {
   left * right
 }
 
-##' @export
+#' @export
 prod.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- prod(p)
@@ -507,7 +507,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
   return(grad)
 }
 
-##' @export
+#' @export
 "+.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -520,7 +520,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "-.estimate" <- function(e1, e2, ...) {
   if (missing(e2)) return(-1*e1)
   operator_estimate(
@@ -534,7 +534,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "*.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -547,7 +547,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "/.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -560,7 +560,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "^.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -579,7 +579,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
 
 # ---- == ---- ------------------------------------------------------------
 
-##' @export
+#' @export
 "==.estimate" <- function(e1, e2) {
   if (!(is.numeric(e1) || is.numeric(e2))) stop("numeric comperator needed")
   null <- if (is.numeric(e1)) e1 else e2

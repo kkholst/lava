@@ -1,5 +1,3 @@
-###{{{ summary.lvm
-
 ##' @export
 `summary.lvm` <-
 function(object,...) {
@@ -35,10 +33,6 @@ function(object,...) {
   ## printmany(object$cov, printmany(object$covpar, object$covfix, name1="Labels:", name2="Fixed:", print=FALSE), name1="covariance:")
   cat("\n")
 }
-
-###}}} summary.lvm
-
-###{{{ summary.lvmfit
 
 ##' @export
 `summary.lvmfit` <-
@@ -124,10 +118,6 @@ print.summary.lvmfit <- function(x,varmat=TRUE,...) {
 ##' @export
 coef.summary.lvmfit <- function(object,...) object$coef
 
-###}}} summary.lvmfit
-
-###{{{ summary.multigroupfit
-
 ##' @export
 summary.multigroupfit <- function(object,groups=NULL,...) {
   if (is.null(groups) | length(groups)==0) {
@@ -168,10 +158,6 @@ print.summary.multigroupfit <- function(x,...) {
   invisible(x)
 }
 
-###}}} summary.multigroupfit
-
-###{{{ summary.multigroup
-
 ##' @export
 summary.multigroup <- function(object,...) {
   for (m in object$lvm)
@@ -180,4 +166,3 @@ summary.multigroup <- function(object,...) {
   invisible(object)
 }
 
-###}}}

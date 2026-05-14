@@ -1,5 +1,3 @@
-###{{{ mixture
-
 #' Estimate mixture latent variable model.
 #'
 #' Estimate mixture latent variable model
@@ -382,11 +380,6 @@ mixture <- function(x, data, k=length(x),
     return(val)
 }
 
-###}}} mixture
-
-
-###{{{ logLik, score, information
-
 ##' @export
 score.lvm.mixture <- function(x,p=coef(x,full=TRUE),prob,indiv=FALSE,model="normal",...) {
     myp <- lapply(x$parpos,function(x) p[x])
@@ -456,18 +449,10 @@ logLik.lvm.mixture <- function(object,p=coef(object,full=TRUE),prob,model="norma
     return(loglik)
 }
 
-###}}} logLik, score, information
-
-###{{{ vcov
-
 ##' @export
 vcov.lvm.mixture <- function(object,...) {
     return(object$vcov)
 }
-
-###}}}
-
-###{{{ summary/print
 
 ##' @export
 summary.lvm.mixture <- function(object,type=0,labels=0,...) {
@@ -549,18 +534,10 @@ print.lvm.mixture <- function(x,...) {
     print(summary(x,type=1,...))
 }
 
-###}}}
-
-###{{{ plot
-
 ##' @export
 plot.lvm.mixture <- function(x,type="l",...) {
     matplot(x$theta,type=type,...)
 }
-
-###}}} plot
-
-###{{{ coef
 
 ##' @export
 coef.lvm.mixture <- function(object,iter,list=FALSE,full=TRUE,prob=FALSE,class=FALSE,label=TRUE,...) {
@@ -596,8 +573,6 @@ coef.lvm.mixture <- function(object,iter,list=FALSE,full=TRUE,prob=FALSE,class=F
     else
         return(res[iter,])
 }
-
-###}}} coef
 
 ##' @export
 model.frame.lvm.mixture <- function(formula,...) {

@@ -1,5 +1,3 @@
-###{{{ estimate.multigroup
-
 ##' @export
 `estimate.multigroup` <- function(x, control=list(),
                            estimator=NULL,
@@ -120,7 +118,7 @@
         data2 <- NULL
     }
 
-    ### Run hooks (additional lava plugins)
+    ## Run hooks (additional lava plugins)
     myhooks <- gethook()
     newweights <- list()
     newdata2 <- list()
@@ -229,8 +227,6 @@
     myfix <- list()
 
     if (Xfix |  (Xconstrain & XconstrStdOpt | !lava.options()$test)) { ## Model with random slopes:
-        #############################################################
-
         if (Xfix) {
             myclass <- c(myclass,"lvmfit.randomslope")
             for (k in seq_len(x$ngroup)) {
@@ -392,9 +388,6 @@
             return(res)
         }
     } else { ## Model without random slopes:
-        ###########################################################
-
-
         ## Non-linear parameter constraints involving observed variables? (e.g. nonlinear regression)
         yconstrain <- c()
         iconstrain <- c()
@@ -530,9 +523,6 @@
         }
     }
 
-    ##############################################################
-
-
     if (!exists(InformationFun)) myInformation <- NULL
     else if (is.null(get(InformationFun))) myInformation <- NULL
     if (is.null(get(GradFun))) myGrad <- NULL
@@ -596,10 +586,6 @@
     return(res)
 }
 
-###}}}
-
-###{{{ estimate.list
-
 estimate_lvmlist <-
     function(x, data, messages=lava.options()$messages, fix, missing=FALSE,  ...) {
         if (base::missing(data)) {
@@ -643,4 +629,3 @@ estimate_lvmlist <-
         return(res)
     }
 
-###}}}
