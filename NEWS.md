@@ -8,7 +8,7 @@
   - `merge`, `c.estimate`: new `drop.ic` argument for dropping influence
     functions before merging
   - `sim.default`: export seeds to replicate results
-  - bugfix: `estimate.lvm` fixed issue with interval censored observations
+  - bug-fix: `estimate.lvm` fixed issue with interval censored observations
   - deprecated: `only.coef` argument in `estimate.default()`. Use
     `parameter(estimate(...))` instead.
 
