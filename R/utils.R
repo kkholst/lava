@@ -393,7 +393,7 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   m <- colMeans(ic, na.rm = TRUE)
   rms <- sqrt(colMeans(ic^2, na.rm = TRUE))
   ratio <- abs(m) / rms
-  flag <- any(ratio > tol)
+  flag <- any(ratio > tol, na.rm=TRUE)
   if (flag) {
     warning(
       sprintf(
