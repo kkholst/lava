@@ -1,6 +1,3 @@
-
-###{{{ modelVar
-
 ##' @export
 `modelVar` <-
   function(x,p,...) UseMethod("modelVar")
@@ -17,4 +14,3 @@ modelVar.lvm <- function(x,p,data,...) {
   attr(res, "epar") <- pp$epar
   res
 }
-###}}} modelVar

@@ -3,13 +3,8 @@
 `modelPar` <-
   function(x,p,...) UseMethod("modelPar")
 
-###{{{ modelPar.lvmfit
 ##' @export
 modelPar.lvmfit <- function(x, p=pars(x), ...) modelPar(Model(x),p=p,...)
-
-###}}} modelPar.lvmfit
-
-###{{{ modelPar
 
 ##' @export
 modelPar.lvm <- function(x,p, ...) {
@@ -34,17 +29,10 @@ modelPar.lvm <- function(x,p, ...) {
   return(list(p=p,meanpar=meanpar,p2=p2))
 }
 
-###}}} modelpar.lvm
-
-###{{{ modelPar.multigroupfit
-
 ##' @export
 modelPar.multigroupfit <- function(x,p=pars(x),...) {
   modelPar(Model(x),p,...)
 }
-###}}}
-
-###{{{ modelPar.multigroup
 
 ##' @export
 modelPar.multigroup <- function(x,p, ...) {
@@ -64,8 +52,6 @@ modelPar.multigroup <- function(x,p, ...) {
   res <- list(p=pm,par=pp,mean=mm)
   return(res)
 }
-
-###}}}
 
 modelPar2.multigroup <-
   function(x,p, ...) {

@@ -104,9 +104,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' \code{\link{covariance}}
 ##' @keywords models regression
 ##' @examples
-##' ##############################
-##' ### Non-linear parameter constraints 1
-##' ##############################
+##' ## Non-linear parameter constraints 1
 ##' m <- lvm(y ~ f(x1,gamma)+f(x2,beta))
 ##' covariance(m) <- y ~ f(v)
 ##' d <- sim(m,100)
@@ -122,9 +120,7 @@ Range.lvm <- function(a=0,b=1) {
 ##' ## Likelihood of restricted model (MLE)
 ##' logLik(e1)
 ##'
-##' ##############################
-##' ### Non-linear regression
-##' ##############################
+##' ## Non-linear regression
 ##'
 ##' ## Simulate data
 ##' m <- lvm(c(y1,y2)~f(x,0)+f(eta,1))
@@ -150,16 +146,13 @@ Range.lvm <- function(a=0,b=1) {
 ##' lines(x0,coef(e)["nu"] + coef(e)["gamma"]*pnorm(coef(e)["alpha"]*x0))
 ##' }
 ##'
-##' ##############################
-##' ### Multigroup model
-##' ##############################
-##' ### Define two models
+##' ## Multigroup model
 ##' m1 <- lvm(y ~ f(x,beta)+f(z,beta2))
 ##' m2 <- lvm(y ~ f(x,psi) + z)
-##' ### And simulate data from them
+##' # simulate data from the two models
 ##' d1 <- sim(m1,500)
 ##' d2 <- sim(m2,500)
-##' ### Add 'non'-linear parameter constraint
+##' # Add 'non'-linear parameter constraint
 ##' constrain(m2,psi ~ beta2) <- function(x) x
 ##' ## Add parameter beta2 to model 2, now beta2 exists in both models
 ##' parameter(m2) <- ~ beta2

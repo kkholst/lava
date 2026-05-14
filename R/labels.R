@@ -1,5 +1,3 @@
-###{{{ labels
-
 ##' Define labels of graph
 ##'
 ##' Alters labels of nodes and edges in the graph of a latent variable model
@@ -88,9 +86,6 @@ labels.lvmfit <- function(object,lab=NULL,...) {
     object$noderender$label[names(lab)] <- lab
   return(object)
 }
-###}}} labels
-
-###{{{ edgelabels
 
 ##' @export
 "edgelabels<-.lvmfit" <- function(object,to,from,est=TRUE,edges=NULL,cex=1,...,value) {
@@ -286,8 +281,6 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
   return(object)
 }
 
-
-
 ##' @export
 `edgelabels.lvm` <- function(object, lab=NULL, to=NULL, from=NULL,
                              cex=1.5, lwd=1, lty=1, col="black",
@@ -394,5 +387,3 @@ edgelabels.lvmfit <- function(object,value,type,pthres,intercept=FALSE,format.fu
   }
   return(object)
 }
-
-###}}} edgelabels

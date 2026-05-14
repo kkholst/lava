@@ -1,4 +1,3 @@
-###{{{ missingModel
 missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=NULL,weights=NULL,data2=NULL,cluster=NULL,...) {
   if (!inherits(model,"lvm")) stop("Needs a lvm-object")
   if (type==3) {
@@ -138,10 +137,6 @@ missingModel <- function(model,data,var=endogenous(model),fix=FALSE,type=2,keep=
               mis.type=mis.type)
   return(res)
 }
-
-###}}}
-
-###{{{ estimate.MAR.lvm
 
 ##' @export
 estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,control=list(),messages=lava.options()$messages,weights,data2,cluster,onlymodel=FALSE,estimator="gaussian",hessian=TRUE,keep=NULL,...) {
@@ -298,6 +293,3 @@ estimate.MAR <- function(x,data,which=endogenous(x),fix,type=2,startcc=FALSE,con
 
   return(res)
 }
-
-###}}} estimate.MAR.lvm
-

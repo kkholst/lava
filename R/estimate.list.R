@@ -1,5 +1,5 @@
 
-##' @export
+#' @export
 estimate.list <- function(x,...) {
   if (inherits(x[[1]],"lvm")) return(estimate_lvmlist(x,...))
   res <- lapply(x,function(x) estimate(x,...))
@@ -7,22 +7,22 @@ estimate.list <- function(x,...) {
   res
 }
 
-##' @export
+#' @export
 coef.estimate.list <- function(object,...) {
   lapply(object, coef)
 }
 
-##' @export
+#' @export
 vcov.estimate.list <- function(object,...) {
   lapply(object, vcov)
 }
 
-##' @export
+#' @export
 IC.estimate.list <- function(x,...) {
   lapply(x, vcov)
 }
 
-##' @export
+#' @export
 merge.estimate.list <- function(x,...) {
   Reduce(merge, x)
 }

@@ -148,9 +148,9 @@ updatelvm <- function(x,mean=TRUE,...) {
                 v0[idx] <- v1[idx] <- 0
         } ## duplicate parameters
 
-        ###
-        ### Extra parameters
-        ###
+        ##
+        ## Extra parameters
+        ##
         efixed <- sapply(x$exfix, function(y) is.numeric(y) & !is.na(y))
         enamed <- sapply(x$exfix, function(y) is.character(y) & !is.na(y))
         if(length(enamed)>0){

@@ -283,8 +283,6 @@ CondMom <- function(mu,S,idx,X) {
   return(list(mean=condmean,var=condvar))
 }
 
-###}}} CondMom
-
 ## Depth-First/acc (accessible)
 DFS <- function(M,v,explored=c()) {
   explored <- union(explored,v)

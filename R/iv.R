@@ -1,5 +1,3 @@
-###{{{ Objective
-
 IV_method.lvm <- NULL
 IV_objective.lvm <- function(x,p,data,...) {
     IV2(x,data,...)
@@ -23,8 +21,6 @@ IV1_objective.lvm <- function(x,p,data,...) {
 IV1_variance.lvm <- function(x,p,data,opt,...) {
     opt$vcov
 }
-
-###}}} Objective
 
 ## Instrumental Variable Estimator / 2SLS
 ##' @export

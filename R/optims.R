@@ -18,8 +18,6 @@ nlminb0 <- function(start,objective,gradient,hessian,...) {
   nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
 }
 
-################################################################################
-
 estimatingfunction <- function(start,objective,gradient,hessian,NR=FALSE,...) {
   myobj <- function(x,...) {
     S <- gradient(x,...)
@@ -48,10 +46,6 @@ estimatingfunction <- function(start,objective,gradient,hessian,NR=FALSE,...) {
 }
 
 estimatingfunction0 <- function(...,hessian=NULL) estimatingfunction(...,hessian=hessian)
-
-################################################################################
-## Newton-Raphson/Scoring
-################################################################################
 
 ##' @title Newton-Raphson method
 ##' 

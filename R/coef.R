@@ -1,5 +1,3 @@
-###{{{ coef.lvm
-
 ##' @export
 `coef.lvm` <-
     function(object, mean=TRUE, fix=TRUE,
@@ -110,10 +108,6 @@
         if (!is.null(object$order)) res <- res[object$order]
         res
     }
-
-###}}}
-
-###{{{ coef.lvmfit
 
 ##' @export
 `coef.lvmfit` <-
@@ -382,18 +376,10 @@
         return(res)
     }
 
-###}}} coef.lvmfit
-
-###{{{ coef.multigroup
-
 ##' @export
 coef.multigroup <- function(object,...) {
     return(object$parpos)
 }
-
-###}}} coef.multigroup
-
-###{{{ coef.multigroupfit
 
 ##' @export
 coef.multigroupfit <-
@@ -487,10 +473,6 @@ coef.multigroupfit <-
         }
         return(res)
     }
-
-###}}}
-
-###{{{ CoefMat
 
 ##' @export
 CoefMat.multigroupfit <- function(x,type=9,
@@ -661,10 +643,6 @@ CoefMat <- function(x,
     res0
 }
 
-###}}} CoefMat
-
-###{{{ standardized coefficients
-
 stdcoef <- function(x,p=coef(x),...) {
     M0 <- moments(x,p=p,...)
     A <- t(M0$A)
@@ -712,4 +690,3 @@ stdcoef <- function(x,p=coef(x),...) {
     return(res)
 }
 
-###}}} standardized coefficients
