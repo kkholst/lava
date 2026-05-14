@@ -5,7 +5,7 @@
 \alias{estimate}
 \alias{merge.estimate}
 \alias{estimate.mlm}
-\title{Influence function based inference"}
+\title{Influence function based inference}
 \usage{
 \method{estimate}{default}(
   x = NULL,

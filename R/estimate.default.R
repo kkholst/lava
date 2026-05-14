@@ -1,7 +1,7 @@
 #' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
-#' Influence function based inference"
+#' Influence function based inference
 #'
 #' Primary tool for obtaining parameter estimates with robust (sandwich)
 #' standard errors, applying the delta method, and testing linear hypotheses.
