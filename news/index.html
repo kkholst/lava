@@ -39,8 +39,24 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.1" id="lava-191">lava 1.9.1<a class="anchor" aria-label="anchor" href="#lava-191"></a></h2>
-<p>Development version - Safe evaluation of rank in <code>wald_test</code> - adding CI Length to <code>summary.sim</code> output - fixing bug wrt <code>estimate.index</code> in <code>summary.sim</code> - updated <code>plot.sim</code>, <code>forestplot</code>, <code>plot.estimate</code> - <code>estimate</code>: <code>type="hc3"</code> variance estimates - <code>merge</code>, <code>c.estimate</code>: new <code>drop.ic</code> argument for dropping influence functions before merging - <code>sim.default</code>: export seeds to replicate results - bugfix: <code>estimate.lvm</code> fixed issue with interval censored observations.</p>
-</div>
+<ul><li>
+<code>estimate.default</code>: removed <code>score.deriv</code>,<code>folds</code>, <code>R</code>, <code>null.sim</code> arguments</li>
+<li>Safe evaluation of rank in <code>wald_test</code>
+</li>
+<li>adding CI Length to <code>summary.sim</code> output</li>
+<li>fixing bug related to <code>estimate.index</code> in <code>summary.sim</code>
+</li>
+<li>updated <code>plot.sim</code>, <code>forestplot</code>, <code>plot.estimate</code>
+</li>
+<li>
+<code>estimate.default</code>: small-sample <code>type="hc3"</code> variance estimates</li>
+<li>
+<code>merge</code>, <code>c.estimate</code>: new <code>drop.ic</code> argument for dropping influence functions before merging</li>
+<li>
+<code>sim.default</code>: export seeds to replicate results</li>
+<li>bug-fix: <code>estimate.lvm</code> fixed issue with interval censored observations</li>
+<li>deprecated: <code>only.coef</code> argument in <code><a href="../reference/estimate.default.html">estimate.default()</a></code>. Use <code>parameter(estimate(...))</code> instead.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.0" id="lava-190">lava 1.9.0<a class="anchor" aria-label="anchor" href="#lava-190"></a></h2><p class="text-muted">CRAN release: 2026-04-05</p>
 <ul><li>

@@ -4,6 +4,8 @@
 
 - **Klaus K. Holst**. Author, maintainer.
 
+- **Benedikt Sommer**. Contributor.
+
 - **Brice Ozenne**. Contributor.
 
 - **Thomas Gerds**. Contributor.

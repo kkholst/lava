@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2026-05-08</h4>
+            <h4 data-toc-skip class="date">2026-05-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/nonlinear.Rmd" class="external-link"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="d-none name"><code>nonlinear.Rmd</code></div>
@@ -159,6 +159,14 @@ spline</p>
 <code class="sourceCode R"><span><span class="va">kn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>,<span class="fl">3</span>,length.out<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/twostage.lvmfit.html">nonlinear</a></span><span class="op">(</span><span class="va">m2</span>, type<span class="op">=</span><span class="st">"spline"</span>, knots<span class="op">=</span><span class="va">kn</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">u2</span> <span class="op">~</span> <span class="va">u1</span></span>
 <span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
+<span><span class="co">#&gt; = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="va">e2</span></span>
 <span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
 <span><span class="co">#&gt; Measurements:                                             </span></span>
@@ -241,6 +249,17 @@ freedom:</p>
 <span>         <span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u1<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,x<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>         <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>estimate<span class="op">=</span><span class="va">e</span>,predict<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">pr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>         <span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
+<span><span class="co">#&gt; = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 1.1e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">u2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">u1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
 <span>     xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
@@ -322,6 +341,14 @@ covariate <span class="math inline">z</span></p>
 <span><span class="va">ee1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">mm1</span>, model2<span class="op">=</span><span class="va">mm2</span>, data<span class="op">=</span><span class="va">d</span>, predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in estimate.lvm(model2, data = newd, ...): Near-singular covariance</span></span>
 <span><span class="co">#&gt; matrix, using pseudo-inverse!</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
+<span><span class="co">#&gt; = 6.4e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 6.4e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 6.5e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"u2~u"</span>,regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5%    P-value</span></span>
 <span><span class="co">#&gt; u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191</span></span>
@@ -332,8 +359,8 @@ covariate <span class="math inline">z</span></p>
 interaction</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"(:g)"</span>, regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, </span></span>
-<span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), </span></span>
+<span><span class="co">#&gt;     coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;         Estimate Std.Err    2.5%    97.5% P-value</span></span>
 <span><span class="co">#&gt; u2~u1:g   0.5926 0.23212  0.1377  1.04756 0.01068</span></span>
@@ -436,6 +463,17 @@ the mixture model</p>
 <code>two-stage</code> method</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">em2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">em0</span>,<span class="va">m2</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
+<span><span class="co">#&gt; = 2.8e-05). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
+<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
+<span><span class="co">#&gt; |mean|/rms = 9.5e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
+<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="va">em2</span></span>
 <span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
 <span><span class="co">#&gt; Measurements:                                             </span></span>

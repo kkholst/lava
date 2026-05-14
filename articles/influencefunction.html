@@ -181,12 +181,12 @@ method or test linear hypotheses, it is also possible to provide the
 asymptotic variance estimate via the <code>vcov</code> argument, without
 specifying the IC matrix.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>x<span class="op">=</span>, <span class="va">...</span><span class="op">)</span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>x<span class="op">=</span>, <span class="va">...</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span>, IC<span class="op">=</span>, <span class="va">...</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span>, vcov<span class="op">=</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p>A typical call could look like</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">p</span>, IC<span class="op">=</span><span class="va">ic</span>, id<span class="op">=</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">p</span>, IC<span class="op">=</span><span class="va">ic</span>, id<span class="op">=</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># parameter transformation</span></span>
 <span>  <span class="fu"><a href="../reference/labels-set.html">labels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span><span class="op">)</span> <span class="co"># rename parameters</span></span></code></pre></div>
 <p>Direct calculations is also possible, if <code>a</code> and
@@ -274,7 +274,7 @@ problem of estimating the proportion of the binary outcome <span class="math inl
 <code>estimate</code> function</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">dw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">inp</span><span class="op">[</span>, <span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>, type<span class="op">=</span><span class="st">"mean"</span><span class="op">)</span> </span>
+<span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">inp</span><span class="op">[</span>, <span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>, type<span class="op">=</span><span class="st">"mean"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "estimate"</span></span>
 <span><span class="va">e</span></span>
@@ -323,8 +323,8 @@ each of the two binary outcomes</p>
 <code>estimate</code> object</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, </span></span>
-<span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), </span></span>
+<span><span class="co">#&gt;     coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;                Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138</span></span>
@@ -396,13 +396,15 @@ errors for a logistic regression model:</p>
 <span><span class="co">#&gt; (Intercept)  -0.2687  0.1622 -0.5867 0.04931 9.772e-02</span></span>
 <span><span class="co">#&gt; a             1.5595  0.2428  1.0835 2.03545 1.348e-10</span></span>
 <span><span class="co">#&gt; x1            0.9728  0.1435  0.6916 1.25397 1.198e-11</span></span></code></pre></div>
-<p>We can compare that to the usual (non-robust) standard errors:</p>
+<p>We can compare that to the usual (non-robust) standard errors by
+supplying the model-based covariance matrix explicitly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, robust <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, vcov <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  -0.2687  0.1589 -0.5802 0.04281 9.091e-02</span></span>
 <span><span class="co">#&gt; a             1.5595  0.2423  1.0846 2.03433 1.220e-10</span></span>
-<span><span class="co">#&gt; x1            0.9728  0.1396  0.6992 1.24634 3.177e-12</span></span></code></pre></div>
+<span><span class="co">#&gt; x1            0.9728  0.1396  0.6992 1.24634 3.177e-12</span></span>
+<span><span class="co"># estimate(g, vcov = TRUE) alternative syntax to obtain model-based SEs</span></span></code></pre></div>
 <p>The IF can be extracted from the <code>estimate</code> object or
 directly from the model object</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -602,8 +604,8 @@ using the <code>merge</code> method</p>
 <span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, family<span class="op">=</span><span class="va">binomial</span>, data<span class="op">=</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, </span></span>
-<span><span class="co">#&gt;     messages = 0), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), </span></span>
+<span><span class="co">#&gt;     coef = p)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err    2.5%    97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01</span></span>
@@ -705,7 +707,7 @@ with the <code>merge</code> function</p>
 <span><span class="co">#&gt; AIC: 554.56</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 3</span></span>
-<span><span class="va">dwc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">dw</span><span class="op">)</span> </span>
+<span><span class="va">dwc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">dw</span><span class="op">)</span></span>
 <span><span class="va">g3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y3</span> <span class="op">~</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dwc</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">g3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -954,7 +956,7 @@ same grouping must be used across estimates when combining IFs.</p>
 <span><span class="co">#&gt; 200 500</span></span>
 <span></span>
 <span><span class="co">## Aggregated IF</span></span>
-<span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span> </span>
+<span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 18992 bytes</span></span>
 <span><span class="va">e</span></span>
@@ -1008,7 +1010,7 @@ function must be supplied to the <code>estimate</code> method (argument
 <span><span class="co">#&gt; a               1.3239  0.2173  0.8981 1.74978 1.105e-09</span></span>
 <span><span class="co">#&gt; (Intercept).1   3.5721  0.7289  2.1435 5.00062 9.539e-07</span></span>
 <span><span class="co">#&gt; inv.a           0.7553  0.1240  0.5124 0.99828 1.105e-09</span></span>
-<span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">exp</span><span class="op">)</span>         </span>
+<span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">exp</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate Std.Err   2.5% 97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)   0.8302  0.1197 0.5955 1.065 4.087e-12</span></span>
 <span><span class="co">#&gt; a             3.7582  0.8166 2.1578 5.359 4.175e-06</span></span></code></pre></div>
@@ -1021,70 +1023,70 @@ automatically calculated exactly. To illustrate this consider the
 following simple example where we consider two <code>estimate</code>
 objects each with a single parameter estimate</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>, IC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">=</span><span class="fl">0.8</span><span class="op">)</span>, IC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>, IC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">=</span><span class="fl">0.8</span><span class="op">)</span>, IC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>Parameter transformation can now be calculated directly as in the
 following examples</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">a</span> <span class="op">*</span> <span class="va">b</span></span>
-<span><span class="co">#&gt;   Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; a      0.4  0.2741 -0.1372 0.9372  0.1445</span></span>
+<span><span class="co">#&gt;   Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; a      0.4  0.3156 -0.2185 1.018  0.2049</span></span>
 <span><span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="va">a</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; a    7.887   5.283 -2.467 18.24  0.1354</span></span>
+<span><span class="co">#&gt; a    7.887   6.089 -4.047 19.82  0.1952</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>sum<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, sum2<span class="op">=</span><span class="va">a</span><span class="op">+</span><span class="va">b</span>,</span>
 <span>  prod<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/prod.html" class="external-link">prod</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>, prod2<span class="op">=</span><span class="va">a</span><span class="op">*</span><span class="va">b</span><span class="op">)</span> <span class="co"># sum and prod function</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err      2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; sum   -0.002244 0.00332 -0.008751 0.004263  0.4991</span></span>
-<span><span class="co">#&gt; sum2   1.300000 0.56369  0.195179 2.404821  0.0211</span></span>
-<span><span class="co">#&gt; prod  -0.002244 0.00332 -0.008751 0.004263  0.4991</span></span>
-<span><span class="co">#&gt; prod2  0.400000 0.36223 -0.309967 1.109967  0.2695</span></span>
+<span><span class="co">#&gt; sum   -0.002244 0.00332 -0.008751 0.004263 0.49911</span></span>
+<span><span class="co">#&gt; sum2   1.300000 0.47822  0.362698 2.237302 0.00656</span></span>
+<span><span class="co">#&gt; prod  -0.002244 0.00332 -0.008751 0.004263 0.49911</span></span>
+<span><span class="co">#&gt; prod2  0.400000 0.31556 -0.218490 1.018490 0.20495</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span> <span class="co"># merge</span></span>
 <span><span class="va">e</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="co"># inner prod.</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err    2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; p1     0.89  0.5491 -0.1863 1.966  0.1051</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; p1      2.1  0.6439 0.8379 3.362 0.00111</span></span>
+<span><span class="co">#&gt; p1     0.89  0.6311 -0.347 2.127  0.1585</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err   2.5% 97.5%  P-value</span></span>
+<span><span class="co">#&gt; p1      2.1  0.7399 0.6499  3.55 0.004535</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>pow <span class="op">=</span> <span class="va">a</span><span class="op">^</span><span class="va">b</span><span class="op">)</span> <span class="co"># power-function, rename parameter</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; pow   0.5743  0.2335 0.1167 1.032 0.01391</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; pow   0.5743  0.2692 0.04679 1.102 0.03286</span></span>
 <span><span class="va">a</span><span class="op">^</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1   0.7071  0.1840  0.3465 1.0677 0.0001212</span></span>
-<span><span class="co">#&gt; p2   0.2500  0.2602 -0.2599 0.7599 0.3365994</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; p1   0.7071  0.2121  0.2913 1.123 0.0008581</span></span>
+<span><span class="co">#&gt; p2   0.2500  0.3000 -0.3380 0.838 0.4046568</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">e</span><span class="op">[</span><span class="st">"a"</span><span class="op">]</span> <span class="op">*</span> <span class="va">e</span><span class="op">[</span><span class="st">"b"</span><span class="op">]</span> <span class="op">/</span> <span class="va">a</span>, <span class="va">e</span><span class="op">[</span><span class="st">"b"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5%  P-value</span></span>
-<span><span class="co">#&gt; a      0.8  0.2614 0.2876 1.312 0.002212</span></span>
-<span><span class="co">#&gt; b      0.8  0.2614 0.2876 1.312 0.002212</span></span></code></pre></div>
+<span><span class="co">#&gt;   Estimate Std.Err  2.5% 97.5%  P-value</span></span>
+<span><span class="co">#&gt; a      0.8     0.3 0.212 1.388 0.007661</span></span>
+<span><span class="co">#&gt; b      0.8     0.3 0.212 1.388 0.007661</span></span></code></pre></div>
 <p>For the <code>%*%</code> operator we can also use a general contrast
 matrix (see also Section on <a href="#linear-contrasts-and-hypothesis-testing">Linear contrasts</a></p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%  P-value</span></span>
-<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915</span></span>
-<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 0.054629</span></span>
-<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 0.002212</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err     2.5%  97.5%  P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.407718</span></span>
+<span><span class="co">#&gt; a              0.5  0.3000 -0.08799 1.0880 0.095581</span></span>
+<span><span class="co">#&gt; b              0.8  0.3000  0.21201 1.3880 0.007661</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [a] - [b] = 0</span></span>
 <span><span class="co">#&gt;   [a] = 0</span></span>
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 10.66, df = 2, p-value = 0.004855</span></span>
+<span><span class="co">#&gt; chisq = 8.075, df = 2, p-value = 0.01764</span></span>
 <span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Estimate Std.Err      2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05</span></span>
-<span><span class="co">#&gt; a              0.5  0.2602 -0.009926 1.0099 5.463e-02</span></span>
-<span><span class="co">#&gt; b              0.8  0.2614  0.287617 1.3124 2.212e-03</span></span>
+<span><span class="co">#&gt;           Estimate Std.Err     2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.0003337</span></span>
+<span><span class="co">#&gt; a              0.5  0.3000 -0.08799 1.0880 0.0955807</span></span>
+<span><span class="co">#&gt; b              0.8  0.3000  0.21201 1.3880 0.0076608</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [[a] - [b]] = 1</span></span>
 <span><span class="co">#&gt;   [a] = 1</span></span>
 <span><span class="co">#&gt;   [b] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 17.52, df = 2, p-value = 0.0001567</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 13.26, df = 2, p-value = 0.001317</span></span></code></pre></div>
 <p>The following transformations are implemented</p>
 <ul>
 <li>trigonometric functions: <code>cos</code>, <code>sin</code>,
@@ -1114,15 +1116,15 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55a7f13ce618&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55b6b535c508&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; b    1.386   1.634 -1.816 4.589  0.3962</span></span>
+<span><span class="co">#&gt; b    1.386   1.875 -2.289 5.061  0.4597</span></span>
 <span><span class="fu"><a href="../reference/internal.html">expit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; a   0.6225 0.06114 0.5026 0.7423 2.418e-24</span></span>
-<span><span class="co">#&gt; b   0.6900 0.05592 0.5804 0.7996 5.632e-35</span></span></code></pre></div>
+<span><span class="co">#&gt; a   0.6225 0.07050 0.4843 0.7606 1.055e-18</span></span>
+<span><span class="co">#&gt; b   0.6900 0.06417 0.5642 0.8158 5.811e-27</span></span></code></pre></div>
 <p>In the above example we also demonstrated the user of the subset
 operator <code>[]</code> and the merge method <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>. These
 are basically equivalent to the <code>subset</code> and
@@ -1135,15 +1137,15 @@ combine these methods via the pipe operator to create readable code:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">prod</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># calculates product of parameter estimates</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># nothing happens here as the result was already 1-dim.</span></span>
 <span>  <span class="fu"><a href="../reference/labels-set.html">labels</a></span><span class="op">(</span><span class="st">"prod"</span><span class="op">)</span> <span class="co"># rename parameter</span></span>
-<span><span class="co">#&gt;      Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; prod      0.4  0.2741 -0.1372 0.9372  0.1445</span></span></code></pre></div>
+<span><span class="co">#&gt;      Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; prod      0.4  0.3156 -0.2185 1.018  0.2049</span></span></code></pre></div>
 <p>Finally, the <code>with</code> function can be used to reference
 parameter names</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"e1"</span><span class="op">=</span><span class="va">a</span>, <span class="st">"e2"</span><span class="op">=</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">e</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>est <span class="op">=</span> <span class="va">e1</span><span class="op">*</span><span class="va">e2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; est      0.4  0.2741 -0.1372 0.9372  0.1445</span></span></code></pre></div>
+<span><span class="co">#&gt;     Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; est      0.4  0.3156 -0.2185 1.018  0.2049</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="example-pearson-correlation">Example: Pearson correlation<a class="anchor" aria-label="anchor" href="#example-pearson-correlation"></a>
 </h3>
@@ -1190,7 +1192,7 @@ building blocks of <span class="math inline">\mathbb{E}X_{1}</span>,
 <span><span class="co">#&gt; E2  -0.037026 0.05187 -0.13869 0.06464  0.4753</span></span>
 <span><span class="co">#&gt; E12  0.002633 0.05003 -0.09541 0.10068  0.9580</span></span>
 <span></span>
-<span><span class="va">est</span><span class="op">[</span><span class="st">"E12"</span><span class="op">]</span> <span class="op">-</span> <span class="va">est</span><span class="op">[</span><span class="st">"E2"</span><span class="op">]</span><span class="op">*</span><span class="va">est</span><span class="op">[</span><span class="st">"E1"</span><span class="op">]</span> </span>
+<span><span class="va">est</span><span class="op">[</span><span class="st">"E12"</span><span class="op">]</span> <span class="op">-</span> <span class="va">est</span><span class="op">[</span><span class="st">"E2"</span><span class="op">]</span><span class="op">*</span><span class="va">est</span><span class="op">[</span><span class="st">"E1"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; E12 0.004043 0.04976 -0.09349 0.1016  0.9352</span></span>
 <span><span class="co"># transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result</span></span></code></pre></div>
@@ -1201,7 +1203,7 @@ to estimate the correlation</p>
 <span><span class="va">v1</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x1</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">v2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="fu">Cov</span><span class="op">(</span><span class="va">x2</span>, <span class="va">x2</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rho <span class="op">=</span> <span class="va">v12</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">v1</span> <span class="op">*</span> <span class="va">v2</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rho <span class="op">=</span> <span class="va">v12</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">v1</span> <span class="op">*</span> <span class="va">v2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">rho</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; rho 0.004025 0.04953 -0.09306 0.1011  0.9352</span></span></code></pre></div>
@@ -1630,7 +1632,7 @@ way</p>
 <span><span class="co">#&gt; [25] future.apply_1.20.2    splines_4.6.0          RcppArmadillo_15.2.6-1</span></span>
 <span><span class="co">#&gt; [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           </span></span>
 <span><span class="co">#&gt; [31] tools_4.6.0            parallel_4.6.0         dplyr_1.2.1           </span></span>
-<span><span class="co">#&gt; [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.3           </span></span>
+<span><span class="co">#&gt; [34] globals_0.19.1         broom_1.0.13           vctrs_0.7.3           </span></span>
 <span><span class="co">#&gt; [37] R6_2.6.1               lifecycle_1.0.5        fs_2.1.0              </span></span>
 <span><span class="co">#&gt; [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            </span></span>
 <span><span class="co">#&gt; [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         </span></span>

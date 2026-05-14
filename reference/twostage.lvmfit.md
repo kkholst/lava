@@ -91,6 +91,9 @@ m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 pred <- function(mu,var,data,...)
     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
 (mm <- twostage(m1,model2=m2,data=d,predict.fun=pred))
+#> Warning: IC does not have mean zero (max |mean|/rms = 1.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning: IC does not have mean zero (max |mean|/rms = 1.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning: IC does not have mean zero (max |mean|/rms = 1.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
 #>    y2~eta            0.96270    0.12462  7.72525    <1e-12

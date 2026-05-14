@@ -103,7 +103,7 @@ onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
     l <- lm(y~x,d)
     res <- c(coef(summary(l))[idx,1:2],
              confint(l)[idx,],
-             estimate(l,only.coef=TRUE)[idx,2:4])
+             coef(estimate(l), mat=TRUE)[idx,2:4])
     names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
     res
@@ -128,7 +128,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.266s
+#> 50 replications                  Time: 1.302s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -150,7 +150,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.266s
+#> 50 replications                  Time: 1.302s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -168,7 +168,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.266s
+#> 50 replications                  Time: 1.302s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843

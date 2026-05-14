@@ -70,6 +70,9 @@ pp <- function(mu,var,data,...) {
           v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 }
 (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+#> Warning: IC does not have mean zero (max |mean|/rms = 9.9e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning: IC does not have mean zero (max |mean|/rms = 9.9e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning: IC does not have mean zero (max |mean|/rms = 9.9e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
 #>             Estimate Std.Err     2.5% 97.5%   P-value
 #> (Intercept)   0.1358  0.1185 -0.09636 0.368 2.516e-01
 #> x             1.1287  0.1181  0.89722 1.360 1.210e-21

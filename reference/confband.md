@@ -17,6 +17,7 @@ confband(
   blank = TRUE,
   vert = TRUE,
   polygon = FALSE,
+  alpha = 1,
   step = FALSE,
   ...
 )
@@ -67,7 +68,11 @@ confband(
 
 - polygon:
 
-  If TRUE polygons are added between 'lower' and 'upper'.
+  If TRUE polygons are added between 'lower' and 'upper'
+
+- alpha:
+
+  transparency of fill-color of polygon (alpha\<1)
 
 - step:
 
@@ -122,7 +127,7 @@ confband(z,zu,zu-2,col=Col("darkred"),polygon=TRUE,step=TRUE)
 
 z <- seq(0,1,length.out=100)
 plot(z,z,type="n")
-confband(z,z,z^2,polygon="TRUE",col=Col("darkblue"))
+confband(z,z,z^2,polygon=TRUE,col="darkred", alpha=0.1)
 
 
 set.seed(1)

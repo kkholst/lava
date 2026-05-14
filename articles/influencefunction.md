@@ -95,7 +95,7 @@ variance estimate via the `vcov` argument, without specifying the IC
 matrix.
 
 ``` r
-estimate(x=, ...) 
+estimate(x=, ...)
 estimate(coef=, IC=, ...)
 estimate(coef=, vcov=, ...)
 ```
@@ -103,7 +103,7 @@ estimate(coef=, vcov=, ...)
 A typical call could look like
 
 ``` r
-merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |> 
+merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
   transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
 ```
@@ -197,7 +197,7 @@ function
 
 ``` r
 inp <- as.matrix(dw[, c("y1", "y2")])
-e <- estimate(inp[, 1, drop = FALSE], type="mean") 
+e <- estimate(inp[, 1, drop = FALSE], type="mean")
 class(e)
 #> [1] "estimate"
 e
@@ -255,8 +255,8 @@ Different methods are available for inspecting an `estimate` object
 
 ``` r
 summary(e)
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>                Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138
@@ -325,14 +325,16 @@ estimate(g)
 #> x1            0.9728  0.1435  0.6916 1.25397 1.198e-11
 ```
 
-We can compare that to the usual (non-robust) standard errors:
+We can compare that to the usual (non-robust) standard errors by
+supplying the model-based covariance matrix explicitly:
 
 ``` r
-estimate(g, robust = FALSE)
+estimate(g, vcov = vcov(g))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -0.2687  0.1589 -0.5802 0.04281 9.091e-02
 #> a             1.5595  0.2423  1.0846 2.03433 1.220e-10
 #> x1            0.9728  0.1396  0.6992 1.24634 3.177e-12
+# estimate(g, vcov = TRUE) alternative syntax to obtain model-based SEs
 ```
 
 The IF can be extracted from the `estimate` object or directly from the
@@ -542,8 +544,8 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%    97.5%   P-value
 #> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
@@ -644,7 +646,7 @@ summary(g2)
 #> AIC: 554.56
 #> 
 #> Number of Fisher Scoring iterations: 3
-dwc <- na.omit(dw) 
+dwc <- na.omit(dw)
 g3 <- glm(y3 ~ 1, family = binomial, data = dwc)
 summary(g3)
 #> 
@@ -915,7 +917,7 @@ Print(cbind(table(id)))
 #> 200 500
 
 ## Aggregated IF
-e <- estimate(cbind(y), id = id) 
+e <- estimate(cbind(y), id = id)
 object.size(e)
 #> 18992 bytes
 e
@@ -965,7 +967,7 @@ estimate(g1, function(x) c(x, x[1] + exp(x[2]), inv = 1 / x[2]))
 #> a               1.3239  0.2173  0.8981 1.74978 1.105e-09
 #> (Intercept).1   3.5721  0.7289  2.1435 5.00062 9.539e-07
 #> inv.a           0.7553  0.1240  0.5124 0.99828 1.105e-09
-estimate(g1, exp)         
+estimate(g1, exp)
 #>             Estimate Std.Err   2.5% 97.5%   P-value
 #> (Intercept)   0.8302  0.1197 0.5955 1.065 4.087e-12
 #> a             3.7582  0.8166 2.1578 5.359 4.175e-06
@@ -981,8 +983,8 @@ exactly. To illustrate this consider the following simple example where
 we consider two `estimate` objects each with a single parameter estimate
 
 ``` r
-a <- estimate(coef=c("a"=0.5), IC=rnorm(10), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=rnorm(10), id=1:10)
+a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
+b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=1:10)
 ```
 
 Parameter transformation can now be calculated directly as in the
@@ -990,36 +992,36 @@ following examples
 
 ``` r
 a * b
-#>   Estimate Std.Err    2.5%  97.5% P-value
-#> a      0.4  0.2741 -0.1372 0.9372  0.1445
+#>   Estimate Std.Err    2.5% 97.5% P-value
+#> a      0.4  0.3156 -0.2185 1.018  0.2049
 (3 * cos(a) / sqrt(b) + 1) / a
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    7.887   5.283 -2.467 18.24  0.1354
+#> a    7.887   6.089 -4.047 19.82  0.1952
 c(sum=sum(e), sum2=a+b,
   prod=prod(e), prod2=a*b) # sum and prod function
 #>        Estimate Std.Err      2.5%    97.5% P-value
-#> sum   -0.002244 0.00332 -0.008751 0.004263  0.4991
-#> sum2   1.300000 0.56369  0.195179 2.404821  0.0211
-#> prod  -0.002244 0.00332 -0.008751 0.004263  0.4991
-#> prod2  0.400000 0.36223 -0.309967 1.109967  0.2695
+#> sum   -0.002244 0.00332 -0.008751 0.004263 0.49911
+#> sum2   1.300000 0.47822  0.362698 2.237302 0.00656
+#> prod  -0.002244 0.00332 -0.008751 0.004263 0.49911
+#> prod2  0.400000 0.31556 -0.218490 1.018490 0.20495
 e <- c(a,b) # merge
 e %*% e # inner prod.
-#>    Estimate Std.Err    2.5% 97.5% P-value
-#> p1     0.89  0.5491 -0.1863 1.966  0.1051
-c(1, 2) %*% e
 #>    Estimate Std.Err   2.5% 97.5% P-value
-#> p1      2.1  0.6439 0.8379 3.362 0.00111
+#> p1     0.89  0.6311 -0.347 2.127  0.1585
+c(1, 2) %*% e
+#>    Estimate Std.Err   2.5% 97.5%  P-value
+#> p1      2.1  0.7399 0.6499  3.55 0.004535
 c(pow = a^b) # power-function, rename parameter
-#>     Estimate Std.Err   2.5% 97.5% P-value
-#> pow   0.5743  0.2335 0.1167 1.032 0.01391
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> pow   0.5743  0.2692 0.04679 1.102 0.03286
 a^c(0.5, 2)
-#>    Estimate Std.Err    2.5%  97.5%   P-value
-#> p1   0.7071  0.1840  0.3465 1.0677 0.0001212
-#> p2   0.2500  0.2602 -0.2599 0.7599 0.3365994
+#>    Estimate Std.Err    2.5% 97.5%   P-value
+#> p1   0.7071  0.2121  0.2913 1.123 0.0008581
+#> p2   0.2500  0.3000 -0.3380 0.838 0.4046568
 c(e["a"] * e["b"] / a, e["b"])
-#>   Estimate Std.Err   2.5% 97.5%  P-value
-#> a      0.8  0.2614 0.2876 1.312 0.002212
-#> b      0.8  0.2614 0.2876 1.312 0.002212
+#>   Estimate Std.Err  2.5% 97.5%  P-value
+#> a      0.8     0.3 0.212 1.388 0.007661
+#> b      0.8     0.3 0.212 1.388 0.007661
 ```
 
 For the `%*%` operator we can also use a general contrast matrix (see
@@ -1029,29 +1031,29 @@ contrasts](#linear-contrasts-and-hypothesis-testing)
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err      2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 0.340915
-#> a              0.5  0.2602 -0.009926 1.0099 0.054629
-#> b              0.8  0.2614  0.287617 1.3124 0.002212
+#>           Estimate Std.Err     2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.407718
+#> a              0.5  0.3000 -0.08799 1.0880 0.095581
+#> b              0.8  0.3000  0.21201 1.3880 0.007661
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] - [b] = 0
 #>   [a] = 0
 #>   [b] = 0 
 #>  
-#> chisq = 10.66, df = 2, p-value = 0.004855
+#> chisq = 8.075, df = 2, p-value = 0.01764
 B %*% e == c(1,1,0)
-#>           Estimate Std.Err      2.5%  97.5%   P-value
-#> [a] - [b]     -0.3  0.3150 -0.917403 0.3174 3.677e-05
-#> a              0.5  0.2602 -0.009926 1.0099 5.463e-02
-#> b              0.8  0.2614  0.287617 1.3124 2.212e-03
+#>           Estimate Std.Err     2.5%  97.5%   P-value
+#> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.0003337
+#> a              0.5  0.3000 -0.08799 1.0880 0.0955807
+#> b              0.8  0.3000  0.21201 1.3880 0.0076608
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [b]] = 1
 #>   [a] = 1
 #>   [b] = 0 
 #>  
-#> chisq = 17.52, df = 2, p-value = 0.0001567
+#> chisq = 13.26, df = 2, p-value = 0.001317
 ```
 
 The following transformations are implemented
@@ -1071,15 +1073,15 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55a7f13ce618>
+#> <bytecode: 0x55b6b535c508>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> b    1.386   1.634 -1.816 4.589  0.3962
+#> b    1.386   1.875 -2.289 5.061  0.4597
 expit(c(a,b))
 #>   Estimate Std.Err   2.5%  97.5%   P-value
-#> a   0.6225 0.06114 0.5026 0.7423 2.418e-24
-#> b   0.6900 0.05592 0.5804 0.7996 5.632e-35
+#> a   0.6225 0.07050 0.4843 0.7606 1.055e-18
+#> b   0.6900 0.06417 0.5642 0.8158 5.811e-27
 ```
 
 In the above example we also demonstrated the user of the subset
@@ -1095,8 +1097,8 @@ merge(a, b) |>  # merges the two `estimate` objects
   transform(prod) |> # calculates product of parameter estimates
   subset(1) |> # nothing happens here as the result was already 1-dim.
   labels("prod") # rename parameter
-#>      Estimate Std.Err    2.5%  97.5% P-value
-#> prod      0.4  0.2741 -0.1372 0.9372  0.1445
+#>      Estimate Std.Err    2.5% 97.5% P-value
+#> prod      0.4  0.3156 -0.2185 1.018  0.2049
 ```
 
 Finally, the `with` function can be used to reference parameter names
@@ -1104,8 +1106,8 @@ Finally, the `with` function can be used to reference parameter names
 ``` r
 e <- c("e1"=a, "e2"=b)
 with(e, c(est = e1*e2))
-#>     Estimate Std.Err    2.5%  97.5% P-value
-#> est      0.4  0.2741 -0.1372 0.9372  0.1445
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> est      0.4  0.3156 -0.2185 1.018  0.2049
 ```
 
 ### Example: Pearson correlation
@@ -1155,7 +1157,7 @@ est
 #> E2  -0.037026 0.05187 -0.13869 0.06464  0.4753
 #> E12  0.002633 0.05003 -0.09541 0.10068  0.9580
 
-est["E12"] - est["E2"]*est["E1"] 
+est["E12"] - est["E2"]*est["E1"]
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> E12 0.004043 0.04976 -0.09349 0.1016  0.9352
 # transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
@@ -1169,7 +1171,7 @@ v12 <- with(dw, Cov(x1, x2, id = id))
 v1  <- with(dw, Cov(x1, x1, id = id))
 v2  <- with(dw, Cov(x2, x2, id = id))
 
-rho <- c(rho = v12 / sqrt(v1 * v2)) 
+rho <- c(rho = v12 / sqrt(v1 * v2))
 rho
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> rho 0.004025 0.04953 -0.09306 0.1011  0.9352
@@ -1621,7 +1623,7 @@ sessionInfo()
 #> [25] future.apply_1.20.2    splines_4.6.0          RcppArmadillo_15.2.6-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
 #> [31] tools_4.6.0            parallel_4.6.0         dplyr_1.2.1           
-#> [34] globals_0.19.1         broom_1.0.12           vctrs_0.7.3           
+#> [34] globals_0.19.1         broom_1.0.13           vctrs_0.7.3           
 #> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.1.0              
 #> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
 #> [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         

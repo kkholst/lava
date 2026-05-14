@@ -5,7 +5,7 @@
 Functions for working with Influence Functions
 
 - [`estimate(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/estimate.default.md)
-  : Estimation of functional of parameters
+  : Influence function based inference
 - [`IC(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/IC.default.md)
   : Extract influence function from model object
 - [`multinomial()`](https://kkholst.github.io/lava/reference/multinomial.md)

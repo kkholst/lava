@@ -37,7 +37,13 @@ Useful links:
 
 **Maintainer**: Klaus K. Holst <klaus@holst.it>
 
+Authors:
+
+- Klaus K. Holst <klaus@holst.it>
+
 Other contributors:
+
+- Benedikt Sommer \[contributor\]
 
 - Brice Ozenne \[contributor\]
 

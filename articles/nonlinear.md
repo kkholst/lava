@@ -111,6 +111,14 @@ spline
 kn <- seq(-3,3,length.out=5)
 nonlinear(m2, type="spline", knots=kn) <- u2 ~ u1
 e2 <- twostage(m1, m2, data=d)
+#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
+#> = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
 e2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
@@ -209,6 +217,17 @@ fit <- lapply(list(m2a,m2b,m2c,m2d),
          pr <- cbind(u1=newd$u1,predict(e,newdata=newd$u1,x=TRUE))
          return(list(estimate=e,predict=as.data.frame(pr)))
          })
+#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
+#> = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 1.1e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
 
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]), xlim=c(-4,4))
@@ -298,6 +317,14 @@ pred <- function(mu,var,data,...) {
 ee1 <- twostage(mm1, model2=mm2, data=d, predict.fun=pred)
 #> Warning in estimate.lvm(model2, data = newd, ...): Near-singular covariance
 #> matrix, using pseudo-inverse!
+#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
+#> = 6.4e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 6.4e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 6.5e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
 estimate(ee1,keep="u2~u",regex=TRUE)
 #>         Estimate Std.Err     2.5%    97.5%    P-value
 #> u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191
@@ -311,8 +338,8 @@ interaction
 
 ``` r
 summary(estimate(ee1,keep="(:g)", regex=TRUE))
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object, 
-#>     messages = 0), coef = p)
+#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
+#>     coef = p)
 #> ────────────────────────────────────────────────────────────
 #>         Estimate Std.Err    2.5%    97.5% P-value
 #> u2~u1:g   0.5926 0.23212  0.1377  1.04756 0.01068
@@ -429,6 +456,17 @@ method
 
 ``` r
 em2 <- twostage(em0,m2,data=d)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
+#> = 2.8e-05). Using lava.options(check.ic = FALSE) disables the warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 9.5e-06). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
 em2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
