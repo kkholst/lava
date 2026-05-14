@@ -29,7 +29,6 @@ Depends:
 	R (>= 3.5.0)
 Imports:
     cli,
-    future,
     future.apply,
     graphics,
     grDevices,
@@ -46,6 +45,7 @@ Suggests:
     data.table,
     ellipse,
     fields,
+    future,
     geepack,
     graph,
     knitr,

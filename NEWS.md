@@ -1,18 +1,16 @@
 # lava 1.9.1
-  Development version
-  - `estimate.default`: removed `score.deriv` and `folds` arguments.
-  - `estimate.default`: removed `R` and `null.sim` arguments
+  - `estimate.default`: removed `score.deriv`,`folds`, `R`, `null.sim` arguments
   - Safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
-  - fixing bug wrt `estimate.index` in `summary.sim`
+  - fixing bug related to `estimate.index` in `summary.sim`
   - updated `plot.sim`, `forestplot`, `plot.estimate`
-  - `estimate`: `type="hc3"` variance estimates
+  - `estimate.default`: small-sample `type="hc3"` variance estimates
   - `merge`, `c.estimate`: new `drop.ic` argument for dropping influence
     functions before merging
   - `sim.default`: export seeds to replicate results
-  - bugfix: `estimate.lvm` fixed issue with interval censored observations.
+  - bug-fix: `estimate.lvm` fixed issue with interval censored observations
   - deprecated: `only.coef` argument in `estimate.default()`. Use
-    `coef(estimate(...), mat=TRUE)` instead.
+    `parameter(estimate(...))` instead.
 
 # lava 1.9.0
   - `estimate`: estimate objects can now be transformed via functions: `log`,

@@ -1,196 +1,305 @@
-##' @export
+#' @export
 estimate <- function(x, ...) UseMethod("estimate")
 
-##' Estimation of functional of parameters
-##'
-##' Estimation of functional of parameters. Wald tests, robust standard errors,
-##' cluster robust standard errors
-##' @param x model object (\code{glm}, \code{lvmfit}, ...)
-##' @param f transformation of model parameters and (optionally) data, or
-##'   contrast matrix (or vector)
-##' @param ... additional arguments to lower level functions
-##' @param data \code{data.frame}
-##' @param id (optional) id-variable corresponding to ic decomposition of model
-##'   parameters.
-##' @param stack if TRUE (default) the i.i.d. decomposition is automatically
-##'   stacked according to 'id'
-##' @param average if TRUE averages are calculated
-##' @param subset (optional) subset of data.frame on which to condition (logical
-##'   expression or variable name)
-##' @param level level of confidence limits
-##' @param IC if TRUE (default) the influence function decompositions are also
-##'   returned (extract with \code{IC} method)
-##' @param type type of small-sample correction
-##' @param var.adj variance adjustment parameter for small-sample correction
-##' @param keep (optional) index of parameters to keep from final result
-##' @param use (optional) index of parameters to use in calculations
-##' @param regex If TRUE use regular expression (perl compatible) for keep, use
-##'   arguments
-##' @param ignore.case Ignore case-sensitiveness in regular expression
-##' @param contrast (optional) Contrast matrix for final Wald test
-##' @param null (optional) null hypothesis to test
-##' @param vcov (optional) covariance matrix of parameter estimates or logical.
-##' If TRUE, then [stats::vcov] is used to obtain the covariance matrix from the
-##' provided model object `x`
-##' @param coef (optional) parameter coefficient
-##' @param df degrees of freedom (default obtained from 'df.residual')
-##' @param print (optional) print function for the resulting estimate object
-##' @param labels (optional) names of coefficients
-##' @param label.width (optional) max width of labels
-##' @param only.coef (Deprecated) if TRUE only the coefficient matrix is
-##'   returned. Use `parameter(estimate(...))` instead.
-##' @param back.transform (optional) transform of parameters and confidence
-##'   intervals
-##' @details
-##'
-##' influence function decomposition of estimator \eqn{\widehat{\theta}} based
-##' on data \eqn{Z_1,\ldots,Z_n}: \deqn{\sqrt{n}(\widehat{\theta}-\theta) =
-##' \frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)} can be extracted with
-##' the \code{IC} method.
-##'
-##' @export
-##' @export estimate.default
-##' @examples
-##'
-##' ## Simulation from logistic regression model
-##' m <- lvm(y~x+z);
-##' distribution(m,y~x) <- binomial.lvm("logit")
-##' d <- sim(m,1000)
-##' g <- glm(y~z+x,data=d,family=binomial())
-##' g0 <- glm(y~1,data=d,family=binomial())
-##'
-##' ## LRT
-##' estimate(g, g0)
-##'
-##' ## Plain estimates (robust standard errors)
-##' estimate(g)
-##'
-##' ## Testing contrasts
-##' estimate(g, null=0)
-##' estimate(g, rbind(c(1,1,0), c(1,0,2)))
-##' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
-##' estimate(g, 2:3) ## same as cbind(0,1,-1)
-##' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
-##' ## Alternative syntax
-##' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
-##' estimate(g, "?")  ## Wildcards
-##' estimate(g, "*Int*", "z")
-##' estimate(g, "1", "2"-"3", null = c(0,1))
-##' estimate(g, 2, 3)
-##'
-##' ## Usual (non-robust) confidence intervals
-##' estimate(g, vcov=TRUE)
-##' estimate(g, vcov=vcov(g))
-##'
-##' ## Transformations
-##' estimate(g, function(p) p[1]+p[2])
-##'
-##' ## Multiple parameters
-##' e <- estimate(g, function(p) c(p[1]+p[2], p[1]*p[2]))
-##' e
-##' vcov(e)
-##'
-##' ## Label new parameters
-##' estimate(g, function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
-##' ##'
-##' ## Multiple group
-##' m <- lvm(y~x)
-##' m <- baptize(m)
-##' d2 <- d1 <- sim(m,50,seed=1)
-##' e <- estimate(list(m,m),list(d1,d2))
-##' estimate(e) ## Wrong
-##' ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
-##' ee
-##' estimate(lm(y~x,d1))
-##'
-##' ## Marginalize
-##' f <- function(p,data)
-##'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-##'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-##' e <- estimate(g, f, average=TRUE)
-##' e
-##' estimate(e,diff)
-##' estimate(e,cbind(1,1))
-##'
-##' ## Clusters and subset (conditional marginal effects)
-##' d$id <- rep(seq(nrow(d)/4),each=4)
-##' estimate(g,function(p,data)
-##'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
-##'          subset=d$z>0, id=d$id, average=TRUE)
-##'
-##' ## More examples with clusters:
-##' m <- lvm(c(y1,y2,y3)~u+x)
-##' d <- sim(m,10)
-##' l1 <- glm(y1~x,data=d)
-##' l2 <- glm(y2~x,data=d)
-##' l3 <- glm(y3~x,data=d)
-##'
-##' ## Some random id-numbers
-##' id1 <- c(1,1,4,1,3,1,2,3,4,5)
-##' id2 <- c(1,2,3,4,5,6,7,8,1,1)
-##' id3 <- seq(10)
-##'
-##' ## Un-stacked and stacked i.i.d. decomposition
-##' IC(estimate(l1,id=id1,stack=FALSE))
-##' IC(estimate(l1,id=id1))
-##'
-##' ## Combined i.i.d. decomposition
-##' e1 <- estimate(l1,id=id1)
-##' e2 <- estimate(l2,id=id2)
-##' e3 <- estimate(l3,id=id3)
-##' (a2 <- merge(e1,e2,e3))
-##'
-##' ## If all models were estimated on the same data we could use the
-##' ## syntax:
-##' ## Reduce(merge,estimate(list(l1,l2,l3)))
-##'
-##' ## Same:
-##' IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
-##'
-##' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
-##' IC(merge(l1,l2,l3,id=FALSE)) # independence
-##'
-##'
-##' # ------ influence function calculus -------
-##' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-##' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-##'
-##' e <- c(a, b) # merge
-##' merge(a, b)
-##' c(e1=a, b) # naming of par
-##' labels(e, c("p1", "p2")) # renaming parameters
-##' e["a"] # subset
-##' subset(e, "a")
-##'
-##' # pipes
-##' # c(a, b) |>
-##' #  transform(function(x) x^2) |>
-##' #  subset("a") |>
-##' #  labels("sq")
-##'
-##' # Parameter transformation with automatic calculation of derivatives
-##' a * b
-##' (3 * cos(a) / sqrt(b) + 1) / a
-##' expit(c(a,b))
-##' c(sum=sum(e), sum2=a+b,
-##'   prod=prod(e), prod2=a*b)
-##' e %*% e # inner prod.
-##' c(1, 2) %*% e
-##' c(pow = a^b)
-##' a^c(0.5, 2)
-##' c(b=e["a"] * e["b"] / a, also.b=e["b"])
-##'
-##' B <- rbind(c(1,-1), c(1,0), c(0,1))
-##' B %*% e
-##' e == 1 # wald-test, null-hypothesis H0: b=1
-##' e == c(1,2)
-##' B %*% e == 1
-##' @aliases estimate estimate.default merge.estimate
-##' @aliases estimate.mlm
-##' @seealso estimate.array summary.estimate coef.estimate vcov.estimate
-##' transform.estimate labels.estimate IC.estimate
-##' @method estimate default
-##' @export
+#' Influence function based inference
+#'
+#' Primary tool for obtaining parameter estimates with robust (sandwich)
+#' standard errors, applying the delta method, and testing linear hypotheses.
+#' The function returns an object of class `estimate` which serves as a
+#' general container for parameter estimates and their influence functions
+#' (IFs). Three calling conventions are supported:
+#'
+#' - `estimate(x, ...)` -- extract estimates from a model object
+#' - `estimate(coef=, IC=, ...)` -- construct from coefficients and IF matrix
+#' - `estimate(coef=, vcov=, ...)` -- construct from coefficients and
+#'   covariance matrix
+#'
+#' @param x model object (`glm`, `lvmfit`, ...) or an existing `estimate`
+#'   object. When two model objects are supplied (e.g., `estimate(g, g0)`) a
+#'   likelihood-ratio test is performed.
+#' @param f transformation of model parameters. Accepts several input types:
+#'   - A **function** `f(p)` or `f(p, data)`: applies the delta method.
+#'     When `f` returns a named list the names are used as parameter labels.
+#'   - A **matrix**: used as a contrast (linear combination) matrix.
+#'   - A **numeric vector** of parameter indices: converted to a contrast
+#'     that selects and differences those parameters.
+#'   - A **list** of indices: each element selects one parameter.
+#'   - **Character** expressions: supports wildcards (`"?"`, `"*"`) and
+#'     arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
+#' @param ... additional arguments to lower level functions
+#' @param data `data.frame` used by `f` when the transformation depends on
+#'   covariates (see `average`). Defaults to `model.frame(x)`.
+#' @param id (optional) cluster identifier. Can be a vector of cluster IDs, a
+#'   one-sided formula (evaluated in `data`), a single character column name,
+#'   or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
+#'   independence). When supplied, the IF is aggregated within clusters to
+#'   produce cluster-robust standard errors.
+#' @param stack if `TRUE` (default) the influence function contributions are
+#'   summed within each cluster defined by `id`. Set to `FALSE` to keep the
+#'   un-stacked (per-observation) decomposition.
+#' @param average if `TRUE` the function computes the standardized
+#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e.,
+#'   the empirical mean of `f(p, data)` over all rows of `data`. The
+#'   influence function accounts for both the empirical averaging and the
+#'   parameter estimation uncertainty (see Details).
+#' @param subset (optional) logical vector, expression evaluated in `data`, or
+#'   column name. When used together with `average = TRUE`, the average is
+#'   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
+#'   conditional marginalized estimate.
+#' @param level level of confidence limits (default 0.95)
+#' @param IC if `TRUE` (default) the influence function matrix is estimated and
+#'   stored in the returned object (extract with the [IC] method). Can also be
+#'   a user-supplied IF matrix (one row per observation, one column per
+#'   parameter), which is used directly instead of estimating it from `x`.
+#' @param type type of small-sample correction for cluster-robust variance.
+#'   One of:
+#'   - `"robust"` (default): no correction.
+#'   - `"df"`: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001).
+#'   - `"mbn"`: Morel-Bokossa-Neerchal (2003) correction.
+#'   - `"hc3"`: leverage-adjusted HC3-type correction (blended with
+#'     `var.adj`).
+#'   - `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
+#' @param var.adj blending parameter for the HC3 leverage adjustment
+#'   (default 0.25). Controls the weight between observation-level empirical
+#'   leverage and the average leverage \eqn{p/n}.
+#' @param keep (optional) index of parameters to keep from final result.
+#'   Accepts integer indices, character names, or (with `regex = TRUE`)
+#'   perl-compatible regular expressions.
+#' @param use (optional) index of parameters to use in calculations. The
+#'   selected parameters are first extracted (via `keep`) and then the
+#'   remaining arguments (`f`, `contrast`, etc.) are applied to this subset.
+#' @param regex if `TRUE` use perl-compatible regular expressions for `keep`
+#'   and `use` arguments
+#' @param ignore.case ignore case in regular expressions
+#' @param contrast (optional) contrast matrix for a final Wald test. When
+#'   supplied together with `null`, tests \eqn{H_0: B\theta = b_0}.
+#' @param null (optional) null hypothesis vector \eqn{b_0} to test against
+#'   (default 0)
+#' @param vcov (optional) covariance matrix of parameter estimates, or a
+#'   logical. If `TRUE`, [stats::vcov] is used to obtain the (model-based)
+#'   covariance matrix from `x`, yielding non-robust standard errors. If a
+#'   matrix is supplied it is used directly. When omitted or `FALSE`, robust
+#'   standard errors are computed from the influence function.
+#' @param coef (optional) named parameter vector. Used instead of
+#'   `coef(x)` when constructing an `estimate` object without a model.
+#' @param df degrees of freedom for t-based inference (default: `NULL` for
+#'   Gaussian approximation; when set, confidence intervals and p-values use
+#'   the t-distribution with `df` degrees of freedom)
+#' @param print (optional) custom print function for the resulting `estimate`
+#'   object
+#' @param labels (optional) character vector of coefficient names
+#' @param label.width (optional) max display width of labels
+#' @param only.coef (Deprecated) if `TRUE` only the coefficient matrix is
+#'   returned. Use `parameter(estimate(...))` instead.
+#' @param back.transform (optional) function applied to the point estimates
+#'   and confidence interval bounds *after* inference is performed on the
+#'   original scale. Useful for variance-stabilizing transformations, e.g.,
+#'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
+#'   `tanh`.
+#'
+#' @details
+#'
+#' # Influence functions and robust standard errors
+#'
+#' An estimator \eqn{\widehat{\theta}} is *regular and asymptotically
+#' linear* (RAL) when it admits the iid decomposition
+#' \deqn{\sqrt{n}(\widehat{\theta}-\theta) =
+#' \frac{1}{\sqrt{n}}\sum_{i=1}^n \mathrm{IC}(Z_i; P) + o_p(1)}
+#' where \eqn{\mathrm{IC}} is the unique *influence function* satisfying
+#' \eqn{E\{\mathrm{IC}(Z; P)\} = 0}. By the central limit theorem
+#' \deqn{\sqrt{n}(\widehat{\theta}-\theta)
+#' \overset{d}{\longrightarrow}
+#' N(0,\; \mathrm{Var}\{\mathrm{IC}(Z; P)\})}
+#' and the asymptotic variance is consistently estimated by the empirical
+#' variance of the plugin IF estimate, yielding robust (sandwich) standard
+#' errors. The estimated IF can be extracted with the [IC] method.
+#'
+#' # Parameter transformations (delta method)
+#'
+#' When `f` is a function \eqn{\phi: R^p \to R^m}, the delta method is
+#' applied:
+#' \deqn{\sqrt{n}\{\phi(\widehat{\theta}) - \phi(\theta)\} =
+#' \frac{1}{\sqrt{n}}\sum_{i=1}^n
+#' \nabla\phi(\theta)\,\mathrm{IC}(Z_i; P) + o_p(1)}
+#' Derivatives are computed numerically via [numDeriv::jacobian] unless the
+#' function returns an attribute `"grad"` with the analytic Jacobian.
+#'
+#' Alternatively, `estimate` objects support direct arithmetic operations
+#' (e.g., `a * b`, `exp(a)`, `a^b`) which apply the delta method with
+#' *exact* (analytical) derivatives computed automatically. This influence
+#' function calculus allows building complex transformations from simple
+#' building blocks without numerical differentiation. See the last example
+#' section ("influence function calculus") and
+#' `vignette("influencefunction", package = "lava")` for details.
+#'
+#' # Averaging and marginalization
+#'
+#' When `average = TRUE` and `f(p, data)` depends on covariates, the
+#' target parameter is the standardized (marginalized) estimate
+#' \eqn{\Psi = E\{f(X;\theta)\}}. The IF for the averaged estimate
+#' accounts for both the empirical averaging and parameter estimation
+#' uncertainty:
+#' \deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
+#' [E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
+#' When `subset` is also specified, the average is conditioned on the
+#' subpopulation, yielding a conditional marginalized estimate.
+#'
+#' # Cluster-robust standard errors
+#'
+#' When `id` is supplied, the per-observation IF contributions are summed
+#' within clusters (when `stack = TRUE`), producing the cluster-level IF
+#' \eqn{\widetilde{\mathrm{IC}}(Z_i; P) = \sum_{k=1}^{N_i}
+#' \frac{n}{N}\mathrm{IC}(Z_{ik}; P)}.
+#' The resulting variance estimate is equivalent to the GEE working
+#' independence sandwich estimator.
+#'
+#' For full theoretical background and worked examples see
+#' `vignette("influencefunction", package = "lava")`.
+#'
+#' @export
+#' @export estimate.default
+#' @examples
+#'
+#' ## Simulation from logistic regression model
+#' m <- lvm(y~x+z);
+#' distribution(m,y~x) <- binomial.lvm("logit")
+#' d <- sim(m,1000)
+#' g <- glm(y~z+x,data=d,family=binomial())
+#' g0 <- glm(y~1,data=d,family=binomial())
+#'
+#' ## LRT
+#' estimate(g, g0)
+#'
+#' ## Plain estimates (robust standard errors)
+#' estimate(g)
+#'
+#' ## Testing contrasts
+#' estimate(g, null=0)
+#' estimate(g, rbind(c(1,1,0), c(1,0,2)))
+#' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
+#' estimate(g, 2:3) ## same as cbind(0,1,-1)
+#' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
+#' ## Alternative syntax
+#' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
+#' estimate(g, "?")  ## Wildcards
+#' estimate(g, "*Int*", "z")
+#' estimate(g, "1", "2"-"3", null = c(0,1))
+#' estimate(g, 2, 3)
+#'
+#' ## Usual (non-robust) confidence intervals
+#' estimate(g, vcov=TRUE)
+#' estimate(g, vcov=vcov(g))
+#'
+#' ## Transformations
+#' estimate(g, function(p) p[1]+p[2])
+#'
+#' ## Multiple parameters
+#' e <- estimate(g, function(p) c(p[1]+p[2], p[1]*p[2]))
+#' e
+#' vcov(e)
+#'
+#' ## Label new parameters
+#' estimate(g, function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
+#' #'
+#' ## Multiple group
+#' m <- lvm(y~x)
+#' m <- baptize(m)
+#' d2 <- d1 <- sim(m,50,seed=1)
+#' e <- estimate(list(m,m),list(d1,d2))
+#' estimate(e) ## Wrong
+#' ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
+#' ee
+#' estimate(lm(y~x,d1))
+#'
+#' ## Marginalize
+#' f <- function(p,data)
+#'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
+#'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
+#' e <- estimate(g, f, average=TRUE)
+#' e
+#' estimate(e,diff)
+#' estimate(e,cbind(1,1))
+#'
+#' ## Clusters and subset (conditional marginal effects)
+#' d$id <- rep(seq(nrow(d)/4),each=4)
+#' estimate(g,function(p,data)
+#'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
+#'          subset=d$z>0, id=d$id, average=TRUE)
+#'
+#' ## More examples with clusters:
+#' m <- lvm(c(y1,y2,y3)~u+x)
+#' d <- sim(m,10)
+#' l1 <- glm(y1~x,data=d)
+#' l2 <- glm(y2~x,data=d)
+#' l3 <- glm(y3~x,data=d)
+#'
+#' ## Some random id-numbers
+#' id1 <- c(1,1,4,1,3,1,2,3,4,5)
+#' id2 <- c(1,2,3,4,5,6,7,8,1,1)
+#' id3 <- seq(10)
+#'
+#' ## Un-stacked and stacked i.i.d. decomposition
+#' IC(estimate(l1,id=id1,stack=FALSE))
+#' IC(estimate(l1,id=id1))
+#'
+#' ## Combined i.i.d. decomposition
+#' e1 <- estimate(l1,id=id1)
+#' e2 <- estimate(l2,id=id2)
+#' e3 <- estimate(l3,id=id3)
+#' (a2 <- merge(e1,e2,e3))
+#'
+#' ## If all models were estimated on the same data we could use the
+#' ## syntax:
+#' ## Reduce(merge,estimate(list(l1,l2,l3)))
+#'
+#' ## Same:
+#' IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+#'
+#' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
+#' IC(merge(l1,l2,l3,id=FALSE)) # independence
+#'
+#'
+#' # ------ influence function calculus -------
+#' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+#' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+#'
+#' e <- c(a, b) # merge
+#' merge(a, b)
+#' c(e1=a, b) # naming of par
+#' labels(e, c("p1", "p2")) # renaming parameters
+#' e["a"] # subset
+#' subset(e, "a")
+#'
+#' # pipes
+#' # c(a, b) |>
+#' #  transform(function(x) x^2) |>
+#' #  subset("a") |>
+#' #  labels("sq")
+#'
+#' # Parameter transformation with automatic calculation of derivatives
+#' a * b
+#' (3 * cos(a) / sqrt(b) + 1) / a
+#' expit(c(a,b))
+#' c(sum=sum(e), sum2=a+b,
+#'   prod=prod(e), prod2=a*b)
+#' e %*% e # inner prod.
+#' c(1, 2) %*% e
+#' c(pow = a^b)
+#' a^c(0.5, 2)
+#' c(b=e["a"] * e["b"] / a, also.b=e["b"])
+#'
+#' B <- rbind(c(1,-1), c(1,0), c(0,1))
+#' B %*% e
+#' e == 1 # wald-test, null-hypothesis H0: b=1
+#' e == c(1,2)
+#' B %*% e == 1
+#' @aliases estimate estimate.default merge.estimate
+#' @aliases estimate.mlm
+#' @seealso [estimate.array], [merge.estimate], [contr], [parsedesign],
+#'   [pairwise.diff], `summary.estimate`, `coef.estimate`, `vcov.estimate`,
+#'   `transform.estimate`, `labels.estimate`, `IC.estimate`
+#' @method estimate default
+#' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,
                              stack=TRUE,
                              average=FALSE, subset,

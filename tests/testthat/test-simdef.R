@@ -33,7 +33,7 @@ test_that("sim.default with estimate objects", {
 
 test_that("sim.default exports seed sequences as attribute", {
   foo <- function() runif(1)
-  plan("sequential")
+  if (requireNamespace("future",quietly=TRUE)) future::plan("sequential")
   result <- sim(foo, R = 5, future.seed = 42L)
   seeds <- attr(result, "seeds")
 
@@ -44,7 +44,7 @@ test_that("sim.default exports seed sequences as attribute", {
 
 test_that("sim.default exported seeds reproduce results (sequential)", {
   foo <- function() runif(1)
-  plan("sequential")
+  if (requireNamespace("future",quietly=TRUE)) future::plan("sequential")
   result <- sim(foo, R = 5, future.seed = 42L)
   seeds <- attr(result, "seeds")
 
