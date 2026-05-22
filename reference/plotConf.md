@@ -201,7 +201,7 @@ plotConf(lm0, var1="x1", var2="x2")
 abline(a=5,b=0.5,col="red")
 abline(a=5.5,b=-0.5,col="red")
 
-### points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)
+## points(5+0.5*x1 -1*(x2=="B")*x1 + 0.5*(x2=="B") ~ x1, cex=2)
 
 data(iris)
 l <- lm(Sepal.Length ~ Sepal.Width*Species,iris)

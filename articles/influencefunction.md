@@ -1073,7 +1073,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x556a1c26ec88>
+#> <bytecode: 0x5573cb469c70>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1609,7 +1609,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6 lava_1.9.1    
+#> [1] survival_3.8-6 lava_1.9.2    
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         
@@ -1627,7 +1627,7 @@ sessionInfo()
 #> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.1.0              
 #> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
 #> [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         
-#> [46] pkgdown_2.2.0          bslib_0.10.0           pillar_1.11.1         
+#> [46] pkgdown_2.2.0          bslib_0.11.0           pillar_1.11.1         
 #> [49] glue_1.8.1             Rcpp_1.1.1-1.1         systemfonts_1.3.2     
 #> [52] tidyselect_1.2.1       xfun_0.57              tibble_3.3.1          
 #> [55] knitr_1.51             htmltools_0.5.9        rmarkdown_2.31        

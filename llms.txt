@@ -455,6 +455,8 @@ Functions for working with Influence Functions
   : Prediction in structural equation models
 - [`predictlvm()`](https://kkholst.github.io/lava/reference/predictlvm.md)
   : Predict function for latent variable models
+- [`predict_glm()`](https://kkholst.github.io/lava/reference/predict_glm.md)
+  : Predict from a GLM with modified coefficients
 
 ## Data sets
 

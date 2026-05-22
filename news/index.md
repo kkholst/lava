@@ -1,6 +1,14 @@
 # Changelog
 
+## lava 1.9.2
+
+Development version
+
+- `predict_glm` function
+
 ## lava 1.9.1
+
+CRAN release: 2026-05-14
 
 - `estimate.default`: removed `score.deriv`,`folds`, `R`, `null.sim`
   arguments
