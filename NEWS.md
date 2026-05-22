@@ -1,3 +1,8 @@
+# lava 1.9.2
+  Development version
+
+  - `predict_glm` function
+
 # lava 1.9.1
   - `estimate.default`: removed `score.deriv`,`folds`, `R`, `null.sim` arguments
   - Safe evaluation of rank in `wald_test`
