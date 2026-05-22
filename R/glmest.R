@@ -177,6 +177,72 @@ score.lm <- function(x, p=coef(x), data, indiv=FALSE,
     return(S)
 }
 
+##' Predict from a GLM with modified coefficients
+##'
+##' Compute predictions from a fitted [stats::glm] object, optionally
+##' substituting new parameter values. Unlike [stats::predict.glm], this
+##' function allows the user to supply an arbitrary coefficient vector `p`,
+##' which is useful for computing predictions at counterfactual parameter
+##' values (e.g., during optimization or simulation). The returned value
+##' also includes a `"grad"` attribute containing the Jacobian of predictions
+##' with respect to the coefficients.
+##'
+##' @param x A fitted `glm` object.
+##' @param p Numeric vector of coefficients (defaults to `coef(x)`).
+##' @param data Optional data frame for computing the model matrix and
+##'   response. If missing, the original model matrix from the fitted
+##'   object is used.
+##' @param offset Optional offset vector. If `NULL` (default), the
+##'   offset stored in the fitted model (`x$offset`) is used.
+##' @param type Character; `"response"` (default) returns predictions on
+##'   the response scale via the inverse link function, `"link"` returns
+##'   predictions on the linear predictor scale.
+##' @param ... Additional arguments (currently unused).
+##' @return Numeric vector of predictions with a `"grad"` attribute
+##'   containing the gradient (Jacobian) of predictions with respect to
+##'   the coefficients. When `type = "link"`, the gradient is simply the
+##'   model matrix `X`.
+##' @seealso [stats::predict.glm], [score.glm]
+##' @examples
+##' m <- glm(mpg ~ hp + wt, data = mtcars)
+##' p0 <- coef(m)
+##' # Predictions at fitted coefficients match predict.glm
+##' all.equal(as.numeric(predict_glm(m)), fitted(m))
+##' # Predictions with modified coefficients
+##' predict_glm(m, p = p0 * 1.1)
+##' @export
+predict_glm <- function(x, p=coef(x), data, offset=NULL,
+                        type=c("response", "link"), ...) {
+  if (!inherits(x,"glm")) stop("need glm object")
+  link <- family(x)
+  if (missing(data)) {
+    X <- model.matrix(x)
+    y <- model.frame(x)[,1]
+  } else {
+    X <- model.matrix(formula(x), data=data)
+    y <- model.frame(formula(x), data=data)[,1]
+  }
+  if (is.null(offset)) offset <- x$offset
+  if (is.character(y) || is.factor(y)) {
+    y <- as.numeric(as.factor(y)) - 1
+  }
+  if(any(is.na(p))) {
+    warning("Over-parameterized model (setting NA's to zero)")
+    p[is.na(p)] <- 0
+  }
+  ginv <- link$linkinv
+  dginv <- link$mu.eta
+  Xbeta <- X%*%p
+  if (!is.null(offset)) Xbeta <- Xbeta+offset
+  if (tolower(type[1]) == "link") {
+    return(structure(Xbeta, grad=X))
+  }
+  pr <- ginv(Xbeta)
+  z <- dginv(Xbeta)
+  gr <- apply(X, 2, function(x) x*z)
+  return(structure(pr, grad=gr))
+}
+
 ##' @export
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
                y,X,link,dispersion,offset=NULL,weights=NULL,...) {
@@ -190,7 +256,7 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
             X <- model.matrix(formula(x),data=data)
             y <- model.frame(formula(x),data=data)[,1]
         }
-        offset <- x$offset
+        if (is.null(offset)) offset <- x$offset
     } else {
         if (missing(link)) stop("Family needed")
         if (missing(data)) stop("data needed")
@@ -219,7 +285,6 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if(any(is.na(p))) stop("Over-parameterized model")
     Xbeta <- X%*%p
     if (!is.null(offset)) Xbeta <- Xbeta+offset
-    if (missing(data) && !is.null(x$offset) && is.null(offset) ) Xbeta <- Xbeta+x$offset
     pi <- ginv(Xbeta)
     r <- y-pi
     if (!is.null(x$prior.weights) || !is.null(weights)) {
@@ -260,7 +325,7 @@ pars.glm <- function(x,...) {
     return(coef(x))
 }
 
-logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
+logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,offset=NULL,...) {
     if (!missing(data)) {
         x <- update(x,data=data,...)
     }
@@ -282,7 +347,8 @@ logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,...) {
         warning("Over-parametrized model")
     }
     Xbeta <- X%*%p0
-    if (!is.null(x$offset)) Xbeta <- Xbeta+x$offset
+    if (is.null(offset)) offset <- x$offset
+    if (!is.null(offset)) Xbeta <- Xbeta+offset
     y <- model.frame(x)[,1]
     mu <- ginv(Xbeta)
     w <- x$prior.weights
