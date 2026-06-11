@@ -9,7 +9,7 @@
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
 messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
-\method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+\method{regression}{lvm}(object, to=NULL, from=NULL, ...) <- value
 }
 \arguments{
 \item{object}{\code{lvm}-object.}
@@ -33,8 +33,6 @@ simulation only).}
 \item{y}{Alias for 'to'}
 
 \item{x}{Alias for 'from'}
-
-\item{quick}{Faster implementation without parameter constraints}
 }
 \value{
 A \code{lvm}-object
