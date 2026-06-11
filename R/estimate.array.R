@@ -29,6 +29,7 @@ IC_quantile <- function(x, estimate, probs=0.5, ...) {
 #' @param probs numeric vector of probabilities (for type="quantile")
 #' @param ... Additional arguments to lower level functions (i.e.,
 #'   stats::density.default when type="quantile")
+#' @return Object of class `estimate` (see [estimate.default]).
 estimate.array <- function(x, type="mean", probs=0.5, ...) {
   cl <- match.call()
   if (missing(x) || is.null(x)) {

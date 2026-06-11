@@ -293,11 +293,21 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' e == 1 # wald-test, null-hypothesis H0: b=1
 #' e == c(1,2)
 #' B %*% e == 1
-#' @aliases estimate estimate.default merge.estimate
+#' @aliases estimate estimate.default
 #' @aliases estimate.mlm
 #' @seealso [estimate.array], [merge.estimate], [contr], [parsedesign],
 #'   [pairwise.diff], `summary.estimate`, `coef.estimate`, `vcov.estimate`,
 #'   `transform.estimate`, `labels.estimate`, `IC.estimate`
+#' @return Object of class `estimate` with the following elements:
+#'   \item{coef}{Named vector of parameter estimates.}
+#'   \item{vcov}{Variance-covariance matrix.}
+#'   \item{IC}{Influence function matrix (observations x parameters).}
+#'   \item{coefmat}{Formatted coefficient table (estimate, std.err,
+#'     confidence limits, p-value).}
+#'   \item{id}{Cluster/id variable used.}
+#'   \item{ncluster}{Number of clusters.}
+#'   \item{n}{Number of observations.}
+#'   \item{compare}{(When `null` or contrasts are specified) Wald test result.}
 #' @method estimate default
 #' @export
 estimate.default <- function(x=NULL, f=NULL, ..., data, id,

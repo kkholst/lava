@@ -21,7 +21,7 @@ colsel <- function(locate,...) {
         ,col=pall2)
 
     if (missing(locate)) return(invisible(NULL))
-    colmat <- matrix(c(1:657,rep(NA,26^2-657)),byrow=T,ncol=26,nrow=26)
+    colmat <- matrix(c(1:657,rep(NA,26^2-657)),byrow=TRUE,ncol=26,nrow=26)
     cols <- NA
     for(i in seq_len(locate))
     {

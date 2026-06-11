@@ -5,9 +5,7 @@
 \alias{gof.lvmfit}
 \alias{moments}
 \alias{moments.lvm}
-\alias{information}
 \alias{information.lvmfit}
-\alias{score}
 \alias{score.lvmfit}
 \alias{logLik.lvmfit}
 \title{Extract model summaries and GOF statistics for model object}
@@ -96,6 +94,9 @@ rr <- rsq(e,TRUE)
 rr
 estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
 
+}
+\seealso{
+\link{information}, \link{score}
 }
 \author{
 Klaus K. Holst

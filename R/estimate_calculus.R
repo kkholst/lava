@@ -1,5 +1,20 @@
 # ---- Merge, subset ------------------------------------------------------
 
+##' Merge estimate objects
+##'
+##' @param x Object of class `estimate`
+##' @param y Object of class `estimate`
+##' @param ... Additional `estimate` objects or arguments
+##' @param id Optional cluster variable
+##' @param paired If TRUE a paired (matched) analysis is performed
+##' @param labels Optional character vector of labels for the merged estimates
+##' @param keep Optional character vector of parameter names to keep
+##' @param subset Optional character vector of parameter names to subset
+##' @param regex If TRUE, `keep` and `subset` are treated as regular expressions
+##' @param sep Separator used for labeling
+##' @param drop.ic If TRUE, drop the influence function from the result
+##' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
+##' @return Object of class `estimate` (see [estimate.default]).
 ##' @export
 merge.estimate <- function(x,y,...,
                            id,

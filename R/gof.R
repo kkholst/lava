@@ -172,8 +172,9 @@ condition <- function(x) {
 ##' structure, residuals and various predicitions.
 ##'
 ##'
-##' @aliases gof gof.lvmfit moments moments.lvm information information.lvmfit
-##' @aliases score score.lvmfit logLik.lvmfit
+##' @aliases gof gof.lvmfit moments moments.lvm information.lvmfit
+##' @aliases score.lvmfit logLik.lvmfit
+##' @seealso [information], [score]
 ##' @param object Model object
 ##' @param x Model object
 ##' @param p Parameter vector used to calculate statistics

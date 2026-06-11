@@ -1,3 +1,11 @@
+##' Extract score function
+##'
+##' Extract the score function (gradient of the log-likelihood) from a
+##' model object.
+##' @param x Model object
+##' @param ... Additional arguments to lower level functions
+##' @return Matrix of score/gradient values. Rows correspond to
+##'   observations (if `indiv=TRUE`) or a single row, columns to parameters.
 ##' @export
 `score` <-
 function(x,...) UseMethod("score")

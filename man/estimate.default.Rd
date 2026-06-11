@@ -3,7 +3,6 @@
 \name{estimate.default}
 \alias{estimate.default}
 \alias{estimate}
-\alias{merge.estimate}
 \alias{estimate.mlm}
 \title{Influence function based inference}
 \usage{
@@ -148,6 +147,18 @@ and confidence interval bounds \emph{after} inference is performed on the
 original scale. Useful for variance-stabilizing transformations, e.g.,
 compute CIs on the \code{atanh} (Fisher z) scale and back-transform with
 \code{tanh}.}
+}
+\value{
+Object of class \code{estimate} with the following elements:
+\item{coef}{Named vector of parameter estimates.}
+\item{vcov}{Variance-covariance matrix.}
+\item{IC}{Influence function matrix (observations x parameters).}
+\item{coefmat}{Formatted coefficient table (estimate, std.err,
+confidence limits, p-value).}
+\item{id}{Cluster/id variable used.}
+\item{ncluster}{Number of clusters.}
+\item{n}{Number of observations.}
+\item{compare}{(When \code{null} or contrasts are specified) Wald test result.}
 }
 \description{
 Primary tool for obtaining parameter estimates with robust (sandwich)

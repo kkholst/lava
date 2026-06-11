@@ -44,6 +44,10 @@
 
 \item{...}{Additional arguments to lower level functions}
 }
+\value{
+Object of class \code{estimate} (see \link{estimate.default}) with
+inference adjusted for the two-stage estimation.
+}
 \description{
 Stack estimating equations (two-stage estimator)
 }

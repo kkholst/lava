@@ -3,6 +3,8 @@
 ##' This function extracts
 ##' @param x Model object
 ##' @param ... Additional arguments (see the man-page of the IC method)
+##' @return Matrix (n x p) with the i.i.d. decomposition of the estimator
+##'   (scaled influence function, i.e., the influence function divided by n).
 ##' @export
 iid <- function(x, ...) UseMethod("iid")
 
