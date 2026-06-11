@@ -2,9 +2,20 @@
 procformula <- function(object=NULL,value,exo=lava.options()$exogenous,...) {
 
     ## Split into reponse and covariates by ~ disregarding expressions in parantheses
+    ## Use deparse on formula components directly to avoid reliance on
+    ## as.character.formula which can be overwritten (e.g., by formula.tools)
     ## '(?!...)' Negative lookahead assertion
     regex <- "~(?![^\\(].*\\))"
-    yx <- lapply(strsplit(as.character(value),regex,perl=TRUE),function(x) gsub(" ","",x))[-1]
+    if (length(value) == 3) {
+        lhs_str <- gsub(" ", "", paste(deparse(value[[2]]), collapse = ""))
+        rhs_str <- paste(deparse(value[[3]]), collapse = "")
+        rhs_parts <- gsub(" ", "", strsplit(rhs_str, regex, perl = TRUE)[[1]])
+        yx <- list(lhs_str, rhs_parts)
+    } else {
+        rhs_str <- paste(deparse(value[[2]]), collapse = "")
+        rhs_parts <- gsub(" ", "", strsplit(rhs_str, regex, perl = TRUE)[[1]])
+        yx <- list(rhs_parts)
+    }
     yx <- lapply(yx,function(x) gsub("\n","",x))
     iscovar <- FALSE
     if (length(yx)==1) {

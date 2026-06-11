@@ -321,7 +321,8 @@ covfix.lvm <- function(object,...) {
 
 ##' @export
 regfix.lvm <- function(object,...) {
-    res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
+    res <- list(rel=index(object)$M, labels=object$par, values=object$fix)
+    attr(res,"type") <- "reg"
     attr(res,"exo.idx") <- index(object)$exo.idx
     attr(res,"nvar") <- NROW(res$rel)
     class(res) <- "fix"
