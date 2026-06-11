@@ -2,6 +2,9 @@
   Development version
 
   - `predict_glm` function
+  - fixed issue when package formula.tools was loaded due to overwriting of
+    as.character.formula.
+  - bug-fix: `regression(model, "y", "x", value="b")` now works as expected
 
 # lava 1.9.1
   - `estimate.default`: removed `score.deriv`,`folds`, `R`, `null.sim` arguments

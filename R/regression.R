@@ -62,12 +62,11 @@
 ##' @param additive If FALSE and predictor is categorical a non-additive effect is assumed
 ##' @param y Alias for 'to'
 ##' @param x Alias for 'from'
-##' @param quick Faster implementation without parameter constraints
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
 ##' messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
-##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+##' \method{regression}{lvm}(object, to=NULL, from=NULL, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.
 ##' @author Klaus K. Holst
@@ -98,14 +97,14 @@
 regression.formula <- function(object,...) regression(lvm(),object,...)
 
 ##' @export
-"regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
+"regression<-.lvm" <- function(object, to=NULL, from=NULL, ..., value) {
     dots <- list(...)
     if (length(dots$additive)>0 && !dots$additive && !inherits(value,"formula")) {
         regression(object,beta=value,...) <- to
         return(object)
     }
     if (!is.null(to) || !is.null(dots$y)) {
-        regfix(object, to=to, ...) <- value
+        regfix(object, to=to, from=from, ...) <- value
         return(object)
     } else  {
         if (is.list(value)) {
