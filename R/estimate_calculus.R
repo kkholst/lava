@@ -275,6 +275,18 @@ with.estimate <- function(data, expr, ...) {
   eval(expr_new, envir = eval_env)
 }
 
+# ---- id / cluster  ------------------------------------------------------
+
+#' @export
+index.estimate <- function(x, ...) {
+  return(x$id)
+}
+
+#' @export
+`index<-.estimate` <- function(x, ..., value) {
+  estimate(x, id=value, ...)
+}
+
 # ---- Trigonometric Functions --------------------------------------------
 
 #' @export
