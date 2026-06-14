@@ -265,6 +265,13 @@ merge.estimate <- function(x,y,...,
 }
 
 #' @export
+c.estimate.extra <- function(...) {
+  est <- Reduce("merge", lapply(list(...), function(x) x$estimate))
+  extra <- Reduce(c, lapply(list(...), function(x) x$extra))
+  structure(list(estimate=est, extra=extra), class="estimate.extra")
+}
+
+#' @export
 subset.estimate <- function(x, keep, ...) {
   estimate(x, keep = keep, ...)
 }
