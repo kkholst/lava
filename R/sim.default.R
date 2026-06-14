@@ -73,6 +73,19 @@
 #' sim(f, R)
 #' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 #' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
+#'
+#' ## Returning estimate objects with extra per-iteration information
+#' onerun2 <- function(...) {
+#'   x <- rnorm(50)
+#'   y <- 0.5*x + rnorm(50)
+#'   e <- estimate(lm(y ~ x))
+#'   c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+#' }
+#' val2 <- sim(onerun2, R = 10)
+#' val2
+#' # extra columns are stored but excluded from default summary statistics
+#' idx <- c("(Intercept)", "x", "niter")
+#' summary(val2, estimate=idx, true=c(0,0.5,NA))
 sim.default <- function(x = NULL, R = 100, f = NULL,
                         colnames = NULL,
                         seed = NULL, args = list(),
@@ -167,9 +180,15 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
-    is_estimate <- inherits(res, c("estimate", "targeted"))
+    extra <- NULL
+    is_estimate_extra <- inherits(res, "estimate.extra")
+    if (is_estimate_extra) {
+      extra <- res$extra
+      res <- res$estimate
+    }
+    is_estimate <- is_estimate_extra || inherits(res, c("estimate", "targeted"))
     if (is_estimate) {
-      idx <- intersect(seq_len(5L), estimate.index)
+      idx <- intersect(seq_len(5L), estimate.index) # parameters to keep
       cmat <- lava::parameter(res)[, idx, drop=FALSE]
       res <- as.vector(cmat)
       cn <- colnames(cmat)
@@ -181,7 +200,13 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       }
       names(res) <- nam
     }
-    return(structure(res, "estimate" = is_estimate, ".rng_seed" = rng_seed))
+    if (!is.null(extra)) { # append extra par. not part of the estimate object
+      res <- c(res, extra)
+    }
+    return(structure(res,
+                     "estimate" = is_estimate,
+                     "n.extra" = length(extra),
+                     ".rng_seed" = rng_seed))
   }
   if (iter || !is.data.frame(parval)) {
     formals(robx)[[1]] <- NULL
@@ -219,8 +244,11 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     val <- do.call(future.apply::future_mapply, pp)
   }
   seed_sequence <- lapply(val, attr, ".rng_seed")
+  n.extra <- attr(val[[1]], "n.extra")
+  if (is.null(n.extra)) n.extra <- 0L
   val <- lapply(val, function(v) {
     attr(v, ".rng_seed") <- NULL
+    attr(v, "n.extra") <- NULL
     v
   })
   res <- do.call(rbind, val)
@@ -228,11 +256,12 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     res <- matrix(NA, ncol=length(val[[1]]), nrow=repl)
   }
   if (attr(val[[1]], "estimate")) {
-    if (ncol(res) %% length(estimate.index) != 0L) {
+    ncol_est <- ncol(res) - n.extra
+    if (ncol_est %% length(estimate.index) != 0L) {
       warning("unexpected number of columns")
     }
-    idx <- seq_len(ncol(res))
-    np <- ncol(res) / length(estimate.index)
+    idx <- seq_len(ncol_est)
+    np <- ncol_est / length(estimate.index)
     if (1 %in% estimate.index) {
       par.index[["estimate"]] <- seq_len(np)
       idx <- setdiff(idx, par.index[["estimate"]])
@@ -252,6 +281,9 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     if (5 %in% estimate.index) {
       par.index[["pval"]] <- idx[seq_len(np)]
       idx <- setdiff(idx, par.index[["pval"]])
+    }
+    if (n.extra > 0L) {
+      par.index[["extra"]] <- seq.int(ncol_est + 1L, ncol(res))
     }
   }
   res
@@ -483,21 +515,38 @@ summary.sim <- function(object,estimate=NULL,se=NULL,
     par.index <- attr(object, "par.index")
     if (is.null(estimate) && length(par.index) > 0) {
       estimate <- par.index[["estimate"]]
+    } else {
+      if (is.character(estimate)) {
+        estimate <- match(estimate, base::colnames(object))
+      }
     }
     np <- length(estimate)
-    if (is.null(se) && length(par.index) > 0) {
-      se <- par.index[["se"]]
+    if (is.null(se) && length(par.index) > 0 && !is.null(par.index[["se"]])) {
+      # Map each requested estimate column to its SE column (NA if unknown)
+      se <- rep(NA_integer_, np)
+      pi_est <- par.index[["estimate"]]
+      pi_se <- par.index[["se"]]
+      for (i in seq_len(np)) {
+        j <- match(estimate[i], pi_est)
+        if (!is.na(j)) se[i] <- pi_se[j]
+      }
     }
     if (missing(confint)) {
       lo <- par.index[["lower"]]
       up <- par.index[["upper"]]
       if (length(par.index) > 0 &&
           (!is.null(lo) || !is.null(up))) {
-        if (is.null(lo)) lo <- rep(-Inf, np)
-        if (is.null(up)) up <- rep(Inf, np)
+        pi_est <- par.index[["estimate"]]
+        if (is.null(lo)) lo <- rep(-Inf, length(pi_est))
+        if (is.null(up)) up <- rep(Inf, length(pi_est))
         confint <- list()
         for (i in seq_len(np)) {
-          confint <- c(confint, list(c(lo[i], up[i])))
+          j <- match(estimate[i], pi_est)
+          if (!is.na(j)) {
+            confint <- c(confint, list(c(lo[j], up[j])))
+          } else {
+            confint <- c(confint, list(c(NA_integer_, NA_integer_)))
+          }
         }
       } else confint <- !is.null(se)&&!is.null(true)
     }
