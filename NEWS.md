@@ -1,6 +1,9 @@
 # lava 1.9.2
   Development version
 
+  - sim.default can now operate on function return objects
+    of type `estimate.extra` which are constructed via
+    `c.estimate(estimate_object, extra_args)`
   - `predict_glm` function
   - fixed issue when package formula.tools was loaded due to overwriting of
     as.character.formula.
