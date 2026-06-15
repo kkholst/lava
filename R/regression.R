@@ -215,6 +215,10 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
             object$parpos <- NULL
             return(object)
         }
+        if (!missing(value) && is.character(to) && !is.null(from)) {
+            regfix(object, to=to, from=from, ...) <- value
+            return(object)
+        }
         if (is.list(to)) {
             for (t in to)
                 regression(object,messages=messages,...) <- t
