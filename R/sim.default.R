@@ -245,7 +245,6 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   }
   seed_sequence <- lapply(val, attr, ".rng_seed")
   n.extra <- attr(val[[1]], "n.extra")
-  if (is.null(n.extra)) n.extra <- 0L
   val <- lapply(val, function(v) {
     attr(v, ".rng_seed") <- NULL
     attr(v, "n.extra") <- NULL
