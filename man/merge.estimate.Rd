@@ -43,6 +43,8 @@
 \item{drop.ic}{If TRUE, drop the influence function from the result}
 
 \item{ignore.case}{If TRUE, case is ignored in \code{keep}/\code{subset} matching}
+
+\item{see.also}{\code{\link[=c.estimate]{c.estimate()}}}
 }
 \value{
 Object of class \code{estimate} (see \link{estimate.default}).

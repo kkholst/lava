@@ -1,21 +1,22 @@
 # ---- Merge, subset ------------------------------------------------------
 
-##' Merge estimate objects
-##'
-##' @param x Object of class `estimate`
-##' @param y Object of class `estimate`
-##' @param ... Additional `estimate` objects or arguments
-##' @param id Optional cluster variable
-##' @param paired If TRUE a paired (matched) analysis is performed
-##' @param labels Optional character vector of labels for the merged estimates
-##' @param keep Optional character vector of parameter names to keep
-##' @param subset Optional character vector of parameter names to subset
-##' @param regex If TRUE, `keep` and `subset` are treated as regular expressions
-##' @param sep Separator used for labeling
-##' @param drop.ic If TRUE, drop the influence function from the result
-##' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
-##' @return Object of class `estimate` (see [estimate.default]).
-##' @export
+#' Merge estimate objects
+#'
+#' @param x Object of class `estimate`
+#' @param y Object of class `estimate`
+#' @param ... Additional `estimate` objects or arguments
+#' @param id Optional cluster variable
+#' @param paired If TRUE a paired (matched) analysis is performed
+#' @param labels Optional character vector of labels for the merged estimates
+#' @param keep Optional character vector of parameter names to keep
+#' @param subset Optional character vector of parameter names to subset
+#' @param regex If TRUE, `keep` and `subset` are treated as regular expressions
+#' @param sep Separator used for labeling
+#' @param drop.ic If TRUE, drop the influence function from the result
+#' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
+#' @param see.also [c.estimate()]
+#' @return Object of class `estimate` (see [estimate.default]).
+#' @export
 merge.estimate <- function(x,y,...,
                            id,
                            paired=FALSE,
@@ -195,42 +196,98 @@ merge.estimate <- function(x,y,...,
     return(res)
 }
 
-##' @export
+#' @export
 "%++%.estimate" <- function(x, ...) {
   merge(x, ...)
 }
 
-##' @export
-"c.estimate" <- function(...) {
+#' Concatenate estimate objects
+#'
+#' When all arguments are `estimate` objects, they are merged into a single
+#' `estimate` object. When some arguments are not `estimate` objects but are
+#' named numeric scalars/vectors, an object of class `estimate.extra` is
+#' returned. This is useful for bundling auxiliary per-iteration information
+#' (e.g., convergence status) alongside an estimate for use with
+#' [sim.default()].
+#'
+#' @param ... `estimate` objects and/or named numeric values
+#' @param as.list if TRUE the returned object will be of class `list` and not
+#'   and `estimate` (or `estimate.extra`) object.
+#' @return An `estimate` object (if all args are estimates) or an
+#'   `estimate.extra` object containing `$estimate` and `$extra` components.
+#' @seealso [sim.default()] [merge.estimate()]
+#' @details arguments `drop.ic`, `paired`, `sep` are passed to [merge.estimate]
+#' @examples
+#' e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
+#' # Bundle estimate with extra information
+#' c(e, converged = 1, niter = 10)
+#' @export
+c.estimate <- function(..., as.list = FALSE) {
   args <- list(...)
-  n_args <- length(args)
-  # Handle names robustly
-  arg_names <- names(args)
-  # If names are NULL, create a vector of empty strings
-  if (is.null(arg_names)) {
-    arg_names <- character(n_args)
-  }
-  is_estimate <- unlist(lapply(args, function(x)
-    inherits(x, c("estimate"))
-    ))
-  merge_args <- c("drop.ic", "paired", "sep")
-  not_merge_arg <- which(arg_names %ni% merge_args)
-  if (!all(is_estimate[not_merge_arg])) { # fallback to default concatenation
-    cl <- class(args[[1]])
+  if (as.list) { # fallback to default concatenation
     class(args[[1]]) <- "list"
     return(do.call(c, args))
   }
-  lab <- arg_names[not_merge_arg]
+  if (any(unlist(lapply(args, function(x) inherits(x, "estimate.extra"))))) {
+    return(do.call(c.estimate.extra, args))
+  }
+  # Handle names robustly
+  arg_names <- names(args) %||% character(length(args))
+  is_estimate <- vapply(args, inherits, logical(1L), "estimate")
+  merge_args <- c("drop.ic", "paired", "sep")
+
+  not_merge_arg <- which(arg_names %ni% merge_args)
+  est_idx <- which(is_estimate)
+  extra_idx <- setdiff(not_merge_arg, est_idx)
+  lab <- arg_names[est_idx]
+  # Extract extra (non-estimate, non-merge) arguments
+  extra <- NULL
+  if (length(extra_idx) > 0L) {
+    extra <- unlist(args[extra_idx])
+  }
+  # Blank non-merge names (estimate labels handled later, extras removed)
   arg_names[not_merge_arg] <- ""
   names(args) <- arg_names
+  args[extra_idx] <- NULL
+  # Merge estimate objects and apply potential merge_args
   res <- do.call(merge, args)
+  # Add new labels
   newlabels <- names(coef(res))
   if (!is.null(lab)) {
     idx <- which(lab != "")
     newlabels[idx] <- lab[idx]
-    return(labels(res, newlabels))
+    res <- labels(res, newlabels)
   }
-  return(res)
+  # Append extra arguments
+  if (!is.null(extra)) {
+    res <- structure(
+      list(estimate = res, extra = extra),
+      class = "estimate.extra"
+    )
+  }
+  res
+}
+
+#' @export
+c.estimate.extra <- function(...) {
+  objs <- list(...)
+  est <- c()
+  extra <- c()
+  for (i in seq_along(objs)) {
+    e <- objs[[i]]
+    if (inherits(e, "estimate.extra")) {
+      extra <- c(extra, list(e$extra))
+      e <- e$estimate
+    }
+    if (inherits(e, "estimate")) {
+      est <- c(est, list(e))
+    } else {
+      extra <- c(extra, list(objs[i]))
+    }
+  }
+  est <- Reduce("merge", est)
+  extra <- unlist(Reduce(c, extra))
+  structure(list(estimate=est, extra=extra), class="estimate.extra")
 }
 
 #' @export
@@ -604,7 +661,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
     }, ...)
 }
 
-# ---- == ---- ------------------------------------------------------------
+# ---- == / hypothesis ----------------------------------------------------
 
 #' @export
 "==.estimate" <- function(e1, e2) {
