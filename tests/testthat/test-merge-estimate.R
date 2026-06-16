@@ -63,7 +63,7 @@ test_that("all non-IC objects: diagonal blocks filled, cross-terms NA", {
   expect_true(all(is.na(V[3:4, 1:2])))
 })
 
-test_That("c.estimate.extra", {
+test_that("c.estimate.extra", {
   e1 <- c(estimate(coef = c(a = 1), vcov = matrix(0.1)), e1.iter = 2)
   e2 <- c(estimate(coef = c(b = 2), vcov = matrix(0.2)), e2.iter = 3)
   e3 <- c(estimate(coef = c(c = 2), vcov = matrix(0.3)))
