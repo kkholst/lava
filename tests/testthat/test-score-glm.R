@@ -14,6 +14,7 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   score_ref <- score.glm(m_ref, indiv = FALSE)
 
   m <- glm(y ~ a * x + x_dup, data = data)
+  idx_m_ref <- names(coef(m)) != "x_dup"
   score_na <- expect_warning(
     score.glm(m, indiv = FALSE),
     "Over-parameterized"
@@ -31,8 +32,8 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
 
   expect_equal(
     attr(score_ref, "bread"),
-    attr(score_na, "bread")[names(coef(m)) != "x_dup",
-                            names(coef(m)) != "x_dup"]
+    attr(score_na, "bread")[idx_m_ref,
+                            idx_m_ref]
   )
 
   expect_true(
@@ -41,11 +42,30 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   )
 
   ## check IC
-
   expect_equal(
     IC(m_ref),
-    suppressWarnings(IC(m))[, names(coef(m)) != "x_dup"],
+    suppressWarnings(IC(m))[, idx_m_ref],
     check.attributes = FALSE
   )
+
+  ## check hessian
+  suppressWarnings(I <- information(m))
+  expect_equal(
+    I[idx_m_ref, idx_m_ref],
+    information(m_ref),
+    check.attributes = FALSE
+  )
+  expect_equal(
+    Inverse(I)[idx_m_ref, idx_m_ref],
+    vcov(m_ref),
+    check.attributes = FALSE
+  )
+
+  ## logL
+  ll <- suppressWarnings(lava:::logL.glm(m))
+  expect_equal(ll, logLik(m_ref),
+    check.attributes = FALSE
+  )
+
 
 })
