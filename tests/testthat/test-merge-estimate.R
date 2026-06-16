@@ -91,4 +91,15 @@ test_that("c.estimate.extra", {
   expect_equal(c(vcov(e1$estimate), vcov(e2$estimate)),
                diag(vcov(e$estimate)), check.attributes=FALSE)
   expect_equal(c(e1$extra, e2$extra, d=2), e$extra)
+
+  e <- c(e3, c(a = 1, b = 2)) # named scalar vector via unnamed argument
+  expect_equal(c(a = 1, b = 2), e$extra)
+
+  e <- c(e3, e1.iter = 1) # duplicated name of extra variable
+  e <- c(e, e1)
+  expect_equal(c(e1.iter = 1, e1.iter = 2), e$extra)
+
+  e <- c(e1, converged = FALSE) # boolean extra variable
+  # internal conversion to numeric
+  expect_equal(c(e1.iter = 2, converged = 0), e$extra)
 })

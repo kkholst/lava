@@ -18,10 +18,11 @@ An \code{estimate} object (if all args are estimates) or an
 }
 \description{
 When all arguments are \code{estimate} objects, they are merged into a single
-\code{estimate}. When some arguments are not \code{estimate} objects but are named
-numeric scalars/vectors, an object of class \code{estimate.extra} is returned.
-This is useful for bundling auxiliary per-iteration information (e.g.,
-convergence status) alongside an estimate for use with \code{\link[=sim.default]{sim.default()}}.
+\code{estimate} object. When some arguments are not \code{estimate} objects but are
+named numeric scalars/vectors, an object of class \code{estimate.extra} is
+returned. This is useful for bundling auxiliary per-iteration information
+(e.g., convergence status) alongside an estimate for use with
+\code{\link[=sim.default]{sim.default()}}.
 }
 \details{
 arguments \code{drop.ic}, \code{paired}, \code{sep} are passed to \link{merge.estimate}

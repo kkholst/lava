@@ -204,10 +204,11 @@ merge.estimate <- function(x,y,...,
 #' Concatenate estimate objects
 #'
 #' When all arguments are `estimate` objects, they are merged into a single
-#' `estimate`. When some arguments are not `estimate` objects but are named
-#' numeric scalars/vectors, an object of class `estimate.extra` is returned.
-#' This is useful for bundling auxiliary per-iteration information (e.g.,
-#' convergence status) alongside an estimate for use with [sim.default()].
+#' `estimate` object. When some arguments are not `estimate` objects but are
+#' named numeric scalars/vectors, an object of class `estimate.extra` is
+#' returned. This is useful for bundling auxiliary per-iteration information
+#' (e.g., convergence status) alongside an estimate for use with
+#' [sim.default()].
 #'
 #' @param ... `estimate` objects and/or named numeric values
 #' @param as.list if TRUE the returned object will be of class `list` and not
