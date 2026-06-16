@@ -221,11 +221,14 @@ merge.estimate <- function(x,y,...,
 #' # Bundle estimate with extra information
 #' c(e, converged = 1, niter = 10)
 #' @export
-"c.estimate" <- function(..., as.list = FALSE) {
+c.estimate <- function(..., as.list = FALSE) {
   args <- list(...)
   if (as.list) { # fallback to default concatenation
     class(args[[1]]) <- "list"
     return(do.call(c, args))
+  }
+  if (any(unlist(lapply(args, function(x) inherits(x, "estimate.extra"))))) {
+    return(do.call(c.estimate.extra, args))
   }
   # Handle names robustly
   arg_names <- names(args) %||% character(length(args))
@@ -266,8 +269,23 @@ merge.estimate <- function(x,y,...,
 
 #' @export
 c.estimate.extra <- function(...) {
-  est <- Reduce("merge", lapply(list(...), function(x) x$estimate))
-  extra <- Reduce(c, lapply(list(...), function(x) x$extra))
+  objs <- list(...)
+  est <- c()
+  extra <- c()
+  for (i in seq_along(objs)) {
+    e <- objs[[i]]
+    if (inherits(e, "estimate.extra")) {
+      extra <- c(extra, list(e$extra))
+      e <- e$estimate
+    }
+    if (inherits(e, "estimate")) {
+      est <- c(est, list(e))
+    } else {
+      extra <- c(extra, list(objs[i]))
+    }
+  }
+  est <- Reduce("merge", est)
+  extra <- unlist(Reduce(c, extra))
   structure(list(estimate=est, extra=extra), class="estimate.extra")
 }
 
