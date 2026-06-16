@@ -246,7 +246,6 @@ predict_glm <- function(x, p=coef(x), data, offset=NULL,
 ##' @export
 score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
                y,X,link,dispersion,offset=NULL,weights=NULL,...) {
-
     if (inherits(x,"glm")) {
         link <- family(x)
         if (missing(data)) {
@@ -282,7 +281,14 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     ##gmu <- function(x) g(caninvlink(x))
     ##invgmu <- function(z) canlink(ginv(z))
     h <- function(z) Dcanlink(ginv(z))*dginv(z)
-    if(any(is.na(p))) stop("Over-parameterized model")
+    pna <- any(is.na(p))
+    if(pna) {
+      warning("Over-parameterized model (NA parameters). Ignoring NA parameters")
+      idx <- is.na(p)
+      ## setting paramter and model.matrix to zero for NA parameters
+      p[idx] <- 0
+      X[, idx] <- 0
+    }
     Xbeta <- X%*%p
     if (!is.null(offset)) Xbeta <- Xbeta+offset
     pi <- ginv(Xbeta)
@@ -311,7 +317,11 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if (pearson) attr(S,"pearson") <- rpearson
     suppressWarnings(attributes(S)$bread <- vcov(x)*NROW(S))
     if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
-        attributes(S)$bread <- -Inverse(information.glm(x)*NROW(S))
+      attributes(S)$bread <- -Inverse(information.glm(x)*NROW(S))
+    if (pna) {
+      attributes(S)$bread[idx, ] <- 0
+      attributes(S)$bread[ , idx] <- 0
+    }
     return(S)
 }
 
