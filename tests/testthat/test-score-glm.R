@@ -14,14 +14,17 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   score_ref <- score.glm(m_ref, indiv = FALSE)
 
   m <- glm(y ~ a * x + x_dup, data = data)
-  score_na <- score.glm(m, indiv = FALSE)
+  score_na <- expect_warning(
+    score.glm(m, indiv = FALSE),
+    "Over-parameterized"
+  )
 
   expect_equal(score_ref, score_na[!is.na(coef(m))])
 
   expect_true(score_na["x_dup"] == 0)
 
   score_ref <- score.glm(m_ref, indiv = TRUE)
-  score_na <- score.glm(m, indiv = TRUE)
+  score_na <- suppressWarnings(score.glm(m, indiv = TRUE))
 
   expect_equal(score_ref, score_na[,!is.na(coef(m))],
                check.attributes = FALSE)
@@ -33,15 +36,15 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   )
 
   expect_true(
-    all(attr(score_na, "bread")[names(coef(m)) == "x_dup", ] == 0),
-    all(attr(score_na, "bread")[, names(coef(m)) == "x_dup"] == 0)
+    all(attr(score_na, "bread")[names(coef(m)) == "x_dup", ] == 0) &&
+      all(attr(score_na, "bread")[, names(coef(m)) == "x_dup"] == 0)
   )
 
   ## check IC
 
   expect_equal(
     IC(m_ref),
-    IC(m)[, names(coef(m)) != "x_dup"],
+    suppressWarnings(IC(m))[, names(coef(m)) != "x_dup"],
     check.attributes = FALSE
   )
 
