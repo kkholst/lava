@@ -370,6 +370,6 @@ B \%*\% e == 1
 }
 \seealso{
 \link{estimate.array}, \link{merge.estimate}, \link{contr}, \link{parsedesign},
-\link{pairwise.diff}, \code{summary.estimate}, \code{coef.estimate}, \code{vcov.estimate},
-\code{transform.estimate}, \code{labels.estimate}, \code{IC.estimate}
+\link{pairwise.diff}, \link{c.estimate}, \code{summary.estimate}, \code{coef.estimate},
+\code{vcov.estimate}, \code{transform.estimate}, \code{labels.estimate}, \code{IC.estimate}
 }

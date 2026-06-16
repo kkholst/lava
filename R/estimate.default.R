@@ -296,8 +296,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @aliases estimate estimate.default
 #' @aliases estimate.mlm
 #' @seealso [estimate.array], [merge.estimate], [contr], [parsedesign],
-#'   [pairwise.diff], `summary.estimate`, `coef.estimate`, `vcov.estimate`,
-#'   `transform.estimate`, `labels.estimate`, `IC.estimate`
+#'   [pairwise.diff], [c.estimate], `summary.estimate`, `coef.estimate`,
+#'   `vcov.estimate`, `transform.estimate`, `labels.estimate`, `IC.estimate`
 #' @return Object of class `estimate` with the following elements:
 #'   \item{coef}{Named vector of parameter estimates.}
 #'   \item{vcov}{Variance-covariance matrix.}
