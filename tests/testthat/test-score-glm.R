@@ -1,3 +1,5 @@
+context("glm components")
+
 test_that("score.glm can handle a overparameterized model (NA coef)", {
   set.seed(1)
   n <- 100
@@ -67,5 +69,7 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
     check.attributes = FALSE
   )
 
+  ## user should get a warning with overparametrized models
+  expect_warning(estimate(m))
 
 })
