@@ -25,7 +25,7 @@ GLMest <- function(m,data,control=list(),...) {
     breads <- c()
 
     et <- eventTime(m)
-    yvar.et <- rep(NA,length(yvar))
+    yvar.et <- rep(NA, length(yvar))
     names(yvar.et) <- yvar
     if (!is.null(et)) {
         for (i in seq_along(et)) {
@@ -93,57 +93,57 @@ GLMest <- function(m,data,control=list(),...) {
 }
 
 GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
-    yvar <- endogenous(x)
-    S <- pnames <- c()
-    count <- 0
-    breads <- c()
-    L <- 0
-    for (y in yvar) {
-        count <- count+1
-        xx <- parents(x,y)
-        pname <- c(y,paste0(y,sep=lava.options()$symbol[1],xx),paste(y,y,sep=lava.options()$symbol[2]))
-        pidx <- na.omit(match(pname,coef(x)))
-        fam <- attributes(distribution(x)[[y]])$family
-        if (is.null(fam)) fam <- stats::gaussian()
-        if (length(xx)==0) xx <- 1
-        f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
-        isSurv <- inherits(data[1,y],"Surv")
-        if (inherits(data[,y],"Surv")) {
-            g <- survival::survreg(f,data=data,dist=fam$family)
-        } else {
-            g <- glm(f,family=fam,data=data)
-        }
-        p0 <- p[pidx]
-        if (!isSurv) L0 <- logL.glm(g,p=p0,indiv=TRUE,...)
-        if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
-            p0 <- p0[-length(p0)]
-            S0 <- score(g,p=p0,indiv=TRUE,pearson=TRUE,...)
-            V0 <- attr(S0,"bread")
-            r <- attr(S0,"pearson")
-            ## dispersion <- mean(r^2)
-            S0 <- cbind(S0,scale=0)
-            null <- matrix(0); dimnames(null) <- list("scale","scale")
-            V0 <- blockdiag(V0,null,pad=0)
-        } else {
-            S0 <- score(g,p=p0,indiv=TRUE,...)
-            if (isSurv) L0 <- attr(S0,"logLik")
-            V0 <- attr(S0,"bread")
-        }
-        L <- L+sum(L0)
-        breads <- c(breads,list(V0))
-        S <- c(S,list(S0))
-        pnames <- c(pnames, list(pname));
+  yvar <- endogenous(x)
+  S <- pnames <- c()
+  count <- 0
+  breads <- c()
+  L <- 0
+  for (y in yvar) {
+    count <- count+1
+    xx <- parents(x,y)
+    pname <- c(y,paste0(y,sep=lava.options()$symbol[1],xx),paste(y,y,sep=lava.options()$symbol[2]))
+    pidx <- na.omit(match(pname,coef(x)))
+    fam <- attributes(distribution(x)[[y]])$family
+    if (is.null(fam)) fam <- stats::gaussian()
+    if (length(xx)==0) xx <- 1
+    f <- as.formula(paste0(y,"~",paste(xx,collapse="+")))
+    isSurv <- inherits(data[1,y],"Surv")
+    if (inherits(data[,y],"Surv")) {
+      g <- survival::survreg(f,data=data,dist=fam$family)
+    } else {
+      g <- glm(f,family=fam,data=data)
     }
-    coefs <- unlist(pnames)
-    idx <- na.omit(match(coefs,coef(x)))
-    idx <- order(idx)
-    V <- Reduce(blockdiag,breads)[idx,idx]
-    S1 <- Reduce(cbind,S)[,idx,drop=FALSE]
-    colnames(S1) <- coef(x)
-    attributes(S1)$bread <- V
-    attributes(S1)$logLik <- structure(L,nobs=nrow(data),nall=nrow(data),df=length(p),class="logLik")
-    if (!indiv) S1 <- colSums(S1)
-    return(S1)
+    p0 <- p[pidx]
+    if (!isSurv) L0 <- logL.glm(g,p=p0,indiv=TRUE,...)
+    if (tolower(fam$family)%in%c("gaussian","gamma","inverse.gaussian") && !isSurv) {
+      p0 <- p0[-length(p0)]
+      S0 <- score(g,p=p0,indiv=TRUE,pearson=TRUE,...)
+      V0 <- attr(S0,"bread")
+      r <- attr(S0,"pearson")
+      ## dispersion <- mean(r^2)
+      S0 <- cbind(S0,scale=0)
+      null <- matrix(0); dimnames(null) <- list("scale","scale")
+      V0 <- blockdiag(V0,null,pad=0)
+    } else {
+      S0 <- score(g,p=p0,indiv=TRUE,...)
+      if (isSurv) L0 <- attr(S0,"logLik")
+      V0 <- attr(S0,"bread")
+    }
+    L <- L+sum(L0)
+    breads <- c(breads,list(V0))
+    S <- c(S,list(S0))
+    pnames <- c(pnames, list(pname));
+  }
+  coefs <- unlist(pnames)
+  idx <- na.omit(match(coefs,coef(x)))
+  idx <- order(idx)
+  V <- Reduce(blockdiag,breads)[idx,idx]
+  S1 <- Reduce(cbind,S)[,idx,drop=FALSE]
+  colnames(S1) <- coef(x)
+  attributes(S1)$bread <- V
+  attributes(S1)$logLik <- structure(L,nobs=nrow(data),nall=nrow(data),df=length(p),class="logLik")
+  if (!indiv) S1 <- colSums(S1)
+  return(S1)
 }
 
 ##' @export
@@ -244,9 +244,9 @@ predict_glm <- function(x, p=coef(x), data, offset=NULL,
 }
 
 ##' @export
-score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
-               y,X,link,dispersion,offset=NULL,weights=NULL,...) {
-
+score.glm <- function(x, p=coef(x), data, indiv=FALSE,
+                      pearson=FALSE, y, X,
+                      link, dispersion, offset=NULL, weights=NULL, ...) {
     if (inherits(x,"glm")) {
         link <- family(x)
         if (missing(data)) {
@@ -282,7 +282,14 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     ##gmu <- function(x) g(caninvlink(x))
     ##invgmu <- function(z) canlink(ginv(z))
     h <- function(z) Dcanlink(ginv(z))*dginv(z)
-    if(any(is.na(p))) stop("Over-parameterized model")
+    pna <- any(is.na(p))
+    if(pna) {
+      warning("Over-parameterized model (NA parameters). Ignoring NA parameters")
+      idx <- is.na(p)
+      ## setting paramter and model.matrix to zero for NA parameters
+      p[idx] <- 0
+      X[, idx] <- 0
+    }
     Xbeta <- X%*%p
     if (!is.null(offset)) Xbeta <- Xbeta+offset
     pi <- ginv(Xbeta)
@@ -311,7 +318,14 @@ score.glm <- function(x,p=coef(x),data,indiv=FALSE,pearson=FALSE,
     if (pearson) attr(S,"pearson") <- rpearson
     suppressWarnings(attributes(S)$bread <- vcov(x)*NROW(S))
     if (x$family$family=="quasi" && x$family$link=="identity" && x$family$varfun=="constant")
-        attributes(S)$bread <- -Inverse(information.glm(x)*NROW(S))
+      attributes(S)$bread <-
+                    suppressWarnings(
+                      Inverse(information.glm(x)*NROW(S))
+                    )
+    if (pna) {
+      attributes(S)$bread[idx, ] <- 0
+      attributes(S)$bread[ , idx] <- 0
+    }
     return(S)
 }
 
@@ -326,64 +340,73 @@ pars.glm <- function(x,...) {
 }
 
 logL.glm <- function(x,p=pars.glm(x),data,indiv=FALSE,offset=NULL,...) {
-    if (!missing(data)) {
-        x <- update(x,data=data,...)
+  if (!missing(data)) {
+    x <- update(x, data=data, ...)
+  }
+  f <- family(x)
+  ginv <- f$linkinv
+  X <- model.matrix(x)
+  n <- nrow(X)
+  pna <- is.na(p)
+  if(any(pna)) {
+    warning("Over-parameterized model (NA parameters). Ignoring NA parameters")
+    p[which(pna)] <- 0
+  }
+  ##disp <- 1;
+  p0 <- p
+  if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
+    if (length(p)==ncol(X)) {
+      ##disp <- suppressWarnings((summary(x)$dispersion))
+    } else {
+      ##disp <- tail(p,1)
+      p0 <- p[-length(p)]
     }
-    f <- family(x)
-    ginv <- f$linkinv
-    X <- model.matrix(x)
-    n <- nrow(X)
-    ##disp <- 1;
-    p0 <- p
-    if (tolower(family(x)$family)%in%c("gaussian","gamma","inverse.gaussian")) {
-        if (length(p)==ncol(X)) {
-            ##disp <- suppressWarnings((summary(x)$dispersion))
-        } else {
-            ##disp <- tail(p,1)
-            p0 <- p[-length(p)]
-        }
-    }
-    if(any(is.na(p))) {
-        warning("Over-parametrized model")
-    }
-    Xbeta <- X%*%p0
-    if (is.null(offset)) offset <- x$offset
-    if (!is.null(offset)) Xbeta <- Xbeta+offset
-    y <- model.frame(x)[,1]
-    mu <- ginv(Xbeta)
-    w <- x$prior.weights
-    dev <-  f$dev.resids(y,mu,w)
-    if (indiv) {
-
-    }
-    loglik <- length(p)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
-    structure(loglik,nobs=n,df=length(p),class="logLik")
+  }
+  Xbeta <- X%*%p0
+  if (is.null(offset)) offset <- x$offset
+  if (!is.null(offset)) Xbeta <- Xbeta+offset
+  y <- model.frame(x)[,1]
+  mu <- ginv(Xbeta)
+  w <- x$prior.weights
+  dev <-  f$dev.resids(y,mu,w)
+   loglik <- sum(!pna)-(f$aic(y,n,mu,w,sum(dev))/2+x$rank)
+  structure(loglik,nobs=n,df=length(p),class="logLik")
 }
 
 ##' @export
 IC.glm <- function(x,...) {
-    IC.default(x,...)
+  IC.default(x,...)
 }
 
-hessian.glm <- function(x,p=coef(x),...) {
-    numDeriv::jacobian(function(theta) score.glm(x,p=theta,indiv=FALSE,...),p)
+hessian.glm <- function(x, p=coef(x), ...) {
+  pna <- any(is.na(p))
+  idx <- is.na(p)
+  if(pna) {
+    warning("Over-parameterized model (NA parameters). Ignoring NA parameters")
+    p[idx] <- 0
+  }
+  res <- numDeriv::jacobian(function(theta) {
+    score.glm(x, p=theta, indiv=FALSE, ...)
+  }, p)
+  res[idx, ] <- res[, idx] <- 0
+  return(res)
 }
 
 ##' @export
-information.glm <- function(x,...) hessian.glm(x,...)
+information.glm <- function(x, ...) -hessian.glm(x, ...)
 
-glm_logLik.lvm <- function(object,...) {
-    attr(GLMscore(object,...),"logLik")
+glm_logLik.lvm <- function(object, ...) {
+  attr(GLMscore(object, ...), "logLik")
 }
 
 glm_method.lvm <- NULL
 glm_objective.lvm <- function(x,p,data,...) {
-    GLMest(x,data,...)
+  GLMest(x, data, ...)
 }
 glm_gradient.lvm <- function(x,p,data,...) {
-    -GLMscore(x,p,data,...)
+  -GLMscore(x, p, data, ...)
 }
 
-glm_variance.lvm <- function(x,p,data,opt,...) {
-    opt$vcov
+glm_variance.lvm <- function(x, p, data, opt, ...) {
+  opt$vcov
 }

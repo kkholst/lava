@@ -403,7 +403,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       }
       IC <- TRUE
     } else {
-      suppressWarnings(ic_theta <- IC(x))
+      ic_theta <- IC(x)
     }
   } else {
     if (!is.null(x) && (missing(vcov) ||
