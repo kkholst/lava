@@ -14,7 +14,7 @@
 #' @param sep Separator used for labeling
 #' @param drop.ic If TRUE, drop the influence function from the result
 #' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
-#' @param see.also [c.estimate()]
+#' @seealso [c.estimate()]
 #' @return Object of class `estimate` (see [estimate.default]).
 #' @export
 merge.estimate <- function(x,y,...,
