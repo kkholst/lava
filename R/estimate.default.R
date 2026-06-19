@@ -430,7 +430,7 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
   idstack <- NULL
   ## Preserve id from 'estimate' object
-  if (missing(id) && inherits(x, "estimate") && !is.null(x$id))
+  if (missing(id) && inherits(x, "estimate") && !is.null(index(x)))
     id <- x$id
   if (!missing(id) && IC) {
     if (is.null(ic_theta)) stop("'IC' method needed")

@@ -336,7 +336,7 @@ with.estimate <- function(data, expr, ...) {
 
 #' @export
 index.estimate <- function(x, ...) {
-  return(x$id)
+  return(x[["id"]])
 }
 
 #' @export
