@@ -402,3 +402,5 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   }
   return(invisible(flag))
 }
+
+center_ic <- function(x) scale(x, scale=FALSE, center=TRUE)

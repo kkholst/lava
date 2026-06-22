@@ -430,8 +430,13 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
   }
   idstack <- NULL
   ## Preserve id from 'estimate' object
-  if (missing(id) && inherits(x, "estimate") && !is.null(index(x)))
-    id <- x$id
+  if (missing(id)) {
+    if (inherits(x, "measurement.error")) {
+      if (!is.null(x[["id"]])) id <- x[["id"]]
+    } else if (inherits(x, "estimate") && !is.null(index(x))) {
+      id <- index(x)
+    }
+  }
   if (!missing(id) && IC) {
     if (is.null(ic_theta)) stop("'IC' method needed")
     nprev <- nrow(ic_theta)
