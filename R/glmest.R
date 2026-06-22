@@ -219,9 +219,9 @@ predict_glm <- function(object, p=coef(object), data, offset = NULL,
 
   ## Getting the model matrix
   if (missing(data)) {
-    X <- model.matrix.lm(x)
+    X <- stats::model.matrix.lm(x)
   } else {
-    X <- model.matrix.lm(formula(x),
+    X <- stats::model.matrix.lm(formula(x),
                          data = data,
                          na.action = na.pass)
   }
