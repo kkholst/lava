@@ -187,7 +187,7 @@ score.lm <- function(x, p=coef(x), data, indiv=FALSE,
 ##' also includes a `"grad"` attribute containing the Jacobian of predictions
 ##' with respect to the coefficients.
 ##'
-##' @param x A fitted `glm` object.
+##' @param object A fitted `glm` object.
 ##' @param p Numeric vector of coefficients (defaults to `coef(x)`).
 ##' @param data Optional data frame for computing the model matrix and
 ##'   response. If missing, the original model matrix from the fitted
@@ -211,32 +211,47 @@ score.lm <- function(x, p=coef(x), data, indiv=FALSE,
 ##' # Predictions with modified coefficients
 ##' predict_glm(m, p = p0 * 1.1)
 ##' @export
-predict_glm <- function(x, p=coef(x), data, offset=NULL,
+predict_glm <- function(object, p=coef(object), data, offset = NULL,
                         type=c("response", "link"), ...) {
-  if (!inherits(x,"glm")) stop("need glm object")
-  link <- family(x)
+  x <- object
+  if (!inherits(x, "glm")) stop("need glm object")
+
+
+  ## Getting the model matrix
   if (missing(data)) {
-    X <- model.matrix(x)
-    y <- model.frame(x)[,1]
+    X <- model.matrix.lm(x)
   } else {
-    X <- model.matrix(formula(x), data=data)
-    y <- model.frame(formula(x), data=data)[,1]
+    X <- model.matrix.lm(formula(x),
+                         data = data,
+                         na.action = na.pass)
   }
-  if (is.null(offset)) offset <- x$offset
-  if (is.character(y) || is.factor(y)) {
-    y <- as.numeric(as.factor(y)) - 1
-  }
+
+  ## Setting NA parameters to zero
   if(any(is.na(p))) {
     warning("Over-parameterized model (setting NA's to zero)")
     p[is.na(p)] <- 0
   }
+
+  ## Calculating the prediction on the link scale
+  Xbeta <- X%*%p
+
+  ## Handling offset
+  if (is.null(offset)) {
+    offset <- x$offset
+  }
+  if (!is.null(offset)) {
+    Xbeta <- Xbeta + offset
+  }
+
+  ## If type == "link"
+  if (tolower(type[1]) == "link") {
+    return(structure(Xbeta, grad = X))
+  }
+
+  ## If type == "response"
+  link <- family(x)
   ginv <- link$linkinv
   dginv <- link$mu.eta
-  Xbeta <- X%*%p
-  if (!is.null(offset)) Xbeta <- Xbeta+offset
-  if (tolower(type[1]) == "link") {
-    return(structure(Xbeta, grad=X))
-  }
   pr <- ginv(Xbeta)
   z <- dginv(Xbeta)
   gr <- apply(X, 2, function(x) x*z)

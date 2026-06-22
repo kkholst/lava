@@ -5,8 +5,8 @@
 \title{Predict from a GLM with modified coefficients}
 \usage{
 predict_glm(
-  x,
-  p = coef(x),
+  object,
+  p = coef(object),
   data,
   offset = NULL,
   type = c("response", "link"),
@@ -14,7 +14,7 @@ predict_glm(
 )
 }
 \arguments{
-\item{x}{A fitted \code{glm} object.}
+\item{object}{A fitted \code{glm} object.}
 
 \item{p}{Numeric vector of coefficients (defaults to \code{coef(x)}).}
 
