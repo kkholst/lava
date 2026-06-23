@@ -172,7 +172,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' estimate(g)
 #'
 #' ## Testing contrasts
-#' estimate(g, null=0)
+#' summary(estimate(g), null=0)
 #' estimate(g, rbind(c(1,1,0), c(1,0,2)))
 #' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
 #' estimate(g, 2:3) ## same as cbind(0,1,-1)
@@ -317,7 +317,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
                              print=NULL, labels, label.width,
-                             # obsolete argumets:
+                             # deprecated argumets (removed in version 1.9.3)
+                             # return object of class summary.estimate
                              contrast,
                              null,
                              level=NULL,
@@ -328,31 +329,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
                              ) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
-
-  if (!missing(null) || !missing(contrast) ||
-      !is.null(type) || !is.null(var.adj) ||
-      !is.null(back.transform) || !is.null(level) ||
-      !is.null(df)
-      ) {
-    .Deprecated(
-      msg = paste0(
-        "The 'null', 'contrast', 'type', 'back.transform', 'level'
-        and 'var.adj' arguments of ",
-        "estimate.default() are deprecated. Use ",
-        "summary(estimate(...),
-null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
-      )
-    )
-  }
-  if (is.null(level)) {
-    level <- 0.95
-  }
-  if (is.null(type)) {
-    type <- "robust"
-  }
-  if (is.null(var.adj)) {
-    var.adj <- 0.25
-  }
 
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
@@ -370,8 +346,7 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
 
   if (!missing(use)) {
     p0 <- c(
-      "f", "contrast",
-      "subset", "average",
+      "f", "subset", "average",
       "keep", "labels", "null"
     )
     cl0 <- cl
@@ -400,16 +375,13 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
     ), dots)
     f <- do.call(parsedesign, args)
   }
-  contrast.transform <- TRUE  # parameter estimates should be transformed
-                              # according to contrast matrix
+
+  contrast.transform <- FALSE  # if TRUE parameter estimates should be
+                               # transformed according to contrast matrix 'f'
   if (!is.null(f) && !is.function(f)) {
     if (!(is.matrix(f) || is.vector(f)))
       return(compare(x, f, ...)) ## LRT
-    if (missing(contrast)) contrast <- f
-    if (length(f)==1L && (is.logical(f)||is.numeric(f)) && !f) { # f = 0 or FALSE
-      contrast.transform <- FALSE # Wald-test and do not alter the parameter estimates
-    }
-    f <- NULL
+    contrast.transform <- TRUE
   }
 
   if (lava.options()$cluster.index) {
@@ -417,8 +389,6 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
   }
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
-  alpha <- 1 - level
-  alpha.str <- paste(c(alpha/2, 1 -alpha/2)*100, "", sep="%")
   nn <- NULL
   if (((is.logical(IC) && IC) || length(IC)>0) &&
       (missing(vcov) || is.null(vcov) ||
@@ -529,60 +499,14 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
-  if (inherits(x, "lm") && family(x)$family == "gaussian"
-      && is.null(df) && !missing(vcov)) {
-    # defaults to t-distribution when calculating p-values with model-based
-    # SEs
-    df <- x$df.residual
-  }
+  ## if (inherits(x, "lm") && family(x)$family == "gaussian"
+  ##     && is.null(df) && !missing(vcov)) {
+  ##   # defaults to t-distribution when calculating p-values with model-based
+  ##   # SEs
+  ##   df <- x$df.residual
+  ## }
   if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
     V <- var_ic(ic_theta)
-    ## Small-sample corrections for clustered data
-    K <- NROW(ic_theta)
-    N <- attributes(ic_theta)$N
-    if (is.null(N)) N <- K
-    p <- NCOL(ic_theta)
-    adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
-    adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
-    adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
-    if (tolower(type[1])=="mbn" && !is.null(attributes(ic_theta)$bread)) {
-      V0 <- V
-      iI0 <- attributes(ic_theta)$bread
-      I0 <- Inverse(iI0)
-      delta <- min(0.5, p / (K - p))
-      phi <- max(1, tr(I0%*%V0)*adj2/p)
-      V <- adj2*V0 + delta*phi*iI0
-    }
-    if (tolower(type[1])=="df") {
-      V <- adj0*V
-    }
-    if (tolower(type[1])=="df1") {
-      V <- adj1*V
-    }
-    if (tolower(type[1])=="df2") {
-      V <- adj2*V
-    }
-    if (tolower(type[1])%in%c("hc3", "hc4")) {
-      ic <- cbind(ic_theta)
-      S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
-      h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
-      n <- nrow(ic)
-      ## h_emp <- pmin(h_emp, 0.99) * (n-1)/n  # Truncate leverage to prevent division by zero
-      if (tolower(type[1])=="hc3") {
-        ## phi_norm <- sqrt(rowSums(ic^2))
-        ## ex_kurt <- (mean((phi_norm - mean(phi_norm))^4) / var(phi_norm)^2) - 3
-        ## alpha <- exp(-max(0, ex_kurt) / 25)
-        v.alpha <- ifelse(missing(var.adj), 0.25, var.adj)
-        h <- v.alpha * h_emp + (1 - v.alpha) * (ncol(ic) / n)
-        adj <- 1 / (1 - h)
-      } else {
-        ## Cribari-Neto (2004)
-        delta <- pmin(1.5, n/ncol(ic) * h_emp)
-        adj <- 1 / (1 - h_emp)**delta
-      }
-      for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
-      V <- var_ic(ic)
-    }
   } else {
     if (!missing(vcov)) {
       if (length(vcov) == 1 && is.na(vcov)) {
@@ -592,6 +516,15 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
     } else {
       suppressWarnings(V <- stats::vcov(x))
     }
+  }
+
+  if (contrast.transform) {
+    pp <- as.vector(f %*% pp)
+    if (!is.null(ic_theta)) {
+      ic_theta <- ic_theta %*% t(f)
+    }
+    V <- f %*% V %*% t(f)
+    f <- NULL
   }
 
   derivative <- NULL
@@ -720,23 +653,8 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
       res <- rbind(c(pp, diag(V)^0.5))
     else
       res <- cbind(pp, diag(V)^0.5)
-    beta0 <- res[, 1]
-
-    if (!missing(null) && missing(contrast))
-      beta0 <- beta0-null
-    if (!is.null(df)) {
-      # the idea should be to assign df as an attribute to the returned
-      # object, and re-use it inside summary.estimate
-      za <- qt(1-alpha/2, df=df)
-      pval <- 2*pt(abs(res[, 1]/res[, 2]), df=df, lower.tail=FALSE)
-    } else {
-      za <- qnorm(1-alpha/2)
-      pval <- 2*pnorm(abs(res[, 1]/res[, 2]), lower.tail=FALSE)
-    }
-    res <- cbind(res, res[, 1]-za*res[, 2], res[, 1] + za*res[, 2], pval)
   }
-  colnames(res) <- c("Estimate", "Std.Err", alpha.str, "P-value")
-
+  res <- estimate_coefmat(res[, 1], res[, 2], df=NULL, level=0.95, null=0)
   if (nrow(res)>0)
     if (!is.null(nn)) {
       rownames(res) <- nn
@@ -757,50 +675,10 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
   res <- structure(list(coef=coefs, coefmat=res, vcov=V,
                         IC=NULL, print=print, id=idstack, df=df),
                    class="estimate")
-  if (IC) ## && is.null(back.transform))
+  if (IC) {
     res$IC <- ic_theta
+  }
   if (length(coefs)==0L) return(res)
-
-  if (!missing(contrast) || !missing(null)) {
-    p <- length(res$coef)
-    if (missing(contrast)) contrast <- diag(nrow=p)
-    if (missing(null)) null <- 0
-    if (is.vector(contrast) || is.list(contrast)) {
-      contrast <- contr(contrast, names(res$coef), ...)
-    }
-    cc <- compare(res, contrast=contrast, null=null,
-                  vcov=V, level=level, df=df)
-    class(res) <- "list"
-    res <- structure(c(res, list(compare=cc)), class="estimate")
-    if (contrast.transform) {
-      if (!is.null(df)) {
-        pval <- with(cc, pt(abs(estimate[, 1]-null)/estimate[, 2],
-                            df=df, lower.tail=FALSE)*2)
-      } else {
-        pval <- with(cc, pnorm(abs(estimate[, 1]-null)/estimate[, 2],
-                               lower.tail=FALSE)*2)
-      }
-      res$coefmat <- with(cc, cbind(estimate, pval))
-      colnames(res$coefmat)[5] <- "P-value"
-      rownames(res$coefmat) <- cc$cnames
-      if (!is.null(res$IC)) {
-        res$IC <- res$IC%*%t(contrast)
-        colnames(res$IC) <- cc$cnames
-      }
-      res$compare$estimate <- NULL
-      res$coef <- res$compare$coef
-      res$vcov <- res$compare$vcov
-
-      names(res$coef) <- strip_bracket(rownames(res$coefmat))
-      rownames(res$coefmat) <- names(res$coef)
-    }
-  }
-  
-  if (!is.null(back.transform)) {
-    res$coefmat[, c(1, 3, 4)] <- do.call(back.transform,
-                                         list(res$coefmat[, c(1, 3, 4)]))
-    res$coefmat[, 2] <- NA
-  }
 
   if (!missing(keep) && !is.null(keep)) {
     if (is.character(keep)) {
@@ -825,25 +703,41 @@ null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
   res <- labels.estimate(
     object = res, str = labels, label.width = label.width
   )
-
-  ## if (only.coef) {
-  ##   .Deprecated(
-  ##     msg = paste0(
-  ##       "The 'only.coef' argument is deprecated. ",
-  ##       "Use `parameter(estimate(...))` instead."
-  ##     )
-  ##   )
-  ##   return(res$coefmat)
-  ## }
   res$call <- cal
-  res$back.transform <- back.transform
   res$n <- nrow(data)
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
-  return(structure(res, class="estimate"))
+  res <- structure(res, class="estimate")
+
+  if (!missing(null) || !missing(contrast) ||
+      !is.null(type) || !is.null(var.adj) ||
+      !is.null(back.transform) || !is.null(level) ||
+      !is.null(df)
+      ) {
+    .Deprecated(
+      msg = paste0(
+        "The 'null', 'contrast', 'type', 'back.transform', 'level'
+        and 'var.adj' arguments of ",
+        "estimate.default() are deprecated. Use ",
+        "summary(estimate(...),
+null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
+      )
+    )
+    args <- list(object=res)
+    if (!missing(contrast)) args$contrast <- contrast
+    if (!missing(null)) args$null <- null
+    if (!is.null(level)) args$level <- level
+    if (!is.null(type)) args$type <- type
+    if (!is.null(var.adj)) args$var.adj <- var.adj
+    if (!is.null(df)) args$df <- df
+    if (!is.null(back.transform)) args$transform <- back.transform
+    return(do.call(summary, args))
+  }
+
+  return(res)
 }
 
-##' @export
+#' @export
 print.estimate <- function(x, type=0L, digits=4L, width=25L,
                            std.error=TRUE, p.value=TRUE,
                            sep=cli::symbol[["line"]],
@@ -958,119 +852,10 @@ coef.estimate <- function(object,
                           list=FALSE,
                           ...) {
   if (mat) return(object$coefmat)
-  if (!is.null(object$back.transform)) {
-    warning("Return estimates on original scale (before 'back.transform')")
-  }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))
   }
   object$coef
-}
-
-with_unique_warnings <- function(expr) {
-  # utility function that prevents the same warning being cast more than once
-  seen <- character(0)
-  withCallingHandlers(expr, warning = function(w) {
-    msg <- conditionMessage(w)
-    if (msg %in% seen) {
-      invokeRestart("muffleWarning")
-    } else {
-      seen <<- c(seen, msg)
-    }
-  })
-}
-
-#' Summary of estimate objects
-#'
-#' Computes hypothesis tests, contrasts, and small-sample corrections for
-#' an [estimate] object. The arguments `null`, `contrast`, `type`, and
-#' `var.adj` were previously available on [estimate.default()] and have
-#' been moved here.
-#'
-#' @param object an `estimate` object.
-#' @param contrast (optional) contrast matrix for the final Wald test.
-#' @param null (optional) null hypothesis to test.
-#' @param type type of small-sample correction. Requires the estimate
-#'   to have been computed with `IC=TRUE` (the default).
-#' @param var.adj variance adjustment parameter for small-sample
-#'   correction. Requires the estimate to have been computed with
-#'   `IC=TRUE` (the default).
-#' @param df degrees of freedom for t-based inference (default: `NULL` for
-#'   Gaussian approximation; when set, confidence intervals and p-values use
-#'   the t-distribution with `df` degrees of freedom)
-#' @param level level of confidence limits (default 0.95)
-#' @param transform (optional) function applied to the point estimates
-#'   and confidence interval bounds *after* inference is performed on the
-#'   original scale. Useful for variance-stabilizing transformations, e.g.,
-#'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
-#'   `tanh`.
-#' @param ... additional arguments passed to [estimate()].
-#' @seealso [estimate.default()]
-#' @export
-summary.estimate <- function(object,
-                             contrast,
-                             null,
-                             type,
-                             var.adj=0.25,
-                             ...) {
-  with_unique_warnings({
-    p <- coef(object)
-    df <- object$df
-    correction <- !missing(type) || !missing(var.adj)
-    user_contrast <- !missing(contrast)
-    user_null <- !missing(null)
-    if (missing(contrast)) contrast <- diag(1, nrow=length(p))
-    args <- list(
-      coef = p,
-      contrast = contrast,
-      df = df
-    )
-    ## When the user supplies any of null/contrast/type/var.adj we want
-    ## the recall to run the full Wald-test override (contrast.transform
-    ## must be TRUE). In the no-op case we preserve the historical
-    ## behavior of passing f=FALSE so the H0:beta=0 p-values in coefmat
-    ## are kept verbatim.
-    if (!user_contrast && !user_null && !correction) {
-      args$f <- FALSE
-    }
-    if (user_null) args$null <- null
-    if (correction) {
-      if (is.null(object$IC)) {
-        stop(
-          "Small-sample corrections in summary() require an estimate ",
-          "computed with IC=TRUE."
-        )
-      }
-      args$IC <- object$IC
-      args$id <- object$id
-      if (!missing(type)) args$type <- type
-      if (!missing(var.adj)) args$var.adj <- var.adj
-    } else {
-      args$vcov <- vcov(object)
-    }
-    args <- c(args, list(...))
-    test <- suppressWarnings(do.call(estimate, args))
-    class(test) <- "NULL"
-    test$compare <- test$compare
-    ## Preserve dimnames on vcov: the recall path through type/var.adj
-    ## corrections builds V from the influence function and may drop
-    ## dimnames. Restore them from the original coef names so the
-    ## summary output is consistent with the deprecated estimate() path.
-    if (!is.null(test$vcov) && is.null(dimnames(test$vcov)) &&
-        !is.null(names(test$coef)) &&
-        nrow(test$vcov) == length(test$coef)) {
-      dimnames(test$vcov) <- list(names(test$coef), names(test$coef))
-    }
-    object <- test[c("coef", "coefmat", "vcov", "call",
-                     "ncluster", "model.index", "compare")]
-    class(object) <- "summary.estimate"
-    object
-  })
-}
-
-#' @export
-coef.summary.estimate <- function(object, ...) {
-  object$coefmat
 }
 
 #' @export
@@ -1100,11 +885,6 @@ labels.estimate <- function(object, str, label.width, ...) {
 #' @export
 parameter.estimate <- function(x, ...) {
   return(x$coefmat)
-}
-
-#' @export
-print.summary.estimate <- function(x, ...) {
-  print.estimate(x, type=2L, ...)
 }
 
 #' @export

@@ -244,7 +244,7 @@ estimate(g, g0)
 estimate(g)
 
 ## Testing contrasts
-estimate(g, null=0)
+summary(estimate(g), null=0)
 estimate(g, rbind(c(1,1,0), c(1,0,2)))
 estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
 estimate(g, 2:3) ## same as cbind(0,1,-1)
