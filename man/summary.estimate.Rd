@@ -7,11 +7,11 @@
 \method{summary}{estimate}(
   object,
   contrast,
-  null,
+  null = 0,
+  level = 0.95,
   type,
   var.adj = 0.25,
-  df = NULL,
-  level = 0.95,
+  df,
   transform,
   ...
 )
@@ -23,6 +23,8 @@
 
 \item{null}{(optional) null hypothesis to test.}
 
+\item{level}{level of confidence limits (default 0.95)}
+
 \item{type}{type of small-sample correction. Requires the estimate
 to have been computed with \code{IC=TRUE} (the default).}
 
@@ -33,8 +35,6 @@ correction. Requires the estimate to have been computed with
 \item{df}{degrees of freedom for t-based inference (default: \code{NULL} for
 Gaussian approximation; when set, confidence intervals and p-values use
 the t-distribution with \code{df} degrees of freedom)}
-
-\item{level}{level of confidence limits (default 0.95)}
 
 \item{transform}{(optional) function applied to the point estimates
 and confidence interval bounds \emph{after} inference is performed on the
