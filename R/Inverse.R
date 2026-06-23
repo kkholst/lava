@@ -6,6 +6,9 @@
 ##' @param names preserve dimnames
 ##' @param chol use Cholesky decomposition for calculating inverse otherwise SVD
 ##' @param symmetric set to true if matrix is symmetric
+##' @return Matrix (generalized inverse of `X`). Attributes include `det`
+##'   (determinant), `pseudo` (logical, whether pseudo-inverse was used),
+##'   and `minSV` (minimum singular value).
 Inverse <- function(X,tol=lava.options()$itol,det=TRUE,names=!chol,chol=FALSE,symmetric=FALSE) {
     n <- NROW(X)
     if (n==1L) {

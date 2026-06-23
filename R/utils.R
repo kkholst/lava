@@ -283,8 +283,6 @@ CondMom <- function(mu,S,idx,X) {
   return(list(mean=condmean,var=condvar))
 }
 
-###}}} CondMom
-
 ## Depth-First/acc (accessible)
 DFS <- function(M,v,explored=c()) {
   explored <- union(explored,v)
@@ -393,7 +391,7 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   m <- colMeans(ic, na.rm = TRUE)
   rms <- sqrt(colMeans(ic^2, na.rm = TRUE))
   ratio <- abs(m) / rms
-  flag <- any(ratio > tol)
+  flag <- any(ratio > tol, na.rm=TRUE)
   if (flag) {
     warning(
       sprintf(
@@ -404,3 +402,5 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   }
   return(invisible(flag))
 }
+
+center_ic <- function(x) scale(x, scale=FALSE, center=TRUE)

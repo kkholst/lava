@@ -62,3 +62,44 @@ test_that("all non-IC objects: diagonal blocks filled, cross-terms NA", {
   expect_true(all(is.na(V[1:2, 3:4])))
   expect_true(all(is.na(V[3:4, 1:2])))
 })
+
+test_that("c.estimate.extra", {
+  e1 <- c(estimate(coef = c(a = 1), vcov = matrix(0.1)), e1.iter = 2)
+  e2 <- c(estimate(coef = c(b = 2), vcov = matrix(0.2)), e2.iter = 3)
+  e3 <- c(estimate(coef = c(c = 2), vcov = matrix(0.3)))
+
+  e <- c(e1, e2) # two estimate.extra objects
+  expect_equal(c(coef(e1$estimate), coef(e2$estimate)), coef(e$estimate))
+  expect_equal(c(vcov(e1$estimate), vcov(e2$estimate)),
+               diag(vcov(e$estimate)), check.attributes=FALSE)
+  expect_equal(c(e1$extra, e2$extra), e$extra)
+
+  e <- c(e1, e3) # estimate.extra + estimate
+  expect_equal(c(coef(e1$estimate), coef(e3)), coef(e$estimate))
+  expect_equal(c(vcov(e1$estimate), vcov(e3)),
+               diag(vcov(e$estimate)), check.attributes=FALSE)
+  expect_equal(c(e1$extra), e$extra)
+
+  e <- c(e3, e1) # estimate + estimate.extra
+  expect_equal(c(coef(e3), coef(e1$estimate)), coef(e$estimate))
+  expect_equal(c(vcov(e3), vcov(e1$estimate)),
+               diag(vcov(e$estimate)), check.attributes=FALSE)
+  expect_equal(c(e1$extra), e$extra)
+
+  e <- c(e1, e2, d=2) # estimate + scalar/extra
+  expect_equal(c(coef(e1$estimate), coef(e2$estimate)), coef(e$estimate))
+  expect_equal(c(vcov(e1$estimate), vcov(e2$estimate)),
+               diag(vcov(e$estimate)), check.attributes=FALSE)
+  expect_equal(c(e1$extra, e2$extra, d=2), e$extra)
+
+  e <- c(e3, c(a = 1, b = 2)) # named scalar vector via unnamed argument
+  expect_equal(c(a = 1, b = 2), e$extra)
+
+  e <- c(e3, e1.iter = 1) # duplicated name of extra variable
+  e <- c(e, e1)
+  expect_equal(c(e1.iter = 1, e1.iter = 2), e$extra)
+
+  e <- c(e1, converged = FALSE) # boolean extra variable
+  # internal conversion to numeric
+  expect_equal(c(e1.iter = 2, converged = 0), e$extra)
+})

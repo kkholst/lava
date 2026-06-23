@@ -26,6 +26,11 @@ Inverse(
 
 \item{symmetric}{set to true if matrix is symmetric}
 }
+\value{
+Matrix (generalized inverse of \code{X}). Attributes include \code{det}
+(determinant), \code{pseudo} (logical, whether pseudo-inverse was used),
+and \code{minSV} (minimum singular value).
+}
 \description{
 Generalized matrix inverse
 }

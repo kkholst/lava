@@ -1,5 +1,3 @@
-###{{{ print.lvm
-
 ##' @export
 `print.lvm` <-
 function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
@@ -74,10 +72,6 @@ function(x, ..., print.transform=TRUE,print.exogenous=TRUE) {
   invisible(x)
 }
 
-###}}} print.lvm
-
-###{{{ print.lvmfit
-
 ##' @export
 `print.lvmfit` <-
 function(x,type=2,labels=FALSE,...) {
@@ -91,19 +85,11 @@ function(x,type=2,labels=FALSE,...) {
     invisible(x)
 }
 
-###}}} print.lvmfit
-
-###{{{ print.lvmfit.randomslope
-
 ##' @export
 print.lvmfit.randomslope <- function(x,labels=FALSE,type=2,...) {
   print(CoefMat(x,labels=labels,type=type,...),quote=FALSE,right=TRUE)
   invisible(x)
 }
-
-###}}}
-
-###{{{ print.multigroupfit
 
 ##' @export
 print.multigroupfit <- function(x,groups=NULL,...)  {
@@ -151,10 +137,6 @@ print.multigroupfit <- function(x,groups=NULL,...)  {
   invisible(x)
 }
 
-###}}} print.multigroupfit
-
-###{{{ print.multigroup
-
 ##' @export
 print.multigroup <- function(x,...) {
   cat("\n")
@@ -165,10 +147,6 @@ print.multigroup <- function(x,...) {
 ##  cat("Mean-vector:", x$mean, "\n\n")
   invisible(x)
 }
-
-###}}} print.multigroup
-
-###{{{ printmany
 
 printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,emptystr=" ",bothrows=!is.table(A),right=TRUE,print=TRUE,...) {
   A <- format(A, digits=digits, right=right, ...)
@@ -209,5 +187,3 @@ printmany <- function(A,B,nspace=1,name1=NULL,name2=NULL,digits=3,rownames=NULL,
   if (print) print(res, quote=FALSE, right=right, ...)
   invisible(res)
 }
-
-###}}} printmany

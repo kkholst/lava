@@ -3,9 +3,8 @@
 \name{estimate.default}
 \alias{estimate.default}
 \alias{estimate}
-\alias{merge.estimate}
 \alias{estimate.mlm}
-\title{Estimation of functional of parameters}
+\title{Influence function based inference}
 \usage{
 \method{estimate}{default}(
   x = NULL,
@@ -37,82 +36,230 @@
 )
 }
 \arguments{
-\item{x}{model object (\code{glm}, \code{lvmfit}, ...)}
+\item{x}{model object (\code{glm}, \code{lvmfit}, ...) or an existing \code{estimate}
+object. When two model objects are supplied (e.g., \code{estimate(g, g0)}) a
+likelihood-ratio test is performed.}
 
-\item{f}{transformation of model parameters and (optionally) data, or
-contrast matrix (or vector)}
+\item{f}{transformation of model parameters. Accepts several input types:
+\itemize{
+\item A \strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method.
+When \code{f} returns a named list the names are used as parameter labels.
+\item A \strong{matrix}: used as a contrast (linear combination) matrix.
+\item A \strong{numeric vector} of parameter indices: converted to a contrast
+that selects and differences those parameters.
+\item A \strong{list} of indices: each element selects one parameter.
+\item \strong{Character} expressions: supports wildcards (\code{"?"}, \code{"*"}) and
+arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
+}}
 
 \item{...}{additional arguments to lower level functions}
 
-\item{data}{\code{data.frame}}
+\item{data}{\code{data.frame} used by \code{f} when the transformation depends on
+covariates (see \code{average}). Defaults to \code{model.frame(x)}.}
 
-\item{id}{(optional) id-variable corresponding to ic decomposition of model
-parameters.}
+\item{id}{(optional) cluster identifier. Can be a vector of cluster IDs, a
+one-sided formula (evaluated in \code{data}), a single character column name,
+or a logical scalar (\code{TRUE} for one-to-one matching, \code{FALSE} for
+independence). When supplied, the IF is aggregated within clusters to
+produce cluster-robust standard errors.}
 
-\item{stack}{if TRUE (default) the i.i.d. decomposition is automatically
-stacked according to 'id'}
+\item{stack}{if \code{TRUE} (default) the influence function contributions are
+summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
+un-stacked (per-observation) decomposition.}
 
-\item{average}{if TRUE averages are calculated}
+\item{average}{if \code{TRUE} the function computes the standardized
+(marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e.,
+the empirical mean of \code{f(p, data)} over all rows of \code{data}. The
+influence function accounts for both the empirical averaging and the
+parameter estimation uncertainty (see Details).}
 
-\item{subset}{(optional) subset of data.frame on which to condition (logical
-expression or variable name)}
+\item{subset}{(optional) logical vector, expression evaluated in \code{data}, or
+column name. When used together with \code{average = TRUE}, the average is
+conditioned on the subpopulation where \code{subset} is \code{TRUE}, yielding a
+conditional marginalized estimate.}
 
-\item{level}{level of confidence limits}
+\item{level}{level of confidence limits (default 0.95)}
 
-\item{IC}{if TRUE (default) the influence function decompositions are also
-returned (extract with \code{IC} method)}
+\item{IC}{if \code{TRUE} (default) the influence function matrix is estimated and
+stored in the returned object (extract with the \link{IC} method). Can also be
+a user-supplied IF matrix (one row per observation, one column per
+parameter), which is used directly instead of estimating it from \code{x}.}
 
+<<<<<<< HEAD
 \item{type}{type of small-sample correction (deprecated; see
 \link{summary.estimate})}
+||||||| 6eb797cc
+\item{type}{type of small-sample correction}
+=======
+\item{type}{type of small-sample correction for cluster-robust variance.
+One of:
+\itemize{
+\item \code{"robust"} (default): no correction.
+\item \code{"df"}: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001).
+\item \code{"mbn"}: Morel-Bokossa-Neerchal (2003) correction.
+\item \code{"hc3"}: leverage-adjusted HC3-type correction (blended with
+\code{var.adj}).
+\item \code{"hc4"}: Cribari-Neto (2004) leverage-adjusted correction.
+}}
+>>>>>>> dev
 
+<<<<<<< HEAD
 \item{var.adj}{variance adjustment parameter for small-sample correction
 (deprecated; see \link{summary.estimate})}
+||||||| 6eb797cc
+\item{var.adj}{variance adjustment parameter for small-sample correction}
+=======
+\item{var.adj}{blending parameter for the HC3 leverage adjustment
+(default 0.25). Controls the weight between observation-level empirical
+leverage and the average leverage \eqn{p/n}.}
+>>>>>>> dev
 
-\item{keep}{(optional) index of parameters to keep from final result}
+\item{keep}{(optional) index of parameters to keep from final result.
+Accepts integer indices, character names, or (with \code{regex = TRUE})
+perl-compatible regular expressions.}
 
-\item{use}{(optional) index of parameters to use in calculations}
+\item{use}{(optional) index of parameters to use in calculations. The
+selected parameters are first extracted (via \code{keep}) and then the
+remaining arguments (\code{f}, \code{contrast}, etc.) are applied to this subset.}
 
-\item{regex}{If TRUE use regular expression (perl compatible) for keep, use
-arguments}
+\item{regex}{if \code{TRUE} use perl-compatible regular expressions for \code{keep}
+and \code{use} arguments}
 
-\item{ignore.case}{Ignore case-sensitiveness in regular expression}
+\item{ignore.case}{ignore case in regular expressions}
 
+<<<<<<< HEAD
 \item{contrast}{(optional) Contrast matrix for final Wald test
 (deprecated; see \link{summary.estimate})}
+||||||| 6eb797cc
+\item{contrast}{(optional) Contrast matrix for final Wald test}
+=======
+\item{contrast}{(optional) contrast matrix for a final Wald test. When
+supplied together with \code{null}, tests \eqn{H_0: B\theta = b_0}.}
+>>>>>>> dev
 
+<<<<<<< HEAD
 \item{null}{(optional) null hypothesis to test (deprecated; see
 \link{summary.estimate})}
+||||||| 6eb797cc
+\item{null}{(optional) null hypothesis to test}
+=======
+\item{null}{(optional) null hypothesis vector \eqn{b_0} to test against
+(default 0)}
+>>>>>>> dev
 
-\item{vcov}{(optional) covariance matrix of parameter estimates or logical.
-If TRUE, then \link[stats:vcov]{stats::vcov} is used to obtain the covariance matrix from the
-provided model object \code{x}}
+\item{vcov}{(optional) covariance matrix of parameter estimates, or a
+logical. If \code{TRUE}, \link[stats:vcov]{stats::vcov} is used to obtain the (model-based)
+covariance matrix from \code{x}, yielding non-robust standard errors. If a
+matrix is supplied it is used directly. When omitted or \code{FALSE}, robust
+standard errors are computed from the influence function.}
 
-\item{coef}{(optional) parameter coefficient}
+\item{coef}{(optional) named parameter vector. Used instead of
+\code{coef(x)} when constructing an \code{estimate} object without a model.}
 
-\item{df}{degrees of freedom (default obtained from 'df.residual')}
+\item{df}{degrees of freedom for t-based inference (default: \code{NULL} for
+Gaussian approximation; when set, confidence intervals and p-values use
+the t-distribution with \code{df} degrees of freedom)}
 
-\item{print}{(optional) print function for the resulting estimate object}
+\item{print}{(optional) custom print function for the resulting \code{estimate}
+object}
 
-\item{labels}{(optional) names of coefficients}
+\item{labels}{(optional) character vector of coefficient names}
 
-\item{label.width}{(optional) max width of labels}
+\item{label.width}{(optional) max display width of labels}
 
-\item{only.coef}{(Deprecated) if TRUE only the coefficient matrix is
+\item{only.coef}{(Deprecated) if \code{TRUE} only the coefficient matrix is
 returned. Use \code{parameter(estimate(...))} instead.}
 
-\item{back.transform}{(optional) transform of parameters and confidence
-intervals}
+\item{back.transform}{(optional) function applied to the point estimates
+and confidence interval bounds \emph{after} inference is performed on the
+original scale. Useful for variance-stabilizing transformations, e.g.,
+compute CIs on the \code{atanh} (Fisher z) scale and back-transform with
+\code{tanh}.}
+}
+\value{
+Object of class \code{estimate} with the following elements:
+\item{coef}{Named vector of parameter estimates.}
+\item{vcov}{Variance-covariance matrix.}
+\item{IC}{Influence function matrix (observations x parameters).}
+\item{coefmat}{Formatted coefficient table (estimate, std.err,
+confidence limits, p-value).}
+\item{id}{Cluster/id variable used.}
+\item{ncluster}{Number of clusters.}
+\item{n}{Number of observations.}
+\item{compare}{(When \code{null} or contrasts are specified) Wald test result.}
 }
 \description{
-Estimation of functional of parameters. Wald tests, robust standard errors,
-cluster robust standard errors
+Primary tool for obtaining parameter estimates with robust (sandwich)
+standard errors, applying the delta method, and testing linear hypotheses.
+The function returns an object of class \code{estimate} which serves as a
+general container for parameter estimates and their influence functions
+(IFs). Three calling conventions are supported:
 }
 \details{
-influence function decomposition of estimator \eqn{\widehat{\theta}} based
-on data \eqn{Z_1,\ldots,Z_n}: \deqn{\sqrt{n}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n IC(Z_i; P) + o_p(1)} can be extracted with
-the \code{IC} method.
+\itemize{
+\item \code{estimate(x, ...)} -- extract estimates from a model object
+\item \code{estimate(coef=, IC=, ...)} -- construct from coefficients and IF matrix
+\item \code{estimate(coef=, vcov=, ...)} -- construct from coefficients and
+covariance matrix
 }
+}
+\section{Influence functions and robust standard errors}{
+An estimator \eqn{\widehat{\theta}} is \emph{regular and asymptotically
+linear} (RAL) when it admits the iid decomposition
+\deqn{\sqrt{n}(\widehat{\theta}-\theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \mathrm{IC}(Z_i; P) + o_p(1)}
+where \eqn{\mathrm{IC}} is the unique \emph{influence function} satisfying
+\eqn{E\{\mathrm{IC}(Z; P)\} = 0}. By the central limit theorem
+\deqn{\sqrt{n}(\widehat{\theta}-\theta)
+\overset{d}{\longrightarrow}
+N(0,\; \mathrm{Var}\{\mathrm{IC}(Z; P)\})}
+and the asymptotic variance is consistently estimated by the empirical
+variance of the plugin IF estimate, yielding robust (sandwich) standard
+errors. The estimated IF can be extracted with the \link{IC} method.
+}
+
+\section{Parameter transformations (delta method)}{
+When \code{f} is a function \eqn{\phi: R^p \to R^m}, the delta method is
+applied:
+\deqn{\sqrt{n}\{\phi(\widehat{\theta}) - \phi(\theta)\} =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n
+\nabla\phi(\theta)\,\mathrm{IC}(Z_i; P) + o_p(1)}
+Derivatives are computed numerically via \link[numDeriv:jacobian]{numDeriv::jacobian} unless the
+function returns an attribute \code{"grad"} with the analytic Jacobian.
+
+Alternatively, \code{estimate} objects support direct arithmetic operations
+(e.g., \code{a * b}, \code{exp(a)}, \code{a^b}) which apply the delta method with
+\emph{exact} (analytical) derivatives computed automatically. This influence
+function calculus allows building complex transformations from simple
+building blocks without numerical differentiation. See the last example
+section ("influence function calculus") and
+\code{vignette("influencefunction", package = "lava")} for details.
+}
+
+\section{Averaging and marginalization}{
+When \code{average = TRUE} and \code{f(p, data)} depends on covariates, the
+target parameter is the standardized (marginalized) estimate
+\eqn{\Psi = E\{f(X;\theta)\}}. The IF for the averaged estimate
+accounts for both the empirical averaging and parameter estimation
+uncertainty:
+\deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
+[E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
+When \code{subset} is also specified, the average is conditioned on the
+subpopulation, yielding a conditional marginalized estimate.
+}
+
+\section{Cluster-robust standard errors}{
+When \code{id} is supplied, the per-observation IF contributions are summed
+within clusters (when \code{stack = TRUE}), producing the cluster-level IF
+\eqn{\widetilde{\mathrm{IC}}(Z_i; P) = \sum_{k=1}^{N_i}
+\frac{n}{N}\mathrm{IC}(Z_{ik}; P)}.
+The resulting variance estimate is equivalent to the GEE working
+independence sandwich estimator.
+
+For full theoretical background and worked examples see
+\code{vignette("influencefunction", package = "lava")}.
+}
+
 \examples{
 
 ## Simulation from logistic regression model
@@ -154,7 +301,7 @@ vcov(e)
 
 ## Label new parameters
 estimate(g, function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
-##'
+#'
 ## Multiple group
 m <- lvm(y~x)
 m <- baptize(m)
@@ -249,6 +396,7 @@ e == c(1,2)
 B \%*\% e == 1
 }
 \seealso{
-estimate.array summary.estimate coef.estimate vcov.estimate
-transform.estimate labels.estimate IC.estimate
+\link{estimate.array}, \link{merge.estimate}, \link{contr}, \link{parsedesign},
+\link{pairwise.diff}, \link{c.estimate}, \code{summary.estimate}, \code{coef.estimate},
+\code{vcov.estimate}, \code{transform.estimate}, \code{labels.estimate}, \code{IC.estimate}
 }

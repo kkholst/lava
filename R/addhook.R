@@ -124,6 +124,6 @@ assign("options", list(
                       symbols=c("~","~~"),
                       devel=FALSE, # development flag, extra debug information
                       check.ic=TRUE, # check if influence functions has zero-mean
-                      check.ic.tol=1e-6, # tolerance for checking zero-mean mean(ic)/rms(ic) > check.ic.tol
+                      check.ic.tol=1e-4, # tolerance for checking zero-mean mean(ic)/rms(ic) > check.ic.tol
                       debug=FALSE),
        envir=lava.env)

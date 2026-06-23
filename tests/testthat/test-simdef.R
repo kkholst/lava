@@ -1,3 +1,4 @@
+library(future)
 context("Generic simulation framework")
 
 f <- function(iter=list(), ...) {
@@ -32,7 +33,7 @@ test_that("sim.default with estimate objects", {
 
 test_that("sim.default exports seed sequences as attribute", {
   foo <- function() runif(1)
-  future::plan("sequential")
+  if (requireNamespace("future",quietly=TRUE)) future::plan("sequential")
   result <- sim(foo, R = 5, future.seed = 42L)
   seeds <- attr(result, "seeds")
 
@@ -43,7 +44,7 @@ test_that("sim.default exports seed sequences as attribute", {
 
 test_that("sim.default exported seeds reproduce results (sequential)", {
   foo <- function() runif(1)
-  future::plan("sequential")
+  if (requireNamespace("future",quietly=TRUE)) future::plan("sequential")
   result <- sim(foo, R = 5, future.seed = 42L)
   seeds <- attr(result, "seeds")
 
@@ -96,4 +97,83 @@ test_that("sim.default subsets", {
     cbind(res[1:50, 1:2], res[1:50, 1:2])
   ) == 4L)
 
+})
+
+test_that("c.estimate creates estimate.extra with numeric extras", {
+  e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
+  obj <- c(e, converged = 1, niter = 10)
+  expect_s3_class(obj, "estimate.extra")
+  expect_s3_class(obj$estimate, "estimate")
+  expect_equal(obj$extra, c(converged = 1, niter = 10))
+})
+
+test_that("c.estimate merges multiple estimates with extras", {
+  e1 <- estimate(coef = c(a = 1), vcov = matrix(0.1))
+  e2 <- estimate(coef = c(b = 2), vcov = matrix(0.2))
+  obj <- c(e1, e2, flag = 1)
+  expect_s3_class(obj, "estimate.extra")
+  expect_equal(length(coef(obj$estimate)), 2L)
+  expect_equal(obj$extra, c(flag = 1))
+})
+
+test_that("sim.default with estimate.extra appends extras", {
+  onerun <- function(...) {
+    e <- estimate(coef = runif(2), vcov = diag(runif(2)),
+                  labels = c("a", "b"))
+    c(e, converged = 1, niter = sample(5:20, 1))
+  }
+  res <- sim(onerun, 20)
+  pi <- attr(res, "par.index")
+
+  # Correct dimensions: 2 estimates + 2 SE + 2 extras = 6 columns
+  expect_equal(ncol(res), 6L)
+  expect_equal(nrow(res), 20L)
+
+  # par.index tracks all components
+
+  expect_equal(pi$estimate, 1:2)
+  expect_equal(pi$se, 3:4)
+  expect_equal(pi$extra, 5:6)
+
+  # Extra columns have correct names
+  expect_true("converged" %in% colnames(res))
+  expect_true("niter" %in% colnames(res))
+
+  # All converged values are 1
+  expect_true(all(res[, "converged"] == 1))
+  # niter values are in expected range
+  expect_true(all(res[, "niter"] >= 5 & res[, "niter"] <= 20))
+})
+
+test_that("summary.sim ignores extra columns", {
+  onerun <- function(...) {
+    e <- estimate(coef = runif(2), vcov = diag(runif(2)),
+                  labels = c("a", "b"))
+    c(e, flag = 1)
+  }
+  res <- sim(onerun, 30)
+  s <- summary(res)
+
+  # Summary only covers the estimate columns, not extras
+  expect_equal(ncol(s), 2L)
+  expect_equal(colnames(s), c("a", "b"))
+})
+
+test_that("summary.sim gives NA SE for extras when estimate is explicit", {
+  onerun <- function(...) {
+    e <- estimate(coef = runif(2), vcov = diag(runif(2)),
+                  labels = c("a", "b"))
+    c(e, conv = 1)
+  }
+  res <- sim(onerun, 20)
+  # Include extra column in explicit estimate argument
+  s <- summary(res, estimate = c(1, 2, 5))
+
+  expect_equal(ncol(s), 3L)
+  # SE is NA for the extra column
+  expect_true(is.na(s["SE", "conv"]))
+  expect_true(is.na(s["SE/SD", "conv"]))
+  # SE is computed for the estimate columns
+  expect_false(is.na(s["SE", "a"]))
+  expect_false(is.na(s["SE", "b"]))
 })

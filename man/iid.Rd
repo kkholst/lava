@@ -11,6 +11,10 @@ iid(x, ...)
 
 \item{...}{Additional arguments (see the man-page of the IC method)}
 }
+\value{
+Matrix (n x p) with the i.i.d. decomposition of the estimator
+(scaled influence function, i.e., the influence function divided by n).
+}
 \description{
 This function extracts
 }

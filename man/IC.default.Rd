@@ -3,7 +3,6 @@
 \name{IC.default}
 \alias{IC.default}
 \alias{IC}
-\alias{var_ic}
 \title{Extract influence function from model object}
 \usage{
 \method{IC}{default}(x, bread, id = NULL, ...)
@@ -17,6 +16,11 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Matrix with rows corresponding to observations and columns to
+parameters, representing the estimated influence function. Attributes
+include \code{bread} (derivative of the estimating equation).
+}
 \description{
 Extract i.i.d. decomposition (influence function) from model object
 }
@@ -26,4 +30,7 @@ distribution(m, ~y+z) <- binomial.lvm("logit")
 d <- sim(m,1e3)
 g <- glm(y~x+z,data=d,family=binomial)
 var_ic(IC(g))
+}
+\seealso{
+\link{var_ic}, \link{iid}
 }

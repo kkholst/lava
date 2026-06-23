@@ -9,7 +9,7 @@
 \usage{
 \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
 messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
-\method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+\method{regression}{lvm}(object, to=NULL, from=NULL, ...) <- value
 }
 \arguments{
 \item{object}{\code{lvm}-object.}
@@ -33,8 +33,6 @@ simulation only).}
 \item{y}{Alias for 'to'}
 
 \item{x}{Alias for 'from'}
-
-\item{quick}{Faster implementation without parameter constraints}
 }
 \value{
 A \code{lvm}-object
@@ -95,17 +93,17 @@ Variables will be added to the model if not already present.
 \examples{
 
 m <- lvm() ## Initialize empty lvm-object
-### E(y1|z,v) = beta1*z + beta2*v
+## E(y1|z,v) = beta1*z + beta2*v
 regression(m) <- y1 ~ z + v
-### E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u
+## E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u
 regression(m) <- y2 ~ f(x,beta) + f(z,beta)  + f(v,2) + u
-### Clear restriction on association between y and
-### fix slope coefficient of u to beta
+## Clear restriction on association between y and
+## fix slope coefficient of u to beta
 regression(m, y2 ~ v+u) <- list(NA,"beta")
 
 regression(m) ## Examine current linear parameter constraints
 
-## ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:
+## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:
 m2 <- lvm(c(y1,y2) ~ x1+x2)
 
 }

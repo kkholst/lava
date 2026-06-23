@@ -110,6 +110,65 @@ test_that("Graph attributes", {
     testthat::expect_true(!is.null(edgelabels(finalize(m))))
 })
 
+test_that("regression<- with character to/from matches formula style", {
+    # Formula style: regression(m, y~x) <- "b"
+    m1 <- lvm()
+    regression(m1, y ~ x) <- "b"
+
+    # Character positional: regression(m, "y", "x") <- "b"
+    m2 <- lvm()
+    regression(m2, "y", "x") <- "b"
+
+    # Character named: regression(m, to="y", from="x") <- "b"
+    m3 <- lvm()
+    regression(m3, to = "y", from = "x") <- "b"
+
+    testthat::expect_identical(m1$par, m2$par)
+    testthat::expect_identical(m1$par, m3$par)
+    testthat::expect_identical(m1$fix, m2$fix)
+    testthat::expect_identical(m1$fix, m3$fix)
+
+    # Numeric constraint
+    m4 <- lvm()
+    regression(m4, "y", "x") <- 2
+    testthat::expect_equal(m4$fix["x", "y"], 2)
+
+    # NA to clear constraint
+    m5 <- lvm(y ~ x)
+    regression(m5, "y", "x") <- "b"
+    testthat::expect_equal(m5$par["x", "y"], "b")
+    regression(m5, "y", "x") <- NA
+    testthat::expect_true(is.na(m5$par["x", "y"]))
+    testthat::expect_true(is.na(m5$fix["x", "y"]))
+})
+
+test_that("regression() with value= and character to/from", {
+    # regression(m, to, from, value=) should apply the constraint
+    m1 <- lvm()
+    regression(m1, y ~ x) <- "b"
+
+    m2 <- lvm()
+    m2 <- regression(m2, to = "y", from = "x", value = "b")
+
+    testthat::expect_identical(m1$par, m2$par)
+    testthat::expect_identical(m1$fix, m2$fix)
+
+    # Numeric value
+    m3 <- lvm()
+    m3 <- regression(m3, "y", "x", value = 2)
+    testthat::expect_equal(m3$fix["x", "y"], 2)
+
+    # Multiple predictors
+    m4 <- lvm()
+    regression(m4, y ~ x1 + x2) <- "b"
+
+    m5 <- lvm()
+    m5 <- regression(m5, to = "y", from = c("x1", "x2"), value = "b")
+
+    testthat::expect_identical(m4$par, m5$par)
+    testthat::expect_identical(m4$fix, m5$fix)
+})
+
 test_that("Categorical variables", {
     m <- lvm()
     categorical(m,K=3,p=c(0.1,0.5)) <- ~x

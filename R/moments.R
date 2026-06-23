@@ -18,9 +18,9 @@ moments.lvm.missing <- function(x, p=pars(x), ...) {
 
 ##' @export
 moments.lvm <- function(x, p, debug=FALSE, conditional=FALSE, data=NULL, latent=FALSE, ...) {
-### p: model-parameters as obtained from e.g. 'startvalues'.
-###       (vector of regression parameters and variance parameters)
-### meanpar: mean-parameters (optional)
+  ## p: model-parameters as obtained from e.g. 'startvalues'.
+  ##       (vector of regression parameters and variance parameters)
+  ## meanpar: mean-parameters (optional)
 
   ii <- index(x)
   pp <- modelPar(x,p)

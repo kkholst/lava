@@ -9,7 +9,8 @@ influence.estimate <- function(model, ...)
 ##' Extract influence function from model object
 ##'
 ##' Extract i.i.d. decomposition (influence function) from model object
-##' @aliases IC var_ic
+##' @aliases IC
+##' @seealso [var_ic], [iid]
 ##' @param x model object
 ##' @param id (optional) id/cluster variable
 ##' @param bread (optional) Inverse of derivative of mean score function
@@ -20,6 +21,9 @@ influence.estimate <- function(model, ...)
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
 ##' var_ic(IC(g))
+##' @return Matrix with rows corresponding to observations and columns to
+##'   parameters, representing the estimated influence function. Attributes
+##'   include `bread` (derivative of the estimating equation).
 ##' @export
 IC.default <- function(x, bread, id=NULL,
                        ...) {

@@ -1,5 +1,3 @@
-###{{{ gaussian
-
 gaussian_method.lvm <- "nlminb2"
 `gaussian_objective.lvm` <-
   function(x,p,data,S,mu,n,...) {
@@ -80,7 +78,7 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weights=NULL, debug=FA
     }
   }
 
-  ### Here the emperical mean and variance of the population are sufficient statistics:
+  ## Here the emperical mean and variance of the population are sufficient statistics:
   if (missing(S)) {
     data0 <- na.omit(data[,manifest(x),drop=FALSE])
     n <- NROW(data0)
@@ -118,10 +116,6 @@ gaussian_score.lvm <- function(x, data, p, S, n, mu=NULL, weights=NULL, debug=FA
   return(rbind(res))
 }
 
-###}}} gaussian
-
-###{{{ gaussian variants
-
 ## Maximum Likelihood with numerical gradient + hessian
 gaussian0_objective.lvm <- gaussian_objective.lvm
 
@@ -145,6 +139,3 @@ gaussian2_hessian.lvm <- function(x,p,n,data,...) {
     attributes(I)$grad <- colSums(S)
     return(I)
 }
-
-###}}}
-

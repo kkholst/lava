@@ -1,3 +1,10 @@
+##' Estimate method for GLM objects
+##'
+##' Applies [estimate.default] to obtain robust inference for a fitted
+##' `glm` object.
+##' @param x Fitted `glm` object
+##' @param ... Additional arguments to [estimate.default]
+##' @return Object of class `estimate` (see [estimate.default]).
 ##' @export
 estimate.glm <- function(x, ...) {
   estimate.default(x, ...)

@@ -62,12 +62,11 @@
 ##' @param additive If FALSE and predictor is categorical a non-additive effect is assumed
 ##' @param y Alias for 'to'
 ##' @param x Alias for 'from'
-##' @param quick Faster implementation without parameter constraints
 ##' @param \dots Additional arguments to be passed to the low level functions
 ##' @usage
 ##' \method{regression}{lvm}(object = lvm(), to, from, fn = NA,
 ##' messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
-##' \method{regression}{lvm}(object, to=NULL, quick=FALSE, ...) <- value
+##' \method{regression}{lvm}(object, to=NULL, from=NULL, ...) <- value
 ##' @return A \code{lvm}-object
 ##' @note Variables will be added to the model if not already present.
 ##' @author Klaus K. Holst
@@ -78,17 +77,17 @@
 ##' @examples
 ##'
 ##' m <- lvm() ## Initialize empty lvm-object
-##' ### E(y1|z,v) = beta1*z + beta2*v
+##' ## E(y1|z,v) = beta1*z + beta2*v
 ##' regression(m) <- y1 ~ z + v
-##' ### E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u
+##' ## E(y2|x,z,v) = beta*x + beta*z + 2*v + beta3*u
 ##' regression(m) <- y2 ~ f(x,beta) + f(z,beta)  + f(v,2) + u
-##' ### Clear restriction on association between y and
-##' ### fix slope coefficient of u to beta
+##' ## Clear restriction on association between y and
+##' ## fix slope coefficient of u to beta
 ##' regression(m, y2 ~ v+u) <- list(NA,"beta")
 ##'
 ##' regression(m) ## Examine current linear parameter constraints
 ##'
-##' ## ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:
+##' ## A multivariate model, E(yi|x1,x2) = beta[1i]*x1 + beta[2i]*x2:
 ##' m2 <- lvm(c(y1,y2) ~ x1+x2)
 ##'
 ##' @export
@@ -98,14 +97,14 @@
 regression.formula <- function(object,...) regression(lvm(),object,...)
 
 ##' @export
-"regression<-.lvm" <- function(object, to=NULL, quick=FALSE, ..., value) {
+"regression<-.lvm" <- function(object, to=NULL, from=NULL, ..., value) {
     dots <- list(...)
     if (length(dots$additive)>0 && !dots$additive && !inherits(value,"formula")) {
         regression(object,beta=value,...) <- to
         return(object)
     }
     if (!is.null(to) || !is.null(dots$y)) {
-        regfix(object, to=to, ...) <- value
+        regfix(object, to=to, from=from, ...) <- value
         return(object)
     } else  {
         if (is.list(value)) {
@@ -214,6 +213,10 @@ regression.formula <- function(object,...) regression(lvm(),object,...)
                 regression(object,messages=messages,...) <- to
             }
             object$parpos <- NULL
+            return(object)
+        }
+        if (!missing(value) && is.character(to) && !is.null(from)) {
+            regfix(object, to=to, from=from, ...) <- value
             return(object)
         }
         if (is.list(to)) {

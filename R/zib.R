@@ -211,7 +211,7 @@ family.zibreg <- function(object,...) object$family
 
 ##' @export
 predict.zibreg <- function(object,p=coef(object),gamma,newdata,link=TRUE,subdist=FALSE,...) {
-    newf <- as.formula(paste("~",as.character(object$formula)[3]))
+    newf <- as.formula(paste("~", paste(deparse(object$formula[[3]]), collapse = " ")))
     if (missing(newdata)) {
         X <- object$X; Z <- object$Z
     } else {

@@ -1,3 +1,15 @@
+##' Estimate method for formulas
+##'
+##' Fit a GLM model specified by a formula and apply [estimate.default]
+##' for robust inference.
+##' @param x formula specifying the model
+##' @param data data.frame
+##' @param weights optional weights
+##' @param family GLM family (default `gaussian`)
+##' @param ... Additional arguments to [estimate.default]
+##' @param model character string specifying the model type (default `"glm"`)
+##' @param lvm logical, if TRUE use `estimate.lvm` instead
+##' @return Object of class `estimate` (see [estimate.default]).
 ##' @export
 estimate.formula <- function(x, data, weights, family=stats::gaussian,
                       ..., model="glm", lvm=FALSE) {

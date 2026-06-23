@@ -17,6 +17,9 @@
 \item{...}{Additional arguments to lower level functions (i.e.,
 stats::density.default when type="quantile")}
 }
+\value{
+Object of class \code{estimate} (see \link{estimate.default}).
+}
 \description{
 Estimate parameters for the sample mean, variance, and quantiles
 }

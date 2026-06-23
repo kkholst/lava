@@ -103,6 +103,19 @@ R <- Expand(a=1:3, b=1:3)
 sim(f, R)
 sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
 sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
+
+## Returning estimate objects with extra per-iteration information
+onerun2 <- function(...) {
+  x <- rnorm(50)
+  y <- 0.5*x + rnorm(50)
+  e <- estimate(lm(y ~ x))
+  c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+}
+val2 <- sim(onerun2, R = 10)
+val2
+# extra columns are stored but excluded from default summary statistics
+idx <- c("(Intercept)", "x", "niter")
+summary(val2, estimate=idx, true=c(0,0.5,NA))
 }
 \seealso{
 \code{\link[=summary.sim]{summary.sim()}} \code{\link[=plot.sim]{plot.sim()}} \code{\link[=sim.lvm]{sim.lvm()}}

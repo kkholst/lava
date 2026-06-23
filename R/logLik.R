@@ -1,5 +1,3 @@
-###{{{ logLik.lvm
-
 ##' @export
 logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=FALSE,weights=NULL,data2=NULL,...) {
     cl <- match.call()
@@ -26,7 +24,7 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     logLikFun <- get(lname)
 
 
-    if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ##### Random slopes!
+    if (length(xfix)>0 | (length(xconstrain)>0 & !xconstrainM & !lava.options()$test & model!="gaussian")) { ## Random slopes!
         x0 <- object
         if (length(xfix)>0) {
             Debug("random slopes...",debug)
@@ -127,10 +125,6 @@ logLik.lvm <- function(object,p,data,model="gaussian",indiv=FALSE,S,mu,n,debug=F
     class(loglik) <- "logLik"
     return(loglik)
 }
-
-###}}}
-
-###{{{ gaussian_loglik
 
 ##' @export
 gaussian_logLik.lvm <- function(object,p,data,
@@ -262,10 +256,6 @@ gaussian_logLik.lvm <- function(object,p,data,
     return(loglik)
 }
 
-###}}}
-
-###{{{ logLik.lvmfit
-
 ##' @export
 logLik.lvmfit <- function(object,
                    p=coef(object),
@@ -285,10 +275,6 @@ logLik.lvmfit <- function(object,
     return(l)
 }
 
-###}}} logLik.lvmfit
-
-###{{{ logLik.lvm.missing
-
 ##' @export
 logLik.lvm.missing <- function(object,
                         p=pars(object), model=object$estimator,
@@ -296,10 +282,6 @@ logLik.lvm.missing <- function(object,
                         ...) {
     logLik(object$estimate$model0, p=p, model=model, weights=weights, ...)
 }
-
-###}}}
-
-###{{{ logLik.multigroup
 
 ##' @export
 logLik.multigroup <- function(object,p,data=object$data,weights=NULL,type=c("cond","sim","exo","sat"),...) {
@@ -337,13 +319,8 @@ logLik.multigroup <- function(object,p,data=object$data,weights=NULL,type=c("con
     return(loglik)
 }
 
-###}}} logLik.multigroup
-
-###{{{ logLik.multigroupfit
-
 ##' @export
 logLik.multigroupfit <- function(object,
                           p=pars(object), weights=Weights(object), model=object$estimator, ...) {
     logLik(object$model0,p=p,weights=weights,model=model,...)
 }
-###}}} logLik.multigroup

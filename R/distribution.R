@@ -1,5 +1,3 @@
-###{{{ distribution
-
 ##' @export
 "distribution<-" <- function(x,...,value) UseMethod("distribution<-")
 
@@ -111,10 +109,6 @@
     x$attributes$distribution[var]
 }
 
-###}}} distribution
-
-###{{{ normal/gaussian
-
 ##' @export
 normal.lvm <- function(link="identity",mean,sd,log=FALSE,...) {
     rnormal <- if(log) rlnorm else rnorm
@@ -132,10 +126,6 @@ gaussian.lvm <- normal.lvm
 ##' @export
 lognormal.lvm <- function(...) structure(normal.lvm(...,log=TRUE),family=list(family="log-normal",...))
 
-###}}} normal/gaussian
-
-###{{{ poisson
-
 ##' @export
 poisson.lvm <- function(link="log",lambda,...) {
     fam <- stats::poisson(link); fam$link <- link
@@ -150,10 +140,6 @@ poisson.lvm <- function(link="log",lambda,...) {
     attr(f,"var") <- FALSE
     return(f)
 }
-
-###}}} poisson
-
-###{{{ pareto
 
 ## @examples
 ## m <- lvm()
@@ -183,9 +169,6 @@ pareto.lvm <- function(lambda=1,...) {   ## shape: lambda, scale: mu
     return(f)
 }
 
-###}}} pareto
-###{{{ threshold
-
 ##' @export
 threshold.lvm <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
@@ -197,8 +180,6 @@ threshold.lvm <- function(p,labels=NULL,...) {
         cut(rnorm(n),breaks=c(-Inf,qnorm(cumsum(p)),Inf))
 }
 
-###}}} threshold
-
 ##' @export
 multinomial.lvm <- function(prob, labels=NULL) {
   if (sum(prob)<1)
@@ -209,8 +190,6 @@ multinomial.lvm <- function(prob, labels=NULL) {
   structure(function(n, ...) sample(labels, n, prob=prob, replace=TRUE),
             family=list(family='multinomial', par=prob))
 }
-
-###{{{ binomial
 
 ##' @export
 binomial.lvm <- function(link="logit",p,size=1) {
@@ -244,10 +223,6 @@ logit.lvm <- binomial.lvm("logit")
 
 ##' @export
 probit.lvm <- binomial.lvm("probit")
-
-###}}} binomial
-
-###{{{ Gamma
 
 ##' @export
 Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
@@ -289,20 +264,12 @@ Gamma.lvm <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,.
 ##' @export
 loggamma.lvm <- function(...) Gamma.lvm(...,log=TRUE)
 
-###}}} Gamma
-
-###{{{ chisq
-
 ##' @export
 chisq.lvm <- function(df=1,...) {
   f <- function(n,mu,var,...) mu + rchisq(n,df=df)
   attr(f, "family") <- list(family="chisq", par=c(df=df))
   return(f)
 }
-
-###}}} chisq
-
-###{{{ student (t-distribution)
 
 ##' @export
 student.lvm <- function(df=2,mu,sigma,...) {
@@ -312,10 +279,6 @@ student.lvm <- function(df=2,mu,sigma,...) {
     attr(f, "family") <- list(family="student-t")
     return(f)
 }
-
-###}}} student (t-distribution)
-
-###{{{ uniform
 
 ##' @export
 uniform.lvm <- function(a,b, value=NULL) {
@@ -334,11 +297,7 @@ uniform.lvm <- function(a,b, value=NULL) {
   return(f)
 }
 
-###}}} uniform
-
-###{{{ weibull
 ## see also eventTime.R for coxWeibull
-
 ##' @export
 weibull.lvm <- function(intercept=0, sigma=.5, scale, shape) {
     ## accelerated failure time (AFT) regression
@@ -370,10 +329,6 @@ weibull.lvm <- function(intercept=0, sigma=.5, scale, shape) {
     return(f)
 }
 
-###}}} weibull
-
-###{{{ sequence
-
 ##' @export
 id.lvm <- function(...) Sequence.lvm(integer=TRUE)
 
@@ -397,8 +352,6 @@ Sequence.lvm <- function(a=0,b=1,integer=FALSE) {
   return(f)
 }
 
-###}}} sequence
-
 ##' @export
 none.lvm <- function(...) {
   f <- function(n, mu, ...) {
@@ -417,8 +370,6 @@ constant.lvm <- function(value=NA) {
   attr(f, "family") <- list(family="constant", par=list(value=value))
   return(f)
 }
-
-###{{{ ones
 
 ##' @export
 ones.lvm <- function(p=1,interval=NULL) {
@@ -450,10 +401,6 @@ Binary.lvm <- ones.lvm
 ##' @export
 binary.lvm <- ones.lvm
 
-###}}} ones
-
-###{{{ beta
-
 ##' @export
 beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
     ## CDF: F(x) = B(x,alpha,beta)/B(alpha,beta)
@@ -472,9 +419,6 @@ beta.lvm <- function(alpha=1,beta=1,scale=TRUE) {
     return(f)
 }
 
-###}}} beta
-
-
 ##' @export
 mvn.lvm <- function(N=2,rho=0.5,sigma=NULL,parname="rho") {
     f <- function(n,rho) {
@@ -486,9 +430,6 @@ mvn.lvm <- function(N=2,rho=0.5,sigma=NULL,parname="rho") {
     if (!is.null(sigma)) parname <- TRUE
     structure(f,parname=parname,init=rho,mdist=TRUE)
 }
-
-
-###{{{ Gaussian mixture
 
 ##' @export
 GM2.lvm <- function(...,parname=c("Pr","M1","M2","V1","V2"),init=c(0.5,-4,4,1,1)) {
@@ -514,5 +455,3 @@ GM3.lvm <- function(...,parname=c("Pr1","Pr2","M1","M2","M3","V1","V2","V3"),ini
     }
     structure(f,parname=parname,init=init)
 }
-
-###}}} Gaussian mixture

@@ -1,8 +1,14 @@
+##' Extract score function
+##'
+##' Extract the score function (gradient of the log-likelihood) from a
+##' model object.
+##' @param x Model object
+##' @param ... Additional arguments to lower level functions
+##' @return Matrix of score/gradient values. Rows correspond to
+##'   observations (if `indiv=TRUE`) or a single row, columns to parameters.
 ##' @export
 `score` <-
 function(x,...) UseMethod("score")
-
-###{{{ score.lvm
 
 ##' @export
 score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weights=NULL, data2=NULL, debug=FALSE, reindex=FALSE, mean=TRUE, constrain=TRUE, indiv=TRUE,...) {
@@ -37,7 +43,7 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weights=NULL,
     n <- nrow(data)
   }
 
-  if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
+  if (length(xfix)>0 | length(xconstrain)>0) { ## Random slopes!
     x0 <- x
     if (length(xfix)>0) {
       Debug("random slopes...",debug)
@@ -80,10 +86,6 @@ score.lvm <- function(x, data, p, model="gaussian", S, n, mu=NULL, weights=NULL,
   return(score)
 }
 
-###}}} score.lvm
-
-###{{{ score.lvm.missing
-
 ##' @export
 score.lvm.missing <- function(x,
                        p=pars(x), estimator=x$estimator,
@@ -113,18 +115,10 @@ score.lvm.missing <- function(x,
     return(S)
 }
 
-###}}} score.lvm.missing
-
-###{{{ score.multigroupfit
-
 ##' @export
 score.multigroupfit <- function(x,p=pars(x), weights=Weights(x), estimator=x$estimator, data2=x$data2, ...) {
   score(x$model0, p=p, weights=weights, data2=data2, model=estimator,...)
 }
-
-###}}} score.multigroupfit
-
-###{{{ score.multigroup
 
 ##' @export
 score.multigroup <- function(x,data=x$data,weights=NULL,data2=NULL,p,indiv=combine,combine=FALSE,...) {
@@ -150,10 +144,6 @@ score.multigroup <- function(x,data=x$data,weights=NULL,data2=NULL,p,indiv=combi
   return(as.vector(res))
 }
 
-###}}} score.multigroup
-
-###{{{ score.lvmfit
-
 ##' @export
 score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, weights=Weights(x), data2=x$data$data2, ...) {
   res <- score(x$model0, data = data, p = p, model = model, weights = weights, data2 = data2, ...)
@@ -161,4 +151,3 @@ score.lvmfit <- function(x, data=model.frame(x), p=pars(x), model=x$estimator, w
   res
 }
 
-###}}} score.lvmfit

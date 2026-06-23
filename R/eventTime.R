@@ -126,13 +126,12 @@
 eventTime <- function(object,formula,eventName="status",...) {
     if (missing(formula)) return(object$attributes$eventHistory)
     if (inherits(eventName,"formula")) eventName <- all.vars(eventName)
-    ff <- as.character(formula)
     timeName <- all.vars(update.formula(formula,"~1"))
     if (length(timeName)==0){
         timeName <- "observedTime"
-        rhs <- ff[[2]]
+        rhs <- paste(deparse(formula[[2]]), collapse = " ")
     }else{
-        rhs <- ff[[3]]
+        rhs <- paste(deparse(formula[[3]]), collapse = " ")
     }
     ## rhs <- tolower(rhs)
     latentTimes <- strsplit(rhs,"[(,)]")[[1]]

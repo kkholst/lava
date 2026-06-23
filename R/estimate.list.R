@@ -1,5 +1,11 @@
 
-##' @export
+##' Estimate method for lists
+##'
+##' @param x list of model objects or `lvm` objects
+##' @param ... Additional arguments to lower level functions
+##' @return Object of class `estimate.list` (a list of `estimate` objects),
+##'   or a fitted multi-group model if input is a list of `lvm` objects.
+#' @export
 estimate.list <- function(x,...) {
   if (inherits(x[[1]],"lvm")) return(estimate_lvmlist(x,...))
   res <- lapply(x,function(x) estimate(x,...))
@@ -7,22 +13,22 @@ estimate.list <- function(x,...) {
   res
 }
 
-##' @export
+#' @export
 coef.estimate.list <- function(object,...) {
   lapply(object, coef)
 }
 
-##' @export
+#' @export
 vcov.estimate.list <- function(object,...) {
   lapply(object, vcov)
 }
 
-##' @export
+#' @export
 IC.estimate.list <- function(x,...) {
   lapply(x, vcov)
 }
 
-##' @export
+#' @export
 merge.estimate.list <- function(x,...) {
   Reduce(merge, x)
 }

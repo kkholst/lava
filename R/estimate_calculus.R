@@ -1,6 +1,22 @@
 # ---- Merge, subset ------------------------------------------------------
 
-##' @export
+#' Merge estimate objects
+#'
+#' @param x Object of class `estimate`
+#' @param y Object of class `estimate`
+#' @param ... Additional `estimate` objects or arguments
+#' @param id Optional cluster variable
+#' @param paired If TRUE a paired (matched) analysis is performed
+#' @param labels Optional character vector of labels for the merged estimates
+#' @param keep Optional character vector of parameter names to keep
+#' @param subset Optional character vector of parameter names to subset
+#' @param regex If TRUE, `keep` and `subset` are treated as regular expressions
+#' @param sep Separator used for labeling
+#' @param drop.ic If TRUE, drop the influence function from the result
+#' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
+#' @seealso [c.estimate()]
+#' @return Object of class `estimate` (see [estimate.default]).
+#' @export
 merge.estimate <- function(x,y,...,
                            id,
                            paired=FALSE,
@@ -180,55 +196,111 @@ merge.estimate <- function(x,y,...,
     return(res)
 }
 
-##' @export
+#' @export
 "%++%.estimate" <- function(x, ...) {
   merge(x, ...)
 }
 
-##' @export
-"c.estimate" <- function(...) {
+#' Concatenate estimate objects
+#'
+#' When all arguments are `estimate` objects, they are merged into a single
+#' `estimate` object. When some arguments are not `estimate` objects but are
+#' named numeric scalars/vectors, an object of class `estimate.extra` is
+#' returned. This is useful for bundling auxiliary per-iteration information
+#' (e.g., convergence status) alongside an estimate for use with
+#' [sim.default()].
+#'
+#' @param ... `estimate` objects and/or named numeric values
+#' @param as.list if TRUE the returned object will be of class `list` and not
+#'   and `estimate` (or `estimate.extra`) object.
+#' @return An `estimate` object (if all args are estimates) or an
+#'   `estimate.extra` object containing `$estimate` and `$extra` components.
+#' @seealso [sim.default()] [merge.estimate()]
+#' @details arguments `drop.ic`, `paired`, `sep` are passed to [merge.estimate]
+#' @examples
+#' e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
+#' # Bundle estimate with extra information
+#' c(e, converged = 1, niter = 10)
+#' @export
+c.estimate <- function(..., as.list = FALSE) {
   args <- list(...)
-  n_args <- length(args)
-  # Handle names robustly
-  arg_names <- names(args)
-  # If names are NULL, create a vector of empty strings
-  if (is.null(arg_names)) {
-    arg_names <- character(n_args)
-  }
-  is_estimate <- unlist(lapply(args, function(x)
-    inherits(x, c("estimate"))
-    ))
-  merge_args <- c("drop.ic", "paired", "sep")
-  not_merge_arg <- which(arg_names %ni% merge_args)
-  if (!all(is_estimate[not_merge_arg])) { # fallback to default concatenation
-    cl <- class(args[[1]])
+  if (as.list) { # fallback to default concatenation
     class(args[[1]]) <- "list"
     return(do.call(c, args))
   }
-  lab <- arg_names[not_merge_arg]
+  if (any(unlist(lapply(args, function(x) inherits(x, "estimate.extra"))))) {
+    return(do.call(c.estimate.extra, args))
+  }
+  # Handle names robustly
+  arg_names <- names(args) %||% character(length(args))
+  is_estimate <- vapply(args, inherits, logical(1L), "estimate")
+  merge_args <- c("drop.ic", "paired", "sep")
+
+  not_merge_arg <- which(arg_names %ni% merge_args)
+  est_idx <- which(is_estimate)
+  extra_idx <- setdiff(not_merge_arg, est_idx)
+  lab <- arg_names[est_idx]
+  # Extract extra (non-estimate, non-merge) arguments
+  extra <- NULL
+  if (length(extra_idx) > 0L) {
+    extra <- unlist(args[extra_idx])
+  }
+  # Blank non-merge names (estimate labels handled later, extras removed)
   arg_names[not_merge_arg] <- ""
   names(args) <- arg_names
+  args[extra_idx] <- NULL
+  # Merge estimate objects and apply potential merge_args
   res <- do.call(merge, args)
+  # Add new labels
   newlabels <- names(coef(res))
   if (!is.null(lab)) {
     idx <- which(lab != "")
     newlabels[idx] <- lab[idx]
-    return(labels(res, newlabels))
+    res <- labels(res, newlabels)
   }
-  return(res)
+  # Append extra arguments
+  if (!is.null(extra)) {
+    res <- structure(
+      list(estimate = res, extra = extra),
+      class = "estimate.extra"
+    )
+  }
+  res
 }
 
-##' @export
+#' @export
+c.estimate.extra <- function(...) {
+  objs <- list(...)
+  est <- c()
+  extra <- c()
+  for (i in seq_along(objs)) {
+    e <- objs[[i]]
+    if (inherits(e, "estimate.extra")) {
+      extra <- c(extra, list(e$extra))
+      e <- e$estimate
+    }
+    if (inherits(e, "estimate")) {
+      est <- c(est, list(e))
+    } else {
+      extra <- c(extra, list(objs[i]))
+    }
+  }
+  est <- Reduce("merge", est)
+  extra <- unlist(Reduce(c, extra))
+  structure(list(estimate=est, extra=extra), class="estimate.extra")
+}
+
+#' @export
 subset.estimate <- function(x, keep, ...) {
   estimate(x, keep = keep, ...)
 }
 
-##' @export
+#' @export
 "[.estimate" <- function(x, i, ...) {
   subset(x, i, ...)
 }
 
-##' @export
+#' @export
 with.estimate <- function(data, expr, ...) {
     # Recursively walk the expression tree and replace symbols
   # that match names in `data` with data["symbol"] calls
@@ -260,9 +332,21 @@ with.estimate <- function(data, expr, ...) {
   eval(expr_new, envir = eval_env)
 }
 
+# ---- id / cluster  ------------------------------------------------------
+
+#' @export
+index.estimate <- function(x, ...) {
+  return(x[["id"]])
+}
+
+#' @export
+`index<-.estimate` <- function(x, ..., value) {
+  estimate(x, id=value, ...)
+}
+
 # ---- Trigonometric Functions --------------------------------------------
 
-##' @export
+#' @export
 sin.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- sin(p)
@@ -270,7 +354,7 @@ sin.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 cos.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- cos(p)
@@ -278,7 +362,7 @@ cos.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 tan.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- tan(p)
@@ -288,7 +372,7 @@ tan.estimate <- function(x, ...) {
 
 # ---- Inverse Trigonometric Functions ------------------------------------
 
-##' @export
+#' @export
 asin.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- asin(p)
@@ -296,7 +380,7 @@ asin.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 acos.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- acos(p)
@@ -304,7 +388,7 @@ acos.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 atan.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- atan(p)
@@ -314,7 +398,7 @@ atan.estimate <- function(x, ...) {
 
 # ---- Hyperbolic Functions -----------------------------------------------
 
-##' @export
+#' @export
 sinh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- sinh(p)
@@ -322,7 +406,7 @@ sinh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 cosh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- cosh(p)
@@ -330,7 +414,7 @@ cosh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 tanh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- tanh(p)
@@ -340,7 +424,7 @@ tanh.estimate <- function(x, ...) {
 
 # ---- Inverse Hyperbolic Functions ---------------------------------------
 
-##' @export
+#' @export
 asinh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- asinh(p)
@@ -348,7 +432,7 @@ asinh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 acosh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- acosh(p)
@@ -356,7 +440,7 @@ acosh.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 atanh.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- atanh(p)
@@ -366,7 +450,7 @@ atanh.estimate <- function(x, ...) {
 
 # ---- Other Common Functions ---------------------------------------------
 
-##' @export
+#' @export
 log1p.estimate <- function(x, ...) {
   # log(1 + p) — more numerically stable than log(p+1) for small p
   estimate(x, function(p) {
@@ -375,7 +459,7 @@ log1p.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 expm1.estimate <- function(x, ...) {
   # exp(p) - 1 — more numerically stable than exp(p)-1 for small p
   estimate(x, function(p) {
@@ -384,7 +468,7 @@ expm1.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 log.estimate <- function(x, base = exp(1), ...) {
   estimate(x, function(p) {
     y <- log(p, base = base)
@@ -393,7 +477,7 @@ log.estimate <- function(x, base = exp(1), ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 exp.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- exp(p)
@@ -401,12 +485,12 @@ exp.estimate <- function(x, ...) {
   }, ...)
 }
 
-##' @export
+#' @export
 sqrt.estimate <- function(x, ...) {
   estimate(x^.5, ...)
 }
 
-##' @export
+#' @export
 sum.estimate <- function(x, ...) {
   estimate(x,
            function(p)
@@ -415,7 +499,7 @@ sum.estimate <- function(x, ...) {
            ...)
 }
 
- ##' @export
+ #' @export
 "%*%.estimate" <- function(x, y, ...) {
   if (is.matrix(x)) {
     return(estimate(y, f=x, ...))
@@ -433,7 +517,7 @@ prod_except <- function(p) {
   left * right
 }
 
-##' @export
+#' @export
 prod.estimate <- function(x, ...) {
   estimate(x, function(p) {
     y <- prod(p)
@@ -507,7 +591,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
   return(grad)
 }
 
-##' @export
+#' @export
 "+.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -520,7 +604,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "-.estimate" <- function(e1, e2, ...) {
   if (missing(e2)) return(-1*e1)
   operator_estimate(
@@ -534,7 +618,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "*.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -547,7 +631,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "/.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -560,7 +644,7 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
       }, ...)
 }
 
-##' @export
+#' @export
 "^.estimate" <- function(e1, e2, ...) {
   operator_estimate(
     e1, e2,
@@ -577,9 +661,9 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
     }, ...)
 }
 
-# ---- == ---- ------------------------------------------------------------
+# ---- == / hypothesis ----------------------------------------------------
 
-##' @export
+#' @export
 "==.estimate" <- function(e1, e2) {
   if (!(is.numeric(e1) || is.numeric(e2))) stop("numeric comperator needed")
   null <- if (is.numeric(e1)) e1 else e2

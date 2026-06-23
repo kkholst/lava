@@ -1,5 +1,3 @@
-###{{{ plot.lvm
-
 ##' Plot path diagram
 ##'
 ##' Plot the path diagram of a SEM
@@ -167,10 +165,6 @@
   invisible(g)
 }
 
-###}}} plot.lvm
-
-###{{{ vis.lvm
-
 vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=TRUE,...) {
     if (!requireNamespace("visNetwork",quietly=TRUE)) stop("'visNetwork' required")
     types <- rep("endogenous",length(vars(m)))
@@ -236,10 +230,6 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
     v
 }
 
-###}}} vis.lvm
-
-###{{{ plot.lvmfit
-
 ##' @export
 `plot.lvmfit` <-
     function(x,diag=TRUE,cor=TRUE,type,noplot=FALSE,fontsize1=5,f,graph.proc=lava.options()$graph.proc,...) {
@@ -295,10 +285,6 @@ vis.lvm <- function(m,randomSeed=1,width="100%",height="700px",labels=FALSE,cor=
     invisible(g)
   }
 
-###}}} plot.lvmfit
-
-###{{{ plot.multigroup
-
 ##' @export
 plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
   k <- x$ngroup
@@ -310,10 +296,6 @@ plot.multigroup <- function(x,diag=TRUE,labels=TRUE,...) {
 plot.multigroupfit <- function(x,...) {
   plot(Model(x),...)
 }
-
-###}}}
-
-###{{{ igraph.lvm
 
 ##' @export
 igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
@@ -348,9 +330,6 @@ igraph.lvm <- function(x,layout=igraph::layout.kamada.kawai,...) {
   g$layout <- layout(g)
   return(g)
 }
-
-###}}} igraph.lvm
-
 
 beautify <- function(x,col=lava.options()$node.color,border=rep("black",3),labcol=rep("darkblue",3),edgecol=TRUE,...) {
     if (is.null(x$noderender$fill)) notcolored <- vars(x)

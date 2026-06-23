@@ -47,6 +47,7 @@ reference:
   - plot.lvm
   - predict.lvm
   - predictlvm
+  - predict_glm
 
 - title: "Data sets"
   contents:

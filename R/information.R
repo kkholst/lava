@@ -1,8 +1,12 @@
+##' Extract information matrix
+##'
+##' Extract the (observed or expected) information matrix from a model object.
+##' @param x Model object
+##' @param ... Additional arguments to lower level functions
+##' @return Information matrix or its inverse (depending on arguments).
 ##' @export
 `information` <-
     function(x,...) UseMethod("information")
-
-###{{{ information.lvm
 
 ##' @export
 information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
@@ -56,7 +60,7 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
         xfix <- colnames(data)[(colnames(data)%in%parlabels(x,exo=TRUE))]
         xconstrain <- intersect(unlist(lapply(constrain(x),function(z) attributes(z)$args)),manifest(x))
 
-        if (length(xfix)>0 | length(xconstrain)>0) { ##### Random slopes!
+        if (length(xfix)>0 | length(xconstrain)>0) { ## Random slopes!
             x0 <- x
             if (length(xfix)>0) {
                 nrow <- length(vars(x))
@@ -181,10 +185,6 @@ information.lvm <- function(x,p,n,type=ifelse(model=="gaussian",
     return(information)
 }
 
-###}}} information.lvm
-
-###{{{ information.lvmfit
-
 ##' @export
 information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=x$estimator,weights=Weights(x),
                         data2=x$data$data2,
@@ -196,9 +196,6 @@ information.lvmfit <- function(x,p=pars(x),n=x$data$n,data=model.frame(x),model=
     }
     return(I)
 }
-
-###}}} information.lvmfit
-
 
 ##' @export
 information.lvm.missing <- function(x,

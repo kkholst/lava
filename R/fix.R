@@ -1,5 +1,3 @@
-###{{{ print.fix
-
 ##' @export
 print.fix <- function(x,exo=FALSE,...) {
     switch(attributes(x)$type,
@@ -44,10 +42,6 @@ linconstrain <- function(x,print=TRUE,indent="  ",exo=FALSE,...) {
     }
     invisible(M)
 }
-
-###}}} print.fix
-
-###{{{ intfix
 
 "intfix" <- function(object,...) UseMethod("intfix")
 
@@ -170,10 +164,6 @@ intfix.lvm <- intercept.lvm
   object
 }
 
-###}}} intfix
-
-###{{{ covfix
-
 "covfix" <- function(object,...) UseMethod("covfix")
 
 #' @exportS3Method
@@ -184,7 +174,6 @@ covfix.lvm <- function(object,...) {
     class(res) <- "fix"
     return(res)
 }
-
 
 `covfix<-` <- function(object,...,value) UseMethod("covfix<-")
 
@@ -327,16 +316,13 @@ covfix.lvm <- function(object,...) {
     return(object)
 }
 
-###}}} covfix
-
-###{{{ regfix
-
 ##' @export
 "regfix" <- function(object,...) UseMethod("regfix")
 
 ##' @export
 regfix.lvm <- function(object,...) {
-    res <- list(rel=index(object)$M, labels=object$par, values=object$fix); attr(res,"type") <- "reg"
+    res <- list(rel=index(object)$M, labels=object$par, values=object$fix)
+    attr(res,"type") <- "reg"
     attr(res,"exo.idx") <- index(object)$exo.idx
     attr(res,"nvar") <- NROW(res$rel)
     class(res) <- "fix"
@@ -475,10 +461,6 @@ regfix.lvm <- function(object,...) {
     return(object)
 }
 
-###}}} regfix
-
-###{{{ parfix
-
 "parfix<-" <- function(x,...,value) UseMethod("parfix<-")
 
 #' @export
@@ -546,4 +528,3 @@ parfix.lvm <- function(x,idx,value,fix=FALSE,...) {
     return(object)
 }
 
-###}}} parfix

@@ -23,18 +23,6 @@ pars.lvm.missing <- function(x,reorder=FALSE,...) {
     return(res)
 }
 
-
-
-###{{{ pars.multigroupfit
-## pars.multigroupfit <- function(x,...) {
-##   res <- pars.default(x)
-##   lapply(ee$model$lvm,coef))
-##   coef()
-##}
-###}}}
-
-###{{{ pars.lvm
-
 ##' @export
 pars.lvm <- function(x, A, P, v, e, ...) {
   parres <- A[index(x)$M1==1]
@@ -58,5 +46,3 @@ pars.lvm <- function(x, A, P, v, e, ...) {
   }
   return(parres)
 }
-
-###}}} pars.lvm

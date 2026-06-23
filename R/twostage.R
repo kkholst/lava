@@ -220,9 +220,10 @@ twostage.lvmfit <- function(object, model2, data=NULL,
         if (is.null(id2)) id2 <- seq(nrow(model.frame(model2)))
         model1 <- object
         if (!inherits(object,"estimate")) {
-            model1 <- estimate(NULL, coef=p1, id=id1, IC=IC(object))
+            model1 <- estimate(NULL, coef = p1, id = id1,
+                               IC = scale(IC(object), center=TRUE, scale=FALSE)
+                               )
         }
-
         e2 <- estimate(model2, id=id2)
         U <- function(alpha = p1, beta = p2) {
             pp <- uhat(alpha, object, nlobj = val$nonlinear)
@@ -256,7 +257,12 @@ twostage.lvmfit <- function(object, model2, data=NULL,
     res$estimate1 <- object
     res$estimate2 <- model2
     res$nonlinear <- val$nonlinear
-    structure(res,class=c("twostage.lvmfit","measurement.error","lvmfit","estimate"))
+    structure(
+      res, class=c("twostage.lvmfit",
+                   "measurement.error",
+                   "lvmfit",
+                   "estimate")
+    )
 }
 
 ##' @export
@@ -335,7 +341,6 @@ plot.twostage.lvm <- function(x,...) {
     }
     plot(model, ...)
 }
-
 
 ##' @export
 predict.twostage.lvmfit <- function(object,
