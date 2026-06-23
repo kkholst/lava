@@ -180,7 +180,6 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
-
     extra <- NULL
     is_estimate_extra <- inherits(res, "estimate.extra")
     if (is_estimate_extra) {
@@ -210,7 +209,6 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       }
       names(res) <- nam
     }
-
     if (!is.null(extra)) { # append extra par. not part of the estimate object
       res <- c(res, extra)
     }
