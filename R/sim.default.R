@@ -180,16 +180,26 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
+
     extra <- NULL
     is_estimate_extra <- inherits(res, "estimate.extra")
     if (is_estimate_extra) {
       extra <- res$extra
       res <- res$estimate
     }
-    is_estimate <- is_estimate_extra || inherits(res, c("estimate", "targeted"))
+    is_estimate <- is_estimate_extra || inherits(res, c(
+      "estimate", "summary.estimate","targeted")
+    )
+    if (is_summary_estimate <- inherits(res, "summary.estimate")) {
+      res <- res$coefmat
+    }
     if (is_estimate) {
       idx <- intersect(seq_len(5L), estimate.index) # parameters to keep
-      cmat <- lava::parameter(res)[, idx, drop=FALSE]
+      if (is_summary_estimate) { #nolint
+        cmat <- res[, idx, drop = FALSE]
+      } else {
+        cmat <- lava::parameter(res)[, idx, drop=FALSE]
+      }
       res <- as.vector(cmat)
       cn <- colnames(cmat)
       nam <- c()
@@ -200,6 +210,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       }
       names(res) <- nam
     }
+
     if (!is.null(extra)) { # append extra par. not part of the estimate object
       res <- c(res, extra)
     }

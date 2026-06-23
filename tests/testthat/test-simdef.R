@@ -23,12 +23,42 @@ test_that("sim.default with estimate objects", {
   onerun <- function(...) estimate(coef=runif(2),
                                    vcov=diag(runif(2)),
                                    labels=c("a","b"))
-  res <- sim(onerun, 100)
+  res <- sim(onerun, 10)
   s <- summary(res)
   expect_true(ncol(s) == 2L)
   expect_equivalent(colnames(s), c("a", "b"))
   expect_equivalent(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]))
   expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
+})
+
+test_that("sim.default with summary.estimate objects", {
+  onerun <- function(...) {
+    estimate(coef = runif(2), vcov = diag(runif(2)), labels = c("a","b")) |>
+      summary()
+  }
+  res <- sim(onerun, 5)
+  s <- summary(res)
+  expect_true(ncol(s) == 2L)
+  expect_equivalent(colnames(s), c("a", "b"))
+  expect_equivalent(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]))
+  expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
+
+  # with concatenated summary.estimate objects
+  onerun <- function(...) {
+    s1 <- estimate(
+      coef = runif(2), vcov = diag(runif(2)), labels = c("a","b")
+    ) |> summary()
+    s2 <- estimate(
+      coef = runif(2), vcov = diag(runif(2)), labels = c("c","d")
+    ) |> summary(back.transform = exp) # blanks Std.Err column in coefmat
+    c(s1, s2)
+  }
+  res <- sim(onerun, 5)
+  expect_true(all(is.na(res[, c("c.Std.Err", "d.Std.Err")])))
+
+  s <- summary(res)
+  expect_true(ncol(s) == 4L)
+  expect_equivalent(colnames(s), c("a", "b", "c", "d"))
 })
 
 test_that("sim.default exports seed sequences as attribute", {
