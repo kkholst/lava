@@ -15,16 +15,16 @@ with_unique_warnings <- function(expr) {
 small_sample_correction <- function(ic, type, var.adj) {
   V <- var_ic(ic)
   ## Small-sample corrections for clustered data
-  K <- NROW(ic_theta)
-  N <- attributes(ic_theta)$N
+  K <- NROW(ic)
+  N <- attributes(ic)$N
   if (is.null(N)) N <- K
-  p <- NCOL(ic_theta)
+  p <- NCOL(ic)
   adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
   adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
   adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
-  if (tolower(type[1])=="mbn" && !is.null(attributes(ic_theta)$bread)) {
+  if (tolower(type[1])=="mbn" && !is.null(attributes(ic)$bread)) {
     V0 <- V
-    iI0 <- attributes(ic_theta)$bread
+    iI0 <- attributes(ic)$bread
     I0 <- Inverse(iI0)
     delta <- min(0.5, p / (K - p))
     phi <- max(1, tr(I0%*%V0)*adj2/p)
@@ -40,7 +40,7 @@ small_sample_correction <- function(ic, type, var.adj) {
     V <- adj2*V
   }
   if (tolower(type[1])%in%c("hc3", "hc4")) {
-    ic <- cbind(ic_theta)
+    ic <- cbind(ic)
     S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
     h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
     n <- nrow(ic)
@@ -60,6 +60,7 @@ small_sample_correction <- function(ic, type, var.adj) {
     for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
     V <- var_ic(ic)
   }
+  return(V)
 }
 
 # construct coefficient matrix with confidence limits and two-sided p-values

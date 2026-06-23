@@ -174,7 +174,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' ## Testing contrasts
 #' summary(estimate(g), null=0)
 #' estimate(g, rbind(c(1,1,0), c(1,0,2)))
-#' estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
+#' summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
 #' estimate(g, 2:3) ## same as cbind(0,1,-1)
 #' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 #' ## Alternative syntax
@@ -519,11 +519,18 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
 
   if (contrast.transform) {
-    pp <- as.vector(f %*% pp)
-    if (!is.null(ic_theta)) {
-      ic_theta <- ic_theta %*% t(f)
+    B <- f
+    if (is.vector(B) || is.list(B)) {
+      B <- contr(f, names(pp), ...)
     }
-    V <- f %*% V %*% t(f)
+    obj <- structure(list(coef=pp, vcov=V), class="estimate")
+    cc <- compare(obj, contrast=B) # to construct new parameter names
+    pp <- as.vector(B %*% pp)
+    names(pp) <- cc$cnames
+    if (!is.null(ic_theta)) {
+      ic_theta <- ic_theta %*% t(B)
+    }
+    V <- B %*% V %*% t(B)
     f <- NULL
   }
 
@@ -533,10 +540,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     dots <- ("..."%in%names(form))
     form0 <- setdiff(form, "...")
     parname <- "p"
-
     if (!is.null(form)) parname <- form[1] # unless .Primitive
     if (length(form0)==1 && !(form0%in%c("object", "data"))) {
-      ##names(formals(f))[1] <- "p"
       parname <- form0
     }
     if (!is.null(ic_theta)) {

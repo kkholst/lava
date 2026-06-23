@@ -668,5 +668,5 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
   if (!(is.numeric(e1) || is.numeric(e2))) stop("numeric comperator needed")
   null <- if (is.numeric(e1)) e1 else e2
   e <- if (is.numeric(e1)) e2 else e1
-  suppressWarnings(estimate(e, null=null))
+  suppressWarnings(summary(e, null=null))
 }
