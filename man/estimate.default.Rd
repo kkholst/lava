@@ -85,12 +85,6 @@ stored in the returned object (extract with the \link{IC} method). Can also be
 a user-supplied IF matrix (one row per observation, one column per
 parameter), which is used directly instead of estimating it from \code{x}.}
 
-<<<<<<< HEAD
-\item{type}{type of small-sample correction (deprecated; see
-\link{summary.estimate})}
-||||||| 6eb797cc
-\item{type}{type of small-sample correction}
-=======
 \item{type}{type of small-sample correction for cluster-robust variance.
 One of:
 \itemize{
@@ -101,18 +95,10 @@ One of:
 \code{var.adj}).
 \item \code{"hc4"}: Cribari-Neto (2004) leverage-adjusted correction.
 }}
->>>>>>> dev
 
-<<<<<<< HEAD
-\item{var.adj}{variance adjustment parameter for small-sample correction
-(deprecated; see \link{summary.estimate})}
-||||||| 6eb797cc
-\item{var.adj}{variance adjustment parameter for small-sample correction}
-=======
 \item{var.adj}{blending parameter for the HC3 leverage adjustment
 (default 0.25). Controls the weight between observation-level empirical
 leverage and the average leverage \eqn{p/n}.}
->>>>>>> dev
 
 \item{keep}{(optional) index of parameters to keep from final result.
 Accepts integer indices, character names, or (with \code{regex = TRUE})
@@ -127,25 +113,11 @@ and \code{use} arguments}
 
 \item{ignore.case}{ignore case in regular expressions}
 
-<<<<<<< HEAD
-\item{contrast}{(optional) Contrast matrix for final Wald test
-(deprecated; see \link{summary.estimate})}
-||||||| 6eb797cc
-\item{contrast}{(optional) Contrast matrix for final Wald test}
-=======
 \item{contrast}{(optional) contrast matrix for a final Wald test. When
 supplied together with \code{null}, tests \eqn{H_0: B\theta = b_0}.}
->>>>>>> dev
 
-<<<<<<< HEAD
-\item{null}{(optional) null hypothesis to test (deprecated; see
-\link{summary.estimate})}
-||||||| 6eb797cc
-\item{null}{(optional) null hypothesis to test}
-=======
 \item{null}{(optional) null hypothesis vector \eqn{b_0} to test against
 (default 0)}
->>>>>>> dev
 
 \item{vcov}{(optional) covariance matrix of parameter estimates, or a
 logical. If \code{TRUE}, \link[stats:vcov]{stats::vcov} is used to obtain the (model-based)
@@ -272,19 +244,20 @@ g0 <- glm(y~1,data=d,family=binomial())
 ## LRT
 estimate(g, g0)
 
-## Plain estimates (robust standard errors)
+
 estimate(g)
 
 ## Testing contrasts
+estimate(g, null=0)
 estimate(g, rbind(c(1,1,0), c(1,0,2)))
-summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
+estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
 estimate(g, 2:3) ## same as cbind(0,1,-1)
 estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 ## Alternative syntax
 estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 estimate(g, "?")  ## Wildcards
 estimate(g, "*Int*", "z")
-summary(estimate(g, "1", "2"-"3"), null = c(0,1))
+estimate(g, "1", "2"-"3", null = c(0,1))
 estimate(g, 2, 3)
 
 ## Usual (non-robust) confidence intervals
@@ -397,6 +370,7 @@ B \%*\% e == 1
 }
 \seealso{
 \link{estimate.array}, \link{merge.estimate}, \link{contr}, \link{parsedesign},
-\link{pairwise.diff}, \link{c.estimate}, \code{summary.estimate}, \code{coef.estimate},
-\code{vcov.estimate}, \code{transform.estimate}, \code{labels.estimate}, \code{IC.estimate}
+\link{pairwise.diff}, \link{c.estimate}, \link{summary.estimate},
+\code{coef.estimate},
+\code{vcov.estimate}, \code{transform.estimate}, \code{labels.estimate},
 }
