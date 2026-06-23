@@ -34,6 +34,17 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
 #'   independence). When supplied, the IF is aggregated within clusters to
 #'   produce cluster-robust standard errors.
+#' @param coef (optional) named parameter vector. Used instead of
+#'   `coef(x)` when constructing an `estimate` object without a model.
+#' @param IC if `TRUE` (default) the influence function matrix is estimated and
+#'   stored in the returned object (extract with the [IC] method). Can also be
+#'   a user-supplied IF matrix (one row per observation, one column per
+#'   parameter), which is used directly instead of estimating it from `x`.
+#' @param vcov (optional) covariance matrix of parameter estimates, or a
+#'   logical. If `TRUE`, [stats::vcov] is used to obtain the (model-based)
+#'   covariance matrix from `x`, yielding non-robust standard errors. If a
+#'   matrix is supplied it is used directly. When omitted or `FALSE`, robust
+#'   standard errors are computed from the influence function.
 #' @param stack if `TRUE` (default) the influence function contributions are
 #'   summed within each cluster defined by `id`. Set to `FALSE` to keep the
 #'   un-stacked (per-observation) decomposition.
@@ -46,11 +57,24 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   column name. When used together with `average = TRUE`, the average is
 #'   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
 #'   conditional marginalized estimate.
+#' @param keep (optional) index of parameters to keep from final result.
+#'   Accepts integer indices, character names, or (with `regex = TRUE`)
+#'   perl-compatible regular expressions.
+#' @param use (optional) index of parameters to use in calculations. The
+#'   selected parameters are first extracted (via `keep`) and then the
+#'   remaining arguments (`f`, `contrast`, etc.) are applied to this subset.
+#' @param regex if `TRUE` use perl-compatible regular expressions for `keep`
+#'   and `use` arguments
+#' @param ignore.case ignore case in regular expressions
+#' @param print (optional) custom print function for the resulting `estimate`
+#'   object
+#' @param labels (optional) character vector of coefficient names
+#' @param label.width (optional) max display width of labels
+#' @param contrast (optional) contrast matrix for a final Wald test. When
+#'   supplied together with `null`, tests \eqn{H_0: B\theta = b_0}.
+#' @param null (optional) null hypothesis vector \eqn{b_0} to test against
+#'   (default 0)
 #' @param level level of confidence limits (default 0.95)
-#' @param IC if `TRUE` (default) the influence function matrix is estimated and
-#'   stored in the returned object (extract with the [IC] method). Can also be
-#'   a user-supplied IF matrix (one row per observation, one column per
-#'   parameter), which is used directly instead of estimating it from `x`.
 #' @param type type of small-sample correction for cluster-robust variance.
 #'   One of:
 #'   - `"robust"` (default): no correction.
@@ -62,41 +86,14 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param var.adj blending parameter for the HC3 leverage adjustment
 #'   (default 0.25). Controls the weight between observation-level empirical
 #'   leverage and the average leverage \eqn{p/n}.
-#' @param keep (optional) index of parameters to keep from final result.
-#'   Accepts integer indices, character names, or (with `regex = TRUE`)
-#'   perl-compatible regular expressions.
-#' @param use (optional) index of parameters to use in calculations. The
-#'   selected parameters are first extracted (via `keep`) and then the
-#'   remaining arguments (`f`, `contrast`, etc.) are applied to this subset.
-#' @param regex if `TRUE` use perl-compatible regular expressions for `keep`
-#'   and `use` arguments
-#' @param ignore.case ignore case in regular expressions
-#' @param contrast (optional) contrast matrix for a final Wald test. When
-#'   supplied together with `null`, tests \eqn{H_0: B\theta = b_0}.
-#' @param null (optional) null hypothesis vector \eqn{b_0} to test against
-#'   (default 0)
-#' @param vcov (optional) covariance matrix of parameter estimates, or a
-#'   logical. If `TRUE`, [stats::vcov] is used to obtain the (model-based)
-#'   covariance matrix from `x`, yielding non-robust standard errors. If a
-#'   matrix is supplied it is used directly. When omitted or `FALSE`, robust
-#'   standard errors are computed from the influence function.
-#' @param coef (optional) named parameter vector. Used instead of
-#'   `coef(x)` when constructing an `estimate` object without a model.
 #' @param df degrees of freedom for t-based inference (default: `NULL` for
 #'   Gaussian approximation; when set, confidence intervals and p-values use
 #'   the t-distribution with `df` degrees of freedom)
-#' @param print (optional) custom print function for the resulting `estimate`
-#'   object
-#' @param labels (optional) character vector of coefficient names
-#' @param label.width (optional) max display width of labels
-#' @param only.coef (Deprecated) if `TRUE` only the coefficient matrix is
-#'   returned. Use `parameter(estimate(...))` instead.
 #' @param back.transform (optional) function applied to the point estimates
 #'   and confidence interval bounds *after* inference is performed on the
 #'   original scale. Useful for variance-stabilizing transformations, e.g.,
 #'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
 #'   `tanh`.
-#'
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -312,21 +309,51 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   \item{compare}{(When `null` or contrasts are specified) Wald test result.}
 #' @method estimate default
 #' @export
-estimate.default <- function(x=NULL, f=NULL, ..., data, id,
+estimate.default <- function(x=NULL, f=NULL, ...,
+                             data, id,
+                             coef, IC=TRUE, vcov,
                              stack=TRUE,
                              average=FALSE, subset,
-                             level=0.95,
-                             IC=TRUE,
-                             type=c("robust", "df", "mbn"),
-                             var.adj,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
-                             contrast, null, vcov, coef,
-                             df=NULL,
                              print=NULL, labels, label.width,
-                             only.coef=FALSE, back.transform=NULL) {
+                             # obsolete argumets:
+                             contrast,
+                             null,
+                             level=NULL,
+                             type=NULL,
+                             var.adj=NULL,
+                             df=NULL,
+                             back.transform=NULL
+                             ) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
+
+  if (!missing(null) || !missing(contrast) ||
+      !is.null(type) || !is.null(var.adj) ||
+      !is.null(back.transform) || !is.null(level) ||
+      !is.null(df)
+      ) {
+    .Deprecated(
+      msg = paste0(
+        "The 'null', 'contrast', 'type', 'back.transform', 'level'
+        and 'var.adj' arguments of ",
+        "estimate.default() are deprecated. Use ",
+        "summary(estimate(...),
+null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
+      )
+    )
+  }
+  if (is.null(level)) {
+    level <- 0.95
+  }
+  if (is.null(type)) {
+    type <- "robust"
+  }
+  if (is.null(var.adj)) {
+    var.adj <- 0.25
+  }
+
   if ("iid" %in% names(cl)) {
     stop("The 'iid' argument is obsolete. Please use the 'IC' argument")
   }
@@ -340,20 +367,12 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
       "Use the 'vcov' argument to compute model-based SEs."
     )
   }
-  if (!missing(null) || !missing(contrast) ||
-      !missing(type) || !missing(var.adj)) {
-    .Deprecated(
-      msg = paste0(
-        "The 'null', 'contrast', 'type', and 'var.adj' arguments of ",
-        "estimate.default() are deprecated. Use ",
-        "summary(estimate(...), null=, contrast=, type=, var.adj=) instead."
-      )
-    )
-  }
+
   if (!missing(use)) {
     p0 <- c(
-      "f", "contrast", "only.coef",
-      "subset", "average", "keep", "labels", "null"
+      "f", "contrast",
+      "subset", "average",
+      "keep", "labels", "null"
     )
     cl0 <- cl
     cl0[c("use", p0)] <- NULL
@@ -807,15 +826,15 @@ estimate.default <- function(x=NULL, f=NULL, ..., data, id,
     object = res, str = labels, label.width = label.width
   )
 
-  if (only.coef) {
-    .Deprecated(
-      msg = paste0(
-        "The 'only.coef' argument is deprecated. ",
-        "Use `parameter(estimate(...))` instead."
-      )
-    )
-    return(res$coefmat)
-  }
+  ## if (only.coef) {
+  ##   .Deprecated(
+  ##     msg = paste0(
+  ##       "The 'only.coef' argument is deprecated. ",
+  ##       "Use `parameter(estimate(...))` instead."
+  ##     )
+  ##   )
+  ##   return(res$coefmat)
+  ## }
   res$call <- cal
   res$back.transform <- back.transform
   res$n <- nrow(data)
@@ -976,6 +995,15 @@ with_unique_warnings <- function(expr) {
 #' @param var.adj variance adjustment parameter for small-sample
 #'   correction. Requires the estimate to have been computed with
 #'   `IC=TRUE` (the default).
+#' @param df degrees of freedom for t-based inference (default: `NULL` for
+#'   Gaussian approximation; when set, confidence intervals and p-values use
+#'   the t-distribution with `df` degrees of freedom)
+#' @param level level of confidence limits (default 0.95)
+#' @param transform (optional) function applied to the point estimates
+#'   and confidence interval bounds *after* inference is performed on the
+#'   original scale. Useful for variance-stabilizing transformations, e.g.,
+#'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
+#'   `tanh`.
 #' @param ... additional arguments passed to [estimate()].
 #' @seealso [estimate.default()]
 #' @export
@@ -983,7 +1011,7 @@ summary.estimate <- function(object,
                              contrast,
                              null,
                              type,
-                             var.adj,
+                             var.adj=0.25,
                              ...) {
   with_unique_warnings({
     p <- coef(object)

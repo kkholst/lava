@@ -12,26 +12,25 @@
   ...,
   data,
   id,
+  coef,
+  IC = TRUE,
+  vcov,
   stack = TRUE,
   average = FALSE,
   subset,
-  level = 0.95,
-  IC = TRUE,
-  type = c("robust", "df", "mbn"),
-  var.adj,
   keep,
   use,
   regex = FALSE,
   ignore.case = FALSE,
-  contrast,
-  null,
-  vcov,
-  coef,
-  df = NULL,
   print = NULL,
   labels,
   label.width,
-  only.coef = FALSE,
+  contrast,
+  null,
+  level = NULL,
+  type = NULL,
+  var.adj = NULL,
+  df = NULL,
   back.transform = NULL
 )
 }
@@ -63,6 +62,20 @@ or a logical scalar (\code{TRUE} for one-to-one matching, \code{FALSE} for
 independence). When supplied, the IF is aggregated within clusters to
 produce cluster-robust standard errors.}
 
+\item{coef}{(optional) named parameter vector. Used instead of
+\code{coef(x)} when constructing an \code{estimate} object without a model.}
+
+\item{IC}{if \code{TRUE} (default) the influence function matrix is estimated and
+stored in the returned object (extract with the \link{IC} method). Can also be
+a user-supplied IF matrix (one row per observation, one column per
+parameter), which is used directly instead of estimating it from \code{x}.}
+
+\item{vcov}{(optional) covariance matrix of parameter estimates, or a
+logical. If \code{TRUE}, \link[stats:vcov]{stats::vcov} is used to obtain the (model-based)
+covariance matrix from \code{x}, yielding non-robust standard errors. If a
+matrix is supplied it is used directly. When omitted or \code{FALSE}, robust
+standard errors are computed from the influence function.}
+
 \item{stack}{if \code{TRUE} (default) the influence function contributions are
 summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
 un-stacked (per-observation) decomposition.}
@@ -78,12 +91,33 @@ column name. When used together with \code{average = TRUE}, the average is
 conditioned on the subpopulation where \code{subset} is \code{TRUE}, yielding a
 conditional marginalized estimate.}
 
-\item{level}{level of confidence limits (default 0.95)}
+\item{keep}{(optional) index of parameters to keep from final result.
+Accepts integer indices, character names, or (with \code{regex = TRUE})
+perl-compatible regular expressions.}
 
-\item{IC}{if \code{TRUE} (default) the influence function matrix is estimated and
-stored in the returned object (extract with the \link{IC} method). Can also be
-a user-supplied IF matrix (one row per observation, one column per
-parameter), which is used directly instead of estimating it from \code{x}.}
+\item{use}{(optional) index of parameters to use in calculations. The
+selected parameters are first extracted (via \code{keep}) and then the
+remaining arguments (\code{f}, \code{contrast}, etc.) are applied to this subset.}
+
+\item{regex}{if \code{TRUE} use perl-compatible regular expressions for \code{keep}
+and \code{use} arguments}
+
+\item{ignore.case}{ignore case in regular expressions}
+
+\item{print}{(optional) custom print function for the resulting \code{estimate}
+object}
+
+\item{labels}{(optional) character vector of coefficient names}
+
+\item{label.width}{(optional) max display width of labels}
+
+\item{contrast}{(optional) contrast matrix for a final Wald test. When
+supplied together with \code{null}, tests \eqn{H_0: B\theta = b_0}.}
+
+\item{null}{(optional) null hypothesis vector \eqn{b_0} to test against
+(default 0)}
+
+\item{level}{level of confidence limits (default 0.95)}
 
 \item{type}{type of small-sample correction for cluster-robust variance.
 One of:
@@ -100,47 +134,9 @@ One of:
 (default 0.25). Controls the weight between observation-level empirical
 leverage and the average leverage \eqn{p/n}.}
 
-\item{keep}{(optional) index of parameters to keep from final result.
-Accepts integer indices, character names, or (with \code{regex = TRUE})
-perl-compatible regular expressions.}
-
-\item{use}{(optional) index of parameters to use in calculations. The
-selected parameters are first extracted (via \code{keep}) and then the
-remaining arguments (\code{f}, \code{contrast}, etc.) are applied to this subset.}
-
-\item{regex}{if \code{TRUE} use perl-compatible regular expressions for \code{keep}
-and \code{use} arguments}
-
-\item{ignore.case}{ignore case in regular expressions}
-
-\item{contrast}{(optional) contrast matrix for a final Wald test. When
-supplied together with \code{null}, tests \eqn{H_0: B\theta = b_0}.}
-
-\item{null}{(optional) null hypothesis vector \eqn{b_0} to test against
-(default 0)}
-
-\item{vcov}{(optional) covariance matrix of parameter estimates, or a
-logical. If \code{TRUE}, \link[stats:vcov]{stats::vcov} is used to obtain the (model-based)
-covariance matrix from \code{x}, yielding non-robust standard errors. If a
-matrix is supplied it is used directly. When omitted or \code{FALSE}, robust
-standard errors are computed from the influence function.}
-
-\item{coef}{(optional) named parameter vector. Used instead of
-\code{coef(x)} when constructing an \code{estimate} object without a model.}
-
 \item{df}{degrees of freedom for t-based inference (default: \code{NULL} for
 Gaussian approximation; when set, confidence intervals and p-values use
 the t-distribution with \code{df} degrees of freedom)}
-
-\item{print}{(optional) custom print function for the resulting \code{estimate}
-object}
-
-\item{labels}{(optional) character vector of coefficient names}
-
-\item{label.width}{(optional) max display width of labels}
-
-\item{only.coef}{(Deprecated) if \code{TRUE} only the coefficient matrix is
-returned. Use \code{parameter(estimate(...))} instead.}
 
 \item{back.transform}{(optional) function applied to the point estimates
 and confidence interval bounds \emph{after} inference is performed on the

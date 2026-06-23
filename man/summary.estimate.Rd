@@ -4,7 +4,7 @@
 \alias{summary.estimate}
 \title{Summary of estimate objects}
 \usage{
-\method{summary}{estimate}(object, contrast, null, type, var.adj, ...)
+\method{summary}{estimate}(object, contrast, null, type, var.adj = 0.25, ...)
 }
 \arguments{
 \item{object}{an \code{estimate} object.}
@@ -21,6 +21,18 @@ correction. Requires the estimate to have been computed with
 \code{IC=TRUE} (the default).}
 
 \item{...}{additional arguments passed to \code{\link[=estimate]{estimate()}}.}
+
+\item{df}{degrees of freedom for t-based inference (default: \code{NULL} for
+Gaussian approximation; when set, confidence intervals and p-values use
+the t-distribution with \code{df} degrees of freedom)}
+
+\item{level}{level of confidence limits (default 0.95)}
+
+\item{transform}{(optional) function applied to the point estimates
+and confidence interval bounds \emph{after} inference is performed on the
+original scale. Useful for variance-stabilizing transformations, e.g.,
+compute CIs on the \code{atanh} (Fisher z) scale and back-transform with
+\code{tanh}.}
 }
 \description{
 Computes hypothesis tests, contrasts, and small-sample corrections for

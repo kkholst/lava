@@ -461,12 +461,3 @@ test_that("robust argument backwards compatibility", {
   expect_equal(e0m$coefmat, e1m$coefmat)
 })
 
-test_that("only.coef argument is deprecated", {
-  expect_warning(
-    result <- estimate(a3d, only.coef = TRUE),
-    regexp = "only.coef.*deprecated"
-  )
-
-  # Verify it still returns the coefficient matrix
-  expect_equal(result, coef(estimate(a3d), mat = TRUE))
-})
