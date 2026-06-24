@@ -526,7 +526,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     obj <- structure(list(coef=pp, vcov=V), class="estimate")
     cc <- compare(obj, contrast=B) # to construct new parameter names
     pp <- as.vector(B %*% pp)
-    names(pp) <- cc$cnames
+    names(pp) <- strip_bracket(cc$cnames)
     if (!is.null(ic_theta)) {
       ic_theta <- ic_theta %*% t(B)
     }
