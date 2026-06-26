@@ -17,28 +17,28 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param x model object (`glm`, `lvmfit`, ...) or an existing `estimate`
 #'   object. When two model objects are supplied (e.g., `estimate(g, g0)`) a
 #'   likelihood-ratio test is performed.
-#' @param f transformation of model parameters. Accepts several input types:
-#'   - A **function** `f(p)` or `f(p, data)`: applies the delta method.
-#'     When `f` returns a named list the names are used as parameter labels.
-#'   - A **matrix**: used as a contrast (linear combination) matrix.
-#'   - A **numeric vector** of parameter indices: converted to a contrast
-#'     that selects and differences those parameters.
-#'   - A **list** of indices: each element selects one parameter.
-#'   - **Character** expressions: supports wildcards (`"?"`, `"*"`) and
-#'     arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
+#' @param f transformation of model parameters. Accepts several input types: - A
+#'   **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
+#'   returns a named list the names are used as parameter labels. - A
+#'   **matrix**: used as a contrast (linear combination) matrix. - A **numeric
+#'   vector** of parameter indices: converted to a contrast that selects and
+#'   differences those parameters. - A **list** of indices: each element selects
+#'   one parameter. - **Character** expressions: supports wildcards (`"?"`,
+#'   `"*"`) and arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 *
+#'   "x"`).
 #' @param ... additional arguments to lower level functions
 #' @param data `data.frame` used by `f` when the transformation depends on
 #'   covariates (see `average`). Defaults to `model.frame(x)`.
 #' @param id (optional) cluster identifier. Can be a vector of cluster IDs, a
-#'   one-sided formula (evaluated in `data`), a single character column name,
-#'   or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
+#'   one-sided formula (evaluated in `data`), a single character column name, or
+#'   a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
 #'   independence). When supplied, the IF is aggregated within clusters to
 #'   produce cluster-robust standard errors.
-#' @param coef (optional) named parameter vector. Used instead of
-#'   `coef(x)` when constructing an `estimate` object without a model.
+#' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
+#'   constructing an `estimate` object without a model.
 #' @param IC if `TRUE` (default) the influence function matrix is estimated and
-#'   stored in the returned object (extract with the [IC] method). Can also be
-#'   a user-supplied IF matrix (one row per observation, one column per
+#'   stored in the returned object (extract with the [IC] method). Can also be a
+#'   user-supplied IF matrix (one row per observation, one column per
 #'   parameter), which is used directly instead of estimating it from `x`.
 #' @param vcov (optional) covariance matrix of parameter estimates, or a
 #'   logical. If `TRUE`, [stats::vcov] is used to obtain the (model-based)
@@ -49,51 +49,52 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   summed within each cluster defined by `id`. Set to `FALSE` to keep the
 #'   un-stacked (per-observation) decomposition.
 #' @param average if `TRUE` the function computes the standardized
-#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e.,
-#'   the empirical mean of `f(p, data)` over all rows of `data`. The
-#'   influence function accounts for both the empirical averaging and the
-#'   parameter estimation uncertainty (see Details).
+#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
+#'   empirical mean of `f(p, data)` over all rows of `data`. The influence
+#'   function accounts for both the empirical averaging and the parameter
+#'   estimation uncertainty (see Details).
 #' @param subset (optional) logical vector, expression evaluated in `data`, or
 #'   column name. When used together with `average = TRUE`, the average is
 #'   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
 #'   conditional marginalized estimate.
-#' @param keep (optional) index of parameters to keep from final result.
-#'   Accepts integer indices, character names, or (with `regex = TRUE`)
-#'   perl-compatible regular expressions.
+#' @param keep (optional) index of parameters to keep from final result. Accepts
+#'   integer indices, character names, or (with `regex = TRUE`) perl-compatible
+#'   regular expressions.
 #' @param use (optional) index of parameters to use in calculations. The
-#'   selected parameters are first extracted (via `keep`) and then the
-#'   remaining arguments (`f`, `contrast`, etc.) are applied to this subset.
-#' @param regex if `TRUE` use perl-compatible regular expressions for `keep`
-#'   and `use` arguments
+#'   selected parameters are first extracted (via `keep`) and then the remaining
+#'   arguments (`f`, `contrast`, etc.) are applied to this subset.
+#' @param regex if `TRUE` use perl-compatible regular expressions for `keep` and
+#'   `use` arguments
 #' @param ignore.case ignore case in regular expressions
 #' @param print (optional) custom print function for the resulting `estimate`
 #'   object
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
-#' @param contrast (optional) contrast matrix for a final Wald test. When
-#'   supplied together with `null`, tests \eqn{H_0: B\theta = b_0}.
-#' @param null (optional) null hypothesis vector \eqn{b_0} to test against
-#'   (default 0)
-#' @param level level of confidence limits (default 0.95)
-#' @param type type of small-sample correction for cluster-robust variance.
-#'   One of:
-#'   - `"robust"` (default): no correction.
-#'   - `"df"`: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001).
-#'   - `"mbn"`: Morel-Bokossa-Neerchal (2003) correction.
-#'   - `"hc3"`: leverage-adjusted HC3-type correction (blended with
-#'     `var.adj`).
-#'   - `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
-#' @param var.adj blending parameter for the HC3 leverage adjustment
-#'   (default 0.25). Controls the weight between observation-level empirical
-#'   leverage and the average leverage \eqn{p/n}.
-#' @param df degrees of freedom for t-based inference (default: `NULL` for
-#'   Gaussian approximation; when set, confidence intervals and p-values use
-#'   the t-distribution with `df` degrees of freedom)
-#' @param back.transform (optional) function applied to the point estimates
-#'   and confidence interval bounds *after* inference is performed on the
-#'   original scale. Useful for variance-stabilizing transformations, e.g.,
-#'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
-#'   `tanh`.
+#' @param contrast (deprecated, use summary method) contrast matrix for a final
+#'   Wald test. When supplied together with `null`, tests \eqn{H_0: B\theta =
+#'   b_0}.
+#' @param null (deprecated, use summary method) null hypothesis vector \eqn{b_0}
+#'   to test against (default 0)
+#' @param level (deprecated, use summary method) level of confidence limits
+#'   (default 0.95)
+#' @param type (deprecated, use summary method) type of small-sample correction
+#'   for cluster-robust variance. One of: - `"robust"` (default): no correction.
+#'   - `"df"`: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001). -
+#'   `"mbn"`: Morel-Bokossa-Neerchal (2003) correction. - `"hc3"`:
+#'   leverage-adjusted HC3-type correction (blended with `var.adj`). - `"hc4"`:
+#'   Cribari-Neto (2004) leverage-adjusted correction.
+#' @param var.adj (deprecated, use summary method) blending parameter for the
+#'   HC3 leverage adjustment (default 0.25). Controls the weight between
+#'   observation-level empirical leverage and the average leverage \eqn{p/n}.
+#' @param df (deprecated, use summary method) degrees of freedom for t-based
+#'   inference (default: `NULL` for Gaussian approximation; when set, confidence
+#'   intervals and p-values use the t-distribution with `df` degrees of
+#'   freedom).
+#' @param back.transform (deprecated, use summary method) function applied to
+#'   the point estimates and confidence interval bounds *after* inference is
+#'   performed on the original scale. Useful for variance-stabilizing
+#'   transformations, e.g., compute CIs on the `atanh` (Fisher z) scale and
+#'   back-transform with `tanh`.
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -645,9 +646,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     }
   }
 
-  df_mod <- df
+  df_mod <- NULL
   if (inherits(x, "lm") && family(x)$family == "gaussian"
-      && !missing(vcov) && is.null(df_mod)) {
+      && !missing(vcov)) {
     # defaults to t-distribution when calculating p-values with model-based SEs
     df_mod <- x$df.residual
   }
@@ -723,8 +724,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       msg = paste0(
         "The 'null', 'contrast', 'type', 'back.transform', 'level'
         and 'var.adj' arguments of ",
-        "estimate.default() are deprecated. Use ",
-        "summary(estimate(...),
+        "estimate.default() are deprecated and will removed in version 1.9.3",
+        "Use: summary(estimate(...),
 null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
       )
     )
