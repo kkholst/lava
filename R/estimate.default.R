@@ -967,6 +967,32 @@ summary.estimate <- function(object,
 }
 
 #' @export
+c.summary.estimate <- function(...) {
+  args <- list(...)
+  if (length(args) == 1) return(args[[1]])
+  if (!all(sapply(args, \(x) inherits(x, "summary.estimate")))) stop(
+    "only summary.estimate objects can be concatenated."
+  )
+
+  .print <- function(x, ...) {
+    cat("Concatenated summary.estimate objects: \n")
+    print(cli::rule(width = min(cli::console_width(), 60)))
+    print(x$coefmat, digits = list(...)$digits)
+    print(cli::rule(width = min(cli::console_width(), 60)))
+  }
+
+  structure(list(
+    coefmat = Reduce(rbind, lapply(args, function (x) x$coefmat)),
+    coef = Reduce(rbind, lapply(args, function (x) x$coef)),
+    vcov = Reduce(function(...) blockdiag(..., pad=NA),
+                  lapply(args, function (x) x$vcov)),
+    objects = args,
+    print = .print # consumed by print.summary.estimate
+  ), class = "summary.estimate"
+  )
+}
+
+#' @export
 coef.summary.estimate <- function(object, ...) {
   object$coefmat
 }
