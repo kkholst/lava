@@ -11,7 +11,7 @@ with_unique_warnings <- function(expr) {
   })
 }
 
-
+# small sample corrections to variance estimates
 small_sample_correction <- function(ic, type, var.adj) {
   V <- var_ic(ic)
   ## Small-sample corrections for clustered data
@@ -89,20 +89,20 @@ estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
 #' @param object an `estimate` object.
 #' @param contrast (optional) contrast matrix for the final Wald test.
 #' @param null (optional) null hypothesis to test.
-#' @param type type of small-sample correction. Requires the estimate
-#'   to have been computed with `IC=TRUE` (the default).
-#' @param var.adj variance adjustment parameter for small-sample
-#'   correction. Requires the estimate to have been computed with
-#'   `IC=TRUE` (the default).
+#' @param type type of small-sample correction. Requires the estimate to have
+#'   been computed with `IC=TRUE` (the default).
+#' @param var.adj variance adjustment parameter for small-sample correction.
+#'   Requires the estimate to have been computed with `IC=TRUE` (the default).
 #' @param df degrees of freedom for t-based inference (default: `NULL` for
-#'   Gaussian approximation; when set, confidence intervals and p-values use
-#'   the t-distribution with `df` degrees of freedom)
+#'   Gaussian approximation; when set, confidence intervals and p-values use the
+#'   t-distribution with `df` degrees of freedom)
 #' @param level level of confidence limits (default 0.95)
-#' @param transform (optional) function applied to the point estimates
-#'   and confidence interval bounds *after* inference is performed on the
-#'   original scale. Useful for variance-stabilizing transformations, e.g.,
-#'   compute CIs on the `atanh` (Fisher z) scale and back-transform with
-#'   `tanh`.
+#' @param transform (optional) function applied to the point estimates and
+#'   confidence interval bounds *after* inference is performed on the original
+#'   scale. Useful for variance-stabilizing transformations, e.g., compute CIs
+#'   on the `atanh` (Fisher z) scale and back-transform with `tanh`.
+#' @param print (optional) custom print function for the resulting
+#'   `summary.estimate` object
 #' @param ... additional arguments passed to [estimate()].
 #' @seealso [estimate.default()]
 #' @export
@@ -113,7 +113,8 @@ summary.estimate <- function(object,
                              type,
                              var.adj = 0.25,
                              df,
-                             transform,
+                             transform = NULL,
+                             print = NULL,
                              ...) {
   with_unique_warnings({
 
@@ -153,25 +154,37 @@ summary.estimate <- function(object,
   res <- c(object[c("coef", "coefmat", "vcov", "call",
                     "ncluster", "model.index")], list(compare=waldtest))
   res$coefmat <- cc0
-  if (!missing(transform)) {
+  if (!is.null(transform)) {
     res$coefmat[, c(1, 3, 4)] <- do.call(transform,
                                          list(res$coefmat[, c(1, 3, 4)]))
     res$coefmat[, 2] <- NA
+    res$vcov <- NULL
+    res$coef <- res$coefmat[, 1, drop=TRUE]
   }
+  res$print <- print
   class(res) <- "summary.estimate"
   return(res)
   })
 }
 
-
 #' @export
 print.summary.estimate <- function(x, ...) {
-  print.estimate(x, type=2L, ...)
+  if (!is.null(x$print)) {
+    x$print(x, ...)
+  } else {
+    print.estimate(x, type=2L, ...)
+  }
+  return(invisible(x))
 }
 
 #' @export
 coef.summary.estimate <- function(object, ...) {
   return(object$coef)
+}
+
+#' @export
+confint.summary.estimate <- function(object, ...) {
+  parameter(object)[, 3:4, drop=FALSE]
 }
 
 #' @export
