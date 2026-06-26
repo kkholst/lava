@@ -82,18 +82,13 @@ test_that("quasipossion", {
   expect_equivalent(crossprod(ii), var_ic(i1))
 })
 
-test_that("merge back.transform", {
-  suppressWarnings(
-    tmp <- estimate(coef = 1, IC = c(1,2,3), id = 1:3, f = exp, back.transform = log)
-  )
-  suppressWarnings(
-    tmp2 <- estimate(coef = 2, IC = c(3,2,1), id = 1:3, f = exp, back.transform = log)
-  )
-
-  expect_warning(
-    m <- merge(tmp, tmp2) # should throw a warning
-  )
-  expect_equivalent(coef(m), exp(c(1, 2)))
+test_that("back.transform", {
+  tmp <- summary(estimate(coef = 1, IC = c(1,-1,0), id = 1:3, f = log),
+                 transform=exp)
+  tmp2 <- summary(estimate(coef = 2, IC = c(0,1,-1), id = 1:3, f = exp),
+                  transform=log)
+  expect_equivalent(coef(tmp), 1)
+  expect_equivalent(coef(tmp2), 2)
 })
 
 test_that("IC.numeric", {
