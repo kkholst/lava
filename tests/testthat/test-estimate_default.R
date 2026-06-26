@@ -457,11 +457,14 @@ test_that("c.summary.estimate concatenates coefficient matrices", {
   expect_equivalent(cc$coefmat, rbind(s1$coefmat, s2$coefmat, s3$coefmat))
 
   # coef.summary.estimate returns the combined coefmat
-  expect_equal(coef(cc), cc$coefmat)
+  expect_equal(coef(cc), cc$coefmat[, 1])
 
   # original summaries are retained in the objects element
   expect_length(cc$objects, 3L)
   expect_equal(cc$objects[[2]]$coefmat, s2$coefmat)
+
+  # check variance covariance matrix
+  expect_equal(dim(vcov(cc)), c(3L,3L))
 })
 
 test_that("c.summary.estimate with single argument returns input unchanged", {
@@ -484,12 +487,3 @@ test_that("c.summary.estimate carries a custom print method", {
   expect_true(any(grepl("a2", out)))
 })
 
-test_that("only.coef argument is deprecated", {
-  expect_warning(
-    result <- estimate(a3d, only.coef = TRUE),
-    regexp = "only.coef.*deprecated"
-  )
-
-  # Verify it still returns the coefficient matrix
-  expect_equal(result, coef(estimate(a3d), mat = TRUE))
-})

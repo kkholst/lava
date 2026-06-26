@@ -645,11 +645,11 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     }
   }
 
-  df <- NULL
+  df_mod <- df
   if (inherits(x, "lm") && family(x)$family == "gaussian"
-      && !missing(vcov)) {
+      && !missing(vcov) && is.null(df_mod)) {
     # defaults to t-distribution when calculating p-values with model-based SEs
-    df <- x$df.residual
+    df_mod <- x$df.residual
   }
   if (is.null(V)) {
     res <- cbind(pp, NA, NA, NA, NA)
@@ -659,7 +659,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     else
       res <- cbind(pp, diag(V)^0.5)
   }
-  res <- estimate_coefmat(res[, 1], res[, 2], df=df, level=0.95, null=0)
+  res <- estimate_coefmat(res[, 1], res[, 2], df=df_mod, level=0.95, null=0)
   if (nrow(res)>0)
     if (!is.null(nn)) {
       rownames(res) <- nn
@@ -678,7 +678,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     names(coefs) <- rownames(res)
   }
   res <- structure(list(coef=coefs, coefmat=res, vcov=V,
-                        IC=NULL, print=print, id=idstack, df=df),
+                        IC=NULL, print=print, id=idstack, df=df_mod),
                    class="estimate")
   if (IC) {
     res$IC <- ic_theta
@@ -709,7 +709,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     object = res, str = labels, label.width = label.width
   )
   res$call <- cal
-  res$df <- df
   res$n <- nrow(data)
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative

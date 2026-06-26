@@ -171,9 +171,9 @@ summary.estimate <- function(object,
 print.summary.estimate <- function(x, ...) {
   if (!is.null(x$print)) {
     x$print(x, ...)
-  } else {
-    print.estimate(x, type=2L, ...)
+    return(invisible(x))
   }
+  print.estimate(x, type=2L, ...)
   return(invisible(x))
 }
 
@@ -194,5 +194,39 @@ parameter.summary.estimate <- function(x, ...) {
 
 #' @export
 vcov.summary.estimate <- function(object, ...) {
-  return(object$vcov)
+  res <- object$vcov
+  p <- coef(object)
+  if (is.null(res)) {
+    res <- matrix(NA, length(p), length(p))
+    dimnames(res) <- list(names(p), names(p))
+  }
+  return(res)
+}
+
+#' @export
+c.summary.estimate <- function(...) {
+  args <- list(...)
+  if (length(args) == 1) return(args[[1]])
+  if (!all(sapply(args, \(x) inherits(x, "summary.estimate")))) stop(
+    "only summary.estimate objects can be concatenated."
+  )
+
+  .print <- function(x, ...) {
+    cat("Concatenated summary.estimate objects: \n")
+    print(cli::rule(width = min(cli::console_width(), 60)))
+    print(x$coefmat, digits = list(...)$digits)
+    print(cli::rule(width = min(cli::console_width(), 60)))
+  }
+
+  res <- structure(list(
+    coefmat = Reduce(rbind, lapply(args, function (x) parameter(x))),
+    coef = as.vector(Reduce(rbind, lapply(args, function (x) coef(x)))),
+    vcov = cbind(Reduce(function(...) blockdiag(..., pad=NA),
+                        lapply(args, function (x) vcov(x)))),
+    objects = args,
+    print = .print # consumed by print.summary.estimate
+  ), class = "summary.estimate"
+  )
+  names(res$coef) <- rownames(res$coefmat)
+  return(res)
 }

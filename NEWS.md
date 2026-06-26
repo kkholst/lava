@@ -8,7 +8,6 @@
     arguments.
   - new `c.summary.estimate` S3-method for concatenating `summary.estimate`
     objects
->>>>>>> dev
   - sim.default can now operate on function return objects
     of type `estimate.extra` which are constructed via
     `c.estimate(estimate_object, extra_args)`
