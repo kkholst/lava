@@ -442,3 +442,54 @@ test_that("robust argument backwards compatibility", {
   expect_equal(e0m$coefmat, e1m$coefmat)
 })
 
+test_that("c.summary.estimate concatenates coefficient matrices", {
+  s1 <- summary(a1)
+  s2 <- summary(a2)
+  s3 <- summary(a3)
+  cc <- c(s1, s2, s3)
+
+  # Result is a summary.estimate object
+  expect_s3_class(cc, "summary.estimate")
+
+  # coefmat is the row-bind of the inputs (preserving rows and columns)
+  expect_equal(rownames(cc$coefmat), c("a1", "a2", "a3"))
+  expect_equal(colnames(cc$coefmat), colnames(s1$coefmat))
+  expect_equivalent(cc$coefmat, rbind(s1$coefmat, s2$coefmat, s3$coefmat))
+
+  # coef.summary.estimate returns the combined coefmat
+  expect_equal(coef(cc), cc$coefmat)
+
+  # original summaries are retained in the objects element
+  expect_length(cc$objects, 3L)
+  expect_equal(cc$objects[[2]]$coefmat, s2$coefmat)
+})
+
+test_that("c.summary.estimate with single argument returns input unchanged", {
+  s1 <- summary(a1)
+  expect_identical(c(s1), s1)
+})
+
+test_that("c.summary.estimate errors on non-summary.estimate input", {
+  s1 <- summary(a1)
+  expect_error(c(s1, a1), "only summary.estimate objects")
+  expect_error(c(s1, 1), "only summary.estimate objects")
+})
+
+test_that("c.summary.estimate carries a custom print method", {
+  cc <- c(summary(a1), summary(a2))
+  expect_type(cc$print, "closure")
+  out <- capture.output(print(cc))
+  expect_true(any(grepl("Concatenated summary.estimate objects", out)))
+  expect_true(any(grepl("a1", out)))
+  expect_true(any(grepl("a2", out)))
+})
+
+test_that("only.coef argument is deprecated", {
+  expect_warning(
+    result <- estimate(a3d, only.coef = TRUE),
+    regexp = "only.coef.*deprecated"
+  )
+
+  # Verify it still returns the coefficient matrix
+  expect_equal(result, coef(estimate(a3d), mat = TRUE))
+})

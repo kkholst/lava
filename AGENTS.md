@@ -24,6 +24,7 @@ devtools::test(filter = "estimate_default")  # substring match on test file name
 
 - **`Rgraphviz`** (Bioconductor) is a Suggests dep for path diagrams. It is commented out in CI and treated as optional (`_R_CHECK_FORCE_SUGGESTS_=0`).
 - `future.apply` and `progressr` are hard **Imports** (not Suggests) — parallelization in `sim.default()` is not optional infrastructure.
+- use `devtools::load_all(".")` to test the package interactively
 
 ## Documentation
 
