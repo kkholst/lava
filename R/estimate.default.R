@@ -499,12 +499,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
-  ## if (inherits(x, "lm") && family(x)$family == "gaussian"
-  ##     && is.null(df) && !missing(vcov)) {
-  ##   # defaults to t-distribution when calculating p-values with model-based
-  ##   # SEs
-  ##   df <- x$df.residual
-  ## }
   if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
     V <- var_ic(ic_theta)
   } else {
@@ -651,6 +645,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     }
   }
 
+  df <- NULL
+  if (inherits(x, "lm") && family(x)$family == "gaussian"
+      && !missing(vcov)) {
+    # defaults to t-distribution when calculating p-values with model-based SEs
+    df <- x$df.residual
+  }
   if (is.null(V)) {
     res <- cbind(pp, NA, NA, NA, NA)
   } else {
@@ -659,7 +659,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     else
       res <- cbind(pp, diag(V)^0.5)
   }
-  res <- estimate_coefmat(res[, 1], res[, 2], df=NULL, level=0.95, null=0)
+  res <- estimate_coefmat(res[, 1], res[, 2], df=df, level=0.95, null=0)
   if (nrow(res)>0)
     if (!is.null(nn)) {
       rownames(res) <- nn
@@ -709,6 +709,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     object = res, str = labels, label.width = label.width
   )
   res$call <- cal
+  res$df <- df
   res$n <- nrow(data)
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
