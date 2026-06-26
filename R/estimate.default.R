@@ -982,7 +982,10 @@ c.summary.estimate <- function(...) {
   }
 
   structure(list(
-    coefmat = Reduce(rbind, lapply(args, \(x) x$coefmat)),
+    coefmat = Reduce(rbind, lapply(args, function (x) x$coefmat)),
+    coef = Reduce(rbind, lapply(args, function (x) x$coef)),
+    vcov = Reduce(function(...) blockdiag(..., pad=NA),
+                  lapply(args, function (x) x$vcov)),
     objects = args,
     print = .print # consumed by print.summary.estimate
   ), class = "summary.estimate"
