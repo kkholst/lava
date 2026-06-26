@@ -38,10 +38,6 @@ merge.estimate <- function(x,y,...,
         objects[[i]]$IC <- NULL
       }
     }
-    trans <- unlist(lapply(
-      objects, function(x) !is.null(x[["back.transform"]])
-    ))
-    if (any(trans)) warning("back-transformation ignored (`back.transform`)")
     if (length(nai <- names(objects)=="NA")>0)
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
