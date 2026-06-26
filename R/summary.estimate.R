@@ -207,7 +207,7 @@ vcov.summary.estimate <- function(object, ...) {
 c.summary.estimate <- function(...) {
   args <- list(...)
   if (length(args) == 1) return(args[[1]])
-  if (!all(sapply(args, \(x) inherits(x, "summary.estimate")))) stop(
+  if (!all(sapply(args, function (x) inherits(x, "summary.estimate")))) stop(
     "only summary.estimate objects can be concatenated."
   )
 
