@@ -12,7 +12,8 @@
   type,
   var.adj = 0.25,
   df,
-  transform,
+  transform = NULL,
+  print = NULL,
   ...
 )
 }
@@ -25,22 +26,23 @@
 
 \item{level}{level of confidence limits (default 0.95)}
 
-\item{type}{type of small-sample correction. Requires the estimate
-to have been computed with \code{IC=TRUE} (the default).}
+\item{type}{type of small-sample correction. Requires the estimate to have
+been computed with \code{IC=TRUE} (the default).}
 
-\item{var.adj}{variance adjustment parameter for small-sample
-correction. Requires the estimate to have been computed with
-\code{IC=TRUE} (the default).}
+\item{var.adj}{variance adjustment parameter for small-sample correction.
+Requires the estimate to have been computed with \code{IC=TRUE} (the default).}
 
 \item{df}{degrees of freedom for t-based inference (default: \code{NULL} for
-Gaussian approximation; when set, confidence intervals and p-values use
-the t-distribution with \code{df} degrees of freedom)}
+Gaussian approximation; when set, confidence intervals and p-values use the
+t-distribution with \code{df} degrees of freedom)}
 
-\item{transform}{(optional) function applied to the point estimates
-and confidence interval bounds \emph{after} inference is performed on the
-original scale. Useful for variance-stabilizing transformations, e.g.,
-compute CIs on the \code{atanh} (Fisher z) scale and back-transform with
-\code{tanh}.}
+\item{transform}{(optional) function applied to the point estimates and
+confidence interval bounds \emph{after} inference is performed on the original
+scale. Useful for variance-stabilizing transformations, e.g., compute CIs
+on the \code{atanh} (Fisher z) scale and back-transform with \code{tanh}.}
+
+\item{print}{(optional) custom print function for the resulting
+\code{summary.estimate} object}
 
 \item{...}{additional arguments passed to \code{\link[=estimate]{estimate()}}.}
 }
