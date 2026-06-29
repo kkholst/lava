@@ -117,7 +117,6 @@ summary.estimate <- function(object,
                              transform = NULL,
                              print = NULL) {
   with_unique_warnings({
-
     p <- coef(object)
     if (missing(df)) df <- object$df
     if (missing(contrast)) contrast <- diag(1, nrow=length(p))
@@ -133,37 +132,37 @@ summary.estimate <- function(object,
     } else {
       V <- vcov(object)
     }
-## Preserve dimnames on vcov: the recall path through type/var.adj
-  ## corrections builds V from the influence function and may drop
-  ## dimnames. Restore them from the original coef names so the
-  ## summary output is consistent with the deprecated estimate() path.
-  if (!is.null(V) && is.null(dimnames(V)) &&
-      !is.null(names(p)) &&
-      nrow(V) == length(p)) {
-    dimnames(V) <- list(names(p), names(p))
-  }
+    ## Preserve dimnames on vcov: the recall path through type/var.adj
+    ## corrections builds V from the influence function and may drop
+    ## dimnames. Restore them from the original coef names so the
+    ## summary output is consistent with the deprecated estimate() path.
+    if (!is.null(V) && is.null(dimnames(V)) &&
+        !is.null(names(p)) &&
+        nrow(V) == length(p)) {
+      dimnames(V) <- list(names(p), names(p))
+    }
 
-  if (is.vector(contrast) || is.list(contrast)) {
-    contrast <- contr(contrast, names(object$coef), ...)
-  }
+    if (is.vector(contrast) || is.list(contrast)) {
+      contrast <- contr(contrast, names(object$coef), ...)
+    }
 
-  cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
-  rownames(cc0) <- rownames(parameter(object))
-  waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
-  class(object) <- "list"
-  res <- c(object[c("coef", "coefmat", "vcov", "call",
-                    "ncluster", "model.index")], list(compare=waldtest))
-  res$coefmat <- cc0
-  if (!is.null(transform)) {
-    res$coefmat[, c(1, 3, 4)] <- do.call(transform,
-                                         list(res$coefmat[, c(1, 3, 4)]))
-    res$coefmat[, 2] <- NA
-    res$vcov <- NULL
-    res$coef <- res$coefmat[, 1, drop=TRUE]
-  }
-  res$print <- print
-  class(res) <- "summary.estimate"
-  return(res)
+    cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
+    rownames(cc0) <- rownames(parameter(object))
+    waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
+    class(object) <- "list"
+    res <- c(object[c("coef", "coefmat", "vcov", "call",
+                      "ncluster", "model.index")], list(compare=waldtest))
+    res$coefmat <- cc0
+    if (!is.null(transform)) {
+      res$coefmat[, c(1, 3, 4)] <- do.call(transform,
+                                           list(res$coefmat[, c(1, 3, 4)]))
+      res$coefmat[, 2] <- NA
+      res$vcov <- NULL
+      res$coef <- res$coefmat[, 1, drop=TRUE]
+    }
+    res$print <- print
+    class(res) <- "summary.estimate"
+    return(res)
   })
 }
 
