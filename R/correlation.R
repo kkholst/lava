@@ -38,13 +38,13 @@ correlation.lvmfit <- function(x,z=TRUE, IC=FALSE, back.transform=TRUE,...) {
     }
     V <- NULL
     if (!IC) V <- vcov(x)
+    res <- estimate(x,coef=coef(x), vcov=V, f=ff,
+             IC=IC)
     if (back.transform) {
-        back.transform <- tanh
+      return(summary(res, transform=tanh, ...))
     } else {
-        back.transform <- NULL
+      return(summary(res, ...))
     }
-    estimate(x,coef=coef(x), vcov=V, f=ff, back.transform=back.transform,
-             IC=IC, ...)
 }
 
 
@@ -64,13 +64,14 @@ correlation.matrix <- function(x,z=TRUE,back.transform=TRUE,mreg=FALSE,return.al
         ii <- IC(x)
         ee <- estimate(coef=attributes(ii)$coef[3:5], IC=ii[,3:5])
         if (z) {
-            if (back.transform) {
-                ee <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])), back.transform=tanh)
-            } else {
-                ee <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])))
-            }
+          est <- estimate(ee, function(x) atanh(x[2]/sqrt(x[1]*x[3])))
+          if (back.transform) {
+            ee <- summary(est, transform=tanh)
+          } else {
+            ee <- est
+          }
         } else {
-            ee <-  estimate(ee, function(x) x[2]/sqrt(x[1]*x[3]))
+          ee <- estimate(ee, function(x) x[2]/sqrt(x[1]*x[3]))
         }
         return(ee)
     }
@@ -80,17 +81,17 @@ correlation.matrix <- function(x,z=TRUE,back.transform=TRUE,mreg=FALSE,return.al
     dimnames(R) <- list(colnames(x),colnames(x))
     for (i in seq(ncol(x)-1))
         for (j in seq(i+1,ncol(x))) {
-            e <- c(e,list(correlation(x[,c(i,j)],z=z,back.transform=FALSE,...)))
-            R[j,i] <- coef(e[[length(e)]])
-            if (z) R[j,i] <- tanh(R[j,i])
+          e <- c(e,list(correlation(x[,c(i,j)],z=z,back.transform=FALSE,...)))
+          R[j,i] <- coef(e[[length(e)]])
+          if (z) R[j,i] <- tanh(R[j,i])
         }
     R <- R[-1,-ncol(R),drop=FALSE]
     res <- do.call(merge, c(e, paired=TRUE))
     if (z && back.transform) {
-        res <- estimate(res,back.transform=tanh, print=function(x,digits=1,...) {
-            print(x$coefmat[,-2,drop=FALSE],...)
-            cat("\n")
-            print(offdiag(R,type=4),digits=digits,...)
+        res <- summary(res, transform=tanh, print=function(x,digits=1,...) {
+          print(x$coefmat[,-2,drop=FALSE],...)
+          cat("\n")
+          print(offdiag(R,type=4),digits=digits,...)
         })
     }
     return(res)

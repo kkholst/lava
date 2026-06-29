@@ -38,10 +38,6 @@ merge.estimate <- function(x,y,...,
         objects[[i]]$IC <- NULL
       }
     }
-    trans <- unlist(lapply(
-      objects, function(x) !is.null(x[["back.transform"]])
-    ))
-    if (any(trans)) warning("back-transformation ignored (`back.transform`)")
     if (length(nai <- names(objects)=="NA")>0)
     names(objects)[which(nai)] <- ""
     if (!missing(subset)) {
@@ -665,8 +661,8 @@ operator_grad <- function(x, y, x_const, y_const, dx, dy) {
 
 #' @export
 "==.estimate" <- function(e1, e2) {
-  if (!(is.numeric(e1) || is.numeric(e2))) stop("numeric comperator needed")
+  if (!(is.numeric(e1) || is.numeric(e2))) stop("numeric comparator needed")
   null <- if (is.numeric(e1)) e1 else e2
   e <- if (is.numeric(e1)) e2 else e1
-  estimate(e, null=null)
+  summary(e, null = null)
 }

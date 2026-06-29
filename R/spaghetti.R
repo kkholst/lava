@@ -200,7 +200,7 @@ spaghetti <- function(formula,data=NULL,id="id",group=NULL,
                         lines(newdata[,1],pr[,i],col=trend.col,lwd=trend.lwd,lty=trend.lty)
                 } else {
                     l1. <- lm(trend.formula,data)
-                    l1 <- estimate(l1.,id=data[,id],level=level)
+                    l1 <- summary(estimate(l1.,id=data[,id]),level=level)
                     xy <- plotConf(l1.,vcov=vcov(l1),data=data,partres=FALSE,plot=FALSE,level=level,...)
                     xx <- xy$x
                     pr <- xy$predict$fit

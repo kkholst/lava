@@ -50,7 +50,7 @@ test_that("sim.default with summary.estimate objects", {
     ) |> summary()
     s2 <- estimate(
       coef = runif(2), vcov = diag(runif(2)), labels = c("c","d")
-    ) |> summary(back.transform = exp) # blanks Std.Err column in coefmat
+    ) |> summary(transform = exp) # blanks Std.Err column in coefmat
     c(s1, s2)
   }
   res <- sim(onerun, 5)
