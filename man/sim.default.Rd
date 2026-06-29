@@ -110,6 +110,8 @@ onerun2 <- function(...) {
   y <- 0.5*x + rnorm(50)
   e <- estimate(lm(y ~ x))
   c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+  # works identically with summary.estimate objects
+  # c(summary(e), converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
 }
 val2 <- sim(onerun2, R = 10)
 val2

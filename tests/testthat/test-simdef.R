@@ -59,6 +59,17 @@ test_that("sim.default with summary.estimate objects", {
   s <- summary(res)
   expect_true(ncol(s) == 4L)
   expect_equivalent(colnames(s), c("a", "b", "c", "d"))
+
+  # with concatenated summary.estimate objects + extra
+  onerun <- function(...) {
+    s1 <- estimate(
+      coef = runif(2), vcov = diag(runif(2)), labels = c("a","b")
+    ) |> summary()
+    c(s1, niter = rpois(1, 10), converged = 1)
+  }
+  res <- sim(onerun, 5)
+  expect_true(all(c("niter", "converged") %in% colnames(res)))
+  expect_true(all(res[, "converged"] == 1))
 })
 
 test_that("sim.default exports seed sequences as attribute", {

@@ -80,6 +80,8 @@
 #'   y <- 0.5*x + rnorm(50)
 #'   e <- estimate(lm(y ~ x))
 #'   c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+#'   # works identically with summary.estimate objects
+#'   # c(summary(e), converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
 #' }
 #' val2 <- sim(onerun2, R = 10)
 #' val2
@@ -189,16 +191,13 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     is_estimate <- is_estimate_extra || inherits(res, c(
       "estimate", "summary.estimate","targeted")
     )
-    if (is_summary_estimate <- inherits(res, "summary.estimate")) {
-      res <- res$coefmat
+    if (inherits(res, "summary.estimate")) {
+      extra <- attributes(res)$extra # defaults to NULL if attribute doesn't
+      # exist
     }
     if (is_estimate) {
       idx <- intersect(seq_len(5L), estimate.index) # parameters to keep
-      if (is_summary_estimate) { #nolint
-        cmat <- res[, idx, drop = FALSE]
-      } else {
-        cmat <- lava::parameter(res)[, idx, drop=FALSE]
-      }
+      cmat <- lava::parameter(res)[, idx, drop = FALSE]
       res <- as.vector(cmat)
       cn <- colnames(cmat)
       nam <- c()
