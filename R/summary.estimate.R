@@ -103,19 +103,19 @@ estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
 #'   on the `atanh` (Fisher z) scale and back-transform with `tanh`.
 #' @param print (optional) custom print function for the resulting
 #'   `summary.estimate` object
-#' @param ... additional arguments passed to [estimate()].
+#' @param ... additional arguments passed to [contr].
 #' @seealso [estimate.default()]
 #' @export
 summary.estimate <- function(object,
                              contrast,
+                             ...,
                              null = 0,
                              level = 0.95,
                              type,
                              var.adj = 0.25,
                              df,
                              transform = NULL,
-                             print = NULL,
-                             ...) {
+                             print = NULL) {
   with_unique_warnings({
 
     p <- coef(object)
@@ -144,7 +144,7 @@ summary.estimate <- function(object,
   }
 
   if (is.vector(contrast) || is.list(contrast)) {
-    contrast <- contr(contrast, names(res$coef), ...)
+    contrast <- contr(contrast, names(object$coef), ...)
   }
 
   cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)

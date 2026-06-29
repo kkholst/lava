@@ -722,11 +722,11 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       ) {
     .Deprecated(
       msg = paste0(
-        "The 'null', 'contrast', 'type', 'back.transform', 'level'
-        and 'var.adj' arguments of ",
-        "estimate.default() are deprecated and will removed in version 1.9.3",
-        "Use: summary(estimate(...),
-null=, contrast=, type=, transform=, level=, df=, var.adj=) instead."
+        "The 'null', 'contrast', 'type', 'back.transform', 'level' ",
+        "and 'var.adj' arguments of estimate.default() are deprecated ",
+        "and will be removed in version 1.9.3. Use ",
+        "summary(estimate(...), null=, contrast=, type=, transform=,",
+        "level=, df=, var.adj=) instead."
       )
     )
     args <- list(object=res)

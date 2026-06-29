@@ -404,7 +404,7 @@ test_that("estimate.default parsedesign dispatch", {
   expect_equal(e$coefmat[, 1], 2.0)
 
   # Character contrasts combine with null hypothesis vector.
-  e <- suppressWarnings(estimate(a3d, "a1", "a1", null = c(0, 1)))
+  e <- summary(estimate(a3d, "a1", "a1"), null = c(0, 1))
   expect_true(e$coefmat[1, "P-value"] != e$coefmat[2, "P-value"])
 })
 
@@ -456,15 +456,16 @@ test_that("c.summary.estimate concatenates coefficient matrices", {
   expect_equal(colnames(cc$coefmat), colnames(s1$coefmat))
   expect_equivalent(cc$coefmat, rbind(s1$coefmat, s2$coefmat, s3$coefmat))
 
-  # coef.summary.estimate returns the combined coefmat
+  # coef.summary.estimate returns the combined coef vector
   expect_equal(coef(cc), cc$coefmat[, 1])
+  expect_equal(parameter(cc), cc$coefmat)
 
   # original summaries are retained in the objects element
   expect_length(cc$objects, 3L)
   expect_equal(cc$objects[[2]]$coefmat, s2$coefmat)
 
   # check variance covariance matrix
-  expect_equal(dim(vcov(cc)), c(3L,3L))
+  expect_equal(dim(vcov(cc)), c(3L, 3L))
 })
 
 test_that("c.summary.estimate with single argument returns input unchanged", {

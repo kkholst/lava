@@ -17,6 +17,28 @@ test_that("estimate(..., null=) emits deprecation warning", {
   expect_warning(estimate(g, null = 0), class = "deprecatedWarning")
 })
 
+test_that("estimate(..., back.transform=) emits deprecation warning", {
+  g <- make_glm()
+  expect_warning(
+    ss <- estimate(g, back.transform = exp),
+    class = "deprecatedWarning"
+  )
+
+  expect_equal(exp(coef(g)), coef(ss))
+})
+
+test_that("estimate(..., level=) emits deprecation warning", {
+  g <- make_glm()
+  s0 <- estimate(g)
+  expect_warning(
+    ss <- estimate(g, level = 0.5),
+    class = "deprecatedWarning"
+  )
+  expect_true(all(confint(s0) != confint(ss)))
+
+})
+
+
 test_that("estimate(..., null=0) warns even when null=0 (Q7)", {
   g <- make_glm()
   expect_warning(estimate(g, null = 0), class = "deprecatedWarning")

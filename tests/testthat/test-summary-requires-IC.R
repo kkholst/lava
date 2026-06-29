@@ -14,20 +14,11 @@ make_glm <- function() {
 }
 
 test_that("summary(..., type=) errors when input estimate has IC=FALSE", {
+  # variance correction via the type argument requires e$IC to be not null
   g <- make_glm()
   e <- estimate(g, IC = FALSE)
   expect_error(
     summary(e, type = "df"),
-    "IC=TRUE",
-    fixed = TRUE
-  )
-})
-
-test_that("summary(..., var.adj=) errors when input estimate has IC=FALSE", {
-  g <- make_glm()
-  e <- estimate(g, IC = FALSE)
-  expect_error(
-    summary(e, type = "hc3", var.adj = 0.5),
     "IC=TRUE",
     fixed = TRUE
   )

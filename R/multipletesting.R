@@ -16,7 +16,7 @@ alpha_zmax <- function(object, alpha = 0.05, ...) {
   if (!inherits(object, c("estimate", "summary.estimate"))) {
     stop("Expected an 'estimate' or 'summary.estimate' object")
   }
-  if (!inherits("object", "summary.estimate")) {
+  if (!inherits(object, "summary.estimate")) {
     object <- summary(object, ...)
   }
   est <- parameter(object)[, c(1, 5), drop = FALSE]

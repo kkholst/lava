@@ -7,20 +7,22 @@
 \method{summary}{estimate}(
   object,
   contrast,
+  ...,
   null = 0,
   level = 0.95,
   type,
   var.adj = 0.25,
   df,
   transform = NULL,
-  print = NULL,
-  ...
+  print = NULL
 )
 }
 \arguments{
 \item{object}{an \code{estimate} object.}
 
 \item{contrast}{(optional) contrast matrix for the final Wald test.}
+
+\item{...}{additional arguments passed to \link{contr}.}
 
 \item{null}{(optional) null hypothesis to test.}
 
@@ -43,8 +45,6 @@ on the \code{atanh} (Fisher z) scale and back-transform with \code{tanh}.}
 
 \item{print}{(optional) custom print function for the resulting
 \code{summary.estimate} object}
-
-\item{...}{additional arguments passed to \code{\link[=estimate]{estimate()}}.}
 }
 \description{
 Computes hypothesis tests, contrasts, and small-sample corrections for
