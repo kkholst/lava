@@ -174,6 +174,9 @@ print.summary.estimate <- function(x, ...) {
     return(invisible(x))
   }
   print.estimate(x, type=2L, ...)
+  if (!is.null(attributes(x)$extra)) {
+    print(attributes(x)$extra)
+  }
   return(invisible(x))
 }
 
@@ -244,6 +247,9 @@ c.summary.estimate <- function(...) {
     print(cli::rule(width = min(cli::console_width(), 60)))
     print(x$coefmat, digits = digits)
     print(cli::rule(width = min(cli::console_width(), 60)))
+    if (!is.null(attributes(x)$extra)) {
+      print(attributes(x)$extra)
+    }
   }
 
   res <- structure(list(
