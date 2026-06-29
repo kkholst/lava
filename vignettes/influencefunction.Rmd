@@ -855,7 +855,7 @@ estimate(gg, B)
 
 The $\bm{b}_0$ vector (default assumed to be zero) can be specified via the `null` argument
 ```{r estcontrast1}
-estimate(gg, B, null=1)
+summary(estimate(gg, B), null=1)
 ```
 
 For testing multiple hypotheses we use that
@@ -873,7 +873,7 @@ estimate(gg, B)
 
 Such linear statistics can also be specified directly as expressions of the parameter names
 ```{r}
-estimate(gg, a + a.1, 2*a - a.2, a, null=c(2,1,1))
+estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
 ```
 
 We refer to the function `lava::contr`  and `lava::parsedesigns` for defining contrast matrices.
@@ -885,7 +885,7 @@ comparisons of different exposure estimates:
 
 ```{r pairwise.diff}
 pairwise.diff(3)
-estimate(gg, pairwise.diff(3), null=c(1,1,1), use=c(2,4,6))
+summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
 ```
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
