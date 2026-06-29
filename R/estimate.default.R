@@ -355,7 +355,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     cl0$keep <- use
     cl$x <- eval(cl0, parent.frame())
     cl[c("vcov", "use")] <- NULL
-    return(eval(cl, parent.frame()))
+    res <- eval(cl, parent.frame())
+    res$call <- cal
+    return(res)
   }
   expr <- suppressWarnings(inherits(try(f, silent=TRUE), "try-error"))
   if (!missing(coef)) {
