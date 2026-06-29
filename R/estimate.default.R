@@ -182,7 +182,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 #' estimate(g, "?")  ## Wildcards
 #' estimate(g, "*Int*", "z")
-#' estimate(g, "1", "2"-"3", null = c(0,1))
+#' summary(estimate(g, "1", "2"-"3"), null = c(0,1))
 #' estimate(g, 2, 3)
 #'
 #' ## Usual (non-robust) confidence intervals
@@ -210,7 +210,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' ee
 #' estimate(lm(y~x,d1))
 #'
-#' ## Marginalize
+#' ## Marginalize / standardization
 #' f <- function(p,data)
 #'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
 #'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))

@@ -251,7 +251,7 @@ estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 estimate(g, "?")  ## Wildcards
 estimate(g, "*Int*", "z")
-estimate(g, "1", "2"-"3", null = c(0,1))
+summary(estimate(g, "1", "2"-"3"), null = c(0,1))
 estimate(g, 2, 3)
 
 ## Usual (non-robust) confidence intervals
@@ -279,7 +279,7 @@ ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
 ee
 estimate(lm(y~x,d1))
 
-## Marginalize
+## Marginalize / standardization
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
