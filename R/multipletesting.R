@@ -12,16 +12,13 @@ pzmax <- function(alpha, S) {
 }
 
 ##' @export
-alpha_zmax <- function(object, method, alpha = 0.05, ...) {
-  if (!inherits(object, "estimate")) {
-    stop("Expected an 'estimate' object")
+alpha_zmax <- function(object, alpha = 0.05, ...) {
+  if (!inherits(object, c("estimate", "summary.estimate"))) {
+    stop("Expected an 'estimate' or 'summary.estimate' object")
   }
-  dots <- list(...)
-  null <- object$compare$null
-  if (!("null" %in% names(dots)) && !is.null(null)) {
-    dots$null <- null
+  if (!inherits(object, "summary.estimate")) {
+    object <- summary(object, ...)
   }
-  object <- do.call(estimate, c(list(object), dots))
   est <- parameter(object)[, c(1, 5), drop = FALSE]
   padj <- pzmax(est[, 2], vcov(object))
   res <- cbind(est, padj)
@@ -124,7 +121,6 @@ closed_testing <- function(object, test = test_wald, ...) {
     class = "test_adj"
   )
 }
-
 
 #' @export
 print.test_adj <- function(x, ...) {

@@ -254,7 +254,7 @@ coef(e)
 ## ## Asymptotic (robust) variance estimate
 vcov(e)
 ## Matrix with estimates and confidence limits
-estimate(e, null=0, level = 0.99) |> parameter()
+estimate(e, level = 0.99) |> parameter()
 ## Influence curve
 IC(e) |> head()
 ## Join estimates
@@ -445,7 +445,7 @@ As we have access to the joint asymptotic distribution we can for example test
 for whether the odds-ratio is the same for the two responses:
 
 ```{r hypo1}
-estimate(e, cbind(0,1,0,-1), null=0)
+summary(estimate(e), contrast=cbind(0,1,0,-1), null=0)
 ```
 More details an be found in the Section on [hypothesis testing](#linear-contrasts-and-hypothesis-testing).
 
@@ -913,8 +913,8 @@ in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{p}$
 can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect, eval=has_mets }
-gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
-alpha_zmax(gg0)
+gg0 <- estimate(gg, use="^a", regex=TRUE)
+alpha_zmax(gg0, null=rep(.8, 3))
 ```
 
 While this always yields a more powerful test compared to Bonferroni
@@ -931,7 +931,7 @@ the composite hypothesis tests. Unfortunately, this only works for relatively
 few comparisons as the number of tests grows exponentially.
 
 ```{r closedtesting, eval=has_mets}
-closed_testing(gg0, test = test_wald)
+summary(closed_testing(gg0, test = test_wald))
 ```
 
 

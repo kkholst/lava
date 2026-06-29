@@ -51,7 +51,6 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
     if (exact) {
         if (!is.table(table) && (is.matrix(table) || is.data.frame(table))) {
             table <- base::table(table[,c(1,2),drop=FALSE])
-            ##names(dimnames(table)) <- colnames(table)[1:2]
         }
         if (!is.table(table) || nrow(table)!=2 || ncol(table)!=2) stop("2x2 table expected")
         n <- sum(table)
@@ -126,20 +125,6 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
         }
 
         names(dimnames(table)) <- paste0(c("Test:","Outcome:"),names(dimnames(table)))
-        prfun <- function(x,...) {
-            printCoefmat(x$coefmat[,c(-2)],na.print="",...)
-            print(cli::rule())
-            cat("\n")
-            cat("Prevalence:				Prob( outcome+ )\n")
-            cat("Test:					Prob( test+ )\n")
-            cat("Sensitivity (True positive rate):	Prob( test+ | outcome+ )\n")
-            cat("Specificity (True negative rate):	Prob( test- | outcome- )\n")
-            cat("Positive predictive value (Precision):	Prob( outcome+ | test+ )\n")
-            cat("Negative predictive value:		Prob( outcome- | test- )\n")
-            cat("Accuracy:				Prob( correct classification )\n")
-            cat("Homogeneity/Symmetry:			Prob( outcome+ ) - Prob( test+ )\n")
-        }
-
         btransform <- NULL
         if (!is.null(confint)) {
             if (tolower(confint[1])=="logit") {
@@ -156,7 +141,10 @@ diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsi
                 }
             }
         }
-        res <- estimate(M,calc_diag,print=prfun,null=c(rep(p0,7),0),back.transform=btransform,...)
+        res <- suppressWarnings(
+          summary(estimate(M,calc_diag),
+                  null=c(rep(p0,7),0),transform=btransform,...)
+        )
     }
     CI <- confint[1]
     if (exact) CI <- "exact"
@@ -187,23 +175,26 @@ print.diagtest <- function(x,...) {
         x$levels[[2]][x$positive], "'\n",
       sep = ""
     )
-    ## cat("\tNegative outcome: '", x$levels[[2]][x$positive%%2+1],"'\n",sep="")
     print(cli::rule())
     printCoefmat(x$coefmat[, c(-2)], na.print="", ...)
     print(cli::rule())
-    cat("\n")
-    cat("Prevalence:				Prob( outcome+ )\n")
-    cat("Test:					Prob( test+ )\n")
-    cat("Sensitivity (True positive rate):	Prob( test+ | outcome+ )\n")
-    cat("Specificity (True negative rate):	Prob( test- | outcome- )\n")
-    cat("Positive predictive value (Precision):	Prob( outcome+ | test+ )\n")
-    cat("Negative predictive value:		Prob( outcome- | test- )\n")
-    cat("Accuracy:				Prob( correct classification )\n")
+    help <- rbind(
+      c("Prevalence", "Pr(outcome+)"),
+      c("Test:", "Pr( test+ )\n"),
+      c("Sensitivity (TPR):", "Pr(test+ | outcome+)"),
+      c("Specificity (TNR):", "Pr(test- | outcome-)"),
+      c("PPV (Precision):", "Pr(outcome+ | test+)"),
+      c("NPV:", "Pr(outcome- | test-)"),
+      c("Accuracy:","Pr(correct classification)")
+    )
     if (x$confint == "exact") {
-        cat("Homogeneity/Symmetry:			Prob( outcome+, test- | discordant ), H0: p=0.5 \n")
+      help <- rbind(help, c("Homogeneity/Sym.:", "Pr(outcome+, test- | discordant), H0: p=0.5"))
     } else {
-        cat("Homogeneity/Symmetry:			H0: Prob( outcome+ ) - Prob( test+ ), H0: p=0\n")
+      help <- rbind(help, c("Homogeneity/Sym.:", "H0: Pr(outcome+) - Pr(test+) = 0"))
     }
+    colnames(help) <- rep("", ncol(help))
+    rownames(help) <- rep("", nrow(help))
+    print(help, quote=FALSE)
     cat("\n")
 }
 
