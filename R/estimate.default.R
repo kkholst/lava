@@ -823,6 +823,11 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   }
   print(cc, digits=digits, na.print=na.print, ...)
 
+  if (!is.null(attributes(x)$extra)) {
+    cat("\n")
+    print(attributes(x)$extra)
+  }
+
   if (!is.null(x$compare)) {
     print(cli::rule(width=min(cli::console_width(),60)))
     cat(x$compare$method[3], "\n")

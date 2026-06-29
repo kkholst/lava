@@ -182,19 +182,9 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
       pb()
     }
     res <- tryCatch(x(...), error = function(e) NA)
-    extra <- NULL
-    is_estimate_extra <- inherits(res, "estimate.extra")
-    if (is_estimate_extra) {
-      extra <- res$extra
-      res <- res$estimate
-    }
-    is_estimate <- is_estimate_extra || inherits(res, c(
-      "estimate", "summary.estimate","targeted")
-    )
-    if (inherits(res, "summary.estimate")) {
-      extra <- attributes(res)$extra # defaults to NULL if attribute doesn't
-      # exist
-    }
+    is_estimate <- inherits(res, c("estimate", "summary.estimate", "targeted"))
+    extra <- attributes(res)$extra # defaults to NULL if attribute doesn't exist
+
     if (is_estimate) {
       idx <- intersect(seq_len(5L), estimate.index) # parameters to keep
       cmat <- lava::parameter(res)[, idx, drop = FALSE]
