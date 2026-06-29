@@ -53,6 +53,11 @@ test_that("c.summary.estimate with extra variables", {
   ss <- c(s1, niter = 1) # single numerical argument
   expect_equal(attributes(ss)$extra, c(niter = 1))
 
+  ss <- c(s1, 1) # single unnamed variable
+  expect_equal(attributes(ss)$extra, 1)
+
+  expect_equal(attributes(c(ss, a = 1))$extra, c(1, a = 1))
+
   # with single named vector
   ss <- c(s1, c(niter = 1, cc = 2)) # single numerical argument
   expect_equal(attributes(ss)$extra, c(niter = 1, cc = 2))
