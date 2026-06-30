@@ -368,7 +368,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       pp <- c(pp, scale=x$scale)
     }
   }
-  if (expr || is.character(f) || (is.numeric(f)
+
+  if (is.null(names(pp))) {
+    names(pp) <- paste0("p", seq_along(pp))
+  }
+
+  if ((expr || is.character(f) || (is.numeric(f))
     && !is.matrix(f))) { ## || is.call(f)) {
     dots <- lapply(substitute(placeholder(...))[-1], function(x) x)
     args <- c(list(
