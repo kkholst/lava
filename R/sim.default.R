@@ -183,9 +183,11 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     }
     res <- tryCatch(x(...), error = function(e) NA)
     is_estimate <- inherits(res, c("estimate", "summary.estimate", "targeted"))
-    extra <- attributes(res)$extra # defaults to NULL if attribute doesn't exist
+    extra <- NULL
 
     if (is_estimate) {
+      extra <- attributes(res)$extra # defaults to NULL if attribute doesn't
+      # exist // only extract extra attribute for estimate-type objects
       idx <- intersect(seq_len(5L), estimate.index) # parameters to keep
       cmat <- lava::parameter(res)[, idx, drop = FALSE]
       res <- as.vector(cmat)
