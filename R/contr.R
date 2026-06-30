@@ -21,7 +21,9 @@
 ##' pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
 ##' pdiff(4)
 contr <- function(p, n, diff = TRUE, ...) {
-  if (missing(n)) n <- max(unlist(p))
+  if (missing(n) || is.null(n)) {
+    n <- max(unlist(p))
+  }
   if (is.character(p)) {
     return(parsedesign(n, p, ...))
   }
