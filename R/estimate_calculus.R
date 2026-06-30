@@ -201,31 +201,29 @@ merge.estimate <- function(x,y,...,
 #'
 #' When all arguments are `estimate` objects, they are merged into a single
 #' `estimate` object. When some arguments are not `estimate` objects but are
-#' named numeric scalars/vectors, an object of class `estimate.extra` is
-#' returned. This is useful for bundling auxiliary per-iteration information
-#' (e.g., convergence status) alongside an estimate for use with
-#' [sim.default()].
+#' named numeric scalars/vectors, the merged `estimate` object is returned
+#' with an `"extra"` attribute containing the provided values. This is useful
+#' for bundling auxiliary per-iteration information (e.g., convergence status)
+#' alongside an estimate for use with [sim.default()].
 #'
 #' @param ... `estimate` objects and/or named numeric values
 #' @param as.list if TRUE the returned object will be of class `list` and not
-#'   and `estimate` (or `estimate.extra`) object.
-#' @return An `estimate` object (if all args are estimates) or an
-#'   `estimate.extra` object containing `$estimate` and `$extra` components.
+#'   an `estimate` object.
+#' @return An `estimate` object. If extra named numeric values were provided,
+#'   the result carries an `"extra"` attribute (a named numeric vector).
 #' @seealso [sim.default()] [merge.estimate()]
 #' @details arguments `drop.ic`, `paired`, `sep` are passed to [merge.estimate]
 #' @examples
 #' e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
 #' # Bundle estimate with extra information
-#' c(e, converged = 1, niter = 10)
+#' res <- c(e, converged = 1, niter = 10)
+#' attr(res, "extra")
 #' @export
 c.estimate <- function(..., as.list = FALSE) {
   args <- list(...)
   if (as.list) { # fallback to default concatenation
     class(args[[1]]) <- "list"
     return(do.call(c, args))
-  }
-  if (any(unlist(lapply(args, function(x) inherits(x, "estimate.extra"))))) {
-    return(do.call(c.estimate.extra, args))
   }
   # Handle names robustly
   arg_names <- names(args) %||% character(length(args))
@@ -236,11 +234,12 @@ c.estimate <- function(..., as.list = FALSE) {
   est_idx <- which(is_estimate)
   extra_idx <- setdiff(not_merge_arg, est_idx)
   lab <- arg_names[est_idx]
+  # Collect extras from existing estimate objects (propagate "extra" attribute)
+  extras_existing <- unlist(
+    lapply(args[est_idx], function(x) attr(x, "extra"))
+  )
   # Extract extra (non-estimate, non-merge) arguments
-  extra <- NULL
-  if (length(extra_idx) > 0L) {
-    extra <- unlist(args[extra_idx])
-  }
+  extra <- c(extras_existing, if (length(extra_idx) > 0L) unlist(args[extra_idx]))
   # Blank non-merge names (estimate labels handled later, extras removed)
   arg_names[not_merge_arg] <- ""
   names(args) <- arg_names
@@ -254,36 +253,9 @@ c.estimate <- function(..., as.list = FALSE) {
     newlabels[idx] <- lab[idx]
     res <- labels(res, newlabels)
   }
-  # Append extra arguments
-  if (!is.null(extra)) {
-    res <- structure(
-      list(estimate = res, extra = extra),
-      class = "estimate.extra"
-    )
-  }
+  # Attach extra as attribute (same pattern as c.summary.estimate)
+  if (length(extra) > 0L) attr(res, "extra") <- extra
   res
-}
-
-#' @export
-c.estimate.extra <- function(...) {
-  objs <- list(...)
-  est <- c()
-  extra <- c()
-  for (i in seq_along(objs)) {
-    e <- objs[[i]]
-    if (inherits(e, "estimate.extra")) {
-      extra <- c(extra, list(e$extra))
-      e <- e$estimate
-    }
-    if (inherits(e, "estimate")) {
-      est <- c(est, list(e))
-    } else {
-      extra <- c(extra, list(objs[i]))
-    }
-  }
-  est <- Reduce("merge", est)
-  extra <- unlist(Reduce(c, extra))
-  structure(list(estimate=est, extra=extra), class="estimate.extra")
 }
 
 #' @export

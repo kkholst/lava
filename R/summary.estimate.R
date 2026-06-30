@@ -117,7 +117,6 @@ summary.estimate <- function(object,
                              transform = NULL,
                              print = NULL) {
   with_unique_warnings({
-
     p <- coef(object)
     if (missing(df)) df <- object$df
     if (missing(contrast)) contrast <- diag(1, nrow=length(p))
@@ -133,37 +132,37 @@ summary.estimate <- function(object,
     } else {
       V <- vcov(object)
     }
-## Preserve dimnames on vcov: the recall path through type/var.adj
-  ## corrections builds V from the influence function and may drop
-  ## dimnames. Restore them from the original coef names so the
-  ## summary output is consistent with the deprecated estimate() path.
-  if (!is.null(V) && is.null(dimnames(V)) &&
-      !is.null(names(p)) &&
-      nrow(V) == length(p)) {
-    dimnames(V) <- list(names(p), names(p))
-  }
+    ## Preserve dimnames on vcov: the recall path through type/var.adj
+    ## corrections builds V from the influence function and may drop
+    ## dimnames. Restore them from the original coef names so the
+    ## summary output is consistent with the deprecated estimate() path.
+    if (!is.null(V) && is.null(dimnames(V)) &&
+        !is.null(names(p)) &&
+        nrow(V) == length(p)) {
+      dimnames(V) <- list(names(p), names(p))
+    }
 
-  if (is.vector(contrast) || is.list(contrast)) {
-    contrast <- contr(contrast, names(object$coef), ...)
-  }
+    if (is.vector(contrast) || is.list(contrast)) {
+      contrast <- contr(contrast, names(object$coef), ...)
+    }
 
-  cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
-  rownames(cc0) <- rownames(parameter(object))
-  waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
-  class(object) <- "list"
-  res <- c(object[c("coef", "coefmat", "vcov", "call",
-                    "ncluster", "model.index")], list(compare=waldtest))
-  res$coefmat <- cc0
-  if (!is.null(transform)) {
-    res$coefmat[, c(1, 3, 4)] <- do.call(transform,
-                                         list(res$coefmat[, c(1, 3, 4)]))
-    res$coefmat[, 2] <- NA
-    res$vcov <- NULL
-    res$coef <- res$coefmat[, 1, drop=TRUE]
-  }
-  res$print <- print
-  class(res) <- "summary.estimate"
-  return(res)
+    cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
+    rownames(cc0) <- rownames(parameter(object))
+    waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
+    class(object) <- "list"
+    res <- c(object[c("coef", "coefmat", "vcov", "call",
+                      "ncluster", "model.index")], list(compare=waldtest))
+    res$coefmat <- cc0
+    if (!is.null(transform)) {
+      res$coefmat[, c(1, 3, 4)] <- do.call(transform,
+                                           list(res$coefmat[, c(1, 3, 4)]))
+      res$coefmat[, 2] <- NA
+      res$vcov <- NULL
+      res$coef <- res$coefmat[, 1, drop=TRUE]
+    }
+    res$print <- print
+    class(res) <- "summary.estimate"
+    return(res)
   })
 }
 
@@ -174,6 +173,9 @@ print.summary.estimate <- function(x, ...) {
     return(invisible(x))
   }
   print.estimate(x, type=2L, ...)
+  if (!is.null(attributes(x)$extra)) {
+    print(attributes(x)$extra)
+  }
   return(invisible(x))
 }
 
@@ -203,30 +205,65 @@ vcov.summary.estimate <- function(object, ...) {
   return(res)
 }
 
+#' Concatenate summary.estimate objects
+#'
+#' When all arguments are `summary.estimate` objects, they are merged into a
+#' single `summary.estimate` object. When some arguments are not
+#' `summary.estimate` objects but are named numeric scalars/vectors, an object
+#' of class `summary.estimate` is returned with an additional `extra` attribute
+#' that contains the provided numeric scalars/vectors. This is useful for
+#' bundling auxiliary per-iteration information (e.g., convergence status)
+#' alongside an estimate for use with [sim.default()].
+#'
+#' @param ... `summary.estimate` objects and/or named numeric values
+#' @examples
+#' e1 <- estimate(coef = 1, IC = scale(rnorm(10)), id = 1:10, labels = "a1")
+#' e2 <- estimate(coef = 2, IC = scale(rnorm(10)), id = 1:10, labels = "a2")
+#'
+#' # concatenating two summary.estimate objects
+#' c(e1, e2)
+#'
+#' # concatenating one summary.estimate object with one numerical variable
+#' ss <- c(summary(e1), niter = 2)
+#' print(ss)
+#' attributes(ss)$extra
 #' @export
 c.summary.estimate <- function(...) {
   args <- list(...)
   if (length(args) == 1) return(args[[1]])
-  if (!all(sapply(args, function (x) inherits(x, "summary.estimate")))) stop(
-    "only summary.estimate objects can be concatenated."
+
+  mask <- sapply(args, function(x) inherits(x, "summary.estimate"))
+  summary_objects <- args[mask]
+
+  extras_existing <- unlist(
+    lapply(summary_objects, function(x) attributes(x)$extra)
   )
 
-  .print <- function(x, ...) {
+  extras <- c(extras_existing, unlist(args[!mask]))
+
+  .print <- function(x, digits = 4, ...) {
     cat("Concatenated summary.estimate objects: \n")
     print(cli::rule(width = min(cli::console_width(), 60)))
-    print(x$coefmat, digits = list(...)$digits)
+    print(x$coefmat, digits = digits)
     print(cli::rule(width = min(cli::console_width(), 60)))
+    if (!is.null(attributes(x)$extra)) {
+      print(attributes(x)$extra)
+    }
   }
 
   res <- structure(list(
-    coefmat = Reduce(rbind, lapply(args, function (x) parameter(x))),
-    coef = as.vector(Reduce(rbind, lapply(args, function (x) coef(x)))),
+    coefmat = Reduce(rbind, lapply(summary_objects, function(x) parameter(x))),
+    coef = as.vector(
+      Reduce(rbind, lapply(summary_objects, function(x) coef(x)))
+    ),
     vcov = cbind(Reduce(function(...) blockdiag(..., pad=NA),
-                        lapply(args, function (x) vcov(x)))),
-    objects = args,
+                        lapply(summary_objects, function(x) vcov(x)))),
+    objects = summary_objects,
     print = .print # consumed by print.summary.estimate
   ), class = "summary.estimate"
   )
   names(res$coef) <- rownames(res$coefmat)
+  if (length(extras) > 0) attr(res, "extra") <- extras
+
   return(res)
 }

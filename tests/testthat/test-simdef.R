@@ -59,6 +59,17 @@ test_that("sim.default with summary.estimate objects", {
   s <- summary(res)
   expect_true(ncol(s) == 4L)
   expect_equivalent(colnames(s), c("a", "b", "c", "d"))
+
+  # with concatenated summary.estimate objects + extra
+  onerun <- function(...) {
+    s1 <- estimate(
+      coef = runif(2), vcov = diag(runif(2)), labels = c("a","b")
+    ) |> summary()
+    c(s1, niter = rpois(1, 10), converged = 1)
+  }
+  res <- sim(onerun, 5)
+  expect_true(all(c("niter", "converged") %in% colnames(res)))
+  expect_true(all(res[, "converged"] == 1))
 })
 
 test_that("sim.default exports seed sequences as attribute", {
@@ -127,23 +138,6 @@ test_that("sim.default subsets", {
     cbind(res[1:50, 1:2], res[1:50, 1:2])
   ) == 4L)
 
-})
-
-test_that("c.estimate creates estimate.extra with numeric extras", {
-  e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
-  obj <- c(e, converged = 1, niter = 10)
-  expect_s3_class(obj, "estimate.extra")
-  expect_s3_class(obj$estimate, "estimate")
-  expect_equal(obj$extra, c(converged = 1, niter = 10))
-})
-
-test_that("c.estimate merges multiple estimates with extras", {
-  e1 <- estimate(coef = c(a = 1), vcov = matrix(0.1))
-  e2 <- estimate(coef = c(b = 2), vcov = matrix(0.2))
-  obj <- c(e1, e2, flag = 1)
-  expect_s3_class(obj, "estimate.extra")
-  expect_equal(length(coef(obj$estimate)), 2L)
-  expect_equal(obj$extra, c(flag = 1))
 })
 
 test_that("sim.default with estimate.extra appends extras", {
