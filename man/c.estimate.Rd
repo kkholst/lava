@@ -10,19 +10,19 @@
 \item{...}{\code{estimate} objects and/or named numeric values}
 
 \item{as.list}{if TRUE the returned object will be of class \code{list} and not
-and \code{estimate} (or \code{estimate.extra}) object.}
+an \code{estimate} object.}
 }
 \value{
-An \code{estimate} object (if all args are estimates) or an
-\code{estimate.extra} object containing \verb{$estimate} and \verb{$extra} components.
+An \code{estimate} object. If extra named numeric values were provided,
+the result carries an \code{"extra"} attribute (a named numeric vector).
 }
 \description{
 When all arguments are \code{estimate} objects, they are merged into a single
 \code{estimate} object. When some arguments are not \code{estimate} objects but are
-named numeric scalars/vectors, an object of class \code{estimate.extra} is
-returned. This is useful for bundling auxiliary per-iteration information
-(e.g., convergence status) alongside an estimate for use with
-\code{\link[=sim.default]{sim.default()}}.
+named numeric scalars/vectors, the merged \code{estimate} object is returned
+with an \code{"extra"} attribute containing the provided values. This is useful
+for bundling auxiliary per-iteration information (e.g., convergence status)
+alongside an estimate for use with \code{\link[=sim.default]{sim.default()}}.
 }
 \details{
 arguments \code{drop.ic}, \code{paired}, \code{sep} are passed to \link{merge.estimate}
@@ -30,7 +30,8 @@ arguments \code{drop.ic}, \code{paired}, \code{sep} are passed to \link{merge.es
 \examples{
 e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
 # Bundle estimate with extra information
-c(e, converged = 1, niter = 10)
+res <- c(e, converged = 1, niter = 10)
+attr(res, "extra")
 }
 \seealso{
 \code{\link[=sim.default]{sim.default()}} \code{\link[=merge.estimate]{merge.estimate()}}

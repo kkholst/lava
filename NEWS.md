@@ -9,8 +9,8 @@
   - new `c.summary.estimate` S3-method for concatenating `summary.estimate`
     objects
   - sim.default can now operate on function return objects
-    of type `estimate.extra` which are constructed via
-    `c.estimate(estimate_object, extra_args)`
+    constructed via `c.estimate(estimate_object, extra_args)` or
+    `c.estimate(summary(estimate_object), extra_args)`
   - `predict_glm` function
   - fixed issue when package formula.tools was loaded due to overwriting of
     as.character.formula.
