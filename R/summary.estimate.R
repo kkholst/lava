@@ -161,7 +161,7 @@ summary.estimate <- function(object,
       res$coef <- res$coefmat[, 1, drop=TRUE]
     }
     res$print <- print
-    class(res) <- "summary.estimate"
+    class(res) <- c("summary.estimate", "estimate")
     return(res)
   })
 }
@@ -260,7 +260,7 @@ c.summary.estimate <- function(...) {
                         lapply(summary_objects, function(x) vcov(x)))),
     objects = summary_objects,
     print = .print # consumed by print.summary.estimate
-  ), class = "summary.estimate"
+  ), class = c("summary.estimate", "estimate")
   )
   names(res$coef) <- rownames(res$coefmat)
   if (length(extras) > 0) attr(res, "extra") <- extras

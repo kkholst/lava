@@ -1,5 +1,4 @@
 # lava 1.9.2
-  Development version
   - `estimate.default`: the `null`, `contrast`, `type`, and `var.adj` arguments
     are soft-deprecated. Use `summary(estimate(...), null=, contrast=, type=,
     var.adj=)` instead. The default-path Wald p-value (H0: beta = 0) continues

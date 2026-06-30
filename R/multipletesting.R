@@ -80,7 +80,9 @@ alpha_zmax <- function(object, alpha = 0.05, ...) {
 ##' adj$p.value
 ##' summary(adj)
 closed_testing <- function(object, test = test_wald, ...) {
-  if (!inherits(object, "estimate")) stop("`estimate` object needed")
+  if (!inherits(object, c("estimate", "summary.estimate"))) {
+    stop("`estimate` or `summary.estimate` object needed")
+  }
   idx <- seq_along(coef(object))
   if (length(idx) > 15)
     stop("Too many tests. Consider some other adjustment method")
@@ -163,13 +165,15 @@ test_wald <- function(par,
                       vcov,
                       null = NULL,
                       index = NULL) {
-  if (!inherits(par, "estimate")) {
+  if (!inherits(par, c("estimate", "summary.estimate"))) {
     par <- lava::estimate(par=par, vcov=vcov)
   }
+  np <- length(coef(par))
   if (is.null(null)) {
-    null <- rep(0, length(coef(par)))
+    null <- 0
   }
-  B <- diag(length(coef(par)))
+  null <- rep(null, length.out = np)
+  B <- diag(1, nrow = np)
   if (!is.null(index)) {
     if (length(coef(par)) < length(index)) stop("wrong `index`")
     null <- null[index]

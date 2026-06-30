@@ -441,3 +441,14 @@ test_that("robust argument backwards compatibility", {
   e1m <- estimate(g, vcov = vcov(g))
   expect_equal(e0m$coefmat, e1m$coefmat)
 })
+
+test_that("initialization of object without names", {
+  p <- c(a=1, b=2, c=3, d=4)
+  e0 <- estimate(coef=p, vcov=diag(4))
+  e1 <- estimate(coef=1:4, vcov=diag(4))
+  expect_equal(coef(e0), coef(e1), check.attributes=FALSE)
+  expect_equal(vcov(e0), vcov(e1), check.attributes=FALSE)
+
+  e <- estimate(coef=1:4, vcov=diag(4), f=list(1,2,3))
+  expect_equal(coef(e), coef(e0)[c(1:3)], check.attributes=FALSE)
+})

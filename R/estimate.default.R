@@ -355,7 +355,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     cl0$keep <- use
     cl$x <- eval(cl0, parent.frame())
     cl[c("vcov", "use")] <- NULL
-    return(eval(cl, parent.frame()))
+    res <- eval(cl, parent.frame())
+    res$call <- cal
+    return(res)
   }
   expr <- suppressWarnings(inherits(try(f, silent=TRUE), "try-error"))
   if (!missing(coef)) {
@@ -366,7 +368,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       pp <- c(pp, scale=x$scale)
     }
   }
-  if (expr || is.character(f) || (is.numeric(f)
+
+  if (is.null(names(pp))) {
+    names(pp) <- paste0("p", seq_along(pp))
+  }
+
+  if ((expr || is.character(f) || (is.numeric(f))
     && !is.matrix(f))) { ## || is.call(f)) {
     dots <- lapply(substitute(placeholder(...))[-1], function(x) x)
     args <- c(list(
