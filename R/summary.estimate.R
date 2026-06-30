@@ -161,7 +161,7 @@ summary.estimate <- function(object,
       res$coef <- res$coefmat[, 1, drop=TRUE]
     }
     res$print <- print
-    class(res) <- "summary.estimate"
+    class(res) <- c("summary.estimate", "estimate")
     return(res)
   })
 }
