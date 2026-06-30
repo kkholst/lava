@@ -78,3 +78,24 @@ test_that("c.summary.estimate with extra variables", {
   expect_equal(attributes(ss)$extra, c(aa = 1, bb = 2, cc = 3))
 }
 )
+
+test_that("summary.estimate class tests", {
+  # tests for future regression when removing estimate class "inheritance"
+  # from summary.estimate object class definition
+  ss <- summary(a1)
+  expect_true(
+    all(c(
+      inherits(ss, "summary.estimate"),
+      inherits(ss, "estimate")
+    ))
+  )
+
+  # same for concatenation
+  ss <- c(summary(a1), aa = 1)
+  expect_true(
+    all(c(
+      inherits(ss, "summary.estimate"),
+      inherits(ss, "estimate")
+    ))
+  )
+})
