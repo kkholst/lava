@@ -254,7 +254,7 @@ coef(e)
 ## ## Asymptotic (robust) variance estimate
 vcov(e)
 ## Matrix with estimates and confidence limits
-estimate(e, level = 0.99) |> parameter()
+summary(e, level = 0.99) |> parameter()
 ## Influence curve
 IC(e) |> head()
 ## Join estimates
@@ -815,10 +815,11 @@ $z = \arctanh(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)$,
 confidence limits with general better coverage can be obtained
 ```{r tanh}
-estimate(atanh(rho), back.transform = tanh)
+estimate(atanh(rho)) |>
+  summary(transform = tanh)
 ```
 The confidence limits are calculated on the $\arctanh$-scale and transformed
-back to the original correlation scale via the `back.transform` argument.
+back to the original correlation scale via the `transform` argument of the `summary` method.
 In this case, where the estimates are far away from the boundary of the parameter space, the variance
 stabilizing transform does almost not have any impact, and the confidence limits
 agrees with the original symmetric confidence limits.
@@ -1074,10 +1075,11 @@ scale:
 ```{r est-ate-or}
 est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
 est
-transform(est, labels="OR", back.transform=exp)
+transform(est, labels="OR") |>
+  summary(transform = exp)
 #logor <- function(p) logit(p[2]) - logit(p[1])
 #transform(potential_outcomes, logor, labels="logOR")
-#transform(potential_outcomes, logor, labels="OR", back.transform=exp)
+#transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
 We refer to the `targeted` package [@r-targeted] for a general implementation
