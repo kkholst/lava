@@ -1,3 +1,8 @@
+# lava (development version)
+
+  - `merge.estimate` (and `estimate`) by default do longer not sort IC by id.
+    `merge.estimate(..., sort=FALSE)` yields the old behaviour.
+
 # lava 1.9.2
   - `estimate.default`: the `null`, `contrast`, `type`, and `var.adj` arguments
     are soft-deprecated. Use `summary(estimate(...), null=, contrast=, type=,
