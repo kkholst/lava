@@ -500,6 +500,10 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       if (is.null(attributes(ic_theta)$N)) {
         attributes(ic_theta)$N <- N
       }
+      ## Reorder to original order: unique(id)
+      ord <- match(unique(id), idstack)
+      ic_theta <- ic_theta[ord, , drop=FALSE]
+      idstack <- idstack[ord]
     } else idstack <- id
   } else {
     if (!is.null(data)) idstack <- rownames(data)
