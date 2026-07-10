@@ -36,12 +36,15 @@ impute0 <- function(object,rows,idx,na.action=na.omit,value,...) {
 ##' @export
 ##' @param object data.frame, vector
 ##' @param na.action function used to identify missing values
+##' @param row.wise when true entire row is set to zero whenever a missing data
+##'   is observed in that row
+##' @param value value to replace NAs with (default 0)
 ##' @param ... additional arguments to lower level functions
 ##' @examples
 ##' d <- data.frame(y=c(1,1,NA,2,NA,2), r=c(1,1,0,1,1,1))
 ##' na.pass0(d)
 ##' glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
-na.pass0 <- function(object, na.action=na.omit, rowwise=FALSE, value = 0, ...) {
+na.pass0 <- function(object, na.action=na.omit, row.wise=FALSE, value = 0, ...) {
   if (!rowwise && NCOL(object)>1L) {
     nas <- is.na(object)
     if (!any(nas)) return(object)
