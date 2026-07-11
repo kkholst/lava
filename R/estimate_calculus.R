@@ -14,19 +14,23 @@
 #' @param sep Separator used for labeling
 #' @param drop.ic If TRUE, drop the influence function from the result
 #' @param ignore.case If TRUE, case is ignored in `keep`/`subset` matching
+#' @param sort if true the returned influence function will be sorted according
+#'   to the id variables (lexigraphically)
 #' @seealso [c.estimate()]
 #' @return Object of class `estimate` (see [estimate.default]).
 #' @export
-merge.estimate <- function(x,y,...,
+merge.estimate <- function(x, y,
+                           ...,
                            id,
-                           paired=FALSE,
-                           labels=NULL,
-                           keep=NULL,
-                           subset=NULL,
-                           regex=FALSE,
-                           sep=FALSE,
+                           paired = FALSE,
+                           labels = NULL,
+                           keep = NULL,
+                           subset = NULL,
+                           regex = FALSE,
+                           sep = FALSE,
                            drop.ic = FALSE,
-                           ignore.case=FALSE) {
+                           ignore.case = FALSE,
+                           sort = FALSE) {
     if (missing(y)) {
       objects <- c(list(x), list(...))
     } else {
@@ -63,15 +67,8 @@ merge.estimate <- function(x,y,...,
     }
     hasIC <- unlist(lapply(objects, function(x) !is.null(IC(x))))
     if (sum(!hasIC) > 0L) { # Some objects do not have influence function
-      ## if (!missing(id) && !is.null(id)) {
-      ##   warning(
-      ##     "Argument 'id' is only applicable to objects with an influence function. ",
-      ##     "It will be used only for objects with IC; ",
-      ##     "cross-terms involving objects without IC will be NA."
-      ##   )
-      ## }
-      npar       <- unlist(lapply(objects, function(x) length(coef(x, messages=0))))
-      col_ends   <- cumsum(npar)
+      npar <- unlist(lapply(objects, function(x) length(coef(x, messages=0))))
+      col_ends <- cumsum(npar)
       col_starts <- col_ends - npar + 1L
       V <- matrix(NA, nrow=sum(npar), ncol=sum(npar))
 
@@ -93,7 +90,6 @@ merge.estimate <- function(x,y,...,
       }
       return(estimate(coef=coefs, vcov=V, keep=keep))
     }
-
     if (!missing(id) && is.null(id)) { ## Independence between datasets in x,y,...
         nn <- unlist(lapply(
           objects,
@@ -117,20 +113,29 @@ merge.estimate <- function(x,y,...,
         nn <- unlist(lapply(objects,function(x) NROW(IC(x))))
         if (length(id)==1 && is.logical(id)) {
             if (id) {
-                if (any(nn[1]!=nn)) stop("Expected objects of the same size: ", paste(nn,collapse=","))
-                id0 <- seq(nn[1]); id <- c()
-                for (i in seq(length(nn))) id <- c(id,list(id0))
+              if (any(nn[1]!=nn)) {
+                stop("Expected objects of the same size: ",
+                     paste(nn,collapse=","))
+              }
+              id0 <- seq(nn[1]); id <- c()
+              for (i in seq(length(nn))) id <- c(id,list(id0))
             } else {
-                id <- c()
-                N <- cumsum(c(0,nn))
-                for (i in seq(length(nn))) id <- c(id,list(seq(nn[i])+N[i]))
+              id <- c()
+              N <- cumsum(c(0,nn))
+              for (i in seq(length(nn))) id <- c(id,list(seq(nn[i])+N[i]))
             }
         }
-        if (length(id)!=length(objects)) stop("Same number of id-elements as model objects expected")
+        if (length(id)!=length(objects)) {
+          stop("Same number of id-elements as model objects expected")
+        }
         idlen <- unlist(lapply(id,length))
-        if (!identical(idlen,nn)) stop("Wrong lengths of 'id': ", paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
+        if (!identical(idlen,nn)) {
+          stop("Wrong lengths of 'id': ",
+               paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
+        }
     }
     ids <- ic_all <- c(); count <- 0
+    first_id <- id[[1]]
     for (z in objects) {
         count <- count+1
         clidx <- NULL
@@ -145,14 +150,19 @@ merge.estimate <- function(x,y,...,
           check_ic_mean_zero(icz)
         }
         if (!lava.options()$cluster.index) {
-            ic0 <- matrix(unlist(by(icz,id0,colSums)),byrow=TRUE,ncol=ncol(icz))
-            ids <- c(ids, list(sort(unique(id0))))
+          ic0 <- matrix(
+            unlist(by(icz,id0,colSums)),
+            byrow = TRUE, ncol = ncol(icz))
+            ids <- c(ids, list(base::sort(unique(id0))))
         } else {
-            if (!requireNamespace("mets",quietly=TRUE)) stop("'mets' package required")
-            clidx <- mets::cluster.index(id0,mat=icz,return.all=TRUE)
-            ic0 <- clidx$X
-            ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
+          if (!requireNamespace("mets", quietly = TRUE)) {
+            stop("'mets' package required")
+          }
+          clidx <- mets::cluster.index(id0, mat = icz, return.all = TRUE)
+          ic0 <- clidx$X
+          ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
         }
+        # order observations such that the order
         ic0 <- ic0 * NROW(ic0) / length(id0)
         ic_all <- c(ic_all, list(ic0))
     }
@@ -164,18 +174,18 @@ merge.estimate <- function(x,y,...,
         relpos <- seq_along(coef(objects[[i]], messages=0))
         if (!missing(subset)) relpos <- seq_along(subset)
         ic0[match(ids[[i]], id), relpos + colpos] <- ic_all[[i]]
-        ## midx <- objects[[i]]$model.index
-        ## if (!is.null(midx)) {
-        ##   midx <- lapply(midx, function(x) {
-        ##     intersect(x, relpos) + colpos
-        ##   })
-        ## } else {
         midx <- list(relpos + colpos)
         ## }
         model.index <- c(model.index, midx)
         colpos <- colpos+tail(relpos,1)
     }
     rownames(ic0) <- id
+    if (!sort) { # Reorder to original order of the first IC
+      ord <- match(id, unique(c(first_id, id)))
+      ord <- match(unique(c(first_id, id)), id)
+      ic0 <- ic0[ord, , drop=FALSE]
+      id <- id[ord]
+    }
     ## Rescale each column according to I(obs)/pr(obs)
     for (i in seq(NCOL(ic0))) {
       pr <- mean(!is.na(ic0[,i]))
@@ -239,7 +249,8 @@ c.estimate <- function(..., as.list = FALSE) {
     lapply(args[est_idx], function(x) attr(x, "extra"))
   )
   # Extract extra (non-estimate, non-merge) arguments
-  extra <- c(extras_existing, if (length(extra_idx) > 0L) unlist(args[extra_idx]))
+  extra <- c(extras_existing,
+             if (length(extra_idx) > 0L) unlist(args[extra_idx]))
   # Blank non-merge names (estimate labels handled later, extras removed)
   arg_names[not_merge_arg] <- ""
   names(args) <- arg_names

@@ -105,3 +105,48 @@ test_that("c.estimate with 'extra' attr", {
   # internal conversion to numeric
   expect_equal(c(e1.iter = 2, converged = 0), attr(e, "extra"))
 })
+
+test_that("estimate preserves original order with stack=TRUE", {
+  set.seed(1)
+  n <- 10
+  x <- seq_len(n)
+  y <- rnorm(n, sd=0.1) + x
+  id1 <- as.character(x + 5)
+  d <- data.frame(y, x)
+  rownames(d) <- id1
+
+  g <- glm(y~x, data=d)
+  e <- estimate(g, id=id1)
+  X <- model.matrix(g)
+  r <- residuals(g)
+  ic1 <- cbind(r, r*d$x) %*% solve(crossprod(X))*nrow(X)
+  ic2 <- IC(e)
+  expect_equivalent(ic1,ic2)
+})
+
+test_that("merge preserves order (of first IC)", {
+  set.seed(1)
+  id1 <- as.character(1:10 + 5)
+  id2 <- as.character(1:10)
+  a <- estimate(coef=1, IC=scale(rnorm(length(id1))), id=id1)
+  b <- estimate(coef=2, IC=scale(rnorm(length(id2))), id=id2)
+
+  expect_equivalent(id1, rownames(IC(a)))
+  expect_equivalent(id2, rownames(IC(b)))
+
+  e <- merge(a, b)
+  expect_equivalent(rownames(IC(e))[seq_along(id1)],
+                    rownames(IC(a)))
+
+  ic1 <- IC(e)[seq_along(id1),1,drop=FALSE]
+  expect_equivalent(IC(a)* 3/2, ic1) # same expect for IPW due to incomplete data
+})
+
+test_that("cluster.index vs lava native impl.", {
+  op <- lava.options(cluster.index = FALSE)
+  e1 <- merge(e_ic1, e_ic2)
+  lava.options(cluster.index = TRUE)
+  e2 <- merge(e_ic1, e_ic2)
+  expect_equal(e1, e2)
+  lava.options(op)
+})
