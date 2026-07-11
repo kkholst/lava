@@ -10,44 +10,53 @@ reference:
   desc: >
     Functions for working with Influence Functions
   contents:
-  - estimate.default
   - IC.default
-  - multinomial
+  - c.estimate
+  - c.summary.estimate
   - estimate.array
+  - estimate.default
+  - estimate.glm
+  - estimate.list
   - iid
-  - stack.estimate
+  - merge.estimate
+  - multinomial
   - plot.estimate
+  - stack.estimate
+  - summary.estimate
+  - var_ic
 
 - title: "Simulation functions"
   contents:
-  - sim.lvm
-  - sim.default
   - density.sim
+  - sim.default
+  - sim.lvm
   - summary.sim
 
 - title: "Statistical Inference and model tools"
   contents:
-  - diagtest
-  - parsedesign
-  - bootstrap
   - backdoor
+  - bootstrap
   - closed_testing
-  - scheffe
-  - zibreg
-  - wkm
+  - confpred
+  - diagtest
   - dsep.lvm
-  - pcor
-  - partialcor
-  - ordreg
-  - mvnmix
   - equivalence
   - gof
-  - confpred
+  - information
   - mixture
+  - mvnmix
+  - ordreg
+  - parsedesign
+  - partialcor
+  - pcor
   - plot.lvm
   - predict.lvm
-  - predictlvm
   - predict_glm
+  - predictlvm
+  - scheffe
+  - score
+  - wkm
+  - zibreg
 
 - title: "Data sets"
   contents:
@@ -59,8 +68,8 @@ reference:
   - hubble
   - hubble2
   - indoorenv
-  - nldata
   - missingdata
+  - nldata
   - nsem
   - semdata
   - serotonin
@@ -69,67 +78,71 @@ reference:
 - title: "Graphics functions"
   contents:
   - Col
-  - curly
-  - fplot
-  - forestplot
-  - ksmooth2
-  - colsel
   - colorbar
+  - colsel
   - confband
-  - plot_region
+  - curly
   - devcoords
-  - surface
+  - forestplot
+  - fplot
   - images
+  - ksmooth2
   - plotConf
+  - plot_region
   - spaghetti
+  - surface
 
 - title: "Matrix functions and linear algebra utilities"
   contents:
-  - blockdiag
   - Inverse
-  - vec
-  - revdiag
-  - revdiag<-
+  - blockdiag
   - offdiag
   - offdiag<-
-  - tr
+  - revdiag
+  - revdiag<-
   - rotate2
+  - tr
+  - vec
 
 - title: "Utility functions"
   contents:
   - By
-  - click
-  - wait
   - Combine
+  - Expand
+  - Grep
+  - NA2x
+  - NR
+  - PD
+  - Print
+  - click
   - commutation
   - csplit
   - foldr
-  - Expand
   - getSAS
-  - PD
+  - lava.options
+  - na.pass0
   - pdfconvert
+  - rbind.Surv
   - toformula
   - trim
+  - wait
   - wrapvec
   - x2NA
-  - NA2x
-  - na.pass0
-  - Grep
-  - NR
-  - Print
   - starts_with("%")
-  - lava.options
-  - rbind.Surv
 
 - title: "Latent variable model building"
   contents:
-  - Model
   - Graph
+  - Missing
+  - Model
+  - Range.lvm
   - addvar
   - addvar<-
   - adjMat
   - ancestors
   - baptize
+  - binomial.rd
+  - binomial.rr
   - cancel
   - cancel<-
   - categorical
@@ -139,31 +152,26 @@ reference:
   - constrain
   - covariance
   - covariance<-
-  - variance
-  - variance<-
   - descendants
   - describecoef
   - distribution
   - distribution<-
   - edgeList
+  - edgeList
   - edgelabels
   - edgelabels<-
-  - edgeList
   - endogenous
-  - exogenous
-  - exogenous<-
   - eventTime
   - eventTime<-
+  - exogenous
+  - exogenous<-
   - fixsome
   - functional
   - functional<-
-  - starts_with("index")
   - intercept
   - intercept<-
   - intervention
   - intervention<-
-  - rmvar
-  - rmvar<-
   - kill
   - kill<-
   - labels
@@ -181,35 +189,37 @@ reference:
   - ordinal<-
   - parameter
   - parameter<-
+  - parents
   - parpos
   - pars
-  - parents
   - path
-  - Range.lvm
   - randomslope
   - randomslope<-
   - regression
   - regression<-
+  - rmvar
+  - rmvar<-
   - roots
   - sinks
+  - starts_with("index")
   - timedep
   - timedep<-
   - transform<-
+  - variance
+  - variance<-
   - vars
-  - Missing
-  - binomial.rr
-  - binomial.rd
 
 - title: "Latent variable model estimation"
   contents:
-  - estimate.lvm
   - bootstrap.lvm
-  - confint.lvmfit
-  - complik
-  - correlation
-  - twostageCV
-  - modelsearch
-  - twostage.lvmfit
-  - measurement.error
-  - twostage
   - compare
+  - complik
+  - confint.lvmfit
+  - correlation
+  - estimate.formula
+  - estimate.lvm
+  - measurement.error
+  - modelsearch
+  - twostage
+  - twostage.lvmfit
+  - twostageCV

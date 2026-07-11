@@ -191,17 +191,10 @@ B %*% e
 #> [a] - [b]     -0.3  0.3881 -1.06064 0.4606 0.439512
 #> a              0.5  0.3000 -0.08799 1.0880 0.095581
 #> b              0.8  0.3000  0.21201 1.3880 0.007661
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [a] - [b] = 0
-#>   [a] = 0
-#>   [b] = 0 
-#>  
-#> chisq = 8.6688, df = 2, p-value = 0.01311
 plot(B %*% e)
 ```
 
-![](man/figures/estimate-contrast-1.svg)<!-- -->
+<img src="man/figures/estimate-contrast-1.svg" alt="forest plot" style="display: block; margin: auto;" />
 
 ### Structural Equation Model
 
