@@ -29,8 +29,8 @@ merge.estimate <- function(x, y,
                            regex = FALSE,
                            sep = FALSE,
                            drop.ic = FALSE,
+                           ignore.case = FALSE,
                            sort = FALSE) {
-                           ignore.case = FALSE) {
     if (missing(y)) {
       objects <- c(list(x), list(...))
     } else {
