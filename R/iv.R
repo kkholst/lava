@@ -95,7 +95,7 @@ IV <- function(m, data, R2thres = 0, type = "robust", ...) {
       Ecor <- c(Ecor, list(y0))
     } else {
       v0 <- vars(m)[-c(e, indicators)]
-      ##m.sub <- subset(m,vars(m)[c(e,indicators)])
+      ## m.sub <- subset(m,vars(m)[c(e,indicators)])
       m.sub <- rmvar(m, v0)
       i <- 0
       while (i < length(y.indicators)) {
@@ -197,7 +197,7 @@ IV <- function(m, data, R2thres = 0, type = "robust", ...) {
   LS <- function(X) {
     with(svd(X), v %*% diag(1 / d, nrow = length(d)) %*% t(u))
   }
-  ##projection <- function(X) X%*%LS(X)
+  ## projection <- function(X) X%*%LS(X)
   P0 <- lapply(V., LS)
   Zhat <- list()
   for (i in seq_along(Z.)) {

@@ -51,7 +51,7 @@ test_that("plotConf", {
     )
   }
   expect_doppelganger("plotConf1", myplot)
-  ##par(mar=c(0,0,0,0))
+  ## par(mar=c(0,0,0,0))
   ## newd <- data.frame(x=seq(min(x),max(x),length.out=100))
   ## l0 <- lm(y~x,subset(d,z==0))
   ## ci0 <- predict(l0,newdata=newd,interval="confidence")
@@ -63,7 +63,7 @@ test_that("plotConf", {
   ## confband(newd$x,lower=ci0[,2],upper=ci0[,3],polygon=TRUE,col=Col("black",0.5),border=FALSE)
   ## confband(newd$x,lower=ci1[,2],upper=ci1[,3],polygon=TRUE,col=Col("blue",0.5),border=FALSE)
   ## points(y~x,col=c("black","blue")[z+1],pch=16)
-  #testthat::expect_true(grcompare(d1,d2,threshold=5))
+  # testthat::expect_true(grcompare(d1,d2,threshold=5))
   l <- lm(y ~ z)
   myplot <- function(...) {
     plotConf(

@@ -28,9 +28,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   dev = "svg",
   fig.ext = "svg"
-  )
-has_mets <- lava:::versioncheck('mets', 1)
-has_geepack <- lava:::versioncheck('geepack', 1)
+)
+has_mets <- lava:::versioncheck("mets", 1)
+has_geepack <- lava:::versioncheck("geepack", 1)
 ```
 
 \newcommand{\arctanh}{\operatorname{arctanh}}
@@ -146,14 +146,14 @@ asymptotic variance estimate via the `vcov` argument, without specifying the IC
 matrix.
 
 ```{r estimate.syntax, eval=FALSE}
-estimate(x=, ...)
-estimate(coef=, IC=, ...)
-estimate(coef=, vcov=, ...)
+estimate(x = , ...)
+estimate(coef = , IC = , ...)
+estimate(coef = , vcov = , ...)
 ```
 
 A typical call could look like
 ```{r estimate.examples, eval=FALSE}
-merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
+merge(subset(estimate(x), 1), estimate(coef = p, IC = ic, id = id)) |>
   transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
 ```
@@ -194,9 +194,12 @@ dw <- sim(m, n, seed = 1) |>
 Print(dw)
 ## Data in long format
 dl <- reshape(dw,
-        varying = list(paste0("y",1:4),
-                       paste0("x",1:4)),
-        v.names=c("y", "x"), direction="long") |>
+  varying = list(
+    paste0("y", 1:4),
+    paste0("x", 1:4)
+  ),
+  v.names = c("y", "x"), direction = "long"
+) |>
   na.omit()
 dl <- dl[order(dl$id), ]
 ## dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
@@ -221,7 +224,7 @@ $Y_1$, the IF is given by $\one(Y_{1}=1) - \pr(Y_{1}=1)$.
 To estimate this parameter and its IF we will use the `estimate` function
 ```{r inp1}
 inp <- as.matrix(dw[, c("y1", "y2")])
-e <- estimate(inp[, 1, drop = FALSE], type="mean")
+e <- estimate(inp[, 1, drop = FALSE], type = "mean")
 class(e)
 e
 ```
@@ -261,7 +264,7 @@ IC(e) |> head()
 ee <- merge(e, e)
 ee
 ## Forest plots
-plot(ee, null=0.5, digits=2)
+plot(ee, null = 0.5, digits = 2)
 ```
 
 <!-- The IF for both the empirical mean and variance can also be estimated directly with the `IC` method: -->
@@ -308,7 +311,7 @@ ordinal outcomes. Here we consider the proportional odds model given by
 \log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
 \end{align*}
 ```{r ordreg}
-ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
+ordreg(y1 ~ a + x1, dw, family = binomial(logit)) |> estimate()
 ```
 
 Note that the `sandwich::estfun` function from the `sandwich` library [@r_sandwich] can also estimate the IF
@@ -322,7 +325,7 @@ Biliary Cholangitis Data [@therneau00surv]
 
 ```{r mets}
 library("survival")
-data(pbc, package="survival")
+data(pbc, package = "survival")
 ```
 
 The Cox proportional hazards model can be fitted with the `mets::phreg` method
@@ -352,7 +355,7 @@ baseline(fit.phreg, tt)
 The `estimate` and `IF` methods are also available for parametric survival
 models via `survival::survreg`, here a Weibull model:
 ```{r survreg, eval=has_mets }
-survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull") |>
+survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist = "weibull") |>
   estimate()
 ```
 
@@ -374,8 +377,8 @@ $$
 to the simulated dataset
 ```{r semfit, eval=has_mets }
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
-  latent(~ u) |>
-  ordinal(K=2, ~ y1 + y2)
+  latent(~u) |>
+  ordinal(K = 2, ~ y1 + y2)
 semfit <- estimate(sem, data = dw)
 
 ## Robust standard errors
@@ -436,8 +439,8 @@ To illustrate this we consider two marginal logistic regression models fitted
 separately for $Y_1$ and $Y_2$ and combine the estimates and IFs using the
 `merge` method
 ```{r glmmarg}
-g1 <- glm(y1 ~ a, family=binomial, data=dw)
-g2 <- glm(y2 ~ a, family=binomial, data=dw)
+g1 <- glm(y1 ~ a, family = binomial, data = dw)
+g2 <- glm(y2 ~ a, family = binomial, data = dw)
 e <- merge(g1, g2)
 summary(e)
 ```
@@ -445,7 +448,7 @@ As we have access to the joint asymptotic distribution we can for example test
 for whether the odds-ratio is the same for the two responses:
 
 ```{r hypo1}
-summary(estimate(e), contrast=cbind(0,1,0,-1), null=0)
+summary(estimate(e), contrast = cbind(0, 1, 0, -1), null = 0)
 ```
 More details an be found in the Section on [hypothesis testing](#linear-contrasts-and-hypothesis-testing).
 
@@ -515,7 +518,7 @@ g3 <- glm(y3 ~ 1, family = binomial, data = dwc)
 summary(g3)
 
 e2 <- estimate(g2, id = dw$id)
-e3 <- estimate(g3, id = "id", data=dwc)
+e3 <- estimate(g3, id = "id", data = dwc)
 
 ecomb <- merge(e2, e3)
 IC(ecomb) |> Print()
@@ -536,7 +539,8 @@ If omitted then the `id` will automatically be extracted from the model-specific
 model). This automatically works with all models and `IC` methods described in this document.
 ```{r estimatenoid}
 estimate(g2) |>
-  IC() |> head()
+  IC() |>
+  head()
 vcov(merge(estimate(g2), estimate(g3)))
 merge(estimate(g2), estimate(g3)) |>
   (rownames %++% head %++% IC)()
@@ -558,7 +562,7 @@ merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
 ```
 The argument can be given either as character vector or a vector of indices:
 ```{r merge2}
-merge(g1, g2, keep=c(1, 3))
+merge(g1, g2, keep = c(1, 3))
 ```
 or as a vector of perl-style regular expressions
 ```{r merge3}
@@ -571,16 +575,16 @@ to rename the parameters with the `labels` argument
 ```{r merge4}
 merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
 merge(g1, g2,
-      labels = c("a", "b", "c"),
-      keep = c("a", "c")
+  labels = c("a", "b", "c"),
+  keep = c("a", "c")
 )
-estimate(g1, labels=c("a", "b"))
+estimate(g1, labels = c("a", "b"))
 ```
 
 Finally, the `subset` argument can be used to subset the parameters and IFs
 before the actual merging is being done
 ```{r merge5}
-merge(g1, g2, subset="(Intercept)")
+merge(g1, g2, subset = "(Intercept)")
 ```
 
 ## Clustered data (non-iid case)
@@ -612,12 +616,12 @@ The asymptotic variance estimate ignoring that the observations are not
 independent is not consistent. Instead we can calculate the cluster robust
 standard errors from the above iid decomposition
 ```{r cluster2}
-estimate(g0, id=dl$id)
+estimate(g0, id = dl$id)
 ```
 We can confirm that this situation is equivalent to the variance estimates we
 obtain from a GEE marginal model with working independence correlation structure [@r_geepack]
 ```{r geepack, eval=has_geepack }
-gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
+gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family = binomial)
 summary(gee0)
 ```
 
@@ -633,7 +637,7 @@ when combining IFs.
 set.seed(1)
 y <- cbind(rnorm(1e5))
 N <- 2e2 ## Number of aggregated groups, the number of observations in the new IF
-id <- foldr(nrow(y), N, list=FALSE)
+id <- foldr(nrow(y), N, list = FALSE)
 Print(cbind(table(id)))
 
 ## Aggregated IF
@@ -693,17 +697,19 @@ necessary derivatives are automatically calculated exactly.
 To illustrate this consider the following simple example where we consider two
 `estimate` objects each with a single parameter estimate
 ```{r estimate_calculus_models}
-a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=1:10)
+a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10)), id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10)), id = 1:10)
 ```
 
 Parameter transformation can now be calculated directly as in the following examples
 ```{r estimate_calc_ex}
 a * b
 (3 * cos(a) / sqrt(b) + 1) / a
-c(sum=sum(e), sum2=a+b,
-  prod=prod(e), prod2=a*b) # sum and prod function
-e <- c(a,b) # merge
+c(
+  sum = sum(e), sum2 = a + b,
+  prod = prod(e), prod2 = a * b
+) # sum and prod function
+e <- c(a, b) # merge
 e %*% e # inner prod.
 c(1, 2) %*% e
 c(pow = a^b) # power-function, rename parameter
@@ -714,9 +720,9 @@ c(e["a"] * e["b"] / a, e["b"])
 For the `%*%` operator we can also use a general contrast matrix
 (see also Section on [Linear contrasts](#linear-contrasts-and-hypothesis-testing)
 ```{r estimate-contrast}
-B <- rbind(c(1,-1), c(1,0), c(0,1))
+B <- rbind(c(1, -1), c(1, 0), c(0, 1))
 B %*% e
-B %*% e == c(1,1,0)
+B %*% e == c(1, 1, 0)
 ```
 
 
@@ -735,7 +741,7 @@ and any compositions of these functions, which also means we can immediately
 ```{r}
 lava::logit
 logit(b)
-expit(c(a,b))
+expit(c(a, b))
 ```
 
 In the above example we also demonstrated the user of the subset operator `[]`
@@ -745,7 +751,7 @@ transformations above, and the `labels` function for renaming parameters.
 Together we can combine these methods via the pipe operator to create readable
 code:
 ```{r estimate-pipe}
-merge(a, b) |>  # merges the two `estimate` objects
+merge(a, b) |> # merges the two `estimate` objects
   transform(prod) |> # calculates product of parameter estimates
   subset(1) |> # nothing happens here as the result was already 1-dim.
   labels("prod") # rename parameter
@@ -753,8 +759,8 @@ merge(a, b) |>  # merges the two `estimate` objects
 
 Finally, the `with` function can be used to reference parameter names
 ```{r estimate-with}
-e <- c("e1"=a, "e2"=b)
-with(e, c(est = e1*e2))
+e <- c("e1" = a, "e2" = b)
+with(e, c(est = e1 * e2))
 ```
 
 
@@ -779,12 +785,12 @@ argument which allows us to provide a user-specificed IF and with the point
 estimate given by the `coef` argument
 ```{r cov}
 Cov <- function(x, y, ...) {
-  est <- mean(x * y)-mean(x)*mean(y)
-    estimate(
-      coef = est,
-      IC = (x - mean(x)) * (y - mean(y)) - est,
-      ...
-    )
+  est <- mean(x * y) - mean(x) * mean(y)
+  estimate(
+    coef = est,
+    IC = (x - mean(x)) * (y - mean(y)) - est,
+    ...
+  )
 }
 with(dw, Cov(x1, x2))
 ```
@@ -796,14 +802,14 @@ est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
   estimate(labels = c("E1", "E2", "E12"))
 est
 
-est["E12"] - est["E2"]*est["E1"]
+est["E12"] - est["E2"] * est["E1"]
 # transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
 The variance estimates can be estimated in the same way and combined to estimate the correlation
 ```{r rho}
 v12 <- with(dw, Cov(x1, x2, id = id))
-v1  <- with(dw, Cov(x1, x1, id = id))
-v2  <- with(dw, Cov(x2, x2, id = id))
+v1 <- with(dw, Cov(x1, x1, id = id))
+v2 <- with(dw, Cov(x2, x2, id = id))
 
 rho <- c(rho = v12 / sqrt(v1 * v2))
 rho
@@ -840,7 +846,7 @@ As an example consider marginal models for the binary response variables
   $Y_1, Y_2, Y_3, Y_4$
 ```{r estglmmerge}
 g <- lapply(
-  list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
+  list(y1 ~ a, y2 ~ a, y3 ~ a), # , y4 ~ a+x4),
   function(f) glm(f, family = binomial, data = dw)
 )
 gg <- Reduce(merge, g)
@@ -850,13 +856,13 @@ gg
 A linear transformation can be specified via the `f` as a matrix argument
 instead of function object
 ```{r contrast1}
-B <- cbind(0,1, 0,-1, 0,0)
+B <- cbind(0, 1, 0, -1, 0, 0)
 estimate(gg, B)
 ```
 
 The $\bm{b}_0$ vector (default assumed to be zero) can be specified via the `null` argument
 ```{r estcontrast1}
-summary(estimate(gg, B), null=1)
+summary(estimate(gg, B), null = 1)
 ```
 
 For testing multiple hypotheses we use that
@@ -867,14 +873,16 @@ $(\bm{B}\widehat{\theta}-\bm{b}_0)^{\top}
  $\widehat{\Sigma}$ is the estimated variance of $\theta$ (i.e.,
 `vcov(gg)`)
 ```{r estcontrast2}
-B <- rbind(cbind(0,1, 0,-1, 0,0),
-           cbind(0,1, 0,0, 0,-1))
+B <- rbind(
+  cbind(0, 1, 0, -1, 0, 0),
+  cbind(0, 1, 0, 0, 0, -1)
+)
 estimate(gg, B)
 ```
 
 Such linear statistics can also be specified directly as expressions of the parameter names
 ```{r}
-estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
+estimate(gg, a + a.1, 2 * a - a.2, a) |> summary(null = c(2, 1, 1))
 ```
 
 We refer to the function `lava::contr`  and `lava::parsedesigns` for defining contrast matrices.
@@ -886,7 +894,7 @@ comparisons of different exposure estimates:
 
 ```{r pairwise.diff}
 pairwise.diff(3)
-summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
+summary(estimate(gg, pairwise.diff(3), use = c(2, 4, 6)), null = c(1, 1, 1))
 ```
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
@@ -914,8 +922,8 @@ in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{p}$
 can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect, eval=has_mets }
-gg0 <- estimate(gg, use="^a", regex=TRUE)
-alpha_zmax(gg0, null=rep(.8, 3))
+gg0 <- estimate(gg, use = "^a", regex = TRUE)
+alpha_zmax(gg0, null = rep(.8, 3))
 ```
 
 While this always yields a more powerful test compared to Bonferroni
@@ -989,15 +997,16 @@ gives the predicted probability $\pr(Y=1\mid,A=a,X_{1},W)$ for any observed
 values of $X_1,W$ but with the treatment variable $A$ kept fixed at the
 value $1$
 ```{r estpred}
-g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
-pr <- function(p, data, ...)
-  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+g <- glm(y1 ~ a + x1 + w, data = dw, family = binomial)
+pr <- function(p, data, ...) {
+  with(data, expit(p[1] + p["a"] + p["x1"] * x1 + p["w"] * w))
+}
 pr(coef(g), dw) |> head()
 ```
 The target parameter can now be estimated with the syntax
 ```{r average}
-id <- foldr(NROW(dw), 100, list=FALSE)
-ea <- estimate(g, pr, average=TRUE, id=id)
+id <- foldr(NROW(dw), 100, list = FALSE)
+ea <- estimate(g, pr, average = TRUE, id = id)
 ea
 IC(ea) |> head()
 ```
@@ -1041,10 +1050,10 @@ logistic regressions models for the two nuisance models
 ```{r ate-nuisancemodels}
 qmod <- glm(y1 ~ a * w, family = binomial, data = dw) # E(Y|W,A) := Q(W,A)
 amod <- glm(a ~ w, family = binomial, data = dw) # P(A=1|W) = Pi_1(W)
-q0 <- predict(qmod, transform(dw, a=0), type="response") # Q(W,0)
-q1 <- predict(qmod, transform(dw, a=1), type="response") # Q(W,1)
-p1 <- predict(amod, dw, type="response") # P(A=1|W)
-e0 <- with(dw, (1-a) / (1-p1) * (y1 - q0) + q0)
+q0 <- predict(qmod, transform(dw, a = 0), type = "response") # Q(W,0)
+q1 <- predict(qmod, transform(dw, a = 1), type = "response") # Q(W,1)
+p1 <- predict(amod, dw, type = "response") # P(A=1|W)
+e0 <- with(dw, (1 - a) / (1 - p1) * (y1 - q0) + q0)
 e1 <- with(dw, a / p1 * (y1 - q1) + q1)
 head(cbind(e0, e1))
 ```
@@ -1052,10 +1061,10 @@ head(cbind(e0, e1))
 We can then easily construct estimates of the two expected potential outcomes
 and estimate their joint asymptotic distribution
 ```{r est-potentialoutcomes}
-est0 <- estimate(coef=mean(e0), IC=e0-mean(e0)) # E[Y(0)]
-est1 <- estimate(coef=mean(e1), IC=e1-mean(e1)) # E[Y(1)]
+est0 <- estimate(coef = mean(e0), IC = e0 - mean(e0)) # E[Y(0)]
+est1 <- estimate(coef = mean(e1), IC = e1 - mean(e1)) # E[Y(1)]
 
-potential_outcomes <- merge(est0, est1, paired=TRUE, labels=c("y(0)", "y(1)"))
+potential_outcomes <- merge(est0, est1, paired = TRUE, labels = c("y(0)", "y(1)"))
 potential_outcomes
 head(IC(potential_outcomes))
 vcov(potential_outcomes)
@@ -1067,19 +1076,19 @@ E[Y(1)]  - E[Y(0)]
 \end{align*}
 
 ```{r est-ate}
-estimate(potential_outcomes, cbind(-1, 1), labels="ate")
+estimate(potential_outcomes, cbind(-1, 1), labels = "ate")
 ```
 
 Alternatively, we could get the estimate of the treatment effect on the log-odds
 scale:
 ```{r est-ate-or}
-est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
+est <- with(potential_outcomes, logit(`y(1)`) - logit(`y(0)`))
 est
-transform(est, labels="OR") |>
+transform(est, labels = "OR") |>
   summary(transform = exp)
-#logor <- function(p) logit(p[2]) - logit(p[1])
-#transform(potential_outcomes, logor, labels="logOR")
-#transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
+# logor <- function(p) logit(p[2]) - logit(p[1])
+# transform(potential_outcomes, logor, labels="logOR")
+# transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
 We refer to the `targeted` package [@r-targeted] for a general implementation
@@ -1087,9 +1096,9 @@ where the nuisance models can be based on machine learning models using
 cross-fitting. The above estimation can be obtained with the  `targeted::cate` function in the following way
 ```{r est-cate}
 #| eval: false
-amod <- targeted::learner_glm(a ~ w, family=binomial)
-qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
-est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
+amod <- targeted::learner_glm(a ~ w, family = binomial)
+qmod <- targeted::learner_glm(y1 ~ a * w, family = binomial)
+est <- targeted::cate(qmod, amod, data = dw, second.order = FALSE)
 #>             Estimate Std.Err    2.5%  97.5%   P-value
 #> E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80
 #> E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52

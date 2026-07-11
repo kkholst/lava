@@ -45,8 +45,7 @@ moments.lvm <- function(
     J <- ii$Jy
     if (latent) {
       J <- diag(nrow = length(ii$vars))[
-        sort(c(ii$endo.idx, ii$eta.idx)),
-        ,
+        sort(c(ii$endo.idx, ii$eta.idx)), ,
         drop = FALSE
       ]
     }
@@ -67,7 +66,7 @@ moments.lvm <- function(
   Im <- diag(nrow = nrow(AP$A))
   if (ii$sparse) {
     IAi <- with(AP, as(Inverse(Im - t(A)), "sparseMatrix"))
-    ##IAi <- as(solve(Matrix::Diagonal(nrow(A))-t(A)),"sparseMatrix")
+    ## IAi <- as(solve(Matrix::Diagonal(nrow(A))-t(A)),"sparseMatrix")
     G <- as(J %*% IAi, "sparseMatrix")
   } else {
     IAi <- Inverse(Im - t(AP$A))

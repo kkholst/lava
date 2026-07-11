@@ -27,8 +27,8 @@ test_that("Effects", {
 
   testthat::expect_equivalent(totaleffects(e, y1 ~ x)[, 1:4], f["Total", ])
 
-  ##g <- graph::updateGraph(plot(m,noplot=TRUE))
-  ##testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))
+  ## g <- graph::updateGraph(plot(m,noplot=TRUE))
+  ## testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))
 })
 
 test_that("Profile confidence limits", {
@@ -123,7 +123,7 @@ test_that("equivalence", {
   cancel(m) <- y1 ~ x
   regression(m) <- y2 ~ x
   e <- estimate(m, d)
-  ##eq <- equivalence(e,y1~x,k=1)
+  ## eq <- equivalence(e,y1~x,k=1)
   dm <- capture.output(eq <- equivalence(e, y2 ~ x, k = 1))
   testthat::expect_output(
     print(eq),
@@ -203,15 +203,15 @@ test_that("Survreg", {
   transform(m, y ~ y0) <- function(x) pmin(x[, 1], 2)
   transform(m, status ~ y0) <- function(x) x < 2
   d <- simulate(m, 100, seed = 1)
-  require('survival')
-  m <- survreg(Surv(y, status) ~ x, data = d, dist = 'gaussian')
+  require("survival")
+  m <- survreg(Surv(y, status) ~ x, data = d, dist = "gaussian")
   s <- score(m)
   testthat::expect_true(length(pars(m)) == length(coef(m)) + 1)
   testthat::expect_true(
-    abs(attr(score(m, pars(m)), 'logLik') - logLik(m)) < 1e-9
+    abs(attr(score(m, pars(m)), "logLik") - logLik(m)) < 1e-9
   )
   testthat::expect_true(mean(colSums(s)^2) < 1e-6)
-  testthat::expect_equivalent(vcov(m), attr(s, 'bread') / nrow(d))
+  testthat::expect_equivalent(vcov(m), attr(s, "bread") / nrow(d))
 })
 
 test_that("diagtest", {
@@ -235,13 +235,13 @@ test_that("Combine", {
   m1 <- lm(cau ~ age * gene1 + age * gene2, data = serotonin)
   m2 <- lm(cau ~ age + gene1, data = serotonin)
 
-  cc <- Combine(list('model A' = m1, 'model B' = m2), fun = function(x) {
+  cc <- Combine(list("model A" = m1, "model B" = m2), fun = function(x) {
     c(R2 = format(summary(x)$r.squared, digits = 2))
   })
   testthat::expect_true(nrow(cc) == length(coef(m1)) + 1)
-  testthat::expect_equivalent(colnames(cc), c('model A', 'model B'))
+  testthat::expect_equivalent(colnames(cc), c("model A", "model B"))
   testthat::expect_equivalent(
-    cc['R2', 2],
+    cc["R2", 2],
     format(summary(m2)$r.squared, digits = 2)
   )
 })
@@ -305,19 +305,19 @@ if (
     d <- simulate(m, 1e3, seed = 1)
     dd <- reshape(
       d,
-      varying = list(c('y1', 'y2', 'y3'), c('x1', 'x2', 'x3')),
-      direction = 'long',
-      v.names = c('y', 'x')
+      varying = list(c("y1", "y2", "y3"), c("x1", "x2", "x3")),
+      direction = "long",
+      v.names = c("y", "x")
     )
 
-    ##system.time(l <- lme4::lmer(y~x+(1|id), data=dd, REML=FALSE))
+    ## system.time(l <- lme4::lmer(y~x+(1|id), data=dd, REML=FALSE))
     system.time(
       l <- nlme::lme(y ~ x, random = ~ 1 | id, data = dd, method = "ML")
     )
     m0 <- lvm(c(y1[m:v], y2[m:v], y3[m:v]) ~ 1 * u[0])
     latent(m0) <- ~u
-    regression(m0, y = c('y1', 'y2', 'y3'), x = c('x1', 'x2', 'x3')) <- rep(
-      'b',
+    regression(m0, y = c("y1", "y2", "y3"), x = c("x1", "x2", "x3")) <- rep(
+      "b",
       3
     )
     system.time(e <- estimate(m0, d))
@@ -326,23 +326,23 @@ if (
     mse <- function(x, y = 0) mean(na.omit(as.matrix(x) - as.matrix(y))^2)
     testthat::expect_true(mse(logLik(e), logLik(l)) < mytol)
     testthat::expect_true(mse(nlme::fixef(l), coef(e)[1:2]) < mytol)
-    u1 <- nlme::ranef(l) ##[[1]][,1]
+    u1 <- nlme::ranef(l) ## [[1]][,1]
     u2 <- predict(e, endogenous(e))
     testthat::expect_true(mse(u1, u2) < 1e-9)
 
     ## Missing data
     idx <- sample(seq(nrow(dd)), nrow(dd) * 0.5)
     dd0 <- dd[idx, , drop = FALSE]
-    d0 <- mets::fast.reshape(subset(dd0, select = -u), id = 'id', num = 'time')
+    d0 <- mets::fast.reshape(subset(dd0, select = -u), id = "id", num = "time")
 
     system.time(e0 <- estimate(m0, d0, missing = TRUE))
-    ##system.time(l0 <- lme4::lmer(y~x+(1|id), data=dd0, REML=FALSE))
+    ## system.time(l0 <- lme4::lmer(y~x+(1|id), data=dd0, REML=FALSE))
     system.time(
       l0 <- nlme::lme(y ~ x, random = ~ 1 | id, data = dd0, method = "ML")
     )
     testthat::expect_true(mse(logLik(e0), logLik(l0)) < mytol)
     testthat::expect_true(mse(nlme::fixef(l0), coef(e0)[1:2]) < mytol)
-    u01 <- nlme::ranef(l0) ##[[1]][,1]
+    u01 <- nlme::ranef(l0) ## [[1]][,1]
     u02 <- predict(e0, endogenous(e0))
     expect_true(mse(u01, u02) < 1e-9)
 
@@ -371,7 +371,7 @@ if (requireNamespace("mets", quietly = TRUE)) {
     dd <- mets::fast.reshape(dw)
     dd$num <- dd$num + runif(nrow(dd), 0, 0.2)
     dd0 <- dd[-c(1:2 * 3), ]
-    ##l <- lme4::lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
+    ## l <- lme4::lmer(y~ 1+num +(1+num|id),dd,REML=FALSE)
     l <- nlme::lme(
       y ~ 1 + num,
       random = ~ 1 + num | id,
@@ -563,7 +563,7 @@ test_that("predict,residuals", {
   m <- lvm(c(y1, y2, y3) ~ u, u ~ x)
   latent(m) <- ~u
   set.seed(1)
-  d <- sim(m, 100, 'y1~u' = 1, 'y3~u' = 3)
+  d <- sim(m, 100, "y1~u" = 1, "y3~u" = 3)
   e <- estimate(m, d)
 
   l <- lm(y3 ~ x, data = d)

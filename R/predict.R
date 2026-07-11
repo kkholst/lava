@@ -138,8 +138,8 @@ predict.lvm <- function(
     } else {
       xi.x <- m$xi %x% rep(1, nrow(data))
       colnames(xi.x) <- ii$endogenous
-      ##xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
-      ##rownames(xi.x) <- names(mu.0)
+      ## xi.x <- matrix(as.vector(m$IAi[ii$endo.obsidx,]%*%mu.0),ncol=nrow(data),nrow=length(mu.0))
+      ## rownames(xi.x) <- names(mu.0)
     }
     return(structure(xi.x, cond.var = Cy.x, p = m$p, e = m$e))
   }
@@ -206,7 +206,7 @@ predict.lvm <- function(
   Ey.x <- xi.x[Y.idx.all, , drop = FALSE]
   Eeta.x <- xi.x[eta.idx, , drop = FALSE]
   Cy.epsilon <- P.x %*% t(IAi) ## Covariance y,residual
-  ##Czeta.y <- Cy.epsilon[eta.idx,index(object)$endo.idx]
+  ## Czeta.y <- Cy.epsilon[eta.idx,index(object)$endo.idx]
   A <- m$A
   IA <- diag(nrow = nrow(A)) - t(A)
 
@@ -253,8 +253,8 @@ predict.lvm <- function(
       attr(res, "cond.var") <-
         C.x[y, y, drop = FALSE] -
         C.x[y, x, drop = FALSE] %*%
-          solve(C.x[x, x, drop = FALSE]) %*%
-          C.x[x, y, drop = FALSE]
+        solve(C.x[x, x, drop = FALSE]) %*%
+        C.x[x, y, drop = FALSE]
     } else {
       attr(res, "cond.var") <- C.x[y, y, drop = FALSE]
     }
@@ -266,7 +266,7 @@ predict.lvm <- function(
 
   if (length(eta.idx) > 0) {
     Ceta.x <- C.x[eta.idx, eta.idx]
-    Lambda <- A[Y.idx.all, eta.idx, drop = FALSE] ##, ncol=length(eta.idx))
+    Lambda <- A[Y.idx.all, eta.idx, drop = FALSE] ## , ncol=length(eta.idx))
     Cetay.x <- Ceta.x %*% t(Lambda)
     KK <- Cetay.x %*% solve(Cy.x)
     Eeta.y <- Eeta.x + KK %*% ry
@@ -313,7 +313,7 @@ predict.lvm <- function(
 }
 
 ##' @export
-print.lvm.predict <- function(x, ...) print(x[,])
+print.lvm.predict <- function(x, ...) print(x[, ])
 
 ##' Predict function for latent variable models
 ##'
@@ -389,7 +389,7 @@ predictlvm <- function(
         D$dS[as.vector(J[idxY, idxX]), , drop = FALSE] +
         -(B %x% B) %*% D$dS[as.vector(J[idxX, idxX]), , drop = FALSE] +
         (diag(nrow = ny) %x% B) %*%
-          D$dS[as.vector(J[idxX, idxY]), , drop = FALSE])
+        D$dS[as.vector(J[idxX, idxY]), , drop = FALSE])
     ## Conditional mean
     M <- m$xi[, idxY, drop = FALSE] + rX %*% t(B)
     dB <- (ic %x% diag(nrow = ny)) %*%

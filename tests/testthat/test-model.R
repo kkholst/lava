@@ -26,7 +26,7 @@ test_that("Basic model building blocks", {
   d <- sim(m, 50)
   e <- estimate(m, d)
   ## Equivalence
-  ##equivalence(e,silent=TRUE)
+  ## equivalence(e,silent=TRUE)
 
   ## formula
   f <- formula(m, all = TRUE)
@@ -75,7 +75,7 @@ test_that("Linear constraints", {
   d <- sim(m, 100, seed = 1)
   l <- lm(y ~ x, d)
   e <- estimate(m, d)
-  err <- sum((coef(l) - coef(e)[c('y', 'a')])^2)
+  err <- sum((coef(l) - coef(e)[c("y", "a")])^2)
   testthat::expect_true(err < 1e-12)
 })
 

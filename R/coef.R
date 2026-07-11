@@ -151,7 +151,7 @@
     data,
     std = NULL,
     labels = lava.options()$coef.names,
-    ##labels=TRUE,
+    ## labels=TRUE,
     vcov,
     vcov.type,
     reliability = FALSE,
@@ -220,8 +220,7 @@
     if (!is.null(std)) {
       stdCoef <- stdcoef(object)
       {
-        switch(
-          tolower(std),
+        switch(tolower(std),
           latent = {
             Astd <- stdCoef$Astar
             Pstd <- stdCoef$Pstar

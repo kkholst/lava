@@ -169,8 +169,8 @@ edgelabels.lvmfit <- function(
   }
 
   Afix <- index(object)$A ## Matrix with fixed parameters and ones where parameters are free
-  ##Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
-  ##mfix <- index(object)$v0
+  ## Pfix <- index(object)$P ## Matrix with fixed covariance parameters and ones where param
+  ## mfix <- index(object)$v0
 
   npar.mean <- index(object)$npar.mean
   Par <- object$coef
@@ -180,8 +180,7 @@ edgelabels.lvmfit <- function(
     Par <- Par[-seq_len(npar.mean), , drop = FALSE]
   }
   Par <-
-    switch(
-      type,
+    switch(type,
       sd = paste0(
         do.call(format.fun, list(Par[, 1, drop = FALSE])),
         " (",
@@ -254,7 +253,7 @@ edgelabels.lvmfit <- function(
   }
   if (inherits(to, "formula")) {
     yy <- decomp.specials(getoutcome(to))
-    from <- all.vars(to[[3]]) ##setdiff(all.vars(to),yy)
+    from <- all.vars(to[[3]]) ## setdiff(all.vars(to),yy)
     if (length(from) == 0) {
       from <- yy
     }

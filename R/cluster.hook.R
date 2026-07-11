@@ -35,8 +35,8 @@ cluster_post_hook <- function(x, ...) {
   if (!is.null(x$cluster)) {
     uclust <- unique(x$cluster)
     K <- length(uclust)
-    S <- score(x, indiv = TRUE) #,...)
-    I <- information(x, type = "hessian") #,...)
+    S <- score(x, indiv = TRUE) # ,...)
+    I <- information(x, type = "hessian") # ,...)
     iI <- Inverse(I)
 
     S0 <- matrix(0, ncol = ncol(S), nrow = K)

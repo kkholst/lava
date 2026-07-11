@@ -188,7 +188,7 @@ logLik.lvm <- function(
   }
   if (is.null(attr(loglik, "nobs"))) {
     attr(loglik, "nobs") <- n
-  } ##-length(p)
+  } ## -length(p)
   if (is.null(attr(loglik, "df"))) {
     attr(loglik, "df") <- length(p)
   }
@@ -273,8 +273,7 @@ gaussian_logLik.lvm <- function(
     class(loglik) <- "logLik"
     return(loglik)
   }
-  myidx <- switch(
-    type[1],
+  myidx <- switch(type[1],
     sim = seq_along(index(object)$manifest),
     cond = {
       endo.idx
@@ -441,7 +440,7 @@ logLik.multigroup <- function(
       n <- n + object$samplestat[[i]]$n
     }
     attr(loglik, "nall") <- n
-    attr(loglik, "nobs") <- n ##-df
+    attr(loglik, "nobs") <- n ## -df
     attr(loglik, "df") <- df
     class(loglik) <- "logLik"
     return(loglik)
@@ -462,7 +461,7 @@ logLik.multigroup <- function(
     loglik <- loglik + val
   }
   attr(loglik, "nall") <- n
-  attr(loglik, "nobs") <- n ##-length(p)
+  attr(loglik, "nobs") <- n ## -length(p)
   attr(loglik, "df") <- length(p)
   class(loglik) <- "logLik"
   return(loglik)

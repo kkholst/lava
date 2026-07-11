@@ -215,7 +215,7 @@ independence <- function(x, ...) {
     Q <- P - I
     #        Q <- sum(n*P*(log(I[1,1])-P1
     sum((P - I)^2)
-    ##V <- sqrt(sum((P*n-I*n)^2/I/n) /(n*(min(k1,k2)-1)))
+    ## V <- sqrt(sum((P*n-I*n)^2/I/n) /(n*(min(k1,k2)-1)))
     V <- sqrt(sum((P - I)^2 / I) / ((min(k1, k2) - 1)))
     return(V)
     sum(n * Q^2 / I)^0.25

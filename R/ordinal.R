@@ -212,7 +212,7 @@ print.ordinal.lvm <- function(x, ...) {
         x$attributes$ordinalparname <- x$attributes$ordinalparname[-idx]
       }
       x$attributes$ordinal <- x$attributes$ordinal[-idx]
-      ##x$attributes$labels[var] <- NULL
+      ## x$attributes$labels[var] <- NULL
       x$attributes$type <- x$attributes$type[-idx]
       x$attributes$constrainY <- x$attributes$constrainY[setdiff(
         names(x$attributes$constrainY),

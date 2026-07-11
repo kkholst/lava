@@ -79,7 +79,7 @@ uhat <- function(p = coef(model1), model1, data = model.frame(model1), nlobj) {
       ))
       return(Pr)
     }
-    ##P <- list(mean=Pr, var=attr(Pr,"cond.var"))
+    ## P <- list(mean=Pr, var=attr(Pr,"cond.var"))
   } else {
     P <- predictlvm(model1, p = p, data = data)
   }
@@ -205,10 +205,10 @@ uhat <- function(p = coef(model1), model1, data = model.frame(model1), nlobj) {
 ##'  mb3 <- nonlinear(mb,type="spline",knots=c(-3,-1,0,1,3),y~u)
 ##'  mb4 <- nonlinear(mb,type="spline",knots=c(-3,-2,-1,0,1,2,3),y~u)
 ##'  ff <- lapply(list(mb1,mb2,mb3,mb4),
-##'	      function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
+##' 	      function(m) function(data,...) twostage(ma,m,data=data,st.derr=FALSE))
 ##'  a <- cv(ff,data=d,rep=1)
 ##'  a
-##'}
+##' }
 twostage.lvmfit <- function(
   object,
   model2,
@@ -283,7 +283,7 @@ twostage.lvmfit <- function(
     res[names(stacked)] <- stacked
     cc <- stacked$coefmat[, c(1, 2)]
     cc <- cbind(cc, cc[, 1] / cc[, 2], stacked$coefmat[, 5])
-    coef[,] <- cc
+    coef[, ] <- cc
     res$coef <- coef
     res$vcov <- vcov(stacked)
     if (all) {
@@ -439,8 +439,8 @@ predict.twostage.lvmfit <- function(
   nl <- nl[variable]
   res <- matrix(nrow = NROW(newdata), ncol = length(nl))
   colnames(res) <- names(nl)
-  ##unam <- unique(unlist(lapply(nl, function(x) x$newx)))
-  ##colnames(res) <- unam
+  ## unam <- unique(unlist(lapply(nl, function(x) x$newx)))
+  ## colnames(res) <- unam
   if (!is.null(x)) {
     newd <- newdata
     m0 <- Model(object$estimate2)
@@ -652,7 +652,11 @@ print.twostageCV <- function(x, ...) {
   print(cli::rule())
   i2 <- which.min(x$cv)
   splinedf <- unlist(lapply(x$knots, function(x) {
-    if (any(is.na(x))) return(1) else length(x) - 1
+    if (any(is.na(x))) {
+      return(1)
+    } else {
+      length(x) - 1
+    }
   }))
   cat(
     "Selected spline model degrees of freedom: ",

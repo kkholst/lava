@@ -180,9 +180,9 @@ plotConf <- function(
   dots$xlim <- xlim
 
   if (is.null(var1) & !is.null(var2)) {
-    ##npoints <- 1
+    ## npoints <- 1
     x <- unique(curdata[, var2])
-    npoints <- 1 #length(x)
+    npoints <- 1 # length(x)
   } else {
     x <- seq(xlim[1], xlim[2], length.out = npoints)
   }
@@ -292,7 +292,8 @@ plotConf <- function(
   if (is.na(intercept)) {
     intercept <- 0
     if (!is.null(var2)) {
-      intercept <- coef(model)[paste0(var2, thelevels)][as.numeric(curdata[,
+      intercept <- coef(model)[paste0(var2, thelevels)][as.numeric(curdata[
+        ,
         var2
       ])]
     }

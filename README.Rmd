@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 library(lava)
-lava.options(plot.engine="Rgraphviz")
+lava.options(plot.engine = "Rgraphviz")
 ```
 
 <!-- badges: start -->
@@ -50,7 +50,7 @@ broad range of statistical models.
 
 ```{r}
 #| eval: FALSE
-install.packages("lava", dependencies=TRUE)
+install.packages("lava", dependencies = TRUE)
 library("lava")
 demo("lava")
 ```
@@ -129,8 +129,8 @@ set.seed(42)
 Construct `estimate` objects from parameter coefficients and estimated influence
 functions
 ```{r estimate_calculus_models}
-a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
-b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=6:15)
+a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10)), id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10)), id = 6:15)
 ```
 
 Alternatively, we can construct estimate objects directly from an existing model
@@ -145,7 +145,7 @@ We can now merge the `estimate` objects to obtain their joint distribution via t
 ```{r estimate-merge}
 e <- c(a, b)
 vcov(e) # joint distribution
-summary(e, null=c(0, 0))
+summary(e, null = c(0, 0))
 ```
 
 Parameter transformations can be calculated directly as in the following examples.
@@ -162,7 +162,7 @@ General transformations
 
 Inner product, sums, and products
 ```{r estimate-calc3}
-c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
+c(iprod = e %*% c(a, b^2), sum = sum(e), prod = prod(e))
 ```
 
 Exponentiation and renaming of parameter
@@ -177,7 +177,7 @@ c(e["a"] * e["b"] / a, e["b"])
 
 For the `%*%*` operator we can also use a general contrast matrix
 ```{r estimate-contrast}
-B <- rbind(c(1,-1), c(1,0), c(0,1))
+B <- rbind(c(1, -1), c(1, 0), c(0, 1))
 B %*% e
 plot(B %*% e)
 ```
@@ -204,7 +204,7 @@ plot(m)
 Simulation
 
 ```{r}
-d <- sim(m, 100, seed=1)
+d <- sim(m, 100, seed = 1)
 ```
 
 Estimation
@@ -235,25 +235,25 @@ Simulate non-linear model
 
 ```{r}
 m <- lvm(y1 + y2 + y3 ~ u, u ~ x)
-transform(m,u2 ~ u) <- function(x) x^2
-regression(m) <- z~u2+u
+transform(m, u2 ~ u) <- function(x) x^2
+regression(m) <- z~u2 + u
 
-d <- sim(m,200,p=c("z"=-1, "z~u2"=-0.5), seed=1)
+d <- sim(m, 200, p = c("z" = -1, "z~u2" = -0.5), seed = 1)
 ```
 
 Stage 1:
 
 ```{r}
-m1 <- lvm(c(y1[0:s], y2[0:s], y3[0:s]) ~ 1*u, u ~ x)
-latent(m1) <- ~ u
+m1 <- lvm(c(y1[0:s], y2[0:s], y3[0:s]) ~ 1 * u, u ~ x)
+latent(m1) <- ~u
 (e1 <- estimate(m1, d))
 ```
 
 Stage 2
 
 ```{r}
-pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
-(e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+pp <- function(mu, var, data, ...) cbind(u = mu[, "u"], u2 = mu[, "u"]^2 + var["u", "u"])
+(e <- measurement.error(e1, z ~ 1 + x, data = d, predictfun = pp))
 ```
 
 
@@ -261,9 +261,9 @@ pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 #| label: nlin1
 #| message: FALSE
 #| fig.align: 'center'
-f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
-u <- seq(-1, 1, length.out=100)
-plot(e, f, data=data.frame(u))
+f <- function(p) p[1] + p["u"] * u + p["u2"] * u^2
+u <- seq(-1, 1, length.out = 100)
+plot(e, f, data = data.frame(u))
 ```
 
 ### Simulation
@@ -272,10 +272,10 @@ Studying the small-sample properties of a mediation analysis
 
 
 ```{r}
-m <- lvm(y~x, c~1)
-regression(m) <- y+x ~ z
-eventTime(m) <- t~min(y=1, c=0)
-transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
+m <- lvm(y ~ x, c ~ 1)
+regression(m) <- y + x ~ z
+eventTime(m) <- t~min(y = 1, c = 0)
+transform(m, S ~ t + status) <- function(x) survival::Surv(x[, 1], x[, 2])
 ```
 
 plot(m)
@@ -296,12 +296,12 @@ future::plan("multicore") # parallelization via future
 ## progressr::handlers(global=TRUE) # add progress-bar
 onerun <- function(...) {
   d <- sim(m, 100)
-  m0 <- lvm(S~x+z, x~z)
-  e <- estimate(m0, d, estimator="glm")
-  vec(summary(effects(e, S~z))$coef[,1:2])
+  m0 <- lvm(S ~ x + z, x ~ z)
+  e <- estimate(m0, d, estimator = "glm")
+  vec(summary(effects(e, S ~ z))$coef[, 1:2])
 }
 val <- sim(onerun, 100)
-summary(val, estimate=1:4, se=5:8, short=TRUE)
+summary(val, estimate = 1:4, se = 5:8, short = TRUE)
 ```
 
 Add additional simulations and visualize results
@@ -311,8 +311,10 @@ Add additional simulations and visualize results
 #| cache: TRUE
 #| message: FALSE
 #| fig.align: 'center'
-val <- sim(val,500) ## Add 500 simulations
-plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
-     true=c(2, 1), se=c("Total.Std.Err", "Indirect.Std.Err"),
-     scatter.plot=TRUE)
+val <- sim(val, 500) ## Add 500 simulations
+plot(val,
+  estimate = c("Total.Estimate", "Indirect.Estimate"),
+  true = c(2, 1), se = c("Total.Std.Err", "Indirect.Std.Err"),
+  scatter.plot = TRUE
+)
 ```

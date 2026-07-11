@@ -60,7 +60,7 @@ test_that("Non-linear in exogenous variables", {
   )
 })
 
-if (lava:::versioncheck('mets', c(1, 0))) {
+if (lava:::versioncheck("mets", c(1, 0))) {
   test_that("Probit constraints", {
     x <- transform(
       data.frame(lava:::rmvn0(1000, sigma = 0.5 * diag(2) + 0.5)),
@@ -85,7 +85,7 @@ test_that("Multiple group constraints I", {
   m1 <- lvm(y[m:v] ~ f(x, beta) + f(z, beta2))
   d1 <- sim(m1, 500, seed = 1)
   d2 <- sim(m1, 500, seed = 2)
-  ##coef(estimate(m1,d1))
+  ## coef(estimate(m1,d1))
   constrain(m1, beta2 ~ psi) <- function(x) 2 * x
   m2 <- lvm(y[m:v] ~ f(x, beta2) + z)
   constrain(m2, beta2 ~ psi) <- function(x) 2 * x

@@ -26,7 +26,7 @@ rsq <- function(x, stderr = FALSE) {
     )
 
     res <- ee
-    ##res <- list(ee)
+    ## res <- list(ee)
     ## for (lat in latent(x)) {
 
     ##     v <- intersect(children(x,lat),endogenous(x))
@@ -88,8 +88,8 @@ rsq <- function(x, stderr = FALSE) {
         pp <- pp[mp]
       }
       idx1 <- x$model$parpos$A[lat, v]
-      ##idx2 <- x$model$parpos$P[lat,lat]
-      ##idx3 <- x$model$parpos$P[cbind(v,v)]
+      ## idx2 <- x$model$parpos$P[lat,lat]
+      ## idx3 <- x$model$parpos$P[cbind(v,v)]
       p0 <- c(idx1)
       p1 <- setdiff(unique(p0), 0)
       p2 <- match(p0, p1)

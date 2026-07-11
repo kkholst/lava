@@ -2,7 +2,7 @@ context("Utility functions")
 
 test_that("By", {
   b1 <- By(datasets::CO2, ~ Treatment + Type, colMeans, ~conc)
-  b2 <- By(datasets::CO2, c('Treatment', 'Type'), colMeans, 'conc')
+  b2 <- By(datasets::CO2, c("Treatment", "Type"), colMeans, "conc")
   testthat::expect_equivalent(b1, b2)
   ## require('data.table')
   ## t1 <- as.data.frame(data.table(datasets::CO2)[,mean(uptake),by=.(Treatment,Type,conc>500)])
@@ -44,10 +44,10 @@ test_that("%in%, %nin%, %in.open%, %in.closed%", {
 })
 
 test_that("formulas", {
-  f <- toformula(c('y1', 'y2'), 'x' %++% 1:5)
+  f <- toformula(c("y1", "y2"), "x" %++% 1:5)
   ff <- getoutcome(f)
   testthat::expect_equivalent(trim(ff, all = TRUE), "c(y1,y2)")
-  testthat::expect_true(length(attr(ff, 'x')) == 5)
+  testthat::expect_true(length(attr(ff, "x")) == 5)
 })
 
 test_that("trim", {

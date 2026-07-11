@@ -33,7 +33,7 @@ procformula <- function(
       iscovar <- TRUE
     }
   }
-  ##Check for link function
+  ## Check for link function
   invlink <- NULL
   if (xidx == 2) {
     if (length(grep("[a-zA-Z0-9_]*\\(.*\\)$", yx[[xidx]])) > 0) {
@@ -52,7 +52,7 @@ procformula <- function(
   ## while not tampering with formulas like y~f(x,-2)
   st <- yx[[xidx]]
   st <- gsub("\\-", "\\+\\-", gsub("\\+\\-", "\\-", st)) ## Convert - to +- (to allow for splitting on '+')
-  ##gsub("[^,]\\-","\\+\\-",st) ## Convert back any - not starting with ','
+  ## gsub("[^,]\\-","\\+\\-",st) ## Convert back any - not starting with ','
   st <- gsub(",\\+", ",", st) ## Remove + inside 'f' and 'v' constraints
   st <- gsub("^\\+", "", st) ## Remove leading plus
   yx[[xidx]] <- st
@@ -60,7 +60,7 @@ procformula <- function(
   ## Match '+' but not when preceeded by ( ... )
   X <- strsplit(yx[[xidx]], "\\+(?![^\\(]*\\))", perl = TRUE)[[1]]
 
-  ##regex <- "(?!(\\(*))[\\(\\)]"
+  ## regex <- "(?!(\\(*))[\\(\\)]"
   regex <- "[\\(\\)]"
   ## Keep squares brackets and |(...) statements
   ## Extract variables from expressions like
@@ -76,8 +76,8 @@ procformula <- function(
     reverse = TRUE,
     perl = TRUE
   )
-  ##OLD:
-  ##res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
+  ## OLD:
+  ## res <- lapply(X,decomp.specials,pattern2="[*]",reverse=TRUE)
   xx <- unlist(lapply(res, function(x) x[1]))
 
   xxf <- lapply(as.list(xx), function(x) {

@@ -93,7 +93,7 @@ curly <- function(
       gp = grid::gpar(col = col, lwd = lwd, lty = lty)
     )
   } else {
-    points(x2, y2, type = 'l', col = col, lwd = lwd, lty = lty, xpd = TRUE)
+    points(x2, y2, type = "l", col = col, lwd = lwd, lty = lty, xpd = TRUE)
   }
   theta <- acos(abs(cos(theta)))
   deg <- ((theta - pi / 2) * 180 / pi)

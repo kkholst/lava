@@ -1,23 +1,23 @@
-##'Appending \code{Surv} objects
+##' Appending \code{Surv} objects
 ##'
-##'\code{rbind} method for \code{Surv} objects
+##' \code{rbind} method for \code{Surv} objects
 ##'
 ##'
-##'@param ... \code{Surv} objects
-##'@return \code{Surv} object
-##'@author Klaus K. Holst
-##'@keywords utilities
-##'@examples
+##' @param ... \code{Surv} objects
+##' @return \code{Surv} object
+##' @author Klaus K. Holst
+##' @keywords utilities
+##' @examples
 ##'
-##'y <- yl <- yr <- rnorm(10)
-##'yl[1:5] <- NA; yr[6:10] <- NA
-##'S1 <- survival::Surv(yl,yr,type="interval2")
-##'S2 <- survival::Surv(y,y>0,type="right")
-##'S3 <- survival::Surv(y,y<0,type="left")
+##' y <- yl <- yr <- rnorm(10)
+##' yl[1:5] <- NA; yr[6:10] <- NA
+##' S1 <- survival::Surv(yl,yr,type="interval2")
+##' S2 <- survival::Surv(y,y>0,type="right")
+##' S3 <- survival::Surv(y,y<0,type="left")
 ##'
-##'rbind(S1,S1)
-##'rbind(S2,S2)
-##'rbind(S3,S3)
+##' rbind(S1,S1)
+##' rbind(S2,S2)
+##' rbind(S3,S3)
 ##'
 ##' @export
 rbind.Surv <- function(...) {

@@ -253,7 +253,7 @@ multinomial.lvm <- function(prob, labels = NULL) {
   }
   structure(
     function(n, ...) sample(labels, n, prob = prob, replace = TRUE),
-    family = list(family = 'multinomial', par = prob)
+    family = list(family = "multinomial", par = prob)
   )
 }
 
@@ -283,7 +283,7 @@ binomial.lvm <- function(link = "logit", p, size = 1) {
   ##             function(n,mu,var=1,...) rbinom(n,1,pnorm(mu,sd=sqrt(var)))
   ##             ### function(n,mu=0,var=1,...) (rnorm(n,mu,sqrt(var))>0)*1
   ##             )
-  ##}
+  ## }
   return(f)
 }
 

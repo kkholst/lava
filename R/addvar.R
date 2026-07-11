@@ -43,7 +43,7 @@
       newNA <- matrix(NA, k, k)
       colnames(newM) <- rownames(newM) <-
         colnames(newcov) <- rownames(newcov) <-
-          colnames(newNA) <- rownames(newNA) <- new
+        colnames(newNA) <- rownames(newNA) <- new
       newmean <- as.list(rep(NA, k))
       N <- nrow(x$cov)
       if (is.null(N)) {
@@ -72,21 +72,21 @@
       }
       names(x$mean)[N + seq_len(k)] <-
         colnames(x$M)[N + seq_len(k)] <- rownames(x$M)[N + seq_len(k)] <-
-          colnames(x$covfix)[N + seq_len(k)] <- rownames(x$covfix)[
-            N + seq_len(k)
-          ] <-
-            colnames(x$fix)[N + seq_len(k)] <- rownames(x$fix)[
-              N + seq_len(k)
-            ] <-
-              colnames(x$covpar)[N + seq_len(k)] <- rownames(x$covpar)[
-                N + seq_len(k)
-              ] <-
-                colnames(x$par)[N + seq_len(k)] <- rownames(x$par)[
-                  N + seq_len(k)
-                ] <-
-                  colnames(x$cov)[N + seq_len(k)] <- rownames(x$cov)[
-                    N + seq_len(k)
-                  ] <- new
+        colnames(x$covfix)[N + seq_len(k)] <- rownames(x$covfix)[
+          N + seq_len(k)
+        ] <-
+        colnames(x$fix)[N + seq_len(k)] <- rownames(x$fix)[
+          N + seq_len(k)
+        ] <-
+        colnames(x$covpar)[N + seq_len(k)] <- rownames(x$covpar)[
+          N + seq_len(k)
+        ] <-
+        colnames(x$par)[N + seq_len(k)] <- rownames(x$par)[
+          N + seq_len(k)
+        ] <-
+        colnames(x$cov)[N + seq_len(k)] <- rownames(x$cov)[
+          N + seq_len(k)
+        ] <- new
 
       if (messages > 1) {
         if (k == 1) {

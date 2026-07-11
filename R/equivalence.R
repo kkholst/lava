@@ -41,7 +41,7 @@ equivalence <- function(x, rel, tol = 1e-3, k = 1, omitrel = TRUE, ...) {
     p0 <- coef(x)
     p0[] <- 0
     p0[match(names(coef(e0)), names(p0))] <- coef(e0)
-    S0 <- score(x, p = p0)[,, drop = TRUE]
+    S0 <- score(x, p = p0)[, , drop = TRUE]
     I0 <- information(x, p = p0)
     T0 <- rbind(S0) %*% solve(I0) %*% cbind(S0)
     names(T0) <- "Q"

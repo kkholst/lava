@@ -171,7 +171,7 @@ normal_objective.lvm <- function(
   l <- mets::loglikMVN(yl, yu, status, mu, S, thres)
 
   if (!is.null(weights)) {
-    ##if (is.matrix(weights)) weights <- weights[,1]
+    ## if (is.matrix(weights)) weights <- weights[,1]
     l <- l * weights
   }
 
@@ -296,4 +296,4 @@ normal_hessian.lvm <- function(x, p, outer = FALSE, data2 = NULL, ...) {
   return(J)
 }
 
-##normal_gradient.lvm <- normal_hessian.lvm <- NULL
+## normal_gradient.lvm <- normal_hessian.lvm <- NULL

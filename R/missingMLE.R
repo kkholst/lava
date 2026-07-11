@@ -55,7 +55,7 @@ missingModel <- function(
             if (
               all(c(rownames(A)[A[xx, ] == 1]) %in% mytop) &&
                 !(xx %in% m0$par)
-              ##&& !(xx%in%names(index(m0))$parval)
+              ## && !(xx%in%names(index(m0))$parval)
             ) {
               exoremove <- c(exoremove, xx)
               rmvar(m0) <- xx

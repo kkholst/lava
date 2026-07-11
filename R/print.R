@@ -11,7 +11,7 @@
       L <- rep(FALSE, k)
       names(L) <- vars(x)
       L[latent(x)] <- TRUE
-      cat("Latent Variable Model\n") ##;" \n\twith: ", k, " variables.\n", sep="");
+      cat("Latent Variable Model\n") ## ;" \n\twith: ", k, " variables.\n", sep="");
       if (k == 0) {
         cat("\nEmpty\n")
         return()
@@ -218,7 +218,7 @@ printmany <- function(
   dnn <- dimnames(A)
   dnn[[2]] <- c(dnn[[2]], rep(emptystr, nspace))
   dimnames(res) <- dnn
-  ##dimnames(res)[[2]] <- c(dimnames(res)[[2]],rep(emptystr,nspace))
+  ## dimnames(res)[[2]] <- c(dimnames(res)[[2]],rep(emptystr,nspace))
   if (!is.null(name1)) {
     oldname <- colnames(res)
     res <- cbind(rep("", nrow(res)), rownames(res), res)

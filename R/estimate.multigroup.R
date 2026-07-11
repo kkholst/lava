@@ -369,7 +369,7 @@
             for (i in seq_along(myfix0$var)) {
               x0$fix[cbind(myfix0$row[[i]], myfix0$col[[i]])] <-
                 index(x0)$A[cbind(myfix0$row[[i]], myfix0$col[[i]])] <-
-                  data0[ii, xfix0[i]]
+                data0[ii, xfix0[i]]
             }
           }
           if (is.list(data2[[k]][ii, ])) {
@@ -422,7 +422,7 @@
             for (i in seq_along(myfix0$var)) {
               x0$fix[cbind(myfix0$row[[i]], myfix0$col[[i]])] <-
                 index(x0)$A[cbind(myfix0$row[[i]], myfix0$col[[i]])] <-
-                  x$data[[k]][ii, xfix[[k]][i]]
+                x$data[[k]][ii, xfix[[k]][i]]
             }
           }
           if (is.list(data2[[k]][ii, ])) {} else {

@@ -77,7 +77,9 @@ confint.lvmfit <- function(
         ...
       )
     )
-    if (curve) return(res)
+    if (curve) {
+      return(res)
+    }
   }
   rownames(res) <- names(coef(object))[parm]
   colnames(res) <- paste((c(0, 1) + c(1, -1) * (1 - level) / 2) * 100, "%")

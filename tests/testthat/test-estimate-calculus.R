@@ -376,8 +376,7 @@ for (opname in names(ops)) {
         seed = 200 + ny
       )
       op_est <- ops[[opname]]
-      op_num <- switch(
-        opname,
+      op_num <- switch(opname,
         "+" = function(p) p[seq_len(nx)] + p[nx + seq_len(ny)],
         "-" = function(p) p[seq_len(nx)] - p[nx + seq_len(ny)],
         "*" = function(p) p[seq_len(nx)] * p[nx + seq_len(ny)],

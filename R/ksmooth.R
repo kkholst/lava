@@ -137,8 +137,7 @@ surface <- function(
   zlen <- diff(zrg)
   if (length(clut) == 1) {
     ncolour <- 128
-    clut <- switch(
-      clut,
+    clut <- switch(clut,
       topo = topo.colors(ncolour),
       red = colorRampPalette(c("yellow", "red"), bias = 1)(ncolour),
       blue = colorRampPalette(c("white", "blue"), bias = 1)(ncolour),

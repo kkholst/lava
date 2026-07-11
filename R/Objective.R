@@ -77,7 +77,7 @@ gaussian_score.lvm <- function(
       D <- with(
         attributes(mp),
         deriv.lvm(x, meanpar = MeanPar, p = pars, mom = mp, mu = NULL)
-      ) ##, all=length(constrain(x))>0))
+      ) ## , all=length(constrain(x))>0))
       myvars <- (index(x)$manifest)
       data <- data[, myvars, drop = FALSE]
       score <- matrix(ncol = length(p), nrow = NROW(data))

@@ -1,7 +1,6 @@
 ##' @export
 print.fix <- function(x, exo = FALSE, ...) {
-  switch(
-    attributes(x)$type,
+  switch(attributes(x)$type,
     reg = cat("Regression parameters:\n"),
     cov = cat("Covariance parameters:\n"),
     mean = cat("Intercept parameters:\n")
@@ -480,7 +479,7 @@ regfix.lvm <- function(object, ...) {
       }
     } else {
       nonlinear_function <- function(...) as.vector(vfun(...))
-      ##nonlinear_function <- vfun
+      ## nonlinear_function <- vfun
       from <- setdiff(from, pname)
     }
     object <- addvar(object, c(to, from))
@@ -518,7 +517,7 @@ regfix.lvm <- function(object, ...) {
   for (i in from) {
     for (j in to) {
       if (object$M[i, j] == 0) {
-        ##!isAdjacent(Graph(object), i, j)) {
+        ## !isAdjacent(Graph(object), i, j)) {
         object <- regression(object, to = j, from = i)
       }
     }

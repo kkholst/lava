@@ -85,7 +85,7 @@ score.lvm <- function(
       index(x0) <- reindex(x0, zeroones = TRUE, deriv = TRUE)
     }
     pp <- modelPar(x0, p)
-    ##p0 <- with(pp, c(meanpar,p,p2))
+    ## p0 <- with(pp, c(meanpar,p,p2))
 
     myfun <- function(ii) {
       if (length(xfix) > 0) {

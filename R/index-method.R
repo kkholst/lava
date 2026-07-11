@@ -85,7 +85,7 @@ updatelvm <- function(x, mean = TRUE, ...) {
     m <- length(eta)
     obs <- manifest(x) ## Manifest/Observed variables
     endo <- endogenous(x)
-    exo <- exogenous(x) ##,index=FALSE)
+    exo <- exogenous(x) ## ,index=FALSE)
 
     allvars <- vars(x)
     eta.idx <- na.omit(match(eta, allvars))

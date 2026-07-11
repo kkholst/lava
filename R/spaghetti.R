@@ -85,7 +85,7 @@ spaghetti <- function(
     if (is.character(by) && length(by == 1)) {
       by <- data[, by]
     } else if (inherits(by, "formula")) {
-      ##by <- model.matrix(update(by,~-1+.), model.frame(~.,data,na.action=na.pass))
+      ## by <- model.matrix(update(by,~-1+.), model.frame(~.,data,na.action=na.pass))
       by <- model.frame(by, data, na.action = na.pass)
     }
     cl <- match.call(expand.dots = TRUE)
@@ -102,7 +102,7 @@ spaghetti <- function(
     if (is.character(group) && length(group == 1)) {
       M <- data[, group]
     } else if (inherits(group, "formula")) {
-      ##M <- model.matrix(update(group,~-1+.),data)
+      ## M <- model.matrix(update(group,~-1+.),data)
       M <- model.frame(group, data, na.action = na.pass)
     } else {
       M <- group
@@ -265,7 +265,7 @@ spaghetti <- function(
           newdata <- data.frame(i)
           names(newdata) <- x
           if (!is.null(tau)) {
-            ##if (!require(quantreg)) stop("Install 'quantreg'")
+            ## if (!require(quantreg)) stop("Install 'quantreg'")
             suppressWarnings(r1 <- quantreg::rq(tf, data = data0, tau = tau))
             pr <- predict(r1, newdata = newdata, level = level)
             res <- rbind(res, pr)
@@ -324,7 +324,7 @@ spaghetti <- function(
           trend.formula <- update(trend.formula, toformula(y, "."))
         }
         if (!is.null(tau)) {
-          ##if (!require(quantreg)) stop("Install 'quantreg'")
+          ## if (!require(quantreg)) stop("Install 'quantreg'")
           suppressWarnings(
             r1 <- quantreg::rq(trend.formula, data = data, tau = tau)
           )
@@ -340,7 +340,7 @@ spaghetti <- function(
             interval = "confidence",
             level = level
           )
-          ##confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)
+          ## confband(xx,pr[,3],pr[,2],polygon=TRUE,col=Col(trend.col,trend.alpha),border=FALSE)
           for (i in seq_along(tau)) {
             lines(
               newdata[, 1],

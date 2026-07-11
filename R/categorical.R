@@ -68,7 +68,9 @@ categorical <- function(
       exo = exo,
       ...
     ) <- X
-    if (!regr) return(x)
+    if (!regr) {
+      return(x)
+    }
   }
 
   if (missing(beta)) {
@@ -90,4 +92,4 @@ categorical <- function(
 }
 
 ##' @export
-'categorical<-' <- function(x, ..., value) categorical(x, value, ...)
+"categorical<-" <- function(x, ..., value) categorical(x, value, ...)

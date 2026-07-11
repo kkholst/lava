@@ -377,7 +377,7 @@ plot.sim <- function(
             c(x, rev(x)),
             c(y, rep(0, length(y))),
             col = pcol,
-            border = NA, #col[1],
+            border = NA, # col[1],
             density = densities[1],
             angle = angles[1]
           )
@@ -425,7 +425,7 @@ plot.sim <- function(
               c(xx, rev(xx)),
               c(yy, rep(0, length(yy))),
               col = se.fill,
-              border = NA, #se.col[j],
+              border = NA, # se.col[j],
               density = densities[j + 1],
               angle = angles[j + 1]
             )

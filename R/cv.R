@@ -67,7 +67,7 @@ cv <- function(
   } else {
     folds <- foldr(n, K, rep)
   }
-  arg <- expand.grid(R = seq(rep), K = seq(K)) #,M=seq_along(modelList))
+  arg <- expand.grid(R = seq(rep), K = seq(K)) # ,M=seq_along(modelList))
   dim <- c(rep, K, M, P)
   PerfArr <- array(0, dim)
   dimnames(PerfArr) <- list(NULL, NULL, nam, namPerf)

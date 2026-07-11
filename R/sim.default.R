@@ -30,54 +30,66 @@
 #'   the progressr package (e.g., `progressr::handlers(global=TRUE)` to enable
 #'   progress information).
 #' @examples
-#' m <- lvm(y~x+e)
-#' distribution(m,~y) <- 0
-#' distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
-#' transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
+#' m <- lvm(y ~ x + e)
+#' distribution(m, ~y) <- 0
+#' distribution(m, ~x) <- uniform.lvm(a = -1.1, b = 1.1)
+#' transform(m, e ~ x) <- function(x) (1 * x^4) * rnorm(length(x), sd = 1)
 #'
-#' onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
-#'     d <- sim(m,n,p=c("y~x"=b0))
-#'     l <- lm(y~x,d)
-#'     res <- c(coef(summary(l))[idx,1:2],
-#'              confint(l)[idx,],
-#'              coef(estimate(l), mat=TRUE)[idx,2:4])
-#'     names(res) <- c("Estimate","Model.se","Model.lo","Model.hi",
-#'                     "Sandwich.se","Sandwich.lo","Sandwich.hi")
-#'     res
+#' onerun <- function(iter = NULL, ..., n = 2e3, b0 = 1, idx = 2) {
+#'   d <- sim(m, n, p = c("y~x" = b0))
+#'   l <- lm(y ~ x, d)
+#'   res <- c(
+#'     coef(summary(l))[idx, 1:2],
+#'     confint(l)[idx, ],
+#'     coef(estimate(l), mat = TRUE)[idx, 2:4]
+#'   )
+#'   names(res) <- c(
+#'     "Estimate", "Model.se", "Model.lo", "Model.hi",
+#'     "Sandwich.se", "Sandwich.lo", "Sandwich.hi"
+#'   )
+#'   res
 #' }
-#' val <- sim(onerun,R=10,b0=1)
+#' val <- sim(onerun, R = 10, b0 = 1)
 #' val
 #'
-#' val <- sim(val,R=40,b0=1) ## append results
-#' summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
+#' val <- sim(val, R = 40, b0 = 1) ## append results
+#' summary(val, estimate = c(1, 1), confint = c(3, 4, 6, 7), true = c(1, 1))
 #'
-#' summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#' summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
-#'         names=c("Model","Sandwich"),confint=TRUE)
+#' summary(val, estimate = c(1, 1), se = c(2, 5), names = c("Model", "Sandwich"))
+#' summary(val,
+#'   estimate = c(1, 1), se = c(2, 5), true = c(1, 1),
+#'   names = c("Model", "Sandwich"), confint = TRUE
+#' )
 #'
 #' if (interactive()) {
-#'     plot(val,estimate=1,c(2,5),true=1,
-#'          names=c("Model","Sandwich"),polygon=FALSE)
-#'     plot(val,estimate=c(1,1),se=c(2,5),main=NULL,
-#'          true=c(1,1),names=c("Model","Sandwich"),
-#'          line.lwd=1,col=c("gray20","gray60"),
-#'          rug=FALSE)
-#'     plot(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
-#'          names=c("Model","Sandwich"))
+#'   plot(val,
+#'     estimate = 1, c(2, 5), true = 1,
+#'     names = c("Model", "Sandwich"), polygon = FALSE
+#'   )
+#'   plot(val,
+#'     estimate = c(1, 1), se = c(2, 5), main = NULL,
+#'     true = c(1, 1), names = c("Model", "Sandwich"),
+#'     line.lwd = 1, col = c("gray20", "gray60"),
+#'     rug = FALSE
+#'   )
+#'   plot(val,
+#'     estimate = c(1, 1), se = c(2, 5), true = c(1, 1),
+#'     names = c("Model", "Sandwich")
+#'   )
 #' }
 #'
-#' f <- function(a=1, b=1) {
-#'   rep(a*b, 5)
+#' f <- function(a = 1, b = 1) {
+#'   rep(a * b, 5)
 #' }
-#' R <- Expand(a=1:3, b=1:3)
+#' R <- Expand(a = 1:3, b = 1:3)
 #' sim(f, R)
-#' sim(function(a,b) f(a,b), 3, args=c(a=5,b=5))
-#' sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
+#' sim(function(a, b) f(a, b), 3, args = c(a = 5, b = 5))
+#' sim(function(iter = 1, a = 5, b = 5) iter * f(a, b), iter = TRUE, R = 5)
 #'
 #' ## Returning estimate objects with extra per-iteration information
 #' onerun2 <- function(...) {
 #'   x <- rnorm(50)
-#'   y <- 0.5*x + rnorm(50)
+#'   y <- 0.5 * x + rnorm(50)
 #'   e <- estimate(lm(y ~ x))
 #'   c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
 #'   # works identically with summary.estimate objects
@@ -87,7 +99,7 @@
 #' val2
 #' # extra columns are stored but excluded from default summary statistics
 #' idx <- c("(Intercept)", "x", "niter")
-#' summary(val2, estimate=idx, true=c(0,0.5,NA))
+#' summary(val2, estimate = idx, true = c(0, 0.5, NA))
 sim.default <- function(
   x = NULL,
   R = 100,
@@ -329,7 +341,7 @@ rbind.sim <- function(x, ...) {
 
 #' @export
 as.vector.sim <- function(x, mode = "any") {
-  as.vector(x[,, drop = TRUE], mode = mode)
+  as.vector(x[, , drop = TRUE], mode = mode)
 }
 
 #' @export
@@ -435,7 +447,7 @@ Print <- function(x, n = 5, digits = max(3, getOption("digits") - 3), ...) {
   if (is.null(rownames(x))) {
     rownames(x) <- seq(nrow(x))
   }
-  sep <- rbind("---" = rep('', ncol(x)))
+  sep <- rbind("---" = rep("", ncol(x)))
   if (n < 1) {
     print(x, quote = FALSE, digits = digits, ...)
   } else {
@@ -509,7 +521,7 @@ print.summary.sim <- function(
   }
 
   print(
-    structure(x0, class = "matrix")[,, drop = FALSE],
+    structure(x0, class = "matrix")[, , drop = FALSE],
     digits = digits,
     quote = quote,
     na.print = na.print,
@@ -726,7 +738,7 @@ summary.sim <- function(
 
   if (!is.null(true)) {
     if (length(true) != ncol(est)) {
-      ##stop("'true' should be of same length as 'estimate'.")
+      ## stop("'true' should be of same length as 'estimate'.")
       true <- rep(true, length.out = ncol(estimate))
     }
     est <- rbind(

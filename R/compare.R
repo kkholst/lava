@@ -53,8 +53,7 @@ compare.default <- function(
     myidx <- parpos(Model(object), p = par)
     contrast[myidx] <- 1
     contrast <- diag(contrast, nrow = length(contrast))[
-      which(contrast != 0),
-      ,
+      which(contrast != 0), ,
       drop = FALSE
     ]
     if (!missing(null) && length(null) > 1) null <- null[attributes(myidx)$ord]
@@ -127,11 +126,11 @@ compare.default <- function(
         msg <- c(msg, paste0(cnames[i], " = ", null[i]))
       }
       method <- c(method, "", "Null Hypothesis:", msg)
-      ##method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
+      ## method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
     }
     rownames(ct) <- cnames
     res <- list(
-      ##data.name=hypothesis,
+      ## data.name=hypothesis,
       statistic = Q,
       parameter = df,
       p.value = pQ,

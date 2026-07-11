@@ -30,7 +30,7 @@ By <- function(x, INDICES, FUN, COLUMNS, array = FALSE, ...) {
   }
   a <- by(x, INDICES, FUN = FUN, ...)
   if (NCOL(x) == 1 && !array) {
-    ##DimElem <- length(a[rep(1,length(dim(a)))][[1]])
+    ## DimElem <- length(a[rep(1,length(dim(a)))][[1]])
     a <- a[]
     attr(a, "call") <- NULL
   }

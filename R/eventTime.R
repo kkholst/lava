@@ -405,7 +405,7 @@ coxExponential.lvm <- function(scale = 1, rate = 1, timecut) {
         rate <- rep(1, length(timecut) - 1)
       }
       for (i in seq(length(timecut) - 1)) {
-        u <- -log(runif(n)) ##rexp(n,1)
+        u <- -log(runif(n)) ## rexp(n,1)
         if (NCOL(mu) > 1) {
           vals[, i] <- timecut[i] + u * exp(-mu[, 1] - mu[, i + 1]) / (rate[i])
         } else {
@@ -447,7 +447,7 @@ aalenExponential.lvm <- function(rate = 1, timecut = 0) {
         rate <- rep(1, length(timecut) - 1)
       }
       for (i in seq(length(timecut) - 1)) {
-        u <- -log(runif(n)) ##rexp(n,1)
+        u <- -log(runif(n)) ## rexp(n,1)
         if (NCOL(mu) > 1) {
           vals[, i] <- timecut[i] + u / (rate[i] + mu[, 1] + mu[, i + 1])
         } else {

@@ -1,4 +1,4 @@
-##v <- lmerplot(l1,varcomp=TRUE,colorkey=TRUE,lwd=0,col=rainbow(20))
+## v <- lmerplot(l1,varcomp=TRUE,colorkey=TRUE,lwd=0,col=rainbow(20))
 lmerplot <- function(
   model,
   x,
@@ -92,7 +92,7 @@ varcomp <- function(x, profile = TRUE, ...) {
     resvar <- summary(x)$sigma
   } else if (inherits(x, "lmerMod")) {
     coefs <- lme4::fixef(x)
-    varcomp <- lme4::VarCorr(x)[[1]][,]
+    varcomp <- lme4::VarCorr(x)[[1]][, ]
     resvar <- attributes(lme4::VarCorr(x))$sc^2
     pr <- confint(x) ## Profile likelihood intervals
   } else {

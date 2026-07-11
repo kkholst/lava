@@ -133,7 +133,7 @@ fixsome <- function(
           j. <- exo_all.idx[j]
           myval <- S0[exo.idx[i], exo.idx[j]]
           if (i. == j. & myval == 0) {
-            ##warning("Overparametrized model. Problem with '"%++%index(x)$vars[j.]%++%"'")
+            ## warning("Overparametrized model. Problem with '"%++%index(x)$vars[j.]%++%"'")
             myval <- 1
           } else if (is.na(myval) || is.nan(myval)) {
             myval <- 0

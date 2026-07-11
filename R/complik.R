@@ -76,7 +76,7 @@ complik <- function(
   }
   nblocks <- length(mypar)
 
-  mydata0 <- data[,, drop = FALSE]
+  mydata0 <- data[, , drop = FALSE]
   mydata <- as.data.frame(matrix(NA, nblocks * nrow(data), ncol = ncol(data)))
   names(mydata) <- names(mydata0)
   for (i in seq_len(ncol(mydata))) {
@@ -137,7 +137,7 @@ complik <- function(
         Siid <- Siid + S[blocks[, j], ]
       }
     }
-    ##B <- solve(information(e0, type="hessian"))
+    ## B <- solve(information(e0, type="hessian"))
     D <- numDeriv::jacobian(
       function(p) score(e0, p = p),
       coef(e0),

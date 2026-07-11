@@ -63,12 +63,12 @@ getMeanVar <- function(object, k, iter, ...) {
 #'
 #' data(faithful)
 #' set.seed(1)
-#' M1 <- mvnmix(faithful[,"waiting",drop=FALSE],k=2)
-#' M2 <- mvnmix(faithful,k=2)
+#' M1 <- mvnmix(faithful[, "waiting", drop = FALSE], k = 2)
+#' M2 <- mvnmix(faithful, k = 2)
 #' if (interactive()) {
-#'     par(mfrow=c(2,1))
-#'     plot(M1,col=c("orange","blue"),ylim=c(0,0.05))
-#'     plot(M2,col=c("orange","blue"))
+#'   par(mfrow = c(2, 1))
+#'   plot(M1, col = c("orange", "blue"), ylim = c(0, 0.05))
+#'   plot(M2, col = c("orange", "blue"))
 #' }
 #'
 #' @export mvnmix
@@ -264,7 +264,7 @@ mvnmix <- function(
   res$theta <- rbind(theta)
   res$parpos <- parpos
   res$opt <- list(estimate = theta)
-  if (requireNamespace('mets', quietly = TRUE)) {
+  if (requireNamespace("mets", quietly = TRUE)) {
     res$vcov <- solve(information(res, type = "E"))
   }
   return(res)

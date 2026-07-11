@@ -442,7 +442,9 @@ decomp.specials <- function(
 ) {
   st <- gsub(" |^\\(|)$", "", x) # Remove white space and leading/trailing parantheses
   if (!is.null(pattern.ignore)) {
-    if (grepl(pattern.ignore, st, perl = perl, ...)) return(st)
+    if (grepl(pattern.ignore, st, perl = perl, ...)) {
+      return(st)
+    }
   }
   if (!is.null(pattern)) {
     st <- rev(unlist(strsplit(st, pattern, perl = perl, ...)))[1]

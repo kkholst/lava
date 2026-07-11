@@ -1,4 +1,4 @@
-'.onLoad' <- function(libname, pkgname = "lava") {
+".onLoad" <- function(libname, pkgname = "lava") {
   addhook("heavytail_init_hook", "init.hooks")
   addhook("glm_estimate_hook", "estimate.hooks")
   addhook("ordinal_estimate_hook", "estimate.hooks")
@@ -9,7 +9,7 @@
   lava.options(cluster.index = packagecheck("mets"))
 }
 
-'.onAttach' <- function(libname, pkgname = "lava") {
+".onAttach" <- function(libname, pkgname = "lava") {
   # desc <- utils::packageDescription(pkgname)
   # packageStartupMessage(desc$Package, " version ",desc$Version)
 }

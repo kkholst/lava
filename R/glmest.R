@@ -235,7 +235,7 @@ score.lm <- function(
   if (!dispersion) {
     sigma2 <- 1
   }
-  ##sigma2 <- suppressWarnings(summary(x)$sigma^2)
+  ## sigma2 <- suppressWarnings(summary(x)$sigma^2)
   A <- as.vector(r) / sigma2
   S <- apply(X, 2, function(x) x * A)
   if (!indiv) {
@@ -372,7 +372,7 @@ score.glm <- function(
   ## g <- link$linkfun
   ginv <- link$linkinv
   dginv <- link$mu.eta ## D[linkinv]
-  ##dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
+  ## dg <- function(x) 1/dginv(g(x)) ## Dh^-1 = 1/(h'(h^-1(x)))
   if (inherits(x, "negbin")) {
     Dcanlink <- function(x) 1 / x
   } else {
@@ -382,8 +382,8 @@ score.glm <- function(
     Dcaninvlink <- canonf$mu.eta
     Dcanlink <- function(x) 1 / Dcaninvlink(canlink(x))
   }
-  ##gmu <- function(x) g(caninvlink(x))
-  ##invgmu <- function(z) canlink(ginv(z))
+  ## gmu <- function(x) g(caninvlink(x))
+  ## invgmu <- function(z) canlink(ginv(z))
   h <- function(z) Dcanlink(ginv(z)) * dginv(z)
   pna <- any(is.na(p))
   if (pna) {
@@ -478,15 +478,15 @@ logL.glm <- function(
     warning("Over-parameterized model (NA parameters). Ignoring NA parameters")
     p[which(pna)] <- 0
   }
-  ##disp <- 1;
+  ## disp <- 1;
   p0 <- p
   if (
     tolower(family(x)$family) %in% c("gaussian", "gamma", "inverse.gaussian")
   ) {
     if (length(p) == ncol(X)) {
-      ##disp <- suppressWarnings((summary(x)$dispersion))
+      ## disp <- suppressWarnings((summary(x)$dispersion))
     } else {
-      ##disp <- tail(p,1)
+      ## disp <- tail(p,1)
       p0 <- p[-length(p)]
     }
   }

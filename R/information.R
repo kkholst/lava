@@ -57,7 +57,7 @@ information.lvm <- function(
         indiv = FALSE,
         n = n
       )
-    } ##...)
+    } ## ...)
     I <- -numDeriv::jacobian(myf, p, method = method)
     res <- (I + t(I)) / 2 # Symmetric result
     if (inverse) {
@@ -187,7 +187,7 @@ information.lvm <- function(
   }
   mp <- moments(x, p, data = data)
   pp <- modelPar(x, p)
-  D <- deriv.lvm(x, meanpar = pp$meanpar, mom = mp, p = p) ##, all=length(constrain(x))>0)
+  D <- deriv.lvm(x, meanpar = pp$meanpar, mom = mp, p = p) ## , all=length(constrain(x))>0)
   C <- mp$C
   iC <- Inverse(C, det = FALSE, symmetric = TRUE)
 

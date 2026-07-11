@@ -17,7 +17,10 @@ sumsplit <- function(x, ...) {
     if (val == "") {
       val <- "1"
     }
-    val <- switch(val, "-" = -1, val)
+    val <- switch(val,
+      "-" = -1,
+      val
+    )
     res <- c(res, val, st0)
   }
   return(res)
@@ -62,7 +65,10 @@ parsedesign <- function(coef, x, ..., regex = FALSE, diff = TRUE) {
       val0 <- gsub("[*()]", "", ff[2 * (i - 1) + 1])
       val <- char2num(val0)
       if (is.na(val)) {
-        val <- switch(val0, "-" = -1, 1)
+        val <- switch(val0,
+          "-" = -1,
+          1
+        )
       }
       par0 <- ff[2 * i]
       par0int <- as.integer(char2num(par0))

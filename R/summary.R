@@ -21,7 +21,7 @@
     if (k == 0) {
       return()
     }
-    ##cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
+    ## cat("Npar=", index(object)$npar, "+", index(object)$npar.mean, "\n", sep="")
     cat("\n")
     print(regression(object), ...)
     print(covariance(object), ...)
@@ -94,7 +94,7 @@
         vcov = vcov(object),
         estimator = object$estimator,
         rsq = rsq(object)
-      ) ##, varmat=modelVar(object)$P[nonexo,nonexo])
+      ) ## , varmat=modelVar(object)$P[nonexo,nonexo])
     }
     class(res) <- "summary.lvmfit"
     res
@@ -202,7 +202,7 @@ print.summary.multigroupfit <- function(x, ...) {
   cat("||score||^2=", l2D, "\n")
   cat("Latent variables:", x$latent, "\n")
   print(x$object, ...)
-  ##print(x$coefmat,quote=FALSE,right=TRUE)
+  ## print(x$coefmat,quote=FALSE,right=TRUE)
   print(cli::rule())
   if (!is.null(attributes(x$coefmat)$nlincon)) {
     cat("Non-linear constraints:\n")

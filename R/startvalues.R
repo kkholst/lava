@@ -189,7 +189,7 @@ startvalues0 <- function(x, S, mu = NULL, tol = 1e-6, delta = 1e-6, ...) {
   A0[, index(x)$eta.idx] <- A[, index(x)$eta.idx]
   diag(P0)[index(x)$endo.idx] <- diag(S)[index(x)$endo.obsidx] / 3
   lu <- 0.9
-  diag(P0)[index(x)$eta.idx] <- lu ##mean(diag(S)[index(x)$endo.idx])/2
+  diag(P0)[index(x)$eta.idx] <- lu ## mean(diag(S)[index(x)$endo.idx])/2
   pp <- pars(x, A = t(A0), P = P0, v = rep(1, length(index(x)$vars)))
   pp[pp == 1] <- p0[pp == 1]
   names(pp) <- coef(x, messages = 0, fixed = FALSE, mean = TRUE)[seq_len(length(
@@ -294,7 +294,7 @@ startvalues <- ## McDonald & Hartmann, 1992
     Chat[obs.idx, ] <- Chat[obs.idx, ] * matrix(s, n, m) ##
     Chat[, obs.idx] <- Chat[, obs.idx] * matrix(s, m, n, byrow = TRUE) ##
     Phat <- (diag(m) - Ahat) %*% Chat %*% t(diag(m) - Ahat)
-    ##diag(Phat) <- abs(diag(Phat))
+    ## diag(Phat) <- abs(diag(Phat))
     ## Guarantee PD-matrix:
     Phat[is.nan(Phat) | is.na(Phat)] <- 0
     diag(Phat)[diag(Phat) == 0] <- 1

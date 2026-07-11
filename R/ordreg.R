@@ -80,7 +80,7 @@ ordreg <- function(
   cc <- op$par
   if (fast) {
     return(structure(cc, threshold = up$threshold(cc, up$K)))
-  } ##,up$K)))
+  } ## ,up$K)))
   nn <- c(paste(lev[-length(lev)], lev[-1L], sep = "|"), colnames(X))
   I <- -ordreg_hessian(cc, up)
   names(cc) <- nn

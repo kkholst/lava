@@ -33,7 +33,7 @@ revdiag <- function(x, ...) {
 
 ##' @export
 offdiag <- function(x, type = 0, ...) {
-  ##if (NCOL(x)==1) return(NULL)
+  ## if (NCOL(x)==1) return(NULL)
   if (type %in% c(1, 3)) {
     ii <- which(upper.tri(x, diag = (type == 3)))
   } else if (type %in% c(2, 4)) {

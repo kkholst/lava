@@ -88,7 +88,6 @@
     layout = lava.options()$layout,
     edgecolor = lava.options()$edgecolor,
     graph.proc = lava.options()$graph.proc,
-
     ...
   ) {
     if (is.null(vars(x))) {
@@ -194,8 +193,8 @@
       }
       res <- tryCatch(Rgraphviz::renderGraph(g), error = function(e) NULL)
       ## Redo nodes to avoid edges overlapping node borders
-      ##par(new=TRUE)
-      ##res <- tryCatch(Rgraphviz::renderGraph(g,drawEdges=NULL,new=FALSE),error=function(e) NULL)
+      ## par(new=TRUE)
+      ## res <- tryCatch(Rgraphviz::renderGraph(g,drawEdges=NULL,new=FALSE),error=function(e) NULL)
       ##
       options(.savedOpt)
     }
@@ -242,7 +241,7 @@ vis.lvm <- function(
     size = rep(1.0, length(types)),
     group = types
   )
-  edges <- cbind(edgeList(m)) #,shadow=TRUE)
+  edges <- cbind(edgeList(m)) # ,shadow=TRUE)
 
   AP <- matrices(m, paste0("p", seq_len(index(m)$npar)))
   if (labels) {

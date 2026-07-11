@@ -264,7 +264,7 @@
         x <- latent(x, new.lat)
       }
     }
-    ##}
+    ## }
 
     ## Run hooks (additional lava plugins)
     myhooks <- gethook()
@@ -816,7 +816,7 @@
             mu = mu,
             n = n,
             weights = weights,
-            data2 = data2 ##, offset=offset
+            data2 = data2 ## , offset=offset
           )
         )
         if (Optim$constrain) {
@@ -942,7 +942,7 @@
               "maxit",
               "abstol",
               "reltol",
-              #"alpha","beta","gamma",
+              # "alpha","beta","gamma",
               "REPORT",
               "type",
               "lmm",
@@ -963,7 +963,7 @@
           if (!is.null(optarg[["gradient"]])) {
             names(optarg)[3] <- "gr"
           }
-          ##if (!is.null(optarg[["hessian"]])) names(optarg)[4] <- "hess"
+          ## if (!is.null(optarg[["hessian"]])) names(optarg)[4] <- "hess"
           optarg$hessian <- NULL
           optarg[names(optarg) %ni% args] <- NULL
         }
@@ -1092,7 +1092,7 @@
       coef = mycoef,
       vcov = asVar,
       mu = mu,
-      S = S, ##A=A, P=P,
+      S = S, ## A=A, P=P,
       model0 = mymodel, ## Random slope hack
       estimator = estimator,
       opt = opt,

@@ -26,7 +26,7 @@ predict.lvm.mixture <- function(
   zmax <- apply(logplogff, 1, max)
   logsumpff <- log(rowSums(exp(logplogff - zmax))) + zmax
   gamma <- exp(apply(logplogff, 2, function(y) y - logsumpff)) ## Posterior class probabilities, conditional mean
-  ##Vgamma <- gamma-gamma^2 ## conditional variance
+  ## Vgamma <- gamma-gamma^2 ## conditional variance
   M <- 0
   V <- 0
   x <- lava::vars(object$model)

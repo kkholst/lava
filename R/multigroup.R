@@ -51,7 +51,7 @@ multigroup <- function(
       ## Fix some parameters (predictors,latent variables,...)
 
       d0 <- datasets[[i]][1, , drop = FALSE]
-      d0[,] <- 1
+      d0[, ] <- 1
       if (fix) {
         models[[i]] <- fixsome(
           models[[i]],
@@ -196,7 +196,7 @@ multigroup <- function(
     ]
 
     mu <- unlist(mymodel$mean)[which(index(mymodel)$v1 == 1)]
-    #ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
+    # ex <- names(mymodel$expar)[which(index(mymodel)$e1==1)]
     ex <- mymodel$exfix
     if (length(ex) > 0) {
       if (any(is.na(ex))) {
@@ -365,14 +365,14 @@ multigroup <- function(
         )
       )
     }
-    #coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],sep="@"))
+    # coefs <- c(coefs,paste(i,coef(lvms[[i]],fix=FALSE,mean=FALSE)[pp0[[i]]],sep="@"))
     if (length(m1) > 0) {
       coefsm0 <- paste(
         coef(lvms[[i]], fix = FALSE, mean = TRUE)[mm0[[i]]],
         i,
         sep = "@"
       )
-      #coefsm0 <- paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@")
+      # coefsm0 <- paste(i,coef(lvms[[i]],fix=FALSE,mean=TRUE)[mm0[[i]]],sep="@")
       coefsm <- c(coefsm, coefsm0)
     }
   }

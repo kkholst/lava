@@ -159,112 +159,117 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @examples
 #'
 #' ## Simulation from logistic regression model
-#' m <- lvm(y~x+z);
-#' distribution(m,y~x) <- binomial.lvm("logit")
-#' d <- sim(m,1000)
-#' g <- glm(y~z+x,data=d,family=binomial())
-#' g0 <- glm(y~1,data=d,family=binomial())
+#' m <- lvm(y ~ x + z)
+#' distribution(m, y ~ x) <- binomial.lvm("logit")
+#' d <- sim(m, 1000)
+#' g <- glm(y ~ z + x, data = d, family = binomial())
+#' g0 <- glm(y ~ 1, data = d, family = binomial())
 #'
 #' ## LRT
 #' estimate(g, g0)
 #'
 #'
-## Plain estimates (robust standard errors)
+#' # Plain estimates (robust standard errors)
 #' estimate(g)
 #'
 #' ## Testing contrasts
-#' summary(estimate(g), null=0)
-#' estimate(g, rbind(c(1,1,0), c(1,0,2)))
-#' summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
+#' summary(estimate(g), null = 0)
+#' estimate(g, rbind(c(1, 1, 0), c(1, 0, 2)))
+#' summary(estimate(g, rbind(c(1, 1, 0), c(1, 0, 2))), null = c(1, 2))
 #' estimate(g, 2:3) ## same as cbind(0,1,-1)
 #' estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 #' ## Alternative syntax
-#' estimate(g, "z", "z"-"x", 2*"z"-3*"x")
-#' estimate(g, "?")  ## Wildcards
+#' estimate(g, "z", "z" - "x", 2 * "z" - 3 * "x")
+#' estimate(g, "?") ## Wildcards
 #' estimate(g, "*Int*", "z")
-#' summary(estimate(g, "1", "2"-"3"), null = c(0,1))
+#' summary(estimate(g, "1", "2" - "3"), null = c(0, 1))
 #' estimate(g, 2, 3)
 #'
 #' ## Usual (non-robust) confidence intervals
-#' estimate(g, vcov=TRUE)
-#' estimate(g, vcov=vcov(g))
+#' estimate(g, vcov = TRUE)
+#' estimate(g, vcov = vcov(g))
 #'
 #' ## Transformations
-#' estimate(g, function(p) p[1]+p[2])
+#' estimate(g, function(p) p[1] + p[2])
 #'
 #' ## Multiple parameters
-#' e <- estimate(g, function(p) c(p[1]+p[2], p[1]*p[2]))
+#' e <- estimate(g, function(p) c(p[1] + p[2], p[1] * p[2]))
 #' e
 #' vcov(e)
 #'
 #' ## Label new parameters
-#' estimate(g, function(p) list("a1"=p[1]+p[2], "b1"=p[1]*p[2]))
+#' estimate(g, function(p) list("a1" = p[1] + p[2], "b1" = p[1] * p[2]))
 #' #'
 #' ## Multiple group
-#' m <- lvm(y~x)
+#' m <- lvm(y ~ x)
 #' m <- baptize(m)
-#' d2 <- d1 <- sim(m,50,seed=1)
-#' e <- estimate(list(m,m),list(d1,d2))
+#' d2 <- d1 <- sim(m, 50, seed = 1)
+#' e <- estimate(list(m, m), list(d1, d2))
 #' estimate(e) ## Wrong
-#' ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
+#' ee <- estimate(e, id = rep(seq(nrow(d1)), 2)) ## Clustered
 #' ee
-#' estimate(lm(y~x,d1))
+#' estimate(lm(y ~ x, d1))
 #'
 #' ## Marginalize / standardization
-#' f <- function(p,data)
-#'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
-#'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-#' e <- estimate(g, f, average=TRUE)
+#' f <- function(p, data) {
+#'   list(
+#'     p0 = expit(p["(Intercept)"] + p["z"] * data[, "z"]),
+#'     p1 = expit(p["(Intercept)"] + p["x"] + p["z"] * data[, "z"])
+#'   )
+#' }
+#' e <- estimate(g, f, average = TRUE)
 #' e
-#' estimate(e,diff)
-#' estimate(e,cbind(1,1))
+#' estimate(e, diff)
+#' estimate(e, cbind(1, 1))
 #'
 #' ## Clusters and subset (conditional marginal effects)
-#' d$id <- rep(seq(nrow(d)/4),each=4)
-#' estimate(g,function(p,data)
-#'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
-#'          subset=d$z>0, id=d$id, average=TRUE)
+#' d$id <- rep(seq(nrow(d) / 4), each = 4)
+#' estimate(g, function(p, data) {
+#'   list(p0 = expit(p[1] + p["z"] * data[, "z"]))
+#' },
+#' subset = d$z > 0, id = d$id, average = TRUE
+#' )
 #'
 #' ## More examples with clusters:
-#' m <- lvm(c(y1,y2,y3)~u+x)
-#' d <- sim(m,10)
-#' l1 <- glm(y1~x,data=d)
-#' l2 <- glm(y2~x,data=d)
-#' l3 <- glm(y3~x,data=d)
+#' m <- lvm(c(y1, y2, y3) ~ u + x)
+#' d <- sim(m, 10)
+#' l1 <- glm(y1 ~ x, data = d)
+#' l2 <- glm(y2 ~ x, data = d)
+#' l3 <- glm(y3 ~ x, data = d)
 #'
 #' ## Some random id-numbers
-#' id1 <- c(1,1,4,1,3,1,2,3,4,5)
-#' id2 <- c(1,2,3,4,5,6,7,8,1,1)
+#' id1 <- c(1, 1, 4, 1, 3, 1, 2, 3, 4, 5)
+#' id2 <- c(1, 2, 3, 4, 5, 6, 7, 8, 1, 1)
 #' id3 <- seq(10)
 #'
 #' ## Un-stacked and stacked i.i.d. decomposition
-#' IC(estimate(l1,id=id1,stack=FALSE))
-#' IC(estimate(l1,id=id1))
+#' IC(estimate(l1, id = id1, stack = FALSE))
+#' IC(estimate(l1, id = id1))
 #'
 #' ## Combined i.i.d. decomposition
-#' e1 <- estimate(l1,id=id1)
-#' e2 <- estimate(l2,id=id2)
-#' e3 <- estimate(l3,id=id3)
-#' (a2 <- merge(e1,e2,e3))
+#' e1 <- estimate(l1, id = id1)
+#' e2 <- estimate(l2, id = id2)
+#' e3 <- estimate(l3, id = id3)
+#' (a2 <- merge(e1, e2, e3))
 #'
 #' ## If all models were estimated on the same data we could use the
 #' ## syntax:
 #' ## Reduce(merge,estimate(list(l1,l2,l3)))
 #'
 #' ## Same:
-#' IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
+#' IC(a1 <- merge(l1, l2, l3, id = list(id1, id2, id3)))
 #'
-#' IC(merge(l1,l2,l3,id=TRUE)) # one-to-one (same clusters)
-#' IC(merge(l1,l2,l3,id=FALSE)) # independence
+#' IC(merge(l1, l2, l3, id = TRUE)) # one-to-one (same clusters)
+#' IC(merge(l1, l2, l3, id = FALSE)) # independence
 #'
 #'
 #' # ------ influence function calculus -------
-#' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-#' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+#' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale = FALSE), id = 1:10)
+#' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale = FALSE), id = 1:10)
 #'
 #' e <- c(a, b) # merge
 #' merge(a, b)
-#' c(e1=a, b) # naming of par
+#' c(e1 = a, b) # naming of par
 #' labels(e, c("p1", "p2")) # renaming parameters
 #' e["a"] # subset
 #' subset(e, "a")
@@ -278,19 +283,21 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' # Parameter transformation with automatic calculation of derivatives
 #' a * b
 #' (3 * cos(a) / sqrt(b) + 1) / a
-#' expit(c(a,b))
-#' c(sum=sum(e), sum2=a+b,
-#'   prod=prod(e), prod2=a*b)
+#' expit(c(a, b))
+#' c(
+#'   sum = sum(e), sum2 = a + b,
+#'   prod = prod(e), prod2 = a * b
+#' )
 #' e %*% e # inner prod.
 #' c(1, 2) %*% e
 #' c(pow = a^b)
 #' a^c(0.5, 2)
-#' c(b=e["a"] * e["b"] / a, also.b=e["b"])
+#' c(b = e["a"] * e["b"] / a, also.b = e["b"])
 #'
-#' B <- rbind(c(1,-1), c(1,0), c(0,1))
+#' B <- rbind(c(1, -1), c(1, 0), c(0, 1))
 #' B %*% e
 #' e == 1 # wald-test, null-hypothesis H0: b=1
-#' e == c(1,2)
+#' e == c(1, 2)
 #' B %*% e == 1
 #' @aliases estimate estimate.default
 #' @aliases estimate.mlm
@@ -490,7 +497,7 @@ estimate.default <- function(
     ## e <- substitute(id)
     ## expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
     ## if (expr) id <- eval(e,envir=data)
-    ##if (!is.null(data)) id <- eval(e, data)
+    ## if (!is.null(data)) id <- eval(e, data)
     if (is.logical(id) && length(id) == 1) {
       id <- if (is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
       stack <- FALSE
@@ -719,7 +726,7 @@ estimate.default <- function(
           if (nrow(ic1) != nrow(ic2)) {
             message(
               "Assuming independence between model iid decomposition and new data frame"
-            ) #nolint
+            ) # nolint
             V <- var_ic(ic1) + var_ic(ic2)
           } else {
             ic_theta <- ic1 + ic2

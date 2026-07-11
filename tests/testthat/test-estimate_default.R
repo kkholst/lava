@@ -29,9 +29,9 @@ test_that("estimate.default misc", {
   if (requireNamespace("geepack", quietly = TRUE)) {
     dd <- reshape(
       d,
-      direction = 'long',
-      varying = list(c('y1', 'y2')),
-      v.names = 'y'
+      direction = "long",
+      varying = list(c("y1", "y2")),
+      v.names = "y"
     )
     dd <- dd[order(dd$id), ]
     ## dd <- mets::fast.reshape(d)

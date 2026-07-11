@@ -349,7 +349,7 @@ forwardsearch <- function(
     Vars <- c(Vars, list(varlist))
   }
 
-  ##if (messages > 0) close(pb)
+  ## if (messages > 0) close(pb)
   ord <- order(Tests)
   Tests <- cbind(Tests, pchisq(Tests, k, lower.tail = FALSE))
   colnames(Tests) <- c("Test Statistic", "P-value")

@@ -163,7 +163,7 @@ images <- function(
   group <- factor(group)
   idxs <- lapply(levels(group), function(x) which(group == x))
   layout(lout, widths = wid, heights = hei)
-  ##if (missing(mar)) par(mar=c(4,4,3,0))
+  ## if (missing(mar)) par(mar=c(4,4,3,0))
   if (missing(axis2)) {
     axis2 <- c(TRUE, rep(FALSE, K - 1))
   }

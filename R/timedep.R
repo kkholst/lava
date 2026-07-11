@@ -69,7 +69,7 @@ timedep <- function(
   if (missing(timecut)) {
     stop("'timecut' needed")
   }
-  ##if (inherits(formula,"formula"))
+  ## if (inherits(formula,"formula"))
   ff <- getoutcome(formula)
   simvars <- attributes(ff)$x
   if (is.null(object$attributes$simvar)) {

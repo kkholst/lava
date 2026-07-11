@@ -340,7 +340,7 @@ sim.lvm <- function(
     for (v in setdiff(v.env, "X")) {
       assign(v, x$sim.env[[v]])
     }
-    if (is.null(X)) X <- x$sim.env[['X']]
+    if (is.null(X)) X <- x$sim.env[["X"]]
   } else {
     if (!is.null(n) && n < 1) {
       return(NULL)
@@ -723,11 +723,11 @@ sim.lvm <- function(
                 }
               }
             }
-            suppressWarnings(yy <- with(x$attributes$transform[[i]], fun(xtr))) ##fun(res[,xtrans])))
+            suppressWarnings(yy <- with(x$attributes$transform[[i]], fun(xtr))) ## fun(res[,xtrans])))
             if (NROW(yy) != NROW(res)) {
               ## apply row-wise
               res[, i] <- with(
-                x$attributes$transform[[i]], ##apply(res[,xtrans,drop=FALSE],1,fun))
+                x$attributes$transform[[i]], ## apply(res[,xtrans,drop=FALSE],1,fun))
                 apply(xtr, 1, fun)
               )
             } else {
@@ -790,7 +790,7 @@ sim.lvm <- function(
                 )
                 if (NROW(yy) != NROW(res)) {
                   ## apply row-wise
-                  mu.i <- #mu.i +
+                  mu.i <- # mu.i +
                     with(
                       xconstrain[[ipos]],
                       apply(res[, exo, drop = FALSE], 1, function(x) {
@@ -800,7 +800,7 @@ sim.lvm <- function(
                       })
                     )
                 } else {
-                  mu.i <- ##mu.i+
+                  mu.i <- ## mu.i+
                     yy
                 }
               }

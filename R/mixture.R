@@ -36,22 +36,21 @@
 #' @seealso \code{mvnmix}
 #' @keywords models regression
 #' @examples
-#'
 #' \donttest{
-#' m0 <- lvm(list(y~x+z,x~z))
-#' distribution(m0,~z) <- binomial.lvm()
-#' d <- sim(m0,2000,p=c("y~z"=2,"y~x"=1),seed=1)
+#' m0 <- lvm(list(y ~ x + z, x ~ z))
+#' distribution(m0, ~z) <- binomial.lvm()
+#' d <- sim(m0, 2000, p = c("y~z" = 2, "y~x" = 1), seed = 1)
 #'
 #' ## unmeasured confounder example
-#' m <- baptize(lvm(y~x, x~1));
-#' intercept(m,~x+y) <- NA
+#' m <- baptize(lvm(y ~ x, x ~ 1))
+#' intercept(m, ~ x + y) <- NA
 #'
-#' if (requireNamespace('mets', quietly=TRUE)) {
+#' if (requireNamespace("mets", quietly = TRUE)) {
 #'   set.seed(42)
-#'   M <- mixture(m,k=2,data=d,control=list(trace=1,tol=1e-6))
+#'   M <- mixture(m, k = 2, data = d, control = list(trace = 1, tol = 1e-6))
 #'   summary(M)
-#'   lm(y~x,d)
-#'   estimate(M,"y~x")
+#'   lm(y ~ x, d)
+#'   estimate(M, "y~x")
 #'   ## True slope := 1
 #' }
 #' }
@@ -67,7 +66,7 @@ mixture <- function(
   ...
 ) {
   MODEL <- "normal"
-  ##type=c("standard","CEM","SEM"),
+  ## type=c("standard","CEM","SEM"),
   ## type <- tolower(type[1])
   ## if (type[1]!="standard") {
   ##     return(mixture0(x,data=data,k=k,control=control,type=type,...))
@@ -418,7 +417,7 @@ mixture <- function(
       "mstep",
       "objfn.inc",
       "kr",
-      ##"keep.objfval","convtype",
+      ## "keep.objfval","convtype",
       "maxiter",
       "tol",
       "trace"
@@ -433,7 +432,7 @@ mixture <- function(
   p <- c(thetacur, probcur)
   opt <- SQUAREM::squarem(
     p,
-    fixptfn = EMstep, ##objfn=negLogLik,
+    fixptfn = EMstep, ## objfn=negLogLik,
     control = em.control
   )
   ## opt2 <- nlminb(opt$par, function(p) negLogLik(p=p), control=list(trace=1))

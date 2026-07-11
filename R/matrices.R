@@ -259,7 +259,7 @@ matrices.lvm <- function(
 ) {
   ii <- index(x)
   pp <- c(rep(NA, ii$npar.mean), pars, epars)
-  ##v <- NULL
+  ## v <- NULL
   v <- ii$v0
   if (!is.null(meanpar) && length(meanpar) > 0) {
     pp[seq(ii$npar.mean)] <- meanpar
@@ -539,25 +539,25 @@ matrices.lvm <- function(
         reg.tidx <- which(t(x$par == p))
         if (!is.null(val)) {
           A[reg.idx] <- cpar
-        } ##myc(val)
+        } ## myc(val)
       }
       if (p %in% ii$covparname.all) {
         cov.idx <- which(x$covpar == p)
         if (!is.null(val)) {
           P[cov.idx] <- cpar
-        } ##myc(val)
+        } ## myc(val)
       }
       if (p %in% ii$mparname.all) {
         m.idx <- which(x$mean == p)
         if (!is.null(val)) {
           v[m.idx] <- cpar
-        } ##myc(val)
+        } ## myc(val)
       }
       if (p %in% ii$eparname.all) {
         e.idx <- which(x$exfix == p)
         if (!is.null(val)) {
           e[e.idx] <- cpar
-        } ##myc(val)
+        } ## myc(val)
       }
       constrain.idx[[p]] <- list(
         reg.idx = reg.idx,

@@ -67,8 +67,8 @@ gkgamma <- function(
         gam <- dif / tot ## Conditional gammas given Z=z
         px2 <- p[psi]^2
         pgamma <- sum(dif * px2) / sum(tot * px2)
-        #weights <- px2*tot/sum(px2*tot)
-        #pgamma <- sum(weights*gam)
+        # weights <- px2*tot/sum(px2*tot)
+        # pgamma <- sum(weights*gam)
         c(gam, pgamma = pgamma)
       },
       labels = c(paste0("\u03b3:", names(dd)), "pgamma"),

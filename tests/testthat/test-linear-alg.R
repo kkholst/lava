@@ -52,24 +52,24 @@ test_that("Inv, matrix inverse", {
 })
 
 test_that("rotate2", {
-  ##rotate2: default rotation by pi flips the point
+  ## rotate2: default rotation by pi flips the point
   x <- cbind(c(1, 0), c(0, 1)) # 2x2 matrix (2 rows, 2 cols)
   result <- rotate2(x, theta = pi)
   expected <- cbind(c(-1, 0), c(0, -1))
   expect_equal(result, expected, tolerance = 1e-10)
 
-  ##rotate2: rotation by 0 returns the same matrix
+  ## rotate2: rotation by 0 returns the same matrix
   x <- cbind(c(1, 2), c(3, 4))
   result <- rotate2(x, theta = 0)
   expect_equal(result, x, tolerance = 1e-10)
 
-  ##rotate2: rotation by pi/2 rotates 90 degrees
+  ## rotate2: rotation by pi/2 rotates 90 degrees
   x <- rbind(c(1, 0)) # row vector (1x2)
   result <- rotate2(x, theta = pi / 2)
   expected <- rbind(c(0, -1))
   expect_equal(result, expected, tolerance = 1e-10)
 
-  ##rotate2: two rotations of pi/2 equal one rotation of pi
+  ## rotate2: two rotations of pi/2 equal one rotation of pi
   x <- cbind(c(1, 2), c(2, 1))
   result_double <- rotate2(rotate2(x, theta = pi / 2), theta = pi / 2)
   result_pi <- rotate2(x, theta = pi)

@@ -164,8 +164,8 @@ diagtest <- function(
       p1 <- sum(P[, positive])
       p2 <- sum(P[positive, ])
       res <- c(
-        Prevalence = p1, ##(p[1]+p[2]),
-        Test = p2, ##(p[1]+p[3]),
+        Prevalence = p1, ## (p[1]+p[2]),
+        Test = p2, ## (p[1]+p[3]),
         Sensitivity = P[positive, positive] / p1, ## p[1]/(p[1]+p[2]), # Prob test + | given (true) disease (True positive rate)
         Specificity = P[negative, negative] / (1 - p1), ## p[4]/(1-p[1]-p[2]), # Prob test - | given no disease (True negative rate)
         PositivePredictiveValue = P[positive, positive] / p2, ## p[1]/(p[1]+p[3]), # Prob disease | test +

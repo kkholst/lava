@@ -86,7 +86,9 @@ versioncheck <- function(pkg = "lava", geq, sep = ".", ...) {
     if (xyz[i] > geq[i]) {
       return(TRUE)
     }
-    if (xyz[i] < geq[i]) return(FALSE)
+    if (xyz[i] < geq[i]) {
+      return(FALSE)
+    }
   }
   if (length(xyz) >= length(geq)) {
     return(TRUE)
