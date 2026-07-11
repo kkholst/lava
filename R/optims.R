@@ -1,54 +1,83 @@
-nlminb2 <- function(start,objective,gradient,hessian,...) {
-  nlminbcontrols <- c("eval.max","iter.max","trace","abs.tol","rel.tol","x.tol","step.min")
+nlminb2 <- function(start, objective, gradient, hessian, ...) {
+  nlminbcontrols <- c(
+    "eval.max",
+    "iter.max",
+    "trace",
+    "abs.tol",
+    "rel.tol",
+    "x.tol",
+    "step.min"
+  )
   dots <- list(...)
   control <- list(...)$control
-  control <- control[names(control)%in%nlminbcontrols]
+  control <- control[names(control) %in% nlminbcontrols]
   dots$control <- control
-  if (length(dots$trace)>0 && dots$trace>0) cat("\n")
-  mypar <- c(list(start=start,objective=objective,gradient=gradient,hessian=hessian),dots)
+  if (length(dots$trace) > 0 && dots$trace > 0) {
+    cat("\n")
+  }
+  mypar <- c(
+    list(
+      start = start,
+      objective = objective,
+      gradient = gradient,
+      hessian = hessian
+    ),
+    dots
+  )
   mypar["debug"] <- NULL
   do.call("nlminb", mypar)
 }
 
-nlminb1 <- function(start,objective,gradient,hessian,...) {
-  nlminb2(start,objective,gradient=gradient,hessian=NULL,...)
+nlminb1 <- function(start, objective, gradient, hessian, ...) {
+  nlminb2(start, objective, gradient = gradient, hessian = NULL, ...)
 }
 
-nlminb0 <- function(start,objective,gradient,hessian,...) {
-  nlminb2(start,objective,gradient=NULL,hessian=NULL,...)
+nlminb0 <- function(start, objective, gradient, hessian, ...) {
+  nlminb2(start, objective, gradient = NULL, hessian = NULL, ...)
 }
 
-estimatingfunction <- function(start,objective,gradient,hessian,NR=FALSE,...) {
-  myobj <- function(x,...) {
-    S <- gradient(x,...)
+estimatingfunction <- function(
+  start,
+  objective,
+  gradient,
+  hessian,
+  NR = FALSE,
+  ...
+) {
+  myobj <- function(x, ...) {
+    S <- gradient(x, ...)
     crossprod(S)[1]
   }
   if (!missing(hessian) && !is.null(hessian)) {
     mygrad <- function(x) {
       H <- hessian(x)
       S <- gradient(x)
-      2*S%*%H
+      2 * S %*% H
     }
   } else {
-    hessian <- function(x) numDeriv::jacobian(gradient,x,method=lava.options()$Dmethod)
+    hessian <- function(x) {
+      numDeriv::jacobian(gradient, x, method = lava.options()$Dmethod)
+    }
     mygrad <- function(x) {
       H <- hessian(x)
       S <- gradient(x)
-      2*S%*%H
+      2 * S %*% H
     }
   }
   if (NR) {
-    op <- lava::NR(start,gradient=gradient,hessian=hessian,...)
+    op <- lava::NR(start, gradient = gradient, hessian = hessian, ...)
   } else {
-    op <- nlminb2(start,myobj,mygrad,hessian=NULL,...)
+    op <- nlminb2(start, myobj, mygrad, hessian = NULL, ...)
   }
   return(op)
 }
 
-estimatingfunction0 <- function(...,hessian=NULL) estimatingfunction(...,hessian=hessian)
+estimatingfunction0 <- function(..., hessian = NULL) {
+  estimatingfunction(..., hessian = hessian)
+}
 
 ##' @title Newton-Raphson method
-##' 
+##'
 ##' @param start Starting value
 ##' @param objective Optional objective function (used for selecting step length)
 ##' @param gradient gradient
@@ -77,47 +106,59 @@ estimatingfunction0 <- function(...,hessian=NULL) estimatingfunction(...,hessian
 ##'              hessian=rbind(c(2,2*y),c(2*y,2*x)))
 ##' }
 ##' NR(c(0,0),f)
-##' 
+##'
 ##' # Parsing arguments to the function and
 ##' g <- function(x,y) (x*y+1)^2
 ##' NR(0, gradient=g, args=list(y=2), control=list(trace=1,tol=1e-20))
-##' 
-##' 
-NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL,...) {
-  control0 <- list(trace=0,
-                   stepsize=1,
-                   lambda=0,
-                   ngamma=0,
-                   gamma2=0,
-                   backtrack=TRUE,
-                   iter.max=200,
-                   tol=1e-6,
-                   stabil=FALSE,
-                   epsilon=1e-9)
+##'
+##'
+NR <- function(
+  start,
+  objective = NULL,
+  gradient = NULL,
+  hessian = NULL,
+  control,
+  args = NULL,
+  ...
+) {
+  control0 <- list(
+    trace = 0,
+    stepsize = 1,
+    lambda = 0,
+    ngamma = 0,
+    gamma2 = 0,
+    backtrack = TRUE,
+    iter.max = 200,
+    tol = 1e-6,
+    stabil = FALSE,
+    epsilon = 1e-9
+  )
   if (!missing(control)) {
-      control0[names(control)] <- control
-      # Backward compatibility:
-      if (!is.null(control0$gammma)) control0$stepsize <- control0$gamma
+    control0[names(control)] <- control
+    # Backward compatibility:
+    if (!is.null(control0$gammma)) control0$stepsize <- control0$gamma
   }
 
   ## conditions to select the step length
-  if(control0$backtrack[1] == "armijo"){
-    control0$backtrack <- c(1e-4,0) # page 33
+  if (control0$backtrack[1] == "armijo") {
+    control0$backtrack <- c(1e-4, 0) # page 33
   }
-  if(control0$backtrack[1] == "curvature"){
-    control0$backtrack <- c(0,0.9) # page 34
+  if (control0$backtrack[1] == "curvature") {
+    control0$backtrack <- c(0, 0.9) # page 34
   }
-  if(control0$backtrack[1] == "wolfe"){
-      control0$backtrack <- c(1e-4,0.9)
+  if (control0$backtrack[1] == "wolfe") {
+    control0$backtrack <- c(1e-4, 0.9)
   }
-  if(!is.logical(control0$backtrack) || length(control0$backtrack)!=1){
-    if(length(control0$backtrack) != 2){
+  if (!is.logical(control0$backtrack) || length(control0$backtrack) != 1) {
+    if (length(control0$backtrack) != 2) {
       stop("control$backtrack must have length two if not TRUE or FALSE \n")
     }
-    if(any(!is.numeric(control0$backtrack)) || any(abs(control0$backtrack)>1)){
+    if (
+      any(!is.numeric(control0$backtrack)) || any(abs(control0$backtrack) > 1)
+    ) {
       stop("elements in control$backtrack must be in [0,1] \n")
     }
-    if(control0$backtrack[2]==0){
+    if (control0$backtrack[2] == 0) {
       control0$backtrack[2] <- +Inf # no Wolfe condition
     }
   }
@@ -125,170 +166,197 @@ NR <- function(start,objective=NULL,gradient=NULL,hessian=NULL,control,args=NULL
   grad <- gradient
   hess <- hessian
   if (!is.null(args)) {
-      if (!is.list(args)) args <- list(args)
-      if (!is.null(objective))
-          obj <- function(p) do.call(objective, c(list(p),args))
-      if (!is.null(gradient))
-          grad <- function(p) do.call(gradient, c(list(p),args))
-      if (!is.null(hessian))
-          hess <- function(p) do.call(hessian, c(list(p),args))
+    if (!is.list(args)) {
+      args <- list(args)
+    }
+    if (!is.null(objective)) {
+      obj <- function(p) do.call(objective, c(list(p), args))
+    }
+    if (!is.null(gradient)) {
+      grad <- function(p) do.call(gradient, c(list(p), args))
+    }
+    if (!is.null(hessian)) {
+      hess <- function(p) do.call(hessian, c(list(p), args))
+    }
   }
-  if (control0$trace>0) {
-       cat("\nIter=0\t")
-      if (!is.null(obj))
-          cat("Objective=",obj(as.double(start)))
-      cat(";\t\n \tp=", paste0(formatC(start), collapse=" "),"\n")
+  if (control0$trace > 0) {
+    cat("\nIter=0\t")
+    if (!is.null(obj)) {
+      cat("Objective=", obj(as.double(start)))
+    }
+    cat(";\t\n \tp=", paste0(formatC(start), collapse = " "), "\n")
   }
-  gradFun = !is.null(grad)
+  gradFun <- !is.null(grad)
   if (!gradFun & is.null(hess)) {
     hess <- function(p) {
       ff <- obj(p)
       res <- attributes(ff)$hess
       if (is.function(res)) {
-          res <- res(p)
-          attributes(res)$grad <- as.vector(attributes(ff)$grad(p))
-      } else {      
-          attributes(res)$grad <- as.vector(attributes(ff)$grad)
+        res <- res(p)
+        attributes(res)$grad <- as.vector(attributes(ff)$grad(p))
+      } else {
+        attributes(res)$grad <- as.vector(attributes(ff)$grad)
       }
       return(res)
     }
     grad <- function(p) {
-        if (control0$trace>0) print("Numerical gradient")
-        numDeriv::jacobian(obj,p)
+      if (control0$trace > 0) {
+        print("Numerical gradient")
+      }
+      numDeriv::jacobian(obj, p)
     }
   }
-  oneiter <- function(p.orig,Dprev,return.mat=FALSE,iter=1) {
-      D <- I <- NULL # Place-holders for gradient and negative hessian
-      if (!is.logical(control0$backtrack) && !is.null(obj)) { # Back-tracking based on objective function evaluations
-          objective.origin <- obj(p.orig)
-          D <- attributes(objective.origin)$grad
-          I <- attributes(objective.origin)$hess
-          if (!is.null(I)) I <- -I
+  oneiter <- function(p.orig, Dprev, return.mat = FALSE, iter = 1) {
+    D <- I <- NULL # Place-holders for gradient and negative hessian
+    if (!is.logical(control0$backtrack) && !is.null(obj)) {
+      # Back-tracking based on objective function evaluations
+      objective.origin <- obj(p.orig)
+      D <- attributes(objective.origin)$grad
+      I <- attributes(objective.origin)$hess
+      if (!is.null(I)) I <- -I
+    }
+    if (is.null(D) || is.null(I)) {
+      if (!is.null(hess)) {
+        H <- hess(p.orig)
       }
-      if (is.null(D) || is.null(I)) {
-          if (!is.null(hess)) {
-              H <- hess(p.orig)
-          }
-          if (is.null(hess) || is.null(H)) {
-              if (control0$trace>0) print("Numerical Hessian")
-              I <- -numDeriv::jacobian(grad,p.orig,method=lava.options()$Dmethod)
-          } else {
-              I <- -H
-          }
-          D <- attributes(I)$grad
-          if (is.null(D)) {
-              D <- grad(p.orig)
-          }
+      if (is.null(hess) || is.null(H)) {
+        if (control0$trace > 0) {
+          print("Numerical Hessian")
+        }
+        I <- -numDeriv::jacobian(grad, p.orig, method = lava.options()$Dmethod)
+      } else {
+        I <- -H
       }
-      
-    if (return.mat) return(list(D=D,I=I))
+      D <- attributes(I)$grad
+      if (is.null(D)) {
+        D <- grad(p.orig)
+      }
+    }
+
+    if (return.mat) {
+      return(list(D = D, I = I))
+    }
     if (control0$stabil) {
-      if (control0$lambda!=0) {
-        if (control0$lambda<0) {
-          sigma <- (t(D)%*%(D))[1]
+      if (control0$lambda != 0) {
+        if (control0$lambda < 0) {
+          sigma <- (t(D) %*% (D))[1]
         } else {
           sigma <- control0$lambda
         }
-        sigma <- min(sigma,10)
-        I <- I+control0$gamma2*sigma*diag(nrow=nrow(I))
+        sigma <- min(sigma, 10)
+        I <- I + control0$gamma2 * sigma * diag(nrow = nrow(I))
       } else {
-        sigma <- ((D)%*%t(D))
-        I <- I+control0$gamma2*(sigma)
+        sigma <- ((D) %*% t(D))
+        I <- I + control0$gamma2 * (sigma)
       }
     }
-    iI <- Inverse(I, symmetric=TRUE, tol=control0$epsilon)
-    Delta <- control0$stepsize*tryCatch(solve(I, cbind(as.vector(D))),
-                            error=function(...) { ## Fall back to Pseudo-Inverse using SVD:
-                                iI%*%cbind(as.vector(D))})
+    iI <- Inverse(I, symmetric = TRUE, tol = control0$epsilon)
+    Delta <- control0$stepsize *
+      tryCatch(solve(I, cbind(as.vector(D))), error = function(...) {
+        ## Fall back to Pseudo-Inverse using SVD:
+        iI %*% cbind(as.vector(D))
+      })
     Lambda <- 1 ## Initial step-size
     if (identical(control0$backtrack, TRUE)) {
       mD0 <- mean(Dprev^2)
       mD <- mean(D^2)
-      p <- p.orig + as.vector(Lambda*Delta)
-      while (mD>=mD0) {
+      p <- p.orig + as.vector(Lambda * Delta)
+      while (mD >= mD0) {
         if (gradFun) {
-          D = grad(p)
+          D <- grad(p)
         } else {
-          DI <- oneiter(p,return.mat=TRUE)
-          D = DI$D
+          DI <- oneiter(p, return.mat = TRUE)
+          D <- DI$D
         }
-        mD = mean(D^2)
-        if (is.nan(mD)) mD=mD0
-        Lambda <- Lambda/2
-        if (Lambda<1e-4) break;
-        p <- p.orig + as.vector(Lambda*Delta)
+        mD <- mean(D^2)
+        if (is.nan(mD)) {
+          mD <- mD0
+        }
+        Lambda <- Lambda / 2
+        if (Lambda < 1e-4) {
+          break
+        }
+        p <- p.orig + as.vector(Lambda * Delta)
       }
+    } else if (identical(control0$backtrack, FALSE)) {
+      p <- p.orig + Lambda * Delta
+    } else {
+      # objective(p.orig) - obj(p) <= mu*Lambda*grad(p.orig)*Delta
+      ## curvature
+      c_D.origin_Delta <- control0$backtrack * c(rbind(D) %*% Delta)
+      p <- p.orig + as.vector(Lambda * Delta)
 
-    } else if(identical(control0$backtrack, FALSE)) {
-      p <- p.orig + Lambda*Delta
-    } else {  # objective(p.orig) - obj(p) <= mu*Lambda*grad(p.orig)*Delta
-        ## curvature
-        c_D.origin_Delta <- control0$backtrack * c(rbind(D) %*% Delta)
-        p <- p.orig + as.vector(Lambda*Delta)
-
-        mD0 <- c(objective.origin + Lambda * c_D.origin_Delta[1], abs(c_D.origin_Delta[2]))#
+      mD0 <- c(
+        objective.origin + Lambda * c_D.origin_Delta[1],
+        abs(c_D.origin_Delta[2])
+      ) #
+      objective.new <- obj(p)
+      grad.new <- attributes(objective.new)$grad
+      if (is.null(grad.new)) {
+        grad.new <- grad(p)
+      }
+      mD <- c(objective.new, abs(grad.new %*% Delta))
+      count <- 0
+      while (any(mD > mD0) || any(is.nan(mD))) {
+        count <- count + 1
+        Lambda <- Lambda / 2
+        if (Lambda < 1e-4) {
+          break
+        }
+        p <- p.orig + Lambda * Delta
         objective.new <- obj(p)
         grad.new <- attributes(objective.new)$grad
-        if (is.null(grad.new)) {
+        if (!is.infinite(mD0[1])) {
+          mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1] #
+          mD[1] <- objective.new
+        }
+        if (!is.infinite(mD0[2])) {
+          if (is.null(grad.new)) {
             grad.new <- grad(p)
+          }
+          mD[2] <- abs(grad.new %*% Delta)
         }
-        mD <- c(objective.new, abs(grad.new %*% Delta))
-        count <- 0
-        while (any(mD>mD0) || any(is.nan(mD))) {
-            count <- count+1
-            Lambda <- Lambda/2
-            if (Lambda<1e-4) break;
-            p <- p.orig + Lambda*Delta
-            objective.new <- obj(p)
-            grad.new <- attributes(objective.new)$grad
-            if(!is.infinite(mD0[1])){
-                mD0[1] <- objective.origin + Lambda * c_D.origin_Delta[1]#
-                mD[1] <- objective.new
-            }
-            if(!is.infinite(mD0[2])){
-                if (is.null(grad.new)) {
-                    grad.new <- grad(p)
-                }
-                mD[2] <- abs(grad.new %*% Delta)
-            }
-        }
+      }
     }
 
-    return(list(p=p,D=D,iI=iI))
+    return(list(p = p, D = D, iI = iI))
   }
 
   count <- count2 <- 0
   thetacur <- start
   stepsizecount <- 0
-  Dprev <- rep(Inf,length(start))
+  Dprev <- rep(Inf, length(start))
   for (jj in seq_len(control0$iter.max)) {
-    stepsizecount <- stepsizecount+1
-    count <-  count+1
-    count2 <- count2+1
-    newpar <- oneiter(thetacur,Dprev,iter=jj)
+    stepsizecount <- stepsizecount + 1
+    count <- count + 1
+    count2 <- count2 + 1
+    newpar <- oneiter(thetacur, Dprev, iter = jj)
     Dprev <- newpar$D
     thetacur <- newpar$p
-    if (!is.null(control0$nstepsize) && control0$nstepsize>0) {
-      if (control0$nstepsize<=stepsizecount) {
+    if (!is.null(control0$nstepsize) && control0$nstepsize > 0) {
+      if (control0$nstepsize <= stepsizecount) {
         control0$stepsize <- sqrt(control0$stepsize)
         stepsizecount <- 0
       }
     }
-    if (count2==control0$trace) {
-        cat("Iter=", count,"\t",sep="")
-        if (!is.null(obj))
-            cat("Objective=",obj(as.double(newpar$p)))
-        cat(";\n\tD=", paste0(formatC(newpar$D),
-                               collapse = " "), "\n")
-        cat("\tp=", paste0(formatC(thetacur), collapse = " "),
-            "\n")
-        count2 <- 0
+    if (count2 == control0$trace) {
+      cat("Iter=", count, "\t", sep = "")
+      if (!is.null(obj)) {
+        cat("Objective=", obj(as.double(newpar$p)))
+      }
+      cat(";\n\tD=", paste0(formatC(newpar$D), collapse = " "), "\n")
+      cat("\tp=", paste0(formatC(thetacur), collapse = " "), "\n")
+      count2 <- 0
     }
-    if (mean(newpar$D^2)^.5<control0$tol) break;
+    if (mean(newpar$D^2)^.5 < control0$tol) break
   }
 
-  res <- list(par=as.vector(thetacur), iterations=count, method="NR",
-              gradient=newpar$D, iH=newpar$iI)
+  res <- list(
+    par = as.vector(thetacur),
+    iterations = count,
+    method = "NR",
+    gradient = newpar$D,
+    iH = newpar$iI
+  )
   return(res)
 }
-

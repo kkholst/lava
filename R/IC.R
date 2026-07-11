@@ -2,8 +2,9 @@
 IC <- function(x, ...) UseMethod("IC")
 
 ##' @export
-influence.estimate <- function(model, ...)
-    IC(model, ...)
+influence.estimate <- function(model, ...) {
+  IC(model, ...)
+}
 
 
 ##' Extract influence function from model object
@@ -25,9 +26,8 @@ influence.estimate <- function(model, ...)
 ##'   parameters, representing the estimated influence function. Attributes
 ##'   include `bread` (derivative of the estimating equation).
 ##' @export
-IC.default <- function(x, bread, id=NULL,
-                       ...) {
-  if (any(paste("iid", class(x), sep=".") %in% methods("iid"))) {
+IC.default <- function(x, bread, id = NULL, ...) {
+  if (any(paste("iid", class(x), sep = ".") %in% methods("iid"))) {
     ## 'iid' method exists for the specific class.
     ## This is a scaled version of the influence function, hence
     ## we need to rescale.
@@ -35,12 +35,12 @@ IC.default <- function(x, bread, id=NULL,
     cl[[1]] <- substitute(iid)
     ii <- eval.parent(cl)
     if (!is.null(attr(ii, "bread"))) {
-      attr(res, "bread") <- attr(res, "bread")*NROW(res)
+      attr(res, "bread") <- attr(res, "bread") * NROW(res)
     }
-    ii <- ii*NROW(ii)
+    ii <- ii * NROW(ii)
     return(ii)
   }
-  if (!any(paste("score", class(x), sep=".") %in% methods("score"))) {
+  if (!any(paste("score", class(x), sep = ".") %in% methods("score"))) {
     warning("Not available for this class")
     return(NULL)
   }
@@ -58,86 +58,105 @@ IC.default <- function(x, bread, id=NULL,
   ##       )
   ##   )
   ## } else {
-  U <- score(x, indiv=TRUE, ...)
+  U <- score(x, indiv = TRUE, ...)
   pp <- pars(x)
   if (!missing(bread) && is.null(bread)) {
-    bread <- suppressWarnings(vcov(x)*NROW(U))
+    bread <- suppressWarnings(vcov(x) * NROW(U))
   }
-  if (missing(bread)) bread <- attributes(U)$bread
+  if (missing(bread)) {
+    bread <- attributes(U)$bread
+  }
   if (is.null(bread)) {
     bread <- attributes(x)$bread
-    if (is.null(bread)) bread <- x$bread
     if (is.null(bread)) {
-      I <- -numDeriv::jacobian(function(p) {
-        score(x, p = p, indiv = FALSE, ...)
-      }, pp, method = lava.options()$Dmethod)
-      bread <- Inverse(I)*NROW(U)
+      bread <- x$bread
+    }
+    if (is.null(bread)) {
+      I <- -numDeriv::jacobian(
+        function(p) {
+          score(x, p = p, indiv = FALSE, ...)
+        },
+        pp,
+        method = lava.options()$Dmethod
+      )
+      bread <- Inverse(I) * NROW(U)
     }
   }
 
-  ic0 <- U%*%bread
+  ic0 <- U %*% bread
   if (!missing(id)) {
-  N <- nrow(ic0)
-  if (!lava.options()$cluster.index) {
-    ic0 <- matrix(unlist(by(ic0, id, colSums)),
-                  byrow=TRUE, ncol=ncol(bread))
-  } else {
-    ic0 <- mets::cluster.index(id, mat=ic0, return.all=FALSE)
+    N <- nrow(ic0)
+    if (!lava.options()$cluster.index) {
+      ic0 <- matrix(
+        unlist(by(ic0, id, colSums)),
+        byrow = TRUE,
+        ncol = ncol(bread)
+      )
+    } else {
+      ic0 <- mets::cluster.index(id, mat = ic0, return.all = FALSE)
+    }
+    ic0 <- ic0 * NROW(ic0) / length(id)
+    attributes(ic0)$N <- N
   }
-  ic0 <- ic0*NROW(ic0)/length(id)
-  attributes(ic0)$N <- N
-}
-colnames(ic0) <- colnames(U)
-return(structure(ic0, bread=bread))
+  colnames(ic0) <- colnames(U)
+  return(structure(ic0, bread = bread))
 }
 
 ##' @export
-IC.multigroupfit <- function(x, ...) IC.default(x, combine=TRUE, ...)
+IC.multigroupfit <- function(x, ...) IC.default(x, combine = TRUE, ...)
 
 ##' @export
 IC.matrix <- function(x, ...) {
-    p <- NCOL(x)
-    n <- NROW(x)
-    mu <- colMeans(x, na.rm = TRUE)
-    S <- var(x, use = "pairwise.complete.obs") * (n - 1) / n
-    ic1 <- t(t(x)-mu)
-    ic2 <- matrix(ncol = (p + 1) * p / 2, nrow = n)
-    pos <- 0
-    nn <- c()
-    cc <- mu
-    for (i in seq(p))
-        for (j in seq(i, p)) {
-            pos <- pos+1
-            cc <- c(cc, S[i, j])
-            ic2[, pos] <- (ic1[, i] * ic1[, j]) - cc[length(cc)]
-            nn <- c(nn, paste(colnames(x)[c(i, j)],
-                              collapse = lava.options()$symbols[2]
-            ))
-        }
-    colnames(ic1) <- colnames(x)
-    colnames(ic2) <- nn
-    names(cc) <- c(colnames(ic1), colnames(ic2))
-    res <- cbind(ic1, ic2)
-    rownames(res) <- rownames(x)
-    structure(res,
-              coef=cc,
-              mean=mu, var=S)
+  p <- NCOL(x)
+  n <- NROW(x)
+  mu <- colMeans(x, na.rm = TRUE)
+  S <- var(x, use = "pairwise.complete.obs") * (n - 1) / n
+  ic1 <- t(t(x) - mu)
+  ic2 <- matrix(ncol = (p + 1) * p / 2, nrow = n)
+  pos <- 0
+  nn <- c()
+  cc <- mu
+  for (i in seq(p)) {
+    for (j in seq(i, p)) {
+      pos <- pos + 1
+      cc <- c(cc, S[i, j])
+      ic2[, pos] <- (ic1[, i] * ic1[, j]) - cc[length(cc)]
+      nn <- c(
+        nn,
+        paste(colnames(x)[c(i, j)], collapse = lava.options()$symbols[2])
+      )
+    }
+  }
+  colnames(ic1) <- colnames(x)
+  colnames(ic2) <- nn
+  names(cc) <- c(colnames(ic1), colnames(ic2))
+  res <- cbind(ic1, ic2)
+  rownames(res) <- rownames(x)
+  structure(res, coef = cc, mean = mu, var = S)
 }
 
 ##' @export
 IC.numeric <- function(x, ...) {
-    n <- length(x)
-    mu <- mean(x)
-    S <- var(x) * (n - 1) / n
-    ic1 <- t(t(x) - mu)
-    structure(cbind(mean=ic1, var=(ic1^2 - S)),
-              coef=c(mean=mu, var=S), mean=mu, var=S)
+  n <- length(x)
+  mu <- mean(x)
+  S <- var(x) * (n - 1) / n
+  ic1 <- t(t(x) - mu)
+  structure(
+    cbind(mean = ic1, var = (ic1^2 - S)),
+    coef = c(mean = mu, var = S),
+    mean = mu,
+    var = S
+  )
 }
 
 ##' @export
 IC.data.frame <- function(x, ...) {
-  if (!all(apply(x[1, , drop=FALSE], 2,
-                 function(x) inherits(x, c("numeric", "integer")))))
-        stop("Don't know how to handle data.frames of this type")
-    IC(as.matrix(x))
+  if (
+    !all(apply(x[1, , drop = FALSE], 2, function(x) {
+      inherits(x, c("numeric", "integer"))
+    }))
+  ) {
+    stop("Don't know how to handle data.frames of this type")
+  }
+  IC(as.matrix(x))
 }

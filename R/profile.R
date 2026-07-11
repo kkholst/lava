@@ -1,28 +1,29 @@
 ##' @export
-profile.lvmfit <- function(fitted,idx,tau,...) {
-  mm <- parfix(Model(fitted),idx,tau)
-  index(mm) <- reindex(mm,zeroones=TRUE,deriv=TRUE)
+profile.lvmfit <- function(fitted, idx, tau, ...) {
+  mm <- parfix(Model(fitted), idx, tau)
+  index(mm) <- reindex(mm, zeroones = TRUE, deriv = TRUE)
   fixed <- attributes(mm)$fixed
   plogl <- function(tau0) {
     for (i in fixed$v) {
       mm$mean[[i]] <- tau0
     }
     for (i in seq_len(nrow(fixed$A))) {
-        index(mm)$A[fixed$A[i,1],fixed$A[i,2]] <-
-            mm$fix[fixed$A[i,1],fixed$A[i,2]] <- tau0
+      index(mm)$A[fixed$A[i, 1], fixed$A[i, 2]] <-
+        mm$fix[fixed$A[i, 1], fixed$A[i, 2]] <- tau0
     }
     for (i in seq_len(nrow(fixed$P))) {
-        index(mm)$P[fixed$P[i,1],fixed$P[i,2]] <-
-            mm$covfix[fixed$P[i,1],fixed$P[i,2]] <- tau0
+      index(mm)$P[fixed$P[i, 1], fixed$P[i, 2]] <-
+        mm$covfix[fixed$P[i, 1], fixed$P[i, 2]] <- tau0
     }
     for (i in length(fixed$e)) {
-        index(mm)$exfix[i] <- tau0
+      index(mm)$exfix[i] <- tau0
     }
     dots <- list(...)
-    if (!is.null(dots$control))
+    if (!is.null(dots$control)) {
       control <- dots$control
-    else
+    } else {
       control <- list()
+    }
     control$start <- coef(fitted)
     dots$control <- control
     dots$index <- FALSE
@@ -34,35 +35,55 @@ profile.lvmfit <- function(fitted,idx,tau,...) {
     dots$estimator <- fitted$estimator
     dots$weights <- fitted$weights
     dots$x <- mm
-    ee <- do.call("estimate",dots)
-    return(logLik(mm,p=ee,data=dots$data,data2=dots$data2,weights=fitted$weights,model=dots$estimator))
+    ee <- do.call("estimate", dots)
+    return(logLik(
+      mm,
+      p = ee,
+      data = dots$data,
+      data2 = dots$data2,
+      weights = fitted$weights,
+      model = dots$estimator
+    ))
   }
-  val <- sapply(tau,plogl)
+  val <- sapply(tau, plogl)
   attributes(val) <- NULL
   val
 }
 
-profci.lvmfit <- function(x,parm,level=0.95,interval=NULL,curve=FALSE,n=20,lower=TRUE,upper=TRUE,...) {
-  ll <- logLik(x)-qchisq(level,1)/2
-  pp <- function(tau) (profile.lvmfit(x,parm,tau) - ll)
+profci.lvmfit <- function(
+  x,
+  parm,
+  level = 0.95,
+  interval = NULL,
+  curve = FALSE,
+  n = 20,
+  lower = TRUE,
+  upper = TRUE,
+  ...
+) {
+  ll <- logLik(x) - qchisq(level, 1) / 2
+  pp <- function(tau) (profile.lvmfit(x, parm, tau) - ll)
   tau0 <- coef(x)[parm]
-  tau0.sd <- x$vcov[parm,parm]^0.5
+  tau0.sd <- x$vcov[parm, parm]^0.5
   if (is.null(interval)) {
-      interval <- tau0 + 3*c(-1,1)*tau0.sd
-      if (parm%in%(variances(x)+index(x)$npar.mean))
-          interval[1] <- max(1e-5,interval[1])
+    interval <- tau0 + 3 * c(-1, 1) * tau0.sd
+    if (parm %in% (variances(x) + index(x)$npar.mean)) {
+      interval[1] <- max(1e-5, interval[1])
+    }
   }
   if (curve) {
-    xx <- seq(interval[1],interval[2],length.out=n)
-    val <- sapply(xx,pp)
-    res <- cbind(par=xx,val=val)
+    xx <- seq(interval[1], interval[2], length.out = n)
+    val <- sapply(xx, pp)
+    res <- cbind(par = xx, val = val)
     return(res)
   }
   low <- up <- NA
-  if (lower)
-    low <- uniroot(pp,interval=c(interval[1],tau0))$root
-  if (upper)
-    up <- uniroot(pp,interval=c(tau0,interval[2]))$root
+  if (lower) {
+    low <- uniroot(pp, interval = c(interval[1], tau0))$root
+  }
+  if (upper) {
+    up <- uniroot(pp, interval = c(tau0, interval[2]))$root
+  }
   ##  res <- rbind(lower$root,upper$root); rownames(res) <- coef()
-  return(c(low,up))
+  return(c(low, up))
 }

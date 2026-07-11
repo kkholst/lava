@@ -15,23 +15,23 @@
 ##' toformula(c("age","gender"), "weight")
 ##'
 ##' @export
-toformula <- function (y = ".", x = ".")
-{
-    xst <- x[1]
-    xn <- length(x)
-    if (xn > 1)
-        for (i in 2:length(x)) {
-            xst <- paste(xst, "+", x[i])
-        }
-    yst <- y[1]
-    yn <- length(y)
-    if (yn > 1) {
-        yst <- paste0("c(", yst)
-        for (i in 2:length(y)) {
-            yst <- paste0(yst, ", ", y[i])
-        }
-        yst <- paste0(yst, ")")
+toformula <- function(y = ".", x = ".") {
+  xst <- x[1]
+  xn <- length(x)
+  if (xn > 1) {
+    for (i in 2:length(x)) {
+      xst <- paste(xst, "+", x[i])
     }
-    ff <- paste(yst, "~", xst)
-    return(as.formula(ff))
+  }
+  yst <- y[1]
+  yn <- length(y)
+  if (yn > 1) {
+    yst <- paste0("c(", yst)
+    for (i in 2:length(y)) {
+      yst <- paste0(yst, ", ", y[i])
+    }
+    yst <- paste0(yst, ")")
+  }
+  ff <- paste(yst, "~", xst)
+  return(as.formula(ff))
 }

@@ -24,32 +24,44 @@
 ##' Model(e)
 ##'
 ##' @export
-`Model` <- function(x,...) UseMethod("Model")
+`Model` <- function(x, ...) UseMethod("Model")
 
 
 ##' @export
-`Model.default` <- function(x,...) x
+`Model.default` <- function(x, ...) x
 
 ##' @export
-`Model.lvm` <- function(x,...) x
+`Model.lvm` <- function(x, ...) x
 
 ##' @export
-`Model.lvmfit` <- function(x,...) x$model
+`Model.lvmfit` <- function(x, ...) x$model
 
 ##' @export
-`Model.multigroup` <- function(x,...) x$lvm
+`Model.multigroup` <- function(x, ...) x$lvm
 
 ##' @export
-`Model.multigroupfit` <- function(x,...) x$model
+`Model.multigroupfit` <- function(x, ...) x$model
 
 ##' @export
-"Model<-" <- function(x,...,value) UseMethod("Model<-")
+"Model<-" <- function(x, ..., value) UseMethod("Model<-")
 
 ##' @export
-"Model<-.lvm" <- function(x,...,value) { x <- value; return(x) }
+"Model<-.lvm" <- function(x, ..., value) {
+  x <- value
+  return(x)
+}
 ##' @export
-"Model<-.lvmfit" <- function(x,...,value) { x$model <- value; return(x) }
+"Model<-.lvmfit" <- function(x, ..., value) {
+  x$model <- value
+  return(x)
+}
 ##' @export
-"Model<-.multigroup" <- function(x,...,value) { x$lvm <- value; return(x) }
+"Model<-.multigroup" <- function(x, ..., value) {
+  x$lvm <- value
+  return(x)
+}
 ##' @export
-"Model<-.multigroupfit" <- function(x,...,value) { x$model <- value; return(x) }
+"Model<-.multigroupfit" <- function(x, ..., value) {
+  x$model <- value
+  return(x)
+}

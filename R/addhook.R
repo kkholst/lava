@@ -1,4 +1,3 @@
-
 ##' Set global options for \code{lava}
 ##'
 ##' Extract and set global parameters of \code{lava}. In particular optimization
@@ -29,101 +28,123 @@
 ##'
 ##' @export
 lava.options <- function(...) {
-    dots <- list(...)
-    newopt <- curopt <- get("options",envir=lava.env)
-    if (length(dots)==0)
-        return(curopt[order(names(curopt))])
-    if (length(dots)==1 && is.list(dots[[1]]) && is.null(names(dots))) {
-        dots <- dots[[1]]
-    }
-    idx <- which(names(dots)!="")
-    newopt[names(dots)[idx]] <- dots[idx]
-    assign("options",newopt,envir=lava.env)
-    invisible(curopt)
+  dots <- list(...)
+  newopt <- curopt <- get("options", envir = lava.env)
+  if (length(dots) == 0) {
+    return(curopt[order(names(curopt))])
+  }
+  if (length(dots) == 1 && is.list(dots[[1]]) && is.null(names(dots))) {
+    dots <- dots[[1]]
+  }
+  idx <- which(names(dots) != "")
+  newopt[names(dots)[idx]] <- dots[idx]
+  assign("options", newopt, envir = lava.env)
+  invisible(curopt)
 }
 
 ##' @export
-gethook <- function(hook="estimate.hooks",...) {
-    get(hook,envir=lava.env)
+gethook <- function(hook = "estimate.hooks", ...) {
+  get(hook, envir = lava.env)
 }
 
-char2num <- function(x,...) {
-    idx <- grep("^[-]*[0-9\\.]+",x,perl=TRUE,invert=TRUE)
-    if (length(idx)>0) x[idx] <- NA
-    as.numeric(x)
+char2num <- function(x, ...) {
+  idx <- grep("^[-]*[0-9\\.]+", x, perl = TRUE, invert = TRUE)
+  if (length(idx) > 0) {
+    x[idx] <- NA
+  }
+  as.numeric(x)
 }
 
 ##' @export
-addhook <- function(x,hook="estimate.hooks",...) {
-    newhooks <- unique(c(gethook(hook),x))
-    assign(hook,newhooks,envir=lava.env)
-    invisible(newhooks)
+addhook <- function(x, hook = "estimate.hooks", ...) {
+  newhooks <- unique(c(gethook(hook), x))
+  assign(hook, newhooks, envir = lava.env)
+  invisible(newhooks)
 }
 
 packagecheck <- function(pkg) {
-  nzchar(system.file(package=pkg))
+  nzchar(system.file(package = pkg))
 }
 
-versioncheck <- function(pkg="lava",geq,sep=".",...) {
-  if (!is.character(pkg)) return(FALSE)
+versioncheck <- function(pkg = "lava", geq, sep = ".", ...) {
+  if (!is.character(pkg)) {
+    return(FALSE)
+  }
   if (packagecheck(pkg)) {
-    xyz <- char2num(strsplit(as.character(utils::packageVersion(pkg)),
-                             split=sep,fixed=TRUE)[[1]])
+    xyz <- char2num(strsplit(
+      as.character(utils::packageVersion(pkg)),
+      split = sep,
+      fixed = TRUE
+    )[[1]])
   } else {
     return(FALSE)
   }
-  if (missing(geq)) return(xyz)
-  for (i in seq(min(length(xyz),length(geq)))) {
-    if (xyz[i]>geq[i]) return(TRUE)
-    if (xyz[i]<geq[i]) return(FALSE)
+  if (missing(geq)) {
+    return(xyz)
   }
-  if (length(xyz)>=length(geq)) return(TRUE)
+  for (i in seq(min(length(xyz), length(geq)))) {
+    if (xyz[i] > geq[i]) {
+      return(TRUE)
+    }
+    if (xyz[i] < geq[i]) return(FALSE)
+  }
+  if (length(xyz) >= length(geq)) {
+    return(TRUE)
+  }
   return(FALSE)
 }
 
 lava.env <- new.env()
-assign("init.hooks",c(),envir=lava.env)
-assign("remove.hooks",c(),envir=lava.env)
-assign("estimate.hooks",c(),envir=lava.env)
-assign("color.hooks",c(),envir=lava.env)
-assign("sim.hooks",c(),envir=lava.env)
-assign("post.hooks",c(),envir=lava.env)
-assign("print.hooks",c(),envir=lava.env)
-assign("plot.post.hooks",c(),envir=lava.env)
-assign("plot.hooks",c(),envir=lava.env)
-assign("options", list(
-                      trace=0,
-                      tol=1e-6,
-                      gamma=1,
-                      backtrack="wolfe",
-                      ngamma=0,
-                      iter.max=300,
-                      eval.max=250,
-                      allow.negative.variance=FALSE,
-                      progressbarstyle=3,
-                      itol=(.Machine$double.eps)**.5, # Tolerance for pseudo-inverses
-                      cluster.index=packagecheck("mets"), # Whether to use mets::cluster.index
-                      Dmethod="simple", # Type of numerical derivative for optimization problems
-                      messages=ifelse(interactive(), 1, 0), # extra messages
-                      parallel=TRUE, # parallelization enabled
-                      param="relative", # parametrization type for latent variable models
-                      sparse=FALSE, #
-                      test=TRUE,
-                      coef.names=FALSE,
-                      constrain=FALSE,
-                      graph.proc="beautify",
-                      regex=FALSE,
-                      min.weight=1e-3,
-                      exogenous=TRUE,
-                      plot.engine="Rgraphviz", # rgraphviz, igraph, visnetwork, ...
-                      node.color=c(exogenous="lightblue",endogenous="orange",
-                                   latent="yellowgreen",transform="lightgray"),
-                      edgecolor=FALSE,
-                      layout="dot", # graphviz graph layout function
-                      ## symbols=c("<-","<->"),
-                      symbols=c("~","~~"),
-                      devel=FALSE, # development flag, extra debug information
-                      check.ic=TRUE, # check if influence functions has zero-mean
-                      check.ic.tol=1e-4, # tolerance for checking zero-mean mean(ic)/rms(ic) > check.ic.tol
-                      debug=FALSE),
-       envir=lava.env)
+assign("init.hooks", c(), envir = lava.env)
+assign("remove.hooks", c(), envir = lava.env)
+assign("estimate.hooks", c(), envir = lava.env)
+assign("color.hooks", c(), envir = lava.env)
+assign("sim.hooks", c(), envir = lava.env)
+assign("post.hooks", c(), envir = lava.env)
+assign("print.hooks", c(), envir = lava.env)
+assign("plot.post.hooks", c(), envir = lava.env)
+assign("plot.hooks", c(), envir = lava.env)
+assign(
+  "options",
+  list(
+    trace = 0,
+    tol = 1e-6,
+    gamma = 1,
+    backtrack = "wolfe",
+    ngamma = 0,
+    iter.max = 300,
+    eval.max = 250,
+    allow.negative.variance = FALSE,
+    progressbarstyle = 3,
+    itol = (.Machine$double.eps)**.5, # Tolerance for pseudo-inverses
+    cluster.index = packagecheck("mets"), # Whether to use mets::cluster.index
+    Dmethod = "simple", # Type of numerical derivative for optimization problems
+    messages = ifelse(interactive(), 1, 0), # extra messages
+    parallel = TRUE, # parallelization enabled
+    param = "relative", # parametrization type for latent variable models
+    sparse = FALSE, #
+    test = TRUE,
+    coef.names = FALSE,
+    constrain = FALSE,
+    graph.proc = "beautify",
+    regex = FALSE,
+    min.weight = 1e-3,
+    exogenous = TRUE,
+    plot.engine = "Rgraphviz", # rgraphviz, igraph, visnetwork, ...
+    node.color = c(
+      exogenous = "lightblue",
+      endogenous = "orange",
+      latent = "yellowgreen",
+      transform = "lightgray"
+    ),
+    edgecolor = FALSE,
+    layout = "dot", # graphviz graph layout function
+    ## symbols=c("<-","<->"),
+    symbols = c("~", "~~"),
+    devel = FALSE, # development flag, extra debug information
+    check.ic = TRUE, # check if influence functions has zero-mean
+    check.ic.tol = 1e-4, # tolerance for checking zero-mean mean(ic)/rms(ic) > check.ic.tol
+    debug = FALSE
+  ),
+  envir = lava.env
+)

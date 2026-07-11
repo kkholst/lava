@@ -2,8 +2,7 @@ context("predict_glm")
 
 set.seed(42)
 n <- 100
-d <- data.frame(y = rpois(100, lambda = 3),
-                x1 = rnorm(100), x2 = rnorm(100))
+d <- data.frame(y = rpois(100, lambda = 3), x1 = rnorm(100), x2 = rnorm(100))
 
 test_that("predict_glm matches predict.glm for poisson(log)", {
   m <- glm(y ~ x1 + x2, data = d, family = poisson(link = "log"))
@@ -18,13 +17,13 @@ test_that("predict_glm matches predict.glm for poisson(log)", {
   expect_equal(pred_mod, exp(rep(0, nrow(d))))
 
   # with data
-  pr <- as.numeric(predict_glm(m, p = p0, data=head(d, 5L)))
-  expect_true(length(pr)==5L)
-  expect_true(all(pr==1L))
+  pr <- as.numeric(predict_glm(m, p = p0, data = head(d, 5L)))
+  expect_true(length(pr) == 5L)
+  expect_true(all(pr == 1L))
 
   # with user offset
-  pr <- as.numeric(predict_glm(m, p = p0, data=head(d, 5L), offset=1L))
-  expect_true(all(pr==exp(1)))
+  pr <- as.numeric(predict_glm(m, p = p0, data = head(d, 5L), offset = 1L))
+  expect_true(all(pr == exp(1)))
 })
 
 test_that("predict_glm matches predict.glm with offset (poisson)", {

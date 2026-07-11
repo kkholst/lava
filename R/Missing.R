@@ -53,32 +53,45 @@
 ##'
 ##' @export
 ##' @author Thomas A. Gerds <tag@@biostat.ku.dk>
-Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
-    if (is.character(Rformula)) {
-        indicatorname <- Rformula
-        Rformula <- toformula(Rformula,1)
-    } else {
-        indicatorname <- all.vars(Rformula)[1]
+Missing <- function(
+  object,
+  formula,
+  Rformula,
+  missing.name,
+  suffix = "0",
+  ...
+) {
+  if (is.character(Rformula)) {
+    indicatorname <- Rformula
+    Rformula <- toformula(Rformula, 1)
+  } else {
+    indicatorname <- all.vars(Rformula)[1]
+  }
+  if (length(all.vars(formula)) == 1) {
+    formula <- all.vars(formula)
+  }
+  if (is.character(formula)) {
+    if (missing(missing.name)) {
+      missing.name <- paste0(formula, suffix)
     }
-    if (length(all.vars(formula))==1) formula <- all.vars(formula)
-    if (is.character(formula)) {
-        if (missing(missing.name)) missing.name <- paste0(formula,suffix)
-        formula <- toformula(missing.name,formula)
-    }
-    newf <- update(formula,paste(".~.+",indicatorname))
-    if (is.null(distribution(object,indicatorname)[[1]]) || length(list(...))>0) {
-        distribution(object,indicatorname) <- binomial.lvm(...)
-    }
-    transform(object,newf) <- function(u){
-        out <- u[,1]
-        out[u[,2]==0] <- NA
-        out
-    }
-    regression(object) <- Rformula
-    object
+    formula <- toformula(missing.name, formula)
+  }
+  newf <- update(formula, paste(".~.+", indicatorname))
+  if (
+    is.null(distribution(object, indicatorname)[[1]]) || length(list(...)) > 0
+  ) {
+    distribution(object, indicatorname) <- binomial.lvm(...)
+  }
+  transform(object, newf) <- function(u) {
+    out <- u[, 1]
+    out[u[, 2] == 0] <- NA
+    out
+  }
+  regression(object) <- Rformula
+  object
 }
 
 ##' @export
-"Missing<-" <- function(object,formula,...,value) {
-    Missing(object,formula,value,...)
+"Missing<-" <- function(object, formula, ..., value) {
+  Missing(object, formula, value, ...)
 }

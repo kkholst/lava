@@ -1,11 +1,26 @@
-mypal <- function(set=TRUE,...) {
-    oldpal <- palette()
-    col <- c("black","darkblue","darkred","goldenrod","mediumpurple",
-             "seagreen","aquamarine3","violetred1","salmon1",
-             "lightgoldenrod1","darkorange2","firebrick1","violetred1", "gold")
-    if (!set) return(col)
-    palette(col)
-    invisible(oldpal)
+mypal <- function(set = TRUE, ...) {
+  oldpal <- palette()
+  col <- c(
+    "black",
+    "darkblue",
+    "darkred",
+    "goldenrod",
+    "mediumpurple",
+    "seagreen",
+    "aquamarine3",
+    "violetred1",
+    "salmon1",
+    "lightgoldenrod1",
+    "darkorange2",
+    "firebrick1",
+    "violetred1",
+    "gold"
+  )
+  if (!set) {
+    return(col)
+  }
+  palette(col)
+  invisible(oldpal)
 }
 
 
@@ -27,11 +42,16 @@ mypal <- function(set=TRUE,...) {
 ##'      col=Col(c("darkblue","orange"),0.5),pch=16)
 ##' @keywords color
 ##' @export
-Col <- function(col,alpha=0.2,locate=0) {
-    if (locate>0) return(colsel(locate))
+Col <- function(col, alpha = 0.2, locate = 0) {
+  if (locate > 0) {
+    return(colsel(locate))
+  }
 
-    mapply(function(x,alpha)
-        do.call(rgb,as.list(c(col2rgb(x)/255,alpha))),
-        col,alpha)
+  mapply(
+    function(x, alpha) {
+      do.call(rgb, as.list(c(col2rgb(x) / 255, alpha)))
+    },
+    col,
+    alpha
+  )
 }
-

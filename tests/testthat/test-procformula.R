@@ -57,40 +57,63 @@ test_that("procformula results match when as.character.formula is masked", {
     # Run with normal dispatch
     res_normal <- procformula(value = f)
     # Temporarily mask as.character.formula
-    registerS3method("as.character", "formula", mock_as_character_formula,
-                     envir = asNamespace("base"))
+    registerS3method(
+      "as.character",
+      "formula",
+      mock_as_character_formula,
+      envir = asNamespace("base")
+    )
     on.exit(
       {
         rm_env <- asNamespace("base")
-        if (exists("as.character.formula", envir = rm_env))
+        if (exists("as.character.formula", envir = rm_env)) {
           rm("as.character.formula", envir = rm_env)
+        }
       },
       add = TRUE
     )
     res_masked <- procformula(value = f)
     # Restore
     rm_env <- asNamespace("base")
-    if (exists("as.character.formula", envir = rm_env))
+    if (exists("as.character.formula", envir = rm_env)) {
       rm("as.character.formula", envir = rm_env)
-    expect_identical(res_normal$ys, res_masked$ys,
-                     info = paste("ys mismatch for", deparse(f)))
-    expect_identical(res_normal$xs, res_masked$xs,
-                     info = paste("xs mismatch for", deparse(f)))
-    expect_identical(res_normal$iscovar, res_masked$iscovar,
-                     info = paste("iscovar mismatch for", deparse(f)))
-    expect_identical(res_normal$invlink, res_masked$invlink,
-                     info = paste("invlink mismatch for", deparse(f)))
+    }
+    expect_identical(
+      res_normal$ys,
+      res_masked$ys,
+      info = paste("ys mismatch for", deparse(f))
+    )
+    expect_identical(
+      res_normal$xs,
+      res_masked$xs,
+      info = paste("xs mismatch for", deparse(f))
+    )
+    expect_identical(
+      res_normal$iscovar,
+      res_masked$iscovar,
+      info = paste("iscovar mismatch for", deparse(f))
+    )
+    expect_identical(
+      res_normal$invlink,
+      res_masked$invlink,
+      info = paste("invlink mismatch for", deparse(f))
+    )
   }
 })
 
 test_that("lvm model building works when as.character.formula is masked", {
-  registerS3method("as.character", "formula", mock_as_character_formula,
-                   envir = asNamespace("base"))
+  registerS3method(
+    "as.character",
+    "formula",
+    mock_as_character_formula,
+    envir = asNamespace("base")
+  )
   on.exit(
     {
       rm_env <- asNamespace("base")
-      if (exists("as.character.formula", envir = rm_env))
+      if (exists("as.character.formula", envir = rm_env)) {
         rm("as.character.formula", envir = rm_env)
+      }
     },
     add = TRUE
   )
@@ -105,13 +128,18 @@ test_that("lvm model building works when as.character.formula is masked", {
 })
 
 test_that("eventTime works when as.character.formula is masked", {
-  registerS3method("as.character", "formula", mock_as_character_formula,
-                   envir = asNamespace("base"))
+  registerS3method(
+    "as.character",
+    "formula",
+    mock_as_character_formula,
+    envir = asNamespace("base")
+  )
   on.exit(
     {
       rm_env <- asNamespace("base")
-      if (exists("as.character.formula", envir = rm_env))
+      if (exists("as.character.formula", envir = rm_env)) {
         rm("as.character.formula", envir = rm_env)
+      }
     },
     add = TRUE
   )

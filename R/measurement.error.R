@@ -38,41 +38,55 @@
 ##'     u <- seq(-1,1,length.out=100)
 ##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
 ##' }
-measurement.error <- function(model1, formula, data=parent.frame(),
-                       predictfun=function(mu,var,data,...) mu[,1]^2+var[1],
-                       id1, id2, ...) {
-    if (!inherits(model1,c("lvmfit","lvm.mixture"))) stop("Expected lava object ('lvmfit','lvm.mixture',...)")
-    if (missing(formula)) stop("formula needed for stage two (right-hand side additional covariates)")
-    p1 <- coef(model1,full=TRUE)
-    uhat <- function(p=p1) {
-        P <- predict(model1,p=p,x=manifest(model1))
-        cbind(predictfun(P,attributes(P)$cond.var,data))
-    }
-    if (missing(id1)) id1 <- seq(nrow(model.frame(model1)))
-    if (missing(id2)) id2 <- seq(nrow(model.frame(model1)))
-    if (!inherits(model1,"estimate"))
-      e1 <- estimate(NULL, coef=p1, id=id1,
-                     IC=IC(model1))
-    u <- uhat()
-    X0 <- model.matrix(formula, data)
-    Y <- model.frame(formula,data)[,1]
-    X <- cbind(X0,u)
-    stage.two <- lm(Y~-1+X)
-    names(stage.two$coefficients) <- colnames(X)
-    if (!inherits(stage.two,"estimate"))
-        e2 <- estimate(stage.two, id=id2)
-    U <- function(alpha=p1,beta=coef(stage.two)) {
-        X <- cbind(X0,uhat(alpha))
-        r <- (Y-X%*%beta)/summary(stage.two)$sigma^2
-        apply(X,2,function(x) sum(x*r))
-    }
-    ## Ia <- -numDeriv::jacobian(function(p) U(p),p1)
-    stacked <- stack(e1,e2,U=U)
-    class(stacked) <- NULL
-    res <- c(stacked,
-             list(naive=e2,lm=coef(summary(stage.two)),
-                  fun=predictfun))
-    structure(res,class=c("measurement.error","estimate"))
+measurement.error <- function(
+  model1,
+  formula,
+  data = parent.frame(),
+  predictfun = function(mu, var, data, ...) mu[, 1]^2 + var[1],
+  id1,
+  id2,
+  ...
+) {
+  if (!inherits(model1, c("lvmfit", "lvm.mixture"))) {
+    stop("Expected lava object ('lvmfit','lvm.mixture',...)")
+  }
+  if (missing(formula)) {
+    stop("formula needed for stage two (right-hand side additional covariates)")
+  }
+  p1 <- coef(model1, full = TRUE)
+  uhat <- function(p = p1) {
+    P <- predict(model1, p = p, x = manifest(model1))
+    cbind(predictfun(P, attributes(P)$cond.var, data))
+  }
+  if (missing(id1)) {
+    id1 <- seq(nrow(model.frame(model1)))
+  }
+  if (missing(id2)) {
+    id2 <- seq(nrow(model.frame(model1)))
+  }
+  if (!inherits(model1, "estimate")) {
+    e1 <- estimate(NULL, coef = p1, id = id1, IC = IC(model1))
+  }
+  u <- uhat()
+  X0 <- model.matrix(formula, data)
+  Y <- model.frame(formula, data)[, 1]
+  X <- cbind(X0, u)
+  stage.two <- lm(Y ~ -1 + X)
+  names(stage.two$coefficients) <- colnames(X)
+  if (!inherits(stage.two, "estimate")) {
+    e2 <- estimate(stage.two, id = id2)
+  }
+  U <- function(alpha = p1, beta = coef(stage.two)) {
+    X <- cbind(X0, uhat(alpha))
+    r <- (Y - X %*% beta) / summary(stage.two)$sigma^2
+    apply(X, 2, function(x) sum(x * r))
+  }
+  ## Ia <- -numDeriv::jacobian(function(p) U(p),p1)
+  stacked <- stack(e1, e2, U = U)
+  class(stacked) <- NULL
+  res <- c(
+    stacked,
+    list(naive = e2, lm = coef(summary(stage.two)), fun = predictfun)
+  )
+  structure(res, class = c("measurement.error", "estimate"))
 }
-
-

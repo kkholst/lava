@@ -16,24 +16,25 @@
 ##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
-getSAS <- function(infile,entry="Parameter Estimates",...) {
-    con <- file(infile, blocking = FALSE)
-    inp <- readLines(con)
-    close(con)
-    linestart <- 1; lineend <- length(inp)
-    idx <- sapply(inp,function(x) length(grep(entry, x))>0)
-    if (sum(idx)==1) {
-        linestart <- which(idx)
-        for (i in seq(linestart,length(inp))) {
-            lineend <- i-1
-            if (inp[i]=="") break;
-        }
-    } else {
-        stop("No match or duplicate entries!")
+getSAS <- function(infile, entry = "Parameter Estimates", ...) {
+  con <- file(infile, blocking = FALSE)
+  inp <- readLines(con)
+  close(con)
+  linestart <- 1
+  lineend <- length(inp)
+  idx <- sapply(inp, function(x) length(grep(entry, x)) > 0)
+  if (sum(idx) == 1) {
+    linestart <- which(idx)
+    for (i in seq(linestart, length(inp))) {
+      lineend <- i - 1
+      if (inp[i] == "") break
     }
-    subinp <- inp[(linestart+1):(lineend)]
-    con <- textConnection(subinp)
-    res <- read.csv(con,header=TRUE)
-    close(con)
-    return(res)
+  } else {
+    stop("No match or duplicate entries!")
+  }
+  subinp <- inp[(linestart + 1):(lineend)]
+  con <- textConnection(subinp)
+  res <- read.csv(con, header = TRUE)
+  close(con)
+  return(res)
 }

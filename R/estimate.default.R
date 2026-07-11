@@ -310,24 +310,35 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   \item{compare}{(When `null` or contrasts are specified) Wald test result.}
 #' @method estimate default
 #' @export
-estimate.default <- function(x=NULL, f=NULL, ...,
-                             data, id,
-                             coef, IC=TRUE, vcov,
-                             stack=TRUE,
-                             average=FALSE, subset,
-                             keep, use,
-                             regex=FALSE, ignore.case=FALSE,
-                             print=NULL, labels, label.width,
-                             # deprecated argumets (removed in version 1.9.3)
-                             # return object of class summary.estimate
-                             contrast,
-                             null,
-                             level=NULL,
-                             type=NULL,
-                             var.adj=NULL,
-                             df=NULL,
-                             back.transform=NULL
-                             ) {
+estimate.default <- function(
+  x = NULL,
+  f = NULL,
+  ...,
+  data,
+  id,
+  coef,
+  IC = TRUE,
+  vcov,
+  stack = TRUE,
+  average = FALSE,
+  subset,
+  keep,
+  use,
+  regex = FALSE,
+  ignore.case = FALSE,
+  print = NULL,
+  labels,
+  label.width,
+  # deprecated argumets (removed in version 1.9.3)
+  # return object of class summary.estimate
+  contrast,
+  null,
+  level = NULL,
+  type = NULL,
+  var.adj = NULL,
+  df = NULL,
+  back.transform = NULL
+) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
 
@@ -347,8 +358,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
 
   if (!missing(use)) {
     p0 <- c(
-      "f", "subset", "average",
-      "keep", "labels", "null"
+      "f",
+      "subset",
+      "average",
+      "keep",
+      "labels",
+      "null"
     )
     cl0 <- cl
     cl0[c("use", p0)] <- NULL
@@ -359,13 +374,13 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     res$call <- cal
     return(res)
   }
-  expr <- suppressWarnings(inherits(try(f, silent=TRUE), "try-error"))
+  expr <- suppressWarnings(inherits(try(f, silent = TRUE), "try-error"))
   if (!missing(coef)) {
     pp <- coef
   } else {
     pp <- suppressWarnings(try(stats::coef(x), silent = TRUE))
     if (inherits(x, "survreg") && length(pp) < NROW(x$var)) {
-      pp <- c(pp, scale=x$scale)
+      pp <- c(pp, scale = x$scale)
     }
   }
 
@@ -373,34 +388,44 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     names(pp) <- paste0("p", seq_along(pp))
   }
 
-  if ((expr || is.character(f) || (is.numeric(f))
-    && !is.matrix(f))) { ## || is.call(f)) {
+  if ((expr || is.character(f) || (is.numeric(f)) && !is.matrix(f))) {
+    ## || is.call(f)) {
     dots <- lapply(substitute(placeholder(...))[-1], function(x) x)
-    args <- c(list(
-      coef = names(pp),
-      x = substitute(f),
-      regex = regex
-    ), dots)
+    args <- c(
+      list(
+        coef = names(pp),
+        x = substitute(f),
+        regex = regex
+      ),
+      dots
+    )
     f <- do.call(parsedesign, args)
   }
 
-  contrast.transform <- FALSE  # if TRUE parameter estimates should be
-                               # transformed according to contrast matrix 'f'
+  contrast.transform <- FALSE # if TRUE parameter estimates should be
+  # transformed according to contrast matrix 'f'
   if (!is.null(f) && !is.function(f)) {
-    if (!(is.matrix(f) || is.vector(f)))
-      return(compare(x, f, ...)) ## LRT
+    if (!(is.matrix(f) || is.vector(f))) {
+      return(compare(x, f, ...))
+    } ## LRT
     contrast.transform <- TRUE
   }
 
   if (lava.options()$cluster.index) {
-    if (!requireNamespace("mets", quietly=TRUE)) stop("'mets' package required")
+    if (!requireNamespace("mets", quietly = TRUE)) {
+      stop("'mets' package required")
+    }
   }
-  if (missing(data))
-    data <- tryCatch(model.frame(x), error=function(...) NULL)
+  if (missing(data)) {
+    data <- tryCatch(model.frame(x), error = function(...) NULL)
+  }
   nn <- NULL
-  if (((is.logical(IC) && IC) || length(IC)>0) &&
-      (missing(vcov) || is.null(vcov) ||
-       (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
+  if (
+    ((is.logical(IC) && IC) || length(IC) > 0) &&
+      (missing(vcov) ||
+        is.null(vcov) ||
+        (is.logical(vcov) && vcov[1] == FALSE && !is.na(vcov[1])))
+  ) {
     ## If user supplied vcov, then don't estimate IC
     if (!is.logical(IC)) {
       ic_theta <- cbind(IC)
@@ -415,9 +440,13 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       ic_theta <- IC(x)
     }
   } else {
-    if (!is.null(x) && (missing(vcov) ||
-                        (is.logical(vcov) && !is.na(vcov)[1])))
+    if (
+      !is.null(x) &&
+        (missing(vcov) ||
+          (is.logical(vcov) && !is.na(vcov)[1]))
+    ) {
       suppressWarnings(vcov <- stats::vcov(x))
+    }
     ic_theta <- NULL
   }
 
@@ -425,16 +454,20 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     ## Rescale each column according to I(obs)/pr(obs)
     for (i in seq_len(NCOL(ic_theta))) {
       pr <- mean(!is.na(ic_theta[, i]))
-      ic_theta[, i] <- ic_theta[, i]/pr
+      ic_theta[, i] <- ic_theta[, i] / pr
     }
     ic_theta[is.na(ic_theta)] <- 0
   }
 
   if (!missing(subset)) {
     e <- substitute(subset)
-    expr <- suppressWarnings(inherits(try(subset, silent=TRUE), "try-error"))
-    if (expr) subset <- eval(e, envir=data)
-    if (is.character(subset)) subset <- data[, subset]
+    expr <- suppressWarnings(inherits(try(subset, silent = TRUE), "try-error"))
+    if (expr) {
+      subset <- eval(e, envir = data)
+    }
+    if (is.character(subset)) {
+      subset <- data[, subset]
+    }
     if (is.numeric(subset)) subset <- subset > 0
   }
   idstack <- NULL
@@ -447,7 +480,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     }
   }
   if (!missing(id) && IC) {
-    if (is.null(ic_theta)) stop("'IC' method needed")
+    if (is.null(ic_theta)) {
+      stop("'IC' method needed")
+    }
     nprev <- nrow(ic_theta)
     if (inherits(id, "formula")) {
       id <- interaction(get_all_vars(id, data))
@@ -456,27 +491,36 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     ## expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
     ## if (expr) id <- eval(e,envir=data)
     ##if (!is.null(data)) id <- eval(e, data)
-    if (is.logical(id) && length(id)==1) {
-      id <- if(is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
+    if (is.logical(id) && length(id) == 1) {
+      id <- if (is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
       stack <- FALSE
     }
-    if (is.character(id) && length(id)==1)
-      id <- data[, id, drop=TRUE]
+    if (is.character(id) && length(id) == 1) {
+      id <- data[, id, drop = TRUE]
+    }
     if (!is.null(ic_theta)) {
-      if (length(id)!=nprev) {
-        if (!is.null(x$na.action) &&
-            (length(id)==length(x$na.action) + nprev)) {
+      if (length(id) != nprev) {
+        if (
+          !is.null(x$na.action) &&
+            (length(id) == length(x$na.action) + nprev)
+        ) {
           warning("Applying na.action")
           id <- id[-x$na.action]
-        } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+        } else {
+          stop("Dimensions of i.i.d decomposition and 'id' does not agree")
+        }
       }
     } else {
-      if (length(id)!=nrow(data)) {
-        if (!is.null(x$na.action) &&
-            (length(id)==length(x$na.action)+nrow(data))) {
+      if (length(id) != nrow(data)) {
+        if (
+          !is.null(x$na.action) &&
+            (length(id) == length(x$na.action) + nrow(data))
+        ) {
           warning("Applying na.action")
           id <- id[-x$na.action]
-        } else stop("Dimensions of IC and 'id' does not agree")
+        } else {
+          stop("Dimensions of IC and 'id' does not agree")
+        }
       }
     }
     if (stack) {
@@ -486,25 +530,30 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       atr$dimnames <- NULL
       atr$dim <- NULL
       if (!lava.options()$cluster.index) {
-        ic_theta <- matrix(unlist(by(ic_theta, id, colSums)),
-                           byrow=TRUE, ncol=ncol(ic_theta))
+        ic_theta <- matrix(
+          unlist(by(ic_theta, id, colSums)),
+          byrow = TRUE,
+          ncol = ncol(ic_theta)
+        )
         attributes(ic_theta)[names(atr)] <- atr
         idstack <- sort(unique(id))
       } else {
-        clidx <- mets::cluster.index(id, mat=ic_theta, return.all=TRUE)
+        clidx <- mets::cluster.index(id, mat = ic_theta, return.all = TRUE)
         ic_theta <- with(clidx, X)
         attributes(ic_theta)[names(atr)] <- atr
-        idstack <- id[as.vector(clidx$firstclustid)+1]
+        idstack <- id[as.vector(clidx$firstclustid) + 1]
       }
-      ic_theta <- ic_theta*NROW(ic_theta)/length(id)
+      ic_theta <- ic_theta * NROW(ic_theta) / length(id)
       if (is.null(attributes(ic_theta)$N)) {
         attributes(ic_theta)$N <- N
       }
-    } else idstack <- id
+    } else {
+      idstack <- id
+    }
   } else {
     if (!is.null(data)) idstack <- rownames(data)
   }
-  if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
+  if (!is.null(ic_theta) && (length(idstack) == nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
   if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
@@ -525,8 +574,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     if (is.vector(B) || is.list(B)) {
       B <- contr(f, names(pp), ...)
     }
-    obj <- structure(list(coef=pp, vcov=V), class="estimate")
-    cc <- compare(obj, contrast=B) # to construct new parameter names
+    obj <- structure(list(coef = pp, vcov = V), class = "estimate")
+    cc <- compare(obj, contrast = B) # to construct new parameter names
     pp <- as.vector(B %*% pp)
     names(pp) <- strip_bracket(cc$cnames)
     if (!is.null(ic_theta)) {
@@ -539,25 +588,27 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   derivative <- NULL
   if (!is.null(f)) {
     form <- names(formals(f))
-    dots <- ("..."%in%names(form))
+    dots <- ("..." %in% names(form))
     form0 <- setdiff(form, "...")
     parname <- "p"
-    if (!is.null(form)) parname <- form[1] # unless .Primitive
-    if (length(form0)==1 && !(form0%in%c("object", "data"))) {
+    if (!is.null(form)) {
+      parname <- form[1]
+    } # unless .Primitive
+    if (length(form0) == 1 && !(form0 %in% c("object", "data"))) {
       parname <- form0
     }
     if (!is.null(ic_theta)) {
-      arglist <- c(list(object=x, data=data, p=vec(pp)), list(...))
+      arglist <- c(list(object = x, data = data, p = vec(pp)), list(...))
       names(arglist)[3] <- parname
     } else {
-      arglist <- c(list(object=x, p=vec(pp)), list(...))
+      arglist <- c(list(object = x, p = vec(pp)), list(...))
       names(arglist)[2] <- parname
     }
     if (!dots) {
       arglist <- arglist[intersect(form0, names(arglist))]
     }
     newf <- NULL
-    if (length(form)==0) {
+    if (length(form) == 0) {
       arglist <- list(vec(pp))
       newf <- function(...) do.call("f", list(...))
       val <- do.call("f", arglist)
@@ -572,80 +623,106 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     k <- NCOL(val)
     N <- NROW(val)
     D <- attributes(val)$grad
-    if (!is.null(D)) derivative <- D
+    if (!is.null(D)) {
+      derivative <- D
+    }
     if (is.null(D)) {
-      D <- numDeriv::jacobian(function(p, ...) {
-        if (length(form)==0) arglist[[1]] <- p
-        else arglist[[parname]] <- p
-        if (is.null(newf))
-          return(do.call("f", arglist))
-        return(do.call("newf", arglist)) }, pp)
+      D <- numDeriv::jacobian(
+        function(p, ...) {
+          if (length(form) == 0) {
+            arglist[[1]] <- p
+          } else {
+            arglist[[parname]] <- p
+          }
+          if (is.null(newf)) {
+            return(do.call("f", arglist))
+          }
+          return(do.call("newf", arglist))
+        },
+        pp
+      )
     }
     if (is.null(ic_theta)) {
-      pp <- structure(as.vector(val), names=names(val))
-      V <- D%*%V%*%t(D)
+      pp <- structure(as.vector(val), names = names(val))
+      V <- D %*% V %*% t(D)
     } else {
-      if (!average || (N<NROW(data))) {  ## transformation not depending on data
-        pp <- structure(as.vector(val), names=names(val))
-        ic_theta <- ic_theta%*%t(D)
+      if (!average || (N < NROW(data))) {
+        ## transformation not depending on data
+        pp <- structure(as.vector(val), names = names(val))
+        ic_theta <- ic_theta %*% t(D)
         V <- var_ic(ic_theta)
       } else {
-        if (k>1) { ## More than one parameter (and depends on data)
-          if (!missing(subset)) { ## Conditional estimate
-            val <- apply(val, 2, function(x) x*subset)
+        if (k > 1) {
+          ## More than one parameter (and depends on data)
+          if (!missing(subset)) {
+            ## Conditional estimate
+            val <- apply(val, 2, function(x) x * subset)
           }
-          D0 <- matrix(nrow=k, ncol=length(pp))
+          D0 <- matrix(nrow = k, ncol = length(pp))
           for (i in seq_len(k)) {
-            D1 <- D[seq(N)+(i-1)*N, , drop=FALSE]
-            if (!missing(subset)) ## Conditional estimate
-              D1 <- apply(D1, 2, function(x) x*subset)
+            D1 <- D[seq(N) + (i - 1) * N, , drop = FALSE]
+            if (!missing(subset)) {
+              ## Conditional estimate
+              D1 <- apply(D1, 2, function(x) x * subset)
+            }
             D0[i, ] <- colMeans(D1)
           }
           D <- D0
-          ic2 <- ic_theta%*%t(D)
-        } else { ## Single parameter
-          if (!missing(subset)) { ## Conditional estimate
-            val <- val*subset
-            D <- apply(rbind(D), 2, function(x) x*subset)
+          ic2 <- ic_theta %*% t(D)
+        } else {
+          ## Single parameter
+          if (!missing(subset)) {
+            ## Conditional estimate
+            val <- val * subset
+            D <- apply(rbind(D), 2, function(x) x * subset)
           }
           D <- colMeans(rbind(D))
-          ic2 <- ic_theta%*%D
+          ic2 <- ic_theta %*% D
         }
         pp <- vec(colMeans(cbind(val)))
-        ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1, N)))
-        if (NROW(ic_theta)==NROW(ic1)) {
+        ic1 <- (cbind(val) - rbind(pp) %x% cbind(rep(1, N)))
+        if (NROW(ic_theta) == NROW(ic1)) {
           rownames(ic1) <- rownames(ic_theta)
         }
         if (!missing(id)) {
-          if (!lava.options()$cluster.index)
-            ic1 <- matrix(unlist(by(ic1, id, colSums)),
-                          byrow=TRUE, ncol=ncol(ic1))
-          else {
-            ic1 <- mets::cluster.index(id, mat=ic1, return.all=FALSE)
+          if (!lava.options()$cluster.index) {
+            ic1 <- matrix(
+              unlist(by(ic1, id, colSums)),
+              byrow = TRUE,
+              ncol = ncol(ic1)
+            )
+          } else {
+            ic1 <- mets::cluster.index(id, mat = ic1, return.all = FALSE)
           }
           ic1 <- ic1 * NROW(ic1) / length(id)
         }
-        if (!missing(subset)) { ## Conditional estimate
+        if (!missing(subset)) {
+          ## Conditional estimate
           phat <- mean(subset)
-          ic3 <- cbind(-1/phat^2 * (subset-phat)) ## check
+          ic3 <- cbind(-1 / phat^2 * (subset - phat)) ## check
           if (!missing(id)) {
             if (!lava.options()$cluster.index) {
-              ic3 <- matrix(unlist(by(ic3, id, colSums)),
-                            byrow=TRUE, ncol=ncol(ic3))
+              ic3 <- matrix(
+                unlist(by(ic3, id, colSums)),
+                byrow = TRUE,
+                ncol = ncol(ic3)
+              )
             } else {
-              ic3 <- mets::cluster.index(id, mat=ic3, return.all=FALSE)
+              ic3 <- mets::cluster.index(id, mat = ic3, return.all = FALSE)
             }
           }
-          ic3 <- ic3*NROW(ic3)/length(id)
-          ic_theta <- (ic1+ic2)/phat + rbind(pp)%x%ic3
-          pp <- pp/phat
+          ic3 <- ic3 * NROW(ic3) / length(id)
+          ic_theta <- (ic1 + ic2) / phat + rbind(pp) %x% ic3
+          pp <- pp / phat
           V <- var_ic(ic_theta)
         } else {
-          if (nrow(ic1)!=nrow(ic2)) {
-            message("Assuming independence between model iid decomposition and new data frame") #nolint
+          if (nrow(ic1) != nrow(ic2)) {
+            message(
+              "Assuming independence between model iid decomposition and new data frame"
+            ) #nolint
             V <- var_ic(ic1) + var_ic(ic2)
           } else {
-            ic_theta <- ic1+ic2
+            ic_theta <- ic1 + ic2
             V <- var_ic(ic_theta)
           }
         }
@@ -654,79 +731,104 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
 
   df_mod <- NULL
-  if (inherits(x, "lm") && family(x)$family == "gaussian"
-      && !missing(vcov)) {
+  if (inherits(x, "lm") && family(x)$family == "gaussian" && !missing(vcov)) {
     # defaults to t-distribution when calculating p-values with model-based SEs
     df_mod <- x$df.residual
   }
   if (is.null(V)) {
     res <- cbind(pp, NA, NA, NA, NA)
   } else {
-    if (length(pp)==1)
+    if (length(pp) == 1) {
       res <- rbind(c(pp, diag(V)^0.5))
-    else
+    } else {
       res <- cbind(pp, diag(V)^0.5)
+    }
   }
-  res <- estimate_coefmat(res[, 1], res[, 2], df=df_mod, level=0.95, null=0)
-  if (nrow(res)>0)
+  res <- estimate_coefmat(
+    res[, 1],
+    res[, 2],
+    df = df_mod,
+    level = 0.95,
+    null = 0
+  )
+  if (nrow(res) > 0) {
     if (!is.null(nn)) {
       rownames(res) <- nn
     } else {
       nn <- attributes(res)$varnames
-      if (!is.null(nn))
+      if (!is.null(nn)) {
         rownames(res) <- nn
-      if (is.null(rownames(res)))
+      }
+      if (is.null(rownames(res))) {
         rownames(res) <- paste0("p", seq_len(nrow(res)))
+      }
     }
+  }
 
-  if (NROW(res)==0L) {
+  if (NROW(res) == 0L) {
     coefs <- NULL
   } else {
-    coefs <- res[, 1, drop=TRUE]
+    coefs <- res[, 1, drop = TRUE]
     names(coefs) <- rownames(res)
   }
-  res <- structure(list(coef=coefs, coefmat=res, vcov=V,
-                        IC=NULL, print=print, id=idstack, df=df_mod),
-                   class="estimate")
+  res <- structure(
+    list(
+      coef = coefs,
+      coefmat = res,
+      vcov = V,
+      IC = NULL,
+      print = print,
+      id = idstack,
+      df = df_mod
+    ),
+    class = "estimate"
+  )
   if (IC) {
     res$IC <- ic_theta
   }
-  if (length(coefs)==0L) return(res)
+  if (length(coefs) == 0L) {
+    return(res)
+  }
 
   if (!missing(keep) && !is.null(keep)) {
     if (is.character(keep)) {
       if (regex) {
         nn <- rownames(res$coefmat)
         keep <- unlist(lapply(keep, function(x) {
-          grep(x, nn,
-               perl = TRUE,
-               ignore.case = ignore.case
-               )
+          grep(x, nn, perl = TRUE, ignore.case = ignore.case)
         }))
       } else {
         keep <- match(keep, rownames(res$coefmat))
       }
     }
     res$coef <- res$coef[keep]
-    res$coefmat <- res$coefmat[keep, , drop=FALSE]
-    if (!is.null(res$IC)) res$IC <- res$IC[, keep, drop=FALSE]
-    res$vcov <- res$vcov[keep, keep, drop=FALSE]
+    res$coefmat <- res$coefmat[keep, , drop = FALSE]
+    if (!is.null(res$IC)) {
+      res$IC <- res$IC[, keep, drop = FALSE]
+    }
+    res$vcov <- res$vcov[keep, keep, drop = FALSE]
   }
 
   res <- labels.estimate(
-    object = res, str = labels, label.width = label.width
+    object = res,
+    str = labels,
+    label.width = label.width
   )
   res$call <- cal
   res$n <- nrow(data)
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
-  res <- structure(res, class="estimate")
+  res <- structure(res, class = "estimate")
 
-  if (!missing(null) || !missing(contrast) ||
-      !is.null(type) || !is.null(var.adj) ||
-      !is.null(back.transform) || !is.null(level) ||
+  if (
+    !missing(null) ||
+      !missing(contrast) ||
+      !is.null(type) ||
+      !is.null(var.adj) ||
+      !is.null(back.transform) ||
+      !is.null(level) ||
       !is.null(df)
-      ) {
+  ) {
     .Deprecated(
       msg = paste0(
         "The 'null', 'contrast', 'type', 'back.transform', 'level' ",
@@ -736,14 +838,28 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         "level=, df=, var.adj=) instead."
       )
     )
-    args <- list(object=res)
-    if (!missing(contrast)) args$contrast <- contrast
-    if (!missing(null)) args$null <- null
-    if (!is.null(level)) args$level <- level
-    if (!is.null(type)) args$type <- type
-    if (!is.null(var.adj)) args$var.adj <- var.adj
-    if (!is.null(df)) args$df <- df
-    if (!is.null(back.transform)) args$transform <- back.transform
+    args <- list(object = res)
+    if (!missing(contrast)) {
+      args$contrast <- contrast
+    }
+    if (!missing(null)) {
+      args$null <- null
+    }
+    if (!is.null(level)) {
+      args$level <- level
+    }
+    if (!is.null(type)) {
+      args$type <- type
+    }
+    if (!is.null(var.adj)) {
+      args$var.adj <- var.adj
+    }
+    if (!is.null(df)) {
+      args$df <- df
+    }
+    if (!is.null(back.transform)) {
+      args$transform <- back.transform
+    }
     return(do.call(summary, args))
   }
 
@@ -751,84 +867,105 @@ estimate.default <- function(x=NULL, f=NULL, ...,
 }
 
 #' @export
-print.estimate <- function(x, type=0L, digits=4L, width=25L,
-                           std.error=TRUE, p.value=TRUE,
-                           sep=cli::symbol[["line"]],
-                           sep.which,
-                           sep.labels=NULL,
-                           indent=" ", unique.names=TRUE,
-                           na.print="", ...) {
-
+print.estimate <- function(
+  x,
+  type = 0L,
+  digits = 4L,
+  width = 25L,
+  std.error = TRUE,
+  p.value = TRUE,
+  sep = cli::symbol[["line"]],
+  sep.which,
+  sep.labels = NULL,
+  indent = " ",
+  unique.names = TRUE,
+  na.print = "",
+  ...
+) {
   if (!is.null(x$print)) {
-    x$print(x, digits=digits, width=width, ...)
+    x$print(x, digits = digits, width = width, ...)
     return(invisible(x))
   }
-  if (type>0 && !is.null(x$call)) {
+  if (type > 0 && !is.null(x$call)) {
     cat("Call: ")
     print(x$call)
-    print(cli::rule(width=min(cli::console_width(),60)))
+    print(cli::rule(width = min(cli::console_width(), 60)))
   }
-  if (type>0) {
+  if (type > 0) {
     if (!is.null(x[["n"]]) && !is.null(x[["k"]])) {
-      cat("n = ", x[["n"]], ", clusters = ", x[["k"]], "\n\n", sep="")
+      cat("n = ", x[["n"]], ", clusters = ", x[["k"]], "\n\n", sep = "")
     } else {
       if (!is.null(x[["n"]])) {
-        cat("n = ", x[["n"]], "\n\n", sep="")
+        cat("n = ", x[["n"]], "\n\n", sep = "")
       }
       if (!is.null(x[["k"]])) {
-        cat("n = ", x[["k"]], "\n\n", sep="")
+        cat("n = ", x[["k"]], "\n\n", sep = "")
       }
     }
   }
 
   cc <- x$coefmat
-  if (!is.null(rownames(cc)) && unique.names)
+  if (!is.null(rownames(cc)) && unique.names) {
     rownames(cc) <- make.unique(
-      unlist(lapply(rownames(cc),
-                    function(x) toString(x, width=width)))
+      unlist(lapply(rownames(cc), function(x) toString(x, width = width)))
     )
-  if (!std.error) cc <- cc[, -2, drop=FALSE]
-  if (!p.value) cc <- cc[, -ncol(cc), drop=FALSE]
+  }
+  if (!std.error) {
+    cc <- cc[, -2, drop = FALSE]
+  }
+  if (!p.value) {
+    cc <- cc[, -ncol(cc), drop = FALSE]
+  }
 
   sep.pos <- c()
   if (missing(sep.which) && !is.null(x$model.index)) {
-    sep.which <- unlist(lapply(x$model.index,
-                               function(x)
-                                 tail(x, 1)))[-length(x$model.index)]
+    sep.which <- unlist(lapply(x$model.index, function(x) {
+      tail(x, 1)
+    }))[-length(x$model.index)]
   }
-  if (missing(sep.which)) sep.which <- NULL
+  if (missing(sep.which)) {
+    sep.which <- NULL
+  }
 
   if (!is.null(sep.which)) {
-    sep0 <- 0%in%sep.which
-    if (sep0)
+    sep0 <- 0 %in% sep.which
+    if (sep0) {
       sep.which <- setdiff(sep.which, 0)
+    }
     cc0 <- c()
     sep.which <- c(0, sep.which, nrow(cc))
-    N <- length(sep.which)-1
+    N <- length(sep.which) - 1
     for (i in seq(N)) {
-      if ((sep.which[i]+1)<=nrow(cc))
-        cc0 <- rbind(cc0, cc[seq(sep.which[i]+1, sep.which[i+1]), , drop=FALSE])
-      if (i<N) {
+      if ((sep.which[i] + 1) <= nrow(cc)) {
+        cc0 <- rbind(
+          cc0,
+          cc[seq(sep.which[i] + 1, sep.which[i + 1]), , drop = FALSE]
+        )
+      }
+      if (i < N) {
         cc0 <- rbind(cc0, NA)
         sep.pos <- c(sep.pos, nrow(cc0))
       }
     }
     if (sep0) {
-      sep.pos <- c(1, sep.pos+1)
+      sep.pos <- c(1, sep.pos + 1)
       cc0 <- rbind(NA, cc0)
     }
     cc <- cc0
   }
   if (!is.null(sep.labels)) {
-    sep.labels <- rep(sep.labels, length.out=length(sep.pos))
+    sep.labels <- rep(sep.labels, length.out = length(sep.pos))
     rownames(cc)[sep.pos] <- sep.labels
     rownames(cc)[-sep.pos] <- paste0(indent, rownames(cc)[-sep.pos])
   } else {
-    if (length(sep.pos)>0)
-      rownames(cc)[sep.pos] <- rep(paste0(rep(sep, max(nchar(rownames(cc)))),
-                                          collapse=""), length(sep.pos))
+    if (length(sep.pos) > 0) {
+      rownames(cc)[sep.pos] <- rep(
+        paste0(rep(sep, max(nchar(rownames(cc)))), collapse = ""),
+        length(sep.pos)
+      )
+    }
   }
-  print(cc, digits=digits, na.print=na.print, ...)
+  print(cc, digits = digits, na.print = na.print, ...)
 
   if (!is.null(attributes(x)$extra)) {
     cat("\n")
@@ -836,25 +973,38 @@ print.estimate <- function(x, type=0L, digits=4L, width=25L,
   }
 
   if (!is.null(x$compare)) {
-    print(cli::rule(width=min(cli::console_width(),60)))
+    print(cli::rule(width = min(cli::console_width(), 60)))
     cat(x$compare$method[3], "\n")
-    cat(paste(" ", x$compare$method[-(1:3)], collapse="\n"), "\n")
-    if (length(x$compare$method)>=4) {
+    cat(paste(" ", x$compare$method[-(1:3)], collapse = "\n"), "\n")
+    if (length(x$compare$method) >= 4) {
       out <- character()
-      out <- with(x$compare, c(out, paste(names(statistic),
-                                          "=", format(round(statistic, 4)))))
-      out <- with(x$compare, c(out, paste(names(parameter),
-                                          "=", format(round(parameter, 3)))))
-      fp  <- with(x$compare, format.pval(p.value, digits = digits))
-      out <- c(out, paste("p-value", if (substr(fp, 1L, 1L) == "<")
-                                       fp else paste("=", fp)))
+      out <- with(
+        x$compare,
+        c(out, paste(names(statistic), "=", format(round(statistic, 4))))
+      )
+      out <- with(
+        x$compare,
+        c(out, paste(names(parameter), "=", format(round(parameter, 3))))
+      )
+      fp <- with(x$compare, format.pval(p.value, digits = digits))
+      out <- c(
+        out,
+        paste(
+          "p-value",
+          if (substr(fp, 1L, 1L) == "<") {
+            fp
+          } else {
+            paste("=", fp)
+          }
+        )
+      )
       cat(" ", strwrap(paste(out, collapse = ", ")), sep = "\n")
     }
   }
 }
 
 #' @export
-vcov.estimate <- function(object, list=FALSE, ...) {
+vcov.estimate <- function(object, list = FALSE, ...) {
   res <- object$vcov
   nn <- names(coef(object, ...))
   if (list && !is.null(object$model.index)) {
@@ -865,11 +1015,10 @@ vcov.estimate <- function(object, list=FALSE, ...) {
 }
 
 #' @export
-coef.estimate <- function(object,
-                          mat=FALSE,
-                          list=FALSE,
-                          ...) {
-  if (mat) return(object$coefmat)
+coef.estimate <- function(object, mat = FALSE, list = FALSE, ...) {
+  if (mat) {
+    return(object$coefmat)
+  }
   if (list && !is.null(object$model.index)) {
     return(lapply(object$model.index, function(x) object$coef[x]))
   }
@@ -885,16 +1034,19 @@ transform.estimate <- function(`_data`, ...) {
 labels.estimate <- function(object, str, label.width, ...) {
   if (!missing(str)) {
     names(object$coef) <- str
-    if (!is.null(object$IC))
+    if (!is.null(object$IC)) {
       colnames(object$IC) <- str
-    if (!is.null(object$vcov))
+    }
+    if (!is.null(object$vcov)) {
       colnames(object$vcov) <- rownames(object$vcov) <- str
+    }
     rownames(object$coefmat) <- str
   }
   if (!missing(label.width)) {
     rownames(object$coefmat) <- make.unique(
-      unlist(lapply(rownames(object$coefmat),
-                    function(x) toString(x, width = label.width)))
+      unlist(lapply(rownames(object$coefmat), function(x) {
+        toString(x, width = label.width)
+      }))
     )
   }
   return(object)
@@ -907,14 +1059,16 @@ parameter.estimate <- function(x, ...) {
 
 #' @export
 IC.estimate <- function(x, ...) {
-  if (is.null(x$IC)) return(NULL)
+  if (is.null(x$IC)) {
+    return(NULL)
+  }
   dimn <- dimnames(x$IC)
   if (!is.null(dimn)) {
     dimn[[2]] <- names(coef(x))
   } else {
     dimn <- list(NULL, names(coef(x)))
   }
-  structure(x$IC, dimnames=dimn)
+  structure(x$IC, dimnames = dimn)
 }
 
 #' @export

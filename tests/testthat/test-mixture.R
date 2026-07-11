@@ -12,9 +12,13 @@ setup_mixture_data <- function(seed = 42, n = 500) {
 
 s <- setup_mixture_data()
 m <- baptize(s$model)
-intercept(m, ~x + y) <- NA
-result <- mixture(m, k = 2, data = s$data,
-                    control = list(tol = 1e-4, trace = 0))
+intercept(m, ~ x + y) <- NA
+result <- mixture(
+  m,
+  k = 2,
+  data = s$data,
+  control = list(tol = 1e-4, trace = 0)
+)
 
 test_that("mixture: result contains expected components", {
   expect_s3_class(result, "lvm.mixture")
@@ -29,7 +33,7 @@ test_that("mixture: result contains expected components", {
 })
 
 test_that("mixture: mixing probabilities sum to 1", {
-  prob <- tail(result$prob, 1)  # last row = final estimates
+  prob <- tail(result$prob, 1) # last row = final estimates
   expect_equal(sum(prob), 1, tolerance = 1e-6)
   expect_true(all(prob >= 0))
   expect_true(all(prob <= 1))
@@ -70,7 +74,7 @@ test_that("vcov.mixture", {
 
 test_that("mixture: score() at MLE is approximately zero", {
   sc <- score(result)
-  expect_true(sum(sc^2) < 1)  # score norm should be small at MLE
+  expect_true(sum(sc^2) < 1) # score norm should be small at MLE
   sc_indiv <- score(result, indiv = TRUE)
   np <- length(coef(result))
   expect_equal(dim(sc_indiv), c(nrow(s$data), np))

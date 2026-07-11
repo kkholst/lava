@@ -68,28 +68,28 @@
 ##'
 ##' @export
 `vars` <-
-function(x,...) UseMethod("vars")
+  function(x, ...) UseMethod("vars")
 
 ##' @export
 `vars.graph` <-
-  function(x,...) {
+  function(x, ...) {
     graph::nodes(x)
   }
 
 ##' @export
 `vars.lvm` <-
-  function(x,...) {
+  function(x, ...) {
     colnames(x$M)
   }
 
 ##' @export
 `vars.lvmfit` <-
-  function(x,...) {
-    vars(Model(x),...)
+  function(x, ...) {
+    vars(Model(x), ...)
   }
 
 ##' @export
-vars.list <- function(x,...) {
+vars.list <- function(x, ...) {
   varlist <- c()
   for (i in seq_along(x)) {
     varlist <- c(varlist, vars(x[[i]]))
@@ -100,6 +100,6 @@ vars.list <- function(x,...) {
 
 ##' @export
 `vars.lm` <-
-  function(x,...) {
-    c(endogenous(x),exogenous(x))
+  function(x, ...) {
+    c(endogenous(x), exogenous(x))
   }

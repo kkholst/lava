@@ -13,26 +13,26 @@
 ##' @examples
 ##' By(datasets::CO2,~Treatment+Type,colMeans,~conc)
 ##' By(datasets::CO2,~Treatment+Type,colMeans,~conc+uptake)
-By <- function(x,INDICES,FUN,COLUMNS,array=FALSE,...) {
-    if (inherits(INDICES,"formula")) {
-        INDICES <- as.list(model.frame(INDICES,x))
+By <- function(x, INDICES, FUN, COLUMNS, array = FALSE, ...) {
+  if (inherits(INDICES, "formula")) {
+    INDICES <- as.list(model.frame(INDICES, x))
+  } else {
+    if (is.character(INDICES) && length(INDICES) != nrow(x)) {
+      INDICES <- as.list(x[, INDICES, drop = FALSE])
+    }
+  }
+  if (!missing(COLUMNS)) {
+    if (inherits(COLUMNS, "formula")) {
+      x <- model.frame(COLUMNS, x)
     } else {
-        if (is.character(INDICES) && length(INDICES)!=nrow(x)) {
-            INDICES <- as.list(x[,INDICES,drop=FALSE])
-        }
+      x <- x[, COLUMNS, drop = FALSE]
     }
-    if (!missing(COLUMNS)) {
-        if (inherits(COLUMNS,"formula")) {
-            x <- model.frame(COLUMNS,x)
-        } else {
-            x <- x[,COLUMNS,drop=FALSE]
-        }
-    }
-    a <- by(x, INDICES, FUN=FUN, ...)
-    if (NCOL(x)==1 && !array) {
-        ##DimElem <- length(a[rep(1,length(dim(a)))][[1]])
-        a <- a[]
-        attr(a,"call") <- NULL
-    }
-    return(a)
+  }
+  a <- by(x, INDICES, FUN = FUN, ...)
+  if (NCOL(x) == 1 && !array) {
+    ##DimElem <- length(a[rep(1,length(dim(a)))][[1]])
+    a <- a[]
+    attr(a, "call") <- NULL
+  }
+  return(a)
 }

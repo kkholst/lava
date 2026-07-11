@@ -1,5 +1,5 @@
 ##' @export
-`Weights` <- function(x,...) UseMethod("Weights")
+`Weights` <- function(x, ...) UseMethod("Weights")
 
 ##' @export
-Weights.default <- function(x,...) eval(x$weights)
+Weights.default <- function(x, ...) eval(x$weights)

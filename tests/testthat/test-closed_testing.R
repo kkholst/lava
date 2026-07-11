@@ -3,14 +3,14 @@ context("Multiple testing")
 test_that("closed_testing", {
   m <- lvm()
   regression(m, c(y1, y2, y3, y4) ~ x) <- c(0, 0.25, 0, 0.25)
-  regression(m, to=endogenous(m), from="u") <- 1
+  regression(m, to = endogenous(m), from = "u") <- 1
   variance(m, endogenous(m)) <- 1
   set.seed(1)
   d <- sim(m, 200)
-  l1 <- lm(y1~x, d)
-  l2 <- lm(y2~x, d)
-  l3 <- lm(y3~x, d)
-  l4 <- lm(y4~x, d)
+  l1 <- lm(y1 ~ x, d)
+  l2 <- lm(y2 ~ x, d)
+  l3 <- lm(y3 ~ x, d)
+  l4 <- lm(y4 ~ x, d)
   e <- merge(l1, l2, l3, l4, subset = 2)
 
   adj <- closed_testing(e)
@@ -28,8 +28,9 @@ test_that("closed_testing", {
 
   expect_true(adj$raw.pval[[4]] == H1$h1234$p.value)
 
-  expect_true(adj$p.value[1] ==
-              max(lapply(H1, function(x) x$p.value) |> unlist()))
+  expect_true(
+    adj$p.value[1] == max(lapply(H1, function(x) x$p.value) |> unlist())
+  )
 
   H2 <- list(
     h1234 = lava::compare(e, contrast = diag(4)),
@@ -44,7 +45,7 @@ test_that("closed_testing", {
 
   expect_true(adj$raw.pval[[4]] == H1$h1234$p.value)
 
-  expect_true(adj$p.value[2] ==
-              max(lapply(H2, function(x) x$p.value) |> unlist()))
-
+  expect_true(
+    adj$p.value[2] == max(lapply(H2, function(x) x$p.value) |> unlist())
+  )
 })

@@ -24,26 +24,33 @@
 ##'
 ##' @export
 `Graph` <-
-    function(x,...) UseMethod("Graph")
+  function(x, ...) UseMethod("Graph")
 
 ##' @export
 `Graph.lvm` <-
-    function(x,add=FALSE,...) {
-        if ((is.null(x$graph) || length(x$graph)==0) & add) {
-            m <- Model(x)
-            return(plot(m,noplot=TRUE))
-        }
-        else return(x$graph)
+  function(x, add = FALSE, ...) {
+    if ((is.null(x$graph) || length(x$graph) == 0) & add) {
+      m <- Model(x)
+      return(plot(m, noplot = TRUE))
+    } else {
+      return(x$graph)
     }
+  }
 
 ##' @export
-`Graph.lvmfit` <- function(x,...) Graph.lvm(x,...)
+`Graph.lvmfit` <- function(x, ...) Graph.lvm(x, ...)
 
 ##' @export
-"Graph<-" <- function(x,...,value) UseMethod("Graph<-")
+"Graph<-" <- function(x, ..., value) UseMethod("Graph<-")
 
 ##' @export
-"Graph<-.lvmfit" <- function(x,...,value) { x$graph <- value; return(x) }
+"Graph<-.lvmfit" <- function(x, ..., value) {
+  x$graph <- value
+  return(x)
+}
 
 ##' @export
-"Graph<-.lvm" <- function(x,...,value) { x$graph <- value; return(x) }
+"Graph<-.lvm" <- function(x, ..., value) {
+  x$graph <- value
+  return(x)
+}

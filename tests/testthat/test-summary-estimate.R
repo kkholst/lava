@@ -76,8 +76,7 @@ test_that("c.summary.estimate with extra variables", {
   # adding additional extra to existing extra attribute
   ss <- c(ss, c(cc = 3))
   expect_equal(attributes(ss)$extra, c(aa = 1, bb = 2, cc = 3))
-}
-)
+})
 
 test_that("summary.estimate class tests", {
   # tests for future regression when removing estimate class "inheritance"

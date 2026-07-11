@@ -1,37 +1,41 @@
 ##' @export
-"parameter<-" <- function(x,...,value) UseMethod("parameter<-")
+"parameter<-" <- function(x, ..., value) UseMethod("parameter<-")
 
 ##' @export
-"parameter<-.lvmfit" <- function(x,...,value) {
-  parameter(Model(x),...) <- value
+"parameter<-.lvmfit" <- function(x, ..., value) {
+  parameter(Model(x), ...) <- value
   return(x)
 }
 
 
 ##' @export
-"parameter<-.lvm" <- function(x,constrain,start,remove=FALSE,...,value) {
-  if (inherits(value,"formula")) value <- all.vars(value)
+"parameter<-.lvm" <- function(x, constrain, start, remove = FALSE, ..., value) {
+  if (inherits(value, "formula")) {
+    value <- all.vars(value)
+  }
   x <- rmvar(x, value)
   if (remove) {
-      x$expar[value] <- NULL
-      x$exfix[value] <- NULL
-      x$attributes$parameter[value] <- NULL
-      index(x) <- reindex(x)
-      return(x)
-      
+    x$expar[value] <- NULL
+    x$exfix[value] <- NULL
+    x$attributes$parameter[value] <- NULL
+    index(x) <- reindex(x)
+    return(x)
   }
   if (!missing(start)) {
-      if (length(start) != length(value)) stop("'start' and 'value' should be of the same lengths")
-      start <- as.list(start)
-      names(start) <- value
+    if (length(start) != length(value)) {
+      stop("'start' and 'value' should be of the same lengths")
+    }
+    start <- as.list(start)
+    names(start) <- value
   } else {
-      start <- as.list(rep(0,length(value))); names(start) <- value
+    start <- as.list(rep(0, length(value)))
+    names(start) <- value
   }
   if (!missing(constrain)) {
-      newfix <- constrain
-      if (!is.list(newfix)) newfix <- as.list(newfix)
+    newfix <- constrain
+    if (!is.list(newfix)) newfix <- as.list(newfix)
   } else {
-      newfix <- as.list(value);
+    newfix <- as.list(value)
   }
   names(newfix) <- value
   x$expar[value] <- start
@@ -42,11 +46,13 @@
 }
 
 ##' @export
-parameter <- function(x,...,value) UseMethod("parameter")
+parameter <- function(x, ..., value) UseMethod("parameter")
 
 ##' @export
 parameter.default <- function(x, var, ...) {
-    if (missing(var)) return (names(unlist(x$attributes$parameter)))
-    parameter(x, ...) <- var
-    return(x)
+  if (missing(var)) {
+    return(names(unlist(x$attributes$parameter)))
+  }
+  parameter(x, ...) <- var
+  return(x)
 }

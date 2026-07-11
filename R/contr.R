@@ -28,11 +28,16 @@ contr <- function(p, n, diff = TRUE, ...) {
     return(parsedesign(n, p, ...))
   }
   if (is.list(p)) {
-    return(Reduce(rbind, lapply(p, function(x) {
-      do.call(contr, list(x, n, diff[1L]))
-    })))
+    return(Reduce(
+      rbind,
+      lapply(p, function(x) {
+        do.call(contr, list(x, n, diff[1L]))
+      })
+    ))
   }
-  if (is.character(n)) n <- length(n)
+  if (is.character(n)) {
+    n <- length(n)
+  }
   if (!is.numeric(n)) {
     try(n <- length(coef(n)), silent = TRUE)
   }
@@ -46,6 +51,6 @@ contr <- function(p, n, diff = TRUE, ...) {
 
 ##' @export
 pairwise.diff <- function(n) {
-  pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
+  pdiff <- function(n) lava::contr(lapply(seq(n - 1), function(x) seq(x, n)))
   pdiff(n)
 }

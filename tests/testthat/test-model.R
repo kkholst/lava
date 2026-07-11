@@ -1,87 +1,88 @@
 context("Model specification")
 
 test_that("Basic model building blocks", {
-    m <- lvm(y[m]~x)
-    covariance(m) <- y~z
-    testthat::expect_true(covariance(m)$rel["z","y"]==1)
-    testthat::expect_true(regression(m)$rel["x","y"]==1)
+  m <- lvm(y[m] ~ x)
+  covariance(m) <- y ~ z
+  testthat::expect_true(covariance(m)$rel["z", "y"] == 1)
+  testthat::expect_true(regression(m)$rel["x", "y"] == 1)
 
-    ## Children parent,nodes
-    testthat::expect_true(children(m,~x)=="y")
-    testthat::expect_true(parents(m,~y)=="x")
-    testthat::expect_equivalent(parents(m),vars(m))
-    testthat::expect_equivalent(children(m),vars(m))
+  ## Children parent,nodes
+  testthat::expect_true(children(m, ~x) == "y")
+  testthat::expect_true(parents(m, ~y) == "x")
+  testthat::expect_equivalent(parents(m), vars(m))
+  testthat::expect_equivalent(children(m), vars(m))
 
-    ## Remove association
-    cancel(m) <- y~z+x
-    testthat::expect_true(covariance(m)$rel["z","y"]==0)
-    testthat::expect_true(regression(m)$rel["x","y"]==0)
+  ## Remove association
+  cancel(m) <- y ~ z + x
+  testthat::expect_true(covariance(m)$rel["z", "y"] == 0)
+  testthat::expect_true(regression(m)$rel["x", "y"] == 0)
 
-    ## Remove variable
-    kill(m) <- ~x
-    testthat::expect_equivalent(vars(m),c("y","z"))
-    testthat::expect_true(intercept(m)["y"]=="m")
+  ## Remove variable
+  kill(m) <- ~x
+  testthat::expect_equivalent(vars(m), c("y", "z"))
+  testthat::expect_true(intercept(m)["y"] == "m")
 
-    m <- lvm(c(y1,y2,y3)~x)
-    d <- sim(m,50)
-    e <- estimate(m,d)
-    ## Equivalence
-    ##equivalence(e,silent=TRUE)
+  m <- lvm(c(y1, y2, y3) ~ x)
+  d <- sim(m, 50)
+  e <- estimate(m, d)
+  ## Equivalence
+  ##equivalence(e,silent=TRUE)
 
+  ## formula
+  f <- formula(m, all = TRUE)
+  testthat::expect_true(length(f) == length(vars(m)))
+  testthat::expect_true(all(unlist(lapply(f, function(x) {
+    inherits(x, "formula")
+  }))))
 
-    ## formula
-    f <- formula(m,all=TRUE)
-    testthat::expect_true(length(f)==length(vars(m)))
-    testthat::expect_true(all(unlist(lapply(f,function(x) inherits(x,"formula")))))
+  ## Parametrization
+  m <- lvm(c(y1, y2, y3) ~ u)
+  latent(m) <- ~u
+  m2 <- fixsome(m, param = NULL)
+  testthat::expect_true(all(is.na(regression(m2)$values)))
+  m2 <- fixsome(m, param = "relative")
+  testthat::expect_true(regression(m2)$values["u", "y1"] == 1)
+  testthat::expect_true(intercept(m2)[["y1"]] == 0)
+  m2 <- fixsome(m, param = "hybrid")
+  testthat::expect_true(regression(m2)$values["u", "y1"] == 1)
+  testthat::expect_true(intercept(m2)[["u"]] == 0)
+  m2 <- fixsome(m, param = "absolute")
+  testthat::expect_true(all(is.na(regression(m2)$values)))
+  testthat::expect_true(intercept(m2)[["u"]] == 0)
+  testthat::expect_true(covariance(m2)$values["u", "u"] == 1)
 
-    ## Parametrization
-    m <- lvm(c(y1,y2,y3)~u)
-    latent(m) <- ~u
-    m2 <- fixsome(m,param=NULL)
-    testthat::expect_true(all(is.na(regression(m2)$values)))
-    m2 <- fixsome(m,param="relative")
-    testthat::expect_true(regression(m2)$values["u","y1"]==1)
-    testthat::expect_true(intercept(m2)[["y1"]]==0)
-    m2 <- fixsome(m,param="hybrid")
-    testthat::expect_true(regression(m2)$values["u","y1"]==1)
-    testthat::expect_true(intercept(m2)[["u"]]==0)
-    m2 <- fixsome(m,param="absolute")
-    testthat::expect_true(all(is.na(regression(m2)$values)))
-    testthat::expect_true(intercept(m2)[["u"]]==0)
-    testthat::expect_true(covariance(m2)$values["u","u"]==1)
+  ## Merge
+  m1 <- lvm(c(y1, y2, y3) ~ 1 * u1[m1:v1])
+  latent(m1) <- ~u1
+  m2 <- lvm(c(y1, y2, y3) ~ 2 * u2[m2:v2])
+  latent(m2) <- ~u2
+  mm <- m1 %++% m2
 
-    ## Merge
-    m1 <- lvm(c(y1,y2,y3)~1*u1[m1:v1])
-    latent(m1) <- ~u1
-    m2 <- lvm(c(y1,y2,y3)~2*u2[m2:v2])
-    latent(m2) <- ~u2
-    mm <- m1%++%m2
+  testthat::expect_true(covariance(mm)$labels["u1", "u1"] == "v1")
+  testthat::expect_true(intercept(mm)[["u2"]] == "m2")
 
-    testthat::expect_true(covariance(mm)$labels["u1","u1"]=="v1")
-    testthat::expect_true(intercept(mm)[["u2"]]=="m2")
-
-    ## LISREL
-    ## mm <- fixsome(mm)
-    ## L <- lava:::lisrel(mm,rep(1,length(coef(mm))))
-    ## testthat::expect_equivalent(L$B,matrix(0,2,2))
-    ## testthat::expect_equivalent(L$Theta,diag(3))
-    ## testthat::expect_equivalent(L$Psi,diag(2))
+  ## LISREL
+  ## mm <- fixsome(mm)
+  ## L <- lava:::lisrel(mm,rep(1,length(coef(mm))))
+  ## testthat::expect_equivalent(L$B,matrix(0,2,2))
+  ## testthat::expect_equivalent(L$Theta,diag(3))
+  ## testthat::expect_equivalent(L$Psi,diag(2))
 })
 
 test_that("Linear constraints", {
-    m <- lvm(c(y[m:v]~b*x))
-    constrain(m,b~a) <- base::identity
-    d <- sim(m,100,seed=1)
-    l <- lm(y~x, d)
-    e <- estimate(m, d)
-    err <- sum((coef(l)-coef(e)[c('y','a')])^2)
-    testthat::expect_true(err<1e-12)
+  m <- lvm(c(y[m:v] ~ b * x))
+  constrain(m, b ~ a) <- base::identity
+  d <- sim(m, 100, seed = 1)
+  l <- lm(y ~ x, d)
+  e <- estimate(m, d)
+  err <- sum((coef(l) - coef(e)[c('y', 'a')])^2)
+  testthat::expect_true(err < 1e-12)
 })
 
-if (requireNamespace("Rgraphviz",quietly = TRUE))
-test_that("Graph attributes", {
-    m <- lvm(y~x)
-    suppressMessages(g1 <- graph::updateGraph(plot(m,noplot=TRUE)))
+if (requireNamespace("Rgraphviz", quietly = TRUE)) {
+  test_that("Graph attributes", {
+    m <- lvm(y ~ x)
+    suppressMessages(g1 <- graph::updateGraph(plot(m, noplot = TRUE)))
     m1 <- graph2lvm(g1)
     testthat::expect_equivalent(m1$M, m$M)
 
@@ -91,95 +92,95 @@ test_that("Graph attributes", {
     testthat::expect_true(col == graph::nodeRenderInfo(g1)$fill[[v]])
     nodecolor(m, v) <- "blue"
 
-    g2 <- Graph(m, add=TRUE)
+    g2 <- Graph(m, add = TRUE)
     testthat::expect_true(inherits(g2, "graph"))
     testthat::expect_true(col == graph::nodeRenderInfo(g2)$fill[[v]])
     testthat::expect_true(lava:::addattr(g2, "fill")[[v]] == "blue")
     graph::graphRenderInfo(g2)$rankdir <- "LR"
     Graph(m) <- g2
-    testthat::expect_true(graph::graphRenderInfo(Graph(m))$rankdir=="LR")
+    testthat::expect_true(graph::graphRenderInfo(Graph(m))$rankdir == "LR")
 
     ## Labels
     labels(m) <- c(y = "Y")
-    lava:::addattr(Graph(m, add=TRUE), "label")
-    testthat::expect_true(lava:::addattr(finalize(m), "label")[["y"]]=="Y")
+    lava:::addattr(Graph(m, add = TRUE), "label")
+    testthat::expect_true(lava:::addattr(finalize(m), "label")[["y"]] == "Y")
     labels(g2) <- c(y = "Y")
     testthat::expect_true(!is.null(graph::nodeRenderInfo(g2)$label["y"]))
 
-    edgelabels(m, y~x) <- "a"
+    edgelabels(m, y ~ x) <- "a"
     testthat::expect_true(!is.null(edgelabels(finalize(m))))
-})
+  })
+}
 
 test_that("regression<- with character to/from matches formula style", {
-    # Formula style: regression(m, y~x) <- "b"
-    m1 <- lvm()
-    regression(m1, y ~ x) <- "b"
+  # Formula style: regression(m, y~x) <- "b"
+  m1 <- lvm()
+  regression(m1, y ~ x) <- "b"
 
-    # Character positional: regression(m, "y", "x") <- "b"
-    m2 <- lvm()
-    regression(m2, "y", "x") <- "b"
+  # Character positional: regression(m, "y", "x") <- "b"
+  m2 <- lvm()
+  regression(m2, "y", "x") <- "b"
 
-    # Character named: regression(m, to="y", from="x") <- "b"
-    m3 <- lvm()
-    regression(m3, to = "y", from = "x") <- "b"
+  # Character named: regression(m, to="y", from="x") <- "b"
+  m3 <- lvm()
+  regression(m3, to = "y", from = "x") <- "b"
 
-    testthat::expect_identical(m1$par, m2$par)
-    testthat::expect_identical(m1$par, m3$par)
-    testthat::expect_identical(m1$fix, m2$fix)
-    testthat::expect_identical(m1$fix, m3$fix)
+  testthat::expect_identical(m1$par, m2$par)
+  testthat::expect_identical(m1$par, m3$par)
+  testthat::expect_identical(m1$fix, m2$fix)
+  testthat::expect_identical(m1$fix, m3$fix)
 
-    # Numeric constraint
-    m4 <- lvm()
-    regression(m4, "y", "x") <- 2
-    testthat::expect_equal(m4$fix["x", "y"], 2)
+  # Numeric constraint
+  m4 <- lvm()
+  regression(m4, "y", "x") <- 2
+  testthat::expect_equal(m4$fix["x", "y"], 2)
 
-    # NA to clear constraint
-    m5 <- lvm(y ~ x)
-    regression(m5, "y", "x") <- "b"
-    testthat::expect_equal(m5$par["x", "y"], "b")
-    regression(m5, "y", "x") <- NA
-    testthat::expect_true(is.na(m5$par["x", "y"]))
-    testthat::expect_true(is.na(m5$fix["x", "y"]))
+  # NA to clear constraint
+  m5 <- lvm(y ~ x)
+  regression(m5, "y", "x") <- "b"
+  testthat::expect_equal(m5$par["x", "y"], "b")
+  regression(m5, "y", "x") <- NA
+  testthat::expect_true(is.na(m5$par["x", "y"]))
+  testthat::expect_true(is.na(m5$fix["x", "y"]))
 })
 
 test_that("regression() with value= and character to/from", {
-    # regression(m, to, from, value=) should apply the constraint
-    m1 <- lvm()
-    regression(m1, y ~ x) <- "b"
+  # regression(m, to, from, value=) should apply the constraint
+  m1 <- lvm()
+  regression(m1, y ~ x) <- "b"
 
-    m2 <- lvm()
-    m2 <- regression(m2, to = "y", from = "x", value = "b")
+  m2 <- lvm()
+  m2 <- regression(m2, to = "y", from = "x", value = "b")
 
-    testthat::expect_identical(m1$par, m2$par)
-    testthat::expect_identical(m1$fix, m2$fix)
+  testthat::expect_identical(m1$par, m2$par)
+  testthat::expect_identical(m1$fix, m2$fix)
 
-    # Numeric value
-    m3 <- lvm()
-    m3 <- regression(m3, "y", "x", value = 2)
-    testthat::expect_equal(m3$fix["x", "y"], 2)
+  # Numeric value
+  m3 <- lvm()
+  m3 <- regression(m3, "y", "x", value = 2)
+  testthat::expect_equal(m3$fix["x", "y"], 2)
 
-    # Multiple predictors
-    m4 <- lvm()
-    regression(m4, y ~ x1 + x2) <- "b"
+  # Multiple predictors
+  m4 <- lvm()
+  regression(m4, y ~ x1 + x2) <- "b"
 
-    m5 <- lvm()
-    m5 <- regression(m5, to = "y", from = c("x1", "x2"), value = "b")
+  m5 <- lvm()
+  m5 <- regression(m5, to = "y", from = c("x1", "x2"), value = "b")
 
-    testthat::expect_identical(m4$par, m5$par)
-    testthat::expect_identical(m4$fix, m5$fix)
+  testthat::expect_identical(m4$par, m5$par)
+  testthat::expect_identical(m4$fix, m5$fix)
 })
 
 test_that("Categorical variables", {
-    m <- lvm()
-    categorical(m,K=3,p=c(0.1,0.5)) <- ~x
-    d1 <- simulate(m,10,seed=1)
-    categorical(m,K=3) <- ~x
-    d2 <- simulate(m,10,seed=1)
-    testthat::expect_false(identical(d1,d2))
+  m <- lvm()
+  categorical(m, K = 3, p = c(0.1, 0.5)) <- ~x
+  d1 <- simulate(m, 10, seed = 1)
+  categorical(m, K = 3) <- ~x
+  d2 <- simulate(m, 10, seed = 1)
+  testthat::expect_false(identical(d1, d2))
 
-    regression(m,additive=FALSE,y~x) <- c(0,-5,5)
-    d <- simulate(m,100,seed=1)
-    l <- lm(y~factor(x),d)
-    testthat::expect_true(sign(coef(l))[2]==-sign(coef(l))[3])
-
+  regression(m, additive = FALSE, y ~ x) <- c(0, -5, 5)
+  d <- simulate(m, 100, seed = 1)
+  l <- lm(y ~ factor(x), d)
+  testthat::expect_true(sign(coef(l))[2] == -sign(coef(l))[3])
 })

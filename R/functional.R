@@ -1,48 +1,53 @@
 ##' @export
-"functional<-" <- function(x,...,value) UseMethod("functional<-")
+"functional<-" <- function(x, ..., value) UseMethod("functional<-")
 
 ##' @export
-"functional<-.lvm" <- function(x,to,from,...,value) {
-    if (inherits(to,"formula")) {
-        yy <- decomp.specials(getoutcome(to))
-        myvars <- all.vars(to)
-        xx <- setdiff(myvars,yy)
-        if (length(yy)*length(xx)>length(value) & length(value)!=1) stop("Wrong number of values")
-        count <- 0
-        for (y in yy) {
-            count <- count+1
-            for (i in seq_along(xx)) {
-                suppressWarnings(x <- regression(x,to=y,from=xx[i],messages=0))
-                count <- count+1
-                if (length(value)==1) {
-                    functional(x, to=y, from=xx[i],...) <- value
-                } else
-                    functional(x, to=y, from=xx[i],...) <- value[[count]]
-            }
-        }
-        return(x)
+"functional<-.lvm" <- function(x, to, from, ..., value) {
+  if (inherits(to, "formula")) {
+    yy <- decomp.specials(getoutcome(to))
+    myvars <- all.vars(to)
+    xx <- setdiff(myvars, yy)
+    if (length(yy) * length(xx) > length(value) & length(value) != 1) {
+      stop("Wrong number of values")
     }
-
-    if (missing(from) | missing(to))
-        return(x)
-
-    edges <- paste(from,to,sep="~")
-    x$attributes$functional[[edges]] <- value
+    count <- 0
+    for (y in yy) {
+      count <- count + 1
+      for (i in seq_along(xx)) {
+        suppressWarnings(x <- regression(x, to = y, from = xx[i], messages = 0))
+        count <- count + 1
+        if (length(value) == 1) {
+          functional(x, to = y, from = xx[i], ...) <- value
+        } else {
+          functional(x, to = y, from = xx[i], ...) <- value[[count]]
+        }
+      }
+    }
     return(x)
+  }
+
+  if (missing(from) | missing(to)) {
+    return(x)
+  }
+
+  edges <- paste(from, to, sep = "~")
+  x$attributes$functional[[edges]] <- value
+  return(x)
 }
 
 ##' @export
-"functional" <- function(x,...) UseMethod("functional")
+"functional" <- function(x, ...) UseMethod("functional")
 
 ##' @export
-functional.lvm <- function(x,to,from,value,...) {
-    if (!missing(value)) {
-        functional(x,to,from,...) <- value
-        return(x)
-    }
-    if (missing(from))
-        return(x$attributes$functional)
+functional.lvm <- function(x, to, from, value, ...) {
+  if (!missing(value)) {
+    functional(x, to, from, ...) <- value
+    return(x)
+  }
+  if (missing(from)) {
+    return(x$attributes$functional)
+  }
 
-    edges <- paste(from,to,sep="~")
-    x$attributes$functional[edges]
+  edges <- paste(from, to, sep = "~")
+  x$attributes$functional[edges]
 }

@@ -1,6 +1,6 @@
 ##' @export
 `dsep` <-
-    function(object,...) UseMethod("dsep")
+  function(object, ...) UseMethod("dsep")
 
 ##' Check d-separation criterion
 ##'
@@ -25,45 +25,52 @@
 ##' dsep(m,x5~x1|x3+x4)
 ##' dsep(m,~x1+x2+x3|x4)
 ##'
-dsep.lvm <- function(object,x,cond=NULL,return.graph=FALSE,...) {
-    if (inherits(x,"formula")) {
-        xf <- getoutcome(x,sep="|")
-        xx <- attr(xf,"x")
-        if (length(xx)==0) stop("Not a valid formula")
-        x <- c(xf,all.vars(xx[[1]]))
-        if (length(xx)>1) {
-            cond <- all.vars(xx[[2]])
-        }
+dsep.lvm <- function(object, x, cond = NULL, return.graph = FALSE, ...) {
+  if (inherits(x, "formula")) {
+    xf <- getoutcome(x, sep = "|")
+    xx <- attr(xf, "x")
+    if (length(xx) == 0) {
+      stop("Not a valid formula")
     }
-    if (inherits(cond,"formula")) {
-        cond <- all.vars(cond)
+    x <- c(xf, all.vars(xx[[1]]))
+    if (length(xx) > 1) {
+      cond <- all.vars(xx[[2]])
     }
-    nod <- vars(object)
-    x <- intersect(x,nod)
-    cond <- intersect(cond,nod)
-    V <- c(x,cond)
-    ## Ancenstral graph
-    keep <- c(V,ancestors(object,V))
-    del <- setdiff(nod,keep)
-    if (length(del)>0) object <- rmvar(object,del)
-    ## moralized graph
-    man <- object
-    for (v in V) {
-        pa <- parents(object,v)
-        if (length(pa)>1)
-            man$M[pa,pa] <- 1
+  }
+  if (inherits(cond, "formula")) {
+    cond <- all.vars(cond)
+  }
+  nod <- vars(object)
+  x <- intersect(x, nod)
+  cond <- intersect(cond, nod)
+  V <- c(x, cond)
+  ## Ancenstral graph
+  keep <- c(V, ancestors(object, V))
+  del <- setdiff(nod, keep)
+  if (length(del) > 0) {
+    object <- rmvar(object, del)
+  }
+  ## moralized graph
+  man <- object
+  for (v in V) {
+    pa <- parents(object, v)
+    if (length(pa) > 1) {
+      man$M[pa, pa] <- 1
     }
-    man.sel <- rmvar(man,cond)
-    ii <- match(x,vars(man.sel))
-    A <- with(man.sel, (t(M)+M)>0)
-    dsep <- c()
-    for (i in ii) {
-        conn <- DFS(A,i)
-        i0 <- setdiff(ii,i)
-        dsep <- c(dsep,!any(i0%in%conn))
-    }
-    res <- all(dsep)
-    attr(man.sel,"dsep") <- res
-    if (return.graph) return(man.sel)
-    return(res)
+  }
+  man.sel <- rmvar(man, cond)
+  ii <- match(x, vars(man.sel))
+  A <- with(man.sel, (t(M) + M) > 0)
+  dsep <- c()
+  for (i in ii) {
+    conn <- DFS(A, i)
+    i0 <- setdiff(ii, i)
+    dsep <- c(dsep, !any(i0 %in% conn))
+  }
+  res <- all(dsep)
+  attr(man.sel, "dsep") <- res
+  if (return.graph) {
+    return(man.sel)
+  }
+  return(res)
 }

@@ -17,35 +17,37 @@ small_sample_correction <- function(ic, type, var.adj) {
   ## Small-sample corrections for clustered data
   K <- NROW(ic)
   N <- attributes(ic)$N
-  if (is.null(N)) N <- K
+  if (is.null(N)) {
+    N <- K
+  }
   p <- NCOL(ic)
-  adj0 <- K/(K-p) ## Mancl & DeRouen, 2001
-  adj1 <- K/(K-1) ## Mancl & DeRouen, 2001
-  adj2 <- (N-1)/(N-p)*(K/(K-1)) ## Morel,Bokossa & Neerchal, 2003
-  if (tolower(type[1])=="mbn" && !is.null(attributes(ic)$bread)) {
+  adj0 <- K / (K - p) ## Mancl & DeRouen, 2001
+  adj1 <- K / (K - 1) ## Mancl & DeRouen, 2001
+  adj2 <- (N - 1) / (N - p) * (K / (K - 1)) ## Morel,Bokossa & Neerchal, 2003
+  if (tolower(type[1]) == "mbn" && !is.null(attributes(ic)$bread)) {
     V0 <- V
     iI0 <- attributes(ic)$bread
     I0 <- Inverse(iI0)
     delta <- min(0.5, p / (K - p))
-    phi <- max(1, tr(I0%*%V0)*adj2/p)
-    V <- adj2*V0 + delta*phi*iI0
+    phi <- max(1, tr(I0 %*% V0) * adj2 / p)
+    V <- adj2 * V0 + delta * phi * iI0
   }
-  if (tolower(type[1])=="df") {
-    V <- adj0*V
+  if (tolower(type[1]) == "df") {
+    V <- adj0 * V
   }
-  if (tolower(type[1])=="df1") {
-    V <- adj1*V
+  if (tolower(type[1]) == "df1") {
+    V <- adj1 * V
   }
-  if (tolower(type[1])=="df2") {
-    V <- adj2*V
+  if (tolower(type[1]) == "df2") {
+    V <- adj2 * V
   }
-  if (tolower(type[1])%in%c("hc3", "hc4")) {
+  if (tolower(type[1]) %in% c("hc3", "hc4")) {
     ic <- cbind(ic)
-    S <- Inverse(crossprod(ic), tol=sqrt(.Machine$double.eps))
+    S <- Inverse(crossprod(ic), tol = sqrt(.Machine$double.eps))
     h_emp <- rowSums((ic %*% S) * ic) # empirical h, lev.
     n <- nrow(ic)
     ## h_emp <- pmin(h_emp, 0.99) * (n-1)/n  # Truncate leverage to prevent division by zero
-    if (tolower(type[1])=="hc3") {
+    if (tolower(type[1]) == "hc3") {
       ## phi_norm <- sqrt(rowSums(ic^2))
       ## ex_kurt <- (mean((phi_norm - mean(phi_norm))^4) / var(phi_norm)^2) - 3
       ## alpha <- exp(-max(0, ex_kurt) / 25)
@@ -54,10 +56,12 @@ small_sample_correction <- function(ic, type, var.adj) {
       adj <- 1 / (1 - h)
     } else {
       ## Cribari-Neto (2004)
-      delta <- pmin(1.5, n/ncol(ic) * h_emp)
+      delta <- pmin(1.5, n / ncol(ic) * h_emp)
       adj <- 1 / (1 - h_emp)**delta
     }
-    for (i in seq_len(NCOL(ic))) ic[, i] <- ic[, i] * adj
+    for (i in seq_len(NCOL(ic))) {
+      ic[, i] <- ic[, i] * adj
+    }
     V <- var_ic(ic)
   }
   return(V)
@@ -66,13 +70,13 @@ small_sample_correction <- function(ic, type, var.adj) {
 # construct coefficient matrix with confidence limits and two-sided p-values
 estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
   alpha <- 1 - level
-  alpha.str <- paste(c(alpha/2, 1 -alpha/2)*100, "", sep="%")
+  alpha.str <- paste(c(alpha / 2, 1 - alpha / 2) * 100, "", sep = "%")
   if (!is.null(df)) {
-    za <- qt(1-alpha/2, df=df)
-    pval <- 2*pt(abs((est-null) / se), df=df, lower.tail=FALSE)
+    za <- qt(1 - alpha / 2, df = df)
+    pval <- 2 * pt(abs((est - null) / se), df = df, lower.tail = FALSE)
   } else {
-    za <- qnorm(1-alpha/2)
-    pval <- 2*pnorm(abs((est-null)/ se), lower.tail=FALSE)
+    za <- qnorm(1 - alpha / 2)
+    pval <- 2 * pnorm(abs((est - null) / se), lower.tail = FALSE)
   }
   res <- cbind(est, se, est - za * se, est + za * se, pval)
   colnames(res) <- c("Estimate", "Std.Err", alpha.str, "P-value")
@@ -106,20 +110,26 @@ estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
 #' @param ... additional arguments passed to [contr].
 #' @seealso [estimate.default()]
 #' @export
-summary.estimate <- function(object,
-                             contrast,
-                             ...,
-                             null = 0,
-                             level = 0.95,
-                             type,
-                             var.adj = 0.25,
-                             df,
-                             transform = NULL,
-                             print = NULL) {
+summary.estimate <- function(
+  object,
+  contrast,
+  ...,
+  null = 0,
+  level = 0.95,
+  type,
+  var.adj = 0.25,
+  df,
+  transform = NULL,
+  print = NULL
+) {
   with_unique_warnings({
     p <- coef(object)
-    if (missing(df)) df <- object$df
-    if (missing(contrast)) contrast <- diag(1, nrow=length(p))
+    if (missing(df)) {
+      df <- object$df
+    }
+    if (missing(contrast)) {
+      contrast <- diag(1, nrow = length(p))
+    }
     correction <- !missing(type)
     if (correction) {
       if (is.null(object$IC)) {
@@ -128,7 +138,7 @@ summary.estimate <- function(object,
           "computed with IC=TRUE."
         )
       }
-      V <- small_sample_correction(IC(object), type=type, var.adj=var.adj)
+      V <- small_sample_correction(IC(object), type = type, var.adj = var.adj)
     } else {
       V <- vcov(object)
     }
@@ -136,9 +146,12 @@ summary.estimate <- function(object,
     ## corrections builds V from the influence function and may drop
     ## dimnames. Restore them from the original coef names so the
     ## summary output is consistent with the deprecated estimate() path.
-    if (!is.null(V) && is.null(dimnames(V)) &&
+    if (
+      !is.null(V) &&
+        is.null(dimnames(V)) &&
         !is.null(names(p)) &&
-        nrow(V) == length(p)) {
+        nrow(V) == length(p)
+    ) {
       dimnames(V) <- list(names(p), names(p))
     }
 
@@ -146,19 +159,23 @@ summary.estimate <- function(object,
       contrast <- contr(contrast, names(object$coef), ...)
     }
 
-    cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
+    cc0 <- estimate_coefmat(p, diag(V)**.5, df = df, level = level, null = null)
     rownames(cc0) <- rownames(parameter(object))
-    waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
+    waldtest <- compare(object, contrast = contrast, null = null, vcov = V)
     class(object) <- "list"
-    res <- c(object[c("coef", "coefmat", "vcov", "call",
-                      "ncluster", "model.index")], list(compare=waldtest))
+    res <- c(
+      object[c("coef", "coefmat", "vcov", "call", "ncluster", "model.index")],
+      list(compare = waldtest)
+    )
     res$coefmat <- cc0
     if (!is.null(transform)) {
-      res$coefmat[, c(1, 3, 4)] <- do.call(transform,
-                                           list(res$coefmat[, c(1, 3, 4)]))
+      res$coefmat[, c(1, 3, 4)] <- do.call(
+        transform,
+        list(res$coefmat[, c(1, 3, 4)])
+      )
       res$coefmat[, 2] <- NA
       res$vcov <- NULL
-      res$coef <- res$coefmat[, 1, drop=TRUE]
+      res$coef <- res$coefmat[, 1, drop = TRUE]
     }
     res$print <- print
     class(res) <- c("summary.estimate", "estimate")
@@ -172,7 +189,7 @@ print.summary.estimate <- function(x, ...) {
     x$print(x, ...)
     return(invisible(x))
   }
-  print.estimate(x, type=2L, ...)
+  print.estimate(x, type = 2L, ...)
   if (!is.null(attributes(x)$extra)) {
     print(attributes(x)$extra)
   }
@@ -186,7 +203,7 @@ coef.summary.estimate <- function(object, ...) {
 
 #' @export
 confint.summary.estimate <- function(object, ...) {
-  parameter(object)[, 3:4, drop=FALSE]
+  parameter(object)[, 3:4, drop = FALSE]
 }
 
 #' @export
@@ -230,7 +247,9 @@ vcov.summary.estimate <- function(object, ...) {
 #' @export
 c.summary.estimate <- function(...) {
   args <- list(...)
-  if (length(args) == 1) return(args[[1]])
+  if (length(args) == 1) {
+    return(args[[1]])
+  }
 
   mask <- sapply(args, function(x) inherits(x, "summary.estimate"))
   summary_objects <- args[mask]
@@ -251,19 +270,28 @@ c.summary.estimate <- function(...) {
     }
   }
 
-  res <- structure(list(
-    coefmat = Reduce(rbind, lapply(summary_objects, function(x) parameter(x))),
-    coef = as.vector(
-      Reduce(rbind, lapply(summary_objects, function(x) coef(x)))
+  res <- structure(
+    list(
+      coefmat = Reduce(
+        rbind,
+        lapply(summary_objects, function(x) parameter(x))
+      ),
+      coef = as.vector(
+        Reduce(rbind, lapply(summary_objects, function(x) coef(x)))
+      ),
+      vcov = cbind(Reduce(
+        function(...) blockdiag(..., pad = NA),
+        lapply(summary_objects, function(x) vcov(x))
+      )),
+      objects = summary_objects,
+      print = .print # consumed by print.summary.estimate
     ),
-    vcov = cbind(Reduce(function(...) blockdiag(..., pad=NA),
-                        lapply(summary_objects, function(x) vcov(x)))),
-    objects = summary_objects,
-    print = .print # consumed by print.summary.estimate
-  ), class = c("summary.estimate", "estimate")
+    class = c("summary.estimate", "estimate")
   )
   names(res$coef) <- rownames(res$coefmat)
-  if (length(extras) > 0) attr(res, "extra") <- extras
+  if (length(extras) > 0) {
+    attr(res, "extra") <- extras
+  }
 
   return(res)
 }

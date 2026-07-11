@@ -1,16 +1,19 @@
 ##' @export
-model.frame.lvmfit <- function(formula, all=FALSE,...) {
+model.frame.lvmfit <- function(formula, all = FALSE, ...) {
   mydata <- formula$data$model.frame
-  if (!is.data.frame(mydata) & !is.matrix(mydata))
+  if (!is.data.frame(mydata) & !is.matrix(mydata)) {
     return(mydata)
-  if (all) return(mydata)
-##  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0,exo=TRUE))]
-  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0))]
-  return( mydata[,c(manifest(formula),xfix),drop=FALSE] )
+  }
+  if (all) {
+    return(mydata)
+  }
+  ##  xfix <- colnames(mydata)[(colnames(mydata)%in%parlabels(formula$model0,exo=TRUE))]
+  xfix <- colnames(mydata)[(colnames(mydata) %in% parlabels(formula$model0))]
+  return(mydata[, c(manifest(formula), xfix), drop = FALSE])
 }
 
 ##' @export
-model.frame.multigroupfit <- function(formula,...) {
+model.frame.multigroupfit <- function(formula, ...) {
   mydata <- formula$model$data
   return(mydata)
 }

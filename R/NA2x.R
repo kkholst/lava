@@ -8,10 +8,14 @@
 ##' @return A vector with same dimension and class as \code{s}.
 ##' @author Klaus K. Holst
 ##' @keywords manip
-##' @examples##' 
+##' @examples##'
 ##' x2NA(1:10, 1:5)
 ##' NA2x(x2NA(c(1:10),5),5)##'
 ##' @export
-NA2x <- function(s,x=0) { sapply(s, function(y) ifelse(is.na(y),x,y) ) }
+NA2x <- function(s, x = 0) {
+  sapply(s, function(y) ifelse(is.na(y), x, y))
+}
 ##' @export
-x2NA <- function(s,x=0) { sapply(s, function(y) ifelse(y%in%x,NA,y) ) }
+x2NA <- function(s, x = 0) {
+  sapply(s, function(y) ifelse(y %in% x, NA, y))
+}

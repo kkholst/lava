@@ -3,24 +3,25 @@
 ## 1) Calculate min distances of observations to current clusters, D
 ## 2) Sample new cluster centre from distribution p(x) = D^2(x)/sum(D^2)
 ## Repeat 1-2 until all clusters are assigned
-kmpp <- function(y,k=2) {
-    Dist <- function(y1,y2) sum((y1-y2)^2)
-    n <- NROW(y)
-    ii <- numeric(k)
-    u <- runif(k)
-    ii[1] <- sample(n,1)
-    D <- matrix(0,n,k-1)
-    hasmets <- requireNamespace("mets", quietly=TRUE)
-    for (i in seq_len(k-1)+1) {
-        D[,i-1] <- apply(y,1,function(x) Dist(x,y[ii[i-1],]))
-        D2 <- apply(D[,seq(i-1),drop=FALSE],1,min)
-        pdist <- cumsum(D2/sum(D2))
-        if (hasmets)
-            ii[i] <- mets::fast.approx(pdist,u[i])
-        else
-            ii[i] <- which.min(abs(pdist-u[i]))
+kmpp <- function(y, k = 2) {
+  Dist <- function(y1, y2) sum((y1 - y2)^2)
+  n <- NROW(y)
+  ii <- numeric(k)
+  u <- runif(k)
+  ii[1] <- sample(n, 1)
+  D <- matrix(0, n, k - 1)
+  hasmets <- requireNamespace("mets", quietly = TRUE)
+  for (i in seq_len(k - 1) + 1) {
+    D[, i - 1] <- apply(y, 1, function(x) Dist(x, y[ii[i - 1], ]))
+    D2 <- apply(D[, seq(i - 1), drop = FALSE], 1, min)
+    pdist <- cumsum(D2 / sum(D2))
+    if (hasmets) {
+      ii[i] <- mets::fast.approx(pdist, u[i])
+    } else {
+      ii[i] <- which.min(abs(pdist - u[i]))
     }
-    return(ii)
+  }
+  return(ii)
 }
 
 
@@ -55,54 +56,76 @@ kmpp <- function(y,k=2) {
 ##'
 ##' ## Formula interface on a data.frame
 ##' wkm(~ Sepal.Length + Sepal.Width, data = iris, mu = 3)
-wkm <- function(x, mu, data, weights=rep(1,NROW(x)), iter.max=20, n.start=5, init="kmpp", ...) { ## Lloyd's algorithm
-    if (inherits(x, "formula")) x <- stats::model.matrix(x,data=data)
-    x <- cbind(x)
-    random.start <- TRUE
-    if (is.list(mu)) {
-        random.start <- FALSE
-        n.start=1
-        K <- length(mu)
-    } else {
-        K <- mu
+wkm <- function(
+  x,
+  mu,
+  data,
+  weights = rep(1, NROW(x)),
+  iter.max = 20,
+  n.start = 5,
+  init = "kmpp",
+  ...
+) {
+  ## Lloyd's algorithm
+  if (inherits(x, "formula")) {
+    x <- stats::model.matrix(x, data = data)
+  }
+  x <- cbind(x)
+  random.start <- TRUE
+  if (is.list(mu)) {
+    random.start <- FALSE
+    n.start <- 1
+    K <- length(mu)
+  } else {
+    K <- mu
+  }
+  sswmin <- Inf
+  ssws <- NULL
+  dmin <- NULL
+  cl0 <- rep(1, NROW(x))
+  for (k in seq(n.start)) {
+    if (random.start) {
+      if (!exists(init)) {
+        ## Random select centres
+        idx <- sample(NROW(x), K)
+      } else {
+        idx <- do.call(init, list(x, K))
+      }
+      mu <- lapply(idx, function(i) cbind(x)[i, , drop = TRUE])
     }
-    sswmin <- Inf
-    ssws <- NULL
-    dmin <- NULL
-    cl0 <- rep(1,NROW(x))
-    for (k in seq(n.start)) {
-        if (random.start) {
-            if (!exists(init)) { ## Random select centres
-                idx <- sample(NROW(x),K)
-            } else {
-                idx <- do.call(init, list(x, K))
-            }
-            mu <- lapply(idx, function(i) cbind(x)[i,,drop=TRUE])
+    for (i in seq(iter.max)) {
+      d <- cbind(Reduce(
+        cbind,
+        lapply(mu, function(m) weights * colSums((t(x) - m) * (t(x) - m)))
+      ))
+      cl <- apply(d, 1, which.min)
+      for (j in seq_along(mu)) {
+        idx <- which(cl == j)
+        if (length(idx)) {
+          mu[[j]] <- colSums(cbind(apply(
+            x[idx, , drop = FALSE],
+            2,
+            function(x) x * weights[idx]
+          ))) /
+            sum(weights[idx])
         }
-        for (i in seq(iter.max)) {
-            d <- cbind(Reduce(cbind,lapply(mu, function(m) weights*colSums((t(x)-m)*(t(x)-m)))))
-            cl <- apply(d,1,which.min)
-            for (j in seq_along(mu)) {
-                idx <- which(cl==j)
-                if (length(idx)) {
-                    mu[[j]] <- colSums(cbind(apply(x[idx,,drop=FALSE],2,
-                                            function(x) x*weights[idx])))/sum(weights[idx])
-                }
-
-            }
-            if (sum(cl0-cl)==0L) break; # No change in assigment
-        }
-        ssw <- sum(d[cbind(seq(NROW(d)),cl)])
-        ssws <- c(ssws,ssw)
-        if (ssw < sswmin) {
-            sswmin <- ssw
-            clmin <- cl
-            mumin <- mu
-            dmin <- d
-        }
+      }
+      if (sum(cl0 - cl) == 0L) break # No change in assigment
     }
-    mu <- structure(mumin,class="by",dim=K,dimnames=list(class=seq(K)))
-    withinclusterss <- as.vector(by(dmin[cbind(seq(NROW(dmin)),clmin)],clmin,sum))
-    return(list(cluster=clmin,
-           center=mu, ssw=withinclusterss))
+    ssw <- sum(d[cbind(seq(NROW(d)), cl)])
+    ssws <- c(ssws, ssw)
+    if (ssw < sswmin) {
+      sswmin <- ssw
+      clmin <- cl
+      mumin <- mu
+      dmin <- d
+    }
+  }
+  mu <- structure(mumin, class = "by", dim = K, dimnames = list(class = seq(K)))
+  withinclusterss <- as.vector(by(
+    dmin[cbind(seq(NROW(dmin)), clmin)],
+    clmin,
+    sum
+  ))
+  return(list(cluster = clmin, center = mu, ssw = withinclusterss))
 }

@@ -123,71 +123,77 @@
 ##' @param formula Formula (see details)
 ##' @param eventName Event names
 ##' @param \dots Additional arguments to lower levels functions
-eventTime <- function(object,formula,eventName="status",...) {
-    if (missing(formula)) return(object$attributes$eventHistory)
-    if (inherits(eventName,"formula")) eventName <- all.vars(eventName)
-    timeName <- all.vars(update.formula(formula,"~1"))
-    if (length(timeName)==0){
-        timeName <- "observedTime"
-        rhs <- paste(deparse(formula[[2]]), collapse = " ")
-    }else{
-        rhs <- paste(deparse(formula[[3]]), collapse = " ")
-    }
-    ## rhs <- tolower(rhs)
-    latentTimes <- strsplit(rhs,"[(,)]")[[1]]
-    if (latentTimes[1]!="min")
-        stop(paste("Formula ",formula," does not have the required form, ",
-                   "e.g. ~min(T1=1,T2=2,C=0), see (examples in) help(eventTime)."))
-    latentTimes <- latentTimes[-1]
-    NT <- length(latentTimes)
-    events <- vector(NT,mode="character")
-    for (lt in seq_len(NT)){
-        tmp <- strsplit(latentTimes[lt],"=")[[1]]
-        stopifnot(length(tmp) %in% c(1,2))
-        if (length(tmp)==1){
-            events[lt] <- as.character(lt)
-            latentTimes[lt] <- tmp
-        }
-        else{
-            events[lt] <- tmp[2]
-            latentTimes[lt] <- tmp[1]
-        }
-    }
-    events <- gsub(" ","",events)
-    eventnum <- char2num(events)
-    if (all(!is.na(eventnum))) {
-        events <- eventnum
+eventTime <- function(object, formula, eventName = "status", ...) {
+  if (missing(formula)) {
+    return(object$attributes$eventHistory)
+  }
+  if (inherits(eventName, "formula")) {
+    eventName <- all.vars(eventName)
+  }
+  timeName <- all.vars(update.formula(formula, "~1"))
+  if (length(timeName) == 0) {
+    timeName <- "observedTime"
+    rhs <- paste(deparse(formula[[2]]), collapse = " ")
+  } else {
+    rhs <- paste(deparse(formula[[3]]), collapse = " ")
+  }
+  ## rhs <- tolower(rhs)
+  latentTimes <- strsplit(rhs, "[(,)]")[[1]]
+  if (latentTimes[1] != "min") {
+    stop(paste(
+      "Formula ",
+      formula,
+      " does not have the required form, ",
+      "e.g. ~min(T1=1,T2=2,C=0), see (examples in) help(eventTime)."
+    ))
+  }
+  latentTimes <- latentTimes[-1]
+  NT <- length(latentTimes)
+  events <- vector(NT, mode = "character")
+  for (lt in seq_len(NT)) {
+    tmp <- strsplit(latentTimes[lt], "=")[[1]]
+    stopifnot(length(tmp) %in% c(1, 2))
+    if (length(tmp) == 1) {
+      events[lt] <- as.character(lt)
+      latentTimes[lt] <- tmp
     } else {
-        events <- gsub("\"","",events)
+      events[lt] <- tmp[2]
+      latentTimes[lt] <- tmp[1]
+    }
+  }
+  events <- gsub(" ", "", events)
+  eventnum <- char2num(events)
+  if (all(!is.na(eventnum))) {
+    events <- eventnum
+  } else {
+    events <- gsub("\"", "", events)
+  }
+
+  addvar(object) <- timeName
+  eventTime <- list(
+    names = c(timeName, eventName),
+    latentTimes = gsub(" ", "", latentTimes),
+    events = events
+  )
+
+  transform(object, y = eventTime$names, x = eventTime$latentTimes) <-
+    function(z) {
+      idx <- apply(z, 1, which.min)
+      cbind(z[cbind(seq(NROW(z)), idx)], eventTime$events[idx])
     }
 
-    addvar(object) <- timeName
-    eventTime <- list(names=c(timeName,eventName),
-                      latentTimes=gsub(" ","",latentTimes),
-                      events=events
-                      )
-
-    transform(object,
-              y=eventTime$names,
-              x=eventTime$latentTimes) <-
-        function(z) {
-            idx <- apply(z,1,which.min)
-            cbind(z[cbind(seq(NROW(z)),idx)],
-                  eventTime$events[idx])
-        }
-
-    if (is.null(object$attributes$eventHistory)) {
-        object$attributes$eventHistory <- list(eventTime)
-        names(object$attributes$eventHistory) <- timeName
-    } else {
-        object$attributes$eventHistory[[timeName]] <- eventTime
-    }
-    return(object)
+  if (is.null(object$attributes$eventHistory)) {
+    object$attributes$eventHistory <- list(eventTime)
+    names(object$attributes$eventHistory) <- timeName
+  } else {
+    object$attributes$eventHistory[[timeName]] <- eventTime
+  }
+  return(object)
 }
 
 ##' @export
-"eventTime<-" <- function(object,...,value) {
-    eventTime(object,value,...)
+"eventTime<-" <- function(object, ..., value) {
+  eventTime(object, value, ...)
 }
 
 ## addhook("color_eventHistory","color.hooks")
@@ -195,62 +201,87 @@ eventTime <- function(object,formula,eventName="status",...) {
 ##   return(list(vars=intersect(subset,binary(x)),col="indianred1"))
 ## }
 
-addhook("plothook_eventHistory","plot.post.hooks")
-plothook_eventHistory <- function(x,...) {
-    eh <- x$attributes$eventHistory
-    for (f in eh) {
-        x <- regression(x,to=f$names[1],from=f$latentTimes)
-        latent(x) <- f$latentTimes
-        kill(x) <- f$names[2]
-    }
-    timedep <- x$attributes$timedep
-    for (i in seq_len(length(timedep))) {
-        x <- regression(x,to=names(timedep)[i],from=timedep[[i]])
-    }
-    return(x)
+addhook("plothook_eventHistory", "plot.post.hooks")
+plothook_eventHistory <- function(x, ...) {
+  eh <- x$attributes$eventHistory
+  for (f in eh) {
+    x <- regression(x, to = f$names[1], from = f$latentTimes)
+    latent(x) <- f$latentTimes
+    kill(x) <- f$names[2]
+  }
+  timedep <- x$attributes$timedep
+  for (i in seq_len(length(timedep))) {
+    x <- regression(x, to = names(timedep)[i], from = timedep[[i]])
+  }
+  return(x)
 }
 
-addhook("colorhook_eventHistory","color.hooks")
-colorhook_eventHistory <- function(x,subset=vars(x),...) {
-    return(list(vars=intersect(subset,unlist(x$attributes$timedep)),col="lightblue4"))
+addhook("colorhook_eventHistory", "color.hooks")
+colorhook_eventHistory <- function(x, subset = vars(x), ...) {
+  return(list(
+    vars = intersect(subset, unlist(x$attributes$timedep)),
+    col = "lightblue4"
+  ))
 }
 
-addhook("print_eventHistory","print.hooks")
-print_eventHistory <- function(x,...) {
-    eh <- x$attributes$eventHistory
-    timedep <- x$attributes$timedep
-    if (is.null(eh) & is.null(timedep)) return(NULL)
-    ehnames <- unlist(lapply(eh,function(x) x$names))
-    cat("Event History Model\n")
-    ff <- formula(x,char=TRUE,all=TRUE)
-    R <- c()
-    for (f in ff) {
-        oneline <- as.character(f);
-        y <- gsub(" ","",strsplit(f,"~")[[1]][1])
-        if (!(y %in% ehnames)) {
-            col1 <- as.character(oneline)
-            D <- attributes(distribution(x)[[y]])$family
-            col2 <- "Normal"
-            if (!is.null(D$family)) col2 <- paste0(D$family)
-            if (!is.null(D$link)) col2 <- paste0(col2,"(",D$link,")")
-            if (!is.null(D$par)) col2 <- paste0(col2,"(",paste(D$par,collapse=","),")")
-            R <- rbind(R,c(col1,"  ",col2))
-        }
+addhook("print_eventHistory", "print.hooks")
+print_eventHistory <- function(x, ...) {
+  eh <- x$attributes$eventHistory
+  timedep <- x$attributes$timedep
+  if (is.null(eh) & is.null(timedep)) {
+    return(NULL)
+  }
+  ehnames <- unlist(lapply(eh, function(x) x$names))
+  cat("Event History Model\n")
+  ff <- formula(x, char = TRUE, all = TRUE)
+  R <- c()
+  for (f in ff) {
+    oneline <- as.character(f)
+    y <- gsub(" ", "", strsplit(f, "~")[[1]][1])
+    if (!(y %in% ehnames)) {
+      col1 <- as.character(oneline)
+      D <- attributes(distribution(x)[[y]])$family
+      col2 <- "Normal"
+      if (!is.null(D$family)) {
+        col2 <- paste0(D$family)
+      }
+      if (!is.null(D$link)) {
+        col2 <- paste0(col2, "(", D$link, ")")
+      }
+      if (!is.null(D$par)) {
+        col2 <- paste0(col2, "(", paste(D$par, collapse = ","), ")")
+      }
+      R <- rbind(R, c(col1, "  ", col2))
     }
-    for (y in names(eh)) {
-        col1 <- paste0(y, " = min(",paste(eh[[y]]$latentTimes,collapse=","),")")
-        eh[[y]]$names[2]
-        col2 <- paste0(eh[[y]]$names[2], " := {",paste(eh[[y]]$events,collapse=","),"}")
-        R <- rbind(R,c(col1,"",col2))
-    }
-    rownames(R) <- rep("",nrow(R)); colnames(R) <- rep("",ncol(R))
-    print(R,quote=FALSE,...)
-    cat("\n")
-    for (i in seq_len(length(timedep))) {
-        cat("Time-dependent covariates:\n\n")
-        cat(paste("",names(timedep)[i],"~", paste(timedep[[i]],collapse="+")),"\n")
-    }
-    TRUE
+  }
+  for (y in names(eh)) {
+    col1 <- paste0(
+      y,
+      " = min(",
+      paste(eh[[y]]$latentTimes, collapse = ","),
+      ")"
+    )
+    eh[[y]]$names[2]
+    col2 <- paste0(
+      eh[[y]]$names[2],
+      " := {",
+      paste(eh[[y]]$events, collapse = ","),
+      "}"
+    )
+    R <- rbind(R, c(col1, "", col2))
+  }
+  rownames(R) <- rep("", nrow(R))
+  colnames(R) <- rep("", ncol(R))
+  print(R, quote = FALSE, ...)
+  cat("\n")
+  for (i in seq_len(length(timedep))) {
+    cat("Time-dependent covariates:\n\n")
+    cat(
+      paste("", names(timedep)[i], "~", paste(timedep[[i]], collapse = "+")),
+      "\n"
+    )
+  }
+  TRUE
 }
 
 ## addhook("simulate_eventHistory","sim.hooks")
@@ -284,146 +315,161 @@ print_eventHistory <- function(x,...) {
 ##   }
 ## }
 
-
-
 ##' @export
-coxWeibull.lvm <- function(scale=1/100,shape=2, param=1) {
-    ## proportional hazard (Cox) parametrization.
-    ##
-    ## Here we parametrize the Weibull distribution
-    ## (without covariates) as
-    ##
-    ## hazard(t) = scale * shape * t^(shape-1)
-    ##
-    ## The linear predictor (LP) enters like this
-    ##
-    ## hazard(t) = = scale * exp(LP) * shape * t^(shape-1)
-    ##
-    ## Thus, we simulate
-    ##
-    ## T = (scale^{-1} * exp(-LP) * -log(U))^{shape-1})
-    ##
-    ## The hazard is:
-    ## - rising if shape > 1
-    ## - declining if shape <1
-    ## - constant if shape=1
-    ##
-    ## scale = exp(b0 + b1*X)
-    ##
-    ## An alternative parametrization, which can be found in ABGK and
-    ## Kalbfleisch&Prentice, can be obtained with \code{param=2}. This leads to
-    ## hazard(t) = scale*shape*(scale*t)^shape, and cum.hazard(t) = (scale*t)^shape.
-    ## \code{param=3} gives the same parametrization as \code{rweibull}, i.e.,
-    ## scale[rweibull] := 1/scale^shape
-    if (tolower(param)%in%c("2","kp","abgk"))
-       scale <- scale^(shape)
-    if (tolower(param)%in%c("3","r","rweibull")) {
-       scale <- scale^(-shape)
-    }
-    f <- function(n,mu=0,Scale=scale,Shape=shape,...) {
-        (- log(runif(n)) / (Scale * exp(mu)))^(1/Shape)
-    }
-    ff <- formals(f)
-    expr <- "(- log(runif(n)) / (Scale * exp(mu)))^{1/Shape}"
-    if (inherits(scale,"formula")) scale <- all.vars(scale)[1]
-    if (is.character(scale)) {
-        names(ff)[3] <- scale
-        expr <- gsub("Scale",scale,expr)
-    }
-    if (inherits(shape,"formula")) shape <- all.vars(shape)[1]
-    if (is.character(shape)) {
-        names(ff)[4] <- shape
-        expr <- gsub("Shape",shape,expr)
-    }
-    formals(f) <- ff
-    e <- parse(text=expr)
-    body(f) <- as.call(c(as.name("{"), e))
-    attr(f,"family") <- list(family="weibull",
-                             regression="PH",
-                             par=c(shape=shape,scale=scale))
-    return(f)
+coxWeibull.lvm <- function(scale = 1 / 100, shape = 2, param = 1) {
+  ## proportional hazard (Cox) parametrization.
+  ##
+  ## Here we parametrize the Weibull distribution
+  ## (without covariates) as
+  ##
+  ## hazard(t) = scale * shape * t^(shape-1)
+  ##
+  ## The linear predictor (LP) enters like this
+  ##
+  ## hazard(t) = = scale * exp(LP) * shape * t^(shape-1)
+  ##
+  ## Thus, we simulate
+  ##
+  ## T = (scale^{-1} * exp(-LP) * -log(U))^{shape-1})
+  ##
+  ## The hazard is:
+  ## - rising if shape > 1
+  ## - declining if shape <1
+  ## - constant if shape=1
+  ##
+  ## scale = exp(b0 + b1*X)
+  ##
+  ## An alternative parametrization, which can be found in ABGK and
+  ## Kalbfleisch&Prentice, can be obtained with \code{param=2}. This leads to
+  ## hazard(t) = scale*shape*(scale*t)^shape, and cum.hazard(t) = (scale*t)^shape.
+  ## \code{param=3} gives the same parametrization as \code{rweibull}, i.e.,
+  ## scale[rweibull] := 1/scale^shape
+  if (tolower(param) %in% c("2", "kp", "abgk")) {
+    scale <- scale^(shape)
+  }
+  if (tolower(param) %in% c("3", "r", "rweibull")) {
+    scale <- scale^(-shape)
+  }
+  f <- function(n, mu = 0, Scale = scale, Shape = shape, ...) {
+    (-log(runif(n)) / (Scale * exp(mu)))^(1 / Shape)
+  }
+  ff <- formals(f)
+  expr <- "(- log(runif(n)) / (Scale * exp(mu)))^{1/Shape}"
+  if (inherits(scale, "formula")) {
+    scale <- all.vars(scale)[1]
+  }
+  if (is.character(scale)) {
+    names(ff)[3] <- scale
+    expr <- gsub("Scale", scale, expr)
+  }
+  if (inherits(shape, "formula")) {
+    shape <- all.vars(shape)[1]
+  }
+  if (is.character(shape)) {
+    names(ff)[4] <- shape
+    expr <- gsub("Shape", shape, expr)
+  }
+  formals(f) <- ff
+  e <- parse(text = expr)
+  body(f) <- as.call(c(as.name("{"), e))
+  attr(f, "family") <- list(
+    family = "weibull",
+    regression = "PH",
+    par = c(shape = shape, scale = scale)
+  )
+  return(f)
 }
 
 
 ##' @export
-coxExponential.lvm <- function(scale=1,rate=1,timecut){
-    if (missing(timecut)) {
-        return(coxWeibull.lvm(shape=1, rate))
-    }
-    if (NROW(rate)>length(timecut))
-        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
-    par <- paste(timecut,rate,sep=":")
-    if (is.matrix(rate)) par <- "..."
-    timecut <- c(timecut,Inf)
-    f <- function(n,mu=0,...) {
-        Ai <- function() {
-            vals <- matrix(0,ncol=length(timecut)-1,nrow=n)
-            ival <- numeric(n)
-            if (is.matrix(rate)) {
-                mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
-                rate <- rep(1,length(timecut)-1)
-            }
-            for (i in seq(length(timecut)-1)) {
-                u <- -log(runif(n)) ##rexp(n,1)
-                if (NCOL(mu)>1) {
-                    vals[,i] <-  timecut[i] + u*exp(-mu[,1]-mu[,i+1])/(rate[i])
-                } else {
-                    vals[,i] <-  timecut[i] + u*exp(-mu)/(rate[i])
-                }
-                idx <- which(vals[,i]<=timecut[i+1] & ival==0)
-                ival[idx] <- vals[idx,i]
-            }
-            ival
+coxExponential.lvm <- function(scale = 1, rate = 1, timecut) {
+  if (missing(timecut)) {
+    return(coxWeibull.lvm(shape = 1, rate))
+  }
+  if (NROW(rate) > length(timecut)) {
+    stop(
+      "Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)"
+    )
+  }
+  par <- paste(timecut, rate, sep = ":")
+  if (is.matrix(rate)) {
+    par <- "..."
+  }
+  timecut <- c(timecut, Inf)
+  f <- function(n, mu = 0, ...) {
+    Ai <- function() {
+      vals <- matrix(0, ncol = length(timecut) - 1, nrow = n)
+      ival <- numeric(n)
+      if (is.matrix(rate)) {
+        mu <- cbind(mu[, 1], cbind(1, as.matrix(mu[, -1])) %*% t(rate))
+        rate <- rep(1, length(timecut) - 1)
+      }
+      for (i in seq(length(timecut) - 1)) {
+        u <- -log(runif(n)) ##rexp(n,1)
+        if (NCOL(mu) > 1) {
+          vals[, i] <- timecut[i] + u * exp(-mu[, 1] - mu[, i + 1]) / (rate[i])
+        } else {
+          vals[, i] <- timecut[i] + u * exp(-mu) / (rate[i])
         }
-        Ai()
+        idx <- which(vals[, i] <= timecut[i + 1] & ival == 0)
+        ival[idx] <- vals[idx, i]
+      }
+      ival
     }
-    attributes(f)$family <- list(family="CoxExponential",par=par)
-    return(f)
+    Ai()
+  }
+  attributes(f)$family <- list(family = "CoxExponential", par = par)
+  return(f)
 }
 
 ##' @export
-aalenExponential.lvm <- function(rate=1,timecut=0){
-    if (missing(timecut)==1) {
-        return(coxWeibull.lvm(shape=1,rate))
-    }
+aalenExponential.lvm <- function(rate = 1, timecut = 0) {
+  if (missing(timecut) == 1) {
+    return(coxWeibull.lvm(shape = 1, rate))
+  }
 
-    if (length(rate)>length(timecut))
-        stop("Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)")
-    par <- paste(timecut,rate,sep=":")
-    if (is.matrix(rate)) par <- "..."
-    timecut <- c(timecut,Inf)
-    f <- function(n,mu,...) {
-        Ai <- function() {
-            vals <- matrix(0,ncol=length(timecut)-1,nrow=n)
-            ival <- numeric(n)
-            if (is.matrix(rate)) {
-                mu <- cbind(mu[,1],cbind(1,as.matrix(mu[,-1]))%*%t(rate))
-                rate <- rep(1,length(timecut)-1)
-            }
-            for (i in seq(length(timecut)-1)) {
-                u <- -log(runif(n)) ##rexp(n,1)
-                if (NCOL(mu)>1) {
-                    vals[,i] <-  timecut[i] + u/(rate[i]+mu[,1]+mu[,i+1])
-                } else {
-                    vals[,i] <-  timecut[i] + u/(rate[i]+mu)
-                }
-                idx <- which(vals[,i]<=timecut[i+1] & ival==0)
-                ival[idx] <- vals[idx,i]
-            }
-            ival
+  if (length(rate) > length(timecut)) {
+    stop(
+      "Number of time-intervals (cuts) does not agree with number of rate parameters (beta0)"
+    )
+  }
+  par <- paste(timecut, rate, sep = ":")
+  if (is.matrix(rate)) {
+    par <- "..."
+  }
+  timecut <- c(timecut, Inf)
+  f <- function(n, mu, ...) {
+    Ai <- function() {
+      vals <- matrix(0, ncol = length(timecut) - 1, nrow = n)
+      ival <- numeric(n)
+      if (is.matrix(rate)) {
+        mu <- cbind(mu[, 1], cbind(1, as.matrix(mu[, -1])) %*% t(rate))
+        rate <- rep(1, length(timecut) - 1)
+      }
+      for (i in seq(length(timecut) - 1)) {
+        u <- -log(runif(n)) ##rexp(n,1)
+        if (NCOL(mu) > 1) {
+          vals[, i] <- timecut[i] + u / (rate[i] + mu[, 1] + mu[, i + 1])
+        } else {
+          vals[, i] <- timecut[i] + u / (rate[i] + mu)
         }
-        Ai()
+        idx <- which(vals[, i] <= timecut[i + 1] & ival == 0)
+        ival[idx] <- vals[idx, i]
+      }
+      ival
     }
-    attributes(f)$family <- list(family="aalenExponential",par=par)
-    return(f)
+    Ai()
+  }
+  attributes(f)$family <- list(family = "aalenExponential", par = par)
+  return(f)
 }
 
 
 ##' @export
-coxGompertz.lvm <- function(shape=1,scale) {
-    f <- function(n,mu,var,...) {
-        (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
-    }
-    attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
-    return(f)
+coxGompertz.lvm <- function(shape = 1, scale) {
+  f <- function(n, mu, var, ...) {
+    (1 / shape) * log(1 - (shape / scale) * (log(runif(n)) * exp(-mu)))
+  }
+  attr(f, "family") <- list(family = "gompertz", par = c(shape, scale))
+  return(f)
 }

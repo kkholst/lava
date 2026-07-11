@@ -8,19 +8,24 @@
 ##' @param ... Additional arguments
 ##' @author Klaus Holst
 ##' @export
-vec <- function(x,matrix=FALSE,sep=".",...) {
-    if (is.vector(x) && !is.list(x)) {
-        res <- x
-    } else if (is.list(x)) {
-        res <- stats::setNames(unlist(x),names(x))
+vec <- function(x, matrix = FALSE, sep = ".", ...) {
+  if (is.vector(x) && !is.list(x)) {
+    res <- x
+  } else if (is.list(x)) {
+    res <- stats::setNames(unlist(x), names(x))
+  } else {
+    if (is.matrix(x) && is.null(rownames(x))) {
+      nn <- colnames(x)
     } else {
-        if (is.matrix(x) && is.null(rownames(x))) {
-            nn <- colnames(x)
-        } else {
-            nn <- apply(expand.grid(dimnames(x)),1,function(x) paste(x,collapse=sep))
-        }
-        res <- as.vector(x); names(res) <- nn
+      nn <- apply(expand.grid(dimnames(x)), 1, function(x) {
+        paste(x, collapse = sep)
+      })
     }
-    if (matrix) return(cbind(res))
-    return(res)
+    res <- as.vector(x)
+    names(res) <- nn
+  }
+  if (matrix) {
+    return(cbind(res))
+  }
+  return(res)
 }

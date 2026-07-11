@@ -58,28 +58,39 @@
 ##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,5,Inf))
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, family=poisson)))
 ##' }
-timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
-    if (missing(timecut)) stop("'timecut' needed")
-    ##if (inherits(formula,"formula"))
-    ff <- getoutcome(formula)
-    simvars <- attributes(ff)$x
-    if (is.null(object$attributes$simvar)) {
-        object$attributes$simvar <- list(simvars)
-        names(object$attributes$simvar) <- ff
-        object$attributes$timedep <- object$attributes$simvar
-    } else {
-        object$attributes$simvar[[ff]] <- simvars
-        object$attributes$timedep[[ff]] <- simvars
-    }
-    if (missing(rate)) rate <- rep(1,length(timecut))
-    
-    args <- list(timecut=timecut,rate=rate,...)
-    covariance(object,ff) <- 1
-    distribution(object,ff) <- do.call(type,args)
-    return(object)
+timedep <- function(
+  object,
+  formula,
+  rate,
+  timecut,
+  type = "coxExponential.lvm",
+  ...
+) {
+  if (missing(timecut)) {
+    stop("'timecut' needed")
+  }
+  ##if (inherits(formula,"formula"))
+  ff <- getoutcome(formula)
+  simvars <- attributes(ff)$x
+  if (is.null(object$attributes$simvar)) {
+    object$attributes$simvar <- list(simvars)
+    names(object$attributes$simvar) <- ff
+    object$attributes$timedep <- object$attributes$simvar
+  } else {
+    object$attributes$simvar[[ff]] <- simvars
+    object$attributes$timedep[[ff]] <- simvars
+  }
+  if (missing(rate)) {
+    rate <- rep(1, length(timecut))
+  }
+
+  args <- list(timecut = timecut, rate = rate, ...)
+  covariance(object, ff) <- 1
+  distribution(object, ff) <- do.call(type, args)
+  return(object)
 }
 
 ##' @export
-"timedep<-" <- function(object,...,value) {
-    timedep(object,value,...)
+"timedep<-" <- function(object, ..., value) {
+  timedep(object, value, ...)
 }

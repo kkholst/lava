@@ -8,7 +8,7 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
     a = rbinom(n, 1, 0.5),
     x = rnorm(n)
   )
-  data$x_dup <- data$x  # exact collinearity with `x`
+  data$x_dup <- data$x # exact collinearity with `x`
   data$y <- 1 + data$a + data$x + rnorm(n)
 
   m_ref <- glm(y ~ a * x, data = data)
@@ -29,13 +29,11 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   score_ref <- score.glm(m_ref, indiv = TRUE)
   score_na <- suppressWarnings(score.glm(m, indiv = TRUE))
 
-  expect_equal(score_ref, score_na[,!is.na(coef(m))],
-               check.attributes = FALSE)
+  expect_equal(score_ref, score_na[, !is.na(coef(m))], check.attributes = FALSE)
 
   expect_equal(
     attr(score_ref, "bread"),
-    attr(score_na, "bread")[idx_m_ref,
-                            idx_m_ref]
+    attr(score_na, "bread")[idx_m_ref, idx_m_ref]
   )
 
   expect_true(
@@ -65,11 +63,8 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
 
   ## logL
   ll <- suppressWarnings(lava:::logL.glm(m))
-  expect_equal(ll, logLik(m_ref),
-    check.attributes = FALSE
-  )
+  expect_equal(ll, logLik(m_ref), check.attributes = FALSE)
 
   ## user should get a warning with overparametrized models
   expect_warning(estimate(m))
-
 })

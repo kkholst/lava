@@ -12,8 +12,7 @@ iid <- function(x, ...) UseMethod("iid")
 iid.default <- function(x, ...) {
   res <- IC(x, ...)
   if (!is.null(attr(res, "bread"))) {
-    attr(res, "bread") <- attr(res, "bread")/NROW(res)
+    attr(res, "bread") <- attr(res, "bread") / NROW(res)
   }
-  return(res/NROW(res))
+  return(res / NROW(res))
 }
-

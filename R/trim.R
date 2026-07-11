@@ -5,9 +5,11 @@
 ##' @param \dots additional arguments to lower level functions
 ##' @author Klaus K. Holst
 ##' @export
-trim <- function(x,all=FALSE,...) {
-    ## y <- gsub("^ .", "", x) # remove leading white space
-    ## y <- gsub(". $", "", x) # remove trailing white space
-    if (!all) return(gsub("^\\s+|\\s+$", "", x))
-    return(gsub("\\s","",x))
+trim <- function(x, all = FALSE, ...) {
+  ## y <- gsub("^ .", "", x) # remove leading white space
+  ## y <- gsub(". $", "", x) # remove trailing white space
+  if (!all) {
+    return(gsub("^\\s+|\\s+$", "", x))
+  }
+  return(gsub("\\s", "", x))
 }

@@ -3,34 +3,36 @@ library(testthat)
 context("nonlinear lvm")
 
 ## simulated data
-f <- function(x) - 0.25*x^2
-m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
-functional(m, eta2~eta1) <- f
-d <- sim(m,1000,seed=1,latent=TRUE)
+f <- function(x) -0.25 * x^2
+m <- lvm(x1 + x2 + x3 ~ eta1, y1 + y2 + y3 ~ eta2, latent = ~ eta1 + eta2)
+functional(m, eta2 ~ eta1) <- f
+d <- sim(m, 1000, seed = 1, latent = TRUE)
 
 ## Setup two-stage model
-m1 <- lvm(x1+x2+x3~eta1,latent=~eta1)
-m2 <- lvm(y1+y2+y3~eta2,latent=~eta2)
-mm <- twostage(m1,m2,formula=eta2~eta1,type="spline")
+m1 <- lvm(x1 + x2 + x3 ~ eta1, latent = ~eta1)
+m2 <- lvm(y1 + y2 + y3 ~ eta2, latent = ~eta2)
+mm <- twostage(m1, m2, formula = eta2 ~ eta1, type = "spline")
 
 test_that("twostage", {
-  nonlinear(m2,type="quadratic") <- eta2~eta1
-  a <- twostage(m1,m2,data=d)
-  expect_true(abs(coef(a)["eta2~eta1_1"])<0.1)
-  expect_true(abs(coef(a)["eta2~eta1_2"]+0.25)<0.1)
+  nonlinear(m2, type = "quadratic") <- eta2 ~ eta1
+  a <- twostage(m1, m2, data = d)
+  expect_true(abs(coef(a)["eta2~eta1_1"]) < 0.1)
+  expect_true(abs(coef(a)["eta2~eta1_2"] + 0.25) < 0.1)
 })
 
 test_that("cv", {
-  m <- list(lm(Sepal.Length~1, data=iris),
-           lm(Sepal.Length~Species, data=iris),
-           lm(Sepal.Length~Species * Petal.Length, data=iris))
-  x <- cv(m, rep=2, nfolds=5, data=iris)
-  expect_equivalent(dim(x$cv), c(2,5,3,1))
-  rmse.1 <- mean(x$cv[,,1,1])
-  rmse.2 <- mean(x$cv[,,2,1])
-  rmse.3 <- mean(x$cv[,,3,1])
-  expect_true(rmse.1>rmse.2)
-  expect_true(rmse.2>rmse.3)
+  m <- list(
+    lm(Sepal.Length ~ 1, data = iris),
+    lm(Sepal.Length ~ Species, data = iris),
+    lm(Sepal.Length ~ Species * Petal.Length, data = iris)
+  )
+  x <- cv(m, rep = 2, nfolds = 5, data = iris)
+  expect_equivalent(dim(x$cv), c(2, 5, 3, 1))
+  rmse.1 <- mean(x$cv[,, 1, 1])
+  rmse.2 <- mean(x$cv[,, 2, 1])
+  rmse.3 <- mean(x$cv[,, 3, 1])
+  expect_true(rmse.1 > rmse.2)
+  expect_true(rmse.2 > rmse.3)
 })
 
 ## testthat("twostage cv", {

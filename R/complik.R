@@ -29,127 +29,163 @@
 ##' if (requireNamespace("mets", quietly=TRUE)) {
 ##'    e1 <- complik(m,d,control=list(trace=1),type="all")
 ##' }
-complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
-             messages=0, estimator="normal", quick=FALSE, ...) {
-
-    y <- setdiff(endogenous(x),latent(x))
-    binsurv <- rep(FALSE,length(y))
-    for (i in seq_along(y)) {
-        z <- try(data[,y[i]],silent=TRUE)
-        ## binsurv[i] <- is.Surv(z) | (is.factor(z) && length(levels(z))==2)
-        if (!inherits(z,"try-error"))
-            binsurv[i] <- inherits(z,"Surv") | (is.factor(z))
+complik <- function(
+  x,
+  data,
+  k = 2,
+  type = c("all", "nearest"),
+  pairlist,
+  messages = 0,
+  estimator = "normal",
+  quick = FALSE,
+  ...
+) {
+  y <- setdiff(endogenous(x), latent(x))
+  binsurv <- rep(FALSE, length(y))
+  for (i in seq_along(y)) {
+    z <- try(data[, y[i]], silent = TRUE)
+    ## binsurv[i] <- is.Surv(z) | (is.factor(z) && length(levels(z))==2)
+    if (!inherits(z, "try-error")) {
+      binsurv[i] <- inherits(z, "Surv") | (is.factor(z))
     }
+  }
 
-    ord <- ordinal(x)
-    binsurv <- unique(c(y[binsurv],ord))
-    if (!missing(pairlist)) {
-        binsurvpos <- which(colnames(data)%in%endogenous(x))
+  ord <- ordinal(x)
+  binsurv <- unique(c(y[binsurv], ord))
+  if (!missing(pairlist)) {
+    binsurvpos <- which(colnames(data) %in% endogenous(x))
+  } else {
+    binsurvpos <- which(colnames(data) %in% binsurv)
+  }
+  if (missing(pairlist)) {
+    if (type[1] == "all") {
+      mypar <- combn(length(binsurv), k) ## all pairs (or multiplets), k=2: k*(k-1)/2
     } else {
-        binsurvpos <- which(colnames(data)%in%binsurv)
+      mypar <- sapply(0:(length(binsurv) - k), function(x) x + 1:k)
     }
-    if (missing(pairlist)) {
-        if (type[1]=="all") {
-            mypar <- combn(length(binsurv),k) ## all pairs (or multiplets), k=2: k*(k-1)/2
-        } else {
-            mypar <- sapply(0:(length(binsurv)-k), function(x) x+1:k)
+  } else {
+    mypar <- pairlist
+  }
+
+  if (is.matrix(mypar)) {
+    mypar0 <- mypar
+    mypar <- c()
+    for (i in seq(ncol(mypar0))) {
+      mypar <- c(mypar, list(mypar0[, i]))
+    }
+  }
+  nblocks <- length(mypar)
+
+  mydata0 <- data[,, drop = FALSE]
+  mydata <- as.data.frame(matrix(NA, nblocks * nrow(data), ncol = ncol(data)))
+  names(mydata) <- names(mydata0)
+  for (i in seq_len(ncol(mydata))) {
+    if (is.factor(data[, i])) {
+      mydata[, i] <- factor(mydata[, i], levels = levels(mydata0[, i]))
+    }
+    if (survival::is.Surv(data[, i])) {
+      S <- data[, i]
+      for (j in 2:nblocks) {
+        S <- rbind(S, data[, i])
+      }
+      S[] <- NA
+      mydata[, i] <- S
+    }
+  }
+  for (ii in 1:nblocks) {
+    data0 <- data
+    for (i in binsurvpos[-mypar[[ii]]]) {
+      if (survival::is.Surv(data[, i])) {
+        S <- data0[, i]
+        S[] <- NA
+        data0[, i] <- S
+      } else {
+        data0[, i] <- NA
+        if (is.factor(data[, i])) {
+          data0[, i] <- factor(data0[, i], levels = levels(data[, i]))
         }
+      }
+    }
+    mydata[seq_len(nrow(data)) + (ii - 1) * nrow(data), ] <- data0
+  }
+  suppressWarnings(
+    e0 <- estimate(
+      x,
+      data = mydata,
+      estimator = estimator,
+      missing = TRUE,
+      messages = messages,
+      hessian = !quick,
+      ...
+    )
+  )
+  e0$n <- nrow(data)
+  e0$eigenvalues <- rep(1, nrow(e0$coef))
+  e0$coef[, 2:4] <- NA
+  if (!quick) {
+    S <- score(e0, indiv = TRUE)
+    nd <- nrow(data)
+    block1 <- which((1:nd) %in% (rownames(S)))
+    blocks <- sapply(seq_len(nblocks), function(x) {
+      seq_along(block1) + length(block1) * (x - 1)
+    })
+    if (nblocks == 1) {
+      Siid <- S
     } else {
-        mypar <- pairlist
+      Siid <- matrix(0, nrow = length(block1), ncol = ncol(S))
+      for (j in seq_len(ncol(blocks))) {
+        Siid <- Siid + S[blocks[, j], ]
+      }
     }
-
-    if (is.matrix(mypar)) {
-        mypar0 <- mypar; mypar <- c()
-        for (i in seq(ncol(mypar0)))
-            mypar <- c(mypar, list(mypar0[,i]))
-    }
-    nblocks <- length(mypar)
-
-    mydata0 <- data[,,drop=FALSE]
-    mydata <-  as.data.frame(matrix(NA, nblocks*nrow(data), ncol=ncol(data)))
-    names(mydata) <- names(mydata0)
-    for (i in seq_len(ncol(mydata))) {
-        if (is.factor(data[,i])) {
-            mydata[,i] <- factor(mydata[,i],levels=levels(mydata0[,i]))
-        }
-        if (survival::is.Surv(data[,i])) {
-            S <- data[,i]
-            for (j in 2:nblocks) S <- rbind(S,data[,i])
-            S[] <- NA
-            mydata[,i] <- S
-        }
-    }
-    for (ii in 1:nblocks) {
-        data0 <- data;
-        for (i in binsurvpos[-mypar[[ii]]]) {
-            if (survival::is.Surv(data[,i])) {
-                S <- data0[,i]
-                S[] <- NA
-                data0[,i] <- S
-            } else {
-                data0[,i] <- NA
-                if (is.factor(data[,i])) data0[,i] <- factor(data0[,i],levels=levels(data[,i]))
-            }
-        }
-        mydata[seq_len(nrow(data))+(ii-1)*nrow(data),] <- data0
-    }
-    suppressWarnings(e0 <- estimate(x,data=mydata,estimator=estimator,missing=TRUE,messages=messages,
-                                    hessian=!quick,
-                                    ...))
-    e0$n <- nrow(data)
-    e0$eigenvalues <- rep(1,nrow(e0$coef))
-    e0$coef[,2:4] <- NA
-    if (!quick) {
-        S <- score(e0,indiv=TRUE)
-        nd <- nrow(data)
-        block1 <- which((1:nd)%in%(rownames(S)))
-        blocks <- sapply(seq_len(nblocks), function(x) seq_along(block1)+length(block1)*(x-1))
-        if (nblocks==1) {
-            Siid <- S
-        } else {
-            Siid <- matrix(0,nrow=length(block1),ncol=ncol(S))
-            for (j in seq_len(ncol(blocks))) {
-                Siid <- Siid+S[blocks[,j],]
-            }
-        }
-        ##B <- solve(information(e0, type="hessian"))
-        D <- numDeriv::jacobian(function(p) score(e0, p=p), coef(e0), method=lava.options()$Dmethod)
-        B <- -Inverse(D)*NROW(Siid)
-        A <- crossprod(Siid)/NROW(Siid)
-        e0$bread <- B
-        e0$meat <- A
-        e0$iidscore <- Siid
-        e0$blocks <- blocks
-        BA <- B%*%A
-        eig <- eigen(BA)$values
-        e0$eigenvalues <- eig
-        e0$vcov <- (BA%*%B)/NROW(Siid)
-        cc <- e0$coef;
-        cc[,2] <- sqrt(diag(e0$vcov))
-        cc[,3] <- cc[,1]/cc[,2]; cc[,4] <- 2*(1-pnorm(abs(cc[,3])))
-        e0$coef <- cc
-    }
-    class(e0) <- c("estimate.complik",class(e0))
-    return(e0)
+    ##B <- solve(information(e0, type="hessian"))
+    D <- numDeriv::jacobian(
+      function(p) score(e0, p = p),
+      coef(e0),
+      method = lava.options()$Dmethod
+    )
+    B <- -Inverse(D) * NROW(Siid)
+    A <- crossprod(Siid) / NROW(Siid)
+    e0$bread <- B
+    e0$meat <- A
+    e0$iidscore <- Siid
+    e0$blocks <- blocks
+    BA <- B %*% A
+    eig <- eigen(BA)$values
+    e0$eigenvalues <- eig
+    e0$vcov <- (BA %*% B) / NROW(Siid)
+    cc <- e0$coef
+    cc[, 2] <- sqrt(diag(e0$vcov))
+    cc[, 3] <- cc[, 1] / cc[, 2]
+    cc[, 4] <- 2 * (1 - pnorm(abs(cc[, 3])))
+    e0$coef <- cc
+  }
+  class(e0) <- c("estimate.complik", class(e0))
+  return(e0)
 }
 
 ##' @export
-score.estimate.complik <- function(x,indiv=FALSE,...) {
-    if (!indiv)
-        return(colSums(x$iidscore))
-    x$iidscore
+score.estimate.complik <- function(x, indiv = FALSE, ...) {
+  if (!indiv) {
+    return(colSums(x$iidscore))
+  }
+  x$iidscore
 }
 
 ##' @export
-IC.estimate.complik <- function(x,...) {
-    IC.default(x,bread=x$bread,...)
+IC.estimate.complik <- function(x, ...) {
+  IC.default(x, bread = x$bread, ...)
 }
 
 ##' @export
-logLik.estimate.complik <- function(object,...) {
-    with(object, structure(opt$objective,
-              nall=n,
-              nobs=n,
-              df=sum(eigenvalues),
-              class="logLik"))
+logLik.estimate.complik <- function(object, ...) {
+  with(
+    object,
+    structure(
+      opt$objective,
+      nall = n,
+      nobs = n,
+      df = sum(eigenvalues),
+      class = "logLik"
+    )
+  )
 }

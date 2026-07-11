@@ -1,8 +1,8 @@
 ##' @export
-logit <- function(p) log(p/(1-p))
+logit <- function(p) log(p / (1 - p))
 
 ##' @export
-expit <- function(z) 1/(1+exp(-z))
+expit <- function(z) 1 / (1 + exp(-z))
 
 ##' @export
 tigol <- expit
@@ -27,179 +27,262 @@ tigol <- expit
 ##'                      dimnames=list(rater=c("no","yes"),gold=c("no","yes"))))
 ##' diagtest(M,exact=TRUE)
 ##' @export
-diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsin","pseudoscore","exact"),...) {
-    if (!inherits(table,c("table","data.frame","matrix","multinomial")))
-        stop("Expecting a table or data.frame.")
-    if (is.table(table)) {
-        lev <- dimnames(table)[[2]]
-    }
-    if (inherits(table,"multinomial")) {
-        lev <- dimnames(table$P)[[2]]
-    }
-    if (!is.table(table) & (is.matrix(table) || is.data.frame(table))) {
-        if (is.factor(table[,2])) {
-            lev <- levels(table[,2])
-        } else
-            lev <- unique(table[,2])
-    }
-    if (is.character(positive)) {
-        positive <- match(positive,lev)
-    }
-    if (!(positive%in%c(1,2))) stop("Expecting and index of 1 or 2.")
-    negative <- positive%%2+1L
-    if (!is.null(confint) && confint[1]=="exact") exact <- TRUE
-    if (exact) {
-        if (!is.table(table) && (is.matrix(table) || is.data.frame(table))) {
-            table <- base::table(table[,c(1,2),drop=FALSE])
-        }
-        if (!is.table(table) || nrow(table)!=2 || ncol(table)!=2) stop("2x2 table expected")
-        n <- sum(table)
-        nc <- colSums(table)
-        nr <- rowSums(table)
-        test <- TRUE
-        if (is.na(p0)) {
-            test <- FALSE
-            p0 <- 0.5
-        }
-        ## Prevalence
-        p1 <- with(stats::binom.test(nc[positive],n,p=p0),c(estimate,conf.int,p.value))
-        ## Test marginal
-        p2 <- with(stats::binom.test(nr[positive],n,p=p0),c(estimate,conf.int,p.value))
-        ## Sensitivity/Specificity
-        sens <- with(stats::binom.test(table[positive,positive],nc[positive],p=p0),c(estimate,conf.int,p.value))
-        spec <- with(stats::binom.test(table[negative,negative],nc[negative],p=p0),c(estimate,conf.int,p.value))
-        ## PPV,NPV
-        ppv <- with(stats::binom.test(table[positive,positive],nr[positive],p=p0),c(estimate,conf.int,p.value))
-        npv <- with(stats::binom.test(table[negative,negative],nr[negative],p=p0),c(estimate,conf.int,p.value))
-        ## Accuracy
-        acc <- with(stats::binom.test(table[positive,positive]+table[negative,negative],n,p=p0),c(estimate,conf.int,p.value))
-        ## Symmetry (McNemar):
-        ##   number of discordant pairs under null: b~bin(b+c,0.5)
-        sym <- with(stats::binom.test(table[positive,negative],table[positive,negative]+table[negative,positive],p=0.5),c(estimate,conf.int,p.value))
-        coefmat <- rbind(Prevalence=p1,
-                         Test=p2,
-                         Sensitivity=sens,
-                         Specificity=spec,
-                         PositivePredictiveValue=ppv,
-                         NegativePredictiveValue=npv,
-                         Accuracy=acc,
-                         Homogeneity=sym)
-        if (!test) coefmat[seq(nrow(coefmat)-1),4] <- NA
-        coefmat <- cbind(coefmat[,1,drop=FALSE],NA,coefmat[,-1,drop=FALSE])
-        colnames(coefmat) <- c("Estimate","Std.Err","2.5%","97.5%","P-value")
-        res <- list(table=table, prop.table=table/sum(table),
-                    coefmat=coefmat)
+diagtest <- function(
+  table,
+  positive = 2,
+  exact = FALSE,
+  p0 = NA,
+  confint = c("logit", "arcsin", "pseudoscore", "exact"),
+  ...
+) {
+  if (!inherits(table, c("table", "data.frame", "matrix", "multinomial"))) {
+    stop("Expecting a table or data.frame.")
+  }
+  if (is.table(table)) {
+    lev <- dimnames(table)[[2]]
+  }
+  if (inherits(table, "multinomial")) {
+    lev <- dimnames(table$P)[[2]]
+  }
+  if (!is.table(table) & (is.matrix(table) || is.data.frame(table))) {
+    if (is.factor(table[, 2])) {
+      lev <- levels(table[, 2])
     } else {
-        if (inherits(table,"table"))
-            M <- multinomial(table)
-        else {
-            if (inherits(table,"multinomial")) {
-                M <- table
-                table <- round(M$P*nrow(M$data))
-            } else {
-                M <- multinomial(table[,1:2],...)
-                table <- base::table(table)
-            }
-        }
-        calc_diag <- function(p,...) {
-            P <- matrix(p[1:4],2)
-            p1 <- sum(P[,positive])
-            p2 <- sum(P[positive,])
-            res <- c(Prevalence=p1,  ##(p[1]+p[2]),
-                     Test=p2,        ##(p[1]+p[3]),
-                     Sensitivity=P[positive,positive]/p1,     ## p[1]/(p[1]+p[2]), # Prob test + | given (true) disease (True positive rate)
-                     Specificity=P[negative,negative]/(1-p1), ## p[4]/(1-p[1]-p[2]), # Prob test - | given no disease (True negative rate)
-                     PositivePredictiveValue=P[positive,positive]/p2,     ## p[1]/(p[1]+p[3]), # Prob disease | test +
-                     NegativePredictiveValue=P[negative,negative]/(1-p2), ## p[4]/(1-p[1]-p[3]), # Prob disease free | test -
-                     Accuracy=(P[1,1]+P[2,2])/sum(P),
-                     Homogeneity=P[negative,positive]-P[positive,negative]
-                     )
-            if (!is.null(confint)) {
-                if (tolower(confint[1])=="logit") {
-                    res[seq(length(res)-1)] <- logit(res[seq(length(res)-1)])
-                } else if (tolower(confint[1])=="arcsin") {
-                    res[seq(length(res)-1)] <- asin(sqrt(res[seq(length(res)-1)]))
-                }
-            }
-            return(res)
-        }
-
-        names(dimnames(table)) <- paste0(c("Test:","Outcome:"),names(dimnames(table)))
-        btransform <- NULL
-        if (!is.null(confint)) {
-            if (tolower(confint[1])=="logit") {
-                btransform <- function(x) {
-                    rbind(expit(x[seq(nrow(x)-1),,drop=FALSE]),
-                          x[nrow(x),,drop=FALSE])
-                }
-            } else if (tolower(confint[1])=="pseudoscore") {
-                ## TODO, agresti-ryu, biometrika 2010
-            } else if (tolower(confint[1])=="arcsin")  {
-                btransform <- function(x) {
-                    rbind(sin(x[seq(nrow(x)-1),,drop=FALSE])^2,
-                          x[nrow(x),,drop=FALSE])
-                }
-            }
-        }
-        res <- suppressWarnings(
-          summary(estimate(M,calc_diag),
-                  null=c(rep(p0,7),0),transform=btransform,...)
-        )
+      lev <- unique(table[, 2])
     }
-    CI <- confint[1]
-    if (exact) CI <- "exact"
-    if (is.null(CI)) CI <- "wald"
-    class(res) <- NULL
-    res <- structure(c(res,
-                       list(table=table, prop.table=table/sum(table),
-                            confint=CI,
-                            positive=positive,
-                            negative=negative,
-                            levels=dimnames(table)
-                            )),
-                     class=c("diagtest","estimate"))
-    res$call <- match.call()
-    rownames(res$coefmat) <- gsub("\\[|\\]","",rownames(res$coefmat))
-    names(res$coef) <- rownames(res$coefmat)
-    return(res)
+  }
+  if (is.character(positive)) {
+    positive <- match(positive, lev)
+  }
+  if (!(positive %in% c(1, 2))) {
+    stop("Expecting and index of 1 or 2.")
+  }
+  negative <- positive %% 2 + 1L
+  if (!is.null(confint) && confint[1] == "exact") {
+    exact <- TRUE
+  }
+  if (exact) {
+    if (!is.table(table) && (is.matrix(table) || is.data.frame(table))) {
+      table <- base::table(table[, c(1, 2), drop = FALSE])
+    }
+    if (!is.table(table) || nrow(table) != 2 || ncol(table) != 2) {
+      stop("2x2 table expected")
+    }
+    n <- sum(table)
+    nc <- colSums(table)
+    nr <- rowSums(table)
+    test <- TRUE
+    if (is.na(p0)) {
+      test <- FALSE
+      p0 <- 0.5
+    }
+    ## Prevalence
+    p1 <- with(
+      stats::binom.test(nc[positive], n, p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    ## Test marginal
+    p2 <- with(
+      stats::binom.test(nr[positive], n, p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    ## Sensitivity/Specificity
+    sens <- with(
+      stats::binom.test(table[positive, positive], nc[positive], p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    spec <- with(
+      stats::binom.test(table[negative, negative], nc[negative], p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    ## PPV,NPV
+    ppv <- with(
+      stats::binom.test(table[positive, positive], nr[positive], p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    npv <- with(
+      stats::binom.test(table[negative, negative], nr[negative], p = p0),
+      c(estimate, conf.int, p.value)
+    )
+    ## Accuracy
+    acc <- with(
+      stats::binom.test(
+        table[positive, positive] + table[negative, negative],
+        n,
+        p = p0
+      ),
+      c(estimate, conf.int, p.value)
+    )
+    ## Symmetry (McNemar):
+    ##   number of discordant pairs under null: b~bin(b+c,0.5)
+    sym <- with(
+      stats::binom.test(
+        table[positive, negative],
+        table[positive, negative] + table[negative, positive],
+        p = 0.5
+      ),
+      c(estimate, conf.int, p.value)
+    )
+    coefmat <- rbind(
+      Prevalence = p1,
+      Test = p2,
+      Sensitivity = sens,
+      Specificity = spec,
+      PositivePredictiveValue = ppv,
+      NegativePredictiveValue = npv,
+      Accuracy = acc,
+      Homogeneity = sym
+    )
+    if (!test) {
+      coefmat[seq(nrow(coefmat) - 1), 4] <- NA
+    }
+    coefmat <- cbind(
+      coefmat[, 1, drop = FALSE],
+      NA,
+      coefmat[, -1, drop = FALSE]
+    )
+    colnames(coefmat) <- c("Estimate", "Std.Err", "2.5%", "97.5%", "P-value")
+    res <- list(
+      table = table,
+      prop.table = table / sum(table),
+      coefmat = coefmat
+    )
+  } else {
+    if (inherits(table, "table")) {
+      M <- multinomial(table)
+    } else {
+      if (inherits(table, "multinomial")) {
+        M <- table
+        table <- round(M$P * nrow(M$data))
+      } else {
+        M <- multinomial(table[, 1:2], ...)
+        table <- base::table(table)
+      }
+    }
+    calc_diag <- function(p, ...) {
+      P <- matrix(p[1:4], 2)
+      p1 <- sum(P[, positive])
+      p2 <- sum(P[positive, ])
+      res <- c(
+        Prevalence = p1, ##(p[1]+p[2]),
+        Test = p2, ##(p[1]+p[3]),
+        Sensitivity = P[positive, positive] / p1, ## p[1]/(p[1]+p[2]), # Prob test + | given (true) disease (True positive rate)
+        Specificity = P[negative, negative] / (1 - p1), ## p[4]/(1-p[1]-p[2]), # Prob test - | given no disease (True negative rate)
+        PositivePredictiveValue = P[positive, positive] / p2, ## p[1]/(p[1]+p[3]), # Prob disease | test +
+        NegativePredictiveValue = P[negative, negative] / (1 - p2), ## p[4]/(1-p[1]-p[3]), # Prob disease free | test -
+        Accuracy = (P[1, 1] + P[2, 2]) / sum(P),
+        Homogeneity = P[negative, positive] - P[positive, negative]
+      )
+      if (!is.null(confint)) {
+        if (tolower(confint[1]) == "logit") {
+          res[seq(length(res) - 1)] <- logit(res[seq(length(res) - 1)])
+        } else if (tolower(confint[1]) == "arcsin") {
+          res[seq(length(res) - 1)] <- asin(sqrt(res[seq(length(res) - 1)]))
+        }
+      }
+      return(res)
+    }
+
+    names(dimnames(table)) <- paste0(
+      c("Test:", "Outcome:"),
+      names(dimnames(table))
+    )
+    btransform <- NULL
+    if (!is.null(confint)) {
+      if (tolower(confint[1]) == "logit") {
+        btransform <- function(x) {
+          rbind(
+            expit(x[seq(nrow(x) - 1), , drop = FALSE]),
+            x[nrow(x), , drop = FALSE]
+          )
+        }
+      } else if (tolower(confint[1]) == "pseudoscore") {
+        ## TODO, agresti-ryu, biometrika 2010
+      } else if (tolower(confint[1]) == "arcsin") {
+        btransform <- function(x) {
+          rbind(
+            sin(x[seq(nrow(x) - 1), , drop = FALSE])^2,
+            x[nrow(x), , drop = FALSE]
+          )
+        }
+      }
+    }
+    res <- suppressWarnings(
+      summary(
+        estimate(M, calc_diag),
+        null = c(rep(p0, 7), 0),
+        transform = btransform,
+        ...
+      )
+    )
+  }
+  CI <- confint[1]
+  if (exact) {
+    CI <- "exact"
+  }
+  if (is.null(CI)) {
+    CI <- "wald"
+  }
+  class(res) <- NULL
+  res <- structure(
+    c(
+      res,
+      list(
+        table = table,
+        prop.table = table / sum(table),
+        confint = CI,
+        positive = positive,
+        negative = negative,
+        levels = dimnames(table)
+      )
+    ),
+    class = c("diagtest", "estimate")
+  )
+  res$call <- match.call()
+  rownames(res$coefmat) <- gsub("\\[|\\]", "", rownames(res$coefmat))
+  names(res$coef) <- rownames(res$coefmat)
+  return(res)
 }
 
 ##' @export
-print.diagtest <- function(x,...) {
-    cat("Call: ")
-    print(x$call)
-    cat("Confidence limits: ", x$confint, "\n", sep="")
-    print(cli::rule())
-    printmany(x$table, x$prop.table,nspace=2, ...)
-    cat("\nPositive outcome: '",
-        x$levels[[2]][x$positive], "'\n",
-      sep = ""
-    )
-    print(cli::rule())
-    printCoefmat(x$coefmat[, c(-2)], na.print="", ...)
-    print(cli::rule())
+print.diagtest <- function(x, ...) {
+  cat("Call: ")
+  print(x$call)
+  cat("Confidence limits: ", x$confint, "\n", sep = "")
+  print(cli::rule())
+  printmany(x$table, x$prop.table, nspace = 2, ...)
+  cat("\nPositive outcome: '", x$levels[[2]][x$positive], "'\n", sep = "")
+  print(cli::rule())
+  printCoefmat(x$coefmat[, c(-2)], na.print = "", ...)
+  print(cli::rule())
+  help <- rbind(
+    c("Prevalence", "Pr(outcome+)"),
+    c("Test:", "Pr( test+ )\n"),
+    c("Sensitivity (TPR):", "Pr(test+ | outcome+)"),
+    c("Specificity (TNR):", "Pr(test- | outcome-)"),
+    c("PPV (Precision):", "Pr(outcome+ | test+)"),
+    c("NPV:", "Pr(outcome- | test-)"),
+    c("Accuracy:", "Pr(correct classification)")
+  )
+  if (x$confint == "exact") {
     help <- rbind(
-      c("Prevalence", "Pr(outcome+)"),
-      c("Test:", "Pr( test+ )\n"),
-      c("Sensitivity (TPR):", "Pr(test+ | outcome+)"),
-      c("Specificity (TNR):", "Pr(test- | outcome-)"),
-      c("PPV (Precision):", "Pr(outcome+ | test+)"),
-      c("NPV:", "Pr(outcome- | test-)"),
-      c("Accuracy:","Pr(correct classification)")
+      help,
+      c("Homogeneity/Sym.:", "Pr(outcome+, test- | discordant), H0: p=0.5")
     )
-    if (x$confint == "exact") {
-      help <- rbind(help, c("Homogeneity/Sym.:", "Pr(outcome+, test- | discordant), H0: p=0.5"))
-    } else {
-      help <- rbind(help, c("Homogeneity/Sym.:", "H0: Pr(outcome+) - Pr(test+) = 0"))
-    }
-    colnames(help) <- rep("", ncol(help))
-    rownames(help) <- rep("", nrow(help))
-    print(help, quote=FALSE)
-    cat("\n")
+  } else {
+    help <- rbind(
+      help,
+      c("Homogeneity/Sym.:", "H0: Pr(outcome+) - Pr(test+) = 0")
+    )
+  }
+  colnames(help) <- rep("", ncol(help))
+  rownames(help) <- rep("", nrow(help))
+  print(help, quote = FALSE)
+  cat("\n")
 }
 
 ##' @export
 summary.diagtest <- function(object, ...) {
-    object[c("IC", "print", "id", "compare")] <- NULL
-    return(object)
+  object[c("IC", "print", "id", "compare")] <- NULL
+  return(object)
 }

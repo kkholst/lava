@@ -35,7 +35,6 @@ test_that("estimate(..., level=) emits deprecation warning", {
     class = "deprecatedWarning"
   )
   expect_true(all(confint(s0) != confint(ss)))
-
 })
 
 

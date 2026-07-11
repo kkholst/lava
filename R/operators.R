@@ -20,22 +20,22 @@
 ##' f <- log %++% exp
 ##' f(2)
 ##' @export
-`%++%` <- function(x,y) UseMethod("%++%",y)
+`%++%` <- function(x, y) UseMethod("%++%", y)
 
 ## ##' @export
 ## `%+%` <- function(x,y) UseMethod("%+%",y)
 
 ##' @export
-`%++%.default` <- function(x,y) paste0(x,y)
+`%++%.default` <- function(x, y) paste0(x, y)
 
 ##' @export
-`%++%.character` <- function(x,y) paste0(x,y)
+`%++%.character` <- function(x, y) paste0(x, y)
 
 ##' @export
-`%++%.matrix` <- function(x,y) blockdiag(x,y)
+`%++%.matrix` <- function(x, y) blockdiag(x, y)
 
 ##' @export
-`%++%.function` <- function(x,y) function(...) x(y(...))
+`%++%.function` <- function(x, y) function(...) x(y(...))
 
 
 notin <- Negate(get("%in%"))
@@ -56,7 +56,7 @@ notin <- Negate(get("%in%"))
 ##' 1:10 %ni% c(1,5,10)
 ##'
 ##' @export
-"%ni%" <- function(x,y) notin(x,y)
+"%ni%" <- function(x, y) notin(x, y)
 
 ## function(x,y) {
 ##   is.na(match(x,y))
@@ -64,14 +64,22 @@ notin <- Negate(get("%in%"))
 
 ##' @export
 "%in.open%" <- function(x, y) {
-  if (length(y) == 1) y <- c(y, y)
-  if (length(y) != 2 || !is.numeric(y)) stop("rhs should be a range (numeric vector of length 2)")
+  if (length(y) == 1) {
+    y <- c(y, y)
+  }
+  if (length(y) != 2 || !is.numeric(y)) {
+    stop("rhs should be a range (numeric vector of length 2)")
+  }
   x > y[1] & x < y[2]
 }
 
 ##' @export
-"%in.closed%" <- function(x,y) {
-  if (length(y) == 1) y <- c(y, y)
-  if (length(y) != 2 || !is.numeric(y)) stop("rhs should be a range (numeric vector of length 2)")
+"%in.closed%" <- function(x, y) {
+  if (length(y) == 1) {
+    y <- c(y, y)
+  }
+  if (length(y) != 2 || !is.numeric(y)) {
+    stop("rhs should be a range (numeric vector of length 2)")
+  }
   x >= y[1] & x <= y[2]
 }

@@ -1,14 +1,13 @@
 pzmax <- function(alpha, S) {
   ## P(Zmax > z) Family wise error rate, Zmax = max |Z_i|
-  if (!requireNamespace("mets",quietly=TRUE))
+  if (!requireNamespace("mets", quietly = TRUE)) {
     stop("'mets' package required")
+  }
   k <- nrow(S)
-  zz <- qnorm(1-alpha/2)
-  unlist(lapply(zz, function(z)
-    1 - mets::pmvn(lower=rep(-z, k),
-                   upper=rep(z, k),
-                   sigma=cov2cor(S))
-    ))
+  zz <- qnorm(1 - alpha / 2)
+  unlist(lapply(zz, function(z) {
+    1 - mets::pmvn(lower = rep(-z, k), upper = rep(z, k), sigma = cov2cor(S))
+  }))
 }
 
 ##' @export
@@ -84,8 +83,9 @@ closed_testing <- function(object, test = test_wald, ...) {
     stop("`estimate` or `summary.estimate` object needed")
   }
   idx <- seq_along(coef(object))
-  if (length(idx) > 15)
+  if (length(idx) > 15) {
     stop("Too many tests. Consider some other adjustment method")
+  }
   combs <- pvals <- c()
   for (i in seq_along(idx)) {
     co <- combn(idx, i)
@@ -119,7 +119,8 @@ closed_testing <- function(object, test = test_wald, ...) {
       hypotheses = combs,
       raw.pval = pvals,
       estimate = coef(object),
-      p.value = pmax),
+      p.value = pmax
+    ),
     class = "test_adj"
   )
 }
@@ -161,12 +162,9 @@ summary.test_adj <- function(object, ...) {
 }
 
 #' @export
-test_wald <- function(par,
-                      vcov,
-                      null = NULL,
-                      index = NULL) {
+test_wald <- function(par, vcov, null = NULL, index = NULL) {
   if (!inherits(par, c("estimate", "summary.estimate"))) {
-    par <- lava::estimate(par=par, vcov=vcov)
+    par <- lava::estimate(par = par, vcov = vcov)
   }
   np <- length(coef(par))
   if (is.null(null)) {
@@ -175,9 +173,11 @@ test_wald <- function(par,
   null <- rep(null, length.out = np)
   B <- diag(1, nrow = np)
   if (!is.null(index)) {
-    if (length(coef(par)) < length(index)) stop("wrong `index`")
+    if (length(coef(par)) < length(index)) {
+      stop("wrong `index`")
+    }
     null <- null[index]
-    B <- B[index, , drop=FALSE]
+    B <- B[index, , drop = FALSE]
   }
-  lava::compare(par, contrast = B, null=null)
+  lava::compare(par, contrast = B, null = null)
 }

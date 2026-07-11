@@ -40,37 +40,60 @@ modelsearch <- function(x, k = 1, dir = "forward", type = "all", ...) {
   return(res)
 }
 
-backwardeliminate <- function(x,
-                              keep = NULL,
-                              pthres = 0.05,
-                              AIC = FALSE,
-                              messages = 0,
-                              missing = FALSE,
-                              intercepts = FALSE,
-                              maxsteps = Inf,
-                              information = "E",
-                              data,
-                              ...) {
+backwardeliminate <- function(
+  x,
+  keep = NULL,
+  pthres = 0.05,
+  AIC = FALSE,
+  messages = 0,
+  missing = FALSE,
+  intercepts = FALSE,
+  maxsteps = Inf,
+  information = "E",
+  data,
+  ...
+) {
   if (inherits(x, "lvm")) {
     M <- x
   } else {
     M <- Model(x)
   }
-  if (missing(data)) data <- model.frame(x)
+  if (missing(data)) {
+    data <- model.frame(x)
+  }
 
   dots <- list(...)
   if (is.null(dots$control$start)) {
-    p0 <- estimate(M, data, quick = TRUE, messages = messages, missing = FALSE, ...)
+    p0 <- estimate(
+      M,
+      data,
+      quick = TRUE,
+      messages = messages,
+      missing = FALSE,
+      ...
+    )
     dots$control <- c(dots$control, list(start = p0, information = "E"))
   }
 
   ff <- function() {
     ii <- grep("m", names(coef(M)))
     vv <- variances(M, mean = TRUE)
-    args <- c(list(x = M, data = data, missing = missing, quick = TRUE, messages = messages), dots)
+    args <- c(
+      list(
+        x = M,
+        data = data,
+        missing = missing,
+        quick = TRUE,
+        messages = messages
+      ),
+      dots
+    )
     cc <- do.call("estimate", args)
     if (is.numeric(cc)) {
-      I0 <- information(M, p = cc, data = data, type = information)[-c(ii, vv), -c(ii, vv)]
+      I0 <- information(M, p = cc, data = data, type = information)[
+        -c(ii, vv),
+        -c(ii, vv)
+      ]
       cc0 <- cc[-c(ii, vv)]
       res <- (pnorm(abs(cc0 / sqrt(diag(solve(I0)))), lower.tail = FALSE)) * 2
       attributes(res)$coef <- cc
@@ -89,20 +112,30 @@ backwardeliminate <- function(x,
     p <- ff()
     ordp <- order(p, decreasing = TRUE)
     curp <- p[ordp[1]]
-    if (curp < pthres) break
+    if (curp < pthres) {
+      break
+    }
     dots$control$start <- attributes(p)$coef[-ordp[1]]
-    if (messages) message("Removed: ", names(curp), " p-value: ", round(curp, 3))
+    if (messages) {
+      message("Removed: ", names(curp), " p-value: ", round(curp, 3))
+    }
     ## var1 <- unlist(strsplit(names(curp),lava.options()$symbol[1]))
-    nn <- strsplit(names(curp), paste0(lava.options()$symbol, collapse = "|"))[[1]]
+    nn <- strsplit(names(curp), paste0(lava.options()$symbol, collapse = "|"))[[
+      1
+    ]]
     cancel(M) <- nn
   }
 
-  if (messages) message("")
+  if (messages) {
+    message("")
+  }
   return(M)
 }
 
 backwardsearch <- function(x, k = 1, ...) {
-  if (!inherits(x, "lvmfit")) stop("Expected an object of class 'lvmfit'.")
+  if (!inherits(x, "lvmfit")) {
+    stop("Expected an object of class 'lvmfit'.")
+  }
   p <- pars(x)
   cur <- Model(x)
   pp <- modelPar(cur, p)
@@ -113,8 +146,7 @@ backwardsearch <- function(x, k = 1, ...) {
   parnotvar <- setdiff(seq_along(p1), variances(Model(x))) ## We don't want to perform tests on the boundary of the parameter space
   freecomb <- utils::combn(parnotvar, k)
 
-  for (i in seq_len(ncol(freecomb)))
-  {
+  for (i in seq_len(ncol(freecomb))) {
     cc0 <- coef(cur, mean = FALSE, messages = 0, symbol = lava.options()$symbol)
     ii <- freecomb[, i]
     p0 <- p1
@@ -138,7 +170,11 @@ backwardsearch <- function(x, k = 1, ...) {
   PM <- matrix(ncol = 3, nrow = 0)
   for (i in seq_len(nrow(Tests))) {
     if (!is.na(res$test[i, 1])) {
-      newrow <- c(formatC(res$test[i, 1]), formatC(res$test[i, 2]), paste(res$var[[i]], collapse = ", "))
+      newrow <- c(
+        formatC(res$test[i, 1]),
+        formatC(res$test[i, 2]),
+        paste(res$var[[i]], collapse = ", ")
+      )
       PM <- rbind(PM, newrow)
     }
   }
@@ -150,8 +186,17 @@ backwardsearch <- function(x, k = 1, ...) {
   res
 }
 
-forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "all", exclude.var = NULL, ...) {
-  if (!inherits(x, "lvmfit")) stop("Expected an object of class 'lvmfit'.")
+forwardsearch <- function(
+  x,
+  k = 1,
+  messages = lava.options()$messages,
+  type = "all",
+  exclude.var = NULL,
+  ...
+) {
+  if (!inherits(x, "lvmfit")) {
+    stop("Expected an object of class 'lvmfit'.")
+  }
 
   p <- pars(x, reorder = TRUE)
   cur <- Model(x)
@@ -168,7 +213,8 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
     return()
   }
 
-  directional <- !(tolower(type) %in% c("cor", "correlation", "cov", "covariance"))
+  directional <- !(tolower(type) %in%
+    c("cor", "correlation", "cov", "covariance"))
   all <- tolower(type) %in% c("all", "both")
 
   Tests <- c()
@@ -226,13 +272,19 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
     message("Calculating score test for ", ncol(restrictedcomb), " models:")
   }
   for (i in seq_len(ncol(restrictedcomb))) {
-    if (messages > 0) pb()
+    if (messages > 0) {
+      pb()
+    }
     varlist <- c()
     altmodel <- cur ## HA: altmodel, H0: cur
     for (j in seq_len(k)) {
       myvar <- restricted[restrictedcomb[j, i], ]
       if (any(wx <- V[myvar] %in% X)) {
-        altmodel <- regression(altmodel, V[myvar][which(!wx)], V[myvar][which(wx)])
+        altmodel <- regression(
+          altmodel,
+          V[myvar][which(!wx)],
+          V[myvar][which(wx)]
+        )
       } else {
         if (directional[i]) {
           covariance(altmodel, pairwise = TRUE) <- V[myvar]
@@ -243,7 +295,12 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
     }
     altmodel$parpos <- NULL
     altmodel <- updatelvm(altmodel, deriv = TRUE, zeroones = TRUE, mean = TRUE)
-    cc <- coef(altmodel, mean = TRUE, messages = 0, symbol = lava.options()$symbol)
+    cc <- coef(
+      altmodel,
+      mean = TRUE,
+      messages = 0,
+      symbol = lava.options()$symbol
+    )
     cc0 <- coef(cur, mean = TRUE, messages = 0, symbol = lava.options()$symbol)
     p1 <- numeric(length(p) + k)
     ## Need to be sure we place 0 at the correct position
@@ -254,20 +311,38 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
       }
     }
     if (x$estimator == "gaussian" && !inherits(x, "lvm.missing")) {
-      Sc2 <- score(altmodel,
-        p = p1, data = NULL,
-        model = x$estimator, weights = Weights(x), S = S, mu = mu, n = n
+      Sc2 <- score(
+        altmodel,
+        p = p1,
+        data = NULL,
+        model = x$estimator,
+        weights = Weights(x),
+        S = S,
+        mu = mu,
+        n = n
       )
     } else {
-      Sc2 <- score(altmodel,
-        p = p1, data = model.frame(x),
-        model = x$estimator, weights = Weights(x)
+      Sc2 <- score(
+        altmodel,
+        p = p1,
+        data = model.frame(x),
+        model = x$estimator,
+        weights = Weights(x)
       )
     }
-    I <- information(altmodel, p = p1, n = n, data = model.frame(x), weights = Weights(x), estimator = x$estimator) ## [-rmidx,-rmidx]
+    I <- information(
+      altmodel,
+      p = p1,
+      n = n,
+      data = model.frame(x),
+      weights = Weights(x),
+      estimator = x$estimator
+    ) ## [-rmidx,-rmidx]
 
     iI <- try(Inverse(I), silent = TRUE)
-    Q <- ifelse(inherits(iI, "try-error"), NA, ## Score test
+    Q <- ifelse(
+      inherits(iI, "try-error"),
+      NA, ## Score test
       (Sc2) %*% iI %*% t(Sc2)
     )
     Tests <- c(Tests, Q)
@@ -281,9 +356,12 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
   PM <- c()
   for (i in seq_len(nrow(Tests))) {
     if (!is.na(Tests[i, 1])) {
-      vv <- apply(Vars[[i]], 1, function(x) paste(x, collapse = lava.options()$symbol[2 - directional[i]]))
+      vv <- apply(Vars[[i]], 1, function(x) {
+        paste(x, collapse = lava.options()$symbol[2 - directional[i]])
+      })
       newrow <- c(
-        formatC(Tests[i, 1]), formatC(Tests[i, 2]),
+        formatC(Tests[i, 1]),
+        formatC(Tests[i, 2]),
         paste(vv, collapse = ",")
       )
       PM <- rbind(PM, newrow)
@@ -305,7 +383,12 @@ forwardsearch <- function(x, k = 1, messages = lava.options()$messages, type = "
 }
 
 ##' @export
-print.modelsearch <- function(x, tail = nrow(x$res), adj = c("holm", "BH"), ...) {
+print.modelsearch <- function(
+  x,
+  tail = nrow(x$res),
+  adj = c("holm", "BH"),
+  ...
+) {
   N <- nrow(x$res)
   if (!is.null(adj)) {
     ##    adjp <- rev(holm(as.numeric(x$test[,2])))

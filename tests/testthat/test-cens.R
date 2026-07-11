@@ -13,15 +13,16 @@ test_that("right censoring", {
   d <- data.frame(
     y = y,
     x = x,
-    status = rstatus)
-  d$ys <- with(d, Surv(y, status, type="right"))
+    status = rstatus
+  )
+  d$ys <- with(d, Surv(y, status, type = "right"))
 
   ms <- lvm(ys ~ x)
   e <- estimate(ms, data = d)
-  es <- survreg(ys ~ x, data=d, dist="gaussian")
+  es <- survreg(ys ~ x, data = d, dist = "gaussian")
 
-  expect_true(abs(logLik(e)-logLik(es))<1e-3)
-  expect_true(mean((coef(e)[1:2]-coef(es))^2)<1e-3)
+  expect_true(abs(logLik(e) - logLik(es)) < 1e-3)
+  expect_true(mean((coef(e)[1:2] - coef(es))^2) < 1e-3)
 })
 
 test_that("left censoring", {
@@ -35,15 +36,16 @@ test_that("left censoring", {
   d <- data.frame(
     y = y,
     x = x,
-    status = lstatus)
-  d$ys <- with(d, Surv(y, status, type="left"))
+    status = lstatus
+  )
+  d$ys <- with(d, Surv(y, status, type = "left"))
 
   ms <- lvm(ys ~ x)
   e <- estimate(ms, data = d)
-  es <- survreg(ys ~ x, data=d, dist="gaussian")
+  es <- survreg(ys ~ x, data = d, dist = "gaussian")
 
-  expect_true(abs(logLik(e)-logLik(es))<1e-3)
-  expect_true(mean((coef(e)[1:2]-coef(es))^2)<1e-3)
+  expect_true(abs(logLik(e) - logLik(es)) < 1e-3)
+  expect_true(mean((coef(e)[1:2] - coef(es))^2) < 1e-3)
 })
 
 test_that("left and right censoring", {
@@ -55,25 +57,26 @@ test_that("left and right censoring", {
   rcens <- rexp(n, 1)
   y <- pmax(y0, lcens)
   y <- pmin(y, rcens)
-  lstatus <- y0>lcens
-  rstatus <- y0<rcens
+  lstatus <- y0 > lcens
+  rstatus <- y0 < rcens
   d <- data.frame(
     y = y,
     x = x,
     lstatus = lstatus,
-    rstatus = rstatus)
+    rstatus = rstatus
+  )
   yleft <- rep(-Inf, n)
   yleft[d$lstatus] <- d$y[d$lstatus]
   yright <- rep(Inf, n)
   yright[d$rstatus] <- d$y[d$rstatus]
-  d$ys <- Surv(yleft, yright, type="interval2")
+  d$ys <- Surv(yleft, yright, type = "interval2")
 
   ms <- lvm(ys ~ x)
   e <- estimate(ms, data = d)
-  es <- survreg(ys ~ x, data=d, dist="gaussian")
+  es <- survreg(ys ~ x, data = d, dist = "gaussian")
 
-  expect_true(abs(logLik(e)-logLik(es))<1e-3)
-  expect_true(mean((coef(e)[1:2]-coef(es))^2)<1e-3)
+  expect_true(abs(logLik(e) - logLik(es)) < 1e-3)
+  expect_true(mean((coef(e)[1:2] - coef(es))^2) < 1e-3)
 })
 
 test_that("interval censoring", {
@@ -92,12 +95,12 @@ test_that("interval censoring", {
     yleft = yleft,
     yright = yright
   )
-  d$ys <- Surv(yleft, yright, type="interval2")
+  d$ys <- Surv(yleft, yright, type = "interval2")
 
   ms <- lvm(ys ~ x)
   e <- estimate(ms, data = d)
-  es <- survreg(ys ~ x, data=d, dist="gaussian")
+  es <- survreg(ys ~ x, data = d, dist = "gaussian")
 
-  expect_true(abs(logLik(e)-logLik(es))<1e-3)
-  expect_true(mean((coef(e)[1:2]-coef(es))^2)<1e-3)
+  expect_true(abs(logLik(e) - logLik(es)) < 1e-3)
+  expect_true(mean((coef(e)[1:2] - coef(es))^2) < 1e-3)
 })

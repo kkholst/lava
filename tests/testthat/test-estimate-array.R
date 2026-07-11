@@ -9,11 +9,11 @@ test_that("estimate.array mean formula is correct", {
   ## mean(y - mean(y)^2) instead of mean((y - mean(y))^2).
   set.seed(1)
   n <- 100
-  x <- matrix(rnorm(2*n, mean = 3, sd = 2), ncol = 2)
+  x <- matrix(rnorm(2 * n, mean = 3, sd = 2), ncol = 2)
   e <- estimate(x)
   expected <- apply(x, 2, function(y) mean(y))
   expect_equivalent(coef(e), expected, tolerance = 1e-8)
-  x0 <- apply(x, 2, function(y) y-mean(y))
+  x0 <- apply(x, 2, function(y) y - mean(y))
   var_expected <- crossprod(x0) / n^2
   expect_equivalent(vcov(e), var_expected, tolerance = 1e-8)
 })

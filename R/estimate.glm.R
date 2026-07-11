@@ -33,15 +33,17 @@ pars.mlm <- function(x, ...) {
   cc <- coef(x)
   q <- NCOL(cc)
   nn <- unlist(lapply(
-    1:q, function(i)
+    1:q,
+    function(i) {
       paste0(colnames(cc)[i], ":", rownames(cc))
+    }
   ))
-  coefs <- unlist(lapply(1:q, function(x) cc[, x, drop=TRUE]))
+  coefs <- unlist(lapply(1:q, function(x) cc[, x, drop = TRUE]))
   names(coefs) <- nn
   coefs
 }
 
 ##' @export
 estimate.mlm <- function(x, ...) {
-  estimate.default(x, coef=pars(x), ...)
+  estimate.default(x, coef = pars(x), ...)
 }

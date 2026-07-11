@@ -1,0 +1,22 @@
+linters: linters_with_defaults(
+  object_name_linter = NULL,
+  infix_spaces_linter = NULL,
+  commented_code_linter = NULL,
+  line_length_linter(80),
+  object_length_linter(40),
+  indentation_linter = NULL,
+  brace_linter(allow_single_line = FALSE),
+  spaces_left_parentheses_linter = NULL,
+  return_linter = NULL
+  )
+encoding: "UTF-8"
+exclusions: list(
+    "inst/misc",
+    "vignettes",
+    "revdep",
+    "tools",
+    "R/RcppExports.R",
+    "inst" = list( # disable return linter for unit tests
+      return_linter = Inf
+    )
+  )

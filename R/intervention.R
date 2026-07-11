@@ -1,6 +1,7 @@
 ##' @export
-"intervention<-" <- function(object, ..., value)
+"intervention<-" <- function(object, ..., value) {
   UseMethod("intervention<-")
+}
 
 ##' @export
 `intervention` <-
@@ -24,18 +25,21 @@
 ##' mm <- intervention(m, a~x, function(x) (x>0)*1)
 ##' sim(mm, 10)
 ##' @export
-intervention.lvm <- function(object, to, value, dist=none.lvm(), ...) {
-  if (!is.numeric(value))
+intervention.lvm <- function(object, to, value, dist = none.lvm(), ...) {
+  if (!is.numeric(value)) {
     regression(object, to, ...) <- value
+  }
   y <- to
   if (inherits(to, "formula")) {
     y <- getoutcome(to)
-    if (length(y)==0)
+    if (length(y) == 0) {
       y <- attr(y, "x")
+    }
   }
   parents <- parents(object, y)
-  if (length(parents)>0)
+  if (length(parents) > 0) {
     cancel(object) <- toformula(y, parents)
+  }
   if (is.numeric(value)) {
     distribution(object, y) <- constant.lvm(value)
   } else {

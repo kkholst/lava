@@ -16,24 +16,24 @@
 ##' T <- with(warpbreaks, table(wool, tension))
 ##' Expand(T)
 Expand <- function(`_data`, ...) {
-    if (missing(`_data`)) {
-        return(expand.grid(...))
+  if (missing(`_data`)) {
+    return(expand.grid(...))
+  }
+  if (inherits(`_data`, "table")) {
+    M <- as.data.frame(`_data`)
+    idx <- rep(seq(nrow(M)), M[, ncol(M)])
+    return(M[idx, -ncol(M), drop = FALSE])
+  }
+  if (!inherits(`_data`, "data.frame")) {
+    return(expand.grid(`_data`, ...))
+  }
+  dots <- list(...)
+  nn <- names(dots)
+  for (n in nn) {
+    y <- dots[[n]]
+    if (is.factor(`_data`[1, n])) {
+      dots[[n]] <- factor(y, levels = levels(`_data`[1, n]))
     }
-    if (inherits(`_data`, "table")) {
-        M <- as.data.frame(`_data`)
-        idx <- rep(seq(nrow(M)), M[, ncol(M)])
-        return(M[idx, -ncol(M), drop=FALSE])
-    }
-    if (!inherits(`_data`, "data.frame")) {
-        return(expand.grid(`_data`, ...))
-    }
-    dots <- list(...)
-    nn <- names(dots)
-    for (n in nn) {
-        y <- dots[[n]]
-        if (is.factor(`_data`[1, n])) {
-            dots[[n]] <- factor(y, levels=levels(`_data`[1, n]))
-        }
-    }
-    do.call("expand.grid", dots)
+  }
+  do.call("expand.grid", dots)
 }

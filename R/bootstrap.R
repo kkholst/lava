@@ -6,7 +6,7 @@
 ##' @seealso \code{bootstrap.lvm} \code{bootstrap.lvmfit}
 ##' @author Klaus K. Holst
 ##' @export
-bootstrap <- function(x,...) UseMethod("bootstrap")
+bootstrap <- function(x, ...) UseMethod("bootstrap")
 
 ##' Calculate bootstrap estimates of a lvm object
 ##'
@@ -59,14 +59,30 @@ bootstrap <- function(x,...) UseMethod("bootstrap")
 ##' B
 ##' }
 ##' @export
-bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
-                          p, parametric = FALSE, bollenstine = FALSE,
-                          constraints = TRUE, sd = FALSE, mc.cores,
-                          future.args=list(future.seed=TRUE),
-                          ...) {
+bootstrap.lvm <- function(
+  x,
+  R = 100,
+  data,
+  fun = NULL,
+  control = list(),
+  p,
+  parametric = FALSE,
+  bollenstine = FALSE,
+  constraints = TRUE,
+  sd = FALSE,
+  mc.cores,
+  future.args = list(future.seed = TRUE),
+  ...
+) {
   coefs <- sds <- c()
-  on.exit(list(coef = coefs[-1, ], sd = sds[-1, ], coef0 = coefs[1, ], sd0 = sds[1, ], model = x))
-  pb <- progressr::progressor(steps = R+1)
+  on.exit(list(
+    coef = coefs[-1, ],
+    sd = sds[-1, ],
+    coef0 = coefs[1, ],
+    sd0 = sds[1, ],
+    model = x
+  ))
+  pb <- progressr::progressor(steps = R + 1)
   pmis <- missing(p)
   bootfun <- function(i) {
     if (i == 0) {
@@ -78,7 +94,16 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
         d0 <- sim(x, p = p, n = nrow(data))
       }
     }
-    suppressWarnings(e0 <- estimate(x, data = d0, control = control, messages = 0, index = FALSE, ...))
+    suppressWarnings(
+      e0 <- estimate(
+        x,
+        data = d0,
+        control = control,
+        messages = 0,
+        index = FALSE,
+        ...
+      )
+    )
     pb()
     if (!is.null(fun)) {
       coefs <- fun(e0)
@@ -92,7 +117,10 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
       if (constraints & length(constrain(x)) > 0) {
         cc <- constraints(e0, ...)
         coefs <- c(coefs, cc[, 1])
-        names(coefs)[seq(length(coefs) - length(cc[, 1]) + 1, length(coefs))] <- rownames(cc)
+        names(coefs)[seq(
+          length(coefs) - length(cc[, 1]) + 1,
+          length(coefs)
+        )] <- rownames(cc)
         if (sd) {
           newsd <- c(newsd, cc[, 2])
         }
@@ -101,31 +129,54 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
     return(list(coefs = coefs, sds = newsd))
   }
   if (bollenstine) {
-    e0 <- estimate(x, data = data, control = control, messages = 0, index = FALSE, ...)
+    e0 <- estimate(
+      x,
+      data = data,
+      control = control,
+      messages = 0,
+      index = FALSE,
+      ...
+    )
     mm <- modelVar(e0)
     mu <- mm$xi
     Y <- t(t(data[, manifest(e0)]) - as.vector(mu))
     Sigma <- mm$C
     S <- (ncol(Y) - 1) / ncol(Y) * var(Y)
-    sSigma <- with(eigen(Sigma), vectors %*% diag(sqrt(values), ncol = ncol(vectors)) %*% t(vectors))
-    isS <- with(eigen(S), vectors %*% diag(1 / sqrt(values), ncol = ncol(vectors)) %*% t(vectors))
+    sSigma <- with(
+      eigen(Sigma),
+      vectors %*% diag(sqrt(values), ncol = ncol(vectors)) %*% t(vectors)
+    )
+    isS <- with(
+      eigen(S),
+      vectors %*% diag(1 / sqrt(values), ncol = ncol(vectors)) %*% t(vectors)
+    )
     data <- as.matrix(Y) %*% (isS %*% sSigma)
     colnames(data) <- manifest(e0)
   }
 
   i <- 0
   if (!missing(mc.cores)) {
-    res <- parallel::mclapply(0:R, bootfun, mc.cores=mc.cores)
+    res <- parallel::mclapply(0:R, bootfun, mc.cores = mc.cores)
   } else {
     res <- do.call(future_lapply, c(list(0:R, bootfun), future.args))
   }
 
-  coefs <- matrix(unlist(lapply(res, function(x) x$coefs)), nrow = R + 1, byrow = TRUE)
+  coefs <- matrix(
+    unlist(lapply(res, function(x) x$coefs)),
+    nrow = R + 1,
+    byrow = TRUE
+  )
   nn <- names(res[[1]]$coefs)
-  if (!is.null(nn)) colnames(coefs) <- nn
+  if (!is.null(nn)) {
+    colnames(coefs) <- nn
+  }
   sds <- NULL
   if (sd) {
-    sds <- matrix(unlist(lapply(res, function(x) x$sds)), nrow = R + 1, byrow = TRUE)
+    sds <- matrix(
+      unlist(lapply(res, function(x) x$sds)),
+      nrow = R + 1,
+      byrow = TRUE
+    )
   }
 
   if (!is.null(fun)) {
@@ -134,24 +185,57 @@ bootstrap.lvm <- function(x, R = 100, data, fun = NULL, control = list(),
   } else {
     colnames(coefs) <- names(res[[1]]$coefs)
     rownames(coefs) <- c()
-    if (sd) colnames(sds) <- colnames(coefs)
-    res <- list(coef = coefs[-1, , drop = FALSE], sd = sds[-1, , drop = FALSE], coef0 = coefs[1, ], sd0 = sds[1, ], model = x, bollenstine = bollenstine)
+    if (sd) {
+      colnames(sds) <- colnames(coefs)
+    }
+    res <- list(
+      coef = coefs[-1, , drop = FALSE],
+      sd = sds[-1, , drop = FALSE],
+      coef0 = coefs[1, ],
+      sd0 = sds[1, ],
+      model = x,
+      bollenstine = bollenstine
+    )
   }
   class(res) <- "bootstrap.lvm"
   return(res)
 }
 
 ##' @export
-bootstrap.lvmfit <- function(x, R = 100, data = model.frame(x),
-                             control = list(start = coef(x)),
-                             p = coef(x), parametric = FALSE, bollenstine = FALSE,
-                             estimator = x$estimator, weights = Weights(x), ...) {
-  bootstrap.lvm(Model(x), R = R, data = data, control = control, estimator = estimator, weights = weights, parametric = parametric, bollenstine = bollenstine, p = p, ...)
+bootstrap.lvmfit <- function(
+  x,
+  R = 100,
+  data = model.frame(x),
+  control = list(start = coef(x)),
+  p = coef(x),
+  parametric = FALSE,
+  bollenstine = FALSE,
+  estimator = x$estimator,
+  weights = Weights(x),
+  ...
+) {
+  bootstrap.lvm(
+    Model(x),
+    R = R,
+    data = data,
+    control = control,
+    estimator = estimator,
+    weights = weights,
+    parametric = parametric,
+    bollenstine = bollenstine,
+    p = p,
+    ...
+  )
 }
 
 ##' @export
 "print.bootstrap.lvm" <- function(x, idx, level = 0.95, ...) {
-  cat("Non-parametric bootstrap statistics (R=", nrow(x$coef), "):\n\n", sep = "")
+  cat(
+    "Non-parametric bootstrap statistics (R=",
+    nrow(x$coef),
+    "):\n\n",
+    sep = ""
+  )
   uplow <- (c(0, 1) + c(1, -1) * (1 - level) / 2)
   nn <- paste(uplow * 100, "%")
   c1 <- t(apply(x$coef, 2, function(x) c(mean(x), sd(x), quantile(x, uplow))))
@@ -164,7 +248,9 @@ bootstrap.lvmfit <- function(x, R = 100, data = model.frame(x),
     print(format(c1[idx, , drop = FALSE], ...), quote = FALSE)
   }
   if (length(x$sd) > 0) {
-    c2 <- t(apply(x$sd, 2, function(x) c(mean(x), sd(x), quantile(x, c(0.025, 0.975)))))
+    c2 <- t(apply(x$sd, 2, function(x) {
+      c(mean(x), sd(x), quantile(x, c(0.025, 0.975)))
+    }))
     c2 <- cbind(c2[, 1], c2[, 1] - x$sd0, c2[, -1])
     colnames(c2) <- c("Estimate", "Bias", "Std.Err", "2.5%", "97.5%")
     cat("\nStandard errors:\n")
