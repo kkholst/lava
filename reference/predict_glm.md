@@ -14,8 +14,8 @@ predictions with respect to the coefficients.
 
 ``` r
 predict_glm(
-  x,
-  p = coef(x),
+  object,
+  p = coef(object),
   data,
   offset = NULL,
   type = c("response", "link"),
@@ -25,7 +25,7 @@ predict_glm(
 
 ## Arguments
 
-- x:
+- object:
 
   A fitted `glm` object.
 

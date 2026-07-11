@@ -1,17 +1,39 @@
 # Changelog
 
+## lava (development version)
+
+- `merge.estimate` by default no longer sorts IC by id (old behaviour
+  via new argument `sort=TRUE`)
+
 ## lava 1.9.2
 
-Development version
+CRAN release: 2026-06-30
 
+- `estimate.default`: the `null`, `contrast`, `type`, and `var.adj`
+  arguments are soft-deprecated. Use
+  `summary(estimate(...), null=, contrast=, type=, var.adj=)` instead.
+  The default-path Wald p-value (H0: beta = 0) continues to be reported
+  by
+  [`estimate()`](https://kkholst.github.io/lava/reference/estimate.default.md).
+- `estimate.default`: removed `R`, `null.sim`, `score.deriv` and `folds`
+  arguments.
+- new `c.summary.estimate` S3-method for concatenating
+  `summary.estimate` objects
+- sim.default can now operate on function return objects constructed via
+  `c.estimate(estimate_object, extra_args)` or
+  `c.estimate(summary(estimate_object), extra_args)`
 - `predict_glm` function
+- fixed issue when package formula.tools was loaded due to overwriting
+  of as.character.formula.
+- bug-fix: `regression(model, "y", "x", value="b")` now works as
+  expected
+- `index.estimate`, `index<-.estimate` methods for getting and setting
+  id/cluster
 
 ## lava 1.9.1
 
 CRAN release: 2026-05-14
 
-- `estimate.default`: removed `score.deriv`,`folds`, `R`, `null.sim`
-  arguments
 - Safe evaluation of rank in `wald_test`
 - adding CI Length to `summary.sim` output
 - fixing bug related to `estimate.index` in `summary.sim`

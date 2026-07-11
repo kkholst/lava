@@ -7,7 +7,7 @@ weighting of the complete-case data.
 ## Usage
 
 ``` r
-na.pass0(object, na.action = na.omit, ...)
+na.pass0(object, na.action = na.omit, row.wise = FALSE, value = 0, ...)
 ```
 
 ## Arguments
@@ -19,6 +19,15 @@ na.pass0(object, na.action = na.omit, ...)
 - na.action:
 
   function used to identify missing values
+
+- row.wise:
+
+  when true entire row is set to zero whenever a missing data is
+  observed in that row
+
+- value:
+
+  value to replace NAs with (default 0)
 
 - ...:
 
@@ -40,7 +49,7 @@ na.pass0(d)
 #> 2 1 1
 #> 3 0 0
 #> 4 2 1
-#> 5 0 0
+#> 5 0 1
 #> 6 2 1
 glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
 #> 
@@ -48,9 +57,9 @@ glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
 #> 
 #> Coefficients:
 #> (Intercept)  
-#>         1.5  
+#>         1.2  
 #> 
-#> Degrees of Freedom: 3 Total (i.e. Null);  3 Residual
-#> Null Deviance:       1 
-#> Residual Deviance: 1     AIC: Inf
+#> Degrees of Freedom: 4 Total (i.e. Null);  4 Residual
+#> Null Deviance:       2.8 
+#> Residual Deviance: 2.8   AIC: Inf
 ```

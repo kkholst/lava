@@ -11,7 +11,7 @@ structure, residuals and various predicitions."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,11 +69,11 @@ structure, residuals and various predicitions.</p>
 <span>                          <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'lvmfit'</span></span>
-<span><span class="fu">score</span><span class="op">(</span><span class="va">x</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,</span>
+<span><span class="fu"><a href="score.html">score</a></span><span class="op">(</span><span class="va">x</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,</span>
 <span>                   weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'lvmfit'</span></span>
-<span><span class="fu">information</span><span class="op">(</span><span class="va">x</span>,p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,n<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">n</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<span><span class="fu"><a href="information.html">information</a></span><span class="op">(</span><span class="va">x</span>,p<span class="op">=</span><span class="fu"><a href="internal.html">pars</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,n<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">n</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
 <span>                   model<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">estimator</span>,weights<span class="op">=</span><span class="fu"><a href="internal.html">Weights</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data2<span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">data2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -153,6 +153,10 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
     <p>A <code>htest</code>-object.</p>
     </div>
     <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><a href="information.html">information</a>, <a href="score.html">score</a></p></div>
+    </div>
+    <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Klaus K. Holst</p>
     </div>
@@ -194,7 +198,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-in"><span><span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`R-squared`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           y1           y2           y3            u </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6.714238e-01 5.109812e-01 5.276472e-01 1.221245e-15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.714238e-01 5.109812e-01 5.276472e-01 1.443290e-15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`Variance explained by 'u'`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        y1        y2        y3 </span>
@@ -211,10 +215,14 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91</span>
 <span class="r-in"><span><span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">rr</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err     2.5%   97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [y1] - [y2]  0.16038 0.04040  0.08119 0.23956 7.197e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [y1] - [y3]  0.13469 0.03884  0.05857 0.21081 5.244e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [y2] - [y3] -0.02569 0.02786 -0.08029 0.02891 3.565e-01</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The 'null', 'contrast', 'type', 'back.transform', 'level' and 'var.adj' arguments of estimate.default() are deprecated and will be removed in version 1.9.3. Use summary(estimate(...), null=, contrast=, type=, transform=,level=, df=, var.adj=) instead.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = rr, contrast = rbind(c(1, -1, 0), c(1, 0, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     -1), c(0, 1, -1)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y2   0.5063 0.02752 0.4523 0.5602  1.342e-75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y3   0.5320 0.02627 0.4805 0.5835  3.856e-91</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [y1] - [y2] = 0</span>
@@ -234,7 +242,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -107,6 +107,7 @@ children(Model(e), ~x2)
 children(Model(e), ~x2+eta)
 #> [1] "eta" "y1"  "y2"  "y3" 
 effects(e,y2~x1)
+#> Warning: Not available for this class
 #>           Estimate Std.Err z value   Pr(>|z|)
 #> Total       2.0041 0.06400   31.31 3.111e-215
 #> Direct      0.9491 0.07118   13.33  1.460e-40

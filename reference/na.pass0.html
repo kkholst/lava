@@ -11,7 +11,7 @@ weighting of the complete-case data."><meta property="og:image" content="https:/
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ weighting of the complete-case data.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">na.pass0</span><span class="op">(</span><span class="va">object</span>, na.action <span class="op">=</span> <span class="va">na.omit</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">na.pass0</span><span class="op">(</span><span class="va">object</span>, na.action <span class="op">=</span> <span class="va">na.omit</span>, row.wise <span class="op">=</span> <span class="cn">FALSE</span>, value <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,15 @@ weighting of the complete-case data.</p>
 
 <dt id="arg-na-action">na.action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
 <dd><p>function used to identify missing values</p></dd>
+
+
+<dt id="arg-row-wise">row.wise<a class="anchor" aria-label="anchor" href="#arg-row-wise"></a></dt>
+<dd><p>when true entire row is set to zero whenever a missing data
+is observed in that row</p></dd>
+
+
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
+<dd><p>value to replace NAs with (default 0)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -83,7 +92,7 @@ weighting of the complete-case data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 2 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 2 1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, weights<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">r</span>, data<span class="op">=</span><span class="va">d</span>, na.action<span class="op">=</span><span class="va">na.pass0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -91,11 +100,11 @@ weighting of the complete-case data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         1.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         1.2  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Degrees of Freedom: 3 Total (i.e. Null);  3 Residual</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Deviance:	    1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Deviance: 1 	AIC: Inf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Degrees of Freedom: 4 Total (i.e. Null);  4 Residual</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Deviance:	    2.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Deviance: 2.8 	AIC: Inf</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -107,7 +116,7 @@ weighting of the complete-case data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

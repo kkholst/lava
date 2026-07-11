@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
       <div class="d-none name"><code>correlation.Rmd</code></div>
@@ -195,8 +195,15 @@ again</p>
 <code>correlation</code> method</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/correlation.html">correlation</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = x, f = ff, coef = coef(x), IC = IC, vcov = V)</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; y1~y2   0.8915         0.8721 0.9082 3.58e-224</span></span></code></pre></div>
+<span><span class="co">#&gt; y1~y2   0.8915         0.8721 0.9082 3.58e-224</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [y1~y2] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1021.625, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>Note, that in this case the confidence intervals are constructed by
 using a variance stabilizing transformation, Fishers <span class="math inline">z</span>-transform <span class="citation">(Lehmann
 and Romano 2023)</span>,</p>
@@ -216,11 +223,20 @@ the inverse transformation:</p>
 <p>This is equivalent to the direct calculations using the delta method
 (except for the small sample bias correction <span class="math inline">3</span>) where the estimate and confidence interval
 are transformed back to the original scale using the
-<code>back.transform</code> argument.</p>
+<code>summary</code> method.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y2'</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y1'</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="st">'y2~~y2'</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y2'</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y1'</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="st">'y2~~y2'</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = e, f = function(p) atanh(p["y1~~y2"]/(p["y1~~y1"] * </span></span>
+<span><span class="co">#&gt;     p["y2~~y2"])^0.5))</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; y1~~y2   0.8915         0.8732 0.9074 7.445e-249</span></span></code></pre></div>
+<span><span class="co">#&gt; y1~~y2   0.8915         0.8732 0.9074 7.445e-249</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [y1~~y2] = 0 </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; chisq = 1135.185, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>The transformed confidence interval will generally have improved
 coverage especially near the boundary <span class="math inline">\rho
 \approx \pm 1</span>.</p>
@@ -272,12 +288,14 @@ positive definite.</p>
 <span><span class="co">#&gt;    z                    1.42942    0.04472 31.96286   &lt;1e-12</span></span></code></pre></div>
 <p>The correlation coefficient can then be obtained as</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; z   0.8915         0.8729 0.9076 5.606e-243</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">"z"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/labels-set.html">labels</a></span><span class="op">(</span><span class="st">"rho"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = e2, f = "z")</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
+<span><span class="co">#&gt; rho   0.8915         0.8729 0.9076 5.606e-243</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [z] = 0 </span></span>
+<span><span class="co">#&gt;   [rho] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 1108.145, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>In practice, a much shorter syntax can be used to obtain the above
@@ -306,7 +324,9 @@ parameters):</p>
 <span><span class="co">#&gt;    l2                   0.04164    0.06325  0.65832   0.5103</span></span>
 <span><span class="co">#&gt;    z                    1.42942    0.04472 31.96286   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>, <span class="st">'z'</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = e2, f = "z")</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5%  97.5%    P-value</span></span>
 <span><span class="co">#&gt; z   0.8915         0.8729 0.9076 5.606e-243</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
@@ -337,10 +357,10 @@ replications would be needed) can be calculated in the following way</p>
 <span><span class="co">#&gt; y2~x  0.9165185250 -0.0054613366  0.0515815249  0.8206914258  1.0057939308</span></span>
 <span><span class="co">#&gt; l1    0.0041846522 -0.0207541703  0.0680010956 -0.1521461170  0.0970349017</span></span>
 <span><span class="co">#&gt; l2    0.0416361064 -0.0172477586  0.0645290353 -0.1102270167  0.1486146877</span></span>
-<span><span class="co">#&gt; z     1.4294227075 -0.0086990026  0.0431164145  1.3409919820  1.4973573361</span></span>
+<span><span class="co">#&gt; z     1.4294227061 -0.0086990013  0.0431164145  1.3409919820  1.4973573361</span></span>
 <span><span class="co">#&gt; v1    1.0041934200 -0.0184096665  0.0664333005  0.8588861834  1.1019310023</span></span>
 <span><span class="co">#&gt; v2    1.0425150452 -0.0157357318  0.0662409478  0.8956329451  1.1602357905</span></span>
-<span><span class="co">#&gt; c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892</span></span></code></pre></div>
+<span><span class="co">#&gt; c1    0.9122097186 -0.0171972063  0.0627102019  0.7706302260  1.0085879892</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">tanh</a></span><span class="op">(</span><span class="va">b</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span>,<span class="st">'z'</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.025</span>,<span class="fl">.975</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      2.5%     97.5% </span></span>
@@ -365,24 +385,26 @@ the <code>mets</code> package) in the data frame.</p>
 <code class="sourceCode R"><span><span class="va">e3</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    y1~x                 0.93301    0.04443 20.99891   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92402    0.04643 19.90128   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    y1~x                 0.93300    0.04443 20.99869   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92402    0.04643 19.90112   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    y1                  -0.00542    0.04482 -0.12083   0.9038</span></span>
-<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45687   0.6478</span></span>
+<span><span class="co">#&gt;    y1                  -0.00541    0.04482 -0.12076   0.9039</span></span>
+<span><span class="co">#&gt;    s2                  -0.02119    0.04638 -0.45683   0.6478</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                   0.00418    0.06325  0.06607   0.9473</span></span>
-<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97307   0.3305</span></span>
-<span><span class="co">#&gt;    z                    1.42835    0.04546 31.41861   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                   0.00419    0.06325  0.06618   0.9472</span></span>
+<span><span class="co">#&gt;    l2                   0.06317    0.06492  0.97310   0.3305</span></span>
+<span><span class="co">#&gt;    z                    1.42834    0.04546 31.41841   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3</span>, <span class="st">'z'</span><span class="op">)</span>, transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = e3, f = "z")</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err  2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; z   0.8913         0.872 0.9079 1.491e-226</span></span>
+<span><span class="co">#&gt; z   0.8913         0.872 0.9079 1.498e-226</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 1032.577, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 1032.567, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>And here the same analysis with <code>s1</code> being left-censored
 and <code>s2</code> right-censored:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -394,32 +416,34 @@ and <code>s2</code> right-censored:</p>
 <span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72734   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89515   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72739   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89518   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05185   0.9586</span></span>
-<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05190   0.9586</span></span>
+<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44875   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01156   0.9908</span></span>
-<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
-<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94282   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00077    0.06500 -0.01177   0.9906</span></span>
+<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98844   0.3229</span></span>
+<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94291   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e3b</span></span>
 <span><span class="co">#&gt;                        Estimate Std. Error  Z-value  P-value</span></span>
 <span><span class="co">#&gt; Regressions:                                                </span></span>
-<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72734   &lt;1e-12</span></span>
-<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89515   &lt;1e-12</span></span>
+<span><span class="co">#&gt;    s1~x                 0.92834    0.04479 20.72739   &lt;1e-12</span></span>
+<span><span class="co">#&gt;     s2~x                0.92466    0.04648 19.89518   &lt;1e-12</span></span>
 <span><span class="co">#&gt; Intercepts:                                                 </span></span>
-<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05185   0.9586</span></span>
-<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44874   0.6536</span></span>
+<span><span class="co">#&gt;    s1                  -0.00233    0.04492 -0.05190   0.9586</span></span>
+<span><span class="co">#&gt;    s2                  -0.02083    0.04641 -0.44875   0.6536</span></span>
 <span><span class="co">#&gt; Additional Parameters:                                      </span></span>
-<span><span class="co">#&gt;    l1                  -0.00075    0.06500 -0.01156   0.9908</span></span>
-<span><span class="co">#&gt;    l2                   0.06425    0.06498  0.98869   0.3228</span></span>
-<span><span class="co">#&gt;    z                    1.42627    0.04609 30.94282   &lt;1e-12</span></span></code></pre></div>
+<span><span class="co">#&gt;    l1                  -0.00077    0.06500 -0.01177   0.9906</span></span>
+<span><span class="co">#&gt;    l2                   0.06423    0.06498  0.98844   0.3229</span></span>
+<span><span class="co">#&gt;    z                    1.42626    0.04609 30.94291   &lt;1e-12</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span>, back.transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e3b</span>, <span class="st">'z'</span><span class="op">)</span>, transform<span class="op">=</span><span class="va">tanh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = e3b, f = "z")</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; z   0.8909         0.8713 0.9077 9.006e-222</span></span>
+<span><span class="co">#&gt; z   0.8909         0.8713 0.9077 9.005e-222</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [z] = 0 </span></span>
@@ -436,7 +460,7 @@ and <code>s2</code> right-censored:</p>
 </h2>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -457,26 +481,26 @@ and <code>s2</code> right-censored:</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] lava_1.9.2</span></span>
+<span><span class="co">#&gt; [1] lava_1.9.2.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        </span></span>
+<span><span class="co">#&gt;  [4] compiler_4.6.1         Rcpp_1.1.2             parallel_4.6.1        </span></span>
 <span><span class="co">#&gt;  [7] Rgraphviz_2.56.0       jquerylib_0.1.4        globals_0.19.1        </span></span>
-<span><span class="co">#&gt; [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
+<span><span class="co">#&gt; [10] splines_4.6.1          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
 <span><span class="co">#&gt; [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        </span></span>
 <span><span class="co">#&gt; [16] R6_2.6.1               generics_0.1.4         knitr_1.51            </span></span>
 <span><span class="co">#&gt; [19] BiocGenerics_0.58.1    htmlwidgets_1.6.4      graph_1.90.0          </span></span>
 <span><span class="co">#&gt; [22] future_1.70.0          desc_1.4.3             bslib_0.11.0          </span></span>
-<span><span class="co">#&gt; [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             </span></span>
-<span><span class="co">#&gt; [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             </span></span>
-<span><span class="co">#&gt; [31] progressr_0.19.0       pkgdown_2.2.0          digest_0.6.39         </span></span>
-<span><span class="co">#&gt; [34] grid_4.6.0             mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [37] timereg_2.0.7          RcppArmadillo_15.2.6-1 evaluate_1.0.5        </span></span>
-<span><span class="co">#&gt; [40] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [43] ragg_1.5.2             survival_3.8-6         stats4_4.6.0          </span></span>
-<span><span class="co">#&gt; [46] parallelly_1.47.0      rmarkdown_2.31         mets_1.3.9            </span></span>
-<span><span class="co">#&gt; [49] tools_4.6.0            htmltools_0.5.9</span></span></code></pre></div>
+<span><span class="co">#&gt; [25] rlang_1.3.0            cachem_1.1.0           xfun_0.60             </span></span>
+<span><span class="co">#&gt; [28] fs_2.1.0               sass_0.4.10            otel_0.2.0            </span></span>
+<span><span class="co">#&gt; [31] cli_3.6.6              progressr_1.0.0        pkgdown_2.2.1         </span></span>
+<span><span class="co">#&gt; [34] digest_0.6.39          grid_4.6.1             mvtnorm_1.4-1         </span></span>
+<span><span class="co">#&gt; [37] lifecycle_1.0.5        timereg_2.0.7          RcppArmadillo_15.4.0-1</span></span>
+<span><span class="co">#&gt; [40] evaluate_1.0.5         numDeriv_2016.8-1.1    listenv_1.0.0         </span></span>
+<span><span class="co">#&gt; [43] codetools_0.2-20       ragg_1.5.2             survival_3.8-6        </span></span>
+<span><span class="co">#&gt; [46] stats4_4.6.1           parallelly_1.48.0      rmarkdown_2.31        </span></span>
+<span><span class="co">#&gt; [49] mets_1.3.11            tools_4.6.1            htmltools_0.5.9</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
@@ -500,7 +524,7 @@ Springer. <a href="https://doi.org/10.1007/978-3-030-70578-7" class="external-li
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

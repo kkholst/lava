@@ -111,14 +111,6 @@ spline
 kn <- seq(-3,3,length.out=5)
 nonlinear(m2, type="spline", knots=kn) <- u2 ~ u1
 e2 <- twostage(m1, m2, data=d)
-#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
-#> = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
 e2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
@@ -146,15 +138,15 @@ Confidence limits can be obtained via the Delta method using the
 
 ``` r
 p <- cbind(u1=newd$u1,
-      estimate(e2,f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
+  estimate(e2,f=function(p)                    predict(e2,p=p,newdata=newd))$coefmat)
 head(p)
 #>      u1  Estimate   Std.Err      2.5%     97.5%      P-value
-#> p1 -4.0 -9.611119 1.2647437 -12.08997 -7.132266 2.978251e-14
-#> p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962889 1.012296e-14
-#> p3 -3.8 -9.038656 1.1463510 -11.28546 -6.791849 3.152439e-15
-#> p4 -3.7 -8.752425 1.0885635 -10.88597 -6.618879 8.958702e-16
-#> p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320153e-16
-#> p6 -3.5 -8.179962 0.9766401 -10.09414 -6.265782 5.493600e-17
+#> p1 -4.0 -9.611119 1.2647438 -12.08997 -7.132266 2.978258e-14
+#> p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962888 1.012298e-14
+#> p3 -3.8 -9.038656 1.1463511 -11.28546 -6.791849 3.152449e-15
+#> p4 -3.7 -8.752425 1.0885636 -10.88597 -6.618879 8.958735e-16
+#> p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320163e-16
+#> p6 -3.5 -8.179962 0.9766402 -10.09414 -6.265782 5.493627e-17
 ```
 
 The fitted function can be obtained with the following code:
@@ -217,17 +209,6 @@ fit <- lapply(list(m2a,m2b,m2c,m2d),
          pr <- cbind(u1=newd$u1,predict(e,newdata=newd$u1,x=TRUE))
          return(list(estimate=e,predict=as.data.frame(pr)))
          })
-#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
-#> = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 1.1e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
 
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]), xlim=c(-4,4))
@@ -317,20 +298,12 @@ pred <- function(mu,var,data,...) {
 ee1 <- twostage(mm1, model2=mm2, data=d, predict.fun=pred)
 #> Warning in estimate.lvm(model2, data = newd, ...): Near-singular covariance
 #> matrix, using pseudo-inverse!
-#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
-#> = 6.4e-06). Using lava.options(check.ic = FALSE) disables the warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 6.4e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 6.5e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
 estimate(ee1,keep="u2~u",regex=TRUE)
-#>         Estimate Std.Err     2.5%    97.5%    P-value
-#> u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191
-#> u2~u1     0.2315 0.12694 -0.01733  0.48026  6.823e-02
-#> u2~u1:g   0.5926 0.23212  0.13768  1.04756  1.068e-02
-#> u2~u2:g  -0.1973 0.08832 -0.37041 -0.02419  2.549e-02
+#>         Estimate Std.Err     2.5%    97.5%   P-value
+#> u2~u2     0.4553 0.04660  0.36393  0.54660 1.523e-22
+#> u2~u1     0.2294 0.12241 -0.01047  0.46936 6.087e-02
+#> u2~u1:g   0.5874 0.25055  0.09637  1.07852 1.905e-02
+#> u2~u2:g  -0.1956 0.08673 -0.36556 -0.02559 2.413e-02
 ```
 
 A formal test show no statistically significant effect of this
@@ -338,18 +311,17 @@ interaction
 
 ``` r
 summary(estimate(ee1,keep="(:g)", regex=TRUE))
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
-#>     coef = p)
+#> Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)
 #> ────────────────────────────────────────────────────────────
-#>         Estimate Std.Err    2.5%    97.5% P-value
-#> u2~u1:g   0.5926 0.23212  0.1377  1.04756 0.01068
-#> u2~u2:g  -0.1973 0.08832 -0.3704 -0.02419 0.02549
+#>         Estimate Std.Err     2.5%    97.5% P-value
+#> u2~u1:g   0.5874 0.25055  0.09637  1.07852 0.01905
+#> u2~u2:g  -0.1956 0.08673 -0.36556 -0.02559 0.02413
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [u2~u1:g] = 0
 #>   [u2~u2:g] = 0 
 #>  
-#> chisq = 43.1318, df = 2, p-value = 4.306e-10
+#> chisq = 27.4922, df = 2, p-value = 1.072e-06
 ```
 
 ## Mixture models
@@ -456,17 +428,6 @@ method
 
 ``` r
 em2 <- twostage(em0,m2,data=d)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms
-#> = 2.8e-05). Using lava.options(check.ic = FALSE) disables the warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 9.5e-06). Using lava.options(check.ic = FALSE) disables the
-#> warning globally.
 em2
 #>                     Estimate Std. Error  Z-value   P-value
 #> Measurements:                                             
@@ -514,7 +475,7 @@ legend("bottomright", c("Gaussian","Mixture"),
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -535,26 +496,26 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.2
+#> [1] lava_1.9.2.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
-#>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
+#>  [4] compiler_4.6.1         Rcpp_1.1.2             parallel_4.6.1        
 #>  [7] Rgraphviz_2.56.0       jquerylib_0.1.4        globals_0.19.1        
-#> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
+#> [10] splines_4.6.1          systemfonts_1.3.2      textshaping_1.0.5     
 #> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
 #> [16] R6_2.6.1               generics_0.1.4         knitr_1.51            
 #> [19] BiocGenerics_0.58.1    htmlwidgets_1.6.4      graph_1.90.0          
 #> [22] future_1.70.0          desc_1.4.3             bslib_0.11.0          
-#> [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
-#> [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             
-#> [31] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            
-#> [34] mvtnorm_1.3-7          lifecycle_1.0.5        timereg_2.0.7         
-#> [37] RcppArmadillo_15.2.6-1 evaluate_1.0.5         numDeriv_2016.8-1.1   
-#> [40] listenv_0.10.1         codetools_0.2-20       ragg_1.5.2            
-#> [43] survival_3.8-6         stats4_4.6.0           parallelly_1.47.0     
-#> [46] rmarkdown_2.31         mets_1.3.9             tools_4.6.0           
-#> [49] htmltools_0.5.9
+#> [25] rlang_1.3.0            cachem_1.1.0           xfun_0.60             
+#> [28] fs_2.1.0               sass_0.4.10            otel_0.2.0            
+#> [31] cli_3.6.6              pkgdown_2.2.1          digest_0.6.39         
+#> [34] grid_4.6.1             mvtnorm_1.4-1          lifecycle_1.0.5       
+#> [37] timereg_2.0.7          RcppArmadillo_15.4.0-1 evaluate_1.0.5        
+#> [40] numDeriv_2016.8-1.1    listenv_1.0.0          codetools_0.2-20      
+#> [43] ragg_1.5.2             survival_3.8-6         stats4_4.6.1          
+#> [46] parallelly_1.48.0      rmarkdown_2.31         mets_1.3.11           
+#> [49] tools_4.6.1            htmltools_0.5.9
 ```
 
 ## Bibliography

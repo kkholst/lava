@@ -9,7 +9,7 @@ define linear constraints between model equations."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ define linear constraints between model equations.</p>
 <span><span class="fu">regression</span><span class="op">(</span>object <span class="op">=</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">to</span>, <span class="va">from</span>, fn <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>messages <span class="op">=</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">messages</span>, additive<span class="op">=</span><span class="cn">TRUE</span>, <span class="va">y</span>, <span class="va">x</span>, <span class="va">value</span>, <span class="va">...</span><span class="op">)</span></span>
 <span><span class="co"># S3 method for class 'lvm'</span></span>
-<span><span class="fu">regression</span><span class="op">(</span><span class="va">object</span>, to <span class="op">=</span> <span class="cn">NULL</span>, quick <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
+<span><span class="fu">regression</span><span class="op">(</span><span class="va">object</span>, to <span class="op">=</span> <span class="cn">NULL</span>, from <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -98,10 +98,6 @@ simulation only).</p></dd>
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>Alias for 'from'</p></dd>
-
-
-<dt id="arg-quick">quick<a class="anchor" aria-label="anchor" href="#arg-quick"></a></dt>
-<dd><p>Faster implementation without parameter constraints</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -188,7 +184,7 @@ used to inspect the linear constraints of a <code>lvm</code>-object.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

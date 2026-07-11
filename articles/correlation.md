@@ -140,8 +140,15 @@ method
 
 ``` r
 correlation(e)
+#> Call: estimate.default(x = x, f = ff, coef = coef(x), IC = IC, vcov = V)
+#> ────────────────────────────────────────────────────────────
 #>       Estimate Std.Err   2.5%  97.5%   P-value
 #> y1~y2   0.8915         0.8721 0.9082 3.58e-224
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [y1~y2] = 0 
+#>  
+#> chisq = 1021.625, df = 1, p-value < 2.2e-16
 ```
 
 Note, that in this case the confidence intervals are constructed by
@@ -166,12 +173,21 @@ calculated by the inverse transformation:
 This is equivalent to the direct calculations using the delta method
 (except for the small sample bias correction 3) where the estimate and
 confidence interval are transformed back to the original scale using the
-`back.transform` argument.
+`summary` method.
 
 ``` r
-estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5), back.transform=tanh)
+estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)) |>
+  summary(transform=tanh)
+#> Call: estimate.default(x = e, f = function(p) atanh(p["y1~~y2"]/(p["y1~~y1"] * 
+#>     p["y2~~y2"])^0.5))
+#> ────────────────────────────────────────────────────────────
 #>        Estimate Std.Err   2.5%  97.5%    P-value
 #> y1~~y2   0.8915         0.8732 0.9074 7.445e-249
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [y1~~y2] = 0 
+#>  
+#> chisq = 1135.185, df = 1, p-value < 2.2e-16
 ```
 
 The transformed confidence interval will generally have improved
@@ -229,12 +245,14 @@ e2
 The correlation coefficient can then be obtained as
 
 ``` r
-estimate(e2, 'z', back.transform=tanh)
-#>   Estimate Std.Err   2.5%  97.5%    P-value
-#> z   0.8915         0.8729 0.9076 5.606e-243
+estimate(e2, "z") |> labels("rho") |> summary(transform=tanh)
+#> Call: estimate.default(x = e2, f = "z")
+#> ────────────────────────────────────────────────────────────
+#>     Estimate Std.Err   2.5%  97.5%    P-value
+#> rho   0.8915         0.8729 0.9076 5.606e-243
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [z] = 0 
+#>   [rho] = 0 
 #>  
 #> chisq = 1108.145, df = 1, p-value < 2.2e-16
 ```
@@ -267,7 +285,9 @@ e2
 ```
 
 ``` r
-estimate(e2, 'z', back.transform=tanh)
+estimate(e2, 'z') |> summary(transform=tanh)
+#> Call: estimate.default(x = e2, f = "z")
+#> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5%    P-value
 #> z   0.8915         0.8729 0.9076 5.606e-243
 #> ────────────────────────────────────────────────────────────
@@ -303,10 +323,10 @@ b
 #> y2~x  0.9165185250 -0.0054613366  0.0515815249  0.8206914258  1.0057939308
 #> l1    0.0041846522 -0.0207541703  0.0680010956 -0.1521461170  0.0970349017
 #> l2    0.0416361064 -0.0172477586  0.0645290353 -0.1102270167  0.1486146877
-#> z     1.4294227075 -0.0086990026  0.0431164145  1.3409919820  1.4973573361
+#> z     1.4294227061 -0.0086990013  0.0431164145  1.3409919820  1.4973573361
 #> v1    1.0041934200 -0.0184096665  0.0664333005  0.8588861834  1.1019310023
 #> v2    1.0425150452 -0.0157357318  0.0662409478  0.8956329451  1.1602357905
-#> c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892
+#> c1    0.9122097186 -0.0171972063  0.0627102019  0.7706302260  1.0085879892
 ```
 
 ``` r
@@ -336,26 +356,28 @@ e3 <- estimate(m3, d)
 e3
 #>                        Estimate Std. Error  Z-value  P-value
 #> Regressions:                                                
-#>    y1~x                 0.93301    0.04443 20.99891   <1e-12
-#>     s2~x                0.92402    0.04643 19.90128   <1e-12
+#>    y1~x                 0.93300    0.04443 20.99869   <1e-12
+#>     s2~x                0.92402    0.04643 19.90112   <1e-12
 #> Intercepts:                                                 
-#>    y1                  -0.00542    0.04482 -0.12083   0.9038
-#>    s2                  -0.02119    0.04638 -0.45687   0.6478
+#>    y1                  -0.00541    0.04482 -0.12076   0.9039
+#>    s2                  -0.02119    0.04638 -0.45683   0.6478
 #> Additional Parameters:                                      
-#>    l1                   0.00418    0.06325  0.06607   0.9473
-#>    l2                   0.06317    0.06492  0.97307   0.3305
-#>    z                    1.42835    0.04546 31.41861   <1e-12
+#>    l1                   0.00419    0.06325  0.06618   0.9472
+#>    l2                   0.06317    0.06492  0.97310   0.3305
+#>    z                    1.42834    0.04546 31.41841   <1e-12
 ```
 
 ``` r
-estimate(e3, 'z', back.transform=tanh)
+summary(estimate(e3, 'z'), transform=tanh)
+#> Call: estimate.default(x = e3, f = "z")
+#> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err  2.5%  97.5%    P-value
-#> z   0.8913         0.872 0.9079 1.491e-226
+#> z   0.8913         0.872 0.9079 1.498e-226
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [z] = 0 
 #>  
-#> chisq = 1032.577, df = 1, p-value < 2.2e-16
+#> chisq = 1032.567, df = 1, p-value < 2.2e-16
 ```
 
 And here the same analysis with `s1` being left-censored and `s2`
@@ -370,36 +392,38 @@ e3b <- estimate(m3b, d)
 e3b
 #>                        Estimate Std. Error  Z-value  P-value
 #> Regressions:                                                
-#>    s1~x                 0.92834    0.04479 20.72734   <1e-12
-#>     s2~x                0.92466    0.04648 19.89515   <1e-12
+#>    s1~x                 0.92834    0.04479 20.72739   <1e-12
+#>     s2~x                0.92466    0.04648 19.89518   <1e-12
 #> Intercepts:                                                 
-#>    s1                  -0.00233    0.04492 -0.05185   0.9586
-#>    s2                  -0.02083    0.04641 -0.44874   0.6536
+#>    s1                  -0.00233    0.04492 -0.05190   0.9586
+#>    s2                  -0.02083    0.04641 -0.44875   0.6536
 #> Additional Parameters:                                      
-#>    l1                  -0.00075    0.06500 -0.01156   0.9908
-#>    l2                   0.06425    0.06498  0.98869   0.3228
-#>    z                    1.42627    0.04609 30.94282   <1e-12
+#>    l1                  -0.00077    0.06500 -0.01177   0.9906
+#>    l2                   0.06423    0.06498  0.98844   0.3229
+#>    z                    1.42626    0.04609 30.94291   <1e-12
 ```
 
 ``` r
 e3b
 #>                        Estimate Std. Error  Z-value  P-value
 #> Regressions:                                                
-#>    s1~x                 0.92834    0.04479 20.72734   <1e-12
-#>     s2~x                0.92466    0.04648 19.89515   <1e-12
+#>    s1~x                 0.92834    0.04479 20.72739   <1e-12
+#>     s2~x                0.92466    0.04648 19.89518   <1e-12
 #> Intercepts:                                                 
-#>    s1                  -0.00233    0.04492 -0.05185   0.9586
-#>    s2                  -0.02083    0.04641 -0.44874   0.6536
+#>    s1                  -0.00233    0.04492 -0.05190   0.9586
+#>    s2                  -0.02083    0.04641 -0.44875   0.6536
 #> Additional Parameters:                                      
-#>    l1                  -0.00075    0.06500 -0.01156   0.9908
-#>    l2                   0.06425    0.06498  0.98869   0.3228
-#>    z                    1.42627    0.04609 30.94282   <1e-12
+#>    l1                  -0.00077    0.06500 -0.01177   0.9906
+#>    l2                   0.06423    0.06498  0.98844   0.3229
+#>    z                    1.42626    0.04609 30.94291   <1e-12
 ```
 
 ``` r
-estimate(e3b, 'z', back.transform=tanh)
+summary(estimate(e3b, 'z'), transform=tanh)
+#> Call: estimate.default(x = e3b, f = "z")
+#> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5%    P-value
-#> z   0.8909         0.8713 0.9077 9.006e-222
+#> z   0.8909         0.8713 0.9077 9.005e-222
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [z] = 0 
@@ -417,7 +441,7 @@ tanh(confint(e3b, 'z', profile=TRUE))
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -438,26 +462,26 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.2
+#> [1] lava_1.9.2.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
-#>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
+#>  [4] compiler_4.6.1         Rcpp_1.1.2             parallel_4.6.1        
 #>  [7] Rgraphviz_2.56.0       jquerylib_0.1.4        globals_0.19.1        
-#> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
+#> [10] splines_4.6.1          systemfonts_1.3.2      textshaping_1.0.5     
 #> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
 #> [16] R6_2.6.1               generics_0.1.4         knitr_1.51            
 #> [19] BiocGenerics_0.58.1    htmlwidgets_1.6.4      graph_1.90.0          
 #> [22] future_1.70.0          desc_1.4.3             bslib_0.11.0          
-#> [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
-#> [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             
-#> [31] progressr_0.19.0       pkgdown_2.2.0          digest_0.6.39         
-#> [34] grid_4.6.0             mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [37] timereg_2.0.7          RcppArmadillo_15.2.6-1 evaluate_1.0.5        
-#> [40] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      
-#> [43] ragg_1.5.2             survival_3.8-6         stats4_4.6.0          
-#> [46] parallelly_1.47.0      rmarkdown_2.31         mets_1.3.9            
-#> [49] tools_4.6.0            htmltools_0.5.9
+#> [25] rlang_1.3.0            cachem_1.1.0           xfun_0.60             
+#> [28] fs_2.1.0               sass_0.4.10            otel_0.2.0            
+#> [31] cli_3.6.6              progressr_1.0.0        pkgdown_2.2.1         
+#> [34] digest_0.6.39          grid_4.6.1             mvtnorm_1.4-1         
+#> [37] lifecycle_1.0.5        timereg_2.0.7          RcppArmadillo_15.4.0-1
+#> [40] evaluate_1.0.5         numDeriv_2016.8-1.1    listenv_1.0.0         
+#> [43] codetools_0.2-20       ragg_1.5.2             survival_3.8-6        
+#> [46] stats4_4.6.1           parallelly_1.48.0      rmarkdown_2.31        
+#> [49] mets_1.3.11            tools_4.6.1            htmltools_0.5.9
 ```
 
 ## Bibliography

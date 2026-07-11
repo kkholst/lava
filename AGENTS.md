@@ -30,6 +30,7 @@ devtools::test(filter = "estimate_default")  # substring match on test file name
   parallelization in
   [`sim.default()`](https://kkholst.github.io/lava/reference/sim.default.md)
   is not optional infrastructure.
+- use `devtools::load_all(".")` to test the package interactively
 
 ## Documentation
 

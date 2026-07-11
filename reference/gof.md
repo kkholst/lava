@@ -106,6 +106,11 @@ information(x,p=pars(x),n=x$data$n,data=model.frame(x),
 
 A `htest`-object.
 
+## See also
+
+[information](https://kkholst.github.io/lava/reference/information.md),
+[score](https://kkholst.github.io/lava/reference/score.md)
+
 ## Author
 
 Klaus K. Holst
@@ -148,7 +153,7 @@ e <- estimate(m,d)
 rsq(e)
 #> $`R-squared`
 #>           y1           y2           y3            u 
-#> 6.714238e-01 5.109812e-01 5.276472e-01 1.221245e-15 
+#> 6.714238e-01 5.109812e-01 5.276472e-01 1.443290e-15 
 #> 
 #> $`Variance explained by 'u'`
 #>        y1        y2        y3 
@@ -165,10 +170,14 @@ rr
 #> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75
 #> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91
 estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
-#>             Estimate Std.Err     2.5%   97.5%   P-value
-#> [y1] - [y2]  0.16038 0.04040  0.08119 0.23956 7.197e-05
-#> [y1] - [y3]  0.13469 0.03884  0.05857 0.21081 5.244e-04
-#> [y2] - [y3] -0.02569 0.02786 -0.08029 0.02891 3.565e-01
+#> Warning: The 'null', 'contrast', 'type', 'back.transform', 'level' and 'var.adj' arguments of estimate.default() are deprecated and will be removed in version 1.9.3. Use summary(estimate(...), null=, contrast=, type=, transform=,level=, df=, var.adj=) instead.
+#> Call: estimate.default(x = rr, contrast = rbind(c(1, -1, 0), c(1, 0, 
+#>     -1), c(0, 1, -1)))
+#> ────────────────────────────────────────────────────────────
+#>    Estimate Std.Err   2.5%  97.5%    P-value
+#> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163
+#> y2   0.5063 0.02752 0.4523 0.5602  1.342e-75
+#> y3   0.5320 0.02627 0.4805 0.5835  3.856e-91
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [y1] - [y2] = 0

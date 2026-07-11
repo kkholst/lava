@@ -10,7 +10,7 @@ define linear constraints between model equations.
 regression(object = lvm(), to, from, fn = NA,
 messages = lava.options()$messages, additive=TRUE, y, x, value, ...)
 # S3 method for class 'lvm'
-regression(object, to = NULL, quick = FALSE, ...) <- value
+regression(object, to = NULL, from = NULL, ...) <- value
 ```
 
 ## Arguments
@@ -56,10 +56,6 @@ regression(object, to = NULL, quick = FALSE, ...) <- value
 - x:
 
   Alias for 'from'
-
-- quick:
-
-  Faster implementation without parameter constraints
 
 ## Value
 

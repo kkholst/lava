@@ -128,7 +128,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.217s
+#> 50 replications                  Time: 0.984s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -150,7 +150,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.217s
+#> 50 replications                  Time: 0.984s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -168,7 +168,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.217s
+#> 50 replications                  Time: 0.984s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
@@ -241,4 +241,58 @@ sim(function(iter=1,a=5,b=5) iter*f(a,b), iter=TRUE, R=5)
 #>        [,1]   [,2]   [,3]   [,4]   [,5]
 #> Mean 75.000 75.000 75.000 75.000 75.000
 #> SD   39.528 39.528 39.528 39.528 39.528
+
+## Returning estimate objects with extra per-iteration information
+onerun2 <- function(...) {
+  x <- rnorm(50)
+  y <- 0.5*x + rnorm(50)
+  e <- estimate(lm(y ~ x))
+  c(e, converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+  # works identically with summary.estimate objects
+  # c(summary(e), converged = 1, niter = sample(5:20, 1), drop.ic = TRUE)
+}
+val2 <- sim(onerun2, R = 10)
+val2
+#>    (Intercept) x        (Intercept).Std.Err x.Std.Err converged niter   
+#> 1   0.10011     0.48755  0.13145             0.09815   1.00000   6.00000
+#> 2   0.20247     0.83953  0.15051             0.20878   1.00000  19.00000
+#> 3   0.11318     0.48145  0.12845             0.11748   1.00000  13.00000
+#> 4  -0.24943     0.56391  0.15076             0.16088   1.00000   5.00000
+#> 5  -0.23902     0.56304  0.14119             0.13798   1.00000  16.00000
+#> 6   0.24264     0.60289  0.13804             0.14833   1.00000  13.00000
+#> 7   0.06325     0.46903  0.11287             0.13361   1.00000  10.00000
+#> 8  -0.18888     0.47657  0.12326             0.09038   1.00000  10.00000
+#> 9  -0.08492     0.33604  0.13019             0.14964   1.00000  12.00000
+#> 10  0.13528     0.54151  0.12871             0.10612   1.00000  13.00000
+#> 
+#>       (Intercept)       x
+#> Mean    0.0094681 0.53615
+#> SD      0.1844915 0.12973
+#> SE      0.1335432 0.13513
+#> SE/SD   0.7238451 1.04166
+# extra columns are stored but excluded from default summary statistics
+idx <- c("(Intercept)", "x", "niter")
+summary(val2, estimate=idx, true=c(0,0.5,NA))
+#> 10 replications                  Time: 0.201s
+#> 
+#>          (Intercept)        x   niter
+#> Mean       0.0094681 0.536154 11.7000
+#> SD         0.1844915 0.129729  4.2177
+#> SE         0.1335432 0.135133        
+#> SE/SD      0.7238451 1.041659        
+#> Coverage   1.0000000 1.000000        
+#> Length     0.5234799 0.529713        
+#>                                      
+#> Min       -0.2494253 0.336044  5.0000
+#> 2.5%      -0.2470833 0.365967  5.2250
+#> 50%        0.0816777 0.514531 12.5000
+#> 97.5%      0.2336029 0.786287 18.3250
+#> Max        0.2426428 0.839530 19.0000
+#>                                      
+#> Missing    0.0000000 0.000000  0.0000
+#>                                      
+#> True       0.0000000 0.500000        
+#> Bias       0.0094681 0.036154        
+#> RMSE       0.1847343 0.134673        
+#> 
 ```

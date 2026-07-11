@@ -27,3 +27,8 @@ estimate(x, type = "mean", probs = 0.5, ...)
 
   Additional arguments to lower level functions (i.e.,
   stats::density.default when type="quantile")
+
+## Value
+
+Object of class `estimate` (see
+[estimate.default](https://kkholst.github.io/lava/reference/estimate.default.md)).

@@ -40,3 +40,9 @@ Inverse(
 - symmetric:
 
   set to true if matrix is symmetric
+
+## Value
+
+Matrix (generalized inverse of `X`). Attributes include `det`
+(determinant), `pseudo` (logical, whether pseudo-inverse was used), and
+`minSV` (minimum singular value).

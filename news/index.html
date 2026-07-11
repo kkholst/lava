@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,16 +38,29 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.2" id="lava-192">lava 1.9.2<a class="anchor" aria-label="anchor" href="#lava-192"></a></h2>
-<p>Development version</p>
+<h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
 <ul><li>
+<code>merge.estimate</code> by default no longer sorts IC by id (old behaviour via new argument <code>sort=TRUE</code>)</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.9.2" id="lava-192">lava 1.9.2<a class="anchor" aria-label="anchor" href="#lava-192"></a></h2><p class="text-muted">CRAN release: 2026-06-30</p>
+<ul><li>
+<code>estimate.default</code>: the <code>null</code>, <code>contrast</code>, <code>type</code>, and <code>var.adj</code> arguments are soft-deprecated. Use <code>summary(estimate(...), null=, contrast=, type=,     var.adj=)</code> instead. The default-path Wald p-value (H0: beta = 0) continues to be reported by <code><a href="../reference/estimate.default.html">estimate()</a></code>.</li>
+<li>
+<code>estimate.default</code>: removed <code>R</code>, <code>null.sim</code>, <code>score.deriv</code> and <code>folds</code> arguments.</li>
+<li>new <code>c.summary.estimate</code> S3-method for concatenating <code>summary.estimate</code> objects</li>
+<li>sim.default can now operate on function return objects constructed via <code>c.estimate(estimate_object, extra_args)</code> or <code>c.estimate(summary(estimate_object), extra_args)</code>
+</li>
+<li>
 <code>predict_glm</code> function</li>
+<li>fixed issue when package formula.tools was loaded due to overwriting of as.character.formula.</li>
+<li>bug-fix: <code>regression(model, "y", "x", value="b")</code> now works as expected</li>
+<li>
+<code>index.estimate</code>, <code>index&lt;-.estimate</code> methods for getting and setting id/cluster</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.1" id="lava-191">lava 1.9.1<a class="anchor" aria-label="anchor" href="#lava-191"></a></h2><p class="text-muted">CRAN release: 2026-05-14</p>
-<ul><li>
-<code>estimate.default</code>: removed <code>score.deriv</code>,<code>folds</code>, <code>R</code>, <code>null.sim</code> arguments</li>
-<li>Safe evaluation of rank in <code>wald_test</code>
+<ul><li>Safe evaluation of rank in <code>wald_test</code>
 </li>
 <li>adding CI Length to <code>summary.sim</code> output</li>
 <li>fixing bug related to <code>estimate.index</code> in <code>summary.sim</code>
@@ -495,7 +508,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

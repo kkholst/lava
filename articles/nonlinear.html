@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Klaus Kähler
 Holst</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/nonlinear.Rmd" class="external-link"><code>vignettes/nonlinear.Rmd</code></a></small>
       <div class="d-none name"><code>nonlinear.Rmd</code></div>
@@ -159,14 +159,6 @@ spline</p>
 <code class="sourceCode R"><span><span class="va">kn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>,<span class="fl">3</span>,length.out<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/twostage.lvmfit.html">nonlinear</a></span><span class="op">(</span><span class="va">m2</span>, type<span class="op">=</span><span class="st">"spline"</span>, knots<span class="op">=</span><span class="va">kn</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">u2</span> <span class="op">~</span> <span class="va">u1</span></span>
 <span><span class="va">e2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
-<span><span class="co">#&gt; = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="va">e2</span></span>
 <span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
 <span><span class="co">#&gt; Measurements:                                             </span></span>
@@ -191,15 +183,15 @@ spline</p>
 <code>estimate</code> method:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u1<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,</span>
-<span>      <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span>                    <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      u1  Estimate   Std.Err      2.5%     97.5%      P-value</span></span>
-<span><span class="co">#&gt; p1 -4.0 -9.611119 1.2647437 -12.08997 -7.132266 2.978251e-14</span></span>
-<span><span class="co">#&gt; p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962889 1.012296e-14</span></span>
-<span><span class="co">#&gt; p3 -3.8 -9.038656 1.1463510 -11.28546 -6.791849 3.152439e-15</span></span>
-<span><span class="co">#&gt; p4 -3.7 -8.752425 1.0885635 -10.88597 -6.618879 8.958702e-16</span></span>
-<span><span class="co">#&gt; p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320153e-16</span></span>
-<span><span class="co">#&gt; p6 -3.5 -8.179962 0.9766401 -10.09414 -6.265782 5.493600e-17</span></span></code></pre></div>
+<span><span class="co">#&gt; p1 -4.0 -9.611119 1.2647438 -12.08997 -7.132266 2.978258e-14</span></span>
+<span><span class="co">#&gt; p2 -3.9 -9.324887 1.2051236 -11.68689 -6.962888 1.012298e-14</span></span>
+<span><span class="co">#&gt; p3 -3.8 -9.038656 1.1463511 -11.28546 -6.791849 3.152449e-15</span></span>
+<span><span class="co">#&gt; p4 -3.7 -8.752425 1.0885636 -10.88597 -6.618879 8.958735e-16</span></span>
+<span><span class="co">#&gt; p5 -3.6 -8.466193 1.0319265 -10.48873 -6.443654 2.320163e-16</span></span>
+<span><span class="co">#&gt; p6 -3.5 -8.179962 0.9766402 -10.09414 -6.265782 5.493627e-17</span></span></code></pre></div>
 <p>The fitted function can be obtained with the following code:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">u2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">u1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
@@ -249,17 +241,6 @@ freedom:</p>
 <span>         <span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u1<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,x<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>         <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>estimate<span class="op">=</span><span class="va">e</span>,predict<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">pr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>         <span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
-<span><span class="co">#&gt; = 2.6e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.6e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 1.1e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">u2</span><span class="op">-</span><span class="va">z</span><span class="op">)</span> <span class="op">~</span> <span class="va">u1</span>, data<span class="op">=</span><span class="va">d</span>, col<span class="op">=</span><span class="fu"><a href="../reference/Col.html">Col</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="fl">0.5</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span>
 <span>     xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">eta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
@@ -341,36 +322,27 @@ covariate <span class="math inline">z</span></p>
 <span><span class="va">ee1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">mm1</span>, model2<span class="op">=</span><span class="va">mm2</span>, data<span class="op">=</span><span class="va">d</span>, predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in estimate.lvm(model2, data = newd, ...): Near-singular covariance</span></span>
 <span><span class="co">#&gt; matrix, using pseudo-inverse!</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
-<span><span class="co">#&gt; = 6.4e-06). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 6.4e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 6.5e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"u2~u"</span>,regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5%    P-value</span></span>
-<span><span class="co">#&gt; u2~u2     0.4505 0.01528  0.42052  0.48041 4.550e-191</span></span>
-<span><span class="co">#&gt; u2~u1     0.2315 0.12694 -0.01733  0.48026  6.823e-02</span></span>
-<span><span class="co">#&gt; u2~u1:g   0.5926 0.23212  0.13768  1.04756  1.068e-02</span></span>
-<span><span class="co">#&gt; u2~u2:g  -0.1973 0.08832 -0.37041 -0.02419  2.549e-02</span></span></code></pre></div>
+<span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5%   P-value</span></span>
+<span><span class="co">#&gt; u2~u2     0.4553 0.04660  0.36393  0.54660 1.523e-22</span></span>
+<span><span class="co">#&gt; u2~u1     0.2294 0.12241 -0.01047  0.46936 6.087e-02</span></span>
+<span><span class="co">#&gt; u2~u1:g   0.5874 0.25055  0.09637  1.07852 1.905e-02</span></span>
+<span><span class="co">#&gt; u2~u2:g  -0.1956 0.08673 -0.36556 -0.02559 2.413e-02</span></span></code></pre></div>
 <p>A formal test show no statistically significant effect of this
 interaction</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"(:g)"</span>, regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), </span></span>
-<span><span class="co">#&gt;     coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;         Estimate Std.Err    2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; u2~u1:g   0.5926 0.23212  0.1377  1.04756 0.01068</span></span>
-<span><span class="co">#&gt; u2~u2:g  -0.1973 0.08832 -0.3704 -0.02419 0.02549</span></span>
+<span><span class="co">#&gt;         Estimate Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; u2~u1:g   0.5874 0.25055  0.09637  1.07852 0.01905</span></span>
+<span><span class="co">#&gt; u2~u2:g  -0.1956 0.08673 -0.36556 -0.02559 0.02413</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [u2~u1:g] = 0</span></span>
 <span><span class="co">#&gt;   [u2~u2:g] = 0 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 43.1318, df = 2, p-value = 4.306e-10</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 27.4922, df = 2, p-value = 1.072e-06</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="mixture-models">Mixture models<a class="anchor" aria-label="anchor" href="#mixture-models"></a>
@@ -463,17 +435,6 @@ the mixture model</p>
 <code>two-stage</code> method</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">em2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">em0</span>,<span class="va">m2</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(icz): IC does not have mean zero (max |mean|/rms</span></span>
-<span><span class="co">#&gt; = 2.8e-05). Using lava.options(check.ic = FALSE) disables the warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 2.8e-05). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
-<span><span class="co">#&gt; Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max</span></span>
-<span><span class="co">#&gt; |mean|/rms = 9.5e-06). Using lava.options(check.ic = FALSE) disables the</span></span>
-<span><span class="co">#&gt; warning globally.</span></span>
 <span><span class="va">em2</span></span>
 <span><span class="co">#&gt;                     Estimate Std. Error  Z-value   P-value</span></span>
 <span><span class="co">#&gt; Measurements:                                             </span></span>
@@ -518,7 +479,7 @@ model:</p>
 </h2>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -539,26 +500,26 @@ model:</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] lava_1.9.2</span></span>
+<span><span class="co">#&gt; [1] lava_1.9.2.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        </span></span>
+<span><span class="co">#&gt;  [4] compiler_4.6.1         Rcpp_1.1.2             parallel_4.6.1        </span></span>
 <span><span class="co">#&gt;  [7] Rgraphviz_2.56.0       jquerylib_0.1.4        globals_0.19.1        </span></span>
-<span><span class="co">#&gt; [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
+<span><span class="co">#&gt; [10] splines_4.6.1          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
 <span><span class="co">#&gt; [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        </span></span>
 <span><span class="co">#&gt; [16] R6_2.6.1               generics_0.1.4         knitr_1.51            </span></span>
 <span><span class="co">#&gt; [19] BiocGenerics_0.58.1    htmlwidgets_1.6.4      graph_1.90.0          </span></span>
 <span><span class="co">#&gt; [22] future_1.70.0          desc_1.4.3             bslib_0.11.0          </span></span>
-<span><span class="co">#&gt; [25] rlang_1.2.0            cachem_1.1.0           xfun_0.57             </span></span>
-<span><span class="co">#&gt; [28] fs_2.1.0               sass_0.4.10            cli_3.6.6             </span></span>
-<span><span class="co">#&gt; [31] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            </span></span>
-<span><span class="co">#&gt; [34] mvtnorm_1.3-7          lifecycle_1.0.5        timereg_2.0.7         </span></span>
-<span><span class="co">#&gt; [37] RcppArmadillo_15.2.6-1 evaluate_1.0.5         numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [40] listenv_0.10.1         codetools_0.2-20       ragg_1.5.2            </span></span>
-<span><span class="co">#&gt; [43] survival_3.8-6         stats4_4.6.0           parallelly_1.47.0     </span></span>
-<span><span class="co">#&gt; [46] rmarkdown_2.31         mets_1.3.9             tools_4.6.0           </span></span>
-<span><span class="co">#&gt; [49] htmltools_0.5.9</span></span></code></pre></div>
+<span><span class="co">#&gt; [25] rlang_1.3.0            cachem_1.1.0           xfun_0.60             </span></span>
+<span><span class="co">#&gt; [28] fs_2.1.0               sass_0.4.10            otel_0.2.0            </span></span>
+<span><span class="co">#&gt; [31] cli_3.6.6              pkgdown_2.2.1          digest_0.6.39         </span></span>
+<span><span class="co">#&gt; [34] grid_4.6.1             mvtnorm_1.4-1          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [37] timereg_2.0.7          RcppArmadillo_15.4.0-1 evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt; [40] numDeriv_2016.8-1.1    listenv_1.0.0          codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [43] ragg_1.5.2             survival_3.8-6         stats4_4.6.1          </span></span>
+<span><span class="co">#&gt; [46] parallelly_1.48.0      rmarkdown_2.31         mets_1.3.11           </span></span>
+<span><span class="co">#&gt; [49] tools_4.6.1            htmltools_0.5.9</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
@@ -587,7 +548,7 @@ Estimation Procedure for Non-Linear Structural Equation Models.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

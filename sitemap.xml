@@ -34,6 +34,8 @@
 <url><loc>https://kkholst.github.io/lava/reference/bootstrap.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/bootstrap.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/brisa.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/c.estimate.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/c.summary.estimate.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/calcium.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/cancel.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/children.html</loc></url>
@@ -59,6 +61,9 @@
 <url><loc>https://kkholst.github.io/lava/reference/equivalence.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.array.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.default.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/estimate.formula.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/estimate.glm.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/estimate.list.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/eventTime.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/fplot.html</loc></url>
@@ -72,6 +77,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/index-method.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/index.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/indoorenv.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/information.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/intercept.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/internal.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/intervention.lvm.html</loc></url>
@@ -82,6 +88,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/makemissing.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/measurement.error.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/merge.estimate.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/missingdata.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/mixture.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/modelsearch.html</loc></url>
@@ -112,6 +119,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/rmvar.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/rotate2.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/scheffe.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/score.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/semdata.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/serotonin.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/sim.default.html</loc></url>
@@ -119,6 +127,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/spaghetti.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/stack.estimate.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/subset.lvm.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/summary.estimate.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/summary.sim.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/timedep.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/toformula.html</loc></url>
@@ -128,6 +137,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/twostage.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/twostage.lvmfit.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/twostageCV.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/var_ic.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/vars.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/vec.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/wait.html</loc></url>

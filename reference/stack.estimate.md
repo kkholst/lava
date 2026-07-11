@@ -72,6 +72,12 @@ stack(
 
   Additional arguments to lower level functions
 
+## Value
+
+Object of class `estimate` (see
+[estimate.default](https://kkholst.github.io/lava/reference/estimate.default.md))
+with inference adjusted for the two-stage estimation.
+
 ## Examples
 
 ``` r

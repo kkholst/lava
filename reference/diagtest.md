@@ -79,14 +79,14 @@ diagtest(M,exact=TRUE)
 #> Accuracy                 0.59829 0.50363 0.68785        
 #> Homogeneity              0.74468 0.59650 0.86055  0.0011
 #> ────────────────────────────────────────────────────────────────────────────────
-#> 
-#> Prevalence:              Prob( outcome+ )
-#> Test:                    Prob( test+ )
-#> Sensitivity (True positive rate):    Prob( test+ | outcome+ )
-#> Specificity (True negative rate):    Prob( test- | outcome- )
-#> Positive predictive value (Precision):   Prob( outcome+ | test+ )
-#> Negative predictive value:       Prob( outcome- | test- )
-#> Accuracy:                Prob( correct classification )
-#> Homogeneity/Symmetry:            Prob( outcome+, test- | discordant ), H0: p=0.5 
+#>                                                                
+#>  Prevalence         Pr(outcome+)                               
+#>  Test:              Pr( test+ )\n                              
+#>  Sensitivity (TPR): Pr(test+ | outcome+)                       
+#>  Specificity (TNR): Pr(test- | outcome-)                       
+#>  PPV (Precision):   Pr(outcome+ | test+)                       
+#>  NPV:               Pr(outcome- | test-)                       
+#>  Accuracy:          Pr(correct classification)                 
+#>  Homogeneity/Sym.:  Pr(outcome+, test- | discordant), H0: p=0.5
 #> 
 ```

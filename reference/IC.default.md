@@ -27,6 +27,17 @@ IC(x, bread, id = NULL, ...)
 
   additional arguments
 
+## Value
+
+Matrix with rows corresponding to observations and columns to
+parameters, representing the estimated influence function. Attributes
+include `bread` (derivative of the estimating equation).
+
+## See also
+
+[var_ic](https://kkholst.github.io/lava/reference/var_ic.md),
+[iid](https://kkholst.github.io/lava/reference/iid.md)
+
 ## Examples
 
 ``` r

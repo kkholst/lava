@@ -16,26 +16,25 @@ estimate(
   ...,
   data,
   id,
+  coef,
+  IC = TRUE,
+  vcov,
   stack = TRUE,
   average = FALSE,
   subset,
-  level = 0.95,
-  IC = TRUE,
-  type = c("robust", "df", "mbn"),
-  var.adj,
   keep,
   use,
   regex = FALSE,
   ignore.case = FALSE,
-  contrast,
-  null,
-  vcov,
-  coef,
-  df = NULL,
   print = NULL,
   labels,
   label.width,
-  only.coef = FALSE,
+  contrast,
+  null,
+  level = NULL,
+  type = NULL,
+  var.adj = NULL,
+  df = NULL,
   back.transform = NULL
 )
 ```
@@ -50,22 +49,15 @@ estimate(
 
 - f:
 
-  transformation of model parameters. Accepts several input types:
-
-  - A **function** `f(p)` or `f(p, data)`: applies the delta method.
-    When `f` returns a named list the names are used as parameter
-    labels.
-
-  - A **matrix**: used as a contrast (linear combination) matrix.
-
-  - A **numeric vector** of parameter indices: converted to a contrast
-    that selects and differences those parameters.
-
-  - A **list** of indices: each element selects one parameter.
-
-  - **Character** expressions: supports wildcards (`"?"`, `"*"`) and
-    arithmetic on parameter names (e.g., `"z" - "x"`,
-    `2 * "z" - 3 * "x"`).
+  transformation of model parameters. Accepts several input types: - A
+  **function** `f(p)` or `f(p, data)`: applies the delta method. When
+  `f` returns a named list the names are used as parameter labels. - A
+  **matrix**: used as a contrast (linear combination) matrix. - A
+  **numeric vector** of parameter indices: converted to a contrast that
+  selects and differences those parameters. - A **list** of indices:
+  each element selects one parameter. - **Character** expressions:
+  supports wildcards (`"?"`, `"*"`) and arithmetic on parameter names
+  (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
 
 - ...:
 
@@ -83,6 +75,29 @@ estimate(
   name, or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
   independence). When supplied, the IF is aggregated within clusters to
   produce cluster-robust standard errors.
+
+- coef:
+
+  (optional) named parameter vector. Used instead of `coef(x)` when
+  constructing an `estimate` object without a model.
+
+- IC:
+
+  if `TRUE` (default) the influence function matrix is estimated and
+  stored in the returned object (extract with the
+  [IC](https://kkholst.github.io/lava/reference/IC.default.md) method).
+  Can also be a user-supplied IF matrix (one row per observation, one
+  column per parameter), which is used directly instead of estimating it
+  from `x`.
+
+- vcov:
+
+  (optional) covariance matrix of parameter estimates, or a logical. If
+  `TRUE`, [stats::vcov](https://rdrr.io/r/stats/vcov.html) is used to
+  obtain the (model-based) covariance matrix from `x`, yielding
+  non-robust standard errors. If a matrix is supplied it is used
+  directly. When omitted or `FALSE`, robust standard errors are computed
+  from the influence function.
 
 - stack:
 
@@ -105,40 +120,6 @@ estimate(
   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
   conditional marginalized estimate.
 
-- level:
-
-  level of confidence limits (default 0.95)
-
-- IC:
-
-  if `TRUE` (default) the influence function matrix is estimated and
-  stored in the returned object (extract with the
-  [IC](https://kkholst.github.io/lava/reference/IC.default.md) method).
-  Can also be a user-supplied IF matrix (one row per observation, one
-  column per parameter), which is used directly instead of estimating it
-  from `x`.
-
-- type:
-
-  type of small-sample correction for cluster-robust variance. One of:
-
-  - `"robust"` (default): no correction.
-
-  - `"df"`: applies \\n/(n-p)\\ correction (Mancl & DeRouen, 2001).
-
-  - `"mbn"`: Morel-Bokossa-Neerchal (2003) correction.
-
-  - `"hc3"`: leverage-adjusted HC3-type correction (blended with
-    `var.adj`).
-
-  - `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
-
-- var.adj:
-
-  blending parameter for the HC3 leverage adjustment (default 0.25).
-  Controls the weight between observation-level empirical leverage and
-  the average leverage \\p/n\\.
-
 - keep:
 
   (optional) index of parameters to keep from final result. Accepts
@@ -160,35 +141,6 @@ estimate(
 
   ignore case in regular expressions
 
-- contrast:
-
-  (optional) contrast matrix for a final Wald test. When supplied
-  together with `null`, tests \\H_0: B\theta = b_0\\.
-
-- null:
-
-  (optional) null hypothesis vector \\b_0\\ to test against (default 0)
-
-- vcov:
-
-  (optional) covariance matrix of parameter estimates, or a logical. If
-  `TRUE`, [stats::vcov](https://rdrr.io/r/stats/vcov.html) is used to
-  obtain the (model-based) covariance matrix from `x`, yielding
-  non-robust standard errors. If a matrix is supplied it is used
-  directly. When omitted or `FALSE`, robust standard errors are computed
-  from the influence function.
-
-- coef:
-
-  (optional) named parameter vector. Used instead of `coef(x)` when
-  constructing an `estimate` object without a model.
-
-- df:
-
-  degrees of freedom for t-based inference (default: `NULL` for Gaussian
-  approximation; when set, confidence intervals and p-values use the
-  t-distribution with `df` degrees of freedom)
-
 - print:
 
   (optional) custom print function for the resulting `estimate` object
@@ -201,17 +153,90 @@ estimate(
 
   (optional) max display width of labels
 
-- only.coef:
+- contrast:
 
-  (Deprecated) if `TRUE` only the coefficient matrix is returned. Use
-  `parameter(estimate(...))` instead.
+  (deprecated, use summary method) contrast matrix for a final Wald
+  test. When supplied together with `null`, tests \\H_0: B\theta =
+  b_0\\.
+
+- null:
+
+  (deprecated, use summary method) null hypothesis vector \\b_0\\ to
+  test against (default 0)
+
+- level:
+
+  (deprecated, use summary method) level of confidence limits (default
+  0.95)
+
+- type:
+
+  (deprecated, use summary method) type of small-sample correction for
+  cluster-robust variance. One of: - `"robust"` (default): no
+  correction.
+
+  - `"df"`: applies \\n/(n-p)\\ correction (Mancl & DeRouen, 2001). -
+    `"mbn"`: Morel-Bokossa-Neerchal (2003) correction. - `"hc3"`:
+    leverage-adjusted HC3-type correction (blended with `var.adj`). -
+    `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
+
+- var.adj:
+
+  (deprecated, use summary method) blending parameter for the HC3
+  leverage adjustment (default 0.25). Controls the weight between
+  observation-level empirical leverage and the average leverage \\p/n\\.
+
+- df:
+
+  (deprecated, use summary method) degrees of freedom for t-based
+  inference (default: `NULL` for Gaussian approximation; when set,
+  confidence intervals and p-values use the t-distribution with `df`
+  degrees of freedom).
 
 - back.transform:
 
-  (optional) function applied to the point estimates and confidence
-  interval bounds *after* inference is performed on the original scale.
-  Useful for variance-stabilizing transformations, e.g., compute CIs on
-  the `atanh` (Fisher z) scale and back-transform with `tanh`.
+  (deprecated, use summary method) function applied to the point
+  estimates and confidence interval bounds *after* inference is
+  performed on the original scale. Useful for variance-stabilizing
+  transformations, e.g., compute CIs on the `atanh` (Fisher z) scale and
+  back-transform with `tanh`.
+
+## Value
+
+Object of class `estimate` with the following elements:
+
+- coef:
+
+  Named vector of parameter estimates.
+
+- vcov:
+
+  Variance-covariance matrix.
+
+- IC:
+
+  Influence function matrix (observations x parameters).
+
+- coefmat:
+
+  Formatted coefficient table (estimate, std.err, confidence limits,
+  p-value).
+
+- id:
+
+  Cluster/id variable used.
+
+- ncluster:
+
+  Number of clusters.
+
+- n:
+
+  Number of observations.
+
+- compare:
+
+  (When `null` or contrasts are specified) Wald test result.
 
 ## Details
 
@@ -281,12 +306,14 @@ For full theoretical background and worked examples see
 ## See also
 
 [estimate.array](https://kkholst.github.io/lava/reference/estimate.array.md),
-merge.estimate,
+[merge.estimate](https://kkholst.github.io/lava/reference/merge.estimate.md),
 [contr](https://kkholst.github.io/lava/reference/contr.md),
 [parsedesign](https://kkholst.github.io/lava/reference/contr.md),
 [pairwise.diff](https://kkholst.github.io/lava/reference/contr.md),
-`summary.estimate`, `coef.estimate`, `vcov.estimate`,
-`transform.estimate`, `labels.estimate`, `IC.estimate`
+[c.estimate](https://kkholst.github.io/lava/reference/c.estimate.md),
+[summary.estimate](https://kkholst.github.io/lava/reference/summary.estimate.md),
+`coef.estimate`, `vcov.estimate`, `transform.estimate`,
+`labels.estimate`,
 
 ## Examples
 
@@ -310,7 +337,7 @@ estimate(g, g0)
 #>                -567.6493                -672.6041 
 #> 
 
-## Plain estimates (robust standard errors)
+
 estimate(g)
 #>              Estimate Std.Err    2.5%  97.5%   P-value
 #> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01
@@ -318,7 +345,9 @@ estimate(g)
 #> x            1.009058 0.14720  0.7205 1.2976 7.135e-12
 
 ## Testing contrasts
-estimate(g, null=0)
+summary(estimate(g), null=0)
+#> Call: estimate.default(x = x)
+#> ────────────────────────────────────────────────────────────
 #>              Estimate Std.Err    2.5%  97.5%   P-value
 #> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01
 #> z            0.953974 0.08114  0.7949 1.1130 6.481e-32
@@ -334,91 +363,54 @@ estimate(g, rbind(c(1,1,0), c(1,0,2)))
 #>                      Estimate Std.Err   2.5% 97.5%   P-value
 #> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199 4.075e-14
 #> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487 4.939e-17
+summary(estimate(g, rbind(c(1,1,0), c(1,0,2))), null=c(1,2))
+#> Call: estimate.default(x = x, f = ..1)
 #> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [(Intercept)] + [z] = 0
-#>   [(Intercept)] + 2[x] = 0 
-#>  
-#> chisq = 153.6241, df = 2, p-value < 2.2e-16
-estimate(g, rbind(c(1,1,0), c(1,0,2)), null=c(1,2))
 #>                      Estimate Std.Err   2.5% 97.5% P-value
 #> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199  0.7037
 #> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487  0.9462
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [(Intercept)] + [z] = 1
-#>   [(Intercept)] + 2[x] = 2 
+#>   [[(Intercept)] + [z]] = 1
+#>   [[(Intercept)] + 2[x]] = 2 
 #>  
 #> chisq = 0.1447, df = 2, p-value = 0.9302
 estimate(g, 2:3) ## same as cbind(0,1,-1)
 #>           Estimate Std.Err    2.5%  97.5% P-value
 #> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [z] - [x] = 0 
-#>  
-#> chisq = 0.1285, df = 1, p-value = 0.72
 estimate(g, as.list(2:3)) ## same as rbind(c(0,1,0),c(0,0,1))
 #>   Estimate Std.Err   2.5% 97.5%   P-value
 #> z    0.954 0.08114 0.7949 1.113 6.481e-32
 #> x    1.009 0.14720 0.7205 1.298 7.135e-12
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [z] = 0
-#>   [x] = 0 
-#>  
-#> chisq = 159.9584, df = 2, p-value < 2.2e-16
 ## Alternative syntax
 estimate(g, "z", "z"-"x", 2*"z"-3*"x")
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> z            0.95397 0.08114  0.7949  1.1130 6.481e-32
 #> [z] - [x]   -0.05508 0.15367 -0.3563  0.2461 7.200e-01
 #> 2[z] - 3[x] -1.11922 0.43991 -1.9814 -0.2570 1.095e-02
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [z] = 0
-#>   [z] - [x] = 0
-#>   2[z] - 3[x] = 0 
-#>  
-#> chisq = 159.9584, df = 2, p-value < 2.2e-16
 estimate(g, "?")  ## Wildcards
 #>           Estimate Std.Err    2.5%  97.5% P-value
 #> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [z] - [x] = 0 
-#>  
-#> chisq = 0.1285, df = 1, p-value = 0.72
 estimate(g, "*Int*", "z")
 #>              Estimate Std.Err    2.5%  97.5%   P-value
 #> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01
 #> z            0.953974 0.08114  0.7949 1.1130 6.481e-32
+summary(estimate(g, "1", "2"-"3"), null = c(0,1))
+#> Call: estimate.default(x = x, f = "1", ..2)
 #> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [(Intercept)] = 0
-#>   [z] = 0 
-#>  
-#> chisq = 138.2721, df = 2, p-value < 2.2e-16
-estimate(g, "1", "2"-"3", null = c(0,1))
 #>              Estimate Std.Err    2.5%  97.5%   P-value
 #> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01
 #> [z] - [x]   -0.055083 0.15367 -0.3563 0.2461 6.606e-12
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [(Intercept)] = 0
-#>   [z] - [x] = 1 
+#>   [[z] - [x]] = 1 
 #>  
 #> chisq = 77.8686, df = 2, p-value < 2.2e-16
 estimate(g, 2, 3)
 #>   Estimate Std.Err   2.5% 97.5%   P-value
 #> z    0.954 0.08114 0.7949 1.113 6.481e-32
 #> x    1.009 0.14720 0.7205 1.298 7.135e-12
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [z] = 0
-#>   [x] = 0 
-#>  
-#> chisq = 159.9584, df = 2, p-value < 2.2e-16
 
 ## Usual (non-robust) confidence intervals
 estimate(g, vcov=TRUE)
@@ -475,7 +467,7 @@ estimate(lm(y~x,d1))
 #> (Intercept)   0.1044  0.1171 -0.1251 0.3338 3.726e-01
 #> x             0.9665  0.1234  0.7246 1.2084 4.853e-15
 
-## Marginalize
+## Marginalize / standardization
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
@@ -490,11 +482,6 @@ estimate(e,diff)
 estimate(e,cbind(1,1))
 #>             Estimate Std.Err  2.5% 97.5% P-value
 #> [p0] + [p1]    1.202 0.03027 1.142 1.261       0
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [p0] + [p1] = 0 
-#>  
-#> chisq = 1576.103, df = 1, p-value < 2.2e-16
 
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
@@ -536,16 +523,10 @@ IC(estimate(l1,id=id1,stack=FALSE))
 IC(estimate(l1,id=id1))
 #>   (Intercept)           x
 #> 1  -0.6402167  1.07508836
-#> 2  -0.2409398 -0.09345091
-#> 3  -0.2915390 -0.17419820
 #> 4   0.9653828 -0.68490833
+#> 3  -0.2915390 -0.17419820
+#> 2  -0.2409398 -0.09345091
 #> 5   0.2073128 -0.12253093
-#> attr(,"bread")
-#>             (Intercept)          x
-#> (Intercept)   0.6136517 -0.1000796
-#> x            -0.1000796  0.9011828
-#> attr(,"N")
-#> [1] 10
 
 ## Combined i.i.d. decomposition
 e1 <- estimate(l1,id=id1)
@@ -568,9 +549,9 @@ e3 <- estimate(l3,id=id3)
 IC(a1 <- merge(l1,l2,l3,id=list(id1,id2,id3)))
 #>    (Intercept)          x (Intercept).1         x.1 (Intercept).2         x.2
 #> 1   -1.2804333  2.1501767    3.53262530 -3.15431642     0.7554987  2.18566521
-#> 2   -0.4818797 -0.1869018    0.06810688 -0.07263298     0.5200220 -0.55458052
-#> 3   -0.5830781 -0.3483964    1.08830429 -0.51910711    -0.1215704  0.05798750
 #> 4    1.9307656 -1.3698167   -2.27428000 -0.36871845    -1.5561326 -0.25228854
+#> 3   -0.5830781 -0.3483964    1.08830429 -0.51910711    -0.1215704  0.05798750
+#> 2   -0.4818797 -0.1869018    0.06810688 -0.07263298     0.5200220 -0.55458052
 #> 5    0.4146255 -0.2450619    0.25612485  0.61909106    -0.4880168 -1.17960761
 #> 6    0.0000000  0.0000000   -2.62738927  3.57191544     1.6742259 -2.27609724
 #> 7    0.0000000  0.0000000    0.33520853  0.13001396     0.8010558  0.31069745
@@ -696,14 +677,10 @@ B %*% e
 #> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 0.365625
 #> a              0.5  0.2346  0.0401 0.9599 0.033101
 #> b              0.8  0.2868  0.2379 1.3621 0.005277
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [a] - [b] = 0
-#>   [a] = 0
-#>   [b] = 0 
-#>  
-#> chisq = 10.3338, df = 2, p-value = 0.005702
 e == 1 # wald-test, null-hypothesis H0: b=1
+#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
+#>     stack = FALSE, keep = keep)
+#> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5% P-value
 #> a      0.5  0.2346 0.0401 0.9599  0.0331
 #> b      0.8  0.2868 0.2379 1.3621  0.4856
@@ -714,6 +691,9 @@ e == 1 # wald-test, null-hypothesis H0: b=1
 #>  
 #> chisq = 4.6135, df = 2, p-value = 0.09958
 e == c(1,2)
+#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
+#>     stack = FALSE, keep = keep)
+#> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5%   P-value
 #> a      0.5  0.2346 0.0401 0.9599 3.310e-02
 #> b      0.8  0.2868 0.2379 1.3621 2.859e-05
@@ -724,6 +704,8 @@ e == c(1,2)
 #>  
 #> chisq = 19.2204, df = 2, p-value = 6.704e-05
 B %*% e == 1
+#> Call: estimate.default(x = y, f = x)
+#> ────────────────────────────────────────────────────────────
 #>           Estimate Std.Err    2.5%  97.5%   P-value
 #> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 8.842e-05
 #> a              0.5  0.2346  0.0401 0.9599 3.310e-02

@@ -122,19 +122,14 @@ if (requireNamespace('mets', quietly=TRUE)) {
 #> Residual:  0.02701133   Extrapolation:  TRUE   Steplength:  1 
 #> Residual:  0.03759283   Extrapolation:  TRUE   Steplength:  4 
 #> Residual:  0.6706137   Extrapolation:  TRUE   Steplength:  16 
-#> Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070702 
-#> Residual:  0.001280272   Extrapolation:  TRUE   Steplength:  3.588918 
-#> Residual:  0.0003418479   Extrapolation:  TRUE   Steplength:  6.548223 
-#> Residual:  0.0001613932   Extrapolation:  TRUE   Steplength:  4.502941 
-#> Residual:  0.0001075714   Extrapolation:  TRUE   Steplength:  5.9717 
-#> Residual:  2.075845e-05   Extrapolation:  TRUE   Steplength:  3.793239 
-#> Residual:  2.519482e-06   Extrapolation:  TRUE   Steplength:  4.763772 
+#> Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070703 
+#> Residual:  0.001280263   Extrapolation:  TRUE   Steplength:  3.58892 
+#> Residual:  0.0003419721   Extrapolation:  TRUE   Steplength:  6.548214 
+#> Residual:  0.0001613952   Extrapolation:  TRUE   Steplength:  4.503239 
+#> Residual:  0.0001076251   Extrapolation:  TRUE   Steplength:  5.974578 
+#> Residual:  2.074922e-05   Extrapolation:  TRUE   Steplength:  3.789031 
+#> Residual:  3.893975e-06   Extrapolation:  TRUE   Steplength:  4.736217 
 #>     Estimate Std.Err   2.5% 97.5%    P-value
 #> y~x    1.048 0.03811 0.9737 1.123 1.263e-166
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [y~x] = 0 
-#>  
-#> chisq = 756.9072, df = 1, p-value < 2.2e-16
 # }
 ```

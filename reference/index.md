@@ -4,60 +4,60 @@
 
 Functions for working with Influence Functions
 
-- [`estimate(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/estimate.default.md)
-  : Influence function based inference
 - [`IC(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/IC.default.md)
   : Extract influence function from model object
-- [`multinomial()`](https://kkholst.github.io/lava/reference/multinomial.md)
-  : Estimate probabilities in contingency table
+- [`c(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/c.estimate.md)
+  : Concatenate estimate objects
+- [`c(`*`<summary.estimate>`*`)`](https://kkholst.github.io/lava/reference/c.summary.estimate.md)
+  : Concatenate summary.estimate objects
 - [`estimate(`*`<array>`*`)`](https://kkholst.github.io/lava/reference/estimate.array.md)
   : Estimate parameters and influence function.
+- [`estimate(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/estimate.default.md)
+  : Influence function based inference
+- [`estimate(`*`<glm>`*`)`](https://kkholst.github.io/lava/reference/estimate.glm.md)
+  : Estimate method for GLM objects
+- [`estimate(`*`<list>`*`)`](https://kkholst.github.io/lava/reference/estimate.list.md)
+  : Estimate method for lists
 - [`iid()`](https://kkholst.github.io/lava/reference/iid.md) : Extract
   i.i.d. decomposition from model object
-- [`stack(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/stack.estimate.md)
-  : Stack estimating equations
+- [`merge(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/merge.estimate.md)
+  : Merge estimate objects
+- [`multinomial()`](https://kkholst.github.io/lava/reference/multinomial.md)
+  : Estimate probabilities in contingency table
 - [`plot(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/plot.estimate.md)
   : Plot method for 'estimate' objects
+- [`stack(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/stack.estimate.md)
+  : Stack estimating equations
+- [`summary(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/summary.estimate.md)
+  : Summary of estimate objects
+- [`var_ic()`](https://kkholst.github.io/lava/reference/var_ic.md) :
+  Variance based on influence function
 
 ## Simulation functions
 
-- [`sim(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/sim.lvm.md)
-  : Simulate model
-- [`sim(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/sim.default.md)
-  : Monte Carlo simulation
 - [`plot(`*`<sim>`*`)`](https://kkholst.github.io/lava/reference/plot.sim.md)
   : Plot method for simulation 'sim' objects
+- [`sim(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/sim.default.md)
+  : Monte Carlo simulation
+- [`sim(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/sim.lvm.md)
+  : Simulate model
 - [`summary(`*`<sim>`*`)`](https://kkholst.github.io/lava/reference/summary.sim.md)
   : Summary method for 'sim' objects
 
 ## Statistical Inference and model tools
 
-- [`diagtest()`](https://kkholst.github.io/lava/reference/diagtest.md) :
-  Calculate diagnostic tests for 2x2 table
-- [`contr()`](https://kkholst.github.io/lava/reference/contr.md) :
-  Create contrast matrix
-- [`bootstrap()`](https://kkholst.github.io/lava/reference/bootstrap.md)
-  : Generic bootstrap method
 - [`backdoor()`](https://kkholst.github.io/lava/reference/backdoor.md) :
   Backdoor criterion
+- [`bootstrap()`](https://kkholst.github.io/lava/reference/bootstrap.md)
+  : Generic bootstrap method
 - [`closed_testing()`](https://kkholst.github.io/lava/reference/closed_testing.md)
   : Closed testing procedure
-- [`scheffe()`](https://kkholst.github.io/lava/reference/scheffe.md) :
-  Calculate simultaneous confidence limits by Scheffe's method
-- [`zibreg()`](https://kkholst.github.io/lava/reference/zibreg.md) :
-  Regression model for binomial data with unkown group of immortals
-- [`wkm()`](https://kkholst.github.io/lava/reference/wkm.md) : Weighted
-  K-means
+- [`confpred()`](https://kkholst.github.io/lava/reference/confpred.md) :
+  Conformal prediction
+- [`diagtest()`](https://kkholst.github.io/lava/reference/diagtest.md) :
+  Calculate diagnostic tests for 2x2 table
 - [`dsep(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/dsep.lvm.md)
   : Check d-separation criterion
-- [`pcor()`](https://kkholst.github.io/lava/reference/pcor.md) :
-  Polychoric correlation
-- [`partialcor()`](https://kkholst.github.io/lava/reference/partialcor.md)
-  : Calculate partial correlations
-- [`ordreg()`](https://kkholst.github.io/lava/reference/ordreg.md) :
-  Univariate cumulative link regression models
-- [`mvnmix()`](https://kkholst.github.io/lava/reference/mvnmix.md) :
-  Estimate mixture latent variable model
 - [`equivalence()`](https://kkholst.github.io/lava/reference/equivalence.md)
   : Identify candidates of equivalent models
 - [`gof()`](https://kkholst.github.io/lava/reference/gof.md)
@@ -66,18 +66,36 @@ Functions for working with Influence Functions
   [`score(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/gof.md)
   [`information(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/gof.md)
   : Extract model summaries and GOF statistics for model object
-- [`confpred()`](https://kkholst.github.io/lava/reference/confpred.md) :
-  Conformal prediction
+- [`information()`](https://kkholst.github.io/lava/reference/information.md)
+  : Extract information matrix
 - [`mixture()`](https://kkholst.github.io/lava/reference/mixture.md) :
   Estimate mixture latent variable model.
+- [`mvnmix()`](https://kkholst.github.io/lava/reference/mvnmix.md) :
+  Estimate mixture latent variable model
+- [`ordreg()`](https://kkholst.github.io/lava/reference/ordreg.md) :
+  Univariate cumulative link regression models
+- [`contr()`](https://kkholst.github.io/lava/reference/contr.md) :
+  Create contrast matrix
+- [`partialcor()`](https://kkholst.github.io/lava/reference/partialcor.md)
+  : Calculate partial correlations
+- [`pcor()`](https://kkholst.github.io/lava/reference/pcor.md) :
+  Polychoric correlation
 - [`plot(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/plot.lvm.md)
   : Plot path diagram
 - [`predict(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/predict.lvm.md)
   : Prediction in structural equation models
-- [`predictlvm()`](https://kkholst.github.io/lava/reference/predictlvm.md)
-  : Predict function for latent variable models
 - [`predict_glm()`](https://kkholst.github.io/lava/reference/predict_glm.md)
   : Predict from a GLM with modified coefficients
+- [`predictlvm()`](https://kkholst.github.io/lava/reference/predictlvm.md)
+  : Predict function for latent variable models
+- [`scheffe()`](https://kkholst.github.io/lava/reference/scheffe.md) :
+  Calculate simultaneous confidence limits by Scheffe's method
+- [`score()`](https://kkholst.github.io/lava/reference/score.md) :
+  Extract score function
+- [`wkm()`](https://kkholst.github.io/lava/reference/wkm.md) : Weighted
+  K-means
+- [`zibreg()`](https://kkholst.github.io/lava/reference/zibreg.md) :
+  Regression model for binomial data with unkown group of immortals
 
 ## Data sets
 
@@ -97,10 +115,10 @@ Functions for working with Influence Functions
   Hubble data
 - [`indoorenv`](https://kkholst.github.io/lava/reference/indoorenv.md) :
   Data
-- [`nldata`](https://kkholst.github.io/lava/reference/nldata.md) :
-  Example data (nonlinear model)
 - [`missingdata`](https://kkholst.github.io/lava/reference/missingdata.md)
   : Missing data example
+- [`nldata`](https://kkholst.github.io/lava/reference/nldata.md) :
+  Example data (nonlinear model)
 - [`nsem`](https://kkholst.github.io/lava/reference/nsem.md) : Example
   SEM data (nonlinear)
 - [`semdata`](https://kkholst.github.io/lava/reference/semdata.md) :
@@ -114,22 +132,22 @@ Functions for working with Influence Functions
 
 - [`Col()`](https://kkholst.github.io/lava/reference/Col.md) : Generate
   a transparent RGB color
-- [`curly()`](https://kkholst.github.io/lava/reference/curly.md) : Adds
-  curly brackets to plot
-- [`fplot()`](https://kkholst.github.io/lava/reference/fplot.md) : fplot
-- [`confband()`](https://kkholst.github.io/lava/reference/confband.md) :
-  Add Confidence limits bar to plot
-- [`ksmooth2()`](https://kkholst.github.io/lava/reference/ksmooth2.md) :
-  Plot/estimate surface
+- [`colorbar()`](https://kkholst.github.io/lava/reference/colorbar.md) :
+  Add color-bar to plot
 - [`click(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/click.md)
   [`idplot()`](https://kkholst.github.io/lava/reference/click.md) :
   Identify points on plot
-- [`colorbar()`](https://kkholst.github.io/lava/reference/colorbar.md) :
-  Add color-bar to plot
+- [`confband()`](https://kkholst.github.io/lava/reference/confband.md) :
+  Add Confidence limits bar to plot
+- [`curly()`](https://kkholst.github.io/lava/reference/curly.md) : Adds
+  curly brackets to plot
 - [`devcoords()`](https://kkholst.github.io/lava/reference/devcoords.md)
   : Returns device-coordinates and plot-region
+- [`fplot()`](https://kkholst.github.io/lava/reference/fplot.md) : fplot
 - [`images()`](https://kkholst.github.io/lava/reference/images.md) :
   Organize several image calls (for visualizing categorical data)
+- [`ksmooth2()`](https://kkholst.github.io/lava/reference/ksmooth2.md) :
+  Plot/estimate surface
 - [`plotConf()`](https://kkholst.github.io/lava/reference/plotConf.md) :
   Plot regression lines
 - [`spaghetti()`](https://kkholst.github.io/lava/reference/spaghetti.md)
@@ -137,36 +155,51 @@ Functions for working with Influence Functions
 
 ## Matrix functions and linear algebra utilities
 
-- [`blockdiag()`](https://kkholst.github.io/lava/reference/blockdiag.md)
-  : Combine matrices to block diagonal structure
 - [`Inverse()`](https://kkholst.github.io/lava/reference/Inverse.md) :
   Generalized matrix inverse
-- [`vec()`](https://kkholst.github.io/lava/reference/vec.md) : vec
-  operator
+- [`blockdiag()`](https://kkholst.github.io/lava/reference/blockdiag.md)
+  : Combine matrices to block diagonal structure
 - [`revdiag()`](https://kkholst.github.io/lava/reference/revdiag.md)
   [`offdiag()`](https://kkholst.github.io/lava/reference/revdiag.md)
   [`` `revdiag<-`() ``](https://kkholst.github.io/lava/reference/revdiag.md)
   [`` `offdiag<-`() ``](https://kkholst.github.io/lava/reference/revdiag.md)
   : Create/extract 'reverse'-diagonal matrix or off-diagonal elements
-- [`tr()`](https://kkholst.github.io/lava/reference/tr.md) : Trace
-  operator
 - [`rotate2()`](https://kkholst.github.io/lava/reference/rotate2.md) :
   Performs a rotation in the plane
+- [`tr()`](https://kkholst.github.io/lava/reference/tr.md) : Trace
+  operator
+- [`vec()`](https://kkholst.github.io/lava/reference/vec.md) : vec
+  operator
 
 ## Utility functions
 
 - [`By()`](https://kkholst.github.io/lava/reference/By.md) : Apply a
   Function to a Data Frame Split by Factors
 
+- [`Combine()`](https://kkholst.github.io/lava/reference/Combine.md) :
+  Report estimates across different models
+
+- [`Expand()`](https://kkholst.github.io/lava/reference/Expand.md) :
+  Create a Data Frame from All Combinations of Factors
+
+- [`Grep()`](https://kkholst.github.io/lava/reference/Grep.md) : Finds
+  elements in vector or column-names in data.frame/matrix
+
+- [`NA2x()`](https://kkholst.github.io/lava/reference/NA2x.md) : Convert
+  to/from NA
+
+- [`NR()`](https://kkholst.github.io/lava/reference/NR.md) :
+  Newton-Raphson method
+
+- [`PD()`](https://kkholst.github.io/lava/reference/PD.md) : Dose
+  response calculation for binomial regression models
+
+- [`Print()`](https://kkholst.github.io/lava/reference/Print.md) :
+  Generic print method
+
 - [`click(`*`<default>`*`)`](https://kkholst.github.io/lava/reference/click.md)
   [`idplot()`](https://kkholst.github.io/lava/reference/click.md) :
   Identify points on plot
-
-- [`wait()`](https://kkholst.github.io/lava/reference/wait.md) : Wait
-  for user input (keyboard or mouse)
-
-- [`Combine()`](https://kkholst.github.io/lava/reference/Combine.md) :
-  Report estimates across different models
 
 - [`commutation()`](https://kkholst.github.io/lava/reference/commutation.md)
   : Finds the unique commutation matrix
@@ -174,17 +207,24 @@ Functions for working with Influence Functions
 - [`csplit()`](https://kkholst.github.io/lava/reference/csplit.md) :
   Split data into folds
 
-- [`Expand()`](https://kkholst.github.io/lava/reference/Expand.md) :
-  Create a Data Frame from All Combinations of Factors
-
 - [`getSAS()`](https://kkholst.github.io/lava/reference/getSAS.md) :
   Read SAS output
 
-- [`PD()`](https://kkholst.github.io/lava/reference/PD.md) : Dose
-  response calculation for binomial regression models
+- [`lava.options()`](https://kkholst.github.io/lava/reference/lava.options.md)
+  :
+
+  Set global options for `lava`
+
+- [`na.pass0()`](https://kkholst.github.io/lava/reference/na.pass0.md) :
+  Handle Missing Values in Objects
 
 - [`pdfconvert()`](https://kkholst.github.io/lava/reference/pdfconvert.md)
   : Convert pdf to raster format
+
+- [`rbind(`*`<Surv>`*`)`](https://kkholst.github.io/lava/reference/rbind.Surv.md)
+  :
+
+  Appending `Surv` objects
 
 - [`toformula()`](https://kkholst.github.io/lava/reference/toformula.md)
   : Converts strings to formula
@@ -192,23 +232,11 @@ Functions for working with Influence Functions
 - [`trim()`](https://kkholst.github.io/lava/reference/trim.md) : Trim
   string of (leading/trailing/all) white spaces
 
+- [`wait()`](https://kkholst.github.io/lava/reference/wait.md) : Wait
+  for user input (keyboard or mouse)
+
 - [`wrapvec()`](https://kkholst.github.io/lava/reference/wrapvec.md) :
   Wrap vector
-
-- [`NA2x()`](https://kkholst.github.io/lava/reference/NA2x.md) : Convert
-  to/from NA
-
-- [`na.pass0()`](https://kkholst.github.io/lava/reference/na.pass0.md) :
-  Handle Missing Values in Objects
-
-- [`Grep()`](https://kkholst.github.io/lava/reference/Grep.md) : Finds
-  elements in vector or column-names in data.frame/matrix
-
-- [`NR()`](https://kkholst.github.io/lava/reference/NR.md) :
-  Newton-Raphson method
-
-- [`Print()`](https://kkholst.github.io/lava/reference/Print.md) :
-  Generic print method
 
 - [`` `%++%` ``](https://kkholst.github.io/lava/reference/op_concat.md)
   : Concatenation operator
@@ -217,30 +245,27 @@ Functions for working with Influence Functions
 
   Matching operator (x not in y) oposed to the `%in%`-operator (x in y)
 
-- [`lava.options()`](https://kkholst.github.io/lava/reference/lava.options.md)
-  :
-
-  Set global options for `lava`
-
-- [`rbind(`*`<Surv>`*`)`](https://kkholst.github.io/lava/reference/rbind.Surv.md)
-  :
-
-  Appending `Surv` objects
-
 ## Latent variable model building
 
-- [`Model()`](https://kkholst.github.io/lava/reference/Model.md)
-  [`` `Model<-`() ``](https://kkholst.github.io/lava/reference/Model.md)
-  : Extract model
 - [`Graph()`](https://kkholst.github.io/lava/reference/Graph.md)
   [`` `Graph<-`() ``](https://kkholst.github.io/lava/reference/Graph.md)
   : Extract graph
+- [`Missing()`](https://kkholst.github.io/lava/reference/Missing.md) :
+  Missing value generator
+- [`Model()`](https://kkholst.github.io/lava/reference/Model.md)
+  [`` `Model<-`() ``](https://kkholst.github.io/lava/reference/Model.md)
+  : Extract model
+- [`Range.lvm()`](https://kkholst.github.io/lava/reference/Range.lvm.md)
+  : Define range constraints of parameters
 - [`addvar()`](https://kkholst.github.io/lava/reference/addvar.md) : Add
   variable to (model) object
 - [`children()`](https://kkholst.github.io/lava/reference/children.md) :
   Extract children or parent elements of object
 - [`baptize()`](https://kkholst.github.io/lava/reference/baptize.md) :
   Label elements of object
+- [`binomial.rd()`](https://kkholst.github.io/lava/reference/binomial.rd.md)
+  : Define constant risk difference or relative risk association for
+  binary exposure
 - [`cancel()`](https://kkholst.github.io/lava/reference/cancel.md) :
   Generic cancel method
 - [`sim(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/sim.lvm.md)
@@ -322,12 +347,6 @@ Functions for working with Influence Functions
   : Extract variable names from latent variable model
 - [`eventTime()`](https://kkholst.github.io/lava/reference/eventTime.md)
   : Add an observed event time outcome to a latent variable model.
-- [`index(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/index-lvm.md)
-  [`` `index<-`( ``*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/index-lvm.md)
-  : Extract the parameter indicies of a lvm object
-- [`index()`](https://kkholst.github.io/lava/reference/index-method.md)
-  [`` `index<-`() ``](https://kkholst.github.io/lava/reference/index-method.md)
-  : Generic method for extract index of an object
 - [`` `intercept<-`( ``*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/intercept.md)
   : Fix mean parameters in 'lvm'-object
 - [`intervention(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/intervention.lvm.md)
@@ -347,42 +366,43 @@ Functions for working with Influence Functions
 - [`path(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/path.md)
   [`effects(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/path.md)
   : Extract pathways in model graph
-- [`Range.lvm()`](https://kkholst.github.io/lava/reference/Range.lvm.md)
-  : Define range constraints of parameters
 - [`regression(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/regression-set.md)
   [`` `regression<-`( ``*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/regression-set.md)
   : Add regression association to latent variable model
+- [`index(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/index-lvm.md)
+  [`` `index<-`( ``*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/index-lvm.md)
+  : Extract the parameter indicies of a lvm object
+- [`index()`](https://kkholst.github.io/lava/reference/index-method.md)
+  [`` `index<-`() ``](https://kkholst.github.io/lava/reference/index-method.md)
+  : Generic method for extract index of an object
 - [`timedep()`](https://kkholst.github.io/lava/reference/timedep.md) :
   Time-dependent parameters
-- [`Missing()`](https://kkholst.github.io/lava/reference/Missing.md) :
-  Missing value generator
-- [`binomial.rd()`](https://kkholst.github.io/lava/reference/binomial.rd.md)
-  : Define constant risk difference or relative risk association for
-  binary exposure
 
 ## Latent variable model estimation
 
-- [`estimate(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/estimate.lvm.md)
-  : Estimation of parameters in a Latent Variable Model (lvm)
 - [`bootstrap(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/bootstrap.lvm.md)
   [`bootstrap(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/bootstrap.lvm.md)
   : Calculate bootstrap estimates of a lvm object
-- [`confint(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/confint.lvmfit.md)
-  : Calculate confidence limits for parameters
+- [`compare()`](https://kkholst.github.io/lava/reference/compare.md) :
+  Statistical tests
 - [`complik()`](https://kkholst.github.io/lava/reference/complik.md) :
   Composite Likelihood for probit latent variable models
+- [`confint(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/confint.lvmfit.md)
+  : Calculate confidence limits for parameters
 - [`correlation()`](https://kkholst.github.io/lava/reference/correlation.md)
   : Generic method for extracting correlation coefficients of model
   object
-- [`twostageCV()`](https://kkholst.github.io/lava/reference/twostageCV.md)
-  : Cross-validated two-stage estimator
-- [`modelsearch()`](https://kkholst.github.io/lava/reference/modelsearch.md)
-  : Model searching
-- [`twostage(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/twostage.lvmfit.md)
-  : Two-stage estimator (non-linear SEM)
+- [`estimate(`*`<formula>`*`)`](https://kkholst.github.io/lava/reference/estimate.formula.md)
+  : Estimate method for formulas
+- [`estimate(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/estimate.lvm.md)
+  : Estimation of parameters in a Latent Variable Model (lvm)
 - [`measurement.error()`](https://kkholst.github.io/lava/reference/measurement.error.md)
   : Two-stage (non-linear) measurement error
+- [`modelsearch()`](https://kkholst.github.io/lava/reference/modelsearch.md)
+  : Model searching
 - [`twostage()`](https://kkholst.github.io/lava/reference/twostage.md) :
   Two-stage estimator
-- [`compare()`](https://kkholst.github.io/lava/reference/compare.md) :
-  Statistical tests
+- [`twostage(`*`<lvmfit>`*`)`](https://kkholst.github.io/lava/reference/twostage.lvmfit.md)
+  : Two-stage estimator (non-linear SEM)
+- [`twostageCV()`](https://kkholst.github.io/lava/reference/twostageCV.md)
+  : Cross-validated two-stage estimator

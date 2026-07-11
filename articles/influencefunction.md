@@ -255,8 +255,7 @@ Different methods are available for inspecting an `estimate` object
 
 ``` r
 summary(e)
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
-#>     coef = p)
+#> Call: estimate.default(x = x, coef = pars(x))
 #> ────────────────────────────────────────────────────────────
 #>                Estimate Std.Err   2.5%  97.5%    P-value
 #> y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138
@@ -277,7 +276,7 @@ vcov(e)
 #> y1:(Intercept)     5.9475e-04   0.0000841250
 #> y2:(Intercept)     8.4125e-05   0.0006219375
 ## Matrix with estimates and confidence limits
-estimate(e, null=0, level = 0.99) |> parameter()
+summary(e, level = 0.99) |> parameter()
 #>                Estimate    Std.Err      0.5%     99.5%       P-value
 #> y1:(Intercept)    0.610 0.02438750 0.5471820 0.6728180 4.434692e-138
 #> y2:(Intercept)    0.535 0.02493867 0.4707622 0.5992378 4.316104e-102
@@ -395,23 +394,18 @@ fit.phreg
 #> 
 #>    n events
 #>  418    186
-#> coeffients:
-#>        Estimate       S.E.    dU^-1/2 P-value
-#> age   0.0220977  0.0070372  0.0072712  0.0017
-#> sexf -0.2999507  0.2022144  0.2097533  0.1380
 #> 
-#> exp(coeffients):
-#>      Estimate    2.5%  97.5%
-#> age   1.02234 1.00834 1.0365
-#> sexf  0.74085 0.49843 1.1012
+#> coefficients:
+#>        age       sexf 
+#>  0.0220977 -0.2999507
 IC(fit.phreg) |> head()
-#>              age       sexf
-#> [1,]  0.12691175  2.9551968
-#> [2,] -0.16011629 -4.3755455
-#> [3,]  0.19322595 -8.1786480
-#> [4,]  0.04668109  0.8548021
-#> [5,] -0.22936186  0.9721761
-#> [6,]  0.07015171  0.5644414
+#>           age       sexf
+#> 1  0.12691175  2.9551968
+#> 2 -0.16011629 -4.3755455
+#> 3  0.19322595 -8.1786480
+#> 4  0.04668109  0.8548021
+#> 5 -0.22936186  0.9721761
+#> 6  0.07015171  0.5644414
 ```
 
 The IF for the baseline cumulative hazard at a specific time point
@@ -466,7 +460,7 @@ estimate(semfit)
 #>      Estimate Std.Err    2.5%    97.5%   P-value
 #> y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02
 #> u     0.36025 0.06659  0.2297  0.49075 6.295e-08
-#> y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15
+#> y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15
 #> y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15
 #> u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01
 ```
@@ -544,8 +538,8 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
-#>     coef = p)
+#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
+#>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%    97.5%   P-value
 #> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
@@ -567,9 +561,14 @@ example test for whether the odds-ratio is the same for the two
 responses:
 
 ``` r
-estimate(e, cbind(0,1,0,-1), null=0)
-#>             Estimate Std.Err    2.5%  97.5% P-value
-#> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
+summary(estimate(e), contrast=cbind(0,1,0,-1), null=0)
+#> Call: estimate.default(x = e)
+#> ────────────────────────────────────────────────────────────
+#>               Estimate Std.Err    2.5%    97.5%   P-value
+#> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
+#> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
+#> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
+#> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] - [a.1] = 0 
@@ -732,7 +731,7 @@ vcov(merge(estimate(g2), estimate(g3)))
 #> (Intercept).1 0.002102598   0.020342639
 merge(estimate(g2), estimate(g3)) |>
   (rownames %++% head %++% IC)()
-#> [1] "1"   "10"  "100" "101" "102" "103"
+#> [1] "1" "2" "3" "4" "5" "6"
 ```
 
 To force that the id variables are not overlapping between the merged
@@ -742,11 +741,11 @@ between the estimates, the argument `id=NULL` can be used
 ``` r
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>     (Intercept) a          (Intercept).1
-#> 1    1.104e-15   5.128e+00  0.000e+00   
-#> 2    1.104e-15   5.128e+00  0.000e+00   
+#> 1   -2.714e-17   5.128e+00  0.000e+00   
+#> 2   -2.714e-17   5.128e+00  0.000e+00   
 #> 3   -7.547e+00   7.547e+00  0.000e+00   
 #> 4   -7.547e+00   7.547e+00  0.000e+00   
-#> 5   -2.200e-15  -1.600e+01  0.000e+00   
+#> 5    4.006e-16  -1.600e+01  0.000e+00   
 #> ---                                     
 #> 796  0.000       0.000     -4.301       
 #> 797  0.000       0.000      3.738       
@@ -755,9 +754,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 800  0.000       0.000     -4.301
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29
-#> a             -2.079760e-02  4.720777e-02 -1.554863e-25
-#> (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02
+#> (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29
+#> a             -2.079760e-02  4.720777e-02 -1.554401e-25
+#> (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02
 ```
 
 ### Renaming and subsetting parameters
@@ -919,7 +918,7 @@ Print(cbind(table(id)))
 ## Aggregated IF
 e <- estimate(cbind(y), id = id)
 object.size(e)
-#> 18992 bytes
+#> 19008 bytes
 e
 #>     Estimate Std.Err      2.5%    97.5% P-value
 #> p1 -0.002244 0.00332 -0.008751 0.004263  0.4991
@@ -1035,14 +1034,9 @@ B %*% e
 #> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.407718
 #> a              0.5  0.3000 -0.08799 1.0880 0.095581
 #> b              0.8  0.3000  0.21201 1.3880 0.007661
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [a] - [b] = 0
-#>   [a] = 0
-#>   [b] = 0 
-#>  
-#> chisq = 8.075, df = 2, p-value = 0.01764
 B %*% e == c(1,1,0)
+#> Call: estimate.default(x = y, f = x)
+#> ────────────────────────────────────────────────────────────
 #>           Estimate Std.Err     2.5%  97.5%   P-value
 #> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.0003337
 #> a              0.5  0.3000 -0.08799 1.0880 0.0955807
@@ -1073,7 +1067,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x5573cb469c70>
+#> <bytecode: 0x560026ef97c8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1140,8 +1134,8 @@ Cov <- function(x, y, ...) {
     )
 }
 with(dw, Cov(x1, x2))
-#>  Estimate Std.Err     2.5%  97.5% P-value
-#>  0.004043 0.04976 -0.09349 0.1016  0.9352
+#>    Estimate Std.Err     2.5%  97.5% P-value
+#> p1 0.004043 0.04976 -0.09349 0.1016  0.9352
 ```
 
 As an illustration we could also derive this estimate from simpler
@@ -1183,17 +1177,25 @@ by using a variance stabilizing transformation, Fishers z-transform
 confidence limits with general better coverage can be obtained
 
 ``` r
-estimate(atanh(rho), back.transform = tanh)
+estimate(atanh(rho)) |>
+  summary(transform = tanh)
+#> Call: estimate.default(x = atanh(rho))
+#> ────────────────────────────────────────────────────────────
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> rho 0.004025         -0.09279 0.1008  0.9352
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [rho] = 0 
+#>  
+#> chisq = 0.0066, df = 1, p-value = 0.9352
 ```
 
 The confidence limits are calculated on the \operatorname{arctanh}-scale
 and transformed back to the original correlation scale via the
-`back.transform` argument. In this case, where the estimates are far
-away from the boundary of the parameter space, the variance stabilizing
-transform does almost not have any impact, and the confidence limits
-agrees with the original symmetric confidence limits.
+`transform` argument of the `summary` method. In this case, where the
+estimates are far away from the boundary of the parameter space, the
+variance stabilizing transform does almost not have any impact, and the
+confidence limits agrees with the original symmetric confidence limits.
 
 ### Linear contrasts and hypothesis testing
 
@@ -1232,23 +1234,20 @@ B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [a] - [a.1] = 0 
-#>  
-#> chisq = 0.3677, df = 1, p-value = 0.5443
 ```
 
 The \mathbf{b}\_0 vector (default assumed to be zero) can be specified
 via the `null` argument
 
 ``` r
-estimate(gg, B, null=1)
+summary(estimate(gg, B), null=1)
+#> Call: estimate.default(x = gg, f = B)
+#> ────────────────────────────────────────────────────────────
 #>             Estimate Std.Err    2.5%  97.5%   P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] - [a.1] = 1 
+#>   [[a] - [a.1]] = 1 
 #>  
 #> chisq = 15.49, df = 1, p-value = 8.281e-05
 ```
@@ -1267,27 +1266,23 @@ estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
 #> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
 #> [a] - [a.2]   0.2192  0.3637 -0.4936 0.9321  0.5466
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [a] - [a.1] = 0
-#>   [a] - [a.2] = 0 
-#>  
-#> chisq = 1.343, df = 2, p-value = 0.5109
 ```
 
 Such linear statistics can also be specified directly as expressions of
 the parameter names
 
 ``` r
-estimate(gg, a + a.1, 2*a - a.2, a, null=c(2,1,1))
+estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
+#> Call: estimate.default(x = gg, f = a + a.1, 2 * a - a.2, a)
+#> ────────────────────────────────────────────────────────────
 #>              Estimate Std.Err   2.5% 97.5%  P-value
 #> [a] + [a.1]     2.830  0.3107 2.2210 3.439 0.007557
 #> 2[a] - [a.2]    1.543  0.5208 0.5224 2.564 0.296991
 #> a               1.324  0.2173 0.8981 1.750 0.135985
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] + [a.1] = 2
-#>   2[a] - [a.2] = 1
+#>   [[a] + [a.1]] = 2
+#>   [2[a] - [a.2]] = 1
 #>   [a] = 1 
 #>  
 #> chisq = 7.557, df = 3, p-value = 0.05612
@@ -1314,16 +1309,19 @@ pairwise.diff(3)
 #> [1,]    1   -1    0
 #> [2,]    1    0   -1
 #> [3,]    0    1   -1
-estimate(gg, pairwise.diff(3), null=c(1,1,1), use=c(2,4,6))
+summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
+#> Call: estimate.default(x = gg, f = pairwise.diff(3), use = c(2, 4, 
+#>     6))
+#> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%  97.5%   P-value
 #> [a] - [a.1]    -0.1821  0.3003 -0.7707 0.4065 8.281e-05
 #> [a] - [a.2]     0.2192  0.3637 -0.4936 0.9321 3.182e-02
 #> [a.1] - [a.2]   0.4013  0.3506 -0.2858 1.0885 8.773e-02
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [a] - [a.1] = 1
-#>   [a] - [a.2] = 1
-#>   [a.1] - [a.2] = 1 
+#>   [[a] - [a.1]] = 1
+#>   [[a] - [a.2]] = 1
+#>   [[a.1] - [a.2]] = 1 
 #>  
 #> chisq = 11.96, df = 2, p-value = 0.002523
 ```
@@ -1346,8 +1344,8 @@ joint distribution of Z\_{1},\ldots,Z\_{p} can be estimated from the
 IFs. This is implemented in the `alpha_zmax` method
 
 ``` r
-gg0 <- estimate(gg, use="^a", regex=TRUE, null=rep(.8, 3))
-alpha_zmax(gg0)
+gg0 <- estimate(gg, use="^a", regex=TRUE)
+alpha_zmax(gg0, null=rep(.8, 3))
 #>     Estimate  P-value Adj.P-value
 #> a      1.324 0.015891    0.046873
 #> a.1    1.506 0.001015    0.003043
@@ -1374,13 +1372,28 @@ Unfortunately, this only works for relatively few comparisons as the
 number of tests grows exponentially.
 
 ``` r
-closed_testing(gg0, test = test_wald)
+summary(closed_testing(gg0, test = test_wald))
 #> Call: closed_testing(object = gg0, test = test_wald)
+#> 
+#> ── Adjusted p-values ──
 #> 
 #>     Estimate     adj.p
 #> a      1.324 1.105e-09
 #> a.1    1.506 2.385e-12
 #> a.2    1.105 1.914e-04
+#> ── Raw p-values for intersection hypotheses ──
+#> 1-way intersections:
+#>   {a}                                      p = 0.0000
+#>   {a.1}                                    p = 0.0000
+#>   {a.2}                                    p = 0.0002
+#> 
+#> 2-way intersections:
+#>   {a, a.1}                                 p = 0.0000
+#>   {a, a.2}                                 p = 0.0000
+#>   {a.1, a.2}                               p = 0.0000
+#> 
+#> 3-way intersections:
+#>   {a, a.1, a.2}                            p = 0.0000
 ```
 
 ### Averaging
@@ -1446,15 +1459,15 @@ id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 #>     Estimate Std.Err   2.5%  97.5%    P-value
-#> val   0.7006 0.03124 0.6394 0.7618 2.035e-111
+#> val   0.7006 0.03155 0.6388 0.7625 3.217e-109
 IC(ea) |> head()
-#>        val
-#> 1  0.05127
-#> 2 -0.69871
-#> 3  0.33584
-#> 4 -0.15036
-#> 5  0.29918
-#> 6 -0.08264
+#>         val
+#> 58  0.10087
+#> 1  -0.11433
+#> 81  0.35721
+#> 38 -0.05024
+#> 71 -0.40835
+#> 18  0.36481
 ```
 
 ### Average Treatment Effects
@@ -1543,11 +1556,6 @@ Finally, we can obtain the Average Treatment Effect (ATE)
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")
 #>     Estimate Std.Err    2.5% 97.5%   P-value
 #> ate   0.1691 0.04996 0.07115 0.267 0.0007138
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   -[y(0)] + [y(1)] = 0 
-#>  
-#> chisq = 11.45, df = 1, p-value = 0.0007138
 ```
 
 Alternatively, we could get the estimate of the treatment effect on the
@@ -1558,12 +1566,20 @@ est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
 est
 #>      Estimate Std.Err  2.5% 97.5%  P-value
 #> y(1)   0.7272  0.2226 0.291 1.163 0.001085
-transform(est, labels="OR", back.transform=exp)
+transform(est, labels="OR") |>
+  summary(transform = exp)
+#> Call: estimate.default(x = `_data`, labels = "OR")
+#> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err  2.5% 97.5%  P-value
 #> OR    2.069         1.338 3.201 0.001085
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [OR] = 0 
+#>  
+#> chisq = 10.68, df = 1, p-value = 0.001085
 #logor <- function(p) logit(p[2]) - logit(p[1])
 #transform(potential_outcomes, logor, labels="logOR")
-#transform(potential_outcomes, logor, labels="OR", back.transform=exp)
+#transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
 We refer to the `targeted` package (Klaus K. Holst, Sommer, and Nordland
@@ -1588,7 +1604,7 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -1609,29 +1625,29 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6 lava_1.9.2    
+#> [1] survival_3.8-6 lava_1.9.2.1  
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         
-#>  [4] generics_0.1.4         lattice_0.22-9         listenv_0.10.1        
+#>  [4] generics_0.1.4         lattice_0.22-9         listenv_1.0.0         
 #>  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        
-#> [10] grid_4.6.0             mvtnorm_1.3-7          fastmap_1.2.0         
+#> [10] grid_4.6.1             mvtnorm_1.4-1          fastmap_1.2.0         
 #> [13] jsonlite_2.0.0         Matrix_1.7-5           backports_1.5.1       
 #> [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   
 #> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             
-#> [22] rlang_1.2.0            mets_1.3.9             parallelly_1.47.0     
-#> [25] future.apply_1.20.2    splines_4.6.0          RcppArmadillo_15.2.6-1
+#> [22] rlang_1.3.0            mets_1.3.11            parallelly_1.48.0     
+#> [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.0-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
-#> [31] tools_4.6.0            parallel_4.6.0         dplyr_1.2.1           
-#> [34] globals_0.19.1         broom_1.0.13           vctrs_0.7.3           
-#> [37] R6_2.6.1               lifecycle_1.0.5        fs_2.1.0              
-#> [40] htmlwidgets_1.6.4      MASS_7.3-65            ragg_1.5.2            
-#> [43] pkgconfig_2.0.3        desc_1.4.3             timereg_2.0.7         
-#> [46] pkgdown_2.2.0          bslib_0.11.0           pillar_1.11.1         
-#> [49] glue_1.8.1             Rcpp_1.1.1-1.1         systemfonts_1.3.2     
-#> [52] tidyselect_1.2.1       xfun_0.57              tibble_3.3.1          
-#> [55] knitr_1.51             htmltools_0.5.9        rmarkdown_2.31        
-#> [58] compiler_4.6.0
+#> [31] otel_0.2.0             tools_4.6.1            parallel_4.6.1        
+#> [34] dplyr_1.2.1            globals_0.19.1         broom_1.0.13          
+#> [37] vctrs_0.7.3            R6_2.6.1               lifecycle_1.0.5       
+#> [40] fs_2.1.0               htmlwidgets_1.6.4      MASS_7.3-65           
+#> [43] ragg_1.5.2             pkgconfig_2.0.3        desc_1.4.3            
+#> [46] pillar_1.11.1          timereg_2.0.7          pkgdown_2.2.1         
+#> [49] bslib_0.11.0           glue_1.8.1             Rcpp_1.1.2            
+#> [52] systemfonts_1.3.2      tidyselect_1.2.1       tibble_3.3.1          
+#> [55] xfun_0.60              knitr_1.51             htmltools_0.5.9       
+#> [58] rmarkdown_2.31         compiler_4.6.1
 ```
 
 ## Bibliography

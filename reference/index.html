@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,13 +48,6 @@
 
       <dl><dt>
 
-          <code><a href="estimate.default.html">estimate(<i>&lt;default&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Influence function based inference</dd>
-
-        <dt>
-
           <code><a href="IC.default.html">IC(<i>&lt;default&gt;</i>)</a></code>
 
         </dt>
@@ -62,10 +55,17 @@
 
         <dt>
 
-          <code><a href="multinomial.html">multinomial()</a></code>
+          <code><a href="c.estimate.html">c(<i>&lt;estimate&gt;</i>)</a></code>
 
         </dt>
-        <dd>Estimate probabilities in contingency table</dd>
+        <dd>Concatenate estimate objects</dd>
+
+        <dt>
+
+          <code><a href="c.summary.estimate.html">c(<i>&lt;summary.estimate&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Concatenate summary.estimate objects</dd>
 
         <dt>
 
@@ -76,10 +76,52 @@
 
         <dt>
 
+          <code><a href="estimate.default.html">estimate(<i>&lt;default&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Influence function based inference</dd>
+
+        <dt>
+
+          <code><a href="estimate.glm.html">estimate(<i>&lt;glm&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Estimate method for GLM objects</dd>
+
+        <dt>
+
+          <code><a href="estimate.list.html">estimate(<i>&lt;list&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Estimate method for lists</dd>
+
+        <dt>
+
           <code><a href="iid.html">iid()</a></code>
 
         </dt>
         <dd>Extract i.i.d. decomposition from model object</dd>
+
+        <dt>
+
+          <code><a href="merge.estimate.html">merge(<i>&lt;estimate&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Merge estimate objects</dd>
+
+        <dt>
+
+          <code><a href="multinomial.html">multinomial()</a></code>
+
+        </dt>
+        <dd>Estimate probabilities in contingency table</dd>
+
+        <dt>
+
+          <code><a href="plot.estimate.html">plot(<i>&lt;estimate&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot method for 'estimate' objects</dd>
 
         <dt>
 
@@ -90,10 +132,17 @@
 
         <dt>
 
-          <code><a href="plot.estimate.html">plot(<i>&lt;estimate&gt;</i>)</a></code>
+          <code><a href="summary.estimate.html">summary(<i>&lt;estimate&gt;</i>)</a></code>
 
         </dt>
-        <dd>Plot method for 'estimate' objects</dd>
+        <dd>Summary of estimate objects</dd>
+
+        <dt>
+
+          <code><a href="var_ic.html">var_ic()</a></code>
+
+        </dt>
+        <dd>Variance based on influence function</dd>
       </dl></div><div class="section level2">
       <h2 id="simulation-functions">Simulation functions<a class="anchor" aria-label="anchor" href="#simulation-functions"></a></h2>
 
@@ -106,10 +155,10 @@
 
       <dl><dt>
 
-          <code><a href="sim.lvm.html">sim(<i>&lt;lvm&gt;</i>)</a></code>
+          <code><a href="plot.sim.html">plot(<i>&lt;sim&gt;</i>)</a></code>
 
         </dt>
-        <dd>Simulate model</dd>
+        <dd>Plot method for simulation 'sim' objects</dd>
 
         <dt>
 
@@ -120,10 +169,10 @@
 
         <dt>
 
-          <code><a href="plot.sim.html">plot(<i>&lt;sim&gt;</i>)</a></code>
+          <code><a href="sim.lvm.html">sim(<i>&lt;lvm&gt;</i>)</a></code>
 
         </dt>
-        <dd>Plot method for simulation 'sim' objects</dd>
+        <dd>Simulate model</dd>
 
         <dt>
 
@@ -143,17 +192,10 @@
 
       <dl><dt>
 
-          <code><a href="diagtest.html">diagtest()</a></code>
+          <code><a href="backdoor.html">backdoor()</a></code>
 
         </dt>
-        <dd>Calculate diagnostic tests for 2x2 table</dd>
-
-        <dt>
-
-          <code><a href="contr.html">contr()</a></code>
-
-        </dt>
-        <dd>Create contrast matrix</dd>
+        <dd>Backdoor criterion</dd>
 
         <dt>
 
@@ -164,13 +206,6 @@
 
         <dt>
 
-          <code><a href="backdoor.html">backdoor()</a></code>
-
-        </dt>
-        <dd>Backdoor criterion</dd>
-
-        <dt>
-
           <code><a href="closed_testing.html">closed_testing()</a></code>
 
         </dt>
@@ -178,24 +213,17 @@
 
         <dt>
 
-          <code><a href="scheffe.html">scheffe()</a></code>
+          <code><a href="confpred.html">confpred()</a></code>
 
         </dt>
-        <dd>Calculate simultaneous confidence limits by Scheffe's method</dd>
+        <dd>Conformal prediction</dd>
 
         <dt>
 
-          <code><a href="zibreg.html">zibreg()</a></code>
+          <code><a href="diagtest.html">diagtest()</a></code>
 
         </dt>
-        <dd>Regression model for binomial data with unkown group of immortals</dd>
-
-        <dt>
-
-          <code><a href="wkm.html">wkm()</a></code>
-
-        </dt>
-        <dd>Weighted K-means</dd>
+        <dd>Calculate diagnostic tests for 2x2 table</dd>
 
         <dt>
 
@@ -203,34 +231,6 @@
 
         </dt>
         <dd>Check d-separation criterion</dd>
-
-        <dt>
-
-          <code><a href="pcor.html">pcor()</a></code>
-
-        </dt>
-        <dd>Polychoric correlation</dd>
-
-        <dt>
-
-          <code><a href="partialcor.html">partialcor()</a></code>
-
-        </dt>
-        <dd>Calculate partial correlations</dd>
-
-        <dt>
-
-          <code><a href="ordreg.html">ordreg()</a></code>
-
-        </dt>
-        <dd>Univariate cumulative link regression models</dd>
-
-        <dt>
-
-          <code><a href="mvnmix.html">mvnmix()</a></code>
-
-        </dt>
-        <dd>Estimate mixture latent variable model</dd>
 
         <dt>
 
@@ -248,10 +248,10 @@
 
         <dt>
 
-          <code><a href="confpred.html">confpred()</a></code>
+          <code><a href="information.html">information()</a></code>
 
         </dt>
-        <dd>Conformal prediction</dd>
+        <dd>Extract information matrix</dd>
 
         <dt>
 
@@ -259,6 +259,41 @@
 
         </dt>
         <dd>Estimate mixture latent variable model.</dd>
+
+        <dt>
+
+          <code><a href="mvnmix.html">mvnmix()</a></code>
+
+        </dt>
+        <dd>Estimate mixture latent variable model</dd>
+
+        <dt>
+
+          <code><a href="ordreg.html">ordreg()</a></code>
+
+        </dt>
+        <dd>Univariate cumulative link regression models</dd>
+
+        <dt>
+
+          <code><a href="contr.html">contr()</a></code>
+
+        </dt>
+        <dd>Create contrast matrix</dd>
+
+        <dt>
+
+          <code><a href="partialcor.html">partialcor()</a></code>
+
+        </dt>
+        <dd>Calculate partial correlations</dd>
+
+        <dt>
+
+          <code><a href="pcor.html">pcor()</a></code>
+
+        </dt>
+        <dd>Polychoric correlation</dd>
 
         <dt>
 
@@ -276,6 +311,13 @@
 
         <dt>
 
+          <code><a href="predict_glm.html">predict_glm()</a></code>
+
+        </dt>
+        <dd>Predict from a GLM with modified coefficients</dd>
+
+        <dt>
+
           <code><a href="predictlvm.html">predictlvm()</a></code>
 
         </dt>
@@ -283,10 +325,31 @@
 
         <dt>
 
-          <code><a href="predict_glm.html">predict_glm()</a></code>
+          <code><a href="scheffe.html">scheffe()</a></code>
 
         </dt>
-        <dd>Predict from a GLM with modified coefficients</dd>
+        <dd>Calculate simultaneous confidence limits by Scheffe's method</dd>
+
+        <dt>
+
+          <code><a href="score.html">score()</a></code>
+
+        </dt>
+        <dd>Extract score function</dd>
+
+        <dt>
+
+          <code><a href="wkm.html">wkm()</a></code>
+
+        </dt>
+        <dd>Weighted K-means</dd>
+
+        <dt>
+
+          <code><a href="zibreg.html">zibreg()</a></code>
+
+        </dt>
+        <dd>Regression model for binomial data with unkown group of immortals</dd>
       </dl></div><div class="section level2">
       <h2 id="data-sets">Data sets<a class="anchor" aria-label="anchor" href="#data-sets"></a></h2>
 
@@ -355,17 +418,17 @@
 
         <dt>
 
-          <code><a href="nldata.html">nldata</a></code>
-
-        </dt>
-        <dd>Example data (nonlinear model)</dd>
-
-        <dt>
-
           <code><a href="missingdata.html">missingdata</a></code>
 
         </dt>
         <dd>Missing data example</dd>
+
+        <dt>
+
+          <code><a href="nldata.html">nldata</a></code>
+
+        </dt>
+        <dd>Example data (nonlinear model)</dd>
 
         <dt>
 
@@ -413,31 +476,10 @@
 
         <dt>
 
-          <code><a href="curly.html">curly()</a></code>
+          <code><a href="colorbar.html">colorbar()</a></code>
 
         </dt>
-        <dd>Adds curly brackets to plot</dd>
-
-        <dt>
-
-          <code><a href="fplot.html">fplot()</a></code>
-
-        </dt>
-        <dd>fplot</dd>
-
-        <dt>
-
-          <code><a href="confband.html">confband()</a></code>
-
-        </dt>
-        <dd>Add Confidence limits bar to plot</dd>
-
-        <dt>
-
-          <code><a href="ksmooth2.html">ksmooth2()</a></code>
-
-        </dt>
-        <dd>Plot/estimate surface</dd>
+        <dd>Add color-bar to plot</dd>
 
         <dt>
 
@@ -448,10 +490,17 @@
 
         <dt>
 
-          <code><a href="colorbar.html">colorbar()</a></code>
+          <code><a href="confband.html">confband()</a></code>
 
         </dt>
-        <dd>Add color-bar to plot</dd>
+        <dd>Add Confidence limits bar to plot</dd>
+
+        <dt>
+
+          <code><a href="curly.html">curly()</a></code>
+
+        </dt>
+        <dd>Adds curly brackets to plot</dd>
 
         <dt>
 
@@ -462,10 +511,24 @@
 
         <dt>
 
+          <code><a href="fplot.html">fplot()</a></code>
+
+        </dt>
+        <dd>fplot</dd>
+
+        <dt>
+
           <code><a href="images.html">images()</a></code>
 
         </dt>
         <dd>Organize several image calls (for visualizing categorical data)</dd>
+
+        <dt>
+
+          <code><a href="ksmooth2.html">ksmooth2()</a></code>
+
+        </dt>
+        <dd>Plot/estimate surface</dd>
 
         <dt>
 
@@ -492,13 +555,6 @@
 
       <dl><dt>
 
-          <code><a href="blockdiag.html">blockdiag()</a></code>
-
-        </dt>
-        <dd>Combine matrices to block diagonal structure</dd>
-
-        <dt>
-
           <code><a href="Inverse.html">Inverse()</a></code>
 
         </dt>
@@ -506,10 +562,10 @@
 
         <dt>
 
-          <code><a href="vec.html">vec()</a></code>
+          <code><a href="blockdiag.html">blockdiag()</a></code>
 
         </dt>
-        <dd>vec operator</dd>
+        <dd>Combine matrices to block diagonal structure</dd>
 
         <dt>
 
@@ -520,6 +576,13 @@
 
         <dt>
 
+          <code><a href="rotate2.html">rotate2()</a></code>
+
+        </dt>
+        <dd>Performs a rotation in the plane</dd>
+
+        <dt>
+
           <code><a href="tr.html">tr()</a></code>
 
         </dt>
@@ -527,10 +590,10 @@
 
         <dt>
 
-          <code><a href="rotate2.html">rotate2()</a></code>
+          <code><a href="vec.html">vec()</a></code>
 
         </dt>
-        <dd>Performs a rotation in the plane</dd>
+        <dd>vec operator</dd>
       </dl></div><div class="section level2">
       <h2 id="utility-functions">Utility functions<a class="anchor" aria-label="anchor" href="#utility-functions"></a></h2>
 
@@ -550,24 +613,59 @@
 
         <dt>
 
-          <code><a href="click.html">click(<i>&lt;default&gt;</i>)</a></code> <code><a href="click.html">idplot()</a></code>
-
-        </dt>
-        <dd>Identify points on plot</dd>
-
-        <dt>
-
-          <code><a href="wait.html">wait()</a></code>
-
-        </dt>
-        <dd>Wait for user input (keyboard or mouse)</dd>
-
-        <dt>
-
           <code><a href="Combine.html">Combine()</a></code>
 
         </dt>
         <dd>Report estimates across different models</dd>
+
+        <dt>
+
+          <code><a href="Expand.html">Expand()</a></code>
+
+        </dt>
+        <dd>Create a Data Frame from All Combinations of Factors</dd>
+
+        <dt>
+
+          <code><a href="Grep.html">Grep()</a></code>
+
+        </dt>
+        <dd>Finds elements in vector or column-names in data.frame/matrix</dd>
+
+        <dt>
+
+          <code><a href="NA2x.html">NA2x()</a></code>
+
+        </dt>
+        <dd>Convert to/from NA</dd>
+
+        <dt>
+
+          <code><a href="NR.html">NR()</a></code>
+
+        </dt>
+        <dd>Newton-Raphson method</dd>
+
+        <dt>
+
+          <code><a href="PD.html">PD()</a></code>
+
+        </dt>
+        <dd>Dose response calculation for binomial regression models</dd>
+
+        <dt>
+
+          <code><a href="Print.html">Print()</a></code>
+
+        </dt>
+        <dd>Generic print method</dd>
+
+        <dt>
+
+          <code><a href="click.html">click(<i>&lt;default&gt;</i>)</a></code> <code><a href="click.html">idplot()</a></code>
+
+        </dt>
+        <dd>Identify points on plot</dd>
 
         <dt>
 
@@ -585,13 +683,6 @@
 
         <dt>
 
-          <code><a href="Expand.html">Expand()</a></code>
-
-        </dt>
-        <dd>Create a Data Frame from All Combinations of Factors</dd>
-
-        <dt>
-
           <code><a href="getSAS.html">getSAS()</a></code>
 
         </dt>
@@ -599,10 +690,17 @@
 
         <dt>
 
-          <code><a href="PD.html">PD()</a></code>
+          <code><a href="lava.options.html">lava.options()</a></code>
 
         </dt>
-        <dd>Dose response calculation for binomial regression models</dd>
+        <dd>Set global options for <code>lava</code></dd>
+
+        <dt>
+
+          <code><a href="na.pass0.html">na.pass0()</a></code>
+
+        </dt>
+        <dd>Handle Missing Values in Objects</dd>
 
         <dt>
 
@@ -610,6 +708,13 @@
 
         </dt>
         <dd>Convert pdf to raster format</dd>
+
+        <dt>
+
+          <code><a href="rbind.Surv.html">rbind(<i>&lt;Surv&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Appending <code>Surv</code> objects</dd>
 
         <dt>
 
@@ -627,45 +732,17 @@
 
         <dt>
 
+          <code><a href="wait.html">wait()</a></code>
+
+        </dt>
+        <dd>Wait for user input (keyboard or mouse)</dd>
+
+        <dt>
+
           <code><a href="wrapvec.html">wrapvec()</a></code>
 
         </dt>
         <dd>Wrap vector</dd>
-
-        <dt>
-
-          <code><a href="NA2x.html">NA2x()</a></code>
-
-        </dt>
-        <dd>Convert to/from NA</dd>
-
-        <dt>
-
-          <code><a href="na.pass0.html">na.pass0()</a></code>
-
-        </dt>
-        <dd>Handle Missing Values in Objects</dd>
-
-        <dt>
-
-          <code><a href="Grep.html">Grep()</a></code>
-
-        </dt>
-        <dd>Finds elements in vector or column-names in data.frame/matrix</dd>
-
-        <dt>
-
-          <code><a href="NR.html">NR()</a></code>
-
-        </dt>
-        <dd>Newton-Raphson method</dd>
-
-        <dt>
-
-          <code><a href="Print.html">Print()</a></code>
-
-        </dt>
-        <dd>Generic print method</dd>
 
         <dt>
 
@@ -680,20 +757,6 @@
 
         </dt>
         <dd>Matching operator (x not in y) oposed to the <code>%in%</code>-operator (x in y)</dd>
-
-        <dt>
-
-          <code><a href="lava.options.html">lava.options()</a></code>
-
-        </dt>
-        <dd>Set global options for <code>lava</code></dd>
-
-        <dt>
-
-          <code><a href="rbind.Surv.html">rbind(<i>&lt;Surv&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Appending <code>Surv</code> objects</dd>
       </dl></div><div class="section level2">
       <h2 id="latent-variable-model-building">Latent variable model building<a class="anchor" aria-label="anchor" href="#latent-variable-model-building"></a></h2>
 
@@ -706,6 +769,20 @@
 
       <dl><dt>
 
+          <code><a href="Graph.html">Graph()</a></code> <code><a href="Graph.html">`Graph&lt;-`()</a></code>
+
+        </dt>
+        <dd>Extract graph</dd>
+
+        <dt>
+
+          <code><a href="Missing.html">Missing()</a></code>
+
+        </dt>
+        <dd>Missing value generator</dd>
+
+        <dt>
+
           <code><a href="Model.html">Model()</a></code> <code><a href="Model.html">`Model&lt;-`()</a></code>
 
         </dt>
@@ -713,10 +790,10 @@
 
         <dt>
 
-          <code><a href="Graph.html">Graph()</a></code> <code><a href="Graph.html">`Graph&lt;-`()</a></code>
+          <code><a href="Range.lvm.html">Range.lvm()</a></code>
 
         </dt>
-        <dd>Extract graph</dd>
+        <dd>Define range constraints of parameters</dd>
 
         <dt>
 
@@ -738,6 +815,13 @@
 
         </dt>
         <dd>Label elements of object</dd>
+
+        <dt>
+
+          <code><a href="binomial.rd.html">binomial.rd()</a></code>
+
+        </dt>
+        <dd>Define constant risk difference or relative risk association for binary exposure</dd>
 
         <dt>
 
@@ -794,20 +878,6 @@
 
         </dt>
         <dd>Add an observed event time outcome to a latent variable model.</dd>
-
-        <dt>
-
-          <code><a href="index-lvm.html">index(<i>&lt;lvm&gt;</i>)</a></code> <code><a href="index-lvm.html">`index&lt;-`(<i>&lt;lvm&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Extract the parameter indicies of a lvm object</dd>
-
-        <dt>
-
-          <code><a href="index-method.html">index()</a></code> <code><a href="index-method.html">`index&lt;-`()</a></code>
-
-        </dt>
-        <dd>Generic method for extract index of an object</dd>
 
         <dt>
 
@@ -874,13 +944,6 @@
 
         <dt>
 
-          <code><a href="Range.lvm.html">Range.lvm()</a></code>
-
-        </dt>
-        <dd>Define range constraints of parameters</dd>
-
-        <dt>
-
           <code><a href="regression-set.html">regression(<i>&lt;lvm&gt;</i>)</a></code> <code><a href="regression-set.html">`regression&lt;-`(<i>&lt;lvm&gt;</i>)</a></code>
 
         </dt>
@@ -888,24 +951,24 @@
 
         <dt>
 
+          <code><a href="index-lvm.html">index(<i>&lt;lvm&gt;</i>)</a></code> <code><a href="index-lvm.html">`index&lt;-`(<i>&lt;lvm&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Extract the parameter indicies of a lvm object</dd>
+
+        <dt>
+
+          <code><a href="index-method.html">index()</a></code> <code><a href="index-method.html">`index&lt;-`()</a></code>
+
+        </dt>
+        <dd>Generic method for extract index of an object</dd>
+
+        <dt>
+
           <code><a href="timedep.html">timedep()</a></code>
 
         </dt>
         <dd>Time-dependent parameters</dd>
-
-        <dt>
-
-          <code><a href="Missing.html">Missing()</a></code>
-
-        </dt>
-        <dd>Missing value generator</dd>
-
-        <dt>
-
-          <code><a href="binomial.rd.html">binomial.rd()</a></code>
-
-        </dt>
-        <dd>Define constant risk difference or relative risk association for binary exposure</dd>
       </dl></div><div class="section level2">
       <h2 id="latent-variable-model-estimation">Latent variable model estimation<a class="anchor" aria-label="anchor" href="#latent-variable-model-estimation"></a></h2>
 
@@ -918,13 +981,6 @@
 
       <dl><dt>
 
-          <code><a href="estimate.lvm.html">estimate(<i>&lt;lvm&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Estimation of parameters in a Latent Variable Model (lvm)</dd>
-
-        <dt>
-
           <code><a href="bootstrap.lvm.html">bootstrap(<i>&lt;lvm&gt;</i>)</a></code> <code><a href="bootstrap.lvm.html">bootstrap(<i>&lt;lvmfit&gt;</i>)</a></code>
 
         </dt>
@@ -932,10 +988,10 @@
 
         <dt>
 
-          <code><a href="confint.lvmfit.html">confint(<i>&lt;lvmfit&gt;</i>)</a></code>
+          <code><a href="compare.html">compare()</a></code>
 
         </dt>
-        <dd>Calculate confidence limits for parameters</dd>
+        <dd>Statistical tests</dd>
 
         <dt>
 
@@ -946,6 +1002,13 @@
 
         <dt>
 
+          <code><a href="confint.lvmfit.html">confint(<i>&lt;lvmfit&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Calculate confidence limits for parameters</dd>
+
+        <dt>
+
           <code><a href="correlation.html">correlation()</a></code>
 
         </dt>
@@ -953,24 +1016,17 @@
 
         <dt>
 
-          <code><a href="twostageCV.html">twostageCV()</a></code>
+          <code><a href="estimate.formula.html">estimate(<i>&lt;formula&gt;</i>)</a></code>
 
         </dt>
-        <dd>Cross-validated two-stage estimator</dd>
+        <dd>Estimate method for formulas</dd>
 
         <dt>
 
-          <code><a href="modelsearch.html">modelsearch()</a></code>
+          <code><a href="estimate.lvm.html">estimate(<i>&lt;lvm&gt;</i>)</a></code>
 
         </dt>
-        <dd>Model searching</dd>
-
-        <dt>
-
-          <code><a href="twostage.lvmfit.html">twostage(<i>&lt;lvmfit&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Two-stage estimator (non-linear SEM)</dd>
+        <dd>Estimation of parameters in a Latent Variable Model (lvm)</dd>
 
         <dt>
 
@@ -981,6 +1037,13 @@
 
         <dt>
 
+          <code><a href="modelsearch.html">modelsearch()</a></code>
+
+        </dt>
+        <dd>Model searching</dd>
+
+        <dt>
+
           <code><a href="twostage.html">twostage()</a></code>
 
         </dt>
@@ -988,10 +1051,17 @@
 
         <dt>
 
-          <code><a href="compare.html">compare()</a></code>
+          <code><a href="twostage.lvmfit.html">twostage(<i>&lt;lvmfit&gt;</i>)</a></code>
 
         </dt>
-        <dd>Statistical tests</dd>
+        <dd>Two-stage estimator (non-linear SEM)</dd>
+
+        <dt>
+
+          <code><a href="twostageCV.html">twostageCV()</a></code>
+
+        </dt>
+        <dd>Cross-validated two-stage estimator</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
@@ -1002,7 +1072,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

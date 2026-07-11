@@ -15,7 +15,7 @@ general container for parameter estimates and their influence functions
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,26 +63,25 @@ general container for parameter estimates and their influence functions
 <span>  <span class="va">...</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">id</span>,</span>
+<span>  <span class="va">coef</span>,</span>
+<span>  IC <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">vcov</span>,</span>
 <span>  stack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  average <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">subset</span>,</span>
-<span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  IC <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"robust"</span>, <span class="st">"df"</span>, <span class="st">"mbn"</span><span class="op">)</span>,</span>
-<span>  <span class="va">var.adj</span>,</span>
 <span>  <span class="va">keep</span>,</span>
 <span>  <span class="va">use</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ignore.case <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">contrast</span>,</span>
-<span>  <span class="va">null</span>,</span>
-<span>  <span class="va">vcov</span>,</span>
-<span>  <span class="va">coef</span>,</span>
-<span>  df <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">labels</span>,</span>
 <span>  <span class="va">label.width</span>,</span>
-<span>  only.coef <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">contrast</span>,</span>
+<span>  <span class="va">null</span>,</span>
+<span>  level <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  var.adj <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  df <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  back.transform <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -98,15 +97,14 @@ likelihood-ratio test is performed.</p></dd>
 
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
-<dd><p>transformation of model parameters. Accepts several input types:</p><ul><li><p>A <strong>function</strong> <code>f(p)</code> or <code>f(p, data)</code>: applies the delta method.
-When <code>f</code> returns a named list the names are used as parameter labels.</p></li>
-<li><p>A <strong>matrix</strong>: used as a contrast (linear combination) matrix.</p></li>
-<li><p>A <strong>numeric vector</strong> of parameter indices: converted to a contrast
-that selects and differences those parameters.</p></li>
-<li><p>A <strong>list</strong> of indices: each element selects one parameter.</p></li>
-<li><p><strong>Character</strong> expressions: supports wildcards (<code>"?"</code>, <code>"*"</code>) and
-arithmetic on parameter names (e.g., <code>"z" - "x"</code>, <code>2 * "z" - 3 * "x"</code>).</p></li>
-</ul></dd>
+<dd><p>transformation of model parameters. Accepts several input types: - A
+<strong>function</strong> <code>f(p)</code> or <code>f(p, data)</code>: applies the delta method. When <code>f</code>
+returns a named list the names are used as parameter labels. - A
+<strong>matrix</strong>: used as a contrast (linear combination) matrix. - A <strong>numeric
+vector</strong> of parameter indices: converted to a contrast that selects and
+differences those parameters. - A <strong>list</strong> of indices: each element selects
+one parameter. - <strong>Character</strong> expressions: supports wildcards (<code>"?"</code>,
+<code>"*"</code>) and arithmetic on parameter names (e.g., <code>"z" - "x"</code>, <code>2 * "z" - 3 * "x"</code>).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -120,90 +118,22 @@ covariates (see <code>average</code>). Defaults to <code>model.frame(x)</code>.<
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>(optional) cluster identifier. Can be a vector of cluster IDs, a
-one-sided formula (evaluated in <code>data</code>), a single character column name,
-or a logical scalar (<code>TRUE</code> for one-to-one matching, <code>FALSE</code> for
+one-sided formula (evaluated in <code>data</code>), a single character column name, or
+a logical scalar (<code>TRUE</code> for one-to-one matching, <code>FALSE</code> for
 independence). When supplied, the IF is aggregated within clusters to
 produce cluster-robust standard errors.</p></dd>
 
 
-<dt id="arg-stack">stack<a class="anchor" aria-label="anchor" href="#arg-stack"></a></dt>
-<dd><p>if <code>TRUE</code> (default) the influence function contributions are
-summed within each cluster defined by <code>id</code>. Set to <code>FALSE</code> to keep the
-un-stacked (per-observation) decomposition.</p></dd>
-
-
-<dt id="arg-average">average<a class="anchor" aria-label="anchor" href="#arg-average"></a></dt>
-<dd><p>if <code>TRUE</code> the function computes the standardized
-(marginalized) estimate \(\hat\Psi = P_n f(X; \hat\theta)\), i.e.,
-the empirical mean of <code>f(p, data)</code> over all rows of <code>data</code>. The
-influence function accounts for both the empirical averaging and the
-parameter estimation uncertainty (see Details).</p></dd>
-
-
-<dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
-<dd><p>(optional) logical vector, expression evaluated in <code>data</code>, or
-column name. When used together with <code>average = TRUE</code>, the average is
-conditioned on the subpopulation where <code>subset</code> is <code>TRUE</code>, yielding a
-conditional marginalized estimate.</p></dd>
-
-
-<dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
-<dd><p>level of confidence limits (default 0.95)</p></dd>
+<dt id="arg-coef">coef<a class="anchor" aria-label="anchor" href="#arg-coef"></a></dt>
+<dd><p>(optional) named parameter vector. Used instead of <code>coef(x)</code> when
+constructing an <code>estimate</code> object without a model.</p></dd>
 
 
 <dt id="arg-ic">IC<a class="anchor" aria-label="anchor" href="#arg-ic"></a></dt>
 <dd><p>if <code>TRUE</code> (default) the influence function matrix is estimated and
-stored in the returned object (extract with the <a href="IC.default.html">IC</a> method). Can also be
-a user-supplied IF matrix (one row per observation, one column per
+stored in the returned object (extract with the <a href="IC.default.html">IC</a> method). Can also be a
+user-supplied IF matrix (one row per observation, one column per
 parameter), which is used directly instead of estimating it from <code>x</code>.</p></dd>
-
-
-<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>type of small-sample correction for cluster-robust variance.
-One of:</p><ul><li><p><code>"robust"</code> (default): no correction.</p></li>
-<li><p><code>"df"</code>: applies \(n/(n-p)\) correction (Mancl &amp; DeRouen, 2001).</p></li>
-<li><p><code>"mbn"</code>: Morel-Bokossa-Neerchal (2003) correction.</p></li>
-<li><p><code>"hc3"</code>: leverage-adjusted HC3-type correction (blended with
-<code>var.adj</code>).</p></li>
-<li><p><code>"hc4"</code>: Cribari-Neto (2004) leverage-adjusted correction.</p></li>
-</ul></dd>
-
-
-<dt id="arg-var-adj">var.adj<a class="anchor" aria-label="anchor" href="#arg-var-adj"></a></dt>
-<dd><p>blending parameter for the HC3 leverage adjustment
-(default 0.25). Controls the weight between observation-level empirical
-leverage and the average leverage \(p/n\).</p></dd>
-
-
-<dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
-<dd><p>(optional) index of parameters to keep from final result.
-Accepts integer indices, character names, or (with <code>regex = TRUE</code>)
-perl-compatible regular expressions.</p></dd>
-
-
-<dt id="arg-use">use<a class="anchor" aria-label="anchor" href="#arg-use"></a></dt>
-<dd><p>(optional) index of parameters to use in calculations. The
-selected parameters are first extracted (via <code>keep</code>) and then the
-remaining arguments (<code>f</code>, <code>contrast</code>, etc.) are applied to this subset.</p></dd>
-
-
-<dt id="arg-regex">regex<a class="anchor" aria-label="anchor" href="#arg-regex"></a></dt>
-<dd><p>if <code>TRUE</code> use perl-compatible regular expressions for <code>keep</code>
-and <code>use</code> arguments</p></dd>
-
-
-<dt id="arg-ignore-case">ignore.case<a class="anchor" aria-label="anchor" href="#arg-ignore-case"></a></dt>
-<dd><p>ignore case in regular expressions</p></dd>
-
-
-<dt id="arg-contrast">contrast<a class="anchor" aria-label="anchor" href="#arg-contrast"></a></dt>
-<dd><p>(optional) contrast matrix for a final Wald test. When
-supplied together with <code>null</code>, tests \(H_0: B\theta = b_0\).</p></dd>
-
-
-<dt id="arg-null">null<a class="anchor" aria-label="anchor" href="#arg-null"></a></dt>
-<dd><p>(optional) null hypothesis vector \(b_0\) to test against
-(default 0)</p></dd>
 
 
 <dt id="arg-vcov">vcov<a class="anchor" aria-label="anchor" href="#arg-vcov"></a></dt>
@@ -214,15 +144,46 @@ matrix is supplied it is used directly. When omitted or <code>FALSE</code>, robu
 standard errors are computed from the influence function.</p></dd>
 
 
-<dt id="arg-coef">coef<a class="anchor" aria-label="anchor" href="#arg-coef"></a></dt>
-<dd><p>(optional) named parameter vector. Used instead of
-<code>coef(x)</code> when constructing an <code>estimate</code> object without a model.</p></dd>
+<dt id="arg-stack">stack<a class="anchor" aria-label="anchor" href="#arg-stack"></a></dt>
+<dd><p>if <code>TRUE</code> (default) the influence function contributions are
+summed within each cluster defined by <code>id</code>. Set to <code>FALSE</code> to keep the
+un-stacked (per-observation) decomposition.</p></dd>
 
 
-<dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
-<dd><p>degrees of freedom for t-based inference (default: <code>NULL</code> for
-Gaussian approximation; when set, confidence intervals and p-values use
-the t-distribution with <code>df</code> degrees of freedom)</p></dd>
+<dt id="arg-average">average<a class="anchor" aria-label="anchor" href="#arg-average"></a></dt>
+<dd><p>if <code>TRUE</code> the function computes the standardized
+(marginalized) estimate \(\hat\Psi = P_n f(X; \hat\theta)\), i.e., the
+empirical mean of <code>f(p, data)</code> over all rows of <code>data</code>. The influence
+function accounts for both the empirical averaging and the parameter
+estimation uncertainty (see Details).</p></dd>
+
+
+<dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
+<dd><p>(optional) logical vector, expression evaluated in <code>data</code>, or
+column name. When used together with <code>average = TRUE</code>, the average is
+conditioned on the subpopulation where <code>subset</code> is <code>TRUE</code>, yielding a
+conditional marginalized estimate.</p></dd>
+
+
+<dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
+<dd><p>(optional) index of parameters to keep from final result. Accepts
+integer indices, character names, or (with <code>regex = TRUE</code>) perl-compatible
+regular expressions.</p></dd>
+
+
+<dt id="arg-use">use<a class="anchor" aria-label="anchor" href="#arg-use"></a></dt>
+<dd><p>(optional) index of parameters to use in calculations. The
+selected parameters are first extracted (via <code>keep</code>) and then the remaining
+arguments (<code>f</code>, <code>contrast</code>, etc.) are applied to this subset.</p></dd>
+
+
+<dt id="arg-regex">regex<a class="anchor" aria-label="anchor" href="#arg-regex"></a></dt>
+<dd><p>if <code>TRUE</code> use perl-compatible regular expressions for <code>keep</code> and
+<code>use</code> arguments</p></dd>
+
+
+<dt id="arg-ignore-case">ignore.case<a class="anchor" aria-label="anchor" href="#arg-ignore-case"></a></dt>
+<dd><p>ignore case in regular expressions</p></dd>
 
 
 <dt id="arg-print">print<a class="anchor" aria-label="anchor" href="#arg-print"></a></dt>
@@ -238,17 +199,79 @@ object</p></dd>
 <dd><p>(optional) max display width of labels</p></dd>
 
 
-<dt id="arg-only-coef">only.coef<a class="anchor" aria-label="anchor" href="#arg-only-coef"></a></dt>
-<dd><p>(Deprecated) if <code>TRUE</code> only the coefficient matrix is
-returned. Use <code>parameter(estimate(...))</code> instead.</p></dd>
+<dt id="arg-contrast">contrast<a class="anchor" aria-label="anchor" href="#arg-contrast"></a></dt>
+<dd><p>(deprecated, use summary method) contrast matrix for a final
+Wald test. When supplied together with <code>null</code>, tests \(H_0: B\theta =
+b_0\).</p></dd>
+
+
+<dt id="arg-null">null<a class="anchor" aria-label="anchor" href="#arg-null"></a></dt>
+<dd><p>(deprecated, use summary method) null hypothesis vector \(b_0\)
+to test against (default 0)</p></dd>
+
+
+<dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
+<dd><p>(deprecated, use summary method) level of confidence limits
+(default 0.95)</p></dd>
+
+
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>(deprecated, use summary method) type of small-sample correction
+for cluster-robust variance. One of: - <code>"robust"</code> (default): no correction.</p><ul><li><p><code>"df"</code>: applies \(n/(n-p)\) correction (Mancl &amp; DeRouen, 2001). -
+<code>"mbn"</code>: Morel-Bokossa-Neerchal (2003) correction. - <code>"hc3"</code>:
+leverage-adjusted HC3-type correction (blended with <code>var.adj</code>). - <code>"hc4"</code>:
+Cribari-Neto (2004) leverage-adjusted correction.</p></li>
+</ul></dd>
+
+
+<dt id="arg-var-adj">var.adj<a class="anchor" aria-label="anchor" href="#arg-var-adj"></a></dt>
+<dd><p>(deprecated, use summary method) blending parameter for the
+HC3 leverage adjustment (default 0.25). Controls the weight between
+observation-level empirical leverage and the average leverage \(p/n\).</p></dd>
+
+
+<dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
+<dd><p>(deprecated, use summary method) degrees of freedom for t-based
+inference (default: <code>NULL</code> for Gaussian approximation; when set, confidence
+intervals and p-values use the t-distribution with <code>df</code> degrees of
+freedom).</p></dd>
 
 
 <dt id="arg-back-transform">back.transform<a class="anchor" aria-label="anchor" href="#arg-back-transform"></a></dt>
-<dd><p>(optional) function applied to the point estimates
-and confidence interval bounds <em>after</em> inference is performed on the
-original scale. Useful for variance-stabilizing transformations, e.g.,
-compute CIs on the <code>atanh</code> (Fisher z) scale and back-transform with
-<code>tanh</code>.</p></dd>
+<dd><p>(deprecated, use summary method) function applied to
+the point estimates and confidence interval bounds <em>after</em> inference is
+performed on the original scale. Useful for variance-stabilizing
+transformations, e.g., compute CIs on the <code>atanh</code> (Fisher z) scale and
+back-transform with <code>tanh</code>.</p></dd>
+
+</dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>Object of class <code>estimate</code> with the following elements:</p>
+<dl><dt>coef</dt>
+<dd><p>Named vector of parameter estimates.</p></dd>
+
+<dt>vcov</dt>
+<dd><p>Variance-covariance matrix.</p></dd>
+
+<dt>IC</dt>
+<dd><p>Influence function matrix (observations x parameters).</p></dd>
+
+<dt>coefmat</dt>
+<dd><p>Formatted coefficient table (estimate, std.err,
+confidence limits, p-value).</p></dd>
+
+<dt>id</dt>
+<dd><p>Cluster/id variable used.</p></dd>
+
+<dt>ncluster</dt>
+<dd><p>Number of clusters.</p></dd>
+
+<dt>n</dt>
+<dd><p>Number of observations.</p></dd>
+
+<dt>compare</dt>
+<dd><p>(When <code>null</code> or contrasts are specified) Wald test result.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -316,9 +339,10 @@ independence sandwich estimator.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="estimate.array.html">estimate.array</a>, merge.estimate, <a href="contr.html">contr</a>, <a href="contr.html">parsedesign</a>,
-<a href="contr.html">pairwise.diff</a>, <code>summary.estimate</code>, <code>coef.estimate</code>, <code>vcov.estimate</code>,
-<code>transform.estimate</code>, <code>labels.estimate</code>, <code>IC.estimate</code></p></div>
+    <div class="dont-index"><p><a href="estimate.array.html">estimate.array</a>, <a href="merge.estimate.html">merge.estimate</a>, <a href="contr.html">contr</a>, <a href="contr.html">parsedesign</a>,
+<a href="contr.html">pairwise.diff</a>, <a href="c.estimate.html">c.estimate</a>, <a href="summary.estimate.html">summary.estimate</a>,
+<code>coef.estimate</code>,
+<code>vcov.estimate</code>, <code>transform.estimate</code>, <code>labels.estimate</code>,</p></div>
     </div>
 
     <div class="section level2">
@@ -343,7 +367,7 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                -567.6493                -672.6041 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Plain estimates (robust standard errors)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
@@ -351,7 +375,9 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x            1.009058 0.14720  0.7205 1.2976 7.135e-12</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Testing contrasts</span></span></span>
-<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span><span class="op">)</span>, null<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
@@ -367,91 +393,54 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199 4.075e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487 4.939e-17</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = x, f = ..1)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + [z] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 153.6241, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + [z]    0.9521  0.1260 0.7052 1.199  0.7037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [(Intercept)] + 2[x]   2.0162  0.2404 1.5451 2.487  0.9462</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + [z] = 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] + 2[x] = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[(Intercept)] + [z]] = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[(Intercept)] + 2[x]] = 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 0.1447, df = 2, p-value = 0.9302</span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="co">## same as cbind(0,1,-1)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 0.1285, df = 1, p-value = 0.72</span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co">## same as rbind(c(0,1,0),c(0,0,1))</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x    1.009 0.14720 0.7205 1.298 7.135e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
 <span class="r-in"><span><span class="co">## Alternative syntax</span></span></span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"z"</span>, <span class="st">"z"</span><span class="op">-</span><span class="st">"x"</span>, <span class="fl">2</span><span class="op">*</span><span class="st">"z"</span><span class="op">-</span><span class="fl">3</span><span class="op">*</span><span class="st">"x"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err    2.5%   97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z            0.95397 0.08114  0.7949  1.1130 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]   -0.05508 0.15367 -0.3563  0.2461 7.200e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2[z] - 3[x] -1.11922 0.43991 -1.9814 -0.2570 1.095e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2[z] - 3[x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"?"</span><span class="op">)</span>  <span class="co">## Wildcards</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x] -0.05508  0.1537 -0.3563 0.2461    0.72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 0.1285, df = 1, p-value = 0.72</span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"*Int*"</span>, <span class="st">"z"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z            0.953974 0.08114  0.7949 1.1130 6.481e-32</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"1"</span>, <span class="st">"2"</span><span class="op">-</span><span class="st">"3"</span><span class="op">)</span>, null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = x, f = "1", ..2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 138.2721, df = 2, p-value &lt; 2.2e-16</span>
-<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="st">"1"</span>, <span class="st">"2"</span><span class="op">-</span><span class="st">"3"</span>, null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.001888 0.09785 -0.1937 0.1899 9.846e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [z] - [x]   -0.055083 0.15367 -0.3563 0.2461 6.606e-12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [(Intercept)] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] - [x] = 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[z] - [x]] = 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 77.8686, df = 2, p-value &lt; 2.2e-16</span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z    0.954 0.08114 0.7949 1.113 6.481e-32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x    1.009 0.14720 0.7205 1.298 7.135e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [z] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [x] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 159.9584, df = 2, p-value &lt; 2.2e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Usual (non-robust) confidence intervals</span></span></span>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g</span>, vcov<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -508,7 +497,7 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.1044  0.1171 -0.1251 0.3338 3.726e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x             0.9665  0.1234  0.7246 1.2084 4.853e-15</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Marginalize</span></span></span>
+<span class="r-in"><span><span class="co">## Marginalize / standardization</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0<span class="op">=</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       p1<span class="op">=</span><span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"x"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -523,11 +512,6 @@ independence sandwich estimator.</p>
 <span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [p0] + [p1]    1.202 0.03027 1.142 1.261       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [p0] + [p1] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 1576.103, df = 1, p-value &lt; 2.2e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Clusters and subset (conditional marginal effects)</span></span></span>
 <span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span>,each<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></span>
@@ -569,16 +553,10 @@ independence sandwich estimator.</p>
 <span class="r-in"><span><span class="fu"><a href="IC.default.html">IC</a></span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   (Intercept)           x</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.6402167  1.07508836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.2409398 -0.09345091</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.2915390 -0.17419820</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.9653828 -0.68490833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.2915390 -0.17419820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.2409398 -0.09345091</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   0.2073128 -0.12253093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"bread")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept)          x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.6136517 -0.1000796</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x            -0.1000796  0.9011828</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"N")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Combined i.i.d. decomposition</span></span></span>
 <span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">l1</span>,id<span class="op">=</span><span class="va">id1</span><span class="op">)</span></span></span>
@@ -601,9 +579,9 @@ independence sandwich estimator.</p>
 <span class="r-in"><span><span class="fu"><a href="IC.default.html">IC</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">l1</span>,<span class="va">l2</span>,<span class="va">l3</span>,id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">id1</span>,<span class="va">id2</span>,<span class="va">id3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    (Intercept)          x (Intercept).1         x.1 (Intercept).2         x.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   -1.2804333  2.1501767    3.53262530 -3.15431642     0.7554987  2.18566521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.4818797 -0.1869018    0.06810688 -0.07263298     0.5200220 -0.55458052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.5830781 -0.3483964    1.08830429 -0.51910711    -0.1215704  0.05798750</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    1.9307656 -1.3698167   -2.27428000 -0.36871845    -1.5561326 -0.25228854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.5830781 -0.3483964    1.08830429 -0.51910711    -0.1215704  0.05798750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.4818797 -0.1869018    0.06810688 -0.07263298     0.5200220 -0.55458052</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4146255 -0.2450619    0.25612485  0.61909106    -0.4880168 -1.17960761</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.0000000  0.0000000   -2.62738927  3.57191544     1.6742259 -2.27609724</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    0.0000000  0.0000000    0.33520853  0.13001396     0.8010558  0.31069745</span>
@@ -729,14 +707,10 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 0.365625</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a              0.5  0.2346  0.0401 0.9599 0.033101</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b              0.8  0.2868  0.2379 1.3621 0.005277</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] - [b] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [a] = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [b] = 0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 10.3338, df = 2, p-value = 0.005702</span>
 <span class="r-in"><span><span class="va">e</span> <span class="op">==</span> <span class="fl">1</span> <span class="co"># wald-test, null-hypothesis H0: b=1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     stack = FALSE, keep = keep)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5%  97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a      0.5  0.2346 0.0401 0.9599  0.0331</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b      0.8  0.2868 0.2379 1.3621  0.4856</span>
@@ -747,6 +721,9 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 4.6135, df = 2, p-value = 0.09958</span>
 <span class="r-in"><span><span class="va">e</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     stack = FALSE, keep = keep)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a      0.5  0.2346 0.0401 0.9599 3.310e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> b      0.8  0.2868 0.2379 1.3621 2.859e-05</span>
@@ -757,6 +734,8 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 19.2204, df = 2, p-value = 6.704e-05</span>
 <span class="r-in"><span><span class="va">B</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="op">==</span> <span class="fl">1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = y, f = x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 8.842e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a              0.5  0.2346  0.0401 0.9599 3.310e-02</span>
@@ -779,7 +758,7 @@ independence sandwich estimator.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
