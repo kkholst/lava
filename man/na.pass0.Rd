@@ -4,12 +4,17 @@
 \alias{na.pass0}
 \title{Handle Missing Values in Objects}
 \usage{
-na.pass0(object, na.action = na.omit, ...)
+na.pass0(object, na.action = na.omit, row.wise = FALSE, value = 0, ...)
 }
 \arguments{
 \item{object}{data.frame, vector}
 
 \item{na.action}{function used to identify missing values}
+
+\item{row.wise}{when true entire row is set to zero whenever a missing data
+is observed in that row}
+
+\item{value}{value to replace NAs with (default 0)}
 
 \item{...}{additional arguments to lower level functions}
 }

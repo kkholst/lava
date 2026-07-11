@@ -141,3 +141,12 @@ test_that("merge preserves order (of first IC)", {
   ic1 <- IC(e)[seq_along(id1),1,drop=FALSE]
   expect_equivalent(IC(a)* 3/2, ic1) # same expect for IPW due to incomplete data
 })
+
+test_that("cluster.index vs lava native impl.", {
+  op <- lava.options(cluster.index = FALSE)
+  e1 <- merge(e_ic1, e_ic2)
+  lava.options(cluster.index = TRUE)
+  e2 <- merge(e_ic1, e_ic2)
+  expect_equal(e1, e2)
+  lava.options(op)
+})

@@ -84,17 +84,32 @@ test_that("All the rest", {
                             bothrows=TRUE),"no.1")
 })
 
-test_that("napass.0", {
+test_that("na.pass0", {
   n <- 10
-  d <- data.frame(y=rnorm(n), a=rbinom(n,1,0.5)*2-1)
+  d0 <- data.frame(y=abs(rnorm(n))+1, a=rbinom(n,1,0.5)*2-1)
+  d <- d0
   idx1 <- c(1,3,5)
   idx2 <- c(1,3,8,9)
   d$y[idx1] <- NA
   d$a[idx2] <- NA
-  d0 <- na.pass0(d)
-  expect_true(nrow(d0)==n)
-  expect_true(all(d0$a[idx2]==0))
-  expect_true(all(d0$a[idx1]==0))
+  d1 <- na.pass0(d)
+  expect_true(nrow(d1)==n)
+  expect_true(all(d1$y[idx1]==0))
+  expect_true(all(d1$a[idx2]==0))
+  expect_true(all(d1$a[setdiff(1:10, idx2)]!=0))
+  expect_true(all(d1$y[setdiff(1:10, idx1)]!=0))
+  y1 <- na.pass0(d$y)
+  expect_equivalent(y1, d1$y)
+  a1 <- na.pass0(d$a)
+  expect_equivalent(a1, d1$a)
+
+  ## Setting entire rows to zero where ever there is a missing entry
+  d2 <- na.pass0(d, rowwise = TRUE)
+  expect_true(nrow(d2)==n)
+  expect_true(all(d2$y[c(idx1,idx2)]==0))
+  expect_true(all(d2$a[c(idx1,idx2)]==0))
+  expect_true(all(d2$a[setdiff(1:10, c(idx1, idx2))]!=0))
+  expect_true(all(d2$y[setdiff(1:10, c(idx1, idx2))]!=0))
 })
 
 test_that("strip_bracket", {
