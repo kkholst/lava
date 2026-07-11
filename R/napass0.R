@@ -44,8 +44,11 @@ impute0 <- function(object,rows,idx,na.action=na.omit,value,...) {
 ##' d <- data.frame(y=c(1,1,NA,2,NA,2), r=c(1,1,0,1,1,1))
 ##' na.pass0(d)
 ##' glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
-na.pass0 <- function(object, na.action=na.omit, row.wise=FALSE, value = 0, ...) {
-  if (!rowwise && NCOL(object)>1L) {
+na.pass0 <- function(object,
+                     na.action = na.omit,
+                     row.wise = FALSE,
+                     value = 0, ...) {
+  if (!row.wise && NCOL(object)>1L) {
     nas <- is.na(object)
     if (!any(nas)) return(object)
     idx <- which(nas)

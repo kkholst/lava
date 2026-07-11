@@ -104,7 +104,7 @@ test_that("na.pass0", {
   expect_equivalent(a1, d1$a)
 
   ## Setting entire rows to zero where ever there is a missing entry
-  d2 <- na.pass0(d, rowwise = TRUE)
+  d2 <- na.pass0(d, row.wise = TRUE)
   expect_true(nrow(d2)==n)
   expect_true(all(d2$y[c(idx1,idx2)]==0))
   expect_true(all(d2$a[c(idx1,idx2)]==0))
