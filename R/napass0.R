@@ -44,8 +44,11 @@ impute0 <- function(object,rows,idx,na.action=na.omit,value,...) {
 ##' d <- data.frame(y=c(1,1,NA,2,NA,2), r=c(1,1,0,1,1,1))
 ##' na.pass0(d)
 ##' glm(y ~ 1, weights=d$r, data=d, na.action=na.pass0)
-na.pass0 <- function(object, na.action=na.omit, row.wise=FALSE, value = 0, ...) {
-  if (!rowwise && NCOL(object)>1L) {
+na.pass0 <- function(object,
+                     na.action = na.omit,
+                     row.wise = FALSE,
+                     value = 0, ...) {
+  if (!row.wise && NCOL(object)>1L) {
     nas <- is.na(object)
     if (!any(nas)) return(object)
     idx <- which(nas)
@@ -59,10 +62,10 @@ na.pass0 <- function(object, na.action=na.omit, row.wise=FALSE, value = 0, ...) 
   idx <- attr(df, "na.action")
   if (is.null(idx)) return(object)
   if (is.matrix(object) || is.vector(object)) {
-    object <- impute0(object,idx=idx,...)
+    object <- impute0(object,idx=idx,value=value,...)
   } else {
     for (i in seq_len(NCOL(object))) {
-      object[[i]] <- impute0(object[[i]],idx=idx,...)
+      object[[i]] <- impute0(object[[i]],idx=idx,value=value,...)
     }
   }
   return(structure(object,na.action=structure(idx,class="pass0")))

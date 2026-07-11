@@ -16,7 +16,8 @@
   regex = FALSE,
   sep = FALSE,
   drop.ic = FALSE,
-  ignore.case = FALSE
+  ignore.case = FALSE,
+  sort = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,9 @@
 \item{drop.ic}{If TRUE, drop the influence function from the result}
 
 \item{ignore.case}{If TRUE, case is ignored in \code{keep}/\code{subset} matching}
+
+\item{sort}{if true the returned influence function will be sorted according
+to the id variables (lexigraphically)}
 }
 \value{
 Object of class \code{estimate} (see \link{estimate.default}).
