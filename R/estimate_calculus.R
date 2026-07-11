@@ -17,16 +17,17 @@
 #' @seealso [c.estimate()]
 #' @return Object of class `estimate` (see [estimate.default]).
 #' @export
-merge.estimate <- function(x,y,...,
+merge.estimate <- function(x, y,
+                           ...,
                            id,
-                           paired=FALSE,
-                           labels=NULL,
-                           keep=NULL,
-                           subset=NULL,
-                           regex=FALSE,
-                           sep=FALSE,
+                           paired = FALSE,
+                           labels = NULL,
+                           keep = NULL,
+                           subset = NULL,
+                           regex = FALSE,
+                           sep = FALSE,
                            drop.ic = FALSE,
-                           ignore.case=FALSE) {
+                           ignore.case = FALSE) {
     if (missing(y)) {
       objects <- c(list(x), list(...))
     } else {

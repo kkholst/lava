@@ -105,3 +105,12 @@ test_that("c.estimate with 'extra' attr", {
   # internal conversion to numeric
   expect_equal(c(e1.iter = 2, converged = 0), attr(e, "extra"))
 })
+
+test_that("cluster.index vs lava native impl.", {
+  op <- lava.options(cluster.index = FALSE)
+  e1 <- merge(e_ic1, e_ic2)
+  lava.options(cluster.index = TRUE)
+  e2 <- merge(e_ic1, e_ic2)
+  expect_equal(e1, e2)
+  lava.options(op)
+})
