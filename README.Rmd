@@ -6,6 +6,7 @@ output: github_document
 
 ```{r include=FALSE}
 # from https://gist.github.com/gadenbuie/c83e078bf8c81b035e32c3fc0cf04ee8
+# tweaked to remove top level sections (#) from TOC
 render_toc <- function(
   filename,
   toc_header_name = "Table of Contents",
@@ -26,6 +27,7 @@ render_toc <- function(
   if (is.null(base_level))
     base_level <- min(sapply(gsub("(#+).+", "\\1", x), nchar))
   start_at_base_level <- FALSE
+
   x <- sapply(x, function(h) {
     level <- nchar(gsub("(#+).+", "\\1", h)) - base_level
     if (level < 0) {
@@ -46,9 +48,15 @@ render_toc <- function(
       header_slug <- paste(strsplit(header_text, " ")[[1]], collapse="-")
       header_slug <- tolower(header_slug)
     }
-    paste0(strrep(" ", level * 4), "- [", header_text, "](#", header_slug, ")")
+    reps <- if (level > 0) (level - 1) * 4 else 0 # tweak to remove # sections
+    paste0(strrep(" ", reps), "- [", header_text, "](#", header_slug, ")")
   })
   x <- x[x != ""]
+
+  x <- x[-1] # tweak to remove # sections
+  nn <- unname(sapply(names(x), \(h) substring(h, 2)))
+  names(x) <- nn
+
   knitr::asis_output(paste(x, collapse = "\n"))
 }
 ```
