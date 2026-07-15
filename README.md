@@ -5,6 +5,7 @@
   - [Examples](#examples)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
@@ -122,8 +123,8 @@ vcov(e) # joint distribution
 #> a 0.09000000 0.01469326
 #> b 0.01469326 0.09000000
 summary(e, null=c(0, 0))
-#> Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, 
-#>     vcov = vcov(object), coef = p)
+#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
+#>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err     2.5% 97.5%  P-value
 #> a      0.5     0.3 -0.08799 1.088 0.095581
@@ -347,7 +348,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 7.381s
+#> 100 replications                 Time: 2.529s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
