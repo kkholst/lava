@@ -120,9 +120,9 @@
 <clipPath id="clip-1">
 <path clip-rule="nonzero" d="M 353 59.039062 L 473.757812 59.039062 L 473.757812 103 L 353 103 Z M 353 59.039062 "/>
 </clipPath>
-<image id="source-102" x="0" y="0" width="0" height="0"/>
+<image id="source-97" x="0" y="0" width="0" height="0"/>
 <mask id="mask-0">
-<use xlink:href="#source-102"/>
+<use xlink:href="#source-97"/>
 </mask>
 </defs>
 <rect x="-50.4" y="-36" width="604.8" height="432" fill="rgb(100%, 100%, 100%)" fill-opacity="1"/>

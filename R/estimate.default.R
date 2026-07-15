@@ -398,9 +398,13 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
   nn <- NULL
-  if (((is.logical(IC) && IC) || length(IC)>0) &&
-      (missing(vcov) || is.null(vcov) ||
-       (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))) {
+  if (
+    (
+      (is.logical(IC) && IC) || (length(IC)>0 && !is.logical(IC))) &&
+    (missing(vcov) ||
+      is.null(vcov) ||
+      (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))
+    ) {
     ## If user supplied vcov, then don't estimate IC
     if (!is.logical(IC)) {
       ic_theta <- cbind(IC)

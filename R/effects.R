@@ -163,7 +163,12 @@ summary.effects <- function(object,...) {
         if (abs(coef(object)[2])<1e-12) {
           medprop <- estimate(NULL,coef=c("Mediation proportion"=1),vcov=matrix(NA))
         } else {
-          medprop <- estimate(object, function(x) list("Mediation proportion"=1-x[2]/x[1]))
+          # set IC=FALSE to prevent warning from estimnate.default because
+          # effect object has no IC function
+          medprop <- estimate(
+            object, function(x) list("Mediation proportion"=1-x[2]/x[1]),
+            IC = FALSE
+          )
         }
     }
     list(coef=mycoef,medprop=medprop)
