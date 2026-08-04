@@ -148,7 +148,10 @@ summary.estimate <- function(object,
 
     cc0 <- estimate_coefmat(p, diag(V)**.5, df=df, level=level, null=null)
     rownames(cc0) <- rownames(parameter(object))
-    waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
+    waldtest <- NULL
+    if (!is.null(contrast)) {
+      waldtest <- compare(object, contrast=contrast, null=null, vcov=V)
+    }
     class(object) <- "list"
     res <- c(object[c("coef", "coefmat", "vcov", "call",
                       "ncluster", "model.index")], list(compare=waldtest))
