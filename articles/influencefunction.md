@@ -365,7 +365,7 @@ ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 ```
 
 Note that the
-[`sandwich::estfun`](https://sandwich.R-Forge.R-project.org/reference/estfun.html)
+[`sandwich::estfun`](https://zeileis.codeberg.page/sandwich/reference/estfun.html)
 function from the `sandwich` library (Zeileis, Köll, and Graham 2020)
 can also estimate the IF for different parametric models, but does not
 provide the tools for combining and transforming these.
@@ -460,7 +460,7 @@ estimate(semfit)
 #>      Estimate Std.Err    2.5%    97.5%   P-value
 #> y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02
 #> u     0.36025 0.06659  0.2297  0.49075 6.295e-08
-#> y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15
+#> y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15
 #> y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15
 #> u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01
 ```
@@ -741,11 +741,11 @@ between the estimates, the argument `id=NULL` can be used
 ``` r
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>     (Intercept) a          (Intercept).1
-#> 1   -2.714e-17   5.128e+00  0.000e+00   
-#> 2   -2.714e-17   5.128e+00  0.000e+00   
+#> 1    1.104e-15   5.128e+00  0.000e+00   
+#> 2    1.104e-15   5.128e+00  0.000e+00   
 #> 3   -7.547e+00   7.547e+00  0.000e+00   
 #> 4   -7.547e+00   7.547e+00  0.000e+00   
-#> 5    4.006e-16  -1.600e+01  0.000e+00   
+#> 5   -2.200e-15  -1.600e+01  0.000e+00   
 #> ---                                     
 #> 796  0.000       0.000     -4.301       
 #> 797  0.000       0.000      3.738       
@@ -754,9 +754,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 800  0.000       0.000     -4.301
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29
-#> a             -2.079760e-02  4.720777e-02 -1.554401e-25
-#> (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02
+#> (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29
+#> a             -2.079760e-02  4.720777e-02 -1.554863e-25
+#> (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02
 ```
 
 ### Renaming and subsetting parameters
@@ -1067,7 +1067,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x560026ef97c8>
+#> <bytecode: 0x55a47a891ee0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1628,15 +1628,15 @@ sessionInfo()
 #> [1] survival_3.8-6 lava_1.9.2.1  
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         
+#>  [1] tidyr_1.3.2            sass_0.4.10            future_1.75.0         
 #>  [4] generics_0.1.4         lattice_0.22-9         listenv_1.0.0         
 #>  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        
-#> [10] grid_4.6.1             mvtnorm_1.4-1          fastmap_1.2.0         
+#> [10] grid_4.6.1             mvtnorm_1.4-2          fastmap_1.2.0         
 #> [13] jsonlite_2.0.0         Matrix_1.7-5           backports_1.5.1       
 #> [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   
 #> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             
-#> [22] rlang_1.3.0            mets_1.3.11            parallelly_1.48.0     
-#> [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.0-1
+#> [22] rlang_1.3.0            mets_1.3.12            parallelly_1.48.0     
+#> [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.2-1
 #> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
 #> [31] otel_0.2.0             tools_4.6.1            parallel_4.6.1        
 #> [34] dplyr_1.2.1            globals_0.19.1         broom_1.0.13          
@@ -1644,7 +1644,7 @@ sessionInfo()
 #> [40] fs_2.1.0               htmlwidgets_1.6.4      MASS_7.3-65           
 #> [43] ragg_1.5.2             pkgconfig_2.0.3        desc_1.4.3            
 #> [46] pillar_1.11.1          timereg_2.0.7          pkgdown_2.2.1         
-#> [49] bslib_0.11.0           glue_1.8.1             Rcpp_1.1.2            
+#> [49] bslib_0.12.0           glue_1.8.1             Rcpp_1.1.2            
 #> [52] systemfonts_1.3.2      tidyselect_1.2.1       tibble_3.3.1          
 #> [55] xfun_0.60              knitr_1.51             htmltools_0.5.9       
 #> [58] rmarkdown_2.31         compiler_4.6.1

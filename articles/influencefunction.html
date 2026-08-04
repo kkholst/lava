@@ -427,7 +427,7 @@ x)}\right) = \alpha_{j} + \beta^{t}x, \quad j=1,\ldots,J
 <span><span class="co">#&gt; 0|1   0.2687  0.1622 -0.04932 0.5867 9.772e-02</span></span>
 <span><span class="co">#&gt; a     1.5595  0.2429  1.08349 2.0355 1.350e-10</span></span>
 <span><span class="co">#&gt; x1    0.9728  0.1435  0.69157 1.2540 1.200e-11</span></span></code></pre></div>
-<p>Note that the <code><a href="https://sandwich.R-Forge.R-project.org/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
+<p>Note that the <code><a href="https://zeileis.codeberg.page/sandwich/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the
 <code>sandwich</code> library <span class="citation">(Zeileis, Köll, and
 Graham 2020)</span> can also estimate the IF for different parametric
 models, but does not provide the tools for combining and transforming
@@ -519,7 +519,7 @@ j=1,2
 <span><span class="co">#&gt;      Estimate Std.Err    2.5%    97.5%   P-value</span></span>
 <span><span class="co">#&gt; y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02</span></span>
 <span><span class="co">#&gt; u     0.36025 0.06659  0.2297  0.49075 6.295e-08</span></span>
-<span><span class="co">#&gt; y1~w  0.55425 0.06931  0.4184  0.69008 1.272e-15</span></span>
+<span><span class="co">#&gt; y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15</span></span>
 <span><span class="co">#&gt; y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15</span></span>
 <span><span class="co">#&gt; u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01</span></span></code></pre></div>
 </div>
@@ -794,11 +794,11 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1   -2.714e-17   5.128e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2   -2.714e-17   5.128e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    1.104e-15   5.128e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    1.104e-15   5.128e+00  0.000e+00   </span></span>
 <span><span class="co">#&gt; 3   -7.547e+00   7.547e+00  0.000e+00   </span></span>
 <span><span class="co">#&gt; 4   -7.547e+00   7.547e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5    4.006e-16  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5   -2.200e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                     </span></span>
 <span><span class="co">#&gt; 796  0.000       0.000     -4.301       </span></span>
 <span><span class="co">#&gt; 797  0.000       0.000      3.738       </span></span>
@@ -807,9 +807,9 @@ between the estimates, the argument <code>id=NULL</code> can be used</p>
 <span><span class="co">#&gt; 800  0.000       0.000     -4.301</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    2.079760e-02 -2.079760e-02 -2.155215e-29</span></span>
-<span><span class="co">#&gt; a             -2.079760e-02  4.720777e-02 -1.554401e-25</span></span>
-<span><span class="co">#&gt; (Intercept).1 -2.155215e-29 -1.554401e-25  1.004919e-02</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29</span></span>
+<span><span class="co">#&gt; a             -2.079760e-02  4.720777e-02 -1.554863e-25</span></span>
+<span><span class="co">#&gt; (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="renaming-and-subsetting-parameters">Renaming and subsetting parameters<a class="anchor" aria-label="anchor" href="#renaming-and-subsetting-parameters"></a>
@@ -1110,7 +1110,7 @@ example consider the <code>logit</code> function</p>
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x560026ef97c8&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55a47a891ee0&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1637,15 +1637,15 @@ way</p>
 <span><span class="co">#&gt; [1] survival_3.8-6 lava_1.9.2.1  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] tidyr_1.3.2            sass_0.4.10            future_1.70.0         </span></span>
+<span><span class="co">#&gt;  [1] tidyr_1.3.2            sass_0.4.10            future_1.75.0         </span></span>
 <span><span class="co">#&gt;  [4] generics_0.1.4         lattice_0.22-9         listenv_1.0.0         </span></span>
 <span><span class="co">#&gt;  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        </span></span>
-<span><span class="co">#&gt; [10] grid_4.6.1             mvtnorm_1.4-1          fastmap_1.2.0         </span></span>
+<span><span class="co">#&gt; [10] grid_4.6.1             mvtnorm_1.4-2          fastmap_1.2.0         </span></span>
 <span><span class="co">#&gt; [13] jsonlite_2.0.0         Matrix_1.7-5           backports_1.5.1       </span></span>
 <span><span class="co">#&gt; [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   </span></span>
 <span><span class="co">#&gt; [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             </span></span>
-<span><span class="co">#&gt; [22] rlang_1.3.0            mets_1.3.11            parallelly_1.48.0     </span></span>
-<span><span class="co">#&gt; [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.0-1</span></span>
+<span><span class="co">#&gt; [22] rlang_1.3.0            mets_1.3.12            parallelly_1.48.0     </span></span>
+<span><span class="co">#&gt; [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.2-1</span></span>
 <span><span class="co">#&gt; [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           </span></span>
 <span><span class="co">#&gt; [31] otel_0.2.0             tools_4.6.1            parallel_4.6.1        </span></span>
 <span><span class="co">#&gt; [34] dplyr_1.2.1            globals_0.19.1         broom_1.0.13          </span></span>
@@ -1653,7 +1653,7 @@ way</p>
 <span><span class="co">#&gt; [40] fs_2.1.0               htmlwidgets_1.6.4      MASS_7.3-65           </span></span>
 <span><span class="co">#&gt; [43] ragg_1.5.2             pkgconfig_2.0.3        desc_1.4.3            </span></span>
 <span><span class="co">#&gt; [46] pillar_1.11.1          timereg_2.0.7          pkgdown_2.2.1         </span></span>
-<span><span class="co">#&gt; [49] bslib_0.11.0           glue_1.8.1             Rcpp_1.1.2            </span></span>
+<span><span class="co">#&gt; [49] bslib_0.12.0           glue_1.8.1             Rcpp_1.1.2            </span></span>
 <span><span class="co">#&gt; [52] systemfonts_1.3.2      tidyselect_1.2.1       tibble_3.3.1          </span></span>
 <span><span class="co">#&gt; [55] xfun_0.60              knitr_1.51             htmltools_0.5.9       </span></span>
 <span><span class="co">#&gt; [58] rmarkdown_2.31         compiler_4.6.1</span></span></code></pre></div>
