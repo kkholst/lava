@@ -3,26 +3,27 @@
 title: Estimating partial correlations with lava
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
-output:
-  rmarkdown::html_vignette:
-    fig_caption: yes
-    fig_width: 6
-    fig_height: 4
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    fig-format: svg
+    fig-caption: yes
+    fig-width: 6
+    fig-height: 4
+execute:
+  echo: true
+  warning: false
+  collapse: true
+  comment: "#>"
 vignette: >
   %\VignetteIndexEntry{Estimating partial correlations with lava}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 bibliography: ref.bib
 ---
-<!-- correlation.Rmd is generated from correlation.org. Please edit that file -->
 
 ```{r  include=FALSE }
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  dev = "svg",
-  fig.ext = "svg"
-)
 mets <- lava:::versioncheck('mets', 1)
 ```
 

@@ -3,19 +3,19 @@ title: The Art of Influence
 subtitle: A Practical Guide to Working with Influence Functions
 author: Klaus Kähler Holst
 Rdate: "`r Sys.Date()`"
-output:
-  # html_document:
-  rmarkdown::html_vignette:
-    # toc_float: true
-    fig_width: 6
-    fig_height: 4
-    fig_caption: true
+format:
+  html:
     toc: true
-    toc_depth: 2
-    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
+    html-math-method: mathjax
+    fig-format: 'svg'
+execute:
+  echo: true
+  warning: false
+  collapse: true
+  comment: "#>"
 vignette: >
   %\VignetteIndexEntry{The Art of Influence}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 bibliography: ref.bib
 ---
