@@ -386,7 +386,7 @@ estimate(semfit)
 
 Let $\beta$ denote the $\tau$th quantile of $X$, with IF
 \begin{align*}
-\IC(x; \Pz) = \tau - \one(x\leq \beta)f_{0}(\beta)^{-1}
+\IC(x; \Pz) = \{\tau - \one(x\leq \beta)\}f_{0}(\beta)^{-1}
 \end{align*}
 
 where $f_{0}$ is the density function of $X$.
