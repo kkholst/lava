@@ -46,7 +46,10 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
       ic[, i] <- ic[, i] - cc[i]
     }
   }
-  if (tolower(type) %in% c("quantile")) {
+  if (grepl("^quantile", tolower(type))) {
+    m <- regexpr("\\d+$", type)
+    quantile_type <- ifelse(m > 0,
+                            as.integer(regmatches(type, m)), 7)
     density.args <- list()
     dargs <- names(formals(density.default))
     didx <- which(dargs %in% names(dots))
@@ -55,7 +58,7 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
       dots[dargs[didx]] <- NULL
     }
     cc <- unlist(apply(x, 2, function(y)
-      quantile(y, probs=probs, na.rm = TRUE),
+      quantile(y, probs=probs, na.rm = TRUE, type = quantile_type),
       simplify=FALSE))
     ic <- c()
     for (i in seq_len(NCOL(x))) {
