@@ -146,8 +146,8 @@
 <span><span class="co">#&gt; a 0.09000000 0.01469326</span></span>
 <span><span class="co">#&gt; b 0.01469326 0.09000000</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(f = FALSE, contrast = contrast, null = ..1, </span></span>
-<span><span class="co">#&gt;     vcov = vcov(object), coef = p)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, </span></span>
+<span><span class="co">#&gt;     stack = FALSE, keep = keep)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err     2.5% 97.5%  P-value</span></span>
 <span><span class="co">#&gt; a      0.5     0.3 -0.08799 1.088 0.095581</span></span>
@@ -321,7 +321,7 @@
 <span><span class="op">}</span></span>
 <span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 100 replications                 Time: 7.381s</span></span>
+<span><span class="co">#&gt; 100 replications                 Time: 2.529s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span></span>
 <span><span class="co">#&gt; Mean           1.99533         1.00468           0.99066        0.99066</span></span>
