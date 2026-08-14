@@ -3,12 +3,12 @@ estimate.data.frame <- function(x, ...) {
   estimate(as.matrix(x), ...)
 }
 
-IC_quantile <- function(x, estimate, probs=0.5, ...) {
+IC_quantile <- function(x, estimate, probs=0.5, type = 7, ...) {
   x <- na.omit(x)
   f0 <- density(x, ...)
   ## U <- function(est) (tau - (x <= est))
   if (missing(estimate)) {
-    estimate <- quantile(x, probs=probs)
+    estimate <- quantile(x, probs=probs, type = type, ...)
   }
   res <- c()
   for (i in seq_len(length(estimate))) {
@@ -60,7 +60,8 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
     ic <- c()
     for (i in seq_len(NCOL(x))) {
       ic <- cbind(ic, do.call(IC_quantile,
-                        c(list(x[, i], probs=probs), density.args)))
+                              c(list(x[, i], probs=probs, type = quantile_type),
+                                density.args)))
     }
   }
   if (any(c("vcov", "IC") %in% names(list(...)))) {
