@@ -254,3 +254,19 @@ nsem                    Example SEM data (nonlinear)
 semdata                 Example SEM data
 serotonin               Serotonin simulated data
 twindata                Twin menarche data
+
+** Working with Influence Function
+
+IC.default              Extract influence function from model object
+c.estimate              Concatenate estimate objects
+c.summary.estimate      Concatenate summary.estimate objects
+estimate.array          Estimate parameters and influence function for population summaries
+estimate.default        Influence function based inference
+estimate.glm            Estimate method for GLM objects
+estimate.list           Estimate method for lists
+merge.estimate          Concatenate estimate objects
+multinomial             Estimate probabilities in contingency table
+plot.estimate           Plot method for 'estimate' objects
+stack.estimate          Stack estimating equations
+summary.estimate        Summary of estimate objects
+var_ic                  Variance based on influence function
