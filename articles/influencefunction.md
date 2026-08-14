@@ -4,12 +4,14 @@
 
 Estimators that have parametric convergence rates can often be fully
 characterized by their *influence function* (IF), also referred to as an
-influence curve or canonical gradient (Bickel et al. 1998; Vaart 1998).
-The IF allows for the direct estimation of properties of the estimator,
-including its asymptotic variance. Moreover, estimates of the IF enable
-the simple combination and transformation of estimators into new ones.
-This vignette describes how to estimate and manipulate IFs using the
-R-package `lava` (K. K. Holst and Budtz-Jørgensen 2013).
+influence curve ([Bickel et al.
+1998](#ref-bickel_effic_adapt_estim_semip_model); [Vaart
+1998](#ref-vaart_1998_asymp)). The IF allows for the direct estimation
+of properties of the estimator, including its asymptotic variance.
+Moreover, estimates of the IF enable the simple combination and
+transformation of estimators into new ones. This vignette describes how
+to estimate and manipulate IFs using the R-package `lava` ([Holst and
+Budtz-Jørgensen 2013](#ref-holst_budtzjorgensen_2013)).
 
 Formally, let Z_1,\ldots,Z_n be iid k-dimensional stochastic variables,
 Z_i=(Y\_{i},A\_{i},W\_{i})\sim P\_{0}, and \widehat{\theta} a consistent
@@ -20,10 +22,11 @@ iid decomposition \begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) =
 o\_{P}(1), \end{align\*} where the function \operatorname{IC} is the
 unique *Influence Function* s.t. \mathbb{E}\\\operatorname{IC}(Z\_{i};
 P\_{0})\\=0 and \mathbb{V}\\\text{ar}\\\operatorname{IC}(Z\_{i};
-P\_{0})^{2}\\\<\infty (Tsiatis 2006; Vaart 1998). The influence function
-thus fully characterizes the asymptotic behaviour of the estimator and
-by the central limit theorem it follows that the estimator converges
-weakly to a Gaussian distribution \sqrt{n}(\widehat{\theta}-\theta)
+P\_{0})\\\<\infty ([Tsiatis 2006](#ref-tsiatis2006semiparametric);
+[Vaart 1998](#ref-vaart_1998_asymp)). The influence function thus fully
+characterizes the asymptotic behaviour of the estimator and by the
+central limit theorem it follows that the estimator converges weakly to
+a Gaussian distribution \sqrt{n}(\widehat{\theta}-\theta)
 \overset{\mathcal{D}}{\longrightarrow} \mathcal{N}(0,
 \mathbb{V}\\\text{ar}\\\operatorname{IC}(Z; P\_{0})\\), where the
 empirical variance of the plugin estimator,
@@ -44,19 +47,20 @@ also be derived for a smooth target parameter \Psi:
 \mathcal{P}\to\mathbb{R} where \mathcal{P} is a family of probability
 distributions forming the statistical model, which often can be left
 completely non-parametric. Formally, the parameter must be *pathwise
-differentiable* see (Vaart 1998) in the sense that there exists linear
-bounded function \dot\Psi\colon L\_{2}(P\_{0})\to\mathbb{R} such that
-\[\Psi(P\_{t}) - \Psi(P\_{0}))\]t^{-1} \to \dot\Psi(P\_{0})(g) as t\to 0
-for any parametric submodel P_t with score model g(z)=
-\partial/(\partial t) \log (p_t)(z)\|\_{t=0}. Riesz’s representation
-theorem then tells us that the directional derivative has a unique
-representer, \phi\_{P\_{0}} lying in the closure of the submodel score
-space (the *tangent space*), s.t. \begin{align\*} \dot\Psi(P_0)(g) =
-\langle\phi\_{P_0}, g\rangle = \int \phi\_{P_0}(Z)g(X)\\dP_0
-\end{align\*} The unique representer is exactly the IF which can be
-found by solving the above integral equation. For more details on how to
-derive influence functions, we refer to (Laan and Rose 2011; Hines et
-al. 2022).
+differentiable* see ([Vaart 1998](#ref-vaart_1998_asymp)) in the sense
+that there exists a bounded linear functional \dot\Psi\colon
+L\_{2}(P\_{0})\to\mathbb{R} such that \[\Psi(P\_{t}) -
+\Psi(P\_{0})\]t^{-1} \to \dot\Psi(P\_{0})(g) as t\to 0 for any
+parametric submodel P_t with score model g(z)= \partial/(\partial t)
+\log (p_t)(z)\|\_{t=0}. Riesz’s representation theorem then tells us
+that the directional derivative has a unique representer, \phi\_{P\_{0}}
+lying in the closure of the submodel score space (the *tangent space*),
+s.t. \begin{align\*} \dot\Psi(P_0)(g) = \langle\phi\_{P_0}, g\rangle =
+\int \phi\_{P_0}(z)g(z)\\dP_0(z) \end{align\*} The unique representer is
+exactly the IF which can be found by solving the above integral
+equation. For more details on how to derive influence functions, we
+refer to ([Laan and Rose 2011](#ref-targetedlearning_2011); [Hines et
+al. 2022](#ref-hines2022)).
 
 As an example we might be interested in the target parameter \Psi(P) =
 \mathbb{E}\_P(Z) which can be shown to have the unique (and thereby
@@ -108,7 +112,7 @@ merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
   labels(c("a", "b")) # rename parameters
 ```
 
-Direct calculations is also possible, if `a` and `b` are estimate
+Direct calculations are also possible, if `a` and `b` are estimate
 objects we can obtain new transformed parameter estimates with the
 syntax
 
@@ -144,22 +148,22 @@ We simulate from the model where Y_3 is only observed for half of the
 subjects
 
 ``` r
-n <- 4e2
+n <- 1e3
 dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
 Print(dw)
-#>     y1 x1       a w        y2 x2       y3 x3       y4 x4        id 
-#> 1   1  -0.6265  1  1.0744  0  -1.08691 1  -1.5570  1   0.34419  1  
-#> 2   1   0.1836  1  1.8957  1  -1.82608 1   1.9232  1   0.01272  2  
-#> 3   0  -0.8356  0 -0.6030  0   0.99528 0  -1.8568  0  -0.87345  3  
-#> 4   0   1.5953  0 -0.3909  1  -0.01186 0  -2.1061  1   0.34280  4  
-#> 5   0   0.3295  1 -0.4162  0  -0.59963 1   0.6976  1  -0.17739  5  
-#> ---                                                                
-#> 396 0  -0.92431 0 -1.02939 0  -0.30825 NA -1.05037 0  -0.008056 396
-#> 397 1   1.59291 1 -0.01093 1   0.01552 NA  1.63787 1   1.033784 397
-#> 398 0   0.04501 0 -1.22499 0  -0.44232 NA -1.20733 0  -0.799127 398
-#> 399 0  -0.71513 0 -2.59611 0  -1.63801 NA -2.62616 0   1.004233 399
-#> 400 1   0.86522 1  1.16912 0  -0.64140 NA  0.01746 1  -0.311973 400
+#>      y1 x1      a w         y2 x2       y3 x3      y4 x4        id  
+#> 1    1  -0.6265 1  1.1350   1  -0.88615 1   0.7391 0  -1.1346   1   
+#> 2    1   0.1836 1  1.1119   1  -1.92225 1   0.3866 1   0.7646   2   
+#> 3    1  -0.8356 1 -0.8708   1   1.61970 1   1.2964 1   0.5707   3   
+#> 4    1   1.5953 1  0.2107   1   0.51927 0  -0.8036 0  -1.3517   4   
+#> 5    0   0.3295 1  0.0694   0  -0.05585 0  -1.6026 0  -2.0299   5   
+#> ---                                                                 
+#> 996  0  -0.3133 0 -0.008056 0  -0.1868  NA -0.1422 0   0.162547  996
+#> 997  1  -0.8807 1  1.033784 1  -0.2294  NA  0.8643 1   0.980737  997
+#> 998  1  -0.4193 1 -0.799127 1   1.6302  NA -0.0219 0  -0.692140  998
+#> 999  0  -1.4828 1  1.004233 1  -2.1647  NA -0.2647 1  -0.003494  999
+#> 1000 1  -0.6973 0 -0.311973 0  -1.0778  NA -0.9133 1   0.171580 1000
 ## Data in long format
 dl <- reshape(dw,
         varying = list(paste0("y",1:4),
@@ -169,18 +173,18 @@ dl <- reshape(dw,
 dl <- dl[order(dl$id), ]
 ## dl <- mets::fast.reshape(dw, varying = c("y", "x")) |> na.omit()
 Print(dl)
-#>       a w      id  time y x      
-#> 1.1   1 1.074  1   1    1 -0.6265
-#> 1.2   1 1.074  1   2    0 -1.0869
-#> 1.3   1 1.074  1   3    1 -1.5570
-#> 1.4   1 1.074  1   4    1  0.3442
-#> 2.1   1 1.896  2   1    1  0.1836
-#> ---                              
-#> 399.2 0 -2.596 399 2    0 -1.6380
-#> 399.4 0 -2.596 399 4    0  1.0042
-#> 400.1 1  1.169 400 1    1  0.8652
-#> 400.2 1  1.169 400 2    0 -0.6414
-#> 400.4 1  1.169 400 4    1 -0.3120
+#>        a w      id   time y x        
+#> 1.1    1 1.135  1    1    1 -0.6265  
+#> 1.2    1 1.135  1    2    1 -0.8861  
+#> 1.3    1 1.135  1    3    1  0.7391  
+#> 1.4    1 1.135  1    4    0 -1.1346  
+#> 2.1    1 1.112  2    1    1  0.1836  
+#> ---                                  
+#> 999.2  1  1.004  999 2    1 -2.164671
+#> 999.4  1  1.004  999 4    1 -0.003494
+#> 1000.1 0 -0.312 1000 1    1 -0.697318
+#> 1000.2 0 -0.312 1000 2    0 -1.077776
+#> 1000.4 0 -0.312 1000 4    1  0.171580
 ```
 
 ### Example: population mean
@@ -188,7 +192,7 @@ Print(dl)
 Here we first consider the problem of estimating the IF of the mean. For
 a general transformation f: \mathbb{R}^k\to\mathbb{R}^p we have that
 \sqrt{n}\\\mathbb{P}\_{n}f(X) - \mathbb{E}\[f(X)\]\\ =
-\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} f(X\_{i}) - \mathbb{E}\[f(X)\] and
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} \\f(X\_{i}) - \mathbb{E}\[f(X)\]\\ and
 hence for the problem of estimating the proportion of the binary outcome
 Y_1, the IF is given by \mathbf{1}(Y\_{1}=1) - \mathbb{P}(Y\_{1}=1).
 
@@ -202,7 +206,7 @@ class(e)
 #> [1] "estimate"
 e
 #>    Estimate Std.Err   2.5%  97.5%    P-value
-#> y1     0.61 0.02439 0.5622 0.6578 4.435e-138
+#> y1    0.565 0.01568 0.5343 0.5957 2.009e-284
 ```
 
 The reported standard errors from the `estimate` method are the robust
@@ -212,18 +216,18 @@ itself can be extracted with the `IC` (or `influence`) method:
 
 ``` r
 IC(e) |> Print()
-#>     y1   
-#> 1    0.39
-#> 2    0.39
-#> 3   -0.61
-#> 4   -0.61
-#> 5   -0.61
-#> ---      
-#> 396 -0.61
-#> 397  0.39
-#> 398 -0.61
-#> 399 -0.61
-#> 400  0.39
+#>      y1    
+#> 1     0.435
+#> 2     0.435
+#> 3     0.435
+#> 4     0.435
+#> 5    -0.565
+#> ---        
+#> 996  -0.565
+#> 997   0.435
+#> 998   0.435
+#> 999  -0.565
+#> 1000  0.435
 ```
 
 It is also possible to simultaneously estimate the proportions of each
@@ -232,8 +236,8 @@ of the two binary outcomes
 ``` r
 estimate(inp)
 #>    Estimate Std.Err   2.5%  97.5%    P-value
-#> y1    0.610 0.02439 0.5622 0.6578 4.435e-138
-#> y2    0.535 0.02494 0.4861 0.5839 4.316e-102
+#> y1    0.565 0.01568 0.5343 0.5957 2.009e-284
+#> y2    0.560 0.01570 0.5292 0.5908 9.550e-279
 ```
 
 or alternatively the input can be a model object, here a `mlm` object:
@@ -243,12 +247,12 @@ e <- lm(cbind(y1, y2) ~ 1, data = dw) |>
   estimate()
 IC(e) |> head()
 #>   y1:(Intercept) y2:(Intercept)
-#> 1           0.39         -0.535
-#> 2           0.39          0.465
-#> 3          -0.61         -0.535
-#> 4          -0.61          0.465
-#> 5          -0.61         -0.535
-#> 6          -0.61          0.465
+#> 1          0.435           0.44
+#> 2          0.435           0.44
+#> 3          0.435           0.44
+#> 4          0.435           0.44
+#> 5         -0.565          -0.56
+#> 6         -0.565           0.44
 ```
 
 Different methods are available for inspecting an `estimate` object
@@ -258,45 +262,45 @@ summary(e)
 #> Call: estimate.default(x = x, coef = pars(x))
 #> ────────────────────────────────────────────────────────────
 #>                Estimate Std.Err   2.5%  97.5%    P-value
-#> y1:(Intercept)    0.610 0.02439 0.5622 0.6578 4.435e-138
-#> y2:(Intercept)    0.535 0.02494 0.4861 0.5839 4.316e-102
+#> y1:(Intercept)    0.565 0.01568 0.5343 0.5957 2.009e-284
+#> y2:(Intercept)    0.560 0.01570 0.5292 0.5908 9.550e-279
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [y1:(Intercept)] = 0
 #>   [y2:(Intercept)] = 0 
 #>  
-#> chisq = 955.6986, df = 2, p-value < 2.2e-16
+#> chisq = 2056.775, df = 2, p-value < 2.2e-16
 ## extract parameter coefficients
 coef(e)
 #> y1:(Intercept) y2:(Intercept) 
-#>          0.610          0.535
+#>          0.565          0.560
 ## ## Asymptotic (robust) variance estimate
 vcov(e)
 #>                y1:(Intercept) y2:(Intercept)
-#> y1:(Intercept)     5.9475e-04   0.0000841250
-#> y2:(Intercept)     8.4125e-05   0.0006219375
+#> y1:(Intercept)    0.000245775      0.0000616
+#> y2:(Intercept)    0.000061600      0.0002464
 ## Matrix with estimates and confidence limits
 summary(e, level = 0.99) |> parameter()
 #>                Estimate    Std.Err      0.5%     99.5%       P-value
-#> y1:(Intercept)    0.610 0.02438750 0.5471820 0.6728180 4.434692e-138
-#> y2:(Intercept)    0.535 0.02493867 0.4707622 0.5992378 4.316104e-102
+#> y1:(Intercept)    0.565 0.01567721 0.5246182 0.6053818 2.009130e-284
+#> y2:(Intercept)    0.560 0.01569713 0.5195669 0.6004331 9.550279e-279
 ## Influence curve
 IC(e) |> head()
 #>   y1:(Intercept) y2:(Intercept)
-#> 1           0.39         -0.535
-#> 2           0.39          0.465
-#> 3          -0.61         -0.535
-#> 4          -0.61          0.465
-#> 5          -0.61         -0.535
-#> 6          -0.61          0.465
+#> 1          0.435           0.44
+#> 2          0.435           0.44
+#> 3          0.435           0.44
+#> 4          0.435           0.44
+#> 5         -0.565          -0.56
+#> 6         -0.565           0.44
 ## Join estimates
 ee <- merge(e, e)
 ee
 #>                  Estimate Std.Err   2.5%  97.5%    P-value
-#> y1:(Intercept)      0.610 0.02439 0.5622 0.6578 4.435e-138
-#> y2:(Intercept)      0.535 0.02494 0.4861 0.5839 4.316e-102
-#> y1:(Intercept).1    0.610 0.02439 0.5622 0.6578 4.435e-138
-#> y2:(Intercept).1    0.535 0.02494 0.4861 0.5839 4.316e-102
+#> y1:(Intercept)      0.565 0.01568 0.5343 0.5957 2.009e-284
+#> y2:(Intercept)      0.560 0.01570 0.5292 0.5908 9.550e-279
+#> y1:(Intercept).1    0.565 0.01568 0.5343 0.5957 2.009e-284
+#> y2:(Intercept).1    0.560 0.01570 0.5292 0.5908 9.550e-279
 ## Forest plots
 plot(ee, null=0.5, digits=2)
 ```
@@ -319,9 +323,9 @@ for a logistic regression model:
 g <- glm(y1 ~ a + x1, data = dw, family = binomial)
 estimate(g)
 #>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -0.2687  0.1622 -0.5867 0.04931 9.772e-02
-#> a             1.5595  0.2428  1.0835 2.03545 1.348e-10
-#> x1            0.9728  0.1435  0.6916 1.25397 1.198e-11
+#> (Intercept)  -0.4033 0.09781 -0.5950 -0.2116 3.742e-05
+#> a             1.5832 0.15030  1.2886  1.8778 6.052e-26
+#> x1            0.8837 0.08061  0.7257  1.0417 5.835e-28
 ```
 
 We can compare that to the usual (non-robust) standard errors by
@@ -330,9 +334,9 @@ supplying the model-based covariance matrix explicitly:
 ``` r
 estimate(g, vcov = vcov(g))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -0.2687  0.1589 -0.5802 0.04281 9.091e-02
-#> a             1.5595  0.2423  1.0846 2.03433 1.220e-10
-#> x1            0.9728  0.1396  0.6992 1.24634 3.177e-12
+#> (Intercept)  -0.4033 0.09682 -0.5930 -0.2135 3.111e-05
+#> a             1.5832 0.15138  1.2865  1.8799 1.335e-25
+#> x1            0.8837 0.08231  0.7223  1.0450 6.904e-27
 # estimate(g, vcov = TRUE) alternative syntax to obtain model-based SEs
 ```
 
@@ -342,38 +346,41 @@ model object
 ``` r
 IC(g) |> head()
 #>   (Intercept)          a         x1
-#> 1  0.09816353   3.715892 -0.8478763
-#> 2 -0.08203584   2.562573  0.7085752
-#> 3 -2.74896196   3.316937  1.8772112
-#> 4 -6.78328520   4.052090 -9.0268560
-#> 5  0.47533946 -11.818085 -4.1056905
-#> 6 -2.77584564   3.340948  1.8677174
+#> 1  0.07717226   4.001259 -0.7195347
+#> 2 -0.07604185   2.866943  0.7089951
+#> 3  0.14619472   4.257845 -1.3630828
+#> 4 -0.09723106   1.252449  0.9065580
+#> 5  0.38472247 -11.599820 -3.5870556
+#> 6 -2.43751385   2.931614  1.5365778
 ```
 
 The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \alpha\_{j} + \beta^{t}x, \quad j=1,\ldots,J \end{align\*}
+x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{t}), \quad
+j=1,\ldots,J-1 \end{align\*}
 
 ``` r
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
-#>     Estimate Std.Err     2.5%  97.5%   P-value
-#> 0|1   0.2687  0.1622 -0.04932 0.5867 9.772e-02
-#> a     1.5595  0.2429  1.08349 2.0355 1.350e-10
-#> x1    0.9728  0.1435  0.69157 1.2540 1.200e-11
+#>     Estimate Std.Err   2.5% 97.5%   P-value
+#> 0|1   0.4033 0.09781 0.2116 0.595 3.743e-05
+#> a     1.5832 0.15031 1.2886 1.878 6.080e-26
+#> x1    0.8837 0.08062 0.7257 1.042 5.866e-28
 ```
 
 Note that the
 [`sandwich::estfun`](https://zeileis.codeberg.page/sandwich/reference/estfun.html)
-function from the `sandwich` library (Zeileis, Köll, and Graham 2020)
-can also estimate the IF for different parametric models, but does not
-provide the tools for combining and transforming these.
+function from the `sandwich` library ([Zeileis et al.
+2020](#ref-r_sandwich)) can also be used to estimate the IF for
+different parametric models, but does not provide the tools for
+combining and transforming these.
 
-### Example: right-censored outcomess
+### Example: right-censored outcomes
 
 To illustrate the methods on survival data we will use the Mayo Clinic
-Primary Biliary Cholangitis Data (Therneau and Grambsch 2000)
+Primary Biliary Cholangitis Data ([Therneau and Grambsch
+2000](#ref-therneau00surv))
 
 ``` r
 library("survival")
@@ -425,7 +432,7 @@ baseline(fit.phreg, tt)
 #> chaz:2000    0.178 0.07597 0.02913 0.3269 0.01911
 ```
 
-The `estimate` and `IF` methods are also available for parametric
+The `estimate` and `IC` methods are also available for parametric
 survival models via
 [`survival::survreg`](https://rdrr.io/pkg/survival/man/survreg.html),
 here a Weibull model:
@@ -457,27 +464,27 @@ semfit <- estimate(sem, data = dw)
 
 ## Robust standard errors
 estimate(semfit)
-#>      Estimate Std.Err    2.5%    97.5%   P-value
-#> y2   -0.21037 0.09391 -0.3944 -0.02630 2.509e-02
-#> u     0.36025 0.06659  0.2297  0.49075 6.295e-08
-#> y1~w  0.55425 0.06930  0.4184  0.69008 1.272e-15
-#> y2~w  0.59388 0.07510  0.4467  0.74108 2.623e-15
-#> u~~u -0.09496 0.07360 -0.2392  0.04929 1.970e-01
+#>      Estimate Std.Err     2.5%  97.5%   P-value
+#> y2   -0.01236 0.06232 -0.13450 0.1098 8.428e-01
+#> u     0.21656 0.04640  0.12562 0.3075 3.052e-06
+#> y1~w  0.59037 0.05307  0.48635 0.6944 9.645e-29
+#> y2~w  0.65419 0.05599  0.54446 0.7639 1.528e-31
+#> u~~u  0.19001 0.07614  0.04078 0.3392 1.257e-02
 ```
 
 ### Example: quantile
 
 Let \beta denote the \tauth quantile of X, with IF \begin{align\*}
-\operatorname{IC}(x; P\_{0}) = \tau - \mathbf{1}(x\leq
-\beta)f\_{0}(\beta)^{-1} \end{align\*}
+\operatorname{IC}(x; P\_{0}) = \\\tau - \mathbf{1}(x\leq
+\beta)\\f\_{0}(\beta)^{-1} \end{align\*}
 
 where f\_{0} is the density function of X.
 
 To calculate the variance estimate, an estimate of the density is thus
 needed which can be obtained by a kernel estimate. Alternatively, the
-resampling method of (Zeng and Lin 2008) can be applied. Here we use a
-kernel smoother (additional arguments to the `estimate` function are
-parsed on to
+resampling method of ([Zeng and Lin 2008](#ref-zenglin2008)) can be
+applied. Here we use a kernel smoother (additional arguments to the
+`estimate` function are parsed on to
 [`stats::density.default`](https://rdrr.io/r/stats/density.html)) to
 estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of W
 and X_1
@@ -486,20 +493,20 @@ and X_1
 eq <- estimate(dw[, c("w", "x1")], type = "quantile", probs = c(0.25, 0.5, 0.75))
 eq
 #>        Estimate Std.Err    2.5%    97.5%   P-value
-#> w.25%  -0.81214 0.07277 -0.9548 -0.66951 6.390e-29
-#> w.50%  -0.11062 0.07201 -0.2518  0.03052 1.245e-01
-#> w.75%   0.67716 0.07784  0.5246  0.82973 3.353e-18
-#> x1.25% -0.57510 0.06340 -0.6994 -0.45084 1.177e-19
-#> x1.50% -0.02664 0.06078 -0.1458  0.09249 6.611e-01
-#> x1.75%  0.69590 0.06696  0.5647  0.82715 2.683e-25
+#> w.25%  -0.68967 0.04493 -0.7777 -0.60161 3.465e-53
+#> w.50%  -0.03448 0.04091 -0.1147  0.04570 3.993e-01
+#> w.75%   0.73734 0.04784  0.6436  0.83111 1.354e-53
+#> x1.25% -0.69737 0.04586 -0.7873 -0.60749 3.172e-52
+#> x1.50% -0.03532 0.04176 -0.1172  0.04653 3.977e-01
+#> x1.75%  0.68843 0.04366  0.6029  0.77400 5.246e-56
 IC(eq) |> head()
-#>          w.25%     w.50%      w.75%    x1.25%    x1.50%     x1.75%
-#> [1,] 0.8402973  1.440254  2.6966215 -2.196201 -1.215663 -0.7732142
-#> [2,] 0.8402973  1.440254  2.6966215  0.732067  1.215663 -0.7732142
-#> [3,] 0.8402973 -1.440254 -0.8988738 -2.196201 -1.215663 -0.7732142
-#> [4,] 0.8402973 -1.440254 -0.8988738  0.732067  1.215663  2.3196427
-#> [5,] 0.8402973 -1.440254 -0.8988738  0.732067  1.215663 -0.7732142
-#> [6,] 0.8402973 -1.440254 -0.8988738 -2.196201 -1.215663 -0.7732142
+#>           w.25%     w.50%      w.75%     x1.25%    x1.50%     x1.75%
+#> [1,]  0.8202184  1.293737  2.6203624  0.8372545 -1.320712 -0.7971649
+#> [2,]  0.8202184  1.293737  2.6203624  0.8372545  1.320712 -0.7971649
+#> [3,] -2.4606551 -1.293737 -0.8734541 -2.5117634 -1.320712 -0.7971649
+#> [4,]  0.8202184  1.293737 -0.8734541  0.8372545  1.320712  2.3914946
+#> [5,]  0.8202184  1.293737 -0.8734541  0.8372545  1.320712 -0.7971649
+#> [6,] -2.4606551 -1.293737 -0.8734541 -2.5117634 -1.320712 -0.7971649
 ```
 
 ## Combining influence functions
@@ -509,23 +516,29 @@ for transforming or combining different estimates while easily deriving
 the resulting IF and thereby asymptotic distribution of the new
 estimator.
 
-Let \widehat{\theta}\_{1}, \ldots, \widehat{\theta}\_{M} be M different
-estimators with decompositions \begin{align\*}
+**Lemma 1** Let \widehat{\theta}\_{1}, \ldots, \widehat{\theta}\_{M} be
+M different estimators with decompositions \begin{align\*}
 \sqrt{n}(\widehat{\theta}\_{m}-\theta\_{m}) =
 \frac{1}{\sqrt{n}}\sum\_{i=1}^{n} \operatorname{IC}\_m(Z_i; P\_{0}) +
-o\_{P}(1) \end{align\*} based on iid data Z_1,\ldots,Z_n. It then
-follows immediately (Vaart 1998 Theorem 18.10\[vi\]) that the joint
-distribution of \widehat{\theta} - {\theta} =
-(\widehat{\theta}\_{1}^{\top},\ldots,\widehat{\theta}\_{M}^{\top})^\top -
-({\theta}\_{1}^{\top},\ldots,{\theta}\_{M}^{\top})^\top is given by
-\begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) &=
-\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}
+o\_{P}(1) \end{align\*} based on iid data Z_1,\ldots,Z_n. Then the joint
+estimate \widehat{\theta} =
+(\widehat{\theta}\_{1}^{\top},\ldots,\widehat{\theta}\_{M}^{\top})^\top
+of {\theta} = ({\theta}\_{1}^{\top},\ldots,{\theta}\_{M}^{\top})^\top
+has influence function given by \begin{align\*}
+\overline{\operatorname{IC}}(Z_i; P\_{0}) =
+\[\operatorname{IC}\_{1}(Z_i;
+P\_{0})^\top,\ldots,\operatorname{IC}\_{M}(Z_i; P\_{0})^\top\]^{\top}.
+\end{align\*} \blacksquare
+
+This follows immediately from ([Vaart 1998](#ref-vaart_1998_asymp),
+Theorem 18.10\[vi\]), and thus \begin{align\*}
+\sqrt{n}(\widehat{\theta}-\theta) &= \frac{1}{\sqrt{n}}\sum\_{i=1}^{n}
 \underbrace{\[\operatorname{IC}\_{1}(Z_i;
 P\_{0})^\top,\ldots,\operatorname{IC}\_{M}(Z_i;
 P\_{0})^\top\]^{\top}}\_{\overline{\operatorname{IC}}(Z_i; P\_{0})} +
 o\_{P}(1) \\
 &\overset{\mathcal{D}}{\longrightarrow}\mathcal{N}(0,\Sigma)
-\end{align\*} by the CLT, and under regulatory conditions
+\end{align\*} by the CLT, and under regularity conditions
 \mathbb{P}\_{n}\overline{\operatorname{IC}}(Z_i; \widehat{P})^{\otimes
 2} \overset{P}{\longrightarrow}\Sigma as n\to\infty.
 
@@ -541,11 +554,11 @@ summary(e)
 #> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
 #>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
-#>               Estimate Std.Err    2.5%    97.5%   P-value
-#> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
-#> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
-#> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
-#> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> a               1.4031 0.13692  1.1347  1.6714 1.218e-24
+#> (Intercept).1  -0.4342 0.08944 -0.6095 -0.2589 1.207e-06
+#> a.1             1.4995 0.13792  1.2291  1.7698 1.562e-27
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [(Intercept)] = 0
@@ -553,7 +566,7 @@ summary(e)
 #>   [(Intercept).1] = 0
 #>   [a.1] = 0 
 #>  
-#> chisq = 96.4362, df = 4, p-value < 2.2e-16
+#> chisq = 214.6624, df = 4, p-value < 2.2e-16
 ```
 
 As we have access to the joint asymptotic distribution we can for
@@ -564,59 +577,87 @@ responses:
 summary(estimate(e), contrast=cbind(0,1,0,-1), null=0)
 #> Call: estimate.default(x = e)
 #> ────────────────────────────────────────────────────────────
-#>               Estimate Std.Err    2.5%    97.5%   P-value
-#> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
-#> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
-#> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
-#> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> a               1.4031 0.13692  1.1347  1.6714 1.218e-24
+#> (Intercept).1  -0.4342 0.08944 -0.6095 -0.2589 1.207e-06
+#> a.1             1.4995 0.13792  1.2291  1.7698 1.562e-27
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] - [a.1] = 0 
 #>  
-#> chisq = 0.3677, df = 1, p-value = 0.5443
+#> chisq = 0.2869, df = 1, p-value = 0.5922
 ```
 
-More details an be found in the Section on [hypothesis
+More details can be found in the Section on [hypothesis
 testing](#linear-contrasts-and-hypothesis-testing).
 
-### Imbalanced data
+### Estimators computed on different subsets
 
-Let O\_{1} = (Z\_{1}R\_{1}, R\_{1}), \ldots, O\_{N}=(Z\_{N}R\_{N},
-R\_{N}) be iid with R\_{i}\\\perp\\\\\\\\\perp\\Z_i and let the
-full-data IF for some estimator of a parameter \theta\in\mathbb{R}^p be
-IC(\cdot; P\_{0}). For convenience let the data be ordered
-R\_{i}=\mathbf{1}(i\leq n) where n is the number of observed data
-points, then the complete-case estimator is consistent and based on same
-IF
+Let O_1 = (Z_1, R_1), \ldots, O_N = (Z_N, R_N) be iid data from some
+distribution O = (Z, R) \sim P_0. We let Q_0 := P_0(\cdot \mid R=1)
+denote the conditional distribution, with P(R=1) = p \> 0, and let S =
+\\i\mid R_i=1\\, n = \lvert S\rvert, and \widehat{p} = n/N.
 
-\begin{align\*} \sqrt{n}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{n}}\sum\_{i=1}^n IC(Z_i; P\_{0}) + o\_{P}(1).
+We assume that the *conditional* target parameter \theta = T(Q_0) is
+pathwise differentiable in Q_0, in the sense that we have a regular and
+asymptotic linear estimator \widehat{\theta} = T_m(O_1, \ldots, O_m)
+based on iid data O_1,\ldots,O_m \sim Q_0, such that for any \eta\>0
+\begin{align\*} g(m, \eta) = Q\Big( \big\lVert \underbrace{
+\sqrt{m}\left\\ T_m(O_1, \ldots, O_m) - \theta -
+\frac{1}{m}\sum\_{i=1}^m \operatorname{IC}(O_i; Q_0) \right\\ }\_{V_m}
+\big\rVert \> \eta \Big) \longrightarrow 0 \text{ as } m\to\infty.
 \end{align\*}
 
-This estimator can also be decomposed in terms of the observed data
-O_1,\ldots,O_N noting that
+**Lemma 2** The estimator \widehat{\theta} has influence function
+\widetilde{\operatorname{IC}}(O; Q_0) = \frac{R}{p}\operatorname{IC}(O;
+Q_0), i.e. \begin{align\*} \sqrt{N}(\widehat{\theta} - \theta) =
+\frac{1}{p}\frac{1}{\sqrt{N}}\sum\_{i=1}^N R_i \operatorname{IC}(O_i;
+Q_0) + o\_{P_0}(1). \end{align\*}
 
-\begin{align\*} \sqrt{N}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{N}}\sum\_{i=1}^N IC(Z_i; P)\frac{R_i N}{n} + o\_{P}(1).
-\end{align\*}
+*Proof*. We can write \begin{align\*} \sqrt{N}(\widehat{\theta}-\theta)
+= \frac{1}{\widehat{p}}\frac{1}{\sqrt{N}} \sum\_{i=1}^N R_i
+\operatorname{IC}(O_i; Q_0) + \underbrace{\sqrt{N}\left(
+\widehat{\theta}-\theta-\frac{1}{n}\sum\_{i\in S}\operatorname{IC}(O_i;
+Q_0) \right)}\_{W_N = \sqrt{N/n}V_n}. \end{align\*}
 
-where the term \frac{R_i N}{n} corresponds to an inverse probability
-weighting with the empirical plugin estimate of the proportion of
-observed data R=1. Under a missing completely at random assumption we
-can therefore combine estimators that are estimated on different
-datasets. Let the observed data be (Z\_{11}R\_{11}, R\_{11},
-Z\_{21}R\_{21}, R\_{21}), \ldots, (Z\_{1N}R\_{1N}, R\_{1N},
-Z\_{2N}R\_{2N}, R\_{2N})) with complete-case estimators
-\widehat{\theta}\_1 and \widehat{\theta}\_2 for parameters \theta_1 and
-\theta_2 based on (Z\_{11}R\_{11}, \ldots, Z\_{1N}R\_{1N}) and
-(Z\_{21}R\_{21}, \ldots, Z\_{2N}R\_{2N}), respectively, and let the
-corresponding IFs be IC\_{1}(\cdot; P\_{0}) and IC\_{2}(\cdot;\\ P). It
-then follows that
+We need to show that the term W_N=o\_{P_0}(1). Let E_N = \\n \> Np/2\\,
+it then follows that \begin{align\*} P(\lVert W_N \rVert \> \epsilon)
+\leq P(E_N^\complement) + P(\\\lVert W_N \rVert \> \epsilon\\\cap E_N)
+\\ \leq P(E_N^\complement) + \sup\_{n\>Np/2} Q(\lVert V_n \rVert \>
+\epsilon/c) \end{align\*} where we have used that on the set E_N we have
+\sqrt{N/n}\< \sqrt{2/p} = c. The supremum term converges to zero as
+N\to\infty due to the assumption that \widehat{\theta} is RAL in Q_0.
 
-\begin{align\*} \sqrt{N}\left\\ \begin{pmatrix} \widehat{\theta}\_1 \\
-\widehat{\theta}\_2 \end{pmatrix} - \begin{pmatrix}
-\vphantom{\widehat{\theta}\_1}\theta_1 \\
-\vphantom{\widehat{\theta}\_1}\theta_2 \end{pmatrix} \right\\ =
+Applying Hoeffding’s Inequality to the iid Bernoulli random variables
+1-R_i, i=1,\ldots,N, we get that \begin{align\*} P(N-n - N(1-p) \geq t)
+\leq \exp(-2t^2/N), \end{align\*} and with t = Np/2, we have that
+P(n\<N\p/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
+the first term P(E_N^\complement) also converges to zero.
+
+As \widehat{p}\to p a.s. by the strong LLN, it follows from continuity
+at p\>0 that \widehat{p}^{-1}-p^{-1} = o\_{P_0}(1), and hence by
+Slutsky’s lemma \begin{align\*} \sqrt{N}(\widehat{\theta}-\theta) &=
+\frac{1}{\sqrt{N}}\sum\_{i=1}^N \frac{R_i}{p}\operatorname{IC}(O_i;
+Q_0) + (\frac{1}{\widehat{p}}-\frac{1}{p})
+\frac{1}{\sqrt{N}}\sum\_{i=1}^N R_i\operatorname{IC}(O_i; Q_0) +
+o\_{P_0}(1) \\ &= \frac{1}{\sqrt{N}}\sum\_{i=1}^N
+\frac{R_i}{p}\operatorname{IC}(O_i; Q_0) + o\_{P_0}(1). \end{align\*}
+\blacksquare
+
+Based on the above Lemma we can therefore combine estimators that are
+estimated on different datasets. Let the observed data be (Z\_{11},
+R\_{11}), (Z\_{21}, R\_{21}), \ldots, (Z\_{1N}, R\_{1N}), (Z\_{2N},
+R\_{2N}) with estimators \widehat{\theta}\_1 and \widehat{\theta}\_2 for
+the conditional parameters \theta_1 and \theta_2 based on data where
+R\_{1i}=1 and R\_{2j}=1, respectively, and let the corresponding IFs be
+IC\_{1}(\cdot; P\_{0}) and IC\_{2}(\cdot;P\_{0}). It then follows that
+the joint parameter estimate has influence function corresponding to an
+inverse probability weighting with the empirical plugin estimate of the
+proportions P(R\_{1}=1), and P(R\_{2}=1) \begin{align\*} \sqrt{N}\left\\
+\begin{pmatrix} \widehat{\theta}\_1 \\ \widehat{\theta}\_2
+\end{pmatrix} - \begin{pmatrix} \vphantom{\widehat{\theta}\_1}\theta_1
+\\ \vphantom{\widehat{\theta}\_1}\theta_2 \end{pmatrix} \right\\ =
 \frac{1}{\sqrt{N}}\sum\_{i=1}^N \begin{pmatrix} IC_1(Z\_{1i};
 P\_{0})\frac{R\_{1i}N}{R\_{1\bullet}} \\ IC_2(Z\_{2i};
 P\_{0})\frac{R\_{2i}N}{R\_{2\bullet}} \end{pmatrix} + o\_{P}(1)
@@ -635,14 +676,16 @@ summary(g2)
 #> glm(formula = y2 ~ 1, family = binomial, data = dw)
 #> 
 #> Coefficients:
-#>             Estimate Std. Error z value Pr(>|z|)
-#> (Intercept)   0.1402     0.1002   1.399    0.162
+#>             Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)  0.24116    0.06371   3.786 0.000153 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 552.56  on 399  degrees of freedom
-#> Residual deviance: 552.56  on 399  degrees of freedom
-#> AIC: 554.56
+#>     Null deviance: 1371.9  on 999  degrees of freedom
+#> Residual deviance: 1371.9  on 999  degrees of freedom
+#> AIC: 1373.9
 #> 
 #> Number of Fisher Scoring iterations: 3
 dwc <- na.omit(dw)
@@ -653,49 +696,49 @@ summary(g3)
 #> glm(formula = y3 ~ 1, family = binomial, data = dwc)
 #> 
 #> Coefficients:
-#>             Estimate Std. Error z value Pr(>|z|)  
-#> (Intercept)   0.2615     0.1426   1.833   0.0668 .
+#>             Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)   0.3474     0.0908   3.827  0.00013 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 273.87  on 199  degrees of freedom
-#> Residual deviance: 273.87  on 199  degrees of freedom
-#> AIC: 275.87
+#>     Null deviance: 678.28  on 499  degrees of freedom
+#> Residual deviance: 678.28  on 499  degrees of freedom
+#> AIC: 680.28
 #> 
-#> Number of Fisher Scoring iterations: 3
+#> Number of Fisher Scoring iterations: 4
 
 e2 <- estimate(g2, id = dw$id)
 e3 <- estimate(g3, id = "id", data=dwc)
 
 ecomb <- merge(e2, e3)
 IC(ecomb) |> Print()
-#>     (Intercept) (Intercept).1
-#> 1   -2.151       3.540       
-#> 2    1.869       3.540       
-#> 3   -2.151      -4.598       
-#> 4    1.869      -4.598       
-#> 5   -2.151       3.540       
-#> ---                          
-#> 396 -2.151       0.000       
-#> 397  1.869       0.000       
-#> 398 -2.151       0.000       
-#> 399 -2.151       0.000       
-#> 400 -2.151       0.000
+#>      (Intercept) (Intercept).1
+#> 1     1.786       3.413       
+#> 2     1.786       3.413       
+#> 3     1.786       3.413       
+#> 4     1.786      -4.831       
+#> 5    -2.273      -4.831       
+#> ---                           
+#> 996  -2.273       0.000       
+#> 997   1.786       0.000       
+#> 998   1.786       0.000       
+#> 999   1.786       0.000       
+#> 1000 -2.273       0.000
 vcov(ecomb)
 #>               (Intercept) (Intercept).1
-#> (Intercept)   0.010049191   0.002102598
-#> (Intercept).1 0.002102598   0.020342639
+#> (Intercept)   0.004058270   0.001140603
+#> (Intercept).1 0.001140603   0.008243887
 ## Same marginals as
 list(vcov(e2), vcov(e3))
 #> [[1]]
 #>             (Intercept)
-#> (Intercept)  0.01004919
+#> (Intercept)  0.00405827
 #> 
 #> [[2]]
 #>             (Intercept)
-#> (Intercept)  0.02034264
+#> (Intercept) 0.008243887
 ```
 
 Note, it is also possible to directly specify the id-variables in the
@@ -703,9 +746,9 @@ Note, it is also possible to directly specify the id-variables in the
 
 ``` r
 merge(e2, e3, id = list(dw$id, dwc$id))
-#>               Estimate Std.Err     2.5%  97.5% P-value
-#> (Intercept)     0.1402  0.1002 -0.05625 0.3367 0.16186
-#> (Intercept).1   0.2615  0.1426 -0.01807 0.5410 0.06676
+#>               Estimate Std.Err   2.5%  97.5%   P-value
+#> (Intercept)     0.2412  0.0637 0.1163 0.3660 0.0001533
+#> (Intercept).1   0.3475  0.0908 0.1695 0.5254 0.0001298
 ```
 
 In the above example the `id` argument defines the identifier that makes
@@ -719,16 +762,16 @@ and `IC` methods described in this document.
 estimate(g2) |>
   IC() |> head()
 #>   (Intercept)
-#> 1   -2.150532
-#> 2    1.869154
-#> 3   -2.150532
-#> 4    1.869154
-#> 5   -2.150532
-#> 6    1.869154
+#> 1    1.785677
+#> 2    1.785677
+#> 3    1.785677
+#> 4    1.785677
+#> 5   -2.272679
+#> 6    1.785677
 vcov(merge(estimate(g2), estimate(g3)))
 #>               (Intercept) (Intercept).1
-#> (Intercept)   0.010049191   0.002102598
-#> (Intercept).1 0.002102598   0.020342639
+#> (Intercept)   0.004058270   0.001140603
+#> (Intercept).1 0.001140603   0.008243887
 merge(estimate(g2), estimate(g3)) |>
   (rownames %++% head %++% IC)()
 #> [1] "1" "2" "3" "4" "5" "6"
@@ -740,23 +783,23 @@ between the estimates, the argument `id=NULL` can be used
 
 ``` r
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
-#>     (Intercept) a          (Intercept).1
-#> 1    1.104e-15   5.128e+00  0.000e+00   
-#> 2    1.104e-15   5.128e+00  0.000e+00   
-#> 3   -7.547e+00   7.547e+00  0.000e+00   
-#> 4   -7.547e+00   7.547e+00  0.000e+00   
-#> 5   -2.200e-15  -1.600e+01  0.000e+00   
-#> ---                                     
-#> 796  0.000       0.000     -4.301       
-#> 797  0.000       0.000      3.738       
-#> 798  0.000       0.000     -4.301       
-#> 799  0.000       0.000     -4.301       
-#> 800  0.000       0.000     -4.301
+#>      (Intercept) a          (Intercept).1
+#> 1    -5.097e-16   5.698e+00  0.000e+00   
+#> 2    -5.097e-16   5.698e+00  0.000e+00   
+#> 3    -5.097e-16   5.698e+00  0.000e+00   
+#> 4    -5.097e-16   5.698e+00  0.000e+00   
+#> 5     3.043e-15  -1.600e+01  0.000e+00   
+#> ---                                      
+#> 1996  0.000       0.000     -4.545       
+#> 1997  0.000       0.000      3.571       
+#> 1998  0.000       0.000      3.571       
+#> 1999  0.000       0.000      3.571       
+#> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    2.079760e-02 -2.079760e-02 -1.600942e-29
-#> a             -2.079760e-02  4.720777e-02 -1.554863e-25
-#> (Intercept).1 -1.600942e-29 -1.554863e-25  1.004919e-02
+#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
+#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
+#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
 ```
 
 ### Renaming and subsetting parameters
@@ -765,9 +808,9 @@ To only keep a subset of the parameters the `keep` argument can be used.
 
 ``` r
 merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
-#>               Estimate Std.Err     2.5%   97.5% P-value
-#> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
 ```
 
 The argument can be given either as character vector or a vector of
@@ -775,22 +818,22 @@ indices:
 
 ``` r
 merge(g1, g2, keep=c(1, 3))
-#>               Estimate Std.Err     2.5%   97.5% P-value
-#> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
 ```
 
 or as a vector of perl-style regular expressions
 
 ``` r
 merge(g1, g2, keep = "cept", regex = TRUE)
-#>               Estimate Std.Err     2.5%   97.5% P-value
-#> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
 merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
 #>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -0.1861  0.1442 -0.4688 0.09655 1.969e-01
-#> a             1.3239  0.2173  0.8981 1.74978 1.105e-09
+#> (Intercept)  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> a             1.4031 0.13692  1.1347  1.6714 1.218e-24
 ```
 
 When merging estimates unique parameter names are created. It is also
@@ -798,20 +841,20 @@ possible to rename the parameters with the `labels` argument
 
 ``` r
 merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
-#>   Estimate Std.Err     2.5%   97.5% P-value
-#> a  -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> c   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>   Estimate Std.Err    2.5%   97.5%   P-value
+#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> c   0.2412 0.06370  0.1163  0.3660 1.533e-04
 merge(g1, g2,
       labels = c("a", "b", "c"),
       keep = c("a", "c")
 )
-#>   Estimate Std.Err     2.5%   97.5% P-value
-#> a  -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> c   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>   Estimate Std.Err    2.5%   97.5%   P-value
+#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> c   0.2412 0.06370  0.1163  0.3660 1.533e-04
 estimate(g1, labels=c("a", "b"))
 #>   Estimate Std.Err    2.5%   97.5%   P-value
-#> a  -0.1861  0.1442 -0.4688 0.09655 1.969e-01
-#> b   1.3239  0.2173  0.8981 1.74978 1.105e-09
+#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> b   1.4031 0.13692  1.1347  1.6714 1.218e-24
 ```
 
 Finally, the `subset` argument can be used to subset the parameters and
@@ -819,15 +862,15 @@ IFs before the actual merging is being done
 
 ``` r
 merge(g1, g2, subset="(Intercept)")
-#>               Estimate Std.Err     2.5%   97.5% P-value
-#> (Intercept)    -0.1861  0.1442 -0.46876 0.09655  0.1969
-#> (Intercept).1   0.1402  0.1002 -0.05625 0.33671  0.1619
+#>               Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
 ```
 
 ### Clustered data (non-iid case)
 
 Let Z_i = (Z\_{i1},\ldots,Z\_{iN\_{i}}) and assume that (Z\_{i}, N\_{i})
-\sim P, i=1,\ldots,n are iid and N_i\\\perp\\\\\\\\\perp\\Z\_{ij}. The
+\sim P, i=1,\ldots,n are iid and N_i\\\perp\\\\\\\\\perp\\ Z\_{ij}. The
 variables Z\_{i1},\ldots,Z\_{iN\_{i}} we assume are exchangeable but not
 necessarily independent. Define N = \sum\_{i=1}^{n} N_i, and assume that
 a parameter estimate, \widehat{\theta}\in\mathbb{R}^p has the
@@ -851,16 +894,16 @@ robust standard errors from the above iid decomposition
 
 ``` r
 estimate(g0, id=dl$id)
-#>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -0.1147 0.09351 -0.2979 0.06862 2.201e-01
-#> a             1.0178 0.13016  0.7627 1.27288 5.303e-15
-#> w             0.9825 0.07421  0.8370 1.12791 5.278e-40
-#> x             0.9485 0.07835  0.7949 1.10203 9.976e-34
+#>             Estimate Std.Err    2.5%   97.5%    P-value
+#> (Intercept) -0.05401 0.05665 -0.1650 0.05702  3.404e-01
+#> a            1.02547 0.09012  0.8488 1.20209  5.289e-30
+#> w            0.94755 0.04972  0.8501 1.04500  5.614e-81
+#> x            1.02487 0.04831  0.9302 1.11955 6.832e-100
 ```
 
 We can confirm that this situation is equivalent to the variance
 estimates we obtain from a GEE marginal model with working independence
-correlation structure (Halekoh, Højsgaard, and Yan 2006)
+correlation structure ([Halekoh et al. 2006](#ref-r_geepack))
 
 ``` r
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
@@ -872,10 +915,10 @@ summary(gee0)
 #> 
 #>  Coefficients:
 #>             Estimate  Std.err    Wald Pr(>|W|)    
-#> (Intercept) -0.11466  0.09351   1.504     0.22    
-#> a            1.01777  0.13016  61.145 5.33e-15 ***
-#> w            0.98246  0.07421 175.250  < 2e-16 ***
-#> x            0.94845  0.07835 146.523  < 2e-16 ***
+#> (Intercept) -0.05401  0.05665   0.909     0.34    
+#> a            1.02547  0.09012 129.493   <2e-16 ***
+#> w            0.94755  0.04972 363.216   <2e-16 ***
+#> x            1.02487  0.04831 450.108   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -883,8 +926,8 @@ summary(gee0)
 #> Estimated Scale Parameters:
 #> 
 #>             Estimate Std.err
-#> (Intercept)   0.9538   0.098
-#> Number of clusters:   400  Maximum cluster size: 4
+#> (Intercept)   0.9928 0.09168
+#> Number of clusters:   1000  Maximum cluster size: 4
 ```
 
 ### Computational aspects
@@ -916,9 +959,9 @@ Print(cbind(table(id)))
 #> 200 500
 
 ## Aggregated IF
-e <- estimate(cbind(y), id = id)
+e <- estimate(y, id = id)
 object.size(e)
-#> 19008 bytes
+#> 18840 bytes
 e
 #>     Estimate Std.Err      2.5%    97.5% P-value
 #> p1 -0.002244 0.00332 -0.008751 0.004263  0.4991
@@ -931,8 +974,8 @@ and assume that \widehat{\theta}\_n is RAL estimator with IF given by
 \operatorname{IC}(\cdot; P\_{0}) such that \begin{align\*}
 \sqrt{n}(\widehat{\theta}\_n - \theta) = \frac{1}{\sqrt{n}}\sum\_{i=1}^n
 \operatorname{IC}(Z_i; P\_{0}) + o\_{P}(1), \end{align\*} then by the
-delta method (Vaart 1998 Theorem 3.1) \begin{align\*}
-\sqrt{n}\\\phi(\widehat{\theta}\_n) - \phi(\theta)\\ =
+delta method ([Vaart 1998](#ref-vaart_1998_asymp) Theorem 3.1)
+\begin{align\*} \sqrt{n}\\\phi(\widehat{\theta}\_n) - \phi(\theta)\\ =
 \frac{1}{\sqrt{n}}\sum\_{i=1}^n \nabla\phi(\theta)\operatorname{IC}(Z_i;
 P\_{0}) + o\_{P}(1), \end{align\*}
 
@@ -955,21 +998,21 @@ must be supplied to the `estimate` method (argument `f`)
 ``` r
 estimate(g1, sum)
 #>    Estimate Std.Err   2.5% 97.5%   P-value
-#> p1    1.138  0.1625 0.8193 1.456 2.532e-12
+#> p1    1.032  0.1042 0.8283 1.237 3.672e-23
 estimate(g1, function(p) list(a = sum(p))) # named list
 #>   Estimate Std.Err   2.5% 97.5%   P-value
-#> a    1.138  0.1625 0.8193 1.456 2.532e-12
+#> a    1.032  0.1042 0.8283 1.237 3.672e-23
 ## Multiple parameters
 estimate(g1, function(x) c(x, x[1] + exp(x[2]), inv = 1 / x[2]))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)    -0.1861  0.1442 -0.4688 0.09655 1.969e-01
-#> a               1.3239  0.2173  0.8981 1.74978 1.105e-09
-#> (Intercept).1   3.5721  0.7289  2.1435 5.00062 9.539e-07
-#> inv.a           0.7553  0.1240  0.5124 0.99828 1.105e-09
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
+#> a               1.4031 0.13692  1.1347  1.6714 1.218e-24
+#> (Intercept).1   3.6971 0.50382  2.7096  4.6845 2.167e-13
+#> inv.a           0.7127 0.06955  0.5764  0.8490 1.218e-24
 estimate(g1, exp)
-#>             Estimate Std.Err   2.5% 97.5%   P-value
-#> (Intercept)   0.8302  0.1197 0.5955 1.065 4.087e-12
-#> a             3.7582  0.8166 2.1578 5.359 4.175e-06
+#>             Estimate Std.Err   2.5%  97.5%   P-value
+#> (Intercept)   0.6903 0.06135 0.5701 0.8106 2.269e-29
+#> a             4.0677 0.55695 2.9761 5.1593 2.805e-13
 ```
 
 The gradient can be provided as the attribute `grad` and otherwise
@@ -982,6 +1025,7 @@ exactly. To illustrate this consider the following simple example where
 we consider two `estimate` objects each with a single parameter estimate
 
 ``` r
+set.seed(1)
 a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
 b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=1:10)
 ```
@@ -991,28 +1035,28 @@ following examples
 
 ``` r
 a * b
-#>   Estimate Std.Err    2.5% 97.5% P-value
-#> a      0.4  0.3156 -0.2185 1.018  0.2049
+#>   Estimate Std.Err     2.5%  97.5% P-value
+#> a      0.4  0.2302 -0.05112 0.8511 0.08224
 (3 * cos(a) / sqrt(b) + 1) / a
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    7.887   6.089 -4.047 19.82  0.1952
-c(sum=sum(e), sum2=a+b,
-  prod=prod(e), prod2=a*b) # sum and prod function
-#>        Estimate Std.Err      2.5%    97.5% P-value
-#> sum   -0.002244 0.00332 -0.008751 0.004263 0.49911
-#> sum2   1.300000 0.47822  0.362698 2.237302 0.00656
-#> prod  -0.002244 0.00332 -0.008751 0.004263 0.49911
-#> prod2  0.400000 0.31556 -0.218490 1.018490 0.20495
+#> a    7.887   5.379 -2.656 18.43  0.1426
 e <- c(a,b) # merge
+c(sum=sum(e), sum2=a+b,
+  prod=prod(e), prod2=a*b) # sum and prod function 
+#>       Estimate Std.Err     2.5%  97.5%  P-value
+#> sum        1.3  0.3350  0.64350 1.9565 0.000104
+#> sum2       1.3  0.3350  0.64350 1.9565 0.000104
+#> prod       0.4  0.2302 -0.05112 0.8511 0.082235
+#> prod2      0.4  0.2302 -0.05112 0.8511 0.082235
 e %*% e # inner prod.
-#>    Estimate Std.Err   2.5% 97.5% P-value
-#> p1     0.89  0.6311 -0.347 2.127  0.1585
+#>    Estimate Std.Err     2.5% 97.5% P-value
+#> p1     0.89  0.4603 -0.01224 1.792 0.05319
 c(1, 2) %*% e
-#>    Estimate Std.Err   2.5% 97.5%  P-value
-#> p1      2.1  0.7399 0.6499  3.55 0.004535
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1      2.1  0.5607 1.001 3.199 0.0001802
 c(pow = a^b) # power-function, rename parameter
-#>     Estimate Std.Err    2.5% 97.5% P-value
-#> pow   0.5743  0.2692 0.04679 1.102 0.03286
+#>     Estimate Std.Err     2.5% 97.5% P-value
+#> pow   0.5743  0.3392 -0.09052 1.239 0.09043
 a^c(0.5, 2)
 #>    Estimate Std.Err    2.5% 97.5%   P-value
 #> p1   0.7071  0.2121  0.2913 1.123 0.0008581
@@ -1025,29 +1069,29 @@ c(e["a"] * e["b"] / a, e["b"])
 
 For the `%*%` operator we can also use a general contrast matrix (see
 also Section on [Linear
-contrasts](#linear-contrasts-and-hypothesis-testing)
+contrasts](#linear-contrasts-and-hypothesis-testing))
 
 ``` r
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
 #>           Estimate Std.Err     2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.407718
+#> [a] - [b]     -0.3  0.4978 -1.27567 0.6757 0.546742
 #> a              0.5  0.3000 -0.08799 1.0880 0.095581
 #> b              0.8  0.3000  0.21201 1.3880 0.007661
 B %*% e == c(1,1,0)
 #> Call: estimate.default(x = y, f = x)
 #> ────────────────────────────────────────────────────────────
-#>           Estimate Std.Err     2.5%  97.5%   P-value
-#> [a] - [b]     -0.3  0.3624 -1.01020 0.4102 0.0003337
-#> a              0.5  0.3000 -0.08799 1.0880 0.0955807
-#> b              0.8  0.3000  0.21201 1.3880 0.0076608
+#>           Estimate Std.Err     2.5%  97.5%  P-value
+#> [a] - [b]     -0.3  0.4978 -1.27567 0.6757 0.009015
+#> a              0.5  0.3000 -0.08799 1.0880 0.095581
+#> b              0.8  0.3000  0.21201 1.3880 0.007661
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [b]] = 1
 #>   [a] = 1
 #>   [b] = 0 
 #>  
-#> chisq = 13.26, df = 2, p-value = 0.001317
+#> chisq = 7.622, df = 2, p-value = 0.02213
 ```
 
 The following transformations are implemented
@@ -1067,7 +1111,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55a47a891ee0>
+#> <bytecode: 0x5565833c5d00>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1078,21 +1122,20 @@ expit(c(a,b))
 #> b   0.6900 0.06417 0.5642 0.8158 5.811e-27
 ```
 
-In the above example we also demonstrated the user of the subset
-operator `[]` and the merge method
-[`c()`](https://rdrr.io/r/base/c.html). These are basically equivalent
-to the `subset` and `merge` methods. There is also a `transform` method
-for constructing parameter transformations above, and the `labels`
-function for renaming parameters. Together we can combine these methods
-via the pipe operator to create readable code:
+In the above example we also demonstrated the use of the subset operator
+`[]` and the merge method [`c()`](https://rdrr.io/r/base/c.html). These
+are basically equivalent to the `subset` and `merge` methods. There is
+also a `transform` method for constructing parameter transformations
+above, and the `labels` function for renaming parameters. Together we
+can combine these methods via the pipe operator to create readable code:
 
 ``` r
 merge(a, b) |>  # merges the two `estimate` objects
   transform(prod) |> # calculates product of parameter estimates
   subset(1) |> # nothing happens here as the result was already 1-dim.
   labels("prod") # rename parameter
-#>      Estimate Std.Err    2.5% 97.5% P-value
-#> prod      0.4  0.3156 -0.2185 1.018  0.2049
+#>      Estimate Std.Err     2.5%  97.5% P-value
+#> prod      0.4  0.2302 -0.05112 0.8511 0.08224
 ```
 
 Finally, the `with` function can be used to reference parameter names
@@ -1100,8 +1143,8 @@ Finally, the `with` function can be used to reference parameter names
 ``` r
 e <- c("e1"=a, "e2"=b)
 with(e, c(est = e1*e2))
-#>     Estimate Std.Err    2.5% 97.5% P-value
-#> est      0.4  0.3156 -0.2185 1.018  0.2049
+#>     Estimate Std.Err     2.5%  97.5% P-value
+#> est      0.4  0.2302 -0.05112 0.8511 0.08224
 ```
 
 ### Example: Pearson correlation
@@ -1109,16 +1152,17 @@ with(e, c(est = e1*e2))
 As a simple toy example consider the problem of estimating the
 covariance of two variables X_1 and X_2 \begin{align\*}
 \widehat{\mathbb{C}\\\text{ov}}(X_1,X_2) =
-\mathbb{P}\_n(X_1-\mathbb{P}\_n X_1)(Y_1-\mathbb{P}\_n Y_1).
+\mathbb{P}\_n(X_1-\mathbb{P}\_n X_1)(X_2-\mathbb{P}\_n X_2).
 \end{align\*} It is easily verified that the IF of the sample estimate
-of (\mathbb{E}X\_{1}, \mathbb{E}X\_{2}, \mathbb{E}\\X\_{1}X\_{2}\\)^\top
-given by is \operatorname{IC}(X1,X2; P\_{0}) = (X\_{1}-\mathbb{E}X\_{1},
-X\_{2}-\mathbb{E}X\_{2}, X\_{1}X\_{2}-\mathbb{E}\\X\_{1}X\_{2}\\)^\top.
-By the delta theorem with \phi(x,y,z) = z-xy we have \nabla\phi(x,y,z) =
-(-y, -x, 1)^\top and thus the IF for the sample covariance estimate
-becomes \begin{align\*} \operatorname{IC}\_{x_1, x_2}(X_1, X_2; P\_{0})
-= (X_1 - \mathbb{E}X_1)(X_2 - \mathbb{E}X_2) -
-\mathbb{C}\\\text{ov}(X_1,X_2) \end{align\*}
+of (\mathbb{E}X\_{1}, \mathbb{E} X\_{2},
+\mathbb{E}\\X\_{1}X\_{2}\\)^\top is \operatorname{IC}(X1,X2; P\_{0}) =
+(X\_{1}-\mathbb{E}X\_{1}, X\_{2}-\mathbb{E}X\_{2},
+X\_{1}X\_{2}-\mathbb{E}\\X\_{1}X\_{2}\\)^\top. By the delta theorem with
+\phi(x,y,z) = z-xy we have \nabla\phi(x,y,z) = (-y, -x, 1) and thus the
+IF for the sample covariance estimate becomes \begin{align\*}
+\operatorname{IC}\_{x_1, x_2}(X_1, X_2; P\_{0}) = (X_1 -
+\mathbb{E}X_1)(X_2 - \mathbb{E}X_2) - \mathbb{C}\\\text{ov}(X_1,X_2)
+\end{align\*}
 
 We can implement this directly using the `estimate` function via the
 `IC` argument which allows us to provide a user-specificed IF and with
@@ -1135,7 +1179,7 @@ Cov <- function(x, y, ...) {
 }
 with(dw, Cov(x1, x2))
 #>    Estimate Std.Err     2.5%  97.5% P-value
-#> p1 0.004043 0.04976 -0.09349 0.1016  0.9352
+#> p1  0.05263  0.0334 -0.01284 0.1181  0.1151
 ```
 
 As an illustration we could also derive this estimate from simpler
@@ -1146,14 +1190,14 @@ building blocks of \mathbb{E}X\_{1}, \mathbb{E}X\_{2}, and
 est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
   estimate(labels = c("E1", "E2", "E12"))
 est
-#>      Estimate Std.Err     2.5%   97.5% P-value
-#> E1   0.038089 0.04842 -0.05681 0.13298  0.4315
-#> E2  -0.037026 0.05187 -0.13869 0.06464  0.4753
-#> E12  0.002633 0.05003 -0.09541 0.10068  0.9580
+#>     Estimate Std.Err     2.5%   97.5% P-value
+#> E1  -0.01165 0.03271 -0.07576 0.05246  0.7218
+#> E2   0.01531 0.03259 -0.04857 0.07918  0.6385
+#> E12  0.05245 0.03339 -0.01298 0.11789  0.1161
 
 est["E12"] - est["E2"]*est["E1"]
 #>     Estimate Std.Err     2.5%  97.5% P-value
-#> E12 0.004043 0.04976 -0.09349 0.1016  0.9352
+#> E12  0.05263  0.0334 -0.01284 0.1181  0.1151
 # transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
 
@@ -1168,11 +1212,12 @@ v2  <- with(dw, Cov(x2, x2, id = id))
 rho <- c(rho = v12 / sqrt(v1 * v2))
 rho
 #>     Estimate Std.Err     2.5%  97.5% P-value
-#> rho 0.004025 0.04953 -0.09306 0.1011  0.9352
+#> rho  0.04937 0.03126 -0.01189 0.1106  0.1142
 ```
 
 by using a variance stabilizing transformation, Fishers z-transform
-(Lehmann and Romano 2023), z = \operatorname{arctanh}(\widehat{\rho}) =
+([Lehmann and Romano 2023](#ref-lehmann2023_testing)), z =
+\operatorname{arctanh}(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right),
 confidence limits with general better coverage can be obtained
 
@@ -1181,13 +1226,13 @@ estimate(atanh(rho)) |>
   summary(transform = tanh)
 #> Call: estimate.default(x = atanh(rho))
 #> ────────────────────────────────────────────────────────────
-#>     Estimate Std.Err     2.5%  97.5% P-value
-#> rho 0.004025         -0.09279 0.1008  0.9352
+#>     Estimate Std.Err   2.5%  97.5% P-value
+#> rho  0.04937         -0.012 0.1104  0.1148
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [rho] = 0 
 #>  
-#> chisq = 0.0066, df = 1, p-value = 0.9352
+#> chisq = 2.486, df = 1, p-value = 0.1148
 ```
 
 The confidence limits are calculated on the \operatorname{arctanh}-scale
@@ -1218,12 +1263,12 @@ g <- lapply(
 gg <- Reduce(merge, g)
 gg
 #>               Estimate Std.Err    2.5%    97.5%   P-value
-#> (Intercept)    -0.1861  0.1442 -0.4688  0.09655 1.969e-01
-#> a               1.3239  0.2173  0.8981  1.74978 1.105e-09
-#> (Intercept).1  -0.6168  0.1505 -0.9117 -0.32185 4.152e-05
-#> a.1             1.5060  0.2148  1.0849  1.92712 2.385e-12
-#> (Intercept).2  -0.2938  0.2063 -0.6982  0.11064 1.545e-01
-#> a.2             1.1047  0.2962  0.5242  1.68515 1.914e-04
+#> (Intercept)    -0.3706 0.08887 -0.5448 -0.19641 3.048e-05
+#> a               1.4031 0.13692  1.1347  1.67143 1.218e-24
+#> (Intercept).1  -0.4342 0.08944 -0.6095 -0.25888 1.207e-06
+#> a.1             1.4995 0.13792  1.2291  1.76976 1.562e-27
+#> (Intercept).2  -0.2763 0.12644 -0.5241 -0.02843 2.890e-02
+#> a.2             1.3586 0.19386  0.9787  1.73856 2.413e-12
 ```
 
 A linear transformation can be specified via the `f` as a matrix
@@ -1233,7 +1278,7 @@ argument instead of function object
 B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
-#> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
+#> [a] - [a.1] -0.09638    0.18 -0.4491 0.2563  0.5922
 ```
 
 The \mathbf{b}\_0 vector (default assumed to be zero) can be specified
@@ -1244,12 +1289,12 @@ summary(estimate(gg, B), null=1)
 #> Call: estimate.default(x = gg, f = B)
 #> ────────────────────────────────────────────────────────────
 #>             Estimate Std.Err    2.5%  97.5%   P-value
-#> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065 8.281e-05
+#> [a] - [a.1] -0.09638    0.18 -0.4491 0.2563 1.111e-09
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [a.1]] = 1 
 #>  
-#> chisq = 15.49, df = 1, p-value = 8.281e-05
+#> chisq = 37.12, df = 1, p-value = 1.111e-09
 ```
 
 For testing multiple hypotheses we use that
@@ -1264,8 +1309,8 @@ B <- rbind(cbind(0,1, 0,-1, 0,0),
            cbind(0,1, 0,0, 0,-1))
 estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
-#> [a] - [a.1]  -0.1821  0.3003 -0.7707 0.4065  0.5443
-#> [a] - [a.2]   0.2192  0.3637 -0.4936 0.9321  0.5466
+#> [a] - [a.1] -0.09638  0.1800 -0.4491 0.2563  0.5922
+#> [a] - [a.2]  0.04446  0.2355 -0.4172 0.5061  0.8503
 ```
 
 Such linear statistics can also be specified directly as expressions of
@@ -1275,22 +1320,23 @@ the parameter names
 estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
 #> Call: estimate.default(x = gg, f = a + a.1, 2 * a - a.2, a)
 #> ────────────────────────────────────────────────────────────
-#>              Estimate Std.Err   2.5% 97.5%  P-value
-#> [a] + [a.1]     2.830  0.3107 2.2210 3.439 0.007557
-#> 2[a] - [a.2]    1.543  0.5208 0.5224 2.564 0.296991
-#> a               1.324  0.2173 0.8981 1.750 0.135985
+#>              Estimate Std.Err   2.5% 97.5%   P-value
+#> [a] + [a.1]     2.903  0.2077 2.4954 3.310 1.395e-05
+#> 2[a] - [a.2]    1.448  0.3330 0.7949 2.100 1.789e-01
+#> a               1.403  0.1369 1.1347 1.671 3.242e-03
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] + [a.1]] = 2
 #>   [2[a] - [a.2]] = 1
 #>   [a] = 1 
 #>  
-#> chisq = 7.557, df = 3, p-value = 0.05612
+#> chisq = 21.01, df = 3, p-value = 0.0001047
 ```
 
 We refer to the function
 [`lava::contr`](https://kkholst.github.io/lava/reference/contr.md) and
-`lava::parsedesigns` for defining contrast matrices.
+[`lava::parsedesign`](https://kkholst.github.io/lava/reference/contr.md)
+for defining contrast matrices.
 
 ``` r
 contr(list(1, c(1, 2), c(1, 4)), n = 5)
@@ -1314,16 +1360,16 @@ summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
 #>     6))
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%  97.5%   P-value
-#> [a] - [a.1]    -0.1821  0.3003 -0.7707 0.4065 8.281e-05
-#> [a] - [a.2]     0.2192  0.3637 -0.4936 0.9321 3.182e-02
-#> [a.1] - [a.2]   0.4013  0.3506 -0.2858 1.0885 8.773e-02
+#> [a] - [a.1]   -0.09638  0.1800 -0.4491 0.2563 1.111e-09
+#> [a] - [a.2]    0.04446  0.2355 -0.4172 0.5061 4.972e-05
+#> [a.1] - [a.2]  0.14085  0.2218 -0.2939 0.5756 1.076e-04
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [a.1]] = 1
 #>   [[a] - [a.2]] = 1
 #>   [[a.1] - [a.2]] = 1 
 #>  
-#> chisq = 11.96, df = 2, p-value = 0.002523
+#> chisq = 33.79, df = 2, p-value = 4.597e-08
 ```
 
 When conducting multiple tests each at a nominal-level of \alpha the
@@ -1339,28 +1385,28 @@ P(Z\_{max} \> z) = 1-\int\_{-z}^{z} \cdots \int\_{-z}^{z}
 is the multivariate normal density function with mean 0 and variance
 given by the correlation matrix R. The adjusted p-values can then be
 calculated as P(Z\_{max} \> \Phi^{-1}(1-p/2)) where \Phi is the standard
-Gaussian CDF. As described in in (Pipper, Ritz, and Bisgaard 2012) the
-joint distribution of Z\_{1},\ldots,Z\_{p} can be estimated from the
-IFs. This is implemented in the `alpha_zmax` method
+Gaussian CDF. As described in in ([Pipper et al.
+2012](#ref-RitzPipper_multcomp)) the joint distribution of
+Z\_{1},\ldots,Z\_{p} can be estimated from the IFs. This is implemented
+in the `alpha_zmax` method
 
 ``` r
 gg0 <- estimate(gg, use="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
-#>     Estimate  P-value Adj.P-value
-#> a      1.324 0.015891    0.046873
-#> a.1    1.506 0.001015    0.003043
-#> a.2    1.105 0.303571    0.661496
+#>     Estimate   P-value Adj.P-value
+#> a      1.403 1.060e-05   3.195e-05
+#> a.1    1.499 3.945e-07   1.180e-06
+#> a.2    1.359 3.958e-03   1.181e-02
 #> attr(,"adjusted.significance.level")
-#> [1] 0.01698
+#> [1] 0.01704
 ```
 
 While this always yields a more powerful test compared to Bonferroni
-adjustments, a more powerful closed-testing procedure (Marcus, Eric, and
-Gabriel 1976), can be generally obtained by considering all intersection
-hypotheses.
+adjustments, another powerful closed-testing procedure ([Marcus et al.
+1976](#ref-marcus1976)), can be generally obtained by considering all
+intersection hypotheses.
 
-![Figure: closed testing via Wald tests of all intersections
-hypotheses.](../reference/figures/closedtesting.svg)
+![](../reference/figures/closedtesting.svg)
 
 *Figure: closed testing via Wald tests of all intersections hypotheses.*
 
@@ -1372,20 +1418,17 @@ Unfortunately, this only works for relatively few comparisons as the
 number of tests grows exponentially.
 
 ``` r
-summary(closed_testing(gg0, test = test_wald))
-#> Call: closed_testing(object = gg0, test = test_wald)
-#> 
-#> ── Adjusted p-values ──
-#> 
+summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
+#> Call: closed_testing(object = gg0, test = test_wald, null = rep(0.8, 
+#>     3))
 #>     Estimate     adj.p
-#> a      1.324 1.105e-09
-#> a.1    1.506 2.385e-12
-#> a.2    1.105 1.914e-04
-#> ── Raw p-values for intersection hypotheses ──
+#> a      1.403 1.060e-05
+#> a.1    1.499 3.945e-07
+#> a.2    1.359 3.958e-03
 #> 1-way intersections:
 #>   {a}                                      p = 0.0000
 #>   {a.1}                                    p = 0.0000
-#>   {a.2}                                    p = 0.0002
+#>   {a.2}                                    p = 0.0040
 #> 
 #> 2-way intersections:
 #>   {a, a.1}                                 p = 0.0000
@@ -1404,23 +1447,27 @@ distribution can in some of these cases also be derived from the
 influence function. Let Z\_{1},\ldots,Z\_{n} be iid observations,
 Z\_{1}\sim P\_{0} and let X\_{i}\subset Z\_{i}.
 
-Assume that \widehat{\theta} is RAL estimator of \theta\in\Omega\subset
-\mathbb{R}^{p} \sqrt{n}(\widehat{\theta}-\theta) =
-\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\phi(Z\_{i}; P\_{0}) + o\_{P}(1). Let
+**Lemma 3** Assume that \widehat{\theta} is RAL estimator of
+\theta\in\Omega\subset \mathbb{R}^{p} \sqrt{n}(\widehat{\theta}-\theta)
+= \frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\phi(Z\_{i}; P\_{0}) + o\_{P}(1). Let
 f:\mathcal{X}\times\Omega\to\mathbb{R} be continuous differentiable in
 \theta \sqrt{n}\\f(X; \widehat{\theta})-f(X; \theta)\\ =
 \frac{1}{\sqrt{n}}\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
-P) + o\_{P}(1).
+P\_{0}) + o\_{P}(1).
 
 Let \Psi = P\_{0}f(X;\theta) and \widehat{\Psi} = P\_{n}
-f(X;\widehat{\theta}). P\_{0} and P\_{n} are here everywhere the
-integrals wrt. X. It is easily verified that \begin{align\*}
-\widehat{\Psi}-\Psi &= (P\_{n}-P\_{0})(f(X; \theta)-\Psi) +
+f(X;\widehat{\theta}). P\_{0} and P\_{n} are here denoting the integrals
+wrt. X. Then the influence function for \widehat{\Psi} is given by
+\begin{align\*} IC(Z; P\_{0}) = f(X;\theta)-\Psi +
+\[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z). \end{align\*}
+
+*Proof*. It is easily verified that \begin{align\*} \widehat{\Psi}-\Psi
+&= (P\_{n}-P\_{0})(f(X; \theta)-\Psi) +
 P\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
 (P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] \end{align\*}
 
-From Lemma 19.24 (Vaart 1998) it follows that for the last term
-\begin{align\*}
+From Lemma 19.24 ([Vaart 1998](#ref-vaart_1998_asymp)) it follows that
+for the last term \begin{align\*}
 \sqrt{n}(P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] = o\_{P}(1)
 \end{align\*} when f for example is Lipschitz and more generally when
 f(X;\theta) forms a P\_{0}-Donsker class.
@@ -1435,21 +1482,23 @@ P\_{0}) + o\_{P}(1) \end{align\*} Hence the IF for \widehat{\Psi}
 becomes IC(Z; P\_{0}) = f(X;\theta)-\Psi +
 \[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z).
 
+\blacksquare
+
 Turning back to the example we can estimate the logistic regression
 model \operatorname{logit}(E\\Y_1 \| A,X_1,W\\) = \beta_0 + \beta_a A +
 \beta\_{x_1} X_1 + \beta_w W, and from this we want to estimate the
 target parameter \theta(P) = \mathbb{E}\_{P}\[E(Y\mid A=1, X\_{1}, W)\].
 To do this we need first to estimate the model and then define a
-function that gives the predicted probability
-\mathbb{P}(Y=1\mid,A=a,X\_{1},W) for any observed values of X_1,W but
-with the treatment variable A kept fixed at the value 1
+function that gives the predicted probability \mathbb{P}(Y=1\mid
+A=1,X\_{1},W) for any observed values of X_1,W but with the treatment
+variable A kept fixed at the value 1
 
 ``` r
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
 pr <- function(p, data, ...)
   with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
 pr(coef(g), dw) |> head()
-#> [1] 0.8307 0.9651 0.4234 0.9337 0.7669 0.4834
+#> [1] 0.7932 0.8968 0.3297 0.9425 0.7954 0.1948
 ```
 
 The target parameter can now be estimated with the syntax
@@ -1459,15 +1508,15 @@ id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
 #>     Estimate Std.Err   2.5%  97.5%    P-value
-#> val   0.7006 0.03155 0.6388 0.7625 3.217e-109
+#> val   0.6628 0.02451 0.6148 0.7108 4.985e-161
 IC(ea) |> head()
-#>         val
-#> 58  0.10087
-#> 1  -0.11433
-#> 81  0.35721
-#> 38 -0.05024
-#> 71 -0.40835
-#> 18  0.36481
+#>          val
+#> 33   0.07714
+#> 100  0.15616
+#> 44   0.41135
+#> 48  -0.13500
+#> 16  -0.43901
+#> 29  -0.05291
 ```
 
 ### Average Treatment Effects
@@ -1478,15 +1527,15 @@ interested in estimating the target parameter \psi_a(P) = E_P\[Y(a)\],
 where Y(a) is the *potential outcome* we would have observed if
 treatment a had been administered, possibly contrary to the actual
 treatment that was observed, i.e., Y = Y(A). To assess the treatment
-effect we can then the consider the *average treatment effect* (ATE)
+effect we can then consider the *average treatment effect* (ATE)
 E_P\[Y(1)\]-E_P\[Y(0)\], or some other contrast of interest g(\psi_1(P),
 \psi_0(P)). Under the following assumptions
 
 1.  Stable Unit Treatment Values Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
-2.  Positivity, P(A\mid W)\>\epsilon for some \epsilon\>0 and baseline
+2.  Positivity, P(A=a\mid W)\>\epsilon for some \epsilon\>0 and baseline
     covariates W
-3.  No unmeasured confounders, Y(a)\perp \\\\\\ \perp A\|W
+3.  No unmeasured confounders, Y(a)\\\perp\\\\\\\\\perp\\A\|W
 
 then the target parameter can be identified from the observed data
 distribution as E(E\[Y\|W,A=a\]) = E(E\[Y(a)\|W\]) = E\[Y(a)\] or E\[Y
@@ -1494,7 +1543,7 @@ I(A=a)/P(A=a\|W)\] = E\[Y(a)\].
 
 This suggests estimators based on outcome regression (g-computation) or
 inverse probability weighting. More generally, under the above
-assumption we can constructor a *one-step* estimator from the *Efficient
+assumption we can construct a *one-step* estimator from the *Efficient
 Influence Function* combining these two
 E\left\[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right\]. In practice,
 this requires plugin estimates of both the outcome model, Q(W,A) :=
@@ -1514,13 +1563,13 @@ p1 <- predict(amod, dw, type="response") # P(A=1|W)
 e0 <- with(dw, (1-a) / (1-p1) * (y1 - q0) + q0)
 e1 <- with(dw, a / p1 * (y1 - q1) + q1)
 head(cbind(e0, e1))
-#>        e0      e1
-#> 1  0.7381  1.0447
-#> 2  0.8434  1.0119
-#> 3 -0.2967  0.6236
-#> 4 -0.3878  0.6656
-#> 5  0.4649 -0.8175
-#> 6 -0.3952  0.6685
+#>         e0      e1
+#> 1  0.65805  1.0545
+#> 2  0.65453  1.0566
+#> 3  0.33088  2.2411
+#> 4  0.50712  1.2459
+#> 5  0.48319 -0.7262
+#> 6 -0.03954  0.3653
 ```
 
 We can then easily construct estimates of the two expected potential
@@ -1532,21 +1581,21 @@ est1 <- estimate(coef=mean(e1), IC=e1-mean(e1)) # E[Y(1)]
 
 potential_outcomes <- merge(est0, est1, paired=TRUE, labels=c("y(0)", "y(1)"))
 potential_outcomes
-#>      Estimate Std.Err   2.5%  97.5%   P-value
-#> y(0)   0.5359 0.03535 0.4667 0.6052 6.290e-52
-#> y(1)   0.7050 0.03721 0.6321 0.7779 4.934e-80
+#>      Estimate Std.Err   2.5%  97.5%    P-value
+#> y(0)   0.4693 0.02355 0.4232 0.5155  2.187e-88
+#> y(1)   0.6702 0.02454 0.6221 0.7183 3.657e-164
 head(IC(potential_outcomes))
-#>       y(0)     y(1)
-#> 1  0.20211  0.33973
-#> 2  0.30750  0.30690
-#> 3 -0.83262 -0.08136
-#> 4 -0.92373 -0.03944
-#> 5 -0.07105 -1.52251
-#> 6 -0.93115 -0.03652
+#>       y(0)    y(1)
+#> 1  0.18872  0.3843
+#> 2  0.18520  0.3865
+#> 3 -0.13845  1.5709
+#> 4  0.03779  0.5758
+#> 5  0.01386 -1.3963
+#> 6 -0.50886 -0.3049
 vcov(potential_outcomes)
 #>           y(0)      y(1)
-#> y(0) 1.249e-03 6.938e-05
-#> y(1) 6.938e-05 1.385e-03
+#> y(0) 5.545e-04 2.385e-05
+#> y(1) 2.385e-05 6.024e-04
 ```
 
 Finally, we can obtain the Average Treatment Effect (ATE)
@@ -1554,8 +1603,8 @@ Finally, we can obtain the Average Treatment Effect (ATE)
 
 ``` r
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")
-#>     Estimate Std.Err    2.5% 97.5%   P-value
-#> ate   0.1691 0.04996 0.07115 0.267 0.0007138
+#>     Estimate Std.Err   2.5%  97.5%   P-value
+#> ate   0.2008  0.0333 0.1356 0.2661 1.637e-09
 ```
 
 Alternatively, we could get the estimate of the treatment effect on the
@@ -1564,28 +1613,28 @@ log-odds scale:
 ``` r
 est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
 est
-#>      Estimate Std.Err  2.5% 97.5%  P-value
-#> y(1)   0.7272  0.2226 0.291 1.163 0.001085
+#>      Estimate Std.Err   2.5% 97.5%   P-value
+#> y(1)   0.8317  0.1428 0.5518 1.112 5.768e-09
 transform(est, labels="OR") |>
   summary(transform = exp)
 #> Call: estimate.default(x = `_data`, labels = "OR")
 #> ────────────────────────────────────────────────────────────
-#>    Estimate Std.Err  2.5% 97.5%  P-value
-#> OR    2.069         1.338 3.201 0.001085
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> OR    2.297         1.736 3.039 5.768e-09
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [OR] = 0 
 #>  
-#> chisq = 10.68, df = 1, p-value = 0.001085
+#> chisq = 33.91, df = 1, p-value = 5.768e-09
 #logor <- function(p) logit(p[2]) - logit(p[1])
 #transform(potential_outcomes, logor, labels="logOR")
 #transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
-We refer to the `targeted` package (Klaus K. Holst, Sommer, and Nordland
-2026) for a general implementation where the nuisance models can be
-based on machine learning models using cross-fitting. The above
-estimation can be obtained with the
+We refer to the `targeted` package ([Holst et al.
+2026](#ref-r-targeted)) for a general implementation where the nuisance
+models can be based on machine learning models using cross-fitting. The
+above estimation can be obtained with the
 [`targeted::cate`](https://kkholst.github.io/targeted/reference/cate.html)
 function in the following way
 
@@ -1628,26 +1677,22 @@ sessionInfo()
 #> [1] survival_3.8-6 lava_1.9.2.1  
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] tidyr_1.3.2            sass_0.4.10            future_1.75.0         
-#>  [4] generics_0.1.4         lattice_0.22-9         listenv_1.0.0         
-#>  [7] digest_0.6.39          magrittr_2.0.5         evaluate_1.0.5        
-#> [10] grid_4.6.1             mvtnorm_1.4-2          fastmap_1.2.0         
-#> [13] jsonlite_2.0.0         Matrix_1.7-5           backports_1.5.1       
-#> [16] purrr_1.2.2            codetools_0.2-20       numDeriv_2016.8-1.1   
-#> [19] textshaping_1.0.5      jquerylib_0.1.4        cli_3.6.6             
-#> [22] rlang_1.3.0            mets_1.3.12            parallelly_1.48.0     
-#> [25] future.apply_1.20.2    splines_4.6.1          RcppArmadillo_15.4.2-1
-#> [28] geepack_1.3.13         cachem_1.1.0           yaml_2.3.12           
-#> [31] otel_0.2.0             tools_4.6.1            parallel_4.6.1        
-#> [34] dplyr_1.2.1            globals_0.19.1         broom_1.0.13          
-#> [37] vctrs_0.7.3            R6_2.6.1               lifecycle_1.0.5       
-#> [40] fs_2.1.0               htmlwidgets_1.6.4      MASS_7.3-65           
-#> [43] ragg_1.5.2             pkgconfig_2.0.3        desc_1.4.3            
-#> [46] pillar_1.11.1          timereg_2.0.7          pkgdown_2.2.1         
-#> [49] bslib_0.12.0           glue_1.8.1             Rcpp_1.1.2            
-#> [52] systemfonts_1.3.2      tidyselect_1.2.1       tibble_3.3.1          
-#> [55] xfun_0.60              knitr_1.51             htmltools_0.5.9       
-#> [58] rmarkdown_2.31         compiler_4.6.1
+#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
+#>  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      
+#>  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           
+#> [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           
+#> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
+#> [16] generics_0.1.4         knitr_1.51             backports_1.5.1       
+#> [19] MASS_7.3-65            tibble_3.3.1           future_1.75.0         
+#> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
+#> [25] xfun_0.60              otel_0.2.0             cli_3.6.6             
+#> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            
+#> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
+#> [34] RcppArmadillo_15.4.2-1 timereg_2.0.7          vctrs_0.7.3           
+#> [37] evaluate_1.0.5         glue_1.8.1             numDeriv_2016.8-1.1   
+#> [40] listenv_1.0.0          codetools_0.2-20       parallelly_1.48.0     
+#> [43] purrr_1.2.2            rmarkdown_2.31         pkgconfig_2.0.3       
+#> [46] tools_4.6.1            htmltools_0.5.9        mets_1.3.12
 ```
 
 ## Bibliography
@@ -1666,7 +1711,7 @@ Functions.” *The American Statistician*, February, 1–13.
 <https://doi.org/10.1080/00031305.2021.2021984>.
 
 Holst, K. K., and E. Budtz-Jørgensen. 2013. “Linear Latent Variable
-Models: The Lava-Package.” *Computational Statistics* 28 (4): 1385–1452.
+Models: The Lava-Package.” *Computational Statistics* 28 (4): 1385–452.
 <https://doi.org/10.1007/s00180-012-0344-y>.
 
 Holst, Klaus K., Benedikt Sommer, and Andreas Nordland. 2026. *Targeted:
@@ -1677,10 +1722,10 @@ Inference for Observational and Experimental Data*. Springer.
 <https://doi.org/10.1007/978-1-4419-9782-1>.
 
 Lehmann, E. L., and Joseph P. Romano. 2023. *Testing Statistical
-Hypotheses*. Fourth. Springer Texts in Statistics. New York: Springer.
+Hypotheses*. Fourth. Springer Texts in Statistics. Springer.
 <https://doi.org/10.1007/978-3-030-70578-7>.
 
-Marcus, Ruth, Pertiz Eric, and K. R. Gabriel. 1976. “On Closed Testing
+Marcus, Ruth, Eric Pertiz, and K. R. Gabriel. 1976. “On Closed Testing
 Procedures with Special Reference to Ordered Analysis of Variance.”
 *Biometrika* 63 (3): 655–60. <https://doi.org/10.1093/biomet/63.3.655>.
 
@@ -1698,7 +1743,7 @@ Tsiatis, A. 2006. *Semiparametric Theory and Missing Data*. Springer
 Series in Statistics. Springer New York.
 <https://doi.org/10.1007/0-387-37345-4>.
 
-Vaart, A. W. van der. 1998. *Asymptotic Statistics*. *Cambridge
+Vaart, A. W. van der. 1998. *Asymptotic Statistics*. In *Cambridge
 University Press, Cambridge*.
 <https://doi.org/10.1017/CBO9780511802256>.
 
