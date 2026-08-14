@@ -1,0 +1,101 @@
+name: pkgdown
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  pkgdown:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest,  r: 'release'}
+
+    concurrency:
+      group: 'pkgdown-${{ github.event_name != ''pull_request'' || github.run_id }}'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Generate custom token
+        id: generate-token
+        if:  ${{ inputs.generate_token }}
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.TOKEN_APP_ID }}
+          private-key: ${{ secrets.TOKEN_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+      - name: Package specific setup
+        if:  ${{ inputs.use_local_setup_action }}
+        uses: ./.github/actions/setup
+      - uses: r-lib/actions/setup-pandoc@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
+      - uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+      - name: Install libpoppler-cpp-dev # required to install pdftools (R pkg)
+        run: sudo apt-get install -y pandoc libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libpoppler-cpp-dev
+
+      - uses: r-lib/actions/setup-r-dependencies@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
+        env:
+          GITHUB_PAT: ${{ steps.generate-token.outputs.token || secrets.GITHUB_TOKEN }}
+        with:
+          extra-packages: 'any::pkgdown, any::devtools, local::.'
+          needs: website
+      - uses: r-lib/actions/setup-tinytex@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
+      - name: Build site
+        run: 'pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)'
+        shell: 'Rscript {0}'
+      - name: "Deploy to GitHub pages \U0001F680"
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
+        with:
+          clean: false
+          branch: gh-pages
+          folder: docs
+      - name: Add pkgdown PR Comment
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          header: pkgdown
+          message: >
+            # Github pages
+
+            Review the pkgdown webpage for the PR [here](https://${{
+            github.repository_owner }}.github.io/${{
+            github.event.repository.name }}/dev/${{
+            github.event.pull_request.number }})
+      - name: Copy page to temp folder
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdir -p /home/runner/work/dev
+          cp -r ./docs/* /home/runner/work/dev
+      - name: Check out gh-pages branch
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: gh-pages
+      - name: Copy and push to gh-pages
+        if: github.event_name == 'pull_request'
+        run: >
+          mkdir -p dev/${{ github.event.pull_request.number }}
+
+          cp -r /home/runner/work/dev/* ./dev/${{
+          github.event.pull_request.number }}
+
+          git config --global user.email "actions-robot@novonordisk.com"
+
+          git config --global user.name "Actions Robot From Github Actions"
+
+          git add .
+
+          git commit -m "Update gh pages from the PR"
+
+          git push
