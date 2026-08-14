@@ -60,14 +60,18 @@ Suggests:
     optimx,
     polycor,
     quantreg,
+    quarto,
     rgl,
     svglite,
     targeted (>= 0.4),
     testthat (>= 0.11),
     vdiffr,
     visNetwork
-VignetteBuilder: knitr,rmarkdown
+VignetteBuilder:
+    quarto
+SystemRequirements: Quarto command line tools
+    (https://github.com/quarto-dev/quarto-cli).
 ByteCompile: yes
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

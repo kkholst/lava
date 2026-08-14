@@ -2,26 +2,24 @@
 title: Non-linear latent variable models and error-in-variable models
 author: Klaus Kähler Holst
 date: "`r Sys.Date()`"
-output:
-  rmarkdown::html_vignette:
-    fig_caption: yes
-    fig_width: 6 
-    fig_height: 4 
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    fig-format: 'svg'
+execute:
+  echo: true
+  warning: false
+  collapse: true
+  comment: "#>"
 vignette: >
   %\VignetteIndexEntry{Non-linear latent variable models and error-in-variable models}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 bibliography: ref.bib
 ---
 
 ```{r  include=FALSE }
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  dev = "svg",
-  fig.ext = "svg"
-)
-## library("svglite")
 mets <- lava:::versioncheck('mets', 1)
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
