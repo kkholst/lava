@@ -25,7 +25,9 @@ IC_quantile <- function(x, estimate, probs=0.5, type = 7, ...) {
 #' @export
 #' @aliases estimate.array estimate.data.frame
 #' @param x numeric matrix
-#' @param type target parameter ("mean", "variance", "quantile")
+#' @param type target parameter ("mean", "variance", "quantile"). The type of
+#'   quantile (see `stats::quantile`) can be chosen with "quantile1",
+#'   "quantile2", ...
 #' @param probs numeric vector of probabilities (for type="quantile")
 #' @param ... Additional arguments to lower level functions (i.e.,
 #'   stats::density.default when type="quantile")
