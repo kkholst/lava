@@ -39,6 +39,9 @@ estimate.array <- function(x, type = "mean", probs = 0.5, ...) {
   density.args <- dots[]
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
+  if (!("id" %in% names(dots))) {
+    dots[["id"]] <- rownames(x)
+  }
   if (tolower(type) %in% c("var", "variance")) {
     cc <- apply(x, 2,
                 function(y) mean((y - mean(y, na.rm = TRUE))^2,

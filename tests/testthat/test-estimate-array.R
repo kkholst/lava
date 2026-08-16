@@ -59,3 +59,24 @@ test_that("estimate.array quantile", {
   e4 <- estimate(y, type="quantile7", probs=qq)
   expect_equivalent(coef(e4), quantile(y, qq))
 })
+
+test_that("estimate.array id", {
+  set.seed(1)
+  y <- cbind(rnorm(10))
+  id <- 1:10
+  e <- estimate(y, id=id, type="mean")
+  expect_equivalent(index(e), id)
+  # check correct order
+  expect_equivalent(IC(e), y-mean(y))
+  # string id
+  ids <- rev(paste0("i", id))
+  e <- estimate(y, id=ids)
+  expect_equivalent(index(e), ids)
+  expect_equivalent(IC(e), y-mean(y))
+  # rownames id
+  ys <- y
+  rownames(ys) <- ids
+  e <- estimate(ys)
+  expect_equivalent(index(e), ids)
+  expect_equivalent(IC(e), ys-mean(ys))
+})
