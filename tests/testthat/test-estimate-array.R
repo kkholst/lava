@@ -36,3 +36,15 @@ test_that("estimate.array variance handles NA without poisoning", {
   expect_no_error(e <- estimate(x, type = "variance"))
   expect_true(all(is.finite(coef(e))))
 })
+
+test_that("estimate.array quantile", {
+  set.seed(1)
+  y <- cbind(rnorm(100))
+  q <- 0.75
+  est <- quantile(y, type = 1L, probs=q)
+  dens <- density(y)
+  dens.est <- approxfun(dens)(est)
+  infl <- (q- (y <= est)) / dens.est
+  e <- estimate(coef = est, IC = infl)
+  e2 <- estimate(y, type="quantile", probs=q)
+})
