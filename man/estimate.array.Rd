@@ -10,7 +10,9 @@
 \arguments{
 \item{x}{numeric matrix}
 
-\item{type}{target parameter ("mean", "variance", "quantile")}
+\item{type}{target parameter ("mean", "variance", "quantile"). The type of
+quantile (see \code{stats::quantile}) can be chosen with "quantile1",
+"quantile2", ...}
 
 \item{probs}{numeric vector of probabilities (for type="quantile")}
 
