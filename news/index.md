@@ -4,6 +4,11 @@
 
 - `merge.estimate` by default no longer sorts IC by id (old behaviour
   via new argument `sort=TRUE`)
+- `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
+  corresponding to the type argument of
+  [`stats::quantile`](https://rdrr.io/r/stats/quantile.html). The `id`
+  index is now automatically derived from the row names unless explictly
+  specified as an argument.
 
 ## lava 1.9.2
 

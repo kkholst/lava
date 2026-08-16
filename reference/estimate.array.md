@@ -17,7 +17,10 @@ estimate(x, type = "mean", probs = 0.5, ...)
 
 - type:
 
-  target parameter ("mean", "variance", "quantile")
+  target parameter ("mean", "variance", "quantile"). The type of
+  quantile (see
+  [`stats::quantile`](https://rdrr.io/r/stats/quantile.html)) can be
+  chosen with "quantile1", "quantile2", ...
 
 - probs:
 
