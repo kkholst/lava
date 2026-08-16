@@ -160,7 +160,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'
 #' ## Simulation from logistic regression model
 #' m <- lvm(y~x+z);
-#' distribution(m,y~x) <- binomial.lvm("logit")
+#' distribution(m,y~x) <- dist_bernoulli("logit")
 #' d <- sim(m,1000)
 #' g <- glm(y~z+x,data=d,family=binomial())
 #' g0 <- glm(y~1,data=d,family=binomial())

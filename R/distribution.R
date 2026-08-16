@@ -5,7 +5,13 @@
 "distribution" <- function(x,...,value) UseMethod("distribution")
 
 ##' @export
-"distribution<-.lvm" <- function(x,variable,parname=NULL,init,mdist=FALSE,...,value) {
+"distribution<-.lvm" <- function(x,
+                                 variable,
+                                 parname=NULL,
+                                 init,
+                                 mdist=FALSE,
+                                 ...,
+                                 value) {
     if (inherits(variable,"formula")) variable <- all.vars(variable)
     dots <- list(...)
 
@@ -108,6 +114,8 @@
     if (multivariate) return(x$attributes$mdistribution)
     x$attributes$distribution[var]
 }
+
+################################################################################
 
 ##' @export
 dist_gaussian <- function(link="identity",mean,sd,log=FALSE,...) {

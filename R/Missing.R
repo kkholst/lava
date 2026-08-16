@@ -21,7 +21,7 @@
 ##' @param suffix If missing.name is missing, then the name of the
 ##' oberved data variable will be the name of the full-data variable +
 ##' the suffix
-##' @param ... Passed to binomial.lvm.
+##' @param ... Passed to dist_bernoulli
 ##' @return lvm object
 ##' @aliases Missing, Missing<-
 ##' @examples
@@ -67,7 +67,7 @@ Missing <- function(object,formula,Rformula,missing.name,suffix="0",...){
     }
     newf <- update(formula,paste(".~.+",indicatorname))
     if (is.null(distribution(object,indicatorname)[[1]]) || length(list(...))>0) {
-        distribution(object,indicatorname) <- binomial.lvm(...)
+        distribution(object,indicatorname) <- dist_bernoulli(...)
     }
     transform(object,newf) <- function(u){
         out <- u[,1]

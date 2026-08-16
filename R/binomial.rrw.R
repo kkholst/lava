@@ -21,8 +21,8 @@
 ##' regression(m) <- op ~ x
 ##' intercept(m, ~lp) <- 0.4   ## constant linear predictor for RD
 ##' intercept(m, ~op) <- 0     ## odds product = exp(0) = 1
-##' distribution(m, ~lp) <- normal.lvm(sd = 0)
-##' distribution(m, ~op) <- normal.lvm(sd = 0)
+##' distribution(m, ~lp) <- dist_gaussian(sd = 0)
+##' distribution(m, ~op) <- dist_gaussian(sd = 0)
 ##' m <- binomial.rd(m, response = "y", exposure = "z",
 ##'                  target.model = "lp", nuisance.model = "op")
 ##' set.seed(1)
@@ -48,8 +48,8 @@
 ##' regression(m) <- op ~ x
 ##' intercept(m, ~lp) <- log(1.5)   ## constant log relative-risk
 ##' intercept(m, ~op) <- 0          ## odds product = 1
-##' distribution(m, ~lp) <- normal.lvm(sd = 0)
-##' distribution(m, ~op) <- normal.lvm(sd = 0)
+##' distribution(m, ~lp) <- dist_gaussian(sd = 0)
+##' distribution(m, ~op) <- dist_gaussian(sd = 0)
 ##' m <- binomial.rr(m, response = "y", exposure = "z",
 ##'                  target.model = "lp", nuisance.model = "op")
 ##' set.seed(1)
@@ -59,21 +59,21 @@
 ##' log(1.5)
 binomial.rd <- function(x,response,exposure,
                  target.model,nuisance.model,
-                 exposure.model=binomial.lvm(),...) {
+                 exposure.model=dist_bernoulli(),...) {
     binomial.rrw(x,response,exposure,target.model,nuisance.model,exposure.model,type="rd",...)
 }
 
 ##' @export
 binomial.rr <- function(x,response,exposure,
                  target.model,nuisance.model,
-                 exposure.model=binomial.lvm(),...) {
+                 exposure.model=dist_bernoulli(),...) {
     binomial.rrw(x,response,exposure,target.model,nuisance.model,exposure.model,type="rr",...)
 }
 
 
 binomial.rrw <- function(x, response, exposure,
                  target.model, nuisance.model,
-                 exposure.model=binomial.lvm(), type="rd", ...) {
+                 exposure.model=dist_bernoulli(), type="rd", ...) {
     if (inherits(response,"formula")) {
         vars <- all.vars(response)
         if (length(vars)==1L) {
@@ -102,7 +102,7 @@ binomial.rrw <- function(x, response, exposure,
                          type="Binomial regression (exposure | relative-risk | odds-product)"))
     }
     if (is.null(distribution(x)[[exposure]]))
-        distribution(x, exposure) <- binomial.lvm(link="logit")
+        distribution(x, exposure) <- dist_bernoulli(link="logit")
     covariance(x,c(target.model,nuisance.model)) <- 0
     distribution(x,exposure) <- exposure.model
     names(val) <- response

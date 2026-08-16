@@ -182,8 +182,8 @@ m <- lvm() |>
   regression(y3 ~ x3 + a + w) |>
   regression(y4 ~ x4 + a + w) |>
   regression(a ~ w) |>
-  distribution(~ y1 + y2 + y3 + y4 + a, value = binomial.lvm()) |>
-  distribution(~id, value = Sequence.lvm(integer = TRUE))
+  distribution(~ y1 + y2 + y3 + y4 + a, value = dist_bernoulli()) |>
+  distribution(~id, value = dist_seq(integer = TRUE))
 ```
 
 We simulate from the model where $Y_3$ is only observed for half of the subjects

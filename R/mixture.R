@@ -39,7 +39,7 @@
 #'
 #' \donttest{
 #' m0 <- lvm(list(y~x+z,x~z))
-#' distribution(m0,~z) <- binomial.lvm()
+#' distribution(m0,~z) <- dist_bernoulli()
 #' d <- sim(m0,2000,p=c("y~z"=2,"y~x"=1),seed=1)
 #'
 #' ## unmeasured confounder example
