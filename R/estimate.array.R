@@ -25,12 +25,14 @@ IC_quantile <- function(x, estimate, probs=0.5, type = 7, ...) {
 #' @export
 #' @aliases estimate.array estimate.data.frame
 #' @param x numeric matrix
-#' @param type target parameter ("mean", "variance", "quantile")
+#' @param type target parameter ("mean", "variance", "quantile"). The type of
+#'   quantile (see `stats::quantile`) can be chosen with "quantile1",
+#'   "quantile2", ...
 #' @param probs numeric vector of probabilities (for type="quantile")
 #' @param ... Additional arguments to lower level functions (i.e.,
 #'   stats::density.default when type="quantile")
 #' @return Object of class `estimate` (see [estimate.default]).
-estimate.array <- function(x, type="mean", probs=0.5, ...) {
+estimate.array <- function(x, type = "mean", probs = 0.5, ...) {
   cl <- match.call()
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
@@ -39,8 +41,13 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
   density.args <- dots[]
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
+  if (!("id" %in% names(dots))) {
+    dots[["id"]] <- rownames(x)
+  }
   if (tolower(type) %in% c("var", "variance")) {
-    cc <- apply(x, 2, function(y) mean((y - mean(y, na.rm=TRUE))^2, na.rm = TRUE))
+    cc <- apply(x, 2,
+                function(y) mean((y - mean(y, na.rm = TRUE))^2,
+                                 na.rm = TRUE))
     ic <- ic^2
     for (i in seq_len(NCOL(ic))) {
       ic[, i] <- ic[, i] - cc[i]
