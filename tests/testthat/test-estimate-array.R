@@ -44,7 +44,18 @@ test_that("estimate.array quantile", {
   est <- quantile(y, type = 1L, probs=q)
   dens <- density(y)
   dens.est <- approxfun(dens)(est)
-  infl <- (q- (y <= est)) / dens.est
-  e <- estimate(coef = est, IC = infl)
-  e2 <- estimate(y, type="quantile", probs=q)
+  infl <- (q - (y <= est)) / dens.est
+  e1 <- estimate(coef = est, IC = infl)
+  e2 <- estimate(y, type="quantile1", probs=q)
+  # check manual vs quantile1 calc.
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+  # default for stats::quantile is type=7
+  e3 <- estimate(y, type="quantile7", probs=q)
+  expect_true(coef(e1) != coef(e3))
+  expect_equivalent(coef(e3), quantile(y, probs=q))
+  # check that multiple quantiles works
+  qq <- c(0.25, 0.5, 0.75)
+  e4 <- estimate(y, type="quantile7", probs=qq)
+  expect_equivalent(coef(e4), quantile(y, qq))
 })
