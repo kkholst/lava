@@ -7,7 +7,6 @@
     now automatically derived from the row names unless explictly specified as
     an argument.
 
-
 # lava 1.9.2
   - `estimate.default`: the `null`, `contrast`, `type`, and `var.adj` arguments
     are soft-deprecated. Use `summary(estimate(...), null=, contrast=, type=,

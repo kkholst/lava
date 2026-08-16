@@ -287,7 +287,7 @@ print_eventHistory <- function(x,...) {
 
 
 ##' @export
-coxWeibull.lvm <- function(scale=1/100,shape=2, param=1) {
+dist_cox_weibull <- function(scale=1/100,shape=2, param=1) {
     ## proportional hazard (Cox) parametrization.
     ##
     ## Here we parametrize the Weibull distribution
@@ -344,9 +344,11 @@ coxWeibull.lvm <- function(scale=1/100,shape=2, param=1) {
     return(f)
 }
 
+##' @export
+coxWeibull.lvm <- dist_cox_weibull
 
 ##' @export
-coxExponential.lvm <- function(scale=1,rate=1,timecut){
+dist_cox_exponential <- function(scale=1,rate=1,timecut){
     if (missing(timecut)) {
         return(coxWeibull.lvm(shape=1, rate))
     }
@@ -382,7 +384,10 @@ coxExponential.lvm <- function(scale=1,rate=1,timecut){
 }
 
 ##' @export
-aalenExponential.lvm <- function(rate=1,timecut=0){
+coxExponential.lvm <- dist_cox_exponential
+
+##' @export
+dist_aalen_exponential <- function(rate=1,timecut=0){
     if (missing(timecut)==1) {
         return(coxWeibull.lvm(shape=1,rate))
     }
@@ -418,12 +423,17 @@ aalenExponential.lvm <- function(rate=1,timecut=0){
     return(f)
 }
 
+##' @export
+aalenExponential.lvm <- dist_aalen_exponential
 
 ##' @export
-coxGompertz.lvm <- function(shape=1,scale) {
+dist_cox_gompertz <- function(shape=1,scale) {
     f <- function(n,mu,var,...) {
         (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
     }
     attr(f,"family") <- list(family="gompertz",par=c(shape,scale))
     return(f)
 }
+
+##' @export
+coxGompertz.lvm <- dist_cox_gompertz
