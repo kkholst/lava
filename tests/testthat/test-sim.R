@@ -136,9 +136,9 @@ test_that("distributions", {
     testthat::expect_equivalent(ex$x4,seq(2,6))
 
     m <- lvm()
-    distribution(m,~x1) <- Binary.lvm()
-    distribution(m,~x2) <- Binary.lvm(p=0.5)
-    distribution(m,~x3) <- Binary.lvm(interval=c(0.4,0.6))
+    distribution(m,~x1) <- dist_ones()
+    distribution(m,~x2) <- dist_ones(p=0.5)
+    distribution(m,~x3) <- binary.lvm(interval=c(0.4,0.6))
     ex <- sim(m,10)
     testthat::expect_equivalent(ex$x1,rep(1,10))
     testthat::expect_equivalent(ex$x2,c(rep(0,5),rep(1,5)))
