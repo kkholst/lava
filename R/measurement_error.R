@@ -78,9 +78,9 @@ measurement_error <- function(model1, formula, data=parent.frame(),
 
 #' @export
 measurement.error <- function(...) {
-  .Defunct("measurement_error", package = "lava",
+  .Deprecated("measurement_error", package = "lava",
     msg = paste(
-      "'measurement.error' is defunct. Use measurement_error instead."
+      "`measurement.error` is deprecated. Use `measurement_error` instead."
     )
   )
   measurement_error(...)

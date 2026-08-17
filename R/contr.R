@@ -52,6 +52,10 @@ pairwise_diff <- function(n) {
 
 ##' @export
 pairwise.diff <- function(n) {
-  warning("Deprecated, use `pairwise_diff`")
+  .Deprecated("pairwise_diff", package = "lava",
+              msg = paste(
+                "`pairwise.diff` is deprecated. Use `pairwise_diff` instead."
+              )
+              )
   pairwise_diff(n)
 }
