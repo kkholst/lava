@@ -129,18 +129,9 @@ dist_gaussian <- function(link="identity",mean,sd,log=FALSE,...) {
 }
 
 ##' @export
-normal.lvm <- dist_gaussian
-
-##' @export
-gaussian.lvm <- normal.lvm
-
-##' @export
 dist_lognormal <- function(...) {
   structure(normal.lvm(...,log=TRUE),family=list(family="log-normal",...))
 }
-
-##' @export
-lognormal.lvm <- dist_lognormal
 
 ##' @export
 dist_poisson <- function(link="log",lambda,...) {
@@ -157,8 +148,6 @@ dist_poisson <- function(link="log",lambda,...) {
     return(f)
 }
 
-##' @export
-poisson.lvm <- dist_poisson
 
 ## @examples
 ## m <- lvm()
@@ -189,9 +178,6 @@ dist_pareto <- function(lambda=1,...) {   ## shape: lambda, scale: mu
 }
 
 ##' @export
-pareto.lvm <- dist_pareto
-
-##' @export
 dist_threshold <- function(p,labels=NULL,...) {
     if (sum(p)>1 || any(p<0 | p>1)) stop("wrong probability vector") ;
     if (!is.null(labels))
@@ -203,9 +189,6 @@ dist_threshold <- function(p,labels=NULL,...) {
 }
 
 ##' @export
-threshold.lvm <- dist_threshold
-
-##' @export
 dist_multinomial <- function(prob, labels=NULL) {
   if (sum(prob)<1)
     prob <- c(prob, 1-sum(prob))
@@ -215,9 +198,6 @@ dist_multinomial <- function(prob, labels=NULL) {
   structure(function(n, ...) sample(labels, n, prob=prob, replace=TRUE),
             family=list(family='multinomial', par=prob))
 }
-
-##' @export
-multinomial.lvm <- dist_multinomial
 
 ##' @export
 dist_bernoulli <- function(link="logit",p,size=1) {
@@ -245,15 +225,6 @@ dist_bernoulli <- function(link="logit",p,size=1) {
     ##}
     return(f)
 }
-
-##' @export
-binomial.lvm <- dist_bernoulli
-
-##' @export
-logit.lvm <- binomial.lvm("logit")
-
-##' @export
-probit.lvm <- binomial.lvm("probit")
 
 ##' @export
 dist_gamma <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,...) {
@@ -293,13 +264,7 @@ dist_gamma <- function(link="inverse",shape,rate,unit=FALSE,var=FALSE,log=FALSE,
 }
 
 ##' @export
-Gamma.lvm <- dist_gamma
-
-##' @export
 dist_loggamma <- function(...) dist_gamma(..., log=TRUE)
-
-##' @export
-loggamma.lvm <- dist_loggamma
 
 ##' @export
 dist_chisq <- function(df=1,...) {
@@ -309,9 +274,6 @@ dist_chisq <- function(df=1,...) {
 }
 
 ##' @export
-chisq.lvm <- dist_chisq
-
-##' @export
 dist_t <- function(df=2, mu, sigma,...) {
     f <- function(n,mu,var,...) mu + sqrt(var)*rt(n,df=df)
     if (!missing(mu)) attr(f,"mean") <- mu
@@ -319,9 +281,6 @@ dist_t <- function(df=2, mu, sigma,...) {
     attr(f, "family") <- list(family="student-t")
     return(f)
 }
-
-##' @export
-student.lvm <- dist_t
 
 ##' @export
 dist_uniform <- function(a,b, value=NULL) {
@@ -340,10 +299,7 @@ dist_uniform <- function(a,b, value=NULL) {
   return(f)
 }
 
-##' @export
-uniform.lvm <- dist_uniform
-
-## see also eventTime.R for coxWeibull
+## see also eventTime.R for dist_cox_weibull
 ##' @export
 dist_weibull <- function(intercept=0, sigma=.5, scale, shape) {
     ## accelerated failure time (AFT) regression
@@ -376,13 +332,7 @@ dist_weibull <- function(intercept=0, sigma=.5, scale, shape) {
 }
 
 ##' @export
-weibull.lvm <- dist_weibull
-
-##' @export
 dist_seqint <- function(...) Sequence.lvm(integer=TRUE)
-
-##' @export
-id.lvm <- dist_seqint
 
 ##' @export
 dist_seq <- function(a=0,b=1,integer=FALSE) {
@@ -405,9 +355,6 @@ dist_seq <- function(a=0,b=1,integer=FALSE) {
 }
 
 ##' @export
-Sequence.lvm <- dist_seq
-
-##' @export
 dist_none <- function(...) {
   f <- function(n, mu, ...) {
     return(mu)
@@ -415,9 +362,6 @@ dist_none <- function(...) {
   attr(f, "family") <- list(family="intervention")
   return(f)
 }
-
-##' @export
-none.lvm <- dist_none
 
 ##' @export
 dist_const <- function(value=NA) {
@@ -428,9 +372,6 @@ dist_const <- function(value=NA) {
   attr(f, "family") <- list(family="constant", par=list(value=value))
   return(f)
 }
-
-##' @export
-constant.lvm <- dist_const
 
 ##' @export
 dist_ones <- function(p=1,interval=NULL) {
@@ -457,15 +398,6 @@ dist_ones <- function(p=1,interval=NULL) {
 }
 
 ##' @export
-ones.lvm <- dist_ones
-
-##' @export
-Binary.lvm <- ones.lvm
-
-##' @export
-binary.lvm <- ones.lvm
-
-##' @export
 dist_beta <- function(alpha=1,beta=1,scale=TRUE) {
     ## CDF: F(x) = B(x,alpha,beta)/B(alpha,beta)
     ## Mean: alpha/(alpha+beta)
@@ -484,9 +416,6 @@ dist_beta <- function(alpha=1,beta=1,scale=TRUE) {
 }
 
 ##' @export
-beta.lvm <- dist_beta
-
-##' @export
 dist_mvn <- function(N=2,rho=0.5,sigma=NULL,parname="rho") {
     f <- function(n,rho) {
         if (is.null(sigma)) {
@@ -499,10 +428,13 @@ dist_mvn <- function(N=2,rho=0.5,sigma=NULL,parname="rho") {
 }
 
 ##' @export
-mvn.lvm <- dist_mvn
-
-##' @export
-dist_gaussian_mixture2 <- function(...,parname=c("Pr","M1","M2","V1","V2"),init=c(0.5,-4,4,1,1)) {
+dist_gaussian_mixture2 <- function(...,
+                                   parname=c("Pr",
+                                             "M1","M2",
+                                             "V1","V2"),
+                                   init=c(0.5,
+                                          -4,4,
+                                          1,1)) {
     f <- function(n,pr,m1,m2,v1,v2) {
         y1 <- rnorm(n,m1,v1^0.5)
         if (pr>=1) return(y1)
@@ -514,10 +446,13 @@ dist_gaussian_mixture2 <- function(...,parname=c("Pr","M1","M2","V1","V2"),init=
 }
 
 ##' @export
-GM2.lvm <- dist_gaussian_mixture2
-
-##' @export
-dist_gaussian_mixture3 <- function(...,parname=c("Pr1","Pr2","M1","M2","M3","V1","V2","V3"),init=c(0.25,0.5,-4,0,4,1,1,1)) {
+dist_gaussian_mixture3 <- function(...,
+                                   parname=c("Pr1","Pr2",
+                                             "M1","M2","M3",
+                                             "V1","V2","V3"),
+                                   init=c(0.25,0.5,
+                                          -4,0,4,
+                                          1,1,1)) {
     f <- function(n,pr1,pr2,m1,m2,m3,v1,v2,v3) {
         p <- c(pr1,pr2,1-pr1-pr2)
         y1 <- rnorm(n,m1,v1^0.5)
@@ -529,5 +464,3 @@ dist_gaussian_mixture3 <- function(...,parname=c("Pr1","Pr2","M1","M2","M3","V1"
     structure(f,parname=parname,init=init)
 }
 
-##' @export
-GM3.lvm <- dist_gaussian_mixture3

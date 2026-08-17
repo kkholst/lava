@@ -31,7 +31,7 @@
 ##' @aliases dist_gamma Gamma.lvm gamma.lvm
 ##' @aliases dist_loggamma loggamma.lvm
 ##' @aliases dist_threshold threshold.lvm
-##' @aliases dist_ones ones.lvm Binary.lvm binary.lvm
+##' @aliases dist_ones ones.lvm binary.lvm
 ##' @aliases dist_seq Sequence.lvm
 ##' @aliases dist_seqint dist_id
 ##' @aliases dist_none none.lvm

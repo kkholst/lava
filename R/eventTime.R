@@ -1,8 +1,7 @@
-##' Add an observed event time outcome to a latent variable model.
-##'
-##' For example, if the model 'm' includes latent event time variables
-##' are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored),
-##' then one can specify
+##' @title Add an observed event time outcome to a latent variable model.
+##' @description For example, if the model 'm' includes latent event time
+##'   variables are called 'T1' and 'T2' and 'C' is the end of follow-up (right
+##'   censored), then one can specify
 ##'
 ##' \code{eventTime(object=m,formula=ObsTime~min(T1=a,T2=b,C=0,"ObsEvent"))}
 ##'
@@ -88,8 +87,10 @@
 ##' # which produce exactly the same random numbers:
 ##'
 ##' model.aft <- lvm()
-##' distribution(model.aft,"eventtime") <- dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
-##' distribution(model.aft,"censtime") <- dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
+##' distribution(model.aft,"eventtime") <-
+##'   dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
+##' distribution(model.aft,"censtime") <-
+##'   dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
 ##' sim(model.aft,6,seed=17)
 ##'
 ##' model.aft <- lvm()
@@ -253,39 +254,6 @@ print_eventHistory <- function(x,...) {
     TRUE
 }
 
-## addhook("simulate_eventHistory","sim.hooks")
-
-## simulate.eventHistory <- function(x,data,...){
-##   if (is.null(eventTime(x))) {
-##     return(data)
-##   }
-##   else{
-##     for (eh in eventTime(x)) {
-##       if (any((found <- match(eh$latentTimes,names(data),nomatch=0))==0)){
-##         warning("Cannot find latent time variable: ",
-##                 eh$latentTimes[found==0],".")
-##       }
-##       else{
-##         for (v in seq_along(eh$latentTimes)) {
-##           if (v==1){ ## initialize with the first latent time and event
-##             eh.time <- data[,eh$latentTimes[v]]
-##             eh.event <- rep(eh$events[v],NROW(data))
-##           } else{ ## now replace if next time is smaller
-##             ## in case of tie keep the first event
-##             eh.event[data[,eh$latentTimes[v]]<eh.time] <- eh$events[v]
-##             eh.time <- pmin(eh.time,data[,eh$latentTimes[v]])
-##           }
-##         }
-##       }
-##       data[,eh$names[1]] <- eh.time
-##       data[,eh$names[2]] <- eh.event
-##     }
-##     return(data)
-##   }
-## }
-
-
-
 ##' @export
 dist_cox_weibull <- function(scale=1/100,shape=2, param=1) {
     ## proportional hazard (Cox) parametrization.
@@ -345,9 +313,6 @@ dist_cox_weibull <- function(scale=1/100,shape=2, param=1) {
 }
 
 ##' @export
-coxWeibull.lvm <- dist_cox_weibull
-
-##' @export
 dist_cox_exponential <- function(scale=1,rate=1,timecut){
     if (missing(timecut)) {
         return(coxWeibull.lvm(shape=1, rate))
@@ -382,9 +347,6 @@ dist_cox_exponential <- function(scale=1,rate=1,timecut){
     attributes(f)$family <- list(family="CoxExponential",par=par)
     return(f)
 }
-
-##' @export
-coxExponential.lvm <- dist_cox_exponential
 
 ##' @export
 dist_aalen_exponential <- function(rate=1,timecut=0){
@@ -424,9 +386,6 @@ dist_aalen_exponential <- function(rate=1,timecut=0){
 }
 
 ##' @export
-aalenExponential.lvm <- dist_aalen_exponential
-
-##' @export
 dist_cox_gompertz <- function(shape=1,scale) {
     f <- function(n,mu,var,...) {
         (1/shape) * log(1 - (shape/scale) * (log(runif(n)) * exp(-mu)))
@@ -435,5 +394,3 @@ dist_cox_gompertz <- function(shape=1,scale) {
     return(f)
 }
 
-##' @export
-coxGompertz.lvm <- dist_cox_gompertz
