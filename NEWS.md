@@ -1,4 +1,4 @@
-# lava (development version)
+# lava 1.9.3
 
   - `merge.estimate` by default no longer sorts IC by id (old behaviour via new
     argument `sort=TRUE`)
