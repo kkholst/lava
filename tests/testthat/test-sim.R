@@ -170,7 +170,7 @@ test_that("eventTime", {
 
     ## Time varying effect
     m <- lvm(y~1)
-    distribution(m,~z1) <- Binary.lvm(0.5)
+    distribution(m,~z1) <- dist_ones(0.5)
     R <- log(cbind(c(0.2,0.7,0.9),c(0.5,0.3,0.3)))
     m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
    
