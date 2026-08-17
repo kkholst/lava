@@ -510,7 +510,7 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base
 
     other attached packages:
-    [1] lava_1.9.2.1
+    [1] lava_1.9.3
 
     loaded via a namespace (and not attached):
      [1] progressr_1.0.0        mets_1.3.12            cli_3.6.6

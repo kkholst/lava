@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x563ca37a9d28>
+#> <bytecode: 0x559b2527aaa0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1737,7 +1737,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6 lava_1.9.2.1  
+#> [1] survival_3.8-6 lava_1.9.3    
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
