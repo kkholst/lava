@@ -45,7 +45,11 @@ contr <- function(p, n, diff = TRUE, ...) {
 }
 
 ##' @export
-pairwise_diff <- function(n) {
+pairwise_diff <- function(n, idx=NULL) {
+  if (!is.null(idx)) {
+    if (any(idx > n)) stop("'n' must be larger or equal to any element of 'idx'")
+    return(contr(combn(idx, 2, simplify=FALSE), n))
+  }
   pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
   pdiff(n)
 }
