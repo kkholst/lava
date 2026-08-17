@@ -4,6 +4,7 @@
 \alias{contr}
 \alias{parsedesign}
 \alias{pairwise.diff}
+\alias{pairwise_diff}
 \title{Create contrast matrix}
 \usage{
 contr(p, n, diff = TRUE, ...)
