@@ -41,6 +41,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
 <ul><li>
 <code>merge.estimate</code> by default no longer sorts IC by id (old behaviour via new argument <code>sort=TRUE</code>)</li>
+<li>
+<code>estimate.array</code> allows arguments <code>type="quantileN"</code> where N=1,..,9 corresponding to the type argument of <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile</a></code>. The <code>id</code> index is now automatically derived from the row names unless explictly specified as an argument.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.2" id="lava-192">lava 1.9.2<a class="anchor" aria-label="anchor" href="#lava-192"></a></h2><p class="text-muted">CRAN release: 2026-06-30</p>
