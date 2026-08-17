@@ -1,10 +1,5 @@
 # Latent Variable Models (`lava`)
 
-- [Latent Variable Models (`lava`)](#latent-variable-models-lava)
-  - [Installation](#installation)
-  - [Citation](#citation)
-  - [Examples](#examples)
-
 A general implementation of Structural Equation Models with latent
 variables (MLE, 2SLS, and composite likelihood estimators) with both
 continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen
@@ -14,6 +9,12 @@ and non-linear latent variable models (Holst and Budtz-Joergensen (2020)
 for graph exploration (d-separation, back-door criterion), simulation of
 general non-linear latent variable models, and estimation of influence
 functions for a broad range of statistical models.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Citation](#citation)
+- [Examples](#examples)
 
 ## Installation
 
@@ -342,7 +343,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.529s
+#> 100 replications                 Time: 2.154s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066

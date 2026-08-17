@@ -56,17 +56,7 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><ul>
-<li>
-<a href="#latent-variable-models-lava">Latent Variable Models (<code>lava</code>)</a>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#citation">Citation</a></li>
-<li><a href="#examples">Examples</a></li>
-</ul>
-</li>
-</ul>
-<!-- README.md is generated from README.Rmd. Please edit that file --><!-- badges: start -->
+  <main id="main" class="col-md-9">
 <div class="section level1">
 <div class="page-header">
 <img src="logo.png" class="logo" alt=""><h1 id="latent-variable-models-lava">Latent Variable Models (<code>lava</code>)<a class="anchor" aria-label="anchor" href="#latent-variable-models-lava"></a>
@@ -74,6 +64,15 @@
 </div>
 <p></p>
 <p>A general implementation of Structural Equation Models with latent variables (MLE, 2SLS, and composite likelihood estimators) with both continuous, censored, and ordinal outcomes (Holst and Budtz-Joergensen (2013) <a href="doi:10.1007/s00180-012-0344-y" class="uri">doi:10.1007/s00180-012-0344-y</a>). Mixture latent variable models and non-linear latent variable models (Holst and Budtz-Joergensen (2020) <a href="doi:10.1093/biostatistics/kxy082" class="uri">doi:10.1093/biostatistics/kxy082</a>). The package also provides methods for graph exploration (d-separation, back-door criterion), simulation of general non-linear latent variable models, and estimation of influence functions for a broad range of statistical models.</p>
+<div class="section level2">
+<h2 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
+</h2>
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#citation">Citation</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -321,7 +320,7 @@
 <span><span class="op">}</span></span>
 <span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim.default.html">sim</a></span><span class="op">(</span><span class="va">onerun</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>, estimate<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, se<span class="op">=</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span>, short<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 100 replications                 Time: 2.529s</span></span>
+<span><span class="co">#&gt; 100 replications                 Time: 2.154s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate</span></span>
 <span><span class="co">#&gt; Mean           1.99533         1.00468           0.99066        0.99066</span></span>
