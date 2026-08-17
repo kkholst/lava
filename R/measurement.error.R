@@ -10,6 +10,7 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @seealso stack.estimate
 ##' @export
+##' @aliases measurement_error measurement.error
 ##' @examples
 ##' m <- lvm(c(y1,y2,y3)~u,c(y3,y4,y5)~v,u~~v,c(u,v)~x)
 ##' transform(m,u2~u) <- function(x) x^2
@@ -27,7 +28,7 @@
 ##'     cbind(u=mu[,"u"],u2=mu[,"u"]^2+var["u","u"],
 ##'           v=mu[,"v"],uv=mu[,"u"]*mu[,"v"]+var["u","v"])
 ##' }
-##' (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+##' (e <- measurement_error(e1, z~1+x, data=d, predictfun=pp))
 ##'
 ##' ## uu <- seq(-1,1,length.out=100)
 ##' ## pp <- estimate(e,function(p,...) p["(Intercept)"]+p["u"]*uu+p["u2"]*uu^2)$coefmat
@@ -38,7 +39,7 @@
 ##'     u <- seq(-1,1,length.out=100)
 ##'     plot(e, f, data=data.frame(u), ylim=c(-.5,2.5))
 ##' }
-measurement.error <- function(model1, formula, data=parent.frame(),
+measurement_error <- function(model1, formula, data=parent.frame(),
                        predictfun=function(mu,var,data,...) mu[,1]^2+var[1],
                        id1, id2, ...) {
     if (!inherits(model1,c("lvmfit","lvm.mixture"))) stop("Expected lava object ('lvmfit','lvm.mixture',...)")
@@ -75,4 +76,12 @@ measurement.error <- function(model1, formula, data=parent.frame(),
     structure(res,class=c("measurement.error","estimate"))
 }
 
-
+#' @export
+measurement.error <- function(...) {
+  .Defunct("measurement_error", package = "lava",
+    msg = paste(
+      "'measurement.error' is defunct. Use measurement_error instead."
+    )
+  )
+  measurement_error(...)
+}
