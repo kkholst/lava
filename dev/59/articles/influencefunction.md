@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x5643d81e2248>
+#> <bytecode: 0x563ca37a9d28>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1403,13 +1403,13 @@ pairwise comparisons of different exposure estimates:
 
 ``` r
 
-pairwise.diff(3)
+pairwise_diff(3)
 #>      [,1] [,2] [,3]
 #> [1,]    1   -1    0
 #> [2,]    1    0   -1
 #> [3,]    0    1   -1
-summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
-#> Call: estimate.default(x = gg, f = pairwise.diff(3), use = c(2, 4, 
+summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
+#> Call: estimate.default(x = gg, f = pairwise_diff(3), use = c(2, 4, 
 #>     6))
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%  97.5%   P-value

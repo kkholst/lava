@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5643d81e2248&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x563ca37a9d28&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1180,13 +1180,13 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <p>A particular useful contrast is the following for considering all pairwise comparisons of different exposure estimates:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/contr.html">pairwise.diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/contr.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      [,1] [,2] [,3]</span></span>
 <span><span class="co">#&gt; [1,]    1   -1    0</span></span>
 <span><span class="co">#&gt; [2,]    1    0   -1</span></span>
 <span><span class="co">#&gt; [3,]    0    1   -1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="fu"><a href="../reference/contr.html">pairwise.diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, use<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(x = gg, f = pairwise.diff(3), use = c(2, 4, </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="fu"><a href="../reference/contr.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, use<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(x = gg, f = pairwise_diff(3), use = c(2, 4, </span></span>
 <span><span class="co">#&gt;     6))</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err    2.5%  97.5%   P-value</span></span>
