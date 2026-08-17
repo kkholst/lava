@@ -17,11 +17,10 @@ eventTime(object, formula, eventName = "status", ...)
 \item{\dots}{Additional arguments to lower levels functions}
 }
 \description{
-For example, if the model 'm' includes latent event time variables
-are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored),
-then one can specify
-}
-\details{
+For example, if the model 'm' includes latent event time
+variables are called 'T1' and 'T2' and 'C' is the end of follow-up (right
+censored), then one can specify
+
 \code{eventTime(object=m,formula=ObsTime~min(T1=a,T2=b,C=0,"ObsEvent"))}
 
 when data are simulated from the model
@@ -105,8 +104,10 @@ sim(ma,6)
 # which produce exactly the same random numbers:
 
 model.aft <- lvm()
-distribution(model.aft,"eventtime") <- dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
-distribution(model.aft,"censtime") <- dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
+distribution(model.aft,"eventtime") <-
+  dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
+distribution(model.aft,"censtime") <-
+  dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
 sim(model.aft,6,seed=17)
 
 model.aft <- lvm()

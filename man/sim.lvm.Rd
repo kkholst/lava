@@ -68,7 +68,6 @@
 \alias{threshold.lvm}
 \alias{dist_ones}
 \alias{ones.lvm}
-\alias{Binary.lvm}
 \alias{binary.lvm}
 \alias{dist_seq}
 \alias{Sequence.lvm}
