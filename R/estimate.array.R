@@ -3,12 +3,12 @@ estimate.data.frame <- function(x, ...) {
   estimate(as.matrix(x), ...)
 }
 
-IC_quantile <- function(x, estimate, probs=0.5, ...) {
+IC_quantile <- function(x, estimate, probs=0.5, type = 7, ...) {
   x <- na.omit(x)
   f0 <- density(x, ...)
   ## U <- function(est) (tau - (x <= est))
   if (missing(estimate)) {
-    estimate <- quantile(x, probs=probs)
+    estimate <- quantile(x, probs=probs, type = type, ...)
   }
   res <- c()
   for (i in seq_len(length(estimate))) {
@@ -25,12 +25,14 @@ IC_quantile <- function(x, estimate, probs=0.5, ...) {
 #' @export
 #' @aliases estimate.array estimate.data.frame
 #' @param x numeric matrix
-#' @param type target parameter ("mean", "variance", "quantile")
+#' @param type target parameter ("mean", "variance", "quantile"). The type of
+#'   quantile (see `stats::quantile`) can be chosen with "quantile1",
+#'   "quantile2", ...
 #' @param probs numeric vector of probabilities (for type="quantile")
 #' @param ... Additional arguments to lower level functions (i.e.,
 #'   stats::density.default when type="quantile")
 #' @return Object of class `estimate` (see [estimate.default]).
-estimate.array <- function(x, type="mean", probs=0.5, ...) {
+estimate.array <- function(x, type = "mean", probs = 0.5, ...) {
   cl <- match.call()
   if (missing(x) || is.null(x)) {
     return(estimate(NULL, ...))
@@ -39,14 +41,22 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
   density.args <- dots[]
   cc <- apply(x, 2, function(y) mean(y, na.rm = TRUE))
   ic <- apply(x, 2, function(y) y - mean(y, na.rm = TRUE))
+  if (!("id" %in% names(dots))) {
+    dots[["id"]] <- rownames(x)
+  }
   if (tolower(type) %in% c("var", "variance")) {
-    cc <- apply(x, 2, function(y) mean((y - mean(y, na.rm=TRUE))^2, na.rm = TRUE))
+    cc <- apply(x, 2,
+                function(y) mean((y - mean(y, na.rm = TRUE))^2,
+                                 na.rm = TRUE))
     ic <- ic^2
     for (i in seq_len(NCOL(ic))) {
       ic[, i] <- ic[, i] - cc[i]
     }
   }
-  if (tolower(type) %in% c("quantile")) {
+  if (grepl("^quantile", tolower(type))) {
+    m <- regexpr("\\d+$", type)
+    quantile_type <- ifelse(m > 0,
+                            as.integer(regmatches(type, m)), 7)
     density.args <- list()
     dargs <- names(formals(density.default))
     didx <- which(dargs %in% names(dots))
@@ -55,12 +65,13 @@ estimate.array <- function(x, type="mean", probs=0.5, ...) {
       dots[dargs[didx]] <- NULL
     }
     cc <- unlist(apply(x, 2, function(y)
-      quantile(y, probs=probs, na.rm = TRUE),
+      quantile(y, probs=probs, na.rm = TRUE, type = quantile_type),
       simplify=FALSE))
     ic <- c()
     for (i in seq_len(NCOL(x))) {
       ic <- cbind(ic, do.call(IC_quantile,
-                        c(list(x[, i], probs=probs), density.args)))
+                              c(list(x[, i], probs=probs, type = quantile_type),
+                                density.args)))
     }
   }
   if (any(c("vcov", "IC") %in% names(list(...)))) {

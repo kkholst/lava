@@ -36,3 +36,47 @@ test_that("estimate.array variance handles NA without poisoning", {
   expect_no_error(e <- estimate(x, type = "variance"))
   expect_true(all(is.finite(coef(e))))
 })
+
+test_that("estimate.array quantile", {
+  set.seed(1)
+  y <- cbind(rnorm(100))
+  q <- 0.75
+  est <- quantile(y, type = 1L, probs=q)
+  dens <- density(y)
+  dens.est <- approxfun(dens)(est)
+  infl <- (q - (y <= est)) / dens.est
+  e1 <- estimate(coef = est, IC = infl)
+  e2 <- estimate(y, type="quantile1", probs=q)
+  # check manual vs quantile1 calc.
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+  # default for stats::quantile is type=7
+  e3 <- estimate(y, type="quantile7", probs=q)
+  expect_true(coef(e1) != coef(e3))
+  expect_equivalent(coef(e3), quantile(y, probs=q))
+  # check that multiple quantiles works
+  qq <- c(0.25, 0.5, 0.75)
+  e4 <- estimate(y, type="quantile7", probs=qq)
+  expect_equivalent(coef(e4), quantile(y, qq))
+})
+
+test_that("estimate.array id", {
+  set.seed(1)
+  y <- cbind(rnorm(10))
+  id <- 1:10
+  e <- estimate(y, id=id, type="mean")
+  expect_equivalent(index(e), id)
+  # check correct order
+  expect_equivalent(IC(e), y-mean(y))
+  # string id
+  ids <- rev(paste0("i", id))
+  e <- estimate(y, id=ids)
+  expect_equivalent(index(e), ids)
+  expect_equivalent(IC(e), y-mean(y))
+  # rownames id
+  ys <- y
+  rownames(ys) <- ids
+  e <- estimate(ys)
+  expect_equivalent(index(e), ids)
+  expect_equivalent(IC(e), ys-mean(ys))
+})
