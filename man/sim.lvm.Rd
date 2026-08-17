@@ -72,7 +72,7 @@
 \alias{dist_seq}
 \alias{Sequence.lvm}
 \alias{dist_seqint}
-\alias{dist_id}
+\alias{id.lvm}
 \alias{dist_none}
 \alias{none.lvm}
 \alias{dist_const}

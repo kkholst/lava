@@ -33,7 +33,7 @@
 ##' @aliases dist_threshold threshold.lvm
 ##' @aliases dist_ones ones.lvm binary.lvm
 ##' @aliases dist_seq Sequence.lvm
-##' @aliases dist_seqint dist_id
+##' @aliases dist_seqint id.lvm
 ##' @aliases dist_none none.lvm
 ##' @aliases dist_const constant.lvm
 ##' @usage
