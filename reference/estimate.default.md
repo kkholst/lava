@@ -309,7 +309,7 @@ For full theoretical background and worked examples see
 [merge.estimate](https://kkholst.github.io/lava/reference/merge.estimate.md),
 [contr](https://kkholst.github.io/lava/reference/contr.md),
 [parsedesign](https://kkholst.github.io/lava/reference/contr.md),
-[pairwise.diff](https://kkholst.github.io/lava/reference/contr.md),
+[pairwise_diff](https://kkholst.github.io/lava/reference/contr.md),
 [c.estimate](https://kkholst.github.io/lava/reference/c.estimate.md),
 [summary.estimate](https://kkholst.github.io/lava/reference/summary.estimate.md),
 `coef.estimate`, `vcov.estimate`, `transform.estimate`,

@@ -794,7 +794,7 @@ Functions for working with Influence Functions
   : Estimate method for formulas
 - [`estimate(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/estimate.lvm.md)
   : Estimation of parameters in a Latent Variable Model (lvm)
-- [`measurement.error()`](https://kkholst.github.io/lava/reference/measurement.error.md)
+- [`measurement_error()`](https://kkholst.github.io/lava/reference/measurement_error.md)
   : Two-stage (non-linear) measurement error
 - [`modelsearch()`](https://kkholst.github.io/lava/reference/modelsearch.md)
   : Model searching
