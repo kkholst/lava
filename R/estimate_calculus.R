@@ -505,6 +505,200 @@ prod.estimate <- function(x, ...) {
   }, ...)
 }
 
+# ---- Normal distribution ------------------------------------------------
+
+# Construct an `estimate` object from an elementwise (vectorized) function of
+# several arguments, each of which may either be a plain numeric vector or an
+# `estimate` object.
+#
+# `args` list of arguments (numeric vectors and/or `estimate` objects)
+# `fun`  function of a list of numeric vectors (same length/order as `args`)
+#        returning a list with elements
+#          `y`    the value (numeric vector), and
+#          `grad` list of elementwise partial derivatives dy/darg (one element
+#                 per element of `args`; entries belonging to numeric
+#                 arguments are ignored and may be `NULL`).
+# `...`  passed on to [estimate.default]
+elementwise_estimate <- function(args, fun, ...) {
+  is_est <- vapply(args, inherits, logical(1L), "estimate")
+  lens <- vapply(seq_along(args), function(i) {
+    if (is_est[i]) length(coef(args[[i]], messages = 0)) else length(args[[i]])
+  }, numeric(1L))
+  n <- max(lens)
+  if (any(lens != 1L & lens != n)) {
+    stop("expecting equal length objects or one of them to be a scalar")
+  }
+  est_idx <- which(is_est)
+  if (length(est_idx) == 0L) { # no uncertainty, plain numeric evaluation
+    return(fun(args)$y)
+  }
+  npar <- lens[est_idx]
+  offset <- cumsum(c(0, npar))
+  # names of the resulting parameter vector (inherited from the first
+  # `estimate` argument of full length, cf. `sin.estimate` and friends)
+  nm <- NULL
+  for (i in est_idx) {
+    if (lens[i] == n) {
+      nm <- names(coef(args[[i]], messages = 0))
+      break
+    }
+  }
+  e <- if (length(est_idx) == 1L) {
+    args[[est_idx]]
+  } else {
+    do.call(merge, unname(args[est_idx]))
+  }
+  estimate(e, function(p) {
+    vals <- args
+    for (j in seq_along(est_idx)) {
+      vals[[est_idx[j]]] <- p[offset[j] + seq_len(npar[j])]
+    }
+    res <- fun(vals)
+    y <- rep_len(as.vector(res$y), n)
+    if (!is.null(nm)) names(y) <- nm
+    grad <- matrix(0, nrow = n, ncol = sum(npar))
+    for (j in seq_along(est_idx)) {
+      d <- rep_len(as.vector(res$grad[[est_idx[j]]]), n)
+      cols <- offset[j] + seq_len(npar[j])
+      grad[, cols] <- if (npar[j] == 1L) {
+        matrix(d, nrow = n, ncol = 1L)
+      } else {
+        diag(d, nrow = n, ncol = n)
+      }
+    }
+    structure(y, grad = grad)
+  }, ...)
+}
+
+#' Normal distribution
+#'
+#' Density (`normpdf`), distribution function (`normcdf`), and quantile
+#' function (`norminv`) of the normal distribution. In contrast to
+#' [stats::dnorm], [stats::pnorm], and [stats::qnorm] these are S3 generic
+#' functions, and methods are available for objects of class `estimate` (see
+#' [estimate.default]) in which case the delta method is applied to obtain the
+#' influence function (and hence robust standard errors) of the transformed
+#' parameter.
+#'
+#' Any of the arguments `x`/`q`/`p`, `mean` and `sd` may be an `estimate`
+#' object. When more than one of them is an `estimate` object the objects are
+#' first merged (see [merge.estimate]) and the joint delta method is applied,
+#' correctly propagating the dependence between them.
+#'
+#' @param x,q vector of quantiles, or an `estimate` object
+#' @param p vector of probabilities, or an `estimate` object
+#' @param mean mean of the normal distribution (numeric or `estimate` object)
+#' @param sd standard deviation of the normal distribution (numeric or
+#'   `estimate` object)
+#' @param log,log.p if `TRUE` probabilities/densities are given as
+#'   \eqn{\log(p)}
+#' @param lower.tail if `TRUE` (default) probabilities are
+#'   \eqn{P(X\leq x)}, otherwise \eqn{P(X > x)}
+#' @param ... additional arguments to lower level functions (e.g., `labels`)
+#' @return A numeric vector (default method) or an object of class `estimate`.
+#' @seealso [estimate.default] [stats::dnorm]
+#' @author Klaus Kähler Holst
+#' @examples
+#' e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
+#' normcdf(e)
+#' normpdf(e)
+#' norminv(normcdf(e)) # identity
+#'
+#' ## mean and sd may themselves be estimates
+#' mu <- estimate(coef = c(mu = 0.5), vcov = 0.01)
+#' normcdf(e, mean = mu, sd = 2)
+#' @aliases normcdf normpdf norminv
+#' @export
+normcdf <- function(q, mean = 0, sd = 1, ...) UseMethod("normcdf")
+
+#' @export
+#' @rdname normcdf
+normcdf.default <- function(q, mean = 0, sd = 1,
+                            lower.tail = TRUE, log.p = FALSE, ...) {
+  if (inherits(mean, "estimate") || inherits(sd, "estimate")) {
+    return(normcdf.estimate(q, mean = mean, sd = sd,
+                            lower.tail = lower.tail, log.p = log.p, ...))
+  }
+  stats::pnorm(q, mean = mean, sd = sd,
+               lower.tail = lower.tail, log.p = log.p)
+}
+
+#' @export
+normcdf.estimate <- function(q, mean = 0, sd = 1,
+                             lower.tail = TRUE, log.p = FALSE, ...) {
+  elementwise_estimate(list(q, mean, sd), function(v) {
+    z <- (v[[1]] - v[[2]]) / v[[3]]
+    y <- stats::pnorm(z, lower.tail = lower.tail, log.p = log.p)
+    sgn <- if (lower.tail) 1 else -1
+    # d/dq of the (log) tail probability
+    logdens <- stats::dnorm(z, log = TRUE) - log(v[[3]])
+    dq <- sgn * exp(if (log.p) logdens - y else logdens)
+    list(y = y, grad = list(dq, -dq, -z * dq))
+  }, ...)
+}
+
+#' @export
+#' @rdname normcdf
+normpdf <- function(x, mean = 0, sd = 1, ...) UseMethod("normpdf")
+
+#' @export
+#' @rdname normcdf
+normpdf.default <- function(x, mean = 0, sd = 1, log = FALSE, ...) {
+  if (inherits(mean, "estimate") || inherits(sd, "estimate")) {
+    return(normpdf.estimate(x, mean = mean, sd = sd, log = log, ...))
+  }
+  stats::dnorm(x, mean = mean, sd = sd, log = log)
+}
+
+#' @export
+normpdf.estimate <- function(x, mean = 0, sd = 1, log = FALSE, ...) {
+  elementwise_estimate(list(x, mean, sd), function(v) {
+    s <- v[[3]]
+    z <- (v[[1]] - v[[2]]) / s
+    if (log) {
+      y <- stats::dnorm(z, log = TRUE) - base::log(s)
+      dx <- -z / s
+      ds <- (z^2 - 1) / s
+    } else {
+      y <- stats::dnorm(z) / s
+      dx <- -z / s * y
+      ds <- (z^2 - 1) / s * y
+    }
+    list(y = y, grad = list(dx, -dx, ds))
+  }, ...)
+}
+
+#' @export
+#' @rdname normcdf
+norminv <- function(p, mean = 0, sd = 1, ...) UseMethod("norminv")
+
+#' @export
+#' @rdname normcdf
+norminv.default <- function(p, mean = 0, sd = 1,
+                            lower.tail = TRUE, log.p = FALSE, ...) {
+  if (inherits(mean, "estimate") || inherits(sd, "estimate")) {
+    return(norminv.estimate(p, mean = mean, sd = sd,
+                            lower.tail = lower.tail, log.p = log.p, ...))
+  }
+  stats::qnorm(p, mean = mean, sd = sd,
+               lower.tail = lower.tail, log.p = log.p)
+}
+
+#' @export
+norminv.estimate <- function(p, mean = 0, sd = 1,
+                             lower.tail = TRUE, log.p = FALSE, ...) {
+  elementwise_estimate(list(p, mean, sd), function(v) {
+    s <- v[[3]]
+    z <- stats::qnorm(v[[1]], lower.tail = lower.tail, log.p = log.p)
+    y <- v[[2]] + s * z
+    sgn <- if (lower.tail) 1 else -1
+    # dz/dp = 1/phi(z) on the probability scale, p/phi(z) on the log scale
+    logp <- if (log.p) v[[1]] else 0
+    dp <- sgn * s * exp(logp - stats::dnorm(z, log = TRUE))
+    list(y = y, grad = list(dp, 1, z))
+  }, ...)
+}
+
 # ---- +,-,*,/ ------------------------------------------------------------
 
 operator_estimate <- function(x, y, op, ...) {

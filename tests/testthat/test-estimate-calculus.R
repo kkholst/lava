@@ -395,3 +395,137 @@ for (opname in names(ops)) {
     })
   }
 }
+
+## ---------------------------------------------------------------------------
+## Normal distribution: normcdf / normpdf / norminv
+## ---------------------------------------------------------------------------
+
+test_that("normcdf/normpdf/norminv default methods", {
+  x <- c(-1, 0, 1)
+  expect_equal(normcdf(x, 0.5, 2), pnorm(x, 0.5, 2))
+  expect_equal(normcdf(x, 0.5, 2, lower.tail = FALSE, log.p = TRUE),
+               pnorm(x, 0.5, 2, lower.tail = FALSE, log.p = TRUE))
+  expect_equal(normpdf(x, 0.5, 2), dnorm(x, 0.5, 2))
+  expect_equal(normpdf(x, 0.5, 2, log = TRUE), dnorm(x, 0.5, 2, log = TRUE))
+  pr <- c(0.1, 0.5, 0.9)
+  expect_equal(norminv(pr, 0.5, 2), qnorm(pr, 0.5, 2))
+  expect_equal(norminv(log(pr), 0.5, 2, lower.tail = FALSE, log.p = TRUE),
+               qnorm(log(pr), 0.5, 2, lower.tail = FALSE, log.p = TRUE))
+})
+
+test_that("normcdf.estimate", {
+  e1 <- normcdf(a)
+  e2 <- estimate(a, function(p) pnorm(p))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## lower.tail / log.p
+  e1 <- normcdf(a, lower.tail = FALSE, log.p = TRUE)
+  e2 <- estimate(a, function(p) pnorm(p, lower.tail = FALSE, log.p = TRUE))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## constant mean/sd
+  e1 <- normcdf(a, mean = 2, sd = 3)
+  e2 <- estimate(a, function(p) pnorm(p, 2, 3))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## mean and sd given as estimate objects
+  s <- estimate(coef = c(s = 1.5), IC = center_ic(10), id = 1:10)
+  e1 <- normcdf(a, mean = b, sd = s)
+  e2 <- estimate(merge(a, b, s),
+                 function(p) pnorm(p[1:2], p[3:4], p[5]))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## numeric first argument, estimate mean/sd (dispatch via default method)
+  e1 <- normcdf(1.5, mean = b, sd = s)
+  e2 <- estimate(merge(b, s), function(p) pnorm(1.5, p[1:2], p[3]))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## scalar estimate recycled against longer numeric argument
+  e1 <- normcdf(c(1, 2, 3), mean = s)
+  e2 <- estimate(s, function(p) pnorm(c(1, 2, 3), p))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  ## labels inherited
+  expect_equivalent(names(coef(normcdf(a))), names(coef(a)))
+})
+
+test_that("normpdf.estimate", {
+  s <- estimate(coef = c(s = 1.5), IC = center_ic(10), id = 1:10)
+  for (lg in c(FALSE, TRUE)) {
+    e1 <- normpdf(a, log = lg)
+    e2 <- estimate(a, function(p) dnorm(p, log = lg))
+    expect_equivalent(IC(e1), IC(e2))
+    expect_equivalent(coef(e1), coef(e2))
+
+    e1 <- normpdf(a, mean = b, sd = s, log = lg)
+    e2 <- estimate(merge(a, b, s),
+                   function(p) dnorm(p[1:2], p[3:4], p[5], log = lg))
+    expect_equivalent(IC(e1), IC(e2))
+    expect_equivalent(coef(e1), coef(e2))
+  }
+  ## exp(log-density) == density
+  e1 <- exp(normpdf(a, log = TRUE))
+  e2 <- normpdf(a)
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+})
+
+test_that("norminv.estimate", {
+  s <- estimate(coef = c(s = 1.5), IC = center_ic(10), id = 1:10)
+  pr <- estimate(coef = c(p1 = 0.3, p2 = 0.75),
+                 IC = center_ic(10, 2) / 20, id = 1:10)
+  e1 <- norminv(pr)
+  e2 <- estimate(pr, function(p) qnorm(p))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  e1 <- norminv(pr, lower.tail = FALSE)
+  e2 <- estimate(pr, function(p) qnorm(p, lower.tail = FALSE))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  lp <- log(pr)
+  e1 <- norminv(lp, lower.tail = FALSE, log.p = TRUE)
+  e2 <- estimate(lp, function(p) qnorm(p, lower.tail = FALSE, log.p = TRUE))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  e1 <- norminv(pr, mean = b, sd = s)
+  e2 <- estimate(merge(pr, b, s), function(p) qnorm(p[1:2], p[3:4], p[5]))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+
+  e1 <- norminv(0.975, mean = b, sd = s)
+  e2 <- estimate(merge(b, s), function(p) qnorm(0.975, p[1:2], p[3]))
+  expect_equivalent(IC(e1), IC(e2))
+  expect_equivalent(coef(e1), coef(e2))
+})
+
+test_that("normcdf/norminv are inverse transformations", {
+  pr <- estimate(coef = c(p1 = 0.3, p2 = 0.75),
+                 IC = center_ic(10, 2) / 20, id = 1:10)
+  e1 <- norminv(normcdf(a))
+  expect_equivalent(IC(e1), IC(a))
+  expect_equivalent(coef(e1), coef(a))
+  e1 <- normcdf(norminv(pr))
+  expect_equivalent(IC(e1), IC(pr))
+  expect_equivalent(coef(e1), coef(pr))
+})
+
+test_that("normcdf/normpdf/norminv work without influence function", {
+  e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
+  res <- normcdf(e)
+  expect_equivalent(coef(res), pnorm(coef(e)))
+  d <- diag(dnorm(coef(e)))
+  expect_equivalent(vcov(res), d %*% (diag(2) * 0.1) %*% d)
+})
+
+test_that("normcdf.estimate incompatible lengths", {
+  expect_error(normcdf(a, mean = c(1, 2, 3)))
+})
