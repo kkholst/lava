@@ -295,7 +295,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @aliases estimate estimate.default
 #' @aliases estimate.mlm
 #' @seealso [estimate.array], [merge.estimate], [contr], [parsedesign],
-#'   [pairwise.diff], [c.estimate], [summary.estimate],
+#'   [pairwise_diff], [c.estimate], [summary.estimate],
 #'   `coef.estimate`,
 #'   `vcov.estimate`, `transform.estimate`, `labels.estimate`,
 #' @return Object of class `estimate` with the following elements:

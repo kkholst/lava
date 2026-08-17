@@ -364,7 +364,7 @@ B \%*\% e == 1
 }
 \seealso{
 \link{estimate.array}, \link{merge.estimate}, \link{contr}, \link{parsedesign},
-\link{pairwise.diff}, \link{c.estimate}, \link{summary.estimate},
+\link{pairwise_diff}, \link{c.estimate}, \link{summary.estimate},
 \code{coef.estimate},
 \code{vcov.estimate}, \code{transform.estimate}, \code{labels.estimate},
 }
