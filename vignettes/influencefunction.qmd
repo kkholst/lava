@@ -954,9 +954,9 @@ contr(list(1, c(1, 2), c(1, 4)), n = 5)
 A particular useful contrast is the following for considering all pairwise
 comparisons of different exposure estimates:
 
-```{r pairwise.diff}
-pairwise.diff(3)
-summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
+```{r pairwise_diff}
+pairwise_diff(3)
+summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 ```
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
