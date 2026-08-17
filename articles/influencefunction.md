@@ -99,6 +99,7 @@ variance estimate via the `vcov` argument, without specifying the IC
 matrix.
 
 ``` r
+
 estimate(x=, ...)
 estimate(coef=, IC=, ...)
 estimate(coef=, vcov=, ...)
@@ -107,6 +108,7 @@ estimate(coef=, vcov=, ...)
 A typical call could look like
 
 ``` r
+
 merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
   transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
@@ -117,6 +119,7 @@ objects we can obtain new transformed parameter estimates with the
 syntax
 
 ``` r
+
 c(exp(b)^0.5, exp(b * a) / (1 + exp(-b)))
 ```
 
@@ -134,6 +137,7 @@ independent covariates X\_{ij}\sim\mathcal{N}(0,1),
 W\_{i}\sim\mathcal{N}(0,1).
 
 ``` r
+
 m <- lvm() |>
   regression(y1 ~ x1 + a + w) |>
   regression(y2 ~ x2 + a + w) |>
@@ -148,6 +152,7 @@ We simulate from the model where Y_3 is only observed for half of the
 subjects
 
 ``` r
+
 n <- 1e3
 dw <- sim(m, n, seed = 1) |>
   transform(y3 = y3 * ifelse(id > n / 2, NA, 1))
@@ -200,6 +205,7 @@ To estimate this parameter and its IF we will use the `estimate`
 function
 
 ``` r
+
 inp <- as.matrix(dw[, c("y1", "y2")])
 e <- estimate(inp[, 1, drop = FALSE], type="mean")
 class(e)
@@ -215,6 +221,7 @@ parameters can be extracted with the `vcov` and `coef` methods. The IF
 itself can be extracted with the `IC` (or `influence`) method:
 
 ``` r
+
 IC(e) |> Print()
 #>      y1    
 #> 1     0.435
@@ -234,6 +241,7 @@ It is also possible to simultaneously estimate the proportions of each
 of the two binary outcomes
 
 ``` r
+
 estimate(inp)
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> y1    0.565 0.01568 0.5343 0.5957 2.009e-284
@@ -243,6 +251,7 @@ estimate(inp)
 or alternatively the input can be a model object, here a `mlm` object:
 
 ``` r
+
 e <- lm(cbind(y1, y2) ~ 1, data = dw) |>
   estimate()
 IC(e) |> head()
@@ -258,6 +267,7 @@ IC(e) |> head()
 Different methods are available for inspecting an `estimate` object
 
 ``` r
+
 summary(e)
 #> Call: estimate.default(x = x, coef = pars(x))
 #> ────────────────────────────────────────────────────────────
@@ -320,6 +330,7 @@ As an example, we can obtain the estimates with robust standard errors
 for a logistic regression model:
 
 ``` r
+
 g <- glm(y1 ~ a + x1, data = dw, family = binomial)
 estimate(g)
 #>             Estimate Std.Err    2.5%   97.5%   P-value
@@ -332,6 +343,7 @@ We can compare that to the usual (non-robust) standard errors by
 supplying the model-based covariance matrix explicitly:
 
 ``` r
+
 estimate(g, vcov = vcov(g))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -0.4033 0.09682 -0.5930 -0.2135 3.111e-05
@@ -344,6 +356,7 @@ The IF can be extracted from the `estimate` object or directly from the
 model object
 
 ``` r
+
 IC(g) |> head()
 #>   (Intercept)          a         x1
 #> 1  0.07717226   4.001259 -0.7195347
@@ -362,6 +375,7 @@ x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{t}), \quad
 j=1,\ldots,J-1 \end{align\*}
 
 ``` r
+
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 #>     Estimate Std.Err   2.5% 97.5%   P-value
 #> 0|1   0.4033 0.09781 0.2116 0.595 3.743e-05
@@ -383,6 +397,7 @@ Primary Biliary Cholangitis Data ([Therneau and Grambsch
 2000](#ref-therneau00surv))
 
 ``` r
+
 library("survival")
 data(pbc, package="survival")
 ```
@@ -394,6 +409,7 @@ the baseline hazard. Here we fit a survival model with right-censored
 event times
 
 ``` r
+
 fit.phreg <- mets::phreg(Surv(time, status > 0) ~ age + sex, data = pbc)
 fit.phreg
 #> Call:
@@ -421,6 +437,7 @@ where \lambda_0(t) is the baseline hazard, can be estimated in similar
 way:
 
 ``` r
+
 baseline <- function(object, time, ...) {
   ic <- mets::IC(object, baseline = TRUE, time = time, ...)
   est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
@@ -438,6 +455,7 @@ survival models via
 here a Weibull model:
 
 ``` r
+
 survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull") |>
   estimate()
 #>             Estimate  Std.Err     2.5%     97.5%    P-value
@@ -457,6 +475,7 @@ U\_{i}\sim\mathcal{N}(0,\sigma\_{u}^{2}),\quad j=1,2 to the simulated
 dataset
 
 ``` r
+
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
   latent(~ u) |>
   ordinal(K=2, ~ y1 + y2)
@@ -490,6 +509,7 @@ estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of W
 and X_1
 
 ``` r
+
 eq <- estimate(dw[, c("w", "x1")], type = "quantile", probs = c(0.25, 0.5, 0.75))
 eq
 #>        Estimate Std.Err    2.5%    97.5%   P-value
@@ -547,6 +567,7 @@ fitted separately for Y_1 and Y_2 and combine the estimates and IFs
 using the `merge` method
 
 ``` r
+
 g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
@@ -574,6 +595,7 @@ example test for whether the odds-ratio is the same for the two
 responses:
 
 ``` r
+
 summary(estimate(e), contrast=cbind(0,1,0,-1), null=0)
 #> Call: estimate.default(x = e)
 #> ────────────────────────────────────────────────────────────
@@ -669,6 +691,7 @@ been estimated from different datasets (as the outcome Y_3 is only
 available in half of the data) with the `merge` function
 
 ``` r
+
 g2 <- glm(y2 ~ 1, family = binomial, data = dw)
 summary(g2)
 #> 
@@ -745,6 +768,7 @@ Note, it is also possible to directly specify the id-variables in the
 `merge` call:
 
 ``` r
+
 merge(e2, e3, id = list(dw$id, dwc$id))
 #>               Estimate Std.Err   2.5%  97.5%   P-value
 #> (Intercept)     0.2412  0.0637 0.1163 0.3660 0.0001533
@@ -759,6 +783,7 @@ used for estimating the model). This automatically works with all models
 and `IC` methods described in this document.
 
 ``` r
+
 estimate(g2) |>
   IC() |> head()
 #>   (Intercept)
@@ -782,6 +807,7 @@ model objects, i.e., assuming that there is complete independence
 between the estimates, the argument `id=NULL` can be used
 
 ``` r
+
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
 #> 1    -5.097e-16   5.698e+00  0.000e+00   
@@ -807,6 +833,7 @@ merge(g1, g2, id = NULL) |> vcov()
 To only keep a subset of the parameters the `keep` argument can be used.
 
 ``` r
+
 merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -817,6 +844,7 @@ The argument can be given either as character vector or a vector of
 indices:
 
 ``` r
+
 merge(g1, g2, keep=c(1, 3))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -826,6 +854,7 @@ merge(g1, g2, keep=c(1, 3))
 or as a vector of perl-style regular expressions
 
 ``` r
+
 merge(g1, g2, keep = "cept", regex = TRUE)
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -840,6 +869,7 @@ When merging estimates unique parameter names are created. It is also
 possible to rename the parameters with the `labels` argument
 
 ``` r
+
 merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
 #>   Estimate Std.Err    2.5%   97.5%   P-value
 #> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -861,6 +891,7 @@ Finally, the `subset` argument can be used to subset the parameters and
 IFs before the actual merging is being done
 
 ``` r
+
 merge(g1, g2, subset="(Intercept)")
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -885,6 +916,7 @@ variance of \widehat{\theta}. Turning back to the example data, we can
 estimate the marginal model
 
 ``` r
+
 g0 <- glm(y ~ a + w + x, data = dl, family = binomial())
 ```
 
@@ -893,6 +925,7 @@ independent is not consistent. Instead we can calculate the cluster
 robust standard errors from the above iid decomposition
 
 ``` r
+
 estimate(g0, id=dl$id)
 #>             Estimate Std.Err    2.5%   97.5%    P-value
 #> (Intercept) -0.05401 0.05665 -0.1650 0.05702  3.404e-01
@@ -906,6 +939,7 @@ estimates we obtain from a GEE marginal model with working independence
 correlation structure ([Halekoh et al. 2006](#ref-r_geepack))
 
 ``` r
+
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
 summary(gee0)
 #> 
@@ -940,6 +974,7 @@ iid and allows us to estimate the asymptotic variance. Obviously, the
 same grouping must be used across estimates when combining IFs.
 
 ``` r
+
 set.seed(1)
 y <- cbind(rnorm(1e5))
 N <- 2e2 ## Number of aggregated groups, the number of observations in the new IF
@@ -996,6 +1031,7 @@ To apply the delta method the transformation of the parameters function
 must be supplied to the `estimate` method (argument `f`)
 
 ``` r
+
 estimate(g1, sum)
 #>    Estimate Std.Err   2.5% 97.5%   P-value
 #> p1    1.032  0.1042 0.8283 1.237 3.672e-23
@@ -1025,6 +1061,7 @@ exactly. To illustrate this consider the following simple example where
 we consider two `estimate` objects each with a single parameter estimate
 
 ``` r
+
 set.seed(1)
 a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
 b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=1:10)
@@ -1034,6 +1071,7 @@ Parameter transformation can now be calculated directly as in the
 following examples
 
 ``` r
+
 a * b
 #>   Estimate Std.Err     2.5%  97.5% P-value
 #> a      0.4  0.2302 -0.05112 0.8511 0.08224
@@ -1072,6 +1110,7 @@ also Section on [Linear
 contrasts](#linear-contrasts-and-hypothesis-testing))
 
 ``` r
+
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
 #>           Estimate Std.Err     2.5%  97.5%  P-value
@@ -1108,10 +1147,11 @@ immediately apply most existing user-defined functions. To give an
 example consider the `logit` function
 
 ``` r
+
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x560e9ed981c8>
+#> <bytecode: 0x563552f67330>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1130,6 +1170,7 @@ above, and the `labels` function for renaming parameters. Together we
 can combine these methods via the pipe operator to create readable code:
 
 ``` r
+
 merge(a, b) |>  # merges the two `estimate` objects
   transform(prod) |> # calculates product of parameter estimates
   subset(1) |> # nothing happens here as the result was already 1-dim.
@@ -1141,6 +1182,7 @@ merge(a, b) |>  # merges the two `estimate` objects
 Finally, the `with` function can be used to reference parameter names
 
 ``` r
+
 e <- c("e1"=a, "e2"=b)
 with(e, c(est = e1*e2))
 #>     Estimate Std.Err     2.5%  97.5% P-value
@@ -1169,6 +1211,7 @@ We can implement this directly using the `estimate` function via the
 the point estimate given by the `coef` argument
 
 ``` r
+
 Cov <- function(x, y, ...) {
   est <- mean(x * y)-mean(x)*mean(y)
     estimate(
@@ -1187,6 +1230,7 @@ building blocks of \mathbb{E}X\_{1}, \mathbb{E}X\_{2}, and
 \mathbb{E}(X\_{1}X\_{2}).
 
 ``` r
+
 est <- lm(cbind(x1, x2, x1 * x2) ~ 1, data = dw) |>
   estimate(labels = c("E1", "E2", "E12"))
 est
@@ -1205,6 +1249,7 @@ The variance estimates can be estimated in the same way and combined to
 estimate the correlation
 
 ``` r
+
 v12 <- with(dw, Cov(x1, x2, id = id))
 v1  <- with(dw, Cov(x1, x1, id = id))
 v2  <- with(dw, Cov(x2, x2, id = id))
@@ -1222,6 +1267,7 @@ by using a variance stabilizing transformation, Fishers z-transform
 confidence limits with general better coverage can be obtained
 
 ``` r
+
 estimate(atanh(rho)) |>
   summary(transform = tanh)
 #> Call: estimate.default(x = atanh(rho))
@@ -1256,6 +1302,7 @@ As an example consider marginal models for the binary response variables
 Y_1, Y_2, Y_3, Y_4
 
 ``` r
+
 g <- lapply(
   list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
   function(f) glm(f, family = binomial, data = dw)
@@ -1275,6 +1322,7 @@ A linear transformation can be specified via the `f` as a matrix
 argument instead of function object
 
 ``` r
+
 B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
 #>             Estimate Std.Err    2.5%  97.5% P-value
@@ -1285,6 +1333,7 @@ The \mathbf{b}\_0 vector (default assumed to be zero) can be specified
 via the `null` argument
 
 ``` r
+
 summary(estimate(gg, B), null=1)
 #> Call: estimate.default(x = gg, f = B)
 #> ────────────────────────────────────────────────────────────
@@ -1305,6 +1354,7 @@ For testing multiple hypotheses we use that
 \widehat{\Sigma} is the estimated variance of \theta (i.e., `vcov(gg)`)
 
 ``` r
+
 B <- rbind(cbind(0,1, 0,-1, 0,0),
            cbind(0,1, 0,0, 0,-1))
 estimate(gg, B)
@@ -1317,6 +1367,7 @@ Such linear statistics can also be specified directly as expressions of
 the parameter names
 
 ``` r
+
 estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
 #> Call: estimate.default(x = gg, f = a + a.1, 2 * a - a.2, a)
 #> ────────────────────────────────────────────────────────────
@@ -1339,6 +1390,7 @@ We refer to the function
 for defining contrast matrices.
 
 ``` r
+
 contr(list(1, c(1, 2), c(1, 4)), n = 5)
 #>      [,1] [,2] [,3] [,4] [,5]
 #> [1,]    1    0    0    0    0
@@ -1350,6 +1402,7 @@ A particular useful contrast is the following for considering all
 pairwise comparisons of different exposure estimates:
 
 ``` r
+
 pairwise.diff(3)
 #>      [,1] [,2] [,3]
 #> [1,]    1   -1    0
@@ -1391,6 +1444,7 @@ Z\_{1},\ldots,Z\_{p} can be estimated from the IFs. This is implemented
 in the `alpha_zmax` method
 
 ``` r
+
 gg0 <- estimate(gg, use="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 #>     Estimate   P-value Adj.P-value
@@ -1418,6 +1472,7 @@ Unfortunately, this only works for relatively few comparisons as the
 number of tests grows exponentially.
 
 ``` r
+
 summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
 #> Call: closed_testing(object = gg0, test = test_wald, null = rep(0.8, 
 #>     3))
@@ -1494,6 +1549,7 @@ A=1,X\_{1},W) for any observed values of X_1,W but with the treatment
 variable A kept fixed at the value 1
 
 ``` r
+
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
 pr <- function(p, data, ...)
   with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
@@ -1504,6 +1560,7 @@ pr(coef(g), dw) |> head()
 The target parameter can now be estimated with the syntax
 
 ``` r
+
 id <- foldr(NROW(dw), 100, list=FALSE)
 ea <- estimate(g, pr, average=TRUE, id=id)
 ea
@@ -1555,6 +1612,7 @@ To illustrate this we manually construct the above estimating equations
 based on logistic regressions models for the two nuisance models
 
 ``` r
+
 qmod <- glm(y1 ~ a * w, family = binomial, data = dw) # E(Y|W,A) := Q(W,A)
 amod <- glm(a ~ w, family = binomial, data = dw) # P(A=1|W) = Pi_1(W)
 q0 <- predict(qmod, transform(dw, a=0), type="response") # Q(W,0)
@@ -1576,6 +1634,7 @@ We can then easily construct estimates of the two expected potential
 outcomes and estimate their joint asymptotic distribution
 
 ``` r
+
 est0 <- estimate(coef=mean(e0), IC=e0-mean(e0)) # E[Y(0)]
 est1 <- estimate(coef=mean(e1), IC=e1-mean(e1)) # E[Y(1)]
 
@@ -1602,6 +1661,7 @@ Finally, we can obtain the Average Treatment Effect (ATE)
 (risk-difference) \begin{align\*} E\[Y(1)\] - E\[Y(0)\] \end{align\*}
 
 ``` r
+
 estimate(potential_outcomes, cbind(-1, 1), labels="ate")
 #>     Estimate Std.Err   2.5%  97.5%   P-value
 #> ate   0.2008  0.0333 0.1356 0.2661 1.637e-09
@@ -1611,6 +1671,7 @@ Alternatively, we could get the estimate of the treatment effect on the
 log-odds scale:
 
 ``` r
+
 est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
 est
 #>      Estimate Std.Err   2.5% 97.5%   P-value
@@ -1639,6 +1700,7 @@ above estimation can be obtained with the
 function in the following way
 
 ``` r
+
 amod <- targeted::learner_glm(a ~ w, family=binomial)
 qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
 est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
@@ -1652,6 +1714,7 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu

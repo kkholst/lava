@@ -76,6 +76,7 @@ Klaus K. Holst
 
 ``` r
 
+
 ## A multivariate model
 m <- lvm(c(y1,y2) ~ f(x1,beta)+x2)
 regression(m) <- y3 ~ f(x1,beta)

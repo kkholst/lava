@@ -35,6 +35,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm(y~x)
 Graph(m)
 #> NULL

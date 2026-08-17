@@ -92,6 +92,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 data(faithful)
 set.seed(1)
 M1 <- mvnmix(faithful[,"waiting",drop=FALSE],k=2)

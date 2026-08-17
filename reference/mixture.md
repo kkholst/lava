@@ -101,6 +101,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 # \donttest{
 m0 <- lvm(list(y~x+z,x~z))
 distribution(m0,~z) <- binomial.lvm()

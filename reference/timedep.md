@@ -45,6 +45,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 ## Piecewise constant hazard
 m <- lvm(y~1)
 m <- timedep(m,y~1,timecut=c(0,5),rate=c(0.5,0.3))

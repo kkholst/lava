@@ -94,6 +94,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 g <- lvm(eta1 ~ x1+x2)
 regression(g) <- c(y1,y2,y3) ~ eta1
 latent(g) <- ~eta1

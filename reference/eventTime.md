@@ -48,6 +48,7 @@ Thomas A. Gerds, Klaus K. Holst
 ## Examples
 
 ``` r
+
 # Right censored survival data without covariates
 m0 <- lvm()
 distribution(m0,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)

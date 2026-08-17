@@ -95,6 +95,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(lvm(y~x), d)

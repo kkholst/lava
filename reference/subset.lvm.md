@@ -34,6 +34,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm(c(y1,y2)~x1+x2)
 subset(m,~y1+x1)
 #> Latent Variable Model

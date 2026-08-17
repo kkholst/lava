@@ -1,6 +1,7 @@
 # Non-linear latent variable models and error-in-variable models
 
 ``` r
+
 library("lava")
 ```
 
@@ -15,6 +16,7 @@ j=1,2,3. and standard normal distributed covariate Z. To simulate from
 this model we use the following syntax:
 
 ``` r
+
 f <- function(x) cos(1.25*x) + x - 0.25*x^2
 m <- lvm(x1+x2+x3 ~ u1, y1+y2+y3 ~ u2, latent=~u1+u2)
 regression(m) <- u1+u2 ~ z
@@ -24,6 +26,7 @@ d <- sim(m, n=200, seed=42) # Default is all parameters are 1
 ```
 
 ``` r
+
 ## plot(m, plot.engine="visNetwork")
 plot(m)
 ```
@@ -41,6 +44,7 @@ To estimate the parameters using the two-stage estimator described in
 first step is now to specify the measurement models
 
 ``` r
+
 m1 <- lvm(x1+x2+x3 ~ u1, u1 ~ z, latent=~u1)
 m2 <- lvm(y1+y2+y3 ~ u2, u2 ~ z, latent=~u2)
 ```
@@ -49,12 +53,14 @@ Next, we specify a quadratic relationship between the two latent
 variables
 
 ``` r
+
 nonlinear(m2, type="quadratic") <- u2 ~ u1
 ```
 
 and the model can then be estimated using the two-stage estimator
 
 ``` r
+
 e1 <- twostage(m1, m2, data=d)
 e1
 ```
@@ -82,6 +88,7 @@ We see a clear statistically significant effect of the second order term
 linear model:
 
 ``` r
+
 e0 <- estimate(regression(m1%++%m2, u2~u1), d)
 estimate(e0,keep="^u2~[a-z]",regex=TRUE) ## Extract coef. matching reg.ex.
 ```
@@ -95,6 +102,7 @@ estimated parameter coefficients
 \mathbb{E}\_{\widehat{\theta}\_{2}}(u\_{2} \mid u\_{1}, Z=0),
 
 ``` r
+
 newd <- expand.grid(u1=seq(-4, 4, by=0.1), z=0)
 pred1 <- predict(e1, newdata=newd, x=TRUE)
 head(pred1)
@@ -112,6 +120,7 @@ To obtain a potential better fit we next proceed with a natural cubic
 spline
 
 ``` r
+
 kn <- seq(-3,3,length.out=5)
 nonlinear(m2, type="spline", knots=kn) <- u2 ~ u1
 e2 <- twostage(m1, m2, data=d)
@@ -142,6 +151,7 @@ Confidence limits can be obtained via the Delta method using the
 `estimate` method:
 
 ``` r
+
 p <- cbind(u1=newd$u1,
   estimate(e2,f=function(p)                    predict(e2,p=p,newdata=newd))$coefmat)
 head(p)
@@ -158,6 +168,7 @@ head(p)
 The fitted function can be obtained with the following code:
 
 ``` r
+
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(u[1]), ylab=expression(u[2]), xlim=c(-4,4))
 lines(Estimate ~ u1, data=as.data.frame(p), col="darkblue", lwd=5)
@@ -174,6 +185,7 @@ cross-validation. Here we specify linear, quadratic and cubic spline
 models with 4 and 9 degrees of freedom.
 
 ``` r
+
 m2a <- nonlinear(m2, type="linear", u2~u1)
 m2b <- nonlinear(m2, type="quadratic", u2~u1)
 kn1 <- seq(-3,3,length.out=5)
@@ -186,6 +198,7 @@ To assess the model fit average RMSE is estimated with 5-fold
 cross-validation repeated two times
 
 ``` r
+
 ## Scale models in stage 2 to allow for a fair RMSE comparison
 d0 <- d
 for (i in endogenous(m2))
@@ -197,6 +210,7 @@ fit.cv <- lava:::cv(ff,data=d,K=5,rep=2,mc.cores=parallel::detectCores(),seed=1)
 ```
 
 ``` r
+
 fit.cv$coef
 ```
 
@@ -210,6 +224,7 @@ Here the RMSE is in favour of the splines model with 4 degrees of
 freedom:
 
 ``` r
+
 fit <- lapply(list(m2a,m2b,m2c,m2d),
          function(x) {
          e <- twostage(m1,x,data=d)
@@ -236,6 +251,7 @@ cross-validation (also for choosing the mixture distribution via the
 `nmix` argument, see the section below). For example,
 
 ``` r
+
 set.seed(1)
 selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
         nfolds=5, rep=2, mc.cores=parallel::detectCores())
@@ -246,6 +262,7 @@ the best splines with degrees of freedom varying from 1-3 (the linear
 model is automatically included)
 
 ``` r
+
 selmod
 ```
 
@@ -296,6 +313,7 @@ between the latent variable u\_{1} and a dichotomized version of the
 covariate z
 
 ``` r
+
 d$g <- (d$z<0)*1 ## Group variable
 mm1 <- regression(m1, ~g)  # Add grouping variable as exogenous variable (effect specified via 'predict.fun')
 mm2 <- regression(m2, u2~ u1+u2+u1:g+u2:g+z)
@@ -317,6 +335,7 @@ A formal test show no statistically significant effect of this
 interaction
 
 ``` r
+
 summary(estimate(ee1,keep="(:g)", regex=TRUE))
 ```
 
@@ -342,6 +361,7 @@ model by setting the intercept of the first indicator variable, x\_{1},
 to zero and the factor loading parameter of the same variable to one.
 
 ``` r
+
 m1 <- baptize(m1)  ## Label all parameters
 intercept(m1, ~x1+u1) <- list(0,NA) ## Set intercept of x1 to zero. Remove the label of u1
 regression(m1,x1~u1) <- 1 ## Factor loading fixed to 1
@@ -355,6 +375,7 @@ Thus, only the intercept of u\_{1} is allowed to vary between the
 mixtures.
 
 ``` r
+
 set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 ```
@@ -363,6 +384,7 @@ To decrease the risk of using a local maximizer of the likelihood we can
 rerun the estimation with different random starting values
 
 ``` r
+
 em0 <- NULL
 ll <- c()
 for (i in 1:5) {
@@ -375,6 +397,7 @@ for (i in 1:5) {
 ```
 
 ``` r
+
 summary(em0)
 ```
 
@@ -425,6 +448,7 @@ Measured by AIC there is a slight improvement in the model fit using the
 mixture model
 
 ``` r
+
 e0 <- estimate(m1,data=d)
 AIC(e0,em0)
 ```
@@ -437,6 +461,7 @@ The spline model may then be estimated as before with the `two-stage`
 method
 
 ``` r
+
 em2 <- twostage(em0,m2,data=d)
 em2
 ```
@@ -464,6 +489,7 @@ em2
 In this example the results are very similar to the Gaussian model:
 
 ``` r
+
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 
@@ -485,6 +511,7 @@ legend("bottomright", c("Gaussian","Mixture"),
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
 ```
 

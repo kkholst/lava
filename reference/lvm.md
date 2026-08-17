@@ -48,6 +48,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm() # Empty model
 m1 <- lvm(y~x) # Simple linear regression
 m2 <- lvm(~y1+y2) # Model with two independent variables (argument)

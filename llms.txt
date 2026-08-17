@@ -19,6 +19,7 @@ functions for a broad range of statistical models.
 ## Installation
 
 ``` r
+
 install.packages("lava", dependencies=TRUE)
 library("lava")
 demo("lava")
@@ -28,6 +29,7 @@ For graphical capabilities the `Rgraphviz` package is needed (first
 install the `BiocManager` package)
 
 ``` r
+
 # install.packages("BiocManager")
 BiocManager::install("Rgraphviz")
 ```
@@ -35,6 +37,7 @@ BiocManager::install("Rgraphviz")
 or the `igraph` or `visNetwork` packages
 
 ``` r
+
 install.packages("igraph")
 install.packages("visNetwork")
 ```
@@ -43,6 +46,7 @@ The development version of `lava` may also be installed directly from
 `github`:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("kkholst/lava")
 ```
@@ -94,6 +98,7 @@ Construct `estimate` objects from parameter coefficients and estimated
 influence functions
 
 ``` r
+
 a <- estimate(coef=c("a"=0.5), IC=scale(rnorm(10)), id=1:10)
 b <- estimate(coef=c("b"=0.8), IC=scale(rnorm(10)), id=6:15)
 ```
@@ -105,6 +110,7 @@ existing model object ([`glm()`](https://rdrr.io/r/stats/glm.html),
 …)
 
 ``` r
+
 estimate(modelobj, id, ...)
 ```
 
@@ -112,6 +118,7 @@ We can now merge the `estimate` objects to obtain their joint
 distribution via their estimated influence functions
 
 ``` r
+
 e <- c(a, b)
 vcov(e) # joint distribution
 #>            a          b
@@ -138,6 +145,7 @@ examples.
 Products
 
 ``` r
+
 a * b
 #>   Estimate Std.Err   2.5% 97.5% P-value
 #> a      0.4  0.3031 -0.194 0.994  0.1869
@@ -146,6 +154,7 @@ a * b
 General transformations
 
 ``` r
+
 (3 * cos(a) / sqrt(b) + 1) / a^2
 #>   Estimate Std.Err   2.5% 97.5% P-value
 #> a    15.77   21.33 -26.03 57.58  0.4596
@@ -154,6 +163,7 @@ General transformations
 Inner product, sums, and products
 
 ``` r
+
 c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
 #>       Estimate Std.Err    2.5% 97.5%  P-value
 #> iprod    0.762  0.6915 -0.5934 2.117 0.270495
@@ -164,6 +174,7 @@ c(iprod=e %*% c(a, b^2), sum=sum(e), prod=prod(e))
 Exponentiation and renaming of parameter
 
 ``` r
+
 c(pow = a^b)
 #>     Estimate Std.Err    2.5% 97.5% P-value
 #> pow   0.5743   0.282 0.02166 1.127 0.04167
@@ -172,6 +183,7 @@ c(pow = a^b)
 Transformation and subsetting
 
 ``` r
+
 c(e["a"] * e["b"] / a, e["b"])
 #>   Estimate Std.Err  2.5% 97.5%  P-value
 #> a      0.8     0.3 0.212 1.388 0.007661
@@ -181,6 +193,7 @@ c(e["a"] * e["b"] / a, e["b"])
 For the `%*%*` operator we can also use a general contrast matrix
 
 ``` r
+
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
 #>           Estimate Std.Err     2.5%  97.5%  P-value
@@ -197,6 +210,7 @@ plot(B %*% e)
 Specify structural equation models with two factors
 
 ``` r
+
 m <- lvm()
 regression(m) <- y1 + y2 + y3 ~ u1
 regression(m) <- z1 + z2 + z3 ~ u2
@@ -212,12 +226,14 @@ plot(m)
 Simulation
 
 ``` r
+
 d <- sim(m, 100, seed=1)
 ```
 
 Estimation
 
 ``` r
+
 e <- estimate(m, d)
 e
 #>                     Estimate Std. Error  Z-value   P-value
@@ -254,6 +270,7 @@ Assessing goodness-of-fit, here the linearity between u2 and u1
 (requires the `gof` package)
 
 ``` r
+
 # install.packages("gof", repos="https://kkholst.github.io/r_repo/")
 library("gof")
 set.seed(1)
@@ -268,6 +285,7 @@ plot(g)
 Simulate non-linear model
 
 ``` r
+
 m <- lvm(y1 + y2 + y3 ~ u, u ~ x)
 transform(m,u2 ~ u) <- function(x) x^2
 regression(m) <- z~u2+u
@@ -278,6 +296,7 @@ d <- sim(m,200,p=c("z"=-1, "z~u2"=-0.5), seed=1)
 Stage 1:
 
 ``` r
+
 m1 <- lvm(c(y1[0:s], y2[0:s], y3[0:s]) ~ 1*u, u ~ x)
 latent(m1) <- ~ u
 (e1 <- estimate(m1, d))
@@ -294,6 +313,7 @@ latent(m1) <- ~ u
 Stage 2
 
 ``` r
+
 pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 (e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
@@ -304,6 +324,7 @@ pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
 ```
 
 ``` r
+
 f <- function(p) p[1]+p["u"]*u+p["u2"]*u^2
 u <- seq(-1, 1, length.out=100)
 plot(e, f, data=data.frame(u))
@@ -316,6 +337,7 @@ plot(e, f, data=data.frame(u))
 Studying the small-sample properties of a mediation analysis
 
 ``` r
+
 m <- lvm(y~x, c~1)
 regression(m) <- y+x ~ z
 eventTime(m) <- t~min(y=1, c=0)
@@ -325,6 +347,7 @@ transform(m,S~t+status) <- function(x) survival::Surv(x[,1],x[,2])
 plot(m)
 
 ``` r
+
 plot(m)
 ```
 
@@ -333,6 +356,7 @@ plot(m)
 Simulate from model and estimate indirect effects
 
 ``` r
+
 future::plan("multicore") # parallelization via future
 ## progressr::handlers(global=TRUE) # add progress-bar
 onerun <- function(...) {
@@ -363,6 +387,7 @@ summary(val, estimate=1:4, se=5:8, short=TRUE)
 Add additional simulations and visualize results
 
 ``` r
+
 val <- sim(val,500) ## Add 500 simulations
 plot(val, estimate=c("Total.Estimate", "Indirect.Estimate"),
      true=c(2, 1), se=c("Total.Std.Err", "Indirect.Std.Err"),

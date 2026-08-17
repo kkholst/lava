@@ -26,6 +26,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 y <- yl <- yr <- rnorm(10)
 yl[1:5] <- NA; yr[6:10] <- NA
 S1 <- survival::Surv(yl,yr,type="interval2")

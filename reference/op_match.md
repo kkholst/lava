@@ -33,6 +33,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 1:10 %ni% c(1,5,10)
 #>  [1] FALSE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE
 ```

@@ -318,6 +318,7 @@ For full theoretical background and worked examples see
 ## Examples
 
 ``` r
+
 ## Simulation from logistic regression model
 m <- lvm(y~x+z);
 distribution(m,y~x) <- binomial.lvm("logit")

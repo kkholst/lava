@@ -47,7 +47,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.2" id="lava-192">lava 1.9.2<a class="anchor" aria-label="anchor" href="#lava-192"></a></h2><p class="text-muted">CRAN release: 2026-06-30</p>
 <ul><li>
-<code>estimate.default</code>: the <code>null</code>, <code>contrast</code>, <code>type</code>, and <code>var.adj</code> arguments are soft-deprecated. Use <code>summary(estimate(...), null=, contrast=, type=,     var.adj=)</code> instead. The default-path Wald p-value (H0: beta = 0) continues to be reported by <code><a href="../reference/estimate.default.html">estimate()</a></code>.</li>
+<code>estimate.default</code>: the <code>null</code>, <code>contrast</code>, <code>type</code>, and <code>var.adj</code> arguments are soft-deprecated. Use <code>summary(estimate(...), null=, contrast=, type=, var.adj=)</code> instead. The default-path Wald p-value (H0: beta = 0) continues to be reported by <code><a href="../reference/estimate.default.html">estimate()</a></code>.</li>
 <li>
 <code>estimate.default</code>: removed <code>R</code>, <code>null.sim</code>, <code>score.deriv</code> and <code>folds</code> arguments.</li>
 <li>new <code>c.summary.estimate</code> S3-method for concatenating <code>summary.estimate</code> objects</li>
@@ -438,7 +438,7 @@
 <li>New function ‘Missing’ to generate complex missing data patterns</li>
 <li>Weibull parametrization of ‘coxWeibull.lvm’ rolled back (ver. 1.2.4). The function ‘weibull.lvm’ now leads to Accelerated Failure Time model (see examples of ‘eventTime’)</li>
 <li>iid function cleanup (new ‘bread’ attribute). iid.glm now gives correct estimated influence functions for ‘quasi’ link (constant variance)</li>
-<li>Parameter constraints on (co)variance parameters now possible with the syntax lvm(…,y~~a*x) (corresponding to covariance(…,y~x)&lt;-“a”)</li>
+<li>Parameter constraints on (co)variance parameters now possible with the syntax lvm(…,y<sub></sub>a*x) (corresponding to covariance(…,y~x)&lt;-“a”)</li>
 <li>Some additional utilities: pdfconvert, scheffe, images, click. confband updated with ‘polygon’ argument.</li>
 <li>New function getMplus: Import results from Mplus</li>
 <li>New function getSAS: Import SAS ODS</li>

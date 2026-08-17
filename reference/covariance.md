@@ -118,6 +118,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm()
 ## Define covariance between residuals terms of y1 and y2
 covariance(m) <- y1~y2

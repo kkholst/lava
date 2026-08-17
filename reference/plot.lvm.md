@@ -126,6 +126,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 if (interactive()) {
 m <- lvm(c(y1,y2) ~ eta)
 regression(m) <- eta ~ z+x2

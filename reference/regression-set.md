@@ -123,6 +123,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm() ## Initialize empty lvm-object
 ## E(y1|z,v) = beta1*z + beta2*v
 regression(m) <- y1 ~ z + v

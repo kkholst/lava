@@ -14,6 +14,7 @@ Assume that Y\_{1} and Y\_{2} are conditionally normal distributed given
 \sigma_2^2 \end{pmatrix}.
 
 ``` r
+
 library("lava")
 m0 <- lvm(y1+y2 ~ x, y1 ~~ y2)
 edgelabels(m0, y1 + y2 ~ x) <- c(expression(b[1]), expression(b[2]))
@@ -36,6 +37,7 @@ following syntax where the correlation parameter here is given the label
 ‘`r`’:
 
 ``` r
+
 m0 <- lvm() |>
   covariance(y1 ~ y2, value='r') |>
   regression(y1 + y2 ~ x)
@@ -47,6 +49,7 @@ a named numeric vector of parameters of the model. The parameter names
 can be inspected with the `coef` method
 
 ``` r
+
 coef(m0, labels=TRUE)
 ```
 
@@ -58,6 +61,7 @@ The default simulation parameters are zero for all intercepts (`y1`,
 residual variance parameters (`y1~~y1`, `y2~~y2`).
 
 ``` r
+
 d <- sim(m0, 500, p=c(r=0.9), seed=1)
 head(d)
 ```
@@ -76,6 +80,7 @@ missing data. To illustrate this, we add left and right censored data
 types to the model output using the `transform` method.
 
 ``` r
+
 cens1 <- function(threshold,type='right') {
   function(x) {
     x <- unlist(x)
@@ -91,6 +96,7 @@ m0 <-
 ```
 
 ``` r
+
 d <- sim(m0, 500, p=c(r=0.9), seed=1)
 head(d)
 ```
@@ -109,6 +115,7 @@ The Maximum Likelihood Estimate can be obtainted using the `estimate`
 method:
 
 ``` r
+
 m <- lvm() |>
      regression(y1 + y2 ~ x) |>
      covariance(y1 ~ y2)
@@ -134,6 +141,7 @@ residual terms in the model. To estimate the correlation we can apply
 the delta method using the `estimate` method again
 
 ``` r
+
 estimate(e, function(p) p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)
 ```
 
@@ -144,6 +152,7 @@ Alternatively, the correlations can be extracted using the `correlation`
 method
 
 ``` r
+
 correlation(e)
 ```
 
@@ -182,6 +191,7 @@ confidence interval are transformed back to the original scale using the
 `summary` method.
 
 ``` r
+
 estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)) |>
   summary(transform=tanh)
 ```
@@ -212,6 +222,7 @@ way that such parameter constraints are naturally fulfilled. This can be
 achieved with the `constrain` method.
 
 ``` r
+
 m2 <- m |>
     parameter(~ l1 + l2 + z) |>
     variance(~ y1 + y2, value=c('v1','v2')) |>
@@ -234,6 +245,7 @@ which can take any values in \mathbb{R}^{3}, while we at the same time
 are guaranteed a proper covariance matrix which is positive definite.
 
 ``` r
+
 e2 <- estimate(m2, d)
 e2
 ```
@@ -253,6 +265,7 @@ e2
 The correlation coefficient can then be obtained as
 
 ``` r
+
 estimate(e2, "z") |> labels("rho") |> summary(transform=tanh)
 ```
 
@@ -274,6 +287,7 @@ and `lname`, `lname2` can be used to specify the parameter names for the
 log variance parameters):
 
 ``` r
+
 m2 <- lvm() |>
   regression(y1 + y2 ~ x) |>
   covariance(y1 ~ y2, constrain=TRUE, rname='z')
@@ -295,6 +309,7 @@ e2
        z                    1.42942    0.04472 31.96286   <1e-12
 
 ``` r
+
 estimate(e2, 'z') |> summary(transform=tanh)
 ```
 
@@ -313,6 +328,7 @@ transformation) is to profile the likelihood. The profile likelihood
 confidence intervals can be obtained with the `confint` method:
 
 ``` r
+
 tanh(confint(e2, 'z', profile=TRUE))
 ```
 
@@ -323,6 +339,7 @@ Finally, a non-parametric bootstrap (in practice a larger number of
 replications would be needed) can be calculated in the following way
 
 ``` r
+
 set.seed(1)
 b <- bootstrap(e2, data=d, R=50, mc.cores=1)
 b
@@ -343,6 +360,7 @@ b
     c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892
 
 ``` r
+
 quantile(tanh(b$coef[,'z']), c(.025,.975))
 ```
 
@@ -359,6 +377,7 @@ defined as `Surv` objects (from the `survival` package which is
 automatically loaded when using the `mets` package) in the data frame.
 
 ``` r
+
 m3 <- lvm() |>
   regression(y1 + s2 ~ x) |>
   covariance(y1 ~ s2, constrain=TRUE, rname='z')
@@ -367,6 +386,7 @@ e3 <- estimate(m3, d)
 ```
 
 ``` r
+
 e3
 ```
 
@@ -383,6 +403,7 @@ e3
        z                    1.42835    0.04546 31.41861   <1e-12
 
 ``` r
+
 summary(estimate(e3, 'z'), transform=tanh)
 ```
 
@@ -400,6 +421,7 @@ And here the same analysis with `s1` being left-censored and `s2`
 right-censored:
 
 ``` r
+
 m3b <- lvm() |>
   regression(s1 + s2 ~ x) |>
   covariance(s1 ~ s2, constrain=TRUE, rname='z')
@@ -421,6 +443,7 @@ e3b
        z                    1.42627    0.04609 30.94282   <1e-12
 
 ``` r
+
 e3b
 ```
 
@@ -437,6 +460,7 @@ e3b
        z                    1.42627    0.04609 30.94282   <1e-12
 
 ``` r
+
 summary(estimate(e3b, 'z'), transform=tanh)
 ```
 
@@ -451,6 +475,7 @@ summary(estimate(e3b, 'z'), transform=tanh)
     chisq = 1010.58, df = 1, p-value < 2.2e-16
 
 ``` r
+
 tanh(confint(e3b, 'z', profile=TRUE))
 ```
 
@@ -460,6 +485,7 @@ tanh(confint(e3b, 'z', profile=TRUE))
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
 ```
 

@@ -43,6 +43,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
 lava.options(iter.max=100,messages=0)
 } # }

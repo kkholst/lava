@@ -59,6 +59,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 ## Simulation
 n <- 2e3
 x <- runif(n,0,20)

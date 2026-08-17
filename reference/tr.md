@@ -34,6 +34,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 tr(diag(1:5))
 #> [1] 15
 ```

@@ -39,6 +39,7 @@ Klaus K. Holst
 ## Examples
 
 ``` r
+
 m <- lvm(c(y1,y2,y3)~x1+x2)
 covariance(m) <- c(y1,y2,y3)~y1+y2+y3
 d <- sim(m,500)

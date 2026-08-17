@@ -557,7 +557,7 @@ CRAN release: 2014-05-07
   correct estimated influence functions for ‘quasi’ link (constant
   variance)
 - Parameter constraints on (co)variance parameters now possible with the
-  syntax lvm(…,y\~~a\*x) (corresponding to covariance(…,y~x)\<-“a”)
+  syntax lvm(…,ya\*x) (corresponding to covariance(…,y~x)\<-“a”)
 - Some additional utilities: pdfconvert, scheffe, images, click.
   confband updated with ‘polygon’ argument.
 - New function getMplus: Import results from Mplus

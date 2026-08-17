@@ -18,6 +18,7 @@ make clean         # removes vignette artifacts, tests/lib, build/
 Run a focused test:
 
 ``` r
+
 devtools::test(filter = "estimate_default")  # substring match on test file name
 ```
 
