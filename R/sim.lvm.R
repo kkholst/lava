@@ -7,35 +7,35 @@
 ##' @aliases simulate.lvmfit simulate.lvm
 ##' @aliases transform<- transform<-.lvm transform.lvm
 ##' @aliases functional functional<-  functional.lvm functional<-.lvm
-##' @aliases distribution distribution distribution<- distribution.lvm distribution<-.lvm
+##' @aliases distribution distribution<- distribution.lvm distribution<-.lvm
 ##' @aliases heavytail heavytail<-
-##' @aliases weibull.lvm
-##' @aliases binomial.lvm
-##' @aliases poisson.lvm
-##' @aliases uniform.lvm
-##' @aliases multinomial.lvm
-##' @aliases beta.lvm
-##' @aliases normal.lvm mvn.lvm
-##' @aliases lognormal.lvm
-##' @aliases gaussian.lvm
-##' @aliases GM2.lvm
-##' @aliases GM3.lvm
-##' @aliases probit.lvm
-##' @aliases logit.lvm
-##' @aliases pareto.lvm
-##' @aliases student.lvm
-##' @aliases chisq.lvm
-##' @aliases coxGompertz.lvm
-##' @aliases coxWeibull.lvm
-##' @aliases coxExponential.lvm
-##' @aliases aalenExponential.lvm
-##' @aliases Gamma.lvm gamma.lvm
-##' @aliases loggamma.lvm
 ##' @aliases categorical categorical<-
-##' @aliases threshold.lvm
-##' @aliases ones.lvm Binary.lvm binary.lvm
-##' @aliases Sequence.lvm
-##' @aliases none.lvm constant.lvm id.lvm
+##' @aliases dist_weibull weibull.lvm
+##' @aliases dist_bernoulli binomial.lvm probit.lvm logit.lvm
+##' @aliases dist_poisson poisson.lvm
+##' @aliases dist_uniform uniform.lvm
+##' @aliases dist_multinomial multinomial.lvm
+##' @aliases dist_beta beta.lvm
+##' @aliases dist_gaussian normal.lvm gaussian.lvm
+##' @aliases dist_mvn mvn.lvm
+##' @aliases dist_lognormal lognormal.lvm
+##' @aliases dist_gaussian_mixture2 GM2.lvm
+##' @aliases dist_gaussian_mixture3 GM3.lvm
+##' @aliases dist_pareto pareto.lvm
+##' @aliases dist_t student.lvm
+##' @aliases dist_chisq chisq.lvm
+##' @aliases dist_cox_gompertz coxGompertz.lvm
+##' @aliases dist_cox_weibull coxWeibull.lvm
+##' @aliases dist_cox_exponential coxExponential.lvm
+##' @aliases dist_aalen_exponential aalenExponential.lvm
+##' @aliases dist_gamma Gamma.lvm gamma.lvm
+##' @aliases dist_loggamma loggamma.lvm
+##' @aliases dist_threshold threshold.lvm
+##' @aliases dist_ones ones.lvm binary.lvm
+##' @aliases dist_seq Sequence.lvm
+##' @aliases dist_seqint id.lvm
+##' @aliases dist_none none.lvm
+##' @aliases dist_const constant.lvm
 ##' @usage
 ##' \method{sim}{lvm}(x, n = NULL, p = NULL, normal = FALSE, cond = FALSE,
 ##' sigma = 1, rho = 0.5, X = NULL, unlink=FALSE, latent=TRUE,
@@ -64,7 +64,7 @@
 ##' ##################################################
 ##' m <- lvm(y~x+z)
 ##' regression(m) <- x~z
-##' distribution(m,~y+z) <- binomial.lvm("logit")
+##' distribution(m,~y+z) <- dist_bernoulli("logit")
 ##' d <- sim(m,1e3)
 ##' head(d)
 ##'
@@ -76,7 +76,7 @@
 ##' ##################################################
 ##' ## Poisson
 ##' ##################################################
-##' distribution(m,~y) <- poisson.lvm()
+##' distribution(m,~y) <- dist_poisson()
 ##' d <- sim(m,1e4,p=c(y=-1,"y~x"=2,z=1))
 ##' head(d)
 ##' estimate(m,d,estimator="glm")
@@ -88,23 +88,23 @@
 ##' ### Gamma distribution
 ##' ##################################################
 ##' m <- lvm(y~x)
-##' distribution(m,~y+x) <- list(Gamma.lvm(shape=2),binomial.lvm())
+##' distribution(m,~y+x) <- list(dist_gamma(shape=2), dist_bernoulli())
 ##' intercept(m,~y) <- 0.5
 ##' d <- sim(m,1e4)
 ##' summary(g <- glm(y~x,family=Gamma(),data=d))
 ##' \dontrun{MASS::gamma.shape(g)}
 ##'
-##' args(lava::Gamma.lvm)
-##' distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
+##' args(lava::dist_gamma)
+##' distribution(m,~y) <- dist_gamma(shape=2,log=TRUE)
 ##' sim(m,10,p=c(y=0.5))[,"y"]
 ##'
 ##' ##################################################
 ##' ### Beta
 ##' ##################################################
 ##' m <- lvm()
-##' distribution(m,~y) <- beta.lvm(alpha=2,beta=1)
+##' distribution(m,~y) <- dist_beta(alpha=2,beta=1)
 ##' var(sim(m,100,"y,y"=2))
-##' distribution(m,~y) <- beta.lvm(alpha=2,beta=1,scale=FALSE)
+##' distribution(m,~y) <- dist_beta(alpha=2,beta=1,scale=FALSE)
 ##' var(sim(m,100))
 ##'
 ##' ##################################################
@@ -120,10 +120,12 @@
 ##' ### Non-random variables
 ##' ##################################################
 ##' m <- lvm()
-##' distribution(m,~x+z+v+w) <- list(Sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
-##'                                Binary.lvm(),       ## Vector of ones
-##'                                Binary.lvm(0.5),    ##  0.5n 0, 0.5n 1
-##'                                Binary.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
+##' distribution(m,~x+z+v+w) <- list(
+##'   dist_seqint(0,5),## Seq. 0 to 5 by 1/n
+##'   dist_ones(),       ## Vector of ones
+##'   dist_ones(0.5),    ##  0.5n 0, 0.5n 1
+##'   dist_ones(interval=list(c(0.3,0.5),c(0.8,1)))
+##' )
 ##' sim(m,10)
 ##'
 ##' ##################################################
@@ -133,7 +135,7 @@
 ##' m <- lvm(t~x)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
 ##' ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
-##' distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
+##' distribution(m,~t) <- dist_cox_exponential(rate=rates,timecut=cuts)
 ##'
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
@@ -151,8 +153,8 @@
 ##' ##################################################
 ##' m <- lvm(y~x+z)
 ##' rates <- c(0.3,0.5); cuts <- c(0,5)
-##' distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
-##'                              loggamma.lvm(rate=1,shape=1))
+##' distribution(m,~y+z) <- list(dist_cox_exponential(rate=rates,timecut=cuts),
+##'                              dist_loggamma(rate=1,shape=1))
 ##' \dontrun{
 ##'     d <- sim(m,2e4,p=c("y~x"=0,"y~z"=0)); d$status <- TRUE
 ##'     plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
@@ -164,15 +166,15 @@
 ##' }
 ##' ## Equivalent via transform (here with Aalens additive hazard model)
 ##' m <- lvm(y~x)
-##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-##' distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
+##' distribution(m,~y) <- dist_aalen_exponential(rate=rates, timecut=cuts)
+##' distribution(m,~z) <- dist_gamma(rate=1, shape=1)
 ##' transform(m,t~y+z) <- prod
 ##' sim(m,10)
 ##' ## Shared frailty
 ##' m <- lvm(c(t1,t2)~x+z)
 ##' rates <- c(1,0.5); cuts <- c(0,5)
-##' distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-##' distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
+##' distribution(m,~y) <- dist_aalen_exponential(rate=rates, timecut=cuts)
+##' distribution(m,~z) <- dist_loggamma(rate=1,shape=1)
 ##' \dontrun{
 ##' mets::fast.reshape(sim(m,100),varying="t")
 ##' }
@@ -230,9 +232,9 @@
 ##' m <- lvm()
 ##' regression(m) <- y ~ z+v
 ##' regression(m) <- s ~ exp(0.6*x-0.5*z)
-##' distribution(m,~x+z) <- binomial.lvm()
-##' distribution(m,~cens) <- coxWeibull.lvm(scale=1)
-##' distribution(m,~y) <- coxWeibull.lvm(scale=0.1,shape=~s)
+##' distribution(m,~x+z) <- dist_bernoulli()
+##' distribution(m,~cens) <- dist_cox_weibull(scale=1)
+##' distribution(m,~y) <- dist_cox_weibull(scale=0.1,shape=~s)
 ##' eventTime(m) <- time ~ min(y=1,cens=0)
 ##'
 ##' if (interactive()) {

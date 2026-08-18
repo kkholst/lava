@@ -31,6 +31,34 @@ reference:
   - sim.default
   - sim.lvm
   - summary.sim
+  - dist_gaussian
+  - dist_lognormal
+  - dist_poisson
+  - dist_threshold
+  - dist_bernoulli
+  - dist_gamma
+  - dist_loggamma
+  - dist_chisq
+  - dist_t
+  - dist_uniform
+  - dist_weibull
+  - dist_seqint
+  - dist_seq
+  - dist_ones
+  - dist_const
+  - dist_beta
+  - dist_multinomial
+  - dist_mvn
+  - dist_gaussian_mixture2
+  - dist_gaussian_mixture3
+  - dist_cox_weibull
+  - dist_cox_exponential
+  - dist_cox_gompertz
+  - dist_aalen_exponential
+  - dist_pareto
+  - dist_none
+  - binomial.rd
+  - binomial.rr
 
 - title: "Statistical Inference and model tools"
   contents:
