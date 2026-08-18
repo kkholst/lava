@@ -441,6 +441,9 @@ Functions for working with Influence Functions
   : Simulate model
 - [`summary(`*`<sim>`*`)`](https://kkholst.github.io/lava/reference/summary.sim.md)
   : Summary method for 'sim' objects
+- [`binomial.rd()`](https://kkholst.github.io/lava/reference/binomial.rd.md)
+  : Define constant risk difference or relative risk association for
+  binary exposure
 
 ## Statistical Inference and model tools
 

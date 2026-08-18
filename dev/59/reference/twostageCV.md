@@ -88,7 +88,7 @@ twostageCV(
 m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
 m2 <- lvm( y ~ 1 )
 m <- functional(merge(m1,m2), y ~ u, value=function(x) sin(x)+x)
-distribution(m, ~u1) <- uniform.lvm(-6,6)
+distribution(m, ~u1) <- dist_uniform(-6, 6)
 d <- sim(m,n=500,seed=1)
 nonlinear(m2) <- y~u1
 if (requireNamespace('mets', quietly=TRUE)) {

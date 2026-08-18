@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-08-17</p>
+      <p class="date">2026-08-18</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/release/1.9.3/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -146,8 +146,8 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y3</span> <span class="op">~</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y4</span> <span class="op">~</span> <span class="va">x4</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">Sequence.lvm</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">dist_bernoulli</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">dist_seq</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>We simulate from the model where <span class="math inline">Y_3</span> is only observed for half of the subjects</p>
 <div class="cell">
@@ -356,7 +356,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">#&gt; a     1.5832 0.15031 1.2886 1.878 6.080e-26</span></span>
 <span><span class="co">#&gt; x1    0.8837 0.08062 0.7257 1.042 5.866e-28</span></span></code></pre></div>
 </div>
-<p>Note that the <code><a href="https://rdrr.io/pkg/sandwich/man/estfun.html" class="external-link">sandwich::estfun</a></code> function from the <code>sandwich</code> library <span class="citation" data-cites="r_sandwich">(<a href="#ref-r_sandwich" role="doc-biblioref">Zeileis et al. 2020</a>)</span> can also be used to estimate the IF for different parametric models, but does not provide the tools for combining and transforming these.</p>
+<p>Note that the <code><a href="https://zeileis.codeberg.page/sandwich/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the <code>sandwich</code> library <span class="citation" data-cites="r_sandwich">(<a href="#ref-r_sandwich" role="doc-biblioref">Zeileis et al. 2020</a>)</span> can also be used to estimate the IF for different parametric models, but does not provide the tools for combining and transforming these.</p>
 </section><section class="level2"><h3 id="example-right-censored-outcomes">Example: right-censored outcomes<a class="anchor" aria-label="anchor" href="#example-right-censored-outcomes"></a>
 </h3>
 <p>To illustrate the methods on survival data we will use the Mayo Clinic Primary Biliary Cholangitis Data <span class="citation" data-cites="therneau00surv">(<a href="#ref-therneau00surv" role="doc-biblioref">Therneau and Grambsch 2000</a>)</span></p>
@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5634cff04cf0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x560d34c8ac18&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
