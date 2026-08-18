@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-08-17</p>
+      <p class="date">2026-08-18</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -146,8 +146,8 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y3</span> <span class="op">~</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">y4</span> <span class="op">~</span> <span class="va">x4</span> <span class="op">+</span> <span class="va">a</span> <span class="op">+</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/regression-set.html">regression</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">Sequence.lvm</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span> <span class="va">y1</span> <span class="op">+</span> <span class="va">y2</span> <span class="op">+</span> <span class="va">y3</span> <span class="op">+</span> <span class="va">y4</span> <span class="op">+</span> <span class="va">a</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">dist_bernoulli</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/sim.lvm.html">distribution</a></span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, value <span class="op">=</span> <span class="fu"><a href="../reference/sim.lvm.html">dist_seq</a></span><span class="op">(</span>integer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>We simulate from the model where <span class="math inline">Y_3</span> is only observed for half of the subjects</p>
 <div class="cell">
@@ -706,11 +706,11 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 3    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 4    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5     3.043e-15  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 3    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 4    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5     2.155e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                      </span></span>
 <span><span class="co">#&gt; 1996  0.000       0.000     -4.545       </span></span>
 <span><span class="co">#&gt; 1997  0.000       0.000      3.571       </span></span>
@@ -719,9 +719,9 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <span><span class="co">#&gt; 2000  0.000       0.000     -4.545</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28</span></span>
-<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.718185e-24</span></span>
-<span><span class="co">#&gt; (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28</span></span>
+<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.717325e-24</span></span>
+<span><span class="co">#&gt; (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="renaming-and-subsetting-parameters">Renaming and subsetting parameters<a class="anchor" aria-label="anchor" href="#renaming-and-subsetting-parameters"></a>
 </h3>
@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55fbf44a4d28&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55fac0a4a870&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>

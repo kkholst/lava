@@ -6,7 +6,7 @@ Define intervention in a `lvm` object
 
 ``` r
 # S3 method for class 'lvm'
-intervention(object, to, value, dist = none.lvm(), ...)
+intervention(object, to, value, dist = dist_none(), ...)
 ```
 
 ## Arguments
@@ -39,7 +39,7 @@ regression lvm sim
 
 ``` r
 m <- lvm(y ~ a + x, a ~ x)
-distribution(m, ~a+y) <- binomial.lvm()
+distribution(m, ~a+y) <- dist_bernoulli()
 mm <- intervention(m, "a", value=3)
 sim(mm, 10)
 #>    y a          x

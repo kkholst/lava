@@ -95,7 +95,7 @@ output is controlled via the progressr package (e.g.,
 ``` r
 m <- lvm(y~x+e)
 distribution(m,~y) <- 0
-distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
+distribution(m,~x) <- dist_uniform(a=-1.1,b=1.1)
 transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
 
 onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {
@@ -128,7 +128,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 1.233s
+#> 50 replications                  Time: 1.006s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -150,7 +150,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 1.233s
+#> 50 replications                  Time: 1.006s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -168,7 +168,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 1.233s
+#> 50 replications                  Time: 1.006s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
@@ -273,7 +273,7 @@ val2
 # extra columns are stored but excluded from default summary statistics
 idx <- c("(Intercept)", "x", "niter")
 summary(val2, estimate=idx, true=c(0,0.5,NA))
-#> 10 replications                  Time: 0.226s
+#> 10 replications                  Time: 0.201s
 #> 
 #>          (Intercept)        x   niter
 #> Mean       0.0094681 0.536154 11.7000

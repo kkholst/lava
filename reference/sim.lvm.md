@@ -81,7 +81,7 @@ Klaus K. Holst
 ##################################################
 m <- lvm(y~x+z)
 regression(m) <- x~z
-distribution(m,~y+z) <- binomial.lvm("logit")
+distribution(m,~y+z) <- dist_bernoulli("logit")
 d <- sim(m,1e3)
 head(d)
 #>   y           x z
@@ -116,7 +116,7 @@ sim(e,n=5)
 ##################################################
 ## Poisson
 ##################################################
-distribution(m,~y) <- poisson.lvm()
+distribution(m,~y) <- dist_poisson()
 d <- sim(m,1e4,p=c(y=-1,"y~x"=2,z=1))
 head(d)
 #>    y           x z
@@ -166,7 +166,7 @@ summary(lm(y~x,sim(lvm(y[1:2]~4*x),1e3)))
 ### Gamma distribution
 ##################################################
 m <- lvm(y~x)
-distribution(m,~y+x) <- list(Gamma.lvm(shape=2),binomial.lvm())
+distribution(m,~y+x) <- list(dist_gamma(shape=2), dist_bernoulli())
 intercept(m,~y) <- 0.5
 d <- sim(m,1e4)
 summary(g <- glm(y~x,family=Gamma(),data=d))
@@ -191,11 +191,11 @@ summary(g <- glm(y~x,family=Gamma(),data=d))
 #> 
 if (FALSE) MASS::gamma.shape(g) # \dontrun{}
 
-args(lava::Gamma.lvm)
+args(lava::dist_gamma)
 #> function (link = "inverse", shape, rate, unit = FALSE, var = FALSE, 
 #>     log = FALSE, ...) 
 #> NULL
-distribution(m,~y) <- Gamma.lvm(shape=2,log=TRUE)
+distribution(m,~y) <- dist_gamma(shape=2,log=TRUE)
 sim(m,10,p=c(y=0.5))[,"y"]
 #>  [1] -1.3148925  0.0231124  0.6164099 -0.3583493 -0.0718344 -0.2697476
 #>  [7] -1.1070485  1.0313895  0.7453192 -1.1577031
@@ -204,11 +204,11 @@ sim(m,10,p=c(y=0.5))[,"y"]
 ### Beta
 ##################################################
 m <- lvm()
-distribution(m,~y) <- beta.lvm(alpha=2,beta=1)
+distribution(m,~y) <- dist_beta(alpha=2,beta=1)
 var(sim(m,100,"y,y"=2))
 #>          y
 #> y 1.027512
-distribution(m,~y) <- beta.lvm(alpha=2,beta=1,scale=FALSE)
+distribution(m,~y) <- dist_beta(alpha=2,beta=1,scale=FALSE)
 var(sim(m,100))
 #>            y
 #> y 0.04661863
@@ -248,22 +248,24 @@ summary(lm(y~x+z + x*I(z>0),d))
 ### Non-random variables
 ##################################################
 m <- lvm()
-distribution(m,~x+z+v+w) <- list(Sequence.lvm(0,5),## Seq. 0 to 5 by 1/n
-                               Binary.lvm(),       ## Vector of ones
-                               Binary.lvm(0.5),    ##  0.5n 0, 0.5n 1
-                               Binary.lvm(interval=list(c(0.3,0.5),c(0.8,1))))
+distribution(m,~x+z+v+w) <- list(
+  dist_seqint(0,5),## Seq. 0 to 5 by 1/n
+  dist_ones(),       ## Vector of ones
+  dist_ones(0.5),    ##  0.5n 0, 0.5n 1
+  dist_ones(interval=list(c(0.3,0.5),c(0.8,1)))
+)
 sim(m,10)
-#>            x z v w
-#> 1  0.0000000 1 0 0
-#> 2  0.5555556 1 0 0
-#> 3  1.1111111 1 0 1
-#> 4  1.6666667 1 0 1
-#> 5  2.2222222 1 0 1
-#> 6  2.7777778 1 1 0
-#> 7  3.3333333 1 1 0
-#> 8  3.8888889 1 1 1
-#> 9  4.4444444 1 1 1
-#> 10 5.0000000 1 1 1
+#>     x z v w
+#> 1   1 1 0 0
+#> 2   2 1 0 0
+#> 3   3 1 0 1
+#> 4   4 1 0 1
+#> 5   5 1 0 1
+#> 6   6 1 1 0
+#> 7   7 1 1 0
+#> 8   8 1 1 1
+#> 9   9 1 1 1
+#> 10 10 1 1 1
 
 ##################################################
 ### Cox model
@@ -272,7 +274,7 @@ sim(m,10)
 m <- lvm(t~x)
 rates <- c(1,0.5); cuts <- c(0,5)
 ## Constant rate: 1 in [0,5), 0.5 in [5,Inf)
-distribution(m,~t) <- coxExponential.lvm(rate=rates,timecut=cuts)
+distribution(m,~t) <- dist_cox_exponential(rate=rates,timecut=cuts)
 
 if (FALSE) { # \dontrun{
     d <- sim(m,2e4,p=c("t~x"=0.1)); d$status <- TRUE
@@ -290,8 +292,8 @@ if (FALSE) { # \dontrun{
 ##################################################
 m <- lvm(y~x+z)
 rates <- c(0.3,0.5); cuts <- c(0,5)
-distribution(m,~y+z) <- list(coxExponential.lvm(rate=rates,timecut=cuts),
-                             loggamma.lvm(rate=1,shape=1))
+distribution(m,~y+z) <- list(dist_cox_exponential(rate=rates,timecut=cuts),
+                             dist_loggamma(rate=1,shape=1))
 if (FALSE) { # \dontrun{
     d <- sim(m,2e4,p=c("y~x"=0,"y~z"=0)); d$status <- TRUE
     plot(timereg::aalen(survival::Surv(y,status)~x,data=d,
@@ -303,8 +305,8 @@ if (FALSE) { # \dontrun{
 } # }
 ## Equivalent via transform (here with Aalens additive hazard model)
 m <- lvm(y~x)
-distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-distribution(m,~z) <- Gamma.lvm(rate=1,shape=1)
+distribution(m,~y) <- dist_aalen_exponential(rate=rates, timecut=cuts)
+distribution(m,~z) <- dist_gamma(rate=1, shape=1)
 transform(m,t~y+z) <- prod
 sim(m,10)
 #>             y          x           z            t
@@ -321,8 +323,8 @@ sim(m,10)
 ## Shared frailty
 m <- lvm(c(t1,t2)~x+z)
 rates <- c(1,0.5); cuts <- c(0,5)
-distribution(m,~y) <- aalenExponential.lvm(rate=rates,timecut=cuts)
-distribution(m,~z) <- loggamma.lvm(rate=1,shape=1)
+distribution(m,~y) <- dist_aalen_exponential(rate=rates, timecut=cuts)
+distribution(m,~z) <- dist_loggamma(rate=1,shape=1)
 if (FALSE) { # \dontrun{
 mets::fast.reshape(sim(m,100),varying="t")
 } # }
@@ -402,9 +404,9 @@ if (interactive()) plot(y~x,sim(m,1e3))
 m <- lvm()
 regression(m) <- y ~ z+v
 regression(m) <- s ~ exp(0.6*x-0.5*z)
-distribution(m,~x+z) <- binomial.lvm()
-distribution(m,~cens) <- coxWeibull.lvm(scale=1)
-distribution(m,~y) <- coxWeibull.lvm(scale=0.1,shape=~s)
+distribution(m,~x+z) <- dist_bernoulli()
+distribution(m,~cens) <- dist_cox_weibull(scale=1)
+distribution(m,~y) <- dist_cox_weibull(scale=0.1,shape=~s)
 eventTime(m) <- time ~ min(y=1,cens=0)
 
 if (interactive()) {

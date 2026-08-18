@@ -135,7 +135,7 @@ iteration</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">m0</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="va">z</span>,<span class="va">x</span><span class="op">~</span><span class="va">z</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="sim.lvm.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="op">~</span><span class="va">z</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.lvm.html">binomial.lvm</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sim.lvm.html">distribution</a></span><span class="op">(</span><span class="va">m0</span>,<span class="op">~</span><span class="va">z</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.lvm.html">dist_bernoulli</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m0</span>,<span class="fl">2000</span>,p<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y~z"</span><span class="op">=</span><span class="fl">2</span>,<span class="st">"y~x"</span><span class="op">=</span><span class="fl">1</span><span class="op">)</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## unmeasured confounder example</span></span></span>
@@ -154,13 +154,13 @@ iteration</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.02701133   Extrapolation:  TRUE   Steplength:  1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.03759283   Extrapolation:  TRUE   Steplength:  4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.6706137   Extrapolation:  TRUE   Steplength:  16 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070702 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.001280272   Extrapolation:  TRUE   Steplength:  3.588918 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0003418479   Extrapolation:  TRUE   Steplength:  6.548223 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0001613932   Extrapolation:  TRUE   Steplength:  4.502941 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0001075714   Extrapolation:  TRUE   Steplength:  5.9717 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  2.075845e-05   Extrapolation:  TRUE   Steplength:  3.793239 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  2.519482e-06   Extrapolation:  TRUE   Steplength:  4.763772 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0202431   Extrapolation:  TRUE   Steplength:  2.070703 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.001280263   Extrapolation:  TRUE   Steplength:  3.58892 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0003419721   Extrapolation:  TRUE   Steplength:  6.548214 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0001613952   Extrapolation:  TRUE   Steplength:  4.503239 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  0.0001076251   Extrapolation:  TRUE   Steplength:  5.974578 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  2.074922e-05   Extrapolation:  TRUE   Steplength:  3.789031 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual:  3.893975e-06   Extrapolation:  TRUE   Steplength:  4.736217 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y~x    1.048 0.03811 0.9737 1.123 1.263e-166</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>

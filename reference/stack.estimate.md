@@ -83,7 +83,7 @@ with inference adjusted for the two-stage estimation.
 ``` r
 m <- lvm(z0~x)
 Missing(m, z ~ z0) <- r~x
-distribution(m,~x) <- binomial.lvm()
+distribution(m,~x) <- dist_bernoulli()
 p <- c(r=-1,'r~x'=0.5,'z0~x'=2)
 beta <- p[3]/2
 d <- sim(m,500,p=p,seed=1)
