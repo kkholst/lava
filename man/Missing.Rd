@@ -30,7 +30,7 @@ full-data variable)}
 oberved data variable will be the name of the full-data variable +
 the suffix}
 
-\item{...}{Passed to dist_bernoulli}
+\item{...}{Passed to \link{dist_bernoulli}}
 }
 \value{
 lvm object

@@ -21,7 +21,7 @@
 ##' @param suffix If missing.name is missing, then the name of the
 ##' oberved data variable will be the name of the full-data variable +
 ##' the suffix
-##' @param ... Passed to dist_bernoulli
+##' @param ... Passed to [dist_bernoulli]
 ##' @return lvm object
 ##' @aliases Missing, Missing<-
 ##' @examples
