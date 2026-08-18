@@ -29,7 +29,7 @@
 ##'
 ##' ## Piecewise constant hazard and time-varying effect of z1
 ##' m <- lvm(y~1)
-##' distribution(m,~z1) <- Binary.lvm(0.5)
+##' distribution(m,~z1) <- dist_ones(0.5)
 ##' R <- log(cbind(c(0.2,0.7,0.9),c(0.5,0.3,0.3)))
 ##' m <- timedep(m,y~z1,timecut=c(0,3,5),rate=R)
 ##'
@@ -43,8 +43,8 @@
 ##'
 ##' ## Explicit simulation of time-varying effects
 ##' m <- lvm(y~1)
-##' distribution(m,~z1) <- Binary.lvm(0.5)
-##' distribution(m,~z2) <- binomial.lvm(p=0.5)
+##' distribution(m,~z1) <- dist_ones(0.5)
+##' distribution(m,~z2) <- dist_bernoulli(p=0.5)
 ##' #variance(m,~m1+m2) <- 0
 ##' #regression(m,m1[m1:0] ~ z1) <- log(0.5)
 ##' #regression(m,m2[m2:0] ~ z1) <- log(0.3)
@@ -58,7 +58,7 @@
 ##' dd <- mets::lifetable(Surv(y,status)~z1,data=d,breaks=c(0,5,Inf))
 ##' exp(coef(glm(events ~ offset(log(atrisk)) + -1 + interval + interval:z1, dd, family=poisson)))
 ##' }
-timedep <- function(object,formula,rate,timecut,type="coxExponential.lvm",...) {
+timedep <- function(object,formula,rate,timecut,type="dist_cox_exponential",...) {
     if (missing(timecut)) stop("'timecut' needed")
     ##if (inherits(formula,"formula"))
     ff <- getoutcome(formula)

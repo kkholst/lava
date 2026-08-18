@@ -32,12 +32,8 @@ exogenous<-             -
 eventTime               Add an observed event time outcome to a latent variable model
 eventTime<-             -
 fixsome                 Constrain parameters in measurement models (identifiability)
-functional              Add non-linear associations (for simulation only)
-functional<-            -
 intercept               Fix mean parameters in 'lvm'-object
 intercept<-             -
-intervention            Define intervention variable
-intervention<-          -
 rmvar                   Remove variables from (model) object.
 rmvar<-                 -
 kill                    -
@@ -71,8 +67,6 @@ regression<-            -
 roots                   Extract root nodes of graph
 sinks                   Extract sink nodes of graph
 subset.lvm              Extract subset of latent variable model
-timedep                 Time-dependent parameters
-timedep<-               -
 transform               Create non-linear parameter constraints
 transform<-             -
 vars                    Extract variable names from latent variable model
@@ -201,43 +195,45 @@ na.pass0                Handle missing data by setting NA to zero
 
 ** Distributions
 
+dist_gaussian           Normal distribution
+dist_lognormal          Log-normal distribution
+dist_poisson            Poisson distribution
+dist_threshold          Threshold model (e.g., Probit)
+dist_bernoulli          Binomial family / Bernoulli distribution
+dist_gamma              Gamma distribution
+dist_loggamma           Log-Gamma distribution
+dist_chisq              Chi-squared distribution
+dist_t                  Student-t distribution
+dist_uniform            Uniform (continuous or discrete) distribution
+dist_weibull            Weibull distribution
+dist_seqint             Sequence of integers 1:n
+dist_seq                Sequence
+dist_ones               Fixed sequence of zeros and ones
+dist_const              Fixed single value
+dist_beta               Beta distribution
+dist_multinomial        Multinomial distribution
+dist_mvn                Multivariate normal distribution
+dist_gaussian_mixture2  Gaussian mixture distribution
+dist_gaussian_mixture3  Gaussian mixture distribution
+dist_cox_weibull        Cox-model (Weibull baseline)
+dist_cox_exponential    Cox-model (Exponential baseline)
+dist_cox_gompertz       Cox-model (Gompertz baseline)
+dist_aalen_exponential  Aalen additive model
+dist_pareto             Pareto distribution
+dist_nonem              Deterministic variable (fixed at its mean-structure)
 Missing                 Add missing mechanism to model
 Missing<-               -
-normal.lvm              Normal distribution
-gaussian.lvm            -
-lognormal.lvm           Log-normal distribution
-poisson.lvm             Poisson distribution
-threshold.lvm           Threshold model (e.g., Probit)
-binomial.lvm            Binomial family / Bernoulli distribution
-logit.lvm               -
-probit.lvm              -
-Gamma.lvm               Gamma distribution
-loggamma.lvm            Log-Gamma distribution
-chisq.lvm               Chi-squared distribution
-student.lvm             Student-t distribution
-uniform.lvm             Uniform (continuous or discrete) distribution
-weibull.lvm             Weibull distribution
-id.lvm                  Sequence of integers 1:n
-Sequence.lvm            -
-ones.lvm                Fixed sequence of zeros and ones
-constant.lvm            Fixed single value
-binary.lvm              -
-Binary.lvm              -
-beta.lvm                Beta distribution
-multinomial.lvm         Multinomial distribution
-mvn.lvm                 Multivariate normal distribution
-GM2.lvm                 Gaussian mixture distribution
-GM3.lvm                 -
-coxWeibull.lvm          Cox-model (Weibull baseline)
-coxExponential.lvm      Cox-model (Exponential baseline)
-coxGompertz.vlm         Cox-model (Gompertz baseline)
-aalenExponential.lvm    Aalen additive model
+intervention            Define intervention variable
+intervention<-          -
+functional              Add non-linear associations (for simulation only)
+functional<-            -
 heavytail.lvm           Heavy-tailed distribution
 heavytail<-             -
+timedep                 Time-dependent parameters
+timedep<-               -
 binomial.rd             Binomial odds-product model (risk difference)
 binomial.rr             Binomial odds-product model (relative risk)
-pareto.lvm              Pareto distribution
-none.lvm                Deterministic variable (fixed at its mean-structure)
+
 
 ** Datasets
 
