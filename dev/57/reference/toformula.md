@@ -37,5 +37,5 @@ Klaus K. Holst
 
 toformula(c("age","gender"), "weight")
 #> c(age, gender) ~ weight
-#> <environment: 0x5649191f92e8>
+#> <environment: 0x5573a22f0560>
 ```
