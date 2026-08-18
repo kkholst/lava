@@ -40,7 +40,8 @@ Missing(object, formula, Rformula, missing.name, suffix = "0", ...)
 
 - ...:
 
-  Passed to dist_bernoulli
+  Passed to
+  [dist_bernoulli](https://kkholst.github.io/lava/reference/sim.lvm.md)
 
 ## Value
 

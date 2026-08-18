@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.097e-16   5.698e+00  0.000e+00   
-#> 2    -5.097e-16   5.698e+00  0.000e+00   
-#> 3    -5.097e-16   5.698e+00  0.000e+00   
-#> 4    -5.097e-16   5.698e+00  0.000e+00   
-#> 5     3.043e-15  -1.600e+01  0.000e+00   
+#> 1    -5.770e-16   5.698e+00  0.000e+00   
+#> 2    -5.770e-16   5.698e+00  0.000e+00   
+#> 3    -5.770e-16   5.698e+00  0.000e+00   
+#> 4    -5.770e-16   5.698e+00  0.000e+00   
+#> 5     2.155e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
-#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
-#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
+#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
+#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
 ```
 
 ### Renaming and subsetting parameters
@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x559a25bd8f58>
+#> <bytecode: 0x55e46b6e4aa0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
