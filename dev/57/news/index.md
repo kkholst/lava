@@ -9,6 +9,10 @@
   [`stats::quantile`](https://rdrr.io/r/stats/quantile.html). The `id`
   index is now automatically derived from the row names unless explictly
   specified as an argument.
+- distribution functions now use the `dist_` prefix in their function
+  names. For example, `dist_lognormal` corresponds to `lognormal.lvm`.
+  This makes the distribution functions easier to discover via tab
+  completion.
 
 ## lava 1.9.2
 
