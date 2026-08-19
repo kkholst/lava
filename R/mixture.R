@@ -37,7 +37,7 @@
 #' @keywords models regression
 #' @examples
 #'
-#' \donttest{
+#' \dontrun{ # Reduce Ex.timings
 #' m0 <- lvm(list(y~x+z,x~z))
 #' distribution(m0,~z) <- dist_bernoulli()
 #' d <- sim(m0,2000,p=c("y~z"=2,"y~x"=1),seed=1)

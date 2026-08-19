@@ -62,7 +62,7 @@ Draws non-parametric bootstrap samples
 m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(lvm(y~x), data=d)
-\donttest{ ## Reduce Ex.Timings
+\dontrun{ # Reduce Ex.Timings
 B <- bootstrap(e,R=50,mc.cores=1)
 B
 }

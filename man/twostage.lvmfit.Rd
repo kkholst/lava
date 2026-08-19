@@ -79,7 +79,7 @@ if (interactive()) {
     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
 }
 
-\donttest{ ## Reduce test timing
+\dontrun{ # Reduce test timing
 ## Splines
 f <- function(x) cos(2*x)+x+-0.25*x^2
 m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)

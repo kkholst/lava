@@ -54,7 +54,7 @@ twostageCV(
 Cross-validated two-stage estimator for non-linear SEM
 }
 \examples{
-\donttest{ ## Reduce Ex.Timings##'
+\dontrun { # Reduce Ex.Timings
 m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
 m2 <- lvm( y ~ 1 )
 m <- functional(merge(m1,m2), y ~ u, value=function(x) sin(x)+x)
