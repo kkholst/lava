@@ -158,11 +158,12 @@
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mm</span>,f<span class="op">=</span><span class="va">pf</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>u<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="co">## Reduce test timing</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co">## Reduce test timing</span></span></span>
 <span class="r-in"><span><span class="co">## Splines</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">x</span><span class="op">)</span><span class="op">+</span><span class="va">x</span><span class="op">+</span><span class="op">-</span><span class="fl">0.25</span><span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">+</span><span class="va">x3</span><span class="op">~</span><span class="va">eta1</span>, <span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span><span class="op">~</span><span class="va">eta2</span>, latent<span class="op">=</span><span class="op">~</span><span class="va">eta1</span><span class="op">+</span><span class="va">eta2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.lvm.html">functional</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">eta2</span><span class="op">~</span><span class="va">eta1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">f</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'f' not found</span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">500</span>,seed<span class="op">=</span><span class="fl">1</span>,latent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">x1</span><span class="op">+</span><span class="va">x2</span><span class="op">+</span><span class="va">x3</span><span class="op">~</span><span class="va">eta1</span>,latent<span class="op">=</span><span class="op">~</span><span class="va">eta1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span><span class="op">~</span><span class="va">eta2</span>,latent<span class="op">=</span><span class="op">~</span><span class="va">eta2</span><span class="op">)</span></span></span>
@@ -193,7 +194,7 @@
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">p1</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,col<span class="op">=</span><span class="st">"green"</span>,lwd<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="confband.html">confband</a></span><span class="op">(</span><span class="va">x</span>,lower<span class="op">=</span><span class="va">p1</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,upper<span class="op">=</span><span class="va">p1</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,center<span class="op">=</span><span class="va">p1</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, polygon<span class="op">=</span><span class="cn">TRUE</span>, col<span class="op">=</span><span class="fu"><a href="Col.html">Col</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span> <span class="co">## Reduce test timing</span></span></span>
+<span class="r-in"><span> <span class="co"># \dontrun{} ## Reduce test timing</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co">## Reduce timing</span></span></span>
 <span class="r-in"><span> <span class="co">## Cross-validation example</span></span></span>
@@ -217,20 +218,20 @@
 <span class="r-in"><span> <span class="va">a</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z-value  P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Measurements:                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta2           1.03076    0.03876 26.59191   &lt;1e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta2           0.99635    0.04036 24.68596   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2~eta2           1.14551    0.10550 10.85824   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3~eta2           0.98358    0.09386 10.47968   &lt;1e-12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_1       2.47344    0.22699 10.89681   &lt;1e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_2      -0.48653    0.05555 -8.75771   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_1       0.12284    0.11066  1.11012   0.2669</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2~eta1_2      -0.03178    0.03357 -0.94667   0.3438</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.02005    0.06568  0.30528   0.7602</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.07986    0.06779  1.17797   0.2388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.16241    0.16093  7.22290   &lt;1e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.01931    0.06894  0.28012   0.7794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                0.07999    0.06640  1.20456   0.2284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              0.04453    0.11512  0.38680   0.6989</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.11229    0.10786 10.31201         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                1.00927    0.09818 10.28011         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.09169    0.09757 11.18840         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              1.81941    0.18188 10.00346         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                1.09790    0.10873 10.09753         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.95220    0.11156  8.53519         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3                1.14687    0.10038 11.42497         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    eta2              0.91344    0.12919  7.07060         </span>
 <span class="r-in"><span> <span class="co"># \dontrun{}</span></span></span>
 </code></pre></div>
     </div>

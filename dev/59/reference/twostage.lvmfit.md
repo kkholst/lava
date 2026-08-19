@@ -117,11 +117,12 @@ if (interactive()) {
     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
 }
 
- ## Reduce test timing
+if (FALSE)  ## Reduce test timing
 ## Splines
 f <- function(x) cos(2*x)+x+-0.25*x^2
 m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
 functional(m, eta2~eta1) <- f
+#> Error: object 'f' not found
 d <- sim(m,500,seed=1,latent=TRUE)
 m1 <- lvm(x1+x2+x3~eta1,latent=~eta1)
 m2 <- lvm(y1+y2+y3~eta2,latent=~eta2)
@@ -152,7 +153,7 @@ if (interactive()) {
   lines(x,p1[,1],col="green",lwd=5)
   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
 }
- ## Reduce test timing
+ # \dontrun{} ## Reduce test timing
 
 if (FALSE)  ## Reduce timing
  ## Cross-validation example
@@ -176,19 +177,19 @@ if (FALSE)  ## Reduce timing
  a
 #>                     Estimate Std. Error  Z-value  P-value
 #> Measurements:                                            
-#>    y2~eta2           1.03076    0.03876 26.59191   <1e-12
-#>    y3~eta2           0.99635    0.04036 24.68596   <1e-12
+#>    y2~eta2           1.14551    0.10550 10.85824   <1e-12
+#>    y3~eta2           0.98358    0.09386 10.47968   <1e-12
 #> Regressions:                                             
-#>    eta2~eta1_1       2.47344    0.22699 10.89681   <1e-12
-#>    eta2~eta1_2      -0.48653    0.05555 -8.75771   <1e-12
+#>    eta2~eta1_1       0.12284    0.11066  1.11012   0.2669
+#>    eta2~eta1_2      -0.03178    0.03357 -0.94667   0.3438
 #> Intercepts:                                              
-#>    y2                0.02005    0.06568  0.30528   0.7602
-#>    y3                0.07986    0.06779  1.17797   0.2388
-#>    eta2              1.16241    0.16093  7.22290   <1e-12
+#>    y2                0.01931    0.06894  0.28012   0.7794
+#>    y3                0.07999    0.06640  1.20456   0.2284
+#>    eta2              0.04453    0.11512  0.38680   0.6989
 #> Residual Variances:                                      
-#>    y1                1.11229    0.10786 10.31201         
-#>    y2                1.00927    0.09818 10.28011         
-#>    y3                1.09169    0.09757 11.18840         
-#>    eta2              1.81941    0.18188 10.00346         
+#>    y1                1.09790    0.10873 10.09753         
+#>    y2                0.95220    0.11156  8.53519         
+#>    y3                1.14687    0.10038 11.42497         
+#>    eta2              0.91344    0.12919  7.07060         
  # \dontrun{}
 ```

@@ -105,14 +105,9 @@ Klaus K. Holst
 m <- lvm(y~x)
 d <- sim(m,100)
 e <- estimate(lvm(y~x), data=d)
- ## Reduce Ex.Timings
+if (FALSE)  ## Reduce Ex.Timings
 B <- bootstrap(e,R=50,mc.cores=1)
 B
-#> Non-parametric bootstrap statistics (R=50):
-#> 
-#>      Estimate     Bias         Std.Err      2.5 %        97.5 %      
-#> y    -0.012523283 -0.002513924  0.083715845 -0.175568919  0.123923908
-#> y~x   1.007018982  0.000333004  0.073128648  0.888965542  1.154184192
-#> y~~y  0.939676415 -0.014462789  0.110341543  0.746729951  1.146074112
-#> 
+#> Error: object 'B' not found
+ # \dontrun{}
 ```

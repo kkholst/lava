@@ -145,17 +145,11 @@ included in the bootstrap procedure</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">e</span>,R<span class="op">=</span><span class="fl">50</span>,mc.cores<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">B</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Non-parametric bootstrap statistics (R=50):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate     Bias         Std.Err      2.5 %        97.5 %      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y    -0.012523283 -0.002513924  0.083715845 -0.175568919  0.123923908</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y~x   1.007018982  0.000333004  0.073128648  0.888965542  1.154184192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y~~y  0.939676415 -0.014462789  0.110341543  0.746729951  1.146074112</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'B' not found</span>
+<span class="r-in"><span> <span class="co"># \dontrun{}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
