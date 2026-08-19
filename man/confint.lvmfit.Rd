@@ -65,7 +65,7 @@ d <- sim(m,100)
 e <- estimate(lvm(y~x), d)
 confint(e,3,profile=TRUE)
 confint(e,3)
-\dontrun{ # Reduce Ex.timings
+\dontrun{ ## Reduce Ex.timings
 B <- bootstrap(e,R=50)
 B
 }
