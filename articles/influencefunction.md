@@ -654,7 +654,7 @@ N\to\infty due to the assumption that \widehat{\theta} is RAL in Q_0.
 Applying Hoeffding’s Inequality to the iid Bernoulli random variables
 1-R_i, i=1,\ldots,N, we get that \begin{align\*} P(N-n - N(1-p) \geq t)
 \leq \exp(-2t^2/N), \end{align\*} and with t = Np/2, we have that
-P(n\<N\p/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
+P(n\<Np/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
 the first term P(E_N^\complement) also converges to zero.
 
 As \widehat{p}\to p a.s. by the strong LLN, it follows from continuity
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.770e-16   5.698e+00  0.000e+00   
-#> 2    -5.770e-16   5.698e+00  0.000e+00   
-#> 3    -5.770e-16   5.698e+00  0.000e+00   
-#> 4    -5.770e-16   5.698e+00  0.000e+00   
-#> 5     2.155e-15  -1.600e+01  0.000e+00   
+#> 1    -5.097e-16   5.698e+00  0.000e+00   
+#> 2    -5.097e-16   5.698e+00  0.000e+00   
+#> 3    -5.097e-16   5.698e+00  0.000e+00   
+#> 4    -5.097e-16   5.698e+00  0.000e+00   
+#> 5     3.043e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
-#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
-#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
+#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
+#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
 ```
 
 ### Renaming and subsetting parameters
@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55fac0a4a870>
+#> <bytecode: 0x55e0fc39ece0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1737,7 +1737,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6 lava_1.9.2.1  
+#> [1] survival_3.8-6 lava_1.9.3    
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        

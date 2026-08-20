@@ -65,60 +65,49 @@ twostage(
 ## Examples
 
 ``` r
+if (FALSE)  ## Reduce test timing
+# simulated example (only linear effects)
 m <- lvm(c(x1,x2,x3)~f1,f1~z,
          c(y1,y2,y3)~f2,f2~f1+z)
 latent(m) <- ~f1+f2
-d <- simulate(m,100,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
+#> Error: object 'm' not found
+d <- simulate(m,1000,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
+#> Error: object 'm' not found
 
 ## Full MLE
 ee <- estimate(m,d)
+#> Error: object 'm' not found
 
 ## Manual two-stage
-if (FALSE) { # \dontrun{
 m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 e1 <- estimate(m1,d)
+#> Error: object 'd' not found
 pp1 <- predict(e1,f1~x1+x2+x3)
+#> Error: object 'e1' not found
 
 d$u1 <- pp1[,]
+#> Error: object 'pp1' not found
 d$u2 <- pp1[,]^2+attr(pp1,"cond.var")[1]
+#> Error: object 'pp1' not found
 m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 e2 <- estimate(m2,d)
-} # }
+#> Error: object 'd' not found
 
-## Two-stage
+## twostage method:
 m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 pred <- function(mu,var,data,...)
     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
 (mm <- twostage(m1,model2=m2,data=d,predict.fun=pred))
-#>                     Estimate Std. Error  Z-value   P-value
-#> Measurements:                                             
-#>    y2~eta            0.96270    0.12462  7.72525    <1e-12
-#>    y3~eta            0.97886    0.12477  7.84516    <1e-12
-#> Regressions:                                              
-#>    y1~u1            -0.10923    0.24754 -0.44125     0.659
-#>    y1~u2            -0.00916    0.02941 -0.31149    0.7554
-#>    y1~z             -0.09088    0.25697 -0.35364    0.7236
-#>     eta~u1           1.23462    0.24891  4.96011 7.045e-07
-#>     eta~u2           0.00912    0.02417  0.37737    0.7059
-#>     eta~z            0.84531    0.27943  3.02508  0.002486
-#> Intercepts:                                               
-#>    y2               -0.19048    0.16526 -1.15257    0.2491
-#>    y3                0.00979    0.18282  0.05354    0.9573
-#>    eta              -0.16805    0.22950 -0.73226     0.464
-#> Residual Variances:                                       
-#>    y1                1.15103    0.24219  4.75250          
-#>    y2                0.97707    0.20212  4.83411          
-#>    y3                1.13661    0.20506  5.54289          
-#>    eta               1.58985    0.37736  4.21312          
+#> Error: object 'd' not found
 
-if (interactive()) {
+  if (interactive()) {
     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
-}
+  }
+ # \dontrun{}
 
- ## Reduce test timing
-## Splines
+## Quadratic example
 f <- function(x) cos(2*x)+x+-0.25*x^2
 m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
 functional(m, eta2~eta1) <- f
@@ -131,9 +120,11 @@ if (interactive()) plot(mm)
 nonlinear(m2,type="quadratic") <- eta2~eta1
 a <- twostage(m1,m2,data=d)
 if (interactive()) plot(a)
-
+if (FALSE)  ## Reduce test timing##'
+## Splines
 kn <- c(-1,0,1)
 nonlinear(m2,type="spline",knots=kn) <- eta2~eta1
+#> Error: object 'kn' not found
 a <- twostage(m1,m2,data=d)
 x <- seq(-3,3,by=0.1)
 y <- predict(a, newdata=data.frame(eta1=x))
@@ -152,7 +143,7 @@ if (interactive()) {
   lines(x,p1[,1],col="green",lwd=5)
   confband(x,lower=p1[,2],upper=p1[,3],center=p1[,1], polygon=TRUE, col=Col(3,0.2))
 }
- ## Reduce test timing
+ # \dontrun{} ## Reduce test timing
 
 if (FALSE)  ## Reduce timing
  ## Cross-validation example
@@ -174,21 +165,21 @@ if (FALSE)  ## Reduce timing
  a <- cv(ff,data=d,rep=1)
 #> Error in cv(ff, data = d, rep = 1): could not find function "cv"
  a
-#>                     Estimate Std. Error  Z-value  P-value
-#> Measurements:                                            
-#>    y2~eta2           1.03076    0.03876 26.59191   <1e-12
-#>    y3~eta2           0.99635    0.04036 24.68596   <1e-12
-#> Regressions:                                             
-#>    eta2~eta1_1       2.47344    0.22699 10.89681   <1e-12
-#>    eta2~eta1_2      -0.48653    0.05555 -8.75771   <1e-12
-#> Intercepts:                                              
-#>    y2                0.02005    0.06568  0.30528   0.7602
-#>    y3                0.07986    0.06779  1.17797   0.2388
-#>    eta2              1.16241    0.16093  7.22290   <1e-12
-#> Residual Variances:                                      
-#>    y1                1.11229    0.10786 10.31201         
-#>    y2                1.00927    0.09818 10.28011         
-#>    y3                1.09169    0.09757 11.18840         
-#>    eta2              1.81941    0.18188 10.00346         
+#>                     Estimate Std. Error  Z-value   P-value
+#> Measurements:                                             
+#>    y2~eta2           1.03159    0.03878 26.60368    <1e-12
+#>    y3~eta2           0.99823    0.04055 24.61738    <1e-12
+#> Regressions:                                              
+#>    eta2~eta1_1       1.02678    0.09758 10.52288    <1e-12
+#>    eta2~eta1_2      -0.45396    0.07186 -6.31753 2.658e-10
+#> Intercepts:                                               
+#>    y2                0.02026    0.06571  0.30828    0.7579
+#>    y3                0.08032    0.06785  1.18390    0.2365
+#>    eta2              0.34096    0.10913  3.12452  0.001781
+#> Residual Variances:                                       
+#>    y1                1.11844    0.10884 10.27618          
+#>    y2                1.01001    0.09859 10.24506          
+#>    y3                1.08519    0.09822 11.04895          
+#>    eta2              1.89819    0.18571 10.22130          
  # \dontrun{}
 ```

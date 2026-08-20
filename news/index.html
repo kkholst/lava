@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,11 +38,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.9.3" id="lava-193">lava 1.9.3<a class="anchor" aria-label="anchor" href="#lava-193"></a></h2>
 <ul><li>
-<code>merge.estimate</code> by default no longer sorts IC by id (old behaviour via new argument <code>sort=TRUE</code>).</li>
+<code>merge.estimate</code> no longer sort IC by id by default. The previous behavior is available via the new argument <code>sort=TRUE</code>.</li>
 <li>
-<code>estimate.array</code> allows arguments <code>type="quantileN"</code> where N=1,..,9 corresponding to the type argument of <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile</a></code>. The <code>id</code> index is now automatically derived from the row names unless explicitly specified as an argument.</li>
+<code>estimate.array</code> allows arguments <code>type="quantileN"</code> where N=1,..,9 corresponding to the type argument in <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile</a></code>. The <code>id</code> index is now automatically derived from the row names unless explicitly specified as an argument.</li>
 <li>distribution functions now use the <code>dist_</code> prefix in their function names. For example, <code>dist_lognormal</code> corresponds to <code>lognormal.lvm</code>. This makes the distribution functions easier to discover via tab completion.</li>
 </ul></div>
     <div class="section level2">

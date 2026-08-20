@@ -105,14 +105,9 @@ confint(e,3,profile=TRUE)
 confint(e,3)
 #>          2.5 %    97.5 %
 #> y~~y 0.5547589 0.9802276
- ## Reduce Ex.timings
+if (FALSE)  ## Reduce Ex.timings
 B <- bootstrap(e,R=50)
 B
-#> Non-parametric bootstrap statistics (R=50):
-#> 
-#>      Estimate     Bias         Std.Err      2.5 %        97.5 %      
-#> y     0.124504326 -0.007753062  0.073936733  0.008375347  0.288089457
-#> y~x   1.061750034  0.013940880  0.074844578  0.949601761  1.235976345
-#> y~~y  0.767493210 -0.026454597  0.100031344  0.584892411  0.986727053
-#> 
+#> Error: object 'B' not found
+ # \dontrun{}
 ```

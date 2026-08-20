@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-08-18</p>
+      <p class="date">2026-08-20</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -567,7 +567,7 @@ P(E_N^\complement)
 <p>Applying Hoeffding’s Inequality to the iid Bernoulli random variables <span class="math inline">1-R_i,
 i=1,\ldots,N</span>, we get that <span class="math display">\begin{align*}
 P(N-n - N(1-p) \geq t) \leq \exp(-2t^2/N),
-\end{align*}</span> and with <span class="math inline">t = Np/2</span>, we have that <span class="math inline">P(n&lt;N\p/2)\leq\exp(-N/(2p^2))\to 0</span> as <span class="math inline">N\to\infty</span>, and it follows that the first term <span class="math inline">P(E_N^\complement)</span> also converges to zero.</p>
+\end{align*}</span> and with <span class="math inline">t = Np/2</span>, we have that <span class="math inline">P(n&lt;Np/2)\leq\exp(-N/(2p^2))\to 0</span> as <span class="math inline">N\to\infty</span>, and it follows that the first term <span class="math inline">P(E_N^\complement)</span> also converges to zero.</p>
 <p>As <span class="math inline">\widehat{p}\to p</span> a.s. by the strong LLN, it follows from continuity at <span class="math inline">p&gt;0</span> that <span class="math inline">\widehat{p}^{-1}-p^{-1} = o_{P_0}(1)</span>, and hence by Slutsky’s lemma <span class="math display">\begin{align*}
 \sqrt{N}(\widehat{\theta}-\theta) &amp;= \frac{1}{\sqrt{N}}\sum_{i=1}^N
 \frac{R_i}{p}\operatorname{IC}(O_i; Q_0) +
@@ -706,11 +706,11 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1    -5.770e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2    -5.770e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 3    -5.770e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 4    -5.770e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5     2.155e-15  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    -5.097e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    -5.097e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 3    -5.097e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 4    -5.097e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5     3.043e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                      </span></span>
 <span><span class="co">#&gt; 1996  0.000       0.000     -4.545       </span></span>
 <span><span class="co">#&gt; 1997  0.000       0.000      3.571       </span></span>
@@ -719,9 +719,9 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <span><span class="co">#&gt; 2000  0.000       0.000     -4.545</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28</span></span>
-<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.717325e-24</span></span>
-<span><span class="co">#&gt; (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28</span></span>
+<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.718185e-24</span></span>
+<span><span class="co">#&gt; (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="renaming-and-subsetting-parameters">Renaming and subsetting parameters<a class="anchor" aria-label="anchor" href="#renaming-and-subsetting-parameters"></a>
 </h3>
@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55fac0a4a870&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55e0fc39ece0&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1434,7 +1434,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] survival_3.8-6 lava_1.9.2.1  </span></span>
+<span><span class="co">#&gt; [1] survival_3.8-6 lava_1.9.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>

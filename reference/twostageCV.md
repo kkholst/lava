@@ -84,12 +84,15 @@ twostageCV(
 ## Examples
 
 ``` r
- ## Reduce Ex.Timings##'
+if (FALSE)  ## Reduce Ex.Timings
 m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
 m2 <- lvm( y ~ 1 )
 m <- functional(merge(m1,m2), y ~ u, value=function(x) sin(x)+x)
+#> Error: object 'm1' not found
 distribution(m, ~u1) <- dist_uniform(-6, 6)
+#> Error: object 'm' not found
 d <- sim(m,n=500,seed=1)
+#> Error: object 'm' not found
 nonlinear(m2) <- y~u1
 if (requireNamespace('mets', quietly=TRUE)) {
   set.seed(1)
@@ -97,31 +100,6 @@ if (requireNamespace('mets', quietly=TRUE)) {
                   nfolds=2)
   val
 }
-#> ────────────────────────────────────────────────────────────────────────────────
-#> Selected mixture model: 1 component
-#>       AIC1
-#> 1 5130.210
-#> 2 5132.707
-#> ────────────────────────────────────────────────────────────────────────────────
-#> Selected spline model degrees of freedom: 3
-#> Knots: -2.674 -0.7956 1.082 2.96 
-#> 
-#>      RMSE(nfolds=2, rep=1)
-#> df:1              5.353550
-#> df:2              5.260141
-#> df:3              4.851035
-#> df:4              5.329716
-#> df:5              6.220957
-#> df:6              5.792549
-#> ────────────────────────────────────────────────────────────────────────────────
-#> 
-#>                     Estimate Std. Error Z-value P-value
-#> Regressions:                                           
-#>    y~u1_1            1.38092                           
-#>    y~u1_2            0.02123                           
-#>    y~u1_3           -0.08440                           
-#> Intercepts:                                            
-#>    y                -0.33435                           
-#> Residual Variances:                                    
-#>    y                 1.61964                           
+#> Error: object 'm1' not found
+ # \dontrun{} ## Reduce Ex.Timings
 ```
