@@ -654,7 +654,7 @@ N\to\infty due to the assumption that \widehat{\theta} is RAL in Q_0.
 Applying Hoeffding’s Inequality to the iid Bernoulli random variables
 1-R_i, i=1,\ldots,N, we get that \begin{align\*} P(N-n - N(1-p) \geq t)
 \leq \exp(-2t^2/N), \end{align\*} and with t = Np/2, we have that
-P(n\<N\p/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
+P(n\<Np/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
 the first term P(E_N^\complement) also converges to zero.
 
 As \widehat{p}\to p a.s. by the strong LLN, it follows from continuity
@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x556289659da8>
+#> <bytecode: 0x55bf84298670>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
