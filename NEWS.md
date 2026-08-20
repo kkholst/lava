@@ -1,8 +1,8 @@
-# lava (development version)
-  - `merge.estimate` by default no longer sorts IC by id (old behaviour via new
-    argument `sort=TRUE`).
+# lava 1.9.3
+  - `merge.estimate` no longer sort IC by id by default. The previous
+     behavior is available via the new argument `sort=TRUE`.
   - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
-    corresponding to the type argument of `stats::quantile`. The `id` index is
+    corresponding to the type argument in `stats::quantile`. The `id` index is
     now automatically derived from the row names unless explicitly specified as
     an argument.
   - distribution functions now use the `dist_` prefix in their function names. For

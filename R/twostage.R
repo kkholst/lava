@@ -105,16 +105,17 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' @param ... Additional arguments to lower level functions
 ##' @aliases twostage.lvmfit twostage.lvm twostage.lvm.mixture twostage.estimate nonlinear nonlinear<-
 ##' @examples
+##' \dontrun{ ## Reduce test timing
+##' # simulated example (only linear effects)
 ##' m <- lvm(c(x1,x2,x3)~f1,f1~z,
 ##'          c(y1,y2,y3)~f2,f2~f1+z)
 ##' latent(m) <- ~f1+f2
-##' d <- simulate(m,100,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
+##' d <- simulate(m,1000,p=c("f2,f2"=2,"f1,f1"=0.5),seed=1)
 ##'
 ##' ## Full MLE
 ##' ee <- estimate(m,d)
 ##'
 ##' ## Manual two-stage
-##' \dontrun{
 ##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 ##' e1 <- estimate(m1,d)
 ##' pp1 <- predict(e1,f1~x1+x2+x3)
@@ -123,22 +124,21 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' d$u2 <- pp1[,]^2+attr(pp1,"cond.var")[1]
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' e2 <- estimate(m2,d)
-##' }
 ##'
-##' ## Two-stage
+##' ## twostage method:
 ##' m1 <- lvm(c(x1,x2,x3)~f1,f1~z); latent(m1) <- ~f1
 ##' m2 <- lvm(c(y1,y2,y3)~eta,c(y1,eta)~u1+u2+z); latent(m2) <- ~eta
 ##' pred <- function(mu,var,data,...)
 ##'     cbind("u1"=mu[,1],"u2"=mu[,1]^2+var[1])
 ##' (mm <- twostage(m1,model2=m2,data=d,predict.fun=pred))
 ##'
-##' if (interactive()) {
+##'   if (interactive()) {
 ##'     pf <- function(p) p["eta"]+p["eta~u1"]*u + p["eta~u2"]*u^2
 ##'     plot(mm,f=pf,data=data.frame(u=seq(-2,2,length.out=100)),lwd=2)
+##'   }
 ##' }
 ##'
-##' \donttest{ ## Reduce test timing
-##' ## Splines
+##' ## Quadratic example
 ##' f <- function(x) cos(2*x)+x+-0.25*x^2
 ##' m <- lvm(x1+x2+x3~eta1, y1+y2+y3~eta2, latent=~eta1+eta2)
 ##' functional(m, eta2~eta1) <- f
@@ -151,7 +151,9 @@ uhat <- function(p=coef(model1), model1, data=model.frame(model1), nlobj) {
 ##' nonlinear(m2,type="quadratic") <- eta2~eta1
 ##' a <- twostage(m1,m2,data=d)
 ##' if (interactive()) plot(a)
-##'
+
+##' \dontrun{ ## Reduce test timing##'
+##' ## Splines
 ##' kn <- c(-1,0,1)
 ##' nonlinear(m2,type="spline",knots=kn) <- eta2~eta1
 ##' a <- twostage(m1,m2,data=d)
@@ -433,7 +435,7 @@ predict.twostage.lvmfit <- function(object,
 ##' @param messages print information (>0)
 ##' @param ... additional arguments to lower
 ##' @examples
-##' \donttest{ ## Reduce Ex.Timings##'
+##' \dontrun{ ## Reduce Ex.Timings
 ##' m1 <- lvm( x1+x2+x3 ~ u, latent= ~u)
 ##' m2 <- lvm( y ~ 1 )
 ##' m <- functional(merge(m1,m2), y ~ u, value=function(x) sin(x)+x)
@@ -446,7 +448,7 @@ predict.twostage.lvmfit <- function(object,
 ##'                   nfolds=2)
 ##'   val
 ##' }
-##' }
+##' } ## Reduce Ex.Timings
 twostageCV <- function(model1, model2, data, control1=list(trace=0), control2=list(trace=0),
                 knots.boundary, nmix=1:4, df=1:9, fix=TRUE, std.err=TRUE,
                 nfolds=5, rep=1, messages=0, ...) {

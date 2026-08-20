@@ -519,7 +519,7 @@ i=1,\ldots,N$, we get that
 \begin{align*}
 P(N-n - N(1-p) \geq t) \leq \exp(-2t^2/N),
 \end{align*}
-and with $t = Np/2$, we have that $P(n<N\p/2)\leq\exp(-N/(2p^2))\to 0$ as
+and with $t = Np/2$, we have that $P(n<Np/2)\leq\exp(-N/(2p^2))\to 0$ as
 $N\to\infty$, and it follows that the first term $P(E_N^\complement)$ also
 converges to zero.
 
