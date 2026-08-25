@@ -89,14 +89,15 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Let \(Y\in\{1,...,J\}\) be the ordinal outcome and $X$ a vector
-of covariates. The cumulative link model is given by $$ P(Y\leq j|X=x)
-  = g(a_j - b^t x), j=1,...,J-1.$$  The default link function is the Probit function, i.e. where $g$
-is equal to the standard normal cumulative distribution function. The
-proportional odds model is obtained with <code>family=binomial(logit)</code>.</p>
+    <p>Let \(Y\in\{1,...,J\}\) be the ordinal outcome and \(X\) a
+vector of covariates. The cumulative link model is given by $$ P(Y\leq
+  j|X=x) = g(a_j - b^\top x), j=1,...,J-1.$$ The default link function is the
+Probit function, i.e. where \(g\) is equal to the standard normal cumulative
+distribution function. The proportional odds model is obtained with
+<code>family=binomial(logit)</code>.</p>
 <p>Note, the intercept parameters are parametrized such that they are
 monotone increasing \(a_1 &lt; \cdots &lt; a_{J-1}\). To get the parameter
-estimates of the actual $a_j$'s use the <code>summary</code> method.</p>
+estimates of the actual \(a_j\)'s use the <code>summary</code> method.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

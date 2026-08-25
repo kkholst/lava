@@ -48,16 +48,16 @@ ordreg(
 
 ## Details
 
-Let \\Y\in\\1,...,J\\\\ be the ordinal outcome and \$X\$ a vector of
+Let \\Y\in\\1,...,J\\\\ be the ordinal outcome and \\X\\ a vector of
 covariates. The cumulative link model is given by \$\$ P(Y\leq j\|X=x) =
-g(a_j - b^t x), j=1,...,J-1.\$\$ The default link function is the Probit
-function, i.e. where \$g\$ is equal to the standard normal cumulative
-distribution function. The proportional odds model is obtained with
-`family=binomial(logit)`.
+g(a_j - b^\top x), j=1,...,J-1.\$\$ The default link function is the
+Probit function, i.e. where \\g\\ is equal to the standard normal
+cumulative distribution function. The proportional odds model is
+obtained with `family=binomial(logit)`.
 
 Note, the intercept parameters are parametrized such that they are
 monotone increasing \\a_1 \< \cdots \< a\_{J-1}\\. To get the parameter
-estimates of the actual \$a_j\$'s use the `summary` method.
+estimates of the actual \\a_j\\'s use the `summary` method.
 
 ## Author
 
