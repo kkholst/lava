@@ -211,7 +211,7 @@ constrain(m2,psi ~ beta2) <- function(x) x
 parameter(m2) <- ~ beta2
 ee <- estimate(list(m1,m2),list(d1,d2),control=list(method="NR"))
 summary(ee)
-#> ||score||^2= 2.641697e-17 
+#> ||score||^2= 2.64236e-17 
 #> Latent variables: 
 #> ____________________________________________________
 #> Group 1 (n=500)
@@ -257,7 +257,7 @@ summary(ee)
 #> 
 #> rank(Information) = 7 (p=7)
 #> condition(Information) = 5.215445
-#> mean(score^2) = 3.773853e-18 
+#> mean(score^2) = 3.7748e-18 
 #> ────────────────────────────────────────────────────────────────────────────────
 
 m3 <- lvm(y ~ f(x,beta)+f(z,beta2))
