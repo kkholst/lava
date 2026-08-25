@@ -32,11 +32,23 @@ ordreg(
 \description{
 Ordinal regression models
 }
+\details{
+Let \eqn{Y\in\{1,...,J\}} be the ordinal outcome and $X$ a vector
+of covariates. The cumulative link model is given by \deqn{ P(Y\leq j|X=x)
+  = g(a_j - b^t x), j=1,...,J-1.}  The default link function is the Probit function, i.e. where $g$
+is equal to the standard normal cumulative distribution function. The
+proportional odds model is obtained with \code{family=binomial(logit)}.
+
+Note, the intercept parameters are parametrized such that they are
+monotone increasing \eqn{a_1 < \cdots < a_{J-1}}. To get the parameter
+estimates of the actual $a_j$'s use the \code{summary} method.
+}
 \examples{
 m <- lvm(y~x)
 ordinal(m,K=3) <- ~y
 d <- sim(m,100)
 e <- ordreg(y~x,d)
+summary(e)
 }
 \author{
 Klaus K. Holst
