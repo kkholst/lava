@@ -22,5 +22,6 @@ test_that("ordreg",{
   ## estimate(a, function(x) lava:::ordreg_threshold(x[seq_len(J-1)]))
   s <- summary(a)
   cc <- coef(s$coef)
-  testthat::expect_equivalent(cc, c(as, bs), tolerance=0.1)
+  expect_equivalent(cc, c(as, bs), tolerance=0.1)
 }
+)
