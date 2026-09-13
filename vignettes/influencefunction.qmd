@@ -305,7 +305,7 @@ The same estimates can be obtained with a
 *cumulative link regression* model which also generalizes to
 ordinal outcomes. Here we consider the proportional odds model given by
 \begin{align*}
-\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{t}), \quad j=1,\ldots,J-1
+\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{\top}x), \quad j=1,\ldots,J-1
 \end{align*}
 ```{r ordreg}
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()

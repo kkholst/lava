@@ -28,6 +28,16 @@ ordreg_dthreshold <- function(theta) {
 ##' @param start optional starting values
 ##' @param fast If TRUE standard errors etc. will not be calculated
 ##' @param ... Additional arguments to lower level functions
+##' @details Let \eqn{Y\in\{1,...,J\}} be the ordinal outcome and \eqn{X} a
+##'   vector of covariates. The cumulative link model is given by \deqn{ P(Y\leq
+##'   j|X=x) = g(a_j - b^\top x), j=1,...,J-1.} The default link function is the
+##'   Probit function, i.e. where \eqn{g} is equal to the standard normal cumulative
+##'   distribution function. The proportional odds model is obtained with
+##'   \code{family=binomial(logit)}.
+##'
+##'   Note, the intercept parameters are parametrized such that they are
+##'   monotone increasing \eqn{a_1 < \cdots < a_{J-1}}. To get the parameter
+##'   estimates of the actual \eqn{a_j}'s use the \code{summary} method.
 ##' @export
 ##' @author Klaus K. Holst
 ##' @examples
@@ -35,6 +45,7 @@ ordreg_dthreshold <- function(theta) {
 ##' ordinal(m,K=3) <- ~y
 ##' d <- sim(m,100)
 ##' e <- ordreg(y~x,d)
+##' summary(e)
 ordreg <- function(formula,data=parent.frame(),offset,family=stats::binomial("probit"),start,fast=FALSE,...) {
     y <- ordered(model.frame(update(formula,.~0),data)[,1])
     lev <- levels(y)
@@ -47,8 +58,10 @@ ordreg <- function(formula,data=parent.frame(),offset,family=stats::binomial("pr
     assign("K",nlevels(y),envir=up)
     assign("n",length(y),envir=up)
     assign("p",NCOL(X),envir=up)
-    assign("threshold", function(theta,K) ordreg_threshold(theta[seq(K-1)]), envir=up)
-    assign("dthreshold",function(theta,K) ordreg_dthreshold(theta[seq(K-1)]), envir=up)
+    assign("threshold",
+           function(theta,K) ordreg_threshold(theta[seq(K-1)]), envir=up)
+    assign("dthreshold",
+           function(theta,K) ordreg_dthreshold(theta[seq(K-1)]), envir=up)
     ff <- function(theta) -ordreg_logL(theta,up)
     gg <- function(theta) -ordreg_score(theta,up)
     if (missing(start)) start <- with(up,c(rep(-1,up$K-1),rep(0,p)))
@@ -72,22 +85,23 @@ print.ordreg <- function(x,...) {
 }
 
 ##' @export
-summary.ordreg <- function(object,alpha=0.95,...) {
-    res <- cbind(coef(object),diag(vcov(object))^.5)
-    pp <- 1-(1-alpha)/2
-    qq <- qnorm(pp)
-    res <- cbind(res,res[,1]-res[,2]*qq,res[,1]+res[,2]*qq,2*(1-pnorm(abs(res[,1])/res[,2])))
-    colnames(res) <- c("Estimate","Std.Err",paste0(round(c(1-pp,pp)*1000)/10,"%"),"P-value")
-    res <- list(coef=res,logLik=logLik(object),AIC=AIC(object))
-    class(res) <- "summary.ordreg"
-    return(res)
+summary.ordreg <- function(object, contrast = NULL, ...) {
+  lev <- object$levels
+  J <- length(lev)
+  est <- summary(estimate(object, function(x) c(ordreg_threshold(x[seq_len(J-1)]),
+                                                tail(x, length(x)-J+1))),
+                 contrast = contrast,...)
+  est$call <- NULL
+  res <- list(coef=est, logLik=logLik(object), AIC=AIC(object))
+  class(res) <- "summary.ordreg"
+  return(res)
 }
 
 ##' @export
 print.summary.ordreg <- function(x,alpha=0.95,...) {
-    cat("AIC: ", x$AIC, "\n\n")
-    print(x$coef)
-    cat("\n")
+  cat("AIC: ", x$AIC, "\n\n")
+  print(x$coef)
+  cat("\n")
 }
 
 ##' @export
