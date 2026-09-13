@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-08-20</p>
+      <p class="date">2026-09-13</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -346,7 +346,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">#&gt; 6 -2.43751385   2.931614  1.5365778</span></span></code></pre></div>
 </div>
 <p>The same estimates can be obtained with a <em>cumulative link regression</em> model which also generalizes to ordinal outcomes. Here we consider the proportional odds model given by <span class="math display">\begin{align*}
-\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{t}), \quad j=1,\ldots,J-1
+\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{\top}x), \quad j=1,\ldots,J-1
 \end{align*}</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55e0fc39ece0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x5630c3491e28&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1415,7 +1415,7 @@ E[Y(1)]  - E[Y(0)]
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1442,16 +1442,16 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt;  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           </span></span>
 <span><span class="co">#&gt; [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           </span></span>
 <span><span class="co">#&gt; [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              </span></span>
-<span><span class="co">#&gt; [16] generics_0.1.4         knitr_1.51             backports_1.5.1       </span></span>
+<span><span class="co">#&gt; [16] generics_0.1.4         knitr_1.52             backports_1.5.1       </span></span>
 <span><span class="co">#&gt; [19] MASS_7.3-65            tibble_3.3.1           future_1.75.0         </span></span>
 <span><span class="co">#&gt; [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          </span></span>
 <span><span class="co">#&gt; [25] xfun_0.60              otel_0.2.0             cli_3.6.6             </span></span>
 <span><span class="co">#&gt; [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            </span></span>
 <span><span class="co">#&gt; [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [34] RcppArmadillo_15.4.2-1 timereg_2.0.7          vctrs_0.7.3           </span></span>
+<span><span class="co">#&gt; [34] RcppArmadillo_15.6.0-1 timereg_2.0.7          vctrs_0.7.3           </span></span>
 <span><span class="co">#&gt; [37] evaluate_1.0.5         glue_1.8.1             numDeriv_2016.8-1.1   </span></span>
 <span><span class="co">#&gt; [40] listenv_1.0.0          codetools_0.2-20       parallelly_1.48.0     </span></span>
-<span><span class="co">#&gt; [43] purrr_1.2.2            rmarkdown_2.31         pkgconfig_2.0.3       </span></span>
+<span><span class="co">#&gt; [43] purrr_1.2.2            rmarkdown_2.32         pkgconfig_2.0.3       </span></span>
 <span><span class="co">#&gt; [46] tools_4.6.1            htmltools_0.5.9        mets_1.3.12</span></span></code></pre></div>
 </div>
 </section><section class="section level2"><h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>

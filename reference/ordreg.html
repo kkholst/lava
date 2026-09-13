@@ -88,6 +88,18 @@
 
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Let \(Y\in\{1,...,J\}\) be the ordinal outcome and \(X\) a
+vector of covariates. The cumulative link model is given by $$ P(Y\leq
+  j|X=x) = g(a_j - b^\top x), j=1,...,J-1.$$ The default link function is the
+Probit function, i.e. where \(g\) is equal to the standard normal cumulative
+distribution function. The proportional odds model is obtained with
+<code>family=binomial(logit)</code>.</p>
+<p>Note, the intercept parameters are parametrized such that they are
+monotone increasing \(a_1 &lt; \cdots &lt; a_{J-1}\). To get the parameter
+estimates of the actual \(a_j\)'s use the <code>summary</code> method.</p>
+    </div>
+    <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Klaus K. Holst</p>
     </div>
@@ -98,6 +110,14 @@
 <span class="r-in"><span><span class="fu"><a href="ordinal-set.html">ordinal</a></span><span class="op">(</span><span class="va">m</span>,K<span class="op">=</span><span class="fl">3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">y</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">ordreg</span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>,<span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AIC:  145.3235 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5%   97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0|1  -1.0227  0.1491 -1.3150 -0.7305 6.892e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1|2  -0.5031  0.1441 -0.7855 -0.2207 4.798e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x     0.9674  0.1675  0.6391  1.2957 7.674e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

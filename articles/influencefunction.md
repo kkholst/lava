@@ -371,7 +371,7 @@ The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{t}), \quad
+x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{\top}x), \quad
 j=1,\ldots,J-1 \end{align\*}
 
 ``` r
@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55e0fc39ece0>
+#> <bytecode: 0x5630c3491e28>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1718,7 +1718,7 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1745,16 +1745,16 @@ sessionInfo()
 #>  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           
 #> [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           
 #> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
-#> [16] generics_0.1.4         knitr_1.51             backports_1.5.1       
+#> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
 #> [19] MASS_7.3-65            tibble_3.3.1           future_1.75.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
 #> [25] xfun_0.60              otel_0.2.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            
 #> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
-#> [34] RcppArmadillo_15.4.2-1 timereg_2.0.7          vctrs_0.7.3           
+#> [34] RcppArmadillo_15.6.0-1 timereg_2.0.7          vctrs_0.7.3           
 #> [37] evaluate_1.0.5         glue_1.8.1             numDeriv_2016.8-1.1   
 #> [40] listenv_1.0.0          codetools_0.2-20       parallelly_1.48.0     
-#> [43] purrr_1.2.2            rmarkdown_2.31         pkgconfig_2.0.3       
+#> [43] purrr_1.2.2            rmarkdown_2.32         pkgconfig_2.0.3       
 #> [46] tools_4.6.1            htmltools_0.5.9        mets_1.3.12
 ```
 

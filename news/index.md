@@ -2,6 +2,8 @@
 
 ## lava 1.9.3
 
+CRAN release: 2026-08-20
+
 - `merge.estimate` no longer sort IC by id by default. The previous
   behavior is available via the new argument `sort=TRUE`.
 - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
