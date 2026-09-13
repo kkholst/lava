@@ -53,6 +53,48 @@ test_that("estimate.default misc", {
 
 })
 
+test_that("estimate standardization (average=TRUE)", {
+  # check that g-computation works as expected for logistic regression
+  sim1 <- function(n = 5000, seed = 1) {
+    set.seed(seed)
+    w1 <- rnorm(n)
+    w2 <- rnorm(n)
+    a  <- rbinom(n, 1, 0.5) # randomized trial
+    lp <- 1 + a + w1 + 0.5 * w2
+    y <- rbinom(n, 1, plogis(lp))
+    data.frame(y = y, a = a, w1 = w1, w2 = w2)
+  }
+  df <- sim1()
+
+  g <- glm(y ~ a * (w1 + w2), data=df, family=binomial)
+  est <- lava::estimate(g, average = TRUE, function(p,data) {
+    X1 <- model.matrix(g, data=transform(data, a=1))
+    X0 <- model.matrix(g, data=transform(data, a=0))
+    cbind(plogis(X1%*%p), plogis(X0%*%p))
+  }) |> labels(c("y1", "y0"))
+  est
+  ## transform(est, cbind(1,-1), labels="ate")
+
+  q1 <- predict(g, newdata=transform(df, a=1), type="response")
+  q0 <- predict(g, newdata=transform(df, a=0), type="response")
+  X1 <- model.matrix(g, data=transform(df, a=1))
+  X0 <- model.matrix(g, data=transform(df, a=0))
+
+  D1 <- numDeriv::grad(\(x) mean(plogis(X1 %*% x)), coef(g))
+  D0 <- numDeriv::grad(\(x) mean(plogis(X0 %*% x)), coef(g))
+  D1a <- apply(X1, 2, \(x) mean(x*q1*(1-q1)))
+  D0a <- apply(X0, 2, \(x) mean(x*q0*(1-q0)))
+  testthat::expect_equivalent(D1, D1a)
+  testthat::expect_equivalent(D0, D0a)
+  ic1 <- q1 - mean(q1) + apply(lava::IC(g), 1, \(x) sum(x*D1a))
+  ic0 <- q0 - mean(q0) + apply(lava::IC(g), 1, \(x) sum(x*D0a))
+  est2 <- c(y1=lava::estimate(coef=mean(q1), IC=ic1),
+            y0=lava::estimate(coef=mean(q0), IC=ic0))
+  testthat::expect_equivalent(coef(est), coef(est2))
+  testthat::expect_equivalent(vcov(est), vcov(est2))
+
+})
+
 # Helper function to manually compute Wald statistic
 compute_wald <- function(B, p, S, null) {
   z <- (B %*% p - null)
