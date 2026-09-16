@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x5630c3491e28>
+#> <bytecode: 0x5618eafccdf8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1494,7 +1494,7 @@ summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
 #>   {a, a.1, a.2}                            p = 0.0000
 ```
 
-### Averaging
+### Standardization
 
 Some parameters of interest are expressed as averages over functions of
 the observed data and estimated parameters of a model. The asymptotic
@@ -1551,29 +1551,38 @@ variable A kept fixed at the value 1
 ``` r
 
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
-pr <- function(p, data, ...)
-  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+pr <- function(p, data, ...) {
+  X <- model.matrix(g, transform(data, a=1))
+  expit(X %*% p)
+  ## alternatively:
+  ## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+}
 pr(coef(g), dw) |> head()
-#> [1] 0.7932 0.8968 0.3297 0.9425 0.7954 0.1948
+#>     [,1]
+#> 1 0.7932
+#> 2 0.8968
+#> 3 0.3297
+#> 4 0.9425
+#> 5 0.7954
+#> 6 0.0797
 ```
 
 The target parameter can now be estimated with the syntax
 
 ``` r
 
-id <- foldr(NROW(dw), 100, list=FALSE)
-ea <- estimate(g, pr, average=TRUE, id=id)
+ea <- estimate(g, pr, average=TRUE)
 ea
-#>     Estimate Std.Err   2.5%  97.5%    P-value
-#> val   0.6628 0.02451 0.6148 0.7108 4.985e-161
+#>    Estimate Std.Err   2.5%  97.5%    P-value
+#> p1    0.565 0.01568 0.5343 0.5957 2.009e-284
 IC(ea) |> head()
-#>          val
-#> 33   0.07714
-#> 100  0.15616
-#> 44   0.41135
-#> 48  -0.13500
-#> 16  -0.43901
-#> 29  -0.05291
+#>       p1
+#> 1  0.435
+#> 2  0.435
+#> 3  0.435
+#> 4  0.435
+#> 5 -0.565
+#> 6 -0.565
 ```
 
 ### Average Treatment Effects

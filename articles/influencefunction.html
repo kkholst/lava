@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-09-13</p>
+      <p class="date">2026-09-16</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -994,7 +994,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5630c3491e28&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x5618eafccdf8&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1248,7 +1248,7 @@ P(Z_{max} &gt;
 <span><span class="co">#&gt; 3-way intersections:</span></span>
 <span><span class="co">#&gt;   {a, a.1, a.2}                            p = 0.0000</span></span></code></pre></div>
 </div>
-</section><section class="level2"><h3 id="averaging">Averaging<a class="anchor" aria-label="anchor" href="#averaging"></a>
+</section><section class="level2"><h3 id="standardization">Standardization<a class="anchor" aria-label="anchor" href="#standardization"></a>
 </h3>
 <p>Some parameters of interest are expressed as averages over functions of the observed data and estimated parameters of a model. The asymptotic distribution can in some of these cases also be derived from the influence function. Let <span class="math inline">Z_{1},\ldots,Z_{n}</span> be iid observations, <span class="math inline">Z_{1}\sim P_{0}</span> and let <span class="math inline">X_{i}\subset Z_{i}</span>.</p>
 <div id="lem-averaging" class="theorem lemma">
@@ -1287,27 +1287,36 @@ X_1 + \beta_w W</span>, and from this we want to estimate the target parameter <
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">dw</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="../reference/internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"a"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"x1"</span><span class="op">]</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"w"</span><span class="op">]</span><span class="op">*</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="va">g</span>, <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">data</span>, a<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/internal.html">expit</a></span><span class="op">(</span><span class="va">X</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">p</span><span class="op">)</span></span>
+<span>  <span class="co">## alternatively:</span></span>
+<span>  <span class="co">## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))</span></span>
+<span><span class="op">}</span></span>
 <span><span class="fu">pr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span>, <span class="va">dw</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7932 0.8968 0.3297 0.9425 0.7954 0.1948</span></span></code></pre></div>
+<span><span class="co">#&gt;     [,1]</span></span>
+<span><span class="co">#&gt; 1 0.7932</span></span>
+<span><span class="co">#&gt; 2 0.8968</span></span>
+<span><span class="co">#&gt; 3 0.3297</span></span>
+<span><span class="co">#&gt; 4 0.9425</span></span>
+<span><span class="co">#&gt; 5 0.7954</span></span>
+<span><span class="co">#&gt; 6 0.0797</span></span></code></pre></div>
 </div>
 <p>The target parameter can now be estimated with the syntax</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csplit.html">foldr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">dw</span><span class="op">)</span>, <span class="fl">100</span>, list<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">ea</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, <span class="va">pr</span>, average<span class="op">=</span><span class="cn">TRUE</span>, id<span class="op">=</span><span class="va">id</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ea</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, <span class="va">pr</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ea</span></span>
-<span><span class="co">#&gt;     Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; val   0.6628 0.02451 0.6148 0.7108 4.985e-161</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err   2.5%  97.5%    P-value</span></span>
+<span><span class="co">#&gt; p1    0.565 0.01568 0.5343 0.5957 2.009e-284</span></span>
 <span><span class="fu"><a href="../reference/IC.default.html">IC</a></span><span class="op">(</span><span class="va">ea</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          val</span></span>
-<span><span class="co">#&gt; 33   0.07714</span></span>
-<span><span class="co">#&gt; 100  0.15616</span></span>
-<span><span class="co">#&gt; 44   0.41135</span></span>
-<span><span class="co">#&gt; 48  -0.13500</span></span>
-<span><span class="co">#&gt; 16  -0.43901</span></span>
-<span><span class="co">#&gt; 29  -0.05291</span></span></code></pre></div>
+<span><span class="co">#&gt;       p1</span></span>
+<span><span class="co">#&gt; 1  0.435</span></span>
+<span><span class="co">#&gt; 2  0.435</span></span>
+<span><span class="co">#&gt; 3  0.435</span></span>
+<span><span class="co">#&gt; 4  0.435</span></span>
+<span><span class="co">#&gt; 5 -0.565</span></span>
+<span><span class="co">#&gt; 6 -0.565</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="average-treatment-effects">Average Treatment Effects<a class="anchor" aria-label="anchor" href="#average-treatment-effects"></a>
 </h3>
