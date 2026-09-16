@@ -1006,7 +1006,7 @@ summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
 ```
 
 
-## Averaging
+## Standardization
 
 Some parameters of interest are expressed as averages over functions of the
 observed data and estimated parameters of a model. The asymptotic distribution
@@ -1075,14 +1075,17 @@ values of $X_1,W$ but with the treatment variable $A$ kept fixed at the
 value $1$
 ```{r estpred}
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
-pr <- function(p, data, ...)
-  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+pr <- function(p, data, ...) {
+  X <- model.matrix(g, transform(data, a=1))
+  expit(X %*% p)
+  ## alternatively:
+  ## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+}
 pr(coef(g), dw) |> head()
 ```
 The target parameter can now be estimated with the syntax
 ```{r average}
-id <- foldr(NROW(dw), 100, list=FALSE)
-ea <- estimate(g, pr, average=TRUE, id=id)
+ea <- estimate(g, pr, average=TRUE)
 ea
 IC(ea) |> head()
 ```
