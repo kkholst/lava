@@ -77,7 +77,8 @@ been moved here.</p>
 
 
 <dt id="arg-contrast">contrast<a class="anchor" aria-label="anchor" href="#arg-contrast"></a></dt>
-<dd><p>(optional) contrast matrix for the final Wald test.</p></dd>
+<dd><p>(optional) contrast matrix for the final Wald test. When
+supplied together with <code>null</code>, tests \(H_0: B\theta = b_0\).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -85,7 +86,7 @@ been moved here.</p>
 
 
 <dt id="arg-null">null<a class="anchor" aria-label="anchor" href="#arg-null"></a></dt>
-<dd><p>(optional) null hypothesis to test.</p></dd>
+<dd><p>(optional) null hypothesis to test (default 0).</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
@@ -120,6 +121,17 @@ on the <code>atanh</code> (Fisher z) scale and back-transform with <code>tanh</c
 <code>summary.estimate</code> object</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>types of small-sample corrections:</p><ul><li><p><code>"robust"</code> (default): no correction.</p></li>
+<li><p><code>"df"</code>: applies \(n/(n-p)\) correction (Mancl &amp; DeRouen, 2001).</p></li>
+<li><p><code>"mbn"</code>: Morel-Bokossa-Neerchal (2003) correction.</p></li>
+<li><p><code>"hc3"</code>: leverage-adjusted HC3-type correction (blended with <code>var.adj</code>).</p></li>
+<li><p><code>"hc4"</code>: Cribari-Neto (2004) leverage-adjusted correction.</p></li>
+</ul><p>The var.adj parameter controls the blending parameter for the
+HC3 leverage adjustment, by controls the weight between
+observation-level empirical leverage and the average leverage \(p/n\).</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="estimate.default.html">estimate.default()</a></code></p></div>

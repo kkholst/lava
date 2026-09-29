@@ -34,7 +34,8 @@ summary(
 
 - contrast:
 
-  (optional) contrast matrix for the final Wald test.
+  (optional) contrast matrix for the final Wald test. When supplied
+  together with `null`, tests \\H_0: B\theta = b_0\\.
 
 - ...:
 
@@ -43,7 +44,7 @@ summary(
 
 - null:
 
-  (optional) null hypothesis to test.
+  (optional) null hypothesis to test (default 0).
 
 - level:
 
@@ -76,6 +77,25 @@ summary(
 
   (optional) custom print function for the resulting `summary.estimate`
   object
+
+## Details
+
+types of small-sample corrections:
+
+- `"robust"` (default): no correction.
+
+- `"df"`: applies \\n/(n-p)\\ correction (Mancl & DeRouen, 2001).
+
+- `"mbn"`: Morel-Bokossa-Neerchal (2003) correction.
+
+- `"hc3"`: leverage-adjusted HC3-type correction (blended with
+  `var.adj`).
+
+- `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
+
+The var.adj parameter controls the blending parameter for the HC3
+leverage adjustment, by controls the weight between observation-level
+empirical leverage and the average leverage \\p/n\\.
 
 ## See also
 

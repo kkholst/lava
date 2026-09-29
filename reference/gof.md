@@ -169,10 +169,15 @@ rr
 #> y1 0.6666507 0.02449714 0.6186372 0.7146642 4.506818e-163
 #> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75
 #> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91
-estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
-#> Warning: The 'null', 'contrast', 'type', 'back.transform', 'level' and 'var.adj' arguments of estimate.default() are deprecated and will be removed in version 1.9.3. Use summary(estimate(...), null=, contrast=, type=, transform=,level=, df=, var.adj=) instead.
-#> Call: estimate.default(x = rr, contrast = rbind(c(1, -1, 0), c(1, 0, 
-#>     -1), c(0, 1, -1)))
+summary(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
+#> Call: estimate.default(x = NULL, f = function(x) {
+#>     res <- (x[idx] - x[idx + p])/x[idx]
+#>     names(res) <- v
+#>     as.list(res)
+#> }, data = NULL, coef = coef0, IC = ic0, print = function(x, ...) {
+#>     cat("\nR-squared:\n\n")
+#>     print(x$coefmat)
+#> })
 #> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163
