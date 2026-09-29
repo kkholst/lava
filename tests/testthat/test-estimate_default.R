@@ -95,6 +95,136 @@ test_that("estimate standardization (average=TRUE)", {
 
 })
 
+test_that("standardization with model estimated on a subset (id alignment)", {
+  set.seed(1)
+  n <- 300
+  dat <- data.frame(w1 = rnorm(n), a = rbinom(n, 1, 0.5), z = rbinom(n, 1, 0.5))
+  dat$y <- rbinom(n, 1, plogis(-0.5 + dat$w1 + dat$a))
+  dat$id <- paste0("a", seq_len(n)) # lexicographic order != row order
+  dat1 <- subset(dat, z == 1)
+  g <- glm(y ~ w1 + a, data = dat1, family = binomial)
+  f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
+
+  # manual influence function
+  X <- cbind(1, dat$w1, 1)
+  q <- as.vector(plogis(X %*% coef(g)))
+  D <- colMeans(X * q * (1 - q))
+  ic2 <- rep(0, n)
+  ic2[dat$z == 1] <- IC(g) %*% D * n / nrow(dat1)
+  ic <- q - mean(q) + ic2
+
+  e <- estimate(g, id = dat1$id)
+  a <- estimate(e, f, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(coef(a), mean(q))
+  expect_equivalent(vcov(a), sum(ic^2) / n^2)
+  expect_equivalent(IC(a), ic)
+  expect_identical(index(a), dat$id)
+
+  # plain glm: model rows linked via rownames of data
+  a2 <- estimate(g, f, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(coef(a2), coef(a))
+  expect_equivalent(vcov(a2), vcov(a))
+  a3 <- estimate(g, f, data = dat, average = TRUE) # id defaults to rownames
+  expect_equivalent(vcov(a3), vcov(a))
+
+  # row order of 'data' does not matter
+  ord <- sample(n)
+  a4 <- estimate(e, f, data = dat[ord, ], id = dat$id[ord], average = TRUE)
+  expect_equivalent(vcov(a4), vcov(a))
+  expect_equivalent(IC(a4)[dat$id, ], IC(a)[dat$id, ])
+
+  # conditional average (subset)
+  s <- dat$w1 > 0
+  phat <- mean(s)
+  m <- mean(q * s)
+  D_s <- colMeans(X * q * (1 - q) * s)
+  ic2_s <- rep(0, n)
+  ic2_s[dat$z == 1] <- IC(g) %*% D_s * n / nrow(dat1)
+  icc <- (q * s - m + ic2_s) / phat - m / phat^2 * (s - phat)
+  ac <- estimate(e, f, data = dat, id = dat$id, subset = s, average = TRUE)
+  expect_equivalent(coef(ac), m / phat)
+  expect_equivalent(vcov(ac), sum(icc^2) / n^2)
+
+  # multiple parameters
+  f2 <- function(p, data) {
+    list(p0 = plogis(p[1] + p["w1"] * data[, "w1"]),
+         p1 = plogis(p[1] + p["w1"] * data[, "w1"] + p["a"]))
+  }
+  a5 <- estimate(e, f2, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(coef(a5)[2], coef(a))
+  expect_equivalent(vcov(a5)[2, 2], vcov(a))
+
+  # disjoint ids: independence between model and new data
+  e_b <- estimate(g, id = paste0("b", seq_len(nrow(dat1))))
+  expect_message(
+    a6 <- estimate(e_b, f, data = dat, id = dat$id, average = TRUE),
+    "independence"
+  )
+  expect_equivalent(
+    vcov(a6),
+    sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
+  )
+
+  # estimate object with default (rowname) ids linked via rownames of data
+  a7 <- estimate(estimate(g), f, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(vcov(a7), vcov(a))
+  expect_identical(index(a7), dat$id)
+
+  # estimate object without index: linked via rownames of the IF
+  ic_g <- IC(g)
+  e0 <- estimate(coef = coef(g), IC = ic_g)
+  expect_null(index(e0))
+  a8 <- estimate(e0, f, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(vcov(a8), vcov(a))
+  # ... or positional when the IF has no rownames and sizes agree
+  g_full <- glm(y ~ w1 + a, data = dat, family = binomial)
+  ic_full <- IC(g_full)
+  e1 <- estimate(coef = coef(g_full), IC = unname(ic_full))
+  a9 <- estimate(e1, f, data = dat, id = dat$id, average = TRUE)
+  a10 <- estimate(g_full, f, data = dat, id = dat$id, average = TRUE)
+  expect_equivalent(vcov(a9), vcov(a10))
+
+  # plain model that cannot be linked to 'data'
+  dat_b <- dat
+  rownames(dat_b) <- paste0("r", seq_len(n))
+  expect_error(
+    estimate(g, f, data = dat_b, id = dat$id, average = TRUE),
+    "estimate\\(x, id="
+  )
+})
+
+test_that("standardization with unsorted and clustered ids (same data)", {
+  set.seed(2)
+  n <- 200
+  d <- data.frame(x = rnorm(n))
+  d$y <- rbinom(n, 1, plogis(d$x))
+  d$id <- paste0("a", seq_len(n))
+  d$cl <- rep(sample(paste0("c", 1:50)), each = 4)
+  g <- glm(y ~ x, data = d, family = binomial)
+  f <- function(p, data) plogis(p[1] + p[2] * data[, "x"])
+  a0 <- estimate(g, f, average = TRUE)
+  a1 <- estimate(g, f, id = d$id, average = TRUE)
+  expect_equivalent(vcov(a1), vcov(a0))
+  expect_equivalent(IC(a1), IC(a0))
+
+  X <- model.matrix(g)
+  q <- as.vector(plogis(X %*% coef(g)))
+  ic <- q - mean(q) + IC(g) %*% colMeans(X * q * (1 - q))
+  icc <- rowsum(ic, d$cl, reorder = FALSE) * 50 / n
+  a2 <- estimate(g, f, id = d$cl, average = TRUE)
+  expect_equivalent(vcov(a2), var_ic(icc))
+  expect_identical(index(a2), unique(d$cl))
+  # same result when clustering is defined by the estimate object
+  a3 <- estimate(estimate(g, id = d$cl), f, data = d, id = d$cl,
+                 average = TRUE)
+  expect_equivalent(vcov(a3), vcov(a2))
+
+  # ids of 'data' default to index(x) for estimate objects of matching length
+  a4 <- estimate(estimate(g, id = d$id), f, data = d, average = TRUE)
+  expect_equivalent(vcov(a4), vcov(a1))
+  expect_identical(index(a4), d$id)
+})
+
 # Helper function to manually compute Wald statistic
 compute_wald <- function(B, p, S, null) {
   z <- (B %*% p - null)
@@ -458,30 +588,6 @@ test_that("estimate.default keep with regex=TRUE", {
   e1 <- estimate(a3d, keep = ".*2") # no literal matches return object with NAs
   expect_true(all(is.na(e1$coefmat)))
   expect_true(nrow(e1$coefmat) == 1)
-})
-
-test_that("robust argument backwards compatibility", {
-  d <- data.frame(y = rnorm(50), x = rnorm(50))
-  g <- lm(y ~ x, data = d)
-
-  # Both robust=TRUE and robust=FALSE emit a deprecation warning
-  e0 <- expect_warning(estimate(g, robust = FALSE), "deprecated and ignored")
-  e1 <- expect_warning(estimate(g, robust = TRUE), "deprecated and ignored")
-  expect_equal(e0$coefmat, e1$coefmat)
-
-  e <- estimate(g)
-  # The robust argument is ignored: results are identical to the default
-  # (sandwich SEs)
-  expect_equal(e$coefmat, e0$coefmat)
-
-  expect_equal(e$coefmat, e0$coefmat)
-
-  # model-based SE can be obtained either via logical variable or supplying
-  # covariance matrix
-  e0m <- estimate(g, vcov = TRUE)
-  expect_false(all(e$coefmat == e0m$coefmat))
-  e1m <- estimate(g, vcov = vcov(g))
-  expect_equal(e0m$coefmat, e1m$coefmat)
 })
 
 test_that("initialization of object without names", {

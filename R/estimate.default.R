@@ -17,15 +17,16 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param x model object (`glm`, `lvmfit`, ...) or an existing `estimate`
 #'   object. When two model objects are supplied (e.g., `estimate(g, g0)`) a
 #'   likelihood-ratio test is performed.
-#' @param f transformation of model parameters. Accepts several input types: - A
-#'   **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
-#'   returns a named list the names are used as parameter labels. - A
-#'   **matrix**: used as a contrast (linear combination) matrix. - A **numeric
+#' @param f transformation of model parameters. Accepts several input types:
+#'
+#' - A **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
+#'   returns a named list the names are used as parameter labels.
+#' - A **matrix**: used as a contrast (linear combination) matrix. - A **numeric
 #'   vector** of parameter indices: converted to a contrast that selects and
-#'   differences those parameters. - A **list** of indices: each element selects
-#'   one parameter. - **Character** expressions: supports wildcards (`"?"`,
-#'   `"*"`) and arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 *
-#'   "x"`).
+#'   differences those parameters.
+#' - A **list** of indices: each element selects one parameter.
+#' - **Character** expressions: supports wildcards (`"?"`, `"*"`) and arithmetic
+#'   on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
 #' @param ... additional arguments to lower level functions
 #' @param data `data.frame` used by `f` when the transformation depends on
 #'   covariates (see `average`). Defaults to `model.frame(x)`.
@@ -33,7 +34,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   one-sided formula (evaluated in `data`), a single character column name, or
 #'   a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
 #'   independence). When supplied, the IF is aggregated within clusters to
-#'   produce cluster-robust standard errors.
+#'   produce cluster-robust standard errors. When `average = TRUE`, `id`
+#'   refers to the rows of `data` (default: `rownames(data)`), and the
+#'   influence function of the model is linked to these ids via `index(x)`
+#'   (for `estimate` objects) or the row names of the model frame.
 #' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
 #'   constructing an `estimate` object without a model.
 #' @param IC if `TRUE` (default) the influence function matrix is estimated and
@@ -50,9 +54,9 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   un-stacked (per-observation) decomposition.
 #' @param average if `TRUE` the function computes the standardized
 #'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-#'   empirical mean of `f(p, data)` over all rows of `data`. The influence
-#'   function accounts for both the empirical averaging and the parameter
-#'   estimation uncertainty (see Details).
+#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument,
+#'   over all rows of `data`. The influence function accounts for both the
+#'   empirical averaging and the parameter estimation uncertainty (see Details).
 #' @param subset (optional) logical vector, expression evaluated in `data`, or
 #'   column name. When used together with `average = TRUE`, the average is
 #'   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
@@ -70,31 +74,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   object
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
-#' @param contrast (deprecated, use summary method) contrast matrix for a final
-#'   Wald test. When supplied together with `null`, tests \eqn{H_0: B\theta =
-#'   b_0}.
-#' @param null (deprecated, use summary method) null hypothesis vector \eqn{b_0}
-#'   to test against (default 0)
-#' @param level (deprecated, use summary method) level of confidence limits
-#'   (default 0.95)
-#' @param type (deprecated, use summary method) type of small-sample correction
-#'   for cluster-robust variance. One of: - `"robust"` (default): no correction.
-#'   - `"df"`: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001). -
-#'   `"mbn"`: Morel-Bokossa-Neerchal (2003) correction. - `"hc3"`:
-#'   leverage-adjusted HC3-type correction (blended with `var.adj`). - `"hc4"`:
-#'   Cribari-Neto (2004) leverage-adjusted correction.
-#' @param var.adj (deprecated, use summary method) blending parameter for the
-#'   HC3 leverage adjustment (default 0.25). Controls the weight between
-#'   observation-level empirical leverage and the average leverage \eqn{p/n}.
-#' @param df (deprecated, use summary method) degrees of freedom for t-based
-#'   inference (default: `NULL` for Gaussian approximation; when set, confidence
-#'   intervals and p-values use the t-distribution with `df` degrees of
-#'   freedom).
-#' @param back.transform (deprecated, use summary method) function applied to
-#'   the point estimates and confidence interval bounds *after* inference is
-#'   performed on the original scale. Useful for variance-stabilizing
-#'   transformations, e.g., compute CIs on the `atanh` (Fisher z) scale and
-#'   back-transform with `tanh`.
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -141,6 +120,12 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' [E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
 #' When `subset` is also specified, the average is conditioned on the
 #' subpopulation, yielding a conditional marginalized estimate.
+#'
+#' The model may be estimated on a different (e.g., smaller) dataset than
+#' `data`. The two terms of the IF are then aligned by id: each term is zero
+#' for ids outside its own support and rescaled by the inverse proportion of
+#' observed ids (as in [merge.estimate]). If there are no common ids the
+#' model estimate and `data` are treated as independent.
 #'
 #' # Cluster-robust standard errors
 #'
@@ -225,6 +210,11 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
 #'          subset=d$z>0, id=d$id, average=TRUE)
 #'
+#' ## Model estimated on a subset, standardized over the full data
+#' g1 <- glm(y~z+x, data=subset(d, id<=100), family=binomial())
+#' estimate(g1, function(p,data) expit(p[1] + p["z"]*data[,"z"]),
+#'          data=d, id=d$id, average=TRUE)
+#'
 #' ## More examples with clusters:
 #' m <- lvm(c(y1,y2,y3)~u+x)
 #' d <- sim(m,10)
@@ -259,8 +249,9 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'
 #'
 #' # ------ influence function calculus -------
-#' a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-#' b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+#' ic1 <- scale(rnorm(10), scale=FALSE)
+#' a <- estimate(coef = c("a" = 0.5), IC = ic1, id = 1:10)
+#' b <- estimate(coef = c("b" = 0.8), IC = ic1, id = 1:10)
 #'
 #' e <- c(a, b) # merge
 #' merge(a, b)
@@ -317,16 +308,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
                              average=FALSE, subset,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
-                             print=NULL, labels, label.width,
-                             # deprecated argumets (removed in version 1.9.3)
-                             # return object of class summary.estimate
-                             contrast,
-                             null,
-                             level=NULL,
-                             type=NULL,
-                             var.adj=NULL,
-                             df=NULL,
-                             back.transform=NULL
+                             print=NULL, labels, label.width
                              ) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
@@ -338,11 +320,21 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     stop("The 'R' and 'null.sim' arguments have been removed. ")
   }
   if ("robust" %in% names(cl)) {
-    warning(
-      "The 'robust' argument is deprecated and ignored. ",
+    stop(
+      "The 'robust' argument is deprecated. ",
       "Robust standard errors are now always computed. ",
       "Use the 'vcov' argument to compute model-based SEs."
     )
+  }
+  if (any(c("null", "contrast", "type", "var.adj",
+            "back.transform", "level", "df") %in% names(cl))) {
+    stop(
+        "The 'null', 'contrast', 'type', 'back.transform', 'level' ",
+        "and 'var.adj' arguments of estimate.default() are deprecated. ",
+        "Use ",
+        "summary(estimate(...), null=, contrast=, type=, transform=,",
+        "level=, df=, var.adj=) instead."
+      )
   }
 
   if (!missing(use)) {
@@ -392,9 +384,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     contrast.transform <- TRUE
   }
 
-  if (lava.options()$cluster.index) {
-    if (!requireNamespace("mets", quietly=TRUE)) stop("'mets' package required")
-  }
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
   nn <- NULL
@@ -442,24 +431,35 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     if (is.numeric(subset)) subset <- subset > 0
   }
   idstack <- NULL
+  id_user <- !missing(id)
+  ## Standardization (average=TRUE): 'id' refers to the rows of 'data', and the
+  ## model IF is aligned to these ids (see 'average_align_ids')
+  avg_align <- isTRUE(average) && is.function(f) &&
+    !is.null(ic_theta) && !is.null(data)
+  id_data <- NULL
+  if (avg_align) {
+    ids <- average_align_ids(x, data=data, ic=ic_theta,
+                             id=if (id_user) id else NULL)
+    id_data <- ids$id_data
+    ic_theta <- ids$ic
+    idstack <- ids$id_model
+  }
   ## Preserve id from 'estimate' object
-  if (missing(id)) {
+  if (!avg_align && missing(id)) {
     if (inherits(x, "measurement.error")) {
       if (!is.null(x[["id"]])) id <- x[["id"]]
     } else if (inherits(x, "estimate") && !is.null(index(x))) {
       id <- index(x)
     }
   }
-  if (!missing(id) && IC) {
+  if (avg_align) {
+    ## ids already handled above
+  } else if (!missing(id) && IC) {
     if (is.null(ic_theta)) stop("'IC' method needed")
     nprev <- nrow(ic_theta)
     if (inherits(id, "formula")) {
       id <- interaction(get_all_vars(id, data))
     }
-    ## e <- substitute(id)
-    ## expr <- suppressWarnings(inherits(try(id,silent=TRUE),"try-error"))
-    ## if (expr) id <- eval(e,envir=data)
-    ##if (!is.null(data)) id <- eval(e, data)
     if (is.logical(id) && length(id)==1) {
       id <- if(is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
       stack <- FALSE
@@ -484,6 +484,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       }
     }
     if (stack) {
+      if (lava.options()$cluster.index) {
+        if (!requireNamespace("mets", quietly=TRUE)) stop("'mets' package required")
+      }
       N <- nrow(ic_theta)
       clidx <- NULL
       atr <- attributes(ic_theta)
@@ -620,43 +623,32 @@ estimate.default <- function(x=NULL, f=NULL, ...,
           ic2 <- ic_theta%*%D
         }
         pp <- vec(colMeans(cbind(val)))
+        ## Empirical averaging term, f(X; theta) - Psi, on the ids of 'data'
         ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1, N)))
-        if (NROW(ic_theta)==NROW(ic1)) {
-          rownames(ic1) <- rownames(ic_theta)
+        ic1 <- cluster_sum_ic(ic1, id_data)
+        uid_data <- unique(id_data)
+        uid_model <- idstack
+        ## Align the terms by id (union of ids, starting with the ids of
+        ## 'data'). As in 'merge', each term is zero outside its own support
+        ## and rescaled by (number of ids in union)/(number of own ids)
+        uid <- unique(c(uid_data, uid_model))
+        if (!any(uid_model %in% uid_data)) {
+          message("Assuming independence between model iid decomposition and new data frame") #nolint
         }
-        if (!missing(id)) {
-          if (!lava.options()$cluster.index)
-            ic1 <- matrix(unlist(by(ic1, id, colSums)),
-                          byrow=TRUE, ncol=ncol(ic1))
-          else {
-            ic1 <- mets::cluster.index(id, mat=ic1, return.all=FALSE)
-          }
-          ic1 <- ic1 * NROW(ic1) / length(id)
-        }
+        ic1 <- extend_ic(ic1, uid_data, uid)
+        ic2 <- extend_ic(cbind(ic2), uid_model, uid)
         if (!missing(subset)) { ## Conditional estimate
           phat <- mean(subset)
-          ic3 <- cbind(-1/phat^2 * (subset-phat)) ## check
-          if (!missing(id)) {
-            if (!lava.options()$cluster.index) {
-              ic3 <- matrix(unlist(by(ic3, id, colSums)),
-                            byrow=TRUE, ncol=ncol(ic3))
-            } else {
-              ic3 <- mets::cluster.index(id, mat=ic3, return.all=FALSE)
-            }
-          }
-          ic3 <- ic3*NROW(ic3)/length(id)
+          ic3 <- cbind(-1/phat^2 * (subset-phat))
+          ic3 <- extend_ic(cluster_sum_ic(ic3, id_data), uid_data, uid)
           ic_theta <- (ic1+ic2)/phat + rbind(pp)%x%ic3
           pp <- pp/phat
-          V <- var_ic(ic_theta)
         } else {
-          if (nrow(ic1)!=nrow(ic2)) {
-            message("Assuming independence between model iid decomposition and new data frame") #nolint
-            V <- var_ic(ic1) + var_ic(ic2)
-          } else {
-            ic_theta <- ic1+ic2
-            V <- var_ic(ic_theta)
-          }
+          ic_theta <- ic1+ic2
         }
+        rownames(ic_theta) <- uid
+        idstack <- uid
+        V <- var_ic(ic_theta)
       }
     }
   }
@@ -729,31 +721,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   res$ncluster <- if (!is.null(ic_theta)) nrow(ic_theta) else nrow(data)
   res$derivative <- derivative
   res <- structure(res, class="estimate")
-
-  if (!missing(null) || !missing(contrast) ||
-      !is.null(type) || !is.null(var.adj) ||
-      !is.null(back.transform) || !is.null(level) ||
-      !is.null(df)
-      ) {
-    .Deprecated(
-      msg = paste0(
-        "The 'null', 'contrast', 'type', 'back.transform', 'level' ",
-        "and 'var.adj' arguments of estimate.default() are deprecated ",
-        "and will be removed in version 1.9.3. Use ",
-        "summary(estimate(...), null=, contrast=, type=, transform=,",
-        "level=, df=, var.adj=) instead."
-      )
-    )
-    args <- list(object=res)
-    if (!missing(contrast)) args$contrast <- contrast
-    if (!missing(null)) args$null <- null
-    if (!is.null(level)) args$level <- level
-    if (!is.null(type)) args$type <- type
-    if (!is.null(var.adj)) args$var.adj <- var.adj
-    if (!is.null(df)) args$df <- df
-    if (!is.null(back.transform)) args$transform <- back.transform
-    return(do.call(summary, args))
-  }
 
   return(res)
 }
@@ -925,7 +892,77 @@ IC.estimate <- function(x, ...) {
   structure(x$IC, dimnames=dimn)
 }
 
-#' @export
-model.frame.estimate <- function(formula, ...) {
-  NULL
+## Sum influence function contributions within clusters (first-appearance order
+## of 'id') and rescale such that var_ic gives the cluster-robust variance (see
+## IC.default)
+cluster_sum_ic <- function(ic, id) {
+  res <- rowsum(cbind(ic), group = id, reorder = FALSE)
+  res * NROW(res) / length(id)
+}
+
+## Embed influence function with rows 'id' into the rows 'uid' (zero outside
+## support) and rescale by length(uid)/length(id) (inverse probability of
+## observation, see the section "Estimators computed on different subsets" in
+## vignette("influencefunction"))
+extend_ic <- function(ic, id, uid) {
+  ic <- cbind(ic)
+  res <- matrix(0, nrow = length(uid), ncol = ncol(ic))
+  colnames(res) <- colnames(ic)
+  res[match(id, uid), ] <- ic
+  res * length(uid) / length(id)
+}
+
+## Ids used when averaging a transformation over 'data' (standardization).
+## Returns the ids of the rows of 'data', the model IF aggregated within the
+## clusters linked to these ids, and the (unique) model ids.
+average_align_ids <- function(x, data, ic, id = NULL) {
+  rn <- rownames(data)
+  if (is.null(rn)) rn <- as.character(seq_len(NROW(data)))
+  id <- average_data_id(x, data, id, rn)
+  cl <- average_model_id(x, ic, id, rn)
+  list(id_data = id, ic = cluster_sum_ic(ic, cl), id_model = unique(cl))
+}
+
+## Ids of the rows of 'data'. Default: index(x) for 'estimate' objects of
+## matching length, else rownames. Also accepts formula, column name, or TRUE.
+average_data_id <- function(x, data, id, rn) {
+  N <- NROW(data)
+  if (is.null(id)) {
+    idx <- if (inherits(x, "estimate")) index(x)
+    id <- if (length(idx) == N) idx else rn
+  }
+  if (is.logical(id) && length(id) == 1) id <- rn
+  if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
+  if (is.character(id) && length(id) == 1 && N != 1)
+    id <- data[, id, drop = TRUE]
+  if (length(id) != N) {
+    if (is.null(x$na.action) || length(id) != length(x$na.action) + N)
+      stop("Dimensions of 'data' and 'id' does not agree")
+    warning("Applying na.action")
+    id <- id[-x$na.action]
+  }
+  if (is.factor(id)) id <- as.character(id) # avoid integer codes in c(...)
+  id
+}
+
+## Ids of the rows of the model IF, linked to the ids of 'data' ('id').
+## Rules (in order):
+##  1. no ids on the model IF: positional matching with the rows of 'data'
+##  2. 'estimate' object with ids in the id space of 'data': used as is
+##  3. ids found among the rownames of 'data': mapped to the corresponding 'id'
+##  4. 'estimate' object with other ids: used as is (union / independence)
+average_model_id <- function(x, ic, id, rn) {
+  is_est <- inherits(x, "estimate")
+  key <- if (is_est) index(x) # keeps the type of the ids
+  if (is.null(key)) key <- rownames(ic)
+  if (length(key) != NROW(ic)) {
+    if (NROW(ic) == length(id)) return(id)
+  } else {
+    if (is_est && all(key %in% id)) return(key)
+    pos <- match(key, rn)
+    if (!anyNA(pos)) return(id[pos])
+    if (is_est) return(key)
+  }
+  stop("Unable to link the model influence function to 'data'. ",
+       "Supply the ids with 'estimate(x, id=...)'")
 }
