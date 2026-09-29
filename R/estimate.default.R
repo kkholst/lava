@@ -912,46 +912,57 @@ extend_ic <- function(ic, id, uid) {
   res * length(uid) / length(id)
 }
 
-## Resolve the ids used when averaging a transformation over 'data'
-## (standardization). 'id' refers to the rows of 'data' (defaults to
-## index(x) for 'estimate' objects of matching length, else rownames(data)).
-## The rows of the model IF are linked to these ids either directly (ids of an
-## 'estimate' object) or via the rownames of 'data'. Returns the ids of 'data',
-## the model IF aggregated within the linked clusters, and the model ids.
+## Ids used when averaging a transformation over 'data' (standardization).
+## Returns the ids of the rows of 'data', the model IF aggregated within the
+## clusters linked to these ids, and the (unique) model ids.
 average_align_ids <- function(x, data, ic, id = NULL) {
-  N <- NROW(data)
   rn <- rownames(data)
-  if (is.null(rn)) rn <- as.character(seq_len(N))
-  is_est <- inherits(x, "estimate")
-  ## ids of 'data'
+  if (is.null(rn)) rn <- as.character(seq_len(NROW(data)))
+  id <- average_data_id(x, data, id, rn)
+  cl <- average_model_id(x, ic, id, rn)
+  list(id_data = id, ic = cluster_sum_ic(ic, cl), id_model = unique(cl))
+}
+
+## Ids of the rows of 'data'. Default: index(x) for 'estimate' objects of
+## matching length, else rownames. Also accepts formula, column name, or TRUE.
+average_data_id <- function(x, data, id, rn) {
+  N <- NROW(data)
   if (is.null(id)) {
-    id <- if (is_est && length(index(x)) == N) index(x) else rn
+    idx <- if (inherits(x, "estimate")) index(x)
+    id <- if (length(idx) == N) idx else rn
   }
   if (is.logical(id) && length(id) == 1) id <- rn
   if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
   if (is.character(id) && length(id) == 1 && N != 1)
-    id <- data[, id, drop=TRUE]
+    id <- data[, id, drop = TRUE]
   if (length(id) != N) {
-    if (!is.null(x$na.action) && length(id) == length(x$na.action) + N) {
-      warning("Applying na.action")
-      id <- id[-x$na.action]
-    } else stop("Dimensions of 'data' and 'id' does not agree")
+    if (is.null(x$na.action) || length(id) != length(x$na.action) + N)
+      stop("Dimensions of 'data' and 'id' does not agree")
+    warning("Applying na.action")
+    id <- id[-x$na.action]
   }
-  if (is.factor(id)) id <- as.character(id)
-  ## ids of the rows of the model IF
-  key <- if (is_est) index(x) else rownames(ic)
-  if (length(key) != NROW(ic)) key <- NULL
-  if (is_est && !is.null(key) && all(key %in% id)) {
-    cl <- key                       # same id space as 'data'
-  } else if (!is.null(key) && all(key %in% rn)) {
-    cl <- id[match(key, rn)]        # linked via rownames of 'data'
-  } else if (is.null(key) && NROW(ic) == N) {
-    cl <- id                        # positional (same data, no rownames)
-  } else if (is_est && !is.null(key)) {
-    cl <- key                       # (partly) disjoint ids: union/independence
+  if (is.factor(id)) id <- as.character(id) # avoid integer codes in c(...)
+  id
+}
+
+## Ids of the rows of the model IF, linked to the ids of 'data' ('id').
+## Rules (in order):
+##  1. no ids on the model IF: positional matching with the rows of 'data'
+##  2. 'estimate' object with ids in the id space of 'data': used as is
+##  3. ids found among the rownames of 'data': mapped to the corresponding 'id'
+##  4. 'estimate' object with other ids: used as is (union / independence)
+average_model_id <- function(x, ic, id, rn) {
+  is_est <- inherits(x, "estimate")
+  key <- if (is_est) index(x) # keeps the type of the ids
+  if (is.null(key)) key <- rownames(ic)
+  if (length(key) != NROW(ic)) {
+    if (NROW(ic) == length(id)) return(id)
   } else {
-    stop("Unable to link the model influence function to 'data'. ",
-         "Supply the ids with 'estimate(x, id=...)'")
+    if (is_est && all(key %in% id)) return(key)
+    pos <- match(key, rn)
+    if (!anyNA(pos)) return(id[pos])
+    if (is_est) return(key)
   }
-  list(id_data=id, ic=cluster_sum_ic(ic, cl), id_model=unique(cl))
+  stop("Unable to link the model influence function to 'data'. ",
+       "Supply the ids with 'estimate(x, id=...)'")
 }
