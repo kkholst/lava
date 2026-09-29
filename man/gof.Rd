@@ -92,7 +92,7 @@ rsq(e)
 ##'
 rr <- rsq(e,TRUE)
 rr
-estimate(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
+summary(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
 
 }
 \seealso{

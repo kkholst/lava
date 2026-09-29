@@ -87,8 +87,9 @@ estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
 #' been moved here.
 #'
 #' @param object an `estimate` object.
-#' @param contrast (optional) contrast matrix for the final Wald test.
-#' @param null (optional) null hypothesis to test.
+#' @param contrast (optional) contrast matrix for the final Wald test. When
+#'   supplied together with `null`, tests \eqn{H_0: B\theta = b_0}.
+#' @param null (optional) null hypothesis to test (default 0).
 #' @param type type of small-sample correction. Requires the estimate to have
 #'   been computed with `IC=TRUE` (the default).
 #' @param var.adj variance adjustment parameter for small-sample correction.
@@ -105,6 +106,17 @@ estimate_coefmat <- function(est, se, df, level = 0.95, null = 0) {
 #'   `summary.estimate` object
 #' @param ... additional arguments passed to [contr].
 #' @seealso [estimate.default()]
+#' @details types of small-sample corrections:
+#'
+#'   - `"robust"` (default): no correction.
+#'   - `"df"`: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001).
+#'   - `"mbn"`: Morel-Bokossa-Neerchal (2003) correction.
+#'   - `"hc3"`: leverage-adjusted HC3-type correction (blended with `var.adj`).
+#'   - `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
+#'
+#' The var.adj parameter controls the blending parameter for the
+#'   HC3 leverage adjustment, by controls the weight between
+#'   observation-level empirical leverage and the average leverage \eqn{p/n}.
 #' @export
 summary.estimate <- function(object,
                              contrast,
