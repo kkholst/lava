@@ -1,3 +1,12 @@
+# development version
+  - `estimate.default(..., average=TRUE)`: the `id` argument now refers to the
+    rows of `data`, and the influence function of the model is aligned to these
+    ids (via `index(x)` for `estimate` objects, or the row names of the model
+    frame). This allows standardization/g-computation over a larger dataset than
+    the one used to fit the model (e.g., a model fitted on a subset).
+  - `ordreg` (ordinal regression, proportional odds model) improved summary
+    method and documentation
+
 # lava 1.9.3
   - `merge.estimate` no longer sort IC by id by default. The previous
      behavior is available via the new argument `sort=TRUE`.
