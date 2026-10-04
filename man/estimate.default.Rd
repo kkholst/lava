@@ -55,8 +55,11 @@ a logical scalar (\code{TRUE} for one-to-one matching, \code{FALSE} for
 independence). When supplied, the IF is aggregated within clusters to
 produce cluster-robust standard errors. When \code{average = TRUE}, \code{id}
 refers to the rows of \code{data} (default: \code{rownames(data)}), and the
-influence function of the model is linked to these ids via \code{index(x)}
-(for \code{estimate} objects) or the row names of the model frame.}
+ids of an \code{estimate} object (\code{index(x)}) are used as is (non-overlapping
+ids are treated as independent observations), whereas the rows of other
+model objects are linked via the row names of \code{data}.
+\code{id = NULL} removes the id (index) and the row names of the influence
+function from the returned object.}
 
 \item{coef}{(optional) named parameter vector. Used instead of \code{coef(x)} when
 constructing an \code{estimate} object without a model.}

@@ -36,8 +36,11 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   independence). When supplied, the IF is aggregated within clusters to
 #'   produce cluster-robust standard errors. When `average = TRUE`, `id`
 #'   refers to the rows of `data` (default: `rownames(data)`), and the
-#'   influence function of the model is linked to these ids via `index(x)`
-#'   (for `estimate` objects) or the row names of the model frame.
+#'   ids of an `estimate` object (`index(x)`) are used as is (non-overlapping
+#'   ids are treated as independent observations), whereas the rows of other
+#'   model objects are linked via the row names of `data`.
+#'   `id = NULL` removes the id (index) and the row names of the influence
+#'   function from the returned object.
 #' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
 #'   constructing an `estimate` object without a model.
 #' @param IC if `TRUE` (default) the influence function matrix is estimated and
@@ -432,6 +435,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
   idstack <- NULL
   id_user <- !missing(id)
+  id_drop <- id_user && is.null(id) # id=NULL: remove id (index) from result
   ## Standardization (average=TRUE): 'id' refers to the rows of 'data', and the
   ## model IF is aligned to these ids (see 'average_align_ids')
   avg_align <- isTRUE(average) && is.function(f) &&
@@ -444,76 +448,23 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     ic_theta <- ids$ic
     idstack <- ids$id_model
   }
-  ## Preserve id from 'estimate' object
-  if (!avg_align && missing(id)) {
-    if (inherits(x, "measurement.error")) {
-      if (!is.null(x[["id"]])) id <- x[["id"]]
-    } else if (inherits(x, "estimate") && !is.null(index(x))) {
-      id <- index(x)
-    }
-  }
-  if (avg_align) {
-    ## ids already handled above
-  } else if (!missing(id) && IC) {
-    if (is.null(ic_theta)) stop("'IC' method needed")
-    nprev <- nrow(ic_theta)
-    if (inherits(id, "formula")) {
-      id <- interaction(get_all_vars(id, data))
-    }
-    if (is.logical(id) && length(id)==1) {
-      id <- if(is.null(ic_theta)) seq_len(nrow(data)) else seq_len(nprev)
-      stack <- FALSE
-    }
-    if (is.character(id) && length(id)==1)
-      id <- data[, id, drop=TRUE]
-    if (!is.null(ic_theta)) {
-      if (length(id)!=nprev) {
-        if (!is.null(x$na.action) &&
-            (length(id)==length(x$na.action) + nprev)) {
-          warning("Applying na.action")
-          id <- id[-x$na.action]
-        } else stop("Dimensions of i.i.d decomposition and 'id' does not agree")
-      }
-    } else {
-      if (length(id)!=nrow(data)) {
-        if (!is.null(x$na.action) &&
-            (length(id)==length(x$na.action)+nrow(data))) {
-          warning("Applying na.action")
-          id <- id[-x$na.action]
-        } else stop("Dimensions of IC and 'id' does not agree")
-      }
-    }
-    if (stack) {
-      if (lava.options()$cluster.index) {
-        if (!requireNamespace("mets", quietly=TRUE)) stop("'mets' package required")
-      }
-      N <- nrow(ic_theta)
-      clidx <- NULL
-      atr <- attributes(ic_theta)
-      atr$dimnames <- NULL
-      atr$dim <- NULL
-      if (!lava.options()$cluster.index) {
-        ic_theta <- matrix(unlist(by(ic_theta, id, colSums)),
-                           byrow=TRUE, ncol=ncol(ic_theta))
-        attributes(ic_theta)[names(atr)] <- atr
-        idstack <- sort(unique(id))
+  if (!avg_align) {
+    ## Cluster id of the rows of the IF (default: id of 'estimate' object)
+    id0 <- if (id_user) id else if (inherits(x, "estimate")) index(x)
+    if (!is.null(id0) && IC) {
+      if (is.null(ic_theta)) stop("'IC' method needed")
+      n <- nrow(ic_theta)
+      if (is.logical(id0) && length(id0) == 1) stack <- FALSE
+      id0 <- resolve_id(id0, data, n=n, x=x, default=seq_len(n))
+      if (stack) {
+        ic_theta <- cluster_sum_ic(ic_theta, id0)
+        idstack <- unique(id0)
       } else {
-        clidx <- mets::cluster.index(id, mat=ic_theta, return.all=TRUE)
-        ic_theta <- with(clidx, X)
-        attributes(ic_theta)[names(atr)] <- atr
-        idstack <- id[as.vector(clidx$firstclustid)+1]
+        idstack <- id0
       }
-      ic_theta <- ic_theta*NROW(ic_theta)/length(id)
-      if (is.null(attributes(ic_theta)$N)) {
-        attributes(ic_theta)$N <- N
-      }
-      ## Reorder to original order: unique(id)
-      ord <- match(unique(id), idstack)
-      ic_theta <- ic_theta[ord, , drop=FALSE]
-      idstack <- idstack[ord]
-    } else idstack <- id
-  } else {
-    if (!is.null(data)) idstack <- rownames(data)
+    } else if (!id_drop && !is.null(data)) {
+      idstack <- rownames(data)
+    }
   }
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
@@ -628,29 +579,32 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         ic1 <- cluster_sum_ic(ic1, id_data)
         uid_data <- unique(id_data)
         uid_model <- idstack
-        ## Align the terms by id (union of ids, starting with the ids of
-        ## 'data'). As in 'merge', each term is zero outside its own support
-        ## and rescaled by (number of ids in union)/(number of own ids)
-        uid <- unique(c(uid_data, uid_model))
         if (!any(uid_model %in% uid_data)) {
           message("Assuming independence between model iid decomposition and new data frame") #nolint
         }
-        ic1 <- extend_ic(ic1, uid_data, uid)
-        ic2 <- extend_ic(cbind(ic2), uid_model, uid)
+        ## Align the terms by id (union of ids, starting with the ids of
+        ## 'data'), see 'align_ic'
         if (!missing(subset)) { ## Conditional estimate
           phat <- mean(subset)
-          ic3 <- cbind(-1/phat^2 * (subset-phat))
-          ic3 <- extend_ic(cluster_sum_ic(ic3, id_data), uid_data, uid)
-          ic_theta <- (ic1+ic2)/phat + rbind(pp)%x%ic3
+          ic3 <- cluster_sum_ic(cbind(-1/phat^2 * (subset-phat)), id_data)
+          al <- align_ic(list(ic1, ic2, ic3), list(uid_data, uid_model, uid_data))
+          ic_theta <- (al$ic[[1]] + al$ic[[2]])/phat + rbind(pp)%x%al$ic[[3]]
           pp <- pp/phat
         } else {
-          ic_theta <- ic1+ic2
+          al <- align_ic(list(ic1, ic2), list(uid_data, uid_model))
+          ic_theta <- al$ic[[1]] + al$ic[[2]]
         }
+        uid <- al$id
         rownames(ic_theta) <- uid
         idstack <- uid
         V <- var_ic(ic_theta)
       }
     }
+  }
+
+  if (id_drop) { # id=NULL: remove id (index) and rownames of IF
+    idstack <- NULL
+    if (!is.null(ic_theta)) rownames(ic_theta) <- NULL
   }
 
   df_mod <- NULL
@@ -892,24 +846,108 @@ IC.estimate <- function(x, ...) {
   structure(x$IC, dimnames=dimn)
 }
 
+
+################################################################################
+## Helper functions for estimate.default
+################################################################################
+
 ## Sum influence function contributions within clusters (first-appearance order
 ## of 'id') and rescale such that var_ic gives the cluster-robust variance (see
-## IC.default)
+## IC.default). Attributes of 'ic' (e.g. 'bread') are kept, and 'N' (number of
+## observations) is set if missing.
 cluster_sum_ic <- function(ic, id) {
-  res <- rowsum(cbind(ic), group = id, reorder = FALSE)
-  res * NROW(res) / length(id)
+  if (anyNA(id)) stop("Missing values in 'id'")
+  atr <- attributes(ic) # before cbind, which drops attributes
+  atr <- atr[setdiff(names(atr), c("dim", "dimnames", "names"))]
+  ic <- cbind(ic)
+  res <- rowsum(ic, group = id, reorder = FALSE)
+  res <- res * NROW(res) / length(id)
+  attributes(res)[names(atr)] <- atr
+  if (is.null(attr(res, "N"))) attr(res, "N") <- NROW(ic)
+  res
 }
 
-## Embed influence function with rows 'id' into the rows 'uid' (zero outside
-## support) and rescale by length(uid)/length(id) (inverse probability of
-## observation, see the section "Estimators computed on different subsets" in
-## vignette("influencefunction"))
-extend_ic <- function(ic, id, uid) {
-  ic <- cbind(ic)
-  res <- matrix(0, nrow = length(uid), ncol = ncol(ic))
-  colnames(res) <- colnames(ic)
-  res[match(id, uid), ] <- ic
-  res * length(uid) / length(id)
+## Convert an 'id' specification (vector, formula or column name evaluated in
+## 'data', or a logical scalar giving 'default') to a vector of length 'n'.
+## An 'id' matching the data before removal of missing values (x$na.action) is
+## reduced accordingly.
+resolve_id <- function(id, data, n, x = NULL, default) {
+  if (is.logical(id) && length(id) == 1) return(default)
+  if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
+  if (is.character(id) && length(id) == 1 && n != 1)
+    id <- data[, id, drop = TRUE]
+  if (length(id) != n) {
+    na <- if (is.list(x)) x$na.action
+    if (is.null(na) || length(id) != length(na) + n)
+      stop("Dimensions of 'id' (", length(id), ") and ",
+           "influence function/data (", n, ") does not agree")
+    warning("Applying na.action")
+    id <- id[-na]
+  }
+  id
+}
+
+## Ids attached to the rows of the influence function 'ic' of 'x': the id of an
+## 'estimate' object (keeps the type of the ids), else rownames of 'ic'
+ic_ids <- function(x, ic) {
+  for (key in list(if (inherits(x, "estimate")) index(x), rownames(ic))) {
+    if (length(key) == NROW(ic)) return(key)
+  }
+  NULL
+}
+
+## Align influence functions 'ics' (list) with row ids 'ids' (list of unique
+## ids) on the union of ids (first-appearance order). Each IF is zero outside
+## its own ids and rescaled by length(union)/length(own ids) (inverse
+## probability of observation, see the section "Estimators computed on
+## different subsets" in vignette("influencefunction")).
+## Returns the list of aligned IFs and the ids of the union.
+align_ic <- function(ics, ids) {
+  uid <- unique(unlist(ids, use.names = FALSE))
+  ics <- Map(function(ic, id) {
+    ic <- cbind(ic)
+    res <- matrix(0, nrow = length(uid), ncol = ncol(ic),
+                  dimnames = list(NULL, colnames(ic)))
+    res[match(id, uid), ] <- ic
+    res * length(uid) / length(id)
+  }, ics, ids)
+  list(ic = ics, id = uid)
+}
+
+## Ids of the rows of the influence functions of the estimate objects in
+## 'objects' (used by merge.estimate):
+##  - id=NULL or id=FALSE: independence (distinct ids across objects)
+##  - id=TRUE or paired=TRUE: one-to-one matching (objects of the same size)
+##  - 'id' missing (id_missing=TRUE): ids of the objects (index or rownames)
+##  - otherwise a list of ids, one element for each object
+merge_ids <- function(objects, id, paired = FALSE, id_missing = FALSE) {
+  nn <- unlist(lapply(objects, function(x) NROW(IC(x))))
+  if (!id_missing && (is.null(id) || isFALSE(id))) {
+    cnn <- c(0, cumsum(nn))
+    return(lapply(seq_along(nn), function(i) seq_len(nn[i]) + cnn[i]))
+  }
+  if ((id_missing && paired) || isTRUE(id)) {
+    if (any(nn[1] != nn)) {
+      stop("Expected objects of the same size: ", paste(nn, collapse = ","))
+    }
+    return(rep(list(seq_len(nn[1])), length(nn)))
+  }
+  if (id_missing) {
+    return(lapply(seq_along(objects), function(i) {
+      id0 <- ic_ids(objects[[i]], IC(objects[[i]]))
+      if (is.null(id0)) stop("Need id for object number ", i)
+      id0
+    }))
+  }
+  if (length(id) != length(objects)) {
+    stop("Same number of id-elements as model objects expected")
+  }
+  idlen <- unlist(lapply(id, length))
+  if (!identical(idlen, nn)) {
+    stop("Wrong lengths of 'id': ",
+         paste(idlen, collapse = ","), "; ", paste(nn, collapse = ","))
+  }
+  id
 }
 
 ## Ids used when averaging a transformation over 'data' (standardization).
@@ -924,44 +962,32 @@ average_align_ids <- function(x, data, ic, id = NULL) {
 }
 
 ## Ids of the rows of 'data'. Default: index(x) for 'estimate' objects of
-## matching length, else rownames. Also accepts formula, column name, or TRUE.
+## matching length, else rownames (see resolve_id for other specifications).
 average_data_id <- function(x, data, id, rn) {
   N <- NROW(data)
   if (is.null(id)) {
     idx <- if (inherits(x, "estimate")) index(x)
     id <- if (length(idx) == N) idx else rn
   }
-  if (is.logical(id) && length(id) == 1) id <- rn
-  if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
-  if (is.character(id) && length(id) == 1 && N != 1)
-    id <- data[, id, drop = TRUE]
-  if (length(id) != N) {
-    if (is.null(x$na.action) || length(id) != length(x$na.action) + N)
-      stop("Dimensions of 'data' and 'id' does not agree")
-    warning("Applying na.action")
-    id <- id[-x$na.action]
-  }
+  id <- resolve_id(id, data, n = N, x = x, default = rn)
   if (is.factor(id)) id <- as.character(id) # avoid integer codes in c(...)
   id
 }
 
 ## Ids of the rows of the model IF, linked to the ids of 'data' ('id').
-## Rules (in order):
-##  1. no ids on the model IF: positional matching with the rows of 'data'
-##  2. 'estimate' object with ids in the id space of 'data': used as is
-##  3. ids found among the rownames of 'data': mapped to the corresponding 'id'
-##  4. 'estimate' object with other ids: used as is (union / independence)
+## Rules:
+##  1. 'estimate' object with ids: used as is (same id space as 'data';
+##     non-overlapping ids are treated as independent observations)
+##  2. rows of other model objects: linked via the rownames of 'data'
+##  3. no ids: positional matching with the rows of 'data'
 average_model_id <- function(x, ic, id, rn) {
-  is_est <- inherits(x, "estimate")
-  key <- if (is_est) index(x) # keeps the type of the ids
-  if (is.null(key)) key <- rownames(ic)
-  if (length(key) != NROW(ic)) {
+  key <- ic_ids(x, ic)
+  if (inherits(x, "estimate") && !is.null(key)) return(key)
+  if (is.null(key)) {
     if (NROW(ic) == length(id)) return(id)
   } else {
-    if (is_est && all(key %in% id)) return(key)
     pos <- match(key, rn)
     if (!anyNA(pos)) return(id[pos])
-    if (is_est) return(key)
   }
   stop("Unable to link the model influence function to 'data'. ",
        "Supply the ids with 'estimate(x, id=...)'")
