@@ -20,7 +20,7 @@ vignette: >
 bibliography: ref.bib
 ---
 
-```{r setup, echo=FALSE}
+```{r setup, include=FALSE}
 library("lava")
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -329,7 +329,8 @@ data(pbc, package="survival")
 The Cox proportional hazards model can be fitted with the `mets::phreg` method
 which can estimate the IF for both the partial likelihood parameters and the
 baseline hazard. Here we fit a survival model with right-censored event times
-```{r phreg, eval=has_mets }
+```{r phreg }
+#| eval: !expr has_mets
 fit.phreg <- mets::phreg(Surv(time, status > 0) ~ age + sex, data = pbc)
 fit.phreg
 IC(fit.phreg) |> head()
@@ -340,7 +341,8 @@ The IF for the baseline cumulative hazard at a specific time point
 \Lambda_0(t) = \int_0^t \lambda_0(u)\,du,
 \end{align*}
 where $\lambda_0(t)$ is the baseline hazard, can be estimated in similar way:
-```{r phreg-baseline, eval=has_mets }
+```{r phreg-baseline }
+#| eval: !expr has_mets
 baseline <- function(object, time, ...) {
   ic <- mets::IC(object, baseline = TRUE, time = time, ...)
   est <- mets::predictCumhaz(object$cumhaz, new.time = time)[1, 2]
@@ -352,7 +354,8 @@ baseline(fit.phreg, tt)
 
 The `estimate` and `IC` methods are also available for parametric survival
 models via `survival::survreg`, here a Weibull model:
-```{r survreg, eval=has_mets }
+```{r survreg  }
+#| eval: !expr has_mets
 survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull") |>
   estimate()
 ```
@@ -373,7 +376,8 @@ $$
 \pr(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
 $$
 to the simulated dataset
-```{r semfit, eval=has_mets }
+```{r semfit }
+#| eval: !expr has_mets
 sem <- lvm(y1 + y2 ~ 1 * u + w) |>
   latent(~ u) |>
   ordinal(K=2, ~ y1 + y2)
@@ -685,7 +689,8 @@ estimate(g0, id=dl$id)
 ```
 We can confirm that this situation is equivalent to the variance estimates we
 obtain from a GEE marginal model with working independence correlation structure [@r_geepack]
-```{r geepack, eval=has_geepack }
+```{r geepack }
+#| eval: !expr has_geepack
 gee0 <- geepack::geeglm(y ~ a + w + x, data = dl, id = dl$id, family=binomial)
 summary(gee0)
 ```
@@ -983,7 +988,8 @@ where $\Phi$ is the standard Gaussian CDF. As described in
 in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{p}$
 can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
-```{r pcorrect, eval=has_mets }
+```{r pcorrect }
+#| eval: !expr has_mets
 gg0 <- estimate(gg, use="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 ```
@@ -1001,7 +1007,8 @@ adjusted $p$-values can here be obtained as the maximum $p$-value across all
 the composite hypothesis tests. Unfortunately, this only works for relatively
 few comparisons as the number of tests grows exponentially.
 
-```{r closedtesting, eval=has_mets}
+```{r closedtesting }
+#| eval: !expr has_mets
 summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
 ```
 
