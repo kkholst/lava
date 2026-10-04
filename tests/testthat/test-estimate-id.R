@@ -72,3 +72,83 @@ test_that("estimate index order", {
               IC(e1),
               )
 })
+
+test_that("id=NULL removes the id (index)", {
+  set.seed(1)
+  n <- 40
+  d <- data.frame(y = rnorm(n), x = rnorm(n))
+  rownames(d) <- paste0("r", seq_len(n))
+  d$id <- paste0("a", seq_len(n))
+  d$cl <- rep(paste0("c", 1:10), each = 4)
+  g <- glm(y ~ x, data = d)
+  e <- estimate(g)
+  e0 <- estimate(g, id = NULL)
+  expect_null(index(e0))
+  expect_null(rownames(IC(e0)))
+  expect_equal(vcov(e0), vcov(e))
+  expect_equal(coef(e0), coef(e))
+  expect_equivalent(IC(e0), IC(e))
+
+  # estimate objects and index<-
+  e1 <- estimate(estimate(g, id = d$id), id = NULL)
+  expect_null(index(e1))
+  expect_null(rownames(IC(e1)))
+  expect_equal(vcov(e1), vcov(e))
+  e2 <- e
+  index(e2) <- NULL
+  expect_null(index(e2))
+  expect_null(rownames(IC(e2)))
+
+  # clustered IF is kept, only the ids are removed
+  ec <- estimate(g, id = d$cl)
+  ec0 <- estimate(ec, id = NULL)
+  expect_null(index(ec0))
+  expect_equal(vcov(ec0), vcov(ec))
+  expect_equivalent(IC(ec0), IC(ec))
+
+  # averaging: default linking, ids removed from result
+  f <- function(p, data) p[1] + p[2] * data[, "x"]
+  a <- estimate(g, f, data = d, average = TRUE)
+  a0 <- estimate(g, f, data = d, id = NULL, average = TRUE)
+  expect_null(index(a0))
+  expect_null(rownames(IC(a0)))
+  expect_equal(vcov(a0), vcov(a))
+
+  # merge requires ids (or explicit independence / pairing)
+  expect_error(merge(e0, e0), "Need id")
+  expect_equal(vcov(merge(e0, e0, id = NULL))[1:2, 1:2], vcov(e))
+  expect_equal(vcov(merge(e0, e0, paired = TRUE)), vcov(merge(e, e)))
+})
+
+test_that("cluster aggregation of IF (stack)", {
+  set.seed(1)
+  n <- 40
+  d <- data.frame(y = rnorm(n), x = rnorm(n))
+  d$cl <- rep(sample(paste0("c", 1:10)), each = 4) # unsorted cluster ids
+  g <- glm(y ~ x, data = d)
+  e <- estimate(g, id = d$cl)
+
+  # first-appearance order and manual aggregation
+  ic0 <- IC(g)
+  ic1 <- rowsum(ic0, d$cl, reorder = FALSE) * 10 / n
+  expect_identical(index(e), unique(d$cl))
+  expect_equivalent(IC(e), ic1)
+  expect_equal(rownames(IC(e)), unique(d$cl))
+
+  # attributes are kept: 'bread' and number of observations 'N'
+  expect_equivalent(attr(IC(e), "bread"), attr(ic0, "bread"))
+  expect_equal(attr(IC(e), "N"), n)
+  expect_no_error(summary(e, type = "mbn"))
+
+  # re-clustering an estimate object keeps the original 'N'
+  cl2 <- sub("c([0-9]+)", "k\\1", unique(d$cl))
+  cl2[1:2] <- "k0"
+  e2 <- estimate(e, id = cl2)
+  expect_equal(attr(IC(e2), "N"), n)
+  expect_equal(nrow(IC(e2)), 9)
+
+  # missing values in id
+  idna <- d$cl
+  idna[3] <- NA
+  expect_error(estimate(g, id = idna), "Missing values in 'id'")
+})
