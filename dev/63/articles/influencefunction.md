@@ -996,7 +996,7 @@ Print(cbind(table(id)))
 ## Aggregated IF
 e <- estimate(y, id = id)
 object.size(e)
-#> 18840 bytes
+#> 19008 bytes
 e
 #>     Estimate Std.Err      2.5%    97.5% P-value
 #> p1 -0.002244 0.00332 -0.008751 0.004263  0.4991
@@ -1151,7 +1151,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p/(1 - p))
-#> <bytecode: 0x55ae4f7d8130>
+#> <bytecode: 0x564ca11ba6d8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value

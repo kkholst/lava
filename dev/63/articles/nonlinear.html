@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Non-linear latent variable models and error-in-variable models</h1>
 
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-09-29</p>
+      <p class="date">2026-10-04</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/feat/estimate-average-dif/vignettes/nonlinear.qmd" class="external-link"><code>vignettes/nonlinear.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -199,7 +199,7 @@ Residual Variances:
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>u1<span class="op">=</span><span class="va">newd</span><span class="op">$</span><span class="va">u1</span>,</span>
-<span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span>                    <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e2</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">e2</span>,p<span class="op">=</span><span class="va">p</span>,newdata<span class="op">=</span><span class="va">newd</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefmat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     u1  Estimate   Std.Err      2.5%     97.5%      P-value
@@ -258,7 +258,7 @@ p6 -3.5 -8.179962 0.9766401 -10.09414 -6.265782 5.493600e-17</code></pre>
 linear    2.137633
 quadratic 1.806409
 spline4   1.747002
-spline6   1.760896</code></pre>
+spline6   1.760917</code></pre>
 </div>
 </div>
 <p>Here the RMSE is in favour of the splines model with 4 degrees of freedom:</p>
@@ -310,33 +310,33 @@ Selected spline model degrees of freedom: 4
 Knots: -3.958 -1.968 0.02149 2.011 4.001
 
      RMSE(nfolds=, rep=)
-df:1            2.135108
-df:2            1.883176
-df:3            1.918421
-df:4            1.860711
+df:1            2.135107
+df:2            1.883174
+df:3            1.918419
+df:4            1.860710
 ────────────────────────────────────────────────────────────────────────────────
 
                     Estimate Std. Error Z-value  P-value   std.xy
 Measurements:
    y1~u2             1.00000                                0.93509
-   y2~u2             0.97827  0.03464   28.24164   &lt;1e-12   0.94291
-   y3~u2             1.04529  0.03482   30.01849   &lt;1e-12   0.96175
+   y2~u2             0.97827  0.03464   28.24162   &lt;1e-12   0.94291
+   y3~u2             1.04529  0.03482   30.01847   &lt;1e-12   0.96175
 Regressions:
-   u2~z              1.02726  0.22350    4.59630 4.301e-06  0.34700
-   u2~u1_1           2.61264  0.90770    2.87830 0.003998   1.13566
-   u2~u1_2           0.01368  0.06464    0.21164 0.8324     0.30984
-   u2~u1_3          -0.19029  0.17477   -1.08879 0.2762    -1.48961
-   u2~u1_4           0.35252  0.19173    1.83859 0.06597    0.52314
+   u2~z              1.02727  0.22350    4.59637 4.299e-06  0.34701
+   u2~u1_1           2.61255  0.90768    2.87827 0.003999   1.13563
+   u2~u1_2           0.01368  0.06464    0.21172 0.8323     0.30995
+   u2~u1_3          -0.19030  0.17477   -1.08887 0.2762    -1.48970
+   u2~u1_4           0.35252  0.19173    1.83864 0.06597    0.52316
 Intercepts:
    y1                0.00000                                0.00000
    y2               -0.12170  0.10925   -1.11391 0.2653    -0.03871
    y3               -0.09870  0.10546   -0.93592 0.3493    -0.02997
-   u2                1.54968  2.64293    0.58635 0.5576     0.51143
+   u2                1.54947  2.64289    0.58628 0.5577     0.51136
 Residual Variances:
-   y1                1.31889  0.17659    7.46873            0.12560
-   y2                1.09634  0.14483    7.56960            0.11093
-   y3                0.81386  0.13260    6.13772            0.07504
-   u2                1.99291  0.28189    7.06988            0.21706</code></pre>
+   y1                1.31890  0.17659    7.46873            0.12560
+   y2                1.09634  0.14483    7.56961            0.11093
+   y3                0.81386  0.13260    6.13771            0.07504
+   u2                1.99292  0.28189    7.06988            0.21706</code></pre>
 </div>
 </div>
 </section><section class="section level2"><h2 id="specification-of-general-functional-forms">Specification of general functional forms<a class="anchor" aria-label="anchor" href="#specification-of-general-functional-forms"></a>
@@ -400,10 +400,10 @@ chisq = 43.1318, df = 2, p-value = 4.306e-10</code></pre>
 <code class="sourceCode R"><span><span class="va">em0</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span>    <span class="va">em</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mixture.html">mixture</a></span><span class="op">(</span><span class="va">m1</span>, k<span class="op">=</span><span class="fl">2</span>, data<span class="op">=</span><span class="va">d</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ll</span>,<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">em</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">em0</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">em0</span><span class="op">)</span><span class="op">&lt;</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">ll</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<span>  <span class="va">em</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mixture.html">mixture</a></span><span class="op">(</span><span class="va">m1</span>, k<span class="op">=</span><span class="fl">2</span>, data<span class="op">=</span><span class="va">d</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ll</span>,<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">em</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">em0</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">em0</span><span class="op">)</span><span class="op">&lt;</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">ll</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">em0</span> <span class="op">&lt;-</span> <span class="va">em</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
@@ -416,43 +416,43 @@ chisq = 43.1318, df = 2, p-value = 4.306e-10</code></pre>
                     Estimate Std. Error Z value  Pr(&gt;|z|)
 Measurements:
    x1~u1             1.00000
-   x2~u1             0.99581  0.07940   12.54098   &lt;1e-12
-   x3~u1             1.06345  0.08436   12.60541   &lt;1e-12
+   x2~u1             0.99581  0.07940   12.54099   &lt;1e-12
+   x3~u1             1.06344  0.08436   12.60538   &lt;1e-12
 Regressions:
-   u1~z              1.06674  0.08527   12.50988   &lt;1e-12
+   u1~z              1.06675  0.08527   12.50987   &lt;1e-12
 Intercepts:
    x1                0.00000
-   x2                0.03845  0.09890    0.38882 0.6974
-   x3               -0.02549  0.10333   -0.24668 0.8052
-   u1                0.20926  0.13162    1.58988 0.1119
+   x2                0.03845  0.09890    0.38884 0.6974
+   x3               -0.02549  0.10333   -0.24666 0.8052
+   u1                0.20922  0.13162    1.58951 0.1119
 Residual Variances:
-   x1                0.98540  0.13316    7.40026
-   x2                0.97181  0.13156    7.38695
-   x3                1.01316  0.14294    7.08815
-   u1                0.29046  0.11128    2.61004
+   x1                0.98539  0.13316    7.40019
+   x2                0.97181  0.13156    7.38694
+   x3                1.01316  0.14294    7.08808
+   u1                0.29049  0.11130    2.61000
 
 Cluster 2 (n=38, Prior=0.224):
 --------------------------------------------------
                     Estimate Std. Error Z value  Pr(&gt;|z|)
 Measurements:
    x1~u1             1.00000
-   x2~u1             0.99581  0.07940   12.54098   &lt;1e-12
-   x3~u1             1.06345  0.08436   12.60541   &lt;1e-12
+   x2~u1             0.99581  0.07940   12.54099   &lt;1e-12
+   x3~u1             1.06344  0.08436   12.60538   &lt;1e-12
 Regressions:
-   u1~z              1.06674  0.08527   12.50988   &lt;1e-12
+   u1~z              1.06675  0.08527   12.50987   &lt;1e-12
 Intercepts:
    x1                0.00000
-   x2                0.03845  0.09890    0.38882 0.6974
-   x3               -0.02549  0.10333   -0.24668 0.8052
-   u1               -1.44289  0.25867   -5.57813 2.431e-08
+   x2                0.03845  0.09890    0.38884 0.6974
+   x3               -0.02549  0.10333   -0.24666 0.8052
+   u1               -1.44297  0.25869   -5.57804 2.432e-08
 Residual Variances:
-   x1                0.98540  0.13316    7.40026
-   x2                0.97181  0.13156    7.38695
-   x3                1.01316  0.14294    7.08815
-   u1                0.29046  0.11128    2.61004
+   x1                0.98539  0.13316    7.40019
+   x2                0.97181  0.13156    7.38694
+   x3                1.01316  0.14294    7.08808
+   u1                0.29049  0.11130    2.61000
 --------------------------------------------------
 AIC= 1958.803
-||score||^2= 7.906111e-06 </code></pre>
+||score||^2= 1.330875e-07 </code></pre>
 </div>
 </div>
 <p>Measured by AIC there is a slight improvement in the model fit using the mixture model</p>
@@ -474,23 +474,23 @@ em0 12 1958.803</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Estimate Std. Error  Z-value   P-value
 Measurements:
-   y2~u2             0.97823    0.03464 28.23707    &lt;1e-12
-   y3~u2             1.04530    0.03480 30.04033    &lt;1e-12
+   y2~u2             0.97823    0.03464 28.23705    &lt;1e-12
+   y3~u2             1.04530    0.03480 30.04032    &lt;1e-12
 Regressions:
-   u2~z              1.02884    0.22333  4.60677  4.09e-06
-   u2~u1_1           2.80414    0.65543  4.27832 1.883e-05
-   u2~u1_2          -0.02249    0.09997 -0.22498     0.822
-   u2~u1_3          -0.17332    0.28932 -0.59908    0.5491
-   u2~u1_4           0.38672    0.33978  1.13815    0.2551
+   u2~z              1.02885    0.22333  4.60684 4.088e-06
+   u2~u1_1           2.80405    0.65542  4.27825 1.884e-05
+   u2~u1_2          -0.02248    0.09997 -0.22488    0.8221
+   u2~u1_3          -0.17335    0.28932 -0.59916    0.5491
+   u2~u1_4           0.38674    0.33978  1.13820     0.255
 Intercepts:
    y2               -0.12171    0.10925 -1.11401    0.2653
    y3               -0.09870    0.10546 -0.93588    0.3493
-   u2                2.12374    1.66609  1.27468    0.2024
+   u2                2.12356    1.66609  1.27458    0.2025
 Residual Variances:
    y1                1.31872    0.17654  7.46974
-   y2                1.09690    0.14502  7.56379
-   y3                0.81345    0.13259  6.13512
-   u2                1.99590    0.28290  7.05501          </code></pre>
+   y2                1.09691    0.14502  7.56380
+   y3                0.81345    0.13259  6.13509
+   u2                1.99591    0.28291  7.05500          </code></pre>
 </div>
 </div>
 <p>In this example the results are very similar to the Gaussian model:</p>
