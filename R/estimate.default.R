@@ -587,7 +587,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         if (!missing(subset)) { ## Conditional estimate
           phat <- mean(subset)
           ic3 <- cluster_sum_ic(cbind(-1/phat^2 * (subset-phat)), id_data)
-          al <- align_ic(list(ic1, ic2, ic3), list(uid_data, uid_model, uid_data))
+          al <- align_ic(ics = list(ic1, ic2, ic3),
+                         ids = list(uid_data, uid_model, uid_data))
           ic_theta <- (al$ic[[1]] + al$ic[[2]])/phat + rbind(pp)%x%al$ic[[3]]
           pp <- pp/phat
         } else {
