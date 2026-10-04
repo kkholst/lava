@@ -20,7 +20,7 @@ bibliography: ref.bib
 ---
 
 ```{r include=FALSE}
-mets <- lava:l::versioncheck('mets', 1)
+mets <- lava:::versioncheck('mets', 1)
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
 
@@ -147,7 +147,7 @@ To assess the model fit average RMSE is estimated with 5-fold
 cross-validation repeated two times
 
 ```{r  cv_fit }
-#| eval: !expr fullVignette
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 ## Scale models in stage 2 to allow for a fair RMSE comparison
 d0 <- d
 for (i in endogenous(m2))
@@ -199,7 +199,7 @@ cross-validation (also for choosing the mixture distribution via the `nmix`
 argument, see the section below). For example,
 
 ```{r  twostageCV }
-#| eval: !expr fullVignette
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 set.seed(1)
 selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
 	    nfolds=5, rep=2, mc.cores=parallel::detectCores())
@@ -274,7 +274,7 @@ model. Thus, only the intercept of $u_{1}$ is allowed to vary
 between the mixtures.
 
 ```{r  mixture1, cache=TRUE }
-#| eval: !expr fullVignette
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 ```
@@ -310,7 +310,7 @@ summary(em0)
 Measured by AIC there is a slight improvement in the model fit using the mixture model
 
 ```{r  estimatem1}
-#| eval: !expr mets
+#| eval: !expr lava:::versioncheck('mets', 1)
 e0 <- estimate(m1,data=d)
 AIC(e0,em0)
 ```
@@ -318,7 +318,7 @@ AIC(e0,em0)
 The spline model may then be estimated as before with the `two-stage` method
 
 ```{r  twostageem2 }
-#| eval: !expr mets
+#| eval: !expr lava:::versioncheck('mets', 1)
 em2 <- twostage(em0,m2,data=d)
 em2
 ```
@@ -326,7 +326,7 @@ em2
 In this example the results are very similar to the Gaussian model:
 
 ```{r  mixturefit }
-#| eval: !expr mets
+#| eval: !expr lava:::versioncheck('mets', 1)
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 
