@@ -915,42 +915,6 @@ align_ic <- function(ics, ids) {
   list(ic = ics, id = uid)
 }
 
-## Ids of the rows of the influence functions of the estimate objects in
-## 'objects' (used by merge.estimate):
-##  - id=NULL or id=FALSE: independence (distinct ids across objects)
-##  - id=TRUE or paired=TRUE: one-to-one matching (objects of the same size)
-##  - 'id' missing (id_missing=TRUE): ids of the objects (index or rownames)
-##  - otherwise a list of ids, one element for each object
-merge_ids <- function(objects, id, paired = FALSE, id_missing = FALSE) {
-  nn <- unlist(lapply(objects, function(x) NROW(IC(x))))
-  if (!id_missing && (is.null(id) || isFALSE(id))) {
-    cnn <- c(0, cumsum(nn))
-    return(lapply(seq_along(nn), function(i) seq_len(nn[i]) + cnn[i]))
-  }
-  if ((id_missing && paired) || isTRUE(id)) {
-    if (any(nn[1] != nn)) {
-      stop("Expected objects of the same size: ", paste(nn, collapse = ","))
-    }
-    return(rep(list(seq_len(nn[1])), length(nn)))
-  }
-  if (id_missing) {
-    return(lapply(seq_along(objects), function(i) {
-      id0 <- ic_ids(objects[[i]], IC(objects[[i]]))
-      if (is.null(id0)) stop("Need id for object number ", i)
-      id0
-    }))
-  }
-  if (length(id) != length(objects)) {
-    stop("Same number of id-elements as model objects expected")
-  }
-  idlen <- unlist(lapply(id, length))
-  if (!identical(idlen, nn)) {
-    stop("Wrong lengths of 'id': ",
-         paste(idlen, collapse = ","), "; ", paste(nn, collapse = ","))
-  }
-  id
-}
-
 ## Ids used when averaging a transformation over 'data' (standardization).
 ## Returns the ids of the rows of 'data', the model IF aggregated within the
 ## clusters linked to these ids, and the (unique) model ids.
