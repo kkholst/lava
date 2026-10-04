@@ -253,7 +253,7 @@ ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
 ee
 estimate(lm(y~x,d1))
 
-## Marginalize / standardization
+## Standardization (g-computation)
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
@@ -261,6 +261,14 @@ e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))
+
+# g-computation on non-overlapping data:
+d$id <- paste0("i", 1:nrow(d))
+d$w <- rbinom(nrow(d), 1, 0.5)
+d1 <- subset(d, w == 1)
+g1 <- glm(y ~ x + z, data=d1, family=binomial)
+e1 <- estimate(g1, id=d1$id)
+estimate(g1, f, data=d, id="id", average=TRUE)
 
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
