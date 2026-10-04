@@ -1,9 +1,20 @@
 # development version
   - `estimate.default(..., average=TRUE)`: the `id` argument now refers to the
-    rows of `data`, and the influence function of the model is aligned to these
+    rows of `data`, and the influence function of the model object is aligned to these
     ids (via `index(x)` for `estimate` objects, or the row names of the model
     frame). This allows standardization/g-computation over a larger dataset than
     the one used to fit the model (e.g., a model fitted on a subset).
+    The ids of `estimate` objects are used as is, and are not mapped via the
+    row names of `data`.
+  - `estimate(x, id=NULL)` (and `index(x) <- NULL`) removes the id (index) and
+    the row names of the influence function.
+  - Aggregation of influence functions within clusters (`estimate`, `IC`,
+    `merge`) is now based on `rowsum` (faster, no longer using
+    `lava.options()$cluster.index`). Clusters are returned in order of first
+    appearance (`IC(x, id=)` now also returns row names). Missing values in
+    `id` give an error.
+  - `merge.estimate`: `sort=TRUE` now sorts according to the union of all ids,
+    and `paired=TRUE` requires objects of the same size (as `id=TRUE`).
   - `ordreg` (ordinal regression, proportional odds model) improved summary
     method and documentation
 
