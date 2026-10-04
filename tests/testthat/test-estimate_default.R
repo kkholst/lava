@@ -165,17 +165,36 @@ test_that("standardization with model estimated on a subset (id alignment)", {
     sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
   )
 
-  # estimate object with default (rowname) ids linked via rownames of data
-  a7 <- estimate(estimate(g), f, data = dat, id = dat$id, average = TRUE)
-  expect_equivalent(vcov(a7), vcov(a))
-  expect_identical(index(a7), dat$id)
+  expect_equal(nrow(IC(a6)), n + nrow(dat1))
+  expect_identical(index(a6), c(dat$id, index(e_b)))
 
-  # estimate object without index: linked via rownames of the IF
+  # ids of estimate objects are used as is (not mapped via rownames of data):
+  # default (rowname) ids of estimate(g) do not overlap with dat$id
+  v_indep <- sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
+  expect_message(
+    a7 <- estimate(estimate(g), f, data = dat, id = dat$id, average = TRUE),
+    "independence"
+  )
+  expect_equal(nrow(IC(a7)), n + nrow(dat1))
+  expect_equivalent(vcov(a7), v_indep)
+
+  # estimate object without index: rownames of the IF are the ids
   ic_g <- IC(g)
   e0 <- estimate(coef = coef(g), IC = ic_g)
   expect_null(index(e0))
-  a8 <- estimate(e0, f, data = dat, id = dat$id, average = TRUE)
-  expect_equivalent(vcov(a8), vcov(a))
+  expect_message(
+    a8 <- estimate(e0, f, data = dat, id = dat$id, average = TRUE),
+    "independence"
+  )
+  expect_equal(nrow(IC(a8)), n + nrow(dat1))
+  expect_equivalent(vcov(a8), v_indep)
+
+  # estimate object without any ids: no link to data of different size
+  expect_error(
+    estimate(estimate(g, id = NULL), f, data = dat, id = dat$id,
+             average = TRUE),
+    "Unable to link"
+  )
   # ... or positional when the IF has no rownames and sizes agree
   g_full <- glm(y ~ w1 + a, data = dat, family = binomial)
   ic_full <- IC(g_full)
@@ -191,6 +210,33 @@ test_that("standardization with model estimated on a subset (id alignment)", {
     estimate(g, f, data = dat_b, id = dat$id, average = TRUE),
     "estimate\\(x, id="
   )
+})
+
+test_that("standardization with partly overlapping ids", {
+  set.seed(3)
+  N <- 1000
+  pop <- data.frame(w = rnorm(N), a = rbinom(N, 1, 0.5))
+  pop$y <- rbinom(N, 1, plogis(-0.5 + pop$w + pop$a))
+  pop$id <- paste0("u", seq_len(N))
+  dm <- pop[401:1000, ] # model data
+  dd <- pop[1:600, ]    # data for the standardization
+  g <- glm(y ~ w + a, data = dm, family = binomial)
+  f <- function(p, data) plogis(p[1] + p["w"] * data[, "w"] + p["a"])
+  a <- estimate(estimate(g, id = dm$id), f, data = dd, id = dd$id,
+                average = TRUE)
+  expect_equal(nrow(IC(a)), N)
+  expect_identical(index(a), pop$id)
+
+  # manual: a_i = 1(i in data)(f_i - psi)/n_d + 1(i in model) D phi_i / n_m
+  X <- cbind(1, dd$w, 1)
+  q <- as.vector(plogis(X %*% coef(g)))
+  D <- colMeans(X * q * (1 - q))
+  ai <- rep(0, N)
+  ai[1:600] <- (q - mean(q)) / 600
+  ai[401:1000] <- ai[401:1000] + IC(g) %*% D / 600
+  expect_equivalent(coef(a), mean(q))
+  expect_equivalent(vcov(a), sum(ai^2))
+  expect_equivalent(IC(a), N * ai)
 })
 
 test_that("standardization with unsorted and clustered ids (same data)", {
