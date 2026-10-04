@@ -458,7 +458,10 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
   if (!avg_align) {
     ## Cluster id of the rows of the IF (default: id of 'estimate' object)
-    id0 <- if (id_user) id else if (inherits(x, "estimate")) index(x)
+    id0 <- if (id_user) id
+           else if (inherits(x, "measurement.error")) {
+               if (!is.null(x[["id"]])) x[["id"]]
+             } else if (inherits(x, "estimate")) index(x)
     if (!is.null(id0) && IC) {
       if (is.null(ic_theta)) stop("'IC' method needed")
       n <- nrow(ic_theta)

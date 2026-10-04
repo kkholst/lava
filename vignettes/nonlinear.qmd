@@ -19,8 +19,8 @@ vignette: >
 bibliography: ref.bib
 ---
 
-```{r echo=FALSE}
-mets <- lava:::versioncheck('mets', 1)
+```{r include=FALSE}
+mets <- lava:l::versioncheck('mets', 1)
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
 
