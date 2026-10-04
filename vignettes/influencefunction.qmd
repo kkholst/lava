@@ -20,7 +20,7 @@ vignette: >
 bibliography: ref.bib
 ---
 
-```{r  setup,include=FALSE }
+```{r setup, echo=FALSE}
 library("lava")
 knitr::opts_chunk$set(
   collapse = TRUE,
