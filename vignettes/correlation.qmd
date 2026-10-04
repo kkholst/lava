@@ -23,7 +23,7 @@ vignette: >
 bibliography: ref.bib
 ---
 
-```{r  include=FALSE }
+```{r  echo=FALSE }
 mets <- lava:::versioncheck('mets', 1)
 ```
 
