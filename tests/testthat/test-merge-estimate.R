@@ -143,7 +143,6 @@ test_that("merge preserves order (of first IC)", {
 })
 
 test_that("merge order of ids (sort argument)", {
-  set.seed(1)
   a <- estimate(coef = 1, IC = c(1, -1), id = c(5, 3))
   b <- estimate(coef = 2, IC = c(2, -1, -1), id = c(4, 3, 1))
   # first IC order, followed by new ids in order of appearance
