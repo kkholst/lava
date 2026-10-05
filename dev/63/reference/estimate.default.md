@@ -238,10 +238,10 @@ section ("influence function calculus") and
 [`vignette("influencefunction", package = "lava")`](https://kkholst.github.io/lava/articles/influencefunction.md)
 for details.
 
-## Averaging and marginalization
+## Standardization (g-computation)
 
 When `average = TRUE` and `f(p, data)` depends on covariates, the target
-parameter is the standardized (marginalized) estimate \\\Psi =
+parameter is the standardized (g-computation) estimate \\\Psi =
 E\\f(X;\theta)\\\\. The IF for the averaged estimate accounts for both
 the empirical averaging and parameter estimation uncertainty:
 \$\$\mathrm{IC}\_\Psi(Z; P) = f(X;\theta) - \Psi + \[E\nabla\_\theta
