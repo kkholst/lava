@@ -170,9 +170,9 @@ section ("influence function calculus") and
 \code{vignette("influencefunction", package = "lava")} for details.
 }
 
-\section{Averaging and marginalization}{
+\section{Standardization (g-computation)}{
 When \code{average = TRUE} and \code{f(p, data)} depends on covariates, the
-target parameter is the standardized (marginalized) estimate
+target parameter is the standardized  (g-computation) estimate
 \eqn{\Psi = E\{f(X;\theta)\}}. The IF for the averaged estimate
 accounts for both the empirical averaging and parameter estimation
 uncertainty:

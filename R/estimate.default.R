@@ -112,10 +112,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' section ("influence function calculus") and
 #' `vignette("influencefunction", package = "lava")` for details.
 #'
-#' # Averaging and marginalization
+#' # Standardization (g-computation)
 #'
 #' When `average = TRUE` and `f(p, data)` depends on covariates, the
-#' target parameter is the standardized (marginalized) estimate
+#' target parameter is the standardized  (g-computation) estimate
 #' \eqn{\Psi = E\{f(X;\theta)\}}. The IF for the averaged estimate
 #' accounts for both the empirical averaging and parameter estimation
 #' uncertainty:
@@ -460,6 +460,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     ## Cluster id of the rows of the IF (default: id of 'estimate' object)
     id0 <- if (id_user) id
            else if (inherits(x, "measurement.error")) {
+             # measurement.error inherits from estimate with custom index method
                if (!is.null(x[["id"]])) x[["id"]]
              } else if (inherits(x, "estimate")) index(x)
     if (!is.null(id0) && IC) {
