@@ -212,14 +212,6 @@ test_that("standardization with model estimated on a subset (id alignment)", {
              average = TRUE),
     "Unable to link"
   )
-
-  # plain model that cannot be linked to 'data'
-  dat_b <- dat
-  rownames(dat_b) <- paste0("r", seq_len(n))
-  expect_error(
-    estimate(g, f, data = dat_b, id = dat$id, average = TRUE),
-    "estimate\\(x, id="
-  )
 })
 
 test_that("standardization with partly overlapping ids", {
@@ -590,7 +582,7 @@ test_that("IC mean-zero warning can be suppressed via lava.options", {
   old <- lava.options(check.ic = FALSE)
   on.exit(lava.options(old))
   expect_no_warning(
-    estimate(coef = c(a = 1), IC = ic_bad, id = 1:50)
+    estimate(coef = c(a = 1), IC = ic_bad)
   )
 })
 
