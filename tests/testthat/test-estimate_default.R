@@ -120,10 +120,18 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   expect_equivalent(IC(a), ic)
   expect_identical(index(a), dat$id)
 
-  # plain glm: model rows linked via rownames of data
-  a2 <- estimate(g, f, data = dat, id = dat$id, average = TRUE)
+  # plain glm: model identified by the rownames of its model frame, which do
+  # not overlap with dat$id (independence)
+  expect_message(
+    a2 <- estimate(g, f, data = dat, id = dat$id, average = TRUE),
+    "independence"
+  )
   expect_equivalent(coef(a2), coef(a))
-  expect_equivalent(vcov(a2), vcov(a))
+  expect_equivalent(
+    vcov(a2),
+    var_ic(q - mean(q)) + var_ic(IC(g) %*% D) # independence
+  )
+  expect_identical(index(a2), c(dat$id, rownames(dat1)))
   a3 <- estimate(g, f, data = dat, average = TRUE) # id defaults to rownames
   expect_equivalent(vcov(a3), vcov(a))
 

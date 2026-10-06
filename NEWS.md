@@ -1,11 +1,10 @@
 # development version
   - `estimate.default(..., average=TRUE)`: the `id` argument now refers to the
-    rows of `data`, and the influence function of the model object is aligned to these
-    ids (via `index(x)` for `estimate` objects, or the row names of the model
-    frame). This allows standardization/g-computation over a larger dataset than
-    the one used to fit the model (e.g., a model fitted on a subset).
-    The ids of `estimate` objects are used as is, and are not mapped via the
-    row names of `data`.
+    rows of `data`, and the influence function of the model object is aligned to
+    these ids (via `index(x)` for `estimate` objects, or the row names of the
+    model frame). This allows standardization/g-computation over a larger
+    dataset than the one used to fit the model (e.g., a model fitted on a
+    subset). Use `estimate(x, id=...)` to link a model to the ids of `data`.
   - `estimate(x, id=NULL)` (and `index(x) <- NULL`) removes the id (index) and
     the row names of the influence function.
   - Aggregation of influence functions within clusters (`estimate`, `IC`,

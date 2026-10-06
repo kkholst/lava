@@ -31,14 +31,15 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param data `data.frame` used by `f` when the transformation depends on
 #'   covariates (see `average`). Defaults to `model.frame(x)`.
 #' @param id (optional) cluster identifier. Can be a vector of cluster IDs, a
-#'   one-sided formula (evaluated in `data`), a single character column name, or
-#'   a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
-#'   independence). When supplied, the IF is aggregated within clusters to
+#'   one-sided formula (evaluated in `data`), a single character column name.
+#'   When supplied, the IF is aggregated within clusters to
 #'   produce cluster-robust standard errors. When `average = TRUE`, `id`
-#'   refers to the rows of `data` (default: `rownames(data)`), and the
-#'   ids of an `estimate` object (`index(x)`) are used as is (non-overlapping
-#'   ids are treated as independent observations), whereas the rows of other
-#'   model objects are linked via the row names of `data`.
+#'   refers to the rows of `data` (default: `rownames(data)`). The model
+#'   influence function is identified by the ids of an `estimate` object
+#'   (`index(x)`), or for other model objects by the row names of the model
+#'   frame, and these ids are used as is (non-overlapping ids are treated as
+#'   independent observations). When `data` is not supplied (i.e., the model
+#'   frame is used), `id` applies to both the data and the model.
 #'   `id = NULL` removes the id (index) and the row names of the influence
 #'   function from the returned object.
 #' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
@@ -128,7 +129,8 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' `data`. The two terms of the IF are then aligned by id: each term is zero
 #' for ids outside its own support and rescaled by the inverse proportion of
 #' observed ids (as in [merge.estimate]). If there are no common ids the
-#' model estimate and `data` are treated as independent.
+#' model estimate and `data` are treated as independent. To link a model
+#' object to the ids of `data` use `estimate(x, id=...)` (see examples).
 #'
 #' # Cluster-robust standard errors
 #'
@@ -213,7 +215,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' d1 <- subset(d, w == 1)
 #' g1 <- glm(y ~ x + z, data=d1, family=binomial)
 #' e1 <- estimate(g1, id=d1$id)
-#' estimate(g1, f, data=d, id="id", average=TRUE)
+#' estimate(e1, f, data=d, id="id", average=TRUE)
 #'
 #' ## Clusters and subset (conditional marginal effects)
 #' d$id <- rep(seq(nrow(d)/4),each=4)
@@ -222,8 +224,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'          subset=d$z>0, id=d$id, average=TRUE)
 #'
 #' ## Model estimated on a subset, standardized over the full data
-#' g1 <- glm(y~z+x, data=subset(d, id<=100), family=binomial())
-#' estimate(g1, function(p,data) expit(p[1] + p["z"]*data[,"z"]),
+#' d1 <- subset(d, id<=100)
+#' g1 <- glm(y~z+x, data=d1, family=binomial())
+#' estimate(estimate(g1, id=d1$id),
+#'          function(p,data) expit(p[1] + p["z"]*data[,"z"]),
 #'          data=d, id=d$id, average=TRUE)
 #'
 #' ## More examples with clusters:
@@ -395,7 +399,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     contrast.transform <- TRUE
   }
 
-  if (missing(data))
+  data_user <- !missing(data) # FALSE: 'data' is the model frame of 'x'
+  if (!data_user)
     data <- tryCatch(model.frame(x), error=function(...) NULL)
   nn <- NULL
   if (
@@ -450,6 +455,11 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     !is.null(ic_theta) && !is.null(data)
   id_data <- NULL
   if (avg_align) {
+    if (!data_user && id_user && !is.null(id) && !inherits(x, "estimate") &&
+        !(is.logical(id) && length(id) == 1)) {
+      ## 'data' is the model frame: 'id' applies to the model IF as well
+      rownames(ic_theta) <- resolve_id(id, data, n=nrow(ic_theta), x=x)
+    }
     ids <- average_align_ids(x, data=data, ic=ic_theta,
                              id=if (id_user) id else NULL)
     id_data <- ids$id_data
@@ -916,7 +926,14 @@ ic_ids <- function(x, ic) {
 ## different subsets" in vignette("influencefunction")).
 ## Returns the list of aligned IFs and the ids of the union.
 align_ic <- function(ics, ids) {
-  uid <- unique(unlist(ids, use.names = FALSE))
+  ## union of ids. Starting from the first set keeps its type (e.g. numeric
+  ## ids) when the other sets are contained in it
+  uid <- unique(ids[[1]])
+  for (i in ids[-1]) {
+    i <- unique(i)
+    new <- is.na(match(i, uid))
+    if (any(new)) uid <- c(uid, i[new])
+  }
   ics <- Map(function(ic, id) {
     ic <- cbind(ic)
     res <- matrix(0, nrow = length(uid), ncol = ncol(ic),
@@ -929,12 +946,12 @@ align_ic <- function(ics, ids) {
 
 ## Ids used when averaging a transformation over 'data' (standardization).
 ## Returns the ids of the rows of 'data', the model IF aggregated within the
-## clusters linked to these ids, and the (unique) model ids.
+## clusters defined by the model ids, and the (unique) model ids.
 average_align_ids <- function(x, data, ic, id = NULL) {
   rn <- rownames(data)
   if (is.null(rn)) rn <- as.character(seq_len(NROW(data)))
   id <- average_data_id(x, data, id, rn)
-  cl <- average_model_id(x, ic, id, rn)
+  cl <- average_model_id(x, ic, id)
   list(id_data = id, ic = cluster_sum_ic(ic, cl), id_model = unique(cl))
 }
 
@@ -951,21 +968,17 @@ average_data_id <- function(x, data, id, rn) {
   id
 }
 
-## Ids of the rows of the model IF, linked to the ids of 'data' ('id').
-## Rules:
-##  1. 'estimate' object with ids: used as is (same id space as 'data';
-##     non-overlapping ids are treated as independent observations)
-##  2. rows of other model objects: linked via the rownames of 'data'
-##  3. no ids: positional matching with the rows of 'data'
-average_model_id <- function(x, ic, id, rn) {
+## Ids of the rows of the model IF. The ids are in the same id space as the
+## ids of 'data' ('id'); non-overlapping ids are treated as independent
+## observations. Rule:
+##  1. index(x) for 'estimate' objects, else the rownames of the IF (for other
+##     model objects: the rownames of the model frame)
+## (when 'data' is not supplied, estimate.default sets the rownames of the IF
+## to 'id', such that 'id' applies to both terms)
+average_model_id <- function(x, ic, id) {
   key <- ic_ids(x, ic)
-  if (inherits(x, "estimate") && !is.null(key)) return(key)
-  if (is.null(key)) {
-    if (NROW(ic) == length(id)) return(id)
-  } else {
-    pos <- match(key, rn)
-    if (!anyNA(pos)) return(id[pos])
-  }
+  if (!is.null(key)) return(key)
+  ## if (NROW(ic) == length(id)) return(id) #
   stop("Unable to link the model influence function to 'data'. ",
        "Supply the ids with 'estimate(x, id=...)'")
 }

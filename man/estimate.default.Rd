@@ -50,14 +50,15 @@ on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
 covariates (see \code{average}). Defaults to \code{model.frame(x)}.}
 
 \item{id}{(optional) cluster identifier. Can be a vector of cluster IDs, a
-one-sided formula (evaluated in \code{data}), a single character column name, or
-a logical scalar (\code{TRUE} for one-to-one matching, \code{FALSE} for
-independence). When supplied, the IF is aggregated within clusters to
+one-sided formula (evaluated in \code{data}), a single character column name.
+When supplied, the IF is aggregated within clusters to
 produce cluster-robust standard errors. When \code{average = TRUE}, \code{id}
-refers to the rows of \code{data} (default: \code{rownames(data)}), and the
-ids of an \code{estimate} object (\code{index(x)}) are used as is (non-overlapping
-ids are treated as independent observations), whereas the rows of other
-model objects are linked via the row names of \code{data}.
+refers to the rows of \code{data} (default: \code{rownames(data)}). The model
+influence function is identified by the ids of an \code{estimate} object
+(\code{index(x)}), or for other model objects by the row names of the model
+frame, and these ids are used as is (non-overlapping ids are treated as
+independent observations). When \code{data} is not supplied (i.e., the model
+frame is used), \code{id} applies to both the data and the model.
 \code{id = NULL} removes the id (index) and the row names of the influence
 function from the returned object.}
 
@@ -185,7 +186,8 @@ The model may be estimated on a different (e.g., smaller) dataset than
 \code{data}. The two terms of the IF are then aligned by id: each term is zero
 for ids outside its own support and rescaled by the inverse proportion of
 observed ids (as in \link{merge.estimate}). If there are no common ids the
-model estimate and \code{data} are treated as independent.
+model estimate and \code{data} are treated as independent. To link a model
+object to the ids of \code{data} use \code{estimate(x, id=...)} (see examples).
 }
 
 \section{Cluster-robust standard errors}{
@@ -268,7 +270,7 @@ d$w <- rbinom(nrow(d), 1, 0.5)
 d1 <- subset(d, w == 1)
 g1 <- glm(y ~ x + z, data=d1, family=binomial)
 e1 <- estimate(g1, id=d1$id)
-estimate(g1, f, data=d, id="id", average=TRUE)
+estimate(e1, f, data=d, id="id", average=TRUE)
 
 ## Clusters and subset (conditional marginal effects)
 d$id <- rep(seq(nrow(d)/4),each=4)
@@ -277,8 +279,10 @@ estimate(g,function(p,data)
          subset=d$z>0, id=d$id, average=TRUE)
 
 ## Model estimated on a subset, standardized over the full data
-g1 <- glm(y~z+x, data=subset(d, id<=100), family=binomial())
-estimate(g1, function(p,data) expit(p[1] + p["z"]*data[,"z"]),
+d1 <- subset(d, id<=100)
+g1 <- glm(y~z+x, data=d1, family=binomial())
+estimate(estimate(g1, id=d1$id),
+         function(p,data) expit(p[1] + p["z"]*data[,"z"]),
          data=d, id=d$id, average=TRUE)
 
 ## More examples with clusters:
