@@ -198,7 +198,7 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-in"><span><span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`R-squared`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           y1           y2           y3            u </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6.714238e-01 5.109812e-01 5.276472e-01 1.443290e-15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.714238e-01 5.109812e-01 5.276472e-01 1.221245e-15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`Variance explained by 'u'`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        y1        y2        y3 </span>
@@ -207,22 +207,12 @@ goodness-of-fit (always TRUE for estimator='gaussian')</p></dd>
 <span class="r-in"><span><span class="co">##'</span></span></span>
 <span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">rsq</a></span><span class="op">(</span><span class="va">e</span>,<span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R-squared:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate    Std.Err      2.5%     97.5%       P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y1 0.6666507 0.02449714 0.6186372 0.7146642 4.506818e-163</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y2   0.5063 0.02752 0.4523 0.5602  1.342e-75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y3   0.5320 0.02627 0.4805 0.5835  3.856e-91</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rr</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = NULL, f = function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- (x[idx] - x[idx + p])/x[idx]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     names(res) &lt;- v</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     as.list(res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }, data = NULL, coef = coef0, IC = ic0, print = function(x, ...) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     cat("\nR-squared:\n\n")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     print(x$coefmat)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = x, id = value)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163</span>

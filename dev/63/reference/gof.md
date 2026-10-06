@@ -153,7 +153,7 @@ e <- estimate(m,d)
 rsq(e)
 #> $`R-squared`
 #>           y1           y2           y3            u 
-#> 6.714238e-01 5.109812e-01 5.276472e-01 1.443290e-15 
+#> 6.714238e-01 5.109812e-01 5.276472e-01 1.221245e-15 
 #> 
 #> $`Variance explained by 'u'`
 #>        y1        y2        y3 
@@ -162,22 +162,12 @@ rsq(e)
 ##'
 rr <- rsq(e,TRUE)
 rr
-#> 
-#> R-squared:
-#> 
-#>     Estimate    Std.Err      2.5%     97.5%       P-value
-#> y1 0.6666507 0.02449714 0.6186372 0.7146642 4.506818e-163
-#> y2 0.5062724 0.02751655 0.4523409 0.5602038  1.342309e-75
-#> y3 0.5319590 0.02627482 0.4804613 0.5834567  3.855758e-91
+#>    Estimate Std.Err   2.5%  97.5%    P-value
+#> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163
+#> y2   0.5063 0.02752 0.4523 0.5602  1.342e-75
+#> y3   0.5320 0.02627 0.4805 0.5835  3.856e-91
 summary(rr,contrast=rbind(c(1,-1,0),c(1,0,-1),c(0,1,-1)))
-#> Call: estimate.default(x = NULL, f = function(x) {
-#>     res <- (x[idx] - x[idx + p])/x[idx]
-#>     names(res) <- v
-#>     as.list(res)
-#> }, data = NULL, coef = coef0, IC = ic0, print = function(x, ...) {
-#>     cat("\nR-squared:\n\n")
-#>     print(x$coefmat)
-#> })
+#> Call: estimate.default(x = x, id = value)
 #> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> y1   0.6667 0.02450 0.6186 0.7147 4.507e-163
