@@ -456,7 +456,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   id_data <- NULL
   if (avg_align) {
     if (!data_user && id_user && !is.null(id) && !inherits(x, "estimate") &&
-        !(is.logical(id) && length(id) == 1)) {
+        (length(id) > 1L)) {
       ## 'data' is the model frame: 'id' applies to the model IF as well
       rownames(ic_theta) <- resolve_id(id, data, n=nrow(ic_theta), x=x)
     }
@@ -472,12 +472,11 @@ estimate.default <- function(x=NULL, f=NULL, ...,
            else if (inherits(x, "measurement.error")) {
              # measurement.error inherits from estimate with custom index method
                if (!is.null(x[["id"]])) x[["id"]]
-             } else if (inherits(x, "estimate")) index(x)
+           } else if (inherits(x, "estimate")) index(x)
     if (!is.null(id0) && IC) {
       if (is.null(ic_theta)) stop("'IC' method needed")
       n <- nrow(ic_theta)
-      if (is.logical(id0) && length(id0) == 1) stack <- FALSE
-      id0 <- resolve_id(id0, data, n=n, x=x, default=seq_len(n))
+      id0 <- resolve_id(id0, data, n=n, x=x)
       if (stack) {
         ic_theta <- cluster_sum_ic(ic_theta, id0)
         idstack <- unique(id0)
@@ -699,6 +698,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   res$derivative <- derivative
   res <- structure(res, class="estimate")
 
+  if (!is.null(IC(res))) {
+    rn <- rownames(IC(res))
+    idx <- index(res)
+    if (!identical(rn, idx)) warning("index and rownames of IC does not agree")
+  }
+
   return(res)
 }
 
@@ -890,12 +895,10 @@ cluster_sum_ic <- function(ic, id) {
   res
 }
 
-## Convert an 'id' specification (vector, formula or column name evaluated in
-## 'data', or a logical scalar giving 'default') to a vector of length 'n'.
-## An 'id' matching the data before removal of missing values (x$na.action) is
-## reduced accordingly.
-resolve_id <- function(id, data, n, x = NULL, default) {
-  if (is.logical(id) && length(id) == 1) return(default)
+## Convert an 'id' specification (vector, or formula or column name evaluated
+## in 'data') to a vector of length 'n'. An 'id' matching the data before
+## removal of missing values (x$na.action) is reduced accordingly.
+resolve_id <- function(id, data, n, x = NULL) {
   if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
   if (is.character(id) && length(id) == 1 && n != 1)
     id <- data[, id, drop = TRUE]
@@ -963,7 +966,7 @@ average_data_id <- function(x, data, id, rn) {
     idx <- if (inherits(x, "estimate")) index(x)
     id <- if (length(idx) == N) idx else rn
   }
-  id <- resolve_id(id, data, n = N, x = x, default = rn)
+  id <- resolve_id(id, data, n = N, x = x)
   if (is.factor(id)) id <- as.character(id) # avoid integer codes in c(...)
   id
 }

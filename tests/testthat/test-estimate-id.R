@@ -15,6 +15,37 @@ test_that("index.estimate", {
     testthat::expect_true(inherits(index(e1), "numeric"))
 })
 
+test_that("estimate index from rownames and `id` arg", {
+  ic0 <- ic1 <- cbind(1:5-3)
+  rownames(ic1) <- paste0("i", 1:5)
+  e0 <- estimate(coef=0, IC=ic0) # no index
+  expect_true(is.null(index(e0)))
+  e1 <- estimate(coef=0, IC=ic1)
+  expect_identical(rownames(ic1), index(e1))
+  e <- estimate(e0, id=1:5)
+  expect_identical(rownames(IC(e)), as.character(1:5))
+})
+
+test_that("id as column name of data", {
+  set.seed(1)
+  d <- data.frame(x = rnorm(40))
+  d$y <- d$x + rnorm(40)
+  d$cl <- rep(paste0("c", 1:10), each = 4)
+  g <- lm(y ~ x, data = d)
+  # clustering (no averaging)
+  e <- estimate(g, id = "cl", data = d)
+  expect_equal(vcov(e), vcov(estimate(g, id = d$cl)))
+  expect_identical(index(e), unique(d$cl))
+  # standardization: id refers to rows of 'data'
+  f <- function(p, data) p[1] + p[2] * data[, "x"]
+  ec <- estimate(g, id = d$cl)
+  a <- estimate(ec, f, data = d, id = "cl", average = TRUE)
+  expect_equal(
+    vcov(a),
+    vcov(estimate(ec, f, data = d, id = d$cl, average = TRUE))
+  )
+  expect_identical(index(a), unique(d$cl))
+})
 
 test_that("estimate index order", {
   n <- 20
