@@ -701,6 +701,15 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (!is.null(IC(res))) {
     rn <- rownames(IC(res))
     idx <- index(res)
+    if (!is.null(idx)) idx <- as.character(idx)
+    if (is.null(idx) && !is.null(rn)) {
+      idx <- rn
+      index(res) <- idx
+    }
+    if (is.null(rn) && !is.null(idx)) {
+      rn <- idx
+      rownames(res$IC) <- rn
+    }
     if (!identical(rn, idx)) warning("index and rownames of IC does not agree")
   }
 
