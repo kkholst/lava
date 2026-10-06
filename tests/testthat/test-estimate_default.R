@@ -98,20 +98,24 @@ test_that("estimate standardization (average=TRUE)", {
 test_that("standardization with model estimated on a subset (id alignment)", {
   set.seed(1)
   n <- 300
-  dat <- data.frame(w1 = rnorm(n), a = rbinom(n, 1, 0.5), z = rbinom(n, 1, 0.5))
+  dat <- data.frame(w1 = rnorm(n),
+                    a = rbinom(n, 1, 0.5),
+                    z = rbinom(n, 1, 0.5))
   dat$y <- rbinom(n, 1, plogis(-0.5 + dat$w1 + dat$a))
   dat$id <- paste0("a", seq_len(n)) # lexicographic order != row order
   dat1 <- subset(dat, z == 1)
   g <- glm(y ~ w1 + a, data = dat1, family = binomial)
   f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
 
+  # target: E[U(W_1, A = 1)]
+  # U fitted on {Z == 1}, U ~ E[Y|W, A] (logistic model)
   # manual influence function
-  X <- cbind(1, dat$w1, 1)
+  X <- cbind(1, dat$w1, 1) # intercept, w1, a
   q <- as.vector(plogis(X %*% coef(g)))
   D <- colMeans(X * q * (1 - q))
   ic2 <- rep(0, n)
   ic2[dat$z == 1] <- IC(g) %*% D * n / nrow(dat1)
-  ic <- q - mean(q) + ic2
+  ic <- q - mean(q) + ic2 # following the order of dat
 
   e <- estimate(g, id = dat1$id)
   a <- estimate(e, f, data = dat, id = dat$id, average = TRUE)
