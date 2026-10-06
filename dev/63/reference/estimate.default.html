@@ -112,14 +112,15 @@ covariates (see <code>average</code>). Defaults to <code>model.frame(x)</code>.<
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>(optional) cluster identifier. Can be a vector of cluster IDs, a
-one-sided formula (evaluated in <code>data</code>), a single character column name, or
-a logical scalar (<code>TRUE</code> for one-to-one matching, <code>FALSE</code> for
-independence). When supplied, the IF is aggregated within clusters to
+one-sided formula (evaluated in <code>data</code>), a single character column name.
+When supplied, the IF is aggregated within clusters to
 produce cluster-robust standard errors. When <code>average = TRUE</code>, <code>id</code>
-refers to the rows of <code>data</code> (default: <code>rownames(data)</code>), and the
-ids of an <code>estimate</code> object (<code>index(x)</code>) are used as is (non-overlapping
-ids are treated as independent observations), whereas the rows of other
-model objects are linked via the row names of <code>data</code>.
+refers to the rows of <code>data</code> (default: <code>rownames(data)</code>). The model
+influence function is identified by the ids of an <code>estimate</code> object
+(<code>index(x)</code>), or for other model objects by the row names of the model
+frame, and these ids are used as is (non-overlapping ids are treated as
+independent observations). When <code>data</code> is not supplied (i.e., the model
+frame is used), <code>id</code> applies to both the data and the model.
 <code>id = NULL</code> removes the id (index) and the row names of the influence
 function from the returned object.</p></dd>
 
@@ -283,7 +284,8 @@ subpopulation, yielding a conditional marginalized estimate.</p>
 <code>data</code>. The two terms of the IF are then aligned by id: each term is zero
 for ids outside its own support and rescaled by the inverse proportion of
 observed ids (as in <a href="merge.estimate.html">merge.estimate</a>). If there are no common ids the
-model estimate and <code>data</code> are treated as independent.</p>
+model estimate and <code>data</code> are treated as independent. To link a model
+object to the ids of <code>data</code> use <code>estimate(x, id=...)</code> (see examples).</p>
     </div>
     <div class="section level2">
     <h2 id="cluster-robust-standard-errors">Cluster-robust standard errors<a class="anchor" aria-label="anchor" href="#cluster-robust-standard-errors"></a></h2>
@@ -478,7 +480,7 @@ independence sandwich estimator.</p>
 <span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">w</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span>, data<span class="op">=</span><span class="va">d1</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">estimate</span><span class="op">(</span><span class="va">g1</span>, id<span class="op">=</span><span class="va">d1</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g1</span>, <span class="va">f</span>, data<span class="op">=</span><span class="va">d</span>, id<span class="op">=</span><span class="st">"id"</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">e1</span>, <span class="va">f</span>, data<span class="op">=</span><span class="va">d</span>, id<span class="op">=</span><span class="st">"id"</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.5329 0.03077 0.4726 0.5933  3.334e-67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6715 0.02827 0.6161 0.7269 9.955e-125</span>
@@ -492,8 +494,10 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Model estimated on a subset, standardized over the full data</span></span></span>
-<span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">z</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">id</span><span class="op">&lt;=</span><span class="fl">100</span><span class="op">)</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="va">g1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">id</span><span class="op">&lt;=</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">z</span><span class="op">+</span><span class="va">x</span>, data<span class="op">=</span><span class="va">d1</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate</span><span class="op">(</span><span class="fu">estimate</span><span class="op">(</span><span class="va">g1</span>, id<span class="op">=</span><span class="va">d1</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         <span class="kw">function</span><span class="op">(</span><span class="va">p</span>,<span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span><span class="op">*</span><span class="va">data</span><span class="op">[</span>,<span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         data<span class="op">=</span><span class="va">d</span>, id<span class="op">=</span><span class="va">d</span><span class="op">$</span><span class="va">id</span>, average<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> val   0.5034 0.03295 0.4389 0.568 1.045e-52</span>

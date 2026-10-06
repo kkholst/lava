@@ -71,13 +71,14 @@ estimate(
 
   (optional) cluster identifier. Can be a vector of cluster IDs, a
   one-sided formula (evaluated in `data`), a single character column
-  name, or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
-  independence). When supplied, the IF is aggregated within clusters to
-  produce cluster-robust standard errors. When `average = TRUE`, `id`
-  refers to the rows of `data` (default: `rownames(data)`), and the ids
-  of an `estimate` object (`index(x)`) are used as is (non-overlapping
-  ids are treated as independent observations), whereas the rows of
-  other model objects are linked via the row names of `data`.
+  name. When supplied, the IF is aggregated within clusters to produce
+  cluster-robust standard errors. When `average = TRUE`, `id` refers to
+  the rows of `data` (default: `rownames(data)`). The model influence
+  function is identified by the ids of an `estimate` object
+  (`index(x)`), or for other model objects by the row names of the model
+  frame, and these ids are used as is (non-overlapping ids are treated
+  as independent observations). When `data` is not supplied (i.e., the
+  model frame is used), `id` applies to both the data and the model.
   `id = NULL` removes the id (index) and the row names of the influence
   function from the returned object.
 
@@ -255,7 +256,8 @@ zero for ids outside its own support and rescaled by the inverse
 proportion of observed ids (as in
 [merge.estimate](https://kkholst.github.io/lava/reference/merge.estimate.md)).
 If there are no common ids the model estimate and `data` are treated as
-independent.
+independent. To link a model object to the ids of `data` use
+`estimate(x, id=...)` (see examples).
 
 ## Cluster-robust standard errors
 
@@ -455,7 +457,7 @@ d$w <- rbinom(nrow(d), 1, 0.5)
 d1 <- subset(d, w == 1)
 g1 <- glm(y ~ x + z, data=d1, family=binomial)
 e1 <- estimate(g1, id=d1$id)
-estimate(g1, f, data=d, id="id", average=TRUE)
+estimate(e1, f, data=d, id="id", average=TRUE)
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p0   0.5329 0.03077 0.4726 0.5933  3.334e-67
 #> p1   0.6715 0.02827 0.6161 0.7269 9.955e-125
@@ -469,8 +471,10 @@ estimate(g,function(p,data)
 #> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192
 
 ## Model estimated on a subset, standardized over the full data
-g1 <- glm(y~z+x, data=subset(d, id<=100), family=binomial())
-estimate(g1, function(p,data) expit(p[1] + p["z"]*data[,"z"]),
+d1 <- subset(d, id<=100)
+g1 <- glm(y~z+x, data=d1, family=binomial())
+estimate(estimate(g1, id=d1$id),
+         function(p,data) expit(p[1] + p["z"]*data[,"z"]),
          data=d, id=d$id, average=TRUE)
 #>     Estimate Std.Err   2.5% 97.5%   P-value
 #> val   0.5034 0.03295 0.4389 0.568 1.045e-52
