@@ -197,7 +197,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   # estimate object without index: rownames of the IF are the ids
   ic_g <- IC(g)
   e0 <- estimate(coef = coef(g), IC = ic_g)
-  expect_null(index(e0))
+  expect_identical(index(e0), rownames(ic_g))
   expect_message(
     a8 <- estimate(e0, f, data = dat, id = dat$id, average = TRUE),
     "independence"
