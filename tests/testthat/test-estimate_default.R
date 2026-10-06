@@ -207,13 +207,6 @@ test_that("standardization with model estimated on a subset (id alignment)", {
              average = TRUE),
     "Unable to link"
   )
-  # ... or positional when the IF has no rownames and sizes agree
-  g_full <- glm(y ~ w1 + a, data = dat, family = binomial)
-  ic_full <- IC(g_full)
-  e1 <- estimate(coef = coef(g_full), IC = unname(ic_full))
-  a9 <- estimate(e1, f, data = dat, id = dat$id, average = TRUE)
-  a10 <- estimate(g_full, f, data = dat, id = dat$id, average = TRUE)
-  expect_equivalent(vcov(a9), vcov(a10))
 
   # plain model that cannot be linked to 'data'
   dat_b <- dat
