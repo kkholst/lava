@@ -108,7 +108,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
 
   # target: E[U(W_1, A = 1)]
-  # U fitted on {Z == 1}, U ~ E[Y|W, A] (logistic model)
+  # U fitted on {Z == 1}, U ~ E[Y|W, A, Z = 1] (logistic model)
   # manual influence function
   X <- cbind(1, dat$w1, 1) # intercept, w1, a
   q <- as.vector(plogis(X %*% coef(g)))
@@ -146,6 +146,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   expect_equivalent(IC(a4)[dat$id, ], IC(a)[dat$id, ])
 
   # conditional average (subset)
+  # target: E[U(W_1, A = 1) | S = 1], for subset indicator S
   s <- dat$w1 > 0
   phat <- mean(s)
   m <- mean(q * s)
@@ -156,8 +157,11 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   ac <- estimate(e, f, data = dat, id = dat$id, subset = s, average = TRUE)
   expect_equivalent(coef(ac), m / phat)
   expect_equivalent(vcov(ac), sum(icc^2) / n^2)
+  expect_equivalent(IC(ac)[,1], icc)
+  expect_equivalent(ac$id, dat$id)
 
   # multiple parameters
+  # target: E[U(W_1, A = 1)], different U
   f2 <- function(p, data) {
     list(p0 = plogis(p[1] + p["w1"] * data[, "w1"]),
          p1 = plogis(p[1] + p["w1"] * data[, "w1"] + p["a"]))
@@ -165,6 +169,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   a5 <- estimate(e, f2, data = dat, id = dat$id, average = TRUE)
   expect_equivalent(coef(a5)[2], coef(a))
   expect_equivalent(vcov(a5)[2, 2], vcov(a))
+  expect_equivalent(IC(a5)[,2], IC(a)[,1])
 
   # disjoint ids: independence between model and new data
   e_b <- estimate(g, id = paste0("b", seq_len(nrow(dat1))))
@@ -176,7 +181,6 @@ test_that("standardization with model estimated on a subset (id alignment)", {
     vcov(a6),
     sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
   )
-
   expect_equal(nrow(IC(a6)), n + nrow(dat1))
   expect_identical(index(a6), c(dat$id, index(e_b)))
 
@@ -202,6 +206,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   expect_equivalent(vcov(a8), v_indep)
 
   # estimate object without any ids: no link to data of different size
+  # (no rownames in IC either)
   expect_error(
     estimate(estimate(g, id = NULL), f, data = dat, id = dat$id,
              average = TRUE),
