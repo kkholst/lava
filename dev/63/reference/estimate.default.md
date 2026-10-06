@@ -295,15 +295,7 @@ g0 <- glm(y~1,data=d,family=binomial())
 
 ## LRT
 estimate(g, g0)
-#> 
-#>  - Likelihood ratio test -
-#> 
-#> data:  
-#> chisq = 209.91, df = 2, p-value < 2.2e-16
-#> sample estimates:
-#> log likelihood (model 1) log likelihood (model 2) 
-#>                -567.6493                -672.6041 
-#> 
+#> NULL
 
 
 estimate(g)
