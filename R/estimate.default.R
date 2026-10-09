@@ -20,28 +20,22 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param f transformation of model parameters. Accepts several input types:
 #'
 #' - A **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
-#'   returns a named list the names are used as parameter labels.
-#' - A **matrix**: used as a contrast (linear combination) matrix. - A **numeric
+#'   returns a named list the names are used as parameter labels. - A
+#'   **matrix**: used as a contrast (linear combination) matrix. - A **numeric
 #'   vector** of parameter indices: converted to a contrast that selects and
-#'   differences those parameters.
-#' - A **list** of indices: each element selects one parameter.
-#' - **Character** expressions: supports wildcards (`"?"`, `"*"`) and arithmetic
-#'   on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
+#'   differences those parameters. - A **list** of indices: each element selects
+#'   one parameter. - **Character** expressions: supports wildcards (`"?"`,
+#'   `"*"`) and arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 *
+#'   "x"`).
+#' @inheritParams stats::glm
 #' @param ... additional arguments to lower level functions
-#' @param data `data.frame` used by `f` when the transformation depends on
-#'   covariates (see `average`). Defaults to `model.frame(x)`.
 #' @param id (optional) cluster identifier. Can be a vector of cluster IDs, a
 #'   one-sided formula (evaluated in `data`), a single character column name.
-#'   When supplied, the IF is aggregated within clusters to
-#'   produce cluster-robust standard errors. When `average = TRUE`, `id`
-#'   refers to the rows of `data` (default: `rownames(data)`). The model
-#'   influence function is identified by the ids of an `estimate` object
-#'   (`index(x)`), or for other model objects by the row names of the model
-#'   frame, and these ids are used as is (non-overlapping ids are treated as
-#'   independent observations). When `data` is not supplied (i.e., the model
-#'   frame is used), `id` applies to both the data and the model.
-#'   `id = NULL` removes the id (index) and the row names of the influence
-#'   function from the returned object.
+#'   When supplied, the IF is aggregated within clusters to produce
+#'   cluster-robust standard errors. When `average = TRUE`, `id` refers to the
+#'   rows of `data`, i.e., the values of `f` (see [marginal]). `id = NULL`
+#'   removes the id (index) and the row names of the influence function from the
+#'   returned object.
 #' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
 #'   constructing an `estimate` object without a model.
 #' @param IC if `TRUE` (default) the influence function matrix is estimated and
@@ -56,15 +50,6 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param stack if `TRUE` (default) the influence function contributions are
 #'   summed within each cluster defined by `id`. Set to `FALSE` to keep the
 #'   un-stacked (per-observation) decomposition.
-#' @param average if `TRUE` the function computes the standardized
-#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument,
-#'   over all rows of `data`. The influence function accounts for both the
-#'   empirical averaging and the parameter estimation uncertainty (see Details).
-#' @param subset (optional) logical vector, expression evaluated in `data`, or
-#'   column name. When used together with `average = TRUE`, the average is
-#'   conditioned on the subpopulation where `subset` is `TRUE`, yielding a
-#'   conditional marginalized estimate.
 #' @param keep (optional) index of parameters to keep from final result. Accepts
 #'   integer indices, character names, or (with `regex = TRUE`) perl-compatible
 #'   regular expressions.
@@ -78,6 +63,12 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   object
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
+#' @param average if `TRUE` the function computes the standardized
+#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
+#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument,
+#'   over all rows of `data`. The influence function accounts for both the
+#'   empirical averaging and the parameter estimation uncertainty (see
+#'   [marginal]).
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -123,14 +114,9 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' \deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
 #' [E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
 #' When `subset` is also specified, the average is conditioned on the
-#' subpopulation, yielding a conditional marginalized estimate.
-#'
-#' The model may be estimated on a different (e.g., smaller) dataset than
-#' `data`. The two terms of the IF are then aligned by id: each term is zero
-#' for ids outside its own support and rescaled by the inverse proportion of
-#' observed ids (as in [merge.estimate]). If there are no common ids the
-#' model estimate and `data` are treated as independent. To link a model
-#' object to the ids of `data` use `estimate(x, id=...)` (see examples).
+#' subpopulation, yielding a conditional marginalized estimate. The model may
+#' be estimated on a different (e.g., smaller) dataset than `data`. See
+#' [marginal] for details.
 #'
 #' # Cluster-robust standard errors
 #'
@@ -208,27 +194,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' e
 #' estimate(e,diff)
 #' estimate(e,cbind(1,1))
-#'
-#' # g-computation on non-overlapping data:
-#' d$id <- paste0("i", 1:nrow(d))
-#' d$w <- rbinom(nrow(d), 1, 0.5)
-#' d1 <- subset(d, w == 1)
-#' g1 <- glm(y ~ x + z, data=d1, family=binomial)
-#' e1 <- estimate(g1, id=d1$id)
-#' estimate(e1, f, data=d, id="id", average=TRUE)
-#'
-#' ## Clusters and subset (conditional marginal effects)
-#' d$id <- rep(seq(nrow(d)/4),each=4)
-#' estimate(g,function(p,data)
-#'          list(p0=expit(p[1] + p["z"]*data[,"z"])),
-#'          subset=d$z>0, id=d$id, average=TRUE)
-#'
-#' ## Model estimated on a subset, standardized over the full data
-#' d1 <- subset(d, id<=100)
-#' g1 <- glm(y~z+x, data=d1, family=binomial())
-#' estimate(estimate(g1, id=d1$id),
-#'          function(p,data) expit(p[1] + p["z"]*data[,"z"]),
-#'          data=d, id=d$id, average=TRUE)
+#' ## see also ?marginal
 #'
 #' ## More examples with clusters:
 #' m <- lvm(c(y1,y2,y3)~u+x)
@@ -399,8 +365,26 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     contrast.transform <- TRUE
   }
 
-  data_user <- !missing(data) # FALSE: 'data' is the model frame of 'x'
-  if (!data_user)
+  if (isTRUE(average) && is.function(f)) { ## g-computation, see 'marginal'
+    if (!is.logical(IC)) x <- estimate(coef=pp, IC=IC)
+    args <- c(list(object=x, f=f), list(...))
+    if (!missing(labels)) args$labels <- labels
+    if (!missing(data)) args["data"] <- list(data)
+    if (!missing(id)) args["id"] <- list(id)
+    if (!missing(subset)) {
+      data0 <- if (!missing(data)) data else
+        tryCatch(model.frame(x), error=function(...) NULL)
+      args$subset <- resolve_subset(substitute(subset), data0, parent.frame())
+    }
+    res <- do.call(marginal, args)
+    if (!missing(keep) && !is.null(keep))
+      res <- estimate(res, keep=keep, regex=regex, ignore.case=ignore.case)
+    if (!is.null(print)) res$print <- print
+    res$call <- cal
+    return(res)
+  }
+
+  if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
   nn <- NULL
   if (
@@ -439,53 +423,27 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     ic_theta[is.na(ic_theta)] <- 0
   }
 
-  if (!missing(subset)) {
-    e <- substitute(subset)
-    expr <- suppressWarnings(inherits(try(subset, silent=TRUE), "try-error"))
-    if (expr) subset <- eval(e, envir=data)
-    if (is.character(subset)) subset <- data[, subset]
-    if (is.numeric(subset)) subset <- subset > 0
-  }
   idstack <- NULL
   id_user <- !missing(id)
   id_drop <- id_user && is.null(id) # id=NULL: remove id (index) from result
-  ## Standardization (average=TRUE): 'id' refers to the rows of 'data', and the
-  ## model IF is aligned to these ids (see 'average_align_ids')
-  avg_align <- isTRUE(average) && is.function(f) &&
-    !is.null(ic_theta) && !is.null(data)
-  id_data <- NULL
-  if (avg_align) {
-    if (!data_user && id_user && !is.null(id) && !inherits(x, "estimate") &&
-        (length(id) > 1L)) {
-      ## 'data' is the model frame: 'id' applies to the model IF as well
-      rownames(ic_theta) <- resolve_id(id, data, n=nrow(ic_theta), x=x)
+  ## Cluster id of the rows of the IF (default: id of 'estimate' object)
+  id0 <- if (id_user) id
+         else if (inherits(x, "measurement.error")) {
+           # measurement.error inherits from estimate with custom index method
+           if (!is.null(x[["id"]])) x[["id"]]
+         } else if (inherits(x, "estimate")) index(x)
+  if (!is.null(id0) && IC) {
+    if (is.null(ic_theta)) stop("'IC' method needed")
+    n <- nrow(ic_theta)
+    id0 <- resolve_id(id0, data, n=n, x=x)
+    if (stack) {
+      ic_theta <- cluster_sum_ic(ic_theta, id0)
+      idstack <- unique(id0)
+    } else {
+      idstack <- id0
     }
-    ids <- average_align_ids(x, data=data, ic=ic_theta,
-                             id=if (id_user) id else NULL)
-    id_data <- ids$id_data
-    ic_theta <- ids$ic
-    idstack <- ids$id_model
-  }
-  if (!avg_align) {
-    ## Cluster id of the rows of the IF (default: id of 'estimate' object)
-    id0 <- if (id_user) id
-           else if (inherits(x, "measurement.error")) {
-             # measurement.error inherits from estimate with custom index method
-               if (!is.null(x[["id"]])) x[["id"]]
-           } else if (inherits(x, "estimate")) index(x)
-    if (!is.null(id0) && IC) {
-      if (is.null(ic_theta)) stop("'IC' method needed")
-      n <- nrow(ic_theta)
-      id0 <- resolve_id(id0, data, n=n, x=x)
-      if (stack) {
-        ic_theta <- cluster_sum_ic(ic_theta, id0)
-        idstack <- unique(id0)
-      } else {
-        idstack <- id0
-      }
-    } else if (!id_drop && !is.null(data)) {
-      idstack <- rownames(data)
-    }
+  } else if (!id_drop && !is.null(data)) {
+    idstack <- rownames(data)
   }
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
@@ -552,8 +510,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         newf <- function(...) do.call("cbind", f(...))
       }
     }
-    k <- NCOL(val)
-    N <- NROW(val)
     D <- attributes(val)$grad
     if (!is.null(D)) derivative <- D
     if (is.null(D)) {
@@ -568,59 +524,9 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       pp <- structure(as.vector(val), names=names(val))
       V <- D%*%V%*%t(D)
     } else {
-      if (!average || (N<NROW(data))) {  ## transformation not depending on data
-        pp <- structure(as.vector(val), names=names(val))
-        ic_theta <- ic_theta%*%t(D)
-        V <- var_ic(ic_theta)
-      } else {
-        if (k>1) { ## More than one parameter (and depends on data)
-          if (!missing(subset)) { ## Conditional estimate
-            val <- apply(val, 2, function(x) x*subset)
-          }
-          D0 <- matrix(nrow=k, ncol=length(pp))
-          for (i in seq_len(k)) {
-            D1 <- D[seq(N)+(i-1)*N, , drop=FALSE]
-            if (!missing(subset)) ## Conditional estimate
-              D1 <- apply(D1, 2, function(x) x*subset)
-            D0[i, ] <- colMeans(D1)
-          }
-          D <- D0
-          ic2 <- ic_theta%*%t(D)
-        } else { ## Single parameter
-          if (!missing(subset)) { ## Conditional estimate
-            val <- val*subset
-            D <- apply(rbind(D), 2, function(x) x*subset)
-          }
-          D <- colMeans(rbind(D))
-          ic2 <- ic_theta%*%D
-        }
-        pp <- vec(colMeans(cbind(val)))
-        ## Empirical averaging term, f(X; theta) - Psi, on the ids of 'data'
-        ic1 <- (cbind(val)-rbind(pp)%x%cbind(rep(1, N)))
-        ic1 <- cluster_sum_ic(ic1, id_data)
-        uid_data <- unique(id_data)
-        uid_model <- idstack
-        if (!any(uid_model %in% uid_data)) {
-          message("Assuming independence between model iid decomposition and new data frame") #nolint
-        }
-        ## Align the terms by id (union of ids, starting with the ids of
-        ## 'data'), see 'align_ic'
-        if (!missing(subset)) { ## Conditional estimate
-          phat <- mean(subset)
-          ic3 <- cluster_sum_ic(cbind(-1/phat^2 * (subset-phat)), id_data)
-          al <- align_ic(ics = list(ic1, ic2, ic3),
-                         ids = list(uid_data, uid_model, uid_data))
-          ic_theta <- (al$ic[[1]] + al$ic[[2]])/phat + rbind(pp)%x%al$ic[[3]]
-          pp <- pp/phat
-        } else {
-          al <- align_ic(list(ic1, ic2), list(uid_data, uid_model))
-          ic_theta <- al$ic[[1]] + al$ic[[2]]
-        }
-        uid <- al$id
-        rownames(ic_theta) <- uid
-        idstack <- uid
-        V <- var_ic(ic_theta)
-      }
+      pp <- structure(as.vector(val), names=names(val))
+      ic_theta <- ic_theta%*%t(D)
+      V <- var_ic(ic_theta)
     }
   }
 
@@ -909,6 +815,7 @@ cluster_sum_ic <- function(ic, id) {
 ## removal of missing values (x$na.action) is reduced accordingly.
 resolve_id <- function(id, data, n, x = NULL) {
   if (inherits(id, "formula")) id <- interaction(get_all_vars(id, data))
+
   if (is.character(id) && length(id) == 1 && n != 1)
     id <- data[, id, drop = TRUE]
   if (length(id) != n) {
@@ -920,77 +827,4 @@ resolve_id <- function(id, data, n, x = NULL) {
     id <- id[-na]
   }
   id
-}
-
-## Ids attached to the rows of the influence function 'ic' of 'x': the id of an
-## 'estimate' object (keeps the type of the ids), else rownames of 'ic'
-ic_ids <- function(x, ic) {
-  for (key in list(if (inherits(x, "estimate")) index(x), rownames(ic))) {
-    if (length(key) == NROW(ic)) return(key)
-  }
-  NULL
-}
-
-## Align influence functions 'ics' (list) with row ids 'ids' (list of unique
-## ids) on the union of ids (first-appearance order). Each IF is zero outside
-## its own ids and rescaled by length(union)/length(own ids) (inverse
-## probability of observation, see the section "Estimators computed on
-## different subsets" in vignette("influencefunction")).
-## Returns the list of aligned IFs and the ids of the union.
-align_ic <- function(ics, ids) {
-  ## union of ids. Starting from the first set keeps its type (e.g. numeric
-  ## ids) when the other sets are contained in it
-  uid <- unique(ids[[1]])
-  for (i in ids[-1]) {
-    i <- unique(i)
-    new <- is.na(match(i, uid))
-    if (any(new)) uid <- c(uid, i[new])
-  }
-  ics <- Map(function(ic, id) {
-    ic <- cbind(ic)
-    res <- matrix(0, nrow = length(uid), ncol = ncol(ic),
-                  dimnames = list(NULL, colnames(ic)))
-    res[match(id, uid), ] <- ic
-    res * length(uid) / length(id)
-  }, ics, ids)
-  list(ic = ics, id = uid)
-}
-
-## Ids used when averaging a transformation over 'data' (standardization).
-## Returns the ids of the rows of 'data', the model IF aggregated within the
-## clusters defined by the model ids, and the (unique) model ids.
-average_align_ids <- function(x, data, ic, id = NULL) {
-  rn <- rownames(data)
-  if (is.null(rn)) rn <- as.character(seq_len(NROW(data)))
-  id <- average_data_id(x, data, id, rn)
-  cl <- average_model_id(x, ic, id)
-  list(id_data = id, ic = cluster_sum_ic(ic, cl), id_model = unique(cl))
-}
-
-## Ids of the rows of 'data'. Default: index(x) for 'estimate' objects of
-## matching length, else rownames (see resolve_id for other specifications).
-average_data_id <- function(x, data, id, rn) {
-  N <- NROW(data)
-  if (is.null(id)) {
-    idx <- if (inherits(x, "estimate")) index(x)
-    id <- if (length(idx) == N) idx else rn
-  }
-  id <- resolve_id(id, data, n = N, x = x)
-  if (is.factor(id)) id <- as.character(id) # avoid integer codes in c(...)
-  id
-}
-
-## Ids of the rows of the model IF. The ids are in the same id space as the
-## ids of 'data' ('id'); non-overlapping ids are treated as independent
-## observations. Rule:
-##  1. index(x) for 'estimate' objects, else the rownames of the IF (for other
-##     model objects: the rownames of the model frame)
-## (when 'data' is not supplied, estimate.default sets the rownames of the IF
-## to 'id', such that 'id' applies to both terms)
-average_model_id <- function(x, ic, id) {
-  key <- ic_ids(x, ic)
-  if (!is.null(key)) return(key)
-  ## if (NROW(ic) == length(id)) return(id) #
-  stop("Unable to link the model influence function to 'data'. ",
-       "Supply the ids with 'estimate(x, id=...)'")
 }

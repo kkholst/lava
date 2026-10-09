@@ -1,10 +1,15 @@
 # development version
-  - `estimate.default(..., average=TRUE)`: the `id` argument now refers to the
-    rows of `data`, and the influence function of the model object is aligned to
-    these ids (via `index(x)` for `estimate` objects, or the row names of the
-    model frame). This allows standardization/g-computation over a larger
-    dataset than the one used to fit the model (e.g., a model fitted on a
-    subset). Use `estimate(x, id=...)` to link a model to the ids of `data`.
+  - New function `marginal(object, f, data, id, subset)` for marginal
+    (standardized) estimates via g-computation. `estimate(x, f,
+    average=TRUE, ...)` now calls `marginal`. The `id` argument refers to the
+    values of `f` (the rows of `data`; defaults to the names of the values of
+    `f` or `rownames(data)`), and the influence function of the model is
+    aligned to these ids via `index(x)` for `estimate` objects, or the row
+    names of the model frame. This allows standardization/g-computation over
+    another dataset than the one used to fit the model (e.g., a model fitted
+    on a subset). Use `estimate(x, id=...)` to link a model to the ids of
+    `data`. `f` must have the argument `p`, and optionally `data` and
+    `object`.
   - `estimate(x, id=NULL)` (and `index(x) <- NULL`) removes the id (index) and
     the row names of the influence function.
   - Aggregation of influence functions within clusters (`estimate`, `IC`,

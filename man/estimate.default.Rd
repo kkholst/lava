@@ -35,32 +35,29 @@ likelihood-ratio test is performed.}
 \item{f}{transformation of model parameters. Accepts several input types:
 \itemize{
 \item A \strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method. When \code{f}
-returns a named list the names are used as parameter labels.
-\item A \strong{matrix}: used as a contrast (linear combination) matrix. - A \strong{numeric
+returns a named list the names are used as parameter labels. - A
+\strong{matrix}: used as a contrast (linear combination) matrix. - A \strong{numeric
 vector} of parameter indices: converted to a contrast that selects and
-differences those parameters.
-\item A \strong{list} of indices: each element selects one parameter.
-\item \strong{Character} expressions: supports wildcards (\code{"?"}, \code{"*"}) and arithmetic
-on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
+differences those parameters. - A \strong{list} of indices: each element selects
+one parameter. - \strong{Character} expressions: supports wildcards (\code{"?"},
+\code{"*"}) and arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
 }}
 
 \item{...}{additional arguments to lower level functions}
 
-\item{data}{\code{data.frame} used by \code{f} when the transformation depends on
-covariates (see \code{average}). Defaults to \code{model.frame(x)}.}
+\item{data}{an optional data frame, list or environment (or object
+    coercible by \code{\link{as.data.frame}} to a data frame) containing
+    the variables in the model.  If not found in \code{data}, the
+    variables are taken from \code{environment(formula)},
+    typically the environment from which \code{glm} is called.}
 
 \item{id}{(optional) cluster identifier. Can be a vector of cluster IDs, a
 one-sided formula (evaluated in \code{data}), a single character column name.
-When supplied, the IF is aggregated within clusters to
-produce cluster-robust standard errors. When \code{average = TRUE}, \code{id}
-refers to the rows of \code{data} (default: \code{rownames(data)}). The model
-influence function is identified by the ids of an \code{estimate} object
-(\code{index(x)}), or for other model objects by the row names of the model
-frame, and these ids are used as is (non-overlapping ids are treated as
-independent observations). When \code{data} is not supplied (i.e., the model
-frame is used), \code{id} applies to both the data and the model.
-\code{id = NULL} removes the id (index) and the row names of the influence
-function from the returned object.}
+When supplied, the IF is aggregated within clusters to produce
+cluster-robust standard errors. When \code{average = TRUE}, \code{id} refers to the
+rows of \code{data}, i.e., the values of \code{f} (see \link{marginal}). \code{id = NULL}
+removes the id (index) and the row names of the influence function from the
+returned object.}
 
 \item{coef}{(optional) named parameter vector. Used instead of \code{coef(x)} when
 constructing an \code{estimate} object without a model.}
@@ -84,12 +81,13 @@ un-stacked (per-observation) decomposition.}
 (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
 empirical mean of \code{f(p, data)}, as defined by the \code{f} argument,
 over all rows of \code{data}. The influence function accounts for both the
-empirical averaging and the parameter estimation uncertainty (see Details).}
+empirical averaging and the parameter estimation uncertainty (see
+\link{marginal}).}
 
-\item{subset}{(optional) logical vector, expression evaluated in \code{data}, or
-column name. When used together with \code{average = TRUE}, the average is
-conditioned on the subpopulation where \code{subset} is \code{TRUE}, yielding a
-conditional marginalized estimate.}
+\item{subset}{an optional vector specifying a subset of observations
+    to be used in the fitting process.  (See additional details about how
+    this argument interacts with data-dependent bases in the
+    \sQuote{Details} below.)}
 
 \item{keep}{(optional) index of parameters to keep from final result. Accepts
 integer indices, character names, or (with \code{regex = TRUE}) perl-compatible
@@ -180,14 +178,9 @@ uncertainty:
 \deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
 [E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
 When \code{subset} is also specified, the average is conditioned on the
-subpopulation, yielding a conditional marginalized estimate.
-
-The model may be estimated on a different (e.g., smaller) dataset than
-\code{data}. The two terms of the IF are then aligned by id: each term is zero
-for ids outside its own support and rescaled by the inverse proportion of
-observed ids (as in \link{merge.estimate}). If there are no common ids the
-model estimate and \code{data} are treated as independent. To link a model
-object to the ids of \code{data} use \code{estimate(x, id=...)} (see examples).
+subpopulation, yielding a conditional marginalized estimate. The model may
+be estimated on a different (e.g., smaller) dataset than \code{data}. See
+\link{marginal} for details.
 }
 
 \section{Cluster-robust standard errors}{
@@ -263,27 +256,7 @@ e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))
-
-# g-computation on non-overlapping data:
-d$id <- paste0("i", 1:nrow(d))
-d$w <- rbinom(nrow(d), 1, 0.5)
-d1 <- subset(d, w == 1)
-g1 <- glm(y ~ x + z, data=d1, family=binomial)
-e1 <- estimate(g1, id=d1$id)
-estimate(e1, f, data=d, id="id", average=TRUE)
-
-## Clusters and subset (conditional marginal effects)
-d$id <- rep(seq(nrow(d)/4),each=4)
-estimate(g,function(p,data)
-         list(p0=expit(p[1] + p["z"]*data[,"z"])),
-         subset=d$z>0, id=d$id, average=TRUE)
-
-## Model estimated on a subset, standardized over the full data
-d1 <- subset(d, id<=100)
-g1 <- glm(y~z+x, data=d1, family=binomial())
-estimate(estimate(g1, id=d1$id),
-         function(p,data) expit(p[1] + p["z"]*data[,"z"]),
-         data=d, id=d$id, average=TRUE)
+## see also ?marginal
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)
