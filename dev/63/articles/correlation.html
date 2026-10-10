@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Estimating partial correlations with lava</h1>
 
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-10-06</p>
+      <p class="date">2026-10-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/feat/estimate-average-dif/vignettes/correlation.qmd" class="external-link"><code>vignettes/correlation.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -191,7 +191,7 @@ Residual Variances:
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">e</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="st">'y1~~y2'</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">'y1~~y1'</span><span class="op">]</span><span class="op">*</span><span class="va">p</span><span class="op">[</span><span class="st">'y2~~y2'</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       Estimate  Std.Err   2.5%  97.5% P-value
-y1~~y2   0.8915 0.008703 0.8745 0.9086       0</code></pre>
+y1~~y2   0.8915 0.008811 0.8743 0.9088       0</code></pre>
 </div>
 </div>
 <p>Alternatively, the correlations can be extracted using the <code>correlation</code> method</p>
@@ -229,12 +229,12 @@ z = \operatorname{arctanh}(\widehat{\rho}) =
     p["y2~~y2"])^0.5))
 ────────────────────────────────────────────────────────────
        Estimate Std.Err   2.5%  97.5%    P-value
-y1~~y2   0.8915         0.8732 0.9074 7.445e-249
+y1~~y2   0.8915         0.8729 0.9076 7.072e-243
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [y1~~y2] = 0
 
-chisq = 1135.185, df = 1, p-value &lt; 2.2e-16</code></pre>
+chisq = 1107.681, df = 1, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>The transformed confidence interval will generally have improved coverage especially near the boundary <span class="math inline">\rho \approx \pm 1</span>.</p>
@@ -276,12 +276,12 @@ Additional Parameters:
 <pre><code>Call: estimate.default(x = e2, f = "z")
 ────────────────────────────────────────────────────────────
     Estimate Std.Err   2.5%  97.5%    P-value
-rho   0.8915         0.8729 0.9076 5.606e-243
+rho   0.8915         0.8729 0.9076 7.072e-243
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [rho] = 0
 
-chisq = 1108.145, df = 1, p-value &lt; 2.2e-16</code></pre>
+chisq = 1107.681, df = 1, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>In practice, a much shorter syntax can be used to obtain the above parametrization. We can simply use the argument <code>constrain</code> when specifying the covariances (the argument <code>rname</code> specifies the parameter name of the <span class="math inline">\operatorname{arctanh}</span> transformed correlation coefficient, and <code>lname</code>, <code>lname2</code> can be used to specify the parameter names for the log variance parameters):</p>
@@ -314,12 +314,12 @@ Additional Parameters:
 <pre><code>Call: estimate.default(x = e2, f = "z")
 ────────────────────────────────────────────────────────────
   Estimate Std.Err   2.5%  97.5%    P-value
-z   0.8915         0.8729 0.9076 5.606e-243
+z   0.8915         0.8729 0.9076 7.072e-243
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [z] = 0
 
-chisq = 1108.145, df = 1, p-value &lt; 2.2e-16</code></pre>
+chisq = 1107.681, df = 1, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>As an alternative to the Wald confidence intervals (with or without transformation) is to profile the likelihood. The profile likelihood confidence intervals can be obtained with the <code>confint</code> method:</p>
@@ -347,10 +347,10 @@ y1~x  0.9330043509 -0.0149098946  0.0515360969  0.8309736543  0.9998117487
 y2~x  0.9165185250 -0.0054613366  0.0515815249  0.8206914258  1.0057939308
 l1    0.0041846522 -0.0207541703  0.0680010956 -0.1521461170  0.0970349017
 l2    0.0416361064 -0.0172477586  0.0645290353 -0.1102270167  0.1486146877
-z     1.4294227075 -0.0086990026  0.0431164145  1.3409919820  1.4973573361
+z     1.4294227061 -0.0086990013  0.0431164145  1.3409919820  1.4973573361
 v1    1.0041934200 -0.0184096665  0.0664333005  0.8588861834  1.1019310023
 v2    1.0425150452 -0.0157357318  0.0662409478  0.8956329451  1.1602357905
-c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892</code></pre>
+c1    0.9122097186 -0.0171972063  0.0627102019  0.7706302260  1.0085879892</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -378,15 +378,15 @@ c1    0.9122097189 -0.0171972066  0.0627102019  0.7706302260  1.0085879892</code
 <div class="cell-output cell-output-stdout">
 <pre><code>                       Estimate Std. Error  Z-value  P-value
 Regressions:
-   y1~x                 0.93301    0.04443 20.99891   &lt;1e-12
-    s2~x                0.92402    0.04643 19.90128   &lt;1e-12
+   y1~x                 0.93300    0.04443 20.99869   &lt;1e-12
+    s2~x                0.92402    0.04643 19.90112   &lt;1e-12
 Intercepts:
-   y1                  -0.00542    0.04482 -0.12083   0.9038
-   s2                  -0.02119    0.04638 -0.45687   0.6478
+   y1                  -0.00541    0.04482 -0.12076   0.9039
+   s2                  -0.02119    0.04638 -0.45683   0.6478
 Additional Parameters:
-   l1                   0.00418    0.06325  0.06607   0.9473
-   l2                   0.06317    0.06492  0.97307   0.3305
-   z                    1.42835    0.04546 31.41861   &lt;1e-12</code></pre>
+   l1                   0.00419    0.06325  0.06618   0.9472
+   l2                   0.06317    0.06492  0.97310   0.3305
+   z                    1.42834    0.04546 31.41841   &lt;1e-12</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -395,13 +395,13 @@ Additional Parameters:
 <div class="cell-output cell-output-stdout">
 <pre><code>Call: estimate.default(x = e3, f = "z")
 ────────────────────────────────────────────────────────────
-  Estimate Std.Err  2.5%  97.5%    P-value
-z   0.8913         0.872 0.9079 1.491e-226
+  Estimate Std.Err   2.5%  97.5%    P-value
+z   0.8913         0.8739 0.9065 2.541e-274
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [z] = 0
 
-chisq = 1032.577, df = 1, p-value &lt; 2.2e-16</code></pre>
+chisq = 1252.365, df = 1, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>And here the same analysis with <code>s1</code> being left-censored and <code>s2</code> right-censored:</p>
@@ -416,15 +416,15 @@ chisq = 1032.577, df = 1, p-value &lt; 2.2e-16</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>                       Estimate Std. Error  Z-value  P-value
 Regressions:
-   s1~x                 0.92834    0.04479 20.72734   &lt;1e-12
-    s2~x                0.92466    0.04648 19.89515   &lt;1e-12
+   s1~x                 0.92834    0.04479 20.72739   &lt;1e-12
+    s2~x                0.92466    0.04648 19.89518   &lt;1e-12
 Intercepts:
-   s1                  -0.00233    0.04492 -0.05185   0.9586
-   s2                  -0.02083    0.04641 -0.44874   0.6536
+   s1                  -0.00233    0.04492 -0.05190   0.9586
+   s2                  -0.02083    0.04641 -0.44875   0.6536
 Additional Parameters:
-   l1                  -0.00075    0.06500 -0.01156   0.9908
-   l2                   0.06425    0.06498  0.98869   0.3228
-   z                    1.42627    0.04609 30.94282   &lt;1e-12</code></pre>
+   l1                  -0.00077    0.06500 -0.01177   0.9906
+   l2                   0.06423    0.06498  0.98844   0.3229
+   z                    1.42626    0.04609 30.94291   &lt;1e-12</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -433,15 +433,15 @@ Additional Parameters:
 <div class="cell-output cell-output-stdout">
 <pre><code>                       Estimate Std. Error  Z-value  P-value
 Regressions:
-   s1~x                 0.92834    0.04479 20.72734   &lt;1e-12
-    s2~x                0.92466    0.04648 19.89515   &lt;1e-12
+   s1~x                 0.92834    0.04479 20.72739   &lt;1e-12
+    s2~x                0.92466    0.04648 19.89518   &lt;1e-12
 Intercepts:
-   s1                  -0.00233    0.04492 -0.05185   0.9586
-   s2                  -0.02083    0.04641 -0.44874   0.6536
+   s1                  -0.00233    0.04492 -0.05190   0.9586
+   s2                  -0.02083    0.04641 -0.44875   0.6536
 Additional Parameters:
-   l1                  -0.00075    0.06500 -0.01156   0.9908
-   l2                   0.06425    0.06498  0.98869   0.3228
-   z                    1.42627    0.04609 30.94282   &lt;1e-12</code></pre>
+   l1                  -0.00077    0.06500 -0.01177   0.9906
+   l2                   0.06423    0.06498  0.98844   0.3229
+   z                    1.42626    0.04609 30.94291   &lt;1e-12</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -451,12 +451,12 @@ Additional Parameters:
 <pre><code>Call: estimate.default(x = e3b, f = "z")
 ────────────────────────────────────────────────────────────
   Estimate Std.Err   2.5%  97.5%    P-value
-z   0.8909         0.8713 0.9077 9.006e-222
+z   0.8909         0.8747 0.9051 4.489e-316
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [z] = 0
 
-chisq = 1010.58, df = 1, p-value &lt; 2.2e-16</code></pre>
+chisq = 1444.502, df = 1, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <div class="cell">
