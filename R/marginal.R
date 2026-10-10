@@ -90,14 +90,11 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
   pp <- coef(e)
   if (missing(data))
     data <- tryCatch(model.frame(object), error = function(...) NULL)
-  ## Model object passed to 'f' (the fitted model of an 'estimate' object)
-  fit <- if (inherits(object, "estimate") && !is.null(object[["fit"]]))
-           object[["fit"]] else object
 
   ## Values of 'f' (N x k matrix) and Jacobian (N*k x p)
   dots <- list(...)
   fval <- function(p) {
-    args <- c(list(data = data, object = fit), dots)
+    args <- c(list(data = data, object = object), dots)
     if (!("..." %in% form)) args <- args[names(args) %in% form]
     args <- c(list(p), args)
     val <- do.call(f, args)

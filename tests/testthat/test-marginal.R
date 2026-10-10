@@ -213,11 +213,10 @@ test_that("marginal: arguments of 'f'", {
   expect_equal(vcov(marginal(g, fo)), vcov(m))
   # 'object' is the model also for estimate objects of the model
   fm <- function(p, data, object) {
-    if (is.null(data)) data <- model.frame(object)
-    plogis(model.matrix(object, data = transform(data, a = 1)) %*% p)
+    if (is.null(data)) data <- model.frame(object$fit)
+    plogis(model.matrix(object$fit, data = transform(data, a = 1)) %*% p)
   }
   expect_equal(vcov(marginal(estimate(g), fm)), vcov(m))
-  expect_equal(vcov(marginal(g, fm)), vcov(m))
   # dots
   fd <- function(p, ...) {
     data <- list(...)$data
