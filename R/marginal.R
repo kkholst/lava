@@ -23,9 +23,10 @@
 #'   otherwise `rownames(data)`. `id = NULL` uses the default ids but removes
 #'   the id (index) from the returned object.
 #' @param subset (optional) logical vector (one value per value of `f`),
-#'   expression evaluated in `data`, or column name. The average is then
-#'   conditioned on the subpopulation where `subset` is `TRUE` (conditional
-#'   marginal estimate).
+#'   expression evaluated in `data` (columns of `data` take precedence over
+#'   variables in the calling environment), or column name. The average is
+#'   then conditioned on the subpopulation where `subset` is `TRUE`
+#'   (conditional marginal estimate).
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -156,13 +157,12 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
   out
 }
 
-# Evaluate 'subset' (an expression, evaluated in 'env' and otherwise in
-# 'data', or a column name of 'data') to a logical vector
+# Evaluate 'subset' (an expression evaluated in 'data' (enclosed by 'env'),
+# or a column name of 'data') to a logical vector. Columns of 'data' take
+# precedence over variables in 'env' (as in 'subset', 'with')
 resolve_subset <- function(expr, data, env) {
-  s <- tryCatch(eval(expr, envir = env), error = function(err) {
-    if (is.null(data)) stop(err)
-    eval(expr, envir = data, enclos = env)
-  })
+  s <- if (!is.list(data)) eval(expr, envir = env) else
+         eval(expr, envir = data, enclos = env)
   if (is.character(s) && length(s) == 1) s <- data[, s, drop = TRUE]
   if (is.numeric(s)) s <- s > 0
   s

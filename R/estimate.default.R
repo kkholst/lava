@@ -515,7 +515,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         else arglist[[parname]] <- p
         if (is.null(newf))
           return(do.call("f", arglist))
-        return(do.call("newf", arglist)) }, pp)
+        return(do.call("newf", arglist))
+      }, pp, method = lava.options()$Dmethod)
     }
     if (is.null(ic_theta)) {
       pp <- structure(as.vector(val), names=names(val))

@@ -27,9 +27,10 @@ otherwise \code{rownames(data)}. \code{id = NULL} uses the default ids but remov
 the id (index) from the returned object.}
 
 \item{subset}{(optional) logical vector (one value per value of \code{f}),
-expression evaluated in \code{data}, or column name. The average is then
-conditioned on the subpopulation where \code{subset} is \code{TRUE} (conditional
-marginal estimate).}
+expression evaluated in \code{data} (columns of \code{data} take precedence over
+variables in the calling environment), or column name. The average is
+then conditioned on the subpopulation where \code{subset} is \code{TRUE}
+(conditional marginal estimate).}
 
 \item{labels}{(optional) character vector of parameter names}
 
