@@ -24,14 +24,7 @@
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width,
-  contrast,
-  null,
-  level = NULL,
-  type = NULL,
-  var.adj = NULL,
-  df = NULL,
-  back.transform = NULL
+  label.width
 )
 }
 \arguments{
@@ -39,25 +32,32 @@
 object. When two model objects are supplied (e.g., \code{estimate(g, g0)}) a
 likelihood-ratio test is performed.}
 
-\item{f}{transformation of model parameters. Accepts several input types: - A
-\strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method. When \code{f}
+\item{f}{transformation of model parameters. Accepts several input types:
+\itemize{
+\item A \strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method. When \code{f}
 returns a named list the names are used as parameter labels. - A
 \strong{matrix}: used as a contrast (linear combination) matrix. - A \strong{numeric
 vector} of parameter indices: converted to a contrast that selects and
 differences those parameters. - A \strong{list} of indices: each element selects
 one parameter. - \strong{Character} expressions: supports wildcards (\code{"?"},
-\code{"*"}) and arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).}
+\code{"*"}) and arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
+}}
 
 \item{...}{additional arguments to lower level functions}
 
-\item{data}{\code{data.frame} used by \code{f} when the transformation depends on
-covariates (see \code{average}). Defaults to \code{model.frame(x)}.}
+\item{data}{an optional data frame, list or environment (or object
+    coercible by \code{\link{as.data.frame}} to a data frame) containing
+    the variables in the model.  If not found in \code{data}, the
+    variables are taken from \code{environment(formula)},
+    typically the environment from which \code{glm} is called.}
 
 \item{id}{(optional) cluster identifier. Can be a vector of cluster IDs, a
-one-sided formula (evaluated in \code{data}), a single character column name, or
-a logical scalar (\code{TRUE} for one-to-one matching, \code{FALSE} for
-independence). When supplied, the IF is aggregated within clusters to
-produce cluster-robust standard errors.}
+one-sided formula (evaluated in \code{data}), a single character column name.
+When supplied, the IF is aggregated within clusters to produce
+cluster-robust standard errors. When \code{average = TRUE}, \code{id} refers to the
+rows of \code{data}, i.e., the values of \code{f} (see \link{marginal}). \code{id = NULL}
+removes the id (index) and the row names of the influence function from the
+returned object.}
 
 \item{coef}{(optional) named parameter vector. Used instead of \code{coef(x)} when
 constructing an \code{estimate} object without a model.}
@@ -79,14 +79,15 @@ un-stacked (per-observation) decomposition.}
 
 \item{average}{if \code{TRUE} the function computes the standardized
 (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-empirical mean of \code{f(p, data)} over all rows of \code{data}. The influence
-function accounts for both the empirical averaging and the parameter
-estimation uncertainty (see Details).}
+empirical mean of \code{f(p, data)}, as defined by the \code{f} argument,
+over all rows of \code{data}. The influence function accounts for both the
+empirical averaging and the parameter estimation uncertainty (see
+\link{marginal}).}
 
-\item{subset}{(optional) logical vector, expression evaluated in \code{data}, or
-column name. When used together with \code{average = TRUE}, the average is
-conditioned on the subpopulation where \code{subset} is \code{TRUE}, yielding a
-conditional marginalized estimate.}
+\item{subset}{an optional vector specifying a subset of observations
+    to be used in the fitting process.  (See additional details about how
+    this argument interacts with data-dependent bases in the
+    \sQuote{Details} below.)}
 
 \item{keep}{(optional) index of parameters to keep from final result. Accepts
 integer indices, character names, or (with \code{regex = TRUE}) perl-compatible
@@ -107,40 +108,6 @@ object}
 \item{labels}{(optional) character vector of coefficient names}
 
 \item{label.width}{(optional) max display width of labels}
-
-\item{contrast}{(deprecated, use summary method) contrast matrix for a final
-Wald test. When supplied together with \code{null}, tests \eqn{H_0: B\theta =
-b_0}.}
-
-\item{null}{(deprecated, use summary method) null hypothesis vector \eqn{b_0}
-to test against (default 0)}
-
-\item{level}{(deprecated, use summary method) level of confidence limits
-(default 0.95)}
-
-\item{type}{(deprecated, use summary method) type of small-sample correction
-for cluster-robust variance. One of: - \code{"robust"} (default): no correction.
-\itemize{
-\item \code{"df"}: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001). -
-\code{"mbn"}: Morel-Bokossa-Neerchal (2003) correction. - \code{"hc3"}:
-leverage-adjusted HC3-type correction (blended with \code{var.adj}). - \code{"hc4"}:
-Cribari-Neto (2004) leverage-adjusted correction.
-}}
-
-\item{var.adj}{(deprecated, use summary method) blending parameter for the
-HC3 leverage adjustment (default 0.25). Controls the weight between
-observation-level empirical leverage and the average leverage \eqn{p/n}.}
-
-\item{df}{(deprecated, use summary method) degrees of freedom for t-based
-inference (default: \code{NULL} for Gaussian approximation; when set, confidence
-intervals and p-values use the t-distribution with \code{df} degrees of
-freedom).}
-
-\item{back.transform}{(deprecated, use summary method) function applied to
-the point estimates and confidence interval bounds \emph{after} inference is
-performed on the original scale. Useful for variance-stabilizing
-transformations, e.g., compute CIs on the \code{atanh} (Fisher z) scale and
-back-transform with \code{tanh}.}
 }
 \value{
 Object of class \code{estimate} with the following elements:
@@ -202,16 +169,18 @@ section ("influence function calculus") and
 \code{vignette("influencefunction", package = "lava")} for details.
 }
 
-\section{Averaging and marginalization}{
+\section{Standardization (g-computation)}{
 When \code{average = TRUE} and \code{f(p, data)} depends on covariates, the
-target parameter is the standardized (marginalized) estimate
+target parameter is the standardized  (g-computation) estimate
 \eqn{\Psi = E\{f(X;\theta)\}}. The IF for the averaged estimate
 accounts for both the empirical averaging and parameter estimation
 uncertainty:
 \deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
 [E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
 When \code{subset} is also specified, the average is conditioned on the
-subpopulation, yielding a conditional marginalized estimate.
+subpopulation, yielding a conditional marginalized estimate. The model may
+be estimated on a different (e.g., smaller) dataset than \code{data}. See
+\link{marginal} for details.
 }
 
 \section{Cluster-robust standard errors}{
@@ -279,7 +248,7 @@ ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
 ee
 estimate(lm(y~x,d1))
 
-## Marginalize / standardization
+## Standardization (g-computation)
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
@@ -287,12 +256,7 @@ e <- estimate(g, f, average=TRUE)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))
-
-## Clusters and subset (conditional marginal effects)
-d$id <- rep(seq(nrow(d)/4),each=4)
-estimate(g,function(p,data)
-         list(p0=expit(p[1] + p["z"]*data[,"z"])),
-         subset=d$z>0, id=d$id, average=TRUE)
+## see also ?marginal
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)
@@ -328,8 +292,9 @@ IC(merge(l1,l2,l3,id=FALSE)) # independence
 
 
 # ------ influence function calculus -------
-a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+ic1 <- scale(rnorm(10), scale=FALSE)
+a <- estimate(coef = c("a" = 0.5), IC = ic1, id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = ic1, id = 1:10)
 
 e <- c(a, b) # merge
 merge(a, b)

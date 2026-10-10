@@ -142,11 +142,46 @@ test_that("merge preserves order (of first IC)", {
   expect_equivalent(IC(a)* 3/2, ic1) # same expect for IPW due to incomplete data
 })
 
-test_that("cluster.index vs lava native impl.", {
-  op <- lava.options(cluster.index = FALSE)
-  e1 <- merge(e_ic1, e_ic2)
-  lava.options(cluster.index = TRUE)
-  e2 <- merge(e_ic1, e_ic2)
-  expect_equal(e1, e2)
-  lava.options(op)
+test_that("merge order of ids (sort argument)", {
+  a <- estimate(coef = 1, IC = c(1, -1), id = c(5, 3))
+  b <- estimate(coef = 2, IC = c(2, -1, -1), id = c(4, 3, 1))
+  # first IC order, followed by new ids in order of appearance
+  expect_equal(index(merge(a, b)), c(5, 3, 4, 1))
+  # sort=TRUE: sorted according to the union of all ids
+  e <- merge(a, b, sort = TRUE)
+  expect_equal(index(e), c(1, 3, 4, 5))
+  expect_equal(rownames(IC(e)), c("1", "3", "4", "5"))
+  expect_equal(vcov(e), vcov(merge(a, b)))
+})
+
+test_that("merge with clustered ids, IPW rescaling and id arguments", {
+  set.seed(2)
+  ic_a <- scale(rnorm(6), scale = FALSE)
+  ic_b <- scale(rnorm(4), scale = FALSE)
+  id_a <- c("x", "x", "y", "z", "z", "z")
+  id_b <- c("y", "w", "w", "v")
+  a <- estimate(coef = c(a = 1), IC = ic_a, id = 1:6)
+  b <- estimate(coef = c(b = 2), IC = ic_b, id = 1:4)
+  e <- merge(a, b, id = list(id_a, id_b))
+  expect_equal(index(e), c("x", "y", "z", "w", "v"))
+  # manual: cluster sums (scaled), zero outside support, IPW rescaling
+  ca <- rowsum(ic_a, id_a, reorder = FALSE) * 3 / 6
+  cb <- rowsum(ic_b, id_b, reorder = FALSE) * 3 / 4
+  M <- matrix(0, 5, 2, dimnames = list(index(e), NULL))
+  M[rownames(ca), 1] <- ca * 5 / 3
+  M[rownames(cb), 2] <- cb * 5 / 3
+  expect_equivalent(IC(e), M)
+
+  # independence (id=NULL / id=FALSE) and one-to-one (id=TRUE / paired)
+  a2 <- estimate(coef = c(a = 1), IC = ic_b, id = 1:4)
+  expect_equal(nrow(IC(merge(a2, b, id = NULL))), 8)
+  expect_equal(IC(merge(a2, b, id = NULL)), IC(merge(a2, b, id = FALSE)))
+  expect_equal(nrow(IC(merge(a2, b, id = TRUE))), 4)
+  expect_equal(IC(merge(a2, b, id = TRUE)), IC(merge(a2, b, paired = TRUE)))
+  expect_error(merge(a, b, paired = TRUE), "same size")
+  expect_error(merge(a, b, id = TRUE), "same size")
+
+  # missing values in id
+  expect_error(merge(a, b, id = list(id_a, c(NA, id_b[-1]))),
+               "Missing values in 'id'")
 })

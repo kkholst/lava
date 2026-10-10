@@ -19,7 +19,7 @@ vignette: >
 bibliography: ref.bib
 ---
 
-```{r  include=FALSE }
+```{r include=FALSE}
 mets <- lava:::versioncheck('mets', 1)
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 ```
@@ -113,7 +113,7 @@ Confidence limits can be obtained via the Delta method using the `estimate` meth
 
 ```{r  spline_ci }
 p <- cbind(u1=newd$u1,
-  estimate(e2,f=function(p)                    predict(e2,p=p,newdata=newd))$coefmat)
+  estimate(e2,f=function(p) predict(e2,p=p,newdata=newd))$coefmat)
 head(p)
 ```
 
@@ -146,7 +146,8 @@ m2d <- nonlinear(m2, type="spline", knots=kn2, u2~u1)
 To assess the model fit average RMSE is estimated with 5-fold
 cross-validation repeated two times
 
-```{r  cv_fit, cache=TRUE, eval=fullVignette }
+```{r  cv_fit }
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 ## Scale models in stage 2 to allow for a fair RMSE comparison
 d0 <- d
 for (i in endogenous(m2))
@@ -197,7 +198,8 @@ For convenience, the function `twostageCV` can be used to do the
 cross-validation (also for choosing the mixture distribution via the `nmix`
 argument, see the section below). For example,
 
-```{r  twostageCV, cache=TRUE, eval=fullVignette }
+```{r  twostageCV }
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 set.seed(1)
 selmod <- twostageCV(m1, m2, data=d, df=2:4, nmix=1:2,
 	    nfolds=5, rep=2, mc.cores=parallel::detectCores())
@@ -271,7 +273,8 @@ in the `list` will be constrained to be identical in the mixture
 model. Thus, only the intercept of $u_{1}$ is allowed to vary
 between the mixtures.
 
-```{r  mixture1, cache=TRUE, eval=fullVignette }
+```{r  mixture1, cache=TRUE }
+#| eval: !expr Sys.getenv('_R_FULL_VIGNETTE_') %in% c('1', 'TRUE')
 set.seed(1)
 em0 <- mixture(m1, k=2, data=d)
 ```
@@ -283,10 +286,10 @@ can rerun the estimation with different random starting values
 em0 <- NULL
 ll <- c()
 for (i in 1:5) {
-    set.seed(i)
-    em <- mixture(m1, k=2, data=d, control=list(trace=0))
-    ll <- c(ll,logLik(em))
-    if (is.null(em0) || logLik(em0)<tail(ll,1))
+  set.seed(i)
+  em <- mixture(m1, k=2, data=d, control=list(trace=0))
+  ll <- c(ll,logLik(em))
+  if (is.null(em0) || logLik(em0)<tail(ll,1))
 	em0 <- em
 }
 ```
@@ -306,21 +309,24 @@ summary(em0)
 
 Measured by AIC there is a slight improvement in the model fit using the mixture model
 
-```{r  eval=mets }
+```{r  estimatem1}
+#| eval: !expr lava:::versioncheck('mets', 1)
 e0 <- estimate(m1,data=d)
 AIC(e0,em0)
 ```
 
 The spline model may then be estimated as before with the `two-stage` method
 
-```{r  eval=mets }
+```{r  twostageem2 }
+#| eval: !expr lava:::versioncheck('mets', 1)
 em2 <- twostage(em0,m2,data=d)
 em2
 ```
 
 In this example the results are very similar to the Gaussian model:
 
-```{r  mixturefit, eval=mets }
+```{r  mixturefit }
+#| eval: !expr lava:::versioncheck('mets', 1)
 plot(I(u2-z) ~ u1, data=d, col=Col("black",0.5), pch=16,
      xlab=expression(eta[1]), ylab=expression(eta[2]))
 

@@ -53,47 +53,6 @@ test_that("estimate.default misc", {
 
 })
 
-test_that("estimate standardization (average=TRUE)", {
-  # check that g-computation works as expected for logistic regression
-  sim1 <- function(n = 5000, seed = 1) {
-    set.seed(seed)
-    w1 <- rnorm(n)
-    w2 <- rnorm(n)
-    a  <- rbinom(n, 1, 0.5) # randomized trial
-    lp <- 1 + a + w1 + 0.5 * w2
-    y <- rbinom(n, 1, plogis(lp))
-    data.frame(y = y, a = a, w1 = w1, w2 = w2)
-  }
-  df <- sim1()
-
-  g <- glm(y ~ a * (w1 + w2), data=df, family=binomial)
-  est <- lava::estimate(g, average = TRUE, function(p,data) {
-    X1 <- model.matrix(g, data=transform(data, a=1))
-    X0 <- model.matrix(g, data=transform(data, a=0))
-    cbind(plogis(X1%*%p), plogis(X0%*%p))
-  }) |> labels(c("y1", "y0"))
-  est
-  ## transform(est, cbind(1,-1), labels="ate")
-
-  q1 <- predict(g, newdata=transform(df, a=1), type="response")
-  q0 <- predict(g, newdata=transform(df, a=0), type="response")
-  X1 <- model.matrix(g, data=transform(df, a=1))
-  X0 <- model.matrix(g, data=transform(df, a=0))
-
-  D1 <- numDeriv::grad(\(x) mean(plogis(X1 %*% x)), coef(g))
-  D0 <- numDeriv::grad(\(x) mean(plogis(X0 %*% x)), coef(g))
-  D1a <- apply(X1, 2, \(x) mean(x*q1*(1-q1)))
-  D0a <- apply(X0, 2, \(x) mean(x*q0*(1-q0)))
-  testthat::expect_equivalent(D1, D1a)
-  testthat::expect_equivalent(D0, D0a)
-  ic1 <- q1 - mean(q1) + apply(lava::IC(g), 1, \(x) sum(x*D1a))
-  ic0 <- q0 - mean(q0) + apply(lava::IC(g), 1, \(x) sum(x*D0a))
-  est2 <- c(y1=lava::estimate(coef=mean(q1), IC=ic1),
-            y0=lava::estimate(coef=mean(q0), IC=ic0))
-  testthat::expect_equivalent(coef(est), coef(est2))
-  testthat::expect_equivalent(vcov(est), vcov(est2))
-
-})
 
 # Helper function to manually compute Wald statistic
 compute_wald <- function(B, p, S, null) {
@@ -116,7 +75,6 @@ a4 <- estimate(coef = 4,   IC = center_ic(10), id = 1:10, labels = "a4")
 a  <- merge(a1, a2)           # 2-dimensional
 a3d <- merge(a1, a2, a3)      # 3-dimensional
 a4d <- merge(a1, a2, a3, a4)  # 4-dimensional
-
 
 test_that("summary.estimate compared with estimate", {
   B <- rbind(c(1,-1, 0), c(0, 1,-1), c(1,0,-1))
@@ -404,7 +362,7 @@ test_that("IC mean-zero warning can be suppressed via lava.options", {
   old <- lava.options(check.ic = FALSE)
   on.exit(lava.options(old))
   expect_no_warning(
-    estimate(coef = c(a = 1), IC = ic_bad, id = 1:50)
+    estimate(coef = c(a = 1), IC = ic_bad)
   )
 })
 
@@ -458,30 +416,6 @@ test_that("estimate.default keep with regex=TRUE", {
   e1 <- estimate(a3d, keep = ".*2") # no literal matches return object with NAs
   expect_true(all(is.na(e1$coefmat)))
   expect_true(nrow(e1$coefmat) == 1)
-})
-
-test_that("robust argument backwards compatibility", {
-  d <- data.frame(y = rnorm(50), x = rnorm(50))
-  g <- lm(y ~ x, data = d)
-
-  # Both robust=TRUE and robust=FALSE emit a deprecation warning
-  e0 <- expect_warning(estimate(g, robust = FALSE), "deprecated and ignored")
-  e1 <- expect_warning(estimate(g, robust = TRUE), "deprecated and ignored")
-  expect_equal(e0$coefmat, e1$coefmat)
-
-  e <- estimate(g)
-  # The robust argument is ignored: results are identical to the default
-  # (sandwich SEs)
-  expect_equal(e$coefmat, e0$coefmat)
-
-  expect_equal(e$coefmat, e0$coefmat)
-
-  # model-based SE can be obtained either via logical variable or supplying
-  # covariance matrix
-  e0m <- estimate(g, vcov = TRUE)
-  expect_false(all(e$coefmat == e0m$coefmat))
-  e1m <- estimate(g, vcov = vcov(g))
-  expect_equal(e0m$coefmat, e1m$coefmat)
 })
 
 test_that("initialization of object without names", {

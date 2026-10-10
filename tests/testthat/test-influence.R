@@ -118,14 +118,19 @@ test_that("influence", {
 })
 
 test_that("IC misc", {
-  ic0 <- IC(e)
-  id <- rep(1:10, length.out=nrow(d))
-  opt <- lava.options(cluster.index=FALSE)
-  ic1 <- IC(l, id=id)
-  lava.options(cluster.index=TRUE)
-  ic2 <- IC(l, id=id)
-  expect_equivalent(ic1, ic2)
+  ic0 <- IC(l)
+  cl <- paste0("c", rep(c(3, 1, 10, 2, 4:9), length.out = nrow(d)))
+  ic1 <- IC(l, id = cl)
+  # aggregation within clusters in first-appearance order
+  expect_equal(rownames(ic1), unique(cl))
+  expect_equivalent(ic1, rowsum(ic0, cl, reorder = FALSE) * 10 / nrow(d))
+  expect_equal(attr(ic1, "N"), nrow(d))
+  expect_equal(colnames(ic1), colnames(ic0))
+  expect_false(is.null(attr(ic1, "bread")))
+  expect_equivalent(var_ic(ic1), vcov(estimate(l, id = cl)))
+  # missing values in id
+  cl[1] <- NA
+  expect_error(IC(l, id = cl), "Missing values in 'id'")
 
   ic <- IC(l, folds=10)
-  ## lava.options(opt)
 })

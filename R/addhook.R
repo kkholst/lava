@@ -103,7 +103,7 @@ assign("options", list(
                       progressbarstyle=3,
                       itol=(.Machine$double.eps)**.5, # Tolerance for pseudo-inverses
                       cluster.index=packagecheck("mets"), # Whether to use mets::cluster.index
-                      Dmethod="simple", # Type of numerical derivative for optimization problems
+                      Dmethod="Richardson", # Type of numerical derivative for optimization problems
                       messages=ifelse(interactive(), 1, 0), # extra messages
                       parallel=TRUE, # parallelization enabled
                       param="relative", # parametrization type for latent variable models
