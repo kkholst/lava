@@ -227,7 +227,7 @@ test_that("marginal: arguments of 'f'", {
   fa <- function(p, data, a) plogis(p[1] + p["w1"] * data[, "w1"] + a * p["a"])
   expect_equal(vcov(marginal(g, fa, a = 1)), vcov(m))
 
-  expect_error(marginal(g, function(x) x[1]), "one value per observation")
+  expect_error(marginal(g, function(x) x[1]), "must have an argument")
   expect_error(marginal(estimate(g, vcov = vcov(g)), f, data = dat),
                "Influence function")
 })

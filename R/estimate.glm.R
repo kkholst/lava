@@ -1,16 +1,23 @@
-##' Estimate method for GLM objects
-##'
-##' Applies [estimate.default] to obtain robust inference for a fitted
-##' `glm` object.
-##' @param x Fitted `glm` object
-##' @param ... Additional arguments to [estimate.default]
-##' @return Object of class `estimate` (see [estimate.default]).
-##' @export
+#' Estimate method for GLM objects
+#'
+#' Applies [estimate.default] to obtain robust inference for a fitted
+#' `glm` object.
+#' @param x Fitted `glm` object
+#' @param ... Additional arguments to [estimate.default]
+#' @return Object of class `estimate` (see [estimate.default]).
+#' @export
 estimate.glm <- function(x, ...) {
   estimate.default(x, ...)
 }
 
-##' @export
+#' @export
+predict.estimate.glm <- function(object, p=coef(object),
+                                 data=NULL, offset = NULL,...) {
+  if (is.null(data)) data <- model.frame(object$fit)
+  predict_glm(object$fit, p=p, data=data, offset=offset, ...)
+}
+
+#' @export
 IC.mlm <- function(x, ...) {
   cc <- coef(x)
   r <- residuals(x)
@@ -28,7 +35,7 @@ IC.mlm <- function(x, ...) {
   return(res)
 }
 
-##' @export
+#' @export
 pars.mlm <- function(x, ...) {
   cc <- coef(x)
   q <- NCOL(cc)
@@ -41,7 +48,7 @@ pars.mlm <- function(x, ...) {
   coefs
 }
 
-##' @export
+#' @export
 estimate.mlm <- function(x, ...) {
   estimate.default(x, coef=pars(x), ...)
 }

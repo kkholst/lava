@@ -80,9 +80,7 @@
 #'          function(p, data) expit(p[1] + p["z"] * data[, "z"]),
 #'          data = d, subset = z > 0, id = "cl")
 marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
-  if (!is.function(f)) stop("'f' must be a function")
-  form <- names(formals(f))
-  ## if (!("p" %in% form)) stop("'f' must have an argument 'p'")
+  form <- checkarg(object, f, "p")
   ## Model: parameter estimates and (row-level) influence function
   e <- if (inherits(object, "estimate")) object else estimate(object)
   ic <- IC(e)
@@ -94,9 +92,9 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
   ## Values of 'f' (N x k matrix) and Jacobian (N*k x p)
   dots <- list(...)
   fval <- function(p) {
-    args <- c(list(data = data, object = object), dots)
+    args <- c(list(p = p, data = data, object = object), dots)
     if (!("..." %in% form)) args <- args[names(args) %in% form]
-    args <- c(list(p), args)
+    ## args <- c(list(p), args)
     val <- do.call(f, args)
     if (is.list(val)) return(do.call("cbind", val))
     structure(cbind(val, deparse.level = 0), grad = attr(val, "grad"))
@@ -190,4 +188,19 @@ average_estimate <- function(val, D, ic, id_data, id_model, subset = NULL) {
                      IC = w * (val - matrix(psi, N, k, byrow = TRUE)) / mean(w))
   e_model <- estimate(coef = 0 * psi, IC = ic %*% t(G), id = id_model)
   e_data + e_model # IC automatically aligned via merge.estimate
+}
+
+checkarg <- function(object, f, arg=NULL) {
+  if (!is.function(f)) stop("'f' must be a function")
+  generic <- utils::isS3stdGeneric(f)
+  if (isTRUE(generic)) {
+    method <- getS3method(names(generic), class(object)[1L])
+    form <- names(formals(method))
+  } else {
+    form <- names(formals(f))
+  }
+  if (!is.null(arg) && !(arg %in% form)) {
+    stop("'f' must have an argument '", arg, "'")
+  }
+  return(form)
 }
