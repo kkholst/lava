@@ -123,6 +123,31 @@ merge.estimate <- function(x, y,
     return(res)
 }
 
+## Align influence functions 'ics' (list) with row ids 'ids' (list of unique
+## ids) on the union of ids (first-appearance order). Each IF is zero outside
+## its own ids and rescaled by length(union)/length(own ids) (inverse
+## probability of observation, see the section "Estimators computed on
+## different subsets" in vignette("influencefunction")).
+## Returns the list of aligned IFs and the ids of the union.
+align_ic <- function(ics, ids) {
+  ## union of ids. Starting from the first set keeps its type (e.g. numeric
+  ## ids) when the other sets are contained in it
+  uid <- unique(ids[[1]])
+  for (i in ids[-1]) {
+    i <- unique(i)
+    new <- is.na(match(i, uid))
+    if (any(new)) uid <- c(uid, i[new])
+  }
+  ics <- Map(function(ic, id) {
+    ic <- cbind(ic)
+    res <- matrix(0, nrow = length(uid), ncol = ncol(ic),
+                  dimnames = list(NULL, colnames(ic)))
+    res[match(id, uid), ] <- ic
+    res * length(uid) / length(id)
+  }, ics, ids)
+  list(ic = ics, id = uid)
+}
+
 
 ## Ids of the rows of the influence functions of the estimate objects in
 ## 'objects' (used by merge.estimate):

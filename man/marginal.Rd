@@ -10,31 +10,26 @@ marginal(object, f, data, id, subset, labels = NULL, ...)
 \item{object}{model object (\code{glm}, \code{lvmfit}, ...) or \code{estimate} object
 providing the parameter estimates and their influence function.}
 
-\item{f}{function with the named argument \code{p} (parameter vector) and
-the optional arguments \code{data} and \code{object} (the model object). Should
-return a vector, matrix or a (named) list of vectors with one value per
-row of \code{data}, or values for some of the rows named by \code{rownames(data)}
-(with \code{id} given per row of \code{data}, the average is then conditioned on
-these rows, as with \code{subset}). If
-the result has an attribute \code{"grad"} it is used as the Jacobian of \code{f}
-with respect to \code{p}.}
+\item{f}{function where the first argument is the parameter vector and
+the optional named arguments \code{data} and \code{object} (the model object, e.g.
+an \code{estimate} object. Should return a vector, matrix or a (named) list of
+vectors with one value per observation (row of \code{data}). If the result has
+an attribute \code{"grad"} it is used as the Jacobian of \code{f} with respect to \code{p}}
 
 \item{data}{\code{data.frame} over which \code{f} is averaged. Defaults to
 \code{model.frame(object)} (which is not available for \code{estimate} objects).}
 
 \item{id}{(optional) ids of the values returned by \code{f} (the g-computation
-part). Can be a vector (one value per value of \code{f}), or refer to the
-rows of \code{data} (a column name, a one-sided formula evaluated in \code{data},
-or a vector with one value per row of \code{data}), in which case the values
-of \code{f} are linked to the rows of \code{data} by their names
-(\code{rownames(data)}). Defaults to the names of the values of \code{f}, and
+part): a vector with one value per value of \code{f}, or a column name or
+one-sided formula evaluated in \code{data} (requiring one value of \code{f} per
+row of \code{data}). Defaults to the names of the values of \code{f}, and
 otherwise \code{rownames(data)}. \code{id = NULL} uses the default ids but removes
 the id (index) from the returned object.}
 
-\item{subset}{(optional) logical vector, expression evaluated in \code{data}, or
-column name. The average is then conditioned on the subpopulation where
-\code{subset} is \code{TRUE} (conditional marginal estimate). Linked to the values
-of \code{f} via \code{id}.}
+\item{subset}{(optional) logical vector (one value per value of \code{f}),
+expression evaluated in \code{data}, or column name. The average is then
+conditioned on the subpopulation where \code{subset} is \code{TRUE} (conditional
+marginal estimate).}
 
 \item{labels}{(optional) character vector of parameter names}
 
@@ -54,7 +49,7 @@ accounts for both the empirical averaging and the uncertainty of
 \details{
 The influence function of the estimate is
 \deqn{\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
-[E\nabla_\theta f(bX;\theta)]\,\phi(Z; P)}
+[E\nabla_\theta f(X;\theta)]\,\phi(Z; P)}
 where \eqn{\phi} is the influence function of \eqn{\widehat\theta}.
 
 The two terms are identified by different ids: the first term by \code{id} (the
@@ -68,9 +63,6 @@ rescaled by the inverse proportion of observed ids (as in
 \link{merge.estimate}). If there are no common ids, the model estimate and
 \code{data} are treated as independent. Use \code{estimate(object, id=...)} to
 assign ids (or clusters) to the model.
-
-\code{estimate(object, f, average=TRUE, ...)} is equivalent to
-\code{marginal(object, f, ...)}.
 }
 \examples{
 m <- lvm(y ~ x + z)
