@@ -9,14 +9,18 @@
     another dataset than the one used to fit the model (e.g., a model fitted
     on a subset). Use `estimate(x, id=...)` to link a model to the ids of
     `data`. `f` must have the argument `p`, and optionally `data` and
-    `object`.
+    `object`
+  - `estimate(x, ...)` when `x` is a glm object returns an object of class
+    `estimate.glm`with a `predict.estimate.glm` method. Standardized estimates
+    can then easily be obtained with the syntax `marginal(e, predict,
+    data=transform(dat, a=1))`
   - `estimate(x, id=NULL)` (and `index(x) <- NULL`) removes the id (index) and
     the row names of the influence function.
   - Aggregation of influence functions within clusters (`estimate`, `IC`,
     `merge`) is now based on `rowsum` (faster, no longer using
     `lava.options()$cluster.index`). Clusters are returned in order of first
     appearance (`IC(x, id=)` now also returns row names). Missing values in
-    `id` give an error.
+    `id` give an error
   - `merge.estimate`: `sort=TRUE` now sorts according to the union of all ids,
     and `paired=TRUE` requires objects of the same size (as `id=TRUE`).
   - `ordreg` (ordinal regression, proportional odds model) improved summary
