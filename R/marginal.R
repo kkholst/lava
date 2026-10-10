@@ -194,7 +194,7 @@ checkarg <- function(object, f, arg=NULL) {
   if (!is.function(f)) stop("'f' must be a function")
   generic <- utils::isS3stdGeneric(f)
   if (isTRUE(generic)) {
-    method <- getS3method(names(generic), class(object)[1L])
+    method <- utils::getS3method(names(generic), class(object)[1L])
     form <- names(formals(method))
   } else {
     form <- names(formals(f))
