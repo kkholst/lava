@@ -74,7 +74,7 @@ PD <- function(model,intercept=1,slope=2,prob=NULL,x,level=0.5,
     xx <- f(b)
     Dxx <- -1/b[2]*rbind(1,xx)
     if (!is.null(EB))
-        Dxx <- numDeriv::grad(f,b)
+        Dxx <- numDeriv::grad(f,b,method = lava.options()$Dmethod)
     se <- diag(t(Dxx)%*%S%*%Dxx)^0.5
     res <- cbind(Estimate=xx,"Std.Err"=se)
     alpha <- 1-ci.level
