@@ -41,7 +41,9 @@ pcor <- function(x,y,X,start,...) {
     suppressWarnings(op <- nlminb(start,ff,gg))
     cc <- op$par
     names(cc) <- c("rho",paste(rownames(nn),"x",sep=".")[-1], paste(colnames(nn),"y",sep=".")[-1])
-    V <- solve(numDeriv::jacobian(function(p) gg(p), cc))
+    V <- solve(numDeriv::jacobian(function(p) gg(p), cc,
+                                  method = lava.options()$Dmethod
+                                  ))
 
     res <- list(coef=cc, vcov=V, tab=nn, logLik0=logL0, logLik=-ff(cc), n1=n1, n2=n2, opt=op, idx=ii)
     structure(res,class="pcor")
@@ -90,8 +92,6 @@ score.pcor <- function(x,p=coef(x),indiv=FALSE,...) {
     pos <- match(data.frame(t(x$idx$pattern)),data.frame(t(Pos)))
     return(U[pos[x$idx$group+1],])
 }
-
-
 
 polycor0 <- function(rho,a0,b0,onlyP=TRUE,...) {
     k1 <- length(a0); k2 <- length(b0)

@@ -415,7 +415,7 @@ score.lvm.mixture <- function(x,p=coef(x,full=TRUE),prob,indiv=FALSE,model="norm
 information.lvm.mixture <- function(x,p=coef(x,full=TRUE),...,type="observed") {
     if (tolower(type)%in%c("obs","observed","hessian")) {
         S <- function(p=p,...) score.lvm.mixture(x,p=p,indiv=FALSE,...)
-        I <- -numDeriv::jacobian(S,p)
+        I <- -numDeriv::jacobian(S, p, method = lava.options()$Dmethod)
         return(I)
     }
     S <- score.lvm.mixture(x,p=p,indiv=TRUE,...)

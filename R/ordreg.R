@@ -155,7 +155,8 @@ ordreg_score <- function(theta,env,...) {
     colSums(env$score)
 }
 ordreg_hessian <- function(theta,env,...) {
-    numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta,...)
+  numDeriv::jacobian(function(p) ordreg_score(p,env,...),theta,...,
+                     method = lava.options()$Dmethod)
 }
 
 ##' @export
