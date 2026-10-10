@@ -18,6 +18,7 @@ reference:
   - estimate.glm
   - estimate.list
   - iid
+  - marginal
   - merge.estimate
   - multinomial
   - plot.estimate
@@ -246,7 +247,7 @@ reference:
   - correlation
   - estimate.formula
   - estimate.lvm
-  - measurement.error
+  - measurement_error
   - modelsearch
   - twostage
   - twostage.lvmfit
