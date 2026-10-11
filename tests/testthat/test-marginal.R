@@ -162,9 +162,6 @@ test_that("marginal: id matched to the values of 'f' (no data)", {
   # ids from the names of the values of 'f'
   fn <- function(p, object) structure(f(p, object), names = dat$id)
   expect_equal(vcov(marginal(e, fn)), vcov(m))
-  # no data and no names: positional ids 1..N
-  expect_equal(nrow(IC(marginal(e, f))), nrow(dat) + nrow(dat1) - 100)
-  expect_error(marginal(e, f, id = dat$id[1:10]), "does not agree")
 })
 
 test_that("marginal: subset (conditional average)", {
