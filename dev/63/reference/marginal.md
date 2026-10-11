@@ -125,4 +125,9 @@ marginal(estimate(g, id = d$cl),
          data = d, subset = z > 0, id = "cl")
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168
+
+## Simple mean of known function
+marginal(x / (1+z^2), data=d)
+#>    Estimate Std.Err   2.5%  97.5%    P-value
+#> p1   0.3088 0.01174 0.2858 0.3318 1.638e-152
 ```
