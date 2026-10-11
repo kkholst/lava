@@ -79,7 +79,29 @@
 #' marginal(estimate(g, id = d$cl),
 #'          function(p, data) expit(p[1] + p["z"] * data[, "z"]),
 #'          data = d, subset = z > 0, id = "cl")
+#'
+#' ## Simple mean of known function
+#' marginal(x / (1+z^2), data=d)
 marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
+
+  if (missing(f)) object <- substitute(object)
+  if (is.expression(object) || is.language(object)) {
+    # If an expression we just calculate E[f(Z)] with known f
+    if (missing(data)) data <- NULL
+    out <- expect(
+      expr = object,
+      data = data,
+      envir = parent.frame(),
+      id = id,
+      quoted = TRUE,
+      ...
+    )
+    if (!is.null(labels))
+      out <- labels(out, labels)
+    return(out)
+  }
+
+  # Otherwise we calculate E[f(Z; theta)], with theta estimated by object
   form <- checkarg(object, f, "p")
   ## Model: parameter estimates and (row-level) influence function
   e <- if (inherits(object, "estimate")) object else estimate(object)
@@ -100,7 +122,7 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
     structure(cbind(val, deparse.level = 0), grad = attr(val, "grad"))
   }
   val <- fval(pp)
-  D <- grad <- attr(val, "grad")
+  D <- attr(val, "grad")
   if (is.null(D)) D <- numDeriv::jacobian(fval, pp,
                                           method=lava.options()$Dmethod)
   N <- NROW(val)
@@ -120,7 +142,7 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
              "'data' (", NROW(data), "). Supply 'id' or name the values of 'f'")
       id <- rownames(data)
     }
-    if (is.null(id)) id <- seq_len(N)
+    ## if (is.null(id)) id <- seq_len(N)
   } else {
     id <- resolve_id(id, data, n = N, x = object)
   }
@@ -148,8 +170,40 @@ marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
   out <- labels(out, if (is.null(labels)) nn else labels)
   if (id_drop) index(out) <- NULL
   out$n <- if (is.null(subset)) N else sum(subset)
-  out$derivative <- grad
+  out$derivative <- D
   out
+}
+
+# Calculate E[f(Z)]
+expect <- function(expr, data = NULL, envir = parent.frame(),
+                   id, quoted = FALSE, ...) {
+  expr <- if (quoted) expr else substitute(expr)
+  z <- if (is.null(data)) {
+    eval(expr, envir = envir)
+  } else {
+    eval(expr, envir = data, enclos = envir)
+  }
+  z <- cbind(z, deparse.level = 0)
+  N <- NROW(z)
+  id_drop <- !missing(id) && is.null(id)
+  if (missing(id) || is.null(id)) {
+    id <- rownames(z)
+    if (is.null(id) && !is.null(data)) {
+      if (NROW(data) != N)
+        stop("Unable to link the values of 'f' (", N, ") to the rows of ",
+             "'data' (", NROW(data), "). Supply 'id' or name the values of 'f'")
+      id <- rownames(data)
+    }
+  } else {
+    id <- resolve_id(id, data, n = N, x = NULL)
+  }
+  if (is.factor(id)) id <- as.character(id)
+  est <- colMeans(z)# avoid integer codes in c(...)
+  ic <- z
+  for (i in seq_len(ncol(z))) ic[, i] <- ic[, i] - est[i]
+  res <- estimate(coef=est, IC=ic, id = id, ...)
+  if (id_drop) index(res) <- NULL
+  res
 }
 
 # Evaluate 'subset' (an expression evaluated in 'data' (enclosed by 'env'),

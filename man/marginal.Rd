@@ -92,6 +92,9 @@ d$cl <- rep(seq(nrow(d) / 4), each = 4)
 marginal(estimate(g, id = d$cl),
          function(p, data) expit(p[1] + p["z"] * data[, "z"]),
          data = d, subset = z > 0, id = "cl")
+
+## Simple mean of known function
+marginal(x / (1+z^2), data=d)
 }
 \seealso{
 \link{estimate.default}, \code{vignette("influencefunction", package = "lava")}
