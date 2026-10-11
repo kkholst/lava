@@ -562,3 +562,40 @@ test_that("gamma.estimate", {
   expect_equal(e1, e2)
   expect_equal(coef(e1), gamma(coef(a1)))
 })
+
+## ---------------------------------------------------------------------------
+## subset methods
+## ---------------------------------------------------------------------------
+
+test_that("subset estimate methods", {
+  p <- 5
+  cc <- seq_len(p)
+  e <- estimate(
+    coef = cc,
+    IC = matrix(c(cc, -cc), nrow=2, ncol=p, byrow=TRUE),
+    labels = rev(letters[seq_len(p)])
+  )
+
+  f <- head(e, 2)
+  expect_equal(coef(e)[1:2], coef(f))
+  expect_equal(f, subset(e, 1:2))
+  expect_equal(f, subset(e, names(coef(e))[1:2]))
+  expect_equal(f, e[1:2])
+
+  f <- tail(e, 2)
+  idx <- seq(p-1, p)
+  expect_equal(coef(e)[idx], coef(f))
+  expect_equal(f, subset(e, idx))
+  expect_equal(f, e[idx])
+
+  f <- rev(e)
+  idx <- seq(p, 1)
+  expect_equal(f, subset(e, idx))
+
+  f <- sort(e)
+  expect_equal(names(coef(f)), sort(names(coef(e))))
+
+  f <- sort(e, decreasing=TRUE)
+  expect_equal(sort(coef(e)), coef(f))
+
+})

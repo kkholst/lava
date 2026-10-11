@@ -270,8 +270,62 @@ c.estimate <- function(..., as.list = FALSE) {
 }
 
 #' @export
+#' @param x `estimate` object
+#' @param keep subset (integer or character vector) of parameters to keep
+#' @param by sorted by "values" or "labels" of parameters
+#' @param decreasing (logical) Should the sort order be increasing or decreasing
+#' @param ... arguments passed to [utils::tail], [utils::head], [base::sort],
+#'   [base::subset]
+#' @param n integer for `tail` and `head` functions
+#' @title Subset parameter of estimate object
+#' @description Methods for extracting or sorting parameter estimates
+#' @aliases subset.estimate
+#' @aliases rev.estimate
+#' @aliases tail.estimate
+#' @aliases head.estimate
+#' @aliases sort.estimate
+#' @usage subset.estimate(x, keep, ...)
+#' @usage rev.estimate(x)
+#' @usage tail.estimate(x, n=1, ...)
+#' @usage head.estimate(x, n=1, ...)
+#' @usage sort.estimate(x, decreasing=FALSE, by=c("labels", "values"), ...)
+#' @seealso [utils::tail] [base::rev] [utils::head] [base::sort] [base::subset]
+#' @examples
+#' e <- estimate(coef=4:1, IC=matrix(0,nrow=2,ncol=4), labels=letters[1:4])
+#' subset(e, c(1,4))
+#' sort(e, by="values")
+#' head(e, 2)
+#' rev(e)
 subset.estimate <- function(x, keep, ...) {
   estimate(x, keep = keep, ...)
+}
+
+#' @export
+rev.estimate <- function(x) {
+  x[rev(seq_along(coef(x)))]
+}
+
+#' @export
+tail.estimate <- function(x, n = 1, ...) {
+  idx <- tail(seq_along(coef(x)), n = n, ...)
+  x[idx]
+}
+
+#' @export
+head.estimate <- function(x, n = 1, ...) {
+  idx <- head(seq_along(coef(x)), n = n, ...)
+  x[idx]
+}
+
+#' @export
+sort.estimate <- function(x,
+                          decreasing = FALSE,
+                          by=c("labels", "values"),
+                          ...) {
+  val <- coef(x)
+  if(tolower(by[1]) == "labels") val <- names(val)
+  idx <- order(val, decreasing = decreasing, ...)
+  x[idx]
 }
 
 #' @export

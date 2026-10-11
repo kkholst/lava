@@ -1,9 +1,12 @@
 # lava (development version)
-  - methods `diff.estimate`, `gamma.estimate`, `lgamma.estimate`,
-    `normcdf.estimate`, `norminv.estimate`, `normpdf.estimate` to for estimating
-    differences of parmaters, (log) gamma transformations, and normal
-    transformations (cumulative distribution function, quantile function,
-    probability density function) with `estimate` objects
+  - methods `diff.estimate`, `pairwise_diff`, `gamma.estimate`,
+    `lgamma.estimate`, `normcdf.estimate`, `norminv.estimate`,
+    `normpdf.estimate` to for estimating differences of parmaters, (log) gamma
+    transformations, and normal transformations (cumulative distribution
+    function, quantile function, probability density function) with `estimate`
+    objects
+  - new subset/ordering methods: `tail.estimate`, `head.estimate`,
+    `rev.estimate`, `sort.estimate`
 
 # lava 1.9.3
   - `merge.estimate` no longer sort IC by id by default. The previous
