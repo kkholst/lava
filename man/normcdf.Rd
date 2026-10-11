@@ -43,10 +43,8 @@ norminv(p, mean = 0, sd = 1, ...)
 A numeric vector (default method) or an object of class \code{estimate}.
 }
 \description{
-Density (\code{normpdf}), distribution function (\code{normcdf}), and quantile
-function (\code{norminv}) of the normal distribution. In contrast to
-\link[stats:dnorm]{stats::dnorm}, \link[stats:pnorm]{stats::pnorm}, and \link[stats:qnorm]{stats::qnorm} these are S3 generic
-functions, and methods are available for objects of class \code{estimate} (see
+Density (\code{normpdf}), distribution function (\code{normcdf}), and quantile function
+(\code{norminv}) of the normal distribution for objects of class \code{estimate} (see
 \link{estimate.default}) in which case the delta method is applied to obtain the
 influence function (and hence robust standard errors) of the transformed
 parameter.

@@ -605,10 +605,8 @@ elementwise_estimate <- function(args, fun, ...) {
 
 #' Normal distribution
 #'
-#' Density (`normpdf`), distribution function (`normcdf`), and quantile
-#' function (`norminv`) of the normal distribution. In contrast to
-#' [stats::dnorm], [stats::pnorm], and [stats::qnorm] these are S3 generic
-#' functions, and methods are available for objects of class `estimate` (see
+#' Density (`normpdf`), distribution function (`normcdf`), and quantile function
+#' (`norminv`) of the normal distribution for objects of class `estimate` (see
 #' [estimate.default]) in which case the delta method is applied to obtain the
 #' influence function (and hence robust standard errors) of the transformed
 #' parameter.
