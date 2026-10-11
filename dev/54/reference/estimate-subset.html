@@ -74,8 +74,8 @@
 <dd><p><code>estimate</code> object</p></dd>
 
 
-<dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
-<dd><p>subset (integer or character vector) of parameters to keep</p></dd>
+<dt id="arg-keep-i">keep, i<a class="anchor" aria-label="anchor" href="#arg-keep-i"></a></dt>
+<dd><p>subset (integer or character vector) of elements to extract</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -83,12 +83,26 @@
 <a href="https://rdrr.io/r/base/subset.html" class="external-link">base::subset</a></p></dd>
 
 
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
+<dd><p>an integer vector of length up to <code>dim(x)</code> (or 1,
+    for non-dimensioned objects).  A <code>logical</code> is silently coerced to
+    integer.  Values specify the indices to be
+    selected in the corresponding dimension (or along the length) of the
+    object. A positive value of <code>n[i]</code> includes the first/last
+    <code>n[i]</code> indices in that dimension, while a negative value
+    excludes the last/first <code>abs(n[i])</code>, including all remaining
+    indices. <code>NA</code> or non-specified values (when <code>length(n) &lt;
+      length(dim(x))</code>) select all indices in that dimension. Must
+    contain at least one non-missing value.</p></dd>
+
+
+<dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
+<dd><p>logical.  Should the sort be increasing or decreasing?
+    Not available for partial sorting.</p></dd>
+
+
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
 <dd><p>sorted by "values" or "labels" of parameters</p></dd>
-
-
-<dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
-<dd><p>Indices specifying elements to extract</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>

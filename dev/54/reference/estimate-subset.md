@@ -33,9 +33,9 @@ with(data, expr, ...)
 
   `estimate` object
 
-- keep:
+- keep, i:
 
-  subset (integer or character vector) of parameters to keep
+  subset (integer or character vector) of elements to extract
 
 - ...:
 
@@ -44,13 +44,26 @@ with(data, expr, ...)
   [base::sort](https://rdrr.io/r/base/sort.html),
   [base::subset](https://rdrr.io/r/base/subset.html)
 
+- n:
+
+  an integer vector of length up to `dim(x)` (or 1, for non-dimensioned
+  objects). A `logical` is silently coerced to integer. Values specify
+  the indices to be selected in the corresponding dimension (or along
+  the length) of the object. A positive value of `n[i]` includes the
+  first/last `n[i]` indices in that dimension, while a negative value
+  excludes the last/first `abs(n[i])`, including all remaining indices.
+  `NA` or non-specified values (when `length(n) < length(dim(x))`)
+  select all indices in that dimension. Must contain at least one
+  non-missing value.
+
+- decreasing:
+
+  logical. Should the sort be increasing or decreasing? Not available
+  for partial sorting.
+
 - by:
 
   sorted by "values" or "labels" of parameters
-
-- i:
-
-  Indices specifying elements to extract
 
 - data:
 
