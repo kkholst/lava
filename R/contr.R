@@ -3,10 +3,12 @@
 ##' Create contrast matrix typically for use with 'estimate' (Wald tests).
 ##' @export
 ##' @param p index of non-zero entries (see example)
-##' @param n Total number of parameters (if omitted the max number in p will be used)
-##' @param diff If FALSE all non-zero entries are +1, otherwise the second non-zero element in each row will be -1.
+##' @param n Total number of parameters (if omitted the max number in p will be
+##'   used)
+##' @param diff If FALSE all non-zero entries are +1, otherwise the second
+##'   non-zero element in each row will be -1.
 ##' @param ... Additional arguments to lower level functions
-##' @aliases contr parsedesign pairwise.diff pairwise_diff
+##' @aliases contr parsedesign pairwise_diff
 ##' @examples
 ##' contr(2,n=5)
 ##' contr(as.list(2:4),n=5)
@@ -45,21 +47,25 @@ contr <- function(p, n, diff = TRUE, ...) {
 }
 
 ##' @export
-pairwise_diff <- function(n, idx=NULL) {
-  if (!is.null(idx)) {
-    if (any(idx > n)) stop("'n' must be larger or equal to any element of 'idx'")
-    return(contr(combn(idx, 2, simplify=FALSE), n))
+pairwise_diff <- function(n, idx=NULL, reverse=FALSE) {
+  estimate_obj <- inherits(n, "estimate")
+  if (isTRUE(estimate_obj)) {
+    e <- n
+    n <- length(coef(e))
   }
-  pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
-  pdiff(n)
+  if (!is.null(idx)) {
+    if (any(idx > n)) {
+      stop("'n' must be larger or equal to any element of 'idx'")
+    }
+    B <- contr(combn(idx, 2, simplify=FALSE), n)
+  } else {
+    pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
+    B <- pdiff(n)
+  }
+  if (reverse) B <- -B
+  if (isTRUE(estimate_obj)) {
+    return(B %*% e)
+  }
+  return(B)
 }
 
-##' @export
-pairwise.diff <- function(n) {
-  .Deprecated("pairwise_diff", package = "lava",
-              msg = paste(
-                "`pairwise.diff` is deprecated. Use `pairwise_diff` instead."
-              )
-              )
-  pairwise_diff(n)
-}

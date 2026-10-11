@@ -24,6 +24,7 @@ reference:
   - stack.estimate
   - summary.estimate
   - var_ic
+  - normcdf
 
 - title: "Simulation functions"
   contents:
