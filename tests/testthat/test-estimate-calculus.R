@@ -529,3 +529,36 @@ test_that("normcdf/normpdf/norminv work without influence function", {
 test_that("normcdf.estimate incompatible lengths", {
   expect_error(normcdf(a, mean = c(1, 2, 3)))
 })
+
+## ---------------------------------------------------------------------------
+## diff
+## ---------------------------------------------------------------------------
+
+test_that("diff.estimate", {
+  e <- c(a, b)
+  f <- diff(e)
+  expect_true(length(coef(f))==3L)
+  expect_equal(unname(coef(f)), unname(diff(coef(e))))
+  lbl <- gsub(" ", "", names(coef(f)))
+  pname <- paste0("[",names(coef(e)),"]")
+  fname <- character(length(pname)-1)
+  for (i in seq_len(length(pname)-1)) {
+    fname[i] <- paste0("-",pname[i],"+",pname[i+1])
+  }
+  expect_equal(lbl, fname)
+  expect_equal(IC(f)[,1], -IC(a)[,1]+IC(a)[,2])
+  expect_equal(IC(f)[,2], -IC(a)[,2]+IC(b)[,1])
+  expect_equal(IC(f)[,3], -IC(b)[,1]+IC(b)[,2])
+})
+
+## ---------------------------------------------------------------------------
+## gamma
+## ---------------------------------------------------------------------------
+
+test_that("gamma.estimate", {
+  a1 <- a + c(2,8)
+  e1 <- gamma(a1)
+  e2 <- exp(lgamma(a1))
+  expect_equal(e1, e2)
+  expect_equal(coef(e1), gamma(coef(a1)))
+})
