@@ -273,10 +273,9 @@ c.estimate <- function(..., as.list = FALSE) {
 #' @param x `estimate` object
 #' @param keep subset (integer or character vector) of parameters to keep
 #' @param by sorted by "values" or "labels" of parameters
-#' @param decreasing (logical) Should the sort order be increasing or decreasing
+#' @param i Indices specifying elements to extract
 #' @param ... arguments passed to [utils::tail], [utils::head], [base::sort],
 #'   [base::subset]
-#' @param n integer for `tail` and `head` functions
 #' @title Subset parameter of estimate object
 #' @description Methods for extracting or sorting parameter estimates
 #' @aliases subset.estimate
@@ -284,11 +283,8 @@ c.estimate <- function(..., as.list = FALSE) {
 #' @aliases tail.estimate
 #' @aliases head.estimate
 #' @aliases sort.estimate
-#' @usage subset.estimate(x, keep, ...)
-#' @usage rev.estimate(x)
-#' @usage tail.estimate(x, n=1, ...)
-#' @usage head.estimate(x, n=1, ...)
-#' @usage sort.estimate(x, decreasing=FALSE, by=c("labels", "values"), ...)
+#' @aliases with.estimate
+#' @aliases [.estimate
 #' @seealso [utils::tail] [base::rev] [utils::head] [base::sort] [base::subset]
 #' @examples
 #' e <- estimate(coef=4:1, IC=matrix(0,nrow=2,ncol=4), labels=letters[1:4])
@@ -296,28 +292,33 @@ c.estimate <- function(..., as.list = FALSE) {
 #' sort(e, by="values")
 #' head(e, 2)
 #' rev(e)
+#' @rdname estimate-subset
 subset.estimate <- function(x, keep, ...) {
   estimate(x, keep = keep, ...)
 }
 
 #' @export
+#' @rdname estimate-subset
 rev.estimate <- function(x) {
   x[rev(seq_along(coef(x)))]
 }
 
 #' @export
+#' @rdname estimate-subset
 tail.estimate <- function(x, n = 1, ...) {
   idx <- tail(seq_along(coef(x)), n = n, ...)
   x[idx]
 }
 
 #' @export
+#' @rdname estimate-subset
 head.estimate <- function(x, n = 1, ...) {
   idx <- head(seq_along(coef(x)), n = n, ...)
   x[idx]
 }
 
 #' @export
+#' @rdname estimate-subset
 sort.estimate <- function(x,
                           decreasing = FALSE,
                           by=c("labels", "values"),
@@ -329,11 +330,15 @@ sort.estimate <- function(x,
 }
 
 #' @export
-"[.estimate" <- function(x, i, ...) {
+#' @rdname estimate-subset
+#' @inheritParams base::Extract
+`[.estimate` <- function(x, i, ...) {
   subset(x, i, ...)
 }
 
 #' @export
+#' @rdname estimate-subset
+#' @inheritParams base::with
 with.estimate <- function(data, expr, ...) {
     # Recursively walk the expression tree and replace symbols
   # that match names in `data` with data["symbol"] calls
