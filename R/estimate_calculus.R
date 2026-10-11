@@ -320,7 +320,6 @@ head.estimate <- function(x, n = 1, ...) {
 
 #' @export
 #' @rdname estimate-subset
-#' @param decreasing
 #' @inheritParams base::sort
 sort.estimate <- function(x,
                           decreasing = FALSE,
