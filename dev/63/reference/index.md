@@ -20,8 +20,8 @@ Functions for working with Influence Functions
   : Estimate method for lists
 - [`iid()`](https://kkholst.github.io/lava/reference/iid.md) : Extract
   i.i.d. decomposition from model object
-- [`marginal()`](https://kkholst.github.io/lava/reference/marginal.md) :
-  Marginal (standardized) estimates via g-computation
+- [`marginal_mean()`](https://kkholst.github.io/lava/reference/marginal_mean.md)
+  : Marginal mean (standardized) estimates via g-computation
 - [`merge(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/merge.estimate.md)
   : Merge estimate objects
 - [`multinomial()`](https://kkholst.github.io/lava/reference/multinomial.md)

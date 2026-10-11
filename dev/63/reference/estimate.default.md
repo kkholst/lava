@@ -72,7 +72,7 @@ estimate(
   name. When supplied, the IF is aggregated within clusters to produce
   cluster-robust standard errors. When `average = TRUE`, `id` refers to
   the rows of `data`, i.e., the values of `f` (see
-  [marginal](https://kkholst.github.io/lava/reference/marginal.md)).
+  [marginal_mean](https://kkholst.github.io/lava/reference/marginal_mean.md)).
   `id = NULL` removes the id (index) and the row names of the influence
   function from the returned object.
 
@@ -107,12 +107,12 @@ estimate(
 
 - average:
 
-  if `TRUE` the function computes the standardized (marginalized)
-  estimate \\\hat\Psi = P_n f(X; \hat\theta)\\, i.e., the empirical mean
-  of `f(p, data)`, as defined by the `f` argument, over all rows of
-  `data`. The influence function accounts for both the empirical
-  averaging and the parameter estimation uncertainty (see
-  [marginal](https://kkholst.github.io/lava/reference/marginal.md)).
+  if `TRUE` the function computes the standardized estimate \\\hat\Psi =
+  P_n f(X; \hat\theta)\\, i.e., the empirical mean of `f(p, data)`, as
+  defined by the `f` argument, over all rows of `data`. The influence
+  function accounts for both the empirical averaging and the parameter
+  estimation uncertainty (see
+  [marginal_mean](https://kkholst.github.io/lava/reference/marginal_mean.md)).
 
 - subset:
 
@@ -244,8 +244,8 @@ f(X;\theta)\]\\\phi(Z; P)\$\$ When `subset` is also specified, the
 average is conditioned on the subpopulation, yielding a conditional
 marginalized estimate. The model may be estimated on a different (e.g.,
 smaller) dataset than `data`. See
-[marginal](https://kkholst.github.io/lava/reference/marginal.md) for
-details.
+[marginal_mean](https://kkholst.github.io/lava/reference/marginal_mean.md)
+for details.
 
 ## Cluster-robust standard errors
 
@@ -430,7 +430,7 @@ estimate(e,diff)
 estimate(e,cbind(1,1))
 #>             Estimate Std.Err  2.5% 97.5% P-value
 #> [p0] + [p1]    1.202 0.03027 1.142 1.261       0
-## see also ?marginal
+## see also ?marginal_mean
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)
