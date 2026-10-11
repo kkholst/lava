@@ -57,7 +57,7 @@ vignette:
 	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
 
 readme:
-	@$(R) -q -e "rmarkdown::render('README.Rmd')"
+	@$(R) -q -e "devtools::load_all(); rmarkdown::render('README.Rmd')"
 
 test:
 	@echo 'devtools::test()' | $(R)

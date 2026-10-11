@@ -160,7 +160,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'
 #' ## Simulation from logistic regression model
 #' m <- lvm(y~x+z);
-#' distribution(m,y~x) <- binomial.lvm("logit")
+#' distribution(m,y~x) <- dist_bernoulli("logit")
 #' d <- sim(m,1000)
 #' g <- glm(y~z+x,data=d,family=binomial())
 #' g0 <- glm(y~1,data=d,family=binomial())
@@ -295,7 +295,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @aliases estimate estimate.default
 #' @aliases estimate.mlm
 #' @seealso [estimate.array], [merge.estimate], [contr], [parsedesign],
-#'   [pairwise.diff], [c.estimate], [summary.estimate],
+#'   [pairwise_diff], [c.estimate], [summary.estimate],
 #'   `coef.estimate`,
 #'   `vcov.estimate`, `transform.estimate`, `labels.estimate`,
 #' @return Object of class `estimate` with the following elements:

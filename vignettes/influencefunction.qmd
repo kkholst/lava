@@ -182,8 +182,8 @@ m <- lvm() |>
   regression(y3 ~ x3 + a + w) |>
   regression(y4 ~ x4 + a + w) |>
   regression(a ~ w) |>
-  distribution(~ y1 + y2 + y3 + y4 + a, value = binomial.lvm()) |>
-  distribution(~id, value = Sequence.lvm(integer = TRUE))
+  distribution(~ y1 + y2 + y3 + y4 + a, value = dist_bernoulli()) |>
+  distribution(~id, value = dist_seq(integer = TRUE))
 ```
 
 We simulate from the model where $Y_3$ is only observed for half of the subjects
@@ -305,7 +305,7 @@ The same estimates can be obtained with a
 *cumulative link regression* model which also generalizes to
 ordinal outcomes. Here we consider the proportional odds model given by
 \begin{align*}
-\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{t}), \quad j=1,\ldots,J-1
+\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{\top}x), \quad j=1,\ldots,J-1
 \end{align*}
 ```{r ordreg}
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
@@ -519,7 +519,7 @@ i=1,\ldots,N$, we get that
 \begin{align*}
 P(N-n - N(1-p) \geq t) \leq \exp(-2t^2/N),
 \end{align*}
-and with $t = Np/2$, we have that $P(n<N\p/2)\leq\exp(-N/(2p^2))\to 0$ as
+and with $t = Np/2$, we have that $P(n<Np/2)\leq\exp(-N/(2p^2))\to 0$ as
 $N\to\infty$, and it follows that the first term $P(E_N^\complement)$ also
 converges to zero.
 
@@ -956,9 +956,9 @@ contr(list(1, c(1, 2), c(1, 4)), n = 5)
 A particular useful contrast is the following for considering all pairwise
 comparisons of different exposure estimates:
 
-```{r pairwise.diff}
-pairwise.diff(3)
-summary(estimate(gg, pairwise.diff(3), use=c(2,4,6)), null=c(1,1,1))
+```{r pairwise_diff}
+pairwise_diff(3)
+summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 ```
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
@@ -1008,7 +1008,7 @@ summary(closed_testing(gg0, test = test_wald, null=rep(.8, 3)))
 ```
 
 
-## Averaging
+## Standardization
 
 Some parameters of interest are expressed as averages over functions of the
 observed data and estimated parameters of a model. The asymptotic distribution
@@ -1077,14 +1077,17 @@ values of $X_1,W$ but with the treatment variable $A$ kept fixed at the
 value $1$
 ```{r estpred}
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
-pr <- function(p, data, ...)
-  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+pr <- function(p, data, ...) {
+  X <- model.matrix(g, transform(data, a=1))
+  expit(X %*% p)
+  ## alternatively:
+  ## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+}
 pr(coef(g), dw) |> head()
 ```
 The target parameter can now be estimated with the syntax
 ```{r average}
-id <- foldr(NROW(dw), 100, list=FALSE)
-ea <- estimate(g, pr, average=TRUE, id=id)
+ea <- estimate(g, pr, average=TRUE)
 ea
 IC(ea) |> head()
 ```

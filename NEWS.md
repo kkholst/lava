@@ -1,17 +1,20 @@
 # lava (development version)
-
-  - `merge.estimate` by default no longer sorts IC by id (old behaviour via new
-    argument `sort=TRUE`)
-  - influence function vignette updated.
-  - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
-    corresponding to the type argument of `stats::quantile`. The `id` index is
-    now automatically derived from the row names unless explictly specified as
-    an argument.
-  - Methods `diff.estimate`, `gamma.estimate`, `lgamma.estimate`,
+  - methods `diff.estimate`, `gamma.estimate`, `lgamma.estimate`,
     `normcdf.estimate`, `norminv.estimate`, `normpdf.estimate` to for estimating
     differences of parmaters, (log) gamma transformations, and normal
     transformations (cumulative distribution function, quantile function,
     probability density function) with `estimate` objects
+
+# lava 1.9.3
+  - `merge.estimate` no longer sort IC by id by default. The previous
+     behavior is available via the new argument `sort=TRUE`.
+> - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
+    corresponding to the type argument in `stats::quantile`. The `id` index is
+    now automatically derived from the row names unless explicitly specified as
+    an argument.
+  - distribution functions now use the `dist_` prefix in their function names. For
+    example, `dist_lognormal` corresponds to `lognormal.lvm`. This makes the
+    distribution functions easier to discover via tab completion.
 
 # lava 1.9.2
   - `estimate.default`: the `null`, `contrast`, `type`, and `var.adj` arguments
@@ -33,7 +36,7 @@
     id/cluster
 
 # lava 1.9.1
-  - Safe evaluation of rank in `wald_test`
+  - safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
   - fixing bug related to `estimate.index` in `summary.sim`
   - updated `plot.sim`, `forestplot`, `plot.estimate`

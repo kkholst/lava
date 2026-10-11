@@ -17,11 +17,10 @@ eventTime(object, formula, eventName = "status", ...)
 \item{\dots}{Additional arguments to lower levels functions}
 }
 \description{
-For example, if the model 'm' includes latent event time variables
-are called 'T1' and 'T2' and 'C' is the end of follow-up (right censored),
-then one can specify
-}
-\details{
+For example, if the model 'm' includes latent event time
+variables are called 'T1' and 'T2' and 'C' is the end of follow-up (right
+censored), then one can specify
+
 \code{eventTime(object=m,formula=ObsTime~min(T1=a,T2=b,C=0,"ObsEvent"))}
 
 when data are simulated from the model
@@ -37,8 +36,8 @@ Note that "ObsEvent" and "ObsTime" are names specified by the user.
 
 # Right censored survival data without covariates
 m0 <- lvm()
-distribution(m0,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-distribution(m0,"censtime") <- coxExponential.lvm(rate=1/10)
+distribution(m0,"eventtime") <- dist_cox_weibull(scale=1/100,shape=2)
+distribution(m0,"censtime") <- dist_cox_exponential(rate=1/10)
 m0 <- eventTime(m0,time~min(eventtime=1,censtime=0),"status")
 sim(m0,10)
 
@@ -51,11 +50,11 @@ sim(m0,10)
 # the effects of covariates as proportional hazard ratios
 # and works as follows:
 m <- lvm()
-distribution(m,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-distribution(m,"censtime") <- coxWeibull.lvm(scale=1/100,shape=2)
+distribution(m,"eventtime") <- dist_cox_weibull(scale=1/100,shape=2)
+distribution(m,"censtime") <- dist_cox_weibull(scale=1/100,shape=2)
 m <- eventTime(m,time~min(eventtime=1,censtime=0),"status")
-distribution(m,"sex") <- binomial.lvm(p=0.4)
-distribution(m,"sbp") <- normal.lvm(mean=120,sd=20)
+distribution(m,"sex") <- dist_bernoulli(p=0.4)
+distribution(m,"sbp") <- dist_gaussian(mean=120,sd=20)
 regression(m,from="sex",to="eventtime") <- 0.4
 regression(m,from="sbp",to="eventtime") <- -0.01
 sim(m,6)
@@ -74,16 +73,16 @@ sim(m,6)
 }
 
 # The second parametrization is an accelerated failure time
-# regression model and uses the function weibull.lvm instead
-# of coxWeibull.lvm to specify the event time distributions.
+# regression model and uses the function dist_weibull instead
+# of dist_cox_weibull to specify the event time distributions.
 # Here is an example:
 
 ma <- lvm()
-distribution(ma,"eventtime") <- weibull.lvm(scale=3,shape=1/0.7)
-distribution(ma,"censtime") <- weibull.lvm(scale=2,shape=1/0.7)
+distribution(ma,"eventtime") <- dist_weibull(scale=3,shape=1/0.7)
+distribution(ma,"censtime") <- dist_weibull(scale=2,shape=1/0.7)
 ma <- eventTime(ma,time~min(eventtime=1,censtime=0),"status")
-distribution(ma,"sex") <- binomial.lvm(p=0.4)
-distribution(ma,"sbp") <- normal.lvm(mean=120,sd=20)
+distribution(ma,"sex") <- dist_bernoulli(p=0.4)
+distribution(ma,"sbp") <- dist_gaussian(mean=120,sd=20)
 regression(ma,from="sex",to="eventtime") <- 0.7
 regression(ma,from="sbp",to="eventtime") <- -0.008
 set.seed(17)
@@ -105,18 +104,20 @@ sim(ma,6)
 # which produce exactly the same random numbers:
 
 model.aft <- lvm()
-distribution(model.aft,"eventtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
-distribution(model.aft,"censtime") <- weibull.lvm(intercept=-log(1/100)/2,sigma=1/2)
+distribution(model.aft,"eventtime") <-
+  dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
+distribution(model.aft,"censtime") <-
+  dist_weibull(intercept=-log(1/100)/2,sigma=1/2)
 sim(model.aft,6,seed=17)
 
 model.aft <- lvm()
-distribution(model.aft,"eventtime") <- weibull.lvm(scale=100^(1/2), shape=2)
-distribution(model.aft,"censtime") <- weibull.lvm(scale=100^(1/2), shape=2)
+distribution(model.aft,"eventtime") <- dist_weibull(scale=100^(1/2), shape=2)
+distribution(model.aft,"censtime") <- dist_weibull(scale=100^(1/2), shape=2)
 sim(model.aft,6,seed=17)
 
 model.cox <- lvm()
-distribution(model.cox,"eventtime") <- coxWeibull.lvm(scale=1/100,shape=2)
-distribution(model.cox,"censtime") <- coxWeibull.lvm(scale=1/100,shape=2)
+distribution(model.cox,"eventtime") <- dist_cox_weibull(scale=1/100,shape=2)
+distribution(model.cox,"censtime") <- dist_cox_weibull(scale=1/100,shape=2)
 sim(model.cox,6,seed=17)
 
 # The minimum of multiple latent times one of them still
@@ -124,12 +125,12 @@ sim(model.cox,6,seed=17)
 # right censored competing risks data
 
 mc <- lvm()
-distribution(mc,~X2) <- binomial.lvm()
+distribution(mc,~X2) <- dist_bernoulli()
 regression(mc) <- T1~f(X1,-.5)+f(X2,0.3)
 regression(mc) <- T2~f(X2,0.6)
-distribution(mc,~T1) <- coxWeibull.lvm(scale=1/100)
-distribution(mc,~T2) <- coxWeibull.lvm(scale=1/100)
-distribution(mc,~C) <- coxWeibull.lvm(scale=1/100)
+distribution(mc,~T1) <- dist_cox_weibull(scale=1/100)
+distribution(mc,~T2) <- dist_cox_weibull(scale=1/100)
+distribution(mc,~C) <- dist_cox_weibull(scale=1/100)
 mc <- eventTime(mc,time~min(T1=1,T2=2,C=0),"event")
 sim(mc,6)
 

@@ -20,11 +20,12 @@
 \arguments{
 \item{object}{an \code{estimate} object.}
 
-\item{contrast}{(optional) contrast matrix for the final Wald test.}
+\item{contrast}{(optional) contrast matrix for the final Wald test. When
+supplied together with \code{null}, tests \eqn{H_0: B\theta = b_0}.}
 
 \item{...}{additional arguments passed to \link{contr}.}
 
-\item{null}{(optional) null hypothesis to test.}
+\item{null}{(optional) null hypothesis to test (default 0).}
 
 \item{level}{level of confidence limits (default 0.95)}
 
@@ -51,6 +52,20 @@ Computes hypothesis tests, contrasts, and small-sample corrections for
 an \link{estimate} object. The arguments \code{null}, \code{contrast}, \code{type}, and
 \code{var.adj} were previously available on \code{\link[=estimate.default]{estimate.default()}} and have
 been moved here.
+}
+\details{
+types of small-sample corrections:
+\itemize{
+\item \code{"robust"} (default): no correction.
+\item \code{"df"}: applies \eqn{n/(n-p)} correction (Mancl & DeRouen, 2001).
+\item \code{"mbn"}: Morel-Bokossa-Neerchal (2003) correction.
+\item \code{"hc3"}: leverage-adjusted HC3-type correction (blended with \code{var.adj}).
+\item \code{"hc4"}: Cribari-Neto (2004) leverage-adjusted correction.
+}
+
+The var.adj parameter controls the blending parameter for the
+HC3 leverage adjustment, by controls the weight between
+observation-level empirical leverage and the average leverage \eqn{p/n}.
 }
 \seealso{
 \code{\link[=estimate.default]{estimate.default()}}

@@ -7,7 +7,7 @@
 \alias{intervention<-.lvm}
 \title{Define intervention}
 \usage{
-\method{intervention}{lvm}(object, to, value, dist = none.lvm(), ...)
+\method{intervention}{lvm}(object, to, value, dist = dist_none(), ...)
 }
 \arguments{
 \item{object}{lvm object}
@@ -25,7 +25,7 @@ Define intervention in a \code{lvm} object
 }
 \examples{
 m <- lvm(y ~ a + x, a ~ x)
-distribution(m, ~a+y) <- binomial.lvm()
+distribution(m, ~a+y) <- dist_bernoulli()
 mm <- intervention(m, "a", value=3)
 sim(mm, 10)
 mm <- intervention(m, a~x, function(x) (x>0)*1)

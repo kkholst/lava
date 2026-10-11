@@ -161,7 +161,8 @@ multinomial <- function(x,data=parent.frame(),marginal=FALSE,transform,vcov=TRUE
     }
     if (!missing(transform) && !is.null(IC)) {
         f <- function(p) do.call(transform,list(p))
-        D <- diag(numDeriv::grad(f,coefs),ncol=length(coefs))
+        D <- diag(numDeriv::grad(f,coefs,method = lava.options()$Dmethod),
+                  ncol=length(coefs))
         coefs <- f(coefs)
         IC <- IC%*%t(D)
     }

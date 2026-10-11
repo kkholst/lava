@@ -62,7 +62,7 @@ progress information).
 \examples{
 m <- lvm(y~x+e)
 distribution(m,~y) <- 0
-distribution(m,~x) <- uniform.lvm(a=-1.1,b=1.1)
+distribution(m,~x) <- dist_uniform(a=-1.1,b=1.1)
 transform(m,e~x) <- function(x) (1*x^4)*rnorm(length(x),sd=1)
 
 onerun <- function(iter=NULL,...,n=2e3,b0=1,idx=2) {

@@ -17,7 +17,7 @@ influence.estimate <- function(model, ...)
 ##' @param ... additional arguments
 ##' @examples
 ##' m <- lvm(y~x+z)
-##' distribution(m, ~y+z) <- binomial.lvm("logit")
+##' distribution(m, ~y+z) <- dist_bernoulli("logit")
 ##' d <- sim(m,1e3)
 ##' g <- glm(y~x+z,data=d,family=binomial)
 ##' var_ic(IC(g))

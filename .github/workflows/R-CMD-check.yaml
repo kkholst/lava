@@ -38,7 +38,6 @@ jobs:
           cache: true
           extra-packages: |
             any::rcmdcheck
-            any::pkgdown
             any::remotes
             any::covr
           needs: check website
@@ -57,14 +56,6 @@ jobs:
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
-
-      - name: Webpage deployment
-        if: success() && contains('refs/heads/main', github.ref)
-        run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          Rscript -e 'remotes::install_local()'
-          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
 
       # - name: Code Coverage
       #   if: success() && contains('refs/heads/main', github.ref)
