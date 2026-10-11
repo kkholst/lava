@@ -470,11 +470,12 @@ sqrt.estimate <- function(x, ...) {
 }
 
 #' @export
-sum.estimate <- function(x, ...) {
+sum.estimate <- function(x, labels="sum", ...) {
   estimate(x,
            function(p)
              structure(sum(p),
                        grad = matrix(1, nrow = 1, ncol = length(p))),
+           labels = labels,
            ...)
 }
 
@@ -486,6 +487,24 @@ sum.estimate <- function(x, ...) {
     return(estimate(x, f=t(y), ...))
   }
   sum(x * y)
+}
+
+#' @export
+diff.estimate <- function(x, ...) {
+  estimate(
+    x = x,
+    f = function(p) {
+      grad <- matrix(0, nrow = length(p)-1, ncol = length(p))
+      colnames(grad) <- names(p)
+      for (i in seq_len(nrow(grad))) {
+        grad[i, i + c(0, 1)] <- c(-1, 1)
+      }
+      lbl <- contrast_names(grad)
+      res <- diff(p)
+      names(res) <- lbl
+      structure(res, grad = grad)
+    },
+    ...)
 }
 
 prod_except <- function(p) {
@@ -504,6 +523,20 @@ prod.estimate <- function(x, ...) {
     structure(y, grad = matrix(prod_except(p), nrow = 1, ncol = length(p)))
   }, ...)
 }
+
+# ---- Gamma function -----------------------------------------------------
+
+#' @export
+lgamma.estimate <- function(x, ...) {
+  estimate(x, function(p) {
+    y <- base::lgamma(p)
+    gr <- diag(base::digamma(p), nrow = length(p))
+    structure(y, grad = gr)
+  }, ...)
+}
+
+#' @export
+gamma.estimate <- function(x, ...) exp(lgamma(x))
 
 # ---- Normal distribution ------------------------------------------------
 
