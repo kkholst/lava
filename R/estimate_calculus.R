@@ -271,9 +271,8 @@ c.estimate <- function(..., as.list = FALSE) {
 
 #' @export
 #' @param x `estimate` object
-#' @param keep subset (integer or character vector) of parameters to keep
+#' @param keep,i subset (integer or character vector) of elements to extract
 #' @param by sorted by "values" or "labels" of parameters
-#' @param i Indices specifying elements to extract
 #' @param ... arguments passed to [utils::tail], [utils::head], [base::sort],
 #'   [base::subset]
 #' @title Subset parameter of estimate object
@@ -305,6 +304,7 @@ rev.estimate <- function(x) {
 
 #' @export
 #' @rdname estimate-subset
+#' @inheritParams utils::tail
 tail.estimate <- function(x, n = 1, ...) {
   idx <- tail(seq_along(coef(x)), n = n, ...)
   x[idx]
@@ -312,6 +312,7 @@ tail.estimate <- function(x, n = 1, ...) {
 
 #' @export
 #' @rdname estimate-subset
+#' @inheritParams utils::tail
 head.estimate <- function(x, n = 1, ...) {
   idx <- head(seq_along(coef(x)), n = n, ...)
   x[idx]
@@ -319,6 +320,8 @@ head.estimate <- function(x, n = 1, ...) {
 
 #' @export
 #' @rdname estimate-subset
+#' @param decreasing
+#' @inheritParams base::sort
 sort.estimate <- function(x,
                           decreasing = FALSE,
                           by=c("labels", "values"),

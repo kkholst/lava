@@ -27,14 +27,26 @@
 \arguments{
 \item{x}{\code{estimate} object}
 
-\item{keep}{subset (integer or character vector) of parameters to keep}
+\item{keep, i}{subset (integer or character vector) of elements to extract}
 
 \item{...}{arguments passed to \link[utils:tail]{utils::tail}, \link[utils:head]{utils::head}, \link[base:sort]{base::sort},
 \link[base:subset]{base::subset}}
 
-\item{by}{sorted by "values" or "labels" of parameters}
+\item{n}{an integer vector of length up to \code{dim(x)} (or 1,
+    for non-dimensioned objects).  A \code{logical} is silently coerced to
+    integer.  Values specify the indices to be
+    selected in the corresponding dimension (or along the length) of the
+    object. A positive value of \code{n[i]} includes the first/last
+    \code{n[i]} indices in that dimension, while a negative value
+    excludes the last/first \code{abs(n[i])}, including all remaining
+    indices. \code{NA} or non-specified values (when \code{length(n) <
+      length(dim(x))}) select all indices in that dimension. Must
+    contain at least one non-missing value.}
 
-\item{i}{Indices specifying elements to extract}
+\item{decreasing}{logical.  Should the sort be increasing or decreasing?
+    Not available for partial sorting.}
+
+\item{by}{sorted by "values" or "labels" of parameters}
 
 \item{data}{data to use for constructing an environment. For the
     default \code{with} method this may be an environment, a list, a
