@@ -1,6 +1,6 @@
-#' Marginal (standardized) estimates via g-computation
+#' Marginal mean (standardized) estimates via g-computation
 #'
-#' Estimates the marginal (standardized) parameter
+#' Estimates the marginal mean (standardized) parameter
 #' \eqn{\Psi = E\{f(X; \theta)\}} by the empirical average of `f(p, data)`
 #' over the rows of `data` (g-computation), where the parameter \eqn{\theta}
 #' is estimated by `object`. The influence function of the estimate
@@ -26,7 +26,7 @@
 #'   expression evaluated in `data` (columns of `data` take precedence over
 #'   variables in the calling environment), or column name. The average is
 #'   then conditioned on the subpopulation where `subset` is `TRUE`
-#'   (conditional marginal estimate).
+#'   (conditional marginal mean estimate).
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -62,7 +62,7 @@
 #' f <- function(p, data)
 #'   list(p0 = expit(p["(Intercept)"] + p["z"] * data[, "z"]),
 #'        p1 = expit(p["(Intercept)"] + p["x"] + p["z"] * data[, "z"]))
-#' e <- marginal(g, f)
+#' e <- marginal_mean(g, f)
 #' e
 #' estimate(e, diff)
 #'
@@ -72,17 +72,17 @@
 #' d1 <- subset(d, w == 1)
 #' g1 <- glm(y ~ x + z, data = d1, family = binomial)
 #' e1 <- estimate(g1, id = d1$id)
-#' marginal(e1, f, data = d, id = "id")
+#' marginal_mean(e1, f, data = d, id = "id")
 #'
-#' ## Conditional marginal effects (subset) and clusters
+#' ## Conditional marginal mean effects (subset) and clusters
 #' d$cl <- rep(seq(nrow(d) / 4), each = 4)
-#' marginal(estimate(g, id = d$cl),
-#'          function(p, data) expit(p[1] + p["z"] * data[, "z"]),
-#'          data = d, subset = z > 0, id = "cl")
+#' marginal_mean(estimate(g, id = d$cl),
+#'               function(p, data) expit(p[1] + p["z"] * data[, "z"]),
+#'               data = d, subset = z > 0, id = "cl")
 #'
 #' ## Simple mean of known function
-#' marginal(x / (1+z^2), data=d)
-marginal <- function(object, f, data, id, subset, labels = NULL, ...) {
+#' marginal_mean(x / (1+z^2), data=d)
+marginal_mean <- function(object, f, data, id, subset, labels = NULL, ...) {
 
   if (missing(f)) object <- substitute(object)
   if (is.expression(object) || is.language(object)) {

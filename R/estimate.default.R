@@ -33,7 +33,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   one-sided formula (evaluated in `data`), a single character column name.
 #'   When supplied, the IF is aggregated within clusters to produce
 #'   cluster-robust standard errors. When `average = TRUE`, `id` refers to the
-#'   rows of `data`, i.e., the values of `f` (see [marginal]). `id = NULL`
+#'   rows of `data`, i.e., the values of `f` (see [marginal_mean]). `id = NULL`
 #'   removes the id (index) and the row names of the influence function from the
 #'   returned object.
 #' @param coef (optional) named parameter vector. Used instead of `coef(x)` when
@@ -64,11 +64,10 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
 #' @param average if `TRUE` the function computes the standardized
-#'   (marginalized) estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument,
-#'   over all rows of `data`. The influence function accounts for both the
-#'   empirical averaging and the parameter estimation uncertainty (see
-#'   [marginal]).
+#'   estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
+#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument, over
+#'   all rows of `data`. The influence function accounts for both the empirical
+#'   averaging and the parameter estimation uncertainty (see [marginal_mean]).
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -116,7 +115,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' When `subset` is also specified, the average is conditioned on the
 #' subpopulation, yielding a conditional marginalized estimate. The model may
 #' be estimated on a different (e.g., smaller) dataset than `data`. See
-#' [marginal] for details.
+#' [marginal_mean] for details.
 #'
 #' # Cluster-robust standard errors
 #'
@@ -194,7 +193,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' e
 #' estimate(e,diff)
 #' estimate(e,cbind(1,1))
-#' ## see also ?marginal
+#' ## see also ?marginal_mean
 #'
 #' ## More examples with clusters:
 #' m <- lvm(c(y1,y2,y3)~u+x)
@@ -365,7 +364,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     contrast.transform <- TRUE
   }
 
-  if (isTRUE(average) && is.function(f)) { ## g-computation, see 'marginal'
+  if (isTRUE(average) && is.function(f)) { ## g-computation, see 'marginal_mean'
     if (!is.logical(IC)) x <- estimate(coef=pp, IC=IC)
     args <- c(list(object=x, f=f), list(...))
     if (!missing(labels)) args$labels <- labels
@@ -376,7 +375,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         tryCatch(model.frame(x), error=function(...) NULL)
       args$subset <- resolve_subset(substitute(subset), data0, parent.frame())
     }
-    res <- do.call(marginal, args)
+    res <- do.call(marginal_mean, args)
     if (!missing(keep) && !is.null(keep))
       res <- estimate(res, keep=keep, regex=regex, ignore.case=ignore.case)
     if (!is.null(print)) res$print <- print
