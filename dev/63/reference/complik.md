@@ -81,7 +81,10 @@ m <- lvm(c(y1,y2,y3)~b*x+1*u[0],latent=~u)
 ordinal(m,K=2) <- ~y1+y2+y3
 d <- sim(m,50,seed=1)
 if (requireNamespace("mets", quietly=TRUE)) {
+   op <- lava.options(Dmethod="simple")
    e1 <- complik(m,d,control=list(trace=1),type="all")
+   lava.options(op)
+   e1
 }
 #>   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000
 #>   1:     163.15053: 0.540600 0.484448 0.209475 0.939309  1.06729
@@ -104,4 +107,13 @@ if (requireNamespace("mets", quietly=TRUE)) {
 #>  18:     160.71643: 0.381620 0.300565 -0.170579  1.06575  1.37852
 #>  19:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856
 #>  20:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856
+#>                     Estimate Std. Error  Z value  Pr(>|z|)
+#> Regressions:                                              
+#>    y1~x              1.06575    0.29344  3.63189 0.0002814
+#> Intercepts:                                               
+#>    y1                0.38159    0.31438  1.21377    0.2248
+#>    y2                0.30055    0.29304  1.02563    0.3051
+#>    y3               -0.17062    0.28520 -0.59825    0.5497
+#> Residual Variances:                                       
+#>    u                 1.37856    0.79666  1.73043          
 ```
