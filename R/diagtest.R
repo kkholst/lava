@@ -1,11 +1,15 @@
 ##' @export
-logit <- function(p) log(p/(1-p))
+logit <- function(p) log(p) - log1p(-p)
 
 ##' @export
-expit <- function(z) 1/(1+exp(-z))
+expit <- function(z) 1 / (1 + exp(-z))
+
+##' @export
+odds <- function(p) p / (1 - p)
 
 ##' @export
 tigol <- expit
+
 ##' Calculate prevalence, sensitivity, specificity, and positive and
 ##' negative predictive values
 ##'
@@ -27,7 +31,8 @@ tigol <- expit
 ##'                      dimnames=list(rater=c("no","yes"),gold=c("no","yes"))))
 ##' diagtest(M,exact=TRUE)
 ##' @export
-diagtest <- function(table,positive=2,exact=FALSE,p0=NA,confint=c("logit","arcsin","pseudoscore","exact"),...) {
+diagtest <- function(table, positive=2, exact=FALSE, p0=NA,
+                     confint=c("logit","arcsin","pseudoscore","exact"), ...) {
     if (!inherits(table,c("table","data.frame","matrix","multinomial")))
         stop("Expecting a table or data.frame.")
     if (is.table(table)) {
