@@ -25,6 +25,7 @@ reference:
   - summary.estimate
   - var_ic
   - normcdf
+  - subset.estimate
 
 - title: "Simulation functions"
   contents:

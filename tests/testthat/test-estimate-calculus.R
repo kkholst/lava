@@ -551,6 +551,12 @@ test_that("diff.estimate", {
   expect_equal(IC(f)[,3], -IC(b)[,1]+IC(b)[,2])
 })
 
+test_that("pairwise_diff", {
+  e <- c(a, b)
+  f <- pairwise_diff(e)
+  expect_equal(length(coef(f)), choose(length(coef(e)), 2))
+})
+
 ## ---------------------------------------------------------------------------
 ## gamma
 ## ---------------------------------------------------------------------------
