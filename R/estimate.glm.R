@@ -7,7 +7,9 @@
 #' @return Object of class `estimate` (see [estimate.default]).
 #' @export
 estimate.glm <- function(x, ...) {
-  estimate.default(x, ...)
+  res <- estimate.default(x, ...)
+  res$fit <- x
+  structure(res, class=c("estimate.glm", "estimate"))
 }
 
 #' @export
