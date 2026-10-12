@@ -1155,7 +1155,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x56002ff22cb0>
+#> <bytecode: 0x559e97560b20>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1756,7 +1756,7 @@ sessionInfo()
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
 #>  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      
 #>  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           
-#> [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           
+#> [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           
 #> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
 #> [19] MASS_7.3-65            tibble_3.3.1           future_1.76.0         

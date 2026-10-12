@@ -524,7 +524,7 @@ sessionInfo()
     [25] Rcpp_1.1.2             future_1.76.0          Rgraphviz_2.56.0
     [28] lattice_0.22-9         digest_0.6.39          parallelly_1.48.0
     [31] parallel_4.6.1         splines_4.6.1          Matrix_1.7-5
-    [34] RcppArmadillo_15.6.0-1 tools_4.6.1            globals_0.19.1
+    [34] RcppArmadillo_15.6.0-1 tools_4.6.1            globals_0.20.0
     [37] survival_3.8-6         BiocGenerics_0.58.1   
 
 ## Bibliography
