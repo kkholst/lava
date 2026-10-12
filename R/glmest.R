@@ -402,7 +402,7 @@ IC.glm <- function(x,...) {
   IC.default(x,...)
 }
 
-hessian.glm <- function(x, p=coef(x), ...) {
+hessian_glm <- function(x, p=coef(x), ...) {
   pna <- any(is.na(p))
   idx <- is.na(p)
   if(pna) {
@@ -417,7 +417,7 @@ hessian.glm <- function(x, p=coef(x), ...) {
 }
 
 ##' @export
-information.glm <- function(x, ...) -hessian.glm(x, ...)
+information.glm <- function(x, ...) -hessian_glm(x, ...)
 
 glm_logLik.lvm <- function(object, ...) {
   attr(GLMscore(object, ...), "logLik")

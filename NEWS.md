@@ -1,5 +1,5 @@
-# development version
-  - New function `marginal(object, f, data, id, subset)` for marginal
+# lava (development version)
+  - new function `marginal(object, f, data, id, subset)` for marginal
     (standardized) estimates via g-computation. `estimate(x, f,
     average=TRUE, ...)` now calls `marginal`. The `id` argument refers to the
     values of `f` (the rows of `data`; defaults to the names of the values of
@@ -25,11 +25,19 @@
     and `paired=TRUE` requires objects of the same size (as `id=TRUE`).
   - `ordreg` (ordinal regression, proportional odds model) improved summary
     method and documentation
+  - methods `diff.estimate`, `pairwise_diff`, `gamma.estimate`,
+    `lgamma.estimate`, `normcdf.estimate`, `norminv.estimate`,
+    `normpdf.estimate` to for estimating differences of parmaters, (log) gamma
+    transformations, and normal transformations (cumulative distribution
+    function, quantile function, probability density function) with `estimate`
+    objects
+  - new subset/ordering methods: `tail.estimate`, `head.estimate`,
+    `rev.estimate`, `sort.estimate`
 
 # lava 1.9.3
   - `merge.estimate` no longer sort IC by id by default. The previous
      behavior is available via the new argument `sort=TRUE`.
-  - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
+> - `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
     corresponding to the type argument in `stats::quantile`. The `id` index is
     now automatically derived from the row names unless explicitly specified as
     an argument.
@@ -57,7 +65,7 @@
     id/cluster
 
 # lava 1.9.1
-  - Safe evaluation of rank in `wald_test`
+  - safe evaluation of rank in `wald_test`
   - adding CI Length to `summary.sim` output
   - fixing bug related to `estimate.index` in `summary.sim`
   - updated `plot.sim`, `forestplot`, `plot.estimate`
