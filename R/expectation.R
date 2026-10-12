@@ -62,7 +62,7 @@
 #' f <- function(p, data)
 #'   list(p0 = expit(p["(Intercept)"] + p["z"] * data[, "z"]),
 #'        p1 = expit(p["(Intercept)"] + p["x"] + p["z"] * data[, "z"]))
-#' e <- marginal_mean(g, f)
+#' e <- expectation(g, f)
 #' e
 #' estimate(e, diff)
 #'
@@ -72,17 +72,17 @@
 #' d1 <- subset(d, w == 1)
 #' g1 <- glm(y ~ x + z, data = d1, family = binomial)
 #' e1 <- estimate(g1, id = d1$id)
-#' marginal_mean(e1, f, data = d, id = "id")
+#' expectation(e1, f, data = d, id = "id")
 #'
 #' ## Conditional marginal mean effects (subset) and clusters
 #' d$cl <- rep(seq(nrow(d) / 4), each = 4)
-#' marginal_mean(estimate(g, id = d$cl),
+#' expectation(estimate(g, id = d$cl),
 #'               function(p, data) expit(p[1] + p["z"] * data[, "z"]),
 #'               data = d, subset = z > 0, id = "cl")
 #'
 #' ## Simple mean of known function
-#' marginal_mean(x / (1+z^2), data=d)
-marginal_mean <- function(object, f, data, id, subset, labels = NULL, ...) {
+#' expectation(x / (1+z^2), data=d)
+expectation <- function(object, f, data, id, subset, labels = NULL, ...) {
 
   if (missing(f)) object <- substitute(object)
   if (is.expression(object) || is.language(object)) {

@@ -1,7 +1,7 @@
 # lava (development version)
-  - new function `marginal(object, f, data, id, subset)` for marginal
+  - new function `expectation(object, f, data, id, subset)` for marginal
     (standardized) estimates via g-computation. `estimate(x, f,
-    average=TRUE, ...)` now calls `marginal`. The `id` argument refers to the
+    average=TRUE, ...)` now calls `expectation`. The `id` argument refers to the
     values of `f` (the rows of `data`; defaults to the names of the values of
     `f` or `rownames(data)`), and the influence function of the model is
     aligned to these ids via `index(x)` for `estimate` objects, or the row
@@ -12,7 +12,7 @@
     `object`
   - `estimate(x, ...)` when `x` is a glm object returns an object of class
     `estimate.glm`with a `predict.estimate.glm` method. Standardized estimates
-    can then easily be obtained with the syntax `marginal(e, predict,
+    can then easily be obtained with the syntax `expectation(e, predict,
     data=transform(dat, a=1))`
   - `estimate(x, id=NULL)` (and `index(x) <- NULL`) removes the id (index) and
     the row names of the influence function.
