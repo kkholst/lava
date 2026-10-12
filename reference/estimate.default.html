@@ -340,7 +340,7 @@ independence sandwich estimator.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="estimate.array.html">estimate.array</a>, <a href="merge.estimate.html">merge.estimate</a>, <a href="contr.html">contr</a>, <a href="contr.html">parsedesign</a>,
-<a href="contr.html">pairwise_diff</a>, <a href="c.estimate.html">c.estimate</a>, <a href="summary.estimate.html">summary.estimate</a>,
+<a href="pairwise_diff.html">pairwise_diff</a>, <a href="c.estimate.html">c.estimate</a>, <a href="summary.estimate.html">summary.estimate</a>,
 <code>coef.estimate</code>,
 <code>vcov.estimate</code>, <code>transform.estimate</code>, <code>labels.estimate</code>,</p></div>
     </div>
@@ -684,11 +684,11 @@ independence sandwich estimator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> prod       0.4  0.2583 -0.1063 0.9063 0.121526</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> prod2      0.4  0.2583 -0.1063 0.9063 0.121526</span>
 <span class="r-in"><span><span class="va">e</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="co"># inner prod.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err    2.5% 97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1     0.89  0.5562 -0.2001  1.98  0.1096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5% 97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sum     0.89  0.5562 -0.2001  1.98  0.1096</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5% 97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1      2.1  0.6624 0.8018 3.398 0.001522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sum      2.1  0.6624 0.8018 3.398 0.001522</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>pow <span class="op">=</span> <span class="va">a</span><span class="op">^</span><span class="va">b</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err   2.5% 97.5%  P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pow   0.5743  0.2226 0.1382 1.011 0.009858</span>

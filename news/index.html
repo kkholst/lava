@@ -38,11 +38,15 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
+<ul><li>methods <code>diff.estimate</code>, <code>pairwise_diff</code>, <code>gamma.estimate</code>, <code>lgamma.estimate</code>, <code>normcdf.estimate</code>, <code>norminv.estimate</code>, <code>normpdf.estimate</code> to for estimating differences of parmaters, (log) gamma transformations, and normal transformations (cumulative distribution function, quantile function, probability density function) with <code>estimate</code> objects</li>
+<li>new subset/ordering methods: <code>tail.estimate</code>, <code>head.estimate</code>, <code>rev.estimate</code>, <code>sort.estimate</code>
+</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.3" id="lava-193">lava 1.9.3<a class="anchor" aria-label="anchor" href="#lava-193"></a></h2><p class="text-muted">CRAN release: 2026-08-20</p>
 <ul><li>
-<code>merge.estimate</code> no longer sort IC by id by default. The previous behavior is available via the new argument <code>sort=TRUE</code>.</li>
-<li>
-<code>estimate.array</code> allows arguments <code>type="quantileN"</code> where N=1,..,9 corresponding to the type argument in <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile</a></code>. The <code>id</code> index is now automatically derived from the row names unless explicitly specified as an argument.</li>
+<code>merge.estimate</code> no longer sort IC by id by default. The previous behavior is available via the new argument <code>sort=TRUE</code>. &gt; - <code>estimate.array</code> allows arguments <code>type="quantileN"</code> where N=1,..,9 corresponding to the type argument in <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile</a></code>. The <code>id</code> index is now automatically derived from the row names unless explicitly specified as an argument.</li>
 <li>distribution functions now use the <code>dist_</code> prefix in their function names. For example, <code>dist_lognormal</code> corresponds to <code>lognormal.lvm</code>. This makes the distribution functions easier to discover via tab completion.</li>
 </ul></div>
     <div class="section level2">
@@ -63,7 +67,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.9.1" id="lava-191">lava 1.9.1<a class="anchor" aria-label="anchor" href="#lava-191"></a></h2><p class="text-muted">CRAN release: 2026-05-14</p>
-<ul><li>Safe evaluation of rank in <code>wald_test</code>
+<ul><li>safe evaluation of rank in <code>wald_test</code>
 </li>
 <li>adding CI Length to <code>summary.sim</code> output</li>
 <li>fixing bug related to <code>estimate.index</code> in <code>summary.sim</code>

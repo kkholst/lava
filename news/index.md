@@ -1,12 +1,23 @@
 # Changelog
 
+## lava (development version)
+
+- methods `diff.estimate`, `pairwise_diff`, `gamma.estimate`,
+  `lgamma.estimate`, `normcdf.estimate`, `norminv.estimate`,
+  `normpdf.estimate` to for estimating differences of parmaters, (log)
+  gamma transformations, and normal transformations (cumulative
+  distribution function, quantile function, probability density
+  function) with `estimate` objects
+- new subset/ordering methods: `tail.estimate`, `head.estimate`,
+  `rev.estimate`, `sort.estimate`
+
 ## lava 1.9.3
 
 CRAN release: 2026-08-20
 
 - `merge.estimate` no longer sort IC by id by default. The previous
-  behavior is available via the new argument `sort=TRUE`.
-- `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
+  behavior is available via the new argument `sort=TRUE`. \> -
+  `estimate.array` allows arguments `type="quantileN"` where N=1,..,9
   corresponding to the type argument in
   [`stats::quantile`](https://rdrr.io/r/stats/quantile.html). The `id`
   index is now automatically derived from the row names unless
@@ -45,7 +56,7 @@ CRAN release: 2026-06-30
 
 CRAN release: 2026-05-14
 
-- Safe evaluation of rank in `wald_test`
+- safe evaluation of rank in `wald_test`
 - adding CI Length to `summary.sim` output
 - fixing bug related to `estimate.index` in `summary.sim`
 - updated `plot.sim`, `forestplot`, `plot.estimate`

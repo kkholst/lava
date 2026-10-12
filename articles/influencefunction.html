@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-10-10</p>
+      <p class="date">2026-10-12</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/main/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -706,11 +706,11 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 3    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 4    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5     3.043e-15  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 3    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 4    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5     2.155e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                      </span></span>
 <span><span class="co">#&gt; 1996  0.000       0.000     -4.545       </span></span>
 <span><span class="co">#&gt; 1997  0.000       0.000      3.571       </span></span>
@@ -719,9 +719,9 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <span><span class="co">#&gt; 2000  0.000       0.000     -4.545</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28</span></span>
-<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.718185e-24</span></span>
-<span><span class="co">#&gt; (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28</span></span>
+<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.717325e-24</span></span>
+<span><span class="co">#&gt; (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="renaming-and-subsetting-parameters">Renaming and subsetting parameters<a class="anchor" aria-label="anchor" href="#renaming-and-subsetting-parameters"></a>
 </h3>
@@ -932,11 +932,11 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <span><span class="co">#&gt; prod       0.4  0.2302 -0.05112 0.8511 0.082235</span></span>
 <span><span class="co">#&gt; prod2      0.4  0.2302 -0.05112 0.8511 0.082235</span></span>
 <span><span class="va">e</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span> <span class="co"># inner prod.</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err     2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; p1     0.89  0.4603 -0.01224 1.792 0.05319</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err     2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; sum     0.89  0.4603 -0.01224 1.792 0.05319</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">e</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1      2.1  0.5607 1.001 3.199 0.0001802</span></span>
+<span><span class="co">#&gt;     Estimate Std.Err  2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; sum      2.1  0.5607 1.001 3.199 0.0001802</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>pow <span class="op">=</span> <span class="va">a</span><span class="op">^</span><span class="va">b</span><span class="op">)</span> <span class="co"># power-function, rename parameter</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5% 97.5% P-value</span></span>
 <span><span class="co">#&gt; pow   0.5743  0.3392 -0.09052 1.239 0.09043</span></span>
@@ -983,9 +983,11 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 </li>
 <li>inverse hyperbolic functions: <code>acosh</code>, <code>asinh</code>, <code>atanh</code>
 </li>
-<li>other mathematical functions: <code>log</code>, <code>log1p</code>, <code>exp</code>, <code>expm1</code>, <code>sqrt</code>
+<li>other mathematical functions: <code>log</code>, <code>log1p</code>, <code>exp</code>, <code>expm1</code>, <code>sqrt</code>, <code>gamma</code>, <code>lgamma</code>
 </li>
-<li>mathematical operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>prod</code>, <code>sum</code>, <code>%*%</code>
+<li>normal distribution functions (CDF, quantile, PDF): <code>normcdf</code>, <code>norminv</code>, <code>normpdf</code>
+</li>
+<li>mathematical operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>prod</code>, <code>sum</code>, <code>diff</code>, <code>%*%</code>
 </li>
 </ul>
 <p>and any compositions of these functions, which also means we can immediately apply most existing user-defined functions. To give an example consider the <code>logit</code> function</p>
@@ -993,8 +995,8 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <div class="sourceCode cell-code" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
-<span><span class="co">#&gt; log(p/(1 - p))</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55d81a6047c8&gt;</span></span>
+<span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x558c5913f718&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1180,12 +1182,12 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <p>A particular useful contrast is the following for considering all pairwise comparisons of different exposure estimates:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/contr.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_diff.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      [,1] [,2] [,3]</span></span>
 <span><span class="co">#&gt; [1,]    1   -1    0</span></span>
 <span><span class="co">#&gt; [2,]    1    0   -1</span></span>
 <span><span class="co">#&gt; [3,]    0    1   -1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="fu"><a href="../reference/contr.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, use<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, <span class="fu"><a href="../reference/pairwise_diff.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>, use<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Call: estimate.default(x = gg, f = pairwise_diff(3), use = c(2, 4, </span></span>
 <span><span class="co">#&gt;     6))</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
@@ -1449,7 +1451,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
 <span><span class="co">#&gt;  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      </span></span>
 <span><span class="co">#&gt;  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           </span></span>
-<span><span class="co">#&gt; [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           </span></span>
+<span><span class="co">#&gt; [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           </span></span>
 <span><span class="co">#&gt; [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              </span></span>
 <span><span class="co">#&gt; [16] generics_0.1.4         knitr_1.52             backports_1.5.1       </span></span>
 <span><span class="co">#&gt; [19] MASS_7.3-65            tibble_3.3.1           future_1.76.0         </span></span>
