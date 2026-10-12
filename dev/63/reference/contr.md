@@ -28,6 +28,10 @@ contr(p, n, diff = TRUE, ...)
 
   Additional arguments to lower level functions
 
+## See also
+
+[pairwise_diff](https://kkholst.github.io/lava/reference/pairwise_diff.md)
+
 ## Examples
 
 ``` r

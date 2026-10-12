@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01
-#> u     0.21656 0.04596  0.12648 0.3066 2.454e-06
-#> y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29
-#> y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31
-#> u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02
+#> y2   -0.01236 0.06350 -0.13682 0.1121 8.457e-01
+#> u     0.21656 0.04681  0.12482 0.3083 3.713e-06
+#> y1~w  0.59037 0.05307  0.48636 0.6944 9.491e-29
+#> y2~w  0.65419 0.05598  0.54447 0.7639 1.510e-31
+#> u~~u  0.19001 0.07610  0.04086 0.3392 1.253e-02
 ```
 
 ### Example: quantile
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.770e-16   5.698e+00  0.000e+00   
-#> 2    -5.770e-16   5.698e+00  0.000e+00   
-#> 3    -5.770e-16   5.698e+00  0.000e+00   
-#> 4    -5.770e-16   5.698e+00  0.000e+00   
-#> 5     2.155e-15  -1.600e+01  0.000e+00   
+#> 1    -5.097e-16   5.698e+00  0.000e+00   
+#> 2    -5.097e-16   5.698e+00  0.000e+00   
+#> 3    -5.097e-16   5.698e+00  0.000e+00   
+#> 4    -5.097e-16   5.698e+00  0.000e+00   
+#> 5     3.043e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
-#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
-#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
+#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
+#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
 ```
 
 ### Renaming and subsetting parameters
@@ -1087,11 +1087,11 @@ c(sum=sum(e), sum2=a+b,
 #> prod       0.4  0.2302 -0.05112 0.8511 0.082235
 #> prod2      0.4  0.2302 -0.05112 0.8511 0.082235
 e %*% e # inner prod.
-#>    Estimate Std.Err     2.5% 97.5% P-value
-#> p1     0.89  0.4603 -0.01224 1.792 0.05319
+#>     Estimate Std.Err     2.5% 97.5% P-value
+#> sum     0.89  0.4603 -0.01224 1.792 0.05319
 c(1, 2) %*% e
-#>    Estimate Std.Err  2.5% 97.5%   P-value
-#> p1      2.1  0.5607 1.001 3.199 0.0001802
+#>     Estimate Std.Err  2.5% 97.5%   P-value
+#> sum      2.1  0.5607 1.001 3.199 0.0001802
 c(pow = a^b) # power-function, rename parameter
 #>     Estimate Std.Err     2.5% 97.5% P-value
 #> pow   0.5743  0.3392 -0.09052 1.239 0.09043
@@ -1139,8 +1139,12 @@ The following transformations are implemented
 - inverse trigonometric functions: `acos`, `asin`, `atan`
 - hyperbolic functions: `cosh`, `sinh`, `tanh`
 - inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
-- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`
-- mathematical operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `%*%`
+- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`,
+  `gamma`, `lgamma`
+- normal distribution functions (CDF, quantile, PDF): `normcdf`,
+  `norminv`, `normpdf`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`,
+  `diff`, `%*%`
 
 and any compositions of these functions, which also means we can
 immediately apply most existing user-defined functions. To give an
@@ -1150,8 +1154,8 @@ example consider the `logit` function
 
 lava::logit
 #> function (p) 
-#> log(p/(1 - p))
-#> <bytecode: 0x55febc7093c8>
+#> log(p) - log1p(-p)
+#> <bytecode: 0x55888f3d3a18>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1752,7 +1756,7 @@ sessionInfo()
 #>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
 #>  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      
 #>  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           
-#> [10] globals_0.19.1         splines_4.6.1          yaml_2.3.12           
+#> [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           
 #> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
 #> [19] MASS_7.3-65            tibble_3.3.1           future_1.76.0         

@@ -264,7 +264,7 @@ For full theoretical background and worked examples see
 [merge.estimate](https://kkholst.github.io/lava/reference/merge.estimate.md),
 [contr](https://kkholst.github.io/lava/reference/contr.md),
 [parsedesign](https://kkholst.github.io/lava/reference/contr.md),
-[pairwise_diff](https://kkholst.github.io/lava/reference/contr.md),
+[pairwise_diff](https://kkholst.github.io/lava/reference/pairwise_diff.md),
 [c.estimate](https://kkholst.github.io/lava/reference/c.estimate.md),
 [summary.estimate](https://kkholst.github.io/lava/reference/summary.estimate.md),
 `coef.estimate`, `vcov.estimate`, `transform.estimate`,
@@ -602,11 +602,11 @@ c(sum=sum(e), sum2=a+b,
 #> prod       0.4  0.3050 -0.1979 0.9979 0.189758
 #> prod2      0.4  0.3050 -0.1979 0.9979 0.189758
 e %*% e # inner prod.
-#>    Estimate Std.Err    2.5% 97.5% P-value
-#> p1     0.89  0.6101 -0.3057 2.086  0.1446
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> sum     0.89  0.6101 -0.3057 2.086  0.1446
 c(1, 2) %*% e
-#>    Estimate Std.Err   2.5% 97.5%  P-value
-#> p1      2.1  0.7039 0.7203  3.48 0.002853
+#>     Estimate Std.Err   2.5% 97.5%  P-value
+#> sum      2.1  0.7039 0.7203  3.48 0.002853
 c(pow = a^b)
 #>     Estimate Std.Err   2.5%  97.5%   P-value
 #> pow   0.5743  0.1222 0.3348 0.8139 2.609e-06
