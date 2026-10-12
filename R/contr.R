@@ -82,6 +82,7 @@ contr <- function(p, n, diff = TRUE, ...) {
 #' e <- estimate(coef = c(a = 1, b = 2, c = 4),
 #'               vcov = diag(3))
 #' pairwise_diff(e)
+#' @export
 pairwise_diff <- function(n, idx=NULL, reverse=FALSE) {
   estimate_obj <- inherits(n, "estimate")
   if (isTRUE(estimate_obj)) {
