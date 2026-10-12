@@ -20,8 +20,11 @@ reference:
   - iid
   - merge.estimate
   - multinomial
+  - normcdf
+  - pairwise_diff
   - plot.estimate
   - stack.estimate
+  - subset.estimate
   - summary.estimate
   - var_ic
 

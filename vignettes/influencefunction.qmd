@@ -796,9 +796,11 @@ The following transformations are implemented
 - inverse trigonometric functions: `acos`, `asin`, `atan`
 - hyperbolic functions: `cosh`, `sinh`, `tanh`
 - inverse hyperbolic functions: `acosh`, `asinh`, `atanh`
-- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`
-- mathematical operators: `+`, `-`, `*`, `/`, `^`,
- `prod`, `sum`, `%*%`
+- other mathematical functions: `log`, `log1p`, `exp`, `expm1`, `sqrt`, `gamma`,
+  `lgamma`
+- normal distribution functions (CDF, quantile, PDF): `normcdf`, `norminv`,
+  `normpdf`
+- mathematical operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `diff`, `%*%`
 
 and any compositions of these functions, which also means we can immediately
  apply most existing user-defined functions. To give an example consider the `logit` function
