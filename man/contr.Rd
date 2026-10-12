@@ -3,7 +3,6 @@
 \name{contr}
 \alias{contr}
 \alias{parsedesign}
-\alias{pairwise_diff}
 \title{Create contrast matrix}
 \usage{
 contr(p, n, diff = TRUE, ...)
@@ -35,4 +34,7 @@ parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
 ## All pairs comparisons:
 pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
 pdiff(4)
+}
+\seealso{
+\link{pairwise_diff}
 }
