@@ -85,23 +85,13 @@ compare.default <- function(object,...,
         method = "- Wald test -";
         cnames <- c()
         if (!is.null(pname)) {
-            msg <- c()
-            for (i in seq_len(nrow(B))) {
-                Bidx <- which(B[i,]!=0)
-                Bval <- abs(B[i,Bidx]); Bval[Bval==1] <- ""
-                sgn  <- rep(" + ",length(Bval)); sgn[sign(B[i,Bidx])==-1] <- " - ";
-                if (sgn[1] == " + ") {
-                  sgn[1] <- ""
-                } else {
-                    sgn[1] <- "-"
-                }
-                cnames <- c(cnames,
-                            paste0(sgn,Bval,
-                                   paste0("[",pname[Bidx],"]"),collapse=""))
-                msg <- c(msg,paste0(cnames[i]," = ",null[i]))
-            }
-            method <- c(method,"","Null Hypothesis:",msg)
-            ##method <- c(method,"","Observed:",paste(formatC(as.vector(Bp)),collapse=" "))
+          msg <- c()
+          colnames(B) <- pname
+          cnames <- contrast_names(B)
+          for (i in seq_len(nrow(B))) {
+            msg <- c(msg,paste0(cnames[i], " = ", null[i]))
+          }
+          method <- c(method, "", "Null Hypothesis:", msg)
         }
         rownames(ct) <- cnames
         res <- list(##data.name=hypothesis,
@@ -124,11 +114,13 @@ compare.default <- function(object,...,
         p0 <- numeric(length(coef(altmodel)))
         idx <-  match(coef(Model(object)),coef(altmodel))
         p0[idx] <- coef(object)
-        Sc2 <- score(altmodel,p=p0,data=model.frame(object),weigth=Weights(altmodel),
-                     estimator=object$estimator,...)
-        I <- information(altmodel,p=p0,n=object$data$n,
-                         data=model.frame(object),weigth=Weights(object),
-                         estimator=object$estimator,...
+        Sc2 <- score(altmodel, p=p0,
+                     data=model.frame(object),
+                     weigth=Weights(altmodel),
+                     estimator=object$estimator, ...)
+        I <- information(altmodel, p=p0, n=object$data$n,
+                         data=model.frame(object), weight=Weights(object),
+                         estimator=object$estimator, ...
                          )
         iI <- try(solve(I), silent=TRUE)
         Q <- ifelse (inherits(iI, "try-error"), NA, ## Score test
@@ -137,7 +129,7 @@ compare.default <- function(object,...,
         )
         attributes(Q) <- NULL; names(Q) <- "chisq"
         df <- length(p0)-length(coef(object)); names(df) <- "df"
-        pQ <- ifelse(df==0,NA,pchisq(Q,df,lower.tail=FALSE))
+        pQ <- ifelse(df==0,NA,pchisq(Q, df, lower.tail=FALSE))
         res <- list(data.name=as.character(scoretest),
                     statistic = Q, parameter = df,
                     p.value=pQ, method = "- Score test -")
@@ -157,11 +149,14 @@ compare.default <- function(object,...,
         L0 <- logLik(object)
         L1 <- satmodel(object,logLik=TRUE)
         df <- attributes(L1)$df-attributes(L0)$df; names(df) <- "df"
-        Q <- abs(2*(L0-L1));
-        attributes(Q) <- NULL; names(Q) <- "chisq";
-        pQ <- ifelse(df==0,NA,pchisq(Q,df,lower.tail=FALSE))
+        Q <- abs(2*(L0-L1))
+        attributes(Q) <- NULL
+        names(Q) <- "chisq"
+        pQ <- ifelse(df==0,NA,pchisq(Q, df, lower.tail=FALSE))
 
-        values <- c(L0,L1); names(values) <- c("log likelihood (model)", "log likelihood (saturated model)")
+        values <- c(L0,L1)
+        names(values) <- c("log likelihood (model)",
+                           "log likelihood (saturated model)")
         res <- list(statistic = Q, parameter = df,
                     p.value=pQ, method = "- Likelihood ratio test -",
                     estimate = values)
@@ -177,6 +172,28 @@ compare.default <- function(object,...,
     return(res)
 }
 
+contrast_names <- function(contrast) {
+  pname <- colnames(contrast)
+  rnames <- c()
+  for (i in seq_len(nrow(contrast))) {
+    contrast_idx <- which(contrast[i,]!=0)
+    contrast_val <- abs(contrast[i, contrast_idx])
+    contrast_val[contrast_val==1] <- ""
+    sgn  <- rep(" + ",length(contrast_val))
+    sgn[sign(contrast[i, contrast_idx])==-1] <- " - "
+    if (sgn[1] == " + ") {
+      sgn[1] <- ""
+    } else {
+      sgn[1] <- "-"
+    }
+    rnames <- c(
+      rnames,
+      paste0(sgn, contrast_val,
+             paste0("[", pname[contrast_idx], "]"), collapse="")
+    )
+  }
+  return(rnames)
+}
 
 comparepair <- function(x1,x2) {
     l1 <- do.call("logLik",list(x1),envir=parent.frame(2))

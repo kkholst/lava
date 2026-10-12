@@ -3,8 +3,6 @@
 \name{contr}
 \alias{contr}
 \alias{parsedesign}
-\alias{pairwise.diff}
-\alias{pairwise_diff}
 \title{Create contrast matrix}
 \usage{
 contr(p, n, diff = TRUE, ...)
@@ -12,9 +10,11 @@ contr(p, n, diff = TRUE, ...)
 \arguments{
 \item{p}{index of non-zero entries (see example)}
 
-\item{n}{Total number of parameters (if omitted the max number in p will be used)}
+\item{n}{Total number of parameters (if omitted the max number in p will be
+used)}
 
-\item{diff}{If FALSE all non-zero entries are +1, otherwise the second non-zero element in each row will be -1.}
+\item{diff}{If FALSE all non-zero entries are +1, otherwise the second
+non-zero element in each row will be -1.}
 
 \item{...}{Additional arguments to lower level functions}
 }
@@ -34,4 +34,7 @@ parsedesign(c("aa","b","c"),"?","?",diff=c(FALSE,TRUE))
 ## All pairs comparisons:
 pdiff <- function(n) lava::contr(lapply(seq(n-1), function(x) seq(x, n)))
 pdiff(4)
+}
+\seealso{
+\link{pairwise_diff}
 }
