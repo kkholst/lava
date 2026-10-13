@@ -84,8 +84,20 @@
 #' expectation(x / (1+z^2), data=d)
 expectation <- function(object, f, data, id, subset, labels = NULL, ...) {
 
-  if (missing(f)) object <- substitute(object)
-  if (is.expression(object) || is.language(object)) {
+
+  if (missing(f)) {
+    expr <- substitute(object)
+    if (is.symbol(expr)) {
+      nm <- as.character(expr)
+      if (exists(nm, envir = parent.frame(), inherits = TRUE)) {
+      value <- get(nm, envir = parent.frame(), inherits = TRUE)
+      if (is.language(value) || is.expression(value))
+        expr <- value
+      }
+    }
+    object <- as.expression(expr)
+  }
+  if (is.expression(object)) {
     # If an expression we just calculate E[f(Z)] with known f
     if (missing(data)) data <- NULL
     out <- expect(
@@ -177,7 +189,7 @@ expectation <- function(object, f, data, id, subset, labels = NULL, ...) {
 # Calculate E[f(Z)]
 expect <- function(expr, data = NULL, envir = parent.frame(),
                    id, quoted = FALSE, ...) {
-  expr <- if (quoted) expr else substitute(expr)
+  expr <- if (quoted) base::as.expression(expr) else substitute(expr)
   z <- if (is.null(data)) {
     eval(expr, envir = envir)
   } else {

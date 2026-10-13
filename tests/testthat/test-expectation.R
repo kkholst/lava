@@ -464,3 +464,20 @@ test_that("standardization with unsorted and clustered ids (same data)", {
   expect_equivalent(vcov(a5), vcov(a1))
   expect_identical(index(a5), d$id)
 })
+
+test_that("expectation: expressions and quoted arguments", {
+  d <- data.frame(z=rnorm(10))
+  e1 <- expression(z)
+  e2 <- quote(z)
+  m1 <- expectation(z, data=d)
+  m2 <- expectation(e1, data=d)
+  m3 <- expectation(e2, data=d)
+  m4 <- with(d, expectation(z))
+  m5 <- expectation(d$z)
+
+  comp <- function(m1, m2) {
+    expect_equal(coef(m1), coef(m2), check.attributes=FALSE)
+    expect_equal(IC(m1), IC(m2), check.attributes=FALSE)
+  }
+  for (m in list(m2, m3, m4, m5)) comp(m1, m)
+})
