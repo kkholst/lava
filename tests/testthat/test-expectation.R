@@ -14,7 +14,7 @@ dat <- sim_expectation()
 test_that("expectation agrees with estimate(..., average=TRUE)", {
   g <- glm(y ~ w1 + a, data = dat, family = binomial)
   f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
-  m <- expectation(g, f)
+  m <- expectation(f, object=g)
   a <- estimate(g, f, average = TRUE)
   expect_equal(coef(m), coef(a))
   expect_equal(vcov(m), vcov(a))
@@ -33,11 +33,11 @@ test_that("expectation agrees with estimate(..., average=TRUE)", {
     list(p0 = plogis(p[1] + p["w1"] * data[, "w1"]),
          p1 = plogis(p[1] + p["w1"] * data[, "w1"] + p["a"]))
   }
-  m2 <- expectation(g, f2)
+  m2 <- expectation(f2, object=g)
   expect_identical(names(coef(m2)), c("p0", "p1"))
   expect_equivalent(coef(m2)[2], coef(m))
   expect_equivalent(vcov(m2)[2, 2], vcov(m))
-  m3 <- expectation(g, f2, labels = c("y0", "y1"))
+  m3 <- expectation(f2, object=g, labels = c("y0", "y1"))
   expect_identical(names(coef(m3)), c("y0", "y1"))
   expect_equal(coef(estimate(g, f2, average = TRUE, keep = "p1")),
                coef(m2)["p1"])
@@ -57,33 +57,33 @@ test_that("expectation: ids of the g-computation and model part", {
   ic2[dat$z == 1] <- IC(g) %*% D * n / nrow(dat1)
   ic <- q - mean(q) + ic2
 
-  m <- expectation(e, f, data = dat, id = dat$id)
+  m <- expectation(f, object=e, data = dat, id = dat$id)
   expect_equal(unname(coef(m)), mean(q))
   expect_true(mean(IC(m)-ic)<1e-9)
   expect_identical(index(m), dat$id)
 
   # id as column name of data
-  expect_equal(vcov(expectation(e, f, data = dat, id = "id")), vcov(m))
+  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id")), vcov(m))
 
   # ids from the names of the values of 'f'
   fn <- function(p, data) {
     structure(f(p, data), names = data$id)
   }
-  mn <- expectation(e, fn, data = dat)
+  mn <- expectation(object=e, fn, data = dat)
   expect_equal(vcov(mn), vcov(m))
   expect_identical(index(mn), dat$id)
   # 'id' takes precedence over the names of 'f'
   expect_message(
-    expectation(e, fn, data = dat, id = paste0("x", seq_len(n))),
+    expectation(object=e, fn, data = dat, id = paste0("x", seq_len(n))),
     "independence"
   )
 
   # default: rownames(data) (overlapping with rownames of the model frame)
-  m0 <- expectation(g, f, data = dat)
+  m0 <- expectation(object=g, f, data = dat)
   expect_equal(vcov(m0), vcov(m))
 
   # id = NULL removes the index
-  m1 <- expectation(g, f, data = dat, id = NULL)
+  m1 <- expectation(object=g, f, data = dat, id = NULL)
   expect_null(index(m1))
   expect_null(rownames(IC(m1)))
   expect_equivalent(vcov(m1), vcov(m))
@@ -102,14 +102,14 @@ test_that("expectation: 'f' returning values for some rows of data", {
   }
   f_all <- function(p, data) plogis(model.matrix(~ w1 + a, data) %*% p)
   # default ids: names of the values of 'f'
-  m <- expectation(e, f, data = dat)
+  m <- expectation(object=e, f, data = dat)
   expect_equal(index(m)[seq_len(sum(dat$a == 1))],
                    rownames(dat)[dat$a == 1])
   expect_equal(unname(coef(m)), mean(f_all(coef(g), subset(dat, a == 1))))
   # same estimate and variance as the conditional average over all rows of
   # 'data' (the IF of the latter also contains the rows with a == 0)
-  ms1 <- expectation(e, f_all, data = dat, subset = dat$a == 1)
-  ms2 <- expectation(e, f_all, data = dat, subset = a == 1)
+  ms1 <- expectation(object=e, f_all, data = dat, subset = dat$a == 1)
+  ms2 <- expectation(object=e, f_all, data = dat, subset = a == 1)
   expect_equal(coef(m), coef(ms1))
   expect_equal(vcov(m), vcov(ms1))
   expect_equal(coef(m), coef(ms2))
@@ -117,7 +117,7 @@ test_that("expectation: 'f' returning values for some rows of data", {
   expect_identical(index(ms1), rownames(dat))
   # columns of 'data' take precedence over variables in the calling environment
   a <- rep(0, nrow(dat))
-  ms3 <- expectation(e, f_all, data = dat, subset = a == 1)
+  ms3 <- expectation(object=e, f_all, data = dat, subset = a == 1)
   expect_equal(coef(ms3), coef(ms1))
   expect_equal(vcov(ms3), vcov(ms1))
   expect_equal(
@@ -128,16 +128,16 @@ test_that("expectation: 'f' returning values for some rows of data", {
   # model ids partly outside data
   id1 <- dat1$id
   id1[1:100] <- seq_len(100)
-  m1 <- expectation(estimate(g, id = id1), f_all, data = dat, id = "id",
+  m1 <- expectation(object=estimate(g, id = id1), f_all, data = dat, id = "id",
                  subset = (a == 1))
   expect_equal(nrow(IC(m1)), nrow(dat) + 100)
   # 'id' and 'subset' must have one value per value of 'f'
-  expect_error(expectation(e, f, data = dat, id = "id"), "does not agree")
-  expect_error(expectation(e, f, data = dat, id = dat$id), "does not agree")
-  expect_error(expectation(e, f, data = dat, subset = w1 > 0), "does not agree")
+  expect_error(expectation(object=e, f, data = dat, id = "id"), "does not agree")
+  expect_error(expectation(object=e, f, data = dat, id = dat$id), "does not agree")
+  expect_error(expectation(object=e, f, data = dat, subset = w1 > 0), "does not agree")
   # unnamed values for some of the rows cannot be linked
   expect_error(
-    expectation(e, function(p, data) as.vector(f(p, data)), data = dat),
+    expectation(object=e, function(p, data) as.vector(f(p, data)), data = dat),
     "Unable to link"
   )
 })
@@ -154,14 +154,14 @@ test_that("expectation: id matched to the values of 'f' (no data)", {
   f <- function(p, object) {
     plogis(p[1] + p["w1"] * dat$w1 + p["a"])
   }
-  m <- expectation(e, f, id = dat$id)
+  m <- expectation(object=e, f, id = dat$id)
   expect_equal(nrow(IC(m)), nrow(dat) + 100)
   expect_identical(index(m)[seq_len(nrow(dat))], dat$id)
   f_d <- function(p, data) plogis(p[1] + p["w1"] * data$w1 + p["a"])
-  expect_equal(vcov(m), vcov(expectation(e, f_d, data = dat, id = "id")))
+  expect_equal(vcov(m), vcov(expectation(object=e, f_d, data = dat, id = "id")))
   # ids from the names of the values of 'f'
   fn <- function(p, object) structure(f(p, object), names = dat$id)
-  expect_equal(vcov(expectation(e, fn)), vcov(m))
+  expect_equal(vcov(expectation(object=e, fn)), vcov(m))
 })
 
 test_that("expectation: subset (conditional average)", {
@@ -182,14 +182,14 @@ test_that("expectation: subset (conditional average)", {
   ic2_s[dat$z == 1] <- IC(g) %*% D_s * n / nrow(dat1)
   icc <- (q * s - mm + ic2_s) / phat - mm / phat^2 * (s - phat)
 
-  m <- expectation(e, f, data = dat, id = dat$id, subset = s)
+  m <- expectation(object=e, f, data = dat, id = dat$id, subset = s)
   expect_equivalent(coef(m), mm / phat)
   expect_equivalent(IC(m), icc)
   # expression evaluated in data, and column name
-  expect_equal(vcov(expectation(e, f, data = dat, id = "id", subset = w1 > 0)),
+  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = w1 > 0)),
                vcov(m))
   dat$s <- s
-  expect_equal(vcov(expectation(e, f, data = dat, id = "id", subset = "s")),
+  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = "s")),
                vcov(m))
   # via estimate
   expect_equal(vcov(estimate(e, f, data = dat, id = "id", subset = w1 > 0,
@@ -200,32 +200,32 @@ test_that("expectation: subset (conditional average)", {
 test_that("expectation: arguments of 'f'", {
   g <- glm(y ~ w1 + a, data = dat, family = binomial)
   f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
-  m <- expectation(g, f)
+  m <- expectation(object=g, f)
   # 'object' argument (no data needed)
   fo <- function(p, object) {
     X <- model.matrix(object)
     X[, "a"] <- 1
     plogis(X %*% p)
   }
-  expect_equal(vcov(expectation(g, fo)), vcov(m))
+  expect_equal(vcov(expectation(object=g, fo)), vcov(m))
   # 'object' is the model also for estimate objects of the model
   fm <- function(p, data, object) {
     if (is.null(data)) data <- model.frame(object$fit)
     plogis(model.matrix(object$fit, data = transform(data, a = 1)) %*% p)
   }
-  expect_equal(vcov(expectation(estimate(g), fm)), vcov(m))
+  expect_equal(vcov(expectation(object=estimate(g), fm)), vcov(m))
   # dots
   fd <- function(p, ...) {
     data <- list(...)$data
     plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
   }
-  expect_equal(vcov(expectation(g, fd)), vcov(m))
+  expect_equal(vcov(expectation(object=g, fd)), vcov(m))
   # additional arguments
   fa <- function(p, data, a) plogis(p[1] + p["w1"] * data[, "w1"] + a * p["a"])
-  expect_equal(vcov(expectation(g, fa, a = 1)), vcov(m))
+  expect_equal(vcov(expectation(object=g, fa, a = 1)), vcov(m))
 
-  expect_error(expectation(g, function(x) x[1]), "must have an argument")
-  expect_error(expectation(estimate(g, vcov = vcov(g)), f, data = dat),
+  expect_error(expectation(object=g, function(x) x[1]), "must have an argument")
+  expect_error(expectation(object=estimate(g, vcov = vcov(g)), f, data = dat),
                "Influence function")
 })
 

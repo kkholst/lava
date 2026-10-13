@@ -4,20 +4,20 @@
 \alias{expectation}
 \title{Mean of (estimated) function via g-computation}
 \usage{
-expectation(object, f, data, id, subset, labels = NULL, ...)
+expectation(f, object, data, id, subset, labels = NULL, ...)
 }
 \arguments{
-\item{object}{model object (\code{glm}, \code{lvmfit}, ...) or \code{estimate} object
-providing the parameter estimates and their influence function.
-Alternatively, an evaluated expression of a function with values in \code{data}
-can be provided to calculate the simple mean (see examples).}
-
 \item{f}{function with named argument \code{p} providing the parameter vector and
 the optional named arguments \code{data} and \code{object} (the model object, e.g. an
 \code{estimate} object). Should return a vector, matrix or a (named) list of
 vectors with one value per observation (row of \code{data} unless \code{data} is
-NULL). If the result has an attribute \code{"grad"} it is used as the Jacobian
-of \code{f} with respect to \code{p}}
+missing). If the result has an attribute \code{"grad"} it is used as the
+Jacobian of \code{f} with respect to \code{p}}
+
+\item{object}{model object (\code{glm}, \code{lvmfit}, ...) or \code{estimate} object
+providing the parameter estimates and their influence function.
+Alternatively, an evaluated expression of a function with values in \code{data}
+can be provided to calculate the simple mean (see examples).}
 
 \item{data}{\code{data.frame} over which \code{f} is averaged. Defaults to
 \code{model.frame(object)} (which is not available for \code{estimate} objects).}
@@ -73,13 +73,13 @@ assign ids (or clusters) to the model.
 m <- lvm(y ~ x + z)
 distribution(m, y ~ x) <- dist_bernoulli("logit")
 d <- sim(m, 1000, seed = 1)
-g <- glm(y ~ z + x, data = d, family = binomial())
+fit <- glm(y ~ z + x, data = d, family = binomial())
 
 ## Standardization (g-computation)
 f <- function(p, data)
   list(p0 = expit(p["(Intercept)"] + p["z"] * data[, "z"]),
        p1 = expit(p["(Intercept)"] + p["x"] + p["z"] * data[, "z"]))
-e <- expectation(g, f)
+e <- expectation(f, fit)
 e
 estimate(e, diff)
 
@@ -89,13 +89,13 @@ d$w <- rbinom(nrow(d), 1, 0.5)
 d1 <- subset(d, w == 1)
 g1 <- glm(y ~ x + z, data = d1, family = binomial)
 e1 <- estimate(g1, id = d1$id)
-expectation(e1, f, data = d, id = "id")
+expectation(f, e1, data = d, id = "id")
 
 ## Conditional marginal mean effects (subset) and clusters
 d$cl <- rep(seq(nrow(d) / 4), each = 4)
-expectation(estimate(g, id = d$cl),
-              function(p, data) expit(p[1] + p["z"] * data[, "z"]),
-              data = d, subset = z > 0, id = "cl")
+expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
+            estimate(fit, id = d$cl),
+            data = d, subset = z > 0, id = "cl")
 
 ## Simple mean of known function
 expectation(x / (1+z^2), data=d)

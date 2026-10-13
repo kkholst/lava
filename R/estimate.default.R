@@ -189,7 +189,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' f <- function(p,data)
 #'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
 #'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-#' e <- expectation(g, f)
+#' e <- expectation(f, g)
 #' e
 #' estimate(e,diff)
 #' estimate(e,cbind(1,1))
