@@ -9,8 +9,8 @@ test_that("Basic model building blocks", {
     ## Children parent,nodes
     testthat::expect_true(children(m,~x)=="y")
     testthat::expect_true(parents(m,~y)=="x")
-    testthat::expect_equivalent(parents(m),vars(m))
-    testthat::expect_equivalent(children(m),vars(m))
+    testthat::expect_equal(parents(m),vars(m), ignore_attr = TRUE)
+    testthat::expect_equal(children(m),vars(m), ignore_attr = TRUE)
 
     ## Remove association
     cancel(m) <- y~z+x
@@ -19,7 +19,7 @@ test_that("Basic model building blocks", {
 
     ## Remove variable
     kill(m) <- ~x
-    testthat::expect_equivalent(vars(m),c("y","z"))
+    testthat::expect_equal(vars(m),c("y","z"), ignore_attr = TRUE)
     testthat::expect_true(intercept(m)["y"]=="m")
 
     m <- lvm(c(y1,y2,y3)~x)
@@ -63,9 +63,9 @@ test_that("Basic model building blocks", {
     ## LISREL
     ## mm <- fixsome(mm)
     ## L <- lava:::lisrel(mm,rep(1,length(coef(mm))))
-    ## testthat::expect_equivalent(L$B,matrix(0,2,2))
-    ## testthat::expect_equivalent(L$Theta,diag(3))
-    ## testthat::expect_equivalent(L$Psi,diag(2))
+    ## testthat::expect_equal(L$B,matrix(0,2,2), ignore_attr = TRUE)
+    ## testthat::expect_equal(L$Theta,diag(3), ignore_attr = TRUE)
+    ## testthat::expect_equal(L$Psi,diag(2), ignore_attr = TRUE)
 })
 
 test_that("Linear constraints", {
@@ -83,7 +83,7 @@ test_that("Graph attributes", {
     m <- lvm(y~x)
     suppressMessages(g1 <- graph::updateGraph(plot(m,noplot=TRUE)))
     m1 <- graph2lvm(g1)
-    testthat::expect_equivalent(m1$M, m$M)
+    testthat::expect_equal(m1$M, m$M, ignore_attr = TRUE)
 
     col <- "blue"
     v <- "y"

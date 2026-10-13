@@ -3,14 +3,14 @@
 test_that("By", {
     b1 <- By(datasets::CO2,~Treatment+Type,colMeans,~conc)
     b2 <- By(datasets::CO2,c('Treatment','Type'),colMeans,'conc')
-    testthat::expect_equivalent(b1,b2)
+    testthat::expect_equal(b1,b2, ignore_attr = TRUE)
     ## require('data.table')
     ## t1 <- as.data.frame(data.table(datasets::CO2)[,mean(uptake),by=.(Treatment,Type,conc>500)])
     d0 <- transform(datasets::CO2,conc500=conc>500)
     t1 <- by(d0[,"uptake"],d0[,c("Treatment","Type","conc500")],mean)
     t2 <- By(datasets::CO2,~Treatment+Type+I(conc>500),colMeans,~uptake)
     testthat::expect_true(inherits(t2,"array"))
-    testthat::expect_equivalent(sort(t2),sort(t1))
+    testthat::expect_equal(sort(t2),sort(t1), ignore_attr = TRUE)
 })
 
 test_that("Expand", {
@@ -29,9 +29,9 @@ test_that("Expand", {
 })
 
 test_that("%in%, %nin%, %in.open%, %in.closed%", {
-  expect_equivalent(1:10 %ni% c(1,5,10),
+  expect_equal(1:10 %ni% c(1,5,10),
                     !c(TRUE,FALSE,FALSE,FALSE,TRUE,
-                      FALSE,FALSE,FALSE,FALSE,TRUE))
+                      FALSE,FALSE,FALSE,FALSE,TRUE), ignore_attr = TRUE)
 
   expect_false(1 %in.open% c(1,4))
   expect_true(1 %in.closed% c(1,4))
@@ -44,7 +44,7 @@ test_that("%in%, %nin%, %in.open%, %in.closed%", {
 test_that("formulas", {
     f <- toformula(c('y1','y2'),'x'%++%1:5)
     ff <- getoutcome(f)
-    testthat::expect_equivalent(trim(ff,all=TRUE),"c(y1,y2)")
+    testthat::expect_equal(trim(ff,all=TRUE),"c(y1,y2)", ignore_attr = TRUE)
     testthat::expect_true(length(attr(ff,'x'))==5)
 })
 
@@ -64,7 +64,7 @@ test_that("Grep", {
   expect_equal(colnames(d), c("Sepal.Length", "Sepal.Width"))
 
   d <- Grep(iris, "Sepal", subset=FALSE)
-  expect_equivalent(colnames(d), c("index", "name"))
+  expect_equal(colnames(d), c("index", "name"), ignore_attr = TRUE)
   expect_true(nrow(d)==2L)
 })
 
@@ -99,9 +99,9 @@ test_that("na.pass0", {
   expect_true(all(d1$a[setdiff(1:10, idx2)]!=0))
   expect_true(all(d1$y[setdiff(1:10, idx1)]!=0))
   y1 <- na.pass0(d$y)
-  expect_equivalent(y1, d1$y)
+  expect_equal(y1, d1$y, ignore_attr = TRUE)
   a1 <- na.pass0(d$a)
-  expect_equivalent(a1, d1$a)
+  expect_equal(a1, d1$a, ignore_attr = TRUE)
 
   ## Setting entire rows to zero where ever there is a missing entry
   d2 <- na.pass0(d, row.wise = TRUE)

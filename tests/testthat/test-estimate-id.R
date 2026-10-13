@@ -7,11 +7,11 @@ test_that("index.estimate", {
 
   l1 <- lm(y1~x+z, data=d)
   e1 <- estimate(l1)
-  expect_equivalent(index(e1), rownames(d))
+  expect_equal(index(e1), rownames(d), ignore_attr = TRUE)
   expect_true(inherits(index(e1), "character"))
   V <- vcov(e1)
   index(e1) <- as.numeric(index(e1))
-  expect_equivalent(vcov(e1), V)
+  expect_equal(vcov(e1), V, ignore_attr = TRUE)
   expect_true(inherits(index(e1), "numeric"))
 })
 
@@ -39,10 +39,10 @@ test_that("id as column name of data", {
   # standardization: id refers to rows of 'data'
   f <- function(p, data) p[1] + p[2] * data[, "x"]
   ec <- estimate(g, id = d$cl)
-  a <- estimate(ec, f, data = d, id = "cl", average = TRUE)
+  a <- expectation(object=ec, f, data = d, id = "cl")
   expect_equal(
     vcov(a),
-    vcov(estimate(ec, f, data = d, id = d$cl, average = TRUE))
+    vcov(expectation(object=ec, f, data = d, id = d$cl))
   )
   expect_identical(index(a), unique(d$cl))
 })
@@ -98,9 +98,9 @@ test_that("estimate index order", {
               index(e)
             )
   e1 <- estimate(g, id=d$id)
-  testthat::expect_equivalent(
+  testthat::expect_equal(
               IC(e),
-              IC(e1),
+              IC(e1), ignore_attr = TRUE
               )
 })
 
@@ -118,7 +118,7 @@ test_that("id=NULL removes the id (index)", {
   expect_null(rownames(IC(e0)))
   expect_equal(vcov(e0), vcov(e))
   expect_equal(coef(e0), coef(e))
-  expect_equivalent(IC(e0), IC(e))
+  expect_equal(IC(e0), IC(e), ignore_attr = TRUE)
 
   # estimate objects and index<-
   e1 <- estimate(estimate(g, id = d$id), id = NULL)
@@ -135,12 +135,12 @@ test_that("id=NULL removes the id (index)", {
   ec0 <- estimate(ec, id = NULL)
   expect_null(index(ec0))
   expect_equal(vcov(ec0), vcov(ec))
-  expect_equivalent(IC(ec0), IC(ec))
+  expect_equal(IC(ec0), IC(ec), ignore_attr = TRUE)
 
   # averaging: default linking, ids removed from result
   f <- function(p, data) p[1] + p[2] * data[, "x"]
-  a <- estimate(g, f, data = d, average = TRUE)
-  a0 <- estimate(g, f, data = d, id = NULL, average = TRUE)
+  a <- expectation(object=g, f, data = d)
+  a0 <- expectation(object=g, f, data = d, id = NULL)
   expect_null(index(a0))
   expect_null(rownames(IC(a0)))
   expect_equal(vcov(a0), vcov(a))
@@ -163,11 +163,11 @@ test_that("cluster aggregation of IF (stack)", {
   ic0 <- IC(g)
   ic1 <- rowsum(ic0, d$cl, reorder = FALSE) * 10 / n
   expect_identical(index(e), unique(d$cl))
-  expect_equivalent(IC(e), ic1)
+  expect_equal(IC(e), ic1, ignore_attr = TRUE)
   expect_equal(rownames(IC(e)), unique(d$cl))
 
   # attributes are kept: 'bread' and number of observations 'N'
-  expect_equivalent(attr(IC(e), "bread"), attr(ic0, "bread"))
+  expect_equal(attr(IC(e), "bread"), attr(ic0, "bread"), ignore_attr = TRUE)
   expect_equal(attr(IC(e), "N"), n)
   expect_no_error(summary(e, type = "mbn"))
 

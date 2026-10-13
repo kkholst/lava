@@ -121,7 +121,7 @@ test_that("estimate preserves original order with stack=TRUE", {
   r <- residuals(g)
   ic1 <- cbind(r, r*d$x) %*% solve(crossprod(X))*nrow(X)
   ic2 <- IC(e)
-  expect_equivalent(ic1,ic2)
+  expect_equal(ic1,ic2, ignore_attr = TRUE)
 })
 
 test_that("merge preserves order (of first IC)", {
@@ -131,15 +131,15 @@ test_that("merge preserves order (of first IC)", {
   a <- estimate(coef=1, IC=scale(rnorm(length(id1))), id=id1)
   b <- estimate(coef=2, IC=scale(rnorm(length(id2))), id=id2)
 
-  expect_equivalent(id1, rownames(IC(a)))
-  expect_equivalent(id2, rownames(IC(b)))
+  expect_equal(id1, rownames(IC(a)), ignore_attr = TRUE)
+  expect_equal(id2, rownames(IC(b)), ignore_attr = TRUE)
 
   e <- merge(a, b)
-  expect_equivalent(rownames(IC(e))[seq_along(id1)],
-                    rownames(IC(a)))
+  expect_equal(rownames(IC(e))[seq_along(id1)],
+                    rownames(IC(a)), ignore_attr = TRUE)
 
   ic1 <- IC(e)[seq_along(id1),1,drop=FALSE]
-  expect_equivalent(IC(a)* 3/2, ic1) # same expect for IPW due to incomplete data
+  expect_equal(IC(a)* 3/2, ic1, ignore_attr = TRUE) # same expect for IPW due to incomplete data
 })
 
 test_that("merge order of ids (sort argument)", {
@@ -170,7 +170,7 @@ test_that("merge with clustered ids, IPW rescaling and id arguments", {
   M <- matrix(0, 5, 2, dimnames = list(index(e), NULL))
   M[rownames(ca), 1] <- ca * 5 / 3
   M[rownames(cb), 2] <- cb * 5 / 3
-  expect_equivalent(IC(e), M)
+  expect_equal(IC(e), M, ignore_attr = TRUE)
 
   # independence (id=NULL / id=FALSE) and one-to-one (id=TRUE / paired)
   a2 <- estimate(coef = c(a = 1), IC = ic_b, id = 1:4)

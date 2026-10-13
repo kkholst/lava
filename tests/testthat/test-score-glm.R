@@ -17,8 +17,9 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
 
   m <- glm(y ~ a * x + x_dup, data = data)
   idx_m_ref <- names(coef(m)) != "x_dup"
-  score_na <- expect_warning(
-    score.glm(m, indiv = FALSE),
+  ## edition 3: expect_warning() returns the condition, not the value
+  expect_warning(
+    score_na <- score.glm(m, indiv = FALSE),
     "Over-parameterized"
   )
 

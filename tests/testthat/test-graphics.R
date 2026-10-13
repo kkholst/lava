@@ -5,13 +5,13 @@ library("vdiffr")
 test_that("color, devcoords", {
   cur <- palette()
   old <- lava:::mypal()
-  testthat::expect_equivalent(col2rgb(cur),col2rgb(old))
-  testthat::expect_equivalent(col2rgb(palette()),col2rgb(lava:::mypal(set=FALSE)))
+  testthat::expect_equal(col2rgb(cur),col2rgb(old), ignore_attr = TRUE)
+  testthat::expect_equal(col2rgb(palette()),col2rgb(lava:::mypal(set=FALSE)), ignore_attr = TRUE)
 
-  testthat::expect_equivalent(Col("red",0.5),rgb(1,0,0,0.5))
-  testthat::expect_equivalent(Col(c("red","blue"),0.5),rgb(c(1,0),c(0,0),c(0,1),0.5))
-  testthat::expect_equivalent(Col(c("red","blue"),c(0.2,0.5)),rgb(c(1,0),c(0,0),c(0,1),c(0.2,0.5)))
-  testthat::expect_equivalent(Col(rgb(1,0,0),0.5),rgb(1,0,0,0.5))
+  testthat::expect_equal(Col("red",0.5),rgb(1,0,0,0.5), ignore_attr = TRUE)
+  testthat::expect_equal(Col(c("red","blue"),0.5),rgb(c(1,0),c(0,0),c(0,1),0.5), ignore_attr = TRUE)
+  testthat::expect_equal(Col(c("red","blue"),c(0.2,0.5)),rgb(c(1,0),c(0,0),c(0,1),c(0.2,0.5)), ignore_attr = TRUE)
+  testthat::expect_equal(Col(rgb(1,0,0),0.5),rgb(1,0,0,0.5), ignore_attr = TRUE)
 
   plot(0,xlim=c(0,1),ylim=c(0,1),type="n",ann=FALSE,axes=FALSE)
   devc1 <- devcoords()
@@ -20,7 +20,7 @@ test_that("color, devcoords", {
   devc2 <- devcoords()
   figx <- c("fig.x1","fig.x2","fig.y1","fig.y2")
   devx <- c("dev.x1","dev.x2","dev.y1","dev.y2")
-  testthat::expect_equivalent(devc1[figx],devc2[devx])
+  testthat::expect_equal(devc1[figx],devc2[devx], ignore_attr = TRUE)
 })
 
 test_that("plotConf", {

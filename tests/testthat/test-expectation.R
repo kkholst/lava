@@ -15,7 +15,7 @@ test_that("expectation agrees with estimate(..., average=TRUE)", {
   g <- glm(y ~ w1 + a, data = dat, family = binomial)
   f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
   m <- expectation(f, object=g)
-  a <- estimate(g, f, average = TRUE)
+  a <- suppressWarnings(estimate(g, f, average = TRUE))
   expect_equal(coef(m), coef(a))
   expect_equal(vcov(m), vcov(a))
   expect_equal(IC(m), IC(a), ignore_attr = TRUE)
@@ -35,11 +35,11 @@ test_that("expectation agrees with estimate(..., average=TRUE)", {
   }
   m2 <- expectation(f2, object=g)
   expect_identical(names(coef(m2)), c("p0", "p1"))
-  expect_equivalent(coef(m2)[2], coef(m))
-  expect_equivalent(vcov(m2)[2, 2], vcov(m))
+  expect_equal(coef(m2)[2], coef(m), ignore_attr = TRUE)
+  expect_equal(vcov(m2)[2, 2], vcov(m), ignore_attr = TRUE)
   m3 <- expectation(f2, object=g, labels = c("y0", "y1"))
   expect_identical(names(coef(m3)), c("y0", "y1"))
-  expect_equal(coef(estimate(g, f2, average = TRUE, keep = "p1")),
+  expect_equal(suppressWarnings(coef(expectation(object=g, f2, keep = "p1"))),
                coef(m2)["p1"])
 })
 
@@ -86,7 +86,7 @@ test_that("expectation: ids of the g-computation and model part", {
   m1 <- expectation(object=g, f, data = dat, id = NULL)
   expect_null(index(m1))
   expect_null(rownames(IC(m1)))
-  expect_equivalent(vcov(m1), vcov(m))
+  expect_equal(vcov(m1), vcov(m), ignore_attr = TRUE)
 })
 
 test_that("expectation: 'f' returning values for some rows of data", {
@@ -120,10 +120,6 @@ test_that("expectation: 'f' returning values for some rows of data", {
   ms3 <- expectation(object=e, f_all, data = dat, subset = a == 1)
   expect_equal(coef(ms3), coef(ms1))
   expect_equal(vcov(ms3), vcov(ms1))
-  expect_equal(
-    vcov(estimate(e, f_all, data = dat, subset = a == 1, average = TRUE)),
-    vcov(ms1)
-  )
   rm(a)
   # model ids partly outside data
   id1 <- dat1$id
@@ -183,8 +179,8 @@ test_that("expectation: subset (conditional average)", {
   icc <- (q * s - mm + ic2_s) / phat - mm / phat^2 * (s - phat)
 
   m <- expectation(object=e, f, data = dat, id = dat$id, subset = s)
-  expect_equivalent(coef(m), mm / phat)
-  expect_equivalent(IC(m), icc)
+  expect_equal(coef(m), mm / phat, ignore_attr = TRUE)
+  expect_equal(IC(m), icc, ignore_attr = TRUE)
   # expression evaluated in data, and column name
   expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = w1 > 0)),
                vcov(m))
@@ -192,9 +188,6 @@ test_that("expectation: subset (conditional average)", {
   expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = "s")),
                vcov(m))
   # via estimate
-  expect_equal(vcov(estimate(e, f, data = dat, id = "id", subset = w1 > 0,
-                             average = TRUE)),
-               vcov(m))
 })
 
 test_that("expectation: arguments of 'f'", {
@@ -229,7 +222,7 @@ test_that("expectation: arguments of 'f'", {
                "Influence function")
 })
 
-test_that("estimate standardization (average=TRUE)", {
+test_that("estimate standardization", {
   # check that g-computation works as expected for logistic regression
   sim1 <- function(n = 5000, seed = 1) {
     set.seed(seed)
@@ -243,7 +236,7 @@ test_that("estimate standardization (average=TRUE)", {
   df <- sim1()
 
   g <- glm(y ~ a * (w1 + w2), data=df, family=binomial)
-  est <- lava::estimate(g, average = TRUE, function(p,data) {
+  est <- lava::expectation(object=g, function(p,data) {
     X1 <- model.matrix(g, data=transform(data, a=1))
     X0 <- model.matrix(g, data=transform(data, a=0))
     cbind(plogis(X1%*%p), plogis(X0%*%p))
@@ -260,14 +253,14 @@ test_that("estimate standardization (average=TRUE)", {
   D0 <- numDeriv::grad(\(x) mean(plogis(X0 %*% x)), coef(g))
   D1a <- apply(X1, 2, \(x) mean(x*q1*(1-q1)))
   D0a <- apply(X0, 2, \(x) mean(x*q0*(1-q0)))
-  testthat::expect_equivalent(D1, D1a)
-  testthat::expect_equivalent(D0, D0a)
+  testthat::expect_equal(D1, D1a, ignore_attr = TRUE)
+  testthat::expect_equal(D0, D0a, ignore_attr = TRUE)
   ic1 <- q1 - mean(q1) + apply(lava::IC(g), 1, \(x) sum(x*D1a))
   ic0 <- q0 - mean(q0) + apply(lava::IC(g), 1, \(x) sum(x*D0a))
   est2 <- c(y1=lava::estimate(coef=mean(q1), IC=ic1),
             y0=lava::estimate(coef=mean(q0), IC=ic0))
-  testthat::expect_equivalent(coef(est), coef(est2))
-  testthat::expect_equivalent(vcov(est), vcov(est2))
+  testthat::expect_equal(coef(est), coef(est2), ignore_attr = TRUE)
+  testthat::expect_equal(vcov(est), vcov(est2), ignore_attr = TRUE)
 
 })
 
@@ -294,32 +287,33 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   ic <- q - mean(q) + ic2 # following the order of dat
 
   e <- estimate(g, id = dat1$id)
-  a <- estimate(e, f, data = dat, id = dat$id, average = TRUE)
-  expect_equivalent(coef(a), mean(q))
-  expect_equivalent(vcov(a), sum(ic^2) / n^2)
-  expect_equivalent(IC(a), ic)
+  a <- expectation(object=e, f, data = dat, id = dat$id)
+  expect_equal(coef(a), mean(q), ignore_attr = TRUE)
+  expect_equal(vcov(a), sum(ic^2) / n^2, ignore_attr = TRUE)
+  expect_equal(IC(a), ic, ignore_attr = TRUE)
   expect_identical(index(a), dat$id)
 
   # plain glm: model identified by the rownames of its model frame, which do
   # not overlap with dat$id (independence)
   expect_message(
-    a2 <- estimate(g, f, data = dat, id = dat$id, average = TRUE),
+    a2 <- expectation(object=g, f, data = dat, id = dat$id),
     "independence"
   )
-  expect_equivalent(coef(a2), coef(a))
-  expect_equivalent(
+  expect_equal(coef(a2), coef(a), ignore_attr = TRUE)
+  expect_equal(
     vcov(a2),
-    var_ic(q - mean(q)) + var_ic(IC(g) %*% D) # independence
+    var_ic(q - mean(q)) + var_ic(IC(g) %*% D), # independence
+    ignore_attr = TRUE
   )
   expect_identical(index(a2), c(dat$id, rownames(dat1)))
-  a3 <- estimate(g, f, data = dat, average = TRUE) # id defaults to rownames
-  expect_equivalent(vcov(a3), vcov(a))
+  a3 <- expectation(object=g, f, data = dat) # id defaults to rownames
+  expect_equal(vcov(a3), vcov(a), ignore_attr = TRUE)
 
   # row order of 'data' does not matter
   ord <- sample(n)
-  a4 <- estimate(e, f, data = dat[ord, ], id = dat$id[ord], average = TRUE)
-  expect_equivalent(vcov(a4), vcov(a))
-  expect_equivalent(IC(a4)[dat$id, ], IC(a)[dat$id, ])
+  a4 <- expectation(object=e, f, data = dat[ord, ], id = dat$id[ord])
+  expect_equal(vcov(a4), vcov(a), ignore_attr = TRUE)
+  expect_equal(IC(a4)[dat$id, ], IC(a)[dat$id, ], ignore_attr = TRUE)
 
   # conditional average (subset)
   # target: E[U(W_1, A = 1) | S = 1], for subset indicator S
@@ -330,11 +324,11 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   ic2_s <- rep(0, n)
   ic2_s[dat$z == 1] <- IC(g) %*% D_s * n / nrow(dat1)
   icc <- (q * s - m + ic2_s) / phat - m / phat^2 * (s - phat)
-  ac <- estimate(e, f, data = dat, id = dat$id, subset = s, average = TRUE)
-  expect_equivalent(coef(ac), m / phat)
-  expect_equivalent(vcov(ac), sum(icc^2) / n^2)
-  expect_equivalent(IC(ac)[,1], icc)
-  expect_equivalent(ac$id, dat$id)
+  ac <- expectation(object=e, f, data = dat, id = dat$id, subset = s)
+  expect_equal(coef(ac), m / phat, ignore_attr = TRUE)
+  expect_equal(vcov(ac), sum(icc^2) / n^2, ignore_attr = TRUE)
+  expect_equal(IC(ac)[,1], icc, ignore_attr = TRUE)
+  expect_equal(ac$id, dat$id, ignore_attr = TRUE)
 
   # multiple parameters
   # target: E[U(W_1, A = 1)], different U
@@ -342,20 +336,20 @@ test_that("standardization with model estimated on a subset (id alignment)", {
     list(p0 = plogis(p[1] + p["w1"] * data[, "w1"]),
          p1 = plogis(p[1] + p["w1"] * data[, "w1"] + p["a"]))
   }
-  a5 <- estimate(e, f2, data = dat, id = dat$id, average = TRUE)
-  expect_equivalent(coef(a5)[2], coef(a))
-  expect_equivalent(vcov(a5)[2, 2], vcov(a))
-  expect_equivalent(IC(a5)[,2], IC(a)[,1])
+  a5 <- expectation(object=e, f2, data = dat, id = dat$id)
+  expect_equal(coef(a5)[2], coef(a), ignore_attr = TRUE)
+  expect_equal(vcov(a5)[2, 2], vcov(a), ignore_attr = TRUE)
+  expect_equal(IC(a5)[,2], IC(a)[,1], ignore_attr = TRUE)
 
   # disjoint ids: independence between model and new data
   e_b <- estimate(g, id = paste0("b", seq_len(nrow(dat1))))
   expect_message(
-    a6 <- estimate(e_b, f, data = dat, id = dat$id, average = TRUE),
+    a6 <- expectation(object=e_b, f, data = dat, id = dat$id),
     "independence"
   )
-  expect_equivalent(
+  expect_equal(
     vcov(a6),
-    sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
+    sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D), ignore_attr = TRUE
   )
   expect_equal(nrow(IC(a6)), n + nrow(dat1))
   expect_identical(index(a6), c(dat$id, index(e_b)))
@@ -364,28 +358,27 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   # default (rowname) ids of estimate(g) do not overlap with dat$id
   v_indep <- sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
   expect_message(
-    a7 <- estimate(estimate(g), f, data = dat, id = dat$id, average = TRUE),
+    a7 <- estimate(object=estimate(g), f, data = dat, id = dat$id),
     "independence"
   )
   expect_equal(nrow(IC(a7)), n + nrow(dat1))
-  expect_equivalent(vcov(a7), v_indep)
+  expect_equal(vcov(a7), v_indep, ignore_attr = TRUE)
 
   # estimate object without index: rownames of the IF are the ids
   ic_g <- IC(g)
   e0 <- estimate(coef = coef(g), IC = ic_g)
   expect_identical(index(e0), rownames(ic_g))
   expect_message(
-    a8 <- estimate(e0, f, data = dat, id = dat$id, average = TRUE),
+    a8 <- expectation(object=e0, f, data = dat, id = dat$id),
     "independence"
   )
   expect_equal(nrow(IC(a8)), n + nrow(dat1))
-  expect_equivalent(vcov(a8), v_indep)
+  expect_equal(vcov(a8), v_indep, ignore_attr = TRUE)
 
   # estimate object without any ids: no link to data of different size
   # (no rownames in IC either)
   expect_error(
-    estimate(estimate(g, id = NULL), f, data = dat, id = dat$id,
-             average = TRUE),
+    estimate(expectation(object=g, id = NULL), f, data = dat, id = dat$id).
     "Unable to link"
   )
 })
@@ -400,8 +393,7 @@ test_that("standardization with partly overlapping ids", {
   dd <- pop[1:600, ]    # data for the standardization
   g <- glm(y ~ w + a, data = dm, family = binomial)
   f <- function(p, data) plogis(p[1] + p["w"] * data[, "w"] + p["a"])
-  a <- estimate(estimate(g, id = dm$id), f, data = dd, id = dd$id,
-                average = TRUE)
+  a <- expectation(object=estimate(g, id = dm$id), f, data = dd, id = dd$id)
   expect_equal(nrow(IC(a)), N)
   expect_identical(index(a), pop$id)
 
@@ -412,9 +404,9 @@ test_that("standardization with partly overlapping ids", {
   ai <- rep(0, N)
   ai[1:600] <- (q - mean(q)) / 600
   ai[401:1000] <- ai[401:1000] + IC(g) %*% D / 600
-  expect_equivalent(coef(a), mean(q))
-  expect_equivalent(vcov(a), sum(ai^2))
-  expect_equivalent(IC(a), N * ai)
+  expect_equal(coef(a), mean(q), ignore_attr = TRUE)
+  expect_equal(vcov(a), sum(ai^2), ignore_attr = TRUE)
+  expect_equal(IC(a), N * ai, ignore_attr = TRUE)
 })
 
 test_that("standardization with unsorted and clustered ids (same data)", {
@@ -426,42 +418,38 @@ test_that("standardization with unsorted and clustered ids (same data)", {
   d$cl <- rep(sample(paste0("c", 1:50)), each = 4)
   g <- glm(y ~ x, data = d, family = binomial)
   f <- function(p, data) plogis(p[1] + p[2] * data[, "x"])
-  a0 <- estimate(g, f, average = TRUE)
+  a0 <- estimate(object=g, f)
   # 'id' only refers to the g-computation part (the values of 'f'): the ids of
   # the model (rownames of the model frame) must be supplied separately
   expect_message(
-    estimate(g, f, id = d$id, average = TRUE),
+    estimate(object=g, f, id = d$id),
     "independence"
   )
   # (estimate objects have no model frame, so 'data' is needed)
-  a1 <- estimate(estimate(g, id = d$id), f, data = d, id = d$id,
-                 average = TRUE)
-  expect_equivalent(vcov(a1), vcov(a0))
-  expect_equivalent(IC(a1), IC(a0))
+  a1 <- expectation(object=estimate(g, id = d$id), f, data = d, id = d$id)
+  expect_equal(vcov(a1), vcov(a0), ignore_attr = TRUE)
+  expect_equal(IC(a1), IC(a0), ignore_attr = TRUE)
   expect_identical(index(a1), d$id)
 
   X <- model.matrix(g)
   q <- as.vector(plogis(X %*% coef(g)))
   ic <- q - mean(q) + IC(g) %*% colMeans(X * q * (1 - q))
   icc <- rowsum(ic, d$cl, reorder = FALSE) * 50 / n
-  a2 <- estimate(estimate(g, id = d$cl), f, data = d, id = d$cl,
-                 average = TRUE)
-  expect_equivalent(vcov(a2), var_ic(icc))
+  a2 <- expectation(object=estimate(g, id = d$cl), f, data = d, id = d$cl)
+  expect_equal(vcov(a2), var_ic(icc), ignore_attr = TRUE)
   expect_identical(index(a2), unique(d$cl))
   # same result with 'id' as column name
-  a3 <- estimate(estimate(g, id = d$cl), f, data = d, id = "cl",
-                 average = TRUE)
-  expect_equivalent(vcov(a3), vcov(a2))
+  a3 <- expectation(object=estimate(g, id = d$cl), f, data = d, id = "cl")
+  expect_equal(vcov(a3), vcov(a2), ignore_attr = TRUE)
 
   # ids of 'data' default to rownames(data) (index(x) is not used)
   expect_message(
-    a4 <- estimate(estimate(g, id = d$id), f, data = d, average = TRUE),
+    a4 <- expectation(object=estimate(g, id = d$id), f, data = d),
     "independence"
   )
   expect_identical(index(a4), c(rownames(d), d$id))
-  a5 <- estimate(estimate(g, id = d$id), f, data = d, id = "id",
-                 average = TRUE)
-  expect_equivalent(vcov(a5), vcov(a1))
+  a5 <- expectation(object=estimate(g, id = d$id), f, data = d, id = "id")
+  expect_equal(vcov(a5), vcov(a1), ignore_attr = TRUE)
   expect_identical(index(a5), d$id)
 })
 

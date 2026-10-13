@@ -16,6 +16,6 @@ test_that("estimate.list", {
   e <- estimate(list(l, l, l))
   cc <- coef(e)
   expect_true(length(cc)==3L)
-  expect_equivalent(cc[[1]], coef(l))
+  expect_equal(cc[[1]], coef(l), ignore_attr = TRUE)
   expect_true(inherits(e[[1]], "estimate"))
 })

@@ -26,9 +26,9 @@ test_that("sim.default with estimate objects", {
   res <- sim(onerun, 10)
   s <- summary(res)
   expect_true(ncol(s) == 2L)
-  expect_equivalent(colnames(s), c("a", "b"))
-  expect_equivalent(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]))
-  expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
+  expect_equal(colnames(s), c("a", "b"), ignore_attr = TRUE)
+  expect_equal(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]), ignore_attr = TRUE)
+  expect_equal(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])), ignore_attr = TRUE)
 })
 
 test_that("sim.default with summary.estimate objects", {
@@ -39,9 +39,9 @@ test_that("sim.default with summary.estimate objects", {
   res <- sim(onerun, 5)
   s <- summary(res)
   expect_true(ncol(s) == 2L)
-  expect_equivalent(colnames(s), c("a", "b"))
-  expect_equivalent(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]))
-  expect_equivalent(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])))
+  expect_equal(colnames(s), c("a", "b"), ignore_attr = TRUE)
+  expect_equal(s["SE",], colMeans(res[, c("a.Std.Err", "b.Std.Err")]), ignore_attr = TRUE)
+  expect_equal(s["SD",], c(sd(res[,"a"]), sd(res[,"b"])), ignore_attr = TRUE)
 
   # with concatenated summary.estimate objects
   onerun <- function(...) {
@@ -58,7 +58,7 @@ test_that("sim.default with summary.estimate objects", {
 
   s <- summary(res)
   expect_true(ncol(s) == 4L)
-  expect_equivalent(colnames(s), c("a", "b", "c", "d"))
+  expect_equal(colnames(s), c("a", "b", "c", "d"), ignore_attr = TRUE)
 
   # with concatenated summary.estimate objects + extra
   onerun <- function(...) {

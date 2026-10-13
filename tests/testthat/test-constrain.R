@@ -15,8 +15,8 @@ test_that("Simple linear constraint",{
     s <- summary(e1)
     testthat::expect_output(print(s),"Non-linear constraints:")
 
-    testthat::expect_equivalent(dim(coef(s)), c(length(coef(e1))+1,4))
-    testthat::expect_equivalent(dim(coef(e1,2)), c(length(coef(e1)),4))
+    testthat::expect_equal(dim(coef(s)), c(length(coef(e1))+1,4), ignore_attr = TRUE)
+    testthat::expect_equal(dim(coef(e1,2)), c(length(coef(e1)),4), ignore_attr = TRUE)
 })
 
 test_that("constrain (Fishers z-transform)", {
@@ -29,7 +29,7 @@ test_that("constrain (Fishers z-transform)", {
         function(x) x[1]/(x[2]*x[3])^0.5
     cc1 <- parameter(correlation(e))
     cc2 <- constraints(e)
-    testthat::expect_equivalent(cc2["rho",1],cc1["y1~y2",1])
+    testthat::expect_equal(cc2["rho",1],cc1["y1~y2",1], ignore_attr = TRUE)
     constrain(e,z~C+v1+v2) <- function(x) {
         f <- function(p) p[1]/sqrt(p[2]*p[3])
         res <- atanh(f(x))
@@ -41,7 +41,7 @@ test_that("constrain (Fishers z-transform)", {
     }
     cc2 <- constraints(e)
     testthat::expect_equal(cc2["z",2],0.1)
-    testthat::expect_equivalent(cc2["inv(z)",1],cc1["y1~y2",1])
+    testthat::expect_equal(cc2["inv(z)",1],cc1["y1~y2",1], ignore_attr = TRUE)
 })
 
 test_that("Non-linear in exogenous variables", {
@@ -77,8 +77,8 @@ test_that("Multiple group constraints I", {
     mg <- multigroup(list(m1,m2),list(d1,d2))
     ee <- estimate(mg)
     testthat::expect_true(length(coef(ee))==5)
-    testthat::expect_equivalent(constraints(ee)[1],2*coef(ee)["psi@1"]) # Est
-    testthat::expect_equivalent(constraints(ee)[2],2*coef(ee,2)[[1]]["psi",2]) # Std.Err
+    testthat::expect_equal(constraints(ee)[1],2*coef(ee)["psi@1"], ignore_attr = TRUE) # Est
+    testthat::expect_equal(constraints(ee)[2],2*coef(ee,2)[[1]]["psi",2], ignore_attr = TRUE) # Std.Err
 })
 
 test_that("Multiple group constraints II", {
@@ -117,7 +117,7 @@ test_that("Multiple group constraints II", {
 
   constrain(ee,h~r2+r1) <- function(x) 2*(x[1]-x[2])
   ce <- constraints(ee)
-  testthat::expect_equivalent(constraints(ee)[1],2*diff(coef(ee)[3:4]))
+  testthat::expect_equal(constraints(ee)[1],2*diff(coef(ee)[3:4]), ignore_attr = TRUE)
   testthat::expect_true(length(coef(ee))==4)
   testthat::expect_true(nrow(ce)==1)
   testthat::expect_true(all(!is.na(ce)))
