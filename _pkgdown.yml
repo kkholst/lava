@@ -17,8 +17,8 @@ reference:
   - estimate.default
   - estimate.glm
   - estimate.list
-  - iid
   - expectation
+  - iid
   - merge.estimate
   - multinomial
   - normcdf
