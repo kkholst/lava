@@ -221,7 +221,7 @@ predict_glm <- function(object, p=coef(object), data, offset = NULL,
   if (missing(data)) {
     X <- stats::model.matrix.lm(x)
   } else {
-    ff <- formula(delete.response(terms(formula(x))))
+    ff <- formula(stats::delete.response(terms(formula(x))))
     X <- stats::model.matrix.lm(ff,
                                 data = data,
                                 na.action = na.pass)
