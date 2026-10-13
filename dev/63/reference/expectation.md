@@ -10,17 +10,10 @@ applications of this function.
 ## Usage
 
 ``` r
-expectation(object, f, data, id, subset, labels = NULL, ...)
+expectation(f, object, data, id, subset, labels = NULL, ...)
 ```
 
 ## Arguments
-
-- object:
-
-  model object (`glm`, `lvmfit`, ...) or `estimate` object providing the
-  parameter estimates and their influence function. Alternatively, an
-  evaluated expression of a function with values in `data` can be
-  provided to calculate the simple mean (see examples).
 
 - f:
 
@@ -28,8 +21,15 @@ expectation(object, f, data, id, subset, labels = NULL, ...)
   the optional named arguments `data` and `object` (the model object,
   e.g. an `estimate` object). Should return a vector, matrix or a
   (named) list of vectors with one value per observation (row of `data`
-  unless `data` is NULL). If the result has an attribute `"grad"` it is
-  used as the Jacobian of `f` with respect to `p`
+  unless `data` is missing). If the result has an attribute `"grad"` it
+  is used as the Jacobian of `f` with respect to `p`
+
+- object:
+
+  model object (`glm`, `lvmfit`, ...) or `estimate` object providing the
+  parameter estimates and their influence function. Alternatively, an
+  evaluated expression of a function with values in `data` can be
+  provided to calculate the simple mean (see examples).
 
 - data:
 
@@ -95,13 +95,13 @@ to the model.
 m <- lvm(y ~ x + z)
 distribution(m, y ~ x) <- dist_bernoulli("logit")
 d <- sim(m, 1000, seed = 1)
-g <- glm(y ~ z + x, data = d, family = binomial())
+fit <- glm(y ~ z + x, data = d, family = binomial())
 
 ## Standardization (g-computation)
 f <- function(p, data)
   list(p0 = expit(p["(Intercept)"] + p["z"] * data[, "z"]),
        p1 = expit(p["(Intercept)"] + p["x"] + p["z"] * data[, "z"]))
-e <- expectation(g, f)
+e <- expectation(f, fit)
 e
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p0   0.5143 0.02111 0.4729 0.5557 4.099e-131
@@ -116,16 +116,16 @@ d$w <- rbinom(nrow(d), 1, 0.5)
 d1 <- subset(d, w == 1)
 g1 <- glm(y ~ x + z, data = d1, family = binomial)
 e1 <- estimate(g1, id = d1$id)
-expectation(e1, f, data = d, id = "id")
+expectation(f, e1, data = d, id = "id")
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p0   0.5067 0.02908 0.4497 0.5637  5.728e-68
 #> p1   0.6889 0.02869 0.6327 0.7451 2.076e-127
 
 ## Conditional marginal mean effects (subset) and clusters
 d$cl <- rep(seq(nrow(d) / 4), each = 4)
-expectation(estimate(g, id = d$cl),
-              function(p, data) expit(p[1] + p["z"] * data[, "z"]),
-              data = d, subset = z > 0, id = "cl")
+expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
+            estimate(fit, id = d$cl),
+            data = d, subset = z > 0, id = "cl")
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168
 

@@ -62,27 +62,27 @@ applications of this function.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span><span class="va">object</span>, <span class="va">f</span>, <span class="va">data</span>, <span class="va">id</span>, <span class="va">subset</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">object</span>, <span class="va">data</span>, <span class="va">id</span>, <span class="va">subset</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
-<dd><p>model object (<code>glm</code>, <code>lvmfit</code>, ...) or <code>estimate</code> object
-providing the parameter estimates and their influence function.
-Alternatively, an evaluated expression of a function with values in <code>data</code>
-can be provided to calculate the simple mean (see examples).</p></dd>
-
-
-<dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
+<dl><dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>function with named argument <code>p</code> providing the parameter vector and
 the optional named arguments <code>data</code> and <code>object</code> (the model object, e.g. an
 <code>estimate</code> object). Should return a vector, matrix or a (named) list of
 vectors with one value per observation (row of <code>data</code> unless <code>data</code> is
-NULL). If the result has an attribute <code>"grad"</code> it is used as the Jacobian
-of <code>f</code> with respect to <code>p</code></p></dd>
+missing). If the result has an attribute <code>"grad"</code> it is used as the
+Jacobian of <code>f</code> with respect to <code>p</code></p></dd>
+
+
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+<dd><p>model object (<code>glm</code>, <code>lvmfit</code>, ...) or <code>estimate</code> object
+providing the parameter estimates and their influence function.
+Alternatively, an evaluated expression of a function with values in <code>data</code>
+can be provided to calculate the simple mean (see examples).</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
@@ -147,13 +147,13 @@ assign ids (or clusters) to the model.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="lvm.html">lvm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="sim.lvm.html">distribution</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.lvm.html">dist_bernoulli</a></span><span class="op">(</span><span class="st">"logit"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">z</span> <span class="op">+</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">d</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">z</span> <span class="op">+</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">d</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Standardization (g-computation)</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p0 <span class="op">=</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       p1 <span class="op">=</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="st">"(Intercept)"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"x"</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">expectation</span><span class="op">(</span><span class="va">g</span>, <span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">fit</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.5143 0.02111 0.4729 0.5557 4.099e-131</span>
@@ -168,16 +168,16 @@ assign ids (or clusters) to the model.</p>
 <span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">w</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span>, data <span class="op">=</span> <span class="va">d1</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g1</span>, id <span class="op">=</span> <span class="va">d1</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="va">e1</span>, <span class="va">f</span>, data <span class="op">=</span> <span class="va">d</span>, id <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">e1</span>, data <span class="op">=</span> <span class="va">d</span>, id <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p0   0.5067 0.02908 0.4497 0.5637  5.728e-68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6889 0.02869 0.6327 0.7451 2.076e-127</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Conditional marginal mean effects (subset) and clusters</span></span></span>
 <span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, id <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">cl</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              <span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              data <span class="op">=</span> <span class="va">d</span>, subset <span class="op">=</span> <span class="va">z</span> <span class="op">&gt;</span> <span class="fl">0</span>, id <span class="op">=</span> <span class="st">"cl"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">fit</span>, id <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">cl</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            data <span class="op">=</span> <span class="va">d</span>, subset <span class="op">=</span> <span class="va">z</span> <span class="op">&gt;</span> <span class="fl">0</span>, id <span class="op">=</span> <span class="st">"cl"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168</span>
 <span class="r-in"><span></span></span>
