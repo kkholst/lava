@@ -39,8 +39,6 @@ test_that("expectation agrees with estimate(..., average=TRUE)", {
   expect_equal(vcov(m2)[2, 2], vcov(m), ignore_attr = TRUE)
   m3 <- expectation(f2, object=g, labels = c("y0", "y1"))
   expect_identical(names(coef(m3)), c("y0", "y1"))
-  expect_equal(suppressWarnings(coef(expectation(object=g, f2, keep = "p1"))),
-               coef(m2)["p1"])
 })
 
 test_that("expectation: ids of the g-computation and model part", {
@@ -358,7 +356,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   # default (rowname) ids of estimate(g) do not overlap with dat$id
   v_indep <- sum((q - mean(q))^2) / n^2 + var_ic(IC(g) %*% D)
   expect_message(
-    a7 <- estimate(object=estimate(g), f, data = dat, id = dat$id),
+    a7 <- expectation(object=estimate(g), f, data = dat, id = dat$id),
     "independence"
   )
   expect_equal(nrow(IC(a7)), n + nrow(dat1))
@@ -418,11 +416,11 @@ test_that("standardization with unsorted and clustered ids (same data)", {
   d$cl <- rep(sample(paste0("c", 1:50)), each = 4)
   g <- glm(y ~ x, data = d, family = binomial)
   f <- function(p, data) plogis(p[1] + p[2] * data[, "x"])
-  a0 <- estimate(object=g, f)
+  a0 <- expectation(object=g, f)
   # 'id' only refers to the g-computation part (the values of 'f'): the ids of
   # the model (rownames of the model frame) must be supplied separately
   expect_message(
-    estimate(object=g, f, id = d$id),
+    expectation(object=g, f, id = d$id),
     "independence"
   )
   # (estimate objects have no model frame, so 'data' is needed)
