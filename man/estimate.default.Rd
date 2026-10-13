@@ -55,7 +55,7 @@ one parameter. - \strong{Character} expressions: supports wildcards (\code{"?"},
 one-sided formula (evaluated in \code{data}), a single character column name.
 When supplied, the IF is aggregated within clusters to produce
 cluster-robust standard errors. When \code{average = TRUE}, \code{id} refers to the
-rows of \code{data}, i.e., the values of \code{f} (see \link{expectation}). \code{id = NULL}
+rows of \code{data}, i.e., the values of \code{f} (see \link[testthat:expectation]{expectation}). \code{id = NULL}
 removes the id (index) and the row names of the influence function from the
 returned object.}
 
@@ -77,11 +77,11 @@ standard errors are computed from the influence function.}
 summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
 un-stacked (per-observation) decomposition.}
 
-\item{average}{if \code{TRUE} the function computes the standardized
+\item{average}{(Deprecated) if \code{TRUE} the function computes the standardized
 estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
 empirical mean of \code{f(p, data)}, as defined by the \code{f} argument, over
 all rows of \code{data}. The influence function accounts for both the empirical
-averaging and the parameter estimation uncertainty (see \link{expectation}).}
+averaging and the parameter estimation uncertainty (see \link[testthat:expectation]{expectation}).}
 
 \item{subset}{an optional vector specifying a subset of observations
     to be used in the fitting process.  (See additional details about how
@@ -179,7 +179,7 @@ uncertainty:
 When \code{subset} is also specified, the average is conditioned on the
 subpopulation, yielding a conditional marginalized estimate. The model may
 be estimated on a different (e.g., smaller) dataset than \code{data}. See
-\link{expectation} for details.
+\link[testthat:expectation]{expectation} for details.
 }
 
 \section{Cluster-robust standard errors}{
@@ -251,7 +251,7 @@ estimate(lm(y~x,d1))
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-e <- estimate(g, f, average=TRUE)
+e <- expectation(g, f)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))

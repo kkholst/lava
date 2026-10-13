@@ -63,7 +63,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #'   object
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
-#' @param average if `TRUE` the function computes the standardized
+#' @param average (Deprecated) if `TRUE` the function computes the standardized
 #'   estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
 #'   empirical mean of `f(p, data)`, as defined by the \code{f} argument, over
 #'   all rows of `data`. The influence function accounts for both the empirical
@@ -189,7 +189,7 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' f <- function(p,data)
 #'   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
 #'        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-#' e <- estimate(g, f, average=TRUE)
+#' e <- expectation(g, f)
 #' e
 #' estimate(e,diff)
 #' estimate(e,cbind(1,1))
@@ -301,7 +301,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
   if ("robust" %in% names(cl)) {
     stop(
-      "The 'robust' argument is deprecated. ",
+      "The 'robust' argument has been removed. ",
       "Robust standard errors are now always computed. ",
       "Use the 'vcov' argument to compute model-based SEs."
     )
@@ -310,7 +310,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
             "back.transform", "level", "df") %in% names(cl))) {
     stop(
         "The 'null', 'contrast', 'type', 'back.transform', 'level' ",
-        "and 'var.adj' arguments of estimate.default() are deprecated. ",
+        "and 'var.adj' arguments of estimate.default() are removed. ",
         "Use ",
         "summary(estimate(...), null=, contrast=, type=, transform=,",
         "level=, df=, var.adj=) instead."
@@ -365,6 +365,13 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   }
 
   if (isTRUE(average) && is.function(f)) { ## g-computation, see 'expectation'
+    .Deprecated(
+      "expectation", package = "lava",
+      msg = paste(
+        "`lava::estimate(..., average=TRUE)` is deprecated.",
+        " Use `lava::expectation` instead."
+      )
+    )
     if (!is.logical(IC)) x <- estimate(coef=pp, IC=IC)
     args <- c(list(object=x, f=f), list(...))
     if (!missing(labels)) args$labels <- labels
