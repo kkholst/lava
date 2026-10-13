@@ -125,7 +125,10 @@ information such as standard errors are skipped</p></dd>
 <span class="r-in"><span><span class="fu"><a href="ordinal-set.html">ordinal</a></span><span class="op">(</span><span class="va">m</span>,K<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">y1</span><span class="op">+</span><span class="va">y2</span><span class="op">+</span><span class="va">y3</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim.default.html">sim</a></span><span class="op">(</span><span class="va">m</span>,<span class="fl">50</span>,seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mets"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span>Dmethod<span class="op">=</span><span class="st">"simple"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>   <span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu">complik</span><span class="op">(</span><span class="va">m</span>,<span class="va">d</span>,control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"all"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="lava.options.html">lava.options</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">e1</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     194.34186: 0.604480 0.584480 0.484480  0.00000 0.900000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     163.15053: 0.540600 0.484448 0.209475 0.939309  1.06729</span>
@@ -148,6 +151,15 @@ information such as standard errors are skipped</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  18:     160.71643: 0.381620 0.300565 -0.170579  1.06575  1.37852</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  19:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  20:     160.71643: 0.381587 0.300550 -0.170619  1.06575  1.37856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std. Error  Z value  Pr(&gt;|z|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1~x              1.06575    0.29344  3.63189 0.0002814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercepts:                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y1                0.38159    0.31438  1.21377    0.2248</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y2                0.30055    0.29304  1.02563    0.3051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    y3               -0.17062    0.28520 -0.59825    0.5497</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Variances:                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    u                 1.37856    0.79666  1.73043          </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

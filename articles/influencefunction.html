@@ -352,9 +352,9 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ordreg.html">ordreg</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x1</span>, <span class="va">dw</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err   2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; 0|1   0.4033 0.09781 0.2116 0.595 3.743e-05</span></span>
-<span><span class="co">#&gt; a     1.5832 0.15031 1.2886 1.878 6.080e-26</span></span>
-<span><span class="co">#&gt; x1    0.8837 0.08062 0.7257 1.042 5.866e-28</span></span></code></pre></div>
+<span><span class="co">#&gt; 0|1   0.4033 0.09781 0.2116 0.595 3.742e-05</span></span>
+<span><span class="co">#&gt; a     1.5832 0.15030 1.2886 1.878 6.055e-26</span></span>
+<span><span class="co">#&gt; x1    0.8837 0.08061 0.7257 1.042 5.837e-28</span></span></code></pre></div>
 </div>
 <p>Note that the <code><a href="https://zeileis.codeberg.page/sandwich/reference/estfun.html" class="external-link">sandwich::estfun</a></code> function from the <code>sandwich</code> library <span class="citation" data-cites="r_sandwich">(<a href="#ref-r_sandwich" role="doc-biblioref">Zeileis et al. 2020</a>)</span> can also be used to estimate the IF for different parametric models, but does not provide the tools for combining and transforming these.</p>
 </section><section class="level2"><h3 id="example-right-censored-outcomes">Example: right-censored outcomes<a class="anchor" aria-label="anchor" href="#example-right-censored-outcomes"></a>
@@ -435,11 +435,11 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">## Robust standard errors</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">semfit</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      Estimate Std.Err     2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; y2   -0.01236 0.06232 -0.13450 0.1098 8.428e-01</span></span>
-<span><span class="co">#&gt; u     0.21656 0.04640  0.12562 0.3075 3.052e-06</span></span>
-<span><span class="co">#&gt; y1~w  0.59037 0.05307  0.48635 0.6944 9.645e-29</span></span>
-<span><span class="co">#&gt; y2~w  0.65419 0.05599  0.54446 0.7639 1.528e-31</span></span>
-<span><span class="co">#&gt; u~~u  0.19001 0.07614  0.04078 0.3392 1.257e-02</span></span></code></pre></div>
+<span><span class="co">#&gt; y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01</span></span>
+<span><span class="co">#&gt; u     0.21656 0.04596  0.12648 0.3066 2.454e-06</span></span>
+<span><span class="co">#&gt; y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29</span></span>
+<span><span class="co">#&gt; y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31</span></span>
+<span><span class="co">#&gt; u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="example-quantile">Example: quantile<a class="anchor" aria-label="anchor" href="#example-quantile"></a>
 </h3>
@@ -859,7 +859,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <span><span class="co">## Aggregated IF</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">y</span>, id <span class="op">=</span> <span class="va">id</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 18840 bytes</span></span>
+<span><span class="co">#&gt; 19008 bytes</span></span>
 <span><span class="va">e</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err      2.5%    97.5% P-value</span></span>
 <span><span class="co">#&gt; p1 -0.002244 0.00332 -0.008751 0.004263  0.4991</span></span></code></pre></div>
@@ -996,7 +996,7 @@ Z_{ij}</span>. The variables <span class="math inline">Z_{i1},\ldots,Z_{iN_{i}}<
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5580db1f65f8&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x56265b422d10&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>

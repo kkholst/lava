@@ -378,9 +378,9 @@ j=1,\ldots,J-1 \end{align\*}
 
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()
 #>     Estimate Std.Err   2.5% 97.5%   P-value
-#> 0|1   0.4033 0.09781 0.2116 0.595 3.743e-05
-#> a     1.5832 0.15031 1.2886 1.878 6.080e-26
-#> x1    0.8837 0.08062 0.7257 1.042 5.866e-28
+#> 0|1   0.4033 0.09781 0.2116 0.595 3.742e-05
+#> a     1.5832 0.15030 1.2886 1.878 6.055e-26
+#> x1    0.8837 0.08061 0.7257 1.042 5.837e-28
 ```
 
 Note that the
@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06232 -0.13450 0.1098 8.428e-01
-#> u     0.21656 0.04640  0.12562 0.3075 3.052e-06
-#> y1~w  0.59037 0.05307  0.48635 0.6944 9.645e-29
-#> y2~w  0.65419 0.05599  0.54446 0.7639 1.528e-31
-#> u~~u  0.19001 0.07614  0.04078 0.3392 1.257e-02
+#> y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01
+#> u     0.21656 0.04596  0.12648 0.3066 2.454e-06
+#> y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29
+#> y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31
+#> u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02
 ```
 
 ### Example: quantile
@@ -996,7 +996,7 @@ Print(cbind(table(id)))
 ## Aggregated IF
 e <- estimate(y, id = id)
 object.size(e)
-#> 18840 bytes
+#> 19008 bytes
 e
 #>     Estimate Std.Err      2.5%    97.5% P-value
 #> p1 -0.002244 0.00332 -0.008751 0.004263  0.4991
@@ -1155,7 +1155,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x5580db1f65f8>
+#> <bytecode: 0x56265b422d10>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value

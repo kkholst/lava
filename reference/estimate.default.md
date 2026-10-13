@@ -28,14 +28,7 @@ estimate(
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width,
-  contrast,
-  null,
-  level = NULL,
-  type = NULL,
-  var.adj = NULL,
-  df = NULL,
-  back.transform = NULL
+  label.width
 )
 ```
 
@@ -49,15 +42,16 @@ estimate(
 
 - f:
 
-  transformation of model parameters. Accepts several input types: - A
-  **function** `f(p)` or `f(p, data)`: applies the delta method. When
-  `f` returns a named list the names are used as parameter labels. - A
-  **matrix**: used as a contrast (linear combination) matrix. - A
-  **numeric vector** of parameter indices: converted to a contrast that
-  selects and differences those parameters. - A **list** of indices:
-  each element selects one parameter. - **Character** expressions:
-  supports wildcards (`"?"`, `"*"`) and arithmetic on parameter names
-  (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
+  transformation of model parameters. Accepts several input types:
+
+  - A **function** `f(p)` or `f(p, data)`: applies the delta method.
+    When `f` returns a named list the names are used as parameter
+    labels. - A **matrix**: used as a contrast (linear combination)
+    matrix. - A **numeric vector** of parameter indices: converted to a
+    contrast that selects and differences those parameters. - A **list**
+    of indices: each element selects one parameter. - **Character**
+    expressions: supports wildcards (`"?"`, `"*"`) and arithmetic on
+    parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
 
 - ...:
 
@@ -65,16 +59,22 @@ estimate(
 
 - data:
 
-  `data.frame` used by `f` when the transformation depends on covariates
-  (see `average`). Defaults to `model.frame(x)`.
+  an optional data frame, list or environment (or object coercible by
+  [`as.data.frame`](https://rdrr.io/r/base/as.data.frame.html) to a data
+  frame) containing the variables in the model. If not found in `data`,
+  the variables are taken from `environment(formula)`, typically the
+  environment from which `glm` is called.
 
 - id:
 
   (optional) cluster identifier. Can be a vector of cluster IDs, a
   one-sided formula (evaluated in `data`), a single character column
-  name, or a logical scalar (`TRUE` for one-to-one matching, `FALSE` for
-  independence). When supplied, the IF is aggregated within clusters to
-  produce cluster-robust standard errors.
+  name. When supplied, the IF is aggregated within clusters to produce
+  cluster-robust standard errors. When `average = TRUE`, `id` refers to
+  the rows of `data`, i.e., the values of `f` (see
+  [expectation](https://kkholst.github.io/lava/reference/expectation.md)).
+  `id = NULL` removes the id (index) and the row names of the influence
+  function from the returned object.
 
 - coef:
 
@@ -107,18 +107,18 @@ estimate(
 
 - average:
 
-  if `TRUE` the function computes the standardized (marginalized)
-  estimate \\\hat\Psi = P_n f(X; \hat\theta)\\, i.e., the empirical mean
-  of `f(p, data)` over all rows of `data`. The influence function
-  accounts for both the empirical averaging and the parameter estimation
-  uncertainty (see Details).
+  (Deprecated) if `TRUE` the function computes the standardized estimate
+  \\\hat\Psi = P_n f(X; \hat\theta)\\, i.e., the empirical mean of
+  `f(p, data)`, as defined by the `f` argument, over all rows of `data`.
+  The influence function accounts for both the empirical averaging and
+  the parameter estimation uncertainty (see
+  [expectation](https://kkholst.github.io/lava/reference/expectation.md)).
 
 - subset:
 
-  (optional) logical vector, expression evaluated in `data`, or column
-  name. When used together with `average = TRUE`, the average is
-  conditioned on the subpopulation where `subset` is `TRUE`, yielding a
-  conditional marginalized estimate.
+  an optional vector specifying a subset of observations to be used in
+  the fitting process. (See additional details about how this argument
+  interacts with data-dependent bases in the ‘Details’ below.)
 
 - keep:
 
@@ -152,54 +152,6 @@ estimate(
 - label.width:
 
   (optional) max display width of labels
-
-- contrast:
-
-  (deprecated, use summary method) contrast matrix for a final Wald
-  test. When supplied together with `null`, tests \\H_0: B\theta =
-  b_0\\.
-
-- null:
-
-  (deprecated, use summary method) null hypothesis vector \\b_0\\ to
-  test against (default 0)
-
-- level:
-
-  (deprecated, use summary method) level of confidence limits (default
-  0.95)
-
-- type:
-
-  (deprecated, use summary method) type of small-sample correction for
-  cluster-robust variance. One of: - `"robust"` (default): no
-  correction.
-
-  - `"df"`: applies \\n/(n-p)\\ correction (Mancl & DeRouen, 2001). -
-    `"mbn"`: Morel-Bokossa-Neerchal (2003) correction. - `"hc3"`:
-    leverage-adjusted HC3-type correction (blended with `var.adj`). -
-    `"hc4"`: Cribari-Neto (2004) leverage-adjusted correction.
-
-- var.adj:
-
-  (deprecated, use summary method) blending parameter for the HC3
-  leverage adjustment (default 0.25). Controls the weight between
-  observation-level empirical leverage and the average leverage \\p/n\\.
-
-- df:
-
-  (deprecated, use summary method) degrees of freedom for t-based
-  inference (default: `NULL` for Gaussian approximation; when set,
-  confidence intervals and p-values use the t-distribution with `df`
-  degrees of freedom).
-
-- back.transform:
-
-  (deprecated, use summary method) function applied to the point
-  estimates and confidence interval bounds *after* inference is
-  performed on the original scale. Useful for variance-stabilizing
-  transformations, e.g., compute CIs on the `atanh` (Fisher z) scale and
-  back-transform with `tanh`.
 
 ## Value
 
@@ -281,16 +233,19 @@ section ("influence function calculus") and
 [`vignette("influencefunction", package = "lava")`](https://kkholst.github.io/lava/articles/influencefunction.md)
 for details.
 
-## Averaging and marginalization
+## Standardization (g-computation)
 
 When `average = TRUE` and `f(p, data)` depends on covariates, the target
-parameter is the standardized (marginalized) estimate \\\Psi =
+parameter is the standardized (g-computation) estimate \\\Psi =
 E\\f(X;\theta)\\\\. The IF for the averaged estimate accounts for both
 the empirical averaging and parameter estimation uncertainty:
 \$\$\mathrm{IC}\_\Psi(Z; P) = f(X;\theta) - \Psi + \[E\nabla\_\theta
 f(X;\theta)\]\\\phi(Z; P)\$\$ When `subset` is also specified, the
 average is conditioned on the subpopulation, yielding a conditional
-marginalized estimate.
+marginalized estimate. The model may be estimated on a different (e.g.,
+smaller) dataset than `data`. See
+[expectation](https://kkholst.github.io/lava/reference/expectation.md)
+for details.
 
 ## Cluster-robust standard errors
 
@@ -328,15 +283,7 @@ g0 <- glm(y~1,data=d,family=binomial())
 
 ## LRT
 estimate(g, g0)
-#> 
-#>  - Likelihood ratio test -
-#> 
-#> data:  
-#> chisq = 209.91, df = 2, p-value < 2.2e-16
-#> sample estimates:
-#> log likelihood (model 1) log likelihood (model 2) 
-#>                -567.6493                -672.6041 
-#> 
+#> NULL
 
 
 estimate(g)
@@ -454,25 +401,25 @@ d2 <- d1 <- sim(m,50,seed=1)
 e <- estimate(list(m,m),list(d1,d2))
 estimate(e) ## Wrong
 #>        Estimate Std.Err     2.5%  97.5%   P-value
-#> y@1      0.1044 0.08277 -0.05785 0.2666 2.073e-01
-#> y~x@1    0.9665 0.08727  0.79541 1.1375 1.677e-28
-#> y~~y@1   0.6764 0.10629  0.46803 0.8847 1.977e-10
+#> y@1      0.1044 0.08278 -0.05785 0.2666 2.073e-01
+#> y~x@1    0.9665 0.08727  0.79541 1.1375 1.673e-28
+#> y~~y@1   0.6764 0.10626  0.46809 0.8846 1.953e-10
 ee <- estimate(e, id=rep(seq(nrow(d1)), 2)) ## Clustered
 ee
 #>        Estimate Std.Err    2.5%  97.5%   P-value
-#> y@1      0.1044  0.1171 -0.1250 0.3338 3.725e-01
-#> y~x@1    0.9665  0.1234  0.7246 1.2084 4.859e-15
-#> y~~y@1   0.6764  0.1503  0.3817 0.9710 6.814e-06
+#> y@1      0.1044  0.1171 -0.1251 0.3338 3.726e-01
+#> y~x@1    0.9665  0.1234  0.7246 1.2084 4.853e-15
+#> y~~y@1   0.6764  0.1503  0.3818 0.9709 6.771e-06
 estimate(lm(y~x,d1))
 #>             Estimate Std.Err    2.5%  97.5%   P-value
 #> (Intercept)   0.1044  0.1171 -0.1251 0.3338 3.726e-01
 #> x             0.9665  0.1234  0.7246 1.2084 4.853e-15
 
-## Marginalize / standardization
+## Standardization (g-computation)
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-e <- estimate(g, f, average=TRUE)
+e <- expectation(f, g)
 e
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p0   0.5010 0.02140 0.4591 0.5429 3.025e-121
@@ -483,14 +430,7 @@ estimate(e,diff)
 estimate(e,cbind(1,1))
 #>             Estimate Std.Err  2.5% 97.5% P-value
 #> [p0] + [p1]    1.202 0.03027 1.142 1.261       0
-
-## Clusters and subset (conditional marginal effects)
-d$id <- rep(seq(nrow(d)/4),each=4)
-estimate(g,function(p,data)
-         list(p0=expit(p[1] + p["z"]*data[,"z"])),
-         subset=d$z>0, id=d$id, average=TRUE)
-#>    Estimate Std.Err   2.5%  97.5%    P-value
-#> p0   0.6754 0.02282 0.6307 0.7202 1.558e-192
+## see also ?expectation
 
 ## More examples with clusters:
 m <- lvm(c(y1,y2,y3)~u+x)
@@ -528,6 +468,12 @@ IC(estimate(l1,id=id1))
 #> 3  -0.2915390 -0.17419820
 #> 2  -0.2409398 -0.09345091
 #> 5   0.2073128 -0.12253093
+#> attr(,"bread")
+#>             (Intercept)          x
+#> (Intercept)   0.6136517 -0.1000796
+#> x            -0.1000796  0.9011828
+#> attr(,"N")
+#> [1] 10
 
 ## Combined i.i.d. decomposition
 e1 <- estimate(l1,id=id1)
@@ -607,22 +553,23 @@ IC(merge(l1,l2,l3,id=FALSE)) # independence
 
 
 # ------ influence function calculus -------
-a <- estimate(coef = c("a" = 0.5), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
-b <- estimate(coef = c("b" = 0.8), IC = scale(rnorm(10), scale=FALSE), id = 1:10)
+ic1 <- scale(rnorm(10), scale=FALSE)
+a <- estimate(coef = c("a" = 0.5), IC = ic1, id = 1:10)
+b <- estimate(coef = c("b" = 0.8), IC = ic1, id = 1:10)
 
 e <- c(a, b) # merge
 merge(a, b)
-#>   Estimate Std.Err   2.5%  97.5%  P-value
-#> a      0.5  0.2346 0.0401 0.9599 0.033101
-#> b      0.8  0.2868 0.2379 1.3621 0.005277
+#>   Estimate Std.Err   2.5%  97.5%   P-value
+#> a      0.5  0.2346 0.0401 0.9599 0.0331012
+#> b      0.8  0.2346 0.3401 1.2599 0.0006511
 c(e1=a, b) # naming of par
-#>    Estimate Std.Err   2.5%  97.5%  P-value
-#> e1      0.5  0.2346 0.0401 0.9599 0.033101
-#> b       0.8  0.2868 0.2379 1.3621 0.005277
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> e1      0.5  0.2346 0.0401 0.9599 0.0331012
+#> b       0.8  0.2346 0.3401 1.2599 0.0006511
 labels(e, c("p1", "p2")) # renaming parameters
-#>    Estimate Std.Err   2.5%  97.5%  P-value
-#> p1      0.5  0.2346 0.0401 0.9599 0.033101
-#> p2      0.8  0.2868 0.2379 1.3621 0.005277
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> p1      0.5  0.2346 0.0401 0.9599 0.0331012
+#> p2      0.8  0.2346 0.3401 1.2599 0.0006511
 e["a"] # subset
 #>   Estimate Std.Err   2.5%  97.5% P-value
 #> a      0.5  0.2346 0.0401 0.9599  0.0331
@@ -639,83 +586,83 @@ subset(e, "a")
 # Parameter transformation with automatic calculation of derivatives
 a * b
 #>   Estimate Std.Err    2.5%  97.5% P-value
-#> a      0.4  0.2583 -0.1063 0.9063  0.1215
+#> a      0.4   0.305 -0.1979 0.9979  0.1898
 (3 * cos(a) / sqrt(b) + 1) / a
 #>   Estimate Std.Err   2.5% 97.5% P-value
-#> a    7.887   4.783 -1.488 17.26 0.09917
+#> a    7.887   5.319 -2.539 18.31  0.1382
 expit(c(a,b))
 #>   Estimate Std.Err   2.5%  97.5%   P-value
 #> a   0.6225 0.05514 0.5144 0.7305 1.503e-29
-#> b   0.6900 0.06134 0.5697 0.8102 2.382e-29
+#> b   0.6900 0.05019 0.5916 0.7884 5.360e-43
 c(sum=sum(e), sum2=a+b,
   prod=prod(e), prod2=a*b)
 #>       Estimate Std.Err    2.5%  97.5%  P-value
-#> sum        1.3  0.4058  0.5047 2.0953 0.001356
-#> sum2       1.3  0.4058  0.5047 2.0953 0.001356
-#> prod       0.4  0.2583 -0.1063 0.9063 0.121526
-#> prod2      0.4  0.2583 -0.1063 0.9063 0.121526
+#> sum        1.3  0.4693  0.3802 2.2198 0.005604
+#> sum2       1.3  0.4693  0.3802 2.2198 0.005604
+#> prod       0.4  0.3050 -0.1979 0.9979 0.189758
+#> prod2      0.4  0.3050 -0.1979 0.9979 0.189758
 e %*% e # inner prod.
 #>     Estimate Std.Err    2.5% 97.5% P-value
-#> sum     0.89  0.5562 -0.2001  1.98  0.1096
+#> sum     0.89  0.6101 -0.3057 2.086  0.1446
 c(1, 2) %*% e
 #>     Estimate Std.Err   2.5% 97.5%  P-value
-#> sum      2.1  0.6624 0.8018 3.398 0.001522
+#> sum      2.1  0.7039 0.7203  3.48 0.002853
 c(pow = a^b)
-#>     Estimate Std.Err   2.5% 97.5%  P-value
-#> pow   0.5743  0.2226 0.1382 1.011 0.009858
+#>     Estimate Std.Err   2.5%  97.5%   P-value
+#> pow   0.5743  0.1222 0.3348 0.8139 2.609e-06
 a^c(0.5, 2)
 #>    Estimate Std.Err    2.5%  97.5%   P-value
 #> p1   0.7071  0.1659  0.3819 1.0323 2.029e-05
 #> p2   0.2500  0.2346 -0.2099 0.7099 2.867e-01
 c(b=e["a"] * e["b"] / a, also.b=e["b"])
-#>        Estimate Std.Err   2.5% 97.5%  P-value
-#> b           0.8  0.2868 0.2379 1.362 0.005277
-#> also.b      0.8  0.2868 0.2379 1.362 0.005277
+#>        Estimate Std.Err   2.5% 97.5%   P-value
+#> b           0.8  0.2346 0.3401  1.26 0.0006511
+#> also.b      0.8  0.2346 0.3401  1.26 0.0006511
 
 B <- rbind(c(1,-1), c(1,0), c(0,1))
 B %*% e
-#>           Estimate Std.Err    2.5%  97.5%  P-value
-#> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 0.365625
-#> a              0.5  0.2346  0.0401 0.9599 0.033101
-#> b              0.8  0.2868  0.2379 1.3621 0.005277
+#>           Estimate Std.Err    2.5%   97.5%   P-value
+#> [a] - [b]     -0.3  0.0000 -0.3000 -0.3000 0.0000000
+#> a              0.5  0.2346  0.0401  0.9599 0.0331012
+#> b              0.8  0.2346  0.3401  1.2599 0.0006511
 e == 1 # wald-test, null-hypothesis H0: b=1
 #> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
 #>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5% P-value
 #> a      0.5  0.2346 0.0401 0.9599  0.0331
-#> b      0.8  0.2868 0.2379 1.3621  0.4856
+#> b      0.8  0.2346 0.3401 1.2599  0.3940
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] = 1
 #>   [b] = 1 
 #>  
-#> chisq = 4.6135, df = 2, p-value = 0.09958
+#> chisq = 2.2249, df = 1, p-value = 0.1358
 e == c(1,2)
 #> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
 #>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5%   P-value
 #> a      0.5  0.2346 0.0401 0.9599 3.310e-02
-#> b      0.8  0.2868 0.2379 1.3621 2.859e-05
+#> b      0.8  0.2346 0.3401 1.2599 3.153e-07
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [a] = 1
 #>   [b] = 2 
 #>  
-#> chisq = 19.2204, df = 2, p-value = 6.704e-05
+#> chisq = 13.1221, df = 1, p-value = 0.0002918
 B %*% e == 1
 #> Call: estimate.default(x = y, f = x)
 #> ────────────────────────────────────────────────────────────
-#>           Estimate Std.Err    2.5%  97.5%   P-value
-#> [a] - [b]     -0.3  0.3316 -0.9499 0.3499 8.842e-05
-#> a              0.5  0.2346  0.0401 0.9599 3.310e-02
-#> b              0.8  0.2868  0.2379 1.3621 4.856e-01
+#>           Estimate Std.Err    2.5%   97.5% P-value
+#> [a] - [b]     -0.3  0.0000 -0.3000 -0.3000  0.0000
+#> a              0.5  0.2346  0.0401  0.9599  0.0331
+#> b              0.8  0.2346  0.3401  1.2599  0.3940
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [[a] - [b]] = 1
 #>   [a] = 1
 #>   [b] = 1 
 #>  
-#> chisq = 14.0808, df = 2, p-value = 0.0008758
+#> chisq = 2.2249, df = 1, p-value = 0.1358
 ```

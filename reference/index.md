@@ -18,6 +18,8 @@ Functions for working with Influence Functions
   : Estimate method for GLM objects
 - [`estimate(`*`<list>`*`)`](https://kkholst.github.io/lava/reference/estimate.list.md)
   : Estimate method for lists
+- [`expectation()`](https://kkholst.github.io/lava/reference/expectation.md)
+  : Mean of (estimated) function via g-computation
 - [`iid()`](https://kkholst.github.io/lava/reference/iid.md) : Extract
   i.i.d. decomposition from model object
 - [`merge(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/merge.estimate.md)

@@ -146,7 +146,7 @@ estimate(e, function(p) p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)
 ```
 
            Estimate  Std.Err   2.5%  97.5% P-value
-    y1~~y2   0.8915 0.008703 0.8745 0.9086       0
+    y1~~y2   0.8915 0.008811 0.8743 0.9088       0
 
 Alternatively, the correlations can be extracted using the `correlation`
 method
@@ -200,12 +200,12 @@ estimate(e, function(p) atanh(p['y1~~y2']/(p['y1~~y1']*p['y2~~y2'])^.5)) |>
         p["y2~~y2"])^0.5))
     ────────────────────────────────────────────────────────────
            Estimate Std.Err   2.5%  97.5%    P-value
-    y1~~y2   0.8915         0.8732 0.9074 7.445e-249
+    y1~~y2   0.8915         0.8729 0.9076 7.072e-243
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [y1~~y2] = 0
 
-    chisq = 1135.185, df = 1, p-value < 2.2e-16
+    chisq = 1107.681, df = 1, p-value < 2.2e-16
 
 The transformed confidence interval will generally have improved
 coverage especially near the boundary \rho \approx \pm 1.
@@ -272,12 +272,12 @@ estimate(e2, "z") |> labels("rho") |> summary(transform=tanh)
     Call: estimate.default(x = e2, f = "z")
     ────────────────────────────────────────────────────────────
         Estimate Std.Err   2.5%  97.5%    P-value
-    rho   0.8915         0.8729 0.9076 5.606e-243
+    rho   0.8915         0.8729 0.9076 7.072e-243
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [rho] = 0
 
-    chisq = 1108.145, df = 1, p-value < 2.2e-16
+    chisq = 1107.681, df = 1, p-value < 2.2e-16
 
 In practice, a much shorter syntax can be used to obtain the above
 parametrization. We can simply use the argument `constrain` when
@@ -316,12 +316,12 @@ estimate(e2, 'z') |> summary(transform=tanh)
     Call: estimate.default(x = e2, f = "z")
     ────────────────────────────────────────────────────────────
       Estimate Std.Err   2.5%  97.5%    P-value
-    z   0.8915         0.8729 0.9076 5.606e-243
+    z   0.8915         0.8729 0.9076 7.072e-243
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [z] = 0
 
-    chisq = 1108.145, df = 1, p-value < 2.2e-16
+    chisq = 1107.681, df = 1, p-value < 2.2e-16
 
 As an alternative to the Wald confidence intervals (with or without
 transformation) is to profile the likelihood. The profile likelihood
@@ -409,13 +409,13 @@ summary(estimate(e3, 'z'), transform=tanh)
 
     Call: estimate.default(x = e3, f = "z")
     ────────────────────────────────────────────────────────────
-      Estimate Std.Err  2.5%  97.5%    P-value
-    z   0.8913         0.872 0.9079 1.498e-226
+      Estimate Std.Err   2.5%  97.5%    P-value
+    z   0.8913         0.8739 0.9065 2.541e-274
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [z] = 0
 
-    chisq = 1032.567, df = 1, p-value < 2.2e-16
+    chisq = 1252.365, df = 1, p-value < 2.2e-16
 
 And here the same analysis with `s1` being left-censored and `s2`
 right-censored:
@@ -467,12 +467,12 @@ summary(estimate(e3b, 'z'), transform=tanh)
     Call: estimate.default(x = e3b, f = "z")
     ────────────────────────────────────────────────────────────
       Estimate Std.Err   2.5%  97.5%    P-value
-    z   0.8909         0.8713 0.9077 9.005e-222
+    z   0.8909         0.8747 0.9051 4.489e-316
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [z] = 0
 
-    chisq = 1010.58, df = 1, p-value < 2.2e-16
+    chisq = 1444.502, df = 1, p-value < 2.2e-16
 
 ``` r
 
@@ -513,13 +513,13 @@ sessionInfo()
     [1] lava_1.9.3.9000
 
     loaded via a namespace (and not attached):
-     [1] progressr_1.0.0        mets_1.3.12            cli_3.6.6
+     [1] mets_1.3.12            progressr_1.0.0        cli_3.6.6
      [4] knitr_1.52             rlang_1.3.0            xfun_0.61
      [7] otel_0.2.0             generics_0.1.4         jsonlite_2.0.0
     [10] future.apply_1.20.2    listenv_1.1.0          htmltools_0.5.9
     [13] graph_1.90.0           stats4_4.6.1           rmarkdown_2.32
     [16] grid_4.6.1             evaluate_1.0.5         fastmap_1.2.0
-    [19] numDeriv_2016.8-1.1    mvtnorm_1.4-2          yaml_2.3.12
+    [19] mvtnorm_1.4-2          numDeriv_2016.8-1.1    yaml_2.3.12
     [22] timereg_2.0.7          compiler_4.6.1         codetools_0.2-20
     [25] Rcpp_1.1.2             future_1.76.0          Rgraphviz_2.56.0
     [28] lattice_0.22-9         digest_0.6.39          parallelly_1.48.0
