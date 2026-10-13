@@ -512,8 +512,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       D <- numDeriv::jacobian(function(p, ...) {
         if (length(form)==0) arglist[[1]] <- p
         else arglist[[parname]] <- p
-        if (is.null(newf))
-          return(do.call("f", arglist))
+        if (is.null(newf)) return(do.call("f", arglist))
         return(do.call("newf", arglist))
       }, pp, method = lava.options()$Dmethod)
     }
