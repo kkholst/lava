@@ -378,7 +378,7 @@ test_that("standardization with model estimated on a subset (id alignment)", {
   # estimate object without any ids: no link to data of different size
   # (no rownames in IC either)
   expect_error(
-    estimate(expectation(object=g, id = NULL), f, data = dat, id = dat$id).
+    expectation(object=estimate(g, id = NULL), f, data = dat, id = dat$id),
     "Unable to link"
   )
 })
