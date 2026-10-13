@@ -1155,7 +1155,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x5634f9c19d88>
+#> <bytecode: 0x558e4513a758>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1586,7 +1586,7 @@ The above steps are easily wrapped into For `glm` objects this
 ``` r
 
 e <- estimate(g, id=dw$id)
-expectation(predict, e, data=dw, id="id", labels="trt=1")
+expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
 #>       Estimate Std.Err   2.5%  97.5%    P-value
 #> trt=1    0.565 0.01568 0.5343 0.5957 2.009e-284
 ```
