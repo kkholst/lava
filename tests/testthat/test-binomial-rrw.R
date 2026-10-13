@@ -1,4 +1,4 @@
-context("Binomial risk-difference / relative-risk models (binomial.rrw)")
+# Binomial risk-difference / relative-risk models (binomial.rrw)
 
 ## ---------------------------------------------------------------------------
 ## Identical()

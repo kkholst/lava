@@ -1,4 +1,4 @@
-context("Weighted K-means (wkm)")
+# Weighted K-means (wkm)
 
 ## Helper: best-permutation accuracy of cluster labels vs truth
 .cluster_accuracy <- function(pred, truth) {

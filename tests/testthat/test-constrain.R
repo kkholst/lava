@@ -1,4 +1,4 @@
-context("Constraints")
+# Constraints
 
 test_that("Simple linear constraint",{
     m1 <- lvm(y[m:v] ~ f(x,beta)+f(z,beta2))

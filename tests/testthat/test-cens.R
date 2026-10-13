@@ -1,4 +1,4 @@
-context("Censored observations")
+# Censored observations
 
 library("survival")
 

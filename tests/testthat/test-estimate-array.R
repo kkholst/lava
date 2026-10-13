@@ -1,4 +1,4 @@
-context("estimate.default and estimate_calculus issues")
+# estimate.default and estimate_calculus issues
 
 library(testthat)
 library(lava)

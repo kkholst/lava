@@ -1,4 +1,4 @@
-context("ordreg: cumulative link regression")
+# ordreg: cumulative link regression
 
 test_that("ordreg",{
   set.seed(1)

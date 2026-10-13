@@ -1,6 +1,4 @@
-library(testthat)
-
-context("nonlinear lvm")
+# nonlinear lvm
 
 ## simulated data
 f <- function(x) - 0.25*x^2

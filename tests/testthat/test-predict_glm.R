@@ -1,4 +1,4 @@
-context("predict_glm")
+# predict_glm
 
 set.seed(42)
 n <- 100

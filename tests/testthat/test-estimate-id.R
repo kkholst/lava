@@ -1,4 +1,4 @@
-context("estimate.default id/cluster")
+# estimate.default id/cluster
 
 test_that("index.estimate", {
   m <- lvm(c(y1,y2)~x+z, y1~~y2)

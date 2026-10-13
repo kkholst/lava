@@ -1,4 +1,4 @@
-context("estimate.default")
+# estimate.default
 
 test_that("estimate.default misc", {
     m <- lvm(c(y1,y2)~x+z,y1~~y2)
@@ -422,9 +422,9 @@ test_that("initialization of object without names", {
   p <- c(a=1, b=2, c=3, d=4)
   e0 <- estimate(coef=p, vcov=diag(4))
   e1 <- estimate(coef=1:4, vcov=diag(4))
-  expect_equal(coef(e0), coef(e1), check.attributes=FALSE)
-  expect_equal(vcov(e0), vcov(e1), check.attributes=FALSE)
+  expect_equal(coef(e0), coef(e1), ignore_attr=TRUE)
+  expect_equal(vcov(e0), vcov(e1), ignore_attr=TRUE)
 
   e <- estimate(coef=1:4, vcov=diag(4), f=list(1,2,3))
-  expect_equal(coef(e), coef(e0)[c(1:3)], check.attributes=FALSE)
+  expect_equal(coef(e), coef(e0)[c(1:3)], ignore_attr=TRUE)
 })

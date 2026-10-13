@@ -1,4 +1,4 @@
-context("Linear algebra functions")
+# Linear algebra functions
 
 test_that("Matrix operations:", {
     ## vec operator

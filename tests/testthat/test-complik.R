@@ -1,4 +1,4 @@
-context("Composite likelihood")
+# Composite likelihood
 
 
 test_that("complik", {

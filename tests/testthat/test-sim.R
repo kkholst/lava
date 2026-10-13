@@ -1,4 +1,4 @@
-context("Simulation")
+# Simulation
 
 test_that("Constrain, transform I", {
     m <- lvm(,~y+x)
@@ -27,7 +27,7 @@ test_that("Missing", {
     g <- glm(r~x,data=d,family=binomial)
     testthat::expect_true(all.equal(coef(g), c(0, 1),
                                     tolerance = 0.2,
-                                    check.attributes = FALSE
+                                    ignore_attr = TRUE
     ))
 })
 

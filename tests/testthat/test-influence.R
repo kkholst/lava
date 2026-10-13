@@ -1,4 +1,4 @@
-context("Influence functions")
+# Influence functions
 
 test_that("GEE", {
   if (requireNamespace("geepack",quietly=TRUE)) {

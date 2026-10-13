@@ -1,4 +1,4 @@
-context("merge.estimate")
+# merge.estimate
 
 library(testthat)
 library(lava)
@@ -71,26 +71,26 @@ test_that("c.estimate with 'extra' attr", {
   e <- c(e1, e2) # two estimate.extra objects
   expect_equal(c(coef(e1), coef(e2)), coef(e))
   expect_equal(c(vcov(e1), vcov(e2)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(c(attr(e1, "extra"), attr(e2, "extra")),
                  attr(e, "extra"))
 
   e <- c(e1, e3) # estimatee.xtra + estimate
   expect_equal(c(coef(e1), coef(e3)), coef(e))
   expect_equal(c(vcov(e1), vcov(e3)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(attr(e1, "extra"), attr(e, "extra"))
 
   e <- c(e3, e1) # estimate + estimate.extra
   expect_equal(c(coef(e3), coef(e1)), coef(e))
   expect_equal(c(vcov(e3), vcov(e1)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(attr(e1, "extra"), attr(e, "extra"))
 
   e <- c(e1, e2, d=2) # estimate + scalar/extra
   expect_equal(c(coef(e1), coef(e2)), coef(e))
   expect_equal(c(vcov(e1), vcov(e2)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(c(attr(e1, "extra"), attr(e2, "extra"), d=2),
                attr(e, "extra"))
 

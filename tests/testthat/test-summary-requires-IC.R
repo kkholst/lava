@@ -1,7 +1,8 @@
+# summary.estimate IC requirement
+
 ## summary.estimate() requires IC=TRUE on the input estimate when applying
 ## small-sample corrections (type / var.adj). Per Q5.
 
-context("summary.estimate IC requirement")
 
 make_glm <- function() {
   set.seed(1)

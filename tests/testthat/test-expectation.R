@@ -1,4 +1,4 @@
-context("expectation (g-computation)")
+# expectation (g-computation)
 
 sim_expectation <- function(n = 300, seed = 1) {
   set.seed(seed)
@@ -476,8 +476,8 @@ test_that("expectation: expressions and quoted arguments", {
   m5 <- expectation(d$z)
 
   comp <- function(m1, m2) {
-    expect_equal(coef(m1), coef(m2), check.attributes=FALSE)
-    expect_equal(IC(m1), IC(m2), check.attributes=FALSE)
+    expect_equal(coef(m1), coef(m2), ignore_attr=TRUE)
+    expect_equal(IC(m1), IC(m2), ignore_attr=TRUE)
   }
   for (m in list(m2, m3, m4, m5)) comp(m1, m)
 })

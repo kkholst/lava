@@ -1,4 +1,4 @@
-context("Optimization")
+# Optimization
 
 test_that("Optimization", {
     m <- lvm(y~x+z)

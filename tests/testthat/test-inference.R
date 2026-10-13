@@ -1,4 +1,4 @@
-context("Inference")
+# statistical inference
 
 test_that("Effects",{
     m <- lvm()

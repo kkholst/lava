@@ -1,4 +1,4 @@
-context("glm components")
+# glm components
 
 test_that("score.glm can handle a overparameterized model (NA coef)", {
   set.seed(1)
@@ -22,15 +22,15 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
     "Over-parameterized"
   )
 
-  expect_equal(score_ref, score_na[!is.na(coef(m))])
+  expect_equal(score_ref, unlist(score_na[!is.na(coef(m))]))
 
-  expect_true(score_na["x_dup"] == 0)
+  expect_true(unlist(score_na["x_dup"]) == 0)
 
   score_ref <- score.glm(m_ref, indiv = TRUE)
   score_na <- suppressWarnings(score.glm(m, indiv = TRUE))
 
-  expect_equal(score_ref, score_na[,!is.na(coef(m))],
-               check.attributes = FALSE)
+  expect_equal(score_ref, unlist(score_na[,!is.na(coef(m))]),
+               ignore_attr = TRUE)
 
   expect_equal(
     attr(score_ref, "bread"),
@@ -47,7 +47,7 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   expect_equal(
     IC(m_ref),
     suppressWarnings(IC(m))[, idx_m_ref],
-    check.attributes = FALSE
+    ignore_attr = TRUE
   )
 
   ## check hessian
@@ -55,18 +55,18 @@ test_that("score.glm can handle a overparameterized model (NA coef)", {
   expect_equal(
     I[idx_m_ref, idx_m_ref],
     information(m_ref),
-    check.attributes = FALSE
+    ignore_attr = TRUE
   )
   expect_equal(
     Inverse(I)[idx_m_ref, idx_m_ref],
     vcov(m_ref),
-    check.attributes = FALSE
+    ignore_attr = TRUE
   )
 
   ## logL
   ll <- suppressWarnings(lava:::logL.glm(m))
   expect_equal(ll, logLik(m_ref),
-    check.attributes = FALSE
+    ignore_attr = TRUE
   )
 
   ## user should get a warning with overparametrized models

@@ -1,4 +1,5 @@
-context("Graphics functions")
+# Graphics functions
+
 library("vdiffr")
 
 test_that("color, devcoords", {

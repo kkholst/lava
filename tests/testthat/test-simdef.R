@@ -1,5 +1,5 @@
-library(future)
-context("Generic simulation framework")
+# Generic simulation framework
+
 
 f <- function(iter=list(), ...) {
   if (!is.list(iter) || is.null(iter$i)) return(0)

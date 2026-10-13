@@ -1,4 +1,4 @@
-context("estimate calculus")
+# estimate calculus
 
 set.seed(1)
 # Generate mean-zero random IC matrix (for internal testing)

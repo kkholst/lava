@@ -1,4 +1,4 @@
-context("Utility functions")
+# Utility functions
 
 test_that("By", {
     b1 <- By(datasets::CO2,~Treatment+Type,colMeans,~conc)

@@ -1,3 +1,5 @@
+
+
 set.seed(1)
 center_ic <- function(n, p = 1) {
   x <- matrix(rnorm(n * p), n, p)

@@ -1,4 +1,4 @@
-context("Model specification")
+# lvm model specification
 
 test_that("Basic model building blocks", {
     m <- lvm(y[m]~x)
