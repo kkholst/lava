@@ -107,11 +107,11 @@ estimate(
 
 - average:
 
-  if `TRUE` the function computes the standardized estimate \\\hat\Psi =
-  P_n f(X; \hat\theta)\\, i.e., the empirical mean of `f(p, data)`, as
-  defined by the `f` argument, over all rows of `data`. The influence
-  function accounts for both the empirical averaging and the parameter
-  estimation uncertainty (see
+  (Deprecated) if `TRUE` the function computes the standardized estimate
+  \\\hat\Psi = P_n f(X; \hat\theta)\\, i.e., the empirical mean of
+  `f(p, data)`, as defined by the `f` argument, over all rows of `data`.
+  The influence function accounts for both the empirical averaging and
+  the parameter estimation uncertainty (see
   [expectation](https://kkholst.github.io/lava/reference/expectation.md)).
 
 - subset:
@@ -419,7 +419,7 @@ estimate(lm(y~x,d1))
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-e <- estimate(g, f, average=TRUE)
+e <- expectation(g, f)
 e
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p0   0.5010 0.02140 0.4591 0.5429 3.025e-121
