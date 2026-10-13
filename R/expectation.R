@@ -1,21 +1,23 @@
-#' Marginal mean (standardized) estimates via g-computation
+#' Mean of (estimated) function via g-computation
 #'
-#' Estimates the marginal mean (standardized) parameter
-#' \eqn{\Psi = E\{f(X; \theta)\}} by the empirical average of `f(p, data)`
-#' over the rows of `data` (g-computation), where the parameter \eqn{\theta}
-#' is estimated by `object`. The influence function of the estimate
+#' Estimates the mean parameter
+#' \eqn{\Psi = E{f(X; \theta)}} by the empirical average of f(p, data)
+#' over the rows of data, where the parameter \eqn{\theta}
+#' is estimated by object. The influence function of the estimate
 #' accounts for both the empirical averaging and the uncertainty of
-#' \eqn{\widehat\theta}.
+#' \eqn{\widehat\theta}. Standardization and g-computation are special
+#' applications of this function.
 #'
 #' @param object model object (`glm`, `lvmfit`, ...) or `estimate` object
-#'   providing the parameter estimates and their influence
-#'   function. Alternatively, an evaluated expression of a function with values
-#'   in `data` can be provided to calculate the simple mean (see examples).
-#' @param f function where the first argument is the parameter vector and the
-#'   optional named arguments `data` and `object` (the model object, e.g.  an
+#'   providing the parameter estimates and their influence function.
+#'   Alternatively, an evaluated expression of a function with values in `data`
+#'   can be provided to calculate the simple mean (see examples).
+#' @param f function with named argument `p` providing the parameter vector and
+#'   the optional named arguments `data` and `object` (the model object, e.g. an
 #'   `estimate` object). Should return a vector, matrix or a (named) list of
-#'   vectors with one value per observation (row of `data`). If the result has
-#'   an attribute `"grad"` it is used as the Jacobian of `f` with respect to `p`
+#'   vectors with one value per observation (row of `data` unless `data` is
+#'   NULL). If the result has an attribute `"grad"` it is used as the Jacobian
+#'   of `f` with respect to `p`
 #' @param data `data.frame` over which `f` is averaged. Defaults to
 #'   `model.frame(object)` (which is not available for `estimate` objects).
 #' @param id (optional) ids of the values returned by `f` (the g-computation

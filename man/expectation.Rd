@@ -2,21 +2,22 @@
 % Please edit documentation in R/expectation.R
 \name{expectation}
 \alias{expectation}
-\title{Marginal mean (standardized) estimates via g-computation}
+\title{Mean of (estimated) function via g-computation}
 \usage{
 expectation(object, f, data, id, subset, labels = NULL, ...)
 }
 \arguments{
 \item{object}{model object (\code{glm}, \code{lvmfit}, ...) or \code{estimate} object
-providing the parameter estimates and their influence
-function. Alternatively, an evaluated expression of a function with values
-in \code{data} can be provided to calculate the simple mean (see examples).}
+providing the parameter estimates and their influence function.
+Alternatively, an evaluated expression of a function with values in \code{data}
+can be provided to calculate the simple mean (see examples).}
 
-\item{f}{function where the first argument is the parameter vector and the
-optional named arguments \code{data} and \code{object} (the model object, e.g.  an
+\item{f}{function with named argument \code{p} providing the parameter vector and
+the optional named arguments \code{data} and \code{object} (the model object, e.g. an
 \code{estimate} object). Should return a vector, matrix or a (named) list of
-vectors with one value per observation (row of \code{data}). If the result has
-an attribute \code{"grad"} it is used as the Jacobian of \code{f} with respect to \code{p}}
+vectors with one value per observation (row of \code{data} unless \code{data} is
+NULL). If the result has an attribute \code{"grad"} it is used as the Jacobian
+of \code{f} with respect to \code{p}}
 
 \item{data}{\code{data.frame} over which \code{f} is averaged. Defaults to
 \code{model.frame(object)} (which is not available for \code{estimate} objects).}
@@ -42,12 +43,13 @@ marginal mean estimate).}
 \code{estimate} object
 }
 \description{
-Estimates the marginal mean (standardized) parameter
-\eqn{\Psi = E\{f(X; \theta)\}} by the empirical average of \code{f(p, data)}
-over the rows of \code{data} (g-computation), where the parameter \eqn{\theta}
-is estimated by \code{object}. The influence function of the estimate
+Estimates the mean parameter
+\eqn{\Psi = E{f(X; \theta)}} by the empirical average of f(p, data)
+over the rows of data, where the parameter \eqn{\theta}
+is estimated by object. The influence function of the estimate
 accounts for both the empirical averaging and the uncertainty of
-\eqn{\widehat\theta}.
+\eqn{\widehat\theta}. Standardization and g-computation are special
+applications of this function.
 }
 \details{
 The influence function of the estimate is
