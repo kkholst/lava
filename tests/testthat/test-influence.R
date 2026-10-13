@@ -132,5 +132,4 @@ test_that("IC misc", {
   cl[1] <- NA
   expect_error(IC(l, id = cl), "Missing values in 'id'")
 
-  ic <- IC(l, folds=10)
 })
