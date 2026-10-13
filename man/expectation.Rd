@@ -8,11 +8,13 @@ expectation(object, f, data, id, subset, labels = NULL, ...)
 }
 \arguments{
 \item{object}{model object (\code{glm}, \code{lvmfit}, ...) or \code{estimate} object
-providing the parameter estimates and their influence function.}
+providing the parameter estimates and their influence
+function. Alternatively, an evaluated expression of a function with values
+in \code{data} can be provided to calculate the simple mean (see examples).}
 
-\item{f}{function where the first argument is the parameter vector and
-the optional named arguments \code{data} and \code{object} (the model object, e.g.
-an \code{estimate} object. Should return a vector, matrix or a (named) list of
+\item{f}{function where the first argument is the parameter vector and the
+optional named arguments \code{data} and \code{object} (the model object, e.g.  an
+\code{estimate} object). Should return a vector, matrix or a (named) list of
 vectors with one value per observation (row of \code{data}). If the result has
 an attribute \code{"grad"} it is used as the Jacobian of \code{f} with respect to \code{p}}
 
@@ -21,16 +23,16 @@ an attribute \code{"grad"} it is used as the Jacobian of \code{f} with respect t
 
 \item{id}{(optional) ids of the values returned by \code{f} (the g-computation
 part): a vector with one value per value of \code{f}, or a column name or
-one-sided formula evaluated in \code{data} (requiring one value of \code{f} per
-row of \code{data}). Defaults to the names of the values of \code{f}, and
-otherwise \code{rownames(data)}. \code{id = NULL} uses the default ids but removes
-the id (index) from the returned object.}
+one-sided formula evaluated in \code{data} (requiring one value of \code{f} per row
+of \code{data}). Defaults to the names of the values of \code{f}, and otherwise
+\code{rownames(data)}. \code{id = NULL} uses the default ids but removes the id
+(index) from the returned object.}
 
 \item{subset}{(optional) logical vector (one value per value of \code{f}),
 expression evaluated in \code{data} (columns of \code{data} take precedence over
-variables in the calling environment), or column name. The average is
-then conditioned on the subpopulation where \code{subset} is \code{TRUE}
-(conditional marginal mean estimate).}
+variables in the calling environment), or column name. The average is then
+conditioned on the subpopulation where \code{subset} is \code{TRUE} (conditional
+marginal mean estimate).}
 
 \item{labels}{(optional) character vector of parameter names}
 

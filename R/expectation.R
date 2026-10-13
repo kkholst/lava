@@ -8,25 +8,27 @@
 #' \eqn{\widehat\theta}.
 #'
 #' @param object model object (`glm`, `lvmfit`, ...) or `estimate` object
-#'   providing the parameter estimates and their influence function.
-#' @param f function where the first argument is the parameter vector and
-#'   the optional named arguments `data` and `object` (the model object, e.g.
-#'   an `estimate` object. Should return a vector, matrix or a (named) list of
+#'   providing the parameter estimates and their influence
+#'   function. Alternatively, an evaluated expression of a function with values
+#'   in `data` can be provided to calculate the simple mean (see examples).
+#' @param f function where the first argument is the parameter vector and the
+#'   optional named arguments `data` and `object` (the model object, e.g.  an
+#'   `estimate` object). Should return a vector, matrix or a (named) list of
 #'   vectors with one value per observation (row of `data`). If the result has
 #'   an attribute `"grad"` it is used as the Jacobian of `f` with respect to `p`
 #' @param data `data.frame` over which `f` is averaged. Defaults to
 #'   `model.frame(object)` (which is not available for `estimate` objects).
 #' @param id (optional) ids of the values returned by `f` (the g-computation
 #'   part): a vector with one value per value of `f`, or a column name or
-#'   one-sided formula evaluated in `data` (requiring one value of `f` per
-#'   row of `data`). Defaults to the names of the values of `f`, and
-#'   otherwise `rownames(data)`. `id = NULL` uses the default ids but removes
-#'   the id (index) from the returned object.
+#'   one-sided formula evaluated in `data` (requiring one value of `f` per row
+#'   of `data`). Defaults to the names of the values of `f`, and otherwise
+#'   `rownames(data)`. `id = NULL` uses the default ids but removes the id
+#'   (index) from the returned object.
 #' @param subset (optional) logical vector (one value per value of `f`),
 #'   expression evaluated in `data` (columns of `data` take precedence over
-#'   variables in the calling environment), or column name. The average is
-#'   then conditioned on the subpopulation where `subset` is `TRUE`
-#'   (conditional marginal mean estimate).
+#'   variables in the calling environment), or column name. The average is then
+#'   conditioned on the subpopulation where `subset` is `TRUE` (conditional
+#'   marginal mean estimate).
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
