@@ -68,13 +68,15 @@ accounts for both the empirical averaging and the uncertainty of
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>model object (<code>glm</code>, <code>lvmfit</code>, ...) or <code>estimate</code> object
-providing the parameter estimates and their influence function.</p></dd>
+providing the parameter estimates and their influence
+function. Alternatively, an evaluated expression of a function with values
+in <code>data</code> can be provided to calculate the simple mean (see examples).</p></dd>
 
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
-<dd><p>function where the first argument is the parameter vector and
-the optional named arguments <code>data</code> and <code>object</code> (the model object, e.g.
-an <code>estimate</code> object. Should return a vector, matrix or a (named) list of
+<dd><p>function where the first argument is the parameter vector and the
+optional named arguments <code>data</code> and <code>object</code> (the model object, e.g.  an
+<code>estimate</code> object). Should return a vector, matrix or a (named) list of
 vectors with one value per observation (row of <code>data</code>). If the result has
 an attribute <code>"grad"</code> it is used as the Jacobian of <code>f</code> with respect to <code>p</code></p></dd>
 
@@ -87,18 +89,18 @@ an attribute <code>"grad"</code> it is used as the Jacobian of <code>f</code> wi
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>(optional) ids of the values returned by <code>f</code> (the g-computation
 part): a vector with one value per value of <code>f</code>, or a column name or
-one-sided formula evaluated in <code>data</code> (requiring one value of <code>f</code> per
-row of <code>data</code>). Defaults to the names of the values of <code>f</code>, and
-otherwise <code>rownames(data)</code>. <code>id = NULL</code> uses the default ids but removes
-the id (index) from the returned object.</p></dd>
+one-sided formula evaluated in <code>data</code> (requiring one value of <code>f</code> per row
+of <code>data</code>). Defaults to the names of the values of <code>f</code>, and otherwise
+<code>rownames(data)</code>. <code>id = NULL</code> uses the default ids but removes the id
+(index) from the returned object.</p></dd>
 
 
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
 <dd><p>(optional) logical vector (one value per value of <code>f</code>),
 expression evaluated in <code>data</code> (columns of <code>data</code> take precedence over
-variables in the calling environment), or column name. The average is
-then conditioned on the subpopulation where <code>subset</code> is <code>TRUE</code>
-(conditional marginal mean estimate).</p></dd>
+variables in the calling environment), or column name. The average is then
+conditioned on the subpopulation where <code>subset</code> is <code>TRUE</code> (conditional
+marginal mean estimate).</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
