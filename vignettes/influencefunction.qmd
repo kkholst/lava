@@ -597,6 +597,8 @@ vcov(ecomb)
 list(vcov(e2), vcov(e3))
 ```
 
+
+
 Note, it is also possible to directly specify the id-variables in the `merge` call:
 ```{r merge}
 merge(e2, e3, id = list(dw$id, dwc$id))
@@ -1085,19 +1087,24 @@ value $1$
 ```{r estpred}
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
 pr <- function(p, data, ...) {
-  X <- model.matrix(g, transform(data, a=1))
-  expit(X %*% p)
-  ## alternatively:
-  ## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
 }
 pr(coef(g), dw) |> head()
 ```
-The target parameter can now be estimated with the syntax
+The target parameter can now be estimated with the `expectation` function
 ```{r average}
-ea <- estimate(g, pr, average=TRUE)
+ea <- expectation(pr, object = g)
 ea
 IC(ea) |> head()
 ```
+
+The above steps are easily wrapped into
+For `glm` objects this
+```{r expectation}
+e <- estimate(g, id=dw$id)
+expectation(predict, e, data=dw, id="id", labels="trt=1")
+```
+
 
 ## Average Treatment Effects
 
