@@ -144,10 +144,7 @@ summary.estimate <- function(object,
     } else {
       V <- vcov(object)
     }
-    ## Preserve dimnames on vcov: the recall path through type/var.adj
-    ## corrections builds V from the influence function and may drop
-    ## dimnames. Restore them from the original coef names so the
-    ## summary output is consistent with the deprecated estimate() path.
+    ## Preserve dimnames on vcov
     if (!is.null(V) && is.null(dimnames(V)) &&
         !is.null(names(p)) &&
         nrow(V) == length(p)) {

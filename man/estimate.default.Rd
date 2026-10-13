@@ -77,7 +77,7 @@ standard errors are computed from the influence function.}
 summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
 un-stacked (per-observation) decomposition.}
 
-\item{average}{if \code{TRUE} the function computes the standardized
+\item{average}{(Deprecated) if \code{TRUE} the function computes the standardized
 estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
 empirical mean of \code{f(p, data)}, as defined by the \code{f} argument, over
 all rows of \code{data}. The influence function accounts for both the empirical
@@ -251,7 +251,7 @@ estimate(lm(y~x,d1))
 f <- function(p,data)
   list(p0=expit(p["(Intercept)"] + p["z"]*data[,"z"]),
        p1=expit(p["(Intercept)"] + p["x"] + p["z"]*data[,"z"]))
-e <- estimate(g, f, average=TRUE)
+e <- expectation(g, f)
 e
 estimate(e,diff)
 estimate(e,cbind(1,1))
