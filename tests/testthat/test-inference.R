@@ -1,4 +1,4 @@
-context("Inference")
+# statistical inference
 
 test_that("Effects",{
     m <- lvm()
@@ -19,13 +19,13 @@ test_that("Effects",{
     testthat::expect_equal(f2["Indirect",1],0)
 
     testthat::expect_output(print(ef),"Mediation proportion")
-    testthat::expect_equivalent(confint(ef)["Direct",],
-                                confint(e)["y1~x",])
+    testthat::expect_equal(confint(ef)["Direct",],
+                                confint(e)["y1~x",], ignore_attr = TRUE)
 
-    testthat::expect_equivalent(totaleffects(e,y1~x)[,1:4],f["Total",])
+    testthat::expect_equal(totaleffects(e,y1~x)[,1:4],f["Total",], ignore_attr = TRUE)
 
     ##g <- graph::updateGraph(plot(m,noplot=TRUE))
-    ##testthat::expect_equivalent(path(g,y1~x),path(m,y1~x))
+    ##testthat::expect_equal(path(g,y1~x),path(m,y1~x), ignore_attr = TRUE)
 })
 
 test_that("Profile confidence limits", {
@@ -57,7 +57,7 @@ test_that("glm-estimator", {
     e <- estimate(m,d,estimator="glm")
     c1 <- coef(e,2)[c("y","y~x","y~z"),1:2]
     c2 <- estimate(glm(y~x+z,d,family=binomial))$coefmat[,1:2]
-    testthat::expect_equivalent(c1,c2)
+    testthat::expect_equal(c1,c2, ignore_attr = TRUE)
     testthat::expect_true(mean(colSums(score(e))^2)<1e-9)
     testthat::expect_true(
                 mean((colSums(score(e,p=coef(e)+1, indiv=TRUE))-
@@ -78,18 +78,18 @@ test_that("gaussian", {
     e <- estimate(m, d, estimator="gaussian")
     e0 <- estimate(m, d, estimator="gaussian0") # numerical grad.
     expect_true(mean((coef(e)- coef(e0))^2)<1e-9)
-    expect_equivalent(logLik(e), logLik(e0))
+    expect_equal(logLik(e), logLik(e0), ignore_attr = TRUE)
     e1 <- estimate(m, d, estimator="gaussian1") # numerical hessian
-    expect_equivalent(logLik(e), logLik(e1))
+    expect_equal(logLik(e), logLik(e1), ignore_attr = TRUE)
     e2 <- estimate(m, d, estimator="gaussian2") # numerical hessian
-    expect_equivalent(logLik(e), logLik(e2)) # BHHH
+    expect_equal(logLik(e), logLik(e2), ignore_attr = TRUE) # BHHH
 })
 
 if (requireNamespace("mets",quietly = TRUE))
 test_that("Association measures", {
     P <- matrix(c(0.25,0.25,0.25,0.25),2)
     a1 <- lava:::assoc(P)
-    testthat::expect_equivalent(-log(0.25),a1$H)
+    testthat::expect_equal(-log(0.25),a1$H, ignore_attr = TRUE)
     testthat::expect_true(with(a1, all(c(kappa,gamma,MI,U.sym)==0)))
 
     p <- lava:::prob.normal(sigma=diag(nrow=2),breaks=c(-Inf,0),breaks2=c(-Inf,0))[1]
@@ -113,11 +113,11 @@ test_that("equivalence", {
 })
 
 test_that("multiple testing", {
-    testthat::expect_equivalent(lava:::holm(c(0.05/3,0.025,0.05)),rep(0.05,3))
+    testthat::expect_equal(lava:::holm(c(0.05/3,0.025,0.05)),rep(0.05,3), ignore_attr = TRUE)
 
     ci1 <- scheffe(l <- lm(1:5~c(0.5,0.7,1,1.3,1.5)))
     ci2 <- predict(l,interval="confidence")
-    testthat::expect_equivalent(ci1[,1],ci2[,1])
+    testthat::expect_equal(ci1[,1],ci2[,1], ignore_attr = TRUE)
     testthat::expect_true(all(ci1[,2]<ci2[,2]))
     testthat::expect_true(all(ci1[,3]>ci2[,3]))
 })
@@ -136,7 +136,7 @@ test_that("modelsearch and GoF", {
     testthat::expect_true(nrow(s2$res)==3)
     e00 <- estimate(e0,vcov=vcov(e0))$coefmat
     ii <- match(s2$res[,"Index"],rownames(e00))
-    testthat::expect_equivalent(e00[ii,5],s2$test[,2])
+    testthat::expect_equal(e00[ii,5],s2$test[,2], ignore_attr = TRUE)
 
     s3 <- modelsearch(e0,dir="backward",k=3)
     testthat::expect_true(nrow(s3$res)==1)
@@ -184,7 +184,7 @@ test_that("Survreg", {
     testthat::expect_true(length(pars(m))==length(coef(m))+1)
     testthat::expect_true(abs(attr(score(m,pars(m)),'logLik')-logLik(m))<1e-9)
     testthat::expect_true(mean(colSums(s)^2)<1e-6)
-    testthat::expect_equivalent(vcov(m), attr(s,'bread')/nrow(d))
+    testthat::expect_equal(vcov(m), attr(s,'bread')/nrow(d), ignore_attr = TRUE)
 })
 
 test_that("diagtest", {
@@ -195,7 +195,7 @@ test_that("diagtest", {
   d2 <- diagtest(M,exact=FALSE)
   e1 <- d1$coefmat[1:7,]
   e2 <- d2$coefmat[1:7,]
-  expect_equivalent(e1[,1], e2[,1])
+  expect_equal(e1[,1], e2[,1], ignore_attr = TRUE)
   expect_true(e1[1,1] == (sum(M[,2])/sum(M)))
 })
 
@@ -206,8 +206,8 @@ test_that("Combine", { ## Combine model output
 
     cc <- Combine(list('model A'=m1,'model B'=m2),fun=function(x) c(R2=format(summary(x)$r.squared,digits=2)))
     testthat::expect_true(nrow(cc)==length(coef(m1))+1)
-    testthat::expect_equivalent(colnames(cc),c('model A','model B'))
-    testthat::expect_equivalent(cc['R2',2],format(summary(m2)$r.squared,digits=2))
+    testthat::expect_equal(colnames(cc),c('model A','model B'), ignore_attr = TRUE)
+    testthat::expect_equal(cc['R2',2],format(summary(m2)$r.squared,digits=2), ignore_attr = TRUE)
 
 })
 
@@ -228,11 +228,11 @@ test_that("zero-inflated binomial regression (zib)", {
     e0 <- zibreg(y~x*z,~1+z+age,data=d)
     e <- zibreg(y~x,~1+z+age,data=d)
     lrt <- compare(e,e0)
-    testthat::expect_equivalent(score(e,data=d),
-                      colSums(score(e,indiv=TRUE)))
-    testthat::expect_equivalent(logLik(e,data=d),
-                      logLik(e))
-    testthat::expect_equivalent(vcov(e), Inverse(information(e,type="obs",data=d)))
+    testthat::expect_equal(score(e,data=d),
+                      colSums(score(e,indiv=TRUE)), ignore_attr = TRUE)
+    testthat::expect_equal(logLik(e,data=d),
+                      logLik(e), ignore_attr = TRUE)
+    testthat::expect_equal(vcov(e), Inverse(information(e,type="obs",data=d)), ignore_attr = TRUE)
 
     testthat::expect_output(print(e), "Prevalence probabilities:")
 
@@ -410,20 +410,20 @@ test_that("multinomial", {
     P <- a1$P
     marg1 <- rowSums(P)
     marg2 <- colSums(P)
-    testthat::expect_equivalent(K1$coef,sum(diag(P)-marg1*marg2)/(1-sum(marg1*marg2)))
+    testthat::expect_equal(K1$coef,sum(diag(P)-marg1*marg2)/(1-sum(marg1*marg2)), ignore_attr = TRUE)
 
     K2 <- kappa(d[,7:8])
     ## Testing difference K1-K2:
     e1 <- estimate(merge(K1,K2,id=TRUE),diff)
     e2 <- estimate(merge(K1,K2,id=NULL),diff)
     testthat::expect_true(vcov(e1)!=vcov(e2))
-    testthat::expect_equivalent(vcov(e2),(vcov(K1)+vcov(K2)))
+    testthat::expect_equal(vcov(e2),(vcov(K1)+vcov(K2)), ignore_attr = TRUE)
 
     g1 <- gkgamma(d[,5:6])
     g2 <- gkgamma(table(d[,5:6]))
     g3 <- gkgamma(multinomial(d[,5:6]))
-    testthat::expect_equivalent(g1$coefmat,g2$coefmat)
-    testthat::expect_equivalent(g3$coefmat,g2$coefmat)
+    testthat::expect_equal(g1$coefmat,g2$coefmat, ignore_attr = TRUE)
+    testthat::expect_equal(g3$coefmat,g2$coefmat, ignore_attr = TRUE)
 
 
     ## TODO
@@ -482,7 +482,7 @@ test_that("correlation", {
   d <- matrix(rnorm(500), ncol=2)
   e1 <- parameter(correlation(d, z=FALSE))
   e2 <- cor.test(d[,1],d[,2])
-  expect_equivalent(e2$estimate, e1[1])
+  expect_equal(e2$estimate, e1[1], ignore_attr = TRUE)
   ci <- e1[3:4]
   ci2 <- e2$conf.int
   expect_true(mean((ci-ci2)^2)< sqrt(1/nrow(d))) # df discrepancy
@@ -495,8 +495,8 @@ test_that("correlation", {
   e1 <- parameter(correlation(d, z=FALSE))
   e2 <- parameter(correlation(d, z=TRUE))
   e3 <- parameter(correlation(d, z=TRUE, back.transform=FALSE))
-  expect_equivalent(e1[,1], e2[,1]) # est same, but not pval
-  expect_equivalent(e2[,5], e3[,5]) # p.vals same, but z vs r
+  expect_equal(e1[,1], e2[,1], ignore_attr = TRUE) # est same, but not pval
+  expect_equal(e2[,5], e3[,5], ignore_attr = TRUE) # p.vals same, but z vs r
 })
 
 if (requireNamespace("mets",quietly = TRUE))
@@ -511,7 +511,7 @@ test_that("Weighted",{
 
     w2 <- estimate(m,data=d,weights=d$w,control=list(trace=0))
     w <- estimate(m,data=d,weights=d$w,estimator="normal",control=list(trace=0))
-    expect_equivalent(coef(w2), coef(w))
+    expect_equal(coef(w2), coef(w), ignore_attr = TRUE)
     lw <- lm(y~x,data=d, weights=d$w)
     testthat::expect_true(mean((coef(w)[1:2]-coef(lw))^2)<1e-12)
 })

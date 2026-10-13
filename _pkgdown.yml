@@ -17,6 +17,7 @@ reference:
   - estimate.default
   - estimate.glm
   - estimate.list
+  - expectation
   - iid
   - merge.estimate
   - multinomial
@@ -249,7 +250,7 @@ reference:
   - correlation
   - estimate.formula
   - estimate.lvm
-  - measurement.error
+  - measurement_error
   - modelsearch
   - twostage
   - twostage.lvmfit

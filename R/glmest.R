@@ -221,9 +221,10 @@ predict_glm <- function(object, p=coef(object), data, offset = NULL,
   if (missing(data)) {
     X <- stats::model.matrix.lm(x)
   } else {
-    X <- stats::model.matrix.lm(formula(x),
-                         data = data,
-                         na.action = na.pass)
+    ff <- formula(stats::delete.response(terms(formula(x))))
+    X <- stats::model.matrix.lm(ff,
+                                data = data,
+                                na.action = na.pass)
   }
 
   ## Setting NA parameters to zero

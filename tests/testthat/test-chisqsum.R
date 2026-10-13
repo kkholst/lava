@@ -1,4 +1,4 @@
-context("Weighted sum of chi-squared (chisqsum)")
+# Weighted sum of chi-squared (chisqsum)
 
 ## rchisqsum / pchisqsum are internal -> accessed via lava:::
 

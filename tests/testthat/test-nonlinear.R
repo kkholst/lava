@@ -1,6 +1,4 @@
-library(testthat)
-
-context("nonlinear lvm")
+# nonlinear lvm
 
 ## simulated data
 f <- function(x) - 0.25*x^2
@@ -25,7 +23,7 @@ test_that("cv", {
            lm(Sepal.Length~Species, data=iris),
            lm(Sepal.Length~Species * Petal.Length, data=iris))
   x <- cv(m, rep=2, K=5, data=iris)
-  expect_equivalent(dim(x$cv), c(2,5,3,1))
+  expect_equal(dim(x$cv), c(2,5,3,1), ignore_attr = TRUE)
   rmse.1 <- mean(x$cv[,,1,1])
   rmse.2 <- mean(x$cv[,,2,1])
   rmse.3 <- mean(x$cv[,,3,1])

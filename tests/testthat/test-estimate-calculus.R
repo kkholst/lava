@@ -1,4 +1,4 @@
-context("estimate calculus")
+# estimate calculus
 
 set.seed(1)
 # Generate mean-zero random IC matrix (for internal testing)
@@ -18,318 +18,318 @@ test_that("+.estimate", {
   ## check addition: estimate + numeric with dim(estimate)=1
   e1 <- a1 + c(2,4,6)
   e2 <- estimate(a1, \(p) p + c(2,4,6))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## check addition: estimate + numeric with dim(estimate)>1
   e1 <- a + 2
   e2 <- estimate(a, \(p) p + 2)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a + c(2,4)
   e2 <- estimate(a, \(p) p + c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   # commutative
   e1 <- c(2,4) + a # 2.dim. estimate
   e2 <- estimate(a, \(p) p + c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- c(2,4) + a1 # 1.dim
   e2 <- estimate(a1, \(p) p + c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # addition with two estimate objects
   e1 <- a1 + a2
   e2 <- estimate(a, cbind(1, 1))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a + b # 2d. estimates
   e2 <- estimate(merge(a, b), rbind(c(1, 0, 1, 0), c(0, 1, 0, 1)))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("-.estimate", {
   ## check minus operator
   e1 <- -a
   e2 <- estimate(a, function(p) -p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## estimate + numeric with dim(estimate)=1
   e1 <- a1 - c(2,4,6)
   e2 <- estimate(a1, \(p) p - c(2,4,6))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## estimate + numeric with dim(estimate)>1
   e1 <- a - 2
   e2 <- estimate(a, \(p) p - 2)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a - c(2,4)
   e2 <- estimate(a, \(p) p - c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # reverse order of numeric and estimate
   e1 <- c(2,4) - a # 2.dim. estimate
   e2 <- estimate(a, \(p) c(2,4) - p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- c(2,4) - a1 # 1.dim
   e2 <- estimate(a1, \(p) c(2,4) - p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # subtraction of two estimate objects
   e1 <- a1 - a2
   e2 <- estimate(a, cbind(1, -1))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a - b # 2d. estimates
   e2 <- estimate(merge(a, b), rbind(c(1, 0, -1, 0), c(0, 1, 0, -1)))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("*.estimate", {
   ## check multiplication: estimate + numeric with dim(estimate)=1
   e1 <- a1 * c(2,4,6)
   e2 <- estimate(a1, \(p) p * c(2,4,6))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## estimate + numeric with dim(estimate)>1
   e1 <- a * 2
   e2 <- estimate(a, \(p) p * 2)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a * c(2,4)
   e2 <- estimate(a, \(p) p * c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   # change order
   e1 <- c(2,4) * a # 2.dim. estimate
   e2 <- estimate(a, \(p) p * c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- c(2,4) * a1 # 1.dim
   e2 <- estimate(a1, \(p) p * c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # with two estimate objects
   e1 <- a1 * a2
   e2 <- estimate(a, prod)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a * b # 2d. estimates
   e2 <- estimate(merge(a, b), function(p) c(p[1]*p[3], p[2]*p[4]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("/.estimate", {
   ## check division: estimate + numeric with dim(estimate)=1
   e1 <- a1 / c(2,4,6)
   e2 <- estimate(a1, \(p) p / c(2,4,6))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## estimate + numeric with dim(estimate)>1
   e1 <- a / 2
   e2 <- estimate(a, \(p) p / 2)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a / c(2,4)
   e2 <- estimate(a, \(p) p / c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   # numeric first
   e1 <- c(2,4) / a # 2.dim. estimate
   e2 <- estimate(a, \(p) c(2,4) / p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- c(2,4) / a1 # 1.dim
   e2 <- estimate(a1, \(p) c(2,4) / p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # with two estimate objects
   e1 <- a1 / a2
   e2 <- estimate(a, function(p) p[1] / p[2])
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a / b # 2d. estimates
   e2 <- estimate(merge(a, b), function(p) c(p[1]/p[3], p[2]/p[4]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("^.estimate", {
   ## check power-func: estimate + numeric with dim(estimate)=1
   e1 <- a1^0.25
   e2 <- estimate(a1, function(p) p**0.25)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a1 / c(2,4,6)
   e2 <- estimate(a1, \(p) p / c(2,4,6))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## estimate + numeric with dim(estimate)>1
   e1 <- a ^ 3
   e2 <- estimate(a, \(p) p ^ 3)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a ^ c(2,4)
   e2 <- estimate(a, \(p) p ^ c(2,4))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   # numeric first
   e1 <- c(2,4) ^ a # 2.dim. estimate
   e2 <- estimate(a, \(p) c(2,4) ^ p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- c(2,4) ^ a1 # 1.dim
   e2 <- estimate(a1, \(p) c(2,4) ^ p)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # addition with two estimate objects
   e1 <- a1 ^ a2
   e2 <- estimate(a, function(p) p[1] ^ p[2])
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a ^ b # 2d. estimates
   e2 <- estimate(merge(a, b), function(p) c(p[1]^p[3], p[2]^p[4]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("math functions", {
   e0 <- c(a, b) # merge
   e <- merge(a, b)
-  expect_equivalent(e, e0)
+  expect_equal(e, e0, ignore_attr = TRUE)
 
   # subset and merge
   ## e1 <- c(a=a["a1"], b=b["b1"])
   e1 <- merge(a["a1"], b["b1"], labels=c("a", "b"))
   expect_true(length(coef(e1)) == 2L)
-  expect_equivalent(names(coef(e1)), c("a", "b"))
+  expect_equal(names(coef(e1)), c("a", "b"), ignore_attr = TRUE)
 
   # product
   e1 <- prod(e, labels="prod")
   e2 <- estimate(e, function(p) prod(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # sum
   e1 <- sum(e, labels="sum")
   e2 <- estimate(e, function(p) sum(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # inner-prod
   e1 <- a %*% b
   e2 <- estimate(e, function(p) sum(p[1:2]*p[3:4]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- a %*% c(2, 3)
   e2 <- estimate(a, function(p) sum(p[1]*2 + p[2]*3))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # log
   e1 <- log(e["a1"])
   e2 <- estimate(e, function(p) log(p[1]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- log(e)
   e2 <- estimate(e, function(p) log(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- log1p(b)
   e2 <- estimate(b, function(p) log1p(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # exp
   e1 <- exp(e["a1"])
   e2 <- estimate(e, function(p) exp(p[1]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   e1 <- exp(e)
   e2 <- estimate(e, function(p) exp(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- expm1(b)
   e2 <- estimate(b, function(p) expm1(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # pow, sqrt
   e1 <- sqrt(e)
   e2 <- estimate(e, function(p) sqrt(p))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   # trigonometric
   for (f in c(cos, sin, tan, acos, asin, atan)) {
       e1 <- f(b)
       e2 <- estimate(b, function(p) f(p))
-      testthat::expect_equivalent(IC(e1), IC(e2))
-      testthat::expect_equivalent(coef(e1), coef(e2))
+      testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+      testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   }
   e1 <- sin(asin(b))
-  testthat::expect_equivalent(IC(e1), IC(b))
-  testthat::expect_equivalent(coef(e1), coef(b))
+  testthat::expect_equal(IC(e1), IC(b), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(b), ignore_attr = TRUE)
 
   # hyberbolic
   for (f in c(cosh, sinh, tanh)) {
       e1 <- f(b)
       e2 <- estimate(b, function(p) f(p))
-      testthat::expect_equivalent(IC(e1), IC(e2))
-      testthat::expect_equivalent(coef(e1), coef(e2))
+      testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+      testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   }
   e1 <- acosh(cosh(b))
-  testthat::expect_equivalent(IC(e1), IC(b))
-  testthat::expect_equivalent(coef(e1), coef(b))
+  testthat::expect_equal(IC(e1), IC(b), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(b), ignore_attr = TRUE)
   e1 <- asinh(sinh(b))
-  testthat::expect_equivalent(IC(e1), IC(b))
-  testthat::expect_equivalent(coef(e1), coef(b))
+  testthat::expect_equal(IC(e1), IC(b), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(b), ignore_attr = TRUE)
   e1 <- atanh(tanh(b))
-  testthat::expect_equivalent(IC(e1), IC(b))
-  testthat::expect_equivalent(coef(e1), coef(b))
+  testthat::expect_equal(IC(e1), IC(b), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(b), ignore_attr = TRUE)
 
 })
 
 test_that("custom functions", {
   e1 <- logit(expit(a))
-  testthat::expect_equivalent(IC(e1), IC(a))
-  testthat::expect_equivalent(coef(e1), coef(a))
+  testthat::expect_equal(IC(e1), IC(a), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(a), ignore_attr = TRUE)
 
   e1 <- 2 * log(a["a2"]) * sqrt(b["b2"])
   e2 <- estimate(merge(a,b),
                  function(p) 2 * log(p["a2"]) * sqrt(p["b2"]))
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- 1 / cos(a) - sqrt(a^2 + 1) + 1
   e2 <- estimate(a,
                  function(p) 1 / cos(p) - sqrt(p^2 + 1) + 1)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- odds(b)
   e2 <- estimate(b, odds)
-  testthat::expect_equivalent(IC(e1), IC(e2))
-  testthat::expect_equivalent(coef(e1), coef(e2))
+  testthat::expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  testthat::expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 ## ---------------------------------------------------------------------------
@@ -390,7 +390,7 @@ for (opname in names(ops)) {
       V_expected <- Jnum %*% var_ic(ic_ab) %*% t(Jnum)
       V_actual   <- vcov(res)
       expect_equal(dim(V_actual), dim(V_expected))
-      expect_equivalent(V_actual, V_expected, tolerance = 1e-5)
+      expect_equal(V_actual, V_expected, tolerance = 1e-5, ignore_attr = TRUE)
       expect_equal(length(res_coef), max(nx, ny))
     })
   }
@@ -416,43 +416,43 @@ test_that("normcdf/normpdf/norminv default methods", {
 test_that("normcdf.estimate", {
   e1 <- normcdf(a)
   e2 <- estimate(a, function(p) pnorm(p))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## lower.tail / log.p
   e1 <- normcdf(a, lower.tail = FALSE, log.p = TRUE)
   e2 <- estimate(a, function(p) pnorm(p, lower.tail = FALSE, log.p = TRUE))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## constant mean/sd
   e1 <- normcdf(a, mean = 2, sd = 3)
   e2 <- estimate(a, function(p) pnorm(p, 2, 3))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## mean and sd given as estimate objects
   s <- estimate(coef = c(s = 1.5), IC = center_ic(10), id = 1:10)
   e1 <- normcdf(a, mean = b, sd = s)
   e2 <- estimate(merge(a, b, s),
                  function(p) pnorm(p[1:2], p[3:4], p[5]))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## numeric first argument, estimate mean/sd (dispatch via default method)
   e1 <- normcdf(1.5, mean = b, sd = s)
   e2 <- estimate(merge(b, s), function(p) pnorm(1.5, p[1:2], p[3]))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## scalar estimate recycled against longer numeric argument
   e1 <- normcdf(c(1, 2, 3), mean = s)
   e2 <- estimate(s, function(p) pnorm(c(1, 2, 3), p))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   ## labels inherited
-  expect_equivalent(names(coef(normcdf(a))), names(coef(a)))
+  expect_equal(names(coef(normcdf(a))), names(coef(a)), ignore_attr = TRUE)
 })
 
 test_that("normpdf.estimate", {
@@ -460,20 +460,20 @@ test_that("normpdf.estimate", {
   for (lg in c(FALSE, TRUE)) {
     e1 <- normpdf(a, log = lg)
     e2 <- estimate(a, function(p) dnorm(p, log = lg))
-    expect_equivalent(IC(e1), IC(e2))
-    expect_equivalent(coef(e1), coef(e2))
+    expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+    expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
     e1 <- normpdf(a, mean = b, sd = s, log = lg)
     e2 <- estimate(merge(a, b, s),
                    function(p) dnorm(p[1:2], p[3:4], p[5], log = lg))
-    expect_equivalent(IC(e1), IC(e2))
-    expect_equivalent(coef(e1), coef(e2))
+    expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+    expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
   }
   ## exp(log-density) == density
   e1 <- exp(normpdf(a, log = TRUE))
   e2 <- normpdf(a)
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("norminv.estimate", {
@@ -482,48 +482,48 @@ test_that("norminv.estimate", {
                  IC = center_ic(10, 2) / 20, id = 1:10)
   e1 <- norminv(pr)
   e2 <- estimate(pr, function(p) qnorm(p))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- norminv(pr, lower.tail = FALSE)
   e2 <- estimate(pr, function(p) qnorm(p, lower.tail = FALSE))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   lp <- log(pr)
   e1 <- norminv(lp, lower.tail = FALSE, log.p = TRUE)
   e2 <- estimate(lp, function(p) qnorm(p, lower.tail = FALSE, log.p = TRUE))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- norminv(pr, mean = b, sd = s)
   e2 <- estimate(merge(pr, b, s), function(p) qnorm(p[1:2], p[3:4], p[5]))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 
   e1 <- norminv(0.975, mean = b, sd = s)
   e2 <- estimate(merge(b, s), function(p) qnorm(0.975, p[1:2], p[3]))
-  expect_equivalent(IC(e1), IC(e2))
-  expect_equivalent(coef(e1), coef(e2))
+  expect_equal(IC(e1), IC(e2), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(e2), ignore_attr = TRUE)
 })
 
 test_that("normcdf/norminv are inverse transformations", {
   pr <- estimate(coef = c(p1 = 0.3, p2 = 0.75),
                  IC = center_ic(10, 2) / 20, id = 1:10)
   e1 <- norminv(normcdf(a))
-  expect_equivalent(IC(e1), IC(a))
-  expect_equivalent(coef(e1), coef(a))
+  expect_equal(IC(e1), IC(a), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(a), ignore_attr = TRUE)
   e1 <- normcdf(norminv(pr))
-  expect_equivalent(IC(e1), IC(pr))
-  expect_equivalent(coef(e1), coef(pr))
+  expect_equal(IC(e1), IC(pr), ignore_attr = TRUE)
+  expect_equal(coef(e1), coef(pr), ignore_attr = TRUE)
 })
 
 test_that("normcdf/normpdf/norminv work without influence function", {
   e <- estimate(coef = c(a = 1, b = 2), vcov = diag(2) * 0.1)
   res <- normcdf(e)
-  expect_equivalent(coef(res), pnorm(coef(e)))
+  expect_equal(coef(res), pnorm(coef(e)), ignore_attr = TRUE)
   d <- diag(dnorm(coef(e)))
-  expect_equivalent(vcov(res), d %*% (diag(2) * 0.1) %*% d)
+  expect_equal(vcov(res), d %*% (diag(2) * 0.1) %*% d, ignore_attr = TRUE)
 })
 
 test_that("normcdf.estimate incompatible lengths", {

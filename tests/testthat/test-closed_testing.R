@@ -1,4 +1,4 @@
-context("Multiple testing")
+# Multiple testing
 
 test_that("closed_testing", {
   m <- lvm()

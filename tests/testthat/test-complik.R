@@ -1,4 +1,4 @@
-context("Composite likelihood")
+# Composite likelihood
 
 
 test_that("complik", {
@@ -15,7 +15,7 @@ test_that("complik", {
     expect_true((coef(e1)["y1~x"]-lme4::fixef(g)["x"])<0.1)
     expect_true((vcov(e1)["y1~x","y1~x"]-vcov(g)["x","x"])<0.025)
 
-    expect_equivalent(vcov(e1), var_ic(IC(e1)))
+    expect_equal(vcov(e1), var_ic(IC(e1)), ignore_attr = TRUE)
     expect_true(inherits(logLik(e1), "logLik"))
     expect_true(mean(score(e1)^2)<1e-4)
   }

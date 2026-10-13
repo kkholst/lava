@@ -1,4 +1,4 @@
-context("merge.estimate")
+# merge.estimate
 
 library(testthat)
 library(lava)
@@ -71,26 +71,26 @@ test_that("c.estimate with 'extra' attr", {
   e <- c(e1, e2) # two estimate.extra objects
   expect_equal(c(coef(e1), coef(e2)), coef(e))
   expect_equal(c(vcov(e1), vcov(e2)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(c(attr(e1, "extra"), attr(e2, "extra")),
                  attr(e, "extra"))
 
   e <- c(e1, e3) # estimatee.xtra + estimate
   expect_equal(c(coef(e1), coef(e3)), coef(e))
   expect_equal(c(vcov(e1), vcov(e3)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(attr(e1, "extra"), attr(e, "extra"))
 
   e <- c(e3, e1) # estimate + estimate.extra
   expect_equal(c(coef(e3), coef(e1)), coef(e))
   expect_equal(c(vcov(e3), vcov(e1)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(attr(e1, "extra"), attr(e, "extra"))
 
   e <- c(e1, e2, d=2) # estimate + scalar/extra
   expect_equal(c(coef(e1), coef(e2)), coef(e))
   expect_equal(c(vcov(e1), vcov(e2)),
-               diag(vcov(e)), check.attributes=FALSE)
+               diag(vcov(e)), ignore_attr=TRUE)
   expect_equal(c(attr(e1, "extra"), attr(e2, "extra"), d=2),
                attr(e, "extra"))
 
@@ -121,7 +121,7 @@ test_that("estimate preserves original order with stack=TRUE", {
   r <- residuals(g)
   ic1 <- cbind(r, r*d$x) %*% solve(crossprod(X))*nrow(X)
   ic2 <- IC(e)
-  expect_equivalent(ic1,ic2)
+  expect_equal(ic1,ic2, ignore_attr = TRUE)
 })
 
 test_that("merge preserves order (of first IC)", {
@@ -131,22 +131,57 @@ test_that("merge preserves order (of first IC)", {
   a <- estimate(coef=1, IC=scale(rnorm(length(id1))), id=id1)
   b <- estimate(coef=2, IC=scale(rnorm(length(id2))), id=id2)
 
-  expect_equivalent(id1, rownames(IC(a)))
-  expect_equivalent(id2, rownames(IC(b)))
+  expect_equal(id1, rownames(IC(a)), ignore_attr = TRUE)
+  expect_equal(id2, rownames(IC(b)), ignore_attr = TRUE)
 
   e <- merge(a, b)
-  expect_equivalent(rownames(IC(e))[seq_along(id1)],
-                    rownames(IC(a)))
+  expect_equal(rownames(IC(e))[seq_along(id1)],
+                    rownames(IC(a)), ignore_attr = TRUE)
 
   ic1 <- IC(e)[seq_along(id1),1,drop=FALSE]
-  expect_equivalent(IC(a)* 3/2, ic1) # same expect for IPW due to incomplete data
+  expect_equal(IC(a)* 3/2, ic1, ignore_attr = TRUE) # same expect for IPW due to incomplete data
 })
 
-test_that("cluster.index vs lava native impl.", {
-  op <- lava.options(cluster.index = FALSE)
-  e1 <- merge(e_ic1, e_ic2)
-  lava.options(cluster.index = TRUE)
-  e2 <- merge(e_ic1, e_ic2)
-  expect_equal(e1, e2)
-  lava.options(op)
+test_that("merge order of ids (sort argument)", {
+  a <- estimate(coef = 1, IC = c(1, -1), id = c(5, 3))
+  b <- estimate(coef = 2, IC = c(2, -1, -1), id = c(4, 3, 1))
+  # first IC order, followed by new ids in order of appearance
+  expect_equal(index(merge(a, b)), c(5, 3, 4, 1))
+  # sort=TRUE: sorted according to the union of all ids
+  e <- merge(a, b, sort = TRUE)
+  expect_equal(index(e), c(1, 3, 4, 5))
+  expect_equal(rownames(IC(e)), c("1", "3", "4", "5"))
+  expect_equal(vcov(e), vcov(merge(a, b)))
+})
+
+test_that("merge with clustered ids, IPW rescaling and id arguments", {
+  set.seed(2)
+  ic_a <- scale(rnorm(6), scale = FALSE)
+  ic_b <- scale(rnorm(4), scale = FALSE)
+  id_a <- c("x", "x", "y", "z", "z", "z")
+  id_b <- c("y", "w", "w", "v")
+  a <- estimate(coef = c(a = 1), IC = ic_a, id = 1:6)
+  b <- estimate(coef = c(b = 2), IC = ic_b, id = 1:4)
+  e <- merge(a, b, id = list(id_a, id_b))
+  expect_equal(index(e), c("x", "y", "z", "w", "v"))
+  # manual: cluster sums (scaled), zero outside support, IPW rescaling
+  ca <- rowsum(ic_a, id_a, reorder = FALSE) * 3 / 6
+  cb <- rowsum(ic_b, id_b, reorder = FALSE) * 3 / 4
+  M <- matrix(0, 5, 2, dimnames = list(index(e), NULL))
+  M[rownames(ca), 1] <- ca * 5 / 3
+  M[rownames(cb), 2] <- cb * 5 / 3
+  expect_equal(IC(e), M, ignore_attr = TRUE)
+
+  # independence (id=NULL / id=FALSE) and one-to-one (id=TRUE / paired)
+  a2 <- estimate(coef = c(a = 1), IC = ic_b, id = 1:4)
+  expect_equal(nrow(IC(merge(a2, b, id = NULL))), 8)
+  expect_equal(IC(merge(a2, b, id = NULL)), IC(merge(a2, b, id = FALSE)))
+  expect_equal(nrow(IC(merge(a2, b, id = TRUE))), 4)
+  expect_equal(IC(merge(a2, b, id = TRUE)), IC(merge(a2, b, paired = TRUE)))
+  expect_error(merge(a, b, paired = TRUE), "same size")
+  expect_error(merge(a, b, id = TRUE), "same size")
+
+  # missing values in id
+  expect_error(merge(a, b, id = list(id_a, c(NA, id_b[-1]))),
+               "Missing values in 'id'")
 })

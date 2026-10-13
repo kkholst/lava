@@ -1,4 +1,4 @@
-context("Multiple Group")
+# lvm multiple group
 
 test_that("Multiple group I", {
   m <- lvm(y~x)
