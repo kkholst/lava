@@ -117,7 +117,7 @@ one parameter. - <strong>Character</strong> expressions: supports wildcards (<co
 one-sided formula (evaluated in <code>data</code>), a single character column name.
 When supplied, the IF is aggregated within clusters to produce
 cluster-robust standard errors. When <code>average = TRUE</code>, <code>id</code> refers to the
-rows of <code>data</code>, i.e., the values of <code>f</code> (see <a href="https://testthat.r-lib.org/reference/expectation.html" class="external-link">expectation</a>). <code>id = NULL</code>
+rows of <code>data</code>, i.e., the values of <code>f</code> (see <a href="expectation.html">expectation</a>). <code>id = NULL</code>
 removes the id (index) and the row names of the influence function from the
 returned object.</p></dd>
 
@@ -153,7 +153,7 @@ un-stacked (per-observation) decomposition.</p></dd>
 estimate \(\hat\Psi = P_n f(X; \hat\theta)\), i.e., the
 empirical mean of <code>f(p, data)</code>, as defined by the <code>f</code> argument, over
 all rows of <code>data</code>. The influence function accounts for both the empirical
-averaging and the parameter estimation uncertainty (see <a href="https://testthat.r-lib.org/reference/expectation.html" class="external-link">expectation</a>).</p></dd>
+averaging and the parameter estimation uncertainty (see <a href="expectation.html">expectation</a>).</p></dd>
 
 
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
@@ -278,7 +278,7 @@ $$\mathrm{IC}_\Psi(Z; P) = f(X;\theta) - \Psi +
 When <code>subset</code> is also specified, the average is conditioned on the
 subpopulation, yielding a conditional marginalized estimate. The model may
 be estimated on a different (e.g., smaller) dataset than <code>data</code>. See
-<a href="https://testthat.r-lib.org/reference/expectation.html" class="external-link">expectation</a> for details.</p>
+<a href="expectation.html">expectation</a> for details.</p>
     </div>
     <div class="section level2">
     <h2 id="cluster-robust-standard-errors">Cluster-robust standard errors<a class="anchor" aria-label="anchor" href="#cluster-robust-standard-errors"></a></h2>

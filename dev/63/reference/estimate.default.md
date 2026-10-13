@@ -72,7 +72,7 @@ estimate(
   name. When supplied, the IF is aggregated within clusters to produce
   cluster-robust standard errors. When `average = TRUE`, `id` refers to
   the rows of `data`, i.e., the values of `f` (see
-  [expectation](https://testthat.r-lib.org/reference/expectation.html)).
+  [expectation](https://kkholst.github.io/lava/reference/expectation.md)).
   `id = NULL` removes the id (index) and the row names of the influence
   function from the returned object.
 
@@ -112,7 +112,7 @@ estimate(
   `f(p, data)`, as defined by the `f` argument, over all rows of `data`.
   The influence function accounts for both the empirical averaging and
   the parameter estimation uncertainty (see
-  [expectation](https://testthat.r-lib.org/reference/expectation.html)).
+  [expectation](https://kkholst.github.io/lava/reference/expectation.md)).
 
 - subset:
 
@@ -244,8 +244,8 @@ f(X;\theta)\]\\\phi(Z; P)\$\$ When `subset` is also specified, the
 average is conditioned on the subpopulation, yielding a conditional
 marginalized estimate. The model may be estimated on a different (e.g.,
 smaller) dataset than `data`. See
-[expectation](https://testthat.r-lib.org/reference/expectation.html) for
-details.
+[expectation](https://kkholst.github.io/lava/reference/expectation.md)
+for details.
 
 ## Cluster-robust standard errors
 

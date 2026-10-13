@@ -1,10 +1,11 @@
-# Marginal mean (standardized) estimates via g-computation
+# Mean of (estimated) function via g-computation
 
-Estimates the marginal mean (standardized) parameter \\\Psi = E\\f(X;
-\theta)\\\\ by the empirical average of `f(p, data)` over the rows of
-`data` (g-computation), where the parameter \\\theta\\ is estimated by
-`object`. The influence function of the estimate accounts for both the
-empirical averaging and the uncertainty of \\\widehat\theta\\.
+Estimates the mean parameter \\\Psi = E{f(X; \theta)}\\ by the empirical
+average of f(p, data) over the rows of data, where the parameter
+\\\theta\\ is estimated by object. The influence function of the
+estimate accounts for both the empirical averaging and the uncertainty
+of \\\widehat\theta\\. Standardization and g-computation are special
+applications of this function.
 
 ## Usage
 
@@ -23,12 +24,12 @@ expectation(object, f, data, id, subset, labels = NULL, ...)
 
 - f:
 
-  function where the first argument is the parameter vector and the
-  optional named arguments `data` and `object` (the model object, e.g.
-  an `estimate` object). Should return a vector, matrix or a (named)
-  list of vectors with one value per observation (row of `data`). If the
-  result has an attribute `"grad"` it is used as the Jacobian of `f`
-  with respect to `p`
+  function with named argument `p` providing the parameter vector and
+  the optional named arguments `data` and `object` (the model object,
+  e.g. an `estimate` object). Should return a vector, matrix or a
+  (named) list of vectors with one value per observation (row of `data`
+  unless `data` is NULL). If the result has an attribute `"grad"` it is
+  used as the Jacobian of `f` with respect to `p`
 
 - data:
 
