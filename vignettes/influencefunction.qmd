@@ -1102,7 +1102,7 @@ The above steps are easily wrapped into
 For `glm` objects this
 ```{r expectation}
 e <- estimate(g, id=dw$id)
-expectation(predict, e, data=dw, id="id", labels="trt=1")
+expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
 ```
 
 
