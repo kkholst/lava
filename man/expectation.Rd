@@ -31,9 +31,12 @@ of \code{data}). Defaults to the names of the values of \code{f}, and otherwise
 
 \item{subset}{(optional) subpopulation on which the average is conditioned
 (conditional marginal mean estimate). Either a logical vector (or numeric
-0/1 vector) with one value per value of \code{f}, a column name of \code{data}, or
-a one-sided formula evaluated in \code{data} (e.g., \code{~ a == 1 & z > 0}), see
-details. Note that \code{subset} uses standard evaluation, i.e., \code{subset = a == 1} is evaluated in the calling environment and not in \code{data}.}
+0/1 vector) with one value per value of \code{f}, a column name of \code{data}, or a
+one-sided formula evaluated in \code{data} (e.g., \code{~ a == 1 & z > 0}), The
+formula \code{subset} is evaluated with the columns of \code{data} masking the
+environment of the formula. Note that \code{subset} uses standard evaluation,
+i.e., \code{subset = a == 1} is evaluated in the calling environment and not in
+\code{data}.}
 
 \item{labels}{(optional) character vector of parameter names}
 
@@ -68,17 +71,6 @@ rescaled by the inverse proportion of observed ids (as in
 \link{merge.estimate}). If there are no common ids, the model estimate and
 \code{data} are treated as independent. Use \code{estimate(object, id=...)} to
 assign ids (or clusters) to the model.
-
-A formula \code{subset} is evaluated with the columns of \code{data} masking the
-environment of the formula. To avoid silently using the wrong variable, it is
-an error if a variable of the formula is both a column of \code{data} and a
-(non-function) object of the environment of the formula (up to the global
-environment). Use the pronouns \code{.data$x} and \code{.env$x} to explicitly refer to
-the column \code{x} of \code{data} or the variable \code{x} of the environment of the
-formula, e.g., \code{subset = ~ .data$a == .env$a}. Alternatively, values can be
-inserted with \code{bquote} (e.g., \code{subset = bquote(~ A == .(a))}). Quoted
-expressions (\code{quote}, \code{expression}) are evaluated in the same way with the
-calling environment as enclosure.
 }
 \examples{
 m <- lvm(y ~ x + z)

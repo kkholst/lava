@@ -28,10 +28,12 @@
 #'   (index) from the returned object.
 #' @param subset (optional) subpopulation on which the average is conditioned
 #'   (conditional marginal mean estimate). Either a logical vector (or numeric
-#'   0/1 vector) with one value per value of `f`, a column name of `data`, or
-#'   a one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`), see
-#'   details. Note that `subset` uses standard evaluation, i.e., `subset = a ==
-#'   1` is evaluated in the calling environment and not in `data`.
+#'   0/1 vector) with one value per value of `f`, a column name of `data`, or a
+#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`), The
+#'   formula `subset` is evaluated with the columns of `data` masking the
+#'   environment of the formula. Note that `subset` uses standard evaluation,
+#'   i.e., `subset = a == 1` is evaluated in the calling environment and not in
+#'   `data`.
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -53,17 +55,6 @@
 #' [merge.estimate]). If there are no common ids, the model estimate and
 #' `data` are treated as independent. Use `estimate(object, id=...)` to
 #' assign ids (or clusters) to the model.
-#'
-#' A formula `subset` is evaluated with the columns of `data` masking the
-#' environment of the formula. To avoid silently using the wrong variable, it is
-#' an error if a variable of the formula is both a column of `data` and a
-#' (non-function) object of the environment of the formula (up to the global
-#' environment). Use the pronouns `.data$x` and `.env$x` to explicitly refer to
-#' the column `x` of `data` or the variable `x` of the environment of the
-#' formula, e.g., `subset = ~ .data$a == .env$a`. Alternatively, values can be
-#' inserted with `bquote` (e.g., `subset = bquote(~ A == .(a))`). Quoted
-#' expressions (`quote`, `expression`) are evaluated in the same way with the
-#' calling environment as enclosure.
 #'
 #' @seealso [estimate.default], `vignette("influencefunction", package =
 #'   "lava")`
