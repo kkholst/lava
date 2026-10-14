@@ -107,42 +107,25 @@ test_that("expectation: 'f' returning values for some rows of data", {
   # same estimate and variance as the conditional average over all rows of
   # 'data' (the IF of the latter also contains the rows with a == 0)
   ms1 <- expectation(object=e, f_all, data = dat, subset = dat$a == 1)
-  ms2 <- expectation(object=e, f_all, data = dat, subset = ~ a == 1)
+  ms2 <- expectation(object=e, f_all, data = dat, subset = "a")
+  ms3 <- expectation(object=e, f_all, data = dat, subset = ~a==1)
   expect_equal(coef(m), coef(ms1))
   expect_equal(vcov(m), vcov(ms1))
   expect_equal(coef(m), coef(ms2))
   expect_equal(vcov(m), vcov(ms2))
+  expect_equal(coef(m), coef(ms3))
+  expect_equal(vcov(m), vcov(ms3))
   expect_identical(index(ms1), rownames(dat))
-  # standard evaluation: bare expressions are not evaluated in 'data'
-  expect_error(expectation(object=e, f_all, data = dat, subset = a == 1),
-               "one-sided formula")
-  # ambiguous: 'a' is both a column of 'data' and a variable in the calling
-  # environment
-  a <- rep(0, nrow(dat))
-  expect_error(expectation(object=e, f_all, data = dat, subset = ~ a == 1),
-               "both a column")
-  # ... the pronouns '.data' and '.env' resolve the ambiguity
-  ms3 <- expectation(object=e, f_all, data = dat, subset = ~ .data$a == 1)
-  expect_equal(coef(ms3), coef(ms1))
-  expect_equal(vcov(ms3), vcov(ms1))
-  ms4 <- expectation(object=e, f_all, data = dat,
-                     subset = ~ .data$a == 1 - .env$a)
-  expect_equal(vcov(ms4), vcov(ms1))
-  # a vector is used as is, also if 'data' has a column with the same name
-  a <- dat$a == 1
-  ms5 <- expectation(object=e, f_all, data = dat, subset = a)
-  expect_equal(vcov(ms5), vcov(ms1))
-  rm(a)
   # model ids partly outside data
   id1 <- dat1$id
   id1[1:100] <- seq_len(100)
   m1 <- expectation(object=estimate(g, id = id1), f_all, data = dat, id = "id",
-                 subset = ~ (a == 1))
+                 subset = (a == 1))
   expect_equal(nrow(IC(m1)), nrow(dat) + 100)
   # 'id' and 'subset' must have one value per value of 'f'
   expect_error(expectation(object=e, f, data = dat, id = "id"), "does not agree")
   expect_error(expectation(object=e, f, data = dat, id = dat$id), "does not agree")
-  expect_error(expectation(object=e, f, data = dat, subset = ~ w1 > 0), "does not agree")
+  expect_error(expectation(object=e, f, data = dat, subset = ~w1 > 0), "does not agree")
   # unnamed values for some of the rows cannot be linked
   expect_error(
     expectation(object=e, function(p, data) as.vector(f(p, data)), data = dat),
@@ -193,63 +176,13 @@ test_that("expectation: subset (conditional average)", {
   m <- expectation(object=e, f, data = dat, id = dat$id, subset = s)
   expect_equal(coef(m), mm / phat, ignore_attr = TRUE)
   expect_equal(IC(m), icc, ignore_attr = TRUE)
-  # formula evaluated in data, and column name
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = ~ w1 > 0)),
+  # expression evaluated in data, and column name
+  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = ~w1 > 0)),
                vcov(m))
   dat$s <- s
   expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = "s")),
                vcov(m))
-  # numeric 0/1
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id",
-                                subset = as.numeric(s))),
-               vcov(m))
-  # via the deprecated estimate(..., average = TRUE): non-standard evaluation
-  # (calling environment first, then data) as in lava <= 1.9.3
-  suppressWarnings({
-    expect_equal(vcov(estimate(e, f, data = dat, id = dat$id,
-                               subset = w1 > 0, average = TRUE)),
-                 vcov(m))
-    expect_equal(vcov(estimate(e, f, data = dat, id = dat$id,
-                               subset = s, average = TRUE)),
-                 vcov(m))
-  })
-})
-
-test_that("expectation: evaluation of 'subset'", {
-  dat <- sim_expectation()
-  dat1 <- subset(dat, z == 1)
-  g <- glm(y ~ w1 + a, data = dat1, family = binomial)
-  e <- estimate(g, id = dat1$id)
-  f <- function(p, data) plogis(p[1] + p["w1"] * data[, "w1"] + p["a"])
-  ref <- vcov(expectation(object=e, f, data = dat, id = "id",
-                          subset = dat$a == 1 & dat$w1 > 0))
-  vc <- function(subset) {
-    vcov(expectation(object=e, f, data = dat, id = "id", subset = subset))
-  }
-  # formula carries its environment (also inside functions)
-  wrap <- function(val) vc(~ a == val & w1 > 0)
-  expect_equal(wrap(1), ref)
-  # values inserted with bquote, and quoted expressions
-  val <- 1
-  expect_equal(vc(bquote(~ a == .(val) & w1 > 0)), ref)
-  expect_equal(vc(quote(a == val & w1 > 0)), ref)
-  expect_equal(vc(expression(a == val & w1 > 0)), ref)
-  expect_equal(vc(~ .data[["a"]] == .env$val & w1 > 0), ref)
-  # base objects (e.g., 'T', 'pi') do not clash with columns
-  dat$T <- dat$a == 1 & dat$w1 > 0
-  expect_equal(vc(~ T), ref)
-  # functions do not clash with columns
-  w1 <- function(x) x
-  expect_equal(vc(~ a == 1 & w1 > 0), ref)
-  rm(w1)
-  # errors
-  expect_error(vc(~ .data$nope > 0), "not found in 'data'")
-  expect_error(vc(~ a == .env$nope), "not found in the calling environment")
-  expect_error(vc("nope"), "not found in 'data'")
-  expect_error(vc(seq_len(nrow(dat))), "values 0 and 1")
-  expect_error(vc(replace(dat$a == 1, 1, NA)), "Missing values")
-  expect_error(vc(dat$id), "must be a logical vector")
-  expect_error(vc(y ~ a), "one-sided")
+  # via estimate
 })
 
 test_that("expectation: arguments of 'f'", {
