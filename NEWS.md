@@ -9,7 +9,13 @@
     another dataset than the one used to fit the model (e.g., a model fitted
     on a subset). Use `estimate(x, id=...)` to link a model to the ids of
     `data`. `f` must have the argument `p`, and optionally `data` and
-    `object`
+    `object`. The `subset` argument of `expectation` uses standard
+    evaluation: a logical (or 0/1) vector, a column name of `data`, or a
+    one-sided formula evaluated in `data` (e.g., `subset = ~ a == 1`).
+    Variables that are both a column of `data` and a variable of the
+    environment of the formula give an error; use the pronouns `.data$x` and
+    `.env$x` to disambiguate. The deprecated `estimate(..., average=TRUE)`
+    keeps the non-standard evaluation of `subset` of lava 1.9.3.
   - `estimate(x, ...)` when `x` is a glm object returns an object of class
     `estimate.glm`with a `predict.estimate.glm` method. Standardized estimates
     can then easily be obtained with the syntax `expectation(e, predict,

@@ -378,9 +378,21 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     if (!missing(data)) args["data"] <- list(data)
     if (!missing(id)) args["id"] <- list(id)
     if (!missing(subset)) {
+      ## Backward compatible (lava <= 1.9.3) non-standard evaluation: 'subset'
+      ## is evaluated in the calling environment, and only if that fails in
+      ## 'data'. See 'expectation' for the standard evaluation alternatives.
       data0 <- if (!missing(data)) data else
         tryCatch(model.frame(x), error=function(...) NULL)
-      args$subset <- resolve_subset(substitute(subset), data0, parent.frame())
+      s <- tryCatch(subset, error = function(e) e)
+      if (inherits(s, "error")) {
+        s <- if (is.list(data0)) {
+          eval(substitute(subset), envir = data0, enclos = parent.frame())
+        } else {
+          eval(substitute(subset), envir = parent.frame())
+        }
+      }
+      if (is.numeric(s)) s <- s > 0
+      args$subset <- s
     }
     res <- do.call(expectation, args)
     if (!missing(keep) && !is.null(keep))

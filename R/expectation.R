@@ -26,11 +26,12 @@
 #'   of `data`). Defaults to the names of the values of `f`, and otherwise
 #'   `rownames(data)`. `id = NULL` uses the default ids but removes the id
 #'   (index) from the returned object.
-#' @param subset (optional) logical vector (one value per value of `f`),
-#'   expression evaluated in `data` (columns of `data` take precedence over
-#'   variables in the calling environment), or column name. The average is then
-#'   conditioned on the subpopulation where `subset` is `TRUE` (conditional
-#'   marginal mean estimate).
+#' @param subset (optional) subpopulation on which the average is conditioned
+#'   (conditional marginal mean estimate). Either a logical vector (or numeric
+#'   0/1 vector) with one value per value of `f`, a column name of `data`, or
+#'   a one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`), see
+#'   details. Note that `subset` uses standard evaluation, i.e., `subset = a ==
+#'   1` is evaluated in the calling environment and not in `data`.
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -52,6 +53,17 @@
 #' [merge.estimate]). If there are no common ids, the model estimate and
 #' `data` are treated as independent. Use `estimate(object, id=...)` to
 #' assign ids (or clusters) to the model.
+#'
+#' A formula `subset` is evaluated with the columns of `data` masking the
+#' environment of the formula. To avoid silently using the wrong variable, it is
+#' an error if a variable of the formula is both a column of `data` and a
+#' (non-function) object of the environment of the formula (up to the global
+#' environment). Use the pronouns `.data$x` and `.env$x` to explicitly refer to
+#' the column `x` of `data` or the variable `x` of the environment of the
+#' formula, e.g., `subset = ~ .data$a == .env$a`. Alternatively, values can be
+#' inserted with `bquote` (e.g., `subset = bquote(~ A == .(a))`). Quoted
+#' expressions (`quote`, `expression`) are evaluated in the same way with the
+#' calling environment as enclosure.
 #'
 #' @seealso [estimate.default], `vignette("influencefunction", package =
 #'   "lava")`
@@ -82,7 +94,7 @@
 #' d$cl <- rep(seq(nrow(d) / 4), each = 4)
 #' expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
 #'             estimate(fit, id = d$cl),
-#'             data = d, subset = z > 0, id = "cl")
+#'             data = d, subset = ~ z > 0, id = "cl")
 #'
 #' ## Simple mean of known function
 #' expectation(x / (1+z^2), data=d)
@@ -168,10 +180,12 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
          "Supply the ids with 'estimate(x, id=...)'")
 
   if (!missing(subset)) {
-    subset <- resolve_subset(substitute(subset), data, parent.frame())
-    if (length(subset) != N)
-      stop("Length of 'subset' (", length(subset), ") does not agree with ",
-           "the number of values of 'f' (", N, ")")
+    subset <- tryCatch(subset, error = function(e) {
+      stop("Unable to evaluate 'subset': ", conditionMessage(e),
+           ". To evaluate an expression in 'data' use a one-sided ",
+           "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
+    })
+    subset <- resolve_subset(subset, data, N, env = parent.frame())
   } else {
     subset <- NULL
   }
@@ -218,15 +232,140 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
   res
 }
 
-# Evaluate 'subset' (an expression evaluated in 'data' (enclosed by 'env'),
-# or a column name of 'data') to a logical vector. Columns of 'data' take
-# precedence over variables in 'env' (as in 'subset', 'with')
-resolve_subset <- function(expr, data, env) {
-  s <- if (!is.list(data)) eval(expr, envir = env) else
-         eval(expr, envir = data, enclos = env)
-  if (is.character(s) && length(s) == 1) s <- data[, s, drop = TRUE]
-  if (is.numeric(s)) s <- s > 0
-  s
+# Resolve the (standard evaluated) 'subset' argument to a logical vector of
+# length 'n':
+#  - one-sided formula: evaluated in 'data', enclosed by environment(formula)
+#  - quoted call / expression: evaluated in 'data', enclosed by 'env'
+#  - character string: column of 'data'
+#  - logical vector, or numeric vector with values in {0, 1}
+# In formulas/expressions a variable that is both a column of 'data' and an
+# object in the calling environment is an error (ambiguous). Use the pronouns
+# `.data$x` / `.env$x` (or `bquote()`) to disambiguate.
+resolve_subset <- function(subset, data, n, env = parent.frame()) {
+  if (is.null(subset)) return(NULL)
+  if (!is.list(data)) data <- NULL
+  if (is.call(subset) && identical(subset[[1L]], as.name("~")))
+    subset <- eval(subset, envir = env) # e.g., bquote(~ a == .(a))
+  if (inherits(subset, "formula")) {
+    if (length(subset) != 2L)
+      stop("'subset' formula must be one-sided, e.g., `~ a == 1`")
+    fenv <- environment(subset)
+    subset <- eval_in_data(subset[[2L]], data,
+                           if (is.null(fenv)) env else fenv)
+  } else if (is.language(subset) || is.expression(subset)) {
+    subset <- eval_in_data(subset, data, env)
+  } else if (is.character(subset) && length(subset) == 1L) {
+    if (is.null(data) || !(subset %in% names(data)))
+      stop("'subset' column '", subset, "' not found in 'data'")
+    subset <- data[[subset]]
+  }
+  if (is.numeric(subset) && !anyNA(subset)) {
+    if (!all(subset %in% c(0, 1)))
+      stop("Numeric 'subset' must only contain the values 0 and 1")
+    subset <- subset == 1
+  }
+  if (!is.logical(subset))
+    stop("'subset' must be a logical vector, a column name of 'data', or a ",
+         "one-sided formula evaluated in 'data' (e.g., `~ a == 1`)")
+  if (anyNA(subset)) stop("Missing values in 'subset'")
+  if (length(subset) != n)
+    stop("Length of 'subset' (", length(subset), ") does not agree with ",
+         "the number of values of 'f' (", n, ")")
+  subset
+}
+
+# Evaluate 'expr' with the columns of 'data' masking 'env'. The pronouns
+# `.data$x` and `.env$x` refer explicitly to a column of 'data' or a variable
+# of 'env'. A bare variable found in both 'data' and (the user part of) 'env'
+# is an error.
+eval_in_data <- function(expr, data, env) {
+  v <- expr_vars(expr)
+  if (length(v$data) > 0) {
+    nf <- setdiff(v$data, names(data))
+    if (length(nf) > 0)
+      stop("Column(s) not found in 'data': ", paste0("`", nf, "`",
+                                                     collapse = ", "))
+  }
+  for (x in v$env) {
+    if (!exists(x, envir = env, inherits = TRUE))
+      stop("Variable `", x, "` not found in the calling environment")
+  }
+  if (!is.null(data)) {
+    clash <- v$vars[v$vars %in% names(data)]
+    clash <- clash[vapply(clash, in_user_env, logical(1), env = env)]
+    if (length(clash) > 0) {
+      x <- clash[1L]
+      stop("`", x, "` is both a column of 'data' and a variable in the ",
+           "calling environment. Use `.data$", x, "` to refer to the ",
+           "column and `.env$", x, "` to refer to the variable",
+           call. = FALSE)
+    }
+  }
+  mask <- new.env(parent = env)
+  mask$.env <- list2env(mget(v$env, envir = env, inherits = TRUE))
+  mask$.data <- if (is.null(data)) list() else as.list(data)
+  if (is.null(data)) return(eval(expr, envir = mask))
+  eval(expr, envir = data, enclos = mask)
+}
+
+# Variables used in 'expr': bare variables ('vars'; not functions in call
+# position, not the right-hand side of `$`/`@`) and the names referenced via
+# the pronouns `.data$x`, `.data[["x"]]` ('data') and `.env$x` ('env')
+expr_vars <- function(expr) {
+  res <- list(vars = character(), data = character(), env = character())
+  walk <- function(e) {
+    if (is.expression(e)) {
+      for (el in as.list(e)) walk(el)
+    } else if (is.symbol(e)) {
+      nm <- as.character(e)
+      if (nzchar(nm) && !(nm %in% c(".data", ".env")))
+        res$vars <<- c(res$vars, nm)
+    } else if (is.call(e)) {
+      fn <- e[[1L]]
+      if (is.symbol(fn) && as.character(fn) %in% c("$", "[[", "@") &&
+          length(e) == 3L) {
+        obj <- e[[2L]]
+        key <- e[[3L]]
+        pron <- if (is.symbol(obj)) as.character(obj) else ""
+        literal <- is.character(key) ||
+          (is.symbol(key) && as.character(fn) == "$")
+        if (pron %in% c(".data", ".env") && as.character(fn) != "@" &&
+            literal) {
+          key <- as.character(key)
+          if (pron == ".data") res$data <<- c(res$data, key) else
+            res$env <<- c(res$env, key)
+          return(invisible())
+        }
+        walk(obj)
+        if (as.character(fn) == "[[") walk(key)
+        return(invisible())
+      }
+      if (!is.symbol(fn)) walk(fn)
+      args <- as.list(e)[-1L]
+      for (i in seq_along(args)) { # skip empty arguments, e.g., x[, 1]
+        if (!identical(args[[i]], quote(expr = ))) walk(args[[i]])
+      }
+    }
+    invisible()
+  }
+  walk(expr)
+  lapply(res, unique)
+}
+
+# Is 'name' a (non-function) object in the user part of the environment chain
+# of 'env', i.e., up to and including the global environment, but excluding
+# namespaces, attached packages and base (to avoid clashes with e.g. `T`, `pi`)
+in_user_env <- function(name, env) {
+  repeat {
+    if (identical(env, emptyenv()) || identical(env, baseenv()) ||
+        isNamespace(env))
+      return(FALSE)
+    if (exists(name, envir = env, inherits = FALSE) &&
+        !is.function(get(name, envir = env, inherits = FALSE)))
+      return(TRUE)
+    if (identical(env, globalenv())) return(FALSE)
+    env <- parent.env(env)
+  }
 }
 
 # Ids attached to the rows of the influence function 'ic' of 'x': the id of an
