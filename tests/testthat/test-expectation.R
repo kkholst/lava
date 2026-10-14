@@ -120,7 +120,7 @@ test_that("expectation: 'f' returning values for some rows of data", {
   id1 <- dat1$id
   id1[1:100] <- seq_len(100)
   m1 <- expectation(object=estimate(g, id = id1), f_all, data = dat, id = "id",
-                 subset = (a == 1))
+                 subset = "a")
   expect_equal(nrow(IC(m1)), nrow(dat) + 100)
   # 'id' and 'subset' must have one value per value of 'f'
   expect_error(expectation(object=e, f, data = dat, id = "id"), "does not agree")
@@ -177,10 +177,12 @@ test_that("expectation: subset (conditional average)", {
   expect_equal(coef(m), mm / phat, ignore_attr = TRUE)
   expect_equal(IC(m), icc, ignore_attr = TRUE)
   # expression evaluated in data, and column name
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = ~w1 > 0)),
+  expect_equal(vcov(expectation(object=e, f, data = dat,
+                                id = "id", subset = ~w1 > 0)),
                vcov(m))
   dat$s <- s
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = "s")),
+  expect_equal(vcov(expectation(object=e, f, data = dat,
+                                id = "id", subset = "s")),
                vcov(m))
   # via estimate
 })
